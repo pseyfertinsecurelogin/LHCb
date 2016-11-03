@@ -63,39 +63,39 @@ namespace Rich
                                const IInterface* parent );
 
       // Initialization of the tool after creation
-      StatusCode initialize() final;
+      StatusCode initialize() override final;
 
       /** Implement the handle method for the Incident service.
        *  This is used to inform the tool of software incidents.
        *
        *  @param incident The incident identifier
        */
-      void handle( const Incident& incident ) final;
+      void handle( const Incident& incident ) override final;
 
     public: // methods (and doxygen comments) inherited from interface
 
       // Access all RichSmartIDs for the current Event
-      const Rich::DAQ::L1Map & allRichSmartIDs() const;
-      
+      const Rich::DAQ::L1Map & allRichSmartIDs() const override;
+
       // Access the vector of RichSmartIDs for the given HPD identifier
       const LHCb::RichSmartID::Vector& richSmartIDs( const LHCb::RichSmartID pdID,
-                                                     const bool createIfMissing = true ) const final;
+                                                     const bool createIfMissing = true ) const override final;
 
       // Access all RichSmartIDs for the current Event
-      const Rich::DAQ::L1Map & allRichSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs ) const final;
+      const Rich::DAQ::L1Map & allRichSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs ) const override final;
 
       // Access the vector of RichSmartIDs for the given HPD identifier
       const LHCb::RichSmartID::Vector& richSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs,
                                                      const LHCb::RichSmartID pdID,
-                                                     const bool createIfMissing = true ) const final;
+                                                     const bool createIfMissing = true ) const override final;
 
-      // Access the number of RICH hits in the given detector, in the current event, 
-      unsigned int nTotalHits( const Rich::DetectorType rich = Rich::InvalidDetector ) const final;
+      // Access the number of RICH hits in the given detector, in the current event,
+      unsigned int nTotalHits( const Rich::DetectorType rich = Rich::InvalidDetector ) const override final;
 
-      // Access the number of RICH hits in the given detector, the current event, 
+      // Access the number of RICH hits in the given detector, the current event,
       unsigned int nTotalHits( const RawEventLocations& taeLocs,
-                               const Rich::DetectorType rich = Rich::InvalidDetector ) const final;
-      
+                               const Rich::DetectorType rich = Rich::InvalidDetector ) const override final;
+
     private: // private methods
 
       /// Initialise for a new event

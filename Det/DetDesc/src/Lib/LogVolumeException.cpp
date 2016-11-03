@@ -7,16 +7,16 @@
 /** @file LogVolumeException.cpp
  *
  *  Implementation file for class : LogVolumeException
- * 
+ *
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
- *  @date 18/11/2001 
+ *  @date 18/11/2001
  */
 // ============================================================================
 
 // ============================================================================
-/** standard constructor 
- *  @param name   exception name 
- *  @param logvol pointer to ILVolume interface 
+/** standard constructor
+ *  @param name   exception name
+ *  @param logvol pointer to ILVolume interface
  *  @param sc     status code
  */
 // ============================================================================
@@ -29,10 +29,10 @@ LogVolumeException::LogVolumeException
 {}
 
 // ============================================================================
-/** standard constructor 
- *  @param name   exception name 
+/** standard constructor
+ *  @param name   exception name
  *  @param excp   "previous" exception in the linked list
- *  @param logvol pointer to ILVolume interface 
+ *  @param logvol pointer to ILVolume interface
  *  @param sc     status code
  */
 // ============================================================================
@@ -46,61 +46,54 @@ LogVolumeException::LogVolumeException
 {}
 
 // ============================================================================
-/** destructor 
+/** printout to standard STD/STL stream
+ *  @param os reference to the stream
+ *  @return reference to the stream
  */
 // ============================================================================
-LogVolumeException::~LogVolumeException() noexcept
-{ m_logvol = nullptr ; }
-
-// ============================================================================
-/** printout to standard STD/STL stream 
- *  @param os reference to the stream 
- *  @return reference to the stream 
- */  
-// ============================================================================
 std::ostream& LogVolumeException::printOut
-( std::ostream& os             ) const 
+( std::ostream& os             ) const
 {
-  /// print THIS exception 
-  os << " \t" << tag() << " \t " << message() ; 
+  /// print THIS exception
+  os << " \t" << tag() << " \t " << message() ;
   switch( code() )
     {
-    case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"    ;  break ; 
-    case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"    ;  break ; 
-    default                  : os << "\t StatusCode=" << code() ;  break ; 
+    case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"    ;  break ;
+    case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"    ;  break ;
+    default                  : os << "\t StatusCode=" << code() ;  break ;
     }
   os << std::endl ;
-  /// print the logvol 
-  os << " Exception logvol: " 
-     << m_logvol 
-     << std::endl  ; 
-  /// print all previous (linked) exceptions     
+  /// print the logvol
+  os << " Exception logvol: "
+     << m_logvol
+     << std::endl  ;
+  /// print all previous (linked) exceptions
   return ( 0 != previous() ) ? previous()->printOut( os ) : os ;
 }
 
 // ============================================================================
-/** printout to standard Message stream 
- *  @param os reference to the stream 
- *  @return reference to the stream 
- */  
+/** printout to standard Message stream
+ *  @param os reference to the stream
+ *  @return reference to the stream
+ */
 // ============================================================================
 MsgStream&    LogVolumeException::printOut
-( MsgStream&    os             ) const 
+( MsgStream&    os             ) const
 {
-  /// print THIS exception 
-  os << " " << tag() << " \t " << message() ; 
+  /// print THIS exception
+  os << " " << tag() << " \t " << message() ;
   switch( code() )
     {
-    case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"    ;  break ; 
-    case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"    ;  break ; 
-    default                  : os << "\t StatusCode=" << code() ;  break ; 
-    } 
+    case StatusCode::SUCCESS : os << "\t StatusCode=SUCCESS"    ;  break ;
+    case StatusCode::FAILURE : os << "\t StatusCode=FAILURE"    ;  break ;
+    default                  : os << "\t StatusCode=" << code() ;  break ;
+    }
   os << endmsg ;
-  /// print the logvol 
-  os << " Exception logvol: " 
-     << m_logvol 
-     << endmsg  ; 
-  /// print all previous (linked) exceptions     
+  /// print the logvol
+  os << " Exception logvol: "
+     << m_logvol
+     << endmsg  ;
+  /// print all previous (linked) exceptions
   return ( 0 != previous() ) ? previous()->printOut( os ) : os ;
 }
 
@@ -109,9 +102,9 @@ MsgStream&    LogVolumeException::printOut
  *  @return pointer to newly created object
  */
 // ============================================================================
-GaudiException* LogVolumeException::clone() const 
+GaudiException* LogVolumeException::clone() const
 { return new LogVolumeException( *this ); }
 
 // ============================================================================
-// The End 
+// The End
 // ============================================================================

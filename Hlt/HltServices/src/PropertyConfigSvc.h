@@ -17,7 +17,6 @@
 #include "GaudiKernel/IAlgManager.h"
 #include "GaudiKernel/IAppMgrUI.h"
 #include "GaudiKernel/IToolSvc.h"
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/VectorMap.h"
 
 // from HltInterfaces
@@ -113,19 +112,9 @@ protected:
   IConfigAccessSvc* cas() const { return m_accessSvc;}
 
 
-  MsgStream& verbose() const { return msg(MSG::VERBOSE); }
-  MsgStream& debug() const { return msg(MSG::DEBUG); }
-  MsgStream& info() const { return msg(MSG::INFO); }
-  MsgStream& warning() const { return msg(MSG::WARNING); }
-  MsgStream& error() const { return msg(MSG::ERROR); }
-  MsgStream& fatal() const { return msg(MSG::FATAL); }
-  MsgStream& always() const { return msg(MSG::ALWAYS); }
-
-
 private:
   TransformMap                         m_transform;
 
-  mutable std::unique_ptr<MsgStream>   m_msg;
   std::string                          s_accessSvc;
   SmartIF<IJobOptionsSvc>              m_joboptionsSvc;
   SmartIF<IToolSvc>                    m_toolSvc;
@@ -147,7 +136,6 @@ private:
   bool                                 m_allowFlowChanges;
   mutable std::unique_ptr<std::vector<std::string> > m_initialTopAlgs;
 
-  MsgStream& msg(MSG::Level level) const;
 
   void onCreate(const IAlgTool* tool) override;
 

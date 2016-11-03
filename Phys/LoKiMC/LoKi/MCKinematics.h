@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCKINEMATICS_H 
 #define LOKI_MCKINEMATICS_H 1

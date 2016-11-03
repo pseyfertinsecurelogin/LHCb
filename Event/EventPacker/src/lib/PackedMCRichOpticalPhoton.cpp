@@ -1,4 +1,3 @@
-
 // local
 #include "Event/PackedMCRichOpticalPhoton.h"
 

@@ -14,7 +14,7 @@
     @date December 2001
 *///--------------------------------------------------------------------------
 
-class IAlignment : virtual public IConditionInfo
+struct IAlignment : virtual IConditionInfo
 {
 
 };

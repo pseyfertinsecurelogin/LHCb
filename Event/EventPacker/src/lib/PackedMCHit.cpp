@@ -1,4 +1,3 @@
-
 // STL
 #include <sstream>
 
@@ -23,7 +22,7 @@ void MCHitPacker::pack( const DataVector & hits,
     phits.data().reserve( hits.size() );
     for ( const auto * hit : hits )
     {
-      phits.data().emplace_back( PackedData() );
+      phits.data().emplace_back( );
       auto & phit = phits.data().back();
       phit.sensDetID    = hit->sensDetID();
       phit.entx         = m_pack.position ( hit->entry().x() );

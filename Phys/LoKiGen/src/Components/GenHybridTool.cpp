@@ -61,9 +61,9 @@ namespace LoKi
     public:
       // ======================================================================
       /// initialization of the tool
-      virtual StatusCode initialize () ;
+      StatusCode initialize ()  override;
       /// finalization   of the tool
-      virtual StatusCode finalize  () ;
+      StatusCode finalize  ()  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -74,10 +74,10 @@ namespace LoKi
        *  @param cuts the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string& pycode  ,
         LoKi::Types::GCut& cuts    ,
-        const std::string& context )
+        const std::string& context ) override
       { return _get ( pycode , m_gcuts  , cuts , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -85,10 +85,10 @@ namespace LoKi
        *  @param cuts the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&  pycode  ,
         LoKi::Types::GVCut& cuts    ,
-        const std::string&  context )
+        const std::string&  context ) override
       { return _get ( pycode , m_gvcuts  , cuts , context ) ; }
       // ======================================================================
     public:
@@ -100,10 +100,10 @@ namespace LoKi
        *  @param func the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string& pycode  ,
         LoKi::Types::GFun& func    ,
-        const std::string& context )
+        const std::string& context ) override
       { return _get ( pycode , m_gfunc  , func , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -111,10 +111,10 @@ namespace LoKi
        *  @param func the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&  pycode  ,
         LoKi::Types::GVFun& func    ,
-        const std::string&  context )
+        const std::string&  context ) override
       { return _get ( pycode , m_gvfunc  , func , context ) ; }
       // ======================================================================
     public:
@@ -126,10 +126,10 @@ namespace LoKi
        *  @param func the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&  pycode  ,
         LoKi::Types::GMap&  func    ,
-        const std::string&  context )
+        const std::string&  context ) override
       { return _get ( pycode , m_gmap  , func , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -137,10 +137,10 @@ namespace LoKi
        *  @param func the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&   pycode  ,
         LoKi::Types::GVMap&  func    ,
-        const std::string&   context )
+        const std::string&   context ) override
       { return _get ( pycode , m_gvmap  , func , context ) ; }
       // ======================================================================
     public:
@@ -152,10 +152,10 @@ namespace LoKi
        *  @param func the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&  pycode  ,
         LoKi::Types::GPipe& func    ,
-        const std::string&  context )
+        const std::string&  context ) override
       { return _get ( pycode , m_gpipe  , func , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -163,10 +163,10 @@ namespace LoKi
        *  @param func the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&   pycode  ,
         LoKi::Types::GVPipe& func    ,
-        const std::string&   context )
+        const std::string&   context ) override
       { return _get ( pycode , m_gvpipe  , func , context ) ; }
       // ======================================================================
     public:
@@ -178,10 +178,10 @@ namespace LoKi
        *  @param func the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&    pycode  ,
         LoKi::Types::GFunVal& func    ,
-        const std::string&    context )
+        const std::string&    context ) override
       { return _get ( pycode , m_gfunval  , func , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -189,10 +189,10 @@ namespace LoKi
        *  @param func the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&     pycode  ,
         LoKi::Types::GVFunVal& func    ,
-        const std::string&     context )
+        const std::string&     context ) override
       { return _get ( pycode , m_gvfunval  , func , context ) ; }
       // ======================================================================
     public:
@@ -204,10 +204,10 @@ namespace LoKi
        *  @param func the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&    pycode  ,
         LoKi::Types::GCutVal& func    ,
-        const std::string&    context )
+        const std::string&    context ) override
       { return _get ( pycode , m_gcutval  , func , context ) ; }
       // ======================================================================
     public:
@@ -219,10 +219,10 @@ namespace LoKi
        *  @param func the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&     pycode  ,
         LoKi::Types::GSource&  func    ,
-        const std::string&     context )
+        const std::string&     context ) override
       { return _get ( pycode , m_gsource  , func , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -230,10 +230,10 @@ namespace LoKi
        *  @param func the placeholder for the result
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&      pycode  ,
         LoKi::Types::GVSource&  func    ,
-        const std::string&      context )
+        const std::string&      context ) override
       { return _get ( pycode , m_gvsource , func , context ) ; }
       // ======================================================================
     public:
@@ -241,10 +241,10 @@ namespace LoKi
       // predicates
       // ======================================================================
       /// set the C++ predicate for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GCuts&   cut )
+      void set ( const LoKi::Types::GCuts&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gcuts , cut ) ; }
       /// set the C++ predicate for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVCuts&   cut )
+      void set ( const LoKi::Types::GVCuts&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvcuts , cut ) ; }
       // ======================================================================
     public:
@@ -252,10 +252,10 @@ namespace LoKi
       // functions
       // ======================================================================
       /// set the C++ function for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GFunc&   cut )
+      void set ( const LoKi::Types::GFunc&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gfunc  , cut ) ; }
       /// set the C++ function for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVFunc&   cut )
+      void set ( const LoKi::Types::GVFunc&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvfunc  , cut ) ; }
       // ======================================================================
     public:
@@ -263,10 +263,10 @@ namespace LoKi
       // maps
       // ======================================================================
       /// set the C++ "map" for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GMaps&   cut )
+      void set ( const LoKi::Types::GMaps&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gmap  , cut ) ; }
       /// set the C++ "map" for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVMaps&   cut )
+      void set ( const LoKi::Types::GVMaps&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvmap  , cut ) ; }
       // ======================================================================
     public:
@@ -274,10 +274,10 @@ namespace LoKi
       // pipes
       // ======================================================================
       /// set the C++ "pipe" for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GPipes&   cut )
+      void set ( const LoKi::Types::GPipes&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gpipe  , cut ) ; }
       /// set the C++ "pipe" for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVPipes&   cut )
+      void set ( const LoKi::Types::GVPipes&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvpipe , cut ) ; }
       // ======================================================================
     public:
@@ -285,10 +285,10 @@ namespace LoKi
       // funvals
       // ======================================================================
       /// set the C++ "fun-val" for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GFunVals&   cut )
+      void set ( const LoKi::Types::GFunVals&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gfunval  , cut ) ; }
       /// set the C++ "pipe" for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVFunVals&   cut )
+      void set ( const LoKi::Types::GVFunVals&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvfunval , cut ) ; }
       // ======================================================================
     public:
@@ -296,7 +296,7 @@ namespace LoKi
       // cutvals
       // ======================================================================
       /// set the C++ "cut-val" for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GCutVals&   cut )
+      void set ( const LoKi::Types::GCutVals&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gcutval  , cut ) ; }
       // ======================================================================
     public:
@@ -304,10 +304,10 @@ namespace LoKi
       // sources
       // ======================================================================
       /// set the C++ "source" for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GSources&   cut )
+      void set ( const LoKi::Types::GSources&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gsource  , cut ) ; }
       /// set the C++ "source" for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVSources&   cut )
+      void set ( const LoKi::Types::GVSources&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvsource , cut ) ; }
       // ======================================================================
     protected:

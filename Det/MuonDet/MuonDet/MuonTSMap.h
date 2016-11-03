@@ -24,9 +24,8 @@ public:
   inline static  const CLID& classID() {
     return CLID_MuonTSMap;
   }
-  /// Workaround to prevent hidden base class function
-  inline StatusCode initialize() { return Condition::initialize(); }
 
+  using Condition::initialize;
   StatusCode initialize(long num, long gridx[2],long gridy[2]);
 
   using Condition::update;
@@ -34,16 +33,16 @@ public:
                     std::vector<long> gridx,std::vector<long> gridy,
                     std::vector<long> synch);
 
-  inline long numberOfLayout(){return m_NumberLogLayout;};
-  inline long gridXLayout(int i){return m_GridXLayout[i];};
-  inline long gridYLayout(int i){return m_GridYLayout[i];};
-  inline long numberOfOutputSignal(){return m_OutputSignal;};
-  inline long layoutOutputChannel(int i){return m_OutputLayoutSequence[i];};
-  inline long gridXOutputChannel(int i){return m_OutputGridXSequence[i];};
-  inline long gridYOutputChannel(int i){return m_OutputGridYSequence[i];};
-  inline long synchChSize(){return m_OutputSynchSequence.size();};
-  inline bool synchChUsed(int i){return m_OutputSynchSequence[i]==0?false:true;};
-  inline long numberOfPad(){return m_pad;};
+  inline long numberOfLayout(){return m_NumberLogLayout;}
+  inline long gridXLayout(int i){return m_GridXLayout[i];}
+  inline long gridYLayout(int i){return m_GridYLayout[i];}
+  inline long numberOfOutputSignal(){return m_OutputSignal;}
+  inline long layoutOutputChannel(int i){return m_OutputLayoutSequence[i];}
+  inline long gridXOutputChannel(int i){return m_OutputGridXSequence[i];}
+  inline long gridYOutputChannel(int i){return m_OutputGridYSequence[i];}
+  inline long synchChSize(){return m_OutputSynchSequence.size();}
+  inline bool synchChUsed(int i){return m_OutputSynchSequence[i]==0?false:true;}
+  inline long numberOfPad(){return m_pad;}
 
 protected:
 

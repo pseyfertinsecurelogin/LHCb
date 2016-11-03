@@ -26,7 +26,7 @@ public:
 
   const std::vector<LHCb::L0CaloAdc>& adcs( ) override;
   const std::vector<LHCb::L0CaloAdc>& adcs( int source ) override;
-  const std::vector<LHCb::L0CaloAdc>& adcs( LHCb::RawBank* bank) override;
+  const std::vector<LHCb::L0CaloAdc>& adcs( const LHCb::RawBank& bank) override;
   const std::vector<LHCb::L0CaloAdc>& pinAdcs( ) override;
   void clear() override;
   void cleanData(int feb) override;

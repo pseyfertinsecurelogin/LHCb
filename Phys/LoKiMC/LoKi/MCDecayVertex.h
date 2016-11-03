@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCDECAYVERTEX_H 
 #define LOKI_MCDECAYVERTEX_H 1

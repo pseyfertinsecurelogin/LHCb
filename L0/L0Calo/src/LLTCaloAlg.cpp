@@ -23,10 +23,7 @@ DECLARE_ALGORITHM_FACTORY( LLTCaloAlg )
 //=============================================================================
 LLTCaloAlg::LLTCaloAlg( const std::string & name , ISvcLocator * pSvcLocator) 
 : GaudiAlgorithm( name , pSvcLocator )
-  , m_ecal(NULL)
-  , m_hcal(NULL)
-  , m_adcsEcal(NULL)
-  , m_adcsHcal(NULL) {
+{
   declareProperty( "ECALMultiplicityThreshold" , m_ECALThreshold = 2   ) ;
   declareProperty( "HCALMultiplicityThreshold" , m_HCALThreshold = 2   ) ;  
   declareProperty( "CaloToolName" , m_caloToolName = "CaloTriggerAdcsFromRaw" ) ; 

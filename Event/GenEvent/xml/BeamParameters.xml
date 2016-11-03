@@ -10,6 +10,8 @@
       desc   = "Parameters of the beam"
       location = "Gen/BeamParameters"
       id     = "200"
+      final  = "TRUE"
+      defaultdestructor="FALSE"
     >
        &DataObject;
        <base name="DataObject"/>

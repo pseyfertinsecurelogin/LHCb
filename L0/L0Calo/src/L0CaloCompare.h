@@ -1,4 +1,4 @@
-#ifndef L0CALOCOMPARE_H 
+#ifndef L0CALOCOMPARE_H
 #define L0CALOCOMPARE_H 1
 
 // Include files
@@ -20,13 +20,13 @@ public:
 
   /// Standard constructor
   L0CaloCompare(const std::string& name, ISvcLocator* pSvcLocator );
-  
+
   /// Standard destructor
-  virtual ~L0CaloCompare( ); 
-  
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  
+  virtual ~L0CaloCompare( );
+
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+
 private:
 
   /// Prints name of candidate
@@ -36,7 +36,7 @@ private:
 
   bool m_fullMonitoring ;
 
-  AIDA::IHistogram1D*            m_histSpdMult_Comp ; 
+  AIDA::IHistogram1D*            m_histSpdMult_Comp ;
   AIDA::IHistogram1D*            m_histSumEt_Comp ;
 
   AIDA::IHistogram1D*            m_histTotalCount ;
@@ -57,6 +57,6 @@ private:
   std::set< unsigned int > m_idles ; ///< List of idle BCIds
   /// Vector of Idles BCIds (to set via job options)
   std::vector< unsigned int > m_idleBCIdVector ;
-  
+
 };
 #endif // L0CALOCOMPARE_H

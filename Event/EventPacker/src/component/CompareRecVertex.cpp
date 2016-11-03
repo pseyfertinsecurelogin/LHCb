@@ -1,4 +1,3 @@
-// $Id: CompareRecVertex.cpp,v 1.2 2009-07-09 09:44:16 cattanem Exp $
 // Include files
 
 // from Gaudi
@@ -26,10 +25,6 @@ DECLARE_ALGORITHM_FACTORY( CompareRecVertex )
   declareProperty( "InputName" , m_inputName  = LHCb::RecVertexLocation::Primary );
   declareProperty( "TestName"  , m_testName   = LHCb::RecVertexLocation::Primary+"Test" );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CompareRecVertex::~CompareRecVertex() {}
 
 //=============================================================================
 // Main execution

@@ -66,7 +66,7 @@ namespace Rich
          *
          *  @param l0ID   L0 board hardware identifier
          *  @param digits Vector of RichSmartIDs listing the active channels in this HPD
-         *  @param extendedFormat 
+         *  @param extendedFormat
          *  @param odin   Pointer to the ODIN data object
          */
         explicit RichNonZeroSuppData( const Level0ID l0ID,
@@ -77,7 +77,7 @@ namespace Rich
                                                             false, // Not ALICE mode
                                                             extendedFormat, // data format
                                                             false, // No GT inhibit
-                                                            l0ID,  // The L0 ID 
+                                                            l0ID,  // The L0 ID
                                                             EventID( odin ? odin->eventNumber() : 0 ), // Event ID
                                                             0 // filled by buildData call below in main body
                                                             ),
@@ -110,11 +110,11 @@ namespace Rich
         ~RichNonZeroSuppData() = default;
 
         // Returns the hit count for this HPD
-        virtual ShortType hitCount() const final;
+        ShortType hitCount() const override final;
 
         // Fill a vector with RichSmartIDs for hit pixels
-        virtual ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
-                                            const LHCb::RichSmartID hpdID ) const final;
+        ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
+                                    const LHCb::RichSmartID hpdID ) const override final;
 
       private: // methods
 

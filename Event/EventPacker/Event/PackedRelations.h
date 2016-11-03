@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PACKEDRELATIONS_H
 #define EVENT_PACKEDRELATIONS_H 1
 
@@ -6,30 +5,30 @@
 #include "Event/StandardPacker.h"
 
 // Include files
-namespace LHCb 
+namespace LHCb
 {
 
   /** @class PackedRelation PackedRelations.h Event/PackedRelations.h
    *
    *  Packed Relation
-   *  
+   *
    *  @author Olivier Callot
    *  @date   2012-01-24
    */
-  class PackedRelation 
+  class PackedRelation
   {
   public:
     long long container{0};
     int start{0};
     int end{0};
   };
-  
+
   // =================== Unweighted Relations =========================
 
   static const CLID CLID_PackedRelations = 1560;
 
   /// Namespace for locations in TDS
-  namespace PackedRelationsLocation 
+  namespace PackedRelationsLocation
   {
     static const std::string& InStream = "/pPhys/Relations";
     static const std::string& P2MCP    = "/pPhys/P2MCPRelations";
@@ -39,11 +38,11 @@ namespace LHCb
   /** @class PackedRelations PackedRelations.h Event/PackedRelations.h
    *
    *  Packed Relations
-   *  
+   *
    *  @author Olivier Callot
    *  @date   2012-01-24
    */
-  class PackedRelations : public DataObject 
+  class PackedRelations : public DataObject
   {
 
   public:
@@ -52,10 +51,10 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedRelations; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedRelations::classID(); }
+    const CLID& clID() const  override { return PackedRelations::classID(); }
 
   public:
-    
+
     std::vector<PackedRelation>&       relations()       { return m_relations; }
     const std::vector<PackedRelation>& relations() const { return m_relations; }
 
@@ -70,7 +69,7 @@ namespace LHCb
     std::vector<PackedRelation> m_relations;
     std::vector<long long>      m_source;
     std::vector<long long>      m_dest;
-  
+
   };
 
   // =================== Weighted Relations =========================
@@ -78,7 +77,7 @@ namespace LHCb
   static const CLID CLID_PackedWeightedRelations = 1562;
 
   /// Namespace for locations in TDS
-  namespace PackedWeightedRelationsLocation 
+  namespace PackedWeightedRelationsLocation
   {
     static const std::string& PP2MCP = "/pPhys/PP2MCPRelations";
   }
@@ -86,11 +85,11 @@ namespace LHCb
   /** @class PackedWeightedRelations PackedRelations.h Event/PackedRelations.h
    *
    *  Packed Weighted Relations
-   *  
+   *
    *  @author Chris Jones
    *  @date   2015-04-13
    */
-  class PackedWeightedRelations : public DataObject 
+  class PackedWeightedRelations : public DataObject
   {
 
   public:
@@ -99,10 +98,10 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedWeightedRelations; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedWeightedRelations::classID(); }
+    const CLID& clID() const  override { return PackedWeightedRelations::classID(); }
 
   public:
-    
+
     std::vector<PackedRelation>&       relations()       { return m_relations; }
     const std::vector<PackedRelation>& relations() const { return m_relations; }
 
@@ -121,7 +120,7 @@ namespace LHCb
     std::vector<long long>      m_source;
     std::vector<long long>      m_dest;
     std::vector<float>          m_weights;
-  
+
   };
 
 }

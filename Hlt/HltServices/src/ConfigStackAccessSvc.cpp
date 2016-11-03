@@ -134,9 +134,3 @@ ConfigStackAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias
             << ( id.invalid() ? "failed" : "OK" ) << endmsg;
     return id;
 }
-
-MsgStream& ConfigStackAccessSvc::msg( MSG::Level level ) const
-{
-    if ( !m_msg ) m_msg.reset( new MsgStream( msgSvc(), name() ) );
-    return *m_msg << level;
-}

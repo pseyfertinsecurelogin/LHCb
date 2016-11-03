@@ -1,4 +1,3 @@
-// $Id: DeCaloTiming.h,v 1.1 2007-08-22 19:05:13 odescham Exp $
 #ifndef COMPONENT_DECALOTIMING_H 
 #define COMPONENT_DECALOTIMING_H 1
 
@@ -18,11 +17,7 @@ public:
   /// Standard constructor
   DeCaloTiming( const std::string& name, ISvcLocator* pSvcLocator );
 
-  ~DeCaloTiming( ) override = default; ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
-
-
 
 private:
   double delta(long id ){

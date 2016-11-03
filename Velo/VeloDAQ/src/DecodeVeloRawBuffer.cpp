@@ -111,9 +111,6 @@ StatusCode DecodeVeloRawBuffer::initialize() {
     info() << "Using '" << m_rawEventLocations << "' as search path for the RawEvent object" << endmsg;
   }
 
-  // Pointer to IncidentSvc
-  m_incidentSvc = svc<IIncidentSvc>("IncidentSvc",true);
-
   return StatusCode::SUCCESS;
 }
 

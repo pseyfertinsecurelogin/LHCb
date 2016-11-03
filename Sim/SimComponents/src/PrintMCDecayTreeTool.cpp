@@ -33,7 +33,7 @@ using namespace Gaudi::Units;
 PrintMCDecayTreeTool::PrintMCDecayTreeTool( const std::string& type,
                                             const std::string& name,
                                             const IInterface* parent )
-  : GaudiTool( type, name, parent ), m_ppSvc(0), m_keys(0), 
+  : base_class( type, name, parent ), 
     m_energyUnitName("MeV"), m_lengthUnitName("mm")
 {
 
@@ -53,12 +53,12 @@ PrintMCDecayTreeTool::PrintMCDecayTreeTool( const std::string& type,
 //=============================================================================
 // initialise
 //=============================================================================
-StatusCode PrintMCDecayTreeTool::initialize( void ){
+StatusCode PrintMCDecayTreeTool::initialize( ){
 
-  StatusCode sc = GaudiTool::initialize();
+  StatusCode sc = base_class::initialize();
   if (!sc) return sc;
 
-  m_ppSvc = svc<LHCb::IParticlePropertySvc>( "LHCb::ParticlePropertySvc",true);
+  m_ppSvc = service( "LHCb::ParticlePropertySvc",true);
 
   if ( m_informationsDeprecated != "" ){
     warning() << "You are using the deprecated option ``informations''." << endmsg ;
@@ -131,17 +131,13 @@ StatusCode PrintMCDecayTreeTool::initialize( void ){
 //=============================================================================
 // printHeader
 //=============================================================================
-void PrintMCDecayTreeTool::printHeader( MsgStream& log )
+MsgStream& PrintMCDecayTreeTool::printHeader( MsgStream& log ) const
 {
   static const std::string mctitle = " MCParticle ";
   const std::string* title;
   title = &mctitle;
 
-  bool name_key = false;
-  std::vector<InfoKeys>::iterator i;
-  for( i = m_keys.begin(); i!= m_keys.end(); i++ ) {
-    if( *i == Name ) name_key = true;
-  }
+  bool name_key = ( std::find(m_keys.begin(), m_keys.end(), Name)!=m_keys.end() );
 
   int n_keys = m_keys.size() - (name_key ? 1 : 0);
   int width = n_keys*m_fWidth + (name_key ? m_treeWidth : 0);
@@ -156,8 +152,8 @@ void PrintMCDecayTreeTool::printHeader( MsgStream& log )
 
   log << std::endl;
 
-  for( i = m_keys.begin(); i!= m_keys.end(); i++ )
-    switch( *i ) {
+  for( const auto& i : m_keys)
+    switch( i ) {
     case Name:      log << std::setw(m_treeWidth) << "Name";   break;
     case PID:       log << std::setw(m_fWidth) << "PID";         break;
     case E:         log << std::setw(m_fWidth) << "E";         break;
@@ -180,8 +176,8 @@ void PrintMCDecayTreeTool::printHeader( MsgStream& log )
 
   log << std::endl;
 
-  for( i = m_keys.begin(); i!= m_keys.end(); i++ )
-    switch( *i ) {
+  for( const auto& i : m_keys)
+    switch( i ) {
     case Name:      log << std::setw(m_treeWidth) << " ";      break;
     case PID:       log << std::setw(m_fWidth)    << " ";       break;
     case E:         log << std::setw(m_fWidth) << m_energyUnitName;       break;
@@ -202,21 +198,20 @@ void PrintMCDecayTreeTool::printHeader( MsgStream& log )
     case idcl:      log << std::setw(m_fWidth) << " ";         break;
     }
 
-  log << std::endl;
+  return log << std::endl;
 }
 //=============================================================================
 // printInfo (MCParticle)
 //=============================================================================
-void PrintMCDecayTreeTool::printInfo( const std::string &prefix, 
-                                      const LHCb::MCParticle *part,
-                                      MsgStream &log )
+MsgStream& PrintMCDecayTreeTool::printInfo( const std::string &prefix, 
+                                            const LHCb::MCParticle *part,
+                                            MsgStream &log ) const
 {
   const LHCb::ParticleProperty* p = m_ppSvc->find( part->particleID() );
   const LHCb::MCVertex *origin = part->originVertex();
 
-  std::vector<InfoKeys>::iterator i;
-  for( i = m_keys.begin(); i!= m_keys.end(); i++ )
-    switch( *i ) {
+  for(const auto& i : m_keys)
+    switch( i ) {
     case Name:
       {
         std::string p_name = p ? p->particle() : "N/A";
@@ -315,35 +310,29 @@ void PrintMCDecayTreeTool::printInfo( const std::string &prefix,
       break;
     }
 
-  log << std::endl;
+  return log << std::endl;
 }
 //=============================================================================
 // Print decay tree for a given MCparticle
 //=============================================================================
 void PrintMCDecayTreeTool::printTree( const LHCb::MCParticle* mother, 
-                                      int maxDepth )
+                                      int maxDepth ) const
 {
-  if( maxDepth == -1 )
-    maxDepth = m_depth;
+  if( maxDepth == -1 ) maxDepth = m_depth;
   
-  MsgStream log(msgSvc(), name());
-
   if( !mother ) {
     err() << "printTree called with NULL MCParticle" << endmsg;
     return;
   }
 
-  log << MSG::INFO << std::endl;
-  printHeader( log );
-
+  auto& log = printHeader( info() << '\n' );
   log.setf(std::ios::fixed,std::ios::floatfield);
-  printDecayTree( mother, "", maxDepth, log );
-  log << endmsg;
+  printDecayTree( mother, "", maxDepth, log ) << endmsg;
 }
 //=============================================================================
 // printAncestor (MCParticle)
 //=============================================================================
-void PrintMCDecayTreeTool::printAncestor( const LHCb::MCParticle *child )
+void PrintMCDecayTreeTool::printAncestor( const LHCb::MCParticle *child ) const
 {
   const LHCb::ParticleProperty *p = m_ppSvc->find(child->particleID());
   std::string decay = p ? p->particle() : "N/A";
@@ -358,95 +347,67 @@ void PrintMCDecayTreeTool::printAncestor( const LHCb::MCParticle *child )
 //=============================================================================
 // printAsTree (MCParticle)
 //=============================================================================
-void PrintMCDecayTreeTool::printAsTree( const LHCb::MCParticle::ConstVector &event)
+void PrintMCDecayTreeTool::printAsTree( const LHCb::MCParticle::ConstVector &event) const
 {
-  MsgStream log(msgSvc(), name());
-
-  log << MSG::INFO << std::endl;
-  printHeader( log );
-
+  auto& log = printHeader( info() << '\n' );
   log.setf(std::ios::fixed,std::ios::floatfield);
-  LHCb::MCParticle::ConstVector::const_iterator i;
-  for( i=event.begin(); i!=event.end(); i++ ) {
-    if( ((*i)->originVertex() == NULL) ||
-        ((*i)->originVertex()->mother() == NULL) )
-      printDecayTree( *i, "", m_depth, log );
+  for(const auto& i : event) {
+    if( !i->originVertex() || !i->originVertex()->mother()  )
+      printDecayTree( i, "", m_depth, log );
   }
   log << endmsg;
 }
 //=============================================================================
 // printAsTree (MCParticle) (KeyedContainer)
 //=============================================================================
-void PrintMCDecayTreeTool::printAsTree( const LHCb::MCParticles& event )
+void PrintMCDecayTreeTool::printAsTree( const LHCb::MCParticles& event ) const
 {
-  MsgStream log(msgSvc(), name());
-
-  log << MSG::INFO << std::endl;
-  printHeader( log );
-
+  auto& log = printHeader( info() << '\n' );
   log.setf(std::ios::fixed,std::ios::floatfield);
-  LHCb::MCParticles::const_iterator i;
-  for( i=event.begin(); i!=event.end(); i++ ) {
-    if( ((*i)->originVertex() == NULL) ||
-        ((*i)->originVertex()->mother() == NULL) )
-      printDecayTree( *i, "", m_depth, log );
+  for(const auto& i : event) {
+    if( !i->originVertex() || !i->originVertex()->mother() )
+      printDecayTree( i, "", m_depth, log );
   }
   log << endmsg;
 }
 //=============================================================================
 // printDecayTree (MCParticle)
 //=============================================================================
-void PrintMCDecayTreeTool::printDecayTree( const LHCb::MCParticle *mother, 
+MsgStream& PrintMCDecayTreeTool::printDecayTree( const LHCb::MCParticle *mother, 
                                            const std::string &prefix,
                                            int depth,
-                                           MsgStream &log )
+                                           MsgStream &log ) const
 {
   printInfo( prefix, mother, log );
-
   if( depth ) {
-    SmartRefVector<LHCb::MCVertex>::const_iterator iv;
-    for ( iv = mother->endVertices().begin();
+    for ( auto iv = mother->endVertices().begin();
           iv != mother->endVertices().end(); iv++ ) {
-      SmartRefVector<LHCb::MCParticle>::const_iterator idau;
-      for ( idau = (*iv)->products().begin();
+      for ( auto idau = (*iv)->products().begin();
             idau != (*iv)->products().end(); idau++ ) {
-        if ( (*idau == (*iv)->products().back())
-             && (*iv == mother->endVertices().back()) )
-          printDecayTree( *idau, prefix+' ', depth-1, log );
-        else
-          printDecayTree( *idau, prefix+'|', depth-1, log );
+        bool last = ( (*idau == (*iv)->products().back())
+             && (*iv == mother->endVertices().back()) );
+        printDecayTree( *idau, prefix+(last?' ':'|'), depth-1, log );
       }
     }
   }
+  return log;
 }
 //=============================================================================
 // printAsList (MCParticle)
 //=============================================================================
-void PrintMCDecayTreeTool::printAsList( const LHCb::MCParticle::ConstVector &event)
+void PrintMCDecayTreeTool::printAsList( const LHCb::MCParticle::ConstVector &event) const
 {
-  MsgStream log(msgSvc(), name());
-  log << MSG::INFO << std::endl;
-  printHeader( log );
-  
-  int c = 0;
-  LHCb::MCParticle::ConstVector::const_iterator i;
-  for( i=event.begin(); i!=event.end(); i++, c++ )
-    printInfo( "", *i, log );
+  auto& log = printHeader( info() << '\n' );
+  for(const auto& i : event) printInfo( "", i, log );
   log << endmsg;
 }
 //=============================================================================
 // printAsList (MCParticle) (KeyedContainer)
 //=============================================================================
-void PrintMCDecayTreeTool::printAsList( const LHCb::MCParticles &event)
+void PrintMCDecayTreeTool::printAsList( const LHCb::MCParticles &event) const
 {
-  MsgStream log(msgSvc(), name());
-  log << MSG::INFO << std::endl;
-  printHeader( log );
-  
-  int c = 0;
-  LHCb::MCParticles::const_iterator i;
-  for( i=event.begin(); i!=event.end(); i++, c++ )
-    printInfo( "", *i, log );
+  auto& log = printHeader( info() << '\n' );
+  for(const auto& i : event) printInfo( "", i, log );
   log << endmsg;
 }
 //=============================================================================

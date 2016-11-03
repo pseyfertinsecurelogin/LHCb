@@ -23,16 +23,15 @@ public:
   StatusCode initialize() override;
 
   const std::vector<LHCb::CaloAdc>& adcs( ) override;// decode all banks
-  const std::vector<LHCb::CaloAdc>& adcs( LHCb::RawBank* bank ) override; // decode a single bank
+  const std::vector<LHCb::CaloAdc>& adcs( const LHCb::RawBank& bank ) override; // decode a single bank
   const std::vector<LHCb::CaloAdc>& adcs( int source ) override; // decode a single Tell1 bank
   const std::vector<LHCb::CaloAdc>& pinAdcs( ) override;
   //
   const std::vector<LHCb::CaloDigit>& digits( ) override; // decode all banks
-  const std::vector<LHCb::CaloDigit>& digits( LHCb::RawBank* bank ) override;// decode a single bank
-  const std::vector<LHCb::CaloDigit>& digits(  int source ) override;// decode a single Tell1 bank
+  const std::vector<LHCb::CaloDigit>& digits( const LHCb::RawBank& bank ) override;// decode a single bank
+  const std::vector<LHCb::CaloDigit>& digits( int source ) override;// decode a single Tell1 bank
   void clear() override;
   void cleanData(int feb) override;
-
 
 private:
   bool getData ( const LHCb::RawBank& bank );

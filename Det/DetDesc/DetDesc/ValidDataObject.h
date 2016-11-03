@@ -27,7 +27,7 @@ class StatusCode;
 *///--------------------------------------------------------------------------
 
 class ValidDataObject : public DataObject,
-			virtual public IValidity
+                        virtual public IValidity
 
 {
 
@@ -48,46 +48,43 @@ class ValidDataObject : public DataObject,
   /// contents, except for the properties of a generic DataObject
   virtual void update ( ValidDataObject& obj );
 
-  /// Destructor
-  virtual ~ValidDataObject();
-
  public:
 
   // Re-implemented from DataObject
 
   /// Class ID of this instance
-  inline virtual const CLID& clID() const { return classID(); }
+  inline const CLID& clID() const override { return classID(); }
 
   /// Class ID of this class
   inline static  const CLID& classID() { return CLID_ValidDataObject; }
 
   /// Fill the output stream (ASCII)
-  virtual std::ostream& fillStream( std::ostream& s ) const;
+  std::ostream& fillStream( std::ostream& s ) const override;
 
  public:
 
   // Implementation of IValidity
 
   /// Check if the data object has a well defined validity range
-  virtual bool isValid() const ;
+  bool isValid() const  override;
 
   /// Check if the data object is valid at the specified time
-  virtual bool isValid( const Gaudi::Time& t ) const;
+  bool isValid( const Gaudi::Time& t ) const override;
 
   /// Get start of validity
-  virtual const Gaudi::Time& validSince() const;
+  const Gaudi::Time& validSince() const override;
 
   /// Get end of validity
-  virtual const Gaudi::Time& validTill() const;
+  const Gaudi::Time& validTill() const override;
 
   /// Set validity range
-  virtual void setValidity( const Gaudi::Time& since, const Gaudi::Time& till );
+  void setValidity( const Gaudi::Time& since, const Gaudi::Time& till ) override;
 
   /// Set start of validity
-  virtual void setValiditySince( const Gaudi::Time& since );
+  void setValiditySince( const Gaudi::Time& since ) override;
 
   /// Set end of validity
-  virtual void setValidityTill( const Gaudi::Time& till );
+  void setValidityTill( const Gaudi::Time& till ) override;
 
 // ================================================
 // ValidDataObject methods
@@ -96,7 +93,7 @@ class ValidDataObject : public DataObject,
   /// Update the current object and all the used ones (children,
   /// references, etc) only if needed, of course.
   /// This method must be reimplemented for more complex objects.
-  virtual StatusCode update();
+  StatusCode update() override;
 
   /// Possible stata of the update flag
   enum UpdateModeFlag {

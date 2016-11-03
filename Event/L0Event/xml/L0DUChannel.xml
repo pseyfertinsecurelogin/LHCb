@@ -35,7 +35,10 @@
     <class
       author="Olivier Deschamps"
       desc="This class represents individual L0DU Channel"
-      name="L0DUChannel">
+      name="L0DUChannel"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
+      >
 
       <base name="ContainedObject"/>
        &ContainedObject;

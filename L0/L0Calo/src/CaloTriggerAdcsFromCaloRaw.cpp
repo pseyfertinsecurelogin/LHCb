@@ -22,7 +22,7 @@ DECLARE_TOOL_FACTORY( CaloTriggerAdcsFromCaloRaw )
 CaloTriggerAdcsFromCaloRaw::CaloTriggerAdcsFromCaloRaw( const std::string& type,
                                                         const std::string& name,
                                                         const IInterface* parent )
-  : GaudiTool( type, name , parent )
+: GaudiTool( type, name , parent )
 {
   declareInterface<ICaloTriggerAdcsFromRaw>(this);
   declareProperty( "DoubleScale" , m_doubleScale = false ) ;
@@ -30,10 +30,6 @@ CaloTriggerAdcsFromCaloRaw::CaloTriggerAdcsFromCaloRaw( const std::string& type,
   m_detectorName = name.substr( index, 4 );
   m_data.clear() ;
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloTriggerAdcsFromCaloRaw::~CaloTriggerAdcsFromCaloRaw() {} 
 
 //=============================================================================
 // Initialize function
@@ -83,7 +79,7 @@ const std::vector< LHCb::L0CaloAdc > & CaloTriggerAdcsFromCaloRaw::adcs( int )
 }
 
 //=============================================================================
-const std::vector< LHCb::L0CaloAdc > & CaloTriggerAdcsFromCaloRaw::adcs( LHCb::RawBank * )
+const std::vector< LHCb::L0CaloAdc > & CaloTriggerAdcsFromCaloRaw::adcs( const LHCb::RawBank& )
 {
   return adcs( ) ;
 }
@@ -98,7 +94,6 @@ int CaloTriggerAdcsFromCaloRaw::l0adcFromAdc( const int adc ,
   if ( adc < 0 ) return 0 ;
 
   unsigned long calibCte = m_calo -> cellParam( id ).l0Constant() ;
-
   if ( m_doubleScale ) calibCte = calibCte / 2 ;
 
   int theAdc = adc ;

@@ -7,6 +7,8 @@
       desc             = "This class represents the input from the calorimeter to the L0 trigger" 
       id               = "6001" 
       name             = "L0CaloCandidate"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
       stdVectorTypeDef = "TRUE">
       <base name="ContainedObject"/>
       &ContainedObject;

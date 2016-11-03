@@ -1,4 +1,3 @@
-// $Id: IXmlEntityResolver.h,v 1.1 2008-06-12 18:43:56 marcocle Exp $
 #ifndef XMLTOOLS_IXMLENTITYRESOLVER_H 
 #define XMLTOOLS_IXMLENTITYRESOLVER_H 1
 
@@ -23,8 +22,7 @@
  *  @author Marco Clemencic
  *  @date   2005-10-12
  */
-class IXmlEntityResolver : public extend_interfaces<IInterface> {
-public: 
+struct IXmlEntityResolver : extend_interfaces<IInterface> {
   DeclareInterfaceID(IXmlEntityResolver, 2, 0 );
 
   /// Return a pointer to the actual implementation of a xercesc::EntityResolver.

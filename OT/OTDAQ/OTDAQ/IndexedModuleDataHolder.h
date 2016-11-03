@@ -61,7 +61,7 @@ namespace OTDAQ
     typedef IndexedModuleDataConstIterator<value_type> const_mapiterator ;
     typedef IndexedModuleDataIterator<value_type> mapiterator ;
     
-    IndexedModuleDataHolder() {}
+    IndexedModuleDataHolder() = default;
     
     MODULE& module(const unsigned int station, const unsigned int layer, 
                    const unsigned int quarter, const unsigned int module) {

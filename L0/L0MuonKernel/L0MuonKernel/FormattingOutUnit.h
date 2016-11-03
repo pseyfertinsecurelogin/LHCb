@@ -66,12 +66,12 @@ namespace L0Muon {
     ~FormattingOutUnit();
 
     /// Overloads from Unit : fill the output register
-    void execute();
+    void execute() override;
     /// Overloads from Unit : release output registers
-    void postexecute();
+    void postexecute() override;
 
    /// Give a static type name to the unit
-    std::string type() {
+    std::string type() override {
       return "FormattingOutUnit";
     }
 

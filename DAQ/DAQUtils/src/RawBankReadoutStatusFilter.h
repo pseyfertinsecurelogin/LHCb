@@ -1,5 +1,5 @@
 // $Id: RawBankReadoutStatusFilter.h,v 1.1 2007/12/05 13:59:18 odescham Exp $
-#ifndef COMPONENT_RAWBANKREADOUTSTATUSFILTER_H 
+#ifndef COMPONENT_RAWBANKREADOUTSTATUSFILTER_H
 #define COMPONENT_RAWBANKREADOUTSTATUSFILTER_H 1
 
 // Include files
@@ -9,21 +9,21 @@
 #include "Event/RawBankReadoutStatus.h"
 
 /** @class RawBankReadoutStatusFilter RawBankReadoutStatusFilter.h component/RawBankReadoutStatusFilter.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2007-12-05
  */
 class RawBankReadoutStatusFilter : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   RawBankReadoutStatusFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~RawBankReadoutStatusFilter( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 

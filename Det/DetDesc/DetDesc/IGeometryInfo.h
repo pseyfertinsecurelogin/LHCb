@@ -1,4 +1,3 @@
-
 // ===========================================================================
 #ifndef  DETDESC_IGEOMETRYINFO_H
 #define  DETDESC_IGEOMETRYINFO_H 1
@@ -32,10 +31,8 @@ static const InterfaceID IID_IGeometryInfo( 155 , 3 , 1 );
  *  @date xx/xx/xxxx
  */
 
-class IGeometryInfo : virtual public IInterface
+struct IGeometryInfo : virtual IInterface
 {
-public:
-
   /// type of vector of daughter elements
   typedef std::vector<IGeometryInfo*>  IGIChildrens;
   /// Iterator over Daughters
@@ -598,8 +595,6 @@ public:
    *  @return self-reference
    */
   virtual IGeometryInfo* reset () = 0;
-  
-  virtual   ~IGeometryInfo() ;  ///< The virtual destructor
   
 };
 

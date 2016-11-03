@@ -8,8 +8,8 @@
 
 
 /// Error codes used for XmlCnvException handling
-enum Status 
-{  
+enum Status
+{
   CANT_QUERY_INTERFACE = 2,
   CANT_RETRIEVE_OBJECT,
   INVALID_CLASS_ID,
@@ -24,22 +24,22 @@ enum Status
 ///
 class XmlCnvException: public GaudiException
 {
-public: 
+public:
   ///
-  inline XmlCnvException( const std::string    & message                       , 
+  inline XmlCnvException( const std::string    & message                       ,
                           const StatusCode     & sc      = StatusCode::FAILURE );
   inline XmlCnvException( const std::string    & message                       ,
                           const GaudiException & ge                            ,
                           const StatusCode     & sc      = StatusCode::FAILURE );
   inline XmlCnvException( const XmlCnvException& ) ;
   ///
-  virtual inline ~XmlCnvException() throw(); 
+  virtual inline ~XmlCnvException() throw();
   ///
   inline const char*       getMessage () const;
   inline const char*       getType    () const;
   inline const StatusCode& status     () const;
   ///
-  virtual inline GaudiException* clone() const; 
+  inline GaudiException* clone() const override;
   ///
 };
 ///

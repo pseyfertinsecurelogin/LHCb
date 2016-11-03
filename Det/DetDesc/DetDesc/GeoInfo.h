@@ -1,5 +1,3 @@
-// $Id: GeoInfo.h,v 1.1 2006-04-20 14:39:55 ranjard Exp $
-/// ===========================================================================
 #ifndef DETDESC_GEOINFO_H 
 #define DETDESC_GEOINFO_H 1
 /// STD/STL 
@@ -7,8 +5,8 @@
 /// DetDesc 
 #include "DetDesc/ILVolume.h"
 /// forward declarations
-class IDetectorElement;
-class IGeometryInfo;
+struct IDetectorElement;
+struct IGeometryInfo;
 
 /** @namespace GeoInfo GeoInfo.h
  *  
@@ -69,9 +67,6 @@ namespace GeoInfo
                       const std::string& Support         ,
                       const ILVolume::ReplicaPath& ReplicaPath,
                       const std::string& alignmentPath="");
-
-
-
 }
 
 /// ===========================================================================

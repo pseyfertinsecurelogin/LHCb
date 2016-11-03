@@ -16,15 +16,11 @@
  *  @author Marco CLEMENCIC
  *  @date   2012-06-12
  */
-class IEventCounter : virtual public IAlgTool 
+struct IEventCounter : extend_interfaces<IAlgTool>
 {
-
-public:
 
   /// InterfaceID
   DeclareInterfaceID(IEventCounter, 2, 0);
-
-  virtual ~IEventCounter() = default;
 
   virtual unsigned long long getEventCounter() const = 0;   ///< Get Event Counter
 

@@ -21,10 +21,8 @@
  */
 
 
-class IPropertyConfigSvc : virtual public extend_interfaces<INamedInterface>  {
-public:
+struct IPropertyConfigSvc : extend_interfaces<INamedInterface>  {
   DeclareInterfaceID(IPropertyConfigSvc,2,0);
-  virtual ~IPropertyConfigSvc() = default;
 
   // Return the configuration object for this object...
   virtual PropertyConfig currentConfiguration(const INamedInterface& obj) const = 0;

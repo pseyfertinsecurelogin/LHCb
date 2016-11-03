@@ -13,7 +13,7 @@
  *  @date   2010-09-23
  */
 
-class RecEventTime final : public extends1<GaudiTool, IEventTimeDecoder> 
+class RecEventTime final : public extends1<GaudiTool, IEventTimeDecoder>
 {
 
 public:
@@ -21,13 +21,13 @@ public:
   /// Standard constructor
   RecEventTime(const std::string& type, const std::string& name,
                const IInterface* parent);
-  
+
   virtual ~RecEventTime() = default; ///< Destructor
 
   // --- implementation of IEventTimeDecoder ---
   /// Retrieve the event time from RecHeader (if present).
   /// @return The time of current event.
-  virtual Gaudi::Time getTime() const;
+  Gaudi::Time getTime() const override;
 
 private:
 

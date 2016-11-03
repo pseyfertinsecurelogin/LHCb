@@ -1,32 +1,30 @@
 #ifndef        __DETDESC_SOLID_SOLIDEXCEPTION_H__
 #define        __DETDESC_SOLID_SOLIDEXCEPTION_H__
 /// GaudiKernle
-#include "GaudiKernel/GaudiException.h" 
+#include "GaudiKernel/GaudiException.h"
 ///
-class ISolid;
+struct ISolid;
 ///
 
-class SolidException : public GaudiException 
-{  
+class SolidException : public GaudiException
+{
   ///
 public:
   ///
-  SolidException( const std::string&     message      , 
-                  const ISolid*          solid  =  nullptr  ); 
+  SolidException( const std::string&     message      ,
+                  const ISolid*          solid  =  nullptr  );
   ///
   SolidException( const std::string   &  message      ,
-                  const GaudiException&  Exception    ,  
-                  const ISolid*          solid  =  nullptr  ); 
+                  const GaudiException&  Exception    ,
+                  const ISolid*          solid  =  nullptr  );
   ///
-  virtual ~SolidException() noexcept;
-  ///
-  virtual std::ostream&   printOut( std::ostream& os = std::cerr ) const ;
-  virtual MsgStream&      printOut( MsgStream&    os             ) const ;
-  virtual GaudiException* clone   ()                               const ; 
+  std::ostream&   printOut( std::ostream& os = std::cerr ) const  override;
+  MsgStream&      printOut( MsgStream&    os             ) const  override;
+  GaudiException* clone   ()                               const  override;
   ///
  private:
   ///
-  const ISolid*     m_se_solid         ;       // the "author" of the exception 
+  const ISolid*     m_se_solid         ;       // the "author" of the exception
   ///
 };
 

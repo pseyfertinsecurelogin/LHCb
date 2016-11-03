@@ -1,13 +1,13 @@
 // $Id: DumpL0CaloBanks.h,v 1.2 2008-07-16 20:20:17 robbep Exp $
-#ifndef DUMPL0CALOBANKS_H 
+#ifndef DUMPL0CALOBANKS_H
 #define DUMPL0CALOBANKS_H 1
 // Include files
 
-// from Gaudi 
+// from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class DumpL0CaloBanks DumpL0CaloBanks.h
- *  Algorithm to dump the content of the L0Calo banks 
+ *  Algorithm to dump the content of the L0Calo banks
  *  to a file for debuggin
  *
  *  @author Patrick Robbe
@@ -19,11 +19,11 @@ public:
   DumpL0CaloBanks(const std::string& name, ISvcLocator* pSvcLocator );
 
   /// Standard destructor
-  virtual ~DumpL0CaloBanks( ); 
+  virtual ~DumpL0CaloBanks( );
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 

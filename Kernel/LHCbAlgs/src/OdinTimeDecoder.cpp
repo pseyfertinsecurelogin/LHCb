@@ -15,10 +15,6 @@
 // local
 #include "OdinTimeDecoder.h"
 
-#ifdef _WIN32
-#pragma warning(disable : 4355) // 'this' used in base member initializer list
-#endif
-
 //-----------------------------------------------------------------------------
 // Implementation file for class : OdinTimeDecoder
 //
@@ -32,21 +28,9 @@ DECLARE_TOOL_FACTORY( OdinTimeDecoder )
 #define DEBUG_MSG ON_DEBUG debug()
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-OdinTimeDecoder::OdinTimeDecoder( const std::string& type,
-                                  const std::string& name,
-                                  const IInterface* parent )
-: GaudiTool ( type, name , parent ),
-  m_odinDecoder("ODINDecodeTool",this)
-{
-  declareInterface<IEventTimeDecoder>(this);
-}
-
-//=============================================================================
 // Initialize
 //=============================================================================
-StatusCode OdinTimeDecoder::initialize() 
+StatusCode OdinTimeDecoder::initialize()
 {
   StatusCode sc = GaudiTool::initialize();
   if (sc.isFailure()) return sc;
@@ -62,10 +46,13 @@ LHCb::ODIN *OdinTimeDecoder::getODIN() const
   // Check if the root of the transient store is available before calling the
   // ODIN decoder. (e. g. during the initialize)
   DataObject * tmp = nullptr;
-  if ( LIKELY( evtSvc()->findObject("", tmp).isSuccess() ) ) 
+  if ( LIKELY( evtSvc()->findObject("", tmp).isSuccess() ) )
   {
     // Decode the ODIN bank.
-    m_odinDecoder->execute();
+    /// \fixme because of https://gitlab.cern.ch/gaudi/Gaudi/merge_requests/217 IGenericTool
+    /// cannot be used in a const method. The proper fix can be implemented only in the context
+    /// of transformer algorithms of Gaudi::Functional.
+    const_cast<IGenericTool&>(*m_odinDecoder).execute();
     // @FIXME: we must get the ODIN object from where the Tool created it
     return getIfExists<LHCb::ODIN>(LHCb::ODINLocation::Default);
   }
@@ -82,14 +69,14 @@ Gaudi::Time OdinTimeDecoder::getTime ( ) const
 
   LHCb::ODIN *odin = getODIN();
 
-  if (odin) 
+  if (odin)
   {
     DEBUG_MSG << "GPS Time = " << odin->gpsTime() << endmsg;
 
     // We need to trigger a RunChange incident if the run number changes or
     // we switch from flagging mode to filtering mode.
     if ((m_currentRun != odin->runNumber()) ||
-        (m_flaggingMode && !odin->isFlagging()) ) 
+        (m_flaggingMode && !odin->isFlagging()) )
     {
       ON_DEBUG {
         debug() << "Firing " << IncidentType::RunChange << " incident. ";

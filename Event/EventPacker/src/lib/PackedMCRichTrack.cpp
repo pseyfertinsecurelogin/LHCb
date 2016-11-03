@@ -1,4 +1,3 @@
-
 // local
 #include "Event/PackedMCRichTrack.h"
 
@@ -19,7 +18,7 @@ void MCRichTrackPacker::pack( const DataVector & tracks,
     ptracks.data().reserve( tracks.size() );
     for ( const auto * track : tracks )
     {
-      ptracks.data().emplace_back( PackedData() );
+      ptracks.data().emplace_back(  );
       auto & ptrack = ptracks.data().back();
 
       ptrack.key = track->key();

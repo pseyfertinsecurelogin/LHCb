@@ -10,7 +10,7 @@
 
     Simple algorithm to dump the detector data store.
 
-    @author Andrea Valassi 
+    @author Andrea Valassi
     @date August 2001
 *///--------------------------------------------------------------------------
 
@@ -19,15 +19,15 @@ class DumpDetectorStore : public GaudiAlgorithm {
  public:
 
   /// Constructor
-  DumpDetectorStore ( const std::string& name, ISvcLocator* pSvcLocator ); 
-  
+  DumpDetectorStore ( const std::string& name, ISvcLocator* pSvcLocator );
+
   /// Only finalize is implemented (GaudiAlgorithm::initialize() is enough).
-  StatusCode execute();
-  StatusCode finalize();
+  StatusCode execute() override;
+  StatusCode finalize() override;
 
 private:
   bool m_dumpConds;
-  
+
 };
 
 #endif    // DETCONDEXAMPLE_DUMPDETECTORSTORE_H

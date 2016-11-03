@@ -63,7 +63,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
    * Returns the nominal centre of curvature of the spherical mirror for
@@ -234,7 +234,7 @@ public:
   virtual Rich::MirrorSegPosition secMirrorSegPos( const int mirrorNumber ) const;
 
   /// sensitive volume identifier for hpd version. to be phased out
-  virtual int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const;
+  int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const override;
 
 public:
 

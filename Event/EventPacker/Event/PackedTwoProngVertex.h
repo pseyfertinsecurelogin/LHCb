@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PACKEDTWOPRONGVERTEX_H
 #define EVENT_PACKEDTWOPRONGVERTEX_H 1
 
@@ -19,7 +18,7 @@ namespace LHCb
   /** @class PackedTwoProngVertex Event/PackedTwoProngVertex.h
    *
    *  Packed representation of LHCb::TwoProngVertex
-   * 
+   *
    *  @author Olivier Callot
    *  @date   2009-01-21
    */
@@ -76,7 +75,7 @@ namespace LHCb
   /** @class PackedTwoProngVertices Event/PackedTwoProngVertex.h
    *
    *  Container of packed LHCb::TwoProngVertex objects.
-   * 
+   *
    *  @author Olivier Callot
    *  @date   2009-01-21
    */
@@ -91,7 +90,7 @@ namespace LHCb
 
   public:
 
-    virtual const CLID& clID()  const { return PackedTwoProngVertices::classID(); }
+    const CLID& clID()  const override { return PackedTwoProngVertices::classID(); }
     static  const CLID& classID()     { return CLID_PackedTwoProngVertices;       }
 
   public:
@@ -109,17 +108,17 @@ namespace LHCb
 
     /// Set the packing version
     void setPackingVersion( const char ver ) { m_packingVersion = ver; }
-    
+
     /// Access the packing version
     char packingVersion() const { return m_packingVersion; }
-    
+
   private:
 
     std::vector<PackedTwoProngVertex>  m_vect;
     std::vector<long long>             m_refs;
     std::vector<std::pair<int,int> >   m_extra;
 
-    /** Data packing version.  
+    /** Data packing version.
      *  Packing version must be set to 0 by default, for compatibility with
      *  data written before the version was added */
     char m_packingVersion{0};

@@ -1,4 +1,3 @@
-// $Id: IMCEventTypeFinder.h,v 1.1 2009-03-06 16:36:36 rlambert Exp $
 #ifndef TOOLS_IMCEVENTTYPEFINDER_H 
 #define TOOLS_IMCEVENTTYPEFINDER_H 1
 
@@ -11,8 +10,6 @@
 #include "Event/MCParticle.h"
 #include "Kernel/IEvtTypeSvc.h"
 
-// Declaration of the interface ID (interface id, major version, minor version)
-static const InterfaceID IID_IMCEventTypeFinder("IMCEventTypeFinder", 1, 0);
 
 /** @class IMCEventTypeFinder IMCEventTypeFinder.h DaVinciTools/IMCEventTypeFinder.h
  *
@@ -24,10 +21,10 @@ static const InterfaceID IID_IMCEventTypeFinder("IMCEventTypeFinder", 1, 0);
  *  @author R Lambert
  *  @date   20/02/2009
  */
-class IMCEventTypeFinder : virtual public IAlgTool {
-public:
+struct IMCEventTypeFinder : extend_interfaces<IAlgTool> {
+
   /// Retrieve interface ID
-  static const InterfaceID& interfaceID() { return IID_IMCEventTypeFinder; }
+  DeclareInterfaceID(IMCEventTypeFinder, 2, 0);
 
   /// Set up the event types, in case you want to change them with some other code.
   virtual StatusCode setEventTypes(const LHCb::EventTypeSet) =0;

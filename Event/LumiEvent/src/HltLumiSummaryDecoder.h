@@ -22,7 +22,8 @@
 
 class HltLumiSummaryDecoder : public Gaudi::Functional::Transformer<
                                   LHCb::HltLumiSummary(const LHCb::RawEvent&)
-                              > {
+                              >
+{
 public:
   /// Standard constructor
   HltLumiSummaryDecoder(  const std::string& name, ISvcLocator* pSvcLocator );

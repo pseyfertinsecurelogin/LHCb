@@ -17,6 +17,8 @@
       keyedContTypeDef="TRUE"
       id="13504"
       serializers="TRUE"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
       >
 <!--
       <base name='DataObject'/>
@@ -122,7 +124,8 @@
         name='fillStream'
         type='std::ostream&amp;'
         desc='readable printout'
-        const='TRUE'>
+        const='TRUE'
+        override='TRUE'>
 	<arg name="s" type="std::ostream" const="FALSE"/>
         <code>
 

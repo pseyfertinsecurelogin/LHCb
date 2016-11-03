@@ -1,4 +1,4 @@
-#ifndef TCKPRESCALEEMULATOR_H 
+#ifndef TCKPRESCALEEMULATOR_H
 #define TCKPRESCALEEMULATOR_H 1
 
 // Include files
@@ -29,8 +29,8 @@ class TCKPrescaleEmulator final : public GaudiAlgorithm
 
   virtual ~TCKPrescaleEmulator( ) = default; ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
  private:
 

@@ -23,34 +23,31 @@
  *  @author Marco Clemencic
  *  @date   2008-07-24
  */
-class RunChangeHandlerSvc:
-  public extends1<Service, IIncidentListener> {
+class RunChangeHandlerSvc: public extends<Service, IIncidentListener> {
 
 public:
 
   /// Standard constructor
   RunChangeHandlerSvc(const std::string& name, ISvcLocator* svcloc);
 
-  virtual ~RunChangeHandlerSvc(); ///< Destructor
-
   /// Initialize Service
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalize Service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   // ---- Implement IIncidentListener interface ----
   /// Handle RunChange incident.
-  virtual void handle(const Incident &inc);
+  void handle(const Incident &inc) override;
 
 private:
 
   /// Helper function to retrieve a service and cache the pointer to it.
   template <class I>
   inline SmartIF<I>& getService(const std::string &name, SmartIF<I> &ptr) const {
-    if (UNLIKELY( !ptr.isValid() )) {
+    if (UNLIKELY( !ptr )) {
       ptr = serviceLocator()->service(name, true);
-      if(UNLIKELY( !ptr.isValid() )) {
+      if(UNLIKELY( !ptr )) {
         throw GaudiException("Service ["+name+"] not found", this->name(),
             StatusCode::FAILURE);
       }

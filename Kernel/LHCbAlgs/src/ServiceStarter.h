@@ -24,10 +24,10 @@ namespace LHCbAlgsTest
     ServiceStarter(const std::string& name, ISvcLocator* pSvcLocator);
     virtual ~ServiceStarter() = default; ///< Destructor
 
-    virtual StatusCode initialize();    ///< Algorithm initialization
-    virtual StatusCode start     ();    ///< Algorithm start
-    virtual StatusCode execute   ();    ///< Algorithm execution
-    virtual StatusCode finalize  ();    ///< Algorithm finalization
+    StatusCode initialize() override;    ///< Algorithm initialization
+    StatusCode start     () override;    ///< Algorithm start
+    StatusCode execute   () override;    ///< Algorithm execution
+    StatusCode finalize  () override;    ///< Algorithm finalization
 
   private:
 

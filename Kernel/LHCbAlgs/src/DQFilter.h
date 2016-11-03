@@ -38,14 +38,14 @@ public:
   /// Initialize the algorithm.
   /// Register to the UpdateManagerSvc as user of the Data Quality flags condition
   /// and, if not requested otherwise, register as BeginEvent listener.
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
   /// By default it does nothing, but if requested not to use the BeginEvent,
   /// it sets the
-  virtual StatusCode execute();
+  StatusCode execute() override;
   /// If registered as BeginEvent listener, unregister.
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
-  virtual void handle(const Incident&);
+  void handle(const Incident&) override;
 
 private:
 

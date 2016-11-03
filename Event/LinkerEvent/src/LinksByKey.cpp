@@ -1,4 +1,3 @@
-// $Id: LinksByKey.cpp,v 1.9 2005-12-13 11:01:47 cattanem Exp $
 // Include files 
 
 #include "GaudiKernel/IRegistry.h"
@@ -44,13 +43,13 @@ void LHCb::LinksByKey::addReference ( int srcKey, int srcLinkID, int destKey,
 
   int indx;
   if ( !findIndex( srcKey, indx ) ) {
-     m_keyIndex.push_back( std::pair<int,int>( 0, 0 ) );
+     m_keyIndex.emplace_back( 0, 0 );
      int iL = m_keyIndex.size() - 1;
      while ( iL > indx ) {
        m_keyIndex[iL] = m_keyIndex[iL-1];
        --iL;
      }
-     m_keyIndex[indx] = std::pair<int,int>( srcKey, refNum );
+     m_keyIndex[indx] = { srcKey, refNum };
      m_linkReference.push_back( temp );
      
      //== Test of proper ordering

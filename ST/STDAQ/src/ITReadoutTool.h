@@ -1,4 +1,3 @@
-// $Id: ITReadoutTool.h,v 1.4 2009-10-30 12:54:19 mtobin Exp $
 #ifndef _ITReadoutTool_H
 #define _ITReadoutTool_H
 
@@ -27,23 +26,23 @@ public:
 
 
   /// init
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// get region
-  virtual unsigned int region(const LHCb::STChannelID aChan) const;
+  unsigned int region(const LHCb::STChannelID aChan) const override;
 
   /** Add the mapping of source ID to board number for IT and TT */
-  virtual const  std::map<unsigned int, unsigned int>& SourceIDToTELLNumberMap() const; 
+  const  std::map<unsigned int, unsigned int>& SourceIDToTELLNumberMap() const override;
 
   /** Add the mapping of board number to source ID for IT and TT */
-  virtual const  std::map<unsigned int, unsigned int>& TELLNumberToSourceIDMap() const; 
+  const  std::map<unsigned int, unsigned int>& TELLNumberToSourceIDMap() const override;
 
 private:
 
   StatusCode createBoards();
 
   unsigned int m_firstStation;
- 
+
 
 };
 
