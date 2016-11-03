@@ -493,7 +493,7 @@ StatusCode L0MuonAlg::getDigitsFromMuon()
 
   // First try the digits on the TES if there (Boole)
   LHCb::MuonDigits* digits = getIfExists<LHCb::MuonDigits>( LHCb::MuonDigitLocation::MuonDigit );
-  if ( !digits ) {
+  if ( digits ) {
     if( msgLevel(MSG::DEBUG) ) debug() << "fillOLsfromDigits:  Getting hits from muon digits"<<m_muonBuffer<<endmsg;
     std::transform( digits->begin(), digits->end(), std::back_inserter(m_digits),
                     [](const LHCb::MuonDigit* d) { return d->key(); } );

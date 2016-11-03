@@ -1,4 +1,4 @@
-#ifndef L0DURAWBANKMONITOR_H 
+#ifndef L0DURAWBANKMONITOR_H
 #define L0DURAWBANKMONITOR_H 1
 
 // Include files
@@ -16,7 +16,7 @@
 #include "CaloUtils/Calo2Dview.h"
 
 /** @class L0DURawBankMonitor L0DURawBankMonitor.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2008-03-03
@@ -42,14 +42,14 @@ namespace L0DUBase{
 
 
 class L0DURawBankMonitor : public Calo2Dview {
-public: 
+public:
   /// Standard constructor
   L0DURawBankMonitor( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~L0DURawBankMonitor( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 protected:
 
@@ -61,7 +61,7 @@ private:
   std::string m_emulatorTool;
   IL0DUFromRawTool*  m_fromRaw;
   IL0DUEmulatorTool* m_emuTool;
-  IL0CondDBProvider* m_condDB;  
+  IL0CondDBProvider* m_condDB;
   IEventTimeDecoder* m_odin;
   ICaloDataProvider* m_spd;
   bool m_conv;

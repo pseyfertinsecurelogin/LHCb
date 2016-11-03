@@ -5,35 +5,35 @@
   <package name='STTELL1Event'>
   <!-- location = address in TES -->
   <!-- classId = identifier -->
-   
+
     <class name='STTELL1BoardErrorBank'
-	   id='9013' 
-	   author='Mathias Knecht' 
+	   id='9013'
+	   author='Mathias Knecht'
 	   desc='Error Bank from a Tell1 board'
            serializers = 'FALSE'>
-      <base name='KeyedObject&lt; int &gt; '/>  
+      <base name='KeyedObject&lt; int &gt; '/>
       <location name="TTErrors"   place="Raw/TT/Errors"   />
       <location name="UTErrors"   place="Raw/UT/Errors"   />
       <location name="ITErrors"   place="Raw/IT/Errors"   />
-      
+
       &KeyedContainer;
-      
+
       <import name='Event/STTELL1Error' />
-     
-      
+
+
       <typedef desc = "Vector of STTELL1Error typedef"
        type =  "std::vector&lt;LHCb::STTELL1Error*&gt;"
        def = "ErrorVector"
        access = "PUBLIC " />
-               
- <!--  
+
+ <!--
       <constructor
         desc = 'constructor with arguments'
         argList = 'Data data'
         initList = 'm_data(data)'>
       </constructor> -->
 
-  
+
       <destructor desc = 'destructor' virtual = 'TRUE'>
        <code>
  LHCb::STTELL1BoardErrorBank::ErrorVector::iterator iter = m_errorInfo.begin();
@@ -43,16 +43,16 @@
  m_errorInfo.clear();
        </code>
       </destructor>
-       
-       <attribute 
-       name="errorInfo" 
+
+       <attribute
+       name="errorInfo"
        type="std::vector &lt;  LHCb::STTELL1Error* &gt;"
        desc= "Vector of 4 Error Info (1 per PP)"
        setMeth = "FALSE"
        transient = "TRUE"
        nonconstaccessor = "TRUE"
        />
-   
+
 
       <method type = "void"
               name = "addToErrorInfo"
@@ -63,16 +63,16 @@
       m_errorInfo.push_back(value);
       </code>
       </method>
-     
+
       <method type = 'unsigned int'
       	      name = 'Tell1ID'
 	      desc = 'Returns the Tell1D id'
-	      const = 'TRUE'> 
+	      const = 'TRUE'>
       <code>  return key();
       </code>
       </method>
-      
-      <method 
+
+      <method
        name = "ppErrorInfo"
        desc = "get the error info for a given pp"
        argList = "const unsigned int&amp; pp"
@@ -119,20 +119,20 @@
      access = "PRIVATE"
      const = "TRUE">
    </method>
-  
 
-    <method 
-        name    = "fillStream" 
+
+    <method
+        name    = "fillStream"
         desc    = "Print out of error information"
-        type    = "std::ostream&amp;" 
-        virtual = "FALSE" 
+        type    = "std::ostream&amp;"
+        override = "TRUE"
         const   = "TRUE">
-        <arg 
-         type = "std::ostream" 
+        <arg
+         type = "std::ostream"
          name = "s" />
      </method>
 
-    </class>   
- 
+    </class>
+
   </package>
 </gdd>

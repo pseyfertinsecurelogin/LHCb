@@ -9,7 +9,7 @@
 
 /** @class LHCbFSRStream LHCbFSRStream.h
   * Extension of RecordStream to add IOFsr and automatically clean up the TES
-  * 
+  *
   *
   * @author  R.Lambert
   * @version 1.0
@@ -21,11 +21,11 @@ public:
   /// Standard Destructor
   virtual ~LHCbFSRStream() {}
   /// Algorithm overload: initialization
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
   /// Algorithm overload: finalization
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
   /// Runrecords do not get written for each event: Event processing hence dummy....
-  virtual StatusCode execute() {  return StatusCode::SUCCESS; }
+  StatusCode execute() override {  return StatusCode::SUCCESS; }
 
 protected:
   ///clean up empty nodes before writing

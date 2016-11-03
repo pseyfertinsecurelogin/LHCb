@@ -6,7 +6,6 @@
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 namespace ST {
-  static const InterfaceID IID_ISTNoiseCalculationTool ( "ISTNoiseCalculationTool", 1, 0 );
 
   /** @class ISTNoiseCalculationTool ISTNoiseCalculationTool.h Kernel/ISTNoiseCalculationTool.h
    *  
@@ -15,11 +14,11 @@ namespace ST {
    *  @author Mark Tobin
    *  @date   2009-10-01
    */
-  class ISTNoiseCalculationTool : public virtual IAlgTool {
+  class ISTNoiseCalculationTool : public extend_interfaces<IAlgTool> {
   public: 
 
     // Return the interface ID
-    static const InterfaceID& interfaceID() { return IID_ISTNoiseCalculationTool; }
+    DeclareInterfaceID(ISTNoiseCalculationTool, 2, 0 );
 
     /// Calculate the noise for the TELL1 data
     virtual StatusCode updateNoise() = 0;
@@ -149,8 +148,6 @@ namespace ST {
     virtual std::vector<double> cmsNoise(const unsigned int TELL) const = 0;//{return m_noiseMap[TELL];} ;
     virtual std::vector<unsigned int> cmsN(const unsigned int TELL) const = 0;//{return m_nEvents[TELL];} ;
     
-  protected:
-
   private:
     /// Calculate the noise for the TELL1 data
     virtual StatusCode calculateNoise() = 0;

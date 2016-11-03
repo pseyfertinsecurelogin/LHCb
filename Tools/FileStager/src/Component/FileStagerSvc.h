@@ -42,15 +42,15 @@ public:
 
    virtual~ FileStagerSvc( );
 
-   virtual StatusCode initialize();
+   StatusCode initialize() override;
 
-   virtual StatusCode finalize();
+   StatusCode finalize() override;
 
-   virtual StatusCode getLocal( const std::string& filename, std::string& local );
+   StatusCode getLocal( const std::string& filename, std::string& local ) override;
 
-   virtual StatusCode addFiles( const std::vector< std::string >& files );
+   StatusCode addFiles( const std::vector< std::string >& files ) override;
 
-   virtual StatusCode clearFiles();
+   StatusCode clearFiles() override;
 
 private:
 
@@ -162,14 +162,14 @@ private:
    void removeFiles();
 
    void removePrevious( const_original_iterator it );
-   
+
    StatusCode garbage();
 
    File* createFile( const std::string& filename );
 
    bool keepFiles() const { return m_keepFiles; }
    void keepFilesHandler( Property& property );
-   
+
    bool checkJobID() const;
 };
 #endif // FILESTAGER_H

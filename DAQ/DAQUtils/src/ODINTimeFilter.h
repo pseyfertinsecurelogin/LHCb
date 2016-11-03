@@ -1,5 +1,5 @@
 // $Id: ODINTimeFilter.h,v 1.1 2009/10/16 14:16:26 odescham Exp $
-#ifndef ODINTIMEFILTER_H 
+#ifndef ODINTIMEFILTER_H
 #define ODINTIMEFILTER_H 1
 
 // Include files
@@ -9,21 +9,21 @@
 #include "Event/ODIN.h"
 
 /** @class ODINTimeFilter ODINTimeFilter.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2009-10-07
  */
 class ODINTimeFilter : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   ODINTimeFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~ODINTimeFilter( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 

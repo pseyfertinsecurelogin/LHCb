@@ -1,5 +1,5 @@
 // $Id: AlignmentCondition.h,v 1.19 2010-01-11 15:57:16 wouter Exp $
-#ifndef DETDESC_ALIGNMENTCONDITION_H 
+#ifndef DETDESC_ALIGNMENTCONDITION_H
 #define DETDESC_ALIGNMENTCONDITION_H 1
 
 // Include files
@@ -16,7 +16,7 @@
 #include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Transform3DTypes.h"
 /** @class AlignmentCondition AlignmentCondition.h DetDesc/AlignmentCondition.h
- *  
+ *
  *
  *  @author Juan PALACIOS
  *  @date   2005-04-12
@@ -27,20 +27,20 @@ class IMessageSvc;
 
 class AlignmentCondition : public Condition {
 
-public: 
+public:
   /// Standard constructor
   AlignmentCondition( );
   ///
   AlignmentCondition(const std::vector<double>& translation,
                      const std::vector<double>& rotation,
                      const std::vector<double>& pivot = std::vector<double>(3, 0.) ) ;
-  
-  virtual StatusCode initialize();
+
+  StatusCode initialize() override;
 
   /// Class ID of this instance
-  inline virtual const CLID& clID() const { return classID(); } 
+  inline const CLID& clID() const override { return classID(); }
   /// Class ID of this class
-  inline static  const CLID& classID() { return CLID_AlignmentCondition; };
+  inline static  const CLID& classID() { return CLID_AlignmentCondition; }
   /**
    * Return the nominal -> off-nominal 3D transformation.
    */
@@ -57,18 +57,18 @@ public:
   }
 
   /**
-   * Set a nominal -> off-nomunal 3D transformation starting directly 
+   * Set a nominal -> off-nomunal 3D transformation starting directly
    * from from a Transform3D
-   * @param newMatrix new full transformation object describing nominal to 
+   * @param newMatrix new full transformation object describing nominal to
    *        off-nominal transformation in the frame of the detector element..
    */
   void offNominalMatrix(const Gaudi::Transform3D& newMatrix);
 
   /**
-   * Set a new nominal -> off-nominal 3D transformation starting 
-   * from the basic set of parameters describing a 
+   * Set a new nominal -> off-nominal 3D transformation starting
+   * from the basic set of parameters describing a
    * rotation about the Z, Y' and X" axes in that order.
-   * 
+   *
    * @param translation vector containing X,Y,Z translation parameters.
    * @param rotation    vector containing rotation angles about Z,Y,X.
    * @param pivot       vector containing X,Y,Z pivot point for rotation.
@@ -85,9 +85,9 @@ public:
    * @param pivot       pivot point
    */
   void setPivotPoint( const Gaudi::XYZPoint& pivot ) ;
-  
-  std::ostream &fillStream(std::ostream &s) const;
-  
+
+  std::ostream &fillStream(std::ostream &s) const override;
+
 protected:
 
   IMessageSvc*       msgSvc  () const;
@@ -95,7 +95,7 @@ protected:
   void loadParams(const std::vector<double>& translation,
 		  const std::vector<double>& rotation,
 		  const std::vector<double>& pivot);
-  
+
   virtual StatusCode makeMatrices();
 
   virtual void updateParams(const Gaudi::Transform3D& matrixInv);

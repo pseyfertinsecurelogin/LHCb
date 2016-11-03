@@ -50,9 +50,9 @@ namespace LoKi
     public:
       // ======================================================================
       /// initialization of the tool
-      virtual StatusCode initialize () ;
+      StatusCode initialize ()  override;
       /// finalization   of the tool
-      virtual StatusCode finalize   () ;
+      StatusCode finalize   ()  override;
       // ======================================================================
     protected:
       // ======================================================================

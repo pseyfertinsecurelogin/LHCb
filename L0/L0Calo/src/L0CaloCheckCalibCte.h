@@ -1,4 +1,4 @@
-#ifndef L0CALO_L0CALOCHECKCALIBCTE_H 
+#ifndef L0CALO_L0CALOCHECKCALIBCTE_H
 #define L0CALO_L0CALOCHECKCALIBCTE_H 1
 
 // Include files
@@ -7,7 +7,7 @@
 
 class DeCalorimeter ;
 struct ICaloDataProvider ;
-class ICaloL0DataProvider ;
+struct ICaloL0DataProvider ;
 
 /** @class L0CaloCheckCalibCte L0CaloCheckCalibCte.h
  *
@@ -18,19 +18,19 @@ class ICaloL0DataProvider ;
  *  @date   2009-11-21
  */
 class L0CaloCheckCalibCte : public Calo2Dview {
-public: 
+public:
   /// Standard constructor
   L0CaloCheckCalibCte( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~L0CaloCheckCalibCte( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 protected:
 
 private:
-  /// Compute L0ADC from ADC 
+  /// Compute L0ADC from ADC
   int l0adcFromAdc( const int adc , const LHCb::CaloCellID & id ) const ;
 
   /// Detector Name (Ecal or Hcal), set by job options

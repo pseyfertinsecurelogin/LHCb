@@ -43,7 +43,7 @@ public:
   /** object/class  identification (virtual)
    *  @return uniqie class identifier
    */
-  virtual const CLID& clID    () const ;
+  const CLID& clID    () const  override;
 
   /** object/class  identification (static)
    *  @return uniqie class identifier
@@ -58,15 +58,14 @@ public:
    *  and pointer to material should be both nulls
    *  @return true if volume is Assembly
    */
-  inline virtual bool
-  isAssembly () const { return false   ; }
+  inline bool isAssembly () const override { return false   ; }
 
   /** the solid, associated with the Logical Volume
    *  @see ILVolume
    *  @return the solid, associated with the Logical Volume
    */
-  inline virtual const ISolid*
-  solid      () const { return m_solid.get() ; }
+  inline const ISolid*
+  solid () const override { return m_solid.get() ; }
 
   /** the material, associated with the Logical Volume
    *  For Assembly Volumes material pointes to NULL!
@@ -74,16 +73,16 @@ public:
    *  @exception LVolumeException no material
    *  @return the material, associated with the Logical Volume
    */
-  inline virtual const Material*
-  material   () const
-  { return m_material ? m_material : findMaterial() ; };
+  inline const Material*
+  material   () const override
+  { return m_material ? m_material : findMaterial() ; }
 
   /** the material(by name), associated with the Logical Volume
    *  @see ILVolume
    *  @return the material(by name), associated with the Logical Volume
    */
-  inline virtual const std::string&
-  materialName () const { return m_materialName; }
+  inline const std::string&
+  materialName () const override { return m_materialName; }
 
   /** check for the given 3D-point. Point coordinates are in the
    *  local reference frame of the logical volume
@@ -91,9 +90,9 @@ public:
    *  @param LocalPoint point (in local reference system of the solid)
    *  @return true if the point is inside the solid
    */
-  inline virtual bool isInside
-  ( const Gaudi::XYZPoint& LocalPoint ) const
-  { return m_solid->isInside( LocalPoint ) ; };
+  inline bool isInside
+  ( const Gaudi::XYZPoint& LocalPoint ) const override
+  { return m_solid->isInside( LocalPoint ) ; }
 
   /** calculate the daughter path containing the Point in Local frame ,
    *  can be VERY slow for complex geometry,
@@ -104,10 +103,10 @@ public:
    *  @param  pVolumePath  vector of physical volumes
    *  @return status code
    */
-  virtual StatusCode belongsTo
+  StatusCode belongsTo
   ( const Gaudi::XYZPoint&        LocalPoint  ,
     const int                Level       ,
-    ILVolume::PVolumePath&   pVolumePath ) const ;
+    ILVolume::PVolumePath&   pVolumePath ) const override;
 
   /** calculate the daughter path containing the Point in Local frame ,
    *  can be VERY slow for complex geometry,
@@ -118,10 +117,10 @@ public:
    *  @param  replicaPath replica path
    *  @return status code
    */
-  virtual StatusCode belongsTo
+  StatusCode belongsTo
   ( const Gaudi::XYZPoint&        LocalPoint  ,
     const int                Level       ,
-    ILVolume::ReplicaPath&   replicaPath ) const  ;
+    ILVolume::ReplicaPath&   replicaPath ) const override;
 
   /** intersection of the logical volume with with the line \n
    *  The line is parametrized in the local reference system
@@ -143,11 +142,11 @@ public:
    *  @param threshold threshold value
    *  @return number of intersections
    */
-  virtual unsigned int intersectLine
+  unsigned int intersectLine
   ( const Gaudi::XYZPoint        & Point         ,
     const Gaudi::XYZVector       & Vector        ,
     ILVolume::Intersections & intersections ,
-    const double              threshold     ) const ;
+    const double              threshold     ) const override;
 
   /** intersection of the logical volume with with the line \n
    *  Theine is parametrized in the local reference system
@@ -171,36 +170,36 @@ public:
    *  @param Threshold threshold value
    *  @return number of intersections
    */
-  virtual unsigned int intersectLine
+  unsigned int intersectLine
   ( const Gaudi::XYZPoint         & Point         ,
     const Gaudi::XYZVector        & Vector        ,
     ILVolume::Intersections  & intersections ,
     const ISolid::Tick         tickMin       ,
     const ISolid::Tick         tickMax       ,
-    const double               Threshold     ) const ;
+    const double               Threshold     ) const override;
 
   /** printout to STD/STL stream
    *  @see ILVolume
    *  @param os STD/STL stream
    *  @return reference to the stream
    */
-  virtual std::ostream& printOut
-  ( std::ostream & os = std::cout ) const ;
+  std::ostream& printOut
+  ( std::ostream & os = std::cout ) const override;
 
   /** printout to Gaudi MsgStream stream
    *  @see ILVolume
    *  @param os Gaudi MsgStream  stream
    *  @return reference to the stream
    */
-  virtual MsgStream&    printOut
-  ( MsgStream    & os             ) const;
+  MsgStream&    printOut
+  ( MsgStream    & os             ) const override;
 
   /** reset to initial state,
    *  clear chaches, etc...
    *  @see ILVolume
    *  @return self reference
    */
-  inline  ILVolume* reset ()
+  inline  ILVolume* reset () override
   {
     /// reset the pointed-to solid
     if( m_solid ) { m_solid->reset() ; }
@@ -208,7 +207,7 @@ public:
     m_material = nullptr ;
     /// reset the base
     return LogVolBase::reset() ;
-  };
+  }
 
   //protected:
 

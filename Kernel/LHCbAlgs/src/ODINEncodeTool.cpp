@@ -15,19 +15,17 @@ class ODINEncodeTool final : public ODINCodecBaseTool
 {
 
  public:
- 
+
   /// Standard constructor
   ODINEncodeTool(const std::string& type,
                  const std::string& name,
                  const IInterface* parent);
 
-  virtual ~ODINEncodeTool() = default; ///< Destructor
-
   /// Initialize the tool
-  virtual inline StatusCode initialize();
+  inline StatusCode initialize() override;
 
   /// Do the conversion
-  virtual void execute();
+  void execute() override;
 
 private:
   /// Location in the transient store of the ODIN object.
@@ -72,15 +70,15 @@ StatusCode ODINEncodeTool::initialize()
 {
   StatusCode sc = ODINCodecBaseTool::initialize(); // always first
   if (sc.isFailure()) return sc; // error message already printed
-  
-  if (m_odinLocation.empty()) 
+
+  if (m_odinLocation.empty())
   {
     // use the default
     m_odinLocation = LHCb::ODINLocation::Default;
   } else {
     info() << "Using '" << m_odinLocation << "' as location of the ODIN object" << endmsg;
   }
-  
+
   if (m_rawEventLocation.empty()) {
     // use the default
     m_rawEventLocation = LHCb::RawEventLocation::Default;
@@ -106,9 +104,9 @@ void ODINEncodeTool::execute()
     LHCb::RawBank * old_bank = nullptr;
     // Check if have an ODIN bank already
     const auto & odinBanks = raw->banks(LHCb::RawBank::ODIN);
-    if ( !odinBanks.empty() ) 
+    if ( !odinBanks.empty() )
     {
-      if (m_force) 
+      if (m_force)
       {
         // we have to replace it... remember which it is, so we can do it if the
         // encoding is successful, just before adding the new bank

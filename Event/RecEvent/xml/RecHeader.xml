@@ -10,6 +10,8 @@
       desc="Header for reconstruction information"
       name="RecHeader"
       id="105"
+      final = "TRUE"
+      defaultdestructor="FALSE"
      >
        <import name="string"  std="TRUE"/>
        

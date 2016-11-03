@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // local
 #include "STErrorDecoding.h"
@@ -25,14 +25,9 @@ DECLARE_ALGORITHM_FACTORY( STErrorDecoding )
 STErrorDecoding::STErrorDecoding( const std::string& name,
                           ISvcLocator* pSvcLocator)
   : STDecodingBaseAlg ( name , pSvcLocator ){
- 
-  declareProperty("PrintErrorInfo", m_PrintErrorInfo = false);  
-}
 
-//=============================================================================
-// Destructor
-//=============================================================================
-STErrorDecoding::~STErrorDecoding() {} 
+  declareProperty("PrintErrorInfo", m_PrintErrorInfo = false);
+}
 
 //=============================================================================
 // Main execution
@@ -45,19 +40,16 @@ StatusCode STErrorDecoding::execute() {
 
   STTELL1BoardErrorBanks* errorBanks = getErrorBanks();
 
-  if (errorBanks == 0) {
+  if (!errorBanks) {
     // was not possible to decode the banks
     return StatusCode::FAILURE;
   }
-   
+
   // print out the error banks
-  if (m_PrintErrorInfo == true){
-    STTELL1BoardErrorBanks::const_iterator iterBank = errorBanks->begin();
-    for ( ; iterBank != errorBanks->end();  ++iterBank){
-      info() << **iterBank << endmsg;
-    }  //iterBanks
+  if ( m_PrintErrorInfo ){
+    for (const auto& b : *errorBanks) info() << b << endmsg;
   }
-  
+
   return StatusCode::SUCCESS;
-} 
+}
 

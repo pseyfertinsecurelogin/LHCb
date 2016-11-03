@@ -89,16 +89,16 @@ namespace Decays
     /// copy constructor
     Node ( const Decays::Node&  right ) ;
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  Node* clone () const ;
+    Node* clone () const override;
     /// MANDATORY: the only one essential method
-    virtual bool operator() ( const LHCb::ParticleID& p ) const ;
+    bool operator() ( const LHCb::ParticleID& p ) const override;
     /// MANDATORY: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const ;
+    std::ostream& fillStream ( std::ostream& s ) const override;
     /// MANDATORY: check the validity of the node
-    virtual bool valid() const ;
+    bool valid() const override;
     /// MANDATORY: the proper validation of the node
-    virtual StatusCode validate
-    ( const LHCb::IParticlePropertySvc* svc ) const ;
+    StatusCode validate
+    ( const LHCb::IParticlePropertySvc* svc ) const override;
     // ========================================================================
   public:
     // ========================================================================

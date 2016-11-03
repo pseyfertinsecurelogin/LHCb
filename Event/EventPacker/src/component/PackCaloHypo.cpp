@@ -27,10 +27,6 @@ DECLARE_ALGORITHM_FACTORY( PackCaloHypo )
   declareProperty( "ClearRegistry",              m_clearRegistry = true     );
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-PackCaloHypo::~PackCaloHypo() {}
 
 //=============================================================================
 // Main execution

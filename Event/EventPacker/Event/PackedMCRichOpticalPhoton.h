@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PACKEDMCRICHOPTICALPHOTON_H
 #define EVENT_PACKEDMCRICHOPTICALPHOTON_H 1
 
@@ -68,7 +67,7 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMCRichOpticalPhoton> Vector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
@@ -78,7 +77,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedMCRichOpticalPhotons; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedMCRichOpticalPhotons::classID(); }
+    const CLID& clID() const override { return PackedMCRichOpticalPhotons::classID(); }
 
   public:
 
@@ -100,7 +99,7 @@ namespace LHCb
     char   m_packingVersion{ defaultPackingVersion() };
 
     /// The packed data objects
-    Vector m_vect; 
+    Vector m_vect;
 
   };
 
@@ -173,7 +172,7 @@ namespace LHCb
     StandardPacker m_pack;
 
   private:
-    
+
     /// Scale factor for photon energies
     double PhotEnScale{ 5.0e8 };
 

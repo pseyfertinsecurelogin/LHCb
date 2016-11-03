@@ -1,5 +1,3 @@
-// $Id: STDetTraits.h,v 1.5 2008-03-14 18:26:39 mneedham Exp $
-
 #ifndef _STDetTraits_H
 #define _STDetTraits_H
 

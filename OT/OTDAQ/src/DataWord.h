@@ -38,7 +38,7 @@ namespace LHCb
    * 
    */
 
-  class DataWord
+  class DataWord final
   {
   public:
 
@@ -52,17 +52,11 @@ namespace LHCb
              int inextChannel,
              int inextTime);
   
-    /// copy constructor
-    DataWord(const DataWord& aDataWord);
-  
     /// constructor with DataWord
     DataWord(int id) : m_dataWord(id) {}
   
     /// Default Constructor
     DataWord() : m_dataWord(0) {}
-  
-    /// Default Destructor
-     ~DataWord() {}
   
     /// Fill the ASCII output stream
    std::ostream& fillStream(std::ostream& s) const;
@@ -198,13 +192,6 @@ inline LHCb::DataWord::DataWord(int iWord,
         
 }
 
-inline LHCb::DataWord::DataWord(const DataWord& aDataWord) 
-{
-
-          m_dataWord = aDataWord.m_dataWord;
-        
-}
-
 inline std::ostream& LHCb::DataWord::fillStream(std::ostream& s) const
 {
   s << "{ " << "dataWord :	" << m_dataWord << std::endl << " }";
@@ -224,17 +211,17 @@ inline void LHCb::DataWord::setDataWord(unsigned int value)
 
 inline unsigned int LHCb::DataWord::nextTime() const
 {
-  return (unsigned int)((m_dataWord & nextTimeMask) >> nextTimeBits);
+  return (m_dataWord & nextTimeMask) >> nextTimeBits;
 }
 
 inline unsigned int LHCb::DataWord::nextChannel() const
 {
-  return (unsigned int)((m_dataWord & nextChannelMask) >> nextChannelBits);
+  return (m_dataWord & nextChannelMask) >> nextChannelBits;
 }
 
 inline unsigned int LHCb::DataWord::nextOtis() const
 {
-  return (unsigned int)((m_dataWord & nextOtisMask) >> nextOtisBits);
+  return (m_dataWord & nextOtisMask) >> nextOtisBits;
 }
 
 inline bool LHCb::DataWord::null() const
@@ -244,17 +231,17 @@ inline bool LHCb::DataWord::null() const
 
 inline unsigned int LHCb::DataWord::firstTime() const
 {
-  return (unsigned int)((m_dataWord & firstTimeMask) >> firstTimeBits);
+  return (m_dataWord & firstTimeMask) >> firstTimeBits;
 }
 
 inline unsigned int LHCb::DataWord::firstChannel() const
 {
-  return (unsigned int)((m_dataWord & firstChannelMask) >> firstChannelBits);
+  return (m_dataWord & firstChannelMask) >> firstChannelBits;
 }
 
 inline unsigned int LHCb::DataWord::firstOtis() const
 {
-  return (unsigned int)((m_dataWord & firstOtisMask) >> firstOtisBits);
+  return (m_dataWord & firstOtisMask) >> firstOtisBits;
 }
 
 inline bool LHCb::DataWord::word() const

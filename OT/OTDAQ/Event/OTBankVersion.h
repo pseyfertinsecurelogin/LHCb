@@ -1,4 +1,3 @@
-// $Id: OTBankVersion.h,v 1.5 2008-07-22 13:16:16 janos Exp $
 #ifndef EVENT_OTBANKVERSION_H 
 #define EVENT_OTBANKVERSION_H 1
 

@@ -1,4 +1,4 @@
-#ifndef EVTTYPECHECKER_H 
+#ifndef EVTTYPECHECKER_H
 #define EVTTYPECHECKER_H 1
 
 // Include files
@@ -16,13 +16,13 @@ struct IMCDecayFinder;
 
 /** @class EvtTypeChecker EvtTypeChecker.h
  *  Algorithm that verifies if at least one decay of the desired type
- *  is present in the event and counts for how many this occurs. 
+ *  is present in the event and counts for how many this occurs.
  *
  *  @author Gloria CORTI
  *  @date   2005-08-08
  */
 class EvtTypeChecker : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   EvtTypeChecker( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -38,8 +38,8 @@ protected:
   StatusCode setDecayToFind( const int evtCode );
 
 //   IMCDecayFinder* decayFinder();      ///< Method to return pointer to tool
- 
-//   int decayCode();                    ///< Method returning decay code used 
+
+//   int decayCode();                    ///< Method returning decay code used
 
 private:
 

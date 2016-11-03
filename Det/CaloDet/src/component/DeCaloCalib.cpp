@@ -27,8 +27,6 @@ DECLARE_ALGORITHM_FACTORY( DeCaloCalib )
 DeCaloCalib::DeCaloCalib( const std::string& name,
                             ISvcLocator* pSvcLocator)
   : GaudiTupleAlg ( name , pSvcLocator )
-  , m_calo(nullptr)
-  , m_rndmSvc(nullptr)
 {
 
   declareProperty( "DetectorName"   , m_detectorName );
@@ -52,10 +50,6 @@ DeCaloCalib::DeCaloCalib( const std::string& name,
 
 
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-DeCaloCalib::~DeCaloCalib() {} 
 
 //=============================================================================
 // Initialization
@@ -84,7 +78,7 @@ StatusCode DeCaloCalib::initialize() {
   
   
   // Params
-  m_rndmSvc = svc< IRndmGenSvc>( "RndmGenSvc" , true );
+  m_rndmSvc = service( "RndmGenSvc" , true );
   
   double a,b;
   if( m_method == "Gauss" ){
@@ -148,16 +142,6 @@ StatusCode DeCaloCalib::execute() {
 }
 
 //=============================================================================
-//  Finalize
-//=============================================================================
-StatusCode DeCaloCalib::finalize() {
-
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Finalize" << endmsg;
-
-  return GaudiTupleAlg::finalize();  // must be called after all other actions
-}
-
-//=============================================================================
 
 void DeCaloCalib::update() {
   // update cellParams
@@ -185,11 +169,11 @@ void DeCaloCalib::update() {
     
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << num << " Calibration constant for cellID " << id << " : " << dt << endmsg;
-    (cell).setCalibration ( dt ) ; //
+    cell.setCalibration ( dt ) ; //
     cellids.push_back( id.index()      );
     cellind.push_back( num             );
-    gains.push_back  ( (cell).gain() );
-    dgains.push_back ( (cell).calibration());
+    gains.push_back  ( cell.gain() );
+    dgains.push_back ( cell.calibration());
   }
 
   if(!m_ntup)return ;
@@ -208,10 +192,9 @@ void DeCaloCalib::update() {
 
 
 bool DeCaloCalib::isDead(int channel) {
-  if(m_dead.empty())return false;
-  for(auto i = m_dead.begin();m_dead.end()!=i;i++){
-    if( m_key == "Index"  && channel == *i)return true;
-    if( m_key == "CellID" && channel == ( *i & 0x3FFF) ) return true;
-  }  
-  return false;
+  return (m_key == "Index" ) ? std::any_of( m_dead.begin(), m_dead.end(),
+                                            [&](int i) { return  channel == i; } )
+       : (m_key == "CellID") ? std::any_of( m_dead.begin(), m_dead.end(),
+                                            [&](int i) { return  channel == ( i & 0x3FFF ) ; })
+       : false;
 }

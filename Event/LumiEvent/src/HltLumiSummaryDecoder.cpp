@@ -23,15 +23,9 @@ HltLumiSummaryDecoder::HltLumiSummaryDecoder( const std::string& name,
 {
   m_rawEventLocations={LHCb::RawEventLocation::Trigger,LHCb::RawEventLocation::Default};
   initRawEventSearch();
-  
+
   declareProperty( "OutputContainerName" , m_OutputContainerName = LHCb::HltLumiSummaryLocation::Default );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-HltLumiSummaryDecoder::~HltLumiSummaryDecoder() {}
-
-//=============================================================================
 
 //=============================================================================
 // Initialisation. Check parameters
@@ -44,7 +38,7 @@ StatusCode HltLumiSummaryDecoder::initialize()
 
   m_nbEvents    = 0;
   m_totDataSize = 0;
-  
+
   return StatusCode::SUCCESS;
 }
 
@@ -54,7 +48,7 @@ StatusCode HltLumiSummaryDecoder::initialize()
 StatusCode HltLumiSummaryDecoder::execute() {
 
   if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
-  
+
   // ------------------------------------------
   // get (existing) container  >>>>>>>>>>>>>>>>>>>> later: if exists: return!!!!!!!!!!
   LHCb::HltLumiSummary* hltLumiSummary = NULL;
@@ -62,7 +56,7 @@ StatusCode HltLumiSummaryDecoder::execute() {
     // create output container on the TES
     hltLumiSummary = new LHCb::HltLumiSummary();
     // locate them in the TES
-    put(hltLumiSummary, m_OutputContainerName); 
+    put(hltLumiSummary, m_OutputContainerName);
     if ( msgLevel( MSG::DEBUG ) )
       debug() << m_OutputContainerName << " not found, made a new one" << endmsg ;
   }
@@ -72,7 +66,7 @@ StatusCode HltLumiSummaryDecoder::execute() {
       debug() << m_OutputContainerName << " found, do nothing" << endmsg ;
     return StatusCode::SUCCESS;
   }
-  
+
   // Retrieve the RawEvent:
   // get data container
   RawEvent* event = findFirstRawEvent();
@@ -86,7 +80,7 @@ StatusCode HltLumiSummaryDecoder::execute() {
        ibank != banks.end() ; ++ibank) {
     // get now the raw data
     const unsigned int* idata = (*ibank)->data() ;
-    
+
     // The data part
     const unsigned int* begin = idata ;
     const unsigned int* end   = idata + (*ibank)->size()/sizeof( unsigned int ) ;
@@ -95,22 +89,22 @@ StatusCode HltLumiSummaryDecoder::execute() {
       int iKey = (*itW >> 16);
       int iVal = (*itW & 0xFFFF);
       if ( MSG::VERBOSE >= msgLevel() ) {
-        verbose() << format ( " %8x %11d %11d %11d ", *itW, *itW, iKey, iVal ) 
+        verbose() << format ( " %8x %11d %11d %11d ", *itW, *itW, iKey, iVal )
                   << endmsg;
       }
       // add this counter
       hltLumiSummary->addInfo( iKey, iVal);
     }
-    
+
     // keep statistics
     int totDataSize = 0;
     totDataSize += (*ibank)->size()/sizeof( unsigned int ) ;
     m_totDataSize += totDataSize;
     m_nbEvents++;
-    
+
     if ( msgLevel( MSG::DEBUG ) ) {
       debug() << "Bank size: ";
-      debug() << format( "%4d ", (*ibank)->size() ) 
+      debug() << format( "%4d ", (*ibank)->size() )
 	      << "Total Data bank size " << totDataSize << endmsg;
     }
   }
@@ -125,7 +119,7 @@ StatusCode HltLumiSummaryDecoder::finalize()
 {
   if ( 0 < m_nbEvents ) {
     m_totDataSize /= m_nbEvents;
-    info() << "Average event size : " << format( "%7.1f words", m_totDataSize ) 
+    info() << "Average event size : " << format( "%7.1f words", m_totDataSize )
 	   << endmsg;
   }
   return Decoder::AlgBase::finalize(); // must be called after all other actions

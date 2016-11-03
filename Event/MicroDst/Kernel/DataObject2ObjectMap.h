@@ -1,5 +1,5 @@
 // $Id: DataObject2ObjectVector.h,v 1.1 2010/08/19 15:09:43 jpalac Exp $
-#ifndef DATAOBJECT2OBJECTMAP_H 
+#ifndef DATAOBJECT2OBJECTMAP_H
 #define DATAOBJECT2OBJECTMAP_H 1
 
 // Include files
@@ -13,10 +13,10 @@
 namespace DaVinci{
 
   namespace Map {
-    
+
 
     /** @class DataObject2ObjectMap DataObject2ObjectMap.h
-     *  
+     *
      *
      *  @author Juan Palacios
      *  @date   2010-08-18
@@ -39,9 +39,9 @@ namespace DaVinci{
       typedef typename Map::value_type value_type;
       typedef typename Map::size_type size_type;
       typedef const From* key_type;
-  
 
-    public: 
+
+    public:
       /// Standard constructor
       DataObject2ObjectMap( )
         :
@@ -67,12 +67,12 @@ namespace DaVinci{
         m_map(first, last)
       {
       }
-      
-        ~DataObject2ObjectMap( ) 
+
+        ~DataObject2ObjectMap( )
       {
         m_map.clear();
       }
-      
+
     public :
 
       inline iterator find(key_type key) const
@@ -84,75 +84,75 @@ namespace DaVinci{
       {
         return m_map(key);
       }
-  
+
       inline const mapped_type& operator[](key_type key) const
       {
-        return m_map[key];    
+        return m_map[key];
       }
 
       inline const mapped_type& at(key_type key) const
       {
-        return m_map.at(key); 
+        return m_map.at(key);
       }
 
-      inline size_type count(const key_type key) const 
+      inline size_type count(const key_type key) const
       {
         return m_map.count(key);
       }
 
       inline result_type insert(key_type key,
-                                mapped_type mapped) 
+                                mapped_type mapped)
       {
         return m_map.insert(key, mapped);
       }
-  
-      inline iterator begin  () const 
+
+      inline iterator begin  () const
       {
         return m_map.begin  () ;
       }
-  
-      inline iterator end() const 
+
+      inline iterator end() const
       {
         return m_map.end    () ;
       }
 
       inline reverse_iterator rbegin  () const
       {
-        return m_map.rbegin  () ;    
+        return m_map.rbegin  () ;
       }
 
       inline reverse_iterator rend() const
-      { 
-        return m_map.rend    () ; 
+      {
+        return m_map.rend    () ;
       }
-  
+
       inline size_type size() const
       {
         return m_map.size();
       }
-  
-      inline bool empty() const 
+
+      inline bool empty() const
       {
         return m_map.empty();
       }
 
-      inline key_type key_at(const size_t index) const 
+      inline key_type key_at(const size_t index) const
       {
         return m_map.key_at(index);
       }
 
-      inline const mapped_type& value_at(const size_t index) const 
+      inline const mapped_type& value_at(const size_t index) const
       {
         return m_map.value_at(index);
       }
 
-      virtual StatusCode update() 
+      StatusCode update() override
       {
         const Map tmp(m_map.begin(), m_map.end());
         m_map = tmp;
         return StatusCode::SUCCESS;
       }
-      
+
 
     private :
       Map m_map;
@@ -160,8 +160,8 @@ namespace DaVinci{
     };
 
   } // namespace Map
-  
+
 } // namespace DaVinci
 
-  
+
 #endif // DATAOBJECT2OBJECTMAP_H

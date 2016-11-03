@@ -22,13 +22,13 @@ public:
   DQFilterSvc(const std::string& name, ISvcLocator* svc);
 
   /// Initialize the service
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalize the service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   /// @see IIncidentListener::handle
-  virtual void handle( const Incident& );
+  void handle( const Incident& ) override;
 
   /// Destructor
   virtual ~DQFilterSvc() = default;

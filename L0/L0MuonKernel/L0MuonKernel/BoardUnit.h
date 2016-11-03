@@ -44,7 +44,7 @@ namespace L0Muon {
     ~BoardUnit();
 
     /// Give a static type name to the unit
-    std::string type() {
+    std::string type() override {
       return "BoardUnit";
     }
 

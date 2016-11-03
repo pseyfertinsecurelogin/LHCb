@@ -84,11 +84,11 @@ namespace Rich
             {
               if ( this->isBitOn(bits0,iB) )
               {
-                ids.emplace_back( LHCb::RichSmartID( hpdID.rich(), hpdID.panel(),
-                                                     hpdID.pdNumInCol(), hpdID.pdCol(),
-                                                     zsData.rowFromAddress(address0,addressOffset0),
-                                                     zsData.colFromAddressAndBit(address0,iB),
-                                                     zsData.subPixelFromAddress(address0) ) );
+                ids.emplace_back( hpdID.rich(), hpdID.panel(),
+                                  hpdID.pdNumInCol(), hpdID.pdCol(),
+                                  zsData.rowFromAddress(address0,addressOffset0),
+                                  zsData.colFromAddressAndBit(address0,iB),
+                                  zsData.subPixelFromAddress(address0) );
                 ++m_nHits; // count hits
               }
             }

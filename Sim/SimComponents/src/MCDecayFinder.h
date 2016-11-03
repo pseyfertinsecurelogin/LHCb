@@ -1,4 +1,4 @@
-#ifndef TOOLS_MCDECAYFINDER_H 
+#ifndef TOOLS_MCDECAYFINDER_H
 #define TOOLS_MCDECAYFINDER_H 1
 
 //#define YYDEBUG 1
@@ -30,7 +30,7 @@ struct yy_buffer_state;
  *  (almost) any set of decay.
  *
  *  The description is made of 'particle' and 'decay'.
- * 
+ *
  *  A 'particle' is one of:
  *
  *  - a particle name as known by the ParticlePropertySvc,
@@ -92,7 +92,7 @@ struct yy_buffer_state;
  *  Note: you can also use the charge conjugate operator on the daughters set.
  *
  *  Note: you can even mix the []cc and the {}.
- * 
+ *
  * Extracting particles from the decay:
  *
  * - It is possible to extract all particle in the decay tree which match a
@@ -105,12 +105,12 @@ struct yy_buffer_state;
  *
  * You can then retrieve these particles with the MCDecayFinder::members
  * method.
- * 
+ *
  * NOTE: You realy don't want to know how it works!
  *
  *  @author Olivier Dormond
  *  @date   12/03/2002
- * 
+ *
  * Edited by R Lambert 2009-03-04
  * Check the decay string for syntax errors before parsing
  * this avoids most segfaults
@@ -124,7 +124,7 @@ public:
                  const std::string& name,
                  const IInterface* parent );
 
-  /// Destructor 
+  /// Destructor
   virtual ~MCDecayFinder( ); ///< Destructor
 
   StatusCode initialize( ) override;
@@ -163,7 +163,7 @@ public:
    *  @param leaf   a bool indicating whether to include all particles or only
    *         the one at the ends of the branches. (Default: all)
    */
-  void descendants( const LHCb::MCParticle *head, 
+  void descendants( const LHCb::MCParticle *head,
                     LHCb::MCParticle::ConstVector& result,
                     bool leaf=false ) const override;
 
@@ -175,7 +175,7 @@ public:
    *  particles seperated from the decay by a ':' and/or by putting a '^' before
    *  any particle in the decay.
    */
-  void decayMembers( const LHCb::MCParticle *head, 
+  void decayMembers( const LHCb::MCParticle *head,
                      LHCb::MCParticle::ConstVector& members ) const override;
 
   /// Get a vector of pairs <mother, products> for all sub-trees.
@@ -205,7 +205,7 @@ private:
                      LHCb::IParticlePropertySvc *ppSvc );
     ParticleMatcher( Quantums quantum, Relations relation, double value,
                      LHCb::IParticlePropertySvc *ppSvc );
-    bool test( const LHCb::MCParticle *part, 
+    bool test( const LHCb::MCParticle *part,
               LHCb::MCParticle::ConstVector *collect=NULL );
     void setLift( void ) { lift = true; }
     bool getLift( void ) { return lift; }
@@ -267,7 +267,7 @@ private:
       }
       if( previous_result )
         start++;
-      
+
       if( mother == NULL ) { // No mother == pp collision
         std::list<const LHCb::MCParticle*> prims;
         for( auto i=(previous_result ? start : first); i != last; i++ ) {
@@ -286,23 +286,23 @@ private:
           getAlternate()->test(first,last,previous_result);
         return false;
       }
-      
+
       auto part_i = (previous_result ? start : first);
       while( (part_i != last) && (test(*part_i) == false) )
         part_i++;
-      
+
       if( part_i != last ) {
         previous_result = *part_i;
         return true;
       }
       return false;
     }
-    bool test(const LHCb::MCParticle *mother, 
+    bool test(const LHCb::MCParticle *mother,
               LHCb::MCParticle::ConstVector *collect=NULL,
               std::vector<std::pair<const LHCb::MCParticle*,
               LHCb::MCParticle::ConstVector >
                          > *subTree=NULL);
-    
+
     void setAlternate( Descriptor *a ) { alternate = a; }
     Descriptor *getAlternate( void ) { return alternate; }
 

@@ -1,5 +1,3 @@
-// $Id: ITReadoutTool.cpp,v 1.15 2009-10-30 12:54:19 mtobin Exp $
-
 // STDAQ
 #include "ITReadoutTool.h"
 #include "Kernel/STTell1Board.h"

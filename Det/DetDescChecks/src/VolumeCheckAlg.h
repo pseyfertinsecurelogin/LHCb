@@ -124,12 +124,12 @@ public:
      *  @see IAlgorithm
      *  @return status code
      */
-    virtual StatusCode initialize () ;
+    StatusCode initialize ()  override;
     /** standard execution of algorithm
      *  @see IAlgorithm
      *  @return status code
      */
-    virtual StatusCode execute    () ;
+    StatusCode execute    ()  override;
     // ========================================================================
   protected:
     // ========================================================================

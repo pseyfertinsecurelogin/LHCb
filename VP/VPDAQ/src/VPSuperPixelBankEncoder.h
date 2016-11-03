@@ -41,7 +41,7 @@
  *  |  15
  *  |  04
  *  +---> col,x
- * 
+ *
  * @author Karol Hennessy
  * @author Kurt Rinnert
  * @date   2014-03-06
@@ -54,8 +54,8 @@ class VPSuperPixelBankEncoder : public GaudiAlgorithm {
   /// Standard constructor
   VPSuperPixelBankEncoder(const std::string& name, ISvcLocator* pSvcLocator);
   virtual ~VPSuperPixelBankEncoder();  ///< Destructor
-  virtual StatusCode initialize();     ///< Algorithm initialization
-  virtual StatusCode execute();        ///< Algorithm execution
+  StatusCode initialize() override;     ///< Algorithm initialization
+  StatusCode execute() override;        ///< Algorithm execution
 
  private:
 

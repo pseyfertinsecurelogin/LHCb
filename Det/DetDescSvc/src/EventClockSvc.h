@@ -1,4 +1,4 @@
-#ifndef EVENTCLOCKSVC_H 
+#ifndef EVENTCLOCKSVC_H
 #define EVENTCLOCKSVC_H 1
 
 // Include files
@@ -9,26 +9,26 @@ class IEventTimeDecoder;
 class IToolSvc;
 
 /** @class EventClockSvc EventClockSvc.h
- *  
+ *
  *  Small IncidentListener to set the event time.
  *
  *  @author Marco Clemencic
  *  @date   2005-07-08
  */
 class EventClockSvc: public extends<Service, IIncidentListener> {
-public: 
+public:
   /// Standard constructor
-  EventClockSvc(const std::string& name, ISvcLocator* svcloc); 
+  EventClockSvc(const std::string& name, ISvcLocator* svcloc);
 
   /// Initialize Service
-  virtual StatusCode initialize();
-  
+  StatusCode initialize() override;
+
   /// Finalize Service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   // ---- Implement IIncidentListener interface ----
   /// Handle BeginEvent incident.
-  virtual void handle(const Incident &inc);
+  void handle(const Incident &inc) override;
 
 protected:
 
@@ -43,7 +43,7 @@ private:
   std::string m_detDataSvcName;
   /// Name of the Event Time Decoder (set by the option EventTimeDecoder, by default "FakeEventTime").
   std::string m_eventTimeDecoderName;
-  
+
   // --- services ---
   /// Pointer to the incident service;
   SmartIF<IIncidentSvc> m_incidentSvc;
@@ -54,12 +54,12 @@ private:
 
   // --- tools ---
   /// Pointer to the EventTimeDecoder tool
-  IEventTimeDecoder *m_eventTimeDecoder;
+  IEventTimeDecoder *m_eventTimeDecoder = nullptr;
 
 
   // --- misc ---
   /// Time to use before reading the first event  (set by the option InitialTime, by default 0).
   long long m_initialTime;
-  
+
 };
 #endif // EVENTCLOCKSVC_H

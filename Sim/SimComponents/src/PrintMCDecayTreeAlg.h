@@ -1,4 +1,4 @@
-#ifndef PRINTMCDECAYTREEALG_H 
+#ifndef PRINTMCDECAYTREEALG_H
 #define PRINTMCDECAYTREEALG_H 1
 
 // Include files
@@ -17,10 +17,10 @@ struct IPrintMCDecayTreeTool;
  *  IPrintMCDecayTreeTool interface.
  *
  *  The MC event tree is defined by the TES location of an
- *  LHCb::MCParticle container. This is controlled by the property 
+ *  LHCb::MCParticle container. This is controlled by the property
  *  <b>MCParticleLocation</b>. The default is LHCb::MCParticleLocation::Default
  *
- *  The IPrintMCDecayTreeTool implementation to use is controlled by the 
+ *  The IPrintMCDecayTreeTool implementation to use is controlled by the
  *  property <b>PrintTool</b>. the default is "PrintMCDecayTreeTool".
  *
  *  @author Vladimir Gligorov, adapted by Marco Cattaneo
@@ -38,6 +38,6 @@ private:
   IPrintMCDecayTreeTool *m_printTool = nullptr;
   std::string m_printToolName = "PrintMCDecayTreeTool";
   std::string m_particleLocation =  LHCb::MCParticleLocation::Default;
-  
+
 };
 #endif // PRINTMCDECAYTREEALG_H

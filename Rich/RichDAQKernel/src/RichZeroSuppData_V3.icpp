@@ -119,10 +119,10 @@ namespace Rich
             {
               if ( this->isBitOn(bits0,iB) )
               {
-                ids.emplace_back( LHCb::RichSmartID( hpdID.rich(), hpdID.panel(),
-                                                     hpdID.pdNumInCol(), hpdID.pdCol(),
-                                                     zsData.rowFromAddress(address0),
-                                                     zsData.colFromAddressAndBit(address0,iB) ) );
+                ids.emplace_back( hpdID.rich(), hpdID.panel(),
+                                  hpdID.pdNumInCol(), hpdID.pdCol(),
+                                  zsData.rowFromAddress(address0),
+                                  zsData.colFromAddressAndBit(address0,iB) );
                 ++m_nHits; // count hits
               }
             }
@@ -139,10 +139,10 @@ namespace Rich
               {
                 if ( this->isBitOn(bits1,iB) )
                 {
-                  ids.emplace_back( LHCb::RichSmartID( hpdID.rich(), hpdID.panel(),
-                                                       hpdID.pdNumInCol(), hpdID.pdCol(),
-                                                       zsData.rowFromAddress(address1),
-                                                       zsData.colFromAddressAndBit(address1,iB) ) );
+                  ids.emplace_back( hpdID.rich(), hpdID.panel(),
+                                    hpdID.pdNumInCol(), hpdID.pdCol(),
+                                    zsData.rowFromAddress(address1),
+                                    zsData.colFromAddressAndBit(address1,iB) );
                   ++m_nHits; // count hits
                 }
               }

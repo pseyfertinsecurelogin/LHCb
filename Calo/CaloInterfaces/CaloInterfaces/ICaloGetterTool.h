@@ -10,7 +10,7 @@
 #include "Event/CaloDigit.h"
 #include "Event/CaloCluster.h"
 #include "Event/CaloHypo.h"
-class ICaloDataProvider;
+struct ICaloDataProvider;
 
 
 /** @class ICaloGetterTool ICaloGetterTool.h

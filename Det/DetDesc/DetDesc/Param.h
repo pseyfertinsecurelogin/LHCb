@@ -1,4 +1,4 @@
-#ifndef DETDESC_PARAM_H 
+#ifndef DETDESC_PARAM_H
 #define DETDESC_PARAM_H 1
 
 // Include files
@@ -13,7 +13,7 @@
 #include "GaudiKernel/GaudiException.h"
 
 /** @class Param Param.h DetDesc/Param.h
- *  
+ *
  *  Class implementing a polymorfic parameter using templates
  *
  *  @author Marco CLEMENCIC
@@ -23,7 +23,7 @@ template <class T>
 class Param: public BasicParam {
 public:
   typedef T value_type;
-  
+
   /// Standard constructor
   Param( ) = default;
 
@@ -42,12 +42,12 @@ public:
 
   /// String representation for printout
   inline std::string toStr() const override;
-  
+
   /// String representation for printout
   std::string toXMLStr(const std::string& name,
                        const std::string& comment = "",
                        int precision = 16) const override;
-  
+
   /// TypeId of the datum
   const std::type_info &type() const override { return typeid(T); }
 
@@ -84,7 +84,7 @@ template<> inline std::string Param<double>::toStr() const {
   return o.str();
 }
 
-/// Default implementation. Only a limited number of types are allowed in 
+/// Default implementation. Only a limited number of types are allowed in
 /// the XML representation of a ParamValidDataObject
 template<class T>
 std::string Param<T>::toXMLStr(const std::string&, const std::string&, int) const {

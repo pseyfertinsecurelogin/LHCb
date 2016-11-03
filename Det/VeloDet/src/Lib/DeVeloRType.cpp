@@ -10,10 +10,6 @@
 #include "vdt/sincos.h"
 
 // From Gaudi
-#include "GaudiKernel/Bootstrap.h"
-#include "GaudiKernel/PropertyMgr.h"
-#include "GaudiKernel/IJobOptionsSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/PhysicalConstants.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
@@ -27,6 +23,8 @@
 
 // for make_array
 #include "Kernel/STLExtensions.h"
+
+#include "getOutputLevel.h"
 
 namespace VeloDet {
   /** This function simply provides access to a local static
@@ -175,27 +173,17 @@ const CLID& DeVeloRType::clID()
 //==============================================================================
 StatusCode DeVeloRType::initialize()
 {
-  { // Trick from old DeVelo to set the output level
-    PropertyMgr pmgr;
-    int outputLevel=0;
-    pmgr.declareProperty("OutputLevel", outputLevel);
-    auto jobSvc = Gaudi::svcLocator()->service<IJobOptionsSvc>("JobOptionsSvc");
-    if (!jobSvc) return StatusCode::FAILURE;
-    auto sc = jobSvc->setMyProperties("DeVeloRType", &pmgr);
-    if (!sc.isSuccess()) return sc;
-    if ( 0 < outputLevel ) {
-      msgSvc()->setOutputLevel("DeVeloRType", outputLevel);
-    }
-  }
+  auto sc = initOutputLevel(msgSvc(), "DeVeloRType");
+  if (!sc) return sc;
 
-  auto sc = DeVeloSensor::initialize();
+  sc = DeVeloSensor::initialize();
   if(!sc.isSuccess()) {
     msg() << MSG::ERROR << "Failed to initialise DeVeloSensor" << endmsg;
     return sc;
   }
-  m_debug   = (msgSvc()->outputLevel("DeVeloRType") == MSG::DEBUG  ) ;
-  m_verbose = (msgSvc()->outputLevel("DeVeloRType") == MSG::VERBOSE) ;
-  if(m_verbose) m_debug = true;
+  const auto lvl = msgSvc()->outputLevel("DeVeloRType");
+  m_debug   = lvl <= MSG::DEBUG;
+  m_verbose = lvl <= MSG::VERBOSE;
 
   m_numberOfZones = 4;
   m_stripsInZone = numberOfStrips() / m_numberOfZones;
@@ -677,9 +665,9 @@ std::unique_ptr<LHCb::Trajectory> DeVeloRType::trajectory(const LHCb::VeloChanne
   Gaudi::XYZPoint gOrigin = localToGlobal(lOrigin);
   Gaudi::XYZPoint gBegin = localToGlobal(lBegin);
   Gaudi::XYZPoint gEnd = localToGlobal(lEnd);
-  // Convert phi range to [0,2pi] on the right (C) side only 
+  // Convert phi range to [0,2pi] on the right (C) side only
   // to make sure trajectories run in right direction
-  // and protect against crossing the -pi/pi boundary 
+  // and protect against crossing the -pi/pi boundary
   double phiBeginTmp=vdt::fast_atan2(gBegin.y(), gBegin.x());
   if( isRight() && phiBeginTmp < 0) phiBeginTmp += 2*Gaudi::Units::pi;
   double phiEndTmp=vdt::fast_atan2(gEnd.y(), gEnd.x());
@@ -825,19 +813,19 @@ StatusCode DeVeloRType::updateGeometryCache()
   return StatusCode::SUCCESS;
 }
 
-StatusCode DeVeloRType::distToM2Line(const Gaudi::XYZPoint& point, 
-                                     LHCb::VeloChannelID &vID, 
+StatusCode DeVeloRType::distToM2Line(const Gaudi::XYZPoint& point,
+                                     LHCb::VeloChannelID &vID,
                                      double & distToM2,
                                      double & distToStrip) const{
   if( m_M2RoutingLines.size() != m_numberOfStrips ){
     // routing lines not loaded: have to fail
     return StatusCode::FAILURE;
   }
-    
+
   Gaudi::XYZPoint lPoint = globalToLocal(point);
   // Check boundaries...
   StatusCode sc = isInActiveArea(lPoint);
-  if(!sc.isSuccess()) return sc; 
+  if(!sc.isSuccess()) return sc;
 
   // work out closet channel....
   double radius=lPoint.Rho();
@@ -845,10 +833,10 @@ StatusCode DeVeloRType::distToM2Line(const Gaudi::XYZPoint& point,
     m_innerPitch;
   double strip = vdt::fast_log(logarithm)/m_pitchSlope;
   // no routing lines below strip 0 (+ rounding error fix)
-  if( strip < 0. ) return StatusCode::FAILURE; 
+  if( strip < 0. ) return StatusCode::FAILURE;
   unsigned int closestStrip = LHCb::Math::round(strip);
   // sanity check in case of rounding error
-  if( closestStrip > 2047 ) closestStrip = 2047; 
+  if( closestStrip > 2047 ) closestStrip = 2047;
   distToStrip = std::abs(strip - closestStrip)*rPitch(closestStrip);
 
   bool OKM2 = distToM2Line(lPoint.x(), lPoint.y(), vID, distToM2);
@@ -857,7 +845,7 @@ StatusCode DeVeloRType::distToM2Line(const Gaudi::XYZPoint& point,
 
 bool DeVeloRType::distToM2Line(double const & x, double const & y,
 			       LHCb::VeloChannelID &vID, double & dist) const{
-  double dist2 = 1.e9; 
+  double dist2 = 1.e9;
   unsigned int strip = 1e9;
 
   // find range of strips covering this phi point
@@ -867,12 +855,12 @@ bool DeVeloRType::distToM2Line(double const & x, double const & y,
   // start at begining of zone
   auto iLineMin = m_M2RLMinPhi.begin() + zone*m_stripsInZone;
   // skip all strips with a minPhi > this phi
-  auto iLineMax = 
+  auto iLineMax =
     lower_bound(iLineMin, iLineMin+m_stripsInZone,
                 std::make_pair(phi,0u));
   for ( ; iLineMin != iLineMax; ++iLineMin ){
     unsigned int iL = iLineMin->second;
-    // as ranges are complicated in phi need to keep going even if 
+    // as ranges are complicated in phi need to keep going even if
     // this strip can be ignored
     if( m_M2RoutingLines[iL].m_maxPhi < phi ) continue;
     std::vector<double> const & xP = m_M2RoutingLines[iL].m_x;
@@ -889,14 +877,14 @@ bool DeVeloRType::distToM2Line(double const & x, double const & y,
       double xp = ( x*dx*dx + (x2*(y1-y) + x1*(y-y2))*dy ) / (dx*dx + dy*dy);
       double yp = y1 + (xp-x1)*dy/dx;
       // order of x1<x2 or x2>x1 and for y is not defined so try both
-      bool checkLimits = ( ( (x1<xp && xp<x2) || (x2<xp && xp<x1) ) && 
+      bool checkLimits = ( ( (x1<xp && xp<x2) || (x2<xp && xp<x1) ) &&
 			   ( (y1<yp && yp<y2) || (y2<yp && yp<y1) ) );
       // check (xp,yp) is in the extent of the original line
       if( !checkLimits )continue;
       // use distance^2 to avoid too many sqrt calls
       double lDist2 = (xp-x)*(xp-x) + (yp-y)*(yp-y);
-      // cap distance to consider at 200 microns 
-      if( lDist2 < dist2 && lDist2 < 0.04 ) { 
+      // cap distance to consider at 200 microns
+      if( lDist2 < dist2 && lDist2 < 0.04 ) {
         dist2 = lDist2;
         strip = iL; // lines in strip order
       }
@@ -916,7 +904,7 @@ bool DeVeloRType::distToM2Line(double const & x, double const & y,
     return true;
   }
   return false;
-}        
+}
 
 void DeVeloRType::loadM2RoutingLines(){
   m_M2RoutingLines.clear();  m_M2RoutingLines.reserve(2048);
@@ -924,8 +912,8 @@ void DeVeloRType::loadM2RoutingLines(){
     std::string param_X = format("Routing-R-X-Strip%04i",strip);
     std::string param_Y = format("Routing-R-Y-Strip%04i",strip);
     if( !exists(param_X) || !exists(param_Y) ){
-      msg() << MSG::WARNING 
-	    << "VELO R sensor M2 routing lines not in conditions DB cond: " 
+      msg() << MSG::WARNING
+	    << "VELO R sensor M2 routing lines not in conditions DB cond: "
             << param_X << " and " << param_Y
             <<endmsg;
       return;

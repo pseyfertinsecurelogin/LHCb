@@ -10,7 +10,7 @@
 
 /** @class HltLumiSummaryDecoder HltLumiSummaryDecoder.h
  *
- *  Decodes the LumiSummary. 
+ *  Decodes the LumiSummary.
  *
  *  @author Jaap Panman
  *
@@ -18,24 +18,19 @@
  */
 
 class HltLumiSummaryDecoder : public Decoder::AlgBase {
-public: 
+public:
   /// Standard constructor
   HltLumiSummaryDecoder(  const std::string& name, ISvcLocator* pSvcLocator );
-  
-  /// Destructor
-  virtual ~HltLumiSummaryDecoder( ) ; ///< Destructor
-  
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
-  
-protected:
-  
+
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
+
 private:
   // data
   std::string m_OutputContainerName;
 
-  // Statistics  
+  // Statistics
   double m_totDataSize;
   int m_nbEvents;
 

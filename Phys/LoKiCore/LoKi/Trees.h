@@ -62,24 +62,24 @@ namespace Decays
       /// move  constructor (ignore the marked particle)
       Marked_ (       Marked_&& right ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Marked_* clone() const { return new Marked_(*this) ; }
+      Marked_* clone() const override { return new Marked_(*this) ; }
       /// MANDATORY: the only one essential method:
-      virtual bool operator()
-        ( typename  Decays::iTree_<PARTICLE>::argument p ) const  ;
+      bool operator()
+        ( typename  Decays::iTree_<PARTICLE>::argument p ) const override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       /// Check the validity
-      virtual bool valid() const ;
+      bool valid() const  override;
       /// validate it
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate
+      ( const LHCb::IParticlePropertySvc* svc ) const override;
       /// reset the collection cache
-      virtual void reset () const ;
+      void reset () const  override;
       /// collect the marked elements
-      virtual size_t collect
-      ( typename Decays::iTree_<PARTICLE>::Collection& output ) const ;
+      size_t collect
+      ( typename Decays::iTree_<PARTICLE>::Collection& output ) const override;
       /// has marked elements in the tree ?
-      virtual bool marked() const { return true ; }
+      bool marked() const override { return true ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -114,24 +114,24 @@ namespace Decays
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Any_* clone() const { return new Any_(*this) ; }
+      Any_* clone() const override { return new Any_(*this) ; }
       /// MANDATORY: the only one essential method:
-      virtual bool operator() ( argument /* p */ ) const { return true ; }
+      bool operator() ( argument /* p */ ) const override { return true ; }
       /// MANDATORY: the printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << " X "; }
       /// Check the validity
-      virtual bool valid() const { return true ; }
+      bool valid() const override { return true ; }
       /// validate it
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* /* svc */ ) const
+      StatusCode validate
+      ( const LHCb::IParticlePropertySvc* /* svc */ ) const override
       { return StatusCode( StatusCode::SUCCESS , true ) ; }
       /// reset the collection cache
-      virtual void reset () const {}
+      void reset () const override {}
       /// collect the marked elements
-      virtual size_t collect ( Collection& /* output */ ) const { return 0 ; }
+      size_t collect ( Collection& /* output */ ) const override { return 0 ; }
       /// has marked elements in the tree ?
-      virtual bool marked() const { return false ; }
+      bool marked() const override { return false ; }
       // ======================================================================
     } ;
     // ========================================================================
@@ -151,11 +151,11 @@ namespace Decays
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  None_* clone() const { return new None_(*this) ; }
+      None_* clone() const override { return new None_(*this) ; }
       /// MANDATORY: the only one essential method:
-      virtual bool operator() ( argument /* p */ ) const { return false ; }
+      bool operator() ( argument /* p */ ) const override { return false ; }
       /// MANDATORY: the printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << " None "; }
       // ======================================================================
     } ;
@@ -180,24 +180,24 @@ namespace Decays
       /// MANDATORY: default constructor
       Invalid_() = default;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Invalid_* clone() const { return new Invalid_(*this) ; }
+      Invalid_* clone() const override { return new Invalid_(*this) ; }
       /// MANDATORY: the only one essential method:
-      virtual bool operator() ( argument /* p */ ) const { return false ; }
+      bool operator() ( argument /* p */ ) const override { return false ; }
       /// MANDATORY: the printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << " <INVALID> "; }
       /// Check the validity
-      virtual bool valid() const { return false ; }
+      bool valid() const override { return false ; }
       /// validate it
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* /* svc */ ) const
+      StatusCode validate
+      ( const LHCb::IParticlePropertySvc* /* svc */ ) const override
       { return StatusCode( StatusCode::FAILURE , true ) ; }
       /// reset the collection cache
-      virtual void reset () const {} ;
+      void reset () const override {}
       /// collect the marked elements
-      virtual size_t collect ( Collection& /* output */ ) const { return 0 ; }
+      size_t collect ( Collection& /* output */ ) const override { return 0 ; }
       /// has marked elements in the tree ?
-      virtual bool marked() const { return false ; }
+      bool marked() const override { return false ; }
       // ======================================================================
     } ;
     // ========================================================================
@@ -226,24 +226,24 @@ namespace Decays
       Stable_ ( const LHCb::ParticleID& head ) ;
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Stable_* clone() const { return new Stable_( *this ) ; }
+      Stable_* clone() const override{ return new Stable_( *this ) ; }
       /// MANDATORY: the only one essential method:
-      virtual bool operator()
-        ( typename  Decays::iTree_<PARTICLE>::argument p ) const ;
+      bool operator()
+        ( typename  Decays::iTree_<PARTICLE>::argument p ) const override;
       /// MANDATORY: the printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       /// Check the validity
-      virtual bool valid() const ;
+      bool valid() const  override;
       /// validate it
-      virtual StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
       /// reset the collection cache
-      virtual void reset () const {} ;
+      void reset () const override {}
       /// collect the marked elements
-      virtual size_t collect
-      ( typename  Decays::iTree_<PARTICLE>::Collection& /* output */ ) const
+      size_t collect
+      ( typename  Decays::iTree_<PARTICLE>::Collection& /* output */ ) const override
       { return 0 ; }
       /// has marked elements in the tree ?
-      virtual bool marked() const { return false ; }
+      bool marked() const override { return false ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -579,17 +579,17 @@ namespace Decays
     public:
       // ======================================================================
       /// MANDATORY: check the validness
-      virtual bool valid() const ;
+      bool valid() const  override;
       /// MANDATORY: the proper validation of the tree
-      virtual  StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate
+      ( const LHCb::IParticlePropertySvc* svc ) const override;
       /// MANDATORY: reset method
-      virtual void reset() const { return i_reset() ; }
+      void reset() const override { return i_reset() ; }
       /// MANDATORY: collect all marked elements
-      virtual size_t collect
-      ( typename Decays::iTree_<PARTICLE>::Collection& ) const ;
+      size_t collect
+      ( typename Decays::iTree_<PARTICLE>::Collection& ) const override;
       /// has marked elements in the tree ?
-      virtual bool marked() const ;
+      bool marked() const  override;
       // ======================================================================
     protected:
       // ======================================================================
@@ -656,12 +656,12 @@ namespace Decays
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  And_* clone() const { return new And_ ( *this ) ; }
+      And_* clone() const override { return new And_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual bool operator()
-        ( typename Decays::iTree_<PARTICLE>::argument p ) const ;
+      bool operator()
+        ( typename Decays::iTree_<PARTICLE>::argument p ) const  override;
       /// MANDATORY: the specific printout
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -729,12 +729,12 @@ namespace Decays
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Or_* clone() const { return new Or_ ( *this ) ; }
+      Or_* clone() const override { return new Or_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual bool operator()
-        ( typename Decays::iTree_<PARTICLE>::argument p ) const ;
+      bool operator()
+        ( typename Decays::iTree_<PARTICLE>::argument p ) const  override;
       /// MANDATORY: the specific printout
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -799,9 +799,9 @@ namespace Decays
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  List_* clone() const { return new List_ ( *this ) ; }
+      List_* clone() const override { return new List_ ( *this ) ; }
       /// MANDATORY: the specific printout
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -866,31 +866,31 @@ namespace Decays
     public:
       // ======================================================================
       // MANDATORY: clone method ("virtual constructor")
-      virtual  Not_* clone() const { return new Not_ ( *this ) ; }
+      Not_* clone() const override { return new Not_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual bool operator()
-        ( typename Decays::iTree_<PARTICLE>::argument p ) const
+      bool operator()
+        ( typename Decays::iTree_<PARTICLE>::argument p ) const override
       {
         const bool result = m_tree.tree ( p ) ;
         m_tree.tree().reset () ;
         return !result ;
       }
       /// MANDATORY: the specific printout
-      virtual  std::ostream& fillStream( std::ostream& s ) const
+      std::ostream& fillStream( std::ostream& s ) const override
       { return s << " ~(" << m_tree << ") " ; }
       /// MANDATORY: check the validness
-      virtual bool valid () const { return m_tree.valid() ; }
+      bool valid () const override{ return m_tree.valid() ; }
         /// MANDATORY: the proper validation of the tree
-      virtual  StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const
+      StatusCode validate
+      ( const LHCb::IParticlePropertySvc* svc ) const override
       { return m_tree.validate ( svc ) ; }
       /// MANDATORY: collect all marked elements
-      virtual size_t collect
-      ( typename Decays::iTree_<PARTICLE>::Collection& ) const { return 0 ; }
+      size_t collect
+      ( typename Decays::iTree_<PARTICLE>::Collection& ) const override { return 0 ; }
       /// reset the collection cache
-      virtual void reset () const { m_tree.reset() ; }
+      void reset () const override { m_tree.reset() ; }
       /// has marked elements in the tree ?
-      virtual bool marked() const { return false ; }
+      bool marked() const override { return false ; }
       // ======================================================================
     private:
       // ======================================================================

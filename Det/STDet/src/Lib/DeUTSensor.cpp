@@ -15,11 +15,6 @@ using namespace LHCb;
 DeUTSensor::DeUTSensor( const std::string& name ) :
   DeSTSensor( name ),
   m_parent(0)
-{ 
-}
-
-
-DeUTSensor::~DeUTSensor()
 {
 }
 
@@ -41,10 +36,10 @@ StatusCode DeUTSensor::initialize()
   else {
     // get the parent
     m_parent = getParent<DeUTSensor>();
-    int id = param<int>("sensorID"); 
-    setID(id);   
+    int id = param<int>("sensorID");
+    setID(id);
     cacheParentProperties(m_parent);
-    sc = initGeometryInfo();  
+    sc = initGeometryInfo();
     if (sc.isFailure()){
       MsgStream msg(msgSvc(), name() );
       msg<< MSG::ERROR << "failed to cache geometry" << endmsg;

@@ -31,10 +31,6 @@ DeTTLayer::DeTTLayer( const std::string& name ) :
 }
 
 
-DeTTLayer::~DeTTLayer() {
-  // destructer
-}
-
 const CLID& DeTTLayer::clID () const
 {
   return DeTTLayer::classID() ;

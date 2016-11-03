@@ -18,10 +18,10 @@ class CondDBSQLiteCopyAccSvc: public CondDBAccessSvc {
 public:
 
   /// Initilize the service
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Return the connection string used to connect to the database.
-  virtual const std::string &connectionString() const;
+  const std::string &connectionString() const override;
 
 
 protected:
