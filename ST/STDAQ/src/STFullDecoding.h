@@ -1,4 +1,3 @@
-// $Id: STFullDecoding.h,v 1.1 2009-03-02 16:27:44 mtobin Exp $
 #ifndef STFULLDECODING_H
 #define STFULLDECODING_H 1
 
@@ -27,8 +26,6 @@ public:
   STFullDecoding( const std::string& name, ISvcLocator* pSvcLocator );
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-
-protected:
 
 private:
 

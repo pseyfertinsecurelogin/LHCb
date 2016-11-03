@@ -1,4 +1,3 @@
-// $Id: STReadoutTool.h,v 1.11 2009-10-30 12:54:19 mtobin Exp $
 #ifndef _STReadoutTool_H
 #define _STReadoutTool_H
 
@@ -117,14 +116,14 @@ protected:
 
 
   unsigned int m_hybridsPerBoard;
-  unsigned int m_nBoard;
+  unsigned int m_nBoard = 0;
   unsigned int m_nServiceBox;
   std::vector<STTell1Board*> m_boards;
   std::vector<std::string> m_serviceBoxes;
   std::vector<unsigned int> m_firstBoardInRegion;
 
   bool m_printMapping;
-  DeSTDetector* m_tracker;
+  DeSTDetector* m_tracker = nullptr;
   std::string m_detType;
   std::string m_conditionLocation;
 
