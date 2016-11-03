@@ -26,16 +26,7 @@ FakeEventTime::FakeEventTime( const std::string& type,
   : AlgTool ( type, name , parent )
 {
   declareInterface<IEventTimeDecoder>(this);
-
-  // properties used to generate fake times
-  declareProperty("StartTime",       m_startTime = 0);
-  declareProperty("TimeStep",        m_timeStep  = 0);
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-FakeEventTime::~FakeEventTime() {}
-
 //=========================================================================
 //  Initialization
 //=========================================================================

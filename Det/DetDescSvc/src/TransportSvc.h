@@ -45,10 +45,7 @@ class TransportSvc : public extends< Service, ITransportSvc, DetDesc::IGeometryE
   ///
 public:
   /// constructor
-  TransportSvc
-  ( const std::string& name, ISvcLocator* ServiceLocator );
-  /// destructor
-  ~TransportSvc() override;
+  using base_class::base_class;
   ///
 public:
   // ==========================================================================
@@ -202,20 +199,21 @@ private:
   // ==========================================================================
   /// Own private data members:
   /// names of used services:
-  std::string                    m_detDataSvc_name       ;
+  Gaudi::Property<std::string> m_detDataSvc_name{ this, "DetectorDataService",  "DetectorDataSvc" };
   ///  Detector Data Service
   mutable SmartIF<IDataProviderSvc> m_detDataSvc            ;
   /**  Name (address in Transient Store) for the top element
    * of "standard" geometry source
    */
-  std::string                    m_standardGeometry_address ;
+  Gaudi::Property<std::string>  m_standardGeometry_address { this, "StandardGeometryTop", "/dd/Structure/LHCb" };
   mutable  IGeometryInfo*        m_standardGeometry = nullptr;
   ///
   mutable IGeometryInfo*           m_previousGeometry = nullptr;
   /// previous parameters
   mutable Gaudi::XYZPoint          m_prevPoint1          ;
   mutable Gaudi::XYZPoint          m_prevPoint2          ;
-  mutable double                   m_previousThreshold   ;
+  /// "cache" parameters
+  mutable double                   m_previousThreshold  =  -10000  ;
   mutable IGeometryInfo*           m_previousGuess = nullptr;
   mutable IGeometryInfo*           m_previousTopGeometry = nullptr;
   mutable ILVolume::Intersections  m_localIntersections  ;
@@ -234,9 +232,11 @@ private:
   Map  m_recover     ; /// the map of the recovered-intervals
   Map1 m_codes       ; /// the map of various error-codes
   /// property to allow the recovery
-  bool m_recovery = true ;
+  Gaudi::Property<bool> m_recovery { this, "Recovery", true,
+                                     "The flag to allow the recovery of geometry errors" } ;
   /// property to allow the protocol
-  bool m_protocol = true ;
+  Gaudi::Property<bool> m_protocol { this, "Protocol", true,
+                                     "The flag to allow protocol for the geometry problems" };
 
 };
 // ============================================================================
