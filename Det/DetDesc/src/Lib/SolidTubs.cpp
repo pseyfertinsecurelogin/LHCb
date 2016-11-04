@@ -360,7 +360,7 @@ unsigned int SolidTubs::intersectionTicksImpl( const aPoint &  Point,
   if( !crossBCylinder( Point , Vector ) )   { return 0 ; }
   
   // first the cylinders
-  static ISolid::Ticks tmpticks ; tmpticks.clear() ;
+  ISolid::Ticks tmpticks ; tmpticks.clear() ;
   SolidTicks::LineIntersectsTheCylinder( Point, Vector,outerRadius(),std::back_inserter( tmpticks   ) ); 
   if( innerRadius() > 0 ) 
     SolidTicks::LineIntersectsTheCylinder( Point, Vector, innerRadius(), std::back_inserter( tmpticks ) );
