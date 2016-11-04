@@ -1,4 +1,3 @@
-
 //-----------------------------------------------------------------------------
 /** @file IMCReconstructible.h
  *
@@ -27,8 +26,6 @@ namespace LHCb
   class MCParticle;
 }
 
-/// Interface ID
-static const InterfaceID IID_IMCReconstructible ( "IMCReconstructible", 1, 0 );
 
 /** @class IMCReconstructible IMCReconstructible.h MCInterfaces/IMCReconstructible.h
  *  
@@ -38,10 +35,8 @@ static const InterfaceID IID_IMCReconstructible ( "IMCReconstructible", 1, 0 );
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date   2004-04-28
  */
-class IMCReconstructible : virtual public IAlgTool
+struct IMCReconstructible : extend_interfaces<IAlgTool>
 {
-
-public: 
 
   /// Reconstructability categories
   enum RecCategory 
@@ -60,10 +55,8 @@ public:
   /// Convert type enum to string
   static std::string text( const RecCategory cat );
 
-public:
-
   /// Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_IMCReconstructible; }
+  DeclareInterfaceID( IMCReconstructible, 2, 0 );
 
   /** Get the reconstruction category for the given MCParticle
    *

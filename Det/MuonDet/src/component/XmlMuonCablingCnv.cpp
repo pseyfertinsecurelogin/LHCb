@@ -53,11 +53,11 @@ protected:
    * @param address ??
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                        MuonStationCabling* dataObj,
-                                        IOpaqueAddress* address);
+  StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
+                                MuonStationCabling* dataObj,
+                                IOpaqueAddress* address) override;
 
-virtual StatusCode updateRep (IOpaqueAddress *pAddress, DataObject *pObject);
+  StatusCode updateRep (IOpaqueAddress *pAddress, DataObject *pObject) override;
 
 private:
 StatusCode splitList( std::string &stringList,

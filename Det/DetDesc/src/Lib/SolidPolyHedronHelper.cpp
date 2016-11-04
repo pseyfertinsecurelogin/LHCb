@@ -23,15 +23,6 @@ SolidPolyHedronHelper::SolidPolyHedronHelper ( const std::string& Name )
 {}
 
 // ============================================================================
-/// destructor
-// ============================================================================
-SolidPolyHedronHelper::~SolidPolyHedronHelper()
-{
-  m_ph_planes.clear();
-  m_ph_vertices.clear();
-}
-
-// ============================================================================
 /// set parameters for bounding solids (box, sphere and cylinder)
 // ============================================================================
 void SolidPolyHedronHelper::setBP()

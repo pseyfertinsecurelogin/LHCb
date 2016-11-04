@@ -12,6 +12,8 @@
          one of the FPGA processing stages. The object is much more simple than
          VeloFullFPGADigit (has only one data member)"
    name="VeloDigit"
+    final = "TRUE"
+    defaultdestructor="FALSE"
    location="Raw/Velo/Digits"
   >
    <import name="Kernel/VeloChannelID"/>

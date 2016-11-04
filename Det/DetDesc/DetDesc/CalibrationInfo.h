@@ -1,8 +1,5 @@
-//$Id: CalibrationInfo.h,v 1.1 2006-04-20 14:39:55 ranjard Exp $
 #ifndef DETDESC_CALIBRATIONINFO_H
 #define DETDESC_CALIBRATIONINFO_H 1
-
-#include <string>
 
 // Base classes
 #include "ConditionInfo.h"
@@ -13,23 +10,17 @@
    The simplest implementation of the ICalibration abstract interface,
     derived from the generic class ConditionInfo.
 
-    @author Andrea Valassi 
+    @author Andrea Valassi
     @date December 2001
 *///--------------------------------------------------------------------------
 
-class CalibrationInfo: public ConditionInfo,
-                       virtual public ICalibration
+struct CalibrationInfo: ConditionInfo, virtual ICalibration
 {
-
- public: 
-  
   /// Constructor
-  CalibrationInfo( IDetectorElement* de,
-		   const std::string& condition );
-
-  /// Destructor 
-  virtual ~CalibrationInfo();
-  
+  // ROOT dictionaries don't like
+  // using ConditionInfo::ConditionInfo;
+  CalibrationInfo( IDetectorElement* de, const std::string& condition ) 
+  : ConditionInfo(de,condition) {}
 };
 
 #endif // DETDESC_CALIBRATIONINFO_H

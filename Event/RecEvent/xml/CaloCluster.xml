@@ -19,6 +19,7 @@
     id               = "&CLID_CaloCluster;"
     author           = "Vanya Belyaev Ivan.Belyaev@itep.ru"
     stdVectorTypeDef = "TRUE"
+    defaultdestructor="FALSE"
     >
   <desc> *
   *

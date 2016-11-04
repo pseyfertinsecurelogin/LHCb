@@ -6,7 +6,11 @@
     <class 
       name     = "LinkReference"
       author   = "Olivier Callot"
-      desc     = "Entry to get a reference to a keyed object" >
+      desc     = "Entry to get a reference to a keyed object" 
+      virtual = "FALSE"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
+      >
       &StlVector;
 
       <constructor 
@@ -49,6 +53,8 @@ m_weight    = weight;
       name        = "LinksByKey" 
       author      = "OlivierCallot" 
       desc        = "Link of an object to Keyed objects" 
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
       id          = "400">
 
       <base   name = "DataObject"/>

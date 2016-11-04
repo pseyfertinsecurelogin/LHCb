@@ -26,7 +26,7 @@
 // ============================================================================
 class IDataProviderSvc;
 class IMessageSvc;
-class IDetectorElement;
+struct IDetectorElement;
 class ISvcLocator;
 class GaudiException;
 // ============================================================================

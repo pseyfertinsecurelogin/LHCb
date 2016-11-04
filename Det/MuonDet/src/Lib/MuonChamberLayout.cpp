@@ -17,7 +17,7 @@
 #include <vector>
 
 #ifdef __INTEL_COMPILER       // Disable ICC remark from ROOT
-  #pragma warning(disable:68) // Integer conversion resulted in a change of sign 
+  #pragma warning(disable:68) // Integer conversion resulted in a change of sign
 #endif
 
 //-----------------------------------------------------------------------------
@@ -33,11 +33,9 @@ static const Gaudi::XYZPoint origin{0,0,0};
 // Standard constructor, initializes variables
 //=============================================================================
 MuonChamberLayout::MuonChamberLayout()
-  : m_msgStream(NULL)
-  , m_msgSvc(NULL)
+  : m_msgSvc(NULL)
   , m_detSvc(NULL)
   , m_isM1defined(false)
-  , m_baseGeom(NULL)
 {
 
   MuonLayout R1(1,1);
@@ -45,6 +43,8 @@ MuonChamberLayout::MuonChamberLayout()
   MuonLayout R3(1,4);
   MuonLayout R4(2,8);
 
+  //@FIXME/@BUG: this creates another (temporary) instance, which then
+  //             goes out of scope immmediately ...
   //When initialized in this way needs un update for the Layout
   MuonChamberLayout(R1,R2,R3,R4,this->dataSvc(),this->msgSvc());
 }
@@ -56,7 +56,6 @@ MuonChamberLayout::MuonChamberLayout(MuonLayout R1,
                                      MuonLayout R4,
                                      IDataProviderSvc* detSvc,
                                      IMessageSvc *msgSvc)
-  : m_msgStream(NULL), m_baseGeom(NULL)
 {
 
 
@@ -66,7 +65,7 @@ MuonChamberLayout::MuonChamberLayout(MuonLayout R1,
   m_layout[2] = R3;
   m_layout[3] = R4;
   m_detSvc = detSvc;
-  m_msgSvc =msgSvc;
+  m_msgSvc = msgSvc;
   //Performing vectors and grid initialization
   initialize();
 }
@@ -86,7 +85,7 @@ StatusCode MuonChamberLayout::initialize( ) {
   if (debug)
     msgStream()<<MSG::INFO<< "Retrieved M1 definition status: " << m_isM1defined <<endmsg;
 
-  m_baseGeom = new MuonBasicGeometry(m_detSvc, m_msgSvc);
+  m_baseGeom = std::make_unique<MuonBasicGeometry>(m_detSvc, m_msgSvc);
 
   // GPGP
   //Grid initialization N.B. these numbers are already defined in the MuonLayout
@@ -114,14 +113,6 @@ StatusCode MuonChamberLayout::initialize( ) {
   return sc;
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-MuonChamberLayout::~MuonChamberLayout() {
-  delete m_msgStream; 
-  m_msgStream = NULL;
-  delete m_baseGeom;
-}
 
 void MuonChamberLayout::Copy(MuonChamberLayout &lay) {
   //Copy constructor
@@ -197,9 +188,6 @@ void MuonChamberLayout::returnChambers(int sta, float st_x, float st_y, int x_di
   if(debug) {
     msgStream()<<MSG::DEBUG<<"Exiting from chamber creation "<<endmsg;
   }
-
-
-  return;
 }
 
 void MuonChamberLayout::chamberXY(int sx, int sy, int shx, int shy,
@@ -353,18 +341,14 @@ void MuonChamberLayout::chamberXY(int sx, int sy, int shx, int shy,
                  << " yIndex " << fy <<endmsg;
     }
 
-
-
   } else {
-    if( UNLIKELY( msgStream().level() <= MSG::DEBUG ) ) 
+    if( UNLIKELY( msgStream().level() <= MSG::DEBUG ) )
       msgStream()<<MSG::DEBUG<< "Chamber " << chN
                  << " in R" << reg
                  << " xIndex " << fx
                  << " yIndex " << fy
                  << " is not in TES/xml. " <<endmsg;
   }
-
-  return;
 }
 
 int MuonChamberLayout::findRegion(int chamber) const {
@@ -374,7 +358,7 @@ int MuonChamberLayout::findRegion(int chamber) const {
     if(chamber < offset[reg]) break;
   }
   if(reg>3){
-    if( UNLIKELY( msgStream().level() <= MSG::DEBUG ) ) 
+    if( UNLIKELY( msgStream().level() <= MSG::DEBUG ) )
       msgStream()<<MSG::DEBUG<<"Region not found for chamber: "<<chamber<<
         ". Go back and check the code!"<<endmsg;
     reg = -1;
@@ -407,7 +391,6 @@ void MuonChamberLayout::chamberMostLikely(float x,float y, int station,
     msgStream()<<MSG::INFO <<"Matrix Index problem!!!!"<<endmsg;
   }
 
-  return;
 }
 
 //Returns the Tile for a given chamber
@@ -562,7 +545,6 @@ void MuonChamberLayout::gridPosition(float x, float y, int iS, int &idx,
     }
 
   }
-  return;
 }
 
 //GPGP also these numbers can go to DDDB
@@ -965,8 +947,8 @@ StatusCode MuonChamberLayout::fillSystemGrids(DeMuonChamber *deChmb,
   }
 
   if(debug) {
-    //    msgStream() << MSG::DEBUG << "Grid "<< deChmb->getGridName() 
-    msgStream() << MSG::INFO << "Stat/Region "<<stat<<"/"<<reg<<" Grid "<< deChmb->getGridName() 
+    //    msgStream() << MSG::DEBUG << "Grid "<< deChmb->getGridName()
+    msgStream() << MSG::INFO << "Stat/Region "<<stat<<"/"<<reg<<" Grid "<< deChmb->getGridName()
                 <<"  data:: "<<grX/m_cgX.at(reg)<<" "<<grY/m_cgY.at(reg)
                 <<" "<<SgrX/m_cgX.at(reg)<<" "<<SgrY/m_cgY.at(reg)
                 <<" ; Map:: "<<xm0<<" "<<ym0<<" "<<xm1<<" "<<ym1<<endmsg;
@@ -1063,7 +1045,7 @@ StatusCode MuonChamberLayout::getXYZChamberTile(const LHCb::MuonTileID& tile,
   unsigned int station = tile.station();
   unsigned int region  = tile.region();
 
-  if( UNLIKELY( msgStream().level() <= MSG::DEBUG ) ) 
+  if( UNLIKELY( msgStream().level() <= MSG::DEBUG ) )
     msgStream() << MSG::DEBUG<<" Get XYZ Chamber Tile " <<chamberNum<<" "<<station<<" "<<region<<endmsg;
 
   StatusCode sc = getXYZChamber(station,region,chamberNum,
@@ -1105,22 +1087,22 @@ StatusCode MuonChamberLayout::getXYZ(const int& station,
     while(re >= 1) {encode += MaxRegions[re-1]; re--;}
   }
   muChamber = m_ChVec.at(encode);
-  
+
   double Dx(0.),Dy(0.),Dz(0.);
-  
+
   if( -1 == gapNum ){
-    
+
     //I'm intrested in the Chamber, not the gaps
     IGeometryInfo* cInfo = muChamber->geometry();
     Gaudi::Transform3D vTransForm = cInfo->toGlobalMatrix();
-    
+
     Gaudi::XYZVector vtrans;    Gaudi::Rotation3D vrota;
     vTransForm.GetDecomposition(vrota,vtrans);
-    
+
     x = vtrans.x();
     y = vtrans.y();
     z = vtrans.z();
-    
+
     // get ILVolume pointer
     const ILVolume *logVol = cInfo->lvolume();
     // Get the solid
@@ -1133,7 +1115,7 @@ StatusCode MuonChamberLayout::getXYZ(const int& station,
       return StatusCode::FAILURE;
     }
 
-    
+
     const ISolid *GVso = muChamber->getFirstGasGap()->lvolume()->solid();
     // check these really are boxes (they ought to be!)
     const SolidBox *GVbox = dynamic_cast<const SolidBox *>(GVso);
@@ -1142,14 +1124,14 @@ StatusCode MuonChamberLayout::getXYZ(const int& station,
                   << endmsg;
       return StatusCode::FAILURE;
     }
-    
+
     //Take the deltax and deltay from
     //Gas volume dimension
     Dx   = GVbox->xHalfLength();
     Dy   = GVbox->yHalfLength();
     //While take the deltaz from the whole chamber dimensions
     Dz   = box->zHalfLength();
-    
+
     Gaudi::XYZPoint cnt(0,0,0);
     Gaudi::XYZPoint crn(Dx,Dy,Dz);
     if(toGlob) {
@@ -1159,7 +1141,7 @@ StatusCode MuonChamberLayout::getXYZ(const int& station,
       deltax = Dx;      deltay = Dy;      deltaz = Dz;
     }
   } else {
-    
+
     // Going down to the needed gap
     // active volume is defined by the gas gaps, want first and last
     IGeometryInfo* cInfo = muChamber->geometry();
@@ -1169,13 +1151,13 @@ StatusCode MuonChamberLayout::getXYZ(const int& station,
 
     if( !gap ){
 
-      msgStream() << MSG::ERROR << "Could not read gas gaps  from TDS" 
+      msgStream() << MSG::ERROR << "Could not read gas gaps  from TDS"
                   << endmsg;
       return StatusCode::FAILURE;
     }
 
     //Found the needed gap
-    //FoundGap = true;  
+    //FoundGap = true;
     const ISolid *solid = gap->lvolume()->solid();
     const SolidBox *box = dynamic_cast<const SolidBox *>(solid);
     if( !box ){
@@ -1183,9 +1165,9 @@ StatusCode MuonChamberLayout::getXYZ(const int& station,
                   << endmsg;
       return StatusCode::FAILURE;
     }
-    
-    
-    
+
+
+
     //Take the deltax and deltay from
     //Gas volume dimension
     Dx   = box->xHalfLength();
@@ -1195,7 +1177,7 @@ StatusCode MuonChamberLayout::getXYZ(const int& station,
 
     Gaudi::XYZPoint cnt(0,0,0);
     Gaudi::XYZPoint crn(Dx,Dy,Dz);
-    
+
     if(toGlob) {
       Gaudi::XYZPoint pointInCh=gapLayer->toMother(origin);
       Gaudi::XYZPoint pointInGlobal=muChamber->geometry()->toGlobal(pointInCh);
@@ -1203,12 +1185,12 @@ StatusCode MuonChamberLayout::getXYZ(const int& station,
       x=pointInGlobal.x();
       y=pointInGlobal.y();
       z=pointInGlobal.z();
-	
+
       localToglobal(cInfo,pointInCh,crnInCh,deltax,deltay,deltaz);
     } else {
       x = y = z = 0;
       deltax = Dx;      deltay = Dy;      deltaz = Dz;
-    }    
+    }
   }
   return StatusCode::SUCCESS;
 }
@@ -1289,7 +1271,7 @@ StatusCode MuonChamberLayout::getXYZPad(const LHCb::MuonTileID& tile,
     ( ( static_cast<double>(yOffset) / static_cast<double>(yRatio) ) *
       (2.0 * cDeltay ) );
 
-  if ( m_debug ) 
+  if ( m_debug )
     msgStream() << MSG::DEBUG <<" getXYZPad:: XY tem info  "
                 <<xOffset<<" "<<yOffset <<" "<<cx<<" "<<cDeltax<<" "
                 <<cy<<" "<<cDeltay<<" "<<x<<" "<<y<<endmsg;
@@ -1308,7 +1290,7 @@ StatusCode MuonChamberLayout::getXYZPad(const LHCb::MuonTileID& tile,
   Gaudi::XYZPoint cnt(x,y,z);
   Gaudi::XYZPoint crn(x+Dx,y+Dy,z+Dz);
 
-  auto myChs = createChambersFromTile( { chamTile }); 
+  auto myChs = createChambersFromTile( { chamTile });
 
   //Correct XYZ and Deltas for local to Global transformation
   deltax = Dx;  deltay = Dy;  deltaz = Dz;
@@ -1675,7 +1657,7 @@ void MuonChamberLayout::localToglobal(const IGeometryInfo* gInfo,
   dz = fabs(cent_global.z() - corn_global.z());
 }
 
-std::vector<DeMuonChamber*> 
+std::vector<DeMuonChamber*>
 MuonChamberLayout::createChambersFromTile(std::vector<LHCb::MuonTileID> mytiles){
 
   std::vector<DeMuonChamber*> myChambers;

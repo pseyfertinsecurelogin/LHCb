@@ -39,7 +39,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  inline const CLID& clID() const final
+  inline const CLID& clID() const override final
   {
     return classID();
   }
@@ -56,7 +56,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize() final;
+  StatusCode initialize() override final;
 
 private:
 
@@ -71,7 +71,7 @@ private:
    * @return A pointer to the HLT refractive index interpolated function of the radiator
    * @retval nullptr No interpolation function
    */
-  virtual const Rich::TabulatedProperty1D* generateHltRefIndex() const;
+  const Rich::TabulatedProperty1D* generateHltRefIndex() const override;
 
   /** Method for the calculation of the refractive index from the Sellmeir
    *  coeficients and update of the Tabulated Property */

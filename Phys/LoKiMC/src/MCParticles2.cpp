@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -34,7 +33,6 @@ LoKi::MCParticles::PolarizationAngle::PolarizationAngle
   const LoKi::MCChild::Selector& parent       ,      
   const bool                     mother       )
   : LoKi::AuxFunBase ( std::tie ( daughter , parent , mother ) ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ()
   , m_first        ( daughter )
   , m_second       ( parent   )
   , m_mother       ( mother   ) 
@@ -47,7 +45,6 @@ LoKi::MCParticles::PolarizationAngle::PolarizationAngle
   const Decays::IMCDecay::iTree& parent   , 
   const bool                   mother   )
   : LoKi::AuxFunBase ( std::tie ( daughter , parent , mother ) ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ()
   , m_first        ( daughter )
   , m_second       ( parent   )
   , m_mother       ( mother   ) 
@@ -61,7 +58,6 @@ LoKi::MCParticles::PolarizationAngle::PolarizationAngle
   const bool                   mother    , 
   const bool                   decayOnly ) 
   : LoKi::AuxFunBase ( std::tie ( daughter , parent , mother , decayOnly ) ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ()
   , m_first        ( daughter , decayOnly )
   , m_second       ( parent   , decayOnly )
   , m_mother       ( mother   ) 
@@ -75,7 +71,6 @@ LoKi::MCParticles::PolarizationAngle::PolarizationAngle
   const bool                   mother    , 
   const bool                   decayOnly ) 
   : LoKi::AuxFunBase ( std::tie ( daughter , parent , mother , decayOnly ) ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ()
   , m_first        ( daughter , decayOnly )
   , m_second       ( parent   , decayOnly )
   , m_mother       ( mother   ) 
@@ -89,15 +84,10 @@ LoKi::MCParticles::PolarizationAngle::PolarizationAngle
   const bool                   mother       , 
   const std::string&           factory      ) 
   : LoKi::AuxFunBase ( std::tie ( daughter , parent , mother , factory ) ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ()
   , m_first        ( daughter , factory )
   , m_second       ( parent   , factory )
   , m_mother       ( mother       ) 
 {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::MCParticles::PolarizationAngle::~PolarizationAngle() {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -356,10 +346,6 @@ StatusCode LoKi::MCParticles::SinChi::getComponents
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::MCParticles::SinChi::~SinChi() {} 
-// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::MCParticles::SinChi*
@@ -511,10 +497,6 @@ LoKi::MCParticles::CosChi::CosChi
                                 particle4    , 
                                 factory      )
 {}
-// ============================================================================
-// MANDATORY: virtualdestructor
-// ============================================================================
-LoKi::MCParticles::CosChi::~CosChi() {} 
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -668,10 +650,6 @@ LoKi::MCParticles::AngleChi::AngleChi
                                 factory      )
 {}
 // ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::MCParticles::AngleChi::~AngleChi() {} 
-// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::MCParticles::AngleChi*
@@ -824,10 +802,6 @@ LoKi::MCParticles::CosThetaTr::CosThetaTr
                                   particle4    , 
                                   factory      )
 {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::MCParticles::CosThetaTr::~CosThetaTr() {} 
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -984,10 +958,6 @@ LoKi::MCParticles::SinPhiTr::SinPhiTr
                                     factory      )
 {}
 // ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::MCParticles::SinPhiTr::~SinPhiTr() {} 
-// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::MCParticles::SinPhiTr*
@@ -1139,10 +1109,6 @@ LoKi::MCParticles::CosPhiTr::CosPhiTr
                                   particle4    , 
                                   factory      )
 {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::MCParticles::CosPhiTr::~CosPhiTr() {} 
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -1301,10 +1267,6 @@ LoKi::MCParticles::AnglePhiTr::AnglePhiTr
                                   particle4    , 
                                   factory      )
 {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::MCParticles::AnglePhiTr::~AnglePhiTr() {} 
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================

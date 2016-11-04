@@ -22,13 +22,6 @@ MaterialException::MaterialException( const std::string   &  message      ,
   , m_me_mat      ( mat     )
 {}
 ////////////////////////////////////////////////////////////////////////////////////////
-MaterialException::MaterialException( const MaterialException& right )
-  : std::exception(), GaudiException( right          )
-  , m_me_mat      ( right.m_me_mat )
-{}
-////////////////////////////////////////////////////////////////////////////////////////
-MaterialException::~MaterialException() throw() { m_me_mat = 0 ; }
-////////////////////////////////////////////////////////////////////////////////////////
 std::ostream& MaterialException::printOut( std::ostream& os ) const
 {
   ///

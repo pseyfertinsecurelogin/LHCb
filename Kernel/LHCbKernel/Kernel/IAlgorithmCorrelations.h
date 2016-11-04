@@ -8,7 +8,6 @@
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
-static const InterfaceID IID_IAlgorithmCorrelations ( "IAlgorithmCorrelations", 1, 0 );
 
 /** @class IAlgorithmCorrelations IAlgorithmCorrelations.h Kernel/IAlgorithmCorrelations.h
  *
@@ -26,11 +25,10 @@ static const InterfaceID IID_IAlgorithmCorrelations ( "IAlgorithmCorrelations", 
  *  @author Patrick KOPPENBURG
  *  @date   2005-04-19
  */
-class IAlgorithmCorrelations : virtual public IAlgTool {
-public:
+struct IAlgorithmCorrelations : extend_interfaces<IAlgTool> {
 
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_IAlgorithmCorrelations; }
+  DeclareInterfaceID( IAlgorithmCorrelations, 2, 0 );
   ///< Set algorithms for which correlations are wanted (column, subject)
   virtual StatusCode algorithms(const std::vector<std::string>&) = 0 ;
   ///< (optional) Set algorithms to check correlations against (row, object)

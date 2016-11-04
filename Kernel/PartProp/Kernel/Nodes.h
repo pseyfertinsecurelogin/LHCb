@@ -1,5 +1,3 @@
-// $Id$
-// ============================================================================
 #ifndef DAVINCI_DECAYNODES_H
 #define DAVINCI_DECAYNODES_H 1
 // ============================================================================
@@ -67,16 +65,15 @@ namespace Decays
       /// MANDATORY: default constructor
       Invalid() = default;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Invalid* clone () const  ;
+       Invalid* clone () const   override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& /* p */ ) const ;
+      bool operator() ( const LHCb::ParticleID& /* p */ ) const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       /// MANDATORY: check the validity
-      virtual bool valid() const ;
+      bool valid() const  override;
       /// MANDATORY: the proper validation of the node
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -265,16 +262,15 @@ namespace Decays
       /// constructor from list of nodes
       Or ( const Decays::NodeList& nodes ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Or* clone () const ;
+       Or* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const ;
+      bool operator() ( const LHCb::ParticleID& pid ) const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       /// MANDATORY: check the validity
-      virtual bool valid () const ;
+      bool valid () const  override;
       /// MANDATORY: the proper validation of the node
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
       // ======================================================================
     protected:
       // ======================================================================
@@ -323,16 +319,15 @@ namespace Decays
       /// constructor from list of nodes
       And ( const Decays::NodeList& nodes ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  And* clone () const ;
+      And* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& p ) const ;
+      bool operator() ( const LHCb::ParticleID& p ) const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       /// MANDATORY: check the validity
-      virtual bool valid () const ;
+      bool valid () const  override;
       /// MANDATORY: the proper validation of the node
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
       // ======================================================================
     protected:
       // ======================================================================
@@ -368,16 +363,15 @@ namespace Decays
       /// constructor from the node
       Not ( const Decays::iNode& node )  ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Not* clone () const ;
+      Not* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const ;
+      bool operator() ( const LHCb::ParticleID& pid ) const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       /// MANDATORY: check the validity
-      virtual bool valid () const ;
+      bool valid () const  override;
       /// MANDATORY: the proper validation of the node
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
       // ======================================================================
     public:
       // ======================================================================

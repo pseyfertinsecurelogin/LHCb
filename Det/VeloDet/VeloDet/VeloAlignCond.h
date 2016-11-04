@@ -1,4 +1,3 @@
-// $Id: VeloAlignCond.h,v 1.4 2009-07-27 10:36:15 jonrob Exp $
 #ifndef VELODET_VELOALIGNCOND_H
 #define VELODET_VELOALIGNCOND_H 1
 
@@ -50,16 +49,16 @@ public:
   virtual ~VeloAlignCond(); ///< Destructor
 
   /// Initialize the internal structures (transformation matrices)
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   using AlignmentCondition::update;
   /// Update internal data from another condition.
-  virtual void update(ValidDataObject& obj);
+  void update(ValidDataObject& obj) override;
 
   /// Class ID of this instance
-  inline virtual const CLID& clID() const { return classID(); }
+  inline const CLID& clID() const override { return classID(); }
   /// Class ID of this class
-  inline static  const CLID& classID() { return CLID_VeloAlignCond; };
+  inline static  const CLID& classID() { return CLID_VeloAlignCond; }
 
   /// Creates the transformation from the motion system
   Gaudi::Transform3D motionSystemTransform() const ;
@@ -67,10 +66,10 @@ public:
 protected:
 
   /// @see AlignmentCondition
-  virtual StatusCode makeMatrices();
+  StatusCode makeMatrices() override;
 
   /// @see AlignmentCondition
-  virtual void updateParams(const Gaudi::Transform3D& matrixInv);
+  void updateParams(const Gaudi::Transform3D& matrixInv) override;
 
   /// Commodity function to register to the UpdateMgrSvc for an offset condition.
   virtual void i_registerOffsetCond(const PositionPaths::ValueType &offsetCond, Condition *&cond,

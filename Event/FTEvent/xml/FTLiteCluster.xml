@@ -11,6 +11,8 @@
             author      = "Olivier Callot"
             desc        = "Lite cluster, all information on 32 bits for fast container"
             location    = "Raw/FT/LiteClusters"
+            final  = "TRUE"
+            defaultdestructor = "FALSE"
             serializers = "FALSE" >
 
       <import name="Kernel/FastClusterContainer"/>

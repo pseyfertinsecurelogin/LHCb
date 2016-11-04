@@ -137,9 +137,9 @@ const std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs (int source ) {
 //=========================================================================
 //  Decode the adcs of a single bank (given by bank pointer)
 //=========================================================================
-const std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs ( LHCb::RawBank* bank ){
+const std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs ( const LHCb::RawBank& bank ){
   clear();
-  if( !getData( *bank ))clear();
+  if( !getData( bank ))clear();
   return m_data ;
 }
 

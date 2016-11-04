@@ -1,9 +1,8 @@
-// $Id$
 // ============================================================================
-#ifndef LOKI_IGENHYBRIDFACTORY_H 
+#ifndef LOKI_IGENHYBRIDFACTORY_H
 #define LOKI_IGENHYBRIDFACTORY_H 1
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 // STD & STL
 // ============================================================================
@@ -14,85 +13,82 @@
 #include "GaudiKernel/IAlgTool.h"
 #include "GaudiKernel/StatusCode.h"
 // ============================================================================
-// LoKi 
+// LoKi
 // ============================================================================
 #include "LoKi/GenTypes.h"
 // ============================================================================
 /** @file LoKi/IGenHybridFactory.h
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 namespace LoKi
 {
   // ==========================================================================
   /** @class IGenHybridFactory IMCHybridFactory.h LoKi/IMCHybridFactory.h
-   *  The abstract interface to "hybrid factory"  
+   *  The abstract interface to "hybrid factory"
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-06-10
    */
   class GAUDI_API IGenHybridFactory : public virtual IAlgTool
   {
-  public: 
+  public:
     // ========================================================================
     /// Return the unique interface ID
     static const InterfaceID& interfaceID() ;
     // ========================================================================
   public:
     // ========================================================================
-    // predicates 
+    // predicates
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param cuts the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param cuts the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
-    ( const std::string& pycode       , 
-      LoKi::Types::GCut& cuts         , 
+    ( const std::string& pycode       ,
+      LoKi::Types::GCut& cuts         ,
       const std::string& context = "" )  = 0 ;
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param cuts the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param cuts the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
-    ( const std::string&  pycode       , 
+    ( const std::string&  pycode       ,
       LoKi::Types::GVCut& cuts         ,
       const std::string&  context = "" )  = 0 ;
     // ========================================================================
   public:
     // ========================================================================
-    // functions 
+    // functions
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param func the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param func the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
     ( const std::string& pycode       ,
-      LoKi::Types::GFun& func         , 
+      LoKi::Types::GFun& func         ,
       const std::string& context = "" )  = 0 ;
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param func the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param func the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
     ( const std::string&  pycode       ,
@@ -101,24 +97,24 @@ namespace LoKi
     // ========================================================================
   public:
     // ========================================================================
-    // maps 
+    // maps
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param func the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param func the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
     ( const std::string& pycode       ,
-      LoKi::Types::GMap& func         , 
+      LoKi::Types::GMap& func         ,
       const std::string& context = "" )  = 0 ;
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param func the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param func the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
     ( const std::string&  pycode       ,
@@ -127,24 +123,24 @@ namespace LoKi
     // ========================================================================
   public:
     // ========================================================================
-    // pipes 
+    // pipes
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param func the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param func the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
     ( const std::string&  pycode       ,
-      LoKi::Types::GPipe& func         , 
+      LoKi::Types::GPipe& func         ,
       const std::string&  context = "" )  = 0 ;
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param func the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param func the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
     ( const std::string&   pycode       ,
@@ -153,24 +149,24 @@ namespace LoKi
     // ========================================================================
   public:
     // ========================================================================
-    // fun-vals 
+    // fun-vals
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param func the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param func the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
     ( const std::string&    pycode       ,
-      LoKi::Types::GFunVal& func         , 
+      LoKi::Types::GFunVal& func         ,
       const std::string&    context = "" )  = 0 ;
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param func the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param func the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
     ( const std::string&     pycode       ,
@@ -179,55 +175,50 @@ namespace LoKi
     // ========================================================================
   public:
     // ========================================================================
-    // cut-vals 
+    // cut-vals
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param func the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param func the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
     ( const std::string&    pycode       ,
-      LoKi::Types::GCutVal& func         , 
+      LoKi::Types::GCutVal& func         ,
       const std::string&    context = "" )  = 0 ;
     // ========================================================================
   public:
     // ========================================================================
-    // sources 
+    // sources
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param func the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param func the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
     ( const std::string&     pycode       ,
-      LoKi::Types::GSource&  func         , 
+      LoKi::Types::GSource&  func         ,
       const std::string&     context = "" )  = 0 ;
     // ========================================================================
-    /** "Factory": get the the object form python code 
+    /** "Factory": get the the object form python code
      *  @param pycode the python pseudo-code of the function
-     *  @param func the placeholder for the result 
-     *  @param context context code fragment to be executed 
-     *  @return StatusCode 
+     *  @param func the placeholder for the result
+     *  @param context context code fragment to be executed
+     *  @return StatusCode
      */
     virtual StatusCode get
     ( const std::string&      pycode       ,
       LoKi::Types::GVSource&  func         ,
       const std::string&      context = "" )  = 0 ;
     // ========================================================================
-  protected:
-    // ========================================================================
-    /// virtual & protecte destructor 
-    virtual ~IGenHybridFactory( ); // Destructor
-    // ========================================================================
   } ;
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_IGENHYBRIDFACTORY_H
 // ============================================================================

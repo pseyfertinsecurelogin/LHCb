@@ -1392,11 +1392,11 @@ namespace LoKi
         , m_dump   ( dump   )
       {}
       /// MANDATORY: clone method("virtual constructor")
-      virtual  Dump_* clone() const { return new Dump_ ( *this ) ; }
+      Dump_* clone() const override { return new Dump_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: the basic printout method
-      virtual std::ostream& fillStream( std::ostream& s ) const
+      std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "dump"; }
       // ======================================================================
     private:

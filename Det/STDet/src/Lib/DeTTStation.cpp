@@ -28,10 +28,6 @@ DeTTStation::DeTTStation( const std::string& name ) :
 }
 
 
-DeTTStation::~DeTTStation() {
-
-}
-
 const CLID& DeTTStation::clID () const
 {
   return DeTTStation::classID() ;

@@ -30,13 +30,13 @@ class LHCbTimingAuditor final : public extends1<Auditor, IIncidentListener>
 
 public:
 
-  virtual void before(StandardEventType evt, INamedInterface* alg);
-  virtual void after(StandardEventType evt, INamedInterface* alg, const StatusCode &sc);
+  void before(StandardEventType evt, INamedInterface* alg) override;
+  void after(StandardEventType evt, INamedInterface* alg, const StatusCode &sc) override;
 
   using Auditor::before; // avoid hiding base-class methods
-  virtual void before(CustomEventTypeRef evt, const std::string& name);
+  void before(CustomEventTypeRef evt, const std::string& name) override;
   using Auditor::after; // avoid hiding base-class methods
-  virtual void after(CustomEventTypeRef evt, const std::string& name, const StatusCode &sc);
+  void after(CustomEventTypeRef evt, const std::string& name, const StatusCode &sc) override;
 
 private:
 
@@ -49,12 +49,12 @@ private:
 public:
 
   /// Inform that a new incident has occurred
-  virtual void handle ( const Incident& ) ;
+  void handle ( const Incident& ) override;
 
 public:
 
-  virtual StatusCode initialize () ;
-  virtual StatusCode finalize   () ;
+  StatusCode initialize ()  override;
+  StatusCode finalize   ()  override;
 
 public:
 
@@ -66,7 +66,7 @@ public:
   {
     declareProperty ( "OptimizedForDOD" , m_goodForDOD ) ;
     declareProperty ( "TimingTool" , m_timingToolName="LHCbSequencerTimerTool/TIMER" ) ;
-  } ;
+  }
   /// virtual destructor
   virtual ~LHCbTimingAuditor() {}
 private:
@@ -100,7 +100,7 @@ private:
 
   // Whether the timing has been saved already
   bool                 m_histoSaved{false};
-  
+
   //name of the timing tool to be used
   std::string m_timingToolName;
 
@@ -307,7 +307,7 @@ void LHCbTimingAuditor::before(CustomEventTypeRef evt, const std::string& name)
     timer = m_timer->addTimer( nick ) ;
     m_mapUser[nick] = timer;
   }
-  else 
+  else
   {
     timer = found->second;
   }

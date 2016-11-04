@@ -6,7 +6,7 @@
 
 namespace OTDAQ
 {
-  class RawBank
+  class RawBank final
   {
   public:
     typedef std::vector<Gol> GolContainer ;
@@ -19,7 +19,6 @@ namespace OTDAQ
     const OTSpecificHeader& header() const { return m_header ; }
     const GolContainer& gols() const { return m_gols ; }
     
-  public:
     GolContainer& gols() { return m_gols ; }
     
   private:

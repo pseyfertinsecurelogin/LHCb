@@ -1,4 +1,4 @@
-#ifndef VELOCLUSTERFILTER_H 
+#ifndef VELOCLUSTERFILTER_H
 #define VELOCLUSTERFILTER_H 1
 
 #include "Kernel/VeloChannelID.h"
@@ -21,14 +21,14 @@ class VeloClusterFilter : public GaudiAlgorithm {
 public:
   VeloClusterFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual StatusCode initialize();
-  virtual StatusCode execute   ();
+  StatusCode initialize() override;
+  StatusCode execute   () override;
 
-  bool passesFilter(LHCb::VeloChannelID id);
-  void incrementCounters(LHCb::VeloChannelID, int&, int&, int&);
+private:
+  bool passesFilter(LHCb::VeloChannelID id) const;
 
-protected:
   std::string m_filterCriterion;
+  enum filter_t { ALL, LEFT, RIGHT, R, PHI, PU, OVERLAP } m_filter = ALL;
 
   AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_inputLiteClusterDh = {LHCb::VeloLiteClusterLocation::Default, Gaudi::DataHandle::Reader, this };
   AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_outputLiteClusterDh = {"/Event/Raw/Velo/LiteClustersCopy", Gaudi::DataHandle::Writer, this };
@@ -41,7 +41,7 @@ protected:
   int m_maxNRClustersCut;
   int m_maxNPhiClustersCut;
   int m_maxNClustersCut;
- private:
+
   DeVelo* m_velo = nullptr;                  ///< Detector element
 };
 #endif // VELOCLUSTERFILTER_H

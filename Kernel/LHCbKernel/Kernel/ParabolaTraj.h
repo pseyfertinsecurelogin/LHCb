@@ -26,11 +26,8 @@ namespace LHCb
 
   public:
 
-    /// Destructor
-    virtual ~ParabolaTraj() {};
-
     // clone thyself...
-    virtual std::unique_ptr<Trajectory> clone() const;
+    std::unique_ptr<Trajectory> clone() const override;
 
     /// Constructor from a (middle) point, a (unit) direction vector,
     /// a curvature vector and the pair of begin- and endpoints.
@@ -40,42 +37,42 @@ namespace LHCb
                   const Trajectory::Range& range );
 
     /// Point on the trajectory at arclength from the starting point
-    virtual Point position( double arclength ) const;
+    Point position( double arclength ) const override;
 
     /// First derivative of the trajectory at arclength from the starting point
-    virtual Vector direction( double arclength ) const;
+    Vector direction( double arclength ) const override;
 
     /// Second derivative of the trajectory at arclength from the starting point
-    virtual Vector curvature( double arclength=0 ) const;
+    Vector curvature( double arclength=0 ) const override;
 
     /// Create a parabolic approximation to the trajectory
     /// at arclength from the starting point
-    virtual void expansion( double arclength,
-                            Point& p,
-                            Vector& dp,
-                            Vector& ddp ) const;
+    void expansion( double arclength,
+                    Point& p,
+                    Vector& dp,
+                    Vector& ddp ) const override;
 
     /// Determine the distance in arclenghts to the
     /// closest point on the trajectory to a given point
-    virtual double muEstimate( const Point& point ) const;
+    double muEstimate( const Point& point ) const override;
 
     /// Number of arclengths until deviation of the trajectory from the
     /// expansion reaches the given tolerance.
-    virtual double distTo1stError( double arclength,
-                                   double tolerance,
-                                   int pathDirection = +1 ) const;
+    double distTo1stError( double arclength,
+                           double tolerance,
+                           int pathDirection = +1 ) const override;
 
     /// Number of arclengths until deviation of the trajectory from the
     /// expansion reaches the given tolerance.
-    virtual double distTo2ndError( double arclength,
-                                   double tolerance,
-                                   int pathDirection = +1 ) const;
+    double distTo2ndError( double arclength,
+                           double tolerance,
+                           int pathDirection = +1 ) const override;
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because ParabolaTraj is parameterized in
     /// arclength.
     using Trajectory::arclength;
-    virtual double arclength(double mu1, double mu2) const { return mu2 - mu1 ; }
+    double arclength(double mu1, double mu2) const override { return mu2 - mu1 ; }
 
 
 #ifndef GOD_NOALLOC

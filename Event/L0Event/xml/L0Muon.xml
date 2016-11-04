@@ -7,6 +7,8 @@
 	   id  ='6002' 
 	   author='A. Tsaregorodtsev' 
 	   desc='L0Muon trigger candidate'
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
 	   stdVectorTypeDef = "TRUE">
       <desc> *  representing the output of the L0Muon trigger processor.</desc>
       <base name='KeyedObject&lt;int&gt;'/>

@@ -1,9 +1,9 @@
 // $Id:  $
-#ifndef L0CALOPRSRESETMONITOR_H 
+#ifndef L0CALOPRSRESETMONITOR_H
 #define L0CALOPRSRESETMONITOR_H 1
 
 // Include files
-// from Gaudi 
+// from Gaudi
 #include "GaudiAlg/GaudiHistoAlg.h"
 
 // from Event
@@ -21,22 +21,22 @@ class DeCalorimeter ;
  */
 
 class L0CaloPRSResetMonitor: public GaudiHistoAlg {
-  
+
 public:
   /// Standard constructor
   L0CaloPRSResetMonitor( const std::string& name , ISvcLocator* pSvcLocator ) ;
-  
+
   /// Standard destructor
-  virtual ~L0CaloPRSResetMonitor( ) ; 
-  
+  virtual ~L0CaloPRSResetMonitor( ) ;
+
   /// Initialization
-  virtual StatusCode initialize() ;
-  
+  StatusCode initialize()  override;
+
   /// Main execution routine: find empty boards
-  virtual StatusCode execute   () ;
+  StatusCode execute   ()  override;
 
 private:
-  
+
   DeCalorimeter * m_ecal ; ///< Pointer to Ecal detector element
 
   unsigned int m_nEvents ; ///< Counter of events

@@ -14,25 +14,23 @@ using namespace boost::spirit;
 namespace {
 
   /// Structure to easily prepare the parameter to add to the condition
-  struct TempParameter {
-    TempParameter():name(),param(){}
-    ~TempParameter() { }
+  struct TempParameter final {
     
     std::string name;
-    BasicParam* param;
+    std::unique_ptr<BasicParam> param;
     
+    TempParameter() = default;
+
     /// helper function
     template <class T>
     void setValue(T value){
-      if (param) delete param;
-      param = new Param<T>(value);
+      param = std::make_unique<Param<T>>(value);
     }
 
     /// helper function
     template <class T>
     void newVector(){
-      if (param) delete param;
-      param = new Param<std::vector<T> >();
+      param = std::make_unique<Param<std::vector<T>>>();
     }
 
     /// helper functor
@@ -41,7 +39,6 @@ namespace {
       TempParameter &temp;
       void operator () (char const*b, char const*e) const {
         temp.name = std::string(b,e);
-        //std::cout << "SetName " << temp.name << std::endl;
       }
     };
 
@@ -51,7 +48,6 @@ namespace {
       SetValue(TempParameter &par):temp(par){}
       TempParameter &temp;
       void operator () (T val) const {
-        //std::cout << "SetValue " << val << std::endl;
         temp.setValue<T>(val);
       }
     };
@@ -62,7 +58,6 @@ namespace {
       TempParameter &temp;
       void operator () (char const*b, char const*e) const {
         temp.setValue<std::string>(std::string(b,e));
-        //std::cout << "SetValueString " << std::string(b,e) << std::endl;
       }
     };
 
@@ -72,7 +67,6 @@ namespace {
       AddVector(TempParameter &par):temp(par){}
       TempParameter &temp;
       void operator () (char const*, char const*) const {
-        //std::cout << "AddVector " << std::string(b,e) << std::endl;
         temp.newVector<T>();
       }
     };
@@ -83,7 +77,6 @@ namespace {
       PushBack(TempParameter &par):temp(par){}
       TempParameter &temp;
       void operator () (T val) const {
-        //std::cout << "PushBack " << val << std::endl;
         temp.param->template get<std::vector<T> >().push_back(val);
       }
     };
@@ -93,7 +86,6 @@ namespace {
       PushBackString(TempParameter &par):temp(par){}
       TempParameter &temp;
       void operator () (char const*b, char const*e) const {
-        //std::cout << "PushBack " << val << std::endl;
         temp.param->get<std::vector<std::string> >().push_back(std::string(b,e));
       }
     };
@@ -104,8 +96,7 @@ namespace {
       TempParameter &temp;
       ParamValidDataObject &cond;
       void operator () (char const*, char const*) const {
-        //std::cout << "AddParam " << temp.name << " " << temp.param->toStr() << std::endl; 
-        cond.addBasicParam(temp.name,temp.param);
+        cond.addBasicParam(temp.name,*temp.param);
       }
     };
 
@@ -117,7 +108,6 @@ namespace {
     std::string &temp;
     void operator () (char const*b, char const*e) const {
       temp = std::string(b,e);
-      //std::cout << "SetString " << temp << std::endl;
     }
   };
   

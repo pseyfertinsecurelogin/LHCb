@@ -52,16 +52,16 @@ namespace Gaudi
   public:
     // ========================================================================
     /// standard initialization
-    virtual StatusCode initialize () ;
+    StatusCode initialize ()  override;
     /// standard finalization
-    virtual StatusCode finalize   () ;
+    StatusCode finalize   ()  override;
     /// the only one essential method
-    virtual StatusCode execute () ; // the only one essential method
+    StatusCode execute ()  override; // the only one essential method
     // ========================================================================
   public:
     // ========================================================================
     // handle the incident
-    void handle ( const Incident& inc ) ;
+    void handle ( const Incident& inc ) override;
     // ========================================================================
   protected:
     // ========================================================================

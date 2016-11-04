@@ -8,7 +8,7 @@
 //
 //	Author     : M.Frank
 //  Created    : 13/1/99
-//	Changes    : 
+//	Changes    :
 //
 //====================================================================
 #ifndef LHCB_OUTPUTSTREAMAGENT_H
@@ -21,10 +21,10 @@ class IRegistry;
 class LHCbOutputStream;
 
 /** @name The LHCbOutputStreamAgent class.
- 
+
   Data store Agent to traverse data store trees and select all
   items to be written to the output file.
- 
+
   @author Markus Frank
  */
 class LHCbOutputStreamAgent : virtual public IDataStoreAgent  {
@@ -36,6 +36,6 @@ public:
   /// Standard Destructor
   virtual ~LHCbOutputStreamAgent();
   /// Analysis callback
-  virtual bool analyse(IRegistry* dir, int level);
+  bool analyse(IRegistry* dir, int level) override;
 };
 #endif // LHCB_OUTPUTSTREAMAGENT_H

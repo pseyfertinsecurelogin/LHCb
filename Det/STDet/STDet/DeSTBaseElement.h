@@ -19,13 +19,10 @@ public:
   /** Constructor */
   DeSTBaseElement ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeSTBaseElement();
-
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** transform global to local point
   * @param  point global point

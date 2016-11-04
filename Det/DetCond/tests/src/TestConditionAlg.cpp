@@ -22,9 +22,9 @@ public:
 
   virtual ~TestConditionAlg( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 
@@ -195,7 +195,7 @@ public:
 
   virtual ~FinalizationEvtLoop() {}
 
-  virtual StatusCode initialize() {
+  StatusCode initialize() override {
     StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
     if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
 
@@ -209,11 +209,11 @@ public:
     return StatusCode::SUCCESS;
   }
 
-  virtual StatusCode execute   () {
+  StatusCode execute() override {
     return StatusCode::SUCCESS;
   }
 
-  virtual StatusCode finalize  () {
+  StatusCode finalize() override {
     Gaudi::Time t(m_initTime);
     const Gaudi::Time fin(m_finalTime);
     const Gaudi::TimeSpan step(m_step);
@@ -265,7 +265,7 @@ public:
 
   /// Override the initialize to ensure that the conditions are already loaded
   /// during the initialize.
-  StatusCode initialize() {
+  StatusCode initialize() override {
     StatusCode sc = TestConditionAlg::initialize();
     if (sc.isFailure()) return sc;
 

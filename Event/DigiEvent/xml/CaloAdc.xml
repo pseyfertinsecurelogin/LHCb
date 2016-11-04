@@ -17,6 +17,8 @@
   desc   = "@brief The ADC content for given cell"
   id     = "&CLID_CaloAdc;"
   author = "Olivier Callot"
+  final  = "TRUE"
+  defaultdestructor = "FALSE"
   >
   <desc> *
     *

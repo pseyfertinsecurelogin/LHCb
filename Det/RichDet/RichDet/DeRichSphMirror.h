@@ -51,7 +51,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const
+  const CLID& clID() const override
   {
     return classID();
   }
@@ -68,7 +68,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
    * Retrieves the centre of curvarute of this mirror

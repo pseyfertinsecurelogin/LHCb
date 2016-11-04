@@ -60,9 +60,9 @@ namespace LoKi
     public:
       // ======================================================================
       /// initialization of the tool
-      virtual StatusCode initialize () ;
+      StatusCode initialize ()  override;
       /// finalization   of the tool
-      virtual StatusCode finalize  () ;
+      StatusCode finalize  ()  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -74,10 +74,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string& pycode    ,
         LoKi::Types::MCCut&  cuts    ,
-        const std::string&   context )
+        const std::string&   context ) override
       { return _get ( pycode , m_mccuts  , cuts , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -86,10 +86,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&   pycode  ,
         LoKi::Types::MCVCut& cuts    ,
-        const std::string&   context )
+        const std::string&   context ) override
       { return _get ( pycode , m_mcvcuts  , cuts , context ) ; }
       // ======================================================================
     public:
@@ -102,10 +102,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&  pycode  ,
         LoKi::Types::MCFun& func    ,
-        const std::string&  context )
+        const std::string&  context ) override
       { return _get ( pycode , m_mcfunc  , func , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -114,10 +114,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&   pycode  ,
         LoKi::Types::MCVFun& func    ,
-        const std::string&   context )
+        const std::string&   context ) override
       { return _get ( pycode , m_mcvfunc  , func , context ) ; }
       // ======================================================================
     public:
@@ -130,10 +130,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&  pycode  ,
         LoKi::Types::MCMap& func    ,
-        const std::string&  context )
+        const std::string&  context ) override
       { return _get ( pycode , m_mcmaps  , func , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -142,10 +142,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&   pycode  ,
         LoKi::Types::MCVMap& func    ,
-        const std::string&   context )
+        const std::string&   context ) override
       { return _get ( pycode , m_mcvmaps  , func , context ) ; }
       // ======================================================================
     public:
@@ -158,10 +158,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&   pycode  ,
         LoKi::Types::MCPipe& func    ,
-        const std::string&   context )
+        const std::string&   context ) override
       { return _get ( pycode , m_mcpipe  , func , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -170,10 +170,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&    pycode  ,
         LoKi::Types::MCVPipe& func    ,
-        const std::string&    context )
+        const std::string&    context ) override
       { return _get ( pycode , m_mcvpipe  , func , context ) ; }
       // ======================================================================
     public:
@@ -186,10 +186,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&     pycode  ,
         LoKi::Types::MCFunVal& func    ,
-        const std::string&     context )
+        const std::string&     context ) override
       { return _get ( pycode , m_mcfunvals , func , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -198,10 +198,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&      pycode  ,
         LoKi::Types::MCVFunVal& func    ,
-        const std::string&      context )
+        const std::string&      context ) override
       { return _get ( pycode , m_mcvfunvals  , func , context ) ; }
       // ======================================================================
     public:
@@ -214,10 +214,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&     pycode  ,
         LoKi::Types::MCCutVal& func    ,
-        const std::string&     context )
+        const std::string&     context ) override
       { return _get ( pycode , m_mccutvals , func , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -226,10 +226,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&      pycode  ,
         LoKi::Types::MCVCutVal& func    ,
-        const std::string&      context )
+        const std::string&      context ) override
       { return _get ( pycode , m_mcvcutvals , func , context ) ; }
       // ======================================================================
     public:
@@ -242,10 +242,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&      pycode  ,
         LoKi::Types::MCSource&  func    ,
-        const std::string&      context )
+        const std::string&      context ) override
       { return _get ( pycode , m_mcsource , func , context ) ; }
       // ======================================================================
       /** "Factory": get the the object form python code
@@ -254,10 +254,10 @@ namespace LoKi
        *  @param context the code fragment to be pre-executed
        *  @return StatusCode
        */
-      virtual StatusCode get
+      StatusCode get
       ( const std::string&       pycode  ,
         LoKi::Types::MCVSource&  func    ,
-        const std::string&       context )
+        const std::string&       context ) override
       { return _get ( pycode , m_mcvsource , func , context ) ; }
       // ======================================================================
     public:
@@ -265,10 +265,10 @@ namespace LoKi
       // predicates:
       // ======================================================================
       /// set the C++ predicate for LHCb::MCParticle
-      virtual void set ( const LoKi::Types::MCCuts&    cut )
+      void set ( const LoKi::Types::MCCuts&    cut ) override
       { LoKi::Hybrid::Base::_set ( m_mccuts  , cut ) ; }
       /// set the C++ predicate for LHCb::MCVertex
-      virtual void set ( const LoKi::Types::MCVCuts&   cut )
+      void set ( const LoKi::Types::MCVCuts&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcvcuts , cut ) ; }
       // ======================================================================
     public:
@@ -276,10 +276,10 @@ namespace LoKi
       // functions:
       // ======================================================================
       /// set the C++ function for LHCb::MCParticle
-      virtual void set ( const LoKi::Types::MCFunc&    cut )
+      void set ( const LoKi::Types::MCFunc&    cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcfunc  , cut ) ; }
       /// set the C++ function for LHCb::MCVertex
-      virtual void set ( const LoKi::Types::MCVFunc&   cut )
+      void set ( const LoKi::Types::MCVFunc&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcvfunc  , cut ) ; }
       // ======================================================================
     public:
@@ -287,10 +287,10 @@ namespace LoKi
       // maps:
       // ======================================================================
       /// set the C++ map for LHCb::MCParticle
-      virtual void set ( const LoKi::Types::MCMaps&    cut )
+      void set ( const LoKi::Types::MCMaps&    cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcmaps  , cut ) ; }
       /// set the C++ map for LHCb::MCVertex
-      virtual void set ( const LoKi::Types::MCVMaps&   cut )
+      void set ( const LoKi::Types::MCVMaps&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcvmaps  , cut ) ; }
       // ======================================================================
     public:
@@ -298,10 +298,10 @@ namespace LoKi
       // pipes:
       // ======================================================================
       /// set the C++ pipe for LHCb::MCParticle
-      virtual void set ( const LoKi::Types::MCPipes&    cut )
+      void set ( const LoKi::Types::MCPipes&    cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcpipe  , cut ) ; }
       /// set the C++ pipe for LHCb::MCVertex
-      virtual void set ( const LoKi::Types::MCVPipes&   cut )
+      void set ( const LoKi::Types::MCVPipes&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcvpipe  , cut ) ; }
       // ======================================================================
     public:
@@ -309,10 +309,10 @@ namespace LoKi
       // fun-vals:
       // ======================================================================
       /// set the C++ fun-val for LHCb::MCParticle
-      virtual void set ( const LoKi::Types::MCFunVals&    cut )
+      void set ( const LoKi::Types::MCFunVals&    cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcfunvals  , cut ) ; }
       /// set the C++ fun-val for LHCb::MCVertex
-      virtual void set ( const LoKi::Types::MCVFunVals&   cut )
+      void set ( const LoKi::Types::MCVFunVals&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcvfunvals  , cut ) ; }
       // ======================================================================
     public:
@@ -320,10 +320,10 @@ namespace LoKi
       // cut-vals:
       // ======================================================================
       /// set the C++ fun-val for LHCb::MCParticle
-      virtual void set ( const LoKi::Types::MCCutVals&    cut )
+      void set ( const LoKi::Types::MCCutVals&    cut ) override
       { LoKi::Hybrid::Base::_set ( m_mccutvals  , cut ) ; }
       /// set the C++ fun-val for LHCb::MCVertex
-      virtual void set ( const LoKi::Types::MCVCutVals&   cut )
+      void set ( const LoKi::Types::MCVCutVals&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcvcutvals , cut ) ; }
       // ======================================================================
     public:
@@ -331,10 +331,10 @@ namespace LoKi
       // sources
       // ======================================================================
       /// set the C++ source for LHCb::MCParticle
-      virtual void set ( const LoKi::Types::MCSources&    cut )
+      void set ( const LoKi::Types::MCSources&    cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcsource  , cut ) ; }
       /// set the C++ source  for LHCb::MCVertex
-      virtual void set ( const LoKi::Types::MCVSources&   cut )
+      void set ( const LoKi::Types::MCVSources&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcvsource , cut ) ; }
       // ======================================================================
     protected:

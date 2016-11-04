@@ -1,4 +1,4 @@
-#ifndef L0DUAlg_H 
+#ifndef L0DUAlg_H
 #define L0DUAlg_H 1
 
 // Include files
@@ -14,7 +14,7 @@
 
 /** @class L0DUAlg L0DUAlg.h
  *  L0DUAlg report
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2005-01-28
@@ -27,16 +27,16 @@ public:
   /// Standard constructor
   L0DUAlg( const std::string& name, ISvcLocator* pSvcLocator );
   virtual ~L0DUAlg( ); ///< Destructor
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 protected:
-  
+
 private:
-  // I/O Locations  
+  // I/O Locations
   std::vector<std::string> m_dataLocations;
   std::vector<std::string> m_locs;
-  
+
   // parameters
   unsigned int m_rawSrcID;
   std::string m_emulatorType;
@@ -46,16 +46,16 @@ private:
   std::string m_configType;
 
 //
-  unsigned int m_rawVsn ;  
+  unsigned int m_rawVsn ;
   LHCb::RawBank::BankType m_rawBankType;
 
-  // Configuration 
+  // Configuration
   LHCb::L0DUConfig* m_config;
 
   // Tools
   IL0DUConfigProvider* m_confTool;
   IL0DUEmulatorTool*   m_emulator;
-  
+
   // PGA3 block building
   std::map<std::string,double> m_muonMap;
 };

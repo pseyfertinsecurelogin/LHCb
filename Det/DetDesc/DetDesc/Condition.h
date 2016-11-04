@@ -1,4 +1,3 @@
-//$Id: Condition.h,v 1.11 2008-02-22 12:12:12 marcocle Exp $
 #ifndef DETDESC_CONDITION_H
 #define DETDESC_CONDITION_H 1
 
@@ -17,30 +16,28 @@
  *  This is the basic type of condition data in the transient data store
  *  (alignment, slow control, etc.).
  *
- *  @author Sebastien Ponce 
- *  @author Andrea Valassi 
+ *  @author Sebastien Ponce
+ *  @author Andrea Valassi
  */
 class Condition : public ParamValidDataObject {
 
- public: 
-  
+ public:
+
   /// Default constructor
   Condition();
 
-  /// Copy constructor 
+  /// Copy constructor
   Condition (const Condition& obj);
-  
-  /// Update using another ValidDataObject: deep copy all contents, 
+
+  /// Update using another ValidDataObject: deep copy all contents,
   /// except for the properties of a generic DataObject
   using ParamValidDataObject::update;
-  virtual void update ( ValidDataObject& obj);
+  void update ( ValidDataObject& obj) override;
 
   /// Prepare an XML string representing the condition.
   virtual std::string toXml(std::string name = "", bool header = false, int precision = 16) const;
 
-  /// Destructor 
-  virtual ~Condition();
-  
+
  public:
 
   /**
@@ -55,7 +52,7 @@ class Condition : public ParamValidDataObject {
   // Re-implemented from DataObject
 
   /// Class ID of this instance
-  inline virtual const CLID& clID() const { return classID(); } 
+  inline const CLID& clID() const override { return classID(); }
 
   /// Class ID of this class
   inline static  const CLID& classID() { return CLID_Condition; }

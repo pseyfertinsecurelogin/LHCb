@@ -1,5 +1,4 @@
-
-#ifndef EVENT_PACKEDPROTOPARTICLE_H 
+#ifndef EVENT_PACKEDPROTOPARTICLE_H
 #define EVENT_PACKEDPROTOPARTICLE_H 1
 
 // Gaudi
@@ -27,7 +26,7 @@ namespace LHCb
    *  @author Olivier Callot
    *  @date   2008-11-13
    */
-  struct PackedProtoParticle 
+  struct PackedProtoParticle
   {
     long long key{0};
     long long track{0};
@@ -51,7 +50,7 @@ namespace LHCb
       save(buf); // identical operation until version is incremented
     }
   };
-  
+
   static const CLID CLID_PackedProtoParticles = 1552;
 
   // Namespace for locations in TDS
@@ -69,17 +68,17 @@ namespace LHCb
    *  @author Olivier Callot
    *  @date   2008-11-13
    */
-  class PackedProtoParticles : public DataObject 
+  class PackedProtoParticles : public DataObject
   {
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
-    
-  public: 
 
-    virtual const CLID& clID()  const { return PackedProtoParticles::classID(); }
+  public:
+
+    const CLID& clID()  const override { return PackedProtoParticles::classID(); }
     static  const CLID& classID()     { return CLID_PackedProtoParticles;       }
 
   public:
@@ -89,7 +88,7 @@ namespace LHCb
 
     std::vector<long long>& refs()                         { return m_refs; }
     const std::vector<long long>& refs() const             { return m_refs; }
- 
+
     std::vector<std::pair<int,int> >& extras()             { return m_extra; }
     const std::vector<std::pair<int,int> >& extras() const { return m_extra; }
 

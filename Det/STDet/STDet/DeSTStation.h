@@ -34,13 +34,10 @@ public:
   /** Constructor */
   DeSTStation ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeSTStation();
-
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** station identifier
   *  @return identifier
@@ -48,16 +45,16 @@ public:
   unsigned int id() const;
 
   /** print to stream */
-  std::ostream& printOut( std::ostream& os ) const;
+  std::ostream& printOut( std::ostream& os ) const override;
 
   /** print to stream */
-  MsgStream& printOut( MsgStream& os) const;
+  MsgStream& printOut( MsgStream& os) const override;
 
   /** check contains channel
   *  @param  aChannel channel
   *  @return bool
   */
-  virtual bool contains(const LHCb::STChannelID aChannel) const;
+  bool contains(const LHCb::STChannelID aChannel) const override;
 
   /**
   * Nickname for the station

@@ -42,70 +42,70 @@ public:
   virtual ~STReadoutTool();
 
   /// init
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// nBoard
-  virtual unsigned int nBoard() const;
+  unsigned int nBoard() const override;
 
   ///return vector of Tell1IDs
-  virtual std::vector<STTell1ID> boardIDs() const;
+  std::vector<STTell1ID> boardIDs() const override;
 
   /// convert ITChannelID to DAQ ChannelID
-  virtual STDAQ::chanPair offlineChanToDAQ(const LHCb::STChannelID aOfflineChan,					   double isf) const;
+  STDAQ::chanPair offlineChanToDAQ(const LHCb::STChannelID aOfflineChan, double isf) const override;
 
 /// convert offline interStripFraction to DAQ interStripFraction
-  virtual double interStripToDAQ(const LHCb::STChannelID aOfflineChan,
+  double interStripToDAQ(const LHCb::STChannelID aOfflineChan,
                                  const STTell1ID aBoardID,
-                                 const double isf) const;
+                                 const double isf) const override;
 
   bool ADCOfflineToDAQ(const LHCb::STChannelID aOfflineChan,
                        const STTell1ID aBoardID,
-                       LHCb::STCluster::ADCVector& adcs) const;
+                       LHCb::STCluster::ADCVector& adcs) const override;
 
 
   /// find the Tell1 board given a board ID
-  virtual STTell1Board* findByBoardID(const STTell1ID aBoardID) const;
+  STTell1Board* findByBoardID(const STTell1ID aBoardID) const override;
 
   /// find Tell1 board by storage order
-  virtual STTell1Board* findByOrder(const unsigned int aValue) const;
+  STTell1Board* findByOrder(const unsigned int aValue) const override;
 
   /// list of the readout sector ids on the board
-  virtual std::vector<LHCb::STChannelID> sectorIDs(const STTell1ID board) const;
-  
+  std::vector<LHCb::STChannelID> sectorIDs(const STTell1ID board) const override;
+
   /// list of the readout sectors
-  virtual std::vector<DeSTSector*> sectors(const STTell1ID board) const;
+  std::vector<DeSTSector*> sectors(const STTell1ID board) const override;
 
   /// service box
-  virtual unsigned int nServiceBox() const;
+  unsigned int nServiceBox() const override;
 
   /// service box number
-  virtual std::string serviceBox(const LHCb::STChannelID& aChan) const; 
+  std::string serviceBox(const LHCb::STChannelID& aChan) const override;
 
-  /// list of the readout sectors ids in a service box 
-  virtual std::vector<LHCb::STChannelID> sectorIDsOnServiceBox(const std::string& serviceBox) const;
-  
+  /// list of the readout sectors ids in a service box
+  std::vector<LHCb::STChannelID> sectorIDsOnServiceBox(const std::string& serviceBox) const override;
+
   /// list of the readout sectors in a service box
-  virtual std::vector<DeSTSector*> sectorsOnServiceBox(const std::string& serviceBox) const;
+  std::vector<DeSTSector*> sectorsOnServiceBox(const std::string& serviceBox) const override;
 
   /// list of service boxes
-  virtual const std::vector<std::string>& serviceBoxes() const;
+  const std::vector<std::string>& serviceBoxes() const override;
 
   /// Add the mapping of source ID to TELL1 board number
-  virtual unsigned int SourceIDToTELLNumber(unsigned int sourceID) const; 
+  unsigned int SourceIDToTELLNumber(unsigned int sourceID) const override;
 
   /// Add the mapping of TELL1 board number to source ID
-  virtual unsigned int TELLNumberToSourceID(unsigned int TELL) const; 
+  unsigned int TELLNumberToSourceID(unsigned int TELL) const override;
 
   /// print mapping
-  virtual void printMapping() const;
+  void printMapping() const override;
 
-  /// write out the mapping as xml 
-  virtual StatusCode writeMappingToXML() const;
+  /// write out the mapping as xml
+  StatusCode writeMappingToXML() const override;
 
   StatusCode validate() const;
 
   /// finalize
-  StatusCode finalize(); 
+  StatusCode finalize() override;
 
 protected:
 
@@ -114,7 +114,7 @@ protected:
   std::string footer() const;
   std::string header(const std::string& conString) const;
   std::string strip(const std::string& conString) const;
- 
+
 
   unsigned int m_hybridsPerBoard;
   unsigned int m_nBoard;
@@ -125,7 +125,7 @@ protected:
 
   bool m_printMapping;
   DeSTDetector* m_tracker;
-  std::string m_detType; 
+  std::string m_detType;
   std::string m_conditionLocation;
 
 private:

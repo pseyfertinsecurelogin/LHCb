@@ -1,4 +1,3 @@
-// $Id: ODINCodecBaseTool.h,v 1.3 2009-11-09 18:28:15 marcocle Exp $
 #ifndef ODIN_CODEC_BASE_TOOL_H
 #define ODIN_CODEC_BASE_TOOL_H
 // Include files
@@ -31,20 +30,15 @@ namespace LHCb {
  *  @author Marco Clemencic
  *  @date   2009-02-02
  */
-class ODINCodecBaseTool : public Decoder::ToolBase, virtual public IGenericTool
+class ODINCodecBaseTool : public extends<Decoder::ToolBase, IGenericTool>
 {
 
 public:
 
   /// Standard constructor
   ODINCodecBaseTool(const std::string& type,
-                 const std::string& name,
-                 const IInterface* parent);
-
-  virtual ~ODINCodecBaseTool() = default; ///< Destructor
-
-  /// Initialize the tool
-  virtual inline StatusCode initialize() { return Decoder::ToolBase::initialize(); }
+                    const std::string& name,
+                    const IInterface* parent);
 
 protected:
 

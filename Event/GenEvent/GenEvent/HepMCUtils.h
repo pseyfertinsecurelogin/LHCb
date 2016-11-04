@@ -1,4 +1,3 @@
-// $Id: HepMCUtils.h,v 1.1 2008-07-23 17:14:24 cattanem Exp $
 #ifndef GENEVENT_HEPMCUTILS_H
 #define GENEVENT_HEPMCUTILS_H 1
 

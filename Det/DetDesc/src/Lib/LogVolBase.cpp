@@ -1,4 +1,3 @@
-// $Id: LogVolBase.cpp,v 1.20 2009-04-17 08:54:24 cattanem Exp $
 // ============================================================================
 // Incldue files 
 // ============================================================================
@@ -9,7 +8,6 @@
 // =============================================================================
 // DetDesc 
 // ============================================================================
-#include "DetDesc/DetDesc.h"
 #include "DetDesc/LogVolBase.h"
 #include "DetDesc/PVolume.h"
 #include "DetDesc/VolumeIntersectionIntervals.h"
@@ -38,15 +36,10 @@ unsigned long LogVolBase::s_volumeCounter = 0 ;
 LogVolBase::LogVolBase( const std::string& /*name*/    , 
                         const std::string& sensitivity ,
                         const std::string& magnetic    )
-  : ValidDataObject (             )
-  , m_pvolumes   (             )
-  , m_surfaces   (             ) 
-  , m_sdName     ( sensitivity ) 
+  : m_sdName     ( sensitivity ) 
   , m_mfName     ( magnetic    )
-  , m_services   ( 0           )
 {
   // get services
-  m_services = DetDesc::services();
   /// add volume counter 
   ++s_volumeCounter ;  
 }
@@ -58,15 +51,7 @@ LogVolBase::~LogVolBase()
   /// decrease  volume counter 
   --s_volumeCounter ;
   // release physical volumes
-  for (PVolumes::const_iterator ipv = m_pvolumes.begin();
-       ipv != m_pvolumes.end() ; ++ipv ) 
-  {
-    IPVolume* pv = *ipv ;
-    if( 0 != pv ) { delete pv ; }
-  }
-  m_pvolumes.clear();
-  // release services
-  m_services->release();
+  for (auto& ipv : m_pvolumes) delete ipv;
 }
 // ============================================================================
 /* 

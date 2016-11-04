@@ -53,11 +53,11 @@ namespace LHCb
     constexpr FastAllocVector( ) { }
 
     /** Constructor with initial size
-     *  @param size Initialisation size for vector 
+     *  @param size Initialisation size for vector
      */
     constexpr FastAllocVector( const typename BaseClass::size_type size )
       : BaseClass(size) { }
-    
+
     /** Constructor with initial size and initialisation value
      *  @param size Initialisation size for vector
      *  @param init Initialisation value
@@ -140,7 +140,7 @@ namespace LHCb
      *  @date   23/09/2015
      */
     //--------------------------------------------------------------------------------
-  
+
     template < typename TYPE,
 #ifndef GOD_NOALLOC
                typename ALLOC = __gnu_cxx::__pool_alloc< TYPE >
@@ -159,11 +159,11 @@ namespace LHCb
      *  @date   23/09/2015
      */
     //--------------------------------------------------------------------------------
-  
+
     template < typename TYPE,
                typename ALLOC = std::allocator< TYPE > >
     using Vector = FastAllocVector< TYPE, ALLOC >;
-  
+
   }
 
 }

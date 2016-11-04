@@ -22,12 +22,8 @@ DeITSector::DeITSector( const std::string& name ) :
   m_parent(0),
   m_prodID(0),
   m_prodIDString("ProdID")
-{ 
+{
   // constructer
-}
-
-DeITSector::~DeITSector() {
-  // destructer
 }
 
 const CLID& DeITSector::clID () const
@@ -36,7 +32,7 @@ const CLID& DeITSector::clID () const
 }
 
 StatusCode DeITSector::initialize() {
-  
+
   // initialize method
   MsgStream msg(msgSvc(), name() );
 
@@ -52,14 +48,14 @@ StatusCode DeITSector::initialize() {
     const STChannelID parentID = m_parent->elementID();
     setElementID(parentID);
     m_nickname = ITNames().UniqueSectorToString(parentID);
-        
+
     // see if stereo
     m_isStereo = false;
     if (elementID().layer() == ITNames::V || elementID().layer() == ITNames::U) m_isStereo = true;
 
     // build the id
     setID(parentID.sector());
-    
+
     std::vector<DeITSensor*> sensors = getChildren<DeITSector>();
     std::sort(sensors.begin(),sensors.end(),STDetFun::SortByY());
     m_sensors.reserve(sensors.size());
@@ -74,7 +70,7 @@ StatusCode DeITSector::initialize() {
                              &DeITSector::updateProdIDCondition, true);
       if (sc.isFailure() ){
         msg << MSG::ERROR << "Failed to register prodID conditions" << endmsg;
-        return StatusCode::FAILURE; 
+        return StatusCode::FAILURE;
       }
     }
 
@@ -129,7 +125,7 @@ StatusCode DeITSector::updateProdIDCondition()
   if (aCon == 0){
     MsgStream msg(msgSvc(), name());
     msg << MSG::ERROR << "Failed to find condition" << endmsg;
-    return StatusCode::FAILURE; 
+    return StatusCode::FAILURE;
   }
   m_prodID = aCon->param<int>("ProdID");
 

@@ -29,20 +29,20 @@ public:
   virtual ~DQAcceptTool() = default; ///< Destructor
 
   /// Initialize the tool.
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalize the tool.
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   /// Tells if the current event has to be accepted or not, according to the
-  virtual bool accept() const;
+  virtual bool accept() const override;
 
  private:
-  
+
   /// Call-back function passed to the UpdateManagerSvc to update the current
   /// filtering status (good or bad).
   StatusCode i_checkFlagsByRun();
-  
+
   /// Call-back function passed to the UpdateManagerSvc to update the current
   /// filtering status (good or bad).
   StatusCode i_checkFlagsByEvent();

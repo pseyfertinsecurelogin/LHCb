@@ -1,50 +1,44 @@
-#ifndef GENFSRREAD_H 
+#ifndef GENFSRREAD_H
 #define GENFSRREAD_H 1
 
-// Include files 
+// Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 
-// from Event 
+// from Event
 #include "Event/GenFSR.h"
 
 // from Kernel
 #include "FSRAlgs/IFSRNavigator.h"
 
 /** @class GenFSRRead GenFSRRead.h
- *  
+ *
  *
  *  @author Davide Fazzini
  *  @date   2015-06-23
  */
 class GenFSRRead : public GaudiAlgorithm {
-public: 
+public:
   // Standard constructor
   GenFSRRead( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~GenFSRRead( );          // Destructor
+  StatusCode initialize() override;  // Algorithm initialization
+  StatusCode execute   () override;  // Algorithm execution
+  StatusCode finalize  () override;  // Algorithm finalization
 
-  virtual StatusCode initialize();  // Algorithm initialization
-  virtual StatusCode execute   ();  // Algorithm execution
-  virtual StatusCode finalize  ();  // Algorithm finalization
+private:
 
-protected:
+  virtual void dumpFSR();       // Dump the GenFSR informations
 
-  virtual void dumpFSR();       // Dump the GenFSR informations 
-  
-protected:
-
-  IDataProviderSvc* m_fileRecordSvc;
+  SmartIF<IDataProviderSvc> m_fileRecordSvc;
 
   std::string m_fileRecordName;     // location of FileRecords
   std::string m_FSRName;            // specific tag of summary data in FSR
 
-private:
+  IFSRNavigator* m_navigatorTool = nullptr;   // tool to navigate FSR
 
-  IFSRNavigator* m_navigatorTool;   // tool to navigate FSR
-  
 };
 #endif // GENFSRREAD_H

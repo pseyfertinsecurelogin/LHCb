@@ -130,24 +130,24 @@ namespace LHCb
                >
     using MTAllocList = FastAllocList< TYPE, ALLOC >;
 
-  //--------------------------------------------------------------------------------
-  /** @typedef PoolAllocList Kernel/FastAllocList.h
-   *
-   *  List with STL Pool allocator
-   *
-   *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
-   *  @date   23/09/2015
-   */
-  //--------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------
+    /** @typedef PoolAllocList Kernel/FastAllocList.h
+     *
+     *  List with STL Pool allocator
+     *
+     *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+     *  @date   23/09/2015
+     */
+    //--------------------------------------------------------------------------------
 
-  template < typename TYPE,
+    template < typename TYPE,
 #ifndef GOD_NOALLOC
              typename ALLOC = __gnu_cxx::__pool_alloc< TYPE >
 #else
              typename ALLOC = std::allocator< TYPE >
 #endif
              >
-  using PoolAllocList = FastAllocList< TYPE, ALLOC >;
+    using PoolAllocList = FastAllocList< TYPE, ALLOC >;
 
     //--------------------------------------------------------------------------------
     /** @typedef List Kernel/FastAllocList.h
@@ -158,13 +158,13 @@ namespace LHCb
      *  @date   23/09/2015
      */
     //--------------------------------------------------------------------------------
-    
+
     template < typename TYPE,
                typename ALLOC = std::allocator< TYPE > >
     using List = FastAllocList< TYPE, ALLOC >;
-    
+
   }
-  
+
 }
 
 #endif // KERNEL_FastAllocList_H

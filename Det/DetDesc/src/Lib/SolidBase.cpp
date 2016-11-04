@@ -1,5 +1,3 @@
-// $Id: SolidBase.cpp,v 1.19 2009-04-17 08:54:24 cattanem Exp $
-
 // Units
 #include "GaudiKernel/SystemOfUnits.h"
 /// DetDesc 
@@ -32,10 +30,8 @@ SolidBase::SolidBase( const std::string& Name )
   , m_zmax   ( -10 * Gaudi::Units::km )
   , m_rmax   ( -10 * Gaudi::Units::km ) 
   , m_rhomax ( -10 * Gaudi::Units::km )
-  , m_services (0)
+  , m_services (DetDesc::services())
 {
-  // get message service
-  m_services = DetDesc::services();
 }
 
 // ============================================================================
@@ -43,10 +39,7 @@ SolidBase::SolidBase( const std::string& Name )
 // ============================================================================
 SolidBase::~SolidBase() 
 { 
-  if( 0 != m_cover && this != m_cover ) { delete m_cover ; }
-  m_cover = 0 ;
-  // release message service
-  m_services->release();
+  if( m_cover && this != m_cover ) { delete m_cover ; }
 }
 
 // ============================================================================
@@ -60,9 +53,8 @@ SolidBase::~SolidBase()
 // ============================================================================
 ISolid* SolidBase::reset ()
 {
-  if( this == m_cover ) {                  m_cover = 0 ; }
-  if(    0 != m_cover ) { delete m_cover ; m_cover = 0 ; }
-  ///
+  if( this == m_cover ) m_cover = nullptr ;
+  delete m_cover ; m_cover = nullptr ;
   return this;
 }
 
