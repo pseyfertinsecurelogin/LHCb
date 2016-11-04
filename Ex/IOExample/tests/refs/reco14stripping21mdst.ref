@@ -130,6 +130,7 @@ TESFingerPrint      DEBUG Property ['Name': Value] =  'OutputLevel':1
 TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service EventDataSvc
 TESFingerPrint      DEBUG ==> Initialize
 TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service ToolSvc
+TESFingerPrint    VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc
 TESFingerPrint      DEBUG input handles: 0
 TESFingerPrint      DEBUG output handles: 0
 TESFingerPrint      DEBUG Data Deps for TESFingerPrint
