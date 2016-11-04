@@ -38,14 +38,6 @@ namespace {
 //=============================================================================
 HltEvaluator::HltEvaluator(const std::string& name, ISvcLocator* pSvcLocator)
    : base_class( name , pSvcLocator )
-   , m_factory{nullptr}
-   , m_evals_updated{false}
-   , m_preambulo_updated{false}
-   , m_runpars{nullptr}
-   , m_updMgrSvc{nullptr}
-   , m_startOfRun{0}
-   , m_binWidth{10} // in seconds!!!
-   , m_timeSpan{4000} // in seconds!!!
 {
    declareProperty("ODINLocation", m_odin_location = LHCb::ODINLocation::Default);
    declareProperty("L0DUReportLocation", m_l0_location = LHCb::L0DUReportLocation::Default);
