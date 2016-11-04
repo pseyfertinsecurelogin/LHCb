@@ -18,6 +18,8 @@
       keyedContTypeDef="TRUE"
       id="13502"
       serializers="TRUE"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
       >
 
 

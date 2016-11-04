@@ -1,5 +1,4 @@
-// $Id: $
-#ifndef EVENT_VELONZSINFO_H 
+#ifndef EVENT_VELONZSINFO_H
 #define EVENT_VELONZSINFO_H 1
 
 // Include files
@@ -11,7 +10,7 @@
 #include "Tell1Kernel/VeloTell1Core.h"
 
 /** @class VeloNZSInfo VeloNZSInfo.h Event/VeloNZSInfo.h
- *  
+ *
  *
  *  @author Tomasz Szumlak
  *  @date   2010-07-07
@@ -25,26 +24,22 @@ namespace VeloNZSInfoLocation{
 }
 
 class VeloNZSInfo: public ContainedObject{
-public: 
-  
+public:
+
   /// Standard constructor
   VeloNZSInfo( ): m_cntMap ( ),
                   m_isNZSStream ( false )
   {  }
-
-  virtual ~VeloNZSInfo( ) { }   ///< Destructor
 
   void setIsNZSStreamPresent(bool isActive);
   bool isNZSStreamPresent() const;
   void setTell1CountersMap(VeloTELL1::Tell1CountersMap inMap);
   VeloTELL1::Tell1CountersMap Tell1CountersMap() const;
   unsigned int counter(unsigned int tell1);
-  
-protected:
 
 private:
-  
-  VeloTELL1::Tell1CountersMap m_cntMap; 
+
+  VeloTELL1::Tell1CountersMap m_cntMap;
   bool m_isNZSStream;
 
 };

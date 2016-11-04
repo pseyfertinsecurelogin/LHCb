@@ -12,7 +12,6 @@
 namespace LHCb{
   class  STChannelID;
 }
-static const InterfaceID IID_ISTRawADCInfo ( "ISTRawADCInfo" , 1 , 0 );
 
 /** @class ISTRawADCInfo ISTRawADCInfo.h
  *
@@ -23,16 +22,14 @@ static const InterfaceID IID_ISTRawADCInfo ( "ISTRawADCInfo" , 1 , 0 );
  *  @date   08/08/2009
  */
 
-class ISTRawADCInfo :
-  virtual public IAlgTool {
-public:
+struct ISTRawADCInfo : extend_interfaces<IAlgTool> {
 
   /** static interface identification
    *  @see IInterface
    *  @see IID_ISTRawADCInfo
    *  @return the unique interface identifier
    */
-  static const InterfaceID& interfaceID() { return IID_ISTRawADCInfo; }
+  DeclareInterfaceID( ISTRawADCInfo , 2 , 0 );
 
   /** link to RAW adc info
   * @param LHCb::STChannelID chan

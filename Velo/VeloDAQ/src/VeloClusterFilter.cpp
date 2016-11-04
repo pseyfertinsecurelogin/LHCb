@@ -10,6 +10,19 @@
 // local
 #include "VeloClusterFilter.h"
 
+namespace {
+void incrementCounters(LHCb::VeloChannelID id,int& countClusters,int& countRClusters,int& countPhiClusters)
+{
+  unsigned int sensorNumber = id.sensor();
+  if(sensorNumber<64){
+    ++countRClusters;
+  }else if(sensorNumber<128){
+    ++countPhiClusters;
+  }
+  ++countClusters;
+}
+}
+
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( VeloClusterFilter )
 
@@ -17,8 +30,8 @@ DECLARE_ALGORITHM_FACTORY( VeloClusterFilter )
 // Standard constructor, initializes variables
 //=============================================================================
 VeloClusterFilter::VeloClusterFilter( const std::string& name,
-                                          ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
+                                      ISvcLocator* pSvcLocator )
+: GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty("InputClusterLocation", m_inputClusterDh);
   declareProperty("InputLiteClusterLocation", m_inputLiteClusterDh);
@@ -30,7 +43,18 @@ VeloClusterFilter::VeloClusterFilter( const std::string& name,
   declareProperty("MaximumNumberOfRClusters",m_maxNRClustersCut=100000);
   declareProperty("MaximumNumberOfPhiClusters",m_maxNPhiClustersCut=100000);
   declareProperty("MaximumNumberOfClusters",m_maxNClustersCut=100000);
-  declareProperty("FilterOption",m_filterCriterion="All");
+  declareProperty("FilterOption",m_filterCriterion="All")
+    ->declareUpdateHandler( [=](Property&) {
+      static const auto valid = { "All","Left","Right","R","Phi","PU","Overlap" };
+      auto i = std::find( valid.begin(), valid.end(), this->m_filterCriterion );
+      if (i==valid.end()) throw GaudiException("Invalid value for VeloClusterFilter/"
+                                               + this->name()
+                                               + ".FilterOption: "
+                                               + this->m_filterCriterion,
+                                               this->name(),
+                                               StatusCode::FAILURE);
+      this->m_filter = static_cast<filter_t>( std::distance( valid.begin(), i ));
+    } ).useUpdateHandler();
 }
 
 //=============================================================================
@@ -40,11 +64,8 @@ StatusCode VeloClusterFilter::initialize()
 {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
-
   debug() << "==> Initialize" << endmsg;
-  
   m_velo = getDet<DeVelo>( DeVeloLocation::Default );
-
   return StatusCode::SUCCESS;
 }
 
@@ -71,8 +92,8 @@ StatusCode VeloClusterFilter::execute()
 
     auto filteredClusters = std::make_unique< LHCb::VeloClusters> ();
     filteredClusters->reserve(clusters->size());
-    
-    for (auto * cluster : *clusters ) {
+
+    for (LHCb::VeloCluster* cluster : *clusters ) {
       if (passesFilter(cluster->channelID())) {
           filteredClusters->insert(cluster);
           incrementCounters(cluster->channelID(),countClusters,countRClusters,countPhiClusters);
@@ -81,12 +102,12 @@ StatusCode VeloClusterFilter::execute()
     }
     m_outputClusterDh.put(filteredClusters.release());
   }
-  
-  if( NULL != liteClusters ){
-    
+
+  if( liteClusters ){
+
     LHCb::VeloLiteCluster::FastContainer filteredLiteClusters;
     filteredLiteClusters.reserve(liteClusters->size());
-    
+
     for (LHCb::VeloLiteCluster::FastContainer::const_iterator ci =  liteClusters->begin(); ci != liteClusters->end(); ++ci) {
       if (passesFilter(ci->channelID())){
         filteredLiteClusters.push_back(*ci);
@@ -99,7 +120,7 @@ StatusCode VeloClusterFilter::execute()
 
   if(isDebug) debug() << "Number of \'" << m_filterCriterion << "\' clusters surviving = "<< countClusters
                       <<"(R:"<<countRClusters<<" ,P:"<<countPhiClusters<<")"<< " from " << totalClusters << "." << endmsg;
-  
+
   if(countRClusters   < m_minNRClustersCut  ) setFilterPassed(false);
   if(countPhiClusters < m_minNPhiClustersCut) setFilterPassed(false);
   if(countClusters    < m_minNClustersCut   ) setFilterPassed(false);
@@ -110,58 +131,35 @@ StatusCode VeloClusterFilter::execute()
   return StatusCode::SUCCESS;
 }
 
-//=============================================================================
-void VeloClusterFilter::incrementCounters(LHCb::VeloChannelID id,int& countClusters,int& countRClusters,int& countPhiClusters)
+bool VeloClusterFilter::passesFilter(LHCb::VeloChannelID id) const
 {
   unsigned int sensorNumber = id.sensor();
-  if(sensorNumber<64){
-    ++countRClusters;
-  }else if(sensorNumber<128){
-    ++countPhiClusters;
-  }
-  ++countClusters;
-}
-
-bool VeloClusterFilter::passesFilter(LHCb::VeloChannelID id)
-{
-  unsigned int sensorNumber = id.sensor();
-
-  if(m_filterCriterion == "All") return true;
-
-  if(m_filterCriterion == "Left"){
-    if(sensorNumber%2==0) return true;
-    return false;
-  }
-  if(m_filterCriterion == "Right"){
-    if(sensorNumber%2==1) return true;
-    return false;
-  }
-  if(m_filterCriterion == "R"){
-    if(sensorNumber<64) return true;
-    return false;
-  }
-  if(m_filterCriterion == "Phi"){
-    if(sensorNumber>=64&&
-       sensorNumber<128) return true;
-    return false;
-  }
-  if(m_filterCriterion == "PU"){
-    if(sensorNumber>=128) return true;
-    return false;
-  }
-  if(m_filterCriterion == "Overlap"){
-    bool response = false;
-    unsigned int stripNumber = id.strip();
-    if(id.isRType() || id.isPileUp()){
-      if(stripNumber< 512 || stripNumber>=1536) response=true;
-    }else if(id.isPhiType()){
-      unsigned int range=25;
-      if(stripNumber<range) response=true;
-      if(stripNumber>=2048-range && stripNumber<2048) response=true;
-      if(stripNumber>= 683-range && stripNumber<683+range) response=true;
+  switch(m_filter) {
+    case ALL     : return true;
+    case LEFT    : return sensorNumber%2==0;
+    case RIGHT   : return sensorNumber%2==1;
+    case R       : return sensorNumber<64;
+    case PHI     : return sensorNumber>=64 && sensorNumber<128;
+    case PU      : return sensorNumber>=128 ;
+    case OVERLAP : {
+      unsigned int stripNumber = id.strip();
+      if(id.isRType() || id.isPileUp()){
+        return stripNumber< 512 || stripNumber>=1536;
+      }
+      if(id.isPhiType()){
+        const unsigned int range=25;
+        return (stripNumber<range) ||
+               (stripNumber>=2048-range && stripNumber<2048) ||
+               (stripNumber>= 683-range && stripNumber<683+range);
+      }
+      return false;
     }
-    return response;
+    default :
+      throw GaudiException(format("Invalid value for filter type, property was"\
+				  " string %s which was converted to invalid integer %i",
+				  m_filterCriterion.c_str(), m_filter),
+			   this->name(),
+			   StatusCode::FAILURE);
+      return false;
   }
-  warning() << "Don't understand \'"<<m_filterCriterion<<"\'. Expect: All,Left,Right,R,Phi,PU or Overlap" << endmsg;
-  return false;
 }

@@ -1,4 +1,3 @@
-// $Id: ITReadoutTool.h,v 1.4 2009-10-30 12:54:19 mtobin Exp $
 #ifndef _ITReadoutTool_H
 #define _ITReadoutTool_H
 

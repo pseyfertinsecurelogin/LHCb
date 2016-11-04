@@ -7,7 +7,10 @@
     <class 
       author="Olivier Deschamps"
       desc="This class represents the L0DU Condition"
-      name="L0DUElementaryCondition">
+      name="L0DUElementaryCondition"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
+      >
 
       <base name="ContainedObject"/>
        &ContainedObject;

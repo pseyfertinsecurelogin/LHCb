@@ -2,6 +2,7 @@
 #define OTDAQ_RAWEVENT_H
 
 #include <vector>
+#include <numeric>
 #include "OTDAQ/RawBank.h"
 
 namespace OTDAQ
@@ -21,24 +22,19 @@ namespace OTDAQ
     RawBankContainer m_banks ;
   } ;
 
-  inline size_t RawEvent::numRawHits() const
-  {
-    size_t rc(0) ;
-    for( RawBankContainer::const_iterator ibank = m_banks.begin() ;
-	 ibank != m_banks.end(); ++ibank)
-      for( RawBank::GolContainer::const_iterator igol = ibank->gols().begin() ;
-	   igol != ibank->gols().end(); ++igol )
-	rc += igol->hits().size() ;
-    return rc ;
+  inline size_t RawEvent::numRawHits() const {
+    return std::accumulate( m_banks.begin(), m_banks.end(), size_t{0},
+                            [](size_t s0, const OTDAQ::RawBank& rb) {
+      return std::accumulate( rb.gols().begin(), rb.gols().end(), s0,
+                            [](size_t s1, const OTDAQ::Gol& gol)
+                            { return s1 + gol.hits().size(); } );
+    });
   }
 
-  inline size_t RawEvent::numGols() const
-  {
-    size_t rc(0) ;
-    for( RawBankContainer::const_iterator ibank = m_banks.begin() ;
-	 ibank != m_banks.end(); ++ibank)
-      rc += ibank->gols().size() ;
-    return rc ;
+  inline size_t RawEvent::numGols() const {
+    return std::accumulate( m_banks.begin(), m_banks.end(), size_t{0},
+                            [](size_t s, const OTDAQ::RawBank& rb)
+                            { return s + rb.gols().size(); } );
   }
   
 }

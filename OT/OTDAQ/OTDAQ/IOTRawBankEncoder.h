@@ -23,9 +23,8 @@
  *  @date   2008-05-22
  */
 
-class IOTRawBankEncoder : public extend_interfaces<IAlgTool> {
+struct IOTRawBankEncoder : extend_interfaces<IAlgTool> {
 
-public: 
   DeclareInterfaceID( IOTRawBankEncoder, 2, 0 );
 
   virtual StatusCode encodeChannels( const std::vector<LHCb::OTChannelID>& channels ) const = 0;

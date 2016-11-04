@@ -125,6 +125,10 @@ FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
       first += nClus;
     }
   }
+
+  // Sort clusters
+  std::sort(clus.begin(), clus.end(), 
+            [](const LHCb::FTLiteCluster& lhs, const LHCb::FTLiteCluster& rhs){ return lhs.channelID() < rhs.channelID(); });
   
   return clus;
 }

@@ -5,10 +5,6 @@
 #include <cmath>
 
 // From Gaudi
-#include "GaudiKernel/Bootstrap.h"
-#include "GaudiKernel/PropertyMgr.h"
-#include "GaudiKernel/IJobOptionsSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
 #include "DetDesc/Condition.h"
@@ -16,6 +12,8 @@
 // From Velo
 #include "VeloDet/DeVeloSensor.h"
 #include "Kernel/VeloChannelID.h"
+
+#include "getOutputLevel.h"
 
 /** @file DeVeloSensor.cpp
  *
@@ -47,30 +45,18 @@ const CLID& DeVeloSensor::clID()
 //==============================================================================
 StatusCode DeVeloSensor::initialize()
 {
-  // Trick from old DeVelo to set the output level
-  {
-      PropertyMgr pmgr;
-      int outputLevel=0;
-      pmgr.declareProperty("OutputLevel", outputLevel);
-      auto jobSvc = Gaudi::svcLocator()->service<IJobOptionsSvc>("JobOptionsSvc");
-      if (!jobSvc) return StatusCode::FAILURE;
-      auto sc = jobSvc->setMyProperties("DeVeloSensor", &pmgr);
-      if( !sc ) return sc;
-      if ( 0 < outputLevel ) {
-        msgSvc()->setOutputLevel("DeVeloSensor", outputLevel);
-      }
-  }
 
-  auto sc = DetectorElement::initialize();
+  auto sc = initOutputLevel(msgSvc(), "DeVeloSensor");
+  if (!sc) return sc;
+
+  sc = DetectorElement::initialize();
   if(!sc.isSuccess()) {
     msg() << MSG::ERROR << "Failed to initialise DetectorElement" << endmsg;
     return sc;
   }
-  m_debug   = (msgSvc()->outputLevel("DeVeloSensor") == MSG::DEBUG  ) ;
-  m_verbose = (msgSvc()->outputLevel("DeVeloSensor") == MSG::VERBOSE) ;
-  if( m_verbose ){
-    m_debug = true;
-  }
+  const auto lvl = msgSvc()->outputLevel("DeVeloSensor");
+  m_debug   = lvl <= MSG::DEBUG;
+  m_verbose = lvl <= MSG::VERBOSE;
 
   initSensor();
   IGeometryInfo* geom = geometry();
@@ -193,7 +179,7 @@ void DeVeloSensor::initSensor()
 }
 
 //=========================================================================
-// residual in sensor plane at line-plane intersection 
+// residual in sensor plane at line-plane intersection
 //=========================================================================
 StatusCode DeVeloSensor::residual(const Gaudi::XYZPoint& point,
     const Gaudi::XYZVector& dir,
@@ -325,4 +311,3 @@ StatusCode DeVeloSensor::updateReadoutCondition () {
 
   return StatusCode::SUCCESS;
 }
-

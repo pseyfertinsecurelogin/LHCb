@@ -17,6 +17,8 @@
     <class name="&className;" 
      author="M Needham" 
      desc="A cluster as produced by the TELL1 but without full ADC information"
+     final = "TRUE"
+     defaultdestructor="FALSE"
      serializers = "TRUE">
      <location name="TTClusters"   place="Raw/TT/LiteClusters"   />
      <location name="ITClusters"   place="Raw/IT/LiteClusters"   />

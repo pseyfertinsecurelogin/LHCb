@@ -6,6 +6,8 @@
 
 /** namespace OTDataFunctor
  *
+ * @TODO: This file seems not to be used anywhere...
+ *
  * This file contains the declaration of OTDataFunctor namespace.
  * It contains functors used for sorting.
  *
@@ -16,199 +18,157 @@
 namespace OTDataFunctor {
 
 // functors
-template <class TYPE1, class TYPE2 = TYPE1 >
-  class Less_by_Channel
-    : public std::binary_function<TYPE1,TYPE2,bool>
+struct Less_by_Channel
+{
+  /** compare the channel of one object wOTh the
+   *  channel of another object
+   *  @param obj1   first  object
+   *  @param obj2   second object
+   *  @return  result of the comparision
+   */
+  template <class TYPE1, class TYPE2 = TYPE1 >
+  bool operator() ( TYPE1 obj1 , TYPE2 obj2 ) const
   {
-  public:
+    return
+      ( !obj1 ) ? true  :
+      ( !obj2 ) ? false : obj1->channel() < obj2->channel() ;
+  }
+  ///
+};
 
-    /** compare the channel of one object wOTh the
-     *  channel of another object
-     *  @param obj1   first  object
-     *  @param obj2   second object
-     *  @return  result of the comparision
-     */
-    inline bool operator() ( TYPE1 obj1 , TYPE2 obj2 ) const
-    {
+struct Less_by_Key
+{
+
+  /** compare the channel of one object wOTh the
+   *  channel of another object
+   *  @param obj1   first  object
+   *  @param obj2   second object
+   *  @return  result of the comparision
+   */
+  template <class TYPE1, class TYPE2 = TYPE1 >
+  bool operator() ( TYPE1 obj1 , TYPE2 obj2 ) const
+  {
+    return
+      ( !obj1 ) ? true  :
+      ( !obj2 ) ? false : obj1->key() < obj2->key() ;
+  }
+  ///
+};
+
+struct Less_by_tdcTime
+{
+
+  /** compare the dep charge of one object wOTh the
+   *  dep Charge  of another object
+   *  @param obj1   first  object
+   *  @param obj2   second object
+   *  @return  result of the comparision
+   */
+  template <class TYPE1, class TYPE2 = TYPE1 >
+  bool operator() ( TYPE1 obj1 , TYPE2 obj2 ) const
+  {
+    return
+      ( !obj1 ) ? true  :
+      ( !obj2 ) ? false : obj1->tdcTime() < obj2->tdcTime() ;
+  }
+  ///
+};
+
+
+struct Less_by_ChannelAndTime
+{
+
+  /** compare the dep charge of one object wOTh the
+   *  dep Charge  of another object
+   *  @param obj1   first  object
+   *  @param obj2   second object
+   *  @return  result of the comparision
+   */
+  template <class TYPE1, class TYPE2 = TYPE1 >
+  bool operator() ( TYPE1 obj1 , TYPE2 obj2 ) const
+  {
+    if ( obj1->channel() != obj2->channel() ) {
       return
         ( !obj1 ) ? true  :
         ( !obj2 ) ? false : obj1->channel() < obj2->channel() ;
-    }
-    ///
-  };
-
-template <class TYPE1, class TYPE2 = TYPE1 >
-  class Less_by_Key
-    : public std::binary_function<TYPE1,TYPE2,bool>
-  {
-  public:
-
-    /** compare the channel of one object wOTh the
-     *  channel of another object
-     *  @param obj1   first  object
-     *  @param obj2   second object
-     *  @return  result of the comparision
-     */
-    inline bool operator() ( TYPE1 obj1 , TYPE2 obj2 ) const
-    {
-      return
-        ( !obj1 ) ? true  :
-        ( !obj2 ) ? false : obj1->key() < obj2->key() ;
-    }
-    ///
-  };
-
-template <class TYPE1, class TYPE2 = TYPE1 >
-  class Less_by_tdcTime
-    : public std::binary_function<TYPE1,TYPE2,bool>
-  {
-  public:
-
-    /** compare the dep charge of one object wOTh the
-     *  dep Charge  of another object
-     *  @param obj1   first  object
-     *  @param obj2   second object
-     *  @return  result of the comparision
-     */
-    inline bool operator() ( TYPE1 obj1 , TYPE2 obj2 ) const
-    {
+    } else {
       return
         ( !obj1 ) ? true  :
         ( !obj2 ) ? false : obj1->tdcTime() < obj2->tdcTime() ;
     }
-    ///
-  };
+  }
+  ///
+};
 
 
-template <class TYPE1, class TYPE2 = TYPE1 >
-  class Less_by_ChannelAndTime
-    : public std::binary_function<TYPE1,TYPE2,bool>
-  {
-  public:
-
-    /** compare the dep charge of one object wOTh the
-     *  dep Charge  of another object
-     *  @param obj1   first  object
-     *  @param obj2   second object
-     *  @return  result of the comparision
-     */
-    inline bool operator() ( TYPE1 obj1 , TYPE2 obj2 ) const
-    {
-      if ( obj1->channel() != obj2->channel() ) {
-        return
-          ( !obj1 ) ? true  :
-          ( !obj2 ) ? false : obj1->channel() < obj2->channel() ;
-      } else {
-        return
-          ( !obj1 ) ? true  :
-          ( !obj2 ) ? false : obj1->tdcTime() < obj2->tdcTime() ;
-      }
-
-    }
-    ///
-  };
-
-
-template <class TYPE>
-class station_eq: public std::unary_function<TYPE,bool>{
+class station_eq {
    LHCb::OTChannelID aChan;
 public:
   explicit station_eq(const LHCb::OTChannelID& testChan) : aChan(testChan){}
-  inline bool operator() (TYPE obj) const{
-  return obj->channel().station()==aChan.station();}
+  template <class TYPE>
+  bool operator() (TYPE obj) const
+  { return obj && ( obj->channel().station()==aChan.station() );}
 };
 
-template <class TYPE>
-class layer_eq: public std::unary_function<TYPE,bool>{
+class layer_eq {
    LHCb::OTChannelID aChan;
 public:
   explicit layer_eq(const LHCb::OTChannelID& testChan) : aChan(testChan){}
-  inline bool operator() (TYPE obj) const{
-  return obj->channel().uniqueLayer()==aChan.uniqueLayer();}
+  template <class TYPE>
+  bool operator() (TYPE obj) const
+  { return obj->channel().uniqueLayer()==aChan.uniqueLayer();}
 };
 
-template <class TYPE>
-class module_eq: public std::unary_function<TYPE,bool>{
+class module_eq {
    LHCb::OTChannelID aChan;
 public:
   explicit module_eq(const LHCb::OTChannelID& testChan) : aChan(testChan){}
-  inline bool operator() (TYPE obj) const{
-  return obj->channelID().uniqueModule()==aChan.uniqueModule();}
+  template <class TYPE>
+  bool operator() (TYPE obj) const
+  { return obj->channelID().uniqueModule()==aChan.uniqueModule();}
 };
 
-template <class TYPE>
-class compByStation_LB: public std::binary_function<const TYPE,
-  const LHCb::OTChannelID, bool>{
-public:
-  inline bool operator() (const TYPE& obj, const LHCb::OTChannelID& testID) const{
-    return ((!obj) ? false : testID.station() >obj->channel().station());
+struct compByStation_LB {
+  template <class TYPE>
+  bool operator() (const TYPE& obj, const LHCb::OTChannelID& testID) const{
+    return obj && ( testID.station() >obj->channel().station() );
   }
 };
 
-template <class TYPE>
-class compByStation_UB: public std::binary_function<const LHCb::OTChannelID,
-  const TYPE ,bool>{
-public:
-  inline bool operator() (const LHCb::OTChannelID& testID, const TYPE& obj) const{
-    return ((!obj) ? false : testID.station() >obj->channel().station());
+struct compByStation_UB {
+  template <class TYPE>
+  bool operator() (const LHCb::OTChannelID& testID, const TYPE& obj) const{
+    return obj && ( testID.station() >obj->channel().station() );
   }
 };
 
-template <class TYPE>
-class compByLayer_LB: public std::binary_function<const TYPE,
-  const LHCb::OTChannelID, bool>{
-   LHCb::OTChannelID testID;
-public:
-  inline bool operator() (const TYPE& obj,const LHCb::OTChannelID& testID) const{
-    return
-      ((!obj) ? false : testID.uniqueLayer() >obj->channel().uniqueLayer());
+struct compByLayer_LB {
+  template <class TYPE>
+  bool operator() (const TYPE& obj,const LHCb::OTChannelID& testID) const{
+    return obj && ( testID.uniqueLayer() >obj->channel().uniqueLayer() );
   }
 };
 
-template <class TYPE>
-class compByLayer_UB: public std::binary_function<const LHCb::OTChannelID,
-  const TYPE ,bool>{
-   LHCb::OTChannelID testID;
-public:
-  inline bool operator()(const LHCb::OTChannelID& testID, const TYPE& obj) const{
-    return
-      ((!obj) ? false : testID.uniqueLayer() >obj->channel().uniqueLayer());
+struct compByLayer_UB {
+  template <class TYPE>
+  bool operator()(const LHCb::OTChannelID& testID, const TYPE& obj) const{
+    return obj && ( testID.uniqueLayer() >obj->channel().uniqueLayer() );
   }
 };
 
-template <class TYPE>
-class compByModule_LB: public std::binary_function<const TYPE,
-  const LHCb::OTChannelID, bool>{
-   LHCb::OTChannelID testID;
-public:
-  inline bool operator() (const TYPE& obj,const LHCb::OTChannelID& testID) const{
-    return
-      ((!obj) ? false : testID.uniqueModule() >obj->channel().uniqueModule());
+struct compByModule_LB {
+  template <class TYPE>
+  bool operator() (const TYPE& obj,const LHCb::OTChannelID& testID) const{
+    return obj && ( testID.uniqueModule() >obj->channel().uniqueModule() );
   }
 };
 
-template <class TYPE>
-class compBModule_UB: public std::binary_function<const LHCb::OTChannelID,
-  const TYPE ,bool>{
-   LHCb::OTChannelID testID;
-public:
-  inline bool operator() (const LHCb::OTChannelID& testID, const TYPE& obj) const{
-    return
-      ((!obj) ? false : testID.uniqueModule() >obj->channel().uniqueModule());
+struct compBModule_UB {
+  template <class TYPE>
+  bool operator() (const LHCb::OTChannelID& testID, const TYPE& obj) const{
+    return obj && ( testID.uniqueModule() >obj->channel().uniqueModule() );
   }
 };
 
 }
-#endif // OTSIMULATION_OTDATAFUNCTOR_H
-
-
-
-
-
-
-
-
-
-
-
-
+#endif // OTDATAFUNCTOR_H
