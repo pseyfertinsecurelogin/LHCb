@@ -206,8 +206,8 @@ private:
    SmartIF<IUpdateManagerSvc> m_updMgrSvc;
 
    mutable unsigned long long m_startOfRun = 0;
-   double m_binWidth = 10;   // in _minutes_!
-   double m_timeSpan = 4000; // in _minutes_!
+   double m_binWidth = 10;   // in _seconds_!
+   double m_timeSpan = 4000; // in _seconds_!
 
    StatusCode i_updateConditions();
    void handle(const Incident&) override;
