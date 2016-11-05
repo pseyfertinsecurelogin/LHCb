@@ -3,6 +3,7 @@
 
 // Required for inheritance
 #include "GaudiKernel/IDataSelector.h"
+#include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/Property.h"
 
@@ -11,12 +12,12 @@
 #include <vector>
 #include <string>
 
+#include "LHCbOutputStreamAgent.h"
+
 // forward declarations
-class IIncidentSvc;
 class IRegistry;
 class IConversionSvc;
 class IDataManagerSvc;
-class LHCbOutputStreamAgent;
 class DataStoreItem;
 
 /** A small to stream Data I/O.
@@ -50,7 +51,7 @@ protected:
   /// Output type: NEW(NEW,CREATE,WRITE,RECREATE), UPDATE)
   std::string              m_outputType;
   /// Keep reference of agent
-  LHCbOutputStreamAgent*       m_agent;
+  std::unique_ptr<LHCbOutputStreamAgent> m_agent;
   /// Keep reference to the data provider service
   SmartIF<IDataProviderSvc>        m_pDataProvider;
   /// Keep reference to the data manager service
@@ -83,17 +84,15 @@ protected:
   /// Vector of names of Algorithms that this stream is vetoed by
   StringArrayProperty      m_vetoNames;
   /// Vector of Algorithms that this stream accepts
-  std::vector<Algorithm*>* m_acceptAlgs;
+  std::vector<Algorithm*>  m_acceptAlgs;
   /// Vector of Algorithms that this stream requires
-  std::vector<Algorithm*>* m_requireAlgs;
+  std::vector<Algorithm*>  m_requireAlgs;
   /// Vector of Algorithms that this stream is vetoed by
-  std::vector<Algorithm*>* m_vetoAlgs;
+  std::vector<Algorithm*>  m_vetoAlgs;
 
 public:
   /// Standard algorithm Constructor
   LHCbOutputStream(const std::string& name, ISvcLocator* pSvcLocator);
-  /// Standard Destructor
-  virtual ~LHCbOutputStream();
 protected:
   /// Decode list of Algorithms that this stream accepts
   StatusCode decodeAcceptAlgs();

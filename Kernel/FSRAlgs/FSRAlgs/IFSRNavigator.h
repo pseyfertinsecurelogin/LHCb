@@ -34,7 +34,5 @@ public:
 protected:
   virtual void explore(IRegistry* pObj, std::string tag, std::vector< std::string >& addresses) = 0;
 
-private:
-
 };
 #endif // IFSRNAVIGATOR_H
