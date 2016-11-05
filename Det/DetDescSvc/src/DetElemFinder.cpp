@@ -46,7 +46,7 @@ StatusCode DetElemFinder::initialize ( )
   auto detSvc = service<IDataProviderSvc>(m_detDataSvcName,true);
   if (!detSvc) {
 		log << MSG::ERROR << "Unable to get a handle to the detector data service ("
-        << m_detDataSvcName << ")" << endmsg;
+        << m_detDataSvcName.value() << ")" << endmsg;
     return StatusCode::FAILURE;
   }
 
