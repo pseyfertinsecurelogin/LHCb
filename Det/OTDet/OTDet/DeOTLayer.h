@@ -1,4 +1,3 @@
-// $Id: DeOTLayer.h,v 1.18 2009-09-24 11:45:32 wouter Exp $
 #ifndef OTDET_DEOTLAYER_H
 #define OTDET_DEOTLAYER_H 1
 
@@ -34,9 +33,6 @@ class DeOTLayer : public DetectorElement {
 
   /** Constructor */
   DeOTLayer(const std::string& name = "") ;
-
-  /** Destructor */
-  ~DeOTLayer() ;
 
   /** Retrieves reference to class identifier
    * @return the class identifier for this class
@@ -112,13 +108,13 @@ class DeOTLayer : public DetectorElement {
    /// 4 quarters; starting from 0
   typedef OT::IndexToDetElementMap<DeOTQuarter, 4, 0> MapQuarters;
 
-  unsigned int m_stationID;       ///< stationID
-  unsigned int m_layerID;         ///< layer ID number
-  LHCb::OTChannelID m_elementID;  ///< element id
-  double m_stereoAngle;           ///< layer stereo angle
-  Gaudi::Plane3D m_plane;         ///< plane corresponding to the layer
-  Quarters m_quarters;            ///< vector of quarters
-  MapQuarters m_mapQuarters;      ///< map quarters
+  unsigned int m_stationID = 0u;       ///< stationID
+  unsigned int m_layerID = 0u;         ///< layer ID number
+  LHCb::OTChannelID m_elementID = 0u;  ///< element id
+  double m_stereoAngle = 0.0;          ///< layer stereo angle
+  Gaudi::Plane3D m_plane;              ///< plane corresponding to the layer
+  Quarters m_quarters;                 ///< vector of quarters
+  MapQuarters m_mapQuarters;           ///< map quarters
 };
 
 // -----------------------------------------------------------------------------

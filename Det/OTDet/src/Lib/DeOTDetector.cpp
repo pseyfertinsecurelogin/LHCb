@@ -1,4 +1,3 @@
-// $Id: DeOTDetector.cpp,v 1.31 2008-10-28 12:53:40 cattanem Exp $
 /// Kernel
 #include "Kernel/LHCbID.h"
 #include "Kernel/OTChannelID.h"
@@ -28,14 +27,14 @@
 
 using namespace LHCb;
 
-DeOTDetector::DeOTDetector(const std::string& name) :
-  DetectorElement( name )
+DeOTDetector::DeOTDetector(const std::string& name)
+: DetectorElement( name )
 {
   /// Constructor
-  m_stations.reserve(3);
-  m_layers.reserve(12);
-  m_quarters.reserve(48);
-  m_modules.reserve(432);
+  m_stations.reserve(      3);
+  m_layers.  reserve(    4*3);
+  m_quarters.reserve(  4*4*3);
+  m_modules. reserve(9*4*4*3);
 }
 
 const CLID& DeOTDetector::clID () const {
@@ -54,8 +53,8 @@ StatusCode DeOTDetector::initialize()
   }
 
   if( hasCondition("Calibration") ) {
-    m_calibration.reset( new Calibration(this->condition("Calibration")) );
-    updMgrSvc()->registerCondition( m_calibration.get(),
+    m_calibration.emplace( this->condition("Calibration") );
+    updMgrSvc()->registerCondition( m_calibration.get_ptr(),
 				    m_calibration->m_condition.path(),
 				    &DeOTDetector::Calibration::callback ) ;
   } else {
@@ -103,7 +102,7 @@ StatusCode DeOTDetector::initialize()
 
   /// Set the first station
   setFirstStation(m_stations.front()->stationID());
-  
+
   /// Get OT Detector parameters
   m_resolution = param<double>("resolution");
   m_propagationDelay = param<double>("propagationDelay");
@@ -111,7 +110,7 @@ StatusCode DeOTDetector::initialize()
   m_maxDriftTimeCor = param<double>("maxDriftTimeCor");
   m_deadTime = param<double>("deadTime");
   m_cellRadius = param<double>("cellRadius");
-    
+
   return sc;
 }
 
@@ -153,13 +152,13 @@ int DeOTDetector::sensitiveVolumeID( const Gaudi::XYZPoint& aPoint ) const {
 double DeOTDetector::distanceAlongWire(const OTChannelID aChannel,
                                        double xHit, double yHit) const {
   const DeOTModule* aModule = findModule(aChannel);
-  if (!aModule) {
+  if (UNLIKELY(!aModule)) {
     MsgStream msg(msgSvc(), name());
     msg << MSG::WARNING << "DistanceAlongWire requested for module that does not exist " << endmsg;
     return 0.0;
   }
-  
-  return (aModule->distanceAlongWire(xHit, yHit));
+
+  return aModule->distanceAlongWire(xHit, yHit);
 }
 
 double DeOTDetector::propagationTime(const OTChannelID aChannel,
@@ -188,76 +187,74 @@ OTChannelID DeOTDetector::nextChannelRight(const OTChannelID aChannel) const {
                                                               nextRight );
 }
 
-std::unique_ptr<LHCb::Trajectory> DeOTDetector::trajectoryFirstWire(const LHCb::LHCbID& id, 
+std::unique_ptr<LHCb::Trajectory> DeOTDetector::trajectoryFirstWire(const LHCb::LHCbID& id,
                                                                   int monolayer) const {
-  if (!id.isOT()) {
+  if (UNLIKELY(!id.isOT())) {
     throw GaudiException("The LHCbID is not of OT type!", "DeOTDetector.cpp",
                          StatusCode::FAILURE);
   }
-  
+
   const DeOTModule* aModule = findModule(id.otID());
-  if (!aModule) {
+  if (UNLIKELY(!aModule)) {
     throw GaudiException("Failed to find module", "DeOTDetector.cpp",
                          StatusCode::FAILURE);
-  } 
-  
-  return std::unique_ptr<LHCb::Trajectory>(aModule->trajectoryFirstWire(monolayer));
+  }
+
+  return aModule->trajectoryFirstWire(monolayer);
 }
 
-std::unique_ptr<LHCb::Trajectory> DeOTDetector::trajectoryLastWire(const LHCb::LHCbID& id, 
+std::unique_ptr<LHCb::Trajectory> DeOTDetector::trajectoryLastWire(const LHCb::LHCbID& id,
                                                                  int monolayer) const {
-  if (!id.isOT()) {
+  if (UNLIKELY(!id.isOT())) {
     throw GaudiException("The LHCbID is not of OT type!", "DeOTDetector.cpp",
 			 StatusCode::FAILURE);
   }
-  
+
   const DeOTModule* aModule = findModule(id.otID());
-  if (!aModule) {
+  if (UNLIKELY(!aModule)) {
     throw GaudiException("Failed to find module", "DeOTDetector.cpp",
 			 StatusCode::FAILURE);
   }
-  
-  return std::unique_ptr<LHCb::Trajectory>(aModule->trajectoryLastWire(monolayer));
+
+  return aModule->trajectoryLastWire(monolayer);
 }
 
 /// Returns a Trajectory representing the wire identified by the LHCbID
 /// The offset is zero for all OT Trajectories
 std::unique_ptr<LHCb::Trajectory> DeOTDetector::trajectory(const LHCb::LHCbID& id,
                                                          const double /*offset*/) const {
-  if (!id.isOT()) {
+  if (UNLIKELY(!id.isOT())) {
     throw GaudiException("The LHCbID is not of OT type!", "DeOTDetector.cpp",
 			 StatusCode::FAILURE);
   }
-  
+
   const DeOTModule* aModule = findModule(id.otID());
-  if(!aModule) {
+  if (UNLIKELY(!aModule)) {
     throw GaudiException("Failed to find module", "DeOTDetector.cpp",
 			 StatusCode::FAILURE);
   }
-  
+
   // Offset hardcoded to 0. to eliminate warning about unused parameter
-  return std::unique_ptr<LHCb::Trajectory>(aModule->trajectory(id.otID(),0));
+  return aModule->trajectory(id.otID(),0);
 }
 
 StatusCode DeOTDetector::Calibration::callback()
 {
   // find the t0 parameter in the calibration condition
-  if(m_condition->exists("TZero")) {
-    m_globalT0 = m_condition->param<double>("TZero") ;
-  } else {
+  if(UNLIKELY(!m_condition->exists("TZero"))) {
     throw GaudiException("No parameter 'TZero' in Calibration condition",
 			 "DeOTDetector.cpp",StatusCode::FAILURE) ;
   }
+  m_globalT0 = m_condition->param<double>("TZero") ;
   return StatusCode::SUCCESS ;
 }
 
 void DeOTDetector::setGlobalT0(double t0)
 {
-  if( m_calibration ) {
-    m_calibration->m_condition->param<double>("TZero") = t0 ;
-    updMgrSvc()->invalidate( m_calibration->m_condition.target() );
-  } else {
+  if(UNLIKELY(!m_calibration)) {
     throw GaudiException("Cannot set TZero parameter since condition does not exist.",
 			 "DeOTDetector.cpp",StatusCode::FAILURE) ;
   }
+  m_calibration->m_condition->param<double>("TZero") = t0 ;
+  updMgrSvc()->invalidate( m_calibration->m_condition.target() );
 }

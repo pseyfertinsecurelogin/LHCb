@@ -1,5 +1,3 @@
-// $Id: DeOTQuarter.cpp,v 1.9 2007-06-09 13:56:48 janos Exp $
-
 /// DetDesc
 #include "DetDesc/IGeometryInfo.h"
 #include "DetDesc/SolidBox.h"
@@ -22,20 +20,20 @@ using namespace LHCb;
 
 DeOTQuarter::DeOTQuarter(const std::string& name) :
   DetectorElement(name)
-{ 
+{
   /// Constructor
   m_modules.reserve(9);
 }
 
-const CLID& DeOTQuarter::clID() const { 
-  return DeOTQuarter::classID() ; 
+const CLID& DeOTQuarter::clID() const {
+  return DeOTQuarter::classID() ;
 }
 
 StatusCode DeOTQuarter::initialize() {
-  
+
   /// Loop over modules
   IDetectorElement::IDEContainer::const_iterator iM;
-  for  (iM = this->childBegin(); iM != this->childEnd(); ++iM) {  
+  for  (iM = this->childBegin(); iM != this->childEnd(); ++iM) {
     DeOTModule* module = dynamic_cast<DeOTModule*>(*iM);
     if (module)  {
       m_modules.push_back(module);
@@ -52,7 +50,7 @@ StatusCode DeOTQuarter::initialize() {
   setElementID(aChan);
 
   m_stereoAngle = layer->params()->param<double>("stereoAngle");
-  
+
   return StatusCode::SUCCESS;
 }
 
@@ -60,7 +58,7 @@ StatusCode DeOTQuarter::initialize() {
 const DeOTModule* DeOTQuarter::findModule(const Gaudi::XYZPoint& aPoint) const {
  /// Find the modules and return a pointer to the modules from channel
   auto iM = std::find_if(m_modules.begin(), m_modules.end(),
-                         [&](const DetectorElement *e) 
+                         [&](const DetectorElement *e)
                          { return e->isInside(aPoint); } );
   return iM != m_modules.end() ? *iM : nullptr;
 }
