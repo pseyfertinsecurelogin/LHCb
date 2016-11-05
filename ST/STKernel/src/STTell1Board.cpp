@@ -39,7 +39,7 @@ bool STTell1Board::isInside(const STChannelID aOfflineChan,
   } // iSector
   sectorIndex = iSector;
 
-  return (iSector != m_sectorsVector.size() ? true : false);
+  return iSector != m_sectorsVector.size();
 }
 
 
@@ -84,12 +84,12 @@ STTell1Board::chanPair STTell1Board::DAQToOffline(const unsigned int fracStrip,
   }
 
   */
-  return std::make_pair(STChannelID(m_sectorsVector[index].type(),
+  return { STChannelID(m_sectorsVector[index].type(),
                      m_sectorsVector[index].station(),
                      m_sectorsVector[index].layer(),
                      m_sectorsVector[index].detRegion(),
                      m_sectorsVector[index].sector(),
-                     strip), interstrip);
+                     strip), interstrip};
 }
 
 
@@ -160,9 +160,10 @@ std::ostream& STTell1Board::fillStream( std::ostream& os ) const{
   os << " Source ID Board: "  <<m_boardID.id() << " region " << m_boardID.region()
      << " subID" <<  m_boardID.subID() << std::endl;
   os << "# readout sectors " << m_sectorsVector.size() << std::endl;
-  std::vector<STChannelID>::const_iterator iterW = m_sectorsVector.begin();
+
   unsigned int wafer = 0u;
-  for (; iterW !=  m_sectorsVector.end() ;++iterW, ++wafer){
+  for (auto iterW  = m_sectorsVector.begin();
+            iterW != m_sectorsVector.end() ;++iterW, ++wafer){
 
     if (*iterW == LHCb::STChannelID(0) ){
       // link is not loaded
@@ -171,28 +172,23 @@ std::ostream& STTell1Board::fillStream( std::ostream& os ) const{
     }
 
     if (m_detType == "IT"){
-      os  << ITNames().UniqueSectorToString(*iterW)  << " "   << serviceBox(wafer) << std::endl;
+      os  << ITNames().UniqueSectorToString(*iterW)  << " "   << serviceBox(wafer) << '\n';
     }
     else if (m_detType == "TT") {
-      os << TTNames().UniqueSectorToString(*iterW) << " " << serviceBox(wafer) << std::endl;
+      os << TTNames().UniqueSectorToString(*iterW) << " " << serviceBox(wafer) << '\n';
     }
     else {
-      os << UTNames().UniqueSectorToString(*iterW) << " " << serviceBox(wafer) << std::endl;
+      os << UTNames().UniqueSectorToString(*iterW) << " " << serviceBox(wafer) << '\n';
     }
   }   // iW
-  os << " -----------" << std::endl;
-
-  return os;
-
+  return os << " -----------\n";
 }
 
 #include "Kernel/STBoardMapping.h"
 
 unsigned int STTell1Board::flatTell1Number() const{
-  if ( m_detType == "TT" )
-    return STBoardMapping::find(boardID().id(), STBoardMapping::TTSourceIDToNumberMap());
-  else if ( m_detType == "IT" )
-    return STBoardMapping::find(boardID().id(), STBoardMapping::ITSourceIDToNumberMap());
-  else
-    return STBoardMapping::find(boardID().id(), STBoardMapping::UTSourceIDToNumberMap());
+  return STBoardMapping::find( boardID().id(),
+                               m_detType == "TT" ? STBoardMapping::TTSourceIDToNumberMap()
+                             : m_detType == "IT" ? STBoardMapping::ITSourceIDToNumberMap()
+                             :                     STBoardMapping::UTSourceIDToNumberMap());
 }
