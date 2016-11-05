@@ -1,4 +1,3 @@
-// $Id: L0FromRawBase.cpp,v 1.4 2009-10-29 11:17:00 jucogan Exp $
 // Include files 
 
 // from Gaudi
@@ -29,11 +28,6 @@ L0FromRawBase::L0FromRawBase( const std::string& name,
   declareProperty("L0Context"   , m_l0context   = "");
   m_useRootInTES = IgnoreRootInTES;
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-L0FromRawBase::~L0FromRawBase() {} 
-
 //=============================================================================
 // Select the raw event location
 //=============================================================================
