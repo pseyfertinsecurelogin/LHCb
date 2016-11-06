@@ -59,23 +59,10 @@ int L0CaloAlg::s_hcalLUT[ 4 ][ 16 ] = {
 //=============================================================================
 L0CaloAlg::L0CaloAlg( const std::string & name , ISvcLocator * pSvcLocator)
   : L0AlgBase( name , pSvcLocator )
-  , m_usePsSpd( true )
-  , m_addEcalToHcal( true )
-  , m_ecal(NULL)
-  , m_hcal(NULL)
-  , m_prs(NULL)
   , m_validPrs()
   , m_validPrsInner()
-  , m_adcsEcal(NULL)
-  , m_adcsHcal(NULL)
-  , m_bitsFromRaw(NULL)
-  , m_bankToTES(NULL)
   , m_rawOutput  ( 2 )
-  , m_totRawSize(0)
-  , m_nbEvents(0)
-  , m_bankVersion( 1 ) 
-  , m_nbValidation( 0 )
-  , m_l0Cond( 0 ) {
+{
   declareProperty( "CreateHCALLut"   , m_createHCALLut      = false    ) ;
   declareProperty( "UsePSSPD"        , m_usePsSpdOpts       = true     ) ;
   declareProperty( "AddECALToHCAL"   , m_addEcalToHcalOpts  = true     ) ;

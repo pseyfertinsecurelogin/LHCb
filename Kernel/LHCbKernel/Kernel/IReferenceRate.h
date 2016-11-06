@@ -21,7 +21,6 @@ public:
     return id;
   }
 
-  virtual ~IReferenceRate() {}
   virtual double rate() const = 0 ;
   virtual size_t tick() const = 0 ;
 };

@@ -75,12 +75,12 @@ namespace Gaudi
   public:
     // ========================================================================
     /// printout  to std::ostream
-    virtual std::ostream& fillStream ( std::ostream& o ) const ;
+    std::ostream& fillStream ( std::ostream& o ) const  override;
     // ========================================================================
   public:  //                               Gaudi technicalities for DataObject
     // ========================================================================
     /// retrieve the unique object identifier  (virtual)
-    virtual const CLID& clID    () const ;
+    const CLID& clID    () const  override;
     /// retrieve the unique object identifier  (static)
     static  const CLID& classID ()       ;
     // ========================================================================
@@ -141,12 +141,12 @@ namespace Gaudi
   public:
     // ========================================================================
     /// printout  to std::ostream
-    virtual std::ostream& fillStream ( std::ostream& o ) const ;
+    std::ostream& fillStream ( std::ostream& o ) const  override;
     // ========================================================================
   public:  //                               Gaudi technicalities for DataObject
     // ========================================================================
     /// retrieve the unique object identifier  (virtual)
-    virtual const CLID& clID    () const ;
+    const CLID& clID    () const  override;
     /// retrieve the unique object identifier  (static)
     static  const CLID& classID ()       ;
     // ========================================================================
@@ -212,12 +212,12 @@ namespace Gaudi
   public:
     // ========================================================================
     /// printout  to std::ostream
-    virtual std::ostream& fillStream ( std::ostream& o ) const ;
+    std::ostream& fillStream ( std::ostream& o ) const  override;
     // ========================================================================
   public:  //                               Gaudi technicalities for DataObject
     // ========================================================================
     /// retrieve the unique object identifier  (virtual)
-    virtual const CLID& clID    () const ;
+    const CLID& clID    () const  override;
     /// retrieve the unique object identifier  (static)
     static  const CLID& classID ()       ;
     // ========================================================================

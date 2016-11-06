@@ -70,7 +70,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
    * Retrieves the id of this radiator
@@ -192,7 +192,7 @@ public:
                                            const Gaudi::XYZVector& vGlobal,
                                            std::vector<Gaudi::XYZPoint>& points ) const = 0;
 
-  /** 
+  /**
    * Finds the intersections (entry/exit) with radiator. For boolean solids there
    * can be more than one intersections
    *
@@ -244,10 +244,10 @@ protected:
 protected:
 
   /// The radiator id (Aerogel, CF4, C4F10)
-  Rich::RadiatorType m_radiatorID = Rich::InvalidRadiator; 
+  Rich::RadiatorType m_radiatorID = Rich::InvalidRadiator;
 
   /// The Rich detector of this radiator
-  Rich::DetectorType m_rich = Rich::InvalidDetector;  
+  Rich::DetectorType m_rich = Rich::InvalidDetector;
 
   /// pointer to the refractive index of the material
   std::shared_ptr<Rich::TabulatedProperty1D> m_refIndex;

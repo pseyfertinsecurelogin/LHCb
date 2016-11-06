@@ -22,9 +22,9 @@ public:
   GaudiParallelizer(const std::string& name, ISvcLocator* pSvcLocator);
   virtual ~GaudiParallelizer(); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
   /** for asynchronous changes in the list of algorithms */
   void membershipHandler( Property& theProp );
@@ -39,7 +39,7 @@ protected:
         m_timer = 0;
       }
 
-      virtual ~AlgorithmEntry( ) {}; ///< Destructor
+      virtual ~AlgorithmEntry( ) {} ///< Destructor
       void setReverse( bool flag )         { m_reverse   = flag; }
 
       Algorithm* algorithm()        const  { return m_algorithm; }

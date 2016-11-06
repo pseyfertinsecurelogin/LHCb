@@ -112,7 +112,7 @@ namespace Rich
 
         /// Constructor from a pointer to a data stream
         explicit RichDAQHeaderPD ( const LongType * data )
-          : HeaderPDBase(nHeaderWordsNormal) 
+          : HeaderPDBase(nHeaderWordsNormal)
         {
           readFromDataStream(data);
         }
@@ -144,13 +144,13 @@ namespace Rich
         }
 
       public:
-        
+
         /// reset
         inline void reset( )
         {
-          if ( nHeaderWords() > 1 ) 
+          if ( nHeaderWords() > 1 )
           {
-            headerWords() = HeaderPDBase::HeaderWords(nHeaderWordsNormal,0); 
+            headerWords() = HeaderPDBase::HeaderWords(nHeaderWordsNormal,0);
           }
           headerWords()[0] = 0;
         }
@@ -161,7 +161,7 @@ namespace Rich
           reset( );
           readFromDataStream( data );
         }
-        
+
       public:
 
         /// Retrieve the Level0 ID
@@ -264,7 +264,7 @@ namespace Rich
 
         /// Read correct number of data words from given stream
         /// Note, after this call data pointer is incremented to the next word after the header
-        virtual void readFromDataStream( const LongType *& data );
+        void readFromDataStream( const LongType *& data ) override;
 
         /// Retrieve the L0 headers
         inline L0Header l0Header() const

@@ -278,7 +278,10 @@ class genSrcUtils(importUtils.importUtils):
 
         s += ')' + constF
         if metAtt['virtual'] == 'PURE': s += ' = 0'
-        if not scopeName : s += ';\n\n'
+        if not scopeName:
+            if metAtt['override'] == 'TRUE':
+                s += ' override'
+            s += ';\n\n'
         else :
             s += ' \n{\n%s\n}\n\n' % met['code'][0]['cont']
         return s

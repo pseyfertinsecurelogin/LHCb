@@ -9,7 +9,7 @@
 
 /** @class UTReadoutTool UTReadoutTool.h
  *
- *  
+ *
  *  @author Jianchun Wang
  *  @date   17/7/2012
 */
@@ -25,16 +25,16 @@ public:
 
 
   /// init
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// get region
-  virtual unsigned int region(const LHCb::STChannelID aChan) const;
+  unsigned int region(const LHCb::STChannelID aChan) const override;
 
   /** Add the mapping of source ID to board number for IT / TT / UT */
-  virtual const  std::map<unsigned int, unsigned int>& SourceIDToTELLNumberMap() const; 
+  const  std::map<unsigned int, unsigned int>& SourceIDToTELLNumberMap() const override;
 
   /** Add the mapping of board number to source ID for IT / TT / UT */
-  virtual const  std::map<unsigned int, unsigned int>& TELLNumberToSourceIDMap() const; 
+  const  std::map<unsigned int, unsigned int>& TELLNumberToSourceIDMap() const override;
 
 private:
 

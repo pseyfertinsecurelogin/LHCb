@@ -1,4 +1,3 @@
-// $Id: $
 // local
 #include "GenEvent/BeamForInitialization.h"
 
@@ -11,7 +10,7 @@
 // 2011-05-27 : Patrick Robbe
 //-----------------------------------------------------------------------------
 
-LHCb::BeamParameters * BeamForInitialization::s_initialBeamParameters = 0 ;
+LHCb::BeamParameters * BeamForInitialization::s_initialBeamParameters = nullptr ;
 
 LHCb::BeamParameters *& BeamForInitialization::getInitialBeamParameters( ) {
   return s_initialBeamParameters ;

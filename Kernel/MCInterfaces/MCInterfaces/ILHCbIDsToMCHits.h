@@ -1,5 +1,3 @@
-//  $Id: ILHCbIDsToMCHits.h,v 1.1.1.1 2007-05-25 16:24:33 cattanem Exp $
-
 #ifndef _ILHCbIDsToMCHits_H
 #define _ILHCbIDsToMCHits_H
 
@@ -16,7 +14,6 @@ namespace LHCb{
   class MCHit;
 }
 
-static const InterfaceID IID_ILHCbIDsToMCHits( "ILHCbIDsToMCHits", 0, 0 );
 
 /** @class ILHCbIDsToMCHits ILHCbIDsToMCHits.h TsaKernel/ILHCbIDsToMCHits.h
 *
@@ -27,13 +24,10 @@ static const InterfaceID IID_ILHCbIDsToMCHits( "ILHCbIDsToMCHits", 0, 0 );
 */
 
 
-class ILHCbIDsToMCHits: virtual public IAlgTool {
-
-public:
-
+struct ILHCbIDsToMCHits: extend_interfaces<IAlgTool> {
   
   /// Retrieve interface ID
-  static const InterfaceID& interfaceID() { return IID_ILHCbIDsToMCHits ; }
+  DeclareInterfaceID(ILHCbIDsToMCHits, 1, 0 );
 
   typedef std::vector<LHCb::LHCbID> LHCbIDs;
   typedef std::map<LHCb::MCHit*, unsigned int> LinkMap;
@@ -67,11 +61,6 @@ public:
   */
   virtual StatusCode link(const LHCb::LHCbID& id, LinkMap& output) const = 0;
 
-
 };
 
 #endif
-
-
-
-  

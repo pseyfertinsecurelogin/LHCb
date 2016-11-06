@@ -1,4 +1,4 @@
-#ifndef CALODATAPROVIDER_H 
+#ifndef CALODATAPROVIDER_H
 #define CALODATAPROVIDER_H 1
 
 // Include files
@@ -15,29 +15,29 @@
  */
 class CaloDataProvider : public extends<CaloReadoutTool, ICaloDataProvider> {
 
-public: 
+public:
   /// Standard constructor
-  CaloDataProvider( const std::string& type, 
+  CaloDataProvider( const std::string& type,
                      const std::string& name,
                      const IInterface* parent);
 
 
-  virtual StatusCode initialize();
-  void clear();
-  void cleanData(int feb);
-  int    adc(LHCb::CaloCellID id, int def = 0);
-  double digit(LHCb::CaloCellID id, double def = 0.);
-  unsigned int nTell1s(){return m_tell1s;};
-  const CaloVector<LHCb::CaloAdc>& adcs(int source=-1,bool clean=true);
-  const CaloVector<LHCb::CaloAdc>& adcs(std::vector<int> source,bool clean=true);
-  const CaloVector<LHCb::CaloDigit>& digits(int source=-1,bool clean=true); 
-  const CaloVector<LHCb::CaloDigit>& digits(std::vector<int> sources,bool clean=true);
-  ICaloDataProvider::CaloAdcPair adcRange(){
+  StatusCode initialize() override;
+  void clear() override;
+  void cleanData(int feb) override;
+  int    adc(LHCb::CaloCellID id, int def = 0) override;
+  double digit(LHCb::CaloCellID id, double def = 0.) override;
+  unsigned int nTell1s() override {return m_tell1s;}
+  const CaloVector<LHCb::CaloAdc>& adcs(int source=-1,bool clean=true) override;
+  const CaloVector<LHCb::CaloAdc>& adcs(std::vector<int> source,bool clean=true) override;
+  const CaloVector<LHCb::CaloDigit>& digits(int source=-1,bool clean=true) override;
+  const CaloVector<LHCb::CaloDigit>& digits(std::vector<int> sources,bool clean=true) override;
+  ICaloDataProvider::CaloAdcPair adcRange() override {
     LHCb::CaloAdc min = (m_minADC.cellID() == LHCb::CaloCellID()) ? LHCb::CaloAdc(LHCb::CaloCellID(), 0) : m_minADC;
     LHCb::CaloAdc max = (m_maxADC.cellID() == LHCb::CaloCellID()) ? LHCb::CaloAdc(LHCb::CaloCellID(), 0) : m_maxADC;
     return std::make_pair(min,max) ;
   }
-  ICaloDataProvider::CaloAdcPair pinRange(){ 
+  ICaloDataProvider::CaloAdcPair pinRange() override{
     LHCb::CaloAdc min = (m_minPinADC.cellID() == LHCb::CaloCellID()) ? LHCb::CaloAdc(LHCb::CaloCellID(), 0) : m_minPinADC;
     LHCb::CaloAdc max = (m_maxPinADC.cellID() == LHCb::CaloCellID()) ? LHCb::CaloAdc(LHCb::CaloCellID(), 0) : m_maxPinADC;
     return std::make_pair(min,max) ;
@@ -47,8 +47,8 @@ protected:
   void adc2digit();
   bool decodeCell(LHCb::CaloCellID id);
   bool decodeTell1(int tell1);
-  bool decodeBank(LHCb::RawBank* bank);
-  bool decodePrsTriggerBank(LHCb::RawBank* bank);
+  bool decodeBank(const LHCb::RawBank& bank);
+  bool decodePrsTriggerBank(const LHCb::RawBank& bank);
 private:
   LHCb::CaloAdc fillAdc(LHCb::CaloCellID id, int adc,int sourceID){
     LHCb::CaloAdc temp(id,adc);
@@ -58,7 +58,7 @@ private:
       counter("Duplicate ADC found")+=1;
       m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::DuplicateEntry);
       return temp;
-    }        
+    }
 
     if( id.area() != CaloCellCode::PinArea ){
       if( adc < m_minADC.adc()  )m_minADC = temp;
@@ -66,10 +66,10 @@ private:
     }else{
       if( adc < m_minPinADC.adc() )m_minPinADC = temp;
       if( adc > m_maxPinADC.adc() )m_maxPinADC = temp;
-    }     
+    }
     return temp;
   }
-  CaloVector<LHCb::CaloAdc>    m_adcs;
+  CaloVector<LHCb::CaloAdc>   m_adcs;
   CaloVector<LHCb::CaloDigit> m_digits;
   unsigned int m_tell1s = 0;
   LHCb::CaloAdc m_minADC;

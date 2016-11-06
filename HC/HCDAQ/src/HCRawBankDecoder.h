@@ -22,15 +22,14 @@ class ODIN;
  *
  */
 
-class HCRawBankDecoder : public Gaudi::Functional::MultiTransformer<std::tuple<LHCb::HCDigits,LHCb::HCDigits>(const LHCb::RawEvent&, const LHCb::ODIN&),
-                                                                    Gaudi::Functional::Traits::BaseClass_t<GaudiHistoAlg>>
+class HCRawBankDecoder final : public Gaudi::Functional::MultiTransformer<std::tuple<LHCb::HCDigits,LHCb::HCDigits>(const LHCb::RawEvent&, const LHCb::ODIN&),
+                                                                          Gaudi::Functional::Traits::BaseClass_t<GaudiHistoAlg>>
 {
  public:
   /// Standard constructor
   HCRawBankDecoder(const std::string& name, ISvcLocator* pSvcLocator);
 
-  ///< Algorithm initialization
-  StatusCode initialize() final;
+  StatusCode initialize() override;  ///< Algorithm initialization
 
   ///< The transform callable
   std::tuple<LHCb::HCDigits,LHCb::HCDigits>

@@ -474,11 +474,6 @@ void ConfigDBAccessSvc::createCacheTables() {
     }
 }
 
-MsgStream& ConfigDBAccessSvc::msg(MSG::Level level) const {
-     if (!m_msg) m_msg.reset( new MsgStream( msgSvc(), name() ));
-     return *m_msg << level;
-}
-
 template <typename T>
 void ConfigDBAccessSvc::createTable() {
     coral::TableDescription tableDesc( std::string("Table_")+ConfigDBAccessSvc::table_traits<T>::tableName() );

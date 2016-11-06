@@ -263,7 +263,8 @@ def test_parse_method():
                                                              u'name': u'doSomething',
                                                              u'static': u'FALSE',
                                                              u'type': u'void',
-                                                             u'virtual': u'FALSE'},
+                                                             u'virtual': u'FALSE',
+                                                             u'override': u'FALSE'},
                                                    'code': [{'attrs': {'xml:space': 'preserve'},
                                                              'cont': '\n        // here goes the code\n        '}]}]}]}]}
 
@@ -324,7 +325,8 @@ def test_parse_method_comment():
                                                              u'name': u'doSomething',
                                                              u'static': u'FALSE',
                                                              u'type': u'void',
-                                                             u'virtual': u'FALSE'},
+                                                             u'virtual': u'FALSE',
+                                                             u'override': u'FALSE'},
                                                    'code': [{'attrs': {'xml:space': 'preserve'},
                                                              'cont': '\n        // here goes the code\n        \n        // other code\n        '}]}]}]}]}
 
@@ -382,4 +384,3 @@ def test_parse_DataObject():
     pprint(data)
 
     assert data == expected
-

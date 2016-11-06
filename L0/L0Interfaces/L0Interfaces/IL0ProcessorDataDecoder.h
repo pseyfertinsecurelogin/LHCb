@@ -1,8 +1,3 @@
-// $Id: IL0ProcessorDataDecoder.h,v 1.3 2010-01-20 16:06:46 odescham Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $
-// ============================================================================
-//
 // ============================================================================
 #ifndef L0DU_IL0PROCESSORDATADECODER_H
 #define L0DU_IL0PROCESSORDATADECODER_H
@@ -15,9 +10,6 @@
 // from Event
 #include "Event/L0ProcessorData.h"
 #include "Event/L0DUBase.h"
-static const InterfaceID IID_L0ProcessorDataDecoder( "IL0ProcessorDataDecoder", 2, 0 );
-
-
 
 /** @class IL0ProcessorDataDecoder IL0ProcessorDataDecoder.h
  * 
@@ -29,12 +21,9 @@ static const InterfaceID IID_L0ProcessorDataDecoder( "IL0ProcessorDataDecoder", 
  *
  */
 
-class IL0ProcessorDataDecoder : public virtual IAlgTool {
+struct IL0ProcessorDataDecoder : extend_interfaces<IAlgTool> {
 
- public:
-
-  static const InterfaceID& interfaceID() { return IID_L0ProcessorDataDecoder; }
-
+  DeclareInterfaceID( IL0ProcessorDataDecoder, 3, 0 );
     
   /** The main methods
    *

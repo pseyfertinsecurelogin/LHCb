@@ -20,12 +20,9 @@ namespace Tuples{
  * @author Jeremie Borel
  * @date November 2007
  */
-class GAUDI_API IEventTupleTool : virtual public IAlgTool {
- public:
+struct GAUDI_API IEventTupleTool : extend_interfaces<IAlgTool> {
 
   DeclareInterfaceID(IEventTupleTool, 2, 0);
-
-  virtual ~IEventTupleTool(){};
 
   //! Fill the tuple. 
   virtual StatusCode fill( Tuples::Tuple& )=0;

@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCFINDER_H 
 #define LOKI_MCFINDER_H 1
@@ -48,17 +47,10 @@ namespace LoKi
     // ========================================================================
     /// Standard constructor
     MCFinder ( const LoKi::MCFinderObj* ); 
-    /// virtual destructor
-    virtual ~MCFinder( );    // Destructor
     /// implicit conversion to the pointer 
     operator const LoKi::MCFinderObj* () const ; 
     /// check for pointer validity:
     bool operator! () const { return validPointer() ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled 
-    MCFinder() ;                         // the default constructor is disabled 
     // ========================================================================
   } ;
   // ==========================================================================

@@ -40,9 +40,6 @@ public:
    /** Constructor */
    DeITStation ( const std::string& name = "" ) ;
 
-   /** Destructor */
-   virtual ~DeITStation();
-
    /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
@@ -53,12 +50,12 @@ public:
    * another reference to class identifier
    * @return the class identifier for this class
    */
-   const CLID& clID () const;
+   const CLID& clID () const override;
 
    /** initialization method
    * @return Status of initialisation
    */
-   virtual StatusCode initialize();
+   StatusCode initialize() override;
 
 
   /**  locate the box based on a channel id

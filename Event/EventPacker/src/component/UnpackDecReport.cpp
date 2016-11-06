@@ -1,4 +1,3 @@
-// $Id: $
 // Include files 
 
 // from Gaudi
@@ -31,10 +30,6 @@ UnpackDecReport::UnpackDecReport( const std::string& name,
   declareProperty( "OutputName", m_outputName = "Strip/Phys/DecReports" );
   declareProperty( "AlwaysCreateOutput",      m_alwaysOutput = false     );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-UnpackDecReport::~UnpackDecReport() {} 
 
 //=============================================================================
 // Main execution

@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_GENVERTICES_H
 #define LOKI_GENVERTICES_H 1
@@ -28,9 +27,6 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-02-08
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 namespace LoKi
 {
@@ -60,16 +56,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      BarCode() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  BarCode* clone() const ;
-      /// MANDATORY: virtual destructor
-      virtual ~BarCode() ;
+      BarCode* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -88,16 +80,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      PositionX() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  PositionX* clone() const ;
-      /// MANDATORY: virtual destructor
-      virtual ~PositionX() ;
+      PositionX* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -116,16 +104,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      PositionY() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  PositionY* clone() const ;
-      /// MANDATORY: virtual destructor
-      virtual ~PositionY() ;
+      PositionY* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -144,16 +128,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      PositionZ() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  PositionZ* clone() const ;
-      /// MANDATORY: virtual destructor
-      virtual ~PositionZ() ;
+      PositionZ* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -172,16 +152,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      PositionT() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  PositionT* clone() const ;
-      /// MANDATORY: virtual destructor
-      virtual ~PositionT() ;
+      PositionT* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -200,16 +176,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      Rho() {}
       /// MANDATORY: clone method ("virtual" constructor")
-      virtual  Rho* clone() const ;
-      /// MANDATORY: virtual destructor
-      virtual ~Rho() ;
+      Rho* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -244,21 +216,12 @@ namespace LoKi
       CountIF
       ( HepMC::IteratorRange      range ,
         const LoKi::Types::GCuts& cut   ) ;
-      /// copy constructor
-      CountIF ( const CountIF& right ) ;
-      /// virtual destructor
-      virtual ~CountIF();
       /// MANDATORY: clone method ("virtual contructor")
-      virtual CountIF* clone() const ;
+      CountIF* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      CountIF () ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -329,21 +292,12 @@ namespace LoKi
       ( const LoKi::Types::GCuts& cut   ,
         const LoKi::Types::GFunc& fun   ,
         HepMC::IteratorRange      range ) ;
-      /// copy constructor
-      SumIF ( const SumIF& right ) ;
-      /// virtual destructor
-      virtual ~SumIF();
       /// MANDATORY: clone method ("virtual contructor")
-      virtual SumIF* clone() const ;
+      SumIF* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      SumIF () ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================

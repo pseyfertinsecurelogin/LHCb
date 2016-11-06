@@ -43,9 +43,9 @@ public:
 
   virtual ~STClustersToRawBankAlg( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute();       ///< Algorithm execution
-  virtual StatusCode finalize();      ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute() override;       ///< Algorithm execution
+  StatusCode finalize() override;      ///< Algorithm finalization
 
 private:
 

@@ -36,11 +36,6 @@ OTTimeCreator::OTTimeCreator(const std::string& name, ISvcLocator* pSvcLocator)
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-OTTimeCreator::~OTTimeCreator() = default;
-
-//=============================================================================
 // Initialisation. Check parameters
 //=============================================================================
 StatusCode OTTimeCreator::initialize() {

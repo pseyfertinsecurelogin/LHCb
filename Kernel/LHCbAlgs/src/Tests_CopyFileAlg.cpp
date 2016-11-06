@@ -5,23 +5,23 @@
 #include <boost/filesystem.hpp>
 using namespace boost::filesystem;
 
-namespace LHCbAlgsTests 
+namespace LHCbAlgsTests
 {
 
   /// Test algorithm that copies a file when executed.
-  class CopyFileAlg final : public GaudiAlgorithm 
+  class CopyFileAlg final : public GaudiAlgorithm
   {
-    
+
   public:
-    
+
     CopyFileAlg(const std::string& name, ISvcLocator* pSvcLocator)
-      : GaudiAlgorithm(name, pSvcLocator) 
+      : GaudiAlgorithm(name, pSvcLocator)
     {
       declareProperty("Source", m_source="");
       declareProperty("Destination", m_destination="");
     }
-    
-    StatusCode execute() 
+
+    StatusCode execute() override
     {
       path src = m_source;
       path dst = m_destination;

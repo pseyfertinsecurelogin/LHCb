@@ -43,7 +43,7 @@ namespace Rich
      */
     Exception( const std::string& ex   = "unspecified exception",
                const StatusCode&  sc   =  StatusCode::FAILURE )
-      : GaudiException( ex , "*RichException*" , sc )  {};
+      : GaudiException( ex , "*RichException*" , sc )  {}
 
     /** Constructor from another GaudiException
      *
@@ -54,7 +54,7 @@ namespace Rich
     Exception( const std::string    & ex                        ,
                const GaudiException & Ex                        ,
                const StatusCode&      sc =  StatusCode::FAILURE )
-      : GaudiException( ex, "*RichException*" , sc , Ex ) {};
+      : GaudiException( ex, "*RichException*" , sc , Ex ) {}
 
     /** destructor
      */
@@ -62,7 +62,7 @@ namespace Rich
 
     /** clone (virtual constructor)
      */
-    virtual GaudiException* clone() const { return new Exception(*this); }
+    GaudiException* clone() const override { return new Exception(*this); }
 
   };
 

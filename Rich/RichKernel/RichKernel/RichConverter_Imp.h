@@ -53,10 +53,10 @@ namespace Rich
     virtual ~Converter_Imp() { resetMsgStream(); }
 
     /// standard initialization method
-    virtual StatusCode initialize();
+    StatusCode initialize() override;
 
     /// standard finalization  method
-    virtual StatusCode finalize  ();
+    StatusCode finalize  () override;
 
   public:
 

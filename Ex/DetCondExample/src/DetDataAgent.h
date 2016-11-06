@@ -27,7 +27,7 @@ class DetDataAgent : virtual public IDataStoreAgent {
 
   virtual ~DetDataAgent() {}
 
-  virtual bool analyse(IRegistry* dir, int level );
+  bool analyse(IRegistry* dir, int level ) override;
 
  private:
 

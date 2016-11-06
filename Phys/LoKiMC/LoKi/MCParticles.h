@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCPARTICLES_H
 #define LOKI_MCPARTICLES_H 1
@@ -66,14 +65,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Momentum() {}
       /// clone method (mandatory!)
-      virtual Momentum* clone() const  ;
+      Momentum* clone() const   override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -88,14 +85,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Energy() {}
       /// clone method (mandatory!)
-      virtual Energy* clone() const ;
+      Energy* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -110,14 +105,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      TransverseMomentum() {}
       /// clone method (mandatory!)
-      virtual TransverseMomentum* clone() const ;
+      TransverseMomentum* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -132,14 +125,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      MomentumX() {}
       /// clone method (mandatory!)
-      virtual MomentumX* clone() const ;
+      MomentumX* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -154,14 +145,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      MomentumY() {}
       /// clone method (mandatory!)
-      virtual MomentumY* clone() const ;
+      MomentumY* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -176,14 +165,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      MomentumZ() {}
       /// clone method (mandatory!)
-      virtual MomentumZ* clone() const  ;
+      MomentumZ* clone() const   override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -198,14 +185,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Theta() {}
       /// clone method (mandatory!)
-      virtual Theta* clone() const ;
+      Theta* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -221,14 +206,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      PseudoRapidity() {}
       /// clone method (mandatory!)
-      virtual PseudoRapidity* clone() const ;
+      PseudoRapidity* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
       /// get eta
       double eta ( argument                    p ) const
@@ -265,14 +248,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Rapidity() {}
       /// clone method (mandatory!)
-      virtual Rapidity* clone() const ;
+      Rapidity* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -292,14 +273,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Rapidity0() {}
       /// clone method (mandatory!)
-      virtual Rapidity0* clone() const ;
+      Rapidity0* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -314,14 +293,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Phi() {}
       /// clone method (mandatory!)
-      virtual Phi* clone() const ;
+      Phi* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       /// get phi
       result_type phi ( argument p ) const
       { return p->momentum(). Phi () ; }
@@ -351,14 +328,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Mass() {}
       /// clone method (mandatory!)
-      virtual Mass* clone() const ;
+      Mass* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -373,24 +348,22 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Identifier() {}
       /// clone method (mandatory!)
-      virtual Identifier* clone() const ;
+      Identifier* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
-    /** @class IsID 
-     *  new verison of PID-comparison 
+    /** @class IsID
+     *  new verison of PID-comparison
      */
     // ========================================================================
-    class GAUDI_API IsID  
+    class GAUDI_API IsID
       : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
-      , public LoKi::Pids::GetPids 
+      , public LoKi::Pids::GetPids
     {
     public:
       // ======================================================================
@@ -406,23 +379,19 @@ namespace LoKi
       IsID ( const std::vector<std::string>&      ids ) ;
       IsID ( const LoKi::Pids::GetPids&           ids ) ;
       // ======================================================================
-      virtual IsID* clone() const ;
+      IsID* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================      
-      IsID() ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class IsNotID 
-     *  new verison of PID-comparison 
+    /** @class IsNotID
+     *  new verison of PID-comparison
      */
     // ========================================================================
-    class GAUDI_API IsNotID : public LoKi::MCParticles::IsID 
+    class GAUDI_API IsNotID : public LoKi::MCParticles::IsID
     {
     public:
       // ======================================================================
@@ -438,19 +407,15 @@ namespace LoKi
       IsNotID ( const std::vector<std::string>&      ids ) ;
       IsNotID ( const LoKi::Pids::GetPids&           ids ) ;
       // ======================================================================
-      virtual IsNotID* clone() const ;
+      IsNotID* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================      
-      IsNotID() ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
-    class GAUDI_API IsAbsID : public LoKi::MCParticles::IsID   
+    class GAUDI_API IsAbsID : public LoKi::MCParticles::IsID
     {
     public:
       // ======================================================================
@@ -466,15 +431,11 @@ namespace LoKi
       IsAbsID ( const std::vector<std::string>&      ids ) ;
       IsAbsID ( const LoKi::Pids::GetPids&           ids ) ;
       // ======================================================================
-      virtual IsAbsID* clone() const ;
+      IsAbsID* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================      
-      IsAbsID() ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -494,15 +455,11 @@ namespace LoKi
       IsNotAbsID ( const std::vector<std::string>&      ids ) ;
       IsNotAbsID ( const LoKi::Pids::GetPids&           ids ) ;
       // ======================================================================
-      virtual IsNotAbsID* clone() const ;
+      IsNotAbsID* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================      
-      IsNotAbsID() ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -517,14 +474,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      AbsIdentifier() {}
       /// clone method (mandatory!)
-      virtual AbsIdentifier* clone() const ;
+      AbsIdentifier* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -540,14 +495,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      Oscillated() {}
       /// clone method (mandatory!)
-      virtual Oscillated* clone() const ;
+      Oscillated* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -562,14 +515,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      ThreeCharge() {}
       /// clone method (mandatory!)
-      virtual ThreeCharge* clone() const ;
+      ThreeCharge* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -588,14 +539,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      ProperLifeTime() {}
       /// clone method (mandatory!)
-      virtual ProperLifeTime* clone() const ;
+      ProperLifeTime* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -611,20 +560,14 @@ namespace LoKi
     public:
       // ======================================================================
       HasQuark (  const LHCb::ParticleID::Quark quark ) ;
-      // copy constructor
-      HasQuark (  const HasQuark& right ) ;
       /// clone method (mandatory!)
-      virtual HasQuark* clone() const ;
+      HasQuark* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       //
       LHCb::ParticleID::Quark quark() const { return m_quark ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      HasQuark();
       // ======================================================================
     private :
       // ======================================================================
@@ -642,14 +585,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsCharged() {}
       /// clone method (mandatory!)
-      virtual IsCharged* clone() const ;
+      IsCharged* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -663,14 +604,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsNeutral() {}
       /// clone method (mandatory!)
-      virtual IsNeutral* clone() const ;
+      IsNeutral* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -684,14 +623,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsLepton() {}
       /// clone method (mandatory!)
-      virtual IsLepton* clone() const ;
+      IsLepton* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -705,14 +642,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsMeson() {}
       /// clone method (mandatory!)
-      virtual IsMeson* clone() const ;
+      IsMeson* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -726,14 +661,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsBaryon() {}
       /// clone method (mandatory!)
-      virtual IsBaryon* clone() const ;
+      IsBaryon* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -747,14 +680,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsHadron() {}
       /// clone method (mandatory!)
-      virtual IsHadron* clone() const ;
+      IsHadron* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -768,14 +699,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// default constructor
-      IsNucleus() {}
       /// clone method (mandatory!)
-      virtual IsNucleus* clone() const ;
+      IsNucleus* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -784,7 +713,7 @@ namespace LoKi
      *  MC decay tree of other MC particle
      *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
      *  @date   2004-07-07
-     *  @warning for this class <c>toCpp</c> method is not properly defined 
+     *  @warning for this class <c>toCpp</c> method is not properly defined
      */
     class GAUDI_API FromMCDecayTree
       : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
@@ -820,16 +749,12 @@ namespace LoKi
                         MCPARTICLE last  )
         : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
           , m_cont ( first , last ) {}
-      // copy constructor
-      FromMCDecayTree( const FromMCDecayTree& ) ;
-      /// virtual destructor
-      ~FromMCDecayTree();
       /// clone method (mandatory!)
-      virtual FromMCDecayTree* clone() const ;
+      FromMCDecayTree* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -892,10 +817,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      FromMCDecayTree();
-      // ======================================================================
-    private:
-      // ======================================================================
       MCCont m_cont ;
       // ======================================================================
     };
@@ -913,19 +834,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from the predicate
       InAncestors ( const LoKi::MCTypes::MCCuts& cut ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~InAncestors() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  InAncestors* clone() const ;
+      InAncestors* clone() const  override;
       /// MANDATORY: the only one important method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: "SHORT" representation
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the defautl constructor is disabled
-      InAncestors () ;                  // the default constructor is disabled
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -952,19 +866,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from the predicate
       NinAncestors ( const LoKi::MCTypes::MCCuts& cut ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~NinAncestors() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  NinAncestors* clone() const ;
+      NinAncestors* clone() const  override;
       /// MANDATORY: the only one important method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: "SHORT" representation
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the defautl constructor is disabled
-      NinAncestors () ;                  // the default constructor is disabled
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -994,14 +901,12 @@ namespace LoKi
        */
       NinMCdownTree
       ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate& cut ) ;
-      /// destructor
-      virtual ~NinMCdownTree() ;
       /// clone method/"virtual constructor" (mandatory!)
-      virtual NinMCdownTree* clone() const ;
+      NinMCdownTree* clone() const  override;
       /// the main method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1028,16 +933,12 @@ namespace LoKi
       MCMotherFunction
       ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Function& fun   ,
         const double                             val   ) ;
-      /// copy constructor
-      MCMotherFunction ( const MCMotherFunction&                  right ) ;
-      /// destructor
-      virtual ~MCMotherFunction();
       /// clone method (virtual constructor) (mandatory!)
-      virtual MCMotherFunction* clone() const ;
+      MCMotherFunction* clone() const  override;
       /// the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1065,17 +966,12 @@ namespace LoKi
       MCMotherPredicate
       ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate& cut   ,
         const bool                                                     val   ) ;
-      /// copy constructor
-      MCMotherPredicate
-      ( const MCMotherPredicate&                  right ) ;
-      /// destructor
-      virtual ~MCMotherPredicate();
       /// clone method (virtual constructor) (mandatory!)
-      virtual MCMotherPredicate* clone() const ;
+      MCMotherPredicate* clone() const  override;
       /// the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1113,21 +1009,14 @@ namespace LoKi
       IsParticle
       ( OBJECT begin ,
         OBJECT end   )
-        : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
-        , m_objects ( begin , end )
+        : m_objects ( begin , end )
       {}
-      /** copy constructor
-       *  @param right  object to be copied
-       */
-      IsParticle( const IsParticle& right ) ;
-      /// destructor (virtual)
-      virtual ~IsParticle();
       /// MANDATORY: clone method ('virtual constructor')
-      virtual IsParticle* clone() const ;
+      IsParticle* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1168,18 +1057,12 @@ namespace LoKi
         : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
         , m_objects ( begin , end )
       {}
-      /** copy constructor
-       *  @param right  object to be copied
-       */
-      IsContainedObject( const IsContainedObject& right ) ;
-      /// destructor (virtual)
-      virtual ~IsContainedObject();
       /// MANDATORY: clone method ('virtual constructor')
-      virtual IsContainedObject* clone() const ;
+      IsContainedObject* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1226,22 +1109,12 @@ namespace LoKi
         const double e  ) ;
       /// constructor from the given 4-momentum
       MomentumDistance ( const LoKi::LorentzVector& vct ) ;
-      /** copy constructor
-       *  @param right object to be copied
-       */
-      MomentumDistance ( const MomentumDistance& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MomentumDistance() ;
       /// MANDATORY: clone function ("virtual constructor")
-      virtual MomentumDistance* clone() const ;
+      MomentumDistance* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      private:
-      /// default constructor is private
-      MomentumDistance() ;
-      // ======================================================================
+      std::ostream& fillStream( std::ostream& s ) const  override;
     private:
       // ======================================================================
       LoKi::LorentzVector m_vct ;
@@ -1279,25 +1152,13 @@ namespace LoKi
        */
       TransverseMomentumRel
       ( const LoKi::ThreeVector& vct ) ;
-      /** copy constructor
-       *  @param right object to be copied
-       */
-      TransverseMomentumRel
-      ( const TransverseMomentumRel& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~TransverseMomentumRel();
       /// MANDATORY: clone function ("virtual constructor")
-      virtual TransverseMomentumRel* clone() const ;
+      TransverseMomentumRel* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // =====================================================================
-    private:
-      // ======================================================================
-      /// default constructor is private
-      TransverseMomentumRel() ;
-      // ======================================================================
     private:
       // ======================================================================
       LoKi::ThreeVector m_vct ;
@@ -1342,15 +1203,13 @@ namespace LoKi
       //         m_phi = p->momentum().Phi() ;
       //         m_phi = adjust ( m_phi ) ;
       //       } ;
-      /// MANDATORY: virtual destructor
-      virtual ~DeltaPhi() {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  DeltaPhi* clone() const
+      DeltaPhi* clone() const override
       { return new DeltaPhi(*this) ; }
       /// MANDATORY: the only essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: "SHORT" representation
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -1359,11 +1218,6 @@ namespace LoKi
       /// get delta phi
       result_type dphi ( argument p ) const
       { return adjust ( phi ( p ) - phi0 () ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      DeltaPhi ();
       // ======================================================================
     private:
       // ======================================================================
@@ -1407,26 +1261,19 @@ namespace LoKi
       //         if ( 0 == p ) { Exception("Invalid PARTICLE*") ;}
       //         m_eta = p->momentum().Eta() ;
       //       } ;
-      /// MANDATORY: virtual destructor
-      virtual ~DeltaEta() {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  DeltaEta* clone() const
+       DeltaEta* clone() const override
       { return new DeltaEta( *this ) ; }
       /// MANDATORY: the only essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: "SHORT" representation
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
       // accessor to eta0
       result_type eta0 () const { return m_eta ; }
       result_type deta ( argument p ) const { return eta ( p ) - eta0() ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      DeltaEta ();
       // ======================================================================
     private:
       // ======================================================================
@@ -1474,15 +1321,13 @@ namespace LoKi
       //         : DeltaPhi ()
       //         , m_deta ( p )
       //       {} ;
-      /// MANDATORY: virtual destructor
-      virtual ~DeltaR2() {} ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  DeltaR2* clone() const
+      DeltaR2* clone() const override
       { return new DeltaR2(*this) ; }
       /// MANDATORY: the only essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: "SHORT" representation
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1493,11 +1338,6 @@ namespace LoKi
       { return eta ( p ) - eta0 ()  ; }
       /// get the eta
       result_type eta  ( argument p ) const { return m_deta.eta( p ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      DeltaR2 ();
       // ======================================================================
     private:
       // ======================================================================
@@ -1517,16 +1357,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      ValidOrigin() {}
-      /// MANDATORY : virtual destructor
-      virtual ~ValidOrigin();
       /// MANDATORY : clone method ("virtual constructor")
-      virtual  ValidOrigin* clone() const ;
+      ValidOrigin* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -1548,14 +1384,12 @@ namespace LoKi
       MCVertexFunAdapter
       ( const LoKi::MCTypes::MCVFunc& vfunc            ,
         const double                  err   = -1000000 ) ;
-      /// MANDATORY : virtual destructor
-      virtual ~MCVertexFunAdapter() ;
       /// MANDATORY : clone method ("virtual constructor")
-      virtual  MCVertexFunAdapter* clone() const ;
+      MCVertexFunAdapter* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private :
       // ======================================================================
@@ -1611,24 +1445,12 @@ namespace LoKi
       MCDecayPattern
       ( const std::string&                     decay  ,
         const LoKi::Interface<IMCDecayFinder>& finder ) ;
-      /** copy constructor
-       *  @param right object to be copied
-       */
-      MCDecayPattern
-      ( const  MCDecayPattern& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MCDecayPattern() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  MCDecayPattern* clone() const ;
+      MCDecayPattern* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      MCDecayPattern() ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1653,21 +1475,12 @@ namespace LoKi
       MCFilter ( const IMCParticleSelector*                  selector ) ;
       /// constructor from selector
       MCFilter ( const LoKi::Interface<IMCParticleSelector>& selector ) ;
-      /// copy constructor
-      MCFilter ( const MCFilter& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MCFilter() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual MCFilter* clone() const ;
+      MCFilter* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      MCFilter() ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1692,27 +1505,18 @@ namespace LoKi
       MCReconstructible ( const IMCReconstructible*                  tool ) ;
       /// constructor from the holder
       MCReconstructible ( const LoKi::Interface<IMCReconstructible>& tool ) ;
-      /// copy constructor
-      MCReconstructible ( const MCReconstructible&  copy ) ;
-      /// MANDATORY: virtual dectructor
-      virtual ~MCReconstructible (){} ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  MCReconstructible* clone() const ;
+      MCReconstructible* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: "short representation"
-      virtual  std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// cast operator to the underlying tool
       operator const LoKi::Interface<IMCReconstructible>& () const
       { return m_eval ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      MCReconstructible () ; // default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1750,26 +1554,17 @@ namespace LoKi
       MCReconstructibleAs
       ( const IMCReconstructible::RecCategory      cat  ,
         const LoKi::Interface<IMCReconstructible>& tool ) ;
-      /// copy constructor
-      MCReconstructibleAs ( const MCReconstructibleAs&  copy ) ;
-      /// MANDATORY: virtual dectructor
-      virtual ~MCReconstructibleAs (){} ;
       /// MAND ATORY: clone method ("virtual constructor")
-      virtual  MCReconstructibleAs* clone() const ;
+      MCReconstructibleAs* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: "short representation"
-      virtual  std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
       /// cast operator to the underlying tool
       operator const LoKi::Interface<IMCReconstructible>& () const { return m_eval ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      MCReconstructibleAs () ;               // default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1823,21 +1618,12 @@ namespace LoKi
       ( const size_t                 index ,
         const LoKi::MCTypes::MCFunc& fun   ,
         const double bad = LoKi::Constants::NegativeInfinity ) ;
-      /// copy
-      ChildFunction ( const ChildFunction& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ChildFunction(){};
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  ChildFunction*  clone() const ;
+      ChildFunction*  clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL:  specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor
-      ChildFunction();  // no default constructor
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1893,21 +1679,12 @@ namespace LoKi
       ( const size_t                 index       ,
         const LoKi::MCTypes::MCCuts& cut         ,
         const bool                   bad = false ) ;
-      /// copy
-      ChildPredicate ( const ChildPredicate& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ChildPredicate(){};
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  ChildPredicate*  clone() const ;
+      ChildPredicate*  clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL:  specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor
-      ChildPredicate();                               // no default constructor
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1946,21 +1723,12 @@ namespace LoKi
        */
       InTree  ( const LoKi::MCTypes::MCCuts& cut               ,
                 const bool                   decayOnly = false ) ;
-      /// copy constructor
-      InTree  ( const InTree& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~InTree (){};
       /// MANDATORY: clone function ("virtual constructor")
-      virtual  InTree*       clone() const ;
+      InTree*       clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type   operator() ( argument p ) const ;
+      result_type   operator() ( argument p ) const  override;
       /// OPTIONAL: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      InTree () ;                            // default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1993,21 +1761,12 @@ namespace LoKi
        */
       NinTree  ( const LoKi::MCTypes::MCCuts& cut                ,
                  const bool                   decayOnly = false  ) ;
-      /// copy constructor
-      NinTree  ( const NinTree& right ) ;
-      /// destructor
-      virtual ~NinTree (){} ;
       /// MANDATORY: clone function (virtual destructor)
-      virtual  NinTree* clone() const ;
+      NinTree* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type   operator() ( argument p ) const ;
+      result_type   operator() ( argument p ) const  override;
       /// OPTIONAL: the specific printout
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      NinTree () ;                       // the default constructor is disabled
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -2060,21 +1819,12 @@ namespace LoKi
         const LoKi::MCTypes::MCFunc& fun               ,
         const bool                   decayOnly = false ,
         const double                 res       = 0.0   ) ;
-      /// copy constructor
-      SumTree ( const SumTree& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~SumTree (){} ;
       /// MANDATORY: clone function (virtual destructor)
-      virtual  SumTree* clone() const ;
+      SumTree* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type   operator() ( argument p ) const ;
+      result_type   operator() ( argument p ) const  override;
       /// OPTIONAL: the specific printout
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      SumTree() ;                       // the default constructor is disabled
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -2129,21 +1879,12 @@ namespace LoKi
         const LoKi::MCTypes::MCFunc& fun               ,
         const bool                   decayOnly = false ,
         const double                 res       = 1.0   ) ;
-      /// copy constructor
-      MultTree ( const MultTree& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MultTree (){} ;
       /// MANDATORY: clone function (virtual destructor)
-      virtual  MultTree* clone() const ;
+      MultTree* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type   operator() ( argument p ) const ;
+      result_type   operator() ( argument p ) const  override;
       /// OPTIONAL: the specific printout
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      MultTree () ;                      // the default constructor is disabled
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -2199,21 +1940,12 @@ namespace LoKi
         const bool                   decayOnly = false ,
         const double                 res =
         LoKi::Constants::PositiveInfinity ) ;
-      /// copy constructor
-      MinTree ( const MinTree& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MinTree (){} ;
       /// MANDATORY: clone function (virtual destructor)
-      virtual  MinTree* clone() const  ;
+      MinTree* clone() const   override;
       /// MANDATORY: the only one essential method
-      virtual  result_type   operator() ( argument p ) const ;
+      result_type   operator() ( argument p ) const  override;
       /// OPTIONAL: the specific printout
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the default constructor is disabled
-      MinTree() ; ///< the default constructor is disabled
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -2269,21 +2001,12 @@ namespace LoKi
         const bool                   decayOnly = false ,
         const double                 res =
         LoKi::Constants::NegativeInfinity ) ;
-      /// copy constructor
-      MaxTree ( const MaxTree& right ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MaxTree (){} ;
       /// MANDATORY: clone function (virtual destructor)
-      virtual  MaxTree* clone() const  ;
+      MaxTree* clone() const   override;
       /// MANDATORY: the only one essential method
-      virtual  result_type   operator() ( argument p ) const ;
+      result_type   operator() ( argument p ) const  override;
       /// OPTIONAL: the specific printout
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      MaxTree() ;                        // the default constructor is disabled
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -2315,16 +2038,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      FromDecays() {}
-      /// MANDATORY: virtual destructor
-      virtual ~FromDecays() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  FromDecays* clone() const ;
+      FromDecays* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -2350,16 +2069,12 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// MANDATORY: default constructor
-      FromInteractions() {}
-      /// MANDATORY: virtual destructor
-      virtual ~FromInteractions () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  FromInteractions* clone() const ;
+      FromInteractions* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -2369,7 +2084,7 @@ namespace LoKi
     GAUDI_API std::size_t hash   ( const LHCb::MCParticle* particle ) ;
     /// soem unique hash
     GAUDI_API std::size_t hash   ( const LHCb::MCVertex*   vertex   ) ;
-    // ========================================================================    
+    // ========================================================================
   } //                                       end of namespace LoKi::MCParticles
   // ==========================================================================
 } //                                                      end of namespace LoKi

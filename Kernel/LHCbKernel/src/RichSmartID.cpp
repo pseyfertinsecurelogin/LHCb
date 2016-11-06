@@ -83,9 +83,9 @@ std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s,
   return s;
 }
 
-void LHCb::RichSmartID::rangeError(const DataType value,
-                                   const DataType maxValue,
-                                   const std::string& message) const
+void LHCb::RichSmartID::rangeError( const DataType value,
+                                    const DataType maxValue,
+                                    const std::string & message ) const
 {
   std::ostringstream mess;
   mess << message << " value " << value << " exceeds field maximum " << maxValue;
@@ -103,9 +103,9 @@ void LHCb::RichSmartID::setPixelSubRow( const DataType pixelSubRow )
 {
   if ( HPDID == idType() )
   {
-    //#ifndef NDEBUG
-    //checkRange( pixelSubRow, HPD::MaxPixelSubRow, "PixelSubRow" );
-    //#endif
+#ifndef NDEBUG
+    checkRange( pixelSubRow, HPD::MaxPixelSubRow, "PixelSubRow" );
+#endif
     setData( pixelSubRow, HPD::ShiftPixelSubRow, HPD::MaskPixelSubRow, HPD::MaskPixelSubRowIsSet );
   }
   else

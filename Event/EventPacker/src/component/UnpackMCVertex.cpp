@@ -28,10 +28,6 @@ UnpackMCVertex::UnpackMCVertex( const std::string& name,
   declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
   //setProperty( "OutputLevel", 1 );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-UnpackMCVertex::~UnpackMCVertex() {}
 
 //=============================================================================
 // Main execution

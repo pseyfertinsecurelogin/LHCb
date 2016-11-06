@@ -7,14 +7,14 @@
 
 #include "DetDesc/DetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
- 
- 
-static const CLID& CLID_DEBcmSens = 14000;  
+
+
+static const CLID& CLID_DEBcmSens = 14000;
 
 class DeBcmSens: public DetectorElement {
- 
+
 public:
- 
+
   DeBcmSens();
 
   DeBcmSens(int nSensor);
@@ -25,11 +25,11 @@ public:
     return CLID_DEBcmSens;
   }
 
-  inline virtual const CLID& clID() const {
+  inline const CLID& clID() const override {
     return classID();
   }
 
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   inline int sensorNumber() const {
     return m_SensorNumber;
@@ -39,8 +39,8 @@ public:
     m_SensorNumber = nSensor;
   }
 
-  int sensitiveVolumeID( const Gaudi::XYZPoint& point )const;
-  
+  int sensitiveVolumeID( const Gaudi::XYZPoint& point ) const override;
+
 private:
   int m_SensorNumber;
 

@@ -1,4 +1,3 @@
-
 // local
 #include "Event/PackedMCRichSegment.h"
 
@@ -19,7 +18,7 @@ void MCRichSegmentPacker::pack( const DataVector & segs,
     psegs.data().reserve( segs.size() );
     for ( const auto * seg : segs )
     {
-      psegs.data().emplace_back( PackedData() );
+      psegs.data().emplace_back( );
       auto & pseg = psegs.data().back();
 
       pseg.key = seg->key();

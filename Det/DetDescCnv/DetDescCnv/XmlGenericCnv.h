@@ -17,7 +17,7 @@
 
 // Forward and external declarations
 class ISvcLocator;
-class IXmlSvc;
+struct IXmlSvc;
 class GenericAddress;
 template <class TYPE> class CnvFactory;
 
@@ -40,13 +40,13 @@ class XmlGenericCnv : public Converter {
    * Initializes the converter
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
    * Finalizes the converter
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   /**
    * Creates the transient representation of an object.
@@ -54,16 +54,16 @@ class XmlGenericCnv : public Converter {
    * @param refpObject the object created
    * @return status depending on the completion of the call
    */
-  virtual StatusCode createObj (IOpaqueAddress* addr,
-                                DataObject*& refpObject);
+  StatusCode createObj (IOpaqueAddress* addr,
+                        DataObject*& refpObject) override;
   /**
    * Updates the transient object from the other representation.
    * @param pAddress the address of the object representation
    * @param pObject the object updated
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode updateObj (IOpaqueAddress* pAddress,
-                                DataObject* pObject);
+  StatusCode updateObj (IOpaqueAddress* pAddress,
+                        DataObject* pObject) override;
 
   /**
    * Converts the transient object to the requested representation.
@@ -71,8 +71,8 @@ class XmlGenericCnv : public Converter {
    * @param pObject the object to convert
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode createRep (DataObject* pObject,
-                                IOpaqueAddress*& refpAddress);
+  StatusCode createRep (DataObject* pObject,
+                        IOpaqueAddress*& refpAddress) override;
 
   /**
    * Updates the converted representation of a transient object.
@@ -80,17 +80,18 @@ class XmlGenericCnv : public Converter {
    * @param pObject the object whose representation has to be updated
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode updateRep (IOpaqueAddress* pAddress,
-                                DataObject* pObject);
+  StatusCode updateRep (IOpaqueAddress* pAddress,
+                        DataObject* pObject) override;
 
   /**
    * Accessor to the IXmlSvc interface of the XmlCnvSvc service
    * @return the IXmlSvc interface of this object
    *  @return status depending on the completion of the call
    */
-  IXmlSvc* xmlSvc() {
-    if (!m_xmlSvc.isValid()) {
-      m_xmlSvc = conversionSvc();
+  IXmlSvc* xmlSvc() const {
+    if (UNLIKELY(!m_xmlSvc)) {
+        auto self = const_cast<XmlGenericCnv*>(this);
+        self->m_xmlSvc = this->conversionSvc();
     }
     return m_xmlSvc;
   }
@@ -107,7 +108,7 @@ class XmlGenericCnv : public Converter {
    * Accessor to the StorageType value
    * @return the storage type for this object
    */
-  virtual long repSvcType() const  {
+  long repSvcType() const override {
     return XML_StorageType;
   }
 
@@ -233,23 +234,23 @@ protected:
   SmartIF<IXmlSvc> m_xmlSvc;
 
   /// The message stream
-  MsgStream* m_msg;
-  
+  std::unique_ptr<MsgStream> m_msg;
+
   /// Methods to print as in GaudiAlgorithms
   MsgStream& verbose() const { return *m_msg << MSG::VERBOSE; }
-  
+
   MsgStream& debug()   const { return *m_msg << MSG::DEBUG; }
 
   MsgStream& info()    const { return *m_msg << MSG::INFO; }
-  
+
   MsgStream& warning() const { return *m_msg << MSG::WARNING; }
 
-  MsgStream& error()   const { return *m_msg << MSG::ERROR; }  
- 
-  MsgStream& fatal()   const { return *m_msg << MSG::FATAL; }  
- 
+  MsgStream& error()   const { return *m_msg << MSG::ERROR; }
+
+  MsgStream& fatal()   const { return *m_msg << MSG::FATAL; }
+
   inline bool msgLevel( const MSG::Level level ) const { return m_msg->level() <= level; }
-  
+
 private:
 
   // Constant strings for element and parameter names
@@ -265,7 +266,7 @@ private:
   const XMLCh* conditionString;
   const XMLCh* classIDString;
   const XMLCh* serialNumberString;
-  
+
   /// Flag that says if the storage type CONDDB_StorageType is accessible.
   bool m_have_CONDDB_StorageType;
 

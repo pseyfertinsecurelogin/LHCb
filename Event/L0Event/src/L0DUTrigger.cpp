@@ -1,4 +1,3 @@
-// $Id: L0DUTrigger.cpp,v 1.2 2010-01-20 15:59:07 odescham Exp $
 // Include files 
 #include <utility>
 #include <string>

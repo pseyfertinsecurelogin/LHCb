@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PACKEDMCVERTEX_H
 #define EVENT_PACKEDMCVERTEX_H 1
 
@@ -50,13 +49,13 @@ namespace LHCb
   {
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
   public:
 
-    virtual const CLID& clID() const { return PackedMCVertices::classID(); }
+    const CLID& clID() const  override { return PackedMCVertices::classID(); }
     static  const CLID& classID()    { return CLID_PackedMCVertices;       }
 
   public:
@@ -65,10 +64,10 @@ namespace LHCb
     const std::vector<PackedMCVertex>& mcVerts() const { return m_vect; }
 
   public:
-    
+
     /// Set the packing version
     void setPackingVersion( const char ver ) { m_packingVersion = ver; }
-    
+
     /// Access the packing version
     char packingVersion() const { return m_packingVersion; }
 

@@ -1,4 +1,3 @@
-// $Id: ReadPackedDst.h,v 1.4 2009-12-04 16:40:19 jonrob Exp $
 #ifndef READPACKEDDST_H
 #define READPACKEDDST_H 1
 
@@ -26,11 +25,9 @@ public:
   /// Standard constructor
   ReadPackedDst( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~ReadPackedDst( ); ///< Destructor
-
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode finalize();      ///< Algorithm finalization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode finalize() override;      ///< Algorithm finalization
+  StatusCode execute() override;    ///< Algorithm execution
 
 protected:
   //== extract a string from the buffer

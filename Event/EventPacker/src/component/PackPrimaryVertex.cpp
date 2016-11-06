@@ -7,7 +7,7 @@ class PackPrimaryVertices : public GaudiAlgorithm
 {
 public:
   PackPrimaryVertices( const std::string&, ISvcLocator*) ;
-  StatusCode execute() ;
+  StatusCode execute()  override;
 private:
   std::string m_inputName ;
   std::string m_outputName ;
@@ -18,7 +18,7 @@ class UnpackPrimaryVertices : public GaudiAlgorithm
 {
 public:
   UnpackPrimaryVertices( const std::string&, ISvcLocator*) ;
-  StatusCode execute() ;
+  StatusCode execute()  override;
 private:
   std::string m_inputName ;
   std::string m_outputName ;

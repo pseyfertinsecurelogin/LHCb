@@ -1,5 +1,4 @@
-// $Id: VeloProcessInfo.h,v 1.6 2008-02-27 14:43:18 jonrob Exp $
-#ifndef EVENT_VELOPROCESSINFO_H 
+#ifndef EVENT_VELOPROCESSINFO_H
 #define EVENT_VELOPROCESSINFO_H 1
 
 // Include files
@@ -11,7 +10,7 @@
 #include "Tell1Kernel/VeloDecodeCore.h"
 
 /** @class VeloProcessInfo VeloProcessInfo.h Event/VeloProcessInfo.h
- *  
+ *
  *
  *  @author Tomasz Szumlak
  *  @date   2006-07-10
@@ -22,16 +21,14 @@ namespace VeloProcessInfoLocation{
 }
 
 class VeloProcessInfo: public ContainedObject{
-public: 
-  
+public:
+
   /// Standard constructor
   VeloProcessInfo( ): m_dataProcessInfo ( 0 ),
                       m_simProcessInfo ( ),
                       m_procType ( 99 ),
-                      m_convergenceLimit ( 0 ) 
+                      m_convergenceLimit ( 0 )
   { }
-
-  virtual ~VeloProcessInfo( ) { }   ///< Destructor
 
   bool isEnable(unsigned int proc);
   void setDataProcessInfo(unsigned int inValue);
@@ -43,11 +40,9 @@ public:
   unsigned int convLimit();
   void setRunType(unsigned int inValue);
   unsigned int runType();
-  
-protected:
 
 private:
-  
+
   unsigned int m_dataProcessInfo;
   VeloTELL1::dataVec m_simProcessInfo;
   unsigned int m_procType;
@@ -82,12 +77,12 @@ inline void VeloProcessInfo::setSimProcessInfo(VeloTELL1::dataVec inVec)
 {
   m_simProcessInfo=inVec;
 }
-//  
+//
 inline void VeloProcessInfo::setDevProcessInfo(VeloTELL1::dataVec inVec)
 {
   m_devProcessInfo=inVec;
 }
-//  
+//
 inline void VeloProcessInfo::setProcType(unsigned int inValue)
 {
   m_procType=inValue;

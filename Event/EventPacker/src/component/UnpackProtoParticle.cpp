@@ -1,4 +1,3 @@
-// $Id: UnpackProtoParticle.cpp,v 1.6 2009-11-10 10:25:07 jonrob Exp $
 // Include files
 
 // local
@@ -25,11 +24,6 @@ DECLARE_ALGORITHM_FACTORY( UnpackProtoParticle )
   declareProperty( "AlwaysCreateOutput", m_alwaysOutput = false );
   //setProperty( "OutputLevel", 1 );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-UnpackProtoParticle::~UnpackProtoParticle() {}
 
 //=============================================================================
 // Main execution

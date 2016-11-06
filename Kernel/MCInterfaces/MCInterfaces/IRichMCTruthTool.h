@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------------
 /** @file IRichMCTruthTool.h
  *
@@ -39,8 +38,6 @@ namespace Rich
   class PDPixelCluster;
 }
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichMCTruthTool( "Rich::IMCTruthTool", 1, 0 );
 
 namespace Rich
 {
@@ -57,15 +54,13 @@ namespace Rich
      */
     //------------------------------------------------------------------------------------
 
-    class IMCTruthTool : public virtual IAlgTool
+    struct IMCTruthTool : extend_interfaces<IAlgTool>
     {
-
-    public:
 
       /** static interface identification
        *  @return unique interface identifier
        */
-      static const InterfaceID& interfaceID() { return IID_IRichMCTruthTool; }
+      DeclareInterfaceID( IMCTruthTool, 1, 0 );
 
       /** get the MCRichHits associated to a given MCParticle
        *

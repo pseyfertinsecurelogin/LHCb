@@ -1056,6 +1056,5 @@ GeometryInfoPlus::~GeometryInfoPlus()
   m_gi_childrensNames.clear();
   m_gi_childrens.clear();
   updMgrSvc()->unregister(this);
-  m_services->release();
 }
 //=============================================================================

@@ -1,5 +1,5 @@
 // $Id: DummyDetectorElement.h,v 1.2 2006-02-01 19:50:30 marcocle Exp $
-#ifndef CMT_DUMMYDETECTORELEMENT_H 
+#ifndef CMT_DUMMYDETECTORELEMENT_H
 #define CMT_DUMMYDETECTORELEMENT_H 1
 
 // Include files
@@ -7,7 +7,7 @@
 #include "CLID_DummyDetectorElement.h"
 
 /** @class DummyDetectorElement DummyDetectorElement.h src/DummyDetectorElement.h
- *  
+ *
  *
  *  @author Marco CLEMENCIC
  *  @date   2005-04-11
@@ -16,19 +16,19 @@ class DummyDetectorElement: public DetectorElement {
 
   friend class DataObjectFactory<DummyDetectorElement>;
 
-public: 
+public:
   /// Standard constructor
-  DummyDetectorElement(const std::string& name = "NotYetDefined"); 
+  DummyDetectorElement(const std::string& name = "NotYetDefined");
 
   virtual ~DummyDetectorElement( ); ///< Destructor
 
   /**
-   * 
+   *
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Obtain class ID
-  virtual const  CLID& clID()   const  { return classID(); }
+  const  CLID& clID()   const   override { return classID(); }
   static const   CLID& classID()       { return CLID_DummyDetectorElement; }
 
 protected:
@@ -42,6 +42,6 @@ private:
 
   StatusCode i_updateTemperatures();
   StatusCode i_updateChannels();
-  
+
 };
 #endif // CMT_DUMMYDETECTORELEMENT_H

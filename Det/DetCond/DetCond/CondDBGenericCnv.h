@@ -40,14 +40,14 @@ public:
    *  </ul>
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
    * Finalizes the converter.
    * It releases the pointers to the taken services.
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   /**
    * Accessor to the StorageType value
@@ -61,7 +61,7 @@ public:
    * Accessor to the StorageType value
    * @return the storage type for this object
    */
-  virtual long repSvcType() const  {
+  long repSvcType() const override {
     return CONDDB_StorageType;
   }
 

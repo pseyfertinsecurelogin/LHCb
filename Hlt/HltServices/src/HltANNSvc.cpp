@@ -29,7 +29,7 @@ HltANNSvc::handleUndefined(const major_key_type& major, const std::string& minor
    if (!m_allowUndefined)  return boost::none;
 
    static boost::hash<std::string> hasher; 
-   log() << MSG::DEBUG << "handleUndefined called for " << major << " : " << minor
-                       << " -->  " << hasher(minor) << endmsg;
+   debug() << "handleUndefined called for " << major << " : " << minor
+           << " -->  " << hasher(minor) << endmsg;
    return minor_value_type(minor,hasher(minor));
 }

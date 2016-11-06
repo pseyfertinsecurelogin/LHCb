@@ -1,4 +1,4 @@
-#ifndef LUMIMERGEFSR_H 
+#ifndef LUMIMERGEFSR_H
 #define LUMIMERGEFSR_H 1
 
 // Include files
@@ -13,22 +13,22 @@
 #include "FSRNavigator.h"
 
 /** @class LumiMergeFSR LumiMergeFSR.h
- *   
+ *
  *
  *  @author Jaap Panman
  *  @date   2010-10-05
  */
 class LumiMergeFSR : public GaudiAlgorithm {
 
-public: 
+public:
   /// Standard constructor
   LumiMergeFSR( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~LumiMergeFSR( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
   virtual StatusCode merge();         ///< merge the FSRs of one input file

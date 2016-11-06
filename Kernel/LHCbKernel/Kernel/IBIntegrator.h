@@ -9,7 +9,6 @@
 #include "GaudiKernel/Vector3DTypes.h"
 
 
-static const InterfaceID IID_IBIntegrator ( "IBIntegrator", 2, 0 );
 
 /** @class IBIntegrator IBIntegrator.h Kernel/IBIntegrator.h
  *  Interface class for field integral tool.
@@ -17,11 +16,10 @@ static const InterfaceID IID_IBIntegrator ( "IBIntegrator", 2, 0 );
  *  @author Rutger Hierck
  *  @date   2002-05-28
  */
-class IBIntegrator : virtual public IAlgTool {
-public:
+struct IBIntegrator : extend_interfaces<IAlgTool> {
 
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_IBIntegrator; }
+  DeclareInterfaceID( IBIntegrator, 3, 0 );
 
   /// Get the z of center and the total Bdl
   virtual StatusCode calculateBdlAndCenter( const Gaudi::XYZPoint& beginPoint,

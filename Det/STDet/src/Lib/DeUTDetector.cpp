@@ -28,10 +28,6 @@ DeUTDetector::DeUTDetector( const std::string& name ) :
   m_sectors.clear();
 }
 
-
-DeUTDetector::~DeUTDetector() = default;
-
-
 const CLID& DeUTDetector::clID () const
 {
   return DeUTDetector::classID() ;

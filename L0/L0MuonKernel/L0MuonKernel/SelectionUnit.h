@@ -45,7 +45,7 @@ namespace L0Muon {
     void select();
 
     /// Release output register
-    void postexecute();
+    void postexecute() override;
 
   protected:
 

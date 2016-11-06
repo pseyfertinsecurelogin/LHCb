@@ -176,7 +176,7 @@ bool CaloL0DataProvider::decodeTell1 (int source) {
 bool CaloL0DataProvider::decodeBank( const LHCb::RawBank& bank ){
   if( LHCb::RawBank::MagicPattern != bank.magic() )return false;// do not decode when MagicPattern is bad
   // Get bank info
-  const unsigned int* data = bank.begin<unsigned int>();
+  const unsigned int* data       = bank.begin<unsigned int>();
   const unsigned int* const end  = bank.end<unsigned int>();
   int version        = bank.version();
   int sourceID       = bank.sourceID();

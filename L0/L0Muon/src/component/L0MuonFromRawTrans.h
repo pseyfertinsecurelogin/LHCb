@@ -1,5 +1,5 @@
 // $Id: L0MuonFromRawTrans.h,v 1.6 2008-09-04 08:57:02 jucogan Exp $
-#ifndef COMPONENT_L0MUONFROMRAWTRANS_H 
+#ifndef COMPONENT_L0MUONFROMRAWTRANS_H
 #define COMPONENT_L0MUONFROMRAWTRANS_H 1
 
 // Include files
@@ -13,7 +13,7 @@
 
 
 /** @class L0MuonFromRawTrans L0MuonFromRawTrans.h component/L0MuonFromRawTrans.h
- *  
+ *
  *
  *  @author Julien Cogan
  *  @date   2008-01-10
@@ -21,15 +21,15 @@
 
 
 class L0MuonFromRawTrans : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   L0MuonFromRawTrans( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~L0MuonFromRawTrans( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
   /// Decode the L0Muon banks and fill the registers of the converters
@@ -43,7 +43,7 @@ protected:
   StatusCode dumpErrors();
 
 private:
-  
+
 
   static inline std::string timeSlot(int bx)
   {
@@ -66,7 +66,7 @@ private:
     case  7 : return "Next7/";
     default : return "Unknown";
     };
-    
+
   };
 
   int m_version;
@@ -76,13 +76,13 @@ private:
 
   std::string  m_configfile;          // Config file name
   bool m_dumpError  ;
-  
+
   LHCb::L0MuonCandidate* l0muoncandidate(L0Muon::PMuonCandidate cand, int procVersion);
 
   L0Muon::CtrlRawCnv*  m_ctrlRaw[2];
   L0Muon::ProcRawCnv*  m_procRaw[4];
-    
+
 };
- 
+
 
 #endif // COMPONENT_L0MUONFROMRAWTRANS_H

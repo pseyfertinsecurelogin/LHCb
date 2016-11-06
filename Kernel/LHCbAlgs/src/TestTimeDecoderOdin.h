@@ -28,7 +28,7 @@ namespace LHCbAlgsTests
    *  @author Marco Clemencic
    *  @date   2006-09-21
    */
-  class TestTimeDecoderOdin final : public GaudiTool, 
+  class TestTimeDecoderOdin final : public GaudiTool,
                                     virtual public IEventTimeDecoder
   {
 
@@ -44,7 +44,7 @@ namespace LHCbAlgsTests
     // --- implementation of IEventTimeDecoder ---
     /// Get the time of the current event from the ODIN object.
     /// @return The time of current event.
-    Gaudi::Time getTime() const;
+    Gaudi::Time getTime() const override;
 
   private:
 
