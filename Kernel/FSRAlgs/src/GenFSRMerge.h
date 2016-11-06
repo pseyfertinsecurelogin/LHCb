@@ -27,6 +27,7 @@ class GenFSRMerge : public GaudiAlgorithm
 
   // Algorithm initialization, execution and finalization
   StatusCode initialize() override;
+  StatusCode execute() override;
   StatusCode finalize() override;
 
  protected:
