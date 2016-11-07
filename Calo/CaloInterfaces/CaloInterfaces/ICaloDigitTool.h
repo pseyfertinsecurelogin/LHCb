@@ -1,5 +1,3 @@
-// $Id: ICaloDigitTool.h,v 1.9 2008-09-22 00:50:30 odescham Exp $
-// ============================================================================
 #ifndef CALOINTERFACES_ICALODIGITTOOL_H
 #define CALOINTERFACES_ICALODIGITTOOL_H 1
 // Include files
@@ -8,7 +6,7 @@
 // GaudiKernel
 #include "GaudiKernel/IAlgTool.h"
 namespace LHCb{
-  class    CaloDigit                ;  
+  class    CaloDigit                ;
 }
 
 
@@ -41,7 +39,7 @@ struct ICaloDigitTool: extend_interfaces<IAlgTool>
    *  @return status code
    */
   virtual StatusCode operator() ( LHCb::CaloDigit* digit ) const = 0 ;
-  
+
 };
 
 // ============================================================================
