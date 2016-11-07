@@ -72,19 +72,18 @@ StatusCode IOFSRSvc::initialize()
   if (!sc.isSuccess()) warning() << "could not init incSvc" << endmsg;
 
   //prepare the IODataManager service
-  sc=service("IODataManager", m_ioDataManager);//, false);//,false);
-  if(!sc.isSuccess() || m_ioDataManager== NULL) return StatusCode::FAILURE;
+  m_ioDataManager = service("IODataManager");//, false);//,false);
+  if( !m_ioDataManager) return StatusCode::FAILURE;
 
   //temp
   m_filename="PFN:/path/filename.dst";
 
   // get the File Records service
-  SmartIF<IDataProviderSvc> fsrSvc(serviceLocator()->service<IDataProviderSvc>("FileRecordDataSvc"));
-  if (!fsrSvc) return StatusCode::FAILURE;
-  m_fileRecordSvc=fsrSvc;
+  m_fileRecordSvc=serviceLocator()->service<IDataProviderSvc>("FileRecordDataSvc");
+  if (!m_fileRecordSvc) return StatusCode::FAILURE;
 
   // prepare navigator tool
-  SmartIF<IToolSvc> toolSvc(serviceLocator()->service<IToolSvc>("ToolSvc"));
+  auto toolSvc = serviceLocator()->service<IToolSvc>("ToolSvc");
   if (!toolSvc) return StatusCode::FAILURE;
 
   //const IInterface* TestInterface =0;
@@ -128,6 +127,9 @@ StatusCode IOFSRSvc::finalize()
   debug() << "preparing to print" << endmsg;
   if (m_printIOFSR) print();
 
+  m_incSvc.reset();
+  m_ioDataManager.reset();
+
   debug() << "finalized" << endmsg;
   return Service::finalize();
 
@@ -149,12 +151,8 @@ StatusCode IOFSRSvc::stop()
 
 StatusCode IOFSRSvc::prepareIncSvc()
 {
-  SmartIF<IIncidentSvc> incSvc(serviceLocator()->service<IIncidentSvc>("IncidentSvc"));
-  if (!incSvc) return StatusCode::FAILURE;
-  m_incSvc=incSvc;//explicit cast.
-
-  //StatusCode sc=service("IncidentSvc", m_incSvc, false);
-  //if(!sc.isSuccess() || m_incSvc== NULL) return StatusCode::FAILURE;
+  m_incSvc = serviceLocator()->service("IncidentSvc");
+  if (!m_incSvc) return StatusCode::FAILURE;
 
   m_incSvc->addListener( this, m_endIncident);
   //m_incSvc->addListener( this, m_beginIncident);

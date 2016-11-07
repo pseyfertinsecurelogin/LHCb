@@ -18,6 +18,15 @@
 
 #include "LHCbOutputStream.h"
 
+namespace {
+// Remove all items from the output streamer list;
+void clearItems(LHCbOutputStream::Items& itms) {
+  for ( auto&  i : itms ) delete i;
+  itms.clear();
+}
+
+}
+
 #include <set>
 
 // Define the algorithm factory for the standard output data writer
@@ -108,53 +117,39 @@ StatusCode LHCbOutputStream::initialize() {
 
   // Take the new item list from the properties.
   ON_DEBUG log << MSG::DEBUG << "ItemList    : " << m_itemNames << endmsg;
-  for( ItemNames::const_iterator i = m_itemNames.begin();
-       i != m_itemNames.end(); ++i )
-  {
-    addItem( m_itemList, *i );
-  }
+  for( const auto& i : m_itemNames ) addItem( m_itemList, i );
 
   // Take the new item list from the properties.
   ON_DEBUG log << MSG::DEBUG << "OptItemList : " << m_optItemNames << endmsg;
-  for( ItemNames::const_iterator i = m_optItemNames.begin();
-       i != m_optItemNames.end(); ++i )
-  {
-    addItem( m_optItemList, *i );
-  }
+  for( const auto& i : m_optItemNames ) addItem( m_optItemList, i );
 
   // prepare the algorithm selected dependent locations
   ON_DEBUG log << MSG::DEBUG << "AlgDependentItemList : " << m_algDependentItemList << endmsg;
-  for ( AlgDependentItemNames::const_iterator a = m_algDependentItemList.begin();
-        a != m_algDependentItemList.end(); ++a )
+  for ( const auto& a : m_algDependentItemList )
   {
     // Get the algorithm pointer
-    Algorithm * theAlgorithm = decodeAlgorithm( a->first );
-    if ( theAlgorithm )
-    {
+    Algorithm * theAlgorithm = decodeAlgorithm( a.first );
+    if ( theAlgorithm ) {
       // Get the item list for this alg
       Items& items = m_algDependentItems[theAlgorithm];
       // Clear the list for this alg
       clearItems( items );
       // fill the list again
-      for ( ItemNames::const_iterator i = a->second.begin();
-            i != a->second.end(); ++i )
-      {
-        addItem( items, *i );
-      }
+      for ( const auto&  i : a.second ) addItem( items, i );
     }
   }
 
   // Take the item list to the data service preload list.
   if ( m_doPreLoad )    {
-    for(Items::iterator j = m_itemList.begin(); j != m_itemList.end(); j++)   {
-      m_pDataProvider->addPreLoadItem( *(*j) ).ignore();
+    for(auto& j : m_itemList) {
+      m_pDataProvider->addPreLoadItem( *j ).ignore();
     }
     // Not working: bad reference counting! pdataSvc->release();
   }
 
   if ( m_doPreLoadOpt )    {
-    for(Items::iterator j=m_optItemList.begin(); j!=m_optItemList.end(); j++) {
-      m_pDataProvider->addPreLoadItem( *(*j) );
+    for(auto& j : m_optItemList) {
+      m_pDataProvider->addPreLoadItem( *j );
     }
   }
   log << MSG::INFO << "Data source: " << m_storeName  << " output: " << m_output << endmsg;
@@ -405,13 +400,6 @@ void LHCbOutputStream::clearSelection()     {
   m_objects.erase(m_objects.begin(), m_objects.end());
 }
 
-// Remove all items from the output streamer list;
-void LHCbOutputStream::clearItems(Items& itms)     {
-  for ( Items::iterator i = itms.begin(); i != itms.end(); i++ )    {
-    delete (*i);
-  }
-  itms.erase(itms.begin(), itms.end());
-}
 
 // Find single item identified by its path (exact match)
 DataStoreItem*

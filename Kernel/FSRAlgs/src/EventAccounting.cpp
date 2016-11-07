@@ -118,6 +118,9 @@ StatusCode EventAccounting::finalize() {
 
   }
 
+  m_fileRecordSvc.reset();
+  m_incSvc.reset();
+
   return GaudiAlgorithm::finalize();  // must be called after all other actions
 }
 

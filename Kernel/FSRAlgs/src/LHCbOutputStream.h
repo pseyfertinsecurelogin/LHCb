@@ -137,8 +137,6 @@ public:
   virtual bool collect(IRegistry* dir, int level);
   /// Collect all objects to be written to the output stream
   virtual StatusCode collectObjects();
-  /// Clear item list
-  void clearItems(Items& itms);
   /// Add item to output streamer list
   void addItem(Items& itms, const std::string& descriptor);
   /// Clear list of selected objects

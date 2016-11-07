@@ -120,8 +120,8 @@ private:
 
   /// Allow SvcFactory to instantiate the service.
   friend class SvcFactory<IOFSRSvc>;
-  IIncidentSvc* m_incSvc = nullptr;
-  Gaudi::IIODataManager * m_ioDataManager; ///the pointer to the data manager service
+  SmartIF<IIncidentSvc> m_incSvc;
+  SmartIF<Gaudi::IIODataManager> m_ioDataManager; ///the pointer to the data manager service
   ///type of incident to regard as begin event
   std::string m_beginIncident;
   ///type of incident to regard as end event

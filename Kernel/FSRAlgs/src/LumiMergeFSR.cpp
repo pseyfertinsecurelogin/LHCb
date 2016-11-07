@@ -53,17 +53,14 @@ StatusCode LumiMergeFSR::initialize() {
 
   // initialize lists - the order is important: the first is the one to normalize to
   if (m_subtractBXTypes.empty()) {
-    m_subtractBXTypes.push_back("Beam1");
-    m_subtractBXTypes.push_back("Beam2");
-    m_subtractBXTypes.push_back("NoBeam");
+    m_subtractBXTypes = { "Beam1", "Beam2", "NoBeam" };
   }
   // ensure consistency
   m_BXTypes.push_back(m_PrimaryBXType);
   info() << "Primary  BXType " << m_PrimaryBXType << endmsg;
-  for(std::vector< std::string >::iterator bx = m_subtractBXTypes.begin() ;
-      bx!= m_subtractBXTypes.end() ; ++bx ){
-    info() << "Subtract BXType " << (*bx) << endmsg;
-    if ( (*bx) != "None" ) m_BXTypes.push_back(*bx);
+  for(const auto& bx : m_subtractBXTypes ) {
+    info() << "Subtract BXType " << bx << endmsg;
+    if ( bx != "None" ) m_BXTypes.push_back(bx);
   }
 
   // get the File Records service
@@ -93,6 +90,7 @@ StatusCode LumiMergeFSR::finalize() {
 
   // integrate all FSRs in one go
   const StatusCode mergeSC = merge();
+  m_fileRecordSvc.reset();
   return ( mergeSC && GaudiAlgorithm::finalize() ); // must be called after all other actions
 }
 
@@ -105,29 +103,25 @@ StatusCode LumiMergeFSR::merge() {
 
   // make an inventory of the FileRecord store
   std::string fileRecordRoot = m_FileRecordName;
-  std::vector< std::string > addresses = m_navigatorTool->navigate(fileRecordRoot, m_FSRName);
+  auto addresses = m_navigatorTool->navigate(fileRecordRoot, m_FSRName);
   // print
-  if ( msgLevel(MSG::DEBUG) ) {
-    for(std::vector< std::string >::iterator iAddr = addresses.begin() ; iAddr != addresses.end() ; ++iAddr ){
-      debug() << "address: " << (*iAddr) << endmsg;
-    }
+  if ( msgLevel(MSG::DEBUG) ) for(const auto& iAddr : addresses) {
+      debug() << "address: " << iAddr << endmsg;
   }
   // get timespans for later removal - and store earliest and latest times
   unsigned long long all_earliest = 0;                         // earliest time seen
   unsigned long long all_latest = 0;                           // latest time seen
-  std::vector< std::string > tsAddresses = m_navigatorTool->navigate(fileRecordRoot, m_TimeSpanFSRName);
-  for(std::vector< std::string >::iterator iAddr = tsAddresses.begin() ; iAddr != tsAddresses.end() ; ++iAddr ){
-    LHCb::TimeSpanFSRs* timeSpanFSRs = getIfExists<LHCb::TimeSpanFSRs>(m_fileRecordSvc, *iAddr);
-    LHCb::TimeSpanFSRs::iterator tsfsr;
-    for ( tsfsr = timeSpanFSRs->begin(); tsfsr != timeSpanFSRs->end(); tsfsr++ ) {
+  auto tsAddresses = m_navigatorTool->navigate(fileRecordRoot, m_TimeSpanFSRName);
+  for(const auto& iAddr : tsAddresses) {
+    for ( const auto& tsfsr : *get<LHCb::TimeSpanFSRs>(m_fileRecordSvc, iAddr) ) {
       // take earliest and latest
-      unsigned long long t0 = (*tsfsr)->earliest();
-      unsigned long long t1 = (*tsfsr)->latest();
+      unsigned long long t0 = tsfsr->earliest();
+      unsigned long long t1 = tsfsr->latest();
       if ( all_earliest == 0 ) all_earliest = t0;
       all_latest = std::max(t1, all_latest);
     }
     if ( msgLevel(MSG::DEBUG) ) {
-      debug() << "address: " << (*iAddr) << endmsg;
+      debug() << "address: " << iAddr << endmsg;
     }
   }
 
@@ -259,8 +253,7 @@ StatusCode LumiMergeFSR::merge() {
             if ( msgLevel(MSG::INFO) ) info() << timeSpanRecordAddress << ": " << n_tsFSR
                                                 << " successfully created - total is now "
                                                 << m_timeSpanFSRs->size() << endmsg;
-          }
-          else {
+          } else {
             // correction needed - take the sum of all timespanFSRs and create only one
             LHCb::TimeSpanFSR* timeSpanFSR = new LHCb::TimeSpanFSR();
             for ( tsfsr = timeSpanFSRs->begin(); tsfsr != timeSpanFSRs->end(); tsfsr++ ) {
@@ -273,8 +266,7 @@ StatusCode LumiMergeFSR::merge() {
                                                 << " successfully copied - total is now "
                                                 << m_timeSpanFSRs->size() << endmsg;
           }
-        }
-        else {
+        } else {
           // no correction needed
           for ( tsfsr = timeSpanFSRs->begin(); tsfsr != timeSpanFSRs->end(); tsfsr++ ) {
             // prepare new time span FSR and put in TS
@@ -314,9 +306,8 @@ StatusCode LumiMergeFSR::merge() {
             LHCb::LumiFSR* lumiFSR = new LHCb::LumiFSR();
             fsrs->insert(lumiFSR); // insert empty FSR in TS
           } else {
-            LHCb::LumiFSRs::iterator fsr;
             // just copy
-            for ( fsr = lumiFSRs->begin(); fsr != lumiFSRs->end(); ++fsr ) {
+            for (auto fsr = lumiFSRs->begin(); fsr != lumiFSRs->end(); ++fsr ) {
               // create a new FSR and append to TS
               n_lumiFSR++;
               LHCb::LumiFSR* lumiFSR = new LHCb::LumiFSR();
@@ -343,20 +334,14 @@ StatusCode LumiMergeFSR::merge() {
     LHCb::LumiFSRs* lumiFSRs = get<LHCb::LumiFSRs>(m_fileRecordSvc, m_FileRecordName + m_FSRNameVec[ibx]);
     info() << m_FileRecordName + m_FSRNameVec[ibx] << " " << lumiFSRs->size() << " FSRs" << endmsg;
     if ( msgLevel(MSG::DEBUG) ) {
-      LHCb::LumiFSRs::iterator fsr;
-      for ( fsr = lumiFSRs->begin(); fsr != lumiFSRs->end(); ++fsr ) {
-        debug() << *(*fsr) << endmsg;
-      }
+      for ( const auto& fsr : *lumiFSRs ) debug() << *fsr << endmsg;
     }
   }
   // read back timeSpanFSR from TS
   LHCb::TimeSpanFSRs* timeSpanFSRs = get<LHCb::TimeSpanFSRs>(m_fileRecordSvc, m_FileRecordName + m_TimeSpanFSRName);
   info() << m_FileRecordName + m_TimeSpanFSRName << " " << timeSpanFSRs->size() << " FSRs" << endmsg;
   if ( msgLevel(MSG::DEBUG) ) {
-    LHCb::TimeSpanFSRs::iterator tsfsr;
-    for ( tsfsr = timeSpanFSRs->begin(); tsfsr != timeSpanFSRs->end(); ++tsfsr ) {
-      debug() << *(*tsfsr) << endmsg;
-    }
+    for (const auto& tsfsr : *timeSpanFSRs) debug() << *tsfsr << endmsg;
   }
 
   // clean up original FSRs
@@ -374,40 +359,38 @@ StatusCode LumiMergeFSR::merge() {
   }
 
   // clean up original tsFSRs
-  for(std::vector< std::string >::iterator a = tsAddresses.begin() ; a!= tsAddresses.end() ; ++a ){
+  for(const auto& a : tsAddresses) {
     // get FSR as keyed object and cleanup the original ones - this only cleans tsFSRs
-    std::string fileRecordAddress = (*a);
-    LHCb::TimeSpanFSRs* tsFSRs = getIfExists<LHCb::TimeSpanFSRs>(m_fileRecordSvc, fileRecordAddress);
-    if ( NULL == tsFSRs ) {
-      if ( msgLevel(MSG::ERROR) ) error() << fileRecordAddress << " not found" << endmsg ;
-    } else {
-      if ( msgLevel(MSG::VERBOSE) ) verbose() << fileRecordAddress << " found" << endmsg ;
-      tsFSRs->erase(tsFSRs->begin(), tsFSRs->end());  // release storage
-      m_fileRecordSvc->unlinkObject( *a ).ignore();   // get it out of TS
+    LHCb::TimeSpanFSRs* tsFSRs = getIfExists<LHCb::TimeSpanFSRs>(m_fileRecordSvc, a);
+    if ( !tsFSRs ) {
+      if ( msgLevel(MSG::ERROR) ) error() << a << " not found" << endmsg ;
+      continue;
     }
+    if ( msgLevel(MSG::VERBOSE) ) verbose() << a << " found" << endmsg ;
+    tsFSRs->erase(tsFSRs->begin(), tsFSRs->end());  // release storage
+    m_fileRecordSvc->unlinkObject( a ).ignore();   // get it out of TS
   }
 
   // make a new inventory of the FileRecord store
   addresses = m_navigatorTool->navigate(fileRecordRoot, m_FSRName);
-  for(std::vector< std::string >::iterator iAddr = addresses.begin() ; iAddr != addresses.end() ; ++iAddr ){
-    if ( msgLevel(MSG::DEBUG) )debug() << "address: " << (*iAddr) << endmsg;
+  if ( msgLevel(MSG::DEBUG) ) for(const auto& iAddr : addresses){
+    debug() << "address: " << iAddr << endmsg;
   }
   // get timespans
   tsAddresses = m_navigatorTool->navigate(fileRecordRoot, m_TimeSpanFSRName);
-  for(std::vector< std::string >::iterator iAddr = tsAddresses.begin() ; iAddr != tsAddresses.end() ; ++iAddr ){
-    if ( msgLevel(MSG::DEBUG) )debug() << "address: " << (*iAddr) << endmsg;
+  if ( msgLevel(MSG::DEBUG) ) for(const auto& iAddr : tsAddresses) {
+    debug() << "address: " << iAddr << endmsg;
   }
 
   // check if the original EventCount FSRs can be retrieved from the TS
-  if ( msgLevel(MSG::DEBUG) )
-  {
+  if ( msgLevel(MSG::DEBUG) ) {
     LHCb::EventCountFSR* readFSR = get<LHCb::EventCountFSR>(m_fileRecordSvc, LHCb::EventCountFSRLocation::Default);
     debug() << "READ FSR: " << *readFSR << endmsg;
   }
 
   // clean up eventCountFSRs, except the top level
   std::vector< std::string > evAddresses = m_navigatorTool->navigate(fileRecordRoot, m_EventCountFSRName);
-  for(std::vector< std::string >::iterator a = evAddresses.begin() ; a!= evAddresses.end() ; ++a ){
+  for(auto a = evAddresses.begin() ; a!= evAddresses.end() ; ++a ){
     // get FSR as keyed object and cleanup the original ones - this only cleans evFSRs
     std::string fileRecordAddress = (*a);
     if ( msgLevel(MSG::DEBUG) )debug() << "address in list: " << (*a) << endmsg;
@@ -422,8 +405,8 @@ StatusCode LumiMergeFSR::merge() {
     }
   }
   evAddresses = m_navigatorTool->navigate(fileRecordRoot, m_EventCountFSRName);
-  for(std::vector< std::string >::iterator iAddr = evAddresses.begin() ; iAddr != evAddresses.end() ; ++iAddr ){
-    if ( msgLevel(MSG::DEBUG) )debug() << "address: " << (*iAddr) << endmsg;
+  if ( msgLevel(MSG::DEBUG) ) for(const auto& addr : evAddresses) {
+    debug() << "address: " << addr << endmsg;
   }
 
   return StatusCode::SUCCESS;
