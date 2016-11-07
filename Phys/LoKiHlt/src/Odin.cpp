@@ -66,6 +66,8 @@ composer_t<std::decay_t<lambda_ts>...>
 compose(lambda_ts&&... lambdas)
 { return {std::forward<lambda_ts>(lambdas)...}; }
 
+
+
 }
 // ============================================================================
 // the constructor from the start/stop times
@@ -144,8 +146,7 @@ LoKi::Odin::RunNumber::operator()( LoKi::Odin::RunNumber::argument o ) const
   auto r = o->runNumber();
   return boost::apply_visitor( compose(
     [&](const run_range& rng) { return rng.first <= r && r < rng.second ; },
-    [&](const run_list& lst)  { return std::binary_search( lst.begin(), lst.end(), r ); },
-    [ ](auto)                 { return false; } ),
+    [&](const run_list& lst)  { return std::binary_search( lst.begin(), lst.end(), r ); } ),
     m_runs );
 
 }
@@ -162,8 +163,7 @@ std::ostream& LoKi::Odin::RunNumber::fillStream ( std::ostream& s ) const
       if (rng.second!=rng.first+1) { s << "," << rng.second; }
       return s << ")"; },
     [&](const run_list& lst) -> std::ostream&
-    { return s << Gaudi::Utils::toString ( lst ) << ")" ; },
-    [&](auto) -> std::ostream& { return s << ")"; }),
+    { return s << Gaudi::Utils::toString ( lst ) << ")" ; }),
     m_runs );
 }
 // ============================================================================
@@ -203,8 +203,7 @@ LoKi::Odin::BXId::operator()
   auto bx = o->bunchId();
   return boost::apply_visitor( compose(
     [&](const bx_range& rng) { return rng.first <= bx && bx < rng.second; },
-    [&](const bx_vector& v)  { return std::binary_search( v.begin(), v.end(), bx ); },
-    [](auto) { return false; } ),
+    [&](const bx_vector& v)  { return std::binary_search( v.begin(), v.end(), bx ); } ),
     m_bxs );
 }
 // ============================================================================
@@ -219,8 +218,7 @@ std::ostream& LoKi::Odin::BXId::fillStream ( std::ostream& s ) const
             if (rng.second!=rng.first+1) s << "," << rng.second;
             return s << ")";},
     [&](const bx_vector& v) -> std::ostream& {
-            return s << Gaudi::Utils::toString ( v ) << ")" ;  },
-    [&](auto) -> std::ostream& { return s <<")"; } ),
+            return s << Gaudi::Utils::toString ( v ) << ")" ;  } ),
     m_bxs );
 }
 // ============================================================================
@@ -291,8 +289,7 @@ LoKi::Odin::EvtNumber::operator()( LoKi::Odin::EvtNumber::argument o ) const
   event_type evt ( o->eventNumber() ) ;
   return boost::apply_visitor( compose(
     [&](const event_range& rng) { return rng.first <= evt && evt < rng.second; },
-    [&](const event_list&  lst) { return lst.contains(evt); },
-    [](auto)                    { return false; } ),
+    [&](const event_list&  lst) { return lst.contains(evt); } ),
     m_evts  );
 
 }
@@ -308,8 +305,7 @@ std::ostream& LoKi::Odin::EvtNumber::fillStream ( std::ostream& s ) const
                                   if (rng.second+0 != rng.first+1)
                                     s << "," << rng.second;
                                   return s << ")" ; },
-    [&](const event_list& lst) -> std::ostream& { return s << Gaudi::Utils::toString ( lst ) << ")" ; },
-    [&](auto) -> std::ostream& { return s << ")"; } ),
+    [&](const event_list& lst) -> std::ostream& { return s << Gaudi::Utils::toString ( lst ) << ")" ; } ),
     m_evts );
 
 }
@@ -361,8 +357,8 @@ LoKi::Odin::RunEvtNumber::operator()( argument o ) const
   //
   return boost::apply_visitor( compose(
         [&](const runevt_range& rng) { return rng.first <= runevt && runevt < rng.second; },
-        [&](const runevt_list&  lst) { return lst.contains(runevt); },
-        [](auto) { return false; }) , m_runevts );
+        [&](const runevt_list&  lst) { return lst.contains(runevt); } ),
+        m_runevts );
 }
 // ============================================================================
 // OPTIONAL: the nice printout
@@ -379,8 +375,7 @@ std::ostream& LoKi::Odin::RunEvtNumber::fillStream ( std::ostream& s ) const
         return s << Gaudi::Utils::toString ( rng.first ) << " , "
                  << Gaudi::Utils::toString ( rng.second   ) << " ) " ;
     },
-    [&](const runevt_list&  lst) -> std::ostream& { return Gaudi::Utils::toStream( lst, s ) << ")";  },
-    [&](auto) -> std::ostream& { return s << ")"; } ),
+    [&](const runevt_list&  lst) -> std::ostream& { return Gaudi::Utils::toStream( lst, s ) << ")";  } ),
     m_runevts );
 }
 // ============================================================================
