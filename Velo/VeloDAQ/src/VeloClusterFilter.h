@@ -3,6 +3,8 @@
 
 #include "Kernel/VeloChannelID.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/AnyDataHandle.h"
+#include "GaudiKernel/DataObjectHandle.h"
 #include <string>
 
 class DeVelo;
@@ -25,12 +27,13 @@ public:
 private:
   bool passesFilter(LHCb::VeloChannelID id) const;
 
-  std::string m_inputLiteClusterLocation;
-  std::string m_outputLiteClusterLocation;
-  std::string m_inputClusterLocation;
-  std::string m_outputClusterLocation;
   std::string m_filterCriterion;
   enum filter_t { ALL, LEFT, RIGHT, R, PHI, PU, OVERLAP } m_filter = ALL;
+
+  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_inputLiteClusterDh = {LHCb::VeloLiteClusterLocation::Default, Gaudi::DataHandle::Reader, this };
+  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_outputLiteClusterDh = {"/Event/Raw/Velo/LiteClustersCopy", Gaudi::DataHandle::Writer, this };
+  DataObjectHandle<LHCb::VeloClusters> m_inputClusterDh = { LHCb::VeloLiteClusterLocation::Default , Gaudi::DataHandle::Writer, this };
+  DataObjectHandle<LHCb::VeloClusters> m_outputClusterDh = {"/Event/Raw/Velo/ClustersCopy" , Gaudi::DataHandle::Writer, this };
 
   int m_minNRClustersCut;
   int m_minNPhiClustersCut;

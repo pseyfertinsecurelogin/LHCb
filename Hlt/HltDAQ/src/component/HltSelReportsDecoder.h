@@ -1,13 +1,10 @@
-// $Id: HltSelReportsDecoder.h,v 1.1.1.1 2009-06-24 15:38:52 tskwarni Exp $
 #ifndef HLTSELREPORTSDECODER_H 
 #define HLTSELREPORTSDECODER_H 1
 
 // Include files
 // from Gaudi
 #include "HltRawBankDecoderBase.h"
-
 #include "HltDAQ/IReportConvert.h"
-#include "HltDAQ/ReportConvertTool.h"
 
 /** @class HltSelReportsDecoder HltSelReportsDecoder.h
  *  
@@ -19,19 +16,20 @@
  *
  */
 
-class HltSelReportsDecoder : public HltRawBankDecoderBase {
+class HltSelReportsDecoder : public HltRawBankMultiDecoder<LHCb::HltSelReports,LHCb::HltObjectSummary::Container> {
 public: 
   /// Standard constructor
   HltSelReportsDecoder( const std::string& name, ISvcLocator* pSvcLocator );
+
+  ///< Algorithm initialization
   StatusCode initialize() override;
-  StatusCode execute   () override;    ///< Algorithm execution
+
+  ///< Algorithm execution
+  std::tuple<LHCb::HltSelReports,LHCb::HltObjectSummary::Container> operator()(const LHCb::RawEvent&) const override;
 
 private:
-  enum HeaderIDs { kVersionNumber=10 };
-  /// location of output
-  StringProperty m_outputHltSelReportsLocation;
-  /// for converting objects in to summaries
-  IReportConvert* m_conv = nullptr;
+  enum HeaderIDs { kVersionNumber=9 };
+  IReportConvert* m_conv = nullptr;   /// for converting objects in to summaries
 };
 
 #endif // HLTSELREPORTSDECODER_H

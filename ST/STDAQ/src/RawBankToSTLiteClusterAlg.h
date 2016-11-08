@@ -4,6 +4,8 @@
 #include "STDecodingBaseAlg.h"
 #include "Event/RawBank.h"
 #include "Kernel/STDAQDefinitions.h"
+#include "GaudiKernel/AnyDataHandle.h"
+#include "GaudiAlg/Transformer.h"
 
 #include "Event/STLiteCluster.h"
 
@@ -16,7 +18,7 @@
  *  Algorithm to create STClusters from RawEvent object
  *
  *  @author M. Needham
- *  @date   2004-01-07
+ *  @author S. Ponce
  */
 
 
@@ -30,33 +32,31 @@ namespace LHCb{
  class STLiteCluster;
 }
 
-class RawBankToSTLiteClusterAlg : public STDecodingBaseAlg {
+typedef Gaudi::Functional::Transformer<LHCb::STLiteCluster::STLiteClusters(const LHCb::ODIN&, const LHCb::RawEvent&),
+  Gaudi::Functional::Traits::BaseClass_t<STDecodingBaseAlg>> RawBankToSTLiteClusterAlgBaseClass;
+
+class RawBankToSTLiteClusterAlg final : public RawBankToSTLiteClusterAlgBaseClass {
 
 public:
 
   /// Standard constructor
-  RawBankToSTLiteClusterAlg( const std::string& name, ISvcLocator* pSvcLocator );
+  RawBankToSTLiteClusterAlg(const std::string& name, ISvcLocator* pSvcLocator);
 
-  virtual ~RawBankToSTLiteClusterAlg( ); ///< Destructor
-
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute() override;    ///< Algorithm execution
-  StatusCode finalize() override; ///< finalize
+  StatusCode initialize() override;   ///< Algorithm initialization
+  StatusCode finalize() override;     ///< Algorithm finalization
+  LHCb::STLiteCluster::STLiteClusters operator()(const LHCb::ODIN&, const LHCb::RawEvent&) const override;
 
 private:
 
   // create Clusters from this type
-  StatusCode decodeBanks(LHCb::RawEvent* rawEvt, LHCb::STLiteCluster::STLiteClusters* fCont) const;
+  StatusCode decodeBanks(const LHCb::RawEvent& rawEvt, LHCb::STLiteCluster::STLiteClusters& fCont) const;
 
   // add a single cluster to the output container
   void createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion,
                      const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters* fCont, const bool isUT) const;
 
 
-  std::string m_clusterLocation;
-
-  class Less_by_Channel : public std::binary_function<LHCb::STLiteCluster,LHCb::STLiteCluster ,bool>{
-  public:
+  struct Less_by_Channel {
 
     /** compare the channel of one object with the
      *  channel of another object
@@ -65,15 +65,14 @@ private:
      *  @return  result of the comparision
      */
     //
-    inline bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
+    bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
     {
       return obj1.channelID() < obj2.channelID() ;
     }
   };
 
 
-  class Equal_Channel : public std::binary_function<LHCb::STLiteCluster,LHCb::STLiteCluster ,bool>{
-  public:
+  struct Equal_Channel {
 
     /** compare the channel of one object with the
      *  channel of another object
@@ -82,7 +81,7 @@ private:
      *  @return  result of the comparision
      */
     //
-    inline bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
+    bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
     {
       return obj1.channelID() == obj2.channelID() ;
     }

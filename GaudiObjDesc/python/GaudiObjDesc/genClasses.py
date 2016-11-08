@@ -811,7 +811,7 @@ class genClasses(genSrcUtils.genSrcUtils):
                'ORDERED':   self._genAllocBoostOrdered,
                'WITHMUTEX': self._genAllocBoost,
                'NOMUTEX':   self._genAllocBoostNoMutex,
-               'DEFAULT':   self._genAllocBoostNoMutex # default allocator type is Boost without mutex support
+               'DEFAULT':   self._genAllocBoost
                }.get(allocatorType, lambda _: "")
         return gen(godClass['attrs']['name'])
 
@@ -822,7 +822,7 @@ class genClasses(genSrcUtils.genSrcUtils):
 
         if allocatorType == 'DEFAULT' :
             # set the default allocator type
-            allocatorType = 'NOMUTEX'
+            allocatorType = 'DEFAULT'
 
         data = {}
         data['classname'] = godClass['attrs']['name']

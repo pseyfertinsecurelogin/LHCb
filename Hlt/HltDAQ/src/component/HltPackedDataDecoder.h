@@ -1,6 +1,10 @@
 #ifndef PACKEDDATADECODER_H
 #define PACKEDDATADECODER_H 1
 
+
+//// TODO: split this up into RawEvent -> [ loc, Out_i ]
+//         and then use SuperAlgorithm to have a vector over i....
+
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 #include "HltRawBankDecoderBase.h"
@@ -19,8 +23,6 @@ public:
 
   /// Standard constructor
   HltPackedDataDecoder(const std::string& name, ISvcLocator* pSvcLocator);
-  /// Destructor
-  ~HltPackedDataDecoder( ) override = default;
 
   StatusCode initialize() override; ///< Algorithm initialization
   StatusCode execute() override; ///< Algorithm execution
@@ -43,7 +45,7 @@ private:
   /// Buffer for de-serialization of the packed objects
   PackedDataPersistence::PackedDataInBuffer m_buffer; 
   /// Helper for computing checksums
-  PackedDataPersistence::PackedDataChecksum* m_checksum{nullptr};
+  std::unique_ptr<PackedDataPersistence::PackedDataChecksum> m_checksum;
 };
 
 #endif // PACKEDDATADECODER_H

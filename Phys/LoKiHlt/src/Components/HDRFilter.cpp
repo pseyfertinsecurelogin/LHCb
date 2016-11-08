@@ -1,6 +1,7 @@
-// $Id: HDRFilter.cpp,v 1.2 2009-05-20 08:57:40 ibelyaev Exp $
 // ============================================================================
 // Include files
+// ============================================================================
+#include "GaudiAlg/FilterPredicate.h"
 // ============================================================================
 // HltEvent
 // ============================================================================
@@ -25,20 +26,13 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.BElyaev@nikhef.nl
    *  @date 2008-09-23
    */
-  class HDRFilter : public LoKi::FilterAlg
+  class HDRFilter : public Gaudi::Functional::FilterPredicate<bool(const LHCb::HltDecReports&),
+                                                              Gaudi::Functional::Traits::BaseClass_t<LoKi::FilterAlg>>
   {
-    // ========================================================================
-    /// friend factory for instantiation
-    friend class AlgFactory<LoKi::HDRFilter> ;
-    // ========================================================================
   public:
     // ========================================================================
-    /// initialization
-    StatusCode initialize ()  override;
     /// the main method: execute
-    StatusCode execute    ()  override;
-    // ========================================================================
-  public:
+    bool operator()(const LHCb::HltDecReports&) const override;
     // ========================================================================
     /** Decode the functor (use the factory)
      *  @see LoKi::FilterAlg
@@ -52,8 +46,6 @@ namespace LoKi
       return StatusCode::SUCCESS ;
     }
     // ========================================================================
-  protected:
-    // ========================================================================
     /** standard constructor
      *  @see LoKi::FilterAlg
      *  @see GaudiAlgorithm
@@ -66,24 +58,16 @@ namespace LoKi
     HDRFilter
     ( const std::string& name ,   // the algorithm instance name
       ISvcLocator*       pSvc ) ; // pointer to the service locator
-    /// virtual and protected destructor
-    virtual ~HDRFilter () {}
     // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    HDRFilter () ;                       // the default constructor is disabled
     /// the copy constructor is disabled
-    HDRFilter ( const HDRFilter& ) ;        // the copy constructor is disabled
+    HDRFilter ( const HDRFilter& ) = delete;
     /// the assignement operator is disabled
-    HDRFilter& operator=( const HDRFilter& ) ;   // the assignement is disabled
+    HDRFilter& operator=( const HDRFilter& ) = delete;
     // ========================================================================
   private:
     // ========================================================================
     /// the functor itself
-    LoKi::Types::HLT_Cut  m_cut ;                         // the functor itself
-    /// TES location of LHCb::HltDecReports object
-    std::string m_location ;      // TES location of LHCb::HltDecReports object
+    LoKi::Types::HLT_Cut  m_cut = { LoKi::BasicFunctors<const LHCb::HltDecReports*>::BooleanConstant( false ) }  ;                         // the functor itself
     // ========================================================================
   };
   // ==========================================================================
@@ -143,12 +127,29 @@ namespace
   // special case: Hlt2*Hlt1*
   inline bool special_case ( const std::string& name )
   {
-
     return
       4 < name.size()          &&
-      0 == name.find ( "Hlt2") && _hlt1_ ( name ) ;
+      boost::algorithm::starts_with(name,"Hlt2") &&
+      _hlt1_ ( name ) ;
   }
   // ==========================================================================
+  std::string location(const std::string& name) {
+      // TES location of LHCb::HltDecReports
+      std::string loc = LHCb::HltDecReportsLocation::Default;
+      if ( special_case ( name ) )
+      { loc =  LHCb::HltDecReportsLocation::Hlt2Default ; }
+      else if ( std::string::npos != name.find ( "Hlt1"  ) ||
+                std::string::npos != name.find ( "HLT1"  ) )
+      { loc =  LHCb::HltDecReportsLocation::Hlt1Default ; }
+      else if ( std::string::npos != name.find ( "Hlt2"  ) ||
+                std::string::npos != name.find ( "HLT2"  ) )
+      { loc =  LHCb::HltDecReportsLocation::Hlt2Default ; }
+      else if ( std::string::npos != name.find ( "Strip" ) ||
+                std::string::npos != name.find ( "STRIP" ) )
+      { loc =  "Strip/Phys/DecReports"                  ; }
+      return loc;
+  }
+
 } // ==========================================================================
 // ============================================================================
 /*  standard constructor
@@ -164,103 +165,68 @@ namespace
 LoKi::HDRFilter::HDRFilter
 ( const std::string& name , // the algorithm instance name
   ISvcLocator*       pSvc ) // pointer to the service locator
-  : LoKi::FilterAlg ( name , pSvc )
-    // the functor itself
-  , m_cut ( LoKi::BasicFunctors<const LHCb::HltDecReports*>::BooleanConstant( false ) )
-    // TES location of LHCb::HltDecReports
-  , m_location ( LHCb::HltDecReportsLocation::Default )
+: FilterPredicate( name , pSvc, KeyValue{ "Location", location(name) } )
 {
-  //
-  if ( special_case ( name ) )
-  { m_location =  LHCb::HltDecReportsLocation::Hlt2Default ; }
-  else if ( std::string::npos != name.find ( "Hlt1"  ) ||
-            std::string::npos != name.find ( "HLT1"  ) )
-  { m_location =  LHCb::HltDecReportsLocation::Hlt1Default ; }
-  else if ( std::string::npos != name.find ( "Hlt2"  ) ||
-            std::string::npos != name.find ( "HLT2"  ) )
-  { m_location =  LHCb::HltDecReportsLocation::Hlt2Default ; }
-  else if ( std::string::npos != name.find ( "Strip" ) ||
-            std::string::npos != name.find ( "STRIP" ) )
-  { m_location =  "Strip/Phys/DecReports"                  ; }
-  //
-  declareProperty
-    ( "Location" ,
-      m_location ,
-      "TES location of LHCb::HltDecReports object" ) ;
-  //
+  // DAMN: this isn't going to (always) work: what if Location is set first - and the test fails,
+  //       and then afterwards code() is updated by the property mgr?
+  const Property& prop = getProperty ( "Location" );
+  const_cast<Property&>(prop).declareUpdateHandler( [=](Property& prop) {
+    const auto& nam = this->name();
+    const auto& loc = dynamic_cast<DataObjectHandleProperty&>(prop).value().objKey();
+  /// the special name
+    if ( special_case ( nam ) )
+  {
+      std::string s ( nam , 5 ) ;
+      if ( !_ok_ ( s       , loc ) )
+    { Error    ( "Inconsistent setting of name&location/2"      ) ;  }
+      if ( !_ok_ ( code()  , loc ) )
+    { Error    ( "Inconsistent setting of code&location/2"      ) ;  }
+      if ( !_ok_ ( s       , code() , loc ) )
+    { Warning  ( "Inconsistent setting of name&code&location/2" ) ;  }
+    } else if ( !_hlt1_ ( nam      )   &&
+                !_hlt1_ ( this->code ()     )   &&
+                !_hlt1_ ( loc  )   &&
+                !_hlt2_ ( nam      )   &&
+                !_hlt2_ ( this->code ()     )   &&
+                !_hlt2_ ( loc  ) ) { /* stripping case? */ }
+    else {
+      if ( !_ok_ ( this->code () , loc ) )
+    { Error    ( "Inconsistent setting of code&location      " ) ;  }
+      if ( !_ok_ ( nam  , loc ) )
+    { Warning  ( "Inconsistent setting of name&location      " ) ;  }
+      if ( !_ok_ ( nam , this->code() , loc ) )
+    { Warning  ( "Inconsistent setting of name&code&location " ) ;  }
+  }
+  });
   StatusCode sc = setProperty ( "Code" , "HLT_NONE" ) ;
   Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
   sc = setProperty
     ( "Factory" ,
-      0 == name.find ( "Hlt1" ) ?
+      boost::algorithm::starts_with( name,  "Hlt1" ) ?
       "LoKi::Hybrid::HltFactory/Hlt1HltFactory:PUBLIC" :
-      0 == name.find ( "Hlt2" ) ?
+      boost::algorithm::starts_with( name,  "Hlt2" ) ?
       "LoKi::Hybrid::HltFactory/Hlt2HltFactory:PUBLIC" :
       "LoKi::Hybrid::HltFactory/HltFactory:PUBLIC"     ) ;
   Assert ( sc.isSuccess () , "Unable (re)set property 'Factory'" , sc ) ;
   //
 }
 // ============================================================================
-// initialization
-// ============================================================================
-StatusCode LoKi::HDRFilter::initialize ()
-{
-  //
-  StatusCode sc = LoKi::FilterAlg::initialize() ;
-  if ( sc.isFailure() ) { return sc ; }
-  //
-  /// the special name
-  if ( special_case ( name() ) )
-  {
-    std::string s ( name() , 5 ) ;
-    if ( !_ok_ ( s       , m_location ) )
-    { Error    ( "Inconsistent setting of name&location/2"      ) ;  }
-    if ( !_ok_ ( code()  , m_location ) )
-    { Error    ( "Inconsistent setting of code&location/2"      ) ;  }
-    if ( !_ok_ ( s       , code() , m_location ) )
-    { Warning  ( "Inconsistent setting of name&code&location/2" ) ;  }
-  }
-  else if ( !_hlt1_ ( name ()     )   &&
-            !_hlt1_ ( code ()     )   &&
-            !_hlt1_ ( m_location  )   &&
-            !_hlt2_ ( name ()     )   &&
-            !_hlt2_ ( code ()     )   &&
-            !_hlt2_ ( m_location  ) ) { /* stripping case? */ }
-  else
-  {
-    if ( !_ok_ ( code () , m_location ) )
-    { Error    ( "Inconsistent setting of code&location      " ) ;  }
-    if ( !_ok_ ( name () , m_location ) )
-    { Warning  ( "Inconsistent setting of name&location      " ) ;  }
-    if ( !_ok_ ( name() , code() , m_location ) )
-    { Warning  ( "Inconsistent setting of name&code&location " ) ;  }
-  }
-  //
-  return sc ;
-}
-// ============================================================================
 // the main method: execute
-StatusCode LoKi::HDRFilter::execute () // the main method: execute
+bool LoKi::HDRFilter::operator()(const LHCb::HltDecReports& hdr) const // the main method
 {
-  if ( updateRequired() )
-  {
-    StatusCode sc = decode() ;
+  if ( updateRequired() ) {
+    // @TODO/@FIXME: get rid of this const_cast...
+    StatusCode sc = const_cast<LoKi::HDRFilter*>(this)->decode() ;
     Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
   }
-  // get LHCb::HltDecReports from TES
-  const LHCb::HltDecReports* hdr = get<LHCb::HltDecReports> ( m_location ) ;
   //
   // use the functor
-  //
-  const bool result = m_cut ( hdr ) ;
+  const bool result = m_cut ( &hdr ) ;
   //
   // some statistics
   counter ("#passed" ) += result ;
-  //
-  // set the filter:
-  setFilterPassed ( result ) ;
-  //
-  return StatusCode::SUCCESS ;
+
+  return result;
 }
 // ============================================================================
 /// the factory (needed for instantiation)
@@ -268,4 +234,3 @@ DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,HDRFilter)
 // ============================================================================
 // The END
 // ============================================================================
-

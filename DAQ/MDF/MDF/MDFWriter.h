@@ -1,3 +1,4 @@
+// $Id: MDFWriter.h,v 1.12 2008-12-04 13:38:25 frankb Exp $
 //  ====================================================================
 //  MDFWriter.h
 //  --------------------------------------------------------------------
@@ -15,8 +16,8 @@
 
 // Forward declarations
 class TMD5;
-namespace Gaudi {
-  class IIODataManager;
+namespace Gaudi { 
+  class IIODataManager; 
   class IDataConnection;
 }
 
@@ -25,7 +26,7 @@ namespace Gaudi {
  */
 namespace LHCb    {
 
-  /**@class MDFWriter
+  /**@class MDFWriter 
     *
     *
     * @author:  M.Frank
@@ -67,21 +68,21 @@ namespace LHCb    {
     void construct();
 
     /** Allocate space for IO buffer
-      * @param[in] ioDesc Output IO descriptor
+      * @param[in] ioDesc Output IO descriptor       
       * @param[in] len    Total length of the data buffer
       *
       * @return  Pointer to allocated memory space
       */
-    std::pair<char*,int> getDataSpace(void* const /* ioDesc */, size_t len) override;
+    virtual std::pair<char*,int> getDataSpace(void* const /* ioDesc */, size_t len);
 
     /** Write byte buffer to output stream
-      * @param[in] ioDesc Output IO descriptor
+      * @param[in] ioDesc Output IO descriptor       
       * @param[in] data   Data buffer to be streamed
       * @param[in] len    Length of the data buffer
       *
       * @return  Status code indicating success or failure.
       */
-    StatusCode writeBuffer(void* const ioDesc, const void* data, size_t len) override;
+    virtual StatusCode writeBuffer(void* const ioDesc, const void* data, size_t len);
 
     /// Additional dataspace in buffer [BYTES]
     int additionalSpace() const {   return m_addSpace*1024; }
@@ -98,13 +99,13 @@ namespace LHCb    {
     virtual ~MDFWriter();
 
     /// Algoritm overload: Initialize
-    StatusCode initialize() override;
+    virtual StatusCode initialize();
 
     /// Algoritm overload: Finalize
-    StatusCode finalize() override;
+    virtual StatusCode finalize();
 
     // Algoritm overload: Execute procedure
-    StatusCode execute() override;
+    virtual StatusCode execute();
   };
 }      // End namespace LHCb
 #endif // MDF_MDFWRITER_H

@@ -1,9 +1,0 @@
-#include "$MDFROOT/options/MDFCheck.opts"
-#include "$MDFROOT/options/MDFdata.opts"
-ApplicationMgr.TopAlg               += { "LHCb::MIFWriter/Writer" };
-ApplicationMgr.EvtMax                = 100000;
-ApplicationMgr.HistogramPersistency  = "NONE";
-EventDataSvc.EnableFaultHandler      = true;
-IODataManager.AgeLimit               = 1;
-IODataManager.OutputLevel            = 1;
-Writer.Connection = "file://mifData.dat";

@@ -53,6 +53,9 @@ namespace Rich
     /// RichSmartID vector type
     using SmartIDVector = LHCb::RichSmartID::Vector;
 
+    /// Vector of clusters
+    using Vector = LHCb::STL::Vector<PDPixelCluster>;
+
   public:
 
     /// Default Constructor
@@ -158,6 +161,13 @@ namespace Rich
     SmartIDVector m_ids;
 
   };
+
+  /// Pixel Cluster data locations
+  namespace PDPixelClusterLocation
+  {
+    /// Default Location in TES for the decoded data map
+    static const std::string Default = "Rec/Rich/PixelClusters/Default";
+  }
 
   //-----------------------------------------------------------------------------
   /** @class PDPixelClusters RichPixelCluster.h

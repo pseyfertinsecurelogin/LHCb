@@ -94,7 +94,8 @@ HltConfigSvc().ApplyTransformation = {".*LoKi.*/.*Factory.*" : {"Modules" : {r",
                                                                 "Lines"   : {r",[ ]*'import HltTracking.Hlt1StreamerConf'" : ""} },
                                       'GaudiSequencer/Hlt' : {"Members" : {"'.*'" : ""}},
                                       'HltRoutingBitsWriter/.*RoutingBitsWriter' : {'RawEventLocation' : {"DAQ/.*RawEvent" : "DAQ/CopyRawEvent"},
-                                                                                    'UpdateExistingRawBank' : {"True" : "False"}}}
+                                                                                    'UpdateExistingRawBank' : {"True" : "False"}}
+                                     }
 # Write these DecReports somewhere else so the decoder can run
 HltConfigSvc().HltDecReportsLocations = ['Hlt1/EmptyDecReports']
 ApplicationMgr().ExtSvc.insert(0, HltConfigSvc().getFullName())
@@ -114,9 +115,13 @@ from DAQSys.Decoders import DecoderDB
 for dec in ("L0DUFromRawAlg/L0DUFromRaw",
             "HltDecReportsDecoder/Hlt1DecReportsDecoder"):
     topSeq.Members.append(DecoderDB[dec].setup())
+    # tell HltConfigSvc to leave the just explicitly configured decoders alone..
+    HltConfigSvc().SkipComponent += [ dec.split('/')[-1] ]
+
 
 if hlt2_tck:
     topSeq.Members.append(DecoderDB["HltDecReportsDecoder/Hlt2DecReportsDecoder"].setup())
+    HltConfigSvc().SkipComponent += [ 'Hlt2DecReportsDecoder' ]
 
 from Configurables import HltRoutingBitsWriter
 from Configurables import bankKiller
@@ -136,8 +141,10 @@ LoKiSvc().Welcome = False
 
 IOHelper("MDF").inputFiles([file])
 
+
 from GaudiPython.Bindings import AppMgr, gbl
 gaudi = AppMgr()
+
 gaudi.initialize()
 TES = gaudi.evtSvc()
 
