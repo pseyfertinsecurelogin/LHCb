@@ -28,13 +28,11 @@
  *  @author Gerhard Raven
  *  @date   2008-07-29
  */
-class HltEvaluator : public extends1<GaudiHistoAlg, IIncidentListener> {
+class HltEvaluator : public extends<GaudiHistoAlg, IIncidentListener> {
 public:
 
    /// Standard constructor
    HltEvaluator( const std::string& name, ISvcLocator* pSvcLocator );
-
-   ~HltEvaluator( ) = default;   ///< Destructor
 
    StatusCode initialize() override;    ///< Algorithm initialization
 
@@ -66,7 +64,7 @@ protected:
 
       using Predicate = PRED;
       using Arg = typename PRED::argument_type;
-      PRED* predicate = nullptr;
+      std::unique_ptr<PRED> predicate;
       StatEntity *counter = nullptr;
       AIDA::IHistogram1D* hist = nullptr;
       RateCounter* rate = nullptr;
@@ -93,7 +91,7 @@ protected:
          StatusCode sc = m_parent->factory().get(m_expr, cut, m_parent->preambulo());
          if (sc.isFailure()) return sc;
 
-         eval.predicate = cut.clone();
+         eval.predicate.reset(cut.clone());
          eval.counter   = &(m_parent->counter(m_title));
          if (m_parent->m_hltMonSvc.isValid())
             eval.rate = &(m_parent->m_hltMonSvc->rateCounter(m_parent->name() + "/" + m_htitle));
@@ -122,8 +120,7 @@ protected:
 
       template <typename EVAL>
       bool operator()( EVAL& eval ) {
-         using Arg = typename EVAL::Arg;
-         Arg data = m_parent->getData<Arg>(eval.location);
+         auto data = m_parent->getData<typename EVAL::Arg>(eval.location);
          if (!data) return false;
          if (!eval.predicate) return false;
          bool result = (*eval.predicate)(data);
@@ -145,7 +142,7 @@ protected:
    struct Deleter : public boost::static_visitor<> {
       template <typename EVAL>
       void operator()( EVAL& eval ) const {
-         delete eval.predicate;
+         eval.predicate.reset();
          eval.counter = nullptr;
          eval.hist = nullptr;
          eval.rate = nullptr;
