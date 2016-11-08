@@ -8,6 +8,7 @@
 // ============================================================================
 #include <algorithm>
 #include <climits>
+#include "boost/optional.hpp"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -83,44 +84,30 @@ namespace LoKi
     template <typename TYPE, typename TYPE2=TYPE>
     class Select final : public LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >
     {
-    protected:
-      // ======================================================================
-      /// the base class
-      typedef LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> > uBase    ;
-      // ======================================================================
     public:
       // ======================================================================
       /// constructor form the basic predicate:
-      Select ( const LoKi::Functor<TYPE2,bool>& fun )
+      template <typename F, typename = details::require_signature<F,TYPE2,bool> >
+      Select ( F&& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_predicate ( fun )
+        , m_predicate ( std::forward<F>(fun) )
       {}
-      /// copy constructor
-      Select ( const Select& right ) = default;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       Select* clone() const override { return new Select ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      std::vector<TYPE> operator() ( const std::vector<TYPE>& a ) const override
       {
-        typename uBase::result_type out ;
-        out.reserve ( a.size() ) ;
-        LoKi::apply_filter( a.begin() , a.end() ,
-                            m_predicate.func() ,
-                            std::back_inserter( out ) ) ;
-        return out ;
+        std::vector<TYPE> r; r.reserve(a.size());
+        std::copy_if( a.begin(), a.end(), std::back_inserter(r),
+                      [&](const TYPE& arg) { return LoKi::apply(m_predicate.func(),arg); } );
+        return r;
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "select(" << m_predicate << ")" ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default construct is private:
-      Select () ;                                      // no default contructor
       // ======================================================================
     private:
       // ======================================================================
@@ -159,23 +146,20 @@ namespace LoKi
     public:
       // ======================================================================
       /// contructor from the basic functor
-      Yields ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+      template <typename F, typename = details::require_signature<F,TYPE2,TYPE1> >
+      Yields ( F&& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_functor   ( fun )
+        , m_functor   ( std::forward<F>(fun) )
       {}
-      /// copy constructor
-      Yields ( const Yields& right  ) = default;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
       Yields* clone() const override { return new Yields ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      std::vector<TYPE1> operator()( typename uBase::argument a ) const override
       {
-        typename uBase::result_type out ;
-        out.reserve ( a.size () ) ;
+        std::vector<TYPE1> out ; out.reserve ( a.size () ) ;
         LoKi::apply ( a.begin() , a.end() ,
                       m_functor.func() ,
                       std::back_inserter ( out ) ) ;
@@ -184,11 +168,6 @@ namespace LoKi
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "yields(" << m_functor << ")"; };
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default construct is private:
-      Yields() ;                                       // no default contructor
       // ======================================================================
     private:
       // ======================================================================
@@ -228,17 +207,15 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor form the basic predicate:
-      Process ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+      template <typename F, typename = details::require_signature<F,TYPE2,TYPE1> >
+      Process ( F&& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_functor ( fun )
+        , m_functor ( std::forward<F>(fun) )
       {}
-      /// copy constructor
-      Process ( const Process& right  ) = default;
       /// MANDATORY: clone method ("virtual constructor")
       Process* clone() const override { return new Process ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      std::vector<TYPE> operator()( typename uBase::argument a ) const override
       {
         LoKi::apply ( a.begin() , a.end() , m_functor.func () ) ;
         return a ;
@@ -246,11 +223,6 @@ namespace LoKi
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "process(" << m_functor << ")"; };
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Process() ;                                      // no default contructor
       // ======================================================================
     private:
       // ======================================================================
@@ -293,30 +265,24 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor form the basic predicate:
-      Tee ( const uFunctor& fun )
+      template <typename F,
+                typename = details::require_signature<F,std::vector<TYPE>,TYPE2> >
+      Tee ( F&& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_functor ( fun )
+        , m_functor ( std::forward<F>(fun) )
       {}
-      /// copy constriuctor
-      Tee ( const Tee& right  ) = default;
       /// MANDATORY: clone method ("virtual constructor")
       Tee* clone() const override { return new Tee ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      std::vector<TYPE> operator()( typename uBase::argument a ) const override
       {
-        typename uBase::result_type out = a ;
+        std::vector<TYPE> out = a ;
         LoKi::apply ( m_functor.func () , a ) ;
         return out ;
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "tee(" << m_functor << ")"; };
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is private:
-      Tee () ;                                         // no default contructor
       // ======================================================================
     private:
       // ======================================================================
@@ -345,23 +311,23 @@ namespace LoKi
       ////TODO: in case TYPE2==TYPE1, add a c'tor where fun is not specified,
       ///       in which case it defaults to identity
       /// constructor
-      Extremum ( const LoKi::Functor<TYPE2,TYPE1>& fun ,
+      template <typename F, typename = details::require_signature<F,TYPE2,TYPE1>>
+      Extremum ( F&& fun ,
                  const TYPE1 val = Traits_::initial_value() )
         : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-        , m_functor ( fun )
+        , m_functor ( std::forward<F>(fun) )
         , m_value   ( val )
       { }
       /// MANDATORY: clone method ("virtual constructor")
       Extremum* clone() const override { return new Extremum ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type
-      operator()( typename uBase::argument a ) const override
+      TYPE1 operator()( typename uBase::argument a ) const override
       {
         // return the value
         if ( a.empty() ) { return m_value; } // RETURN
         //
         auto res = LoKi::Algs::extremum( a.begin () , a.end   () ,
-                                         LoKi::Apply<TYPE2,TYPE1>( &this->func() ),
+                                         LoKi::Apply( this->func() ),
                                          typename Traits_::BinaryOp{} ) ;
         Assert ( a.end() != res.first , "Empty input container!" ) ;
         return res.second ;
@@ -376,9 +342,6 @@ namespace LoKi
       }
       // ======================================================================
     private:
-      // ======================================================================
-      /// the default construct is private:
-      Extremum () ;                                   // no default contructor
       // ======================================================================
       /// get the functor
       const LoKi::Functor<TYPE2,TYPE1>& func() const { return m_functor.func() ; }
@@ -483,9 +446,10 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor
-      ExtremeElement ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+      template <typename F, typename = details::require_signature<F,TYPE2,TYPE1> >
+      ExtremeElement ( F&& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_functor ( fun )
+        , m_functor ( std::forward<F>(fun) )
       {}
       /// MANDATORY: clone method ("virtual constructor")
       ExtremeElement* clone() const override { return new ExtremeElement ( *this ) ; }
@@ -498,7 +462,7 @@ namespace LoKi
         //
         auto res = LoKi::Algs::extremum( a.begin () ,
                                          a.end   () ,
-                                         LoKi::Apply<TYPE2,TYPE1>( &m_functor.func () ),
+                                         LoKi::Apply( m_functor.func () ),
                                          typename Traits_::BinaryOp{} ) ;
         Assert ( res.first != a.end(), "Empty input container!" ) ;
         return { *(res.first)  } ;
@@ -506,15 +470,6 @@ namespace LoKi
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << Traits_::name() << "(" << m_functor << ")"; } ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is private:
-      ExtremeElement() ;                                   // no default contructor
-      // ======================================================================
-    protected:
-      // ======================================================================
-      const LoKi::Functor<TYPE2,TYPE1>& func() const { return m_functor.func() ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -601,28 +556,22 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate
-      Count ( const LoKi::Functor<TYPE1,TYPE2>& cut )
+      template <typename F, typename = details::require_signature<F,TYPE1,TYPE2>>
+      Count( F&& cut )
         : LoKi::AuxFunBase ( std::tie ( cut ) )
-        , LoKi::Functor<std::vector<TYPE>,double> ()
-        , m_cut ( cut )
+        , m_cut ( std::forward<F>(cut) )
       {}
       /// MANDATORY: clone method ("virtual constructor")
       Count* clone() const override { return new Count ( *this ) ; }
       /// MANDATORY: the only one essential method:
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      double operator()( typename uBase::argument a ) const override
       {
         return std::count_if( a.begin(), a.end(),
-                              LoKi::Apply<TYPE1,TYPE2>( &m_cut.func() ) );
+                              LoKi::Apply( m_cut.func() ) );
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "count(" << m_cut << ")" ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Count() ; /// default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -653,58 +602,49 @@ namespace LoKi
            *  @param fun the function
            *  @param init the initial value for summation
            */
-          Accumulate ( const LoKi::Functor<TYPE,double>& fun      ,
-                       const double                      init = Traits_::unit() )
+          template <typename F, typename = ::LoKi::details::require_signature<F,TYPE,double>>
+          Accumulate ( F&&         fun,
+                       const double init = Traits_::unit() )
             : LoKi::AuxFunBase ( std::tie ( fun , init ) )
-            , m_fun      ( fun  )
-            , m_cut      ( LoKi::Constant<TYPE,bool>( true ) )
-            , m_trivCut  ( true )
+            , m_fun      ( std::forward<F>(fun)  )
             , m_init     ( init )
           {}
           /** constructor from the function
            *  @param fun the function
            *  @param init the initial value for summation
            */
-          Accumulate ( const LoKi::Functor<TYPE,double>& fun      ,
-                const LoKi::Functor<TYPE,bool>&   cut      ,
-                const double                      init = Traits_::unit() )
+          template <typename F1, typename = ::LoKi::details::require_signature<F1,TYPE,double>,
+                    typename F2, typename = ::LoKi::details::require_signature<F2,TYPE,bool>>
+          Accumulate ( F1&& fun, F2&& cut, double init = Traits_::unit() )
             : LoKi::AuxFunBase ( std::tie ( fun , cut , init ) )
-            , m_fun      ( fun   )
-            , m_cut      ( cut   )
-            , m_trivCut  ( false )
+            , m_fun      ( std::forward<F1>(fun) )
+            , m_cut      ( std::forward<F2>(cut) )
             , m_init     ( init  )
           {}
           /// MANDATORY: clone method ("virtual constructor")
           Accumulate* clone() const override { return new Accumulate ( *this ) ; }
           /// MANDATORY: the only one essential method:
-          typename uBase::result_type
-          operator()( typename uBase::argument a ) const override
+          double operator()( typename uBase::argument a ) const override
           {
             typename Traits_::BinaryOperation operation{};
-            const LoKi::Apply<TYPE,double> appFun ( &m_fun.func() ) ;
             //
-            return m_trivCut ?
+            return m_cut ?
               LoKi::Algs::accumulate ( a.begin ()   , a.end   ()   ,
-                                       appFun       ,
+                                       LoKi::Apply( m_fun.func() )      ,
+                                       LoKi::Apply( m_cut->func() ),
                                        this->m_init , operation    ) :
               LoKi::Algs::accumulate ( a.begin ()   , a.end   ()   ,
-                                       appFun       ,
-                                       LoKi::Apply<TYPE,bool>{ &m_cut.func() },
+                                       LoKi::Apply( m_fun.func() )      ,
                                        this->m_init , operation    ) ;
           }
           /// OPTIONAL: the basic printout method
           std::ostream& fillStream( std::ostream& s ) const override
           {
             s << Traits_::name() << "(" << this->m_fun ;
-            if ( !this->m_trivCut  ) { s << "." << this -> m_cut  ; }
+            if ( this->m_cut  ) { s << "." << *(this -> m_cut)  ; }
             if ( this->m_init != Traits_::unit()) { s << "," << this -> m_init ; }
             return s << ")" ;
           }
-          // ======================================================================
-        private:
-          // ======================================================================
-          /// the default constructor is disabled
-          Accumulate () ;                              // default constructor is disabled
           // ======================================================================
         protected:
           // ======================================================================
@@ -714,17 +654,14 @@ namespace LoKi
                                   const double       d ) const
           {
             s << n << "(" << this->m_fun ;
-            if ( !this->m_trivCut  ) { s << "." << this -> m_cut  ; }
+            if ( this->m_cut  ) { s << "." << *(this -> m_cut)  ; }
             if ( d != this->m_init ) { s << "," << this -> m_init ; }
             return s << ")" ;
           }
           // ======================================================================
           /// the function
           LoKi::FunctorFromFunctor<TYPE,double> m_fun     ; // the function
-          //TODO: replace (m_cut,m_trivCut) with boost;:optional
-          LoKi::FunctorFromFunctor<TYPE,bool>   m_cut     ; // the cut
-          /// trivial cut ?
-          bool                                  m_trivCut ; // trivial cut ?
+          boost::optional<LoKi::FunctorFromFunctor<TYPE,bool>>   m_cut     ; // the cut
           double                                m_init    ; // init-value
           // ======================================================================
         };
@@ -777,20 +714,20 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from functor, index and bad-value
-      Fetch  ( const LoKi::Functor<TYPE,TYPE2>& fun   ,
+      template <typename F,
+                typename = ::LoKi::details::require_signature<F,TYPE,TYPE2>>
+      Fetch  ( F&& fun   ,
                const unsigned int               index ,
                const TYPE2                      bad   )
         : LoKi::AuxFunBase ( std::tie ( fun , index , bad ) )
-        , m_fun   ( fun   )
+        , m_fun   ( std::forward<F>(fun) )
         , m_index ( index )
         , m_bad   ( bad   )
       {}
       /// MANDATORY: clone method ("virtual constructor")
       Fetch* clone() const override { return new Fetch ( *this ) ; }
-      /// MANDATORY:
       /// MANDATORY: the only one essential method:
-      typename LoKi::Functor<std::vector<TYPE>,TYPE2>::result_type operator()
-        ( typename LoKi::Functor<std::vector<TYPE>,TYPE2>::argument a ) const override
+      TYPE2 operator()( const std::vector<TYPE>& a ) const override
       {
         if ( a.size() < m_index + 1 )
         {
@@ -798,13 +735,8 @@ namespace LoKi
           return this->m_bad ;
         }
         // evaluate the functor:
-        return this->m_fun.fun ( a[ this->m_index] ) ;
+        return this->m_fun.fun( a[ this->m_index] ) ;
       }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Fetch () ;                         // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -831,27 +763,21 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate
-      Has ( const LoKi::Functor<TYPE1,TYPE2>& cut )
+      template <typename F, typename = ::LoKi::details::require_signature<F,TYPE1,TYPE2>>
+      Has ( F&& cut )
         : LoKi::AuxFunBase ( std::tie ( cut ) )
-        , m_cut ( cut )
+        , m_cut ( std::forward<F>(cut) )
       {}
       /// MANDATORY: clone method ("virtual constructor")
       Has* clone() const override { return new Has ( *this ) ; }
       /// MANDATORY: the only one essential method:
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      bool operator()( typename uBase::argument a ) const override
       {
-        return std::any_of( a.begin(), a.end(),
-                            LoKi::Apply<TYPE1,TYPE2>( &m_cut.func() ) );
+        return std::any_of( a.begin(), a.end(), LoKi::Apply(m_cut.func()) );
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "has(" << m_cut << ")" ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Has() ; /// default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -879,8 +805,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Empty* clone() const override { return new Empty(*this) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override { return a.empty() ; }
+      bool operator()( typename uBase::argument a ) const override { return a.empty() ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -904,8 +829,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Size* clone() const override { return new Size ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override { return a.size () ; }
+      double operator()( typename uBase::argument a ) const override { return a.size () ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -925,26 +849,21 @@ namespace LoKi
         public:
           // ======================================================================
           /// constructor from two streamers
-          ComposeFunctions ( const LoKi::Functor<TYPE,std::vector<TYPE2>>& fun1 ,
-                             const LoKi::Functor<TYPE,std::vector<TYPE2>>& fun2 )
+          template <typename F1, typename = ::LoKi::details::require_signature<F1,TYPE,std::vector<TYPE2>>,
+                    typename F2, typename = ::LoKi::details::require_signature<F2,TYPE,std::vector<TYPE2>>>
+          ComposeFunctions ( F1&& fun1 , F2&& fun2 )
             : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-            , m_two ( fun1 , fun2 )
+            , m_two ( std::forward<F1>(fun1) , std::forward<F2>(fun2) )
           {}
           /// MANDATORY: clone method ("virtual constructor")
           ComposeFunctions* clone() const override { return new ComposeFunctions ( *this ); }
           /// MANDATORY: the only one essential method
-          typename LoKi::Functor<TYPE,std::vector<TYPE2> >::result_type
-          operator()( typename LoKi::Functor<TYPE,std::vector<TYPE2> >::argument a ) const override
+          std::vector<TYPE2> operator()( const TYPE& a ) const override
           { return COMPOSE::invoke( m_two.func1(), m_two.func2(), a ); }
           /// OPTIONAL: nice printout
           std::ostream& fillStream ( std::ostream& s ) const override
           { return s << " " << COMPOSE::name() << "( " << m_two.func1()
                      << ","        << m_two.func2() << ") " ; }
-          // ======================================================================
-        private:
-          // ======================================================================
-          /// the default constructor is disabled
-          ComposeFunctions () ;                         // the default constructor is disabled
           // ======================================================================
         private:
           // ======================================================================
@@ -959,27 +878,21 @@ namespace LoKi
         public:
           // ======================================================================
           /// constructor from two streamers
-          ComposeFunctions
-          ( const LoKi::Functor <void,std::vector<TYPE2> >& fun1 ,
-            const LoKi::Functor <void,std::vector<TYPE2> >& fun2 )
+          template <typename F1, typename = ::LoKi::details::require_signature<F1,void,std::vector<TYPE2>>,
+                    typename F2, typename = ::LoKi::details::require_signature<F2,void,std::vector<TYPE2>> >
+          ComposeFunctions( F1&& fun1 , F2&& fun2 )
             : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-            , m_two ( fun1 , fun2 )
+            , m_two ( std::forward<F1>(fun1) , std::forward<F2>(fun2) )
           {}
           /// MANDATORY: clone method ("virtual constructor")
           ComposeFunctions* clone() const override { return new ComposeFunctions ( *this ) ; }
           /// MANDATORY: the only one essential method
-          typename LoKi::Functor<void,std::vector<TYPE2> >::result_type
-          operator() () const override
+          std::vector<TYPE2> operator() () const override
           { return COMPOSE::invoke( m_two.func1(), m_two.func2() ); }
           /// OPTIONAL: nice printout
           std::ostream& fillStream ( std::ostream& s ) const override
           { return s << " " << COMPOSE::name() << "(" << m_two.func1()
                      << ","       << m_two.func2() << ") " ; }
-          // ======================================================================
-        private:
-          // ======================================================================
-          /// the default constructor is disabled
-          ComposeFunctions () ;                         // the default constructor is disabled
           // ======================================================================
         protected:
           // ======================================================================
@@ -1128,29 +1041,24 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from two streamers
-      Includes ( const LoKi::Functor <TYPE,std::vector<TYPE2> >& fun1 ,
-                 const LoKi::Functor <TYPE,std::vector<TYPE2> >& fun2 )
+      template <typename F1, typename = ::LoKi::details::require_signature<F1,TYPE,std::vector<TYPE2>>,
+                typename F2, typename = ::LoKi::details::require_signature<F2,TYPE,std::vector<TYPE2>>>
+      Includes ( F1&& fun1 , F2&& fun2 )
         : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-        , m_two  ( fun1 , fun2 )
+        , m_two  ( std::forward<F1>(fun1) , std::forward<F2>(fun2) )
       {}
       /// MANDATORY: clone method ("virtual consturctor")
       Includes* clone() const override { return new Includes ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor<TYPE,bool>::result_type operator()
-        ( typename LoKi::Functor<TYPE,bool>::argument a ) const override
+      bool operator()( typename LoKi::Functor<TYPE,bool>::argument a ) const override
       {
-        LoKi::Operations::Includes<TYPE2> _includes ;
+        LoKi::Operations::Includes<TYPE2> _includes{} ;
         return _includes( m_two.fun1 ( a ) , m_two.fun2 ( a ) ) ;
       }
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return s << " includes(" << m_two.func1()
                  << ","          << m_two.func2() << ") " ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Includes () ;                      // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1165,16 +1073,16 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from two streamers
-      Includes ( const LoKi::Functor <void,std::vector<TYPE2> >& fun1 ,
-                 const LoKi::Functor <void,std::vector<TYPE2> >& fun2 )
+      template <typename F1, typename = ::LoKi::details::require_signature<F1,void,std::vector<TYPE2>>,
+                typename F2, typename = ::LoKi::details::require_signature<F2,void,std::vector<TYPE2>>>
+      Includes ( F1&& fun1 , F2&& fun2 )
         : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-        , m_two  ( fun1 , fun2 )
+        , m_two  ( std::forward<F1>(fun1) , std::forward<F2>(fun2) )
       {}
       /// MANDATORY: clone method ("virtual consturctor")
       Includes* clone() const override { return new Includes ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor<void,bool>::result_type
-      operator()() const override
+      bool operator()() const override
       {
         LoKi::Operations::Includes<TYPE2> _includes ;
         return _includes( m_two.fun1 (  ) , m_two.fun2 (  ) ) ;
@@ -1183,11 +1091,6 @@ namespace LoKi
       std::ostream& fillStream ( std::ostream& s ) const override
       { return s << " includes(" << m_two.func1()
                  << ","          << m_two.func2() << ") " ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Includes () ;                      // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1210,9 +1113,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Unique* clone() const override { return new Unique ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::result_type
-      operator()
-        ( typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::argument a ) const override
+      std::vector<TYPE> operator()( const std::vector<TYPE>& a ) const override
       {
         LoKi::Operations::Unique<TYPE> _unique ;
         return _unique ( a ) ;
@@ -1234,36 +1135,27 @@ namespace LoKi
     class Gate final : public LoKi::Functor<std::vector<TYPE>  ,
                                             std::vector<TYPE>  >
     {
-    private:
-      // ======================================================================
-      typedef LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >      Pipe_ ;
-      typedef typename Pipe_::argument                              argument ;
-      typedef typename Pipe_::result_type                        result_type ;
-      // ======================================================================
     public:
       // =====================================================================
       /// the constructor from the stopper
-      Gate ( const LoKi::Functor<void,bool>& gate )
+      template <typename F,
+                typename = ::LoKi::details::require_signature<F,void,bool>>
+      Gate ( F&& gate )
         : LoKi::AuxFunBase ( std::tie ( gate ) )
-        , m_gate ( gate )
+        , m_gate ( std::forward<F>(gate) )
       {}
       /// MANDATORY: clone method("virtual constructor")
       Gate* clone() const override { return new Gate ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override
+      std::vector<TYPE> operator() ( const std::vector<TYPE>& a ) const override
       {
         // run stopper only for non-empty containers
         // and stop the data flow if needed
-        return ( a.empty() || m_gate() ) ? a : result_type{} ;
+        return ( a.empty() || m_gate() ) ? a : std::vector<TYPE>{} ;
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "gate(" << m_gate << ")"; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Gate () ;                         // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1281,48 +1173,33 @@ namespace LoKi
     template <typename TYPE>
     class Cause final : public LoKi::Functor<void,std::vector<TYPE> >
     {
-    private:
-      // ======================================================================
-      typedef LoKi::Functor<void,std::vector<TYPE> >                 Source_ ;
-      typedef typename Source_::result_type                      result_type ;
-      // ======================================================================
     public:
       // =====================================================================
       /// the constructor from the start & source
       Cause
-      ( const LoKi::Functor< void , bool              >& start  ,
-        const LoKi::Functor< void , std::vector<TYPE> >& source )
+      ( LoKi::FunctorFromFunctor< void , bool              > start  ,
+        LoKi::FunctorFromFunctor< void , std::vector<TYPE> > source )
         : LoKi::AuxFunBase ( std::tie ( source , start ) )
-        , m_start  ( start  )
-        , m_source ( source )
+        , m_start  ( std::move(start)  )
+        , m_source ( std::move(source) )
       {}
-      /// the constructor from the start & source
+      /// the constructor from the source & start
       Cause
-      ( const LoKi::Functor< void , std::vector<TYPE> >& source ,
-        const LoKi::Functor< void , bool              >& start  )
-        : LoKi::AuxFunBase ( std::tie ( source , start ) )
-        , LoKi::Functor< void , std::vector<TYPE> >()
-        , m_start  ( start  )
-        , m_source ( source )
+      ( LoKi::FunctorFromFunctor< void , std::vector<TYPE> > source ,
+        LoKi::FunctorFromFunctor< void , bool              > start  )
+        : Cause( std::move(start), std::move(source) )
       {}
       /// MANDATORY: clone method("virtual constructor")
       Cause* clone() const override { return new Cause ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( ) const override
+      std::vector<TYPE> operator() ( ) const override
       {
-        // invoke the source if enabled
-        if ( m_start (  ) ) { return m_source (  ) ; }
-        // return empty container
-        return {};
+        // invoke the source if enabled, else empty container
+        return m_start() ? m_source() : std::vector<TYPE>{};
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
       { return  s << " cause( "<< m_start << "," << m_source << ") "; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Cause () ;                         // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -1345,37 +1222,31 @@ namespace LoKi
     public:
       // =====================================================================
       /// the constructor
-      FirstN_ ( const unsigned int N )
+      explicit FirstN_ ( const unsigned int N )
         : LoKi::AuxFunBase ( std::tie ( N ) )
         , m_N ( N )
       {}
       /// the constructor
-      FirstN_ ( const LoKi::FirstN& N  )
+      explicit FirstN_ ( const LoKi::FirstN& N  )
         : LoKi::AuxFunBase ( std::tie ( N ) )
         , m_N ( N )
       {}
       /// MANDATORY: clone method("virtual constructor")
       FirstN_ * clone() const override { return new FirstN_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::result_type
-      operator() ( typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::argument a ) const override
+      std::vector<TYPE> operator() ( const std::vector<TYPE>& a ) const override
       {
-        //
-        if ( a.size() <= m_N.n() ) { return a ; }                 // RETURN
-        //
-        return { a.begin() , a.begin() + m_N.n() } ;
+        auto n = std::min( static_cast<std::size_t>(m_N.n()), a.size() );
+        std::vector<TYPE> r; r.reserve(n);
+        std::copy_n( a.begin(), n, std::back_inserter(r) );
+        return r;
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      FirstN_ () ;                        // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// number of eleemtns to be selected :
+      /// number of elements to be selected :
       LoKi::FirstN m_N ;                 // number of elements to be selected
       // ======================================================================
     } ;
@@ -1392,13 +1263,12 @@ namespace LoKi
     public:
       // =========================================================================
       /// the constructor
-      Reverse_ () : LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> > () {}
+      Reverse_ () : AuxFunBase{ std::tie() } { }
       // ======================================================================
       /// MANDATORY: clone method("virtual constructor")
       Reverse_* clone() const override { return new Reverse_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::result_type
-      operator() ( typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::argument a ) const override
+      std::vector<TYPE> operator() ( const std::vector<TYPE>& a ) const override
       {
         return { a.rbegin(), a.rend() };
       }
@@ -1417,44 +1287,36 @@ namespace LoKi
                bool     ASCENDING = true   >
     class Sort_ final : public LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >
     {
-    protected:
-      // ======================================================================
-      /// the base class
-      typedef LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> > uBase    ;
-      // ======================================================================
     public:
       // ======================================================================
       /** constructor from the function
        *  @param fun the function
        *  @param init the initial value for summation
        */
-      Sort_ ( const LoKi::Functor<TYPE,TYPE2>& fun        ,
-              const int                        N   = -1   )
+      template <typename F, typename = ::LoKi::details::require_signature<F,TYPE,TYPE2>>
+      Sort_ ( F&& fun, int N = -1 )
         : LoKi::AuxFunBase ( std::tie ( fun , N  ) )
-        , m_cmp  ( fun )
+        , m_cmp  ( std::forward<F>(fun) )
         , m_sort ( N , ASCENDING )
       {}
       /// MANDATORY: clone method ("virtual constructor")
       Sort_* clone() const override { return new Sort_ ( *this ) ; }
       /// MANDATORY: the only one essential method:
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      std::vector<TYPE> operator() ( const std::vector<TYPE>& a ) const override
       {
         // nothing to select => nothing to sort
         if ( 0 == this->N() ) { return {} ; }
-        //
+
         auto r = a ;
         if ( this->all() || (unsigned) this->N() >= a.size() )
         {
-            // note: partial_sort <->sort, not stable_sort!
-          std::stable_sort ( r.begin () , r.end   () , this->m_cmp ) ;
-          return r ;
+          std::sort ( r.begin () , r.end   () , m_cmp ) ;
+        } else {
+          std::partial_sort( r.begin(),std::next(r.begin(), N()),
+                             r.end() , m_cmp ) ;
+          r.resize(N());
         }
-        //
-        std::partial_sort  ( r.begin ()                 ,
-                             r.begin () + this -> N()   ,
-                             r.end   () , this -> m_cmp ) ;
-        return { r.begin () , r.begin () + this -> N () };
+        return r;
       }
       /// OPTIONAL: the basic printout method
       virtual std::ostream& fillStream( std::ostream& s ) const
@@ -1472,11 +1334,6 @@ namespace LoKi
       // ======================================================================
       int  N   ( ) const { return this->m_sort.N   () ; }
       bool all ( ) const { return this->m_sort.all () ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Sort_ () ;                             // default constructor is disabled
       // ======================================================================
     protected:
       // ======================================================================
@@ -1517,7 +1374,6 @@ namespace LoKi
               const std::string& open   = ""   ,
               const std::string& close  = "\n" )
         : LoKi::AuxFunBase ( std::tie ( open , close ) )
-        , LoKi::Functor<std::vector<TYPE> , std::vector<TYPE> >()
         , m_stream ( stream )
         , m_dump   ( open , close )
       {}
@@ -1536,11 +1392,11 @@ namespace LoKi
         , m_dump   ( dump   )
       {}
       /// MANDATORY: clone method("virtual constructor")
-      virtual  Dump_* clone() const { return new Dump_ ( *this ) ; }
+      Dump_* clone() const override { return new Dump_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: the basic printout method
-      virtual std::ostream& fillStream( std::ostream& s ) const
+      std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "dump"; }
       // ======================================================================
     private:
@@ -1561,13 +1417,10 @@ namespace LoKi
     {
       m_stream << m_dump.open  () ;
       //
-      if ( a.size() <= m_dump.nMax() )
-      {
+      if ( a.size() <= m_dump.nMax() ) {
         Gaudi::Utils::toStream
           ( a.begin() , a.end() , m_stream , "[ " , " ]" , " ,\n " ) ;
-      }
-      else
-      {
+      } else {
         Gaudi::Utils::toStream
           ( a.begin() , a.begin() + m_dump.nMax() ,
             m_stream , "[ " , " , ... ]" , " ,\n " ) ;
@@ -1591,22 +1444,17 @@ namespace LoKi
     template <typename TYPE>
     class FakeSource final : public LoKi::Functor<void,std::vector<TYPE> >
     {
-    private:
-      // ======================================================================
-      typedef LoKi::Functor<void,std::vector<TYPE> >                  Source_ ;
-      typedef typename Source_::result_type                       result_type ;
-      // ======================================================================
     public:
       // =====================================================================
       /// the constructor
-      FakeSource ( const unsigned short n = 0      )
+      explicit FakeSource ( const unsigned short n = 0      )
         : LoKi::AuxFunBase ( std::tie ( n ) )
         , m_n     ( n )
       {}
       /// MANDATORY: clone method("virtual constructor")
-      virtual  FakeSource* clone() const { return new FakeSource ( *this ) ; }
+      FakeSource* clone() const override { return new FakeSource ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( /* argument a */ ) const
+      std::vector<TYPE> operator() ( ) const override
       { return std::vector<TYPE> ( m_n )  ; }
       // ======================================================================
     private:
@@ -1638,12 +1486,14 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE, typename TYPE2>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename = details::require_signature<F,TYPE2,bool> >
   inline
   LoKi::Functors::Select<TYPE,TYPE2>
-  filter ( const LoKi::Functor<TYPE2,bool>& cut )
+  filter ( F&& cut )
   {
-    return LoKi::Functors::Select<TYPE,TYPE2>( cut ) ;
+    return { std::forward<F>(cut) } ;
   }
   // ==========================================================================
   /** simple "select/filter" function
@@ -1663,12 +1513,14 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE, typename TYPE2>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename = typename details::require_signature<F,TYPE2,bool>>
   inline
   LoKi::Functors::Select<TYPE,TYPE2>
-  select ( const LoKi::Functor<TYPE2,bool>& cut )
+  select ( F&& cut )
   {
-    return LoKi::Functors::Select<TYPE,TYPE2> ( cut ) ;
+    return { std::forward<F>(cut) } ;
   }
   // ==========================================================================
   /** simple "yield/map" function
@@ -1687,12 +1539,15 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-02
    */
-  template <typename TYPE,typename TYPE1,typename TYPE2>
+  template <typename TYPE,
+            typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::Yields<TYPE,TYPE1,TYPE2>
-  yields ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+  yields ( F&& fun )
   {
-    return LoKi::Functors::Yields<TYPE,TYPE1,TYPE2> ( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
   /** simple "tee" function:
@@ -1716,12 +1571,15 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE,typename TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1::value_type,
+            typename TYPE2 = typename details::LF<F>::type2,
+            typename = details::require_signature<F,std::vector<TYPE>,TYPE2>>
   inline
   LoKi::Functors::Tee<TYPE,TYPE2>
-  tee ( const LoKi::Functor<std::vector<TYPE>,TYPE2>& fun )
+  tee ( F&& fun )
   {
-    return LoKi::Functors::Tee<TYPE,TYPE2> ( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
   /** simple "min_value" function:
@@ -1741,21 +1599,24 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE, typename TYPE2, typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::Min<TYPE,TYPE2,TYPE1>
-  min_value ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+  min_value ( F&& fun )
   {
-    return LoKi::Functors::Min<TYPE,TYPE2,TYPE1>( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
-  template <typename TYPE, typename TYPE2, typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::Min<TYPE,TYPE2,TYPE1>
-  min_value ( const LoKi::Functor<TYPE2,TYPE1>& fun ,
-              const TYPE1&                      val )
+  min_value ( F&& fun , const TYPE1& val )
   {
-    return LoKi::Functors::Min<TYPE,TYPE2,TYPE1>( fun , val ) ;
+    return { std::forward<F>(fun) , val } ;
   }
   // ==========================================================================
   /** simple "max_value" function:
@@ -1775,21 +1636,24 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE, typename TYPE2, typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::Max<TYPE,TYPE2,TYPE1>
-  max_value ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+  max_value ( F&& fun )
   {
-    return LoKi::Functors::Max<TYPE,TYPE2,TYPE1>( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
-  template <typename TYPE, typename TYPE2, typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::Max<TYPE,TYPE2,TYPE1>
-  max_value ( const LoKi::Functor<TYPE2,TYPE1>& fun ,
-              const TYPE1&                      val )
+  max_value ( F&& fun , const TYPE1& val )
   {
-    return LoKi::Functors::Max<TYPE,TYPE2,TYPE1>( fun , val ) ;
+    return { std::forward<F>(fun) , val } ;
   }
   // ==========================================================================
   /** simple "min_abs_value" function:
@@ -1809,21 +1673,24 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE, typename TYPE2, typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::AbsMin<TYPE,TYPE2,TYPE1>
-  min_abs_value ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+  min_abs_value ( F&& fun )
   {
-    return LoKi::Functors::AbsMin<TYPE,TYPE2,TYPE1>( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
-  template <typename TYPE, typename TYPE2, typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::AbsMin<TYPE,TYPE2,TYPE1>
-  min_abs_value ( const LoKi::Functor<TYPE2,TYPE1>& fun ,
-                  const TYPE1&                      val )
+  min_abs_value ( F&& fun , const TYPE1& val )
   {
-    return LoKi::Functors::AbsMin<TYPE,TYPE2,TYPE1>( fun , val ) ;
+    return { std::forward<F>(fun) , val } ;
   }
   // ==========================================================================
   /** simple "max_abs_value" function:
@@ -1843,21 +1710,24 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE, typename TYPE2, typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::AbsMax<TYPE,TYPE2,TYPE1>
-  max_abs_value ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+  max_abs_value ( F&& fun )
   {
-    return LoKi::Functors::AbsMax<TYPE,TYPE2,TYPE1>( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
-  template <typename TYPE, typename TYPE2, typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::AbsMax<TYPE,TYPE2,TYPE1>
-  max_abs_value ( const LoKi::Functor<TYPE2,TYPE1>& fun ,
-                  const TYPE1&                      val )
+  max_abs_value ( F&& fun , const TYPE1& val )
   {
-    return LoKi::Functors::AbsMax<TYPE,TYPE2,TYPE1>( fun , val ) ;
+    return { std::forward<F>(fun) , val } ;
   }
   // ==========================================================================
   /** simple "process" function
@@ -1877,12 +1747,14 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE,typename TYPE1,typename TYPE2>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::Process<TYPE,TYPE1,TYPE2>
-  process ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+  process ( F&& fun )
   {
-    return LoKi::Functors::Process<TYPE,TYPE1,TYPE2>( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
   /** simple "for_each/process" function
@@ -1902,12 +1774,14 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE,typename TYPE1,typename TYPE2>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::Process<TYPE,TYPE1,TYPE2>
-  for_each ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+  for_each ( F&& fun )
   {
-    return LoKi::Functors::Process<TYPE,TYPE1,TYPE2>( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
   /** simple 'max_element' function
@@ -1927,12 +1801,14 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE,typename TYPE2,typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::MaxElement<TYPE,TYPE2,TYPE1>
-  max_element ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+  max_element ( F&& fun )
   {
-    return LoKi::Functors::MaxElement<TYPE,TYPE2,TYPE1>( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
   /** simple 'min_element' function
@@ -1953,12 +1829,14 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE,typename TYPE2,typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::MinElement<TYPE,TYPE2,TYPE1>
-  min_element ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+  min_element ( F&& fun )
   {
-    return LoKi::Functors::MinElement<TYPE,TYPE2,TYPE1>( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
   /** simple 'max_abs_element' function
@@ -1978,12 +1856,14 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE,typename TYPE2,typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::AbsMaxElement<TYPE,TYPE2,TYPE1>
-  max_abs_element ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+  max_abs_element ( F&& fun )
   {
-    return LoKi::Functors::AbsMaxElement<TYPE,TYPE2,TYPE1>( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
   /** simple 'min_abs_element' function
@@ -2004,12 +1884,14 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-28
    */
-  template <typename TYPE,typename TYPE2,typename TYPE1>
+  template <typename TYPE, typename F,
+            typename TYPE2 = typename details::LF<F>::type1,
+            typename TYPE1 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::AbsMinElement<TYPE,TYPE2,TYPE1>
-  min_abs_element ( const LoKi::Functor<TYPE2,TYPE1>& fun )
+  min_abs_element ( F&& fun )
   {
-    return LoKi::Functors::AbsMinElement<TYPE,TYPE2,TYPE1>( fun ) ;
+    return { std::forward<F>(fun) } ;
   }
   // ==========================================================================
   /**  simple "count" function
@@ -2029,12 +1911,14 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2008-10-17
    */
-  template <typename TYPE,typename TYPE1,typename TYPE2>
+  template <typename TYPE, typename F,
+            typename TYPE1 = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::Count<TYPE,TYPE1,TYPE2>
-  count ( const LoKi::Functor<TYPE1,TYPE2>& cut )
+  count ( F&& cut )
   {
-    return LoKi::Functors::Count<TYPE,TYPE1,TYPE2>( cut ) ;
+    return { std::forward<F>(cut) } ;
   }
   // ==========================================================================
   /**  simple "has" function
@@ -2054,12 +1938,14 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2008-10-17
    */
-  template <typename TYPE,typename TYPE1,typename TYPE2>
+  template <typename TYPE, typename F,
+            typename TYPE1 = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline
   LoKi::Functors::Has<TYPE,TYPE1,TYPE2>
-  has ( const LoKi::Functor<TYPE1,TYPE2>& cut )
+  has ( F&& cut )
   {
-    return LoKi::Functors::Has<TYPE,TYPE1,TYPE2>( cut ) ;
+    return { std::forward<F>(cut) } ;
   }
   // ==========================================================================
   /** simple function to produce the "union" for two streamers
@@ -2068,22 +1954,28 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2010-06-05
    */
-  template <typename TYPE, typename TYPE2>
+  template <typename F1, typename F2,
+            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE2 = typename details::LF2<F1,F2>::type2::value_type,
+            typename = details::require_signature<F1,TYPE,std::vector<TYPE2>>,
+            typename = details::require_signature<F2,TYPE,std::vector<TYPE2>>>
   inline
   LoKi::Functors::Union<TYPE,TYPE2>
-  union_ ( const LoKi::Functor<TYPE,std::vector<TYPE2> >& fun1 ,
-           const LoKi::Functor<TYPE,std::vector<TYPE2> >& fun2 )
+  union_ ( F1&& fun1 , F2&& fun2 )
   {
-    return LoKi::Functors::Union<TYPE,TYPE2> ( fun1 , fun2 ) ;
+    return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ;
   }
   // ==========================================================================
-  template <typename TYPE, typename TYPE2>
+  template <typename F1, typename F2,
+            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE2 = typename details::LF2<F1,F2>::type2::value_type,
+            typename = details::require_signature<F1,TYPE,std::vector<TYPE2>>,
+            typename = details::require_signature<F2,TYPE,std::vector<TYPE2>> >
   inline
   LoKi::Functors::NoEmptyUnion<TYPE,TYPE2>
-  no_empty_union ( const LoKi::Functor<TYPE,std::vector<TYPE2> >& fun1 ,
-                   const LoKi::Functor<TYPE,std::vector<TYPE2> >& fun2 )
+  no_empty_union ( F1&& fun1 , F2&& fun2 )
   {
-    return LoKi::Functors::NoEmptyUnion<TYPE,TYPE2> ( fun1 , fun2 ) ;
+    return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ;
   }
   // ==========================================================================
   template <typename TYPE, typename TYPE2>
@@ -2093,7 +1985,7 @@ namespace LoKi
                    const LoKi::Functor<TYPE,std::vector<TYPE2> >& fun2 ,
                    const LoKi::Functor<TYPE,std::vector<TYPE2> >& fun3 )
   {
-    return no_empty_union ( no_empty_union ( fun1 , fun2 ) , fun3 ) ;
+    return no_empty_union( no_empty_union( fun1 , fun2 ) , fun3 ) ;
   }
   // ==========================================================================
   template <typename TYPE, typename TYPE2>
@@ -2114,8 +2006,7 @@ namespace LoKi
   union_ ( const LoKi::Functor<TYPE,bool>&                            fun1 ,
            const LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >& fun2 )
   {
-    return LoKi::Functors::Union< std::vector<TYPE>,TYPE>
-      ( LoKi::Functors::Select<TYPE,TYPE> ( fun1 ) , fun2 ) ;
+    return { LoKi::Functors::Select<TYPE,TYPE> ( fun1 ) , fun2 } ;
   }
   // ==========================================================================
   template <typename TYPE>
@@ -2124,8 +2015,7 @@ namespace LoKi
   union_ ( const LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >& fun1 ,
            const LoKi::Functor<TYPE,bool>&                            fun2 )
   {
-    return LoKi::Functors::Union< std::vector<TYPE>,TYPE>
-      ( fun1 , LoKi::Functors::Select<TYPE,TYPE> ( fun2 ) ) ;
+    return { fun1 , LoKi::Functors::Select<TYPE,TYPE> ( fun2 ) } ;
   }
   // ==========================================================================
   template <typename TYPE>
@@ -2134,20 +2024,20 @@ namespace LoKi
   union_ ( const LoKi::Functor<TYPE,bool>& fun1 ,
            const LoKi::Functor<TYPE,bool>& fun2 )
   {
-    return LoKi::Functors::Union< std::vector<TYPE>,TYPE>
-      ( LoKi::Functors::Select<TYPE,TYPE> ( fun1 ) ,
-        LoKi::Functors::Select<TYPE,TYPE> ( fun2 ) ) ;
+    return { LoKi::Functors::Select<TYPE,TYPE> ( fun1 ) ,
+             LoKi::Functors::Select<TYPE,TYPE> ( fun2 ) } ;
   }
   // ==========================================================================
   /** simple "gate" function
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2010-11-17
    */
-  template <typename TYPE>
+  template <typename TYPE, typename F,
+            typename = details::require_signature<F,void,bool> >
   LoKi::Functors::Gate<TYPE>
-  gate ( const LoKi::Functor<void,bool>& gate )
+  gate ( F&& gate )
   {
-    return LoKi::Functors::Gate<TYPE>( gate );
+    return { std::forward<F>(gate) };
   }
   // ==========================================================================
   /** conditional source
@@ -2162,7 +2052,7 @@ namespace LoKi
   cause ( const LoKi::Functor<void,bool>&               start  ,
           const LoKi::Functor<void,std::vector<TYPE> >& source )
   {
-    return LoKi::Functors::Cause<TYPE>( start , source );
+    return { start , source };
   }
   // ==========================================================================
   /** conditional source
@@ -2177,65 +2067,68 @@ namespace LoKi
   cause ( const LoKi::Functor<void,std::vector<TYPE> >& source ,
           const LoKi::Functor<void,bool>&               start  )
   {
-    return LoKi::Functors::Cause<TYPE>( start , source );
+    return { start , source };
   }
   // ==========================================================================
   /** sum over the stream
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    */
-  template <typename TYPE>
+  template <typename F, typename TYPE = typename details::LF<F>::type1,
+            typename = details::require_signature<F,TYPE,double> >
   LoKi::Functors::Sum<TYPE>
-  sum   ( const LoKi::Functor<TYPE,double>& fun      ,
-          const double                      init = 0 )
+  sum( F&& fun, double init = 0 )
   {
-    return LoKi::Functors::Sum<TYPE>( fun , init ) ;
+    return { std::forward<F>(fun) , init } ;
   }
   // ==========================================================================
   /** sum over good elements of the stream
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    */
-  template <typename TYPE>
+  template <typename F1, typename F2,
+            typename TYPE = typename details::LF<F1>::type1,
+            typename = details::require_signature<F1,TYPE,double>,
+            typename = details::require_signature<F2,TYPE,bool> >
   LoKi::Functors::Sum<TYPE>
-  sum   ( const LoKi::Functor<TYPE,double>& fun      ,
-          const LoKi::Functor<TYPE,bool>&   cut      ,
-          const double                      init = 0 )
+  sum( F1&& fun, F2&& cut, double init = 0 )
   {
-    return LoKi::Functors::Sum<TYPE>( fun , cut , init ) ;
+    return { std::forward<F1>(fun) , std::forward<F2>(cut) , init } ;
   }
   // ==========================================================================
   /** product over the stream
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    */
-  template <typename TYPE>
+  template <typename F,
+            typename TYPE = typename details::LF<F>::type1,
+            typename = details::require_signature<F,TYPE,double>>
   LoKi::Functors::Product<TYPE>
-  product ( const LoKi::Functor<TYPE,double>& fun      ,
-            const double                      init = 1 )
+  product( F&& fun, double init = 1 )
   {
-    return LoKi::Functors::Product<TYPE>( fun , init ) ;
+    return { std::forward<F>(fun) , init } ;
   }
   // ==========================================================================
   /** product over good elements of the stream
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    */
-  template <typename TYPE>
+  template <typename F1, typename F2,
+            typename TYPE  = typename details::LF<F1>::type1,
+            typename = details::require_signature<F1,TYPE,double>,
+            typename = details::require_signature<F2,TYPE,bool> >
   LoKi::Functors::Product<TYPE>
-  product ( const LoKi::Functor<TYPE,double>& fun      ,
-            const LoKi::Functor<TYPE,bool>&   cut      ,
-            const double                      init = 1 )
+  product( F1&& fun, F2&& cut, double init = 1 )
   {
-    return LoKi::Functors::Product<TYPE>( fun , cut , init ) ;
+    return { std::forward<F1>(fun) , std::forward<F2>(cut) , init } ;
   }
   // ==========================================================================
   /** fetch certain element from the vector and evaluate  the function
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    */
-  template <typename TYPE, typename TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2 >
   LoKi::Functors::Fetch<TYPE,TYPE2>
-  fetch ( const LoKi::Functor<TYPE,TYPE2>& fun      ,
-          const unsigned int               index    ,
-          const TYPE2                      bad      )
+  fetch( F&& fun, unsigned int index, TYPE2 bad)
   {
-    return LoKi::Functors::Fetch<TYPE,TYPE2> ( fun , index , bad ) ;
+    return { std::forward<F>(fun) , index , std::move(bad) } ;
   }
   // ==========================================================================
   /** sort the input sequence
@@ -2243,32 +2136,36 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-30
    */
-  template <typename TYPE, typename TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   LoKi::Functors::Sort_<TYPE,TYPE2>
-  sort ( const LoKi::Functor<TYPE,TYPE2>& fun )
-  { return LoKi::Functors::Sort_<TYPE,TYPE2>( fun ) ; }
+  sort( F&& fun )
+  { return { std::forward<F>(fun) } ; }
   // ==========================================================================
   /** sort the sequence and get the first N-elements
    *  @see LoKi::Functors::Sort_
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-30
    */
-  template <typename TYPE, typename TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   LoKi::Functors::Sort_<TYPE,TYPE2>
-  sort ( const LoKi::Functor<TYPE,TYPE2>& fun ,
-         const int                        N   )
-  { return LoKi::Functors::Sort_<TYPE,TYPE2>( fun , N ) ; }
+  sort( F&& fun , int N )
+  { return { std::forward<F>(fun) , N } ; }
   // ==========================================================================
   /** sort the sequence and get the first N-elements
    *  @see LoKi::Functors::Sort_
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-30
    */
-  template <typename TYPE, typename TYPE2>
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   LoKi::Functors::Sort_<TYPE,TYPE2>
-  sort ( const int                        N   ,
-         const LoKi::Functor<TYPE,TYPE2>& fun )
-  { return LoKi::Functors::Sort_<TYPE,TYPE2>( fun , N ) ; }
+  sort( int N , F&& fun )
+  { return { std::forward<F>(fun) , N } ; }
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

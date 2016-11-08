@@ -1,4 +1,3 @@
-//$Id: Condition.cpp,v 1.14 2008-02-22 12:12:12 marcocle Exp $
 #include <string> 
 
 #include "DetDesc/Condition.h"
@@ -74,10 +73,6 @@ std::string Condition::toXml(std::string name, bool header, int precision) const
 }
 //---------------------------------------------------------------------------
 
-/// Destructor
-Condition::~Condition() {}
-
-//----------------------------------------------------------------------------
 
 /// initialize
 StatusCode Condition::initialize() {

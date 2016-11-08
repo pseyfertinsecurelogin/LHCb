@@ -1,4 +1,3 @@
-// $Id: L0CaloCandidate.cpp,v 1.7 2009-08-12 09:16:24 ibelyaev Exp $
 // Include files 
 #include <vector>
 #include "GaudiKernel/SystemOfUnits.h"

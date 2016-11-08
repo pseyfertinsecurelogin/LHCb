@@ -58,10 +58,10 @@ namespace L0Muon {
     FormattingUnit(DOMNode* pNode);
 
     /// Overloads from Unit : perform the data exchange
-    void preexecute();
+    void preexecute() override;
 
     /// Give a static type name to the unit
-    std::string type() {
+    std::string type() override {
       return "FormattingUnit";
     }
 

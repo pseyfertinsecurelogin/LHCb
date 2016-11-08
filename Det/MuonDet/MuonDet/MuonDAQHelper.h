@@ -1,7 +1,7 @@
-// $Id: MuonDAQHelper.h,v 1.8 2010-02-09 12:47:38 asatta Exp $
 #ifndef MUONDET_MUONDAQHELPER_H 
 #define MUONDET_MUONDAQHELPER_H 1
 #include <string>
+#include <memory>
 #include <vector>
 
 #include "GaudiKernel/MsgStream.h"
@@ -28,12 +28,13 @@ static const unsigned int MuonDAQHelper_maxTell1Number=14;
 static const unsigned int MuonDAQHelper_maxODENumber=180;
 static const unsigned int MuonDAQHelper_linkNumber=24;
 
-class MuonDAQHelper {
+class MuonDAQHelper final {
 public: 
   /// Standard constructor
-  MuonDAQHelper( ); 
+  MuonDAQHelper( ) = default;
 
-  virtual ~MuonDAQHelper( ); ///< Destructor
+  virtual ~MuonDAQHelper() = default; // needed (for no good reason!) in call to registerUpdate
+
   void initSvc(IDataProviderSvc* detSvc , IMessageSvc * msgSvc );
   /// steering initialization
   StatusCode initDAQMaps();
@@ -56,12 +57,12 @@ public:
   std::vector<LHCb::MuonTileID> DoPadV1(std::vector<LHCb::MuonTileID> digit,
                                         std::vector<LHCb::MuonTileID> 
                                           wrongdigit,MuonTSMap* TS);
-  LHCb::MuonTileID getADDInLink(unsigned int Tell1_num, long link_num,long ch);
-  LHCb::MuonTileID getADDInODE(long ODE_num, long ch);
-  LHCb::MuonTileID getADDInODENoHole(long ODE_num, long ch);
-  LHCb::MuonTileID getADDInTell1(unsigned int Tell1_num, long ch);
-  LHCb::MuonTileID getPadInTell1DC06(unsigned int Tell1_num, long pad);
-  LHCb::MuonTileID getPadInTell1V1(unsigned int Tell1_num, long pad);
+  LHCb::MuonTileID getADDInLink(unsigned int Tell1_num, long link_num,long ch) const;
+  LHCb::MuonTileID getADDInODE(long ODE_num, long ch) const;
+  LHCb::MuonTileID getADDInODENoHole(long ODE_num, long ch) const;
+  LHCb::MuonTileID getADDInTell1(unsigned int Tell1_num, long ch) const;
+  LHCb::MuonTileID getPadInTell1DC06(unsigned int Tell1_num, long pad) const ;
+  LHCb::MuonTileID getPadInTell1V1(unsigned int Tell1_num, long pad) const;
    unsigned int getPPNumber(unsigned int Tell1_num,unsigned int ODE_num);
   inline unsigned int TotTellNumber(){
     return m_TotTell1;
@@ -99,7 +100,7 @@ public:
 
 
   
-  LHCb::MuonTileID findTS(LHCb::MuonTileID digit);
+  LHCb::MuonTileID findTS(LHCb::MuonTileID digit) const;
   unsigned int findDigitInTS(std::string TSPath, LHCb::MuonTileID TSTile,
                              LHCb::MuonTileID digit,bool hole=true);  
   unsigned int findODENumber(std::string odePath);
@@ -143,21 +144,21 @@ private:
   /// Access to Msgstream object
   inline MsgStream & msgStream() const
   {
-    if ( !m_msgStream ) m_msgStream = new MsgStream(m_msgSvc, "MuonDAQHelper");
+    if ( UNLIKELY(!m_msgStream) ) m_msgStream.reset( new MsgStream(m_msgSvc, "MuonDAQHelper") );
     return *m_msgStream;
   }
 
 private:
 
-  mutable MsgStream * m_msgStream;
-  IDataProviderSvc* m_detSvc ;
-  IMessageSvc* m_msgSvc ;
+  mutable std::unique_ptr<MsgStream> m_msgStream;
+  IDataProviderSvc* m_detSvc = nullptr;
+  IMessageSvc* m_msgSvc = nullptr;
   friend class DeMuonDetector;
   void resetLUT();
   
-  unsigned int m_TotTell1; // TELL1 counter
+  unsigned int m_TotTell1 = 0; // TELL1 counter
   unsigned int m_ODENumberInTell1[MuonDAQHelper_maxTell1Number];
-  unsigned int m_M1Tell1;
+  unsigned int m_M1Tell1 = 0;
   std::vector<unsigned int> m_ODEInTell1[MuonDAQHelper_maxTell1Number];
   std::vector<LHCb::MuonTileID> m_mapTileInODE[MuonDAQHelper_maxODENumber];
   std::vector<LHCb::MuonTileID> m_mapTileInODEDC06[MuonDAQHelper_maxODENumber];
@@ -187,7 +188,7 @@ private:
   std::vector<int> m_tellPerStation[5];
 
   int m_nStations;
-  MuonBasicGeometry* m_basegeometry;
+  std::unique_ptr<MuonBasicGeometry> m_basegeometry;
 
 };
 #endif // MUONDET_MUONDAQHELPER_H

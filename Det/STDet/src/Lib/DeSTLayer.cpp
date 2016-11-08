@@ -20,23 +20,19 @@ DeSTLayer::DeSTLayer( const std::string& name ) :
   m_angle(0.0),
   m_sinAngle(0.0),
   m_cosAngle(0.0)
-{ 
+{
   // constructer
 }
 
 
-DeSTLayer::~DeSTLayer() {
-  // destructer
-}
-
 StatusCode DeSTLayer::initialize() {
 
   // initialize method
- 
+
   StatusCode sc = DeSTBaseElement::initialize();
   if (sc.isFailure() ){
     MsgStream msg(msgSvc(), name() );
-    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg; 
+    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
   }
   else {
 
@@ -44,13 +40,13 @@ StatusCode DeSTLayer::initialize() {
     m_angle = param<double>("stereoangle");
     m_cosAngle = cos(m_angle);
     m_sinAngle = sin(m_angle);
-     
+
     // cache trajectories
     sc = registerCondition(this,this->geometry(),&DeSTLayer::cachePlane);
     if (sc.isFailure() ){
       MsgStream msg(msgSvc(), name() );
       msg << MSG::ERROR << "Failed to register conditions" << endmsg;
-      return StatusCode::FAILURE; 
+      return StatusCode::FAILURE;
     }
   }
 
@@ -62,7 +58,7 @@ std::ostream& DeSTLayer::printOut( std::ostream& os ) const{
   // stream to cout
   os << " Layer: "  << m_id << std::endl;
   os << "stereo angle " << m_angle << std::endl
-     << " Nickname: " << m_nickname 
+     << " Nickname: " << m_nickname
      << std::endl;
 
   return os;
@@ -73,7 +69,7 @@ MsgStream& DeSTLayer::printOut( MsgStream& os ) const{
   // stream to Msg service
   os << " Station : "  << m_id << endmsg;
   os << "stereo angle " << m_angle
-     << " Nickname: " << m_nickname 
+     << " Nickname: " << m_nickname
      << endmsg;
 
   return os;

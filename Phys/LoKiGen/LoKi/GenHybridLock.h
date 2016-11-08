@@ -1,6 +1,5 @@
-// $Id$
 // ============================================================================
-#ifndef LOKI_GENHYBRIDLOCK_H 
+#ifndef LOKI_GENHYBRIDLOCK_H
 #define LOKI_GENHYBRIDLOCK_H 1
 // ============================================================================
 // Include files
@@ -12,20 +11,17 @@
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2007-10-31 
+ *  @date 2007-10-31
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 namespace LoKi
 {
@@ -33,41 +29,39 @@ namespace LoKi
   namespace Hybrid
   {
     // ========================================================================
-    /** @class GenLock  LoKi/GenHybridLock.h 
-     *  Helper class (sentry) to connent IGenHybridTool to GenEngine  
+    /** @class GenLock  LoKi/GenHybridLock.h
+     *  Helper class (sentry) to connent IGenHybridTool to GenEngine
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-06-09
      */
-    class GenLock 
+    class GenLock
     {
     public:
       // ======================================================================
-      /// constructor : Lock 
-      GenLock  ( IGenHybridTool* tool ) ; // contructor : Lock 
+      /// constructor : Lock
+      GenLock  ( IGenHybridTool* tool ) ; // contructor : Lock
       /// destructor : UnLock
       virtual ~GenLock () ;               // destrcutor : UnLock
       // ======================================================================
     private:
       // ======================================================================
-      /// no default constructor 
-      GenLock () ;                     // no default constructor 
-      /// no copy constructor 
-      GenLock ( const GenLock& ) ;     // no copy constructor 
-      /// no assignement opeartor 
-      GenLock& operator = ( const GenLock& ) ; // no assignement operator
+      /// no copy constructor
+      GenLock ( const GenLock& ) = delete;     // no copy constructor
+      /// no assignement opeartor
+      GenLock& operator = ( const GenLock& ) = delete; // no assignement operator
       // ======================================================================
     private:
       // ======================================================================
-      /// the tool itself 
-      LoKi::Interface<LoKi::IGenHybridTool> m_tool ;  // the tool itself 
+      /// the tool itself
+      LoKi::Interface<LoKi::IGenHybridTool> m_tool ;  // the tool itself
       // ======================================================================
     } ;
     // ========================================================================
-  } //                                            end of namespace LoKi::Hybrid 
+  } //                                            end of namespace LoKi::Hybrid
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_MCHYBRIDLOCK_H
 // ============================================================================

@@ -9,6 +9,8 @@
 #include "STDet/DeSTBaseElement.h"
 #include "GaudiKernel/Plane3DTypes.h"
 #include "LHCbMath/LineTypes.h"
+#include "Kernel/Trajectory.h"
+
 
 /** @class DeSTSensor DeSTSensor.h "STDet/DeSTSensor.h"
  *
@@ -23,10 +25,6 @@
 
 class DeSTSector;
 
-namespace LHCb{
-  class Trajectory;
-}
-
 class DeSTSensor : public DeSTBaseElement  {
 
 public:
@@ -34,19 +32,16 @@ public:
   /** Constructor */
   DeSTSensor ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeSTSensor();
-
   /** initialization method
    * @return StatusCode OK or not
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** check whether contains
   *  @param  aChannel channel
   *  @return bool
   */
-  virtual bool contains(const LHCb::STChannelID aChannel) const;
+  bool contains(const LHCb::STChannelID aChannel) const override;
 
   /** sector identfier
    * @return id
@@ -164,10 +159,10 @@ public:
   bool yInverted() const;
 
   /** print to stream */
-  std::ostream& printOut( std::ostream& os ) const;
+  std::ostream& printOut( std::ostream& os ) const override;
 
   /** print to msgstream */
-  MsgStream& printOut( MsgStream& os) const;
+  MsgStream& printOut( MsgStream& os) const override;
 
 protected:
 

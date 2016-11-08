@@ -102,7 +102,7 @@ namespace LHCb
     /// Retrieve class identifier (static)
     static const CLID& classID()      {  return CLID_RawEvent;        }
     /// Retrieve class identifier (virtual overload)
-    virtual const CLID& clID() const  {  return RawEvent::classID();  }
+    const CLID& clID() const override {  return RawEvent::classID();  }
 
     /// accessor method to the vector of Raw banks for a given bank type
     const std::vector<RawBank*> &  banks(RawBank::BankType bankType)  const {

@@ -17,9 +17,6 @@ Check<PACKER>::Check( const std::string& name,
 }
 
 template < class PACKER >
-Check<PACKER>::~Check() { }
-
-template < class PACKER >
 StatusCode Check<PACKER>::execute()
 {
   // Check data exists at both locations and load it

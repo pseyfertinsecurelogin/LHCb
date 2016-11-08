@@ -1,5 +1,5 @@
 // $Id: FilterByBankType.h,v 1.1 2009-03-09 21:18:07 jvantilb Exp $
-#ifndef FILTERBYRUNEVENT_H 
+#ifndef FILTERBYRUNEVENT_H
 #define FILTERBYRUNEVENT_H 1
 
 // from Gaudi
@@ -27,11 +27,11 @@
  *    location is taken from @c  RawEventLocation::Default.
  *
  *  Example of usage:
- * 
+ *
  *  In order to configure an algorithm that selects events containing an
  *  ODIN bank or a pedestal bank from any subdetector:
  *  @code
- *  
+ *
  *  //
  *  ApplicationMgr.TopAlg += { 'FilterByBankType/SelectODINEvents' }
  *  SelectODINEvents.PassSelectedEvents = true;
@@ -43,14 +43,16 @@
  *  @date   2009-03-06
  *
  */
-class FilterByBankType : public GaudiAlgorithm {
+class FilterByBankType final : public GaudiAlgorithm
+{
 
-public: 
+public:
+
   /// Standard constructor
   FilterByBankType( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual StatusCode execute();    ///< Algorithm execution
-  virtual StatusCode initialize(); ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode initialize() override; ///< Algorithm initialization
 
 private:
 
@@ -63,4 +65,5 @@ private:
   bool m_passSelect;                    ///< Flag to determine selection logic.
 
 };
+
 #endif // FILTERBYRUNEVENT_H

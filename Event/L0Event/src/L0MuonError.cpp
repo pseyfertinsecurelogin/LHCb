@@ -1,7 +1,4 @@
 // local
-//#ifdef __INTEL_COMPILER         // Disable ICC warning
-//  #pragma warning(disable:1125) // virtual function is hidden, override intended?
-//#endif
 #include "Event/L0MuonError.h"
 
 //-----------------------------------------------------------------------------
@@ -10,20 +7,17 @@
 // 2008-07-22 : Julien Cogan
 //-----------------------------------------------------------------------------
 
-void LHCb::L0MuonError::index( int & quarter, int & board, int & pu ) const{
+void LHCb::L0MuonError::index( int & quarter, int & board, int & pu ) const {
 
   LHCb::MuonTileID mid=key();
   
-
   quarter = mid.quarter();
-  
 
   MuonLayout lay=mid.layout();
   
   int xgrid=lay.xGrid();
   
   int ygrid=lay.yGrid();
-  
 
   // CU & SU
   if (xgrid==0 && ygrid==0) {
@@ -35,7 +29,6 @@ void LHCb::L0MuonError::index( int & quarter, int & board, int & pu ) const{
     return;
     
   }
-  
 
   // BCSU
   if (xgrid==1 && ygrid==1) {
@@ -48,7 +41,6 @@ void LHCb::L0MuonError::index( int & quarter, int & board, int & pu ) const{
     
   }
   
-
   // PU
   if (xgrid==2 && ygrid==2) {
     
@@ -64,17 +56,11 @@ void LHCb::L0MuonError::index( int & quarter, int & board, int & pu ) const{
     
   }
   
-
   // Unknown
   quarter=-1;
   
   board=-1;
   
   pu=-1;
-  
-
-  return;
-  
-
 
 }

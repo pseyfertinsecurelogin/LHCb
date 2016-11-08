@@ -1,6 +1,6 @@
 // $Id: $
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -19,23 +19,23 @@ namespace Gaudi
    *  @date 2012-11-08
    */
   // ==========================================================================
-  class DataRemove : public GaudiAlgorithm
+  class DataRemove final : public GaudiAlgorithm
   {
     // ========================================================================
     friend class AlgFactory<Gaudi::DataRemove> ;
     // ========================================================================
   public:
     // ========================================================================
-    /// the only one essential method 
-    virtual StatusCode execute () ;
+    /// the only one essential method
+    StatusCode execute ()  override;
     // ========================================================================
   protected:
     // ========================================================================
-    /// standard constructor 
+    /// standard constructor
     DataRemove ( const std::string& name ,
                  ISvcLocator*       pSvc ) ;
-    /// virtual destructor 
-    virtual ~DataRemove() ;              
+    /// virtual destructor
+    virtual ~DataRemove() = default ;
     // ========================================================================
   private:
     std::string m_dataLocation;
@@ -45,20 +45,16 @@ namespace Gaudi
 } //                                                     end of namespace Gaudi
 // ============================================================================
 Gaudi::DataRemove::DataRemove( const std::string& name ,
-                               ISvcLocator*       pSvc ) 
+                               ISvcLocator*       pSvc )
   : GaudiAlgorithm ( name , pSvc )
 {
   declareProperty( "DataLocation", m_dataLocation = "" );
 }
-// ============================================================================
-// virtual & protected desctructor 
-// ============================================================================
-Gaudi::DataRemove::~DataRemove() { }
 // ========================================================================
-// the main method 
+// the main method
 // ========================================================================
-StatusCode Gaudi::DataRemove::execute() 
-{ 
+StatusCode Gaudi::DataRemove::execute()
+{
   if ( !m_dataLocation.empty() )
   {
     DataObject * data = getIfExists<DataObject>( m_dataLocation );
@@ -68,7 +64,7 @@ StatusCode Gaudi::DataRemove::execute()
       if ( sc.isSuccess() )
       {
         delete data;
-        data = NULL;
+        data = nullptr;
       }
       else
       {
@@ -76,10 +72,10 @@ StatusCode Gaudi::DataRemove::execute()
       }
     }
   }
-  return StatusCode::SUCCESS;  
+  return StatusCode::SUCCESS;
 }
 // ============================================================================
 DECLARE_NAMESPACE_ALGORITHM_FACTORY(Gaudi,DataRemove)
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

@@ -27,8 +27,6 @@ OTReadOutWindow::OTReadOutWindow(const std::string& type,
   declareProperty("sizeOfReadoutGate", m_sizeOfReadOutGate = 75.0*Gaudi::Units::ns);
 }
 
-OTReadOutWindow::~OTReadOutWindow() = default;
-
 StatusCode OTReadOutWindow::initialize()
 {
   StatusCode sc = GaudiTool::initialize();

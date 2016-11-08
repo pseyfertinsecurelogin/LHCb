@@ -31,10 +31,6 @@ public:
   /** Constructor */
   DeITDetector ( const std::string& name = "" ) ;
 
-
-  /** Destructor */
-  ~DeITDetector() override;
-
   /**
   * Retrieves reference to class identifier
   * @return the class identifier for this class

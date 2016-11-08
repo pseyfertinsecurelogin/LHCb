@@ -25,10 +25,6 @@ CompareMCVertex::CompareMCVertex( const std::string& name,
   declareProperty( "InputName" , m_inputName  = LHCb::MCVertexLocation::Default );
   declareProperty( "TestName"  , m_testName   = LHCb::MCVertexLocation::Default+"Test" );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CompareMCVertex::~CompareMCVertex() {}
 
 //=============================================================================
 // Main execution
@@ -46,8 +42,8 @@ StatusCode CompareMCVertex::execute() {
           << endmsg;
     return StatusCode::FAILURE;
   }
-  LHCb::MCVertices::const_iterator itOld  = old->begin();
-  LHCb::MCVertices::const_iterator itTest = test->begin();
+  auto itOld  = old->begin();
+  auto itTest = test->begin();
 
   static const double smallest = boost::numeric::bounds<float>::smallest();
   static const double tiny     = boost::numeric::bounds<double>::smallest();

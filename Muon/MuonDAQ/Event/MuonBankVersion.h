@@ -1,4 +1,3 @@
-// $Id: MuonBankVersion.h,v 1.2 
 #ifndef EVENT_MUONBANKVERSION_H
 #define EVENT_MUONBANKVERSION_H 1
 

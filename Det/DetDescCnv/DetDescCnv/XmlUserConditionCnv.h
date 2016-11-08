@@ -23,12 +23,12 @@
  * @author Sebastien Ponce
  */
 template <class DeType> class XmlUserConditionCnv : public XmlBaseConditionCnv {
-  
+
   /// The type of this object
   typedef XmlUserConditionCnv<DeType> MyType;
   /// Friend needed for instantiation
   friend class CnvFactory<MyType>;
-  
+
 
  public:
 
@@ -37,12 +37,12 @@ template <class DeType> class XmlUserConditionCnv : public XmlBaseConditionCnv {
    * @param svc a ISvcLocator interface to find services
    */
   XmlUserConditionCnv (ISvcLocator* svc);
-  
+
   /**
    * Default destructor
    */
   virtual ~XmlUserConditionCnv() {};
-  
+
   /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
@@ -58,8 +58,8 @@ template <class DeType> class XmlUserConditionCnv : public XmlBaseConditionCnv {
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_createObj (xercesc::DOMElement* element,
-                                  DataObject*& refpObject);  
+  StatusCode i_createObj (xercesc::DOMElement* element,
+                          DataObject*& refpObject) override;
 
   /** This fills the current object for specific child.
    * This is a very general method reimplemented from XmlBaseConditionCnv.
@@ -70,9 +70,9 @@ template <class DeType> class XmlUserConditionCnv : public XmlBaseConditionCnv {
    * @param address    the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
-                                        Condition* refpObject,
-                                        IOpaqueAddress* address);
+  StatusCode i_fillSpecificObj (xercesc::DOMElement* childElement,
+                                Condition* refpObject,
+                                IOpaqueAddress* address) override;
 
   /** This fills the current object for specific child.
    * This should never be called directly but always through the other
@@ -118,10 +118,10 @@ XmlUserConditionCnv<DeType>::i_createObj(xercesc::DOMElement* /*element*/,
                                          DataObject*& refpObject) {
   MsgStream log(msgSvc(), "XmlUserConditionCnv" );
   if( log.level() <= MSG::DEBUG ) log << MSG::DEBUG << "entering i_createObj" << endmsg;
-  
+
   // creates an object for the node found
   refpObject = new DeType();
-  
+
   // returns
   return StatusCode::SUCCESS;
 } // end i_createObj

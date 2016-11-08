@@ -1,5 +1,5 @@
 
-#ifndef ApplicationVersionFilter_H 
+#ifndef ApplicationVersionFilter_H
 #define ApplicationVersionFilter_H 1
 
 // from Gaudi
@@ -12,25 +12,25 @@
 #include <boost/regex.hpp>
 
 /** @class ApplicationVersionFilter ApplicationVersionFilter.h
- *  
+ *
  *  Checks the application version from the given ProcessHeader,
  *  comparing it to a given regex pattern to pass/reject the event.
  *
  *  @author Chris Jones
  *  @date   18-04-2013
  */
-class ApplicationVersionFilter : public GaudiAlgorithm 
+class ApplicationVersionFilter final : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
-  ApplicationVersionFilter( const std::string& name, 
+  ApplicationVersionFilter( const std::string& name,
                             ISvcLocator* pSvcLocator );
 
-  virtual ~ApplicationVersionFilter( ); ///< Destructor
+  virtual ~ApplicationVersionFilter( ) = default; ///< Destructor
 
-  virtual StatusCode execute();    ///< Algorithm execution
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
 

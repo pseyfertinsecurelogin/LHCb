@@ -65,26 +65,31 @@
  *     CaloCheckObjectsAlg from Calo/CaloReco package
  */
 // ============================================================================
-class TESCheck : public GaudiAlgorithm
+class TESCheck final : public GaudiAlgorithm
 {
+
   friend class AlgFactory<TESCheck>;
-public:
+
+ public:
+
   typedef StringArrayProperty       Inputs ;
   enum Stores
-    {
-      EvtStore = 0 ,
-      DetStore     ,
-      HstStore
-    };
+  {
+    EvtStore = 0 ,
+    DetStore     ,
+    HstStore
+  };
 
-protected:
+ protected:
+
   typedef std::vector<std::string> _Inputs ;
-public:
+
+ public:
 
   /// execute the algorithm itself
-  virtual StatusCode execute() ;
+  StatusCode execute()  override;
 
-protected:
+ protected:
 
   /** constructor
    *  @param name algorithm instance name
@@ -102,16 +107,17 @@ protected:
     declareProperty  ( "Stop"   , m_stop   ) ;
     //
     m_inputs.declareUpdateHandler (&TESCheck::propHndl , this);
-  };
-  /// virtual destructor
-  virtual ~TESCheck() {};
+  }
 
-public:
+  /// virtual destructor
+  virtual ~TESCheck() = default;
+
+ public:
 
   /// a technical - to be able to modify it interactively, e.g. in Python
   void propHndl ( Property&  /* p */ ) {};
 
-private:
+ private:
 
   // default constructor is disabled
   TESCheck() ;
@@ -120,10 +126,12 @@ private:
   // assignement operator is disabled
   TESCheck& operator=( const TESCheck& ) ;
 
-private:
+ private:
+
   Inputs  m_inputs ;
   int     m_store  ;
   bool    m_stop   ;
+
 };
 // ============================================================================
 
@@ -135,11 +143,10 @@ DECLARE_ALGORITHM_FACTORY( TESCheck )
 // ============================================================================
 StatusCode TESCheck::execute()
 {
-  const _Inputs& inputs = m_inputs.value() ;
+  const auto & inputs = m_inputs.value() ;
 
-  for ( _Inputs::const_iterator i = inputs.begin() ; inputs.end() != i ; ++i )
+  for ( const auto & address : inputs )
   {
-    const std::string& address = *i ;
 
     SmartIF<IDataProviderSvc> dp;
     switch(m_store) {
@@ -155,8 +162,8 @@ StatusCode TESCheck::execute()
     }
 
     SmartDataPtr<DataObject> obj( dp , address ) ;
-    DataObject* o = obj ;
-    if ( 0 == o  )
+    DataObject * o = obj ;
+    if ( !o  )
     {
       if ( m_stop ) { return Error ( "Check failed for '" + address + "'" ) ; }
       if ( msgLevel ( MSG::WARNING ) )
@@ -172,7 +179,7 @@ StatusCode TESCheck::execute()
                 << System::typeinfoName( typeid( *o ) ) << "'" << endmsg ;
       }
     }
-    
+
   }
 
   return StatusCode::SUCCESS;

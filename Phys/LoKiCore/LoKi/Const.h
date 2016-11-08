@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_CONST_H 
+#ifndef LOKI_CONST_H
 #define LOKI_CONST_H 1
 // ============================================================================
 // Include files
@@ -13,12 +13,12 @@
  *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
- * 
+ *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2006-03-29
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
   /** @struct Const LoKi/Const.h
@@ -27,7 +27,7 @@ namespace LoKi
    *  @date   2006-03-29
    */
   template <class TYPE>
-  struct  Const 
+  struct  Const
   { typedef           const TYPE                       Value ; } ;
   // ==========================================================================
   template <class TYPE>
@@ -48,7 +48,7 @@ namespace LoKi
    *  @date   2010-07-30
    */
   template <class TYPE>
-  struct  NonConst 
+  struct  NonConst
   { typedef           TYPE                             Value ; } ;
   // ==========================================================================
   template <class TYPE>
@@ -65,7 +65,7 @@ namespace LoKi
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_CONST_H
 // ============================================================================

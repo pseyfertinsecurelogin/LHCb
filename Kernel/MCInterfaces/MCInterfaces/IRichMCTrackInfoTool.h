@@ -1,4 +1,3 @@
-
 /** @file IRichMCTrackInfoTool.h
  *
  *  Header file for tool interface : Rich::IMCTrackInfoTool
@@ -23,8 +22,6 @@ namespace LHCb
   class MCRichSegment;
 }
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichMCTrackInfoTool( "Rich::IMCTrackInfoTool", 1, 0 );
 
 namespace Rich
 {
@@ -40,15 +37,14 @@ namespace Rich
      *  @date   15/03/2002
      */
 
-    class IMCTrackInfoTool : public virtual IAlgTool
+    struct IMCTrackInfoTool : extend_interfaces<IAlgTool>
     {
 
-    public:
 
       /** static interface identification
        *  @return unique interface identifier
        */
-      static const InterfaceID& interfaceID() { return IID_IRichMCTrackInfoTool; }
+      DeclareInterfaceID( IMCTrackInfoTool, 2, 0 );
 
       /** Takes the direction information from a MCRichSegment and ray traces it through the
        *  appropriate RICH optical system and computes the intersect points with the HPD

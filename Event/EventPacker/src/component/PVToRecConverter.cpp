@@ -6,7 +6,7 @@ class PVToRecConverter : public GaudiAlgorithm
 {
 public:
   PVToRecConverter( const std::string&, ISvcLocator*) ;
-  StatusCode execute() ;
+  StatusCode execute()  override;
 private:
   std::string m_inputLocation ;
   std::string m_outputLocation ;

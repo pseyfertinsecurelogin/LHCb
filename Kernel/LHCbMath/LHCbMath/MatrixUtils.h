@@ -11,6 +11,7 @@
 #include <functional>
 #include <utility>
 #include <cmath>
+#include <array>
 // ============================================================================
 // ROOT
 // ============================================================================
@@ -1224,7 +1225,209 @@ namespace Gaudi
       if ( 0 != ifail ) { result = what.Inverse     ( ifail ) ; }
       return ifail ;  
     }
-    // ==========================================================================
+    // ========================================================================
+
+    
+    // ========================================================================
+    // helper functions to allow proper operations in PyROOT
+    // ========================================================================
+    /// addition of matrices  (same type +  same type) -> matrix
+    template <class T,unsigned int D1, unsigned int D2, class R>
+    inline ROOT::Math::SMatrix<T,D1,D2,R>
+    _matrix_add_ 
+    ( const ROOT::Math::SMatrix<T,D1,D2,R>& a ,
+      const ROOT::Math::SMatrix<T,D1,D2,R>& b ) { return a+b ; } 
+    // =========================================================================
+    /// addition of matrices (symmetric + general -> general ) 
+    template <class T,unsigned int D>
+    inline ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
+    _matrix_add_ 
+    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >  & a ,
+      const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >& b ) { return a + b ; }
+    // ========================================================================= 
+    /// addition of matrices (general + symmetric -> general
+    template <class T,unsigned int D>
+    inline ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
+    _matrix_add_
+    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> > & a ,
+      const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >   & b ) { return a + b ; }
+    // =========================================================================
+
+    // =========================================================================
+    /// subtraction of matrices  (same type +  same type) -> matrix
+    template <class T,unsigned int D1, unsigned int D2, class R>
+    inline ROOT::Math::SMatrix<T,D1,D2,R>
+    _matrix_sub_ 
+    ( const ROOT::Math::SMatrix<T,D1,D2,R>& a ,
+      const ROOT::Math::SMatrix<T,D1,D2,R>& b ) { return a-b ; } 
+    // =========================================================================
+    /// subtraction of matrices (symmetric + general -> general ) 
+    template <class T,unsigned int D>
+    inline ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
+    _matrix_sub_ 
+    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >  & a ,
+      const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >& b ) { return a - b ; }
+    // ========================================================================= 
+    /// addition of matrices (general + symmetric -> general
+    template <class T,unsigned int D>
+    inline ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
+    _matrix_sub_
+    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> > & a ,
+      const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >   & b ) { return a - b ; }
+    // =========================================================================
+    
+    // =========================================================================    
+    // multiplication of matrices  ( general * general -> general ) 
+    template <class T,unsigned int D1, unsigned int D2, unsigned int D3, class R1, class R2>
+    inline ROOT::Math::SMatrix<T,D1,D3,ROOT::Math::MatRepStd<T,D1,D3> >
+    _matrix_mul_
+    ( const ROOT::Math::SMatrix<T,D1,D2,R1>& a ,
+      const ROOT::Math::SMatrix<T,D2,D3,R2>& b ) { return a * b ; }
+    // =========================================================================
+    /// multiplication of matrices ( general * symmetric -> general ) 
+    template <class T,unsigned int D1, unsigned int D2>
+    inline ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> >
+    _matrix_mul_ 
+    ( const ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> >& a ,  
+      const ROOT::Math::SMatrix<T,D2,D2,ROOT::Math::MatRepSym<T,D2> >   & b ) { return a * b ; }
+    // =========================================================================
+    /// multiplication of matrices ( symmetric * general -> general ) 
+    template <class T,unsigned int D1, unsigned int D2>
+    inline ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> >
+    _matrix_mul_ 
+    ( const ROOT::Math::SMatrix<T,D1,D1,ROOT::Math::MatRepSym<T,D1> >   & a , 
+      const ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> >& b ) { return a * b ; }
+    // =========================================================================
+    /// multiplication of matrices ( symmetric * symmetric -> general ) 
+    template <class T,unsigned int D>
+    inline ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
+    _matrix_mul_ 
+    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& a , 
+      const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& b ) { return a * b ; }
+    // =========================================================================
+    /// multiplication of matrices  ( matrix * vector ) -> expression
+    template <class T,unsigned int D1, unsigned int D2, class R>
+    inline ROOT::Math::SVector<T,D1>
+    _matrix_mul_
+    ( const ROOT::Math::SMatrix<T,D1,D2,R>& a ,
+      const ROOT::Math::SVector<T,D2>     & b ) { return a * b ; }
+    // =========================================================================
+    // multiplication of matrices  (  matrix * scalar -> matrix ) 
+    template <class T,unsigned int D1, unsigned int D2, class R1>
+    inline ROOT::Math::SMatrix<T,D1,D2,R1>
+    _matrix_mul_
+    ( const ROOT::Math::SMatrix<T,D1,D2,R1>& a ,
+      const double                           b ) { return a * b ; }
+    // =========================================================================
+    /// "right" multiplication of matrices  ( vector * matrix ) -> vector 
+    template <class T,unsigned int D1, unsigned int D2, class R>
+    inline ROOT::Math::SVector<T,D2>
+    _matrix_rmul_
+    ( const ROOT::Math::SMatrix<T,D1,D2,R>& a ,
+      const ROOT::Math::SVector<T,D1>     & b ) { return b * a ; }
+    // =========================================================================
+    // "right" multiplication of matrices  (  scalar * matrix -> matrix ) 
+    template <class T,unsigned int D1, unsigned int D2, class R1>
+    inline ROOT::Math::SMatrix<T,D1,D2,R1>
+    _matrix_rmul_
+    ( const ROOT::Math::SMatrix<T,D1,D2,R1>& a ,
+      const double                           b ) { return b * a ; }
+    // =========================================================================
+    // division of matrices  (  matrix / scalar -> matrix ) 
+    template <class T,unsigned int D1, unsigned int D2, class R1>
+    inline ROOT::Math::SMatrix<T,D1,D2,R1>
+    _matrix_div_
+    ( const ROOT::Math::SMatrix<T,D1,D2,R1>& a ,
+      const double                           b ) { return a / b ; }
+    // =========================================================================
+
+    
+    // ========================================================================
+    // addition of vectors:  vector + vector -> vector 
+    template <class T,unsigned int D>
+    inline ROOT::Math::SVector<T,D>
+    _vector_add_ 
+    ( const ROOT::Math::SVector<T,D>& a ,
+      const ROOT::Math::SVector<T,D>& b ) { return a + b ; }
+    // ========================================================================
+    // addition of vectors:  vector + scalar  -> vector
+    template <class T,unsigned int D>
+    inline ROOT::Math::SVector<T,D>
+    _vector_add_ 
+    ( const ROOT::Math::SVector<T,D>& a ,
+      const double                    b ) { return a + b ; }
+    // ========================================================================
+    // "right" addition of vectors:  scalar+vector  -> vector
+    template <class T,unsigned int D>
+    inline ROOT::Math::SVector<T,D>
+    _vector_radd_ 
+    ( const ROOT::Math::SVector<T,D>& a ,
+      const double                    b ) { return b + a ; }
+    // ========================================================================
+    // subtraction of vectors:  vector - vector -> vector 
+    template <class T,unsigned int D>
+    inline ROOT::Math::SVector<T,D>
+    _vector_sub_ 
+    ( const ROOT::Math::SVector<T,D>& a ,
+      const ROOT::Math::SVector<T,D>& b ) { return a - b ; }
+    // ========================================================================
+    // subtraction of vectors:  vector - scalar  -> vector
+    template <class T,unsigned int D>
+    inline ROOT::Math::SVector<T,D>
+    _vector_sub_ 
+    ( const ROOT::Math::SVector<T,D>& a ,
+      const double                    b ) { return a - b ; }
+    // ========================================================================
+    // addition of vectors:  scalar - vector  -> vector
+    template <class T,unsigned int D>
+    inline ROOT::Math::SVector<T,D>
+    _vector_rsub_ 
+    ( const ROOT::Math::SVector<T,D>& a ,
+      const double                    b ) { return b - a ; }
+
+    // ========================================================================
+    // multiplication:   vector * matrix -> vector 
+    template <class T,unsigned int D, unsigned int D1, class R>
+    inline ROOT::Math::SVector<T,D1>
+    _vector_mul_ 
+    ( const ROOT::Math::SVector<T,D>     & a ,
+      const ROOT::Math::SMatrix<T,D,D1,R>& b ) { return a * b ; }
+    // ========================================================================
+    // multiplication   vector * vector -> scalar
+    template <class T,unsigned int D>
+    inline double 
+    _vector_mul_ 
+    ( const ROOT::Math::SVector<T,D> & a ,
+      const ROOT::Math::SVector<T,D> & b ) 
+    {
+      double result = 0 ;
+      for ( unsigned int i = 0 ; i < D ; ++i ){ result += a[i]*b[i] ; }
+      return result ;
+    }
+    // ========================================================================
+    // multiplication:   vector * scalar -> vector 
+    template <class T,unsigned int D>
+    inline ROOT::Math::SVector<T,D>     
+    _vector_mul_ 
+    ( const ROOT::Math::SVector<T,D>     & a ,
+      const double                         b ) { return a * b; }
+    // ========================================================================    
+    // "right" multiplication:   scalar * vector -> vector 
+    template <class T,unsigned int D>
+    inline ROOT::Math::SVector<T,D>     
+    _vector_rmul_ 
+    ( const ROOT::Math::SVector<T,D>     & a ,
+      const double                         b ) { return b * a; }
+    // ========================================================================
+    // division:  vector / scalar -> vector 
+    template <class T,unsigned int D>
+    inline ROOT::Math::SVector<T,D>     
+    _vector_div_ 
+    ( const ROOT::Math::SVector<T,D>     & a ,
+      const double                         b ) { return a / b; }
+    // ========================================================================
+
+    // ========================================================================
   } //                                                    end of namespace Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi

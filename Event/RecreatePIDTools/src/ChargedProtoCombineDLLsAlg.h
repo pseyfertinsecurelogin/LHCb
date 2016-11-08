@@ -39,8 +39,8 @@ public:
 
   virtual ~ChargedProtoCombineDLLsAlg( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 protected:
 
@@ -80,7 +80,7 @@ private: // utility classes
     friend inline std::ostream& operator << ( std::ostream& s,
                                               const CombinedLL& dlls )
     {
-      return s << "[ " << dlls.elDLL << " " << dlls.muDLL << " " 
+      return s << "[ " << dlls.elDLL << " " << dlls.muDLL << " "
                << dlls.piDLL << " " << dlls.kaDLL << " " << dlls.prDLL << " " << dlls.deDLL << " ]";
     }
   };

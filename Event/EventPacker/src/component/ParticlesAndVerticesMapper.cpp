@@ -22,11 +22,6 @@ ParticlesAndVerticesMapper( const std::string& type,
 }
 
 // ============================================================================
-// Destructor
-// ============================================================================
-ParticlesAndVerticesMapper::~ParticlesAndVerticesMapper() {}
-
-// ============================================================================
 // Initialize
 // ============================================================================
 StatusCode ParticlesAndVerticesMapper::initialize()

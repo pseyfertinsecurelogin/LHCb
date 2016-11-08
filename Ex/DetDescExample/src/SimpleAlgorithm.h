@@ -6,7 +6,7 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class SimpleAlgorithm SimpleAlgorithm.h
- *  Example of an algorithm using the detector data service 
+ *  Example of an algorithm using the detector data service
  *  and the declaration of specific detertor element converter
  *
  *  @author Sebastien Ponce
@@ -18,7 +18,7 @@ public:
   /**
    * Constructor: A constructor of this form must be provided.
    */
-  SimpleAlgorithm(const std::string& name, ISvcLocator* pSvcLocator); 
+  SimpleAlgorithm(const std::string& name, ISvcLocator* pSvcLocator);
 
   /**
    * The "initialization" of the algorithm.
@@ -26,18 +26,18 @@ public:
    * In this example, everything is done here since no events are
    * processed.
    */
-  StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
    * This is were the code for the event processing should reside.
    * In this example, we do nothing here since we don't process any event.
    */
-  StatusCode execute();
+  StatusCode execute() override;
 
   /**
    * We use this place to display the status of the transient data store.
    */
-  StatusCode finalize();
+  StatusCode finalize() override;
 
   /**
    * Displays the list of existing physical volumes in lv

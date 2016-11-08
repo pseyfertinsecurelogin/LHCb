@@ -1,4 +1,3 @@
-//$Id: ConditionInfo.h,v 1.2 2009-02-02 12:20:22 marcocle Exp $
 #ifndef DETDESC_CONDITIONINFO_H
 #define DETDESC_CONDITIONINFO_H 1
 
@@ -16,7 +15,7 @@ class IDataProviderSvc;
  *
  *  The simplest implementation of the IConditionInfo abstract interface.
  *
- *  @author Andrea Valassi 
+ *  @author Andrea Valassi
  *  @author Sebastien Ponce
  *
  */
@@ -24,17 +23,13 @@ class IDataProviderSvc;
 class ConditionInfo : virtual public IConditionInfo
 {
 
- public: 
-  
-  /// Constructor
-  ConditionInfo( IDetectorElement* de,
-		 const std::string& condition );
+ public:
 
-  /// Destructor 
-  virtual ~ConditionInfo();
-  
+  /// Constructor
+  ConditionInfo( IDetectorElement* de, const std::string& condition );
+
  private:
-  
+
   /// Get a pointer to the data service responsible for condition data
   IDataProviderSvc* dataSvc() const;
 
@@ -43,22 +38,22 @@ class ConditionInfo : virtual public IConditionInfo
   // Implementation of the IConditionInfo interface
 
   /// Get a pointer to the detector element to which the ConditionInfo belongs
-  virtual IDetectorElement* detElem() const;
+  IDetectorElement* detElem() const override;
 
   /// Get the name of the associated condition
-  virtual const std::string& conditionName() const;
+  const std::string& conditionName() const override;
 
   /// Get a pointer to the associated condition
-  virtual Condition* condition();
+  Condition* condition() override;
 
   // Implementation of the IInterface interface
 
   /// query interface
-    StatusCode queryInterface( const InterfaceID& ID , void** ppI ) ;
+  StatusCode queryInterface( const InterfaceID& ID , void** ppI ) override;
   /// add reference
-  unsigned long addRef();
-  /// release 
-  unsigned long release();
+  unsigned long addRef() override;
+  /// release
+  unsigned long release() override;
 
 
  private:
@@ -76,7 +71,7 @@ class ConditionInfo : virtual public IConditionInfo
   unsigned long m_count;
 
   /// reference to dataSvc
-  DetDesc::Services* m_services;
+  DetDesc::ServicesPtr m_services;
 
 };
 

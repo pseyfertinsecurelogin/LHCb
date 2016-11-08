@@ -1,5 +1,4 @@
-// 
-#ifndef _Status_H 
+#ifndef _Status_H
 #define _Status_H 1
 
 #include<map>
@@ -9,12 +8,12 @@
 #include "STDet/DeSTSector.h"
 
 namespace Status{
- 
+
   typedef std:: map<DeSTSector::Status,std::string> StatusToStringMap;
   typedef std::vector<DeSTSector::Status> StatusVector;
 
-  /** map conversion from enum to string */ 
-  const StatusToStringMap& statusDescription();  
+  /** map conversion from enum to string */
+  const StatusToStringMap& statusDescription();
 
   /** lookup the enum corresponding to a string */
   DeSTSector::Status toStatus(const std::string& str);
@@ -22,8 +21,8 @@ namespace Status{
   /** lookup the string corresponding to a status enum */
   std::string toString(const DeSTSector::Status& tstatus) ;
 
-  /** allow state for beetles */ 
-  const StatusVector& validBeetleStates();   
+  /** allow state for beetles */
+  const StatusVector& validBeetleStates();
 
   /** protected states, should not be overwritten */
   const StatusVector& protectedStates();

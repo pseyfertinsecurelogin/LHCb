@@ -34,13 +34,9 @@ preprocessor = (
                  "Memory for the event exceeds 3*sigma",
                  "Mean 'delta-memory' exceeds 3*sigma",
                  "INFO  'CnvServices':",
-                 "DEBUG Property ['Name': Value] =  'ErrorCount",
-                 "DEBUG Property ['Name': Value] =  'RootOnTES':",
-                 "VERBOSE ServiceLocatorHelper::service: found service",
-                 "DEBUG Property ['Name': Value] =  'NeededResources':[  ]",
-                 "DEBUG Property ['Name': Value] =  'Cardinality':1",
-                 "DEBUG Property ['Name': Value] =  'IsClonable':False",
+                 "DEBUG Property ['Name': Value] =  'IsIOBound':False",
                  "#properties =",
+                 "VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc"
                 ],
       regexps = [r"DEBUG Property \['Name': Value\] =  '(Timeline|(Extra|Data)(In|Out)puts)'",
                 ])

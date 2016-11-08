@@ -27,21 +27,21 @@ template <class TYPE> class CnvFactory;
 class XmlBaseDetElemCnv : public XmlGenericCnv {
 
 public:
-  
+
   /**
    * Initializes the converter - Overrides the default method in XmlGenericCnv
    * @return status depending on the completion of the call
    */
-  virtual StatusCode initialize();
-  
+  StatusCode initialize() override;
+
   /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
    */
   static const CLID& classID();
-  
+
 protected:
-  
+
   /**
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
@@ -63,7 +63,7 @@ protected:
   /**
    * Resolves the references of the created transient object.
    */
-  virtual StatusCode fillObjRefs(IOpaqueAddress* pAddress, DataObject* pObject);
+  StatusCode fillObjRefs(IOpaqueAddress* pAddress, DataObject* pObject) override;
 
   /** Creates the transient representation of an object from a DOMElement.
    * Overrides the default method in XmlGenericCnv
@@ -71,8 +71,8 @@ protected:
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_createObj (xercesc::DOMElement* element,
-                                  DataObject*& refpObject);
+  StatusCode i_createObj (xercesc::DOMElement* element,
+                          DataObject*& refpObject) override;
 
   using XmlGenericCnv::i_fillObj;
   /** Fills the current object for its child element childElement.
@@ -82,9 +82,9 @@ protected:
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillObj (xercesc::DOMElement* childElement,
-                                DataObject* refpObject,
-                                IOpaqueAddress* address);
+  StatusCode i_fillObj (xercesc::DOMElement* childElement,
+                        DataObject* refpObject,
+                        IOpaqueAddress* address) override;
 
   /** This fills the current object for specific child.
    * Specific children are children of children \<specific\>
@@ -102,7 +102,7 @@ protected:
 
 
 private:
-  
+
   /// Whether to use the generic converter in case a specific one does not exist
   bool m_doGenericCnv;
 

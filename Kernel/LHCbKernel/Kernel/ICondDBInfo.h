@@ -17,8 +17,8 @@
  *  @author Marco Cattaneo
  *  @date   2007-05-10
  */
-class ICondDBInfo : virtual public IInterface {
-public:
+struct ICondDBInfo : extend_interfaces<IInterface> {
+
   /// InterfaceID
   DeclareInterfaceID(ICondDBInfo, 2, 0);
 

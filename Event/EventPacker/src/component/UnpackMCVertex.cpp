@@ -1,6 +1,5 @@
-// $Id: UnpackMCVertex.cpp,v 1.5 2009-11-07 12:20:39 jonrob Exp $
-// Include files 
 
+// STL
 #include <algorithm>
 
 #include "Event/MCVertex.h"
@@ -29,10 +28,6 @@ UnpackMCVertex::UnpackMCVertex( const std::string& name,
   declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
   //setProperty( "OutputLevel", 1 );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-UnpackMCVertex::~UnpackMCVertex() {}
 
 //=============================================================================
 // Main execution
@@ -90,8 +85,8 @@ StatusCode UnpackMCVertex::execute()
     for ( const auto& I : src.products )
     {
       // Check for duplicates ...
-      if ( !std::any_of( processedRefs.begin(), processedRefs.end(),
-                         [&I]( const auto J ) { return I == J; } ) )
+      if ( std::none_of( processedRefs.begin(), processedRefs.end(),
+                         [&I]( const auto& J ) { return I == J; } ) )
       {
         // save this packed ref to the list of those already processed.
         processedRefs.push_back(I);

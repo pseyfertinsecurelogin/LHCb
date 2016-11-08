@@ -36,11 +36,6 @@ ServiceStarter::ServiceStarter(const std::string& name, ISvcLocator* pSvcLocator
       "When to retrieve the service (initialize, start, execute).");
 }
 
-// ============================================================================
-// Destructor
-// ============================================================================
-ServiceStarter::~ServiceStarter() {}
-
 StatusCode ServiceStarter::i_retrieveService(const std::string &currentPhase) {
   if (!m_service && currentPhase == m_phase) {
     info() << "Retrieving " << m_serviceName << endmsg;
@@ -56,7 +51,8 @@ StatusCode ServiceStarter::i_retrieveService(const std::string &currentPhase) {
 // ============================================================================
 // Initialization
 // ============================================================================
-StatusCode ServiceStarter::initialize() {
+StatusCode ServiceStarter::initialize()
+{
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc; // error printed already by GaudiAlgorithm
 
@@ -67,11 +63,12 @@ StatusCode ServiceStarter::initialize() {
     return StatusCode::FAILURE;
   }
 
-  if (m_phase.empty() || std::find(phases.begin(), phases.end(), m_phase) == phases.end()) {
+  if ( m_phase.empty() || std::find(phases.begin(), phases.end(), m_phase) == phases.end() )
+  {
     error() << "The property 'Phase' must be set to one of: ";
-    for (std::vector<std::string>::const_iterator i = phases.begin(); i != phases.end(); ++i) {
-      if (phases.begin() != i)
-        error() << ", ";
+    for ( auto i = phases.begin(); i != phases.end(); ++i  )
+    {
+      if ( phases.begin() != i ) error() << ", ";
       error() << *i;
     }
     error() << endmsg;
@@ -85,29 +82,28 @@ StatusCode ServiceStarter::initialize() {
 // ============================================================================
 // Main execution
 // ============================================================================
-StatusCode ServiceStarter::start() {
+StatusCode ServiceStarter::start() 
+{
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Start" << endmsg;
-
   return i_retrieveService("start");
 }
 
 // ============================================================================
 // Main execution
 // ============================================================================
-StatusCode ServiceStarter::execute() {
+StatusCode ServiceStarter::execute() 
+{
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-
   return i_retrieveService("execute");
 }
 
 // ============================================================================
 // Finalize
 // ============================================================================
-StatusCode ServiceStarter::finalize() {
+StatusCode ServiceStarter::finalize() 
+{
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
-
   m_service.reset();
-
   return GaudiAlgorithm::finalize(); // must be called after all other actions
 }
 

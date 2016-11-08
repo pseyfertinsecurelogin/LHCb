@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // local
 #include "Event/MuonCoord.h"
@@ -22,10 +22,6 @@ MuonPadTest::MuonPadTest( const std::string& name,
 {
 
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-MuonPadTest::~MuonPadTest() {} 
 
 //=============================================================================
 // Initialization
@@ -36,10 +32,8 @@ StatusCode MuonPadTest::initialize() {
 
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Initialize" << endmsg;
   m_MuonBuffer=tool<IMuonRawBuffer>("MuonRawBuffer");
-  if(m_MuonBuffer)
-    return sc;
-  else
-    return Error("Could not instantiate MuonRawBuffer tool");
+  if(!m_MuonBuffer) return Error("Could not instantiate MuonRawBuffer tool");
+  return sc;
 }
 
 //=============================================================================
@@ -62,29 +56,29 @@ StatusCode MuonPadTest::execute() {
   for(icoord=coord->begin();icoord<coord->end();icoord++){
     LHCb::MuonTileID tileCoord=(*icoord)->key();
     if(tileCoord.station()>0){
-      if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+      if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
         debug()<< "["  <<  tileCoord.layout() << ","
                <<  tileCoord.station() << ","
                <<  tileCoord.region() << ","
                <<  tileCoord.quarter() << ","
                <<  tileCoord.nX() << ","
                <<  tileCoord.nY() << "]"<<endmsg;
-      
-      bool found=false;      
+
+      bool found=false;
       for(ipad=decodingTile.begin();ipad<decodingTile.end();ipad++){
         if(*ipad==tileCoord){
-          if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) 
+          if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
             debug()<<" found the matching coord "<<
               "["  <<  ipad->layout() << ","
                    <<  ipad->station() << ","
                    <<  ipad->region() << ","
                    <<  ipad->quarter() << ","
                    <<  ipad->nX() << ","
-                   <<  ipad->nY() << "]"<<endmsg;            
+                   <<  ipad->nY() << "]"<<endmsg;
           found=true;
-          break;          
-        }        
-      }   
+          break;
+        }
+      }
       if(!found){
         if((tileCoord.station()==1||tileCoord.station()==2)
            &&(tileCoord.region()==0||tileCoord.region()==1)&&
@@ -92,9 +86,9 @@ StatusCode MuonPadTest::execute() {
         info()<< " not found the tile "<<tileCoord.station()<<" "<<
           tileCoord.region()<<" "<<(*icoord)->uncrossed()<<endmsg;
       }
-    }    
+    }
   }
-  
+
   return StatusCode::SUCCESS;
 }
 //=============================================================================

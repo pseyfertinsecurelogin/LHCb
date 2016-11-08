@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_ALGCUTS_H 
+#ifndef LOKI_ALGCUTS_H
 #define LOKI_ALGCUTS_H 1
 // ============================================================================
 // Include files
@@ -21,27 +21,27 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2012-01-17
  */
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  namespace Cuts 
+  namespace Cuts
   {
     // ========================================================================
     /** @typedef ALG_ALLENABLED
      *  simple functor to check if all algorithms from thelist are 'enabled'
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_ALLENABLED enabled ( "StdTightD02KK", "..." ) ;
      *
      *   const bool ok = enabled () ;
      *
-     *  @endcode 
+     *  @endcode
      *
-     *  @see Algorithm:isEnabled 
-     *  @todo ALG_* stuff need to be recoded as soon as 
+     *  @see Algorithm:isEnabled
+     *  @todo ALG_* stuff need to be recoded as soon as
      *        IAlgorithm::isEnabled appears
-     *  @see LoKi::Algorithms::AllEnabled 
+     *  @see LoKi::Algorithms::AllEnabled
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
@@ -50,13 +50,13 @@ namespace LoKi
     /** @typedef ALG_ALLEXECUTED
      *  simple functor to check if all algorithms from the list are 'executed'
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_ALLEXECUTED executed ( "StdTightD02KK" , "..." , "...") ;
      *
      *   const bool ok = executed () ;
      *
-     *  @endcode 
+     *  @endcode
      *
      *  @see  IAlgorithm:isExecuted
      *  @see LoKi::Algorithms::AllExecuted
@@ -65,21 +65,21 @@ namespace LoKi
      */
     typedef LoKi::Algorithms::AllExecuted                     ALG_ALLEXECUTED ;
     // ========================================================================
-    /** @typedef ALG_ALLPASSED 
-     *  simple functor to check if all algorithms from the list passed filter 
+    /** @typedef ALG_ALLPASSED
+     *  simple functor to check if all algorithms from the list passed filter
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_ALLPASSED passed ( "StdTightD02KK", "..", "..." ) ;
      *
      *   const bool filtered = passed () ;
      *
-     *  @endcode 
+     *  @endcode
      *
-     *  @see Algorithm:filterPassed 
-     *  @todo ALG_* stuff need to be recoded as soon as 
+     *  @see Algorithm:filterPassed
+     *  @todo ALG_* stuff need to be recoded as soon as
      *        IAlgorithm::filterPassed appears
-     *  @see LoKi::Algorithms::AllPassed 
+     *  @see LoKi::Algorithms::AllPassed
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
@@ -88,18 +88,18 @@ namespace LoKi
     /** @typedef ALG_ANYENABLED
      *  simple functor to check if any algorithm from thelist is 'enabled'
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_ANYENABLED enabled ( "StdTightD02KK", "..." ) ;
      *
      *   const bool ok = enabled () ;
      *
-     *  @endcode 
+     *  @endcode
      *
-     *  @see Algorithm:isEnabled 
-     *  @todo ALG_* stuff need to be recoded as soon as 
+     *  @see Algorithm:isEnabled
+     *  @todo ALG_* stuff need to be recoded as soon as
      *        IAlgorithm::isEnabled appears
-     *  @see LoKi::Algorithms::AnyEnabled 
+     *  @see LoKi::Algorithms::AnyEnabled
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
@@ -108,13 +108,13 @@ namespace LoKi
     /** @typedef ALG_ANYEXECUTED
      *  simple functor to check if any algorithm from the list is 'executed'
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_ANYEXECUTED executed ( "StdTightD02KK" , "..." , "...") ;
      *
      *   const bool ok = executed () ;
      *
-     *  @endcode 
+     *  @endcode
      *
      *  @see  IAlgorithm:isExecuted
      *  @see LoKi::Algorithms::AnyExecuted
@@ -123,21 +123,21 @@ namespace LoKi
      */
     typedef LoKi::Algorithms::AnyExecuted                     ALG_ANYEXECUTED ;
     // ========================================================================
-    /** @typedef ALG_ANYPASSED 
-     *  simple functor to check if any algorithm from the list passed filter 
+    /** @typedef ALG_ANYPASSED
+     *  simple functor to check if any algorithm from the list passed filter
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_ANYPASSED passed ( "StdTightD02KK", "..", "..." ) ;
      *
      *   const bool filtered = passed () ;
      *
-     *  @endcode 
+     *  @endcode
      *
-     *  @see Algorithm:filterPassed 
-     *  @todo ALG_* stuff need to be recoded as soon as 
+     *  @see Algorithm:filterPassed
+     *  @todo ALG_* stuff need to be recoded as soon as
      *        IAlgorithm::filterPassed appears
-     *  @see LoKi::Algorithms::AnyPassed 
+     *  @see LoKi::Algorithms::AnyPassed
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
@@ -146,18 +146,18 @@ namespace LoKi
     /** @typedef ALG_ENABLED
      *  simple functor to check if given algorithm 'enabled'
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_ENABLED enabled ( "StdTightD02KK" ) ;
      *
      *   const bool ok = enabled () ;
      *
-     *  @endcode 
+     *  @endcode
      *
-     *  @see Algorithm:isEnabled 
-     *  @todo ALG_* stuff need to be recoded as soon as 
+     *  @see Algorithm:isEnabled
+     *  @todo ALG_* stuff need to be recoded as soon as
      *        IAlgorithm::isEnabled appears
-     *  @see LoKi::Algorithms::Enabled 
+     *  @see LoKi::Algorithms::Enabled
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
@@ -166,13 +166,13 @@ namespace LoKi
     /** @typedef ALG_EXECUTED
      *  simple functor to check if given algorithm 'executed'
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_EXECUTED executed ( "StdTightD02KK" ) ;
      *
      *   const bool ok = executed () ;
      *
-     *  @endcode 
+     *  @endcode
      *
      *  @see  IAlgorithm:isExecuted
      *  @see LoKi::Algorithms::Executed
@@ -181,21 +181,21 @@ namespace LoKi
      */
     typedef LoKi::Algorithms::Executed                           ALG_EXECUTED ;
     // ========================================================================
-    /** @typedef ALG_PASSED 
-     *  simple functor to check if given algorithm passed filter 
+    /** @typedef ALG_PASSED
+     *  simple functor to check if given algorithm passed filter
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_PASSED passed ( "StdTightD02KK" ) ;
      *
      *   const bool filtered = passed () ;
      *
-     *  @endcode 
+     *  @endcode
      *
-     *  @see Algorithm:filterPassed 
-     *  @todo ALG_* stuff need to be recoded as soon as 
+     *  @see Algorithm:filterPassed
+     *  @todo ALG_* stuff need to be recoded as soon as
      *        IAlgorithm::filterPassed appears
-     *  @see LoKi::Algorithms::Passed 
+     *  @see LoKi::Algorithms::Passed
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
@@ -204,18 +204,18 @@ namespace LoKi
     /** @typedef ALG_NUMENABLED
      *  simple functor to ount algorithms from the list are 'enabled'
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_NUMENABLED nenabled ( "StdTightD02KK", "..." ) ;
      *
      *   const bool ok = 6 < nenabled () ;
      *
-     *  @endcode 
+     *  @endcode
      *
-     *  @see Algorithm:isEnabled 
-     *  @todo ALG_* stuff need to be recoded as soon as 
+     *  @see Algorithm:isEnabled
+     *  @todo ALG_* stuff need to be recoded as soon as
      *        IAlgorithm::isEnabled appears
-     *  @see LoKi::Algorithms::AllEnabled 
+     *  @see LoKi::Algorithms::AllEnabled
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
@@ -224,13 +224,13 @@ namespace LoKi
     /** @typedef ALG_NUMEXECUTED
      *  simple functor to count algorithms from the list are 'executed'
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_NUMEXECUTED nexecuted ( "StdTightD02KK" , "..." , "...") ;
      *
      *   const bool ok = 5 < nexecuted () ;
      *
-     *  @endcode 
+     *  @endcode
      *
      *  @see  IAlgorithm:isExecuted
      *  @see LoKi::Algorithms::NumExecuted
@@ -239,31 +239,31 @@ namespace LoKi
      */
     typedef LoKi::Algorithms::NumExecuted                     ALG_NUMEXECUTED ;
     // ========================================================================
-    /** @typedef ALG_NUMPASSED 
-     *  simple functor to count algorithms from the list passed filter 
+    /** @typedef ALG_NUMPASSED
+     *  simple functor to count algorithms from the list passed filter
      *
-     *  @code 
+     *  @code
      *
      *   const ALG_ALLPASSED npassed ( "StdTightD02KK", "..", "..." ) ;
      *
      *   const bool OK = npassed() > 3 ;
      *
-     *  @endcode 
+     *  @endcode
      *
-     *  @see Algorithm:filterPassed 
-     *  @todo ALG_* stuff need to be recoded as soon as 
+     *  @see Algorithm:filterPassed
+     *  @todo ALG_* stuff need to be recoded as soon as
      *        IAlgorithm::filterPassed appears
-     *  @see LoKi::Algorithms::NumPassed 
+     *  @see LoKi::Algorithms::NumPassed
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
     typedef LoKi::Algorithms::NumPassed                         ALG_NUMPASSED ;
     // ========================================================================
-  } // end of namespace LoKi::Cuts 
+  } // end of namespace LoKi::Cuts
   // ==========================================================================
-} // end of namespace LoKi 
+} // end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_ALGCUTS_H
 // ============================================================================

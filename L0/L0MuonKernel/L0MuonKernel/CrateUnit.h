@@ -35,7 +35,7 @@ namespace L0Muon {
     ~CrateUnit();
 
     /// Give a static type name to the unit
-    std::string type() {
+    std::string type() override {
       return "CrateUnit";
     }
 

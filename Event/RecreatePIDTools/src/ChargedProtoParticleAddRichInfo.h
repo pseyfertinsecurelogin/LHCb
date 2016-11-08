@@ -40,7 +40,7 @@ public:
 
   virtual ~ChargedProtoParticleAddRichInfo( ); ///< Destructor
 
-  virtual StatusCode execute();    ///< Algorithm execution
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
 

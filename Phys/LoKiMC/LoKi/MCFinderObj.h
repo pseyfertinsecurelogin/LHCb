@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCFINDEROBJ_H 
 #define LOKI_MCFINDEROBJ_H 1
@@ -88,11 +87,6 @@ namespace LoKi
       const IMCDecayFinder* finder   , 
       const GaudiTool*      algo     , 
       const IReporter*      reporter ) ;
-    // ========================================================================
-  protected:
-    // ========================================================================
-    /// virtual and protected  destructor 
-    virtual ~MCFinderObj();                                      // Destructor
     // ========================================================================
   public:
     // ========================================================================
@@ -221,11 +215,6 @@ namespace LoKi
     inline LoKi::Types::MCRange _findDecays 
     ( const std::string& decay  , 
       const SOURCE&      source ) const ;
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled 
-    MCFinderObj() ;                      // the default constructor is disabled 
     // ========================================================================
   private:
     // ========================================================================

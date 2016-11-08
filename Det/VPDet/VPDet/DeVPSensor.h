@@ -33,10 +33,10 @@ class DeVPSensor : public DetectorElement {
 
   /// Object identification
   static const CLID& classID() { return CLID_DeVPSensor; }
-  virtual const CLID& clID() const;
+  virtual const CLID& clID() const override;
 
   /// Initialise the sensor.
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Calculate the nearest channel to a given point.
   bool pointToChannel(const Gaudi::XYZPoint& point, const bool local,

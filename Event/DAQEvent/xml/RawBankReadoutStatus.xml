@@ -12,6 +12,8 @@
       author="Olivier Deschamps"
       name="RawBankReadoutStatus"
       desc="Class for the status of RawBank decoding"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
       >
 
 

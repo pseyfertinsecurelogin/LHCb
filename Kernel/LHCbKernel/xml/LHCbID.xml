@@ -59,14 +59,14 @@
          </code>
        </method>
 
-       <constructor 
+       <constructor
          desc     = "Constructor from unsigned int "
          explicit = "TRUE"
          argList  = "unsigned int theID"
          initList = "m_lhcbID(theID)"
        />
 
-       <constructor 
+       <constructor
          desc  = "Constructor from VeloChannelID " >
           <arg const="TRUE" name="chanID" type="VeloChannelID" />
           <code>
@@ -94,7 +94,7 @@
          </code>
        </method>
 
-       
+
        <method
          type  = "bool"
          name  = "isVeloPhi"
@@ -125,7 +125,7 @@
          </code>
        </method>
 
-       <constructor 
+       <constructor
          desc  = "Constructor from VPChannelID, VP corresponding to pixel solution for upgrade" >
           <arg const="TRUE" name="chanID" type="VPChannelID" />
           <code>
@@ -246,9 +246,9 @@
          type = "bool"
          name = "isBitOn"
          desc = "Checks if a given bit is set"
-         virtual = "FALSE" 
+         virtual = "FALSE"
          access  = "PRIVATE"
-         const   = "TRUE"> 
+         const   = "TRUE">
          <arg type = "unsigned int" name = "pos" const = "TRUE"/>
          <code>
            return ( 0 != ( lhcbID() &amp; (1&lt;&lt;pos) ) );
@@ -259,9 +259,9 @@
          type = "void"
          name = "setBit"
          desc = "Sets the given bit to the given value"
-         virtual = "FALSE" 
+         virtual = "FALSE"
          access  = "PRIVATE"
-         const   = "FALSE"> 
+         const   = "FALSE">
          <arg type = "unsigned int" name = "pos"   const = "TRUE"/>
          <arg type = "unsigned int" name = "value" const = "TRUE"/>
          <code>
@@ -276,7 +276,7 @@
          <code>
   // Set the type to be RICH
   setDetectorType( Rich );
-  // Save the data bits 
+  // Save the data bits
   setID( chanID.dataBitsOnly() );
   // Save the MaPMT/HPD flag in bit 27
   setBit( 27, chanID.idType() );
@@ -308,7 +308,7 @@
   // Retrieve the MaPMT/HPD flag
   if ( isRich() ) { tmpid.setIDType( (LHCb:: RichSmartID::IDType)isBitOn(27) ); }
   // Object to return, with RICH and panel fields set
-  LHCb::RichSmartID id( tmpid.rich(),       tmpid.panel(), 
+  LHCb::RichSmartID id( tmpid.rich(),       tmpid.panel(),
                         tmpid.pdNumInCol(), tmpid.pdCol(),
                         tmpid.idType() );
   // Set pixels fields
@@ -316,8 +316,8 @@
   {
      id.setPixelRow    ( tmpid.pixelRow()    );
      id.setPixelCol    ( tmpid.pixelCol()    );
-     if ( tmpid.idType() == LHCb::RichSmartID::HPDID ) 
-     { 
+     if ( tmpid.idType() == LHCb::RichSmartID::HPDID )
+     {
        id.setPixelSubRow ( tmpid.pixelSubRow() );
      }
   }
@@ -414,7 +414,7 @@
          </code>
        </method>
 
-       <constructor 
+       <constructor
          desc  = "Constructor from HCCellID, HC standing for Herschel" >
           <arg const="TRUE" name="cellID" type="HCCellID" />
           <code>
@@ -459,27 +459,31 @@
         const   = "TRUE"
         desc    = "General ID: returns detector ID = internal unsigned int">
         <code>
-  if (isVP()) return vpID().channelID();
-  if (isVelo())    return veloID().channelID();
-  if (isST())      return stID().channelID();
-  if (isOT())      return otID().channelID();
-  if (isRich())    return richID().key();
-  if (isCalo())    return m_lhcbID &amp; IDMask;
-  if (isMuon())    return m_lhcbID &amp; IDMask;
-  if (isFT())      return ftID().channelID();
-  if (isHC())      return hcID().cellID();
-  return 0;
+  switch ( detectorType() ) {
+    case VP:    return vpID().channelID();
+    case Velo:  return veloID().channelID();
+    case TT:    //C++17 [[fall-through]]
+    case UT:    //C++17 [[fall-through]]
+    case IT:    return stID().channelID();
+    case OT:    return otID().channelID();
+    case Rich:  return richID().key();
+    case Calo:  //C++17 [[ fall-through ]]
+    case Muon:  return m_lhcbID &amp; IDMask;
+    case FT:    return ftID().channelID();
+    case HC:    return hcID().cellID();
+    default:    return 0;
+  }
         </code>
       </method>
 
-      <method 
-          name    = "fillStream" 
+      <method
+          name    = "fillStream"
           desc    = "Print this LHCbID in a human readable way"
-          type    = "std::ostream&amp;" 
-          virtual = "FALSE" 
+          type    = "std::ostream&amp;"
+          virtual = "FALSE"
           const   = "TRUE">
-          <arg 
-            type = "std::ostream" 
+          <arg
+            type = "std::ostream"
             name = "s"/>
       </method>
 

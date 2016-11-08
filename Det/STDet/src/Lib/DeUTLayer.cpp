@@ -28,11 +28,6 @@ DeUTLayer::DeUTLayer( const std::string& name ) :
 }
 
 
-DeUTLayer::~DeUTLayer()
-{
-}
-
-
 const CLID& DeUTLayer::clID () const
 {
   return DeUTLayer::classID() ;

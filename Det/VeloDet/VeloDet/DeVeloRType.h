@@ -1,5 +1,5 @@
 // $Id: DeVeloRType.h,v 1.31 2009-07-27 10:36:15 jonrob Exp $
-#ifndef VELODET_DEVELORTYPE_H 
+#ifndef VELODET_DEVELORTYPE_H
 #define VELODET_DEVELORTYPE_H 1
 
 // Include files
@@ -30,7 +30,7 @@ namespace LHCb {
 }
 
 /** @class DeVeloRType DeVeloRType.h VeloDet/DeVeloRType.h
- *  
+ *
  *
  *  @author Mark Tobin
  *  @author Kurt Rinnert kurt.rinnert@cern.ch
@@ -39,71 +39,71 @@ namespace LHCb {
 class DeVeloRType : public DeVeloSensor {
 public:
   /// Standard constructor
-  DeVeloRType( const std::string& name = "" ); 
+  DeVeloRType( const std::string& name = "" );
 
   /// object identifier (static method)
   static  const CLID& classID() { return CLID_DeVeloRType; }
   /// object identification
-  virtual const CLID& clID()     const;
+  const CLID& clID()     const override;
 
   /// Initialise the DeVeloSensor from the XML
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Calculate the nearest channel to a 3-d point.
   /// Also returns the fractional difference in the channel
   /// and the local pitch.
-  virtual StatusCode pointToChannel(const Gaudi::XYZPoint& point,
-                                    LHCb::VeloChannelID& channel,
-                                    double& fraction,
-                                    double& pitch) const;
-  
+  StatusCode pointToChannel(const Gaudi::XYZPoint& point,
+                            LHCb::VeloChannelID& channel,
+                            double& fraction,
+                            double& pitch) const override;
+
   /// Get the nth nearest neighbour for a given channel
-  virtual StatusCode neighbour(const LHCb::VeloChannelID& start, 
-                               const int& nOffset, 
-                               LHCb::VeloChannelID& channel) const;
+  StatusCode neighbour(const LHCb::VeloChannelID& start,
+                       const int& nOffset,
+                       LHCb::VeloChannelID& channel) const override;
 
   /// Return a trajectory (for track fit) from strip + offset
-  virtual std::unique_ptr<LHCb::Trajectory> trajectory(const LHCb::VeloChannelID& id, const double offset) const;
+  std::unique_ptr<LHCb::Trajectory> trajectory(const LHCb::VeloChannelID& id, const double offset) const override;
 
   /// Residual of 3-d point to a VeloChannelID
-  virtual StatusCode residual(const Gaudi::XYZPoint& point, 
-                              const LHCb::VeloChannelID& channel,
-                              double &residual,
-                              double &chi2) const;
-  
+  StatusCode residual(const Gaudi::XYZPoint& point,
+                      const LHCb::VeloChannelID& channel,
+                      double &residual,
+                      double &chi2) const override;
+
   /// Residual of a 3-d point to a VeloChannelID + interstrip fraction
-  virtual StatusCode residual(const Gaudi::XYZPoint& point, 
-                              const LHCb::VeloChannelID& channel,
-                              const double interStripFraction,
-                              double &residual,
-                              double &chi2) const;
+  StatusCode residual(const Gaudi::XYZPoint& point,
+                      const LHCb::VeloChannelID& channel,
+                      const double interStripFraction,
+                      double &residual,
+                      double &chi2) const override;
 
   /// The zones number for a given strip
-  virtual unsigned int zoneOfStrip(const unsigned int strip) const {
+  unsigned int zoneOfStrip(const unsigned int strip) const override {
     return static_cast<unsigned int>(strip/512);
   }
 
   /// The number of strips in a zone
-  virtual unsigned int stripsInZone(const unsigned int /*zone*/) const{
+  unsigned int stripsInZone(const unsigned int /*zone*/) const override {
     return m_stripsInZone;
   }
 
   /// The minimum radius for a given zone of the sensor
-  virtual double rMin(const unsigned int /*zone*/) const {
+  double rMin(const unsigned int /*zone*/) const override {
     return innerRadius();
   }
-  
+
   /// The maximum radius for a given zone of the sensor
-  virtual double rMax(const unsigned int /*zone*/) const {return outerRadius();}
+  double rMax(const unsigned int /*zone*/) const override {return outerRadius();}
 
   /// Determines if local 3-d point is inside sensor
-  virtual StatusCode isInActiveArea(const Gaudi::XYZPoint& point) const;
+  StatusCode isInActiveArea(const Gaudi::XYZPoint& point) const override;
 
   /// Determine if local point is in corner cut-offs
-  virtual bool isCutOff(double x, double y) const;
+  bool isCutOff(double x, double y) const override;
 
   /// Return the length of a strip
-  virtual double stripLength(const unsigned int strip) const;
+  double stripLength(const unsigned int strip) const override;
 
   /// Zone for a given local phi
   unsigned int zoneOfPhi(double phi) const {
@@ -119,7 +119,7 @@ public:
     }
     return zone;
   }
-  
+
   /// Minimum strip number for each zone
   inline unsigned int firstStrip(unsigned int zone) const {return zone*512;}
 
@@ -141,8 +141,8 @@ public:
     return vdt::fast_exp(m_pitchSlope*((strip%512)+fraction))*m_innerPitch;
   }
 
-  /// Return the local pitch at a given radius 
-  inline double rPitch(double radius) const {  
+  /// Return the local pitch at a given radius
+  inline double rPitch(double radius) const {
     return m_innerPitch + m_pitchSlope*(radius - innerRadius());
   }
 
@@ -150,52 +150,52 @@ public:
   inline double globalR(unsigned int strip, double isp) const {
     return  m_globalR[strip] + isp*rPitch(strip);
   }
-  
+
   /// Return the radius of the centre of strip plus interstrip fraction*pitch in the halfbox frame
   inline double halfboxR(unsigned int strip, double isp) const {
     return m_halfboxR[strip] + isp*rPitch(strip);
   }
-  
+
   /// Return the radius of the centre of the strip in the global frame
   inline double globalROfStrip(unsigned int strip) const { return m_globalR[strip]; }
 
   /// Return the radius of the centre of the strip in the global frame
   inline double halfboxROfStrip(unsigned int strip) const { return m_halfboxR[strip]; }
 
-  /** The minimum phi for a zone assuming the radius is not known.  
+  /** The minimum phi for a zone assuming the radius is not known.
       This is a constant value for zone 0 and should be used with caution **/
   inline double phiMinZone(unsigned int zone) const {return m_phiMin[zone];}
 
   /// Returns the minimum phi in a zone at given radius
   double phiMinZone(unsigned int zone, double radius) const;
-  
+
   /// The maximum phi for a zone
   inline double phiMaxZone(unsigned int zone) const {return m_phiMax[zone];}
-     
-  /** The maximum phi for a zone assuming the radius is not known.  
+
+  /** The maximum phi for a zone assuming the radius is not known.
       This is a constant value for zone 2 and should be used with caution **/
   double phiMaxZone(unsigned int zone, double radius) const;
-   
+
   /// The phi range [-pi,pi] of the given global zone in the global frame.
   const std::pair<double,double>& globalPhiRange(unsigned int globalZone) const { return m_globalPhiLimitsZone[globalZone]; }
-  
+
   /// The phi range [-pi,pi] of the given global zone in the halfbox frame.
   const std::pair<double,double>& halfboxPhiRange(unsigned int globalZone) const { return m_halfboxPhiLimitsZone[globalZone]; }
-  
+
   /// The r range of the given global zone in the global frame.
   const std::pair<double,double>& globalRRange(unsigned int globalZone) const { return m_globalRLimitsZone[globalZone]; }
-  
+
   /// The r range of the given global zone in the halfbox frame.
   const std::pair<double,double>& halfboxRRange(unsigned int globalZone) const { return m_halfboxRLimitsZone[globalZone]; }
-  
+
   /// The minimum phi of a strip
   double phiMinStrip(unsigned int strip) const {
     return m_stripPhiLimits[strip].first;
   }
-  
+
   /// The maximum phi of a strip
   double phiMaxStrip(unsigned int strip) const {
-    return m_stripPhiLimits[strip].second; 
+    return m_stripPhiLimits[strip].second;
   }
 
   /// Return the strip limits for panoramix
@@ -209,16 +209,16 @@ public:
 
   /// Access to the associated Phi sensor on the same module
   inline const DeVeloPhiType* associatedPhiSensor() const { return m_associatedPhiSensor; }
-    
+
   /// Access to the r sensor on the other side of the VELO
   inline const DeVeloRType* otherSideRSensor() const { return m_otherSideRSensor; }
-  
+
   /// Access to the phi sensor on the other side of the VELO
   inline const DeVeloPhiType* otherSidePhiSensor() const { return m_otherSidePhiSensor; }
-  
+
   /// Set the associated phi sensor.  This should only be called by DeVelo::initialize()
   inline void setAssociatedPhiSensor(const DeVeloPhiType* ps) { m_associatedPhiSensor = ps; }
-  
+
   /// Set the r sensor on the other side of the VELO.  This should only be called by DeVelo::initialize()
   inline void setOtherSideRSensor(const DeVeloRType* rs) { m_otherSideRSensor = rs; }
 
@@ -233,10 +233,10 @@ public:
       @param vID : VeloChannelID of inner strip of M2 line (if any)
       @param distToM2Line : distance of this point to M2 line (if <200microns only) in mm
       @param distToStrip : distance to the closest strip (the one under this point) in mm
-      @return : Success if there was an M2 line near point, Failure if not 
+      @return : Success if there was an M2 line near point, Failure if not
   */
-  StatusCode distToM2Line(const Gaudi::XYZPoint& point, 
-                          LHCb::VeloChannelID &vID, 
+  StatusCode distToM2Line(const Gaudi::XYZPoint& point,
+                          LHCb::VeloChannelID &vID,
                           double & distToM2Line,
                           double & distToStrip) const;
 
@@ -245,7 +245,7 @@ private:
       line and strip of that line returns false if nothing matches,
       strip is the routing line strip number and dist is the distance
       from the point to the line in mm */
-  bool distToM2Line(double const & x, double const & y, 
+  bool distToM2Line(double const & x, double const & y,
 		   LHCb::VeloChannelID &vID, double & dist) const;
 
   /// Store the local radius for each strip in the sensor
@@ -265,10 +265,10 @@ private:
 
   /// Calculate the zone limits in the global and halfbox frame
   StatusCode updateZoneLimits();
-  
+
   /// Update geomtry cache when the alignment changes
   StatusCode updateGeometryCache();
-    
+
 private:
 
   //  unsigned int m_numberOfZones;
@@ -276,7 +276,7 @@ private:
   double m_cornerX1;
   double m_cornerY1;
   double m_cornerX2;
-  double m_cornerY2;  
+  double m_cornerY2;
   double m_cornerXInt;//<X intercept for corner cut off
   double m_cornerYInt;//<Y intercept for corner cut off
   double m_gradCutOff;//<Gradient of line defining cut offs
@@ -303,22 +303,22 @@ private:
 
   /// cache for phi range of zones in halfbox frame
   std::pair<double,double> m_halfboxPhiLimitsZone[4];
-  
+
   /// cache for r range of zones in global frame
   std::pair<double,double> m_globalRLimitsZone[4];
 
   /// cache for r range of zones in halfbox frame
   std::pair<double,double> m_halfboxRLimitsZone[4];
-  
+
   /// pointer to associated phi sensor
   const DeVeloPhiType* m_associatedPhiSensor;
-  
+
   /// pointer to the r sensor on the other side of the VELO
   const DeVeloRType* m_otherSideRSensor;
-  
+
   /// pointer to the phi sensor on the other side of the VELO
   const DeVeloPhiType* m_otherSidePhiSensor;
-  
+
   // These are references to local statics accessed via static functions
   // implemented in DeVeloRType.cpp. I stree this because these are
   // NOT ALLOWED TO BE INLINED!
@@ -335,10 +335,10 @@ private:
   std::vector<double>& m_phiMax;
   std::vector< std::pair<double,double> >& m_stripPhiLimits;//Min/Max phi of strips
 
-  // stuff to hold the M2 lines has to be public for the static 
+  // stuff to hold the M2 lines has to be public for the static
 public:
   /// small struct to hold a set of x,y points defining a connected line
-  struct PolyLine{    
+  struct PolyLine{
     std::vector<double> m_x;
     std::vector<double> m_y;
     double m_maxPhi;
@@ -356,12 +356,12 @@ public:
         if( phi < minPhi ) minPhi = phi;
       }
       return minPhi;
-    }    
+    }
   };
 private:
-  /// The lines defining the 2nd metal routing on the sensor 
+  /// The lines defining the 2nd metal routing on the sensor
   /// the index is the readout strip number [0 to 2047]
-  /// actually refers to a static 
+  /// actually refers to a static
   std::vector<DeVeloRType::PolyLine>& m_M2RoutingLines;
   /// minPhi of the strips sorted by phi: actually refs a static
   std::vector<std::pair<double,unsigned int> >& m_M2RLMinPhi;
@@ -406,14 +406,14 @@ private:
   inline MsgStream & msg() const
   {
     if ( !m_msgStream ) m_msgStream.reset(new MsgStream( msgSvc(), "DeVeloRType" ));
-    return *m_msgStream; 
+    return *m_msgStream;
   }
 
 };
 
 /// fast cast to R sensor, returns 0 for wrong type
-inline const DeVeloRType* DeVeloSensor::rType() const { 
-  return (m_isR || m_isPileUp ? static_cast<const DeVeloRType*>(this) : 0); 
+inline const DeVeloRType* DeVeloSensor::rType() const {
+  return (m_isR || m_isPileUp ? static_cast<const DeVeloRType*>(this) : 0);
 }
 
 

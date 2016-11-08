@@ -1,4 +1,3 @@
-// $Id: ICaloHypoTool.h,v 1.9 2008-09-22 00:50:30 odescham Exp $
 // ============================================================================
 #ifndef CALOINTERFACES_ICALOHYPOTOOL_H 
 #define CALOINTERFACES_ICALOHYPOTOOL_H 1
@@ -10,7 +9,6 @@
 namespace LHCb{
   class    CaloHypo                ;  
 }
-static const InterfaceID IID_ICaloHypoTool( "ICaloHypoTool" , 2 , 0 );
 /** @class ICaloHypoTool ICaloHypoTool.h CaloInterfaces/ICaloHypoTool.h
  *
  *  The generic interface for "Calorimeter tools" , which deals with 
@@ -24,18 +22,14 @@ static const InterfaceID IID_ICaloHypoTool( "ICaloHypoTool" , 2 , 0 );
  *  @date   30/10/2001
  */
 
-class ICaloHypoTool: 
-  public virtual IAlgTool ,
-  public std::unary_function<LHCb::CaloHypo*,StatusCode>
+struct ICaloHypoTool: extend_interfaces<IAlgTool>
 {
-  
- public:
   
   /** static interface identification
    *  @see IInterface
    *  @return unique interface identifier
    */
-  static const InterfaceID& interfaceID() { return IID_ICaloHypoTool; };
+  DeclareInterfaceID( ICaloHypoTool , 3 , 0 );
   
   /** The main processing method 
    *  @param  hypo  pointer to CaloHypo object to be processed
@@ -48,9 +42,6 @@ class ICaloHypoTool:
    *  @return status code 
    */  
   virtual StatusCode operator() ( LHCb::CaloHypo* hypo  ) const = 0 ;
-
-
-  
   
 };
 

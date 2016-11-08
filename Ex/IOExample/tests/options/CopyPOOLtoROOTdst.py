@@ -3,7 +3,7 @@ from Configurables import IOTest
 from GaudiConf.IOHelper import IOHelper
 from PRConfig import TestFileDB
 
-IOTest( EvtMax = 5, LoadAll = True, DataType = 'MC09' )
+IOTest( EvtMax = 5, LoadAll = True )
 
 ioh = IOHelper()
 ioh.setupServices()

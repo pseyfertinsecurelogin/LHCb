@@ -1,6 +1,5 @@
-// $Id$
 // ============================================================================
-#ifndef LOKI_GENTYPES_H 
+#ifndef LOKI_GENTYPES_H
 #define LOKI_GENTYPES_H 1
 // ============================================================================
 // Include files
@@ -12,33 +11,30 @@
 #include "LoKi/Selected.h"
 #include "LoKi/RangeList.h"
 // ============================================================================
-// GenEvent 
+// GenEvent
 // ============================================================================
 #include "Event/HepMCEvent.h"
 // ============================================================================
-// forward declarations  
+// forward declarations
 // ============================================================================
-namespace HepMC { class GenParticle ; } 
-namespace HepMC { class GenVertex   ; } 
+namespace HepMC { class GenParticle ; }
+namespace HepMC { class GenVertex   ; }
 // ============================================================================
 /** @file LoKi/GenTypes.h
  *
- *  Collection of useful function to extract the information from  HepMC 
+ *  Collection of useful function to extract the information from  HepMC
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23 
+ *  @date 2001-01-23
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -48,22 +44,22 @@ namespace LoKi
    *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
    *  @date   2005-03-27
    */
-  namespace GenTypes 
+  namespace GenTypes
   {
     // ========================================================================
-    /// the basic imported type for the sequence of HepMC-particles 
+    /// the basic imported type for the sequence of HepMC-particles
     typedef std::vector<const HepMC::GenParticle*>  GenContainer      ;
-    /// the basic imported type for the sequence of HepMC-particles 
+    /// the basic imported type for the sequence of HepMC-particles
     typedef GenContainer                            ConstVector       ;
-    /// the basic imported type for the sequence of HepMC-vertices 
+    /// the basic imported type for the sequence of HepMC-vertices
     typedef std::vector<const HepMC::GenVertex*>    GenVContainer     ;
     //
     typedef LoKi::Selected_<GenContainer>           GenSelected       ;
     typedef LoKi::Selected_<GenVContainer>          GenVSelected      ;
     //
-    /// the actual type of the range of HepMC-particles 
+    /// the actual type of the range of HepMC-particles
     typedef GenSelected::Range                      GRange            ;
-    /// the actual type of the range  of HepMC-vertices  
+    /// the actual type of the range  of HepMC-vertices
     typedef GenVSelected::Range                     GVRange           ;
     /// type of 'cuts' for HepMC::GenParticle        (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate GCuts ;
@@ -83,7 +79,7 @@ namespace LoKi
     /// type of 'functions' for HepMC::GenVertex     (assignable)
     typedef LoKi::BasicFunctors<const HepMC::GenVertex*>::FunctionFromFunction   GVFun ;
     //
-    // functional types for HepMC::GenParticle 
+    // functional types for HepMC::GenParticle
     //
     // type of "map" for HepMC::GenParticle   (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenParticle*>::Map     GMaps      ;
@@ -150,10 +146,10 @@ namespace LoKi
     /// type of 'cuts' for HepMC::GenVertex       (assignable)
     typedef LoKi::GenTypes::GVCut     GVCut  ;
     /// type of 'functions' for HepMC::GenVertex  (assignable)
-    typedef LoKi::GenTypes::GVFun     GVFun  ;  
-    /// the actual type of the range of HepMC-particles 
+    typedef LoKi::GenTypes::GVFun     GVFun  ;
+    /// the actual type of the range of HepMC-particles
     typedef LoKi::GenTypes::GRange    GRange  ;
-    /// the actual type of the range of HepMC-vertices  
+    /// the actual type of the range of HepMC-vertices
     typedef LoKi::GenTypes::GVRange   GVRange ;
     /// Range list for HepMC-particles:
     typedef LoKi::RangeList_<GRange>  GRangeL  ;
@@ -162,7 +158,7 @@ namespace LoKi
     //
 
     // functional types for HepMC::GenParticle
-    
+
     // type of "map" for HepMC::GenParticle  (interface)
     typedef LoKi::GenTypes::GMaps         GMaps     ;
     // type of "map" for HepMC::GenParticle  (assignable)
@@ -185,7 +181,7 @@ namespace LoKi
     typedef LoKi::GenTypes::GSource       GSource   ;
 
     // functional types for HepMC::GenVertex
-    
+
     // type of "map" for HepMC::GenVertex  (interface)
     typedef LoKi::GenTypes::GVMaps        GVMaps     ;
     // type of "map" for HepMC::GenVertex  (assignable)
@@ -211,58 +207,58 @@ namespace LoKi
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  // the specialized printout 
+  // the specialized printout
   // ==========================================================================
   template <>
-  inline std::ostream& 
-  Constant<const HepMC::GenParticle*,bool>::fillStream( std::ostream& s ) const 
+  inline std::ostream&
+  Constant<const HepMC::GenParticle*,bool>::fillStream( std::ostream& s ) const
   { return s << ( this->m_value ? "GALL" : "GNONE" ) ; }
   // ==========================================================================
-  // the specialized printout 
-  // ==========================================================================  
+  // the specialized printout
+  // ==========================================================================
   template <>
-  inline std::ostream& 
-  Constant<const HepMC::GenVertex*,bool>::fillStream  ( std::ostream& s ) const 
+  inline std::ostream&
+  Constant<const HepMC::GenVertex*,bool>::fillStream  ( std::ostream& s ) const
   { return s << ( this->m_value ? "GVALL" : "GVNONE" ) ; }
-  // ==========================================================================  
+  // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// a little bit of streamers 
+// a little bit of streamers
 // ============================================================================
-GAUDI_API 
-LoKi::GenTypes::GenContainer 
-operator >> 
-( const LoKi::GenTypes::GenContainer& input ,  
+GAUDI_API
+LoKi::GenTypes::GenContainer
+operator >>
+( const LoKi::GenTypes::GenContainer& input ,
   const LoKi::Types::GCuts&           cuts  ) ;
 // ============================================================================
-GAUDI_API 
-LoKi::GenTypes::GenContainer 
-operator >> 
-( const LoKi::GenTypes::GRange&       input ,  
+GAUDI_API
+LoKi::GenTypes::GenContainer
+operator >>
+( const LoKi::GenTypes::GRange&       input ,
   const LoKi::Types::GCuts&           cuts  ) ;
 // ============================================================================
-GAUDI_API 
-LoKi::GenTypes::GenContainer 
-operator >> 
-( const LHCb::HepMCEvent*             event ,  
+GAUDI_API
+LoKi::GenTypes::GenContainer
+operator >>
+( const LHCb::HepMCEvent*             event ,
   const LoKi::Types::GCuts&           cuts  ) ;
 // ============================================================================
-GAUDI_API 
-LoKi::GenTypes::GenContainer 
-operator >> 
-( const LHCb::HepMCEvent::Container*  event ,  
+GAUDI_API
+LoKi::GenTypes::GenContainer
+operator >>
+( const LHCb::HepMCEvent::Container*  event ,
   const LoKi::Types::GCuts&           cuts  ) ;
 // ============================================================================
-GAUDI_API 
-LoKi::GenTypes::GenContainer 
-operator >> 
-( const HepMC::GenEvent*              event ,  
+GAUDI_API
+LoKi::GenTypes::GenContainer
+operator >>
+( const HepMC::GenEvent*              event ,
   const LoKi::Types::GCuts&           cuts  ) ;
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_GENTYPES_H
 // ============================================================================

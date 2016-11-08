@@ -28,16 +28,14 @@ static const InterfaceID IID_IPVolume( 154 , 5 , 0 );
  *  @date xx/xx/xxxx 
  */      
 
-class IPVolume : virtual public IInterface
+struct IPVolume : virtual IInterface
 {
-public:
   
   /** retrieve the unique interface identifier 
    *  @return unique interface identifier 
    */
   static const InterfaceID& interfaceID() { return IID_IPVolume; }     
   
-public:
   
   /** retrieve name of the physical volume
    *  (unique within mother logical volume)
@@ -183,9 +181,6 @@ public:
    */
   virtual const Gaudi::Transform3D& 
   resetMisAlignment (                          ) = 0 ;
-  
-  /// virtual destructor
-  virtual  ~IPVolume();  
   
 };
 

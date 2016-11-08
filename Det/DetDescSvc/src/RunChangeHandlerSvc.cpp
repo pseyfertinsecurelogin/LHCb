@@ -33,10 +33,6 @@ RunChangeHandlerSvc::RunChangeHandlerSvc(const std::string &name, ISvcLocator *s
    "Map defining what to use to replace the location of the source XML files.");
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-RunChangeHandlerSvc::~RunChangeHandlerSvc() {}
 
 //=============================================================================
 // Initialize
@@ -55,10 +51,9 @@ StatusCode RunChangeHandlerSvc::initialize(){
   updMgrSvc();
 
   // Prepare the list of conditions
-  CondDescMap::iterator condDesc;
-  for (condDesc = m_condDesc.begin(); condDesc != m_condDesc.end(); ++condDesc) {
-    m_conditions.push_back(CondData(detectorSvc(),condDesc->first,condDesc->second));
-    updMgrSvc()->registerCondition(this,condDesc->first);
+  for (const auto& condDesc : m_condDesc) {
+    m_conditions.emplace_back(detectorSvc(),condDesc.first,condDesc.second);
+    updMgrSvc()->registerCondition(this,condDesc.first);
   }
   // FIXME: (MCl) This is a hack to be sure that the UMS knows about all the
   // objects we have to modify before we get to the first event.
@@ -136,11 +131,9 @@ void RunChangeHandlerSvc::update(CondData &cond){
         // This is a bit of a hack, but it is the only way of replacing the
         // URL to use for an object.
         std::string* par = const_cast<std::string*>(addr->par());
-	if( cond.pathTemplate.find("%") != std::string::npos )
-	  par[0] = (boost::format(cond.pathTemplate) % m_currentRun).str();
-	else
-	  par[0] = cond.pathTemplate ;
-
+        par[0] = ( cond.pathTemplate.find("%") == std::string::npos ?
+                     cond.pathTemplate :
+                     (boost::format(cond.pathTemplate) % m_currentRun).str() );
         // notify the UMS and the object that they have to be updated.
         cond.object->forceUpdateMode();
         updMgrSvc()->invalidate(cond.object.ptr());

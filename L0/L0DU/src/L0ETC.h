@@ -1,5 +1,5 @@
 // $Id: L0ETC.h,v 1.2 2007-07-15 16:57:48 pkoppenb Exp $
-#ifndef L0ETC_H 
+#ifndef L0ETC_H
 #define L0ETC_H 1
 
 // Include files
@@ -7,21 +7,21 @@
 #include "GaudiAlg/GaudiTupleAlg.h"
 /** @class L0ETC L0ETC.h
  *
- *  Writes out ETC for L0 stripping  
+ *  Writes out ETC for L0 stripping
  *
  *  @author Patrick Koppenburg
  *  @date   2007-07-13
  */
 class L0ETC : public GaudiTupleAlg {
-public: 
+public:
   /// Standard constructor
   L0ETC( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~L0ETC( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 

@@ -1,4 +1,3 @@
-//  $Id: ILHCbIDsToMCParticles.h,v 1.1.1.1 2007-05-25 16:24:33 cattanem Exp $
 #ifndef _ILHCbIDsToMCParticles_H
 #define _ILHCbIDsToMCParticles_H
 
@@ -14,7 +13,6 @@ namespace LHCb{
   class Track;
 }
 
-static const InterfaceID IID_ILHCbIDsToMCParticles( "ILHCbIDsToMCParticles", 0, 0 );
 
 /** @class ILHCbIDsToMCParticles ILHCbIDsToMCParticles.h TsaKernel/ILHCbIDsToMCParticles.h
 *
@@ -25,13 +23,10 @@ static const InterfaceID IID_ILHCbIDsToMCParticles( "ILHCbIDsToMCParticles", 0, 
 */
 
 
-class ILHCbIDsToMCParticles: virtual public IAlgTool {
+struct ILHCbIDsToMCParticles: extend_interfaces<IAlgTool> {
 
-public:
-
-  
   /// Retrieve interface ID
-  static const InterfaceID& interfaceID() { return IID_ILHCbIDsToMCParticles ; }
+  DeclareInterfaceID(ILHCbIDsToMCParticles, 1, 0 );
 
   typedef std::vector<LHCb::LHCbID> LHCbIDs;
   typedef std::map<LHCb::MCParticle*, unsigned int> LinkMap;
@@ -65,11 +60,6 @@ public:
   */
   virtual StatusCode link(const LHCb::LHCbID& id, LinkMap& output) const = 0;
 
-
 };
 
 #endif
-
-
-
-  

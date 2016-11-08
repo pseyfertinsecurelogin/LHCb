@@ -1,4 +1,3 @@
-// $Id: CaloNeighbours.cpp,v 1.2 2009-10-25 14:46:51 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -29,8 +28,7 @@ namespace
     if ( cells.empty() ) { return true  ; }                           // RETURN 
     // local copy:
     std::set<LHCb::CaloCellID> local ( cells ) ;
-    for ( std::set<LHCb::CaloCellID>::const_iterator iloc = 
-            local.begin() ; local.end() != iloc ; ++iloc ) 
+    for ( auto iloc = local.begin() ; local.end() != iloc ; ++iloc ) 
     {
       const LHCb::CaloCellID::Vector& nei 
         = detector->neighborCells ( *iloc ) ;

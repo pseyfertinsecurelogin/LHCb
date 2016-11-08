@@ -1,5 +1,5 @@
 // $Id: TestUpdateMgr.h,v 1.4 2006-01-19 18:32:11 marcocle Exp $
-#ifndef TESTUPDATEMGR_H 
+#ifndef TESTUPDATEMGR_H
 #define TESTUPDATEMGR_H 1
 
 // Include files
@@ -10,22 +10,22 @@ class IUpdateManagerSvc;
 class DataObject;
 
 /** @class TestUpdateMgr TestUpdateMgr.h
- *  
+ *
  *  Algorith used to test the functionalities of the update manager.
  *
  *  @author Marco CLEMENCIC
  *  @date   2005-04-27
  */
 class TestUpdateMgr : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   TestUpdateMgr( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~TestUpdateMgr( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 

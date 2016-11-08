@@ -7,16 +7,16 @@
 <gdd>
   <package name='GenEvent'>
 
-<!-- GenCounters Class --> 
-       
+<!-- GenCounters Class -->
+
     <class
       name="GenCountersFSR"
       author="Davide Fazzini"
       desc="Enum class for Generator counters"
-      id="13601" 
+      id="13601"
       serializers="TRUE"
       >
-      
+
       &DataObject;
       <base name="DataObject"/>
       <import name="GaudiKernel/VectorMap"/>
@@ -136,17 +136,17 @@
         <enumval name="AfterantiPCut"     value="96"   desc="Number of signal anti-particle passing the generator level cut with pz > 0"/>
 
 <!-- ****************************** EXTRA VALUES ****************************** -->
-	<enumval name="Unknown"           value="98"   desc="Unknown value"/> 
+	<enumval name="Unknown"           value="98"   desc="Unknown value"/>
 
-<!-- ****************************** Pythia counter ****************************** -->                      
+<!-- ****************************** Pythia counter ****************************** -->
         <enumval name="AllsubProcess"     value="100"   desc="Total cross-section of Minimum Bias events"/>
       </enum>
 
-      
+
       <method
-        name='getFullNames'   
+        name='getFullNames'
         type='std::map&lt;std::string,std::string&gt;'
-        desc='return a map with the complete names of generator counters' 
+        desc='return a map with the complete names of generator counters'
         const='FALSE'>
         <code>
           std::map&lt;std::string,std::string&gt; map;
@@ -231,7 +231,7 @@
           map.insert(std::pair&lt;std::string,std::string&gt;("cBaryonAcc","accepted c-Baryon"));
           map.insert(std::pair&lt;std::string,std::string&gt;("anticBaryonAcc","accepted anti-c-Baryon"));
           map.insert(std::pair&lt;std::string,std::string&gt;("ccAcc","accepted (cc)"));
-	  
+
 <!-- ****************************** B** Hadron counters ****************************** -->
 	  map.insert(std::pair&lt;std::string,std::string&gt;("BGen","generated B(L=0, J=0)"));
           map.insert(std::pair&lt;std::string,std::string&gt;("BstarGen","generated B* (L=0, J=1)"));
@@ -271,7 +271,8 @@
         name='fillStream'
         type='std::ostream&amp;'
         desc='printout'
-        const='TRUE'>
+        const='TRUE'
+        override='TRUE'>
         <arg name="s" type="std::ostream" const="FALSE"/>
         <code>
 	  std::ostream&amp; ss = const_cast&lt; std::ostream&amp; &gt;(s);

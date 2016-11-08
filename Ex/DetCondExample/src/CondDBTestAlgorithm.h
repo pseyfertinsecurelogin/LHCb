@@ -1,4 +1,4 @@
-#ifndef CONDDBTESTALGORITHM_H 
+#ifndef CONDDBTESTALGORITHM_H
 #define CONDDBTESTALGORITHM_H 1
 
 // Include files
@@ -12,27 +12,27 @@ class IDetDataSvc;
 class AlignmentCondition;
 
 /** @class CondDBTestAlgorithm CondDBTestAlgorithm.h
- *  
+ *
  *  Example of an algorithm retrieving condition data stored in the CondDB.
  *
  *  Pointers to relevant DataObjects are retrieved at every new event.
  *  The retrieved objects are explicitly updated to ensure they are valid.
  *
- *  @author Andrea Valassi 
+ *  @author Andrea Valassi
  *  @date December 2001
  *
  *  @author Marco Clemencic
  *  @date   2005-06-23
  */
 class CondDBTestAlgorithm : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   CondDBTestAlgorithm( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~CondDBTestAlgorithm( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
   /// Dump interesting information about a DataObject
@@ -44,7 +44,7 @@ private:
   StatusCode i_updateCacheHcal();
   /// Internal member function used with the UpdateManagerSvc
   StatusCode i_updateCache();
-  
+
   /// Cached pointer to Condition
   Condition *m_LHCb_cond;
   /// Cached pointer to Condition

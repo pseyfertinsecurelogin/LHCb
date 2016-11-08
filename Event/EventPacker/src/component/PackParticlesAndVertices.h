@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef PACKPARTICLESANDVERTICES_H
 #define PACKPARTICLESANDVERTICES_H 1
 
@@ -51,9 +50,7 @@ public:
   /// Standard constructor
   PackParticlesAndVertices( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~PackParticlesAndVertices( ); ///< Destructor
-
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 
@@ -61,7 +58,7 @@ private:
   typedef LHCb::Relation1D<LHCb::Particle,LHCb::VertexBase>     P2VRELATION;
   typedef LHCb::Relation1D<LHCb::Particle,LHCb::MCParticle>     P2MCPRELATION;
   typedef LHCb::Relation1D<LHCb::Particle,int>                  Part2IntRelations;
-  typedef LHCb::Relation1D<LHCb::Particle,LHCb::RelatedInfoMap> Part2InfoRelations; 
+  typedef LHCb::Relation1D<LHCb::Particle,LHCb::RelatedInfoMap> Part2InfoRelations;
   typedef LHCb::RelationWeighted1D<LHCb::ProtoParticle,LHCb::MCParticle,double> Proto2MCPRelation;
 
   // things for working
@@ -72,7 +69,7 @@ private:
 
   /// Test if a TES container is Veto'ed from being packed
   bool isVetoed( const std::string& id ) const;
-  
+
   /// Build the ClassID to TES location(s) map
   void buildTESMap( const DataObject* obj,
                     ClassIDTESMap& tesmap ) const;

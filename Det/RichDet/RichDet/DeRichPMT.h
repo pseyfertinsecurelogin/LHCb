@@ -46,7 +46,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const final { return classID(); }
+  const CLID& clID() const override final { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -60,19 +60,19 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize() final;
+  StatusCode initialize() override final;
 
   // @brief Converts a RichSmartID to a point in global coordinates.
-  virtual bool detectionPoint ( const LHCb::RichSmartID smartID,
-                                Gaudi::XYZPoint& detectPoint,
-                                bool photoCathodeSide = false ) const final;
-  
+  bool detectionPoint ( const LHCb::RichSmartID smartID,
+                        Gaudi::XYZPoint& detectPoint,
+                        bool photoCathodeSide = false ) const override final;
+
   // Converts an x,y point from the anode to the photocathode in the
   // coordinate system of the PMT.
-  virtual bool detectionPoint ( const double fracPixelCol,
-                                const double fracPixelRow,
-                                Gaudi::XYZPoint& detectPoint,
-                                const bool photoCathodeSide = true ) const final;
+  bool detectionPoint ( const double fracPixelCol,
+                        const double fracPixelRow,
+                        Gaudi::XYZPoint& detectPoint,
+                        const bool photoCathodeSide = true ) const override final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the PMT channel
@@ -83,10 +83,10 @@ public:
   void setPmtLensFlag(bool aflag)  {m_PmtLensFlag=aflag;}
   int pmtCopyNumber() {  return m_number;}
   bool PmtLensFlag()  {  return m_PmtLensFlag;}
-  
-  void setPmtIsGrandFlag(bool aflagG ) {m_PmtIsGrand  = aflagG ;}   
+
+  void setPmtIsGrandFlag(bool aflagG ) {m_PmtIsGrand  = aflagG ;}
   bool PmtIsGrand()  {  return m_PmtIsGrand;}
-    
+
 private:
 
   StatusCode getPMTParameters();
@@ -129,7 +129,7 @@ private:
   bool m_PmtLensFlag{false};
   double m_PmtLensMagnificationRatio;
   double m_PmtLensRoc;
-  
+
   double m_GrandPmtAnodeXSize;
   double m_GrandPmtAnodeYSize;
   double m_GrandPmtAnodeZSize;
@@ -148,7 +148,7 @@ private:
   double m_Rich1Rich2ZDivideLimit;
   int m_Rich2PmtArrayConfig;
   bool m_PmtIsGrand{false};
-  
+
 };
 
 #endif // RICHDET_DERICHPMT_H

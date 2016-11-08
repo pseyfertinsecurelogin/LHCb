@@ -684,9 +684,3 @@ ConfigCDBAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias )
         return ConfigTreeNodeAlias::alias_type();
     }
 }
-
-MsgStream& ConfigCDBAccessSvc::msg( MSG::Level level ) const
-{
-    if ( !m_msg ) m_msg.reset( new MsgStream( msgSvc(), name() ) );
-    return *m_msg << level;
-}

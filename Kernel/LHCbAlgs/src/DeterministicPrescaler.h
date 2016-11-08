@@ -1,29 +1,50 @@
+
+// Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "boost/cstdint.hpp"
+
+// STL
 #include <string>
+#include <math.h>
 
-namespace LHCb { class ODIN; }
-class StatEntity;
+// from Boost
+#include "boost/cstdint.hpp"
+#include "boost/integer/integer_mask.hpp"
+#include "boost/integer_traits.hpp"
+using boost::uint32_t;
+using boost::uint64_t;
 
-class DeterministicPrescaler : public GaudiAlgorithm 
+// from LHCb core
+#include "Event/ODIN.h"
+
+class DeterministicPrescaler final : public GaudiAlgorithm
 {
 
-public:
+ public:
 
   DeterministicPrescaler( const std::string& name, ISvcLocator* pSvcLocator );
-  ~DeterministicPrescaler( );
-  
-  StatusCode initialize();
-  StatusCode execute();
-  
-private:
-  double                  m_accFrac;      // fraction of input events to accept...
-  boost::uint32_t         m_acc;          // integer representation of the above
-  boost::uint32_t         m_initial;      // initial seed unique to this instance (computed from the name)
-  StatEntity*             m_counter;
+  ~DeterministicPrescaler( ) = default;
+
+  StatusCode initialize() override;
+  StatusCode execute() override;
+
+ private:
 
   inline bool accept(const LHCb::ODIN& odin) const ;
   void update(Property&) ;
+
+private:
+
+  /// fraction of input events to accept...
+  double                  m_accFrac;
+
+  /// integer representation of the above
+  boost::uint32_t         m_acc{boost::integer_traits<uint32_t>::const_max};
+
+  /// initial seed unique to this instance (computed from the name)
+  boost::uint32_t         m_initial{0};
+
+  // acahe pointer to counter, to avoid map look ups
+  StatEntity*             m_counter = nullptr;
 
 };
 

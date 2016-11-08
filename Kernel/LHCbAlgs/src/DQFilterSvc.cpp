@@ -6,8 +6,8 @@
 
 DECLARE_SERVICE_FACTORY(DQFilterSvc)
 
-DQFilterSvc::DQFilterSvc(const std::string & name, ISvcLocator *svc):
-  base_class(name, svc), m_acceptTool(0)
+DQFilterSvc::DQFilterSvc(const std::string & name, ISvcLocator *svc)
+: base_class(name, svc)
 {
   declareProperty("AcceptTool",
                   m_acceptToolName = "DQAcceptTool",
@@ -48,7 +48,7 @@ StatusCode DQFilterSvc::initialize()
     debug() << "  filtering using " << m_acceptToolName << endmsg;
   }
 
-  return StatusCode::SUCCESS;
+  return sc;
 }
 
 
@@ -67,7 +67,7 @@ StatusCode DQFilterSvc::finalize()
     } else {
       info() << "ToolSvc already finalized: cannot release tools. Check options." << endmsg;
     }
-    m_acceptTool = 0;
+    m_acceptTool = nullptr;
     m_toolSvc.reset();
   }
 
@@ -87,12 +87,3 @@ void DQFilterSvc::handle(const Incident &)
     m_incSvc->fireIncident(Incident(name(), IncidentType::AbortEvent));
   }
 }
-
-
-
-DQFilterSvc::~DQFilterSvc()
-{
-}
-
-
-

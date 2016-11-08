@@ -1,5 +1,5 @@
 // $Id: L0MuonInputTool.h,v 1.1 2010-03-08 14:18:15 jucogan Exp $
-#ifndef COMPONENT_L0MUONINPUTTOOL_H 
+#ifndef COMPONENT_L0MUONINPUTTOOL_H
 #define COMPONENT_L0MUONINPUTTOOL_H 1
 
 // Include files
@@ -15,20 +15,20 @@
  *  @date   2010-02-25
  */
 class L0MuonInputTool : public GaudiTool, virtual public IL0MuonInputTool {
-public: 
+public:
   /// Standard constructor
-  L0MuonInputTool( const std::string& type, 
+  L0MuonInputTool( const std::string& type,
                    const std::string& name,
                    const IInterface* parent);
 
   virtual ~L0MuonInputTool( ); ///< Destructor
-  StatusCode getTiles(std::vector<LHCb::MuonTileID> & tiles, std::string rootInTes="");
-  StatusCode getPads(std::vector<LHCb::MuonTileID> & pads, std::string rootInTes="");
-  
+  StatusCode getTiles(std::vector<LHCb::MuonTileID> & tiles, std::string rootInTes="") override;
+  StatusCode getPads(std::vector<LHCb::MuonTileID> & pads, std::string rootInTes="") override;
+
 protected:
 
 private:
-  
+
   // Options
   std::string m_l0Context; ///< Suffix appended to data location in TES
 

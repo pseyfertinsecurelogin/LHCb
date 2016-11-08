@@ -14,7 +14,7 @@
 
 // forward declarations
 class DeOTDetector;
-class IOTChannelMapTool ;
+struct IOTChannelMapTool ;
 namespace LHCb {
   class RawBank ;
 }

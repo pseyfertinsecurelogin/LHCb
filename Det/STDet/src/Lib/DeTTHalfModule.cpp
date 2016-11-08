@@ -36,10 +36,6 @@ DeTTHalfModule::DeTTHalfModule( const std::string& name ) :
   m_sectors.clear();
 }
 
-DeTTHalfModule::~DeTTHalfModule() {
-  // destructer
-}
-
 const CLID& DeTTHalfModule::clID () const
 {
   return DeTTHalfModule::classID() ;

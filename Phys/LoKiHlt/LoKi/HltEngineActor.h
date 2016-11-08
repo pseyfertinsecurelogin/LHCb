@@ -1,4 +1,3 @@
-// $Id: HltEngineActor.h,v 1.2 2008-09-23 13:13:35 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_HltENGINEACTOR_H 
 #define LOKI_HltENGINEACTOR_H 1
@@ -78,9 +77,7 @@ namespace LoKi
      protected:
       // ======================================================================
       /// Standard constructor
-      HltEngineActor() ;
-      /// virtual & protected destrucutor  
-      virtual ~HltEngineActor( ); // virtual & protected destrucutor  
+      HltEngineActor() = default;
       // ======================================================================
     private:
       // ======================================================================
@@ -99,7 +96,7 @@ namespace LoKi
     private:
       // ======================================================================
       /// the tool itself 
-      LoKi::Interface<LoKi::Hybrid::IHltAntiFactory> m_tool ; // the tool itself 
+      LoKi::Interface<LoKi::Hybrid::IHltAntiFactory> m_tool = 0; // the tool itself 
       // ======================================================================
     } ;
     // ========================================================================

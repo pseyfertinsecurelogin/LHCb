@@ -16,21 +16,17 @@ DECLARE_ALGORITHM_FACTORY(TestEventCounter)
 // Standard constructor, initializes variables
 // ============================================================================
 TestEventCounter::TestEventCounter(const std::string& name, ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm(name, pSvcLocator), m_eventCounter(NULL)
+  : GaudiAlgorithm(name, pSvcLocator)
 {
   declareProperty("EvtCounter", m_eventCounterName = "EvtCounter",
                   "Type/Name of the (public) event counter to use.");
 }
 
 // ============================================================================
-// Destructor
-// ============================================================================
-TestEventCounter::~TestEventCounter() {}
-
-// ============================================================================
 // Initialization
 // ============================================================================
-StatusCode TestEventCounter::initialize() {
+StatusCode TestEventCounter::initialize() 
+{
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc; // error printed already by GaudiAlgorithm
 
@@ -38,15 +34,16 @@ StatusCode TestEventCounter::initialize() {
 
   m_eventCounter = tool<IEventCounter>(m_eventCounterName);
 
-  return StatusCode::SUCCESS;
+  return sc;
 }
 
 // ============================================================================
 // Main execution
 // ============================================================================
-StatusCode TestEventCounter::execute() {
+StatusCode TestEventCounter::execute()
+{
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-
+  
   info() << "Event count = " << m_eventCounter->getEventCounter() << endmsg;
 
   return StatusCode::SUCCESS;
@@ -55,11 +52,12 @@ StatusCode TestEventCounter::execute() {
 // ============================================================================
 // Finalize
 // ============================================================================
-StatusCode TestEventCounter::finalize() {
+StatusCode TestEventCounter::finalize() 
+{
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
 
   release(m_eventCounter);
-  m_eventCounter = NULL;
+  m_eventCounter = nullptr;
 
   return GaudiAlgorithm::finalize(); // must be called after all other actions
 }

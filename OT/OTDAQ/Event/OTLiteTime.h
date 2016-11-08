@@ -1,11 +1,7 @@
-
 //-----------------------------------------------------------------------------
 /** @file OTLiteTime.h
  *
  *  Header file for track find class LHCb::OTLiteTime
- *
- *  CVS Log :-
- *  $Id: OTLiteTime.h,v 1.7 2010-04-07 04:26:37 wouter Exp $
  *
  *  @author S. Hansmann-Menzemer, W. Hulsbergen, C. Jones, K. Rinnert
  *  @date   2007-05-30
@@ -39,11 +35,11 @@ namespace LHCb
     /// typedef Range
     typedef Gaudi::Range_<Vector> Range;
 
-    /// Default constructor does nothing
-    OTLiteTime() : m_channelid(0), m_calibratedTime(0) {}
-    
+    /// Default constructor
+    OTLiteTime() = default;
+
     /// Constructor from an OTChannelID
-    OTLiteTime(LHCb::OTChannelID channelid, double calibratedtime) 
+    OTLiteTime(LHCb::OTChannelID channelid, double calibratedtime)
       : m_channelid(channelid), m_calibratedTime(calibratedtime) {}
 
     /// Access the OTChannelID for this OTLiteTime
@@ -51,8 +47,6 @@ namespace LHCb
 
     /// Access to the calibrated time
     double calibratedTime() const { return m_calibratedTime ; }
-
-  public:
 
     /// Print this OTLiteTime in a human readable way
     std::ostream& fillStream(std::ostream& s) const
@@ -68,8 +62,8 @@ namespace LHCb
     }
 
   private:
-    LHCb::OTChannelID m_channelid ; ///< The OTChannelID
-    double m_calibratedTime ;        ///< T0 corrected timet0 corrected; calibratedTime=propagationTime+driftTime 
+    LHCb::OTChannelID m_channelid = 0 ; ///< The OTChannelID
+    double m_calibratedTime = 0 ;        ///< T0 corrected timet0 corrected; calibratedTime=propagationTime+driftTime
   } ;
 
   /// Type for a container of OTLiteTime objects

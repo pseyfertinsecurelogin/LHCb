@@ -46,141 +46,141 @@ class CondDBAccessSvc: public extends3<Service,
 public:
 
   /// Initialize COOL (CondDB) Access Layer Service
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
   /// Finalize Service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
 
   // --------- ICondDBReader implementation
 
   /// Try to retrieve an object from the Condition DataBase. If path points to a FolderSet,
   /// channel and when are ignored and data is set ot NULL.
-  virtual StatusCode getObject (const std::string &path, const Gaudi::Time &when,
-                                DataPtr &data,
-                                std::string &descr, Gaudi::Time &since, Gaudi::Time &until, cool::ChannelId channel = 0);
+  StatusCode getObject (const std::string &path, const Gaudi::Time &when,
+                        DataPtr &data,
+                        std::string &descr, Gaudi::Time &since, Gaudi::Time &until, cool::ChannelId channel = 0) override;
 
   /// Try to retrieve an object from the Condition DataBase. If path points to a FolderSet,
   /// channel and when are ignored and data is set ot NULL.
   /// (Version with alphanumeric channel id)
-  virtual StatusCode getObject (const std::string &path, const Gaudi::Time &when,
-                                DataPtr &data,
-                                std::string &descr, Gaudi::Time &since, Gaudi::Time &until, const std::string &channel);
+  StatusCode getObject (const std::string &path, const Gaudi::Time &when,
+                        DataPtr &data,
+                        std::string &descr, Gaudi::Time &since, Gaudi::Time &until, const std::string &channel) override;
 
   /// @{
   /// @see ICondDBReader::getIOVs
-  virtual IOVList getIOVs (const std::string &path, const IOV &iov, cool::ChannelId channel = 0);
-  virtual IOVList getIOVs (const std::string &path, const IOV &iov, const std::string &channel);
+  IOVList getIOVs (const std::string &path, const IOV &iov, cool::ChannelId channel = 0) override;
+  IOVList getIOVs (const std::string &path, const IOV &iov, const std::string &channel) override;
   /// @}
 
   /// Retrieve the names of the children nodes of a FolderSet.
-  virtual StatusCode getChildNodes (const std::string &path, std::vector<std::string> &node_names);
+  StatusCode getChildNodes (const std::string &path, std::vector<std::string> &node_names) override;
 
   /// Retrieve the names of the children nodes of a FolderSet divided in folders and foldersets.
-  virtual StatusCode getChildNodes (const std::string &path,
-                                    std::vector<std::string> &folders,
-                                    std::vector<std::string> &foldersets);
+  StatusCode getChildNodes (const std::string &path,
+                            std::vector<std::string> &folders,
+                            std::vector<std::string> &foldersets) override;
 
   /// Tells if the path is available in the database.
-  virtual bool exists(const std::string &path);
+  bool exists(const std::string &path) override;
 
   /// Tells if the path (if it exists) is a folder.
-  virtual bool isFolder(const std::string &path);
+  bool isFolder(const std::string &path) override;
 
   /// Tells if the path (if it exists) is a folderset.
-  virtual bool isFolderSet(const std::string &path);
+  bool isFolderSet(const std::string &path) override;
 
   /// Disconnect from the database.
-  virtual void disconnect();
+  void disconnect() override;
 
   // --------- ICondDBInfo implementation
 
   /** Get the current default database tags
    *  @param  tags vector of DB name, tag pairs. Empty if DB not available
    */
-  virtual void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const;
+  void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const override;
 
   // --------- ICondDBEditor implementation
 
   /// Create a CondDB node in the hierarchy (Folder or FolderSet).
-  virtual StatusCode createNode(const std::string &path,
-                                const std::string &descr,
-                                StorageType storage = XML,
-                                VersionMode vers = MULTI) const;
+  StatusCode createNode(const std::string &path,
+                        const std::string &descr,
+                        StorageType storage = XML,
+                        VersionMode vers = MULTI) const override;
 
   /// Create a CondDB node in the hierarchy (Folder or FolderSet).
-  virtual StatusCode createNode(const std::string &path,
-                                const std::string &descr,
-                                const std::set<std::string> &fields,
-                                StorageType storage = XML,
-                                VersionMode vers = MULTI) const;
+  StatusCode createNode(const std::string &path,
+                        const std::string &descr,
+                        const std::set<std::string> &fields,
+                        StorageType storage = XML,
+                        VersionMode vers = MULTI) const override;
 
   /// Utility function that simplifies the storage of an XML string.
-  virtual StatusCode storeXMLData(const std::string &path, const std::string &data,
-                                  const Gaudi::Time &since, const Gaudi::Time &until, cool::ChannelId channel = 0) const;
+  StatusCode storeXMLData(const std::string &path, const std::string &data,
+                          const Gaudi::Time &since, const Gaudi::Time &until, cool::ChannelId channel = 0) const override;
 
   /// Utility function that simplifies the storage of a set of XML strings.
-  virtual StatusCode storeXMLData(const std::string &path, const std::map<std::string,std::string> &data,
-                                  const Gaudi::Time &since, const Gaudi::Time &until, cool::ChannelId channel = 0) const;
+  StatusCode storeXMLData(const std::string &path, const std::map<std::string,std::string> &data,
+                          const Gaudi::Time &since, const Gaudi::Time &until, cool::ChannelId channel = 0) const override;
 
   /// Tag the given leaf node with the given tag-name.
-  virtual StatusCode tagLeafNode(const std::string &path, const std::string &tagName,
-                                 const std::string &description = "");
+  StatusCode tagLeafNode(const std::string &path, const std::string &tagName,
+                         const std::string &description = "") override;
 
   /// Tag the given inner node with the given tag-name, recursively tagging the head
   /// of child nodes with automatically generated tag-names.
-  virtual StatusCode recursiveTag(const std::string &path, const std::string &tagName,
-                                  const std::string &description = "");
+  StatusCode recursiveTag(const std::string &path, const std::string &tagName,
+                          const std::string &description = "") override;
 
   // --------- ICondDBAccessSvc implementation
 
   /// Used to obtain direct access to the database.
-  virtual cool::IDatabasePtr& database() { return m_db; }
+  cool::IDatabasePtr& database() override { return m_db; }
 
   /// Convert from Gaudi::Time class to cool::ValidityKey.
-  virtual cool::ValidityKey timeToValKey(const Gaudi::Time &time) const;
+  cool::ValidityKey timeToValKey(const Gaudi::Time &time) const override;
 
   /// Convert from cool::ValidityKey to Gaudi::Time class.
-  virtual Gaudi::Time valKeyToTime(const cool::ValidityKey &key) const;
+  Gaudi::Time valKeyToTime(const cool::ValidityKey &key) const override;
 
   /// Return the currently set TAG to use.
-  virtual const std::string &tag() const;
+  const std::string &tag() const override;
 
   /// Set the TAG to use.
-  virtual StatusCode setTag(const std::string &_tag);
+  StatusCode setTag(const std::string &_tag) override;
 
   /// Return the connection string used to connect to the database.
-  virtual const std::string &connectionString() const;
+  const std::string &connectionString() const override;
 
   /// Add a folder to the cache (bypass the DB)
-  virtual StatusCode cacheAddFolder(const std::string &path, const std::string &descr,
-                                    const cool::IRecordSpecification& spec);
+  StatusCode cacheAddFolder(const std::string &path, const std::string &descr,
+                            const cool::IRecordSpecification& spec) override;
 
   /// Add a folder-set to the cache (bypass the DB)
-  virtual StatusCode cacheAddFolderSet(const std::string &path, const std::string &descr);
+  StatusCode cacheAddFolderSet(const std::string &path, const std::string &descr) override;
 
   /// Add a folder to the cache (bypass the DB)
-  virtual StatusCode cacheAddXMLFolder(const std::string &path);
+  StatusCode cacheAddXMLFolder(const std::string &path) override;
 
   /// Add an XML folder to the cache (bypass the DB)
-  virtual StatusCode cacheAddXMLFolder(const std::string &path, const std::set<std::string> &fields);
+  StatusCode cacheAddXMLFolder(const std::string &path, const std::set<std::string> &fields) override;
 
   ///Add an object to the cache (bypass the DB)
-  virtual StatusCode cacheAddObject(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
-                                    const cool::IRecord& payload, cool::ChannelId channel = 0);
+  StatusCode cacheAddObject(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
+                            const cool::IRecord& payload, cool::ChannelId channel = 0) override;
 
   ///Add an XML object to the cache (bypass the DB)
-  virtual StatusCode cacheAddXMLData(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
-                                     const std::string& data, cool::ChannelId channel = 0);
+  StatusCode cacheAddXMLData(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
+                             const std::string& data, cool::ChannelId channel = 0) override;
 
   /// Add an XML object to the cache (bypass the DB)
-  virtual StatusCode cacheAddXMLData(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
-                                     const std::map<std::string,std::string> &data, cool::ChannelId channel = 0);
+  StatusCode cacheAddXMLData(const std::string &path, const Gaudi::Time &since, const Gaudi::Time &until,
+                             const std::map<std::string,std::string> &data, cool::ChannelId channel = 0) override;
 
   /// Clear the cache
-  virtual void clearCache();
+  void clearCache() override;
 
   /// Dump the cache (debug)
-  virtual void dumpCache() const;
+  void dumpCache() const override;
 
 protected:
   /// Standard constructor
@@ -223,7 +223,7 @@ private:
   int m_checkTagTimeOut;
 
   /// Pointer to the service initializing COOL/CORAL.
-  ICOOLConfSvc *m_coolConfSvc;
+  SmartIF<ICOOLConfSvc> m_coolConfSvc;
 
   /// Shared pointer to the COOL database instance
   cool::IDatabasePtr m_db;
@@ -232,10 +232,10 @@ private:
   cool::IFolderSetPtr   m_rootFolderSet;
 
   /// Pointer to the cache manager
-  CondDBCache *m_cache;
+  std::unique_ptr<CondDBCache> m_cache;
 
   /// Pointer to the random generator service
-  IRndmGenSvc *m_rndmSvc;
+  SmartIF<IRndmGenSvc> m_rndmSvc;
 
   /// Lazy connection flag.
   /// If true (the default), the connection to  (lazy = connect only when needed).

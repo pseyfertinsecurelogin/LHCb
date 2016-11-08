@@ -1,12 +1,3 @@
-// $Id: ObjectTypeTraits.h,v 1.5 2008-11-29 16:25:30 ibelyaev Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.4  2006/06/11 17:46:05  ibelyaev
-//  fix for OLD gcc
-//
-// ============================================================================
 #ifndef RELATIONS_ObjectTypeTraits_H
 #define RELATIONS_ObjectTypeTraits_H 1
 // ============================================================================

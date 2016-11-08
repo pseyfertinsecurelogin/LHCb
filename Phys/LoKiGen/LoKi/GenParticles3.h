@@ -1,6 +1,5 @@
-// $Id$
 // ============================================================================
-#ifndef LOKI_GENPARTICLES3_H 
+#ifndef LOKI_GENPARTICLES3_H
 #define LOKI_GENPARTICLES3_H 1
 // ============================================================================
 // Include files
@@ -15,20 +14,17 @@
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
- *  @date 2012-01-28 
+ *  @date 2012-01-28
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -38,7 +34,7 @@ namespace LoKi
   {
     // ========================================================================
     /** @class Count
-     *  simple class which counts how many particles 
+     *  simple class which counts how many particles
      *  satisfy the certain criteria
      *
      *  @see LoKi::Cuts::GCOUNT
@@ -48,40 +44,33 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@itep.ru
      *  @date   2012-01-28
      */
-    class GAUDI_API Count : public LoKi::GenTypes::GFunc 
+    class GAUDI_API Count : public LoKi::GenTypes::GFunc
     {
     public:
       // ======================================================================
       /** constructor from the criteria and "range"
        *  @param cut the criteria
-       *  @param range search region 
-       *  @see HepMC::IteratorRange 
+       *  @param range search region
+       *  @see HepMC::IteratorRange
        */
       Count
-      ( const LoKi::Types::GCuts& cut   , 
+      ( const LoKi::Types::GCuts& cut   ,
         HepMC::IteratorRange      range ) ;
       /** constructor from the criteria and "range"
-       *  @param range search region 
+       *  @param range search region
        *  @param cut the criteria
-       *  @see HepMC::IteratorRange 
+       *  @see HepMC::IteratorRange
        */
       Count
       ( HepMC::IteratorRange      range ,
         const LoKi::Types::GCuts& cut   ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Count ();
       /// MANDATORY: clone method ("virtual contructor")
-      virtual Count * clone() const ;
-      /// MANDATORY: the only one essential method 
-      virtual result_type operator() ( argument v ) const ;
-      /// OPTIONAL: nice printout 
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      Count () ;                         // the default constructor is disabled 
+      Count * clone() const  override;
+      /// MANDATORY: the only one essential method
+      result_type operator() ( argument v ) const  override;
+      /// OPTIONAL: nice printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -91,7 +80,7 @@ namespace LoKi
     } ;
     // ========================================================================
     /** @class Has
-     *  simple class which check the presence of particles 
+     *  simple class which check the presence of particles
      *  satisfy the certain criteria
      *
      *  @see LoKi::Cuts::GHAS
@@ -107,34 +96,27 @@ namespace LoKi
       // ======================================================================
       /** constructor from the criteria and "range"
        *  @param cut the criteria
-       *  @param range search region 
-       *  @see HepMC::IteratorRange 
+       *  @param range search region
+       *  @see HepMC::IteratorRange
        */
       Has
-      ( const LoKi::Types::GCuts& cut   , 
+      ( const LoKi::Types::GCuts& cut   ,
         HepMC::IteratorRange      range ) ;
       /** constructor from the criteria and "range"
-       *  @param range search region 
+       *  @param range search region
        *  @param cut the criteria
-       *  @see HepMC::IteratorRange 
+       *  @see HepMC::IteratorRange
        */
       Has
       ( HepMC::IteratorRange      range ,
         const LoKi::Types::GCuts& cut   ) ;
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Has ();
       /// MANDATORY: clone method ("virtual contructor")
-      virtual  Has* clone() const ;
-      /// MANDATORY: the only one essential method 
-      virtual result_type operator() ( argument v ) const ;
-      /// OPTIONAL: nice printout 
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled 
-      Has () ;                         // the default constructor is disabled 
+      Has* clone() const  override;
+      /// MANDATORY: the only one essential method
+      result_type operator() ( argument v ) const  override;
+      /// OPTIONAL: nice printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -143,42 +125,42 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
-  } //                                      end of namespace LoKi::GenParticles 
+  } //                                      end of namespace LoKi::GenParticles
   // ==========================================================================
-  namespace Cuts 
+  namespace Cuts
   {
     // ========================================================================
-    /** @typedef GCOUNT 
-     *  simple functor to count certain particles in HepMC-graph 
-     * 
-     *  @code 
-     * 
+    /** @typedef GCOUNT
+     *  simple functor to count certain particles in HepMC-graph
+     *
+     *  @code
+     *
      *   const GCOUNT cnt = GCOUNT ( "pi+" == GABSID , HepMC.descendents ) ;
      *
      *   const HepMC::GenParticle* p = ... ;
      *
      *   const double numPi = cnt ( p ) ;
      *
-     *  @endcode 
+     *  @endcode
      *
-     *  @see LoKi:GenParticles::Count 
-     *  @see LoKi:GenVertices::CountIF 
+     *  @see LoKi:GenParticles::Count
+     *  @see LoKi:GenVertices::CountIF
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-28
      */
     typedef LoKi::GenParticles::Count                                  GCOUNT ;
     // ========================================================================
     /** @typedef GHAS
-     *  simple functor to check certain particles in HepMC-graph 
-     *  @code 
-     * 
+     *  simple functor to check certain particles in HepMC-graph
+     *  @code
+     *
      *   const GHAS chk = GHAS ( "pi+" == GABSID , HepMC.descendents ) ;
      *
      *   const HepMC::GenParticle* p = ... ;
      *
      *   const bool hasPi = chk ( p ) ;
      *
-     *  @endcode 
+     *  @endcode
      *
      *  @see LoKi:GenParticles::Has
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
@@ -186,11 +168,11 @@ namespace LoKi
      */
     typedef LoKi::GenParticles::Has                                      GHAS ;
     // ========================================================================
-  } // end of namespace LoKi::Cuts 
+  } // end of namespace LoKi::Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_GENPARTICLES3_H
 // ============================================================================

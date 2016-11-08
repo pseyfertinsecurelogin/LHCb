@@ -1,8 +1,7 @@
-// $Id:$ 
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
-// Event 
+// Event
 // ============================================================================
 #include "Event/ODIN.h"
 #include "Event/L0DUReport.h"
@@ -13,7 +12,7 @@
 #include "LoKi/Constants.h"
 #include "LoKi/TESGet.h"
 // ============================================================================
-namespace 
+namespace
 {
   // ==========================================================================
   template <class TYPE>
@@ -21,38 +20,36 @@ namespace
   {
   public:
     // ========================================================================
-    _C ( const LoKi::TES::Get&                  obj , 
-         const LoKi::Functor<const TYPE*,bool>& cut ) 
-      : LoKi::Functor<void,bool> () 
-      , m_get ( obj ) 
-      , m_cut ( cut ) 
-      , m_t   ( 0   ) 
+    _C ( const LoKi::TES::Get&                  obj ,
+         const LoKi::Functor<const TYPE*,bool>& cut )
+      : LoKi::Functor<void,bool> ()
+      , m_get ( obj )
+      , m_cut ( cut )
     {}
-    // ========================================================================     
-    virtual ~_C () {}
-    virtual  _C* clone() const { return new _C(*this) ; }
     // ========================================================================
-    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    _C* clone() const override { return new _C(*this) ; }
+    // ========================================================================
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return  s << " (" << m_get << " >> " << m_cut  << ") " ; }
     //
-    virtual std::string toCpp() const 
+    std::string toCpp() const override
     {
       return
         "LoKi::TES::TESGet::get( "    +
-        Gaudi::Utils::toCpp ( m_get ) + ", " + 
+        Gaudi::Utils::toCpp ( m_get ) + ", " +
         Gaudi::Utils::toCpp ( m_cut ) + ") " ;
     }
     // ========================================================================
-    virtual result_type operator() ( /* argument */ ) const 
+    result_type operator() ( /* argument */ ) const override
     {
       //
-      if ( 0 == m_t || !sameEvent() ) 
-      { 
-        m_t = LoKi::TES::get_<TYPE> ( m_get ) ; 
+      if ( !m_t || !sameEvent() )
+      {
+        m_t = LoKi::TES::get_<TYPE> ( m_get ) ;
         setEvent () ;
       }
       //
-      if ( 0 == m_t ) 
+      if ( !m_t )
       {
         Error ( "No valid object is found at '" + m_get.location() + "', return False") ;
         return false ;
@@ -63,15 +60,10 @@ namespace
     // ========================================================================
   private:
     // ========================================================================
-    /// default constructor is disabled 
-    _C() ;                                // default constructor is disabled 
-    // ========================================================================
-  private:
-    // ========================================================================
     LoKi::TES::Get                             m_get ;
     LoKi::FunctorFromFunctor<const TYPE*,bool> m_cut ;
-    mutable const TYPE*                        m_t   ;
-    // ========================================================================    
+    mutable const TYPE*                        m_t   = nullptr;
+    // ========================================================================
   };
   // ==========================================================================
   template <class TYPE>
@@ -79,38 +71,36 @@ namespace
   {
   public:
     // ========================================================================
-    _F ( const LoKi::TES::Get&                    obj , 
-         const LoKi::Functor<const TYPE*,double>& fun ) 
-      : LoKi::Functor<void,double> () 
-      , m_get ( obj ) 
-      , m_fun ( fun ) 
-      , m_t   ( 0   ) 
+    _F ( const LoKi::TES::Get&                    obj ,
+         const LoKi::Functor<const TYPE*,double>& fun )
+      : LoKi::Functor<void,double> ()
+      , m_get ( obj )
+      , m_fun ( fun )
     {}
-    // ========================================================================     
-    virtual ~_F () {}
-    virtual  _F* clone() const { return new _F(*this) ; }
     // ========================================================================
-    virtual std::ostream& fillStream ( std::ostream& s ) const 
+    _F* clone() const override { return new _F(*this) ; }
+    // ========================================================================
+    std::ostream& fillStream ( std::ostream& s ) const override
     { return  s << " (" << m_get << " >> " << m_fun  << ") " ; }
     // ========================================================================
-    virtual std::string toCpp() const 
+    std::string toCpp() const override
     {
       return
         "LoKi::TES::TESGet::get( "    +
-        Gaudi::Utils::toCpp ( m_get ) + ", " + 
+        Gaudi::Utils::toCpp ( m_get ) + ", " +
         Gaudi::Utils::toCpp ( m_fun ) + ") " ;
     }
     // ========================================================================
-    virtual result_type operator() ( /* argument */ ) const 
+    result_type operator() ( /* argument */ ) const override
     {
       //
-      if ( 0 == m_t || !sameEvent() ) 
-      { 
-        m_t = LoKi::TES::get_<TYPE> ( m_get ) ; 
+      if ( !m_t || !sameEvent() )
+      {
+        m_t = LoKi::TES::get_<TYPE> ( m_get ) ;
         setEvent () ;
       }
       //
-      if ( 0 == m_t ) 
+      if ( !m_t )
       {
         Error ( "No valid object is found at '" + m_get.location() + "', return -inf") ;
         return false ;
@@ -121,57 +111,51 @@ namespace
     // ========================================================================
   private:
     // ========================================================================
-    /// default constructor is disabled 
-    _F() ;                                 // default constructor is disabled 
-    // ========================================================================
-  private:
-    // ========================================================================
     LoKi::TES::Get                               m_get ;
     LoKi::FunctorFromFunctor<const TYPE*,double> m_fun ;
-    mutable const TYPE*                          m_t  ;
-    // ========================================================================    
+    mutable const TYPE*                          m_t  = nullptr;
+    // ========================================================================
   };
   // ==========================================================================
-} // end of anonymous namespace 
+} // end of anonymous namespace
 // ============================================================================
-LoKi::FunctorFromFunctor<void,bool>  
-LoKi::TES::TESGet::get 
-( const LoKi::TES::Get&                          obj , 
+LoKi::FunctorFromFunctor<void,bool>
+LoKi::TES::TESGet::get
+( const LoKi::TES::Get&                          obj ,
   const LoKi::Functor<const LHCb::ODIN*,bool>&   cut )
 { return _C<LHCb::ODIN>          ( obj , cut ) ; }
 // ============================================================================
-LoKi::FunctorFromFunctor<void,double>  
-LoKi::TES::TESGet::get 
-( const LoKi::TES::Get&                            obj , 
+LoKi::FunctorFromFunctor<void,double>
+LoKi::TES::TESGet::get
+( const LoKi::TES::Get&                            obj ,
   const LoKi::Functor<const LHCb::ODIN*,double>&   fun )
 { return _F<LHCb::ODIN>          ( obj , fun ) ; }
 // ============================================================================
-LoKi::FunctorFromFunctor<void,bool>  
-LoKi::TES::TESGet::get 
-( const LoKi::TES::Get&                                obj , 
+LoKi::FunctorFromFunctor<void,bool>
+LoKi::TES::TESGet::get
+( const LoKi::TES::Get&                                obj ,
   const LoKi::Functor<const LHCb::L0DUReport*,bool>&   cut )
 { return _C<LHCb::L0DUReport>    ( obj , cut ) ; }
 // ============================================================================
-LoKi::FunctorFromFunctor<void,double>  
-LoKi::TES::TESGet::get 
-( const LoKi::TES::Get&                                  obj , 
+LoKi::FunctorFromFunctor<void,double>
+LoKi::TES::TESGet::get
+( const LoKi::TES::Get&                                  obj ,
   const LoKi::Functor<const LHCb::L0DUReport*,double>&   fun )
 { return _F<LHCb::L0DUReport>    ( obj , fun ) ; }
 // ============================================================================
-LoKi::FunctorFromFunctor<void,bool>  
-LoKi::TES::TESGet::get 
-( const LoKi::TES::Get&                                   obj , 
+LoKi::FunctorFromFunctor<void,bool>
+LoKi::TES::TESGet::get
+( const LoKi::TES::Get&                                   obj ,
   const LoKi::Functor<const LHCb::HltDecReports*,bool>&   cut )
 { return _C<LHCb::HltDecReports> ( obj , cut ) ; }
 // ============================================================================
-LoKi::FunctorFromFunctor<void,double>  
-LoKi::TES::TESGet::get 
-( const LoKi::TES::Get&                                     obj , 
+LoKi::FunctorFromFunctor<void,double>
+LoKi::TES::TESGet::get
+( const LoKi::TES::Get&                                     obj ,
   const LoKi::Functor<const LHCb::HltDecReports*,double>&   fun )
 { return _F<LHCb::HltDecReports> ( obj , fun ) ; }
 // ============================================================================
 
-
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

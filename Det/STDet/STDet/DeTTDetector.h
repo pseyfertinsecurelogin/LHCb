@@ -28,9 +28,6 @@ public:
   /** Constructor */
   DeTTDetector ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeTTDetector();
-
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
@@ -41,26 +38,26 @@ public:
   * another reference to class identifier
   * @return the class identifier for this class
   */
-  const CLID& clID () const;
+  const CLID& clID () const override;
 
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
   *  short cut to pick up the wafer corresponding to x,y,z
   * @param  aPoint point in global frame
   * @return sector
   */
-  virtual DeSTSector* findSector(const Gaudi::XYZPoint& aPoint) const;
+  DeSTSector* findSector(const Gaudi::XYZPoint& aPoint) const override;
 
  /**
   *  find top level DeSTBaseElement by nickname
   * @param nickname
   * @return base element
   */
-  DeSTBaseElement* findTopLevelElement(const std::string& nickname) const;
+  DeSTBaseElement* findTopLevelElement(const std::string& nickname) const override;
 
 private:
 

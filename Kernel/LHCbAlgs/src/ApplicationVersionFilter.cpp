@@ -20,11 +20,6 @@ ApplicationVersionFilter::ApplicationVersionFilter( const std::string& name,
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-ApplicationVersionFilter::~ApplicationVersionFilter() {}
-
-//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode ApplicationVersionFilter::execute()
