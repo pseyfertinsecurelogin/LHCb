@@ -1,4 +1,3 @@
-// $Id: DeOTStation.h,v 1.12 2007-07-23 09:59:04 cattanem Exp $
 #ifndef OTDET_DEOTSTATION_H
 #define OTDET_DEOTSTATION_H 1
 
@@ -35,9 +34,6 @@ class DeOTStation : public DetectorElement {
 
   /** Constructor */
   DeOTStation(const std::string& name = "") ;
-
-  /** Destructor */
-  ~DeOTStation() = default;
 
   /** Retrieves reference to class identifier
    * @return the class identifier for this class

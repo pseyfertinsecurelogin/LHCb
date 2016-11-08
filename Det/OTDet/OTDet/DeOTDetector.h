@@ -1,6 +1,7 @@
-// $Id: DeOTDetector.h,v 1.39 2008-10-28 12:53:40 cattanem Exp $
 #ifndef OTDET_DEOTDETECTOR_H
 #define OTDET_DEOTDETECTOR_H 1
+
+#include "boost/optional.hpp"
 
 /// GaudiKernel
 #include "GaudiKernel/VectorMap.h"
@@ -55,9 +56,6 @@ public:
 
   /** Constructor */
   DeOTDetector(const std::string& name = "");
-
-  /** Destructor */
-  ~DeOTDetector() = default;
 
   /** Retrieves reference to class identifier
    * @return the class identifier for this class
@@ -309,10 +307,10 @@ public:
   /// Nested class to communicate to the updatesvc for the
   /// calibration. Advantage of object is that DeOTModule can also
   /// register to it.
-  struct Calibration
+  struct Calibration final
   {
-    Calibration( SmartRef<Condition> c ) : m_condition(c) {}
-    virtual ~Calibration() {}
+    Calibration( SmartRef<Condition> c ) : m_condition(std::move(c)) {}
+    virtual ~Calibration() = default; //@FIXME:@TODO needed because of needless dynamic_cast in Gaudi...
     StatusCode callback() ;
     SmartRef<Condition> m_condition ;
     double m_globalT0 ;
@@ -320,7 +318,7 @@ public:
 
   /** get the calibrationholder */
   const Calibration* globalCalibration() const {
-    return m_calibration.get() ;
+    return m_calibration.get_ptr() ;
   }
 
   /** get the global T0 offset */
@@ -352,7 +350,7 @@ private:
   double m_maxDriftTime = 0.;           ///< maximum drift time
   double m_maxDriftTimeCor = 0.;        ///< magn. correction on maximum drift time
   double m_deadTime = 0.;               ///< deadtime
-  std::unique_ptr<Calibration> m_calibration;     ///< holder for global calibration parameters (e.g. t0)
+  boost::optional<Calibration> m_calibration;     ///< holder for global calibration parameters (e.g. t0)
 };
 
 // -----------------------------------------------------------------------------
