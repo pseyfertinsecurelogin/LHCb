@@ -17,6 +17,8 @@
  desc   = "@brief The energy deposition for given cell"
  id     = "&CLID_CaloDigit;"
  author = "Vanya Belyaev Ivan.Belyaev@itep.ru"
+ final = "TRUE"
+ defaultdestructor="FALSE"
 >
 <desc> *
  *

@@ -1,40 +1,40 @@
-#ifndef L0DUFROMRAWALG_H 
+#ifndef L0DUFROMRAWALG_H
 #define L0DUFROMRAWALG_H 1
 
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 //Base
-#include "L0Base/L0FromRawBase.h" 
+#include "L0Base/L0FromRawBase.h"
 
 // Interfaces
 #include "L0Interfaces/IL0DUFromRawTool.h"
 
 
 /** @class L0DUFromRawAlg L0DUFromRawAlg.h
- *  
- * Decode L0DU rawBank 
- * Produce L0DUReport on TES  
+ *
+ * Decode L0DU rawBank
+ * Produce L0DUReport on TES
  * ReBuilt L0ProcessorData from L0DU rawBank
- * 
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2007-10-25
  */
 class L0DUFromRawAlg : public L0FromRawBase {
-public: 
+public:
   /// Standard constructor
   L0DUFromRawAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~L0DUFromRawAlg( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 protected:
 
   void compareReports();
-  
+
 private:
   std::string m_L0DUReportLocation;
   std::string m_procDataLocation   ;

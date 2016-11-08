@@ -26,7 +26,7 @@ namespace LHCb {
   class MuonTileID;
 }
 
-class MuonLayout : public IMuonLayout {
+class MuonLayout final : public IMuonLayout {
 
 public:
   /// Default constructor
@@ -41,13 +41,10 @@ public:
   */
   MuonLayout(std::pair<unsigned int, unsigned int> xygrid);
 
-  /// Destructor
-  virtual ~MuonLayout();
-
   /// Accessor to MuonLayout grid corresponding to the given MuonTileID
   /// reimplemented from IMuonLayout
-  virtual std::pair<unsigned int, unsigned int>
-          grid(const  LHCb::MuonTileID&) const {
+  std::pair<unsigned int, unsigned int>
+          grid(const  LHCb::MuonTileID&) const override {
     return std::make_pair(xGrid(),yGrid());
   }
 
@@ -63,7 +60,7 @@ public:
       @param pad   :  tile defining the area covered
   */
 
-  virtual std::vector<LHCb::MuonTileID> tiles(const LHCb::MuonTileID& pad) const;
+  std::vector<LHCb::MuonTileID> tiles(const LHCb::MuonTileID& pad) const override;
 
   /** find a vector of MuonTileID's defined in terms of this MuonLayout
       which are touched by an area around a given MuonTileID defined
@@ -74,36 +71,36 @@ public:
       @param areaY : limits of the search area in Y
   */
 
-  virtual std::vector<LHCb::MuonTileID>
-          tilesInArea(const LHCb::MuonTileID& pad, int areaX, int areaY) const;
+  std::vector<LHCb::MuonTileID>
+  tilesInArea(const LHCb::MuonTileID& pad, int areaX, int areaY) const override;
 
   /// returns a vector of its MuonTileID's.
   /// Implementation of the IMuonLayout	interface
-  virtual std::vector<LHCb::MuonTileID> tiles() const;
+  std::vector<LHCb::MuonTileID> tiles() const override;
 
   /** returns a vector of its MuonTileID's in a given quarter
 
       @param quarter : the quarter number to look into
   */
-  virtual std::vector<LHCb::MuonTileID> tiles(int quarter) const;
+  std::vector<LHCb::MuonTileID> tiles(int quarter) const override;
 
   /** returns a vector of its MuonTileID's in a given quarter and region
 
       @param quarter : the quarter number to look into
       @param region : the region number to look into
   */
-  virtual std::vector<LHCb::MuonTileID> tiles(int quarter, int region) const;
+  std::vector<LHCb::MuonTileID> tiles(int quarter, int region) const override;
 
   /// find a tile containing the argument tile
-  virtual LHCb::MuonTileID contains(const LHCb::MuonTileID& pad) const;
+  LHCb::MuonTileID contains(const LHCb::MuonTileID& pad) const override;
 
   /// Get tiles touched by pad defined in terms of pregion region number
-  virtual std::vector<LHCb::MuonTileID>
-          tilesInRegion(const LHCb::MuonTileID& pad, int pregion) const;
+  std::vector<LHCb::MuonTileID>
+  tilesInRegion(const LHCb::MuonTileID& pad, int pregion) const override;
 
   /// find all the MuonTileID's which are neighbours of the argument tile
-  virtual std::vector<LHCb::MuonTileID>
-          neighbours(const LHCb::MuonTileID& pad) const;
+  std::vector<LHCb::MuonTileID>
+  neighbours(const LHCb::MuonTileID& pad) const override;
 
   /** find all the MuonTileID's which are neighbours of the argument tile
       in the specified direction.
@@ -111,8 +108,8 @@ public:
       @param   dirX  horizontal direction in which to look for neighbours
       @param   dirY  vertical direction in which to look for neighbours
   */
-  virtual std::vector<LHCb::MuonTileID>
-          neighbours(const LHCb::MuonTileID& pad, int dirX, int dirY) const;
+  std::vector<LHCb::MuonTileID>
+  neighbours(const LHCb::MuonTileID& pad, int dirX, int dirY) const override;
 
   /** find all the MuonTileID's which are neighbours of the argument tile
       in the specified direction.
@@ -121,9 +118,8 @@ public:
       @param   dirY  vertical direction in which to look for neighbours
       @param   depth depth of the band in which to look for neighbours
   */
-  virtual std::vector<LHCb::MuonTileID>
-          neighbours(const LHCb::MuonTileID& pad, int dirX, int dirY,
-					                                                  int depth ) const;
+  std::vector<LHCb::MuonTileID>
+  neighbours(const LHCb::MuonTileID& pad, int dirX, int dirY, int depth ) const override;
 
   /** find all the MuonTileID's which are neighbours of the argument tile
       in the specified direction. This version takes into account that
@@ -135,12 +131,12 @@ public:
       @param   depthX depth of the band in which to look for neighbours
       @param   depthY depth of the band in which to look for neighbours
   */
-  virtual std::vector<LHCb::MuonTileID>
-          neighboursInArea(const LHCb::MuonTileID& pad, int dirX, int dirY,
-                                            int depthX, int depthY ) const;
+  std::vector<LHCb::MuonTileID>
+  neighboursInArea(const LHCb::MuonTileID& pad, int dirX, int dirY,
+                                    int depthX, int depthY ) const override;
 
   /// check if the given MuonTileID is valid for this layout
-  virtual bool isValidID(const LHCb::MuonTileID& mt) const;
+  bool isValidID(const LHCb::MuonTileID& mt) const override;
 
   /// check if the layout itself is defined
   bool isDefined() const;

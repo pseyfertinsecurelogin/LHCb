@@ -47,11 +47,8 @@ public:
                               const std::string& name,
                               const IInterface* parent );
 
-  /// Destructor
-  virtual ~ParticlesAndVerticesMapper();
-
   /// Initialize the tool instance.
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
 public:
 
@@ -60,21 +57,21 @@ public:
    *
    *  @param incident The incident identifier
    */
-  void handle( const Incident& incident );
+  void handle( const Incident& incident ) override;
 
 public:
 
   /** Returns the correctly configured and name instance of the
    *  Particles and Vertices unpacker, for the given path
    */
-  virtual Gaudi::Utils::TypeNameString algorithmForPath(const std::string &path);
+  Gaudi::Utils::TypeNameString algorithmForPath(const std::string &path) override;
 
 public:
 
   /** Instruct the DataOnDemandSvc to create DataObjects for the
    *  intermediate levels of a path we can handle.
    */
-  virtual std::string nodeTypeForPath(const std::string &path);
+  std::string nodeTypeForPath(const std::string &path) override;
 
 private:
 
@@ -105,7 +102,7 @@ private:
 
   /// Unpacker class type
   std::string m_unpackerType;
-  
+
   /// Outputlevel for unpackers created
   int m_unpackersOutputLevel;
 

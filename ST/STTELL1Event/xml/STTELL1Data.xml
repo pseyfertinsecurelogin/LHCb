@@ -5,13 +5,13 @@
   <package name='STTELL1Event'>
   <!-- location = address in TES -->
   <!-- classId = identifier -->
-   
+
     <class name='STTELL1Data'
-	   id='9010' 
-	   author='Matthew Needham' 
+	   id='9010'
+	   author='Matthew Needham'
 	   desc='ADCs from a TELL1 board'
            serializers = 'FALSE'>
-      <base name='KeyedObject&lt; int &gt; '/>  
+      <base name='KeyedObject&lt; int &gt; '/>
       <location name="ITFull"   place="Raw/IT/Full"   />
       <location name="TTFull"   place="Raw/TT/Full"   />
       <location name="UTFull"   place="Raw/UT/Full"   />
@@ -33,14 +33,14 @@
       <location name="ITEmulated"   place="Raw/IT/Emulated"   />
       <location name="TTEmulated"   place="Raw/TT/Emulated"   />
       <location name="UTEmulated"   place="Raw/UT/Emulated"   />
-      
+
       &KeyedContainer;
       <import name='Event/STTELL1EventInfo' />
       <typedef desc = "2-d data vector of signed int typedef"
        type =  "std::vector &lt;  std::vector &lt; signed int &gt; &gt;"
        def = "Data"
        access = "PUBLIC " />
-      
+
       <typedef desc = "Vector of STTELL1EventInfo typedef"
        type =  "SmartRefVector&lt;LHCb::STTELL1EventInfo&gt;"
        def = "Info"
@@ -66,78 +66,78 @@
         initList = 'KeyedObject&lt;int&gt;(numberOfTELL1), m_data(), m_header()'>
       </constructor>
 
-      <attribute 
+      <attribute
         type ='Data'
         name = 'data'
         desc = 'vector of raw data'
         nonconstaccessor = 'TRUE'
-      /> 
-      
-       <attribute 
+      />
+
+       <attribute
         type ='Data'
         name = 'header'
         desc = 'vector of headers'
-      /> 
+      />
 
 
-          
-     <attribute 
+
+     <attribute
         type ='std::vector&lt; unsigned int &gt;'
         name = 'sentPPs'
         desc = 'which pp sent data'
-      /> 
+      />
 
 
-     <method 
+     <method
         type =' std::vector &lt; const LHCb::STTELL1EventInfo*  &gt;'
         name = 'validData'
         desc = 'data from pps that are read out'
         const = 'TRUE'
-      /> 
-     
-          
-       <relation 
-       name="eventInfo" 
-       multiplicity="M" 
+      />
+
+
+       <relation
+       name="eventInfo"
+       multiplicity="M"
        type="LHCb::STTELL1EventInfo"
        desc= "Vector of 4 Event Info block (1 per PP)"
        />
-     
-      <method 
+
+      <method
           name = "fillStream"
           desc = "Print in a human readable way"
           type = "std::ostream&amp;"
-          virtual = "FALSE"
+          override = "TRUE"
           const = "TRUE">
           <arg type = "std::ostream" name  = "s" />
       </method>
-        
+
       <method type = 'unsigned int'
               name = 'dataSize'
               desc = 'size of TELL1 data'
               const = 'TRUE'>
         <code> return m_data.size();  </code>
       </method>
-      
-      
+
+
       <method type = 'unsigned int'
       	      name = 'TELL1ID'
 	      desc = 'Returns the TELL1D id'
-	      const = 'TRUE'> 
+	      const = 'TRUE'>
       <code>  return key();
       </code>
       </method>
-      
+
       <method type = 'const std::vector &lt; signed int &gt; &amp;'
       	      name = 'beetleData'
 	      argList = 'unsigned char beetleID'
 	      desc = 'Returns the data of a single beetle'
-	      const = 'TRUE'> 
+	      const = 'TRUE'>
       <code>  return m_data[beetleID];
       </code>
       </method>
 
-    </class>   
- 
+    </class>
+
   </package>
 </gdd>

@@ -25,9 +25,8 @@ public:
   inline static  const CLID& classID() {
     return CLID_MuonODEBoard;
   }
-  /// Workaround to prevent hidden base class function
-  inline StatusCode initialize() { return Condition::initialize(); }
 
+  using Condition::initialize;
   void initialize(long number,long region);
 
   using Condition::update;
@@ -36,20 +35,20 @@ public:
                     std::vector<long> quadrant);
 
   StatusCode addTSName(std::string name);
-  inline long getODESerialNumber(){return m_ODENumber;};
-  inline long getTSLayoutX(){return m_TSLayoutX;};
-  inline long getTSLayoutY(){return m_TSLayoutY;};
-  inline long getTSNumber(){return m_TSNumber;};
-  inline long getTSGridX(int i) {return m_TSGridX[i];};
-  inline long getTSGridY(int i) {return m_TSGridY[i];};
-  inline long getTSQuadrant(int i) {return m_TSQuadrant[i];};
+  inline long getODESerialNumber(){return m_ODENumber;}
+  inline long getTSLayoutX(){return m_TSLayoutX;}
+  inline long getTSLayoutY(){return m_TSLayoutY;}
+  inline long getTSNumber(){return m_TSNumber;}
+  inline long getTSGridX(int i) {return m_TSGridX[i];}
+  inline long getTSGridY(int i) {return m_TSGridY[i];}
+  inline long getTSQuadrant(int i) {return m_TSQuadrant[i];}
   inline std::string getTSName(int i)  {return m_TSName[i];}
-  inline void setRegion(long i)  {  m_region=i;};
-  inline long region(){ return m_region;};
+  inline void setRegion(long i)  {  m_region=i;}
+  inline long region(){ return m_region;}
   void setQuadrants();
   bool isQuadrantContained(long quadrant);
   bool isTSContained(LHCb::MuonTileID TSTile);
-  void setECSName(std::string name){m_ECSName=name;};
+  void setECSName(std::string name){m_ECSName=name;}
 
   inline std::string ECSName()  {return m_ECSName;}
 

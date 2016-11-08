@@ -5,10 +5,6 @@
 #include <algorithm>
 
 // From Gaudi
-#include "GaudiKernel/Bootstrap.h"
-#include "GaudiKernel/PropertyMgr.h"
-#include "GaudiKernel/IJobOptionsSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 #include "GaudiKernel/SystemOfUnits.h"
 
@@ -16,6 +12,7 @@
 
 // Local
 #include "VeloDet/DeVelo.h"
+#include "getOutputLevel.h"
 
 /** @file DeVelo.cpp
  *
@@ -50,26 +47,16 @@ const CLID& DeVelo::clID () const { return DeVelo::classID() ; }
 // ============================================================================
 StatusCode DeVelo::initialize() {
 
-  // Trick from old DeVelo to set the output level
-  {
-      PropertyMgr pmgr;
-      int outputLevel=0;
-      pmgr.declareProperty("OutputLevel", outputLevel);
-      auto jobSvc = Gaudi::svcLocator()->service<IJobOptionsSvc>("JobOptionsSvc");
-      if (!jobSvc) return StatusCode::FAILURE;
-      auto sc = jobSvc->setMyProperties("DeVelo", &pmgr);
-      if (!sc) return StatusCode::FAILURE;
-      if ( outputLevel > 0 ) {
-        msgSvc()->setOutputLevel("DeVelo", outputLevel);
-      }
-  }
-  m_debug   = (msgSvc()->outputLevel("DeVelo") == MSG::DEBUG  ) ;
-  m_verbose = (msgSvc()->outputLevel("DeVelo") == MSG::VERBOSE) ;
-  if( m_verbose ) m_debug = true;
+  auto sc = initOutputLevel(msgSvc(), "DeVelo");
+  if (!sc) return sc;
+
+  const auto lvl = msgSvc()->outputLevel("DeVelo");
+  m_debug   = lvl <= MSG::DEBUG;
+  m_verbose = lvl <= MSG::VERBOSE;
 
   if( m_debug ) msg() << MSG::DEBUG << "Initialising DeVelo " << endmsg;
   // Initialise the detector element
-  auto sc = DetectorElement::initialize();
+  sc = DetectorElement::initialize();
   if( sc.isFailure() ) {
     msg() << MSG::ERROR << "Failure to initialize DetectorElement" << endmsg;
     return sc ;

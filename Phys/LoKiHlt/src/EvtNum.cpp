@@ -31,9 +31,6 @@
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date   2012-02-13
  * 
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */ 
 // =============================================================================
 namespace Gaudi 
@@ -290,9 +287,8 @@ LoKi::Numbers::RunEvtList::RunEvtList
 ( const LoKi::Numbers::RunEvtList::runevt_list& lst )  
   : m_list ( lst )  
 {
-  std::sort ( m_list.begin() , m_list.end() ) ;
-  runevt_list::iterator i = std::unique( m_list.begin() , m_list.end() ) ;
-  m_list.erase ( i ,  m_list.end() ) ;
+  std::sort( m_list.begin() , m_list.end() ) ;
+  m_list.erase( std::unique( m_list.begin() , m_list.end() ),  m_list.end() ) ;
 }
 // =============================================================================
 // RunEvtList

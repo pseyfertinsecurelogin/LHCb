@@ -52,19 +52,12 @@ namespace LoKi
       ( const int          key                 , 
         const std::string& location     = ""   , 
         const bool         useRootInTES = true ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~HasRecSummary () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  HasRecSummary* clone () const ;
+      HasRecSummary* clone () const override;
       /// MANDATORY: the only one essential method 
-      virtual  result_type operator() ( /* argument v */ ) const ;
+      result_type operator() ( /* argument v */ ) const override;
       /// OPTIONAL: nice printout 
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      HasRecSummary () ;                    // default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
@@ -96,19 +89,12 @@ namespace LoKi
         const int          bad                  ,  
         const std::string& location     = ""    , 
         const bool         useRootInTES = true  ) ;
-      /// MANDATORY: virtual destructor 
-      virtual ~RecSummary () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  RecSummary* clone () const ;
+      RecSummary* clone () const override;
       /// MANDATORY: the only one essential method 
-      virtual  result_type operator() ( /* argument v */ ) const ;
+      result_type operator() ( /* argument v */ ) const override;
       /// OPTIONAL: nice printout 
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      RecSummary () ;                       // default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================

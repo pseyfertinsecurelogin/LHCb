@@ -1,5 +1,5 @@
 // $Id: L0DUReportMonitor.h,v 1.7 2010-01-20 16:30:58 odescham Exp $
-#ifndef L0DUREPORTMONITOR_H 
+#ifndef L0DUREPORTMONITOR_H
 #define L0DUREPORTMONITOR_H 1
 
 // Include files
@@ -12,21 +12,21 @@
 #include <TAxis.h>
 
 /** @class L0DUReportMonitor L0DUReportMonitor.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2007-10-25
  */
 class L0DUReportMonitor : public L0AlgBase {
-public: 
+public:
   /// Standard constructor
   L0DUReportMonitor( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~L0DUReportMonitor( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 
@@ -34,7 +34,7 @@ private:
   typedef std::map<std::string , int>                              SeqMap;
   typedef std::map<std::string , double>                           CounterMap;
   typedef std::map<unsigned int, std::map<std::string , double> >  CounterMapMap;
-  
+
   SeqMap m_condSeq;
   SeqMap m_chanSeq;
   SeqMap m_trigSeq;

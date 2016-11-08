@@ -36,15 +36,11 @@ TestTimeDecoderOdin::TestTimeDecoderOdin( const std::string& type,
   declareProperty("RunNumberStep", m_runNumberStep=1);
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-TestTimeDecoderOdin::~TestTimeDecoderOdin() {}
-
 //=========================================================================
 //  Return the time of current event
 //=========================================================================
-Gaudi::Time TestTimeDecoderOdin::getTime ( ) const {
+Gaudi::Time TestTimeDecoderOdin::getTime ( ) const 
+{
 
   // As a real EventTimeDecoder, the event time can be retrieved only in RUNNING
   // state, i.e. when the event can be loaded.
@@ -56,11 +52,13 @@ Gaudi::Time TestTimeDecoderOdin::getTime ( ) const {
 
   LHCb::ODIN *odin = new LHCb::ODIN();
 
-  if (first) {
+  if ( UNLIKELY(first) )
+  {
     odin->setRunNumber(m_currentRun);
     first = false;
   }
-  else {
+  else
+  {
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "Firing " << IncidentType::RunChange << " incident. Old run="
               << m_currentRun;

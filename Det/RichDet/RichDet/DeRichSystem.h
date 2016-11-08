@@ -18,9 +18,9 @@
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichSmartID.h"
 
-// RichKernel
-#include "RichKernel/RichDAQDefinitions.h"
-#include "RichKernel/RichMap.h"
+// RichUtils
+#include "RichUtils/RichDAQDefinitions.h"
+#include "RichUtils/RichMap.h"
 
 // local
 #include "RichDet/RichDetConfigType.h"
@@ -53,7 +53,7 @@ public:
   /** Retrieves reference to class identifier
    *  @return the class identifier for this class
    */
-  const CLID& clID() const { return classID(); }
+  const CLID& clID() const override { return classID(); }
 
   /** Retrieves reference to class identifier
    *  @return the class identifier for this class
@@ -65,7 +65,7 @@ public:
    *  @retval StatusCode::FAILURE Initialisation failed, program should
    *  terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
 public:
 
@@ -376,7 +376,7 @@ private: // data
   L1HIDToCopyN m_l1H2CopyN;
 
   /// Rich1 & Rich2 detector elements
-  mutable std::map<Rich::DetectorType, DetectorElement*> m_deRich = 
+  mutable std::map<Rich::DetectorType, DetectorElement*> m_deRich =
     { { {Rich::Rich1,nullptr}, {Rich::Rich2,nullptr} } };
 
   /// Location of RICH Numbering schemes in Conditions DB

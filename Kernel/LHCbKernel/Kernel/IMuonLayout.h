@@ -22,9 +22,6 @@ class IMuonLayout {
 
 public:
 
-  /// destructor
-  virtual ~IMuonLayout () { }
-
   /** Accessor to the layout grid values for a given MuonTileID
       @param   id   MuonTileID of the tile for which the grid is requested
       @return   std::pair<int,int> for the two grid values in X and in Y

@@ -1,6 +1,3 @@
-// $Id$
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision$ 
 // ============================================================================
 #ifndef KERNEL_SYMBOLS_H 
 #define KERNEL_SYMBOLS_H 1
@@ -138,7 +135,7 @@ namespace Decays
     /// the default constructor is protected:
     Symbols  () ;
     /// the destructor is protected 
-    virtual ~Symbols () ;
+    virtual ~Symbols () = default;
     // ========================================================================    
   private:
     // ========================================================================    

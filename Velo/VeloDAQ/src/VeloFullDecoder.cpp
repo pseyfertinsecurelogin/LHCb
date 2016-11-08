@@ -1,4 +1,3 @@
-// $Id: VeloFullDecoder.cpp,v 1.3 2008-03-18 08:40:15 krinnert Exp $
 // Include files
 
 // local
@@ -22,24 +21,15 @@ VeloFullDecoder::VeloFullDecoder(const int decoderType)
   decoderIni(decoderType);
 }
 //=============================================================================
-// Destructor
-//=============================================================================
-VeloFullDecoder::~VeloFullDecoder() {}
-//=============================================================================
-void VeloFullDecoder::decode(VeloFullBank* inData, VeloTELL1::sdataVec& decodedData)
+void VeloFullDecoder::decode(VeloFullBank* inData, VeloTELL1::sdataVec& decodedData) const
 {
-  dataVec::iterator secIt;
-  unsigned int decodedWord=0;
   decodedData.clear();
-    //                                             
-  int NumberOfPPFPGA=VeloTELL1::NumberOfPPFPGA;
-  int SectionsPerBlock=VeloTELL1::SectionsPerBlock;
-  //                                          
-  for(int aBlock=0; aBlock<NumberOfPPFPGA; aBlock++){
-    for(int aSection=0; aSection<SectionsPerBlock; aSection++){
+  //
+  for(int aBlock=0; aBlock<VeloTELL1::NumberOfPPFPGA; aBlock++){
+    for(int aSection=0; aSection<VeloTELL1::SectionsPerBlock; aSection++){
       dataVec section=inData->getSection(aBlock, aSection);
       for(int stream=0; stream<VeloTELL1::DataStreamPerSection; stream++){
-        // skip the empty space in C section                    
+        // skip the empty space in C section
         if(!((aSection==EmptyData)&&(stream==EmptyData))){
           int ADCBitShift=stream*VeloTELL1::ADCShift;
           for(int aLink=0; aLink<VeloTELL1::ALinkPerDataStream; aLink++){
@@ -47,23 +37,13 @@ void VeloFullDecoder::decode(VeloFullBank* inData, VeloTELL1::sdataVec& decodedD
             int beginDecode=m_initialShift+analogChanShift;
             int endDecode=m_wordsToDecode+beginDecode;
             int count=0;
-            if(aBlock==10&&aSection==0&&stream==0&&aLink==0){
-              std::cout<< "chanShift: " << analogChanShift 
-                << ", beginDecode: " << beginDecode
-                << ", endDecode: " << endDecode 
-                << ", steram: " << stream <<std::endl;
-            }
             //
-            for(secIt=(section.begin()+beginDecode);
-                secIt!=(section.begin()+endDecode); ++secIt){
-              decodedWord=(((*secIt)>>ADCBitShift)&VeloTELL1::ADCMask);
+            for(auto secIt  = section.begin()+beginDecode;
+                     secIt != section.begin()+endDecode; ++secIt ){
+              unsigned int decodedWord=(((*secIt)>>ADCBitShift)&VeloTELL1::ADCMask);
               // from now on we must be prepared for negative values, hence
               // the cast to int.
               decodedData.push_back(static_cast<int>(decodedWord));
-              if(aBlock==10&&aSection==0&&stream==0&&aLink==0){
-                std::cout<< "counter: " << count << ", decoded ADC: "
-                  << decodedWord <<std::endl;
-              }
               count++;
             }
           } // loop over channels

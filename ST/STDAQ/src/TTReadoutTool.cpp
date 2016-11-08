@@ -20,8 +20,6 @@ TTReadoutTool::TTReadoutTool(const std::string& type,
                             const std::string& name,
                             const IInterface* parent)
   : STReadoutTool( type, name, parent)
-  , m_nRegionA(512)
-  , m_firstStation(512)
 {
   // constructor
 

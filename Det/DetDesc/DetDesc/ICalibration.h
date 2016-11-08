@@ -14,7 +14,7 @@
     @date December 2001
 *///--------------------------------------------------------------------------
 
-class ICalibration : virtual public IConditionInfo
+struct ICalibration : virtual IConditionInfo
 {
 
 };

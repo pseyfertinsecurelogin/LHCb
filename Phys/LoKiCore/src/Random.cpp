@@ -251,10 +251,6 @@ LoKi::Random::Rand::Rand ( const unsigned int seed )
   if ( 0 != seed ) { srand ( seed ) ; } // reset the seed
 }
 // ============================================================================
-// virtual and protected desctrustor
-// ============================================================================
-LoKi::Random::Rand::~Rand () { }
-// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::Random::Rand*
@@ -305,10 +301,6 @@ LoKi::Random::Blind::Blind ( const std::string& seed )
   , m_max    (  1   )
 {}
 // ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::Random::Blind::~Blind(){}
-// ============================================================================
 // MANDATORY: clone method ( "virtual construtor")
 // ============================================================================
 LoKi::Random::Blind*
@@ -343,7 +335,6 @@ LoKi::Random::XBlind::XBlind
   const double       minv ,
   const double       maxv )
   : LoKi::AuxFunBase ( std::tie ( seed , minv , maxv ) )
-  , LoKi::BasicFunctors<double>::Function()
   , m_blind  ( seed , minv , maxv )
 {}
 // =============================================================================
@@ -351,13 +342,8 @@ LoKi::Random::XBlind::XBlind
 // =============================================================================
 LoKi::Random::XBlind::XBlind ( const std::string& seed )
   : LoKi::AuxFunBase ( std::tie ( seed ) )
-  , LoKi::BasicFunctors<double>::Function()
   , m_blind  ( seed )
 {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-LoKi::Random::XBlind::~XBlind(){}
 // ============================================================================
 // MANDATORY: clone method ( "virtual construtor")
 // ============================================================================

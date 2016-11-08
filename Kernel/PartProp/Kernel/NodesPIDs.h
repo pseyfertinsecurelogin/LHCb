@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef PARTPROP_NODESPID_H
 #define PARTPROP_NODESPID_H 1
@@ -7,6 +6,7 @@
 // ============================================================================
 // PartProp
 // ============================================================================
+#include "Kernel/IParticlePropertySvc.h"
 #include "Kernel/Nodes.h"
 // ============================================================================
 /** @file  Kernel/NodePIDs.h
@@ -32,19 +32,16 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Any() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Any* clone () const  ;
+      Any* clone () const   override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& /* p */ ) const ;
+      bool operator() ( const LHCb::ParticleID& /* p */ ) const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       /// MANDATORY: check the validity
-      virtual bool valid() const ;
+      bool valid() const  override;
       /// MANDATORY: the proper validation of the node
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -66,20 +63,17 @@ namespace Decays
       Pid ( const LHCb::ParticleID&        item ) ;
       /// constructor from Particle name
       Pid ( const std::string&             item ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Pid () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Pid* clone () const  ;
+      Pid* clone () const   override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return check ( pid ) ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       /// MANDATORY: check the validity
-      virtual bool valid () const ;
+      bool valid () const  override;
       /// MANDATORY: the proper validation of the node
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -120,15 +114,13 @@ namespace Decays
       CC ( const std::string&                item ) ;
       /// constructor from node
       CC ( const Decays::Nodes::Pid& pid  ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~CC () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  CC* clone () const ;
+      CC* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return pid.abspid() == item().pid().abspid() ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -141,15 +133,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Lepton() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Lepton* clone () const ;
+      Lepton* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return pid.isLepton() ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -162,15 +152,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Nu() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Nu* clone () const ;
+      Nu* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return pid.isLepton() && ( 0 == pid.threeCharge() ) ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -183,15 +171,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Ell() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Ell* clone () const ;
+      Ell* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return pid.isLepton() && ( 0 != pid.threeCharge() ) ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -204,15 +190,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~EllPlus() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  EllPlus* clone () const ;
+      EllPlus* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return pid.isLepton() && ( 0 < pid.threeCharge() ) ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -225,15 +209,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~EllMinus() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  EllMinus* clone () const ;
+      EllMinus* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return pid.isLepton() && ( 0 > pid.threeCharge() ) ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -246,15 +228,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Hadron() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Hadron* clone () const ;
+      Hadron* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return pid.isHadron() ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -267,15 +247,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Meson() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Meson* clone () const ;
+      Meson* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return pid.isMeson() ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -288,15 +266,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Baryon() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Baryon* clone () const ;
+      Baryon* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return pid.isBaryon() ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -309,15 +285,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Charged () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Charged* clone () const ;
+      Charged* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return 0 != pid.threeCharge() ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -330,15 +304,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Positive () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Positive* clone () const ;
+      Positive* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return 0 < pid.threeCharge() ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -351,15 +323,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Negative () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Negative* clone () const  ;
+      Negative* clone () const   override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return 0 > pid.threeCharge() ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -372,15 +342,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Neutral() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Neutral* clone () const ;
+      Neutral* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return 0 == pid.threeCharge() ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -393,15 +361,13 @@ namespace Decays
     {
     public:
       // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~Nucleus()  ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Nucleus* clone () const ;
+      Nucleus* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return pid.isNucleus() ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -416,15 +382,13 @@ namespace Decays
       // ======================================================================
       /// constructor from the quark
       HasQuark ( LHCb::ParticleID::Quark quark ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~HasQuark() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  HasQuark* clone () const  ;
+      HasQuark* clone () const   override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return pid.hasQuark ( m_quark  ) ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -453,32 +417,24 @@ namespace Decays
       // ======================================================================
       /// constructor from the 2J+1
       JSpin ( const int spin )  ;
-      /// MANDATORY: virtual destructor
-      virtual ~JSpin() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  JSpin* clone () const ;
+      JSpin* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return spin() == pid.jSpin () ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// valid only for positive spin-values
-      virtual bool valid() const ;
+      bool valid() const  override;
       /// MANDATORY: the proper validation of the node
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* /* svc */ ) const ;
+      StatusCode validate ( const LHCb::IParticlePropertySvc* /* svc */ ) const  override;
       // ======================================================================
     public:
       // ======================================================================
       int spin() const { return m_spin ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      JSpin() ;                          // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -498,20 +454,13 @@ namespace Decays
       // ======================================================================
       /// constructor from the 2S+1
       SSpin ( const int spin )  ;
-      /// MANDATORY: virtual destructor
-      virtual ~SSpin() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  SSpin* clone () const ;
+      SSpin* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return spin() == pid.sSpin () ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      SSpin() ;                          // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -526,20 +475,13 @@ namespace Decays
       // ======================================================================
       /// constructor from the 2L+1
       LSpin ( const int spin )  ;
-      /// MANDATORY: virtual destructor
-      virtual ~LSpin() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  LSpin* clone () const ;
+      LSpin* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const
+      bool operator() ( const LHCb::ParticleID& pid ) const override
       { return spin() == pid.lSpin () ; }
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      LSpin() ;                          // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -556,22 +498,19 @@ namespace Decays
       CTau ( const double                      low      ,
              const double                      high     ,
              const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY : virtual destructor
-      virtual ~CTau() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  CTau* clone() const ;
+      CTau* clone() const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const ;
+      bool operator() ( const LHCb::ParticleID& pid ) const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       /// MANDATORY: check the validity
-      virtual bool valid () const ;
+      bool valid () const  override;
       /// MANDATORY: the proper validation of the node
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -583,11 +522,6 @@ namespace Decays
       double high () const { return m_high ; }
       // ======================================================================
       StatusCode setService ( const LHCb::IParticlePropertySvc* svc ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      CTau() ;                           // the default constructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -632,12 +566,10 @@ namespace Decays
                     const LHCb::IParticlePropertySvc* svc  = 0 ) ;
       /// constructor service
       ShortLived_ ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~ShortLived_() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  ShortLived_* clone() const ;
+      ShortLived_* clone() const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -646,21 +578,18 @@ namespace Decays
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-05-11
      */
-    class GAUDI_API LongLived_ : public CTau
+    struct GAUDI_API LongLived_ : CTau
     {
-    public:
       // ======================================================================
       /// constructor with high edge and service
       LongLived_ ( const double                      high     ,
                    const LHCb::IParticlePropertySvc* svc  = 0 ) ;
       /// constructor service
       LongLived_ ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~LongLived_() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  LongLived_* clone() const ;
+      LongLived_* clone() const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -675,12 +604,10 @@ namespace Decays
       // ======================================================================
       /// constructor service
       Stable ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Stable() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Stable* clone() const ;
+      Stable* clone() const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -695,14 +622,12 @@ namespace Decays
       // ======================================================================
       /// constructor service
       StableCharged ( const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~StableCharged () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  StableCharged* clone() const ;
+      StableCharged* clone() const  override;
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const ;
+      bool operator() ( const LHCb::ParticleID& pid ) const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -719,17 +644,15 @@ namespace Decays
       Mass ( const double                      low      ,
              const double                      high     ,
              const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY : virtual destructor
-      virtual ~Mass() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Mass* clone() const ;
+      Mass* clone() const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const ;
+      bool operator() ( const LHCb::ParticleID& pid ) const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       /// the default constructor is disabled
@@ -749,15 +672,13 @@ namespace Decays
       /// constructor from mass-range
       Light ( const double                      high     ,
               const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY : virtual destructor
-      virtual ~Light() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Light* clone() const ;
+      Light* clone() const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       /// the default constructor is disabled
@@ -777,15 +698,13 @@ namespace Decays
       /// constructor from mass-range
       Heavy ( const double                      low      ,
               const LHCb::IParticlePropertySvc* svc  = 0 ) ;
-      /// MANDATORY : virtual destructor
-      virtual ~Heavy() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Heavy* clone() const ;
+      Heavy* clone() const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     private:
       /// the default constructor is disabled
@@ -800,22 +719,19 @@ namespace Decays
       /// the constructor from the symbol
       Symbol ( const std::string& sym ) ;
       // =======================================================================
-      /// MANDATORY : virtual destructor
-      virtual ~Symbol() ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Symbol* clone() const ;
+      Symbol* clone() const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: the only one essential method
-      virtual bool operator() ( const LHCb::ParticleID& pid ) const ;
+      bool operator() ( const LHCb::ParticleID& pid ) const  override;
       /// MANDATORY: the specific printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       /// MANDATORY: check the validity
-      virtual bool valid () const ;
+      bool valid () const  override;
       /// MANDATORY: the proper validation of the node
-      virtual StatusCode validate
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
       // ======================================================================
     private:
       // ======================================================================

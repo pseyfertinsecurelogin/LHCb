@@ -35,7 +35,7 @@ StatusCode MuonRec::initialize() {
 
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Initialise" << endmsg;
   m_muonDetector=getDet<DeMuonDetector>(DeMuonLocation::Default);
-  if(m_muonDetector==NULL)
+  if(!m_muonDetector)
     return Error("Could not read /dd/Structure/LHCb/DownstreamRegion/Muon from TDS");
 
   m_NStation = 0;
@@ -61,10 +61,6 @@ StatusCode MuonRec::initialize() {
   sc = prop->setProperty( "RootInTES", rootInTES() );
   if( sc.isFailure() )
     return Error( "Unable to set RootInTES property of MuonRawBuffer", sc );
-  //    sc = prop->setProperty( "GlobalTimeOffset", globalTimeOffset() );
-  // if( sc.isFailure() )
-  // return Error("Unable to set GlobalTimeOffset property of MuonRawBuffer",
-  //                 sc );
 
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug()<<" station number "<<m_NStation<<" "<<m_NRegion <<endmsg;
@@ -81,7 +77,7 @@ StatusCode MuonRec::execute() {
 
   // need to loop over input vector of MuonDigits
   // and make output vectors of MuonCoords one for each station
-  std::vector<std::pair<LHCb::MuonTileID,unsigned int > > decoding;
+  std::vector<std::pair<LHCb::MuonTileID,unsigned int>> decoding;
 
   StatusCode sc = m_muonBuffer->getTileAndTDC(decoding);
   if(sc.isFailure()) return Error( "Error in decoding the muon raw data " );
@@ -89,11 +85,9 @@ StatusCode MuonRec::execute() {
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
     debug()<<decoding.size()<<" digits in input "<<endmsg;
 
-  int station;
   MuonCoords *coords = new MuonCoords;
-  for( station = 0 ; station < m_NStation ; station++ ){
-    int region;
-    for( region = 0 ; region < m_NRegion ; region++ ){
+  for( int station = 0 ; station < m_NStation ; station++ ){
+    for( int region = 0 ; region < m_NRegion ; region++ ){
 
       // get mapping of input to output from region
       // in fact we are reversing the conversion done in the digitisation
@@ -103,7 +97,7 @@ StatusCode MuonRec::execute() {
 
       if(1 == NLogicalMap){
         // straight copy of the input + making SmartRefs to the MuonDigits
-        StatusCode sc = addCoordsNoMap(coords,decoding,station,region);
+        StatusCode sc = addCoordsNoMap(*coords,decoding,station,region);
         if(!sc.isSuccess()){
           error()
               << "Failed to map digits to coords in a one to one manner"
@@ -114,7 +108,7 @@ StatusCode MuonRec::execute() {
       }else{
         // need to cross the input strips to get output strips
         StatusCode sc =
-          addCoordsCrossingMap(coords,decoding,station,region);
+          addCoordsCrossingMap(*coords,decoding,station,region);
         if(!sc.isSuccess()){error()
               << "Failed to map digits to coords by crossing strips"
               << endmsg;
@@ -139,7 +133,6 @@ StatusCode MuonRec::finalize() {
   if(   m_Exccounter>0){
     info()<<" during the reconstruction there were problem with duplicated coords "<<endmsg;
     info()<<"The error occured " <<  m_Exccounter<<endmsg;
-
   }
 
   return GaudiAlgorithm::finalize();
@@ -148,9 +141,8 @@ StatusCode MuonRec::finalize() {
 //=============================================================================
 
 // Adding entries to coords 1 to 1 from digits, need to make the references
-StatusCode MuonRec::addCoordsNoMap(MuonCoords *coords,
-                                   std::vector< std::pair<LHCb::MuonTileID,
-                                   unsigned int> > & digits,
+StatusCode MuonRec::addCoordsNoMap(MuonCoords& coords,
+                                   const std::vector< std::pair<LHCb::MuonTileID, unsigned int> > & digits,
                                    int station,
                                    int region) const{
   for(auto iD = digits.begin() ; iD != digits.end() ; iD++ ){
@@ -175,7 +167,7 @@ StatusCode MuonRec::addCoordsNoMap(MuonCoords *coords,
 
       // as no change between digit and coord in this mapping key is the same
       try {
-        coords->insert( current.release(), pad );
+        coords.insert( current.release(), pad );
       } catch( const GaudiException& exc  ) {
 
         error() << "The error is caused by the duplication of  pad " <<pad<<endmsg;
@@ -187,10 +179,8 @@ StatusCode MuonRec::addCoordsNoMap(MuonCoords *coords,
   return StatusCode::SUCCESS;
 }
 
-StatusCode MuonRec::addCoordsCrossingMap(MuonCoords *coords,
-                                         std::vector<std::pair<LHCb::MuonTileID,
-                                         unsigned int > > &
-                                         digits,
+StatusCode MuonRec::addCoordsCrossingMap(MuonCoords& coords,
+                                         const std::vector<std::pair<LHCb::MuonTileID, unsigned int > > & digits,
                                          int station,
                                          int region) const {
 
@@ -211,16 +201,16 @@ StatusCode MuonRec::addCoordsCrossingMap(MuonCoords *coords,
   std::vector<std::pair<std::pair<MuonTileID,unsigned int>,bool> > typeOnes;
   std::vector<std::pair<std::pair<MuonTileID,unsigned int>,bool> > typeTwos;
   for(auto it = digits.begin() ; it != digits.end() ; it++ ){
-    if( (it->first).station() == static_cast<unsigned int>(station) &&
-        (it->first).region() == static_cast<unsigned int>(region) ){
-      if( (it->first).layout() == layoutOne ){
-        typeOnes.push_back(std::pair<std::pair<MuonTileID,unsigned int> ,bool>((*it),false));
-      }else if( (it->first).layout() == layoutTwo ){
-          typeTwos.push_back(std::pair<std::pair<MuonTileID,unsigned int> ,bool>((*it),false));
+    if( it->first.station() == static_cast<unsigned int>(station) &&
+        it->first.region()  == static_cast<unsigned int>(region) ) {
+      if( it->first.layout() == layoutOne ){
+        typeOnes.emplace_back(*it,false);
+      }else if( it->first.layout() == layoutTwo ){
+        typeTwos.emplace_back(*it,false);
       } else {
         error()
             << "MuonDigits in list are not compatable with expected shapes"
-            << (*it)<<endmsg;
+            << *it <<endmsg;
       }
     }
   }
@@ -230,20 +220,21 @@ StatusCode MuonRec::addCoordsCrossingMap(MuonCoords *coords,
   for(auto iOne = typeOnes.begin() ; iOne != typeOnes.end() ; iOne++ ){
     for(auto iTwo = typeTwos.begin() ; iTwo != typeTwos.end() ; iTwo++ ){
       // who said C++ did not make lovely transparent code?
-      MuonTileID pad = ((iOne->first).first).intercept((iTwo->first).first);
+      MuonTileID pad = iOne->first.first.intercept(iTwo->first.first);
       if(pad.isValid()){
         // have a pad to write out
         // make the coordinate to be added to coords
         auto current = std::unique_ptr<MuonCoord>(new MuonCoord());
         current->setUncrossed(false);
         current->setDigitTile({ iOne->first.first, iTwo->first.first });
-        current->setDigitTDC1((iOne->first).second);
-        current->setDigitTDC2((iTwo->first).second);
+        current->setDigitTDC1(iOne->first.second);
+        current->setDigitTDC2(iTwo->first.second);
 
         // as no change between digit and coord in this mapping key is the same
 
         try {
-          coords->insert( current.release(), pad );
+          coords.insert( current.get(), pad );
+          current.release();
         } catch( const GaudiException& exc  ) {
 
           error() << "The error is caused by the duplication of  pad " <<pad<<endmsg;
@@ -255,16 +246,16 @@ StatusCode MuonRec::addCoordsCrossingMap(MuonCoords *coords,
         iTwo->second = true;
 
         if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
-          verbose() << " Made an crossed pad " << pad
-                    << " from " << (iOne->first) << " and "
-                    << (iTwo->first) << endmsg;
+          verbose() << " Made a crossed pad " << pad
+                    << " from " << (iOne->first)
+                    << " and "  << (iTwo->first) << endmsg;
       }
     }
   }
 
   // now copy across directly all strips that have not yet been used
   for(auto iOne = typeOnes.begin() ; iOne != typeOnes.end() ; iOne++ ){
-    if(!(iOne->second)){
+    if(!(iOne->second)) {
       // no crossing map here
       MuonTileID pad = (iOne->first).first;
 
@@ -279,7 +270,8 @@ StatusCode MuonRec::addCoordsCrossingMap(MuonCoords *coords,
 
 
       try {
-        coords->insert( current.release(), pad );
+        coords.insert( current.get(), pad );
+        current.release();
       } catch( const GaudiException& exc  ) {
 
         error() << "The error is caused by the duplication of  pad " <<pad<<endmsg;
@@ -305,7 +297,7 @@ StatusCode MuonRec::addCoordsCrossingMap(MuonCoords *coords,
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose() << " Found an uncrossed pad type 2 " << pad << endmsg;
       try {
-        coords->insert( current.release(), pad );
+        coords.insert( current.release(), pad );
       } catch( const GaudiException& exc  ) {
         error() << "The error is caused by the duplication of  pad " <<pad<<endmsg;
         error() << "It is likely due to data corruption " <<endmsg;

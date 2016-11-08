@@ -1,4 +1,3 @@
-// $Id: UnpackCaloHypo.cpp,v 1.4 2009-11-07 12:20:39 jonrob Exp $
 // Include files 
 #include "Event/StandardPacker.h"
 #include "Event/PackedCaloHypo.h"
@@ -24,11 +23,6 @@ UnpackCaloHypo::UnpackCaloHypo( const std::string& name,
   declareProperty( "OutputName", m_outputName = LHCb::CaloHypoLocation::Electrons );
   declareProperty( "AlwaysCreateOutput", m_alwaysOutput = false );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-UnpackCaloHypo::~UnpackCaloHypo() {} 
 
 //=============================================================================
 // Main execution

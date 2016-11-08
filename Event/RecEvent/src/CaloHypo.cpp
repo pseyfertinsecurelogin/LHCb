@@ -19,6 +19,6 @@ std::ostream& LHCb::CaloHypo::fillStream(std::ostream& s) const
 LHCb::CaloHypo* LHCb::CaloHypo::clone() const
 {
   CaloHypo* hypo = new CaloHypo( *this );
-  if (position() ) hypo->setPosition( new CaloPosition(*position()) );
+  if ( position() ) hypo->setPosition( new CaloPosition(*position()) );
   return hypo;
 }

@@ -1,4 +1,3 @@
-// $Id: ICalo2MCTool.h,v 1.3 2009-11-20 15:43:08 odescham Exp $
 #ifndef ICALO2MCTOOL_H 
 #define ICALO2MCTOOL_H 1
 
@@ -20,7 +19,6 @@ namespace LHCb{
 
 
 
-static const InterfaceID IID_ICalo2MCTool ( "ICalo2MCTool", 3, 0 );
 
 /** @class ICalo2MCTool ICalo2MCTool.h
  *  
@@ -28,11 +26,10 @@ static const InterfaceID IID_ICalo2MCTool ( "ICalo2MCTool", 3, 0 );
  *  @author Olivier Deschamps
  *  @date   2009-07-27
  */
-class ICalo2MCTool : virtual public IAlgTool {
-public: 
+struct ICalo2MCTool : extend_interfaces<IAlgTool> 
+{
 
-  // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICalo2MCTool; }
+  DeclareInterfaceID( ICalo2MCTool, 4, 0 );
 
   // setters
   virtual ICalo2MCTool* from(const LHCb::CaloDigit*     digit    )=0;
@@ -53,9 +50,6 @@ public:
   virtual std::string descriptor() = 0;
   virtual bool isCalo(const LHCb::Particle* particle) = 0;
   virtual bool isPureNeutralCalo(const LHCb::Particle* particle) = 0;
-protected:
-
-private:
 
 };
 #endif // ICALO2MCTOOL_H

@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef DECAYS_NODE_H
 #define DECAYS_NODE_H 1
@@ -72,7 +71,7 @@ namespace Decays
     virtual std::string toString () const ;
     // ========================================================================
     /// virtual desctructor
-    virtual ~iNode() ;
+    virtual ~iNode() = default ;
     // ========================================================================
   };
   // ==========================================================================
@@ -89,19 +88,17 @@ namespace Decays
     Node ( const Decays::iNode& node  ) ;
     /// copy constructor
     Node ( const Decays::Node&  right ) ;
-    /// MANDATORY: virtual destructor
-    virtual ~Node () ;
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  Node* clone () const ;
+    Node* clone () const override;
     /// MANDATORY: the only one essential method
-    virtual bool operator() ( const LHCb::ParticleID& p ) const ;
+    bool operator() ( const LHCb::ParticleID& p ) const override;
     /// MANDATORY: the specific printout
-    virtual std::ostream& fillStream ( std::ostream& s ) const ;
+    std::ostream& fillStream ( std::ostream& s ) const override;
     /// MANDATORY: check the validity of the node
-    virtual bool valid() const ;
+    bool valid() const override;
     /// MANDATORY: the proper validation of the node
-    virtual StatusCode validate
-    ( const LHCb::IParticlePropertySvc* svc ) const ;
+    StatusCode validate
+    ( const LHCb::IParticlePropertySvc* svc ) const override;
     // ========================================================================
   public:
     // ========================================================================
@@ -137,7 +134,7 @@ namespace Decays
   private:
     // ========================================================================
     /// the node itself:
-    iNode* m_node  ; // the node itself:
+    std::unique_ptr<iNode> m_node ; // the node itself:
     // ========================================================================
   } ;
   // ==========================================================================

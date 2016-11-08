@@ -12,7 +12,6 @@ namespace LHCb {
   class MCParticle;
 }
 
-static const InterfaceID IID_IFlagSignalChain ( "IFlagSignalChain", 1, 0 );
 
 /** @class IFlagSignalChain IFlagSignalChain.h
  *  
@@ -20,18 +19,13 @@ static const InterfaceID IID_IFlagSignalChain ( "IFlagSignalChain", 1, 0 );
  *  @author Gloria Corti
  *  @date   2015-07-23
  */
-class IFlagSignalChain : virtual public IAlgTool {
-public: 
+struct IFlagSignalChain : extend_interfaces<IAlgTool> {
 
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_IFlagSignalChain; }
+  DeclareInterfaceID( IFlagSignalChain, 2, 0 );
 
   /// Set flag if particle is signal or from signal
   virtual void setFromSignalFlag( const LHCb::MCParticle* mcPart ) = 0;
-
-protected:
-
-private:
 
 };
 #endif // IFLAGSIGNALCHAIN_H

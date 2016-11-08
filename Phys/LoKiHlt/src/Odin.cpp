@@ -96,7 +96,6 @@ LoKi::Odin::RunNumber::RunNumber
   , m_flag  ( Range ) 
   , m_begin ( begin ) 
   , m_end   ( end   ) 
-  , m_runs  (       ) 
 {}
 // ============================================================================
 // constructor from the run list 
@@ -169,7 +168,6 @@ LoKi::Odin::BXId::BXId
   , m_bx    ( bx ) 
   , m_begin ( 0   ) 
   , m_end   ( 0   ) 
-  , m_bxs   (     ) 
 {}
 // ============================================================================
 // constructor from the run range 
@@ -182,7 +180,6 @@ LoKi::Odin::BXId::BXId
   , m_bx    ( 0     ) 
   , m_begin ( begin ) 
   , m_end   ( end   ) 
-  , m_bxs   (       ) 
 {}
 // ============================================================================
 // constructor from the run list 
@@ -250,7 +247,6 @@ LoKi::Odin::Tck::Tck
   : LoKi::AuxFunBase ( std::tie ( bx ) ) 
   , m_flag  ( One ) 
   , m_bx    ( bx ) 
-  , m_bxs   (     ) 
 {}
 // ============================================================================
 // constructor from the run list 
@@ -316,7 +312,6 @@ LoKi::Odin::EvtNumber::EvtNumber
   , m_flag  ( One     ) 
   , m_begin ( evt     ) 
   , m_end   ( evt + 1 ) 
-  , m_evts  (         ) 
 {}
 // ============================================================================
 // constructor from event range 
@@ -328,7 +323,6 @@ LoKi::Odin::EvtNumber::EvtNumber
   , m_flag  ( Range ) 
   , m_begin ( begin ) 
   , m_end   ( end   ) 
-  , m_evts  (       ) 
 {}
 // ============================================================================
 // constructor from event list 
@@ -408,7 +402,6 @@ LoKi::Odin::RunEvtNumber::RunEvtNumber
   , m_flag    ( One ) 
   , m_begin   ( run , evt           ) 
   , m_end     ( run , evt.evt() + 1 ) 
-  , m_runevts (     ) 
 {}
 // ============================================================================
 // constructor from the run/event number 
@@ -419,7 +412,6 @@ LoKi::Odin::RunEvtNumber::RunEvtNumber
   , m_flag    ( One    ) 
   , m_begin   ( runevt ) 
   , m_end     ( runevt.run() , runevt.evt() + 1 ) 
-  , m_runevts (        ) 
 {}
 // ============================================================================
 // constructor from the run/event range
@@ -431,7 +423,6 @@ LoKi::Odin::RunEvtNumber::RunEvtNumber
   , m_flag    ( Range ) 
   , m_begin   ( begin ) 
   , m_end     ( end   ) 
-  , m_runevts (       )  
 {}
 // ============================================================================
 // constructor from the run/event list
@@ -440,8 +431,6 @@ LoKi::Odin::RunEvtNumber::RunEvtNumber
 ( const LoKi::Odin::RunEvtNumber::runevt_list&  runevts ) 
   : LoKi::AuxFunBase ( std::tie ( runevts ) ) 
   , m_flag    ( List ) 
-  , m_begin   () 
-  , m_end     () 
   , m_runevts ( runevts )  
 {}
 // ============================================================================
@@ -544,7 +533,6 @@ std::ostream& LoKi::Odin::RoutingBits::fillStream ( std::ostream& s ) const
 LoKi::Odin::Evt1::Evt1
 ( const unsigned long long modulo ) 
   : LoKi::AuxFunBase ( std::tie ( modulo ) ) 
-  , LoKi::BasicFunctors<const LHCb::ODIN*>::Function () 
   , m_modulo ( modulo ) 
 {}
 // ============================================================================

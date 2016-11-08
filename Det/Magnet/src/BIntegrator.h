@@ -1,5 +1,5 @@
 // $Id: BIntegrator.h,v 1.3 2007-02-26 14:50:47 cattanem Exp $
-#ifndef MAGNET_BINTEGRATOR_H 
+#ifndef MAGNET_BINTEGRATOR_H
 #define MAGNET_BINTEGRATOR_H 1
 
 // Include files
@@ -24,15 +24,15 @@ class IMagneticFieldSvc;
  */
 class BIntegrator : public GaudiTool,
                     virtual public IBIntegrator {
-public: 
+public:
   /// Standard constructor
-  BIntegrator( const std::string& type, 
+  BIntegrator( const std::string& type,
                const std::string& name,
                const IInterface* parent );
 
   virtual ~BIntegrator( ); ///< Destructor
 
-  StatusCode initialize(); ///< Initialization
+  StatusCode initialize() override; ///< Initialization
 
  /// Get the z of center and the total Bdl
  StatusCode calculateBdlAndCenter( const Gaudi::XYZPoint& beginPoint,
@@ -40,7 +40,7 @@ public:
                                    const double tX,
                                    const double tY,
                                    double& zCenter,
-                                   Gaudi::XYZVector& Bdl ) const;
+                                   Gaudi::XYZVector& Bdl ) const override;
 
 protected:
 

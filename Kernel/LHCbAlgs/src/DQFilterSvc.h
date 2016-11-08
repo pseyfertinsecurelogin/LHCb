@@ -13,22 +13,25 @@
  * @author Marco Clemencic
  * @date 2012-02-10
  */
-class DQFilterSvc: public extends1<Service, IIncidentListener> {
+class DQFilterSvc final : public extends1<Service, IIncidentListener>
+{
+
 public:
+
   /// Constructor
   DQFilterSvc(const std::string& name, ISvcLocator* svc);
 
   /// Initialize the service
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalize the service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   /// @see IIncidentListener::handle
-  virtual void handle( const Incident& );
+  void handle( const Incident& ) override;
 
   /// Destructor
-  virtual ~DQFilterSvc();
+  virtual ~DQFilterSvc() = default;
 
 private:
 
@@ -37,7 +40,7 @@ private:
   std::string m_acceptToolName;
 
   /// Pointer to the IAccept tool.
-  IAccept *m_acceptTool;
+  IAccept *m_acceptTool = nullptr;
 
   /// Pointer to the ToolSvc.
   SmartIF<IToolSvc> m_toolSvc;

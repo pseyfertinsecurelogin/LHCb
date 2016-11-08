@@ -1,4 +1,3 @@
-// $Id: MuonChamberGrid.cpp,v 1.15 2009-09-09 12:59:56 cattanem Exp $
 // Include files 
 
 // local
@@ -17,23 +16,6 @@
 //-----------------------------------------------------------------------------
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-MuonChamberGrid::MuonChamberGrid() {
-  m_number_of_grid=0;
-  m_x_pad_rdout1.clear();
-  m_y_pad_rdout1.clear();
-  m_x_pad_rdout2.clear();
-  m_y_pad_rdout2.clear();
-  m_readoutType.clear();
-  m_mapType.clear();
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-MuonChamberGrid::~MuonChamberGrid() {}
-
-//=============================================================================
 StatusCode MuonChamberGrid::initialize(){
 
   char patt[400]; int Ngrid(0);
@@ -41,16 +23,12 @@ StatusCode MuonChamberGrid::initialize(){
   sscanf(patt,"/G%d",&Ngrid);
   m_number_of_grid = Ngrid;
   
-  //  std::cout<< "Gn: "<< m_number_of_grid<<" "
-  //     <<(this->name()).data()<<std::endl;
-
   m_x_pad_rdout1     = param< std::vector<double> >("xrd1");
   m_y_pad_rdout1     = param< std::vector<double> >("yrd1");
   m_x_pad_rdout2     = param< std::vector<double> >("xrd2");
   m_y_pad_rdout2     = param< std::vector<double> >("yrd2");
   m_readoutType      = param< std::vector<int> >("grrd");
   m_mapType          = param< std::vector<int> >("mapT");
-
 
   return StatusCode::SUCCESS;
 }

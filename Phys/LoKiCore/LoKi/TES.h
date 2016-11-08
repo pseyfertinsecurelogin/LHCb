@@ -52,18 +52,13 @@ namespace LoKi
        *  @param location     TES-location
        *  @param useRootInTES RootInTES-flag
        */
-      Get ( const std::string& location            ,
-            const bool         useRootInTES = true ) ;
+      explicit Get ( const std::string& location            ,
+                     const bool         useRootInTES = true ) ;
       /// virtual destructor
       virtual ~Get() ;
       // ======================================================================
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      Get () ;                                // defalt constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -81,7 +76,7 @@ namespace LoKi
     protected:
       // ======================================================================
       void setLocation ( const std::string& value ) { m_location = value ; }
-      /// acquire algorithm or service 
+      /// acquire algorithm or service
       void getAlgSvc   () const ;
       // ======================================================================
     private:
@@ -114,19 +109,14 @@ namespace LoKi
       /** constructor from TES location & "rootInTes"-flag
        *  @see GaudiCommon<TYPE>::exists
        */
-      Exists ( const std::string& location            ,
-               const bool         useRootInTes = true ) ;
+      explicit Exists ( const std::string& location            ,
+                        const bool         useRootInTes = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Exists* clone() const ;
+      Exists* clone() const override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( /* argument v */ ) const ;
+      bool operator() ( /* argument v */ ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Exists() ;                        // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -151,21 +141,16 @@ namespace LoKi
        *  @see GaudiCommon<TYPE>::exists
        *  @see GaudiCommon<TYPE>::get
        */
-      Contains ( const std::string& location            ,
-                 const bool         useRootInTes = true ) ;
+      explicit Contains ( const std::string& location            ,
+                          const bool         useRootInTes = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Contains* clone() const ;
+      Contains* clone() const override;
       /** MANDATORY: the only one essential method
-       *  @return numebr of element in continer, -1 for non-existing container
+       *  @return number of elements in container, -1 for non-existing container
        */
-      virtual  result_type operator() ( /* argument v */ ) const ;
+      double operator() ( /* argument v */ ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Contains () ;                      // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -192,15 +177,13 @@ namespace LoKi
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      result_type operator() ( /* argument v */ ) const override ;
+      double operator() ( /* argument v */ ) const override ;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override ;
       const std::string& stationName     () const { return m_stationName    ; }
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      HrcSumAdc () ;                      // the default constructor is disabled
       /// the station name
       std::string m_stationName         ; // the Herschel station name
       // ======================================================================
@@ -230,24 +213,19 @@ namespace LoKi
       Counter ( const std::string& location              ,
                 const std::string& counter               ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Counter* clone() const ;
+      Counter* clone() const override;
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      virtual  result_type operator() ( /* argument v */ ) const ;
+      result_type operator() ( /* argument v */ ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the counter name
       const std::string& counter () const { return m_counter ; }
       double             bad     () const { return m_bad     ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Counter () ;                       // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -292,20 +270,15 @@ namespace LoKi
              const std::string&       counter               ,
              const StatEntityGetter&  function              ) ;
       /// MANDATORY: virtual destructor
-      virtual ~Stat () ;
+      ~Stat () override;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Stat* clone() const ;
+      Stat* clone() const override;
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      virtual  result_type operator() ( /* argument v */ ) const ;
+      result_type operator() ( /* argument v */ ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Stat () ;                          // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
@@ -373,7 +346,7 @@ namespace LoKi
     typedef LoKi::TES::Contains                                      CONTAINS ;
     // ========================================================================
     /** @typedef HRCSUMADC
-     *  Function to find Herschel station sum digits 
+     *  Function to find Herschel station sum digits
      *
      *  @code
      *

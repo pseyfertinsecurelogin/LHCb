@@ -221,7 +221,7 @@ namespace  VolumeIntersectionIntervals
           /** this situation means that something wrong
            *  with geometry description!!!
            */
-          DetDesc::Services* services = DetDesc::services();
+          DetDesc::ServicesPtr services = DetDesc::services();
           MsgStream log (services->msgSvc() , "TransportSvc");
           log << MSG::ERROR
               << "VolumeIntersection:Merge error 15 : interval " 
@@ -229,7 +229,6 @@ namespace  VolumeIntersectionIntervals
               << intervalLoc.second << " master "
               << intervalTop.first << " " 
               << intervalTop.second << endmsg;
-          services->release();
           return StatusCode(15) ;
         }
         // ? RETURN !!!
@@ -272,7 +271,7 @@ namespace  VolumeIntersectionIntervals
                                              matLocal ) ; 
           }
         } else {                                 // geometry error!!!
-          DetDesc::Services* services = DetDesc::services();
+          DetDesc::ServicesPtr services = DetDesc::services();
           MsgStream log (services->msgSvc() , "TransportSvc");
           log << MSG::ERROR
               << "VolumeIntersection:Merge error 17 : interval " 
@@ -280,7 +279,6 @@ namespace  VolumeIntersectionIntervals
               << intervalLocal.second << " master "
               << leftTick << " " 
               << mostRightTick << endmsg;
-          services->release();
           return StatusCode(17) ; 
         }         // RETURN !!!
         leftTick     = intervalLocal.second;

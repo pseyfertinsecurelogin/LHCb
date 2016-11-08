@@ -1,4 +1,3 @@
-// $Id: IVisPrimVertTool.h,v 1.1.1.1 2007-05-25 16:24:33 cattanem Exp $
 #ifndef KERNEL_IVISPRIMVERTTOOL_H 
 #define KERNEL_IVISPRIMVERTTOOL_H 1
 
@@ -14,8 +13,6 @@ namespace LHCb{
   class MCParticle ;
 }
 
-static const InterfaceID IID_IVisPrimVertTool("IVisPrimVertTool", 1 , 0); 
-
 /** @class IVisPrimVertTool IVisPrimVertTool.h 
  *
  *  Tells if a primary MCVertex is visible and a little more
@@ -24,11 +21,9 @@ static const InterfaceID IID_IVisPrimVertTool("IVisPrimVertTool", 1 , 0);
  *  @author Christian Jacoby (IPHE, UNIL, Lausanne)
  *  @date   2002-12-17
  */
-class IVisPrimVertTool : virtual public IAlgTool {
-public:
-  
+struct IVisPrimVertTool : extend_interfaces<IAlgTool> {
   /// Retrieve interface ID
-  static const InterfaceID& interfaceID() { return IID_IVisPrimVertTool; }
+  DeclareInterfaceID(IVisPrimVertTool, 2 , 0); 
   virtual long countVertices() const      = 0; ///< count number of visible PVs
   virtual bool isVisible     ( const LHCb::MCVertex* primvtx )const  = 0; ///< is visible ?
   virtual bool isB           ( const LHCb::MCVertex* primvtx )const  = 0; ///< has a B?

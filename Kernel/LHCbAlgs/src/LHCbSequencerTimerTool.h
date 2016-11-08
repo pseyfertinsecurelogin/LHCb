@@ -17,15 +17,15 @@
  *  The width of the timing table column printing the algorithm name
  *  is 30 by default. That can be changed via
  *  \verbatim
-TimingAuditor().addTool(LHCbSequencerTimerTool, name = "TIMER")
-TimingAuditor().TIMER.NameSize = 50 \endverbatim
+ TimingAuditor().addTool(LHCbSequencerTimerTool, name = "TIMER")
+ TimingAuditor().TIMER.NameSize = 50 \endverbatim
  *
  *  @author Olivier Callot
  *  @date   2004-05-19
  */
 
-class LHCbSequencerTimerTool : public GaudiHistoTool, 
-                           virtual public ISequencerTimerTool
+class LHCbSequencerTimerTool final : public GaudiHistoTool,
+                                     virtual public ISequencerTimerTool
 {
 
 public:
@@ -36,69 +36,69 @@ public:
 
 public:
 
- /// Standard constructor
+  /// Standard constructor
   LHCbSequencerTimerTool( const std::string& type,
-                      const std::string& name,
-                      const IInterface* parent);
+                          const std::string& name,
+                          const IInterface* parent);
 
-  virtual ~LHCbSequencerTimerTool( ); ///< Destructor
+  virtual ~LHCbSequencerTimerTool( ) = default; ///< Destructor
 
   /** initialize method, to compute the normalization factor **/
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** finalize method, to print the time summary table **/
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   /** add a timer entry with the specified name **/
-  virtual int addTimer( const std::string& name );
+  int addTimer( const std::string& name ) override;
 
   /** Increase the indentation of the name **/
-  virtual void increaseIndent() { m_indent += 2; }
+  void increaseIndent() override { m_indent += 2; }
 
   /** Decrease the indentation of the name **/
-  virtual void decreaseIndent() 
+  void decreaseIndent() override
   {
     m_indent -= 2;
     if ( 0 > m_indent ) m_indent = 0;
   }
 
   /** start the counter, i.e. register the current time **/
-  void start( int index ) { m_timerList[index].start(); }
+  void start( int index ) override { m_timerList[index].start(); }
 
   /** stop the counter, return the elapsed time **/
-  double stop( int index ) { return m_timerList[index].stop(); }
+  double stop( int index ) override { return m_timerList[index].stop(); }
 
   /** returns the last time **/
-  double lastTime( int index ) { return m_timerList[index].lastTime(); }
+  double lastTime( int index ) override { return m_timerList[index].lastTime(); }
 
   /** returns the name of the counter **/
-  const std::string& name( int index ) { return m_timerList[index].name(); }
+  const std::string& name( int index ) override { return m_timerList[index].name(); }
 
   /** returns the index of the counter with that name, or -1 **/
-  int indexByName( const std::string& name );
+  int indexByName( const std::string& name ) override;
 
   /** returns the flag telling that global timing is wanted **/
-  virtual bool globalTiming() { return m_globalTiming; };
+  bool globalTiming() override { return m_globalTiming; }
 
   /** prepares and saves the timing histograms **/
-  virtual void saveHistograms();
-  
+  void saveHistograms() override;
+
   /** saves the output to a file **/
   StatusCode fileIO();
-  
+
 private:
 
   int m_shots;       ///< Number of shots for CPU normalization
   bool m_normalised; ///< Is the time scaled to a nominal PIII ?
-  int m_indent;      ///< Amount of indentation
+  int m_indent{0};   ///< Amount of indentation
   std::vector<LHCbTimerForSequencer> m_timerList;
-  double m_normFactor; ///< Factor to convert to standard CPU (1 GHz PIII)
-  double m_speedRatio;
+  double m_normFactor{0.001}; ///< Factor to convert to standard CPU (1 GHz PIII)
+  double m_speedRatio{0};
   bool   m_globalTiming;
   std::string::size_type m_headerSize;   ///< Size of the name field
   std::string m_summaryFile; ///< Whether to output also to a file
   std::string m_sep; ///< Separator to use in fileIO, defined by extension of the file
-  
 
 };
+
 #endif // LHCbSEQUENCERTIMERTOOL_H

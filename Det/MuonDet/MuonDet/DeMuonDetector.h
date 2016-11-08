@@ -2,6 +2,8 @@
 #ifndef MUONDET_DEMUONDETECTOR_H
 #define MUONDET_DEMUONDETECTOR_H 1
 
+#include <memory>
+
 //DetDesc
 #include "DetDesc/DetectorElement.h"
 #include "DetDesc/SolidBox.h"
@@ -44,9 +46,8 @@ class DeMuonDetector: public DetectorElement {
 
 public:
   /// Constructor
-  DeMuonDetector();
+  DeMuonDetector() ;
 
-  /// Destructor
   ~DeMuonDetector() override;
 
   /// object identification
@@ -299,7 +300,6 @@ private:
 
   //Chamber Layout
   std::unique_ptr<MuonChamberLayout> m_chamberLayout;
-
 
   //How many stations and regions
   int m_stations = 0;

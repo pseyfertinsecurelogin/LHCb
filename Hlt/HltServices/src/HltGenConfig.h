@@ -37,11 +37,11 @@ class HltGenConfig : public GaudiAlgorithm, public IToolSvc::Observer
   private:
     typedef unsigned int TCK_t;
 
-    IAlgManager* m_appMgr;
+    SmartIF<IAlgManager> m_appMgr;
     std::string s_accessSvc;
-    IConfigAccessSvc* m_accessSvc;
+    SmartIF<IConfigAccessSvc> m_accessSvc;
     std::string s_configSvc;
-    IPropertyConfigSvc* m_configSvc;
+    SmartIF<IPropertyConfigSvc> m_configSvc;
     std::vector<std::string> m_topConfig; ///< where to start when configuring
     std::vector<std::string> m_svcConfig; ///< Which services to configure
     std::string m_hltType; ///< what runtype do we label this config as?

@@ -1,10 +1,6 @@
 #include <algorithm>
 
 // Gaudi
-#include "GaudiKernel/Bootstrap.h"
-#include "GaudiKernel/PropertyMgr.h"
-#include "GaudiKernel/IJobOptionsSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 #include "GaudiKernel/SystemOfUnits.h"
 
@@ -13,6 +9,7 @@
 
 // Local
 #include "VPDet/DeVP.h"
+#include "getOutputLevel.h"
 
 //============================================================================
 // Constructor
@@ -29,9 +26,9 @@ DeVP::~DeVP() = default;
 //============================================================================
 // Object identification
 //============================================================================
-const CLID& DeVP::clID() const { 
+const CLID& DeVP::clID() const {
 
-  return DeVP::classID(); 
+  return DeVP::classID();
 
 }
 
@@ -40,22 +37,14 @@ const CLID& DeVP::clID() const {
 //============================================================================
 StatusCode DeVP::initialize() {
 
-  // Set the output level.
-  std::unique_ptr<PropertyMgr> pmgr{ new PropertyMgr() };
-  int outputLevel = 0;
-  pmgr->declareProperty("OutputLevel", outputLevel);
-  ISvcLocator* svcLoc = Gaudi::svcLocator();
-  auto jobSvc = svcLoc->service<IJobOptionsSvc>("JobOptionsSvc");
-  if (jobSvc) {
-    auto sc = jobSvc->setMyProperties("DeVP", pmgr.get());
-    if (!sc) return sc;
-  }
-  if (outputLevel > 0) msgSvc()->setOutputLevel("DeVP", outputLevel);
-  m_debug = (msgSvc()->outputLevel("DeVP") == MSG::DEBUG ||
-             msgSvc()->outputLevel("DeVP") == MSG::VERBOSE);
+  auto sc = initOutputLevel(msgSvc(), "DeVP");
+  if (!sc) return sc;
+
+  const auto lvl = msgSvc()->outputLevel("DeVP");
+  m_debug = lvl <= MSG::DEBUG;
 
   // Initialise the base class.
-  auto sc = DetectorElement::initialize();
+  sc = DetectorElement::initialize();
   if (sc.isFailure()) {
     msg() << MSG::ERROR << "Cannot initialize DetectorElement" << endmsg;
     return sc;
@@ -92,7 +81,7 @@ StatusCode DeVP::initialize() {
 int DeVP::sensitiveVolumeID(const Gaudi::XYZPoint& point) const {
 
   const double z = point.z();
-  constexpr double tol = 10 * Gaudi::Units::mm; 
+  constexpr double tol = 10 * Gaudi::Units::mm;
   auto i = std::find_if( m_sensors.begin(), m_sensors.end(),
                          [&]( const DeVPSensor* s) {
     // Quickly skip sensors which are far away in z, only

@@ -6,6 +6,19 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-09-14 - Vanya Belyaev
+ - Fix the issue with Smatrix/Svectors tretament in PyROOT
+ - add new qmtest 
+
+! 2016-08-30 - Vanya Belyaev
+ - HistoInterpolation
+   - 2D & 3D case: impleme all possible interpolation rules, up to 
+   biqubic and triqubic
+   - add possibility to interpolate for "density" ( "bin-content"/"bin-volume")
+   - add possibility for extrapolation 
+   - better/uniform treatment of edge case 
+   - fix some typos in doxygen
+
 ! 2016-07-19 - Vanya Belyaev
  - add erfi function 
  - replace std::array with std::vector for PseudoVoigt 

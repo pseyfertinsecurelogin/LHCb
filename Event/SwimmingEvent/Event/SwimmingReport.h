@@ -23,7 +23,7 @@
 #include "GaudiKernel/SmartRef.h"
 #include "GaudiKernel/SmartRefVector.h"
 
-// STD 
+// STD
 #include <ostream>
 #include <string>
 
@@ -35,7 +35,7 @@
 // local
 #include "Event/TurningPoint.h"
 
-namespace LHCb 
+namespace LHCb
 {
    static const CLID CLID_SwimmingReport = 900;
 
@@ -45,18 +45,18 @@ namespace LHCb
   }
 
   /**Class ID definition
-   * 
+   *
    *  @class SwimmingReport SwimmingReport.h
-   * 
+   *
    * Class to store the results of the swimming.
-   * 
+   *
    * @author Roel Aaij
    * created Fri Sep 16 10:30:49 2011
    */
 
 class SwimmingReport: public KeyedObject<int>
 {
-   
+
 public:
 
    /// Definition of Keyed Container for SwimmingReport
@@ -89,25 +89,25 @@ public:
       : KeyedObject<int>(),
         m_turningPoints(other.m_turningPoints)
    {
-   
+
    }
-   
+
    /// Default Destructor
    virtual ~SwimmingReport()
    {
-   
+
    }
-   
+
    // Retrieve pointer to class definition structure
-   virtual const CLID& clID() const;
+   const CLID& clID() const override;
    static const CLID& classID();
-   
+
    /// Fill the ASCII output stream
-   virtual std::ostream& fillStream(std::ostream& s) const;
-   
+   std::ostream& fillStream(std::ostream& s) const override;
+
    /// Clone report
    SwimmingReport* clone() const;
-   
+
    /// Assignment operator, note that the original vertex and protoSwimmingReport are kept
    SwimmingReport& operator=(const SwimmingReport& rhs);
 
@@ -127,7 +127,7 @@ public:
    {
       return m_turningPoints.count(stage) != 0;
    }
-   
+
    /// Get the turningpoints for a stage
    const std::vector<LHCb::TurningPoint>& turningPoints(const std::string& stage) const
    {
@@ -146,7 +146,7 @@ public:
    {
       m_turningPoints.clear();
    }
-   
+
    void addTurningPoint(const std::string& stage, const LHCb::TurningPoint& tp)
    {
       TurningPoints::iterator it = m_turningPoints.find(stage);
@@ -162,7 +162,7 @@ public:
    /// operator new
    static void* operator new ( size_t size )
    {
-      return ( sizeof(SwimmingReport) == size ? 
+      return ( sizeof(SwimmingReport) == size ?
                boost::singleton_pool<SwimmingReport, sizeof(SwimmingReport)>::malloc() :
                ::operator new(size) );
    }
@@ -193,7 +193,7 @@ public:
 private:
 
    TurningPoints m_turningPoints;
-   
+
 }; // class SwimmingReport
 
 inline std::ostream& operator<< (std::ostream& str, const SwimmingReport& obj)
@@ -224,12 +224,12 @@ inline std::ostream& LHCb::SwimmingReport::fillStream(std::ostream& s) const
 }
 
 
-inline LHCb::SwimmingReport* LHCb::SwimmingReport::clone() const 
+inline LHCb::SwimmingReport* LHCb::SwimmingReport::clone() const
 {
    return new SwimmingReport(*this);
 }
 
-inline LHCb::SwimmingReport& LHCb::SwimmingReport::operator=(const SwimmingReport& rhs) 
+inline LHCb::SwimmingReport& LHCb::SwimmingReport::operator=(const SwimmingReport& rhs)
 {
    if ( this != &rhs ) {
       m_turningPoints = rhs.m_turningPoints;

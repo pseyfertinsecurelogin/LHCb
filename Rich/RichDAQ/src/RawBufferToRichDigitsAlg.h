@@ -18,7 +18,7 @@
 #include "Event/RichDigit.h"
 
 // Interfaces
-#include "RichKernel/IRichRawBufferToSmartIDsTool.h"
+#include "RichInterfaces/IRichRawBufferToSmartIDsTool.h"
 
 namespace Rich
 {
@@ -45,8 +45,8 @@ namespace Rich
 
       virtual ~RawBufferToRichDigitsAlg( ); ///< Destructor
 
-      virtual StatusCode initialize() final;    // Algorithm initialization
-      virtual StatusCode execute   () final;    // Algorithm execution
+      StatusCode initialize() override final;    // Algorithm initialization
+      StatusCode execute   () override final;    // Algorithm execution
 
     private: // data
 

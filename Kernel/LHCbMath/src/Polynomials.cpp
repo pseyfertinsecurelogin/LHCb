@@ -634,7 +634,7 @@ namespace
   // ==========================================================================
 }
 // ============================================================================
-/* class Polynomial
+/*  class Polynomial
  *  Trivial polynomial
  *  \f$ f(x) = \sum_i \p_i x^i\f$
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru

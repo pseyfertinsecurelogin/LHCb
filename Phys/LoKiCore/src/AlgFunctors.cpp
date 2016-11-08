@@ -227,25 +227,25 @@ namespace
   }
   // ==========================================================================
   // filter passed ?
-  struct FilterPassed
+  constexpr struct FilterPassed_t
   {
     inline bool operator() ( const IAlgorithm* ia ) const
     { return ia && ia -> filterPassed () ; }
-  } ;
+  } filterPassed{};
   // ========================================================================
   // is enabled ?
-  struct IsEnabled
+  constexpr struct IsEnabled_t
   {
     inline bool operator() ( const IAlgorithm* ia ) const
     { return ia && ia -> isEnabled () ; }
-  } ;
+  } isEnabled{};
   // ==========================================================================
   // is executed ?
-  struct IsExecuted
+  constexpr struct IsExecuted_t
   {
     inline bool operator() ( const IAlgorithm* ia ) const
     { return ia && ia -> isExecuted () ; }
-  } ;
+  } isExecuted{};
   // ==========================================================================
 }
 // ============================================================================
@@ -266,7 +266,6 @@ LoKi::Algorithms::Passed::getAlgorithm
 LoKi::Algorithms::Passed::Passed
 ( const std::string& name )
   : LoKi::AuxFunBase ( std::tie ( name ) )
-  , LoKi::BasicFunctors<void>::Predicate ()
   , m_name       ( name        )
   , m_algorithm  ( s_ALGORITHM )
 {
@@ -290,8 +289,7 @@ LoKi::Algorithms::Passed::operator() () const
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
   //
-  FilterPassed fun ;
-  return fun ( algorithm() ) ;
+  return filterPassed ( algorithm() ) ;
   //
 }
 // ============================================================================
@@ -312,8 +310,7 @@ LoKi::Algorithms::Enabled::operator() () const
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
   //
-  IsEnabled fun ;
-  return fun ( algorithm() ) ;
+  return isEnabled ( algorithm() ) ;
   //
 }
 // ============================================================================
@@ -338,8 +335,7 @@ LoKi::Algorithms::Executed::operator() () const
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
   //
-  IsExecuted fun ;
-  return fun ( algorithm() ) ;
+  return isExecuted ( algorithm() ) ;
   //
 }
 // ============================================================================
@@ -364,17 +360,13 @@ LoKi::Algorithms::Run::operator() () const
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
   //
-  IsEnabled    fun1 ;
-  IsExecuted   fun2 ;
-  FilterPassed fun3 ;
-  //
-  if ( !fun1 ( algorithm() ) )
+  if ( !isEnabled ( algorithm() ) )
   {
     Warning("Algorithm '" + algName() + "' is disabled, return false " );
     return false ;                                                  // RETURN
   }
   //
-  if ( !fun2 ( algorithm() ) )
+  if ( !isExecuted ( algorithm() ) )
   {
     StatusCode sc = algorithm()->sysExecute() ;  // EXECUTE IT!!!
     if ( sc.isFailure() )
@@ -385,7 +377,7 @@ LoKi::Algorithms::Run::operator() () const
   }
   //
   // finally:
-  return fun3 ( algorithm() ) ;
+  return filterPassed ( algorithm() ) ;
   //
 }
 // ============================================================================
@@ -412,15 +404,14 @@ LoKi::Algorithms::AnyPassed::getAlgorithm
 void LoKi::Algorithms::AnyPassed::getAlgorithms () const  // get the algorithm
 {
   // unsigned int i = 0 ;
-  for ( std::vector<std::string>::const_iterator iname =
-          m_names.begin() ; m_names.end() != iname ; ++iname )
-  {
-    const IAlgorithm* a = this->getAlgorithm ( *iname ) ;
-    m_algorithms.push_back ( a ) ;
+  std::transform( m_names.begin(), m_names.end(),
+                  std::back_inserter(m_algorithms),
+                  [&](const std::string& name) {
     // Warning( " AQUICRE alg: " + a->name()
     // + Gaudi::Utils::toCpp ( ++i ) + "/"
     // + Gaudi::Utils::toCpp ( m_names.size() ) ) ;
-  }
+                      return this->getAlgorithm(name);
+                  });
 }
 // ============================================================================
 // constructor from the algorithm name
@@ -437,7 +428,7 @@ LoKi::Algorithms::AnyPassed::AnyPassed
 // ============================================================================
 LoKi::Algorithms::AnyPassed::~AnyPassed()
 {
-  for ( Algorithms::iterator ia = m_algorithms.begin() ; m_algorithms.end() != ia ; ++ia )
+  for ( auto ia = m_algorithms.begin() ; m_algorithms.end() != ia ; ++ia )
   {
     if ( ( *ia )  && !gaudi() )
     {
@@ -455,7 +446,7 @@ LoKi::Algorithms::AnyPassed::operator() () const
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
   //
-  return std::any_of ( begin () , end   () , FilterPassed() ) ;
+  return std::any_of ( begin () , end   () , filterPassed ) ;
 }
 // ============================================================================
 // OPTIONAL: nice printout
@@ -463,28 +454,23 @@ LoKi::Algorithms::AnyPassed::operator() () const
 std::ostream& LoKi::Algorithms::AnyPassed::print
 ( const std::string& name , std::ostream& s ) const
 {
-  if      ( 4 == algNames().size() )
-  {
-    return s << name << "("
-             << Gaudi::Utils::toString ( algName( 0 ) ) << ","
-             << Gaudi::Utils::toString ( algName( 1 ) ) << ","
-             << Gaudi::Utils::toString ( algName( 2 ) ) << ","
-             << Gaudi::Utils::toString ( algName( 3 ) ) << ")" ;   // RETURN
+  s << name << "(";
+  if      ( 4 == algNames().size() ) {
+    s << Gaudi::Utils::toString ( algName( 0 ) ) << ","
+      << Gaudi::Utils::toString ( algName( 1 ) ) << ","
+      << Gaudi::Utils::toString ( algName( 2 ) ) << ","
+      << Gaudi::Utils::toString ( algName( 3 ) ) ;
+  } else if ( 3 == algNames().size() ) {
+    s << Gaudi::Utils::toString ( algName( 0 ) ) << ","
+      << Gaudi::Utils::toString ( algName( 1 ) ) << ","
+      << Gaudi::Utils::toString ( algName( 2 ) ) ;
+  } else if ( 2 == algNames().size() ) {
+    s << Gaudi::Utils::toString ( algName( 0 ) ) << ","
+      << Gaudi::Utils::toString ( algName( 1 ) ) ;
+  } else {
+    s << Gaudi::Utils::toString( algNames() ) ;
   }
-  else if ( 3 == algNames().size() )
-  {
-    return s << name << "("
-             << Gaudi::Utils::toString ( algName( 0 ) ) << ","
-             << Gaudi::Utils::toString ( algName( 1 ) ) << ","
-             << Gaudi::Utils::toString ( algName( 2 ) ) << ")" ;   // RETURN
-  }
-  else if ( 2 == algNames().size() )
-  {
-    return s << name << "("
-             << Gaudi::Utils::toString ( algName( 0 ) ) << ","
-             << Gaudi::Utils::toString ( algName( 1 ) ) << ")" ;   // RETURN
-  }
-  return s << name << "(" << Gaudi::Utils::toString( algNames() ) << ")" ;
+  return s << ")" ;
 }
 
 
@@ -497,7 +483,7 @@ LoKi::Algorithms::AllPassed::operator() () const
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
   //
-  return !empty()  && std::all_of( begin () , end () ,  FilterPassed() ) ;
+  return !empty()  && std::all_of( begin () , end () ,  filterPassed ) ;
 }
 // ============================================================================
 // MANDATORY: the only one essential method
@@ -508,7 +494,7 @@ LoKi::Algorithms::AnyEnabled::operator() () const
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
   //
-  return std::any_of( begin () , end () , IsEnabled () ) ;
+  return std::any_of( begin () , end () , isEnabled ) ;
 }
 // ============================================================================
 // MANDATORY: the only one essential method
@@ -519,7 +505,7 @@ LoKi::Algorithms::AllEnabled::operator() () const
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
   //
-  return !empty()  && std::all_of( begin () , end () , IsEnabled () ) ;
+  return !empty()  && std::all_of( begin () , end () , isEnabled ) ;
 }
 // ============================================================================
 // MANDATORY: the only one essential method
@@ -530,7 +516,7 @@ LoKi::Algorithms::AnyExecuted::operator() () const
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
   //
-  return std::any_of( begin () , end () , IsExecuted () ) ;
+  return std::any_of( begin () , end () , isExecuted ) ;
 }
 // ============================================================================
 // MANDATORY: the only one essential method
@@ -541,7 +527,7 @@ LoKi::Algorithms::AllExecuted::operator() () const
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
   //
-  return !empty()  && std::all_of ( begin () , end () , IsExecuted () ) ;
+  return !empty()  && std::all_of ( begin () , end () , isExecuted ) ;
 }
 // ============================================================================
 
@@ -554,7 +540,7 @@ LoKi::Algorithms::NumPassed::operator() () const
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
   //
-  return std::count_if( begin () , end() , FilterPassed() ) ;
+  return std::count_if( begin () , end() , filterPassed ) ;
 }
 // ============================================================================
 // MANDATORY: the only one essential method
@@ -565,7 +551,7 @@ LoKi::Algorithms::NumEnabled::operator() () const
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
   //
-  return std::count_if ( begin () , end() , IsEnabled() ) ;
+  return std::count_if ( begin () , end() , isEnabled ) ;
 }
 // ============================================================================
 // MANDATORY: the only one essential method
@@ -576,7 +562,7 @@ LoKi::Algorithms::NumExecuted::operator() () const
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
   //
-  return std::count_if ( begin () , end() , IsExecuted () ) ;
+  return std::count_if ( begin () , end() , isExecuted ) ;
 }
 
 // ============================================================================
@@ -588,22 +574,19 @@ LoKi::Algorithms::RunAll::operator() () const
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
   //
-  IsEnabled    fun1 ;
-  IsExecuted   fun2 ;
-  FilterPassed fun3 ;
   //
   for ( IAlgorithm* alg : algorithms() ){
     if ( !alg ) {
-      Warning("Invaild algotithm!, return false " );
+      Warning("Invalid algorithm!, return false " );
       return false ;                                                  // RETURN
     }
     //
-    if ( !fun1 ( alg ) ) {
+    if ( !isEnabled( alg ) ) {
       Warning("Algorithm '" + alg->name() + "' is disabled, return false " );
       return false ;                                                  // RETURN
     }
     //
-    if ( !fun2 ( alg ) ) {
+    if ( !isExecuted ( alg ) ) {
       StatusCode sc = alg->sysExecute() ;  // EXECUTE IT!!!
       if ( sc.isFailure() ) {
         Error("Error from algorithm '" + alg->name() + "' sysExecute", sc );
@@ -611,7 +594,7 @@ LoKi::Algorithms::RunAll::operator() () const
       }
     }
     //
-    if ( !fun3 ( alg ) ) { return false ; }                           // RETURN
+    if ( !filterPassed ( alg ) ) { return false ; }                           // RETURN
   }
   //
   return true ;

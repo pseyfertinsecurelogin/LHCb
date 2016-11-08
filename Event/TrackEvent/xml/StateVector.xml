@@ -9,6 +9,8 @@
       name             = 'StateVector'
       author           = 'Jose Hernando, Eduardo Rodrigues, Wouter Hulsbergen'
       desc             = 'StateVector is a simple track state vector with z position'
+      defaultdestructor = "FALSE"
+      final            = 'TRUE'
       virtual          = 'FALSE' >
 
       <import name="GaudiKernel/MsgStream" />

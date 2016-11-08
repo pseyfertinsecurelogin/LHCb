@@ -1,5 +1,3 @@
-// $Id: ReadRoutingBits.cpp,v 1.5 2010-03-08 16:47:44 pkoppenb Exp $
-
 #include "Kernel/ReadRoutingBits.h"
 
 //-----------------------------------------------------------------------------

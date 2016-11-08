@@ -4,6 +4,10 @@
 // ============================================================================
 // Include files
 // ============================================================================
+// STL
+// ============================================================================
+#include <numeric>
+// ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
@@ -303,12 +307,10 @@ namespace LoKi
       PREDICATE           cut                            , 
       LoKi::LorentzVector result = LoKi::LorentzVector() )
     { 
-      for ( ; first != last ; ++first ) 
-      { 
-        if ( 0 != (*first) && cut ( *first ) ) 
-        { result += (*first)->momentum() ; } 
-      }
-      return result ;
+      using ref = decltype(*first);
+      return std::accumulate( first, last, result,
+                              [&](LoKi::LorentzVector r, ref i) 
+                              { return ( i && cut(i) ) ? r + i->momentum() : r ; } );
     }
     // ========================================================================
     /** the simple function which adds a 4-momenta of all (MC)Particles

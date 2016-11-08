@@ -20,11 +20,9 @@ public:
   /// Standard constructor
   CaloFillRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~CaloFillRawBuffer( ); ///< Destructor
-
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 
@@ -37,21 +35,21 @@ protected:
 private:
   std::string m_inputBank;
   std::string m_triggerBank;
-  std::string m_detectorName;
+  std::string m_detectorName = "None";  
   std::string m_detectorLocation;
-  LHCb::RawBank::BankType m_bankType;
-  LHCb::RawBank::BankType m_triggerBankType;
-  int    m_numberOfBanks;
+  LHCb::RawBank::BankType m_bankType = LHCb::RawBank::LastType;
+  LHCb::RawBank::BankType m_triggerBankType = LHCb::RawBank::LastType;
+  int    m_numberOfBanks = 0;
   int    m_dataCodingType;
 
-  DeCalorimeter* m_calo;
+  DeCalorimeter* m_calo = nullptr;
 
   // Statistics
   
-  double m_totDataSize;
+  double m_totDataSize = 0;
   std::vector<double> m_dataSize;
-  double m_totTrigSize;
-  int m_nbEvents;
+  double m_totTrigSize = 0;
+  int m_nbEvents = 0;
   std::vector< std::vector<unsigned int> > m_banks;
   std::vector< std::vector<unsigned int> > m_trigBanks;
   bool m_pin;

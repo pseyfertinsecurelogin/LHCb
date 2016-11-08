@@ -7,27 +7,32 @@
 
 namespace LHCbAlgsTests {
 
-/** @class TestEventCounter TestEventCounter.h src/TestEventCounter.h
- *
- *
- * @author Marco Clemencic
- * @date 11/06/2012
- */
-class TestEventCounter: public GaudiAlgorithm {
-public:
-  /// Standard constructor
-  TestEventCounter(const std::string& name, ISvcLocator* pSvcLocator);
-  virtual ~TestEventCounter(); ///< Destructor
+  /** @class TestEventCounter TestEventCounter.h src/TestEventCounter.h
+   *
+   *
+   * @author Marco Clemencic
+   * @date 11/06/2012
+   */
+  class TestEventCounter final : public GaudiAlgorithm
+  {
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  public:
 
-protected:
-private:
-  std::string m_eventCounterName;
-  IEventCounter* m_eventCounter;
-};
+    /// Standard constructor
+    TestEventCounter(const std::string& name, ISvcLocator* pSvcLocator);
+    virtual ~TestEventCounter() = default; ///< Destructor
+
+    StatusCode initialize() override;    ///< Algorithm initialization
+    StatusCode execute   () override;    ///< Algorithm execution
+    StatusCode finalize  () override;    ///< Algorithm finalization
+
+  private:
+
+    std::string m_eventCounterName;
+
+    IEventCounter* m_eventCounter = nullptr;
+
+  };
 
 } // namespace LHCbAlgsTests
 

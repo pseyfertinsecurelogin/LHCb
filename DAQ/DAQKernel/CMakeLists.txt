@@ -8,7 +8,7 @@ gaudi_depends_on_subdirs(Event/DAQEvent
                          GaudiUtils
                          Kernel/LHCbKernel)
 
-message(STATUS "CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}")
+#message(STATUS "CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}")
 
 gaudi_add_library(DAQKernelLib
                   src/lib/*.cpp

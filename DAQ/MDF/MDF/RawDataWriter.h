@@ -50,7 +50,7 @@ namespace LHCb    {
     IInterface*         m_owner;
   public:
     /// Initializing constructor
-    RawDataFile(Gaudi::IIODataManager* mgr, 
+    RawDataFile(Gaudi::IIODataManager* mgr,
                 IInterface*            owner,
                 const std::string&     fname,
                 bool                   md5,
@@ -82,7 +82,7 @@ namespace LHCb    {
     unsigned int& eventCounter()            {  return m_eventCounter; }
   };
 
-  /** @class RawDataWriter 
+  /** @class RawDataWriter
     *
     *
     * @author:  M.Frank
@@ -134,30 +134,30 @@ namespace LHCb    {
     virtual ~RawDataWriter()    {}
 
     /// Initialize
-    virtual StatusCode initialize();
+    StatusCode initialize() override;
 
     /// Finalize
-    virtual StatusCode finalize();
+    StatusCode finalize() override;
 
     /** Allocate space for IO buffer
-      * @param[in] ioDesc    Output IO descriptor       
+      * @param[in] ioDesc    Output IO descriptor
       * @param[in] len       Total length of the data buffer
       *
       * @return  Pointer to allocated memory space
       */
-    virtual std::pair<char*,int> getDataSpace(void* const ioDesc, size_t len);
+    std::pair<char*,int> getDataSpace(void* const ioDesc, size_t len) override;
 
     /** Write byte buffer to output stream
-      * @param[in] iodesc  Output IO descriptor       
+      * @param[in] iodesc  Output IO descriptor
       * @param[in] data    Data buffer to be streamed
       * @param[in] len     Length of the data buffer
       *
       * @return  Status code indicating success or failure.
       */
-    StatusCode writeBuffer(void* const iodesc, const void* data, size_t len);
+    StatusCode writeBuffer(void* const iodesc, const void* data, size_t len) override;
 
     /// Algorithm overlay: Execute procedure
-    StatusCode execute();
+    StatusCode execute() override;
   };
 }      // End namespace LHCb
 #endif // MDF_RAWDATAWRITER_H

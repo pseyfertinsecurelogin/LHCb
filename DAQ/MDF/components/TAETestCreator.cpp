@@ -1,8 +1,8 @@
 // $Id: TAETestCreator.cpp,v 1.1 2009-02-06 09:37:57 frankb Exp $
 // Include files from Gaudi
-#include "GaudiKernel/Algorithm.h" 
-#include "GaudiKernel/SmartDataPtr.h" 
-#include "GaudiKernel/IDataProviderSvc.h" 
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "MDF/RawEventHelpers.h"
 #include "MDF/MDFHeader.h"
 #include "Event/RawEvent.h"
@@ -13,7 +13,7 @@
 namespace LHCb  {
 
  /** @class TAETestCreator TAETestCreator.cpp
-  *  Creates and fills dummy RawEvent  
+  *  Creates and fills dummy RawEvent
   *
   *  @author Markus Frank
   *  @date   2005-10-13
@@ -22,7 +22,7 @@ namespace LHCb  {
     /// Flag to test bank removal
     int m_numTAEEvents;
     bool m_removeDAQStatus;
-  public: 
+  public:
     /// Standard constructor
     TAETestCreator( const std::string& name, ISvcLocator* pSvcLocator )
     : Algorithm(name, pSvcLocator), m_numTAEEvents(3) {
@@ -31,10 +31,10 @@ namespace LHCb  {
     }
 
     /// Destructor
-    virtual ~TAETestCreator()  {} 
+    virtual ~TAETestCreator()  {}
 
     /// Main execution
-    virtual StatusCode execute()  {
+    StatusCode execute() override {
       MsgStream log(msgSvc(),name());
       int nevts = abs(m_numTAEEvents)>7 ? 7 : abs(m_numTAEEvents);
       SmartDataPtr<RawEvent> raw(eventSvc(),RawEventLocation::Default);

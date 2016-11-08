@@ -65,7 +65,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      Passed ( const std::string& name ) ;
+      explicit Passed ( const std::string& name ) ;
       ~Passed() override;
       /// MANDATORY: clone method ("virtual constructor")
       Passed* clone() const override { return new Passed ( *this ) ; }
@@ -90,11 +90,6 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      Passed () ;                        // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the algorithm name
       std::string                         m_name      ;
       /// the algorithm itself
@@ -114,18 +109,13 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      Enabled ( const std::string& name ) ;
+      explicit Enabled ( const std::string& name ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Enabled* clone() const { return new Enabled ( *this ) ; }
+      Enabled* clone() const override { return new Enabled ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() () const ;
+      result_type operator() () const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Enabled () ;                       // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     } ;
     // =========================================================================
@@ -141,18 +131,13 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      Executed ( const std::string& name ) ;
+      explicit Executed ( const std::string& name ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Executed* clone() const { return new Executed ( *this ) ; }
+      Executed* clone() const override { return new Executed ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() () const ;
+      result_type operator() () const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Executed () ;                       // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     } ;
     // =========================================================================
@@ -170,18 +155,13 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      Run ( const std::string& name ) ;
+      explicit Run ( const std::string& name ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Run* clone() const { return new Run ( *this ) ; }
+      Run* clone() const override { return new Run ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() () const ;
+      result_type operator() () const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Run () ;                          // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -210,6 +190,8 @@ namespace LoKi
                   const std::string& name4 )
           : AnyPassed( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
       AnyPassed ( std::vector<std::string> name ) ;
+      AnyPassed ( AnyPassed&& ) = default;
+      AnyPassed ( const AnyPassed& ) = default;
       ~AnyPassed() override;
       /// MANDATORY: clone method ("virtual constructor")
       AnyPassed* clone() const override { return new AnyPassed ( *this ) ; }
@@ -249,11 +231,6 @@ namespace LoKi
       const std::vector<std::string>& algNames () const { return m_names ; }
       /// get the algorithms
       void getAlgorithms () const ; // get the algorithms
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AnyPassed () ;                     // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -299,11 +276,6 @@ namespace LoKi
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ANYPASSED" , s ) ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AllPassed () ;                        // the default constructor is disabled
-      // ======================================================================
     } ;
     // ========================================================================
     /** @class AnyEnabled
@@ -342,11 +314,6 @@ namespace LoKi
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ANYENABLED" , s ) ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AnyEnabled () ;                        // the default constructor is disabled
-      // ======================================================================
     } ;
     // ========================================================================
     /** @class AllEnabled
@@ -378,17 +345,12 @@ namespace LoKi
           , AnyPassed( std::move(names) ) { }
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  AllEnabled* clone() const { return new AllEnabled ( *this ) ; }
+      AllEnabled* clone() const override { return new AllEnabled ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() () const ;
+      result_type operator() () const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ALLENABLED" , s ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AllEnabled () ;                        // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -421,17 +383,12 @@ namespace LoKi
           , AnyPassed( std::move(names) ) { }
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  AnyExecuted* clone() const { return new AnyExecuted ( *this ) ; }
+      AnyExecuted* clone() const override { return new AnyExecuted ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() () const ;
+      result_type operator() () const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ANYEXECUTED" , s ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AnyExecuted () ;                        // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -447,33 +404,28 @@ namespace LoKi
     public:
       // ======================================================================
       /// forward to base class constructor
-      AllExecuted ( const std::string& name1 ,
-                    const std::string& name2 )
-          : AllExecuted( std::vector<std::string>{ name1, name2 } ) {}
-      AllExecuted ( const std::string& name1 ,
-                    const std::string& name2 ,
-                    const std::string& name3 )
-          : AllExecuted( std::vector<std::string>{ name1, name2, name3 } ) {}
-      AllExecuted ( const std::string& name1 ,
-                    const std::string& name2 ,
-                    const std::string& name3 ,
-                    const std::string& name4 )
-          : AllExecuted( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
+      AllExecuted ( std::string name1 ,
+                    std::string name2 )
+          : AllExecuted( std::vector<std::string>{ std::move(name1), std::move(name2) } ) {}
+      AllExecuted ( std::string name1 ,
+                    std::string name2 ,
+                    std::string name3 )
+          : AllExecuted( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) {}
+      AllExecuted ( std::string name1 ,
+                    std::string name2 ,
+                    std::string name3 ,
+                    std::string name4 )
+          : AllExecuted( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) {}
       AllExecuted ( std::vector<std::string> names )
           : AuxFunBase{ std::tie(names) }
           , AnyPassed( std::move(names) ) { }
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  AllExecuted* clone() const { return new AllExecuted ( *this ) ; }
+      AllExecuted* clone() const override { return new AllExecuted ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() () const ;
+      result_type operator() () const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ALLEXECUTED" , s ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      AllExecuted () ;                        // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -487,33 +439,28 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      RunAll ( const std::string& name1 ,
-               const std::string& name2 )
-          : RunAll( std::vector<std::string>{ name1, name2 } ) {}
-      RunAll ( const std::string& name1 ,
-               const std::string& name2 ,
-               const std::string& name3 )
-          : RunAll( std::vector<std::string>{ name1, name2, name3 } ) {}
-      RunAll ( const std::string& name1 ,
-               const std::string& name2 ,
-               const std::string& name3 ,
-               const std::string& name4 )
-          : RunAll( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
+      RunAll ( std::string name1 ,
+               std::string name2 )
+          : RunAll( std::vector<std::string>{ std::move(name1), std::move(name2) } ) {}
+      RunAll ( std::string name1 ,
+               std::string name2 ,
+               std::string name3 )
+          : RunAll( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) {}
+      RunAll ( std::string name1 ,
+               std::string name2 ,
+               std::string name3 ,
+               std::string name4 )
+          : RunAll( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) {}
       RunAll ( std::vector<std::string> names )
           : AuxFunBase{ std::tie(names) }
           , AllExecuted( std::move(names) ) { }
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  RunAll* clone() const { return new RunAll ( *this ) ; }
+      RunAll* clone() const override { return new RunAll ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() () const ;
+      result_type operator() () const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_RUNALL" , s ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      RunAll () ;                        // the default constructor is disabled
       // ======================================================================
     } ;
     // =========================================================================
@@ -528,31 +475,31 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      NumPassed ( const std::string& name1 ,
-                  const std::string& name2 )
-        : NumPassed( std::vector<std::string>{ name1, name2 } ) {}
+      NumPassed ( std::string name1 ,
+                  std::string name2 )
+        : NumPassed( std::vector<std::string>{ std::move(name1), std::move(name2) } ) {}
       /// constructor from the algorithm name
-      NumPassed ( const std::string& name1 ,
-                  const std::string& name2 ,
-                  const std::string& name3 )
-        : NumPassed( std::vector<std::string>{ name1, name2, name3 } ) {}
+      NumPassed ( std::string name1 ,
+                  std::string name2 ,
+                  std::string name3 )
+        : NumPassed( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) {}
       /// constructor from the algorithm name
-      NumPassed ( const std::string& name1 ,
-                  const std::string& name2 ,
-                  const std::string& name3 ,
-                  const std::string& name4 )
-        : NumPassed( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
+      NumPassed ( std::string name1 ,
+                  std::string name2 ,
+                  std::string name3 ,
+                  std::string name4 )
+        : NumPassed( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) {}
       /// constructor from the algorithm names
       NumPassed ( std::vector<std::string> names )
         : AuxFunBase{ std::tie(names) }
         , m_fun{ std::move(names) } { }
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  NumPassed* clone() const { return new NumPassed ( *this ) ; }
+      NumPassed* clone() const override { return new NumPassed ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() () const ;
+      result_type operator() () const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_NUMPASSED" , s ) ; }
       // ======================================================================
     public:
@@ -578,11 +525,6 @@ namespace LoKi
       // =======================================================================
     private:
       // =======================================================================
-      /// the default constructor is disabled
-      NumPassed () ;                      // the default constructor is disabled
-      // =======================================================================
-    private:
-      // =======================================================================
       /// the actual functor
       LoKi::Algorithms::AnyPassed m_fun ;                  // the actual functor
       // =======================================================================
@@ -599,37 +541,32 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      NumEnabled ( const std::string& name1 ,
-                   const std::string& name2 )
-          : NumEnabled( std::vector<std::string>{ name1, name2 } ) { }
+      NumEnabled ( std::string name1 ,
+                   std::string name2 )
+          : NumEnabled( std::vector<std::string>{ std::move(name1), std::move(name2) } ) { }
       /// constructor from the algorithm name
-      NumEnabled ( const std::string& name1 ,
-                   const std::string& name2 ,
-                   const std::string& name3 )
-          : NumEnabled( std::vector<std::string>{ name1, name2, name3 } ) { }
+      NumEnabled ( std::string name1 ,
+                   std::string name2 ,
+                   std::string name3 )
+          : NumEnabled( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) { }
       /// constructor from the algorithm name
-      NumEnabled ( const std::string& name1 ,
-                   const std::string& name2 ,
-                   const std::string& name3 ,
-                   const std::string& name4 )
-          : NumEnabled( std::vector<std::string>{ name1, name2, name3, name4 } ) { }
+      NumEnabled ( std::string name1 ,
+                   std::string name2 ,
+                   std::string name3 ,
+                   std::string name4 )
+          : NumEnabled( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) { }
       /// constructor from the algorithm name
       NumEnabled ( std::vector<std::string> names )
           : AuxFunBase{ std::tie(names) }
           , NumPassed( std::move(names) ) { }
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  NumEnabled* clone() const { return new NumEnabled ( *this ) ; }
+      NumEnabled* clone() const override { return new NumEnabled ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() () const ;
+      result_type operator() () const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_NUMENABLED" , s ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      NumEnabled () ;                   // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================
@@ -644,37 +581,32 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the algorithm name
-      NumExecuted ( const std::string& name1 ,
-                   const std::string& name2 )
-          : NumExecuted( std::vector<std::string>{ name1, name2 } ) { }
+      NumExecuted ( std::string name1 ,
+                    std::string name2 )
+          : NumExecuted( std::vector<std::string>{ std::move(name1), std::move(name2) } ) { }
       /// constructor from the algorithm name
       NumExecuted ( const std::string& name1 ,
                    const std::string& name2 ,
                    const std::string& name3 )
-          : NumExecuted( std::vector<std::string>{ name1, name2, name3 } ) { }
+          : NumExecuted( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) { }
       /// constructor from the algorithm name
       NumExecuted ( const std::string& name1 ,
                    const std::string& name2 ,
                    const std::string& name3 ,
                    const std::string& name4 )
-          : NumExecuted( std::vector<std::string>{ name1, name2, name3, name4 } ) { }
+          : NumExecuted( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) { }
       /// constructor from the algorithm name
       NumExecuted ( std::vector<std::string> names )
           : AuxFunBase{ std::tie(names) }
           , NumPassed( std::move(names) ) { }
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  NumExecuted* clone() const { return new NumExecuted ( *this ) ; }
+      NumExecuted* clone() const override { return new NumExecuted ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() () const ;
+      result_type operator() () const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_NUMEXECUTED" , s ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      NumExecuted () ;                   // the default constructor is disabled
       // ======================================================================
     } ;
     // ========================================================================

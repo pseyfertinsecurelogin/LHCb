@@ -70,45 +70,42 @@ namespace LHCb
         m_pivot(pivot), m_traj(&traj)
     {  m_trans.SetX(p(0)); m_trans.SetY(p(1)); m_trans.SetZ(p(2)); }
 
-    /// destructor
-    virtual ~AlignTraj(){}
-
     // clone thyself...
-    virtual std::unique_ptr<Trajectory> clone() const;
+    std::unique_ptr<Trajectory> clone() const override;
 
     /// Retrieve the derivative of the point at fixed arclength 'arclength'
     /// with respect to the alignment parameters
-    virtual Derivative derivative( double arclength ) const ;
+    Derivative derivative( double arclength ) const  override;
 
     /// Retrieve the alignment parameters
-    virtual Parameters parameters() const ;
+    Parameters parameters() const  override;
 
     /// update the parameters
-    virtual AlignTraj& operator+=(const Parameters& delta) ;
+    AlignTraj& operator+=(const Parameters& delta)  override;
 
 
-    virtual Point  position(  double arclength ) const ;
-    virtual Vector direction( double arclength ) const;
-    virtual Vector curvature( double arclength ) const;
-    virtual void expansion(   double arclength,
-                              Point& p,
-                              Vector& dp,
-                              Vector& ddp ) const ;
+    Point  position(  double arclength ) const  override;
+    Vector direction( double arclength ) const override;
+    Vector curvature( double arclength ) const override;
+    void expansion(   double arclength,
+                      Point& p,
+                      Vector& dp,
+                      Vector& ddp ) const override;
 
-    virtual double muEstimate( const Point& ) const ;
+    double muEstimate( const Point& ) const  override;
 
-    virtual double distTo1stError( double arclength,
-                                   double tolerance,
-                                   int pathDirection = +1 ) const ;
-    virtual double distTo2ndError( double arclength,
-                                   double tolerance,
-                                   int pathDirection = +1 ) const ;
+    double distTo1stError( double arclength,
+                           double tolerance,
+                           int pathDirection = +1 ) const override;
+    double distTo2ndError( double arclength,
+                           double tolerance,
+                           int pathDirection = +1 ) const override;
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because AlignTraj is parameterized in
     /// arclength.
     using DifTraj<6>::arclength;
-    virtual double arclength(double mu1, double mu2) const { return mu2 - mu1 ; }
+    double arclength(double mu1, double mu2) const override { return mu2 - mu1 ; }
 
   private:
     template <typename T> T rotate(const T& t) const

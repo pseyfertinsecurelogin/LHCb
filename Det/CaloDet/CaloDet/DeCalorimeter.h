@@ -182,6 +182,17 @@ public:
     double offset = isPinId( id ) ? pinPedestalShift () : pedestalShift    ()  ;
     return cellGain(id) * ((double) adc - offset);
   };
+  // reverse operation : convert energy in MeV to ADC
+  double  cellADC(double energy,LHCb::CaloCellID id) {
+    double offset = isPinId( id ) ? pinPedestalShift () : pedestalShift    ()  ;
+    double gain = cellGain(id);
+    return (gain>0) ? floor( energy / gain + offset + 0.5) : 0 ;
+  };
+  bool isSaturated(double energy,LHCb::CaloCellID id){
+    return cellADC(energy,id)+256  >= adcMax();
+  }
+  
+
   inline double cellTime ( const LHCb::CaloCellID& ) const ;
   inline const Gaudi::XYZPoint cellCenter       ( const LHCb::CaloCellID& ) const ;
   inline const CaloNeighbors& neighborCells    ( const LHCb::CaloCellID& ) const ;

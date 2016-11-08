@@ -24,7 +24,7 @@ namespace Rich
     /// Standard constructor
     Converter ( long storage_type,
                 const CLID &class_type,
-                ISvcLocator *svc = NULL )
+                ISvcLocator *svc = nullptr )
       : Rich::CommonBase<Rich::Converter_Imp> ( storage_type, class_type, svc )
     { }
 

@@ -24,12 +24,8 @@ DeTTSector::DeTTSector( const std::string& name ) :
   DeSTSector( name ),
   m_parent(NULL),
   m_row(0u)
-{ 
+{
   // constructer
-}
-
-DeTTSector::~DeTTSector() {
-  // destructer
 }
 
 const CLID& DeTTSector::clID () const
@@ -43,7 +39,7 @@ std::string DeTTSector::hybridType() const
 }
 
 StatusCode DeTTSector::initialize() {
-  
+
   // initialize method
   MsgStream msg(msgSvc(), name() );
 
@@ -70,7 +66,7 @@ StatusCode DeTTSector::initialize() {
     else {
       setID(m_parent->firstSector() + tSize - subID);
     }
-   
+
     // row..
     if (m_parent->type() == "KLM"){
       if (m_parent->position() == "B"){
@@ -78,8 +74,8 @@ StatusCode DeTTSector::initialize() {
       }
       else {
         m_row = id() - m_parent->firstSector() + 4;
-      }  
-    } 
+      }
+    }
     else {
       if (m_parent->position() == "B"){
         m_row = id() - m_parent->firstSector() + 1;
@@ -91,17 +87,17 @@ StatusCode DeTTSector::initialize() {
 
     // build the id
     const STChannelID parentID = m_parent->elementID();
-    STChannelID chan(STChannelID::typeTT,parentID.station(),parentID.layer(), 
+    STChannelID chan(STChannelID::typeTT,parentID.station(),parentID.layer(),
                      parentID.detRegion(),  id(), 0);
     setElementID(chan);
 
     // get the nickname
-    m_nickname = TTNames().UniqueSectorToString(chan); 
+    m_nickname = TTNames().UniqueSectorToString(chan);
 
     // see if stereo
     const unsigned int layer = chan.layer();
     m_isStereo = false;
-    if ((chan.station() == TTNames::TTa && layer == 2) || (chan.station() == TTNames::TTb && layer == 1))  m_isStereo = true; 
+    if ((chan.station() == TTNames::TTa && layer == 2) || (chan.station() == TTNames::TTb && layer == 1))  m_isStereo = true;
 
     // get the attached sensors
     std::vector<DeTTSensor*> sensors = getChildren<DeTTSector>();

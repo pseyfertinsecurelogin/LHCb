@@ -1,4 +1,3 @@
-// $Id: UnpackTrack.cpp,v 1.15 2009-12-12 15:37:20 jonrob Exp $
 // Include files
 
 // from Gaudi
@@ -30,11 +29,6 @@ DECLARE_ALGORITHM_FACTORY( UnpackTrack )
   declareProperty( "AncestorSource",          m_ancestorSource = LHCb::TrackLocation::Default );
   //setProperty( "OutputLevel", 1 );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-UnpackTrack::~UnpackTrack() {}
 
 //=============================================================================
 // Main execution

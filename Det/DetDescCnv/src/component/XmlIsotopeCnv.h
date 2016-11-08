@@ -18,41 +18,41 @@ template <class TYPE> class CnvFactory;
  * @author Pere Mato
  */
 class XmlIsotopeCnv : public XmlGenericCnv {
-  
+
   /// Friend needed for instantiation
   friend class CnvFactory<XmlIsotopeCnv>;
-  
+
 public:
-  
+
   /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
    */
-  static const CLID& classID() { return CLID_Isotope; }  
+  static const CLID& classID() { return CLID_Isotope; }
 
- 
+
 protected:
-  
+
   /**
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
   XmlIsotopeCnv (ISvcLocator* svcs);
-  
+
   /**
    * Default destructor
    */
   virtual ~XmlIsotopeCnv();
-  
+
   /** Creates the transient representation of an object from a DOMElement.
    * Overrides the default method in XmlGenericCnv
    * @param element the DOMElement to be used to builds the object
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_createObj (xercesc::DOMElement* element,
-                                  DataObject*& refpObject);
-  
+  StatusCode i_createObj (xercesc::DOMElement* element,
+                          DataObject*& refpObject) override;
+
   using XmlGenericCnv::i_fillObj;
   /** Fills the current object for its child element childElement.
    * Overrides the default method in XmlGenericCnv
@@ -61,10 +61,10 @@ protected:
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillObj (xercesc::DOMElement* childElement,
-                                DataObject* refpObject,
-                                IOpaqueAddress* address);
-  
+  StatusCode i_fillObj (xercesc::DOMElement* childElement,
+                        DataObject* refpObject,
+                                IOpaqueAddress* address) override;
+
 private:
 
   // Constant strings for element and parameter names
@@ -84,7 +84,7 @@ private:
 };
 
 // ============================================================================
-// End 
+// End
 // ============================================================================
 #endif // DETDESCCNV_XMLCNVSVC_XMLISOTOPECNV_H
 // ============================================================================

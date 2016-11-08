@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef UNPACKCLUSTER_H
 #define UNPACKCLUSTER_H 1
 
@@ -12,18 +11,16 @@
  *  @author Olivier Callot
  *  @date   2012-03-06
  */
-class UnpackCluster : public GaudiAlgorithm 
+class UnpackCluster : public GaudiAlgorithm
 {
 
 public:
 
   /// Standard constructor
-  UnpackCluster( const std::string& name, 
+  UnpackCluster( const std::string& name,
                  ISvcLocator* pSvcLocator );
 
-  virtual ~UnpackCluster( ); ///< Destructor
-
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 
@@ -32,7 +29,7 @@ private:
   {
     if ( !m_vClus )
     {
-      put( m_vClus = new LHCb::VeloClusters() , 
+      put( m_vClus = new LHCb::VeloClusters() ,
            LHCb::VeloClusterLocation::Default  + m_extension );
     }
     return m_vClus;

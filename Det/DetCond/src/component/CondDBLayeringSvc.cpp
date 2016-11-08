@@ -1,5 +1,4 @@
 // Include files
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/Time.h"
 
@@ -34,10 +33,6 @@ CondDBLayeringSvc::CondDBLayeringSvc( const std::string& name, ISvcLocator* svcl
                   " transient store.");
 
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CondDBLayeringSvc::~CondDBLayeringSvc() {}
 
 //=============================================================================
 // initialize
@@ -46,24 +41,23 @@ StatusCode CondDBLayeringSvc::initialize(){
   StatusCode sc = base_class::initialize();
   if (sc.isFailure()) return sc;
 
-  MsgStream log(msgSvc(), name() );
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "Initialize" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "Initialize" << endmsg;
 
   // locate all the AccessSvcs layers
   std::vector<std::string>::iterator lname;
-  for ( lname = m_layersNames.begin(); lname != m_layersNames.end(); ++lname ) {
+  for ( const auto& lname : m_layersNames) {
 
     ICondDBReader *svcPtr;
-    sc = service(*lname,svcPtr,true);
+    sc = service(lname,svcPtr,true);
     if (  !sc.isSuccess() ) {
-      log << MSG::ERROR << "Could not locate " << *lname << endmsg;
+      error() << "Could not locate " << lname << endmsg;
       return sc;
     }
 
     m_layers.push_back(svcPtr);
-    if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-      log << MSG::DEBUG << "Retrieved '" << *lname << "'" << endmsg;
+    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+      debug() << "Retrieved '" << lname << "'" << endmsg;
 
   }
 
@@ -74,14 +68,9 @@ StatusCode CondDBLayeringSvc::initialize(){
 // finalize
 //=============================================================================
 StatusCode CondDBLayeringSvc::finalize(){
-  MsgStream log(msgSvc(), name() );
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "Finalize" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "Finalize" << endmsg;
 
-  std::vector<ICondDBReader*>::iterator layer;
-  for ( layer = m_layers.begin(); layer != m_layers.end(); ++layer ) {
-    if ( *layer ) (*layer)->release();
-  }
   m_layers.clear();
 
   return base_class::finalize();
@@ -101,9 +90,8 @@ StatusCode CondDBLayeringSvc::getObject (const std::string &path, const Gaudi::T
     until = Gaudi::Time::max();
     sc = CondDB::generateXMLCatalog(this,path,data);
   } else {
-    std::vector<ICondDBReader*>::iterator layer;
     sc = StatusCode::FAILURE;
-    for ( layer = m_layers.begin();
+    for ( auto layer = m_layers.begin();
           layer != m_layers.end() && sc.isFailure();
           ++layer ) {
       sc = (*layer)->getObject(path,when,data,descr,since,until,channel);
@@ -122,9 +110,8 @@ StatusCode CondDBLayeringSvc::getObject (const std::string &path, const Gaudi::T
     until = Gaudi::Time::max();
     sc = CondDB::generateXMLCatalog(this,path,data);
   } else {
-    std::vector<ICondDBReader*>::iterator layer;
     sc = StatusCode::FAILURE;
-    for ( layer = m_layers.begin();
+    for ( auto layer = m_layers.begin();
           layer != m_layers.end() && sc.isFailure();
           ++layer ) {
       sc = (*layer)->getObject(path,when,data,descr,since,until,channel);
@@ -141,9 +128,8 @@ ICondDBReader::IOVList CondDBLayeringSvc::i_getIOVs(const std::string & path, co
   IOVList missing; // IOVs not found
   missing.push_back(iov);
 
-  std::vector<ICondDBReader*>::iterator layer;
   // for each layer
-  for ( layer = m_layers.begin();
+  for ( auto layer = m_layers.begin();
         layer != m_layers.end() && !missing.empty();
         ++layer ) {
 
@@ -220,8 +206,7 @@ StatusCode CondDBLayeringSvc::getChildNodes (const std::string &path,
   // Get the folders and foldersets from the dedicated alternative
   std::vector<std::string> tmpv1,tmpv2;
   StatusCode sc = StatusCode::FAILURE;
-  std::vector<ICondDBReader*>::iterator layer;
-  for ( layer = m_layers.begin(); layer != m_layers.end(); ++layer ) {
+  for ( auto layer = m_layers.begin(); layer != m_layers.end(); ++layer ) {
     if ((*layer)->getChildNodes(path,tmpv1,tmpv2).isSuccess()){
       // we consider it a success if it worked at least for one of the layers
       sc = StatusCode::SUCCESS;
@@ -235,43 +220,35 @@ StatusCode CondDBLayeringSvc::getChildNodes (const std::string &path,
 // Tells if the path is available in the database.
 //=========================================================================
 bool CondDBLayeringSvc::exists(const std::string &path) {
-  std::vector<ICondDBReader*>::const_iterator layer;
-  for ( layer = m_layers.begin(); layer != m_layers.end(); ++layer ) {
-    if ((*layer)->exists(path)) return true;
-  }
-  return false;
+  return std::any_of( m_layers.begin(), m_layers.end(),
+                      [&](ICondDBReader* r) { return r->exists(path); } );
 }
 
 //=========================================================================
 // Tells if the path (if it exists) is a folder.
 //=========================================================================
 bool CondDBLayeringSvc::isFolder(const std::string &path) {
-  std::vector<ICondDBReader*>::const_iterator layer;
-  for ( layer = m_layers.begin(); layer != m_layers.end(); ++layer ) {
-    if ((*layer)->exists(path)) return (*layer)->isFolder(path);
-  }
-  return false;
+  auto layer = std::find_if( m_layers.begin(), m_layers.end(),
+                             [&](ICondDBReader* r) 
+                             { return r->exists(path); } );
+  return layer!=m_layers.end() && (*layer)->isFolder(path);
 }
 
 //=========================================================================
 // Tells if the path (if it exists) is a folderset.
 //=========================================================================
 bool CondDBLayeringSvc::isFolderSet(const std::string &path) {
-  std::vector<ICondDBReader*>::const_iterator layer;
-  for ( layer = m_layers.begin(); layer != m_layers.end(); ++layer ) {
-    if ((*layer)->exists(path)) return (*layer)->isFolderSet(path);
-  }
-  return false;
+  auto layer = std::find_if( m_layers.begin(), m_layers.end(),
+                             [&](ICondDBReader* r) 
+                             { return r->exists(path); } );
+  return layer!=m_layers.end() && (*layer)->isFolderSet(path);
 }
 
 //=========================================================================
 // Force disconnection from database.
 //=========================================================================
 void CondDBLayeringSvc::disconnect() {
-  std::vector<ICondDBReader*>::const_iterator layer;
-  for ( layer = m_layers.begin(); layer != m_layers.end(); ++layer ) {
-    (*layer)->disconnect();
-  }
+  for (auto& layer : m_layers ) layer->disconnect();
 }
 
 //=========================================================================
@@ -279,10 +256,7 @@ void CondDBLayeringSvc::disconnect() {
 //=========================================================================
 void CondDBLayeringSvc::defaultTags ( std::vector<LHCb::CondDBNameTagPair>& tags ) const {
   // loop over layers
-  std::vector<ICondDBReader*>::const_iterator layer;
-  for ( layer = m_layers.begin(); layer != m_layers.end(); ++layer ) {
-    (*layer)->defaultTags(tags);
-  }
+  for ( auto& layer : m_layers) layer->defaultTags(tags);
 }
 
 //=============================================================================
