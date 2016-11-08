@@ -16,16 +16,15 @@
  *  @author Jaap Panman
  *  @date   2010-10-05
  */
-class FSRNavigator : public GaudiTool, virtual public IFSRNavigator {
+class FSRNavigator : public extends<GaudiTool, IFSRNavigator> {
 public:
   /// Standard constructor
   FSRNavigator( const std::string& type,
                   const std::string& name,
                   const IInterface* parent);
 
-  virtual ~FSRNavigator( ); ///< Destructor
-
   StatusCode initialize() override;
+  StatusCode finalize() override;
 
   // return list of addresses found below the address
   std::vector< std::string > navigate(std::string rootname, std::string tag) override;
@@ -35,7 +34,7 @@ protected:
 
 private:
   std::string m_ToolName;                       ///> name of tool for normalization
-  IDataProviderSvc* m_fileRecordSvc;            ///> Reference to file records data service
+  SmartIF<IDataProviderSvc> m_fileRecordSvc ;  ///> Reference to file records data service
 
 };
 #endif // FSRNAVIGATOR_H

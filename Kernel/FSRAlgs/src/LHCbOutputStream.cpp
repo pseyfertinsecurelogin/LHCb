@@ -17,7 +17,15 @@
 #include "GaudiKernel/AttribStringParser.h"
 
 #include "LHCbOutputStream.h"
-#include "LHCbOutputStreamAgent.h"
+
+namespace {
+// Remove all items from the output streamer list;
+void clearItems(LHCbOutputStream::Items& itms) {
+  for ( auto&  i : itms ) delete i;
+  itms.clear();
+}
+
+}
 
 #include <set>
 
@@ -38,10 +46,7 @@ LHCbOutputStream::LHCbOutputStream(const std::string& name, ISvcLocator* pSvcLoc
   m_outputType     = "UPDATE";
   m_storeName      = "EventDataSvc";
   m_persName       = "EventPersistencySvc";
-  m_agent          = new LHCbOutputStreamAgent(this);
-  m_acceptAlgs     = new std::vector<Algorithm*>();
-  m_requireAlgs    = new std::vector<Algorithm*>();
-  m_vetoAlgs       = new std::vector<Algorithm*>();
+  m_agent          = std::make_unique<LHCbOutputStreamAgent>(this);
   ///in the baseclass, always fire the incidents by default
   ///in e.g. RecordStream this will be set to false, and configurable
   m_fireIncidents  = true;
@@ -70,13 +75,6 @@ LHCbOutputStream::LHCbOutputStream(const std::string& name, ISvcLocator* pSvcLoc
 
 }
 
-// Standard Destructor
-LHCbOutputStream::~LHCbOutputStream()   {
-  delete m_agent;
-  delete m_acceptAlgs;
-  delete m_requireAlgs;
-  delete m_vetoAlgs;
-}
 
 // initialize data writer
 StatusCode LHCbOutputStream::initialize() {
@@ -119,53 +117,39 @@ StatusCode LHCbOutputStream::initialize() {
 
   // Take the new item list from the properties.
   ON_DEBUG log << MSG::DEBUG << "ItemList    : " << m_itemNames << endmsg;
-  for( ItemNames::const_iterator i = m_itemNames.begin();
-       i != m_itemNames.end(); ++i )
-  {
-    addItem( m_itemList, *i );
-  }
+  for( const auto& i : m_itemNames ) addItem( m_itemList, i );
 
   // Take the new item list from the properties.
   ON_DEBUG log << MSG::DEBUG << "OptItemList : " << m_optItemNames << endmsg;
-  for( ItemNames::const_iterator i = m_optItemNames.begin();
-       i != m_optItemNames.end(); ++i )
-  {
-    addItem( m_optItemList, *i );
-  }
+  for( const auto& i : m_optItemNames ) addItem( m_optItemList, i );
 
   // prepare the algorithm selected dependent locations
   ON_DEBUG log << MSG::DEBUG << "AlgDependentItemList : " << m_algDependentItemList << endmsg;
-  for ( AlgDependentItemNames::const_iterator a = m_algDependentItemList.begin();
-        a != m_algDependentItemList.end(); ++a )
+  for ( const auto& a : m_algDependentItemList )
   {
     // Get the algorithm pointer
-    Algorithm * theAlgorithm = decodeAlgorithm( a->first );
-    if ( theAlgorithm )
-    {
+    Algorithm * theAlgorithm = decodeAlgorithm( a.first );
+    if ( theAlgorithm ) {
       // Get the item list for this alg
       Items& items = m_algDependentItems[theAlgorithm];
       // Clear the list for this alg
       clearItems( items );
       // fill the list again
-      for ( ItemNames::const_iterator i = a->second.begin();
-            i != a->second.end(); ++i )
-      {
-        addItem( items, *i );
-      }
+      for ( const auto&  i : a.second ) addItem( items, i );
     }
   }
 
   // Take the item list to the data service preload list.
   if ( m_doPreLoad )    {
-    for(Items::iterator j = m_itemList.begin(); j != m_itemList.end(); j++)   {
-      m_pDataProvider->addPreLoadItem( *(*j) ).ignore();
+    for(auto& j : m_itemList) {
+      m_pDataProvider->addPreLoadItem( *j ).ignore();
     }
     // Not working: bad reference counting! pdataSvc->release();
   }
 
   if ( m_doPreLoadOpt )    {
-    for(Items::iterator j=m_optItemList.begin(); j!=m_optItemList.end(); j++) {
-      m_pDataProvider->addPreLoadItem( *(*j) );
+    for(auto& j : m_optItemList) {
+      m_pDataProvider->addPreLoadItem( *j );
     }
   }
   log << MSG::INFO << "Data source: " << m_storeName  << " output: " << m_output << endmsg;
@@ -335,7 +319,7 @@ StatusCode LHCbOutputStream::collectObjects()   {
     m_currentItem = (*i);
     StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(), obj);
     if ( iret.isSuccess() )  {
-      iret = m_pDataManager->traverseSubTree(obj, m_agent);
+      iret = m_pDataManager->traverseSubTree(obj, m_agent.get());
       if ( !iret.isSuccess() )  {
         status = iret;
       }
@@ -353,7 +337,7 @@ StatusCode LHCbOutputStream::collectObjects()   {
     m_currentItem = (*i);
     StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(), obj);
     if ( iret.isSuccess() )  {
-      iret = m_pDataManager->traverseSubTree(obj, m_agent);
+      iret = m_pDataManager->traverseSubTree(obj, m_agent.get());
     }
     if ( !iret.isSuccess() )    {
       ON_DEBUG
@@ -379,7 +363,7 @@ StatusCode LHCbOutputStream::collectObjects()   {
         StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(),obj);
         if ( iret.isSuccess() )
         {
-          iret = m_pDataManager->traverseSubTree(obj,m_agent);
+          iret = m_pDataManager->traverseSubTree(obj,m_agent.get());
           if ( !iret.isSuccess() ) { status = iret; }
         }
         else
@@ -416,13 +400,6 @@ void LHCbOutputStream::clearSelection()     {
   m_objects.erase(m_objects.begin(), m_objects.end());
 }
 
-// Remove all items from the output streamer list;
-void LHCbOutputStream::clearItems(Items& itms)     {
-  for ( Items::iterator i = itms.begin(); i != itms.end(); i++ )    {
-    delete (*i);
-  }
-  itms.erase(itms.begin(), itms.end());
-}
 
 // Find single item identified by its path (exact match)
 DataStoreItem*
@@ -550,11 +527,11 @@ StatusCode LHCbOutputStream::decodeAcceptAlgs( ) {
   MsgStream log(msgSvc(), name());
   ON_DEBUG
     log << MSG::DEBUG << "AcceptAlgs  : " << m_acceptNames.value() << endmsg;
-  return decodeAlgorithms( m_acceptNames, m_acceptAlgs );
+  return decodeAlgorithms( m_acceptNames, &m_acceptAlgs );
 }
 
 void LHCbOutputStream::acceptAlgsHandler( Property& /* theProp */ )  {
-  StatusCode sc = decodeAlgorithms( m_acceptNames, m_acceptAlgs );
+  StatusCode sc = decodeAlgorithms( m_acceptNames, &m_acceptAlgs );
   if (sc.isFailure()) {
     throw GaudiException("Failure in LHCbOutputStream::decodeAlgorithms",
                          "LHCbOutputStream::acceptAlgsHandler",sc);
@@ -565,11 +542,11 @@ StatusCode LHCbOutputStream::decodeRequireAlgs( )  {
   MsgStream log(msgSvc(), name());
   ON_DEBUG
     log << MSG::DEBUG << "RequireAlgs : " << m_requireNames.value() << endmsg;
-  return decodeAlgorithms( m_requireNames, m_requireAlgs );
+  return decodeAlgorithms( m_requireNames, &m_requireAlgs );
 }
 
 void LHCbOutputStream::requireAlgsHandler( Property& /* theProp */ )  {
-  StatusCode sc = decodeAlgorithms( m_requireNames, m_requireAlgs );
+  StatusCode sc = decodeAlgorithms( m_requireNames, &m_requireAlgs );
   if (sc.isFailure()) {
     throw GaudiException("Failure in LHCbOutputStream::decodeAlgorithms",
                          "LHCbOutputStream::requireAlgsHandler",sc);
@@ -580,11 +557,11 @@ StatusCode LHCbOutputStream::decodeVetoAlgs( )  {
   MsgStream log(msgSvc(), name());
   ON_DEBUG
     log << MSG::DEBUG << "VetoAlgs    : " << m_vetoNames.value() << endmsg;
-  return decodeAlgorithms( m_vetoNames, m_vetoAlgs );
+  return decodeAlgorithms( m_vetoNames, &m_vetoAlgs );
 }
 
 void LHCbOutputStream::vetoAlgsHandler( Property& /* theProp */ )  {
-  StatusCode sc = decodeAlgorithms( m_vetoNames, m_vetoAlgs );
+  StatusCode sc = decodeAlgorithms( m_vetoNames, &m_vetoAlgs );
   if (sc.isFailure()) {
     throw GaudiException("Failure in LHCbOutputStream::decodeAlgorithms",
                          "LHCbOutputStream::vetoAlgsHandler",sc);
@@ -683,10 +660,10 @@ bool LHCbOutputStream::isEventAccepted( ) const  {
   // whether any have been executed and have their filter
   // passed flag set. Any match causes the event to be
   // provisionally accepted.
-  if ( ! m_acceptAlgs->empty() ) {
+  if ( ! m_acceptAlgs.empty() ) {
     result = false;
-    for(AlgIter i=m_acceptAlgs->begin(),end=m_acceptAlgs->end(); i != end; ++i) {
-      if ( (*i)->isExecuted() && (*i)->filterPassed() ) {
+    for(const auto& alg : m_acceptAlgs) {
+      if ( alg->isExecuted() && alg->filterPassed() ) {
         result = true;
         break;
       }
@@ -697,9 +674,9 @@ bool LHCbOutputStream::isEventAccepted( ) const  {
   // whether all have been executed and have their filter
   // passed flag set. Any mismatch causes the event to be
   // rejected.
-  if ( result && ! m_requireAlgs->empty() ) {
-    for(AlgIter i=m_requireAlgs->begin(),end=m_requireAlgs->end(); i != end; ++i) {
-      if ( !(*i)->isExecuted() || !(*i)->filterPassed() ) {
+  if ( result ) {
+    for(const auto& alg : m_requireAlgs) {
+      if ( !alg->isExecuted() || !alg->filterPassed() ) {
         result = false;
         break;
       }
@@ -710,9 +687,9 @@ bool LHCbOutputStream::isEventAccepted( ) const  {
   // whether any have been executed and have their filter
   // passed flag set. Any match causes the event to be
   // rejected.
-  if ( result && ! m_vetoAlgs->empty() ) {
-    for(AlgIter i=m_vetoAlgs->begin(),end=m_vetoAlgs->end(); i != end; ++i) {
-      if ( (*i)->isExecuted() && (*i)->filterPassed() ) {
+  if ( result ) {
+    for(auto& alg : m_vetoAlgs ) {
+      if ( alg->isExecuted() && alg->filterPassed() ) {
         result = false;
         break;
       }
