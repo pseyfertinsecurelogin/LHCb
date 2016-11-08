@@ -28,22 +28,14 @@ DECLARE_ALGORITHM_FACTORY( L0DUFromRawAlg )
 L0DUFromRawAlg::L0DUFromRawAlg( const std::string& name,
                                 ISvcLocator* pSvcLocator)
   : L0FromRawBase ( name , pSvcLocator )
-  , m_fromRaw(NULL)
-  , m_fromRaw2(NULL)
 {
-  declareProperty( "L0DUReportLocation"   , m_L0DUReportLocation =  LHCb::L0DUReportLocation::Default );
-  declareProperty( "ProcessorDataLocation", m_procDataLocation   =  LHCb::L0ProcessorDataLocation::L0DU );
-  declareProperty( "L0DUFromRawToolType"  , m_fromRawTool = "L0DUFromRawTool" );
-  declareProperty( "Hlt1"                 , m_hlt1        = false );
-  declareProperty( "CompareTools"         , m_compare     = false );
-  declareProperty( "EnsureKnownTCK"       , m_ensureKnownTCK = false );
+  declareProperty( "L0DUReportLocation"   , m_L0DUReportLocation );
+  declareProperty( "ProcessorDataLocation", m_procDataLocation   );
+  declareProperty( "L0DUFromRawToolType"  , m_fromRawTool );
+  declareProperty( "Hlt1"                 , m_hlt1        );
+  declareProperty( "CompareTools"         , m_compare     );
+  declareProperty( "EnsureKnownTCK"       , m_ensureKnownTCK );
 }
-
-  //=============================================================================
-  // Destructor
-  //=============================================================================
-L0DUFromRawAlg::~L0DUFromRawAlg() {} 
-
 
 //=============================================================================
 // Initialization
@@ -72,8 +64,6 @@ StatusCode L0DUFromRawAlg::initialize() {
 
     if ( m_fromRaw->_setProperty("StatusOnTES",Gaudi::Utils::toString(m_statusOnTES)).isFailure() )
       return Error("Unable to set StatusOnTES in L0DUFromRawTool",StatusCode::SUCCESS,50);
-    //if ( m_fromRaw->_setProperty("UseRootInTES",Gaudi::Utils::toString(m_useRootInTES)).isFailure() ) //no longer needed!
-    //   return Error("Unable to set UseRootInTES in L0DUFromRawTool",StatusCode::SUCCESS,50);
   }
   return StatusCode::SUCCESS;
 }
@@ -83,36 +73,29 @@ StatusCode L0DUFromRawAlg::initialize() {
 //=============================================================================
 StatusCode L0DUFromRawAlg::execute() {
 
-
-  
   if(!m_fromRaw->decodeBank())Warning("Unable to decode L0DU rawBank", StatusCode::SUCCESS).ignore();
 
-  if (m_ensureKnownTCK) {
-    if (m_fromRaw->report().configuration() == NULL) 
+  if (m_ensureKnownTCK && !m_fromRaw->report().configuration()) {
       return Error("TCK not recognized. Run with L0Conf().EnsureKnownTCK=False to ignore this error",StatusCode::FAILURE);
   }
 
   // L0DUReport on TES
   if( m_writeOnTES ){
-    LHCb::L0DUReport rep = m_fromRaw->report();
     // put the report and processor data on TES
-    LHCb::L0DUReport* report = new LHCb::L0DUReport( rep );
-    std::string loc = dataLocation( m_L0DUReportLocation);
-    put (report , loc , IgnoreRootInTES);
+    LHCb::L0DUReport* report = new LHCb::L0DUReport( m_fromRaw->report() );
+    put (report , dataLocation( m_L0DUReportLocation) , IgnoreRootInTES);
   }
 
   if ( m_compare ) compareReports();
 
   // Clone Processor Data and put it on TES 
   // WARNING : PROCESSOR DATA ARE NOT CONTEXT DEPENDANT
-  if( m_writeProcData){
+  if( m_writeProcData) {
     LHCb::L0ProcessorDatas* datas = new LHCb::L0ProcessorDatas();
     put (datas  , m_procDataLocation , IgnoreRootInTES);
-    for(LHCb::L0ProcessorDatas::iterator it = m_fromRaw->L0ProcessorDatas()->begin();
-        it != m_fromRaw->L0ProcessorDatas()->end(); it++){
-      LHCb::L0ProcessorData* data = new  LHCb::L0ProcessorData( **it );
-      datas->insert (data);
-    }  
+    for(const auto& it : * m_fromRaw->L0ProcessorDatas() ) {
+      datas->insert (new LHCb::L0ProcessorData( *it ));
+    }
   }
   
   counter("L0DU RawBank Size (Bytes)") += m_fromRaw->size();
