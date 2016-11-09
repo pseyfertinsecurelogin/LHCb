@@ -1268,9 +1268,9 @@ Gaudi::Math::ValueWithError Gaudi::Math::igamma
   const double bv = b.value() ;
   const double v  = Gaudi::Math::igamma  ( bv ) ;
   //
-  const double d1 = - Gaudi::Math::psi( bv ) / v ;
-  const double d2 = d1 * d1 ;
-  const double e2 = d2 * b.cov2() ;
+  const double d1 = - Gaudi::Math::psi( bv ) * v ;
+  const double d2 =   d1 * d1 ;
+  const double e2 =   d2 * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
