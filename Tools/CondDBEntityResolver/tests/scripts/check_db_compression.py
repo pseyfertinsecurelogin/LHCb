@@ -53,7 +53,7 @@ class DetCondCompressionTest(unittest.TestCase):
     def test_compression_default(self):
         """Check default compression method"""
         ret = CondDBCompression.compress(self.testin)
-        self.assertEquals(ret in self.testout[DEFAULT_METHOD])
+        self.assert_(ret in self.testout[DEFAULT_METHOD])
 
     def test_decompression(self):
         """Check decompression method"""
