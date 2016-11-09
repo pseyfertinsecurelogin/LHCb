@@ -35,7 +35,8 @@ preprocessor = (
                  "Mean 'delta-memory' exceeds 3*sigma",
                  "INFO  'CnvServices':",
                  "DEBUG Property ['Name': Value] =  'IsIOBound':False",
-                 "#properties ="
+                 "#properties =",
+                 "VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc"
                 ],
       regexps = [r"DEBUG Property \['Name': Value\] =  '(Timeline|(Extra|Data)(In|Out)puts)'",
                 ])
