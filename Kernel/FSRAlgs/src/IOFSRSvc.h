@@ -1,4 +1,3 @@
-
 #ifndef GAUDISVC_IOFSRSVC_H
 #define GAUDISVC_IOFSRSVC_H
 
@@ -38,9 +37,7 @@ template <class TYPE> class SvcFactory;
  *  @author Robert Lambert
  *  @date   2012-09-27
  */
-class IOFSRSvc
-  : public extends1<Service,IIOFSRSvc>
-  , public virtual IIncidentListener {
+class IOFSRSvc : public extends<Service,IIOFSRSvc,IIncidentListener> {
 
 public:
 
@@ -63,9 +60,6 @@ public:
   // ==========================================================================
   void handle ( const Incident& )  override;
   // ==========================================================================
-
-  // Destructor.
-  virtual ~IOFSRSvc();
 
   // Return map of input GUID : #events for all GUIDs, events read in __creating__ those files
   // For provenenance files only, since I don't necessarily know the top file's GUID
@@ -126,9 +120,8 @@ private:
 
   /// Allow SvcFactory to instantiate the service.
   friend class SvcFactory<IOFSRSvc>;
-  //IIncidentSvc* m_incSvc; ///the incident service
-  IIncidentSvc* m_incSvc;
-  Gaudi::IIODataManager * m_ioDataManager; ///the pointer to the data manager service
+  SmartIF<IIncidentSvc> m_incSvc;
+  SmartIF<Gaudi::IIODataManager> m_ioDataManager; ///the pointer to the data manager service
   ///type of incident to regard as begin event
   std::string m_beginIncident;
   ///type of incident to regard as end event

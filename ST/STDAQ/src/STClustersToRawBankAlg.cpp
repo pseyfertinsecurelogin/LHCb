@@ -36,12 +36,9 @@ DECLARE_ALGORITHM_FACTORY( STClustersToRawBankAlg )
 
 STClustersToRawBankAlg::STClustersToRawBankAlg( const std::string& name,
                                                       ISvcLocator* pSvcLocator )
-  :ST::AlgBase( name, pSvcLocator ),
-   m_overflow(0),
-   m_maxClusterSize(4),
-   m_pcn(128)
+  :ST::AlgBase( name, pSvcLocator )
 {
-  // constructer
+  // constructor
 
   declareSTConfigProperty("clusterLocation", m_clusterLocation , STClusterLocation::TTClusters);
   declareSTConfigProperty("summaryLocation", m_summaryLocation , STSummaryLocation::TTSummary);
@@ -50,10 +47,6 @@ STClustersToRawBankAlg::STClustersToRawBankAlg( const std::string& name,
 
 
   setForcedInit();
-}
-
-// Destructor
-STClustersToRawBankAlg::~STClustersToRawBankAlg() {
 }
 
 // Finalisation.

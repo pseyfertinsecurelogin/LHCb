@@ -1,4 +1,3 @@
-// $Id: TTReadoutTool.h,v 1.4 2009-10-30 12:54:19 mtobin Exp $
 #ifndef _TTReadoutTool_H
 #define _TTReadoutTool_H
 
@@ -42,15 +41,9 @@ private:
 
   StatusCode createBoards();
 
-
-  unsigned int m_nRegionA;
-  unsigned int m_firstStation;
+  unsigned int m_nRegionA     = 512;
+  unsigned int m_firstStation = 512;
 
 };
-
-
-
-
-
 
 #endif // _TTReadoutTool_H

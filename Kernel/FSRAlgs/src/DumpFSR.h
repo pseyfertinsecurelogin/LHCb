@@ -1,4 +1,3 @@
-// $Id: DumpFSR.h,v 1.3 2010-05-12 08:11:08 panmanj Exp $
 #ifndef DUMPFSR_H
 #define DUMPFSR_H 1
 
@@ -27,13 +26,10 @@
  *  @author Jaap Panman
  *  @date   2009-02-27
  */
-class DumpFSR : public GaudiAlgorithm
-  , public virtual IIncidentListener {
+class DumpFSR : public extends<GaudiAlgorithm, IIncidentListener> {
 public:
   /// Standard constructor
   DumpFSR( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~DumpFSR( ); ///< Destructor
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
@@ -42,17 +38,16 @@ public:
   // ==========================================================================
   // IIncindentListener interface
   // ==========================================================================
-  void handle ( const Incident& )  override;
+  void handle ( const Incident& ) override;
   // ==========================================================================
 
-protected:
-  virtual void dump_file( std::string txt = "" ); ///< print the FSRs of one input file
-  virtual void write_file();                      ///< write the FSRs as ascii to a file
-  virtual std::string fileID();                   ///< get the fileID
+private:
+  void dump_file( std::string txt = "" ); ///< print the FSRs of one input file
+  void write_file();                      ///< write the FSRs as ascii to a file
+  std::string fileID();                   ///< get the fileID
 
-protected:
   /// Reference to run records data service
-  IDataProviderSvc* m_fileRecordSvc;
+  SmartIF<IDataProviderSvc> m_fileRecordSvc ;
 
   std::string m_rawEventLocation;               ///< Location where we get the RawEvent
   std::string m_FileRecordName;                 ///< location of FileRecords
@@ -63,13 +58,13 @@ protected:
   std::string m_current_fname;                  ///< current file ID string
   std::string m_ascii_fname;                    ///< name of ascii file to write FSR data to
   std::string m_dumprequests;                   ///< job: E:event F:fini, files: B:begin C:close
-  int         m_count_files;                    ///< number of files read
-  int         m_count_events;                   ///< number of events read
-  int         m_events_in_file;                 ///< events after OpenFileIncident
+  int         m_count_files = 0;                ///< number of files read
+  int         m_count_events = 0;               ///< number of events read
+  int         m_events_in_file = 0;             ///< events after OpenFileIncident
 
 private:
-  IFSRNavigator *m_navigatorTool;               ///< tool to navigate FSR
-  mutable IIncidentSvc* m_incSvc ;              ///< the incident service
+  IFSRNavigator *m_navigatorTool = nullptr;               ///< tool to navigate FSR
+  mutable SmartIF<IIncidentSvc> m_incSvc;              ///< the incident service
 
 };
 #endif // DUMPFSR_H
