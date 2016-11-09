@@ -26,9 +26,7 @@ class DeVP : public DetectorElement {
  public:
 
   /// Constructor
-  DeVP(const std::string& name = "");
-  /// Destructor
-  virtual ~DeVP();
+  using DetectorElement::DetectorElement;
 
   /// Object identification
   static const CLID& classID() { return CLID_DeVP; }
