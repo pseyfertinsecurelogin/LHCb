@@ -1,3 +1,4 @@
+#include <mutex>
 // Gaudi
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
@@ -9,43 +10,48 @@
 #include "VPDet/DeVPSensor.h"
 #include "getOutputLevel.h"
 
-// Dimensions of the sensor active area
-double DeVPSensor::m_sizeX;
-double DeVPSensor::m_sizeY;
-double DeVPSensor::m_thickness;
-// Number of chips per ladder
-unsigned int DeVPSensor::m_nChips;
-// Length of chip active area
-double DeVPSensor::m_chipSize;
-// Distance between two chips
-double DeVPSensor::m_interChipDist;
-// Number of columns and rows
-unsigned int DeVPSensor::m_nCols;
-unsigned int DeVPSensor::m_nRows;
-// Cell size of pixels
-double DeVPSensor::m_pixelSize;
-// Cell size in column direction of elongated pixels
-double DeVPSensor::m_interChipPixelSize;
+DeVPSensor::common_t DeVPSensor::m_cache{};
 
-// local coordinate cache, once for all sensors
-double DeVPSensor::m_local_x[VP::NSensorColumns];
-// pitch cache, once for all sensors
-double DeVPSensor::m_x_pitch[VP::NSensorColumns];
-// common configuration validity
-bool DeVPSensor::m_common_cache_valid = false;
+void init_cache(DeVPSensor::common_t& cache) {
+    // Calculate the active area.
+    cache.sizeX =
+         cache.nChips * cache.chipSize +
+        (cache.nChips - 1) * cache.interChipDist;
+    cache.sizeY = cache.chipSize;
 
-//==============================================================================
-// Standard constructor
-//==============================================================================
-DeVPSensor::DeVPSensor(const std::string& name)
-    : DetectorElement(name), m_geometry(nullptr) {
+  for (unsigned int col = 0; col < VP::NSensorColumns; ++col) {
+    // Calculate the x-coordinate of the pixel centre and the pitch.
+    const double x0 =
+        (col / VP::NColumns) * (cache.chipSize + cache.interChipDist);
+    double x = x0 + (col % VP::NColumns + 0.5) * cache.pixelSize;
+    double pitch = cache.pixelSize;
+    switch (col) {
+      case 256:
+      case 512:
+        // right of chip border
+        x -= 0.5 * (cache.interChipPixelSize - cache.pixelSize);
+        pitch =
+            0.5 * (cache.interChipPixelSize + cache.pixelSize);
+        break;
+      case 255:
+      case 511:
+        // left of chip border
+        x += 0.5 * (cache.interChipPixelSize - cache.pixelSize);
+        pitch = cache.interChipPixelSize;
+        break;
+      case 254:
+      case 510:
+        // two left of chip border
+        pitch =
+            0.5 * (cache.interChipPixelSize + cache.pixelSize);
+        break;
+    }
+    cache.local_x[col] = x;
+    cache.x_pitch[col] = pitch;
+  }
 
 }
 
-//==============================================================================
-// Destructor
-//==============================================================================
-DeVPSensor::~DeVPSensor() = default;
 
 //==============================================================================
 // Object identification
@@ -85,26 +91,22 @@ StatusCode DeVPSensor::initialize() {
 
   // commons
   //
-  if (!DeVPSensor::m_common_cache_valid) {
-    DeVPSensor::m_common_cache_valid = true;
-
-    DeVPSensor::m_thickness = param<double>("Thickness");
-    DeVPSensor::m_nChips = param<int>("NChips");
-    DeVPSensor::m_chipSize = param<double>("ChipSize");
-    DeVPSensor::m_interChipDist = param<double>("InterChipDist");
-    DeVPSensor::m_nCols = param<int>("NColumns");
-    DeVPSensor::m_nRows = param<int>("NRows");
-    DeVPSensor::m_pixelSize = param<double>("PixelSize");
-    DeVPSensor::m_interChipPixelSize = param<double>("InterChipPixelSize");
-
-    // Calculate the active area.
-    DeVPSensor::m_sizeX =
-        DeVPSensor::m_nChips * DeVPSensor::m_chipSize +
-        (DeVPSensor::m_nChips - 1) * DeVPSensor::m_interChipDist;
-    DeVPSensor::m_sizeY = DeVPSensor::m_chipSize;
-
+  if (!m_cache.common_cache_valid) {
+    static std::mutex mtx;
+    std::unique_lock<std::mutex> lock(mtx);
     // create the local cache if no-one else did it yet
-    cacheLocalXAndPitch();
+    if (!m_cache.common_cache_valid) {
+        m_cache.thickness = param<double>("Thickness");
+        m_cache.nChips = param<int>("NChips");
+        m_cache.chipSize = param<double>("ChipSize");
+        m_cache.interChipDist = param<double>("InterChipDist");
+        m_cache.nCols = param<int>("NColumns");
+        m_cache.nRows = param<int>("NRows");
+        m_cache.pixelSize = param<double>("PixelSize");
+        m_cache.interChipPixelSize = param<double>("InterChipPixelSize");
+        init_cache(m_cache);
+        m_cache.common_cache_valid = true;
+    }
   }
 
   m_geometry = geometry();
@@ -134,27 +136,27 @@ bool DeVPSensor::pointToChannel(const Gaudi::XYZPoint& point,
   // Set the sensor number.
   channel.setSensor(m_sensorNumber);
   double x0 = 0.;
-  for (unsigned int i = 0; i < DeVPSensor::m_nChips; ++i) {
+  for (unsigned int i = 0; i < m_cache.nChips; ++i) {
     const double x = localPoint.x() - x0;
-    if (x < DeVPSensor::m_chipSize + 0.5 * DeVPSensor::m_interChipDist) {
+    if (x < m_cache.chipSize + 0.5 * m_cache.interChipDist) {
       // Set the chip number.
       channel.setChip(i);
       // Set the row and column.
       unsigned int col = 0;
       unsigned int row = 0;
       if (x > 0.) {
-        col = int(x / DeVPSensor::m_pixelSize);
-        if (col >= DeVPSensor::m_nCols) col = DeVPSensor::m_nCols - 1;
+        col = int(x / m_cache.pixelSize);
+        if (col >= m_cache.nCols) col = m_cache.nCols - 1;
       }
       if (localPoint.y() > 0.) {
-        row = int(localPoint.y() / DeVPSensor::m_pixelSize);
-        if (row >= DeVPSensor::m_nRows) row = DeVPSensor::m_nRows - 1;
+        row = int(localPoint.y() / m_cache.pixelSize);
+        if (row >= m_cache.nRows) row = m_cache.nRows - 1;
       }
       channel.setCol(col);
       channel.setRow(row);
       break;
     }
-    x0 += DeVPSensor::m_chipSize + DeVPSensor::m_interChipDist;
+    x0 += m_cache.chipSize + m_cache.interChipDist;
   }
   return true;
 
@@ -174,15 +176,15 @@ bool DeVPSensor::pointToChannel(const Gaudi::XYZPoint& point,
   fraction.second = 0.;
   // Set the sensor number.
   channel.setSensor(m_sensorNumber);
-  const double step = DeVPSensor::m_chipSize + DeVPSensor::m_interChipDist;
+  const double step = m_cache.chipSize + m_cache.interChipDist;
   double x0 = 0.;
-  for (unsigned int i = 0; i < DeVPSensor::m_nChips; ++i) {
+  for (unsigned int i = 0; i < m_cache.nChips; ++i) {
     if (localPoint.x() < x0 + step) {
       // Set the chip number.
       channel.setChip(i);
       // Calculate the column number.
       const double x = localPoint.x() - x0;
-      const double fcol = x / DeVPSensor::m_pixelSize - 0.5;
+      const double fcol = x / m_cache.pixelSize - 0.5;
       const unsigned int icol = fcol > 0. ? int(fcol) : 0;
       // Set column and inter-pixel fraction.
       if (icol <= 0) {
@@ -191,38 +193,38 @@ bool DeVPSensor::pointToChannel(const Gaudi::XYZPoint& point,
           if (fcol > 0.) fraction.first = fcol;
         } else {
           // First column has elongated pixels.
-          const double pitch = 0.5 * (DeVPSensor::m_pixelSize +
-                                      DeVPSensor::m_interChipPixelSize);
+          const double pitch = 0.5 * (m_cache.pixelSize +
+                                      m_cache.interChipPixelSize);
           fraction.first = x / pitch;
         }
-      } else if (icol >= DeVPSensor::m_nCols - 1) {
-        channel.setCol(DeVPSensor::m_nCols - 1);
-        if (i == DeVPSensor::m_nChips - 1) {
+      } else if (icol >= m_cache.nCols - 1) {
+        channel.setCol(m_cache.nCols - 1);
+        if (i == m_cache.nChips - 1) {
           fraction.first = fcol - icol;
         } else {
           // Last column has elongated pixels.
-          if (x < DeVPSensor::m_chipSize) {
+          if (x < m_cache.chipSize) {
             // This point is assigned to the last but one pixel.
-            channel.setCol(DeVPSensor::m_nCols - 2);
-            const double pitch = 0.5 * (DeVPSensor::m_pixelSize +
-                                        DeVPSensor::m_interChipPixelSize);
-            fraction.first = 1. - (DeVPSensor::m_chipSize - x) / pitch;
+            channel.setCol(m_cache.nCols - 2);
+            const double pitch = 0.5 * (m_cache.pixelSize +
+                                        m_cache.interChipPixelSize);
+            fraction.first = 1. - (m_cache.chipSize - x) / pitch;
           } else {
             // Point is in inter-chip region.
             fraction.first =
-                (x - DeVPSensor::m_chipSize) / DeVPSensor::m_interChipPixelSize;
+                (x - m_cache.chipSize) / m_cache.interChipPixelSize;
           }
         }
       } else {
         channel.setCol(icol);
         fraction.first = fcol - icol;
-        if (icol == DeVPSensor::m_nCols - 2 && i < DeVPSensor::m_nChips - 1) {
+        if (icol == m_cache.nCols - 2 && i < m_cache.nChips - 1) {
           fraction.first *=
-              DeVPSensor::m_pixelSize / DeVPSensor::m_interChipPixelSize;
+              m_cache.pixelSize / m_cache.interChipPixelSize;
         }
       }
       // Set the row and inter-pixel fraction.
-      const double frow = localPoint.y() / DeVPSensor::m_pixelSize - 0.5;
+      const double frow = localPoint.y() / m_cache.pixelSize - 0.5;
       const unsigned int irow = frow > 0. ? int(frow) : 0;
       if (irow <= 0) {
         channel.setRow(0);
@@ -244,8 +246,8 @@ bool DeVPSensor::pointToChannel(const Gaudi::XYZPoint& point,
 //==============================================================================
 bool DeVPSensor::isInActiveArea(const Gaudi::XYZPoint& point) const {
 
-  if (point.x() < 0. || point.x() > DeVPSensor::m_sizeX) return false;
-  if (point.y() < 0. || point.y() > DeVPSensor::m_sizeY) return false;
+  if (point.x() < 0. || point.x() > m_cache.sizeX) return false;
+  if (point.y() < 0. || point.y() > m_cache.sizeY) return false;
   return true;
 
 }
@@ -256,9 +258,9 @@ bool DeVPSensor::isInActiveArea(const Gaudi::XYZPoint& point) const {
 std::pair<double, double>
 DeVPSensor::pixelSize(const LHCb::VPChannelID channel) const {
 
-  return { isLong(channel) ? DeVPSensor::m_interChipPixelSize
-                           : DeVPSensor::m_pixelSize,
-           DeVPSensor::m_pixelSize };
+  return { isLong(channel) ? m_cache.interChipPixelSize
+                           : m_cache.pixelSize,
+           m_cache.pixelSize };
 
 }
 
@@ -270,50 +272,13 @@ bool DeVPSensor::isLong(const LHCb::VPChannelID channel) const {
   const unsigned int chip = channel.chip();
   const unsigned int col = channel.col();
   if ((col == 0 && chip > 0) ||
-      (col == DeVPSensor::m_nCols - 1 && chip < DeVPSensor::m_nChips - 1)) {
+      (col == m_cache.nCols - 1 && chip < m_cache.nChips - 1)) {
     return true;
   }
   return false;
 
 }
 
-//==============================================================================
-// Calculate and cache the local x positions and pitches
-//==============================================================================
-void DeVPSensor::cacheLocalXAndPitch() {
-
-  for (unsigned int col = 0; col < VP::NSensorColumns; ++col) {
-    // Calculate the x-coordinate of the pixel centre and the pitch.
-    const double x0 =
-        (col / VP::NColumns) * (DeVPSensor::m_chipSize + DeVPSensor::m_interChipDist);
-    double x = x0 + (col % VP::NColumns + 0.5) * DeVPSensor::m_pixelSize;
-    double pitch = DeVPSensor::m_pixelSize;
-    switch (col) {
-      case 256:
-      case 512:
-        // right of chip border
-        x -= 0.5 * (DeVPSensor::m_interChipPixelSize - DeVPSensor::m_pixelSize);
-        pitch =
-            0.5 * (DeVPSensor::m_interChipPixelSize + DeVPSensor::m_pixelSize);
-        break;
-      case 255:
-      case 511:
-        // left of chip border
-        x += 0.5 * (DeVPSensor::m_interChipPixelSize - DeVPSensor::m_pixelSize);
-        pitch = DeVPSensor::m_interChipPixelSize;
-        break;
-      case 254:
-      case 510:
-        // two left of chip border
-        pitch =
-            0.5 * (DeVPSensor::m_interChipPixelSize + DeVPSensor::m_pixelSize);
-        break;
-    }
-    DeVPSensor::m_local_x[col] = x;
-    DeVPSensor::m_x_pitch[col] = pitch;
-  }
-
-}
 
 //==============================================================================
 // Cache geometry parameters
