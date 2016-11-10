@@ -23,16 +23,16 @@ IGeometryInfo*  TransportSvc::findLocalGI ( const Gaudi::XYZPoint& point1 ,
                                             const Gaudi::XYZPoint& point2 , 
                                             IGeometryInfo*    gi     ,
                                             IGeometryInfo*    topGi  ) const  {
-  if( 0 == gi ) { return 0 ; } 
+  if ( !gi ) { return nullptr ; } 
 
  
   /// output :-))
-  IGeometryInfo* goodGI = 0  ; 
+  IGeometryInfo* goodGI = nullptr ; 
   
   try {  
     /// find the nearest "upper" volume, which contains the  first point  
     if ( !gi->isInside( point1 ) ) {
-      return 0;
+      return nullptr;
     }
     IGeometryInfo* gi1   = gi->belongsTo( point1, -1 ) ;   
   
@@ -40,29 +40,29 @@ IGeometryInfo*  TransportSvc::findLocalGI ( const Gaudi::XYZPoint& point1 ,
     IGeometryInfo* gi2   = gi1 ; 
     {  
       bool loc = false ; 
-      for( loc = gi2->isInside( point2 ) ; !loc && 0 != gi2 ; 
+      for( loc = gi2->isInside( point2 ) ; !loc && nullptr != gi2 ; 
            gi2 = gi2->parentIGeometryInfo() ) { 
         loc = gi2->isInside( point2 ); 
         if ( loc ) break;
       }  
-      if( 0 == gi2 ) { 
-        return 0; 
+      if( nullptr == gi2 ) { 
+        return nullptr; 
       }
     }
     
     // Here both points are located, gi2 is a parent of gi1. Get the first 
     // parent of gi2 which is a good GI.
 
-    for( IGeometryInfo* gl = gi2 ; 0 != gl ; 
+    for( IGeometryInfo* gl = gi2 ; nullptr != gl ; 
          gl = gl->parentIGeometryInfo() ) { 
-      if ( 0 == gl ) return 0;
+      if ( nullptr == gl ) return nullptr;
       if( goodLocalGI( point1 , point2 , gl ) ) { 
         return gl; 
       } 
-      if ( topGi == gl ) return 0;
+      if ( topGi == gl ) return nullptr;
     }
     /// we have failed to find "good" element 
-    return 0;                      /// RETURN !!! 
+    return nullptr;                      /// RETURN !!! 
 
   }
   catch( const GaudiException& Exception ) 
