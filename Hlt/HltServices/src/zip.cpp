@@ -68,18 +68,8 @@ uint16_t get<uint16_t>( const unsigned char* buf )
 {
     return _get2<uint16_t, uint8_t>( buf );
 }
-template <>
-uint32_t get<uint32_t>( const unsigned char* buf )
-{
-    return _get2<uint32_t, uint16_t>( buf );
-}
 template <typename T>
 void put( ostream& os, T value );
-template <>
-void put<uint8_t>( ostream& os, uint8_t value )
-{
-    os.put( value & 0xff );
-}
 template <>
 void put<uint16_t>( ostream& os, uint16_t value )
 {
