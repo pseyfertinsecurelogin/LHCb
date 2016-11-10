@@ -179,8 +179,8 @@ unsigned long TransportSvc::intersections
           << ",Vect=" << vect
           << ",Tick=" << tickMin << "/" << tickMax  
           << "Thrsh=" << threshold; 
-      if( 0 != alternativeGeometry ) { ost << "A.Geo!=NULL" ; }  
-      if( 0 != guessGeometry ) { ost << "G.Geo!=NULL" ; }  
+      if ( alternativeGeometry ) { ost << "A.Geo!=NULL" ; }  
+      if ( guessGeometry ) { ost << "G.Geo!=NULL" ; }  
       message += ost.str();             
       Assert( false , message , Exception );
     }
@@ -208,8 +208,8 @@ unsigned long TransportSvc::intersections
           << ",Vect=" << vect
           << ",Tick=" << tickMin << "/" << tickMax  
           << "Thrsh=" << threshold; 
-      if( 0 != alternativeGeometry ) { ost << "A.Geo!=NULL" ; }  
-      if( 0 != guessGeometry ) { ost << "G.Geo!=NULL" ; }  
+      if ( alternativeGeometry ) { ost << "A.Geo!=NULL" ; }  
+      if ( guessGeometry ) { ost << "G.Geo!=NULL" ; }  
       message += ost.str();             
       Assert( false , message );
     }
