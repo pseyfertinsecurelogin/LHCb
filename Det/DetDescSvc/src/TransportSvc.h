@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <mutex>
 // ============================================================================
 // GaudiKErnel
 // ============================================================================
@@ -164,15 +165,13 @@ private:
   // own private methods
   // ==========================================================================
   /// access to Detector Data Service
-  inline IDataProviderSvc*        detSvc              () const ;
+  inline IDataProviderSvc*        detSvc              () const noexcept;
   /**  source of "standard" geometry information -
    *  "top of Detector Description tree"
    */
-  inline IGeometryInfo*           standardGeometry    () const ;
+  inline IGeometryInfo*           standardGeometry    () const noexcept;
   ///  previous geometry information
-  inline IGeometryInfo*           previousGeometry    () const ;
-  inline IGeometryInfo*           setPreviousGeometry
-  ( IGeometryInfo* previous )  const;
+  inline IGeometryInfo*           previousGeometry    () const noexcept;
   /// assertion!
   inline void Assert
   ( bool                  assertion                        ,
@@ -185,7 +184,7 @@ private:
     const GaudiException& Exception                        ,
     const StatusCode&     statusCode = StatusCode::FAILURE ) const;
   /// get the geometry info by name
-  IGeometryInfo* findGeometry( const std::string& address ) const ;
+  IGeometryInfo* findGeometry( const std::string& address ) const;
   /// check for "good" geometry info
   bool           goodLocalGI
   ( const Gaudi::XYZPoint& point1,
@@ -202,30 +201,28 @@ private:
   // ==========================================================================
   /// Own private data members:
   /// names of used services:
-  std::string                    m_detDataSvc_name       ;
+  std::string                      m_detDataSvc_name;
   ///  Detector Data Service
-  mutable SmartIF<IDataProviderSvc> m_detDataSvc            ;
+  SmartIF<IDataProviderSvc>        m_detDataSvc;
   /**  Name (address in Transient Store) for the top element
-   * of "standard" geometry source
-   */
-  std::string                    m_standardGeometry_address ;
-  mutable  IGeometryInfo*        m_standardGeometry = nullptr;
-  ///
-  mutable IGeometryInfo*           m_previousGeometry = nullptr;
+   *   of "standard" geometry source */
+  std::string                      m_standardGeometry_address;
+  IGeometryInfo*                   m_standardGeometry   = nullptr;
+private:
+  // Updates to these mutable members are protected by a mutex lock
+  mutable IGeometryInfo*           m_previousGeometry = nullptr; 
   /// previous parameters
   mutable Gaudi::XYZPoint          m_prevPoint1          ;
   mutable Gaudi::XYZPoint          m_prevPoint2          ;
   mutable double                   m_previousThreshold   ;
-  mutable IGeometryInfo*           m_previousGuess = nullptr;
+  mutable IGeometryInfo*           m_previousGuess       = nullptr;
   mutable IGeometryInfo*           m_previousTopGeometry = nullptr;
   mutable ILVolume::Intersections  m_localIntersections  ;
-  /// some cache:
-  mutable ILVolume::Intersections  m_local_intersects    ;
-  mutable GeoContainer             m_vGi1                ;
-  mutable GeoContainer             m_vGi2                ;
-  mutable GeoContainer             m_vGi                 ;
-  mutable ISolid::Ticks            m_local_ticks         ;
-  ///
+  //
+private:
+  /// mutex lock for mutable updates
+  mutable std::mutex m_updateLock;
+  //
 private:
   /// the actual type of the Map
   typedef std::map<std::string, std::pair<StatEntity,StatEntity> > Map ;
@@ -237,29 +234,21 @@ private:
   bool m_recovery = true ;
   /// property to allow the protocol
   bool m_protocol = true ;
-
 };
 // ============================================================================
 /// access to Detector Data  Service
-inline IDataProviderSvc*    TransportSvc::detSvc               () const
+inline IDataProviderSvc*    TransportSvc::detSvc               () const noexcept
 { return m_detDataSvc       ; }
 // ============================================================================
 /// access to the top of standard detector geometry information
-inline IGeometryInfo*       TransportSvc::standardGeometry     () const
+inline IGeometryInfo*       TransportSvc::standardGeometry     () const noexcept
 {
-  return ( 0 != m_standardGeometry ) ?
-    m_standardGeometry : m_standardGeometry =
-    findGeometry( m_standardGeometry_address ) ;
+  return m_standardGeometry;
 }
 // ============================================================================
 /// access to the top of standard detector geometry information
-inline IGeometryInfo*       TransportSvc::previousGeometry     () const
+inline IGeometryInfo*       TransportSvc::previousGeometry     () const noexcept
 { return m_previousGeometry ; }
-// ============================================================================
-///
-inline IGeometryInfo*       TransportSvc::setPreviousGeometry
-( IGeometryInfo* previous ) const
-{ m_previousGeometry = previous ; return previousGeometry() ; }
 // ============================================================================
 /// Assertion !!!
 inline void TransportSvc::Assert

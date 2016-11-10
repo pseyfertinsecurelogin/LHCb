@@ -42,6 +42,7 @@ inline double TransportSvc::distanceInRadUnits
 
   // retrieve the history 
   Gaudi::XYZVector Vector( point2 - point1 ) ;
+
   // initial point on the line 
   // direction vector of the line 
   // minimal value of the parameter of the line  
@@ -50,11 +51,12 @@ inline double TransportSvc::distanceInRadUnits
   // threshold value 
   // source of the alternative geometry information 
   // a guess for navigation
+  ILVolume::Intersections  local_intersects;
   intersections( point1              ,   
                  Vector              ,   
                  0.0                 ,   
                  1.0                 ,   
-                 m_local_intersects  ,   
+                 local_intersects  ,   
                  threshold           ,
                  alternativeGeometry ,
                  geometryGuess       ); 
@@ -62,8 +64,8 @@ inline double TransportSvc::distanceInRadUnits
   //  radiation length in tick units 
   double RadLength = 
     std::accumulate
-    (  m_local_intersects.begin()                              ,  
-       m_local_intersects.end  ()                              , 
+    (  local_intersects.begin()                              ,  
+       local_intersects.end  ()                              , 
        0.0                                                     ,  
        VolumeIntersectionIntervals::AccumulateIntersections()  ); 
 
