@@ -26,7 +26,7 @@ struct ITransportSvc : extend_interfaces<IService>
   /** Declaration of the unique interface identifier
    *  ( interface id, major version, minor version)
    */
-  DeclareInterfaceID( ITransportSvc , 4 , 0);
+  DeclareInterfaceID( ITransportSvc , 4 , 0 );
 
   /// Create an instance of the accelerator cache
   virtual ranges::v3::any createCache() const = 0 ;
@@ -46,7 +46,7 @@ struct ITransportSvc : extend_interfaces<IService>
     double            threshold                 = 0,
     IGeometryInfo*    alternativeGeometry       = nullptr,
     IGeometryInfo*    geometryGuess             = nullptr  )  const = 0 ;
-
+  
   /** Estimate the distance between 2 points in units
    *  of radiation length units
    *  Similar to distanceInRadUnits but with an additional accelerator
@@ -98,7 +98,7 @@ struct ITransportSvc : extend_interfaces<IService>
     double                   threshold           = 0,
     IGeometryInfo*           alternativeGeometry = nullptr,
     IGeometryInfo*           geometryGuess       = nullptr ) const = 0;
-
+  
   /** general method ( returns the "full history" of the volume
    *  boundary intersections
    *  with different material properties between 2 points )

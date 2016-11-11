@@ -38,7 +38,7 @@ class GaudiException;
  *
  *  @author Vanya Belyaev ibelyaev@physics.syr.edu
  */
-class TransportSvc : public extends< Service, ITransportSvc, DetDesc::IGeometryErrorSvc>
+class TransportSvc : public extends<Service,ITransportSvc,DetDesc::IGeometryErrorSvc>
 {
   /// typedefs: (internal only!)
   typedef std::vector<IGeometryInfo*>     GeoContainer;

@@ -35,8 +35,8 @@ double TransportSvc::distanceInRadUnits
   IGeometryInfo*    AlternativeGeometry ,
   IGeometryInfo*    GeometryGuess       ) const
 {
-  return this->distanceInRadUnits_r( Point1, Point2, m_accelCache, Threshold,
-                                     AlternativeGeometry, GeometryGuess );
+  return distanceInRadUnits_r( Point1, Point2, m_accelCache, Threshold,
+                               AlternativeGeometry, GeometryGuess );
 }
 // ============================================================================
 /** Estimate the distance between 2 points in 

@@ -1,7 +1,4 @@
-// $Id: TransportSvcIntersections.h,v 1.5 2007-09-13 14:19:16 wouter Exp $ 
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $
-// ============================================================================
+
 #ifndef     __DETDESC_TRANSPORTSVC_TRANSPORTSVCINTERSECTIONS_H__ 
 #define     __DETDESC_TRANSPORTSVC_TRANSPORTSVCINTERSECTIONS_H__  1
 
@@ -46,9 +43,9 @@ unsigned long TransportSvc::intersections
   IGeometryInfo*           alternativeGeometry ,
   IGeometryInfo*           geometryGuess       )  const
 {
-  return this->intersections_r( point, vect, tickMin, tickMax,
-                                intersept, m_accelCache, threshold, 
-                                alternativeGeometry, geometryGuess );
+  return intersections_r( point, vect, tickMin, tickMax,
+                          intersept, m_accelCache, threshold, 
+                          alternativeGeometry, geometryGuess );
 }
 
 // ============================================================================
