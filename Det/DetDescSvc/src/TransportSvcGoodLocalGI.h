@@ -41,15 +41,16 @@ inline bool  TransportSvc::goodLocalGI
   ISolid::Tick  tickMin = 0; 
   ISolid::Tick  tickMax = 1; 
   ///
+  ISolid::Ticks local_ticks;
   unsigned int nInt = 
     lv->solid()->intersectionTicks
     ( gi->toLocalMatrix() * point1                         , 
       gi->toLocalMatrix() * Gaudi::XYZVector( point2 - point1 ) , 
-      tickMin   ,     tickMax  ,  m_local_ticks     ) ; 
+      tickMin   ,     tickMax  ,  local_ticks     ) ; 
   /// 
   if ( debug ) std::cout << " goodLocalGI : nInt " << nInt << std::endl;
-  return ( 2 == nInt && tickMin == *(m_local_ticks.begin() ) 
-           && tickMax == *(m_local_ticks.rbegin()) ) ? true : false ; 
+  return ( 2 == nInt && tickMin == *(local_ticks.begin() ) 
+           && tickMax == *(local_ticks.rbegin()) ) ? true : false ; 
   ///
 }
 

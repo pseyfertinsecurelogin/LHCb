@@ -87,6 +87,9 @@ StatusCode TransportSvc::initialize()
   else {
     info() << "Recovery of geometry errors is DISABLED" << endmsg; }
 
+  // Load geometry
+  m_standardGeometry = findGeometry( m_standardGeometry_address ) ;
+
   return StatusCode::SUCCESS;
 }
 // ============================================================================

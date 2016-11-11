@@ -181,6 +181,9 @@ StatusCode DetDesc::MaterialBudget::makeRandomShots()
   // get random number generator 
   Rndm::Numbers x ( randSvc() , Rndm::Flat( m_xMin , m_xMax ) );
   Rndm::Numbers y ( randSvc() , Rndm::Flat( m_yMin , m_yMax ) );
+
+  // Accelerator cache for transport service
+  ITransportSvc::AccelCache accelCache;
   
   // make 'shots'
   boost::progress_display progress ( m_shots ) ;
@@ -190,7 +193,7 @@ StatusCode DetDesc::MaterialBudget::makeRandomShots()
     const Gaudi::XYZPoint point( x() , y() , m_z );      
     // evaluate the distance 
     const double dist = 
-      m_trSvc -> distanceInRadUnits ( m_vertex , point );
+      m_trSvc -> distanceInRadUnits_r ( m_vertex, point, accelCache );
     
     // fill material budget histogram 
     plot2D ( point.x()   , point.y()              , 
@@ -223,6 +226,9 @@ StatusCode DetDesc::MaterialBudget::makeGridShots()
   
   // xx and yy refer to the two non-Z dimensions, be them cartesian or 
   // whatever. x and y are cartesian.
+
+  // Accelerator cache for transport service
+  ITransportSvc::AccelCache accelCache;
   
   /// make a progress bar 
   boost::progress_display progress( m_nbx * m_nby ) ;
@@ -236,7 +242,7 @@ StatusCode DetDesc::MaterialBudget::makeGridShots()
       
       // evaluate the distance 
       const double dist = 
-        m_trSvc -> distanceInRadUnits ( m_vertex , point );
+        m_trSvc -> distanceInRadUnits_r ( m_vertex, point, accelCache );
       
       // fill material budget histogram 
       plot2D ( point.x()   , point.y()              , 
@@ -269,6 +275,9 @@ StatusCode DetDesc::MaterialBudget::makePsrapShots()
   // put in a transformation to go from XY to Eta-Phi.
   const double dxgrid = (m_xMax-m_xMin)/m_nbx;
   const double dygrid = (m_yMax-m_yMin)/m_nby;
+
+  // Accelerator cache for transport service
+  ITransportSvc::AccelCache accelCache;
   
   /// make a pregress bar 
   boost::progress_display progress ( m_nbx * m_nby ) ;  
@@ -287,7 +296,7 @@ StatusCode DetDesc::MaterialBudget::makePsrapShots()
       
       // evaluate the distance 
       const double dist = 
-        m_trSvc -> distanceInRadUnits( m_vertex , point );
+        m_trSvc -> distanceInRadUnits_r( m_vertex, point, accelCache );
       
       // fill material budget histogram 
       plot2D ( xx          , yy                      , 
