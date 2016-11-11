@@ -229,7 +229,7 @@ class LHCbApp(LHCbConfigurableUser):
     def setupHive(self):
         '''Enable Hive event loop manager'''
         from Configurables import (HiveWhiteBoard, HiveSlimEventLoopMgr,
-                                   ForwardSchedulerSvc)
+                                   ForwardSchedulerSvc, UpdateManagerSvc)
         scheduler    = ForwardSchedulerSvc()
         whiteboard   = HiveWhiteBoard("EventDataSvc")
         eventloopmgr = HiveSlimEventLoopMgr(SchedulerName=scheduler)
@@ -246,6 +246,8 @@ class LHCbApp(LHCbConfigurableUser):
 
         ApplicationMgr().ExtSvc.insert(0, whiteboard)
         ApplicationMgr().EventLoop = eventloopmgr
+
+        UpdateManagerSvc().WithoutBeginEvent = True
 
     def __apply_configuration__(self):
         if self.getProp("EnableHive"): self.setupHive()
