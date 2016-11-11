@@ -214,11 +214,11 @@ private:
   // own private methods
   // ==========================================================================
   /// access to Detector Data Service
-  inline IDataProviderSvc*        detSvc              () const noexcept;
+  inline IDataProviderSvc*        detSvc           () const noexcept;
   /**  source of "standard" geometry information -
    *  "top of Detector Description tree"
    */
-  inline IGeometryInfo*           standardGeometry    () const noexcept;
+  inline IGeometryInfo*           standardGeometry () const noexcept;
   /// assertion!
   inline void Assert
   ( bool                  assertion                        ,
