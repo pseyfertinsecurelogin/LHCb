@@ -1268,9 +1268,9 @@ Gaudi::Math::ValueWithError Gaudi::Math::igamma
   const double bv = b.value() ;
   const double v  = Gaudi::Math::igamma  ( bv ) ;
   //
-  const double d1 = - Gaudi::Math::psi( bv ) / v ;
-  const double d2 = d1 * d1 ;
-  const double e2 = d2 * b.cov2() ;
+  const double d1 = - Gaudi::Math::psi( bv ) * v ;
+  const double d2 =   d1 * d1 ;
+  const double e2 =   d2 * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -2420,7 +2420,7 @@ Gaudi::Math::interpolate
         y_i.end  () , 
         x           , 
         Gaudi::Math::ValueWithError()  , 
-        [] ( double x ) { return x ; } ,
+        [] ( double z ) { return z ; } ,
         [] ( auto   y ) { return y ; } ) ;
   }
   //
@@ -2436,7 +2436,7 @@ Gaudi::Math::interpolate
       x_i.end  () , 
       _y .begin() ,  
       x           , 
-      [] ( double x ) { return x         ; } ) ;
+      [] ( double z ) { return z         ; } ) ;
   //
   //
   std::transform ( y_i.begin () , 
@@ -2449,7 +2449,7 @@ Gaudi::Math::interpolate
       x_i.end  () , 
       _y .begin() ,  
       x           , 
-      [] ( double x ) { return x         ; } ) ;
+      [] ( double z ) { return z         ; } ) ;
   //
   //
   std::transform ( y_i.begin () , 
@@ -2462,7 +2462,7 @@ Gaudi::Math::interpolate
       x_i.end  () , 
       _y .begin() ,  
       x           , 
-      [] ( double x ) { return x         ; } ) ;
+      [] ( double z ) { return z         ; } ) ;
   //
   // get an estimate for the error 
   const double e = std::max ( std::abs ( r_plus  - r_0     ) ,
@@ -2502,7 +2502,7 @@ Gaudi::Math::interpolate
       _y .begin() ,  
       _d .begin() ,  
       x.value  () , 
-      [] ( double x ) { return x  ; } ) ;
+      [] ( double z ) { return z  ; } ) ;
   //
   if (  0 >= x.cov2() || _zero ( x.cov2() ) ) { return r.first ; }
   return ValueWithError ( r.first , r.second * r.second * x.cov2() ) ;
@@ -2534,8 +2534,8 @@ Gaudi::Math::interpolate
     ( x_i.begin() , x_i.end() , 
       y_i.begin() , y_i.end() , 
       x , 
-      [] ( double x ) { return x  ; } , 
-      [] ( double x ) { return x  ; } ) ;
+      [] ( double z ) { return z  ; } , 
+      [] ( double z ) { return z  ; } ) ;
   //
   const double d = rn.second ;
   rl.setCov2 ( std::max( rl.cov2() , 0.0 ) + x.cov2() * d * d  ) ;
