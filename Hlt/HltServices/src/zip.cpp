@@ -63,11 +63,6 @@ uint64_t get<uint64_t>( istream& is )
     return _get2<uint64_t, uint32_t>( is );
 }
 
-template <>
-uint16_t get<uint16_t>( const unsigned char* buf )
-{
-    return _get2<uint16_t, uint8_t>( buf );
-}
 template <typename T>
 void put( ostream& os, T value );
 template <>
