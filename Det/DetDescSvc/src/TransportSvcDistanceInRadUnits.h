@@ -56,7 +56,7 @@ double TransportSvc::distanceInRadUnits
 double TransportSvc::distanceInRadUnits_r
 ( const Gaudi::XYZPoint& point1         ,  
   const Gaudi::XYZPoint& point2         ,  
-  AccelCache&            accelCache     ,
+  ranges::v3::any&       accelCache     ,
   double            threshold           ,  
   IGeometryInfo*    alternativeGeometry ,  
   IGeometryInfo*    geometryGuess       )  const
@@ -65,7 +65,7 @@ double TransportSvc::distanceInRadUnits_r
   if ( point1 == point2 ) { return 0; } 
 
   // retrieve the history 
-  Gaudi::XYZVector Vector( point2 - point1 ) ;
+  const Gaudi::XYZVector Vector( point2 - point1 ) ;
 
   // initial point on the line 
   // direction vector of the line 

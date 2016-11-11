@@ -9,9 +9,11 @@
 // DetDesc
 #include "DetDesc/ILVolume.h"
 
+// range v3
+#include <range/v3/utility/any.hpp>
+
 // Forward declarations
 struct IGeometryInfo;
-
 
 /** @class ITransportSvc ITransportSvc.h DetDesc/ITransportSvc.h
  *
@@ -26,20 +28,8 @@ struct ITransportSvc : extend_interfaces<IService>
    */
   DeclareInterfaceID( ITransportSvc , 4 , 0);
 
-  /// Type for accelerator cache
-  struct AccelCache
-  {
-    /// Pointer to last used geometry
-    IGeometryInfo*           previousGeometry    = nullptr;
-    // previous point parameters
-    Gaudi::XYZPoint          prevPoint1;
-    Gaudi::XYZPoint          prevPoint2;
-    // "cache" parameters
-    double                   previousThreshold   = -10000;
-    IGeometryInfo*           previousGuess       = nullptr;
-    IGeometryInfo*           previousTopGeometry = nullptr;
-    ILVolume::Intersections  localIntersections;
-  };
+  /// Create an instance of the accelerator cache
+  virtual ranges::v3::any createCache() const = 0 ;
 
   /** Estimate the distance between 2 points in units
    *  of radiation length units
@@ -72,7 +62,7 @@ struct ITransportSvc : extend_interfaces<IService>
   distanceInRadUnits_r
   ( const Gaudi::XYZPoint& point1,
     const Gaudi::XYZPoint& point2,
-    AccelCache&            accelCache,
+    ranges::v3::any&   accelCache,
     double            threshold                 = 0,
     IGeometryInfo*    alternativeGeometry       = nullptr,
     IGeometryInfo*    geometryGuess             = nullptr  )  const = 0 ;
@@ -137,7 +127,7 @@ struct ITransportSvc : extend_interfaces<IService>
     const ISolid::Tick&      tickMin,
     const ISolid::Tick&      tickMax,
     ILVolume::Intersections& intersept,
-    AccelCache&              accelCache,
+    ranges::v3::any&         accelCache,
     double                   threshold           = 0,
     IGeometryInfo*           alternativeGeometry = nullptr,
     IGeometryInfo*           geometryGuess       = nullptr ) const = 0;

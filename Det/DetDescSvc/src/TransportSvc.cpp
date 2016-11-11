@@ -244,6 +244,9 @@ IGeometryInfo*       TransportSvc::findGeometry
 #include "TransportSvcIntersections.h"
 // ============================================================================
 
+// Create an instance of the accelerator cache
+ranges::v3::any TransportSvc::createCache() const { return AccelCache{}; }
+
 // ============================================================================
 // Implementation of interface DetDesc::IGeometryErrorSvc
 // ============================================================================

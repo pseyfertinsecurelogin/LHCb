@@ -183,7 +183,7 @@ StatusCode DetDesc::MaterialBudget::makeRandomShots()
   Rndm::Numbers y ( randSvc() , Rndm::Flat( m_yMin , m_yMax ) );
 
   // Accelerator cache for transport service
-  ITransportSvc::AccelCache accelCache;
+  auto accelCache = m_trSvc -> createCache();
   
   // make 'shots'
   boost::progress_display progress ( m_shots ) ;
@@ -228,7 +228,7 @@ StatusCode DetDesc::MaterialBudget::makeGridShots()
   // whatever. x and y are cartesian.
 
   // Accelerator cache for transport service
-  ITransportSvc::AccelCache accelCache;
+  auto accelCache = m_trSvc -> createCache();
   
   /// make a progress bar 
   boost::progress_display progress( m_nbx * m_nby ) ;
@@ -277,7 +277,7 @@ StatusCode DetDesc::MaterialBudget::makePsrapShots()
   const double dygrid = (m_yMax-m_yMin)/m_nby;
 
   // Accelerator cache for transport service
-  ITransportSvc::AccelCache accelCache;
+  auto accelCache = m_trSvc -> createCache();
   
   /// make a pregress bar 
   boost::progress_display progress ( m_nbx * m_nby ) ;  

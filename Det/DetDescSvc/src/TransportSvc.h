@@ -61,6 +61,8 @@ public:
   // ==========================================================================
   // Methods from ITransportSvc
   // ==========================================================================
+  /// Create an instance of the accelerator cache
+  ranges::v3::any createCache() const override;
   /** Estimate the distance between 2 points in
    *  units of radiation length units
    *  @see ITransportSvc
@@ -93,10 +95,10 @@ public:
   distanceInRadUnits_r
   ( const Gaudi::XYZPoint& point1,
     const Gaudi::XYZPoint& point2,
-    AccelCache&            accelCache,
-    double            threshold                 = 0,
-    IGeometryInfo*    alternativeGeometry       = nullptr,
-    IGeometryInfo*    geometryGuess             = nullptr  ) const override;
+    ranges::v3::any&       accelCache,
+    double                 threshold           = 0,
+    IGeometryInfo*         alternativeGeometry = nullptr,
+    IGeometryInfo*         geometryGuess       = nullptr  ) const override;
   // ==========================================================================
   /** general method ( returns the "full history" of the volume
    *  boundary intersections
@@ -150,7 +152,7 @@ public:
     const ISolid::Tick&      tickMin,
     const ISolid::Tick&      tickMax,
     ILVolume::Intersections& intersept,
-    AccelCache&              accelCache,
+    ranges::v3::any&         accelCache,
     double                   threshold           = 0,
     IGeometryInfo*           alternativeGeometry = nullptr,
     IGeometryInfo*           geometryGuess       = nullptr ) const override;
@@ -244,6 +246,23 @@ private:
   // ==========================================================================
 private:
   // ==========================================================================
+  /// Type for accelerator cache
+  struct AccelCache
+  {
+    /// Pointer to last used geometry
+    IGeometryInfo*           previousGeometry    = nullptr;
+    // previous point parameters
+    Gaudi::XYZPoint          prevPoint1;
+    Gaudi::XYZPoint          prevPoint2;
+    // "cache" parameters
+    double                   previousThreshold   = -10000;
+    IGeometryInfo*           previousGuess       = nullptr;
+    IGeometryInfo*           previousTopGeometry = nullptr;
+    ILVolume::Intersections  localIntersections;
+  };
+  // ==========================================================================
+private:
+  // ==========================================================================
   /// Own private data members:
   /// names of used services:
   Gaudi::Property<std::string>     m_detDataSvc_name
@@ -259,7 +278,7 @@ private:
 private:
   /** Local accelerator cache. Should eventually be removed so
    *  only the re-entrant versions are available */
-  mutable ITransportSvc::AccelCache m_accelCache;
+  mutable ranges::v3::any m_accelCache { AccelCache{} };
   //
 private:
   /// the actual type of the Map

@@ -76,7 +76,7 @@ unsigned long TransportSvc::intersections_r
   const ISolid::Tick&      tickMin             , 
   const ISolid::Tick&      tickMax             , 
   ILVolume::Intersections& intersept           , 
-  AccelCache&              accelCache          ,
+  ranges::v3::any&         accelCache          ,
   double                   threshold           , 
   IGeometryInfo*           alternativeGeometry , 
   IGeometryInfo*           guessGeometry       ) const
@@ -92,21 +92,23 @@ unsigned long TransportSvc::intersections_r
     // Set the top level geometry, because this is what is in the cache
     auto * topGeometry = alternativeGeometry ? alternativeGeometry : standardGeometry() ;
  
-    //
+    // get the cache
+    auto & cache = ranges::v3::any_cast<AccelCache&>(accelCache);
+
     Gaudi::XYZPoint point1( point + vect * tickMin ) ; 
     Gaudi::XYZPoint point2( point + vect * tickMax ) ; 
     // check - if the previous paramaters are the same
-    if ( point1              == accelCache.prevPoint1          && 
-         point2              == accelCache.prevPoint2          &&
-         threshold           == accelCache.previousThreshold   &&
-         topGeometry         == accelCache.previousTopGeometry && 
-         guessGeometry       == accelCache.previousGuess        ) 
+    if ( point1              == cache.prevPoint1          && 
+         point2              == cache.prevPoint2          &&
+         threshold           == cache.previousThreshold   &&
+         topGeometry         == cache.previousTopGeometry && 
+         guessGeometry       == cache.previousGuess        ) 
     {
       /// use cached container!!!
-      intersept.reserve( accelCache.localIntersections.size() ); 
+      intersept.reserve( cache.localIntersections.size() ); 
       intersept.insert( intersept.begin(),
-                        accelCache.localIntersections.begin() , 
-                        accelCache.localIntersections.end() ); 
+                        cache.localIntersections.begin() , 
+                        cache.localIntersections.end() ); 
       ///
       return intersept.size();  
     }
@@ -133,13 +135,13 @@ unsigned long TransportSvc::intersections_r
                                 alternativeGeometry ) ) ) ? 
       guessGeometry       : 
       // try the previous geometry (only if top-geometry matches)
-      ( accelCache.previousGeometry && topGeometry == accelCache.previousTopGeometry &&
+      ( cache.previousGeometry && topGeometry == cache.previousTopGeometry &&
 	( giLocal = findLocalGI( point1 , 
                                  point2 , 
-                                 accelCache.previousGeometry ,
+                                 cache.previousGeometry ,
                                  topGeometry ) ) ) ? 
       // just take the top geometry
-      accelCache.previousGeometry :
+      cache.previousGeometry :
       ( giLocal = findLocalGI( point1 , 
                                point2 , 
                                topGeometry,
@@ -166,33 +168,34 @@ unsigned long TransportSvc::intersections_r
         threshold                 );
       
     /// redefine previous geometry
-    accelCache.previousGeometry = giLocal;
+    cache.previousGeometry = giLocal;
     
     /// make local copy of all parameters:    
-    accelCache.prevPoint1           = point1              ;
-    accelCache.prevPoint2           = point2              ; 
-    accelCache.previousThreshold    = threshold           ;
-    accelCache.previousGuess        = guessGeometry       ;
-    accelCache.previousTopGeometry  = topGeometry ;
+    cache.prevPoint1           = point1              ;
+    cache.prevPoint2           = point2              ; 
+    cache.previousThreshold    = threshold           ;
+    cache.previousGuess        = guessGeometry       ;
+    cache.previousTopGeometry  = topGeometry ;
     
     /// intersections 
-    accelCache.localIntersections.clear();
-    accelCache.localIntersections.reserve( intersept.size() ); 
-    accelCache.localIntersections.insert( accelCache.localIntersections.begin(),
-                                          intersept.begin() , 
-                                          intersept.end() );
+    cache.localIntersections.clear();
+    cache.localIntersections.reserve( intersept.size() ); 
+    cache.localIntersections.insert( cache.localIntersections.begin(),
+                                     intersept.begin() , 
+                                     intersept.end() );
     
   }
   
   catch ( const GaudiException& Exception ) 
   {
-    /// 1) reset cache: 
-    accelCache.prevPoint1           = Gaudi::XYZPoint() ;
-    accelCache.prevPoint2           = Gaudi::XYZPoint() ; 
-    accelCache.previousThreshold    = -1000.0      ; 
-    accelCache.previousGuess        = 0            ; 
-    accelCache.previousTopGeometry  = 0            ;
-    accelCache.localIntersections.clear()          ; 
+    /// 1) reset cache:
+    auto & cache = ranges::v3::any_cast<AccelCache&>(accelCache);
+    cache.prevPoint1           = Gaudi::XYZPoint() ;
+    cache.prevPoint2           = Gaudi::XYZPoint() ; 
+    cache.previousThreshold    = -1000.0      ; 
+    cache.previousGuess        = 0            ; 
+    cache.previousTopGeometry  = 0            ;
+    cache.localIntersections.clear()          ; 
 
     ///  2) throw new exception:
     std::string message
@@ -212,12 +215,13 @@ unsigned long TransportSvc::intersections_r
   catch( ... ) 
   {
     /// 1) reset cache: 
-    accelCache.prevPoint1           = Gaudi::XYZPoint() ;
-    accelCache.prevPoint2           = Gaudi::XYZPoint() ; 
-    accelCache.previousThreshold    = -1000.0      ; 
-    accelCache.previousGuess        = 0            ; 
-    accelCache.previousTopGeometry  = 0            ;
-    accelCache.localIntersections.clear()          ; 
+    auto & cache = ranges::v3::any_cast<AccelCache&>(accelCache);
+    cache.prevPoint1           = Gaudi::XYZPoint() ;
+    cache.prevPoint2           = Gaudi::XYZPoint() ; 
+    cache.previousThreshold    = -1000.0      ; 
+    cache.previousGuess        = 0            ; 
+    cache.previousTopGeometry  = 0            ;
+    cache.localIntersections.clear()          ; 
 
     /// 2) throw new exception:
     std::string message
