@@ -98,8 +98,8 @@ void CaloL0DataProvider::cleanData(int feb ) {
 //  Get ADC Container
 //===================
 const CaloVector<LHCb::L0CaloAdc>& CaloL0DataProvider::l0Adcs(int source,bool clean){
-  if(clean)clear();
-  (!m_packed)? decodeTell1(-1) : decodeTell1(source);
+  if (clean) clear();
+  decodeTell1( !m_packed ? -1 : source);
   return m_adcs;
 }
 const CaloVector<LHCb::L0CaloAdc>& CaloL0DataProvider::l0Adcs(std::vector<int> sources,bool clean){

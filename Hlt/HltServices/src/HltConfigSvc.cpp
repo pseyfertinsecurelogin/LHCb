@@ -44,7 +44,7 @@ HltConfigSvc::HltConfigSvc( const std::string& name, ISvcLocator* pSvcLocator)
   , m_decodeOdin("ODINDecodeTool",this)
 {
   declareProperty("TCK2ConfigMap", m_tck2config_)->declareUpdateHandler( &HltConfigSvc::updateMap, this);
-  declareProperty("initialTCK", m_initialTCK_ )->declareUpdateHandler( &HltConfigSvc::updateInitial, this); 
+  declareProperty("initialTCK", m_initialTCK_ )->declareUpdateHandler( &HltConfigSvc::updateInitial, this);
   declareProperty("checkOdin", m_checkOdin = true);
   declareProperty("maskL0TCK", m_maskL0TCK = false);
   declareProperty("HltDecReportsLocations", m_outputContainerName = {"/Event/Hlt1/DecReports","/Event/Hlt2/DecReports"} );
@@ -245,7 +245,7 @@ StatusCode HltConfigSvc::updateTCK()
 void HltConfigSvc::createHltDecReports()
 {
    for ( const auto& location :  m_outputContainerName ) {
-      std::unique_ptr<LHCb::HltDecReports> hdr( new LHCb::HltDecReports() );
+      auto hdr = std::make_unique<LHCb::HltDecReports>();
       hdr->setConfiguredTCK(m_configuredTCK.uint());
       hdr->setTaskID(m_id);
       m_evtSvc->registerObject(location,hdr.release());

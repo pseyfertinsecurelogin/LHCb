@@ -1,4 +1,3 @@
-// $Id: HltRawDataMonitor.h,v 1.1.1.1 2009-06-24 15:38:52 tskwarni Exp $
 #ifndef HLTRAWDATAMONITOR_H 
 #define HLTRAWDATAMONITOR_H 1
 
@@ -26,8 +25,6 @@ public:
   /// Standard constructor
   HltRawDataMonitor( const std::string& name, ISvcLocator* pSvcLocator );
 
-  ~HltRawDataMonitor( ) override = default; ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
@@ -37,7 +34,6 @@ private:
   /// location of input
   std::string m_inputRawEventLocation;
   std::vector<std::string> m_rawEventLocations;
-
 
   /// SourceID to decode 0=Hlt 1=Hlt1 2=Hlt2 ... (1,2 will decode from 0 if 1,2 not found)
   UnsignedIntegerProperty m_sourceID;

@@ -1,5 +1,5 @@
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -7,43 +7,39 @@
 #include "LoKi/HltLock.h"
 #include "LoKi/HltEngineActor.h"
 // ============================================================================
-/** @file 
+/** @file
  *  Implementation file for class LoKi::Hybrid::HltLock
- *  @date 2008-09-18 
+ *  @date 2008-09-18
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  */
 // ============================================================================
-// contructor 
+// contructor
 // ============================================================================
-LoKi::Hybrid::HltLock::HltLock 
-( LoKi::Hybrid::IHltAntiFactory* tool ) 
-  : m_tool ( tool ) 
+LoKi::Hybrid::HltLock::HltLock
+( LoKi::Hybrid::IHltAntiFactory* tool )
+  : m_tool ( tool )
 {
-  LoKi::Hybrid::HltEngineActor& actor = 
-    LoKi::Hybrid::HltEngineActor::instance() ;
-  // connect the tool to the actor 
-  StatusCode sc = actor.connectTool ( m_tool.getObject () ) ;  
-  if ( sc.isFailure () ) 
-  {
+  auto& actor = LoKi::Hybrid::HltEngineActor::instance() ;
+  // connect the tool to the actor
+  StatusCode sc = actor.connectTool ( m_tool.getObject () ) ;
+  if ( sc.isFailure () ) {
     LoKi::Report::Error
       ( "LoKi::Hybrid::HltLock: error from connectTool", sc ) .ignore() ;
-  } 
+  }
 }
 // ============================================================================
-// destructor 
+// destructor
 // ============================================================================
 LoKi::Hybrid::HltLock::~HltLock()
 {
-  LoKi::Hybrid::HltEngineActor& actor = 
-    LoKi::Hybrid::HltEngineActor::instance() ;
-  // connect the tool to the actor 
-  StatusCode sc = actor.releaseTool ( m_tool.getObject () ) ;  
-  if ( sc.isFailure () ) 
-  {
+  auto& actor = LoKi::Hybrid::HltEngineActor::instance() ;
+  // connect the tool to the actor
+  StatusCode sc = actor.releaseTool ( m_tool.getObject () ) ;
+  if ( sc.isFailure () ) {
     LoKi::Report::Error
       ( "LoKi::Hybrid::HltLock: error from releaseTool", sc ) .ignore() ;
-  } 
+  }
 }
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

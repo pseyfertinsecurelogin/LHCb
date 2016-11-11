@@ -39,8 +39,6 @@ public:
 
   /// Standard constructor
   HltPackedDataWriter(const std::string& name, ISvcLocator* pSvcLocator);
-  /// Destructor
-  ~HltPackedDataWriter( ) override = default;
   
   StatusCode initialize() override; ///< Algorithm initialization
   StatusCode execute() override; ///< Algorithm execution

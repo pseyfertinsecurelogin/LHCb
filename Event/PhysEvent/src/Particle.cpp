@@ -39,18 +39,17 @@ std::ostream& LHCb::Particle::fillStream(std::ostream& s) const
     << "posCovMatrix    : " << std::endl << m_posCovMatrix << std::endl
     << "posMomCovMatrix : " << std::endl << m_posMomCovMatrix << std::endl
     << "extraInfo       : [";
-  for ( ExtraInfo::const_iterator i = extraInfo().begin();
-        i != extraInfo().end(); ++i )
+  for ( const auto & i : extraInfo() )
   {
-    if ( (*i).first < (int)LHCb::Particle::LastGlobal )
+    if ( i.first < (int)LHCb::Particle::LastGlobal )
     {
-      const LHCb::Particle::additionalInfo info =
-        static_cast<LHCb::Particle::additionalInfo>((*i).first);
-      s << " " << info << "=" << (*i).second;
+      const auto info =
+        static_cast<LHCb::Particle::additionalInfo>(i.first);
+      s << " " << info << "=" << i.second;
     }
     else
     {
-      s << " " << (*i).first << "=" << (*i).second;
+      s << " " << i.first << "=" << i.second;
     }
   }
   s << " ]";

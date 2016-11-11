@@ -26,8 +26,6 @@ public:
   /// Standard constructor
   L0DUFromRawAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0DUFromRawAlg( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
@@ -36,13 +34,13 @@ protected:
   void compareReports();
 
 private:
-  std::string m_L0DUReportLocation;
-  std::string m_procDataLocation   ;
-  std::string m_fromRawTool;
-  IL0DUFromRawTool* m_fromRaw;
-  IL0DUFromRawTool* m_fromRaw2;
-  bool m_hlt1;
-  bool m_compare;
-  bool m_ensureKnownTCK;
+  std::string m_L0DUReportLocation = LHCb::L0DUReportLocation::Default ;
+  std::string m_procDataLocation   = LHCb::L0ProcessorDataLocation::L0DU  ;
+  std::string m_fromRawTool = "L0DUFromRawTool" ;
+  IL0DUFromRawTool* m_fromRaw = nullptr;
+  IL0DUFromRawTool* m_fromRaw2 = nullptr;
+  bool m_hlt1 = false;
+  bool m_compare = false;
+  bool m_ensureKnownTCK = false;
 };
 #endif // L0DUFROMRAWALG_H
