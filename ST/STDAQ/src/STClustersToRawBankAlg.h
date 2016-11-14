@@ -31,7 +31,7 @@ class ISTDAQDataSvc;
 #include "STBoardToBankMap.h"
 namespace LHCb {class RawBank;}
 
-class ISTReadoutTool;
+struct ISTReadoutTool;
 
 
 class STClustersToRawBankAlg : public ST::AlgBase {
@@ -40,8 +40,6 @@ public:
 
   /// Standard constructor
   STClustersToRawBankAlg(const std::string& name, ISvcLocator* pSvcLocator);
-
-  virtual ~STClustersToRawBankAlg( ); ///< Destructor
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute() override;       ///< Algorithm execution
@@ -78,10 +76,10 @@ private:
   std::map<STTell1ID,STClustersOnBoard* > m_clusMap;
   std::vector<STClustersOnBoard> m_clusVectors;
 
-  unsigned int m_overflow;
+  unsigned int m_overflow = 0;
   int m_maxClustersPerPPx;
-  unsigned int m_maxClusterSize;
-  unsigned int m_pcn;
+  unsigned int m_maxClusterSize = 4;
+  unsigned int m_pcn = 128;
 
 };
 #endif // STClustersToRawBankAlg

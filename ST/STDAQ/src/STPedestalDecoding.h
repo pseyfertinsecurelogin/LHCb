@@ -1,4 +1,3 @@
-// $Id: STPedestalDecoding.h,v 1.1 2009-03-02 16:27:44 mtobin Exp $
 #ifndef STPEDESTALDECODING_H
 #define STPEDESTALDECODING_H 1
 

@@ -37,10 +37,6 @@ ST::AlgBase (name , pSvcLocator)
  declareSTConfigProperty( "inputLocation", m_inputLocation , STDigitLocation::TTDigits);
  
 }
-
-STDigitsToSTTELL1Data::~STDigitsToSTTELL1Data() {
-  // Destructor
-}
     
 StatusCode STDigitsToSTTELL1Data::execute() {
 

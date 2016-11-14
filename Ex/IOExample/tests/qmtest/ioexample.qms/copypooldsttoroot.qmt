@@ -6,9 +6,9 @@
   <argument name="validator"><text>
 from GaudiConf.QMTest.LHCbExclusions import preprocessor as LHCbPreprocessor
 preprocessor = LHCbPreprocessor + \
-LineSkipper(['/lhcb/swtest/MC09-pool-dst/00001820_00000001.dst']) + \
-LineSkipper( 'DetectorPersist...   INFO Added successfully Conversion service:XmlCnvSvc') + \
-LineSkipper( 'DetectorDataSvc   SUCCESS Detector description database: conddb:/lhcb.xml')
+LineSkipper(['/lhcb/swtest/MC09-pool-dst/00001820_00000001.dst', \
+             'DetectorPersist...   INFO Added successfully Conversion service:XmlCnvSvc', \
+             'DetectorDataSvc   SUCCESS Detector description database: conddb:/lhcb.xml'])
 validateWithReference(preproc = preprocessor)
 </text></argument>
 </extension>

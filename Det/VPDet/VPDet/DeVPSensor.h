@@ -1,6 +1,9 @@
 #ifndef VPDET_DEVPSENSOR_H
 #define VPDET_DEVPSENSOR_H 1
 
+#include <atomic>
+#include <array>
+
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Point3DTypes.h"
@@ -27,13 +30,11 @@ class DeVPSensor : public DetectorElement {
  public:
 
   /// Constructor
-  DeVPSensor(const std::string& name = "");
-  /// Destructor
-  virtual ~DeVPSensor();
+  using DetectorElement::DetectorElement;
 
   /// Object identification
   static const CLID& classID() { return CLID_DeVPSensor; }
-  virtual const CLID& clID() const override;
+  const CLID& clID() const override;
 
   /// Initialise the sensor.
   StatusCode initialize() override;
@@ -80,27 +81,27 @@ class DeVPSensor : public DetectorElement {
   bool isLeft() const { return m_isLeft; }
 
   /// Return sensor thickness in mm.
-  double siliconThickness() const { return DeVPSensor::m_thickness; }
+  double siliconThickness() const { return m_cache.thickness; }
 
   /// Return array of cached local x-coordinates by column
-  const double* xLocal() const { return DeVPSensor::m_local_x; }
+  const std::array<double,VP::NSensorColumns>& xLocal() const { return m_cache.local_x; }
 
   /// Return array of cached x pitches by column
-  const double* xPitch() const { return DeVPSensor::m_x_pitch; }
+  const std::array<double,VP::NSensorColumns>& xPitch() const { return m_cache.x_pitch; }
 
   /// Calculate the position of a given pixel.
   Gaudi::XYZPoint channelToPoint(const LHCb::VPChannelID& channel,
                                  const bool local) const {
 
-    const double x = DeVPSensor::m_local_x[channel.scol()];
-    const double y = (channel.row() + 0.5) * m_pixelSize;
+    const double x = m_cache.local_x[channel.scol()];
+    const double y = (channel.row() + 0.5) * m_cache.pixelSize;
     const Gaudi::XYZPoint point(x, y, 0.0);
     return (local ? point : localToGlobal(point));
   }
 
  private:
 
-  IGeometryInfo* m_geometry;
+  IGeometryInfo* m_geometry = nullptr;
 
   unsigned int m_sensorNumber;
   unsigned int m_module;
@@ -109,23 +110,35 @@ class DeVPSensor : public DetectorElement {
   /// Global Z position
   double m_z;
 
-  /// Dimensions of the sensor active area
-  static double m_sizeX;
-  static double m_sizeY;
-  static double m_thickness;
-  /// Number of chips per ladder
-  static unsigned int m_nChips;
-  /// Length of chip active area
-  static double m_chipSize;
-  /// Distance between two chips
-  static double m_interChipDist;
-  /// Number of columns and rows
-  static unsigned int m_nCols;
-  static unsigned int m_nRows;
-  /// Cell size of pixels
-  static double m_pixelSize;
-  /// Cell size in column direction of elongated pixels
-  static double m_interChipPixelSize;
+  struct common_t {
+      common_t() = default;
+      /// Dimensions of the sensor active area
+      double sizeX;
+      double sizeY;
+      double thickness;
+      /// Number of chips per ladder
+      unsigned int nChips;
+      /// Length of chip active area
+      double chipSize;
+      /// Distance between two chips
+      double interChipDist;
+      /// Number of columns and rows
+      unsigned int nCols;
+      unsigned int nRows;
+      /// Cell size of pixels
+      double pixelSize;
+      /// Cell size in column direction of elongated pixels
+      double interChipPixelSize;
+      /// Cache of local x-cooordinates
+      std::array<double,VP::NSensorColumns> local_x;
+      /// Cache of x-pitch
+      std::array<double,VP::NSensorColumns> x_pitch;
+      /// Cache validity, so we create it only once on startup
+      std::atomic<bool> common_cache_valid { false };
+  };
+
+  static common_t m_cache;
+
 
   /// Output level flag
   bool m_debug = false;
@@ -134,21 +147,13 @@ class DeVPSensor : public DetectorElement {
   mutable std::unique_ptr<MsgStream> m_msg;
   /// On-demand access to message stream
   MsgStream& msg() const {
-    if (!m_msg) m_msg.reset( new MsgStream(msgSvc(), "DeVPSensor") );
+    if (UNLIKELY(!m_msg)) m_msg.reset( new MsgStream(msgSvc(), "DeVPSensor") );
     return *m_msg;
   }
 
-  /// Cache of local x-cooordinates
-  static double m_local_x[VP::NSensorColumns];
-  /// Cache of x-pitch
-  static double m_x_pitch[VP::NSensorColumns];
-  /// Cache validity, so we create it only once on startup
-  static bool m_common_cache_valid;
-
-  /// Calculate and cache the local x positions and pitches
-  void cacheLocalXAndPitch();
   /// Update geometry cache when the alignment changes
   StatusCode updateGeometryCache();
 
+  friend void init_cache(common_t&);
 };
 #endif
