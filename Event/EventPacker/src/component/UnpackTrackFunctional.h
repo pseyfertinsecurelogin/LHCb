@@ -16,7 +16,8 @@
  *  @author Olivier Callot
  *  @date   2008-11-14
  */
-class UnpackTrackFunctional : public Gaudi::Functional::Transformer< LHCb::Tracks(const LHCb::PackedTracks&) >
+class UnpackTrackFunctional final : 
+  public Gaudi::Functional::Transformer< LHCb::Tracks(const LHCb::PackedTracks&) >
 {
 
 public: 
@@ -25,7 +26,7 @@ public:
   UnpackTrackFunctional( const std::string& name, ISvcLocator* pSvcLocator );
 
   /// Functional operator
-  LHCb::Tracks operator()( const LHCb::PackedTracks& pTracks ) const;
+  LHCb::Tracks operator()( const LHCb::PackedTracks& pTracks ) const override;
 
 };
 
