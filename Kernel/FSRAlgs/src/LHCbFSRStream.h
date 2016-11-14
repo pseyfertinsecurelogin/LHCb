@@ -1,4 +1,3 @@
-// $Id: LHCbFSRStream.h,v 1.1 2008/12/10 18:37:36 marcocle Exp $
 #ifndef LHCB_LHCBFSRSTREAM_H
 #define LHCB_LHCBFSRSTREAM_H
 
@@ -34,9 +33,9 @@ protected:
                   unsigned int nRecCount = 0 );
 
 private:
-  IIOFSRSvc* m_ioFsrSvc; ///<reference to IOFSR service
-  bool m_doIOFsr; //set to false to skip all the IOFSR stuff
-  bool m_cleanTree; //set to false to skip cleaning the FSR tree
+  SmartIF<IIOFSRSvc> m_ioFsrSvc; ///<reference to IOFSR service
+  bool m_doIOFsr = true; //set to false to skip all the IOFSR stuff
+  bool m_cleanTree = true; //set to false to skip cleaning the FSR tree
   std::string m_cleanRoot; //clean from where in the FSR tree
 
 };

@@ -24,8 +24,6 @@ public:
   /// Standard constructor
   LumiMergeFSR( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~LumiMergeFSR( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
@@ -35,7 +33,7 @@ protected:
 
 protected:
   /// Reference to run records data service
-  IDataProviderSvc* m_fileRecordSvc;
+  SmartIF<IDataProviderSvc> m_fileRecordSvc;
 
   std::string m_FileRecordName;                 ///< location of FileRecords
   std::string m_FSRName;                        ///< specific tag of summary data in FSR
