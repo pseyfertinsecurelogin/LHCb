@@ -40,7 +40,7 @@ StatusCode FakeEventTime::initialize ( ) {
   if( log.level() <= MSG::DEBUG )
     log << MSG::DEBUG << "--- initialize ---" << endmsg;
 
-  log << MSG::INFO << "Event times generated from " << m_startTime << " with steps of " << m_timeStep << endmsg;
+  log << MSG::INFO << "Event times generated from " << m_startTime.value() << " with steps of " << m_timeStep.value() << endmsg;
 
   return StatusCode::SUCCESS;
 }
