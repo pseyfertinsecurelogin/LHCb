@@ -4,9 +4,9 @@
 
 // Include files
 // from Gaudi
+#include "Event/FTLiteCluster.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
-
 
 /** @class FTRawBankDecoder FTRawBankDecoder.h
  *  Decode the FT raw bank into FTLiteClusters
@@ -14,6 +14,9 @@
  *  @author Olivier Callot
  *  @date   2012-05-11
  */
+
+typedef FastClusterContainer<LHCb::FTLiteCluster,int> FTLiteClusters;
+
 class FTRawBankDecoder : public Decoder::AlgBase {
 public: 
   /// Standard constructor
@@ -28,8 +31,7 @@ private:
   
   std::string m_outputClusterLocation;
 
-  std::unique_ptr<FastClusterContainer<LHCb::FTLiteCluster,int>>
-  operator()(const std::vector<LHCb::RawBank*>& banks) const;
+  std::unique_ptr<FTLiteClusters> operator()(const std::vector<LHCb::RawBank*>& banks) const;
 
 };
 #endif // FTRAWBANKDECODER_H

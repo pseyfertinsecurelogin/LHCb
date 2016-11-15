@@ -1,9 +1,6 @@
 // Include files
 
 // from Gaudi
-#include "Event/FTLiteCluster.h"
-#include "Event/FTCluster.h"
-
 #include "Event/RawEvent.h"
 
 // local
@@ -57,10 +54,10 @@ StatusCode FTRawBankDecoder::execute() {
   return StatusCode::SUCCESS;
 }
 
-std::unique_ptr<FastClusterContainer<LHCb::FTLiteCluster,int>>
+std::unique_ptr<FTLiteClusters>
 FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
 {
-  std::unique_ptr<FastClusterContainer<LHCb::FTLiteCluster,int>> clus{ new FastClusterContainer<LHCb::FTLiteCluster,int>() };
+  std::unique_ptr<FTLiteClusters> clus{ new FTLiteClusters() };
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
 
@@ -99,17 +96,16 @@ FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
                   << nClus << ", #clusters in bank=" << std::distance(first,last) << endmsg;
         return nullptr;
       }
+
       std::transform( first, first+nClus,
                       std::back_inserter(*clus),
                       [&](short int c) -> LHCb::FTLiteCluster {
         unsigned channel= ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
         int fraction = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
-        //int sipmId   = ( c >> FTRawBank::sipmIdShift   ) & FTRawBank::sipmIdMaximum; //dummy (-> remove)
         int cSize    = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
-        //int charge   = ( c >> FTRawBank::chargeShift   ) & FTRawBank::chargeMaximum;
         if ( msgLevel( MSG::VERBOSE ) ) {
           verbose() << format(  "    channel %4d frac %3d size %3d code %4.4x",
-                                channel,fraction, cSize, c ) << endmsg;
+                                channel, fraction, cSize, c ) << endmsg;
         }
         return  { LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
                   fraction, cSize };

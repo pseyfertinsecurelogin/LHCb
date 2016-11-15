@@ -91,6 +91,14 @@
         <code> m_channelID+=offset; </code>
       </method>
 
+      <method type    = "unsigned int" 
+              name    = "sipmInModule"
+              argList = "" 
+              const   = "TRUE" 
+              desc    = "Return the SiPM number within the module (0-15)">
+        <code> return (m_channelID &amp; (matMask + sipmMask)) &gt;&gt; sipmBits; </code>
+      </method>
+
      <attribute  type = "bitfield" 
                   name = "channelID" 
                   desc = "FT Channel ID">
