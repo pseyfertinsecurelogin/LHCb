@@ -62,15 +62,15 @@ namespace LoKi
         , m_default ( value )
       { }
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  GetInfo* clone() const { return new GetInfo(*this); }
+      GetInfo* clone() const override { return new GetInfo(*this); }
       /// MANDATORY: the only one essential method
-      virtual typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
-        ( typename LoKi::Functor<TYPE,TYPE2>::argument a )  const
+      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       { return LoKi::ExtraInfo::info ( a , m_index , m_default ) ; }
       /** OPTIONAL: the nice printout
        *  @attention: it is worth to redefine it for each type
        */
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << this->objType() << "(" << m_index << "," << m_default << ")" ; }
       // ======================================================================
     private:
@@ -110,15 +110,15 @@ namespace LoKi
         , m_index   ( index )
       { }
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  CheckInfo* clone() const { return new CheckInfo (*this); }
+      CheckInfo* clone() const override { return new CheckInfo (*this); }
       /// MANDATORY: the only one essential method
-      virtual typename LoKi::Functor<TYPE,bool>::result_type operator()
-        ( typename LoKi::Functor<TYPE,bool>::argument a )  const
+      typename LoKi::Functor<TYPE,bool>::result_type operator()
+        ( typename LoKi::Functor<TYPE,bool>::argument a )  const override
       { return LoKi::ExtraInfo::hasInfo ( a , m_index ) ; }
       /** OPTIONAL: the nice printout
        *  @attention: it is worth to redefine for each type
        */
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s <<  this->objType() << "(" << m_index << ")" ; }
       // ======================================================================
       /// no assigenement
@@ -163,10 +163,10 @@ namespace LoKi
         , m_update ( update )
       {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  GetSmartInfo* clone() const { return new GetSmartInfo (*this); }
+      GetSmartInfo* clone() const override { return new GetSmartInfo (*this); }
       /// MANDATORY: the only one essential method
-      virtual typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
-      ( typename LoKi::Functor<TYPE,TYPE2>::argument a )  const
+      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+      ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       {
         // check extra info:
         if ( LoKi::ExtraInfo::hasInfo ( a , m_index ) )
@@ -181,7 +181,7 @@ namespace LoKi
       /** OPTIONAL: the nice printout
        *  @attention: it is worth to redefine for each type
        */
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       {
         s << "info(" << m_index << "," << m_fun << "," ;
         return s <<  ( m_update ? "True" : "False"  ) << ")" ;
@@ -191,7 +191,7 @@ namespace LoKi
        *  @see LoKi::AuxFunBase
        *  @return the function-ID
        */
-      virtual std::size_t         id     () const { return m_index ; }
+      std::size_t         id     () const override { return m_index ; }
       // ======================================================================
     public:
       // ======================================================================

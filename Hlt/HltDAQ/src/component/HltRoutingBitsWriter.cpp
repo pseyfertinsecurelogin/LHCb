@@ -38,7 +38,7 @@ StatusCode HltRoutingBitsWriter::decode() {
    zeroEvaluators();
 
    // Create the right type of evaluator and build it
-   auto build = [this](const int bit, const string expr) -> StatusCode {
+   auto build = [this](const unsigned int bit, const string expr) -> StatusCode {
       if (expr.empty()) return StatusCode::SUCCESS;
 
       std::string title = boost::str(boost::format("%02d:%s") % bit % expr);
