@@ -38,29 +38,6 @@ StatusCode parse(std::set<std::string>& result,
 
 using namespace std;
 
-namespace {
-
-template <typename T>
-struct equals_t  {
-    T arg0;
-
-    template <typename U>
-    bool operator()(const U& u) const { return arg0 == u; }
-};
-
-// note that in case of an r-value, we copy, in case of an l-value
-// or an l-value reference, we use a reference...
-template <typename T>
-equals_t<T> equals( T&& t ) { return equals_t<T>{std::forward<T>(t)}; }
-
-/// C++14 version:
-// template <typename T>
-// auto equals( T&& t ) { return [arg0=std::forward<T>(t)](const auto& arg) 
-//                               { return arg0 == arg; }; 
-// }
-}
-
-
 //-----------------------------------------------------------------------------
 // Implementation file for class : PropertyConfigSvc
 //
@@ -72,6 +49,10 @@ DECLARE_COMPONENT( PropertyConfigSvc )
 
 
 namespace {
+    template <typename T>
+    auto equals( T&& t ) { return [arg0=std::forward<T>(t)](const auto& arg)
+                                  { return arg0 == arg; };
+    }
 
     // model this as output iterator
     class property2jos  : public std::iterator<std::output_iterator_tag,const PropertyConfig::Prop> {
@@ -301,8 +282,11 @@ PropertyConfigSvc::findInTree(const ConfigTreeNode::digest_type& configTree, con
 ConfigTreeNode::digest_type
 PropertyConfigSvc::resolveAlias(const ConfigTreeNodeAlias::alias_type& alias) const
 {
-    auto i = m_aliases.find(alias);
-    if (i!=m_aliases.end()) return i->second;
+    {
+        std::unique_lock<std::mutex> lock(m_aliases_mtx);
+        auto i = m_aliases.find(alias);
+        if (i!=m_aliases.end()) return i->second;
+    }
     auto node = m_accessSvc->readConfigTreeNodeAlias(alias);
     if (!node) {
         error() << " could not obtain alias " << alias << endmsg;
@@ -310,9 +294,14 @@ PropertyConfigSvc::resolveAlias(const ConfigTreeNodeAlias::alias_type& alias) co
     }
     // add it into alias cache
     ConfigTreeNode::digest_type ref = node->digest();
-    m_aliases.emplace( alias,ref );
-    // add to ConfigTreeNode cache now that we got it anyway...
-    if (m_nodes.find(ref)==m_nodes.end()) m_nodes.emplace( ref, *node );
+    {
+        std::unique_lock<std::mutex> lock(m_aliases_mtx);
+        m_aliases.emplace( alias,ref );
+    }{
+        std::unique_lock<std::mutex> lock(m_nodes_mtx);
+        // add to ConfigTreeNode cache now that we got it anyway...
+        if (m_nodes.find(ref)==m_nodes.end()) m_nodes.emplace( ref, *node );
+    }
     info() << " resolved " << alias << " to " << ref << endmsg;
     return ref;
 }
@@ -327,9 +316,12 @@ PropertyConfigSvc::collectNodeRefs(const ConfigTreeNodeAlias::alias_type& alias)
 const PropertyConfigSvc::Tree2NodeMap_t::mapped_type&
 PropertyConfigSvc::collectNodeRefs(const ConfigTreeNode::digest_type& nodeRef) const
 {
-    // first check cache...
-    auto j = m_nodesInTree.find(nodeRef);
-    if (j!=m_nodesInTree.end()) return j->second;
+    {
+        std::unique_lock<std::mutex> lock(m_nodesInTree_mtx);
+        // first check cache...
+        auto j = m_nodesInTree.find(nodeRef);
+        if (j!=m_nodesInTree.end()) return j->second;
+    }
 
     //std::chrono::time_point<std::chrono::system_clock> start ;
     //start = std::chrono::system_clock::now();
@@ -359,8 +351,13 @@ PropertyConfigSvc::collectNodeRefs(const ConfigTreeNode::digest_type& nodeRef) c
     // std::cerr << "PropertyConfigSvc::collectNodeRefs: elapsed time to resolve " << nodeRef << " : " << elapsed_seconds.count() << std::endl;
 
     // insert in cache
-    auto rv = m_nodesInTree.emplace( nodeRef, nrefs );
-    return rv.first->second;
+    {
+        std::unique_lock<std::mutex> lock(m_nodesInTree_mtx);
+        // we may be beaten to this point, and nodeRef may already be there,
+        // but that is OK / irrelevant ;-)
+        auto rv = m_nodesInTree.emplace( nodeRef, nrefs );
+        return rv.first->second;
+    }
 }
 
 const vector<PropertyConfig::digest_type>&
@@ -372,17 +369,22 @@ PropertyConfigSvc::collectLeafRefs(const ConfigTreeNodeAlias::alias_type& alias)
 const vector<PropertyConfig::digest_type>&
 PropertyConfigSvc::collectLeafRefs(const ConfigTreeNode::digest_type& nodeRef) const
 {
-     auto i  = m_leavesInTree.find(nodeRef);
-     if ( i != m_leavesInTree.end() ) return i->second;
-
+     {
+        std::unique_lock<std::mutex> lock(m_leavesInTree_mtx);
+        auto i  = m_leavesInTree.find(nodeRef);
+        if ( i != m_leavesInTree.end() ) return i->second;
+     }
      vector<PropertyConfig::digest_type> leafRefs;
      for (auto& i : collectNodeRefs(nodeRef) ) {
         const ConfigTreeNode *node = resolveConfigTreeNode(i);
         PropertyConfig::digest_type leafRef = node->leaf();
         if (leafRef.valid()) leafRefs.push_back(leafRef);
      }
-     auto rv = m_leavesInTree.emplace( nodeRef, std::move(leafRefs) );
-     return rv.first->second;
+     {
+        std::unique_lock<std::mutex> lock(m_leavesInTree_mtx);
+        auto rv = m_leavesInTree.emplace( nodeRef, std::move(leafRefs) );
+        return rv.first->second;
+     }
 }
 
 StatusCode
@@ -416,7 +418,7 @@ StatusCode
 PropertyConfigSvc::outOfSyncConfigs(const ConfigTreeNode::digest_type& configID,
                                     back_insert_iterator<vector<const PropertyConfig*> > newConfigs) const
 {
-    if (!configID.valid())  return StatusCode::FAILURE;
+    assert(configID.valid()); // caller already verified this!
     for (const auto& i : collectLeafRefs(configID) ) {
         const PropertyConfig *config = resolvePropertyConfig(i);
         if ( !config ) {
@@ -465,6 +467,10 @@ PropertyConfigSvc::outOfSyncConfigs(const ConfigTreeNode::digest_type& configID,
 StatusCode
 PropertyConfigSvc::configure(const ConfigTreeNode::digest_type& configID, bool callSetProperties) const
 {
+    //TODO: make thread safe!
+    //      move chcek on m_configPushed out of  outOfSyncConfigs
+    //      to avoid reading m_configPushed there, and restrict read/write
+    //      of m_configPushed to configure only!
     if(msgLevel(MSG::DEBUG)) debug() << " configuring using " << configID << endmsg;
     if (!configID.valid()) return StatusCode::FAILURE;
     setTopAlgs(configID); // do this last instead of first?
@@ -682,10 +688,13 @@ PropertyConfigSvc::createGraphVizFile(const ConfigTreeNode::digest_type& ref, co
 const PropertyConfig*
 PropertyConfigSvc::resolvePropertyConfig(const PropertyConfig::digest_type& ref) const
 {
-   auto i = m_configs.find(ref);
-   if (i!=m_configs.end()) {
-        if(msgLevel(MSG::DEBUG)) debug() << "already have an entry for id " << ref << endl;
-        return &(i->second);
+   {
+       std::unique_lock<std::mutex> lock(m_configs_mtx);
+       auto i = m_configs.find(ref);
+       if (i!=m_configs.end()) {
+            if(msgLevel(MSG::DEBUG)) debug() << "already have an entry for id " << ref << endl;
+            return &(i->second);
+       }
    }
    auto config = m_accessSvc->readPropertyConfig(ref);
    if (!config) {
@@ -697,8 +706,11 @@ PropertyConfigSvc::resolvePropertyConfig(const PropertyConfig::digest_type& ref)
                 << " points at " << config->digest().str() << endmsg;
         return nullptr;
    }
-   auto rv = m_configs.emplace(  ref, *config);
-   return &(rv.first->second);
+   {
+        std::unique_lock<std::mutex> lock(m_configs_mtx);
+        auto rv = m_configs.emplace(  ref, *config);
+        return &(rv.first->second);
+   }
 }
 
 const ConfigTreeNode*
@@ -712,10 +724,13 @@ const ConfigTreeNode*
 PropertyConfigSvc::resolveConfigTreeNode(const ConfigTreeNode::digest_type& ref) const
 {
    if(msgLevel(MSG::DEBUG)) debug() << " resolving nodeRef " << ref << endmsg;
-   auto i = m_nodes.find(ref);
-   if (i!=m_nodes.end()) {
-        if(msgLevel(MSG::DEBUG)) debug() << "already have an entry for id " << ref << endl;
-        return &(i->second);
+   {
+       std::unique_lock<std::mutex> lock(m_nodes_mtx);
+       auto i = m_nodes.find(ref);
+       if (i!=m_nodes.end()) {
+            if(msgLevel(MSG::DEBUG)) debug() << "already have an entry for id " << ref << endl;
+            return &(i->second);
+       }
    }
    assert(m_accessSvc);
    auto node = m_accessSvc->readConfigTreeNode(ref);
@@ -728,8 +743,11 @@ PropertyConfigSvc::resolveConfigTreeNode(const ConfigTreeNode::digest_type& ref)
                 << " points at " << node->digest().str() << endmsg;
         return nullptr;
    }
-   auto rv = m_nodes.emplace( ref, *node );
-   return &(rv.first->second);
+   {
+       std::unique_lock<std::mutex> lock(m_nodes_mtx);
+       auto rv = m_nodes.emplace( ref, *node );
+       return &(rv.first->second);
+   }
 }
 
 
