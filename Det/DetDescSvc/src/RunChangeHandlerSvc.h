@@ -28,7 +28,7 @@ class RunChangeHandlerSvc: public extends<Service, IIncidentListener> {
 public:
 
   /// Standard constructor
-  RunChangeHandlerSvc(const std::string& name, ISvcLocator* svcloc);
+  using base_class::base_class;
 
   /// Initialize Service
   StatusCode initialize() override;
@@ -103,14 +103,15 @@ private:
   void update();
 
   typedef GaudiUtils::Map<std::string,std::string> CondDescMap;
-  CondDescMap m_condDesc;
+  Gaudi::Property<CondDescMap> m_condDesc { this, "Conditions", {},
+   "Map defining what to use to replace the location of the source XML files."};
 
   typedef std::list<CondData> Conditions;
   /// List of objects to modify
   Conditions m_conditions;
 
   /// Current run number.
-  unsigned long m_currentRun;
+  unsigned long m_currentRun = 0;
 
   /// EventDataSvc, for ODIN
   mutable SmartIF<IDataProviderSvc> m_evtSvc;

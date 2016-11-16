@@ -23,18 +23,6 @@ DECLARE_SERVICE_FACTORY( RunChangeHandlerSvc )
 //-----------------------------------------------------------------------------
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-RunChangeHandlerSvc::RunChangeHandlerSvc(const std::string &name, ISvcLocator *svcLoc):
-  base_class(name,svcLoc),
-  m_currentRun(0)
-{
-  declareProperty("Conditions", m_condDesc,
-   "Map defining what to use to replace the location of the source XML files.");
-}
-
-
-//=============================================================================
 // Initialize
 //=============================================================================
 StatusCode RunChangeHandlerSvc::initialize(){
