@@ -42,12 +42,6 @@ uint8_t get<uint8_t>( istream& is )
     return x;
 }
 template <>
-uint8_t get<uint8_t>( const unsigned char* buf )
-{
-    return uint8_t( buf[0] );
-}
-
-template <>
 uint16_t get<uint16_t>( istream& is )
 {
     return _get2<uint16_t, uint8_t>( is );
