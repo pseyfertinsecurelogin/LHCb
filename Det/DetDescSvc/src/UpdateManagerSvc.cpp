@@ -31,23 +31,6 @@ DECLARE_SERVICE_FACTORY( UpdateManagerSvc )
 //-----------------------------------------------------------------------------
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-UpdateManagerSvc::UpdateManagerSvc(const std::string& name, ISvcLocator* svcloc):
-  base_class(name,svcloc),
-  m_head_since(1),m_head_until(0)
-{
-#ifndef WIN32
-  pthread_mutex_t tmp_lock = PTHREAD_MUTEX_INITIALIZER;
-  m_busy = tmp_lock;
-#endif
-  declareProperty("DataProviderSvc",    m_dataProviderName = "DetectorDataSvc");
-  declareProperty("DetDataSvc",         m_detDataSvcName);
-  declareProperty("ConditionsOverride", m_conditionsOveridesDesc);
-  declareProperty("DotDumpFile",        m_dotDumpFile = "");
-}
-
-//=============================================================================
 // IService implementation
 //=============================================================================
 StatusCode UpdateManagerSvc::initialize(){
@@ -594,7 +577,7 @@ void UpdateManagerSvc::dump(){
   std::unique_ptr<std::ofstream> dot_file;
 
   if ( !m_dotDumpFile.empty() ){
-    dot_file = std::make_unique<std::ofstream>(m_dotDumpFile.c_str());
+    dot_file = std::make_unique<std::ofstream>(m_dotDumpFile.value().c_str());
   }
 
   if (dot_file) {

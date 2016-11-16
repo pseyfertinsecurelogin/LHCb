@@ -37,12 +37,12 @@ class Condition;
  *  @author Marco Clemencic
  *  @date   2005-03-30
  */
-class UpdateManagerSvc: public virtual extends2<Service,
-                        						IUpdateManagerSvc,
-                        						IIncidentListener> {
+class UpdateManagerSvc: public extends<Service,
+                                       IUpdateManagerSvc,
+                                       IIncidentListener> {
 public:
   /// Standard constructor
-  UpdateManagerSvc(const std::string& name, ISvcLocator* svcloc);
+  using base_class::base_class;
 
   /// Initialize Service
   StatusCode initialize() override;
@@ -148,7 +148,7 @@ private:
   SmartIF<IDataProviderSvc> m_dataProvider;
 
   /// Name of the Data Provider (set by the option DataProviderSvc, by default "DetectorDataSvc").
-  std::string       m_dataProviderName;
+  Gaudi::Property<std::string> m_dataProviderName { this, "DataProviderSvc", "DetectorDataSvc" };
 
   /// Name of the root node of the Transient Store.
   std::string       m_dataProviderRootName;
@@ -159,7 +159,7 @@ private:
   SmartIF<IDetDataSvc> m_detDataSvc;
 
   /// Name of the DetDataSvc (set by the option DetDataSvc, by default empty, which means <i>the same as data provider</i>).
-  std::string       m_detDataSvcName;
+  Gaudi::Property<std::string> m_detDataSvcName { this, "DetDataSvc" };
 
   /// Pointer to the incident service;
   SmartIF<IIncidentSvc> m_incidentSvc;
@@ -172,24 +172,24 @@ private:
   /// List used to record all the objects without parents. (for fast access)
   Item::ItemList                                                            m_head_items;
   /// Lower bound of intersection of head IOVs.
-  Gaudi::Time                                                               m_head_since;
+  Gaudi::Time                                                               m_head_since = 1;
   /// Higher bound of intersection of head IOVs.
-  Gaudi::Time                                                               m_head_until;
+  Gaudi::Time                                                               m_head_until = 0;
 
   /// List of condition definitions to override the ones in the transient store (option ConditionsOverride).
   /// The syntax to define a condition is:<BR>
   /// path := type1 name1 = value1; type2 name2 = value2; ...
-  std::vector<std::string> m_conditionsOveridesDesc;
+  Gaudi::Property<std::vector<std::string>> m_conditionsOveridesDesc { this, "ConditionsOverride" };
   /// Map containing the list of parsed condition definitions
   std::map<std::string,std::unique_ptr<Condition>> m_conditionsOverides;
 
   /// Name of the dot (graphviz) file into which write the dump (http://www.graphviz.org)
   /// (property DotDumpFile).
-  std::string m_dotDumpFile;
+  Gaudi::Property<std::string> m_dotDumpFile { this, "DotDumpFile" };
 
 #ifndef WIN32
   /// mutex lock used to avoid dependencies corruptions in a multi-thread environment.
-  pthread_mutex_t m_busy;
+  pthread_mutex_t m_busy = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 };

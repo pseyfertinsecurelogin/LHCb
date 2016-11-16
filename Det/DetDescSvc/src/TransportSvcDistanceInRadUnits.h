@@ -18,9 +18,32 @@
  */
 // ============================================================================
 
+/** Estimate the distance between 2 points in
+ *  units of radiation length units
+ *  @see ITransportSvc
+ *  @param Point1 first point
+ *  @param Point2 second point
+ *  @param Threshold threshold value
+ *  @param AlternativeGeometry  source ot alternative geomtry
+ *  @param GeometryGuess guess foe geometry
+ *  @return distance in rad length units
+ */
+double TransportSvc::distanceInRadUnits
+( const Gaudi::XYZPoint& Point1         ,
+  const Gaudi::XYZPoint& Point2         ,
+  double            Threshold           ,
+  IGeometryInfo*    AlternativeGeometry ,
+  IGeometryInfo*    GeometryGuess       ) const
+{
+  return distanceInRadUnits_r( Point1, Point2, m_accelCache, Threshold,
+                               AlternativeGeometry, GeometryGuess );
+}
 // ============================================================================
 /** Estimate the distance between 2 points in 
  *  units of radiation length units 
+ *  Similar to distanceInRadUnits but with an additional accelerator
+ *  cache for local client storage. This method, unlike distanceInRadUnits
+ *  is re-entrant and thus thread safe.
  *  @see ITransportSvc 
  *  @param point1 first point
  *  @param point2 second point 
@@ -30,18 +53,20 @@
  *  @return distance in rad length units 
  */
 // ============================================================================
-inline double TransportSvc::distanceInRadUnits
+double TransportSvc::distanceInRadUnits_r
 ( const Gaudi::XYZPoint& point1         ,  
   const Gaudi::XYZPoint& point2         ,  
+  ranges::v3::any&       accelCache     ,
   double            threshold           ,  
   IGeometryInfo*    alternativeGeometry ,  
   IGeometryInfo*    geometryGuess       )  const
 {
   // check for the  distance 
-  if( point1 == point2 ) { return 0 ;} 
+  if ( point1 == point2 ) { return 0; } 
 
   // retrieve the history 
-  Gaudi::XYZVector Vector( point2 - point1 ) ;
+  const Gaudi::XYZVector Vector( point2 - point1 ) ;
+
   // initial point on the line 
   // direction vector of the line 
   // minimal value of the parameter of the line  
@@ -50,28 +75,29 @@ inline double TransportSvc::distanceInRadUnits
   // threshold value 
   // source of the alternative geometry information 
   // a guess for navigation
-  intersections( point1              ,   
-                 Vector              ,   
-                 0.0                 ,   
-                 1.0                 ,   
-                 m_local_intersects  ,   
-                 threshold           ,
-                 alternativeGeometry ,
-                 geometryGuess       ); 
+  ILVolume::Intersections local_intersects;
+  intersections_r( point1              ,   
+                   Vector              ,   
+                   0.0                 ,   
+                   1.0                 ,   
+                   local_intersects    ,   
+                   accelCache          ,
+                   threshold           ,
+                   alternativeGeometry ,
+                   geometryGuess       ); 
   
   //  radiation length in tick units 
-  double RadLength = 
+  const auto RadLength = 
     std::accumulate
-    (  m_local_intersects.begin()                              ,  
-       m_local_intersects.end  ()                              , 
-       0.0                                                     ,  
-       VolumeIntersectionIntervals::AccumulateIntersections()  ); 
+    (  local_intersects.begin()                               ,  
+       local_intersects.end  ()                               , 
+       0.0                                                    ,  
+       VolumeIntersectionIntervals::AccumulateIntersections() ); 
 
   // scale
-  const ISolid::Tick TickLength = std::sqrt( Vector.mag2() ); 
+  const auto TickLength = std::sqrt( Vector.mag2() ); 
   
   return RadLength * TickLength ;  
-  ///  
 }
 
 // ============================================================================
