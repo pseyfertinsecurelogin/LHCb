@@ -135,7 +135,7 @@ class DigiConf(LHCbConfigurableUser):
         if 'OT' in dets :
             writer.ItemList += ["/Event/Link/Raw/OT/Times#1"]
         if 'FT' in dets :
-            writer.ItemList += ["/Event/Link/Raw/FT/Clusters#1"]
+            writer.ItemList += ["/Event/Link/Raw/FT/LiteClusters#1"]
         if 'Muon' in dets :
             writer.ItemList += ["/Event/Link/Raw/Muon/Digits#1"]
 
@@ -170,7 +170,7 @@ class DigiConf(LHCbConfigurableUser):
         if 'OT' in dets :
             writer.ItemList += ["/Event/Link/Raw/OT/Times2MCHits#1"]
         if 'FT' in dets :
-            writer.ItemList += ["/Event/Link/Raw/FT/Clusters2MCHits#1"]
+            writer.ItemList += ["/Event/Link/Raw/FT/LiteClusters2MCHits#1"]
             
             
 

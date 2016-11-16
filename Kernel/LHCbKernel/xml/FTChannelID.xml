@@ -99,6 +99,30 @@
         <code> return (m_channelID &amp; (matMask + sipmMask)) &gt;&gt; sipmBits; </code>
       </method>
 
+      <method type    = "bool" 
+              name    = "isX"
+              argList = "" 
+              const   = "TRUE" 
+              desc    = "Return true if channelID is in x-layer">
+        <code> return (layer() == 0 || layer() == 3); </code>
+      </method>
+
+      <method type    = "bool" 
+              name    = "isBottom"
+              argList = "" 
+              const   = "TRUE" 
+              desc    = "Return true if channelID is in bottom part of detector">
+        <code> return (quarter() == 0 || quarter() == 1); </code>
+      </method>
+
+      <method type    = "bool" 
+              name    = "isTop"
+              argList = "" 
+              const   = "TRUE" 
+              desc    = "Return true if channelID is in top part of detector">
+        <code> return (quarter() == 2 || quarter() == 3); </code>
+      </method>
+
      <attribute  type = "bitfield" 
                   name = "channelID" 
                   desc = "FT Channel ID">
