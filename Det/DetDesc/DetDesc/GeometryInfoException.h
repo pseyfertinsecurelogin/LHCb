@@ -1,17 +1,17 @@
 #ifndef     DETDESC_GEOMETRYINFOEXCEPTION_H
-#define     DETDESC_GEOMETRYINFOEXCEPTION_H 1 
+#define     DETDESC_GEOMETRYINFOEXCEPTION_H 1
 /// GaudiKernel
-#include "GaudiKernel/GaudiException.h" 
+#include "GaudiKernel/GaudiException.h"
 ///
 class MsgStream;
-class IGeometryInfo;
+struct IGeometryInfo;
 ///
 
 /** @class GeometryInfoException GeometryInfoException.h DetDesc/GeometryInfoException.h
 
-    Exception class used in GeometryInfo objects 
-    
-    @author Vanya Belyaev 
+    Exception class used in GeometryInfo objects
+
+    @author Vanya Belyaev
 
 
     Change to deal with IGeometryInfo
@@ -20,29 +20,29 @@ class IGeometryInfo;
 
 */
 
-class GeometryInfoException : public GaudiException 
-{  
+class GeometryInfoException : public GaudiException
+{
 public:
-  /// constructor 
-  GeometryInfoException( const std::string  & name     , 
+  /// constructor
+  GeometryInfoException( const std::string  & name     ,
                          const IGeometryInfo * gi   = nullptr ,
                          const StatusCode   & sc = StatusCode::FAILURE );
   ///
-  GeometryInfoException( const std::string    & name      , 
-                         const GaudiException & ge        , 
+  GeometryInfoException( const std::string    & name      ,
+                         const GaudiException & ge        ,
                          const IGeometryInfo   * gi   =  nullptr ,
                          const StatusCode     & sc = StatusCode::FAILURE ) ;
-  /// destructor 
+  /// destructor
   virtual ~GeometryInfoException() noexcept;
   ///
-  virtual std::ostream& printOut( std::ostream& os = std::cerr ) const ; 
-  virtual MsgStream&    printOut( MsgStream&    os             ) const ;
+  std::ostream& printOut( std::ostream& os = std::cerr ) const  override;
+  MsgStream&    printOut( MsgStream&    os             ) const  override;
   ///
-  virtual GaudiException* clone() const;  
+  GaudiException* clone() const override;
   ///
 private:
   ///
-  const IGeometryInfo*   m_gie_geometryInfo  ; 
+  const IGeometryInfo*   m_gie_geometryInfo  ;
   ///
 };
 ///

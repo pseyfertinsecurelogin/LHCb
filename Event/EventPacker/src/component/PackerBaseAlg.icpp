@@ -22,9 +22,6 @@ Pack<PACKER>::Pack( const std::string& name,
 }
 
 template < class PACKER >
-Pack<PACKER>::~Pack() { }
-
-template < class PACKER >
 StatusCode Pack<PACKER>::initialize()
 {
   const StatusCode sc = GaudiAlgorithm::initialize();

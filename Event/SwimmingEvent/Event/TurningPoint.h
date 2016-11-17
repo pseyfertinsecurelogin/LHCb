@@ -1,5 +1,5 @@
 // $Id: $
-#ifndef EVENT_TURNINGPOINT_H 
+#ifndef EVENT_TURNINGPOINT_H
 #define EVENT_TURNINGPOINT_H 1
 
 // Include files
@@ -118,13 +118,13 @@ namespace LHCb {
    static const CLID CLID_TurningPoint = 901;
 
 /** @class TurningPoint
- *  
  *
- *  @author 
+ *
+ *  @author
  *  @date   2011-10-06
  */
 class TurningPoint : public DataObject {
-public: 
+public:
 
    /// Standard constructor
    TurningPoint()
@@ -155,7 +155,7 @@ public:
         m_dec(dec),
         m_decisions(decisions)
    {
-   
+
    }
 
    TurningPoint(const double raw, const double tau,
@@ -169,7 +169,7 @@ public:
         m_decisions(decisions),
         m_info(info)
    {
-   
+
    }
 
    TurningPoint(const double raw, const double tau,
@@ -221,7 +221,7 @@ public:
    }
 
    // ClassID
-   virtual const CLID& clID() const
+   const CLID& clID() const override
    {
       return classID();
    }
@@ -347,7 +347,7 @@ public:
 #endif
       } else {
          std::stringstream msg;
-         msg << "No entry present for daughter with hash " << h 
+         msg << "No entry present for daughter with hash " << h
              << " in info with with name " << name << ".";
          throw GaudiException(msg.str(), "TurningPoint", StatusCode::FAILURE);
       }
@@ -357,7 +357,7 @@ public:
    /// operator new
    static void* operator new ( size_t size )
    {
-      return ( sizeof(TurningPoint) == size ? 
+      return ( sizeof(TurningPoint) == size ?
                boost::singleton_pool<TurningPoint, sizeof(TurningPoint)>::malloc() :
                ::operator new(size) );
    }

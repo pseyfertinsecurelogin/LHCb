@@ -36,9 +36,6 @@ public:
   /** Constructor */
   DeUTLayer ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeUTLayer();
-
   /**
   * Retrieves reference to class identifier
   * @return the class identifier for this class
@@ -49,12 +46,12 @@ public:
   * another reference to class identifier
   * @return the class identifier for this class
   */
-  const CLID& clID () const;
+  const CLID& clID () const override;
 
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**  locate module based on a channel id
   @return  module */
@@ -68,7 +65,7 @@ public:
   *  @param  aChannel channel
   *  @return bool
   */
-  virtual bool contains(const LHCb::STChannelID aChannel) const;
+  bool contains(const LHCb::STChannelID aChannel) const override;
 
   /** vector of children */
   const Children& modules() const;

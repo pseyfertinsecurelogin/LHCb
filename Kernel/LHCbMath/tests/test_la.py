@@ -5,7 +5,7 @@
 # =============================================================================
 ## @file test_la.py
 #
-#  tests for some linear algebra studd with ROOT6
+#  tests for some linear algebra stuff with ROOT6
 #
 #  @author Vanya BELYAEV Ivan.Belyaeve@itep.ru
 #  @date 2014-09-02
@@ -93,31 +93,6 @@ print 'p1+v1' , p1 + v1 , type(p1 + v1)
 print 'p1-v1' , p1 - v1 , type(p1 - v1) 
 print 'v1+p1' , v1 + p1 , type(v1 + p1) 
 
-# ============================================================================
-LA3 = cpp.Gaudi.Math.Vector3
-
-l1 = LA3(0,1,2)
-l2 = LA3(3,4,5)
-
-print 'l1 , l2 '   , l1 , l2 
-print 'l1 + l2 '   , l1 + l2 
-print 'l1 - l2 '   , l1 - l2 
-print 'l1 * l2 '   , l1 * l2 
-print 'l1 *  2 '   , l1 *  2 
-print 'l1 -  2 '   , l1 -  2 
-print ' 2 + l1 '   ,  2 + l1 
-print ' 2 - l1 '   ,  2 - l1 
-print 'l1 +  2 '   , l1 +  2 
-print ' 2 * l1 '   ,  2 * l1
-print 'l1 /  2 '   , l1 /  2 
-l1 *= 2
-print 'l1 *=  2 '  , l1 
-l1 /= 2
-print 'l1 /=  2 '  , l1 
-l1 += 2
-print 'l1 +=  2 '  , l1 
-l1 -= 2
-print 'l1 -=  2 '  , l1 
 
 
 # ============================================================================

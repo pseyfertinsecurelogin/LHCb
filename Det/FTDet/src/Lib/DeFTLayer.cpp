@@ -15,7 +15,7 @@
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeFTLayer::DeFTLayer( const std::string& name ) :
+DeFTLayer::DeFTLayer( std::string name ) :
 DetectorElement ( std::move(name) )
 {
   m_quarters.reserve(4);

@@ -13,7 +13,7 @@
  *  @author Ivan Belyaev
  *  @date   07/11/2001
  */
-class CellMatrix2x2 : public CellMatrix
+class CellMatrix2x2 final : public CellMatrix
 {
   
 public:
@@ -38,8 +38,6 @@ public:
     : CellMatrix( Det  ) 
     , m_type    ( Type )
   {};
-  
-  virtual ~CellMatrix2x2(); ///< Destructor
   
   /** accessor to submatrix type 
    *  @return sub-matrix type 

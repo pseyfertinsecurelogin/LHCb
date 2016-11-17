@@ -1,5 +1,4 @@
-// $Id: EventClockSvc.h,v 1.3 2006-09-26 10:45:48 marcocle Exp $
-#ifndef EVENTCLOCKSVC_H 
+#ifndef EVENTCLOCKSVC_H
 #define EVENTCLOCKSVC_H 1
 
 // Include files
@@ -10,30 +9,26 @@ class IEventTimeDecoder;
 class IToolSvc;
 
 /** @class EventClockSvc EventClockSvc.h
- *  
+ *
  *  Small IncidentListener to set the event time.
  *
  *  @author Marco Clemencic
  *  @date   2005-07-08
  */
 class EventClockSvc: public extends<Service, IIncidentListener> {
-public: 
+public:
   /// Standard constructor
-  EventClockSvc(const std::string& name, ISvcLocator* svcloc); 
-
-  virtual ~EventClockSvc( ); ///< Destructor
+  using base_class::base_class;
 
   /// Initialize Service
-  virtual StatusCode initialize();
-  
+  StatusCode initialize() override;
+
   /// Finalize Service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   // ---- Implement IIncidentListener interface ----
   /// Handle BeginEvent incident.
-  virtual void handle(const Incident &inc);
-
-protected:
+  void handle(const Incident &inc) override;
 
 private:
 
@@ -43,26 +38,26 @@ private:
   // ---------- data members ----------
   // --- names ---
   /// Name of the Data Provider (set by the option DetDataSvc, by default "DetectorDataSvc").
-  std::string m_detDataSvcName;
+  Gaudi::Property<std::string> m_detDataSvcName{ this, "DetectorDataSvc", "DetectorDataSvc" };
   /// Name of the Event Time Decoder (set by the option EventTimeDecoder, by default "FakeEventTime").
-  std::string m_eventTimeDecoderName;
-  
+  Gaudi::Property<std::string> m_eventTimeDecoderName { this, "EventTimeDecoder",  "FakeEventTime"};
+
   // --- services ---
   /// Pointer to the incident service;
   SmartIF<IIncidentSvc> m_incidentSvc;
   /// Handle to the IDetDataSvc interface (to propagate the event time).
-  IDetDataSvc      *m_detDataSvc;
+  SmartIF<IDetDataSvc>  m_detDataSvc;
   /// Handle to the Tool Service.
-  IToolSvc         *m_toolSvc;
+  SmartIF<IToolSvc>     m_toolSvc;
 
   // --- tools ---
   /// Pointer to the EventTimeDecoder tool
-  IEventTimeDecoder *m_eventTimeDecoder;
+  IEventTimeDecoder *m_eventTimeDecoder = nullptr;
 
 
   // --- misc ---
   /// Time to use before reading the first event  (set by the option InitialTime, by default 0).
-  long long m_initialTime;
-  
+  Gaudi::Property<long long> m_initialTime { this, "InitialTime",   0 };
+
 };
 #endif // EVENTCLOCKSVC_H

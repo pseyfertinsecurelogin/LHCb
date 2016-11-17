@@ -59,11 +59,11 @@ namespace LoKi
       /// copy constructor
       Numbers ( const Numbers& right ) ;
       // destructor
-      virtual ~Numbers() ;
+      ~Numbers() override;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Numbers* clone() const ;
+      Numbers* clone() const override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( argument /* a */ ) const ;
+      result_type operator() ( argument /* a */ ) const override;
       // ======================================================================
     public:
       // ======================================================================
@@ -139,14 +139,14 @@ namespace LoKi
         const double      low   = 0 ,
         const double      high  = 1 ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Uniform* clone() const ;
+      Uniform* clone() const override;
       /// OPTIONAL: nice a nice printout
-      virtual  std::ostream& fillStream ( std::ostream& s  ) const ;
+      std::ostream& fillStream ( std::ostream& s  ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the params (if are known)
-      virtual const Rndm::Flat* params() const { return &m_flat ; }
+      const Rndm::Flat* params() const override { return &m_flat ; }
       /// cast:
       operator const Rndm::Flat& () const { return m_flat ; }
       // ======================================================================
@@ -205,14 +205,14 @@ namespace LoKi
         const double      mean  = 0 ,
         const double      sigma = 1 ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Gaussian* clone() const ;
+      Gaussian* clone() const  override;
       /// OPTIONAL: nice a nice printout
-      virtual  std::ostream& fillStream ( std::ostream& s  ) const ;
+      std::ostream& fillStream ( std::ostream& s  ) const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the params (if are known)
-      virtual const Rndm::Gauss* params() const { return &m_gauss ; }
+      const Rndm::Gauss* params() const override { return &m_gauss ; }
       /// cast:
       operator const Rndm::Gauss& () const { return m_gauss ; }
       // ======================================================================
@@ -245,11 +245,11 @@ namespace LoKi
        */
       Rand ( const unsigned int seed = 0 ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Rand* clone() const ;
+      Rand* clone() const override;
       /// MANDATORY: the only one essential method
-      virtual  result_type   operator() ( argument /* a */ ) const ;
+      result_type   operator() ( argument /* a */ ) const override;
       /// OPTIONAL: just a nice printout
-      virtual  std::ostream& fillStream ( std::ostream& s  ) const ;
+      std::ostream& fillStream ( std::ostream& s  ) const override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -269,11 +269,11 @@ namespace LoKi
       /// constructor from the seed , min & max values
       explicit Blind ( const std::string& seed ) ;
       /// MANDATORY: clone method ( "virtual construtor")
-      virtual  Blind* clone () const ;
+      Blind* clone () const override;
       /// MANDATORY: the only one essential method
-      virtual  result_type   operator() ( /* argument a */ ) const ;
+      result_type   operator() ( /* argument a */ ) const override;
       /// OPTIONAL: just a nice printout
-      virtual  std::ostream& fillStream ( std::ostream& s  ) const ;
+      std::ostream& fillStream ( std::ostream& s  ) const override;
       // ======================================================================
     public:
       // ======================================================================
@@ -313,11 +313,11 @@ namespace LoKi
       /// constructor from the seed , min & max values
       explicit XBlind ( const std::string& seed ) ;
       /// MANDATORY: clone method ( "virtual construtor")
-      virtual  XBlind* clone () const ;
+      XBlind* clone () const  override;
       /// MANDATORY: the only one essential method
-      virtual  result_type   operator() ( argument      a ) const ;
+      result_type   operator() ( argument      a ) const  override;
       /// OPTIONAL: just a nice printout
-      virtual  std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================

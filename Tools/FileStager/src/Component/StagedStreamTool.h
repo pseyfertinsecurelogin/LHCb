@@ -39,11 +39,11 @@ public:
 
    virtual ~StagedStreamTool( ); ///< Destructor
 
-   virtual StatusCode initialize();
+   StatusCode initialize() override;
 
-   virtual StatusCode addStreams(const StreamSpecs &);
+   StatusCode addStreams(const StreamSpecs &) override;
 
-   virtual StatusCode clear();
+   StatusCode clear() override;
 
  private:
 
@@ -60,7 +60,7 @@ public:
       Descriptor( Type type, const std::string& descriptor )
          : m_type( type ), m_descriptor( descriptor )
       {
-         
+
       }
 
       virtual ~Descriptor()

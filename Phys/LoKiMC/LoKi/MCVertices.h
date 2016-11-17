@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCVERTICES_H
 #define LOKI_MCVERTICES_H 1
@@ -60,14 +59,12 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       TypeOfMCVertex() {}
-      /// destructor
-      virtual ~TypeOfMCVertex();
       /// clone method (mandatory)
-      virtual TypeOfMCVertex* clone() const ;
+      TypeOfMCVertex* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -83,14 +80,12 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       TimeOfFlight() {}
-      /// destructor
-      virtual ~TimeOfFlight();
       /// clone method (mandatory)
-      virtual TimeOfFlight* clone() const ;
+      TimeOfFlight* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -106,14 +101,12 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       VertexPositionX() {}
-      /// destructor
-      virtual ~VertexPositionX();
       /// clone method (mandatory)
-      virtual VertexPositionX* clone() const ;
+      VertexPositionX* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -129,14 +122,12 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       VertexPositionY() {}
-      /// destructor
-      virtual ~VertexPositionY();
       /// clone method (mandatory)
-      virtual VertexPositionY* clone() const ;
+      VertexPositionY* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -152,14 +143,12 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       VertexPositionZ() {}
-      /// destructor
-      virtual ~VertexPositionZ();
       /// clone method (mandatory)
-      virtual VertexPositionZ* clone() const ;
+      VertexPositionZ* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -175,14 +164,12 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       VertexTime() {}
-      /// destructor
-      virtual ~VertexTime();
       /// clone method (mandatory)
-      virtual VertexTime* clone() const ;
+      VertexTime* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -198,14 +185,12 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       Primary() {}
-      /// destructor
-      virtual ~Primary();
       /// clone method (mandatory)
-      virtual Primary* clone() const ;
+      Primary* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -221,14 +206,12 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       Decay() {}
-      /// destructor
-      virtual ~Decay();
       /// clone method (mandatory)
-      virtual Decay* clone() const ;
+      Decay* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -250,14 +233,12 @@ namespace LoKi
        *  @param point 3D-point
        */
       MCVertexDistance ( const LHCb::MCVertex*   point ) ;
-      /// virtual descructor
-      virtual ~MCVertexDistance() ;
       /// clone method (mandatory!)
-      virtual  MCVertexDistance* clone() const ;
+      MCVertexDistance* clone() const  override;
       /// the only one essential method
-      virtual  result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -286,14 +267,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from MC Vertex fuction
       MCVFunAsMCFun ( const LoKi::MCTypes::MCVFunc& func   ) ;
-      /// virtual descructor
-      virtual ~MCVFunAsMCFun() ;
       /// clone method (mandatory!)
-      virtual  MCVFunAsMCFun* clone() const ;
+      MCVFunAsMCFun* clone() const  override;
       /// the only one essential method
-      virtual  result_type    operator() ( argument p ) const ;
+      result_type    operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -347,14 +326,12 @@ namespace LoKi
       /// constructor from MC Vertex fuction and vertex selection
       MCVFunction ( const LoKi::MCTypes::MCVCuts& cuts  ,
                     const LoKi::MCTypes::MCVFunc& func  ) ;
-      /// virtual descructor
-      virtual ~MCVFunction () ;
       /// clone method (mandatory!)
-      virtual  MCVFunction* clone() const ;
+      MCVFunction* clone() const  override;
       /// the only one essential method
-      virtual  result_type    operator() ( argument p ) const ;
+      result_type    operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -380,14 +357,12 @@ namespace LoKi
       // ======================================================================
       /// default constructor
       Key() {}
-      /// destructor
-      virtual ~Key();
       /// clone method (mandatory)
-      virtual Key* clone() const ;
+      Key* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument v ) const ;
+      result_type operator() ( argument v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     };
     // ========================================================================
@@ -406,14 +381,12 @@ namespace LoKi
       // ======================================================================
       /// constructor from MC Vertex fuction
       MCVPFunAsMCFun ( const LoKi::MCTypes::MCVFunc& func   ) ;
-      /// virtual descructor
-      virtual ~MCVPFunAsMCFun() ;
       /// clone method (mandatory!)
-      virtual  MCVPFunAsMCFun* clone() const ;
+      MCVPFunAsMCFun* clone() const  override;
       /// the only one essential method
-      virtual  result_type    operator() ( argument p ) const ;
+      result_type    operator() ( argument p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================

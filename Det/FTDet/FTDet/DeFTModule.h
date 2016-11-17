@@ -28,7 +28,7 @@ class DeFTModule : public DetectorElement {
 public: 
 
   /// Standard constructor
-  DeFTModule( const std::string& name = "" );
+  DeFTModule( std::string name = "" );
 
   /** Initialization method */
   StatusCode initialize() override;

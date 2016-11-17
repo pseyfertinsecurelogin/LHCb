@@ -13,7 +13,7 @@
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeFTQuarter::DeFTQuarter( const std::string& name ) :
+DeFTQuarter::DeFTQuarter( std::string name ) :
 DetectorElement ( std::move(name) )
 {
   m_modules.reserve(6);

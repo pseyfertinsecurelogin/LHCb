@@ -1,8 +1,6 @@
-// $Id: PreloadGeometryTool.cpp,v 1.1 2006-07-27 20:39:15 cattanem Exp $
-// Include files 
 
 // from Gaudi
-#include "GaudiKernel/IDataManagerSvc.h" 
+#include "GaudiKernel/IDataManagerSvc.h"
 
 // from DetDesc
 #include "DetDesc/DataStoreLoadAgent.h"
@@ -19,36 +17,31 @@
 // Declaration of the Tool Factory
 DECLARE_TOOL_FACTORY( PreloadGeometryTool )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 PreloadGeometryTool::PreloadGeometryTool( const std::string& type,
                                           const std::string& name,
                                           const IInterface* parent )
-  : GaudiTool ( type, name , parent )
+  : base_class ( type, name , parent )
 {
   declareInterface<IGenericTool>(this);
-
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-PreloadGeometryTool::~PreloadGeometryTool() {} 
 
 //=============================================================================
 // Excution method
 //=============================================================================
-void PreloadGeometryTool::execute() 
+void PreloadGeometryTool::execute()
 {
-  DataStoreLoadAgent *loadAgent = new DataStoreLoadAgent();
-  IDataManagerSvc *dataMgr = svc<IDataManagerSvc>("DetectorDataSvc", true);
+  std::unique_ptr<DataStoreLoadAgent> loadAgent ( new DataStoreLoadAgent() );
+  auto dataMgr = service<IDataManagerSvc>("DetectorDataSvc", true);
   info() << "Preloading detector geometry..." << endmsg;
-  dataMgr->traverseTree(loadAgent);
-  info() << "Loaded " << loadAgent->loadedObjects() << " objects to depth of "
-         << loadAgent->maxDepth() << " levels" << endmsg;
-  delete loadAgent;
-  return;
+  const auto sc = dataMgr->traverseTree(loadAgent.get());
+  if ( sc ) {
+    info() << "Loaded " << loadAgent->loadedObjects() << " objects to depth of "
+           << loadAgent->maxDepth() << " levels" << endmsg;
+  } else {
+    error() << "Problem loading geometry" << endmsg;
+  }
 }
-
 //=============================================================================

@@ -1,7 +1,7 @@
 //  $Id: XmlSurfaceCnv.h,v 1.4 2005-03-24 16:21:18 cattanem Exp $
 
 #ifndef     DETDESCCNV_XMLSurfaceCNV_H
-#define     DETDESCCNV_XMLSurfaceCNV_H 1 
+#define     DETDESCCNV_XMLSurfaceCNV_H 1
 
 
 // Include files
@@ -13,14 +13,14 @@ template <class TYPE> class CnvFactory;
 
 
 /** @class XmlSurfaceCnv
- *   
+ *
  *  XML converter for Surfaces
  *
  *  @author  Sebastien Ponce
  *  @author  Vanya Belyaev
  */
 class XmlSurfaceCnv : public XmlGenericCnv {
-  
+
   /// Friend needed for instantiation
   friend class CnvFactory<XmlSurfaceCnv>;
 
@@ -52,8 +52,8 @@ class XmlSurfaceCnv : public XmlGenericCnv {
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_createObj (xercesc::DOMElement* element,
-                                  DataObject*& refpObject);
+  StatusCode i_createObj (xercesc::DOMElement* element,
+                          DataObject*& refpObject) override;
 
   using XmlGenericCnv::i_fillObj;
   /** Fills the current object for its child element childElement.
@@ -63,9 +63,9 @@ class XmlSurfaceCnv : public XmlGenericCnv {
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillObj (xercesc::DOMElement* childElement,
-                                DataObject* refpObject,
-                                IOpaqueAddress* address);
+  StatusCode i_fillObj (xercesc::DOMElement* childElement,
+                        DataObject* refpObject,
+                        IOpaqueAddress* address) override;
 
 
 private:

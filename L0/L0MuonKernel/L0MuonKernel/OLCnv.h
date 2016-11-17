@@ -36,7 +36,7 @@ namespace L0Muon {
     ~OLCnv();
 
     /// Give a static type name to the unit : OLDumpUnit
-    std::string type() {
+    std::string type() override {
       return "OLDumpUnit";
     }
 
@@ -44,7 +44,7 @@ namespace L0Muon {
 
         @param ievt : current event number
     */
-    void write(int ievt);
+    void write(int ievt) override;
 
   private:
 

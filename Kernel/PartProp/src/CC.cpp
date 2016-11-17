@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -30,11 +29,10 @@ namespace
     // check the validity of position 
     if  ( pos >= decay.size() ) { return decay ; }                  // RETURN
     // find the match:
-    std::string::size_type _p = std::string::npos ;
+    auto _p = std::string::npos ;
     Decays::CC::MapCC::const_iterator  _i = map_.end () ;
     // look for the "nearest" and "longest" match 
-    for ( Decays::CC::MapCC::const_iterator ic = map_.begin() ; 
-          map_.end() != ic ; ++ic ) 
+    for ( auto ic = map_.begin() ; map_.end() != ic ; ++ic ) 
     {
       // find the particle 
       std::string::size_type p = decay.find ( ic->first , pos ) ;
@@ -78,8 +76,7 @@ std::string Decays::CC::cc
 ( const std::string&                       decay   , 
   const std::map<std::string,std::string>& map_    ) 
 {
-  Decays::CC::MapCC mapcc ( map_.begin() , map_.end() ) ;
-  return cc_ ( decay , mapcc ) ;
+  return cc_ ( decay ,{ map_.begin(), map_.end() } ) ;
 }
 // ============================================================================
 // The END 

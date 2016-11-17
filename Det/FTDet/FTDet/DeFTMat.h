@@ -28,7 +28,7 @@ class DeFTMat : public DetectorElement {
 public:
 
   /// Standard constructor
-  DeFTMat( const std::string& name = "" );
+  DeFTMat( std::string name = "" );
 
   /** Initialization method */
   StatusCode initialize() override;

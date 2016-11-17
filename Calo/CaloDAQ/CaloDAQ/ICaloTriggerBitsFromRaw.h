@@ -1,4 +1,3 @@
-// $Id: ICaloTriggerBitsFromRaw.h,v 1.5 2009-10-12 16:03:53 odescham Exp $
 #ifndef CALODAQ_ICALOTRIGGERBITSFROMRAW_H 
 #define CALODAQ_ICALOTRIGGERBITSFROMRAW_H 1
 
@@ -9,7 +8,6 @@
 #include "ICaloReadoutTool.h"
 #include "Kernel/CaloCellID.h"
 
-static const InterfaceID IID_ICaloTriggerBitsFromRaw ( "ICaloTriggerBitsFromRaw", 3, 0 );
 
 /** @class ICaloTriggerBitsFromRaw ICaloTriggerBitsFromRaw.h CaloDAQ/ICaloTriggerBitsFromRaw.h
  *  Interface to the Prs/SPD bit decoding
@@ -24,20 +22,15 @@ namespace LHCb{
   }
 }
 
-class ICaloTriggerBitsFromRaw : virtual public ICaloReadoutTool {
-public: 
+struct ICaloTriggerBitsFromRaw : extend_interfaces<ICaloReadoutTool> {
 
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICaloTriggerBitsFromRaw; }
+  DeclareInterfaceID( ICaloTriggerBitsFromRaw, 4, 0 );
   virtual const LHCb::Calo::FiredCells& prsCells( ) = 0;
   virtual const LHCb::Calo::FiredCells& spdCells( ) = 0;
   virtual const LHCb::Calo::PrsSpdFiredCells& prsSpdCells( ) = 0;
   virtual const LHCb::Calo::PrsSpdFiredCells& prsSpdCells(int source ) = 0;
-  virtual const LHCb::Calo::PrsSpdFiredCells& prsSpdCells(LHCb::RawBank* bank ) = 0;
-
-protected:
-
-private:
+  virtual const LHCb::Calo::PrsSpdFiredCells& prsSpdCells(const LHCb::RawBank& bank ) = 0;
 
 };
 #endif // CALODAQ_ICALOTRIGGERBITSFROMRAW_H

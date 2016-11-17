@@ -11,6 +11,9 @@ find_package(Boost COMPONENTS python)
 find_package(ROOT COMPONENTS Core)
 find_package(PythonLibs)
 
+find_package(COOL)
+include_directories(SYSTEM ${COOL_INCLUDE_DIRS})
+
 gaudi_add_module(CondDBEntityResolver
                  src/component/*.cpp
                  LINK_LIBRARIES DetCondLib XmlToolsLib)

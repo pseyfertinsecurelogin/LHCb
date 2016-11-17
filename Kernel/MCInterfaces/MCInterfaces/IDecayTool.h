@@ -1,4 +1,3 @@
-// $Id: IDecayTool.h,v 1.2 2005-12-11 23:21:47 robbep Exp $
 #ifndef MCINTERFACES_IDECAYTOOL_H 
 #define MCINTERFACES_IDECAYTOOL_H 1
 
@@ -18,13 +17,12 @@ namespace HepMC {
  *  @date   2003-10-15
  */
 
-static const InterfaceID IID_IDecayTool("IDecayTool",2,0) ;
 
 
-class IDecayTool : virtual public IAlgTool {
-public:
+struct IDecayTool : extend_interfaces<IAlgTool> {
+
   // Retrieve interface ID
-  static const InterfaceID& interfaceID() { return IID_IDecayTool ; }
+  DeclareInterfaceID( IDecayTool,3,0) ;
   
   /** Generate the decay of a particle.
    *  @param[in,out] theMother  Particle to decay with the decay engine. The 

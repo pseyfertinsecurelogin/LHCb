@@ -12,8 +12,8 @@
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeFTDetector::DeFTDetector( const std::string& name ) :
-DetectorElement( name )
+DeFTDetector::DeFTDetector( std::string name ) :
+DetectorElement( std::move(name) )
 {
   m_stations.reserve(3);
 }

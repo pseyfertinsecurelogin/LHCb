@@ -14,7 +14,7 @@
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeFTMat::DeFTMat( const std::string& name ) :
+DeFTMat::DeFTMat( std::string name ) :
 DetectorElement ( std::move(name) ) {
 }
 

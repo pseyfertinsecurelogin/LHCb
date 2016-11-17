@@ -22,7 +22,7 @@ using namespace LHCb;
 namespace {
 void sanityCheck(const HltSelRepRBStdInfo& stdInfo) {
     auto sizeStored = ( stdInfo.location()[0] >> 16 );
-    if (sizeStored!=0xFFFFu && sizeStored != stdInfo.size()) { 
+    if (sizeStored!=0xFFFFu && sizeStored != stdInfo.size()) {
         throw GaudiException( "Inconsistent HltSelRepRBStdInfo bank","HltSelReportsWriter",StatusCode::FAILURE );
     }
 }
@@ -61,16 +61,15 @@ void decompose(Input1 first1, Input1 last1,
     std::copy(first2, last2, result2);
 }
 
-template <typename S> class intersects {
-    const S& m_s;
-public:
-    intersects(const S& s) : m_s(s) {};
+template <typename OrderedSequence> struct intersects {
+    OrderedSequence s;
 
-    bool operator()(const S& s) const {
-        auto first1 = std::begin(m_s);
-        auto last1  = std::end(m_s);
-        auto first2 = std::begin(s);
-        auto last2  = std::end(s);
+    template <typename OrderedSequence2>
+    bool operator()(const OrderedSequence2& s2) const {
+        auto first1 = std::begin(s);
+        auto last1  = std::end(s);
+        auto first2 = std::begin(s2);
+        auto last2  = std::end(s2);
         while( first1!=last1 && first2!=last2 ) {
             if      (*first1<*first2) ++first1;
             else if (*first2<*first1) ++first2;
@@ -80,7 +79,9 @@ public:
     }
 };
 
-template <typename S> intersects<S> intersects_( const S& s ) { return {s}; }
+template <typename OrderedSequence>
+intersects<OrderedSequence> intersects_with( OrderedSequence&& s )
+{ return {std::forward<OrderedSequence>(s)}; }
 
 //=============================================================================
 // this function moves (the relevant parts of) set2 into sequences
@@ -90,10 +91,10 @@ void addToSequences( typename T::value_type&& set2, T& sequences )
   typename T::difference_type offset{ 0 };
   while ( !set2.empty() ) {
      auto iSet1 = std::find_if(std::next(std::begin(sequences), offset),
-                               std::end(sequences), intersects_(set2));
+                               std::end(sequences), intersects_with(set2));
      if (iSet1==std::end(sequences)) {
-        // no overlap, add everything in one shot...
-         sequences.emplace_back( std::move(set2) ); assert(set2.empty());
+         // no overlap, add everything in one shot...
+         sequences.emplace_back( std::move(set2) );
      } else {
          offset = std::distance( std::begin(sequences), iSet1 );  // start of the next iteration
          typename T::value_type set1p,set2p,setin;
@@ -102,9 +103,9 @@ void addToSequences( typename T::value_type&& set2, T& sequences )
                     std::inserter( set1p, std::end(set1p) ),  // subset of set1, not in set2
                     std::inserter( set2p, std::end(set2p) ),  // subset of set2, not in set1
                     std::inserter( setin, std::end(setin) ) ) ; // intersection of set1 and set2
-         if (iSet1->size()!=setin.size()) iSet1->swap(setin); // shrink set1 to its intersection with set2
+         if (iSet1->size()!=setin.size()) *iSet1 = std::move(setin); // shrink set1 to its intersection with set2
          if (!set1p.empty()) sequences.emplace_back( std::move(set1p) ); // add the non-overlapping part of set1
-         set2.swap(set2p);   // shrink set2 to its non-overlapping part
+         set2 = std::move(set2p);   // shrink set2 to its non-overlapping part
      }
   }
 }
@@ -140,7 +141,7 @@ DECLARE_ALGORITHM_FACTORY( HltSelReportsWriter )
 //=============================================================================
 HltSelReportsWriter::HltSelReportsWriter( const std::string& name,
                                           ISvcLocator* pSvcLocator)
-    : GaudiAlgorithm ( name , pSvcLocator ),  m_hltANNSvc{ nullptr }
+    : GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty("InputHltSelReportsLocation",
     m_inputHltSelReportsLocation= LHCb::HltSelReportsLocation::Default);
@@ -159,7 +160,7 @@ StatusCode HltSelReportsWriter::initialize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
-  m_hltANNSvc = svc<IANNSvc>("HltANNSvc");
+  m_hltANNSvc = service("HltANNSvc");
 
   if( m_sourceID > kSourceID_Max || m_sourceID<0 ){
     return Error("Illegal SourceID specified; maximal allowed value is 7" , StatusCode::FAILURE );
@@ -183,7 +184,7 @@ StatusCode HltSelReportsWriter::execute() {
 
   // protection against too many objectSummaries to store
   if( objectSummaries->size() > 0xFFFFL ){
-    return Error( "Too many HltObjectSummaries to store " 
+    return Error( "Too many HltObjectSummaries to store "
                 + std::to_string(objectSummaries->size())
                 + " HltSelReports RawBank cannot be created ",
                   StatusCode::SUCCESS, 50 );
@@ -217,7 +218,7 @@ StatusCode HltSelReportsWriter::execute() {
       [](unsigned int n, LhcbidSequences::const_reference s) { return n+s.size(); });
 
   if( lhcbidSequences.size()/2 + 1 + nHits >  0xFFFFL  ){
-    return Error( "Too many hits or hit-sequences to store hits=" 
+    return Error( "Too many hits or hit-sequences to store hits="
                 + std::to_string(nHits) +  " seq=" + std::to_string( lhcbidSequences.size())
                 + " HltSelReports RawBank cannot be created ",
                   StatusCode::SUCCESS, 50 );
@@ -260,7 +261,7 @@ StatusCode HltSelReportsWriter::execute() {
   unsigned int nStdInfo=0;
   for( const auto&  hos : sortedHosPtrs ) {
     for( const auto&  i : hos->numericalInfo() ) {
-      if( isStdInfo(i.first) ) { 
+      if( isStdInfo(i.first) ) {
         ++nStdInfo;
       } else {
         ++nExtraInfo;
@@ -270,7 +271,7 @@ StatusCode HltSelReportsWriter::execute() {
   bool saveExtraInfo = extraInfoSubBank.initialize( sortedHosPtrs.size(), nExtraInfo );
   if( !saveExtraInfo ){
         Error( "ExtraInfoSubBank too large to store nObj="  + std::to_string( sortedHosPtrs.size() )
-             + " nInfo=" + std::to_string(nExtraInfo) 
+             + " nInfo=" + std::to_string(nExtraInfo)
              + " No Extra Info will be saved!", StatusCode::SUCCESS, 50 );
         if( !extraInfoSubBank.initialize( sortedHosPtrs.size(), 0 ) ){
           Error( "Cannot save even empty ExtraInfoSubBank  - expect a fatal error", StatusCode::SUCCESS, 50 );
@@ -278,8 +279,8 @@ StatusCode HltSelReportsWriter::execute() {
   }
   bool saveStdInfo = stdInfoSubBank.initialize( sortedHosPtrs.size(), nStdInfo );
   if( !saveStdInfo ){
-        Error( "StdInfoSubBank too large to store nObj=" 
-             + std::to_string( sortedHosPtrs.size()) 
+        Error( "StdInfoSubBank too large to store nObj="
+             + std::to_string( sortedHosPtrs.size())
              + " nInfo=" + std::to_string(nStdInfo) + " No Std Info will be saved!",
                StatusCode::SUCCESS, 50 );
         // save only selection IDs
@@ -370,16 +371,16 @@ StatusCode HltSelReportsWriter::execute() {
       substrSubBank.deleteBank();
       stdInfoSubBank.deleteBank();
       extraInfoSubBank.deleteBank();
-      
-      
+
+
       Gaudi::StringKey HltID;
       if(m_sourceID==1) HltID = "Hlt1SelectionID";
       else HltID = "Hlt2SelectionID";
-      
+
       const auto* reports = getIfExists<LHCb::HltSelReports>( m_inputHltSelReportsLocation.value() );
-      
+
       auto SelNames = reports->selectionNames();
-      
+
       std::vector<unsigned int> vect;
       for(auto n : SelNames){
         auto j = m_hltANNSvc->value(HltID, n ) ;
@@ -389,16 +390,16 @@ StatusCode HltSelReportsWriter::execute() {
       HltSelRepRBHits hitsSubBank_99;
       hitsSubBank_99.initialize(1,vect.size());
       hitsSubBank_99.push_back( vect );
-      
+
       HltSelRepRawBank hltSelReportsBank_99;
       hltSelReportsBank_99.push_back( HltSelRepRBEnums::kHitsID, hitsSubBank_99.location(), hitsSubBank_99.size() );
       hitsSubBank_99.deleteBank();
-      
+
       std::vector< unsigned int > bankBody_99( &(hltSelReportsBank_99.location()[0]),
         &(hltSelReportsBank_99.location()[hltSelReportsBank_99.size()]) );
       rawEvent->addBank(  m_sourceID, RawBank::HltSelReports, 99,  bankBody_99);
       hltSelReportsBank_99.deleteBank();
-      
+
       return Error("Exceeded maximal size of substructure-subbank. HltSelReports RawBank cannot be created, instead returning debugging bank"
                    , StatusCode::SUCCESS, 50 );
     }
@@ -456,7 +457,7 @@ StatusCode HltSelReportsWriter::execute() {
   for(int iBank=0; iBank < nBank; ++iBank ){
     int ioff=iBank*16300;
     int isize=hltSelReportsBank.size()-ioff;
-    if( isize > 16300 )isize=16300;	
+    if( isize > 16300 )isize=16300;
     //TODO: can we avoid making a copy into bankBody??? ( call adoptBank( createBank( ... ) ) ? )
     std::vector< unsigned int > bankBody( &(hltSelReportsBank.location()[ioff]),
                                           &(hltSelReportsBank.location()[ioff+isize]) );
@@ -464,7 +465,7 @@ StatusCode HltSelReportsWriter::execute() {
     rawEvent->addBank(  sourceID, RawBank::HltSelReports, kVersionNumber, bankBody );
   }
   if( nBank>1 ){
-    Warning( "HltSelReports is huge. Saved in " 
+    Warning( "HltSelReports is huge. Saved in "
            + std::to_string( nBank ) + " separate RawBanks ",
              StatusCode::SUCCESS, 10 );
   }

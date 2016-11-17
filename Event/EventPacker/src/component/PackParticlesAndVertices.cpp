@@ -26,11 +26,6 @@ PackParticlesAndVertices::PackParticlesAndVertices( const std::string& name,
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-PackParticlesAndVertices::~PackParticlesAndVertices() {}
-
-//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode PackParticlesAndVertices::execute()

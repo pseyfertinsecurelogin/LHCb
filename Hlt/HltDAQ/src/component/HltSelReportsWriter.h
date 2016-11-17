@@ -1,4 +1,3 @@
-// $Id: HltSelReportsWriter.h,v 1.2 2010-05-19 21:09:15 graven Exp $
 #ifndef HLTSELREPORTSWRITER_H 
 #define HLTSELREPORTSWRITER_H 1
 
@@ -25,11 +24,10 @@ class HltSelReportsWriter : public GaudiAlgorithm {
 public: 
   /// Standard constructor
   HltSelReportsWriter( const std::string& name, ISvcLocator* pSvcLocator );
-  ~HltSelReportsWriter() override = default; ///< Destructor
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
-  enum HeaderIDs { kVersionNumber=9 };
+  enum HeaderIDs { kVersionNumber=10 };
 
 
   enum SourceIDs { kSourceID_Dummy=0,
@@ -53,7 +51,7 @@ private:
   IntegerProperty m_sourceID;
   
   /// HltANNSvc for making selection names to int selection ID
-  IANNSvc* m_hltANNSvc = nullptr;
+  SmartIF<IANNSvc> m_hltANNSvc;
 };
 
 

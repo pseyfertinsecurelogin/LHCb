@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PackedMCRichDigitSummary_H
 #define EVENT_PackedMCRichDigitSummary_H 1
 
@@ -60,7 +59,7 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMCRichDigitSummary> Vector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
@@ -70,7 +69,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedMCRichDigitSummarys; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedMCRichDigitSummarys::classID(); }
+    const CLID& clID() const  override { return PackedMCRichDigitSummarys::classID(); }
 
   public:
 
@@ -92,7 +91,7 @@ namespace LHCb
     char   m_packingVersion{ defaultPackingVersion() };
 
     /// The packed data objects
-    Vector m_vect; 
+    Vector m_vect;
 
   };
 

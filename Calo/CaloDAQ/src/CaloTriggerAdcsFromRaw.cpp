@@ -16,7 +16,7 @@ DECLARE_TOOL_FACTORY( CaloTriggerAdcsFromRaw )
 CaloTriggerAdcsFromRaw::CaloTriggerAdcsFromRaw( const std::string& type,
                                                 const std::string& name,
                                                 const IInterface* parent )
-  : CaloReadoutTool ( type, name , parent )
+  : base_class ( type, name , parent )
 {
   declareInterface<ICaloTriggerAdcsFromRaw>(this);
   // define default detector name
@@ -25,16 +25,12 @@ CaloTriggerAdcsFromRaw::CaloTriggerAdcsFromRaw( const std::string& type,
   // clear data
   clear();
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloTriggerAdcsFromRaw::~CaloTriggerAdcsFromRaw() {}
 
 //=========================================================================
 //  Initialise
 //=========================================================================
 StatusCode CaloTriggerAdcsFromRaw::initialize ( ) {
-  StatusCode sc = CaloReadoutTool::initialize(); // must be executed first
+  StatusCode sc = base_class::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiTool
 
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -74,27 +70,18 @@ void CaloTriggerAdcsFromRaw::clear( ) {
 
 void CaloTriggerAdcsFromRaw::cleanData(int feb ) {
   if(feb<0)return;
-  std::vector<LHCb::L0CaloAdc> tempP;
-  std::vector<LHCb::L0CaloAdc> temp;
   if(m_calo->isPinCard(feb)){
-    for(std::vector<LHCb::L0CaloAdc>::iterator iadc = m_pinData.begin();iadc!=m_pinData.end();++iadc){
-      if( m_calo->cellParam( (*iadc).cellID() ).cardNumber() == feb)continue;
-      tempP.push_back( *iadc );
-    }
-    m_pinData.clear();
-    for(std::vector<LHCb::L0CaloAdc>::iterator iadc = tempP.begin();iadc!=tempP.end();++iadc){
-      m_pinData.push_back(*iadc);
-    }
-
+    m_pinData.erase( std::remove_if( m_pinData.begin(), m_pinData.end(),
+                                     [&](const LHCb::L0CaloAdc& adc) {
+                                       return m_calo->cellParam( adc.cellID() ).cardNumber() == feb;
+                                     }), 
+                     m_pinData.end());
   }else{
-    for(std::vector<LHCb::L0CaloAdc>::iterator iadc = m_data.begin();iadc!=m_data.end();++iadc){
-      if( m_calo->cellParam( (*iadc).cellID() ).cardNumber() == feb)continue;
-      temp.push_back(*iadc);
-    }
-    m_data.clear();
-    for(std::vector<LHCb::L0CaloAdc>::iterator iadc = temp.begin();iadc!=temp.end();++iadc){
-      m_data.push_back(*iadc);
-    }
+    m_data.erase( std::remove_if( m_data.begin(), m_data.end(),
+                                  [&]( const LHCb::L0CaloAdc& adc ) {
+                                    return m_calo->cellParam( adc.cellID() ).cardNumber() == feb;
+                                  }),
+                  m_data.end());
   }
 }
 
@@ -127,13 +114,12 @@ const std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs (int source ) {
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "The banks container is empty"<< endmsg;
   }else{
-    for( std::vector<LHCb::RawBank*>::const_iterator itB = m_banks->begin();
-         itB != m_banks->end() ; ++itB ) {
-      sourceID       = (*itB)->sourceID();
+    for( const auto& bank : *m_banks ) {
+      sourceID       = bank->sourceID();
       if( source >= 0 && source != sourceID )continue;
       found = true;
       if(checkSrc( sourceID ))continue;
-      decoded = getData ( *itB );
+      decoded = getData ( *bank );
       if( !decoded ){
         if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
           debug() << "Error when decoding bank " << Gaudi::Utils::toString(sourceID)
@@ -151,7 +137,7 @@ const std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs (int source ) {
 //=========================================================================
 //  Decode the adcs of a single bank (given by bank pointer)
 //=========================================================================
-const std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs ( LHCb::RawBank* bank ){
+const std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs ( const LHCb::RawBank& bank ){
   clear();
   if( !getData( bank ))clear();
   return m_data ;
@@ -161,44 +147,38 @@ const std::vector<LHCb::L0CaloAdc>& CaloTriggerAdcsFromRaw::adcs ( LHCb::RawBank
 // Main method to decode the rawBank - fill m_data vector
 //=============================================================================
 
-bool CaloTriggerAdcsFromRaw::getData ( LHCb::RawBank* bank ){
-  if(NULL == bank)return false;
-  if( LHCb::RawBank::MagicPattern != bank->magic() )return false;// do not decode when MagicPattern is bad
-  unsigned int* data = bank->data();
-  int size           = bank->size()/4;  // in bytes in the header
-  int version        = bank->version();
-  int sourceID       = bank->sourceID();
+bool CaloTriggerAdcsFromRaw::getData ( const LHCb::RawBank& bank ){
+  if( LHCb::RawBank::MagicPattern != bank.magic() )return false;// do not decode when MagicPattern is bad
+  const unsigned int* data = bank.begin<unsigned int>();
+  const unsigned int* const end  = bank.end<unsigned int>();
+  int version        = bank.version();
+  int sourceID       = bank.sourceID();
   int lastData = 0;
 
-  if(0 == size)m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Empty );
+  if(data == end)m_status.addStatus(sourceID,LHCb::RawBankReadoutStatus::Empty );
 
-  if ( msgLevel( MSG::DEBUG) )debug() << "Decode bank " << bank << " source " << sourceID
-                                      << "version " << version << " size " << size << endmsg;
+  if ( msgLevel( MSG::DEBUG) )debug() << "Decode bank " << &bank << " source " << sourceID
+                                      << "version " << version << " size " << (end-data) << endmsg;
 
   // -----------------------------------------------
   // skip detector specific header line
-  if(m_extraHeader){
-    ++data ;
-    --size;
-  }
+  if(m_extraHeader) ++data;
   // -----------------------------------------------
 
   //=== Offline coding
   if ( 2 > version ) {
-    while ( 0 < size ) {
+    while ( data < end ) {
       int lastID   = (*data) >> 16;
       int adc1     = (*data)>>8 & 0xFF;
       int adc2     = (*data)    & 0xFF;
       ++data;
-      --size;
 
       LHCb::CaloCellID id1( lastID );
       if ( 0 != adc1 ) {
-        LHCb::L0CaloAdc dum( id1, adc1 );
         if( !id1.isPin() ){
-          m_data.push_back( dum );
+          m_data.emplace_back( id1, adc1 );
         }else{
-          m_pinData.push_back( dum );
+          m_pinData.emplace_back( id1, adc1 );
         }
       }
 
@@ -213,11 +193,10 @@ bool CaloTriggerAdcsFromRaw::getData ( LHCb::RawBank* bank ){
 
       LHCb::CaloCellID id2( ++lastID );
       if ( 0 != adc2 ) {
-        LHCb::L0CaloAdc dum( id2, adc2 );
         if( !id2.isPin() ){
-          m_data.push_back( dum );
+          m_data.emplace_back( id2, adc2 );
         }else{
-          m_pinData.push_back( dum );
+          m_pinData.emplace_back( id2, adc2 );
         }
       }
 
@@ -242,9 +221,8 @@ bool CaloTriggerAdcsFromRaw::getData ( LHCb::RawBank* bank ){
     int lenTrig  = 0;
 
     int prevCard = -1;
-    while ( 0 < size ) {
+    while ( data < end ) {
       int word = *data++;
-      size--;
       lenTrig = word & 0x3F;
       lenAdc  = (word >> 7 ) & 0x3F;
       int code  = (word >> 14 ) & 0x1FF;
@@ -274,19 +252,16 @@ bool CaloTriggerAdcsFromRaw::getData ( LHCb::RawBank* bank ){
         int pattern  = *data++;
         int offset   = 0;
         lastData  = *data++;
-        size -= 2;
         for (unsigned  int bitNum = 0 ; 32 > bitNum ; bitNum++ ) {
           if ( 0 != (pattern & (1<<bitNum)) ) {
             if ( 31 < offset ) {
               offset   = 0;
               lastData = *data++;
-              size--;
             }
 
 
-            LHCb::CaloCellID id = LHCb::CaloCellID();
-            if(bitNum < chanID.size())id= chanID[ bitNum ];
-
+            LHCb::CaloCellID id = ( bitNum < chanID.size() ? chanID[ bitNum ] 
+                                                           : LHCb::CaloCellID() );
             int adc = ( lastData >> offset ) & 0xFF;
 
             // event dump
@@ -300,11 +275,10 @@ bool CaloTriggerAdcsFromRaw::getData ( LHCb::RawBank* bank ){
             }
 
             if ( 0 != id.index() ) {
-              LHCb::L0CaloAdc temp( id, adc );
               if( !id.isPin() ){
-                m_data.push_back( temp );
+                m_data.emplace_back( id, adc );
               }else{
-                m_pinData.push_back( temp );
+                m_pinData.emplace_back( id, adc );
               }
             }
             offset += 8;
@@ -314,7 +288,6 @@ bool CaloTriggerAdcsFromRaw::getData ( LHCb::RawBank* bank ){
       // Skip ADC data
       int nSkip = (lenAdc+3)/4;  //== length in byte, skip words
       data     += nSkip;
-        size     -= nSkip;
     } // another card
     // Check All cards have been read
     if(!checkCards(nCards,feCards))m_status.addStatus(sourceID, LHCb::RawBankReadoutStatus::Incomplete);

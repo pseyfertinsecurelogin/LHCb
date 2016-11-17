@@ -20,21 +20,12 @@ namespace LHCb
 {
 
   template<unsigned int N>
-  class DifTraj : public Trajectory {
+  struct DifTraj : Trajectory {
 
-  public:
     enum { kSize = N };
 
-    /// Constructor taking the values of arclength
-    /// at the begin and at the end of the trajectory
-    DifTraj(double begin, double end) : Trajectory(begin, end) {}
-
-    /// Constructor taking a range
-    /// at the begin and at the end of the trajectory
-    DifTraj(const Range& range) : Trajectory(range) {}
-
-    /// destructer
-    virtual ~DifTraj(){}
+    /// Constructor - defer to Trajectory
+    using Trajectory::Trajectory;
 
     typedef ROOT::Math::SMatrix<double,3,N> Derivative;
     typedef ROOT::Math::SVector<double,N>   Parameters;

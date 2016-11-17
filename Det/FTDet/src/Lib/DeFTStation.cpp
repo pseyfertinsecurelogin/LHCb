@@ -12,7 +12,7 @@
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeFTStation::DeFTStation( const std::string& name ) :
+DeFTStation::DeFTStation( std::string name ) :
 DetectorElement ( std::move(name) )
 {   // constructor
   m_layers.reserve(4);

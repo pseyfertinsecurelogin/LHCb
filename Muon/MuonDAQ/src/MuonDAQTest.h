@@ -1,4 +1,4 @@
-#ifndef MUONDAQTEST_H 
+#ifndef MUONDAQTEST_H
 #define MUONDAQTEST_H 1
 
 // Include files
@@ -10,26 +10,20 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 /** @class MuonDAQTest MuonDAQTest.h
- *  
+ *
  *
  *  @author Alessia Satta
  *  @date   2005-10-19
  */
 class MuonDAQTest : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
-  MuonDAQTest( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
 
-  virtual ~MuonDAQTest( ); ///< Destructor
-
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-
-protected:
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
-
-
-IMuonRawBuffer* m_MuonBuffer;
+  IMuonRawBuffer* m_MuonBuffer = nullptr;
 };
 #endif // MUONDAQTEST_H

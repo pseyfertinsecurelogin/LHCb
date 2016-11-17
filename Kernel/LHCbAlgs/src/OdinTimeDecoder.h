@@ -23,25 +23,25 @@ namespace LHCb
  *  @author Marco Clemencic
  *  @date   2006-09-21
  */
-class OdinTimeDecoder final : public GaudiTool, virtual public IEventTimeDecoder
+class OdinTimeDecoder final : public extends<GaudiTool, IEventTimeDecoder>
 {
 
  public:
 
-  /// Standard constructor
+  // inherited constructor
   OdinTimeDecoder( const std::string& type,
                    const std::string& name,
-                   const IInterface* parent);
+                   const IInterface* parent): base_class(type, name, parent) {}
 
   virtual ~OdinTimeDecoder( ) = default; ///< Destructor
 
   /// Initialize the tool
-  StatusCode initialize();
+  StatusCode initialize() override;
 
   // --- implementation of IEventTimeDecoder ---
   /// Get the time of the current event from the ODIN object.
   /// @return The time of current event.
-  Gaudi::Time getTime() const;
+  Gaudi::Time getTime() const override;
 
  private:
 
@@ -53,7 +53,7 @@ class OdinTimeDecoder final : public GaudiTool, virtual public IEventTimeDecoder
  private:
 
   /// Tool to decode the ODIN bank
-  ToolHandle<IGenericTool> m_odinDecoder;
+  ToolHandle<IGenericTool> m_odinDecoder{"ODINDecodeTool", this};
 
   // --- local data ---
   /// Used to remember the run number and spot a change of run number.

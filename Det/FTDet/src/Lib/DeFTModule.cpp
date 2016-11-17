@@ -12,7 +12,7 @@
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeFTModule::DeFTModule( const std::string& name ) :
+DeFTModule::DeFTModule( std::string name ) :
 DetectorElement ( std::move(name) ) {
 }
 

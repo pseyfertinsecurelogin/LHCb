@@ -1,4 +1,3 @@
-// $Id: XmlParserSvc.h,v 1.12 2009-05-04 15:03:48 ocallot Exp $
 #ifndef DETDESCCNV_XMLPARSERSVC_H
 #define DETDESCCNV_XMLPARSERSVC_H
 
@@ -14,7 +13,7 @@
 #include "XmlTools/IXmlParserSvc.h"
 
 // Forward and external declarations
-class IXmlEntityResolver;
+struct IXmlEntityResolver;
 class IDetDataSvc;
 class IToolSvc;
 class IAlgTool;
@@ -41,11 +40,6 @@ public:
    * @param svc    Pointer to service locator interface
    */
   XmlParserSvc (const std::string& name, ISvcLocator* svc);
-
-  /**
-   * default destructor
-   */
-  ~XmlParserSvc() override;
 
   /// Initialize the service
   StatusCode initialize() override;
@@ -150,16 +144,6 @@ private:
   /// Return the pointer to the detector data service (loading it if not yet done).
   IDetDataSvc *detDataSvc();
 
-  /// Utilities to print...
-  MsgStream& info()    { return *m_msg << MSG::INFO; }
-  
-  MsgStream& debug()   { return *m_msg << MSG::DEBUG; }
-  
-  MsgStream& warning() { return *m_msg << MSG::WARNING; }
-
-  MsgStream& error()   { return *m_msg << MSG::ERROR; }  
-  
-  inline bool msgLevel( const MSG::Level level ) const { return m_msg->level() <= level; }
 
 private:
 
@@ -226,9 +210,6 @@ private:
   
   /// Pointer to the ToolSvc.
   SmartIF<IToolSvc> m_toolSvc;
-
-  /// Pointer to a message stream
-  std::unique_ptr<MsgStream> m_msg;
 
   /// Flag to decide if we measure time...
   bool m_measureTime;

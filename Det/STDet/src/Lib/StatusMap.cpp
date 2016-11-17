@@ -4,8 +4,7 @@
 #endif
 
 const Status::StatusToStringMap& Status::statusDescription() {
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L
-  static Status::StatusToStringMap s_map = {{DeSTSector::OK, "OK"},
+  static const Status::StatusToStringMap s_map = {{DeSTSector::OK, "OK"},
                                              {DeSTSector::Open, "Open"},
                                              {DeSTSector::Short,"Short"},
                                              {DeSTSector::Pinhole,"Pinhole"},
@@ -16,22 +15,6 @@ const Status::StatusToStringMap& Status::statusDescription() {
                                              {DeSTSector::OtherFault,"OtherFault"},
                                              {DeSTSector::Dead,"Dead"},
                                              {DeSTSector::UnknownStatus, "Unknown"}};
-#else
-  static Status::StatusToStringMap s_map;
-  if (s_map.empty()){
-    s_map = boost::assign::map_list_of(DeSTSector::OK, "OK")
-                                      (DeSTSector::Open, "Open")
-                                      (DeSTSector::Short,"Short")
-                                      (DeSTSector::Pinhole,"Pinhole")
-                                      (DeSTSector::NotBonded, "NotBonded")
-                                      (DeSTSector::LowGain, "LowGain")
-                                      (DeSTSector::Noisy, "Noisy")
-                                      (DeSTSector::ReadoutProblems,"ReadoutProblems")
-                                      (DeSTSector::OtherFault,"OtherFault")
-                                      (DeSTSector::Dead,"Dead")
-                                      (DeSTSector::UnknownStatus, "Unknown");
-  }
-#endif
   return s_map;
 }
 
@@ -56,24 +39,13 @@ std::string Status::toString(const DeSTSector::Status& tstatus) {
 
 
 const Status::StatusVector& Status::validBeetleStates() {
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L
-  static StatusVector s_vec = {DeSTSector::OK, DeSTSector::ReadoutProblems,
+  static const StatusVector s_vec = {DeSTSector::OK, DeSTSector::ReadoutProblems,
                                 DeSTSector::Dead, DeSTSector::OtherFault};
-#else
-  static StatusVector s_vec;
-  s_vec = boost::assign::list_of(DeSTSector::OK)(DeSTSector::ReadoutProblems)
-                                (DeSTSector::Dead)(DeSTSector::OtherFault);
-#endif
   return s_vec;
 }
 
 const Status::StatusVector& Status::protectedStates() {
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L
-  static StatusVector s_vec = {DeSTSector::NotBonded};
-#else
-  static StatusVector s_vec;
-  s_vec = boost::assign::list_of(DeSTSector::NotBonded);
-#endif
+  static const StatusVector s_vec = {DeSTSector::NotBonded};
   return s_vec;
 }
 

@@ -18,10 +18,12 @@
       keyedContTypeDef="TRUE"
       id="13501"
       serializers="TRUE"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
       >
 
 
-      <location name="Default"   
+      <location name="Default"
 		place="/FileRecords/LumiFSR"/>
 
       <base name="KeyedObject&lt;int&gt;"/>
@@ -36,15 +38,15 @@
         def="ValuePair"
         desc="For User information"
         access="PUBLIC"
-	/>       
- 
+	/>
+
       <typedef
         type="GaudiUtils::VectorMap&lt;  int, ValuePair &gt;"
         def="ExtraInfo"
         desc="User information"
         access="PUBLIC"
-	/> 
-  
+	/>
+
       <typedef
         type="std::vector&lt;unsigned int&gt;"
         def="RunNumbers"
@@ -81,7 +83,7 @@
         </code>
       </method>
 
-      <attribute 
+      <attribute
 	type = "RunNumbers"
 	name = "runNumbers"
 	desc = "Set of run numbers summed up in this job"
@@ -96,12 +98,12 @@
    return m_runNumbers;
         </code>
       </method>
-      
+
       <method
 	type = "void"
 	name = "addRunNumber"
 	desc = "add a RunNumber to the set">
-	<arg type = "unsigned int" name = "number"/> 
+	<arg type = "unsigned int" name = "number"/>
 	<code>
 	  m_runNumbers.push_back(number);
 	</code>
@@ -113,7 +115,7 @@
         desc="has information for specified runNumber"
         argList="unsigned int number"
         type="bool"
-	> 
+	>
 	<code>
    return m_runNumbers.end() != find(m_runNumbers.begin(), m_runNumbers.end(), number ) ;
 	</code>
@@ -133,12 +135,12 @@
          m_runNumbers.push_back(*(iterB));
       }
    }
-   
+
    return m_runNumbers;
         </code>
       </method>
 
-      <attribute 
+      <attribute
 	type = "FileIDs"
 	name = "fileIDs"
 	desc = "Set of file IDs summed up in this job"
@@ -153,12 +155,12 @@
    return m_fileIDs;
         </code>
       </method>
-      
+
       <method
 	type = "void"
 	name = "addFileID"
 	desc = "add a fileID to the set">
-	<arg type = "std::string" name = "idString"/> 
+	<arg type = "std::string" name = "idString"/>
 	<code>
 	  m_fileIDs.push_back(idString);
 	</code>
@@ -170,7 +172,7 @@
         desc="has information for specified fileID"
         argList="std::string idString"
         type="bool"
-	> 
+	>
 	<code>
    return m_fileIDs.end() != find(m_fileIDs.begin(), m_fileIDs.end(), idString ) ;
 	</code>
@@ -207,7 +209,7 @@
         const="TRUE"
         desc="ExtraInformation. Don't use directly, use hasInfo, info, addInfo..."
         type="const ExtraInfo"
-	> 
+	>
 	<code>
 	  return m_extraInfo ;
 	</code>
@@ -218,8 +220,8 @@
         const="TRUE"
         desc="has information for specified key"
         argList="int key"
-        type="bool" 
-	> 
+        type="bool"
+	>
 	<code>
 	  return m_extraInfo.end() != m_extraInfo.find( key ) ;
 	</code>
@@ -230,7 +232,7 @@
         desc=" Add new information associated with the specified key. This method cannot be used to modify information for a pre-existing key."
         argList="const int key, const int incr, const long long count"
         type="bool"
-	> 
+	>
 	<code>
 	  ValuePair info(incr, count);
 	  return m_extraInfo.insert( key , info ).second ;
@@ -243,7 +245,7 @@
         argList="const int key, const ValuePair def"
         type="ValuePair"
         const="TRUE"
-	> 
+	>
 	<code>
 	  ExtraInfo::iterator i = m_extraInfo.find( key ) ;
 	  return m_extraInfo.end() == i ? def : i->second ;
@@ -255,9 +257,9 @@
         desc="erase the information associated with the given key"
         argList="int key"
         type="int "
-	> 
+	>
 	<code>
-	  return m_extraInfo.erase( key ) ; 
+	  return m_extraInfo.erase( key ) ;
 	</code>
       </method>
 
@@ -267,7 +269,7 @@
         type="ExtraInfo"
 	>
 	<arg name="rhs" type="ExtraInfo" const="TRUE"/>
-        <code> 
+        <code>
    // sum info or add new key
    ExtraInfo::iterator iterB;
    for ( iterB = rhs.begin(); iterB != rhs.end(); iterB++ ) {
@@ -289,7 +291,7 @@
         argList="const int key, const long long count"
         type="ExtraInfo"
 	>
-        <code> 
+        <code>
    // increment info or add new key, only if data exists
    if ( count != -1 ) {
       ValuePair value = info (key, ValuePair(0,0));
@@ -301,14 +303,14 @@
    return m_extraInfo;
         </code>
       </method>
- 
+
       <method
         desc="Addition operator"
         name="operator+"
         type="LHCb::LumiFSR&amp;"
 	>
-	<arg name="rhs" type="LHCb::LumiFSR" const="TRUE"/>   
-        <code>   
+	<arg name="rhs" type="LHCb::LumiFSR" const="TRUE"/>
+        <code>
    if ( this != &amp;rhs ) {
       // merge run number sets
       mergeRuns(rhs.m_runNumbers);
@@ -319,17 +321,17 @@
    }
    return *this;
         </code>
-      </method> 
+      </method>
 
       <method
         desc="Addition operator"
         name="operator+"
         type="LHCb::LumiFSR&amp;"
 	>
-	<arg name="rhs" type="LHCb::LumiFSR*" const="TRUE"/>   
-        <code>   
+	<arg name="rhs" type="LHCb::LumiFSR*" const="TRUE"/>
+        <code>
 
-   if ( this != rhs ) {   
+   if ( this != rhs ) {
       // merge run number sets
       mergeRuns(rhs->m_runNumbers);
       // merge file ID sets
@@ -340,58 +342,59 @@
    return *this;
 
         </code>
-      </method> 
- 
+      </method>
+
 
       <method
         desc="Addition operator"
         name="operator+="
         type="LHCb::LumiFSR&amp;"
 	>
-	<arg name="rhs" type="LHCb::LumiFSR" const="TRUE"/>   
-        <code>   
+	<arg name="rhs" type="LHCb::LumiFSR" const="TRUE"/>
+        <code>
    return *this + rhs;
         </code>
-      </method> 
- 
+      </method>
+
 
       <method
         desc="Addition operator"
         name="operator+="
         type="LHCb::LumiFSR&amp;"
 	>
-	<arg name="rhs" type="LHCb::LumiFSR*" const="TRUE"/>   
-        <code>   
+	<arg name="rhs" type="LHCb::LumiFSR*" const="TRUE"/>
+        <code>
    return *this + *rhs;
         </code>
-      </method> 
- 
+      </method>
+
 
       <!-- readable printout -->
       <method
         name='fillStream'
         type='std::ostream&amp;'
         desc='intelligent printout'
-        const='TRUE'>
-	<arg name="s" type="std::ostream" const="FALSE"/>   
+        const='TRUE'
+        override='TRUE'>
+	<arg name="s" type="std::ostream" const="FALSE"/>
         <code>
 
     std::ostream&amp; ss = const_cast&lt; std::ostream&amp; &gt;(s);
     ss &lt;&lt; "{ "
-       &lt;&lt; " runs : " ; 
+       &lt;&lt; " runs : " ;
 
     RunNumbers::const_iterator run;
     for ( run = m_runNumbers.begin(); run != m_runNumbers.end(); run++ ) {
       ss &lt;&lt; *run &lt;&lt; " ";
     }
     LumiFSR::FileIDs::const_iterator file;
-    ss &lt;&lt; " files : " ; 
+    ss &lt;&lt; " files : " ;
     for ( file = m_fileIDs.begin(); file != m_fileIDs.end(); file++ ) {
       ss &lt;&lt; *file &lt;&lt; " ";
     }
 
     // overall sum info
-    ss &lt;&lt; " info (key/incr/integral) : " ; 
+    ss &lt;&lt; " info (key/incr/integral) : " ;
     ExtraInfo::const_iterator infoIter;
     for (infoIter = m_extraInfo.begin(); infoIter != m_extraInfo.end(); infoIter++) {
       // get the key and value of the input info
@@ -399,11 +402,11 @@
       LumiFSR::ValuePair values = infoIter->second;
       int incr = values.first;
       long long count = values.second;
-      ss &lt;&lt; key &lt;&lt; " " 
-         &lt;&lt; incr &lt;&lt; " " 
+      ss &lt;&lt; key &lt;&lt; " "
+         &lt;&lt; incr &lt;&lt; " "
          &lt;&lt; count &lt;&lt; " / ";
     }
-    ss &lt;&lt; " }"; 
+    ss &lt;&lt; " }";
 
     return ss;
         </code>

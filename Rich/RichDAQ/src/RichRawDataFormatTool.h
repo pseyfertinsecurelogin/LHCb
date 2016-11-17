@@ -30,23 +30,21 @@
 // Base class
 #include "RichKernel/RichToolBase.h"
 
-// Kernel
-#include "RichKernel/RichStatDivFunctor.h"
-#include "RichKernel/RichHashMap.h"
+// Utils
+#include "RichUtils/RichStatDivFunctor.h"
+#include "RichUtils/RichHashMap.h"
+#include "RichUtils/RichMap.h"
+#include "RichUtils/RichPoolMap.h"
+#include "RichUtils/RichHashMap.h"
 
 // Interfaces
-#include "RichKernel/IRichRawDataFormatTool.h"
+#include "RichInterfaces/IRichRawDataFormatTool.h"
 
-// local
-#include "RichDAQVersions.h"
+// RICH DAQ Kernel
+#include "RichDAQKernel/RichDAQVersions.h"
 
 // RichDet
 #include "RichDet/DeRichSystem.h"
-
-// RichKernel
-#include "RichKernel/RichMap.h"
-#include "RichKernel/RichPoolMap.h"
-#include "RichKernel/RichHashMap.h"
 
 // Event model
 #include "Event/RawEvent.h"
@@ -87,14 +85,11 @@ namespace Rich
                          const std::string& name,
                          const IInterface* parent );
 
-      /// Destructor
-      virtual ~RawDataFormatTool( );
-
       // Initialization of the tool after creation
-      StatusCode initialize() final;
+      StatusCode initialize() override final;
 
       // Finalization of the tool before deletion
-      StatusCode finalize() final;
+      StatusCode finalize() override final;
 
     public:
 
@@ -103,17 +98,17 @@ namespace Rich
        *
        *  @param incident The incident identifier
        */
-      void handle( const Incident& incident ) final;
+      void handle( const Incident& incident ) override final;
 
     public: // methods (and doxygen comments) inherited from interface
 
       /// Creates a bank data from a vector of RichSmartIDs
       void fillRawEvent( const LHCb::RichSmartID::Vector & smartIDs,
-                         const Rich::DAQ::BankVersion version = Rich::DAQ::LHCb2 ) const final;
+                         const Rich::DAQ::BankVersion version = Rich::DAQ::LHCb2 ) const override final;
 
       /// Decode all RICH RawBanks into RichSmartID identifiers
       void decodeToSmartIDs( const RawEventLocations & taeLocations,
-                             Rich::DAQ::L1Map & decodedData ) const final;
+                             Rich::DAQ::L1Map & decodedData ) const override final;
 
     private: // definitions
 

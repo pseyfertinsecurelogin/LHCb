@@ -41,7 +41,7 @@ namespace LHCb
     Trajectory( const Range& range ): m_range(range) {}
 
     /// destructor
-    virtual ~Trajectory() {}
+    virtual ~Trajectory() = default;
 
     /// Point on the trajectory at position mu from the starting point
     virtual Point position( double mu ) const = 0;

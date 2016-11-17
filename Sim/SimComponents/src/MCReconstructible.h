@@ -1,11 +1,7 @@
-
 //-----------------------------------------------------------------------------
 /** @file MCReconstructible.h
  *
  *  Header file for class : MCReconstructible
- *
- *  CVS Log :-
- *  $Id: MCReconstructible.h,v 1.7 2007-05-29 08:48:16 cattanem Exp $
  *
  *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
  *  @date 28/02/2007
@@ -18,6 +14,8 @@
 // from STL
 #include <string>
 #include <vector>
+#include <array>
+#include "boost/optional.hpp"
 
 // Gaudi
 #include "GaudiKernel/IIncidentListener.h"
@@ -57,26 +55,24 @@ public:
                      const std::string& name,
                      const IInterface* parent);
 
-  virtual ~MCReconstructible( ); ///< Destructor
-
   /// Initialize
-  StatusCode initialize();
+  StatusCode initialize() override;
 
   /** Implement the handle method for the Incident service.
    *  This is used to inform the tool of software incidents.
    *  @param incident The incident identifier
    */
-  void handle( const Incident& incident );
+  void handle( const Incident& incident ) override;
 
   /// Get the reconstruction category for the given MCParticle
-  virtual IMCReconstructible::RecCategory reconstructible( const LHCb::MCParticle* mcPart ) const;
+  IMCReconstructible::RecCategory reconstructible( const LHCb::MCParticle* mcPart ) const override;
 
   /// Is the MCParticle in the detector acceptance?
-  virtual bool inAcceptance( const LHCb::MCParticle* mcPart ) const;
+  bool inAcceptance( const LHCb::MCParticle* mcPart ) const override;
 
-  /// Is the MCParticle reconstructible as given type 
-  virtual bool isReconstructibleAs(const IMCReconstructible::RecCategory& category,
-                                   const LHCb::MCParticle* mcPart ) const;
+  /// Is the MCParticle reconstructible as given type
+  bool isReconstructibleAs(const IMCReconstructible::RecCategory& category,
+                           const LHCb::MCParticle* mcPart ) const override;
 
 private: // methods
 
@@ -89,10 +85,9 @@ private: // methods
   /// get the MCTrackInfo object
   inline MCTrackInfo & mcTkInfo() const
   {
-    if ( NULL == m_tkInfo ) 
-    { 
-      m_tkInfo = new MCTrackInfo( evtSvc(), msgSvc() );
-      if ( NULL == m_tkInfo ) { Exception( "Failed to load MCTrackInfo" ); }
+    if ( UNLIKELY(!m_tkInfo) ) {
+      m_tkInfo = std::make_unique<MCTrackInfo>( evtSvc(), msgSvc() );
+      if ( !m_tkInfo ) { Exception( "Failed to load MCTrackInfo" ); }
     }
     return *m_tkInfo;
   }
@@ -100,32 +95,34 @@ private: // methods
 private: // data
 
   /// Acceptance parameters (neutrals)
-  double m_zECAL; 
-  double m_xECALInn; 
-  double m_yECALInn; 
-  double m_xECALOut; 
-  double m_yECALOut;
+  // misc CALO params. Hopefully to go into specific CALO reconstructibility tool
+  double m_zECAL    = 12696.0*Gaudi::Units::mm ;
+  double m_xECALInn = 363.3*Gaudi::Units::mm   ;
+  double m_yECALInn = 363.3*Gaudi::Units::mm   ;
+  double m_xECALOut = 3757.2*Gaudi::Units::mm  ;
+  double m_yECALOut = 3030.0*Gaudi::Units::mm  ;
 
   /// Threshold for Et gammas reconstructibility
-  double m_lowEt;
+  double m_lowEt    = 200*Gaudi::Units::MeV    ;
 
   /// Allow primary particles
   bool m_allowPrimary;
 
   /// Pointer to MCTrackInfo object
-  mutable MCTrackInfo * m_tkInfo;
+  mutable std::unique_ptr<MCTrackInfo> m_tkInfo;
 
   /// MCParticle selector
-  IMCParticleSelector * m_mcSel;
+  IMCParticleSelector * m_mcSel = nullptr;
 
   std::vector<std::string> m_chargedLongCriteria;
   std::vector<std::string> m_chargedUpstreamCriteria;
   std::vector<std::string> m_chargedDownstreamCriteria;
-  std::vector<std::string> m_chargedTCriteria;
   std::vector<std::string> m_chargedVeloCriteria;
+  std::vector<std::string> m_chargedTCriteria;
 
-  typedef GaudiUtils::VectorMap<unsigned int,LHCb::MC::MCTrackGeomCriteria*> CriteriaMap;
-  CriteriaMap m_critMap;  
+  // the boost::optional is required to delay the construction...
+  std::array<boost::optional<std::pair<IMCReconstructible::RecCategory,
+                                       LHCb::MC::MCTrackGeomCriteria>>,5> m_critMap;
 
 };
 

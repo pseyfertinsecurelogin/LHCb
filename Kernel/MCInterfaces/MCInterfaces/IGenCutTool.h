@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef MCINTERFACES_IGENCUTTOOL_H 
 #define MCINTERFACES_IGENCUTTOOL_H 1
 
@@ -31,14 +30,12 @@ class IDecayTool ;
  *  @date   2005-08-17
  */
 
-static const InterfaceID IID_IGenCutTool( "IGenCutTool" , 5 , 0 ) ;
 
-class IGenCutTool : virtual public IAlgTool {
-public:
+struct IGenCutTool : extend_interfaces<IAlgTool> {
   /// Vector of particles
   typedef std::vector< HepMC::GenParticle * > ParticleVector ;
 
-  static const InterfaceID& interfaceID() { return IID_IGenCutTool ; }
+  DeclareInterfaceID ( IGenCutTool , 6 , 0 ) ;
 
   /** Applies the cut on the signal interaction.
    *  @param[in,out] theParticleVector  List of signal particles. The 

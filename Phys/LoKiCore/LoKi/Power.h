@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_POWER_H 
+#ifndef LOKI_POWER_H
 #define LOKI_POWER_H 1
 // ============================================================================
 // Include files
@@ -14,27 +14,27 @@
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23 
+ *  @date 2001-01-23
  */
 // ============================================================================
-namespace LoKi 
-{  
+namespace LoKi
+{
   // ==========================================================================
   /** @class Power Power.h LoKi/Power.h
    *
-   *  Simple function which allows the efficient 
-   *  evaluation of pow(X,N) for LoKi-functions 
+   *  Simple function which allows the efficient
+   *  evaluation of pow(X,N) for LoKi-functions
    *
-   *  @author Vanya BELYAEV Ivan.Belyaev@lapp.in2p3.fr 
+   *  @author Vanya BELYAEV Ivan.Belyaev@lapp.in2p3.fr
    *  @date   2005-04-09
    */
   // ==========================================================================
@@ -44,9 +44,7 @@ namespace LoKi
   private:
     // ========================================================================
     /// argument type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
-    /// result type 
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
     // ========================================================================
   public:
     // ========================================================================
@@ -54,36 +52,37 @@ namespace LoKi
      *  @param fun function to be used in "pow"
      *  @param val power itself
      */
-    Power ( const LoKi::Functor<TYPE,TYPE2>& fun , 
-            const int                        val ) 
-      : LoKi::AuxFunBase ( std::tie ( fun , val ) ) 
-      , m_fun ( fun ) 
-      , m_val ( val ) 
+    template <typename F,
+              typename = typename details::require_signature<F,TYPE,TYPE2>>
+    Power ( F&& fun , int val )
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+      , m_fun ( std::forward<F>(fun) )
+      , m_val ( val )
     {}
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  Power* clone() const { return new Power ( *this ) ; }
-    /// MANDATORY: the only one essential method 
-    virtual  result_type operator() ( argument p ) const 
+    Power* clone() const override { return new Power ( *this ) ; }
+    /// MANDATORY: the only one essential method
+    TYPE2 operator() ( argument p ) const override
     {
       if ( 0 == m_val ) { return TYPE2(1) ; }
       // evaluate the function
       auto value = m_fun.fun ( p ) ;
       // evaluate the result
       if ( 0 <  m_val ) { return Gaudi::Math::pow( value, (unsigned long)m_val ); }
-      if ( 0 == value ) 
+      if ( 0 == value )
       { this->Error ( " ZERO in NEGATIVE power! return -1.e+9" ) ; return -1.e+9 ; }
       //
-      return Gaudi::Math::pow( 1.0/value, (unsigned long)(-m_val) ); 
+      return Gaudi::Math::pow( 1.0/value, (unsigned long)(-m_val) );
     };
-    /// the basic printout method 
-    virtual std::ostream& fillStream( std::ostream& s ) const 
+    /// the basic printout method
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << "pow("  << m_fun << "," << m_val << ")" ; };
     // ========================================================================
   private:
     // ========================================================================
-    /// the functor 
-    LoKi::FunctorFromFunctor<TYPE,TYPE2>  m_fun ;                // the functor 
-    /// the power 
+    /// the functor
+    LoKi::FunctorFromFunctor<TYPE,TYPE2>  m_fun ;                // the functor
+    /// the power
     int                                   m_val ;                  // the power
     // ========================================================================
   };
@@ -93,11 +92,8 @@ namespace LoKi
   {
   private:
     // ========================================================================
-    typedef void TYPE ;
     /// argument type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ; 
-    /// result type 
-    typedef typename LoKi::Functor<TYPE,TYPE2>::result_type result_type ; 
+    typedef typename LoKi::Functor<void,TYPE2>::argument argument  ;
     // ========================================================================
   public:
     // ========================================================================
@@ -105,98 +101,108 @@ namespace LoKi
      *  @param fun function to be used in "pow"
      *  @param val power itself
      */
-    Power ( const LoKi::Functor<TYPE,TYPE2>& fun , 
-            const int                        val ) 
-      : LoKi::AuxFunBase ( std::tie ( fun , val ) ) 
-      , m_fun ( fun ) 
-      , m_val ( val ) 
+    template <typename F,
+              typename = typename details::require_signature<F,void,TYPE2>>
+    Power ( F&& fun , int val )
+      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+      , m_fun ( std::forward<F>(fun) )
+      , m_val ( val )
     {}
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  Power* clone() const { return new Power ( *this ) ; }
-    /// MANDATORY: the only one essential method 
-    virtual  result_type operator() ( /* argument a */ ) const 
+    Power* clone() const override { return new Power ( *this ) ; }
+    /// MANDATORY: the only one essential method
+    TYPE2 operator() (  ) const override
     {
       if ( 0 == m_val ) { return TYPE2(1) ; }
       // evaluate the function
-      auto value = m_fun.fun ( /* a */ ) ;
+      auto value = m_fun.fun (  ) ;
       // evaluate the result
       if ( 0 <  m_val ) { return Gaudi::Math::pow( value, (unsigned long)m_val ); }
-      if ( 0 == value ) 
+      if ( 0 == value )
       { this->Error ( " ZERO in NEGATIVE power! return -1.e+9" ) ; return -1.e+9 ; }
       //
-      return Gaudi::Math::pow( 1.0/value, (unsigned long)(-m_val) ); 
+      return Gaudi::Math::pow( 1.0/value, (unsigned long)(-m_val) );
     }
-    /// the basic printout method 
-    virtual std::ostream& fillStream( std::ostream& s ) const 
+    /// the basic printout method
+    std::ostream& fillStream( std::ostream& s ) const override
     { return s << "pow("  << m_fun << "," << m_val << ")" ; };
     // ========================================================================
   private:
     // ========================================================================
-    /// the functor 
-    LoKi::FunctorFromFunctor<TYPE,TYPE2>  m_fun ;                // the functor 
-    /// the power 
-    int                                   m_val ;                  // the power 
+    /// the functor
+    LoKi::FunctorFromFunctor<void,TYPE2>  m_fun ;                // the functor
+    /// the power
+    int                                   m_val ;                  // the power
     // ========================================================================
   };
   // ==========================================================================
   /** pow for LoKi functions
-   *  @see LoKi::Power 
+   *  @see LoKi::Power
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-04-09
-   */      
-  template <class TYPE,class TYPE2> 
+   */
+  template <typename F,
+            typename TYPE = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
   inline LoKi::Power<TYPE,TYPE2>
-  pow ( const LoKi::Functor<TYPE,TYPE2>& fun , 
-        const int                        val ) 
-  { return LoKi::Power<TYPE,TYPE2> ( fun , val ) ; }
-  // ==========================================================================  
+  pow ( F&& fun , int val ) { return { std::forward<F>(fun) , val } ; }
+  // ==========================================================================
+  /** powN for LoKi functions
+   *  @see LoKi::pow
+   *  @see LoKi::Power
+   *  @author Gerhard Raven gerhard.raven@nikhef.nl
+   *  @date   2016-09-10
+   */
+  template <int N, typename F,
+            typename TYPE = typename details::LF<F>::type1,
+            typename TYPE2 = typename details::LF<F>::type2>
+  inline LoKi::Power<TYPE,TYPE2>
+  pow( F&& fun ) { return { std::forward<F>(fun) , N } ; }
+
+  // ==========================================================================
   /** pow2 for LoKi functions
    *  @see LoKi::pow
-   *  @see LoKi::Power 
+   *  @see LoKi::Power
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-04-09
-   */      
-  template <class TYPE,class TYPE2> 
-  inline LoKi::Power<TYPE,TYPE2>
-  pow2 ( const LoKi::Functor<TYPE,TYPE2>& fun ) 
-  { return LoKi::Power<TYPE,TYPE2> ( fun , 2 ) ; }
-  // ==========================================================================  
+   */
+  // C++14: template <typename F> constexpr auto pow2<F> = pow<2,F>;
+  template <typename F> auto pow2(F&& f) -> decltype( pow(f,2) )
+  { return pow(std::forward<F>(f),2); }
+  // ==========================================================================
   /** pow3 for LoKi functions
    *  @see LoKi::pow
-   *  @see LoKi::Power 
+   *  @see LoKi::Power
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-04-09
-   */      
-  template <class TYPE, class TYPE2> 
-  inline LoKi::Power<TYPE,TYPE2>
-  pow3 ( const LoKi::Functor<TYPE,TYPE2>& fun ) 
-  { return LoKi::Power<TYPE,TYPE2> ( fun , 3 ) ; }
-  // ==========================================================================  
+   */
+  //C++14: template <typename F> constexpr auto pow3<F> = pow<3,F>;
+  template <typename F> auto pow3(F&& f) -> decltype( pow(f,3) )
+  { return pow(std::forward<F>(f),3); }
+  // ==========================================================================
   /** pow4 for LoKi functions
    *  @see LoKi::pow
-   *  @see LoKi::Power 
+   *  @see LoKi::Power
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-04-09
-   */      
-  template <class TYPE,class TYPE2> 
-  inline LoKi::Power<TYPE,TYPE2>
-  pow4 ( const LoKi::Functor<TYPE,TYPE2>& fun ) 
-  { return LoKi::Power<TYPE,TYPE2> ( fun , 4 ) ; }
-  // ==========================================================================  
-  /** pow2 for LoKi functions
+   */
+  //C++14: template <typename F> constexpr auto pow3<F> = pow<4,F>;
+  template <typename F> auto pow4(F&& f) -> decltype( pow(f,4) )
+  { return pow(std::forward<F>(f),4); }
+  // ==========================================================================
+  /** square for LoKi functions
    *  @see LoKi::pow
-   *  @see LoKi::Power 
+   *  @see LoKi::Power
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-04-09
-   */      
-  template <class TYPE,class TYPE2> 
-  inline LoKi::Power<TYPE,TYPE2>
-  square ( const LoKi::Functor<TYPE,TYPE2>& fun ) 
-  { return LoKi::Power<TYPE,TYPE2> ( fun , 2 ) ; }
+   */
+  //C++14: template <typename F> constexpr auto square<F> = pow<2,F>;
+  template <typename F> auto square(F&& f) -> decltype( pow(f,2) )
+  { return pow2(std::forward<F>(f)); }
   // ==========================================================================
 } //end of namespace LoKi
 // ============================================================================
 #endif // LOKI_POWER_H
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

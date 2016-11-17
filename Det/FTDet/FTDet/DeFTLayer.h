@@ -22,7 +22,7 @@ public:
   typedef std::vector<DeFTModule*> Modules;
 
   /// Standard constructor
-  DeFTLayer( const std::string& name = "" );
+  DeFTLayer( std::string name = "" );
 
   /// Initialization method
   StatusCode initialize() override;

@@ -29,9 +29,6 @@ public:
   /** Constructor */
   DeUTSensor ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeUTSensor();
-
   /**
   * Retrieves reference to class identifier
   * @return the class identifier for this class
@@ -42,12 +39,12 @@ public:
   * another reference to class identifier
   * @return the class identifier for this class
   */
-  const CLID& clID () const;
+  const CLID& clID () const override;
 
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
 private:
 

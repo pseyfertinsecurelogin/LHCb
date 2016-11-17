@@ -175,9 +175,8 @@ bool L0DUFromRawTool::decoding(int ibank){
   m_report.clear();
   // reset
   for( auto& i : *m_processorDatas ) {
-    const std::vector<int>& BXs=i->bxList();
-    for( std::vector<int>::const_iterator ibx=BXs.begin();BXs.end()!=ibx;ibx++){    
-      i->setWord (L0DUBase::EmptyData,*ibx);
+    for( const auto& ibx : i->bxList() ) {
+      i->setWord (L0DUBase::EmptyData,ibx);
     }    
   }
   
@@ -199,8 +198,6 @@ bool L0DUFromRawTool::decoding(int ibank){
     m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::BadMagicPattern);
     return false;
   }
-
-
 
   // ------------------------
   // decoding ---------------

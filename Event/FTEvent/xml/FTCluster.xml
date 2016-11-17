@@ -10,6 +10,8 @@
            id     = "14003"
            author = "Olivier Callot,Eric Cogneras"
            desc   = "This class represents the clusters made of consecutive FTChannels"
+           final  = "TRUE"
+           defaultdestructor = "FALSE"
            serializers="FALSE">
       <import   name = "Kernel/FTChannelID" />
       <location name = "Default"   place="Raw/FT/Clusters"   />

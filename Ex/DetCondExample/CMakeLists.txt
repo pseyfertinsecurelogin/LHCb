@@ -18,6 +18,9 @@ find_package(MySQL)
 find_package(Oracle)
 find_package(SQLite)
 
+find_package(COOL)
+include_directories(SYSTEM ${COOL_INCLUDE_DIRS})
+
 gaudi_add_executable(DetCondExample
                      src/*.cpp
                      ${CMAKE_SOURCE_DIR}/GaudiConf/src/GaudiMain.cpp

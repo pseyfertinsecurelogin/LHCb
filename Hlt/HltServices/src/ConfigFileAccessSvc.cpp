@@ -263,8 +263,3 @@ ConfigFileAccessSvc::configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type
     }
     return x;
 }
-
-MsgStream& ConfigFileAccessSvc::msg(MSG::Level level) const {
-     if (!m_msg) m_msg.reset( new MsgStream( msgSvc(), name() ));
-     return *m_msg << level;
-}

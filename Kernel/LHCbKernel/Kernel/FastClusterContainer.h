@@ -148,15 +148,15 @@ public:
 public: // fake methods form ObjectContainerBase
   // ==========================================================================
   /// Distance of a given object from the beginning of its container
-  virtual long index( const ContainedObject* /* obj */ ) const { return -1 ; }
+  long index( const ContainedObject* /* obj */ ) const override { return -1 ; }
   /// Pointer to an object of a given distance
-  virtual ContainedObject* containedObject( long /* dist */ ) const { return nullptr ; }
+  ContainedObject* containedObject( long /* dist */ ) const override { return nullptr ; }
   /// Number of objects in the container
-  virtual size_type numberOfObjects() const { return this->size() ; }
+  size_type numberOfObjects() const override { return this->size() ; }
   /// Add an object to the container
-  virtual long add    ( ContainedObject* /* obj */ ) { return -1 ; }
+  long add    ( ContainedObject* /* obj */ ) override { return -1 ; }
   /// Release object from the container
-  virtual long remove ( ContainedObject* /* obj */ ) { return -1 ; }
+  long remove ( ContainedObject* /* obj */ ) override { return -1 ; }
   // ==========================================================================
 };
 // ============================================================================

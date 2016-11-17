@@ -1,4 +1,3 @@
-// $Id: HistoParam.h,v 1.3 2009-12-06 19:13:45 dgolubko Exp $
 // ============================================================================
 #ifndef DETDESC_HISTOPARAM_H 
 #define DETDESC_HISTOPARAM_H 1

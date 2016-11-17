@@ -1,5 +1,4 @@
-// $Id: UnpackRecVertex.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef UNPACKRECVERTEX_H 
+#ifndef UNPACKRECVERTEX_H
 #define UNPACKRECVERTEX_H 1
 
 // Include files
@@ -13,17 +12,15 @@
  *  @author Olivier Callot
  *  @date   2008-11-17
  */
-class UnpackRecVertex : public GaudiAlgorithm 
+class UnpackRecVertex : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   UnpackRecVertex( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~UnpackRecVertex(); ///< Destructor
-
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 

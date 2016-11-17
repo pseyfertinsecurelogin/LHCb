@@ -75,7 +75,7 @@ public:
   typedef std::vector<DeFTStation*>     Stations;
 
   /// Standard constructor
-  DeFTDetector( const std::string& name = "" );
+  DeFTDetector( std::string name = "" );
 
   /** Initialization method 
    *  @return Status of initialization

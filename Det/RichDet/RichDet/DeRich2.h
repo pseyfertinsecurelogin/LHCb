@@ -42,7 +42,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const { return classID(); }
+  const CLID& clID() const override { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -54,7 +54,7 @@ public:
    * Specific Rich2 initialisation
    * @return Status of initialisation
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
    * Returns the nominal centre of curvature of the spherical mirror for this Rich
@@ -62,7 +62,7 @@ public:
    * @param side Which side: left or right
    * @return The nominal centre of curvature
    */
-  virtual const Gaudi::XYZPoint& nominalCentreOfCurvature(const Rich::Side side) const;
+  const Gaudi::XYZPoint& nominalCentreOfCurvature(const Rich::Side side) const override;
 
   /**
    * Returns the nominal normal vector of the flat mirror plane for this Rich
@@ -70,7 +70,7 @@ public:
    * @param side Which side: left or right
    * @return The nominal normal vector
    */
-  virtual const Gaudi::XYZVector& nominalNormal(const Rich::Side side) const;
+  const Gaudi::XYZVector& nominalNormal(const Rich::Side side) const override;
 
   /**
    * Returns the nominal flat mirror plane for this Rich
@@ -78,7 +78,7 @@ public:
    * @param side Which side: left or right
    * @return The nominal flat mirror plane
    */
-  virtual const Gaudi::Plane3D& nominalPlane(const Rich::Side side) const;
+  const Gaudi::Plane3D& nominalPlane(const Rich::Side side) const override;
 
   /**
    * Check on which side of this Rich lies this point
@@ -86,12 +86,12 @@ public:
    * @param point A point in the global coordinate system
    * @return The side for this point
    */
-  virtual Rich::Side side( const Gaudi::XYZPoint& point ) const;
+  Rich::Side side( const Gaudi::XYZPoint& point ) const override;
 
 private:
 
   /// Access the name for a given panel
-  virtual const std::string panelName( const Rich::Side panel ) const;
+  const std::string panelName( const Rich::Side panel ) const override;
 
   /// Update Nominal mirror parameters
   StatusCode updateMirrorParams();

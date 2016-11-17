@@ -1,5 +1,3 @@
-// $Id: IntersectionErrors.h,v 1.2 2008-05-20 15:41:17 cattanem Exp $
-// ============================================================================
 #ifndef DETDESC_INTERSECTIONERRORS_H 
 #define DETDESC_INTERSECTIONERRORS_H 1
 // ============================================================================
@@ -20,14 +18,14 @@
 namespace DetDesc
 {
   // forward declarations 
-  class IGeometryErrorSvc ;
+  struct IGeometryErrorSvc ;
   // ==========================================================================
   /** @class IntersectionErrors DetDesc/IntersectionErrors.h
    *  
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-12-12
    */
-  class IntersectionErrors 
+  class IntersectionErrors final
   {
   public:
     /// get the total number of uncatched errors 

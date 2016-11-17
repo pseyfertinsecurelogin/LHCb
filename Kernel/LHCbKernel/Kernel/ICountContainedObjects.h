@@ -4,7 +4,6 @@
 #include "GaudiKernel/IAlgTool.h"
 #include "GaudiKernel/ObjectContainerBase.h"
 
-static const InterfaceID IID_ICountContainedObjects( "ICountContainedObjects", 0, 0 );
  
 /** @class ICountContainedObjects ICountContainedObjects.h
  *
@@ -15,12 +14,11 @@ static const InterfaceID IID_ICountContainedObjects( "ICountContainedObjects", 0
  *  @date   14/2/2011
  */
 
-class ICountContainedObjects: virtual public IAlgTool{
+struct ICountContainedObjects: extend_interfaces<IAlgTool> {
  
-public:
         
   /// Retrieve interface ID
-  static const InterfaceID& interfaceID() { return IID_ICountContainedObjects ; }
+  DeclareInterfaceID( ICountContainedObjects, 1, 0 );
                                                                                
   /** Returns number of objects in the container
   *

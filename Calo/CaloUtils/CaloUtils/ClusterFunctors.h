@@ -193,8 +193,7 @@ namespace ClusterFunctors
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   02/12/2001
    */
-  class  ClusterArea
-    : public std::unary_function<const LHCb::CaloCluster*,const unsigned int>
+  class  ClusterArea final
   {
   public:
     
@@ -256,8 +255,7 @@ namespace ClusterFunctors
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   02/12/2001
    */
-  class  ClusterCalo
-    : public std::unary_function<const LHCb::CaloCluster*,const unsigned int>
+  class  ClusterCalo final
   {
   public:
     
@@ -319,8 +317,7 @@ namespace ClusterFunctors
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   02/12/2001
    */
-  class ClusterFromCalo
-    : public std::unary_function<const LHCb::CaloCluster*,bool>
+  class ClusterFromCalo final
   {
   public:
     /** constructor 
@@ -378,8 +375,7 @@ namespace ClusterFunctors
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   02/12/2001
    */
-  class ClusterFromArea
-    : public std::unary_function<const LHCb::CaloCluster*,bool>
+  class ClusterFromArea final
   {
   public:
     /** constructor 
@@ -410,8 +406,7 @@ namespace ClusterFunctors
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   02/12/2001
    */
-  class OnTheBoundary 
-    : public std::unary_function<const LHCb::CaloCluster*,bool>
+  class OnTheBoundary final
   {
   public:
     
@@ -483,8 +478,7 @@ namespace ClusterFunctors
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   02/12/2001
    */
-  class ZPosition
-    : public std::unary_function<const LHCb::CaloCluster*,double>
+  class ZPosition final
   {
   public:    
     /** the explicit constructor
@@ -492,8 +486,6 @@ namespace ClusterFunctors
      */
     ZPosition( const DeCalorimeter* detector )
       : m_detector( detector ){};
-    /// destructor
-    ~ZPosition() { m_detector = 0 ;};
     /** the only one essential method 
      *  @exception CaloException if detector is not valid
      *  @exception CaloException if cluster is NULL

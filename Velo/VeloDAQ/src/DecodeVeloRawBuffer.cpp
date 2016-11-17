@@ -63,11 +63,6 @@ DecodeVeloRawBuffer::DecodeVeloRawBuffer( const std::string& name,
 
 
 //=============================================================================
-// Destructor
-//=============================================================================
-DecodeVeloRawBuffer::~DecodeVeloRawBuffer() {}
-
-//=============================================================================
 // Initialisation. Check parameters
 //=============================================================================
 StatusCode DecodeVeloRawBuffer::initialize() {
@@ -115,9 +110,6 @@ StatusCode DecodeVeloRawBuffer::initialize() {
 	     m_defaultRawEventLocations.end() ) ){
     info() << "Using '" << m_rawEventLocations << "' as search path for the RawEvent object" << endmsg;
   }
-
-  // Pointer to IncidentSvc
-  m_incidentSvc = svc<IIncidentSvc>("IncidentSvc",true);
 
   return StatusCode::SUCCESS;
 }

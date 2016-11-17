@@ -24,22 +24,22 @@ namespace LHCb  {
   public:
     /// Standard constructor
     RawDataConnection(const IInterface* own, const std::string& nam);
-    /// Standard destructor      
+    /// Standard destructor
     virtual ~RawDataConnection();
     /// Check if connected to data source
-    virtual bool isConnected() const        {     return m_access.ioDesc != 0; }
+    bool isConnected() const override {     return m_access.ioDesc != 0; }
     /// Open data stream in read mode
-    virtual StatusCode connectRead();
+    StatusCode connectRead() override;
     /// Open data stream in write mode
-    virtual StatusCode connectWrite(IoType typ);
+    StatusCode connectWrite(IoType typ) override;
     /// Release data stream
-    virtual StatusCode disconnect();
+    StatusCode disconnect() override;
     /// Read raw byte buffer from input stream
-    virtual StatusCode read(void* const data, size_t len);
+    StatusCode read(void* const data, size_t len) override;
     /// Write raw byte buffer to output stream
-    virtual StatusCode write(const void* data, int len);
+    StatusCode write(const void* data, int len) override;
     /// Seek on the file described by ioDesc. Arguments as in ::seek()
-    virtual long long int seek(long long int where, int origin);
+    long long int seek(long long int where, int origin) override;
   };
 }         // End namespace Gaudi
 #endif    // MDF_RAWDATACONNECTION_H

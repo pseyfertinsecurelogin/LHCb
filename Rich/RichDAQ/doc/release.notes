@@ -4,6 +4,9 @@
 ! Purpose     : Package simulating the RICH DAQ system and data format
 !-----------------------------------------------------------------------------
 
+! 2016-09-06 - Chris Jones
+ - Adapt to the split up of RichKernel.
+
 ! 2016-07-27 - Chris Jones
  - Another round of C++11 improvements. 
 

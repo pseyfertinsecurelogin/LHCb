@@ -28,7 +28,7 @@ public:
   typedef std::vector<DeFTModule*> Modules;
 
   /** Constructor */
-  DeFTQuarter( const std::string& name = "");
+  DeFTQuarter( std::string name = "");
 
   /** Retrieves reference to class identifier
    * @return the class identifier for this class

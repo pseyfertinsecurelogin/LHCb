@@ -29,10 +29,6 @@ CompareCaloDigits::CompareCaloDigits( const std::string& name,
   declareProperty( "PackedRawBuffer", m_packedRawBuffer = false );
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-CompareCaloDigits::~CompareCaloDigits() {}
 
 //=============================================================================
 // Main execution
@@ -51,22 +47,22 @@ StatusCode CompareCaloDigits::execute() {
   //== SPD. Digits are yes/no -> tolerance = .5
   LHCb::CaloDigits* spd1 = get<LHCb::CaloDigits>( LHCb::CaloDigitLocation::Spd );
   LHCb::CaloDigits* spd2 = get<LHCb::CaloDigits>( LHCb::CaloDigitLocation::Spd + m_extension );
-  compareContainers( spd1, spd2, 0.5 );
+  compareContainers( *spd1, *spd2, 0.5 );
 
   //== PreShower.
   LHCb::CaloDigits* prs1 = get<LHCb::CaloDigits>( LHCb::CaloDigitLocation::Prs );
   LHCb::CaloDigits* prs2 = get<LHCb::CaloDigits>( LHCb::CaloDigitLocation::Prs + m_extension );
-  compareContainers( prs1, prs2, 0.1 );
+  compareContainers( *prs1, *prs2, 0.1 );
 
   //== Ecal.
   LHCb::CaloDigits* ecal1 = get<LHCb::CaloDigits>( ecalName );
   LHCb::CaloDigits* ecal2 = get<LHCb::CaloDigits>( LHCb::CaloDigitLocation::Ecal + m_extension );
-  compareContainers( ecal1, ecal2, 1. );
+  compareContainers( *ecal1, *ecal2, 1. );
 
   //== Hcal.
   LHCb::CaloDigits* hcal1 = get<LHCb::CaloDigits>( hcalName );
   LHCb::CaloDigits* hcal2 = get<LHCb::CaloDigits>( LHCb::CaloDigitLocation::Hcal + m_extension );
-  compareContainers( hcal1, hcal2, 1. );
+  compareContainers( *hcal1, *hcal2, 1. );
 
   return StatusCode::SUCCESS;
 }
@@ -74,25 +70,24 @@ StatusCode CompareCaloDigits::execute() {
 //=========================================================================
 //  Compare two CaloDigits containers
 //=========================================================================
-void CompareCaloDigits::compareContainers ( LHCb::CaloDigits* dig1,
-                                            LHCb::CaloDigits* dig2,
-                                            double tol) {
-  if ( dig1->size() != dig2->size() ) {
-    error() << "Incoherent size : " << dig1->registry()->identifier()
-            << " : " << dig1->size() << " and "
-            << dig2->registry()->identifier() << " : " << dig2->size()
+void CompareCaloDigits::compareContainers ( const LHCb::CaloDigits& dig1,
+                                            const LHCb::CaloDigits& dig2,
+                                            double tol) const {
+  if ( dig1.size() != dig2.size() ) {
+    error() << "Incoherent size : " << dig1.registry()->identifier()
+            << " : " << dig1.size() << " and "
+            << dig2.registry()->identifier() << " : " << dig2.size()
             << endmsg;
   } else {
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug() << "Comparing " << dig1->name()
-              << " and " << dig2->name()
-              << " both sizes = " << dig2->size() << endmsg;
+      debug() << "Comparing " << dig1.name()
+              << " and " << dig2.name()
+              << " both sizes = " << dig2.size() << endmsg;
   }
 
-  LHCb::CaloDigits::const_iterator it1, it2;
-  it1 = dig1->begin();
-  it2 = dig2->begin();
-  while ( dig1->end() != it1 && dig2->end() != it2 ) {
+  auto it1 = dig1.begin();
+  auto it2 = dig2.begin();
+  while ( dig1.end() != it1 && dig2.end() != it2 ) {
     if (  !((*it1)->cellID() ==  (*it2)->cellID()) ||
           fabs( (*it1)->e() - (*it2)->e() ) > tol ) {
       info() << "Error in sequence/energy (old-new): "

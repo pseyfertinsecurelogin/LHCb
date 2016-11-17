@@ -40,30 +40,25 @@ DeSTSensor::DeSTSensor( const std::string& name ) :
   m_yInverted(false),
   m_deadWidth(0.0),
   m_stripLength(0.0)
-{ 
+{
     // constructer (first strip means we number from 1)
 }
 
-DeSTSensor::~DeSTSensor() {
-  // destructer
-  clear();
-}
-
 void DeSTSensor::clear() {
-  
+
   m_midTraj.reset();
 }
 
 std::ostream& DeSTSensor::printOut( std::ostream& os ) const{
 
-  // stream to cout  
+  // stream to cout
 
    const ILVolume* lv = this->geometry()->lvolume();
    const SolidBox* mainBox = dynamic_cast<const SolidBox*>(lv->solid());
 
    os << " Sensor :  "  << name()
-      << "\n ID " << id() 
-     << "\n pitch " << m_pitch 
+      << "\n ID " << id()
+     << "\n pitch " << m_pitch
      << "\n strip " << m_nStrip
      << "\n active width" << m_uMaxLocal - m_uMinLocal
      << "\n total width " << mainBox->xsize()
@@ -71,7 +66,7 @@ std::ostream& DeSTSensor::printOut( std::ostream& os ) const{
      << "\n total height " << mainBox->ysize()
      << "\n dead width " << m_deadWidth
      << "\n center " << globalCentre()
-     << std::endl; 
+     << std::endl;
   return os;
 }
 
@@ -79,12 +74,12 @@ MsgStream& DeSTSensor::printOut( MsgStream& os ) const{
 
   // stream to Msg service
   os << " Sensor : \n "  << name()
-     << "\n ID " << id() 
-     << " pitch \n " << m_pitch 
+     << "\n ID " << id()
+     << " pitch \n " << m_pitch
      << "n strip \n " << m_nStrip
-     << " u min \n " << m_uMinLocal 
+     << " u min \n " << m_uMinLocal
      << " u max \n " << m_uMaxLocal
-     << " v min \n " << m_vMinLocal 
+     << " v min \n " << m_vMinLocal
      << " v max  \n " << m_vMaxLocal
      << "dead width \n " << m_deadWidth
      << "\n center " << globalCentre()
@@ -99,12 +94,12 @@ StatusCode DeSTSensor::initialize() {
   StatusCode sc = DeSTBaseElement::initialize();
   if (sc.isFailure() ){
     MsgStream msg(msgSvc(), name() );
-    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg; 
+    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
   }
   else {
     // nothing
-  } 
-  
+  }
+
   return StatusCode::SUCCESS;
 }
 
@@ -123,10 +118,10 @@ unsigned int DeSTSensor::localUToStrip(const double u) const{
 
 }
 
-double DeSTSensor::localU(const unsigned int strip, 
+double DeSTSensor::localU(const unsigned int strip,
                           const double offset) const
-{ 
-  // strip to local  
+{
+  // strip to local
 
   double u = -999.;
   double tStrip = strip + offset;
@@ -140,7 +135,7 @@ double DeSTSensor::localU(const unsigned int strip,
 }
 
 bool DeSTSensor::localInActive( const Gaudi::XYZPoint& point,
-                                Gaudi::XYZPoint tol) const 
+                                Gaudi::XYZPoint tol) const
 {
   const double u = point.x();
   const double v = point.y();
@@ -150,14 +145,14 @@ bool DeSTSensor::localInActive( const Gaudi::XYZPoint& point,
 }
 
 
-std::unique_ptr<LHCb::Trajectory> DeSTSensor::trajectory(const unsigned int strip, 
+std::unique_ptr<LHCb::Trajectory> DeSTSensor::trajectory(const unsigned int strip,
                                                        const double offset) const {
-  
+
   const double arclen = (offset + strip - m_firstStrip)*m_pitch ;
-  
-  Gaudi::XYZPoint midPoint = m_midTraj->position( arclen + 
+
+  Gaudi::XYZPoint midPoint = m_midTraj->position( arclen +
                                                     m_midTraj->beginRange());
-  
+
   return std::unique_ptr<LHCb::Trajectory>(new LineTraj(midPoint,m_direction,m_range, true));
 }
 
@@ -166,7 +161,7 @@ void DeSTSensor::determineSense()
 {
   Gaudi::XYZPoint g1 = globalPoint(m_uMinLocal , m_vMinLocal, 0.);
   Gaudi::XYZPoint g2 = globalPoint(m_uMaxLocal , m_vMinLocal, 0.);
-  if (g1.x() > g2.x()) { 
+  if (g1.x() > g2.x()) {
     m_xInverted = true;
   }
 
@@ -194,7 +189,7 @@ StatusCode DeSTSensor::cacheInfo()
   m_direction = g2 - g1;
   m_direction = m_direction.Unit();
 
-  // trajectory of middle  
+  // trajectory of middle
   const Gaudi::XYZPoint g3 = globalPoint(xLower, 0., 0.);
   const Gaudi::XYZPoint g4 = globalPoint(xUpper, 0., 0.);
   m_midTraj.reset( new LineTraj(g3,g4) );
@@ -204,16 +199,16 @@ StatusCode DeSTSensor::cacheInfo()
 
   // plane
   m_plane =  Gaudi::Plane3D(g1,g2,g4);
-  
+
   m_entryPlane = Gaudi::Plane3D(m_plane.Normal(), globalPoint(0.,0.,-0.5*m_thickness));
   m_exitPlane = Gaudi::Plane3D(m_plane.Normal(), globalPoint(0.,0., 0.5*m_thickness));
-  
+
   return StatusCode::SUCCESS;
 }
 
 
 StatusCode DeSTSensor::initGeometryInfo(){
- 
+
   // geometry: uMin, uMax
   const ILVolume* lv = this->geometry()->lvolume();
   const SolidBox* mainBox = dynamic_cast<const SolidBox*>(lv->solid());
@@ -227,7 +222,7 @@ StatusCode DeSTSensor::initGeometryInfo(){
 
   m_stripLength = fabs(m_vMaxLocal - m_vMinLocal);
 
-  // thickness 
+  // thickness
   m_thickness = mainBox->zsize();
 
   // sense in x and y...
@@ -247,12 +242,12 @@ StatusCode DeSTSensor::registerConditionsCallbacks(){
 
   // cache trajectories
   // initialize method
- 
+
   StatusCode sc = registerCondition(this,this->geometry(),&DeSTSensor::cacheInfo, true);
   if (sc.isFailure() ){
     MsgStream msg(msgSvc(), name() );
     msg << MSG::ERROR << "Failed to register geometry conditions" << endmsg;
-    return StatusCode::FAILURE; 
+    return StatusCode::FAILURE;
   }
 
   return StatusCode::SUCCESS;

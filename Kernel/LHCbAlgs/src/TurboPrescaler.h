@@ -1,4 +1,4 @@
-#ifndef TURBOPRESCALER_H 
+#ifndef TURBOPRESCALER_H
 #define TURBOPRESCALER_H 1
 
 // Include files
@@ -22,8 +22,8 @@ class TurboPrescaler final : public GaudiAlgorithm
 
   TurboPrescaler( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual StatusCode initialize();
-  virtual StatusCode execute   ();
+  StatusCode initialize() override;
+  StatusCode execute   () override;
 
  private:
 

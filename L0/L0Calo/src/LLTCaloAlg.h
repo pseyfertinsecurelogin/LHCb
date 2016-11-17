@@ -1,7 +1,7 @@
 #ifndef   LLTCALO_L0CALOALG_H
 #define   LLTCALO_L0CALOALG_H  1
 
-// from Gaudi 
+// from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 // Local classes
@@ -10,7 +10,7 @@
 
 // forward declarations
 class DeCalorimeter ;
-class ICaloTriggerAdcsFromRaw ;
+struct ICaloTriggerAdcsFromRaw ;
 
 /** @class LLTCaloAlg LLTCaloAlg.h
  *
@@ -18,19 +18,19 @@ class ICaloTriggerAdcsFromRaw ;
  *
  *  @author  Patrick Robbe
  *  @date    27 September 2013
- */ 
+ */
 
 class LLTCaloAlg : public GaudiAlgorithm {
-public:  
+public:
   /// standard algorithm Constructor
   LLTCaloAlg( const std::string& name , ISvcLocator* pSvcLocator ) ;
-  
+
   virtual ~LLTCaloAlg() ; ///< Standard destructor
 
-  virtual StatusCode initialize(); ///< Algorithm initialization
-  virtual StatusCode execute   (); ///< Algorithm execution
-  virtual StatusCode finalize  (); ///< Algorithm finalization
-  
+  StatusCode initialize() override; ///< Algorithm initialization
+  StatusCode execute   () override; ///< Algorithm execution
+  StatusCode finalize  () override; ///< Algorithm finalization
+
 protected:
   unsigned int sumEcalData( );  ///< process Ecal FE card.
   unsigned int sumHcalData( );  ///< process Hcal FE card.
@@ -41,13 +41,13 @@ private:
 
   unsigned int m_ECALThreshold ;  ///< Threshold to count multiplicity in ECAL
   unsigned int m_HCALThreshold ;  ///< Threshold to count multiplicity in HCAL
-  
-  // Local variables
-  DeCalorimeter *    m_ecal               ; ///< Pointer to Ecal detector element
-  DeCalorimeter *    m_hcal               ; ///< Pointer to Hcal detector element
 
-  ICaloTriggerAdcsFromRaw * m_adcsEcal ; ///< Tool to decode trigger adcs.
-  ICaloTriggerAdcsFromRaw * m_adcsHcal ; ///< Tool to decode trigger adcs.
+  // Local variables
+  DeCalorimeter *    m_ecal = nullptr            ; ///< Pointer to Ecal detector element
+  DeCalorimeter *    m_hcal = nullptr            ; ///< Pointer to Hcal detector element
+
+  ICaloTriggerAdcsFromRaw * m_adcsEcal = nullptr ; ///< Tool to decode trigger adcs.
+  ICaloTriggerAdcsFromRaw * m_adcsHcal = nullptr ; ///< Tool to decode trigger adcs.
 
   // Trigger cards
   std::vector< LLTTriggerCard > m_ecalFe ; ///< Ecal front-end card vector

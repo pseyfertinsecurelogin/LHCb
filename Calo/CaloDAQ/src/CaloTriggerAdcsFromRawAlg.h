@@ -18,12 +18,8 @@ public:
   /// Standard constructor
   CaloTriggerAdcsFromRawAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~CaloTriggerAdcsFromRawAlg( ); ///< Destructor
-
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-
-protected:
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
   std::string m_outputData;          // Output container

@@ -23,34 +23,31 @@
  *  @author Marco Clemencic
  *  @date   2008-07-24
  */
-class RunChangeHandlerSvc:
-  public extends1<Service, IIncidentListener> {
+class RunChangeHandlerSvc: public extends<Service, IIncidentListener> {
 
 public:
 
   /// Standard constructor
-  RunChangeHandlerSvc(const std::string& name, ISvcLocator* svcloc);
-
-  virtual ~RunChangeHandlerSvc(); ///< Destructor
+  using base_class::base_class;
 
   /// Initialize Service
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalize Service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   // ---- Implement IIncidentListener interface ----
   /// Handle RunChange incident.
-  virtual void handle(const Incident &inc);
+  void handle(const Incident &inc) override;
 
 private:
 
   /// Helper function to retrieve a service and cache the pointer to it.
   template <class I>
   inline SmartIF<I>& getService(const std::string &name, SmartIF<I> &ptr) const {
-    if (UNLIKELY( !ptr.isValid() )) {
+    if (UNLIKELY( !ptr )) {
       ptr = serviceLocator()->service(name, true);
-      if(UNLIKELY( !ptr.isValid() )) {
+      if(UNLIKELY( !ptr )) {
         throw GaudiException("Service ["+name+"] not found", this->name(),
             StatusCode::FAILURE);
       }
@@ -106,14 +103,15 @@ private:
   void update();
 
   typedef GaudiUtils::Map<std::string,std::string> CondDescMap;
-  CondDescMap m_condDesc;
+  Gaudi::Property<CondDescMap> m_condDesc { this, "Conditions", {},
+   "Map defining what to use to replace the location of the source XML files."};
 
   typedef std::list<CondData> Conditions;
   /// List of objects to modify
   Conditions m_conditions;
 
   /// Current run number.
-  unsigned long m_currentRun;
+  unsigned long m_currentRun = 0;
 
   /// EventDataSvc, for ODIN
   mutable SmartIF<IDataProviderSvc> m_evtSvc;

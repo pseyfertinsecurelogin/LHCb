@@ -16,23 +16,17 @@ DECLARE_TOOL_FACTORY( CaloL0DataProvider )
 CaloL0DataProvider::CaloL0DataProvider( const std::string& type,
                                       const std::string& name,
                                       const IInterface* parent )
-  : CaloReadoutTool ( type, name , parent )
-  , m_adcs(), m_tell1s(0) {
+: CaloReadoutTool ( type, name , parent )
+{
 
   declareInterface<ICaloL0DataProvider>(this);
 
   // set default detectorName
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = name.substr( index, 4 );
-  if ( name.substr(index,3) == "Prs" ) m_detectorName = "Prs";
-  if ( name.substr(index,3) == "Spd" ) m_detectorName = "Spd";
+  m_detectorName = ( name.compare(index,3,"Prs") == 0 ? "Prs"
+                   : name.compare(index,3,"Spd") == 0 ? "Spd"
+                   : name.substr( index, 4 ) );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloL0DataProvider::~CaloL0DataProvider() {}
-
-
 //=========================================================================
 //  Initialisation, according to the name -> detector
 //=========================================================================
@@ -80,8 +74,6 @@ StatusCode CaloL0DataProvider::initialize ( ) {
 // Public methods :
 //-------------------------------------------------------
 
-
-
 //-------------------------------------
 void CaloL0DataProvider::clear( ) {
   m_adcs.clear();
@@ -94,14 +86,11 @@ void CaloL0DataProvider::clear( ) {
 void CaloL0DataProvider::cleanData(int feb ) {
   if(feb<0)return;
   CaloVector<LHCb::L0CaloAdc> temp;
-  for(CaloVector<LHCb::L0CaloAdc>::iterator iadc = m_adcs.begin();iadc!=m_adcs.end();++iadc){
-    if( m_calo->cellParam( (*iadc).cellID() ).cardNumber() == feb)continue;
-    temp.addEntry( *iadc, (*iadc).cellID() );
+  for(const auto& adc : m_adcs ) {
+    if( m_calo->cellParam( adc.cellID() ).cardNumber() == feb)continue;
+    temp.addEntry( adc, adc.cellID() );
   }
-  m_adcs.clear();
-  for(CaloVector<LHCb::L0CaloAdc>::iterator iadc = temp.begin();iadc!=temp.end();++iadc){
-    m_adcs.addEntry(*iadc, (*iadc).cellID() );
-  }
+  m_adcs = std::move(temp);
 }
 
 
@@ -109,17 +98,15 @@ void CaloL0DataProvider::cleanData(int feb ) {
 //  Get ADC Container
 //===================
 const CaloVector<LHCb::L0CaloAdc>& CaloL0DataProvider::l0Adcs(int source,bool clean){
-  if(clean)clear();
-  (!m_packed)? decodeTell1(-1) : decodeTell1(source);
+  if (clean) clear();
+  decodeTell1( !m_packed ? -1 : source);
   return m_adcs;
 }
 const CaloVector<LHCb::L0CaloAdc>& CaloL0DataProvider::l0Adcs(std::vector<int> sources,bool clean){
   if( clean)clear();
   if( m_getRaw )getBanks();
   if( !m_packed) return l0Adcs(); // decode the single 'offline' bank
-  for(std::vector<int>::iterator i = sources.begin();i!=sources.end();i++){
-    decodeTell1(*i);
-  }
+  for(auto i : sources) decodeTell1(i);
   return m_adcs;
 }
 
@@ -145,51 +132,37 @@ bool CaloL0DataProvider::decodeCell(LHCb::CaloCellID id ){
     if(card<0)return false;
     tell1 = m_calo->cardToTell1(card); // Tell1 from FE-Card
     if(tell1<0)return false;
-    for(std::vector<int>::iterator it = m_readSources.begin() ; it != m_readSources.end() ; ++it){
-      if( tell1 == *it){
-        read = true;
-        break;
-      }
-    }
+    read = std::any_of( m_readSources.begin(), m_readSources.end(),
+                        [&](int i) { return i == tell1 ; } );
   }else{
-    for(std::vector<int>::iterator it = m_readSources.begin() ; it != m_readSources.end() ; ++it){
-      if( 0 == *it){
-        read = true;
-        break;
-      }
-    }
+    read = std::any_of( m_readSources.begin(), m_readSources.end(),
+                        [](int i) { return i == 0; } );
   }
-  if(read )return true;
-  return decodeTell1( tell1 );
+  return read || decodeTell1( tell1 );
 }
 //-------------------------------------------------------
 bool CaloL0DataProvider::decodeTell1 (int source) {
   if( source < 0)clear(); // re-init for full decoding
   bool decoded = false;
   bool found  = false;
-  if( m_getRaw )getBanks();
-  if(NULL == m_banks) return false;
-  int sourceID  ;
+  if (m_getRaw) getBanks();
+  if (!m_banks) return false;
 
-  for( std::vector<LHCb::RawBank*>::const_iterator itB = m_banks->begin();
-       itB != m_banks->end() ; ++itB ) {
-    sourceID       = (*itB)->sourceID();
+  for( const LHCb::RawBank* bank : *m_banks ) {
+    int sourceID       = bank->sourceID();
     if( source >= 0 && source != sourceID )continue;
     found = true;
 
     if(checkSrc( sourceID ))continue;
 
-    if( "Spd" == m_detectorName || "Prs" == m_detectorName ){
-      decoded = decodePrsTriggerBank( *itB);
-    }else{
-      decoded = decodeBank ( *itB );
-    }
+    decoded = ( ( "Spd" == m_detectorName || "Prs" == m_detectorName ) ? 
+                decodePrsTriggerBank( *bank) : decodeBank ( *bank ) );
     if( !decoded ){
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
         debug() << "Error when decoding bank " << Gaudi::Utils::toString(sourceID)
                 << " -> incomplete data - May be corrupted"<<endmsg;
     }
-    m_tell1s++; // count the number of decoded TELL1
+    ++m_tell1s; // count the number of decoded TELL1
   }
   if( !found ){
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -200,40 +173,35 @@ bool CaloL0DataProvider::decodeTell1 (int source) {
 //==================================
 // Main method to decode the rawBank
 //==================================
-bool CaloL0DataProvider::decodeBank( LHCb::RawBank* bank ){
-  if(NULL == bank)return false;
-  if( LHCb::RawBank::MagicPattern != bank->magic() )return false;// do not decode when MagicPattern is bad
+bool CaloL0DataProvider::decodeBank( const LHCb::RawBank& bank ){
+  if( LHCb::RawBank::MagicPattern != bank.magic() )return false;// do not decode when MagicPattern is bad
   // Get bank info
-  unsigned int* data = bank->data();
-  int size           = bank->size()/4;  // Bank size is in bytes
-  int version        = bank->version();
-  int sourceID       = bank->sourceID();
+  const unsigned int* data       = bank.begin<unsigned int>();
+  const unsigned int* const end  = bank.end<unsigned int>();
+  int version        = bank.version();
+  int sourceID       = bank.sourceID();
   int lastData = 0;
 
-  if(0 == size)m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Empty);
+  if(data == end)m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Empty);
 
   if ( msgLevel( MSG::DEBUG) )
-    debug() << "Decode bank " << bank << " source " << sourceID
-            << " version " << version << " size " << size << endmsg;
+    debug() << "Decode bank " << &bank << " source " << sourceID
+            << " version " << version << " size " << std::distance(data,end) << endmsg;
 
   // -----------------------------------------------
   // skip detector specific header line
-  if(m_extraHeader){
-    ++data ;
-    --size;
-  }
+  if(m_extraHeader) ++data ;
   // -----------------------------------------------
 
 
 
   //=== Offline coding
   if ( 2 > version ) {
-    while ( 0 < size ) {
+    while ( data < end ) {
       int lastID   = (*data) >> 16;
       int adc1     = (*data)>>8 & 0xFF;
       int adc2     = (*data)    & 0xFF;
       ++data;
-      --size;
 
       LHCb::CaloCellID id1( lastID );
       if ( 0 != adc1 )fillL0ADC( id1, adc1, sourceID);
@@ -272,9 +240,8 @@ bool CaloL0DataProvider::decodeBank( LHCb::RawBank* bank ){
 
     int prevCard = -1;
 
-    while ( 0 < size ) {
+    while ( data < end ) {
       int word = *data++;
-      size--;
       lenTrig = word & 0x3F;
       lenAdc  = (word >> 7 ) & 0x3F;
       //lenAdc += 4; //PATCH FOR COMMISSIONING DATA WITH TELL1 F/W v2.3
@@ -306,13 +273,11 @@ bool CaloL0DataProvider::decodeBank( LHCb::RawBank* bank ){
         int offset   = 0;
         if ( msgLevel( MSG::DEBUG) )debug() << format( " pattern %8x lenTrig %2d", pattern, lenTrig ) << endmsg;
         lastData  = *data++;
-        size -= 2;
         for (unsigned int bitNum = 0 ; 32 > bitNum ; bitNum++ ) {
           if ( 0 != (pattern & (1<<bitNum)) ) {
             if ( 31 < offset ) {
               offset   = 0;
               lastData = *data++;
-              size--;
             }
 
             if( offset == 0)
@@ -342,34 +307,32 @@ bool CaloL0DataProvider::decodeBank( LHCb::RawBank* bank ){
         }
       }
       // Skip ADC data
-      int nSkip = (lenAdc+3)/4;  //== length in byte, skip words
-      data     += nSkip;
-      size     -= nSkip;
+      data     += (lenAdc+3)/4;  //== length in byte, skip words
     } // another card
     // Check All cards have been read
-    if(!checkCards(nCards,feCards))m_status.addStatus(sourceID, LHCb::RawBankReadoutStatus::Incomplete);   } // version
+    if(!checkCards(nCards,feCards))m_status.addStatus(sourceID, LHCb::RawBankReadoutStatus::Incomplete);   
+  } // version
   return true;
 }
 
 
 
 //==================================
-bool CaloL0DataProvider::decodePrsTriggerBank( LHCb::RawBank* bank ) {
+bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
 
-  if(NULL == bank)return false;
-  if( LHCb::RawBank::MagicPattern != bank->magic() )return false;// do not decode when MagicPattern is bad
+  if( LHCb::RawBank::MagicPattern != bank.magic() )return false;// do not decode when MagicPattern is bad
 
 
-  unsigned int* data = bank->data();
-  int size           = bank->size()/4;  // size in byte
-  int version        = bank->version();
-  int sourceID       = bank->sourceID();
+  const unsigned int* data = bank.data();
+  int size           = bank.size()/4;  // size in byte
+  int version        = bank.version();
+  int sourceID       = bank.sourceID();
   int lastData       = 0;
 
   m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::OK);
 
   if ( msgLevel( MSG::DEBUG) )
-    debug() << "Decode Prs bank " << bank << " source " << sourceID
+    debug() << "Decode Prs bank " << &bank << " source " << sourceID
             << " version " << version << " size " << size << endmsg;
 
 

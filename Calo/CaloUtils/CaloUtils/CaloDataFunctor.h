@@ -1,5 +1,3 @@
-// $Id: CaloDataFunctor.h,v 1.4 2009-08-05 17:33:00 ibelyaev Exp $
-// ============================================================================
 #ifndef CALOUTILS_CALODATAFUNCTOR_H 
 #define CALOUTILS_CALODATAFUNCTOR_H 1
 // ============================================================================
@@ -46,18 +44,14 @@ namespace LHCb
       const DATA&            data  ) 
     {
       // ======================================================================
-      if ( 0 == digit || 0 == det || data.empty() ) { return false ; } // RETURN 
+      if ( !digit || !det || data.empty() ) { return false ; } // RETURN 
       // get all neighbours 
       const LHCb::CaloCellID::Vector& cells = 
         det->neighborCells ( digit->cellID() ) ;
-      for ( LHCb::CaloCellID::Vector::const_iterator inei = cells.begin() ;
-            cells.end() != inei ; ++inei )
-      {
-        const LHCb::CaloDigit* nei = data(*inei);
-        if ( 0 == nei               ) { continue     ; }  // skip NULLS 
-        if ( nei->e() >= digit->e() ) { return false ; }  // RETURN
-      }
-      return true ;                                      // RETURN 
+      return std::none_of( cells.begin(), cells.end(),
+                           [&,e=digit->e()](const LHCb::CaloCellID& id) 
+                           { const auto* nei = data(id);
+                             return nei && nei->e() >= e; } );
       // ======================================================================
     }
     // =========================================================================
@@ -73,13 +67,13 @@ namespace LHCb
       const DETECTOR*        det   ,
       const DATA*            data  ) 
     {
-      if ( 0 == data ) { return false ; }
-      return isLocalMax ( digit , det , *data ) ;
+      return data && isLocalMax ( digit , det , *data ) ;
     }
     // ========================================================================
     template <class DETECTOR, class DATA>
-    struct IsLocalMax : public std::unary_function<const LHCb::CaloDigit*,bool>
+    class IsLocalMax 
     {
+    public:
       // ======================================================================
       /// constructor from detector and data 
       IsLocalMax ( const DETECTOR* det  , 
@@ -87,16 +81,11 @@ namespace LHCb
         : m_det ( det ) , m_data ( data ) 
       {}
       // ======================================================================
-    public:
       // =====================================================================
       /// the only one essential method
       bool operator() ( const LHCb::CaloDigit* digit ) const 
       { return isLocalMax ( digit , m_det , m_data ) ; }
       // =====================================================================
-    private:
-      // =====================================================================
-      /// the defalt constructor is disabled 
-      IsLocalMax (); // the defalt constructor is disabled 
     private:
       // =====================================================================
       /// the detector 

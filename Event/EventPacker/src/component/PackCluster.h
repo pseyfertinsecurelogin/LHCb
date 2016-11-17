@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef PACKCLUSTER_H
 #define PACKCLUSTER_H 1
 
@@ -14,7 +13,7 @@
  *  @author Olivier Callot
  *  @date   2012-03-05
  */
-class PackCluster : public GaudiAlgorithm 
+class PackCluster : public GaudiAlgorithm
 {
 
 public:
@@ -22,13 +21,11 @@ public:
   /// Standard constructor
   PackCluster( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~PackCluster( ); ///< Destructor
-
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 
-  std::string m_inputName;   ///< Input Track location 
+  std::string m_inputName;   ///< Input Track location
   std::string m_outputName;  ///< Output location for packed clusters
   std::string m_veloClusLoc; ///< Velo clusters location
   std::string m_ttClusLoc;   ///< TT clusters location

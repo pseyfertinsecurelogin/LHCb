@@ -12,12 +12,12 @@ struct Item final {
   // ------ Item Cons & Dest
 
   /// Constructor for an item representing an object in the data store.
-  Item(std::string objPath, ValidDataObject *overrideObj = nullptr):
-    path(std::move(objPath)), override(overrideObj)
+  Item(std::string objPath, std::unique_ptr<ValidDataObject> overrideObj = nullptr):
+    path(std::move(objPath)), override(std::move(overrideObj))
   {}
   /// Constructor for an item representing an object in the data store.
-  Item(std::string objPath, UserPtrType dest, ValidDataObject *overrideObj = nullptr):
-    path(std::move(objPath)), override(overrideObj)
+  Item(std::string objPath, UserPtrType dest, std::unique_ptr<ValidDataObject> overrideObj = nullptr):
+    path(std::move(objPath)), override(std::move(overrideObj))
   {
     if (dest.first) user_dest_ptrs.push_back(dest);
   }
@@ -46,20 +46,17 @@ struct Item final {
   typedef std::vector<Item*> ItemList;
   /// Type used as pointer to an item that is using this one, a \e parent.
   typedef std::pair<Item*,BaseObjectMemberFunction*> ParentItem;
-  /// Type for the list of \e parents.
-  typedef std::vector<ParentItem> ParentList;
   /// Type for the list of user's pointers for the condition.
-  typedef std::list<UserPtrType> UserPtrList;
   /// Used inside Item to identify a registered member function.
   struct MembFunc final {
     /// Simple constructor.
-    MembFunc(BaseObjectMemberFunction *mf_p): mf(mf_p) { items = new ItemList; }
+    MembFunc(BaseObjectMemberFunction *mf_p): mf(mf_p) { }
     /// Simple destructor. The pointers are not deleted because \e owned by the item.
     ~MembFunc() = default;
     /// Pointer to the registered member function.
     BaseObjectMemberFunction *mf;
     /// List of the items used by this member function
-    ItemList                 *items;
+    ItemList  items;
     /// Time points delimiting the interval of validity of the member function
     /// (intersection of the intervals of validity of the used items).
     Gaudi::Time              since{1},until{0};
@@ -120,7 +117,7 @@ struct Item final {
   Gaudi::Time since{1},until{0};
 
   /// Item parents: the (item,member_function) pairs that depend on this item
-  ParentList parents;
+  std::vector<ParentItem> parents;
 
   /// List of all the children: the items on which this item depend (used for fast accessing).
   ItemList children;
@@ -134,7 +131,7 @@ struct Item final {
   /// Void pointer to the represented object, obtained via dynamic_cast (used to unically identify the item)
   void             *ptr = nullptr;
   /// Pointer to the object used to override the object retrieved from the data provider.
-  ValidDataObject  *override = nullptr;
+  std::unique_ptr<ValidDataObject> override = nullptr;
   /// List of the registered member functions.
   MembFuncList     memFuncs;
 
@@ -142,11 +139,11 @@ struct Item final {
   bool updateLock = false;
 
   /// List op setters for user's pointers.
-  UserPtrList user_dest_ptrs;
+  std::list<UserPtrType> user_dest_ptrs;
 
   inline StatusCode setUserPointers(DataObject  *pObj, bool force = false)
   {
-    for (UserPtrList::iterator pi = user_dest_ptrs.begin(); pi != user_dest_ptrs.end(); ++pi){
+    for (auto pi = user_dest_ptrs.begin(); pi != user_dest_ptrs.end(); ++pi){
       if (!force){
         if ( pi->first->isNull() ){
           pi->first->set(pObj);

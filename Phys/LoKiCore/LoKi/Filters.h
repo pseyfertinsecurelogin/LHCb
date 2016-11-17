@@ -84,11 +84,6 @@ namespace LoKi
     template <typename TYPE, typename TYPE2=TYPE>
     class Select final : public LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >
     {
-    protected:
-      // ======================================================================
-      /// the base class
-      typedef LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> > uBase    ;
-      // ======================================================================
     public:
       // ======================================================================
       /// constructor form the basic predicate:
@@ -103,15 +98,12 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Select* clone() const override { return new Select ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      std::vector<TYPE> operator() ( const std::vector<TYPE>& a ) const override
       {
-        typename uBase::result_type out ;
-        out.reserve ( a.size() ) ;
-        LoKi::apply_filter( a.begin() , a.end() ,
-                            m_predicate.func() ,
-                            std::back_inserter( out ) ) ;
-        return out ;
+        std::vector<TYPE> r; r.reserve(a.size());
+        std::copy_if( a.begin(), a.end(), std::back_inserter(r),
+                      [&](const TYPE& arg) { return LoKi::apply(m_predicate.func(),arg); } );
+        return r;
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
@@ -165,11 +157,9 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Yields* clone() const override { return new Yields ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      std::vector<TYPE1> operator()( typename uBase::argument a ) const override
       {
-        typename uBase::result_type out ;
-        out.reserve ( a.size () ) ;
+        std::vector<TYPE1> out ; out.reserve ( a.size () ) ;
         LoKi::apply ( a.begin() , a.end() ,
                       m_functor.func() ,
                       std::back_inserter ( out ) ) ;
@@ -225,8 +215,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Process* clone() const override { return new Process ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      std::vector<TYPE> operator()( typename uBase::argument a ) const override
       {
         LoKi::apply ( a.begin() , a.end() , m_functor.func () ) ;
         return a ;
@@ -276,7 +265,8 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor form the basic predicate:
-      template <typename F, typename = details::require_signature<F,std::vector<TYPE>,TYPE2> >
+      template <typename F,
+                typename = details::require_signature<F,std::vector<TYPE>,TYPE2> >
       Tee ( F&& fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
         , m_functor ( std::forward<F>(fun) )
@@ -284,10 +274,9 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Tee* clone() const override { return new Tee ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      std::vector<TYPE> operator()( typename uBase::argument a ) const override
       {
-        typename uBase::result_type out = a ;
+        std::vector<TYPE> out = a ;
         LoKi::apply ( m_functor.func () , a ) ;
         return out ;
       }
@@ -332,14 +321,13 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Extremum* clone() const override { return new Extremum ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type
-      operator()( typename uBase::argument a ) const override
+      TYPE1 operator()( typename uBase::argument a ) const override
       {
         // return the value
         if ( a.empty() ) { return m_value; } // RETURN
         //
         auto res = LoKi::Algs::extremum( a.begin () , a.end   () ,
-                                         LoKi::Apply<TYPE2,TYPE1>( &this->func() ),
+                                         LoKi::Apply( this->func() ),
                                          typename Traits_::BinaryOp{} ) ;
         Assert ( a.end() != res.first , "Empty input container!" ) ;
         return res.second ;
@@ -474,7 +462,7 @@ namespace LoKi
         //
         auto res = LoKi::Algs::extremum( a.begin () ,
                                          a.end   () ,
-                                         LoKi::Apply<TYPE2,TYPE1>( &m_functor.func () ),
+                                         LoKi::Apply( m_functor.func () ),
                                          typename Traits_::BinaryOp{} ) ;
         Assert ( res.first != a.end(), "Empty input container!" ) ;
         return { *(res.first)  } ;
@@ -576,11 +564,10 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Count* clone() const override { return new Count ( *this ) ; }
       /// MANDATORY: the only one essential method:
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      double operator()( typename uBase::argument a ) const override
       {
         return std::count_if( a.begin(), a.end(),
-                              LoKi::Apply<TYPE1,TYPE2>( &m_cut.func() ) );
+                              LoKi::Apply( m_cut.func() ) );
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
@@ -637,19 +624,17 @@ namespace LoKi
           /// MANDATORY: clone method ("virtual constructor")
           Accumulate* clone() const override { return new Accumulate ( *this ) ; }
           /// MANDATORY: the only one essential method:
-          typename uBase::result_type
-          operator()( typename uBase::argument a ) const override
+          double operator()( typename uBase::argument a ) const override
           {
             typename Traits_::BinaryOperation operation{};
-            const LoKi::Apply<TYPE,double> appFun ( &m_fun.func() ) ;
             //
             return m_cut ?
               LoKi::Algs::accumulate ( a.begin ()   , a.end   ()   ,
-                                       appFun       ,
-                                       LoKi::Apply<TYPE,bool>{ &m_cut->func() },
+                                       LoKi::Apply( m_fun.func() )      ,
+                                       LoKi::Apply( m_cut->func() ),
                                        this->m_init , operation    ) :
               LoKi::Algs::accumulate ( a.begin ()   , a.end   ()   ,
-                                       appFun       ,
+                                       LoKi::Apply( m_fun.func() )      ,
                                        this->m_init , operation    ) ;
           }
           /// OPTIONAL: the basic printout method
@@ -729,7 +714,8 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from functor, index and bad-value
-      template <typename F, typename = ::LoKi::details::require_signature<F,TYPE,TYPE2>>
+      template <typename F,
+                typename = ::LoKi::details::require_signature<F,TYPE,TYPE2>>
       Fetch  ( F&& fun   ,
                const unsigned int               index ,
                const TYPE2                      bad   )
@@ -740,10 +726,8 @@ namespace LoKi
       {}
       /// MANDATORY: clone method ("virtual constructor")
       Fetch* clone() const override { return new Fetch ( *this ) ; }
-      /// MANDATORY:
       /// MANDATORY: the only one essential method:
-      typename LoKi::Functor<std::vector<TYPE>,TYPE2>::result_type operator()
-        ( typename LoKi::Functor<std::vector<TYPE>,TYPE2>::argument a ) const override
+      TYPE2 operator()( const std::vector<TYPE>& a ) const override
       {
         if ( a.size() < m_index + 1 )
         {
@@ -751,7 +735,7 @@ namespace LoKi
           return this->m_bad ;
         }
         // evaluate the functor:
-        return this->m_fun.fun ( a[ this->m_index] ) ;
+        return this->m_fun.fun( a[ this->m_index] ) ;
       }
       // ======================================================================
     private:
@@ -787,11 +771,9 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Has* clone() const override { return new Has ( *this ) ; }
       /// MANDATORY: the only one essential method:
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      bool operator()( typename uBase::argument a ) const override
       {
-        return std::any_of( a.begin(), a.end(),
-                            LoKi::Apply<TYPE1,TYPE2>( &m_cut.func() ) );
+        return std::any_of( a.begin(), a.end(), LoKi::Apply(m_cut.func()) );
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
@@ -823,8 +805,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Empty* clone() const override { return new Empty(*this) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override { return a.empty() ; }
+      bool operator()( typename uBase::argument a ) const override { return a.empty() ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -848,8 +829,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Size* clone() const override { return new Size ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override { return a.size () ; }
+      double operator()( typename uBase::argument a ) const override { return a.size () ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -878,8 +858,7 @@ namespace LoKi
           /// MANDATORY: clone method ("virtual constructor")
           ComposeFunctions* clone() const override { return new ComposeFunctions ( *this ); }
           /// MANDATORY: the only one essential method
-          typename LoKi::Functor<TYPE,std::vector<TYPE2> >::result_type
-          operator()( typename LoKi::Functor<TYPE,std::vector<TYPE2> >::argument a ) const override
+          std::vector<TYPE2> operator()( const TYPE& a ) const override
           { return COMPOSE::invoke( m_two.func1(), m_two.func2(), a ); }
           /// OPTIONAL: nice printout
           std::ostream& fillStream ( std::ostream& s ) const override
@@ -908,8 +887,7 @@ namespace LoKi
           /// MANDATORY: clone method ("virtual constructor")
           ComposeFunctions* clone() const override { return new ComposeFunctions ( *this ) ; }
           /// MANDATORY: the only one essential method
-          typename LoKi::Functor<void,std::vector<TYPE2> >::result_type
-          operator() () const override
+          std::vector<TYPE2> operator() () const override
           { return COMPOSE::invoke( m_two.func1(), m_two.func2() ); }
           /// OPTIONAL: nice printout
           std::ostream& fillStream ( std::ostream& s ) const override
@@ -1072,10 +1050,9 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual consturctor")
       Includes* clone() const override { return new Includes ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor<TYPE,bool>::result_type operator()
-        ( typename LoKi::Functor<TYPE,bool>::argument a ) const override
+      bool operator()( typename LoKi::Functor<TYPE,bool>::argument a ) const override
       {
-        LoKi::Operations::Includes<TYPE2> _includes ;
+        LoKi::Operations::Includes<TYPE2> _includes{} ;
         return _includes( m_two.fun1 ( a ) , m_two.fun2 ( a ) ) ;
       }
       /// OPTIONAL: nice printout
@@ -1105,8 +1082,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual consturctor")
       Includes* clone() const override { return new Includes ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor<void,bool>::result_type
-      operator()() const override
+      bool operator()() const override
       {
         LoKi::Operations::Includes<TYPE2> _includes ;
         return _includes( m_two.fun1 (  ) , m_two.fun2 (  ) ) ;
@@ -1137,9 +1113,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Unique* clone() const override { return new Unique ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::result_type
-      operator()
-        ( typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::argument a ) const override
+      std::vector<TYPE> operator()( const std::vector<TYPE>& a ) const override
       {
         LoKi::Operations::Unique<TYPE> _unique ;
         return _unique ( a ) ;
@@ -1161,12 +1135,6 @@ namespace LoKi
     class Gate final : public LoKi::Functor<std::vector<TYPE>  ,
                                             std::vector<TYPE>  >
     {
-    private:
-      // ======================================================================
-      typedef LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >      Pipe_ ;
-      typedef typename Pipe_::argument                              argument ;
-      typedef typename Pipe_::result_type                        result_type ;
-      // ======================================================================
     public:
       // =====================================================================
       /// the constructor from the stopper
@@ -1179,11 +1147,11 @@ namespace LoKi
       /// MANDATORY: clone method("virtual constructor")
       Gate* clone() const override { return new Gate ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override
+      std::vector<TYPE> operator() ( const std::vector<TYPE>& a ) const override
       {
         // run stopper only for non-empty containers
         // and stop the data flow if needed
-        return ( a.empty() || m_gate() ) ? a : result_type{} ;
+        return ( a.empty() || m_gate() ) ? a : std::vector<TYPE>{} ;
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
@@ -1205,11 +1173,6 @@ namespace LoKi
     template <typename TYPE>
     class Cause final : public LoKi::Functor<void,std::vector<TYPE> >
     {
-    private:
-      // ======================================================================
-      typedef LoKi::Functor<void,std::vector<TYPE> >                 Source_ ;
-      typedef typename Source_::result_type                      result_type ;
-      // ======================================================================
     public:
       // =====================================================================
       /// the constructor from the start & source
@@ -1229,10 +1192,10 @@ namespace LoKi
       /// MANDATORY: clone method("virtual constructor")
       Cause* clone() const override { return new Cause ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( ) const override
+      std::vector<TYPE> operator() ( ) const override
       {
         // invoke the source if enabled, else empty container
-        return m_start() ? m_source() : result_type{};
+        return m_start() ? m_source() : std::vector<TYPE>{};
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream( std::ostream& s ) const override
@@ -1271,13 +1234,12 @@ namespace LoKi
       /// MANDATORY: clone method("virtual constructor")
       FirstN_ * clone() const override { return new FirstN_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::result_type
-      operator() ( typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::argument a ) const override
+      std::vector<TYPE> operator() ( const std::vector<TYPE>& a ) const override
       {
-        //
-        if ( a.size() <= m_N.n() ) { return a ; }                 // RETURN
-        //
-        return { a.begin() , a.begin() + m_N.n() } ;
+        auto n = std::min( static_cast<std::size_t>(m_N.n()), a.size() );
+        std::vector<TYPE> r; r.reserve(n);
+        std::copy_n( a.begin(), n, std::back_inserter(r) );
+        return r;
       }
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream ( std::ostream& s ) const override;
@@ -1306,8 +1268,7 @@ namespace LoKi
       /// MANDATORY: clone method("virtual constructor")
       Reverse_* clone() const override { return new Reverse_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::result_type
-      operator() ( typename LoKi::Functor< std::vector<TYPE>,std::vector<TYPE> >::argument a ) const override
+      std::vector<TYPE> operator() ( const std::vector<TYPE>& a ) const override
       {
         return { a.rbegin(), a.rend() };
       }
@@ -1326,11 +1287,6 @@ namespace LoKi
                bool     ASCENDING = true   >
     class Sort_ final : public LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >
     {
-    protected:
-      // ======================================================================
-      /// the base class
-      typedef LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> > uBase    ;
-      // ======================================================================
     public:
       // ======================================================================
       /** constructor from the function
@@ -1346,23 +1302,21 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Sort_* clone() const override { return new Sort_ ( *this ) ; }
       /// MANDATORY: the only one essential method:
-      typename uBase::result_type operator()
-        ( typename uBase::argument a ) const override
+      std::vector<TYPE> operator() ( const std::vector<TYPE>& a ) const override
       {
         // nothing to select => nothing to sort
         if ( 0 == this->N() ) { return {} ; }
-        //
+
         auto r = a ;
         if ( this->all() || (unsigned) this->N() >= a.size() )
         {
-            // note: partial_sort <->sort, not stable_sort!
-          std::stable_sort ( r.begin () , r.end   () , this->m_cmp ) ;
-          return r ;
+          std::sort ( r.begin () , r.end   () , m_cmp ) ;
+        } else {
+          std::partial_sort( r.begin(),std::next(r.begin(), N()),
+                             r.end() , m_cmp ) ;
+          r.resize(N());
         }
-        //
-        std::partial_sort  ( r.begin(),std::next(r.begin (),this -> N()),
-                             r.end() , this -> m_cmp ) ;
-        return { r.begin () , std::next(r.begin (), this -> N ()) };
+        return r;
       }
       /// OPTIONAL: the basic printout method
       virtual std::ostream& fillStream( std::ostream& s ) const
@@ -1438,11 +1392,11 @@ namespace LoKi
         , m_dump   ( dump   )
       {}
       /// MANDATORY: clone method("virtual constructor")
-      virtual  Dump_* clone() const { return new Dump_ ( *this ) ; }
+      Dump_* clone() const override { return new Dump_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument a ) const ;
+      result_type operator() ( argument a ) const override;
       /// OPTIONAL: the basic printout method
-      virtual std::ostream& fillStream( std::ostream& s ) const
+      std::ostream& fillStream( std::ostream& s ) const override
       { return  s << "dump"; }
       // ======================================================================
     private:
@@ -1463,13 +1417,10 @@ namespace LoKi
     {
       m_stream << m_dump.open  () ;
       //
-      if ( a.size() <= m_dump.nMax() )
-      {
+      if ( a.size() <= m_dump.nMax() ) {
         Gaudi::Utils::toStream
           ( a.begin() , a.end() , m_stream , "[ " , " ]" , " ,\n " ) ;
-      }
-      else
-      {
+      } else {
         Gaudi::Utils::toStream
           ( a.begin() , a.begin() + m_dump.nMax() ,
             m_stream , "[ " , " , ... ]" , " ,\n " ) ;
@@ -1493,11 +1444,6 @@ namespace LoKi
     template <typename TYPE>
     class FakeSource final : public LoKi::Functor<void,std::vector<TYPE> >
     {
-    private:
-      // ======================================================================
-      typedef LoKi::Functor<void,std::vector<TYPE> >                  Source_ ;
-      typedef typename Source_::result_type                       result_type ;
-      // ======================================================================
     public:
       // =====================================================================
       /// the constructor
@@ -1506,9 +1452,9 @@ namespace LoKi
         , m_n     ( n )
       {}
       /// MANDATORY: clone method("virtual constructor")
-      virtual  FakeSource* clone() const { return new FakeSource ( *this ) ; }
+      FakeSource* clone() const override { return new FakeSource ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( /* argument a */ ) const
+      std::vector<TYPE> operator() ( ) const override
       { return std::vector<TYPE> ( m_n )  ; }
       // ======================================================================
     private:

@@ -61,7 +61,7 @@ private:
   IntegerProperty m_sourceID;
 
   /// HltANNSvc for making selection names to int selection ID
-  IANNSvc* m_hltANNSvc = nullptr;
+  SmartIF<IANNSvc> m_hltANNSvc;
 
 };
 

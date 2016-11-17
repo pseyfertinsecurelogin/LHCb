@@ -27,24 +27,24 @@ class XmlCatalogCnv : public XmlGenericCnv {
 
   /// Friend needed for instantiation
   friend class CnvFactory<XmlCatalogCnv>;
-  
+
 public:
- 
+
   /**
    * accessor to the type of elements that this converter converts
    * @return the classID for this type
    */
   static const CLID& classID();
-  
-  
+
+
 protected:
-  
+
   /**
    * Constructor for this converter
    * @param svcs a ISvcLocator interface to find services
    */
   XmlCatalogCnv(ISvcLocator* svcs);
-  
+
   /**
    * Default destructor
    */
@@ -56,8 +56,8 @@ protected:
    * @param refpObject the object to be built
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_createObj (xercesc::DOMElement* element,
-                                  DataObject*& refpObject);
+  StatusCode i_createObj (xercesc::DOMElement* element,
+                          DataObject*& refpObject) override;
 
   using XmlGenericCnv::i_fillObj;
   /** Fills the current object for its child element childElement.
@@ -67,9 +67,9 @@ protected:
    * @param address the address for this object
    * @return status depending on the completion of the call
    */
-  virtual StatusCode i_fillObj (xercesc::DOMElement* childElement,
-                                DataObject* refpObject,
-                                IOpaqueAddress* address);
+  StatusCode i_fillObj (xercesc::DOMElement* childElement,
+                        DataObject* refpObject,
+                        IOpaqueAddress* address) override;
 
   /**
    * This method checks that a converter exists for a given clID.

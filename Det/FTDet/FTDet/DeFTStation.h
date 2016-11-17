@@ -26,7 +26,7 @@ class DeFTStation : public DetectorElement {
 public: 
 
   /// Standard constructor
-  DeFTStation( const std::string& name = "" );
+  DeFTStation( std::string name = "" );
 
   /// Initialization method
   StatusCode initialize() override;

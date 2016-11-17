@@ -1,4 +1,3 @@
-// $Id: ConfigFileAccessSvc.h,v 1.1 2010-05-05 13:20:44 graven Exp $
 #ifndef CONFIGFILEACCESSSVC_H 
 #define CONFIGFILEACCESSSVC_H 1
 
@@ -21,10 +20,9 @@
  *  @author Gerhard Raven
  *  @date   2007-12-14
  */
-class ConfigFileAccessSvc : public extends1<Service, IConfigAccessSvc> {
+class ConfigFileAccessSvc : public extends<Service, IConfigAccessSvc> {
 public:
   ConfigFileAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
-  ~ConfigFileAccessSvc( ) override = default;     ///< Destructor
 
   StatusCode initialize() override;    ///< Service initialization
   StatusCode finalize() override;      ///< Service initialization
@@ -40,17 +38,9 @@ public:
 
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type&) override;
 private:
-  MsgStream& verbose() const { return msg(MSG::VERBOSE); }
-  MsgStream&   debug() const { return msg(MSG::DEBUG);   }
-  MsgStream&    info() const { return msg(MSG::INFO);    }
-  MsgStream& warning() const { return msg(MSG::WARNING); }
-  MsgStream&   error() const { return msg(MSG::ERROR);   }
-  MsgStream&   fatal() const { return msg(MSG::FATAL);   }
-  MsgStream&  always() const { return msg(MSG::ALWAYS);  }
 
   boost::filesystem::path dir() const;
    
-  mutable std::unique_ptr<MsgStream> m_msg;
   mutable std::string                m_dir;   ///< where to read/write configurations from/to?
 
   // TODO: replace fs::path with a concrete config...
@@ -61,6 +51,5 @@ private:
   boost::filesystem::path configTreeNodeAliasPath( const ConfigTreeNodeAlias::alias_type& alias ) const;
   bool create_directories( boost::filesystem::path dir ) const;
 
-  MsgStream& msg(MSG::Level level) const;
 };
 #endif // CONFIGFILEACCESSSVC_H

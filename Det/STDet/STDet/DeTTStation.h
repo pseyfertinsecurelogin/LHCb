@@ -39,9 +39,6 @@ public:
   /** Constructor */
   DeTTStation ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeTTStation();
-
    /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
@@ -52,12 +49,12 @@ public:
   * another reference to class identifier
   * @return the class identifier for this class
   */
-  const CLID& clID () const;
+  const CLID& clID () const override;
 
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**  locate the layer based on a channel id
   @return  layer */

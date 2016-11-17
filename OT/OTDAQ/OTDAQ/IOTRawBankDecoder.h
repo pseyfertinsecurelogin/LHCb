@@ -30,10 +30,8 @@ namespace LHCb {
  *  @date   2007-05-30
  */
 
-class IOTRawBankDecoder : public extend_interfaces<IAlgTool>
+struct IOTRawBankDecoder : extend_interfaces<IAlgTool>
 {
-  
-public: 
   /// Interface ID
   DeclareInterfaceID( IOTRawBankDecoder, 2, 0 );
   
