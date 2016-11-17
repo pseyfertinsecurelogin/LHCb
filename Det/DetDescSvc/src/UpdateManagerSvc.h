@@ -37,10 +37,12 @@ class Condition;
  *  @author Marco Clemencic
  *  @date   2005-03-30
  */
-class UpdateManagerSvc: public extends<Service, IUpdateManagerSvc, IIncidentListener> {
+class UpdateManagerSvc: public extends<Service,
+                                       IUpdateManagerSvc,
+                                       IIncidentListener> {
 public:
-  // inherited constructor
-  using extends::extends;
+  /// Standard constructor
+  using base_class::base_class;
 
   /// Initialize Service
   StatusCode initialize() override;
@@ -170,7 +172,6 @@ private:
   /// If the service is not found it is not fatal, but you cannot use the method newEvent()
   /// without the event time parameter (will always fail).
   SmartIF<IDetDataSvc> m_detDataSvc;
-
 
   /// Pointer to the incident service;
   SmartIF<IIncidentSvc> m_incidentSvc;

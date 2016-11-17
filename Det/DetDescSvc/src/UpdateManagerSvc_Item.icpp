@@ -46,10 +46,7 @@ struct Item final {
   typedef std::vector<Item*> ItemList;
   /// Type used as pointer to an item that is using this one, a \e parent.
   typedef std::pair<Item*,BaseObjectMemberFunction*> ParentItem;
-  /// Type for the list of \e parents.
-  typedef std::vector<ParentItem> ParentList;
   /// Type for the list of user's pointers for the condition.
-  typedef std::list<UserPtrType> UserPtrList;
   /// Used inside Item to identify a registered member function.
   struct MembFunc final {
     /// Simple constructor.
@@ -120,7 +117,7 @@ struct Item final {
   Gaudi::Time since{1},until{0};
 
   /// Item parents: the (item,member_function) pairs that depend on this item
-  ParentList parents;
+  std::vector<ParentItem> parents;
 
   /// List of all the children: the items on which this item depend (used for fast accessing).
   ItemList children;
@@ -142,7 +139,7 @@ struct Item final {
   bool updateLock = false;
 
   /// List op setters for user's pointers.
-  UserPtrList user_dest_ptrs;
+  std::list<UserPtrType> user_dest_ptrs;
 
   inline StatusCode setUserPointers(DataObject  *pObj, bool force = false)
   {
