@@ -12,7 +12,7 @@
 #include <iostream>
 
 
-class STTell1ID{
+class STTell1ID final {
 
 public:
 
@@ -21,7 +21,7 @@ public:
             unsigned int aSubID){
 
     m_id = (aRegion<<regionBits) +
-           (aSubID<<subIDBits);                  
+           (aSubID<<subIDBits);
     m_isUT = false;
   }
 
@@ -30,11 +30,11 @@ public:
             bool         aIsUT){
     m_isUT = aIsUT;
     if ( m_isUT )
-      m_id = (aRegion<<regionBitsUT) + (aSubID<<subIDBits);                  
+      m_id = (aRegion<<regionBitsUT) + (aSubID<<subIDBits);
     else
       m_id = (aRegion<<regionBits) + (aSubID<<subIDBits);
   }
-  
+
   explicit STTell1ID(unsigned int id):
   m_id(id){
     m_isUT = false;
@@ -45,17 +45,11 @@ public:
     m_isUT = isUT;
   }
 
-
-
   /// Default Constructor
-  STTell1ID()
-    : m_id(0), m_isUT(false) {}
+  STTell1ID() = default;
 
-  /// Destructor
-  ~STTell1ID() {}
-
-  /// wafer 
-  unsigned int region() const; 
+  /// wafer
+  unsigned int region() const;
 
   /// strip
   unsigned int subID() const;
@@ -64,11 +58,13 @@ public:
   //  operator int() const;
 
   /// comparison equality
-  bool operator==(const STTell1ID& testID) const;
+  friend bool operator==(const STTell1ID& lhs, const STTell1ID& rhs)
+  { return lhs.id() == rhs.id(); }
 
   /// comparison <
-  bool operator<(const STTell1ID& testID) const;
- 
+  friend bool operator<(const STTell1ID& lhs, const STTell1ID& rhs)
+  { return lhs.id() < rhs.id(); }
+
   /// Retrieve IT Channel ID
   unsigned int id() const;
 
@@ -94,8 +90,8 @@ private:
   enum bits  {subIDBits = 0,  regionBits = 5, regionBitsUT = 6}; /// Enumeration to store the bit packing offsets
   enum masks {subIDMask = 0x0000001f, regionMask = 0x000000e0, subIDMaskUT = 0x0000003f, regionMaskUT = 0x000000c0};
 
-  unsigned int m_id; /// STell1ID
-  bool         m_isUT;
+  unsigned int m_id = 0; /// STell1ID
+  bool         m_isUT = false;
 };
 
 
@@ -108,15 +104,6 @@ inline std::string STTell1ID::toString() const{
   return o.str();
 }
 
-inline bool STTell1ID::operator==(const STTell1ID& testID) const
-{
- return (this->id() == testID.id());
-}
-
-inline bool STTell1ID::operator<(const STTell1ID& testID) const
-{
- return (this->id() < testID.id());
-}
 
 inline unsigned int STTell1ID::id() const
 {
@@ -128,7 +115,7 @@ inline unsigned int STTell1ID::isUT() const
   return m_isUT;
 }
 
-inline unsigned int STTell1ID::region() const 
+inline unsigned int STTell1ID::region() const
 {
   return isUT() ? ((m_id & regionMask) >> regionBits) : ((m_id & regionMaskUT) >> regionBitsUT);
 }

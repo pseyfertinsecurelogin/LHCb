@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <numeric>
 #include "boost/operators.hpp"
 #include "GaudiKernel/System.h"
 #include "GaudiKernel/INamedInterface.h"
@@ -38,18 +39,17 @@ public:
     { }
 
     PropertyConfig(const PropertyConfig& orig, Properties properties)
-        : m_properties( std::move(properties) )
-        , m_type( orig.m_type )
-        , m_name( orig.m_name )
-        , m_kind( orig.m_kind )
+      : m_properties( std::move(properties) )
+      , m_type( orig.m_type )
+      , m_name( orig.m_name )
+      , m_kind( orig.m_kind )
     { }
 
-    bool operator==(const PropertyConfig& rhs) const { 
-        return digest() != digest_type::createInvalid() ? digest() == rhs.digest()
-                             : ( m_type == rhs.m_type 
-                              && m_name == rhs.m_name 
-                              && m_kind == rhs.m_kind 
-                              && m_properties == rhs.m_properties );
+    friend bool operator==(const PropertyConfig& lhs, const PropertyConfig& rhs) {
+      return lhs.m_type == rhs.m_type &&
+             lhs.m_name == rhs.m_name &&
+             lhs.m_kind == rhs.m_kind &&
+             lhs.m_properties == rhs.m_properties;
     }
 
     const std::string& name() const    { return m_name;}
@@ -62,10 +62,16 @@ public:
     PropertyConfig copyAndModify(const std::string& keyAndValue) const;
 
     template <typename T>
-    PropertyConfig copyAndModify(const std::pair<T,T>& keyAndValue) const { return copyAndModify(keyAndValue.first,keyAndValue.second);}
-    
+    PropertyConfig copyAndModify(const std::pair<T,T>& keyAndValue) const
+    { return copyAndModify(keyAndValue.first,keyAndValue.second);}
+
     template <typename T>
-    PropertyConfig copyAndModify(T begin, T end) const { PropertyConfig ret(*this); while (begin!=end) ret=ret.copyAndModify(*begin++); return ret;}
+    PropertyConfig copyAndModify(T begin, T end) const
+    { using arg_t = decltype(*begin);
+      return std::accumulate( begin, end, *this,
+                              [](PropertyConfig pc, arg_t arg)
+                              { return pc.copyAndModify(arg); } );
+    }
 
     std::ostream& print(std::ostream& os) const;
     std::istream& read(std::istream& is);
@@ -77,7 +83,7 @@ private:
     std::string str() const;
 
     Properties   m_properties;
-    std::string  m_type,m_name,m_kind;
+    std::string  m_type, m_name, m_kind;
     mutable digest_type  m_digest = digest_type::createInvalid();
     void updateCache() const;
     void initProperties( const IProperty& obj );

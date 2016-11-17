@@ -2,6 +2,7 @@
 #define OTDET_DEOTMODULE_H 1
 
 #include "boost/container/static_vector.hpp"
+#include <array>
 /// DetDesc
 #include "DetDesc/DetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
@@ -16,11 +17,11 @@
 /// OTDet
 #include "OTDet/RtRelation.h"
 #include "OTDet/WalkRelation.h"
+#include "OTDet/OTWireTraj.h"
 
 namespace LHCb
 {
   class Trajectory;
-  class OTWireTraj ;
 }
 
 class MsgStream;
@@ -89,9 +90,6 @@ public:
 
   /** Constructor */
   DeOTModule(const std::string& name = "");
-
-  /** Destructor */
-  ~DeOTModule() override;
 
   /** Retrieves reference to class identifier
    * @return the class identifier for this class
@@ -387,10 +385,10 @@ public:
 
   /** Set parameters for mono layer alignment **/
   StatusCode setMonoAlignment( const std::vector<double>& pars ) ;
-  
+
   /** Get parameters for mono layer alignment **/
   void getMonoAlignment( std::vector<double>& pars ) const ;
-  
+
   /// Private member methods
 private:
 
@@ -486,7 +484,7 @@ private :
   Gaudi::Plane3D m_entryPlane;                  ///< entry plane
   Gaudi::Plane3D m_exitPlane;                   ///< exit plane
   Gaudi::XYZPoint m_centerModule;               ///< center of module
-  std::unique_ptr<LHCb::OTWireTraj> m_trajFirstWire[2] ; ///< trajectory of first wire in monolayer
+  std::array<std::unique_ptr<LHCb::OTWireTraj>,2> m_trajFirstWire ; ///< trajectory of first wire in monolayer
   double m_dxdy[2] ;                            ///< dx/dy along straw
   double m_dzdy[2] ;                            ///< dx/dz along straw
   double m_dy[2] ;                              ///< difference in y coordinates of straw end points
@@ -504,7 +502,7 @@ private :
   SmartRef< Condition > m_calibration;          ///< Calibration condition
   std::string           m_statusName;           ///< Name of calibration condition
   SmartRef< Condition > m_status;               ///< Status condition
-  unsigned char m_strawStatus[MAXNUMCHAN] ;     ///< vector of channel statuses
+  std::array<unsigned char,MAXNUMCHAN> m_strawStatus ;     ///< vector of channel statuses
 private:
   OTDet::WalkRelation m_walkrelation ;          ///< walk-relation
   std::vector<double> m_monoDx ;

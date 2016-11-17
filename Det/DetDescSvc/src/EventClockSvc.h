@@ -18,7 +18,7 @@ class IToolSvc;
 class EventClockSvc: public extends<Service, IIncidentListener> {
 public:
   /// Standard constructor
-  EventClockSvc(const std::string& name, ISvcLocator* svcloc);
+  using base_class::base_class;
 
   /// Initialize Service
   StatusCode initialize() override;
@@ -30,8 +30,6 @@ public:
   /// Handle BeginEvent incident.
   void handle(const Incident &inc) override;
 
-protected:
-
 private:
 
   /// Allow SvcFactory to instantiate the service.
@@ -40,9 +38,9 @@ private:
   // ---------- data members ----------
   // --- names ---
   /// Name of the Data Provider (set by the option DetDataSvc, by default "DetectorDataSvc").
-  std::string m_detDataSvcName;
+  Gaudi::Property<std::string> m_detDataSvcName{ this, "DetectorDataSvc", "DetectorDataSvc" };
   /// Name of the Event Time Decoder (set by the option EventTimeDecoder, by default "FakeEventTime").
-  std::string m_eventTimeDecoderName;
+  Gaudi::Property<std::string> m_eventTimeDecoderName { this, "EventTimeDecoder",  "FakeEventTime"};
 
   // --- services ---
   /// Pointer to the incident service;
@@ -59,7 +57,7 @@ private:
 
   // --- misc ---
   /// Time to use before reading the first event  (set by the option InitialTime, by default 0).
-  long long m_initialTime;
+  Gaudi::Property<long long> m_initialTime { this, "InitialTime",   0 };
 
 };
 #endif // EVENTCLOCKSVC_H

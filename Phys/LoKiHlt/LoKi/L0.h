@@ -296,7 +296,8 @@ namespace LoKi
     public:
       // ======================================================================
       /// channel decision by channel name
-      ChannelDecision ( const std::string& channel , const int bx = 0 ) ;
+      ChannelDecision ( const std::string& channel , const int bx = 0 )
+          : ChannelDecision( std::vector<std::string>{ channel }, bx )  {}
       /// channel decision by channel names  ("OR")
       ChannelDecision ( const std::vector<std::string>& channels ,
                         const int bx = 0 ) ;
