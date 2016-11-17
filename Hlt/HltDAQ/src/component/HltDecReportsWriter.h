@@ -1,4 +1,3 @@
-// $Id: HltDecReportsWriter.h,v 1.1.1.1 2009-06-24 15:38:52 tskwarni Exp $
 #ifndef HLTDECREPORTSWRITER_H 
 #define HLTDECREPORTSWRITER_H 1
 
@@ -35,8 +34,6 @@ public:
 
   /// Standard constructor
   HltDecReportsWriter( const std::string& name, ISvcLocator* pSvcLocator );
-
-  ~HltDecReportsWriter( ) override = default; ///< Destructor
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution

@@ -7,6 +7,7 @@
 // STD & STL
 // ============================================================================
 #include <utility>
+#include "boost/variant.hpp"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -82,7 +83,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the modulo
-      Evt1 ( const unsigned long long modulo ) ;
+      Evt1 ( unsigned long long modulo ) ;
       /// MANDATORY: clone method ("virtual constructor")
       Evt1* clone() const  override;
       /// MANDATORY: the only essential method
@@ -111,7 +112,7 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the modulo
-      Evt2 ( const unsigned long long modulo ) ;
+      Evt2 ( unsigned long long modulo ) ;
       /// MANDATORY: clone method ("virtual constructor")
       Evt2* clone() const  override;
       /// MANDATORY: the only essential method
@@ -457,13 +458,8 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      Flag           m_flag  ;
-      /// the range: begin
-      event_type     m_begin ;                            // the range: begin
-      /// the range: end
-      event_type     m_end   ;                            // the range: end
-      /// the event list
-      event_list     m_evts  ;                            // the event list
+      using event_range = std::pair<event_type,event_type>;
+      boost::variant< event_range, event_list > m_evts;
       // ======================================================================
     };
     // ========================================================================
@@ -500,10 +496,8 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      Flag                      m_flag  ;
-      run_type                  m_begin ;
-      run_type                  m_end   ;
-      std::vector<unsigned int> m_runs  ;
+      using run_range = std::pair<run_type,run_type>;
+      boost::variant< run_range, run_list > m_runs;
       // ======================================================================
     } ;
     // ========================================================================
@@ -547,13 +541,8 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      Flag                      m_flag      ;
-      /// the range: begin
-      runevt_type               m_begin     ;           //     the range: begin
-      /// the range: end
-      runevt_type               m_end       ;           //       the range: end
-      /// the run-event list
-      runevt_list               m_runevts   ;           //   the run-event list
+      using runevt_range = std::pair<runevt_type,runevt_type>;
+      boost::variant< runevt_range, runevt_list > m_runevts;
       // ======================================================================
     } ;
     // ========================================================================
@@ -569,12 +558,11 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the BX-Id
-      BXId ( const unsigned int bx   ) ;
+      explicit BXId ( unsigned int bx   ) ;
       /// constructor from the run range
-      BXId ( const unsigned int begin ,
-             const unsigned int end   ) ;
+      BXId ( unsigned int begin , unsigned int end   ) ;
       /// constructor from the run list
-      BXId ( const std::vector<unsigned int>& bxs ) ;
+      BXId ( std::vector<unsigned int> bxs ) ;
       /// MANDATORY: clone method ("virtual constructor")
       BXId* clone() const override { return new BXId(*this) ; }
       /// MANDATORY: The only one essential method:
@@ -584,11 +572,9 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      Flag                      m_flag  ;
-      unsigned int              m_bx    ;
-      unsigned int              m_begin ;
-      unsigned int              m_end   ;
-      std::vector<unsigned int> m_bxs   ;
+      using bx_range = std::pair<unsigned int, unsigned int>;
+      using bx_vector = std::vector<unsigned int>;
+      boost::variant<bx_range,bx_vector> m_bxs;
       // ======================================================================
     } ;
     // ========================================================================
@@ -603,10 +589,11 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// constructor from the BX-Id
-      Tck ( const unsigned int bx    ) ;
-      /// constructor from the tck-list
-      Tck ( const std::vector<unsigned int>& bxs ) ;
+      /// constructor from a tck
+      explicit Tck ( unsigned int tck )
+          : Tck( std::vector<unsigned int>{ tck } ) {}
+      /// constructor from the tck list
+      Tck ( std::vector<unsigned int> tcks ) ;
       /// MANDATORY: clone method ("virtual constructor")
       Tck* clone() const override { return new Tck(*this) ; }
       /// MANDATORY: The only one essential method:
@@ -616,9 +603,7 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      Flag                      m_flag  ;
-      unsigned int              m_bx    ;
-      std::vector<unsigned int> m_bxs   ;
+      std::vector<unsigned int> m_tcks   ;
       // ======================================================================
     } ;
     // ========================================================================

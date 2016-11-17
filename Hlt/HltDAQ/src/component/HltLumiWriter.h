@@ -1,4 +1,3 @@
-// $Id: HltLumiWriter.h,v 1.3 2010-04-07 16:59:08 jpalac Exp $
 #ifndef HLTLUMIWRITER_H 
 #define HLTLUMIWRITER_H 1
 
@@ -17,8 +16,6 @@ class HltLumiWriter : public GaudiAlgorithm {
 public: 
   /// Standard constructor
   HltLumiWriter( const std::string& name, ISvcLocator* pSvcLocator );
-
-  ~HltLumiWriter( ) override = default; ///< Destructor
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution

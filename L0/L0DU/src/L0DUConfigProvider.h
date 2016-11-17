@@ -29,9 +29,6 @@ public:
   StatusCode initialize() override;
   StatusCode finalize() override;
 
-
-  virtual ~L0DUConfigProvider( ); ///< Destructor
-
   LHCb::L0DUConfig*  config(long tck = LHCb::L0DUTemplateConfig::TCKValue ,std::string slot="T0") override {
     if (!m_uptodate) { reset();update(); }
     if( slot == "") slot = "T0";
@@ -70,9 +67,6 @@ public:
 
 
 
-protected:
-
-
 private:
   void handler(Property&);
   StatusCode update();
@@ -96,7 +90,7 @@ private:
   bool m_detail;
 
 
-  void printConfig(LHCb::L0DUConfig config,std::string slot);
+  void printConfig(const LHCb::L0DUConfig& config,std::string slot) const;
   void constantData();
   void predefinedData();
   StatusCode createData();

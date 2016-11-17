@@ -23,8 +23,6 @@ public:
                  const std::string& name,
                  const IInterface* parent);
 
-  virtual ~FakeEventTime( ); ///< Destructor
-
   /// Initialization
   StatusCode initialize() override;
 
@@ -42,10 +40,10 @@ private:
 
   /// First event time (when simluating them).
   /// Set by the option StartTime (default = 0)
-  long long m_startTime;
+  Gaudi::Property<long long> m_startTime { this, "StartTime",  0 };
   /// Event time increment (when simluating event times).
   /// Set by the option TimeStep (default = 0, which means no simulation)
-  long long m_timeStep;
+  Gaudi::Property<long long> m_timeStep { this, "TimeStep",  0 };
 
 };
 #endif // FAKEEVENTTIME_H

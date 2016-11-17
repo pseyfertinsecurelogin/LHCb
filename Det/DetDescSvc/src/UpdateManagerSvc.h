@@ -37,10 +37,12 @@ class Condition;
  *  @author Marco Clemencic
  *  @date   2005-03-30
  */
-class UpdateManagerSvc: public extends<Service, IUpdateManagerSvc, IIncidentListener> {
+class UpdateManagerSvc: public extends<Service,
+                                       IUpdateManagerSvc,
+                                       IIncidentListener> {
 public:
-  // inherited constructor
-  using extends::extends;
+  /// Standard constructor
+  using base_class::base_class;
 
   /// Initialize Service
   StatusCode initialize() override;
@@ -171,7 +173,6 @@ private:
   /// without the event time parameter (will always fail).
   SmartIF<IDetDataSvc> m_detDataSvc;
 
-
   /// Pointer to the incident service;
   SmartIF<IIncidentSvc> m_incidentSvc;
 
@@ -183,9 +184,9 @@ private:
   /// List used to record all the objects without parents. (for fast access)
   Item::ItemList                                                            m_head_items;
   /// Lower bound of intersection of head IOVs.
-  Gaudi::Time                                                               m_head_since{1};
+  Gaudi::Time                                                               m_head_since = 1;
   /// Higher bound of intersection of head IOVs.
-  Gaudi::Time                                                               m_head_until{0};
+  Gaudi::Time                                                               m_head_until = 0;
 
   /// Map containing the list of parsed condition definitions
   std::map<std::string,std::unique_ptr<Condition>> m_conditionsOverides;

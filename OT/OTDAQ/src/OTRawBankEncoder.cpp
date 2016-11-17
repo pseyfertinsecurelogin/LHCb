@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 // from std
 #include <algorithm>
 #include <cstring> // for memcpy with gcc 4.3
@@ -29,12 +29,12 @@ namespace OTDAQ {
   /// These simple classes are needed for sorting
   /// the channel ids according to Bank and Gol
 
- template<class T> 
+ template<class T>
  void pipeToBuffer( const T& t, std::vector<unsigned char>& buffer ) {
   size_t curSize    = buffer.size();
-  size_t objectSize = sizeof( t );
+  constexpr size_t objectSize = sizeof( t );
   buffer.resize( objectSize +curSize );
-  std::memcpy( &buffer.front() + curSize, &t, objectSize );
+  std::memcpy( buffer.data() + curSize, &t, objectSize );
  }
 
  struct CompareChannel {
@@ -48,29 +48,29 @@ namespace OTDAQ {
  class OTGol {
    public:
 
-   OTGol( size_t id ):m_id( id ), 
+   OTGol( size_t id ):m_id( id ),
                       m_channels(),
                       m_encode(false) {};
 
    size_t id() const { return m_id; };
 
    void addChannel( const LHCb::OTChannelID& channel ) { m_channels.push_back( channel ); };
-   
+
    size_t nChannels() const { return m_channels.size(); }; ///< == Number of hits in gol
 
    bool encode() const { return m_encode; };
-        
+
    void setEncode( const bool& encode ) { m_encode = encode; } ;
-        
+
    std::vector<LHCb::OTChannelID>::const_iterator firstChannel() const { return m_channels.begin(); };
-   
+
    std::vector<LHCb::OTChannelID>::const_iterator lastChannel() const { return m_channels.end(); };
-     
-   void clear() { 
+
+   void clear() {
      m_channels.clear();
      m_encode = false;
    };
-        
+
    private:
 
    size_t                         m_id;
@@ -82,21 +82,21 @@ namespace OTDAQ {
  /// One bank per X gols
  class OTBank {
    public:
-   
-   OTBank( size_t id, size_t nGols ):m_id( id ), 
-                                     m_nGols( nGols), 
+
+   OTBank( size_t id, size_t nGols ):m_id( id ),
+                                     m_nGols( nGols),
                                      m_gols(),
                                      m_nChannels( 0u ),
                                      m_encode(false),
                                      m_nGolsToEncode( 0u ) {
      m_gols.reserve( m_nGols );
      /// Gols start from 1
-     for (size_t i = 1u, iEnd = m_nGols+1u; i != iEnd; ++i) m_gols.push_back( OTDAQ::OTGol( i ) );
+     for (size_t i = 1u, iEnd = m_nGols+1u; i != iEnd; ++i) m_gols.emplace_back(  i );
    };
 
    size_t id() const { return m_id; };
-   
-   void addChannel( const LHCb::OTChannelID& channel ) { 
+
+   void addChannel( const LHCb::OTChannelID& channel ) {
      /// Gols start from 1
      unsigned int golID = channel.module(); /// == module id
      if ( golID == 0 || golID > m_nGols ) {
@@ -117,16 +117,16 @@ namespace OTDAQ {
    size_t nChannels() const { return m_nChannels; }; ///< == Number of hits in bank
 
    bool encode() const { return m_encode; };
-        
+
    size_t nGols() const { return m_nGols; };
-   
+
    size_t nGolsToEncode() const { return m_nGolsToEncode; };
-   
+
    std::vector<OTGol>::const_iterator begin() const { return m_gols.begin(); };
-   
+
    std::vector<OTGol>::const_iterator end() const { return m_gols.end(); };
 
-   void clear() { 
+   void clear() {
      /// Clear gols
      std::for_each( m_gols.begin(), m_gols.end(), [](OTGol& g) { return g.clear(); } );
      /// reset counters
@@ -134,9 +134,9 @@ namespace OTDAQ {
      m_encode       = false;
      m_nGolsToEncode = 0u;
    };
-      
+
    private:
-   
+
    size_t             m_id;
    size_t             m_nGols;
    std::vector<OTGol> m_gols;
@@ -144,7 +144,7 @@ namespace OTDAQ {
    bool               m_encode;
    size_t             m_nGolsToEncode;
  };
- 
+
 }
 
 // Declaration of the Tool Factory
@@ -153,34 +153,31 @@ DECLARE_TOOL_FACTORY( OTRawBankEncoder )
 OTRawBankEncoder::OTRawBankEncoder( const std::string& type,
                                     const std::string& name,
                                     const IInterface* parent )
-  : GaudiTool ( type, name , parent ), m_channelmaptool(0)
+  : extends( type, name , parent ), m_channelmaptool(0)
 {
   declareInterface<IOTRawBankEncoder>(this);
   declareProperty( "AddEmptyBanks"   , m_addEmptyBanks = true                               );
   declareProperty( "RawEventLocation", m_rawEventLocation = LHCb::RawEventLocation::Default );
 }
 
-OTRawBankEncoder::~OTRawBankEncoder() {}
-
-
 StatusCode OTRawBankEncoder::initialize() {
-  
+
   debug() << "Initialising OTRawbankEncoder" << endmsg;
   StatusCode sc = GaudiTool::initialize();
   if ( sc.isFailure() ) return sc;
 
   // access to the channel map
   m_channelmaptool = tool<IOTChannelMapTool>("OTChannelMapTool");
- 
+
   createBanks();
-  
+
   return sc;
 }
 
 void OTRawBankEncoder::createBanks( ) {
 
   m_banks.reserve( nTell1s::v2008 );
-  /// OK I assume we have one Tell1 per quarter, 48 in total, and 
+  /// OK I assume we have one Tell1 per quarter, 48 in total, and
   /// that the Tell1 id is 0x0TLQ where T={1,2,3}, L={0,1,2,3}, and Q={0,1,2,3}
   for ( unsigned t = 1; t < 4u; ++t ) {
     for ( unsigned l = 0; l < 4u; ++l ) {
@@ -189,23 +186,23 @@ void OTRawBankEncoder::createBanks( ) {
         // First four bits is Q next for four is L and next four is T
         unsigned id = ( t << 8 ) | ( l << 4 ) | ( q << 0 );
         //std::cout << "Created id " << std::dec << id << " in hex " << std::hex << id << std::endl;
-        m_banks.push_back( OTDAQ::OTBank( id, nGols::v2008 ) );
+        m_banks.emplace_back( id, nGols::v2008 );
       }
     }
   }
 }
 
 const OTRawBankEncoder::OTRawBank& OTRawBankEncoder::createRawBank(const OTDAQ::OTBank& bank) const {
-  
+
   const bool isDebug   = msgLevel( MSG::DEBUG );
   const bool isVerbose = msgLevel( MSG::VERBOSE );
 
-  if ( isDebug ) debug() << "Creating OTRawBank for OTBank with id = " << bank.id() 
-                         << " containing " << bank.nGols() << " GOLS of which " << bank.nGolsToEncode() 
+  if ( isDebug ) debug() << "Creating OTRawBank for OTBank with id = " << bank.id()
+                         << " containing " << bank.nGols() << " GOLS of which " << bank.nGolsToEncode()
                          << " are non-empty and contain " << bank.nChannels() << " channels." << endmsg;
 
   if ( isDebug ) debug() << "Start: Size of bank = " << m_rawBank.size() << endmsg;
-  
+
   /// The first 4 bytes contain the OT Specific header.
   /// Don't fill it for simulation.
   std::vector<unsigned char> buffer;
@@ -217,7 +214,7 @@ const OTRawBankEncoder::OTRawBank& OTRawBankEncoder::createRawBank(const OTDAQ::
   /// Loop over ot gols and encode them
   /// Do this only for non-empty gols
   for ( const auto& gol : bank ) {
-    
+
     if ( gol.encode() || m_addEmptyBanks ) {
       if ( !gol.encode() && m_addEmptyBanks ) { //Empty. Always add empty gols in hardware
         /// OK empty gol and we want to "add" it
@@ -233,56 +230,56 @@ const OTRawBankEncoder::OTRawBank& OTRawBankEncoder::createRawBank(const OTDAQ::
         const unsigned layer   = ( ( bankid >> 4 ) & mask );  //( bank.id()%100 )/10;
         const unsigned quarter = ( ( bankid >> 0 ) & mask );  //( bank.id()%10 );
         const unsigned module  = gol.id();
-        if ( isDebug ) debug() << "Creating gol header with id = " << module << " station = " << station 
+        if ( isDebug ) debug() << "Creating gol header with id = " << module << " station = " << station
                                << " layer = " << layer << " quarter = " << quarter << endmsg;
         /// Create gol header.
         pipeToBuffer( OTDAQ::GolHeader( 0u, station, layer, quarter, module, 0u, 0u), buffer );
       } else
         /// Create gol header. ///Non-empty. Can create header from first channel
-        pipeToBuffer( OTDAQ::GolHeader( 0u, 
-                                        gol.firstChannel()->station(), 
+        pipeToBuffer( OTDAQ::GolHeader( 0u,
+                                        gol.firstChannel()->station(),
                                         gol.firstChannel()->layer()  ,
                                         gol.firstChannel()->quarter(),
                                         gol.firstChannel()->module() ,
                                         0u,
                                         gol.nChannels() ), buffer );
-      
+
       /// tmp vector of raw hits
       OTDAQ::RawHitContainer rawHits;
       rawHits.reserve( gol.nChannels() );
-      for ( auto firstChannel = gol.firstChannel(); 
+      for ( auto firstChannel = gol.firstChannel();
             firstChannel != gol.lastChannel(); ++firstChannel ) {
         if ( isVerbose ) verbose() << " Gol ID  = " << gol.id()
                                    << " Station = " << firstChannel->station()
                                    << " Layer   = " << firstChannel->layer()
                                    << " Quarter = " << firstChannel->quarter()
-                                   << " Module  = " << firstChannel->module() 
+                                   << " Module  = " << firstChannel->module()
                                    << " nHits   = " << gol.nChannels() << endmsg;
-        
+
         size_t channel = m_channelmaptool->channel( (*firstChannel) ) ;
         rawHits.emplace_back( 0, channel, firstChannel->tdcTime() );
       }
-      
+
       /// Sort according to channel in Tell1
       std::sort( rawHits.begin(), rawHits.end(), OTDAQ::CompareChannel() );
-      
+
       // add padding i.e. empty hit
       if ( rawHits.size()%2 ) rawHits.emplace_back( );
-      
+
       for ( const auto & i : rawHits ) pipeToBuffer( i, buffer );
-  
+
       m_rawBank.resize( buffer.size()/sizeof( int ) );
       std::memcpy( &( m_rawBank.front() ), &( buffer.front() ), buffer.size() );
-      
+
       if ( isDebug ) debug() << "End: Size of bank = " << m_rawBank.size() << endmsg;
     }
   }
-  
+
   return m_rawBank;
 }
 
 StatusCode OTRawBankEncoder::encodeChannels( const std::vector<LHCb::OTChannelID>& channels ) const {
- 
+
   const bool isDebug   = msgLevel( MSG::DEBUG );
   const bool isVerbose = msgLevel( MSG::VERBOSE );
 
@@ -297,7 +294,7 @@ StatusCode OTRawBankEncoder::encodeChannels( const std::vector<LHCb::OTChannelID
   //     rawEvent = new LHCb::RawEvent();
   //     eventSvc()->registerObject(m_rawEventLocation, rawEvent);
   //   }
-  
+
   /// Sort the channels into banks
   if ( isDebug ) debug() << "Going to encode " << channels.size() << " channels" << endmsg;
   for ( const auto& chan : channels ) {
@@ -311,8 +308,8 @@ StatusCode OTRawBankEncoder::encodeChannels( const std::vector<LHCb::OTChannelID
       m_banks[bankID-1u].addChannel( chan );
       if ( isVerbose ) verbose() << "Added channel " << chan << " to bank with id 0x0" << std::hex << m_banks[bankID-1u].id() << endmsg;
     }
-  } 
-  
+  }
+
   if ( isDebug ) {
     for ( const auto& bank : m_banks ) {
       debug() << "Bank id = " << bank.id() << " number of channels = " << bank.nChannels() << endmsg;
@@ -335,7 +332,7 @@ StatusCode OTRawBankEncoder::encodeChannels( const std::vector<LHCb::OTChannelID
       m_rawBank.clear();
     }
   }
-  
+
   /// clear OTBanks
   std::for_each( m_banks.begin(), m_banks.end(), [](OTDAQ::OTBank& bank) { bank.clear(); } );
 

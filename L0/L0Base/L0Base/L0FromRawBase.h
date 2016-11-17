@@ -1,4 +1,3 @@
-// $Id: L0FromRawBase.h,v 1.2 2009-10-29 10:41:22 robbep Exp $
 #ifndef L0FROMRAWBASE_H 
 #define L0FROMRAWBASE_H 1
 
@@ -18,8 +17,6 @@ class L0FromRawBase : public Decoder::AlgBase {
 public: 
   /// Standard constructor
   L0FromRawBase( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~L0FromRawBase( ); ///< Destructor
 
 protected:
 

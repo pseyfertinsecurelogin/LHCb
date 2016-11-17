@@ -16,22 +16,6 @@ DECLARE_SERVICE_FACTORY( EventClockSvc )
 // 2005-07-08 : Marco CLEMENCIC
 //-----------------------------------------------------------------------------
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-EventClockSvc::EventClockSvc(const std::string& name, ISvcLocator* svcloc):
-  base_class(name,svcloc)
-{
-  // service name
-  declareProperty("DetectorDataSvc",  m_detDataSvcName       = "DetectorDataSvc" );
-
-  // tool name
-  declareProperty("EventTimeDecoder", m_eventTimeDecoderName = "FakeEventTime"   );
-
-  declareProperty("InitialTime",      m_initialTime          = 0                 );
-
-}
-
 //=========================================================================
 //
 //=========================================================================
@@ -57,7 +41,7 @@ StatusCode EventClockSvc::initialize() {
   if (!m_toolSvc) {
     error() << "Unable to get a handle to the tool service" << endmsg;
     return StatusCode::FAILURE;
-  } 
+  }
   if( msgLevel(MSG::DEBUG) )
       debug() << "Got pointer to ToolSvc " << endmsg;
 
@@ -65,7 +49,7 @@ StatusCode EventClockSvc::initialize() {
   if (!sc.isSuccess()) {
     error() << "Unable to get a handle to the IEventTimeDecoder \"" << m_eventTimeDecoderName << '"' << endmsg;
     return sc;
-  } 
+  }
   if( msgLevel(MSG::DEBUG) )
       debug() << "Got pointer to " <<  m_eventTimeDecoderName << endmsg;
 
