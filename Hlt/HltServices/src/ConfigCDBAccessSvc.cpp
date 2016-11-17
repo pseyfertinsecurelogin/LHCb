@@ -348,7 +348,7 @@ class CDB
         buffer.emplace_back( ( t >> 16 ) & 0xff );
         buffer.emplace_back( ( t >> 24 ) & 0xff );
         if ( buffer.size() != 12 ) std::cerr << "ERROR" << std::endl;
-        auto e = std::copy_n( begin( str ), str.size(), back_inserter(buffer) );
+        std::copy_n( begin( str ), str.size(), back_inserter(buffer) );
         if ( buffer.size() != 12 + str.size() ) std::cerr << "ERROR" << std::endl;
         return buffer;
     }
