@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 #include <mutex>
+#include <shared_mutex>
 #include <iterator>
 #include "boost/optional.hpp"
 
@@ -122,19 +123,19 @@ private:
   SmartIF<IAppMgrUI>                   m_appMgrUI;
   SmartIF<IConfigAccessSvc>            m_accessSvc;
 
-  mutable std::mutex                   m_configs_mtx;
+  mutable std::shared_timed_mutex      m_configs_mtx; // C++17: replace with stared_mutex...
   mutable PropertyConfigMap_t          m_configs;  // config ref -> config (leaf)
 
-  mutable std::mutex                   m_nodes_mtx;
+  mutable std::shared_timed_mutex      m_nodes_mtx;
   mutable ConfigTreeNodeMap_t          m_nodes;    // node   ref -> node
 
-  mutable std::mutex                   m_aliases_mtx;
+  mutable std::shared_timed_mutex                   m_aliases_mtx;
   mutable ConfigTreeNodeAliasMap_t     m_aliases;    // node   ref -> node
 
-  mutable std::mutex                   m_leavesInTree_mtx;
+  mutable std::shared_timed_mutex      m_leavesInTree_mtx;
   mutable Tree2LeafMap_t               m_leavesInTree; // top level node ref -> config refs (leaves)
 
-  mutable std::mutex                   m_nodesInTree_mtx;
+  mutable std::shared_timed_mutex      m_nodesInTree_mtx;
   mutable Tree2NodeMap_t               m_nodesInTree; // top level node ref -> node refs
 
   mutable ConfigPushed_t               m_configPushed;
