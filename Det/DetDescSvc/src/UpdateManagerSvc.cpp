@@ -796,6 +796,16 @@ void UpdateManagerSvc::releaseLock(){
 #endif
 }
 
+namespace {
+  /**
+   * UpdateManagerSvc specific implementation of the ICondIOVResource::IOVLock::LockManager.
+   */
+  struct UMSLockManager : public ICondIOVResource::IOVLock::LockManager {
+    UMSLockManager(std::shared_lock<std::shared_timed_mutex>&& lock): m_lock(std::move(lock)) {}
+    std::shared_lock<std::shared_timed_mutex> m_lock;
+  };
+}
+
 ICondIOVResource::IOVLock UpdateManagerSvc::reserve(const Gaudi::Time &eventTime) const {
   std::shared_lock<std::shared_timed_mutex> reading {m_IOVresource};
   if ( eventTime < m_head_since || eventTime >= m_head_until ) {
@@ -808,6 +818,6 @@ ICondIOVResource::IOVLock UpdateManagerSvc::reserve(const Gaudi::Time &eventTime
     }
     reading.lock();
   }
-  return ICondIOVResource::IOVLock{std::move(reading)};
+  return ICondIOVResource::IOVLock{std::make_unique<UMSLockManager>(std::move(reading))};
 }
 //=============================================================================

@@ -25,12 +25,20 @@ public:
    * of the returned instance of this class.
    */
   class IOVLock : public DataObject {
-    using read_lock = std::shared_lock<std::shared_timed_mutex>;
   public:
+    /// Default location of the IOVLock in the TES.
     static constexpr auto DefaultLocation = "IOVLock";
-    IOVLock(read_lock&& lock): m_resourceLock{std::move(lock)} {}
+
+    /// Base class for the implementation specific lock manager.
+    /// An implementation of ICondIOVResource will have to subclass LockManager and
+    /// return an IOVLock wrapping a LockHandle.
+    struct LockManager { virtual ~LockManager() = default; };
+    using LockHandle = std::unique_ptr<LockManager>;
+
+    IOVLock(LockHandle&& lock): m_resourceLock{std::move(lock)} {}
+
   private:
-    read_lock m_resourceLock;
+    LockHandle m_resourceLock;
   };
 
   /// Reserve the IOV valid for the given event time
