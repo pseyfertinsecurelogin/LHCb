@@ -184,9 +184,9 @@ private:
   /// List used to record all the objects without parents. (for fast access)
   Item::ItemList                                                            m_head_items;
   /// Lower bound of intersection of head IOVs.
-  Gaudi::Time                                                               m_head_since{1};
+  Gaudi::Time                                                               m_head_since = 1;
   /// Higher bound of intersection of head IOVs.
-  Gaudi::Time                                                               m_head_until{0};
+  Gaudi::Time                                                               m_head_until = 0;
 
   /// Map containing the list of parsed condition definitions
   std::map<std::string,std::unique_ptr<Condition>> m_conditionsOverides;
