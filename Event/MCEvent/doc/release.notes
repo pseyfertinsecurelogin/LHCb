@@ -6,6 +6,13 @@
 ! 2016-11-17 - Vanya Belyaev
 
  - MCParticle.xml
+   add a regular copoy consructor (no key copying)
+   remove "quasi-copy-constructor"
+   fix clone/cloneWithKey accordingly 
+
+! 2016-11-17 - Vanya Belyaev
+
+ - MCParticle.xml
 
    fix bug: weird "quasi copy-constrcutor" is not copying m_flags field.
    as a result "fromSignal" information is lost for all MC tapes..
