@@ -614,10 +614,10 @@ void UpdateManagerSvc::dump(){
     if (dot_file) {
       // graph node for registered item (first part, label)
       (*dot_file) << "item_" << std::hex << i.get()
-    		  << "[label=\""
-    		  << "(" << std::dec << cnt-1 << ") "
-    		  << std::hex << i.get() << "\\n"
-    		  << "(" << i->ptr << ")";
+                  << "[label=\""
+                  << "(" << std::dec << cnt-1 << ") "
+                  << std::hex << i.get() << "\\n"
+                  << "(" << i->ptr << ")";
     }
 
     if ( msgLevel(MSG::VERBOSE) )
@@ -632,8 +632,8 @@ void UpdateManagerSvc::dump(){
     }/* else {
       INamedInterface *ni = dynamic_cast<INamedInterface>(i->ptr);
       if (ni) {
-    	// It's a component with name, we can put it in the graph label
-    	(*dot_file) << "\\n" << ni->name();
+        // It's a component with name, we can put it in the graph label
+        (*dot_file) << "\\n" << ni->name();
       }
     } */
 
@@ -796,4 +796,18 @@ void UpdateManagerSvc::releaseLock(){
 #endif
 }
 
+ICondIOVResource::IOVLock UpdateManagerSvc::reserve(const Gaudi::Time &eventTime) const {
+  std::shared_lock<std::shared_timed_mutex> reading {m_IOVresource};
+  if ( eventTime < m_head_since || eventTime >= m_head_until ) {
+    reading.unlock();
+    std::lock_guard<std::mutex> need_to_update {m_IOVreserve_mutex};
+    {
+      std::unique_lock<std::shared_timed_mutex> updating {m_IOVresource};
+      detDataSvc()->setEventTime( eventTime );
+      const_cast<UpdateManagerSvc*>(this)->newEvent( eventTime );
+    }
+    reading.lock();
+  }
+  return ICondIOVResource::IOVLock{std::move(reading)};
+}
 //=============================================================================
