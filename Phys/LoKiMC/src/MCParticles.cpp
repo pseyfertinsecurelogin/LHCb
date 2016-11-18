@@ -2525,6 +2525,70 @@ LoKi::MCParticles::FromInteractions::fillStream ( std::ostream& s ) const
 { return s << " MCFROMXS" ; }
 // ============================================================================
 
+
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+LoKi::MCParticles::Signal*
+LoKi::MCParticles::Signal::clone () const
+{ return new LoKi::MCParticles::Signal ( *this ) ; }
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+LoKi::MCParticles::Signal::result_type 
+LoKi::MCParticles::Signal::operator() 
+  ( LoKi::MCParticles::Signal::argument p ) const
+{
+  if ( !p ) 
+  {
+    Error ( "LHCb::MCParticle* points to NULL, return false") ;
+    return false ;
+  }
+  return signal ( p ) ;
+}
+// ============================================================================
+// OPTIONAL: "SHORT" representation
+// ============================================================================
+std::ostream& 
+LoKi::MCParticles::Signal::fillStream ( std::ostream& s ) const 
+{ return s << " MCSIGNAL" ; }
+// ============================================================================
+
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+LoKi::MCParticles::FromSignal*
+LoKi::MCParticles::FromSignal::clone () const
+{ return new LoKi::MCParticles::FromSignal ( *this ) ; }
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+LoKi::MCParticles::FromSignal::result_type 
+LoKi::MCParticles::FromSignal::operator() 
+  ( LoKi::MCParticles::FromSignal::argument p ) const
+{
+  if ( !p ) 
+  {
+    Error ( "LHCb::MCParticle* points to NULL, return false") ;
+    return false ;
+  }
+  const LHCb::MCParticle* mother = p ;
+  while ( nullptr != mother ) 
+  {
+    if ( signal ( mother ) ) { return true ; }
+    mother = mother->mother() ;
+  }
+  return false ;
+}
+// ============================================================================
+// OPTIONAL: "SHORT" representation
+// ============================================================================
+std::ostream& 
+LoKi::MCParticles::FromSignal::fillStream ( std::ostream& s ) const 
+{ return s << " MCFROMSIGNAL" ; }
+// ============================================================================
+
+
 // ============================================================================
 // get unique string for HepMC::Particle 
 // ============================================================================

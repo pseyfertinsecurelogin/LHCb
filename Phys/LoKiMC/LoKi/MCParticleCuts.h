@@ -628,6 +628,23 @@ namespace LoKi
      */
     const auto MCFROMXS = LoKi::MCParticles::FromInteractions{};
     // ========================================================================
+    /** @var MCFROMSIGNAL
+     *  Is this partiicle is a SIGNAL particle?
+     *  @code
+     *  const LHCb::MCParticle* p = ... ;
+     *  const bool signal = MCFROMSIGNAL ( p ) ;
+     *  if ( signal) { ... } 
+     *  @endcode 
+     *  @see LHCb::MCParticle
+     *  @see LHCb::MCParticle::fromSignal
+     *  @see LoKi::MCParticles::FromSignal
+     *  @see LoKi::MCParticles::Signal
+     *  @see LoKi::CUTS::MCSIGNAL
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-11-17
+     */
+    const LoKi::MCParticles::FromSignal                       MCFROMSIGNAL {} ;
+    // ========================================================================
     /** @var MCID
      *  MCParticle ID
      *
@@ -1232,6 +1249,23 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      */
     typedef LoKi::MCParticles::MCReconstructibleAs                    MCRECAS ;
+    // ========================================================================
+    /** @var MCSIGNAL
+     *  Is this partiicle is a SIGNAL particle?
+     *  @code
+     *  const LHCb::MCParticle* p = ... ;
+     *  const bool signal = SIGNAL ( p ) ;
+     *  if ( signal) { ... } 
+     *  @endcode 
+     *  @see LHCb::MCParticle
+     *  @see LHCb::MCParticle::fromSignal
+     *  @see LoKi::MCParticles::Signal
+     *  @see LoKi::MCParticles::FromSignal
+     *  @see LoKi::CUTS::MCFROMSIGNAL
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-11-17
+     */
+    const LoKi::MCParticles::Signal                                MCSIGNAL {} ;
     // ========================================================================
     /** Simple "switch"
      *  The function evaluated the predicate and returns
