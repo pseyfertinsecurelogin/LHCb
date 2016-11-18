@@ -20,6 +20,9 @@
 #include <map>
 #include <exception>
 #include <algorithm>
+#include <shared_mutex>
+
+#include "DetDesc/ICondIOVResource.h"
 
 #ifndef WIN32
 #include <pthread.h>
@@ -37,9 +40,7 @@ class Condition;
  *  @author Marco Clemencic
  *  @date   2005-03-30
  */
-class UpdateManagerSvc: public extends<Service,
-                                       IUpdateManagerSvc,
-                                       IIncidentListener> {
+class UpdateManagerSvc: public extends<Service, IUpdateManagerSvc, IIncidentListener, ICondIOVResource> {
 public:
   /// Standard constructor
   using base_class::base_class;
@@ -90,6 +91,8 @@ public:
   // ---- Implement IIncidentListener interface ----
   /// Handle BeginEvent incident.
   void handle(const Incident &inc) override;
+
+  ICondIOVResource::IOVLock reserve( const Gaudi::Time& eventTime ) const override;
 
 protected:
 
@@ -196,6 +199,8 @@ private:
   pthread_mutex_t m_busy = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
+  mutable std::shared_timed_mutex m_IOVresource;
+  mutable std::mutex m_IOVreserve_mutex;
 };
 
 #include "UpdateManagerSvc.icpp"
