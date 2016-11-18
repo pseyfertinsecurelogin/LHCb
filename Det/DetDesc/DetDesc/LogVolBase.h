@@ -103,7 +103,7 @@ public:
    *  @return pointer to daughter (Physical Volume)
    */
   inline const IPVolume* operator[]
-  ( const std::string&           name  ) const override
+  ( boost::string_ref            name  ) const override
   {
     auto pvi = std::find_if( m_pvolumes.begin  () ,
                              m_pvolumes.end    () ,
@@ -127,7 +127,7 @@ public:
    *  @return pointer to daughter (Physical Volume)
    */
   const IPVolume* pvolume
-  ( const std::string&           name  ) const override
+  ( boost::string_ref            name  ) const override
   {
     auto pvi = std::find_if( m_pvolumes.begin  () ,
                              m_pvolumes.end    () ,
