@@ -597,25 +597,20 @@ namespace LoKi
         const unsigned int                   mask  ) ;
       // =====================================================================
       /// constructor from the lines & mask
-      CountErrorBits
-      ( const std::string& line1 ,
-        const std::string& line2 ,
-        const unsigned int mask  ) ;
+      CountErrorBits ( const std::string& line1 , const std::string& line2 ,
+                       const unsigned int mask  )
+      : CountErrorBits( std::vector<std::string>{ line1, line2 }, mask ) { }
       // =====================================================================
       /// constructor from the lines & mask
-      CountErrorBits
-      ( const std::string& line1 ,
-        const std::string& line2 ,
-        const std::string& line3 ,
-        const unsigned int mask  ) ;
+      CountErrorBits ( const std::string& line1 , const std::string& line2 ,
+                       const std::string& line3 , const unsigned int mask  )
+      : CountErrorBits( std::vector<std::string>{ line1, line2, line3 }, mask ) { }
       // =====================================================================
       /// constructor from the lines & mask
-      CountErrorBits
-      ( const std::string& line1 ,
-        const std::string& line2 ,
-        const std::string& line3 ,
-        const std::string& line4 ,
-        const unsigned int mask  ) ;
+      CountErrorBits ( const std::string& line1 , const std::string& line2 ,
+                       const std::string& line3 , const std::string& line4 ,
+                       const unsigned int mask  )
+      : CountErrorBits( std::vector<std::string>{ line1, line2, line3, line4 }, mask ) { }
       // =====================================================================
       /// MANDATORY: clone method ( "virtual constructor")
       CountErrorBits* clone () const override;
@@ -655,11 +650,6 @@ namespace LoKi
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const  override;
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      CountErrorBitsRegex () ;          // the default constructor is disabled
-      // ======================================================================
     public:
       // ======================================================================
       /// regurn the regular expression
@@ -697,11 +687,6 @@ namespace LoKi
     public:
       // ======================================================================
       operator const LoKi::HLT::RoutingBits&() const { return m_bits ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      HltRoutingBits () ;          // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================

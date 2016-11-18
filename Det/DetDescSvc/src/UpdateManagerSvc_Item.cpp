@@ -193,8 +193,7 @@ BaseObjectMemberFunction * UpdateManagerSvc::Item::addChild(BaseObjectMemberFunc
   if (mfIt == memFuncs.end()) {
     mfIt = memFuncs.insert(mfIt,MembFunc(thisMF));
   } else {
-    if (mfIt->mf != thisMF)
-      delete thisMF;
+    if (mfIt->mf != thisMF) delete thisMF;
   }
   if (std::find(mfIt->items.begin(),mfIt->items.end(),child) == mfIt->items.end()){
     // it is a new child (not in current m.f. list)

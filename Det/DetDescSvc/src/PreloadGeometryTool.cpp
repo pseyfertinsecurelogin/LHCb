@@ -1,6 +1,6 @@
 
 // from Gaudi
-#include "GaudiKernel/IDataManagerSvc.h" 
+#include "GaudiKernel/IDataManagerSvc.h"
 
 // from DetDesc
 #include "DetDesc/DataStoreLoadAgent.h"
@@ -23,7 +23,7 @@ DECLARE_TOOL_FACTORY( PreloadGeometryTool )
 PreloadGeometryTool::PreloadGeometryTool( const std::string& type,
                                           const std::string& name,
                                           const IInterface* parent )
-  : GaudiTool ( type, name , parent )
+  : base_class ( type, name , parent )
 {
   declareInterface<IGenericTool>(this);
 }
@@ -31,19 +31,16 @@ PreloadGeometryTool::PreloadGeometryTool( const std::string& type,
 //=============================================================================
 // Excution method
 //=============================================================================
-void PreloadGeometryTool::execute() 
+void PreloadGeometryTool::execute()
 {
   std::unique_ptr<DataStoreLoadAgent> loadAgent ( new DataStoreLoadAgent() );
-  auto dataMgr = svc<IDataManagerSvc>("DetectorDataSvc", true);
+  auto dataMgr = service<IDataManagerSvc>("DetectorDataSvc", true);
   info() << "Preloading detector geometry..." << endmsg;
   const auto sc = dataMgr->traverseTree(loadAgent.get());
-  if ( sc ) 
-  {
+  if ( sc ) {
     info() << "Loaded " << loadAgent->loadedObjects() << " objects to depth of "
            << loadAgent->maxDepth() << " levels" << endmsg;
-  }
-  else
-  {
+  } else {
     error() << "Problem loading geometry" << endmsg;
   }
 }

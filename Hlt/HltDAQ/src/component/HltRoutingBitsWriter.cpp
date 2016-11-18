@@ -85,12 +85,6 @@ HltRoutingBitsWriter::HltRoutingBitsWriter( const std::string& name,
 }
 
 //=============================================================================
-HltRoutingBitsWriter::~HltRoutingBitsWriter()
-{
-   zeroEvaluators();
-}
-
-//=============================================================================
 void HltRoutingBitsWriter::zeroEvaluators() {
    Deleter deleter;
    for (auto& entry : m_evaluators) {
@@ -106,7 +100,7 @@ void HltRoutingBitsWriter::updateBits( Property& /* p */ )
    /// mark as "to-be-updated"
    m_evals_updated = true;
    // no action if not yet initialized
-   if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return; }
+   if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) return;
    // postpone the action
    if ( !m_preambulo_updated ){ return; }
    // perform the actual immediate decoding
@@ -114,12 +108,6 @@ void HltRoutingBitsWriter::updateBits( Property& /* p */ )
    Assert ( sc.isFailure() , "Error from HltRoutingBitsWriter::decode()" , sc );
 }
 
-//=============================================================================
-// Initialization
-//=============================================================================
-StatusCode HltRoutingBitsWriter::initialize() {
-   return HltEvaluator::initialize(); // must be executed first
-}
 
 //=============================================================================
 // Main execution

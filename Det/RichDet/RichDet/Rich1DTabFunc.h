@@ -60,8 +60,9 @@ namespace Rich
      *
      *  @param interType   GSL Interpolator type.
      */
-    TabulatedFunction1D( const gsl_interp_type * interType = gsl_interp_linear )
-      : m_interType ( interType ) 
+    TabulatedFunction1D( const gsl_interp_type * interType = gsl_interp_linear,
+                         const bool accelerate = false )
+      : m_interType( interType ), m_accelerate( accelerate )
     {
       initInterpolator(); 
     }
@@ -79,8 +80,9 @@ namespace Rich
     TabulatedFunction1D( const double x[],
                          const double y[],
                          const int size,
-                         const gsl_interp_type * interType = gsl_interp_linear )
-      : m_interType ( interType )
+                         const gsl_interp_type * interType = gsl_interp_linear,
+                         const bool accelerate = false )
+      : m_interType( interType ), m_accelerate( accelerate )
     {
       initInterpolator ( x, y, size, interType );
     }
@@ -96,8 +98,9 @@ namespace Rich
      */
     TabulatedFunction1D( const std::vector<double> & x,
                          const std::vector<double> & y,
-                         const gsl_interp_type * interType = gsl_interp_linear )
-      : m_interType ( interType )
+                         const gsl_interp_type * interType = gsl_interp_linear,
+                         const bool accelerate = false )
+      : m_interType( interType ), m_accelerate( accelerate )
     {
       initInterpolator ( x, y, interType );
     }
@@ -108,8 +111,9 @@ namespace Rich
      *  @param interType GSL Interpolator type
      */
     TabulatedFunction1D( const std::map<double,double> & data,
-                         const gsl_interp_type * interType = gsl_interp_linear )
-      : m_interType ( interType )
+                         const gsl_interp_type * interType = gsl_interp_linear,
+                         const bool accelerate = false )
+      : m_interType( interType ), m_accelerate( accelerate )
     {
       initInterpolator( data, interType );
     }
@@ -120,9 +124,9 @@ namespace Rich
      *  @param interType GSL Interpolator type
      */
     TabulatedFunction1D( const std::vector< std::pair<double,double> > & data,
-                         const gsl_interp_type * interType = gsl_interp_linear )
-      :
-      m_interType ( interType )
+                         const gsl_interp_type * interType = gsl_interp_linear,
+                         const bool accelerate = false )
+      : m_interType( interType ), m_accelerate( accelerate )
     {
       initInterpolator( data, interType );
     }
@@ -417,6 +421,9 @@ namespace Rich
     
     /// The interpolator type
     const gsl_interp_type * m_interType = nullptr;
+
+    /// Is acceleration enabled ?
+    bool m_accelerate = false;
     
   };
 

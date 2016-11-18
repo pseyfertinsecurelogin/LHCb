@@ -1,4 +1,4 @@
-#ifndef DETELEMFINDER_H 
+#ifndef DETELEMFINDER_H
 #define DETELEMFINDER_H 1
 
 // Include files
@@ -7,19 +7,17 @@
 #include "DetDesc/IDetElemFinder.h"
 
 /** @class DetElemFinder DetElemFinder.h
- *  
+ *
  *  Implementation of IDetElemFinder.
  *
  *  @author Marco Clemencic
  *  @date   2006-09-01
  */
 class DetElemFinder: public extends<Service,IDetElemFinder> {
-public: 
+public:
 
   /// Standard constructor
-  DetElemFinder( const std::string& name, ISvcLocator* svcloc ); 
-
-  ~DetElemFinder( ) override; ///< Destructor
+  using base_class::base_class;
 
   /** Query interfaces (\see{IInterface})
       @param riid       ID of Interface to be retrieved
@@ -32,7 +30,7 @@ public:
 
   /// Initialize Service
   StatusCode initialize() override;
-  
+
   /// Finalize Service
   StatusCode finalize() override;
 
@@ -49,13 +47,13 @@ private:
                                    const std::string &parent_path = "") const;
 
   /// Name of the Data Provider (set by the option DetDataSvc, by default "DetectorDataSvc").
-  std::string m_detDataSvcName;
+  Gaudi::Property<std::string> m_detDataSvcName { this, "DetectorDataSvc", "DetectorDataSvc" };
 
   /// Path to the detector element to start from. (DetElemFinder.RootElement = "/dd/Structure/LHCb")
-  std::string m_rootElement;
+  Gaudi::Property<std::string> m_rootElement { this, "RootElement", "/dd/Structure/LHCb" };
 
   /// Flag to dump the retrieved map of detector elements. (DetElemFinder.DumpMap = false)
-  bool m_dumpMap;
+  Gaudi::Property<bool> m_dumpMap { this,  "DumpMap",  false };
 
   /// Structure for the mapping
   GaudiUtils::HashMap<std::string, const IDetectorElement *> m_map;

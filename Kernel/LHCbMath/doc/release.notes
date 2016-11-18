@@ -6,6 +6,13 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-11-10 - Vanya Belyaev
+ - ValueWithError.cpp
+   fix Coverity warnings 
+
+! 2016-11-09 - Vanya Belyaev
+ - ValueWithError.cpp: fix a bug in estimation of uncertainty in igamma
+
 ! 2016-09-14 - Vanya Belyaev
  - Fix the issue with Smatrix/Svectors tretament in PyROOT
  - add new qmtest 

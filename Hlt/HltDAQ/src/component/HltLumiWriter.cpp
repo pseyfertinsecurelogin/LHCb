@@ -1,4 +1,3 @@
-// $Id: HltLumiWriter.cpp,v 1.4 2010-04-07 16:59:08 jpalac Exp $
 // Include files
 // local
 #include "Event/HltLumiSummary.h"

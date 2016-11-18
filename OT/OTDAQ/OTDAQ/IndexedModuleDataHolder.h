@@ -8,11 +8,12 @@ namespace OTDAQ
 {
   class IndexedModuleCounter
   {
-  private:
     size_t m_counter ;
   public:
     IndexedModuleCounter() : m_counter(0) {}
-    bool operator==(const IndexedModuleCounter& rhs) const { return m_counter == rhs.m_counter ; }
+    friend bool operator==(const IndexedModuleCounter& lhs,
+                           const IndexedModuleCounter& rhs)
+    { return lhs.m_counter == rhs.m_counter ; }
     IndexedModuleCounter& operator++() { ++m_counter ; return *this ; }
     IndexedModuleCounter& operator--() { --m_counter ; return *this ; }
     size_t station()  const { return OffsetStations  + m_counter / (NumLayers*NumQuadrants*NumModules) ; }
@@ -26,13 +27,13 @@ namespace OTDAQ
   template<class MODULE>
   class IndexedModuleDataConstIterator : public IndexedModuleCounter
   {
-  private:
     const MODULE* m_data ;
   public:
     IndexedModuleDataConstIterator(const MODULE* data) : m_data(data) {}
-    bool operator==(const IndexedModuleDataConstIterator& rhs) const { return IndexedModuleCounter::operator==(rhs) ; }
-    bool operator==(const MODULE* pointer) const { return m_data + counter() == pointer ; }
-    bool operator!=(const MODULE* pointer) const { return m_data + counter() != pointer ; }
+    friend bool operator==(const IndexedModuleDataConstIterator& lhs, const MODULE* pointer)
+    { return lhs.m_data+lhs.counter() == pointer; }
+    friend bool operator!=(const IndexedModuleDataConstIterator& lhs, const MODULE* pointer)
+    { return !(lhs==pointer); }
     const MODULE& operator*() const { return *(m_data + counter()) ; }
     const MODULE* operator->() const { return m_data + counter() ; }
   } ;
@@ -44,13 +45,14 @@ namespace OTDAQ
     MODULE* m_data ;
   public:
     IndexedModuleDataIterator(MODULE* data) : m_data(data) {}
-    bool operator==(const IndexedModuleDataIterator& rhs) const { return IndexedModuleCounter::operator==(rhs) ; }
-    bool operator==(const MODULE* pointer) const { return m_data + counter() == pointer ; }
-    bool operator!=(const MODULE* pointer) const { return m_data + counter() != pointer ; }
+    friend bool operator==(const IndexedModuleDataIterator& lhs, const MODULE* pointer)
+    { return lhs.m_data + lhs.counter() == pointer ; }
+    friend bool operator!=(const IndexedModuleDataIterator& lhs, const MODULE* pointer)
+    { return !(lhs==pointer); }
     MODULE& operator*() const { return *(m_data + counter()) ; }
     MODULE* operator->() const { return m_data + counter() ; }
   } ;
-  
+
   template<class MODULE>
   class IndexedModuleDataHolder
   {
@@ -60,14 +62,14 @@ namespace OTDAQ
     typedef const value_type* const_iterator ;
     typedef IndexedModuleDataConstIterator<value_type> const_mapiterator ;
     typedef IndexedModuleDataIterator<value_type> mapiterator ;
-    
+
     IndexedModuleDataHolder() = default;
-    
-    MODULE& module(const unsigned int station, const unsigned int layer, 
+
+    MODULE& module(const unsigned int station, const unsigned int layer,
                    const unsigned int quarter, const unsigned int module) {
       return m_modules[station-1][layer][quarter][module-1] ;
     }
-    
+
     MODULE& module(const LHCb::OTChannelID& id) {
       return module(id.station(),id.layer(),id.quarter(),id.module()) ;
     }
@@ -76,14 +78,14 @@ namespace OTDAQ
     iterator end() { return &(m_modules[NumStations-1][NumLayers-1][NumQuadrants-1][NumModules]); }
     const_iterator begin() const { return &(m_modules[0][0][0][0]) ; }
     const_iterator end() const { return &(m_modules[NumStations-1][NumLayers-1][NumQuadrants-1][NumModules]); }
-    
-    bool isvalidID(const unsigned int station, const unsigned int layer, 
+
+    bool isvalidID(const unsigned int station, const unsigned int layer,
                    const unsigned int quarter, const unsigned int module) const {
       return station-1<=NumStations-1 && layer<=NumLayers-1  && quarter<=NumQuadrants-1 && module-1<=NumModules-1 ; }
-  private: 
+  private:
     MODULE m_modules[NumStations][NumLayers][NumQuadrants][NumModules];
   } ;
-  
+
 }
 
 #endif

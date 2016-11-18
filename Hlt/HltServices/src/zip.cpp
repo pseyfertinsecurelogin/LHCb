@@ -42,12 +42,6 @@ uint8_t get<uint8_t>( istream& is )
     return x;
 }
 template <>
-uint8_t get<uint8_t>( const unsigned char* buf )
-{
-    return uint8_t( buf[0] );
-}
-
-template <>
 uint16_t get<uint16_t>( istream& is )
 {
     return _get2<uint16_t, uint8_t>( is );
@@ -63,23 +57,8 @@ uint64_t get<uint64_t>( istream& is )
     return _get2<uint64_t, uint32_t>( is );
 }
 
-template <>
-uint16_t get<uint16_t>( const unsigned char* buf )
-{
-    return _get2<uint16_t, uint8_t>( buf );
-}
-template <>
-uint32_t get<uint32_t>( const unsigned char* buf )
-{
-    return _get2<uint32_t, uint16_t>( buf );
-}
 template <typename T>
 void put( ostream& os, T value );
-template <>
-void put<uint8_t>( ostream& os, uint8_t value )
-{
-    os.put( value & 0xff );
-}
 template <>
 void put<uint16_t>( ostream& os, uint16_t value )
 {
