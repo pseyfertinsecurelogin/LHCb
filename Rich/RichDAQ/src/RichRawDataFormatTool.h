@@ -72,9 +72,9 @@ namespace Rich
      */
     //-----------------------------------------------------------------------------
 
-    class RawDataFormatTool : public Rich::ToolBase,
-                              virtual public IRawDataFormatTool,
-                              virtual public IIncidentListener
+    class RawDataFormatTool final : public Rich::ToolBase,
+                                    virtual public IRawDataFormatTool,
+                                    virtual public IIncidentListener
     {
 
     public: // Methods for Gaudi Framework
@@ -85,10 +85,10 @@ namespace Rich
                          const IInterface* parent );
 
       // Initialization of the tool after creation
-      StatusCode initialize() override final;
+      StatusCode initialize() override;
 
       // Finalization of the tool before deletion
-      StatusCode finalize() override final;
+      StatusCode finalize() override;
 
     public:
 
@@ -97,17 +97,17 @@ namespace Rich
        *
        *  @param incident The incident identifier
        */
-      void handle( const Incident& incident ) override final;
+      void handle( const Incident& incident ) override;
 
     public: // methods (and doxygen comments) inherited from interface
 
       /// Creates a bank data from a vector of RichSmartIDs
       void fillRawEvent( const LHCb::RichSmartID::Vector & smartIDs,
-                         const Rich::DAQ::BankVersion version = Rich::DAQ::LHCb2 ) const override final;
+                         const Rich::DAQ::BankVersion version = Rich::DAQ::LHCb2 ) const override;
 
       /// Decode all RICH RawBanks into RichSmartID identifiers
       void decodeToSmartIDs( const RawEventLocations & taeLocations,
-                             Rich::DAQ::L1Map & decodedData ) const override final;
+                             Rich::DAQ::L1Map & decodedData ) const override;
 
     private: // definitions
 

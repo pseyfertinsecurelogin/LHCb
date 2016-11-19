@@ -60,7 +60,7 @@ namespace LHCb
    */
   //-----------------------------------------------------------------------------
 
-  class RichTrackSegment : public LHCb::MemPoolAlloc<LHCb::RichTrackSegment>
+  class RichTrackSegment final : public LHCb::MemPoolAlloc<LHCb::RichTrackSegment>
   {
 
   public:
@@ -102,7 +102,7 @@ namespace LHCb
      *  @date   2004-05-31
      */
     //-----------------------------------------------------------------------------
-    class StateErrors
+    class StateErrors final
     {
 
     public:
