@@ -6,7 +6,6 @@
 #include <vector>
 #include <map>
 #include <memory>
-
 #include <sstream>
 
 #include "DetDesc/BasicParam.h"

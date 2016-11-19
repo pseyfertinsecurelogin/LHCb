@@ -27,10 +27,7 @@ class PVolumeException;
 
 class PVolume: public IPVolume
 {
-  /// friend class
-  friend class LogVolBase;
-
-protected:
+public:
 
   /** constructor
    *  @param PhysVol_name name of phys volume
@@ -59,7 +56,6 @@ protected:
   /// destructor
   ~PVolume() override;
 
-public:
 
 
   /** retrieve name of the physical volume
@@ -251,14 +247,10 @@ protected:
    */
   IDataProviderSvc* dataSvc() const;
 
-private:
-
-  /// no default constructor
-  PVolume()                           ;
   /// no public copy constructor
-  PVolume           ( const PVolume& );
+  PVolume           ( const PVolume& ) = delete;
   /// no public assignment
-  PVolume& operator=( const PVolume& );
+  PVolume& operator=( const PVolume& ) = delete;
 
 private:
 

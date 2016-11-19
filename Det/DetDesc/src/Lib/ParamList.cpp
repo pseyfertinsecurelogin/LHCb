@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 #include <algorithm>
 
 // local
@@ -16,16 +16,11 @@
 ParamList::ParamList(const  ParamList&pl) : base_type() { *this = pl; }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-ParamList::~ParamList() { deleteItems(); }
-
-//=============================================================================
 // Assignement
 //=============================================================================
 ParamList& ParamList::operator= (const ParamList &pl){
   clear();
-  for (const auto&  i : pl ) {
+  for ( const auto& i : pl ) {
   	insert(std::make_pair(i.first,i.second->new_copy().release()));
   }
   return *this;
@@ -55,7 +50,7 @@ void ParamList::clear(){
 // Delete the object referenced by the stored pointers
 //=============================================================================
 void ParamList::deleteItems(){
-  std::for_each(begin(),end(),[](const std::pair<const std::string, BasicParam*>& i) 
+  std::for_each(begin(),end(),[](const std::pair<const std::string, BasicParam*>& i)
                 { delete i.second; } );
 }
 
@@ -64,10 +59,9 @@ void ParamList::deleteItems(){
 //=============================================================================
 std::vector<std::string> ParamList::getKeys() const {
   std::vector<std::string> v; v.reserve(size());
-  std::transform(begin(),end(),std::back_inserter(v),
-                 [](const std::pair<const std::string,BasicParam*>& i) {
-        return i.first;
-  });
+  std::transform( begin(), end(), std::back_inserter(v),
+                  []( const std::pair<const std::string,BasicParam*>& i )
+                  { return i.first; });
   return v;
 }
 

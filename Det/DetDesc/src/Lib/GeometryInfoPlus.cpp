@@ -391,8 +391,8 @@ StatusCode GeometryInfoPlus::updateChildren()
 void GeometryInfoPlus::clearMatrices()
 {
 
-  if (!m_pvMatrices.empty()) m_pvMatrices.clear();
-  if (!m_deltaMatrices.empty()) m_deltaMatrices.clear();
+  m_pvMatrices.clear();
+  m_deltaMatrices.clear();
 
   m_matrix           = boost::none;
   m_idealMatrix      = boost::none;
@@ -914,7 +914,7 @@ std::ostream& GeometryInfoPlus::printOut( std::ostream& os ) const
     os << " !!! Unable to print GeometryInfo out !!!";
   }
   //
-  return os << std::endl;
+  return os << '\n';
 }
 //=============================================================================
 MsgStream& GeometryInfoPlus::printOut( MsgStream& os ) const
@@ -989,9 +989,6 @@ StatusCode GeometryInfoPlus::queryInterface( const InterfaceID& ID,
 //=============================================================================
 GeometryInfoPlus::~GeometryInfoPlus()
 {
-  clearMatrices();
-  m_gi_childrensNames.clear();
-  m_gi_childrens.clear();
   updMgrSvc()->unregister(this);
 }
 //=============================================================================
