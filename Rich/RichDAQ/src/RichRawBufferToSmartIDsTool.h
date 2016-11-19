@@ -50,9 +50,9 @@ namespace Rich
      */
     //-----------------------------------------------------------------------------
 
-    class RawBufferToSmartIDsTool : public ToolBase,
-                                    virtual public IRawBufferToSmartIDsTool,
-                                    virtual public IIncidentListener
+    class RawBufferToSmartIDsTool final : public ToolBase,
+                                          virtual public IRawBufferToSmartIDsTool,
+                                          virtual public IIncidentListener
     {
 
     public: // Methods for Gaudi Framework
@@ -63,14 +63,14 @@ namespace Rich
                                const IInterface* parent );
 
       // Initialization of the tool after creation
-      StatusCode initialize() override final;
+      StatusCode initialize() override;
 
       /** Implement the handle method for the Incident service.
        *  This is used to inform the tool of software incidents.
        *
        *  @param incident The incident identifier
        */
-      void handle( const Incident& incident ) override final;
+      void handle( const Incident& incident ) override;
 
     public: // methods (and doxygen comments) inherited from interface
 
@@ -79,22 +79,22 @@ namespace Rich
 
       // Access the vector of RichSmartIDs for the given HPD identifier
       const LHCb::RichSmartID::Vector& richSmartIDs( const LHCb::RichSmartID pdID,
-                                                     const bool createIfMissing = true ) const override final;
+                                                     const bool createIfMissing = true ) const override;
 
       // Access all RichSmartIDs for the current Event
-      const Rich::DAQ::L1Map & allRichSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs ) const override final;
+      const Rich::DAQ::L1Map & allRichSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs ) const override;
 
       // Access the vector of RichSmartIDs for the given HPD identifier
       const LHCb::RichSmartID::Vector& richSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs,
                                                      const LHCb::RichSmartID pdID,
-                                                     const bool createIfMissing = true ) const override final;
+                                                     const bool createIfMissing = true ) const override;
 
       // Access the number of RICH hits in the given detector, in the current event,
-      unsigned int nTotalHits( const Rich::DetectorType rich = Rich::InvalidDetector ) const override final;
+      unsigned int nTotalHits( const Rich::DetectorType rich = Rich::InvalidDetector ) const override;
 
       // Access the number of RICH hits in the given detector, the current event,
       unsigned int nTotalHits( const RawEventLocations& taeLocs,
-                               const Rich::DetectorType rich = Rich::InvalidDetector ) const override final;
+                               const Rich::DetectorType rich = Rich::InvalidDetector ) const override;
 
     private: // private methods
 
