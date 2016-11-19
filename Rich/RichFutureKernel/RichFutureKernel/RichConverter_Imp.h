@@ -52,10 +52,10 @@ namespace Rich
       }
 
       /// standard initialization method
-      virtual StatusCode initialize();
+      virtual StatusCode initialize() override;
 
       /// standard finalization  method
-      virtual StatusCode finalize  ();
+      virtual StatusCode finalize  () override;
 
     public:
 
