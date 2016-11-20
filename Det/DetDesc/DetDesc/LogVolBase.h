@@ -61,7 +61,7 @@ public:
   {
     static const std::string s_empty = "";
     IRegistry* pReg = registry();
-    return pReg ? pReg->identifier() : s_empty;;
+    return pReg ? pReg->identifier() : s_empty;
   }
 
   /** vector of physical volumes
