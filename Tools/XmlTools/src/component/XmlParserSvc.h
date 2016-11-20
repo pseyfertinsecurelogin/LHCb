@@ -3,11 +3,12 @@
 
 // Include files
 #include <map>
+#include <mutex>
 
 #include <xercesc/sax/ErrorHandler.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
 
-#include <GaudiKernel/Service.h> 
+#include <GaudiKernel/Service.h>
 #include "GaudiKernel/MsgStream.h"
 
 #include "XmlTools/IXmlParserSvc.h"
@@ -31,7 +32,7 @@ template <class TYPE> class SvcFactory;
  */
 class XmlParserSvc : public extends<Service, IXmlParserSvc>,
                      virtual public xercesc::ErrorHandler {
-  
+
 public:
 
   /**
@@ -83,7 +84,7 @@ public:
   //////////////////////////////////////////////////////
 
   /**
-   * Receives notification of a warning. 
+   * Receives notification of a warning.
    * The parser will use this method to report conditions that are not errors
    * or fatal errors as defined by the XML 1.0 recommendation. The default
    * behaviour is to display the warning via the Message service.
@@ -93,7 +94,7 @@ public:
   void warning( const xercesc::SAXParseException& exception ) override;
 
   /**
-   * Receives notification of a recoverable error. 
+   * Receives notification of a recoverable error.
    * This corresponds to the definition of "error" in section 1.2 of the W3C
    * XML 1.0 Recommendation. For example, a validating parser would use
    * this callback to report the violation of a validity constraint. The default
@@ -104,18 +105,18 @@ public:
   void error( const xercesc::SAXParseException& exception ) override;
 
   /**
-   * Receives notification of a non-recoverable error. 
+   * Receives notification of a non-recoverable error.
    * This corresponds to the definition of "fatal error" in section 1.2 of the
    * W3C XML 1.0 Recommendation. For example, a parser would use this callback
    * to report the violation of a well-formedness constraint. The default
    * behaviour is to display the error via the Message service.
    * @param exception the error information encapsulated in a SAX parse
-   * exception. 
+   * exception.
    */
   void fatalError( const xercesc::SAXParseException& exception ) override;
 
   /**
-   * Resets the Error handler object on its reuse. 
+   * Resets the Error handler object on its reuse.
    * This method helps in reseting the Error handler object implementational
    * defaults each time the Error handler is begun.
    * The default implementation does nothing
@@ -124,7 +125,7 @@ public:
 
 
 private:
-  
+
   /**
    * Caches the new document, parsed from the given file
    * Since this adds an item into the cache, this may remove another
@@ -148,6 +149,16 @@ private:
 private:
 
   /// the actual DOM parser
+  //
+  // from https://xerces.apache.org/xerces-c/faq-parse-3.html#faq-6:
+  // Within an address space, an instance of the parser may be used without
+  // restriction from a single thread, or an instance of the parser can be
+  // accessed from multiple threads, provided the application guarantees that
+  // only one thread has entered a method of the parser at any one time.
+  //
+  // i.e. we need to protect the parser with a mutex...
+  //
+  std::mutex m_parser_mtx;
   std::unique_ptr<xercesc::XercesDOMParser> m_parser;
 
   /**
@@ -189,7 +200,7 @@ private:
    * not taken into account
    */
   unsigned int m_cacheAge = 0;
-  
+
   /// The maximum number of cached documents
   unsigned int m_maxDocNbInCache;
 
@@ -198,16 +209,16 @@ private:
 
   /// Pointer to the IXmlEntityResolver tool interface (for bookkeeping).
   IAlgTool *m_resolverTool = nullptr;
-  
+
   /// Pointer to the IXmlEntityResolver.
   SmartIF<IXmlEntityResolver> m_resolver;
 
   /// Name of the service which will provide the event time (option "DetectorDataSvc", default = "DetectorDataSvc").
   std::string m_detDataSvcName;
-  
+
   /// Pointer to the detector data service
   SmartIF<IDetDataSvc> m_detDataSvc;
-  
+
   /// Pointer to the ToolSvc.
   SmartIF<IToolSvc> m_toolSvc;
 

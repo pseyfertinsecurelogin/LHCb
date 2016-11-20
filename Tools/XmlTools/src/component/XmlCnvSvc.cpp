@@ -197,7 +197,7 @@ IOVDOMDocument* XmlCnvSvc::parseString (std::string source) {
   }
 
   // Then feed the string to the XML parser
-  if (m_parserSvc) return m_parserSvc->parseString (source);
+  if (m_parserSvc) return m_parserSvc->parseString (std::move(source));
   if( msgLevel(MSG::DEBUG) )  debug() << "null result returned in parseString" << endmsg;
   return nullptr;
 }
@@ -446,7 +446,7 @@ std::string::size_type XmlCnvSvc::skipExpr (std::string s,
 // -----------------------------------------------------------------------
 // sumHasUnit
 // -----------------------------------------------------------------------
-bool XmlCnvSvc::sumHasUnit (std::string s,
+bool XmlCnvSvc::sumHasUnit (const std::string& s,
                  std::string::size_type baseIndex,
                  std::string::size_type lastIndex) {
   bool result = true;
@@ -468,7 +468,7 @@ bool XmlCnvSvc::sumHasUnit (std::string s,
 // -----------------------------------------------------------------------
 // productHasUnit
 // -----------------------------------------------------------------------
-bool XmlCnvSvc::productHasUnit (std::string s,
+bool XmlCnvSvc::productHasUnit (const std::string& s,
                      std::string::size_type baseIndex,
                      std::string::size_type lastIndex) {
   bool result = false;
@@ -490,7 +490,7 @@ bool XmlCnvSvc::productHasUnit (std::string s,
 // -----------------------------------------------------------------------
 // exprHasUnit
 // -----------------------------------------------------------------------
-bool XmlCnvSvc::exprHasUnit (std::string s,
+bool XmlCnvSvc::exprHasUnit (const std::string& s,
                              std::string::size_type baseIndex,
                              std::string::size_type lastIndex) {
   // deal with the unary minus
