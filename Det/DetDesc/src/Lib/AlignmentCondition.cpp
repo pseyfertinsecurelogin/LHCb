@@ -27,19 +27,19 @@ namespace {
 //=============================================================================
 // Default constructor
 //=============================================================================
-AlignmentCondition::AlignmentCondition(  ) : 
+AlignmentCondition::AlignmentCondition(  ) :
   m_services(DetDesc::services())
 {
 }
 //=============================================================================
 AlignmentCondition::AlignmentCondition(const std::vector<double>& translation,
                                        const std::vector<double>& rotation,
-                                       const std::vector<double>& pivot) : 
+                                       const std::vector<double>& pivot) :
   m_services(DetDesc::services())
 {
   MsgStream log(msgSvc(), "AlignmentCondition");
   if( log.level() <= MSG::VERBOSE )
-    log << MSG::VERBOSE << "Constructing AlignmentCondition from transformation parameters. classID " 
+    log << MSG::VERBOSE << "Constructing AlignmentCondition from transformation parameters. classID "
         << classID()
         << endmsg;
 
@@ -56,17 +56,17 @@ StatusCode AlignmentCondition::initialize() {
   return makeMatrices();
 }
 //=============================================================================
-void AlignmentCondition::offNominalMatrix(const Gaudi::Transform3D& newMatrix) 
+void AlignmentCondition::offNominalMatrix(const Gaudi::Transform3D& newMatrix)
 {
   m_matrix=newMatrix.Inverse();
-  m_matrixInv=newMatrix;  
+  m_matrixInv=newMatrix;
   updateParams(m_matrixInv);
 }
 //=============================================================================
-StatusCode 
+StatusCode
 AlignmentCondition::setOffNominalTransformation( const std::vector<double>& translation,
                                                  const std::vector<double>& rotation,
-                                                 const std::vector<double>& pivot) 
+                                                 const std::vector<double>& pivot)
 {
   loadParams(translation, rotation, pivot);
   return makeMatrices();
@@ -74,23 +74,19 @@ AlignmentCondition::setOffNominalTransformation( const std::vector<double>& tran
 //=============================================================================
 void AlignmentCondition::setPivotPoint( const Gaudi::XYZPoint& point )
 {
-  std::vector<double> pivotvec(3) ;
-  pivotvec[0] = point.x() ;
-  pivotvec[1] = point.y() ;
-  pivotvec[2] = point.z() ;
-  this->addParam(s_pivotString, pivotvec );
+  this->addParam<std::vector<double>>(s_pivotString, { point.x(), point.y(), point.z() } );
   updateParams(m_matrixInv) ;
 }
 //=============================================================================
-StatusCode AlignmentCondition::makeMatrices() 
+StatusCode AlignmentCondition::makeMatrices()
 {
   MsgStream log(msgSvc(), "AlignmentCondition");
   if( log.level() <= MSG::VERBOSE )
     log << MSG::VERBOSE << " Making transformation matrix for \'" << name() << "\'" << endmsg;
-  
+
   std::vector<double> translations = paramAsDoubleVect (s_translationString);
   std::vector<double> rotations    = paramAsDoubleVect (s_rotationString);
-  std::vector<double> pivot = (exists(s_pivotString) ) ? 
+  std::vector<double> pivot = (exists(s_pivotString) ) ?
     paramAsDoubleVect(s_pivotString) : std::vector<double>(3, 0);
 
   if (translations.size()==3  && rotations.size()==3 && pivot.size()==3) {
@@ -98,9 +94,9 @@ StatusCode AlignmentCondition::makeMatrices()
     m_matrixInv = DetDesc::localToGlobalTransformation(translations,
                                                        rotations,
                                                        pivot);
-    
+
     m_matrix = m_matrixInv.Inverse();
-    
+
     return StatusCode::SUCCESS;
   } else {
     log << MSG::ERROR << "Translations vector for \'" << name() << "\' has funny size: "
@@ -112,21 +108,21 @@ StatusCode AlignmentCondition::makeMatrices()
 
 }
 //=============================================================================
-void AlignmentCondition::updateParams(const Gaudi::Transform3D& matrixInv) 
+void AlignmentCondition::updateParams(const Gaudi::Transform3D& matrixInv)
 {
   std::vector<double> newTrans(3,0);
   std::vector<double> newRot(3,0);
-  const std::vector<double> pivot = (exists(s_pivotString) ) ? 
+  const std::vector<double> pivot = (exists(s_pivotString) ) ?
     paramAsDoubleVect(s_pivotString) : std::vector<double>(3, 0);
 
   DetDesc::getZYXTransformParameters( matrixInv, newTrans, newRot, pivot );
-  
+
   loadParams( newTrans, newRot, pivot );
-} 
+}
 //=============================================================================
 void AlignmentCondition::loadParams(const std::vector<double>& translation,
-				    const std::vector<double>& rotation,
-				    const std::vector<double>& pivot) 
+				                    const std::vector<double>& rotation,
+				                    const std::vector<double>& pivot)
 {
   this->addParam(s_translationString, translation );
   this->addParam(s_rotationString,    rotation    );
