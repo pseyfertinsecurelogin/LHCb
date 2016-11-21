@@ -100,8 +100,11 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   if ( nullptr != interType ) m_interType = interType;
 
   // Create the GSL interpolators
-  m_mainDistAcc        = gsl_interp_accel_alloc();
-  m_weightedDistAcc    = gsl_interp_accel_alloc();
+  if ( m_accelerate )
+  {
+    m_mainDistAcc      = gsl_interp_accel_alloc();
+    m_weightedDistAcc  = gsl_interp_accel_alloc();
+  }
   m_mainDistSpline     = gsl_spline_alloc ( m_interType, data.size() );
   m_weightedDistSpline = gsl_spline_alloc ( m_interType, data.size() );
 

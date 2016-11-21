@@ -65,7 +65,7 @@ namespace Rich
    *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
    *  @date   05/02/2008
    */
-  class SmartIDGlobalOrdering
+  class SmartIDGlobalOrdering final
   {
 
   public: // definitions and constants
