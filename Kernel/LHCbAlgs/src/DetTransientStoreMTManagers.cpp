@@ -54,7 +54,7 @@ namespace LHCb {
         if ( !sc ) return sc;
         if ( m_preloadGeometry ) {
           auto mgr = detSvc().as<IDataManagerSvc>(); // this is for sure not null because I checked at initialize
-          const std::string root{ mgr->rootName() + "*" };
+          const std::string root{ mgr->rootName() + "/Structure/*" };
           if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) {
             debug() << "preloading " << root << " in " << detSvc().as<INamedInterface>()->name() << endmsg;
           }
