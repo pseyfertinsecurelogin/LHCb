@@ -54,8 +54,17 @@ namespace LHCb {
         if ( !sc ) return sc;
         if ( m_preloadGeometry ) {
           auto mgr = detSvc().as<IDataManagerSvc>(); // this is for sure not null because I checked at initialize
-          detSvc()->addPreLoadItem( mgr->rootName() + "*" ).ignore();
+          const std::string root{ mgr->rootName() + "*" };
+          if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) {
+            debug() << "preloading " << root << " in " << detSvc().as<INamedInterface>()->name() << endmsg;
+          }
+          const auto start = std::chrono::system_clock::now();
+          detSvc()->addPreLoadItem( root ).ignore();
           detSvc()->preLoad().ignore();
+          if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) {
+            const auto stop = std::chrono::system_clock::now();
+            debug() << "preload completed in " << std::chrono::duration<float>{stop - start}.count() << "s" << endmsg;
+          }
         }
         return sc;
       }
