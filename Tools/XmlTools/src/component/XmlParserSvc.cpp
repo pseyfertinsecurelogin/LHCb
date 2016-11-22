@@ -80,22 +80,24 @@ StatusCode XmlParserSvc::initialize( ) {
   }
 
   // creates a new XercesDOMParser
-  m_parser = std::make_unique<xercesc::XercesDOMParser>();
-  // if the creation was successful, sets some properties
-  if( !m_parser ) {
-    Service::error() << "Could not create xercesc::XercesDOMParser" << endmsg;
-    return StatusCode::FAILURE;
+  {   std::unique_lock<std::mutex> lck(m_parser_mtx);
+      m_parser = std::make_unique<xercesc::XercesDOMParser>();
+      // if the creation was successful, sets some properties
+      if( !m_parser ) {
+        Service::error() << "Could not create xercesc::XercesDOMParser" << endmsg;
+        return StatusCode::FAILURE;
+      }
+      // sets the error handler to this object
+      m_parser->setErrorHandler(this);
+      // asks the parser to validate the parsed xml
+      m_parser->setValidationScheme(xercesc::XercesDOMParser::Val_Auto);
+      // asks the parser to continue parsing after a fatal error
+      m_parser->setExitOnFirstFatalError(false);
+      // asks the parser to ignore whitespaces when possible
+      m_parser->setIncludeIgnorableWhitespace (false);
+      // asks the parser to avoid the creation of EntityReference nodes
+      m_parser->setCreateEntityReferenceNodes (false);
   }
-  // sets the error handler to this object
-  m_parser->setErrorHandler(this);
-  // asks the parser to validate the parsed xml
-  m_parser->setValidationScheme(xercesc::XercesDOMParser::Val_Auto);
-  // asks the parser to continue parsing after a fatal error
-  m_parser->setExitOnFirstFatalError(false);
-  // asks the parser to ignore whitespaces when possible
-  m_parser->setIncludeIgnorableWhitespace (false);
-  // asks the parser to avoid the creation of EntityReference nodes
-  m_parser->setCreateEntityReferenceNodes (false);
 
   if( ! m_resolverName.empty() ) {
     m_toolSvc = service("ToolSvc",true);
@@ -114,7 +116,9 @@ StatusCode XmlParserSvc::initialize( ) {
       Service::error() << "Could not get the IXmlEntityResolver interface of" << m_resolverName << endmsg;
       return sc;
     }
-    m_parser->setEntityResolver(m_resolver->resolver());
+    {   std::unique_lock<std::mutex> lck(m_parser_mtx);
+        m_parser->setEntityResolver(m_resolver->resolver());
+    }
     if( msgLevel(MSG::DEBUG) ) debug() << "using the xercesc::EntityResolver provided by " << m_resolverName << endmsg;
   }
   return StatusCode::SUCCESS;
@@ -126,7 +130,9 @@ StatusCode XmlParserSvc::initialize( ) {
 StatusCode XmlParserSvc::finalize() {
   clearCache();
 
-  m_parser.reset();
+  { std::unique_lock<std::mutex> lck(m_parser_mtx);
+    m_parser.reset();
+  }
 
   if (m_toolSvc && m_resolver) {
     m_resolver.reset();
@@ -197,6 +203,7 @@ IOVDOMDocument* XmlParserSvc::parse (const char* fileName) {
   }
   // There was nothing in the cache, try to parse the file if a parser exists
   if (m_parser) {
+    std::unique_lock<std::mutex> lck(m_parser_mtx);
     // resets it
     m_parser->reset();
     // parses the file
@@ -263,9 +270,10 @@ IOVDOMDocument* XmlParserSvc::parseString (std::string source) {
   // try to parse the string if a parser exists
   if (!m_parser) return nullptr;
   // resets it
+  std::unique_lock<std::mutex> lck(m_parser_mtx);
   m_parser->reset();
   // builds a new InputSource
-  xercesc::MemBufInputSource inputSource ((XMLByte*) source.data(),
+  xercesc::MemBufInputSource inputSource ((const XMLByte*) source.data(),
                                           source.length(),
                                           "");
   // parses the file
@@ -283,7 +291,10 @@ IOVDOMDocument* XmlParserSvc::parseString (std::string source) {
 void XmlParserSvc::clearCache() {
   // remove everything from the cache
   //    first delete the DOM documents
-  m_parser->resetDocumentPool();
+  {
+    std::unique_lock<std::mutex> lck(m_parser_mtx);
+    m_parser->resetDocumentPool();
+  }
   //    check the lock status of the cached objects
   for ( auto& i : m_cache ) {
     if ( i.second.lock > 0 ) {

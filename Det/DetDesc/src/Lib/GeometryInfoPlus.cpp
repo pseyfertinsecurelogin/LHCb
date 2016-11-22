@@ -33,11 +33,36 @@
 /// 2005-04-28 : Juan PALACIOS
 //-----------------------------------------------------------------------------
 
+namespace {
+    void recoverPrecision(Gaudi::Transform3D& matrix ) {
+        double xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz;
+        matrix.GetComponents( xx, xy, xz, dx,
+                              yx, yy, yz, dy,
+                              zx, zy, zz, dz );
+        if( std::abs(xx) < 1.e-15 ) xx = 0.;
+        if( std::abs(xy) < 1.e-15 ) xy = 0.;
+        if( std::abs(xz) < 1.e-15 ) xz = 0.;
+        if( std::abs(dx) < 1.e-12 ) dx = 0.;
+
+        if( std::abs(yx) < 1.e-15 ) yx = 0.;
+        if( std::abs(yy) < 1.e-15 ) yy = 0.;
+        if( std::abs(yz) < 1.e-15 ) yz = 0.;
+        if( std::abs(dy) < 1.e-12 ) dy = 0.;
+
+        if( std::abs(zx) < 1.e-15 ) zx = 0.;
+        if( std::abs(zy) < 1.e-15 ) zy = 0.;
+        if( std::abs(zz) < 1.e-15 ) zz = 0.;
+        if( std::abs(dz) < 1.e-12 ) dz = 0.;
+        matrix.SetComponents( xx, xy, xz, dx,
+                              yx, yy, yz, dy,
+                              zx, zy, zz, dz );
+    }
+}
+
 //=============================================================================
 // create "ghost"
 GeometryInfoPlus::GeometryInfoPlus(IDetectorElement* de)
-  :
-  m_gi_has_logical      (     false   ),
+: m_gi_has_logical      (     false   ),
   m_gi_iDetectorElement (      de     )
 {
   if ( !de  )
@@ -49,8 +74,7 @@ GeometryInfoPlus::GeometryInfoPlus(IDetectorElement* de)
 // create orphan
 GeometryInfoPlus::GeometryInfoPlus(IDetectorElement*  de,
                                    const std::string& LogVol)
-  :
-  m_gi_lvolumeName      (   LogVol    ),
+: m_gi_lvolumeName      (   LogVol    ),
   m_gi_iDetectorElement (      de     )
 {
   if ( !de  )
@@ -65,8 +89,7 @@ GeometryInfoPlus::GeometryInfoPlus(IDetectorElement*            de,
                                    const std::string&           Support,
                                    const ILVolume::ReplicaPath& replicaPath,
                                    const std::string& alignmentPath          )
-  :
-  m_gi_lvolumeName      (   LogVol    ),
+: m_gi_lvolumeName      (   LogVol    ),
   m_alignmentPath       (alignmentPath),
   m_gi_has_support      (    true     ),
   m_gi_supportName      (   Support   ),
@@ -86,8 +109,7 @@ GeometryInfoPlus::GeometryInfoPlus( IDetectorElement*  de,
                                     const std::string& Support,
                                     const std::string& ReplicaNamePath,
                                     const std::string& alignmentPath   )
-  :
-  m_gi_lvolumeName      (   LogVol        ),
+: m_gi_lvolumeName      (   LogVol        ),
   m_alignmentPath       ( alignmentPath   ),
   m_gi_has_support      (    true         ),
   m_gi_supportName      (   Support       ),
@@ -110,18 +132,15 @@ StatusCode GeometryInfoPlus::initialize()
 
   m_hasAlignmentPath = !m_alignmentPath.empty();
 
-  if( !m_log ) m_log.reset( new MsgStream(msgSvc(), "GeometryInfoPlus") );
+  if( !m_log ) m_log = std::make_unique<MsgStream>(msgSvc(), "GeometryInfoPlus");
 
   VERBO << "initialize" << endmsg;
   VERBO << "alignment path " << m_alignmentPath << endmsg;
 
-  if ( m_hasAlignmentPath )
-  {
+  if ( m_hasAlignmentPath ) {
     this->hasAlignmentCondition(true);
     VERBO << "Using AlignmentCondition with path " << m_alignmentPath << endmsg;
-  }
-  else
-  {
+  } else {
     this->hasAlignmentCondition(false);
     m_alignmentCondition = nullptr;
     VERBO << "No AlignmentCondition requested. Assigning identity transformation"
@@ -168,7 +187,7 @@ const Gaudi::Transform3D& GeometryInfoPlus::toGlobalMatrixNominal() const
 //=============================================================================
 Gaudi::Transform3D GeometryInfoPlus::ownMatrix() const
 {
-  return Gaudi::Transform3D( this->ownToNominalMatrix() * this->ownToLocalMatrixNominal() );
+  return Gaudi::Transform3D( ownToNominalMatrix() * ownToLocalMatrixNominal() );
 }
 //=============================================================================
 Gaudi::XYZPoint GeometryInfoPlus::toLocal( const Gaudi::XYZPoint& globalPoint ) const
@@ -176,7 +195,7 @@ Gaudi::XYZPoint GeometryInfoPlus::toLocal( const Gaudi::XYZPoint& globalPoint ) 
   auto localPoint = toLocalMatrix() * globalPoint;
   // Due to LHCb geometry, many measurements have Z=0 in local frame
   // Next line recovers precision lost in transformations, particularly on 32-bit
-  if( fabs(localPoint.Z()) < 1.e-10 ) localPoint.SetZ(0.);
+  if( std::abs(localPoint.Z()) < 1.e-10 ) localPoint.SetZ(0.);
   return localPoint;
 }
 //=============================================================================
@@ -222,8 +241,7 @@ StatusCode GeometryInfoPlus::calculateMatrices()
         << gi->lvolumeName() << " support " << m_gi_supportName
         << endmsg;
 
-  do
-  {
+  do {
     Assert( gi,
             " GeometryInfoPlus::calculateMatrices() - support is not found!");
     Assert( gi->lvolume(),
@@ -231,13 +249,10 @@ StatusCode GeometryInfoPlus::calculateMatrices()
 
     VERBO << "storing matrix for volume " << gi->lvolumeName() << endmsg;
 
-    if (!idealMatrixLoaded())
-    {
+    if (!idealMatrixLoaded()) {
       VERBO << "store ideal..." << endmsg;
       m_pvMatrices.push_back( gi->ownToLocalMatrixNominal() );
-    }
-    else
-    {
+    } else {
       VERBO << "ideal already stored..." << endmsg;
     }
 
@@ -261,10 +276,8 @@ StatusCode GeometryInfoPlus::calculateMatrices()
   Assert(m_pvMatrices.size()==m_deltaMatrices.size(),
          "GeometryInfoPlus::calculateMatrices: \n different number of ideal and delta matrices");
 
-  if ( isVerbose() )
-  {
-    for ( const auto * info : parentGeomInfos )
-    {
+  if ( isVerbose() ) {
+    for ( const auto * info : parentGeomInfos ) {
       VERBO << "\t" << info->lvolumeName() << endmsg;
     }
   }
@@ -287,50 +300,17 @@ StatusCode GeometryInfoPlus::calculateFullMatrices(matrix_iterator deltaFirst,
                                                    matrix_iterator deltaEnd,
                                                    matrix_iterator pvFirst)
 {
-  m_matrix.reset(
-    new Gaudi::Transform3D( std::inner_product(deltaFirst,
-                                           deltaEnd,
-                                           pvFirst,
-                                           Gaudi::Transform3D{},
-                                           std::multiplies<Gaudi::Transform3D>(),
-                                           std::multiplies<Gaudi::Transform3D>()
-                                           )
-                        ) );
+  m_matrix = std::inner_product(deltaFirst, deltaEnd,
+                                pvFirst, Gaudi::Transform3D{},
+                                std::multiplies<Gaudi::Transform3D>(),
+                                std::multiplies<Gaudi::Transform3D>() ) ;
 
   // Recover precision in cases of rotations by pi or halfpi
-  double xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz;
-  m_matrix->GetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
-  if( fabs(xx) < 1.e-15 ) xx = 0.;
-  if( fabs(xy) < 1.e-15 ) xy = 0.;
-  if( fabs(xz) < 1.e-15 ) xz = 0.;
-  if( fabs(dx) < 1.e-12 ) dx = 0.;
-  if( fabs(yx) < 1.e-15 ) yx = 0.;
-  if( fabs(yy) < 1.e-15 ) yy = 0.;
-  if( fabs(yz) < 1.e-15 ) yz = 0.;
-  if( fabs(dy) < 1.e-12 ) dy = 0.;
-  if( fabs(zx) < 1.e-15 ) zx = 0.;
-  if( fabs(zy) < 1.e-15 ) zy = 0.;
-  if( fabs(zz) < 1.e-15 ) zz = 0.;
-  if( fabs(dz) < 1.e-12 ) dz = 0.;
-  m_matrix->SetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
-
-  m_matrixInv.reset( new Gaudi::Transform3D( toLocalMatrix().Inverse() ) );
+  recoverPrecision(*m_matrix);
+  m_matrixInv = toLocalMatrix().Inverse();
 
   // Recover precision
-  m_matrixInv->GetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
-  if( fabs(xx) < 1.e-15 ) xx = 0.;
-  if( fabs(xy) < 1.e-15 ) xy = 0.;
-  if( fabs(xz) < 1.e-15 ) xz = 0.;
-  if( fabs(dx) < 1.e-12 ) dx = 0.;
-  if( fabs(yx) < 1.e-15 ) yx = 0.;
-  if( fabs(yy) < 1.e-15 ) yy = 0.;
-  if( fabs(yz) < 1.e-15 ) yz = 0.;
-  if( fabs(dy) < 1.e-12 ) dy = 0.;
-  if( fabs(zx) < 1.e-15 ) zx = 0.;
-  if( fabs(zy) < 1.e-15 ) zy = 0.;
-  if( fabs(zz) < 1.e-15 ) zz = 0.;
-  if( fabs(dz) < 1.e-12 ) dz = 0.;
-  m_matrixInv->SetComponents( xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz );
+  recoverPrecision(*m_matrixInv);
 
   VERBO << "calculated full matrices" << endmsg;
 
@@ -342,12 +322,10 @@ void GeometryInfoPlus::calculateIdealMatrix(matrix_iterator pvFirst,
                                             matrix_iterator pvEnd)
 {
 
-  m_idealMatrix.reset(
-    new Gaudi::Transform3D( std::accumulate(pvFirst,
-                                        pvEnd,
-                                        Gaudi::Transform3D {},
-                                        std::multiplies<Gaudi::Transform3D>())) );
-  m_idealMatrixInv.reset( new Gaudi::Transform3D( m_idealMatrix->Inverse()) );
+  m_idealMatrix =  std::accumulate( pvFirst, pvEnd,
+                                    Gaudi::Transform3D {},
+                                    std::multiplies<Gaudi::Transform3D>() );
+  m_idealMatrixInv = m_idealMatrix->Inverse();
 
 }
 //=============================================================================
@@ -388,7 +366,7 @@ StatusCode GeometryInfoPlus::setLocalOffNominalDeltaMatrix(const Gaudi::Transfor
   }
 
   VERBO << "updating local delta matrix" << endmsg;
-  m_localDeltaMatrix.reset( new Gaudi::Transform3D(newDelta.Inverse()) );
+  m_localDeltaMatrix = newDelta.Inverse();
   m_deltaMatrices[0] = *m_localDeltaMatrix;
 
   if (!calculateFullMatrices(deltaBegin(),
@@ -413,15 +391,15 @@ StatusCode GeometryInfoPlus::updateChildren()
 void GeometryInfoPlus::clearMatrices()
 {
 
-  if (!m_pvMatrices.empty()) m_pvMatrices.clear();
-  if (!m_deltaMatrices.empty()) m_deltaMatrices.clear();
+  m_pvMatrices.clear();
+  m_deltaMatrices.clear();
 
-  m_matrix           .reset();
-  m_idealMatrix      .reset();
-  m_localIdealMatrix .reset();
-  m_localDeltaMatrix .reset();
-  m_matrixInv        .reset();
-  m_idealMatrixInv   .reset();
+  m_matrix           = boost::none;
+  m_idealMatrix      = boost::none;
+  m_localIdealMatrix = boost::none;
+  m_localDeltaMatrix = boost::none;
+  m_matrixInv        = boost::none;
+  m_idealMatrixInv   = boost::none;
 
 }
 //=============================================================================
@@ -466,8 +444,7 @@ StatusCode GeometryInfoPlus::registerSupportGI()
 const Gaudi::Transform3D& GeometryInfoPlus::ownToLocalMatrixNominal() const
 {
 
-  if ( m_localIdealMatrix )
-  {
+  if ( LIKELY(bool(m_localIdealMatrix) ) ) {
     VERBO << "Ideal matrix for " << m_gi_supportNamePath
           << " already present" << endmsg;
     return *m_localIdealMatrix;
@@ -476,21 +453,15 @@ const Gaudi::Transform3D& GeometryInfoPlus::ownToLocalMatrixNominal() const
   auto * gi = supportIGeometryInfo();
 
   if ( ( !gi || !hasLVolume()) || !hasSupport() ||
-       ( this == ( const IGeometryInfo*) gi ) )
-  {
+       ( this == ( const IGeometryInfo*) gi ) ) {
     VERBO << "localIdealMatrix: assigning identity matrix " << endmsg;
-    m_localIdealMatrix.reset( new Gaudi::Transform3D() );
-  }
-  else
-  {
+    m_localIdealMatrix.emplace();
+  } else {
     const auto * lv = gi->lvolume();
-
     ILVolume::PVolumePath volumePath;
-
     StatusCode sc = lv->traverse( supportPath().begin(),
                                   supportPath().end(),
                                   volumePath );
-
     Assert( sc.isSuccess()  ,
             " GeometryInfoPlus::localIdealMatrix(): could not traverse the path!");
     m_localIdealMatrix = accumulateMatrices(volumePath);
@@ -502,14 +473,11 @@ const Gaudi::Transform3D& GeometryInfoPlus::ownToLocalMatrixNominal() const
 //=============================================================================
 const Gaudi::Transform3D& GeometryInfoPlus::ownToNominalMatrix() const
 {
-  if ( m_localDeltaMatrix ) return *m_localDeltaMatrix;
-
-  m_localDeltaMatrix.reset( this->hasAlignmentCondition() ?
-                            new Gaudi::Transform3D(myAlignmentCondition()->toNominalMatrix()) :
-                            new Gaudi::Transform3D() );
-
+  if ( UNLIKELY(!m_localDeltaMatrix) )
+      m_localDeltaMatrix = ( this->hasAlignmentCondition() ?
+                             myAlignmentCondition()->toNominalMatrix() :
+                             Gaudi::Transform3D{} );
   return *m_localDeltaMatrix;
-
 }
 //=============================================================================
 Gaudi::Transform3D GeometryInfoPlus::ownToOffNominalMatrix() const
@@ -547,14 +515,10 @@ IGeometryInfo* GeometryInfoPlus::supportIGeometryInfo() const
 
 }
 //=============================================================================
-std::unique_ptr<Gaudi::Transform3D> GeometryInfoPlus::accumulateMatrices(const ILVolume::PVolumePath& volumePath) const
+Gaudi::Transform3D GeometryInfoPlus::accumulateMatrices(const ILVolume::PVolumePath& volumePath) const
 {
-  auto return_value=std::accumulate( volumePath.begin() ,
-                                     volumePath.end  () ,
-                                     Gaudi::Transform3D{},
-                                     IPVolume_accumulateMatrix() );
-  return std::unique_ptr<Gaudi::Transform3D>(new Gaudi::Transform3D(return_value));
-
+  return std::accumulate( volumePath.begin(), volumePath.end() ,
+                          Gaudi::Transform3D{}, IPVolume_accumulateMatrix );
 }
 
 //=============================================================================
@@ -562,8 +526,7 @@ const ILVolume::ReplicaPath& GeometryInfoPlus::supportPath() const
 {
   VERBO << "supportPath is " << m_gi_supportName << endmsg;
 
-  if ( !m_gi_has_support || !m_gi_supportPath.empty() )
-  {
+  if ( LIKELY( !m_gi_has_support || !m_gi_supportPath.empty() ) ) {
     return m_gi_supportPath;
   }
 
@@ -571,18 +534,12 @@ const ILVolume::ReplicaPath& GeometryInfoPlus::supportPath() const
   if( !m_gi_support ) { m_gi_support = geoByName( m_gi_supportName ) ; }
   ///
   const ILVolume* lv = m_gi_support->lvolume();
-  std::string aux( m_gi_supportNamePath );
-  while( !aux.empty() && lv )
-  {
+  auto aux = boost::string_ref( m_gi_supportNamePath );
+  while ( !aux.empty() && lv ) {
     // find separator
-    std::string::size_type pos     = aux.find_first_of('/');
-    std::string            physVol ("") ;
-    if( std::string::npos == pos )
-    { physVol  = aux                   ; aux=""                       ; }
-    else
-    { physVol = aux.substr( 0 , pos )  ; aux = aux.substr( pos + 1  ) ; }
-    if( !physVol.empty() )
-    {
+    auto pos     = aux.find_first_of('/');
+    auto physVol = aux.substr(0,pos);
+    if( !physVol.empty() ) {
       // get physical volume by name
       const auto * pv = (*lv)[ physVol ];
       // find this name in the sequence
@@ -590,10 +547,10 @@ const ILVolume::ReplicaPath& GeometryInfoPlus::supportPath() const
       Assert( lv->pvEnd() != it ,
               "GeometryInfoPlus:: error during retrieve of Replica Path" );
       // extract index and put it into replica path
-
       m_gi_supportPath.push_back( it - lv->pvBegin() );
       lv = (*it)->lvolume();
     }
+    aux = ( pos == std::string::npos ? "" : aux.substr(pos+1) );
   }
   //
   return m_gi_supportPath;
@@ -623,8 +580,8 @@ StatusCode GeometryInfoPlus::fullGeoInfoForPoint
 {
   // reset output values
   start = nullptr         ;
-  if( !volumePath.empty() )            { volumePath.clear();          }
-  if( !isInside( point )  )            { return StatusCode::FAILURE ; }
+  if( !volumePath.empty() )    { volumePath.clear();          }
+  if( !isInside( point )  )    { return StatusCode::FAILURE ; }
   //
   auto * gi = belongsTo( point , -1 );
   if( !gi || !gi->lvolume() )  { return StatusCode::FAILURE ; }
@@ -662,8 +619,8 @@ StatusCode GeometryInfoPlus::fullGeoInfoForPoint
 {
   // reset output values
   start = nullptr         ;
-  if( !replicaPath.empty() )            { replicaPath.clear();         }
-  if( !isInside( point )   )            { return StatusCode::FAILURE ; }
+  if( !replicaPath.empty() )    { replicaPath.clear();         }
+  if( !isInside( point )   )    { return StatusCode::FAILURE ; }
   //
   auto * gi = belongsTo( point , -1 );
   if( !gi || !gi->lvolume() )   { return StatusCode::FAILURE ; }
@@ -694,17 +651,15 @@ StatusCode GeometryInfoPlus::fullGeoInfoForPoint
 //=============================================================================
 std::string GeometryInfoPlus::belongsToPath( const Gaudi::XYZPoint& globalPoint )
 {
-  if( !isInside( globalPoint )                     )
-    { return {}; }
-  if( !childLoaded() && loadChildren().isFailure() )
-    { return {}; }
+  if( !isInside( globalPoint ) ) { return {}; }
+  if( !childLoaded() && loadChildren().isFailure() ) { return {}; }
+
+  // Look children
+  auto it = std::find_if( childBegin() , childEnd  () ,
+                          IGeometryInfo_isInside(globalPoint) ) ;
   //
-  auto it =  // Look children
-    std::find_if( childBegin() , childEnd  () ,
-                  IGeometryInfo_isInside(globalPoint) ) ;
-  //
-  return ( ( childEnd() == it ) ? std::string{} :
-           *(m_gi_childrensNames.begin()+(it-childBegin())) );
+  return ( childEnd() == it ) ? std::string{} :
+         *(m_gi_childrensNames.begin()+(it-childBegin()));
 }
 //=============================================================================
 std::string GeometryInfoPlus::belongsToPath( const Gaudi::XYZPoint& globalPoint,
@@ -754,8 +709,7 @@ StatusCode GeometryInfoPlus::loadChildren() const
       auto * pObj     = ( ide  ? dynamic_cast<DataObject*>(ide) : nullptr );
       auto * pReg     = ( pObj ? pObj->registry() : nullptr );
       const auto path = ( pReg ? pReg->identifier() : "" );
-      if ( igi && !path.empty() )
-      {
+      if ( igi && !path.empty() ) {
         m_gi_childrensNames.push_back( path );
         m_gi_childrens.push_back     ( igi  );
       }
@@ -787,8 +741,8 @@ IGeometryInfo*  GeometryInfoPlus::reset()
   m_gi_lvolume = nullptr;
 
   /// reset matrices
-  m_matrix   .reset();
-  m_matrixInv.reset();
+  m_matrix    = boost::none;
+  m_matrixInv = boost::none;
 
   /// reset support
   m_gi_support      = nullptr;
@@ -812,8 +766,7 @@ IGeometryInfo* GeometryInfoPlus::parentIGeometryInfo()
   if( !hasSupport() )  { return nullptr; }
   VERBO << "parentIGeometryInfo with support "
         << m_gi_supportName << endmsg;
-  if( !m_gi_support && !m_gi_supportName.empty() )
-  {
+  if( !m_gi_support && !m_gi_supportName.empty() ) {
     m_gi_support = geoByName( m_gi_supportName );
   }
   return m_gi_support;
@@ -891,8 +844,7 @@ const ILVolume* GeometryInfoPlus::lvolume( IGeometryInfo* start,
   //
   const auto * lv = start->lvolume();
   ILVolume::PVolumePath volumePath;
-  if( lv->traverse( replicaPath.begin()  ,
-                    replicaPath.end  ()  ,
+  if( lv->traverse( replicaPath.begin()  , replicaPath.end  ()  ,
                     volumePath           ).isFailure() ) { return nullptr; }
   //
   if( volumePath.empty() ) { return lv; }
@@ -911,8 +863,7 @@ std::string GeometryInfoPlus::lvolumePath( IGeometryInfo* start,
   //
   const auto * lv = start->lvolume();
   ILVolume::PVolumePath volumePath;
-  if( lv->traverse( replicaPath.begin()  ,
-                    replicaPath.end  ()  ,
+  if( lv->traverse( replicaPath.begin()  , replicaPath.end  ()  ,
                     volumePath           ).isFailure() ) { return ""; }
   if( volumePath.empty() ) { return start->lvolumeName(); }
   const auto* pv = volumePath.back();
@@ -936,13 +887,6 @@ std::string GeometryInfoPlus::lvolumePath( const std::string& start,
   IGeometryInfo* gi = geoByName( start );
   return  gi ? lvolumePath( gi , replicaPath ) : std::string{};
 }
-//=============================================================================
-// StatusCode  GeometryInfoPlus::reset( const int /*Level*/ )
-// {
-//   this->reset();
-//   return StatusCode::SUCCESS;
-// }
-//=============================================================================
 
 //=============================================================================
 std::ostream& GeometryInfoPlus::printOut( std::ostream& os ) const
@@ -950,16 +894,15 @@ std::ostream& GeometryInfoPlus::printOut( std::ostream& os ) const
   try
   {
     os << "GeometryInfoPlus::name=" <<  detElem()->name() << ";" ;
-    if( !hasLVolume() ) { os << " no LVolume associated ('ghost');"; }
-    else
-    {
+    if( !hasLVolume() ) {
+      os << " no LVolume associated ('ghost');";
+    } else {
       os << " LVolume=" << lvolumeName() << ";";
-      if( !hasSupport() ) { os << "('orphan');"; }
-      else
-      {
+      if( !hasSupport() ) {
+        os << "('orphan');";
+      } else {
         os << " supported by " << m_gi_supportName << " with ReplicaPath=(";
-        std::copy( m_gi_supportPath.begin() ,
-                   m_gi_supportPath.end() ,
+        std::copy( m_gi_supportPath.begin() , m_gi_supportPath.end() ,
                    std::ostream_iterator<ILVolume::ReplicaType>(os,",") );
         os << ") ";
         os << "(" << m_gi_supportNamePath << ");";
@@ -971,7 +914,7 @@ std::ostream& GeometryInfoPlus::printOut( std::ostream& os ) const
     os << " !!! Unable to print GeometryInfo out !!!";
   }
   //
-  return os << std::endl;
+  return os << '\n';
 }
 //=============================================================================
 MsgStream& GeometryInfoPlus::printOut( MsgStream& os ) const
@@ -979,21 +922,15 @@ MsgStream& GeometryInfoPlus::printOut( MsgStream& os ) const
   try
   {
     os << "GeometryInfoPlus::name=" << detElem()->name() << ";" ;
-    if (!hasLVolume())
-    {
+    if (!hasLVolume()) {
       os << " no LVolume associated ('ghost');";
-    }
-    else
-    {
+    } else {
       os << " LVolume=" << lvolumeName() << ";";
-      if (!hasSupport())
-      {
+      if (!hasSupport()) {
         os << "('orphan');";
-      }
-      else
-      {
+      } else {
         os << " supported by " << m_gi_supportName << " with ReplicaPath=(";
-        for ( const auto ci : supportPath() ) { os << ci << "," ; }
+        for ( const auto& ci : supportPath() ) { os << ci << "," ; }
         os << ") ";
         os << "(" << m_gi_supportNamePath << ");";
       }
@@ -1052,9 +989,6 @@ StatusCode GeometryInfoPlus::queryInterface( const InterfaceID& ID,
 //=============================================================================
 GeometryInfoPlus::~GeometryInfoPlus()
 {
-  clearMatrices();
-  m_gi_childrensNames.clear();
-  m_gi_childrens.clear();
   updMgrSvc()->unregister(this);
 }
 //=============================================================================

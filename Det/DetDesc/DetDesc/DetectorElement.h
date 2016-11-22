@@ -311,7 +311,7 @@ public:
   unsigned long addRef() override;
   unsigned long release() override;
   StatusCode queryInterface( const InterfaceID& riid,
-                                     void** ppvInterface ) override;
+                             void** ppvInterface ) override;
 
 protected:
 
