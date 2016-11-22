@@ -3,6 +3,7 @@
 
 // Include files
 #include <map>
+#include <mutex>
 
 #include <xercesc/sax/ErrorHandler.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
@@ -148,6 +149,16 @@ private:
 private:
 
   /// the actual DOM parser
+  //
+  // from https://xerces.apache.org/xerces-c/faq-parse-3.html#faq-6:
+  // Within an address space, an instance of the parser may be used without
+  // restriction from a single thread, or an instance of the parser can be
+  // accessed from multiple threads, provided the application guarantees that
+  // only one thread has entered a method of the parser at any one time.
+  //
+  // i.e. we need to protect the parser with a mutex...
+  //
+  std::mutex m_parser_mtx;
   std::unique_ptr<xercesc::XercesDOMParser> m_parser;
 
   /**

@@ -222,13 +222,13 @@ private:
                          std::string::size_type start,
                          std::string::size_type end);
 
-  bool sumHasUnit (std::string s,
+  bool sumHasUnit (const std::string& s,
                    std::string::size_type baseIndex,
                    std::string::size_type lastIndex);
-  bool productHasUnit (std::string s,
+  bool productHasUnit (const std::string& s,
                        std::string::size_type baseIndex,
                        std::string::size_type lastIndex);
-  bool exprHasUnit (std::string s,
+  bool exprHasUnit (const std::string& s,
                     std::string::size_type baseIndex,
                     std::string::size_type lastIndex);
 
