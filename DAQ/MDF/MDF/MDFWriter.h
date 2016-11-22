@@ -16,8 +16,8 @@
 
 // Forward declarations
 class TMD5;
-namespace Gaudi { 
-  class IIODataManager; 
+namespace Gaudi {
+  class IIODataManager;
   class IDataConnection;
 }
 
@@ -26,7 +26,7 @@ namespace Gaudi {
  */
 namespace LHCb    {
 
-  /**@class MDFWriter 
+  /**@class MDFWriter
     *
     *
     * @author:  M.Frank
@@ -68,21 +68,21 @@ namespace LHCb    {
     void construct();
 
     /** Allocate space for IO buffer
-      * @param[in] ioDesc Output IO descriptor       
+      * @param[in] ioDesc Output IO descriptor
       * @param[in] len    Total length of the data buffer
       *
       * @return  Pointer to allocated memory space
       */
-    virtual std::pair<char*,int> getDataSpace(void* const /* ioDesc */, size_t len);
+    std::pair<char*,int> getDataSpace(void* const /* ioDesc */, size_t len) override;
 
     /** Write byte buffer to output stream
-      * @param[in] ioDesc Output IO descriptor       
+      * @param[in] ioDesc Output IO descriptor
       * @param[in] data   Data buffer to be streamed
       * @param[in] len    Length of the data buffer
       *
       * @return  Status code indicating success or failure.
       */
-    virtual StatusCode writeBuffer(void* const ioDesc, const void* data, size_t len);
+    StatusCode writeBuffer(void* const ioDesc, const void* data, size_t len) override;
 
     /// Additional dataspace in buffer [BYTES]
     int additionalSpace() const {   return m_addSpace*1024; }
@@ -99,13 +99,13 @@ namespace LHCb    {
     virtual ~MDFWriter();
 
     /// Algoritm overload: Initialize
-    virtual StatusCode initialize();
+    StatusCode initialize() override;
 
     /// Algoritm overload: Finalize
-    virtual StatusCode finalize();
+    StatusCode finalize() override;
 
     // Algoritm overload: Execute procedure
-    virtual StatusCode execute();
+    StatusCode execute() override;
   };
 }      // End namespace LHCb
 #endif // MDF_MDFWRITER_H

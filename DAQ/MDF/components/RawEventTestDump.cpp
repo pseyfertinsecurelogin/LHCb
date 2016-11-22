@@ -1,9 +1,9 @@
 // $Id: RawEventTestDump.cpp,v 1.1 2009-02-06 09:37:57 frankb Exp $
 // Include files from Gaudi
-#include "GaudiKernel/Algorithm.h" 
-#include "GaudiKernel/IDataProviderSvc.h" 
-#include "GaudiKernel/SmartDataPtr.h" 
-#include "GaudiKernel/MsgStream.h" 
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/MsgStream.h"
 #include "MDF/RawEventPrintout.h"
 #include "MDF/MDFHeader.h"
 #include "Event/RawEvent.h"
@@ -14,7 +14,7 @@
 namespace LHCb  {
 
 /** @class RawEventTestDump RawEventTestDump.cpp
-  *  Creates and fills dummy RawEvent  
+  *  Creates and fills dummy RawEvent
   *
   *  @author Markus Frank
   *  @date   2005-10-13
@@ -26,8 +26,8 @@ namespace LHCb  {
     int  m_debug;                ///< Number of events where all dump flags should be considered true
     int  m_numEvent;             ///< Event counter
     std::string  m_rawLocation;  ///< Property "RawLocation". Raw Event location
-  public: 
-    
+  public:
+
     /// Standard constructor
     RawEventTestDump( const std::string& name, ISvcLocator* pSvcLocator )
     : Algorithm(name, pSvcLocator), m_numEvent(0)
@@ -42,17 +42,17 @@ namespace LHCb  {
     virtual ~RawEventTestDump()  {
     }
     /// Algorithm initialization
-    virtual StatusCode initialize()  {
+    StatusCode initialize()  override {
       m_numEvent = 0;
       return StatusCode::SUCCESS;
     }
     /// Algorithm finalization
-    virtual StatusCode finalize()  {
+    StatusCode finalize()  override {
       m_numEvent = 0;
       return StatusCode::SUCCESS;
     }
     /// Main execution
-    virtual StatusCode execute()  {
+    StatusCode execute()  override {
       SmartDataPtr<RawEvent> raw(eventSvc(),m_rawLocation);
       MsgStream info(msgSvc(),name());
       bool dmp = m_numEvent<m_debug || m_dump;
@@ -64,7 +64,7 @@ namespace LHCb  {
       if ( !raw ) {
         info << MSG::ERROR << "Failed to access " << RawEventLocation::Default << endmsg;
         // Don't want to exit for this -- this is a debugging algorithm only!
-        return StatusCode::SUCCESS;        
+        return StatusCode::SUCCESS;
       }
       for(int j=0; j<RawBank::LastType; ++j)  {
         RawBank::BankType i = RawBank::BankType(j);
@@ -73,8 +73,8 @@ namespace LHCb  {
         const int *p;
         if ( b.size() > 0 )  {
           if ( dmp )  {
-            info << "Evt No:" << std::left << std::setw(6) << evt 
-                 << " has " << b.size() << " bank(s) of type " << i 
+            info << "Evt No:" << std::left << std::setw(6) << evt
+                 << " has " << b.size() << " bank(s) of type " << i
                  << " (" << RawEventPrintout::bankType(i) << ") " << endmsg;
           }
           std::vector<RawBank*>::const_iterator itB;
