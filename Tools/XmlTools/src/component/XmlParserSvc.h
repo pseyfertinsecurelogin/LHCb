@@ -40,7 +40,7 @@ public:
    * @param name   String with service name
    * @param svc    Pointer to service locator interface
    */
-  XmlParserSvc (const std::string& name, ISvcLocator* svc);
+  using base_class::base_class;
 
   /// Initialize the service
   StatusCode initialize() override;
@@ -168,7 +168,7 @@ private:
    * Thus, a 0 value allows to have a FIFO cache behavior, while a bigger
    * value tends to keep only reused items.
    */
-  unsigned int m_cacheBehavior;
+  Gaudi::Property<unsigned int> m_cacheBehavior { this, "CacheBehavior",  2 };
 
   /**
    * a structure containing a cached document, its birthDate and its utility.
@@ -202,10 +202,11 @@ private:
   unsigned int m_cacheAge = 0;
 
   /// The maximum number of cached documents
-  unsigned int m_maxDocNbInCache;
+  Gaudi::Property<unsigned int> m_maxDocNbInCache { this, "MaxDocNbInCache", 10 };
 
   /// Name of the service which will provide the xercesc::EntityResolver pointer (option "EntityResolver").
-  std::string m_resolverName;
+  Gaudi::Property<std::string> m_resolverName { this, "EntityResolver", "",
+                                                "Name of the tool providing the IXmlEntityResolver interface."};
 
   /// Pointer to the IXmlEntityResolver tool interface (for bookkeeping).
   IAlgTool *m_resolverTool = nullptr;
@@ -214,7 +215,7 @@ private:
   SmartIF<IXmlEntityResolver> m_resolver;
 
   /// Name of the service which will provide the event time (option "DetectorDataSvc", default = "DetectorDataSvc").
-  std::string m_detDataSvcName;
+  Gaudi::Property<std::string> m_detDataSvcName { this, "DetectorDataSvc", "DetectorDataSvc" };
 
   /// Pointer to the detector data service
   SmartIF<IDetDataSvc> m_detDataSvc;
@@ -223,8 +224,10 @@ private:
   SmartIF<IToolSvc> m_toolSvc;
 
   /// Flag to decide if we measure time...
-  bool m_measureTime;
-  bool m_printTime;
+  // Property to measure overall timing
+  Gaudi::Property<bool> m_measureTime { this,  "MeasureTime", false };
+  // Property to print timing for each parse
+  Gaudi::Property<bool> m_printTime { this,  "PrintTime", false };
   double m_sumCpu = 0;
   double m_sumClock = 0;
 };
