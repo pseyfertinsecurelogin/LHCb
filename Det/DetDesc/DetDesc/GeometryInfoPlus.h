@@ -8,6 +8,7 @@
 #include <functional>
 #include <algorithm>
 #include <memory>
+#include "boost/optional.hpp"
 /* GaudiKernel includes */
 #include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/ISvcLocator.h"
@@ -243,13 +244,13 @@ public:
   /// (reference to) container of children IGeometryInfo
   inline IGeometryInfo::IGIChildrens& childIGeometryInfos() override
   {
-    if( !m_gi_childLoaded ) loadChildren();
+    if( UNLIKELY(!m_gi_childLoaded) ) loadChildren();
     return m_gi_childrens;
   }
   /// (reference to) container of children IGeometryInfo
   inline const IGeometryInfo::IGIChildrens& childIGeometryInfos() const override
   {
-    if( !m_gi_childLoaded ) loadChildren();
+    if( UNLIKELY(!m_gi_childLoaded ) ) loadChildren();
     return m_gi_childrens;
   }
   /// iterators for manipulation of daughter elements
@@ -432,9 +433,9 @@ private:
     if( !assertion ) { throw GeometryInfoException( name , ge , this ); }
   }
 
-  std::unique_ptr<Gaudi::Transform3D> accumulateMatrices(const ILVolume::PVolumePath& volumePath) const;
+  Gaudi::Transform3D accumulateMatrices(const ILVolume::PVolumePath& volumePath) const;
 
-  bool idealMatrixLoaded() { return ( nullptr != m_idealMatrix ); }
+  bool idealMatrixLoaded() { return bool(m_idealMatrix); }
 
   inline matrix_iterator idealBegin() const
   {
@@ -491,39 +492,39 @@ private:
   /// Transformation from the  global reference system
   /// to the local reference system.
   /// Total matrix, including ideal alignment plus deltas.
-  mutable std::unique_ptr<Gaudi::Transform3D>        m_matrix;
+  mutable boost::optional<Gaudi::Transform3D>        m_matrix;
 
   /// Transformation from the  global reference system
   /// to the local reference system.
   /// Ideal geometry with no misalignments.
-  mutable std::unique_ptr<Gaudi::Transform3D>   m_idealMatrix;
+  mutable boost::optional<Gaudi::Transform3D>   m_idealMatrix;
 
-  mutable std::unique_ptr<Gaudi::Transform3D> m_localIdealMatrix;
-  mutable std::unique_ptr<Gaudi::Transform3D> m_localDeltaMatrix;
-
-  /** transformation FROM local reference system  to the global
-   *  reference system
-   */
+  mutable boost::optional<Gaudi::Transform3D> m_localIdealMatrix;
+  mutable boost::optional<Gaudi::Transform3D> m_localDeltaMatrix;
 
   /** transformation FROM local reference system  to the global
    *  reference system
    */
 
-  mutable std::unique_ptr<Gaudi::Transform3D>    m_matrixInv;
-  mutable std::unique_ptr<Gaudi::Transform3D> m_idealMatrixInv;
+  /** transformation FROM local reference system  to the global
+   *  reference system
+   */
+
+  mutable boost::optional<Gaudi::Transform3D>    m_matrixInv;
+  mutable boost::optional<Gaudi::Transform3D> m_idealMatrixInv;
 
   /// flag for support association
   bool                             m_gi_has_support = false ;
   /**  name of DetectorElement (full path(address) in the
    *   Transient Store) , which supports the addres)
    */
-  std::string                          m_gi_supportName     ;
+  std::string                      m_gi_supportName     ;
   /// pointer to element, which supports the address (loaded on demand)
-  mutable IGeometryInfo*             m_gi_support = nullptr ;
+  mutable IGeometryInfo*           m_gi_support = nullptr ;
   /// the address itself (numeric replic apath)
-  mutable ILVolume::ReplicaPath        m_gi_supportPath     ;
+  mutable ILVolume::ReplicaPath    m_gi_supportPath     ;
   /// another form of address  (name replica path)
-  std::string                          m_gi_supportNamePath ;
+  std::string                      m_gi_supportNamePath ;
   //
   ///  The corresponding IDtectorElement object
   mutable IDetectorElement*           m_gi_iDetectorElement ;
@@ -531,7 +532,7 @@ private:
   /// flag for  parent object
   mutable bool                    m_gi_parentLoaded = false ;
   /// pointer to parent object (resolved on demand only)
-  mutable IGeometryInfo*              m_gi_parent = nullptr ;
+  mutable IGeometryInfo*           m_gi_parent = nullptr ;
   /// flag for children objects
   mutable bool                     m_gi_childLoaded = false ;
   /**  container of pointers to children objects
@@ -543,9 +544,6 @@ private:
    */
   mutable GeometryInfoPlus::ChildName   m_gi_childrensNames ;
 
-  /// object/reference counter
-  //static unsigned long m_count;
-
   /// reference to services
   DetDesc::ServicesPtr m_services;
 
@@ -555,12 +553,6 @@ private:
   /// temporary objects in one algorithm. Juan.
   std::vector<Gaudi::Transform3D> m_pvMatrices;
   std::vector<Gaudi::Transform3D> m_deltaMatrices;
-
-
-  /// flag for alignment condition
-  //bool                                 m_has_condition     ;
-  /// Path on data store where alignment condition is to be found
-  //std::string                          m_gi_condPath     ;
 
 };
 

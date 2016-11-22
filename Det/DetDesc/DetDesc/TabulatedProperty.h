@@ -35,7 +35,6 @@ public:
 public:
   /// constructor
   TabulatedProperty( const std::string& Name = "");
-  virtual ~TabulatedProperty();
   ///
   const CLID& clID    () const override { return TabulatedProperty::classID() ; }
   static  const CLID& classID ()       { return CLID_TabulatedProperty       ; }

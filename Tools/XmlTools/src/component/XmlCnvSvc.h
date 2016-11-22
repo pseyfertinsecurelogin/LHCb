@@ -28,7 +28,8 @@ public:
    * @param svc Pointer to service locator interface
    * @return Reference to CdfPersCnvSvc
    */
-  XmlCnvSvc (const std::string& name, ISvcLocator* svc);
+  XmlCnvSvc (const std::string& name, ISvcLocator* svc)
+      : base_class(name, svc, XML_StorageType) {}
 
   /**
    * Initializes the service
@@ -183,7 +184,7 @@ private:
 //               | expr '/' product
 //    expr :=   '-'? alphanumeric_token
 //            | '-'? function_name? '(' sum ')'
-// Where ? means that it is optionnal and | means or. alphanumeric_token
+// Where ? means that it is optional and | means or. alphanumeric_token
 // contains only alphanumeric characters, except for a single '-' character
 // if preceded by a digit and an 'e'
 //
@@ -211,23 +212,23 @@ private:
 //    - note that the result of a function is supposed to have no unit
 //  in general
 
-  std::string::size_type skipSum (std::string s,
+  std::string::size_type skipSum (const std::string& s,
                         std::string::size_type start,
                         std::string::size_type end);
-  std::string::size_type skipProduct (std::string s,
+  std::string::size_type skipProduct(const std::string& s,
                             std::string::size_type start,
                             std::string::size_type end);
-  std::string::size_type skipExpr (std::string s,
+  std::string::size_type skipExpr (const std::string& s,
                          std::string::size_type start,
                          std::string::size_type end);
 
-  bool sumHasUnit (std::string s,
+  bool sumHasUnit (const std::string& s,
                    std::string::size_type baseIndex,
                    std::string::size_type lastIndex);
-  bool productHasUnit (std::string s,
+  bool productHasUnit (const std::string& s,
                        std::string::size_type baseIndex,
                        std::string::size_type lastIndex);
-  bool exprHasUnit (std::string s,
+  bool exprHasUnit (const std::string& s,
                     std::string::size_type baseIndex,
                     std::string::size_type lastIndex);
 
@@ -235,7 +236,7 @@ private:
 private:
 
   /// Name of the XmlParserSvc to use (option XmlCnvSvc.XmlParserSvc, default "XmlParserSvc")
-  std::string m_parserSvcName;
+  Gaudi::Property<std::string> m_parserSvcName { this, "XmlParserSvc", "XmlParserSvc" };
 
   /// XmlParserSvc used to parse xmlfiles
   SmartIF<IXmlParserSvc> m_parserSvc;
@@ -248,18 +249,21 @@ private:
    * elements in case the corresponding user defined converter is not
    * available
    */
-  bool  m_genericConversion;
+  Gaudi::Property<bool>  m_genericConversion { this, "AllowGenericConversion", false};
+
 
   /**
    * Property specifying the directory containing standard DTD files.
    * This is necessary when parsing XML strings rather than XML files.
    */
-  std::string m_dtdLocation;
+  Gaudi::Property<std::string> m_dtdLocation { this, "DtdLocation" };
+
 
   /**
    * tells whether to check parameters for units or not.
    */
-  bool m_checkUnits;
+  Gaudi::Property<bool> m_checkUnits { this, "CheckUnits",  true };
+
 
 };
 

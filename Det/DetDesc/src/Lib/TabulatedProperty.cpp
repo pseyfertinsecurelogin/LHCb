@@ -1,6 +1,4 @@
-// $Id: TabulatedProperty.cpp,v 1.11 2009-04-17 08:54:24 cattanem Exp $
-
-// DetDesc 
+// DetDesc
 #include "DetDesc/TabulatedProperty.h"
 
 // GaudiKernel
@@ -13,48 +11,44 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 TabulatedProperty::TabulatedProperty( const std::string& /*Name*/ )
-  : ValidDataObject( )
-  , m_type    ( "(Unknown)" ) 
-  , m_xAxis   ( "(empty)"   ) 
-  , m_yAxis   ( "(empty)"   ) 
-  , m_table   (             ) 
+  : m_type    ( "(Unknown)" )
+  , m_xAxis   ( "(empty)"   )
+  , m_yAxis   ( "(empty)"   )
 {}
 ////////////////////////////////////////////////////////////////////////////////
-TabulatedProperty::~TabulatedProperty(){ table().clear(); }
-////////////////////////////////////////////////////////////////////////////////
-std::ostream& TabulatedProperty::fillStream ( std::ostream& s ) const 
+std::ostream& TabulatedProperty::fillStream ( std::ostream& s ) const
 {
-  s << " \tTabulatedProperty " 
-    << " \ttype="      << type () 
-    << " \txAxis="     << xAxis() 
-    << " \tyAxis="     << yAxis() 
-    << " \t#enties="   << table().size() << std::endl; 
+  s << " \tTabulatedProperty "
+    << " \ttype="      << type ()
+    << " \txAxis="     << xAxis()
+    << " \tyAxis="     << yAxis()
+    << " \t#enties="   << table().size() << std::endl;
   for( auto it = table().begin() ; table().end() != it ; ++it )
     {
-      s << " \t\t\t( entry#"    
+      s << " \t\t\t( entry#"
         << std::setw(2) << it-table().begin()
-        << "   "      
-        << std::setw(12) << it->first 
-        << "   "      
-        << std::setw(12) << it->second << " ) " << std::endl;
+        << "   "
+        << std::setw(12) << it->first
+        << "   "
+        << std::setw(12) << it->second << " )\n";
     }
   return s ;
 }
 ////////////////////////////////////////////////////////////////////////////////
-MsgStream&    TabulatedProperty::fillStream ( MsgStream&    s ) const 
+MsgStream&    TabulatedProperty::fillStream ( MsgStream&    s ) const
 {
-  s << " \tTabulatedProperty " 
-    << " \ttype="       << type() 
-    << " \txAxis="      << xAxis() 
-    << " \tyAxis="      << yAxis() 
-    << " \t#entries="   << table().size() << endmsg; 
+  s << " \tTabulatedProperty "
+    << " \ttype="       << type()
+    << " \txAxis="      << xAxis()
+    << " \tyAxis="      << yAxis()
+    << " \t#entries="   << table().size() << endmsg;
   for( auto it = table().begin() ; table().end() != it ; ++it )
     {
-      s << " \t\t\t( entry#" 
+      s << " \t\t\t( entry#"
         << std::setw(2) << it-table().begin()
-        << "   "      
-        << std::setw(12) << it->first 
-        << "   " 
+        << "   "
+        << std::setw(12) << it->first
+        << "   "
         << std::setw(12) << it->second << " )" << endmsg ;
     }
   return s ;
@@ -90,12 +84,12 @@ std::string TabulatedProperty::toXml(const std::string &name) const {
   for ( i = table().begin() ; i != table().end() ; ++i ) {
     xml << "<entry x = '" << i->first << "'  y = '" << i->second  << "' />";
   }
-  
+
   // condition close
   xml << "</tabproperty>";
   // DDDB close
   xml << "</DDDB>\n";
-  
+
   return xml.str();
 }
 
@@ -105,7 +99,7 @@ std::string TabulatedProperty::toXml(const std::string &name) const {
 void TabulatedProperty::update ( ValidDataObject& obj ) {
   // first check the class
   TabulatedProperty *tp = dynamic_cast<TabulatedProperty *>(&obj);
-  if (0 == tp){
+  if (!tp){
     throw GaudiException("Trying to do a deep copy between different classes","TabulatedProperty::update",StatusCode::FAILURE);
   }
   // call the parent update method
@@ -116,14 +110,6 @@ void TabulatedProperty::update ( ValidDataObject& obj ) {
   m_xAxis = tp->m_xAxis;
   m_yAxis = tp->m_yAxis;
   m_table = tp->m_table;
-  
+
 }
 ////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
