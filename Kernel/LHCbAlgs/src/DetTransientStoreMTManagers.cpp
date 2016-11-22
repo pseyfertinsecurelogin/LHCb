@@ -18,6 +18,8 @@ namespace Gaudi {
   }
 }
 
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiAlg/Transformer.h"
 #include "GaudiAlg/Producer.h"
 #include "GaudiAlg/Consumer.h"
@@ -42,7 +44,30 @@ namespace LHCb {
         if ( !sc ) return sc;
         // make sure we get the ICondIOVResource (AKA UpdateManagerSvc) during initialize
         m_IOVresource = SmartIF<ICondIOVResource>( updMgrSvc() );
-        if ( !m_IOVresource ) sc = StatusCode::FAILURE;
+        if ( ! m_IOVresource ||
+             // and that we can access the IDataManagerSvc interface of the detector service
+             ( m_preloadGeometry && ! detSvc().as<IDataManagerSvc>() ) ) sc = StatusCode::FAILURE;
+        return sc;
+      }
+      StatusCode start() override {
+        auto sc = Transformer::start();
+        if ( !sc ) return sc;
+        if ( m_preloadGeometry ) {
+          auto mgr = detSvc().as<IDataManagerSvc>(); // this is for sure not null because I checked at initialize
+          for( const auto path : { "Structure", "Geometry" } ) {
+            const std::string root{ mgr->rootName() + "/" + path + "/*" };
+            if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) {
+              debug() << "preloading " << root << " in " << detSvc().as<INamedInterface>()->name() << endmsg;
+            }
+            detSvc()->addPreLoadItem( root ).ignore();
+          }
+          const auto start = std::chrono::system_clock::now();
+          detSvc()->preLoad().ignore();
+          if ( UNLIKELY( msgLevel( MSG::DEBUG ) ) ) {
+            const auto stop = std::chrono::system_clock::now();
+            debug() << "preload completed in " << std::chrono::duration<float>{stop - start}.count() << "s" << endmsg;
+          }
+        }
         return sc;
       }
       ICondIOVResource::IOVLock operator() (const ODIN& odin) const override {
@@ -53,6 +78,8 @@ namespace LHCb {
         return Transformer::finalize();
       }
     private:
+      Gaudi::Property<bool> m_preloadGeometry {this, "PreloadGeometry", true,
+                                               "if we need to trigger a preload of the geometry during start"};
       SmartIF<ICondIOVResource>  m_IOVresource;
     };
     DECLARE_COMPONENT(ReserveDetDescForEvent)
