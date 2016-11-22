@@ -37,13 +37,12 @@ TabulatedProperty1D::~TabulatedProperty1D( )
 
 // Constructor from a tabulated property pointer
 TabulatedProperty1D::TabulatedProperty1D( const TabulatedProperty * tab,
-                                          const bool registerUMS,
-                                          const gsl_interp_type * interType )
-  : TabulatedFunction1D ( interType ),
-    m_tabProp           ( tab       )
+                                          const bool registerUMS )
+  : TabulatedFunction1D (     ),
+    m_tabProp           ( tab )
 {
   // initialise the underlying GSL interpolator
-  m_OK = initInterpolator( tab, registerUMS, interType );
+  m_OK = initInterpolator( tab, registerUMS );
 }
 
 bool TabulatedProperty1D::configureUMS( const TabulatedProperty * tab )
@@ -76,15 +75,11 @@ bool TabulatedProperty1D::configureUMS( const TabulatedProperty * tab )
 
 bool
 TabulatedProperty1D::initInterpolator( const TabulatedProperty * tab,
-                                       const bool registerUMS,
-                                       const gsl_interp_type * interType )
+                                       const bool registerUMS )
 {
   // Check the data is valid
   if ( !tab ) throw GaudiException("Null Rich::TabulatedProperty",
                                    "*TabulatedProperty1D*", StatusCode::FAILURE );
-
-  // set interpolator type
-  if ( nullptr != interType ) m_interType = interType;
 
   // UMS
   m_OK = ( registerUMS ? configureUMS(tab) : true );
@@ -95,7 +90,7 @@ TabulatedProperty1D::initInterpolator( const TabulatedProperty * tab,
   for ( const auto & t : tab->table() ) { data[t.first] = t.second; }
 
   // init the underlying GSL interpolator
-  m_OK = this->TabulatedFunction1D::initInterpolator(data,interType);
+  m_OK = this->TabulatedFunction1D::initInterpolator(data);
 
   // return
   return m_OK;
@@ -108,7 +103,7 @@ StatusCode TabulatedProperty1D::updateTabProp()
   msg << MSG::INFO << "Update triggered for " << tabProperty()->name() << endmsg;
 
   // run the update
-  m_OK = initInterpolator( tabProperty(), interType() );
+  m_OK = initInterpolator( tabProperty() );
 
   // check status of update
   if ( !m_OK )
