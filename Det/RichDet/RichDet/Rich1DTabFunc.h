@@ -329,7 +329,7 @@ namespace Rich
      *
      *  @return The value of the function at the given parameter value
      */
-    inline double value( const double x ) const
+    inline double value( const double x ) const noexcept
     {
       return m_fastInterp.value(checkRange(x));
     }
@@ -340,7 +340,7 @@ namespace Rich
      *
      *   @return The value of the function at the given parameter value
      */
-    inline double operator [] ( const double x ) const { return value(x); }
+    inline double operator [] ( const double x ) const noexcept { return value(x); }
 
     /** Computes the mean function value between the given parameter limits
      *
