@@ -34,22 +34,20 @@ TabulatedFunction1D::~TabulatedFunction1D( ) { clearInterpolator(); }
 
 bool TabulatedFunction1D::initInterpolator( const double x[],
                                             const double y[],
-                                            const int size,
-                                            const gsl_interp_type * interType )
+                                            const unsigned int size )
 {
   // copy data to temporary map
   Data data;
-  for ( int i = 0; i < size; ++i ) { data[ x[i] ] = y[i]; }
+  for ( unsigned int i = 0; i < size; ++i ) { data[ x[i] ] = y[i]; }
 
   // initialise interpolation
-  return ( m_OK = initInterpolator( data, interType ) );
+  return ( m_OK = initInterpolator( data ) );
 }
 
 //============================================================================
 
 bool TabulatedFunction1D::initInterpolator( const std::vector<double> & x,
-                                            const std::vector<double> & y,
-                                            const gsl_interp_type * interType )
+                                            const std::vector<double> & y )
 {
   // Check on size of containers
   if ( x.size() != y.size() )
@@ -67,7 +65,7 @@ bool TabulatedFunction1D::initInterpolator( const std::vector<double> & x,
           ix != x.end(); ++ix, ++iy ) { data[*ix] = *iy; }
 
     // initialise interpolation
-    m_OK = initInterpolator( data, interType );
+    m_OK = initInterpolator( data );
   }
 
   return m_OK;
@@ -76,79 +74,71 @@ bool TabulatedFunction1D::initInterpolator( const std::vector<double> & x,
 //============================================================================
 
 bool
-TabulatedFunction1D::initInterpolator( const std::vector< std::pair<double,double> > & data,
-                                       const gsl_interp_type * interType )
+TabulatedFunction1D::initInterpolator( const std::vector< std::pair<double,double> > & data )
 {
   // copy data to temporary map
   Data data_map;
   for ( auto i = data.begin(); i != data.end(); ++i ) { data_map[i->first] = i->second; }
 
   // initialise interpolation
-  return ( m_OK = initInterpolator( data_map, interType ) );
+  return ( m_OK = initInterpolator( data_map ) );
 }
 
 //============================================================================
 
-bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data,
-                                            const gsl_interp_type * interType )
+bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data )
 {
 
   // clean up first
   clearInterpolator();
 
-  // set interpolator type
-  if ( nullptr != interType ) m_interType = interType;
-
-  // Create the GSL interpolators
-  if ( m_accelerate )
-  {
-    m_mainDistAcc      = gsl_interp_accel_alloc();
-    m_weightedDistAcc  = gsl_interp_accel_alloc();
-  }
-  m_mainDistSpline     = gsl_spline_alloc ( m_interType, data.size() );
-  m_weightedDistSpline = gsl_spline_alloc ( m_interType, data.size() );
+  // Create the temporary GSL interpolator
+  std::unique_ptr<gsl_spline,GSLSplineDeleter> 
+    gslSpline( gsl_spline_alloc( gsl_interp_cspline, data.size() ) );
 
   // Check number of points needed to work ...
-  const auto min_points = gsl_interp_min_size(m_mainDistSpline->interp);
+  const auto min_points = gsl_interp_min_size(gslSpline->interp);
   if ( data.size() < min_points )
   {
     std::ostringstream mess;
-    mess << "Error whilst initialising GSL interpolator : Type '" << interpName()
+    mess << "Error whilst initialising GSL interpolator : Type '" 
+         << gsl_interp_name(gslSpline->interp)
          << "' requires a minimum of " << min_points << " data points. Only given "
          << data.size();
     initInterpolator();
     throw GaudiException( mess.str(), "*Rich::TabulatedFunction1D*", StatusCode::FAILURE );
     return false;
   }
+  
+  // find the min and max X values
+  auto minX = boost::numeric::bounds<double>::highest();
+  auto maxX = boost::numeric::bounds<double>::lowest();
 
-  // Copy data to temporary initialisation arrays
-  double * x  = new double[data.size()];
-  double * y  = new double[data.size()];
-  double * xy = new double[data.size()];
+  // Copy data to temporary GSL initialisation arrays
+  std::unique_ptr<double[]> x ( new double[data.size()] );
+  std::unique_ptr<double[]> y ( new double[data.size()] );
   unsigned int i = 0;
   for ( auto iD = data.begin(); iD != data.end(); ++iD, ++i )
   {
     x[i]  = (*iD).first;
     y[i]  = (*iD).second;
-    xy[i] = x[i]*y[i];
+    // set min and max x
+    if ( x[i] < minX ) { minX = x[i]; }
+    if ( x[i] > maxX ) { maxX = x[i]; }
   }
 
   // Initialise the interpolators
-  const auto err1 = gsl_spline_init ( m_mainDistSpline,     x, y,  data.size() );
-  const auto err2 = gsl_spline_init ( m_weightedDistSpline, x, xy, data.size() );
-
-  // delete temporary arrays
-  delete[] x;
-  delete[] y;
-  delete[] xy;
-
-  if ( err1 || err2 )
+  const auto err = gsl_spline_init ( gslSpline.get(), x.get(), y.get(), data.size() );
+  if ( err )
   {
     initInterpolator();
     throw GaudiException( "Error whilst initialising GSL interpolators",
                           "*TabulatedFunction1D*", StatusCode::FAILURE );
     return false;
   }
+
+  // Initialise the fast interpolator
+  m_fastInterp.init( minX, maxX, gslSpline.get() );
 
   return true;
 }
@@ -158,27 +148,7 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
 // clean out the GSL components
 void TabulatedFunction1D::clearInterpolator()
 {
-  // Free GSL components
-  if ( m_mainDistSpline )
-  {
-    gsl_spline_free( m_mainDistSpline );
-    m_mainDistSpline = nullptr;
-  }
-  if ( m_mainDistAcc )
-  {
-    gsl_interp_accel_free( m_mainDistAcc );
-    m_mainDistAcc = nullptr;
-  }
-  if ( m_weightedDistSpline )
-  {
-    gsl_spline_free( m_weightedDistSpline );
-    m_weightedDistSpline = nullptr;
-  }
-  if ( m_weightedDistAcc )
-  {
-    gsl_interp_accel_free( m_weightedDistAcc );
-    m_weightedDistAcc = nullptr;
-  }
+   m_fastInterp.clear();
 }
 
 //============================================================================
@@ -187,12 +157,6 @@ void TabulatedFunction1D::initInterpolator()
 {
   // remove any existing interpolators
   clearInterpolator();
-  // initialise with defaults
-  m_mainDistAcc         = gsl_interp_accel_alloc();
-  m_weightedDistAcc     = gsl_interp_accel_alloc();
-  const auto min_points = 3;
-  m_mainDistSpline      = gsl_spline_alloc ( m_interType, min_points );
-  m_weightedDistSpline  = gsl_spline_alloc ( m_interType, min_points );
 }
 
 //============================================================================
@@ -216,10 +180,7 @@ TabulatedFunction1D::rms( const double from,
   for ( unsigned int i = 0; i < samples; ++i, X += xInc )
   {
     const double Y = value(X) * ( weightFunc ? weightFunc->value(X) : 1.0 );
-    if ( Y>0 )
-    {
-      rms += Y * Y;
-    }
+    if ( Y > 0 ) { rms += Y * Y; }
   }
   rms /= (double)samples;
 
@@ -250,7 +211,7 @@ TabulatedFunction1D::standardDeviation( const double from,
   for ( unsigned int i = 0; i < samples; ++i, X += xInc )
   {
     const auto Y = value(X) * ( weightFunc ? weightFunc->value(X) : 1.0 );
-    if ( Y>0 )
+    if ( Y > 0 )
     {
       sd  += Y * std::pow(X-avgX,2);
       sum += Y;
@@ -265,8 +226,7 @@ TabulatedFunction1D::standardDeviation( const double from,
 
 std::unique_ptr<TabulatedFunction1D> 
 TabulatedFunction1D::combine( const ConstVector & funcs,
-                              const unsigned int samples,
-                              const gsl_interp_type * interType )
+                              const unsigned int samples )
 {
   if ( samples < 2 )
   {
@@ -304,7 +264,7 @@ TabulatedFunction1D::combine( const ConstVector & funcs,
     }
 
     // Create the new interpolated function
-    combFunc = new TabulatedFunction1D(mergedData,interType);
+    combFunc = new TabulatedFunction1D(mergedData);
 
   }
 

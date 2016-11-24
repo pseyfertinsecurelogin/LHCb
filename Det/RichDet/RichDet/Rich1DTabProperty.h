@@ -37,9 +37,8 @@ namespace Rich
 
   public:
 
-    /// Default Constructor with optional interpolator type argument
-    TabulatedProperty1D( const gsl_interp_type * interType = gsl_interp_linear ) 
-      : TabulatedFunction1D( interType ) { }
+    /// Default Constructor 
+    TabulatedProperty1D( ) : TabulatedFunction1D( ) { }
     
     /** Constructor from tabulated property and gsl interpolator type
      *
@@ -47,12 +46,9 @@ namespace Rich
      *  @param registerUMS Flag to indicate if this interpolator should register
      *                     itself to the UMS, so that it is automatically updated
      *                     when the underlying TabulatedProperty is updated
-     *  @param interType   GSL Interpolator type. See
-     *                     http://www.gnu.org/software/gsl/manual/gsl-ref_26.html#SEC389
      */
     explicit TabulatedProperty1D( const TabulatedProperty * tab,
-                                  const bool registerUMS = false,
-                                  const gsl_interp_type * interType = gsl_interp_linear );
+                                  const bool registerUMS = false );
 
     /// Destructor
     virtual ~TabulatedProperty1D( );
@@ -87,8 +83,7 @@ namespace Rich
      *  @param interType GSL Interpolator type (If not given, currently configured type is used)
      */
     bool initInterpolator( const TabulatedProperty * tab,
-                           const bool registerUMS            = false,
-                           const gsl_interp_type * interType = nullptr );
+                           const bool registerUMS = false );
 
   private: // methods
 
