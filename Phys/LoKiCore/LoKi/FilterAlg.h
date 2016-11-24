@@ -94,7 +94,7 @@ namespace LoKi
                 ISvcLocator*       pSvc ) ; // pointer to the service locator
     // ========================================================================
     /// the initialization of the algorithm
-    virtual StatusCode initialize () ;
+    StatusCode initialize () override;
     // ========================================================================
     /// the copy constructor is disabled
     FilterAlg ( const FilterAlg& ) = delete;        // the copy constructor is disabled

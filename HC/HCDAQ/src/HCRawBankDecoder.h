@@ -33,7 +33,7 @@ class HCRawBankDecoder final : public Gaudi::Functional::MultiTransformer<std::t
 
   ///< The transform callable
   std::tuple<LHCb::HCDigits,LHCb::HCDigits>
-  operator()(const LHCb::RawEvent&,const LHCb::ODIN&) const final;
+  operator()(const LHCb::RawEvent&,const LHCb::ODIN&) const override final;
 
  private:
 
