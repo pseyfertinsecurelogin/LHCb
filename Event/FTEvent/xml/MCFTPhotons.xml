@@ -11,7 +11,7 @@
            author = "Violaine Belle, Julian Wishahi"
            desc   = "This class represents the total photons exiting a fibre mat as a result of the crossing MCHits"
            serializers="FALSE">
-      <import   name = "Kernel/FTModule" />
+      <import   name = "Kernel/FTChannelID" />
       <import   name = "Event/MCHit" />
       <location name = "Default"   place="MC/FT/Photons"   />
 
