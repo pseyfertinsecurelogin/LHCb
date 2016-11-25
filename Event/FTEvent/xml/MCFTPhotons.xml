@@ -8,92 +8,76 @@
   <package name="FTEvent">
     <class name   = "MCFTPhotons"
            id     = "14005"
-           author = "Violaine Belle, Julian Wishahi"
-           desc   = "This class represents the total photons exiting a fibre mat as a result of the crossing MCHits"
+           author = "Violaine Bellee, Julian Wishahi"
+           desc   = "This class represents all photons exiting a fibre mat as a result of the crossing MCHits."
            serializers="FALSE">
-      <import   name = "Kernel/FTChannelID" />
       <import   name = "Event/MCHit" />
       <location name = "Default"   place="MC/FT/Photons"   />
 
-      <template name = "KeyedObjectDict" t1="LHCb::FTChannelID"/>
-      <base     name = "KeyedObject&lt;LHCb::FTChannelID&gt;" />
+      <template name = "KeyedObjectDict" t1="unsigned int"/>
+      <base     name = "KeyedObject&lt;unsigned int&gt;" />
       &KeyedObject;
 
       <constructor desc     = "Constructor"
-		   argList  = "LHCb::FTChannelID&amp; id, LHCb::MCHit* aHit, int photons, double time, bool isReflected">
-        <code> this->setKey(id); 
-	  m_mcHitVec.push_back(aHit);
-	  m_photonVec.push_back(photons);
-	  m_timeVec.push_back(time);
-    m_isReflectedVec.push_back(isReflected);
-    m_noisePhotons = 0;
-	</code>
+		   argList  = "unsigned int uniqueMatId, int nPhotons, LHCb::MCHit* mcHit, double exitTime, bool isReflected">
+        <code> 
+          this->setKey(uniqueMatId); 
+          m_nPhotonsVec.push_back(nPhotons);
+	        m_mcHitVec.push_back(mcHit);
+	        m_exitTimeVec.push_back(exitTime);
+          m_isReflectedVec.push_back(isReflected);
+	      </code>
       </constructor>
 
       <destructor  desc="destructor">
         <code> // dummy  </code>
       </destructor>
 
-      <method    name   = "channelID"
-                 desc   = "Retrieve the FTChannelID, key of the object"
-                 type   = "const LHCb::FTChannelID&amp;"
-                 const  = "TRUE"
-                 access = "PUBLIC">
+      <method   name   = "getUniqueMatID"
+                desc   = "Retrieve the uniqueMatID, key of the object"
+                type   = "unsigned int"
+                const  = "TRUE"
+                access = "PUBLIC">
         <code> return key(); </code>
       </method>
 
-      <method    name   = "addMCHit"
-                 desc   = "Add MCHit, energies and times to the relevant vectors"
-                 type   = "void"
-		 argList = "LHCb::MCHit* aHit, int photons, double time, bool isReflected "
-                 access = "PUBLIC">
+      <method   name    = "addPhotons"
+                desc    = "Add number of photons, their associated MCHit, exit time, if reflected"
+                type    = "void"
+		            argList = "int nPhotons, const LHCb::MCHit* mcHit, double exitTime, bool isReflected "
+                access  = "PUBLIC">
         <code> 
-	  m_mcHitVec.push_back(aHit);
-	  m_photonVec.push_back(photons);
-	  m_timeVec.push_back(time);
-    m_isReflectedVec.push_back(isReflected);
-	</code>
+          m_nPhotonsVec.push_back(nPhotons);
+	        m_mcHitVec.push_back(mcHit);
+	        m_exitTimeVec.push_back(exitTime);
+          m_isReflectedVec.push_back(isReflected);
+	      </code>
       </method>
 
-      <method    name    = "countNoise"
-                 desc    = "keep track of added noise photons"
-                 type    = "void"
-                 argList = "int newNoisePhotons"
-                 access  = "PUBLIC">
-          <code>
-            m_noisePhotons += newNoisePhotons;
-          </code>
-      </method>
+      <attribute  name   = "mcHitVec"
+                  desc   = "Vector of MCHits"
+                  type   = "std::vector &lt; const LHCb::MCHit* &gt;"
+		              setMeth = "FALSE"
+                  access = "PRIVATE"/>
 
-      <attribute name   = "mcHitVec"
-                 desc   = "Vector of MCHits"
-                 type   = "std::vector &lt; LHCb::MCHit* &gt;"
-		 setMeth = "FALSE"
-                 access = "PRIVATE"/>
+      <attribute  name   = "nPhotonsVec"
+                  desc   = "Vector of number of photons"
+                  type   = "std::vector &lt; int &gt;"
+		              setMeth = "FALSE"
+                  access = "PRIVATE"/>
 
-      <attribute name   = "photonVec"
-                 desc   = "Vector of photon deposits"
-                 type   = "std::vector &lt; double &gt;"
-		 setMeth = "FALSE"
-                 access = "PRIVATE"/>
+      <attribute  name   = "exitTimeVec"
+                  desc   = "Vector of exit times of the photons at the fibre ends"
+                  type   = "std::vector &lt; double &gt;"
+		              setMeth = "FALSE"
+                  access = "PRIVATE"/>
 
-      <attribute name   = "timeVec"
-                 desc   = "Vector of time deposits"
-                 type   = "std::vector &lt; double &gt;"
-		 setMeth = "FALSE"
-                 access = "PRIVATE"/>
+      <attribute  name   = "isReflectedVec"
+                  desc   = "Vector of isReflected flags"
+                  type   = "std::vector &lt; bool &gt;"
+		              setMeth = "FALSE"
+                  access = "PRIVATE"/>
 
-      <attribute name   = "isReflectedVec"
-                 desc   = "Vector of isReflected flags"
-                 type   = "std::vector &lt; bool &gt;"
-		 setMeth = "FALSE"
-                 access = "PRIVATE"/>
-
-      <attribute name   = "noisePhotons"
-                 desc   = "Counter for added noise photons"
-                 type   = "int"
-                setMeth = "FALSE"
-                 access = "PRIVATE" />
 
     </class>
   </package>
