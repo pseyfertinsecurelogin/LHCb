@@ -101,13 +101,15 @@ def main():
     tags_to_copy.append(head_tag)
 
     if os.path.exists(repo_dir):
-        print 'ERROR: directory %s already exist, please, remove it' % repo_dir
-        sys.exit(1)
+        print 'retrieve existing tags in', repo_dir
+        existing_tags = set(check_output(['git', 'tag'], cwd=repo_dir).splitlines())
+        tags_to_copy = [t for t in tags_to_copy if t.name not in existing_tags]
+    else:
+        print 'initialize repository'
+        check_output(['git', 'init', repo_dir])
 
     single_version_nodes = set(n for n in db.getAllNodes()
                                if db.isSingleVersionFolder(n))
-    print 'initialize repository'
-    check_output(['git', 'init', repo_dir])
     print 'processing %d tags' % len(tags_to_copy)
     for count, tag in enumerate(tags_to_copy, 1):
         # print datetime.now()
