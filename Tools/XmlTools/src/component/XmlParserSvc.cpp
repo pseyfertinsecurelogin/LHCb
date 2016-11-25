@@ -25,38 +25,6 @@
 // -----------------------------------------------------------------------
 DECLARE_SERVICE_FACTORY(XmlParserSvc)
 
-// -----------------------------------------------------------------------
-// Standard Constructor
-// ------------------------------------------------------------------------
-XmlParserSvc::XmlParserSvc (const std::string& name, ISvcLocator* svc) :
-  base_class (name, svc)
-{
-
-  // gets the maximum number of caches documents from the joboption file
-  // by default, this is 10.
-  declareProperty ("MaxDocNbInCache", m_maxDocNbInCache = 10 );
-
-  // gets the cacheBehavior from the joboption file. A 0 value means
-  // FIFO cache. The bigger this value is, the more you tend to keep
-  // only reused items. Default value is 2
-  declareProperty ("CacheBehavior", m_cacheBehavior = 2);
-
-  // Name of the xerces::EntityResolver provider
-  declareProperty ("EntityResolver", m_resolverName = "",
-                   "Name of the tool providing the IXmlEntityResolver interface.");
-
-  // Name of the xerces::EntityResolver provider
-  declareProperty ("DetectorDataSvc", m_detDataSvcName = "DetectorDataSvc" );
-
-  // Property to measure overall timing
-  declareProperty( "MeasureTime", m_measureTime = false );
-
-  // Property to print timing for each parse
-  declareProperty( "PrintTime", m_printTime = false );
-
-}
-
-
 //=========================================================================
 //  Initialization
 //=========================================================================
@@ -107,19 +75,19 @@ StatusCode XmlParserSvc::initialize( ) {
     }
     sc = m_toolSvc->retrieveTool(m_resolverName,m_resolverTool,0,true);
     if (  !sc.isSuccess() ) {
-      Service::error() << "Could not locate the tool " << m_resolverName << endmsg;
+      Service::error() << "Could not locate the tool " << m_resolverName.value() << endmsg;
       m_resolverTool = nullptr; // extra safety check
       return sc;
     }
     m_resolver.reset( m_resolverTool );
     if (  !m_resolver) {
-      Service::error() << "Could not get the IXmlEntityResolver interface of" << m_resolverName << endmsg;
+      Service::error() << "Could not get the IXmlEntityResolver interface of" << m_resolverName.value() << endmsg;
       return sc;
     }
     {   std::unique_lock<std::mutex> lck(m_parser_mtx);
         m_parser->setEntityResolver(m_resolver->resolver());
     }
-    if( msgLevel(MSG::DEBUG) ) debug() << "using the xercesc::EntityResolver provided by " << m_resolverName << endmsg;
+    if( msgLevel(MSG::DEBUG) ) debug() << "using the xercesc::EntityResolver provided by " << m_resolverName.value() << endmsg;
   }
   return StatusCode::SUCCESS;
 }
@@ -175,8 +143,7 @@ IDetDataSvc *XmlParserSvc::detDataSvc() {
 IOVDOMDocument* XmlParserSvc::parse (const char* fileName) {
 
   // first look in the cache
-  cacheType::iterator it = m_cache.find(fileName);
-
+  auto it = m_cache.find(fileName);
   if (it != m_cache.end()) {
     // we found an object in the cache
     if ( detDataSvc()->validEventTime() ) {
