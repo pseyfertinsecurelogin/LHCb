@@ -38,9 +38,9 @@ StatusCode DeFTDetector::initialize(){
   // Load version and check if version is correct
   m_FTversion = ( exists("FTversion") ? this->params()->param<int>("FTversion") : 0 );
   *m_msg << MSG::INFO << "Current FT geometry version =   " <<  m_FTversion << endmsg;
-  if ( m_FTversion < 60 ) {
+  if ( m_FTversion < 61 ) {
     *m_msg << MSG::FATAL << "Wrong geometry version! " << endmsg;
-    *m_msg << MSG::FATAL << "This version of FTDet requires version 60 or higher." << endmsg;
+    *m_msg << MSG::FATAL << "This version of FTDet requires version 6.1 or higher." << endmsg;
     *m_msg << MSG::FATAL << "--> Current version is " <<  m_FTversion << endmsg;
     return StatusCode::FAILURE;
   }
@@ -57,9 +57,7 @@ StatusCode DeFTDetector::initialize(){
   m_nModulesT3 = (unsigned int)param<int>("nModulesT3");
   m_nLayers    = (unsigned int)param<int>("nLayers");
   m_nQuarters  = (unsigned int)param<int>("nQuarters");
-  m_nSiPMs     = (unsigned int)param<int>("nSiPMs");
-  m_nChannels  = (unsigned int)param<int>("nChannels");
-  m_nChannelsInModule = m_nSiPMs * m_nChannels;
+  m_nChannelsInModule = (unsigned int)param<int>("nChannelsInModule");
   m_nTotQuarters = m_nStations * m_nLayers * m_nQuarters;
   m_nTotChannels = (m_nModulesT1 + m_nModulesT2 + m_nModulesT3) *
       m_nLayers * m_nQuarters * m_nChannelsInModule;
@@ -97,8 +95,14 @@ const DeFTQuarter* DeFTDetector::findQuarter(const Gaudi::XYZPoint& aPoint) cons
 
 /// Find the module for a given XYZ point
 const DeFTModule* DeFTDetector::findModule(const Gaudi::XYZPoint& aPoint) const {
-  const DeFTQuarter* q = findQuarter(aPoint);
-  return q  ? q->findModule(aPoint) : nullptr;;
+  const DeFTLayer* l = findLayer(aPoint); // is faster than via DeFTQuarter
+  return l ? l->findModule(aPoint) : nullptr ;
+}
+
+/// Find the mat for a given XYZ point
+const DeFTMat* DeFTDetector::findMat(const Gaudi::XYZPoint& aPoint) const {
+  const DeFTModule* m = findModule(aPoint);
+  return m ? m->findMat(aPoint) : nullptr ;
 }
 
 /// Get a random FTChannelID (useful for the thermal noise, which is ~flat)
@@ -106,10 +110,8 @@ LHCb::FTChannelID DeFTDetector::getRandomChannelFromSeed(const double seed) cons
   if(seed < 0.0 || seed > 1.0 )
     return LHCb::FTChannelID(0u);
   unsigned int flatChannel = int(seed*m_nTotChannels);
-  unsigned int channel = flatChannel & (m_nChannels - 1u) ;
-  flatChannel /= m_nChannels;
-  unsigned int sipm    = flatChannel & (m_nSiPMs - 1u);
-  flatChannel /= m_nSiPMs;
+  unsigned int channelInModule = flatChannel & (m_nChannelsInModule - 1u) ;
+  flatChannel /= m_nChannelsInModule;
   unsigned int quarter = flatChannel & (m_nQuarters - 1u);
   flatChannel /= m_nQuarters;
   unsigned int layer   = flatChannel & (m_nLayers - 1u);
@@ -121,7 +123,7 @@ LHCb::FTChannelID DeFTDetector::getRandomChannelFromSeed(const double seed) cons
   } else if( flatChannel >=  m_nModulesT1 ) {
     station = 2; module = flatChannel - m_nModulesT1;
   }
-  return LHCb::FTChannelID(station, layer, quarter, module, sipm, channel);
+  return LHCb::FTChannelID(station, layer, quarter, module, channelInModule);
 }
 
 /// Get a random FTChannelID from a pseudoChannel (useful for the AP noise)
@@ -138,7 +140,7 @@ LHCb::FTChannelID DeFTDetector::getRandomChannelFromPseudo(const int pseudoChann
 
   unsigned int module = pseudoChannel / m_nChannelsInModule ;
   const DeFTModule* moduleDet =
-      findModule( LHCb::FTChannelID(station, layer, quarter, module, 0u, 0u) );
+      findModule( LHCb::FTChannelID(station, layer, quarter, module, 0u) );
   if( moduleDet == nullptr ) {
     return LHCb::FTChannelID(0u);
   } else {

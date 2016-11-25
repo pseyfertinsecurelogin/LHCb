@@ -12,6 +12,7 @@
 #include "DeFTLayer.h"
 #include "DeFTQuarter.h"
 #include "DeFTModule.h"
+#include "DeFTMat.h"
 
 /** @class DeFTDetector DeFTDetector.h "FTDet/DeFTDetector.h"
  *
@@ -122,6 +123,11 @@ public:
    */
   const DeFTModule* findModule(const Gaudi::XYZPoint& point) const;
 
+  /** Find the FT Module where a global point is
+   *  @return Pointer to the relevant Module
+   */
+  const DeFTMat* findMat(const Gaudi::XYZPoint& point) const;
+
   /** Find the FT Station corresponding to the channel id
    *  @return Pointer to the relevant station
    */
@@ -142,9 +148,18 @@ public:
    */
   const DeFTModule* findModule( const LHCb::FTChannelID& id ) const;
 
+  /** Find the FT Mat corresponding to the channel id
+   *  @return Pointer to the relevant module
+   */
+  const DeFTMat* findMat( const LHCb::FTChannelID& id ) const;
+
+  /**
+   * Return a sensitive volume identifier for a given point in the
+   * global reference frame. This function is vital for Gauss.
+   */
   int sensitiveVolumeID(const Gaudi::XYZPoint& point) const override {
-    const DeFTModule* module = findModule( point );
-    return module ? module->sensitiveVolumeID( point ) : -1 ;
+    const DeFTMat* mat = findMat( point );
+    return mat ? mat->sensitiveVolumeID( point ) : -1 ;
   }
 
   /** Get a random channelID using a seed between 0 and 1 */
@@ -168,8 +183,6 @@ private: // private data members
   unsigned int m_nModulesT3;
   unsigned int m_nLayers;
   unsigned int m_nQuarters;
-  unsigned int m_nSiPMs;
-  unsigned int m_nChannels;
   unsigned int m_nTotQuarters;
   unsigned int m_nChannelsInModule;
   unsigned int m_nTotChannels;
@@ -200,6 +213,12 @@ inline const DeFTQuarter* DeFTDetector::findQuarter(const LHCb::FTChannelID& aCh
 inline const DeFTModule* DeFTDetector::findModule(const LHCb::FTChannelID& aChannel) const {
   const DeFTQuarter* q = findQuarter(aChannel);
   return q ? q->findModule(aChannel) : 0;
+}
+
+/// Find module methods
+inline const DeFTMat* DeFTDetector::findMat(const LHCb::FTChannelID& aChannel) const {
+  const DeFTModule* m = findModule(aChannel);
+  return m ? m->findMat(aChannel) : 0;
 }
 
 #endif // DEFTDETECTOR_H

@@ -24,23 +24,24 @@ det = appMgr.detSvc()
 FT = det['/dd/Structure/LHCb/AfterMagnetRegion/T/FT']
 
 # set an arbitrary point in global coordinates
-point = gbl.Gaudi.XYZPoint(-2495.27, -1207.75, 7848.65)
+point = gbl.Gaudi.XYZPoint(-2485.27, -1207.75, 7848.65)
 
-# get the corresponding module
-module = FT.findModule(point)
-print module
+# get the corresponding mat
+mat = FT.findMat(point)
+print mat
 
 # Get the local point
-localP = module.geometry().toLocal(point)
+localP = mat.geometry().toLocal(point)
 
 fraction = ROOT.Double(0.0) # needed fro pass-by-ref of doubles
-channel = module.calculateChannelAndFrac(localP.x(),fraction)
+channel = mat.calculateChannelAndFrac(localP.x(),fraction)
 
 print "Hit position = ",point.x(), point.y(),point.z()
 print "Hit channel: station=",channel.station(),
 print " layer=",channel.layer(),
 print " quarter =",channel.quarter(),
 print " module =",channel.module(),
+print " mat =",channel.mat(),
 print " sipm =",channel.sipm(),
 print " channel =",channel.channel()
 print "   fraction=",fraction

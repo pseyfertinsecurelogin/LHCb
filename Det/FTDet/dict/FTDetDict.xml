@@ -9,5 +9,7 @@
   <class name="std::vector<DeFTQuarter*>"   />    
   <class name="DeFTModule"        />
   <class name="std::vector<DeFTModule*>"   />    
+  <class name="DeFTMat"        />
+  <class name="std::vector<DeFTMat*>"   />    
 
 </lcgdict>

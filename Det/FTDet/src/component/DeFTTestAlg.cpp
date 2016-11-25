@@ -106,17 +106,25 @@ StatusCode DeFTTestAlg::execute() {
       const DeFTStation* pStation = m_deFT->findStation(pMid);
       lVolName = (pStation ? pStation->geometry()->lvolumeName() : "");
       if ( msgLevel(MSG::DEBUG) ) debug() << "Found Station: " << lVolName << endmsg;
+      tuple->column("StationID", (pStation ? pStation->stationID() : -1) );
 
       /// test findLayer method
       const DeFTLayer* pLayer = m_deFT->findLayer(pMid);
       lVolName = (pLayer ? pLayer->geometry()->lvolumeName() : "");
       if ( msgLevel(MSG::DEBUG) ) debug() << "Found Layer  : " << lVolName << endmsg;
+      tuple->column("LayerID", (pLayer ? pLayer->layerID() : -1) );
 
       /// test findModule method
       const DeFTModule* pModule = m_deFT->findModule(pMid);
       lVolName = (pModule ? pModule->geometry()->lvolumeName() : "");
       if ( msgLevel(MSG::DEBUG) ) debug() << "Found Module  : " << lVolName << endmsg;
-      tuple->column("ModuleID", (pModule ? pModule->moduleID() : 0) );
+      tuple->column("ModuleID", (pModule ? pModule->moduleID() : -1) );
+
+      /// test findMat method
+      const DeFTMat* pMat = m_deFT->findMat(pMid);
+      lVolName = (pMat ? pMat->geometry()->lvolumeName() : "");
+      if ( msgLevel(MSG::DEBUG) ) debug() << "Found Mat  : " << lVolName << endmsg;
+      tuple->column("MatID", (pMat ? pMat->matID() : -1) );
 
       // ok, write tuple row
       StatusCode status = tuple->write();

@@ -25,6 +25,7 @@ public:
 
 private:
   std::vector<std::vector<std::vector<uint16_t> > > m_sipmData;
+  std::string m_inputLocation;
   std::string m_outputLocation; 
 
 };

@@ -1,6 +1,6 @@
 // Include files
 #include "boost/optional.hpp"
-#include "Event/FTCluster.h"
+#include "Event/FTLiteCluster.h"
 #include "Event/RawEvent.h"
 
 #include <numeric>
@@ -28,6 +28,7 @@ FTRawBankEncoder::FTRawBankEncoder( const std::string& name,
                                     ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
 {
+  declareProperty("InputLocation" , m_inputLocation  = LHCb::FTLiteClusterLocation::Default);
   declareProperty("OutputLocation", m_outputLocation = LHCb::RawEventLocation::Default);
 }
 
@@ -49,9 +50,9 @@ StatusCode FTRawBankEncoder::initialize() {
 //=============================================================================
 StatusCode FTRawBankEncoder::execute() {
 
-  if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-
-  LHCb::FTClusters* clusters = get<LHCb::FTClusters>(LHCb::FTClusterLocation::Default );
+  typedef FastClusterContainer<LHCb::FTLiteCluster,int> FTLiteClusters;
+  FTLiteClusters* clusters = get<FTLiteClusters>( m_inputLocation );
+  if ( msgLevel( MSG::DEBUG) ) debug() << "Retrieved " << clusters->size() << " clusters" << endmsg;
   LHCb::RawEvent* event = getOrCreate<LHCb::RawEvent,LHCb::RawEvent>( m_outputLocation );
 
   // Incremented to deal with new numbering scheme
@@ -59,46 +60,35 @@ StatusCode FTRawBankEncoder::execute() {
 
   for (auto &b : m_sipmData ) for (auto &pm : b ) pm.clear();
 
-  for ( const auto&  cluster : *clusters ) {
-    LHCb::FTChannelID id = cluster->channelID();
+  for ( const auto cluster : *clusters ) {
+    LHCb::FTChannelID id = cluster.channelID();
+
     unsigned int bankNumber = id.quarter() + 4*id.layer() + 16*(id.station()-1u);   //== Temp, assumes 1 TELL40 per quarter.
 
     if ( m_sipmData.size() <= bankNumber ) {
       info() << "*** Invalid bank number " << bankNumber << " channelID " << id << endmsg;
       return StatusCode::FAILURE;
     }
-    unsigned int sipmNumber = id.sipm() + 16 * id.module();//== changes to be done here to include module + mat
+    unsigned int sipmNumber = id.sipm() + 4*id.mat() + 16 * id.module();
     if ( m_sipmData[bankNumber].size() <= sipmNumber ) {
       info() << "Invalid SiPM number " << sipmNumber << " in bank " << bankNumber << " channelID " << id << endmsg;
       return StatusCode::FAILURE;
     }
 
     auto& data = m_sipmData[bankNumber][sipmNumber];
-    if (data.size() > FTRawBank::nbClusMaximum+1u ) continue; // JvT: should be 9 (only for non-central)
+    if (data.size() > FTRawBank::nbClusMaximum ) continue; // JvT: should be 9 (only for non-central)
     // one extra word for sipm number + nbClus
     if ( data.empty() ) data.push_back( sipmNumber << FTRawBank::sipmShift );
-    auto frac =   std::min(uint16_t(0.5 + cluster->fraction() * (FTRawBank::fractionMaximum+1)),
-                           FTRawBank::fractionMaximum); // JvT: Should be done by FTLiteCluster
-    auto channel = std::min(uint16_t(id.channel()),
-                           FTRawBank::cellMaximum);
-    //auto sipmId = std::min(uint16_t(0),               // Dummy (remove)
-    //                       FTRawBank::sipmIdMaximum);
-    auto cSize = (cluster->size() < FTRawBank::largeClusterSize) ? uint16_t(0) : FTRawBank::sizeMaximum ;
-    //auto charg =  std::min(uint16_t(cluster->charge() / 16),
-    //                       FTRawBank::chargeMaximum); // one MIP should be around 32 (6 bits ADC) -> coded as 2.
-    data.push_back( ( channel << FTRawBank::cellShift ) |
-                    ( frac    << FTRawBank::fractionShift ) |
-                   //( sipmId  << FTRawBank::sipmIdShift ) |
-                    ( cSize   << FTRawBank::sizeShift ) //|
-                   //( charg   << FTRawBank::chargeShift )
+    data.push_back( ( id.channel()           << FTRawBank::cellShift ) |
+                    ( cluster.fractionBit() << FTRawBank::fractionShift ) |
+                    ( cluster.isLarge()     << FTRawBank::sizeShift )
                    );
     ++data[0]; // counts the number of clusters (in the header)
     if ( msgLevel( MSG::VERBOSE ) ) {
-      verbose() << format( "Bank%3d sipm%4d channel %4d frac %6.4f charge%4d size%3d code %4.4x",
-                           bankNumber, sipmNumber, id.channel(), cluster->fraction(),
-                           cluster->charge(), cluster->size(), data.back() ) << endmsg;
+      verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %1d code %4.4x",
+                           bankNumber, sipmNumber, id.channel(), cluster.fraction(),
+                           cluster.isLarge(), data.back() ) << endmsg;
     }
-
   }
 
   //== Now build the banks: We need to put the 16 bits content into 32 bits words.
