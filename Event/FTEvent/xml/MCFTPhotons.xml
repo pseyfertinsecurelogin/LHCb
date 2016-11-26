@@ -19,12 +19,16 @@
       &KeyedObject;
 
       <constructor desc     = "Constructor"
-		   argList  = "unsigned int uniqueMatId, int nPhotons, LHCb::MCHit* mcHit, double exitTime, bool isReflected">
+		   argList  = "unsigned int uniqueMatId, int nPhotons, LHCb::MCHit* mcHit, double time, double posX, double posZ, double dirX, double dirZ, bool isReflected">
         <code> 
           this->setKey(uniqueMatId); 
           m_nPhotonsVec.push_back(nPhotons);
 	        m_mcHitVec.push_back(mcHit);
-	        m_exitTimeVec.push_back(exitTime);
+	        m_timeVec.push_back(time);
+          m_posXVec.push_back(posX);
+          m_posZVec.push_back(posZ);
+          m_dirXVec.push_back(dirX);
+          m_dirZVec.push_back(dirZ);
           m_isReflectedVec.push_back(isReflected);
 	      </code>
       </constructor>
@@ -44,12 +48,16 @@
       <method   name    = "addPhotons"
                 desc    = "Add number of photons, their associated MCHit, exit time, if reflected"
                 type    = "void"
-		            argList = "int nPhotons, const LHCb::MCHit* mcHit, double exitTime, bool isReflected "
+		            argList = "int nPhotons, const LHCb::MCHit* mcHit, double time, double posX, double posZ, double dirX, double dirZ, bool isReflected "
                 access  = "PUBLIC">
         <code> 
           m_nPhotonsVec.push_back(nPhotons);
 	        m_mcHitVec.push_back(mcHit);
-	        m_exitTimeVec.push_back(exitTime);
+	        m_timeVec.push_back(time);
+          m_posXVec.push_back(posX);
+          m_posZVec.push_back(posZ);
+          m_dirXVec.push_back(dirX);
+          m_dirZVec.push_back(dirZ);
           m_isReflectedVec.push_back(isReflected);
 	      </code>
       </method>
@@ -66,10 +74,34 @@
 		              setMeth = "FALSE"
                   access = "PRIVATE"/>
 
-      <attribute  name   = "exitTimeVec"
+      <attribute  name   = "timeVec"
                   desc   = "Vector of exit times of the photons at the fibre ends"
                   type   = "std::vector &lt; double &gt;"
 		              setMeth = "FALSE"
+                  access = "PRIVATE"/>
+
+      <attribute  name   = "posXVec"
+                  desc   = "Vector of x coordinates of the exit points of the photons at the fibre ends (local coordinates)"
+                  type   = "std::vector &lt; double &gt;"
+                  setMeth = "FALSE"
+                  access = "PRIVATE"/>
+
+      <attribute  name   = "posZVec"
+                  desc   = "Vector of z coordinates of the exit points of the photons at the fibre ends (local coordinates)"
+                  type   = "std::vector &lt; double &gt;"
+                  setMeth = "FALSE"
+                  access = "PRIVATE"/>
+
+      <attribute  name   = "dirXVec"
+                  desc   = "Vector of normalised x component of the momentum of the photons at the fibre ends (local coordinates)"
+                  type   = "std::vector &lt; double &gt;"
+                  setMeth = "FALSE"
+                  access = "PRIVATE"/>
+
+      <attribute  name   = "dirZVec"
+                  desc   = "Vector of normalised z component of the momentum of the photons at the fibre ends (local coordinates)"
+                  type   = "std::vector &lt; double &gt;"
+                  setMeth = "FALSE"
                   access = "PRIVATE"/>
 
       <attribute  name   = "isReflectedVec"

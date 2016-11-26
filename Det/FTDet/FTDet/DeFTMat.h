@@ -58,6 +58,21 @@ public:
   /** @return stationID */
   unsigned int stationID() const;
 
+  /** @return unique matID */
+  unsigned int uniqueMatID() const;
+
+  /** @return unique moduleID */
+  unsigned int uniqueModuleID() const;
+
+  /** @return unique quarterID */
+  unsigned int uniqueQuarterID() const;
+
+  /** @return  unique layerID */
+  unsigned int uniqueLayerID() const;
+
+  /** @return unique stationID */
+  unsigned int uniqueStationID() const;
+
   /** Element id */
   LHCb::FTChannelID elementID() const;
 
@@ -199,6 +214,23 @@ inline unsigned int DeFTMat::layerID() const {
 inline unsigned int DeFTMat::stationID() const {
   return m_elementID.station();
 }
+
+inline unsigned int DeFTMat::uniqueMatID() const {
+  return m_elementID.uniqueMat();
+}
+
+inline unsigned int DeFTMat::uniqueModuleID() const {
+  return m_elementID.uniqueModule();
+}
+
+inline unsigned int DeFTMat::uniqueQuarterID() const {
+  return m_elementID.uniqueQuarter();
+}
+
+inline unsigned int DeFTMat::uniqueLayerID() const {
+  return m_elementID.uniqueLayer();
+}
+
 
 inline LHCb::FTChannelID DeFTMat::elementID() const {
   return m_elementID;
