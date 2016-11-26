@@ -6,7 +6,7 @@
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
   <package name="FTEvent">
-    <class name   = "MCFTPhotons"
+    <class name   = "MCFTPhoton"
            id     = "14005"
            author = "Violaine Bellee, Julian Wishahi"
            desc   = "This class represents all photons exiting a fibre mat as a result of the crossing MCHits."
