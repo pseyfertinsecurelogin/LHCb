@@ -538,10 +538,15 @@ def odin_runevts ( arg1 , *arg ) :
     if   0 == len ( arg ) and issubclass ( type(arg1) ,  ( RunEvt , RunEvtList ) ) : 
         return ODIN_RUNEVT ( arg1 )
     elif 1 == len ( arg ) :
-        if issubclass ( type(arg1) , EvtRun  ) :
+        if issubclass ( type(arg1) , RunEvt  ) :
             arg2=arg[0]
-            if issubclass ( type(arg2) , EvtRun  ) :
+            if issubclass ( type(arg2) , RunEvt  ) :
                 return ODIN_RUNEVT ( arg1 , arg2 )
+        elif issubclass ( type(arg1) , (int,long) ): 
+            arg2=arg[0]
+            if issubclass ( type(arg2) , (int,long,EvtNum)) :
+                arg = RunEvt ( arg1 , EvtNum ( arg2 ) ) 
+                return ODIN_RUNEVT ( arg )
         raise TypeError ("invalid signature") 
                         
     evts = runevt_lst ( arg1 , *arg ) 
