@@ -3,13 +3,25 @@ High level configuration tools for the detector description.
 """
 __author__ = "Marco Clemencic <Marco.Clemencic@cern.ch>"
 
+import re
 from Gaudi.Configuration import *
 from Configurables import ( CondDBEntityResolver,
                             XmlCnvSvc,
                             XmlParserSvc )
+
+
+GIT_DBS = {}
 try:
+
     from Configurables import EntityResolverDispatcher, GitEntityResolver
     CAN_USE_GIT_DDDB = True
+    # look for git DBs
+    GITDBPATH = os.environ.get('GITDBPATH', '').split(os.pathsep)
+    for p in GITDBPATH:
+        if os.path.isdir(p):
+            for f in os.listdir(p):
+                if re.match(r'^[A-Z0-9]+\.git$', f) and os.path.isdir(os.path.join(p, f)):
+                    GIT_DBS[f.split('.')[0]] = os.path.join(p, f)
 except ImportError:  # GitEntityResolver may not be available
     CAN_USE_GIT_DDDB = False
 
@@ -24,7 +36,7 @@ class DDDBConf(ConfigurableUser):
     """
     ConfigurableUser for the configuration of the detector description.
     """
-    __slots__ = { "DbRoot"    : "git:/lhcb.xml" if CAN_USE_GIT_DDDB else "conddb:/lhcb.xml",
+    __slots__ = { "DbRoot"    : "git:/lhcb.xml" if "DDDB" in GIT_DBS else "conddb:/lhcb.xml",
                   "DataType"  : "2012",
                   "Simulation": False,
                   "AutoTags"  : False,
@@ -72,13 +84,29 @@ class DDDBConf(ConfigurableUser):
         xmlCnvSvc = XmlCnvSvc(AllowGenericConversion = True)
 
         if using_git:
-            resolver = EntityResolverDispatcher(EntityResolvers=[
-                GitEntityResolver('GitDDDB', Ignore="Conditions/.*"),
-                GitEntityResolver('GitLHCBCOND', Ignore="Conditions/(Online|DQ).*"),
-                GitEntityResolver('GitONLINE', Ignore="Conditions/DQ.*"),
-                GitEntityResolver('GitDQFLAGS'),
-                CondDBEntityResolver(),
-                ], Mappings=[(r'^conddb:', 'git:')])
+            if self.getProp("Simulation"):
+                resolvers = [
+                    GitEntityResolver('GitDDDB', Ignore="Conditions/.*"),
+                    GitEntityResolver('GitSIMCOND'),
+                    CondDBEntityResolver(),
+                ]
+            else:
+                resolvers = [
+                    GitEntityResolver('GitDDDB', Ignore="Conditions/.*"),
+                    GitEntityResolver('GitLHCBCOND', Ignore="Conditions/(Online|DQ).*"),
+                    GitEntityResolver('GitONLINE', Ignore="Conditions/DQ.*"),
+                    GitEntityResolver('GitDQFLAGS'),
+                    CondDBEntityResolver(),
+                ]
+            for r in resolvers:
+                if r.name().startswith('ToolSvc.Git'):
+                    if r.name()[11:] in GIT_DBS:
+                        r.PathToRepository = GIT_DBS[r.name()[11:]]
+                    else:
+                        # ignore this resolver if there is no repository for the partition
+                        r.Ignore = '.*'
+            resolver = EntityResolverDispatcher(EntityResolvers=resolvers,
+                                                Mappings=[(r'^conddb:', 'git:')])
         else:
             resolver = CondDBEntityResolver()
 
