@@ -65,10 +65,10 @@ int main()
       << " \t" << std::setprecision ( 8 ) << value 
       << " \tstd::fabs - std::abs : "
       << " \t" << std::setprecision ( 8 ) 
-      << ( std::fabs ( value ) - std::abs( value ) ) 
+      << ( std::fabs ( value ) - std::abs( int(value) ) )
       << " \tfabs - abs :  "      
       << " \t" << std::setprecision ( 8 ) 
-      << ( ::fabs ( value ) - ::abs( value ) ) 
+      << ( ::fabs ( value ) - ::abs( int(value) ))
       << std::endl;
   }
   // ==========================================================================

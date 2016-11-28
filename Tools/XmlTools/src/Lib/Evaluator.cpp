@@ -73,17 +73,8 @@ namespace {
     inline std::string operator+(const std::string& s1, boost::string_ref s2) {
         return s1+to_string(s2);
     }
-    inline std::string operator+(const char* s1, boost::string_ref s2) {
-        return s1+to_string(s2);
-    }
     inline std::string operator+(char s1, boost::string_ref s2) {
         return s1+to_string(s2);
-    }
-    inline std::string operator+(boost::string_ref s1, const std::string& s2) {
-        return to_string(s1)+s2;
-    }
-    inline std::string operator+(boost::string_ref s1, const char* s2) {
-        return to_string(s1)+s2;
     }
 }
 #define SKIP_BLANKS                      \
