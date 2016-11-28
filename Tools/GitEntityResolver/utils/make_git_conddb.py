@@ -12,6 +12,7 @@ from xml.etree import ElementTree as ET
 from subprocess import check_output, STDOUT
 from hashlib import sha1
 from datetime import datetime
+from clean_iovs import process as clean_iovs
 
 IOV_MIN = 0
 IOV_MAX = 0x7fffffffffffffff
@@ -157,6 +158,7 @@ def main():
                         with open(os.path.join(path, 'IOVs'), 'a') as iovs:
                             iovs.write('%d %s\n' % (since, value_id))
 
+        clean_iovs(repo_dir)
         print 'updating repository'
         check_output(['git', 'add', '.'], cwd=repo_dir)
         if check_output(['git', 'status', '--porcelain'],

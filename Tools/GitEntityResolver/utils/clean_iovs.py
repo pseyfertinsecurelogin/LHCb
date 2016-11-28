@@ -123,6 +123,17 @@ def remove_dummy_entries(data):
     return new_data
 
 
+def process(repo):
+    print 'reducing IOVs...'
+    for iovs in iov_files(repo):
+        path = os.path.dirname(iovs)
+        print '  processing', path
+        data = remove_dummy_entries(flatten_iovs(parse_iovs(path)))
+        remove_iovs(path)  # at this point we should not need old files
+        data = partition_iovs(data)
+        write_iovs(path, data)
+
+
 def main():
     from optparse import OptionParser
     parser = OptionParser(usage='%prog [options] repository')
@@ -130,15 +141,7 @@ def main():
     opts, args = parser.parse_args()
     if len(args) != 1:
         parser.error('can work only on one repository at a time')
-    repo = args[0]
-
-    for iovs in iov_files(repo):
-        path = os.path.dirname(iovs)
-        print 'processing', path
-        data = remove_dummy_entries(flatten_iovs(parse_iovs(path)))
-        remove_iovs(path)  # at this point we should not need old files
-        data = partition_iovs(data)
-        write_iovs(path, data)
+    process(args[0])
 
 
 if __name__ == '__main__':
