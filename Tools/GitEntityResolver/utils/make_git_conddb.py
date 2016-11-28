@@ -167,6 +167,7 @@ def main():
                 # default author
                 author = 'Marco Clemencic <marco.clemencic@cern.ch>'
                 date = tag_time(tag)
+            os.environ['GIT_COMMITTER_DATE'] = date
             check_output(['git', 'commit', '-m', tag,
                           '--author', author, '--date', date],
                          cwd=repo_dir)
