@@ -69,6 +69,11 @@ def main():
 
     parser = OptionParser(usage='%prog [options] dbfile notes-xml repo_dir')
 
+    parser.add_option('--tag-prefix',
+                      help='prefix to use for the generated tags')
+
+    parser.set_defaults(tag_prefix='')
+
     opts, (dbfile, notes, repo_dir) = parser.parse_args()
 
     name = os.path.splitext(os.path.basename(dbfile))[0]
@@ -104,7 +109,7 @@ def main():
     if os.path.exists(repo_dir):
         print 'retrieve existing tags in', repo_dir
         existing_tags = set(check_output(['git', 'tag'], cwd=repo_dir).splitlines())
-        tags_to_copy = [t for t in tags_to_copy if t.name not in existing_tags]
+        tags_to_copy = [t for t in tags_to_copy if (opts.tag_prefix + t.name) not in existing_tags]
     else:
         print 'initialize repository'
         check_output(['git', 'init', repo_dir])
@@ -176,7 +181,7 @@ def main():
         else:
             print 'no changes in %s' % tag
         if tag != 'HEAD':
-            check_output(['git', 'tag', tag], cwd=repo_dir)
+            check_output(['git', 'tag', opts.tag_prefix + tag], cwd=repo_dir)
 
     print 'compacting repository'
     check_output(['git', 'gc'], cwd=repo_dir)
