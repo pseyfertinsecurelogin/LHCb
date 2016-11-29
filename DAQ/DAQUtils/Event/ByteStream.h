@@ -46,14 +46,12 @@ namespace LHCb
   private:
 
     unsigned char* m_start;
-    unsigned int m_size;
     unsigned int m_pos;
 
   };
   inline ByteStream::ByteStream(unsigned int* bank, 
                                 size_t size):
     m_start(0),
-    m_size(size),
     m_pos(0){
     // constructor
     m_start = reinterpret_cast<unsigned char*>(bank);

@@ -1,4 +1,4 @@
-#if __GNUC__
+#if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC optimize "O3"
 #endif
 
