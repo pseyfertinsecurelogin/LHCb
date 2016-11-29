@@ -104,7 +104,7 @@ def write_iovs(path, data):
     '''
     if not os.path.exists(path):
         os.mkdir(path)
-    print 'writing %s/IOVs' % path
+    print '  writing %s/IOVs' % path
     with open(os.path.join(path, 'IOVs'), 'w') as iovs:
         for since, key in data:
             if not isinstance(key, basestring):

@@ -60,12 +60,15 @@ def extract_tags_infos(notes, partition):
                  (
                     # we use a dummy time
                     el.find('lhcb:date', ns).text + 'T00:00:00',
-                    committers.get(el.find('lhcb:contributor', ns).text)
+                    committers.get(el.find('lhcb:contributor', ns).text),
+                    el.find(("lhcb:partition/[lhcb:name='{0}']/"
+                             "lhcb:base").format(partition), ns).text,
                  ))
                 for el in notes.findall(tags_xpath, ns))
 
 
 def main():
+    start_time = datetime.now()
 
     parser = OptionParser(usage='%prog [options] dbfile notes-xml repo_dir')
 
@@ -112,19 +115,40 @@ def main():
         tags_to_copy = [t for t in tags_to_copy if (opts.tag_prefix + t.name) not in existing_tags]
     else:
         print 'initialize repository'
+        existing_tags = set()
         check_output(['git', 'init', repo_dir])
 
     single_version_nodes = set(n for n in db.getAllNodes()
                                if db.isSingleVersionFolder(n))
+    tip_tags = set()  # tags not overridden (good for branches)
     print 'processing %d tags' % len(tags_to_copy)
     for count, tag in enumerate(tags_to_copy, 1):
         # print datetime.now()
         tag = tag.name
+        print 80 * '-'
+        print 'processing tag %s (%d/%d)' % (tag, count, len(tags_to_copy))
+
+        if tag in tags_infos:
+            date, author, base = tags_infos[tag]
+            base = opts.tag_prefix + base
+        else:
+            # default author
+            author = 'Marco Clemencic <marco.clemencic@cern.ch>'
+            date = tag_time(tag)
+            base = 'HEAD'
+
+        if base in existing_tags:
+            print 'get base tag %s' % (base,)
+            check_output(['git', 'checkout', base], cwd=repo_dir)
+        tip_tags.add(opts.tag_prefix + tag)
+        if base in tip_tags:
+            tip_tags.remove(base)
+
         if len(os.listdir(repo_dir)) > 1:
             print 'cleaning up'
             check_output(['git', 'rm', '-r', '.'], cwd=repo_dir)
 
-        print 'dumping tag %s (%d/%d)' % (tag, count, len(tags_to_copy))
+        print 'dumping content of %s' % (tag,)
         if tag != 'HEAD':
             nodes = db.findNodesWithTag(tag) + list(single_version_nodes)
         else:
@@ -168,12 +192,6 @@ def main():
         check_output(['git', 'add', '.'], cwd=repo_dir)
         if check_output(['git', 'status', '--porcelain'],
                         cwd=repo_dir).strip():
-            if tag in tags_infos:
-                date, author = tags_infos[tag]
-            else:
-                # default author
-                author = 'Marco Clemencic <marco.clemencic@cern.ch>'
-                date = tag_time(tag)
             os.environ['GIT_COMMITTER_DATE'] = date
             check_output(['git', 'commit', '-m', tag,
                           '--author', author, '--date', date],
@@ -182,10 +200,19 @@ def main():
             print 'no changes in %s' % tag
         if tag != 'HEAD':
             check_output(['git', 'tag', opts.tag_prefix + tag], cwd=repo_dir)
+            existing_tags.add(opts.tag_prefix + tag)
 
+    print 80 * '-'
+    print 'creating branches for tip tags'
+    for i, tag in enumerate(sorted(tip_tags)):
+        if tag.endswith('HEAD'):
+            continue
+        print 'branch-%d -> %s' % (i, tag)
+        check_output(['git', 'branch', 'branch-%d' % i, tag], cwd=repo_dir)
     print 'compacting repository'
     check_output(['git', 'gc'], cwd=repo_dir)
 
+    print 'completed in', (datetime.now() - start_time)
 
 if __name__ == '__main__':
     main()
