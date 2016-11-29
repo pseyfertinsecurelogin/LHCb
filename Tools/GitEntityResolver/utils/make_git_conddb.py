@@ -169,7 +169,10 @@ def main():
                                 '{0}/{1}@{2}'.format(os.path.dirname(node),
                                                      key,
                                                      os.path.basename(node)))
-                    if channel or path.endswith('MagnetScale.xml'):
+                    if channel or (
+                          os.path.basename(path) in ('MagnetScale.xml',
+                                                     'RichHpdSurface.xml')
+                          ):
                         path = path + ':{0}'.format(channel)
                     value = fix_system_refs(payload[key], path, node)
                     if since == IOV_MIN and until == IOV_MAX:
