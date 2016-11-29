@@ -181,11 +181,10 @@ protected:
    SmartIF<IHltMonitorSvc> m_hltMonSvc;
    mutable LoKi::Hybrid::IHltFactory* m_factory = nullptr;
 
-   std::string m_odin_location;
-   std::string m_l0_location;
-   std::string m_hlt_location[2];
-   std::string m_raw_location;
-   std::map<unsigned int,std::string> m_bits;
+   Gaudi::Property<std::string> m_odin_location { this, "ODINLocation", LHCb::ODINLocation::Default };
+   Gaudi::Property<std::string> m_l0_location { this, "L0DUReportLocation", LHCb::L0DUReportLocation::Default };
+   std::array< Gaudi::Property<std::string>, 2 >  m_hlt_location { Gaudi::Property<std::string>{ this, "Hlt1DecReportsLocation", LHCb::HltDecReportsLocation::Default },
+                                                                   Gaudi::Property<std::string>{ this, "Hlt2DecReportsLocation", LHCb::HltDecReportsLocation::Default } };
 
    bool m_evals_updated      = false;
    bool m_preambulo_updated  = false;
@@ -193,18 +192,18 @@ protected:
 
 private:
 
-   bool m_useCondDB;
-   std::string m_monSvc;
+   Gaudi::Property<bool> m_useCondDB { this, "GetStartOfRunFromCondDB", true };
+   Gaudi::Property<std::string> m_monSvc { this, "MonitorSvc","HltMonitorSvc/Hlt2MonSvc" };
 
-   std::vector<std::string> m_preambulo_ ;             // the preambulo property
+   Gaudi::Property<std::vector<std::string>> m_preambulo_ { this, "Preambulo" };
 
    std::unordered_map<std::string, const DataObject*> m_data;
    Condition *m_runpars = nullptr;
    SmartIF<IUpdateManagerSvc> m_updMgrSvc;
 
    mutable unsigned long long m_startOfRun = 0;
-   double m_binWidth = 10;   // in _seconds_!
-   double m_timeSpan = 4000; // in _seconds_!
+   Gaudi::Property<double> m_binWidth { this,"TrendBinWidth",10 };   // in _seconds_!
+   Gaudi::Property<double> m_timeSpan { this,"TrendTimeSpan",4000 }; // in _seconds_!
 
    StatusCode i_updateConditions();
    void handle(const Incident&) override;

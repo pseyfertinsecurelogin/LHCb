@@ -77,11 +77,9 @@ StatusCode HltRoutingBitsWriter::decode() {
 //=============================================================================
 HltRoutingBitsWriter::HltRoutingBitsWriter( const std::string& name,
                                             ISvcLocator* pSvcLocator)
-   : HltEvaluator( name , pSvcLocator )
+: HltEvaluator( name , pSvcLocator )
 {
-   declareProperty("RoutingBits", m_bits) ->declareUpdateHandler( &HltRoutingBitsWriter::updateBits, this );
-   declareProperty("UpdateExistingRawBank",m_updateBank = false);
-   declareProperty("RawEventLocation", m_raw_location = LHCb::RawEventLocation::Default);
+   m_bits.declareUpdateHandler( &HltRoutingBitsWriter::updateBits, this );
 }
 
 //=============================================================================
