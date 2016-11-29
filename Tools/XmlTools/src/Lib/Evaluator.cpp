@@ -70,9 +70,6 @@ namespace {
     inline std::string to_string(boost::string_ref str) {
         return std::string( str.data(), str.size() );
     }
-    inline std::string operator+(const std::string& s1, boost::string_ref s2) {
-        return s1+to_string(s2);
-    }
     inline std::string operator+(char s1, boost::string_ref s2) {
         return s1+to_string(s2);
     }
