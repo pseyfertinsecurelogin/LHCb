@@ -183,8 +183,8 @@ protected:
 
    Gaudi::Property<std::string> m_odin_location { this, "ODINLocation", LHCb::ODINLocation::Default };
    Gaudi::Property<std::string> m_l0_location { this, "L0DUReportLocation", LHCb::L0DUReportLocation::Default };
-   std::array< Gaudi::Property<std::string>, 2 >  m_hlt_location { Gaudi::Property<std::string>{ this, "Hlt1DecReportsLocation", LHCb::HltDecReportsLocation::Default },
-                                                                   Gaudi::Property<std::string>{ this, "Hlt2DecReportsLocation", LHCb::HltDecReportsLocation::Default } };
+   std::array< Gaudi::Property<std::string>, 2 >  m_hlt_location { { Gaudi::Property<std::string>{ this, "Hlt1DecReportsLocation", LHCb::HltDecReportsLocation::Default },
+                                                                     Gaudi::Property<std::string>{ this, "Hlt2DecReportsLocation", LHCb::HltDecReportsLocation::Default } } };
 
    bool m_evals_updated      = false;
    bool m_preambulo_updated  = false;
