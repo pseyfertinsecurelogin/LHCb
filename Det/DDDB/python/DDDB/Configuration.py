@@ -88,7 +88,6 @@ class DDDBConf(ConfigurableUser):
                 resolvers = [
                     GitEntityResolver('GitDDDB', Ignore="Conditions/.*"),
                     GitEntityResolver('GitSIMCOND'),
-                    CondDBEntityResolver(),
                 ]
             else:
                 resolvers = [
@@ -96,15 +95,15 @@ class DDDBConf(ConfigurableUser):
                     GitEntityResolver('GitLHCBCOND', Ignore="Conditions/(Online|DQ).*"),
                     GitEntityResolver('GitONLINE', Ignore="Conditions/DQ.*"),
                     GitEntityResolver('GitDQFLAGS'),
-                    CondDBEntityResolver(),
                 ]
+            # set PathToRepository if needed and available
             for r in resolvers:
-                if r.name().startswith('ToolSvc.Git') and not r.isPropertySet('PathToRepository'):
-                    if r.name()[11:] in GIT_DBS:
-                        r.PathToRepository = GIT_DBS[r.name()[11:]]
-                    else:
-                        # ignore this resolver if there is no repository for the partition
-                        r.Ignore = '.*'
+                r.PathToRepository = (r.PathToRepository if r.isPropertySet('PathToRepository')
+                                      else GIT_DBS.get(r.name()[11:], ''))
+            # keep only Git resolvers that can be acutally used
+            resolvers = [ r for r in resolvers if r.PathToRepository ]
+            # add failover to COOL CondDB
+            resolvers.append(CondDBEntityResolver())
             resolver = EntityResolverDispatcher(EntityResolvers=resolvers,
                                                 Mappings=[(r'^conddb:', 'git:')])
         else:
