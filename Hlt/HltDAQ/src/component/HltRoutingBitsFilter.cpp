@@ -16,8 +16,8 @@ public:
   StatusCode execute   () override;    ///< Algorithm execution
 private:
 
-  Gaudi::Property<std::vector<unsigned int>> m_r{ this, "RequireMask",{ 0xFFFF,0xFFFF,0xFFFF} }
-                                            ,m_v{ this, "VetoMask", {0x0,0x0,0x0} };
+  Gaudi::Property<std::vector<unsigned int>> m_r{ this, "RequireMask",{ ~0u,~0u,~0u } },
+                                             m_v{ this, "VetoMask",   {  0u, 0u, 0u } };
 };
 
 
