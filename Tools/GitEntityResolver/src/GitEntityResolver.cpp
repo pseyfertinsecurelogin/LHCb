@@ -154,7 +154,8 @@ GitEntityResolver::GitEntityResolver( const std::string& type, const std::string
                                                  git_repository_open, m_pathToRepository.value().c_str() );
   } );
 
-  declareProperty( "Commit", m_commit = "HEAD", "commit id (or tag, or branch) of the version to use" );
+  declareProperty( "Commit", m_commit = "HEAD", "commit id (or tag, or branch) of the version to use, "
+                                                "empty means use local files" );
 
   declareProperty( "DetDataSvc", m_detDataSvcName = "DetectorDataSvc",
                    "name of the IDetDataSvc, used to get the current event time" );
