@@ -625,6 +625,8 @@ class CondDB(ConfigurableUser):
             if ger:
                 if not ger.isPropertySet('Commit'):
                     ger.Commit = self.getProp("Tags").get(partition, 'HEAD')
+                    if self.getProp('Upgrade'):
+                        ger.Commit = 'upgrade/' + ger.Commit
                 VFSSvc().FileAccessTools.append(ger)
                 if localTags.get(partition):
                     log.warning('local tags in %s are ignored', partition)
