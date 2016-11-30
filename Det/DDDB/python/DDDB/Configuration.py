@@ -99,7 +99,7 @@ class DDDBConf(ConfigurableUser):
                     CondDBEntityResolver(),
                 ]
             for r in resolvers:
-                if r.name().startswith('ToolSvc.Git'):
+                if r.name().startswith('ToolSvc.Git') and not r.isPropertySet('PathToRepository'):
                     if r.name()[11:] in GIT_DBS:
                         r.PathToRepository = GIT_DBS[r.name()[11:]]
                     else:
