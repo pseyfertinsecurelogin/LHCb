@@ -103,7 +103,9 @@ class DDDBConf(ConfigurableUser):
             # keep only Git resolvers that can be acutally used
             resolvers = [ r for r in resolvers if r.PathToRepository ]
             # add failover to COOL CondDB
-            resolvers.append(CondDBEntityResolver())
+            resolvers.append(EntityResolverDispatcher('FallbackResolver',
+                                                      EntityResolvers=[CondDBEntityResolver()],
+                                                      Mappings=[(r'^git:', 'conddb:')]))
             resolver = EntityResolverDispatcher(EntityResolvers=resolvers,
                                                 Mappings=[(r'^conddb:', 'git:')])
         else:
