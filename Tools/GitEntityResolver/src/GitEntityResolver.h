@@ -76,14 +76,15 @@ public:
   void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const override;
 
 private:
-  /// path to the git repository to get data from
-  StringProperty m_pathToRepository;
-  /// commit id (or tag, or branch) of the version to use
-  StringProperty m_commit;
-  /// name of the IDetDataSvc, used to get the current event time
-  StringProperty m_detDataSvcName;
-  /// regular expression matching paths that should be ignored
-  StringProperty m_ignoreRegex;
+  Gaudi::Property<std::string> m_pathToRepository{this, "PathToRepository", "",
+                                                  "path to the git repository to get data from"};
+  Gaudi::Property<std::string> m_commit{this, "Commit", "HEAD",
+                                        "commit id (or tag, or branch) of the version to use, "
+                                        "empty means use local files"};
+  Gaudi::Property<std::string> m_detDataSvcName{this, "DetDataSvc", "DetectorDataSvc",
+                                                "name of the IDetDataSvc, used to get the current event time"};
+  Gaudi::Property<std::string> m_ignoreRegex{this, "Ignore", "",
+                                             "regular expression matching paths that should be ignored"};
 
   /// internal flag used to track if we are using the Git database or checked out files
   bool m_useFiles = false;

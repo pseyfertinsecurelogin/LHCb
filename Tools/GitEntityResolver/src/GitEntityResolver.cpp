@@ -147,20 +147,12 @@ GitEntityResolver::GitEntityResolver( const std::string& type, const std::string
   // Initialize Git library
   git_libgit2_init();
 
-  declareProperty( "PathToRepository", m_pathToRepository = "", "path to the git repository to get data from" );
   m_pathToRepository.declareUpdateHandler( [this]( Property& ) -> void {
     DEBUG_MSG << "opening Git repository '" << m_pathToRepository.value() << "'" << endmsg;
     m_repository = git_call<git_repository_ptr>( this->name(), "cannot open repository", m_pathToRepository.value(),
                                                  git_repository_open, m_pathToRepository.value().c_str() );
   } );
 
-  declareProperty( "Commit", m_commit = "HEAD", "commit id (or tag, or branch) of the version to use, "
-                                                "empty means use local files" );
-
-  declareProperty( "DetDataSvc", m_detDataSvcName = "DetectorDataSvc",
-                   "name of the IDetDataSvc, used to get the current event time" );
-
-  declareProperty( "Ignore", m_ignoreRegex = "", "regular expression matching paths that should be ignored" );
   m_ignoreRegex.declareUpdateHandler( [this]( Property& ) -> void {
     if ( !m_ignoreRegex.value().empty() ) {
       DEBUG_MSG << "ignoring paths matching '" << m_ignoreRegex.value() << "'" << endmsg;
@@ -189,7 +181,7 @@ StatusCode GitEntityResolver::initialize()
                             StatusCode::FAILURE );
   }
 
-  m_useFiles = m_commit.value().empty();
+  m_useFiles = m_commit.empty();
   if ( m_useFiles ) {
     if ( git_repository_is_bare( m_repository.get() ) ) {
       error() << "cannot use files in a Git bare repository" << endmsg;
