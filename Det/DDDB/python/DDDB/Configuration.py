@@ -16,8 +16,8 @@ try:
     from Configurables import EntityResolverDispatcher, GitEntityResolver
     CAN_USE_GIT_DDDB = True
     # look for git DBs
-    GITDBPATH = os.environ.get('GITDBPATH', '').split(os.pathsep)
-    for p in GITDBPATH:
+    GITCONDDBPATH = os.environ.get('GITCONDDBPATH', '').split(os.pathsep)
+    for p in GITCONDDBPATH:
         if os.path.isdir(p):
             for f in os.listdir(p):
                 if re.match(r'^[A-Z0-9]+\.git$', f) and os.path.isdir(os.path.join(p, f)):
