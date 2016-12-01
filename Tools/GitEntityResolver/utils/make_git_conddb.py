@@ -66,6 +66,11 @@ def extract_tags_infos(notes, partition):
                  ))
                 for el in notes.findall(tags_xpath, ns))
 
+def fix_lines_ends(data):
+    '''
+    Change \\r\\n to \\n and remove spaces at end of lines.
+    '''
+    return '\n'.join(l.rstrip() for l in data.splitlines()) + '\n'
 
 def main():
     start_time = datetime.now()
@@ -176,6 +181,7 @@ def main():
                           ):
                         path = path + ':{0}'.format(channel)
                     value = fix_system_refs(payload[key], path, node)
+                    value = fix_lines_ends(value)
                     if since == IOV_MIN and until == IOV_MAX:
                         if not os.path.exists(os.path.dirname(path)):
                             os.makedirs(os.path.dirname(path))
