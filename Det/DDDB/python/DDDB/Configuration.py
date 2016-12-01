@@ -94,7 +94,7 @@ class DDDBConf(ConfigurableUser):
                     GitEntityResolver('GitDDDB', Ignore="Conditions/.*"),
                     GitEntityResolver('GitLHCBCOND', Ignore="Conditions/(Online|DQ).*"),
                     GitEntityResolver('GitONLINE', Ignore="Conditions/DQ.*"),
-                    GitEntityResolver('GitDQFLAGS'),
+                    GitEntityResolver('GitDQFLAGS', Ignore="Conditions/Online.*"),
                 ]
             # set PathToRepository if needed and available
             for r in resolvers:
