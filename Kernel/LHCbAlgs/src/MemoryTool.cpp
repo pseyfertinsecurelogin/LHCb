@@ -48,9 +48,7 @@ StatusCode MemoryTool::finalize () {
       m_delMem.flagMean() > 3 * m_delMem.flagMeanErr()) {
     Warning("Mean 'delta-memory' exceeds 3*sigma", StatusCode::SUCCESS).ignore();
   }
-  delete(m_plot1);
   m_plot1 = nullptr;
-  delete(m_plot2);
   m_plot2 = nullptr;
   return GaudiHistoTool::finalize ();
 }
