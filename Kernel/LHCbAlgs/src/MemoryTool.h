@@ -2,18 +2,12 @@
 // ============================================================================
 #ifndef MEMORYTOOL_H
 #define MEMORYTOOL_H 1
-// ============================================================================
+
 // Include files
-// ============================================================================
-//  GaudiKernel
-// ============================================================================
 #include "GaudiKernel/HistoDef.h"
-// ============================================================================
-// GaudiAlg
-// ============================================================================
 #include "GaudiAlg/GaudiHistoTool.h"
 #include "GaudiAlg/IGenericTool.h"            // Interface
-// ============================================================================
+
 /** @class MemoryTool MemoryTool.h
  *  Tool to plot memory usage of the application at each call
  *
@@ -26,8 +20,7 @@
  *  @author Marco Cattaneo
  *  @date   2005-12-14
  */
-class MemoryTool final : public GaudiHistoTool, virtual public IGenericTool
-{
+class MemoryTool final : public GaudiHistoTool, virtual public IGenericTool {
 
  public:
   /// Standard constructor
@@ -35,46 +28,32 @@ class MemoryTool final : public GaudiHistoTool, virtual public IGenericTool
               const std::string& name,
               const IInterface* parent);
 
-  virtual ~MemoryTool( ) = default; ///< Destructor
-
-  void execute() override; ///< Plot the current memory usage
-
-  StatusCode finalize ()  override;
+  void execute() override;
+  StatusCode initialize() override;
+  StatusCode finalize () override;
 
 private:
-  // ==========================================================================
-  unsigned long long m_counter{0}; ///< Counter of calls to the tool
-  unsigned int  m_bins{0};  ///< Number of bins of histogram (Property HistoSize)
-  // ==========================================================================
-  /// flag to skip/reset events for memory measurements
-  unsigned int  m_skip   ;   // flag to skip/reset events for memory measurements
+
+  Gaudi::Property<unsigned int> m_bins{this, "HistoSize", 500, "Number of bins of histogram"};
+  Gaudi::Property<unsigned int> m_skip{this, "SkipEvents", 10, "Skip the first N events from delta memory counter"};
+  Gaudi::Property<Gaudi::Histo1DDef> m_histo1{this, "TotalMemoryHisto", {"Total Memory [MB]", 0, 2000}, "The parameters of 'total memory' histogram"};
+  Gaudi::Property<Gaudi::Histo1DDef> m_histo2{this, "DeltaMemoryHisto", {"Delta Memory [MB]", -25, 25}, "The parameters of 'delta memory' histogram"};
+  Gaudi::Property<unsigned int> m_check{this, "Check", 20, "Frequency for checks for suspision memory leak"};
+  Gaudi::Property<unsigned int> m_maxPrint{this, "MaxPrints", 0, "Maximal number of print-out"};
+
+  ///< Counter of calls to the tool
+  unsigned int m_counter{0};
   /// the previous measurement of virtual memory
-  double        m_prev{-1.e+6};
-  // ==========================================================================
-  /// the histogram definition (as property)
-  Gaudi::Histo1DDef m_histo1 ;         // the histogram definition (as property)
-  /// the histogram definition (as property)
-  Gaudi::Histo1DDef m_histo2 ;         // the histogram definition (as property)
-  // ==========================================================================
-  /// how often check for the memory leaks ?
-  unsigned int m_check    ; // how often check for the memory leaks ?
-  /// maximalnumber of printouts
-  unsigned int m_maxPrint ; // maximal number of printouts
-  // ==========================================================================
-private:
-  // ==========================================================================
+  double m_prev{-1.e+6};  
   /// the counter for total memory
-  StatEntity* m_totMem = nullptr;
+  StatEntity &m_totMem;
   /// the counter for delta memory
-  StatEntity* m_delMem = nullptr;
+  StatEntity &m_delMem;
   /// the histogram of total memory
   AIDA::IHistogram1D* m_plot1 = nullptr;
   /// the histogram of delta memory
   AIDA::IHistogram1D* m_plot2 = nullptr;
-  // ==========================================================================
+  /// Mutex to secure non thread safe code, that is on demand initializations
+  std::mutex m_mutex;
 };
-// ============================================================================
-// The END
-// ============================================================================
 #endif // MEMORYTOOL_H
-// ============================================================================
