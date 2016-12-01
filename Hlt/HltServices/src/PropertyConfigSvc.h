@@ -1,4 +1,4 @@
-#ifndef PROPERTYCONFIGSVC_H 
+#ifndef PROPERTYCONFIGSVC_H
 #define PROPERTYCONFIGSVC_H 1
 
 // Include files
@@ -7,6 +7,8 @@
 #include <set>
 #include <vector>
 #include <memory>
+#include <mutex>
+#include <shared_mutex>
 #include <iterator>
 #include "boost/optional.hpp"
 
@@ -26,12 +28,12 @@
 
 
 /** @class PropertyConfigSvc PropertyConfigSvc.h
- *  
+ *
  *  functionality:
  *         configure algorithms, services and tools...
  *
- *         TODO: split into two seperate svcs, 
- *               one for getting configuration info (using the 
+ *         TODO: split into two seperate svcs,
+ *               one for getting configuration info (using the
  *               access svc for I/O) and navigating through it,
  *               and a second, which uses the first,
  *               to actually _use_ it to configure
@@ -50,12 +52,11 @@ private:
   //TODO: use multimap instead???
   typedef std::map<ConfigTreeNode::digest_type,  std::vector<PropertyConfig::digest_type> > Tree2LeafMap_t;
   typedef std::map<ConfigTreeNode::digest_type,  std::list<ConfigTreeNode::digest_type> > Tree2NodeMap_t;
-  
+
   typedef std::map<std::string, PropertyConfig::digest_type> ConfigPushed_t;
 public:
   PropertyConfigSvc(const std::string& name, ISvcLocator* pSvcLocator );
 
-  ~PropertyConfigSvc( ) override  = default ; ///< Destructor
   StatusCode initialize() override;    ///< Service initialization
   StatusCode finalize() override;    ///< Service initialization
 
@@ -75,11 +76,11 @@ public:
   // preload a configuration
   StatusCode loadConfig(const ConfigTreeNode::digest_type& nodeRef);
   // resolve the ID to get a list of  configurations, then use them to configure
-  using Service::configure;  
+  using Service::configure;
   StatusCode configure(const ConfigTreeNode::digest_type& configID, bool callSetProperties) const;
   StatusCode configure(const ConfigTreeNodeAlias::alias_type& alias, bool callSetProperties) const;
   // reconfigure: first configure, then call sysReinitialize on the top algorithm
-  StatusCode reconfigure(const ConfigTreeNode::digest_type& top) const; 
+  StatusCode reconfigure(const ConfigTreeNode::digest_type& top) const;
 
   //               component             property               regex        replacement
   typedef std::map<std::string, std::map<std::string, std::map< std::string, std::string> > > TransformMap;
@@ -105,7 +106,7 @@ protected:
        MsgStream&  m_os;
        std::string m_c;
   };
-  
+
   // check validity of given config
   StatusCode validateConfig(const PropertyConfig::digest_type& ref) const;
 
@@ -121,11 +122,22 @@ private:
   SmartIF<IAlgManager>                 m_algMgr;
   SmartIF<IAppMgrUI>                   m_appMgrUI;
   SmartIF<IConfigAccessSvc>            m_accessSvc;
+
+  mutable std::shared_timed_mutex      m_configs_mtx; // C++17: replace with stared_mutex...
   mutable PropertyConfigMap_t          m_configs;  // config ref -> config (leaf)
+
+  mutable std::shared_timed_mutex      m_nodes_mtx;
   mutable ConfigTreeNodeMap_t          m_nodes;    // node   ref -> node
+
+  mutable std::shared_timed_mutex                   m_aliases_mtx;
   mutable ConfigTreeNodeAliasMap_t     m_aliases;    // node   ref -> node
+
+  mutable std::shared_timed_mutex      m_leavesInTree_mtx;
   mutable Tree2LeafMap_t               m_leavesInTree; // top level node ref -> config refs (leaves)
+
+  mutable std::shared_timed_mutex      m_nodesInTree_mtx;
   mutable Tree2NodeMap_t               m_nodesInTree; // top level node ref -> node refs
+
   mutable ConfigPushed_t               m_configPushed;
   std::map<std::string,IAlgTool*>      m_toolmap;
   std::vector<std::string>             m_prefetch;    ///< configurations to load at initialization
@@ -148,7 +160,7 @@ private:
                          std::back_insert_iterator<std::vector<const PropertyConfig*> > components) const;
   void createGraphVizFile(const PropertyConfig::digest_type& ref, const std::string& fname) const;
   ConfigTreeNode::digest_type resolveAlias(const ConfigTreeNodeAlias::alias_type& alias) const;
-  StatusCode outOfSyncConfigs(const ConfigTreeNode::digest_type& top, 
+  StatusCode outOfSyncConfigs(const ConfigTreeNode::digest_type& top,
                               std::back_insert_iterator<std::vector<const PropertyConfig*> >  ) const;
 };
 #endif // PROPERTYCONFIGSVC_H

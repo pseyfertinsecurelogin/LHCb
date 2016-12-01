@@ -89,14 +89,6 @@ namespace
   }
   inline
   //
-  bool _ok_ ( const std::string& n1 )
-  {
-    const bool h1_1 = _hlt1_ ( n1 ) ;
-    const bool h2_1 = _hlt2_ ( n1 ) ;
-    //
-    return ( h1_1 && !h2_1 ) || ( h2_1 && !h1_1 ) ;
-  }
-  //
   bool _ok_ ( const std::string& n1 ,
               const std::string& n2 )
   {

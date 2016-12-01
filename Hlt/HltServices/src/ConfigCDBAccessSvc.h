@@ -55,6 +55,7 @@ private:
   mutable std::string                m_name;   ///< filename of tar file from which to read configurations
   std::string                        m_mode;   ///< which flags to specify when opening the tar file
   std::string                        m_incident;   ///< the incident to
+  mutable std::mutex                                       m_file_mtx;
   mutable std::unique_ptr<ConfigCDBAccessSvc_details::CDB> m_file;
   std::unique_ptr<IIncidentListener> m_initListener;
 
