@@ -171,7 +171,8 @@ def main():
                                                      os.path.basename(node)))
                     if channel or (
                           os.path.basename(path) in ('MagnetScale.xml',
-                                                     'RichHpdSurface.xml')
+                                                     'RichHpdSurface.xml',
+                                                     'HpdLogVol.xml')
                           ):
                         path = path + ':{0}'.format(channel)
                     value = fix_system_refs(payload[key], path, node)
