@@ -31,7 +31,7 @@ namespace Rich
    */
   //-----------------------------------------------------------------------------
 
-  class SmartIDSorter
+  class SmartIDSorter final
   {
 
   private: // utility classes

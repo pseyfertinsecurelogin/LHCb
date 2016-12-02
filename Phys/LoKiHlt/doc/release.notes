@@ -4,6 +4,10 @@
 ! Purpose     : collection of functors&factory for HLT
 ! -----------------------------------------------------------------------------
 
+! 2016-11-24 - Vanya Belyaev
+ - fix printout for ODIN_RUNEVT function
+   fix odin_runevts function 
+
 ! 2016-07-29 - Marco Cattaneo
  - Fix clang warnings: ToolFactory is now a struct, no longer a class
 

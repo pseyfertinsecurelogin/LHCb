@@ -1,7 +1,6 @@
 #ifndef     DETDESC_LOGVOLBASE_H
 #define     DETDESC_LOGVOLBASE_H
 /// STD and STL includes
-#include <functional>
 #include <algorithm>
 /// GaudiKernel includes
 #include "GaudiKernel/IValidity.h"
@@ -32,9 +31,8 @@ class IMessageSvc;
  *  @author  Marco Clemencic
  */
 
-class LogVolBase:
-  public virtual ILVolume   ,
-  public         ValidDataObject
+class LogVolBase: public virtual ILVolume   ,
+                  public         ValidDataObject
 {
 
 protected:
@@ -61,9 +59,9 @@ public:
    */
   inline const std::string&  name () const override
   {
-    static std::string s_empty = "";
+    static const std::string s_empty = "";
     IRegistry* pReg = registry();
-    return (0!=pReg) ? pReg->identifier() : s_empty;;
+    return pReg ? pReg->identifier() : s_empty;
   }
 
   /** vector of physical volumes
@@ -103,7 +101,7 @@ public:
    *  @return pointer to daughter (Physical Volume)
    */
   inline const IPVolume* operator[]
-  ( const std::string&           name  ) const override
+  ( boost::string_ref            name  ) const override
   {
     auto pvi = std::find_if( m_pvolumes.begin  () ,
                              m_pvolumes.end    () ,
@@ -127,7 +125,7 @@ public:
    *  @return pointer to daughter (Physical Volume)
    */
   const IPVolume* pvolume
-  ( const std::string&           name  ) const override
+  ( boost::string_ref            name  ) const override
   {
     auto pvi = std::find_if( m_pvolumes.begin  () ,
                              m_pvolumes.end    () ,
@@ -233,9 +231,8 @@ public:
   inline ILVolume* reset () override
   {
     /// reset all physical volumes
-    std::for_each( m_pvolumes.begin ()         ,
-                   m_pvolumes.end   ()         ,
-                   std::mem_fun(&IPVolume::reset) ) ;
+    std::for_each( m_pvolumes.begin(), m_pvolumes.end(),
+                   [](IPVolume* v) { v->reset(); } );
     /// return self-reference
     return this;
   }
@@ -268,11 +265,10 @@ public:
    *  @param rotation rotation of logical volume
    *  @return pointer to created physical volume
    */
-  IPVolume* createPVolume
-  ( const std::string&    PVname                    ,
-    const std::string&    LVnameForPV               ,
-    const Gaudi::XYZPoint&     position = Gaudi::XYZPoint  () ,
-    const Gaudi::Rotation3D&    rotation = Gaudi::Rotation3D () );
+  IPVolume* createPVolume( const std::string&       PVname,
+                           const std::string&       LVnameForPV,
+                           const Gaudi::XYZPoint&   pos = Gaudi::XYZPoint() ,
+                           const Gaudi::Rotation3D& rot = Gaudi::Rotation3D() );
 
   /** create daughter physical volume
    *  @param PVname      name of daughter volume
@@ -280,10 +276,9 @@ public:
    *  @param Transform   tranformation
    *  @return pointer to created physical volume
    */
-  IPVolume* createPVolume
-  ( const std::string&    PVname                    ,
-    const std::string&    LVnameForPV               ,
-    const Gaudi::Transform3D& Transform                 );
+  IPVolume* createPVolume( const std::string&        PVname,
+                           const std::string&        LVnameForPV,
+                           const Gaudi::Transform3D& Transform );
 
 protected:
 
@@ -297,10 +292,9 @@ protected:
    *  @param name      exception message
    *  @param sc        status code
    */
-  inline void Assert
-  ( bool               assertion                       ,
-    const std::string& name                            ,
-    const StatusCode&  sc        = StatusCode::FAILURE ) const
+  inline void Assert( bool               assertion,
+                      const std::string& name,
+                      const StatusCode&  sc = StatusCode::FAILURE ) const
   { if( !assertion ) { throw LogVolumeException( name, this , sc ); } }
 
   /** Assertion
@@ -309,11 +303,10 @@ protected:
    *  @param Exception previous exception
    *  @param sc        status code
    */
-  inline void Assert
-  ( bool                  assertion ,
-    const std::string&    name      ,
-    const GaudiException& Exception ,
-    const StatusCode&     sc        = StatusCode::FAILURE ) const
+  inline void Assert( bool                  assertion ,
+                      const std::string&    name      ,
+                      const GaudiException& Exception ,
+                      const StatusCode&     sc = StatusCode::FAILURE ) const
   {
     if( !assertion )
       { throw LogVolumeException( name, Exception , this , sc ); }
@@ -329,13 +322,12 @@ protected:
    *  @param Threshold threshold value
    *  @return number of intersections
    */
-  unsigned int intersectDaughters
-  ( const Gaudi::XYZPoint&        Point              ,
-    const Gaudi::XYZVector&       Vector             ,
-    ILVolume::Intersections& childIntersections ,
-    const ISolid::Tick     & tickMin            ,
-    const ISolid::Tick     & tickMax            ,
-    const double             Threshold          ) const ;
+  unsigned int intersectDaughters( const Gaudi::XYZPoint&   Point              ,
+                                   const Gaudi::XYZVector&  Vector             ,
+                                   ILVolume::Intersections& childIntersections ,
+                                   const ISolid::Tick     & tickMin            ,
+                                   const ISolid::Tick     & tickMax            ,
+                                   const double             Threshold          ) const ;
 
   /** Auxillary method  to calculate intersection with daughters
    *  @exception LVolumeException wrong parameters or geometry error
@@ -345,11 +337,10 @@ protected:
    *  @param Threshold threshold value
    *  @return number of intersections
    */
-  unsigned int  intersectDaughters
-  ( const Gaudi::XYZPoint&        Point              ,
-    const Gaudi::XYZVector&       Vector             ,
-    ILVolume::Intersections& childIntersections ,
-    const double             Threshold          ) const ;
+  unsigned int  intersectDaughters( const Gaudi::XYZPoint&   Point,
+                                    const Gaudi::XYZVector&  Vector,
+                                    ILVolume::Intersections& childIntersections,
+                                    const double             Threshold ) const ;
 
   /** check for the given 3D-point inside daughter volume
    *  Point coordinates are in the local reference
@@ -357,11 +348,9 @@ protected:
    *  @param LocalPoint point (in local reference system of the solid)
    *  @return true if the point is inside the daughter volume
    */
-  inline bool isInsideDaughter
-  ( const Gaudi::XYZPoint& LocalPoint ) const
+  bool isInsideDaughter( const Gaudi::XYZPoint& LocalPoint ) const
   {
-    return
-      m_pvolumes.end() != insideDaughter( LocalPoint );
+    return insideDaughter( LocalPoint ) != m_pvolumes.end();
   }
 
   /** check for the given 3D-point inside daughter volume
@@ -370,20 +359,13 @@ protected:
    *  @param LocalPoint point (in local reference system of the solid)
    *  @return iterator to the daughter volume
    */
-  inline ILVolume::PVolumes::const_iterator insideDaughter
-  ( const Gaudi::XYZPoint& LocalPoint ) const
+  ILVolume::PVolumes::const_iterator
+  insideDaughter( const Gaudi::XYZPoint& LocalPoint ) const
   {
-    return
-      std::find_if( m_pvolumes.begin () ,
-                    m_pvolumes.end   () ,
-                    IPVolume_isInside( LocalPoint ) ) ;
+    return std::find_if( m_pvolumes.begin () ,
+                         m_pvolumes.end   () ,
+                         IPVolume_isInside( LocalPoint ) ) ;
   }
-
-protected:
-
-  // deduce the copy number of physical volume from its name
-  //  size_t   copyNumber ( const std::string& pvName ) const ;
-  //  bool     copyExist  ( const size_t       copy   ) const ;
 
 protected:
 
@@ -399,12 +381,10 @@ protected:
    */
   IMessageSvc* msgSvc() const;
 
-private:
-
   /// copy constructor is private!
-  LogVolBase            ( const LogVolBase& lvb );
+  LogVolBase            ( const LogVolBase& lvb ) = delete;
   /// assignment operator is private!
-  LogVolBase& operator= ( const LogVolBase& lvb );
+  LogVolBase& operator= ( const LogVolBase& lvb ) = delete;
 
 private:
 

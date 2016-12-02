@@ -122,23 +122,23 @@ namespace LoKi
   public:
     // ========================================================================
     /// MANDATORY: clone method ("virtual constructor")
-    virtual  FunctorFromFunctor* clone() const
+    FunctorFromFunctor* clone() const override
     { return new FunctorFromFunctor ( *this ) ; }
     /// MANDATORY: the only one essential method
-    virtual TYPE3 operator()( typename functor::argument a ) const
+    TYPE3 operator()( typename functor::argument a ) const override
     { return fun ( a ) ; }
     /// the only one essential method ("function")
-    virtual TYPE3 operator ()( typename functor::first_argument  a ,
-                               typename functor::second_argument b ) const
+    TYPE3 operator ()( typename functor::first_argument  a ,
+                       typename functor::second_argument b ) const override
     { return fun ( a , b ) ; }
     /// OPTIONAL: the basic printout method, delegate to the underlying object
-    virtual std::ostream& fillStream( std::ostream& s ) const
+    std::ostream& fillStream( std::ostream& s ) const override
     { return  m_fun->fillStream( s ) ; };
     /// OPTIONAL: unique function ID, delegate to the underlying objects
-    virtual std::size_t   id () const { return m_fun->id() ; }
+    std::size_t   id () const override { return m_fun->id() ; }
     /// OPTIONAL: delegate the object type
-    virtual std::string   objType () const { return m_fun -> objType() ; }
-    virtual std::string   toCpp   () const { return m_fun -> toCpp  () ; }
+    std::string   objType () const override { return m_fun -> objType() ; }
+    std::string   toCpp   () const override { return m_fun -> toCpp  () ; }
     // ========================================================================
   public:
     // ========================================================================

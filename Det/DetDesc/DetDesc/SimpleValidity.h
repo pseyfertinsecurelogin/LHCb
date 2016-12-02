@@ -1,19 +1,3 @@
-// $Id: SimpleValidity.h,v 1.1 2006-04-20 14:39:56 ranjard Exp $
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.3  2006/02/01 19:39:10  marcocle
-// use Gaudi::Time instead of ITime+TimePoint
-//
-// Revision 1.2  2005/04/22 13:10:41  marcocle
-// Follow (pending) change in GaudiKernel/IValidity.
-// Improvements in ValidDataObject and LogVolBase. (see doc/release.notes)
-//
-// Revision 1.1  2001/11/18 15:32:45  ibelyaev
-//  update for Logical Assemblies
-//
-// ============================================================================
 #ifndef DETDESC_SIMPLEVALIDITY_H
 #define DETDESC_SIMPLEVALIDITY_H 1
 // Include files
@@ -27,8 +11,7 @@
  *  @date   17/11/2001
  */
 
-class SimpleValidity:
-  public  virtual  IValidity
+class SimpleValidity : public  virtual  IValidity
 {
 public:
 
@@ -65,9 +48,6 @@ public:
    */
   SimpleValidity& operator=( const SimpleValidity& copy );
 
-  /** destructor
-   */
-  virtual ~SimpleValidity();
 
   /** is the Object valid? (it can be always invalid)
    *  @return true if object valid

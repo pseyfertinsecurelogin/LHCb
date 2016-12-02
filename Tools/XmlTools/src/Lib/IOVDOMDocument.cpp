@@ -1,16 +1,8 @@
 #include "XmlTools/IOVDOMDocument.h"
 
-
-IOVDOMDocument::IOVDOMDocument(xercesc::DOMDocument *dom):
-  m_since(Gaudi::Time::epoch()),
-  m_until(Gaudi::Time::max()),
-  m_dom(dom)
+IOVDOMDocument::IOVDOMDocument(xercesc::DOMDocument *dom)
+: m_dom(dom)
 {}
-
-IOVDOMDocument::~IOVDOMDocument()
-{
-  if ( m_dom ) m_dom->release();
-}
 
 bool IOVDOMDocument::isValid() const
 {
@@ -41,7 +33,7 @@ void IOVDOMDocument::setValidity( const Gaudi::Time& since, const Gaudi::Time& u
 void IOVDOMDocument::setValiditySince( const Gaudi::Time& since)
 {
   m_since = since;
-} 
+}
 
 void IOVDOMDocument::setValidityTill( const Gaudi::Time& until)
 {
