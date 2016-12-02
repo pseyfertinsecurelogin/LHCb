@@ -97,10 +97,6 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
   boost::optional<std::map<std::string, std::pair<unsigned int,double>>> dataMap;
   if (msgLevel(MSG::DEBUG)) dataMap.emplace();
 
-  auto encode = [&](auto&&... args) {
-      encode_(dataMap,report,std::forward<decltype(args)>(args)...);
-  };
-
   //== Get the normal data bank. Check that it exists and is alone.
   const std::vector<LHCb::RawBank*> l0Banks = rawEvent.banks( LHCb::RawBank::L0DU );
   if( l0Banks.size() != 1 ){
@@ -115,13 +111,13 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
   // rawBank header :
   const unsigned int* data = bank->data();
   unsigned int size   = bank->size();  // Bank size is in bytes
+  counter("L0DU RawBank Size (Bytes)") += size;
   unsigned int vsn    = bank->version();
-
-  report.setBankVersion( vsn );
   if ( 2 != vsn ) {
     throw GaudiException( "== Unsupported version " + std::to_string(vsn) + " L0DU bank",
                           name(), StatusCode::FAILURE );
   }
+  report.setBankVersion( vsn );
 
   unsigned int itc    = (*data & 0x00000003) >>  0;
   unsigned int iec    = (*data & 0x0000000C) >>  2;
@@ -142,6 +138,10 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
   }
 
   report.setConfiguration( config );
+
+  auto encode = [&](auto&&... args) {
+      encode_(dataMap,report,std::forward<decltype(args)>(args)...);
+  };
 
   //== PGA3-block header
   ++data;
@@ -342,6 +342,40 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
       debug() << "   --> Data = (value,scale) : " << imap.first << " = " <<  imap.second << endmsg;
     }
   }
-   return report;
+  if( msgLevel( MSG::DEBUG)){
+    debug() << "Bank size : " << size << " (bytes) - Bank version : " << report.bankVersion()<< endmsg;
+    debug() << "________________ L0DU decisions ____________________  " << endmsg;
+    int mask = LHCb::L0DUDecision::Any;
+    int typ  = 0x1;
+    while(mask != 0x0){
+      debug()   << " -- Decision type = " << LHCb::L0DUDecision::Name[typ] << " -- " << endmsg;
+      debug()   << "    o decision bit from raw                          : "
+                <<  report.decision(typ) << endmsg;
+      debug()   << "    o decision re-built from summary report          : "
+                <<   report.decisionFromSummary(typ) << endmsg;
+      if( vsn != 0 && report.configuration() && report.configuration()->completed()){
+        debug()   << "    o emulated decision from configuration ( "
+                  << format("0x%04X",report.configuration()->tck() ) << ") : "
+                  <<   report.configuration()->emulatedDecision(typ)
+                  << " (Downscaling decision : " << report.configuration()->isDownscaled() << ") " << endmsg;
+      }
+      typ  = typ  << 1;
+      mask = mask >> 1;
+    }
+    if( report.configuration() && msgLevel(MSG::VERBOSE) ) {
+      verbose() << "________________ Channels decision ____________________  " << endmsg;
+      for(const auto& channel : report.configuration()->channels() ) {
+        const auto& name = channel.second->name();
+        verbose() << " -- Channel Decision '" << name << "'"
+                  << " (Decision type  : " << LHCb::L0DUDecision::Name[channel.second->decisionType()] << ") : "
+                  << report.channelDecisionByName( name ) << endmsg;
+      }
+      for(const auto& cond :  report.configuration()->conditions() ) {
+        const auto& name = cond.second->name();
+        verbose() << "    - Condition Value " << name << " : " << report.conditionValueByName( name ) << endmsg;
+      }
+    }
+  }
+  return report;
 }
 //=============================================================================
