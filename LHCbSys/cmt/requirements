@@ -1,5 +1,5 @@
 package LHCbSys
-version v41r1
+version v42r0
 
 branches doc cmt tests
 
