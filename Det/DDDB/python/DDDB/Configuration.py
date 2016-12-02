@@ -10,20 +10,46 @@ from Configurables import ( CondDBEntityResolver,
                             XmlParserSvc )
 
 
-GIT_DBS = {}
+GIT_CONDDBS = {}
 try:
 
     from Configurables import EntityResolverDispatcher, GitEntityResolver
-    CAN_USE_GIT_DDDB = True
     # look for git DBs
-    GITCONDDBPATH = os.environ.get('GITCONDDBPATH', '').split(os.pathsep)
-    for p in GITCONDDBPATH:
-        if os.path.isdir(p):
-            for f in os.listdir(p):
-                if re.match(r'^[A-Z0-9]+\.git$', f) and os.path.isdir(os.path.join(p, f)):
-                    GIT_DBS[f.split('.')[0]] = os.path.join(p, f)
+    def _gitconddbpath():
+        from os.path import join, isdir
+        from itertools import ifilter, imap, chain
+
+        def pathenv(name):
+            from os import environ as env, pathsep
+            return env.get(name, '').split(pathsep)
+
+        def deduplicate(iterable):
+            used = set()
+            for i in iterable:
+                if i not in used:
+                    used.add(i)
+                    yield i
+
+        user_path = pathenv('GITCONDDBPATH')
+        main_path = imap(lambda p: join(p, 'git-conddb'),
+                         pathenv('CMAKE_PREFIX_PATH') +
+                         pathenv('CMTPROJECTPATH'))
+
+        return ifilter(isdir, deduplicate(chain(user_path, main_path)))
+
+    for p in _gitconddbpath():
+        for dbname in [f.split('.')[0] for f in os.listdir(p)
+                       if re.match(r'^[A-Z0-9_]+(\.git)?$', f)]:
+            if dbname not in GIT_CONDDBS:
+                if os.path.isdir(os.path.join(p, dbname, '.git')):
+                    GIT_CONDDBS[dbname] = os.path.join(p, dbname)
+                elif os.path.isdir(os.path.join(p, dbname + '.git')):
+                    GIT_CONDDBS[dbname] = os.path.join(p, dbname + '.git')
+    # allow forcing COOL CondDB if Git CondDBs are found
+    if 'NO_GIT_CONDDB' in os.environ:
+        GIT_CONDDBS = {}
 except ImportError:  # GitEntityResolver may not be available
-    CAN_USE_GIT_DDDB = False
+    pass
 
 
 from DetCond.Configuration import CondDB
@@ -36,7 +62,7 @@ class DDDBConf(ConfigurableUser):
     """
     ConfigurableUser for the configuration of the detector description.
     """
-    __slots__ = { "DbRoot"    : "git:/lhcb.xml" if "DDDB" in GIT_DBS else "conddb:/lhcb.xml",
+    __slots__ = { "DbRoot"    : "git:/lhcb.xml" if "DDDB" in GIT_CONDDBS else "conddb:/lhcb.xml",
                   "DataType"  : "2012",
                   "Simulation": False,
                   "AutoTags"  : False,
@@ -99,7 +125,7 @@ class DDDBConf(ConfigurableUser):
             # set PathToRepository if needed and available
             for r in resolvers:
                 r.PathToRepository = (r.PathToRepository if r.isPropertySet('PathToRepository')
-                                      else GIT_DBS.get(r.name()[11:], ''))
+                                      else GIT_CONDDBS.get(r.name()[11:], ''))
             # keep only Git resolvers that can be acutally used
             resolvers = [ r for r in resolvers if r.PathToRepository ]
             # add failover to COOL CondDB
