@@ -26,7 +26,7 @@ public:
   void clear() override;
   void cleanData(int feb) override;
   int    l0Adc(LHCb::CaloCellID id,int def=0) override;
-  unsigned int nTell1s() override {return m_tell1s;}
+  unsigned int nTell1s() const override {return m_tell1s;}
   const CaloVector<LHCb::L0CaloAdc>& l0Adcs(int source=-1,bool clean=true) override;
   const CaloVector<LHCb::L0CaloAdc>& l0Adcs(std::vector<int> sources,bool clean=true) override;
 

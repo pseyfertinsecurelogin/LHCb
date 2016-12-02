@@ -295,20 +295,10 @@ Decoder("L0CaloCandidatesFromRaw/L0CaloFromRaw",
         outputs=["Trig/L0/Calo","Trig/L0/FullCalo"],
         conf=DecoderDB)
 
-Decoder("L0DUFromRawAlg/L0DUFromRaw",
+Decoder("L0DUDecoder/L0DUFromRaw",
         active=True, banks=["L0DU"],
-        privateTools=["L0DUFromRawTool"],
         inputs={"RawEventLocations" : None},
-        outputs={"L0DUReportLocation": None, "ProcessorDataLocation": None},
-        conf=DecoderDB)
-
-#this is new, really I should let the banks be determined from the sum of lower banks so that I could in the future split up the calo banks
-Decoder("L0DUFromRawTool",
-        active=False,
-#        banks=['EcalE','EcalTrig','EcalPacked','EcalPackedError',
-#               'HcalE','HcalTrig','HcalPacked','HcalPackedError',
-#               "PrsE",'PrsTrig',"PrsPacked"],
-        inputs={"RawEventLocations" : None},
+        outputs={"L0DUReportLocation": None},
         conf=DecoderDB)
 
 Decoder("L0CaloAlg/L0Calo",

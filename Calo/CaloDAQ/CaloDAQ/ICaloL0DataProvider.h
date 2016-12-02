@@ -20,7 +20,7 @@ struct ICaloL0DataProvider : extend_interfaces<ICaloReadoutTool> {
   DeclareInterfaceID( ICaloL0DataProvider, 4, 0 );
 
   virtual int l0Adc(LHCb::CaloCellID id,int def=0)=0;
-  virtual unsigned int nTell1s()=0;
+  virtual unsigned int nTell1s() const =0;
   virtual const CaloVector<LHCb::L0CaloAdc>& l0Adcs(int source=-1,bool clean=true)=0;
   virtual const CaloVector<LHCb::L0CaloAdc>& l0Adcs(std::vector<int> sources,bool clean=true)=0;
 

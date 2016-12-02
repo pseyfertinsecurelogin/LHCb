@@ -38,8 +38,7 @@ namespace nGols {
  enum nGols { v2008 = 9u };
 }
 
-class OTRawBankEncoder : public GaudiTool,
-                         virtual public IOTRawBankEncoder {
+class OTRawBankEncoder : public extends<GaudiTool, IOTRawBankEncoder> {
 
 public:
 
@@ -48,14 +47,8 @@ public:
 		    const std::string& name,
 		    const IInterface* parent );
 
-  /// Destructor
-  virtual ~OTRawBankEncoder( ) ; ///< Destructor
-
   /// Tool initialization
   StatusCode initialize() override;
-
-  /// Tool finalize
-  //virtual StatusCode finalize();
 
   /// Abstract virtual in IOTRawBankEncoder
   StatusCode encodeChannels( const std::vector<LHCb::OTChannelID>& channels ) const override;

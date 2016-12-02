@@ -22,9 +22,9 @@
 IGeometryInfo*  TransportSvc::findLocalGI ( const Gaudi::XYZPoint& point1 , 
                                             const Gaudi::XYZPoint& point2 , 
                                             IGeometryInfo*    gi     ,
-                                            IGeometryInfo*    topGi  ) const  {
+                                            IGeometryInfo*    topGi  ) const
+{
   if ( !gi ) { return nullptr ; } 
-
  
   /// output :-))
   IGeometryInfo* goodGI = nullptr ; 

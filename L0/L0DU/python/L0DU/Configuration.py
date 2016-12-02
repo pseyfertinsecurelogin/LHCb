@@ -518,9 +518,8 @@ class L0Conf(LHCbConfigurableUser) :
             for p,v in orig.getValuedProperties().items() : setattr(single,p,v)
             single.TCK = L0TCK
             from Configurables import L0DUFromRawTool, L0DUFromRawAlg
-            l0du   = L0DUFromRawAlg("L0DUFromRaw")
-            l0du.addTool(L0DUFromRawTool,name = "L0DUFromRawTool")
-            getattr( l0du, 'L0DUFromRawTool' ).L0DUConfigProviderType = 'L0DUConfigProvider'
+            l0du   = decodeL0DU()
+            l0du.L0DUConfigProviderType = 'L0DUConfigProvider'
             from Configurables import L0DUAlg
             L0DUAlg('L0DU').L0DUConfigProviderType = 'L0DUConfigProvider'
                     

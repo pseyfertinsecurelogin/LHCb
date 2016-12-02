@@ -35,7 +35,7 @@ namespace Rich
      */
     //-----------------------------------------------------------------------------
 
-    class RawBufferToRichDigitsAlg : public AlgBase
+    class RawBufferToRichDigitsAlg final : public AlgBase
     {
 
     public:
@@ -45,8 +45,8 @@ namespace Rich
 
       virtual ~RawBufferToRichDigitsAlg( ); ///< Destructor
 
-      StatusCode initialize() override final;    // Algorithm initialization
-      StatusCode execute   () override final;    // Algorithm execution
+      StatusCode initialize() override;    // Algorithm initialization
+      StatusCode execute   () override;    // Algorithm execution
 
     private: // data
 

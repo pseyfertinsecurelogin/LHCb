@@ -6,7 +6,6 @@
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/MsgStream.h"
 // ============================================================================
 // DetDesc
 // ============================================================================
@@ -46,35 +45,6 @@ namespace
   }
 }
 // ============================================================================
-// Constructor
-// ============================================================================
-TransportSvc::TransportSvc
-( const std::string& name           ,
-  ISvcLocator*       ServiceLocator )
-  : base_class                    ( name , ServiceLocator )
-  /// names of "standard" services
-  , m_detDataSvc_name             (  "DetectorDataSvc"    )
-  /// source of "standard" geometry
-  , m_standardGeometry_address    (  "/dd/Structure/LHCb" )
-  /// "cache" parameters
-  , m_previousThreshold           (        -10000         )
-  ///
-{
-  /// properties
-  declareProperty ( "DetectorDataService"  , m_detDataSvc_name          ) ;
-  declareProperty ( "StandardGeometryTop"  , m_standardGeometry_address ) ;
-  declareProperty
-    ( "Recovery" , m_recovery ,
-      "The flag to allow the recovery of geometry errors" ) ;
-  declareProperty
-    ( "Protocol" , m_protocol ,
-      "The flag to allow protocol for the geometry problems" ) ;
-}
-// ============================================================================
-// Destructor:
-// ============================================================================
-TransportSvc::~TransportSvc() = default;
-// ============================================================================
 //  Implementation of initialize() method
 // ============================================================================
 StatusCode TransportSvc::initialize()
@@ -83,44 +53,42 @@ StatusCode TransportSvc::initialize()
   StatusCode statusCode = Service::initialize();
   if( statusCode.isFailure() ) return statusCode; // Propagate the error
 
-  MsgStream log( msgSvc() , name() );
 
   /// Locate Detector Data  Service:
   m_detDataSvc = serviceLocator()->service(m_detDataSvc_name, true);
   if ( !m_detDataSvc ) {
-    log << MSG::FATAL
-        << " Unable to locate  Detector Data Service="
-        << m_detDataSvc_name << endmsg;
+    fatal() << " Unable to locate  Detector Data Service="
+            << m_detDataSvc_name << endmsg;
     return StatusCode::FAILURE ;
   }
 
-  if ( MSG::DEBUG >= outputLevel() && !m_protocol )
+  if ( msgLevel(MSG::DEBUG) && !m_protocol )
   {
-    log << MSG::WARNING
-        << "Protocol property is always 'true' when in DEBUG" << endmsg ;
+    warning() << "Protocol property is always 'true' when in DEBUG" << endmsg ;
     m_protocol = true ;
   }
 
   if ( !DetDesc::IntersectionErrors::service() )
   {
-    log << MSG::INFO
-        << "Initialize the static pointer to DetDesc::IGeometryErrorSvc" << endmsg ;
+    info() << "Initialize the static pointer to DetDesc::IGeometryErrorSvc" << endmsg ;
     DetDesc::IntersectionErrors::setService ( this ) ;
   }
 
   if ( !m_protocol )
   {
-    log << MSG::WARNING
-        << "The protocol of geometry errors is DISABLED" << endmsg;
+    warning() << "The protocol of geometry errors is DISABLED" << endmsg;
     DetDesc::IntersectionErrors::setService ( 0 ) ;
   }
 
   // recover errors ?
   DetDesc::IntersectionErrors::setRecovery ( m_recovery ) ;
   if (  DetDesc::IntersectionErrors::recovery() ) {
-    log << MSG::INFO << "Recovery of geometry errors is  ENABLED" << endmsg; }
+    info() << "Recovery of geometry errors is  ENABLED" << endmsg; }
   else {
-    log << MSG::INFO << "Recovery of geometry errors is DISABLED" << endmsg; }
+    info() << "Recovery of geometry errors is DISABLED" << endmsg; }
+
+  // Load geometry
+  m_standardGeometry = findGeometry( m_standardGeometry_address ) ;
 
   // Load geometry
   m_standardGeometry = findGeometry( m_standardGeometry_address ) ;
@@ -133,18 +101,16 @@ StatusCode TransportSvc::initialize()
 StatusCode TransportSvc::finalize()
 {
   //
-  MsgStream log ( msgSvc() , name() );
 
   { // skip map
-    log << MSG::ALWAYS
-        << " GEOMETRY ERRORS: 'Skip'     map has the size " << m_skip.size() << std::endl ;
+    always() << " GEOMETRY ERRORS: 'Skip'     map has the size " << m_skip.size() << std::endl ;
     if ( !m_skip.empty() )
     {
       boost::format fmt1 ( "   | %1$=55.55s |    | %2$-65.65s |" ) ;
       fmt1 % " Logical Volume " ;
       fmt1 % " #          mean             RMS          min              max" ;
-      log << fmt1.str() << std::endl ;
-      for ( Map::const_iterator i = m_skip.begin() ; m_skip.end() != i ; ++i )
+      msgStream() << fmt1.str() << std::endl ;
+      for ( auto i = m_skip.begin() ; m_skip.end() != i ; ++i )
       {
         {
           boost::format fmt2 ( "   | %1$-55.55s | mm | %2$-65.65s |" ) ;
@@ -152,7 +118,7 @@ StatusCode TransportSvc::finalize()
           fmt2 % Gaudi::Utils::formatAsTableRow
             ( i->second.first  , false ,
               "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" ) ;
-          log << fmt2.str() << std::endl ;
+          msgStream() << fmt2.str() << std::endl ;
         }
         {
           boost::format fmt2 ( "   | %1$-55.55s | X0 | %2$-65.65s |" ) ;
@@ -160,23 +126,22 @@ StatusCode TransportSvc::finalize()
           fmt2 % Gaudi::Utils::formatAsTableRow
             ( i->second.second  , false ,
               "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" ) ;
-          log << fmt2.str() << std::endl ;
+          msgStream() << fmt2.str() << std::endl ;
         }
       }
     }
   }
-  log << endmsg;
+  msgStream() << endmsg;
 
   // recovery map
   {
-    log << MSG::ALWAYS
-        << " GEOMETRY ERRORS: 'Recover'  map has the size " << m_recover.size() << std::endl ;
+    always() << " GEOMETRY ERRORS: 'Recover'  map has the size " << m_recover.size() << std::endl ;
     if ( !m_recover.empty() )
     {
       boost::format fmt1 ( "   | %1$=55.55s |    | %2$-65.65s |" ) ;
       fmt1 % " Logical Volume " ;
       fmt1 % " #          mean             RMS          min              max" ;
-      log << fmt1.str() << std::endl ;
+      msgStream() << fmt1.str() << std::endl ;
       for ( Map::const_iterator i = m_recover.begin() ; m_recover.end() != i ; ++i )
       {
         {
@@ -185,7 +150,7 @@ StatusCode TransportSvc::finalize()
           fmt2 % Gaudi::Utils::formatAsTableRow
             ( i->second.first  , false ,
               "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" ) ;
-          log << fmt2.str() << std::endl ;
+          msgStream() << fmt2.str() << std::endl ;
         }
         {
           boost::format fmt2 ( "   | %1$-55.55s | X0 | %2$-65.65s |" ) ;
@@ -193,40 +158,38 @@ StatusCode TransportSvc::finalize()
           fmt2 % Gaudi::Utils::formatAsTableRow
             ( i->second.second  , false ,
               "%1$-7d %3$-14.8g %4$14.8g %5$-14.8g %6$14.8g" ) ;
-          log << fmt2.str() << std::endl ;
+          msgStream() << fmt2.str() << std::endl ;
         }
       }
     }
   }
-  log << endmsg;
+  msgStream() << endmsg;
 
   // codes:
   {
-    log << MSG::ALWAYS
-        << " GEOMETRY ERRORS: 'Codes'    map has the size " << m_codes.size() << std::endl ;
+    always() << " GEOMETRY ERRORS: 'Codes'    map has the size " << m_codes.size() << std::endl ;
     if ( !m_codes  .empty() )
     {
       boost::format fmt1 ( "   | %1$=55.55s | %2$=10.10s |" ) ;
       fmt1 % " Logical Volume " ;
       fmt1 % "#errors" ;
-      log << fmt1.str() << std::endl ;
+      msgStream() << fmt1.str() << std::endl ;
       for ( Map1::const_iterator i = m_codes.begin() ; m_codes.end() != i ; ++i )
       {
         {
           boost::format fmt2 ( "   | %1$-55.55s | %2$=10d |" ) ;
           fmt2 % logVol ( i->first , 55 ) ;
           fmt2 %              i->second ;
-          log << fmt2.str() << std::endl ;
+          msgStream() << fmt2.str() << std::endl ;
         }
       }
     }
   }
-  log << endmsg;
+  msgStream() << endmsg;
 
   if ( this == DetDesc::IntersectionErrors::service() )
   {
-    log << MSG::INFO
-        << "Reset the static pointer to DetDesc::IGeometyrErrorSvc" << endmsg ;
+    info() << "Reset the static pointer to DetDesc::IGeometyrErrorSvc" << endmsg ;
     DetDesc::IntersectionErrors::setService ( 0 ) ;
   }
   ///
@@ -234,23 +197,20 @@ StatusCode TransportSvc::finalize()
     const unsigned long nErrors = DetDesc::IntersectionErrors::errors ()  ;
     if ( 0 != nErrors  )
     {
-      log << MSG::ERROR
-          << "DetDesc::IntersectionErrors has "
-          << nErrors << " errors " << endmsg ;
-      log << MSG::ERROR
-          << "Rerun the job with activated error handling!" << endmsg ;
+      error() << "DetDesc::IntersectionErrors has "
+              << nErrors << " errors " << endmsg ;
+      error() << "Rerun the job with activated error handling!" << endmsg ;
     }
   }
   ///
   {
     /// release all services
-    MsgStream log  ( msgSvc() , name() );
     /// release Detector Data  Service
     m_detDataSvc.reset();
   }
   ///
-  if ( MSG::DEBUG >= outputLevel() )
-    log << MSG::DEBUG << "Service finalised successfully" << endmsg;
+  if ( msgLevel(MSG::DEBUG) )
+    debug() << "Service finalised successfully" << endmsg;
   ///
   return Service::finalize();
   ///
@@ -286,6 +246,9 @@ IGeometryInfo*       TransportSvc::findGeometry
 #include "TransportSvcGoodLocalGI.h"
 #include "TransportSvcIntersections.h"
 // ============================================================================
+
+// Create an instance of the accelerator cache
+ranges::v3::any TransportSvc::createCache() const { return AccelCache{}; }
 
 // ============================================================================
 // Implementation of interface DetDesc::IGeometryErrorSvc
@@ -323,15 +286,12 @@ void TransportSvc::inspect
   const ILVolume::Intersections& cnt    )
 {
 
-  MsgStream log ( msgSvc () , name () );
 
-  log << MSG::ERROR
-      << " DetDesc::IntersectionError for LV='" << volume->name()  <<"'" << endmsg ;
-  log << MSG::ERROR
-      << " Local Frame: "
-      << " point="       << pnt
-      << "/vector="      << vect
-      << " Tick Length=" << vect.R() << endmsg ;
+  error() << " DetDesc::IntersectionError for LV='" << volume->name()  <<"'" << endmsg ;
+  error() << " Local Frame: "
+          << " point="       << pnt
+          << "/vector="      << vect
+          << " Tick Length=" << vect.R() << endmsg ;
 
   boost::format fmt1
     ( "| %1$1.1s |%2$=15.15s %3$=15.15s|%4$=27.27s %5$=27.27s|%6$=3s %7$=16.16s | %8$=16.16s |" ) ;
@@ -343,7 +303,7 @@ void TransportSvc::inspect
   fmt1 % "#"             ;
   fmt1 % "phys.volume"   ;
   fmt1 % "material"      ;
-  log << MSG::ERROR << fmt1.str() << endmsg ;
+  error() << fmt1.str() << endmsg ;
 
   for ( auto i = cnt.begin() ; cnt.end() != i ; ++i )
   {
@@ -386,7 +346,7 @@ void TransportSvc::inspect
     else { fmt %  std::string ( n , n.size() - 16 ) ; } // (6) the material name
 
     //
-    log << MSG::ERROR << fmt.str() << endmsg ;
+    error() << fmt.str() << endmsg ;
   }
 }
 // ============================================================================

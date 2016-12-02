@@ -111,13 +111,9 @@ public:
          addRef(); // Initial count set to 1
       }
 
-   ~CloseListener() override = default;
-
    /// Inform that a new incident has occurred
    void handle(const Incident& i) override {
-      if (i.type() == m_incident) {
-         m_file.reset();
-      }
+      if (i.type() == m_incident) m_file.reset();
    }
 
 private:
@@ -330,35 +326,30 @@ class CDB
         filter.push( io::back_inserter( compressed ) );
         io::copy( boost::make_iterator_range( str ), filter, 8192 );
         bool ok = compressed.size() < str.size(); // yes, it's better!
-        if ( ok ) str.swap( compressed );
+        if ( ok ) str = std::move( compressed );
         return ok ? 3 : 0;
     }
 
     std::vector<unsigned char> make_cdb_record( std::string str, uid_t uid, std::time_t t )
     {
         auto flags = compress( str );
-        std::vector<unsigned char> buffer( 12 + str.size(), 0 );
-        auto buf = std::begin( buffer );
-        *buf++ = 0;     // version number
-        *buf++ = flags; // compression
-        *buf++ = 0;     // reserved;
-        *buf++ = 0;     // reserved;
+        std::vector<unsigned char> buffer; buffer.reserve( 12 + str.size() );
+        buffer.emplace_back( 0 );     // version number
+        buffer.emplace_back( flags ); // compression
+        buffer.emplace_back( 0 );     // reserved;
+        buffer.emplace_back( 0 );     // reserved;
         assert( sizeof( uid_t ) == 4 );
-        *buf++ = ( uid & 0xff );
-        *buf++ = ( ( uid >> 8 ) & 0xff );
-        *buf++ = ( ( uid >> 16 ) & 0xff );
-        *buf++ = ( ( uid >> 24 ) & 0xff );
-        *buf++ = ( t & 0xff );
-        *buf++ = ( ( t >> 8 ) & 0xff );
-        *buf++ = ( ( t >> 16 ) & 0xff );
-        *buf++ = ( ( t >> 24 ) & 0xff );
-        if ( std::distance( std::begin( buffer ), buf ) != 12 ) {
-            std::cerr << "ERROR" << std::endl;
-        }
-        auto e = std::copy_n( std::begin( str ), str.size(), buf );
-        if ( e != std::end( buffer ) ) {
-            std::cerr << "ERROR" << std::endl;
-        }
+        buffer.emplace_back( uid & 0xff );
+        buffer.emplace_back( ( uid >> 8 ) & 0xff );
+        buffer.emplace_back( ( uid >> 16 ) & 0xff );
+        buffer.emplace_back( ( uid >> 24 ) & 0xff );
+        buffer.emplace_back( t & 0xff );
+        buffer.emplace_back( ( t >> 8 ) & 0xff );
+        buffer.emplace_back( ( t >> 16 ) & 0xff );
+        buffer.emplace_back( ( t >> 24 ) & 0xff );
+        if ( buffer.size() != 12 ) std::cerr << "ERROR" << std::endl;
+        std::copy_n( begin( str ), str.size(), back_inserter(buffer) );
+        if ( buffer.size() != 12 + str.size() ) std::cerr << "ERROR" << std::endl;
         return buffer;
     }
 
@@ -465,6 +456,8 @@ StatusCode ConfigCDBAccessSvc::initialize()
 ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
 {
     if ( UNLIKELY(!m_file) ) {
+        std::unique_lock<std::mutex> lock(m_file_mtx);
+        if (LIKELY(!m_file)){
         if ( m_mode != "ReadOnly" && m_mode != "ReadWrite" &&
              m_mode != "Truncate" ) {
             error() << "invalid mode: " << m_mode << endmsg;
@@ -491,6 +484,7 @@ ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
                     << endmsg;
             error() << string( strerror( errno ) ) << endmsg;
             m_file.reset( );
+        }
         }
     }
     return m_file.get();
@@ -553,7 +547,7 @@ boost::optional<T> ConfigCDBAccessSvc::read( const string& path ) const
 template <typename T>
 bool ConfigCDBAccessSvc::write( const string& path, const T& object ) const
 {
-    boost::optional<T> current = read<T>( path );
+    auto current = read<T>( path );
     if ( current ) {
         if ( object == current.get() ) return true;
         error() << " object @ " << path

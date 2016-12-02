@@ -67,11 +67,11 @@ namespace Rich
       RawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
       /// Initialize
-      StatusCode initialize() final;
+      StatusCode initialize() override;
       
       /// Algorithm execution via transform
       Rich::DAQ::L1Map operator()( const LHCb::RawEvent& rawEvent,
-                                   const LHCb::ODIN& odin ) const final;
+                                   const LHCb::ODIN& odin ) const override;
 
     private:
 

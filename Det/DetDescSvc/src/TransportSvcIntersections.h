@@ -1,7 +1,4 @@
-// $Id: TransportSvcIntersections.h,v 1.5 2007-09-13 14:19:16 wouter Exp $ 
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $
-// ============================================================================
+
 #ifndef     __DETDESC_TRANSPORTSVC_TRANSPORTSVCINTERSECTIONS_H__ 
 #define     __DETDESC_TRANSPORTSVC_TRANSPORTSVCINTERSECTIONS_H__  1
 
@@ -21,10 +18,42 @@
  */
 // ============================================================================
 
+/** general method ( returns the "full history" of the volume
+   *  boundary intersections
+   * with different material properties between 2 points )
+   *  @see ITransportSvc
+   *  @see IGeometryInfo
+   *  @see ILVolume
+   *  @param point               initial point on the line
+   *  @param vect                direction vector of the line
+   *  @param tickMin             minimal value of line paramater
+   *  @param tickMax             maximal value of line parameter
+   *  @param intersept           (output) container of intersections
+   *  @param threshold           threshold value
+   *  @param alternativeGeometry source of alternative geometry information
+   *  @param geometryGuess       a guess for navigation
+   */
+unsigned long TransportSvc::intersections
+( const Gaudi::XYZPoint&   point               ,
+  const Gaudi::XYZVector&  vect                ,
+  const ISolid::Tick&      tickMin             ,
+  const ISolid::Tick&      tickMax             ,
+  ILVolume::Intersections& intersept           ,
+  double                   threshold           ,
+  IGeometryInfo*           alternativeGeometry ,
+  IGeometryInfo*           geometryGuess       )  const
+{
+  return intersections_r( point, vect, tickMin, tickMax,
+                          intersept, m_accelCache, threshold, 
+                          alternativeGeometry, geometryGuess );
+}
+
 // ============================================================================
 /** general method ( returns the "full history" of the volume 
  *  boundary intersections 
- * with different material properties between 2 points )
+ *  with different material properties between 2 points )
+ *  Similar to intersections but with an additional accelerator
+ *  cache for local client storage. This method, unlike the above
  *  @see ITransportSvc
  *  @see IGeometryInfo
  *  @see ILVolume
@@ -38,12 +67,13 @@
  *  @param GeometryGuess       a guess for navigation 
  */
 // ============================================================================
-unsigned long TransportSvc::intersections
+unsigned long TransportSvc::intersections_r
 ( const Gaudi::XYZPoint&   point               , 
   const Gaudi::XYZVector&  vect                , 
   const ISolid::Tick&      tickMin             , 
   const ISolid::Tick&      tickMax             , 
   ILVolume::Intersections& intersept           , 
+  ranges::v3::any&         accelCache          ,
   double                   threshold           , 
   IGeometryInfo*           alternativeGeometry , 
   IGeometryInfo*           guessGeometry       ) const
@@ -57,23 +87,25 @@ unsigned long TransportSvc::intersections
     if ( tickMin >= tickMax && vect.mag2() <= 0 ) { return 0;}
     
     // Set the top level geometry, because this is what is in the cache
-    IGeometryInfo* topGeometry = alternativeGeometry ? alternativeGeometry : standardGeometry() ;
+    auto * topGeometry = alternativeGeometry ? alternativeGeometry : standardGeometry() ;
  
-    //
+    // get the cache
+    auto & cache = ranges::v3::any_cast<AccelCache&>(accelCache);
+
     Gaudi::XYZPoint point1( point + vect * tickMin ) ; 
     Gaudi::XYZPoint point2( point + vect * tickMax ) ; 
     // check - if the previous paramaters are the same
-    if ( point1              == m_prevPoint1          && 
-         point2              == m_prevPoint2          &&
-         threshold           == m_previousThreshold   &&
-         topGeometry         == m_previousTopGeometry && 
-         guessGeometry       == m_previousGuess         ) 
+    if ( point1              == cache.prevPoint1          && 
+         point2              == cache.prevPoint2          &&
+         threshold           == cache.previousThreshold   &&
+         topGeometry         == cache.previousTopGeometry && 
+         guessGeometry       == cache.previousGuess        ) 
     {
       /// use cached container!!!
-      intersept.reserve( m_localIntersections.size() ); 
-      intersept.insert(intersept.begin(),
-                       m_localIntersections.begin() , 
-                       m_localIntersections.end()); 
+      intersept.reserve( cache.localIntersections.size() ); 
+      intersept.insert( intersept.begin(),
+                        cache.localIntersections.begin() , 
+                        cache.localIntersections.end() ); 
       ///
       return intersept.size();  
     }
@@ -100,13 +132,13 @@ unsigned long TransportSvc::intersections
                                 alternativeGeometry ) ) ) ? 
       guessGeometry       : 
       // try the previous geometry (only if top-geometry matches)
-      ( previousGeometry() && topGeometry == m_previousTopGeometry &&
+      ( cache.previousGeometry && topGeometry == cache.previousTopGeometry &&
 	( giLocal = findLocalGI( point1 , 
                                  point2 , 
-                                 previousGeometry() ,
+                                 cache.previousGeometry ,
                                  topGeometry ) ) ) ? 
       // just take the top geometry
-      previousGeometry() :
+      cache.previousGeometry :
       ( giLocal = findLocalGI( point1 , 
                                point2 , 
                                topGeometry,
@@ -123,7 +155,7 @@ unsigned long TransportSvc::intersections
                                    StatusCode::FAILURE );
     
     /// delegate the calculation to the logical volume 
-    const ILVolume* lv = giLocal->lvolume();   
+    const auto * lv = giLocal->lvolume();   
     lv->intersectLine
       ( giLocal->toLocalMatrix() * point , 
         giLocal->toLocalMatrix() * vect  , 
@@ -131,44 +163,36 @@ unsigned long TransportSvc::intersections
         tickMin                   , 
         tickMax                   , 
         threshold                 );
-
-    {
-      // Lock this part as it updates caches.
-      std::lock_guard<std::mutex> lock(m_updateLock);
       
-      /// redefine previous geometry
-      m_previousGeometry = giLocal;
-      
-      /// make local copy of all parameters:    
-      m_prevPoint1           = point1              ;
-      m_prevPoint2           = point2              ; 
-      m_previousThreshold    = threshold           ;
-      m_previousGuess        = guessGeometry       ;
-      m_previousTopGeometry  = topGeometry ;
-      
-      /// intersections 
-      m_localIntersections.clear();
-      m_localIntersections.reserve( intersept.size() ); 
-      m_localIntersections.insert(m_localIntersections.begin(),
-                                  intersept.begin() , 
-                                  intersept.end());
-    } // end lock
-
+    /// redefine previous geometry
+    cache.previousGeometry = giLocal;
+    
+    /// make local copy of all parameters:    
+    cache.prevPoint1           = point1              ;
+    cache.prevPoint2           = point2              ; 
+    cache.previousThreshold    = threshold           ;
+    cache.previousGuess        = guessGeometry       ;
+    cache.previousTopGeometry  = topGeometry ;
+    
+    /// intersections 
+    cache.localIntersections.clear();
+    cache.localIntersections.reserve( intersept.size() ); 
+    cache.localIntersections.insert( cache.localIntersections.begin(),
+                                     intersept.begin() , 
+                                     intersept.end() );
+    
   }
   
   catch ( const GaudiException& Exception ) 
   {
-    /// 1) reset cache: 
-    {
-      // Lock this part as it updates caches.
-      std::lock_guard<std::mutex> lock(m_updateLock);
-      m_prevPoint1           = Gaudi::XYZPoint() ;
-      m_prevPoint2           = Gaudi::XYZPoint() ; 
-      m_previousThreshold    = -1000.0      ; 
-      m_previousGuess        = 0            ; 
-      m_previousTopGeometry  = 0            ;
-      m_localIntersections.clear()          ; 
-    }
+    /// 1) reset cache:
+    auto & cache = ranges::v3::any_cast<AccelCache&>(accelCache);
+    cache.prevPoint1           = Gaudi::XYZPoint() ;
+    cache.prevPoint2           = Gaudi::XYZPoint() ; 
+    cache.previousThreshold    = -1000.0      ; 
+    cache.previousGuess        = 0            ; 
+    cache.previousTopGeometry  = 0            ;
+    cache.localIntersections.clear()          ; 
 
     ///  2) throw new exception:
     std::string message
@@ -188,16 +212,13 @@ unsigned long TransportSvc::intersections
   catch( ... ) 
   {
     /// 1) reset cache: 
-    {
-      // Lock this part as it updates caches.
-      std::lock_guard<std::mutex> lock(m_updateLock);
-      m_prevPoint1           = Gaudi::XYZPoint() ;
-      m_prevPoint2           = Gaudi::XYZPoint() ; 
-      m_previousThreshold    = -1000.0      ; 
-      m_previousGuess        = 0            ; 
-      m_previousTopGeometry  = 0            ;
-      m_localIntersections.clear()          ; 
-    }
+    auto & cache = ranges::v3::any_cast<AccelCache&>(accelCache);
+    cache.prevPoint1           = Gaudi::XYZPoint() ;
+    cache.prevPoint2           = Gaudi::XYZPoint() ; 
+    cache.previousThreshold    = -1000.0      ; 
+    cache.previousGuess        = 0            ; 
+    cache.previousTopGeometry  = 0            ;
+    cache.localIntersections.clear()          ; 
 
     /// 2) throw new exception:
     std::string message

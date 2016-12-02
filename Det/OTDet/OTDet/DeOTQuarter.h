@@ -33,9 +33,6 @@ class DeOTQuarter : public DetectorElement {
   /** Constructor */
   DeOTQuarter( const std::string& name = "");
 
-  /** Destructor */
-  ~DeOTQuarter() = default;
-
   /** Retrieves reference to class identifier
    * @return the class identifier for this class
    */
