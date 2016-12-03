@@ -1,5 +1,4 @@
 // -*- C++ -*-
-// $Id: setSystemOfUnits.cpp,v 1.1 2005-12-07 15:35:25 jpalac Exp $
 // ----------------------------------------------------------------------
 
 #include "XmlTools/Evaluator.h"
@@ -13,7 +12,7 @@ void Evaluator::setSystemOfUnits(double meter,
 				 double kelvin,
 				 double mole,
 				 double candela)
-{			    
+{
   const double kilo_  = 1.e+03; // chilioi (Greek) "thousand"
   const double mega_  = 1.e+06; // megas (Greek) "large"
   const double giga_  = 1.e+09; // gigas (Greek) "giant"
@@ -33,43 +32,43 @@ void Evaluator::setSystemOfUnits(double meter,
   // for the basic measurable quantities (dimensions):
   //
   // ======================================================================
-  
+
   // Length
   // metrum (Latin) and metron (Greek) "measure"
   const double m = meter;
   setVariable("meter", m);
   setVariable("metre", m);
   setVariable("m",     m);
-  
+
   // Mass
   const double kg = kilogram;
   setVariable("kilogram", kg);
   setVariable("kg",       kg);
-  
+
   // Time
   // minuta secundam (Latin) "second small one"
   const double s = second;
   setVariable("second", s);
   setVariable("s",      s);
-  
+
   // Current
   // ---  honors Andre-Marie Ampere (1775-1836) of France
   const double A = ampere;
   setVariable("ampere", A);
   setVariable("amp",    A);
   setVariable("A",      A);
-  
+
   // Temperature
   // ---  honors William Thomson, 1st Baron Lord Kelvin (1824-1907) of England
   const double K = kelvin;
   setVariable("kelvin", K);
   setVariable("K",      K);
-  
+
   // Amount of substance
   const double mol = mole;
   setVariable("mole", mol);
   setVariable("mol",  mol);
-  
+
   // Luminous intensity
   const double cd  = candela;
   setVariable("candela", cd);
@@ -81,7 +80,7 @@ void Evaluator::setSystemOfUnits(double meter,
   //
   // ======================================================================
 
-  // Plane angle 
+  // Plane angle
   const double rad = 1.;
   setVariable("radian", rad);
   setVariable("rad",    rad);
@@ -147,7 +146,7 @@ void Evaluator::setSystemOfUnits(double meter,
   setVariable("coulomb", C);
   setVariable("C",       C);
 
-  // Electric potential  
+  // Electric potential
   // ---  honors Count Alessandro Volta (1745-1827) of Italy
   const double V = J / C;
   setVariable("volt", V);
@@ -245,7 +244,7 @@ void Evaluator::setSystemOfUnits(double meter,
 
   setVariable("decimeter",  deci_ * m);
 
-  const double km = kilo_ * m; 
+  const double km = kilo_ * m;
   setVariable("kilometer",  km);
   setVariable("km",         km);
 
@@ -266,7 +265,7 @@ void Evaluator::setSystemOfUnits(double meter,
   setVariable("cm2", cm*cm);
   setVariable("km2", km*km);
 
-  const double barn = 1.e-28 * m*m; 
+  const double barn = 1.e-28 * m*m;
   setVariable("barn",      barn);
   setVariable("millibarn", milli_ * barn);
   setVariable("mbarn",     milli_ * barn);
@@ -283,9 +282,9 @@ void Evaluator::setSystemOfUnits(double meter,
   setVariable("km3", km*km*km);
 
   const double L = 1.e-3*m*m*m;
-  setVariable("liter", L);  
-  setVariable("litre", L);  
-  setVariable("L",     L);  
+  setVariable("liter", L);
+  setVariable("litre", L);
+  setVariable("L",     L);
   setVariable("centiliter",  centi_ * L);
   setVariable("cL",          centi_ * L);
   setVariable("milliliter",  milli_ * L);
@@ -305,7 +304,7 @@ void Evaluator::setSystemOfUnits(double meter,
   setVariable("g",    g);
   setVariable("milligram",   milli_ * g);
   setVariable("mg",          milli_ * g);
-  
+
   // Time
 
   setVariable("millisecond", milli_ * s);
@@ -371,7 +370,7 @@ void Evaluator::setSystemOfUnits(double meter,
   setVariable("gigawatt",    giga_ * W);
   setVariable("GW",          giga_ * W);
 
-  // Electric potential  
+  // Electric potential
   setVariable("kilovolt",    kilo_ * V);
   setVariable("kV",          kilo_ * V);
   setVariable("megavolt",    mega_ * V);
