@@ -37,12 +37,13 @@ TabulatedProperty1D::~TabulatedProperty1D( )
 
 // Constructor from a tabulated property pointer
 TabulatedProperty1D::TabulatedProperty1D( const TabulatedProperty * tab,
-                                          const bool registerUMS )
+                                          const bool registerUMS,
+                                          const gsl_interp_type * interType )
   : TabulatedFunction1D (     ),
     m_tabProp           ( tab )
 {
   // initialise the underlying GSL interpolator
-  m_OK = initInterpolator( tab, registerUMS );
+  m_OK = initInterpolator( tab, registerUMS, interType );
 }
 
 bool TabulatedProperty1D::configureUMS( const TabulatedProperty * tab )
@@ -75,7 +76,8 @@ bool TabulatedProperty1D::configureUMS( const TabulatedProperty * tab )
 
 bool
 TabulatedProperty1D::initInterpolator( const TabulatedProperty * tab,
-                                       const bool registerUMS )
+                                       const bool registerUMS,
+                                       const gsl_interp_type * interType )
 {
   // Check the data is valid
   if ( !tab ) throw GaudiException("Null Rich::TabulatedProperty",
@@ -90,7 +92,7 @@ TabulatedProperty1D::initInterpolator( const TabulatedProperty * tab,
   for ( const auto & t : tab->table() ) { data[t.first] = t.second; }
 
   // init the underlying GSL interpolator
-  m_OK = this->TabulatedFunction1D::initInterpolator(data);
+  m_OK = this->TabulatedFunction1D::initInterpolator(data,interType);
 
   // return
   return m_OK;
