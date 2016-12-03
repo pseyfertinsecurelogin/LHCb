@@ -48,7 +48,8 @@ namespace Rich
      *                     when the underlying TabulatedProperty is updated
      */
     explicit TabulatedProperty1D( const TabulatedProperty * tab,
-                                  const bool registerUMS = false );
+                                  const bool registerUMS = false,
+                                  const gsl_interp_type * interType = gsl_interp_cspline );
 
     /// Destructor
     virtual ~TabulatedProperty1D( );
@@ -83,7 +84,8 @@ namespace Rich
      *  @param interType GSL Interpolator type (If not given, currently configured type is used)
      */
     bool initInterpolator( const TabulatedProperty * tab,
-                           const bool registerUMS = false );
+                           const bool registerUMS = false,
+                           const gsl_interp_type * interType = gsl_interp_cspline );
 
   private: // methods
 
