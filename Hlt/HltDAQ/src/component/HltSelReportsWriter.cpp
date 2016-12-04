@@ -135,22 +135,6 @@ constexpr sortByCLID sortByCLID_{};
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( HltSelReportsWriter )
 
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-HltSelReportsWriter::HltSelReportsWriter( const std::string& name,
-                                          ISvcLocator* pSvcLocator)
-    : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty("InputHltSelReportsLocation",
-    m_inputHltSelReportsLocation= LHCb::HltSelReportsLocation::Default);
-  declareProperty("OutputRawEventLocation",
-    m_outputRawEventLocation= LHCb::RawEventLocation::Default);
-  declareProperty("SourceID",
-    m_sourceID= kSourceID_Dummy );
-}
-
 //=============================================================================
 // Initialization
 //=============================================================================
