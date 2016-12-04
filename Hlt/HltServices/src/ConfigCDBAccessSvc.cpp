@@ -420,18 +420,6 @@ using namespace ConfigCDBAccessSvc_details;
 DECLARE_COMPONENT( ConfigCDBAccessSvc )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-ConfigCDBAccessSvc::ConfigCDBAccessSvc( const string& name,
-                                        ISvcLocator* pSvcLocator )
-    : base_class( name, pSvcLocator )
-{
-    declareProperty( "File", m_name = "" );
-    declareProperty( "Mode", m_mode = "ReadOnly" );
-    declareProperty( "CloseIncident", m_incident );
-}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode ConfigCDBAccessSvc::initialize()
@@ -456,19 +444,20 @@ StatusCode ConfigCDBAccessSvc::initialize()
 ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
 {
     if ( UNLIKELY(!m_file) ) {
-        std::unique_lock<std::mutex> lock(m_file_mtx);
-        if (LIKELY(!m_file)){
+      std::unique_lock<std::mutex> lock(m_file_mtx);
+      if (LIKELY(!m_file)){
         if ( m_mode != "ReadOnly" && m_mode != "ReadWrite" &&
              m_mode != "Truncate" ) {
-            error() << "invalid mode: " << m_mode << endmsg;
+            error() << "invalid mode: " << m_mode.value() << endmsg;
             return nullptr;
         }
-        ios::openmode mode = ( m_mode == "ReadWrite" )
+  // todo: use Parse and toStream to make mode instead of m_mode a property...
+        ios::openmode mode = ( m_mode == "ReadWrite"
                                  ? ( ios::in | ios::out | ios::ate )
                                  : ( m_mode == "Truncate" )
                                        ? ( ios::in | ios::out | ios::trunc )
-                                       : ios::in;
-        if ( m_name.empty() ) {
+                                       : ios::in );
+        if ( m_name.value().empty() ) {
             std::string def( System::getEnv( "HLTTCKROOT" ) );
             if ( def.empty() ) {
                throw GaudiException("Environment variable HLTTCKROOT not specified and no explicit "
@@ -477,15 +466,15 @@ ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
             }
             m_name = def + "/config.cdb";
         }
-        info() << " opening " << m_name << " in mode " << m_mode << endmsg;
-        m_file.reset( new CDB( m_name, mode ) );
+        info() << " opening " << m_name.value() << " in mode " << m_mode.value() << endmsg;
+        m_file.reset( new CDB( m_name.value(), mode ) );
         if ( !*m_file ) {
-            error() << " Failed to open " << m_name << " in mode " << m_mode
+            error() << " Failed to open " << m_name.value() << " in mode " << m_mode.value()
                     << endmsg;
             error() << string( strerror( errno ) ) << endmsg;
             m_file.reset( );
         }
-        }
+      }
     }
     return m_file.get();
 }
@@ -531,13 +520,13 @@ boost::optional<T> ConfigCDBAccessSvc::read( const string& path ) const
 {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "trying to read " << path << endmsg;
     if ( file() == nullptr ) {
-        debug() << "file " << m_name << " not found" << endmsg;
+        debug() << "file " << m_name.value() << " not found" << endmsg;
         return boost::none;
     }
     T c;
     if ( !file()->readObject( c, path ) ) {
         if ( msgLevel( MSG::DEBUG ) )
-            debug() << "file " << path << " not found in container " << m_name
+            debug() << "file " << path << " not found in container " << m_name.value()
                     << endmsg;
         return boost::none;
     }
@@ -554,7 +543,7 @@ bool ConfigCDBAccessSvc::write( const string& path, const T& object ) const
                 << "  already exists, but contents are different..." << endmsg;
         return false;
     }
-    if ( m_mode == "ReadOnly" ) {
+    if ( m_mode.value() == "ReadOnly" ) {
         error() << "attempted write, but file has been opened ReadOnly" << endmsg;
         return false;
     }

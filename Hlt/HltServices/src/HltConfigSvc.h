@@ -5,16 +5,30 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <set>
+
 #include "Kernel/TCK.h"
 
+
+class StatusCode;
+namespace Gaudi {
+namespace Parsers {
+StatusCode parse(TCK& result, const std::string& input );
+StatusCode parse(std::map<TCK,std::string>& result, const std::string& input );
+}
+namespace Utils {
+std::ostream& toStream(const TCK&, std::ostream&);
+}
+}
+
 // from Gaudi
+#include "PropertyConfigSvc.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiAlg/IGenericTool.h"
 #include "GaudiKernel/ToolHandle.h"
-#include "PropertyConfigSvc.h"
 
 class Condition;
 
@@ -26,12 +40,11 @@ class Condition;
  *  @author Gerhard Raven
  *  @date   2007-10-24
  */
-class HltConfigSvc : public extends1<PropertyConfigSvc, IIncidentListener> {
+class HltConfigSvc : public extends<PropertyConfigSvc, IIncidentListener> {
 public:
 
-  HltConfigSvc(const std::string& name, ISvcLocator* pSvcLocator );
+  using extends::extends;
 
-  ~HltConfigSvc( ) override = default; ///< Destructor
   StatusCode initialize() override;    ///< Service initialization
   StatusCode start() override;    ///< Service initialization
   StatusCode finalize() override;      ///< Service finalization
@@ -47,28 +60,25 @@ private:
 
   typedef std::map<TCK,std::string> TCKMap_t;
 
-  std::vector<std::string>     m_outputContainerName;  ///< location of HltDecReports in which to record configured TCK
+  Gaudi::Property<std::vector<std::string>>  m_outputContainerName{ this, "HltDecReportsLocations", {"/Event/Hlt1/DecReports","/Event/Hlt2/DecReports"} };  ///< location of HltDecReports in which to record configured TCK
   std::string                  m_prefetchDir;     ///< which set of configurations
                                                   ///< to search for same types as initial TCK
                                                   ///< and to prefetch...
 
-  TCKMap_t                          m_tck2config;      ///< from TCK to configuration ID
-  std::map<std::string,std::string> m_tck2config_;     ///< from TCK to configuration ID
-
-  TCK                          m_initialTCK;      ///< which TCK to start with...
-  std::string                  m_initialTCK_;     ///< which TCK to start with...
+  Gaudi::Property<TCKMap_t> m_tck2config { this, "TCK2ConfigMap" };     ///< from TCK to configuration ID
+  Gaudi::Property<TCK> m_initialTCK {this, "initialTCK" };     ///< which TCK to start with...
 
   mutable TCKMap_t             m_tck2configCache; ///< from TCK to configuration ID
   TCK                          m_configuredTCK { 0 } ;   ///< which TCK is currently in use?
   SmartIF<IDataProviderSvc>    m_evtSvc ;          ///< get Evt Svc to get ODIN (which contains TCK)
   SmartIF<IIncidentSvc>        m_incidentSvc;     ///<
-  ToolHandle<IGenericTool>     m_decodeOdin;
-  bool                         m_checkOdin;
-  bool                         m_maskL0TCK;
+  ToolHandle<IGenericTool>     m_decodeOdin { "ODINDecodeTool",this };
+  Gaudi::Property<bool>        m_checkOdin { this, "checkOdin", true };
+  Gaudi::Property<bool>        m_maskL0TCK { this, "maskL0TCK", false};
   unsigned int                 m_id = ~0u;
-  bool                         m_hlt2Mode;
-  std::string                  m_taskNameRegex;
-  std::string                  m_tckConditionPath;
+  Gaudi::Property<bool>        m_hlt2Mode{ this, "Hlt2Mode", false};
+  Gaudi::Property<std::string> m_taskNameRegex{ this, "TaskNameRegex", "^(?:LHCb[A2]?|FEST)_HLT([^_]*)_Moore([12])_([0-9]+)"};
+  Gaudi::Property<std::string> m_tckConditionPath{ this, "Hlt2TCKCondition",  "/dd/Conditions/Online/LHCb/RunInfo/HLT2"};
 
   Condition*                   m_tckCondition;
 
