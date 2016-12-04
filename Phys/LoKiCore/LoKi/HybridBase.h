@@ -146,10 +146,8 @@ namespace LoKi
       std::vector<std::string>       m_cpplines   ; ///< header lines for C++ code
       ///
       // information about the created functors
-      typedef std::pair<std::string,std::string>  PAIR       ;
-      typedef std::map<std::string,PAIR>          FUNCTIONS  ;
-      typedef std::map<std::string,FUNCTIONS>     ALLFUNCS   ;
-      ALLFUNCS                       m_allfuncs   ;
+      typedef std::map<std::string,std::pair<std::string,std::string>> FUNCTIONS  ;
+      std::map<std::string,FUNCTIONS>             m_allfuncs   ;
       // ======================================================================
     } ;
     // ========================================================================

@@ -1,5 +1,5 @@
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -8,7 +8,7 @@
 #include "GaudiKernel/IAlgContextSvc.h"
 #include "GaudiKernel/ISvcLocator.h"
 // ============================================================================
-// GaudiAlg 
+// GaudiAlg
 // ============================================================================
 #include "GaudiAlg/IHistoTool.h"
 #include "GaudiAlg/GaudiHistos.h"
@@ -19,42 +19,42 @@
 #include "GaudiAlg/Fill.h"
 // ============================================================================
 // LoKi
-// ============================================================================ 
+// ============================================================================
 #include "LoKi/Services.h"
 #include "LoKi/HistoBook.h"
 #include "LoKi/Report.h"
 #include "LoKi/Monitor.h"
-// ============================================================================ 
-/** @file 
+// ============================================================================
+/** @file
  *  Implementation file for namespace LoKi::HistoBook
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-11-28
  */
-// ============================================================================ 
+// ============================================================================
 /*  helper function to book 1D-histogram
- *  @param svc pointer to Histogram Service 
- *  @param path full path in Histogram Data Store 
- *  @param hist histogram desctription 
- *  @param histogram service 
- *  @return booked histogram 
- */ 
-// ============================================================================ 
+ *  @param svc pointer to Histogram Service
+ *  @param path full path in Histogram Data Store
+ *  @param hist histogram desctription
+ *  @param histogram service
+ *  @return booked histogram
+ */
+// ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
 ( const std::string&       path ,
-  const Gaudi::Histo1DDef& hist , 
-  IHistogramSvc*           svc  ) 
+  const Gaudi::Histo1DDef& hist ,
+  IHistogramSvc*           svc  )
 {
-  // get the service from LoKi 
+  // get the service from LoKi
   if ( !svc ) {
     const LoKi::Services& svcs = LoKi::Services::instance() ;
-    svc = svcs.histoSvc();  
+    svc = svcs.histoSvc();
   }
-  // 
+  //
   if ( !svc )
   {
     LoKi::Report::Error
       ( "LoKi::HistoBook::book("
-        + Gaudi::Utils::toString ( path ) + "," 
+        + Gaudi::Utils::toString ( path ) + ","
         + Gaudi::Utils::toString ( hist ) + "): invalid IHistogramSvc") ;
     return nullptr ;
   }
@@ -77,37 +77,37 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
     ( "LoKi::HistoBook::book("
       + Gaudi::Utils::toString ( path ) + ","
       + Gaudi::Utils::toString ( hist ) + ")"
-      + " success using IHistogramSvc," 
-      + " THS path: '" 
-      + Gaudi::Utils::Histos::path 
+      + " success using IHistogramSvc,"
+      + " THS path: '"
+      + Gaudi::Utils::Histos::path
       (  Gaudi::Utils::Histos::toBase ( histo ) ) + "'" ,
       StatusCode::SUCCESS , MSG::DEBUG ) ;
   //
   return histo ;
 }
-// ============================================================================ 
+// ============================================================================
 /*  helper function to book 1D-histogram
- *  @param svc  pointer to Histogram Service 
- *  @param dir  directory path in Histogram Data Store 
- *  @param id   historgam identifier 
+ *  @param svc  pointer to Histogram Service
+ *  @param dir  directory path in Histogram Data Store
+ *  @param id   historgam identifier
  *  @param hist histogram desctription
- *  @param histogram service 
- *  @return booked histogram 
- */ 
-// ============================================================================ 
+ *  @param histogram service
+ *  @return booked histogram
+ */
+// ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
 ( const std::string&       dir  ,
   const GaudiAlg::ID&      id   ,
-  const Gaudi::Histo1DDef& hist , 
-  IHistogramSvc*           svc  )  
+  const Gaudi::Histo1DDef& hist ,
+  IHistogramSvc*           svc  )
 {
-  // get the service form LoKi 
-  if ( !svc ) 
+  // get the service form LoKi
+  if ( !svc )
   {
     const LoKi::Services& svcs = LoKi::Services::instance() ;
-    svc = svcs.histoSvc();  
+    svc = svcs.histoSvc();
   }
-  // 
+  //
   if ( !svc )
   {
     LoKi::Report::Error
@@ -119,19 +119,19 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
   }
   // check the existing histogram:
   AIDA::IHistogram1D* histo = nullptr ;
-  StatusCode sc = 
-    id.literal () ? 
+  StatusCode sc =
+    id.literal () ?
     svc->retrieveObject ( dir , id.literalID   () , histo ) :
-    id.numeric () ? 
+    id.numeric () ?
     svc->retrieveObject ( dir , id.numericID   () , histo ) :
     svc->retrieveObject ( dir , id.idAsString  () , histo ) ;
   //
   if ( sc.isSuccess() && histo ) { return histo ; }      // RETURN
   // book new histogram:
-  histo = 
-    id.literal () ? 
+  histo =
+    id.literal () ?
     Gaudi::Histos::book ( svc , dir , id.literalID  ()  , hist ) :
-    id.numeric () ? 
+    id.numeric () ?
     Gaudi::Histos::book ( svc , dir , id.numericID  ()  , hist ) :
     Gaudi::Histos::book ( svc , dir , id.idAsString ()  , hist ) ;
   //
@@ -151,95 +151,95 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
       + Gaudi::Utils::toString ( id   ) + ","
       + Gaudi::Utils::toString ( hist ) + ")"
       + " success using IHistogramSvc,"
-      + " THS path: '" 
-      + Gaudi::Utils::Histos::path 
+      + " THS path: '"
+      + Gaudi::Utils::Histos::path
       (  Gaudi::Utils::Histos::toBase ( histo ) ) + "'" ,
       StatusCode::SUCCESS , MSG::DEBUG ) ;
   //
-  return histo ; 
+  return histo ;
 }
-// ============================================================================ 
+// ============================================================================
 /*  helper function to book 1D-histogram
- *  @param svc pointer to Histogram Service 
- *  @param dir directory path in Histogram Data Store 
- *  @param id  historgam identifier 
+ *  @param svc pointer to Histogram Service
+ *  @param dir directory path in Histogram Data Store
+ *  @param id  historgam identifier
  *  @param hist histogram desctription
- *  @param histogram service 
- *  @return booked histogram 
- */ 
-// ============================================================================ 
+ *  @param histogram service
+ *  @return booked histogram
+ */
+// ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
 ( const std::string&       dir  ,
   const int                id   ,
-  const Gaudi::Histo1DDef& hist , 
-  IHistogramSvc*           svc  ) 
+  const Gaudi::Histo1DDef& hist ,
+  IHistogramSvc*           svc  )
 { return book ( dir , GaudiAlg::ID( id ) , hist , svc ) ; }
-// ============================================================================ 
+// ============================================================================
 /*  helper function to book 1D-histogram
- *  @param svc pointer to Histogram Service 
- *  @param dir directory path in Histogram Data Store 
- *  @param id  historgam identifier 
+ *  @param svc pointer to Histogram Service
+ *  @param dir directory path in Histogram Data Store
+ *  @param id  historgam identifier
  *  @param hist histogram desctription
- */ 
-// ============================================================================ 
+ */
+// ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
 ( const std::string&       dir  ,
   const std::string&       id   ,
   const Gaudi::Histo1DDef& hist ,
-  IHistogramSvc*           svc  ) 
+  IHistogramSvc*           svc  )
 { return book ( dir , GaudiAlg::ID ( id ) , hist , svc ) ; }
 // ============================================================================
 /*  helper function to book 1D-histogram
  *  @param alg  the algorithm, whcih owns the histogram
- *  @param id   histogram identifier 
+ *  @param id   histogram identifier
  *  @param hist histogram desctription
- */ 
+ */
 // ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
-( const GaudiHistoAlg*     alg  , 
+( const GaudiHistoAlg*     alg  ,
   const std::string&       id   ,
-  const Gaudi::Histo1DDef& hist ) 
+  const Gaudi::Histo1DDef& hist )
 { return book ( alg , GaudiAlg::ID ( id ) , hist ) ; }
 // ============================================================================
 /*  helper function to book 1D-histogram
  *  @param tool the tool, which owns the histogram
- *  @param dir  directory path in Histogram Data Store 
- *  @param id   histogram identifier 
+ *  @param dir  directory path in Histogram Data Store
+ *  @param id   histogram identifier
  *  @param hist histogram desctription
- */ 
+ */
 // ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
-( const GaudiHistoTool*    tool , 
+( const GaudiHistoTool*    tool ,
   const std::string&       id   ,
-  const Gaudi::Histo1DDef& hist ) 
+  const Gaudi::Histo1DDef& hist )
 { return book ( tool , GaudiAlg::ID ( id ) , hist ) ; }
 // ============================================================================
 /*  helper function to book 1D-histogram
  *  @param tool the tool, which owns the histogram
- *  @param dir  directory path in Histogram Data Store 
- *  @param id   histogram identifier 
+ *  @param dir  directory path in Histogram Data Store
+ *  @param id   histogram identifier
  *  @param hist histogram desctription
- */ 
+ */
 // ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
-( const IHistoTool*        tool , 
+( const IHistoTool*        tool ,
   const std::string&       id   ,
-  const Gaudi::Histo1DDef& hist ) 
+  const Gaudi::Histo1DDef& hist )
 { return book ( tool , GaudiAlg::ID ( id ) , hist ) ; }
 // ============================================================================
 /*  helper function to book 1D-histogram
  *  @param alg  the algorithm, whcih owns the histogram
- *  @param id   histogram identifier 
+ *  @param id   histogram identifier
  *  @param hist histogram desctription
- */ 
+ */
 // ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
-( const GaudiHistoAlg*     alg  , 
+( const GaudiHistoAlg*     alg  ,
   const GaudiAlg::ID&      id   ,
-  const Gaudi::Histo1DDef& hist ) 
+  const Gaudi::Histo1DDef& hist )
 {
-  if ( !alg ) 
-  { 
+  if ( !alg )
+  {
     LoKi::Report::Error
       ( "LoKi::HistoBook::book("
         + Gaudi::Utils::toString ( id   ) + ","
@@ -247,7 +247,7 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
     return nullptr ;
   }
   //
-  if ( !alg->produceHistos() ) 
+  if ( !alg->produceHistos() )
   {
     LoKi::Report::Warning
       ( "LoKi::HistoBook::book("
@@ -257,14 +257,14 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
     return nullptr ;
   }
   // book the histogram:
-  AIDA::IHistogram1D* histo = 
-    alg -> book ( id               , 
-                  hist.title    () , 
-                  hist.lowEdge  () , 
+  AIDA::IHistogram1D* histo =
+    alg -> book ( id               ,
+                  hist.title    () ,
+                  hist.lowEdge  () ,
                   hist.highEdge () , hist.bins() ) ;
   //
-  if ( !histo ) 
-  { 
+  if ( !histo )
+  {
     LoKi::Report::Error
       ( "LoKi::HistoBook::book("
         + Gaudi::Utils::toString ( id   ) + ","
@@ -276,9 +276,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
     ( "LoKi::HistoBook::book("
       + Gaudi::Utils::toString ( id   ) + ","
       + Gaudi::Utils::toString ( hist ) + ")"
-      + " success using GaudiHistoAlg: '" + alg->name() + "'" 
-      + " THS path: '" 
-      + Gaudi::Utils::Histos::path 
+      + " success using GaudiHistoAlg: '" + alg->name() + "'"
+      + " THS path: '"
+      + Gaudi::Utils::Histos::path
       (  Gaudi::Utils::Histos::toBase ( histo ) ) + "'" ,
       StatusCode::SUCCESS , MSG::DEBUG  ) ;
   //
@@ -287,18 +287,18 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
 // ============================================================================
 /*  helper function to book 1D-histogram
  *  @param tool the tool, which owns the histogram
- *  @param dir  directory path in Histogram Data Store 
- *  @param id   histogram identifier 
+ *  @param dir  directory path in Histogram Data Store
+ *  @param id   histogram identifier
  *  @param hist histogram desctription
- */ 
+ */
 // ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
-( const GaudiHistoTool*    tool , 
+( const GaudiHistoTool*    tool ,
   const GaudiAlg::ID&      id   ,
-  const Gaudi::Histo1DDef& hist ) 
+  const Gaudi::Histo1DDef& hist )
 {
-  if ( !tool ) 
-  { 
+  if ( !tool )
+  {
     LoKi::Report::Error
       ( "LoKi::HistoBook::book("
         + Gaudi::Utils::toString ( id   ) + ","
@@ -306,7 +306,7 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
     return nullptr ;
   }
   //
-  if ( !tool->produceHistos() ) 
+  if ( !tool->produceHistos() )
   {
     LoKi::Report::Warning
       ( "LoKi::HistoBook::book("
@@ -316,14 +316,14 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
     return nullptr ;
   }
   // book the histogram:
-  AIDA::IHistogram1D* histo = 
-    tool -> book ( id               , 
-                   hist.title    () , 
-                   hist.lowEdge  () , 
+  AIDA::IHistogram1D* histo =
+    tool -> book ( id               ,
+                   hist.title    () ,
+                   hist.lowEdge  () ,
                    hist.highEdge () , hist.bins() ) ;
   //
-  if ( !histo ) 
-  { 
+  if ( !histo )
+  {
     LoKi::Report::Error
       ( "LoKi::HistoBook::book("
         + Gaudi::Utils::toString ( id   ) + ","
@@ -335,9 +335,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
     ( "LoKi::HistoBook::book("
       + Gaudi::Utils::toString ( id   ) + ","
       + Gaudi::Utils::toString ( hist ) + ")"
-      + " success using GaudiHistoTool: " + tool->name() + "'" 
-      + " THS path: '" 
-      + Gaudi::Utils::Histos::path 
+      + " success using GaudiHistoTool: " + tool->name() + "'"
+      + " THS path: '"
+      + Gaudi::Utils::Histos::path
       (  Gaudi::Utils::Histos::toBase ( histo ) ) + "'" ,
       StatusCode::SUCCESS , MSG::DEBUG  ) ;
   //
@@ -346,18 +346,18 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
 // ============================================================================
 /*  helper function to book 1D-histogram
  *  @param tool the tool, which owns the histogram
- *  @param dir  directory path in Histogram Data Store 
- *  @param id   histogram identifier 
+ *  @param dir  directory path in Histogram Data Store
+ *  @param id   histogram identifier
  *  @param hist histogram desctription
- */ 
+ */
 // ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
-( const IHistoTool*        tool , 
+( const IHistoTool*        tool ,
   const GaudiAlg::ID&      id   ,
-  const Gaudi::Histo1DDef& hist ) 
+  const Gaudi::Histo1DDef& hist )
 {
-  if ( !tool  ) 
-  { 
+  if ( !tool  )
+  {
     LoKi::Report::Error
       ( "LoKi::HistoBook::book("
         + Gaudi::Utils::toString ( id   ) + ","
@@ -365,19 +365,19 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
     return nullptr ;
   }
   // book the histogram:
-  AIDA::IHistogram1D* histo = 
-    tool -> book ( id               , 
-                   hist.title    () , 
-                   hist.lowEdge  () , 
+  AIDA::IHistogram1D* histo =
+    tool -> book ( id               ,
+                   hist.title    () ,
+                   hist.lowEdge  () ,
                    hist.highEdge () , hist.bins() ) ;
   //
-  if ( !histo ) 
-  { 
+  if ( !histo )
+  {
     LoKi::Report::Error
       ( "LoKi::HistoBook::book("
         + Gaudi::Utils::toString ( id   ) + ","
         + Gaudi::Utils::toString ( hist ) + "): invalid AIDA::IHistogramID") ;
-    return nullptr ; 
+    return nullptr ;
   }
   //
   LoKi::Report::Print
@@ -385,27 +385,27 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
       + Gaudi::Utils::toString ( id   ) + ","
       + Gaudi::Utils::toString ( hist ) + ")"
       + " success using IHistoTool: '" + tool->name() + "'"
-      + " THS path: '" 
-      + Gaudi::Utils::Histos::path 
+      + " THS path: '"
+      + Gaudi::Utils::Histos::path
       (  Gaudi::Utils::Histos::toBase ( histo ) ) + "'" ,
       StatusCode::SUCCESS , MSG::DEBUG  ) ;
   //
-  return histo ;  
+  return histo ;
 }
 // ============================================================================
 /*  helper function to book 1D-histogram
- *  @param svc the context service 
- *  @param id   histogram identifier 
+ *  @param svc the context service
+ *  @param id   histogram identifier
  *  @param hist histogram desctription
- */ 
+ */
 // ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
-( const IAlgContextSvc*    svc , 
+( const IAlgContextSvc*    svc ,
   const GaudiAlg::ID&      id   ,
-  const Gaudi::Histo1DDef& hist ) 
+  const Gaudi::Histo1DDef& hist )
 {
-  if ( !svc ) 
-  { 
+  if ( !svc )
+  {
     LoKi::Report::Error
       ( "LoKi::HistoBook::book("
         + Gaudi::Utils::toString ( id   ) + ","
@@ -418,39 +418,39 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
 // ============================================================================
 /*  helper function to book 1D-histogram
  *  @attention it looks for the appropriate Histo-algorithm within "context"
- *  @param svc the context service 
- *  @param id   histogram identifier 
+ *  @param svc the context service
+ *  @param id   histogram identifier
  *  @param hist histogram desctription
- */ 
+ */
 // ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
 ( const Gaudi::Histo1DDef& hist ,
-  const GaudiAlg::ID&      id   , 
+  const GaudiAlg::ID&      id   ,
   const IAlgContextSvc*    svc  )
 {
-  if ( !svc ) 
+  if ( !svc )
   {
     const LoKi::Services& svcs = LoKi::Services::instance() ;
-    svc = svcs.contextSvc() ;  
+    svc = svcs.contextSvc() ;
   }
   //
-  if ( !svc ) 
-  { 
+  if ( !svc )
+  {
     LoKi::Report::Error
-      ( "LoKi::HistoBook::book(" 
+      ( "LoKi::HistoBook::book("
         + Gaudi::Utils::toString ( hist ) + ","
         + Gaudi::Utils::toString ( id   ) + "): invalid IAlgContextSvc" ) ;
-    return nullptr ;                                              // RETURN 
+    return nullptr ;                                              // RETURN
   }
   return book ( svc , id , hist ) ;
 }
 // ============================================================================
 /*  helper function to book 1D-histogram
  *  @attention it looks for the appropriate Histo-algorithm within "context"
- *  @param svc the context service 
- *  @param id   histogram identifier 
+ *  @param svc the context service
+ *  @param id   histogram identifier
  *  @param hist histogram desctription
- */ 
+ */
 // ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
 ( const Gaudi::Histo1DDef& hist ,
@@ -460,10 +460,10 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
 // ============================================================================
 /*  helper function to book 1D-histogram
  *  @attention it looks for the appropriate Histo-algorithm within "context"
- *  @param svc the context service 
- *  @param id   histogram identifier 
+ *  @param svc the context service
+ *  @param id   histogram identifier
  *  @param hist histogram desctription
- */ 
+ */
 // ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
 ( const Gaudi::Histo1DDef& hist ,
@@ -472,32 +472,32 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
 { return book ( hist , GaudiAlg::ID ( id ) , svc ) ; }
 // ============================================================================
 /** helper function to book 1D-histogram
- *  @param svc the context service 
- *  @param id   histogram identifier 
+ *  @param svc the context service
+ *  @param id   histogram identifier
  *  @param hist histogram desctription
- */ 
+ */
 // ============================================================================
 AIDA::IHistogram1D* LoKi::HistoBook::book
-( const IAlgContextSvc*    svc  , 
+( const IAlgContextSvc*    svc  ,
   const std::string&       id   ,
-  const Gaudi::Histo1DDef& hist ) 
+  const Gaudi::Histo1DDef& hist )
 { return book ( svc , GaudiAlg::ID ( id ) , hist ) ; }
-// ============================================================================ 
+// ============================================================================
 /*  helper function to book 1D-histogram
  *  @param hist histogram desctription
- *  @return booked histogram 
- */ 
-// ============================================================================ 
-AIDA::IHistogram1D* LoKi::HistoBook::book ( const LoKi::Histo& histo ) 
+ *  @return booked histogram
+ */
+// ============================================================================
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const LoKi::Histo& histo )
 {
   //
-  if      ( histo.hcase() && histo.id().undefined() ) 
+  if ( histo.hcase() && histo.id().undefined() )
   { return book ( histo.path() , histo.hdef() , histo.histoSvc() ) ; }
-  else if ( histo.hcase() ) 
+  if ( histo.hcase() )
   { return book ( histo.path() , histo.id() , histo.hdef() , histo.histoSvc() ) ; }
   //
   return book ( histo.hdef() , histo.id() , histo.contextSvc() ) ;
 }
-// ============================================================================ 
-// The END 
-// ============================================================================ 
+// ============================================================================
+// The END
+// ============================================================================

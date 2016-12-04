@@ -1,18 +1,9 @@
 // ===========================================================================
-// Include files 
+// Include files
 // ===========================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/IAlgContextSvc.h"
-#include "GaudiKernel/IHistogramSvc.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IRndmGenSvc.h"
-#include "GaudiKernel/IStatSvc.h"
-#include "GaudiKernel/ICounterSvc.h"
-#include "GaudiKernel/IChronoSvc.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-#include "GaudiKernel/SmartIF.h"
 // ============================================================================
 // PartProp
 // ============================================================================
@@ -28,114 +19,100 @@
  *
  *  Implementation file for class LoKi::Services
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23 
+ *  @date 2001-01-23
  */
 // ===========================================================================
 // accessor to unique instance ("Meyer's singleton" pattern)
 // ===========================================================================
 LoKi::Services& LoKi::Services::instance()
 {
-  static LoKi::Services s_instance = Services() ;
+  static LoKi::Services s_instance;
   return s_instance ;
 }
 // ===========================================================================
-// standard (default) constructor 
+// standard (default) constructor
 // ===========================================================================
 LoKi::Services::Services()
-  : m_lokiSvc    ( 0 ) 
-  , m_ppSvc      ( 0 ) 
-  , m_contextSvc ( 0 ) 
-  , m_randSvc    ( 0 ) 
-  , m_histoSvc   ( 0 ) 
-  , m_evtSvc     ( 0 ) 
-  , m_statSvc    ( 0 ) 
-  , m_cntSvc     ( 0 ) 
-  , m_chronoSvc  ( 0 ) 
-  , m_updateSvc  ( 0 ) 
 {
   LoKi::Welcome::instance() ;
 }
 // ===========================================================================
-// destructor
+// release all services
 // ===========================================================================
-LoKi::Services::~Services(){}
-// ===========================================================================
-// release all services 
-// ===========================================================================
-StatusCode LoKi::Services::releaseAll() 
+StatusCode LoKi::Services::releaseAll()
 {
-  // release services 
-  if ( 0 != m_updateSvc  ) { m_updateSvc  -> release () ; m_updateSvc  = 0 ; }
-  // release services 
-  if ( 0 != m_chronoSvc  ) { m_chronoSvc  -> release () ; m_chronoSvc  = 0 ; }
-  // release services 
-  if ( 0 != m_cntSvc     ) { m_cntSvc     -> release () ; m_cntSvc     = 0 ; }
-  // release services 
-  if ( 0 != m_statSvc    ) { m_statSvc    -> release () ; m_statSvc    = 0 ; }
-  // release services 
-  if ( 0 != m_histoSvc   ) { m_histoSvc   -> release () ; m_histoSvc   = 0 ; }
-  // 'release' the service 
-  if ( 0 != m_evtSvc     ) { m_evtSvc     -> release () ; m_evtSvc     = 0 ; }
-  // release services 
-  if ( 0 != m_ppSvc      ) { m_ppSvc      -> release () ; m_ppSvc      = 0 ; }
-  // release services 
-  if ( 0 != m_randSvc    ) { m_randSvc    -> release () ; m_randSvc    = 0 ; }
-  // 'release' the service 
-  if ( 0 != m_contextSvc ) { m_contextSvc -> release () ; m_contextSvc = 0 ; }
-  // 'release' the service 
-  if ( 0 != m_lokiSvc    ) { m_lokiSvc    -> release () ; m_lokiSvc    = 0 ; }
+  // release services
+  m_updateSvc.reset();
+  // release services
+  m_chronoSvc.reset();
+  // release services
+  m_cntSvc.reset();
+  // release services
+  m_statSvc.reset();
+  // release services
+  m_histoSvc.reset();
+  // 'release' the service
+  m_evtSvc.reset();
+  // release services
+  m_ppSvc.reset();
+  // release services
+  m_randSvc.reset();
+  // 'release' the service
+  m_contextSvc.reset();
+  // 'release' the service
+  if (m_lokiSvc) m_lokiSvc->release(); m_lokiSvc = nullptr;
   //
   return StatusCode::SUCCESS ;
 }
 // ===========================================================================
 /*  Print the error  message, return status code
- *  @param msg    error message 
- *  @param st     status code 
- *  @return       status code 
+ *  @param msg    error message
+ *  @param st     status code
+ *  @return       status code
  */
 // ===========================================================================
-StatusCode LoKi::Services::Error     
-( const std::string& msg , 
-  const StatusCode   st  , 
-  const size_t       mx  ) const  
+StatusCode LoKi::Services::Error
+( const std::string& msg ,
+  const StatusCode   st  ,
+  const size_t       mx  ) const
 {
   return LoKi::Report::Error(" LoKi::Services " + msg , st , mx );
 }
 // ===========================================================================
-/*  Print the warning  message, return status code 
- *  @param msg    warning message 
- *  @param st     status code  
- *  @return       status code 
+/*  Print the warning  message, return status code
+ *  @param msg    warning message
+ *  @param st     status code
+ *  @return       status code
  */
 // ===========================================================================
-StatusCode LoKi::Services::Warning   
-( const std::string& msg  , 
-  const StatusCode   st   , 
-  const size_t       mx   ) const   
+StatusCode LoKi::Services::Warning
+( const std::string& msg  ,
+  const StatusCode   st   ,
+  const size_t       mx   ) const
 {
   return LoKi::Report::Warning(" LoKi::Services " + msg , st , mx ) ;
-} 
+}
 // ===========================================================================
-// accessor to main LoKi algorithm 
+// accessor to main LoKi algorithm
 // ===========================================================================
 LoKi::ILoKiSvc* LoKi::Services::lokiSvc () const { return m_lokiSvc ; }
 // ===========================================================================
-// set new main LoKi algorithms 
+// set new main LoKi algorithms
 // ===========================================================================
-LoKi::ILoKiSvc* LoKi::Services::setLoKi( LoKi::ILoKiSvc* svc )  
+LoKi::ILoKiSvc* LoKi::Services::setLoKi( LoKi::ILoKiSvc* svc )
 {
-  // add reference to the new algo 
-  if ( 0 != svc ) { svc -> addRef() ; }
-  // release all  previously allocated  services  
+  // add reference to the new algo
+  if ( svc ) { svc -> addRef() ; }
+  // release all  previously allocated  services
   releaseAll().ignore() ;
   // set new algorithm
   m_lokiSvc = svc ;
@@ -145,171 +122,66 @@ LoKi::ILoKiSvc* LoKi::Services::setLoKi( LoKi::ILoKiSvc* svc )
 // ===========================================================================
 // accessor to particle properties service
 // ===========================================================================
-LHCb::IParticlePropertySvc* LoKi::Services::ppSvc     () const 
+LHCb::IParticlePropertySvc* LoKi::Services::ppSvc     () const
 {
-  if ( 0 != m_ppSvc ) { return m_ppSvc ; }
-  SmartIF<LHCb::IParticlePropertySvc> svc ( m_lokiSvc ) ;
-  if ( !svc ) 
-  {
-    Error ( " LHCb::IParticlePropertySvc* points to NULL, return NULL" ) ;
-    return 0 ;
-  }
-  //
-  m_ppSvc = svc ;
-  m_ppSvc -> addRef () ;
-  //
-  return m_ppSvc ;
+  return svc(m_ppSvc, m_lokiSvc," LHCb::IParticlePropertySvc* points to NULL, return NULL");
 }
 // ===========================================================================
 // accessor to context service
 // ===========================================================================
-IAlgContextSvc* LoKi::Services::contextSvc () const 
+IAlgContextSvc* LoKi::Services::contextSvc () const
 {
-  if ( 0 != m_contextSvc ) { return m_contextSvc ; }
-  SmartIF<IAlgContextSvc> svc ( m_lokiSvc ) ;
-  if ( !svc ) 
-  {
-    Error ( " IAlgContextSvc* points to NULL, return NULL" ) ;
-    return 0 ;
-  }
-  //
-  m_contextSvc = svc ;
-  m_contextSvc -> addRef () ;
-  //
-  return m_contextSvc ;
+  return svc(m_contextSvc,m_lokiSvc," IAlgContextSvc* points to NULL, return NULL");
 }
 // ===========================================================================
 // accessor to histogram service
 // ===========================================================================
-IHistogramSvc* LoKi::Services::histoSvc () const 
+IHistogramSvc* LoKi::Services::histoSvc () const
 {
-  if ( 0 != m_histoSvc ) { return m_histoSvc ; }
-  SmartIF<IHistogramSvc> svc ( m_lokiSvc ) ;
-  if ( !svc ) 
-  {
-    Error ( " IHistogramSvc* points to NULL, return NULL" ) ;
-    return 0 ;
-  }
-  //
-  m_histoSvc = svc ;
-  m_histoSvc -> addRef () ;
-  //
-  return m_histoSvc  ;
+  return svc(m_histoSvc, m_lokiSvc, " IHistogramSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
 // accessor to Random Numbers Service
 // ===========================================================================
-IRndmGenSvc* LoKi::Services::randSvc () const 
+IRndmGenSvc* LoKi::Services::randSvc () const
 {
-  if ( 0 != m_randSvc ) { return m_randSvc ; }
-  // get the service form LoKi 
-  SmartIF<IRndmGenSvc> svc ( m_lokiSvc ) ;
-  if ( !svc ) 
-  {
-    Error ( "IRndmGenSvc* points to NULL, return NULL" ) ;
-    return 0 ;
-  }
-  //
-  m_randSvc = svc ;
-  m_randSvc -> addRef() ;
-  //
-  return m_randSvc  ;
+  return svc(m_randSvc, m_lokiSvc, "IRndmGenSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
-// accessor to Event Data Service 
+// accessor to Event Data Service
 // ===========================================================================
-IDataProviderSvc* LoKi::Services::evtSvc     () const 
+IDataProviderSvc* LoKi::Services::evtSvc     () const
 {
-  if ( 0 != m_evtSvc ) { return m_evtSvc ; }
-  // get the service form LoKi 
-  SmartIF<IDataProviderSvc> svc ( m_lokiSvc ) ;
-  if ( !svc ) 
-  {
-    Error ( "IDataProviderSvc* points to NULL, return NULL" ) ;
-    return 0 ;
-  }
-  //
-  m_evtSvc = svc ;
-  m_evtSvc -> addRef() ;
-  //
-  return m_evtSvc  ;
+  return svc(m_evtSvc,m_lokiSvc, "IDataProviderSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
-// accessor to Statistical Service 
+// accessor to Statistical Service
 // ===========================================================================
-IStatSvc* LoKi::Services::statSvc     () const 
+IStatSvc* LoKi::Services::statSvc     () const
 {
-  if ( 0 != m_statSvc ) { return m_statSvc ; }
-  // get the service form LoKi 
-  SmartIF<IStatSvc> svc ( m_lokiSvc ) ;
-  if ( !svc ) 
-  {
-    Error ( "IStatSvc* points to NULL, return NULL" ) ;
-    return 0 ;
-  }
-  //
-  m_statSvc = svc ;
-  m_statSvc -> addRef() ;
-  //
-  return m_statSvc  ;
+  return svc(m_statSvc,  m_lokiSvc,"IStatSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
-// accessor to Counter Service 
+// accessor to Counter Service
 // ===========================================================================
-ICounterSvc* LoKi::Services::cntSvc     () const 
+ICounterSvc* LoKi::Services::cntSvc     () const
 {
-  if ( 0 != m_cntSvc ) { return m_cntSvc ; }
-  // get the service form LoKi 
-  SmartIF<ICounterSvc> svc ( m_lokiSvc ) ;
-  if ( !svc ) 
-  {
-    Error ( "ICounterSvc* points to NULL, return NULL" ) ;
-    return 0 ;
-  }
-  //
-  m_cntSvc = svc ;
-  m_cntSvc -> addRef() ;
-  //
-  return m_cntSvc  ;
+  return svc(m_cntSvc, m_lokiSvc, "ICounterSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
-// accessor to Chrono Service 
+// accessor to Chrono Service
 // ===========================================================================
-IChronoSvc* LoKi::Services::chronoSvc     () const 
+IChronoSvc* LoKi::Services::chronoSvc     () const
 {
-  if ( 0 != m_chronoSvc ) { return m_chronoSvc ; }
-  // get the service form LoKi 
-  SmartIF<IChronoSvc> svc ( m_lokiSvc ) ;
-  if ( !svc ) 
-  {
-    Error ( "IChronoSvc* points to NULL, return NULL" ) ;
-    return 0 ;
-  }
-  //
-  m_chronoSvc = svc ;
-  m_chronoSvc -> addRef() ;
-  //
-  return m_chronoSvc  ;
+  return svc( m_chronoSvc, m_lokiSvc, "IChronoSvc* points to NULL, return NULL" );
 }
 // ===========================================================================
-// accessor to Chrono Service 
+// accessor to Chrono Service
 // ===========================================================================
-IUpdateManagerSvc* LoKi::Services::updateSvc     () const 
+IUpdateManagerSvc* LoKi::Services::updateSvc     () const
 {
-  if ( 0 != m_updateSvc ) { return m_updateSvc ; }
-  // get the service form LoKi 
-  SmartIF<IUpdateManagerSvc> svc ( m_lokiSvc ) ;
-  if ( !svc ) 
-  {
-    Error ( "IUpdateManagerSvc* points to NULL, return NULL" ) ;
-    return 0 ;
-  }
-  //
-  m_updateSvc = svc ;
-  m_updateSvc -> addRef() ;
-  //
-  return m_updateSvc  ;
+  return svc( m_updateSvc, m_lokiSvc, "IUpdateManagerSvc* points to NULL, return NULL");
 }
 // ===========================================================================
-// The END 
+// The END
 // ===========================================================================
