@@ -101,6 +101,10 @@ namespace Rich
         inline TYPE minX()  const noexcept { return m_minX; }
         /// Get the bin max x
         inline TYPE maxX()  const noexcept { return m_maxX; }
+        /// Get the bin y value at min x
+        inline TYPE minY()  const noexcept { return getY(m_minX); }
+        /// Get the bin y value at max x
+        inline TYPE maxY()  const noexcept { return getY(m_maxX); }
       private:
         /// The slope parameter
         TYPE m_slope{0};
@@ -167,6 +171,12 @@ namespace Rich
       
       /// Access the max X value
       inline TYPE maxX() const noexcept { return m_maxX; }
+
+      /// Access the Y value at the minimum X value
+      inline TYPE minY() const noexcept { return m_data.front().minY(); }
+
+      /// Access the Y value at the maximum X value
+      inline TYPE maxY() const noexcept { return m_data.back().maxY(); }
 
       /// Compute the intergral for the given range
       inline TYPE integral ( const TYPE from,  
@@ -427,7 +437,7 @@ namespace Rich
      *
      *  @return The function value at the minimum valid parameter
      */
-    inline double minY() const noexcept { return value(m_fastInterp.minX()); }
+    inline double minY() const noexcept { return m_fastInterp.minY(); }
 
     /** The maximum parameter value for which the function is defined
      *
@@ -439,7 +449,7 @@ namespace Rich
      *
      *  @return The function value at the minimum valid parameter
      */
-    inline double maxY() const noexcept { return value(m_fastInterp.maxX()); }
+    inline double maxY() const noexcept { return m_fastInterp.maxY(); }
 
     /** The status of the interpolator.
      *
