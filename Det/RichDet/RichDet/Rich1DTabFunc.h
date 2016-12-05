@@ -229,11 +229,8 @@ namespace Rich
 
   public:
 
-    /** Default Constructor
-     *
-     *  @param interType   GSL Interpolator type.
-     */
-    TabulatedFunction1D() { initInterpolator(); }
+    /// Default constructor
+    TabulatedFunction1D() = default;
 
     /** Constructor from arrays containing x and y values
      *
@@ -292,7 +289,7 @@ namespace Rich
     }
     
     /// Destructor
-    virtual ~TabulatedFunction1D( );
+    virtual ~TabulatedFunction1D() = default;
 
   public:
 
@@ -506,7 +503,7 @@ namespace Rich
   protected: // methods
 
     /// clear the interpolator
-    void clearInterpolator();
+    inline void clearInterpolator() { m_fastInterp.clear(); }
 
     /// Default initialise the interpolator
     void initInterpolator();
