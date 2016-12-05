@@ -1,4 +1,3 @@
-// ============================================================================
 #ifndef LOKI_ALGS_H
 #define LOKI_ALGS_H 1
 // ============================================================================
@@ -54,12 +53,11 @@ namespace LoKi
      *  @date   2006-02-10
      */
     template <class ITER,class RESULT,class FUNCTOR,class OPERATION>
-    inline RESULT accumulate
-    ( ITER         first     ,
-      ITER         last      ,
-      const FUNCTOR& functor   ,
-      RESULT         result    ,
-      OPERATION      binop     )
+    inline RESULT accumulate( ITER           first     ,
+                              ITER           last      ,
+                              const FUNCTOR& functor   ,
+                              RESULT         result    ,
+                              OPERATION      binop     )
     {
       using reference = typename std::iterator_traits<ITER>::reference;
       return std::accumulate( first,last, result,
@@ -83,15 +81,14 @@ namespace LoKi
      */
     template <class ITER,class RESULT,class FUNCTOR,
               class PREDICATE,class OPERATION>
-    inline RESULT accumulate
-    ( ITER             first     ,
-      ITER             last      ,
-      const FUNCTOR&   functor   ,
-      const PREDICATE& predicate ,
-      RESULT           result    ,
-      OPERATION        binop     )
+    inline RESULT accumulate( ITER             first     ,
+                              ITER             last      ,
+                              const FUNCTOR&   functor   ,
+                              const PREDICATE& predicate ,
+                              RESULT           result    ,
+                              OPERATION        binop     )
     {
-      // ITER::reference , std::iterator_traits<ITER>::reference doesn't work here ;-(
+      // std::iterator_traits<ITER>::reference doesn't work here ;-(
       using value_type = typename std::iterator_traits<ITER>::value_type;
       using arg_t      = typename std::conditional< std::is_pointer<value_type>::value,
                                                     value_type,
@@ -113,41 +110,37 @@ namespace LoKi
      *  @date   2006-02-20
      */
     template <class OBJECT,class OUTPUT,class PREDICATE>
-    inline OUTPUT copy_if
-    ( OBJECT    first  ,
-      OBJECT    last   ,
-      OUTPUT    output ,
-      PREDICATE cut    )
+    inline OUTPUT copy_if( OBJECT    first  ,
+                           OBJECT    last   ,
+                           OUTPUT    output ,
+                           PREDICATE cut    )
     {
       return std::copy_if(first,last,output,std::ref(cut));
     }
     // ========================================================================
     /// a bit modified version of std::count_if
     template <class OBJECT, class PREDICATE>
-    inline std::size_t count_if
-    ( OBJECT            first ,
-      OBJECT            last  ,
-      const PREDICATE&  cuts  )
+    inline std::size_t count_if( OBJECT            first ,
+                                 OBJECT            last  ,
+                                 const PREDICATE&  cuts  )
     {
       return std::count_if( first, last, std::cref(cuts) );
     }
     // ========================================================================
     /// a bit modified version of std::find_if
     template <class OBJECT, class PREDICATE>
-    inline OBJECT find_if
-    ( OBJECT            first ,
-      OBJECT            last  ,
-      const PREDICATE&  cuts  )
+    inline OBJECT find_if( OBJECT            first ,
+                           OBJECT            last  ,
+                           const PREDICATE&  cuts  )
     {
       return std::find_if( first,last, std::cref(cuts) );
     }
     // ========================================================================
     /// useful shortcut
     template <class OBJECT,class PREDICATE>
-    inline bool found
-    ( OBJECT            first ,
-      OBJECT            last  ,
-      const PREDICATE&  cuts  )
+    inline bool found( OBJECT            first ,
+                       OBJECT            last  ,
+                       const PREDICATE&  cuts  )
     {
       return last != LoKi::Algs::find_if ( first , last , cuts ) ;
     }
@@ -190,10 +183,10 @@ namespace LoKi
      */
     template<class OBJECT,class FUNCTION,class PREDICATE,class BINOP>
     inline auto extremum( OBJECT           first ,
-      OBJECT           last  ,
-      const FUNCTION&  fun   ,
-      const PREDICATE& cut   ,
-      BINOP            binop )
+                          OBJECT           last  ,
+                          const FUNCTION&  fun   ,
+                          const PREDICATE& cut   ,
+                          BINOP            binop )
     -> std::pair<OBJECT,decltype(fun(*first))>
     {
       using result_type = decltype(fun(*first));
@@ -208,7 +201,7 @@ namespace LoKi
           first = std::find_if(first,last,std::cref(cut));
           if (first==last) break;                        // BREAK
           // evaluate the  function
-          auto tmp = fun ( *first ) ;
+          auto tmp = fun( *first ) ;
           // compare it!
           if ( binop ( tmp , value ) ) {
             result = first ;
@@ -252,14 +245,13 @@ namespace LoKi
      *  @date   2005-03-09
      */
     template<class OBJECT,class FUNCTION,class PREDICATE>
-    inline OBJECT select_min
-    ( OBJECT           first ,
-      OBJECT           last  ,
-      const FUNCTION&  fun   ,
-      const PREDICATE& cut   )
+    inline OBJECT select_min( OBJECT           first ,
+                              OBJECT           last  ,
+                              const FUNCTION&  fun   ,
+                              const PREDICATE& cut   )
     {
       return LoKi::Algs::extremum
-        ( first , last , fun , cut , std::less<double> () ).first  ;
+        ( first , last , fun , cut , std::less<> () ).first  ;
     }
     // ========================================================================
     /** select element from the sequence with maximal value of
@@ -294,14 +286,13 @@ namespace LoKi
      *  @date   2005-03-09
      */
     template<class OBJECT,class FUNCTION,class PREDICATE>
-    inline OBJECT select_max
-    ( OBJECT           first ,
-      OBJECT           last  ,
-      const FUNCTION&  fun   ,
-      const PREDICATE& cut   )
+    inline OBJECT select_max( OBJECT           first ,
+                              OBJECT           last  ,
+                              const FUNCTION&  fun   ,
+                              const PREDICATE& cut   )
     {
       return LoKi::Algs::extremum
-        ( first , last , fun , cut , std::greater<double>() ).first ;
+        ( first , last , fun , cut , std::greater<>() ).first ;
     }
     // ========================================================================
     /** select element from the sequence with maximal value of
@@ -321,8 +312,7 @@ namespace LoKi
      *  Where <tt>SEQUENCE</tt> could be any container or container-like
      *  object (like e.g. <tt>LoKi::Range</tt>) of <tt>const Particle*</tt>.
      *  This example illustrates the selection of particle with maximal
-     *  transverse momentum  from "container" <tt>prts</tt>. Only
-     *  particles with momentum in excess of 10 GeV are considered.
+     *  transverse momentum  from "container" <tt>prts</tt>.
      *
      *  @see PT
      *  @see LoKi::Function
@@ -334,13 +324,12 @@ namespace LoKi
      *  @date   2005-03-09
      */
     template<class OBJECT,class FUNCTION>
-    inline OBJECT select_min
-    ( OBJECT           first ,
-      OBJECT           last  ,
-      const FUNCTION&  fun   )
+    inline OBJECT select_min( OBJECT           first ,
+                              OBJECT           last  ,
+                              const FUNCTION&  fun   )
     {
       return LoKi::Algs::extremum
-        ( first , last , fun , std::less<double>() ).first ;
+        ( first , last , fun , std::less<>() ).first ;
     }
     // ========================================================================
     /** select element form the sequence with maximal value of
@@ -360,8 +349,7 @@ namespace LoKi
      *  Where <tt>SEQUENCE</tt> could be any container or container-like
      *  object (like e.g. <tt>LoKi::Range</tt>) of <tt>const Particle*</tt>.
      *  This example illustrates the selection of particle with maximal
-     *  transverse momentum  from "container" <tt>prts</tt>. Only
-     *  particles with momentum in excess of 10 GeV are considered.
+     *  transverse momentum  from "container" <tt>prts</tt>.
      *
      *  @see PT
      *  @see LoKi::Function
@@ -373,13 +361,12 @@ namespace LoKi
      *  @date   2005-03-09
      */
     template<class OBJECT,class FUNCTION>
-    inline OBJECT select_max
-    ( OBJECT           first ,
-      OBJECT           last  ,
-      const FUNCTION&  fun   )
+    inline OBJECT select_max( OBJECT           first ,
+                              OBJECT           last  ,
+                              const FUNCTION&  fun   )
     {
       return LoKi::Algs::extremum
-        ( first , last , fun , std::greater<double>() ).first ;
+        ( first , last , fun , std::greater<>() ).first ;
     }
     // ========================================================================
     /** very simple algorithm for minimum value of the function over the
@@ -388,11 +375,10 @@ namespace LoKi
      *  @date   2007-07-20
      */
     template <class OBJECT, class FUNCTION,class RESULT>
-    inline RESULT min_value
-    ( OBJECT           first  ,
-      OBJECT           last   ,
-      const FUNCTION&  fun    ,
-      RESULT           result )
+    inline RESULT min_value( OBJECT           first  ,
+                             OBJECT           last   ,
+                             const FUNCTION&  fun    ,
+                             RESULT           result )
     {
       using arg_t = decltype(*first);
       return std::accumulate( first, last, result,
@@ -406,12 +392,11 @@ namespace LoKi
      *  @date   2007-07-20
      */
     template <class OBJECT, class FUNCTION, class PREDICATE, class RESULT>
-    inline RESULT min_value
-    ( OBJECT           first  ,
-      OBJECT           last   ,
-      const FUNCTION&  fun    ,
-      const PREDICATE& cut    ,
-      RESULT           result )
+    inline RESULT min_value( OBJECT           first  ,
+                             OBJECT           last   ,
+                             const FUNCTION&  fun    ,
+                             const PREDICATE& cut    ,
+                             RESULT           result )
     {
       using arg_t = decltype(*first);
       return std::accumulate( first, last, result,
@@ -425,11 +410,10 @@ namespace LoKi
      *  @date   2007-07-20
      */
     template <class OBJECT, class FUNCTION,class RESULT>
-    inline RESULT max_value
-    ( OBJECT           first  ,
-      OBJECT           last   ,
-      const FUNCTION&  fun    ,
-      RESULT           result )
+    inline RESULT max_value( OBJECT           first  ,
+                             OBJECT           last   ,
+                             const FUNCTION&  fun    ,
+                             RESULT           result )
     {
       using arg_t = decltype(*first);
       return std::accumulate( first, last, result,
@@ -443,12 +427,11 @@ namespace LoKi
      *  @date   2007-07-20
      */
     template <class OBJECT, class FUNCTION, class PREDICATE, class RESULT>
-    inline RESULT max_value
-    ( OBJECT           first  ,
-      OBJECT           last   ,
-      const FUNCTION&  fun    ,
-      const PREDICATE& cut    ,
-      RESULT           result )
+    inline RESULT max_value( OBJECT           first  ,
+                             OBJECT           last   ,
+                             const FUNCTION&  fun    ,
+                             const PREDICATE& cut    ,
+                             RESULT           result )
     {
       using arg_t = decltype(*first);
       return std::accumulate( first, last, result,
@@ -457,25 +440,21 @@ namespace LoKi
     }
     // ========================================================================
     template <class OBJECT,class PREDICATE1,class PREDICATE2>
-    inline bool _found_2
-    ( OBJECT            first  ,
-      OBJECT            last   ,
-      const PREDICATE1& cut1   ,
-      const PREDICATE2& cut2   ,
-      OBJECT            except )
+    inline bool _found_2( OBJECT            first  ,
+                          OBJECT            last   ,
+                          const PREDICATE1& cut1   ,
+                          const PREDICATE2& cut2   ,
+                          OBJECT            except )
     {
       const int num = last - first ;
-      for ( int i = 0 ; i < num ; ++i )
-      {
+      for ( int i = 0 ; i < num ; ++i ) {
         if ( first + i == except ) { continue ; }                   // CONTINUE
         if ( !cut1( *( first + i ) ) ) { continue ; }               // CONTINUE
-        for ( int j = 0 ; j < num ; ++j )
-        {
+        for ( int j = 0 ; j < num ; ++j ) {
           if ( first + j == except ) { continue ; }                 // CONTINUE
           if ( i != j && cut2( *( first + j ) ) ) { return true ; } // RETURN
         }
       }
-      //
       return false ;                                                // RETURN
     }
     // ========================================================================
@@ -489,29 +468,24 @@ namespace LoKi
      *  @return true if there are two elements
      */
     template <class OBJECT, class PREDICATE1, class PREDICATE2>
-    inline bool found_2
-    ( OBJECT            first ,
-      OBJECT            last  ,
-      const PREDICATE1& cut1  ,
-      const PREDICATE2& cut2  )
+    inline bool found_2( OBJECT            first ,
+                         OBJECT            last  ,
+                         const PREDICATE1& cut1  ,
+                         const PREDICATE2& cut2  )
     {
       return _found_2 ( first , last , cut1 , cut2 , last ) ;
     }
     // ========================================================================
     template <class OBJECT, class PREDICATE1, class PREDICATE2, class PREDICATE3>
-    inline bool _found_3
-    ( OBJECT            first  ,
-      OBJECT            last   ,
-      const PREDICATE1& cut1   ,
-      const PREDICATE2& cut2   ,
-      const PREDICATE3& cut3   ,
-      OBJECT            except )
+    inline bool _found_3( OBJECT            first  ,
+                          OBJECT            last   ,
+                          const PREDICATE1& cut1   ,
+                          const PREDICATE2& cut2   ,
+                          const PREDICATE3& cut3   ,
+                          OBJECT            except )
     {
-      for ( OBJECT f1 = first ; f1 != last ; ++f1 )
-      {
-        //
+      for ( auto f1 = first ; f1 != last ; ++f1 ) {
         if ( f1 == except ) { continue ; }
-        //
         if       ( cut1 ( *f1 ) &&
                    _found_2 ( first , last , cut2 , cut3 , f1 ) ) { return true ; }
         else if  ( cut2 ( *f1 ) &&
@@ -533,12 +507,11 @@ namespace LoKi
      *  @return true if there are two elements
      */
     template <class OBJECT, class PREDICATE1, class PREDICATE2, class PREDICATE3>
-    inline bool found_3
-    ( OBJECT            first ,
-      OBJECT            last  ,
-      const PREDICATE1& cut1  ,
-      const PREDICATE2& cut2  ,
-      const PREDICATE3& cut3  )
+    inline bool found_3( OBJECT            first ,
+                         OBJECT            last  ,
+                         const PREDICATE1& cut1  ,
+                         const PREDICATE2& cut2  ,
+                         const PREDICATE3& cut3  )
     {
       return _found_3 ( first , last , cut1 , cut2 , cut3 , last ) ;
     }
@@ -546,17 +519,15 @@ namespace LoKi
     template <class OBJECT,
               class PREDICATE1, class PREDICATE2,
               class PREDICATE3, class PREDICATE4>
-    inline bool _found_4
-    ( OBJECT            first  ,
-      OBJECT            last   ,
-      const PREDICATE1& cut1   ,
-      const PREDICATE2& cut2   ,
-      const PREDICATE3& cut3   ,
-      const PREDICATE4& cut4   ,
-      OBJECT            except )
+    inline bool _found_4( OBJECT            first  ,
+                          OBJECT            last   ,
+                          const PREDICATE1& cut1   ,
+                          const PREDICATE2& cut2   ,
+                          const PREDICATE3& cut3   ,
+                          const PREDICATE4& cut4   ,
+                          OBJECT            except )
     {
-      for ( OBJECT f1 = first ; f1 != last ; ++f1 )
-      {
+      for ( auto f1 = first ; f1 != last ; ++f1 ) {
         if ( f1 == except ) { continue ; }
         //
         if       ( cut1 ( *f1 ) &&
@@ -585,13 +556,12 @@ namespace LoKi
     template <class OBJECT,
               class PREDICATE1, class PREDICATE2,
               class PREDICATE3, class PREDICATE4>
-    inline bool found_4
-    ( OBJECT            first ,
-      OBJECT            last  ,
-      const PREDICATE1& cut1  ,
-      const PREDICATE2& cut2  ,
-      const PREDICATE3& cut3  ,
-      const PREDICATE4& cut4  )
+    inline bool found_4 ( OBJECT            first ,
+                          OBJECT            last  ,
+                          const PREDICATE1& cut1  ,
+                          const PREDICATE2& cut2  ,
+                          const PREDICATE3& cut3  ,
+                          const PREDICATE4& cut4  )
     {
       return _found_4 ( first , last , cut1 , cut2 , cut3 , cut4 , last ) ;
     }
@@ -670,7 +640,7 @@ namespace LoKi
         if (icut==cuts.end()) continue;
 
         if ( 1 == cuts.size()  ) { return true ; }              // TRUE
-        std::set<size_t>    _indices    ( indices ) ;
+        auto  _indices = indices ;
         _indices.insert ( index ) ;
         auto _cuts =  cuts;
         _cuts.erase ( _cuts.begin() + ( icut - cuts.begin() ) ) ;
@@ -687,41 +657,36 @@ namespace LoKi
      *  @return true if there are N different good elements in the sequence
      */
     template <class OBJECT, class PREDICATE>
-    inline bool found_N
-    ( OBJECT first                          ,
-      OBJECT last                           ,
-      const std::vector<PREDICATE>& cuts    )
+    inline bool found_N( OBJECT first                          ,
+                         OBJECT last                           ,
+                         const std::vector<PREDICATE>& cuts    )
     {
-      if ( cuts.empty()       )                          { return false ; }
-      const size_t dist = std::distance ( first , last ) ;
-      if ( dist < cuts.size() )                          { return false ; }
-      //
-      if      ( 1 == cuts.size() )
-      { return last != std::find_if ( first , last , cuts.front() ) ; }
-      else if ( 2 == cuts.size() )
-      { return found_2 ( first , last , cuts.front() , cuts.back() ) ; }
-      else if ( 3 == cuts.size() )
-      { return found_3 ( first , last ,
-                         *( cuts.begin ()     ) ,
-                         *( cuts.begin () + 1 ) ,
-                         *( cuts.begin () + 2 ) ) ; }
-      else if ( 4 == cuts.size() )
-      { return found_4 ( first , last ,
-                         *( cuts.begin ()     ) ,
-                         *( cuts.begin () + 1 ) ,
-                         *( cuts.begin () + 2 ) ,
-                         *( cuts.begin () + 3 ) ) ; }
-      else if ( 5 == cuts.size() )
-      { return found_5 ( first , last ,
-                         *( cuts.begin ()     ) ,
-                         *( cuts.begin () + 1 ) ,
-                         *( cuts.begin () + 2 ) ,
-                         *( cuts.begin () + 3 ) ,
-                         *( cuts.begin () + 4 ) ) ; }
+      if ( static_cast<std::size_t>(std::distance( first, last )) < cuts.size() )  return false;
 
-      std::set<size_t> indices ;
-      return _found_N ( first , last , cuts , indices ) ;
+      switch (cuts.size()) {
+          case 0 : return false;
+          case 1 : return last != std::find_if( first , last , cuts.front() );
+          case 2 : return found_2( first , last , cuts.front() , cuts.back() );
+          case 3 : return found_3( first , last ,
+                                   *( cuts.begin ()     ) ,
+                                   *( cuts.begin () + 1 ) ,
+                                   *( cuts.begin () + 2 ) ) ;
+          case 4 : return found_4( first , last ,
+                                   *( cuts.begin ()     ) ,
+                                   *( cuts.begin () + 1 ) ,
+                                   *( cuts.begin () + 2 ) ,
+                                   *( cuts.begin () + 3 ) ) ;
+          case 5 : return found_5( first , last ,
+                                   *( cuts.begin ()     ) ,
+                                   *( cuts.begin () + 1 ) ,
+                                   *( cuts.begin () + 2 ) ,
+                                   *( cuts.begin () + 3 ) ,
+                                   *( cuts.begin () + 4 ) ) ;
+          default : { std::set<size_t> indices ;
+                      return _found_N ( first , last , cuts , indices );
+          }
     }
+  }
     // ========================================================================
   } //                                              end of namespace LoKi::Algs
   // ==========================================================================
@@ -730,4 +695,3 @@ namespace LoKi
 //                                                                      The END
 // ============================================================================
 #endif // LOKI_ALGS_H
-// ============================================================================

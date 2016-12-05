@@ -35,25 +35,6 @@ namespace {
 DECLARE_ALGORITHM_FACTORY(HltGenConfig)
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-HltGenConfig::HltGenConfig(const string &name, ISvcLocator *pSvcLocator)
-    : GaudiAlgorithm(name, pSvcLocator)
-{
-  declareProperty("ConfigTop", m_topConfig = { { "Hlt" } });
-  declareProperty("ConfigSvc",
-                  m_svcConfig = { {"ToolSvc"}, {"HltANNSvc"},
-                                  {"Hlt::Service"} });
-  declareProperty("ConfigAccessSvc", s_accessSvc = "ConfigTarFileAccessSvc");
-  declareProperty("PropertyConfigSvc", s_configSvc = "PropertyConfigSvc");
-  declareProperty("HltType", m_hltType);
-  declareProperty("MooreRelease", m_release);
-  declareProperty("Label", m_label);
-  declareProperty("Overrule", m_overrule);
-  declareProperty("EnvironmentVariables", m_envVars = {"PARAMFILESROOT"});
-}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode HltGenConfig::initialize() {

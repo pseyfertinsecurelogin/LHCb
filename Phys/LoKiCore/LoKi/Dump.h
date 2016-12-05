@@ -34,7 +34,7 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2010-11-17
    */
-  class GAUDI_API Dump
+  class GAUDI_API Dump final
   {
   public:
     // ========================================================================
@@ -49,9 +49,6 @@ namespace LoKi
     Dump  ( const std::string&  open          ,
             const std::size_t   nmax          ,
             const std::string&  close  = "\n" ) ;
-    virtual ~Dump() = default;
-    // ========================================================================
-  public:
     // ========================================================================
     const std::string& open  () const { return  m_open  ; }
     const std::string& close () const { return  m_close ; }

@@ -67,7 +67,7 @@ private:
     
 protected:
     /// SourceID to decode: 0=Hlt 1=Hlt1 2=Hlt2 ... (1,2 will decode from 0 if 1,2 not found)
-    UnsignedIntegerProperty m_sourceID;
+    Gaudi::Property<unsigned int> m_sourceID { this, "SourceID", kSourceID_Dummy  };
 
     enum SourceIDs {
         kSourceID_Dummy=0,

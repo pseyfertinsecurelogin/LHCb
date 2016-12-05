@@ -134,7 +134,7 @@ StatusCode RelyConverter::updateObj (IOpaqueAddress* pAddress, DataObject* pObje
 
   ValidDataObject* pVDO = dynamic_cast<ValidDataObject*>(pObject);
   ValidDataObject* pNewVDO = dynamic_cast<ValidDataObject*>(pNewObject);
-  if ( 0 == pVDO || 0 == pNewVDO ) {
+  if ( !pVDO || !pNewVDO ) {
     log << MSG::ERROR
         << "Cannot update objects other than ValidDataObject: "
         << "update() must be defined!"

@@ -23,7 +23,6 @@ HltRawBankDecoderBase::HltRawBankDecoderBase( const std::string& name, ISvcLocat
   m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Copied, LHCb::RawEventLocation::Default};
   initRawEventSearch();
 
-  declareProperty("SourceID", m_sourceID= kSourceID_Dummy );
 }
 
 StatusCode HltRawBankDecoderBase::initialize()

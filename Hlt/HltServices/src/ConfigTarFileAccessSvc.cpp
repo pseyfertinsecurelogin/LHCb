@@ -10,18 +10,6 @@ using ConfigTarFileAccessSvc_details::TarFile;
 DECLARE_COMPONENT( ConfigTarFileAccessSvc )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-ConfigTarFileAccessSvc::ConfigTarFileAccessSvc( const std::string& name,
-                                                ISvcLocator* pSvcLocator )
-    : ConfigArchiveAccessSvc( name, pSvcLocator ), m_file{ nullptr }
-{
-    declareProperty( "File", m_name = "" );
-    declareProperty( "Mode", m_mode = "ReadOnly" );
-    declareProperty("CompressOnWrite", m_compress = true );
-}
-
-//=============================================================================
 // Finalization
 //=============================================================================
 StatusCode ConfigTarFileAccessSvc::finalize()
