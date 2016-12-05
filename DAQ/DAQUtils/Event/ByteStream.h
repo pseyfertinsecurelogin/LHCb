@@ -13,7 +13,8 @@
  */
 namespace LHCb 
 {
-  class ByteStream {
+  class ByteStream
+  {
 
   public: 
     /**
@@ -22,8 +23,6 @@ namespace LHCb
      * @param size size in bytes
      */
     ByteStream(unsigned int* bank, size_t size);
-
-    ~ByteStream(){} ///< Destructor
 
     /** templated streamer */
     template<class TYPE>
@@ -39,26 +38,26 @@ namespace LHCb
     void seek(const size_t nByte);
 
     /** number of bytes read 
-    @return nBytes read 
-    */
-    unsigned int nRead() const;
+     *  @return nBytes read 
+     */
+    unsigned int nRead() const noexcept;
 
   private:
 
-    unsigned char* m_start;
-    unsigned int m_pos;
+    unsigned char* m_start = nullptr;
+    unsigned int m_pos{0};
 
   };
+
   inline ByteStream::ByteStream(unsigned int* bank, 
-                                size_t size):
-    m_start(0),
-    m_pos(0){
-    // constructor
+                                size_t /* size */ )
+  {
     m_start = reinterpret_cast<unsigned char*>(bank);
   }
 
   template <class TYPE>
-  inline ByteStream& ByteStream::operator >> (TYPE& value){
+  inline ByteStream& ByteStream::operator >> (TYPE& value)
+  {
 
     TYPE* tmp = reinterpret_cast<TYPE*>(&m_start[m_pos]);
     value = *tmp;
@@ -66,19 +65,23 @@ namespace LHCb
     return *this;
   }
 
-  inline void ByteStream::rewind(){
+  inline void ByteStream::rewind()
+  {
     m_pos = 0;
   }
 
-  inline void ByteStream::rewind(const size_t nByte){
+  inline void ByteStream::rewind(const size_t nByte)
+  {
     m_pos -= nByte;
   }
 
-  inline void ByteStream::seek(const size_t nByte){
+  inline void ByteStream::seek(const size_t nByte)
+  {
     m_pos += nByte;
   }
 
-  inline unsigned int ByteStream::nRead() const{
+  inline unsigned int ByteStream::nRead() const noexcept
+  {
     return m_pos;    
   }
 
