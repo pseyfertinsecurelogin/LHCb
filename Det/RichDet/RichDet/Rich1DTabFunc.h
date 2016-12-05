@@ -60,7 +60,7 @@ namespace Rich
   private:
 
     /// Callable class to handle the GSL free call. Used in conjugation with std::unique_ptr.
-    class GSLSplineDeleter
+    class GSLSplineDeleter final
     {
     public:
       /// the deletion operator
@@ -301,7 +301,7 @@ namespace Rich
      *  @param funcs   A vector containing pointers to the functions to merge
      *  @param samples Number of sample points to use
      *
-     *  @return Pointer to an interpolator that represents the productof all functions
+     *  @return Pointer to an interpolator that represents the product of all functions
      *  @retval Non-nullptr Interpolator was successfully created
      *  @retval nullptr     Interpolator could not be created
      */
