@@ -38,8 +38,8 @@ namespace Rich
   public:
 
     /// Default Constructor 
-    TabulatedProperty1D( ) : TabulatedFunction1D( ) { }
-    
+    TabulatedProperty1D( ) = default;
+
     /** Constructor from tabulated property and gsl interpolator type
      *
      *  @param tab         Pointer to a tabulated property

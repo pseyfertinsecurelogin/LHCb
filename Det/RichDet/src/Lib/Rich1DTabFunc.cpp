@@ -27,11 +27,6 @@ using namespace Rich;
 
 //============================================================================
 
-// Destructor
-TabulatedFunction1D::~TabulatedFunction1D( ) { clearInterpolator(); }
-
-//============================================================================
-
 bool TabulatedFunction1D::initInterpolator( const double x[],
                                             const double y[],
                                             const unsigned int size,
@@ -150,14 +145,6 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   m_fastInterp.init( minX, maxX, gslSpline.get(), nsamples );
 
   return true;
-}
-
-//============================================================================
-
-// clean out the GSL components
-void TabulatedFunction1D::clearInterpolator()
-{
-   m_fastInterp.clear();
 }
 
 //============================================================================
