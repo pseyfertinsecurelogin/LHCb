@@ -461,22 +461,6 @@ std::string LoKi::Hybrid::Base::makeCode
   return result ;
 }
 // ============================================================================
-// write C++ code 
-// ============================================================================
-namespace 
-{
-  inline std::ostream&
-  writeLines ( const std::vector<std::string>& lines  , 
-               std::ostream&                   stream )
-  {
-    for ( std::vector<std::string>::const_iterator iline = lines.begin() ;
-          lines.end() != iline ; ++iline ) 
-    { stream << ( *iline ) << std::endl ;}
-    //
-    return stream ;
-  }
-}
-// ============================================================================
 namespace 
 {
   // ==========================================================================

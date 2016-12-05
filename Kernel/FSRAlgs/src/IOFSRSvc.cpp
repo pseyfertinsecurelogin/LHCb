@@ -15,17 +15,6 @@ DECLARE_SERVICE_FACTORY(IOFSRSvc)
 
 using namespace std;
 
-namespace {
-  /// @FIXME: (MCl) work-around to fix the warning
-  ///
-  ///   warning: deprecated conversion from string constant to ‘char*’
-  ///
-  /// that occurs when a string constant (e.g.: "abc", "") is passed to a function
-  /// expecting char *
-  inline char *chr(const char*c){ return const_cast<char*>(c); }
-}
-
-//
 ///////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 ///////////////////////////////////////////////////////////////////////////

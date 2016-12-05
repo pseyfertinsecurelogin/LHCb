@@ -13,9 +13,6 @@ namespace {
   inline void DecoderAssert(const bool cond, const std::string& msg) {
     Assert(cond, "LHCb::ODINCodec::decode", msg);
   }
-  inline void EncoderAssert(const bool cond, const std::string& msg) {
-    Assert(cond, "LHCb::ODINCodec::encode", msg);
-  }
 }
 
 //=============================================================================

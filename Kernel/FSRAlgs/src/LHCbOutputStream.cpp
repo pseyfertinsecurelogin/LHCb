@@ -225,38 +225,38 @@ StatusCode LHCbOutputStream::writeObjects()
       {
         // Now pass the collection to the persistency service
         IOpaqueAddress* pAddress = NULL;
-        for ( IDataSelector::iterator j = sel->begin(); j != sel->end(); ++j )
+        for (DataObject* obj : *sel)
         {
           try
           {
-            const StatusCode iret = m_pConversionSvc->createRep( *j, pAddress );
+            const StatusCode iret = m_pConversionSvc->createRep( obj, pAddress );
             if ( !iret.isSuccess() )
             {
               status = iret;
               continue;
             }
-            IRegistry* pReg = (*j)->registry();
+            IRegistry* pReg = obj->registry();
             pReg->setAddress(pAddress);
           }
           catch ( const std::exception & excpt )
           {
             MsgStream log( msgSvc(), name() );
-            const std::string loc = ( (*j)->registry() ?
-                                      (*j)->registry()->identifier() : "UnRegistered" );
+            const std::string loc = ( obj->registry() ?
+                                      obj->registry()->identifier() : "UnRegistered" );
             log << MSG::FATAL
                 << "std::exception during createRep for '" << loc << "' "
-                << System::typeinfoName( typeid(**j) )
+                << System::typeinfoName( typeid(*obj) )
                 << endmsg;
             log << MSG::FATAL << excpt.what() << endmsg;
             throw;
           }
         }
-        for ( IDataSelector::iterator j = sel->begin(); j != sel->end(); ++j )
+        for (DataObject* obj : *sel)
         {
           try
           {
-            IRegistry* pReg = (*j)->registry();
-            const StatusCode iret = m_pConversionSvc->fillRepRefs( pReg->address(), *j );
+            IRegistry* pReg = obj->registry();
+            const StatusCode iret = m_pConversionSvc->fillRepRefs( pReg->address(), obj );
             if ( !iret.isSuccess() )
             {
               status = iret;
@@ -265,11 +265,11 @@ StatusCode LHCbOutputStream::writeObjects()
           catch ( const std::exception & excpt )
           {
             MsgStream log( msgSvc(), name() );
-            const std::string loc = ( (*j)->registry() ?
-                                      (*j)->registry()->identifier() : "UnRegistered" );
+            const std::string loc = ( obj->registry() ?
+                                      obj->registry()->identifier() : "UnRegistered" );
             log << MSG::FATAL
                 << "std::exception during fillRepRefs for '" << loc << "'"
-                << System::typeinfoName( typeid(**j) )
+                << System::typeinfoName( typeid(*obj) )
                 << endmsg;
             log << MSG::FATAL << excpt.what() << endmsg;
             throw;
