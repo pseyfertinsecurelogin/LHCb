@@ -40,7 +40,8 @@ namespace Rich
     public:
 
       /// Type for header words
-      using HeaderWords = LHCb::Boost::PoolAllocVector<LongType>;
+      //using HeaderWords = LHCb::Boost::PoolAllocVector<LongType>;
+      using HeaderWords = LHCb::STL::Vector<LongType>;
 
     public:
 
