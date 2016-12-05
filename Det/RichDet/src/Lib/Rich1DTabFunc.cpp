@@ -231,8 +231,8 @@ TabulatedFunction1D::combine( const ConstVector & funcs,
                           "*Rich::TabulatedFunction1D*", StatusCode::FAILURE );
   }
   
-  // Default top a nullptr pointer. Filled later on.
-  TabulatedFunction1D * combFunc = nullptr;
+  // Default to a nullptr pointer. Filled later on.
+  std::unique_ptr<TabulatedFunction1D> combFunc;
 
   // Get global min and max range of function
   auto maxX(boost::numeric::bounds<double>::highest());
@@ -261,12 +261,12 @@ TabulatedFunction1D::combine( const ConstVector & funcs,
     }
 
     // Create the new interpolated function
-    combFunc = new TabulatedFunction1D(mergedData,interType);
+    combFunc = std::make_unique<TabulatedFunction1D>(mergedData,interType);
 
   }
 
   // return
-  return std::unique_ptr<TabulatedFunction1D>(combFunc);
+  return combFunc;
 }
 
 //============================================================================
