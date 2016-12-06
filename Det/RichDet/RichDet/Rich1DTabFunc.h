@@ -60,7 +60,7 @@ namespace Rich
   private:
 
     /// Callable class to handle the GSL free call. Used in conjugation with std::unique_ptr.
-    class GSLSplineDeleter
+    class GSLSplineDeleter final
     {
     public:
       /// the deletion operator
@@ -93,7 +93,7 @@ namespace Rich
         /// Get the y value for a given x for this bin
         inline TYPE getY( const TYPE x ) const noexcept
         {
-          return ( ( x * m_slope ) + m_const );
+          return ( m_const + ( x * m_slope ) );
         }
         /// get the slope for this given bin
         inline TYPE slope() const noexcept { return m_slope; }
@@ -101,6 +101,10 @@ namespace Rich
         inline TYPE minX()  const noexcept { return m_minX; }
         /// Get the bin max x
         inline TYPE maxX()  const noexcept { return m_maxX; }
+        /// Get the bin y value at min x
+        inline TYPE minY()  const noexcept { return getY(m_minX); }
+        /// Get the bin y value at max x
+        inline TYPE maxY()  const noexcept { return getY(m_maxX); }
       private:
         /// The slope parameter
         TYPE m_slope{0};
@@ -132,20 +136,24 @@ namespace Rich
       {
         // reset container
         clear();
-        m_data.reserve(nsamples);
         // set min and max X
         m_minX = minX;
         m_maxX = maxX;
         // set 1/increment
         m_incXinv = (TYPE)(nsamples) / ( maxX - minX );
+        // accelerator for te GSL calls
+        auto * acc = gsl_interp_accel_alloc();
         // Fill the data storage
+        m_data.reserve(nsamples);
         for ( unsigned int i = 0; i < nsamples; ++i )
         {
           const TYPE binXmin = std::max( minX, minX    + ( i   / m_incXinv ) );
           const TYPE binXmax = std::min( maxX, binXmin + ( 1.0 / m_incXinv ) );
-          m_data.emplace_back( binXmin, gsl_spline_eval(gslS,binXmin,nullptr),
-                               binXmax, gsl_spline_eval(gslS,binXmax,nullptr) );
+          m_data.emplace_back( binXmin, gsl_spline_eval(gslS,binXmin,acc),
+                               binXmax, gsl_spline_eval(gslS,binXmax,acc) );
         }
+        // free the accelerator
+        gsl_interp_accel_free( acc );
       }
       
     public:
@@ -167,6 +175,12 @@ namespace Rich
       
       /// Access the max X value
       inline TYPE maxX() const noexcept { return m_maxX; }
+
+      /// Access the Y value at the minimum X value
+      inline TYPE minY() const noexcept { return m_data.front().minY(); }
+
+      /// Access the Y value at the maximum X value
+      inline TYPE maxY() const noexcept { return m_data.back().maxY(); }
 
       /// Compute the intergral for the given range
       inline TYPE integral ( const TYPE from,  
@@ -229,11 +243,8 @@ namespace Rich
 
   public:
 
-    /** Default Constructor
-     *
-     *  @param interType   GSL Interpolator type.
-     */
-    TabulatedFunction1D() { initInterpolator(); }
+    /// Default constructor
+    TabulatedFunction1D() = default;
 
     /** Constructor from arrays containing x and y values
      *
@@ -292,7 +303,7 @@ namespace Rich
     }
     
     /// Destructor
-    virtual ~TabulatedFunction1D( );
+    virtual ~TabulatedFunction1D() = default;
 
   public:
 
@@ -301,7 +312,7 @@ namespace Rich
      *  @param funcs   A vector containing pointers to the functions to merge
      *  @param samples Number of sample points to use
      *
-     *  @return Pointer to an interpolator that represents the productof all functions
+     *  @return Pointer to an interpolator that represents the product of all functions
      *  @retval Non-nullptr Interpolator was successfully created
      *  @retval nullptr     Interpolator could not be created
      */
@@ -430,7 +441,7 @@ namespace Rich
      *
      *  @return The function value at the minimum valid parameter
      */
-    inline double minY() const noexcept { return value(m_fastInterp.minX()); }
+    inline double minY() const noexcept { return m_fastInterp.minY(); }
 
     /** The maximum parameter value for which the function is defined
      *
@@ -442,7 +453,7 @@ namespace Rich
      *
      *  @return The function value at the minimum valid parameter
      */
-    inline double maxY() const noexcept { return value(m_fastInterp.maxX()); }
+    inline double maxY() const noexcept { return m_fastInterp.maxY(); }
 
     /** The status of the interpolator.
      *
@@ -506,7 +517,7 @@ namespace Rich
   protected: // methods
 
     /// clear the interpolator
-    void clearInterpolator();
+    inline void clearInterpolator() { m_fastInterp.clear(); }
 
     /// Default initialise the interpolator
     void initInterpolator();
