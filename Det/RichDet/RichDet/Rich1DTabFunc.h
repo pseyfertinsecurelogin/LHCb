@@ -93,7 +93,7 @@ namespace Rich
         /// Get the y value for a given x for this bin
         inline TYPE getY( const TYPE x ) const noexcept
         {
-          return ( ( x * m_slope ) + m_const );
+          return ( m_const + ( x * m_slope ) );
         }
         /// get the slope for this given bin
         inline TYPE slope() const noexcept { return m_slope; }
@@ -136,20 +136,24 @@ namespace Rich
       {
         // reset container
         clear();
-        m_data.reserve(nsamples);
         // set min and max X
         m_minX = minX;
         m_maxX = maxX;
         // set 1/increment
         m_incXinv = (TYPE)(nsamples) / ( maxX - minX );
+        // accelerator for te GSL calls
+        auto * acc = gsl_interp_accel_alloc();
         // Fill the data storage
+        m_data.reserve(nsamples);
         for ( unsigned int i = 0; i < nsamples; ++i )
         {
           const TYPE binXmin = std::max( minX, minX    + ( i   / m_incXinv ) );
           const TYPE binXmax = std::min( maxX, binXmin + ( 1.0 / m_incXinv ) );
-          m_data.emplace_back( binXmin, gsl_spline_eval(gslS,binXmin,nullptr),
-                               binXmax, gsl_spline_eval(gslS,binXmax,nullptr) );
+          m_data.emplace_back( binXmin, gsl_spline_eval(gslS,binXmin,acc),
+                               binXmax, gsl_spline_eval(gslS,binXmax,acc) );
         }
+        // free the accelerator
+        gsl_interp_accel_free( acc );
       }
       
     public:
