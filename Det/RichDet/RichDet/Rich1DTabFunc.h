@@ -59,12 +59,26 @@ namespace Rich
 
   private:
 
-    /// Callable class to handle the GSL free call. Used in conjugation with std::unique_ptr.
-    class GSLSplineDeleter final
+    /** Callable class to handle the GSL interpolator free call.
+     *  Used in conjugation with std::unique_ptr. */
+    class GSLSpline final
     {
     public:
       /// the deletion operator
       void operator()( gsl_spline * s ) { gsl_spline_free(s); }
+      /// The type for memory management
+      using Ptr = std::unique_ptr<gsl_spline,GSLSpline>;
+    };
+
+    /** Callable class to handle the GSL accelerator free call.
+     *  Used in conjugation with std::unique_ptr. */
+    class GSLAccelerator final
+    {
+    public:
+      /// the deletion operator
+      void operator()( gsl_interp_accel * a ) { gsl_interp_accel_free(a); }
+      /// The type for memory management
+      using Ptr = std::unique_ptr<gsl_interp_accel,GSLAccelerator>;
     };
 
     /// Fast linear interpolator using fixed sized bins
@@ -142,18 +156,16 @@ namespace Rich
         // set 1/increment
         m_incXinv = (TYPE)(nsamples) / ( maxX - minX );
         // accelerator for te GSL calls
-        auto * acc = gsl_interp_accel_alloc();
+        GSLAccelerator::Ptr acc ( gsl_interp_accel_alloc() );
         // Fill the data storage
         m_data.reserve(nsamples);
         for ( unsigned int i = 0; i < nsamples; ++i )
         {
           const TYPE binXmin = std::max( minX, minX    + ( i   / m_incXinv ) );
           const TYPE binXmax = std::min( maxX, binXmin + ( 1.0 / m_incXinv ) );
-          m_data.emplace_back( binXmin, gsl_spline_eval(gslS,binXmin,acc),
-                               binXmax, gsl_spline_eval(gslS,binXmax,acc) );
+          m_data.emplace_back( binXmin, gsl_spline_eval(gslS,binXmin,acc.get()),
+                               binXmax, gsl_spline_eval(gslS,binXmax,acc.get()) );
         }
-        // free the accelerator
-        gsl_interp_accel_free( acc );
       }
       
     public:

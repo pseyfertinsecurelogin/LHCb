@@ -92,8 +92,7 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   clearInterpolator();
 
   // Create the temporary GSL interpolator
-  std::unique_ptr<gsl_spline,GSLSplineDeleter> 
-    gslSpline( gsl_spline_alloc( interType, data.size() ) );
+  GSLSpline::Ptr gslSpline( gsl_spline_alloc( interType, data.size() ) );
 
   // Check number of points needed to work ...
   const auto min_points = gsl_interp_min_size(gslSpline->interp);
