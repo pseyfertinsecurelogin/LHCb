@@ -46,7 +46,7 @@
       <method   name   = "addMCHit"
                 desc   = "Add MCHit, energies and times to the relevant vectors"
                 type   = "void"
-                argList = "LHCb::MCHit* aHit, int photons, double time, bool isReflected "
+                argList = "const LHCb::MCHit* aHit, int photons, double time, bool isReflected "
                 access = "PUBLIC">
         <code> 
           m_mcHitVec.push_back(aHit);
@@ -68,7 +68,7 @@
 
       <attribute  name    = "mcHitVec"
                   desc    = "Vector of MCHits"
-                  type    = "std::vector &lt; LHCb::MCHit* &gt;"
+                  type    = "std::vector &lt; const LHCb::MCHit* &gt;"
                   setMeth = "FALSE"
                   access  = "PRIVATE"/>
 
