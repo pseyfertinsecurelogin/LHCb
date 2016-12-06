@@ -20,7 +20,7 @@
       &KeyedObject;
 
       <constructor  desc     = "Constructor"
-                    argList  = "LHCb::FTChannelID&amp; id, LHCb::MCHit* aHit, int photons, double time, bool isReflected">
+                    argList  = "LHCb::FTChannelID&amp; id, const LHCb::MCHit* aHit, int photons, double time, bool isReflected">
         <code> 
           this->setKey(id); 
           m_mcHitVec.push_back(aHit);

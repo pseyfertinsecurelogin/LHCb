@@ -19,7 +19,7 @@
       &KeyedObject;
 
       <constructor desc     = "Constructor"
-       argList  = "unsigned int uniqueMatId, int nPhotons, LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dirX, double dirZ, bool isReflected">
+       argList  = "unsigned int uniqueMatId, int nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dirX, double dirZ, bool isReflected">
         <code> 
           this->setKey(uniqueMatId); 
           m_nPhotonsVec.push_back(nPhotons);
