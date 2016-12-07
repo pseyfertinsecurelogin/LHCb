@@ -39,8 +39,8 @@ TabulatedProperty1D::~TabulatedProperty1D( )
 TabulatedProperty1D::TabulatedProperty1D( const TabulatedProperty * tab,
                                           const bool registerUMS,
                                           const gsl_interp_type * interType )
-  : TabulatedFunction1D ( interType ),
-    m_tabProp           ( tab       )
+  : TabulatedFunction1D (     ),
+    m_tabProp           ( tab )
 {
   // initialise the underlying GSL interpolator
   m_OK = initInterpolator( tab, registerUMS, interType );
@@ -83,9 +83,6 @@ TabulatedProperty1D::initInterpolator( const TabulatedProperty * tab,
   if ( !tab ) throw GaudiException("Null Rich::TabulatedProperty",
                                    "*TabulatedProperty1D*", StatusCode::FAILURE );
 
-  // set interpolator type
-  if ( nullptr != interType ) m_interType = interType;
-
   // UMS
   m_OK = ( registerUMS ? configureUMS(tab) : true );
   if ( !m_OK ) return m_OK;
@@ -108,7 +105,7 @@ StatusCode TabulatedProperty1D::updateTabProp()
   msg << MSG::INFO << "Update triggered for " << tabProperty()->name() << endmsg;
 
   // run the update
-  m_OK = initInterpolator( tabProperty(), interType() );
+  m_OK = initInterpolator( tabProperty() );
 
   // check status of update
   if ( !m_OK )
