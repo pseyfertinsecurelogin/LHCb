@@ -11,15 +11,9 @@
 
 
 class StatusCode;
-namespace Gaudi {
-namespace Parsers {
-StatusCode parse(TCK& result, const std::string& input );
-StatusCode parse(std::map<TCK,std::string>& result, const std::string& input );
-}
-namespace Utils {
-std::ostream& toStream(const TCK&, std::ostream&);
-}
-}
+namespace Gaudi { namespace Parsers {
+StatusCode parse( std::map<TCK,std::string>& result, const std::string& input );
+} }
 
 // from Gaudi
 #include "PropertyConfigSvc.h"
