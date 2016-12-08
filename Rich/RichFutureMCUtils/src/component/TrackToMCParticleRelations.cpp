@@ -18,12 +18,12 @@ TrackToMCParticleRelations( const std::string& name, ISvcLocator* pSvcLocator )
                   { KeyValue{ "TrackToMCParticlesRelations", Relations::TrackToMCParticles } } )
 { }
 
-TkToMCPRels 
+Rich::Future::MC::Relations::TkToMCPRels
 TrackToMCParticleRelations::operator()( const LHCb::Tracks& tks, 
                                         const LHCb::MCParticles& ) const
 {
   // make a relations table
-  TkToMCPRels rels( tks.size() );
+  Relations::TkToMCPRels rels( tks.size() );
 
   // The location in the TES for the tracks we have been given
   const auto & tkLoc = inputLocation<0>();

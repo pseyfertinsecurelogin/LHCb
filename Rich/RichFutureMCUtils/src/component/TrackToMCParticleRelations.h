@@ -11,17 +11,11 @@
 #include "Event/Track.h"
 #include "Event/MCParticle.h"
 
-// Relations 
-//#include "Relations/IRelationWeighted.h" 
-//#include "Relations/RelationWeighted.h" 
-#include "Relations/IRelationWeighted2D.h" 
-#include "Relations/RelationWeighted2D.h"
-
 // Linkers
 #include "Linker/LinkedTo.h"
 
-// Relations locations
-#include "RichFutureMCUtils/RichMCRelationsLocations.h"
+// Relations
+#include "RichFutureMCUtils/RichMCRelations.h"
 
 namespace Rich
 {
@@ -32,12 +26,6 @@ namespace Rich
       
       // Use the functional framework
       using namespace Gaudi::Functional;
-
-      namespace
-      {
-        /// The relations type
-        using TkToMCPRels = LHCb::RelationWeighted2D<LHCb::Track,LHCb::MCParticle,double>;
-      }
 
       /** @class TrackToMCParticleRelations TrackToMCParticleRelations.h
        *
@@ -51,8 +39,8 @@ namespace Rich
        *  @date   2016-12-07
        */
       class TrackToMCParticleRelations final : 
-        public Transformer< TkToMCPRels( const LHCb::Tracks&, 
-                                         const LHCb::MCParticles& ),
+        public Transformer< Relations::TkToMCPRels( const LHCb::Tracks&, 
+                                                    const LHCb::MCParticles& ),
                             Traits::BaseClass_t<AlgBase> >
       {
         
@@ -62,8 +50,9 @@ namespace Rich
         TrackToMCParticleRelations( const std::string& name, ISvcLocator* pSvcLocator );
         
         /// Algorithm execution via transform
-        TkToMCPRels operator()( const LHCb::Tracks& tks, 
-                                const LHCb::MCParticles& mcps ) const override;
+        Rich::Future::MC::Relations::TkToMCPRels
+          operator()( const LHCb::Tracks& tks, 
+                      const LHCb::MCParticles& mcps ) const override;
         
       };
 
