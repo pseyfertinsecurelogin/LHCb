@@ -15,7 +15,6 @@
 #include "RichFutureKernel/RichAlgBase.h"
 
 // Gaudi Functional
-#include "GaudiAlg/FunctionalUtilities.h"
 #include "GaudiAlg/Transformer.h"
 
 // Rich Utils
@@ -55,7 +54,7 @@ namespace Rich
      *  @author Chris Jones
      *  @date   2016-09-21
      */
-    class RawBankDecoder final : 
+    class RawBankDecoder final :
       public Transformer< Rich::DAQ::L1Map( const LHCb::RawEvent&, 
                                             const LHCb::ODIN& ),
                           Traits::BaseClass_t<AlgBase> >
