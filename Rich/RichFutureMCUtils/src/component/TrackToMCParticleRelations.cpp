@@ -15,7 +15,8 @@ TrackToMCParticleRelations( const std::string& name, ISvcLocator* pSvcLocator )
   : Transformer ( name, pSvcLocator,
                   { KeyValue{ "TracksLocation",      LHCb::TrackLocation::Default },
                     KeyValue{ "MCParticlesLocation", LHCb::MCParticleLocation::Default } },
-                  { KeyValue{ "TrackToMCParticlesRelations", Relations::TrackToMCParticles } } )
+                  { KeyValue{ "TrackToMCParticlesRelations", 
+                              Rich::Future::MC::Relations::TrackToMCParticles } } )
 { }
 
 Rich::Future::MC::Relations::TkToMCPRels
