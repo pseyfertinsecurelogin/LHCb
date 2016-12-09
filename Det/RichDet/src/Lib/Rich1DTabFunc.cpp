@@ -27,11 +27,6 @@ using namespace Rich;
 
 //============================================================================
 
-// Destructor
-TabulatedFunction1D::~TabulatedFunction1D( ) { clearInterpolator(); }
-
-//============================================================================
-
 bool TabulatedFunction1D::initInterpolator( const double x[],
                                             const double y[],
                                             const unsigned int size,
@@ -97,8 +92,7 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   clearInterpolator();
 
   // Create the temporary GSL interpolator
-  std::unique_ptr<gsl_spline,GSLSplineDeleter> 
-    gslSpline( gsl_spline_alloc( interType, data.size() ) );
+  GSLSpline::Ptr gslSpline( gsl_spline_alloc( interType, data.size() ) );
 
   // Check number of points needed to work ...
   const auto min_points = gsl_interp_min_size(gslSpline->interp);
@@ -150,14 +144,6 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   m_fastInterp.init( minX, maxX, gslSpline.get(), nsamples );
 
   return true;
-}
-
-//============================================================================
-
-// clean out the GSL components
-void TabulatedFunction1D::clearInterpolator()
-{
-   m_fastInterp.clear();
 }
 
 //============================================================================
@@ -244,8 +230,8 @@ TabulatedFunction1D::combine( const ConstVector & funcs,
                           "*Rich::TabulatedFunction1D*", StatusCode::FAILURE );
   }
   
-  // Default top a nullptr pointer. Filled later on.
-  TabulatedFunction1D * combFunc = nullptr;
+  // Default to a nullptr pointer. Filled later on.
+  std::unique_ptr<TabulatedFunction1D> combFunc;
 
   // Get global min and max range of function
   auto maxX(boost::numeric::bounds<double>::highest());
@@ -274,12 +260,12 @@ TabulatedFunction1D::combine( const ConstVector & funcs,
     }
 
     // Create the new interpolated function
-    combFunc = new TabulatedFunction1D(mergedData,interType);
+    combFunc = std::make_unique<TabulatedFunction1D>(mergedData,interType);
 
   }
 
   // return
-  return std::unique_ptr<TabulatedFunction1D>(combFunc);
+  return combFunc;
 }
 
 //============================================================================
