@@ -39,10 +39,6 @@ public:
             const double       yHalf ,
             const double       zHalf);
 
-  /** destructor
-   */
-  ~SolidBox() override;
-
   /** - retrieve the box type
    *  - implementation of ISolid abstract interface
    *  @see ISolid
@@ -210,10 +206,6 @@ public:
   Ticks::size_type maxNumberOfTicks() const override { return 2 ; }
 
 protected:
-
-  /** default (protected) constructor
-   */
-  SolidBox();
 
   /** set parameters for bounding solids (box, sphere and cylinder)
    */

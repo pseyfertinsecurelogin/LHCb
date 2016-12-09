@@ -1,5 +1,3 @@
-// Units
-#include "GaudiKernel/SystemOfUnits.h"
 /// DetDesc 
 #include "DetDesc/DetDesc.h"
 #include "DetDesc/SolidBase.h"
@@ -20,27 +18,7 @@
  */
 // ============================================================================
 SolidBase::SolidBase( const std::string& Name )
-  : m_name   ( Name     ) 
-  , m_cover  ( 0        ) 
-  , m_xmin   (  10 * Gaudi::Units::km )
-  , m_ymin   (  10 * Gaudi::Units::km ) 
-  , m_zmin   (  10 * Gaudi::Units::km )
-  , m_xmax   ( -10 * Gaudi::Units::km ) 
-  , m_ymax   ( -10 * Gaudi::Units::km ) 
-  , m_zmax   ( -10 * Gaudi::Units::km )
-  , m_rmax   ( -10 * Gaudi::Units::km ) 
-  , m_rhomax ( -10 * Gaudi::Units::km )
-  , m_services (DetDesc::services())
-{
-}
-
-// ============================================================================
-/// destructor 
-// ============================================================================
-SolidBase::~SolidBase() 
-{ 
-  if( m_cover && this != m_cover ) { delete m_cover ; }
-}
+  : m_name(Name), m_services (DetDesc::services()) {}
 
 // ============================================================================
 /** - reset solid to its inititial state, remove 
@@ -51,10 +29,7 @@ SolidBase::~SolidBase()
  *  @return  self-reference 
  */
 // ============================================================================
-ISolid* SolidBase::reset ()
-{
-  if( this == m_cover ) m_cover = nullptr ;
-  delete m_cover ; m_cover = nullptr ;
+ISolid* SolidBase::reset () {
   return this;
 }
 

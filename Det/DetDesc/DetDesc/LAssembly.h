@@ -2,6 +2,7 @@
 #define DETDESC_LASSEMBLY_H 1
 // Include files
 // from DetDesc
+#include "DetDesc/IBoxCover.h"
 #include "DetDesc/LogVolBase.h"
 #include "DetDesc/CLIDLAssembly.h"
 #include "DetDesc/DetDesc.h"
@@ -21,23 +22,15 @@ static const std::string EmptyString("");
  *  @date   18/11/2001
  */
 
-class LAssembly : public LogVolBase
-{
+class LAssembly : public virtual IBoxCover,
+                  public LogVolBase {
   /// friend factory for instantiation
   friend class DataObjectFactory<LAssembly>;
 
 public:
 
-  /** constructor
-   *  @exception LVolumeException wrong paramaters value
-   *  @param name name of logical volume
-   *  @param sensitivity  name of sensitive detector object (for simulation)
-   *  @param magnetic  name of magnetic field object (for simulation)
-   */
-  LAssembly
-  ( const std::string& name             ,
-    const std::string& sensitivity = "" ,
-    const std::string& magnetic    = "" );
+  /// inherited constructor
+  using LogVolBase::LogVolBase;
 
 public:
 
@@ -196,27 +189,33 @@ public:
   MsgStream&    printOut
   ( MsgStream    & os             ) const override;
 
-  double xMin() const   { return m_xMin;  }
-  double xMax() const   { return m_xMax;  }
-  double yMin() const   { return m_yMin;  }
-  double yMax() const   { return m_yMax;  }
-  double zMin() const   { return m_zMin;  }
-  double zMax() const   { return m_zMax;  }
+  /// accessor to "minimal x" value of the solid("bounding box")
+  inline double xMin() const override { return m_xMin; }
+  /// accessor to "maximal x" value of the solid("bounding box")
+  inline double xMax() const override { return m_xMax; }
 
-  void   computeCover ();
+  /// accessor to "minimal y" value of the solid("bounding box")
+  inline double yMin() const override { return m_yMin; }
+  /// accessor to "maximal y" value of the solid("bounding box")
+  inline double yMax() const override { return m_yMax; }
 
-  /** default constructor
-   */
-  LAssembly();
+  /// accessor to "minimal z" value of the solid("bounding box")
+  inline double zMin() const override { return m_zMin; }
+  /// accessor to "maximal z" value of the solid("bounding box")
+  inline double zMax() const override { return m_zMax; }
+
+protected:
+
+  /// updates box cover integrating the new BoxCover
+  void updateCover(const IPVolume* const box) override;
 
 private:
-  double m_xMin;
-  double m_xMax;
-  double m_yMin;
-  double m_yMax;
-  double m_zMin;
-  double m_zMax;
-  bool   m_coverComputed;
+  double m_xMin{1000000.};
+  double m_xMax{-1000000.};
+  double m_yMin{1000000.};
+  double m_yMax{-1000000.};
+  double m_zMin{1000000.};
+  double m_zMax{-1000000.};
 
 };
 

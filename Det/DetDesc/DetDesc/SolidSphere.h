@@ -1,6 +1,8 @@
 // ===========================================================================
 #ifndef     DETDESC_SOLIDSPHERE_H
 #define     DETDESC_SOLIDSPHERE_H 1
+
+#include <memory>
 // DetDesc
 #include "DetDesc/SolidBase.h"
 // Units
@@ -87,7 +89,7 @@ public:
    *  @see SolidSphere::m_sphere_coverModel
    *  @return pointer to "simplified" solid - "cover"
    */
-  const ISolid* cover () const override;
+  inline const ISolid* cover () const override { return m_cover.get(); }
 
   /** - printout to STD/STL stream
    *  - implementation of ISolid abstract interface
@@ -249,11 +251,6 @@ protected:
 
 protected:
 
-  /** protected constructor
-   *  @param name name of the sphere segment \
-   */
-  SolidSphere( const std::string& name = "Anonymous Sphere" );
-
   /** set bounding parameters
    */
   void setBP();
@@ -275,7 +272,7 @@ private:
   unsigned int intersectionTicksImpl( const aPoint  & Point,
                                       const aVector & Vector,
                                       ISolid::Ticks& ticks ) const;
-
+  void createCover();
   //
 private:
 
@@ -295,6 +292,7 @@ private:
   bool                  m_noPhiGap               ;
   bool                  m_noThetaGap             ;
   //
+  std::unique_ptr<ISolid> m_cover;
 };
 // ===========================================================================
 

@@ -11,6 +11,8 @@
 #include "DetDesc/SolidTicks.h" 
 #include "DetDesc/SolidException.h" 
 
+#include <memory>
+
 // ============================================================================
 /** @file SolidTrd.cpp 
  *  
@@ -68,6 +70,7 @@ SolidTrd::SolidTrd
   setBP();
   ///
   checkTickContainerCapacity() ;
+  createCover();
 }
 
 // ============================================================================
@@ -87,6 +90,7 @@ SolidTrd::SolidTrd( const std::string& name )
   ///
   makeAll();
   ///
+  createCover();
 }
 
 
@@ -99,39 +103,26 @@ SolidTrd::SolidTrd( const std::string& name )
  *  @return pointer to "simplified" solid - "cover"
  */
 // ============================================================================
-const ISolid* SolidTrd::cover () const 
-{
-  /// cover is calculated already 
-  if( 0 != m_cover ) { return m_cover; }
-  ///
-  ISolid* cov = 0 ;
+void SolidTrd::createCover() {
   if(  ( xHalfLength1() != yHalfLength1() )  || 
        ( xHalfLength2() != yHalfLength2() ) ) 
-    { cov = 
-        new SolidTrd("Cover for " + name() , 
-                     zHalfLength() , 
-                     xHalfLength1() > yHalfLength1() ? 
-                     xHalfLength1() : yHalfLength1() , 
-                     xHalfLength1() > yHalfLength1() ? 
-                     xHalfLength1() : yHalfLength1() , 
-                     xHalfLength2() > yHalfLength2() ? 
-                     xHalfLength2() : yHalfLength2() , 
-                     xHalfLength2() > yHalfLength2() ? 
-                     xHalfLength2() : yHalfLength2() ) ; }
+    { m_cover = std::make_unique<SolidTrd>("Cover for " + name() , 
+                                           zHalfLength() , 
+                                           xHalfLength1() > yHalfLength1() ? 
+                                           xHalfLength1() : yHalfLength1() , 
+                                           xHalfLength1() > yHalfLength1() ? 
+                                           xHalfLength1() : yHalfLength1() , 
+                                           xHalfLength2() > yHalfLength2() ? 
+                                           xHalfLength2() : yHalfLength2() , 
+                                           xHalfLength2() > yHalfLength2() ? 
+                                           xHalfLength2() : yHalfLength2() ) ; }
   else
-    { cov = 
-        new SolidBox("Cover for " + name() , 
-                     xHalfLength1() > xHalfLength2() ? 
-                     xHalfLength1() : xHalfLength2() , 
-                     yHalfLength1() > yHalfLength2() ? 
-                     yHalfLength1() : yHalfLength2() , 
-                     zHalfLength () ); }
-  ///
-  if( 0 == cov ) { return this ; } 
-  ///
-  m_cover = cov; 
-  ///
-  return m_cover;
+    { m_cover = std::make_unique<SolidBox>("Cover for " + name() , 
+                                           xHalfLength1() > xHalfLength2() ? 
+                                           xHalfLength1() : xHalfLength2() , 
+                                           yHalfLength1() > yHalfLength2() ? 
+                                           yHalfLength1() : yHalfLength2() , 
+                                           zHalfLength () ); }
 }
 
 // ============================================================================
