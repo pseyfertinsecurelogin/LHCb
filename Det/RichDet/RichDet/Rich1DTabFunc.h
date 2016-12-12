@@ -19,7 +19,6 @@
 #include <math.h>
 #include <memory>
 #include <type_traits>
-#include <array>
 
 // GSL interpolation
 #include "gsl/gsl_errno.h"
@@ -33,8 +32,9 @@ namespace Rich
    *
    *  A class describing a function based on the interpolation of data points.
    *
-   *  The interpolation is based on the GSL library, with the default interpolation
-   *  type based on a simple cspline algorithm 'gsl_interp_cspline'.
+   *  Uses a home made fixed binned linear interpolator, initialised from the input
+   *  (x,y) data points using a GSL interpolator. 
+   *  Default GSL interpolator type is gsl_interp_cspline.
    *
    *  For other possibilities see
    *  http://www.gnu.org/software/gsl/manual/html_node/Interpolation.html
@@ -59,17 +59,30 @@ namespace Rich
 
   private:
 
-    /// Callable class to handle the GSL free call. Used in conjugation with std::unique_ptr.
-    class GSLSplineDeleter
+    /** Callable class to handle the GSL interpolator free call.
+     *  Used in conjugation with std::unique_ptr. */
+    class GSLSpline final
     {
     public:
       /// the deletion operator
       void operator()( gsl_spline * s ) { gsl_spline_free(s); }
+      /// The type for memory management
+      using Ptr = std::unique_ptr<gsl_spline,GSLSpline>;
+    };
+
+    /** Callable class to handle the GSL accelerator free call.
+     *  Used in conjugation with std::unique_ptr. */
+    class GSLAccelerator final
+    {
+    public:
+      /// the deletion operator
+      void operator()( gsl_interp_accel * a ) { gsl_interp_accel_free(a); }
+      /// The type for memory management
+      using Ptr = std::unique_ptr<gsl_interp_accel,GSLAccelerator>;
     };
 
     /// Fast linear interpolator using fixed sized bins
     template< typename TYPE,
-              size_t NSAMPLES = 200,
               typename = typename std::enable_if<std::is_floating_point<TYPE>::value>::type >
     class LinearInterp final
     {
@@ -94,7 +107,7 @@ namespace Rich
         /// Get the y value for a given x for this bin
         inline TYPE getY( const TYPE x ) const noexcept
         {
-          return ( ( x * m_slope ) + m_const );
+          return ( m_const + ( x * m_slope ) );
         }
         /// get the slope for this given bin
         inline TYPE slope() const noexcept { return m_slope; }
@@ -102,6 +115,10 @@ namespace Rich
         inline TYPE minX()  const noexcept { return m_minX; }
         /// Get the bin max x
         inline TYPE maxX()  const noexcept { return m_maxX; }
+        /// Get the bin y value at min x
+        inline TYPE minY()  const noexcept { return getY(m_minX); }
+        /// Get the bin y value at max x
+        inline TYPE maxY()  const noexcept { return getY(m_maxX); }
       private:
         /// The slope parameter
         TYPE m_slope{0};
@@ -113,7 +130,7 @@ namespace Rich
         TYPE m_maxX{0};
       public:
         /// type for storage of data points
-        typedef std::array<Bin,NSAMPLES> Storage;
+        typedef std::vector<Bin> Storage;
       };
 
     public:
@@ -121,12 +138,15 @@ namespace Rich
       /// Clear the interpolator
       void clear() 
       {
-        m_data.fill(Bin()); 
+        m_data.clear(); 
         m_incXinv = m_minX = m_maxX = 0;
       }
 
       /// Initialise
-      void init( const TYPE minX, const TYPE maxX, gsl_spline * gslS )
+      void init( const TYPE minX, 
+                 const TYPE maxX, 
+                 gsl_spline * gslS,
+                 const unsigned int nsamples )
       {
         // reset container
         clear();
@@ -134,14 +154,17 @@ namespace Rich
         m_minX = minX;
         m_maxX = maxX;
         // set 1/increment
-        m_incXinv = (TYPE)(NSAMPLES) / ( maxX - minX );
+        m_incXinv = (TYPE)(nsamples) / ( maxX - minX );
+        // accelerator for te GSL calls
+        GSLAccelerator::Ptr acc ( gsl_interp_accel_alloc() );
         // Fill the data storage
-        for ( unsigned int i = 0; i < NSAMPLES; ++i )
+        m_data.reserve(nsamples);
+        for ( unsigned int i = 0; i < nsamples; ++i )
         {
           const TYPE binXmin = std::max( minX, minX    + ( i   / m_incXinv ) );
           const TYPE binXmax = std::min( maxX, binXmin + ( 1.0 / m_incXinv ) );
-          m_data[i] = Bin( binXmin, gsl_spline_eval(gslS,binXmin,nullptr),
-                           binXmax, gsl_spline_eval(gslS,binXmax,nullptr) );
+          m_data.emplace_back( binXmin, gsl_spline_eval(gslS,binXmin,acc.get()),
+                               binXmax, gsl_spline_eval(gslS,binXmax,acc.get()) );
         }
       }
       
@@ -164,6 +187,12 @@ namespace Rich
       
       /// Access the max X value
       inline TYPE maxX() const noexcept { return m_maxX; }
+
+      /// Access the Y value at the minimum X value
+      inline TYPE minY() const noexcept { return m_data.front().minY(); }
+
+      /// Access the Y value at the maximum X value
+      inline TYPE maxY() const noexcept { return m_data.back().maxY(); }
 
       /// Compute the intergral for the given range
       inline TYPE integral ( const TYPE from,  
@@ -226,11 +255,8 @@ namespace Rich
 
   public:
 
-    /** Default Constructor
-     *
-     *  @param interType   GSL Interpolator type.
-     */
-    TabulatedFunction1D() { initInterpolator(); }
+    /// Default constructor
+    TabulatedFunction1D() = default;
 
     /** Constructor from arrays containing x and y values
      *
@@ -244,9 +270,10 @@ namespace Rich
      */
     TabulatedFunction1D( const double x[],
                          const double y[],
-                         const unsigned int size )
+                         const unsigned int size,
+                         const gsl_interp_type * interType = gsl_interp_cspline )
     {
-      initInterpolator ( x, y, size );
+      initInterpolator ( x, y, size, interType );
     }
     
     /** Constructor from std::vectors containing x and y values
@@ -259,9 +286,10 @@ namespace Rich
      *  @param interType GSL Interpolator type
      */
     TabulatedFunction1D( const std::vector<double> & x,
-                         const std::vector<double> & y )
+                         const std::vector<double> & y,
+                         const gsl_interp_type * interType = gsl_interp_cspline )
     {
-      initInterpolator ( x, y );
+      initInterpolator ( x, y, interType );
     }
 
     /** Constructor from map of x,y values
@@ -269,9 +297,10 @@ namespace Rich
      *  @param data      map containing x(key) and y(data) values
      *  @param interType GSL Interpolator type
      */
-    TabulatedFunction1D( const std::map<double,double> & data )
+    TabulatedFunction1D( const std::map<double,double> & data,
+                         const gsl_interp_type * interType = gsl_interp_cspline )
     {
-      initInterpolator( data );
+      initInterpolator( data, interType );
     }
 
     /** Constructor from vector of a pair of x,y values
@@ -279,13 +308,14 @@ namespace Rich
      *  @param data      std::vector containing and pair of x(first) and y(second) values
      *  @param interType GSL Interpolator type
      */
-    TabulatedFunction1D( const std::vector< std::pair<double,double> > & data )
+    TabulatedFunction1D( const std::vector< std::pair<double,double> > & data,
+                         const gsl_interp_type * interType = gsl_interp_cspline )
     {
-      initInterpolator( data );
+      initInterpolator( data, interType );
     }
     
     /// Destructor
-    virtual ~TabulatedFunction1D( );
+    virtual ~TabulatedFunction1D() = default;
 
   public:
 
@@ -294,13 +324,14 @@ namespace Rich
      *  @param funcs   A vector containing pointers to the functions to merge
      *  @param samples Number of sample points to use
      *
-     *  @return Pointer to an interpolator that represents the productof all functions
+     *  @return Pointer to an interpolator that represents the product of all functions
      *  @retval Non-nullptr Interpolator was successfully created
      *  @retval nullptr     Interpolator could not be created
      */
     static std::unique_ptr<TabulatedFunction1D> 
     combine( const ConstVector & funcs,
-             const unsigned int samples = 100 ); 
+             const unsigned int samples = 100,
+             const gsl_interp_type * interType = gsl_interp_cspline ); 
 
   private:
 
@@ -422,7 +453,7 @@ namespace Rich
      *
      *  @return The function value at the minimum valid parameter
      */
-    inline double minY() const noexcept { return value(m_fastInterp.minX()); }
+    inline double minY() const noexcept { return m_fastInterp.minY(); }
 
     /** The maximum parameter value for which the function is defined
      *
@@ -434,7 +465,7 @@ namespace Rich
      *
      *  @return The function value at the minimum valid parameter
      */
-    inline double maxY() const noexcept { return value(m_fastInterp.maxX()); }
+    inline double maxY() const noexcept { return m_fastInterp.maxY(); }
 
     /** The status of the interpolator.
      *
@@ -466,7 +497,8 @@ namespace Rich
      */
     bool initInterpolator( const double x[],
                            const double y[],
-                           const unsigned int size );
+                           const unsigned int size,
+                           const gsl_interp_type * interType = gsl_interp_cspline );
 
     /** Initialisation from std::vectors containing x and y values
      *
@@ -477,24 +509,27 @@ namespace Rich
      *  @param y         Vector of y values
      */
     bool initInterpolator( const std::vector<double> & x,
-                           const std::vector<double> & y );
+                           const std::vector<double> & y,
+                           const gsl_interp_type * interType = gsl_interp_cspline );
 
     /** Initialisation from a map of x,y values
      *
      *  @param data      map containing x(key) and y(data) values
      */
-    bool initInterpolator( const std::map<double,double> & data );
+    bool initInterpolator( const std::map<double,double> & data,
+                           const gsl_interp_type * interType = gsl_interp_cspline );
 
     /** Initialisation from a vector of a pair of x,y values
      *
      *  @param data      std::vector containing and pair of x(first) and y(second) values
      */
-    bool initInterpolator( const std::vector< std::pair<double,double> > & data );
+    bool initInterpolator( const std::vector< std::pair<double,double> > & data,
+                           const gsl_interp_type * interType = gsl_interp_cspline );
 
   protected: // methods
 
     /// clear the interpolator
-    void clearInterpolator();
+    inline void clearInterpolator() { m_fastInterp.clear(); }
 
     /// Default initialise the interpolator
     void initInterpolator();

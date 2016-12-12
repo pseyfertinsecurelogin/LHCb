@@ -90,6 +90,9 @@ StatusCode TransportSvc::initialize()
   // Load geometry
   m_standardGeometry = findGeometry( m_standardGeometry_address ) ;
 
+  // Load geometry
+  m_standardGeometry = findGeometry( m_standardGeometry_address ) ;
+
   return StatusCode::SUCCESS;
 }
 // ============================================================================
