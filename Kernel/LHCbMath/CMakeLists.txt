@@ -14,6 +14,8 @@ find_package(ROOT COMPONENTS MathCore GenVector)
 find_package(VDT)
 find_package(Eigen)
 find_package(pyanalysis)
+# hide warnings from some external projects
+include_directories(SYSTEM ${Eigen_INCLUDE_DIRS})
 
 gaudi_install_headers(LHCbMath)
 
