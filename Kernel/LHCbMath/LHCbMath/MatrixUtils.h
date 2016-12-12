@@ -1080,6 +1080,45 @@ namespace Gaudi
       const ROOT::Math::SMatrix<T,D1,D2,R>& m2 , P pred )
     { return std::equal ( m1.begin() , m1.end() , m2.begin() , pred ) ; } 
     // ========================================================================
+    /** check the "equality" of the two vectors 
+     *  element-by-element: true == pred( m1(i) , m2() ) 
+     *
+     *  @code 
+     * 
+     *  const Gaudi::Vector2 v1 = ... ;
+     *  const Gaudi::Vector2 v2 = ... ;
+     *  
+     *   // comparison criteria:
+     *   struct Equal : publuc std::binary_fuction<double,double,bool>
+     *   {
+     *     Equal ( const double value ) : m_threshold ( value ) {} ;
+     *     bool operator() ( const double v1 , const double v2 ) const 
+     *     {
+     *         return ::fabs( v1 , v2 ) < m_threshold ;
+     *     }
+     *    private: 
+     *    double m_threshold ;
+     *   } ;
+     *  
+     *   // "compare" the matrices 
+     *   const bool eq = 
+     *      Gaudi::Math::equal_if ( v1 , v2 , Equal(0.001) ) ;
+     *  
+     *  @endcode 
+     *  @param v1   (input) the first vector to be checked 
+     *  @param v2   (input) the second vector to be checked 
+     *  @param pred (input) predicate to be tested 
+     *  @return true if at least once false == pred( m1(i) , m2(i) )
+     *  @author Vanya BELYAEV ibelyaev@itep.ru
+     *  @date 2006-04-24
+     */
+    template <class T,unsigned int D,class P>
+    inline bool 
+    equal_if  
+    ( const ROOT::Math::SVector<T,D>& v1 , 
+      const ROOT::Math::SVector<T,D>& v2 , P pred )
+    { return std::equal ( v1.begin() , v1.end() , v2.begin() , pred ) ; } 
+    // ========================================================================
     // UPDATE
     // =========================================================================
     /** update the symmetric matrix according to the rule m +=  s*v*v^T
@@ -1380,11 +1419,52 @@ namespace Gaudi
     template <class T, unsigned int D>
     struct MultiplyOp < ROOT::Math::SVector<T,D>, ROOT::Math::SVector<T,D> >
     {
+      // dot:
+      static
+      double 
+      dot ( const ROOT::Math::SVector<T,D> & a , 
+            const ROOT::Math::SVector<T,D> & b ) 
+      {
+        double result = 0 ;
+        for ( unsigned short i = 0 ; i < D ; ++i ) { result +=  double( a[i] ) * b[i] ; }
+        return result ;
+      }
+      // cross: 
+      static
+      ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
+      cross ( const ROOT::Math::SVector<T,D> & a , 
+              const ROOT::Math::SVector<T,D> & b ) 
+      {
+        ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> > result ;
+        for ( unsigned short i = 0 ; i < D ; ++i ) 
+        { for ( unsigned short j = 0 ; j < D ; ++j ) 
+          { result(i,j) = a[i] * b[j] ; } }
+        return result ;
+      }
+      // multiply
       static 
       double 
       multiply ( const ROOT::Math::SVector<T,D> & a , 
-                 const ROOT::Math::SVector<T,D> & b ) { return a * b ; }
-    } ;    
+                 const ROOT::Math::SVector<T,D> & b ) { return dot ( a , b ) ; }
+    } ;
+    // ========================================================================    
+    // cross: vector * vector  
+    template <class T, unsigned int D1, unsigned int D2>
+    struct MultiplyOp < ROOT::Math::SVector<T,D1>, ROOT::Math::SVector<T,D2> >
+    {
+      //
+      static
+      ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> >
+      cross ( const ROOT::Math::SVector<T,D1> & a , 
+              const ROOT::Math::SVector<T,D2> & b ) 
+      {
+        ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> > result ;
+        for ( unsigned short i = 0 ; i < D1 ; ++i ) 
+        { for ( unsigned short j = 0 ; j < D2 ; ++j ) 
+          { result(i,j) = a[i] * b[j] ; } }
+        return result ;
+      }
+    } ;
     // ========================================================================
     // vector * matrix 
     template <class T, unsigned int D, unsigned D2, class  R>
@@ -1416,9 +1496,39 @@ namespace Gaudi
                   const ROOT::Math::SVector<T,D2>     & b ) { return a * b ; }
     } ;
     // ========================================================================
+    template <class T1, class T2> 
+    struct EqualOp ;
+    // ========================================================================
+    // vectors 
+    template <class T, unsigned int D> 
+    struct EqualOp<ROOT::Math::SVector<T,D>, ROOT::Math::SVector<T,D> > 
+    {
+      static 
+      bool equal ( const ROOT::Math::SVector<T,D>& a , 
+                   const ROOT::Math::SVector<T,D>& b ) 
+      { 
+        static const LHCb::Math::Equal_To<ROOT::Math::SVector<T,D> > m_cmp{} ;
+        return m_cmp ( a , b ) ; 
+      }
+      //
+    } ;
+    // matrices 
+    template <class T, unsigned int D1, unsigned int D2, class R1, class R2> 
+    struct EqualOp<ROOT::Math::SMatrix<T,D1,D2,R1>, ROOT::Math::SMatrix<T,D1,D2,R2> > 
+    {
+      static 
+      bool equal ( const ROOT::Math::SMatrix<T,D1,D2,R1>& a , 
+                   const ROOT::Math::SMatrix<T,D1,D2,R2>& b ) 
+      { 
+        static const LHCb::Math::Equal_To<ROOT::Math::SMatrix<T,D1,D2,R1> > m_cmp{} ;
+        return m_cmp ( a , b ) ;
+      }
+      //
+    } ;
+    // ========================================================================
   } //                                                    end of namespace Math
   // ==========================================================================
-} //                                                     end of namespace Gaudi
+} //                                               end of namespace Gaudi::Math
 // ============================================================================
 // The END 
 // ============================================================================

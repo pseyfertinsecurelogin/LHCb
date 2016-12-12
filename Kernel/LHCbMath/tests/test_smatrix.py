@@ -14,7 +14,7 @@
 #  Last modification $Date$
 #                 by $Author$
 # =============================================================================
-"""Tests for some linear algebra studd with ROOT6
+"""Tests for some linear algebra stuff with ROOT6
 """
 # =============================================================================
 __version__ = "$Revision:"
@@ -37,7 +37,7 @@ l2  = LA3(3,4,5)
 print 'l1 , l2 '   , l1 , l2 
 print 'l1 + l2 '   , l1 + l2
 print 'l1 - l2 '   , l1 - l2
-## print 'l1 * l2 '   , l1 * l2
+print 'l1 * l2 '   , l1 * l2
 print 'l1 *  2 '   , l1 *  2
 print ' 2 + l1 '   , 2  + l1
 print ' 2 - l1 '   , 2  - l1
@@ -52,7 +52,6 @@ l1 += 2
 print 'l1 +=  2 '  , l1 
 l1 -= 2
 print 'l1 -=  2 '  , l1 
-
 
 print 'TEST matrices '
 
@@ -101,6 +100,10 @@ print m22
 
 print 'm22*s22+2*m22:\n' , m22*s22 + 2*m22 
 
+print 'm22 ==  m22*1.0 ' , m22 == m22 * 1.0
+print 'm22 !=  m22*1.1 ' , m22 == m22 * 1.1
+print 'l1  ==  l1 *1.0 ' , l1  == l1 * 1.0
+print 'l1  !=  l1 *1.1 ' , l1  == l1 * 1.1
 
 # ============================================================================
 # The END 

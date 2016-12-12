@@ -322,9 +322,51 @@ def _linalg_div_ ( a  , b ) :
         v  = a.__class__( a )
         v /= b
         return v
-    return NotImplemented 
+    return NotImplemented
 
+# =============================================================================
+## 
+def _vector_cross_ ( a, b ) :
+    try  : 
+        _ops_  = cpp.Gaudi.Math.MultiplyOp ( a.__class__ , b.__class__ )
+        return _ops_.cross ( a , b )
+    except TypeError :
+        return NotImplemented 
 
+# =============================================================================
+## equality of vectors 
+def _vector_eq_ ( a , b ) :
+    """Equalty for vectors
+    """
+    if         a    is      b   : return True 
+    elif len ( a ) != len ( b ) : return False
+    #
+    try  : 
+        _ops_  = cpp.Gaudi.Math.EqualOp ( a.__class__ , b.__class__ )
+        return _ops_.equal ( a , b )
+    except TypeError :
+        for i in len(a) :
+            if a[i] != b[i]   : return false
+        return True
+    
+# =============================================================================
+## equality of matrices 
+def _matrix_eq_ ( a , b ) :
+    """Equalty for matrices
+    """
+    if  a is b : return True
+    
+    try :
+        if   a.kRows != b.kRows : return False
+        elif a.kCols != b.kCols : return False
+    except :
+        pass
+        
+    try  : 
+        _ops_  = cpp.Gaudi.Math.EqualOp ( a.__class__ , b.__class__ )
+        return _ops_.equal ( a , b )
+    except TypeError :
+        return NotImplemented
 
 # =============================================================================
 ## decorate vector 
@@ -353,6 +395,11 @@ def deco_vector ( t ) :
         t.__mul__       = lambda a,b : _linalg_mul_     ( a , b )
         t.__rmul__      = lambda a,b : _linalg_rmul_    ( a , b )
         t.__div__       = lambda a,b : _linalg_div_     ( a , b )
+        
+        t.__eq__        = lambda a,b : _vector_eq_      ( a , b )
+        t.__neq__       = lambda a,b : not ( a == b ) 
+
+        t.cross         = lambda a,b : _vector_cross_   ( a , b )
         
         t.__rdiv__      = lambda s,*a :  NotImplemented 
 
@@ -1010,6 +1057,10 @@ def deco_symmatrix ( m ) :
         m . __div__     = lambda a,b : _matrix_div_  (a,b) 
 
         m . __rdiv__    = lambda s,*a :  NotImplemented 
+
+        m.__eq__        = lambda a,b : _matrix_eq_   ( a , b )
+        m.__neq__       = lambda a,b : not ( a == b ) 
+
 
         m._increment_  = _ms_increment_
         m.increment    = _ms_increment_

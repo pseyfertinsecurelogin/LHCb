@@ -34,8 +34,9 @@
   <class name    = "Gaudi::Math::VctrOp"     />
   <class name    = "Gaudi::Math::MtrxOp"     />
   <class name    = "Gaudi::Math::MultiplyOp" />
+  <class name    = "Gaudi::Math::EqualOp"    />
   --->
-  
+
   <function name = "Gaudi::Math::_vector_add_"   />
   <function name = "Gaudi::Math::_vector_radd_"  />
   <function name = "Gaudi::Math::_vector_sub_"   />

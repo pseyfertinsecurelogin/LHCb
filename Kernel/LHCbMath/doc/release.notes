@@ -7,6 +7,11 @@
 !-----------------------------------------------------------------------------
 
 ! 2016-12-12 - Vanya Belyaev
+ - 1) tiny fix
+   2) make it more robust 
+   3) propagate matrix/vector comparsion(equality) criteria to python
+
+! 2016-12-12 - Vanya Belyaev
  - Fix linear-algebra operations in python   (new ROOT?)
 
 ! 2016-11-10 - Vanya Belyaev
