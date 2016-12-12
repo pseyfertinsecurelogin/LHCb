@@ -69,7 +69,7 @@ StatusCode LoKi::Services::releaseAll()
   // 'release' the service
   m_contextSvc.reset();
   // 'release' the service
-  if (m_lokiSvc) m_lokiSvc->release(); m_lokiSvc = nullptr;
+  if (m_lokiSvc) { m_lokiSvc->release(); m_lokiSvc = nullptr; }
   //
   return StatusCode::SUCCESS ;
 }
