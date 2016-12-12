@@ -6,6 +6,9 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-12-12 - Vanya Belyaev
+ - Fix linear-algebra operations in python   (new ROOT?)
+
 ! 2016-11-10 - Vanya Belyaev
  - ValueWithError.cpp
    fix Coverity warnings 

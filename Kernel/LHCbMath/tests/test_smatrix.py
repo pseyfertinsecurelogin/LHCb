@@ -37,7 +37,7 @@ l2  = LA3(3,4,5)
 print 'l1 , l2 '   , l1 , l2 
 print 'l1 + l2 '   , l1 + l2
 print 'l1 - l2 '   , l1 - l2
-print 'l1 * l2 '   , l1 * l2
+## print 'l1 * l2 '   , l1 * l2
 print 'l1 *  2 '   , l1 *  2
 print ' 2 + l1 '   , 2  + l1
 print ' 2 - l1 '   , 2  - l1

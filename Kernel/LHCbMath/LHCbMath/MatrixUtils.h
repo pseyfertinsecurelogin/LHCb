@@ -1227,206 +1227,194 @@ namespace Gaudi
     }
     // ========================================================================
 
-    
     // ========================================================================
     // helper functions to allow proper operations in PyROOT
+    // - need to avoid expressions  (no easy way to use them in PyROOT)
     // ========================================================================
-    /// addition of matrices  (same type +  same type) -> matrix
-    template <class T,unsigned int D1, unsigned int D2, class R>
-    inline ROOT::Math::SMatrix<T,D1,D2,R>
-    _matrix_add_ 
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& a ,
-      const ROOT::Math::SMatrix<T,D1,D2,R>& b ) { return a+b ; } 
-    // =========================================================================
-    /// addition of matrices (symmetric + general -> general ) 
-    template <class T,unsigned int D>
-    inline ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
-    _matrix_add_ 
-    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >  & a ,
-      const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >& b ) { return a + b ; }
-    // ========================================================================= 
-    /// addition of matrices (general + symmetric -> general
-    template <class T,unsigned int D>
-    inline ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
-    _matrix_add_
-    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> > & a ,
-      const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >   & b ) { return a + b ; }
-    // =========================================================================
-
-    // =========================================================================
-    /// subtraction of matrices  (same type +  same type) -> matrix
-    template <class T,unsigned int D1, unsigned int D2, class R>
-    inline ROOT::Math::SMatrix<T,D1,D2,R>
-    _matrix_sub_ 
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& a ,
-      const ROOT::Math::SMatrix<T,D1,D2,R>& b ) { return a-b ; } 
-    // =========================================================================
-    /// subtraction of matrices (symmetric + general -> general ) 
-    template <class T,unsigned int D>
-    inline ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
-    _matrix_sub_ 
-    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >  & a ,
-      const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >& b ) { return a - b ; }
-    // ========================================================================= 
-    /// addition of matrices (general + symmetric -> general
-    template <class T,unsigned int D>
-    inline ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
-    _matrix_sub_
-    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> > & a ,
-      const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >   & b ) { return a - b ; }
-    // =========================================================================
-    
-    // =========================================================================    
-    // multiplication of matrices  ( general * general -> general ) 
-    template <class T,unsigned int D1, unsigned int D2, unsigned int D3, class R1, class R2>
-    inline ROOT::Math::SMatrix<T,D1,D3,ROOT::Math::MatRepStd<T,D1,D3> >
-    _matrix_mul_
-    ( const ROOT::Math::SMatrix<T,D1,D2,R1>& a ,
-      const ROOT::Math::SMatrix<T,D2,D3,R2>& b ) { return a * b ; }
-    // =========================================================================
-    /// multiplication of matrices ( general * symmetric -> general ) 
-    template <class T,unsigned int D1, unsigned int D2>
-    inline ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> >
-    _matrix_mul_ 
-    ( const ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> >& a ,  
-      const ROOT::Math::SMatrix<T,D2,D2,ROOT::Math::MatRepSym<T,D2> >   & b ) { return a * b ; }
-    // =========================================================================
-    /// multiplication of matrices ( symmetric * general -> general ) 
-    template <class T,unsigned int D1, unsigned int D2>
-    inline ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> >
-    _matrix_mul_ 
-    ( const ROOT::Math::SMatrix<T,D1,D1,ROOT::Math::MatRepSym<T,D1> >   & a , 
-      const ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> >& b ) { return a * b ; }
-    // =========================================================================
-    /// multiplication of matrices ( symmetric * symmetric -> general ) 
-    template <class T,unsigned int D>
-    inline ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >
-    _matrix_mul_ 
-    ( const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& a , 
-      const ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >& b ) { return a * b ; }
-    // =========================================================================
-    /// multiplication of matrices  ( matrix * vector ) -> expression
-    template <class T,unsigned int D1, unsigned int D2, class R>
-    inline ROOT::Math::SVector<T,D1>
-    _matrix_mul_
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& a ,
-      const ROOT::Math::SVector<T,D2>     & b ) { return a * b ; }
-    // =========================================================================
-    // multiplication of matrices  (  matrix * scalar -> matrix ) 
-    template <class T,unsigned int D1, unsigned int D2, class R1>
-    inline ROOT::Math::SMatrix<T,D1,D2,R1>
-    _matrix_mul_
-    ( const ROOT::Math::SMatrix<T,D1,D2,R1>& a ,
-      const double                           b ) { return a * b ; }
-    // =========================================================================
-    /// "right" multiplication of matrices  ( vector * matrix ) -> vector 
-    template <class T,unsigned int D1, unsigned int D2, class R>
-    inline ROOT::Math::SVector<T,D2>
-    _matrix_rmul_
-    ( const ROOT::Math::SMatrix<T,D1,D2,R>& a ,
-      const ROOT::Math::SVector<T,D1>     & b ) { return b * a ; }
-    // =========================================================================
-    // "right" multiplication of matrices  (  scalar * matrix -> matrix ) 
-    template <class T,unsigned int D1, unsigned int D2, class R1>
-    inline ROOT::Math::SMatrix<T,D1,D2,R1>
-    _matrix_rmul_
-    ( const ROOT::Math::SMatrix<T,D1,D2,R1>& a ,
-      const double                           b ) { return b * a ; }
-    // =========================================================================
-    // division of matrices  (  matrix / scalar -> matrix ) 
-    template <class T,unsigned int D1, unsigned int D2, class R1>
-    inline ROOT::Math::SMatrix<T,D1,D2,R1>
-    _matrix_div_
-    ( const ROOT::Math::SMatrix<T,D1,D2,R1>& a ,
-      const double                           b ) { return a / b ; }
-    // =========================================================================
-
     
     // ========================================================================
-    // addition of vectors:  vector + vector -> vector 
-    template <class T,unsigned int D>
-    inline ROOT::Math::SVector<T,D>
-    _vector_add_ 
-    ( const ROOT::Math::SVector<T,D>& a ,
-      const ROOT::Math::SVector<T,D>& b ) { return a + b ; }
+    // Vector operations 
     // ========================================================================
-    // addition of vectors:  vector + scalar  -> vector
-    template <class T,unsigned int D>
-    inline ROOT::Math::SVector<T,D>
-    _vector_add_ 
-    ( const ROOT::Math::SVector<T,D>& a ,
-      const double                    b ) { return a + b ; }
+    template <class VECTOR>
+    struct VctrOps ;
     // ========================================================================
-    // "right" addition of vectors:  scalar+vector  -> vector
-    template <class T,unsigned int D>
-    inline ROOT::Math::SVector<T,D>
-    _vector_radd_ 
-    ( const ROOT::Math::SVector<T,D>& a ,
-      const double                    b ) { return b + a ; }
-    // ========================================================================
-    // subtraction of vectors:  vector - vector -> vector 
-    template <class T,unsigned int D>
-    inline ROOT::Math::SVector<T,D>
-    _vector_sub_ 
-    ( const ROOT::Math::SVector<T,D>& a ,
-      const ROOT::Math::SVector<T,D>& b ) { return a - b ; }
-    // ========================================================================
-    // subtraction of vectors:  vector - scalar  -> vector
-    template <class T,unsigned int D>
-    inline ROOT::Math::SVector<T,D>
-    _vector_sub_ 
-    ( const ROOT::Math::SVector<T,D>& a ,
-      const double                    b ) { return a - b ; }
-    // ========================================================================
-    // addition of vectors:  scalar - vector  -> vector
-    template <class T,unsigned int D>
-    inline ROOT::Math::SVector<T,D>
-    _vector_rsub_ 
-    ( const ROOT::Math::SVector<T,D>& a ,
-      const double                    b ) { return b - a ; }
-
-    // ========================================================================
-    // multiplication:   vector * matrix -> vector 
-    template <class T,unsigned int D, unsigned int D1, class R>
-    inline ROOT::Math::SVector<T,D1>
-    _vector_mul_ 
-    ( const ROOT::Math::SVector<T,D>     & a ,
-      const ROOT::Math::SMatrix<T,D,D1,R>& b ) { return a * b ; }
-    // ========================================================================
-    // multiplication   vector * vector -> scalar
-    template <class T,unsigned int D>
-    inline double 
-    _vector_mul_ 
-    ( const ROOT::Math::SVector<T,D> & a ,
-      const ROOT::Math::SVector<T,D> & b ) 
+    template <class T, unsigned int D>
+    struct VctrOps < ROOT::Math::SVector<T,D> >
     {
-      double result = 0 ;
-      for ( unsigned int i = 0 ; i < D ; ++i ){ result += a[i]*b[i] ; }
-      return result ;
-    }
+      // a + b 
+      static
+      ROOT::Math::SVector<T,D> 
+      add  ( const ROOT::Math::SVector<T,D>& a ,
+             const ROOT::Math::SVector<T,D>& b ) { return a + b ; }
+      // a + c 
+      static
+      ROOT::Math::SVector<T,D>
+      add  ( const ROOT::Math::SVector<T,D>& a ,
+             const double                    c ) { return a + c ; }
+      // a - b 
+      static
+      ROOT::Math::SVector<T,D> 
+      sub  ( const ROOT::Math::SVector<T,D>& a ,
+             const ROOT::Math::SVector<T,D>& b ) { return a - b ; }
+      // a - c 
+      static
+      ROOT::Math::SVector<T,D> 
+      sub  ( const ROOT::Math::SVector<T,D>& a ,
+             const double                    b ) { return a + b ; }
+      // c - a  
+      static
+      ROOT::Math::SVector<T,D> 
+      rsub ( const ROOT::Math::SVector<T,D>& a ,
+             const double                    c ) { return c - a  ; }
+    };    
     // ========================================================================
-    // multiplication:   vector * scalar -> vector 
-    template <class T,unsigned int D>
-    inline ROOT::Math::SVector<T,D>     
-    _vector_mul_ 
-    ( const ROOT::Math::SVector<T,D>     & a ,
-      const double                         b ) { return a * b; }
-    // ========================================================================    
-    // "right" multiplication:   scalar * vector -> vector 
-    template <class T,unsigned int D>
-    inline ROOT::Math::SVector<T,D>     
-    _vector_rmul_ 
-    ( const ROOT::Math::SVector<T,D>     & a ,
-      const double                         b ) { return b * a; }
+    // matrix operations 
     // ========================================================================
-    // division:  vector / scalar -> vector 
-    template <class T,unsigned int D>
-    inline ROOT::Math::SVector<T,D>     
-    _vector_div_ 
-    ( const ROOT::Math::SVector<T,D>     & a ,
-      const double                         b ) { return a / b; }
+    template <class VECTOR>
+    struct MtrxOps ;
+    // generic matrices 
+    template <class T, unsigned int D1, unsigned int D2>
+    struct MtrxOps< ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> > > 
+    {
+      typedef ROOT::Math::SMatrix<T,D1,D2,ROOT::Math::MatRepStd<T,D1,D2> > MATRIX ;
+      //
+      // ======================================================================
+      // m + m 
+      static MATRIX add  ( const MATRIX& a ,
+                           const MATRIX& b ) { return a + b ; }
+      // m + c 
+      static MATRIX add  ( const MATRIX& a ,
+                           const double  c ) { return a + c ; }
+      // ======================================================================
+      // m - m 
+      static MATRIX sub  ( const MATRIX& a ,
+                           const MATRIX& b ) { return a - b ; }
+      // m - c
+      static MATRIX sub  ( const MATRIX& a ,
+                           const double  c ) { return a - c ; }
+      // ======================================================================
+      // c - m
+      static MATRIX rsub ( const MATRIX& a ,
+                           const double  c ) { return c - a ; }
+      // ======================================================================
+    };  
+    // square matrices 
+    template <class T, unsigned int D>
+    struct MtrxOps<ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> > > 
+    {
+      typedef ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> >      MATRIX ;
+      typedef ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >     SYMMATRIX ;
+      //
+      // ======================================================================
+      // m + m
+      static MATRIX add  ( const    MATRIX& a ,
+                           const    MATRIX& b ) { return a + b ; }
+      // m + s 
+      static MATRIX add  ( const    MATRIX& a ,
+                           const SYMMATRIX& b ) { return a + b ; }
+      // m + c
+      static MATRIX add  ( const    MATRIX& a ,
+                           const    double  b ) { return a + b ; }
+      // ======================================================================
+      // m - m 
+      static MATRIX sub  ( const    MATRIX& a ,
+                           const    MATRIX& b ) { return a - b ; }
+      // m - s 
+      static MATRIX sub  ( const    MATRIX& a ,
+                           const SYMMATRIX& b ) { return a - b ; }
+      // m - c 
+      static MATRIX sub  ( const    MATRIX& a ,
+                           const    double  c ) { return a - c ; }
+      // ======================================================================
+      // s - m 
+      static MATRIX rsub ( const    MATRIX& a ,
+                           const SYMMATRIX& b ) { return b - a ; }
+      // c - m  
+      static MATRIX rsub ( const    MATRIX& a ,
+                           const    double  c ) { return c - a ; }
+      
+      // ======================================================================
+    };
+    // symmetric matrices
+    template <class T, unsigned int D>
+    struct MtrxOps<ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> > > 
+    {
+      typedef ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepSym<T,D> >      MATRIX ;
+      typedef ROOT::Math::SMatrix<T,D,D,ROOT::Math::MatRepStd<T,D,D> > GENMATRIX ;
+      //
+      // ======================================================================
+      // s + s 
+      static MATRIX    add  ( const    MATRIX& a ,
+                              const    MATRIX& b ) { return a + b ; }
+      // s + m      
+      static GENMATRIX add  ( const    MATRIX& a ,
+                              const GENMATRIX& b ) { return a + b ; }
+      // s + c
+      static MATRIX    add  ( const    MATRIX& a ,
+                              const     double c ) { return a + c ; }      
+      // ======================================================================
+      // s - s 
+      static MATRIX    sub  ( const    MATRIX& a ,
+                              const    MATRIX& b ) { return a - b ; }
+      // s - m      
+      static GENMATRIX sub  ( const    MATRIX& a ,
+                              const GENMATRIX& b ) { return a - b ; }
+      // s - c
+      static MATRIX    sub  ( const    MATRIX& a ,
+                              const     double c ) { return a - c ; }
+      // ======================================================================      
+      // m - s      
+      static GENMATRIX rsub ( const    MATRIX& a ,
+                              const GENMATRIX& b ) { return b - a ; }
+      // c - s 
+      static MATRIX    rsub ( const    MATRIX& a ,
+                              const     double c ) { return c - a ; }
+      // ======================================================================      
+    };
     // ========================================================================
-
+    /// multiplication
+    template <class OBJ1, class OBJ2>
+    struct MultiplyOp ;
+    // ========================================================================
+    // vector * vector  
+    template <class T, unsigned int D>
+    struct MultiplyOp < ROOT::Math::SVector<T,D>, ROOT::Math::SVector<T,D> >
+    {
+      static 
+      double 
+      multiply ( const ROOT::Math::SVector<T,D> & a , 
+                 const ROOT::Math::SVector<T,D> & b ) { return a * b ; }
+    } ;    
+    // ========================================================================
+    // vector * matrix 
+    template <class T, unsigned int D, unsigned D2, class  R>
+    struct MultiplyOp<ROOT::Math::SVector<T,D>,ROOT::Math::SMatrix<T,D,D2,R> >
+    {
+      static 
+      ROOT::Math::SVector<T,D2> 
+      multiply ( const ROOT::Math::SVector<T,D>      & a , 
+                 const ROOT::Math::SMatrix<T,D,D2,R> & b ) { return a * b ; }
+    } ;
+    // =======================================================================
+    // matrix * matrix  
+    template <class T, unsigned int D1, unsigned D2, unsigned D3, class R1, class R2>
+    struct MultiplyOp<ROOT::Math::SMatrix<T,D1,D2,R1>,ROOT::Math::SMatrix<T,D2,D3,R2> > 
+    {
+      static 
+      ROOT::Math::SMatrix<T,D1,D3,ROOT::Math::MatRepStd<T,D1,D3> >  
+      multiply  ( const ROOT::Math::SMatrix<T,D1,D2,R1> & a , 
+                  const ROOT::Math::SMatrix<T,D2,D3,R2> & b ) { return a * b ; }
+    } ;
+    // =======================================================================
+    // matrix * vector  
+    template <class T, unsigned int D, unsigned D2, class  R>
+    struct MultiplyOp <ROOT::Math::SMatrix<T,D,D2,R>,ROOT::Math::SVector<T,D2> >
+    {
+      static 
+      ROOT::Math::SVector<T,D> 
+      multiply  ( const ROOT::Math::SMatrix<T,D,D2,R> & a , 
+                  const ROOT::Math::SVector<T,D2>     & b ) { return a * b ; }
+    } ;
     // ========================================================================
   } //                                                    end of namespace Math
   // ==========================================================================

@@ -127,7 +127,7 @@ def _vector_ ( i , typ = 'double' ) :
     >>> V3   = Gaudi.Math.Vector(3)
     >>> vct  = V3 ()
     """
-    v = _RM.SVector ( typ , i )
+    v        = _RM.SVector ( typ , i )
     return deco_vector ( v ) 
 
 # =============================================================================
@@ -138,7 +138,8 @@ def _matrix_ ( i , j , typ = 'double' ) :
     >>> M3x4   = Gaudi.Math.Matrix(3,4)
     >>> matrix = M3x4 ()    
     """
-    m = _RM.SMatrix ( "%s,%d,%d" % ( typ , i , j ) )
+    m        = _RM.SMatrix ( "%s,%d,%d" % ( typ , i , j ) )
+    ## v.SCALAR = typ 
     return deco_matrix( m )  
 
 # =============================================================================
@@ -291,13 +292,39 @@ def _v_iteritems_ ( self ) :
     for i in range(self.kSize) :
         yield i,self(i)
 
-_vector_add_  = cpp.Gaudi.Math._vector_add_
-_vector_radd_ = cpp.Gaudi.Math._vector_radd_
-_vector_sub_  = cpp.Gaudi.Math._vector_sub_
-_vector_rsub_ = cpp.Gaudi.Math._vector_rsub_
-_vector_mul_  = cpp.Gaudi.Math._vector_mul_
-_vector_rmul_ = cpp.Gaudi.Math._vector_rmul_
-_vector_div_  = cpp.Gaudi.Math._vector_div_
+
+# =============================================================================
+## helper function for Linear Algebra multiplications 
+def _linalg_mul_ ( a  , b ) :    
+    if isinstance ( b , ( int , long , float ) ) :
+        b  = float( b )
+        v  = a.__class__( a )
+        v *= b
+        return v 
+    _ops_  = cpp.Gaudi.Math.MultiplyOp ( a.__class__ , b.__class__ )
+    return _ops_.multiply ( a , b )
+
+# =============================================================================
+## helper function for "right" multiplication (Linear Algebra)
+def _linalg_rmul_ ( a , b ) :
+    if isinstance ( b , ( int , long , float ) ) :
+        b  = float( b )
+        v  = a.__class__( a )
+        v *= b
+        return v
+    return NotImplemented 
+
+# =============================================================================
+## helper function for Linear Algebra divisions 
+def _linalg_div_ ( a  , b ) :
+    if isinstance ( b , ( int , long , float ) ) :
+        b  = float( b )
+        v  = a.__class__( a )
+        v /= b
+        return v
+    return NotImplemented 
+
+
 
 # =============================================================================
 ## decorate vector 
@@ -316,16 +343,18 @@ def deco_vector ( t ) :
         t ._old_rsub_   = t.__rsub__
         t ._old_div_    = t.__div__
 
-        t . __add__     = lambda a,b : _vector_add_  (a,b)
-        t . __radd__    = lambda a,b : _vector_radd_ (a,b)
-        t . __sub__     = lambda a,b : _vector_sub_  (a,b)
-        t . __rsub__    = lambda a,b : _vector_rsub_ (a,b)
-        t . __mul__     = lambda a,b : _vector_mul_  (a,b)
-        t . __rmul__    = lambda a,b : _vector_rmul_ (a,b)
-        t . __div__     = lambda a,b : _vector_div_  (a,b) 
-
-        t . __rdiv__    = lambda s,*a :  NotImplemented 
-
+        _operations   = cpp.Gaudi.Math.VctrOps( t )
+        
+        t.__add__       = lambda a,b : _operations.add  ( a , b )
+        t.__sub__       = lambda a,b : _operations.sub  ( a , b )
+        t.__radd__      = lambda a,b : _operations.add  ( a , b )
+        t.__rsub__      = lambda a,b : _operations.rsub ( a , b )
+        
+        t.__mul__       = lambda a,b : _linalg_mul_     ( a , b )
+        t.__rmul__      = lambda a,b : _linalg_rmul_    ( a , b )
+        t.__div__       = lambda a,b : _linalg_div_     ( a , b )
+        
+        t.__rdiv__      = lambda s,*a :  NotImplemented 
 
         t. _new_str_    = _v_str_
         t. __str__      = _v_str_
@@ -903,14 +932,6 @@ def  _ms_sim_ ( m , v ) :
             sim += v[i]*m(i,j)*v[j] 
     return sim 
             
-_matrix_add_  = cpp.Gaudi.Math._matrix_add_
-## _matrix_radd_ = cpp.Gaudi.Math._matrix_add_ ## ditto 
-_matrix_sub_  = cpp.Gaudi.Math._matrix_sub_
-## _matrix_rsub_ = cpp.Gaudi.Math._matrix_rsub_
-_matrix_mul_  = cpp.Gaudi.Math._matrix_mul_
-_matrix_rmul_ = cpp.Gaudi.Math._matrix_rmul_
-_matrix_div_  = cpp.Gaudi.Math._matrix_div_
-
         
 ##  decorate the matrix  type 
 def deco_matrix ( m  ) :
@@ -932,16 +953,19 @@ def deco_matrix ( m  ) :
         m ._old_sub_    = m.__sub__
         m ._old_rsub_   = m.__rsub__
         m ._old_div_    = m.__div__
-
-        m . __add__     = lambda a,b : _matrix_add_  (a,b)
-        ## m . __radd__    = lambda a,b : _matrix_radd_ (a,b)
-        m . __sub__     = lambda a,b : _matrix_sub_  (a,b)
-        ## m . __rsub__    = lambda a,b : _matrix_rsub_ (a,b)
-        m . __mul__     = lambda a,b : _matrix_mul_  (a,b)
-        m . __rmul__    = lambda a,b : _matrix_rmul_ (a,b)
-        m . __div__     = lambda a,b : _matrix_div_  (a,b) 
-
-        m . __rdiv__    = lambda s,*a :  NotImplemented 
+        
+        _operations   = cpp.Gaudi.Math.MtrxOps( m )
+        
+        m.__add__       = lambda a,b : _operations.add  ( a , b )
+        m.__sub__       = lambda a,b : _operations.sub  ( a , b )
+        m.__radd__      = lambda a,b : _operations.add  ( a , b )
+        m.__rsub__      = lambda a,b : _operations.rsub ( a , b )
+        
+        m.__mul__       = lambda a,b : _linalg_mul_     ( a , b )
+        m.__rmul__      = lambda a,b : _linalg_rmul_    ( a , b )
+        m.__div__       = lambda a,b : _linalg_div_     ( a , b )
+        
+        m.__rdiv__      = lambda s,*a :  NotImplemented 
 
         
         m._increment_  = _mg_increment_
