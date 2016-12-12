@@ -134,7 +134,7 @@ public:
  private:
 
     ///using the std::set to append parents
-    StatusCode appendParents(LHCb::EventTypeSet& aset);
+    void appendParents(LHCb::EventTypeSet& aset);
     ///convert a std::set to a std::vector
     bool set2vec(LHCb::EventTypeSet& aset,std::vector<long unsigned int>& avec);
     ///convert a std::set to a std::vector
