@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RichFlatFormatSmartIDData_H
-#define RICHDAQ_RichFlatFormatSmartIDData_H 1
+#pragma once
 
 // local
 #include "RichDAQKernel/RichHPDDataBank.h"
@@ -93,9 +92,6 @@ namespace Rich
       /// Destructor
       virtual ~RichFlatFormatSmartIDData() = default;
 
-      // Returns the hit count for this HPD
-      ShortType hitCount() const override final;
-
       // Fill a vector with RichSmartIDs for hit pixels
       ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
                                   const LHCb::RichSmartID hpdID ) const override final;
@@ -105,14 +101,7 @@ namespace Rich
       /// Build data array from vector of RichSmartIDs
       void buildData( const LHCb::RichSmartID::Vector & digits );
 
-    private: // data
-
-      /// Decoded number of hits
-      mutable int m_nHits = -1;
-
     };
 
   }
 }
-
-#endif // RICHDAQ_RichFlatFormatSmartIDData_H
