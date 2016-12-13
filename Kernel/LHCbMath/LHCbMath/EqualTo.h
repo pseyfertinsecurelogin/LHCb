@@ -173,6 +173,18 @@ namespace LHCb
           std::equal ( v1.begin() , v1.end() , v2.begin() , m_cmp ) ;
       }
       // ======================================================================
+      /// compare with another matrix type (e.g. symmetric...)
+      template <class R2>
+      inline bool operator()
+      ( const ROOT::Math::SMatrix<T,D1,D2,R> & v1 , 
+        const ROOT::Math::SMatrix<T,D1,D2,R2>& v2 ) const  
+      {
+        for ( unsigned int i = 0 ; i < D1 ; ++i ) 
+        { for ( unsigned int j = 0 ; j < D2 ; ++j ) 
+          { if ( !m_cmp ( v1(i,j) , v2(i,j) ) ) { return false ; } } } // RETURN 
+        return true ; 
+      }
+      // ======================================================================
     private:
       // ======================================================================
       /// the evaluator 
