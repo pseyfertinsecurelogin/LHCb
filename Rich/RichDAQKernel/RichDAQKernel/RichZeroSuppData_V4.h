@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHZEROSUPPDATA_V4_H
-#define RICHDAQ_RICHZEROSUPPDATA_V4_H 1
+#pragma once
 
 // local
 #include "RichDAQKernel/RichHPDDataBank.h"
@@ -96,15 +95,11 @@ namespace Rich
         inline void reset( const LongType * data )
         {
           m_tooBig = false;
-          m_nHits  = -1;
           HPDDataBankImp<Version,Header,Footer>::reset( data );
         }
 
         /// Destructor
         virtual ~RichZeroSuppData() = default;
-
-        // Returns the hit count for this HPD
-        ShortType hitCount() const override final;
 
         // Fill a vector with RichSmartIDs for hit pixels
         ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
@@ -123,14 +118,9 @@ namespace Rich
         /// Too big flag
         bool m_tooBig = false;
 
-        /// Decoded number of hits
-        mutable int m_nHits = -1;
-
       };
 
     } // end V4 namespace
 
   }
 }
-
-#endif // RICHDAQ_RICHZEROSUPPDATA_V4_H

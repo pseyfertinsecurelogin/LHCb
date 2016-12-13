@@ -39,16 +39,18 @@ namespace Rich
 
       // ------------------------------------------------------------------------------------------------
       template< class Version, class Header, class Footer >
-      ShortType RichZeroSuppALICEData<Version,Header,Footer>::
+      ShortType
+      RichZeroSuppALICEData<Version,Header,Footer>::
       fillRichSmartIDs ( LHCb::RichSmartID::Vector & ids,
                          const LHCb::RichSmartID hpdID ) const
       {
         using namespace RichZSPacked_V2;
 
-        m_nHits = 0; // reset number of hits to zero
-
         // Number of data words
         const ShortType nDataWords = this->dataSize();
+        
+        // Count hits made
+        ShortType nHits(0);
 
         // Is the last word padded or not ?
         const bool lastWordIsPadded = ( 1 == this->header().nEightBitBlocks()%2 );
@@ -89,7 +91,7 @@ namespace Rich
                                   zsData.rowFromAddress(address0,addressOffset0),
                                   zsData.colFromAddressAndBit(address0,iB),
                                   zsData.subPixelFromAddress(address0) );
-                ++m_nHits; // count hits
+                ++nHits;
               }
             }
           }
@@ -120,7 +122,7 @@ namespace Rich
                                                        zsData.rowFromAddress(address1,addressOffset1),
                                                        zsData.colFromAddressAndBit(address1,iB),
                                                        zsData.subPixelFromAddress(address1) ) );
-                  ++m_nHits; // count hits
+                  ++nHits;
                 }
               }
             }
@@ -128,24 +130,9 @@ namespace Rich
 
         }
 
-        return m_nHits;
+        return nHits;
       }
       // ------------------------------------------------------------------------------------------------
-
-      // ------------------------------------------------------------------------------------------------
-      template< class Version, class Header, class Footer >
-      ShortType RichZeroSuppALICEData<Version,Header,Footer>::hitCount() const
-      {
-        if ( m_nHits < 0 )
-        {
-          static LHCb::RichSmartID::Vector ids;
-          ids.clear();
-          this->fillRichSmartIDs( ids, LHCb::RichSmartID(Rich::Rich1,Rich::top,0,0) ); // fills m_nHits
-        }
-        return m_nHits;
-      }
-      // ------------------------------------------------------------------------------------------------
-
 
     } // V1 namespace
 

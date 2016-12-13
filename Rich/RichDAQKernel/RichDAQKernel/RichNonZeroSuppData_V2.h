@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHNONZEROSUPPDATA_V2_H
-#define RICHDAQ_RICHNONZEROSUPPDATA_V2_H 1
+#pragma once
 
 // local
 #include "RichDAQKernel/RichHPDDataBank.h"
@@ -92,15 +91,11 @@ namespace Rich
          */
         inline void reset( const LongType * data )
         {
-          m_nHits = -1;
           HPDDataBankImp<Version,Header,Footer>::reset( data );
         }
 
         /// Destructor
         ~RichNonZeroSuppData() = default;
-
-        // Returns the hit count for this HPD
-        ShortType hitCount() const override final;
 
         // Fill a vector with RichSmartIDs for hit pixels
         ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
@@ -128,16 +123,9 @@ namespace Rich
           return this -> isBitOn( this->data()[this->maxDataSize()-(row+1)], col );
         }
 
-      private: // data
-
-        /// Decoded number of hits
-        mutable int m_nHits = -1;
-
       };
 
     } // RichNonZeroSuppDataV2 namespace
 
   }
 }
-
-#endif // RICHDAQ_RICHNONZEROSUPPDATA_V2_H

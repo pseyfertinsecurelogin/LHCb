@@ -54,7 +54,7 @@ namespace Rich
     RichFlatFormatSmartIDData<Version,Header,Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
                                                                         const LHCb::RichSmartID hpdID ) const
     {
-      m_nHits = 0; // reset number of hits to zero
+      ShortType nHits = 0;
 
       // Number of data words
       const auto nDataWords = this->dataSize();
@@ -71,23 +71,11 @@ namespace Rich
             std::cout << "PD ID Error. Should never see this" << std::endl;
           }
           ids.push_back( id );
+          ++nHits;
         }
       }
 
-      return m_nHits;
-    }
-    // ------------------------------------------------------------------------------------------------
-
-    // ------------------------------------------------------------------------------------------------
-    template< class Version, class Header, class Footer >
-    ShortType RichFlatFormatSmartIDData<Version,Header,Footer>::hitCount() const
-    {
-      if ( m_nHits < 0 )
-      {
-        LHCb::RichSmartID::Vector ids;
-        this->fillRichSmartIDs( ids, LHCb::RichSmartID(Rich::Rich1,Rich::top,0,0) ); // fills m_nHits
-      }
-      return static_cast<ShortType>(m_nHits);
+      return nHits;
     }
     // ------------------------------------------------------------------------------------------------
 
