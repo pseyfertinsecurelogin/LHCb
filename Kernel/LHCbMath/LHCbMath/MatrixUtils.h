@@ -1496,34 +1496,37 @@ namespace Gaudi
                   const ROOT::Math::SVector<T,D2>     & b ) { return a * b ; }
     } ;
     // ========================================================================
-    template <class T1, class T2> 
-    struct EqualOp ;
+    
     // ========================================================================
-    // vectors 
-    template <class T, unsigned int D> 
-    struct EqualOp<ROOT::Math::SVector<T,D>, ROOT::Math::SVector<T,D> > 
+    template <class OBJ1, class OBJ2> 
+    struct EqualityOp ;
+    // ========================================================================
+    // vector == vector 
+    template <class T1,class T2, unsigned int D>
+    struct EqualityOp< ROOT::Math::SVector<T1,D>,ROOT::Math::SVector<T2,D> >
     {
       static 
-      bool equal ( const ROOT::Math::SVector<T,D>& a , 
-                   const ROOT::Math::SVector<T,D>& b ) 
-      { 
-        static const LHCb::Math::Equal_To<ROOT::Math::SVector<T,D> > m_cmp{} ;
-        return m_cmp ( a , b ) ; 
+      bool 
+      equal ( const ROOT::Math::SVector<T1,D>& v1 , 
+              const ROOT::Math::SVector<T2,D>& v2 ) 
+      {
+        static const LHCb::Math::Equal_To<ROOT::Math::SVector<T1,D> > m_cmp{} ;
+        return m_cmp ( v1 , v2 ) ;
       }
-      //
     } ;
-    // matrices 
-    template <class T, unsigned int D1, unsigned int D2, class R1, class R2> 
-    struct EqualOp<ROOT::Math::SMatrix<T,D1,D2,R1>, ROOT::Math::SMatrix<T,D1,D2,R2> > 
+    // ========================================================================
+    // matrix == matrix 
+    template <class T1,class T2, unsigned int D1,unsigned int D2, class R1, class R2>
+    struct EqualityOp< ROOT::Math::SMatrix<T1,D1,D2,R1>,ROOT::Math::SMatrix<T2,D1,D2,R2> >
     {
       static 
-      bool equal ( const ROOT::Math::SMatrix<T,D1,D2,R1>& a , 
-                   const ROOT::Math::SMatrix<T,D1,D2,R2>& b ) 
-      { 
-        static const LHCb::Math::Equal_To<ROOT::Math::SMatrix<T,D1,D2,R1> > m_cmp{} ;
-        return m_cmp ( a , b ) ;
+      bool 
+      equal ( const ROOT::Math::SMatrix<T1,D1,D2,R1>& v1 , 
+              const ROOT::Math::SMatrix<T2,D1,D2,R2>& v2 ) 
+      {
+        static const LHCb::Math::Equal_To<ROOT::Math::SMatrix<T1,D1,D2,R1> > m_cmp{} ;
+        return m_cmp ( v1 , v2 ) ;
       }
-      //
     } ;
     // ========================================================================
   } //                                                    end of namespace Math
