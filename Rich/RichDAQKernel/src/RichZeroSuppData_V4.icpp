@@ -95,10 +95,11 @@ namespace Rich
       {
         using namespace RichZSPacked_V2;
 
-        m_nHits = 0; // reset number of hits to zero
-
         // Number of data words
         const int nDataWords = this->dataSize();
+
+        // count the hits made
+        ShortType nHits(0);
 
         // any data words
         if ( nDataWords>0 )
@@ -137,7 +138,7 @@ namespace Rich
                     auto & id = ids.back();
                     id.setPixelRow( zsData.rowFromAddress(address1) );
                     id.setPixelCol( zsData.colFromAddressAndBit(address1,iB) );
-                    ++m_nHits; // count hits
+                    ++nHits;
                   }
                 }
               }
@@ -154,7 +155,7 @@ namespace Rich
                   auto & id = ids.back();
                   id.setPixelRow( zsData.rowFromAddress(address0) );
                   id.setPixelCol( zsData.colFromAddressAndBit(address0,iB) );
-                  ++m_nHits; // count hits
+                  ++nHits;
                 }
               }
             }
@@ -163,20 +164,7 @@ namespace Rich
 
         } // have some data words
 
-        return m_nHits;
-      }
-      // ------------------------------------------------------------------------------------------------
-
-      // ------------------------------------------------------------------------------------------------
-      template< class Version, class Header, class Footer >
-      ShortType RichZeroSuppData<Version,Header,Footer>::hitCount() const
-      {
-        if ( m_nHits < 0 )
-        {
-          LHCb::RichSmartID::Vector ids;
-          this->fillRichSmartIDs( ids, LHCb::RichSmartID(Rich::Rich1,Rich::top,0,0) ); // fills m_nHits
-        }
-        return m_nHits;
+        return nHits;
       }
       // ------------------------------------------------------------------------------------------------
 

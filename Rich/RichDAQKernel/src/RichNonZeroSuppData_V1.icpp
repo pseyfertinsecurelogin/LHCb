@@ -54,13 +54,6 @@ namespace Rich
         return nHits;
       }
 
-      template< class Version, class Header, class Footer >
-      ShortType RichNonZeroSuppData<Version,Header,Footer>::hitCount() const
-      {
-        // For this implementation the header nEightBitBlocksPlusOne word contains the number of hits
-        return this->header().nEightBitBlocksPlusOne();
-      }
-
     } // end V1 namespace
 
   }

@@ -3,15 +3,11 @@
  *
  *  Header file for RICH DAQ utility class : RichZSHitTriplet
  *
- *  CVS Log :-
- *  $Id: RichZSHitTriplet.h,v 1.15 2007-04-23 12:58:44 jonrob Exp $
- *
  *  @author Chris Jones       Christopher.Rob.Jones@cern.ch
  *  @date   2003-11-06
  */
 
-#ifndef RICHDAQ_RICHZSHITTRIPLET_H
-#define RICHDAQ_RICHZSHITTRIPLET_H 1
+#pragma once
 
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
@@ -207,5 +203,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHDAQ_RICHZSHITTRIPLET_H
