@@ -142,7 +142,7 @@ namespace Rich
                                        const unsigned int       bins,
                                        const std::string&      xAxisLabel = "",
                                        const std::string&      yAxisLabel = "",
-                                       const BinLabels& binLabels = BinLabels() ) const;
+                                       const BinLabels& binLabels = BinLabels() );
 
       /** Book a 2D histogram
        *
@@ -174,7 +174,7 @@ namespace Rich
                                        const std::string&      yAxisLabel = "",
                                        const std::string&      zAxisLabel = "",
                                        const BinLabels& xBinLabels = BinLabels(),
-                                       const BinLabels& yBinLabels = BinLabels() ) const;
+                                       const BinLabels& yBinLabels = BinLabels() );
 
       /** Book a 1D profile histogram
        *
@@ -196,7 +196,7 @@ namespace Rich
                                        const unsigned int      bins,
                                        const std::string&      xAxisLabel = "",
                                        const std::string&      yAxisLabel = "",
-                                       const BinLabels& binLabels = BinLabels() ) const;
+                                       const BinLabels& binLabels = BinLabels() );
 
       /** Book a 2D profile histogram
        *
@@ -228,7 +228,7 @@ namespace Rich
                                        const std::string&      yAxisLabel = "",
                                        const std::string&      zAxisLabel = "",
                                        const BinLabels& xBinLabels = BinLabels(),
-                                       const BinLabels& yBinLabels = BinLabels() ) const;
+                                       const BinLabels& yBinLabels = BinLabels() );
 
       //-----------------------------------------------------------------------------------------
 
@@ -249,11 +249,17 @@ namespace Rich
       private:
         using Map = Rich::Map < Rich::PackedPIDInfo::Pack32_t, StringToHist >;
       private:
-        Map map;
+        Map m_map;
       public:
         inline StringToHist & getmap( const Rich::PackedPIDInfo& info )
         {
-          return map[info.raw()];
+          return m_map[info.raw()];
+        }
+        inline const StringToHist & getmap( const Rich::PackedPIDInfo& info ) const
+        {
+          static const StringToHist defaultMap;
+          const auto i = m_map.find(info.raw());
+          return ( i != m_map.end() ? i->second : defaultMap );
         }
       };
 
@@ -272,19 +278,19 @@ namespace Rich
     private:
 
       /// Flag to indicate if histograms have been booked or not
-      mutable bool m_histosAreBooked{false};
+      bool m_histosAreBooked{false};
 
       /// 1D histo map
-      mutable Map1DH m_1dhmap;
+      Map1DH m_1dhmap;
 
       /// 2D histo map
-      mutable Map2DH m_2dhmap;
+      Map2DH m_2dhmap;
 
       /// 1D Profile map
-      mutable Map1DP m_1dpmap;
+      Map1DP m_1dpmap;
 
       /// 2D Profile map
-      mutable Map2DP m_2dpmap;
+      Map2DP m_2dpmap;
 
     protected:
 
