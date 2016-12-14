@@ -36,11 +36,6 @@ DeRichPMT::DeRichPMT( const std::string & name )
   : DeRichPD ( name ) { }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-DeRichPMT::~DeRichPMT() { }
-
-//=============================================================================
 
 const CLID& DeRichPMT::classID()
 {
@@ -339,7 +334,7 @@ DeRichPMT::getAnodeHitCoordFromGrandPixelNum( const double fracPixelCol,
 Gaudi::XYZPoint
 DeRichPMT::getAnodeHitCoordFromMultTypePixelNum( const double fracPixelCol,
                                                  const double fracPixelRow ,
-                                                 const LHCb::RichSmartID smartID ) const
+                                                 const LHCb::RichSmartID& smartID ) const
 {
   Gaudi::XYZPoint aP = Gaudi::XYZPoint(0.0,0.0,0.0);
 
@@ -350,17 +345,16 @@ DeRichPMT::getAnodeHitCoordFromMultTypePixelNum( const double fracPixelCol,
     aP = getAnodeHitCoordFromPixelNum( fracPixelCol , fracPixelRow );
 
   }
-  const Gaudi::XYZPoint aPC = aP;
 
-  return aPC;
-
+  return aP;
 }
+
 //===============================================================================================
-Gaudi::XYZPoint DeRichPMT::detPointOnAnode ( const LHCb::RichSmartID smartID ) const
+Gaudi::XYZPoint DeRichPMT::detPointOnAnode ( const LHCb::RichSmartID& smartID ) const
 {
   const double aPixCol = (double) (smartID.pixelCol());
   const double aPixRow = (double) (smartID.pixelRow());
-  Gaudi::XYZPoint aLocalAnodeCoord = getAnodeHitCoordFromMultTypePixelNum(aPixCol,aPixRow,smartID );
+  auto aLocalAnodeCoord = getAnodeHitCoordFromMultTypePixelNum(aPixCol,aPixRow,smartID );
   // std::cout<<" DeRichPmt local point col row coord "<<aPixCol<<"  :"<<aPixRow<<"   "<<aLocalAnodeCoord <<std::endl;
 
   return ( m_dePmtAnode->geometry()->toGlobal(aLocalAnodeCoord));

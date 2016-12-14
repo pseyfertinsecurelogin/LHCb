@@ -7,8 +7,7 @@
  *  @date   2004-06-18
  */
 
-#ifndef RICHDET_DERICHMULTISOLIDRADIATOR_H
-#define RICHDET_DERICHMULTISOLIDRADIATOR_H 1
+#pragma once
 
 // Include files
 #include "RichDet/DeRichRadiator.h"
@@ -40,7 +39,7 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRichMultiSolidRadiator();
+  virtual ~DeRichMultiSolidRadiator() = default;
 
   /**
    * Retrieves reference to class identifier
@@ -142,5 +141,3 @@ private:
   bool m_firstUpdate{true};
 
 };
-
-#endif    // RICHDET_DERICHMULTISOLIDRADIATOR_H

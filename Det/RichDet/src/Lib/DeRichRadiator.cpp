@@ -28,19 +28,13 @@
 //=========================================================================
 DeRichRadiator::DeRichRadiator(const std::string & name) : DeRichBase(name) { }
 
-//=========================================================================
-//  destructor
-//=========================================================================
-DeRichRadiator::~DeRichRadiator() { }
-
 StatusCode DeRichRadiator::initialize()
 {
   // store the name of the radiator
-  const std::string::size_type pos = name().find("Rich");
+  const auto pos = name().find("Rich");
   setMyName( std::string::npos != pos ? name().substr(pos) : "DeRichRadiator_NO_NAME" );
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Initializing Radiator : " << rich() << " " << radiatorID() << endmsg;
+  _ri_debug << "Initializing Radiator : " << rich() << " " << radiatorID() << endmsg;
 
   return setRadiatorID();
 }
@@ -50,8 +44,7 @@ StatusCode DeRichRadiator::initialize()
 //=========================================================================
 StatusCode DeRichRadiator::initTabPropInterpolators()
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Initialising interpolators" << endmsg;
+  _ri_debug << "Initialising interpolators" << endmsg;
 
   if ( m_refIndexTabProp )
   {
@@ -101,11 +94,10 @@ StatusCode DeRichRadiator::initTabPropInterpolators()
 //=========================================================================
 // generateHltRefIndex
 //=========================================================================
-const Rich::TabulatedProperty1D* DeRichRadiator::generateHltRefIndex() const
+void DeRichRadiator::generateHltRefIndex()
 {
-  // return normal refractive index
+  // use normal refractive index
   m_hltRefIndex = m_refIndex;
-  return m_hltRefIndex.get();
 }
 
 //=========================================================================

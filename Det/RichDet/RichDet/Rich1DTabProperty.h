@@ -7,8 +7,7 @@
  *  @date   2003-08-13
  */
 
-#ifndef RICHDET_RICH1DTABPROPERTY_H
-#define RICHDET_RICH1DTABPROPERTY_H 1
+#pragma once
 
 // Base class
 #include "RichDet/Rich1DTabFunc.h"
@@ -119,5 +118,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHDET_RICH1DTABPROPERTY_H

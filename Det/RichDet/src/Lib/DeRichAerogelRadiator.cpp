@@ -35,11 +35,6 @@ DeRichAerogelRadiator::DeRichAerogelRadiator(const std::string & name)
   : DeRichSingleSolidRadiator ( name )
 { }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-DeRichAerogelRadiator::~DeRichAerogelRadiator() { }
-
 //=========================================================================
 // Retrieve Pointer to class defininition structure
 //=========================================================================
@@ -112,6 +107,13 @@ StatusCode DeRichAerogelRadiator::initialize ( )
 
   }
 
+  // Load RICH1 DetElem
+  SmartDataPtr<DetectorElement> deRich1( dataSvc(), DeRichLocations::Rich1 );
+  m_deRich1 = deRich1;
+  if ( !m_deRich1 )
+  {
+    return Error( "Failed to load DeRich1 detector element at " + DeRichLocations::Rich1 );
+  }
 
   // configure refractive index updates
 
@@ -143,34 +145,12 @@ StatusCode DeRichAerogelRadiator::initialize ( )
   return sc;
 }
 
-
-//=========================================================================
-// Access on demand the DeRich1 detector element
-//=========================================================================
-DetectorElement* DeRichAerogelRadiator::deRich1() const
-{
-  if ( !m_deRich1 )
-  {
-    SmartDataPtr<DetectorElement> deRich1( dataSvc(), DeRichLocations::Rich1 );
-    m_deRich1 = deRich1;
-    if ( !m_deRich1 )
-    {
-      throw GaudiException( "Failed to load DeRich1 detector element at " +
-                            DeRichLocations::Rich1,
-                            "DeRichAerogelRadiator::deRich1()",
-                            StatusCode::FAILURE );
-    }
-  }
-  return m_deRich1;
-}
-
 //=========================================================================
 // updateRefIndex
 //=========================================================================
 StatusCode DeRichAerogelRadiator::updateProperties ( )
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Refractive index update triggered" << endmsg;
+  _ri_debug << "Refractive index update triggered" << endmsg;
 
   // load various parameters
   const auto photonEnergyLowLimit     = deRich1()->param<double>("PhotonMinimumEnergyAerogel");
@@ -227,7 +207,7 @@ StatusCode DeRichAerogelRadiator::updateProperties ( )
 //=========================================================================
 StatusCode DeRichAerogelRadiator::
 calcSellmeirRefIndex (const std::vector<double>& momVect,
-                      const TabulatedProperty* tabProp )
+                      TabulatedProperty* tabProp )
 {
 
   // test the tab property pointer
@@ -238,8 +218,7 @@ calcSellmeirRefIndex (const std::vector<double>& momVect,
   }
 
   // reset table
-  auto * modTabProp = const_cast<TabulatedProperty*>( tabProp );
-  auto & aTable = modTabProp->table();
+  auto & aTable = tabProp->table();
   aTable.clear();
   aTable.reserve( momVect.size() );
 
@@ -265,11 +244,10 @@ calcSellmeirRefIndex (const std::vector<double>& momVect,
       SellF1 / ( SellE1 * SellE1 - epho * epho ) +
       SellF2 / ( SellE2 * SellE2 - epho * epho );
     const double curRindex = sqrt( 1.0 + pfe * scalingfactor );
-    aTable.emplace_back( TabulatedProperty::Entry( epho*Gaudi::Units::eV, curRindex ) );
+    aTable.emplace_back( epho*Gaudi::Units::eV, curRindex );
   }
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Table in TabulatedProperty " << tabProp->name()
+  _ri_debug << "Table in TabulatedProperty " << tabProp->name()
             << " updated with " << momVect.size() << " bins" << endmsg;
 
   return StatusCode::SUCCESS;
@@ -280,7 +258,7 @@ calcSellmeirRefIndex (const std::vector<double>& momVect,
 //=========================================================================
 StatusCode DeRichAerogelRadiator::
 calcRayleigh (const std::vector<double>& momVect,
-              const TabulatedProperty* tabProp )
+              TabulatedProperty* tabProp )
 {
 
   // test the tab property pointer
@@ -294,8 +272,7 @@ calcRayleigh (const std::vector<double>& momVect,
   const auto clarity = m_AerogelCond->param<double>("CurrentAerogel_Clarity");
 
   // reset table
-  auto * modTabProp = const_cast<TabulatedProperty*>( tabProp );
-  auto & aTable = modTabProp->table();
+  auto & aTable = tabProp->table();
   aTable.clear();
   aTable.reserve( momVect.size() );
 
@@ -304,11 +281,10 @@ calcRayleigh (const std::vector<double>& momVect,
     const auto epho       = momVect[ibin]/Gaudi::Units::eV;
     const auto wAgel      = (m_photMomWaveConv/1000./Gaudi::Units::eV/Gaudi::Units::nanometer) /epho;
     const auto pathlength = wAgel*wAgel*wAgel*wAgel/clarity*10;
-    aTable.emplace_back( TabulatedProperty::Entry( epho*Gaudi::Units::eV, pathlength ) );
+    aTable.emplace_back( epho*Gaudi::Units::eV, pathlength );
   }
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Table in TabulatedProperty " << tabProp->name()
+  _ri_debug << "Table in TabulatedProperty " << tabProp->name()
             << " updated with " << momVect.size() << " bins" << endmsg;
 
   return StatusCode::SUCCESS;
@@ -320,7 +296,7 @@ calcRayleigh (const std::vector<double>& momVect,
 //=========================================================================
 StatusCode DeRichAerogelRadiator::
 calcAbsorption (const std::vector<double>& momVect,
-                const TabulatedProperty* tabProp )
+                TabulatedProperty* tabProp )
 {
 
   // test the tab property pointer
@@ -336,8 +312,7 @@ calcAbsorption (const std::vector<double>& momVect,
   const auto constA = m_AerogelCond->param<double>("CurrentAerogel_Aconst");
 
   // reset table
-  auto * modTabProp = const_cast<TabulatedProperty*>( tabProp );
-  auto & aTable = modTabProp->table();
+  auto & aTable = tabProp->table();
   aTable.clear();
   aTable.reserve( momVect.size() );
 
@@ -346,11 +321,10 @@ calcAbsorption (const std::vector<double>& momVect,
   for ( unsigned int ibin = 0; ibin < momVect.size(); ++ibin )
   {
     const auto epho = momVect[ibin]/Gaudi::Units::eV;
-    aTable.emplace_back( TabulatedProperty::Entry( epho*Gaudi::Units::eV, pathlength ) );
+    aTable.emplace_back( epho*Gaudi::Units::eV, pathlength );
   }
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Table in TabulatedProperty " << tabProp->name()
+  _ri_debug << "Table in TabulatedProperty " << tabProp->name()
             << " updated with " << momVect.size() << " bins" << endmsg;
 
   return StatusCode::SUCCESS;

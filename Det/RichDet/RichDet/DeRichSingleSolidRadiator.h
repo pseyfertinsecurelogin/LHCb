@@ -9,8 +9,7 @@
  */
 //----------------------------------------------------------------------------
 
-#ifndef RICHDET_DERICHSINGLESOLIDRADIATOR_H
-#define RICHDET_DERICHSINGLESOLIDRADIATOR_H 1
+#pragma once
 
 // Include files
 #include "RichDet/DeRichRadiator.h"
@@ -41,7 +40,7 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRichSingleSolidRadiator();
+  virtual ~DeRichSingleSolidRadiator() = default;
 
   /**
    * Retrieves reference to class identifier
@@ -115,5 +114,3 @@ private:
   const Material* m_material = nullptr; ///< pointer to the radiator material
 
 };
-
-#endif    // RICHDET_DERICHSINGLESOLIDRADIATOR_H

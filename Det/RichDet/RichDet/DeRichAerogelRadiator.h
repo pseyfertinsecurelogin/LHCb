@@ -9,8 +9,7 @@
  */
 //----------------------------------------------------------------------------
 
-#ifndef RICHDET_DERICHAEROGELRADIATOR_H
-#define RICHDET_DERICHAEROGELRADIATOR_H 1
+#pragma once
 
 // Include files
 #include "RichDet/DeRichSingleSolidRadiator.h"
@@ -30,7 +29,7 @@ public:
   /// Standard constructor
   DeRichAerogelRadiator( const std::string & name = "" );
 
-  virtual ~DeRichAerogelRadiator( ); ///< Destructor
+  virtual ~DeRichAerogelRadiator( ) = default; ///< Destructor
 
   /**
    * Retrieves reference to class identifier
@@ -90,25 +89,25 @@ private:
   /// method for the calculation of the refractive index from the Sellmeir
   /// coeficients and update of the Tabulated Property
   StatusCode calcSellmeirRefIndex (const std::vector<double>& momVect,
-                                   const TabulatedProperty* tabProp );
+                                   TabulatedProperty* tabProp );
 
   /// method for the calculation of Rayleigh scattering from
   /// clarity and update of the Tabulated Property
   StatusCode calcRayleigh(const std::vector<double>& momVect,
-                          const TabulatedProperty* tabProp);
+                          TabulatedProperty* tabProp);
 
   /// method for the calculation of Absorption from const A
   /// and update of the Tabulated Property
   StatusCode calcAbsorption(const std::vector<double>& momVect,
-                            const TabulatedProperty* tabProp);
+                            TabulatedProperty* tabProp);
 
   /// Access on demand the DeRich1 detector element
-  DetectorElement* deRich1() const;
+  inline DetectorElement* deRich1() const noexcept { return m_deRich1; }
 
 private:
 
   /// access to DeRich1 for user parameters
-  mutable DetectorElement* m_deRich1 = nullptr;
+  DetectorElement* m_deRich1 = nullptr;
 
   /// Condition holding the aerogel parameters
   SmartRef<Condition> m_AerogelCond;
@@ -129,5 +128,3 @@ private:
   bool m_subTile{true};
 
 };
-
-#endif // RICHDET_DERICHAEROGELRADIATOR_H
