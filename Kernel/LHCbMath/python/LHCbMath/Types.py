@@ -293,20 +293,107 @@ def _v_iteritems_ ( self ) :
         yield i,self(i)
 
 
+
 # =============================================================================
-## helper function for Linear Algebra multiplications 
-def _linalg_mul_ ( a  , b ) :    
+## the multiplication operators 
+_mult_ops_ = {}
+## get the proper multiplication operator 
+def _get_mult_op_ ( klass1 , klass2 ) :
+    """Get the proper multiplication operator
+    """
+    t   = klass1 , klass2
+    ops = _mult_ops_.get( t , None )
+    if ops : return ops                   ## RETURN  
+
+    ## try to load the operators 
+    try :
+        ops = cpp.Gaudi.Math.MultiplyOp ( klass1 , klass2 )
+        _mult_ops_ [ t ] = ops
+        return ops                       ## RETURN 
+    except TypeError:
+        return None                      ## RETURN
+    
+    return None                          ## RETURN
+
+
+# =============================================================================
+## equailty operators 
+_eq_ops_ = {}
+## get the proper multiplication operator 
+def _get_eq_op_ ( klass1 , klass2 ) :
+    """Get the proper equality operator
+    """
+    t   = klass1 , klass2
+    ops = _eq_ops_.get( t , None )
+    if ops : return ops                   ## RETURN  
+
+    ## try to load the operators 
+    try :
+        ops = cpp.Gaudi.Math.EqualityOp ( klass1 , klass2 )
+        _eq_ops_ [ t ] = ops
+        return ops                       ## RETURN 
+    except TypeError:
+        return None                      ## RETURN
+    
+    return None                          ## RETURN
+
+
+# =============================================================================
+## helper function for Linear Algebra: multiplications
+#  multiplication of vectors, matrices, constants 
+#  @code
+#  vector1 = ...
+#  vector2 = ...
+#  matrix1 = ...
+#  matrix2 = ...
+#  print vector1 * vector2 
+#  print vector1 * matrix1
+#  print matrix1 * vector2
+#  print matrix1 * matrix2
+#  print vector1 * 2
+#  print matrix1 * 2
+#  @endcode
+def _linalg_mul_ ( a  , b ) :
+    """Multiplication of vectors, matrices, etc
+    >>> vector1 = ...
+    >>> vector2 = ...
+    >>> matrix1 = ...
+    >>> matrix2 = ...
+    >>> print vector1 * vector2 
+    >>> print vector1 * matrix1
+    >>> print matrix1 * vector2
+    >>> print matrix1 * matrix2
+    >>> print vector1 * 2
+    >>> print matrix1 * 2
+    """
+    ## simple cases: multiply by a constant 
     if isinstance ( b , ( int , long , float ) ) :
         b  = float( b )
         v  = a.__class__( a )
         v *= b
-        return v 
-    _ops_  = cpp.Gaudi.Math.MultiplyOp ( a.__class__ , b.__class__ )
-    return _ops_.multiply ( a , b )
+        return v
+    
+    ## get the proper operator 
+    ops   = _get_mult_op_ ( a.__class__ , b.__class__ )
+    if not ops : return NotImplemented 
+    return ops.multiply ( a , b )
 
 # =============================================================================
 ## helper function for "right" multiplication (Linear Algebra)
+#  "right multiplication" for a constant
+#  @code
+#  vector = ...
+#  matrix = ...
+#  print 2 * vector
+#  print 2 * matrix 
+#  @endcode 
 def _linalg_rmul_ ( a , b ) :
+    """``right multiplication'' for a constant
+    >>> vector = ...
+    >>> matrix = ...
+    >>> print 2 * vector
+    >>> print 2 * matrix
+    """
     if isinstance ( b , ( int , long , float ) ) :
         b  = float( b )
         v  = a.__class__( a )
@@ -316,7 +403,20 @@ def _linalg_rmul_ ( a , b ) :
 
 # =============================================================================
 ## helper function for Linear Algebra divisions 
+#  Division by a constant
+#  @code
+#  vector = ...
+#  matrix = ...
+#  print vector / 2 
+#  print matrix / 2 
+#  @endcode 
 def _linalg_div_ ( a  , b ) :
+    """Division by a constant
+    >>> vector = ...
+    >>> matrix = ...
+    >>> print vector / 2 
+    >>> print matrix / 2 
+    """
     if isinstance ( b , ( int , long , float ) ) :
         b  = float( b )
         v  = a.__class__( a )
@@ -325,34 +425,65 @@ def _linalg_div_ ( a  , b ) :
     return NotImplemented
 
 # =============================================================================
-## 
+## "cross-product" of two vectors to get a matrix
+#  @code 
+#  vector1 = ...
+#  vector2 = ...
+#  matrix =  vector1.cross ( vector2 )
+#  @endcode 
 def _vector_cross_ ( a, b ) :
-    try  : 
-        _ops_  = cpp.Gaudi.Math.MultiplyOp ( a.__class__ , b.__class__ )
-        return _ops_.cross ( a , b )
-    except TypeError :
-        return NotImplemented 
+    """Cross-product of two vectors to get a matrix
+    >>> vector1 = ...
+    >>> vector2 = ...
+    >>> matrix =  vector1.cross ( vector2 ) 
+    """
+    ## get the proper operator 
+    ops   = _get_mult_op_ ( a.__class__ , b.__class__ )
+    if not ops : return NotImplemented 
+    return ops.cross ( a , b )
+
 
 # =============================================================================
-## equality of vectors 
+## equality of vectors
+#  @code
+#  vector1 = ...
+#  vector2 = ...
+#  print vector1 == vector2
+#  print vector1 == ( 0, 2, 3 )
+#  print vector1 == [ 0, 2, 3 ]
+#  @endcode 
 def _vector_eq_ ( a , b ) :
-    """Equalty for vectors
+    """Equality for vectors
+    >>> vector1 = ...
+    >>> vector2 = ...
+    >>> print vector1 == vector2
+    >>> print vector1 == ( 0, 2, 3 )
+    >>> print vector1 == [ 0, 2, 3 ]
     """
-    if         a    is      b   : return True 
-    elif len ( a ) != len ( b ) : return False
+    if         a    is      b          : return True
+    elif not hasattr ( b , '__len__' ) : return False 
+    elif  len ( a ) != len ( b )       : return False        
     #
-    try  : 
-        _ops_  = cpp.Gaudi.Math.EqualOp ( a.__class__ , b.__class__ )
-        return _ops_.equal ( a , b )
-    except TypeError :
-        for i in len(a) :
-            if a[i] != b[i]   : return false
-        return True
+    ops = _get_eq_op_ ( a.__class__ , b.__class__ )
+    if ops : return ops.equal ( a , b )  ## RETURN
+    ## compare elements  
+    for i in range ( len( a ) ) :
+        if not _is_equal_ ( a[i] , b[i] ) : return False
+        
+    return True 
     
 # =============================================================================
-## equality of matrices 
+## equality of matrices
+#  @code
+#  matrix1 = ...
+#  matrix2 = ...
+#  print matrix1 == matrix2 
+#  @endcode 
 def _matrix_eq_ ( a , b ) :
-    """Equalty for matrices
+    """Equality for matrices
+    >>> matrix1 = ...
+    >>> matrix2 = ...
+    >>> print matrix1 == matrix2 
     """
     if  a is b : return True
     
@@ -362,11 +493,10 @@ def _matrix_eq_ ( a , b ) :
     except :
         pass
         
-    try  : 
-        _ops_  = cpp.Gaudi.Math.EqualOp ( a.__class__ , b.__class__ )
-        return _ops_.equal ( a , b )
-    except TypeError :
-        return NotImplemented
+    ops = _get_eq_op_ ( a.__class__ , b.__class__ )
+    if not ops : return NotImplemented
+    return ops.equal ( a , b )
+
 
 # =============================================================================
 ## decorate vector 
@@ -392,14 +522,15 @@ def deco_vector ( t ) :
         t.__radd__      = lambda a,b : _operations.add  ( a , b )
         t.__rsub__      = lambda a,b : _operations.rsub ( a , b )
         
-        t.__mul__       = lambda a,b : _linalg_mul_     ( a , b )
-        t.__rmul__      = lambda a,b : _linalg_rmul_    ( a , b )
-        t.__div__       = lambda a,b : _linalg_div_     ( a , b )
+        t.__mul__       = _linalg_mul_    
+        t.__rmul__      = _linalg_rmul_    
+        t.__div__       = _linalg_div_    
         
-        t.__eq__        = lambda a,b : _vector_eq_      ( a , b )
+        t.__eq__        = _vector_eq_     
         t.__neq__       = lambda a,b : not ( a == b ) 
+        t.__neg__       = lambda s   : s*(-1) 
 
-        t.cross         = lambda a,b : _vector_cross_   ( a , b )
+        t.cross         = _vector_cross_
         
         t.__rdiv__      = lambda s,*a :  NotImplemented 
 
@@ -1008,9 +1139,13 @@ def deco_matrix ( m  ) :
         m.__radd__      = lambda a,b : _operations.add  ( a , b )
         m.__rsub__      = lambda a,b : _operations.rsub ( a , b )
         
-        m.__mul__       = lambda a,b : _linalg_mul_     ( a , b )
-        m.__rmul__      = lambda a,b : _linalg_rmul_    ( a , b )
-        m.__div__       = lambda a,b : _linalg_div_     ( a , b )
+        m.__mul__       = _linalg_mul_    
+        m.__rmul__      = _linalg_rmul_    
+        m.__div__       = _linalg_div_     
+
+        m.__eq__        = _matrix_eq_     
+        m.__neq__       = lambda a,b : not ( a == b ) 
+        m.__neg__       = lambda s   : s*(-1)
         
         m.__rdiv__      = lambda s,*a :  NotImplemented 
 
@@ -1048,19 +1183,22 @@ def deco_symmatrix ( m ) :
         m ._old_rsub_   = m.__rsub__
         m ._old_div_    = m.__div__
 
-        m . __add__     = lambda a,b : _matrix_add_  (a,b)
-        ## m . __radd__    = lambda a,b : _matrix_radd_ (a,b)
-        m . __sub__     = lambda a,b : _matrix_sub_  (a,b)
-        ## m . __rsub__    = lambda a,b : _matrix_rsub_ (a,b)
-        m . __mul__     = lambda a,b : _matrix_mul_  (a,b)
-        m . __rmul__    = lambda a,b : _matrix_rmul_ (a,b)
-        m . __div__     = lambda a,b : _matrix_div_  (a,b) 
+        _operations   = cpp.Gaudi.Math.MtrxOps( m )
+        
+        m.__add__       = lambda a,b : _operations.add  ( a , b )
+        m.__sub__       = lambda a,b : _operations.sub  ( a , b )
+        m.__radd__      = lambda a,b : _operations.add  ( a , b )
+        m.__rsub__      = lambda a,b : _operations.rsub ( a , b )
+        
+        m.__mul__       = _linalg_mul_    
+        m.__rmul__      = _linalg_rmul_    
+        m.__div__       = _linalg_div_     
 
-        m . __rdiv__    = lambda s,*a :  NotImplemented 
-
-        m.__eq__        = lambda a,b : _matrix_eq_   ( a , b )
+        m.__eq__        = _matrix_eq_     
         m.__neq__       = lambda a,b : not ( a == b ) 
+        m.__neg__       = lambda s   : s*(-1)
 
+        m.__rdiv__      = lambda s,*a :  NotImplemented 
 
         m._increment_  = _ms_increment_
         m.increment    = _ms_increment_
