@@ -151,9 +151,6 @@ L0MuonAlg::L0MuonAlg(const std::string& name,
   declareProperty("ModifyDigitsToolType", m_modifyInputToolName = "L0MuonModifyInputTool");
   declareProperty("ModifyDigitsToolName", m_modifyInputToolType = "L0MuonModifyInputTool");
 
-  m_totEvent = 0;
-  m_totBx = 0;
-  m_itck = -1 ;
 }
 
 

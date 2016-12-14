@@ -36,7 +36,7 @@ public:
 
 
   /// Standard constructor
-  HltVertexReportsWriter( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   ~HltVertexReportsWriter( ) override = default; ///< Destructor
 
@@ -52,13 +52,13 @@ private:
   // ----------------------- data members
 
   /// location of input
-  StringProperty m_inputHltVertexReportsLocation;
+  Gaudi::Property<std::string> m_inputHltVertexReportsLocation { this, "InputHltVertexReportsLocation",  LHCb::HltVertexReportsLocation::Default };
 
   /// location of output
-  StringProperty m_outputRawEventLocation;
+  Gaudi::Property<std::string> m_outputRawEventLocation { this,  "OutputRawEventLocation", LHCb::RawEventLocation::Default };
 
   /// SourceID to insert in the bank header
-  IntegerProperty m_sourceID;
+  Gaudi::Property<int> m_sourceID { this, "SourceID", kSourceID_Dummy };
 
   /// HltANNSvc for making selection names to int selection ID
   SmartIF<IANNSvc> m_hltANNSvc;

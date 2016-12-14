@@ -1,4 +1,4 @@
-#ifndef CONFIGDBACCESSSVC_H 
+#ifndef CONFIGDBACCESSSVC_H
 #define CONFIGDBACCESSSVC_H 1
 
 // Include files
@@ -22,17 +22,16 @@ namespace coral {
 }
 
 /** @class ConfigDBAccessSvc ConfigDBAccessSvc.h
- *  
+ *
  *  functionality:
  *        read/write configure information to CORAL database
  *
  *  @author Gerhard Raven
  *  @date   2007-12-20
  */
-class ConfigDBAccessSvc : public extends1<Service,IConfigAccessSvc> {
+class ConfigDBAccessSvc : public extends<Service,IConfigAccessSvc> {
 public:
-  ConfigDBAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
-  ~ConfigDBAccessSvc( ) override = default;     ///< Destructor
+  using extends::extends;
 
   StatusCode initialize() override;    ///< Service initialization
   StatusCode finalize() override;      ///< Service initialization
@@ -55,7 +54,7 @@ private:
   template <typename T> boost::optional<T>                 read(const typename table_traits<T>::key_type&);
   template <typename T> typename table_traits<T>::key_type write(const T& );
   template <typename T> void                               createTable();
-  
+
   StatusCode openConnection();
   StatusCode createSchema();
 
@@ -64,11 +63,11 @@ private:
   template <typename iter> void writeCacheEntries( const std::string&, const std::string&, iter, iter);
   void createCacheTables();
 
-  std::string                          m_connection;
-  coral::ISessionProxy*                m_session = nullptr;
-  ICOOLConfSvc*                        m_coolConfSvc = nullptr;
-  bool                                 m_readOnly;
-  bool                                 m_createSchema;
+  Gaudi::Property<std::string>  m_connection { this, "Connection" };
+  coral::ISessionProxy*         m_session = nullptr;
+  ICOOLConfSvc*                 m_coolConfSvc = nullptr;
+  Gaudi::Property<bool>         m_readOnly { this, "ReadOnly", true };
+  Gaudi::Property<bool>         m_createSchema { this, "CreateSchema", false };
 
 };
 #endif // CONFIGDBACCESSSVC_H

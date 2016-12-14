@@ -85,11 +85,12 @@ namespace Rich
       ShortType
       RichNonZeroSuppData<Version,Header,Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
                                                                     const LHCb::RichSmartID hpdID ) const
-      {     
-        m_nHits = 0; // reset number of hits to zero
-
+      {
         // reserve size in hit vector ( guess )
         ids.reserve( 96 );
+
+        // count hits made
+        ShortType nHits(0);
 
         // Fill with active channels
         for ( ShortType iRow = 0; iRow < MaxDataSize; ++iRow )
@@ -103,33 +104,12 @@ namespace Rich
                                 hpdID.pdNumInCol(),
                                 hpdID.pdCol(),
                                 iRow, iCol );
-              ++m_nHits; // count hits
+              ++nHits;
             }
           }
         }
 
-        return m_nHits;
-      }
-
-      template< class Version, class Header, class Footer >
-      ShortType RichNonZeroSuppData<Version,Header,Footer>::hitCount() const
-      {
-        if ( m_nHits < 0 )
-        {
-          // not yet calculated, so need to do it here
-          m_nHits = 0;
-          for ( ShortType iRow = 0; iRow < MaxDataSize; ++iRow )
-          {
-            for ( ShortType iCol = 0; iCol < MaxDataSize; ++iCol )
-            {
-              if ( isPixelActive(iRow,iCol) )
-              {
-                ++m_nHits; // count hits
-              }
-            }
-          }
-        }
-        return static_cast<ShortType>(m_nHits);
+        return nHits;
       }
 
     } // end V2 namespace

@@ -428,12 +428,10 @@ LoKi::Algorithms::AnyPassed::AnyPassed
 // ============================================================================
 LoKi::Algorithms::AnyPassed::~AnyPassed()
 {
-  for ( auto ia = m_algorithms.begin() ; m_algorithms.end() != ia ; ++ia )
-  {
-    if ( ( *ia )  && !gaudi() )
-    {
+  for ( auto& ia : m_algorithms) {
+    if ( ia && !gaudi() ) {
       // Warning("IAlgorithm: manual reset!") ;
-      ia->reset() ;
+      ia.reset() ;
     }
   }
 }

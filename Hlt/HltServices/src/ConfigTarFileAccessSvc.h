@@ -1,5 +1,4 @@
-// $Id: ConfigTarFileAccessSvc.h,v 1.1 2010-05-05 13:20:44 graven Exp $
-#ifndef CONFIGTARFILEACCESSSVC_H 
+#ifndef CONFIGTARFILEACCESSSVC_H
 #define CONFIGTARFILEACCESSSVC_H 1
 
 // Include files
@@ -8,7 +7,7 @@
 #include "ConfigArchiveAccessSvc.h"
 
 /** @class ConfigFileAccessSvc ConfigFileAccessSvc.h
- *  
+ *
  *  functionality:
  *        read/write configure information to files
  *
@@ -19,15 +18,16 @@ class IArchive;
 
 class ConfigTarFileAccessSvc : public ConfigArchiveAccessSvc {
 public:
-  ConfigTarFileAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
-  ~ConfigTarFileAccessSvc( ) override = default;     ///< Destructor
+  using ConfigArchiveAccessSvc::ConfigArchiveAccessSvc;
+
   StatusCode finalize() override;      ///< Service initialization
-private:
   IArchive*  file() const override;
 
+private:
+
   mutable std::unique_ptr<IArchive>    m_file;
-  mutable std::string                  m_name;   ///< filename of tar file from which to read configurations
-  std::string                          m_mode;   ///< which flags to specify when opening the tar file
-  bool                                 m_compress; ///< do we want to transparently compress items on write?
+  mutable Gaudi::Property<std::string> m_name { this, "File" };   ///< filename of tar file from which to read configurations
+  Gaudi::Property<std::string>         m_mode { this, "Mode", "ReadOnly" };   ///< which flags to specify when opening the tar file
+  Gaudi::Property<bool>                m_compress { this, "CompressOnWrite", true }; ///< do we want to transparently compress items on write?
 };
 #endif // CONFIGTARFILEACCESSSVC_H

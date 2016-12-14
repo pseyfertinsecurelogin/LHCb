@@ -48,12 +48,13 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
   unsigned int maxWarnings = 0;
   if (UNLIKELY(msgLevel(MSG::DEBUG))) maxWarnings = 9999;
 
-  static Gaudi::XYZPoint newPos1, newPos2;
+  Gaudi::XYZPoint newPos1, newPos2;
   double delta(0), prevdelta(0);
   int nOscillStep(0);
   int nDivergingStep(0);
   int nStuck(0);
   bool finished = false;
+  cache_t cache;
 
   for (int istep = 0; LIKELY(istep < m_maxnTry && !finished); ++istep) {
     double prevflt1      = mu1;
@@ -61,7 +62,7 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
     double prevprevdelta = prevdelta;
     prevdelta = delta ;
     if (UNLIKELY(!stepTowardPoca(traj1, mu1, restrictRange1,
-                                 traj2, mu2, restrictRange2, precision))) {
+                                 traj2, mu2, restrictRange2, precision,cache))) {
       status = StatusCode::FAILURE;
       break; // Parallel Trajectories in stepTowardPoca
     }
@@ -162,35 +163,28 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj,
 //=============================================================================
 //
 //=============================================================================
-bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1,
-                               double& mu1,
-                               bool restrictRange1,
-                               const LHCb::Trajectory& traj2,
-                               double& mu2,
-                               bool restrictRange2,
-                               double tolerance ) const
+bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, bool restrictRange1,
+                               const LHCb::Trajectory& traj2, double& mu2, bool restrictRange2,
+                               double tolerance, cache_t& cache ) const
 {
   // a bunch of ugly, unitialized member variables
-  // -- but, believe me, it really is faster this way...
-  // (assignment is faster than c'tor...)
-  traj1.expansion(mu1, m_p1, m_dp1dmu1, m_d2p1dmu12);
-  traj2.expansion(mu2, m_p2, m_dp2dmu2, m_d2p2dmu22);
-  const Gaudi::XYZVector d(m_p1 - m_p2);
+  traj1.expansion(mu1, cache.p1, cache.dp1dmu1, cache.d2p1dmu12);
+  traj2.expansion(mu2, cache.p2, cache.dp2dmu2, cache.d2p2dmu22);
+  const Gaudi::XYZVector d(cache.p1 - cache.p2);
   // if the distance between points is below 1e-4 mm, we consider the
   // minimisation to be converged
   if (UNLIKELY(d.mag2() < std::pow(1e-4 * Gaudi::Units::mm, 2))) {
     return true;
   }
   std::array<double, 3> mat = { // keep all terms up to order mu1, mu2, mu1 * mu2
-    m_dp1dmu1.mag2() + d.Dot(m_d2p1dmu12),
-    -m_dp2dmu2.Dot(m_dp1dmu1),
-    m_dp2dmu2.mag2() - d.Dot(m_d2p2dmu22),
+    cache.dp1dmu1.mag2() + d.Dot(cache.d2p1dmu12), -cache.dp2dmu2.Dot(cache.dp1dmu1),
+    cache.dp2dmu2.mag2() - d.Dot(cache.d2p2dmu22),
   };
   ROOT::Math::CholeskyDecomp<double, 2> decomp(&mat[0]);
   if (UNLIKELY(!decomp)) {
     // singular, or not pos. def; try again neglecting curvature
-    mat[0] = m_dp1dmu1.mag2(),
-      mat[2] = m_dp2dmu2.mag2();
+    mat[0] = cache.dp1dmu1.mag2(),
+    mat[2] = cache.dp2dmu2.mag2();
     decomp = ROOT::Math::CholeskyDecomp<double, 2>(&mat[0]);
     if (UNLIKELY(!decomp)) {
       // singular, or not pos. def; give up
@@ -212,7 +206,7 @@ bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1,
       return false;
     }
   }
-  const std::array<double, 2> rhs = { -d.Dot(m_dp1dmu1), d.Dot(m_dp2dmu2) };
+  const std::array<double, 2> rhs = { -d.Dot(cache.dp1dmu1), d.Dot(cache.dp2dmu2) };
   std::array<double, 2> dmu = rhs;
   decomp.Solve(dmu);
 

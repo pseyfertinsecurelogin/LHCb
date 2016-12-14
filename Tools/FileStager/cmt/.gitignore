@@ -1,6 +1,0 @@
-*.history
-version.cmt
-setup.*
-cleanup.*
-Makefile
-build.*
