@@ -9,6 +9,7 @@
 // ============================================================================
 #include <functional>
 #include <vector>
+#include <cmath>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -668,6 +669,8 @@ namespace Gaudi
       /// copy 
       ChebyshevSum (       ChebyshevSum&& ) = default ;
       // ======================================================================
+    public:  // constriuctors with conversions 
+      // ======================================================================
       ///  constructor from Polinomial           (efficient)
       explicit ChebyshevSum ( const Polynomial&  poly ) ;
       ///  constructor from Bernstein            (delegation) 
@@ -1180,7 +1183,56 @@ namespace Gaudi
       const double                   tau  ) ;
     // ========================================================================    
     
-    // ========================================================================    
+    // ========================================================================
+    /** construct chebyshev approximation for arbitrary function 
+     *  @param func the function
+     *  @param x_min low edge
+     *  @param x_max high edge 
+     *  @return Chebyshev approximation 
+     *  @see ChebyshevSum 
+     *  @code 
+     *  FUNC func = ...
+     *  ChebyshevSum a = chebyshev_sum<6> ( func , x_min , x_max ) ;
+     *  @endcode 
+     *  
+     */
+    template <unsigned short N, class FUNCTION>
+    inline ChebyshevSum 
+    chebyshev_sum ( FUNCTION     func        , 
+                    const double x_min  = -1 , 
+                    const double x_max  =  1 ) 
+    { 
+      // array of precomputed function values 
+      std::array<double,N>   fv ;
+      // 
+      const double xmin = std::min ( x_min , x_max ) ;
+      const double xmax = std::max ( x_min , x_max ) ;
+      //
+      const double xhs = 0.5 * ( xmin + xmax ) ;
+      const double xhd = 0.5 * ( xmax - xmin ) ;
+      const long double pi_N = M_PIl / N ;
+      auto _xi_ = [xhs,xhd,pi_N] ( const unsigned short k ) 
+        { return std::cos ( pi_N * ( k + 0.5 ) ) * xhd + xhs ; } ;
+      for ( unsigned short i = 0 ; i < N ; ++i ) { fv[i] = func ( _xi_ ( i ) ) ; }
+      //
+      ChebyshevSum cs ( N , xmin , xmax ) ;
+      for ( unsigned short i = 0 ; i < N + 1 ; ++i ) 
+      {
+        double c_i = 0 ;
+        if ( 0 == i ) 
+        { for ( unsigned short k = 0 ; k < N ; ++k ) { c_i += fv[k] ; } }
+        else 
+        {
+          for ( unsigned short k = 0 ; k < N ; ++k ) 
+          { c_i += fv[k] * std::cos ( pi_N * i * ( k + 0.5 ) ) ; }
+        }
+        c_i *= 2.0 / N ;
+        if ( 0 == i ) { c_i *= 0.5 ;}
+        cs.setPar ( i, c_i ) ;
+      }
+      return cs ;
+    }              
+    // ========================================================================
   } //                                             end of namespace Gaudi::Math 
   // ==========================================================================
 } //                                                     end of namespace Gaudi
