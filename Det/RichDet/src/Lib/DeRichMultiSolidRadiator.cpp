@@ -37,9 +37,6 @@ DeRichMultiSolidRadiator::DeRichMultiSolidRadiator(const std::string & name)
   m_radiators.reserve(300);
 }
 
-// Standard Destructor
-DeRichMultiSolidRadiator::~DeRichMultiSolidRadiator() {}
-
 // Retrieve Pointer to class defininition structure
 const CLID& DeRichMultiSolidRadiator::classID()
 {

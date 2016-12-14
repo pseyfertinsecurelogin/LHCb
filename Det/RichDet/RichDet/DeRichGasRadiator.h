@@ -9,8 +9,7 @@
  */
 //----------------------------------------------------------------------------
 
-#ifndef RICHDET_DERICHGASRADIATOR_H
-#define RICHDET_DERICHGASRADIATOR_H 1
+#pragma once
 
 // Include files
 #include "RichDet/DeRichSingleSolidRadiator.h"
@@ -33,7 +32,7 @@ public:
   /// Standard constructor
   DeRichGasRadiator( const std::string & name = "" );
 
-  virtual ~DeRichGasRadiator( ); ///< Destructor
+  virtual ~DeRichGasRadiator( ) = default; ///< Destructor
 
   /**
    * Retrieves reference to class identifier
@@ -71,12 +70,12 @@ private:
    * @return A pointer to the HLT refractive index interpolated function of the radiator
    * @retval nullptr No interpolation function
    */
-  const Rich::TabulatedProperty1D* generateHltRefIndex() const override;
+  void generateHltRefIndex() override;
 
   /** Method for the calculation of the refractive index from the Sellmeir
    *  coeficients and update of the Tabulated Property */
   StatusCode calcSellmeirRefIndex ( const std::vector<double>& momVect,
-                                    const TabulatedProperty* tabProp,
+                                    TabulatedProperty* tabProp,
                                     const SmartRef<Condition>& gasParamCond ) const;
 
   /// method to use the old separate temperature and pressure conditions
@@ -101,5 +100,3 @@ private: // data
   SmartRef<Condition> m_scaleFactorCond;
 
 };
-
-#endif // RICHDET_DERICHGASRADIATOR_H

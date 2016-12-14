@@ -34,42 +34,12 @@ const CLID CLID_DeRichPMTPanel = 12020;  // User defined
 //=============================================================================
 DeRichPMTPanel::DeRichPMTPanel( const std::string & name )
   : DeRichPDPanel ( name ),
-    m_DePMTModules(std::vector<IDetectorElement*> (1)),
-    m_DePMTs(1,std::vector<DeRichPMT*>(2)),
-    m_DePMTAnodes(1,std::vector<IDetectorElement*>(2)),
-    m_PmtModulePlaneHalfSizeR1( std::vector<double> (0)),
-    m_PmtModulePlaneHalfSizeR2( std::vector<double>(0)),
-    m_RichPmtNumModulesInRowCol(std::vector<int>(4)),
-    m_RichPmtModuleCopyNumBeginPanel(std::vector<int>(4)),
-    m_RichPmtModuleCopyNumEndPanel(std::vector<int>(4)),
-    m_RichPmtModuleActiveAreaHalfSize(std::vector<double>(2)),
-    m_NumPmtInRowCol(std::vector<int>(2)),
-    m_NumPmtModuleInRich(std::vector<int>(4)),
-    m_Rich1PmtLensPresence(0),
-    m_Rich1PmtLensModuleCol(std::vector<int>(0)),
-    m_RichPmtModuleLensFlag(std::vector<bool>(350)),
-    m_Rich1PmtPanelWithLensXSize(std::vector<double>(2)),
-    m_Rich1PmtPanelWithLensYSize(std::vector<double>(2)),
-    m_Rich1PmtPanelWithLensColSize(std::vector<int>(2)),
-    m_RichNumLensPmtinModuleRowCol(std::vector<int>(2)),
-    m_Rich2UseGrandModule(false),
-    m_Rich2UseMixedModule(false), 
-    m_GrandPmtModulePlaneHalfSizeR2( std::vector<double>(0)),
-    m_MixedPmtModulePlaneHalfSizeR2( std::vector<double>(0)),
-    m_MixedStdPmtModulePlaneHalfSizeR2( std::vector<double>(0)),
-    m_RichGrandPmtModuleActiveAreaHalfSize(std::vector<double>(2)),
-    m_NumGrandPmtInRowCol(std::vector<int>(2)),
-    m_Rich2MixedModuleArrayColumnSize(std::vector<int>(3)),
-    m_ModuleIsWithGrandPMT(std::vector<bool>(350))
+    m_RichPmtModuleLensFlag(350),
+    m_ModuleIsWithGrandPMT(350)
 {
   // Set the PD type to PMT
   m_pdType = LHCb::RichSmartID::MaPMTID;
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-DeRichPMTPanel::~DeRichPMTPanel() {}
 
 //=============================================================================
 // Retrieve Pointer to class defininition structure
@@ -1378,7 +1348,7 @@ DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
 
   return res;
 }
-Gaudi::XYZPoint DeRichPMTPanel::DemagnifyFromLens(const Gaudi::XYZPoint aLensPoint) const
+Gaudi::XYZPoint DeRichPMTPanel::DemagnifyFromLens(const Gaudi::XYZPoint& aLensPoint) const
 {
   double aX = aLensPoint.x()/ m_Rich1LensMagnificationFactor ;
   double aY = aLensPoint.y()/ m_Rich1LensMagnificationFactor ;
@@ -1758,28 +1728,20 @@ StatusCode DeRichPMTPanel::setRichPanelAndSide ( )
 
   return StatusCode::SUCCESS;
 }
-//=========================================================================
-//  seModulecipy number
-//=========================================================================
 
-int DeRichPMTPanel::getModuleCopyNumber ( std::string aModuleName){
-
+int DeRichPMTPanel::getModuleCopyNumber( const std::string& aModuleName )
+{
+  
   int anumber=-1;
-   const std::string::size_type pos2 = aModuleName.find(":");
-   if ( std::string::npos == pos2 ){    error() << "A PMTModule  without a number!   " <<aModuleName<< endmsg;
-     
-   }else {
-     anumber = atoi( aModuleName.substr(pos2+1).c_str() );
-   }
-   
-   return anumber;
-   
-
+  const auto pos2 = aModuleName.find(":");
+  if ( std::string::npos == pos2 ) 
+  { 
+    error() << "A PMTModule  without a number!   " <<aModuleName<< endmsg;  
+  }
+  else
+  {
+    anumber = atoi( aModuleName.substr(pos2+1).c_str() );
+  }
+  
+  return anumber;
 }
-
-
-
-
-
-                           
-

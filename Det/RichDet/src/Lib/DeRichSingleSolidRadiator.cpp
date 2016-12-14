@@ -28,11 +28,7 @@ const CLID CLID_DeRichSingleSolidRadiator = 12040;  // User defined
 
 // Standard Constructor
 DeRichSingleSolidRadiator::DeRichSingleSolidRadiator(const std::string & name)
-  : DeRichRadiator ( name )
-{ }
-
-// Standard Destructor
-DeRichSingleSolidRadiator::~DeRichSingleSolidRadiator() { }
+  : DeRichRadiator ( name ) { }
 
 // Retrieve Pointer to class defininition structure
 const CLID& DeRichSingleSolidRadiator::classID()
@@ -45,8 +41,7 @@ StatusCode DeRichSingleSolidRadiator::initialize()
   const StatusCode initSC =  DeRichRadiator::initialize();
   if ( initSC.isFailure() ) return initSC;
   
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Starting initialisation for DeRichSingleSolidRadiator "
+  _ri_debug << "Starting initialisation for DeRichSingleSolidRadiator "
             << name() << endmsg;
 
   m_solid    = geometry()->lvolume()->solid();
@@ -56,36 +51,32 @@ StatusCode DeRichSingleSolidRadiator::initialize()
   if ( !m_material ) 
   { error() << "Failed to load material" << endmsg; return StatusCode::FAILURE; }
 
-  for ( const auto mat : m_material->tabulatedProperties() )
+  for ( auto mat : m_material->tabulatedProperties() )
   {
     if ( mat )
     {
       if ( mat->type() == "RINDEX" )
       {
         m_refIndexTabProp = mat;
-        if ( msgLevel(MSG::DEBUG) )
-          debug() << "Found TabProp " << m_refIndexTabProp->name() << " type "
+        _ri_debug << "Found TabProp " << m_refIndexTabProp->name() << " type "
                   << m_refIndexTabProp->type() << endmsg;
       }
       if ( mat->type() == "RAYLEIGH" )
       {
         m_rayleighTabProp = mat;
-        if ( msgLevel(MSG::DEBUG) )
-          debug() << "Found TabProp " << m_rayleighTabProp->name() << " type "
+        _ri_debug << "Found TabProp " << m_rayleighTabProp->name() << " type "
                   << m_rayleighTabProp->type() << endmsg;
       }
       if ( mat->type() == "CKVRNDX" )
       {
         m_chkvRefIndexTabProp = mat;
-        if ( msgLevel(MSG::DEBUG) )
-          debug() << "Found TabProp " << m_chkvRefIndexTabProp->name() << " type "
+        _ri_debug << "Found TabProp " << m_chkvRefIndexTabProp->name() << " type "
                   << m_chkvRefIndexTabProp->type() << endmsg;
       }
       if ( mat->type() == "ABSLENGTH" )
       {
         m_absorptionTabProp = mat;
-        if ( msgLevel(MSG::DEBUG) )
-          debug() << "Found TabProp " << m_absorptionTabProp->name() << " type "
+        _ri_debug << "Found TabProp " << m_absorptionTabProp->name() << " type "
                   << m_absorptionTabProp->type() << endmsg;
       }
     }
@@ -98,8 +89,7 @@ StatusCode DeRichSingleSolidRadiator::initialize()
     return StatusCode::FAILURE;
   }
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() <<" Centre " << geometry()->toGlobal(Gaudi::XYZPoint(0,0,0)) << endmsg;
+  _ri_debug <<" Centre " << geometry()->toGlobal(Gaudi::XYZPoint(0,0,0)) << endmsg;
 
   return initSC;
 }
