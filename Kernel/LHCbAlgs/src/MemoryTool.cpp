@@ -18,7 +18,7 @@ DECLARE_TOOL_FACTORY(MemoryTool)
 MemoryTool::MemoryTool(const std::string& type,
                         const std::string& name,
                        const IInterface* parent) :
-  GaudiHistoTool(type, name, parent),
+  base_class(type, name, parent),
   m_totMem(counter("Total Memory/MB")),
   m_delMem(counter("Delta Memory/MB")) {
   setProperty ("HistoPrint", false);
@@ -28,14 +28,12 @@ MemoryTool::MemoryTool(const std::string& type,
 // initialize the tool
 // ============================================================================
 StatusCode MemoryTool::initialize() {
+  auto sc = base_class::initialize ();
   if (produceHistos()) {
-    m_plot1  = book(m_histo1.value());
-    m_plot2  = book(m_histo2.value());
-    if (!m_plot1 || !m_plot2) {
-      return StatusCode::FAILURE;
-    }
+     m_plot1  = book( m_histo1 ) ;
+     m_plot2  = book( m_histo2 ) ;
   }
-  return StatusCode::SUCCESS;
+  return sc;
 }
 
 // ============================================================================
@@ -50,26 +48,31 @@ StatusCode MemoryTool::finalize () {
   }
   m_plot1 = nullptr;
   m_plot2 = nullptr;
-  return GaudiHistoTool::finalize ();
+  return base_class::finalize ();
 }
 //=============================================================================
 // Plot the memory usage
 //=============================================================================
 void MemoryTool::execute()
 {
-  const auto mem = (double)System::virtualMemory();
+  const auto lmem = System::virtualMemory();
+  const double mem = lmem;
+
+  // get/set "previous" measurement
+  auto prev = double(m_prev.exchange(lmem))/1000.;  // memory in MB
+
   const auto memMB = mem / 1000. ;
-  
-  // We need to guard this method
-  std::lock_guard<std::mutex> guard(m_mutex);
+
+  /// grab current value, and (post!)increment event counter
+  auto counter = m_counter++;
 
   // Fill the counter for "valid" previous measurements
   m_totMem += memMB;
   // Fill the plot
   fill (m_plot1, memMB, 1, m_histo1.value().title());
-  
+
   // Fill the counter for "valid" previous measurements
-  const auto deltaMem = memMB - m_prev;
+  const auto deltaMem = memMB - prev;
   if (0 <= m_prev && (m_skip.value() == 0 || m_counter >= m_skip.value())) {
     // fill the counter
     m_delMem += deltaMem;
@@ -77,29 +80,25 @@ void MemoryTool::execute()
     fill(m_plot2, deltaMem, 1, m_histo2.value().title());
   }
 
-  // set "previous" measurement
-  m_prev = memMB;
 
   if (m_bins.value() > 0) {
-    if (m_bins.value() > m_counter) {
-      plot(m_counter+1, "Virtual mem, all entries", "Virtual memory (kB), first 'HistoSize' entries",
+    if (m_bins.value() > counter) {
+      plot(counter+1, "Virtual mem, all entries", "Virtual memory (kB), first 'HistoSize' entries",
            0.5, m_bins.value()+0.5, m_bins.value(), mem);
     }
-    if (0 == m_counter % m_bins.value()) {
-      const unsigned int bin = 1 + (m_counter/m_bins.value());
+    if (0 == counter % m_bins.value()) {
+      const unsigned int bin = 1 + (counter/m_bins.value());
       plot(bin, "Virtual mem, downscaled", "Virtual memory (kB), downscaled entries",
            0.5, m_bins.value()+0.5, m_bins.value(), mem);
     }
   }
 
-  /// increment event counter
-  ++m_counter;
 
   // check Total Memory for the particular event
-  if (16 <  m_totMem.nEntries() &&
-      0  <  m_totMem.flagMean() &&
-      0  <  m_totMem.flagRMS()  &&
-      0  <  memMB                &&
+  if ( 16 <  m_totMem.nEntries() &&
+       0  <  m_totMem.flagMean() &&
+       0  <  m_totMem.flagRMS()  &&
+       0  <  memMB               &&
       memMB > m_totMem.flagMean() + 3 * m_totMem.flagRMS ()) {
     Warning ("Total Memory for the event exceeds 3*sigma" ,
              StatusCode::SUCCESS, m_maxPrint.value()).ignore() ;
@@ -109,10 +108,10 @@ void MemoryTool::execute()
                << "+-" << m_totMem.flagRMS() << ")" << endmsg ;
   }
   // check the particular event
-  if (0 <= m_prev                &&
+  if ( 0 <= prev                &&
       16 <  m_delMem.nEntries() &&
-      0  <  m_delMem.flagRMS()  &&
-      0  <  deltaMem             &&
+       0 <  m_delMem.flagRMS()  &&
+       0 <  deltaMem            &&
       deltaMem > m_delMem.flagMean() + 3 * m_delMem.flagRMS ()) {
     Warning ("Delta Memory for the event exceeds 3*sigma" ,
              StatusCode::SUCCESS, m_maxPrint.value()).ignore() ;
@@ -122,7 +121,7 @@ void MemoryTool::execute()
                << "+-" << m_delMem.flagRMS() << ")" << endmsg ;
   }
   /// check the tendency:
-  if (((0 < m_check.value() && 0 == m_counter % m_check.value()) || 1 == m_check.value()) &&
+  if (((0 < m_check.value() && 0 == counter % m_check.value()) || 1 == m_check.value()) &&
       16 < m_delMem.nEntries()    &&
       0  < m_delMem.flagMean()    &&
       0  < m_delMem.flagMeanErr() &&
