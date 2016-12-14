@@ -5,6 +5,7 @@
 #include <cmath>
 #include <functional>
 #include <algorithm>
+#include <iterator>
 
 #ifdef __INTEL_COMPILER         // Disable ICC remark from Math headers
   #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
@@ -75,9 +76,9 @@ namespace SolidTicks
     bool    boolNext = true  ;
     for ( auto it = ticks.begin() ; it != ticks.end() ; ++it ) {
         // the last point is to be treated in a specific way
-        if     ( ticks.end   () != it + 1 ) { 
+        if     ( ticks.end   () != it + 1 ) {
           auto tickNext = 0.5 * ( (*it) + *(it+1) ) ;
-          boolNext = solid.isInside( point + vect * tickNext );  
+          boolNext = solid.isInside( point + vect * tickNext );
         }
         // get the index
         unsigned int index = it - ticks.begin();
@@ -231,7 +232,7 @@ namespace SolidTicks
 
    /** Remove or adjust intervals such that they overlap with tick range
    *  Assume that "ticks" are already sorted, come in pairs and
-   *  that adjancent ticks are removed.
+   *  that adjacent ticks are removed.
    *  @author      Wouter Hulsbergen
    *  @date        10.09.2007
    *  @see ISolid
@@ -243,16 +244,18 @@ namespace SolidTicks
   template <class TickContainer>
   unsigned int adjustToTickRange( TickContainer& ticks, const ISolid::Tick & tickMin, const ISolid::Tick & tickMax )
   {
-    if( !ticks.empty() ) {
-      static ISolid::Ticks validticks ; validticks.clear() ;
-      // explicitely use that ticks come in pairs
-      for( auto it = ticks.begin() ; it+1 < ticks.end(); it +=2)
-        if( *it <= tickMax && *(it+1) >= tickMin ) {
-          validticks.push_back( std::max( tickMin, *it) ) ;
-          validticks.push_back( std::min( tickMax, *(it+1)) ) ;
-        }
-      ticks.swap(validticks) ;
-    }
+    assert(ticks.size()%2==0);
+
+    auto l = std::find_if(ticks.begin(),ticks.end(),
+                          [&](double tick) { return tick >= tickMin; } );
+    if ( std::distance(ticks.begin(),l)%2!=0 ) *--l = tickMin;
+    ticks.erase(ticks.begin(),l);
+
+    auto r = std::find_if(ticks.begin(),ticks.end(),
+                          [&](double tick) { return tick > tickMax; } );
+    if ( std::distance(ticks.begin(),r)%2!=0 ) *r++ = tickMax;
+    ticks.erase(r,ticks.end());
+
     return ticks.size () ;
   }
 
