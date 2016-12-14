@@ -18,6 +18,13 @@
       <base     name = "KeyedObject&lt;unsigned int&gt;" />
       &KeyedObject;
 
+      <constructor  desc     = "Constructor"
+                    argList  = "unsigned int uniqueMatId">
+        <code> 
+          this->setKey(uniqueMatId); 
+        </code>
+      </constructor>      
+
       <constructor desc     = "Constructor"
        argList  = "unsigned int uniqueMatId, int nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dirX, double dirZ, bool isReflected">
         <code> 
