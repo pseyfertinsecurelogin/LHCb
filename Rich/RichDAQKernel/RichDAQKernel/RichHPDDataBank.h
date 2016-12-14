@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHHPDDATABANK_H
-#define RICHDAQ_RICHHPDDATABANK_H 1
+#pragma once
 
 // STD
 #include <sstream>
@@ -68,10 +67,6 @@ namespace Rich
 
       /// Returns the L0ID
       virtual Level0ID level0ID() const = 0;
-
-      /// Returns the hit count for this HPD.
-      /// To be removed once DC04/DC06 support no longer needed
-      virtual ShortType hitCount() const = 0;
 
       /// Returns the number of header words for this HPD
       virtual ShortType nHeaderWords() const = 0;
@@ -261,10 +256,6 @@ namespace Rich
       /// Returns the L0ID
       Level0ID level0ID() const override final;
 
-      /// Returns the hit count for this HPD
-      /// To be removed once DC04/DC06 support no longer needed
-      virtual ShortType hitCount() const override = 0;
-
       /// Returns the number of header words for this HPD
       ShortType nHeaderWords() const override final;
 
@@ -411,5 +402,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHDAQ_RICHHPDDATABANK_H
