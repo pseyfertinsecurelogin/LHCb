@@ -86,7 +86,7 @@ namespace Rich {
       fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
                         const LHCb::RichSmartID hpdID ) const
       {
-        m_nHits = 0; // reset number of hits to zero
+        Rich::DAQ::ShortType nHits = 0;
 
         // reserve size in hit vector ( guess )
         ids.reserve( 96 );
@@ -106,33 +106,12 @@ namespace Rich {
                                 iCol,    // pixel col
                                 iRow%8   // pixel subrow
                                 );
-              ++m_nHits; // count hits
+              ++nHits; // count hits
             }
           }
         }
 
-        return m_nHits;
-      }
-
-      template< class Version, class Header, class Footer >
-      Rich::DAQ::ShortType RichNonZeroSuppALICEData<Version,Header,Footer>::hitCount() const
-      {
-        if ( m_nHits < 0 )
-        {
-          // not yet calculated, so need to do it here
-          m_nHits = 0;
-          for ( Rich::DAQ::ShortType iRow = 0; iRow < Rich::DAQ::MaxDataSizeALICE; ++iRow )
-          {
-            for ( Rich::DAQ::ShortType iCol = 0; iCol < Rich::DAQ::MaxDataSize; ++iCol )
-            {
-              if ( isPixelActive(iRow,iCol) )
-              {
-                ++m_nHits; // count hits
-              }
-            }
-          }
-        }
-        return static_cast<Rich::DAQ::ShortType>(m_nHits);
+        return nHits;
       }
 
     } // end V1 namespace

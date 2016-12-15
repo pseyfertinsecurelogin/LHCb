@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHNONZEROSUPPDATA_H
-#define RICHDAQ_RICHNONZEROSUPPDATA_H 1
+#pragma once
 
 // version one
 #include "RichDAQKernel/RichNonZeroSuppData_V1.h"
@@ -20,5 +19,3 @@
 
 // version three
 #include "RichDAQKernel/RichNonZeroSuppData_V3.h"
-
-#endif // RICHDAQ_RICHNONZEROSUPPDATA_H

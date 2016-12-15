@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHDAQVERSIONS_H
-#define RICHDAQ_RICHDAQVERSIONS_H 1
+#pragma once
 
 // From RichUtils
 #include "RichUtils/RichDAQHeaderPD.h"
@@ -129,5 +128,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHDAQ_RICHDAQVERSIONS_H
