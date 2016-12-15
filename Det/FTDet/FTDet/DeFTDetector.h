@@ -153,32 +153,6 @@ public:
    */
   const DeFTMat* findMat( const LHCb::FTChannelID& id ) const;
 
-  /** Find the FT Station corresponding to the unique id
-   *  @return Pointer to the relevant station
-   */
-  const DeFTStation* findStation( unsigned int uniqueStationID ) const;
-
-  /** Find the FT Layer corresponding to the unique id
-   *  @return Pointer to the relevant layer
-   */
-  const DeFTLayer* findLayer( unsigned int uniqueLayerID ) const;
-
-  /** Find the FT Quarter corresponding to the unique id
-   *  @return Pointer to the relevant quarter
-   */
-  const DeFTQuarter* findQuarter( unsigned int uniqueQuarterID ) const;
-
-  /** Find the FT Module corresponding to the unique id
-   *  @return Pointer to the relevant module
-   */
-  const DeFTModule* findModule( unsigned int uniqueModuleID ) const;
-
-  /** Find the FT Mat corresponding to the unique id
-   *  @return Pointer to the relevant module
-   */
-  const DeFTMat* findMat( unsigned int uniqueMatID ) const;
-
-
   /**
    * Return a sensitive volume identifier for a given point in the
    * global reference frame. This function is vital for Gauss.
@@ -247,30 +221,7 @@ inline const DeFTMat* DeFTDetector::findMat(const LHCb::FTChannelID& aChannel) c
   return m ? m->findMat(aChannel) : 0;
 }
 
-inline const DeFTStation* DeFTDetector::findStation( unsigned int uniqueStationID ) const {
-  LHCb::FTChannelID tempChannelID(uniqueStationID);
-  return findStation(tempChannelID);
-}
 
-inline const DeFTLayer* DeFTDetector::findLayer( unsigned int uniqueLayerID ) const {
-  LHCb::FTChannelID tempChannelID(uniqueLayerID);
-  return findLayer(tempChannelID);
-}
-
-inline const DeFTQuarter* DeFTDetector::findQuarter( unsigned int uniqueQuarterID ) const {
-  LHCb::FTChannelID tempChannelID(uniqueQuarterID);
-  return findQuarter(tempChannelID);
-}
-
-inline const DeFTModule* DeFTDetector::findModule( unsigned int uniqueModuleID ) const {
-  LHCb::FTChannelID tempChannelID(uniqueModuleID);
-  return findModule(tempChannelID);
-}
-
-inline const DeFTMat* DeFTDetector::findMat( unsigned int uniqueMatID ) const {
-  LHCb::FTChannelID tempChannelID(uniqueMatID);
-  return findMat(tempChannelID);
-}
 
 
 #endif // DEFTDETECTOR_H

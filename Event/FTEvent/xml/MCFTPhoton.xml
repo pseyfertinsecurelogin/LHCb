@@ -19,16 +19,16 @@
       &KeyedObject;
 
       <constructor  desc     = "Constructor"
-                    argList  = "unsigned int uniqueMatId">
+                    argList  = "unsigned int sensDetID">
         <code> 
-          this->setKey(uniqueMatId); 
+          this->setKey(sensDetID); 
         </code>
       </constructor>      
 
       <constructor desc     = "Constructor"
-       argList  = "unsigned int uniqueMatId, int nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dirX, double dirZ, bool isReflected">
+       argList  = "unsigned int sensDetID, int nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dirX, double dirZ, bool isReflected">
         <code> 
-          this->setKey(uniqueMatId); 
+          this->setKey(sensDetID); 
           m_nPhotonsVec.push_back(nPhotons);
           m_mcHitVec.push_back(mcHit);
           m_timeVec.push_back(time);
