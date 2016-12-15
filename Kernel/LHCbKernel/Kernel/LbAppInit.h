@@ -4,6 +4,8 @@
 // STL
 #include <string>
 #include <vector>
+#include <mutex>
+#include <atomic>
 
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
@@ -11,7 +13,6 @@
 
 // from LHCbKernel
 #include "Kernel/ICondDBInfo.h"
-#include "Kernel/IEventCounter.h"
 
 // Forward declarations
 class IRndmEngine;
@@ -21,45 +22,43 @@ class IRndmGenSvc;
  *
  *  General LHCb Initialisation algorithm
  *
- *  @author Marco Cattaneo
- *  @date   2005-12-21
+ *  @author Marco Cattaneo, Sebastien Ponce
  */
 
-class LbAppInit : public GaudiAlgorithm
-{
+class LbAppInit : public GaudiAlgorithm {
 
 public:
 
-  /// Standard constructor
-  LbAppInit( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~LbAppInit( ); ///< Destructor
+  /// inherit constructor
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;     ///< Algorithm initialization
-  StatusCode execute   () override;     ///< Algorithm execution
   StatusCode finalize  () override;     ///< Algorithm finalization
 
 protected:
 
+  /// Check memory status and print info if it raised too much
+  void checkMem() const;
+
   /// Return number of events processed
-  long  eventCounter() const;
+  long eventCounter() const {
+    return m_evtCounter;
+  }
 
   /// Return name of application being run
-  const std::string& appName() const
-  {
+  const std::string& appName() const {
     return m_appName;
   }
 
   /// Return version of application being run
-  const std::string& appVersion() const
-  {
+  const std::string& appVersion() const {
     return m_appVersion;
   }
 
   /** Get the list of active CondDB tags
    *  @return vector of DB name, tag pairs. Empty if DB not available
    */
-  const std::vector<LHCb::CondDBNameTagPair> condDBTags();
+  const std::vector<LHCb::CondDBNameTagPair> condDBTags() const;
 
   /** Print the run number, event number and optional vector of seeds
    *  @param[in] evt event number
@@ -67,16 +66,16 @@ protected:
    *  @param[in] seeds (optional) vector of seeds
    *  @param[in] time (optional) time of the event
    */
-  void printEventRun( long long evt,
+  void printEventRun(long long evt,
                       int run,
                       std::vector<long int> *seeds = 0,
-                      Gaudi::Time time = 0              ) const;
+                      Gaudi::Time time = 0             ) const;
 
   /** Initialize the random number engine with the given seeds
    *  @param[in] seeds Vector of seeds
    *  @return    StatusCode
    */
-  StatusCode initRndm( const std::vector<long int>& seeds );
+  StatusCode initRndm(const std::vector<long int>& seeds) const;
 
   /** Get a vector of seeds. First three seeds are built from seed1 and seed2
    *  Last seed is hash including seed1, seed2 and name()
@@ -85,16 +84,15 @@ protected:
    *  @param[in] seed2 Second seed (typically event number)
    *  @return    vector of seeds
    */
-  std::vector<long int> getSeeds( unsigned int seed1, unsigned long long seed2 );
+  std::vector<long int> getSeeds(unsigned int seed1, unsigned long long seed2) const;
 
   /** Is printing OK for this event ?
    *  Checks the PrintFreq option to see how frequently mesages should be printed
    *  @retval true Messages should be printed this event
    *  @retval false Messages should be suppressed this event
    */
-  inline bool okToPrint() const
-  {
-    return ( m_printFreq > 0 && 0 == (eventCounter()-1)%m_printFreq );
+  inline bool okToPrint() const {
+    return (m_printFreq > 0 && 0 == (eventCounter()-1)%m_printFreq);
   }
 
 private:
@@ -103,39 +101,25 @@ private:
 
 private:
 
-  /// Property to skip some random numbers (default is zero)
-  int  m_skipFactor;
+  Gaudi::Property<int> m_skipFactor{this, "SkipFactor", 0, "skip some random numbers"};
+  Gaudi::Property<bool> m_singleSeed{this, "SingleSeed", false, "use only one seed"};
+  Gaudi::Property<bool> m_preload{this, "PreloadGeometry", false, "preload the geometry"};
+  Gaudi::Property<int> m_printFreq{this, "PrintFreq", 1, "event print frequency. > 0 indicate the rate at which event messages should be printed, < 0 suppress event messages entirely"};
+  Gaudi::Property<bool> m_printTime{this, "PrintEventTime", false, "print also the event time"};
+  Gaudi::Property< unsigned long long> m_increment{this, "Increment", 100, "Number of events to measure memory"};
+  Gaudi::Property<unsigned long long> m_memPurgeLimit{this, "MemoryPurgeLimit", 3400 * 1000, "The memory threshold at which to trigger a purge of the boost pools"}; // default to 3.4GB
+  Gaudi::Property<long long> m_minMemDelta{this, "MinMemoryDelta", 16, "The minimum change in memory usage (KB) to trigger a message"}; // defaults to 16KB
+  
+  mutable SmartIF<IRndmGenSvc> m_randSvc;  ///< Pointer to random number service
+  mutable IRndmEngine* m_engine{0};        ///< Pointer to random number engine
+  mutable std::atomic_ullong m_lastMem{0}; ///< Last memory usage
+  mutable std::mutex m_mutex;              ///< Mutex to secure non thread safe code, that is on demand initializations
 
-  /// Property to use only one seed (default is false)
-  bool m_singleSeed;
-
-  /// Property to preload the geometry (default is false)
-  bool m_preload;
-
-  /** @brief Property for event print frequency
-   *  Values > 0 indicate the rate at which event messages should be printed
-   *  Values < 0 suppress event messages entirely
-   */
-  int m_printFreq;
-
-  /// Property to print also the event time (default is false)
-  bool m_printTime;
-
-  // Member data
-  IRndmEngine*  m_engine;       ///< Pointer to random number engine
-  SmartIF<IRndmGenSvc>  m_randSvc;      ///< Pointer to random number service
-  SmartIF<ICondDBInfo>  m_condDBInfo;   ///< Pointer to Info interface of CondDB service
-  IEventCounter* m_evtCounter;  ///< Pointer to EventCounter interface
-  std::string   m_evtCounterName;  ///< Name of EventCounter tool
-  long long  m_eventMax;     ///< Number of events requested (ApplicationMgr.EvtMax)
-  std::string   m_appName;      ///< Application Name
-  std::string   m_appVersion;   ///< Application Version
-
-  unsigned long long m_increment; ///< Number of events to measure memory on
-  unsigned long long m_lastMem;   ///< Last memory usage
-  unsigned long long m_memPurgeLimit; ///< Memory limit to trigger a purge of the pools
-
-  long long m_minMemDelta; ///< Minimum memory delta to trigger a message
+  SmartIF<ICondDBInfo> m_condDBInfo; ///< Pointer to Info interface of CondDB service
+  std::atomic_long m_evtCounter{0};  ///< Pointer to EventCounter interface
+  long m_eventMax{0};                ///< Number of events requested (ApplicationMgr.EvtMax)
+  std::string m_appName{""};         ///< Application Name
+  std::string m_appVersion{""};      ///< Application Version
 
 };
 
