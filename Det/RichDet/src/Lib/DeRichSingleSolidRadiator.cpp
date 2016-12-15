@@ -38,7 +38,7 @@ const CLID& DeRichSingleSolidRadiator::classID()
 
 StatusCode DeRichSingleSolidRadiator::initialize()
 {
-  const StatusCode initSC =  DeRichRadiator::initialize();
+  const StatusCode initSC = DeRichRadiator::initialize();
   if ( initSC.isFailure() ) return initSC;
   
   _ri_debug << "Starting initialisation for DeRichSingleSolidRadiator "

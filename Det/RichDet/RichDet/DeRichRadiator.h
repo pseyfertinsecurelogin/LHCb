@@ -108,7 +108,6 @@ public:
    */
   inline const Rich::TabulatedProperty1D* hltRefIndex() const
   {
-    //return ( m_hltRefIndex.get() ? m_hltRefIndex.get() : generateHltRefIndex() );
     return m_hltRefIndex.get();
   }
 

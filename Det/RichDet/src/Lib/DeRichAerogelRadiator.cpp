@@ -199,6 +199,9 @@ StatusCode DeRichAerogelRadiator::updateProperties ( )
   // Update interpolators in base class
   sc = initTabPropInterpolators();
 
+  // Check the HLT ref index
+  checkHltRefIndex();
+
   return sc;
 }
 

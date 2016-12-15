@@ -110,7 +110,7 @@ protected:
 
 private:
 
-  const ISolid* m_solid = nullptr;      ///< topmost solid of the radiator
+  const ISolid* m_solid = nullptr;      ///< top most solid of the radiator
   const Material* m_material = nullptr; ///< pointer to the radiator material
 
 };
