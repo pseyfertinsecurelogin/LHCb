@@ -45,8 +45,8 @@
         <code> // dummy  </code>
       </destructor>
 
-      <method   name   = "getUniqueMatID"
-                desc   = "Retrieve the uniqueMatID, key of the object"
+      <method   name   = "sensDetID"
+                desc   = "Retrieve the sensDetID, key of the object"
                 type   = "unsigned int"
                 const  = "TRUE"
                 access = "PUBLIC">
