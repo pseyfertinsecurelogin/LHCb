@@ -101,7 +101,7 @@ LHCb::Inspector::Inspector
 ( const Gaudi::Utils::Names& props )
   : m_members ()
   , m_names   ( props )
-  , m_algMgr  ()
+  , m_algMgr  ( Gaudi::svcLocator() )
 {
   m_members.push_back ( "Members" ) ;
   m_members.push_back ( "TopAlg"  ) ;
@@ -117,7 +117,7 @@ LHCb::Inspector::Inspector
   const Gaudi::Utils::Names& members )
   : m_members ( members )
   , m_names   ( props )
-  , m_algMgr  ()
+  , m_algMgr  ( Gaudi::svcLocator() )
 {}
 // ============================================================================
 StatusCode
@@ -167,15 +167,6 @@ LHCb::Inspector::inspect
   if ( members.empty() )
   { return StatusCode ( StatusCode::SUCCESS , true ) ; }            // REUTRN
   //
-  // at this point we need to get the algorithm manager
-  if ( !m_algMgr )
-  {
-    ISvcLocator* svcLoc = Gaudi::svcLocator () ;
-    if ( 0 == svcLoc ) { return StatusCode ( 501 ) ; }                // REUTRN
-    m_algMgr = svcLoc ;
-  }
-  if ( !m_algMgr  ) { return StatusCode ( 502 ) ; }                   // RETURN
-  //
   for ( Gaudi::Utils::Properties::const_iterator im = members.begin() ;
         members.end() != im ; ++im )
   {
@@ -206,17 +197,6 @@ LHCb::Inspector::inspect
   } // end of the loop over structural properties
   //
   return StatusCode( StatusCode::SUCCESS , true ) ;              // RETURN
-}
-// ============================================================================
-StatusCode LHCb::Inspector::setAlgManager
-( const IInterface* mgr )
-{
-  if ( 0 == mgr ) { return StatusCode ( 504 ) ; }
-  IInterface* _cmp = const_cast<IInterface*> ( mgr ) ;
-  m_algMgr = _cmp ;
-  return !m_algMgr ?
-    StatusCode ( 505 ) :
-    StatusCode ( StatusCode::SUCCESS , true ) ;
 }
 // ============================================================================
 /*  inspect the component
