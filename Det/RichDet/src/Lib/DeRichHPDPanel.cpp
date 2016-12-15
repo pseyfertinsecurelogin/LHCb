@@ -134,7 +134,7 @@ bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
   }
 
   // check if the HPD is active or dead
-  if ( m_deRichS->pdIsActive( id ) ) return false;
+  if ( !m_deRichS->pdIsActive( id ) ) return false;
 
   const auto HPDNumber = pdNumber(id);
   if ( HPDNumber.data() > nPDs() )
@@ -242,7 +242,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
     else
     {
       // Inside an HPD
-      if ( m_deRichS->pdIsActive(smartID) || // check if the HPD is active or dead
+      if ( !m_deRichS->pdIsActive(smartID) ||   // check if the HPD is active or dead
            ( mode.hpdKaptonShadowing() &&       // check for intersection with kapton shield
              HPD->testKaptonShadowing(pInPanel,vInPanel) ) )
       {
@@ -323,7 +323,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
         windowPointGlobal = HPD->geometry()->toGlobal( windowPointInHPD );
 
         // check if the HPD is active or dead
-        if ( m_deRichS->pdIsActive(smartID) )
+        if ( !m_deRichS->pdIsActive(smartID) )
         {
           res = LHCb::RichTraceMode::OutsideHPDPanel;
         }
