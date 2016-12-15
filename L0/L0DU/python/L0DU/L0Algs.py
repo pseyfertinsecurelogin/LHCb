@@ -68,7 +68,7 @@ def emulateL0DUSeq(suffix=''):
 
 L0CaloFromRawAlgName = "L0CaloFromRaw"
 L0MuonFromRawAlgName = "L0MuonFromRaw"
-L0DUFromRawAlgName   = "L0DUFromRaw"
+L0DUFromRawAlgName   = "L0DUDecoder"
 
 ## L0Calo algorithm
 def decodeL0Calo(suffix=''):
