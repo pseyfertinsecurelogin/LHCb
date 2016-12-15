@@ -42,8 +42,6 @@ namespace VeloDet {
 // used to control initialization
 bool DeVeloPhiType::m_staticDataInvalid = true;
 
-std::vector<std::pair<double,double> > DeVeloPhiType::m_stripLines;
-//std::vector<std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> > DeVeloPhiType::m_stripLimits;
 
 /** @file DeVeloPhiType.cpp
  *
@@ -170,7 +168,6 @@ StatusCode DeVeloPhiType::initialize()
 //==============================================================================
 void DeVeloPhiType::calcStripLines()
 {
-  m_stripLines.clear();
   double x1,y1,x2,y2;
   for(unsigned int strip=0; strip<numberOfStrips(); ++strip){
     double rInner;
@@ -194,7 +191,6 @@ void DeVeloPhiType::calcStripLines()
     gradient = (y2 - y1) /  (x2 - x1);
     double intercept;
     intercept = y2 - (gradient*x2);
-    m_stripLines.emplace_back(gradient,intercept);
     // Store strip limits in vector
     if(isCutOff(x1,y1)){
       if(0 < y1){

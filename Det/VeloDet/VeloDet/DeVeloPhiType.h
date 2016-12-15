@@ -356,7 +356,6 @@ private:
   double m_outerPitch;
   double m_rGap;
   std::vector<unsigned int> m_stripsInZone;
-  static std::vector<std::pair<double,double> > m_stripLines;
 
   /// First corner
   double m_corner1X1;
