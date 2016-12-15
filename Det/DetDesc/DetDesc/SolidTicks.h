@@ -5,6 +5,7 @@
 #include <cmath>
 #include <functional>
 #include <algorithm>
+#include <iterator>
 
 #ifdef __INTEL_COMPILER         // Disable ICC remark from Math headers
   #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
@@ -40,7 +41,7 @@
 namespace SolidTicks
 {
 
-  /** Remove all adjancent ticks
+  /** Remove all adjacent ticks
    *  @author      Vanya Belyaev   Ivan.Belyaev@itep.ru
    *  @date        10.02.2000
    *  @see ISolid
@@ -52,32 +53,30 @@ namespace SolidTicks
    */
   template <class SOLID, class aPoint, class aVector>
   inline unsigned int
-  RemoveAdjancent
+  RemoveAdjacent
   ( ISolid::Ticks     & ticks ,
     const aPoint      & point ,
     const aVector     & vect  ,
     const SOLID       & solid )
   {
-    // local typedefs
-    // no adjancent ?
+    // no adjacent ?
     if     ( ticks.size() <  2 ) { ticks.clear() ;    return 0 ; }    // RETURN
-    else if( ticks.size() == 2 )
-      {
+    else if( ticks.size() == 2 ) {
         auto tick1 = ticks.front () ;           // first tick
         auto tick2 = ticks.back  () ;           // last  tick
         auto tick  = 0.5 * ( tick1 + tick2 ) ;  // middle tick
         if( solid.isInside( point + vect * tick ) ) { return 2 ; } // RETURN
         else                        { ticks.clear() ; return 0 ; } // RETURN
-      }
-    // perform removing of adjancent  ticks
+    }
+    // perform removing of adjacent  ticks
     boost::container::static_vector<size_t, ISolid::MaxTicks> tmp;
     bool    boolPrev = true  ;
     bool    boolNext = true  ;
     for ( auto it = ticks.begin() ; it != ticks.end() ; ++it ) {
         // the last point is to be treated in a specific way
-        if     ( ticks.end   () != it + 1 ) { 
+        if     ( ticks.end   () != it + 1 ) {
           auto tickNext = 0.5 * ( (*it) + *(it+1) ) ;
-          boolNext = solid.isInside( point + vect * tickNext );  
+          boolNext = solid.isInside( point + vect * tickNext );
         }
         // get the index
         unsigned int index = it - ticks.begin();
@@ -106,7 +105,7 @@ namespace SolidTicks
     return ticks.size();
   }
 
-  /** Sort Ticks, eliminate duplicates and remove all adjancent ticks
+  /** Sort Ticks, eliminate duplicates and remove all adjacent ticks
    *  @author      Vanya Belyaev   Ivan.Belyaev@itep.ru
    *  @date        10.02.2000
    *  @see ISolid
@@ -118,7 +117,7 @@ namespace SolidTicks
    */
   template <class SOLID, class aPoint, class aVector>
   inline unsigned int
-  RemoveAdjancentTicks
+  RemoveAdjacentTicks
   ( ISolid::Ticks     & ticks ,
     const aPoint  & point ,
     const aVector & vect  ,
@@ -131,14 +130,14 @@ namespace SolidTicks
     std::sort( ticks.begin() , ticks.end() ) ;
     // (2) eliminate duplicates and (3) shrink container
     ticks.erase( std::unique( ticks.begin() , ticks.end() )  , ticks.end() );
-    // remove adjancent
-    return RemoveAdjancent( ticks , point , vect , solid );
+    // remove adjacent
+    return RemoveAdjacent( ticks , point , vect , solid );
   }
 
 
- /** Eliminate duplicates and remove all adjancent ticks,
+ /** Eliminate duplicates and remove all adjacent ticks,
    *  Assume that "ticks" are already sorted  and
-   *  all adjancent ticks are removed!
+   *  all adjacent ticks are removed!
    *  @author      Vanya Belyaev   Ivan.Belyaev@itep.ru
    *  @date        10.02.2000
    *  @see ISolid
@@ -152,7 +151,7 @@ namespace SolidTicks
    */
   template <class SOLID, class aPoint, class aVector>
   inline unsigned int
-  RemoveAdjancentTicks
+  RemoveAdjacentTicks
   ( ISolid::Ticks      & ticks   ,
     const aPoint   & point   ,
     const aVector  & vect    ,
@@ -195,7 +194,7 @@ namespace SolidTicks
             ticks.push_back( tickMax ) ;
         }
     }
-    // adjancent are already removed
+    // adjacent are already removed
     return ticks.size() ;
   }
 
@@ -224,14 +223,14 @@ namespace SolidTicks
     auto newend  = std::unique( ticks.begin() , ticks.end() ) ;
     if( newend != ticks.end() || ticks.size()%2 != 0 ) {
       ticks.erase( newend, ticks.end()) ;
-      RemoveAdjancent( ticks , point , vect , solid );
+      RemoveAdjacent( ticks , point , vect , solid );
     }
     return ticks.size() ;
   }
 
    /** Remove or adjust intervals such that they overlap with tick range
    *  Assume that "ticks" are already sorted, come in pairs and
-   *  that adjancent ticks are removed.
+   *  that adjacent ticks are removed.
    *  @author      Wouter Hulsbergen
    *  @date        10.09.2007
    *  @see ISolid
@@ -243,20 +242,22 @@ namespace SolidTicks
   template <class TickContainer>
   unsigned int adjustToTickRange( TickContainer& ticks, const ISolid::Tick & tickMin, const ISolid::Tick & tickMax )
   {
-    if( !ticks.empty() ) {
-      static ISolid::Ticks validticks ; validticks.clear() ;
-      // explicitely use that ticks come in pairs
-      for( auto it = ticks.begin() ; it+1 < ticks.end(); it +=2)
-        if( *it <= tickMax && *(it+1) >= tickMin ) {
-          validticks.push_back( std::max( tickMin, *it) ) ;
-          validticks.push_back( std::min( tickMax, *(it+1)) ) ;
-        }
-      ticks.swap(validticks) ;
-    }
+    assert(ticks.size()%2==0);
+
+    auto r = std::find_if(ticks.rbegin(), ticks.rend(),
+                          [&](double tick) { return tick <= tickMax; } ).base();
+    if ( std::distance(ticks.begin(),r)%2!=0 ) *r++ = tickMax;
+    ticks.erase(r,ticks.end());
+
+    auto l = std::find_if(ticks.begin(),ticks.end(),
+                          [&](double tick) { return tick >= tickMin; } );
+    if ( std::distance(ticks.begin(),l)%2!=0 ) *--l = tickMin;
+    ticks.erase(ticks.begin(),l);
+
     return ticks.size () ;
   }
 
-} ///< end of namespace SolidTicks
+} ///  < end of namespace SolidTicks
 
 // ============================================================================
 // The End

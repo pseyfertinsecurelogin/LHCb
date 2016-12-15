@@ -186,8 +186,8 @@ unsigned int SolidBoolean::intersectionTicksImpl( const aPoint & Point,
                  std::back_inserter( ticks ) );
       childTicks.clear();
     }
-  /// sort and remove adjancent and some EXTRA ticks and return
-  return SolidTicks::RemoveAdjancentTicks( ticks , Point , Vector , *this );
+  /// sort and remove adjacent and some EXTRA ticks and return
+  return SolidTicks::RemoveAdjacentTicks( ticks , Point , Vector , *this );
 }
 // ============================================================================
 /** Calculate the maximum number of ticks that a straight line could make with this solid
@@ -253,10 +253,10 @@ unsigned int SolidBoolean::intersectionTicksImpl( const aPoint  & point,
   if( isOutBBox( point , vect , tickMin , tickMax ) ) { return 0; }
   ///
   intersectionTicks( point , vect , ticks );
-  // sort and remove adjancent and some EXTRA ticks and return
+  // sort and remove adjacent and some EXTRA ticks and return
   return
-    SolidTicks::RemoveAdjancentTicks( ticks , point , vect ,
-                                      tickMin , tickMax , *this );
+    SolidTicks::RemoveAdjacentTicks( ticks , point , vect ,
+                                     tickMin , tickMax , *this );
 }
 
 // ============================================================================
