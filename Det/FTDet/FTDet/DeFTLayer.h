@@ -17,12 +17,9 @@ static const CLID CLID_DeFTLayer = 8604;
 class DeFTLayer : public DetectorElement {
 
 public: 
-  /** Some typedefs */
-  typedef std::vector<DeFTQuarter*> Quarters;
-  typedef std::vector<DeFTModule*> Modules;
 
   /// Standard constructor
-  DeFTLayer( std::string name = "" );
+  using DetectorElement::DetectorElement;
 
   /// Initialization method
   StatusCode initialize() override;
@@ -44,7 +41,7 @@ public:
   double globalZ() const { return m_globalZ; }
 
   /** Returns the xy-plane at z-middle the layer */
-  const Gaudi::Plane3D plane() const { return m_plane; }
+  const Gaudi::Plane3D& plane() const { return m_plane; }
 
   /** Returns the stereo angle of the layer */
   double stereoAngle() const { return m_stereoAngle; }
@@ -83,15 +80,13 @@ public:
    */
   const DeFTModule* findModule( const LHCb::FTChannelID& aChannel) const;
 
-  /** flat vector of quarters
-   * @return vector of quarters
-   */
-  const Quarters& quarters() const;
-
 private:
 
-  Quarters m_quarters;             ///< vector of quarters
-  Modules m_modules;               ///< vector of modules
+  /// vector of quarters
+  std::array<DeFTQuarter*,4> m_quarters{{nullptr,nullptr,nullptr, nullptr}};
+
+  ///< flat vector of modules
+  boost::container::static_vector<DeFTModule*,24> m_modules;
 
   unsigned int m_layerID;          ///< layer ID number
   double m_globalZ;                ///< Global z position of layer closest to y-axis
@@ -112,7 +107,7 @@ inline const DeFTQuarter* DeFTLayer::findQuarter(const LHCb::FTChannelID& aChann
 /// Find module methods
 inline const DeFTModule* DeFTLayer::findModule(const LHCb::FTChannelID& aChannel) const {
   const DeFTQuarter* q = findQuarter(aChannel);
-  return q ? q->findModule(aChannel) : 0;
+  return q ? q->findModule(aChannel) : nullptr;
 }
 
 #endif // DEFTLAYER_H

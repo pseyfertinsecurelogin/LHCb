@@ -11,16 +11,6 @@
  *  @date   2016-07-18
  */
 
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-DeFTLayer::DeFTLayer( std::string name ) :
-DetectorElement ( std::move(name) )
-{
-  m_quarters.reserve(4);
-}
-
 //=============================================================================
 // classID function
 //=============================================================================
@@ -36,10 +26,13 @@ StatusCode DeFTLayer::initialize() {
   for (auto iQ = this->childBegin(); iQ != this->childEnd(); ++iQ) {
     DeFTQuarter* quarter = dynamic_cast<DeFTQuarter*>(*iQ);
     if (quarter) {
-      m_quarters.push_back(quarter);
-      // Create the flat list of modules
-      DeFTLayer::Modules modules = quarter->modules();
-      m_modules.insert(m_modules.end(), modules.begin(), modules.end());
+      unsigned int quarterID = quarter->quarterID();
+       if( quarterID < 4 ) {
+         m_quarters[quarterID] = quarter;
+         // Create the flat list of modules
+         auto modules = quarter->modules();
+         m_modules.insert(m_modules.end(), modules.begin(), modules.end());
+       }
     }
   }
 
@@ -69,13 +62,13 @@ StatusCode DeFTLayer::initialize() {
 /// Find the quarter for a given XYZ point
 const DeFTQuarter* DeFTLayer::findQuarter(const Gaudi::XYZPoint& aPoint) const {
   auto  iQ = std::find_if(m_quarters.begin(), m_quarters.end(),
-      [&aPoint](const DeFTQuarter* q){return q->isInside(aPoint); } );
+      [&aPoint](const DeFTQuarter* q){return q ? q->isInside(aPoint) : false ; } );
   return iQ != m_quarters.end() ? *iQ : nullptr ;
 }
 
 /// Find the module for a given XYZ point
 const DeFTModule* DeFTLayer::findModule(const Gaudi::XYZPoint& aPoint) const {
   auto  iM = std::find_if(m_modules.begin(), m_modules.end(),
-      [&aPoint](const DeFTModule* m){return m->isInside(aPoint); } );
+      [&aPoint](const DeFTModule* m){return m ? m->isInside(aPoint) : false; } );
   return iM != m_modules.end() ? *iM : nullptr ;
 }

@@ -10,15 +10,6 @@
  */
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-DeFTDetector::DeFTDetector( std::string name ) :
-DetectorElement( std::move(name) )
-{
-  m_stations.reserve(3);
-}
-
-//=============================================================================
 // classID function
 //=============================================================================
 const CLID& DeFTDetector::clID () const {
@@ -48,9 +39,14 @@ StatusCode DeFTDetector::initialize(){
   // loop over stations and fill stations vector
   for (auto  iS = this->childBegin(); iS != this->childEnd(); ++iS) {
     auto* station = dynamic_cast<DeFTStation*>(*iS);
-    if (station) m_stations.push_back(station);
+    if (station) {
+      unsigned int stationID = station->stationID();
+      if( stationID < 4 && stationID > 0) {
+        m_stations[stationID-1u] = station;
+        m_nStations++;
+      }
+    }
   }
-  m_nStations  = m_stations.size();
 
   m_nModulesT1 = (unsigned int)param<int>("nModulesT1");
   m_nModulesT2 = (unsigned int)param<int>("nModulesT2");
@@ -77,7 +73,7 @@ StatusCode DeFTDetector::finalize(){
 /// Find the station for a given XYZ point
 const DeFTStation* DeFTDetector::findStation(const Gaudi::XYZPoint& aPoint) const {
   auto iS = std::find_if( std::begin(m_stations), std::end(m_stations),
-      [&aPoint] (const DeFTStation* s) {return s->isInside(aPoint) ;});
+      [&aPoint] (const DeFTStation* s) {return s ? s->isInside(aPoint) : false ;});
   return iS != m_stations.end() ? *iS : nullptr;
 }
 

@@ -23,12 +23,10 @@ static const CLID CLID_DeFTModule = 8605;
 
 class DeFTModule : public DetectorElement {
 
-  typedef std::vector<DeFTMat*>       Mats;
-
 public: 
 
   /// Standard constructor
-  DeFTModule( std::string name = "" );
+  using DetectorElement::DetectorElement;
 
   /** Initialization method */
   StatusCode initialize() override;
@@ -67,9 +65,6 @@ public:
   /** @return flag true if this quarter is top half */
   bool isTop() const {return quarterID() == 2 || quarterID() == 3; }
 
-  /** @return Vector of pointers to the FT Mats */
-  const Mats&   mats()   const { return m_mats;   }
-
   /** Find the FT Mat where a global point is
    *  @return Pointer to the relevant Mat
    */
@@ -105,7 +100,9 @@ public:
 private :
   LHCb::FTChannelID m_elementID;   ///< element ID
 
-  Mats m_mats;                     ///< vector of pointers to mats
+  /// vector of pointers to mats
+  std::array<DeFTMat*,4> m_mats{{nullptr, nullptr, nullptr, nullptr}};
+
   int m_nChannelsInModule;         ///< number of channels per module
   Gaudi::Plane3D m_plane;          ///< xy-plane in the z-middle of the module
   bool   m_reversed;               ///< Flag set when the pseudochannel-ordering is reversed
