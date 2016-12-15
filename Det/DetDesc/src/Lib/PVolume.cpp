@@ -22,16 +22,7 @@
  */
 // ============================================================================
 
-unsigned long PVolume::s_volumeCounter = 0;
-
-//namespace
-//{
-//  std::string ITOA( const int value )
-//  {
-//    char buffer[64];
-//    return std::string( buffer , buffer + sprintf( buffer , "%d" , value ) );
-//  };
-//};
+std::atomic<unsigned long> PVolume::s_volumeCounter = {0};
 
 
 // ============================================================================
