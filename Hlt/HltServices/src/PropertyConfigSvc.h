@@ -155,7 +155,7 @@ private:
   std::unique_ptr<std::ostream>        m_os;
   Gaudi::Property<bool>                m_createGraphVizFile { this, "createGraphVizFile", false };
   Gaudi::Property<bool>                m_allowFlowChanges { this, "AllowFlowChanges",false};
-  mutable std::unique_ptr<std::vector<std::string> > m_initialTopAlgs;
+  mutable boost::optional<std::vector<std::string> > m_initialTopAlgs;
 
   void onCreate(const IAlgTool* tool) override;
 

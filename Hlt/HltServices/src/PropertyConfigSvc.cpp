@@ -125,7 +125,7 @@ StatusCode PropertyConfigSvc::initialize() {
    if ( !m_toolSvc )  return StatusCode::FAILURE;
    m_toolSvc->registerObserver(this);
 
-   if (!m_ofname.empty()) m_os.reset( new boost::filesystem::ofstream( m_ofname.value() ) );
+   if (!m_ofname.empty()) m_os = std::make_unique<boost::filesystem::ofstream>( m_ofname.value() );
 
   // read table of pre-assigned, possible configurations for this job...
   // i.e. avoid reading _everything_ when we really need to be quick
@@ -530,7 +530,7 @@ PropertyConfigSvc::setTopAlgs(const ConfigTreeNode::digest_type& id) const {
     if(msgLevel(MSG::DEBUG)) debug() << " current TopAlgs: " << topAlgs.toString() << endmsg;
 
     if (!m_initialTopAlgs) {
-        m_initialTopAlgs.reset( new vector<string>( topAlgs.value() ) );
+        m_initialTopAlgs = topAlgs.value();
     }
 
     vector<const PropertyConfig*> ids;
