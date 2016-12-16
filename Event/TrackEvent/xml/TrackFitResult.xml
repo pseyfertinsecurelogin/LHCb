@@ -43,6 +43,12 @@
 
       <attribute
         type = 'LHCb::ChiSquare'
+        name = 'chi2'
+        desc = 'Track chi square'
+        access = 'PRIVATE' />
+
+      <attribute
+        type = 'LHCb::ChiSquare'
         name = 'chi2Velo'
         desc = 'VELO segment chi square'
         access = 'PRIVATE' />
@@ -50,7 +56,7 @@
       <attribute
         type = 'LHCb::ChiSquare'
         name = 'chi2Upstream'
-        desc = 'Upstream chi square'
+        desc = 'Upstream segment chi square'
         access = 'PRIVATE' />
 
       <attribute
@@ -87,35 +93,46 @@
 	      nonconstaccessor = 'TRUE' />
 
       <constructor 
-	desc     = 'Constructor'>
+	      desc     = 'Constructor'>
       </constructor>
    
       <method
-	type     = ''
-	name     = 'TrackFitResult'
-	argList  = 'const LHCb::TrackFitResult&amp; rhs'
-	access   = 'PROTECTED'
-	desc     = 'Copy constructor (hidden). Use clone method instead.'>
+      	type     = ''
+      	name     = 'TrackFitResult'
+      	argList  = 'const LHCb::TrackFitResult&amp; rhs'
+      	access   = 'PROTECTED'
+      	desc     = 'Copy constructor (hidden). Use clone method instead.'>
       </method>      
 
       <destructor
         desc = 'Destructor'
-	virtual = 'TRUE' >
+	      virtual = 'TRUE' >
       </destructor>
+
+      <method
+        type    = 'LHCb::ChiSquare'
+        name    = 'chi2Match'
+        desc    = 'Upstream versus downstream segment chi square'
+        const   = 'TRUE'>
+        <code>
+  return LHCb::ChiSquare(m_chi2.chi2() - m_chi2Upstream.chi2() - m_chi2Downstream.chi2(),
+    m_chi2.nDoF() - m_chi2Upstream.nDoF() - m_chi2Downstream.chi2());
+        </code>
+      </method>
 
       <method
         type    = 'void'
         name    = 'copy'
         argList = 'const LHCb::TrackFitResult&amp; rhs'
         desc    = 'Copy the info from the argument track into this track'
-	virtual = 'FALSE'
-	access  = 'PROTECTED'/>
+      	virtual = 'FALSE'
+      	access  = 'PROTECTED'/>
 
       <method
         type    = 'LHCb::TrackFitResult*'
         name    = 'clone'
         desc    = 'Clone the track (you take ownership of the pointer)'
-	const   = 'TRUE'
+	      const   = 'TRUE'
         virtual = 'TRUE' />
 
       <method
@@ -212,7 +229,7 @@
         type    = 'void'
         name    = 'reset'
         desc    = 'Clear the track before re-use'
-	virtual = 'TRUE'>
+	      virtual = 'TRUE'>
       </method>
 
 
