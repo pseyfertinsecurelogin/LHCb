@@ -223,7 +223,7 @@
         type    = 'const LHCb::Measurement*'
         name    = 'measurement'
         argList = 'const LHCb::LHCbID value'
-        desc    = 'Return the measurement on the track corresponding to the input LHCbID. Call first the 'isMeasurementOnTrack' method before calling this one, as it throws an exception if the LHCbID is not present! (ONLY for tracking code, not for general use.)'
+        desc    = 'Return the measurement on the track corresponding to the input LHCbID. Call first the "isMeasurementOnTrack" method before calling this one, as it throws an exception if the LHCbID is not present! (ONLY for tracking code, not for general use.)'
         const   = 'TRUE' />
 
       <method
