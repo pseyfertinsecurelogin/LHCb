@@ -239,5 +239,8 @@ double
 DeRichSingleSolidRadiator::refractiveIndex( const double energy, 
                                             const bool hlt ) const
 {
-  return (*(this->refIndex(hlt)))[energy*Gaudi::Units::eV];
+  const auto ind = refIndex(hlt);
+  if ( !ind )
+  { warning() << "Null ref. index pointer" << endmsg; return 0; }
+  return (*ind)[energy*Gaudi::Units::eV];
 }
