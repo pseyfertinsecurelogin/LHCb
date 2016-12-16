@@ -12,7 +12,7 @@
       virtual          = 'TRUE' >
 
       <import name='Measurement' />
-      <import name='ChiSquare' />
+      <import name='Event/ChiSquare.h' />
       <import name='Node' soft='FORWARDONLY' />
       <import name='LHCbID' soft='FORWARDONLY' />
       
