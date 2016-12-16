@@ -7,7 +7,7 @@
 
     <class
       name             = 'TrackFitResult'
-      author           = 'Jose Hernando, Eduardo Rodrigues, Wouter Hulsbergen'
+      author           = 'Jose Hernando, Eduardo Rodrigues, Wouter Hulsbergen, Daniel Campora'
       desc             = 'TrackFitResult holds transient information from the track fit'
       virtual          = 'TRUE' >
 
@@ -16,30 +16,60 @@
       <import name='LHCbID' soft='FORWARDONLY' />
       
       <typedef
-        type   = "std::vector&lt;LHCb::Measurement*&gt;"
-        def    = "MeasurementContainer"
-        desc   = "Container for LHCb::Measurements on track"
-        access = "PUBLIC"
-	/>
+        type   = 'std::vector&lt;LHCb::Measurement*&gt;'
+        def    = 'MeasurementContainer'
+        desc   = 'Container for LHCb::Measurements on track'
+        access = 'PUBLIC'
+	    />
 
       <typedef
-        type   = "std::vector&lt;LHCb::Node*&gt;"
-        def    = "NodeContainer"
-        desc   = "Container for LHCb::Nodes on track"
-        access = "PUBLIC"
-	/>
+        type   = 'std::vector&lt;LHCb::Node*&gt;'
+        def    = 'NodeContainer'
+        desc   = 'Container for LHCb::Nodes on track'
+        access = 'PUBLIC'
+	    />
       
       <attribute 
-	type = 'int'
-	name = 'nIter'
-	desc = 'Number of iterations in track fit'
-	access = 'PRIVATE' />
+      	type = 'int'
+      	name = 'nIter'
+      	desc = 'Number of iterations in track fit'
+      	access = 'PRIVATE' />
       
       <attribute 
-	type = 'double'
-	name = 'pScatter'
-	desc = 'Momentum used for computing material corrections'
-	access = 'PRIVATE' />
+      	type = 'double'
+      	name = 'pScatter'
+      	desc = 'Momentum used for computing material corrections'
+      	access = 'PRIVATE' />
+
+      <attribute
+        type = 'LHCb::ChiSquare'
+        name = 'chi2Velo'
+        desc = 'VELO segment chi square'
+        access = 'PRIVATE' />
+
+      <attribute
+        type = 'LHCb::ChiSquare'
+        name = 'chi2Upstream'
+        desc = 'Upstream chi square'
+        access = 'PRIVATE' />
+
+      <attribute
+        type = 'LHCb::ChiSquare'
+        name = 'chi2Long'
+        desc = 'Velo-TT-T segment chi square'
+        access = 'PRIVATE' />
+
+      <attribute
+        type = 'LHCb::ChiSquare'
+        name = 'chi2Muon'
+        desc = 'Muon segment chi square'
+        access = 'PRIVATE' />
+
+      <attribute
+        type = 'LHCb::ChiSquare'
+        name = 'chi2Downstream'
+        desc = 'Downstream segment chi square'
+        access = 'PRIVATE' />
       
       <attribute
         type      = 'std::vector&lt;LHCb::Measurement*&gt;'
@@ -54,10 +84,10 @@
         desc      = 'Container of Nodes'
         access    = 'PRIVATE'
         setMeth   = 'FALSE'
-	nonconstaccessor = 'TRUE' />
+	      nonconstaccessor = 'TRUE' />
 
       <constructor 
-	desc     = "Constructor">
+	desc     = 'Constructor'>
       </constructor>
    
       <method
@@ -175,7 +205,7 @@
         type    = 'const LHCb::Measurement*'
         name    = 'measurement'
         argList = 'const LHCb::LHCbID value'
-        desc    = 'Return the measurement on the track corresponding to the input LHCbID. Call first the "isMeasurementOnTrack" method before calling this one, as it throws an exception if the LHCbID is not present! (ONLY for tracking code, not for general use.)'
+        desc    = 'Return the measurement on the track corresponding to the input LHCbID. Call first the 'isMeasurementOnTrack' method before calling this one, as it throws an exception if the LHCbID is not present! (ONLY for tracking code, not for general use.)'
         const   = 'TRUE' />
 
       <method
