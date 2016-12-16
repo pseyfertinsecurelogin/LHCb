@@ -46,37 +46,37 @@
         type = 'LHCb::ChiSquare'
         name = 'chi2'
         desc = 'Track chi square'
-        access = 'PRIVATE' />
+        access = 'PROTECTED' />
 
       <attribute
         type = 'LHCb::ChiSquare'
         name = 'chi2Velo'
         desc = 'VELO segment chi square'
-        access = 'PRIVATE' />
+        access = 'PROTECTED' />
 
       <attribute
         type = 'LHCb::ChiSquare'
         name = 'chi2Upstream'
         desc = 'Upstream segment chi square'
-        access = 'PRIVATE' />
+        access = 'PROTECTED' />
 
       <attribute
         type = 'LHCb::ChiSquare'
         name = 'chi2Long'
         desc = 'Velo-TT-T segment chi square'
-        access = 'PRIVATE' />
+        access = 'PROTECTED' />
 
       <attribute
         type = 'LHCb::ChiSquare'
         name = 'chi2Muon'
         desc = 'Muon segment chi square'
-        access = 'PRIVATE' />
+        access = 'PROTECTED' />
 
       <attribute
         type = 'LHCb::ChiSquare'
         name = 'chi2Downstream'
         desc = 'Downstream segment chi square'
-        access = 'PRIVATE' />
+        access = 'PROTECTED' />
       
       <attribute
         type      = 'std::vector&lt;LHCb::Measurement*&gt;'
@@ -215,7 +215,7 @@
         type    = 'unsigned int'
         name    = 'nActiveMeasurements'
         desc    = 'Retrieve the number of active measurements of a certain type'
-        argList = 'const LHCb::Measurement::Type type'
+        argList = 'const LHCb::Measurement::Type&amp; type'
         const   = 'TRUE'>
       </method>
 
