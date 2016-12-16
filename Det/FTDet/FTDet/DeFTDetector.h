@@ -164,6 +164,9 @@ public:
       const double seed) const;
 
   /// Get the total number of channels in the FT detector
+  int nStations() const { return m_nStations; }
+
+  /// Get the total number of channels in the FT detector
   int nChannels() const { return m_nTotChannels; }
 
 private: // private data members
