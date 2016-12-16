@@ -149,6 +149,19 @@
         desc    = 'Get the number of active (non-outlier) measurements on the track'
         const   = 'TRUE'>
       </method>
+
+      <method
+        type    = 'unsigned int'
+        name    = 'nActiveMeasurements'
+        argList = 'const LHCb::Measurement::Type&amp; type'
+        desc    = 'Get the number of active (non-outlier) measurements on the track of the type specified'
+        const   = 'TRUE'>
+        <code>
+  return std::count_if(nodes().begin(), nodes().end(), [&amp;] (decltype(nodes()[0])&amp; node) {
+    return node-&gt;type() == LHCb::Node::HitOnTrack and node-&gt;measurement().type() == type;
+  });
+        </code>
+      </method>
       
       <method
         name    = 'addToMeasurements'
