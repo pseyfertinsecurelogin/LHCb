@@ -6,7 +6,9 @@
     <class name = "FTChannelID"
 	   author   = "FT software team"
 	   desc     = "Channel ID for the Fibre Tracker (LHCb Upgrade)"
-	   virtual  = "FALSE" >
+	   virtual  = "FALSE" 
+	   final    = "TRUE"
+	   defaultdestructor = "FALSE" >
 
 	   &StlVector;
 
