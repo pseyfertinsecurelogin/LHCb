@@ -117,11 +117,3 @@ StatusCode DeFTTestAlg::execute() {
 
   return StatusCode::SUCCESS;
 }
-
-//=============================================================================
-//  Finalize
-//=============================================================================
-StatusCode DeFTTestAlg::finalize() {
-  return GaudiTupleAlg::finalize();  // must be called after all other actions
-}
-
