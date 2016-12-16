@@ -65,6 +65,9 @@ public:
   /** @return flag true if this quarter is top half */
   bool isTop() const {return quarterID() == 2 || quarterID() == 3; }
 
+  /** @return Vector of pointers to the FT Mats */
+  const std::array<DeFTMat*,4>&   mats()   const { return m_mats;   }
+
   /** Find the FT Mat where a global point is
    *  @return Pointer to the relevant Mat
    */

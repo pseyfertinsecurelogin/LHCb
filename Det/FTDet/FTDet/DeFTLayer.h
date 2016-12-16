@@ -80,6 +80,11 @@ public:
    */
   const DeFTModule* findModule( const LHCb::FTChannelID& aChannel) const;
 
+  /** flat vector of quarters
+   * @return vector of quarters
+   */
+  const std::array<DeFTQuarter*,4>& quarters() const;
+
 private:
 
   /// vector of quarters

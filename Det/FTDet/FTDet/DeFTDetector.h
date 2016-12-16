@@ -97,6 +97,9 @@ public:
   /** @return Ft version  */
   int version() const { return m_FTversion; }
 
+  /** @return Vector of pointers to the FT Stations */
+  const std::array<DeFTStation*,3>& stations() const { return m_stations; }
+
   /** Find the FT Station where a global point is
    *  @return Pointer to the relevant Station
    */

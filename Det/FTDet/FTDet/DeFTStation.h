@@ -43,7 +43,10 @@ public:
   /** @return stationID */
   unsigned int stationID() const { return m_stationID;}
 
-  /** Find the FT Layer where a global point is
+  /** @return Vector of pointers to the FT Layers */
+  const std::array<DeFTLayer*,4>&  layers()  const { return m_layers; }
+
+   /** Find the FT Layer where a global point is
    *  @return Pointer to the relevant Layer
    */
   const DeFTLayer* findLayer(const Gaudi::XYZPoint& point) const;
