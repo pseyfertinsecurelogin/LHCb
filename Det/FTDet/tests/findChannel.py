@@ -17,7 +17,7 @@ CondDB().Upgrade = True
 #DDDBConf().DbRoot = "../DDDB/lhcb.xml"
 
 # use database slice
-CondDB().addLayer(dbFile = "/eos/lhcb/wg/SciFi/Custom_Geoms_Upgrade/databases/DDDB_FT60.db", dbName = "DDDB")
+CondDB().addLayer(dbFile = "/eos/lhcb/wg/SciFi/Custom_Geoms_Upgrade/databases/DDDB_FT61.db", dbName = "DDDB")
 
 appMgr = AppMgr(outputlevel=4)
 det = appMgr.detSvc()
@@ -33,7 +33,7 @@ print mat
 # Get the local point
 localP = mat.geometry().toLocal(point)
 
-fraction = ROOT.Double(0.0) # needed fro pass-by-ref of doubles
+fraction = ROOT.Double(0.0) # needed for pass-by-ref of doubles
 channel = mat.calculateChannelAndFrac(localP.x(),fraction)
 
 print "Hit position = ",point.x(), point.y(),point.z()
