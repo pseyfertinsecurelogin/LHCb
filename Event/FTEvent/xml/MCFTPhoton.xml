@@ -26,7 +26,7 @@
       </constructor>      
 
       <constructor desc     = "Constructor"
-       argList  = "unsigned int sensDetID, int nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dirX, double dirZ, bool isReflected">
+       argList  = "unsigned int sensDetID, int nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dXdY, double dZdY, bool isReflected">
         <code> 
           this->setKey(sensDetID); 
           m_nPhotonsVec.push_back(nPhotons);
@@ -35,8 +35,8 @@
           m_wavelengthVec.push_back(wavelength);
           m_posXVec.push_back(posX);
           m_posZVec.push_back(posZ);
-          m_dirXVec.push_back(dirX);
-          m_dirZVec.push_back(dirZ);
+          m_dXdYVec.push_back(dXdY);
+          m_dZdYVec.push_back(dZdY);
           m_isReflectedVec.push_back(isReflected);
         </code>
       </constructor>
@@ -56,7 +56,7 @@
       <method   name    = "addPhotons"
                 desc    = "Add number of photons, their associated MCHit, exit time, wavelength, if reflected"
                 type    = "void"
-                argList = "int nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dirX, double dirZ, bool isReflected "
+                argList = "int nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dXdY, double dZdY, bool isReflected "
                 access  = "PUBLIC">
         <code> 
           m_nPhotonsVec.push_back(nPhotons);
@@ -65,8 +65,8 @@
           m_wavelengthVec.push_back(wavelength);
           m_posXVec.push_back(posX);
           m_posZVec.push_back(posZ);
-          m_dirXVec.push_back(dirX);
-          m_dirZVec.push_back(dirZ);
+          m_dXdYVec.push_back(dXdY);
+          m_dZdYVec.push_back(dZdY);
           m_isReflectedVec.push_back(isReflected);
         </code>
       </method>
@@ -107,14 +107,14 @@
                   setMeth = "FALSE"
                   access = "PRIVATE"/>
 
-      <attribute  name   = "dirXVec"
-                  desc   = "Vector of normalised x component of the momentum of the photons at the fibre ends (local coordinates)"
+      <attribute  name   = "dXdYVec"
+                  desc   = "Vector of dx/dy of the direction vector of the photons at the fibre ends (local coordinates)"
                   type   = "std::vector &lt; double &gt;"
                   setMeth = "FALSE"
                   access = "PRIVATE"/>
 
-      <attribute  name   = "dirZVec"
-                  desc   = "Vector of normalised z component of the momentum of the photons at the fibre ends (local coordinates)"
+      <attribute  name   = "dZdYVec"
+                  desc   = "Vector of dz/dy of the direction vector of the photons at the fibre ends (local coordinates)"
                   type   = "std::vector &lt; double &gt;"
                   setMeth = "FALSE"
                   access = "PRIVATE"/>
