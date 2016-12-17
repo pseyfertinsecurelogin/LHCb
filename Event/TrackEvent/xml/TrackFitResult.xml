@@ -207,7 +207,7 @@
         type    = 'unsigned int'
         name    = 'nMeasurements'
         desc    = 'Retrieve the number of measurements of a certain type'
-        argList = 'const LHCb::Measurement::Type type'
+        argList = 'const LHCb::Measurement::Type&amp; type'
         const   = 'TRUE'>
       </method>
 
