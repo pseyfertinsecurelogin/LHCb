@@ -77,10 +77,9 @@
         name = 'operator+'
         desc = 'addition operator'
         const = 'TRUE'>
-        <arg type = 'LHCb::ChiSquare' name='c0' const='TRUE'/>
-        <arg type = 'LHCb::ChiSquare' name='c1' const='TRUE'/>
+        <arg type = 'LHCb::ChiSquare' name='rhs' const='TRUE'/>
         <code>
-  return LHCb::ChiSquare(c0.chi2() + c1.chi2(), c0.nDoF() + c1.nDoF());
+  return LHCb::ChiSquare(m_chi2 + rhs.chi2(), m_nDoF + rhs.nDoF());
         </code>
       </method>
 
@@ -89,10 +88,9 @@
         name = 'operator-'
         desc = 'subtraction operator'
         const = 'TRUE'>
-        <arg type = 'LHCb::ChiSquare' name='c0' const='TRUE'/>
-        <arg type = 'LHCb::ChiSquare' name='c1' const='TRUE'/>
+        <arg type = 'LHCb::ChiSquare' name='rhs' const='TRUE'/>
         <code>
-  return LHCb::ChiSquare(c0.chi2() - c1.chi2(), c0.nDoF() - c1.nDoF());
+  return LHCb::ChiSquare(m_chi2 - rhs.chi2(), m_nDoF - rhs.nDoF());
         </code>
       </method>
     </class>
