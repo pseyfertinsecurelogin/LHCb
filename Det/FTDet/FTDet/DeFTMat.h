@@ -115,6 +115,12 @@ public:
    */
   LHCb::FTChannelID calculateChannelAndFrac(double localX, double& frac) const;
 
+  /** Main method to determine which channel was hit
+   *  @param localX is the input x coordinate in the local frame.
+   *  @return channel returns the corresponding readout channel
+   */
+  LHCb::FTChannelID calculateChannel(double localX) const;
+
   /** Get the list of SiPM channels traversed by the hit.
    *  The particle trajectory is a straight line defined by:
    *  @param provide local entry and exit point
@@ -124,6 +130,15 @@ public:
   std::vector<std::pair<LHCb::FTChannelID, double>>
     calculateChannels(const double localEntry, const double localExit,
                       const unsigned int numOfAdditionalChannels ) const;
+
+  /** Get the list of SiPM channels in the mat
+   *  Need to make clear what happens if there is a gap
+   *  @param empty
+   *  Fills a vector of FTChannelIDs, and a vector of the
+   *  corresponding left edges (along x) in the local frame.
+   */
+  std::vector<std::pair<LHCb::FTChannelID, double>>
+    calculateChannels() const;
 
   /** Get the distance from the hit to the SiPM
    *  @param localPoint is the position of the half module in local coordinates
