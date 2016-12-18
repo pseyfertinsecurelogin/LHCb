@@ -1,4 +1,4 @@
-#ifndef DETDESC_SERVICES_H 
+#ifndef DETDESC_SERVICES_H
 #define DETDESC_SERVICES_H 1
 
 #include <memory>
@@ -24,36 +24,36 @@ namespace DetDesc {
   public:
     /**
      * the accessor to Service Locator
-     * @exception GaudiException the service could not be located 
+     * @exception GaudiException the service could not be located
      * @return pointer to message service
      */
-    ISvcLocator* svcLocator() const;
+    SmartIF<ISvcLocator>& svcLocator() const;
     /**
-     * the accessor to Detector data provider 
-     * @exception GaudiException the service could not be located 
+     * the accessor to Detector data provider
+     * @exception GaudiException the service could not be located
      * @return pointer to detector data provider
      */
-    IDataProviderSvc* detSvc() const;    
+    IDataProviderSvc* detSvc() const;
     /**
-     * the accessor to Message Service 
-     * @exception GaudiException the service could not be located 
+     * the accessor to Message Service
+     * @exception GaudiException the service could not be located
      * @return pointer to message service
      */
     IMessageSvc* msgSvc() const;
-    
+
     /**
      * the accessor to Update Manager Service
-     * @exception GaudiException the service could not be located 
+     * @exception GaudiException the service could not be located
      * @return pointer to UpdateManagerSvc instance
      */
     IUpdateManagerSvc* updMgrSvc(bool create = false) const;
-    
 
-    // static acessor 
+
+    // static acessor
     static ServicesPtr services();
 
   protected:
-    
+
     /** Default constructor */
     Services() = default;
 
@@ -66,8 +66,8 @@ namespace DetDesc {
     mutable SmartIF<IMessageSvc> m_msgSvc;
     /// The Update Manager Service
     mutable SmartIF<IUpdateManagerSvc> m_updMgrSvc;
-    
-    
+
+
    };
 }
 
