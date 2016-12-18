@@ -6,6 +6,10 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-12-18 - Vanya Belyaev
+ - add Gauss-Lobatto interpolation
+ - add (and extend) qmtest for new interpolation functions 
+  
 ! 2016-12-14 - Vanya Belyaev
  - add helper function 
  - add one more test

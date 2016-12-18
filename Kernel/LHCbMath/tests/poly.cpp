@@ -15,6 +15,7 @@
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/Polynomials.h"
+#include "LHCbMath/Bernstein.h"
 // ============================================================================
 // Boost
 // ============================================================================
@@ -58,7 +59,7 @@ int main()
             << c.xmax  () << ") " ;
   Gaudi::Utils::toStream ( c.pars() , std::cout ) << std::endl ;
   //
-  // make a chebyshev approximation  
+  // make a chebyshev approximation  (template)
   Gaudi::Math::ChebyshevSum cc = Gaudi::Math::chebyshev_sum<10> ( p , xmin , xmax ) ;
   std::cout << "ChebyshevSum (" 
             << cc.degree() << "," 
@@ -77,24 +78,30 @@ int main()
     std::cout 
       << line 
       %    xi 
-      % p( xi ) 
-      % ( c  ( xi ) - p ( xi ) )  
-      % ( cc ( xi ) - p ( xi ) )
+      % p ( xi ) 
+      % ( c   ( xi ) - p ( xi ) )  
+      % ( cc  ( xi ) - p ( xi ) )
       << std::endl ;
   }
   //
   std::cout 
-    << "Chebyshev approximations for sin and abs"
+    << "Chebyshev approximations and Gauss-Lobatto interpolation for sin and abs"
     << std::endl;
-  
   
   // make a chebyshev approximation  
   auto fun1 = []( double x ){ return std::sin(x) ; } ;
   auto fun2 = []( double x ){ return std::abs(x) ; } ;
-  Gaudi::Math::ChebyshevSum sf1 = Gaudi::Math::chebyshev_sum<21> ( fun1 ) ;
-  Gaudi::Math::ChebyshevSum sf2 = Gaudi::Math::chebyshev_sum<21> ( fun2 ) ;
-  
-  boost::format format2 ( " %|#6.3f|     %|#+7.4f| %|#+14.5g|   %|#+7.4f| %|#+14.5g|")  ;
+  //  use     templated methods:
+  Gaudi::Math::ChebyshevSum sf1 = Gaudi::Math::chebyshev_sum<16> ( fun1 ) ;
+  Gaudi::Math::ChebyshevSum sf2 = Gaudi::Math::chebyshev_sum<16> ( fun2 ) ;
+  //  use non-templated methods:
+  Gaudi::Math::ChebyshevSum sf3 = Gaudi::Math::chebyshev_sum ( fun1 , 16 ) ;
+  Gaudi::Math::ChebyshevSum sf4 = Gaudi::Math::chebyshev_sum ( fun2 , 16 ) ;
+  //  use intrpolation with Gauss-Lobatto grid 
+  Gaudi::Math::Bernstein    sf5 = Gaudi::Math::Interpolation::lobatto<16> ( fun1 ,      -1 , 1 ) ;
+  Gaudi::Math::Bernstein    sf6 = Gaudi::Math::Interpolation::lobatto     ( fun2 , 16 , -1 , 1 ) ;
+  //
+  boost::format format2 ( "x: %|#6.3f| sin:%|#+7.5f| %|#+14.5g| %|#+14.5g| %|#+14.5g|  abs:%|#+7.5f| %|#+14.5g| %|#+14.5g| %|#+14.5g|") ;
   for ( unsigned int i = 0 ; i < N ; ++i ) 
   {
     const double  ti   = std::cos ( M_PI / N * ( i + 0.5 ) ) ;
@@ -102,8 +109,14 @@ int main()
     std::cout 
       << line 
       %  ti
-      %  fun1( ti ) % ( sf1 ( ti ) - fun1 ( ti ) )
-      %  fun2( ti ) % ( sf2 ( ti ) - fun2 ( ti ) )
+      % fun1 ( ti ) 
+      % ( sf1 ( ti ) - fun1 ( ti ) )
+      % ( sf3 ( ti ) - fun1 ( ti ) )
+      % ( sf5 ( ti ) - fun1 ( ti ) )
+      % fun2 ( ti )      
+      % ( sf2 ( ti ) - fun2 ( ti ) )
+      % ( sf4 ( ti ) - fun2 ( ti ) )
+      % ( sf6 ( ti ) - fun2 ( ti ) )
       << std::endl ;
   }
   //
