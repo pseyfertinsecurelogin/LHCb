@@ -53,7 +53,7 @@ StatusCode LbAppInit::initialize() {
   always()
     << "=================================================================="
     << endmsg;
-  
+
 
   sc = propMgr->getProperty("AppName", value);
   if (sc.isFailure())
@@ -61,7 +61,7 @@ StatusCode LbAppInit::initialize() {
   m_appName = value;
 
   sc = propMgr->getProperty("AppVersion", value);
-  if (sc.isFailure()) 
+  if (sc.isFailure())
     return Error(" Fatal error while retrieving Property AppVersion ");
   m_appVersion = value;
 
@@ -72,7 +72,7 @@ StatusCode LbAppInit::initialize() {
   }
 
   m_condDBInfo = service("CondDBCnvSvc", true);
-  
+
   return StatusCode::SUCCESS;
 }
 
@@ -91,10 +91,10 @@ void LbAppInit::checkMem() const {
     if (UNLIKELY(std::abs(memDiff) >= m_minMemDelta)) {
       info() << "Memory has changed from " << m_lastMem << " to " << mem << " KB"
              << " (" << memDiff << "KB, " << 100.*memDiff/m_lastMem << "%)"
-             << " in last " << m_increment << " events" << endmsg ;
+             << " in last " << m_increment.value() << " events" << endmsg ;
       if (mem > m_memPurgeLimit) {
 
-        Info("Memory exceeds limit of " + std::to_string(m_memPurgeLimit) 
+        Info("Memory exceeds limit of " + std::to_string(m_memPurgeLimit)
             + " KB -> Purging pools", StatusCode::SUCCESS, 1).ignore();
         releaseMemoryPools();
         mem = System::virtualMemory();
