@@ -372,13 +372,13 @@ class L0Conf(LHCbConfigurableUser) :
         if self.getProp("FastL0DUDecoding"):
             #log.info("Using Fast decoding for L0DU (rootInTES: %s)"%(rootintes))
             l0du   = decodeL0DU(rootintes)
-            from Configurables import  L0DUFromRawTool
-            l0du.addTool(L0DUFromRawTool,name = "L0DUFromRawTool")
-            l0du.L0DUFromRawTool.FillDataMap         = False
-            l0du.L0DUFromRawTool.EncodeProcessorData = False
-            l0du.L0DUFromRawTool.Emulate             = False
-            l0du.L0DUFromRawTool.StatusOnTES         = False
-            l0du.WriteProcData                       = False
+            from Configurables import  L0DUDecoder
+            l0du.addTool(L0DUDecoder,name = "L0DUDecoder")
+            l0du.L0DUDecoder.FillDataMap         = False
+            l0du.L0DUDecoder.EncodeProcessorData = False
+            l0du.L0DUDecoder.Emulate             = False
+            l0du.L0DUDecoder.StatusOnTES         = False
+            l0du.WriteProcData                   = False
 
         # Ensure that TCK is recognized when decoding the L0DU
         if self.getProp("EnsureKnownTCK"):
@@ -517,7 +517,7 @@ class L0Conf(LHCbConfigurableUser) :
             single = L0DUConfigProvider('ToolSvc.L0DUConfig')
             for p,v in orig.getValuedProperties().items() : setattr(single,p,v)
             single.TCK = L0TCK
-            from Configurables import L0DUFromRawTool, L0DUFromRawAlg
+            from Configurables import L0DUDecoder, L0DUFromRawAlg
             l0du   = decodeL0DU()
             l0du.L0DUConfigProviderType = 'L0DUConfigProvider'
             from Configurables import L0DUAlg
