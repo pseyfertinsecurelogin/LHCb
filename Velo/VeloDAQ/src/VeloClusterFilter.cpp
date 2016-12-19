@@ -29,18 +29,18 @@ static const std::array<std::string,7> valid_criteria =
 StatusCode parse(VeloClusterFilter::filter_t& result, const std::string& input) {
   auto i = std::find( valid_criteria.begin(), valid_criteria.end(), input );
   if (i==valid_criteria.end()) return StatusCode::FAILURE;
-  result.m_criterion = static_cast<VeloClusterFilter::filter_t::criterion_t>(std::distance( valid_criteria.begin(), i ));
+  result.criterion = static_cast<VeloClusterFilter::filter_t::criterion_t>(std::distance( valid_criteria.begin(), i ));
   return StatusCode::SUCCESS;
 }
 std::ostream& toStream(const VeloClusterFilter::filter_t& crit, std::ostream& os) {
   return os << std::quoted( crit.toString(), '\'' );
 }
 const std::string& VeloClusterFilter::filter_t::toString() const {
-  return valid_criteria[static_cast<int>(m_criterion)];
+  return valid_criteria[static_cast<int>(criterion)];
 }
 bool VeloClusterFilter::filter_t::operator()(LHCb::VeloChannelID id) const {
   unsigned int sensorNumber = id.sensor();
-  switch (m_criterion) {
+  switch (criterion) {
     case criterion_t::ALL     : return true;
     case criterion_t::LEFT    : return sensorNumber%2==0;
     case criterion_t::RIGHT   : return sensorNumber%2==1;
@@ -60,7 +60,9 @@ bool VeloClusterFilter::filter_t::operator()(LHCb::VeloChannelID id) const {
       }
       return false;
     }
-    default : return false; // unreachable...
+    default :
+        assert(false); // unreachable...
+        return false;
   }
 }
 

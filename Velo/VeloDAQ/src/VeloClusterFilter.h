@@ -22,17 +22,16 @@ public:
   StatusCode initialize() override;
   StatusCode execute()    override;
 
-  class filter_t {
-  public:
-     enum class criterion_t { ALL = 0, LEFT, RIGHT, R, PHI, PU, OVERLAP };
-     filter_t(criterion_t c = criterion_t::ALL) : m_criterion(c) {}
-     bool operator()(LHCb::VeloChannelID id) const;
-     const std::string& toString() const;
-     // add support for Gaudi::Property<filter_t>
-     friend std::ostream& toStream(const filter_t& crit, std::ostream& os);
-     friend StatusCode parse(filter_t& result, const std::string& input );
-  private:
-     criterion_t m_criterion;
+  struct filter_t final {
+    enum class criterion_t { ALL = 0, LEFT, RIGHT, R, PHI, PU, OVERLAP };
+    criterion_t criterion;
+
+    filter_t( criterion_t c = criterion_t::ALL ) : criterion(c) {}
+    bool operator()(LHCb::VeloChannelID id) const;
+    const std::string& toString() const;
+    // add support for Gaudi::Property<filter_t>
+    friend std::ostream& toStream(const filter_t& crit, std::ostream& os);
+    friend StatusCode parse(filter_t& result, const std::string& input );
   };
 
 private:
