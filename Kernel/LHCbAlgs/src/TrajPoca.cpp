@@ -252,5 +252,4 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj,
   return StatusCode::SUCCESS;
 }
 
-
 //=============================================================================

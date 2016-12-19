@@ -27,9 +27,9 @@
         init="0.0, 0.0, 0.0, -1*Gaudi::Units::GeV"
        />
        <constructor
-           desc     = "Copy Constructor"
-           argList  = "const LHCb::MCParticle* right"
-           initList = "KeyedObject&lt;int&gt;(), m_momentum(right->momentum()), m_particleID(right->particleID()), m_originVertex(right->originVertex()), m_endVertices(right->endVertices())"
+           desc     = "Copy Constructor[Attention: the key is NOT copied!]"
+           argList  = "const LHCb::MCParticle&amp; right"
+           initList = "KeyedObject&lt;int&gt;(), m_momentum(right.m_momentum), m_particleID(right.m_particleID),m_flags(right.m_flags),m_originVertex(right.m_originVertex), m_endVertices(right.m_endVertices)"
            > <code/> </constructor>
 
       <method
@@ -39,7 +39,7 @@
         const="TRUE"
         >
         <code>
-          return new LHCb::MCParticle(this);
+          return new LHCb::MCParticle(*this);
         </code>
       </method>
 
@@ -50,7 +50,7 @@
         const="TRUE"
         >
         <code>
-          LHCb::MCParticle *clone = new LHCb::MCParticle(this);
+          LHCb::MCParticle *clone = new LHCb::MCParticle(*this);
           clone -> setKey(this->key());
           return clone;
         </code>

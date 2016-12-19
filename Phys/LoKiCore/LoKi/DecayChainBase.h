@@ -78,7 +78,6 @@ namespace LoKi
       const MSG::Color&     fg       = MSG::YELLOW  ,
       const MSG::Color&     bg       = MSG::RED     ) ;
     /// virtual destructor
-    virtual ~DecayChainBase () ;                         // virtual destructor
     // ========================================================================
   public:
     // ========================================================================

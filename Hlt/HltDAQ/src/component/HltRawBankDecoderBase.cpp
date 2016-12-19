@@ -43,11 +43,6 @@ std::vector<const LHCb::RawBank*> selectRawBanks_(unsigned int sourceID, const s
 }
 
 
-HltRawBankDecoderBase::HltRawBankDecoderBase( const std::string& name, ISvcLocator* pSvcLocator)
-    : Decoder::AlgBase ( name , pSvcLocator )
-{
-    declareProperty("SourceID", m_sourceID= kSourceID_Dummy );
-}
 
 StatusCode HltRawBankDecoderBase::initialize()
 {

@@ -13,8 +13,10 @@ public:
   StatusCode initialize() override;                      ///< Algorithm initialisation
   bool operator()(const LHCb::RawEvent&) const override; ///< Algorithm execution
 private:
-  std::vector<unsigned int> m_r,m_v;
-  bool m_passOnError;
+
+  Gaudi::Property<std::vector<unsigned int>> m_r{ this, "RequireMask",{ ~0u,~0u,~0u } },
+                                             m_v{ this, "VetoMask",   {  0u, 0u, 0u } };
+  Gaudi::Property<bool> m_passOnError { this, "PassOnError", true };
 };
 
 //-----------------------------------------------------------------------------
@@ -38,9 +40,6 @@ HltRoutingBitsFilter::HltRoutingBitsFilter( const std::string& name,
                                                                       LHCb::RawEventLocation::Default )
                            } )
 {
-  declareProperty("VetoMask", m_v = std::vector<unsigned int>(3, 0x0));
-  declareProperty("RequireMask", m_r = std::vector<unsigned int>(3, 0xFFFF));
-  declareProperty("PassOnError", m_passOnError = true );
 }
 
 //=============================================================================

@@ -13,7 +13,10 @@ void PropertyConfig::initProperties(const IProperty& obj) {
         m_properties.emplace_back(i->name(),i->toString());
         // verify that toString / fromString are each others inverse...
         // WARNING: this does not guarantee that we don't loose information -- toString may be lossy!!!!
+        // WARNING: we remove the update handler (if any), which means that weird behaviour there (like
+        //          changing the property that was just updated) will be missed.
         std::unique_ptr<Property> clone( i->clone() );
+        clone->declareUpdateHandler(nullptr);
         if ( clone->fromString(m_properties.back().second).isFailure() ) {
             std::cerr << "Property::fromString fails to parse Property::toString" << std::endl;
             std::cerr << "component: " << kind() << " / " << name() << ", property type: " << i->type()<< " : " << i->name() << " -> " << i->toString() << std::endl;

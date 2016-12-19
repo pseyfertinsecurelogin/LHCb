@@ -20,21 +20,6 @@ DECLARE_ALGORITHM_FACTORY( HltDecReportsWriter )
 using namespace LHCb;
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-HltDecReportsWriter::HltDecReportsWriter( const std::string& name,
-                                          ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty("InputHltDecReportsLocation",
-    m_inputHltDecReportsLocation= LHCb::HltDecReportsLocation::Default);
-  declareProperty("OutputRawEventLocation",
-    m_outputRawEventLocation= LHCb::RawEventLocation::Default);
-  declareProperty("SourceID",
-    m_sourceID= kSourceID_Dummy );
-}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode HltDecReportsWriter::initialize()

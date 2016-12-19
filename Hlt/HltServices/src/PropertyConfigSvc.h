@@ -12,6 +12,15 @@
 #include <iterator>
 #include "boost/optional.hpp"
 
+class StatusCode;
+namespace Gaudi { namespace Parsers {
+StatusCode parse(std::map<std::string, std::map<std::string,
+                 std::map< std::string, std::string> > >& result,
+                 const std::string& input ) ;
+
+StatusCode parse(std::set<std::string>& result,
+                 const std::string& input ) ;
+} }
 
 // from Gaudi
 #include "GaudiKernel/Service.h"
@@ -55,7 +64,7 @@ private:
 
   typedef std::map<std::string, PropertyConfig::digest_type> ConfigPushed_t;
 public:
-  PropertyConfigSvc(const std::string& name, ISvcLocator* pSvcLocator );
+  using extends::extends;
 
   StatusCode initialize() override;    ///< Service initialization
   StatusCode finalize() override;    ///< Service initialization
@@ -114,9 +123,9 @@ protected:
 
 
 private:
-  TransformMap                         m_transform;
+  Gaudi::Property<TransformMap>        m_transform { this, "ApplyTransformation" };
 
-  std::string                          s_accessSvc;
+  Gaudi::Property<std::string>         s_accessSvc{ this, "ConfigAccessSvc", "ConfigCDBAccessSvc"};
   SmartIF<IJobOptionsSvc>              m_joboptionsSvc;
   SmartIF<IToolSvc>                    m_toolSvc;
   SmartIF<IAlgManager>                 m_algMgr;
@@ -140,14 +149,13 @@ private:
 
   mutable ConfigPushed_t               m_configPushed;
   std::map<std::string,IAlgTool*>      m_toolmap;
-  std::vector<std::string>             m_prefetch;    ///< configurations to load at initialization
-  std::set<std::string>                m_skip;        ///< items NOT to configure with this service
-  std::string                          m_ofname;
+  Gaudi::Property<std::vector<std::string>> m_prefetch{ this, "prefetchConfig"};    ///< configurations to load at initialization
+  Gaudi::Property<std::set<std::string>> m_skip{this, "SkipComponent"};        ///< items NOT to configure with this service NOR THEIR DEPENDENTS!
+  Gaudi::Property<std::string>         m_ofname { this, "optionsfile" };
   std::unique_ptr<std::ostream>        m_os;
-  bool                                 m_createGraphVizFile;
-  bool                                 m_allowFlowChanges;
-  mutable std::unique_ptr<std::vector<std::string> > m_initialTopAlgs;
-
+  Gaudi::Property<bool>                m_createGraphVizFile { this, "createGraphVizFile", false };
+  Gaudi::Property<bool>                m_allowFlowChanges { this, "AllowFlowChanges",false};
+  mutable boost::optional<std::vector<std::string> > m_initialTopAlgs;
 
   void onCreate(const IAlgTool* tool) override;
 

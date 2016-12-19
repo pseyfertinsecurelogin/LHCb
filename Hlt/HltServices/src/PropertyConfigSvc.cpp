@@ -1,18 +1,6 @@
 // Include files
 
-#include <map>
-#include <string>
-#include <set>
 
-class StatusCode;
-namespace Gaudi { namespace Parsers {
-StatusCode parse(std::map<std::string, std::map<std::string,
-                 std::map< std::string, std::string> > >& result,
-                 const std::string& input ) ;
-
-StatusCode parse(std::set<std::string>& result,
-                 const std::string& input ) ;
-} }
 
 #include <sstream>
 #include <algorithm>
@@ -24,6 +12,9 @@ StatusCode parse(std::set<std::string>& result,
 #include "boost/filesystem/convenience.hpp"
 #include "boost/regex.hpp"
 
+// local
+#include "PropertyConfigSvc.h"
+
 // from Gaudi
 #include "GaudiKernel/System.h"
 #include "GaudiKernel/Algorithm.h"
@@ -33,8 +24,6 @@ StatusCode parse(std::set<std::string>& result,
 #include "GaudiKernel/IAuditor.h"
 #include "GaudiKernel/IAlgTool.h"
 
-// local
-#include "PropertyConfigSvc.h"
 
 using namespace std;
 
@@ -50,7 +39,8 @@ DECLARE_COMPONENT( PropertyConfigSvc )
 
 namespace {
     template <typename T>
-    auto equals( T&& t ) { return [arg0=std::forward<T>(t)](const auto& arg)
+    auto equals( T&& t ) { return [arg0=std::forward<T>(t)]
+                                  (const auto& arg)
                                   { return arg0 == arg; };
     }
 
@@ -58,7 +48,6 @@ namespace {
     class property2jos  : public std::iterator<std::output_iterator_tag,const PropertyConfig::Prop> {
          public:
             property2jos& operator++()   { return *this; }
-//            property2jos operator++(int) { return *this; } // Not yet implemented
             property2jos& operator*()    { return *this; }
             property2jos(IJobOptionsSvc* jos,const string& name, ostream* os=nullptr) :
                 m_jos(jos),m_name(name),m_properties(jos->getProperties(name)),m_out(os) { assert(m_jos); }
@@ -116,20 +105,6 @@ namespace {
     };
 }
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-PropertyConfigSvc::PropertyConfigSvc( const string& name, ISvcLocator* pSvcLocator)
-  : base_class ( name , pSvcLocator )
-{
-  declareProperty("ConfigAccessSvc", s_accessSvc = "ConfigCDBAccessSvc");
-  declareProperty("prefetchConfig", m_prefetch);
-  declareProperty("SkipComponent", m_skip); // do not touch these algorithms configurations, NOR THEIR DEPENDENTS!
-  declareProperty("optionsfile", m_ofname);
-  declareProperty("createGraphVizFile", m_createGraphVizFile=false);
-  declareProperty("AllowFlowChanges",m_allowFlowChanges = false);
-  declareProperty("ApplyTransformation",m_transform);
-}
 
 //=============================================================================
 // Initialization
@@ -150,7 +125,7 @@ StatusCode PropertyConfigSvc::initialize() {
    if ( !m_toolSvc )  return StatusCode::FAILURE;
    m_toolSvc->registerObserver(this);
 
-   if (!m_ofname.empty()) m_os.reset( new boost::filesystem::ofstream( m_ofname.c_str() ) );
+   if (!m_ofname.empty()) m_os = std::make_unique<boost::filesystem::ofstream>( m_ofname.value() );
 
   // read table of pre-assigned, possible configurations for this job...
   // i.e. avoid reading _everything_ when we really need to be quick
@@ -555,7 +530,7 @@ PropertyConfigSvc::setTopAlgs(const ConfigTreeNode::digest_type& id) const {
     if(msgLevel(MSG::DEBUG)) debug() << " current TopAlgs: " << topAlgs.toString() << endmsg;
 
     if (!m_initialTopAlgs) {
-        m_initialTopAlgs.reset( new vector<string>( topAlgs.value() ) );
+        m_initialTopAlgs = topAlgs.value();
     }
 
     vector<const PropertyConfig*> ids;
@@ -755,13 +730,13 @@ PropertyConfig::Prop
 PropertyConfigSvc::Transformer::operator()(const PropertyConfig::Prop& in) {
    std::string out = in.second;
    for (const auto& i : m_list) { // vector of all component maps to apply
-       for (const auto& j : *i ) {  // map to apply
-           if (in.first != j.first) continue;
-           for (const auto& k : j.second ) {
-               boost::regex pattern(k.first);
-               out = boost::regex_replace(out, pattern, k.second);
-           }
+     for (const auto& j : *i ) {  // map to apply
+       if (in.first != j.first) continue;
+       for (const auto& k : j.second ) {
+         boost::regex pattern(k.first);
+         out = boost::regex_replace(out, pattern, k.second);
        }
+     }
    }
    if (out == in.second) return in;
    m_os <<  "Applying substitution " << m_c << "." << in.first << " : " << in.second << " => " << out << endmsg;

@@ -1,4 +1,4 @@
-#ifndef HLTLUMIWRITER_H 
+#ifndef HLTLUMIWRITER_H
 #define HLTLUMIWRITER_H 1
 
 // Include files
@@ -13,9 +13,9 @@
  *  @date   2004-07-22
  */
 class HltLumiWriter : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
-  HltLumiWriter( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
@@ -25,14 +25,14 @@ private:
 
   void fillDataBankShort ( );
 
-  std::string m_inputBank;
+  Gaudi::Property<std::string> m_inputBank = { this, "InputBank", LHCb::HltLumiSummaryLocation::Default };
 
-  // Statistics  
-  double m_totDataSize;
-  int m_nbEvents;
+  // Statistics
+  double m_totDataSize = 0;
+  int m_nbEvents = 0;
   std::vector<unsigned int> m_bank;
-  LHCb::RawBank::BankType m_bankType;  
-  std::string m_inputRawEventLocation;
+  LHCb::RawBank::BankType m_bankType = LHCb::RawBank::HltLumiSummary;
+  Gaudi::Property<std::string> m_inputRawEventLocation { this, "RawEventLocation" };
   std::vector<std::string> m_rawEventLocations;
 
 };

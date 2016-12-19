@@ -86,7 +86,7 @@ private:
   std::string m_configName;           ///< L0DUConfigProviderName tool name
   std::string m_configType;           ///< L0DUConfigProviderType tool name
   std::string m_tck;                  ///< TCK (used to get the FOIs)
-  int m_itck;                         ///< TCK (used to get the FOIs)
+  int m_itck = -1;                    ///< TCK (used to get the FOIs)
   bool m_useTCKFromData;              ///< Flag to take the TCK from data (odin)
 
   // Emulator running modes
@@ -115,8 +115,8 @@ private:
 
   L0MuonOutputs* m_outputTool = nullptr; ///< For output to RAwEvent, TES ot L0ProcessorDatas
 
-  int m_totEvent; ///< Event counter
-  int m_totBx ;   ///< Tot number of time slices processed
+  int m_totEvent = 0; ///< Event counter
+  int m_totBx = 0;   ///< Tot number of time slices processed
 
   IMuonRawBuffer* m_muonBuffer = nullptr;  ///< Interface to muon raw buffer
 

@@ -129,15 +129,16 @@ ReportConvertTool::ReportConvertTool( const std::string& type,
   declareInterface<IReportConvert>(this);
 
   m_LatestVersion=1;
-  for (const auto& map : { m_track_unordered_map2_Turbo,
-                           m_particle_unordered_map2_Turbo,
-                           m_proto_unordered_map2_Turbo,
-                           m_rpid_unordered_map2_Turbo,
-                           m_mpid_unordered_map2_Turbo,
-                           m_recvertex_unordered_map2_Turbo,
-                           m_vertex_unordered_map2_Turbo,
-                           m_recsummary_unordered_map2,
-                           m_calohypo_unordered_map2_Turbo } ) {
+  auto maps = { m_track_unordered_map2_Turbo,
+                m_particle_unordered_map2_Turbo,
+                m_proto_unordered_map2_Turbo,
+                m_rpid_unordered_map2_Turbo,
+                m_mpid_unordered_map2_Turbo,
+                m_recvertex_unordered_map2_Turbo,
+                m_vertex_unordered_map2_Turbo,
+                m_recsummary_unordered_map2,
+                m_calohypo_unordered_map2_Turbo };
+  for (const auto& map : maps ) {
     for(const auto & elem : map) {
         if(elem.first > m_LatestVersion) m_LatestVersion = elem.first;
     }
