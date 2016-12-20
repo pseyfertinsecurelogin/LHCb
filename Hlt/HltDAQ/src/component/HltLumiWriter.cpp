@@ -14,20 +14,6 @@
 DECLARE_ALGORITHM_FACTORY( HltLumiWriter )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-  HltLumiWriter::HltLumiWriter( const std::string& name,
-                                ISvcLocator* pSvcLocator)
-    : GaudiAlgorithm ( name , pSvcLocator ),
-      m_totDataSize(0),
-      m_nbEvents(0),
-      m_bankType(LHCb::RawBank::HltLumiSummary)
-{
-  declareProperty("InputBank", m_inputBank = LHCb::HltLumiSummaryLocation::Default );
-  declareProperty("RawEventLocation",m_inputRawEventLocation );
-}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode HltLumiWriter::initialize() {
@@ -89,7 +75,7 @@ StatusCode HltLumiWriter::execute() {
   if ( MSG::VERBOSE >= msgLevel() ) {
     verbose() << "DATA bank : " << endmsg;
     int kl = 0;
-    for (const auto& w : m_bank ) { 
+    for (const auto& w : m_bank ) {
       verbose() << format ( " %8x %11d   ", w, w);
       if ( ++kl%4 == 0 ) verbose() << endmsg;
     }

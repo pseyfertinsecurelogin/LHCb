@@ -75,19 +75,19 @@ StatusCode XmlParserSvc::initialize( ) {
     }
     sc = m_toolSvc->retrieveTool(m_resolverName,m_resolverTool,0,true);
     if (  !sc.isSuccess() ) {
-      Service::error() << "Could not locate the tool " << m_resolverName << endmsg;
+      Service::error() << "Could not locate the tool " << m_resolverName.value() << endmsg;
       m_resolverTool = nullptr; // extra safety check
       return sc;
     }
     m_resolver.reset( m_resolverTool );
     if (  !m_resolver) {
-      Service::error() << "Could not get the IXmlEntityResolver interface of" << m_resolverName << endmsg;
+      Service::error() << "Could not get the IXmlEntityResolver interface of" << m_resolverName.value() << endmsg;
       return sc;
     }
     {   std::unique_lock<std::mutex> lck(m_parser_mtx);
         m_parser->setEntityResolver(m_resolver->resolver());
     }
-    if( msgLevel(MSG::DEBUG) ) debug() << "using the xercesc::EntityResolver provided by " << m_resolverName << endmsg;
+    if( msgLevel(MSG::DEBUG) ) debug() << "using the xercesc::EntityResolver provided by " << m_resolverName.value() << endmsg;
   }
   return StatusCode::SUCCESS;
 }

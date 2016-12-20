@@ -33,22 +33,16 @@ namespace {
    using std::string;
 }
 
+
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 HltEvaluator::HltEvaluator(const std::string& name, ISvcLocator* pSvcLocator)
-   : base_class( name , pSvcLocator )
+: base_class( name , pSvcLocator )
 {
-   declareProperty("ODINLocation", m_odin_location = LHCb::ODINLocation::Default);
-   declareProperty("L0DUReportLocation", m_l0_location = LHCb::L0DUReportLocation::Default);
-   declareProperty("Hlt1DecReportsLocation", m_hlt_location[0] = LHCb::HltDecReportsLocation::Default);
-   declareProperty("Hlt2DecReportsLocation", m_hlt_location[1] = LHCb::HltDecReportsLocation::Default);
-   declareProperty("Preambulo", m_preambulo_)->declareUpdateHandler(&HltEvaluator::updatePreambulo , this);
-   declareProperty("TrendTimeSpan", m_timeSpan = 4000 );
-   declareProperty("TrendBinWidth", m_binWidth = 10 );
-   declareProperty("GetStartOfRunFromCondDB", m_useCondDB = true);
-   declareProperty("MonitorSvc", m_monSvc = "HltMonitorSvc/Hlt2MonSvc");
+  m_preambulo_.declareUpdateHandler(&HltEvaluator::updatePreambulo , this);
 }
+
 
 //=============================================================================
 StatusCode HltEvaluator::times(double& t, double& w, double& et) const
@@ -73,7 +67,7 @@ StatusCode HltEvaluator::times(double& t, double& w, double& et) const
 void HltEvaluator::updatePreambulo(Property& /* p */)
 {
    // concatenate the preambulo:
-   m_preambulo = boost::algorithm::join(m_preambulo_ , "\n");
+   m_preambulo = boost::algorithm::join(m_preambulo_.value() , "\n");
    /// mark as "to-be-updated"
    m_preambulo_updated = true;
    // no further action if not yet initialized

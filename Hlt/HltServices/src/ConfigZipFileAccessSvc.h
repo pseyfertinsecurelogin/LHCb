@@ -1,4 +1,4 @@
-#ifndef CONFIGZIPFILEACCESSSVC_H 
+#ifndef CONFIGZIPFILEACCESSSVC_H
 #define CONFIGZIPFILEACCESSSVC_H 1
 
 // Include files
@@ -8,7 +8,7 @@
 #include "ConfigArchiveAccessSvc.h"
 
 /** @class ConfigFileAccessSvc ConfigZipFileAccessSvc.h
- *  
+ *
  *  functionality:
  *        read/write configure information to zip files
  *
@@ -20,13 +20,12 @@ class IArchive;
 
 class ConfigZipFileAccessSvc : public ConfigArchiveAccessSvc {
 public:
-  ConfigZipFileAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
-  ~ConfigZipFileAccessSvc( ) override = default;     ///< Destructor
+  using ConfigArchiveAccessSvc::ConfigArchiveAccessSvc;
   StatusCode finalize() override;      ///< Service initialization
-private:  
   IArchive*  file() const override;
+private:
   mutable std::unique_ptr<IArchive>    m_file;
-  mutable std::string                  m_name;   ///< filename of zip file from which to read configurations
-  std::string                          m_mode;   ///< which flags to specify when opening the zip file
+  mutable Gaudi::Property<std::string> m_name { this, "File" };   ///< filename of zip file from which to read configurations
+  Gaudi::Property<std::string>         m_mode { this, "Mode", "ReadOnly" };   ///< which flags to specify when opening the zip file
 };
 #endif // CONFIGZIPFILEACCESSSVC_H
