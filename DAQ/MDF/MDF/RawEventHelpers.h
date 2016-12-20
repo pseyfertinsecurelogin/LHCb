@@ -37,6 +37,10 @@ namespace LHCb  {
   /// Check consistency of MEP multi event fragment
   bool checkMDFRecord(const MDFHeader* h, int opt_len=~0x0, bool throw_exc=true,bool print_cout=false);
 
+  /// Deep copy raw event structure (including baw bank memory - hence heavy)
+  StatusCode deepCopyRawEvent(RawEvent* source, RawEvent*& result);
+  /// Clone rawevent structure
+  StatusCode cloneRawEvent(RawEvent* source, RawEvent*& result);
   /// Determine length of the sequential buffer from RawEvent object
   size_t rawEventLength(const RawEvent* evt);
   /// Determine length of the sequential buffer from vector of raw banks
