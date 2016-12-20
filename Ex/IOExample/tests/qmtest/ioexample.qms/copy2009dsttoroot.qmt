@@ -2,7 +2,7 @@
 <extension class="GaudiTest.GaudiExeTest" kind="test">
   <argument name="program"><text>gaudirun.py</text></argument>
   <argument name="args"><set><text>../options/Copy2009toROOTdst.py</text></set></argument>
-  <argument name="reference"><text>../refs/2009dst.ref</text></argument>
+  <argument name="reference"><text>../refs/2009dsttoroot.ref</text></argument>
   <argument name="validator"><text>
 from GaudiConf.QMTest.LHCbExclusions import preprocessor as LHCbPreprocessor
 preprocessor = LHCbPreprocessor
