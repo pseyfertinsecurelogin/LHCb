@@ -6,6 +6,9 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-12-20 - Vanya Belyaev
+ - Bernstein.h: minor fix for incorrect object creation  
+
 ! 2016-12-18 - Vanya Belyaev
  - add Gauss-Lobatto interpolation
  - add (and extend) qmtest for new interpolation functions 
