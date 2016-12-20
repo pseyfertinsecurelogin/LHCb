@@ -66,28 +66,24 @@ Decoder("RawBankToSTLiteClusterAlg/createTTLiteClusters",
         active=True, banks=["TT"],
         outputs={"clusterLocation":"Raw/TT/LiteClusters"},
         inputs={"RawEventLocations":None},
-        required=["createODIN"],
         conf=DecoderDB)
 
 Decoder("RawBankToSTLiteClusterAlg/createTTLiteClustersExpert",
         active=False, banks=["TTPedestal","TTFull","TTProcFull","TTError"],
         outputs={"clusterLocation":"Raw/TT/LiteClusters"},
         inputs={"RawEventLocations" : None},
-        required=["createODIN"],
         conf=DecoderDB)
 
 Decoder("RawBankToSTClusterAlg/createTTClusters",
         active=True, banks=["TT"],
         outputs={"clusterLocation":"Raw/TT/Clusters", "summaryLocation":"Rec/TT/Summary"},
         inputs={"RawEventLocations" : None},
-        required=["createODIN"],
         conf=DecoderDB)
 
 Decoder("RawBankToSTClusterAlg/createTTClustersExpert",
         active=False, banks=["TTPedestal","TTFull","TTProcFull","TTError"],
         outputs={"clusterLocation":"Raw/TT/Clusters", "summaryLocation":"Rec/TT/Summary"},
         inputs={"RawEventLocations" : None},
-        required=["createODIN"],
         conf=DecoderDB)
 
 #===========RICH===========
@@ -121,7 +117,6 @@ Decoder("RawBankToSTLiteClusterAlg/createITLiteClusters",
         outputs={"clusterLocation":"Raw/IT/LiteClusters"},
         inputs={"RawEventLocations" : None},
         properties={"DetType":"IT"},
-        required=["createODIN"],
         conf=DecoderDB)
 
 Decoder("RawBankToSTLiteClusterAlg/createITLiteClustersExpert",
@@ -129,7 +124,6 @@ Decoder("RawBankToSTLiteClusterAlg/createITLiteClustersExpert",
         outputs={"clusterLocation":"Raw/IT/LiteClusters"},
         inputs={"RawEventLocations" : None},
         properties={"DetType":"IT"},
-        required=["createODIN"],
         conf=DecoderDB)
 
 Decoder("RawBankToSTClusterAlg/createITClusters",
@@ -137,7 +131,6 @@ Decoder("RawBankToSTClusterAlg/createITClusters",
         outputs={"clusterLocation":"Raw/IT/Clusters", "summaryLocation":"Rec/IT/Summary"},
         inputs={"RawEventLocations" : None},
         properties={"DetType":"IT"},
-        required=["createODIN"],
         conf=DecoderDB)
 
 Decoder("RawBankToSTClusterAlg/createITClustersExpert",
@@ -145,7 +138,6 @@ Decoder("RawBankToSTClusterAlg/createITClustersExpert",
         outputs={"clusterLocation":"Raw/IT/Clusters", "summaryLocation":"Rec/IT/Summary"},
         inputs={"RawEventLocations" : None},
         properties={"DetType":"IT"},
-        required=["createODIN"],
         conf=DecoderDB)
 
 #===========OT===========
@@ -279,7 +271,6 @@ tool2=tool.clone(tname+"/ToolSvc."+tname)
 Decoder("L0MuonCandidatesFromRaw/L0MuonFromRaw",
         active=True, banks=["L0Muon","L0MuonProcCand"],
         privateTools=["L0MuonOutputs/OutputTool"],
-        required=["createODIN"], #needed in TAE mode
         properties={"DAQMode" : 1},
         inputs={"RawEventLocations" : None},
         conf=DecoderDB)
