@@ -163,7 +163,6 @@ void L0DUConfigProvider::reset() {
     LHCb::L0DUConfigs* configs = it->second;
     if( !configs ) continue;
     configs->release();
-    delete configs;
   }
   m_config = nullptr;
   m_configs.clear();
@@ -244,6 +243,7 @@ void L0DUConfigProvider::createConfig(std::string slot){
   auto it = m_configs.find( slot );
   if(it == m_configs.end()){
     m_configs[slot] = new LHCb::L0DUConfigs();
+    m_configs[slot]->addRef();
   }
   if( !m_FOIx.empty() )m_config->setMuonFOIx( m_FOIx );
   if( !m_FOIy.empty() )m_config->setMuonFOIy( m_FOIy );
