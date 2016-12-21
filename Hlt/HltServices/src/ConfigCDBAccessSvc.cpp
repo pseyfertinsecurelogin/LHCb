@@ -342,49 +342,7 @@ class CDB
         return m_myUid;
     }
 
-    int compress( string& str )
-    {
-        // compress and check if worthwhile...
-        string compressed;
-        compressed.reserve( str.size() );
-        io::filtering_streambuf<io::output> filter;
-        io::zlib_params params;
-        params.noheader = true;
-        filter.push( io::zlib_compressor( params ) );
-        filter.push( io::back_inserter( compressed ) );
-        io::copy( boost::make_iterator_range( str ), filter, 8192 );
-        bool ok = compressed.size() < str.size(); // yes, it's better!
-        if ( ok ) str = std::move( compressed );
-        return ok ? 3 : 0;
-    }
 
-    std::vector<unsigned char> make_cdb_record( std::string str, uid_t uid, std::time_t t )
-    {
-        auto flags = compress( str );
-        std::vector<unsigned char> buffer; buffer.reserve( 12 + str.size() );
-        buffer.emplace_back( 0 );     // version number
-        buffer.emplace_back( flags ); // compression
-        buffer.emplace_back( 0 );     // reserved;
-        buffer.emplace_back( 0 );     // reserved;
-        assert( sizeof( uid_t ) == 4 );
-        buffer.emplace_back( uid & 0xff );
-        buffer.emplace_back( ( uid >> 8 ) & 0xff );
-        buffer.emplace_back( ( uid >> 16 ) & 0xff );
-        buffer.emplace_back( ( uid >> 24 ) & 0xff );
-        buffer.emplace_back( t & 0xff );
-        buffer.emplace_back( ( t >> 8 ) & 0xff );
-        buffer.emplace_back( ( t >> 16 ) & 0xff );
-        buffer.emplace_back( ( t >> 24 ) & 0xff );
-        if ( buffer.size() != 12 ) std::cerr << "ERROR" << std::endl;
-        std::copy_n( begin( str ), str.size(), back_inserter(buffer) );
-        if ( buffer.size() != 12 + str.size() ) std::cerr << "ERROR" << std::endl;
-        return buffer;
-    }
-
-    std::vector<unsigned char> make_cdb_record( std::string str )
-    {
-        return make_cdb_record( std::move(str), getUid(), std::time(nullptr) );
-    }
 
     bool append( const string& key, std::stringstream& is )
     {
