@@ -43,7 +43,6 @@ const CLID& DeRichGasRadiator::classID() { return CLID_DeRichGasRadiator; }
 //=========================================================================
 StatusCode DeRichGasRadiator::initialize()
 {
-
   MsgStream msg = msgStream( "DeRichGasRadiator" );
   if ( msgLevel(MSG::DEBUG,msg) )
     msg << MSG::DEBUG << "Initialize " << name() << endmsg;
@@ -100,20 +99,16 @@ StatusCode DeRichGasRadiator::initialize()
           << " at " << m_hltGasParametersCond.path()
           << endmsg;
     foundGasConditions = true;
+    _ri_debug << " -> Registering dependency on online condition" << endmsg;
+    updMgrSvc()->registerCondition( this,
+                                    m_hltGasParametersCond.path(),
+                                    &DeRichGasRadiator::updateHltProperties );
   }
   else  // use offline conditions for hlt
   {
     m_hltGasParametersCond = m_gasParametersCond;
     if ( msgLevel(MSG::DEBUG,msg) )
       msg << MSG::DEBUG << "Using offline gas condition for HLT" << endmsg;
-  }
-
-  // register dependency on HLT gas parameters if different to nomimal ones
-  if ( m_hltGasParametersCond != m_gasParametersCond )
-  {
-    updMgrSvc()->registerCondition( this,
-                                    m_hltGasParametersCond.path(),
-                                    &DeRichGasRadiator::updateHltProperties );
   }
 
   if ( !foundGasConditions )
@@ -207,8 +202,8 @@ StatusCode DeRichGasRadiator::updateProperties()
   // Update interpolators in base class
   sc = initTabPropInterpolators();
 
-  // Check the HLT ref index
-  checkHltRefIndex();
+  // Update the HLT ref index
+  generateHltRefIndex();
 
   return sc;
 }
@@ -502,13 +497,10 @@ DeRichGasRadiator::calcSellmeirRefIndex ( const std::vector<double>& momVect,
 }
 
 //=========================================================================
-//  generateHltRefIndex
+// generateHltRefIndex
 //=========================================================================
 void DeRichGasRadiator::generateHltRefIndex()
-{
-  // make a new table
-  m_hltRefIndexTabProp = std::make_unique<TabulatedProperty>("HltRefIndexTabProperty");
-  
+{ 
   // update the HLT parameters
   updateHltProperties();
 }
@@ -518,6 +510,9 @@ void DeRichGasRadiator::generateHltRefIndex()
 //=========================================================================
 StatusCode DeRichGasRadiator::updateHltProperties()
 {
+  // make a new table
+  m_hltRefIndexTabProp = std::make_unique<TabulatedProperty>("HltRefIndexTabProperty");
+
   // load parameters
   const auto photonEnergyLowLimit  = param<double>("PhotonMinimumEnergy");
   const auto photonEnergyHighLimit = param<double>("PhotonMaximumEnergy");
