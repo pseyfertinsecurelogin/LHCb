@@ -122,6 +122,10 @@ if(GAUDI_BUILD_TESTS)
                        tests/TestXYZTypes.cpp
                        INCLUDE_DIRS Boost GSL ROOT VDT Eigen
                        LINK_LIBRARIES Boost GSL ROOT VDT GaudiKernel LHCbMathLib)
+  gaudi_add_executable(TestPolynomials
+                       tests/poly.cpp
+                       INCLUDE_DIRS Boost GSL ROOT
+                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
 endif()
 
 gaudi_install_python_modules()
