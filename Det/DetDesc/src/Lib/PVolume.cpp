@@ -22,8 +22,7 @@
  */
 // ============================================================================
 
-std::atomic<unsigned long> PVolume::s_volumeCounter = {0};
-
+std::atomic<unsigned long> PVolume::s_volumeCounter{0};
 
 // ============================================================================
 /** constructor
@@ -45,7 +44,7 @@ PVolume::PVolume
   m_nominal =  Gaudi::Transform3D( Rotation,
                                    Rotation(Gaudi::XYZVector(Position)));
   m_matrix  = m_nominal ;
-  ///
+  m_imatrix = m_nominal.Inverse();
   m_services = DetDesc::services();
   ++s_volumeCounter ;
 }
@@ -67,6 +66,7 @@ PVolume::PVolume
   , m_matrix    ( Transform      )
 {
   m_services = DetDesc::services();
+  m_imatrix = m_matrix.Inverse();
   ++s_volumeCounter ;
 }
 

@@ -181,7 +181,7 @@ namespace LHCb
     std::vector<std::string>     m_names   ;
     // ========================================================================
     // the algorithm manager
-    mutable SmartIF<IAlgManager> m_algMgr  ;
+    SmartIF<IAlgManager> m_algMgr;
     // ========================================================================
   };
   // ==========================================================================

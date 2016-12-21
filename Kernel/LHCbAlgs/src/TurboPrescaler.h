@@ -50,7 +50,7 @@ class TurboPrescaler final : public GaudiAlgorithm
 
   std::map<std::string, Algorithm*> prescalers;
 
-  mutable IPropertyConfigSvc * m_propertyConfigSvc=nullptr;
+  IPropertyConfigSvc * m_propertyConfigSvc=nullptr;
   bool m_filter=false;
   std::string m_propertyConfigSvcName;
   std::string m_hltDecReportsLocation;
