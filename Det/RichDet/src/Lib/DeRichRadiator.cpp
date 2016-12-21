@@ -34,9 +34,11 @@ StatusCode DeRichRadiator::initialize()
   const auto pos = name().find("Rich");
   setMyName( std::string::npos != pos ? name().substr(pos) : "DeRichRadiator_NO_NAME" );
 
+  const auto sc = setRadiatorID();
+
   _ri_debug << "Initializing Radiator : " << rich() << " " << radiatorID() << endmsg;
 
-  return setRadiatorID();
+  return sc;
 }
 
 //=========================================================================

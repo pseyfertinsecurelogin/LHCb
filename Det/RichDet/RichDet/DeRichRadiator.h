@@ -238,12 +238,6 @@ protected:
     return m_refIndex.get();
   }
 
-  /// Checks if the HLT refractive index is OK and if not generates one
-  inline void checkHltRefIndex() 
-  {
-    if ( !m_hltRefIndex.get() ) { generateHltRefIndex(); }
-  }
-
   StatusCode setRadiatorID(); ///< Set rich and radiator ID
 
 protected:
