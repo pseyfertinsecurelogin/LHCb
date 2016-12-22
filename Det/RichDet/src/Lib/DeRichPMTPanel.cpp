@@ -83,7 +83,7 @@ StatusCode DeRichPMTPanel::initialize()
   m_DePMTModules.clear();
   m_DePMTAnodes.clear();
 
-  auto numCurModules = getNumModulesInThisPanel();
+  const auto numCurModules = getNumModulesInThisPanel();
 
   m_DePMTModules.reserve(numCurModules);
   m_DePMTs.reserve(numCurModules);
@@ -1537,7 +1537,7 @@ const DeRichPD* DeRichPMTPanel::dePD( const Rich::DAQ::HPDCopyNumber PmtCopyNumb
 
 const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const
 {
-  const DeRichPMT * dePmt = nullptr;
+  const DeRichPMT* dePmt = nullptr;
 
   unsigned int aTotNumPmt= m_Rich1TotNumPmts + m_Rich2TotNumPmts;
   //  if(rich() == Rich::Rich2 && m_Rich2UseGrandModule ) {
@@ -1547,9 +1547,9 @@ const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNu
 
   if ( PmtCopyNumber.data() < aTotNumPmt )
   {
-    const unsigned int Mnum = (unsigned int) (PmtCopyNumber.data()/m_NumPmtInRichModule);
+    const auto Mnum = (unsigned int) (PmtCopyNumber.data()/m_NumPmtInRichModule);
     const unsigned int MNumInCurPanel = PmtModuleNumInPanelFromModuleNumAlone(Mnum);
-    const unsigned int Pnum =  PmtCopyNumber.data() - ( Mnum * m_NumPmtInRichModule);
+    const auto Pnum =  PmtCopyNumber.data() - ( Mnum * m_NumPmtInRichModule);
     // info()<<"DeRichPMTPanel  current rich side pmtcopynum "<<rich()<<"  "<<side()<<"  "<<PmtCopyNumber<<  endmsg;
 
     //        info()<<"dePmtpanel depmt mNum "<<Mnum << endmsg;
@@ -1583,8 +1583,8 @@ const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNu
 
 Gaudi::XYZPoint DeRichPMTPanel::detPointOnAnode( const LHCb::RichSmartID smartID ) const
 {
-  const DeRichPMT * aPMT = dePMT( pdNumber( smartID ) );
-  return aPMT->detPointOnAnode(smartID);
+  const auto* aPMT = dePMT( pdNumber( smartID ) );
+  return ( aPMT ? aPMT->detPointOnAnode(smartID) : Gaudi::XYZPoint(0,0,0) );
 }
 
 //  return a list with all the valid readout channels (smartIDs)
@@ -1616,8 +1616,8 @@ DeRichPMTPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels 
     }
   }
 
-  int aBeginM=m_RichPmtModuleCopyNumBeginPanel[CurPanelNum];
-  int aEndM = m_RichPmtModuleCopyNumEndPanel[CurPanelNum];
+  const auto aBeginM = m_RichPmtModuleCopyNumBeginPanel[CurPanelNum];
+  const auto aEndM   = m_RichPmtModuleCopyNumEndPanel[CurPanelNum];
   // int aNumMod = aEndM-aBeginM+1;
 
   for (int iM=aBeginM ; iM <= aEndM; ++iM )
