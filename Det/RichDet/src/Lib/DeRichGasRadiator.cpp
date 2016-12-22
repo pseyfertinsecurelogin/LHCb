@@ -488,7 +488,7 @@ DeRichGasRadiator::calcSellmeirRefIndex ( const std::vector<double>& momVect,
 
     aTable.emplace_back( e, 1.0+nMinus1 );
 
-  } // end loop over bins of photon energy.
+  } // end loop over bins of photon energy
 
   _ri_debug << "Table in TabulatedProperty " << tabProp->name()
             << " updated with " << momVect.size() << " bins" << endmsg;
