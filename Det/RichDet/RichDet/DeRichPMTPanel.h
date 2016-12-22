@@ -144,25 +144,28 @@ private:
 
 private:
 
+  using IDeElemV = std::vector<IDetectorElement*>;
+  using IDRiPMTV = std::vector<DeRichPMT*>;
+
   /// Container for the PMT Modules as Det Elements
-  std::vector<IDetectorElement*> m_DePMTModules{1}; 
+  IDeElemV m_DePMTModules{1,nullptr};
 
   ///< Container for the PMTs
-  std::vector<std::vector<DeRichPMT*> > m_DePMTs{1,std::vector<DeRichPMT*>(2)};
+  std::vector<IDRiPMTV> m_DePMTs{1,IDRiPMTV(2,nullptr)};
 
   /// Container for the PMTAnodes as Det Elements
-  std::vector<std::vector<IDetectorElement*> > m_DePMTAnodes{1,std::vector<IDetectorElement*>(2)};
+  std::vector<IDeElemV> m_DePMTAnodes{1,IDeElemV(2,nullptr)};
 
   std::vector<double> m_PmtModulePlaneHalfSizeR1;
   std::vector<double> m_PmtModulePlaneHalfSizeR2;
   double m_PmtModulePitch{0};
   double m_PmtPitch{0};
-  std::vector<int> m_RichPmtNumModulesInRowCol{4};
-  std::vector<int> m_RichPmtModuleCopyNumBeginPanel{4};
-  std::vector<int> m_RichPmtModuleCopyNumEndPanel{4};
-  std::vector<double> m_RichPmtModuleActiveAreaHalfSize{2};
-  std::vector<int> m_NumPmtInRowCol{2};
-  std::vector<int> m_NumPmtModuleInRich{4};
+  std::vector<int> m_RichPmtNumModulesInRowCol{4,0};
+  std::vector<int> m_RichPmtModuleCopyNumBeginPanel{4,0};
+  std::vector<int> m_RichPmtModuleCopyNumEndPanel{4,0};
+  std::vector<double> m_RichPmtModuleActiveAreaHalfSize{2,0};
+  std::vector<int> m_NumPmtInRowCol{2,0};
+  std::vector<int> m_NumPmtModuleInRich{4,0};
   int m_NumPmtInRichModule{0};
   int m_totNumPmtModuleInRich{0};
   double m_PmtAnodeXSize{0};
@@ -188,31 +191,29 @@ private:
   Gaudi::Plane3D m_localPlane;
   Gaudi::XYZVector m_localPlaneNormal;
   // Gaudi::Plane3D m_localPlane2;
-  int  m_Rich1TotNumPmts{0};
+  int m_Rich1TotNumPmts{0};
   int m_Rich2TotNumPmts{0};
   Gaudi::Plane3D m_detectionPlane_exterior;
   // Access info related to PMT Lens flag
 
-  double  m_PmtMasterWithLensLateralSize{0};
-  double  m_PmtModuleWithLensPitch{0};
+  double m_PmtMasterWithLensLateralSize{0};
+  double m_PmtModuleWithLensPitch{0};
   double m_PmtLensPitch{0};
-  std::vector<double> m_Rich1PmtPanelWithLensXSize{2};
-  std::vector<double> m_Rich1PmtPanelWithLensYSize{2};
-  std::vector<int>    m_Rich1PmtPanelWithLensColSize{2};
-  std::vector<int>    m_RichNumLensPmtinModuleRowCol{2};
+  std::vector<double> m_Rich1PmtPanelWithLensXSize{2,0};
+  std::vector<double> m_Rich1PmtPanelWithLensYSize{2,0};
+  std::vector<int>    m_Rich1PmtPanelWithLensColSize{2,0};
+  std::vector<int>    m_RichNumLensPmtinModuleRowCol{2,0};
   double m_Rich1LensMagnificationFactor{0};
-
 
   bool  m_Rich2UseGrandModule{false};
   int   m_Rich2ArrayConfig{0};
   bool  m_Rich2UseMixedModule{false};
 
-
   std::vector<double> m_GrandPmtModulePlaneHalfSizeR2;
   std::vector<double> m_MixedPmtModulePlaneHalfSizeR2;
   std::vector<double> m_MixedStdPmtModulePlaneHalfSizeR2;
   double m_GrandPmtModulePitch{0};
-  std::vector<double>  m_RichGrandPmtModuleActiveAreaHalfSize{2};
+  std::vector<double> m_RichGrandPmtModuleActiveAreaHalfSize{2,0};
   double m_GrandPmtPitch{0};
   double m_GrandPmtAnodeXSize{0};
   double m_GrandPmtAnodeYSize{0};
@@ -227,13 +228,13 @@ private:
   double m_GrandPmtAnodeEffectiveYPixelSize{0};
   double m_GrandPmtMasterLateralSize{0};
   int m_GrandNumPmtInRichModule{0};
-  std::vector<int> m_NumGrandPmtInRowCol{2};
+  std::vector<int> m_NumGrandPmtInRowCol{2,0};
   int m_Rich2TotNumGrandPmts{0};
   int m_Rich2TotNumStdPmts{0};
   int m_Rich2TotNumGrandModules{0};
   int m_Rich2TotNumStdModules{0};
 
-  std::vector<int> m_Rich2MixedModuleArrayColumnSize{3};
-  std::vector<bool>  m_ModuleIsWithGrandPMT;
+  std::vector<int> m_Rich2MixedModuleArrayColumnSize{3,0};
+  std::vector<bool> m_ModuleIsWithGrandPMT;
 
 };
