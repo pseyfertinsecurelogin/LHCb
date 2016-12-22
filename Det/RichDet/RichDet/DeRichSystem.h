@@ -7,8 +7,7 @@
  *  @date   2006-01-26
  */
 
-#ifndef RICHDET_DERICHSYSTEM_H
-#define RICHDET_DERICHSYSTEM_H 1
+#pragma once
 
 // base class
 #include "RichDet/DeRichBase.h"
@@ -48,7 +47,7 @@ public:
   DeRichSystem( const std::string & name = "" );
 
   /// Default destructor
-  virtual ~DeRichSystem();
+  virtual ~DeRichSystem() = default;
 
   /** Retrieves reference to class identifier
    *  @return the class identifier for this class
@@ -376,8 +375,7 @@ private: // data
   L1HIDToCopyN m_l1H2CopyN;
 
   /// Rich1 & Rich2 detector elements
-  mutable std::map<Rich::DetectorType, DetectorElement*> m_deRich =
-    { { {Rich::Rich1,nullptr}, {Rich::Rich2,nullptr} } };
+  Rich::DetectorArray<DetectorElement*> m_deRich = {{}};
 
   /// Location of RICH Numbering schemes in Conditions DB
   std::map<Rich::DetectorType, std::string> m_detNumConds;
@@ -400,6 +398,14 @@ private: // data
   int m_version{0};
 
 };
+
+//=========================================================================
+// Access the Detector Elements for Rich1 and Rich2
+//=========================================================================
+inline DetectorElement * DeRichSystem::deRich( const Rich::DetectorType rich ) const
+{
+  return m_deRich[rich];
+}
 
 //=========================================================================
 // activePDRichSmartIDs
@@ -500,5 +506,3 @@ inline unsigned int DeRichSystem::nPDs() const
 {
   return allPDRichSmartIDs().size();
 }
-
-#endif    // RICHDET_DERICHSYSTEM_H

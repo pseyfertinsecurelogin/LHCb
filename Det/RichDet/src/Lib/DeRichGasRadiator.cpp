@@ -31,13 +31,7 @@ const CLID CLID_DeRichGasRadiator = 12042;  // User defined
 // Standard constructor, initializes variables
 //=============================================================================
 DeRichGasRadiator::DeRichGasRadiator(const std::string & name)
-  : DeRichSingleSolidRadiator(name)
-{ }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-DeRichGasRadiator::~DeRichGasRadiator() { }
+  : DeRichSingleSolidRadiator(name) { }
 
 //=========================================================================
 // Retrieve Pointer to class defininition structure
@@ -49,7 +43,6 @@ const CLID& DeRichGasRadiator::classID() { return CLID_DeRichGasRadiator; }
 //=========================================================================
 StatusCode DeRichGasRadiator::initialize()
 {
-
   MsgStream msg = msgStream( "DeRichGasRadiator" );
   if ( msgLevel(MSG::DEBUG,msg) )
     msg << MSG::DEBUG << "Initialize " << name() << endmsg;
@@ -106,6 +99,10 @@ StatusCode DeRichGasRadiator::initialize()
           << " at " << m_hltGasParametersCond.path()
           << endmsg;
     foundGasConditions = true;
+    _ri_debug << " -> Registering dependency on online condition" << endmsg;
+    updMgrSvc()->registerCondition( this,
+                                    m_hltGasParametersCond.path(),
+                                    &DeRichGasRadiator::updateHltProperties );
   }
   else  // use offline conditions for hlt
   {
@@ -156,7 +153,7 @@ StatusCode DeRichGasRadiator::initialize()
     msg << MSG::DEBUG << "Initialisation Complete" << endmsg;
 
   // return
-  return StatusCode::SUCCESS;
+  return sc;
 }
 
 //=========================================================================
@@ -205,6 +202,9 @@ StatusCode DeRichGasRadiator::updateProperties()
   // Update interpolators in base class
   sc = initTabPropInterpolators();
 
+  // Update the HLT ref index
+  generateHltRefIndex();
+
   return sc;
 }
 
@@ -214,7 +214,7 @@ StatusCode DeRichGasRadiator::updateProperties()
 
 StatusCode
 DeRichGasRadiator::calcSellmeirRefIndex ( const std::vector<double>& momVect,
-                                          const TabulatedProperty* tabProp,
+                                          TabulatedProperty* tabProp,
                                           const SmartRef<Condition>& gasParamCond ) const
 {
   // test the tab property pointer
@@ -257,15 +257,13 @@ DeRichGasRadiator::calcSellmeirRefIndex ( const std::vector<double>& momVect,
   const double scaleFactor = ( !m_scaleFactorCond ? 1.0 :
                                m_scaleFactorCond->param<double>("CurrentScaleFactor") );
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Refractive index update : Pressure = " << curPressure/Gaudi::Units::bar
+  _ri_debug << "Refractive index update : Pressure = " << curPressure/Gaudi::Units::bar
             << " bar : Temperature = " << curTemp << " K"
             << " : (n-1) Scale = " << scaleFactor
             << endmsg;
 
   // reset table
-  TabulatedProperty* modTabProp = const_cast<TabulatedProperty*>( tabProp );
-  TabulatedProperty::Table& aTable = modTabProp->table();
+  auto & aTable = tabProp->table();
   aTable.clear();
   aTable.reserve( momVect.size() );
 
@@ -488,46 +486,23 @@ DeRichGasRadiator::calcSellmeirRefIndex ( const std::vector<double>& momVect,
 
     }  // end if on ref index options
 
-    aTable.push_back( TabulatedProperty::Entry( e, 1.0+nMinus1 ) );
+    aTable.emplace_back( e, 1.0+nMinus1 );
 
-  } // end loop over bins of photon energy.
+  } // end loop over bins of photon energy
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Table in TabulatedProperty " << tabProp->name()
+  _ri_debug << "Table in TabulatedProperty " << tabProp->name()
             << " updated with " << momVect.size() << " bins" << endmsg;
 
   return StatusCode::SUCCESS;
 }
 
 //=========================================================================
-//  generateHltRefIndex
+// generateHltRefIndex
 //=========================================================================
-const Rich::TabulatedProperty1D*
-DeRichGasRadiator::generateHltRefIndex() const
-{
-  m_hltRefIndexTabProp.reset( new TabulatedProperty("HltRefIndexTabProperty") );
-
-  auto * nonConstSelf = const_cast<DeRichGasRadiator*>(this);
-
-  // temperature
-  if ( m_hltGasParametersCond != m_gasParametersCond )
-  {
-    updMgrSvc()->registerCondition( nonConstSelf,
-                                    m_hltGasParametersCond.path(),
-                                    &DeRichGasRadiator::updateHltProperties );
-    const StatusCode sc = updMgrSvc()->update(nonConstSelf);
-    if ( sc.isFailure() )
-    {
-      error() << "First UMS update failed for HLT properties" << endmsg;
-      return 0;
-    }
-  }
-  else
-  {
-    nonConstSelf->updateHltProperties();
-  }
-
-  return m_hltRefIndex.get();
+void DeRichGasRadiator::generateHltRefIndex()
+{ 
+  // update the HLT parameters
+  updateHltProperties();
 }
 
 //=========================================================================
@@ -535,11 +510,13 @@ DeRichGasRadiator::generateHltRefIndex() const
 //=========================================================================
 StatusCode DeRichGasRadiator::updateHltProperties()
 {
+  // make a new table
+  m_hltRefIndexTabProp = std::make_unique<TabulatedProperty>("HltRefIndexTabProperty");
 
   // load parameters
-  const auto photonEnergyLowLimit   = param<double>("PhotonMinimumEnergy");
-  const auto photonEnergyHighLimit  = param<double>("PhotonMaximumEnergy");
-  const auto photonEnergyNumBins    = param<int>   ("PhotonEnergyNumBins");
+  const auto photonEnergyLowLimit  = param<double>("PhotonMinimumEnergy");
+  const auto photonEnergyHighLimit = param<double>("PhotonMaximumEnergy");
+  const auto photonEnergyNumBins   = param<int>   ("PhotonEnergyNumBins");
 
   if ( photonEnergyHighLimit < photonEnergyLowLimit )
   {
@@ -561,7 +538,7 @@ StatusCode DeRichGasRadiator::updateHltProperties()
 
   if ( !m_hltRefIndex )
   {
-    m_hltRefIndex.reset( new Rich::TabulatedProperty1D(m_hltRefIndexTabProp.get()) );
+    m_hltRefIndex = std::make_shared<Rich::TabulatedProperty1D>(m_hltRefIndexTabProp.get());
   }
   else
   {

@@ -55,9 +55,9 @@ bool TabulatedProperty1D::configureUMS( const TabulatedProperty * tab )
     m_registedUMS = false;
     
     // try registering updates
-    auto * nonconsttab = const_cast<TabulatedProperty*>(tab);
-    updMgrSvc()->registerCondition( this,
-                                    nonconsttab,
+    // const cast can be removed once UMS is updated to allow it.
+    updMgrSvc()->registerCondition( this, 
+                                    const_cast<TabulatedProperty*>(tab),
                                     &TabulatedProperty1D::updateTabProp );
 
     // flag we correctly registered

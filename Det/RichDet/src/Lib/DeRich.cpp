@@ -29,20 +29,14 @@
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-DeRich::DeRich( const std::string & name ) : DeRichBase ( name  ) { }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-DeRich::~DeRich() { }
+DeRich::DeRich( const std::string & name ) : DeRichBase ( name ) { }
 
 //=========================================================================
 //  initialize
 //=========================================================================
 StatusCode DeRich::initialize ( )
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Initialize " << name() << endmsg;
+  _ri_debug << "Initialize " << name() << endmsg;
 
   if ( exists( "SphMirrorSegRows" ) )
   {
@@ -99,28 +93,32 @@ StatusCode DeRich::initialize ( )
     }
   }
 
+  // initialise various local cached data
+  //loadPDPanels();
+  //loadNominalQuantumEff();
+
   return StatusCode::SUCCESS;
 }
 
 //=========================================================================
 
-void DeRich::loadNominalQuantumEff() const
+void DeRich::loadNominalQuantumEff()
 {
   if      ( m_RichPhotoDetConfig == Rich::HPDConfig )
   {
-    m_nominalPDQuantumEff.reset( loadNominalHPDQuantumEff() );
+    m_nominalPDQuantumEff = loadNominalHPDQuantumEff();
   }
   else if ( m_RichPhotoDetConfig == Rich::PMTConfig )
   {
-    m_nominalPDQuantumEff.reset( loadNominalPMTQuantumEff() );
+    m_nominalPDQuantumEff =  loadNominalPMTQuantumEff();
   }
 }
 
 //=========================================================================
 
-const Rich::TabulatedProperty1D * DeRich::loadNominalHPDQuantumEff() const
+std::shared_ptr<const Rich::TabulatedProperty1D> DeRich::loadNominalHPDQuantumEff()
 {
-  const Rich::TabulatedProperty1D * nominalHPDQuantumEff = nullptr;
+  std::shared_ptr<const Rich::TabulatedProperty1D> nominalHPDQuantumEff;
 
   // find the HPD quantum efficiency
   std::string HPD_QETabPropLoc;
@@ -151,7 +149,7 @@ const Rich::TabulatedProperty1D * DeRich::loadNominalHPDQuantumEff() const
   {
     if ( msgLevel(MSG::DEBUG) )
       debug() << "Loaded HPD QE from: " << HPD_QETabPropLoc << endmsg;
-    nominalHPDQuantumEff = new Rich::TabulatedProperty1D( tabQE );
+    nominalHPDQuantumEff = std::make_shared<Rich::TabulatedProperty1D>( tabQE );
     if ( !nominalHPDQuantumEff->valid() )
     {
       throw GaudiException( "Invalid HPD QE RichTabulatedProperty1D for " + tabQE->name(),
@@ -164,9 +162,9 @@ const Rich::TabulatedProperty1D * DeRich::loadNominalHPDQuantumEff() const
 
 //=========================================================================
 
-const Rich::TabulatedProperty1D * DeRich::loadNominalPMTQuantumEff() const
+std::shared_ptr<const Rich::TabulatedProperty1D> DeRich::loadNominalPMTQuantumEff()
 {
-  const Rich::TabulatedProperty1D * nominalPMTQuantumEff = nullptr;
+  std::shared_ptr<const Rich::TabulatedProperty1D> nominalPMTQuantumEff;
 
   // find the PMT quantum efficiency
   std::string PMT_QETabPropLoc;
@@ -197,7 +195,7 @@ const Rich::TabulatedProperty1D * DeRich::loadNominalPMTQuantumEff() const
   {
     if ( msgLevel(MSG::DEBUG) )
       debug() << "Loaded PMT QE from: " << PMT_QETabPropLoc << endmsg;
-    nominalPMTQuantumEff = new Rich::TabulatedProperty1D( tabQE );
+    nominalPMTQuantumEff = std::make_shared<Rich::TabulatedProperty1D>( tabQE );
     if ( !nominalPMTQuantumEff->valid() )
     {
       throw GaudiException( "Invalid PMT QE RichTabulatedProperty1D for " + tabQE->name(),
@@ -270,17 +268,17 @@ const std::string DeRich::panelName( const Rich::Side /* panel */ ) const
                         "DeRich::panelName", StatusCode::FAILURE );
 }
 
-//=========================================================================
-// Access PD Panels on demand
-//=========================================================================
-DeRichPDPanel * DeRich::pdPanel( const Rich::Side panel ) const
+//=============================================================================
+// Load the PD panels
+//=============================================================================
+void DeRich::loadPDPanels()
 {
-  if ( !m_PDPanels[panel] )
+  for ( const auto panel : Rich::sides() )
   {
     const std::string pName = panelName(panel);
-
+    
     DeRichPDPanel* phdePanel = nullptr;
-
+    
     if      ( RichPhotoDetConfig() == Rich::HPDConfig )
     {
       SmartDataPtr<DeRichHPDPanel> aHpdPanel( dataSvc(), pName );
@@ -291,18 +289,16 @@ DeRichPDPanel * DeRich::pdPanel( const Rich::Side panel ) const
       SmartDataPtr<DeRichPMTPanel> aPmtPanel( dataSvc(), pName );
       phdePanel = aPmtPanel;
     }
-
+    
     if ( !phdePanel )
     {
       std::ostringstream mess;
       mess << "Failed to load DeRichPDPanel at " << pName;
       throw GaudiException( mess.str(), "DeRich::PhDetPanel", StatusCode::FAILURE );
     }
-
+  
     m_PDPanels[panel] = phdePanel;
   }
-
-  return m_PDPanels[panel];
 }
 
 //=============================================================================
