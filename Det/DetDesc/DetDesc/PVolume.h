@@ -1,6 +1,7 @@
 #ifndef    DETDESC_PVOLUME_H
 #define    DETDESC_PVOLUME_H 1
 
+//#include <atomic>
 ///  GaudiKernel includes
 #include "GaudiKernel/Transform3DTypes.h"
 /// DetDesc includes
@@ -52,6 +53,11 @@ public:
     const std::string&     LogVol_name  ,
     //    const size_t           copynumber   ,
     const Gaudi::Transform3D&  Transform    );
+
+  /// no copy constructor
+  PVolume           ( const PVolume& ) = delete;
+  /// no assignment
+  PVolume& operator=( const PVolume& ) = delete;
 
   /// destructor
   ~PVolume() override;
@@ -247,10 +253,6 @@ protected:
    */
   IDataProviderSvc* dataSvc() const;
 
-  /// no public copy constructor
-  PVolume           ( const PVolume& ) = delete;
-  /// no public assignment
-  PVolume& operator=( const PVolume& ) = delete;
 
 private:
 
@@ -267,7 +269,7 @@ private:
   // pointer to logical volume
   mutable ILVolume*       m_lvolume = nullptr      ;
   // reference/object counter
-  static unsigned long    s_volumeCounter ;
+  static std::atomic<unsigned long> s_volumeCounter ;
   // reference to dataSvc
   DetDesc::ServicesPtr    m_services;
 };
@@ -275,4 +277,3 @@ private:
 /// ===========================================================================
 #endif  ///< DETDESC_PVOLUME_H
 /// ===========================================================================
-

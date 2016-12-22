@@ -68,10 +68,10 @@ namespace
      *  Seek for algorithm that
      *    - matched the name pattern
      *    - has property "Property"
-     *    - the property shoudl be convertible either to
-     *        simple double or map { string: dobule}
+     *    - the property should be convertible either to
+     *        simple double or map { string: double}
      *    - for map-case, the presence of the
-     *       corresponsing key in map is required.
+     *       corresponding key in map is required.
      */
     bool operator() ( const IAlgorithm* a ) const override
     {

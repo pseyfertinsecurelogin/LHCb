@@ -1319,7 +1319,7 @@ namespace LoKi
         return r;
       }
       /// OPTIONAL: the basic printout method
-      virtual std::ostream& fillStream( std::ostream& s ) const
+      std::ostream& fillStream( std::ostream& s ) const override
       {
         s << " sort ( " << this->m_cmp.func1() ;
         //

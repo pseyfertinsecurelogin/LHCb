@@ -101,8 +101,6 @@ HltConfigSvc().HltDecReportsLocations = ['Hlt1/EmptyDecReports']
 ApplicationMgr().ExtSvc.insert(0, HltConfigSvc().getFullName())
 
 topSeq = GaudiSequencer( "TopSequence" )
-from Configurables import createODIN
-topSeq.Members += [createODIN()]
 
 # Filter nanofied events if the file is HLT2 accepted
 if hlt2_tck:
@@ -112,12 +110,12 @@ if hlt2_tck:
 
 # Decode Hlt DecReports
 from DAQSys.Decoders import DecoderDB
-for dec in ("L0DUFromRawAlg/L0DUFromRaw",
+for dec in ("L0DUDecoder/L0DUFromRaw",
             "HltDecReportsDecoder/Hlt1DecReportsDecoder"):
     topSeq.Members.append(DecoderDB[dec].setup())
     # tell HltConfigSvc to leave the just explicitly configured decoders alone..
     HltConfigSvc().SkipComponent += [ dec.split('/')[-1] ]
-
+print topSeq.Members
 
 if hlt2_tck:
     topSeq.Members.append(DecoderDB["HltDecReportsDecoder/Hlt2DecReportsDecoder"].setup())

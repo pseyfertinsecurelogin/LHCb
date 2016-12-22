@@ -93,7 +93,7 @@ topSeq.Members += [createODIN()]
 
 # Decode Hlt DecReports
 from DAQSys.Decoders import DecoderDB
-for dec in ("L0DUFromRawAlg/L0DUFromRaw",):
+for dec in ("L0DUDecoder/L0DUFromRaw",):
     topSeq.Members.append(DecoderDB[dec].setup())
 
 ApplicationMgr().TopAlg = [topSeq]

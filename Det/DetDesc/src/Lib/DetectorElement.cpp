@@ -281,20 +281,23 @@ StatusCode DetectorElement::initialize() {
 IDetectorElement::IDEContainer&
 DetectorElement::childIDetectorElements() const {
   /// already loaded?
-  if( m_de_childrensLoaded ) { return m_de_childrens; }
+  if (m_de_childrensLoaded) { return m_de_childrens; }
   /// load them!
   SmartIF<IDataManagerSvc> mgr( dataSvc() );
-  if( mgr ) {
+  if (mgr) {
     std::vector<IRegistry*> leaves;
     StatusCode sc = mgr->objectLeaves(this, leaves);
-    if ( sc.isSuccess() ) {
-      for ( const auto& l : leaves ) {
-        Assert (l , "DirIterator points to NULL!" );
-        const std::string& nam = l->identifier();
-        SmartDataPtr<IDetectorElement> de( dataSvc() , nam );
-        IDetectorElement* ide = de;
-        Assert (ide , "Could not load child object="+nam );
-        m_de_childrens.push_back( ide  );
+    if (sc.isSuccess()) {
+      std::lock_guard<std::mutex> guard(m_de_childrens_lock);
+      if (!m_de_childrensLoaded) {
+        for (const auto& l : leaves) {
+          Assert (l, "DirIterator points to NULL!" );
+          const std::string& nam = l->identifier();
+          SmartDataPtr<IDetectorElement> de(dataSvc() , nam);
+          IDetectorElement* ide = de;
+          Assert (ide, "Could not load child object="+nam);
+          m_de_childrens.push_back(ide);
+        }
       }
       m_de_childrensLoaded = true;
     }

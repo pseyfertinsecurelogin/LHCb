@@ -8,8 +8,7 @@
  */
 //=============================================================================
 
-#ifndef RICHDET_DERICHPD_H
-#define RICHDET_DERICHPD_H 1
+#pragma once
 
 // STL
 #include <memory>
@@ -41,7 +40,7 @@ public:
   explicit DeRichPD( const std::string & name = "" );
 
   /// Destructor
-  virtual ~DeRichPD( );
+  virtual ~DeRichPD( ) = default;
 
 public:
 
@@ -96,8 +95,7 @@ public: // virtual methods to be implemented by derived classes
 protected: // to be initialised by derived classes
   
   ///< Interpolated property for HPD quantum efficiency
-  mutable std::shared_ptr<const Rich::TabulatedProperty1D> m_pdQuantumEffFunc;
+  std::shared_ptr<const Rich::TabulatedProperty1D> m_pdQuantumEffFunc;
   
 };
 
-#endif // RICHDET_DERICHPD_H

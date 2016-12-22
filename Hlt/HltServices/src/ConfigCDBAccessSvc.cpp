@@ -64,44 +64,74 @@ struct PrefixFilenameSelector
 
 uint8_t read8( std::istream& s )
 {
-    union
-    {
-        unsigned int ui;
-        int i;
-    } u;
-    u.i = s.get(); // stream will typically return an 'int', as it is a 'char' stream
-    uint8_t r = u.ui;
-    return r;
+    union { unsigned int ui; int i; } ;
+    i = s.get(); // stream will typically return an 'int', as it is a 'char' stream
+    return ui;
 }
+
 uint16_t read16( std::istream& s )
 {
-    uint16_t r;
-    r = uint16_t( read8( s ) );
-    r |= uint16_t( read8( s ) ) << 8;
-    return r;
+    auto r1 = uint16_t( read8( s ) );
+    auto r2 = uint16_t( read8( s ) ) << 8;
+    return r1 | r2 ;
 }
+
 uint32_t read32( std::istream& s )
 {
-    uint32_t r;
-    r = uint32_t( read16( s ) );
-    r |= uint32_t( read16( s ) ) << 16;
-    return r;
+    auto r1 = uint32_t( read8( s ) );
+    auto r2 = uint32_t( read8( s ) ) <<  8;
+    auto r3 = uint32_t( read8( s ) ) << 16;
+    auto r4 = uint32_t( read8( s ) ) << 24;
+    return r1 | r2 | r3 | r4;
 }
+
 uid_t read_uid( std::istream& s )
 {
-    uid_t uid = read32( s );
-    // std::cout << "uid : " <<  uid << std::endl ;
-    return uid;
+    return read32( s );
 }
+
 std::time_t read_time( std::istream& s )
 {
-    std::time_t tm = read32( s );
-    // std::cout << "time : " << tm  << " " ;
-    // char mbstr[100];
-    // if (std::strftime(mbstr, sizeof(mbstr), "%A %c", std::localtime(&tm)))
-    // std::cout << mbstr ;
-    // std::cout << endl;
-    return tm;
+    return read32( s );
+}
+
+int compress( string& str )
+{
+    // compress and check if worthwhile...
+    string compressed;
+    compressed.reserve( str.size() );
+    io::filtering_streambuf<io::output> filter;
+    io::zlib_params params;
+    params.noheader = true;
+    filter.push( io::zlib_compressor( params ) );
+    filter.push( io::back_inserter( compressed ) );
+    io::copy( boost::make_iterator_range( str ), filter, 8192 );
+    bool ok = compressed.size() < str.size(); // yes, it's better!
+    if ( ok ) str = std::move( compressed );
+    return ok ? 3 : 0;
+}
+
+std::vector<unsigned char> make_cdb_record( std::string str, uid_t uid, std::time_t t )
+{
+    auto flags = compress( str );
+    std::vector<unsigned char> buffer; buffer.reserve( 12 + str.size() );
+    buffer.emplace_back( 0u );     // version number
+    buffer.emplace_back( flags ); // compression
+    buffer.emplace_back( 0u );     // reserved;
+    buffer.emplace_back( 0u );     // reserved;
+    assert( sizeof( uid_t ) == 4 );
+    buffer.emplace_back( uid & 0xff );
+    buffer.emplace_back( ( uid >> 8 ) & 0xff );
+    buffer.emplace_back( ( uid >> 16 ) & 0xff );
+    buffer.emplace_back( ( uid >> 24 ) & 0xff );
+    buffer.emplace_back( t & 0xff );
+    buffer.emplace_back( ( t >> 8 ) & 0xff );
+    buffer.emplace_back( ( t >> 16 ) & 0xff );
+    buffer.emplace_back( ( t >> 24 ) & 0xff );
+    if ( buffer.size() != 12 ) std::cerr << "CDB: ERROR unexpected header size" << std::endl;
+    std::copy_n( begin( str ), str.size(), back_inserter(buffer) );
+    if ( buffer.size() != 12 + str.size() ) std::cerr << "CDB: ERROR unexpected record size" << std::endl;
+    return buffer;
 }
 
 class CloseListener : public implements<IIncidentListener> {
@@ -122,6 +152,7 @@ private:
    /// file to reset (close)
    std::unique_ptr<ConfigCDBAccessSvc_details::CDB> &m_file;
 };
+
 }
 
 namespace ConfigCDBAccessSvc_details
@@ -234,22 +265,19 @@ class CDB
             io::stream<io::array_source> value(
                 static_cast<const char*>( cdb_getdata( &m_icdb ) ),
                 cdb_datalen( &m_icdb ) );
-// 12 bytes of header information...
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
+            // 12 bytes of header information...
             {
-                unsigned int version = read8( value );
+                unsigned int version [[gnu::unused]] = read8( value );  // C++17: replace by [[maybe_unused]]; note: both clang and gcc understand [[gnu::unused]]
                 assert( version == 0 );
             }
             unsigned int flags = read8( value );
             assert( flags < 4 );
             {
-                unsigned int reserved = read16( value );
+                unsigned int reserved [[gnu::unused]] = read16( value );
                 assert( reserved == 0 );
-                auto uid = read_uid( value );
-                auto tm = read_time( value );
+                auto uid [[gnu::unused]] = read_uid( value );
+                auto tm [[gnu::unused]] = read_time( value );
             }
-#pragma GCC diagnostic pop
 
             assert( value.tellg() == 12 );
             io::filtering_istream s;
@@ -265,7 +293,7 @@ class CDB
                 s.push( io::zlib_decompressor( params ) );
             } break;
             default:
-                std::cerr << "unknown compression flag" << std::endl;
+                std::cerr << "CDB: unknown compression flag" << std::endl;
                 return 0;
             }
             s.push( value );
@@ -309,7 +337,7 @@ class CDB
     uid_t getUid() const
     {
 #ifndef _WIN32
-        if ( m_myUid == 0 ) m_myUid = getuid();
+        if ( UNLIKELY(m_myUid == 0) ) m_myUid = getuid();
 #endif
         return m_myUid;
     }
@@ -386,7 +414,7 @@ class CDB
         // aha, this is an as yet unknown key... insert it!
         m_shadow.emplace( key, is.str() );
 
-        auto record = make_cdb_record( is.str() );
+        auto record = make_cdb_record( is.str(), getUid(), std::time(nullptr) );
         if ( cdb_make_add( &m_ocdb,
                            reinterpret_cast<const unsigned char*>( key.data() ),
                            key.size(), record.data(), record.size() ) != 0 ) {
@@ -406,7 +434,7 @@ class CDB
     } // TODO: FIXME: properly implement error checking...
   private:
     mutable struct cdb m_icdb;
-    mutable struct cdb_make m_ocdb;
+    struct cdb_make m_ocdb;
     fs::path m_fname;
     fs::path m_oname;
     map<Gaudi::StringKey, string> m_shadow; // write cache..
@@ -418,18 +446,6 @@ using namespace ConfigCDBAccessSvc_details;
 
 // Factory implementation
 DECLARE_COMPONENT( ConfigCDBAccessSvc )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-ConfigCDBAccessSvc::ConfigCDBAccessSvc( const string& name,
-                                        ISvcLocator* pSvcLocator )
-    : base_class( name, pSvcLocator )
-{
-    declareProperty( "File", m_name = "" );
-    declareProperty( "Mode", m_mode = "ReadOnly" );
-    declareProperty( "CloseIncident", m_incident );
-}
 
 //=============================================================================
 // Initialization
@@ -445,8 +461,8 @@ StatusCode ConfigCDBAccessSvc::initialize()
     // closed when it it fired. In that case, we should be handled first/always,
     // so give maximum priority.
     if (status.isSuccess() && !m_incident.empty()) {
-       m_initListener.reset(new CloseListener{m_incident, m_file});
-       auto incSvc = service("IncidentSvc").as<IIncidentSvc>();
+       m_initListener= std::make_unique<CloseListener>(m_incident, m_file);
+       auto incSvc = service<IIncidentSvc>("IncidentSvc");
        incSvc->addListener(m_initListener.get(), m_incident, std::numeric_limits<long>::max());
     }
 
@@ -456,19 +472,20 @@ StatusCode ConfigCDBAccessSvc::initialize()
 ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
 {
     if ( UNLIKELY(!m_file) ) {
-        std::unique_lock<std::mutex> lock(m_file_mtx);
-        if (LIKELY(!m_file)){
+      std::unique_lock<std::mutex> lock(m_file_mtx);
+      if (LIKELY(!m_file)){
         if ( m_mode != "ReadOnly" && m_mode != "ReadWrite" &&
              m_mode != "Truncate" ) {
-            error() << "invalid mode: " << m_mode << endmsg;
+            error() << "invalid mode: " << m_mode.value() << endmsg;
             return nullptr;
         }
-        ios::openmode mode = ( m_mode == "ReadWrite" )
+  // todo: use Parse and toStream to make mode instead of m_mode a property...
+        ios::openmode mode = ( m_mode == "ReadWrite"
                                  ? ( ios::in | ios::out | ios::ate )
                                  : ( m_mode == "Truncate" )
                                        ? ( ios::in | ios::out | ios::trunc )
-                                       : ios::in;
-        if ( m_name.empty() ) {
+                                       : ios::in );
+        if ( m_name.value().empty() ) {
             std::string def( System::getEnv( "HLTTCKROOT" ) );
             if ( def.empty() ) {
                throw GaudiException("Environment variable HLTTCKROOT not specified and no explicit "
@@ -477,15 +494,15 @@ ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
             }
             m_name = def + "/config.cdb";
         }
-        info() << " opening " << m_name << " in mode " << m_mode << endmsg;
-        m_file.reset( new CDB( m_name, mode ) );
+        info() << " opening " << m_name.value() << " in mode " << m_mode.value() << endmsg;
+        m_file = std::make_unique<CDB>( m_name.value(), mode );
         if ( !*m_file ) {
-            error() << " Failed to open " << m_name << " in mode " << m_mode
+            error() << " Failed to open " << m_name.value() << " in mode " << m_mode.value()
                     << endmsg;
             error() << string( strerror( errno ) ) << endmsg;
             m_file.reset( );
         }
-        }
+      }
     }
     return m_file.get();
 }
@@ -531,13 +548,13 @@ boost::optional<T> ConfigCDBAccessSvc::read( const string& path ) const
 {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "trying to read " << path << endmsg;
     if ( file() == nullptr ) {
-        debug() << "file " << m_name << " not found" << endmsg;
+        debug() << "file " << m_name.value() << " not found" << endmsg;
         return boost::none;
     }
     T c;
     if ( !file()->readObject( c, path ) ) {
         if ( msgLevel( MSG::DEBUG ) )
-            debug() << "file " << path << " not found in container " << m_name
+            debug() << "file " << path << " not found in container " << m_name.value()
                     << endmsg;
         return boost::none;
     }
@@ -554,7 +571,7 @@ bool ConfigCDBAccessSvc::write( const string& path, const T& object ) const
                 << "  already exists, but contents are different..." << endmsg;
         return false;
     }
-    if ( m_mode == "ReadOnly" ) {
+    if ( m_mode.value() == "ReadOnly" ) {
         error() << "attempted write, but file has been opened ReadOnly" << endmsg;
         return false;
     }

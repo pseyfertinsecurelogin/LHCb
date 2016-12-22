@@ -358,6 +358,32 @@ StatusCode LHCb::decompressBuffer(int           algtype,
   return StatusCode::FAILURE;
 }
 
+/// Clone rawevent structure
+StatusCode LHCb::cloneRawEvent(RawEvent* source, RawEvent*& result)  {
+  if ( source )  {
+    std::unique_ptr<RawEvent> raw(new RawEvent());
+    for(int i=RawBank::L0Calo; i<RawBank::LastType; ++i) {
+      for( const auto& bank : source->banks(RawBank::BankType(i)) )
+        raw->adoptBank(bank, false);
+    }
+    result = raw.release();
+    return StatusCode::SUCCESS;
+  }
+  return StatusCode::FAILURE;
+}
+
+/// Deep copy raw event structure (including baw bank memory - hence heavy)
+StatusCode LHCb::deepCopyRawEvent(RawEvent* source, RawEvent*& result)  {
+  if ( !source )  return StatusCode::FAILURE;
+  RawEvent* raw = ( result ? result : new RawEvent() );
+  for(int i=RawBank::L0Calo; i<RawBank::LastType; ++i) {
+    for(const auto& bank : source->banks(RawBank::BankType(i)))
+      raw->addBank(bank);
+  }
+  result = raw;
+  return StatusCode::SUCCESS;
+}
+
 /// Determine length of the sequential buffer from RawEvent object
 size_t LHCb::rawEventLength(const RawEvent* evt)    {
   size_t  len = 0;

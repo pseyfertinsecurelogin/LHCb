@@ -4,15 +4,6 @@
 // Factory implementation
 DECLARE_COMPONENT( ConfigStackAccessSvc )
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-ConfigStackAccessSvc::ConfigStackAccessSvc( const std::string& name,
-                                            ISvcLocator* pSvcLocator )
-    : base_class( name, pSvcLocator )
-{
-    declareProperty( "ConfigAccessSvcs", s_svcs = {{"ConfigDBAccessSvc"}} );
-}
 
 //=============================================================================
 // Initialization

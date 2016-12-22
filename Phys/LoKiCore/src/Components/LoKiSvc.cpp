@@ -98,14 +98,6 @@ public:
   // ==========================================================================
 public:
   // ==========================================================================
-  /** get the pointer to service locator
-   *  @return ponter to Service Locator
-   *  @see LoKi::ILoKiSvc
-   *  @see IScvLocator
-   */
-  ISvcLocator*          svcLoc() const
-  { return Service::serviceLocator() ; }
-  // ==========================================================================
   /** get the pointer to Particle Property Service
    *  @return pointer to Particle Property Service
    *  @see LoKi::ILoKiSvc
@@ -567,11 +559,11 @@ public:
     else if ( IIncidentSvc::interfaceID         () == iid && incidentSvc () )
     { return incidentSvc ()     -> queryInterface ( iid , ppI ) ; }
     // ServiceLocator
-    else if ( ISvcLocator::interfaceID          () == iid && svcLoc      () )
-    { return svcLoc      ()     -> queryInterface ( iid , ppI ) ; }
+    else if ( ISvcLocator::interfaceID          () == iid && serviceLocator() )
+    { return serviceLocator()   -> queryInterface ( iid , ppI ) ; }
     // IAlgManager
-    else if ( IAlgManager::interfaceID          () == iid && svcLoc      () )
-    { return svcLoc      ()     -> queryInterface ( iid , ppI ) ; }
+    else if ( IAlgManager::interfaceID          () == iid && serviceLocator() )
+    { return serviceLocator()   -> queryInterface ( iid , ppI ) ; }
     // IHistogramSvc
     else if ( IHistogramSvc::interfaceID        () == iid && histoSvc    () )
     { return histoSvc    ()     -> queryInterface ( iid , ppI ) ; }

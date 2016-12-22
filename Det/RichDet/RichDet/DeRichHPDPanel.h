@@ -9,8 +9,7 @@
  */
 //----------------------------------------------------------------------------
 
-#ifndef RICHDET_DERICHHPDPANEL_H
-#define RICHDET_DERICHHPDPANEL_H 1
+#pragma once
 
 // STL
 #include <sstream>
@@ -55,7 +54,7 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRichHPDPanel();
+  virtual ~DeRichHPDPanel() = default;
 
   /**
    * Retrieves reference to class identifier
@@ -192,6 +191,9 @@ private: // data
 
   std::vector<DeRichHPD*> m_DeHPDs; ///< Container for the HPDs as Det Elements
 
+  /// DeRichSystem pointer
+  DeRichSystem * m_deRichS = nullptr;
+
 };
 
 //=========================================================================
@@ -225,5 +227,3 @@ DeRichHPDPanel::checkPanelAcc( const Gaudi::XYZPoint & point ) const
              fabs(uv.second) >= m_panelStartColPos ) ?
            LHCb::RichTraceMode::OutsideHPDPanel : LHCb::RichTraceMode::InHPDPanel );
 }
-
-#endif    // RICHDET_DERICHHPDPANEL_H

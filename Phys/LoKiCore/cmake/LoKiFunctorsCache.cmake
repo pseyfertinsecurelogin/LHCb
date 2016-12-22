@@ -96,7 +96,7 @@ function(loki_functors_cache name)
   add_custom_command(OUTPUT ${name}_srcs/${name}.${tmp_ext}
                      COMMAND ${env_cmd} --xml ${env_xml}
                        gaudirun.py -n -o ${name}_srcs/${name}.${tmp_ext} ${inputs} ${LOKI_FUNCTORS_CACHE_POST_ACTION_OPTS}
-                     DEPENDS ${inputs} ${ARG_DEPENDS}
+                     DEPENDS ${inputs} ${LOKI_FUNCTORS_CACHE_POST_ACTION_OPTS} ${ARG_DEPENDS}
                      COMMENT "Preprocess options for ${name}")
 
   add_custom_command(OUTPUT ${outputs}

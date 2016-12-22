@@ -1,4 +1,4 @@
-#ifndef CONFIGFILEACCESSSVC_H 
+#ifndef CONFIGFILEACCESSSVC_H
 #define CONFIGFILEACCESSSVC_H 1
 
 // Include files
@@ -13,7 +13,7 @@
 #include "Kernel/IConfigAccessSvc.h"
 
 /** @class ConfigFileAccessSvc ConfigFileAccessSvc.h
- *  
+ *
  *  functionality:
  *        read/write configure information to files
  *
@@ -22,10 +22,9 @@
  */
 class ConfigFileAccessSvc : public extends<Service, IConfigAccessSvc> {
 public:
-  ConfigFileAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
+  using extends::extends;
 
   StatusCode initialize() override;    ///< Service initialization
-  StatusCode finalize() override;      ///< Service initialization
 
   boost::optional<PropertyConfig>  readPropertyConfig(const PropertyConfig::digest_type& ref) override;
   PropertyConfig::digest_type      writePropertyConfig(const PropertyConfig& config) override;
@@ -40,8 +39,8 @@ public:
 private:
 
   boost::filesystem::path dir() const;
-   
-  mutable std::string                m_dir;   ///< where to read/write configurations from/to?
+
+  mutable Gaudi::Property<std::string> m_dir { this, "Directory" };   ///< where to read/write configurations from/to?
 
   // TODO: replace fs::path with a concrete config...
   bool isCompatible(const ConfigTreeNodeAlias& alias, const boost::filesystem::path& dirName ) const;

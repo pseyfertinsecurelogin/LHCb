@@ -6,6 +6,29 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-12-18 - Vanya Belyaev
+ - add Gauss-Lobatto interpolation
+ - add (and extend) qmtest for new interpolation functions 
+  
+! 2016-12-14 - Vanya Belyaev
+ - add helper function 
+ - add one more test
+
+! 2016-12-13 - Vanya Belyaev
+ - speedup vector/matrix operations in Python
+ - make operations more robust and more efficient
+ - add negation operator 
+ - improve comparison 
+ - extend the test 
+
+! 2016-12-12 - Vanya Belyaev
+ - 1) tiny fix
+   2) make it more robust 
+   3) propagate matrix/vector comparsion(equality) criteria to python
+
+! 2016-12-12 - Vanya Belyaev
+ - Fix linear-algebra operations in python   (new ROOT?)
+
 ! 2016-11-10 - Vanya Belyaev
  - ValueWithError.cpp
    fix Coverity warnings 

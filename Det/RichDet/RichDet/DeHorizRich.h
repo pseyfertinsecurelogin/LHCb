@@ -7,8 +7,7 @@
  *  @date   2012-10-18
  */
 
-#ifndef RICHDET_DEHORIZRICH_H
-#define RICHDET_DEHORIZRICH_H 1
+#pragma once
 
 // local
 #include "RichDet/DeRich.h"
@@ -35,7 +34,7 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeHorizRich();
+  virtual ~DeHorizRich() = default;
 
   /**
    * Retrieves reference to class identifier
@@ -110,5 +109,3 @@ private:
   Gaudi::XYZVector m_nominalNormalLeft;
 
 };
-
-#endif    // RICHDET_DEHORIZRICH_H

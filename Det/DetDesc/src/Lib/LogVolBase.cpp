@@ -24,7 +24,7 @@
 /** initialize the static counter (number of existing volumes)
  */
 // ============================================================================
-unsigned long LogVolBase::s_volumeCounter = 0 ;
+std::atomic<unsigned long> LogVolBase::s_volumeCounter = {0} ;
 // ============================================================================
 /*  constructor
  *  @exception LVolumeException wrong paramaters value
@@ -84,13 +84,10 @@ unsigned long LogVolBase::release () { return DataObject::release(); }
  *  @return status code
  */
 // ============================================================================
-StatusCode
-LogVolBase::queryInterface
-( const InterfaceID& ID  ,
-  void**             ppI )
+StatusCode LogVolBase::queryInterface ( const InterfaceID& ID, void** ppI )
 {
-  if(  0 ==  ppI ) { return StatusCode::FAILURE ; }
-  *ppI = 0 ;
+  if(  !ppI ) { return StatusCode::FAILURE ; }
+  *ppI = nullptr ;
   if      ( ID == ILVolume::   interfaceID() )
   { *ppI = static_cast<ILVolume*>   ( this ) ; }
   else if ( ID == IInterface:: interfaceID() )

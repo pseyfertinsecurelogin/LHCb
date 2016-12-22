@@ -88,8 +88,7 @@ public:
    *  @param  index    physical volume index
    *  @return pointer to daughter (Physical Volume)
    */
-  inline const IPVolume* operator[]
-  ( const ILVolume::ReplicaType& index ) const override
+  const IPVolume* operator[]( const ILVolume::ReplicaType& index ) const override
   {
     return index < m_pvolumes.size() ?
       *(m_pvolumes.begin()+index) : nullptr ;
@@ -100,8 +99,7 @@ public:
    *  @param  name    physical volume name
    *  @return pointer to daughter (Physical Volume)
    */
-  inline const IPVolume* operator[]
-  ( boost::string_ref            name  ) const override
+  const IPVolume* operator[]( boost::string_ref name  ) const override
   {
     auto pvi = std::find_if( m_pvolumes.begin  () ,
                              m_pvolumes.end    () ,
@@ -113,19 +111,16 @@ public:
    *  @param  index    physical volume index
    *  @return pointer to daughter (Physical Volume)
    */
-  const IPVolume* pvolume
-  ( const ILVolume::ReplicaType& index ) const override
+  const IPVolume* pvolume( const ILVolume::ReplicaType& index ) const override
   {
-    return index < m_pvolumes.size() ?
-      *(m_pvolumes.begin()+index) : nullptr ;
+    return index < m_pvolumes.size() ?  *(m_pvolumes.begin()+index) : nullptr ;
   }
 
   /** get daughter (Physical Volume) by name
    *  @param  name    physical volume name
    *  @return pointer to daughter (Physical Volume)
    */
-  const IPVolume* pvolume
-  ( boost::string_ref            name  ) const override
+  const IPVolume* pvolume( boost::string_ref name  ) const override
   {
     auto pvi = std::find_if( m_pvolumes.begin  () ,
                              m_pvolumes.end    () ,
@@ -397,7 +392,7 @@ private:
   /// name of magnetic field source
   std::string           m_mfName        ;
   /// static  volume counter
-  static  unsigned long s_volumeCounter ;
+  static  std::atomic<unsigned long> s_volumeCounter ;
   /// reference to services
   DetDesc::ServicesPtr m_services = DetDesc::services();
 };

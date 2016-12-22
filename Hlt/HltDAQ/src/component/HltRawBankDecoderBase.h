@@ -1,4 +1,4 @@
-#ifndef HLTRAWBANKDECODERBASE_H 
+#ifndef HLTRAWBANKDECODERBASE_H
 #define HLTRAWBANKDECODERBASE_H 1
 
 // Include files
@@ -27,7 +27,7 @@ public:
         kSourceID_MajorMask=0xE000
     };
 
-    HltRawBankDecoderBase( const std::string& name, ISvcLocator* pSvcLocator);
+    using Decoder::AlgBase::AlgBase;
 
     StatusCode initialize() override;
 
@@ -37,8 +37,8 @@ public:
         Gaudi::StringKey m_key;
         bool             m_decode;
     public:
-        element_t( Gaudi::StringKey key, bool decode ) 
-            : m_key{ std::move(key) }, m_decode{ decode } 
+        element_t( Gaudi::StringKey key, bool decode )
+            : m_key{ std::move(key) }, m_decode{ decode }
         {}
         operator const Gaudi::StringKey& () const { return m_key; }
         const std::string& str() const { return m_key.str(); }
@@ -78,9 +78,9 @@ private:
     mutable Table_t m_infoTable;
     mutable Table_t m_packedObjectLocationsTable;
     Table_t::const_iterator fetch_info2string(unsigned int tck, const IANNSvc::major_key_type& major, Table_t& table) const;
-    
+
     /// SourceID to decode: 0=Hlt 1=Hlt1 2=Hlt2 ... (1,2 will decode from 0 if 1,2 not found)
-    UnsignedIntegerProperty m_sourceID;
+    Gaudi::Property<unsigned int> m_sourceID { this, "SourceID", kSourceID_Dummy  };
 
 };
 

@@ -476,23 +476,25 @@ StatusCode MCEventTypeFinder::parentEventTypes(long unsigned int evtType, LHCb::
   return StatusCode::SUCCESS;
     
 }
-StatusCode MCEventTypeFinder::appendParents(LHCb::EventTypeSet & aset)
+
+void MCEventTypeFinder::appendParents(LHCb::EventTypeSet & aset)
 {
   if(UNLIKELY(msgLevel(MSG::DEBUG))) 
     debug() << "appending all parents, starting size:" << aset.size() << endmsg;
 
-    const LHCb::EventTypeSet parents=aset;
+  const LHCb::EventTypeSet parents=aset;
     
-    if(aset.empty()) { aset.insert(m_mbias); return StatusCode::SUCCESS;}
+  if(aset.empty()) { aset.insert(m_mbias); return;}
     
     
-    for(LHCb::EventTypeSet::const_iterator n=parents.begin(); n!=parents.end(); n++)
-      {
-        parentEventTypes(*n, aset); //append parents to aset
-      }
-    if(UNLIKELY(msgLevel(MSG::DEBUG))) 
-      debug() << "parents appended, final size:" << aset.size() << endmsg;
-    return StatusCode::SUCCESS;
+  for(LHCb::EventTypeSet::const_iterator n=parents.begin(); n!=parents.end(); n++)
+  {
+    parentEventTypes(*n, aset); //append parents to aset
+  }
+  if(UNLIKELY(msgLevel(MSG::DEBUG))) 
+    debug() << "parents appended, final size:" << aset.size() << endmsg;
+
+  return;
     
 }
 bool MCEventTypeFinder::set2vec(LHCb::EventTypeSet& aset,std::vector<long unsigned int>& avec)

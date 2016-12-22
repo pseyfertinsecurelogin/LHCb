@@ -12,8 +12,7 @@
  */
 //----------------------------------------------------------------------------
 
-#ifndef RICHDET_DERICHHPDPANELLOCATIONS_H
-#define RICHDET_DERICHHPDPANELLOCATIONS_H 1
+#pragma once
 
 // LHCbKernel
 #include "Kernel/RichRadiatorType.h"
@@ -99,4 +98,3 @@ namespace DeRichLocations
 
 // ************************************************************************************************************
 
-#endif // RICHDET_DERICHHPDPANELLOCATIONS_H
