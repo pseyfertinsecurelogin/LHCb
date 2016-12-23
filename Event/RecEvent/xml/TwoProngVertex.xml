@@ -302,7 +302,7 @@
 	const = "TRUE">
 	<arg type = "unsigned int" name = "trackIndex" const = "TRUE"/>
 	<code>
-	  return trackIndex &lt; tracks().size() ? tracks().at(trackIndex)->type() : LHCb::Track::TypeUnknown ;
+	  return trackIndex &lt; tracks().size() ? tracks().at(trackIndex)->type() : LHCb::Track::Types::TypeUnknown ;
 	</code>
       </method>
 
