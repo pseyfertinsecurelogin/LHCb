@@ -22,22 +22,32 @@ void incrementCounters(LHCb::VeloChannelID id,int& countClusters,int& countRClus
   }
   ++countClusters;
 }
-static const std::array<std::string,7> valid_criteria =
-             { "All","Left","Right","R","Phi","PU","Overlap" };
 }
 
 StatusCode parse(VeloClusterFilter::filter_t& result, const std::string& input) {
-  auto i = std::find( valid_criteria.begin(), valid_criteria.end(), input );
-  if (i==valid_criteria.end()) return StatusCode::FAILURE;
-  result.criterion = static_cast<VeloClusterFilter::filter_t::criterion_t>(std::distance( valid_criteria.begin(), i ));
+  using criterion_t = VeloClusterFilter::filter_t::criterion_t;
+  static const std::array<VeloClusterFilter::filter_t,7> filters = {
+      criterion_t::ALL, criterion_t::LEFT, criterion_t::RIGHT,
+      criterion_t::R,   criterion_t::PHI,   criterion_t::PU,
+      criterion_t::OVERLAP };
+  auto i = std::find_if( filters.begin(), filters.end(),
+                         [&](VeloClusterFilter::filter_t f)
+                         { return f.toString() == input; } );
+  if (i==filters.end()) return StatusCode::FAILURE;
+  result = *i;
   return StatusCode::SUCCESS;
 }
+
 std::ostream& toStream(const VeloClusterFilter::filter_t& crit, std::ostream& os) {
   return os << std::quoted( crit.toString(), '\'' );
 }
+
 const std::string& VeloClusterFilter::filter_t::toString() const {
+  static const std::array<std::string,7> valid_criteria = {
+      "All","Left","Right","R","Phi","PU","Overlap" };
   return valid_criteria[static_cast<int>(criterion)];
 }
+
 bool VeloClusterFilter::filter_t::operator()(LHCb::VeloChannelID id) const {
   unsigned int sensorNumber = id.sensor();
   switch (criterion) {
@@ -65,7 +75,6 @@ bool VeloClusterFilter::filter_t::operator()(LHCb::VeloChannelID id) const {
         return false;
   }
 }
-
 
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( VeloClusterFilter )
