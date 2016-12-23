@@ -96,6 +96,10 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Rich/RichKernel
                          Rich/RichUtils
                          Rich/RichInterfaces
+                         Rich/RichFutureKernel
+                         Rich/RichFutureDAQ
+                         Rich/RichFutureUtils
+                         Rich/RichFutureMCUtils
 			 ST/STDAQ
                          ST/STKernel
                          ST/STTELL1Event
