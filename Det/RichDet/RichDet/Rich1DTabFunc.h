@@ -9,8 +9,7 @@
  */
 //============================================================================
 
-#ifndef RICHDET_RICH1DTABFUNC_H
-#define RICHDET_RICH1DTABFUNC_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -547,5 +546,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHDET_RICH1DTABFUNC_H

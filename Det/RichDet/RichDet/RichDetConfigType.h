@@ -1,6 +1,5 @@
-// $Id: $
-#ifndef RICHDET_RICHDETCONFIGTYPE_H
-#define RICHDET_RICHDETCONFIGTYPE_H 1
+
+#pragma once
 
 #include <string>
 
@@ -29,5 +28,3 @@ namespace Rich
   std::string text( const Rich::RichPhDetConfigType conf );
 
 }
-
-#endif // RICHDET_RICHDETCONFIGTYPE_H

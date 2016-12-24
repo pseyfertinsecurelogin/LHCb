@@ -7,15 +7,13 @@
  *  @date   2004-06-18
  */
 
-#ifndef RICHDET_DERICH2_H
-#define RICHDET_DERICH2_H 1
+#pragma once
 
 // local
 #include "RichDet/DeRich.h"
 
 // External declarations
 extern const CLID CLID_DERich2;
-
 
 /** @class DeRich2 RichDet/DeRich2.h
  *
@@ -36,7 +34,7 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRich2();
+  virtual ~DeRich2() = default;
 
   /**
    * Retrieves reference to class identifier
@@ -114,5 +112,3 @@ private:
   Gaudi::XYZVector m_nominalNormalLeft;
 
 };
-
-#endif    // RICHDET_DERICH2_H

@@ -9,8 +9,7 @@
  */
 //----------------------------------------------------------------------------
 
-#ifndef RICHDET_DERICHRADIATOR_H
-#define RICHDET_DERICHRADIATOR_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -62,7 +61,7 @@ public:
   DeRichRadiator( const std::string & name = "" );
 
   /// Destructor
-  virtual ~DeRichRadiator();
+  virtual ~DeRichRadiator() = default;
 
   /**
    * This is where most of the geometry is read and variables initialised
@@ -109,7 +108,7 @@ public:
    */
   inline const Rich::TabulatedProperty1D* hltRefIndex() const
   {
-    return ( m_hltRefIndex.get() ? m_hltRefIndex.get() : generateHltRefIndex() );
+    return m_hltRefIndex.get();
   }
 
   /**
@@ -222,7 +221,7 @@ protected:
    * @return A pointer to the HLT refractive index interpolated function of the radiator
    * @retval nullptr No interpolation function
    */
-  virtual const Rich::TabulatedProperty1D* generateHltRefIndex() const;
+  virtual void generateHltRefIndex();
 
   /**
    * Checks if the refractive index is valid. If not it throws an exception
@@ -253,29 +252,27 @@ protected:
   std::shared_ptr<Rich::TabulatedProperty1D> m_refIndex;
 
   /// pointer to the refractive index of the material used by the HLT
-  mutable std::shared_ptr<Rich::TabulatedProperty1D> m_hltRefIndex;
+  std::shared_ptr<Rich::TabulatedProperty1D> m_hltRefIndex;
 
   /// pointer to the Tabulated property refractive index
-  const TabulatedProperty* m_refIndexTabProp = nullptr;
+  TabulatedProperty* m_refIndexTabProp = nullptr;
 
   /// pointer to the Tabulated property refractive index
-  mutable std::unique_ptr<TabulatedProperty> m_hltRefIndexTabProp;
+  std::unique_ptr<TabulatedProperty> m_hltRefIndexTabProp;
 
   /// pointer to the Tabulated property Cherenkov Ref Index
-  const TabulatedProperty* m_chkvRefIndexTabProp = nullptr;
+  TabulatedProperty* m_chkvRefIndexTabProp = nullptr;
 
   /// pointer to the Rayleigh scattering properties
   std::unique_ptr<Rich::TabulatedProperty1D> m_rayleigh;
 
   /// pointer to the Tabulated property Rayleigh
-  const TabulatedProperty* m_rayleighTabProp = nullptr;
+  TabulatedProperty* m_rayleighTabProp = nullptr;
 
   /// pointer to the absorption tabulated function
   std::unique_ptr<Rich::TabulatedProperty1D> m_absorption;
 
   /// pointer to the Tabulated property for the absoption
-  const TabulatedProperty* m_absorptionTabProp = nullptr;
+  TabulatedProperty* m_absorptionTabProp = nullptr;
 
 };
-
-#endif    // RICHDET_DERICHRADIATOR_H

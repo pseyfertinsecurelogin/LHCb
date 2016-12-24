@@ -9,8 +9,7 @@
  */
 //=============================================================================
 
-#ifndef RICHDET_DERICHPDPANEL_H
-#define RICHDET_DERICHPDPANEL_H 1
+#pragma once
 
 // Gaudi
 #include "GaudiKernel/Transform3DTypes.h"
@@ -46,7 +45,7 @@ public:
   DeRichPDPanel( const std::string & name = "" );
 
   /// Destructor
-  virtual ~DeRichPDPanel( );
+  virtual ~DeRichPDPanel( ) = default;
 
 public:
 
@@ -240,5 +239,3 @@ protected: // Parameters that must be properly configured in the derived classes
   Gaudi::Transform3D m_PDPanelToGlobalTransform;  ///< local (PD plane) to global transform
 
 };
-
-#endif // RICHDET_DERICHPDPANEL_H
