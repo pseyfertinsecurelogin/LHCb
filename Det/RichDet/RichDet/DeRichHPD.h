@@ -9,8 +9,7 @@
  */
 //=============================================================================
 
-#ifndef RICHDET_DERICHHPD_H
-#define RICHDET_DERICHHPD_H 1
+#pragma once
 
 // STL
 #include <cmath>
@@ -305,14 +304,10 @@ private: // functions
   StatusCode initHpdQuantumEff();
 
   /// Access magnetic field service on demand
-  inline ILHCbMagnetSvc * magSvc() const
-  {
-    if ( !m_magFieldSvc ) { loadMagSvc(); }
-    return m_magFieldSvc;
-  }
+  inline ILHCbMagnetSvc * magSvc() const noexcept { return m_magFieldSvc; }
 
-  /// Load the Magnetic field service when required
-  void loadMagSvc() const;
+  /// Load the Magnetic field service
+  void loadMagSvc();
 
   /** It returns the rotation angle \Delta\phi [rad] as a function of the
    * radial entrance
@@ -421,7 +416,7 @@ private: // data
   Gaudi::XYZVector m_windowCoCglobal;
 
   /// pointer to the magnetic field service
-  mutable ILHCbMagnetSvc * m_magFieldSvc = nullptr;
+  ILHCbMagnetSvc * m_magFieldSvc = nullptr;
 
 };
 
@@ -433,5 +428,3 @@ DeRichHPD::detPointOnAnode( const LHCb::RichSmartID smartID ) const
 {
   return ( m_deSiSensor->geometry()->toGlobal( pointOnSilicon(smartID) ) );
 }
-
-#endif    // RICHDET_DERICHHPD_H

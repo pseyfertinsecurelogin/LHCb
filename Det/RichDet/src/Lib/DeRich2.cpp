@@ -33,9 +33,6 @@ DeRich2::DeRich2(const std::string & name) : DeRich ( name )
   setMyName("DeRich2");
 }
 
-// Standard Destructor
-DeRich2::~DeRich2() = default;
-
 // Retrieve Pointer to class defininition structure
 const CLID& DeRich2::classID()
 {
@@ -46,8 +43,7 @@ const CLID& DeRich2::classID()
 
 StatusCode DeRich2::initialize()
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Initialize " << name() << endmsg;
+  _ri_debug << "Initialize " << name() << endmsg;
 
   if ( !DeRich::initialize() ) return StatusCode::FAILURE;
 
@@ -65,7 +61,7 @@ StatusCode DeRich2::initialize()
   const auto * pvGasWindow = geometry()->lvolume()->pvolume("pvRich2QuartzWindow:0");
   if ( pvGasWindow )
   {
-    for ( const auto& mat : pvGasWindow->lvolume()->material()->tabulatedProperties() )
+    for ( auto& mat : pvGasWindow->lvolume()->material()->tabulatedProperties() )
     {
       if ( mat )
       {
@@ -139,14 +135,13 @@ StatusCode DeRich2::initialize()
     }
   }
 
-  // Force loading of the HPD panels now
-  //hpdPanel(Rich::left);
-  //hpdPanel(Rich::right);
+  // initialise various local cached data
+  loadPDPanels();
+  loadNominalQuantumEff();
 
-   // Trigger first update
+  // Trigger first update
   const auto sc = updMgrSvc()->update(this);
   if ( sc.isFailure() ) { fatal() << "UMS updates failed" << endmsg; }
-
   return sc;
 }
 

@@ -6,8 +6,7 @@
  *  @date   2004-06-18
  */
 
-#ifndef RICHDET_DERICH_H
-#define RICHDET_DERICH_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -55,7 +54,7 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRich();
+  virtual ~DeRich() = default;
 
   /**
    * This is where most of the geometry is read and variables initialised
@@ -113,10 +112,7 @@ public:
    *
    * @return The DeRichSystem object
    */
-  inline DeRichSystem* deRichSystem() const noexcept
-  {
-    return deRichSys();
-  }
+  inline DeRichSystem* deRichSystem() noexcept { return deRichSys(); }
 
   /**
    * Returns the nominal spherical mirror radius for this Rich
@@ -192,7 +188,6 @@ public:
   inline const std::shared_ptr<const Rich::TabulatedProperty1D>&
   nominalPDQuantumEff() const noexcept
   {
-    if ( !m_nominalPDQuantumEff ) { loadNominalQuantumEff(); }
     return m_nominalPDQuantumEff;
   }
 
@@ -234,12 +229,23 @@ public:
   virtual Rich::MirrorSegPosition secMirrorSegPos( const int mirrorNumber ) const;
 
   /// sensitive volume identifier for hpd version. to be phased out
-  int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const override;
+  int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override;
 
 public:
 
-  /// Access PD Panels on demand
-  DeRichPDPanel * pdPanel( const Rich::Side panel ) const;
+  /// Access PD Panels
+  inline DeRichPDPanel * pdPanel( const Rich::Side panel ) const noexcept 
+  {
+    return m_PDPanels[panel];
+  }
+
+protected:
+
+  /// Load on demand the nominal PD Q.E.
+  void loadNominalQuantumEff();
+
+  /// Load the PD panels
+  void loadPDPanels();
 
 private:
 
@@ -247,13 +253,10 @@ private:
   virtual const std::string panelName( const Rich::Side panel ) const;
 
   /// Load on demand the nominal HPD Q.E.
-  const Rich::TabulatedProperty1D * loadNominalHPDQuantumEff() const;
+  std::shared_ptr<const Rich::TabulatedProperty1D> loadNominalHPDQuantumEff();
 
   /// Load on demand the nominal PMT Q.E.
-  const Rich::TabulatedProperty1D * loadNominalPMTQuantumEff() const;
-
-  /// Load on demand the nominal PD Q.E.
-  void loadNominalQuantumEff() const;
+  std::shared_ptr<const Rich::TabulatedProperty1D> loadNominalPMTQuantumEff();
 
 protected:
 
@@ -302,7 +305,7 @@ protected:
 private: // data
 
   /// Pointers to the PD panels of this Rich detector
-  mutable std::array<DeRichPDPanel*,Rich::NRiches> m_PDPanels{{nullptr,nullptr}};
+  Rich::DetectorArray<DeRichPDPanel*> m_PDPanels{{nullptr,nullptr}};
 
   /// flag to test if the xml supports mirror position info
   bool m_positionInfo{false};
@@ -313,8 +316,6 @@ private: // data
   int m_secMirrorSegCols{0};  ///< number of secondary mirror columns
 
   /// PD quantum efficiency
-  mutable std::shared_ptr<const Rich::TabulatedProperty1D> m_nominalPDQuantumEff;
+  std::shared_ptr<const Rich::TabulatedProperty1D> m_nominalPDQuantumEff;
 
 };
-
-#endif    // RICHDET_DERICH_H

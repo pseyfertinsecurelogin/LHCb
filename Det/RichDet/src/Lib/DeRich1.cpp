@@ -33,9 +33,6 @@ DeRich1::DeRich1(const std::string & name) : DeRich ( name )
   setMyName("DeRich1");
 }
 
-// Standard Destructor
-DeRich1::~DeRich1() = default;
-
 // Retrieve Pointer to class defininition structure
 const CLID& DeRich1::classID()
 {
@@ -114,8 +111,7 @@ StatusCode DeRich1::initialize()
   }
   else
   {
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Loaded spherical mirror reflectivity from: "
+    _ri_debug << "Loaded spherical mirror reflectivity from: "
               << sphMirrorReflLoc << endmsg;
     m_nominalSphMirrorRefl.reset( new Rich::TabulatedProperty1D( sphMirrorRefl ) );
     if ( !m_nominalSphMirrorRefl->valid() )
@@ -138,8 +134,7 @@ StatusCode DeRich1::initialize()
   }
   else
   {
-    if ( msgLevel(MSG::DEBUG) )
-      debug() <<"Loaded secondary mirror reflectivity from: "<<secMirrorReflLoc<<endmsg;
+    _ri_debug <<"Loaded secondary mirror reflectivity from: "<<secMirrorReflLoc<<endmsg;
     m_nominalSecMirrorRefl.reset( new Rich::TabulatedProperty1D( secMirrorRefl ) );
     if ( !m_nominalSecMirrorRefl->valid() )
     {
@@ -147,18 +142,17 @@ StatusCode DeRich1::initialize()
     }
   }
 
-  // Force loading of the HPD panels now
-  //hpdPanel(Rich::top);
-  //hpdPanel(Rich::bottom);
-
   // initialize all child detector elements. This triggers the update
   // of the radiator properties
   childIDetectorElements();
 
+  // initialise various local cached data
+  loadPDPanels();
+  loadNominalQuantumEff();
+
   // Trigger first update
   const auto sc = updMgrSvc()->update(this);
   if ( sc.isFailure() ) { fatal() << "UMS updates failed" << endmsg; }
-
   return sc;
 }
 
