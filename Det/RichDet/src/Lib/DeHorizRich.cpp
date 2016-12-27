@@ -33,9 +33,6 @@ DeHorizRich::DeHorizRich(const std::string & name)
   setMyName("DeHorizRich");
 }
 
-// Standard Destructor
-DeHorizRich::~DeHorizRich() { }
-
 // Retrieve Pointer to class defininition structure
 const CLID& DeHorizRich::classID()
 {
@@ -175,6 +172,10 @@ StatusCode DeHorizRich::initialize()
     if ( !richRad )
       error() << "Cannot initialize Rich Radiator:" << radLocs[rad] << endmsg;
   }
+
+  // initialise various local cached data
+  loadPDPanels();
+  loadNominalQuantumEff();
 
   return StatusCode::SUCCESS;
 }

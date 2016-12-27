@@ -7,8 +7,7 @@
  *  @date   2006-11-27
  */
 
-#ifndef RICHDET_DERICHBEAMPIPE_H
-#define RICHDET_DERICHBEAMPIPE_H 1
+#pragma once
 
 // STL
 #include <memory>
@@ -66,13 +65,13 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRichBeamPipe();
+  virtual ~DeRichBeamPipe() = default;
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const  override { return classID(); }
+  const CLID& clID() const override { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -193,4 +192,3 @@ inline std::ostream& operator << ( std::ostream& s,
   return s << DeRichBeamPipe::text( type );
 }
 
-#endif    // RICHDET_DERICHBEAMPIPE_H
