@@ -53,10 +53,6 @@ LbAppInit::LbAppInit( const std::string& name,
   declareProperty( "MinMemoryDelta", m_minMemDelta = 16,
                    "The minimum change in memory usage (KB) to trigger a message" );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-LbAppInit::~LbAppInit() {}
 
 //=============================================================================
 // Initialization
@@ -85,7 +81,7 @@ StatusCode LbAppInit::initialize() {
   always()
     << "=================================================================="
     << endmsg;
-  
+
 
   sc = propMgr->getProperty( "AppName", value );
   if( sc.isFailure() )
@@ -93,7 +89,7 @@ StatusCode LbAppInit::initialize() {
   m_appName = value;
 
   sc = propMgr->getProperty( "AppVersion", value );
-  if( sc.isFailure() ) 
+  if( sc.isFailure() )
     return Error( " Fatal error while retrieving Property AppVersion " );
   m_appVersion = value;
 
@@ -137,7 +133,7 @@ StatusCode LbAppInit::execute()
       if ( mem > m_memPurgeLimit )
       {
 
-        Info( "Memory exceeds limit of " + std::to_string(m_memPurgeLimit) 
+        Info( "Memory exceeds limit of " + std::to_string(m_memPurgeLimit)
             + " KB -> Purging pools", StatusCode::SUCCESS, 1 ).ignore();
         releaseMemoryPools();
         mem = System::virtualMemory();

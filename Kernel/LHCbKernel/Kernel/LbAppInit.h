@@ -33,8 +33,6 @@ public:
   /// Standard constructor
   LbAppInit( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~LbAppInit( ); ///< Destructor
-
   StatusCode initialize() override;     ///< Algorithm initialization
   StatusCode execute   () override;     ///< Algorithm execution
   StatusCode finalize  () override;     ///< Algorithm finalization
