@@ -97,8 +97,11 @@ namespace Rich
 
     private:
 
-      unsigned int m_nBins1D; ///< Number of bins for 1D histograms
-      unsigned int m_nBins2D; ///< Number of bins for 2D histograms
+      /// Number of bins for 1D histograms
+      Gaudi::Property<unsigned int> m_nBins1D { this, "NBins1DHistos", 100 };
+
+      /// Number of bins for 2D histograms
+      Gaudi::Property<unsigned int> m_nBins2D { this, "NBins2DHistos",  50 };
 
     protected:
 

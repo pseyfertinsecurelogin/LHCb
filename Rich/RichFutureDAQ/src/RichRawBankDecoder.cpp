@@ -29,21 +29,7 @@ RawBankDecoder::RawBankDecoder( const std::string& name,
                                                LHCb::RawEventLocation::Default } ) },
                     KeyValue{ "OdinLocation", LHCb::ODINLocation::Default } },
                   { KeyValue{ "DecodedDataLocation", L1MapLocation::Default } } )
-{
-  declareProperty( "DumpRawBanks",       m_dumpBanks          = false  );
-  declareProperty( "DecodeUsingODIN",    m_decodeUseOdin      = false  );
-  declareProperty( "CheckODINEventIDs",  m_checkODINEventsIDs = false  );
-  declareProperty( "CheckBXIDs",         m_checkBxIDs         = true   );
-  declareProperty( "CheckRICHEventIDs",  m_checkRICHEventsIDs = true   );
-  declareProperty( "CheckDataIntegrity", m_checkDataIntegrity = true   );
-  declareProperty( "CheckHPDL1IDs",      m_hpdL1check         = false  );
-  declareProperty( "UseFakeHPDID",       m_useFakeHPDID       = false  );
-  declareProperty( "VerboseErrors",      m_verboseErrors      = false  );
-  declareProperty( "MaxHPDOccupancy",    m_maxHPDOc           = 999999 );
-  declareProperty( "PurgeHPDsFailIntegrityTest", m_purgeHPDsFailIntegrity = true );
-  declareProperty( "ActiveRICHes",     m_richIsActive = { true, true } );
-  declareProperty( "HotPixelsToMask",    m_hotChannels                 );
-}
+{ }
 
 //=============================================================================
 
