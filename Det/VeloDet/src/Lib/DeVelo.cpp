@@ -164,13 +164,16 @@ StatusCode DeVelo::initialize() {
 
     // associated sensors on the left side
     DeVeloRType*   lRS = *iRS;
-    DeVeloPhiType* lPS = const_cast<DeVeloPhiType*>(phiSensor(lRS->sensorNumber()+64));
+    DeVeloPhiType* lPS = 
+      dynamic_cast<DeVeloPhiType*>(m_sensors.at((lRS->sensorNumber()+64)));
     lRS->setAssociatedPhiSensor(lPS);
     if (lPS) lPS->setAssociatedRSensor(lRS);
 
     // associated sensors on the right side
-    DeVeloRType*   rRS = const_cast<DeVeloRType*>(rSensor(lRS->sensorNumber()+1));
-    DeVeloPhiType* rPS = const_cast<DeVeloPhiType*>(phiSensor(lPS->sensorNumber()+1));
+    DeVeloRType*   rRS = 
+      dynamic_cast<DeVeloRType*>(m_sensors.at(lRS->sensorNumber()+1));
+    DeVeloPhiType* rPS = 
+      dynamic_cast<DeVeloPhiType*>(m_sensors.at(lPS->sensorNumber()+1));
     if (rRS) rRS->setAssociatedPhiSensor(rPS);
     if (rPS) rPS->setAssociatedRSensor(rRS);
 
@@ -331,7 +334,7 @@ StatusCode DeVelo::updateTell1ToSensorsCondition()
     unsigned int sensorNumber = static_cast<unsigned int>(*j);
     unsigned int moduleId      = static_cast<unsigned int>(*k);
 
-    const DeVeloSensor* sens=sensor(sensorNumber);
+    DeVeloSensor* sens=m_sensors.at(sensorNumber);
     if(!sens) {
       msg() << MSG::ERROR << "No such sensor " << sensorNumber << endmsg;
       return StatusCode::FAILURE;

@@ -314,10 +314,12 @@ public:
 
   /// Convert routing line to strip number
   unsigned int RoutingLineToStrip(unsigned int routLine) const {
-    return m_mapRoutingLineToStrip[routLine];
+    return m_mapRoutingLineToStrip.at(routLine);
   }
   /// Convert strip number to routing line
-  unsigned int StripToRoutingLine(unsigned int strip) const {return m_mapStripToRoutingLine[strip];}
+  unsigned int StripToRoutingLine(unsigned int strip) const {
+    return m_mapStripToRoutingLine.at(strip);
+  }
 
   /// Get the chip number from the routing line
   unsigned int ChipFromRoutingLine(unsigned int routLine) const {
@@ -528,8 +530,8 @@ protected:
   static const unsigned int m_maxRoutingLine=2048;
   static const unsigned int m_numberOfStrips=2048;
 
-  mutable std::map<unsigned int, unsigned int> m_mapRoutingLineToStrip;//<Map of routing line to strips
-  mutable std::map<unsigned int, unsigned int> m_mapStripToRoutingLine;//<Map of strips to routing line
+  std::map<unsigned int, unsigned int> m_mapRoutingLineToStrip;//<Map of routing line to strips
+  std::map<unsigned int, unsigned int> m_mapStripToRoutingLine;//<Map of strips to routing line
   std::vector<std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> > m_stripLimits;//<Begin and end point of strips
 
   IGeometryInfo* m_geometry;
@@ -570,7 +572,7 @@ private:
   bool m_tell1WithoutSensor;
 
   friend class DeVelo;
-  mutable int m_moduleId;//<Liverpool database module id
+  int m_moduleId;//<Liverpool database module id
 
   // Set output level for message service
   bool m_debug;
