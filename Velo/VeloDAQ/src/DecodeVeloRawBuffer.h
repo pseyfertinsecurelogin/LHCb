@@ -5,6 +5,7 @@
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
+#include "VeloEvent/VeloDecodeStatus.h"
 
 #include "SiDAQ/SiRawBufferWord.h"
 
@@ -52,7 +53,8 @@ private:
    *
    * @see VeloLiteCluster
    */
-  StatusCode decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks) const;
+  StatusCode decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks,
+				      LHCb::VeloDecodeStatus* decStatus) const;
 
   /** Decode raw buffer to clusters
    * This decodes the raw buffer to VeloClusters and
@@ -60,7 +62,8 @@ private:
    *
    * @see VeloCluster
    */
-  StatusCode decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks);
+  StatusCode decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks,
+				  LHCb::VeloDecodeStatus *decStatus) const;
 
   /** Write VeloClusters to stdout
    *
@@ -90,7 +93,8 @@ private:
    */
   StatusCode replaceFullFromLite(LHCb::VeloClusters& clusters,
                                  unsigned int nSensor,
-                                 const std::vector<LHCb::RawBank*>& banks) const;
+                                 const std::vector<LHCb::RawBank*>& banks,
+				 LHCb::VeloDecodeStatus *decStatus) const;
 
   /// Add a fake lite cluster to the full cluster container
   void makeFakeCluster(LHCb::VeloLiteCluster const &liteCluster,
