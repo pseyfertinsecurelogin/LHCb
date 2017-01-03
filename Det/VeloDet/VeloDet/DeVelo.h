@@ -644,7 +644,7 @@ private:
   unsigned int m_nRightPUSensors;
 
   /// Indices of R, Phi and Pile Up sensors in list of all sensors sorted by z
-  mutable std::vector<DeVeloSensor*> m_sensors;
+  std::vector<DeVeloSensor*> m_sensors;
 
   /// Custom operator for sorting sensors in terms of z position
   struct less_Z {
