@@ -4,6 +4,7 @@
 // Include files
 #include <algorithm>
 #include <bitset>
+#include <mutex>
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
@@ -520,13 +521,6 @@ private:
    */
   StatusCode registerConditionCallBacks();
 
-  /// On demand access to MsgStream object
-  inline MsgStream & msg() const
-  {
-    if ( !m_msgStream ) m_msgStream.reset(new MsgStream( msgSvc(), "DeVeloSensor" ));
-    return *m_msgStream;
-  }
-
 protected:
 
   unsigned int m_numberOfZones;
@@ -582,11 +576,20 @@ private:
   bool m_debug;
   bool m_verbose;
 
-  /// cached Message Stream object
-  mutable std::unique_ptr<MsgStream> m_msgStream;
-
   /// event-specific TELL1 info
   Tell1EventInfo m_tell1EventInfo;
+
+  /// Thread safe on demand access to MsgStream object
+  inline MsgStream & msg() const {
+    std::call_once(m_msgSetFlag,
+		   [&]{m_msgStream.reset( new MsgStream( msgSvc(), "DeVeloSensor" ) );});
+    return *m_msgStream;
+  }
+  /// cached Message Stream object
+  mutable std::unique_ptr<MsgStream> m_msgStream;
+  /// making the msg() function above thread safe
+  mutable std::once_flag m_msgSetFlag;
+
 
 };
 #endif // VELODET_DEVELOSENSOR_H
