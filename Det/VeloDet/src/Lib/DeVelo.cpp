@@ -164,15 +164,15 @@ StatusCode DeVelo::initialize() {
 
     // associated sensors on the left side
     DeVeloRType*   lRS = *iRS;
-    DeVeloPhiType* lPS = 
+    DeVeloPhiType* lPS =
       dynamic_cast<DeVeloPhiType*>(m_sensors.at((lRS->sensorNumber()+64)));
     lRS->setAssociatedPhiSensor(lPS);
     if (lPS) lPS->setAssociatedRSensor(lRS);
 
     // associated sensors on the right side
-    DeVeloRType*   rRS = 
+    DeVeloRType*   rRS =
       dynamic_cast<DeVeloRType*>(m_sensors.at(lRS->sensorNumber()+1));
-    DeVeloPhiType* rPS = 
+    DeVeloPhiType* rPS =
       dynamic_cast<DeVeloPhiType*>(m_sensors.at(lPS->sensorNumber()+1));
     if (rRS) rRS->setAssociatedPhiSensor(rPS);
     if (rPS) rPS->setAssociatedRSensor(rRS);

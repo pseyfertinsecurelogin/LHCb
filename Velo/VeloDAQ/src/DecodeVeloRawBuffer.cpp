@@ -54,7 +54,7 @@ DecodeVeloRawBuffer::DecodeVeloRawBuffer( const std::string& name,
   m_defaultRawEventLocations={LHCb::RawEventLocation::Velo,    // When only VELO retained in stripping
 			      LHCb::RawEventLocation::Other,   // Stripping default
 			      LHCb::RawEventLocation::Default};// RAW default
-			
+
   m_rawEventLocations.resize(m_defaultRawEventLocations.size(),"");
   std::copy(m_defaultRawEventLocations.begin(),
 	    m_defaultRawEventLocations.end(),m_rawEventLocations.begin());
@@ -157,7 +157,7 @@ StatusCode DecodeVeloRawBuffer::execute() {
 //=============================================================================
 
 StatusCode DecodeVeloRawBuffer::
-decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks, 
+decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks,
 			 LHCb::VeloDecodeStatus *decStatus) const {
   LHCb::VeloLiteCluster::FastContainer* fastCont = new LHCb::VeloLiteCluster::FastContainer();
 
@@ -209,7 +209,7 @@ decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks,
 	decStatus->setDecoderState(sensor->sensorNumber(),false);
         continue;
       }
-    } 
+    }
 
     if ( m_doLengthCheck && (rb->size() != byteCount) ) {
       if ( msgLevel( MSG::DEBUG ) ) debug() << "Byte count mismatch between RawBank size and decoded bytes."
