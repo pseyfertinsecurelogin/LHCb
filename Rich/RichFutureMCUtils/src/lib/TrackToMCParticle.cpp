@@ -5,13 +5,13 @@
 using namespace Rich::Future::MC::Relations;
 
 const LHCb::MCParticle *
-TrackToMCParticle::mcParticle( const LHCb::Track * track, 
+TrackToMCParticle::mcParticle( const LHCb::Track & track, 
                                const double minWeight ) const
 {
   const LHCb::MCParticle * mcP = nullptr;
 
   // Get the range for the given track
-  const auto mcRange = m_rels.relations( track );
+  const auto mcRange = m_rels.relations( &track );
 
   // loop over the found relations and pick the best
   double bestWeight = -1;
@@ -32,7 +32,7 @@ TrackToMCParticle::mcParticle( const LHCb::Track * track,
 }
 
 Rich::ParticleIDType
-TrackToMCParticle::mcParticleType( const LHCb::Track * track,
+TrackToMCParticle::mcParticleType( const LHCb::Track & track,
                                    const double minWeight ) const
 {
   // get the MCParticle
