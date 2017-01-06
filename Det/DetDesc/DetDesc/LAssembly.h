@@ -29,8 +29,18 @@ class LAssembly : public virtual IBoxCover,
 
 public:
 
-  /// inherited constructor
-  using LogVolBase::LogVolBase;
+  /// constructor
+  LAssembly(const std::string& name,
+            const std::string& sensitivity ,
+            const std::string& magnetic) :
+  LogVolBase(name, sensitivity, magnetic) {
+    m_xMin = 1000000.;
+    m_xMax = -1000000.;
+    m_yMin = 1000000.;
+    m_yMax = -1000000.;
+    m_zMin = 1000000.;
+    m_zMax = -1000000.;
+  }
 
 public:
 
@@ -189,33 +199,10 @@ public:
   MsgStream&    printOut
   ( MsgStream    & os             ) const override;
 
-  /// accessor to "minimal x" value of the solid("bounding box")
-  inline double xMin() const override { return m_xMin; }
-  /// accessor to "maximal x" value of the solid("bounding box")
-  inline double xMax() const override { return m_xMax; }
-
-  /// accessor to "minimal y" value of the solid("bounding box")
-  inline double yMin() const override { return m_yMin; }
-  /// accessor to "maximal y" value of the solid("bounding box")
-  inline double yMax() const override { return m_yMax; }
-
-  /// accessor to "minimal z" value of the solid("bounding box")
-  inline double zMin() const override { return m_zMin; }
-  /// accessor to "maximal z" value of the solid("bounding box")
-  inline double zMax() const override { return m_zMax; }
-
 protected:
 
   /// updates box cover integrating the new BoxCover
   void updateCover(const IPVolume* const box) override;
-
-private:
-  double m_xMin{1000000.};
-  double m_xMax{-1000000.};
-  double m_yMin{1000000.};
-  double m_yMax{-1000000.};
-  double m_zMin{1000000.};
-  double m_zMax{-1000000.};
 
 };
 

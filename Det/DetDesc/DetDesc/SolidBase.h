@@ -158,21 +158,6 @@ public:
 
 public :
 
-  /// accessor to "minimal x" value of the solid("bounding box")
-  inline double xMin() const override { return m_xmin; }
-  /// accessor to "maximal x" value of the solid("bounding box")
-  inline double xMax() const override { return m_xmax; }
-
-  /// accessor to "minimal y" value of the solid("bounding box")
-  inline double yMin() const override { return m_ymin; }
-  /// accessor to "maximal y" value of the solid("bounding box")
-  inline double yMax() const override { return m_ymax; }
-
-  /// accessor to "minimal z" value of the solid("bounding box")
-  inline double zMin() const override { return m_zmin; }
-  /// accessor to "maximal z" value of the solid("bounding box")
-  inline double zMax() const override { return m_zmax; }
-
   /// accessor to "maximal r" value of the solid("bounding sphere")
   inline double rMax() const { return m_rmax; }
 
@@ -398,21 +383,6 @@ protected:
 
 protected:
 
-  /// set "minimal x" for the solid
-  inline void    setXMin   ( const double value )  { m_xmin   = value ; }
-  /// set "maximal x" for the solid
-  inline void    setXMax   ( const double value )  { m_xmax   = value ; }
-
-  /// set "minimal y" for the solid
-  inline void    setYMin   ( const double value )  { m_ymin   = value ; }
-  /// set "maximal y" for the solid
-  inline void    setYMax   ( const double value )  { m_ymax   = value ; }
-
-  /// set "minimal z" for the solid
-  inline void    setZMin   ( const double value )  { m_zmin   = value ; }
-  /// set "maximal z" for the solid
-  inline void    setZMax   ( const double value )  { m_zmax   = value ; }
-
   /// set "maximal r" for the solid
   inline void    setRMax   ( const double value )  { m_rmax   = value ; }
   /// set "maximal r" for the solid
@@ -468,14 +438,6 @@ unsigned int intersectionTicksImpl( ISolid::Ticks& ticks ) const;
 protected:
 
   std::string     m_name  ; ///< name of the solid
-
-  double m_xmin{10 * Gaudi::Units::km};
-  double m_ymin{10 * Gaudi::Units::km};
-  double m_zmin{10 * Gaudi::Units::km};
-
-  double m_xmax{-10 * Gaudi::Units::km};
-  double m_ymax{-10 * Gaudi::Units::km};
-  double m_zmax{-10 * Gaudi::Units::km};
 
   double m_rmax{-10 * Gaudi::Units::km};
   double m_rhomax{-10 * Gaudi::Units::km};

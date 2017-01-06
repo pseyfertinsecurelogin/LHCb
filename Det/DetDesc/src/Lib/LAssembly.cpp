@@ -176,12 +176,12 @@ unsigned int LAssembly::intersectLine
   
   Gaudi::XYZPoint p1 = Point + tickMin * Vector;
   Gaudi::XYZPoint p2 = Point + tickMax * Vector;
-  if ( (m_zMin > p1.z()) && (m_zMin > p2.z()) ) return 0 ;
-  if ( (m_zMax < p1.z()) && (m_zMax < p2.z()) ) return 0 ;
-  if ( (m_xMin > p1.x()) && (m_xMin > p2.x()) ) return 0 ;
-  if ( (m_xMax < p1.x()) && (m_xMax < p2.x()) ) return 0 ;
-  if ( (m_yMin > p1.y()) && (m_yMin > p2.y()) ) return 0 ;
-  if ( (m_yMax < p1.y()) && (m_yMax < p2.y()) ) return 0 ;
+  if ( (zMin() > p1.z()) && (zMin() > p2.z()) ) return 0 ;
+  if ( (zMax() < p1.z()) && (zMax() < p2.z()) ) return 0 ;
+  if ( (xMin() > p1.x()) && (xMin() > p2.x()) ) return 0 ;
+  if ( (xMax() < p1.x()) && (xMax() < p2.x()) ) return 0 ;
+  if ( (yMin() > p1.y()) && (yMin() > p2.y()) ) return 0 ;
+  if ( (yMax() < p1.y()) && (yMax() < p2.y()) ) return 0 ;
   
   /*  look for the intersections of the given 
    *  line with daughter elements construct the 
@@ -216,13 +216,9 @@ MsgStream&    LAssembly::printOut
 //  
 // =============================================================================
 void LAssembly::updateCover(const IPVolume* const pv) {
-  const IBoxCover* boxCover = 0;
   const ISolid* mySolid = pv->lvolume()->solid();
-  if ( 0 != mySolid ) {  //== Solid => has a cover
-    boxCover = mySolid->cover();
-  } else {  //== No solid : This is an assembly
-    boxCover = dynamic_cast<const LAssembly*>(pv->lvolume());
-  }
+  //== if it is a Solid, it has a cover -- otherwise, it is an assembly and thus an ISolid and an IBoxCover
+  const IBoxCover* boxCover = (mySolid ? mySolid->cover() : dynamic_cast<const IBoxCover*>(pv->lvolume()));
   if (!boxCover) {
     MsgStream log ( msgSvc() , "TransportSvc" );
     log << MSG::ERROR << " === No cover for assembly " << name() 
@@ -237,12 +233,12 @@ void LAssembly::updateCover(const IPVolume* const pv) {
         double pointZ=boxCover->zMin();
         for (int k = 0 ; 2 > k ; ++k ) {
           auto motherPt = pv->toMother(Gaudi::XYZPoint(pointX,pointY,pointZ));
-          if ( m_xMin > motherPt.x() ) m_xMin = motherPt.x();
-          if ( m_xMax < motherPt.x() ) m_xMax = motherPt.x();
-          if ( m_yMin > motherPt.y() ) m_yMin = motherPt.y();
-          if ( m_yMax < motherPt.y() ) m_yMax = motherPt.y();
-          if ( m_zMin > motherPt.z() ) m_zMin = motherPt.z();
-          if ( m_zMax < motherPt.z() ) m_zMax = motherPt.z();
+          if ( xMin() > motherPt.x() ) setXMin(motherPt.x());
+          if ( xMax() < motherPt.x() ) setXMax(motherPt.x());
+          if ( yMin() > motherPt.y() ) setYMin(motherPt.y());
+          if ( yMax() < motherPt.y() ) setYMax(motherPt.y());
+          if ( zMin() > motherPt.z() ) setZMin(motherPt.z());
+          if ( zMax() < motherPt.z() ) setZMax(motherPt.z());
           pointZ=boxCover->zMax();
         }
         pointY = boxCover->yMax();

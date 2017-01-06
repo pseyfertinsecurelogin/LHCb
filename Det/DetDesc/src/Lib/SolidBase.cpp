@@ -18,7 +18,14 @@
  */
 // ============================================================================
 SolidBase::SolidBase( const std::string& Name )
-  : m_name(Name), m_services (DetDesc::services()) {}
+  : m_name(Name), m_services (DetDesc::services()) {
+  m_xMin = 10 * Gaudi::Units::km;
+  m_xMax = -10 * Gaudi::Units::km;
+  m_yMin = 10 * Gaudi::Units::km;
+  m_yMax = -10 * Gaudi::Units::km;
+  m_zMin = 10 * Gaudi::Units::km;
+  m_zMax = -10 * Gaudi::Units::km;
+}
 
 // ============================================================================
 /** - reset solid to its inititial state, remove 
