@@ -4,7 +4,6 @@
 #include "GaudiKernel/IAlgTool.h"
 #include "Kernel/LHCbID.h"
 
-static const InterfaceID IID_IUsedLHCbID( "IUsedLHCbID", 0, 0 );
 
 /** @class IUsedLHCbID IUsedLHCbID.h Kernel/IUsedLHCbID.h
  *
@@ -14,12 +13,9 @@ static const InterfaceID IID_IUsedLHCbID( "IUsedLHCbID", 0, 0 );
  *  @date   02/08/2006
  */
 
-class IUsedLHCbID: virtual public IAlgTool{
+struct IUsedLHCbID: extend_interfaces<IAlgTool> {
 
-public:
-
-  /** Retrieve interface ID */
-  static const InterfaceID& interfaceID() { return IID_IUsedLHCbID ; }
+  DeclareInterfaceID(IUsedLHCbID, 1, 0 );
 
   /** Test if the LHCbID is used
   * @param id to be test tested
