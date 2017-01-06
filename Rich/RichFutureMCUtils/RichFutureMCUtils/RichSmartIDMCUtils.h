@@ -74,9 +74,6 @@ namespace Rich
  
         private:
 
-          /// The underlying histories container
-          const LHCb::MCRichDigitSummarys & m_histories;
-
           /// map relating a smartID to its list of history objects
           SummaryMap m_sumMap;
 

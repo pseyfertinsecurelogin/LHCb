@@ -9,7 +9,6 @@ using namespace Rich::Future::MC::Relations;
 
 SmartIDUtils::
 SmartIDUtils( const LHCb::MCRichDigitSummarys & histories )
-  : m_histories(histories) 
 { 
   // Fill the summary map
   // If this class is used a lot might want to write an algorithm
