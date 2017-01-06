@@ -119,7 +119,12 @@ StatusCode DecodeVeloRawBuffer::initialize() {
 //=============================================================================
 StatusCode DecodeVeloRawBuffer::execute() {
 
-  auto decStatus = new LHCb::VeloDecodeStatus();
+  auto decStatus =
+    getIfExists<LHCb::VeloDecodeStatus>(m_veloLiteClusterLocation+"DecStatus");
+  if( !decStatus ){
+    decStatus = new LHCb::VeloDecodeStatus();
+    put(decStatus,m_veloLiteClusterLocation+"DecStatus");
+  }
 
   // Retrieve the RawEvent:
   LHCb::RawEvent* rawEvent = findFirstRawEvent();
@@ -148,7 +153,6 @@ StatusCode DecodeVeloRawBuffer::execute() {
     if (sc.isFailure()) return sc;
   }
 
-  put(decStatus,m_veloLiteClusterLocation+"DecStatus");
   return StatusCode::SUCCESS;
 }
 
