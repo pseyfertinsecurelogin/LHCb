@@ -96,7 +96,6 @@ XmlLVolumeCnv::XmlLVolumeCnv (ISvcLocator* svc) :
   rotYString = xercesc::XMLString::transcode("rotY");
   rotZString = xercesc::XMLString::transcode("rotZ");
   serialNumber = xercesc::XMLString::transcode("SerialNumber");
-  m_numeral = "";
 }
 
 
@@ -304,10 +303,10 @@ StatusCode XmlLVolumeCnv::internalCreateObj (xercesc::DOMElement* element,
   std::string sensDetName = dom2Std (element->getAttribute (sensdetString));
   std::string volName = dom2Std (element->getAttribute (nameString));
 
-  m_numeral = dom2Std (element->getAttribute ( serialNumber ) );
-  if ( 0 != m_numeral.size() ) {
-    replaceTagInString( volName );
-    replaceTagInString( materialName );
+  std::string numeral = dom2Std (element->getAttribute ( serialNumber ) );
+  if ( 0 != numeral.size() ) {
+    replaceTagInString( volName, numeral );
+    replaceTagInString( materialName, numeral );
   }
 
   // processes the children. The dtd says we should find
@@ -335,7 +334,7 @@ StatusCode XmlLVolumeCnv::internalCreateObj (xercesc::DOMElement* element,
   std::unique_ptr<ISolid> solid;
   if (isSolid (tagName)) {
     // deal with the solid itself
-    solid = dealWithSolid (childElement);
+    solid = dealWithSolid (childElement, numeral);
     // finds the next child
     i += 1;
     while (i < childNodes->getLength() &&
@@ -410,7 +409,7 @@ StatusCode XmlLVolumeCnv::internalCreateObj (xercesc::DOMElement* element,
     if (0 == xercesc::XMLString::compareString(physvolString, tagName)) {
       // deals with a physical volume, adds it to the logical volume
       // and frees the memory
-      auto volume = dealWithPhysvol(childElement);
+      auto volume = dealWithPhysvol(childElement, numeral);
       dataObj->createPVolume (createPvName(volume),
                               volume.logvolName,
                               volume.transformation ? volume.transformation->Inverse()
@@ -418,7 +417,7 @@ StatusCode XmlLVolumeCnv::internalCreateObj (xercesc::DOMElement* element,
     } else if (isParamphysvol (tagName)) {
       // deals with a parametrized physical volume, adds all physical
       // volumes created to the logical volume and frees the memory
-      auto volumes = dealWithParamphysvol(childElement);
+      auto volumes = dealWithParamphysvol(childElement, numeral);
       for (const auto& vol : *volumes) {
         dataObj->createPVolume (createPvName (vol),
                                 vol.logvolName,
@@ -460,7 +459,8 @@ StatusCode XmlLVolumeCnv::internalCreateObj (xercesc::DOMElement* element,
 // Deal with Physical volume
 // -----------------------------------------------------------------------
 XmlLVolumeCnv::PVolumeItem
-XmlLVolumeCnv::dealWithPhysvol(const xercesc::DOMElement* element) const {
+XmlLVolumeCnv::dealWithPhysvol(const xercesc::DOMElement* element,
+                               std::string& numeral) const {
   // gets attributes
   std::string nameAttribute = dom2Std (element->getAttribute (nameString));
   std::string logvolAttribute = dom2Std (element->getAttribute (logvolString));
@@ -511,8 +511,8 @@ XmlLVolumeCnv::dealWithPhysvol(const xercesc::DOMElement* element) const {
     nameAttribute = nameAttribute.substr (0, columnPos);
     indexed = true;
     if (!digits.empty()) {
-      if ( 0 != m_numeral.size() ) {
-        replaceTagInString(digits);
+      if ( 0 != numeral.size() ) {
+        replaceTagInString(digits, numeral);
       }
       index = (int) xmlSvc()->eval(digits, false);
     }
@@ -525,9 +525,9 @@ XmlLVolumeCnv::dealWithPhysvol(const xercesc::DOMElement* element) const {
   result.indexed = indexed;
   result.logvolName = logvolAttribute;
   result.transformation = std::move(transformation);
-  if ( 0 != m_numeral.size() ) {
-    replaceTagInString( result.logvolName );
-    replaceTagInString( result.physvolName );
+  if ( 0 != numeral.size() ) {
+    replaceTagInString( result.logvolName, numeral );
+    replaceTagInString( result.physvolName, numeral );
   }
   return result;
 } // end dealWithPhysVol
@@ -537,18 +537,19 @@ XmlLVolumeCnv::dealWithPhysvol(const xercesc::DOMElement* element) const {
 // Deal with parametrized physical volume
 // -----------------------------------------------------------------------
 std::unique_ptr<XmlLVolumeCnv::PVolumes>
-XmlLVolumeCnv::dealWithParamphysvol(const xercesc::DOMElement* element) const {
+XmlLVolumeCnv::dealWithParamphysvol(const xercesc::DOMElement* element,
+                                    std::string& numeral) const {
   // gets the element's name
   const XMLCh* tagName = element->getNodeName();
   // dispatches, based on the name
   if (0 == xercesc::XMLString::compareString(paramphysvolString, tagName)) {
-    return dealWithParamphysvol (element, 1);
+    return dealWithParamphysvol (element, 1, numeral);
   } else if (0 == xercesc::XMLString::compareString
              (paramphysvol2DString, tagName)) {
-    return dealWithParamphysvol (element, 2);
+    return dealWithParamphysvol (element, 2, numeral);
   } else if (0 == xercesc::XMLString::compareString
              (paramphysvol3DString, tagName)) {
-    return dealWithParamphysvol (element, 3);
+    return dealWithParamphysvol (element, 3, numeral);
   } else {
     // unknown tag
     MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -568,7 +569,7 @@ XmlLVolumeCnv::dealWithParamphysvol(const xercesc::DOMElement* element) const {
 // -----------------------------------------------------------------------
 std::unique_ptr<XmlLVolumeCnv::PVolumes>
 XmlLVolumeCnv::dealWithParamphysvol(const xercesc::DOMElement* element,
-                                    unsigned int nD) const {
+                                    unsigned int nD, std::string& numeral) const {
   // nD should be positive
   if (0 == nD) return nullptr;
 
@@ -637,11 +638,11 @@ XmlLVolumeCnv::dealWithParamphysvol(const xercesc::DOMElement* element,
       // gets the physical volume and add it to the result as the first
       // volume of the vector
       result = std::make_unique<PVolumes>();
-      result->push_back( dealWithPhysvol (firstChildElement) );
+      result->push_back( dealWithPhysvol (firstChildElement, numeral) );
     } else if (isParamphysvol (tagName)) {
       // gets the vector of physical volumes and use it as first result
       // that will be upgraded later for the current parametrisation
-      result = dealWithParamphysvol (firstChildElement);
+      result = dealWithParamphysvol (firstChildElement, numeral);
     } else {
       // unknown tag -> display an error, return 0
       MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -812,14 +813,15 @@ std::string XmlLVolumeCnv::dealWithSurf(const xercesc::DOMElement* element) cons
 // -----------------------------------------------------------------------
 // Deal with solid
 // -----------------------------------------------------------------------
-std::unique_ptr<ISolid> XmlLVolumeCnv::dealWithSolid(const xercesc::DOMElement* element) const {
+std::unique_ptr<ISolid> XmlLVolumeCnv::dealWithSolid(const xercesc::DOMElement* element,
+                                                     std::string& numeral) const {
   // gets the element's name
   const XMLCh* tagName = element->getNodeName();
   // dispatches, based on the name
   if (isSimpleSolid (tagName)) {
-    return dealWithSimpleSolid (element);
+    return dealWithSimpleSolid (element, numeral);
   } else if (isBooleanSolid(tagName)) {
-    return dealWithBoolean (element);
+    return dealWithBoolean (element, numeral);
   } else {
     // unknown tag
     MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -836,7 +838,8 @@ std::unique_ptr<ISolid> XmlLVolumeCnv::dealWithSolid(const xercesc::DOMElement* 
 // -----------------------------------------------------------------------
 // Deal with boolean
 // -----------------------------------------------------------------------
-std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOMElement* element) const {
+std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOMElement* element,
+                                                             std::string& numeral) const {
   // gets the element's name
   std::string nameAttribute = dom2Std (element->getAttribute (nameString));
   const XMLCh* tagName = element->getNodeName();
@@ -854,7 +857,7 @@ std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOME
   }
 
   // builds the list of the children
-  auto solids = dealWithBooleanChildren (element);
+  auto solids = dealWithBooleanChildren (element, numeral);
 
   // checks that there are at least two solids
   if (solids->size() < 2) {
@@ -958,7 +961,8 @@ std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOME
 // Deal with boolean children
 // -----------------------------------------------------------------------
 std::unique_ptr<XmlLVolumeCnv::PlacedSolidList>
-XmlLVolumeCnv::dealWithBooleanChildren(const xercesc::DOMElement* element) const {
+XmlLVolumeCnv::dealWithBooleanChildren(const xercesc::DOMElement* element,
+                                       std::string& numeral) const {
   // builds an empty list
   auto result = std::make_unique<PlacedSolidList>();
 
@@ -976,7 +980,7 @@ XmlLVolumeCnv::dealWithBooleanChildren(const xercesc::DOMElement* element) const
       // checks it's a solid
       if (isSolid (tagName)) {
         // get the C++ object from it
-        auto solid = dealWithSolid(childElement);
+        auto solid = dealWithSolid(childElement, numeral);
         // see if there is a transformation afterwards
         std::unique_ptr<Gaudi::Transform3D> transformation;
         i += 1;
@@ -1017,13 +1021,14 @@ XmlLVolumeCnv::dealWithBooleanChildren(const xercesc::DOMElement* element) const
 // -----------------------------------------------------------------------
 // Deal with simple solid
 // -----------------------------------------------------------------------
-std::unique_ptr<ISolid> XmlLVolumeCnv::dealWithSimpleSolid(const xercesc::DOMElement* element) const {
+std::unique_ptr<ISolid> XmlLVolumeCnv::dealWithSimpleSolid(const xercesc::DOMElement* element,
+                                                           std::string& numeral) const {
   // gets the element's name
   const XMLCh* tagName = element->getNodeName();
 
   // dispatches, based on the name
   if (0 == xercesc::XMLString::compareString(boxString, tagName)) {
-    return dealWithBox (element);
+    return dealWithBox (element, numeral);
   } else if (0 == xercesc::XMLString::compareString(trdString, tagName)) {
     return dealWithTrd (element);
   } else if (0 == xercesc::XMLString::compareString(trapString, tagName)) {
@@ -1052,14 +1057,15 @@ std::unique_ptr<ISolid> XmlLVolumeCnv::dealWithSimpleSolid(const xercesc::DOMEle
 // -----------------------------------------------------------------------
 // Deal with box
 // -----------------------------------------------------------------------
-std::unique_ptr<SolidBox> XmlLVolumeCnv::dealWithBox(const xercesc::DOMElement* element) const {
+std::unique_ptr<SolidBox> XmlLVolumeCnv::dealWithBox(const xercesc::DOMElement* element,
+                                                     std::string& numeral) const {
   // gets attributes
   std::string sizeXAttribute = dom2Std (element->getAttribute (sizeXString));
   std::string sizeYAttribute = dom2Std (element->getAttribute (sizeYString));
   std::string sizeZAttribute = dom2Std (element->getAttribute (sizeZString));
   std::string solidName = dom2Std (element->getAttribute (nameString));
-  if ( 0 != m_numeral.size() ) {
-    replaceTagInString( solidName );
+  if ( 0 != numeral.size() ) {
+    replaceTagInString( solidName, numeral );
   }
 
   // computes the values
@@ -1844,13 +1850,13 @@ XmlLVolumeCnv::dealWithRotAxis(const xercesc::DOMElement* element) const {
 //=========================================================================
 //  Method to handle the 'tag' string and replace by the numeral.
 //=========================================================================
-void XmlLVolumeCnv::replaceTagInString ( std::string& string ) const {
+void XmlLVolumeCnv::replaceTagInString ( std::string& string, std::string& numeral ) const {
   auto indx = string.find( "-KEY-" );
   if ( std::string::npos != indx ) {
     if ( indx < string.size()-5 ) {
-      string = string.substr(0,indx) + m_numeral + string.substr( indx+5 );
+      string = string.substr(0,indx) + numeral + string.substr( indx+5 );
     } else {
-      string = string.substr(0,indx) + m_numeral;
+      string = string.substr(0,indx) + numeral;
     }
   }
 }

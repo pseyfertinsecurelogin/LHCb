@@ -166,7 +166,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ Object
    */
-  PVolumeItem dealWithPhysvol(const xercesc::DOMElement* element) const;
+  PVolumeItem dealWithPhysvol(const xercesc::DOMElement* element, std::string& numeral) const;
 
   /**
    * deals with the xml tags \<paramphysvol\>, \<paramphysvol2D\>, \<paramphysvol3D\>.
@@ -177,7 +177,8 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return a vector of physical volumes
    */
-  std::unique_ptr<PVolumes> dealWithParamphysvol (const xercesc::DOMElement* element) const;
+  std::unique_ptr<PVolumes> dealWithParamphysvol (const xercesc::DOMElement* element,
+                                                  std::string& numeral) const;
 
   /**
    * deals with parametrized physical volumes of any dimension. The dimension
@@ -191,7 +192,8 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @return a vector of physical volumes
    */
   std::unique_ptr<PVolumes> dealWithParamphysvol (const xercesc::DOMElement* element,
-                                                  unsigned int nD) const;
+                                                  unsigned int nD,
+                                                  std::string& numeral) const;
 
   /**
    * expands a given list of physical volumes. The expansion is done in
@@ -232,7 +234,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  std::unique_ptr<ISolid> dealWithSolid(const xercesc::DOMElement* element) const;
+  std::unique_ptr<ISolid> dealWithSolid(const xercesc::DOMElement* element, std::string& numeral) const;
 
   /**
    * deals with the xml tags \<union\>, \<subtraction\> and \<intersection\>.
@@ -241,7 +243,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  std::unique_ptr<SolidBoolean> dealWithBoolean(const xercesc::DOMElement* element) const;
+  std::unique_ptr<SolidBoolean> dealWithBoolean(const xercesc::DOMElement* element, std::string& numeral) const;
 
   /**
    * deals with the children of a boolean operation. Builds a PlacedSolidList
@@ -249,7 +251,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the boolean solid node
    * @return the list of children, as a PlacedSolidList*
    */
-  std::unique_ptr<PlacedSolidList> dealWithBooleanChildren(const xercesc::DOMElement* element) const;
+  std::unique_ptr<PlacedSolidList> dealWithBooleanChildren(const xercesc::DOMElement* element, std::string& numeral) const;
 
   /**
    * deals with the xml tags \<box\>, \<cons\>, \<sphere\>, \<tubs\>, \<trd\>
@@ -259,14 +261,14 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  std::unique_ptr<ISolid> dealWithSimpleSolid(const xercesc::DOMElement* element) const;
+  std::unique_ptr<ISolid> dealWithSimpleSolid(const xercesc::DOMElement* element, std::string& numeral) const;
 
   /**
    * deals with the xml tag \<box\>. Creates the corresponding C++ Object.
    * @param element the DOM element representing the tag
    * @return the C++ object
    */
-  std::unique_ptr<SolidBox> dealWithBox(const xercesc::DOMElement* element) const;
+  std::unique_ptr<SolidBox> dealWithBox(const xercesc::DOMElement* element, std::string& numeral) const;
 
   /**
    * deals with the xml tag \<trd\>. Creates the corresponding C++ Object.
@@ -381,7 +383,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
   /**
    * Method to replace the tag string by the value, if it exists
    */
-  void replaceTagInString( std::string& string ) const;
+  void replaceTagInString( std::string& string, std::string& numeral ) const;
 
 private:
 
@@ -449,7 +451,6 @@ private:
   const XMLCh* rotYString;
   const XMLCh* rotZString;
   const XMLCh* serialNumber;
-  std::string  m_numeral;
 };
 
 #endif // DETDESCCNV_XMLCNVSVC_XMLLVOLUMECNV_H
