@@ -8,7 +8,6 @@
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
-static const InterfaceID IID_IMCVeloFEType ( "IMCVeloFEType", 1, 0 );
 
 /** @class IMCVeloFEType IMCVeloFEType.h VeloAlgorithms/IMCVeloFEType.h
  *
@@ -22,17 +21,14 @@ namespace LHCb
   class MCVeloFE;
 }
 
-class IMCVeloFEType : virtual public IAlgTool 
+struct IMCVeloFEType : extend_interfaces<IAlgTool>
 {
 
 public:
 
-    enum Types{ Signal=0,
-                Noise,
-                Other };
-  // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_IMCVeloFEType; }
+  DeclareInterfaceID(IMCVeloFEType, 2, 0 );
 
+  enum Types{ Signal=0, Noise, Other }; // Return the interface ID
   virtual void FEType(const LHCb::MCVeloFE* fe, int& feType)=0;
 
 };

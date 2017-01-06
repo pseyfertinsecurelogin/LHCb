@@ -4,8 +4,6 @@
 #include "GaudiKernel/IAlgTool.h"
 #include <string>
 
-// Declaration of the interface ID ( interface id, major version, minor version)
-static const InterfaceID IID_ISiAmplifierResponse("ISiAmplifierResponse", 0 , 0);
 
 namespace SiAmpliferResponseType{
 
@@ -20,18 +18,16 @@ namespace SiAmpliferResponseType{
  *  @author M.Needham
  *  @date   6/11/2005
  */
-class ISiAmplifierResponse : virtual public IAlgTool {
+struct ISiAmplifierResponse : extend_interfaces<IAlgTool> {
 
-public:
+  DeclareInterfaceID(ISiAmplifierResponse, 1 , 0);
 
-  typedef struct {
+  struct Info final {
     double capacitance;
     unsigned int vfs;
     std::string type;
-  } Info;
+  };
 
-  /** Static access to interface id */
-  static const InterfaceID& interfaceID() { return IID_ISiAmplifierResponse; }
 
   /** calculate Beetle response
   * @param  time time in ns
@@ -60,6 +56,3 @@ public:
 };
 
 #endif // _ISiAMPLIFIERRESPONSE_H
-
-
-

@@ -1,4 +1,4 @@
-#ifndef IVELOCCECONFIGTOOL_H 
+#ifndef IVELOCCECONFIGTOOL_H
 #define IVELOCCECONFIGTOOL_H 1
 
 // Include files
@@ -14,12 +14,9 @@
  */
 
 // Declaration of  the interface ID
-static const InterfaceID IID_IVeloCCEConfigTool( "IVeloCCEConfigTool", 1, 0 );
 
-class IVeloCCEConfigTool : virtual public IAlgTool {
-public:
-  /// Static access to interface id
-  static const InterfaceID& interfaceID() { return IID_IVeloCCEConfigTool; }
+struct IVeloCCEConfigTool : extend_interfaces<IAlgTool> {
+  DeclareInterfaceID(IVeloCCEConfigTool, 2, 0 );
 
   /** List of killed sensors and bias voltage of test
   ** sensor for a step in the CCE scan
@@ -30,4 +27,4 @@ public:
   virtual void findBadStrips(unsigned int &sensorNum, std::vector<int> &badStripList) const = 0;
 
 };
-#endif // IVELOCCECONFIGTOOL_H 
+#endif // IVELOCCECONFIGTOOL_H
