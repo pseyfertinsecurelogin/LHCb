@@ -1,5 +1,4 @@
-// $Id: HltSelReportsDecoder.h,v 1.1.1.1 2009-06-24 15:38:52 tskwarni Exp $
-#ifndef HLTSELREPORTSDECODER_H 
+#ifndef HLTSELREPORTSDECODER_H
 #define HLTSELREPORTSDECODER_H 1
 
 // Include files
@@ -10,7 +9,7 @@
 #include "HltDAQ/ReportConvertTool.h"
 
 /** @class HltSelReportsDecoder HltSelReportsDecoder.h
- *  
+ *
  *
  *  @author Tomasz Skwarnicki
  *  @date   2008-08-02
@@ -20,16 +19,16 @@
  */
 
 class HltSelReportsDecoder : public HltRawBankDecoderBase {
-public: 
+public:
   /// Standard constructor
-  HltSelReportsDecoder( const std::string& name, ISvcLocator* pSvcLocator );
+  using HltRawBankDecoderBase::HltRawBankDecoderBase;
   StatusCode initialize() override;
   StatusCode execute   () override;    ///< Algorithm execution
 
 private:
   enum HeaderIDs { kVersionNumber=10 };
   /// location of output
-  StringProperty m_outputHltSelReportsLocation;
+  Gaudi::Property<std::string> m_outputHltSelReportsLocation{ this,"OutputHltSelReportsLocation", LHCb::HltSelReportsLocation::Default};
   /// for converting objects in to summaries
   IReportConvert* m_conv = nullptr;
 };
