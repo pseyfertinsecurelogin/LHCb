@@ -45,9 +45,8 @@ public:
 public:
 
   /** Retrieves the HPD Quantum Efficiency interpolation function.
-   * For a given Photon Momentum in eV
-   * returns the HPD Quantum Efficiency percentage.
-   * @return pointer to the interpolation function for QuantumEff(PhotMom)
+   *  For a given photon momentum (eV) returns the PD Quantum Efficiency percentage.
+   *  @return pointer to the interpolation function for QuantumEff(PhotMom)
    */
   inline const Rich::TabulatedProperty1D* pdQuantumEff() const
   {
@@ -64,7 +63,7 @@ public: // virtual methods to be implemented by derived classes
    *
    *  @param[in]  smartID     The RichSmartID pixel channel ID
    *  @param[out] detectPoint The position in global coordinates
-   *  @param[in]  photoCathodeSide Set to false to include refraction on HPD window
+   *  @param[in]  photoCathodeSide Set to false to include refraction on PD window
    *  @return StatusCode indicating if the conversion was successful or not
    *  @retval true  Conversion was successful
    *  @retval false Conversion failed
@@ -92,10 +91,24 @@ public: // virtual methods to be implemented by derived classes
                                 Gaudi::XYZPoint& detectPoint,
                                 const bool photoCathodeSide = true ) const = 0;
 
+public:
+
+  /// Access the actual physical area of the pixels in the PD (in mm^2)
+  inline double pixelArea() const noexcept { return m_pixelArea; }
+
+  /// Access the effective pixel area (in mm^2) including any demagnification factors
+  inline double effectivePixelArea() const noexcept { return m_effPixelArea; }
+
 protected: // to be initialised by derived classes
   
-  ///< Interpolated property for HPD quantum efficiency
+  /// Interpolated property for HPD quantum efficiency
   std::shared_ptr<const Rich::TabulatedProperty1D> m_pdQuantumEffFunc;
+
+  /// The pixel area (in mm^2)
+  double m_pixelArea{0};
+
+  /// The effective pixel area (in mm^2) including any demagnification factors
+  double m_effPixelArea{0};
   
 };
 

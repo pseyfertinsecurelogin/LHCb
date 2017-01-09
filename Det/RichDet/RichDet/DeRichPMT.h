@@ -37,7 +37,7 @@ class DeRichPMT : public DeRichPD
 public:
 
   /// Standard constructor
-  DeRichPMT(const std::string & name = "" );
+  DeRichPMT ( const std::string & name = "" );
 
   virtual ~DeRichPMT( ) = default; ///< Destructor
 
@@ -79,11 +79,14 @@ public:
    */
   Gaudi::XYZPoint detPointOnAnode ( const LHCb::RichSmartID& smartID ) const;
 
-  void setPmtLensFlag( bool aflag )  { m_PmtLensFlag = aflag; }
-  int pmtCopyNumber() const noexcept {  return m_number;}
-  bool PmtLensFlag() const noexcept { return m_PmtLensFlag;}
+  int pmtCopyNumber() const noexcept {  return m_number; }
 
-  void setPmtIsGrandFlag(bool aflagG ) {m_PmtIsGrand  = aflagG ;}
+  void setPmtLensFlag( const bool aflag ) { m_PmtLensFlag = aflag; }
+
+  bool PmtLensFlag() const noexcept { return m_PmtLensFlag; }
+  
+  void setPmtIsGrandFlag( const bool isGrand );
+
   bool PmtIsGrand() const noexcept { return m_PmtIsGrand; }
 
 private:
@@ -107,7 +110,7 @@ private:
   
   IDetectorElement* m_dePmtAnode = nullptr; ///< The PMT Anode detector element
   int m_number{0};                    ///<Pmt number (should be the same as copy number)
-  std::string  m_PmtQELocation;
+  std::string m_PmtQELocation;
 
   double m_PmtAnodeXSize{0};
   double m_PmtAnodeYSize{0};
@@ -143,8 +146,9 @@ private:
   double m_GrandPmtAnodeHalfThickness{0};
   bool m_Rich2UseGrandPmt{false};
   bool m_Rich2UseMixedPmt{false};
-  double m_Rich1Rich2ZDivideLimit{0};
   int m_Rich2PmtArrayConfig{0};
   bool m_PmtIsGrand{false};
+
+  Rich::DetectorType m_rich = Rich::InvalidDetector;
 
 };

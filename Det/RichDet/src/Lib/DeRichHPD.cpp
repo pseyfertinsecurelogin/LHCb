@@ -244,11 +244,20 @@ StatusCode DeRichHPD::getParameters()
     return StatusCode::FAILURE;
   }
 
-  m_pixelSize    = deRich1->param<double>("RichHpdPixelXsize");
+  const auto pixXsize = deRich1->param<double>("RichHpdPixelXsize");
+  const auto pixYsize = deRich1->param<double>("RichHpdPixelYsize");
+
+  m_pixelSize    = pixXsize;
   m_activeRadius = deRich1->param<double>("RichHpdActiveInpRad");
 
-  if (deRich1->exists("RefractHPDQrtzWin") )
+  m_pixelArea    = pixXsize * pixYsize;
+  const double demagScale = 4.8; // CRJ - Is this in the DB anywhere ?
+  m_effPixelArea = m_pixelArea * std::pow(demagScale,2);
+
+  if ( deRich1->exists("RefractHPDQrtzWin") )
+  {
     m_refactParams = deRich1->param<std::vector<double> >("RefractHPDQrtzWin");
+  }
   else
   {
     warning() << "No parameters for refraction on HPD window! "

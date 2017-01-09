@@ -16,6 +16,6 @@
 // Standard constructor, initializes variables
 //=============================================================================
 DeRichPD::DeRichPD( const std::string & name ) 
-  : DeRichBase         ( name ) { }
+  : DeRichBase ( name ) { }
 
 //=============================================================================

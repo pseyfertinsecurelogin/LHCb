@@ -3,6 +3,7 @@
 #include <sstream>
 #include <time.h>
 #include <vector>
+
 // Gaudi
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/PhysicalConstants.h"
@@ -149,7 +150,7 @@ StatusCode DeRichPMTPanel::initialize()
               const auto curPmtCopyNum = dePMT->pmtCopyNumber();
               dePMT->setPmtLensFlag( isCurrentPmtWithLens(curPmtCopyNum)   );
               dePMT->setPmtIsGrandFlag( ModuleIsWithGrandPMT(aCurrentModuleCopyNumber)  );
-              DePmtsInCurModule[curPmtNum] =dePMT;
+              DePmtsInCurModule[curPmtNum] = dePMT;
 
               if ( ! dePMT->childIDetectorElements().empty() )
               {
@@ -160,7 +161,7 @@ StatusCode DeRichPMTPanel::initialize()
                   {
                     SmartDataPtr<IDetectorElement> dePmtAnode( dataSvc(), (*det_it_pm_an)->name() );
 
-                    if (dePmtAnode)
+                    if ( dePmtAnode )
                     {
                       //  IDetectorElement* dePmtAnode = (IDetectorElement*) (*det_it_pm_an);
                       // register UMS dependency

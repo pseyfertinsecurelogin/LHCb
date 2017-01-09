@@ -201,8 +201,9 @@ public: // virtual methods. Derived classes must implement these
   /// Returns the PD number for the given RichSmartID
   virtual Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const = 0;
 
-  ///Returns true when the given smartID corresponds to a GrandPMT.  
+  /// Returns true when the given smartID corresponds to a GrandPMT.  
   /// For hpds and for standard pmts returns false.
+  /// CRJ This method should be removed and the functionality delegated to the DePD elements themselves.
   virtual bool pdGrandSize( const LHCb::RichSmartID& smartID ) const = 0;
 
   /**
