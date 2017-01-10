@@ -84,12 +84,12 @@ Gaudi::Math::wald_interval
   if ( 0 >= conflevel  ) { return std::make_pair ( p , p )     ; }
   //
   const double alpha = 1 - conflevel ;
-  const double  z  = _probit_ ( 1 - 0.5  * alpha ) ;
+  const double  z    = _probit_ ( 1 - 0.5  * alpha ) ;
   //
-  // adjust cases of p-0 and p=1
+  // adjust cases of p=0 and p=1
   //
   const double p1 =
-    0 == accepted ?   ( a + 1 ) / ( a + rejected     ) :
+    0 == accepted ?   ( a + 1 ) / ( a + rejected + 1 ) :
     0 == rejected ?   ( a     ) / ( a + rejected + 1 ) : p ;
   //
   const double  dx = std::sqrt ( p1 * ( 1 - p1 ) / ( accepted + rejected ) ) ;

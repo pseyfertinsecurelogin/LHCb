@@ -6,6 +6,57 @@
 !               All headers included in directory LHCbMath
 !-----------------------------------------------------------------------------
 
+! 2016-12-20 - Vanya Belyaev
+ - Bernstein.h: minor fix for incorrect object creation  
+
+! 2016-12-18 - Vanya Belyaev
+ - add Gauss-Lobatto interpolation
+ - add (and extend) qmtest for new interpolation functions 
+  
+! 2016-12-14 - Vanya Belyaev
+ - add helper function 
+ - add one more test
+
+! 2016-12-13 - Vanya Belyaev
+ - speedup vector/matrix operations in Python
+ - make operations more robust and more efficient
+ - add negation operator 
+ - improve comparison 
+ - extend the test 
+
+! 2016-12-12 - Vanya Belyaev
+ - 1) tiny fix
+   2) make it more robust 
+   3) propagate matrix/vector comparsion(equality) criteria to python
+
+! 2016-12-12 - Vanya Belyaev
+ - Fix linear-algebra operations in python   (new ROOT?)
+
+! 2016-11-10 - Vanya Belyaev
+ - ValueWithError.cpp
+   fix Coverity warnings 
+
+! 2016-11-09 - Vanya Belyaev
+ - ValueWithError.cpp: fix a bug in estimation of uncertainty in igamma
+
+! 2016-09-14 - Vanya Belyaev
+ - Fix the issue with Smatrix/Svectors tretament in PyROOT
+ - add new qmtest 
+
+! 2016-08-30 - Vanya Belyaev
+ - HistoInterpolation
+   - 2D & 3D case: impleme all possible interpolation rules, up to 
+   biqubic and triqubic
+   - add possibility to interpolate for "density" ( "bin-content"/"bin-volume")
+   - add possibility for extrapolation 
+   - better/uniform treatment of edge case 
+   - fix some typos in doxygen
+
+! 2016-07-19 - Vanya Belyaev
+ - add erfi function 
+ - replace std::array with std::vector for PseudoVoigt 
+   (error message during serialization)  
+
 ! 2016-06-14 - Vanya Belyaev
 
  - Fix very sad and stupid bug in the normalization of Voigt function

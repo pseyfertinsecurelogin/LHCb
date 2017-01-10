@@ -61,24 +61,12 @@ namespace
                10000       * std::numeric_limits<long double>::epsilon () ) ;
   // ==========================================================================
   /// get a factorial 
-  inline unsigned long long 
-  _factorial_i_ ( const unsigned short N ) 
-  {
-    return 
-      0 == N ?  1 : 
-      0 == N ?  1 : 
-      2 == N ?  2 : 
-      3 == N ?  6 : 
-      4 == N ? 24 : N * _factorial_i_ ( N - 1 ) ;
-  }
-  // ==========================================================================
-  /// get a factorial 
   inline long double 
   _factorial_d_ ( const unsigned short N ) 
   {
     return 
       0 == N ?  1 : 
-      0 == N ?  1 : 
+      1 == N ?  1 : 
       2 == N ?  2 : 
       3 == N ?  6 : 
       4 == N ? 24 : N * _factorial_d_ ( N - 1 ) ;
@@ -694,6 +682,30 @@ Gaudi::Math::erf   ( const std::complex<double>& x )
 std::complex<double>  
 Gaudi::Math::erfc  ( const std::complex<double>& x ) 
 { return Faddeeva::erfc ( x ) ; }
+// ============================================================================
+/* imaginary error function 
+ *  \f$ erfi(x) = -i \mathrm{erf}(ix) = \frac{2}{\sqrt{\pi}} \int_0^x e^{t^2}dt\f$ 
+ *  @param x the argument
+ *  @return the value of the imaginary error function 
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ */
+// ============================================================================
+double Gaudi::Math::erfi ( const double x ) 
+{ return Faddeeva::erfi ( x ) ; }  
+// ============================================================================
+/* imaginary error function 
+ *  \f$ erfi(x) = -i \mathrm{erf}(ix) = \frac{2}{\sqrt{\pi}} \int_0^x e^{t^2}dt\f$ 
+ *  @param x the argument
+ *  @return the value of the imaginary error function 
+ *  The actual implementation is copied from http://ab-initio.mit.edu/Faddeeva
+ *  @see http://ab-initio.mit.edu/Faddeeva
+ *  @see https://en.wikipedia.org/wiki/Error_function
+ */
+// ============================================================================
+std::complex<double> Gaudi::Math::erfi ( const std::complex<double>& x ) 
+{ return Faddeeva::erfi ( x ) ; }  
 // ============================================================================
 /*  compute sech fuction 
  *  \$f f(x) = \frac{1}{\cosh x} = \frac{2}{ e^{x}+e^{-x} }\f$

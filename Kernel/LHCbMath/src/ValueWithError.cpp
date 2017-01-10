@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -25,6 +24,7 @@
 #include "LHCbMath/Clenshaw.h"
 #include "LHCbMath/Combine.h"
 #include "LHCbMath/MoreFunctions.h"
+#include "LHCbMath/Interpolation.h"
 // ============================================================================
 // Boost
 // ============================================================================
@@ -167,7 +167,7 @@ Gaudi::Math::ValueWithError::operator+=
   }
   //
   m_value += right.m_value ;
-  m_cov2  += right.m_cov2  ;
+  if ( 0 < right.m_cov2 ) { m_cov2  += right.m_cov2  ; }
   //
   if ( _zero ( m_cov2 ) ) { m_cov2 = 0 ; }
   //
@@ -189,7 +189,7 @@ Gaudi::Math::ValueWithError::operator-=
   }
   //
   m_value -= right.m_value ;
-  m_cov2  += right.m_cov2  ;  
+  if ( 0 < right.m_cov2 ) { m_cov2  += right.m_cov2  ; }
   //
   if ( _zero ( m_cov2 ) ) { m_cov2 = 0 ; }
   //
@@ -216,7 +216,7 @@ Gaudi::Math::ValueWithError::operator*=
   const double _a2 =       m_value *       m_value ;
   const double _b2 = right.m_value * right.m_value ;
   m_cov2  *= _b2                 ;
-  m_cov2  += _a2 * right.m_cov2  ;
+  if ( 0 < right.m_cov2 ) { m_cov2  += _a2 * right.m_cov2  ; }
   m_value *=      right.m_value ;
   //
   if ( _zero ( m_cov2 ) ) { m_cov2 = 0 ; }
@@ -242,7 +242,7 @@ Gaudi::Math::ValueWithError::operator/=
   const double _b4 = _b2 * _b2 ;
   //
   m_cov2  /= _b2 ;
-  m_cov2  += ( _a2 / _b4 ) * right.m_cov2 ;
+  if ( 0 < right.m_cov2 ) { m_cov2  += ( _a2 / _b4 ) * right.m_cov2 ; }
   m_value /= right.m_value ;
   //
   if ( _zero ( m_cov2 ) ) { m_cov2 = 0 ; }
@@ -524,16 +524,12 @@ bool Gaudi::Math::ValueWithError::isfinite () const
 // check for finiteness
 // =============================================================================
 bool Gaudi::Math::ValueWithError::isnormal () const
-{
-  return std::isnormal ( m_value ) && std::isfinite ( m_cov2  )  ;
-}
+{ return std::isnormal ( m_value ) && std::isfinite ( m_cov2  )  ; }
 // =============================================================================
 // check for finiteness
 // =============================================================================
 bool Gaudi::Math::ValueWithError::isinf () const
-{
-  return std::isinf ( m_value ) || std::isinf ( m_cov2  )  ;
-}
+{ return std::isinf ( m_value ) || std::isinf ( m_cov2  )  ; }
 // ============================================================================
 // check for goodness: finite values and non-negative covariance 
 // ============================================================================
@@ -1272,9 +1268,9 @@ Gaudi::Math::ValueWithError Gaudi::Math::igamma
   const double bv = b.value() ;
   const double v  = Gaudi::Math::igamma  ( bv ) ;
   //
-  const double d1 = - Gaudi::Math::psi( bv ) / v ;
-  const double d2 = d1 * d1 ;
-  const double e2 = d2 * b.cov2() ;
+  const double d1 = - Gaudi::Math::psi( bv ) * v ;
+  const double d2 =   d1 * d1 ;
+  const double e2 =   d2 * b.cov2() ;
   //
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
@@ -1957,6 +1953,29 @@ Gaudi::Math::ValueWithError Gaudi::Math::erfc
   return Gaudi::Math::ValueWithError ( v , e2 ) ;
 }
 // ============================================================================
+/*  evaluate erfi(b)
+ *  @param b (INPUT) the parameter 
+ *  @return  erfc(b)
+ *  @warning invalid and small covariances are ignored 
+ */
+// ============================================================================
+Gaudi::Math::ValueWithError Gaudi::Math::erfi
+( const Gaudi::Math::ValueWithError& b )
+{
+  if ( 0 >= b.cov2 () || _zero ( b.cov2() ) )
+  { return Gaudi::Math::erfi( b.value() ) ; }
+  //
+  const double bv = b.value() ;
+  const double v  = Gaudi::Math::erfi ( bv ) ;
+  //
+  static const double factor  = 2.0 / std::sqrt ( M_PI ) ;
+  //
+  const double d2 = factor * std::exp ( bv * bv ) ;
+  const double e2 = d2     * b.cov2() ;
+  //
+  return Gaudi::Math::ValueWithError ( v , e2 ) ;
+}
+// ============================================================================
 /*  evaluate erfcx(b)
  *  @param b (INPUT) the parameter 
  *  @return  erfc(b)
@@ -2375,11 +2394,158 @@ Gaudi::Math::operator<<( std::ostream&                                   s ,
   return Gaudi::Utils::toStream ( v , s ) ; 
 }
 // ============================================================================
+/*  simple interpolation 
+ *  @param values     INPUT  vector of yi 
+ *  @param abscissas  INPUT  vector of xi
+ *  @param x          INPUT  the point where the function to be evaluated 
+ *  @param correlated INPUT  correlated uncertaties in yi?
+ */
+// ===========================================================================
+Gaudi::Math::ValueWithError 
+Gaudi::Math::interpolate 
+( const std::vector<Gaudi::Math::ValueWithError>& y_i        ,
+  const std::vector<double>&                      x_i        ,
+  const double                                    x          , 
+  const bool                                      correlated ) 
+{
+  // simple  cases 
+  if      ( x_i.empty() || y_i.empty() ) { return Gaudi::Math::ValueWithError() ; }
+  else if ( 1 == x_i.size ()           ) { return y_i.front() ; }  
+  //
+  if ( !correlated ) 
+  { return Gaudi::Math::Interpolation::lagrange
+      ( x_i.begin() ,  
+        x_i.end  () , 
+        y_i.begin() ,  
+        y_i.end  () , 
+        x           , 
+        Gaudi::Math::ValueWithError()  , 
+        [] ( double z ) { return z ; } ,
+        [] ( auto   y ) { return y ; } ) ;
+  }
+  //
+  std::vector<double> _y ( x_i.size() , 0.0 ) ;
+  //
+  //
+  std::transform ( y_i.begin () , 
+                   y_i.begin () +  std::min ( x_i.size() , y_i.size() )  , 
+                   _y .begin () , [] ( auto y ) { return y.value() ; } ) ;                 
+  const double r_0 = 
+    Gaudi::Math::Interpolation::neville 
+    ( x_i.begin() ,  
+      x_i.end  () , 
+      _y .begin() ,  
+      x           , 
+      [] ( double z ) { return z         ; } ) ;
+  //
+  //
+  std::transform ( y_i.begin () , 
+                   y_i.begin () +  std::min ( x_i.size() , y_i.size() )  , 
+                   _y .begin () , [] ( auto y ) { return y.value() + y.error() ; } );                 
+  std::fill ( _y.begin() + y_i.size() , _y.end ( ) , 0.0 )  ;
+  const double r_plus = 
+    Gaudi::Math::Interpolation::neville 
+    ( x_i.begin() ,  
+      x_i.end  () , 
+      _y .begin() ,  
+      x           , 
+      [] ( double z ) { return z         ; } ) ;
+  //
+  //
+  std::transform ( y_i.begin () , 
+                   y_i.begin () +  std::min ( x_i.size() , y_i.size() )  , 
+                   _y .begin () , [] ( auto y ) { return y.value() - y.error() ; } );                 
+  std::fill ( _y.begin() + y_i.size() , _y.end ( ) , 0.0 )  ;
+  const double r_minus = 
+    Gaudi::Math::Interpolation::neville 
+    ( x_i.begin() ,  
+      x_i.end  () , 
+      _y .begin() ,  
+      x           , 
+      [] ( double z ) { return z         ; } ) ;
+  //
+  // get an estimate for the error 
+  const double e = std::max ( std::abs ( r_plus  - r_0     ) ,
+                              std::abs ( r_0     - r_minus ) ) ;
+  return Gaudi::Math::ValueWithError ( r_0 , e * e ) ;
+}
+// ============================================================================
+/*  simple interpolation 
+ *  - if vector of y is larger  than vector of x, extra values are ignored 
+ *  - if vector of y is shorter than vector of x, missinge entries assumed to be zero 
+ *  @param values     INPUT  vector of yi 
+ *  @param abscissas  INPUT  vector of xi
+ *  @param x          INPUT  the point where the function to be evaluated 
+ */
+// ============================================================================
+Gaudi::Math::ValueWithError
+Gaudi::Math::interpolate 
+( const std::vector<double>&         y_i , 
+  const std::vector<double>&         x_i ,
+  const Gaudi::Math::ValueWithError& x   ) 
+{
+  //
+  // simple  cases 
+  if      ( x_i.empty() || y_i.empty() ) { return 0           ; }
+  else if ( 1 == x_i.size ()           ) { return y_i.front() ; }  
+  //
+  std::vector<double> _y ( x_i.size() , 0.0 ) ;
+  std::vector<double> _d ( x_i.size() , 0.0 ) ;
+  //
+  std::copy ( y_i.begin () , 
+              y_i.begin () + std::min ( x_i.size() , y_i.size() ) , _y .begin () ) ;
+  //
+  std::pair<double,double> r = 
+    Gaudi::Math::Interpolation::neville
+    ( x_i.begin() ,  
+      x_i.end  () , 
+      _y .begin() ,  
+      _d .begin() ,  
+      x.value  () , 
+      [] ( double z ) { return z  ; } ) ;
+  //
+  if (  0 >= x.cov2() || _zero ( x.cov2() ) ) { return r.first ; }
+  return ValueWithError ( r.first , r.second * r.second * x.cov2() ) ;
+}
+// ========================================================================
+/*  simple interpolation 
+ *  - if vector of y is larger  than vector of x, extra values are ignored 
+ *  - if vector of y is shorter than vector of x, missing entries assumed to be zero 
+ *  @param values     INPUT  vector of yi 
+ *  @param abscissas  INPUT  vector of xi
+ *  @param x          INPUT  the point where the function to be evaluated 
+ *  @param correlated INPUT  correlated uncertaties in yi?
+ */
+// ========================================================================
+Gaudi::Math::ValueWithError 
+Gaudi::Math::interpolate 
+( const std::vector<Gaudi::Math::ValueWithError>& y_i        , 
+  const std::vector<double>&                      x_i        ,
+  const Gaudi::Math::ValueWithError&              x          , 
+  const bool                                      correlated ) 
+{
+  // calculate value (with uncertainty with respect to y)
+  ValueWithError rl  =  interpolate (  y_i , x_i , x.value() , correlated ) ;
+  if ( 0 >= x.cov2() || _zero ( x.cov2() ) ){ return rl ; } // RETURN 
+  //
+  // calculate the uncertainty with respect to x 
+  std::pair<double,double> rn = 
+    Gaudi::Math::Interpolation::neville2 
+    ( x_i.begin() , x_i.end() , 
+      y_i.begin() , y_i.end() , 
+      x , 
+      [] ( double z ) { return z  ; } , 
+      [] ( double z ) { return z  ; } ) ;
+  //
+  const double d = rn.second ;
+  rl.setCov2 ( std::max( rl.cov2() , 0.0 ) + x.cov2() * d * d  ) ;
+  return rl ;  
+}
 
-// ============================================================================
-// Boost.Bind
-// ============================================================================
-#include "boost/bind.hpp"
+
+
+
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
