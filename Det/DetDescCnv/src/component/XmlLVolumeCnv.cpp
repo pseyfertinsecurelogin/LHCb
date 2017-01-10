@@ -21,6 +21,13 @@
 
 #include "XmlLVolumeCnv.h"
 
+#include  <boost/algorithm/string/replace.hpp>
+
+namespace {
+  void replaceTagInString ( std::string& s, const std::string& numeral ) {
+    boost::algorithm::replace_first(s,"-KEY-",numeral);
+  }
+}
 
 // -----------------------------------------------------------------------
 // Instantiation of a static factory class used by clients to create
@@ -460,7 +467,7 @@ StatusCode XmlLVolumeCnv::internalCreateObj (xercesc::DOMElement* element,
 // -----------------------------------------------------------------------
 XmlLVolumeCnv::PVolumeItem
 XmlLVolumeCnv::dealWithPhysvol(const xercesc::DOMElement* element,
-                               std::string& numeral) const {
+                               const std::string& numeral) const {
   // gets attributes
   std::string nameAttribute = dom2Std (element->getAttribute (nameString));
   std::string logvolAttribute = dom2Std (element->getAttribute (logvolString));
@@ -538,7 +545,7 @@ XmlLVolumeCnv::dealWithPhysvol(const xercesc::DOMElement* element,
 // -----------------------------------------------------------------------
 std::unique_ptr<XmlLVolumeCnv::PVolumes>
 XmlLVolumeCnv::dealWithParamphysvol(const xercesc::DOMElement* element,
-                                    std::string& numeral) const {
+                                    const std::string& numeral) const {
   // gets the element's name
   const XMLCh* tagName = element->getNodeName();
   // dispatches, based on the name
@@ -569,7 +576,7 @@ XmlLVolumeCnv::dealWithParamphysvol(const xercesc::DOMElement* element,
 // -----------------------------------------------------------------------
 std::unique_ptr<XmlLVolumeCnv::PVolumes>
 XmlLVolumeCnv::dealWithParamphysvol(const xercesc::DOMElement* element,
-                                    unsigned int nD, std::string& numeral) const {
+                                    unsigned int nD, const std::string& numeral) const {
   // nD should be positive
   if (0 == nD) return nullptr;
 
@@ -814,7 +821,7 @@ std::string XmlLVolumeCnv::dealWithSurf(const xercesc::DOMElement* element) cons
 // Deal with solid
 // -----------------------------------------------------------------------
 std::unique_ptr<ISolid> XmlLVolumeCnv::dealWithSolid(const xercesc::DOMElement* element,
-                                                     std::string& numeral) const {
+                                                     const std::string& numeral) const {
   // gets the element's name
   const XMLCh* tagName = element->getNodeName();
   // dispatches, based on the name
@@ -839,7 +846,7 @@ std::unique_ptr<ISolid> XmlLVolumeCnv::dealWithSolid(const xercesc::DOMElement* 
 // Deal with boolean
 // -----------------------------------------------------------------------
 std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOMElement* element,
-                                                             std::string& numeral) const {
+                                                             const std::string& numeral) const {
   // gets the element's name
   std::string nameAttribute = dom2Std (element->getAttribute (nameString));
   const XMLCh* tagName = element->getNodeName();
@@ -962,7 +969,7 @@ std::unique_ptr<SolidBoolean> XmlLVolumeCnv::dealWithBoolean(const xercesc::DOME
 // -----------------------------------------------------------------------
 std::unique_ptr<XmlLVolumeCnv::PlacedSolidList>
 XmlLVolumeCnv::dealWithBooleanChildren(const xercesc::DOMElement* element,
-                                       std::string& numeral) const {
+                                       const std::string& numeral) const {
   // builds an empty list
   auto result = std::make_unique<PlacedSolidList>();
 
@@ -1022,7 +1029,7 @@ XmlLVolumeCnv::dealWithBooleanChildren(const xercesc::DOMElement* element,
 // Deal with simple solid
 // -----------------------------------------------------------------------
 std::unique_ptr<ISolid> XmlLVolumeCnv::dealWithSimpleSolid(const xercesc::DOMElement* element,
-                                                           std::string& numeral) const {
+                                                           const std::string& numeral) const {
   // gets the element's name
   const XMLCh* tagName = element->getNodeName();
 
@@ -1058,7 +1065,7 @@ std::unique_ptr<ISolid> XmlLVolumeCnv::dealWithSimpleSolid(const xercesc::DOMEle
 // Deal with box
 // -----------------------------------------------------------------------
 std::unique_ptr<SolidBox> XmlLVolumeCnv::dealWithBox(const xercesc::DOMElement* element,
-                                                     std::string& numeral) const {
+                                                     const std::string& numeral) const {
   // gets attributes
   std::string sizeXAttribute = dom2Std (element->getAttribute (sizeXString));
   std::string sizeYAttribute = dom2Std (element->getAttribute (sizeYString));
@@ -1846,20 +1853,3 @@ XmlLVolumeCnv::dealWithRotAxis(const xercesc::DOMElement* element) const {
 
 
 } // end dealWithRotAxis
-
-//=========================================================================
-//  Method to handle the 'tag' string and replace by the numeral.
-//=========================================================================
-void XmlLVolumeCnv::replaceTagInString ( std::string& string, std::string& numeral ) const {
-  auto indx = string.find( "-KEY-" );
-  if ( std::string::npos != indx ) {
-    if ( indx < string.size()-5 ) {
-      string = string.substr(0,indx) + numeral + string.substr( indx+5 );
-    } else {
-      string = string.substr(0,indx) + numeral;
-    }
-  }
-}
-// ============================================================================
-// End
-// ============================================================================
