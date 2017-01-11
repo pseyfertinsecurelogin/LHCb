@@ -13,8 +13,6 @@
 #include "GaudiKernel/SmartIF.h"
 #include "XmlTools/IXmlParserSvc.h"
 
-#include <list>
-
 /** @class RunChangeHandlerSvc RunChangeHandlerSvc.h
  *
  *  Service intercepting "RunChange" incidents to replace the path of the XML
@@ -94,6 +92,7 @@ private:
           pathTemplate(pathTempl) {}
     SmartDataPtr<ValidDataObject> object;
     std::string pathTemplate;
+
   };
 
   /// Modify the object opaque address (flag for update).
@@ -106,7 +105,7 @@ private:
   Gaudi::Property<CondDescMap> m_condDesc { this, "Conditions", {},
    "Map defining what to use to replace the location of the source XML files."};
 
-  typedef std::list<CondData> Conditions;
+  typedef std::vector<CondData> Conditions;
   /// List of objects to modify
   Conditions m_conditions;
 

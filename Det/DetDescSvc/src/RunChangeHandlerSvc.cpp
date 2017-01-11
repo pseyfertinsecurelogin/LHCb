@@ -39,6 +39,7 @@ StatusCode RunChangeHandlerSvc::initialize(){
   updMgrSvc();
 
   // Prepare the list of conditions
+  m_conditions.reserve(m_condDesc.size());
   for (const auto& condDesc : m_condDesc) {
     m_conditions.emplace_back(detectorSvc(),condDesc.first,condDesc.second);
     updMgrSvc()->registerCondition(this,condDesc.first);
