@@ -101,7 +101,7 @@ private:
         fmt % run;
       }
       std::string newpath = fmt.str();
-      bool isChanged = newpath != path;
+      bool isChanged = true; // newpath != path;
       path = newpath;
       return isChanged;
     }
