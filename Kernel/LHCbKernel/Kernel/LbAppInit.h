@@ -41,6 +41,11 @@ protected:
   void checkMem() const;
 
   /// Return number of events processed
+  inline void increaseEventCounter() const {
+    m_evtCounter++;
+  }
+
+  /// Return number of events processed
   long eventCounter() const {
     return m_evtCounter;
   }
@@ -116,7 +121,7 @@ private:
   mutable std::mutex m_mutex;              ///< Mutex to secure non thread safe code, that is on demand initializations
 
   SmartIF<ICondDBInfo> m_condDBInfo; ///< Pointer to Info interface of CondDB service
-  std::atomic_long m_evtCounter{0};  ///< Pointer to EventCounter interface
+  mutable std::atomic_long m_evtCounter{0};  ///< Pointer to EventCounter interface
   long m_eventMax{0};                ///< Number of events requested (ApplicationMgr.EvtMax)
   std::string m_appName{""};         ///< Application Name
   std::string m_appVersion{""};      ///< Application Version
