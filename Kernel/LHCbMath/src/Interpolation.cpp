@@ -75,8 +75,8 @@ double Gaudi::Math::Interpolation::lagrange
                     data.end   () , 
                     x             , 
                     0.0           , 
-                    [] ( auto i ) { return i.first  ; } , 
-                    [] ( auto i ) { return i.second ; } ) ; 
+                    [] ( decltype(*data.begin()) i ) { return i.first  ; } , 
+                    [] ( decltype(*data.begin()) i ) { return i.second ; } ) ; 
 }
 // ============================================================================
 /*  Simple lagrange interpolation 
@@ -156,8 +156,8 @@ Gaudi::Math::Interpolation::lagrange2
                               data.end   () , 
                               x             , 
                               0.0           , 
-                              [] ( auto i ) { return i.first  ; } , 
-                              [] ( auto i ) { return i.second ; } ) ; 
+                              [] ( decltype(*data.begin()) i ) { return i.first  ; } , 
+                              [] ( decltype(*data.begin()) i ) { return i.second ; } ) ; 
   //
   if  ( data.size() <= iy ) { return std::make_pair ( r , 0. ) ; } // RETURN
   //

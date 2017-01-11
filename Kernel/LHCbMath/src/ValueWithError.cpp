@@ -2421,7 +2421,7 @@ Gaudi::Math::interpolate
         x           , 
         Gaudi::Math::ValueWithError()  , 
         [] ( double z ) { return z ; } ,
-        [] ( auto   y ) { return y ; } ) ;
+        [] ( decltype(*y_i.begin())   y ) { return y ; } ) ;
   }
   //
   std::vector<double> _y ( x_i.size() , 0.0 ) ;
@@ -2429,7 +2429,7 @@ Gaudi::Math::interpolate
   //
   std::transform ( y_i.begin () , 
                    y_i.begin () +  std::min ( x_i.size() , y_i.size() )  , 
-                   _y .begin () , [] ( auto y ) { return y.value() ; } ) ;                 
+                   _y .begin () , [] ( decltype(*y_i.begin()) y ) { return y.value() ; } ) ;
   const double r_0 = 
     Gaudi::Math::Interpolation::neville 
     ( x_i.begin() ,  
@@ -2441,7 +2441,7 @@ Gaudi::Math::interpolate
   //
   std::transform ( y_i.begin () , 
                    y_i.begin () +  std::min ( x_i.size() , y_i.size() )  , 
-                   _y .begin () , [] ( auto y ) { return y.value() + y.error() ; } );                 
+                   _y .begin () , [] ( decltype(*y_i.begin()) y ) { return y.value() + y.error() ; } );
   std::fill ( _y.begin() + y_i.size() , _y.end ( ) , 0.0 )  ;
   const double r_plus = 
     Gaudi::Math::Interpolation::neville 
@@ -2454,7 +2454,7 @@ Gaudi::Math::interpolate
   //
   std::transform ( y_i.begin () , 
                    y_i.begin () +  std::min ( x_i.size() , y_i.size() )  , 
-                   _y .begin () , [] ( auto y ) { return y.value() - y.error() ; } );                 
+                   _y .begin () , [] ( decltype(*y_i.begin()) y ) { return y.value() - y.error() ; } );
   std::fill ( _y.begin() + y_i.size() , _y.end ( ) , 0.0 )  ;
   const double r_minus = 
     Gaudi::Math::Interpolation::neville 

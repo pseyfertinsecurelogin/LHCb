@@ -258,8 +258,8 @@ double Gaudi::Math::Splines::interpolate
     ( data.begin() , data.end () , 
       data.begin() , data.end () , 
       x  , 0.0 , 
-      [] ( auto x ) { return x.first  ; } , 
-      [] ( auto y ) { return y.second ; } ) ;
+      [] ( decltype(*data.begin()) x ) { return x.first  ; } , 
+      [] ( decltype(*data.begin()) y ) { return y.second ; } ) ;
 }
 // ===========================================================================
 /*  simple lagrange interpolation 
@@ -278,8 +278,8 @@ Gaudi::Math::Splines::interpolate
     ( data.begin() , data.end () , 
       data.begin() , data.end () , 
       x  , Gaudi::Math::ValueWithError() , 
-      [] ( auto x ) { return x.first  ; } , 
-      [] ( auto y ) { return y.second ; } ) ;
+      [] ( decltype(*data.begin()) x ) { return x.first  ; } , 
+      [] ( decltype(*data.begin()) y ) { return y.second ; } ) ;
 }
 // ===========================================================================
 
