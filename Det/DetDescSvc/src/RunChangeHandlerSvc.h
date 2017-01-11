@@ -20,6 +20,10 @@
 
 #include <boost/format.hpp>
 
+#include <array>
+#include <fstream>
+#include <openssl/sha.h>
+
 /** @class RunChangeHandlerSvc RunChangeHandlerSvc.h
  *
  *  Service intercepting "RunChange" incidents to replace the path of the XML
@@ -92,7 +96,9 @@ private:
 
   /// Helper class to work with conditions data file path templates.
   struct PathTemplate {
-    PathTemplate(const std::string& f): fmt{f} {}
+    PathTemplate(const std::string& f): fmt{f}, hash{0} {}
+
+    using Hash_t = std::array<unsigned char, SHA_DIGEST_LENGTH>;
 
     /// Check if the file changes when going to the requested run.
     /// After this call, the data member path will hold the new name.
@@ -100,14 +106,27 @@ private:
       if (fmt.expected_args()) {
         fmt % run;
       }
-      std::string newpath = fmt.str();
-      bool isChanged = true; // newpath != path;
-      path = newpath;
-      return isChanged;
+      path = fmt.str();
+      Hash_t oldhash = hash;
+      {
+        SHA_CTX c;
+        SHA1_Init(&c);
+        std::ifstream data(path, std::ios::binary);
+        const std::streamsize BUFFER_SIZE = 1024 * 1024;
+        std::array<char, BUFFER_SIZE> buff{0};
+        while (!data.eof()) {
+          data.read(buff.data(), buff.size());
+          SHA1_Update(&c, buff.data(), data.gcount());
+        }
+        SHA1_Final(hash.data(), &c);
+      }
+
+      return hash != oldhash;
     }
 
     boost::format fmt;
     std::string path;
+    Hash_t hash;
   };
 
   /// Class to simplify handling of the objects to modify.
