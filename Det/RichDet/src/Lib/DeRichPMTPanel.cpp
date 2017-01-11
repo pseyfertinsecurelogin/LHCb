@@ -144,11 +144,12 @@ StatusCode DeRichPMTPanel::initialize()
 
               // DeRichPMT * dePMT = (DeRichPMT*)  (*det_it_pm);
               // register UMS dependency
-              updMgrSvc()->registerCondition( this,dePMT->geometry(),&DeRichPMTPanel::geometryUpdate );
+              updMgrSvc()->registerCondition( this, dePMT->geometry(),
+                                              &DeRichPMTPanel::geometryUpdate );
               // get the current pmt and save.
               const auto curPmtNum = det_it_pm - dePMTModule->childIDetectorElements().begin();
               const auto curPmtCopyNum = dePMT->pmtCopyNumber();
-              dePMT->setPmtLensFlag( isCurrentPmtWithLens(curPmtCopyNum)   );
+              dePMT->setPmtLensFlag( isCurrentPmtWithLens(curPmtCopyNum) );
               dePMT->setPmtIsGrandFlag( ModuleIsWithGrandPMT(aCurrentModuleCopyNumber)  );
               DePmtsInCurModule[curPmtNum] = dePMT;
 
@@ -165,7 +166,8 @@ StatusCode DeRichPMTPanel::initialize()
                     {
                       //  IDetectorElement* dePmtAnode = (IDetectorElement*) (*det_it_pm_an);
                       // register UMS dependency
-                      updMgrSvc()->registerCondition( this,dePmtAnode->geometry(),&DeRichPMTPanel::geometryUpdate );
+                      updMgrSvc()->registerCondition( this, dePmtAnode->geometry(), 
+                                                      &DeRichPMTPanel::geometryUpdate );
                       DePmtAnodesInCurModule[curPmtNum] = dePmtAnode;
                     }
                     else
@@ -740,8 +742,8 @@ int DeRichPMTPanel::getPmtNumFromRowCol(int PRow, int PCol ) const
   //for values outside the range, set the closest value to the
   // corresponding edges.
 
-  if ( PRow < 0 ) PRow=0;
-  if ( PCol < 0 ) PCol =0;
+  if ( PRow < 0 ) PRow = 0;
+  if ( PCol < 0 ) PCol = 0;
   if ( PRow >= m_NumPmtInRowCol[1] ) PRow = m_NumPmtInRowCol[1]-1;
   if ( PCol >= m_NumPmtInRowCol[0] ) PCol = m_NumPmtInRowCol[0]-1;
 
@@ -1455,119 +1457,70 @@ bool DeRichPMTPanel::isInPmtPanel(const Gaudi::XYZPoint& aPointInPanel ) const
   return inAcc;
 }
 
-
 bool DeRichPMTPanel::isInPmt(const Gaudi::XYZPoint& aPointInPmt , const bool aFlagGrandPMT ) const
 {
-  const double xp = aPointInPmt.x();
-  const double yp = aPointInPmt.y();
-  const double aPmtH = ( (aFlagGrandPMT)   && (rich() == Rich::Rich2)  ) ?  (m_GrandPmtMasterLateralSize/2.0 )  
-    :  (m_PmtMasterLateralSize/2.0);
+  const auto xp = aPointInPmt.x();
+  const auto yp = aPointInPmt.y();
+  const auto aPmtH = ( ( aFlagGrandPMT && (rich() == Rich::Rich2)  ) ?  
+                       (m_GrandPmtMasterLateralSize/2.0 ) : (m_PmtMasterLateralSize/2.0) );
   return ( (fabs(xp) <  aPmtH ) && (fabs (yp) < aPmtH ) );
 }
 
 bool DeRichPMTPanel::isInPmtAnodeLateralAcc(const Gaudi::XYZPoint& aPointInPmtAnode, const bool aFlagGrandPMT  ) const
 {
-  const double xp = aPointInPmtAnode.x();
-  const double yp = aPointInPmtAnode.y();
-  bool  aflgpx = true;
-  if(  aFlagGrandPMT   && (rich() == Rich::Rich2) ) {
-
-    aflgpx = ( fabs(xp) < fabs( m_GrandPmtAnodeXEdge ) ) && ( fabs(yp) < fabs( m_GrandPmtAnodeYEdge ) );
-      
-  }else {
-    aflgpx = ( fabs(xp) < fabs( m_PmtAnodeXEdge ) ) && ( fabs(yp) < fabs( m_PmtAnodeYEdge ) );
-    
+  const auto xp = aPointInPmtAnode.x();
+  const auto yp = aPointInPmtAnode.y();
+  bool aflgpx = true;
+  if ( aFlagGrandPMT  && ( rich() == Rich::Rich2 ) ) 
+  {
+    aflgpx = ( ( fabs(xp) < fabs( m_GrandPmtAnodeXEdge ) ) && 
+               ( fabs(yp) < fabs( m_GrandPmtAnodeYEdge ) ) );    
   }
-  const bool aflgpxC= aflgpx;
-  
-  
-  return aflgpxC;
+  else 
+  {
+    aflgpx = ( ( fabs(xp) < fabs( m_PmtAnodeXEdge ) ) && 
+               ( fabs(yp) < fabs( m_PmtAnodeYEdge ) ) );  
+  }
+  return aflgpx;
 }
-
 
 Rich::DAQ::HPDCopyNumber DeRichPMTPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
 {
-  //  info()<<"derich pmt panel smartid "<<smartID <<endmsg;
-
-  return Rich::DAQ::HPDCopyNumber( smartID.rich() == rich() && smartID.panel() == side() ?
-                                   smartID.pdCol() * m_NumPmtInRichModule  + smartID.pdNumInCol() :
-                                   nPDs() + 1 );
+  return _pdNumber( smartID );
 }
-bool DeRichPMTPanel::pdGrandSize( const LHCb::RichSmartID& smartID ) const 
+
+const DeRichPD* DeRichPMTPanel::dePD( const LHCb::RichSmartID pdID ) const
 {
-  return ModuleIsWithGrandPMT(smartID.pdCol());
+  return dePMT( _pdNumber( pdID ) );
 }
-
-
-//const DeRichPD* DeRichPMTPanel::dePD( const unsigned int PmtCopyNumber ) const
-//{
-//  const DeRichPD * dePmt = nullptr;
-
-//  if ( ((int) PmtCopyNumber) < ( m_Rich1TotNumPmts + m_Rich2TotNumPmts  ) )
-//  {
-//   const unsigned int Mnum = (int) (PmtCopyNumber/m_NumPmtInRichModule);
-//    const unsigned int MNumInCurPanel = PmtModuleNumInPanelFromModuleNumAlone(Mnum);
-//    const unsigned int Pnum =  PmtCopyNumber - ( Mnum * m_NumPmtInRichModule);
-
-//    if ( MNumInCurPanel >= m_DePMTs.size() ||
-//         Pnum >= m_DePMTs[MNumInCurPanel].size() )
-//    {
-//      std::ostringstream mess;
-//      mess << "Inappropriate PMT numbers " << MNumInCurPanel << " " << Pnum;
-//      throw GaudiException( mess.str(), "*DeRichPMTPanel*",StatusCode::FAILURE);
-//    }
-//
-//    dePmt = m_DePMTs [ MNumInCurPanel ] [ Pnum ];
-//
-//  }
-//  else
-//  {
-//    std::ostringstream mess;
-//    mess << "Inappropriate PmtNumber : " << PmtCopyNumber;
-//    throw GaudiException( mess.str(),"*DeRichPMTPanel*",StatusCode::FAILURE);
-//  }
-
-//  return dePmt;
-//}
 
 const DeRichPD* DeRichPMTPanel::dePD( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const
 {
-  return dePMT(  PmtCopyNumber );
+  return dePMT( PmtCopyNumber );
 }
-
 
 const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const
 {
   const DeRichPMT* dePmt = nullptr;
 
-  unsigned int aTotNumPmt= m_Rich1TotNumPmts + m_Rich2TotNumPmts;
-  //  if(rich() == Rich::Rich2 && m_Rich2UseGrandModule ) {
-  //    aTotNumPmt= m_Rich1TotNumPmts + m_Rich2TotNumPmts;
-  // }
-  
+  const unsigned int aTotNumPmt = m_Rich1TotNumPmts + m_Rich2TotNumPmts;
 
   if ( PmtCopyNumber.data() < aTotNumPmt )
   {
     const auto Mnum = (unsigned int) (PmtCopyNumber.data()/m_NumPmtInRichModule);
     const unsigned int MNumInCurPanel = PmtModuleNumInPanelFromModuleNumAlone(Mnum);
     const auto Pnum =  PmtCopyNumber.data() - ( Mnum * m_NumPmtInRichModule);
-    // info()<<"DeRichPMTPanel  current rich side pmtcopynum "<<rich()<<"  "<<side()<<"  "<<PmtCopyNumber<<  endmsg;
 
-    //        info()<<"dePmtpanel depmt mNum "<<Mnum << endmsg;
-    //  info()<<"depmts sizes "<< (int) m_DePMTs.size()
-    //     <<"  "<< m_DePMTs[MNumInCurPanel].size()<<endmsg;
-
-
-    if ( MNumInCurPanel >= m_DePMTs.size() ||
-         Pnum >= m_DePMTs[MNumInCurPanel].size() )
+    if ( UNLIKELY( MNumInCurPanel >= m_DePMTs.size() ||
+                   Pnum >= m_DePMTs[MNumInCurPanel].size() ) )
     {
       std::ostringstream mess;
       mess << "DeRichPMTPanel: Inappropriate PMT module and pmt numbers " << MNumInCurPanel << " " << Pnum;
-
+      
       throw GaudiException( mess.str(), "*DeRichPMTPanel*",StatusCode::FAILURE);
-    }else {
-
-
+    }
+    else
+    {
       dePmt = m_DePMTs [ MNumInCurPanel ] [ Pnum ];
     }
 
@@ -1584,7 +1537,7 @@ const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNu
 
 Gaudi::XYZPoint DeRichPMTPanel::detPointOnAnode( const LHCb::RichSmartID smartID ) const
 {
-  const auto* aPMT = dePMT( pdNumber( smartID ) );
+  const auto* aPMT = dePMT( _pdNumber( smartID ) );
   return ( aPMT ? aPMT->detPointOnAnode(smartID) : Gaudi::XYZPoint(0,0,0) );
 }
 
@@ -1641,10 +1594,10 @@ DeRichPMTPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels 
 int DeRichPMTPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
 {
   // Create a RichSmartID for this RICH and panel
-  LHCb::RichSmartID id(rich(), side(), 0, 0, 0, 0,LHCb::RichSmartID::MaPMTID );
+  LHCb::RichSmartID id( rich(), side(), 0, 0, 0, 0, LHCb::RichSmartID::MaPMTID );
   // set the remaining fields from the position
   return ( smartID(globalPoint,id) ?
-           id : LHCb::RichSmartID( rich(), side(), 0, 0, 0, 0,LHCb::RichSmartID::MaPMTID) );
+           id : LHCb::RichSmartID( rich(), side(), 0, 0, 0, 0, LHCb::RichSmartID::MaPMTID) );
 }
 
 //=========================================================================

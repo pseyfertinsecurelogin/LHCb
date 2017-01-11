@@ -113,15 +113,6 @@ public:
     return this->dePD(smartID)->detectionPoint(smartID,detectPoint,photoCathodeSide);
   }
 
-  /** Access the DeRichPD object for a given PD RichSmartID
-   *  @param[in] pdID The PD RichSmartID identifier
-   *  @return Pointer to the associated DeRichPD object
-   */
-  const DeRichPD * dePD( const LHCb::RichSmartID pdID ) const
-  {
-    return this->dePD(this->pdNumber(pdID));
-  }
-
   /** Get the global to local (PD panel) transform. The local frame is defined with an offset
    *  to accommodate both detector panels in one histogram and the x=0 in Rich1 and y=0 in
    *  Rich2 are aligned with the global x=0 and y=0.
@@ -138,6 +129,12 @@ public:
   }
   
 public: // virtual methods. Derived classes must implement these
+
+  /** Access the DeRichPD object for a given PD RichSmartID
+   *  @param[in] pdID The PD RichSmartID identifier
+   *  @return Pointer to the associated DeRichPD object
+   */
+  virtual const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const = 0;
 
   /// Returns the detector element for the given PD number
   virtual const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const = 0;
@@ -200,11 +197,6 @@ public: // virtual methods. Derived classes must implement these
 
   /// Returns the PD number for the given RichSmartID
   virtual Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const = 0;
-
-  /// Returns true when the given smartID corresponds to a GrandPMT.  
-  /// For hpds and for standard pmts returns false.
-  /// CRJ This method should be removed and the functionality delegated to the DePD elements themselves.
-  virtual bool pdGrandSize( const LHCb::RichSmartID& smartID ) const = 0;
 
   /**
    * Adds to the given vector all the available readout channels in this PD panel

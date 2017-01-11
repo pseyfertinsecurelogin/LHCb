@@ -79,7 +79,7 @@ public:
    */
   Gaudi::XYZPoint detPointOnAnode ( const LHCb::RichSmartID& smartID ) const;
 
-  int pmtCopyNumber() const noexcept {  return m_number; }
+  int pmtCopyNumber() const noexcept { return m_number; }
 
   void setPmtLensFlag( const bool aflag ) { m_PmtLensFlag = aflag; }
 

@@ -50,6 +50,9 @@ public:
    */
   StatusCode initialize() override final;
 
+  // Access the DeRichPD object for a given PD RichSmartID
+  const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const override final;
+
   // Returns the detector element for the given PD number
   const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const override final;
 
@@ -85,13 +88,18 @@ public:
    */
   Gaudi::XYZPoint detPointOnAnode( const LHCb::RichSmartID smartID ) const;
 
-private:
-
   /// Returns the PD number for the given RichSmartID
   Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const override;
 
-  /// Size of something ...
-  bool pdGrandSize( const LHCb::RichSmartID& smartID ) const  override;
+private:
+
+  /// Returns the PD number for the given RichSmartID
+  inline Rich::DAQ::HPDCopyNumber _pdNumber( const LHCb::RichSmartID& smartID ) const 
+  {
+    return Rich::DAQ::HPDCopyNumber( smartID.rich() == rich() && smartID.panel() == side() ?
+                                     ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() :
+                                     nPDs() + 1 );
+  }
 
   const DeRichPMT* dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const;
 
@@ -136,7 +144,7 @@ private:
   bool isCurrentPmtModuleWithLens(const int aModuleNum);
   bool isCurrentPmtWithLens(const int aPMTNum) ;
   Gaudi::XYZPoint DemagnifyFromLens(const Gaudi::XYZPoint& aLensPoint) const ;
-  bool  ModuleIsWithGrandPMT(int aModuleNum ) const 
+  bool ModuleIsWithGrandPMT(int aModuleNum ) const 
   {
     return (( aModuleNum >=0 && aModuleNum < (int) m_ModuleIsWithGrandPMT.size() ) ?
             m_ModuleIsWithGrandPMT[aModuleNum] : false);
