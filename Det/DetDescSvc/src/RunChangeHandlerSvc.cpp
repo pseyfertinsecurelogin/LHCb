@@ -1,20 +1,9 @@
-// Include files
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-
-#include "DetDesc/ValidDataObject.h"
-#include "DetDesc/RunChangeIncident.h"
-
-#include <boost/format.hpp>
-
-// local
 #include "RunChangeHandlerSvc.h"
 
 DECLARE_SERVICE_FACTORY( RunChangeHandlerSvc )
 
 #define ON_DEBUG if (msgLevel(MSG::DEBUG))
 #define DEBUG_MSG ON_DEBUG debug()
-
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RunChangeHandlerSvc
@@ -110,28 +99,14 @@ void RunChangeHandlerSvc::update(){
 // Flag for update one condition
 //=========================================================================
 void RunChangeHandlerSvc::update(CondData &cond){
-  // get the object and its registry
-  if (cond.object) {
-    IRegistry *reg = cond.object->registry();
-    if (reg) {
-      // get the opaque address
-      IOpaqueAddress *addr = reg->address();
-      if (addr) {
-        // This is a bit of a hack, but it is the only way of replacing the
-        // URL to use for an object.
-        std::string* par = const_cast<std::string*>(addr->par());
-        par[0] = ( cond.pathTemplate.find("%") == std::string::npos ?
-                     cond.pathTemplate :
-                     (boost::format(cond.pathTemplate) % m_currentRun).str() );
-        // notify the UMS and the object that they have to be updated.
-        cond.object->forceUpdateMode();
-        updMgrSvc()->invalidate(cond.object.ptr());
-        // exit to avoid the trap at the end of the function
-        return;
-      }
+  try {
+    if (cond.needsUpdate(m_currentRun)) {
+      // notify the UMS and the object that they have to be updated.
+      updMgrSvc()->invalidate(cond.object.ptr());
     }
+  } catch(const std::exception& x) {
+    // something went wrong, so we change the exception type and rethrow
+    evtProc()->stopRun(); // schedule a stop
+    throw GaudiException(x.what(), name(), StatusCode::FAILURE);
   }
-  // If we get here, it means that we cannot manipulate the address
-  evtProc()->stopRun(); // schedule a stop
-  throw GaudiException("Cannot modify address for object at " + cond.object.path(), name(), StatusCode::FAILURE);
 }

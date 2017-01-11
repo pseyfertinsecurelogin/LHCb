@@ -1,5 +1,4 @@
-#ifndef _RUNCHANGEHANDLERSVC_H_
-#define _RUNCHANGEHANDLERSVC_H_
+#pragma once
 
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/Map.h"
@@ -8,10 +7,18 @@
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IEventProcessor.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IOpaqueAddress.h"
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/SmartIF.h"
+
+#include "DetDesc/ValidDataObject.h"
+#include "DetDesc/RunChangeIncident.h"
+
 #include "XmlTools/IXmlParserSvc.h"
+
+#include <boost/format.hpp>
 
 /** @class RunChangeHandlerSvc RunChangeHandlerSvc.h
  *
@@ -83,16 +90,56 @@ private:
     return getService("XmlParserSvc", m_xmlParser);
   }
 
+  /// Helper class to work with conditions data file path templates.
+  struct PathTemplate {
+    PathTemplate(const std::string& f): fmt{f} {}
+
+    /// Check if the file changes when going to the requested run.
+    /// After this call, the data member path will hold the new name.
+    bool changed(unsigned long run) {
+      if (fmt.expected_args()) {
+        fmt % run;
+      }
+      std::string newpath = fmt.str();
+      bool isChanged = newpath != path;
+      path = newpath;
+      return isChanged;
+    }
+
+    boost::format fmt;
+    std::string path;
+  };
+
   /// Class to simplify handling of the objects to modify.
   struct CondData {
     CondData(IDataProviderSvc* pService,
         const std::string& fullPath,
-        const std::string &pathTempl):
-          object(pService, fullPath),
-          pathTemplate(pathTempl) {}
-    SmartDataPtr<ValidDataObject> object;
-    std::string pathTemplate;
+        const std::string& pathTempl):
+          object{pService, fullPath},
+          dataFile{pathTempl} {}
 
+    /// Check if the wrapped data object requires an update for
+    /// the specified run.
+    bool needsUpdate(unsigned long run) {
+      // assert that the object can be used
+      if ( ! object || ! object->registry() || ! object->registry()->address() )
+        throw std::runtime_error{"Cannot modify address for object at " + object.path()};
+
+      if (dataFile.changed(run)) {
+        auto addr = object->registry()->address();
+        // This is a bit of a hack, but it is the only way of replacing the
+        // URL to use for an object.
+        std::string* par = const_cast<std::string*>(addr->par());
+        par[0] = dataFile.path;
+        // flag the object as in need of an update
+        object->forceUpdateMode();
+        return true;
+      }
+      return false;
+    }
+
+    SmartDataPtr<ValidDataObject> object;
+    PathTemplate dataFile;
   };
 
   /// Modify the object opaque address (flag for update).
@@ -133,5 +180,3 @@ private:
   mutable SmartIF<IXmlParserSvc> m_xmlParser;
 
 };
-
-#endif
