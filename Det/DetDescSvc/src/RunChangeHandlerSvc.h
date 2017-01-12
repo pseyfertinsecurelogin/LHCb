@@ -126,7 +126,10 @@ private:
 
   /// Helper class to work with conditions data file path templates.
   struct PathTemplate {
-    PathTemplate(const std::string& f): fmt{f}, hash{0} {}
+    PathTemplate(const std::string& f): fmt{f}, hash{0} {
+      if (fmt.expected_args() > 1)
+        throw std::invalid_argument("format string can have only 0 or 1 placeholders: \"" + f + "\"");
+    }
 
     /// Check if the file changes when going to the requested run.
     /// After this call, the data member path will hold the new name.
