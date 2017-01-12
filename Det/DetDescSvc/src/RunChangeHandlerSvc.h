@@ -94,21 +94,13 @@ private:
     return getService("XmlParserSvc", m_xmlParser);
   }
 
-  /// Helper class to work with conditions data file path templates.
-  struct PathTemplate {
-    PathTemplate(const std::string& f): fmt{f}, hash{0} {}
-
+  struct FileHasher {
     using Hash_t = std::array<unsigned char, SHA_DIGEST_LENGTH>;
 
-    /// Check if the file changes when going to the requested run.
-    /// After this call, the data member path will hold the new name.
-    bool changed(unsigned long run) {
-      if (fmt.expected_args()) {
-        fmt % run;
-      }
-      path = fmt.str();
-      Hash_t oldhash = hash;
-      {
+    const Hash_t& operator() (const std::string& path) const {
+      auto h = m_cache.find(path);
+      if (h == m_cache.end()) {
+        h = m_cache.emplace(std::make_pair(path, Hash_t{0})).first;
         SHA_CTX c;
         SHA1_Init(&c);
         std::ifstream data(path, std::ios::binary);
@@ -118,15 +110,34 @@ private:
           data.read(buff.data(), buff.size());
           SHA1_Update(&c, buff.data(), data.gcount());
         }
-        SHA1_Final(hash.data(), &c);
+        SHA1_Final(h->second.data(), &c);
       }
+      return h->second;
+    }
 
+  private:
+    mutable std::map<std::string, Hash_t> m_cache;
+  };
+
+  /// Helper class to work with conditions data file path templates.
+  struct PathTemplate {
+    PathTemplate(const std::string& f): fmt{f}, hash{0} {}
+
+    /// Check if the file changes when going to the requested run.
+    /// After this call, the data member path will hold the new name.
+    bool changed(unsigned long run, const FileHasher& hasher) {
+      if (fmt.expected_args()) {
+        fmt % run;
+      }
+      path = fmt.str();
+      auto oldhash = hash;
+      hash = hasher(path);
       return hash != oldhash;
     }
 
     boost::format fmt;
     std::string path;
-    Hash_t hash;
+    FileHasher::Hash_t hash;
   };
 
   /// Class to simplify handling of the objects to modify.
@@ -139,12 +150,12 @@ private:
 
     /// Check if the wrapped data object requires an update for
     /// the specified run.
-    bool needsUpdate(unsigned long run) {
+    bool needsUpdate(unsigned long run, const FileHasher& hasher) {
       // assert that the object can be used
       if ( ! object || ! object->registry() || ! object->registry()->address() )
         throw std::runtime_error{"Cannot modify address for object at " + object.path()};
 
-      if (dataFile.changed(run)) {
+      if (dataFile.changed(run, hasher)) {
         auto addr = object->registry()->address();
         // This is a bit of a hack, but it is the only way of replacing the
         // URL to use for an object.
@@ -160,9 +171,6 @@ private:
     SmartDataPtr<ValidDataObject> object;
     PathTemplate dataFile;
   };
-
-  /// Modify the object opaque address (flag for update).
-  void update(CondData &cond);
 
   /// Flag for update all the registered objects.
   void update();

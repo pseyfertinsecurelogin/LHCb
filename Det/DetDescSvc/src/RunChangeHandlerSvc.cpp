@@ -91,22 +91,18 @@ void RunChangeHandlerSvc::handle(const Incident &inc) {
 // Flag for update all conditions
 //=========================================================================
 void RunChangeHandlerSvc::update(){
+  FileHasher hasher;
   std::for_each(m_conditions.begin(), m_conditions.end(),
-                [this](CondData &cond) {this->update(cond);});
-}
-
-//=========================================================================
-// Flag for update one condition
-//=========================================================================
-void RunChangeHandlerSvc::update(CondData &cond){
-  try {
-    if (cond.needsUpdate(m_currentRun)) {
-      // notify the UMS and the object that they have to be updated.
-      updMgrSvc()->invalidate(cond.object.ptr());
+                [this, &hasher](CondData &cond) {
+    try {
+      if (cond.needsUpdate(m_currentRun, hasher)) {
+        // notify the UMS and the object that they have to be updated.
+        updMgrSvc()->invalidate(cond.object.ptr());
+      }
+    } catch(const std::exception& x) {
+      // something went wrong, so we change the exception type and rethrow
+      evtProc()->stopRun(); // schedule a stop
+      throw GaudiException(x.what(), name(), StatusCode::FAILURE);
     }
-  } catch(const std::exception& x) {
-    // something went wrong, so we change the exception type and rethrow
-    evtProc()->stopRun(); // schedule a stop
-    throw GaudiException(x.what(), name(), StatusCode::FAILURE);
-  }
+  });
 }
