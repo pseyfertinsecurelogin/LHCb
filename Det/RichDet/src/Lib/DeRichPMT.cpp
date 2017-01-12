@@ -102,15 +102,9 @@ StatusCode DeRichPMT::getPMTParameters()
     return StatusCode::FAILURE;
   }
 
-  std::string firstRichLoc;
-  if ( afterMag->exists("RichDetectorLocations") )
-  {
-    firstRichLoc = afterMag->paramVect<std::string>("RichDetectorLocations")[0];
-  }
-  else
-  {
-    firstRichLoc = DeRichLocations::Rich1;
-  }
+  const std::string firstRichLoc = ( afterMag->exists("RichDetectorLocations") ?
+                                     afterMag->paramVect<std::string>("RichDetectorLocations")[0] :
+                                     DeRichLocations::Rich1 );
 
   SmartDataPtr<DetectorElement> deRich(dataSvc(), firstRichLoc );
   if ( !deRich )
@@ -121,7 +115,7 @@ StatusCode DeRichPMT::getPMTParameters()
 
   const std::string effnumPixCond = "RichPmtTotNumPixel";
   m_effNumActivePixs = ( deRich->exists(effnumPixCond) ? 
-                         deRich->param<double>(effnumPixCond) : 64.0 );
+                         (double)deRich->param<int>(effnumPixCond) : 64.0 );
 
   m_PmtQELocation = deRich->param<std::string>("RichPmtQETableName");
   m_PmtAnodeXSize = deRich->param<double> ("RichPmtAnodeXSize" );
@@ -275,12 +269,11 @@ Gaudi::XYZPoint
 DeRichPMT::RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) const
 {
 
-  const auto aPhCaRsq_Coord =
-    (aPhCathCoord.x() * aPhCathCoord.x() + aPhCathCoord.y() * aPhCathCoord.y() );
+  const auto aPhCaRsq_Coord = ( std::pow(aPhCathCoord.x(),2) + std::pow(aPhCathCoord.y(),2) );
   const auto aPhCaR_Coord =  (aPhCaRsq_Coord>0.0) ? std::sqrt(aPhCaRsq_Coord) : 0.0;
   const auto aPhCaRsq_Phi = vdt::fast_atan2( aPhCathCoord.y(), aPhCathCoord.x() );
-  const auto aXSignLocal = (( aPhCathCoord.x()) > 0) ? 1 : -1;
-  const auto aYSignLocal = (( aPhCathCoord.y()) > 0) ? 1 : -1;
+  const auto aXSignLocal = ( aPhCathCoord.x() > 0 ? 1 : -1 );
+  const auto aYSignLocal = ( aPhCathCoord.y() > 0 ? 1 : -1 );
 
   double sinphi(0), cosphi(0);
   vdt::fast_sincos( aPhCaRsq_Phi, sinphi, cosphi );
