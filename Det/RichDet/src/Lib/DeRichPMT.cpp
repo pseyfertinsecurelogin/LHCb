@@ -119,6 +119,10 @@ StatusCode DeRichPMT::getPMTParameters()
     return StatusCode::FAILURE;
   }
 
+  const std::string effnumPixCond = "RichPmtTotNumPixel";
+  m_effNumActivePixs = ( deRich->exists(effnumPixCond) ? 
+                         deRich->param<double>(effnumPixCond) : 64.0 );
+
   m_PmtQELocation = deRich->param<std::string>("RichPmtQETableName");
   m_PmtAnodeXSize = deRich->param<double> ("RichPmtAnodeXSize" );
   m_PmtAnodeYSize = deRich->param<double> ("RichPmtAnodeYSize" );

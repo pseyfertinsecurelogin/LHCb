@@ -247,6 +247,10 @@ StatusCode DeRichHPD::getParameters()
   const auto pixXsize = deRich1->param<double>("RichHpdPixelXsize");
   const auto pixYsize = deRich1->param<double>("RichHpdPixelYsize");
 
+  const std::string effnumPixCond = "RichEffectiveActiveNumPixelPerHpd";
+  m_effNumActivePixs = ( deRich1->exists(effnumPixCond) ? 
+                         deRich1->param<double>(effnumPixCond) : 784.763611 );
+
   m_pixelSize    = pixXsize;
   m_activeRadius = deRich1->param<double>("RichHpdActiveInpRad");
 

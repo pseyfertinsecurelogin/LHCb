@@ -99,6 +99,9 @@ public:
   /// Access the effective pixel area (in mm^2) including any demagnification factors
   inline double effectivePixelArea() const noexcept { return m_effPixelArea; }
 
+  /// Access the effective number of active pixels
+  inline double effectiveNumActivePixels() const noexcept { return m_effNumActivePixs; }
+
 protected: // to be initialised by derived classes
   
   /// Interpolated property for HPD quantum efficiency
@@ -109,6 +112,9 @@ protected: // to be initialised by derived classes
 
   /// The effective pixel area (in mm^2) including any demagnification factors
   double m_effPixelArea{0};
+
+  /// The effective number of active pixels (including acceptance effects).
+  double m_effNumActivePixs{0};
   
 };
 
