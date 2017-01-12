@@ -38,6 +38,19 @@ protected:
 
   /// Container of the conditions to print
   GaudiUtils::Map<std::string,Condition*> m_conditions;
+
+  struct CondUpdateMonitor {
+    CondUpdateMonitor(MsgStream& _log, std::string _path):
+      log{_log}, path{std::move(_path)} {}
+    virtual StatusCode handler() {
+      log << MSG::INFO << path << " was updated" << endmsg;
+      return StatusCode::SUCCESS;
+    }
+    MsgStream& log;
+    std::string path;
+  };
+  std::vector<CondUpdateMonitor> m_updateMonitors;
+
 };
 
 namespace {
@@ -58,8 +71,10 @@ StatusCode TestConditionAlg::initialize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
+  m_updateMonitors.reserve(m_condPaths.size());
   for (const auto& path: m_condPaths){
-    registerCondition<TestConditionAlg>(path, m_conditions[path], NULL);
+    m_updateMonitors.emplace_back(msgStream(), path);
+    updMgrSvc()->registerCondition( &m_updateMonitors.back(), path, &CondUpdateMonitor::handler, m_conditions[path] );
   }
 
   std::size_t cnt = 0;
