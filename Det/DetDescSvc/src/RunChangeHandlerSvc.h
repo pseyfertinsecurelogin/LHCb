@@ -22,6 +22,7 @@
 
 #include <array>
 #include <fstream>
+#include <mutex>
 #include <openssl/sha.h>
 
 /** @class RunChangeHandlerSvc RunChangeHandlerSvc.h
@@ -98,9 +99,12 @@ private:
     using Hash_t = std::array<unsigned char, SHA_DIGEST_LENGTH>;
 
     const Hash_t& operator() (const std::string& path) const {
+      // protect the cache from multiple accesses
+      std::unique_lock<std::mutex> lock(m_mutex);
       auto h = m_cache.find(path);
       if (h == m_cache.end()) {
         h = m_cache.emplace(std::make_pair(path, Hash_t{0})).first;
+        lock.unlock(); // the SHA1 computation is reentrant
         SHA_CTX c;
         SHA1_Init(&c);
         std::ifstream data(path, std::ios::binary);
@@ -117,6 +121,7 @@ private:
 
   private:
     mutable std::map<std::string, Hash_t> m_cache;
+    mutable std::mutex m_mutex;
   };
 
   /// Helper class to work with conditions data file path templates.
@@ -173,7 +178,7 @@ private:
   };
 
   /// Flag for update all the registered objects.
-  void update();
+  void update(unsigned long run);
 
   typedef GaudiUtils::Map<std::string,std::string> CondDescMap;
   Gaudi::Property<CondDescMap> m_condDesc { this, "Conditions", {},
@@ -206,4 +211,5 @@ private:
   /// files when we get a RunChangeIncident without actual run change.
   mutable SmartIF<IXmlParserSvc> m_xmlParser;
 
+  mutable std::mutex m_updateMutex;
 };

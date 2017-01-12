@@ -84,18 +84,19 @@ void RunChangeHandlerSvc::handle(const Incident &inc) {
 
   m_currentRun = rci->runNumber();
   // update objects
-  update();
+  update(m_currentRun);
 }
 
 //=========================================================================
 // Flag for update all conditions
 //=========================================================================
-void RunChangeHandlerSvc::update(){
+void RunChangeHandlerSvc::update(unsigned long run) {
+  std::lock_guard<std::mutex> lock(m_updateMutex); // we cannot run this concurrently
   FileHasher hasher;
   std::for_each(m_conditions.begin(), m_conditions.end(),
-                [this, &hasher](CondData &cond) {
+                [this, run, &hasher](CondData &cond) {
     try {
-      if (cond.needsUpdate(m_currentRun, hasher)) {
+      if (cond.needsUpdate(run, hasher)) {
         // notify the UMS and the object that they have to be updated.
         updMgrSvc()->invalidate(cond.object.ptr());
       }
