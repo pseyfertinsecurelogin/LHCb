@@ -23,6 +23,10 @@
 
 // local
 #include "RichDet/RichDetConfigType.h"
+#include "RichDet/DeRichPDPanel.h"
+#include "RichDet/DeRich.h"
+
+class DeRichPD;
 
 // External declarations
 extern const CLID CLID_DERichSystem;
@@ -242,6 +246,15 @@ public:
   /// Returns the total number of PDs
   unsigned int nPDs() const;
 
+  /** Get the correct DeRichPD object for the given RichSmartID
+   *  @param[in] hpdID The RichSmartID for the PD
+   *  @return Pointer to the associated DeRichPD object
+   */
+  inline const DeRichPD * dePD( const LHCb::RichSmartID pdID ) const
+  {
+    return m_deRich[pdID.rich()]->pdPanel(pdID.panel())->dePD(pdID);
+  }
+  
 public:
 
   /**
@@ -254,16 +267,13 @@ public:
 public:
 
   /// The photon detector type
-  inline Rich::RichPhDetConfigType RichPhotoDetConfig() const
+  inline Rich::RichPhDetConfigType RichPhotoDetConfig() const noexcept
   {
     return m_photDetConf;
   }
 
   /// The version of RichSystem
-  inline int systemVersion() const
-  {
-    return m_version;
-  }
+  inline int systemVersion() const noexcept { return m_version; }
 
 private: // methods
 
@@ -274,7 +284,7 @@ private: // methods
   StatusCode fillMaps( const Rich::DetectorType rich );
 
   /// Access on demand the Detector Elements for Rich1 and Rich2
-  DetectorElement * deRich( const Rich::DetectorType rich ) const;
+  DeRich * deRich( const Rich::DetectorType rich ) const;
 
   /// Save information to a map, checking first it is not already set
   template < class SOURCE, class TARGET, class MAP >
@@ -375,7 +385,7 @@ private: // data
   L1HIDToCopyN m_l1H2CopyN;
 
   /// Rich1 & Rich2 detector elements
-  Rich::DetectorArray<DetectorElement*> m_deRich = {{}};
+  Rich::DetectorArray<DeRich*> m_deRich = {{}};
 
   /// Location of RICH Numbering schemes in Conditions DB
   std::map<Rich::DetectorType, std::string> m_detNumConds;
@@ -402,7 +412,7 @@ private: // data
 //=========================================================================
 // Access the Detector Elements for Rich1 and Rich2
 //=========================================================================
-inline DetectorElement * DeRichSystem::deRich( const Rich::DetectorType rich ) const
+inline DeRich * DeRichSystem::deRich( const Rich::DetectorType rich ) const
 {
   return m_deRich[rich];
 }

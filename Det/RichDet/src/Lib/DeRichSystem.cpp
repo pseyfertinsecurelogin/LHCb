@@ -112,7 +112,7 @@ StatusCode DeRichSystem::initialize()
   // Load the RICH detectors
   for ( const auto rich : Rich::detectors() )
   {
-    SmartDataPtr<DetectorElement> deR( dataSvc(), DeRichLocations::location(rich) );
+    SmartDataPtr<DeRich> deR( dataSvc(), DeRichLocations::location(rich) );
     m_deRich[rich] = deR;
   }
 
