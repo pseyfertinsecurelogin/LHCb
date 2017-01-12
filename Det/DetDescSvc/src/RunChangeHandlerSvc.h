@@ -126,16 +126,24 @@ private:
 
   /// Helper class to work with conditions data file path templates.
   struct PathTemplate {
-    PathTemplate(const std::string& f): fmt{f}, hash{0} {
+    PathTemplate(const std::string& f): fmt{f}, hash{0},
+      splitRunString{f.find("%s") != std::string::npos}
+    {
       if (fmt.expected_args() > 1)
         throw std::invalid_argument("format string can have only 0 or 1 placeholders: \"" + f + "\"");
+      if (splitRunString)
+        fmt.parse((fmt % "%d/%d").str());
     }
 
     /// Check if the file changes when going to the requested run.
     /// After this call, the data member path will hold the new name.
     bool changed(unsigned long run, const FileHasher& hasher) {
       if (fmt.expected_args()) {
-        fmt % run;
+        if (splitRunString) {
+          fmt % (run / 1000) % run;
+        } else {
+          fmt % run;
+        }
       }
       path = fmt.str();
       auto oldhash = hash;
@@ -146,6 +154,7 @@ private:
     boost::format fmt;
     std::string path;
     FileHasher::Hash_t hash;
+    bool splitRunString;
   };
 
   /// Class to simplify handling of the objects to modify.
