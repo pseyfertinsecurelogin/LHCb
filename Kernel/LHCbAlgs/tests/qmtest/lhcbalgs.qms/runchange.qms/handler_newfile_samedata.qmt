@@ -12,7 +12,7 @@ from Configurables import LHCbAlgsTests__CopyFileAlg as CopyFile
 from Configurables import ( EventClockSvc, RunChangeHandlerSvc, XmlCnvSvc )
 
 EventClockSvc().addTool(TimeDecoder, "EventTimeDecoder")
-EventClockSvc().EventTimeDecoder.RunNumberStep = 0
+EventClockSvc().EventTimeDecoder.FirstRunNumber = 2
 
 detDataSvc = DetectorDataSvc( UsePersistency = True,
                               DetDbRootName = "dd",
@@ -26,16 +26,14 @@ rch.Conditions = {"Condition": "./data%d.xml"}
 # prepare dummy file
 import shutil
 shutil.copy('../data/runchangehandler/structure.dtd', 'structure.dtd')
-shutil.copy('../data/runchangehandler/dummy.xml', 'data1.xml')
+shutil.copy('../data/runchangehandler/dummy.xml', 'data2.xml')
+shutil.copy('../data/runchangehandler/dummy.xml', 'data3.xml')
 
 testAlg = TestAlg("TestCond")
 testAlg.Conditions = [ "Condition" ]
 
 app = ApplicationMgr()
-app.TopAlg = [ TestAlg("TestCond"),
-               CopyFile('OverwriteXML',
-                        Source='../data/runchangehandler/real.xml',
-                        Destination='data1.xml') ]
+app.TopAlg = [ TestAlg("TestCond") ]
 
 ApplicationMgr().ExtSvc += [ detDataSvc, rch ]
 app.EvtSel = "NONE"
@@ -53,11 +51,10 @@ expected = [
     '--- Condition',
     'Validity: 0.0 -> 9223372036.854775807',
     '(std::string) data = dummy',
-    'TestCond             INFO Condition was updated',
     'TestCond             INFO Requested Conditions:',
     '--- Condition',
     'Validity: 0.0 -> 9223372036.854775807',
-    '(std::string) data = real',
+    '(std::string) data = dummy',
     ]
 
 regexp = r"^---|^Validity|^\(std::string\) data|.*Requested Conditions|TestCond.*was updated"
