@@ -120,6 +120,14 @@ StatusCode DeRichHPDPanel::initialize()
 }
 
 //=========================================================================
+// The maximum PD copy number for this panel
+//=========================================================================
+Rich::DAQ::HPDCopyNumber DeRichHPDPanel::maxPdNumber() const
+{
+  return Rich::DAQ::HPDCopyNumber(m_DeHPDs.size());
+}
+
+//=========================================================================
 // convert a point on the silicon sensor to a smartID
 //=========================================================================
 bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,

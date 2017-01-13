@@ -209,6 +209,11 @@ public: // virtual methods. Derived classes must implement these
    */
   virtual bool
   readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const = 0;
+  
+  /** The maximum PD copy number for this panel
+   *  Useful as for the PMTs this is not easily derived from the number of PD
+   *  as they are not completely sequential */
+  virtual Rich::DAQ::HPDCopyNumber maxPdNumber() const = 0;
 
 protected: // Parameters that must be properly configured in the derived classes
 
@@ -226,9 +231,9 @@ protected: // Parameters that must be properly configured in the derived classes
 
   double m_detPlaneZ{0};   ///< The z position of the detection plane in an PD panel
 
-  Gaudi::Plane3D m_detectionPlane;     ///< detection plane in global coordinates
+  Gaudi::Plane3D m_detectionPlane; ///< detection plane in global coordinates
 
-  Gaudi::Transform3D m_globalToPDPanelTransform;  ///< global to PD plane (local) transform
-  Gaudi::Transform3D m_PDPanelToGlobalTransform;  ///< local (PD plane) to global transform
+  Gaudi::Transform3D m_globalToPDPanelTransform; ///< global to PD plane (local) transform
+  Gaudi::Transform3D m_PDPanelToGlobalTransform; ///< local (PD plane) to global transform
 
 };

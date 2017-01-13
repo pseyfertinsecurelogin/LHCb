@@ -252,10 +252,17 @@ public:
   /// Returns the total number of PDs
   unsigned int nPDs() const noexcept;
 
-  // Access the DeRichPanel for the given PD ID
+  /// Access the DeRichPanel for the given RICH and Panel
+  inline const DeRichPDPanel * dePDPanel( const Rich::DetectorType rich,
+                                          const Rich::Side side  ) const
+  {
+    return m_deRich[rich]->pdPanel(side);
+  }
+
+  /// Access the DeRichPanel for the given PD ID
   inline const DeRichPDPanel * dePDPanel( const LHCb::RichSmartID pdID ) const
   {
-    return m_deRich[pdID.rich()]->pdPanel(pdID.panel());
+    return dePDPanel( pdID.rich(), pdID.panel() );
   }
 
   /** Get the correct DeRichPD object for the given RichSmartID

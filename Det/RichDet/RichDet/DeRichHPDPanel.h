@@ -137,6 +137,9 @@ public:
   /// Returns the PD number for the given RichSmartID
   Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const override final;
 
+  /// The maximum PD copy number for this panel
+  Rich::DAQ::HPDCopyNumber maxPdNumber() const override final;
+
 private: // methods
 
   /// Returns the PD number for the given RichSmartID
