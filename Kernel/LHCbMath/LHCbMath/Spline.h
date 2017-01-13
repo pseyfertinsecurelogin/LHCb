@@ -10,6 +10,7 @@
 #include <vector>
 #include <utility>
 #include <memory>
+#include <limits>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -69,26 +70,72 @@ namespace Gaudi
       /// the actual type of data with errors  
       typedef std::vector<PAIR>                                DATAERR ;
       // ======================================================================
-      /// get the values from the histogram 
-      GAUDI_API DATA    getValues ( const TH1&          histo ) ;
-      /// get the errors from the histogram 
-      GAUDI_API DATA    getErrors ( const TH1&          histo ) ;
-      /// get the data   from the histogram 
-      GAUDI_API DATAERR getData   ( const TH1&          histo ) ;
+      static_assert( std::numeric_limits<unsigned int>::is_specialized , 
+                     "std::numeric_limits<unsigne int> is not *NOT* specialized" );
+      const unsigned int max_bin = std::numeric_limits<unsigned int>::max() ;
+      // ======================================================================
+      /** get the values from the histogram 
+       *  @param first  INPUT the first bin in the range to be considered  
+       *  @param  end   INPUT  last+1 bin in th eraneg to be considered 
+       *  @attention  underflow/overflow bins are ignored 
+       */
+      GAUDI_API DATA    getValues ( const TH1&          histo           , 
+                                    const unsigned int  begin = 1       , 
+                                    const unsigned int  end   = max_bin ) ;
+      // ======================================================================
+      /** get the errors from the histogram 
+       *  @param first  INPUT the first bin in the range to be considered  
+       *  @param  end   INPUT  last+1 bin in th eraneg to be considered 
+       *  @attention  underflow/overflow bins are ignored 
+       */
+      GAUDI_API DATA    getErrors ( const TH1&          histo           ,
+                                    const unsigned int  begin = 1       , 
+                                    const unsigned int  end   = max_bin ) ;
+      // ======================================================================
+      /** get the data   from the histogram 
+       *  @param first  INPUT the first bin in the range to be considered  
+       *  @param  end   INPUT  last+1 bin in th eraneg to be considered 
+       *  @attention  underflow/overflow bins are ignored 
+       */
+      GAUDI_API DATAERR getData   ( const TH1&          histo           ,
+                                    const unsigned int  begin = 1       , 
+                                    const unsigned int  end   = max_bin ) ;
+      // ======================================================================
+      /** get the values from the graph 
+       *  @param first  INPUT the first bin in the range to be considered  
+       *  @param  end   INPUT  last+1 bin in th eraneg to be considered 
+       */
+      GAUDI_API DATA    getValues ( const TGraph&       graph           ,
+                                    const unsigned int  begin = 0       ,
+                                    const unsigned int  end   = max_bin ) ;
+      // ======================================================================
+      /** get the values from the graph 
+       *  @param first  INPUT the first bin in the range to be considered  
+       *  @param  end   INPUT  last+1 bin in th eraneg to be considered 
+       */
+      GAUDI_API DATA    getErrors ( const TGraphErrors& graph           ,
+                                    const unsigned int  begin = 0       ,
+                                    const unsigned int  end   = max_bin ) ;
+      // ======================================================================
+      /** get the values from the graph 
+       *  @param first  INPUT the first bin in the range to be considered  
+       *  @param  end   INPUT  last+1 bin in th eraneg to be considered 
+       */
+      GAUDI_API DATAERR getData   ( const TGraphErrors& graph           ,
+                                    const unsigned int  begin = 0       ,
+                                    const unsigned int  end   = max_bin ) ;
+      // ======================================================================
       /// get the values from the data vector 
       GAUDI_API DATA    getValues ( const DATAERR&      data  ) ;
       /// get the values from the data vector 
       GAUDI_API DATA    getErrors ( const DATAERR&      histo ) ;
-      /// get the values from the graph 
-      GAUDI_API DATA    getValues ( const TGraph&       graph ) ;
-      /// get the values from the graph 
-      GAUDI_API DATA    getErrors ( const TGraphErrors& graph ) ;
-      /// get the values from the graph
-      GAUDI_API DATAERR getData   ( const TGraphErrors& graph ) ;
       // ======================================================================
       /** simple lagrange interpolation 
        *  @attention it can be CPU-inefficient!
        *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+       *  @see Gaudi::Math::Interpolation
+       *  @see Gaudi::Math::Interpolation::lagrange 
+       *  @see Gaudi::Math::Interpolation::neville 
        *  @date 2013-03-15
        */ 
       GAUDI_API double  
@@ -96,6 +143,9 @@ namespace Gaudi
       // ======================================================================
       /** simple lagrange interpolation 
        *  @attention it can be CPU-inefficient!
+       *  @see Gaudi::Math::Interpolation
+       *  @see Gaudi::Math::Interpolation::lagrange 
+       *  @see Gaudi::Math::Interpolation::neville 
        *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
        *  @date 2013-03-15
        */ 
@@ -167,7 +217,9 @@ namespace Gaudi
         const GaudiMath::Interpolation::Type& type   = GaudiMath::Interpolation::Akima , 
         const bool                            null   = true                            , 
         const double                          scale  = 1  , 
-        const double                          shift  = 0  ) ;
+        const double                          shift  = 0  , 
+        const unsigned int                    begin  = 1  , 
+        const unsigned int                    end    = std::numeric_limits<unsigned int>::max() ) ;
       // ======================================================================
       /** Standard constructor
        *  @param graph the graph to be interpolated  
@@ -181,7 +233,9 @@ namespace Gaudi
         const GaudiMath::Interpolation::Type& type   = GaudiMath::Interpolation::Akima , 
         const bool                            null   = false                           , 
         const double                          scale  = 1  , 
-        const double                          shift  = 0  ) ;
+        const double                          shift  = 0  ,
+        const unsigned int                    begin  = 1  , 
+        const unsigned int                    end    = std::numeric_limits<unsigned int>::max() ) ;
       /// destructor 
       ~Spline() ;
       // ======================================================================
@@ -287,7 +341,9 @@ namespace Gaudi
         const GaudiMath::Interpolation::Type& type   = GaudiMath::Interpolation::Akima , 
         const bool                            null   = true                            , 
         const double                          scale  = 1  , 
-        const double                          shift  = 0  ) ;
+        const double                          shift  = 0  , 
+        const unsigned int                    begin  = 1  , 
+        const unsigned int                    end    = std::numeric_limits<unsigned int>::max() ) ;
       // ======================================================================
       /** Standard constructor
        *  @param graph the graph to be interpolated  
@@ -301,7 +357,9 @@ namespace Gaudi
         const GaudiMath::Interpolation::Type& type   = GaudiMath::Interpolation::Akima , 
         const bool                            null   = false                           , 
         const double                          scale  = 1  , 
-        const double                          shift  = 0  ) ;
+        const double                          shift  = 0  ,
+        const unsigned int                    begin  = 1  , 
+        const unsigned int                    end    = std::numeric_limits<unsigned int>::max() ) ;
       /// destructor 
       ~SplineErrors() ;
       // ======================================================================

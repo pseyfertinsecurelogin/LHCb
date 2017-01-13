@@ -9,11 +9,15 @@ gaudi_depends_on_subdirs(GaudiGSL
                          Kernel/VectorClass)
 
 find_package(Boost)
+find_package(CLHEP)
 find_package(GSL)
 find_package(ROOT COMPONENTS MathCore GenVector)
 find_package(VDT)
 find_package(Eigen)
 find_package(pyanalysis)
+# hide warnings from some external projects
+include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
+                           ${Boost_INCLUDE_DIRS} ${CLHEP_INCLUDE_DIRS})
 
 gaudi_install_headers(LHCbMath)
 
@@ -118,6 +122,10 @@ if(GAUDI_BUILD_TESTS)
                        tests/TestXYZTypes.cpp
                        INCLUDE_DIRS Boost GSL ROOT VDT Eigen
                        LINK_LIBRARIES Boost GSL ROOT VDT GaudiKernel LHCbMathLib)
+  gaudi_add_executable(TestPolynomials
+                       tests/poly.cpp
+                       INCLUDE_DIRS Boost GSL ROOT
+                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
 endif()
 
 gaudi_install_python_modules()
