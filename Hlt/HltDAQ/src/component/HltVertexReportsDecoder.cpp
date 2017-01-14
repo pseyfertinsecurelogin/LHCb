@@ -1,4 +1,3 @@
-// $Id: HltVertexReportsDecoder.cpp,v 1.5 2010-06-14 13:38:00 tskwarni Exp $
 // Include files
 
 #include "Event/HltVertexReports.h"
@@ -27,25 +26,12 @@ using namespace LHCb;
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( HltVertexReportsDecoder )
 
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-HltVertexReportsDecoder::HltVertexReportsDecoder( const std::string& name,
-                                                      ISvcLocator* pSvcLocator)
-: HltRawBankDecoderBase( name , pSvcLocator )
-{
-  declareProperty("OutputHltVertexReportsLocation",
-    m_outputHltVertexReportsLocation= LHCb::HltVertexReportsLocation::Default);
-}
-
 //=============================================================================
 // Main execution
 //=============================================================================
 StatusCode HltVertexReportsDecoder::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-
 
   // create output container for vertex selections keyed with string and put it on TES
   auto  outputSummary = new HltVertexReports();

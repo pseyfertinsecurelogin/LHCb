@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 #include "boost/format.hpp"
 #include <numeric>
 
@@ -46,18 +46,6 @@ float floatFromInt(unsigned int i)
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( HltSelReportsDecoder )
 
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-HltSelReportsDecoder::HltSelReportsDecoder( const std::string& name,
-                                          ISvcLocator* pSvcLocator)
-: HltRawBankDecoderBase( name, pSvcLocator ) 
-{
-  declareProperty("OutputHltSelReportsLocation",
-  m_outputHltSelReportsLocation= LHCb::HltSelReportsLocation::Default);  
-}
-
 //=============================================================================
 // Initialize
 //=============================================================================
@@ -66,7 +54,7 @@ StatusCode HltSelReportsDecoder::initialize() {
   if (!sc) return sc;
   // Initialise the converter tool
   m_conv = tool<IReportConvert>("ReportConvertTool", this );
-  return m_conv ? StatusCode::SUCCESS 
+  return m_conv ? StatusCode::SUCCESS
                 : Error("Unable to retrieve the Report converter tool");
 }
 //=============================================================================
@@ -74,7 +62,7 @@ StatusCode HltSelReportsDecoder::initialize() {
 //=============================================================================
 StatusCode HltSelReportsDecoder::execute() {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-  
+
   // ----------------------------------------------------------
   // get the bank(s) from RawEvent
   // ----------------------------------------------------------
@@ -87,27 +75,27 @@ StatusCode HltSelReportsDecoder::execute() {
 
   // Tell the converter the version from the raw bank
   m_conv->setReportVersion( hltselreportsRawBank0->version() );
- 
+
   // Check we know how to decode this version
   // If version is 99, this is the special case of the empty dummy bank
   if( hltselreportsRawBank0->version() == 99 ){
     auto  outputDummy = new HltSelReports();
     put( outputDummy, m_outputHltSelReportsLocation );
- 
+
     // Get the list of ids and associated candidates
     auto  pBank99 = new unsigned int[hltselreportsRawBank0->size()];
     HltSelRepRawBank hltSelReportsBank99( pBank99 );
     std::copy( hltselreportsRawBank0->begin<unsigned int>(), hltselreportsRawBank0->end<unsigned int>(), pBank99);
     HltSelRepRBHits hitsSubBank99( hltSelReportsBank99.subBankFromID( HltSelRepRBEnums::kHitsID ) );
-    
+
     // Populate map with line name and number of candidates
     auto summary = new LHCb::HltObjectSummary();
-    
+
     auto tck_dummy = tck();
     bool settings= ( tck_dummy==0 );
     GaudiUtils::VectorMap<int, HltRawBankDecoderBase::element_t> idmap_dummy;
     if(!settings) idmap_dummy = id2string(tck_dummy);
-    
+
     unsigned int i = hitsSubBank99.seqBegin(0);
     while(i<hitsSubBank99.seqEnd(0)){
       int temp1 = hitsSubBank99.location()[i];
@@ -126,18 +114,18 @@ StatusCode HltSelReportsDecoder::execute() {
     Warning( " HltSelReports RawBank version is higher than expected. Will try to decode it anyway." ,StatusCode::SUCCESS, 20 ).ignore();
   }
   // put the banks into the right order (in case the data was split across multiple banks...
-  std::sort( std::begin(hltselreportsRawBanks), std::end(hltselreportsRawBanks), 
-             [](const RawBank* lhs, const RawBank* rhs) { 
+  std::sort( std::begin(hltselreportsRawBanks), std::end(hltselreportsRawBanks),
+             [](const RawBank* lhs, const RawBank* rhs) {
                     auto l = lhs->sourceID() & HltSelReportsWriter::kSourceID_MinorMask;
                     auto r = rhs->sourceID() & HltSelReportsWriter::kSourceID_MinorMask;
-                    return l < r; 
+                    return l < r;
   } );
   // verify no duplicates...
-  auto adj = std::adjacent_find( std::begin(hltselreportsRawBanks), std::end(hltselreportsRawBanks), 
-             [](const RawBank* lhs, const RawBank* rhs) { 
+  auto adj = std::adjacent_find( std::begin(hltselreportsRawBanks), std::end(hltselreportsRawBanks),
+             [](const RawBank* lhs, const RawBank* rhs) {
                     auto l = lhs->sourceID() & HltSelReportsWriter::kSourceID_MinorMask;
                     auto r = rhs->sourceID() & HltSelReportsWriter::kSourceID_MinorMask;
-                    return l == r; 
+                    return l == r;
   } );
   if ( adj != std::end(hltselreportsRawBanks) ) {
       return Error( " Duplicate sequential Source ID HltSelReports. Aborting decoder ", StatusCode::SUCCESS, 20 );
@@ -148,14 +136,14 @@ StatusCode HltSelReportsDecoder::execute() {
       return Error( " Did not find the expected number of HltSelReports raw banks. Aborting decoder ", StatusCode::SUCCESS, 20 );
   }
 
-  unsigned int bankSize = std::accumulate( std::begin(hltselreportsRawBanks), std::end(hltselreportsRawBanks), 
-                                            0, [](unsigned int s, const RawBank* bank) { 
+  unsigned int bankSize = std::accumulate( std::begin(hltselreportsRawBanks), std::end(hltselreportsRawBanks),
+                                            0, [](unsigned int s, const RawBank* bank) {
                                             return s+std::distance( bank->begin<unsigned int>(), bank->end<unsigned int>());  }
   );
 
   if( !bankSize ){
     return Warning( " No HltSelReports RawBank for requested SourceID in RawEvent. Quiting. ",StatusCode::SUCCESS, 10 );
-  }    
+  }
 
   // need to copy it to local array to concatenate  --- TODO: we could run a decompression such as LZMA at this point as well...
   auto  pBank = new unsigned int[bankSize];
@@ -181,7 +169,7 @@ StatusCode HltSelReportsDecoder::execute() {
   if( bankSize < hltSelReportsBank.size() ){
     Error( " HltSelReportsRawBank internally reported size "
          + std::to_string( hltSelReportsBank.size() )
-         + " less than bank size delivered by RawEvent " 
+         + " less than bank size delivered by RawEvent "
          + std::to_string(bankSize),
          StatusCode::SUCCESS, 100 );
     errors=true;
@@ -198,7 +186,7 @@ StatusCode HltSelReportsDecoder::execute() {
 
   ic = hitsSubBank.integrityCode();
   if( ic ){
-    Error( " HltSelRepRBHits fails integrity check with code " 
+    Error( " HltSelRepRBHits fails integrity check with code "
          + std::to_string(ic) + " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
            StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
@@ -214,15 +202,15 @@ StatusCode HltSelReportsDecoder::execute() {
 
   ic = substrSubBank.integrityCode();
   if( ic ){
-    Error( " HltSelRepRBSubstr fails integrity check with code " 
+    Error( " HltSelRepRBSubstr fails integrity check with code "
          + std::to_string(ic) +  " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
            StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
   }
   if( nObj != substrSubBank.numberOfObj() ){
-    Error( " HltSelRepRBSubstr has number of objects " 
+    Error( " HltSelRepRBSubstr has number of objects "
          + std::to_string(substrSubBank.numberOfObj())
-         + " which is different than HltSelRepRBObjTyp " 
+         + " which is different than HltSelRepRBObjTyp "
          + std::to_string(nObj),
            StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
@@ -236,9 +224,9 @@ StatusCode HltSelReportsDecoder::execute() {
     errors=true;
   }
   if( nObj != stdInfoSubBank.numberOfObj() ){
-    Error( " HltSelRepRBStdInfo has number of objects " 
+    Error( " HltSelRepRBStdInfo has number of objects "
          + std::to_string( stdInfoSubBank.numberOfObj() )
-         + " which is different than HltSelRepRBObjTyp " 
+         + " which is different than HltSelRepRBObjTyp "
          + std::to_string( nObj ),
            StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
@@ -246,15 +234,15 @@ StatusCode HltSelReportsDecoder::execute() {
 
   ic = extraInfoSubBank.integrityCode();
   if( ic ){
-    Error( " HltSelRepRBExtraInfo fails integrity check with code " 
+    Error( " HltSelRepRBExtraInfo fails integrity check with code "
          + std::to_string(ic) + " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
            StatusCode::SUCCESS, 100 ).ignore();
     exInfOn=false; // the only non-fatal info corruption
   }
   if( nObj != extraInfoSubBank.numberOfObj() ){
-    Error( " HltSelRepRBExtraInfo has number of objects " 
+    Error( " HltSelRepRBExtraInfo has number of objects "
          + std::to_string( extraInfoSubBank.numberOfObj() )
-         + " which is different than HltSelRepRBObjTyp " 
+         + " which is different than HltSelRepRBObjTyp "
          + std::to_string( nObj ),
            StatusCode::SUCCESS, 100 ).ignore();
     exInfOn=false;
@@ -270,7 +258,7 @@ StatusCode HltSelReportsDecoder::execute() {
     verbose() << HltSelRepRBSubstr( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kSubstrID ) ) << endmsg;
     verbose() << HltSelRepRBStdInfo( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kStdInfoID ) ) << endmsg;
     verbose() << HltSelRepRBExtraInfo( hltSelReportsBank.subBankFromID( HltSelRepRBEnums::kExtraInfoID ) ) << endmsg;
-  } 
+  }
 
   if( errors ){
     hltSelReportsBank.deleteBank();
@@ -298,7 +286,7 @@ StatusCode HltSelReportsDecoder::execute() {
   std::vector< HltObjectSummary* > objects;
 
   for(unsigned int iObj=0; iObj!= nObj; ++iObj){
-  
+
     auto  hos = new HltObjectSummary();
 
     // =========== class ID
@@ -307,7 +295,7 @@ StatusCode HltSelReportsDecoder::execute() {
     // =========== numerical info
     HltObjectSummary::Info infoPersistent;
 
-    //           ============== standard 
+    //           ============== standard
     HltSelRepRBStdInfo::StdInfo stdInfo = stdInfoSubBank.next();
     if( stdInfo.size() ) switch( hos->summarizedObjectCLID() ) {
       case LHCb::CLID_Track:
@@ -350,35 +338,35 @@ StatusCode HltSelReportsDecoder::execute() {
         {
           infoPersistent.insert( "0#SelectionID", floatFromInt(stdInfo[0]) );
           if( stdInfo.size()>1 ){
-            int id = (int)(  floatFromInt(stdInfo[1])+0.1 );            
+            int id = (int)(  floatFromInt(stdInfo[1])+0.1 );
             auto iselName = idmap.find(id);
             if (iselName == std::end(idmap)) {
               Error( " Did not find string key for PV-selection-ID in trigger selection in storage id=" + std::to_string(id),
-                     StatusCode::SUCCESS, 10 ); 
-              infoPersistent.insert( "10#Unknown" , floatFromInt(id) );        
-            } else 
+                     StatusCode::SUCCESS, 10 );
+              infoPersistent.insert( "10#Unknown" , floatFromInt(id) );
+            } else
               infoPersistent.insert( "10#" + iselName->second.str(), floatFromInt(stdInfo[1]) );
             }
             for( unsigned int ipvkeys=2; ipvkeys< stdInfo.size(); ++ipvkeys ){
               infoPersistent.insert( "11#" + boost::str(boost::format("%1$=08X") % (ipvkeys-2)),
-                                     floatFromInt( stdInfo[ipvkeys] ) );        
+                                     floatFromInt( stdInfo[ipvkeys] ) );
             }
 
         }
         break;
       default:
-        { 
+        {
 
           Warning( " StdInfo on unsupported class type " + std::to_string(hos->summarizedObjectCLID()),
                    StatusCode::SUCCESS, 20 );
           int e = 0;
-          for (const auto& i : stdInfo) { 
-            infoPersistent.insert( "z#Unknown.unknown" + std::to_string( e++ ), floatFromInt(i) );        
-          }      
-        }    
+          for (const auto& i : stdInfo) {
+            infoPersistent.insert( "z#Unknown.unknown" + std::to_string( e++ ), floatFromInt(i) );
+          }
+        }
       }
 
-    //           ============== extra 
+    //           ============== extra
 
     if( exInfOn ){
       HltSelRepRBExtraInfo::ExtraInfo extraInfo = extraInfoSubBank.next();
@@ -400,7 +388,7 @@ StatusCode HltSelReportsDecoder::execute() {
   // reloop to add substructure or hits
   // -----------------------------------------------------------------
   for( unsigned int iObj=0; iObj!= nObj; ++iObj){
-    
+
     HltObjectSummary* & hos = objects[iObj];
     HltSelRepRBSubstr::Substr sub=substrSubBank.next();
 
@@ -417,9 +405,9 @@ StatusCode HltSelReportsDecoder::execute() {
                 hitseq.erase( hitseq.begin() );
           }
           // ------------------------- end fix --------------------------------------------
-          if( hitseq.size() ){            
+          if( hitseq.size() ){
             hits.insert( std::end(hits), std::begin(hitseq), std::end(hitseq) );
-          }          
+          }
         } else {
           Error(  "Hit sequence index out of range", StatusCode::SUCCESS, 10 ).ignore();
         }
@@ -428,8 +416,8 @@ StatusCode HltSelReportsDecoder::execute() {
 
     } else {
       // pointers
-      SmartRefVector<LHCb::HltObjectSummary> thisSubstructure; 
-      for( const auto& jObj : sub.second ) { 
+      SmartRefVector<LHCb::HltObjectSummary> thisSubstructure;
+      for( const auto& jObj : sub.second ) {
         if( jObj<nObj ){
           thisSubstructure.push_back( &(*(objects[jObj])) );
         } else {
@@ -451,17 +439,17 @@ StatusCode HltSelReportsDecoder::execute() {
   hltSelReportsBank.deleteBank();
 
 
-  // fix intermix of substructure needed by TisTos tool and by Turbo stream  
+  // fix intermix of substructure needed by TisTos tool and by Turbo stream
   // substructure() returns only things needed by TisTos, substructureExetended() all things needed by Turbo
   // logic below is somewhat messy and depends on what was done in HltSelReportsMaker; this is the best we
-  //      can do without restructuring rawbanks that don't distinguish between the two types 
+  //      can do without restructuring rawbanks that don't distinguish between the two types
 
-  //     don't waste time on older version banks which did not have extended info 
+  //     don't waste time on older version banks which did not have extended info
   if( hltselreportsRawBank0->version() > 2 )
   {
     for( unsigned int iObj=0; iObj!= nObj; ++iObj){
-    
-      HltObjectSummary* & hos = objects[iObj];        
+
+      HltObjectSummary* & hos = objects[iObj];
       if( hos->summarizedObjectCLID()!=LHCb::CLID_Particle )
       {
         hos->setSubstructure( hos->substructureExtended() );
@@ -488,19 +476,19 @@ StatusCode HltSelReportsDecoder::execute() {
       }
     }
   }
-  
+
 
   // ---------------------------------------------------------
   // ------- special container for selections ----------------
   // ---------------------------------------------------------
 
   for( unsigned int iObj=0; iObj!= nObj; ++iObj){
-    
-    HltObjectSummary* & hos = objects[iObj];        
-    if( hos->summarizedObjectCLID()!=1 )continue; 
+
+    HltObjectSummary* & hos = objects[iObj];
+    if( hos->summarizedObjectCLID()!=1 )continue;
 
     auto selName = std::end(idmap);
-    auto i = std::find_if( std::begin(hos->numericalInfo()) , std::end(hos->numericalInfo()), 
+    auto i = std::find_if( std::begin(hos->numericalInfo()) , std::end(hos->numericalInfo()),
                            [](const std::pair<std::string,double>& info) {
                                return info.first == "0#SelectionID";
                            } );
@@ -517,24 +505,24 @@ StatusCode HltSelReportsDecoder::execute() {
       HltObjectSummary selSumOut;
       selSumOut.setSummarizedObjectCLID( hos->summarizedObjectCLID() );
       selSumOut.setNumericalInfo( hos->numericalInfo() );
-      selSumOut.setSubstructure( hos->substructure() ); 
+      selSumOut.setSubstructure( hos->substructure() );
 
       // insert selection into the container
       if( outputSummary->insert(selName->second,selSumOut) == StatusCode::FAILURE ){
-        Error( "  Failed to add Hlt selection name " 
+        Error( "  Failed to add Hlt selection name "
                + std::string{ selName->second }
                + " to its container ", StatusCode::SUCCESS, 10 ).ignore();
       }
-    } else {    
+    } else {
       Error( " Did not find string key for trigger selection in storage",
-             StatusCode::SUCCESS, 50 ).ignore(); 
+             StatusCode::SUCCESS, 50 ).ignore();
     }
 
   }
 
   if ( msgLevel(MSG::VERBOSE) ){
 
-    verbose() << " ======= HltSelReports size= " << outputSummary->size() << endmsg;  
+    verbose() << " ======= HltSelReports size= " << outputSummary->size() << endmsg;
     verbose() << *outputSummary << endmsg;
 
     verbose() << " ======= HltObjectSummary container size= " << objectSummaries->size() << endmsg;
@@ -542,14 +530,14 @@ StatusCode HltSelReportsDecoder::execute() {
       verbose() << " key " << pHos->index();
       auto selby = outputSummary->selectedAsCandidateBy(pHos);
       if( !selby.empty() ){
-        verbose() << " selectedAsCandidateBy= ";       
+        verbose() << " selectedAsCandidateBy= ";
         for( const auto&  i : selby ) verbose() << i << " ";
         auto pvInfo = outputSummary->pvSelectionNameAndKey(pHos);
         if( pvInfo.second > -1 ){
           verbose() << " pvSelectionName= " << pvInfo.first << " pvKey= " << pvInfo.second << " ";
         }
-      }     
-      verbose() << *pHos << endmsg;    
+      }
+      verbose() << *pHos << endmsg;
     }
   }
   return StatusCode::SUCCESS;
