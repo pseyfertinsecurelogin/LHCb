@@ -120,6 +120,14 @@ StatusCode DeRichHPDPanel::initialize()
 }
 
 //=========================================================================
+// The maximum PD copy number for this panel
+//=========================================================================
+Rich::DAQ::HPDCopyNumber DeRichHPDPanel::maxPdNumber() const
+{
+  return Rich::DAQ::HPDCopyNumber(m_DeHPDs.size());
+}
+
+//=========================================================================
 // convert a point on the silicon sensor to a smartID
 //=========================================================================
 bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
@@ -136,7 +144,7 @@ bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
   // check if the HPD is active or dead
   if ( !m_deRichS->pdIsActive( id ) ) return false;
 
-  const auto HPDNumber = pdNumber(id);
+  const auto HPDNumber = _pdNumber(id);
   if ( HPDNumber.data() > nPDs() )
   {
     error() << "Inappropriate HPDNumber : " << HPDNumber;
@@ -217,7 +225,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
   { return LHCb::RichTraceMode::RayTraceFailed; }
 
   // Find the correct DeRichHPD
-  const auto * HPD = deHPD( pdNumber(smartID) );
+  const auto * HPD = deHPD( _pdNumber(smartID) );
 
   // Refind intersection point using other local plane
   // ( Can reuse scalar as both local planes have the same normal vector )
@@ -468,6 +476,14 @@ int DeRichHPDPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
   LHCb::RichSmartID id( rich(), side() );
   // set the remaining fields from the position
   return ( smartID(globalPoint,id) ? id : LHCb::RichSmartID(rich(),side()) );
+}
+
+//=========================================================================
+// Access the DeRichPD object for a given PD RichSmartID
+//=========================================================================
+const DeRichPD* DeRichHPDPanel::dePD( const LHCb::RichSmartID pdID ) const
+{
+  return deHPD( _pdNumber(pdID) );
 }
 
 //=========================================================================
@@ -731,9 +747,7 @@ StatusCode DeRichHPDPanel::geometryUpdate()
 
 Rich::DAQ::HPDCopyNumber DeRichHPDPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
 {
-  return Rich::DAQ::HPDCopyNumber( smartID.rich() == rich() && smartID.panel() == side() ?
-                                   smartID.pdCol() * nPDsPerCol() + smartID.pdNumInCol() :
-                                   nPDs() + 1 );
+  return  _pdNumber(smartID);
 }
 
 //=========================================================================

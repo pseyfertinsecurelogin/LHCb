@@ -102,10 +102,7 @@ public:
    *
    * @return The detector type
    */
-  inline Rich::DetectorType rich() const noexcept
-  {
-    return m_rich;
-  }
+  inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
   /**
    * Returns the RichSystem
@@ -146,16 +143,10 @@ public:
   }
 
   /// Use large PMTs
-  inline bool Rich2UseGrandPmt () const noexcept
-  {
-    return m_Rich2UseGrandPmt;
-  }
+  inline bool Rich2UseGrandPmt() const noexcept { return m_Rich2UseGrandPmt; }
 
-  /// Use large+small  PMTs
-  inline bool Rich2UseMixedPmt () const noexcept
-  {
-    return m_Rich2UseMixedPmt;
-  }
+  /// Use large+small PMTs
+  inline bool Rich2UseMixedPmt() const noexcept { return m_Rich2UseMixedPmt; }
 
   /**
    * Returns a pointer to the tabulated property that holds the refractive
