@@ -110,7 +110,6 @@ public:
       auto h = m_cache.find(path);
       if (h == m_cache.end()) {
         h = m_cache.emplace(std::make_pair(path, Hash_t{0})).first;
-        lock.unlock(); // the SHA1 computation is reentrant
         SHA_CTX c;
         SHA1_Init(&c);
         std::ifstream data(path, std::ios::binary);
