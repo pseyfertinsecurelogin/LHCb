@@ -95,9 +95,15 @@ private:
     return getService("XmlParserSvc", m_xmlParser);
   }
 
+public:
+  /// Helper class to compute the cryptographic hash (SHA1) of files.
+  /// The class caches the hash of files already processed, to avoid
+  /// useless computations.
   struct FileHasher {
     using Hash_t = std::array<unsigned char, SHA_DIGEST_LENGTH>;
 
+    /// Return the cryptographic hash of the content of the file
+    /// passed as argument
     const Hash_t& operator() (const std::string& path) const {
       // protect the cache from multiple accesses
       std::unique_lock<std::mutex> lock(m_mutex);
@@ -108,6 +114,9 @@ private:
         SHA_CTX c;
         SHA1_Init(&c);
         std::ifstream data(path, std::ios::binary);
+        if (!data.good()) {
+          throw std::runtime_error("problems opening " + path);
+        }
         const std::streamsize BUFFER_SIZE = 1024 * 1024;
         std::array<char, BUFFER_SIZE> buff{0};
         while (!data.eof()) {
@@ -126,6 +135,10 @@ private:
 
   /// Helper class to work with conditions data file path templates.
   struct PathTemplate {
+    /// Construct an instance from a template file name.
+    /// The file name may contain the special sequence `%d` or `%s` (only one occurrence).
+    /// `%d` will be replaced by the run number, while `%s` by the string "_k_/_n_"
+    ///  where _k_ is run number divided by 1000 and _n_ is the run number.
     PathTemplate(const std::string& f): fmt{f}, hash{0},
       splitRunString{f.find("%s") != std::string::npos}
     {
@@ -189,6 +202,7 @@ private:
     PathTemplate dataFile;
   };
 
+private:
   /// Flag for update all the registered objects.
   void update(unsigned long run);
 
