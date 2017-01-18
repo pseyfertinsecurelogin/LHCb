@@ -14,6 +14,52 @@
 </ul>
 </b>
 
+<H1><A NAME=v40r4>2017-01-20 LHCbSys v40r4</A></H1>
+This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
+<p>
+This version is released on 2016-patches branch. 
+
+<h2>New or changed functionalities</h2>
+<dl>
+<dt>[MR !523] Backport Kernel/LHCbMath from master to 2016-patches
+<dd> Includes all LHCbMath patches from LHCb <a href="https://gitlab.cern.ch/lhcb/LHCb/tags/v42r0">v42r0</a>, <a href="https://gitlab.cern.ch/lhcb/LHCb/tags/v41r1">v41r1</a>, <a href="https://gitlab.cern.ch/lhcb/LHCb/tags/v41r0">v41r0</a>
+<dd> Replace auto in lambda arguments (only C++14) with actual types
+<dt>[MR !313] Add ssh capabilities to the FileStagerSvc
+<dd> While not useful on the grid, as an SSH agent is needed, staging files over ssh from another machine when running an interactive job can be rather useful.
+<dt>[MR !170] Update default database tags
+<dd> DQFLAGS, 2016: dq-20160621-5
+</dl>
+    
+<h2>Persistency fixes</h2>
+<dl>
+<dt>[MR !254] Add Deuteron to Turbo HltSelReports
+<dd> Slightly non-trivial as the ReportConvertTool is a bit different in the master. See LHCBPS-1653
+<dt>[MR !150] Fix calculation of checksums for some packed objects
+<dd> Some of the packed object structs had padding so checksums were undefined.
+<dd> Added custom functions for these (going over all members)
+<dd> Added a simple compile-time protection to fail compilation next time packed objects are modified.
+<dd> Compute checksums per location and improve debug printout
+</dl>
+    
+<h2>Code cleanups</h2>
+<dl>
+<dt>[MR !424] HltRoutingBitsWriter.cpp: Fix compilation warning in assert
+<dt>[MR !185] HltGenConfig.cpp: Only print overrule warning the first time.
+<dt>[MR !151] Added .gitignore and .gitattributes
+<dd> See LHCBPS-1599
+</dl>
+    
+<h2>Changes to tests</h2>
+<dl>
+<dt>[MR !284] Remove obsolete tests
+<dd> Remove obsolete conftest, was testing SVNProjecDeps functionality of GaudiConf/python/GaudiConf/QMTest/ConfigurablesTest.py
+<dd> Remove obsolete configurables test, was checking integrity of SVN project recursive checkout
+    
+<dt>[MR !258] Update HltDAQ Turcal Routing Bits test
+<dd>  An option has been added to the test script to limit the number of event the routing bits tests run on.
+<dd> The test for the turcal stream has been limited to 2000 events.
+</dl>
+
 <H1><A NAME=v40r3>2016-07-20 LHCbSys v40r3</A></H1>
 This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
 <p>
@@ -89,7 +135,7 @@ This version is released on 2016-patches branch.
 
 <h2>Geometry and Conditions</h2>
 <dl>
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/58">MR 58</a>] Update default LHCBCOND tag for 2016 to cond-20160522
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/58">MR 58</a>] Update default LHCBCOND tag for 2016 to cond-20160522
 <dd>(DDDB/Configuration.py)
 
 </dl>
@@ -103,9 +149,9 @@ This version is released on 2016-patches branch.
 </dl>
 <h2>Persistency</h2>
 <dl>
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/66">MR 66</a>] Make TurboConf work with 2015 Turbo++ (GaudiConf/TurboConf.py)
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/66">MR 66</a>] Make TurboConf work with 2015 Turbo++ (GaudiConf/TurboConf.py)
 
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/48">MR 48</a>] Changes for PersistReco:
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/48">MR 48</a>] Changes for PersistReco:
 <dd>Separate out Turbo configuration from DstConf into TurboConf.
 <dd>PersistReco = True enables unpacking of PR data and linking to the proper PVs
 <dd>Removed executable permissions from modules
@@ -113,13 +159,13 @@ This version is released on 2016-patches branch.
 <dd>Export TurboConf configurable and add missing import
 <dd>(GaudiConf/{DigiConf.py, DstConf.py, TurboConf.py}, GaudiConf/CMakeLists.txt
 
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/32">MR 32</a>] Improvements in persist reco
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/32">MR 32</a>] Improvements in persist reco
 <dd>Add support for persisting packed RecVertex containers in the raw event.
 <dd>Decouple links from locations of non-packed objects in the Hlt (needed for the next point).
 <dd>Add a central place (`GaudiConf.PersistRecoConf`) where persist reco packing (locations, (un)packers) is configured. `DAQSys.Decoder.py` and `HltConf.HltPersistReco.py` now use the latter rather than hard code locations, etc.
 <dd>(Changes in DAQSys, GaudiConf, HltDAQ, EventPacker)
 
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/34">MR 34</a>] Add explicit dependency on EventPacker
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/34">MR 34</a>] Add explicit dependency on EventPacker
 <dd>(GaudiConf/CMakeLists.txt)
 
 <dt>DAQSys
@@ -135,54 +181,54 @@ This version is released on 2016-patches branch.
 </dl>
 <h2>LHCbMath</h2>
 <dl>
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/50">MR 50</a>]  Fix issue with normalization for several 2D-models
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/50">MR 50</a>]  Fix issue with normalization for several 2D-models
 <dd>(LHCbMath/Bernstein.h, LHCbMath/src/Bernstein.cpp, LHCbMath/src/Functions.cpp)
    
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/49">MR 49</a>] Fix interpolation
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/49">MR 49</a>] Fix interpolation
 <dd>(LHCbMath/src/HistoInterpolation.cpp)
 
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/47">MR 47</a>] Fix normalization of Expo2DPolSym function
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/47">MR 47</a>] Fix normalization of Expo2DPolSym function
 <dd>(LHCbMath/Functions.h, LHCbMath/src/Bernstein.cpp, LHCbMath/src/Functions.cpp)
 
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/40">MR 40</a>] Add Sech-function: hyperbolic secant  (inverse cosh) distribution
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/40">MR 40</a>] Add Sech-function: hyperbolic secant  (inverse cosh) distribution
 <dd>(LHCbMath/Functions.h, LHCbMath/dict/LHCbMathDict.xml, LHCbMath/src/Functions.cpp)
    
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/38">MR 38</a>] Updates to deriv.py:
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/38">MR 38</a>] Updates to deriv.py:
 <dd>add Width/width functions, allowing easy evaluation of full width at half maximum for functons (LHCbMath/deriv.py)
 
 </dl>
 <h2>LoKi</h2>
 <dl>
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/46">MR 46</a>] LoKi fixes
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/46">MR 46</a>] LoKi fixes
 <dd>Fix hash issue
 <dd>Extend "children" function for better match between C++ and python
 <dd>(Multiple files in LoKiGen and LoKiMC)
 
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/43">MR 43</a>] LoKiGen: add missing hex_id function
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/43">MR 43</a>] LoKiGen: add missing hex_id function
 <dd>(LoKiGen/src/GenParticles.cpp)
 
 </dl>
 <h2>HLT and Online</h2>
 <dl>
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/52">MR 52</a>]
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/52">MR 52</a>]
 <dd>Close CDB file at an incident and at process stop (HltServices/src/ConfigCDBAccessSvc.{cpp,h})
 <dd>Add a test for closing of the CDB file on an incident and on application stop (HltServices/tests/qmtest/close_cdb_file.qmt)
 <dd>Update get_tck script with an option to get the HLT1 TCK from ODIN instead of the DecReports (HltDAQ/tests/options/get_tck.py)
 
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/53">MR 53</a>] Add HltEvaluator
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/53">MR 53</a>] Add HltEvaluator
 <dd>Split HltDAQ into linker and module library
 <dd>HltEvaluator as a base class
 <dd>HltRoutingBitsWriter now inherits from HltEvaluator
 <dd>Add tests for routing bit reproducibility with the new HltRoutingBitsWriter.
 <dd>(Multiple files in HltDAQ)
 
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/33">MR 33</a>] Changes to allow PID-less TCK
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/33">MR 33</a>] Changes to allow PID-less TCK
 <dd>Check on technical bits of TCK removed from Kernel/HltInterfaces/src/ConfigTreeNodeAlias.cpp (moved to TCKsh function)
 
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/59">MR 59</a>] Add OnlineMode option to LHCbApp and DDDBConf configurables for online use
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/59">MR 59</a>] Add OnlineMode option to LHCbApp and DDDBConf configurables for online use
 <dd> Used to switch off print outs from the configurables when used at the pit (DDDB/Configuration.py, LHCbAlgs/Configuration.py).
 
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/31">MR 31</a>] Fix CondDB configuration in case of UseDBSnapshot=True.
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/31">MR 31</a>] Fix CondDB configuration in case of UseDBSnapshot=True.
 <dd>(DetCond/Configuration.py)
 
 <dt>HltServices<dd>Fix HltANNSvc when allowUndefined = false
@@ -199,10 +245,10 @@ This version is released on 2016-patches branch.
 </dl>
 <h2>Herschel</h2>
 <dl>
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/67">MR 67</a>] HC decoder returns StatusCode::SUCCESS instead of FAILURE if CondDB location is not found
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/67">MR 67</a>] HC decoder returns StatusCode::SUCCESS instead of FAILURE if CondDB location is not found
 <dd>Allows testing with MC (SIMCOND doesn't have Herschel Conditions yet) (HCDAQ/src/HCRawBankDecoderHlt.cpp)
 
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/55">MR 55</a>] Access to Herschel sum-of-station-ADC information for use in HLT1
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/55">MR 55</a>] Access to Herschel sum-of-station-ADC information for use in HLT1
 <dd>Added new Herschel Raw Bank decoder class to produce ADC sums per station on TES and related functor
 <dd>Added LoKi functor HrcSumAdc to access Herschel digits.
 <dd>(HCDAQ/src/HCRawBankDecoderHlt.{cpp,h}, LoKiCore/LoKi/TES.h, LoKiCore/src/TES.cpp, LoKiNumbers/functions.py)
@@ -223,7 +269,7 @@ This version is released on 2016-patches branch.
 </dl>
 <h2>Velo</h2>
 <dl>
-<dt>[<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/54">MR 54</a>], [<a href="https://gitlab.cern.ch/LHCb-SVN-mirrors/LHCb/merge_requests/60">MR 60</a>] Added new interface IVeloCCEConfigTool.h for VELO CCE scan configuration
+<dt>[<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/54">MR 54</a>], [<a href="https://gitlab.cern.ch/lhcb/LHCb/merge_requests/60">MR 60</a>] Added new interface IVeloCCEConfigTool.h for VELO CCE scan configuration
 <dd>(LHCbKernel/Kernel/IVeloCCEConfigTool.h, LHCbKernel/dict/LHCbKernelDict.h, LHCbKernel/xml/lcgdict/lcg_selection.xml)
 
 </dl>
