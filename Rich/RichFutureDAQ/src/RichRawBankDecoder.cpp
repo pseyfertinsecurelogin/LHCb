@@ -236,22 +236,22 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        dataBank.reset( new RichDAQ_LHCb5::ZeroSuppAlice( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb5::ZeroSuppAlice>( dataStart );
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb5::ZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb5::ZeroSuppLHCb>( dataStart );
       }
     }
     else
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        dataBank.reset( new RichDAQ_LHCb5::NonZeroSuppAlice( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb5::NonZeroSuppAlice>( dataStart );
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb5::NonZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb5::NonZeroSuppLHCb>( dataStart );
       }
     }
 
@@ -271,18 +271,18 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb4::ZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb4::ZeroSuppLHCb>( dataStart );
       }
     }
     else
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        dataBank.reset( new RichDAQ_LHCb4::NonZeroSuppAlice( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb4::NonZeroSuppAlice>( dataStart );
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb4::NonZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb4::NonZeroSuppLHCb>( dataStart );
       }
     }
 
@@ -302,18 +302,18 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb3::ZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb3::ZeroSuppLHCb>( dataStart );
       }
     }
     else
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        dataBank.reset( new RichDAQ_LHCb3::NonZeroSuppAlice( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb3::NonZeroSuppAlice>( dataStart );
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb3::NonZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb3::NonZeroSuppLHCb>( dataStart );
       }
     }
 
@@ -327,11 +327,11 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
     // Decide to zero suppress or not depending on number of hits
     if ( header.zeroSuppressed() )
     {
-      dataBank.reset( new RichDAQ_LHCb2::ZeroSuppLHCb( dataStart, dataSize ) );
+      dataBank = std::make_unique<RichDAQ_LHCb2::ZeroSuppLHCb>( dataStart, dataSize );
     }
     else
     {
-      dataBank.reset( new RichDAQ_LHCb2::NonZeroSuppLHCb( dataStart ) );
+      dataBank = std::make_unique<RichDAQ_LHCb2::NonZeroSuppLHCb>( dataStart );
     }
 
   }
@@ -344,19 +344,17 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
     // Decide to zero suppress or not depending on number of hits
     if ( header.zeroSuppressed() )
     {
-      dataBank.reset( new RichDAQ_LHCb1::ZeroSuppLHCb( dataStart, dataSize ) );
+      dataBank = std::make_unique<RichDAQ_LHCb1::ZeroSuppLHCb>( dataStart, dataSize );
     }
     else
     {
-      dataBank.reset( new RichDAQ_LHCb1::NonZeroSuppLHCb( dataStart ) );
+      dataBank = std::make_unique<RichDAQ_LHCb1::NonZeroSuppLHCb>( dataStart );
     }
 
   }
   else if ( FlatList == version )
   {
-
-    dataBank.reset( new RichDAQ_FlatList::Data( dataStart ) );
-
+    dataBank = std::make_unique<RichDAQ_FlatList::Data>( dataStart );
   }
   else
   {
