@@ -388,7 +388,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
 
   // various counts
   unsigned int nHPDbanks(0);
-  unsigned int decodedHits(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in 32 bit words
   const int bankSize = bank.size() / 4;
@@ -602,7 +602,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                 if ( hpdHitCount < m_maxHPDOc )
                 {
                   ++nHPDbanks;
-                  decodedHits += hpdHitCount;
+                  decodedHits[hpdID.rich()] += hpdHitCount;
 
                   // suppress hot pixels
                   suppressHotPixels(hpdID,newids);
@@ -679,7 +679,7 @@ void RawBankDecoder::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
 
   // HPD count
   unsigned int nHPDbanks(0);
-  unsigned int decodedHits(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -748,7 +748,7 @@ void RawBankDecoder::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
         if ( hpdHitCount < m_maxHPDOc )
         {
           ++nHPDbanks;
-          decodedHits += hpdHitCount;
+          decodedHits[hpdID.rich()] += hpdHitCount;
         }
         else
         {
@@ -804,7 +804,7 @@ void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
 
   // HPD count
   unsigned int nHPDbanks(0);
-  unsigned int decodedHits(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -929,7 +929,7 @@ void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
         if ( hpdHitCount < m_maxHPDOc )
         {
           ++nHPDbanks;
-          decodedHits += hpdHitCount;
+          decodedHits[hpdID.rich()] += hpdHitCount;
         }
         else
         {
@@ -975,7 +975,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
   const int bankSize = bank.size() / 4;
 
   // various counts
-  unsigned int decodedHits(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
   std::set<LHCb::RichSmartID> pdSet;
 
   // If we have some words to process, start the decoding
@@ -1011,14 +1011,14 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
           info.setIngressHeader(iHeader);
         }
         auto & ingressInfo = ingressMap[l1Input.ingressID()];
-        auto & hpdMap      = ingressInfo.pdData();
+        auto & pdMap       = ingressInfo.pdData();
 
         // Does this PD have an entry
-        if ( hpdMap.find(l1Input) == hpdMap.end() )
+        if ( pdMap.find(l1Input) == pdMap.end() )
         {
-          hpdMap[l1Input] = PDInfo();
+          pdMap[l1Input] = PDInfo();
           // Set the PD ID
-          hpdMap[l1Input].setPdID( id.pdID() );
+          pdMap[l1Input].setPdID( id.pdID() );
           // set the header
           PDInfo::Header header;
           // CRJ - Comment out until decide what to do about maPMT Level0 IDs ...
@@ -1029,15 +1029,15 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
           //             mess << "Failed to set L0ID " << l0id;
           //             Warning( mess.str() ).ignore();
           //           }
-          hpdMap[l1Input].setHeader( header );
+          pdMap[l1Input].setHeader( header );
         }
-        auto & hpdInfo = hpdMap[l1Input];
+        auto & pdInfo = pdMap[l1Input];
 
         // add the hit to the list
-        hpdInfo.smartIDs().push_back( id );
+        pdInfo.smartIDs().emplace_back( id );
 
         // count the hits and hpds
-        ++decodedHits;
+        ++decodedHits[id.rich()];
         pdSet.insert( id.pdID() );
 
       }

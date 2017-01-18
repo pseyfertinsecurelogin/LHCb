@@ -825,7 +825,7 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
   const auto version = bankVersion( bank );
 
   // various counts
-  unsigned int decodedHits(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
   std::set<LHCb::RichSmartID> pdSet;
 
   // If we have some words to process, start the decoding
@@ -887,7 +887,7 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
         pdInfo.smartIDs().push_back( id );
 
         // count the hits and hpds
-        ++decodedHits;
+        ++decodedHits[id.rich()];
         pdSet.insert( id.pdID() );
 
       }
@@ -905,7 +905,7 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
     // Increment bank size
     cands.nWords += bank.size()/4; // 2 L1 headers + data words
     // Increment hit occupancy
-    cands.nHits += decodedHits;
+    cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
     // Count number of HPD banks
     cands.nHPDs += pdSet.size();
     // Count fills
@@ -922,7 +922,8 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
   _ri_debug << "Decoding L1 bank " << L1ID << endmsg;
 
   // various counts
-  unsigned int nHPDbanks(0), decodedHits(0);
+  unsigned int nHPDbanks(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in 32 bit words
   const int bankSize = bank.size() / 4;
@@ -1136,7 +1137,7 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                 if ( hpdHitCount < m_maxHPDOc )
                 {
                   ++nHPDbanks;
-                  decodedHits += hpdHitCount;
+                  decodedHits[pdID.rich()] += hpdHitCount;
 
                   // suppress hot pixels
                   suppressHotPixels(pdID,newids);
@@ -1200,7 +1201,7 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
     // Increment bank size
     cands.nWords += bank.size()/4; // 2 L1 headers + data words
     // Increment hit occupancy
-    cands.nHits += decodedHits;
+    cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
     // Count number of HPD banks
     cands.nHPDs += nHPDbanks;
     // Count fills
@@ -1269,7 +1270,8 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
   const Level1HardwareID L1ID ( bank.sourceID() );
 
   // HPD count
-  unsigned int nHPDbanks(0), decodedHits(0);
+  unsigned int nHPDbanks(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -1338,7 +1340,7 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
         if ( hpdHitCount < m_maxHPDOc )
         {
           ++nHPDbanks;
-          decodedHits += hpdHitCount;
+          decodedHits[pdID.rich()] += hpdHitCount;
         }
         else
         {
@@ -1378,7 +1380,7 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
     // Increment bank size
     cands.nWords += bank.size()/4; // 2 L1 headers + data words
     // Increment hit occupancy
-    cands.nHits += decodedHits;
+    cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
     // Count number of HPD banks
     cands.nHPDs += nHPDbanks;
     // Count fills
@@ -1405,7 +1407,8 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
   const ShortType maxDataSize = MaxDataSize;
 
   // HPD count
-  unsigned int nHPDbanks(0), decodedHits(0);
+  unsigned int nHPDbanks(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -1530,7 +1533,7 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
         if ( hpdHitCount < m_maxHPDOc )
         {
           ++nHPDbanks;
-          decodedHits += hpdHitCount;
+          decodedHits[pdID.rich()] += hpdHitCount;
         }
         else
         {
@@ -1560,7 +1563,7 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
     // Increment bank size
     cands.nWords += bank.size()/4; // 2 L1 headers + data words
     // Increment hit occupancy
-    cands.nHits += decodedHits;
+    cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
     // Count number of HPD banks
     cands.nHPDs += nHPDbanks;
     // Count fills
