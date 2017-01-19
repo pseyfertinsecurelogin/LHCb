@@ -38,10 +38,12 @@ namespace Rich
     //-----------------------------------------------------------------------------
     /** @class IMirrorSegFinderLookUpTable RichInterfaces/IRichMirrorSegFinderLookUpTable.h
      *
-     *  Interface to a tool to find the appropriate mirror segment for a given reflection point
+     *  Interface to a tool to find the appropriate mirror segment for a given reflection point.
+     *  This interface is specific to the implementation using a look up table, and
+     *  as such provides the most efficient access.
      *
-     *  @author Antonis Papanestis
-     *  @date   2003-11-04
+     *  @author Chris Jones
+     *  @date   2017-01-19
      */
     //-----------------------------------------------------------------------------
     
