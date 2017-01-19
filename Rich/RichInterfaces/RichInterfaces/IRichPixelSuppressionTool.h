@@ -20,9 +20,6 @@
 // Kernel
 #include "Kernel/RichSmartID.h"
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichPixelSuppressionTool( "Rich::DAQ::IPixelSuppressionTool", 1, 0 );
-
 namespace Rich
 {
   namespace DAQ
@@ -43,10 +40,8 @@ namespace Rich
 
     public:
 
-      /** static interface identification
-       *  @return unique interface identifier
-       */
-      static const InterfaceID& interfaceID() { return IID_IRichPixelSuppressionTool; }
+      /// Interface ID
+      DeclareInterfaceID( IPixelSuppressionTool, 1, 0 );
 
       /** Applies pixel suppression to the given HPD
        *

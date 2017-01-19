@@ -26,9 +26,6 @@ namespace LHCb
   class RawBank;
 }
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichRawDataFormatTool ( "Rich::DAQ::IRawDataFormatTool", 1, 0 );
-
 namespace Rich
 {
   namespace DAQ
@@ -52,10 +49,8 @@ namespace Rich
 
     public:
 
-      /** static interface identification
-       *  @return unique interface identifier
-       */
-      static const InterfaceID& interfaceID() { return IID_IRichRawDataFormatTool; }
+      /// Interface ID
+      DeclareInterfaceID( IRawDataFormatTool, 1, 0 );
 
       /** Fills the RICH RawEvent from a vector of RichSmartIDs
        *

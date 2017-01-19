@@ -18,9 +18,6 @@
 #include "Kernel/RichRadiatorType.h"
 #include "Kernel/RichRadIntersection.h"
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichRefractiveIndex( "Rich::IRefractiveIndex", 1, 0 );
-
 namespace Rich
 {
 
@@ -38,10 +35,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() { return IID_IRichRefractiveIndex; }
+    /// Interface ID
+    DeclareInterfaceID( IRefractiveIndex, 1, 0 );
 
     /** Calculates the refractive index for a given radiator type at a
      *  given photon energy.

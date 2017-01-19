@@ -31,9 +31,6 @@ namespace LHCb
   class RichTrackSegment;
 }
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichRayTracing( "Rich::IRayTracing", 1, 0 );
-
 namespace Rich
 {
 
@@ -54,10 +51,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() { return IID_IRichRayTracing; }
+    /// Interface ID
+    DeclareInterfaceID( IRayTracing, 1, 0 );
 
     /** For a given detector, ray-traces a given direction from a given point to
      *  the photo detectors. Returns the result in the form of a RichGeomPhoton

@@ -17,9 +17,6 @@
 // LHCbKernel
 #include "Kernel/RichRadiatorType.h"
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichDetParameters( "Rich::IDetParameters", 1, 0 );
-
 namespace Rich
 {
 
@@ -90,10 +87,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() { return IID_IRichDetParameters; }
+    /// Interface ID
+    DeclareInterfaceID( IDetParameters, 1, 0 );
 
     /** Calculates the maximum observable photon energy for a given radiator medium
      *

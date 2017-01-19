@@ -23,9 +23,6 @@
 namespace Rich
 {
 
-  /// Tool Interface ID
-  static const InterfaceID IID_IRichAddBackground ( "Rich::IAddBackground", 1, 0 );
-
   /** @class IAddBackground RichKernel/IRichAddBackground.h
    *
    *  Interface for tools that generate RICH backgrounds
@@ -39,8 +36,8 @@ namespace Rich
 
   public:
 
-    /// Return the interface ID
-    static const InterfaceID& interfaceID() { return IID_IRichAddBackground; }
+    /// Interface ID
+    DeclareInterfaceID( IAddBackground, 1, 0 );
 
   public:
 

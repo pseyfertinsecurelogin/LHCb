@@ -17,9 +17,6 @@
 // forward decs
 class DeRich;
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichDetectorTool( "Rich::IDetectorTool", 1, 0 );
-
 namespace Rich
 {
 
@@ -38,10 +35,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() { return IID_IRichDetectorTool; }
+    /// Interface ID
+    DeclareInterfaceID( IDetectorTool, 1, 0 );
 
     /// Vector of pointers to the Rich Detectors
     virtual std::vector<DeRich*> deRichDetectors() const = 0;

@@ -31,9 +31,6 @@ namespace Rich
   class PDPixelCluster;
 }
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichSmartIDTool( "Rich::ISmartIDTool", 1, 0 );
-
 namespace Rich
 {
 
@@ -53,10 +50,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() { return IID_IRichSmartIDTool; }
+    /// Interface ID
+    DeclareInterfaceID( ISmartIDTool, 1, 0 );
 
     /** Converts a RichSmartID channel identification into a position in
      *  global LHCb coordinates, on the PD entrance window.

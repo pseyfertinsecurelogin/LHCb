@@ -21,9 +21,6 @@ namespace LHCb
   class RichTrackSegment;
 }
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichParticleProperties( "Rich::IParticleProperties", 1, 0 );
-
 namespace Rich
 {
 
@@ -41,10 +38,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() {return IID_IRichParticleProperties;}
+    /// Interface ID
+    DeclareInterfaceID( IParticleProperties, 1, 0 );
 
     /** Calculates 'beta' for given particle hypothesis and track momentum
      *
