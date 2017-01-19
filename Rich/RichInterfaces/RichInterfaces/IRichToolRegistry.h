@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHTOOLREGISTRY_H
-#define RICHINTERFACES_IRICHTOOLREGISTRY_H 1
+#pragma once
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -62,5 +61,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRICHTOOLREGISTRY_H

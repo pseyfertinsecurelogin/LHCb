@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRichSnellsLawRefraction_H
-#define RICHINTERFACES_IRichSnellsLawRefraction_H 1
+#pragma once
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -99,5 +98,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRichSnellsLawRefraction_H

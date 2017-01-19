@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IGenericHPDAnalysisTool_H
-#define RICHINTERFACES_IGenericHPDAnalysisTool_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -82,5 +81,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IGenericHPDAnalysisTool_H

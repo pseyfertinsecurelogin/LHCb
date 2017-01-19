@@ -9,8 +9,7 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHADDBACKGROUND_H
-#define RICHINTERFACES_IRICHADDBACKGROUND_H 1
+#pragma once
 
 // from STL
 #include <string>
@@ -57,5 +56,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRICHADDBACKGROUND_H

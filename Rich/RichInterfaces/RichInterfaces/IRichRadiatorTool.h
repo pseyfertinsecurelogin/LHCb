@@ -9,8 +9,7 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHRADIATORTOOL_H
-#define RICHINTERFACES_IRICHRADIATORTOOL_H 1
+#pragma once
 
 // from STL
 #include <string>
@@ -68,5 +67,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRICHRADIATORTOOL_H

@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRichPixelClusteringTool_H
-#define RICHINTERFACES_IRichPixelClusteringTool_H 1
+#pragma once
 
 // STL
 #include <memory>
@@ -67,5 +66,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHINTERFACES_IRichPixelClusteringTool_H

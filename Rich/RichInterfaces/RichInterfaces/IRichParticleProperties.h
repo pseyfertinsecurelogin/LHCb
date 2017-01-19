@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHPARTICLEPROPERTIES_H
-#define RICHINTERFACES_IRICHPARTICLEPROPERTIES_H 1
+#pragma once
 
 // Kernel
 #include "Kernel/RichParticleIDType.h"
@@ -103,5 +102,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRICHPARTICLEPROPERTIES_H

@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHRAWBUFFERTOSMARTIDSTOOL_H
-#define RICHINTERFACES_IRICHRAWBUFFERTOSMARTIDSTOOL_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -145,5 +144,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHINTERFACES_IRICHRAWBUFFERTOSMARTIDSTOOL_H

@@ -9,8 +9,7 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHDETECTORTOOL_H
-#define RICHINTERFACES_IRICHDETECTORTOOL_H 1
+#pragma once
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -50,5 +49,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRICHDETECTORTOOL_H

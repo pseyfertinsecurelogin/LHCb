@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHDETPARAMETERS_H
-#define RICHINTERFACES_IRICHDETPARAMETERS_H 1
+#pragma once
 
 // Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -143,5 +142,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRICHDETPARAMETERS_H

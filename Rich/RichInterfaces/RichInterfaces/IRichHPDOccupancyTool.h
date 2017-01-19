@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRichHPDOccupancyTool_H
-#define RICHINTERFACES_IRichHPDOccupancyTool_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -59,5 +58,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRichHPDOccupancyTool_H
