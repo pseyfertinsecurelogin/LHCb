@@ -155,13 +155,26 @@ namespace Rich
     {
     public:
       /// Returns the total number of RICH hits in the decoded data
-      unsigned int nTotalHits() const noexcept { return m_nTotalHits; }
-      /// Sets the total number of RICH hits in the decoded data
-      void setNTotalHits( const unsigned int nHits ) { m_nTotalHits = nHits; }
-      /// Append to the number of hits
-      void addToTotalHits( const unsigned int nHits ) { m_nTotalHits += nHits; }
+      unsigned int nTotalHits() const noexcept 
+      {
+        return m_nTotalHits[Rich::Rich1] + m_nTotalHits[Rich::Rich2]; 
+      }
+      /// Returns the total number of hits in the decoded data for the given RICH detector
+      unsigned int nTotalHits( const Rich::DetectorType rich ) const noexcept
+      {
+        return m_nTotalHits[rich];
+      }
+      /// Append to the number of hits for the given RICH detector
+      void addToTotalHits( const Rich::DetectorType rich,
+                           const unsigned int nHits ) { m_nTotalHits[rich] += nHits; }
+      /// Append to the number of hits for each RICH
+      void addToTotalHits( const DetectorArray<unsigned int>& nHits )
+      {
+        for ( const auto rich : Rich::detectors() ) { m_nTotalHits[rich] += nHits[rich]; }
+      }
     private:
-      unsigned int m_nTotalHits{0};
+      /// The total hit count for each RICH detector
+      DetectorArray<unsigned int> m_nTotalHits = {{0,0}};
     };
     
     /// L1Map data locations

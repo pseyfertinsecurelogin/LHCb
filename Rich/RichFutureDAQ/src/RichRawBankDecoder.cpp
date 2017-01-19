@@ -236,22 +236,22 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        dataBank.reset( new RichDAQ_LHCb5::ZeroSuppAlice( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb5::ZeroSuppAlice>( dataStart );
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb5::ZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb5::ZeroSuppLHCb>( dataStart );
       }
     }
     else
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        dataBank.reset( new RichDAQ_LHCb5::NonZeroSuppAlice( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb5::NonZeroSuppAlice>( dataStart );
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb5::NonZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb5::NonZeroSuppLHCb>( dataStart );
       }
     }
 
@@ -271,18 +271,18 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb4::ZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb4::ZeroSuppLHCb>( dataStart );
       }
     }
     else
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        dataBank.reset( new RichDAQ_LHCb4::NonZeroSuppAlice( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb4::NonZeroSuppAlice>( dataStart );
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb4::NonZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb4::NonZeroSuppLHCb>( dataStart );
       }
     }
 
@@ -302,18 +302,18 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb3::ZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb3::ZeroSuppLHCb>( dataStart );
       }
     }
     else
     {
       if ( UNLIKELY(header.aliceMode()) )
       {
-        dataBank.reset( new RichDAQ_LHCb3::NonZeroSuppAlice( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb3::NonZeroSuppAlice>( dataStart );
       }
       else
       {
-        dataBank.reset( new RichDAQ_LHCb3::NonZeroSuppLHCb( dataStart ) );
+        dataBank = std::make_unique<RichDAQ_LHCb3::NonZeroSuppLHCb>( dataStart );
       }
     }
 
@@ -327,11 +327,11 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
     // Decide to zero suppress or not depending on number of hits
     if ( header.zeroSuppressed() )
     {
-      dataBank.reset( new RichDAQ_LHCb2::ZeroSuppLHCb( dataStart, dataSize ) );
+      dataBank = std::make_unique<RichDAQ_LHCb2::ZeroSuppLHCb>( dataStart, dataSize );
     }
     else
     {
-      dataBank.reset( new RichDAQ_LHCb2::NonZeroSuppLHCb( dataStart ) );
+      dataBank = std::make_unique<RichDAQ_LHCb2::NonZeroSuppLHCb>( dataStart );
     }
 
   }
@@ -344,19 +344,17 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
     // Decide to zero suppress or not depending on number of hits
     if ( header.zeroSuppressed() )
     {
-      dataBank.reset( new RichDAQ_LHCb1::ZeroSuppLHCb( dataStart, dataSize ) );
+      dataBank = std::make_unique<RichDAQ_LHCb1::ZeroSuppLHCb>( dataStart, dataSize );
     }
     else
     {
-      dataBank.reset( new RichDAQ_LHCb1::NonZeroSuppLHCb( dataStart ) );
+      dataBank = std::make_unique<RichDAQ_LHCb1::NonZeroSuppLHCb>( dataStart );
     }
 
   }
   else if ( FlatList == version )
   {
-
-    dataBank.reset( new RichDAQ_FlatList::Data( dataStart ) );
-
+    dataBank = std::make_unique<RichDAQ_FlatList::Data>( dataStart );
   }
   else
   {
@@ -388,7 +386,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
 
   // various counts
   unsigned int nHPDbanks(0);
-  unsigned int decodedHits(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in 32 bit words
   const int bankSize = bank.size() / 4;
@@ -602,7 +600,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                 if ( hpdHitCount < m_maxHPDOc )
                 {
                   ++nHPDbanks;
-                  decodedHits += hpdHitCount;
+                  decodedHits[hpdID.rich()] += hpdHitCount;
 
                   // suppress hot pixels
                   suppressHotPixels(hpdID,newids);
@@ -679,7 +677,7 @@ void RawBankDecoder::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
 
   // HPD count
   unsigned int nHPDbanks(0);
-  unsigned int decodedHits(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -748,7 +746,7 @@ void RawBankDecoder::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
         if ( hpdHitCount < m_maxHPDOc )
         {
           ++nHPDbanks;
-          decodedHits += hpdHitCount;
+          decodedHits[hpdID.rich()] += hpdHitCount;
         }
         else
         {
@@ -804,7 +802,7 @@ void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
 
   // HPD count
   unsigned int nHPDbanks(0);
-  unsigned int decodedHits(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -929,7 +927,7 @@ void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
         if ( hpdHitCount < m_maxHPDOc )
         {
           ++nHPDbanks;
-          decodedHits += hpdHitCount;
+          decodedHits[hpdID.rich()] += hpdHitCount;
         }
         else
         {
@@ -975,7 +973,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
   const int bankSize = bank.size() / 4;
 
   // various counts
-  unsigned int decodedHits(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
   std::set<LHCb::RichSmartID> pdSet;
 
   // If we have some words to process, start the decoding
@@ -1011,14 +1009,14 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
           info.setIngressHeader(iHeader);
         }
         auto & ingressInfo = ingressMap[l1Input.ingressID()];
-        auto & hpdMap      = ingressInfo.pdData();
+        auto & pdMap       = ingressInfo.pdData();
 
         // Does this PD have an entry
-        if ( hpdMap.find(l1Input) == hpdMap.end() )
+        if ( pdMap.find(l1Input) == pdMap.end() )
         {
-          hpdMap[l1Input] = PDInfo();
+          pdMap[l1Input] = PDInfo();
           // Set the PD ID
-          hpdMap[l1Input].setPdID( id.pdID() );
+          pdMap[l1Input].setPdID( id.pdID() );
           // set the header
           PDInfo::Header header;
           // CRJ - Comment out until decide what to do about maPMT Level0 IDs ...
@@ -1029,15 +1027,15 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
           //             mess << "Failed to set L0ID " << l0id;
           //             Warning( mess.str() ).ignore();
           //           }
-          hpdMap[l1Input].setHeader( header );
+          pdMap[l1Input].setHeader( header );
         }
-        auto & hpdInfo = hpdMap[l1Input];
+        auto & pdInfo = pdMap[l1Input];
 
         // add the hit to the list
-        hpdInfo.smartIDs().push_back( id );
+        pdInfo.smartIDs().emplace_back( id );
 
         // count the hits and hpds
-        ++decodedHits;
+        ++decodedHits[id.rich()];
         pdSet.insert( id.pdID() );
 
       }
