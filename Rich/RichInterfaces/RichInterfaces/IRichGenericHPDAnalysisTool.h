@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IGenericHPDAnalysisTool_H
-#define RICHINTERFACES_IGenericHPDAnalysisTool_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -20,9 +19,6 @@
 
 // Kernel
 #include "Kernel/RichSmartID.h"
-
-/// Static Interface Identification
-static const InterfaceID IID_IRichGenericHPDAnalysisTool( "Rich::IGenericHPDAnalysisTool", 1, 0 );
 
 namespace Rich
 {
@@ -41,10 +37,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() { return IID_IRichGenericHPDAnalysisTool; }
+      /// Interface ID
+    DeclareInterfaceID( IGenericHPDAnalysisTool, 1, 0 );
 
   public:
 
@@ -82,5 +76,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IGenericHPDAnalysisTool_H

@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHPARTICLEPROPERTIES_H
-#define RICHINTERFACES_IRICHPARTICLEPROPERTIES_H 1
+#pragma once
 
 // Kernel
 #include "Kernel/RichParticleIDType.h"
@@ -21,9 +20,6 @@ namespace LHCb
 {
   class RichTrackSegment;
 }
-
-/// Static Interface Identification
-static const InterfaceID IID_IRichParticleProperties( "Rich::IParticleProperties", 1, 0 );
 
 namespace Rich
 {
@@ -42,10 +38,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() {return IID_IRichParticleProperties;}
+    /// Interface ID
+    DeclareInterfaceID( IParticleProperties, 1, 0 );
 
     /** Calculates 'beta' for given particle hypothesis and track momentum
      *
@@ -103,5 +97,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRICHPARTICLEPROPERTIES_H

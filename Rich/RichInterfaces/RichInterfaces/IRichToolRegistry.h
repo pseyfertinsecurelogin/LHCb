@@ -9,14 +9,10 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHTOOLREGISTRY_H
-#define RICHINTERFACES_IRICHTOOLREGISTRY_H 1
+#pragma once
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
-
-/// Static Interface Identification
-static const InterfaceID IID_IRichToolRegistry( "Rich::IToolRegistry" , 1 , 0 );
 
 namespace Rich
 {
@@ -36,10 +32,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() { return IID_IRichToolRegistry; }
+    /// Interface ID
+    DeclareInterfaceID( IToolRegistry, 1, 0 );
 
     /** Converts a tool "nickname" into a particular class name
      *
@@ -62,5 +56,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRICHTOOLREGISTRY_H
