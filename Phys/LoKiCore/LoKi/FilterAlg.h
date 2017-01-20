@@ -83,9 +83,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// the initialization of the algorithm
-    virtual StatusCode initialize () ;
-    /// the finalization of the algorithm
-    virtual StatusCode finalize   () ;
+    StatusCode initialize ()  override;
     // ========================================================================
   protected:
     // ========================================================================
@@ -99,13 +97,9 @@ namespace LoKi
      */
     FilterAlg ( const std::string& name ,   // the algorithm instance name
                 ISvcLocator*       pSvc ) ; // pointer to the service locator
-    /// virtual and protected destructor
-    virtual ~FilterAlg() ;
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled
-    FilterAlg () ;                       // the default constructor is disabled
     /// the copy constructor is disabled
     FilterAlg ( const FilterAlg& ) ;        // the copy constructor is disabled
     /// the assignement operator is disabled

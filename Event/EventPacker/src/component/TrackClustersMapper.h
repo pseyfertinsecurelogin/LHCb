@@ -29,22 +29,19 @@ public:
                        const std::string& name,
                        const IInterface* parent );
 
-  /// Destructor
-  virtual ~TrackClustersMapper();
-
 public:
 
   /** Returns the correctly configured and name instance of the
    *  Clusters unpacker, for the given path
    */
-  virtual Gaudi::Utils::TypeNameString algorithmForPath(const std::string &path);
+  Gaudi::Utils::TypeNameString algorithmForPath(const std::string &path) override;
 
 public:
 
   /** Instruct the DataOnDemandSvc to create DataObjects for the
    *  intermediate levels of a path we can handle.
    */
-  virtual std::string nodeTypeForPath(const std::string &path);
+  std::string nodeTypeForPath(const std::string &path) override;
 
 private:
 
@@ -58,7 +55,7 @@ private:
     const auto it = m_nodeTypeMap.find( fixPath(path) );
     return ( it != m_nodeTypeMap.end() );
   }
-  
+
   /// Check the node mappings are updated for the given path stream
   void updateNodeTypeMap( const std::string & path );
 
@@ -79,7 +76,7 @@ private:
 
   /// Unpacker class type
   std::string m_unpackerType;
-  
+
   /// Outputlevel for unpackers created
   int m_unpackersOutputLevel;
 

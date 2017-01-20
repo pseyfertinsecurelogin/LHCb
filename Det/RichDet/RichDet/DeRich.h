@@ -6,8 +6,7 @@
  *  @date   2004-06-18
  */
 
-#ifndef RICHDET_DERICH_H
-#define RICHDET_DERICH_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -55,7 +54,7 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRich();
+  virtual ~DeRich() = default;
 
   /**
    * This is where most of the geometry is read and variables initialised
@@ -63,7 +62,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
    * Returns the nominal centre of curvature of the spherical mirror for
@@ -72,7 +71,11 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal centre of curvature
    */
-  virtual const Gaudi::XYZPoint& nominalCentreOfCurvature(const Rich::Side side) const = 0;
+  inline const Gaudi::XYZPoint& 
+  nominalCentreOfCurvature(const Rich::Side side) const noexcept
+  {
+    return m_nominalCentresOfCurvature[side];
+  }
 
   /**
    * Returns the nominal normal vector of the flat mirror plane for this Rich
@@ -80,7 +83,11 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal normal vector
    */
-  virtual const Gaudi::XYZVector& nominalNormal(const Rich::Side side) const = 0;
+  inline const Gaudi::XYZVector& 
+  nominalNormal(const Rich::Side side) const noexcept
+  {
+    return m_nominalNormals[side];
+  }
 
   /**
    * Returns the nominal flat mirror plane for this Rich
@@ -88,7 +95,11 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal flat mirror plane
    */
-  virtual const Gaudi::Plane3D& nominalPlane(const Rich::Side side) const = 0;
+  inline const Gaudi::Plane3D& 
+  nominalPlane(const Rich::Side side) const noexcept
+  {
+    return m_nominalPlanes[side];
+  }
 
   /**
    * Check on which side of this Rich lies this point
@@ -96,27 +107,26 @@ public:
    * @param point A point in the global coordinate system
    * @return The side for this point
    */
-  virtual Rich::Side side( const Gaudi::XYZPoint& point ) const = 0;
+  inline Rich::Side side( const Gaudi::XYZPoint& point ) const noexcept
+  {
+    return ( Rich::Rich1 == rich()                            ?
+             ( point.y() >= 0.0 ? Rich::top  : Rich::bottom ) :
+             ( point.x() >= 0.0 ? Rich::left : Rich::right  ) );
+  }
 
   /**
    * Returns the detector type for this Rich
    *
    * @return The detector type
    */
-  inline Rich::DetectorType rich() const noexcept
-  {
-    return m_rich;
-  }
+  inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
   /**
    * Returns the RichSystem
    *
    * @return The DeRichSystem object
    */
-  inline DeRichSystem* deRichSystem() const noexcept
-  {
-    return deRichSys();
-  }
+  inline DeRichSystem* deRichSystem() noexcept { return deRichSys(); }
 
   /**
    * Returns the nominal spherical mirror radius for this Rich
@@ -150,16 +160,10 @@ public:
   }
 
   /// Use large PMTs
-  inline bool Rich2UseGrandPmt () const noexcept
-  {
-    return m_Rich2UseGrandPmt;
-  }
+  inline bool Rich2UseGrandPmt() const noexcept { return m_Rich2UseGrandPmt; }
 
-  /// Use large+small  PMTs
-  inline bool Rich2UseMixedPmt () const noexcept
-  {
-    return m_Rich2UseMixedPmt;
-  }
+  /// Use large+small PMTs
+  inline bool Rich2UseMixedPmt() const noexcept { return m_Rich2UseMixedPmt; }
 
   /**
    * Returns a pointer to the tabulated property that holds the refractive
@@ -192,7 +196,6 @@ public:
   inline const std::shared_ptr<const Rich::TabulatedProperty1D>&
   nominalPDQuantumEff() const noexcept
   {
-    if ( !m_nominalPDQuantumEff ) { loadNominalQuantumEff(); }
     return m_nominalPDQuantumEff;
   }
 
@@ -234,12 +237,23 @@ public:
   virtual Rich::MirrorSegPosition secMirrorSegPos( const int mirrorNumber ) const;
 
   /// sensitive volume identifier for hpd version. to be phased out
-  virtual int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const;
+  int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override;
 
 public:
 
-  /// Access PD Panels on demand
-  DeRichPDPanel * pdPanel( const Rich::Side panel ) const;
+  /// Access PD Panels
+  inline DeRichPDPanel * pdPanel( const Rich::Side panel ) const noexcept 
+  {
+    return m_PDPanels[panel];
+  }
+
+protected:
+
+  /// Load on demand the nominal PD Q.E.
+  void loadNominalQuantumEff();
+
+  /// Load the PD panels
+  void loadPDPanels();
 
 private:
 
@@ -247,13 +261,10 @@ private:
   virtual const std::string panelName( const Rich::Side panel ) const;
 
   /// Load on demand the nominal HPD Q.E.
-  const Rich::TabulatedProperty1D * loadNominalHPDQuantumEff() const;
+  std::shared_ptr<const Rich::TabulatedProperty1D> loadNominalHPDQuantumEff();
 
   /// Load on demand the nominal PMT Q.E.
-  const Rich::TabulatedProperty1D * loadNominalPMTQuantumEff() const;
-
-  /// Load on demand the nominal PD Q.E.
-  void loadNominalQuantumEff() const;
+  std::shared_ptr<const Rich::TabulatedProperty1D> loadNominalPMTQuantumEff();
 
 protected:
 
@@ -299,10 +310,19 @@ protected:
   /// flat mirror reflectivity
   std::unique_ptr<const Rich::TabulatedProperty1D> m_nominalSecMirrorRefl;
 
+  /// Nominal planes for each panel
+  Rich::PanelArray<Gaudi::Plane3D> m_nominalPlanes = {{}};
+
+  /// The nominal normal vector of the flat mirror planes
+  Rich::PanelArray<Gaudi::XYZVector> m_nominalNormals = {{}};
+
+  /// The nominal centres of curvature of the spherical mirrors
+  Rich::PanelArray<Gaudi::XYZPoint> m_nominalCentresOfCurvature = {{}};
+
 private: // data
 
   /// Pointers to the PD panels of this Rich detector
-  mutable std::array<DeRichPDPanel*,Rich::NRiches> m_PDPanels{{nullptr,nullptr}};
+  Rich::DetectorArray<DeRichPDPanel*> m_PDPanels{{nullptr,nullptr}};
 
   /// flag to test if the xml supports mirror position info
   bool m_positionInfo{false};
@@ -313,8 +333,6 @@ private: // data
   int m_secMirrorSegCols{0};  ///< number of secondary mirror columns
 
   /// PD quantum efficiency
-  mutable std::shared_ptr<const Rich::TabulatedProperty1D> m_nominalPDQuantumEff;
+  std::shared_ptr<const Rich::TabulatedProperty1D> m_nominalPDQuantumEff;
 
 };
-
-#endif    // RICHDET_DERICH_H

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <numeric>
 
 #include "GaudiKernel/MsgStream.h"
 
@@ -31,7 +32,7 @@
  *  @author Marco Clemencic
  *  @date   2005-06-13
  */
-class CondDBCache {
+class CondDBCache final {
 
 public:
 
@@ -41,7 +42,7 @@ public:
   /// Standard constructor
   CondDBCache(const MsgStream& log, size_t highLevel = 100, size_t lowLevel = 10);
 
-  virtual ~CondDBCache( ); ///< Destructor
+   ~CondDBCache( ); ///< Destructor
 
   /// Add a new data object to the cache.
   /// \warning {no check performed}
@@ -146,8 +147,6 @@ public:
   /// Getter for the data member m_silentConflicts.
   void setSilentConflicts(bool value) { m_silentConflicts = value; }
 
-protected:
-
 private:
 
   struct CondFolder;
@@ -160,7 +159,7 @@ private:
   typedef GaudiUtils::HashMap<FolderIdType,CondFolder> StorageType;
 
   /// Internal class used to record IOV+data pairs
-  struct CondItem {
+  struct CondItem final {
     /// Constructor.
     CondItem(CondFolder *myFolder, const cool::IObject &obj):
       folder(myFolder),iov(obj.since(),obj.until()),
@@ -179,7 +178,7 @@ private:
   };
 
   /// Internal class used to keep the items common to a given path.
-  struct CondFolder {
+  struct CondFolder final {
 
     typedef GaudiUtils::Map<cool::ChannelId,ItemListType> StorageType;
     typedef GaudiUtils::HashMap<std::string,cool::ChannelId> ChannelNamesMapType;
@@ -201,36 +200,36 @@ private:
     /// Search for the first item in the storage valid at the given time.
     inline ItemListType::iterator find(const cool::ValidityKey &when, const cool::ChannelId &channel = 0) {
       ItemListType &lst = items[channel];
-      ItemListType::iterator i;
-      for ( i = lst.begin(); i != lst.end() && !i->valid(when) ; ++i ){}
-      return i;
+      return std::find_if( lst.begin(), lst.end(),
+                           [&](ItemListType::const_reference i)
+                           { return i.valid(when); } );
     }
     /// Const version of the search method.
     inline ItemListType::const_iterator find(const cool::ValidityKey &when, const cool::ChannelId &channel = 0) const {
       const ItemListType &lst = (*const_cast<StorageType *>(&items))[channel];
-      ItemListType::const_iterator i;
-      for ( i = lst.begin(); i != lst.end() && !i->valid(when) ; ++i ){}
-      return i;
+      return std::find_if( lst.begin(), lst.end(),
+                           [&](ItemListType::const_reference i)
+                           { return i.valid(when); } );
     }
     inline ItemListType::iterator conflict(const cool::ValidityKey &since, const cool::ValidityKey &until,
                                            const cool::ChannelId &channel = 0) {
       ItemListType &lst = items[channel];
-      ItemListType::iterator i;
-      for ( i = lst.begin(); i != lst.end() ; ++i ){
+      return std::find_if( lst.begin(), lst.end(),
+                           [&](ItemListType::const_reference i) {
         // Given two IOVs a and b, they conflict if the intersection is not empty:
         //   max(a.s,b.s) < min(a.u,b.u)
-        if ( std::max(i->iov.first, since) < std::min(i->iov.second, until) ) return i;
-      }
-      return i;
+                            return std::max(i.iov.first, since) < std::min(i.iov.second, until);
+      } );
     }
     inline ItemListType::const_iterator conflict(const cool::ValidityKey &since, const cool::ValidityKey &until,
                                                  const cool::ChannelId &channel = 0) const {
       const ItemListType &lst = (*const_cast<StorageType *>(&items))[channel];
-      ItemListType::const_iterator i;
-      for ( i = lst.begin(); i != lst.end() ; ++i ){
-        if ( std::max(i->iov.first, since) < std::min(i->iov.second, until) ) return i;
-      }
-      return i;
+      return std::find_if( lst.begin(), lst.end(),
+                           [&](ItemListType::const_reference i) {
+        // Given two IOVs a and b, they conflict if the intersection is not empty:
+        //   max(a.s,b.s) < min(a.u,b.u)
+                            return std::max(i.iov.first, since) < std::min(i.iov.second, until);
+      } );
     }
     inline ItemListType::iterator end(const cool::ChannelId &channel = 0) {
       return items[channel].end();
@@ -242,10 +241,9 @@ private:
       items[channel].erase(find(when,channel));
     }
     inline bool empty() const {
-      for (StorageType::const_iterator ch = items.begin(); ch != items.end(); ++ch ) {
-        if (! ch->second.empty()) return false;
-      }
-      return true;
+      return std::all_of( items.begin(), items.end(),
+                          [](StorageType::const_reference ch)
+                          { return ch.second.empty(); } );
     }
 
   };
@@ -267,13 +265,11 @@ private:
 };
 
 inline size_t CondDBCache::size() const {
-  size_t count = 0;
-  StorageType::const_iterator folder;
-  for (folder = m_cache.begin(); folder != m_cache.end(); ++folder) {
-    for (CondFolder::StorageType::const_iterator ch = folder->second.items.begin(); ch != folder->second.items.end(); ++ch)
-      count += ch->second.size();
-  }
-  return count;
+  return std::accumulate( m_cache.begin(), m_cache.end(), (size_t)0,
+                          [](size_t count, StorageType::const_reference folder) {
+    return std::accumulate( folder.second.items.begin(), folder.second.items.end(),
+                            count, [](size_t c, CondFolder::StorageType::const_reference ch)
+                            { return c+ch.second.size(); } ); } );
 }
 
 #endif // COMPONENT_CONDDBCACHE_H

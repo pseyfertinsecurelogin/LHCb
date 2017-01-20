@@ -15,8 +15,8 @@
 
 
 bool LHCb::L0DUElementaryCondition::comparison( unsigned int a, const std::string& comparator,  unsigned int b){
-    if( "<" == comparator ){return (a < b);}
-    if( ">" == comparator ){return (a > b);}
+    if( "<"  == comparator){return (a < b);}
+    if( ">"  == comparator){return (a > b);}
     if( "==" == comparator){return (a == b);}
     if( "!=" == comparator){return (a != b);}
     return false;}

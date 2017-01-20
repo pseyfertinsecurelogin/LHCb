@@ -1,5 +1,3 @@
-// $Id: MuonBasicGeometry.cpp,v 1.8 2010-03-17 16:19:07 cattanem Exp $
-
 // Include files
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/MsgStream.h"

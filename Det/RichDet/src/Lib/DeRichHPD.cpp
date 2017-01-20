@@ -148,6 +148,9 @@ StatusCode DeRichHPD::initialize ( )
   // Update HPD QE values whenever DeRichSystem updates
   updMgrSvc()->registerCondition( this, deRichSys(), &DeRichHPD::initHpdQuantumEff );
 
+  // Force loading the magnetic field service during initialise
+  loadMagSvc();
+
   // Trigger first update
   sc = updMgrSvc()->update(this);
   if ( sc.isFailure() ) { fatal() << "UMS updates failed" << endmsg; }
@@ -159,7 +162,7 @@ StatusCode DeRichHPD::initialize ( )
 //=========================================================================
 // Load the Magnetic field service when required
 //=========================================================================
-void DeRichHPD::loadMagSvc() const
+void DeRichHPD::loadMagSvc()
 {
   if ( !m_magFieldSvc )
   {
@@ -184,8 +187,7 @@ void DeRichHPD::loadMagSvc() const
 //=========================================================================
 StatusCode DeRichHPD::initHpdQuantumEff()
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Updating Q.E. for HPD:" << m_number << endmsg;
+  _ri_debug << "Updating Q.E. for HPD:" << m_number << endmsg;
 
   // get quantum efficiency tabulated property from LHCBCOND if available
   if ( deRichSys()->exists( "HpdQuantumEffCommonLoc" ) )  // use hardware ID to locate QE
@@ -242,11 +244,24 @@ StatusCode DeRichHPD::getParameters()
     return StatusCode::FAILURE;
   }
 
-  m_pixelSize    = deRich1->param<double>("RichHpdPixelXsize");
+  const auto pixXsize = deRich1->param<double>("RichHpdPixelXsize");
+  const auto pixYsize = deRich1->param<double>("RichHpdPixelYsize");
+
+  const std::string effnumPixCond = "RichEffectiveActiveNumPixelPerHpd";
+  m_effNumActivePixs = ( deRich1->exists(effnumPixCond) ? 
+                         deRich1->param<double>(effnumPixCond) : 784.763611 );
+
+  m_pixelSize    = pixXsize;
   m_activeRadius = deRich1->param<double>("RichHpdActiveInpRad");
 
-  if (deRich1->exists("RefractHPDQrtzWin") )
+  m_pixelArea    = pixXsize * pixYsize;
+  const double demagScale = 4.8; // CRJ - Is this in the DB anywhere ?
+  m_effPixelArea = m_pixelArea * std::pow(demagScale,2);
+
+  if ( deRich1->exists("RefractHPDQrtzWin") )
+  {
     m_refactParams = deRich1->param<std::vector<double> >("RefractHPDQrtzWin");
+  }
   else
   {
     warning() << "No parameters for refraction on HPD window! "
@@ -256,9 +271,6 @@ StatusCode DeRichHPD::getParameters()
   m_UseHpdMagDistortions = ( 0 != deRich1->param<int>("UseHpdMagDistortions") );
   m_UseBFieldTestMap     = ( 0 != deRich1->param<int>("UseBFieldTestMap") );
   m_LongitudinalBField   = deRich1->param<double>("LongitudinalBField");
-  //m_UseRandomBField     = deRich1->param<int>("UseRandomBField");
-  //m_RandomBFieldMinimum = deRich1->param<double>("RandomBFieldMinimum");
-  //m_RandomBFieldMaximum = deRich1->param<double>("RandomBFieldMaximum");
 
   // load old demagnification factors
   SmartDataPtr<TabulatedProperty> HPDdeMag
@@ -275,14 +287,12 @@ StatusCode DeRichHPD::getParameters()
   return StatusCode::SUCCESS;
 }
 
-
 //=========================================================================
 // update the localy cached transforms
 //=========================================================================
 StatusCode DeRichHPD::updateGeometry()
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Updating geometry transformations for HPD:" << m_number <<endmsg;
+  _ri_debug << "Updating geometry transformations for HPD:" << m_number <<endmsg;
 
   // find the subMaster volume, normally the first physical volume
   const auto * pvHPDSMaster = geometry()->lvolume()->pvolume(0);
@@ -390,8 +400,7 @@ StatusCode DeRichHPD::updateGeometry()
 //=================================================================================
 StatusCode DeRichHPD::updateDemagProperties()
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Updating Demagnification properties for HPD:" << m_number << endmsg;
+  _ri_debug << "Updating Demagnification properties for HPD:" << m_number << endmsg;
 
   StatusCode sc = StatusCode::SUCCESS;
   for ( unsigned int field = 0; field<2; ++field )
@@ -520,8 +529,7 @@ StatusCode DeRichHPD::fillHpdMagTable( const unsigned int field )
   // MDMS version
   m_MDMS_version[field] = ( m_demagConds[field]->exists("version") ?
                             m_demagConds[field]->param<int>("version") : 0 );
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << " -> Field " << field << " MDMS version = " << m_MDMS_version[field] << endmsg;
+  _ri_debug << " -> Field " << field << " MDMS version = " << m_MDMS_version[field] << endmsg;
   if ( m_MDMS_version[field] < 0 || m_MDMS_version[field] > 2 )
   {
     error() << "Unknown MDMS version " << m_MDMS_version[field] << endmsg;

@@ -14,7 +14,11 @@
 <class 
 	name             = "RichSummaryRadSegment"
 	author           = "Chris Jones   Christopher.Rob.Jones@cern.ch" 
-	desc             = "RICH reconstruction summary object representing a single trajectory through a RICH radiator">
+	desc             = "RICH reconstruction summary object representing a single trajectory through a RICH radiator"
+    virtual = "FALSE"
+    final = "TRUE"
+    defaultdestructor="FALSE"
+    >
 
         &StlVector;
 

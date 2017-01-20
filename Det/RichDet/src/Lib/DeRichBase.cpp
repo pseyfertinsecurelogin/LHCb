@@ -7,7 +7,7 @@
 #include "RichDet/DeRichSystem.h"
 
 // Access DeRichSystem on demand
-DeRichSystem * DeRichBase::deRichSys() const
+DeRichSystem * DeRichBase::deRichSys()
 {
   if ( UNLIKELY(!m_deRichS) )
   {

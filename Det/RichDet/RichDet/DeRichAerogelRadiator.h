@@ -9,8 +9,7 @@
  */
 //----------------------------------------------------------------------------
 
-#ifndef RICHDET_DERICHAEROGELRADIATOR_H
-#define RICHDET_DERICHAEROGELRADIATOR_H 1
+#pragma once
 
 // Include files
 #include "RichDet/DeRichSingleSolidRadiator.h"
@@ -22,7 +21,7 @@
  *  @author Antonis Papanestis
  *  @date   2006-03-02
  */
-class DeRichAerogelRadiator : public DeRichSingleSolidRadiator 
+class DeRichAerogelRadiator : public DeRichSingleSolidRadiator
 {
 
 public:
@@ -30,13 +29,13 @@ public:
   /// Standard constructor
   DeRichAerogelRadiator( const std::string & name = "" );
 
-  virtual ~DeRichAerogelRadiator( ); ///< Destructor
+  virtual ~DeRichAerogelRadiator( ) = default; ///< Destructor
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  inline const CLID& clID() const
+  inline const CLID& clID() const override
   {
     return classID();
   }
@@ -53,7 +52,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
 public:
 
@@ -69,19 +68,19 @@ public:
    */
   inline int subtileCopynumber() const noexcept { return m_subtilecopynumber; }
 
-  /** Returns the sub-tile number within a primary tile 
+  /** Returns the sub-tile number within a primary tile
    *
    *  If sub tiles are not active, returns -1
    */
   inline int subtileIDInTile()   const noexcept { return m_subtileNumInTile;  }
 
   /// Returns a unique tile ID number, when sub-tiles are both active and inactive
-  inline int tileID() const 
-  { 
+  inline int tileID() const
+  {
     return ( !subTile() ? primaryTileID() :
              1000*primaryTileID() + subtileIDInTile() );
   }
-  
+
 private:
 
   /// method to update the refractive index of the radiator
@@ -90,25 +89,25 @@ private:
   /// method for the calculation of the refractive index from the Sellmeir
   /// coeficients and update of the Tabulated Property
   StatusCode calcSellmeirRefIndex (const std::vector<double>& momVect,
-                                   const TabulatedProperty* tabProp );
+                                   TabulatedProperty* tabProp );
 
   /// method for the calculation of Rayleigh scattering from
   /// clarity and update of the Tabulated Property
   StatusCode calcRayleigh(const std::vector<double>& momVect,
-                          const TabulatedProperty* tabProp);
+                          TabulatedProperty* tabProp);
 
   /// method for the calculation of Absorption from const A
   /// and update of the Tabulated Property
   StatusCode calcAbsorption(const std::vector<double>& momVect,
-                            const TabulatedProperty* tabProp);
+                            TabulatedProperty* tabProp);
 
   /// Access on demand the DeRich1 detector element
-  DetectorElement* deRich1() const;
+  inline DetectorElement* deRich1() const noexcept { return m_deRich1; }
 
 private:
 
   /// access to DeRich1 for user parameters
-  mutable DetectorElement* m_deRich1 = nullptr;
+  DetectorElement* m_deRich1 = nullptr;
 
   /// Condition holding the aerogel parameters
   SmartRef<Condition> m_AerogelCond;
@@ -121,13 +120,11 @@ private:
 
   /// Aerogel sub tile copy number
   int m_subtilecopynumber{-1};
-  
+
   /// Aerogel subtile number in a tile
   int m_subtileNumInTile{-1};
 
   /// Flag to say if this is a sub tile or not
   bool m_subTile{true};
-  
-};
 
-#endif // RICHDET_DERICHAEROGELRADIATOR_H
+};

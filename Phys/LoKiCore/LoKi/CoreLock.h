@@ -1,4 +1,4 @@
-#ifndef LOKI_CORELOCK_H 
+#ifndef LOKI_CORELOCK_H
 #define LOKI_CORELOCK_H 1
 // ============================================================================
 // Include files
@@ -26,42 +26,38 @@ namespace LoKi
   namespace Hybrid
   {
     // ========================================================================
-    /** @class CoreLock  LoKi/coreLock.h 
-     *  Helper class (sentry) to connent LoKi::Hybrid::ICoreAntiFactory 
-     *  to CoreEngine  
+    /** @class CoreLock  LoKi/coreLock.h
+     *  Helper class (sentry) to connent LoKi::Hybrid::ICoreAntiFactory
+     *  to CoreEngine
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-18
      */
-    class CoreLock 
+    class CoreLock
     {
     public:
       // ======================================================================
-      /// contructor : Lock 
-      CoreLock  ( LoKi::Hybrid::ICoreAntiFactory* tool ) ; // contructor : Lock 
+      /// contructor : Lock
+      explicit CoreLock  ( LoKi::Hybrid::ICoreAntiFactory* tool ) ; // contructor : Lock
       /// destrcutor : UnLock
       virtual ~CoreLock () ;                              // destructor : UnLock
       // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor 
-      CoreLock () ;                                   // no default constructor 
-      /// no copy constructor 
-      CoreLock ( const CoreLock& ) ;                     // no copy constructor 
-      /// no assignement opeartor 
-      CoreLock& operator = ( const CoreLock& ) ;     // no assignement operator
+      /// no copy constructor
+      CoreLock ( const CoreLock& ) = delete ;            // no copy constructor
+      /// no assignement opeartor
+      CoreLock& operator = ( const CoreLock& ) = delete ;// no assignement operator
       // ======================================================================
     private:
       // ======================================================================
-      /// the tool itself 
+      /// the tool itself
       LoKi::Interface<LoKi::Hybrid::ICoreAntiFactory> m_tool ;  // the tool
       // ======================================================================
-    } ; 
+    } ;
     // ========================================================================
- } // end of namespace LoKi::Hybrid 
-  // ==========================================================================  
+ } // end of namespace LoKi::Hybrid
+  // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_CORELOCK_H
 // ============================================================================

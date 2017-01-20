@@ -40,7 +40,7 @@ public:
 
   virtual ~ChargedProtoParticleAddMuonInfo( ); ///< Destructor
 
-  virtual StatusCode execute();    ///< Algorithm execution
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
 

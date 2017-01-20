@@ -124,7 +124,7 @@ namespace Decays
     virtual bool operator()  ( argument p ) const = 0 ;
     // ======================================================================
     /// clone method ("virtual constructor")
-    virtual  iTree_* clone() const  = 0 ;
+    iTree_* clone() const override = 0 ;
     // ======================================================================
     /** collect all marked elements of the decay tree
      *
@@ -213,22 +213,17 @@ namespace Decays
     // ======================================================================
   public:
     // ======================================================================
-    /// swap two trees: it can reduce CPU for decay mathching 
+    /// swap two trees: it can reduce CPU for decay mathching
     void swap ( Tree_& another ) { std::swap ( m_tree , another.m_tree ) ; }
     // ======================================================================
   public:
     // ======================================================================
     /// assignment operator
     Tree_& operator=( const  Tree_&           right ) ; // assignment
-    /// move assignment oerator 
+    /// move assignment operator
     Tree_& operator=(        Tree_&&          right ) = default; // assignment
     /// pseudo-assignment operator
     Tree_& operator=( const iTree_<PARTICLE>& right ) ; // assignment
-    // ======================================================================
-  private:
-    // ======================================================================
-    /// the default constructor is private one
-    Tree_ () ; // no  default constructor
     // ======================================================================
   private:
     // ======================================================================
@@ -244,12 +239,12 @@ namespace Decays
    */
   std::ostream& operator<<( std::ostream& s , const iTree& o ) ;
   // ==========================================================================
-  /** swap two decay trees 
-   *  useful to reduce unnesessary cloning 
+  /** swap two decay trees
+   *  useful to reduce unnesessary cloning
    *  @author Vanya  BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-03-25
    */
-  template <class PARTICLE> 
+  template <class PARTICLE>
   inline void swap ( Tree_<PARTICLE>& a , Tree_<PARTICLE>& b ) { a.swap ( b ) ; }
   // ==========================================================================
 } // end of namespace Decays
@@ -308,13 +303,13 @@ Decays::Tree_<PARTICLE>::operator=
 namespace Gaudi
 {
   // ==========================================================================
-  namespace Utils 
+  namespace Utils
   {
     // ========================================================================
     template <class PARTICLE>
-    inline 
-    std::string toCpp ( const Decays::iTree_<PARTICLE>& p ) 
-    { return "\"" + p.toString() + "\"" ; } 
+    inline
+    std::string toCpp ( const Decays::iTree_<PARTICLE>& p )
+    { return "\"" + p.toString() + "\"" ; }
     // ========================================================================
   }
   // ==========================================================================

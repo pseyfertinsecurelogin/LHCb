@@ -1,5 +1,4 @@
-// $Id: HltVertexReportsDecoder.h,v 1.3 2010-06-14 13:38:00 tskwarni Exp $
-#ifndef HLTVERTEXREPORTSDECODER_H 
+#ifndef HLTVERTEXREPORTSDECODER_H
 #define HLTVERTEXREPORTSDECODER_H 1
 
 // Include files
@@ -9,7 +8,7 @@
 
 
 /** @class HltvertexReportsDecoder HltvertexReportsDecoder.h
- *  
+ *
  *  @author Tomasz Skwarnicki
  *  @date   2008-08-05
  *
@@ -22,15 +21,13 @@ public:
   enum HeaderIDs { kVersionNumber=2 };
 
   /// Standard constructor
-  HltVertexReportsDecoder( const std::string& name, ISvcLocator* pSvcLocator );
-  ~HltVertexReportsDecoder( ) override = default; ///< Destructor
+  using HltRawBankDecoderBase::HltRawBankDecoderBase;
   StatusCode execute   () override;    ///< Algorithm execution
 
 private:
-  // ----------------------- data members 
+  // ----------------------- data members
   /// location of output
-  StringProperty m_outputHltVertexReportsLocation;
-
+  Gaudi::Property<std::string> m_outputHltVertexReportsLocation{ this,"OutputHltVertexReportsLocation", LHCb::HltVertexReportsLocation::Default};
 };
 
 #endif // HLTVERTEXREPORTSDECODER_H

@@ -1,4 +1,3 @@
-// $Id: MuonHLTBase.h,v 1.3 2008-04-02 11:52:05 asatta Exp $
 #ifndef MUONHLTBASE_H 
 #define MUONHLTBASE_H 1
 

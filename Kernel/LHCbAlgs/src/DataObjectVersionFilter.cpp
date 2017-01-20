@@ -26,11 +26,6 @@ DataObjectVersionFilter::DataObjectVersionFilter( const std::string& name,
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-DataObjectVersionFilter::~DataObjectVersionFilter() {} 
-
-//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode DataObjectVersionFilter::execute() 
@@ -42,7 +37,7 @@ StatusCode DataObjectVersionFilter::execute()
     const DataObject * data = getIfExists<DataObject>(m_loc);
     if ( data )
     {
-      const unsigned int ver = (unsigned int)data->version();
+      const auto ver = (unsigned int)data->version();
       if ( msgLevel(MSG::DEBUG) )
         debug() << "version = " << ver << endmsg;
       OK = ( ver <= m_maxV && ver >= m_minV );

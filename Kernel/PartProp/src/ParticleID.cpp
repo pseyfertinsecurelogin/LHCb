@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -198,7 +197,7 @@ bool LHCb::ParticleID::hasQuarks() const
 // ============================================================================
 bool LHCb::ParticleID::hasQuark ( const Quark& q ) const 
 {
-  if ( abspid() == (unsigned int)::abs(q) ) { return true ; } // Special case for quarks
+  if ( abspid() == static_cast<unsigned int>(q) ) { return true ; } // Special case for quarks
   //
   return   hasQuarks() && 
     ( q == digit_<nq3> () ||
@@ -370,9 +369,7 @@ std::string LHCb::ParticleID::toString() const
 // ============================================================================
 // print the nice representation of enum
 // ============================================================================
-std::ostream& LHCb::ParticleID::printLocation 
-( const long    l ,
-  std::ostream& s ) 
+std::ostream& LHCb::ParticleID::printLocation( const long l, std::ostream& s )
 {
   switch (l) 
   {
@@ -402,9 +399,7 @@ std::string LHCb::ParticleID::printLocation ( const long l )
 // ============================================================================
 // the nice representation of 'Quark' enum
 // ============================================================================
-std::ostream& LHCb::ParticleID::printQuark
-( const long    q , 
-  std::ostream& s ) 
+std::ostream& LHCb::ParticleID::printQuark( const long q, std::ostream& s ) 
 {
   switch ( q ) 
   {

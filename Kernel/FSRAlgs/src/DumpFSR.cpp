@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Gaudi
 #include "GaudiKernel/IRegistry.h"
@@ -23,7 +23,7 @@
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DumpFSR
-// 
+//
 // 2009-02-27 : Jaap Panman
 //-----------------------------------------------------------------------------
 
@@ -35,14 +35,7 @@ DECLARE_ALGORITHM_FACTORY( DumpFSR )
 //=============================================================================
 DumpFSR::DumpFSR( const std::string& name,
                   ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ),
-    m_fileRecordSvc(NULL),
-    m_current_fname(""),
-    m_count_files(0),
-    m_count_events(0),
-    m_events_in_file(0),
-    m_navigatorTool(NULL),
-    m_incSvc(NULL)
+: base_class ( name , pSvcLocator )
 {
   // need to get the registry
   declareProperty( "RawEventLocation"   , m_rawEventLocation = LHCb::RawEventLocation::Default );
@@ -56,11 +49,6 @@ DumpFSR::DumpFSR( const std::string& name,
   declareProperty( "DumpRequests"       , m_dumprequests      = "F");
 }
 //=============================================================================
-// Destructor
-//=============================================================================
-DumpFSR::~DumpFSR() {} 
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode DumpFSR::initialize() {
@@ -69,12 +57,12 @@ StatusCode DumpFSR::initialize() {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
   // get the File Records service
-  m_fileRecordSvc = svc<IDataProviderSvc>("FileRecordDataSvc", true);
+  m_fileRecordSvc = service("FileRecordDataSvc", true);
   // prepare navigator tool
   m_navigatorTool = tool<IFSRNavigator>( "FSRNavigator" , "FSRNavigator" );
   // incident service
-  m_incSvc = svc<IIncidentSvc> ( "IncidentSvc" , true );
-  
+  m_incSvc = service ( "IncidentSvc" , true );
+
   //check extended file incidents are defined
 #ifdef GAUDI_FILE_INCIDENTS
   m_incSvc->addListener( this, IncidentType::BeginInputFile);
@@ -85,7 +73,7 @@ StatusCode DumpFSR::initialize() {
   warn() << "cannot register with incSvc" << endmsg;
 #endif //GAUDI_FILE_INCIDENTS
 
-  // counting 
+  // counting
   m_current_fname = "";
   m_count_files = 0;
   m_count_events = 0;
@@ -122,9 +110,10 @@ StatusCode DumpFSR::finalize() {
 
   if ( m_dumprequests.find("F") != std::string::npos ) dump_file("Finalize");
 
-  if ( m_ascii_fname != "" ) {
-    write_file();
-  }
+  if ( m_ascii_fname != "" ) write_file();
+
+  m_fileRecordSvc.reset();
+  m_incSvc.reset();
 
   return GaudiAlgorithm::finalize();  // must be called after all other actions
 }
@@ -164,14 +153,13 @@ void DumpFSR::dump_file( std::string txt ) {
   // make an inventory of the FileRecord store
   std::string fileRecordRoot = m_FileRecordName;
   std::vector< std::string > addresses = m_navigatorTool->navigate(fileRecordRoot, m_FSRName);
-  for(std::vector< std::string >::iterator iAddr = addresses.begin() ; 
-      iAddr != addresses.end() ; ++iAddr ){
+  for(auto iAddr = addresses.begin() ; iAddr != addresses.end() ; ++iAddr ){
     if ( msgLevel(MSG::INFO) ) {
       info() << "lu address: " << (*iAddr) << endmsg;
       std::string lumiRecordAddress = *iAddr;
-      // read LumiFSR 
+      // read LumiFSR
       LHCb::LumiFSRs* lumiFSRs = getIfExists<LHCb::LumiFSRs>(m_fileRecordSvc, lumiRecordAddress);
-      if ( NULL == lumiFSRs ) {
+      if ( !lumiFSRs ) {
         Warning("A lumi record was not found").ignore();
         if ( msgLevel(MSG::DEBUG) ) debug() << lumiRecordAddress << " not found" << endmsg ;
       } else {
@@ -183,18 +171,17 @@ void DumpFSR::dump_file( std::string txt ) {
         }
       }
     }
-  }  
+  }
 
   // make an inventory of the FileRecord store (LowLumi)
   std::vector< std::string > loAddresses = m_navigatorTool->navigate(fileRecordRoot, m_LowFSRName);
-  for(std::vector< std::string >::iterator iAddr = loAddresses.begin() ; 
-      iAddr != loAddresses.end() ; ++iAddr ){
-    if ( msgLevel(MSG::INFO) ) {
+  if ( msgLevel(MSG::INFO) ) {
+    for(auto iAddr = loAddresses.begin() ; iAddr != loAddresses.end() ; ++iAddr ){
       info() << "lo address: " << (*iAddr) << endmsg;
       std::string lumiRecordAddress = *iAddr;
-      // read LumiLowFSR 
+      // read LumiLowFSR
       LHCb::LumiFSRs* lumiFSRs = getIfExists<LHCb::LumiFSRs>(m_fileRecordSvc, lumiRecordAddress);
-      if ( NULL == lumiFSRs ) {
+      if ( !lumiFSRs ) {
         Warning("A lumi record was not found").ignore();
         if ( msgLevel(MSG::DEBUG) ) debug() << lumiRecordAddress << " not found" << endmsg ;
       } else {
@@ -206,18 +193,18 @@ void DumpFSR::dump_file( std::string txt ) {
         }
       }
     }
-  }  
-  
+  }
+
   //touch all EventCountFSRs
   std::vector< std::string > evAddresses = m_navigatorTool->navigate(fileRecordRoot, m_EventCountFSRName);
-  for(std::vector< std::string >::iterator iAddr = evAddresses.begin() ; 
-      iAddr != evAddresses.end() ; ++iAddr ){
-    if ( msgLevel(MSG::INFO) ) {
+  if ( msgLevel(MSG::INFO) ) {
+    for(std::vector< std::string >::iterator iAddr = evAddresses.begin() ;
+        iAddr != evAddresses.end() ; ++iAddr ){
       info() << "ev address: " << (*iAddr) << endmsg;
       std::string eventCountRecordAddress = *iAddr;
-      // read EventCountFSR 
+      // read EventCountFSR
       LHCb::EventCountFSR* eventCountFSR = getIfExists<LHCb::EventCountFSR>(m_fileRecordSvc, eventCountRecordAddress);
-      if ( NULL == eventCountFSR ) {
+      if ( !eventCountFSR ) {
         Warning("An EventCount Record was not found").ignore();
         if ( msgLevel(MSG::DEBUG) ) debug() << eventCountRecordAddress << " not found" << endmsg ;
       } else {
@@ -226,18 +213,18 @@ void DumpFSR::dump_file( std::string txt ) {
         info() << eventCountRecordAddress << ": EventCountFSR: " << *eventCountFSR << endmsg;
       }
     }
-  }  
-  
+  }
+
   //touch all TimeSpanFSRs (independently of the LumiFSRs)
   std::vector< std::string > tsAddresses = m_navigatorTool->navigate(fileRecordRoot, m_TimeSpanFSRName);
-  for(std::vector< std::string >::iterator iAddr = tsAddresses.begin() ; 
+  for(std::vector< std::string >::iterator iAddr = tsAddresses.begin() ;
       iAddr != tsAddresses.end() ; ++iAddr ){
     if ( msgLevel(MSG::INFO) ) {
       info() << "ts address: " << (*iAddr) << endmsg;
       std::string timeSpanRecordAddress = *iAddr;
-      // read TimeSpanFSR 
+      // read TimeSpanFSR
       LHCb::TimeSpanFSRs* timeSpanFSRs = getIfExists<LHCb::TimeSpanFSRs>(m_fileRecordSvc, timeSpanRecordAddress);
-      if ( NULL == timeSpanFSRs ) {
+      if ( !timeSpanFSRs ) {
         Warning("A TimeSpan Record was not found").ignore();
         if ( msgLevel(MSG::DEBUG) ) debug() << timeSpanRecordAddress << " not found" << endmsg ;
       } else {
@@ -271,12 +258,11 @@ void DumpFSR::write_file( ) {
       std::string fileRecordRoot = m_FileRecordName;
       // make an inventory of the FileRecord store
       std::vector< std::string > addresses = m_navigatorTool->navigate(fileRecordRoot, m_FSRName);
-      for(std::vector< std::string >::iterator iAddr = addresses.begin() ; 
-          iAddr != addresses.end() ; ++iAddr ){
+      for(auto iAddr = addresses.begin() ; iAddr != addresses.end() ; ++iAddr ){
         std::string lumiRecordAddress = *iAddr;
-        // read LumiFSR 
+        // read LumiFSR
         LHCb::LumiFSRs* lumiFSRs = getIfExists<LHCb::LumiFSRs>(m_fileRecordSvc, lumiRecordAddress);
-        if ( NULL == lumiFSRs ) {
+        if ( !lumiFSRs ) {
           Warning("A lumi record was not found").ignore();
           if ( msgLevel(MSG::DEBUG) ) debug() << lumiRecordAddress << " not found" << endmsg ;
         } else {
@@ -289,12 +275,11 @@ void DumpFSR::write_file( ) {
 
       // make an inventory of the FileRecord store (LowLumi)
       addresses = m_navigatorTool->navigate(fileRecordRoot, m_LowFSRName);
-      for(std::vector< std::string >::iterator iAddr = addresses.begin() ; 
-          iAddr != addresses.end() ; ++iAddr ){
+      for(auto iAddr = addresses.begin() ; iAddr != addresses.end() ; ++iAddr ){
         std::string lumiRecordAddress = *iAddr;
-        // read LumiFSR 
+        // read LumiFSR
         LHCb::LumiFSRs* lumiFSRs = getIfExists<LHCb::LumiFSRs>(m_fileRecordSvc, lumiRecordAddress);
-        if ( NULL == lumiFSRs ) {
+        if ( !lumiFSRs ) {
           Warning("A lumi record was not found").ignore();
           if ( msgLevel(MSG::DEBUG) ) debug() << lumiRecordAddress << " not found" << endmsg ;
         } else {
@@ -304,31 +289,29 @@ void DumpFSR::write_file( ) {
           }
         }
       }
-  
+
       // EventCountFSRs
       std::vector< std::string > evAddresses = m_navigatorTool->navigate(fileRecordRoot, m_EventCountFSRName);
-      for(std::vector< std::string >::iterator iAddr = evAddresses.begin() ; 
-          iAddr != evAddresses.end() ; ++iAddr ){
+      for(auto iAddr = evAddresses.begin() ; iAddr != evAddresses.end() ; ++iAddr ){
         std::string eventCountRecordAddress = *iAddr;
-        // read EventCountFSR 
+        // read EventCountFSR
         LHCb::EventCountFSR* eventCountFSR = getIfExists<LHCb::EventCountFSR>(m_fileRecordSvc, eventCountRecordAddress);
-        if ( NULL == eventCountFSR ) {
+        if ( !eventCountFSR ) {
           Warning("An EventCount Record was not found").ignore();
           if ( msgLevel(MSG::DEBUG) ) debug() << eventCountRecordAddress << " not found" << endmsg ;
         } else {
           // look at the EventCountFSR
           outfile << eventCountRecordAddress << ": EventCountFSR: " << *eventCountFSR << std::endl;
         }
-      }  
-  
+      }
+
       // TimeSpanFSRs
       std::vector< std::string > tsAddresses = m_navigatorTool->navigate(fileRecordRoot, m_TimeSpanFSRName);
-      for(std::vector< std::string >::iterator iAddr = tsAddresses.begin() ; 
-          iAddr != tsAddresses.end() ; ++iAddr ){
+      for(auto iAddr = tsAddresses.begin() ; iAddr != tsAddresses.end() ; ++iAddr ){
         std::string timeSpanRecordAddress = *iAddr;
-        // read TimeSpanFSR 
+        // read TimeSpanFSR
         LHCb::TimeSpanFSRs* timeSpanFSRs = getIfExists<LHCb::TimeSpanFSRs>(m_fileRecordSvc, timeSpanRecordAddress);
-        if ( NULL == timeSpanFSRs ) {
+        if ( !timeSpanFSRs ) {
           Warning("A TimeSpan Record was not found").ignore();
           if ( msgLevel(MSG::DEBUG) ) debug() << timeSpanRecordAddress << " not found" << endmsg ;
         } else {
@@ -339,11 +322,11 @@ void DumpFSR::write_file( ) {
           }
         }
       }
-  
+
       // close output file
       outfile.close();
       always() << "asciifile: " << m_ascii_fname << " - closed" << endmsg;
-      
+
     } else {
       always() << "asciifile: " << m_ascii_fname << " - not opened" << endmsg;
     }
@@ -358,23 +341,23 @@ std::string DumpFSR::fileID() {
 
   // get ODIN
   LHCb::ODIN* odin = getIfExists<LHCb::ODIN> (LHCb::ODINLocation::Default);
-  if( NULL == odin ){
+  if( !odin ){
     // should remain flagged as an error and stop the run
     error() << "ODIN cannot be loaded" << endmsg;
     return event_fname;
   }
   // obtain the run number from ODIN
-  unsigned int run = odin->runNumber();  
+  unsigned int run = odin->runNumber();
   if ( msgLevel(MSG::VERBOSE) ) verbose() << "ODIN RunNumber: " << run << endmsg;
 
-  // registry from raw data - only correct if file catalogue used 
-  IOpaqueAddress* eAddr = 0;
+  // registry from raw data - only correct if file catalogue used
+  IOpaqueAddress* eAddr = nullptr;
   LHCb::RawEvent* rawEvt = getIfExists<LHCb::RawEvent>(m_rawEventLocation);
-  if( NULL == rawEvt ){
+  if( !rawEvt ){
     if ( msgLevel(MSG::VERBOSE) ) verbose() << m_rawEventLocation << " not found" << endmsg ;
     // then try from other bank
     DataObject* event = getIfExists<DataObject>("/Event");
-    if ( NULL == event ){
+    if ( !event ){
       if ( msgLevel(MSG::VERBOSE) ) verbose() << "/Event" << " not found" << endmsg ;
       eAddr = odin->registry()->address();
     } else {
@@ -393,7 +376,7 @@ std::string DumpFSR::fileID() {
     error() << "Registry cannot be loaded from Event" << endmsg;
     return event_fname;
   }
-  if ( msgLevel(MSG::VERBOSE) ) verbose() << "ODIN RunNumber: " << run 
+  if ( msgLevel(MSG::VERBOSE) ) verbose() << "ODIN RunNumber: " << run
                                           << " with RunInfo record: " << event_fname << endmsg;
 
   return event_fname;

@@ -1,4 +1,3 @@
-
 // local
 #include "Event/PackedMCRichHit.h"
 
@@ -7,9 +6,6 @@
 
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-
-// LHCbKernel
-#include "Kernel/RichSmartID32.h"
 
 using namespace LHCb;
 
@@ -63,9 +59,7 @@ void MCRichHitPacker::unpack( const PackedDataVector & phits,
                                        m_pack.position(phit.z) ) );
       hit->setEnergy       ( m_pack.energy(phit.energy)        );
       hit->setTimeOfFlight ( m_pack.time(phit.tof)             );
-      hit->setSensDetID    ( ver>1 ? 
-                             LHCb::RichSmartID((int64_t)phit.sensDetID) :
-                             LHCb::RichSmartID((int32_t)phit.sensDetID) );
+      hit->setSensDetID    ( LHCb::RichSmartID(phit.sensDetID) );
       hit->setHistoryCode  ( phit.history                      );
       if ( -1 != phit.mcParticle )
       {

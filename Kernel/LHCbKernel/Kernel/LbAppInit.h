@@ -25,7 +25,7 @@ class IRndmGenSvc;
  *  @date   2005-12-21
  */
 
-class LbAppInit : public GaudiAlgorithm 
+class LbAppInit : public GaudiAlgorithm
 {
 
 public:
@@ -33,11 +33,9 @@ public:
   /// Standard constructor
   LbAppInit( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~LbAppInit( ); ///< Destructor
-
-  virtual StatusCode initialize();     ///< Algorithm initialization
-  virtual StatusCode execute   ();     ///< Algorithm execution
-  virtual StatusCode finalize  ();     ///< Algorithm finalization
+  StatusCode initialize() override;     ///< Algorithm initialization
+  StatusCode execute   () override;     ///< Algorithm execution
+  StatusCode finalize  () override;     ///< Algorithm finalization
 
 protected:
 
@@ -123,8 +121,8 @@ private:
 
   // Member data
   IRndmEngine*  m_engine;       ///< Pointer to random number engine
-  IRndmGenSvc*  m_randSvc;      ///< Pointer to random number service
-  ICondDBInfo*  m_condDBInfo;   ///< Pointer to Info interface of CondDB service
+  SmartIF<IRndmGenSvc>  m_randSvc;      ///< Pointer to random number service
+  SmartIF<ICondDBInfo>  m_condDBInfo;   ///< Pointer to Info interface of CondDB service
   IEventCounter* m_evtCounter;  ///< Pointer to EventCounter interface
   std::string   m_evtCounterName;  ///< Name of EventCounter tool
   long long  m_eventMax;     ///< Number of events requested (ApplicationMgr.EvtMax)
@@ -136,7 +134,7 @@ private:
   unsigned long long m_memPurgeLimit; ///< Memory limit to trigger a purge of the pools
 
   long long m_minMemDelta; ///< Minimum memory delta to trigger a message
-  
+
 };
 
 #endif // LBAPPINIT_H

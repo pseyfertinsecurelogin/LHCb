@@ -1,4 +1,3 @@
-// $Id: ICaloTrackMatch.h,v 1.12 2008-09-22 00:50:30 odescham Exp $
 // ============================================================================
 #ifndef CALOINTERFACES_ICALOTRACKMATCH_H 
 #define CALOINTERFACES_ICALOTRACKMATCH_H 1
@@ -13,7 +12,6 @@ namespace LHCb{
   class Track         ; // from TrackEvent   package
   class State         ; // from TrackEvent   package
 }
-static const InterfaceID IID_ICaloTrackMatch( "ICaloTrackMatch" , 4 , 0 );
 /** @class ICaloTrackMatch ICaloTrackMatch.h CaloInterfaces/ICaloTrackMatch.h
  *  
  *  The generic interface for matching of 
@@ -38,12 +36,8 @@ static const InterfaceID IID_ICaloTrackMatch( "ICaloTrackMatch" , 4 , 0 );
  *  @date   30/10/2001
  */
 
-class ICaloTrackMatch: 
-  public  virtual IAlgTool ,
-  public  std::binary_function<const LHCb::CaloPosition*,const LHCb::Track*,
-  std::pair<StatusCode,double> >
+struct  ICaloTrackMatch: extend_interfaces<IAlgTool>
 {
- public:
   
   /** useful typedef for result
    *  - it is just a pair of status  and chi2 of the matching  
@@ -53,7 +47,7 @@ class ICaloTrackMatch:
   /** interface identification
    *  @return unique interface identifier 
    */
-  static const InterfaceID& interfaceID()  { return IID_ICaloTrackMatch;};
+  DeclareInterfaceID( ICaloTrackMatch , 5 , 0 );
   
   /** the main matching method  
    *

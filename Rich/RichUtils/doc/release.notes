@@ -1,0 +1,15 @@
+!-----------------------------------------------------------------------------
+! Package     : Rich/RichUtils
+! Responsible : Chris Jones
+! Purpose     : RICH Utility Classes
+!-----------------------------------------------------------------------------
+
+! 2016-09-06 - Chris Jones
+ - First Version.
+ - Split off from RichKernel the small utility classes from the algorithm
+   and tool base classes. Allows for independent development.
+ - Classes in package should be compatible with both the current and upgrade
+   application frameworks. RichKernel (and a future upgrade version) will
+   contain the base classes that will need to be different for the two 
+   frameworks.
+   

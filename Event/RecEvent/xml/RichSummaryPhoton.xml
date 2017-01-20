@@ -14,7 +14,11 @@
 <class 
 	name             = "RichSummaryPhoton"
 	author           = "Chris Jones   Christopher.Rob.Jones@cern.ch" 
-	desc             = "RICH reconstruction summary object representing a single reconstructed Cherenkov photon">
+	desc             = "RICH reconstruction summary object representing a single reconstructed Cherenkov photon"
+    virtual = "FALSE"
+    final = "TRUE"
+    defaultdestructor="FALSE"
+    >
 
         &StlVector;
 

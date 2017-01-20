@@ -22,7 +22,7 @@ DECLARE_TOOL_FACTORY( CaloTriggerAdcsFromCaloRaw )
 CaloTriggerAdcsFromCaloRaw::CaloTriggerAdcsFromCaloRaw( const std::string& type,
                                                         const std::string& name,
                                                         const IInterface* parent )
-  : GaudiTool( type, name , parent )
+: GaudiTool( type, name , parent )
 {
   declareInterface<ICaloTriggerAdcsFromRaw>(this);
   declareProperty( "DoubleScale" , m_doubleScale = false ) ;
@@ -30,10 +30,6 @@ CaloTriggerAdcsFromCaloRaw::CaloTriggerAdcsFromCaloRaw( const std::string& type,
   m_detectorName = name.substr( index, 4 );
   m_data.clear() ;
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloTriggerAdcsFromCaloRaw::~CaloTriggerAdcsFromCaloRaw() {} 
 
 //=============================================================================
 // Initialize function
@@ -67,16 +63,12 @@ StatusCode CaloTriggerAdcsFromCaloRaw::initialize() {
 const std::vector< LHCb::L0CaloAdc > & CaloTriggerAdcsFromCaloRaw::adcs( ) 
 {
   m_data.clear() ;
-
   const CaloVector< LHCb::CaloAdc >& adcs = m_adcs -> adcs( -1 ) ;
-  for ( CaloVector< LHCb::CaloAdc >::const_iterator itAdc = adcs.begin() ; 
-        adcs.end() != itAdc ; ++itAdc ) {
-    LHCb::CaloCellID id = (*itAdc).cellID() ;
-    int adc = l0adcFromAdc( (*itAdc).adc() , id ) ;
-    LHCb::L0CaloAdc tAdc( id , adc ) ;
-    m_data.push_back( tAdc ) ;
-  }
-  
+  std::transform( adcs.begin(), adcs.end(), std::back_inserter(m_data),
+                  [&](const LHCb::CaloAdc& adc) -> LHCb::L0CaloAdc {
+    LHCb::CaloCellID id = adc.cellID() ;
+    return { id , l0adcFromAdc( adc.adc() , id )  };
+  });
   return m_data ;
 }
 
@@ -87,7 +79,7 @@ const std::vector< LHCb::L0CaloAdc > & CaloTriggerAdcsFromCaloRaw::adcs( int )
 }
 
 //=============================================================================
-const std::vector< LHCb::L0CaloAdc > & CaloTriggerAdcsFromCaloRaw::adcs( LHCb::RawBank * )
+const std::vector< LHCb::L0CaloAdc > & CaloTriggerAdcsFromCaloRaw::adcs( const LHCb::RawBank& )
 {
   return adcs( ) ;
 }
@@ -102,7 +94,6 @@ int CaloTriggerAdcsFromCaloRaw::l0adcFromAdc( const int adc ,
   if ( adc < 0 ) return 0 ;
 
   unsigned long calibCte = m_calo -> cellParam( id ).l0Constant() ;
-
   if ( m_doubleScale ) calibCte = calibCte / 2 ;
 
   int theAdc = adc ;

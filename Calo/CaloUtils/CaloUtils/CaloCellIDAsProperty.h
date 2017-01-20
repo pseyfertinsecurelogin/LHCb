@@ -1,4 +1,3 @@
-// $Id: CaloCellIDAsProperty.h,v 1.2 2009-11-28 19:12:40 ibelyaev Exp $
 // ============================================================================
 #ifndef CALOUTILS_CALOCELLIDASPROPERTY_H 
 #define CALOUTILS_CALOCELLIDASPROPERTY_H 1
@@ -17,8 +16,8 @@
 namespace LHCb { class CaloCellID ; }
 // ============================================================================
 /** @file 
- *  Streamer& Parsing function to allos CaloCellID & related classes to be 
- *  used as properteis for Gaudi components 
+ *  Streamer& Parsing function to allow CaloCellID & related classes to be 
+ *  used as properties for Gaudi components 
  *  @see class LHCb::CaloCellID
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2009-09-29
@@ -115,7 +114,7 @@ namespace Gaudi
       const std::string&                 input  ) ;    
     // ========================================================================
     /** parse the map of  { cellID : vector<double> } from the string 
-     *  @param result (OUPUT) the parsed map { cellID : vetcor<double> } 
+     *  @param result (OUPUT) the parsed map { cellID : vector<double> } 
      *  @param input  (INPUT) the input string
      *  @return status code 
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl

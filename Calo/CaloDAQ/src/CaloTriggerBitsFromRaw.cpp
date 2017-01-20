@@ -24,12 +24,6 @@ CaloTriggerBitsFromRaw::CaloTriggerBitsFromRaw( const std::string& type,
   clear();
 }
 
-
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloTriggerBitsFromRaw::~CaloTriggerBitsFromRaw() {}
-
 //=========================================================================
 //  Initialisation
 //=========================================================================
@@ -53,8 +47,8 @@ StatusCode CaloTriggerBitsFromRaw::initialize ( ) {
 
 //-------------------------------------
 void CaloTriggerBitsFromRaw::clear( ) {
-  (m_data.first).clear();
-  (m_data.second).clear();
+  m_data.first.clear();
+  m_data.second.clear();
   m_readSources.clear();
 }
 
@@ -62,18 +56,18 @@ void CaloTriggerBitsFromRaw::cleanData(int feb ) {
   if(feb<0)return;
   LHCb::Calo::FiredCells& prs = m_data.first;
   LHCb::Calo::FiredCells& spd = m_data.second;
-  LHCb::Calo::FiredCells tempPrs ;
   LHCb::Calo::FiredCells tempSpd ;
-  for(LHCb::Calo::FiredCells::iterator ispd = spd.begin();ispd != spd.end();++ispd){
+  for(auto ispd = spd.begin();ispd != spd.end();++ispd){
     if( m_calo->cellParam( *ispd ).cardNumber() == feb)continue;
     tempSpd.push_back( *ispd );
   }
-  for(LHCb::Calo::FiredCells::iterator iprs = prs.begin();iprs!=prs.end();++iprs){
+  LHCb::Calo::FiredCells tempPrs ;
+  for(auto iprs = prs.begin();iprs!=prs.end();++iprs){
     if( m_calo->cellParam( *iprs ).cardNumber() == feb)continue;
     tempPrs.push_back( *iprs );
   }
   clear();
-  m_data = std::make_pair(tempPrs,tempSpd);
+  m_data = std::make_pair( std::move(tempPrs), std::move(tempSpd) );
 }
 
 
@@ -110,12 +104,12 @@ const LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (int sou
   bool found   = false;
   int sourceID     ;
   if(m_getRaw)getBanks();
-  if( NULL == m_banks || 0 == m_banks->size() ){
+  if( !m_banks || 0 == m_banks->size() ){
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "The banks container is empty" << endmsg;
   }else{
-    for( std::vector<LHCb::RawBank*>::const_iterator itB = m_banks->begin(); itB != m_banks->end() ; ++itB ) {
-      sourceID       = (*itB)->sourceID();
+    for( const auto& itB : *m_banks) {
+      sourceID       = itB->sourceID();
       if( source >= 0 && source != sourceID )continue;
       found = true;
       if(checkSrc( sourceID ))continue;
@@ -138,71 +132,65 @@ const LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (int sou
 //  Return appropriate containers (prs.or.spd) for a single bank (given by pointer)
 //=========================================================================
 
-const LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells (  LHCb::RawBank* bank ) {
+const LHCb::Calo::PrsSpdFiredCells& CaloTriggerBitsFromRaw::prsSpdCells ( const LHCb::RawBank& bank ) {
   clear();
-  if( ! getData ( bank ))clear();
+  if( ! getData( bank ))clear();
   return m_data;
 }
 
 //=========================================================================
 //  Main decoding method fill both m_prsCells and m_spdCells containers.
 //=========================================================================
-bool CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
-  if(NULL == bank)return false;
-  if( LHCb::RawBank::MagicPattern != bank->magic() )return false;// do not decode when MagicPattern is bad
-  unsigned int* data = bank->data();
-  int size           = bank->size()/4;  // size in byte
-  int version        = bank->version();
-  int sourceID       = bank->sourceID();
+bool CaloTriggerBitsFromRaw::getData(const  LHCb::RawBank& bank ) {
+  if( LHCb::RawBank::MagicPattern != bank.magic() )return false;// do not decode when MagicPattern is bad
+
+  const unsigned int* data       = bank.begin<unsigned int>();
+  const unsigned int* const end  = bank.end<unsigned int>();
+  int version        = bank.version();
+  int sourceID       = bank.sourceID();
   int lastData       = 0;
 
-  if(0 == size)m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Empty);
+  if (data == end) m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Empty);
 
-  if ( msgLevel( MSG::DEBUG) )debug() << "Decode bank " << bank << " source " << sourceID
-                                      << " version " << version << " size " << size << endmsg;
-
-
+  if ( msgLevel( MSG::DEBUG) )debug() << "Decode bank " << &bank << " source " << sourceID
+                                      << " version " << version << " size " << std::distance(data,end) << endmsg;
 
   // -----------------------------------------------
   // skip detector specific header line
-  if(m_extraHeader){
-    ++data ;
-    --size;
-  }
+  if(m_extraHeader) ++data ;
   // -----------------------------------------------
 
   //=== Offline coding: a CellID, 8 SPD bits, 8 Prs bits
   if ( 1 == version ) {
-    while ( 0 != size ) {
+    while ( data != end ) {
       int spdData = (*data >> 8 ) & 0xFF;
       int prsData = (*data) & 0xFF;
       int lastID  = (*data) >> 16;
-        ++data;
-        --size;
-        for ( unsigned int kk = 0; 8 > kk; ++kk ) {
+      ++data;
+      for ( unsigned int kk = 0; 8 > kk; ++kk ) {
 
-          LHCb::CaloCellID id( lastID+kk );
-          LHCb::CaloCellID spdId( (lastID+kk) & 0x3FFF );
+        LHCb::CaloCellID id( lastID+kk );
+        LHCb::CaloCellID spdId( (lastID+kk) & 0x3FFF );
 
-          if ( spdData & 1 ) m_data.second.push_back( spdId);
-          if ( prsData & 1 ) m_data.first.push_back( id );
+        if ( spdData & 1 ) m_data.second.push_back( spdId);
+        if ( prsData & 1 ) m_data.first.push_back( id );
 
-
-          //event dump
-          if ( msgLevel( MSG::VERBOSE) ) {
-            verbose() << " |  SourceID : " << sourceID
+        //event dump
+        if ( msgLevel(MSG::VERBOSE) ) {
+          verbose() << " |  SourceID : " << sourceID
                     << " |  FeBoard : " << m_calo->cardNumber(id)
                     << " |  CaloCell " << id
                     << " |  valid ? " << m_calo->valid(id)
                     << " |  Prs/Spd  = " << (prsData & 1) << "/" << (spdData & 1) << endmsg;
-          }
-          spdData = spdData >> 1;
-          prsData = prsData >> 1;
         }
+
+        spdData = spdData >> 1;
+        prsData = prsData >> 1;
+      }
     }
     //=== Compact coding: a CellID, and its Prs/SPD bits
   } else if ( 2 == version ) {
-    while ( 0 != size ) {
+    while ( data != end ) {
       int word = *data;
       while ( 0 != word ) {
         int item = word & 0xFFFF;
@@ -231,7 +219,6 @@ bool CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
         }
       }
       ++data;
-      --size;
     }
     //==== Codage for 1 MHz
   } else if ( 3 == version ) {
@@ -247,14 +234,13 @@ bool CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
     int lenTrig  = 0;
 
     int prevCard = -1;
-    while( 0 != size ) {
+    while( data != end ) {
       int word = *data++;
-      size--;
       lenTrig = word & 0x7F;
       lenAdc  = (word >> 7 ) & 0x7F;
       if ( msgLevel( MSG::DEBUG) ) {
         debug() << format( "  Header data %8x size %4d lenAdc%3d lenTrig%3d",
-                           word, size, lenAdc, lenTrig )
+                           word, std::distance(data,end), lenAdc, lenTrig )
                 << endmsg;
       }
       int code  = (word >>14 ) & 0x1FF;
@@ -286,7 +272,6 @@ bool CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
       while ( 0 < lenTrig ) {
         if ( 32 == offset ) {
           lastData = *data++;
-          size--;
           offset = 0;
         }
         unsigned int num   = ( lastData >> offset ) & 0x3F;
@@ -320,7 +305,6 @@ bool CaloTriggerBitsFromRaw::getData(  LHCb::RawBank* bank ) {
       }
 
       int nSkip = (lenAdc+1 ) / 2;  // Length in number of words
-      size     -= nSkip;
       data     += nSkip;
     } //== DataSize
     // Check All cards have been read

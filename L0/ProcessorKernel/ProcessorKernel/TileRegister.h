@@ -113,7 +113,7 @@ namespace L0Muon {
         (used to build the L0MuonKernel.xml configuration file
          for L0Muon emulation and decoding)
     */
-    std::string toXML(std::string tab="");
+    std::string toXML(std::string tab="") override;
 
   private:
 

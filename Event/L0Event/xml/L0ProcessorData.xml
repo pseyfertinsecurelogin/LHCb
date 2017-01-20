@@ -7,7 +7,10 @@
     <class 
       author="Olivier Deschamps"
       desc="This class represents the L0 processors data sent to L0DU"
-      name="L0ProcessorData">
+      name="L0ProcessorData"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
+      >
 
       <base name="KeyedObject&lt;int&gt;"/>
        &KeyedObject;

@@ -1,5 +1,4 @@
-// $Id: UnpackCaloHypo.h,v 1.2 2009-11-07 12:20:39 jonrob Exp $
-#ifndef UNPACKCALOHYPO_H 
+#ifndef UNPACKCALOHYPO_H
 #define UNPACKCALOHYPO_H 1
 
 // from Gaudi
@@ -8,23 +7,21 @@
 #include "Event/PackedCaloHypo.h"
 
 /** @class UnpackCaloHypo UnpackCaloHypo.h
- *  
+ *
  *  Unpack CaloHypos
  *
  *  @author Olivier Callot
  *  @date   2008-11-14
  */
-class UnpackCaloHypo : public GaudiAlgorithm 
+class UnpackCaloHypo : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   UnpackCaloHypo( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~UnpackCaloHypo(); ///< Destructor
-
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 

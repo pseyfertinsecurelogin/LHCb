@@ -1,5 +1,4 @@
 // Include files
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/Time.h"
 
@@ -20,9 +19,7 @@ DECLARE_SERVICE_FACTORY(CondDBDispatcherSvc)
 // Standard constructor, initializes variables
 //=============================================================================
 CondDBDispatcherSvc::CondDBDispatcherSvc( const std::string& name, ISvcLocator* svcloc ):
-  base_class(name,svcloc),
-  m_mainDB(0),
-  m_alternatives()
+  base_class(name,svcloc)
 {
   declareProperty("MainAccessSvc", m_mainAccessSvcName = "CondDBAccessSvc" );
   declareProperty("Alternatives",  m_alternativesDeclarationMap            );
@@ -33,49 +30,41 @@ CondDBDispatcherSvc::CondDBDispatcherSvc( const std::string& name, ISvcLocator* 
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-CondDBDispatcherSvc::~CondDBDispatcherSvc() {}
-
-//=============================================================================
 // initialize
 //=============================================================================
 StatusCode CondDBDispatcherSvc::initialize(){
   StatusCode sc = base_class::initialize();
   if (sc.isFailure()) return sc;
 
-  MsgStream log(msgSvc(), name() );
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "Initialize" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "Initialize" << endmsg;
 
   // locate the main access service
-  sc = service(m_mainAccessSvcName,m_mainDB,true);
-  if (  !sc.isSuccess() ) {
-    log << MSG::ERROR << "Could not locate " << m_mainAccessSvcName << endmsg;
-    return sc;
+  m_mainDB = service(m_mainAccessSvcName,true);
+  if (  !m_mainDB ) {
+    error() << "Could not locate " << m_mainAccessSvcName << endmsg;
+    return StatusCode::FAILURE;
   }
 
   // locate all the alternative AccessSvcs
-  std::map<std::string,std::string>::iterator decl;
-  for ( decl = m_alternativesDeclarationMap.begin(); decl != m_alternativesDeclarationMap.end(); ++decl ) {
-    const std::string &altPath = decl->first;
-    const std::string &svcName = decl->second;
+  for (const auto& decl : m_alternativesDeclarationMap) {
+    const std::string &altPath = decl.first;
+    const std::string &svcName = decl.second;
 
     if ( m_alternatives.find(altPath) != m_alternatives.end() ) {
-      log << MSG::ERROR << "More than one alternative for path " << altPath << endmsg;
+      error() << "More than one alternative for path " << altPath << endmsg;
       return StatusCode::FAILURE;
     }
 
-    ICondDBReader *svcPtr;
-    sc = service(svcName,svcPtr,true);
-    if (  !sc.isSuccess() ) {
-      log << MSG::ERROR << "Could not locate " << svcName << endmsg;
-      return sc;
+    auto svcPtr = service<ICondDBReader>(svcName,true);
+    if (  !svcPtr ) {
+      error() << "Could not locate " << svcName << endmsg;
+      return StatusCode::FAILURE;
     }
 
-    m_alternatives[altPath] = svcPtr;
-    if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-      log << MSG::DEBUG << "Retrieved '" << svcName << "' (for path '" << altPath << "')" << endmsg;
+    m_alternatives[altPath] = std::move(svcPtr);
+    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+      debug() << "Retrieved '" << svcName << "' (for path '" << altPath << "')" << endmsg;
 
   }
 
@@ -86,19 +75,10 @@ StatusCode CondDBDispatcherSvc::initialize(){
 // finalize
 //=============================================================================
 StatusCode CondDBDispatcherSvc::finalize(){
-  MsgStream log(msgSvc(), name() );
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "Finalize" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "Finalize" << endmsg;
 
-  if (m_mainDB) {
-    m_mainDB->release();
-    m_mainDB = 0;
-  }
-
-  std::map<std::string,ICondDBReader*>::iterator alt;
-  for ( alt = m_alternatives.begin(); alt != m_alternatives.end(); ++alt ) {
-    if (alt->second) alt->second->release();
-  }
+  m_mainDB.reset();
   m_alternatives.clear();
 
   return base_class::finalize();
@@ -118,21 +98,18 @@ ICondDBReader::IOVList CondDBDispatcherSvc::getIOVs(const std::string & path, co
 //  find the appropriate alternative
 //=========================================================================
 ICondDBReader *CondDBDispatcherSvc::alternativeFor(const std::string &path) const {
-  MsgStream log(msgSvc(), name() );
-
-  if( UNLIKELY( log.level() <= MSG::VERBOSE ) )
-    log << MSG::VERBOSE << "Get alternative DB for '" << path << "'" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
+    verbose() << "Get alternative DB for '" << path << "'" << endmsg;
   if ( path.empty() || (path == "/") ) {
-    if( UNLIKELY( log.level() <= MSG::VERBOSE ) )
-      log << MSG::VERBOSE << "Root node: using '" << m_mainAccessSvcName << "'" << endmsg;
-    return m_mainDB;
+    if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
+      verbose() << "Root node: using '" << m_mainAccessSvcName << "'" << endmsg;
+    return m_mainDB.get();
   }
 
   // loop over alternatives
-  std::map<std::string,ICondDBReader*>::const_reverse_iterator alt;
-  for ( alt = m_alternatives.rbegin(); alt != m_alternatives.rend(); ++alt ) {
-    if( UNLIKELY( m_outputLevel <= MSG::VERBOSE ) ) {
-      log << MSG::VERBOSE << "Comparing with " << alt->first << endmsg;
+  for (auto alt = m_alternatives.rbegin(); alt != m_alternatives.rend(); ++alt ) {
+    if( UNLIKELY( msgLevel(MSG::VERBOSE) ) ) {
+      verbose() << "Comparing with " << alt->first << endmsg;
     }
     // FIXME: (MCl) wrong logic
     //     path=/Conditions/Velo/AlignmentCatalog.xml
@@ -140,21 +117,17 @@ ICondDBReader *CondDBDispatcherSvc::alternativeFor(const std::string &path) cons
     //     Should not match
     if ( ( path.size() >= alt->first.size() ) &&
          ( path.substr(0,alt->first.size()) == alt->first ) ){
-      if( UNLIKELY( m_outputLevel <= MSG::VERBOSE ) ) {
-        IService *svc = dynamic_cast<IService*>(alt->second);
-        log << MSG::VERBOSE << "Using '" ;
-        if (svc) log << svc->name();
-        else log << "unknown";
-        log << "'" << endmsg;
+      if( UNLIKELY( msgLevel(MSG::VERBOSE) ) ) {
+        auto svc = alt->second.as<IService>();
+        verbose() << "Using '" << ( svc ? svc->name() : "unknown" ) << "'" << endmsg;
       }
-
       return alt->second;
     }
   }
 
-  if( UNLIKELY( log.level() <= MSG::VERBOSE ) )
-    log << MSG::VERBOSE << "Not found: using '" << m_mainAccessSvcName << "'" << endmsg;
-  return m_mainDB;
+  if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
+    verbose() << "Not found: using '" << m_mainAccessSvcName << "'" << endmsg;
+  return m_mainDB.get();
 }
 
 //=========================================================================
@@ -212,9 +185,8 @@ StatusCode CondDBDispatcherSvc::getChildNodes (const std::string &path,
   if (sc.isFailure()) return sc;
 
   // Find alternatives for subfolders of the path.
-  std::map<std::string,ICondDBReader*>::reverse_iterator alt;
-  std::string::size_type path_size = path.size();
-  for ( alt = m_alternatives.rbegin(); alt != m_alternatives.rend(); ++alt ) {
+  auto path_size = path.size();
+  for ( auto alt = m_alternatives.rbegin(); alt != m_alternatives.rend(); ++alt ) {
     // check if the path for the alternative is a subfolder of the required path
     // i.e. alt->first should be = path + '/' + extra
     if ( ( alt->first.size() > (path_size+1) ) && // it must be long enough
@@ -268,12 +240,8 @@ bool CondDBDispatcherSvc::isFolderSet(const std::string &path) {
 //=========================================================================
 void CondDBDispatcherSvc::disconnect() {
   // loop over alternatives
-  std::map<std::string,ICondDBReader*>::const_iterator alt;
-  for ( alt = m_alternatives.begin(); alt != m_alternatives.end(); ++alt ) {
-    alt->second->disconnect();
-  }
-  if (m_mainDB)
-    m_mainDB->disconnect();
+  for (auto&  alt : m_alternatives) alt.second->disconnect();
+  if (m_mainDB) m_mainDB->disconnect();
 }
 
 //=========================================================================
@@ -282,13 +250,8 @@ void CondDBDispatcherSvc::disconnect() {
 void CondDBDispatcherSvc::defaultTags ( std::vector<LHCb::CondDBNameTagPair>& tags ) const {
   // first add the main db
   m_mainDB->defaultTags(tags);
-
   // loop over alternatives
-  std::map<std::string,ICondDBReader*>::const_iterator alt;
-  for ( alt = m_alternatives.begin(); alt != m_alternatives.end(); ++alt ) {
-    alt->second->defaultTags(tags);
-  }
+  for (auto& alt : m_alternatives) alt.second->defaultTags(tags);
 }
-
 
 //=============================================================================

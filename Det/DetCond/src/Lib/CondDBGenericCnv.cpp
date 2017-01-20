@@ -1,5 +1,4 @@
 // Include files
-#include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/Time.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/IValidity.h"
@@ -29,10 +28,6 @@
 CondDBGenericCnv::CondDBGenericCnv(ISvcLocator* svc,const CLID& clid):
   Converter(CONDDB_StorageType,clid,svc)
 {}
-//=============================================================================
-// Destructor
-//=============================================================================
-CondDBGenericCnv::~CondDBGenericCnv() = default;
 
 //=========================================================================
 // Initialization

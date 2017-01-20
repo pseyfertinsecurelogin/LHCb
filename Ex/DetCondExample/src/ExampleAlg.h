@@ -1,4 +1,4 @@
-#ifndef EXAMPLEALG_H 
+#ifndef EXAMPLEALG_H
 #define EXAMPLEALG_H 1
 
 // Include files
@@ -7,28 +7,28 @@
 
 
 /** @class ExampleAlg ExampleAlg.h
- *  
+ *
  *  Example of an algorithm using conditions.
  *
  *  @author Marco Clemencic
  *  @date   2006-01-22
  */
 class ExampleAlg : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   ExampleAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~ExampleAlg( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
 
   /// Cached pointer to Condition
   Condition *m_myCond1;
   /// Cached pointer to Condition
-  Condition *m_myCond2;  
+  Condition *m_myCond2;
   /// Cached pointer to AlignmentCondition
   AlignmentCondition *m_myAlignment;
 
@@ -43,6 +43,6 @@ private:
   double           m_cond1;
   /// Values taken from Cond2
   std::vector<int> m_cond2;
-  
+
 };
 #endif // EXAMPLEALG_H

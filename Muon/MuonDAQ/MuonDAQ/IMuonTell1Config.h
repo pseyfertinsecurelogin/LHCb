@@ -11,10 +11,8 @@
  *  @author 
  *  @date   2008-02-29
  */
-class IMuonTell1Config : public extend_interfaces<IAlgTool> {
-public: 
+struct IMuonTell1Config : extend_interfaces<IAlgTool> {
   DeclareInterfaceID(  IMuonTell1Config, 2, 0 );
-
   virtual StatusCode configTell1(int Tell1) const = 0;
 };
 

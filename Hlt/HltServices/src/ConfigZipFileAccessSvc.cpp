@@ -17,17 +17,6 @@ using ConfigZipFileAccessSvc_details::ZipFile;
 // Factory implementation
 DECLARE_COMPONENT( ConfigZipFileAccessSvc )
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-ConfigZipFileAccessSvc::ConfigZipFileAccessSvc( const string& name,
-                                                ISvcLocator* pSvcLocator )
-    : ConfigArchiveAccessSvc( name, pSvcLocator ), m_file{ nullptr }
-{
-    declareProperty( "File", m_name = "" );
-    declareProperty( "Mode", m_mode = "ReadOnly" );
-}
-
 IArchive* ConfigZipFileAccessSvc::file() const
 {
     if ( !m_file ) {

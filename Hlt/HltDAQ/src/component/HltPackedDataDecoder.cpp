@@ -20,8 +20,6 @@ HltPackedDataDecoder::HltPackedDataDecoder(const std::string& name,
                                            ISvcLocator* pSvcLocator)
   : HltRawBankDecoderBase(name, pSvcLocator)
 {
-  declareProperty("EnableChecksum", m_enableChecksum = false);
-  declareProperty("ContainerMap", m_containerMap);
   // The default m_sourceID=0 triggers a warning in HltRawBankDecoderBase::initialize
   // Since we only care about HLT2 persistence, set it explicitly:
   m_sourceID = kSourceID_Hlt2;
@@ -159,7 +157,7 @@ StatusCode HltPackedDataDecoder::execute() {
       continue;
     }
     std::string containerPath = locationIt->second;
-    
+
     if (UNLIKELY(msgLevel(MSG::DEBUG))) {
       debug() << "Reading " << storedObjectSize << " bytes "
               << "for object with CLID " << classID << " into TES location "

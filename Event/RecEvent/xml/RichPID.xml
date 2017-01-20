@@ -11,18 +11,18 @@
   * date:   2004-06-23                                                        *
   ************************************************************************* -->
 
-<class 
+<class
 	name             = "RichPID"
-	author           = "Chris Jones   Christopher.Rob.Jones@cern.ch" 
-	desc             = "RICH particle identification information for a given track object" 
-	id               = "12402" 
-	keyedContTypeDef = "TRUE" 
-      	location         = "Rec/Rich/PIDs"  
+	author           = "Chris Jones   Christopher.Rob.Jones@cern.ch"
+	desc             = "RICH particle identification information for a given track object"
+	id               = "12402"
+	keyedContTypeDef = "TRUE"
+      	location         = "Rec/Rich/PIDs"
 	stdVectorTypeDef = "TRUE">
 
         <base name="KeyedObject&lt;int&gt;" virtual="FALSE"/>
         &KeyedObject;
-	
+
         <import name = "Kernel/RichParticleIDType"      />
         <import name = "Kernel/RichRadiatorType"        />
         <import name = "Event/Track"                    />
@@ -35,7 +35,7 @@
         <location name="HLTGlobal"        place="Rec/Rich/HltGlobalPIDs"/>
         <location name="HLTLocal"         place="Rec/Rich/HltLocalPIDs"/>
 
-	<constructor 
+	<constructor
 		desc     = "Constructor from data fields"
                 initList = "m_pidResultCode(0),m_particleLLValues(dllValues),m_track(track)">
                 <arg const="TRUE" inout="BYVALUE" name="pid"       type="Rich::ParticleIDType"/>
@@ -46,41 +46,40 @@
                 </code>
         </constructor>
 
-	<constructor 
-		desc     = "Copy constructor. Creates a new RichPID object with the same pid information" 
+	<constructor
+		desc     = "Copy constructor. Creates a new RichPID object with the same pid information"
 		initList = "KeyedObject&lt;int&gt;(), m_pidResultCode(pid.m_pidResultCode), m_particleLLValues(pid.m_particleLLValues), m_track(pid.m_track)">
                 <arg const="TRUE" name="pid" type="LHCb::RichPID"/>
       	</constructor>
 
-        <method 
+        <method
 		name  = "particleRawProb"
-		const = "TRUE" 
+		const = "TRUE"
                 type  = "float"
 		desc  = "Returns the raw gaussian probability value for a given particle species">
-                <arg const="TRUE" inout="BYVALUE" name="type" type="Rich::ParticleIDType"/>  
+                <arg const="TRUE" inout="BYVALUE" name="type" type="Rich::ParticleIDType"/>
                 <code>
-                   const float dll = particleDeltaLL(type);
+                   const auto dll = particleDeltaLL(type);
                    return (float)( dll &gt; 0 ? 1.0 - (float)gsl_sf_erf(std::sqrt(dll)) : 1.0 );
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "particleNormProb"
-		const = "TRUE" 
+		const = "TRUE"
                 type  = "float"
 		desc  = "Returns the normalised gaussian probability value for a given particle species">
                 <arg const="TRUE" inout="BYVALUE" name="type" type="Rich::ParticleIDType"/>
                 <code>
                    float norm = 0;
-                   for ( int iPID = 0; iPID &lt; Rich::NParticleTypes; ++iPID ) 
-                       { norm += particleRawProb( static_cast&lt;Rich::ParticleIDType&gt;(iPID) ); }
+                   for ( const auto pid : Rich::Particles() ) { norm += particleRawProb(pid); }
                    return ( norm &gt; 0 ? particleRawProb(type)/norm : 0 );
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "particleDeltaLL"
-                const = "TRUE" 
+                const = "TRUE"
                 type  = "float"
                 desc  = "Returns the delta LL value for a given hypothesis">
                 <arg const="TRUE" inout="BYVALUE" name="type" type="Rich::ParticleIDType"/>
@@ -89,7 +88,7 @@
                 </code>
         </method>
 
-        <method 
+        <method
                 name = "setParticleDeltaLL"
                 desc = "Sets the particle delta LL value for the given hypothesis">
                 <arg const="TRUE" inout="BYVALUE" name="type" type="Rich::ParticleIDType"/>
@@ -99,9 +98,9 @@
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "traversedRadiator"
-                const = "TRUE" 
+                const = "TRUE"
                 type  = "bool"
                 desc  = "Boolean method to check if the given radiator was used to create this PID result (i.e. if the associated track was found to traverse the radiator in a manner that would have produced detectable Cherenkov photons">
                 <arg const="TRUE" inout="BYVALUE" name="radiator" type="Rich::RadiatorType"/>
@@ -124,20 +123,20 @@
                 <arg const="TRUE" inout="BYVALUE" name="flag" type="bool"/>
         </method>
 
-        <method 
+        <method
                 name  = "nSigmaSeparation"
-                const = "TRUE" 
+                const = "TRUE"
                 type  = "float"
                 desc  = "Returns the signed sigma separation beween 2 particle hypotheses (first relative to last)">
                 <arg const="TRUE" inout="BYVALUE" name="firstPart" type="Rich::ParticleIDType"/>
                 <arg const="TRUE" inout="BYVALUE" name="lastPart" type="Rich::ParticleIDType"/>
                 <code>
-                   const float dLL = m_particleLLValues[lastPart]-m_particleLLValues[firstPart]; 
-                   return (float) ( std::sqrt( fabs(2.0*dLL) ) * (dLL&gt;0 ? 1.0 : -1.0 ) );
+                   const auto dLL = m_particleLLValues[lastPart]-m_particleLLValues[firstPart];
+                   return (float) ( std::sqrt( fabs(2.0f*dLL) ) * (dLL&gt;0 ? 1.0f : -1.0f ) );
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "isConsistentNSigma"
                 const = "TRUE"
                 type  = "bool"
@@ -149,16 +148,16 @@
                 </code>
         </method>
 
-        <method 
+        <method
                 name = "pidType"
                 type  = "std::string"
-                const = "TRUE" 
+                const = "TRUE"
                 desc  = "Textual representation of PID type"
         />
 
-        <method 
-                name  = "bestParticleID" 
-                const = "TRUE" 
+        <method
+                name  = "bestParticleID"
+                const = "TRUE"
                 type  = "Rich::ParticleIDType"
                 desc  = "The best Particle ID">
                 <code>
@@ -166,23 +165,23 @@
                    return (Rich::ParticleIDType)( ((m_pidResultCode &amp; packedBestParticleIDMask) &gt;&gt; packedBestParticleIDBits) - 1 );
                 </code>
         </method>
-          
-        <method 
-                desc = "set the best particle ID" 
+
+        <method
+                desc = "set the best particle ID"
                 name = "setBestParticleID">
                 <arg const="TRUE" inout="BYVALUE" name="type" type="Rich::ParticleIDType"/>
                 <code>
-                    // Shift bit-packed representation by +1 to start numbering from 0 
-                    const unsigned int val = (unsigned int)type + 1;
+                    // Shift bit-packed representation by +1 to start numbering from 0
+                    const auto val = (unsigned int)type + 1;
                     m_pidResultCode &amp;= ~packedBestParticleIDMask;
                     m_pidResultCode |= ((((unsigned int)val) &lt;&lt; packedBestParticleIDBits) &amp; packedBestParticleIDMask);
                 </code>
         </method>
 
-        <attribute 
-                 desc = "Bit-packed information (Best particle ID and History) for the RichPID result" 
+        <attribute
+                 desc = "Bit-packed information (Best particle ID and History) for the RichPID result"
                  name = "pidResultCode"
-                 init = "0"  
+                 init = "0"
                  type = "bitfield">
                 <bitfield desc="The best Particle ID, bit-packed into the history word. DO NOT access this field directly, instead use the provided accessor and setter methods" length="4" name="packedBestParticleID" getMeth="FALSE" setMeth="FALSE"  />
                 <bitfield desc="Information from aerogel was used to form this PID result"                   length="1" name="usedAerogel"            />
@@ -201,30 +200,30 @@
                 <bitfield desc="The deuteron hypothesis is above threshold in at least one active radiator"  length="1" name="deuteronHypoAboveThres" />
         </attribute>
 
-        <attribute 
+        <attribute
                 name = "particleLLValues"
-                desc = "Vector of particle hypothesis log likelihood values" 
+                desc = "Vector of particle hypothesis log likelihood values"
                 type = "std::vector&lt;float&gt;"
                 init = "Rich::NParticleTypes,0"
         />
 
-        <relation 
+        <relation
                 name    = "track"
                 type    = "LHCb::Track"
                 desc    = "Associated reconstructed Track"
         />
 
-        <method 
-          name    = "fillStream" 
+        <method
+          name    = "fillStream"
           desc    = "Print this RichPID data object in a human readable way"
-          type    = "std::ostream&amp;" 
-          virtual = "FALSE" 
+          type    = "std::ostream&amp;"
+          override = "TRUE"
           const   = "TRUE">
-          <arg 
-            type = "std::ostream" 
+          <arg
+            type = "std::ostream"
             name = "s"/>
         </method>
-       
+
 </class>
 
 </package>

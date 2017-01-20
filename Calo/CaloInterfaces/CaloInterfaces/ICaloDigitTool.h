@@ -1,5 +1,3 @@
-// $Id: ICaloDigitTool.h,v 1.9 2008-09-22 00:50:30 odescham Exp $
-// ============================================================================
 #ifndef CALOINTERFACES_ICALODIGITTOOL_H
 #define CALOINTERFACES_ICALODIGITTOOL_H 1
 // Include files
@@ -8,10 +6,9 @@
 // GaudiKernel
 #include "GaudiKernel/IAlgTool.h"
 namespace LHCb{
-  class    CaloDigit                ;  
+  class    CaloDigit                ;
 }
 
-static const InterfaceID IID_ICaloDigitTool( "ICaloDigitTool" , 2 , 0 );
 
 /** @class ICaloDigitTool ICaloDigitTool.h CaloInterfaces/ICaloDigitTool.h
  *
@@ -24,17 +21,12 @@ static const InterfaceID IID_ICaloDigitTool( "ICaloDigitTool" , 2 , 0 );
  *  @date   30/10/2001
  */
 
-class ICaloDigitTool:
-  public virtual IAlgTool ,
-  public std::unary_function<LHCb::CaloDigit*,StatusCode>
+struct ICaloDigitTool: extend_interfaces<IAlgTool>
 {
-
-public:
-
   /** static interface identification
    *  @return unique interface identifier
    */
-  static const InterfaceID& interfaceID() { return IID_ICaloDigitTool; };
+  DeclareInterfaceID( ICaloDigitTool , 3 , 0 );
 
   /** The main processing method
    *  @param digit pointer to CaloCluster object to be processed
@@ -47,9 +39,6 @@ public:
    *  @return status code
    */
   virtual StatusCode operator() ( LHCb::CaloDigit* digit ) const = 0 ;
-  
- protected:
-  
 
 };
 

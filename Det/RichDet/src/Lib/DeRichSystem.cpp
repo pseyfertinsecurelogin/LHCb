@@ -9,16 +9,13 @@
  */
 //=============================================================================
 
-// STL
-#include <algorithm>
-
 // Gaudi
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
-// RichKernel
-#include "RichKernel/RichHPDIdentifier.h"
+// RichUtils
+#include "RichUtils/RichHPDIdentifier.h"
 
 // LHCbKernel
 #include "Kernel/RichSmartID32.h"
@@ -43,11 +40,6 @@ const CLID CLID_DERichSystem = 12005;  // User defined
 //=============================================================================
 DeRichSystem::DeRichSystem( const std::string & name ) : DeRichBase(name) { }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-DeRichSystem::~DeRichSystem() { }
-
 // Retrieve Pointer to class defininition structure
 const CLID& DeRichSystem::classID() { return CLID_DERichSystem; }
 
@@ -58,14 +50,12 @@ StatusCode DeRichSystem::initialize()
 {
   setMyName("DeRichSystem");
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Initialize " << name() << endmsg;
+  _ri_debug << "Initialize " << name() << endmsg;
 
   // get the version number
   if ( exists("systemVersion") )
     m_version = param<int>("systemVersion");
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "System version:" << systemVersion() << endmsg;
+  _ri_debug << "System version:" << systemVersion() << endmsg;
 
   // get rich detectors
   std::vector<std::string> deRichLocs = getDeRichLocations();
@@ -97,33 +87,37 @@ StatusCode DeRichSystem::initialize()
   }
 
   // loop over detectors and conditions to set things up
-  for ( unsigned int i = 0; i < deRichLocs.size(); ++i)
+  for ( unsigned int i = 0; i < deRichLocs.size(); ++i )
   {
     m_detNumConds[(Rich::DetectorType)i] = detCondNames[i];
 
     updMgrSvc()->registerCondition( this,
                                     condition(detCondNames[i]).path(),
                                     &DeRichSystem::buildPDMappings );
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Registered:" << condition(detCondNames[i]).path() << endmsg;
+    _ri_debug << "Registered:" << condition(detCondNames[i]).path() << endmsg;
 
-    if ( systemVersion() == 1 )
+    if ( systemVersion() == 1)
     {
       m_inactivePDConds[(Rich::DetectorType)i] = inactiveCondNames[i];
       updMgrSvc()->registerCondition( this,
                                       condition(inactiveCondNames[i]).path(),
                                       &DeRichSystem::buildPDMappings );
-      if ( msgLevel(MSG::DEBUG) )
-        debug() << "Registered:" << condition(inactiveCondNames[i]).path() << endmsg;
+      _ri_debug << "Registered:" << condition(inactiveCondNames[i]).path() << endmsg;
     }
+  }
+
+  // Load the RICH detectors
+  for ( const auto rich : Rich::detectors() )
+  {
+    SmartDataPtr<DeRich> deR( dataSvc(), DeRichLocations::location(rich) );
+    m_deRich[rich] = deR;
   }
 
   // Run first update
   const StatusCode sc = updMgrSvc()->update(this);
   if ( sc.isFailure() ) error() << "Failed to update mappings" << endmsg;
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "DeRichSystem initialized " << endmsg;
+  _ri_debug << "DeRichSystem initialized " << endmsg;
 
   return sc;
 }
@@ -147,38 +141,11 @@ bool DeRichSystem::safeMapFill( const SOURCE& source, const TARGET& target, MAP&
 }
 
 //=========================================================================
-// Access on demand the Detector Elements for Rich1 and Rich2
-//=========================================================================
-DetectorElement * DeRichSystem::deRich( const Rich::DetectorType rich ) const
-{
-  const auto richElement = m_deRich.find(rich);
-
-  if ( richElement != m_deRich.end() )
-  {
-    if ( !m_deRich[rich] )
-    {
-      SmartDataPtr<DetectorElement> deR( dataSvc(), DeRichLocations::location(rich) );
-      m_deRich[rich] = deR;
-    }
-
-    return richElement->second;
-
-  }
-  else
-  {
-    throw GaudiException( "Did not find Rich Detector","DeRichSystem::deRich",
-                          StatusCode::FAILURE );
-  }
-  return nullptr;
-}
-
-//=========================================================================
 //  buildPDMappings
 //=========================================================================
 StatusCode DeRichSystem::buildPDMappings()
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Update triggered for PD numbering maps" << endmsg;
+  _ri_debug << "Update triggered for PD numbering maps" << endmsg;
 
   // clear maps and containers
   m_soft2hard.clear();
@@ -210,9 +177,9 @@ StatusCode DeRichSystem::buildPDMappings()
   m_firstL1CopyN = 0;
 
   // Fill the maps for each RICH
-  for ( const auto& rich : m_deRich )
+  for ( const auto rich : Rich::detectors() )
   {
-    const StatusCode sc = fillMaps ( rich.first );
+    const StatusCode sc = fillMaps( rich );
     if ( !sc ) { return sc; }
   }
 
@@ -224,8 +191,7 @@ StatusCode DeRichSystem::buildPDMappings()
 //=========================================================================
 StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Building Mappings for " << rich << endmsg;
+  _ri_debug << "Building Mappings for " << rich << endmsg;
 
   std::string str_NumberOfPDs              = "NumberOfHPDs";
   std::string str_PDSmartIDs               = "HPDSmartIDs";
@@ -267,8 +233,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   }
 
   // load conditions
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Loading Conditions from " <<  m_detNumConds[rich] << endmsg;
+  _ri_debug << "Loading Conditions from " <<  m_detNumConds[rich] << endmsg;
   const auto numbers = condition(m_detNumConds[rich]);
   if ( msgLevel(MSG::DEBUG) )
     debug() << m_detNumConds[rich] << " since:" << numbers->validSince().format(true)
@@ -278,8 +243,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   if ( systemVersion() == 1 )
   {
     inactives = condition(m_inactivePDConds[rich]);
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Inactive list since:" << inactives->validSince().format(true)
+    _ri_debug << "Inactive list since:" << inactives->validSince().format(true)
               << " till:" << inactives->validTill().format(true) << endmsg;
   }
 
@@ -289,51 +253,42 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
 
   // number of PDs
   const unsigned int nPDs = numbers->param<int>(str_NumberOfPDs);
-  if ( msgLevel(MSG::VERBOSE) )
-    verbose() << "Condition " << str_NumberOfPDs << " = " << nPDs << endmsg;
+  _ri_verbo << "Condition " << str_NumberOfPDs << " = " << nPDs << endmsg;
 
   // vector of PD RichSmartIDs
   const auto & softIDs = numbers->paramVect<int>(str_PDSmartIDs);
-  if ( msgLevel(MSG::VERBOSE) )
-    verbose() << "Condition " << str_PDSmartIDs << " = " << softIDs << endmsg;
+  _ri_verbo << "Condition " << str_PDSmartIDs << " = " << softIDs << endmsg;
 
   // vector of PD hardware IDs
   const auto & hardIDs = numbers->paramVect<int>(str_PDHardwareIDs);
-  if ( msgLevel(MSG::VERBOSE) )
-    verbose() << "Condition " << str_PDHardwareIDs << " = " << hardIDs << endmsg;
+  _ri_verbo << "Condition " << str_PDHardwareIDs << " = " << hardIDs << endmsg;
 
   // vector of PD Level0 IDs
   const auto & l0IDs   = numbers->paramVect<int>(str_PDLevel0IDs);
-  if ( msgLevel(MSG::VERBOSE) )
-    verbose() << "Condition " << str_PDLevel0IDs << " = " << l0IDs << endmsg;
+  _ri_verbo << "Condition " << str_PDLevel0IDs << " = " << l0IDs << endmsg;
 
   // vector of PD Level1 board Hardware IDs
   const auto & l1IDs   = numbers->paramVect<int>(str_PDLevel1HardwareIDs);
-  if ( msgLevel(MSG::VERBOSE) )
-    verbose() << "Condition " << str_PDLevel1HardwareIDs << " = " << l1IDs << endmsg;
+  _ri_verbo << "Condition " << str_PDLevel1HardwareIDs << " = " << l1IDs << endmsg;
 
   // vector of PD Level1 input numbers
   const auto & l1Ins   = numbers->paramVect<int>(str_PDLevel1InputNums);
-  if ( msgLevel(MSG::VERBOSE) )
-    verbose() << "Condition " << str_PDLevel1InputNums << " = " << l1Ins << endmsg;
+  _ri_verbo << "Condition " << str_PDLevel1InputNums << " = " << l1Ins << endmsg;
 
   // vector of PD Copy numbers
   const auto & copyNs  = numbers->paramVect<int>(str_PDCopyNumbers);
-  if ( msgLevel(MSG::VERBOSE) )
-    verbose() << "Condition " << str_PDCopyNumbers << " = " << copyNs << endmsg;
+  _ri_verbo << "Condition " << str_PDCopyNumbers << " = " << copyNs << endmsg;
 
   // inactive PDs
   CondData inacts;
   const bool inactivePDListInSmartIDs( numbers->exists(str_InactivePDListInSmartIDs) ||
                                        systemVersion() == 1 );
-  if ( msgLevel(MSG::VERBOSE) )
-    verbose() << "Condition " << str_InactivePDListInSmartIDs
-              << " exists = " << inactivePDListInSmartIDs << endmsg;
+  _ri_verbo << "Condition " << str_InactivePDListInSmartIDs
+            << " exists = " << inactivePDListInSmartIDs << endmsg;
   if ( inactivePDListInSmartIDs )
   {
     // smartIDs
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Inactive PDs are taken from the smartID list" << endmsg;
+    _ri_debug << "Inactive PDs are taken from the smartID list" << endmsg;
     const auto& inactsHuman = ( systemVersion() == 1 ?
                                 inactives->paramVect<int>(str_InactivePDListInSmartIDs) :
                                 numbers->paramVect<int>(str_InactivePDListInSmartIDs) );
@@ -342,7 +297,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     for ( const auto inpd : inactsHuman )
     {
       const LHCb::RichSmartID ID( Rich::DAQ::HPDIdentifier(inpd).smartID() );
-      debug() << "Inactive SmartID " << inpd << " : " << ID << endmsg;
+      _ri_debug << "Inactive SmartID " << inpd << " : " << ID << endmsg;
       if ( ID.isValid() )
       {
         inacts.push_back( ID.key() );
@@ -361,16 +316,14 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
   else
   {
     // hardware IDs
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Inactive PDs are taken from the hardware list" << endmsg;
+    _ri_debug << "Inactive PDs are taken from the hardware list" << endmsg;
     inacts.clear();
     for ( const auto & i : numbers->paramVect<int>(str_InactivePDs) ) 
     {
       inacts.push_back( i ); 
     }
   }
-  if ( msgLevel(MSG::VERBOSE) )
-    verbose() << "Condition InactiveHPDs = " << inacts << endmsg;
+  _ri_verbo << "Condition InactiveHPDs = " << inacts << endmsg;
 
   // check consistency
   if ( nPDs != softIDs.size() ||
@@ -413,11 +366,10 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     const Rich::DAQ::HPDCopyNumber    copyN  ( *icopyN );
 
     // debug printout
-    if ( msgLevel(MSG::VERBOSE) )
-      verbose() << "PD     " << pdID
-                << " PDhardID " << hardID << " L0 " << L0ID << " L1 HardID " << L1ID
-                << " L1 input " << L1IN << endmsg;
-
+    _ri_verbo << "PD     " << pdID
+              << " PDhardID " << hardID << " L0 " << L0ID << " L1 HardID " << L1ID
+              << " L1 input " << L1IN << endmsg;
+    
     // Sanity checks that this PD is not already in the maps
     if ( m_soft2hard.find(pdID) != m_soft2hard.end() )
     {
@@ -451,8 +403,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     {
       m_activePDSmartIDs.push_back ( pdID   );
       m_activePDHardIDs.push_back  ( hardID );
-      if ( msgLevel(MSG::DEBUG) )
-        debug() << "PD " << pdID << " hardID " << hardID << " is ACTIVE" << endmsg;
+      _ri_debug << "PD " << pdID << " hardID " << hardID << " is ACTIVE" << endmsg;
     }
     else
     {
@@ -465,8 +416,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
       {
         m_inactivePDSmartIDs.push_back ( pdID   );
         m_inactivePDHardIDs.push_back  ( hardID );
-        if ( msgLevel(MSG::DEBUG) )
-          debug() << "PD " << pdID << " hardID " << hardID << " is INACTIVE" << endmsg;
+        _ri_debug << "PD " << pdID << " hardID " << hardID << " is INACTIVE" << endmsg;
       }
     }
 
@@ -531,8 +481,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
       const Rich::DAQ::Level1LogicalID  logID  ( boost::lexical_cast<int>(data.substr(0,slash)) );
       const Rich::DAQ::Level1HardwareID hardID ( boost::lexical_cast<int>(data.substr(slash+1)) );
       const Rich::DetectorType richTmp = this->richDetector(hardID);
-      if ( msgLevel(MSG::DEBUG) )
-        debug() << richTmp << " L1 ID mapping : Logical=" << logID
+      _ri_debug << richTmp << " L1 ID mapping : Logical=" << logID
                 << " Hardware=" << hardID << endmsg;
       (m_l1LogToHard[rich])[logID]  = hardID;
       m_l1HardToLog[hardID]         = logID;
@@ -550,15 +499,13 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     if ( m_l1H2CopyN.find(L1HID) == m_l1H2CopyN.end() )
     {
       m_l1H2CopyN[L1HID] = Rich::DAQ::Level1CopyNumber(m_firstL1CopyN++);
-      if ( msgLevel(MSG::DEBUG) )
-        debug() << "L1 Copy Number " << m_l1H2CopyN[L1HID]
+      _ri_debug << "L1 Copy Number " << m_l1H2CopyN[L1HID]
                 << " -> HardwareID=" << L1HID << " LogicalID=" << level1LogicalID(L1HID)
                 << endmsg;
     }
   }
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Built mappings for " << boost::format("%2i") % (m_l1IDs.size()-saveL1size)
+  _ri_debug << "Built mappings for " << boost::format("%2i") % (m_l1IDs.size()-saveL1size)
             << " L1 and " << nPDs << " PDs in " << rich << endmsg;
 
   return StatusCode::SUCCESS;
@@ -993,7 +940,7 @@ DeRichSystem::getDePDLocation( const LHCb::RichSmartID& smartID ) const
       }
       else
       {
-        if( smartID.panel() == Rich::left )
+        if ( smartID.panel() == Rich::left )
         {
           loc = DeRichLocations::Rich2Panel0;
         }
@@ -1010,30 +957,10 @@ DeRichSystem::getDePDLocation( const LHCb::RichSmartID& smartID ) const
 
 }
 
-//===========================================================================
-
-const Rich::DAQ::Level1LogicalID
-DeRichSystem::level1LogicalID( const LHCb::RichSmartID& smartID ) const
-{
-  return level1LogicalID( level1HardwareID(smartID) );
-}
-
-//===========================================================================
-
-unsigned int DeRichSystem::nPDs( const Rich::DetectorType rich ) const
-{
-  unsigned int nPDs = 0;
-  for ( const auto & PD : allPDRichSmartIDs() )
-  {
-    if ( PD.rich() == rich ) { ++nPDs; }
-  }
-  return nPDs;
-}
-
 //=========================================================================
 //  getDeRichLocations
 //=========================================================================
-std::vector<std::string> DeRichSystem::getDeRichLocations ( )
+std::vector<std::string> DeRichSystem::getDeRichLocations()
 {
   // find the Rich detectos
   SmartDataPtr<DetectorElement> afterMag(dataSvc(),"/dd/Structure/LHCb/AfterMagnetRegion");

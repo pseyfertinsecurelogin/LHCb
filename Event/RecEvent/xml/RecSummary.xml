@@ -4,11 +4,14 @@
 <gdd>
   <package name='RecEvent'>
 
-     <class 
+     <class
        author   = "C. Jones"
        desc     = "Holds basic summary information from the reconstruction"
        name     = "RecSummary"
-       id       = "106" >
+       id       = "106" 
+    final = "TRUE"
+    defaultdestructor="FALSE"
+       >
 
        <location name="Default" place="Rec/Summary" />
        <location name="Track" place="Rec/TrackSummary" />
@@ -54,7 +57,7 @@
         <enumval name="nMuonCoordsS4"      value="94"   desc="Number of Coords in Muon Station 4"/>
         <enumval name="nMuonTracks"        value="95"   desc="Number of Muon Tracks"/>
        </enum>
-      
+
        <attribute
         name="summaryData"
         desc="Storage of the summary data"
@@ -102,7 +105,7 @@
         argList = "const int key"
         type    = "LHCb::RecSummary::SummaryData::size_type" >
         <code>
-          return m_summaryData.erase( key ) ; 
+          return m_summaryData.erase( key ) ;
         </code>
        </method>
 
@@ -110,7 +113,7 @@
          name    = "fillStream"
          desc    = "Print this ProtoParticle in a human readable way"
          type    = "std::ostream&amp;"
-         virtual = "FALSE"
+         override = "TRUE"
          const   = "TRUE">
          <arg
            type = "std::ostream"

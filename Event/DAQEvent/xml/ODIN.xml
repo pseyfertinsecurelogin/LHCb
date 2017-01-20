@@ -16,6 +16,8 @@
       location="DAQ/ODIN"
       id="1005"
       allocator="NO"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
       >
 
       <enum

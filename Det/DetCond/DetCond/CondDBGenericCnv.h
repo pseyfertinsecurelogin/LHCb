@@ -6,6 +6,7 @@
 #include <functional>
 
 #include "GaudiKernel/Converter.h"
+#include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/Time.h"
 
@@ -15,7 +16,6 @@
 
 // Forward and external declarations
 class ISvcLocator;
-class IDetDataSvc;
 class DataObject;
 
 template <class TYPE> class CnvFactory;
@@ -40,14 +40,14 @@ public:
    *  </ul>
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
    * Finalizes the converter.
    * It releases the pointers to the taken services.
    *  @return status depending on the completion of the call
    */
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   /**
    * Accessor to the StorageType value
@@ -61,7 +61,7 @@ public:
    * Accessor to the StorageType value
    * @return the storage type for this object
    */
-  virtual long repSvcType() const  {
+  long repSvcType() const override {
     return CONDDB_StorageType;
   }
 
@@ -69,8 +69,6 @@ protected:
 
   /// Standard constructor
   CondDBGenericCnv(ISvcLocator* svc,const CLID& clid);
-
-  virtual ~CondDBGenericCnv( ); ///< Destructor
 
   /**
    * Ask to the DetectorDataSvc the curren event time.

@@ -5,7 +5,6 @@
 #define max max
 #endif
 
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/Time.h"
 #include "GaudiKernel/SystemOfUnits.h"
@@ -48,13 +47,8 @@ namespace {
 // Standard constructor, initializes variables
 //=============================================================================
 CondDBTimeSwitchSvc::CondDBTimeSwitchSvc( const std::string& name, ISvcLocator* svcloc ):
-  base_class(name,svcloc),
-  m_readersDeclatations(),
-  m_readers(),
-  m_latestReaderRequested(0),
-  m_dds(0)
+  base_class(name,svcloc)
 {
-
   // "'CondDBReader':(since, until)", with since and until doubles
   declareProperty("Readers", m_readersDeclatations);
 
@@ -64,31 +58,25 @@ CondDBTimeSwitchSvc::CondDBTimeSwitchSvc( const std::string& name, ISvcLocator* 
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-CondDBTimeSwitchSvc::~CondDBTimeSwitchSvc() {}
-
-//=============================================================================
 // initialize
 //=============================================================================
 StatusCode CondDBTimeSwitchSvc::initialize(){
   StatusCode sc = base_class::initialize();
   if (sc.isFailure()) return sc;
 
-  MsgStream log(msgSvc(), name() );
-  if( UNLIKELY( log.level() <= MSG::DEBUG ) )
-    log << MSG::DEBUG << "Initialize" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
+    debug() << "Initialize" << endmsg;
 
   if (m_readersDeclatations.empty()) {
-    log << MSG::ERROR << "No CondDBReader has been specified"
-                         " (property 'Readers')." << endmsg;
+    error() << "No CondDBReader has been specified"
+               " (property 'Readers')." << endmsg;
     return StatusCode::FAILURE;
   }
 
   // decoding the property "Readers"
   std::string reader_name, reader_siov;
   std::pair<long long,long long> reader_iov;
-  for (ReadersDeclatationsType::iterator rd = m_readersDeclatations.begin();
+  for (auto rd = m_readersDeclatations.begin();
        rd != m_readersDeclatations.end(); ++rd){
     // first step of parsing (split "'name':value" -> "name","value")
     sc = Gaudi::Parsers::parse(reader_name,reader_siov,*rd);
@@ -97,7 +85,7 @@ StatusCode CondDBTimeSwitchSvc::initialize(){
       sc = ::parse(reader_iov,reader_siov);
     }
     if (sc.isFailure()){
-      log << MSG::ERROR << "Cannot decode string '" << *rd << "'" << endmsg;
+      error() << "Cannot decode string '" << *rd << "'" << endmsg;
       return sc;
     }
     // Check for overlaps
@@ -105,26 +93,26 @@ StatusCode CondDBTimeSwitchSvc::initialize(){
     ReaderInfo *old = readerFor(reader_iov.first,quiet);
     if (!old) old = readerFor(reader_iov.second,quiet);
     if (old) {
-      log << MSG::ERROR << "Conflicting IOVs between '" << old->name  << "':("
+      error() << "Conflicting IOVs between '" << old->name  << "':("
           << old->since.ns() << "," << old->until.ns() << ") and "
           << *rd << endmsg;
       return StatusCode::FAILURE;
     }
     // use "until" as key to be able to search with "upper_bound"
     ReaderInfo ri(reader_name, reader_iov.first, reader_iov.second);
-    m_readers.insert(std::make_pair(ri.until,ri));
+    m_readers.emplace(ri.until,ri);
   }
-  if( UNLIKELY( outputLevel() <= MSG::DEBUG ) ) {
-    log << MSG::DEBUG << "Configured CondDBReaders:" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) {
+    debug() << "Configured CondDBReaders:" << endmsg;
     ReadersType::iterator r;
-    for (r = m_readers.begin(); r != m_readers.end(); ++r) {
-      log << MSG::DEBUG << " " << r->second.since << " - " << r->second.until
-          << ": " << r->second.name << endmsg;
+    for (const auto& r : m_readers) {
+      debug() << " " << r.second.since << " - " << r.second.until
+          << ": " << r.second.name << endmsg;
     }
   }
   // we need to reset it because it got corrupted during the
   // check for overlaps
-  m_latestReaderRequested = 0;
+  m_latestReaderRequested = nullptr;
 
   return sc;
 }
@@ -133,19 +121,15 @@ StatusCode CondDBTimeSwitchSvc::initialize(){
 // finalize
 //=============================================================================
 StatusCode CondDBTimeSwitchSvc::finalize(){
-  if( UNLIKELY( outputLevel() <= MSG::DEBUG ) ) {
-    MsgStream log(msgSvc(), name());
-    log << MSG::DEBUG << "Finalize" << endmsg;
+  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) {
+    debug() << "Finalize" << endmsg;
   }
 
   // release all the loaded CondDBReader services
   m_readers.clear();
-  if(m_dds) {
-    m_dds->release();
-    m_dds = 0;
-  }
+  m_dds.reset();
   m_readersDeclatations.clear();
-  m_latestReaderRequested = 0;
+  m_latestReaderRequested = nullptr;
 
   return base_class::finalize();
 }
@@ -154,9 +138,8 @@ StatusCode CondDBTimeSwitchSvc::finalize(){
 //  find the appropriate reader
 //=========================================================================
 CondDBTimeSwitchSvc::ReaderInfo *CondDBTimeSwitchSvc::readerFor(const Gaudi::Time &when, bool quiet) {
-  MsgStream log(msgSvc(), name());
 
-  if (!quiet) log << MSG::VERBOSE << "Get CondDBReader for event time " << when << endmsg;
+  if (!quiet) verbose() << "Get CondDBReader for event time " << when << endmsg;
 
   // TODO: (MCl) if we change service, we may clear the cache of the one
   //       that is not needed.
@@ -164,12 +147,12 @@ CondDBTimeSwitchSvc::ReaderInfo *CondDBTimeSwitchSvc::readerFor(const Gaudi::Tim
     // service not valid: search for the correct one
 
     // Find the element with key ("until") greater that the requested one
-    ReadersType::iterator reader = m_readers.upper_bound(when);
+    auto reader = m_readers.upper_bound(when);
     if (reader != m_readers.end() && reader->second.isValidAt(when)){
       m_latestReaderRequested = &(reader->second);
     } else {
-      m_latestReaderRequested = 0; // reader not found
-      if (!quiet) log << MSG::WARNING << "No reader configured for requested event time" << endmsg;
+      m_latestReaderRequested = nullptr; // reader not found
+      if (!quiet) warning() << "No reader configured for requested event time" << endmsg;
     }
   }
 
@@ -181,11 +164,10 @@ CondDBTimeSwitchSvc::ReaderInfo *CondDBTimeSwitchSvc::readerFor(const Gaudi::Tim
 //=========================================================================
 Gaudi::Time CondDBTimeSwitchSvc::getTime() {
   if (!m_dds) {
-    StatusCode sc = service("DetectorDataSvc",m_dds,false);
-    if (sc.isFailure()) {
-      MsgStream log(msgSvc(), name());
-      log << MSG::WARNING << "Cannot find the DetectorDataSvc,"
-                             " using a default event time (0)" << endmsg;
+    m_dds = service("DetectorDataSvc",false);
+    if (!m_dds) {
+      warning() << "Cannot find the DetectorDataSvc,"
+                   " using a default event time (0)" << endmsg;
       return Gaudi::Time();
     }
   }
@@ -265,8 +247,7 @@ ICondDBReader::IOVList CondDBTimeSwitchSvc::i_getIOVs(const std::string & path, 
   IOV tmp;
 
   // get the list of readers valid in the given time IOV
-  ReadersType::iterator r;
-  for(r = m_readers.begin(); r != m_readers.end(); ++r) {
+  for(auto r = m_readers.begin(); r != m_readers.end(); ++r) {
     if (r->second.until <= iov.since) continue; // ignore readers before...
     if (r->second.since >= iov.until) break; // ...and after the request
 
@@ -342,10 +323,9 @@ bool CondDBTimeSwitchSvc::isFolderSet(const std::string &path) {
 //=========================================================================
 void CondDBTimeSwitchSvc::disconnect() {
   // loop over all readers
-  ReadersType::const_iterator reader;
-  for ( reader = m_readers.begin(); reader != m_readers.end(); ++reader ) {
-    if (reader->second.loaded())
-      reader->second.reader(serviceLocator())->disconnect();
+  for ( const auto& reader : m_readers ) {
+    if (reader.second.loaded())
+      reader.second.reader(serviceLocator())->disconnect();
   }
 }
 
@@ -354,9 +334,8 @@ void CondDBTimeSwitchSvc::disconnect() {
 //=========================================================================
 void CondDBTimeSwitchSvc::defaultTags ( std::vector<LHCb::CondDBNameTagPair>& tags ) const {
   // loop over all readers
-  ReadersType::const_iterator reader;
-  for ( reader = m_readers.begin(); reader != m_readers.end(); ++reader ) {
-    reader->second.reader(serviceLocator())->defaultTags(tags);
+  for ( const auto& reader : m_readers ) {
+    reader.second.reader(serviceLocator())->defaultTags(tags);
   }
 }
 

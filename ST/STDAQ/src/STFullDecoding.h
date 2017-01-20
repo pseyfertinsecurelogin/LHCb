@@ -1,5 +1,4 @@
-// $Id: STFullDecoding.h,v 1.1 2009-03-02 16:27:44 mtobin Exp $
-#ifndef STFULLDECODING_H 
+#ifndef STFULLDECODING_H
 #define STFULLDECODING_H 1
 
 // Include files
@@ -7,7 +6,7 @@
 #include "Event/RawBank.h"
 
 /** @class STFullDecoding STFullDecoding.h
- *   
+ *
  *  Algorithm to decode the NZS ST data in the RawEvent buffer into STTELL1Data
  *  objects. Job options:
  *  - \b PrintErrorInfo: Flag to print out errors from event info.
@@ -21,18 +20,16 @@
  */
 class STFullDecoding : public ST::AlgBase {
 
-public: 
+public:
 
   /// Standard constructor
   STFullDecoding( const std::string& name, ISvcLocator* pSvcLocator );
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-
-protected:
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
- 
-  LHCb::RawBank::BankType m_bankType; 
+
+  LHCb::RawBank::BankType m_bankType;
 
   // job options
   bool m_printErrorInfo;           ///< Flag to print out errors from event info

@@ -20,15 +20,11 @@ ChargedProtoParticleMapper::ChargedProtoParticleMapper( const std::string& type,
 {
   declareProperty( "UnpackerOutputLevel", m_unpackersOutputLevel = -1 );
   declareProperty( "TrackTypes", m_tkTypes = {"Long","Downstream","Upstream"} );
-  declareProperty( "PIDTypes", m_pidTypes = { "Electron", "Muon", "Pion", 
+  declareProperty( "PIDTypes", m_pidTypes = { "Electron", "Muon", "Pion",
                                               "Kaon", "Proton", "Ghost" } );
   declareProperty( "ANNPIDTune", m_pidTune = "" );
   declareProperty( "VersionRegex", m_regex = "" );
 }
-
-// ============================================================================
-
-ChargedProtoParticleMapper::~ChargedProtoParticleMapper() { }
 
 // ============================================================================
 
@@ -86,10 +82,10 @@ ChargedProtoParticleMapper::algorithmForPath( const std::string & path )
         }
       }
     }
-    
+
     // Set the sequencer alg list
     joSvc()->addPropertyToCatalogue( seqName, StringArrayProperty("Members",algs) );
-    
+
     // Set output levels, if required
     if ( m_unpackersOutputLevel > 0 )
     {

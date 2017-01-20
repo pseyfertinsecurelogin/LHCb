@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -8,6 +7,7 @@
 // ============================================================================
 #include <functional>
 #include <algorithm>
+#include "GaudiKernel/SerializeSTL.h"
 // ============================================================================
 // PartProp
 // ============================================================================
@@ -20,35 +20,6 @@
  *  @date 2008-04-12
  */
 // ============================================================================
-namespace 
-{
-  // =========================================================================
-  /** @struct _Pid
-   *  helper structure to match pids 
-   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-   */
-  struct _Pid : public std::unary_function<Decays::Nodes::_Node,bool>
-  {
-  public:
-    // ========================================================================
-    /// constructor 
-    _Pid ( const LHCb::ParticleID& pid ) : m_pid ( pid ) {}
-    /// the only one imporant operator 
-    inline bool operator () ( const Decays::Nodes::_Node& node ) const
-    { return node  ( m_pid ) ; }  
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled 
-    _Pid ();
-    // the pid itself 
-    LHCb::ParticleID m_pid ; 
-    // ========================================================================
-  };
-  // ==========================================================================
-} //                                                 end of anonymous namespace 
-// ============================================================================
-
 
 // ============================================================================
 Decays::NodeList::NodeList ( const Decays::NodeList::Nodes_& nodes )
@@ -103,10 +74,6 @@ Decays::Nodes::_Node::op_and ( const Decays::NodeList& right )
 // ============================================================================
 // Invalid 
 // ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-Decays::Nodes::Invalid::~Invalid() {} 
-// ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 Decays::Nodes::Invalid*
@@ -139,20 +106,6 @@ Decays::Nodes::Invalid::fillStream ( std::ostream& s ) const
 Decays::Nodes::_Node::_Node ()  : m_node ( Decays::Nodes::Invalid() ) {}
 // ============================================================================
 
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-Decays::Nodes::Or       :: ~Or       () {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-Decays::Nodes::And      :: ~And      () {}
-// ============================================================================
-// MANDATORY: virtual destructor
-// ============================================================================
-Decays::Nodes::Not      :: ~Not      () {}
-// ============================================================================
-
 
 // ===========================================================================
 // Or
@@ -162,8 +115,6 @@ Decays::Nodes::Not      :: ~Not      () {}
 Decays::Nodes::Or::Or 
 ( const Decays::iNode& n1 , 
   const Decays::iNode& n2 ) 
-  : Decays::iNode () 
-  , m_nodes ()
 {
   add ( n1 ) ;
   add ( n2 ) ;
@@ -175,8 +126,6 @@ Decays::Nodes::Or::Or
 ( const Decays::iNode& n1 , 
   const Decays::iNode& n2 ,
   const Decays::iNode& n3 ) 
-  : Decays::iNode () 
-  , m_nodes ()
 {
   add ( n1 ) ;
   add ( n2 ) ;
@@ -190,8 +139,6 @@ Decays::Nodes::Or::Or
   const Decays::iNode& n2 ,
   const Decays::iNode& n3 , 
   const Decays::iNode& n4 ) 
-  : Decays::iNode () 
-  , m_nodes ()
 {
   add ( n1 ) ;
   add ( n2 ) ;
@@ -203,8 +150,6 @@ Decays::Nodes::Or::Or
 // ===========================================================================
 Decays::Nodes::Or::Or 
 ( const Decays::NodeList& nodes ) 
-  : Decays::iNode () 
-    , m_nodes ()
 {
   add ( nodes )  ;  
 }
@@ -229,9 +174,7 @@ size_t Decays::Nodes::Or::add ( const Decays::iNode& node )
 size_t Decays::Nodes::Or::add 
 ( const Decays::NodeList& nodes ) 
 {
-  for ( Decays::NodeList::const_iterator inode = nodes.begin() ; 
-        nodes.end() != inode  ; ++inode ) 
-  { add ( *inode ) ; }
+  for ( const auto& n : nodes ) add ( n ) ;
   return m_nodes.size () ;
 }
 // ============================================================================
@@ -243,8 +186,9 @@ Decays::Nodes::Or::clone() const { return new Or(*this) ; }
 // MANDATORY: the only one essential method
 // ============================================================================
 bool Decays::Nodes::Or::operator() ( const LHCb::ParticleID& pid ) const 
-{ return m_nodes.end() != std::find_if  
-    ( m_nodes.begin() , m_nodes.end() , _Pid ( pid ) ) ; }
+{ return m_nodes.end() != std::find_if( m_nodes.begin() , m_nodes.end() , 
+      [&](const Decays::Nodes::_Node& node) { return node(pid); } );
+}
 // ===========================================================================
 // MANDATORY: the specific printout
 // ===========================================================================
@@ -285,8 +229,6 @@ StatusCode Decays::Nodes::Or::validate
 Decays::Nodes::And::And
 ( const Decays::iNode& n1 , 
   const Decays::iNode& n2 ) 
-  : Decays::iNode () 
-  , m_nodes ()
 {
   add ( n1 ) ;
   add ( n2 ) ;
@@ -298,8 +240,6 @@ Decays::Nodes::And::And
 ( const Decays::iNode& n1 , 
   const Decays::iNode& n2 ,
   const Decays::iNode& n3 ) 
-  :  Decays::iNode () 
-  , m_nodes ()
 {
   add ( n1 ) ;
   add ( n2 ) ;
@@ -313,8 +253,6 @@ Decays::Nodes::And::And
   const Decays::iNode& n2 ,
   const Decays::iNode& n3 , 
   const Decays::iNode& n4 ) 
-  : Decays::iNode () 
-  , m_nodes ()
 {
   add ( n1 ) ;
   add ( n2 ) ;
@@ -326,8 +264,6 @@ Decays::Nodes::And::And
 // ===========================================================================
 Decays::Nodes::And::And
 ( const Decays::NodeList& nodes ) 
-  : Decays::iNode () 
-  , m_nodes ()
 {
   add ( nodes ) ;  
 }
@@ -352,9 +288,7 @@ size_t Decays::Nodes::And::add ( const Decays::iNode& node )
 size_t Decays::Nodes::And::add 
 ( const Decays::NodeList& nodes ) 
 {
-  for ( Decays::NodeList::const_iterator inode = nodes.begin() ; 
-        nodes.end() != inode  ; ++inode ) 
-  { add ( *inode ) ; }
+  for ( const auto& n : nodes ) add ( n );
   return m_nodes.size () ;
 }
 // ============================================================================
@@ -368,24 +302,16 @@ Decays::Nodes::And::clone() const { return new And(*this) ; }
 bool Decays::Nodes::And::operator() ( const LHCb::ParticleID& pid ) const 
 {
   if ( m_nodes.empty() ) { return false ; }
-  for ( Decays::NodeList::const_iterator node = m_nodes.begin() ;
-        m_nodes.end() != node ; ++node ) 
-  { if ( (*node != pid ) ) { return false; } }
-  return true ;
+  return std::all_of( m_nodes.begin(), m_nodes.end(),
+                      [&](const Decays::Nodes::_Node& n)
+                      { return n==pid; } );
 }
 // ===========================================================================
 // MANDATORY: the specific printout
 // ===========================================================================
 std::ostream& Decays::Nodes::And::fillStream ( std::ostream& s ) const 
 {
-  s << " (" ;
-  for ( Decays::NodeList::const_iterator node = m_nodes.begin() ;
-        m_nodes.end() != node ; ++node ) 
-  {
-    if ( m_nodes.begin() != node ) { s << "&" ; }    
-    s << *node ;
-  }  
-  return s << ") " ;
+  return GaudiUtils::details::ostream_joiner( s << " (",  m_nodes, "&" ) << ") ";
 }
 // ===========================================================================
 // MANDATORY: check the validity 

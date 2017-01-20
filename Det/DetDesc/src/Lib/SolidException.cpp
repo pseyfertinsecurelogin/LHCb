@@ -20,8 +20,6 @@ SolidException::SolidException( const std::string   &  message   ,
   , m_se_solid    ( solid      ) 
 { }
 ///////////////////////////////////////////////////////////////////////////////////////
-SolidException::~SolidException() throw(){}
-///////////////////////////////////////////////////////////////////////////////////////
 std::ostream& SolidException::printOut( std::ostream& os             ) const 
 {
   /// 

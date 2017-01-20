@@ -590,51 +590,12 @@ bool Gaudi::Math::affine_transform
   return true ;
 }
 // ============================================================================
-namespace 
-{
-  // ==========================================================================
-  /** evaluate the integral for monomial 
-   *  @param N    the polynomial degree 
-   *  @param low  low edge of integration 
-   *  @param high high edge of integration 
-   */  
-  inline long double _monomial_int_ 
-  ( const unsigned int N    ,
-    const long double  low  , 
-    const long double  high ) 
-  {
-    // trivial cases 
-    if      ( s_equal ( low , high ) ) { return 0          ; }
-    else if ( 0 == N                 ) { return high - low ; }
-    else if ( 1 == N                 )
-    { return 0.5 * ( high * high - low * low ) ; }
-    else if ( high < low ) 
-    { return -_monomial_int_ ( N ,  high , low )  ; }
-    //
-    const long double ihigh = Gaudi::Math::pow ( high , N + 1 ) ;
-    const long double ilow  = Gaudi::Math::pow ( low  , N + 1 ) ;
-    //
-    return ( ihigh - ilow ) / ( N + 1 ) ;
-  }
-  // ========================================================================== 
-  /** evaluate the derivative for monomial 
-   *  @param N the polynomial degree
-   *  @param x the point 
-   */
-  inline long double _monomial_der_
-  ( const unsigned int N ,
-    const long double  x )  
-  {
-    //
-    if      ( 0 == N       ) { return 0   ; }
-    else if ( 1 == N       ) { return 1   ; }
-    //
-    return N * Gaudi::Math::pow ( x , N - 1 ) ;
-  }
-  // ==========================================================================
-}
+
+
+
+
 // ============================================================================
-/* class Polynomial
+/*  class Polynomial
  *  Trivial polynomial
  *  \f$ f(x) = \sum_i \p_i x^i\f$
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
@@ -2234,6 +2195,60 @@ double Gaudi::Math::integrate
   return result * ( xmax - xmin ) * _fac / 2 ;
 }
 // ============================================================================
+/* construct chebyshev approximation for arbitrary function 
+ *  @param func the function
+ *  @param N    the order/degree
+ *  @param x_min low edge
+ *  @param x_max high edge 
+ *  @return Chebyshev approximation 
+ *  @see ChebyshevSum 
+ *  @code 
+ *  FUNC func = ...
+ *  ChebyshevSum a = chebyshev_sum<6> ( func , x_min , x_max ) ;
+ *  @endcode 
+ *  
+ */
+// ============================================================================
+Gaudi::Math::ChebyshevSum 
+Gaudi::Math::chebyshev_sum 
+( std::function<double(double)> func  ,
+  const unsigned short          N     , 
+  const double                  x_min , 
+  const double                  x_max )
+{
+  // array of precomputed function values 
+  std::vector<double> fv ( N ) ;
+  // 
+  const double xmin = std::min ( x_min , x_max ) ;
+  const double xmax = std::max ( x_min , x_max ) ;
+  //
+  const double      xhs  = 0.5 * ( xmin + xmax ) ;
+  const double      xhd  = 0.5 * ( xmax - xmin ) ;
+  const long double pi_N = M_PIl / N ;
+  auto _xi_ = [xhs,xhd,pi_N] ( const unsigned short k ) 
+    { return std::cos ( pi_N * ( k + 0.5 ) ) * xhd + xhs ; } ;
+  //
+  for ( unsigned short i = 0 ; i < N ; ++i ) { fv[i] = func ( _xi_ ( i ) ) ; }
+  //
+  Gaudi::Math::ChebyshevSum cs ( N , xmin , xmax ) ;
+  for ( unsigned short i = 0 ; i < N + 1 ; ++i ) 
+  {
+    double c_i = 0 ;
+    if ( 0 == i ) { for ( unsigned short k = 0 ; k < N ; ++k ) { c_i += fv[k] ; } }
+    else 
+    {
+      for ( unsigned short k = 0 ; k < N ; ++k ) 
+      { c_i += fv[k] * std::cos ( pi_N * i * ( k + 0.5 ) ) ; }
+    }
+    c_i *= 2.0 / N ;
+    if ( 0 == i ) { c_i *= 0.5 ;}
+    cs.setPar ( i, c_i ) ;
+  }
+  return cs ;
+}              
+// ============================================================================
+
+
 
 
 // ============================================================================

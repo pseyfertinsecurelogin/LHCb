@@ -4,9 +4,6 @@
  *
  *  Implementation file for class : MCRichHit
  *
- *  CVS Log :-
- *  $Id: MCRichHit.cpp,v 1.9 2010-04-13 09:12:15 jonrob Exp $
- *
  *  @author  Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date    26/01/2008
  */

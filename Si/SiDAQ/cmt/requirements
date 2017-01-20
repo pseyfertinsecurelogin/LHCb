@@ -1,9 +1,0 @@
-package SiDAQ
-version           v2r4
-
-branches cmt doc SiDAQ
-
-use GaudiPolicy v*
-apply_pattern install_more_includes more=SiDAQ
-
-

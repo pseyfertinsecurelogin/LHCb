@@ -1,4 +1,4 @@
-#ifndef TESTUMSERROR_H 
+#ifndef TESTUMSERROR_H
 #define TESTUMSERROR_H 1
 
 // Include files
@@ -9,21 +9,21 @@
 class ICondDBAccessSvc;
 
 /** @class TestUMSError TestUMSError.h
- *  
+ *
  *  Algorithm that tests the injection of condition object into CondDBAccessSvc's cache.
  *
  *  @author Marco Clemencic
  *  @date   2005-06-20
  */
 class TestUMSError : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   TestUMSError( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~TestUMSError( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
 

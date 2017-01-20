@@ -1,5 +1,3 @@
-// $Id: XmlCnvSvc.h,v 1.13 2009-05-05 09:26:45 ocallot Exp $
-
 #ifndef DETDESCCNV_XMLCNVSVC_H
 #define DETDESCCNV_XMLCNVSVC_H
 
@@ -30,50 +28,45 @@ public:
    * @param svc Pointer to service locator interface
    * @return Reference to CdfPersCnvSvc
    */
-  XmlCnvSvc (const std::string& name, ISvcLocator* svc);
-  
-  /**
-   * Default destructor
-   */
-  virtual ~XmlCnvSvc();
+  XmlCnvSvc (const std::string& name, ISvcLocator* svc)
+      : base_class(name, svc, XML_StorageType) {}
 
-  
   /**
    * Initializes the service
    * @return status depending on the completion of the call
    */
-  virtual StatusCode initialize();
-  
+  StatusCode initialize() override;
+
   /**
    * Reinitializes the service
    * @return status depending on the completion of the call
    */
-  virtual StatusCode reinitialize();
-  
+  StatusCode reinitialize() override;
+
   /**
    * Finalizes the service
    * @return status depending on the completion of the call
    */
-  virtual StatusCode finalize();
-  
+  StatusCode finalize() override;
+
 
   /**
    * Create an XML address using explicit arguments to identify a single object
    * @param svc_type the service type
    * @param clid the CLID of the XML Element for which an address is created
-   * @param par an array of two strings containing the dbname and objectname 
+   * @param par an array of two strings containing the dbname and objectname
    * in this order
    * @param refpAddress the new address created
    * @return a StatusCode giving the status of the address creation
    * @note unsigned long fourth argument can be ignored for XML addresses
    */
   using ConversionSvc::createAddress;
-  virtual StatusCode createAddress(long  svc_type,
-                                   const CLID& clid,
-                                   const std::string* par, 
-                                   const unsigned long* /*ip*/,
-                                   IOpaqueAddress*& refpAddress);
-  
+  StatusCode createAddress(long  svc_type,
+                           const CLID& clid,
+                           const std::string* par,
+                           const unsigned long* /*ip*/,
+                           IOpaqueAddress*& refpAddress) override;
+
 
   ///////////////////////////////////////////////////
   // implementation of the IXmlParserSvc interface //
@@ -85,7 +78,7 @@ public:
    * @param fileName the name of the file to parse
    * @return the document issued from the parsing
    */
-  virtual IOVDOMDocument* parse (const char* fileName);
+  IOVDOMDocument* parse (const char* fileName) override;
 
   /**
    * This method parses XML from a string and produces the corresponding DOM
@@ -93,80 +86,80 @@ public:
    * @param source the string to parse
    * @return the document issued from the parsing
    */
-  virtual IOVDOMDocument* parseString (std::string source);
+  IOVDOMDocument* parseString (std::string source) override;
 
   /**
    * This clears the cache of previously parsed xml files.
    */
-  virtual void clearCache();
+  void clearCache() override;
 
   /// Method to remove the lock from a document in the cache or to delete the document
   /// generated from a string.
-  virtual void releaseDoc(IOVDOMDocument* doc);
+  void releaseDoc(IOVDOMDocument* doc) override;
 
   /////////////////////////////////////////////
   // implementation of the IXmlSvc interface //
   /////////////////////////////////////////////
 
-  /** 
+  /**
    * Evaluates a numerical expresion
    * @param expr expresion to evaluate. It may include units and parameters
    * @param check boolean to control if the value needs to be check for being a
    * dimentioned magnitude (with units)
    * @return return double value
    */
-  virtual double eval( const char* expr, bool check = true );
+  double eval( const char* expr, bool check = true ) override;
 
-  /** 
+  /**
    * Evaluates a numerical expresion
    * @param expr expresion to evaluate. It may include units and parameters
    * @param check boolean to control if the value needs to be check for being a
    * dimentioned magnitude (with units)
    * @return return double value
    */
-  virtual double eval( const std::string& expr, bool check = true );
+  double eval( const std::string& expr, bool check = true ) override;
 
   /**
    * Adds a parameter in the list of known parameters. The value can also be an
    * expression with units and other parameters.
    * @param name parameter name
    * @param value string which defines the value of the parameter.
-   * @return true if success 
+   * @return true if success
    */
-  virtual bool addParameter (const std::string& name,
-                             const std::string& value);
+  bool addParameter (const std::string& name,
+                     const std::string& value) override;
 
   /**
    * Adds a parameter in the list of known parameters. The value can also be an
    * expression with units and other parameters.
    * @param name parameter name
    * @param value string which defines the value of the parameter.
-   * @return true if success 
+   * @return true if success
    */
-  virtual bool addParameter( const char* name, const char* value );
+  bool addParameter( const char* name, const char* value ) override;
 
   /**
    * Adds a parameter in the list of known parameters. The value can also be an
    * expression with units and other parameters.
    * @param name parameter name
    * @param value string which defines the value of the parameter.
-   * @return true if success 
+   * @return true if success
    */
-  virtual bool addParameter( const char* name, double value );
+  bool addParameter( const char* name, double value ) override;
 
   /**
    * Removes a parameter from the list of known parameters
    * @param name parameter name
-   * @return true if success 
+   * @return true if success
    */
-  virtual bool removeParameter( const std::string& name );
+  bool removeParameter( const std::string& name ) override;
 
   /**
    * Removes a parameter from the list of known parameters
    * @param name parameter name
-   * @return true if success 
+   * @return true if success
    */
-  virtual bool removeParameter( const char* name );
+  bool removeParameter( const char* name ) override;
 
   /**
    * Accessor to m_genericConversion.
@@ -174,9 +167,8 @@ public:
    * be used in case the corresponding user defined converter is not available
    * @return true if generic conversion is allowed
    */
-  bool allowGenericCnv() { return m_genericConversion; }
+  bool allowGenericCnv() override { return m_genericConversion; }
 
-  
 
 private:
 
@@ -192,7 +184,7 @@ private:
 //               | expr '/' product
 //    expr :=   '-'? alphanumeric_token
 //            | '-'? function_name? '(' sum ')'
-// Where ? means that it is optionnal and | means or. alphanumeric_token
+// Where ? means that it is optional and | means or. alphanumeric_token
 // contains only alphanumeric characters, except for a single '-' character
 // if preceded by a digit and an 'e'
 //
@@ -220,31 +212,31 @@ private:
 //    - note that the result of a function is supposed to have no unit
 //  in general
 
-  std::string::size_type skipSum (std::string s,
+  std::string::size_type skipSum (const std::string& s,
                         std::string::size_type start,
                         std::string::size_type end);
-  std::string::size_type skipProduct (std::string s,
+  std::string::size_type skipProduct(const std::string& s,
                             std::string::size_type start,
                             std::string::size_type end);
-  std::string::size_type skipExpr (std::string s,
+  std::string::size_type skipExpr (const std::string& s,
                          std::string::size_type start,
                          std::string::size_type end);
-  
-  bool sumHasUnit (std::string s,
+
+  bool sumHasUnit (const std::string& s,
                    std::string::size_type baseIndex,
                    std::string::size_type lastIndex);
-  bool productHasUnit (std::string s,
+  bool productHasUnit (const std::string& s,
                        std::string::size_type baseIndex,
                        std::string::size_type lastIndex);
-  bool exprHasUnit (std::string s,
+  bool exprHasUnit (const std::string& s,
                     std::string::size_type baseIndex,
                     std::string::size_type lastIndex);
-  
+
 
 private:
 
   /// Name of the XmlParserSvc to use (option XmlCnvSvc.XmlParserSvc, default "XmlParserSvc")
-  std::string m_parserSvcName;
+  Gaudi::Property<std::string> m_parserSvcName { this, "XmlParserSvc", "XmlParserSvc" };
 
   /// XmlParserSvc used to parse xmlfiles
   SmartIF<IXmlParserSvc> m_parserSvc;
@@ -257,36 +249,22 @@ private:
    * elements in case the corresponding user defined converter is not
    * available
    */
-  bool  m_genericConversion;
+  Gaudi::Property<bool>  m_genericConversion { this, "AllowGenericConversion", false};
+
 
   /**
    * Property specifying the directory containing standard DTD files.
    * This is necessary when parsing XML strings rather than XML files.
    */
-  std::string m_dtdLocation;
+  Gaudi::Property<std::string> m_dtdLocation { this, "DtdLocation" };
+
 
   /**
    * tells whether to check parameters for units or not.
    */
-  bool m_checkUnits;
-  /// The message stream
-  std::unique_ptr<MsgStream> m_msg;
-  
-  /// Methods to print as in GaudiAlgorithms
-  MsgStream& verbose() const { return *m_msg << MSG::VERBOSE; }
-  
-  MsgStream& debug()   const { return *m_msg << MSG::DEBUG; }
+  Gaudi::Property<bool> m_checkUnits { this, "CheckUnits",  true };
 
-  MsgStream& info()    const { return *m_msg << MSG::INFO; }
-  
-  MsgStream& warning() const { return *m_msg << MSG::WARNING; }
 
-  MsgStream& error()   const { return *m_msg << MSG::ERROR; }  
- 
-  MsgStream& fatal()   const { return *m_msg << MSG::FATAL; }
-
-  inline bool msgLevel( const MSG::Level level ) const { return m_msg->level() <= level; }
-  
 };
 
 #endif    // DETDESCCNV_XMLCNVSVC_H

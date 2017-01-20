@@ -1,4 +1,4 @@
-#ifndef MUONTAEREC_H 
+#ifndef MUONTAEREC_H
 #define MUONTAEREC_H 1
 
 // Include files
@@ -11,23 +11,18 @@
 
 
 /** @class MuonTAERec MuonTAERec.h
- *  
+ *
  *
  *  @author Alessia Satta
  *  @date   2008-10-28
  */
 class MuonTAERec : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   MuonTAERec( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~MuonTAERec( ); ///< Destructor
-
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-
-protected:
-
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
   /// Copy MuonTileID from digits to coords with no logical map (1:1 copy)
@@ -57,9 +52,9 @@ bool m_ignoreUncrossedStrips;
   DeMuonDetector* m_muonDetector;
   IMuonRawBuffer* m_muonBuffer;
   bool m_ignoreExecution;
-  std::string m_offsetLoc[15]; 
+  std::string m_offsetLoc[15];
   int m_TAENum;
-  
+
   std::vector<std::pair<LHCb::MuonTileID,unsigned int> >  m_logChannels;
 };
 

@@ -1,5 +1,3 @@
-// $Id: L0MuonCandidate.cpp,v 1.11 2008-04-10 13:07:10 jucogan Exp $
-
 #include <cmath>
 #include <vector>
 #include "Event/L0MuonCandidate.h"

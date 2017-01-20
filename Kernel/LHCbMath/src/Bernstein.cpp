@@ -28,10 +28,6 @@
  *  @see http://en.wikipedia.org/wiki/Bernstein_polynomial
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
- *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $author$
  */
 // ============================================================================
 namespace 
@@ -48,10 +44,6 @@ namespace
                  "std::numeric_limits<double> is not specialized" ) ;
   static_assert( std::numeric_limits<long double>::is_specialized , 
                  "std::numeric_limits<long double> is not specialized" ) ;
-  /// machine epsilon (double)
-  const double s_epsilon   = std::numeric_limits<double>::epsilon() ;
-  /// machine epsilon (long double) 
-  const double s_ld_epsilon = std::numeric_limits<long double>::epsilon() ;
   /// small value 
   const LHCb::Math::Small<long double> s_small
   ( 2.0L * std::numeric_limits<double>::epsilon() ) ;
@@ -208,50 +200,54 @@ Gaudi::Math::Bernstein::Bernstein
   const std::vector<double>& y     , 
   const double               xmin  ,
   const double               xmax  )
-  : Gaudi::Math::PolySum ( x.empty() ? 0 : x.size() - 1 ) 
-  , m_xmin ( std::min ( xmin , xmax ) )
-  , m_xmax ( std::max ( xmin , xmax ) )
-    //
-{
-  //
-  std::vector<double> _x ( x.empty() ? 1 : x.size()  ) ;
-  const long unsigned int N = _x.size() ;
-  //
-  std::transform ( x.begin() , x.end() , _x.begin() , [this]( const double v ) { return this->t(v) ; } ) ;
-  std::vector<double> _f ( N ) ;
-  std::copy      ( y.begin() , y.begin() + std::min ( y.size() , N ) , _f.begin() ) ;
-  //
-  std::vector<double>  w ( N , 0.0 ) ;
-  std::vector<double>  c ( N , 0.0 ) ;
-  //
-  w[0] =  1.0  ;
-  c[0] = _f[0] ;
-  //
-  for ( unsigned int s = 1 ; s < N ; ++s ) 
-  {
-    /// calculate the divided differences 
-    for ( unsigned int k = N - 1 ; s <= k ; --k )
-    {
-      const double fk  = _f[k  ] ;
-      const double fk1 = _f[k-1] ;
-      const double xk  = _x[k  ] ;
-      const double xks = _x[k-s] ;
-      _f[k] = ( fk - fk1 ) / ( xk - xks ) ;
-    }
-    //
-    const double xs1 = _x[s-1] ;
-    for ( unsigned int j = s ; 1 <= j ; --j ) 
-    {
-      w[j] =  j * w[j-1] * ( 1 - xs1 ) / s  - ( s - j ) * xs1 * w[j] / s ;
-      c[j] =  j * c[j-1]               / s  + ( s - j )       * c[j] / s  + w[j] * _f[s] ; 
-    }
-    w[0]  = -w[0] *   xs1 ;
-    c[0] +=  w[0] * _f[s] ;
-  }
-  ///  finally set parameters 
-  for ( unsigned short i = 0 ; i < N ; ++i ) { setPar ( i , c[i] ) ; }
-} 
-// ============================================================================
+  : Bernstein ( x.begin() , x.end () , 
+                y.begin() , y.end () ,
+                xmin      , xmax     )
+{}   
+//   : Gaudi::Math::PolySum ( x.empty() ? 0 : x.size() - 1 ) 
+//   , m_xmin ( std::min ( xmin , xmax ) )
+//   , m_xmax ( std::max ( xmin , xmax ) )
+//     //
+// {
+//   //
+//   std::vector<double> _x ( x.empty() ? 1 : x.size()  ) ;
+//   const long unsigned int N = _x.size() ;
+//   //
+//   std::transform ( x.begin() , x.end() , _x.begin() , [this]( const double v ) { return this->t(v) ; } ) ;
+//   std::vector<double> _f ( N ) ;
+//   std::copy      ( y.begin() , y.begin() + std::min ( y.size() , N ) , _f.begin() ) ;
+//   //
+//   std::vector<double>  w ( N , 0.0 ) ;
+//   std::vector<double>  c ( N , 0.0 ) ;
+//   //
+//   w[0] =  1.0  ;
+//   c[0] = _f[0] ;
+//   //
+//   for ( unsigned int s = 1 ; s < N ; ++s ) 
+//   {
+//     /// calculate the divided differences 
+//     for ( unsigned int k = N - 1 ; s <= k ; --k )
+//     {
+//       const double fk  = _f[k  ] ;
+//       const double fk1 = _f[k-1] ;
+//       const double xk  = _x[k  ] ;
+//       const double xks = _x[k-s] ;
+//       _f[k] = ( fk - fk1 ) / ( xk - xks ) ;
+//     }
+//     //
+//     const double xs1 = _x[s-1] ;
+//     for ( unsigned int j = s ; 1 <= j ; --j ) 
+//     {
+//       w[j] =  j * w[j-1] * ( 1 - xs1 ) / s  - ( s - j ) * xs1 * w[j] / s ;
+//       c[j] =  j * c[j-1]               / s  + ( s - j )       * c[j] / s  + w[j] * _f[s] ; 
+//     }
+//     w[0]  = -w[0] *   xs1 ;
+//     c[0] +=  w[0] * _f[s] ;
+//   }
+//   ///  finally set parameters 
+//   for ( unsigned short i = 0 ; i < N ; ++i ) { setPar ( i , c[i] ) ; }
+// } 
+// // ============================================================================
 
 // ============================================================================
 // copy assignement 
@@ -1339,7 +1335,6 @@ double Gaudi::Math::casteljau
 // ============================================================================
 namespace 
 {
-  inline short signm1 ( const long i ) { return 0 == i%2 ? 1 : -1 ; }
   // ==========================================================================
   /** transformation matrix from legendre to bernstein basis 
    *  @see http://www.sciencedirect.com/science/article/pii/S0377042700003769 eq.20 
@@ -1793,6 +1788,113 @@ Gaudi::Math::BernsteinDualBasis::BernsteinDualBasis
   , m_k         (             right.m_k           ) 
   , m_bernstein ( std::move ( right.m_bernstein ) ) 
 {}
+
+// ============================================================================
+// EVEN 
+// ============================================================================
+/*  constructor
+ *  the actual degree of polynomial will be 2*N
+ *  @param N  parameter that defiend the order of polynomial (2*N)
+ *  @param xmin low edge 
+ *  @param xmax high edge 
+ */
+// ============================================================================
+Gaudi::Math::BernsteinEven::BernsteinEven 
+( const unsigned short N    , 
+  const double         xmin ,
+  const double         xmax ) 
+  : std::unary_function<double,double> ()
+  , m_N         (   N                   )   
+  , m_bernstein ( 2*N + 1 , xmin , xmax )
+{}
+// ============================================================================
+/*  constructor from list of coefficients 
+ *  @param xmin low edge 
+ *  @param xmax high edge 
+ */
+// ============================================================================
+Gaudi::Math::BernsteinEven::BernsteinEven 
+( const std::vector<double>& pars , 
+  const double               xmin ,
+  const double               xmax ) 
+  : std::unary_function<double,double> ()
+  , m_N         (   pars.size()                   )   
+  , m_bernstein ( 2*pars.size() + 1 , xmin , xmax )
+{
+  for ( unsigned short i = 0 ; i < pars.size() ; ++i ) { setPar ( i , pars[i] ) ; }
+}
+// ============================================================================
+/* set k-parameter
+ *  @param k index
+ *  @param value new value 
+ *  @return true if parameter is actually changed 
+ */
+// ============================================================================
+bool Gaudi::Math::BernsteinEven::setPar
+( const unsigned short k , const double value ) 
+{
+  if ( npars() <= k ) { return false ; }
+  const bool b1 = m_bernstein.setPar (             k , value ) ;
+  const bool b2 = m_bernstein.setPar ( 2*m_N + 1 - k , value ) ;
+  return b1 || b2 ;
+}
+// ============================================================================
+// get all parameters (by value!!! COPY!!)
+// ============================================================================
+std::vector<double>
+Gaudi::Math::BernsteinEven::pars () const 
+{
+  return std::vector<double>( m_bernstein.pars().begin()           , 
+                              m_bernstein.pars().begin() + m_N + 1 ) ;                            
+}
+// ============================================================================
+//  Sum of Bernstein polynomial and a constant 
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__add__   ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp += value ; return tmp ; }
+// ============================================================================
+//  Sum of Bernstein polynomial and a constant 
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__radd__  ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp += value ; return tmp ; }
+// ============================================================================
+//  Product of Bernstein polynomial and a constant 
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__mul__   ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp *= value ; return tmp ; }
+// ============================================================================
+//  Product of Bernstein polynomial and a constant 
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__rmul__  ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp *= value ; return tmp ; }
+// ============================================================================
+//  Subtract a constant from Bernstein polynomial
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__sub__   ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp -= value ; return tmp ; }
+// ============================================================================
+//  Subtract (right) a constant and Bernstein polynomial
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__rsub__  ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp *= -1 ; tmp += value ; return tmp ; }
+// ============================================================================
+//  Division of Bernstein polynomial and constant 
+// ============================================================================
+Gaudi::Math::BernsteinEven
+Gaudi::Math::BernsteinEven::__div__   ( const double value ) const 
+{ BernsteinEven tmp(*this) ; tmp /= value ; return tmp ; }
+// ============================================================================
+
+
+    
+
+
 // ============================================================================
 // POSITIVE 
 // ============================================================================
@@ -1990,6 +2092,151 @@ double Gaudi::Math::Positive::integral
     s_equal ( low  , xmin() ) && s_equal ( high , xmax() ) ? 1 :
     m_bernstein.integral ( low , high )  ; 
 }
+
+
+
+
+
+
+// ============================================================================
+// POSITIVE EVEN
+// ============================================================================
+
+
+// ============================================================================
+// constructor from the order
+// ============================================================================
+Gaudi::Math::PositiveEven::PositiveEven
+( const unsigned short      N    ,
+  const double              xmin ,
+  const double              xmax )
+  : std::unary_function<double,double> ()
+  , m_even   ( N , xmin , xmax )
+  , m_sphere ( N , 3 ) 
+{
+  updateBernstein () ;
+}
+// ============================================================================
+// constructor from the list of phases 
+// ============================================================================
+Gaudi::Math::PositiveEven::PositiveEven
+( const std::vector<double>& pars ,
+  const double               xmin ,
+  const double               xmax )
+  : std::unary_function<double,double> ()
+  , m_even      ( pars.size() , xmin , xmax )
+  , m_sphere    ( pars , 3 ) 
+{
+  updateBernstein () ;
+}
+// ============================================================================
+// constructor from the sphere with coefficients  
+// ============================================================================
+Gaudi::Math::PositiveEven::PositiveEven
+( const Gaudi::Math::NSphere& sphere , 
+  const double                xmin   , 
+  const double                xmax   )
+  : std::unary_function<double,double> ()
+  , m_even    ( sphere.dim() , xmin , xmax )
+  , m_sphere  ( sphere ) 
+{
+  updateBernstein () ;
+}
+// ============================================================================
+// set k-parameter
+// ============================================================================
+bool Gaudi::Math::PositiveEven::setPar 
+( const unsigned short k , const double value )
+{
+  //
+  const bool update = m_sphere.setPhase ( k , value ) ;
+  if ( !update ) { return false ; }   // no actual change 
+  //
+  return updateBernstein () ;
+}
+// =============================================================================
+// update bernstein coefficients
+// =============================================================================
+bool Gaudi::Math::PositiveEven::updateBernstein ()
+{
+  ///
+  bool         update = false ;
+  /// degree 
+  const unsigned short o = m_even.degree() ;
+  //
+  const double   norm    = m_even.npars() / 
+    ( m_even.xmax() -  m_even.xmin () ) ;
+  //
+  // few simple cases 
+  //
+  if       ( 0 == o ) { return m_even.setPar( 0 , norm ) ; }
+  //
+  // get the parameters of "global" non-negative symmetric parabola 
+  //
+  const double a0 = m_sphere.x2(0)      ;
+  const double a1 = m_sphere.x2(1) - a0 ;
+  const double a2 = a0                  ;
+  //
+  // "elevate to degree of bernstein"
+  const unsigned short N =  m_even.bernstein().degree()  ;
+  std::vector<long double> v ( N + 1 ) ;
+  v[0] = a0 ;
+  v[1] = a1 ;
+  v[2] = a2 ;
+  std::fill ( v.begin() + 3 , v.end() , a2 ) ;
+  // repeate the elevation cycles: 
+  for ( unsigned short   n = 2  ; n < N ; ++n ) 
+  {
+    // "current" degree 
+    for ( unsigned short k = n ;  1<= k ; --k ) 
+    {
+      v[k]  = ( n + 1 - k ) * v[k] + k * v[k-1] ;
+      v[k] /=   n + 1  ;
+    } 
+  }
+  //
+  // now  we have a non-negative symmetric parabola coded.
+  //   - add a proper positive polynomial to it.
+  const unsigned short nV = v.size() ;
+  const unsigned short nX = m_sphere.nX() ;
+  for ( unsigned short ix = 2 ; ix < nX ; ++ix ) 
+  {
+    const double x = m_sphere.x2 ( ix ) ;
+    v[      ix - 2 ] += x ; 
+    v[ nV - ix + 1 ] += x ; // keep symmetry 
+  }
+  //
+  const double isum = norm / std::accumulate ( v.begin() , v.end() , 0.0L ) ;
+  //
+  const unsigned short nE = m_even.npars() ;
+  //
+  for ( unsigned short ix = 0 ; ix < nE ; ++ix ) 
+  {
+    const bool updated = m_even.setPar ( ix , 2 * v[ix] * isum ) ;
+    update = updated || update ;
+  }
+  //
+  return update ;
+}
+// =============================================================================
+// get the integral between xmin and xmax
+// =============================================================================
+double Gaudi::Math::PositiveEven::integral () const { return 1 ; } 
+// =============================================================================
+// get the integral between low and high 
+// =============================================================================
+double Gaudi::Math::PositiveEven::integral
+( const double low , const double high ) const 
+{ 
+  return 
+    s_equal ( low  , xmin() ) && s_equal ( high , xmax() ) ? 1 :
+    m_even.integral ( low , high )  ; 
+}
+
+
+
+
+
 // ============================================================================
 // constructor from the order
 // ============================================================================
@@ -3141,6 +3388,115 @@ double Gaudi::Math::Positive2DSym::integrateX ( const double y ) const
 double Gaudi::Math::Positive2DSym::integrateY ( const double x ) const 
 { return m_bernstein.integrateY ( x ) ; }
 // ======================================================================
+
+
+
+
+// ============================================================================
+//  Some interpolation utilisties 
+// ============================================================================
+/*  construct interpolation polynomial (in Bernstein form)
+ *  @param x       vector of abscissas 
+ *  @param y       vector of function values 
+ *  @param xmin low  edge for Bernstein polynomial
+ *  @param xmax high edge for Bernstein polynomial       
+ *  - if vector of y is longer  than vector x, extra values are ignored 
+ *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+ *  It relies on Newton-Bernstein algorithm
+ *  @see http://arxiv.org/abs/1510.09197
+ *  @see Mark Ainsworth and Manuel A. Sanches, 
+ *       "Computing of Bezier control points of Largangian interpolant 
+ *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
+ *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
+ *  @see Gaudi::Math::Bernstein 
+ *  @code 
+ *  std::vector<double> x = ... ; // abscissas
+ *  std::vector<double> y = ... ; // functionvalues 
+ *  Gaudi::Math::Bernstein p = interpolate ( x , y , -1 , 1 );
+ *  std::cout << " interpolant at x=0.1 is " << p(0.1) << std::endl ;
+ *  std::cout << " interpolant at x=0.2 is " << p(0.2) << std::endl ;
+ *  @endcode 
+ */
+// ============================================================================
+Gaudi::Math::Bernstein
+Gaudi::Math::Interpolation::bernstein
+( const std::vector<double>& x    ,  
+  const std::vector<double>& y    , 
+  const double               xmin , 
+  const double               xmax )
+{
+  return Gaudi::Math::Bernstein ( x.begin() , x.end() ,
+                                  y.begin() , y.end() , 
+                                  xmin      , xmax    ) ;
+}
+// ============================================================================
+/*  construct interpolation polynomial (in Bernstein form)
+ *  @param func    the function 
+ *  @param x       vector of abscissas 
+ *  @param xmin low  edge for Bernstein polynomial
+ *  @param xmax high edge for Bernstein polynomial
+ *  - if vector of y is longer  than vector x, extra values are ignored 
+ *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+ *  It relies on Newton-Bernstein algorithm
+ *  @see http://arxiv.org/abs/1510.09197
+ *  @see Mark Ainsworth and Manuel A. Sanches, 
+ *       "Computing of Bezier control points of Largangian interpolant 
+ *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
+ *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
+ *  @see Gaudi::Math::Bernstein 
+ *  @code 
+ *  auto f = [] ( double t ) { return std::sin ( t ) ; }
+ *  std::vector<double> x = ... ; // abscissas
+ *  Gaudi::Math::Bernstein p = interpolate ( f , x , -1 , 1 );
+ *  std::cout << " interpolant at x=0.1 is " << p(0.1) << std::endl ;
+ *  std::cout << " interpolant at x=0.2 is " << p(0.2) << std::endl ;
+ *  @endcode 
+ */
+// ============================================================================
+Gaudi::Math::Bernstein
+Gaudi::Math::Interpolation::bernstein
+( std::function<double(double)> func , 
+  const std::vector<double>&    x    ,
+  const double                  xmin , 
+  const double                  xmax ) 
+{
+  return Gaudi::Math::Interpolation::bernstein ( func      , 
+                                                 x.begin() , x.end() ,
+                                                 xmin      , xmax    ) ;
+}
+// ============================================================================
+/*  construct interpolation polynomial (in Bernstein form) using Gauss-Lobatto grid, 
+ *  that minimises Runge's effect.
+ *  @param func      the function 
+ *  @param N         the interpolation  degree 
+ *  @param xmin low  edge for Bernstein polynomial
+ *  @param xmax high edge for Bernstein polynomial       
+ *  - if vector of y is longer  than vector x, extra values are ignored 
+ *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+ *  It relies on Newton-Bernstein algorithm
+ *  @see http://arxiv.org/abs/1510.09197
+ *  @see Mark Ainsworth and Manuel A. Sanches, 
+ *       "Computing of Bezier control points of Largangian interpolant 
+ *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
+ *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
+ *  @see Gaudi::Math::Bernstein 
+ *  @code 
+ *  auto f = [] ( double t ) { return std::sin ( t ) ; }
+ *  Gaudi::Math::Bernstein p = bernstein ( f , 5 , -1 , 1 );
+ *  std::cout << " interpolant at x=0.1 is " << p(0.1) << std::endl ;
+ *  std::cout << " interpolant at x=0.2 is " << p(0.2) << std::endl ;
+ *  @endcode 
+ */  
+// ============================================================================
+Gaudi::Math::Bernstein
+Gaudi::Math::Interpolation::bernstein
+( std::function<double(double)> func , 
+  const unsigned short          N    , 
+  const double                  xmin , 
+  const double                  xmax ) 
+{ return Gaudi::Math::Interpolation::lobatto ( func , N , xmin , xmax ) ; }
+// ============================================================================
+
 
 
 

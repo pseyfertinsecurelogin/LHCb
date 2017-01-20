@@ -219,11 +219,10 @@ namespace LoKi
      */
     Combiner_& reset()
     {
-      // reset current  (multy) iterator
-      typename Select::iterator select=m_current.begin();
-      for ( typename Ranges::iterator range  = m_ranges  .begin() ;
-            m_ranges.end() != range ; ++range , ++select )
-      { *select = range->begin() ; }
+      // reset current  (multi) iterator
+      std::transform( m_ranges.begin(), m_ranges.end(),
+                      m_current.begin(),
+                      [](const Range& r) { return r.begin(); } );
       // reset the current index
       m_index = 0 ;
       // return
@@ -240,21 +239,19 @@ namespace LoKi
      */
     bool end    () const { return !( m_index < m_size ); }
     // ========================================================================
-    /** check the validity of current (multy)iterator
+    /** check the validity of current (multi)iterator
      *  @return true if no "actual" sub-iterators are invalid
      */
     bool valid  () const
     {
-      return
-        0       == m_size ? false :                    // valid size?
-        m_index <  m_size ? true  : false ;            // valid index?
+      return m_size!=0 && m_index<m_size;
     }
     // ========================================================================
-    /** advance 'current' (multy)iterator.
+    /** advance 'current' (multi)iterator.
      *  I guess it the most tricky funtion of the whole class.
      *  It is the most primitive one, but I've spent few hours
      *  trying to debug it :-)
-     *  @return 'current' (multy)iterator after the advance
+     *  @return 'current' (multi)iterator after the advance
      */
     inline const Select&  next   ()
     {
@@ -270,7 +267,7 @@ namespace LoKi
       {
         size_t index  =  ( m_index / prev ) % range->size() ;
         prev         *= range->size() ;
-        *curr         = range->begin() + index ;
+        *curr         = std::next(range->begin(),index) ;
       }
       // the end
       return m_current ;

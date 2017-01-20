@@ -1,4 +1,3 @@
-// $Id: IL0DUFromRawTool.h,v 1.6 2010-01-20 16:06:46 odescham Exp $
 #ifndef IL0DUFROMRAWTOOL_H 
 #define IL0DUFROMRAWTOOL_H 1
 
@@ -19,8 +18,8 @@
  *  @author Olivier Deschamps
  *  @date   2007-10-19
  */
-class IL0DUFromRawTool : public extend_interfaces<IAlgTool> {
-public: 
+struct IL0DUFromRawTool : extend_interfaces<IAlgTool> {
+
   DeclareInterfaceID( IL0DUFromRawTool, 2, 0 );
 
   virtual bool decodeBank(int iBank=0 )=0;

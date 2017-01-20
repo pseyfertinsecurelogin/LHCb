@@ -13,15 +13,10 @@
  */
 
 
-class IReferenceRate : virtual public INamedInterface
+struct IReferenceRate : extend_interfaces<INamedInterface>
 {
-public:
-  static const InterfaceID& interfaceID() {
-    static const InterfaceID id( "IReferenceRate", 1, 0 );
-    return id;
-  }
+  DeclareInterfaceID( IReferenceRate, 2, 0 );
 
-  virtual ~IReferenceRate() {}
   virtual double rate() const = 0 ;
   virtual size_t tick() const = 0 ;
 };

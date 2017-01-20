@@ -44,13 +44,13 @@ public:
 public:
 
   /// Sets the cumlative cross talk arrays
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
 
   // Re-implemented from DataObject
 
   /// Class ID of this instance
-  inline virtual const CLID& clID() const {
+  inline const CLID& clID() const override {
     return classID();
   }
 

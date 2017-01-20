@@ -1,4 +1,3 @@
-
 //-----------------------------------------------------------------------------
 /** @file IRichRecMCTruthTool.h
  *
@@ -42,11 +41,10 @@ namespace LHCb
 }
 namespace Rich
 {
-  class HPDPixelCluster;
+  class PDPixelCluster;
 }
 
 /// Static Interface Identification
-static const InterfaceID IID_IRichRecMCTruthTool( "Rich::Rec::IMCTruthTool", 1, 0 );
 
 namespace Rich
 {
@@ -69,10 +67,8 @@ namespace Rich
        */
       //-----------------------------------------------------------------------------
 
-      class IMCTruthTool : public virtual IAlgTool
+      struct IMCTruthTool : extend_interfaces<IAlgTool>
       {
-
-      public:
 
         //-----------------------------------------------------------------------------
         /** @class MCPartAssocInfo IRichRecMCTruthTool.h
@@ -83,24 +79,16 @@ namespace Rich
          *  @date   15/03/2002
          */
         //-----------------------------------------------------------------------------
-        class MCPartAssocInfo
+        struct MCPartAssocInfo
         {
-        public:
-          /// Default Constructor
-          MCPartAssocInfo() : mcParticle(NULL), associationFrac(0) { }
-        public:
-          const LHCb::MCParticle * mcParticle;   ///< The associated MCParticle
-          double associationFrac;                ///< The association fraction (weight).
+          const LHCb::MCParticle * mcParticle = nullptr;   ///< The associated MCParticle
+          double associationFrac = 0;                ///< The association fraction (weight).
         };
         
-      public:
-
         /** static interface identification
          *  @return unique interface identifier
          */
-        static const InterfaceID& interfaceID() { return IID_IRichRecMCTruthTool; }
-
-      public:
+        DeclareInterfaceID(IMCTruthTool, 2, 0 );
 
         /** Find best MCParticle association for a given reconstructed Track
          *
@@ -305,7 +293,7 @@ namespace Rich
          */
         virtual const LHCb::MCParticle *
         trueRecPhoton( const LHCb::MCParticle * mcPart,
-                       const Rich::HPDPixelCluster& cluster ) const = 0;
+                       const Rich::PDPixelCluster& cluster ) const = 0;
 
         /** Is this a true Cherenkov photon candidate ?
          *  Do the associated segment and pixel have the same MC parent AND was the pixel
@@ -394,7 +382,7 @@ namespace Rich
          *  @retval !NULL Monte Carlo association was successful
          */
         virtual const LHCb::MCParticle *
-        trueCherenkovRadiation( const Rich::HPDPixelCluster& cluster,
+        trueCherenkovRadiation( const Rich::PDPixelCluster& cluster,
                                 const Rich::RadiatorType rad ) const = 0;
 
         /** Access the MCRichSegment associated to a given RichRecSegment

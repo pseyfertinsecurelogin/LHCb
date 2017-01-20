@@ -1,4 +1,4 @@
-#ifndef L0PATTERN_H 
+#ifndef L0PATTERN_H
 #define L0PATTERN_H 1
 
 // Include files
@@ -13,7 +13,7 @@
 #include "L0Interfaces/IL0DUFromRawTool.h"
 
 /** @class L0Pattern L0Pattern.h
- *  L0 Processors (L0Calo/L0Muon/PUVETO) -> L0DU 
+ *  L0 Processors (L0Calo/L0Muon/PUVETO) -> L0DU
  *  bit assignment from EDMS 528259
  *
  *  @author Olivier Deschamps
@@ -25,8 +25,8 @@ public:
   L0Pattern( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~L0Pattern( ); ///< Destructor
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 protected:
 

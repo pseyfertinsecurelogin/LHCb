@@ -59,9 +59,6 @@ RawDataFormatTool::RawDataFormatTool( const std::string& type,
                    " LHCb::RawEventLocation::Default." );
 }
 
-// Destructor
-RawDataFormatTool::~RawDataFormatTool() { }
-
 StatusCode RawDataFormatTool::initialize()
 {
   // Initialise base class
@@ -605,15 +602,15 @@ void RawDataFormatTool::fillRawEvent( const LHCb::RichSmartID::Vector & smartIDs
     // Get reference to correct data group
     auto & ingress  = L1Data  [ L1ID                ];
     auto & hpds     = ingress [ L1Input.ingressID() ];
-    auto & hpdInfo  = (hpds.hpdData())[L1Input];
+    auto & pdInfo   = (hpds.pdData())[L1Input];
 
     _ri_debug << dig << " mapped to L1ID " << L1ID << " L1Input " << L1Input << endmsg;
 
     // Finally, insert this pixel into correct place
-    hpdInfo.smartIDs().push_back( dig );
+    pdInfo.smartIDs().push_back( dig );
 
     // Set the HPD information
-    hpdInfo.setHpdID( dig.pdID() );
+    pdInfo.setPdID( dig.pdID() );
 
   }
 
@@ -652,7 +649,7 @@ void RawDataFormatTool::fillRawEvent( const LHCb::RichSmartID::Vector & smartIDs
         // set data from ODIN
         ingressWord.readFromODIN( odin() );
         // fill with HPDs with data
-        for ( const auto& HPD : (*iIngress).second.hpdData() )
+        for ( const auto& HPD : (*iIngress).second.pdData() )
         {
           ingressWord.setHPDActive( HPD.first.l1InputWithinIngress() );
         }
@@ -661,13 +658,13 @@ void RawDataFormatTool::fillRawEvent( const LHCb::RichSmartID::Vector & smartIDs
         _ri_debug << " Ingress " << ingress << " : " << ingressWord << endmsg;
       }
 
-      _ri_debug << "  Found " << (*iIngress).second.hpdData().size() << " HPD(s) with data"
+      _ri_debug << "  Found " << (*iIngress).second.pdData().size() << " HPD(s) with data"
                 << endmsg;
 
       // Loop over each active HPD for this Level1 board ingress and fill RAWBank
-      for ( const auto& HPD : (*iIngress).second.hpdData() )
+      for ( const auto& HPD : (*iIngress).second.pdData() )
       {
-        _ri_debug << "   HPD " << HPD.second.hpdID() << " L1input=" << HPD.first
+        _ri_debug << "   HPD " << HPD.second.pdID() << " L1input=" << HPD.first
                   << " Found " << HPD.second.smartIDs().size() << " hits" << endmsg;
         if ( version != MaPMT0 )
         {
@@ -828,7 +825,7 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
   const auto version = bankVersion( bank );
 
   // various counts
-  unsigned int decodedHits(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
   std::set<LHCb::RichSmartID> pdSet;
 
   // If we have some words to process, start the decoding
@@ -864,16 +861,16 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
           info.setIngressHeader(iHeader);
         }
         auto & ingressInfo = ingressMap[l1Input.ingressID()];
-        auto & hpdMap      = ingressInfo.hpdData();
+        auto & hpdMap      = ingressInfo.pdData();
 
         // Does this PD have an entry
         if ( hpdMap.find(l1Input) == hpdMap.end() )
         {
-          hpdMap[l1Input] = HPDInfo();
+          hpdMap[l1Input] = PDInfo();
           // Set the PD ID
-          hpdMap[l1Input].setHpdID( id.pdID() );
+          hpdMap[l1Input].setPdID( id.pdID() );
           // set the header
-          HPDInfo::Header header;
+          PDInfo::Header header;
           // CRJ - Comment out until decide what to do about maPMT Level0 IDs ...
           //           const Level0ID l0id = m_richSys->level0ID(id);
           //           if ( ! header.setL0ID( l0id ) )
@@ -884,19 +881,22 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
           //           }
           hpdMap[l1Input].setHeader( header );
         }
-        HPDInfo & hpdInfo = hpdMap[l1Input];
+        PDInfo & pdInfo = hpdMap[l1Input];
 
         // add the hit to the list
-        hpdInfo.smartIDs().push_back( id );
+        pdInfo.smartIDs().push_back( id );
 
         // count the hits and hpds
-        ++decodedHits;
+        ++decodedHits[id.rich()];
         pdSet.insert( id.pdID() );
 
       }
     }
 
   }
+
+  // Add to the total number of decoded hits
+  decodedData.addToTotalHits( decodedHits );
 
   if ( m_summary )
   {
@@ -905,7 +905,7 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
     // Increment bank size
     cands.nWords += bank.size()/4; // 2 L1 headers + data words
     // Increment hit occupancy
-    cands.nHits += decodedHits;
+    cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
     // Count number of HPD banks
     cands.nHPDs += pdSet.size();
     // Count fills
@@ -922,7 +922,8 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
   _ri_debug << "Decoding L1 bank " << L1ID << endmsg;
 
   // various counts
-  unsigned int nHPDbanks(0), decodedHits(0);
+  unsigned int nHPDbanks(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in 32 bit words
   const int bankSize = bank.size() / 4;
@@ -1013,13 +1014,13 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
             Warning( mess.str(), StatusCode::SUCCESS, 0 ).ignore();
           }
 
-          // Try to add a new HPDInfo to map
+          // Try to add a new PDInfo to map
           const Level1Input l1Input(ingressWord.ingressID(),HPD);
           const auto hpdInsert =
-            ingressInfo.hpdData().emplace( l1Input,
-                                           HPDInfo( LHCb::RichSmartID(),
-                                                    hpdBank->headerWords(),
-                                                    hpdBank->footerWords() ) );
+            ingressInfo.pdData().emplace( l1Input,
+                                          PDInfo( LHCb::RichSmartID(),
+                                                  hpdBank->headerWords(),
+                                                  hpdBank->footerWords() ) );
           // disable test (gives wrong warnings in TAE events)
           //if ( !p.second )
           //{
@@ -1027,7 +1028,7 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
           //  mess << "Found multiple data blocks L1=" << L1ID << " input=" << l1Input;
           //  Warning( mess.str() );
           //}
-          auto & hpdInfo = hpdInsert.first->second;
+          auto & pdInfo = hpdInsert.first->second;
 
           // Only try and decode this HPD if ODIN test was OK
           if ( odinOK && !hpdIsSuppressed )
@@ -1035,11 +1036,11 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
 
             // get HPD RichSmartID
             // do in a try block incase HPD ID is unknown
-            LHCb::RichSmartID hpdID;
+            LHCb::RichSmartID pdID;
             try
             {
-              hpdID = ( m_useFakeHPDID ? s_fakeHPDID :
-                        m_richSys->richSmartID( hpdBank->level0ID() ) );
+              pdID = ( m_useFakeHPDID ? s_fakeHPDID :
+                       m_richSys->richSmartID( hpdBank->level0ID() ) );
             }
             catch ( const GaudiException & expt )
             {
@@ -1049,19 +1050,19 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
               Error( errMsg.str() ).ignore();
             }
             // If the HPD smartID was successfully found, continue with decoding
-            if ( hpdID.isValid() )
+            if ( pdID.isValid() )
             {
 
-              _ri_debug << "   Decoding HPD " << hpdID << endmsg;
+              _ri_debug << "   Decoding HPD " << pdID << endmsg;
 
               // save HPD ID
-              hpdInfo.setHpdID(hpdID);
+              pdInfo.setPdID(pdID);
 
               // local hit count
               unsigned int hpdHitCount(0);
 
               // smartIDs
-              auto & newids = hpdInfo.smartIDs();
+              auto & newids = pdInfo.smartIDs();
 
               // Compare Event IDs for errors
               bool OK = ( hpdIsSuppressed ? true :
@@ -1070,7 +1071,7 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
               {
                 std::ostringstream mess;
                 mess << "EventID Mismatch : HPD L0ID="
-                     <<  hpdBank->level0ID() << " " << hpdID;
+                     <<  hpdBank->level0ID() << " " << pdID;
                 Error( mess.str() ).ignore();
               }
               else
@@ -1095,14 +1096,14 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                 {
 
                   // decode to smartIDs
-                  hpdHitCount = hpdBank->fillRichSmartIDs( newids, hpdID );
+                  hpdHitCount = hpdBank->fillRichSmartIDs( newids, pdID );
 
                   // Do data integrity checks
                   OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,warning()) );
                   if ( !OK )
                   {
                     std::ostringstream mess;
-                    mess << "HPD L0ID=" << hpdBank->level0ID() << " " << hpdID
+                    mess << "HPD L0ID=" << hpdBank->level0ID() << " " << pdID
                          << " data block failed integrity check";
                     Error( mess.str() ).ignore();
                     if ( m_purgeHPDsFailIntegrity ) { newids.clear(); }
@@ -1112,7 +1113,7 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                   if ( OK && hpdBank->headerWords().size()>1 )
                   {
                     std::ostringstream mess;
-                    mess << "HPD L0ID=" << hpdBank->level0ID() << " " << hpdID
+                    mess << "HPD L0ID=" << hpdBank->level0ID() << " " << pdID
                          << " in extended mode for UNKNOWN reasons";
                     Error( mess.str() ).ignore();
                   }
@@ -1136,16 +1137,16 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                 if ( hpdHitCount < m_maxHPDOc )
                 {
                   ++nHPDbanks;
-                  decodedHits += hpdHitCount;
+                  decodedHits[pdID.rich()] += hpdHitCount;
 
                   // suppress hot pixels
-                  suppressHotPixels(hpdID,newids);
+                  suppressHotPixels(pdID,newids);
 
                 }
                 else
                 {
                   std::ostringstream hpd;
-                  hpd << hpdID.panelID();
+                  hpd << pdID.panelID();
                   Warning( "Forced suppression of HPD "+hpd.str(), StatusCode::SUCCESS, 0 ).ignore();
                   newids.clear();
                 }
@@ -1154,7 +1155,7 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
               else if ( m_verboseErrors )
               {
                 // decoding error ....
-                error() << "Error in decoding -> Data is rejected for HPD " << hpdID << endmsg;
+                error() << "Error in decoding -> Data is rejected for HPD " << pdID << endmsg;
 
                 if ( l1BankErrorDump )
                 {
@@ -1190,6 +1191,9 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
 
   } // data bank not empty
 
+  // Add to the total number of decoded hits
+  decodedData.addToTotalHits( decodedHits );
+
   if ( m_summary )
   {
     // Count the number of banks and size
@@ -1197,7 +1201,7 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
     // Increment bank size
     cands.nWords += bank.size()/4; // 2 L1 headers + data words
     // Increment hit occupancy
-    cands.nHits += decodedHits;
+    cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
     // Count number of HPD banks
     cands.nHPDs += nHPDbanks;
     // Count fills
@@ -1213,14 +1217,14 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
 
 }
 
-void RawDataFormatTool::suppressHotPixels( const LHCb::RichSmartID& hpdID,
+void RawDataFormatTool::suppressHotPixels( const LHCb::RichSmartID& pdID,
                                            LHCb::RichSmartID::Vector & newids ) const
 {
   // clean out hot pixels enabled at all ?
   if ( m_pixelsToSuppress )
   {
     // Does this HPD have some pixels to suppress
-    const auto iHPDSup = m_hotPixels.find(hpdID);
+    const auto iHPDSup = m_hotPixels.find(pdID);
     if ( iHPDSup != m_hotPixels.end() )
     {
       // temporary copy of original hit channels
@@ -1240,9 +1244,9 @@ void RawDataFormatTool::suppressHotPixels( const LHCb::RichSmartID& hpdID,
         else
         {
           // Get detector info
-          const auto l0ID    = m_richSys->level0ID(hpdID);
-          const auto l1ID    = m_richSys->level1HardwareID(hpdID);
-          const auto l1Input = m_richSys->level1InputNum(hpdID);
+          const auto l0ID    = m_richSys->level0ID(pdID);
+          const auto l1ID    = m_richSys->level1HardwareID(pdID);
+          const auto l1Input = m_richSys->level1InputNum(pdID);
           // Print warning
           std::ostringstream mess;
           mess << "L1HardID=" << l1ID << " L1Input=" << l1Input
@@ -1266,7 +1270,8 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
   const Level1HardwareID L1ID ( bank.sourceID() );
 
   // HPD count
-  unsigned int nHPDbanks(0), decodedHits(0);
+  unsigned int nHPDbanks(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -1307,15 +1312,15 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
                                              version ) );
 
       // get HPD RichSmartID
-      const LHCb::RichSmartID hpdID = ( m_useFakeHPDID ? s_fakeHPDID :
-                                        m_richSys->richSmartID( hpdBank->level0ID() ) );
+      const LHCb::RichSmartID pdID = ( m_useFakeHPDID ? s_fakeHPDID :
+                                       m_richSys->richSmartID( hpdBank->level0ID() ) );
 
       // decode to smartIDs
-      auto & hpdInfo = (ingressInfo.hpdData())[ l1Input ];
-      hpdInfo.setHpdID(hpdID);
+      auto & pdInfo = (ingressInfo.pdData())[ l1Input ];
+      pdInfo.setPdID(pdID);
       ++l1Input;
-      auto & newids = hpdInfo.smartIDs();
-      const auto hpdHitCount = hpdBank->fillRichSmartIDs( newids, hpdID );
+      auto & newids = pdInfo.smartIDs();
+      const auto hpdHitCount = hpdBank->fillRichSmartIDs( newids, pdID );
 
       // Do data integrity checks
       const bool OK = ( !m_checkDataIntegrity || hpdBank->checkDataIntegrity(newids,warning()) );
@@ -1335,12 +1340,12 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
         if ( hpdHitCount < m_maxHPDOc )
         {
           ++nHPDbanks;
-          decodedHits += hpdHitCount;
+          decodedHits[pdID.rich()] += hpdHitCount;
         }
         else
         {
           std::ostringstream hpd;
-          hpd << hpdID.panelID();
+          hpd << pdID.panelID();
           Warning( "Forced suppression of HPD "+hpd.str(), StatusCode::SUCCESS, 0 ).ignore();
           newids.clear();
         }
@@ -1349,7 +1354,7 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
       else if ( m_verboseErrors )
       {
         // decoding error ....
-        error() << "Corruption in decoding -> Data is rejected for HPD " << hpdID << endmsg;
+        error() << "Corruption in decoding -> Data is rejected for HPD " << pdID << endmsg;
 
         error() << " -> Dump of offending raw L1 data :-" << endmsg;
         dumpRawBank( bank, error() );
@@ -1365,6 +1370,9 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
 
   } // data bank not empty
 
+  // Add to the total number of decoded hits
+  decodedData.addToTotalHits( decodedHits );
+
   if ( m_summary )
   {
     // Count the number of banks and size
@@ -1372,7 +1380,7 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
     // Increment bank size
     cands.nWords += bank.size()/4; // 2 L1 headers + data words
     // Increment hit occupancy
-    cands.nHits += decodedHits;
+    cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
     // Count number of HPD banks
     cands.nHPDs += nHPDbanks;
     // Count fills
@@ -1399,7 +1407,8 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
   const ShortType maxDataSize = MaxDataSize;
 
   // HPD count
-  unsigned int nHPDbanks(0), decodedHits(0);
+  unsigned int nHPDbanks(0);
+  DetectorArray<unsigned int> decodedHits = {{0,0}};
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -1420,7 +1429,7 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
       Exception( "Non-empty RICH Bank size is less than 2 !" );
     }
 
-    // Make up L1 input numbers when using fake HPDIDs
+    // Make up L1 input numbers when using fake PDIDs
     Level1Input fake_l1Input(0);
 
     // Loop over bank, find headers and produce a data bank for each
@@ -1488,11 +1497,11 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
                                                version ) );
         
         // get HPD RichSmartID
-        const LHCb::RichSmartID hpdID = ( m_useFakeHPDID ? s_fakeHPDID :
-                                          m_richSys->richSmartID( hpdBank->level0ID() ) );
+        const LHCb::RichSmartID pdID = ( m_useFakeHPDID ? s_fakeHPDID :
+                                         m_richSys->richSmartID( hpdBank->level0ID() ) );
 
         // L1 ID
-        const auto L1ID = m_richSys->level1HardwareID(hpdID);
+        const auto L1ID = m_richSys->level1HardwareID(pdID);
         if ( L1ID != base_L1ID )
         {
           error() << "L1ID Mis-match" << endmsg;
@@ -1506,30 +1515,30 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
         // L1 input number
         const Level1Input l1Input = ( m_useFakeHPDID ?
                                       fake_l1Input :
-                                      m_richSys->level1InputNum(hpdID) );
+                                      m_richSys->level1InputNum(pdID) );
         if ( m_useFakeHPDID ) ++fake_l1Input;
 
         // Ingress info
         auto & ingressInfo = ingressMap[l1Input.ingressID()];
 
         // get HPD data
-        auto & hpdInfo = (ingressInfo.hpdData())[ l1Input ];
-        hpdInfo.setHpdID(hpdID);
-        auto & newids = hpdInfo.smartIDs();
+        auto & pdInfo = (ingressInfo.pdData())[ l1Input ];
+        pdInfo.setPdID(pdID);
+        auto & newids = pdInfo.smartIDs();
 
         // get hit count
-        const auto hpdHitCount = hpdBank->fillRichSmartIDs( newids, hpdID );
+        const auto hpdHitCount = hpdBank->fillRichSmartIDs( newids, pdID );
 
         // apply suppression of high occupancy HPDs
         if ( hpdHitCount < m_maxHPDOc )
         {
           ++nHPDbanks;
-          decodedHits += hpdHitCount;
+          decodedHits[pdID.rich()] += hpdHitCount;
         }
         else
         {
           std::ostringstream hpd;
-          hpd << hpdID.panelID();
+          hpd << pdID.panelID();
           Warning( "Suppressed HPD in "+hpd.str(), StatusCode::SUCCESS, 0 ).ignore();
           newids.clear();
         }
@@ -1544,6 +1553,9 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
 
   } // data bank not empty
 
+  // Add to the total number of decoded hits
+  decodedData.addToTotalHits( decodedHits );
+
   if ( m_summary )
   {
     // Count the number of banks and size
@@ -1551,7 +1563,7 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
     // Increment bank size
     cands.nWords += bank.size()/4; // 2 L1 headers + data words
     // Increment hit occupancy
-    cands.nHits += decodedHits;
+    cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
     // Count number of HPD banks
     cands.nHPDs += nHPDbanks;
     // Count fills
@@ -1619,7 +1631,7 @@ RawDataFormatTool::decodeToSmartIDs( const RawEventLocations & taeLocations,
       }
     }
 
-    // do not print if faking HPDID, since smartIDs.size() then has no meaning
+    // do not print if faking PDID, since smartIDs.size() then has no meaning
     if ( !m_useFakeHPDID )
     {
       _ri_debug << "Decoded in total " << richBanks.size()

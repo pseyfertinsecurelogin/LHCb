@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Gaudi
 #include "Event/L0DUReport.h"
@@ -14,6 +14,61 @@
 // Declaration of the Tool Factory
 DECLARE_TOOL_FACTORY( L0DUFromRawTool )
 
+namespace {
+    static const std::string MuonCU0_Status= "MuonCU0(Status)";
+    static const std::string MuonCU1_Status= "MuonCU1(Status)";
+    static const std::string MuonCU2_Status= "MuonCU2(Status)";
+    static const std::string MuonCU3_Status= "MuonCU3(Status)";
+
+    static const std::string M0_Add = "M0(Add)";
+    static const std::string M1_Add = "M1(Add)";
+    static const std::string M2_Add = "M2(Add)";
+    static const std::string M3_Add = "M3(Add)";
+    static const std::string M4_Add = "M4(Add)";
+    static const std::string M5_Add = "M5(Add)";
+    static const std::string M6_Add = "M6(Add)";
+    static const std::string M7_Add = "M7(Add)";
+
+    static const std::string M0_Pt =   "M0(Pt)";
+    static const std::string M1_Pt =   "M1(Pt)" ;
+    static const std::string M2_Pt =   "M2(Pt)" ;
+    static const std::string M3_Pt =   "M3(Pt)" ;
+    static const std::string M4_Pt =   "M4(Pt)" ;
+    static const std::string M5_Pt =   "M5(Pt)" ;
+    static const std::string M6_Pt =   "M6(Pt)" ;
+    static const std::string M7_Pt =   "M7(Pt)" ;
+
+    static const std::string M0_Sgn =   "M0(Sgn)";
+    static const std::string M1_Sgn =   "M1(Sgn)";
+    static const std::string M2_Sgn =   "M2(Sgn)";
+    static const std::string M3_Sgn =   "M3(Sgn)";
+    static const std::string M4_Sgn =   "M4(Sgn)";
+    static const std::string M5_Sgn =   "M5(Sgn)";
+    static const std::string M6_Sgn =   "M6(Sgn)";
+    static const std::string M7_Sgn =   "M7(Sgn)";
+
+    static const std::string Electron_Status = "Electron(Status)";
+    static const std::string Photon_Status   = "Photon(Status)";
+    static const std::string Hadron_Status   = "Hadron(Status)";
+    static const std::string GlobalPi0_Status= "GlobalPi0(Status)";
+    static const std::string LocalPi0_Status = "LocalPi0(Status)";
+    static const std::string Sum_Status      = "Sum(Status)";
+    static const std::string Spd_Status      = "Spd(Status)";
+    static const std::string PU1_Status      = "PU1(Status)";
+    static const std::string PU2_Status      = "PU2(Status)";
+
+    static const std::string Sum_Et_Prev2 = "Sum(Et,Prev2)";
+    static const std::string Sum_Et_Prev1 = "Sum(Et,Prev1)";
+
+    static const std::string Sum_Et_Next2 = "Sum(Et,Next2)";
+    static const std::string Sum_Et_Next1 = "Sum(Et,Next1)";
+
+    static const std::string noLabel = "";
+
+    static const std::string PU_MoreInfo =  "PU(MoreInfo)";
+
+}
+
 
 //=============================================================================
 // Standard constructor, initializes variables
@@ -23,11 +78,11 @@ L0DUFromRawTool::L0DUFromRawTool( const std::string& type,
                                   const IInterface* parent )
 : base_class( type, name , parent ),
 // DO NOT TOUCH !! IF YOU MODIFY THIS VALUE THIS WILL BREAK THE DC06 BACKWARD COMPATIBILITY
-  m_tck(0xDC06), // default value for DC06 production (TCK was not implemented in Bank) 
+  m_tck(0xDC06), // default value for DC06 production (TCK was not implemented in Bank)
   m_sumEtPrev1(-1),
   m_sumEtPrev2(-1){
   declareInterface<IL0DUFromRawTool>(this);
-  
+
   declareProperty( "EmulatorTool"            , m_emulatorType="L0DUEmulatorTool");
   declareProperty( "L0DUConfigProviderName"  , m_configName="L0DUConfig");
   declareProperty( "L0DUConfigProviderType"  , m_configType="L0DUMultiConfigProvider");
@@ -44,7 +99,7 @@ L0DUFromRawTool::L0DUFromRawTool( const std::string& type,
   //new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Default};
   initRawEventSearch();
-  
+
 }
 
 
@@ -75,7 +130,7 @@ StatusCode L0DUFromRawTool::initialize(){
         (rootInTES() == "Next6/") ||\
         (rootInTES() == "Next7/") )
      m_slot =rootInTES();
-   else 
+   else
      m_slot ="T0";
 
    if(!m_encode)m_emu = false;
@@ -88,12 +143,11 @@ StatusCode L0DUFromRawTool::initialize(){
   // Built L0ProcessorData
   m_processorDatas.reset( new LHCb::L0ProcessorDatas() );
   for( int fiber = 0 ; fiber != (int) L0DUBase::Fiber::Empty ; fiber++){
-    LHCb::L0ProcessorData* temp = new LHCb::L0ProcessorData ( (L0DUBase::Fiber::Type) fiber , L0DUBase::EmptyData );
-    m_processorDatas->insert( temp );
+    m_processorDatas->insert( new LHCb::L0ProcessorData ( (L0DUBase::Fiber::Type) fiber , L0DUBase::EmptyData ) );
   }
 
   if( m_force >= 0 ){
-    warning() << " ========> WARNING : TCK WILL BE FORCED TO : " << format("0x%04X", m_force) 
+    warning() << " ========> WARNING : TCK WILL BE FORCED TO : " << format("0x%04X", m_force)
               << " YOU ARE ASSUMMED TO KNOW WHAT YOU ARE DOING " << endmsg;
   }
   if( m_sumSize >= 0 ){
@@ -102,7 +156,7 @@ StatusCode L0DUFromRawTool::initialize(){
   if( m_muonNoZsup ){
     warning() << " ========> WARNING : Muons are assumed to be non zero-suppressed : " << endmsg;
   }
-  
+
   return sc;
 }
 
@@ -134,8 +188,8 @@ bool L0DUFromRawTool::getL0DUBanksFromRaw( ){
     Warning("rawEvent not found in  '" + Gaudi::Utils::toString(m_rawEventLocations) +"' locations", StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Missing);
     return false;
-  }      
-  
+  }
+
   m_banks= &rawEvt->banks(   LHCb::RawBank::L0DU );
 
 
@@ -145,7 +199,7 @@ bool L0DUFromRawTool::getL0DUBanksFromRaw( ){
     if(m_warn)Warning("L0DUError bank has been found ...",StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( 0, LHCb::RawBankReadoutStatus::ErrorBank );
   }
-  
+
    if ( msgLevel( MSG::DEBUG) )
      debug() << "Number of L0DU bank(s) found : " << m_banks->size() << endmsg; // should be == 1 for L0DU
   if( 0 == m_banks->size() ) {
@@ -157,9 +211,9 @@ bool L0DUFromRawTool::getL0DUBanksFromRaw( ){
     std::stringstream msg("");
     if(m_warn)Warning("READOUSTATUS : more than one L0DU bank has been found in the RawEvent",StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::NonUnique);
-  }  
+  }
   return true;
-} 
+}
 
 
 
@@ -175,18 +229,17 @@ bool L0DUFromRawTool::decoding(int ibank){
   m_report.clear();
   // reset
   for( auto& i : *m_processorDatas ) {
-    const std::vector<int>& BXs=i->bxList();
-    for( std::vector<int>::const_iterator ibx=BXs.begin();BXs.end()!=ibx;ibx++){    
-      i->setWord (L0DUBase::EmptyData,*ibx);
-    }    
+    for( const auto& ibx : i->bxList() ) {
+      i->setWord (L0DUBase::EmptyData,ibx);
+    }
   }
-  
+
   //-----------------------------
   // get bank -------------------
   //-----------------------------
   if( !getL0DUBanksFromRaw() )return false;
-  auto itB = m_banks->begin(); 
-  LHCb::RawBank* bank = *itB+ibank;  
+  auto itB = m_banks->begin();
+  LHCb::RawBank* bank = *itB+ibank;
   if(!bank){
     Error("Bank point to NULL ",StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Missing);
@@ -200,8 +253,6 @@ bool L0DUFromRawTool::decoding(int ibank){
     return false;
   }
 
-
-
   // ------------------------
   // decoding ---------------
   // ------------------------
@@ -213,14 +264,14 @@ bool L0DUFromRawTool::decoding(int ibank){
   m_report.setBankVersion( m_vsn );
   m_source = bank->sourceID();
   m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::OK);
-  
+
   int nm        = 0 ;
   int np        = 0 ;
 
 
   if ( msgLevel( MSG::DEBUG) ){
     debug() << " <============= Start decoding bank =============>" << endmsg;
-    debug() << "Decoding bank : " << bank << " Source : " << m_source << " Version : " 
+    debug() << "Decoding bank : " << bank << " Source : " << m_source << " Version : "
             << m_vsn << " Size " << m_size << " (bytes) " << endmsg;
   }
 
@@ -228,7 +279,7 @@ bool L0DUFromRawTool::decoding(int ibank){
   //--------------------------------------------------------------
   if(m_vsn == 0){
 
-    
+
     if( m_force >= 0 ){
       std::stringstream msg;
       msg << " TCK IS FORCED TO BE " << format("0x%04X", m_force);
@@ -239,13 +290,12 @@ bool L0DUFromRawTool::decoding(int ibank){
         msg << " consistent with assumed TCK : " << format("0x%04X", m_tck) ;
         if ( msgLevel(MSG::DEBUG) ) debug() << msg.str() << endmsg;
       }
-      m_tck = (unsigned int) m_force;    
-    }    
-    
+      m_tck = (unsigned int) m_force;
+    }
+
     m_report.setTck( m_tck );
 
-    unsigned int word;
-    word = *m_data;
+    unsigned int word = *m_data;
     m_dump.push_back(word);
     if ( msgLevel( MSG::VERBOSE) )verbose() << "first data word = " << format("0x%04X", word)<< endmsg;
     m_report.setDecisionValue( (word & 0x1) );
@@ -275,7 +325,7 @@ bool L0DUFromRawTool::decoding(int ibank){
       std::stringstream tck;
       tck << format("0x%04X", m_tck);
       if(m_warning)Warning("L0DU bank version = 0 --> the TCK value is forced to " + tck.str(),StatusCode::SUCCESS).ignore();
-    } 
+    }
     if ( msgLevel( MSG::DEBUG) )debug() << "Loading configuration" << endmsg;
 
     config = m_confTool->config( m_tck , m_slot);
@@ -284,10 +334,10 @@ bool L0DUFromRawTool::decoding(int ibank){
       std::stringstream tck("");
       tck << "Unable to load the configuration for tck = " <<  format("0x%04X", m_tck) << " --> Incomplete L0DUReport" ;
       Warning(tck.str(), StatusCode::SUCCESS).ignore();
-      m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Unknown);      
-    }else{      
+      m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Unknown);
+    }else{
       m_report.setConfiguration(config);
-    }    
+    }
     if ( msgLevel( MSG::DEBUG) )debug() << "L0DU bank version 0 decoded" << endmsg;
   }
   // Version 1 : complete RawBank as described in EDMS 868071
@@ -322,10 +372,10 @@ bool L0DUFromRawTool::decoding(int ibank){
         msg << " consistent with TCK in data : " << format("0x%04X", m_tck) ;
         if ( msgLevel(MSG::DEBUG) ) debug() << msg.str() << endmsg;
       }
-      m_tck = (unsigned int) m_force;    
+      m_tck = (unsigned int) m_force;
     }
-    
-    m_report.setTck( m_tck );    
+
+    m_report.setTck( m_tck );
 
     if ( msgLevel( MSG::DEBUG) ){
       debug() << "-- Global header " << endmsg;
@@ -333,48 +383,48 @@ bool L0DUFromRawTool::decoding(int ibank){
       debug() << "   -> Firmware version : " << m_pgaVsn << " [" <<  format("0x%04X", m_pgaVsn) << "]" <<endmsg;
       debug() << "   -> Number of Condition & Channel summaries are : " << iec << " / " << itc << " respectively " ;
       if(m_vsn == 2) debug() << "   -> Number of Previous/Next BX : " << nm << "/" << np << endmsg;
-      if(m_sumSize>0) debug() << " (FORCED BY USER) " ;                        
+      if(m_sumSize>0) debug() << " (FORCED BY USER) " ;
       debug() <<endmsg;
     }
-    
+
     //---------------------------------
     // get corresponding configuration
     //---------------------------------
     config = m_confTool->config( m_tck , m_slot );
     if( !config){
       std::stringstream tck;
-      m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Unknown);      
+      m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Unknown);
       tck << " Unable to load the configuration for tck = " <<  format("0x%04X", m_tck) << " --> Incomplete L0DUReport" ;
       Warning(tck.str(), StatusCode::SUCCESS).ignore();
     }else{
       m_report.setConfiguration(config);
     }
-    
+
     //---------------------------------
-    
+
     // PGA3-block header
     if( !nextData() )return false;
-    
+
     unsigned long pga3Status    = (*m_data & 0x001FFFFF ) >>  0;
     m_bcid3                    = (*m_data & 0x0FE00000 ) >> 21;
     unsigned int  nmu          = (*m_data & 0xF0000000 ) >> 28;
-    
+
     if(m_muonNoZsup){
       std::stringstream msg("");
       if( 8 != nmu ){
-        msg << "READOUTSTATUS : muons are supposed to be NON 0-suppressed but the bank content indicates " 
+        msg << "READOUTSTATUS : muons are supposed to be NON 0-suppressed but the bank content indicates "
             << nmu << " muons only (will assume 8 muons for decoding)";
-        m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Corrupted);      
+        m_roStatus.addStatus( 0 , LHCb::RawBankReadoutStatus::Corrupted);
         Warning(msg.str() , StatusCode::SUCCESS).ignore();
       }
       nmu = 8;
     }
-    
-    encode("MuonCU0(Status)",(pga3Status >> 0) & 0xF  , L0DUBase::Muon1::Status  );
-    encode("MuonCU1(Status)",(pga3Status >> 4) & 0xF  , L0DUBase::Muon3::Status  );
-    encode("MuonCU2(Status)",(pga3Status >> 8) & 0xF  , L0DUBase::Muon5::Status  );
-    encode("MuonCU3(Status)",(pga3Status >> 12)& 0xF  , L0DUBase::Muon7::Status  );
-    
+
+    encode(MuonCU0_Status,(pga3Status >> 0) & 0xF  , L0DUBase::Muon1::Status  );
+    encode(MuonCU1_Status,(pga3Status >> 4) & 0xF  , L0DUBase::Muon3::Status  );
+    encode(MuonCU2_Status,(pga3Status >> 8) & 0xF  , L0DUBase::Muon5::Status  );
+    encode(MuonCU3_Status,(pga3Status >> 12)& 0xF  , L0DUBase::Muon7::Status  );
+
     unsigned int pga3Size = 4 * ( 4 + ( int((nmu+3)/4) ) + ( int((nmu+1)/2) ) );
     if ( msgLevel( MSG::DEBUG) ){
       debug() << "-- PGA3 header -------------------------- "  << endmsg;
@@ -385,7 +435,7 @@ bool L0DUFromRawTool::decoding(int ibank){
       debug() << endmsg;
       debug() << "   -> PGA3 block expected size : "<< pga3Size  << " (bytes) " <<endmsg;
     }
-    
+
     // PGA3 processing
     if( !nextData() )return false;
     int mu1 = (*m_data & 0x0000007F ) >> 0;
@@ -403,78 +453,85 @@ bool L0DUFromRawTool::decoding(int ibank){
     if( !nextData() )return false;
     dataMap(Name[Muon1Add],(*m_data & 0x0000FFFF ) >>0   );
     dataMap(Name[Muon2Add],(*m_data & 0xFFFF0000 ) >>16  );
-    
+
     if( !nextData() )return false;
     dataMap(Name[Muon3Add],(*m_data & 0x0000FFFF)  >> 0  );
     m_muCleanPattern             = (*m_data & 0x00FF0000)  >>16;
     if ( msgLevel( MSG::VERBOSE) ){
       verbose() << "-- PGA3 block -------------------------- " << endmsg;
-      verbose() << "   ... L0Muon processed data decoded  - Muon cleaning pattern = " 
-                << m_muCleanPattern <<  " [" << format("0x%04X",  m_muCleanPattern) << "] ..."   
+      verbose() << "   ... L0Muon processed data decoded  - Muon cleaning pattern = "
+                << m_muCleanPattern <<  " [" << format("0x%04X",  m_muCleanPattern) << "] ..."
                 <<endmsg;
     }
-    
+
     // PGA3 Input data
-    int n[8]; 
+    int n[8];
     for(unsigned int imu =0 ; imu < nmu ; imu++){
       int odd = imu-int(imu/2)*2;
       if(odd == 0 && !nextData())return false;
-      std::stringstream num;
       n[imu] = ((*m_data  >> 16*odd) & 0x0000E000 ) >> 13;
-      num << n[imu];
       unsigned int val = (*m_data  >> 16*odd) & 0x0000FFFF;
-      if( n[imu] == 0)     encode("M"+num.str()+"(Add)", val , L0DUBase::Muon1::Address);
-      else if( n[imu] == 1)encode("M"+num.str()+"(Add)", val , L0DUBase::Muon2::Address);
-      else if( n[imu] == 2)encode("M"+num.str()+"(Add)", val , L0DUBase::Muon3::Address);
-      else if( n[imu] == 3)encode("M"+num.str()+"(Add)", val , L0DUBase::Muon4::Address);
-      else if( n[imu] == 4)encode("M"+num.str()+"(Add)", val , L0DUBase::Muon5::Address);
-      else if( n[imu] == 5)encode("M"+num.str()+"(Add)", val , L0DUBase::Muon6::Address);
-      else if( n[imu] == 6)encode("M"+num.str()+"(Add)", val , L0DUBase::Muon7::Address);
-      else if( n[imu] == 7)encode("M"+num.str()+"(Add)", val , L0DUBase::Muon8::Address);
+      switch( n[imu] ) {
+        case 0: encode(M0_Add, val , L0DUBase::Muon1::Address); break;
+        case 1: encode(M1_Add, val , L0DUBase::Muon2::Address); break;
+        case 2: encode(M2_Add, val , L0DUBase::Muon3::Address); break;
+        case 3: encode(M3_Add, val , L0DUBase::Muon4::Address); break;
+        case 4: encode(M4_Add, val , L0DUBase::Muon5::Address); break;
+        case 5: encode(M5_Add, val , L0DUBase::Muon6::Address); break;
+        case 6: encode(M6_Add, val , L0DUBase::Muon7::Address); break;
+        case 7: encode(M7_Add, val , L0DUBase::Muon8::Address); break;
+      }
     }
-    
+
     for(unsigned int imu =0 ; imu < nmu ; imu++){
       int biodd = imu-int(imu/4)*4;
       if(biodd == 0 && !nextData())return false;
-      std::stringstream num;
-      num << n[imu];
       unsigned int pt = (*m_data >> 8*biodd) & 0x0000007F ;
       unsigned int sgn=((*m_data >> 8*biodd) & 0x00000080) >> 7;
-      if( n[imu] == 0){
-        encode("M"+num.str()+"(Pt)" , pt  ,  L0DUBase::Muon1::Pt  );
-        encode("M"+num.str()+"(Sgn)", sgn ,  L0DUBase::Muon1::Sign );
-      }else if( n[imu] == 1){
-        encode("M"+num.str()+"(Pt)" , pt  ,  L0DUBase::Muon2::Pt  );
-        encode("M"+num.str()+"(Sgn)", sgn ,  L0DUBase::Muon2::Sign );
-      }else if( n[imu] == 2){
-        encode("M"+num.str()+"(Pt)" , pt  ,  L0DUBase::Muon3::Pt  );
-        encode("M"+num.str()+"(Sgn)", sgn ,  L0DUBase::Muon3::Sign );
-      }else if( n[imu] == 3){
-        encode("M"+num.str()+"(Pt)" , pt  ,  L0DUBase::Muon4::Pt  );
-        encode("M"+num.str()+"(Sgn)", sgn ,  L0DUBase::Muon4::Sign );
-      }else if( n[imu] == 4){
-        encode("M"+num.str()+"(Pt)" , pt  ,  L0DUBase::Muon5::Pt  );
-        encode("M"+num.str()+"(Sgn)", sgn ,  L0DUBase::Muon5::Sign );
-      }else if( n[imu] == 5){
-        encode("M"+num.str()+"(Pt)" , pt  ,  L0DUBase::Muon6::Pt  );
-        encode("M"+num.str()+"(Sgn)", sgn ,  L0DUBase::Muon6::Sign );
-      }else if( n[imu] == 6){
-        encode("M"+num.str()+"(Pt)" , pt  ,  L0DUBase::Muon7::Pt  );
-        encode("M"+num.str()+"(Sgn)", sgn ,  L0DUBase::Muon7::Sign );
-      }else if( n[imu] == 7){
-        encode("M"+num.str()+"(Pt)" , pt  ,  L0DUBase::Muon8::Pt  );
-        encode("M"+num.str()+"(Sgn)", sgn ,  L0DUBase::Muon8::Sign );
+      switch (n[imu]) {
+      case 0:
+        encode(M0_Pt , pt  ,  L0DUBase::Muon1::Pt  );
+        encode(M0_Sgn, sgn ,  L0DUBase::Muon1::Sign );
+        break;
+      case 1:
+        encode(M1_Pt , pt  ,  L0DUBase::Muon2::Pt  );
+        encode(M1_Sgn, sgn ,  L0DUBase::Muon2::Sign );
+        break;
+      case 2:
+        encode(M2_Pt , pt  ,  L0DUBase::Muon3::Pt  );
+        encode(M2_Sgn, sgn ,  L0DUBase::Muon3::Sign );
+        break;
+      case 3:
+        encode(M3_Pt , pt  ,  L0DUBase::Muon4::Pt  );
+        encode(M3_Sgn, sgn ,  L0DUBase::Muon4::Sign );
+        break;
+      case 4:
+        encode(M4_Pt , pt  ,  L0DUBase::Muon5::Pt  );
+        encode(M4_Sgn, sgn ,  L0DUBase::Muon5::Sign );
+        break;
+      case 5:
+        encode(M5_Pt , pt  ,  L0DUBase::Muon6::Pt  );
+        encode(M5_Sgn, sgn ,  L0DUBase::Muon6::Sign );
+        break;
+      case 6:
+        encode(M6_Pt , pt  ,  L0DUBase::Muon7::Pt  );
+        encode(M6_Sgn, sgn ,  L0DUBase::Muon7::Sign );
+        break;
+      case 7:
+        encode(M7_Pt , pt  ,  L0DUBase::Muon8::Pt  );
+        encode(M7_Sgn, sgn ,  L0DUBase::Muon8::Sign );
+        break;
       }
     }
-    
+
     if ( msgLevel( MSG::VERBOSE) )verbose() << "   ... L0Muon input data decoded  ( " << nmu << " ) ..." << endmsg;
-    
+
     // PGA2-block header
     if( !nextData() )return false;
     m_rsda       = (*m_data & 0x0000FFFF );
     unsigned int pga2Status= (*m_data & 0x0FFF0000 ) >> 16;
     m_status               = (pga2Status & 0xE00   )  >> 12;
- 
+
     // NOT IMPLEMENTED IN TELL1 F/W TO BE CHANGED IN EDMS !!!!
     //if( 0x1 & m_status){
     //  m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Tell1Error );
@@ -484,7 +541,7 @@ bool L0DUFromRawTool::decoding(int ibank){
     if( m_vsn == 1 ){
       nm                     = (*m_data & 0x30000000 ) >> 28;
       np                     = (*m_data & 0xC0000000 ) >> 30;
-    }    
+    }
 
     unsigned int beam1 = 0;
     unsigned int beam2 = 0;
@@ -493,7 +550,7 @@ bool L0DUFromRawTool::decoding(int ibank){
     }
     else if (m_vsn ==2){
       // BCID split : 10 LSB in RSDA + 2 in PGA2 header
-      m_bcid2                =  (m_rsda & 0x3FF)  | ( (*m_data & 0x30000000 ) >> 18); 
+      m_bcid2                =  (m_rsda & 0x3FF)  | ( (*m_data & 0x30000000 ) >> 18);
       beam1     = (m_rsda >> 10) & 0x1;
       beam2     = (m_rsda >> 11) & 0x1;
     }
@@ -509,7 +566,7 @@ bool L0DUFromRawTool::decoding(int ibank){
     if ( msgLevel( MSG::DEBUG) ){
       debug() << "-- PGA2 header -------------------------- " << endmsg;
       debug() << "   -> RSDA : " <<  m_rsda << " [" << format("0x%04X",  m_rsda) << "]"   << endmsg;
-      debug() << "   -> BCID ( & 0xFFF): "<< m_bcid2 << " [" << format("0x%04X",  m_bcid2) << "]"   << endmsg; 
+      debug() << "   -> BCID ( & 0xFFF): "<< m_bcid2 << " [" << format("0x%04X",  m_bcid2) << "]"   << endmsg;
       debug() << "   -> Decisions : [ physics : " << decision << "| beam1 : " << beam1 << " |  beam2 : " << beam2 << "]" <<endmsg;
       debug() << "   -> TTB : " << ttb  << "  FB : " << fb << endmsg;
       if(m_vsn == 1) debug() << "   -> Number of Previous/Next BX : " << nm << "/" << np << endmsg;
@@ -524,52 +581,51 @@ bool L0DUFromRawTool::decoding(int ibank){
     m_report.setTimingTriggerBit( (ttb == 1) );
     m_report.setForceBit( (fb == 1) );
     //
-    encode("Electron(Status)",(pga2Status>>L0DUBase::Fiber::CaloElectron)  & 0x1    , L0DUBase::Electron::Status  );
-    encode("Photon(Status)",(pga2Status>>L0DUBase::Fiber::CaloPhoton)    & 0x1      , L0DUBase::Photon::Status    );
-    encode("Hadron(Status)",(pga2Status>>L0DUBase::Fiber::CaloHadron)    & 0x1      , L0DUBase::Hadron::Status    );
-    encode("GlobalPi0(Status)", (pga2Status>>L0DUBase::Fiber::CaloPi0Local)  & 0x1  , L0DUBase::Pi0Global::Status );
-    encode("LocalPi0(Status)",(pga2Status>>L0DUBase::Fiber::CaloPi0Global) & 0x1    , L0DUBase::Pi0Local::Status  );
-    encode("Sum(Status)",(pga2Status>>L0DUBase::Fiber::CaloSumEt)     & 0x1         , L0DUBase::Sum::Status       );
-    encode("Spd(Status)",(pga2Status>>L0DUBase::Fiber::CaloSpdMult)   & 0x1         , L0DUBase::Spd::Status       );
-    encode("PU1(Status)",(pga2Status>>L0DUBase::Fiber::Pu1)           & 0x1         , L0DUBase::PileUp::Status1   );
-    encode("PU2(Status)",(pga2Status>>L0DUBase::Fiber::Pu2)           & 0x1         , L0DUBase::PileUp::Status2   );
-    
+    encode(Electron_Status,(pga2Status>>L0DUBase::Fiber::CaloElectron)  & 0x1    , L0DUBase::Electron::Status  );
+    encode(Photon_Status,(pga2Status>>L0DUBase::Fiber::CaloPhoton)    & 0x1      , L0DUBase::Photon::Status    );
+    encode(Hadron_Status,(pga2Status>>L0DUBase::Fiber::CaloHadron)    & 0x1      , L0DUBase::Hadron::Status    );
+    encode(GlobalPi0_Status, (pga2Status>>L0DUBase::Fiber::CaloPi0Local)  & 0x1  , L0DUBase::Pi0Global::Status );
+    encode(LocalPi0_Status,(pga2Status>>L0DUBase::Fiber::CaloPi0Global) & 0x1    , L0DUBase::Pi0Local::Status  );
+    encode(Sum_Status,(pga2Status>>L0DUBase::Fiber::CaloSumEt)     & 0x1         , L0DUBase::Sum::Status       );
+    encode(Spd_Status,(pga2Status>>L0DUBase::Fiber::CaloSpdMult)   & 0x1         , L0DUBase::Spd::Status       );
+    encode(PU1_Status,(pga2Status>>L0DUBase::Fiber::Pu1)           & 0x1         , L0DUBase::PileUp::Status1   );
+    encode(PU2_Status,(pga2Status>>L0DUBase::Fiber::Pu2)           & 0x1         , L0DUBase::PileUp::Status2   );
+
     // check the bank size is consistent
-    
-    unsigned int pga2Size = 4 * ( 7 + iec + 2*itc +  (itc+iec)*(nm+np) 
+
+    unsigned int pga2Size = 4 * ( 7 + iec + 2*itc +  (itc+iec)*(nm+np)
                                   + (int( (nm+1)/2) + int ((np+1)/2)));
     if ( msgLevel( MSG::DEBUG) )debug() << "   -> PGA2 bloc size should be " << pga2Size << " (bytes)" << endmsg;
     unsigned int allSize = 4 + pga2Size + pga3Size;
     if(m_size == allSize){
-      if ( msgLevel( MSG::DEBUG) )debug() << "   -> The total expected size (header + PGA2 + PGA3) " << allSize 
+      if ( msgLevel( MSG::DEBUG) )debug() << "   -> The total expected size (header + PGA2 + PGA3) " << allSize
                                           << " matches the actual bank size ________________ <** OK **> " <<endmsg;
     }else{
-      std::stringstream msg("");
-      msg << "READOUTSTATUS : the total expected size "  
-          << " does NOT match the bank size __________________  <** POSSIBLE DATA CORRUPTION **>";
       if ( msgLevel( MSG::DEBUG) )
         debug() << " Expected size : " << allSize << " Actual size : " << m_size << " DO NOT MATCH" << endmsg;
-      Error(msg.str() , StatusCode::SUCCESS).ignore(); 
-      m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Corrupted ); 
+      Error( "READOUTSTATUS : the total expected size "
+             " does NOT match the bank size __________________  <** POSSIBLE DATA CORRUPTION **>",
+             StatusCode::SUCCESS).ignore();
+      m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Corrupted );
     }
-    
+
     if ( (0x7F & m_bcid2) == m_bcid3){
-      if ( msgLevel( MSG::DEBUG) )debug() 
-        << "   -> The PGA3 and PGA2 data are aligned _____________________________________ <** OK **> " 
+      if ( msgLevel( MSG::DEBUG) )debug()
+        << "   -> The PGA3 and PGA2 data are aligned _____________________________________ <** OK **> "
         << endmsg;
     }else{
       if(m_warn)Warning("   -> The PGA3 and PGA2 data are NOT aligned ",StatusCode::SUCCESS).ignore();
       if ( msgLevel( MSG::DEBUG) )
         debug() << " BCIDs PGA2(LSB)/PGA3= " << (m_bcid2 & 0x7F) << " /"  << m_bcid3 << " NOT ALIGNED " << endmsg;
     }
-    
-    
+
+
     // PGA2 processing
     //clear summaries Maps
     m_ecs.clear();
     m_cds.clear();
     m_tcs.clear();
-    
+
     for(unsigned int i = 0 ; i < itc ; i++){
       if( !nextData() )return false;
       m_tcs[std::make_pair(0,i)] = *m_data;
@@ -585,71 +641,71 @@ bool L0DUFromRawTool::decoding(int ibank){
     for(unsigned int i = 0 ; i < iec ; i++){
       if( !nextData() )return false;
       m_ecs[std::make_pair(0,i)]=*m_data;
-      if ( msgLevel( MSG::VERBOSE) )verbose() << "   ->  Elementary condition summary[BX=0, Word=" << i << "] = " 
-                                              << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg; 
+      if ( msgLevel( MSG::VERBOSE) )verbose() << "   ->  Elementary condition summary[BX=0, Word=" << i << "] = "
+                                              << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
     }
 
-    
+
     if ( msgLevel( MSG::VERBOSE) )verbose() << "   ... PGA2 decision processing decoded ..." <<endmsg;
-    
+
     //PGA2 input data
     if( !nextData() )return false;
-    int sumEt0 = (*m_data & 0x00003FFF );             
+    int sumEt0 = (*m_data & 0x00003FFF );
     encode(Name[SumEt]        , sumEt0                         , L0DUBase::Sum::Et  );
     m_sumEt[0] = sumEt0;
     if ( msgLevel( MSG::VERBOSE) )verbose() << "   -> SumEt[BX=0] = "<< m_sumEt[0] << endmsg;
-    
+
 
 
     encode(Name[SpdMult],(*m_data & 0x0FFFC000 ) >> 14         , L0DUBase::Spd::Mult    );
-    encode("PU(MoreInfo)",(*m_data & 0xF0000000 ) >> 28      , L0DUBase::PileUp::MoreInfo  );
-    
+    encode(PU_MoreInfo,(*m_data & 0xF0000000 ) >> 28      , L0DUBase::PileUp::MoreInfo  );
+
     if( !nextData() )return false;
     encode(Name[ElectronEt] ,(*m_data & 0x000000FF ) >> 0      , L0DUBase::Electron::Et      );
     encode(Name[PhotonEt]   ,(*m_data & 0x0000FF00 ) >> 8      , L0DUBase::Photon::Et        );
     encode(Name[GlobalPi0Et],(*m_data & 0x00FF0000 ) >> 16     , L0DUBase::Pi0Global::Et     );
     encode(Name[LocalPi0Et] ,(*m_data & 0xFF000000 ) >> 24     , L0DUBase::Pi0Local::Et      );
-    
+
     if( !nextData() )return false;
     encode(Name[HadronEt]   ,(*m_data & 0x000000FF ) >> 0      , L0DUBase::Hadron::Et        );
     encode(Name[PuPeak1],(*m_data & 0x0000FF00 ) >> 8      , L0DUBase::PileUp::Peak1     );
     encode(Name[PuPeak2],(*m_data & 0x00FF0000 ) >> 16     , L0DUBase::PileUp::Peak2     );
     encode(Name[PuHits] ,(*m_data & 0xFF000000 ) >> 24     , L0DUBase::PileUp::Hits      );
-    
+
     if( !nextData() )return false;
     encode(Name[ElectronAdd] ,(*m_data & 0x0000FFFF ) >> 0     , L0DUBase::Electron::Address   );
     encode(Name[PhotonAdd]   ,(*m_data & 0xFFFF0000 ) >> 16    , L0DUBase::Photon::Address   );
-    
+
     if( !nextData() )return false;
     encode(Name[GlobalPi0Add],(*m_data & 0x0000FFFF )          , L0DUBase::Pi0Global::Address );
     encode(Name[LocalPi0Add] ,(*m_data & 0xFFFF0000 ) >> 16    , L0DUBase::Pi0Local::Address  );
-    
+
     if( !nextData() )return false;
     encode(Name[HadronAdd]  ,(*m_data & 0x0000FFFF )           , L0DUBase::Hadron::Address );
     encode(Name[PuPeak1Pos] ,(*m_data & 0x00FF0000 ) >> 16     , L0DUBase::PileUp::Peak1Pos );
     encode(Name[PuPeak2Pos] ,(*m_data & 0xFF000000 ) >> 24     , L0DUBase::PileUp::Peak2Pos );
-    
+
     if ( msgLevel( MSG::VERBOSE) )verbose() << "   ... L0Calo & L0PileUp input data decoded ..." <<endmsg;
-    
-    
+
+
     // Previous/Next BX
     for(int im = nm ; im > 0 ; im--){
       for(unsigned int i = 0 ; i < itc ; i++){
         if( !nextData() )return false;
         m_cds[std::make_pair(-im,i)] = *m_data;
-        if( msgLevel( MSG::VERBOSE) )verbose() << "   -> Trigger Channel Summary[BX="<< -im << ", Word=" <<i << "] = " 
+        if( msgLevel( MSG::VERBOSE) )verbose() << "   -> Trigger Channel Summary[BX="<< -im << ", Word=" <<i << "] = "
                                                << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
       }
       for(unsigned int i = 0 ; i < iec ; i++){
         if( !nextData() )return false;
         m_ecs[std::make_pair(-im,i)] = *m_data;
-        if ( msgLevel( MSG::VERBOSE) )verbose() << "   -> Elementary Condition Summary[BX="<< -im << ", Word=" <<i << "] = " 
+        if ( msgLevel( MSG::VERBOSE) )verbose() << "   -> Elementary Condition Summary[BX="<< -im << ", Word=" <<i << "] = "
                   << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
       }
     }
-    if( msgLevel( MSG::VERBOSE) )verbose() << "   ... " << nm << " previous BX summaries decoded ..." << endmsg;  
-    
-    
+    if( msgLevel( MSG::VERBOSE) )verbose() << "   ... " << nm << " previous BX summaries decoded ..." << endmsg;
+
+
     // SumEt
     for(int im = nm ; im > 0 ; im--){
       int odd = (nm-im)%2;
@@ -657,32 +713,32 @@ bool L0DUFromRawTool::decoding(int ibank){
       m_sumEt[-im]= (*m_data >> 16*odd) & 0x3FFF ;
       if( msgLevel( MSG::VERBOSE) )verbose() << "   -> SumEt[Bx=" << -im << "] = " <<  m_sumEt[-im] << endmsg;
     }
-    // === FAKE CONSECUTIVE EVENTS FOR PRODUCING COHERENT SumEt,Prev PATTERN : overwrite the real SumEtPrev1/Prev2 
+    // === FAKE CONSECUTIVE EVENTS FOR PRODUCING COHERENT SumEt,Prev PATTERN : overwrite the real SumEtPrev1/Prev2
     // === (!!Next1/Next2 are no longer coherent)
     if(m_fakeSeq){
       if( m_sumEtPrev1 != -1){ // do nothing for 1st event in the sequence
         m_sumEt[-2]=m_sumEtPrev2;
         m_sumEt[-1]=m_sumEtPrev1;  // use cached sumEt from previous event
-      }    
+      }
       m_sumEtPrev2=m_sumEt[-1];
       m_sumEtPrev1=m_sumEt[0];
       //info() << "SumEt sequence : " << m_sumEt[0] << " | " << m_sumEt[-1] << " | " << m_sumEt[-2] << endmsg;
     }
     // ===
 
-    encode( "Sum(Et,Prev2)",  m_sumEt[-2]  , L0DUBase::Sum::Et , -2      ); // new OD - 2016
-    encode( "Sum(Et,Prev1)",  m_sumEt[-1]  , L0DUBase::Sum::Et , -1      ); // new OD - 2016
+    encode( Sum_Et_Prev2,  m_sumEt[-2]  , L0DUBase::Sum::Et , -2      ); // new OD - 2016
+    encode( Sum_Et_Prev1,  m_sumEt[-1]  , L0DUBase::Sum::Et , -1      ); // new OD - 2016
     //dataMap("Sum(Et,Prev2)",m_sumEt[-2],scale(L0DUBase::Sum::Et)); // new OD - 2015 (dataMap incl. in encode())
     //dataMap("Sum(Et,Prev1)",m_sumEt[-1],scale(L0DUBase::Sum::Et)); // new OD - 2015 (dataMap incl. in encode())
 
     if( msgLevel( MSG::VERBOSE) )verbose() << "   ... " << nm << " previous BX sumET decoded ... " << endmsg;
 
-    
+
     for(int ip = 0 ; ip < np ; ip++){
       for(unsigned int i = 0 ; i < itc ; i++){
         if( !nextData() )return false;
         m_cds[std::make_pair(ip+1,i)] = *m_data;
-        if( msgLevel( MSG::VERBOSE) )verbose() << "   -> Trigger Channel Summary[BX="<< ip+1 << ", Word=" <<i << "] = " 
+        if( msgLevel( MSG::VERBOSE) )verbose() << "   -> Trigger Channel Summary[BX="<< ip+1 << ", Word=" <<i << "] = "
                                                << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
       }
       for(unsigned int i = 0 ; i < iec ; i++){
@@ -692,8 +748,8 @@ bool L0DUFromRawTool::decoding(int ibank){
                                                << *m_data << " [0x" << format("0x%04X",  *m_data) << "]"  <<endmsg;
       }
     }
-    if( msgLevel( MSG::VERBOSE) )verbose() << "   ... " <<  np << " next BX summaries decoded ..." << endmsg;  
-    
+    if( msgLevel( MSG::VERBOSE) )verbose() << "   ... " <<  np << " next BX summaries decoded ..." << endmsg;
+
     for(int ip = 0 ; ip < np ; ip++){
       int odd = ip%2;
       if(odd == 0 &&  !nextData() )return false;
@@ -701,14 +757,14 @@ bool L0DUFromRawTool::decoding(int ibank){
       if( msgLevel( MSG::VERBOSE) )verbose() << " SumEt[Bx=" << ip+1 << "] = " <<  m_sumEt[ip+1] << endmsg;
     }
     if( msgLevel( MSG::VERBOSE) )verbose() << "   ... " << nm << " next BX sumET decoded ..." << endmsg;
-    encode( "Sum(Et,Next2)",  m_sumEt[2]  , L0DUBase::Sum::Et , +2      ); // new OD - 2016
-    encode( "Sum(Et,Next1)",  m_sumEt[1]  , L0DUBase::Sum::Et , +1      ); // new OD - 2016
+    encode( Sum_Et_Next2,  m_sumEt[2]  , L0DUBase::Sum::Et , +2      ); // new OD - 2016
+    encode( Sum_Et_Next1,  m_sumEt[1]  , L0DUBase::Sum::Et , +1      ); // new OD - 2016
     //dataMap("Sum(Et,Next1)",m_sumEt[1],scale(L0DUBase::Sum::Et));
     //dataMap("Sum(Et,Next2)",m_sumEt[2],scale(L0DUBase::Sum::Et));
 
-    // check the size 
+    // check the size
     if( msgLevel( MSG::VERBOSE) )verbose() << " <============= Decoding completed successfuly =============>" << endmsg;
-    
+
     // Print all data values extracted from rawBank
     if ( msgLevel( MSG::VERBOSE) ){
       for(std::map<std::string, std::pair<unsigned int,double> >::iterator imap = m_dataMap.begin();
@@ -716,14 +772,14 @@ bool L0DUFromRawTool::decoding(int ibank){
         verbose() << "   --> Data = (value,scale) : " << imap->first << " = " <<  imap->second << endmsg;
       }
     }
-    
+
     // -----------------------------------------------
     // BUILDING output (L0ProcessorData & L0Report)
     // -----------------------------------------------
     if ( msgLevel( MSG::VERBOSE) )verbose() << " ... fill processor Data ..." <<endmsg;
     // encode BCIDs from input data in rawBank
     if(m_encode)fillBCIDData();
-    //  emulate the config for later usage (monitoring) 
+    //  emulate the config for later usage (monitoring)
     if(m_emu){
       if(config)m_emuTool->process(config , m_processorDatas.get()).ignore();
       // template config :
@@ -733,31 +789,31 @@ bool L0DUFromRawTool::decoding(int ibank){
       }
     }
     // add data value to L0DUReport embeded map if not available via L0DUConfig (i.e. status bit or no emulation or unknown TCK)
-    for( auto it = m_dataMap.begin(); m_dataMap.end() != it ; ++it){ 
-      const std::string& name = it->first;
+    for( const auto& i : m_dataMap ) {
+      const std::string& name = i.first;
       if(name.empty()) continue;
-      unsigned int    di = (it->second).first;
-      double sc = (it->second).second;
-      if( m_report.dataDigit(name) != di )m_report.addToData(name,di, sc);
+      unsigned int di = i.second.first;
+      double sc = i.second.second;
+      if( m_report.dataDigit(name) != di ) m_report.addToData(name,di, sc);
     }
-    
-    
+
+
 
     // Fill report with the consecutive BXs info
     if ( msgLevel( MSG::VERBOSE) )verbose() << " ... filling L0DU Report with consecutive BXs ..." << endmsg;
     m_report.setChannelsDecisionSummaries( m_cds );
     m_report.setConditionsValueSummaries(  m_ecs );
-    m_report.setChannelsPreDecisionSummaries( m_tcs );  
-    m_report.setSumEt( m_sumEt );    
+    m_report.setChannelsPreDecisionSummaries( m_tcs );
+    m_report.setSumEt( m_sumEt );
     m_report.setBcid( m_bcid2 );
-    if ( msgLevel( MSG::VERBOSE) )verbose() 
-      << " <==== Building output (emulated ProcessorData & L0DUReport) completed successfuly ====>" 
+    if ( msgLevel( MSG::VERBOSE) )verbose()
+      << " <==== Building output (emulated ProcessorData & L0DUReport) completed successfuly ====>"
       << endmsg;
-    
+
     //---------------------------------------------------------
     // End of coding version = 1
     //---------------------------------------------------------
-    
+
   }  else{
     Error(" Unknown bank version ",StatusCode::SUCCESS).ignore();
     if ( msgLevel( MSG::DEBUG) )debug() << " Unknown bank version : " << m_vsn << endmsg;
@@ -766,7 +822,7 @@ bool L0DUFromRawTool::decoding(int ibank){
   }
 
 
-  
+
   return true;
 }
 
@@ -797,38 +853,38 @@ double L0DUFromRawTool::scale(const unsigned int base[L0DUBase::Index::Size]) co
 
 
 void L0DUFromRawTool::fillBCIDData(){
-  encode("",m_bcid2                        , L0DUBase::Electron::BCID    );
-  encode("",m_bcid2                        , L0DUBase::Photon::BCID    );
-  encode("",m_bcid2                        , L0DUBase::Hadron::BCID    );
-  encode("",m_bcid2                        , L0DUBase::Pi0Global::BCID    );
-  encode("",m_bcid2                        , L0DUBase::Pi0Local::BCID    );
-  encode("",m_bcid2                        , L0DUBase::Sum::BCID    );
-  encode("",m_bcid2                        , L0DUBase::Spd::BCID    );
-  encode("",m_bcid3                        , L0DUBase::Muon1::BCID1);
-  encode("",m_bcid3                        , L0DUBase::Muon1::BCID2);
-  encode("",m_bcid3                        , L0DUBase::Muon2::BCID1);
-  encode("",m_bcid3                        , L0DUBase::Muon2::BCID2);
-  encode("",m_bcid3                        , L0DUBase::Muon3::BCID1);
-  encode("",m_bcid3                        , L0DUBase::Muon3::BCID2);
-  encode("",m_bcid3                        , L0DUBase::Muon4::BCID1);
-  encode("",m_bcid3                        , L0DUBase::Muon4::BCID2);
-  encode("",m_bcid3                        , L0DUBase::Muon5::BCID1);
-  encode("",m_bcid3                        , L0DUBase::Muon5::BCID2);
-  encode("",m_bcid3                        , L0DUBase::Muon6::BCID1);
-  encode("",m_bcid3                        , L0DUBase::Muon6::BCID2);
-  encode("",m_bcid3                        , L0DUBase::Muon7::BCID1);
-  encode("",m_bcid3                        , L0DUBase::Muon7::BCID2);
-  encode("",m_bcid3                        , L0DUBase::Muon8::BCID1);
-  encode("",m_bcid3                        , L0DUBase::Muon8::BCID2);
-  encode("",m_bcid2                        , L0DUBase::PileUp::BCID1);
-  encode("",m_bcid2                        , L0DUBase::PileUp::BCID2);
+  encode(noLabel,m_bcid2                        , L0DUBase::Electron::BCID    );
+  encode(noLabel,m_bcid2                        , L0DUBase::Photon::BCID    );
+  encode(noLabel,m_bcid2                        , L0DUBase::Hadron::BCID    );
+  encode(noLabel,m_bcid2                        , L0DUBase::Pi0Global::BCID    );
+  encode(noLabel,m_bcid2                        , L0DUBase::Pi0Local::BCID    );
+  encode(noLabel,m_bcid2                        , L0DUBase::Sum::BCID    );
+  encode(noLabel,m_bcid2                        , L0DUBase::Spd::BCID    );
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon1::BCID1);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon1::BCID2);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon2::BCID1);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon2::BCID2);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon3::BCID1);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon3::BCID2);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon4::BCID1);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon4::BCID2);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon5::BCID1);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon5::BCID2);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon6::BCID1);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon6::BCID2);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon7::BCID1);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon7::BCID2);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon8::BCID1);
+  encode(noLabel,m_bcid3                        , L0DUBase::Muon8::BCID2);
+  encode(noLabel,m_bcid2                        , L0DUBase::PileUp::BCID1);
+  encode(noLabel,m_bcid2                        , L0DUBase::PileUp::BCID2);
 }
 
 
 void L0DUFromRawTool::putStatusOnTES(){
   // Readout Status
   typedef LHCb::RawBankReadoutStatus Status;
-  typedef LHCb::RawBankReadoutStatuss Statuss;  
+  typedef LHCb::RawBankReadoutStatuss Statuss;
   Statuss* statuss = getOrCreate<Statuss,Statuss>( LHCb::RawBankReadoutStatusLocation::Default );
   Status* status = statuss->object ( m_roStatus.key() );
   if( !status ){
@@ -837,13 +893,13 @@ void L0DUFromRawTool::putStatusOnTES(){
   } else {
     std::stringstream type;
     type << LHCb::RawBank::typeName(m_roStatus.key()) ;
-    
+
     if ( msgLevel( MSG::DEBUG) )debug() << "Status for bankType " <<  type.str()  << " already exists" << endmsg;
     if( status->status() != m_roStatus.status() ){
       Warning("Status for bankType " +  type.str() + " already exists  with different status value -> merge both"
               , StatusCode::SUCCESS).ignore();
       for(const auto& i : m_roStatus.statusMap()) status->addStatus(i.first , i.second);
-    } 
+    }
   }
 }
 

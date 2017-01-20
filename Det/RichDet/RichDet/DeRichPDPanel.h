@@ -9,8 +9,7 @@
  */
 //=============================================================================
 
-#ifndef RICHDET_DERICHPDPANEL_H
-#define RICHDET_DERICHPDPANEL_H 1
+#pragma once
 
 // Gaudi
 #include "GaudiKernel/Transform3DTypes.h"
@@ -24,8 +23,8 @@
 #include "Kernel/RichSmartID.h"
 #include "Kernel/RichTraceMode.h"
 
-// RichKernel
-#include "RichKernel/RichDAQDefinitions.h"
+// RichUtils
+#include "RichUtils/RichDAQDefinitions.h"
 
 //=============================================================================
 /** @class DeRichPDPanel DeRichPDPanel.h RichDet/DeRichPDPanel.h
@@ -46,7 +45,7 @@ public:
   DeRichPDPanel( const std::string & name = "" );
 
   /// Destructor
-  virtual ~DeRichPDPanel( );
+  virtual ~DeRichPDPanel( ) = default;
 
 public:
 
@@ -114,15 +113,6 @@ public:
     return this->dePD(smartID)->detectionPoint(smartID,detectPoint,photoCathodeSide);
   }
 
-  /** Access the DeRichPD object for a given PD RichSmartID
-   *  @param[in] pdID The PD RichSmartID identifier
-   *  @return Pointer to the associated DeRichPD object
-   */
-  const DeRichPD * dePD( const LHCb::RichSmartID pdID ) const
-  {
-    return this->dePD(this->pdNumber(pdID));
-  }
-
   /** Get the global to local (PD panel) transform. The local frame is defined with an offset
    *  to accommodate both detector panels in one histogram and the x=0 in Rich1 and y=0 in
    *  Rich2 are aligned with the global x=0 and y=0.
@@ -139,6 +129,12 @@ public:
   }
   
 public: // virtual methods. Derived classes must implement these
+
+  /** Access the DeRichPD object for a given PD RichSmartID
+   *  @param[in] pdID The PD RichSmartID identifier
+   *  @return Pointer to the associated DeRichPD object
+   */
+  virtual const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const = 0;
 
   /// Returns the detector element for the given PD number
   virtual const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const = 0;
@@ -202,10 +198,6 @@ public: // virtual methods. Derived classes must implement these
   /// Returns the PD number for the given RichSmartID
   virtual Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const = 0;
 
-  ///Returns true when the given smartID corresponds to a GrandPMT.  
-  /// For hpds and for standard pmts returns false.
-  virtual bool pdGrandSize( const LHCb::RichSmartID& smartID ) const = 0;
-
   /**
    * Adds to the given vector all the available readout channels in this PD panel
    *
@@ -217,6 +209,11 @@ public: // virtual methods. Derived classes must implement these
    */
   virtual bool
   readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const = 0;
+  
+  /** The maximum PD copy number for this panel
+   *  Useful as for the PMTs this is not easily derived from the number of PD
+   *  as they are not completely sequential */
+  virtual Rich::DAQ::HPDCopyNumber maxPdNumber() const = 0;
 
 protected: // Parameters that must be properly configured in the derived classes
 
@@ -234,11 +231,9 @@ protected: // Parameters that must be properly configured in the derived classes
 
   double m_detPlaneZ{0};   ///< The z position of the detection plane in an PD panel
 
-  Gaudi::Plane3D m_detectionPlane;     ///< detection plane in global coordinates
+  Gaudi::Plane3D m_detectionPlane; ///< detection plane in global coordinates
 
-  Gaudi::Transform3D m_globalToPDPanelTransform;  ///< global to PD plane (local) transform
-  Gaudi::Transform3D m_PDPanelToGlobalTransform;  ///< local (PD plane) to global transform
+  Gaudi::Transform3D m_globalToPDPanelTransform; ///< global to PD plane (local) transform
+  Gaudi::Transform3D m_PDPanelToGlobalTransform; ///< local (PD plane) to global transform
 
 };
-
-#endif // RICHDET_DERICHPDPANEL_H

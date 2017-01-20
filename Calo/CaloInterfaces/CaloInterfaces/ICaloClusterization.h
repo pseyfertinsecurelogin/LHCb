@@ -1,4 +1,3 @@
-// $Id: ICaloClusterization.h,v 1.4 2009-06-17 18:31:37 odescham Exp $
 #ifndef CALOINTERFACES_ICALOCLUSTERIZATION_H 
 #define CALOINTERFACES_ICALOCLUSTERIZATION_H 1
 
@@ -18,7 +17,6 @@
 // forward declarations
 class DeCalorimeter;
 
-static const InterfaceID IID_ICaloClusterization ( "ICaloClusterization", 1, 1 );
 
 /** @class ICaloClusterization ICaloClusterization.h CaloInterfaces/ICaloClusterization.h
  *  
@@ -26,9 +24,11 @@ static const InterfaceID IID_ICaloClusterization ( "ICaloClusterization", 1, 1 )
  *  @author Victor Egorychev
  *  @date   2008-04-03
  */
-class ICaloClusterization : virtual public IAlgTool 
+struct  ICaloClusterization : extend_interfaces<IAlgTool>
 {
-public:
+
+  DeclareInterfaceID( ICaloClusterization, 2, 0 );
+
   // ==========================================================================
   /**  The main clusterization method
    * @ param pointer to CaloDigit
@@ -84,20 +84,6 @@ public:
     const unsigned int                    level      ) = 0 ;
 
   virtual unsigned int iterations()=0;
-  
-public: 
-
-  /** static interface identification
-   *  @see IInterface
-   *  @see IID_ICaloClusterization
-   *  Return the interface ID
-   */
-  static const InterfaceID& interfaceID() { return IID_ICaloClusterization; }
-
-
-protected:
-
-private:
 
 };
 #endif // CALOINTERFACES_ICALOCLUSTERIZATION_H

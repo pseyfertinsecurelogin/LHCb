@@ -1,4 +1,4 @@
-#ifndef CALOL0DATAPROVIDER_H 
+#ifndef CALOL0DATAPROVIDER_H
 #define CALOL0DATAPROVIDER_H 1
 
 
@@ -16,42 +16,40 @@
  */
 class CaloL0DataProvider : public CaloReadoutTool, virtual public ICaloL0DataProvider {
 
-public: 
+public:
   /// Standard constructor
-  CaloL0DataProvider( const std::string& type, 
+  CaloL0DataProvider( const std::string& type,
                      const std::string& name,
                      const IInterface* parent);
 
-  virtual ~CaloL0DataProvider( ); ///< Destructor
+  StatusCode initialize() override;
+  void clear() override;
+  void cleanData(int feb) override;
+  int    l0Adc(LHCb::CaloCellID id,int def=0) override;
+  unsigned int nTell1s() const override {return m_tell1s;}
+  const CaloVector<LHCb::L0CaloAdc>& l0Adcs(int source=-1,bool clean=true) override;
+  const CaloVector<LHCb::L0CaloAdc>& l0Adcs(std::vector<int> sources,bool clean=true) override;
 
-  virtual StatusCode initialize();
-   void clear();
-   void cleanData(int feb);
-  int    l0Adc(LHCb::CaloCellID id,int def=0);
-  unsigned int nTell1s(){return m_tell1s;};
-  const CaloVector<LHCb::L0CaloAdc>& l0Adcs(int source=-1,bool clean=true);
-  const CaloVector<LHCb::L0CaloAdc>& l0Adcs(std::vector<int> sources,bool clean=true);
-  
 
 
 
 protected:
   bool decodeCell(LHCb::CaloCellID id);
   bool decodeTell1(int tell1);
-  bool decodeBank(LHCb::RawBank* bank);
-  bool decodePrsTriggerBank(LHCb::RawBank* bank);
+  bool decodeBank(const LHCb::RawBank& bank);
+  bool decodePrsTriggerBank(const LHCb::RawBank& bank);
 private:
-  LHCb::L0CaloAdc fillL0ADC(LHCb::CaloCellID id,int adc, int sourceID){ 
-    LHCb::L0CaloAdc temp(id,adc); 
+  LHCb::L0CaloAdc fillL0ADC(LHCb::CaloCellID id,int adc, int sourceID){
+    LHCb::L0CaloAdc temp(id,adc);
     if( 0 >  m_adcs.index(id)){
       m_adcs.addEntry( temp , id);
     }else{
       counter("Duplicate L0ADC found")+=1;
       m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::DuplicateEntry);
-    } 
+    }
     return temp;
   }
   CaloVector<LHCb::L0CaloAdc>    m_adcs;
-  unsigned int m_tell1s;
+  unsigned int m_tell1s = 0;
 };
 #endif // CALOL0DATAPROVIDER_H

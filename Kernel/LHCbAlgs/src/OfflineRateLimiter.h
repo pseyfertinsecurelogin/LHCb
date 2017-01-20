@@ -1,4 +1,4 @@
-#ifndef OFFLINERATELIMITER_H 
+#ifndef OFFLINERATELIMITER_H
 #define OFFLINERATELIMITER_H 1
 
 // Include files
@@ -8,7 +8,7 @@
 #include "RateFromCondDB.h"
 /** @class OfflineRateLimiter OfflineRateLimiter.h
  *
- *  Algorithm to ``rate limit'' a line in the stripping. 
+ *  Algorithm to ``rate limit'' a line in the stripping.
  *  It needs to calibrate to something else, i.e. an Hlt rate limited line.
  *
  * Usage:
@@ -23,7 +23,7 @@
  * A special case is the NoBias in 2012 data:
  *
  * @verbatim
- * OfflineRateLimiter().UseCondition = True  
+ * OfflineRateLimiter().UseCondition = True
  * OfflineRateLimiter().HltLimiter = "Hlt1MBNoBiasODINFilter"
  * Offlineratelimiter().Prescaler = "Hlt1MBNoBiasPreScaler"
  * @endverbatim
@@ -33,17 +33,19 @@
  *  @author Patrick Koppenburg
  *  @date   2011-08-05
  */
-class OfflineRateLimiter : public OfflineDeterministicPrescaler{
-public: 
+class OfflineRateLimiter final : public OfflineDeterministicPrescaler
+{
+
+ public:
+
   /// Standard constructor
   OfflineRateLimiter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~OfflineRateLimiter( ); ///< Destructor
-  virtual StatusCode execute ( ); ///< Algorithm execution
+  virtual ~OfflineRateLimiter( ) = default; ///< Destructor
+  StatusCode execute ( ) override; ///< Algorithm execution
 
-protected:
+ private:
 
-private:
   bool handleTCK();               ///< Check if TCK has changed
   void updateRateFromTCK();       ///< Check if TCK has changed, update rate
   void updatePrescaleFromTCK();   ///< Check if TCK has changed, update prescale
@@ -51,16 +53,20 @@ private:
   void updateRate();              ///< Redo all calculations
   StatusCode initializeOnFirstEvent() ; ///< wait for event 1 to initialize
 
-  IRateFromTCK* m_tckReader ;     ///< Property Config Service
+ private:
+
+  IRateFromTCK* m_tckReader = nullptr; ///< Property Config Service
   std::string m_hltLimiter ;      ///< Line wrt to which one wants to scale
   double m_rate ;                 ///< Target rate
-  unsigned int m_tck ;            ///< Last TCK seen
+  unsigned int m_tck{0} ;            ///< Last TCK seen
   bool m_useCondDB ;              ///< Use Condition DB
-  RateFromCondDB* m_condTriggerTool ; ///< Rate from CondDB
+  RateFromCondDB* m_condTriggerTool = nullptr; ///< Rate from CondDB
   bool m_fallback;                ///< Fallback to TCK if rate is zero (for instance in 2011 data)
   std::string m_prescaler;        ///< Name of prescaler, if any
-  double m_storedRate ;           ///< Rate stored in TCK or CondDB
-  double m_storedPrescale ;       ///< Prescale stored in TCK
-  bool m_initialized ;            ///< has been initialized
+  double m_storedRate{0} ;        ///< Rate stored in TCK or CondDB
+  double m_storedPrescale{1};     ///< Prescale stored in TCK
+  bool m_initialized{false};      ///< has been initialized
+
 };
+
 #endif // OFFLINERATELIMITER_H

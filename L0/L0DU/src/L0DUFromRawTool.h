@@ -1,11 +1,11 @@
-#ifndef L0DUFROMRAWTOOL_H 
+#ifndef L0DUFROMRAWTOOL_H
 #define L0DUFROMRAWTOOL_H 1
 
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 // Interface
-#include "L0Interfaces/IL0DUFromRawTool.h"            
+#include "L0Interfaces/IL0DUFromRawTool.h"
 #include "L0Interfaces/IL0DUConfigProvider.h"
 #include "L0Interfaces/IL0DUEmulatorTool.h"
 #include "L0Interfaces/IL0CondDBProvider.h"
@@ -16,15 +16,15 @@
 
 
 /** @class L0DUFromRawTool L0DUFromRawTool.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2007-10-19
  */
 class L0DUFromRawTool : public extends<Decoder::ToolBase, IL0DUFromRawTool> {
-public: 
+public:
   /// Standard constructor
-  L0DUFromRawTool( const std::string& type, 
+  L0DUFromRawTool( const std::string& type,
                    const std::string& name,
                    const IInterface* parent);
 
@@ -48,9 +48,9 @@ public:
   LHCb::L0DUReport report() const override {return m_report;}
   LHCb::L0ProcessorDatas* L0ProcessorDatas() override {return m_processorDatas.get();}
   const std::map<std::string, std::pair<unsigned int,double> >& datas() const override {return m_dataMap;}
-  
+
   virtual StatusCode  _setProperty(const std::string& p,const std::string& v) override {return  setProperty(p,v);};
-  
+
 private:
   bool decoding(int ibank);
   bool getL0DUBanksFromRaw();
@@ -67,13 +67,13 @@ private:
   bool m_muonNoZsup;
   int m_force;
   int m_sumSize;
-  
+
 
   IL0DUConfigProvider*   m_confTool = nullptr;
   IL0DUEmulatorTool*     m_emuTool = nullptr;
   IL0CondDBProvider*     m_condDB = nullptr;
   //
-  const std::vector<LHCb::RawBank*>* m_banks;  
+  const std::vector<LHCb::RawBank*>* m_banks;
   std::map<std::string, std::pair<unsigned int,double> > m_dataMap;
   unsigned int m_vsn = 0;
   unsigned int m_status;
@@ -86,10 +86,10 @@ private:
   std::map<std::pair<int , unsigned int>, unsigned int > m_cds;
   std::map<std::pair<int , unsigned int>, unsigned int > m_tcs;
   std::map<int , unsigned int> m_sumEt;
-  
+
   LHCb::L0DUReport m_report;
   std::unique_ptr<LHCb::L0ProcessorDatas> m_processorDatas;
-  unsigned int m_tck;  
+  unsigned int m_tck;
   bool m_warning = true;
   unsigned int m_size = 0;
   LHCb::RawBankReadoutStatus m_roStatus;
@@ -118,7 +118,7 @@ inline void L0DUFromRawTool::encode(const std::string& name, unsigned int data ,
   if(name != "")dataMap(name,data,scale(base));
   if(!m_encode)return;
   LHCb::L0ProcessorData* fiber = m_processorDatas->object( base[ L0DUBase::Index::Fiber ]  )  ;
-  unsigned int word = fiber->word(bx);  
+  unsigned int word = fiber->word(bx);
   //  word |= ( (data << base[L0DUBase::Index::Shift]) & base[L0DUBase::Index::Mask] );
   word |= ( (data & ( base[L0DUBase::Index::Mask] >> base[L0DUBase::Index::Shift] )) << base[L0DUBase::Index::Shift]);
   fiber->setWord( word,bx);
@@ -136,7 +136,7 @@ inline void L0DUFromRawTool::dataMap(const std::string& name, unsigned int data,
 }
 
 inline bool L0DUFromRawTool::nextData(){
-  if( NULL == ++m_data){
+  if( NULL == ++m_data){ //@FIXME: I suspect there is a '*' missing here... i.e. if (!*++m_data)
     Error("READOUTSTATUS : No more data in bank --> CORRUPTION",StatusCode::SUCCESS).ignore();
     m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Corrupted );
     m_roStatus.addStatus( m_source , LHCb::RawBankReadoutStatus::Incomplete);

@@ -1,4 +1,3 @@
-// $Id: CaloFillPrsSpdRawBuffer.h,v 1.5 2007-02-22 23:39:52 odescham Exp $
 #ifndef CALOFILLPRSSPDRAWBUFFER_H 
 #define CALOFILLPRSSPDRAWBUFFER_H 1
 
@@ -19,13 +18,11 @@ public:
   /// Standard constructor
   CaloFillPrsSpdRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~CaloFillPrsSpdRawBuffer( ); ///< Destructor
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
-
-protected:
+private:
 
   void fillDataBank ( );
 
@@ -37,7 +34,6 @@ protected:
 
   void fillPackedBank ( );
 
-private:
   std::string m_inputBank;
   std::string m_prsBank;
   std::string m_spdBank;

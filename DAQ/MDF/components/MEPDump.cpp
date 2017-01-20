@@ -1,10 +1,10 @@
 // $Id: MEPDump.cpp,v 1.1 2009-02-06 09:37:57 frankb Exp $
-// Include files 
+// Include files
 
 // from Gaudi
-#include "GaudiKernel/Algorithm.h" 
-#include "GaudiKernel/MsgStream.h" 
-#include "GaudiKernel/IDataProviderSvc.h" 
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h"
@@ -20,7 +20,7 @@ namespace LHCb  {
     *  @date   2005-10-13
     */
   class MEPDump : public Algorithm {
-  public: 
+  public:
     int m_evt;
     std::string              m_con;
     StreamDescriptor         m_desc;
@@ -34,9 +34,9 @@ namespace LHCb  {
     }
 
     /// Destructor
-    virtual ~MEPDump()  {} 
+    virtual ~MEPDump()  {}
 
-    virtual StatusCode initialize()  {
+    StatusCode initialize() override {
       m_bindDsc = StreamDescriptor::bind(m_con);
       if ( m_bindDsc.ioDesc > 0 )   {
         m_accessDsc = StreamDescriptor::accept(m_bindDsc);
@@ -45,14 +45,14 @@ namespace LHCb  {
       return StatusCode::FAILURE;
     }
 
-    virtual StatusCode finalize()  {
+    StatusCode finalize() override {
       StreamDescriptor::close(m_accessDsc);
       StreamDescriptor::close(m_bindDsc);
       return StatusCode::SUCCESS;
     }
 
     /// Main execution
-    virtual StatusCode execute()  {
+    StatusCode execute() override {
       MsgStream log(msgSvc(),name());
       unsigned int partitionID;
       try  {
@@ -71,7 +71,7 @@ namespace LHCb  {
             const RawEvent* e = (*i).second;
             size_t nbank = numberOfBanks(e);
             size_t ntypes = numberOfBankTypes(e);
-            log << MSG::ALWAYS << "Event:" << (*i).first << " has " 
+            log << MSG::ALWAYS << "Event:" << (*i).first << " has "
                 << nbank << " banks of " << ntypes << " types." << endmsg;
           }
           for(i=events.begin();i!=events.end();++i)  {

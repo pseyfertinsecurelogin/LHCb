@@ -15,7 +15,6 @@ namespace LHCb
 }
 
 
-static const InterfaceID IID_IPart2Calo ( "IPart2Calo", 1, 0 );
 
 /** @class IPart2Calo IPart2Calo.h Kernel/IPart2Calo.h
  *  
@@ -23,35 +22,24 @@ static const InterfaceID IID_IPart2Calo ( "IPart2Calo", 1, 0 );
  *  @author Olivier Deschamps
  *  @date   2007-06-25
  */
-class IPart2Calo : virtual public ITrack2Calo {
-public: 
-
+struct IPart2Calo : extend_interfaces<ITrack2Calo>
+{
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_IPart2Calo; }
-
-  /// virtual destructor
-  virtual ~IPart2Calo() {}  
-
-  virtual StatusCode         initialize() = 0;
+  DeclareInterfaceID( IPart2Calo, 2, 0 );
 
   using ITrack2Calo::match;
-  virtual bool  match(const  LHCb::Particle* part,
-                      std::string det = DeCalorimeterLocation::Ecal,
-                      CaloPlane::Plane plane = CaloPlane::ShowerMax, 
-                      double delta = 0.
-                      )= 0;
-  virtual bool  match(const  LHCb::ProtoParticle* proto,
-                      std::string det = DeCalorimeterLocation::Ecal,
-                      CaloPlane::Plane plane = CaloPlane::ShowerMax, 
-                      double delta = 0.
-                      )= 0;
+  virtual bool match(const  LHCb::Particle* part,
+                     std::string det = DeCalorimeterLocation::Ecal,
+                     CaloPlane::Plane plane = CaloPlane::ShowerMax, 
+                     double delta = 0.
+                     )= 0;
+  virtual bool match(const  LHCb::ProtoParticle* proto,
+                     std::string det = DeCalorimeterLocation::Ecal,
+                     CaloPlane::Plane plane = CaloPlane::ShowerMax, 
+                     double delta = 0.
+                     )= 0;
 
   virtual bool inAcceptance()=0;  
-
-
-protected:
-
-private:
 
 };
 #endif // IPART2CALO_H

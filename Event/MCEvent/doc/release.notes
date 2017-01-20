@@ -3,6 +3,31 @@
 ! Purpose     : LHCb Event model. MC truth classes (Gauss and Boole output)
 !-----------------------------------------------------------------------------
 
+! 2016-11-17 - Vanya Belyaev
+
+ - MCParticle.xml
+   add a regular copoy consructor (no key copying)
+   remove "quasi-copy-constructor"
+   fix clone/cloneWithKey accordingly 
+
+! 2016-11-17 - Vanya Belyaev
+
+ - MCParticle.xml
+
+   fix bug: weird "quasi copy-constrcutor" is not copying m_flags field.
+   as a result "fromSignal" information is lost for all MC tapes..
+   now it is fixed..
+
+    Btw - *WHY* we need this strange "quasi-copy" ? 
+    Could it be replaced with normal Copy Constructor  (as e.g. fro LHCb::Particle)
+    (of course  LHCb::MCParticle::clone and  LHCb::MCParticle::cloneWithKey
+     in this case need to be fixed also, but I think it is more correct, instead of 
+     using weird "quasi-copy constructor".
+   
+ 
+! 2016-08-22 - Chris Jones
+ - Modernise a bit the various cpp implementation files.
+
 !========================= MCEvent v3r4 2016-01-27 =========================
 ! 2015-11-26 - Marco Clemencic
  - Removed (u)longlong typedef (see GAUDI-1125).

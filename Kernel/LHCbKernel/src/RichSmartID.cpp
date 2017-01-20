@@ -105,9 +105,9 @@ std::ostream& LHCb::RichSmartID::fillStream( std::ostream& s,
   return s;
 }
 
-void LHCb::RichSmartID::rangeError(const DataType value,
-                                   const DataType maxValue,
-                                   const std::string& message) const
+void LHCb::RichSmartID::rangeError( const DataType value,
+                                    const DataType maxValue,
+                                    const std::string & message ) const
 {
   std::ostringstream mess;
   mess << message << " value " << value << " exceeds field maximum " << maxValue;

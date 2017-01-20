@@ -2,6 +2,7 @@
 #ifndef DICT_CALOINTERFACESDICT_H 
 #define DICT_CALOINTERFACESDICT_H 1
 
+#include "CaloInterfaces/ICounterLevel.h"     
 #include "CaloInterfaces/ICaloClusterSelector.h"     
 #include "CaloInterfaces/ICaloClusterization.h"     
 #include "CaloInterfaces/ICaloClusterTool.h"         

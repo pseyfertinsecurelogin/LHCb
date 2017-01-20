@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MONITORING_H
 #define LOKI_MONITORING_H 1
@@ -91,10 +90,10 @@ namespace LoKi
         { m_stat = LoKi::Monitoring::getCounter ( m_cntdef ) ; }
       }
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Counter* clone() const { return new Counter(*this); }
+      Counter* clone() const override { return new Counter(*this); }
       /// MANDATORY: the only one essential method:
-      virtual typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
-        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const
+      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       {
         const auto result = m_cut.fun ( a ) ;
         /// get counter if needed
@@ -105,15 +104,10 @@ namespace LoKi
         return result ;                                               // RETURN
       }
       /// OPTIONAL: just a nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return m_cut.fillStream ( s ) ; }
       /// OPTIONAL: delegate ID:
-      virtual std::size_t id() const { return m_cut.id() ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor
-      Counter () ; //  no default constructor
+      std::size_t id() const override { return m_cut.id() ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -165,11 +159,6 @@ namespace LoKi
       { return m_cut.fillStream ( s ) ; }
       /// OPTIONAL: delegate ID:
       virtual std::size_t id() const { return m_cut.id() ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor
-      Counter () ; //  no default constructor
       // ======================================================================
     private:
       // ======================================================================
@@ -246,10 +235,10 @@ namespace LoKi
         , m_histo   ( histo )
       {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Plot* clone() const { return new Plot(*this); }
+      Plot* clone() const override { return new Plot(*this); }
       /// MANDATORY: the only one essential method:
-      virtual typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
-        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const
+      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       {
         // evaluate the functor
         const auto result = m_fun.fun ( a ) ;
@@ -262,22 +251,17 @@ namespace LoKi
         return result ;
       }
       /// OPTIONAL: just a nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return m_fun.fillStream ( s ) ; }
       /// delegate ID:
-      virtual std::size_t id() const { return m_fun.id() ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor
-      Plot() ;                                       // no default constructor
+      std::size_t id() const override { return m_fun.id() ; }
       // ======================================================================
     private:
       // ======================================================================
       /// the "main" function:
       LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ; // the "main" function
       /// the histogram for monitoring
-      mutable AIDA::IHistogram1D*      m_histo ; // the histogram for monitoring
+      mutable AIDA::IHistogram1D*      m_histo = nullptr ; // the histogram for monitoring
       /// histogram description for lazy instantiation
       LoKi::Histo                      m_hdef  ; // histogram description
       // ======================================================================
@@ -291,18 +275,14 @@ namespace LoKi
       /// constructor from the function and the histogram
       Plot ( const LoKi::Functor<void,TYPE2>& fun   ,
              AIDA::IHistogram1D*              histo )
-        : LoKi::Functor<void,TYPE2>()
-        , m_fun     ( fun   )
+        : m_fun     ( fun   )
         , m_histo   ( histo )
-        , m_hdef    ()
       {}
       /// constructor from the function and the histogram
       Plot ( const LoKi::Functor<void,TYPE2>& fun   ,
              const LoKi::Histo&               hdef  )
         : LoKi::AuxFunBase ( std::tie ( fun , hdef ) )
-        , LoKi::Functor<void,TYPE2>()
         , m_fun     ( fun   )
-        , m_histo   ( 0     )
         , m_hdef    ( hdef  )
       {
         // try to load the histo
@@ -312,13 +292,9 @@ namespace LoKi
       /// constructor from the function and the histogram
       Plot ( AIDA::IHistogram1D*              histo ,
              const LoKi::Functor<void,TYPE2>& fun   )
-        : LoKi::Functor<void,TYPE2>()
-        , m_fun     ( fun   )
+        : m_fun     ( fun   )
         , m_histo   ( histo )
-        , m_hdef    ()
       {}
-      /// MANDATORY: virtual constructor
-      virtual ~Plot () { m_histo = 0 ; }
       /// MANDATORY: clone method ("virtual constructor")
       virtual  Plot* clone() const { return new Plot(*this); }
       /// MANDATORY: the only one essential method:
@@ -339,11 +315,6 @@ namespace LoKi
       /// delegate ID:
       virtual std::size_t id() const { return m_fun.id() ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// no default constructor
-      Plot() ; // no default constructor
-     // ======================================================================
     private:
       // ======================================================================
       /// the "main" function:
@@ -414,10 +385,10 @@ namespace LoKi
         , m_prefix ( prefix ) {}
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Printer* clone() const { return new Printer ( *this ) ; }
+      Printer* clone() const override { return new Printer ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
-        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const
+      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       {
         // evaluat ethe underlying functor:
         const auto result = m_fun.fun ( a )        ;
@@ -428,15 +399,10 @@ namespace LoKi
         return result ;
       }
       /// OPTIONAL: just a nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return m_fun.fillStream ( s ) ; }
       /// OPTIONAL: delegate ID:
-      virtual std::size_t id() const { return m_fun.id() ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Printer() ; // the default constructor is disabled
+      std::size_t id() const override { return m_fun.id() ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -509,11 +475,6 @@ namespace LoKi
       { return m_fun.fillStream ( s ) ; }
       /// OPTIONAL: delegate ID:
       virtual std::size_t id() const { return m_fun.id() ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Printer() ; // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================

@@ -80,7 +80,7 @@ namespace L0Muon {
     CoreUnit(DOMNode* pNode);
 
     /// Set the unit properties
-    void setProperties(std::map<std::string,L0Muon::Property>properties);
+    void setProperties(std::map<std::string,L0Muon::Property>properties) override;
 
     /// Return x foi in station sta
     int xFoi(int sta);
@@ -110,14 +110,14 @@ namespace L0Muon {
     void initializeM1TowerMap();
 
     /// Set the DEBUG level flag
-    void setDebugMode(bool debug = true) ;
+    void setDebugMode(bool debug = true) override;
 
     /// Overloads from Unit : set parameters, initialize the CandRegisterHandler with pointer to the output register
-    void initialize();
+    void initialize() override;
     /// Overloads from Unit : search candidates, fill the CandRegisterHandler
-    void execute();
+    void execute() override;
     /// Overloads from Unit : clear the input and output registers
-    void postexecute();
+    void postexecute() override;
 
     /// Special method to emulate part of the execute method : construct the tower
     bool preprocess();
@@ -147,12 +147,12 @@ namespace L0Muon {
     std::vector<L0Muon::PMuonCandidate> process(int xfoiM1,int xfoiM2,int xfoiM4,int xfoiM5,int yfoiM4,int yfoiM5);
 
     /// Give a static type name to the unit
-    std::string type() {
+    std::string type() override {
       return "CoreUnit";
     }
 
     /// Set the pointer to the pt Look Up Table
-    void setLUTPointer(L0MPtLUT * plut);
+    void setLUTPointer(L0MPtLUT * plut) override;
 
   private:
 

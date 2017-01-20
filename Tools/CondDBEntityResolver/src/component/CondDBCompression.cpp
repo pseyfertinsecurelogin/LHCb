@@ -61,7 +61,7 @@ std::string CondDBCompression::compress(const std::string& strin, const int8_t m
     }
 
     // pass a preamble which sets the first byte to identify compression method
-	auto str = base64_encode( { dest.data(), size_t(destLen) }, {{ char('0'+method) }} );
+	auto str = base64_encode( { dest.data(), size_t(destLen) }, { char('0'+method) } );
     return str;
 }
 

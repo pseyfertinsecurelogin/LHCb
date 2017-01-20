@@ -1,5 +1,4 @@
-// $Id: UnpackMCVertex.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef UNPACKMCVERTEX_H 
+#ifndef UNPACKMCVERTEX_H
 #define UNPACKMCVERTEX_H 1
 
 // Include files
@@ -13,17 +12,15 @@
  *  @author Olivier Callot
  *  @date   2005-03-18
  */
-class UnpackMCVertex : public GaudiAlgorithm 
+class UnpackMCVertex : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   UnpackMCVertex( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~UnpackMCVertex(); ///< Destructor
-
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 

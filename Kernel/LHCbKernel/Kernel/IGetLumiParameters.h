@@ -1,4 +1,3 @@
-// $Id: IGetLumiParameters.h,v 1.1 2010-11-20 08:17:50 panmanj Exp $
 #ifndef IGETLUMIPARAMETERS_H 
 #define IGETLUMIPARAMETERS_H 1
 
@@ -8,7 +7,6 @@
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
-static const InterfaceID IID_IGetLumiParameters ( "IGetLumiParameters", 1, 1 );
 
 /** @class IGetLumiParameters IGetLumiParameters.h
  *
@@ -17,10 +15,10 @@ static const InterfaceID IID_IGetLumiParameters ( "IGetLumiParameters", 1, 1 );
  *  @author Jaap Panman
  *  @date   2010-11-20
  */
-class IGetLumiParameters : virtual public IAlgTool {
-public: 
+struct IGetLumiParameters : extend_interfaces<IAlgTool> {
+
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_IGetLumiParameters; }
+  DeclareInterfaceID( IGetLumiParameters, 2, 0 );
 
   virtual unsigned int getTCK() const = 0;                            ///< retrieve TCK
   virtual long CollidingBunches() = 0;                                ///< retrieve number of colliding bunches

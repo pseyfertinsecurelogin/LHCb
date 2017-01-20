@@ -1,4 +1,3 @@
-// $Id: ICaloEnergyFromRaw.h,v 1.6 2009-10-12 16:03:53 odescham Exp $
 #ifndef CALODAQ_ICALOENERGYFROMRAW_H 
 #define CALODAQ_ICALOENERGYFROMRAW_H 1
 
@@ -10,7 +9,6 @@
 #include "Event/CaloAdc.h"
 #include "Event/CaloDigit.h"
 
-static const InterfaceID IID_ICaloEnergyFromRaw ( "ICaloEnergyFromRaw", 4, 0 );
 
 /** @class ICaloEnergyFromRaw ICaloEnergyFromRaw.h CaloDAQ/ICaloEnergyFromRaw.h
  *  Interface to the tool decoding the (cell+energy) from Raw
@@ -18,27 +16,19 @@ static const InterfaceID IID_ICaloEnergyFromRaw ( "ICaloEnergyFromRaw", 4, 0 );
  *  @author Olivier Callot
  *  @date   2005-01-10
  */
-class ICaloEnergyFromRaw : virtual public ICaloReadoutTool {
-public: 
+struct ICaloEnergyFromRaw : extend_interfaces<ICaloReadoutTool> {
 
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICaloEnergyFromRaw; }
+  DeclareInterfaceID( ICaloEnergyFromRaw, 5, 0 );
 
   virtual const std::vector<LHCb::CaloAdc>&   adcs( ) = 0;
   virtual const std::vector<LHCb::CaloAdc>&   adcs( int source ) = 0;
-  virtual const std::vector<LHCb::CaloAdc>&   adcs( LHCb::RawBank* bank ) = 0;
+  virtual const std::vector<LHCb::CaloAdc>&   adcs( const LHCb::RawBank& bank ) = 0;
   virtual const std::vector<LHCb::CaloAdc>&   pinAdcs( ) = 0;
   
   virtual const std::vector<LHCb::CaloDigit>& digits( ) = 0;
   virtual const std::vector<LHCb::CaloDigit>& digits( int source  ) = 0;
-  virtual const std::vector<LHCb::CaloDigit>& digits( LHCb::RawBank* bank ) = 0;
+  virtual const std::vector<LHCb::CaloDigit>& digits( const LHCb::RawBank& bank ) = 0;
   
-
-  
-  
-protected:
-
-private:
-
 };
 #endif // CALODAQ_ICALOENERGYFROMRAW_H

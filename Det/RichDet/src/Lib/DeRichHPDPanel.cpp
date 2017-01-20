@@ -46,9 +46,6 @@ DeRichHPDPanel::DeRichHPDPanel(const std::string & name) :
   m_pdType = LHCb::RichSmartID::HPDID;
 }
 
-// Standard Destructor
-DeRichHPDPanel::~DeRichHPDPanel() { }
-
 // Retrieve Pointer to class defininition structure
 const CLID& DeRichHPDPanel::classID()
 {
@@ -69,6 +66,9 @@ StatusCode DeRichHPDPanel::initialize()
 
   if ( msgLevel(MSG::DEBUG,msg) )
     msg << MSG::DEBUG << "Initialize " << name() << endmsg;
+
+  // cache the DeRichSystem pointer
+  m_deRichS = deRichSys();
 
   // register UMS dependency on local geometry
   updMgrSvc()->registerCondition( this, geometry(), &DeRichHPDPanel::geometryUpdate );
@@ -120,6 +120,14 @@ StatusCode DeRichHPDPanel::initialize()
 }
 
 //=========================================================================
+// The maximum PD copy number for this panel
+//=========================================================================
+Rich::DAQ::HPDCopyNumber DeRichHPDPanel::maxPdNumber() const
+{
+  return Rich::DAQ::HPDCopyNumber(m_DeHPDs.size());
+}
+
+//=========================================================================
 // convert a point on the silicon sensor to a smartID
 //=========================================================================
 bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
@@ -134,9 +142,9 @@ bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
   }
 
   // check if the HPD is active or dead
-  if ( !deRichSys()->pdIsActive( id ) ) return false;
+  if ( !m_deRichS->pdIsActive( id ) ) return false;
 
-  const auto HPDNumber = pdNumber(id);
+  const auto HPDNumber = _pdNumber(id);
   if ( HPDNumber.data() > nPDs() )
   {
     error() << "Inappropriate HPDNumber : " << HPDNumber;
@@ -217,7 +225,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
   { return LHCb::RichTraceMode::RayTraceFailed; }
 
   // Find the correct DeRichHPD
-  const auto * HPD = deHPD( pdNumber(smartID) );
+  const auto * HPD = deHPD( _pdNumber(smartID) );
 
   // Refind intersection point using other local plane
   // ( Can reuse scalar as both local planes have the same normal vector )
@@ -242,7 +250,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
     else
     {
       // Inside an HPD
-      if ( !deRichSys()->pdIsActive(smartID) || // check if the HPD is active or dead
+      if ( !m_deRichS->pdIsActive(smartID) ||   // check if the HPD is active or dead
            ( mode.hpdKaptonShadowing() &&       // check for intersection with kapton shield
              HPD->testKaptonShadowing(pInPanel,vInPanel) ) )
       {
@@ -323,7 +331,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
         windowPointGlobal = HPD->geometry()->toGlobal( windowPointInHPD );
 
         // check if the HPD is active or dead
-        if ( !deRichSys()->pdIsActive(smartID) )
+        if ( !m_deRichS->pdIsActive(smartID) )
         {
           res = LHCb::RichTraceMode::OutsideHPDPanel;
         }
@@ -468,6 +476,14 @@ int DeRichHPDPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
   LHCb::RichSmartID id( rich(), side() );
   // set the remaining fields from the position
   return pdNumber( smartID(globalPoint,id) ? id : LHCb::RichSmartID(rich(),side()) ).data();
+}
+
+//=========================================================================
+// Access the DeRichPD object for a given PD RichSmartID
+//=========================================================================
+const DeRichPD* DeRichHPDPanel::dePD( const LHCb::RichSmartID pdID ) const
+{
+  return deHPD( _pdNumber(pdID) );
 }
 
 //=========================================================================
@@ -731,9 +747,7 @@ StatusCode DeRichHPDPanel::geometryUpdate()
 
 Rich::DAQ::HPDCopyNumber DeRichHPDPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
 {
-  return Rich::DAQ::HPDCopyNumber( smartID.rich() == rich() && smartID.panel() == side() ?
-                                   smartID.pdCol() * nPDsPerCol() + smartID.pdNumInCol() :
-                                   nPDs() + 1 );
+  return  _pdNumber(smartID);
 }
 
 //=========================================================================

@@ -21,7 +21,6 @@ ValidInputSource::ValidInputSource ( std::string                    buffer,
   m_buffer( std::move(buffer) ) // keep the buffer alive for the lifetime of 'this'
 {}
 
-ValidInputSource::~ValidInputSource() = default;
 
 bool ValidInputSource::isValid() const
 {

@@ -1,4 +1,4 @@
-#ifndef TRACKTOOLS_TRAJPOCA_H 
+#ifndef TRACKTOOLS_TRAJPOCA_H
 #define TRACKTOOLS_TRAJPOCA_H 1
 
 // Include files
@@ -14,7 +14,7 @@
 #include "Kernel/Trajectory.h"
 
 /** @class TrajPoca TrajPoca.h
- *  
+ *
  *  Calculates points of closest approach
  *  between two trajectories
  *
@@ -28,23 +28,16 @@ class TrajPoca : public extends<GaudiTool,ITrajPoca> {
 public:
 
   /// Default constructor
-  TrajPoca( const std::string& type, 
+  TrajPoca( const std::string& type,
             const std::string& name,
             const IInterface* parent );
-
-  /// Default destructor
-  ~TrajPoca() override = default;
 
   /// Find points along trajectories at which the distance between the
   /// trajectories is at its minimum. The precision parameter is the desired
   /// numerical accuracy of mu1 and mu2. If the restrictrange flag is true, mu
   /// is restricted to the range of the trajectory.
-  StatusCode minimize( const LHCb::Trajectory& traj1,
-                       double& mu1, 
-                       bool restrictRange1,
-                       const LHCb::Trajectory& traj2,
-                       double& mu2, 
-                       bool restrictRange2, 
+  StatusCode minimize( const LHCb::Trajectory& traj1, double& mu1, bool restrictRange1,
+                       const LHCb::Trajectory& traj2, double& mu2, bool restrictRange2,
                        Gaudi::XYZVector& distance,
                        double precision ) const override;
 
@@ -59,13 +52,16 @@ public:
                        Gaudi::XYZVector& distance,
                        double precision ) const override;
 private:
-  bool stepTowardPoca( const LHCb::Trajectory& traj1,
-                       double& mu1,
-                       bool restrictRange1,
-                       const LHCb::Trajectory& traj2,
-                       double& mu2, 
-                       bool restrictRange2,
-                       double precision ) const;
+  struct cache_t {
+    Gaudi::XYZPoint p1, p2;
+    Gaudi::XYZVector dp1dmu1, dp2dmu2;
+    Gaudi::XYZVector d2p1dmu12, d2p2dmu22;
+  };
+
+
+  bool stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, bool restrictRange1,
+                       const LHCb::Trajectory& traj2, double& mu2, bool restrictRange2,
+                       double precision, cache_t& cache ) const;
 
   inline bool restrictToRange(double& l, const LHCb::Trajectory& t) const
   {
@@ -86,10 +82,6 @@ private:
   double m_maxDist;
   double m_maxExtrapTolerance;
 
-  // replace the statics in stepTowardPoca
-  mutable Gaudi::XYZPoint m_p1, m_p2;
-  mutable Gaudi::XYZVector m_dp1dmu1, m_dp2dmu2;
-  mutable Gaudi::XYZVector m_d2p1dmu12, m_d2p2dmu22;
 };
 
 #endif // TRACKTOOLS_TRAJPOCA_H

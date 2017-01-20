@@ -19,29 +19,20 @@
 
 using namespace LHCb;
 
-DeOTLayer::DeOTLayer(const std::string& name) :
-  DetectorElement(name),
-  m_stationID(0u),
-  m_layerID(0u),
-  m_elementID(0u),
-  m_stereoAngle(0.0),
-  m_quarters()
-{ 
+DeOTLayer::DeOTLayer(const std::string& name)
+: DetectorElement(name)
+{
   m_quarters.reserve(4);
 }
 
-DeOTLayer::~DeOTLayer() {
-}
-
-const CLID& DeOTLayer::clID() const { 
-  return DeOTLayer::classID() ; 
+const CLID& DeOTLayer::clID() const {
+  return DeOTLayer::classID() ;
 }
 
 StatusCode DeOTLayer::initialize() {
-  
+
   /// Loop over quarters
-  IDetectorElement::IDEContainer::const_iterator iQ;
-  for (iQ = this->childBegin(); iQ != this->childEnd(); ++iQ) {  
+  for (auto iQ = this->childBegin(); iQ != this->childEnd(); ++iQ) {
     DeOTQuarter* quarter = dynamic_cast<DeOTQuarter*>(*iQ);
     if (quarter) {
       m_quarters.push_back(quarter);
@@ -56,7 +47,7 @@ StatusCode DeOTLayer::initialize() {
   setElementID(aChan);
 
   m_stereoAngle = param<double>("stereoAngle");
-  
+
   /// Update and chache planes
   MsgStream msg(msgSvc(), name() );
   try {
@@ -73,24 +64,23 @@ StatusCode DeOTLayer::initialize() {
     msg << MSG::ERROR << e << endmsg;
     return StatusCode::FAILURE;
   }
-
   return StatusCode::SUCCESS;
 }
 
 /// Find the quarter for a given XYZ point
-const DeOTQuarter* DeOTLayer::findQuarter(const Gaudi::XYZPoint& aPoint) const {  
+const DeOTQuarter* DeOTLayer::findQuarter(const Gaudi::XYZPoint& aPoint) const {
   auto  iQ = std::find_if(m_quarters.begin(), m_quarters.end(),
-                         [&](const DetectorElement* e) 
+                         [&](const DetectorElement* e)
                          { return e->isInside(aPoint); } );
   return iQ != m_quarters.end() ? *iQ : nullptr ;
 }
 
 StatusCode DeOTLayer::cachePlane() {
-  Gaudi::XYZPoint g1 = this->geometry()->toGlobal(Gaudi::XYZPoint(0.0, 0.0, 0.0));
-  Gaudi::XYZPoint g2 = this->geometry()->toGlobal(Gaudi::XYZPoint(3.5*Gaudi::Units::m, 0.0, 0.0));
-  Gaudi::XYZPoint g3 = this->geometry()->toGlobal(Gaudi::XYZPoint(0.0, 2.5*Gaudi::Units::m, 0.0));
-  
-  m_plane = Gaudi::Plane3D(g1, g2, g3);
 
+  auto toGlobal = [&](double x, double y, double z)
+                  { return this->geometry()->toGlobal(Gaudi::XYZPoint{x,y,z}); };
+  m_plane = Gaudi::Plane3D(toGlobal(0.0,                0.0,                0.0),
+                           toGlobal(3.5*Gaudi::Units::m,0.0,                0.0),
+                           toGlobal(0.0,                2.5*Gaudi::Units::m,0.0));
   return StatusCode::SUCCESS;
 }

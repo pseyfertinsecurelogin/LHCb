@@ -17,13 +17,9 @@ using namespace LHCb;
 
 DeITDetector::DeITDetector( const std::string& name ) :
   DeSTDetector( name )
-{ 
+{
   // constructer
   m_sectors.clear();
-}
-
-DeITDetector::~DeITDetector() {
-  // initialize
 }
 
 const CLID& DeITDetector::clID () const
@@ -32,12 +28,12 @@ const CLID& DeITDetector::clID () const
 }
 
 StatusCode DeITDetector::initialize() {
-  
+
   // initialize
   StatusCode sc = DeSTDetector::initialize();
   if (sc.isFailure() ){
     MsgStream msg(msgSvc(), name() );
-    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg; 
+    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
   }
   else {
     flatten();
@@ -48,7 +44,7 @@ StatusCode DeITDetector::initialize() {
     } // iter
   }
   return sc;
-  
+
 }
 
 DeSTSector* DeITDetector::findSector(const Gaudi::XYZPoint& aPoint) const {
@@ -57,7 +53,7 @@ DeSTSector* DeITDetector::findSector(const Gaudi::XYZPoint& aPoint) const {
   DeSTStation* tStation = findStation(aPoint);
   if (tStation){
     DeITStation* aStation = static_cast<DeITStation*>(tStation);
-    DeITBox* aBox = aStation->findBox(aPoint);    
+    DeITBox* aBox = aStation->findBox(aPoint);
     if (aBox){
       DeITLayer* aLayer = aBox->findLayer(aPoint);
       if (aLayer){
@@ -65,7 +61,7 @@ DeSTSector* DeITDetector::findSector(const Gaudi::XYZPoint& aPoint) const {
         if (aLadder){
           if (aLadder->isInside(aPoint)) aSector=aLadder->sector();
         }
-      } // module   
+      } // module
     } // layer
   }   // station
   return aSector;
@@ -96,8 +92,8 @@ void DeITDetector::flatten(){
 DeITBox* DeITDetector::findBox(const STChannelID aChannel) const
 {
   // return pointer to the layer from channel
-  auto iter = std::find_if(m_boxes.begin() , m_boxes.end(), 
-                           [&](const DeITBox* b) { 
+  auto iter = std::find_if(m_boxes.begin() , m_boxes.end(),
+                           [&](const DeITBox* b) {
                               return b->contains(aChannel);
   });
   return iter != m_boxes.end() ? *iter: nullptr;
@@ -105,8 +101,8 @@ DeITBox* DeITDetector::findBox(const STChannelID aChannel) const
 
 DeITBox* DeITDetector::findBox(const Gaudi::XYZPoint& point) const {
   // return pointer to a box from point
-  auto iter = std::find_if( m_boxes.begin(), m_boxes.end(), 
-                            [&](const DeITBox* b) { 
+  auto iter = std::find_if( m_boxes.begin(), m_boxes.end(),
+                            [&](const DeITBox* b) {
                                 return b->isInside(point);
   });
   return iter != m_boxes.end() ? *iter: nullptr;
@@ -129,11 +125,11 @@ DeSTBaseElement* DeITDetector::findTopLevelElement(const std::string& nickname) 
   if (chan.detRegion() != 0u){
     // its a box
     return findBox(chan);
-  } 
+  }
   if (chan.station() != 0u) {
     // its a station
     return findStation(chan);
-  } 
-  // too bad 
+  }
+  // too bad
   return nullptr;
 }

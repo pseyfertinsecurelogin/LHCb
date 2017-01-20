@@ -3,7 +3,7 @@
 //  MDFWriterLite.h
 //  --------------------------------------------------------------------
 //
-//  Author    : Sai Suman & Niko Neufeld 
+//  Author    : Sai Suman & Niko Neufeld
 //
 //  ====================================================================
 #ifndef MDF_MDFWRITERLITE_H
@@ -16,7 +16,7 @@
  */
 namespace LHCb    {
 
-  /**@class MDFWriterLite 
+  /**@class MDFWriterLite
     *
     * @author:  K. Akiba
     * @author:  S. Suman & N. Neufeld
@@ -27,9 +27,9 @@ namespace LHCb    {
   protected:
     /// Time stamp of last file open
     time_t m_lastOpen;
-    /// Number of events written out to the file so far. 
+    /// Number of events written out to the file so far.
     size_t m_eventsWritten;
-    /// Maximum size of each file (after which a new file will be written) 
+    /// Maximum size of each file (after which a new file will be written)
     /// will be ignored if m_timeOut != 0
     size_t m_maxFileSizeKB;
     /// Maximum number of events in a file (after which a new file will be written)
@@ -40,8 +40,8 @@ namespace LHCb    {
     /// Timeout value to open a new file (in seconds)
     time_t m_timeOut;
     /// Transform file name in presence of catalogs
-    virtual std::string getConnection(const std::string& org_conn);
-    
+    std::string getConnection(const std::string& org_conn) override;
+
   public:
     /// Standard algorithm constructor
     MDFWriterLite(const std::string& name, ISvcLocator* pSvcLocator);
@@ -50,8 +50,8 @@ namespace LHCb    {
     virtual ~MDFWriterLite();
 
     /// Algoritihm overload: Execute & initialize procedure
-    virtual StatusCode execute();
-    virtual StatusCode initialize();
+    StatusCode execute() override;
+    StatusCode initialize() override;
   };
 }      // End namespace LHCb
 #endif // MDF_MDFWRITERLITE_H

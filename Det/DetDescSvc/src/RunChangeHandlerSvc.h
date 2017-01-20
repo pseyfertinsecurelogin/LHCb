@@ -1,5 +1,4 @@
-#ifndef _RUNCHANGEHANDLERSVC_H_
-#define _RUNCHANGEHANDLERSVC_H_
+#pragma once
 
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/Map.h"
@@ -8,12 +7,23 @@
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IEventProcessor.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IOpaqueAddress.h"
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/SmartIF.h"
+
+#include "DetDesc/ValidDataObject.h"
+#include "DetDesc/RunChangeIncident.h"
+
 #include "XmlTools/IXmlParserSvc.h"
 
-#include <list>
+#include <boost/format.hpp>
+
+#include <array>
+#include <fstream>
+#include <mutex>
+#include <openssl/sha.h>
 
 /** @class RunChangeHandlerSvc RunChangeHandlerSvc.h
  *
@@ -23,34 +33,31 @@
  *  @author Marco Clemencic
  *  @date   2008-07-24
  */
-class RunChangeHandlerSvc:
-  public extends1<Service, IIncidentListener> {
+class RunChangeHandlerSvc: public extends<Service, IIncidentListener> {
 
 public:
 
   /// Standard constructor
-  RunChangeHandlerSvc(const std::string& name, ISvcLocator* svcloc);
-
-  virtual ~RunChangeHandlerSvc(); ///< Destructor
+  using base_class::base_class;
 
   /// Initialize Service
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalize Service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   // ---- Implement IIncidentListener interface ----
   /// Handle RunChange incident.
-  virtual void handle(const Incident &inc);
+  void handle(const Incident &inc) override;
 
 private:
 
   /// Helper function to retrieve a service and cache the pointer to it.
   template <class I>
   inline SmartIF<I>& getService(const std::string &name, SmartIF<I> &ptr) const {
-    if (UNLIKELY( !ptr.isValid() )) {
+    if (UNLIKELY( !ptr )) {
       ptr = serviceLocator()->service(name, true);
-      if(UNLIKELY( !ptr.isValid() )) {
+      if(UNLIKELY( !ptr )) {
         throw GaudiException("Service ["+name+"] not found", this->name(),
             StatusCode::FAILURE);
       }
@@ -88,32 +95,126 @@ private:
     return getService("XmlParserSvc", m_xmlParser);
   }
 
+public:
+  /// Helper class to compute the cryptographic hash (SHA1) of files.
+  /// The class caches the hash of files already processed, to avoid
+  /// useless computations.
+  struct FileHasher {
+    using Hash_t = std::array<unsigned char, SHA_DIGEST_LENGTH>;
+
+    /// Return the cryptographic hash of the content of the file
+    /// passed as argument
+    const Hash_t& operator() (const std::string& path) const {
+      // protect the cache from multiple accesses
+      std::unique_lock<std::mutex> lock(m_mutex);
+      auto h = m_cache.find(path);
+      if (h == m_cache.end()) {
+        h = m_cache.emplace(std::make_pair(path, Hash_t{0})).first;
+        SHA_CTX c;
+        SHA1_Init(&c);
+        std::ifstream data(path, std::ios::binary);
+        if (!data.good()) {
+          throw std::runtime_error("problems opening " + path);
+        }
+        const std::streamsize BUFFER_SIZE = 1024 * 1024;
+        std::array<char, BUFFER_SIZE> buff{0};
+        while (!data.eof()) {
+          data.read(buff.data(), buff.size());
+          SHA1_Update(&c, buff.data(), data.gcount());
+        }
+        SHA1_Final(h->second.data(), &c);
+      }
+      return h->second;
+    }
+
+  private:
+    mutable std::map<std::string, Hash_t> m_cache;
+    mutable std::mutex m_mutex;
+  };
+
+  /// Helper class to work with conditions data file path templates.
+  struct PathTemplate {
+    /// Construct an instance from a template file name.
+    /// The file name may contain the special sequence `%d` or `%s` (only one occurrence).
+    /// `%d` will be replaced by the run number, while `%s` by the string "_k_/_n_"
+    ///  where _k_ is run number divided by 1000 and _n_ is the run number.
+    PathTemplate(const std::string& f): fmt{f}, hash{0},
+      splitRunString{f.find("%s") != std::string::npos}
+    {
+      if (fmt.expected_args() > 1)
+        throw std::invalid_argument("format string can have only 0 or 1 placeholders: \"" + f + "\"");
+      if (splitRunString)
+        fmt.parse((fmt % "%d/%d").str());
+    }
+
+    /// Check if the file changes when going to the requested run.
+    /// After this call, the data member path will hold the new name.
+    bool changed(unsigned long run, const FileHasher& hasher) {
+      if (fmt.expected_args()) {
+        if (splitRunString) {
+          fmt % (run / 1000) % run;
+        } else {
+          fmt % run;
+        }
+      }
+      path = fmt.str();
+      auto oldhash = hash;
+      hash = hasher(path);
+      return hash != oldhash;
+    }
+
+    boost::format fmt;
+    std::string path;
+    FileHasher::Hash_t hash;
+    bool splitRunString;
+  };
+
   /// Class to simplify handling of the objects to modify.
   struct CondData {
     CondData(IDataProviderSvc* pService,
         const std::string& fullPath,
-        const std::string &pathTempl):
-          object(pService, fullPath),
-          pathTemplate(pathTempl) {}
+        const std::string& pathTempl):
+          object{pService, fullPath},
+          dataFile{pathTempl} {}
+
+    /// Check if the wrapped data object requires an update for
+    /// the specified run.
+    bool needsUpdate(unsigned long run, const FileHasher& hasher) {
+      // assert that the object can be used
+      if ( ! object || ! object->registry() || ! object->registry()->address() )
+        throw std::runtime_error{"Cannot modify address for object at " + object.path()};
+
+      if (dataFile.changed(run, hasher)) {
+        auto addr = object->registry()->address();
+        // This is a bit of a hack, but it is the only way of replacing the
+        // URL to use for an object.
+        std::string* par = const_cast<std::string*>(addr->par());
+        par[0] = dataFile.path;
+        // flag the object as in need of an update
+        object->forceUpdateMode();
+        return true;
+      }
+      return false;
+    }
+
     SmartDataPtr<ValidDataObject> object;
-    std::string pathTemplate;
+    PathTemplate dataFile;
   };
 
-  /// Modify the object opaque address (flag for update).
-  void update(CondData &cond);
-
+private:
   /// Flag for update all the registered objects.
-  void update();
+  void update(unsigned long run);
 
   typedef GaudiUtils::Map<std::string,std::string> CondDescMap;
-  CondDescMap m_condDesc;
+  Gaudi::Property<CondDescMap> m_condDesc { this, "Conditions", {},
+   "Map defining what to use to replace the location of the source XML files."};
 
-  typedef std::list<CondData> Conditions;
+  typedef std::vector<CondData> Conditions;
   /// List of objects to modify
   Conditions m_conditions;
 
   /// Current run number.
-  unsigned long m_currentRun;
+  unsigned long m_currentRun = 0;
 
   /// EventDataSvc, for ODIN
   mutable SmartIF<IDataProviderSvc> m_evtSvc;
@@ -135,6 +236,5 @@ private:
   /// files when we get a RunChangeIncident without actual run change.
   mutable SmartIF<IXmlParserSvc> m_xmlParser;
 
+  mutable std::mutex m_updateMutex;
 };
-
-#endif

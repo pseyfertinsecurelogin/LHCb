@@ -1,3 +1,0 @@
-${CONSTITUENT} ::
-	@source setup.sh; lcgdictcheck --cmt --info -s $(GAUDIPOOLDBROOT)/$(BINDIR)/libGaudiPoolDb.so libSealSTLRflx.so libSealCLHEPRflx.so;
-

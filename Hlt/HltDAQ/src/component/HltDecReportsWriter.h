@@ -1,5 +1,4 @@
-// $Id: HltDecReportsWriter.h,v 1.1.1.1 2009-06-24 15:38:52 tskwarni Exp $
-#ifndef HLTDECREPORTSWRITER_H 
+#ifndef HLTDECREPORTSWRITER_H
 #define HLTDECREPORTSWRITER_H 1
 
 // Include files
@@ -8,7 +7,7 @@
 #include "Event/HltDecReport.h"
 
 /** @class HltDecReportsWriter HltDecReportsWriter.h
- *  
+ *
  *
  *  @author Tomasz Skwarnicki
  *  @date   2008-07-26
@@ -17,10 +16,9 @@
  *
  */
 class HltDecReportsWriter : public GaudiAlgorithm {
-public: 
+public:
 
   enum HeaderIDs { kVersionNumber=2 };
-
 
   enum SourceIDs { kSourceID_Dummy=0,
 		   kSourceID_Hlt=kSourceID_Dummy,
@@ -32,26 +30,22 @@ public:
 		   kSourceID_MajorMask=0xE000
   };
 
-
   /// Standard constructor
-  HltDecReportsWriter( const std::string& name, ISvcLocator* pSvcLocator );
-
-  ~HltDecReportsWriter( ) override = default; ///< Destructor
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
-
 private:
 
   /// location of input
-  StringProperty m_inputHltDecReportsLocation;
+  Gaudi::Property<std::string> m_inputHltDecReportsLocation { this, "InputHltDecReportsLocation", LHCb::HltDecReportsLocation::Default} ;
 
   /// location of output
-  StringProperty m_outputRawEventLocation;
+  Gaudi::Property<std::string> m_outputRawEventLocation { this, "OutputRawEventLocation", LHCb::RawEventLocation::Default };
 
   /// SourceID to insert in the bank header
-  IntegerProperty m_sourceID;
+  Gaudi::Property<int> m_sourceID { this, "SourceID", kSourceID_Dummy };
 
 };
 #endif // HLTDECREPORTSWRITER_H

@@ -1,5 +1,4 @@
-// $Id: STPedestalDecoding.h,v 1.1 2009-03-02 16:27:44 mtobin Exp $
-#ifndef STPEDESTALDECODING_H 
+#ifndef STPEDESTALDECODING_H
 #define STPEDESTALDECODING_H 1
 
 // Include files
@@ -20,16 +19,16 @@
  */
 class STPedestalDecoding : public ST::AlgBase {
 
-public: 
+public:
   /// Standard constructor
   STPedestalDecoding( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
 
-  LHCb::RawBank::BankType m_bankType;  
+  LHCb::RawBank::BankType m_bankType;
 
   // job options
   std::string m_inputLocation;  ///< Location of RawEvent

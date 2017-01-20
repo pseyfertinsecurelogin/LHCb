@@ -60,7 +60,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// default constructor 
-    Keeper() : m_objects() {}
+    Keeper() = default;
     /// constructor form one object
     Keeper ( const OBJECT* o )
       : m_objects () { addObject ( o ) ; }
@@ -85,8 +85,6 @@ namespace LoKi
              OTHER     last  , 
              PREDICATE cut   ) 
       : m_objects () { addObjects ( first , last , cut ) ; }
-    /// protected destructor 
-    ~Keeper() { m_objects.clear() ; }
     // ========================================================================
   public:
     // ========================================================================

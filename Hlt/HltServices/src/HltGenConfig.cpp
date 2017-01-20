@@ -1,4 +1,3 @@
-// $Id: HltGenConfig.cpp,v 1.18 2010-05-05 21:07:43 graven Exp $
 // Include files
 #include <algorithm>
 
@@ -36,34 +35,14 @@ namespace {
 DECLARE_ALGORITHM_FACTORY(HltGenConfig)
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-HltGenConfig::HltGenConfig(const string &name, ISvcLocator *pSvcLocator)
-    : GaudiAlgorithm(name, pSvcLocator), m_appMgr{ nullptr },
-      m_accessSvc{ nullptr }, m_configSvc{ nullptr }
-{
-  declareProperty("ConfigTop", m_topConfig = { { "Hlt" } });
-  declareProperty("ConfigSvc",
-                  m_svcConfig = { {"ToolSvc"}, {"HltANNSvc"},
-                                  {"Hlt::Service"} });
-  declareProperty("ConfigAccessSvc", s_accessSvc = "ConfigTarFileAccessSvc");
-  declareProperty("PropertyConfigSvc", s_configSvc = "PropertyConfigSvc");
-  declareProperty("HltType", m_hltType);
-  declareProperty("MooreRelease", m_release);
-  declareProperty("Label", m_label);
-  declareProperty("Overrule", m_overrule);
-  declareProperty("EnvironmentVariables", m_envVars = {"PARAMFILESROOT"});
-}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode HltGenConfig::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize();
-  m_appMgr = svc<IAlgManager>("ApplicationMgr");
-  m_accessSvc = svc<IConfigAccessSvc>(s_accessSvc, true);
-  m_configSvc = svc<IPropertyConfigSvc>("PropertyConfigSvc", true);
-  IToolSvc *toolSvc = svc<IToolSvc>("ToolSvc", true);
+  m_appMgr = service("ApplicationMgr");
+  m_accessSvc = service(s_accessSvc, true);
+  m_configSvc = service("PropertyConfigSvc", true);
+  auto toolSvc = service<IToolSvc>("ToolSvc", true);
   toolSvc->registerObserver(this);
   // FIXME: need to unregister at some point!!!
   if (m_hltType.empty()) {

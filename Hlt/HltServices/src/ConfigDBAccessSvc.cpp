@@ -224,18 +224,6 @@ struct ConfigDBAccessSvc::table_traits<ConfigTreeNodeAlias> {
 // Factory implementation
 DECLARE_COMPONENT(ConfigDBAccessSvc)
 
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-ConfigDBAccessSvc::ConfigDBAccessSvc( const std::string& name, ISvcLocator* pSvcLocator)
-  : base_class ( name , pSvcLocator )
-{
-  declareProperty("Connection", m_connection = "" );
-  declareProperty("ReadOnly", m_readOnly = true );
-  declareProperty("CreateSchema", m_createSchema = false);
-}
-
 //=============================================================================
 // Initialization
 //=============================================================================
@@ -472,11 +460,6 @@ void ConfigDBAccessSvc::createCacheTables() {
         coral::ITable& table = m_session->nominalSchema().createTable( descr );
         table.privilegeManager().grantToPublic( coral::ITablePrivilegeManager::Select );
     }
-}
-
-MsgStream& ConfigDBAccessSvc::msg(MSG::Level level) const {
-     if (!m_msg) m_msg.reset( new MsgStream( msgSvc(), name() ));
-     return *m_msg << level;
 }
 
 template <typename T>
