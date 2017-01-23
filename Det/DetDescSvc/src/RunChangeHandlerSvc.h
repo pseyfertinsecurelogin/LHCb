@@ -116,7 +116,7 @@ public:
         if (!data.good()) {
           throw std::runtime_error("problems opening " + path);
         }
-        const std::streamsize BUFFER_SIZE = 1024 * 1024;
+        const std::streamsize BUFFER_SIZE = 2 * 1024;
         std::array<char, BUFFER_SIZE> buff{0};
         while (!data.eof()) {
           data.read(buff.data(), buff.size());
