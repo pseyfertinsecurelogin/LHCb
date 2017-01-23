@@ -24,10 +24,12 @@ using Hash_t = RunChangeHandlerSvc::FileHasher::Hash_t;
 
 namespace std {
   ostream& operator<< (ostream& os, const Hash_t& hash) {
+    auto flags = os.flags();
     os << hex;
     for(unsigned short c: hash) {
       os << c;
     }
+    os.flags(flags);
     return os;
   }
 }
