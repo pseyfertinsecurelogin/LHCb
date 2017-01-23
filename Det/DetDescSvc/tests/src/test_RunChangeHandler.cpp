@@ -6,7 +6,7 @@
 
 #include "../../src/RunChangeHandlerSvc.h"
 
-#include <gsl/gsl_util>
+#include <boost/io/ios_state.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -26,8 +26,7 @@ using Hash_t = RunChangeHandlerSvc::FileHasher::Hash_t;
 
 namespace std {
   ostream& operator<< (ostream& os, const Hash_t& hash) {
-    auto flags = os.flags();
-    auto restore_flags = gsl::finally([&flags, &os]() { os.flags(flags); });
+    boost::io::ios_all_saver ias(os);
     os << hex;
     for(unsigned short c: hash) {
       os << c;

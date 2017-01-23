@@ -25,13 +25,8 @@ gaudi_add_module(DetDescSvc
                  INCLUDE_DIRS Boost XercesC OpenSSL
                  LINK_LIBRARIES Boost XercesC DetDescLib GaudiAlgLib GaudiKernel ${OPENSSL_CRYPTO_LIBRARY})
 
-find_path(CPP_GSL_INCLUDE_DIR NAMES gsl/gsl)
-if(NOT CPP_GSL_INCLUDE_DIR)
-  message(FATAL "required headers from C++ GSL missing")
-endif()
-
 gaudi_add_unit_test(test_RunChangeHandler
                     tests/src/test_RunChangeHandler.cpp src/RunChangeHandlerSvc.cpp
-                    INCLUDE_DIRS OpenSSL ${CPP_GSL_INCLUDE_DIR}
+                    INCLUDE_DIRS OpenSSL
                     LINK_LIBRARIES XercesC DetDescLib ${OPENSSL_CRYPTO_LIBRARY}
                     TYPE Boost)
