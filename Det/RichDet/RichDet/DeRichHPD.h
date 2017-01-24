@@ -260,7 +260,7 @@ private: // functions
    */
   inline double xOnSilicon( const LHCb::RichSmartID smartID ) const
   {
-    return smartID.pixelCol()*m_pixelSize + m_pixelSize/2.0 - m_siliconHalfLengthX;
+    return ( ( (double)smartID.pixelCol() + 0.5 ) * m_pixelSize ) - m_siliconHalfLengthX;
   }
 
   /** Returns the silicon y coordinate for the given RichSmartID
@@ -269,7 +269,7 @@ private: // functions
    */
   inline double yOnSilicon( const LHCb::RichSmartID smartID ) const
   {
-    return m_siliconHalfLengthY - smartID.pixelRow()*m_pixelSize - m_pixelSize/2.0;
+    return m_siliconHalfLengthY - ( ( (double)smartID.pixelRow() + 0.5 ) * m_pixelSize );
   }
 
   /// parameterised extra radius for the defraction in the HPD window
