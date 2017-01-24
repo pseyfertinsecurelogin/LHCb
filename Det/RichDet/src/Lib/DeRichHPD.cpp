@@ -723,7 +723,7 @@ bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
   if ( new_phi > Gaudi::Units::twopi ) new_phi -= Gaudi::Units::twopi;
 
   const auto& winRadius = ( photoCathodeSide ? m_winInR : m_winOutR );
-  if ( winRadius < rCathode ) return StatusCode::FAILURE;
+  if ( winRadius < rCathode ) return false;
 
   double vdtsin(0), vdtcos(0);
   vdt::fast_sincos(new_phi,vdtsin,vdtcos);
