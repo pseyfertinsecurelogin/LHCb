@@ -130,46 +130,6 @@ public:
    */
   Gaudi::XYZPoint detPointOnAnode( const LHCb::RichSmartID smartID ) const;
 
-  /** Retrieves the demagnification interpolation function for the HPD R coordinate.
-   *  For a given R on the HPD cathode returns the R on the anode.
-   *  @return A pointer to the demagnification function for R(R)
-   */
-  inline const Rich::TabulatedFunction1D*
-  demagnification_RtoR( const int field = 0 ) const noexcept
-  {
-    return m_demagMapR[ field > 0 ? 1 : 0 ].get();
-  }
-
-  /** Retrieves the demagnification interpolation function for the HPD phi coordinate.
-   *  For a given R on the HPD cathode returns the phi on the anode.
-   *  @return A pointer to the demagnification function for phi(R)
-   */
-  inline const Rich::TabulatedFunction1D*
-  demagnification_RtoPhi( const int field = 0 ) const noexcept
-  {
-    return m_demagMapPhi[ field > 0 ? 1 : 0 ].get();
-  }
-
-  /** Retrieves the magnification interpolation function for the HPD R coordinate.
-   *  For a given R on the HPD anode returns the R on the cathode.
-   *  @return A pointer to the magnification function for R(R)
-   */
-  inline const Rich::TabulatedFunction1D*
-  magnification_RtoR( const int field = 0 ) const noexcept
-  {
-    return m_magMapR[ field > 0 ? 1 : 0 ].get();
-  }
-
-  /** Retrieves the magnification interpolation function for the HPD phi coordinate.
-   *  For a given R on the HPD anode returns the phi on the cathode.
-   *  @return A pointer to the magnification function for phi(R)
-   */
-  inline const Rich::TabulatedFunction1D*
-  magnification_RtoPhi( const int field = 0 ) const noexcept
-  {
-    return m_magMapPhi[ field > 0 ? 1 : 0 ].get();
-  }
-
   /** Converts the given RichSmartID to the position on the silicon wafer,
    *  in the coordinate system of the wafer
    *  @param[in] smartID The RichSmartID channel identifier
@@ -245,6 +205,52 @@ public:
   bool intersectEntryWindow ( const Gaudi::XYZPoint& position,
                               const Gaudi::XYZVector& direction,
                               Gaudi::XYZPoint& intersection ) const;
+
+public:
+
+  /** Retrieves the demagnification interpolation function for the HPD R coordinate.
+   *  For a given R on the HPD cathode returns the R on the anode.
+   *  Only valid values for field are 0 (DOWN) or 1 (UP)
+   *  @return A pointer to the demagnification function for R(R)
+   */
+  inline const Rich::TabulatedFunction1D*
+  demagnification_RtoR( const unsigned short int field = 0 ) const noexcept
+  {
+    return m_demagMapR[ field ].get();
+  }
+
+  /** Retrieves the demagnification interpolation function for the HPD phi coordinate.
+   *  For a given R on the HPD cathode returns the phi on the anode.
+   *  Only valid values for field are 0 (DOWN) or 1 (UP)
+   *  @return A pointer to the demagnification function for phi(R)
+   */
+  inline const Rich::TabulatedFunction1D*
+  demagnification_RtoPhi( const unsigned short int field = 0 ) const noexcept
+  {
+    return m_demagMapPhi[ field ].get();
+  }
+
+  /** Retrieves the magnification interpolation function for the HPD R coordinate.
+   *  For a given R on the HPD anode returns the R on the cathode.
+   *  Only valid values for field are 0 (DOWN) or 1 (UP)
+   *  @return A pointer to the magnification function for R(R)
+   */
+  inline const Rich::TabulatedFunction1D*
+  magnification_RtoR( const unsigned short int field = 0 ) const noexcept
+  {
+    return m_magMapR[ field ].get();
+  }
+
+  /** Retrieves the magnification interpolation function for the HPD phi coordinate.
+   *  For a given R on the HPD anode returns the phi on the cathode.
+   *  Only valid values for field are 0 (DOWN) or 1 (UP)
+   *  @return A pointer to the magnification function for phi(R)
+   */
+  inline const Rich::TabulatedFunction1D*
+  magnification_RtoPhi( const unsigned short int field = 0 ) const noexcept
+  {
+    return m_magMapPhi[ field ].get();
+  }
 
 private: // functions
 
