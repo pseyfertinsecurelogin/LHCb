@@ -353,6 +353,19 @@ private: // functions
 
 private: // data
 
+  // cached field parameters
+
+  /// Field polarity index ( 0 = DOWN, 1 = UP )
+  unsigned short int m_fieldIndex{0};
+
+  /// Is field ON or OFF
+  bool m_isFieldON{true};
+
+private:
+
+  /// version of MDMS corrections, for both field polarities
+  std::array<int,2> m_MDMS_version = {{0,0}};
+
   IDetectorElement* m_deSiSensor = nullptr;  ///< The silicon sensor detector element
 
   const IPVolume* m_pvWindow = nullptr;      ///< The pv for the HPD quartz window
@@ -404,9 +417,6 @@ private: // data
   /// magnitude of the longitudinal B field
   double m_LongitudinalBField{0};
 
-  /// version of MDMS corrections, for both field polarities
-  std::array<int,2> m_MDMS_version = {{0,0}};
-
   // Cached parameters for speed reasons.
   Gaudi::Transform3D m_SiSensorToHPDMatrix; ///< silicon to HPD transform
   Gaudi::Transform3D m_fromWindowToGlobal;  ///< window to global coord system transform
@@ -426,14 +436,6 @@ private: // data
 
   /// pointer to the magnetic field service
   ILHCbMagnetSvc * m_magFieldSvc = nullptr;
-
-  // cached field parameters
-
-  /// Field polarity index ( 0 = DOWN, 1 = UP )
-  unsigned short int m_fieldIndex{0};
-
-  /// Is field ON or OFF
-  bool m_isFieldON{true};
 
 };
 
