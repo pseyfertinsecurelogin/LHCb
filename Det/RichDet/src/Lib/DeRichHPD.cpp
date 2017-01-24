@@ -724,6 +724,7 @@ bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
 
   return true;
 }
+
 //=========================================================================
 //  magnification to cathode and transformation to Global coordinates
 //  with the magnet OFF

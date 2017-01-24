@@ -215,14 +215,19 @@ public: // virtual methods. Derived classes must implement these
    *  as they are not completely sequential */
   virtual Rich::DAQ::HPDCopyNumber maxPdNumber() const = 0;
 
+protected:
+
+  /// Set the RICH type
+  void setRich( const Rich::DetectorType rich ) noexcept { m_rich = rich; }
+
+  /// Set the side type
+  void setSide( const Rich::Side side ) noexcept { m_side = side; }
+
 protected: // Parameters that must be properly configured in the derived classes
 
   unsigned int m_PDColumns{0};    ///< Number of PD columns in the panel
   unsigned int m_PDNumInCol{0};   ///< Number of PDs in each column
   unsigned int m_PDMax{0};        ///< Total number of PDs in this panel
-
-  Rich::DetectorType m_rich = Rich::InvalidDetector;   ///< The RICH detector type
-  Rich::Side m_side = Rich::InvalidSide;    ///< The RICH PD panel (up, down, left or right)
 
   /// The PD technology type (HPD or MaPMT)
   LHCb::RichSmartID::IDType m_pdType = LHCb::RichSmartID::Undefined;
@@ -235,5 +240,10 @@ protected: // Parameters that must be properly configured in the derived classes
 
   Gaudi::Transform3D m_globalToPDPanelTransform; ///< global to PD plane (local) transform
   Gaudi::Transform3D m_PDPanelToGlobalTransform; ///< local (PD plane) to global transform
+
+private:
+
+  Rich::DetectorType m_rich = Rich::InvalidDetector; ///< The RICH detector type
+  Rich::Side m_side = Rich::InvalidSide;             ///< The RICH PD panel (up, down, left or right)
 
 };
