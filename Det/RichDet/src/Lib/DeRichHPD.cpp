@@ -52,10 +52,10 @@ DeRichHPD::DeRichHPD ( const std::string & name ) : DeRichPD ( name  )
 {
   for ( unsigned int field = 0; field < 2; ++field )
   {
-    m_demagMapR.emplace_back   ( new Rich::TabulatedFunction1D() );
-    m_demagMapPhi.emplace_back ( new Rich::TabulatedFunction1D() );
-    m_magMapR.emplace_back     ( new Rich::TabulatedFunction1D() );
-    m_magMapPhi.emplace_back   ( new Rich::TabulatedFunction1D() );
+    m_demagMapR.emplace_back   ( std::make_unique<Rich::TabulatedFunction1D>() );
+    m_demagMapPhi.emplace_back ( std::make_unique<Rich::TabulatedFunction1D>() );
+    m_magMapR.emplace_back     ( std::make_unique<Rich::TabulatedFunction1D>() );
+    m_magMapPhi.emplace_back   ( std::make_unique<Rich::TabulatedFunction1D>() );
   }
 }
 
@@ -190,11 +190,11 @@ void DeRichHPD::loadMagSvc()
 //=========================================================================
 StatusCode DeRichHPD::updateFieldParams()
 {
-  m_isFieldDown = magSvc()->isDown();
-  m_isFieldON   = fabs(magSvc()->signedRelativeCurrent()) > 0.5;
+  m_fieldIndex = ( magSvc()->isDown() ? 0 : 1 );
+  m_isFieldON  = fabs(magSvc()->signedRelativeCurrent()) > 0.5;
   _ri_debug << "Magnetic field update :" 
-            << ( m_isFieldON   ? " ON"   : " OFF" )
-            << ( m_isFieldDown ? " DOWN" : " UP"  )
+            << ( m_isFieldON       ? " ON"   : " OFF" )
+            << ( 0 == m_fieldIndex ? " DOWN" : " UP"  )
             << endmsg;
   return StatusCode::SUCCESS;
 }
@@ -220,7 +220,7 @@ StatusCode DeRichHPD::initHpdQuantumEff()
               << " from " << qePath+hID << endmsg;
       return StatusCode::FAILURE;
     }
-    m_pdQuantumEffFunc.reset( new Rich::TabulatedProperty1D( hpdQuantumEffTabProp ) );
+    m_pdQuantumEffFunc = std::make_shared<Rich::TabulatedProperty1D>( hpdQuantumEffTabProp );
   }
   else // use copy number to locate QE
   {
@@ -242,7 +242,7 @@ StatusCode DeRichHPD::initHpdQuantumEff()
                 << " from " << hpdQuantumEffCond.path() << endmsg;
         return StatusCode::FAILURE;
       }
-      m_pdQuantumEffFunc.reset( new Rich::TabulatedProperty1D( hpdQuantumEffTabProp ) );
+      m_pdQuantumEffFunc = std::make_shared<Rich::TabulatedProperty1D>( hpdQuantumEffTabProp );
     }
   }
 
@@ -679,10 +679,9 @@ StatusCode DeRichHPD::fillHpdMagTable( const unsigned int field )
 bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
                                          const bool photoCathodeSide ) const
 {
-  const auto field = ( m_isFieldDown ? 0 : 1 );
 
   // Only versions 0, 1 or 2 possible
-  detectPoint = ( 2 > m_MDMS_version[field] ?
+  detectPoint = ( 2 > m_MDMS_version[m_fieldIndex] ?
                   m_SiSensorToHPDMatrix * detectPoint  :
                   detectPoint - m_MDMSRotCentre );
   detectPoint.SetZ(0.0);
@@ -692,7 +691,7 @@ bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
   //const bool rAnodeOK = rAnode < m_siAnodeRCheck;
 
   double rCathode(0);
-  if ( UNLIKELY( 2 == m_MDMS_version[field] ) )
+  if ( UNLIKELY( 2 == m_MDMS_version[m_fieldIndex] ) )
   {
     detectPoint = m_SiSensorToHPDMatrix * detectPoint;
     detectPoint.SetZ(0.0);
@@ -702,7 +701,7 @@ bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
   }
   else
   {
-    rCathode = magnification_RtoR(field)->value(rAnode);
+    rCathode = magnification_RtoR(m_fieldIndex)->value(rAnode);
   }
 
   // check if this point could have come from the photoCathode
@@ -718,7 +717,7 @@ bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
   auto anodePhi = vdt::fast_atan2( detectPoint.Y(), detectPoint.X() );
   if ( detectPoint.Y() < 0 ) anodePhi += Gaudi::Units::twopi;
 
-  const auto result_phi = magnification_RtoPhi(field)->value( rAnode );
+  const auto result_phi = magnification_RtoPhi(m_fieldIndex)->value( rAnode );
 
   auto new_phi = anodePhi + result_phi + Gaudi::Units::pi;
   if ( new_phi > Gaudi::Units::twopi ) new_phi -= Gaudi::Units::twopi;

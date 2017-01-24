@@ -423,8 +423,8 @@ private: // data
 
   // cached field parameters
 
-  /// Field polarity
-  bool m_isFieldDown{false};
+  /// Field polarity index ( 0 = DOWN, 1 = UP )
+  unsigned short int m_fieldIndex{0};
 
   /// Is field ON or OFF
   bool m_isFieldON{true};
