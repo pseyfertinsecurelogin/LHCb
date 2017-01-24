@@ -52,10 +52,10 @@ DeRichHPD::DeRichHPD ( const std::string & name ) : DeRichPD ( name  )
 {
   for ( unsigned int field = 0; field < 2; ++field )
   {
-    m_demagMapR.emplace_back   ( std::make_unique<Rich::TabulatedFunction1D>() );
-    m_demagMapPhi.emplace_back ( std::make_unique<Rich::TabulatedFunction1D>() );
-    m_magMapR.emplace_back     ( std::make_unique<Rich::TabulatedFunction1D>() );
-    m_magMapPhi.emplace_back   ( std::make_unique<Rich::TabulatedFunction1D>() );
+    m_demagMapR  [field] = std::make_unique<Rich::TabulatedFunction1D>();
+    m_demagMapPhi[field] = std::make_unique<Rich::TabulatedFunction1D>();
+    m_magMapR    [field] = std::make_unique<Rich::TabulatedFunction1D>();
+    m_magMapPhi  [field] = std::make_unique<Rich::TabulatedFunction1D>();
   }
 }
 

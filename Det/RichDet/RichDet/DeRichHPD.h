@@ -360,7 +360,7 @@ private: // data
 
   const ISolid* m_kaptonSolid = nullptr;     ///< Pointer to the kapton solid
 
-  int m_number{0};                    ///< HPD number (should be the same as copy number)
+  int m_number{0};               ///< HPD number (should be the same as copy number)
 
   double m_winInR{0};            ///< Inner radius of HPD window squared
   double m_winOutR{0};           ///< Outter radius of HPD window squared
@@ -382,13 +382,13 @@ private: // data
   double m_magnificationCoef2{0};
 
   /// Interpolated function for HPD R for demagnification
-  std::vector< std::unique_ptr<Rich::TabulatedFunction1D> > m_demagMapR;
+  std::array< std::unique_ptr<Rich::TabulatedFunction1D>, 2 > m_demagMapR;
   /// Interpolated function for HPD phi for demagnification
-  std::vector< std::unique_ptr<Rich::TabulatedFunction1D> > m_demagMapPhi;
+  std::array< std::unique_ptr<Rich::TabulatedFunction1D>, 2 > m_demagMapPhi;
   /// Interpolated function for HPD R for magnification
-  std::vector< std::unique_ptr<Rich::TabulatedFunction1D> > m_magMapR;
+  std::array< std::unique_ptr<Rich::TabulatedFunction1D>, 2 > m_magMapR;
   /// Interpolated function for HPD phi for magnification
-  std::vector< std::unique_ptr<Rich::TabulatedFunction1D> > m_magMapPhi;
+  std::array< std::unique_ptr<Rich::TabulatedFunction1D>, 2 > m_magMapPhi;
 
   /// Demagnification parameters condition
   std::vector< SmartRef<Condition> > m_demagConds;
@@ -405,7 +405,7 @@ private: // data
   double m_LongitudinalBField{0};
 
   /// version of MDMS corrections, for both field polarities
-  int m_MDMS_version[2] = {0,0};
+  std::array<int,2> m_MDMS_version = {{0,0}};
 
   // Cached parameters for speed reasons.
   Gaudi::Transform3D m_SiSensorToHPDMatrix; ///< silicon to HPD transform
