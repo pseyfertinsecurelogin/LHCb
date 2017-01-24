@@ -286,6 +286,9 @@ private: // functions
   /// Update the magnification and demagnification information
   StatusCode updateDemagProperties();
 
+  /// Update the cached field parameters
+  StatusCode updateFieldParams();
+
   /// go from a point on silicon to a point on the photo-cathode with magnet ON
   bool magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
                                 const bool photoCathodeSide ) const;
@@ -417,6 +420,14 @@ private: // data
 
   /// pointer to the magnetic field service
   ILHCbMagnetSvc * m_magFieldSvc = nullptr;
+
+  // cached field parameters
+
+  /// Field polarity
+  bool m_isFieldDown{false};
+
+  /// Is field ON or OFF
+  bool m_isFieldON{true};
 
 };
 
