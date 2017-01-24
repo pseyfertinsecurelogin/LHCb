@@ -80,7 +80,7 @@ public:
    */
   Gaudi::XYZPoint windowCentreIn() const
   {
-    return geometry()->toGlobal(m_pvWindow->toMother(Gaudi::XYZPoint(0,0,m_winInR)) );
+    return geometry()->toGlobal(m_pvWindow->toMother({0,0,m_winInR}) );
   }
 
   /**
@@ -90,7 +90,7 @@ public:
   Gaudi::XYZPoint windowCentreInIdeal() const
   {
     return ( geometry()->toGlobalMatrixNominal() *
-             m_pvWindow->toMother(Gaudi::XYZPoint(0,0,m_winInR)) );
+             m_pvWindow->toMother({0,0,m_winInR}) );
   }
 
   /** Get the point on the centre of the HPD window on the inside surface in the mother
@@ -137,7 +137,7 @@ public:
    */
   inline Gaudi::XYZPoint pointOnSilicon ( const LHCb::RichSmartID smartID ) const
   {
-    return Gaudi::XYZPoint( xOnSilicon(smartID), yOnSilicon(smartID), 0.0 );
+    return { xOnSilicon(smartID), yOnSilicon(smartID), 0.0 };
   }
 
   /** Get the tranformation from the HPD panel coordinate system to the HPD quartz
