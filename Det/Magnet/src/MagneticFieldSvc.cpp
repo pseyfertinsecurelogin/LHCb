@@ -109,8 +109,8 @@ StatusCode MagneticFieldSvc::initialize()
 
   }
 
-  // update the cached field polarity
-  cacheFieldPolarity();
+  // update the cached field constants
+  cacheFieldConstants();
 
   return status;
 }
@@ -253,9 +253,12 @@ StatusCode MagneticFieldSvc::i_updateConditions()
 
   // Update the field map file
   StatusCode sc = StatusCode::SUCCESS;
-  if ( !m_mapFromOptions ) {
+  if ( !m_mapFromOptions )
+  {
     // Convention used: positive polarity is "Up" (+y), negative is "Down" (-y)
-    auto files = ( polarity>0 ? m_mapFilesUpPtr : m_mapFilesDownPtr) ->param<std::vector<std::string> >("Files");
+    auto files = 
+      ( polarity>0 ? 
+        m_mapFilesUpPtr : m_mapFilesDownPtr ) -> param<std::vector<std::string> >("Files");
 
     // prepend the path
     for ( auto& f : files ) f.insert(0,m_mapFilePath);
@@ -273,8 +276,8 @@ StatusCode MagneticFieldSvc::i_updateConditions()
     }
   }
 
-  // update the cached field polarity
-  cacheFieldPolarity();
+  // update the cached field constants
+  cacheFieldConstants();
 
   // Print a message
   static std::map<std::string,unsigned long long> nUpdates;
@@ -302,6 +305,13 @@ Gaudi::XYZVector MagneticFieldSvc::fieldVector( const Gaudi::XYZPoint& xyz ) con
 bool MagneticFieldSvc::isDown() const
 {
   return m_isDown ;
+}
+
+//=============================================================================
+
+double MagneticFieldSvc::signedRelativeCurrent() const
+{
+  return m_signedCurrent; 
 }
 
 //=============================================================================
