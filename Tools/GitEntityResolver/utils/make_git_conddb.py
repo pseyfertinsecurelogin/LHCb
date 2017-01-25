@@ -79,8 +79,23 @@ def main():
 
     parser.add_option('--tag-prefix',
                       help='prefix to use for the generated tags')
+    parser.add_option('--clean-iovs',
+                      action='store_true', dest='clean_iovs',
+                      help='partition IOVs after the dump (default)')
+    parser.add_option('--no-clean-iovs',
+                      action='store_false', dest='clean_iovs',
+                      help='do not partition IOVs after the dump')
+    parser.add_option('--append',
+                      action='store_true',
+                      help='do not clean the destination dir before dump')
+    parser.add_option('--always-iovs',
+                      action='store_true',
+                      help='create IOVs file for sigle IOV in folder')
 
-    parser.set_defaults(tag_prefix='')
+    parser.set_defaults(tag_prefix='',
+                        clean_iovs=True,
+                        append=False,
+                        always_iovs=False)
 
     opts, (dbfile, notes, repo_dir) = parser.parse_args()
 
@@ -149,7 +164,7 @@ def main():
         if base in tip_tags:
             tip_tags.remove(base)
 
-        if len(os.listdir(repo_dir)) > 1:
+        if not opts.append and len(os.listdir(repo_dir)) > 1:
             print 'cleaning up'
             check_output(['git', 'rm', '-r', '.'], cwd=repo_dir)
 
@@ -159,6 +174,8 @@ def main():
         else:
             nodes = db.getAllNodes()
         for node in nodes:
+            if os.path.basename(node) in ('InstLumi', ):
+                continue  # ignore this condition object
             # print node
             data = db.getPayloadList(node, IOV_MIN, IOV_MAX, None,
                                      tag if node not in
@@ -182,7 +199,7 @@ def main():
                         path = path + ':{0}'.format(channel)
                     value = fix_system_refs(payload[key], path, node)
                     value = fix_lines_ends(value)
-                    if since == IOV_MIN and until == IOV_MAX:
+                    if (since == IOV_MIN and until == IOV_MAX) and not opts.always_iovs:
                         if not os.path.exists(os.path.dirname(path)):
                             os.makedirs(os.path.dirname(path))
                         with open(path, 'w') as f:
@@ -197,7 +214,8 @@ def main():
                         with open(os.path.join(path, 'IOVs'), 'a') as iovs:
                             iovs.write('%d %s\n' % (since, value_id))
 
-        clean_iovs(repo_dir)
+        if opts.clean_iovs:
+            clean_iovs(repo_dir)
         print 'updating repository'
         check_output(['git', 'add', '.'], cwd=repo_dir)
         if check_output(['git', 'status', '--porcelain'],
