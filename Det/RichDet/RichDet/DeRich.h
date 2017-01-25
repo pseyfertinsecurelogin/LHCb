@@ -226,20 +226,18 @@ public:
    * be used to test if the mirror segment is at the edge or not
    * @return Position (row/column) for this spherical mirror segment
    */
-  virtual Rich::MirrorSegPosition sphMirrorSegPos( const int mirrorNumber ) const;
-
+  Rich::MirrorSegPosition sphMirrorSegPos( const int mirrorNumber ) const;
+  
   /**
    * Method to find the row/column of a flat mirror segment. It can be used to
    * test if the mirror segment is at the edge or not
    *
    * @return Position (row/column) for this flat mirror segment
    */
-  virtual Rich::MirrorSegPosition secMirrorSegPos( const int mirrorNumber ) const;
-
+  Rich::MirrorSegPosition secMirrorSegPos( const int mirrorNumber ) const;
+  
   /// sensitive volume identifier for hpd version. to be phased out
   int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override;
-
-public:
 
   /// Access PD Panels
   inline DeRichPDPanel * pdPanel( const Rich::Side panel ) const noexcept 
@@ -286,12 +284,12 @@ protected:
   int m_Rich2PhotoDetectorArrayConfig{0};
 
   /** Use large PMTs in RICH2
-   * This is specific to RICH2, but the flags are in RICH1 part of DB since
-   * all the pmts are created there together. So at the moment giving the capability to access it from
-   * RICH1 or RICH2 detector elements as per convenience and saving cpu time. There is also the possibility of
-   * different array config in RICH1 in future. So keeping all the flags here makes it easier to
-   * navigate through them.
-   * The mixed pmt means some pmts are large and others are with standard size.
+   *  This is specific to RICH2, but the flags are in RICH1 part of DB since
+   *  all the pmts are created there together. So at the moment giving the capability to access it from
+   *  RICH1 or RICH2 detector elements as per convenience and saving cpu time. There is also the possibility of
+   *  different array config in RICH1 in future. So keeping all the flags here makes it easier to
+   *  navigate through them.
+   *  The mixed pmt means some pmts are large and others are with standard size.
    */
   bool m_Rich2UseGrandPmt{false};
 

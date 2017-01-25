@@ -13,6 +13,7 @@
 
 // STL
 #include <sstream>
+#include <array>
 
 // Gaudi
 #include "GaudiKernel/Point3DTypes.h"
@@ -194,8 +195,7 @@ private: // data
   double m_localPlaneZdiff{0}; ///< Shift in Z between localPlane2 and localPlane
 
   double m_panelColumnSideEdge{0};    ///< Edge of the panel along the columns
-  double m_panelStartColPosEven{0};   ///< Bottom/Start point of the even HPD columns
-  double m_panelStartColPosOdd{0};    ///< Bottom/Start point of the odd HPD columns
+  std::array<double,2> m_panelStartColPosEvenOdd = {{0,0}}; ///< Bottom/Start point of the [even,odd] HPD columns
   double m_panelStartColPos{0};       ///< abs max of even and odd start points used as the edge across columns
 
   std::vector<IDetectorElement*> m_DeSiSensors; ///< Container for the Si sensors as Det Elements
@@ -222,7 +222,7 @@ DeRichHPDPanel::detPointOnAnode( const LHCb::RichSmartID& smartID ) const
 inline LHCb::RichTraceMode::RayTraceResult
 DeRichHPDPanel::checkPanelAcc( const Gaudi::XYZPoint & point ) const
 {
-  const auto uv = ( rich() == Rich::Rich1 ?
+  const auto uv = ( Rich::Rich1 == rich() ?
                     std::make_pair(point.y(),point.x()) :
                     std::make_pair(point.x(),point.y()) );
   return ( ( fabs(uv.first)  >= fabs(m_panelColumnSideEdge) ||
