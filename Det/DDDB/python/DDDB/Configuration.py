@@ -66,7 +66,7 @@ class DDDBConf(ConfigurableUser):
         xmlParserSvc = XmlParserSvc(
                                     # Set the maximum number of files to be put in the
                                     # cache of the XmlCnvSvc
-                                    MaxDocNbInCache = 10,
+                                    MaxDocNbInCache = 15,
 
                                     # Change the behavior of the cache. A 0 value makes
                                     # it FIFO while a bigger value tends to make it keep
