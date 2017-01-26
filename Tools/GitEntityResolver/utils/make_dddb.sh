@@ -19,8 +19,8 @@ make_git_conddb.py --tag-prefix=upgrade/ ${SQLITEUPGRADEDBPATH}/${name}.db ${SQL
 
 (
   cd ${name}
-  git checkout upgrade/dddb-20161117
-  git branch -f upgrade upgrade/dddb-20161117
+  git checkout upgrade/dddb-20161201
+  git branch -f upgrade upgrade/dddb-20161201
   git branch | grep branch- | xargs -r git branch -D
 )
 
