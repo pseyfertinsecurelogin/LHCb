@@ -826,7 +826,7 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
 
   // various counts
   DetectorArray<unsigned int> decodedHits = {{0,0}};
-  std::set<LHCb::RichSmartID> pdSet;
+  DetectorArray< std::set<LHCb::RichSmartID> > pdSet;
 
   // If we have some words to process, start the decoding
   if ( bankSize > 0 )
@@ -887,8 +887,9 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
         pdInfo.smartIDs().push_back( id );
 
         // count the hits and hpds
-        ++decodedHits[id.rich()];
-        pdSet.insert( id.pdID() );
+        const auto rich = id.rich();
+        ++decodedHits[rich];
+        pdSet[rich].insert( id.pdID() );
 
       }
     }
@@ -897,6 +898,8 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
 
   // Add to the total number of decoded hits
   decodedData.addToTotalHits( decodedHits );
+  for ( const auto rich : { Rich::Rich1, Rich::Rich2 } )
+  { decodedData.addToActivePDs( rich, pdSet[rich].size() ); }
 
   if ( m_summary )
   {
@@ -905,9 +908,9 @@ RawDataFormatTool::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
     // Increment bank size
     cands.nWords += bank.size()/4; // 2 L1 headers + data words
     // Increment hit occupancy
-    cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
+    cands.nHits += decodedHits[Rich::Rich1]  + decodedHits[Rich::Rich2];
     // Count number of HPD banks
-    cands.nHPDs += pdSet.size();
+    cands.nHPDs += pdSet[Rich::Rich1].size() + pdSet[Rich::Rich2].size();
     // Count fills
     ++cands.nFills;
   }
@@ -922,8 +925,7 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
   _ri_debug << "Decoding L1 bank " << L1ID << endmsg;
 
   // various counts
-  unsigned int nHPDbanks(0);
-  DetectorArray<unsigned int> decodedHits = {{0,0}};
+  DetectorArray<unsigned int> nHPDbanks{{0,0}}, decodedHits{{0,0}};
 
   // Data bank size in 32 bit words
   const int bankSize = bank.size() / 4;
@@ -1136,8 +1138,9 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                 // apply suppression of high occupancy HPDs
                 if ( hpdHitCount < m_maxHPDOc )
                 {
-                  ++nHPDbanks;
-                  decodedHits[pdID.rich()] += hpdHitCount;
+                  const auto rich = pdID.rich();
+                  ++nHPDbanks[rich];
+                  decodedHits[rich] += hpdHitCount;
 
                   // suppress hot pixels
                   suppressHotPixels(pdID,newids);
@@ -1193,6 +1196,7 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
 
   // Add to the total number of decoded hits
   decodedData.addToTotalHits( decodedHits );
+  decodedData.addToActivePDs( nHPDbanks   );
 
   if ( m_summary )
   {
@@ -1203,13 +1207,13 @@ void RawDataFormatTool::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
     // Increment hit occupancy
     cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
     // Count number of HPD banks
-    cands.nHPDs += nHPDbanks;
+    cands.nHPDs += (nHPDbanks[Rich::Rich1]+nHPDbanks[Rich::Rich2]);
     // Count fills
     ++cands.nFills;
   }
 
   // debug printout
-  _ri_debug << "Decoded " << boost::format("%2i") % nHPDbanks;
+  _ri_debug << "Decoded " << boost::format("%2i") % (nHPDbanks[Rich::Rich1]+nHPDbanks[Rich::Rich2]);
   _ri_debug << " PDs from Level1 Bank ID = "
             << boost::format("%2i") % L1ID.data();
   _ri_debug << " : Size " << boost::format("%4i") % (bank.size()/4) << " words : Version "
@@ -1270,8 +1274,7 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
   const Level1HardwareID L1ID ( bank.sourceID() );
 
   // HPD count
-  unsigned int nHPDbanks(0);
-  DetectorArray<unsigned int> decodedHits = {{0,0}};
+  DetectorArray<unsigned int> nHPDbanks{{0,0}}, decodedHits{{0,0}};
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -1339,8 +1342,9 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
         // apply suppression of high occupancy HPDs
         if ( hpdHitCount < m_maxHPDOc )
         {
-          ++nHPDbanks;
-          decodedHits[pdID.rich()] += hpdHitCount;
+          const auto rich = pdID.rich();
+          ++nHPDbanks[rich];
+          decodedHits[rich] += hpdHitCount;
         }
         else
         {
@@ -1372,6 +1376,7 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
 
   // Add to the total number of decoded hits
   decodedData.addToTotalHits( decodedHits );
+  decodedData.addToActivePDs( nHPDbanks   );
 
   if ( m_summary )
   {
@@ -1382,13 +1387,13 @@ void RawDataFormatTool::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
     // Increment hit occupancy
     cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
     // Count number of HPD banks
-    cands.nHPDs += nHPDbanks;
+    cands.nHPDs += (nHPDbanks[Rich::Rich1]+nHPDbanks[Rich::Rich2]);
     // Count fills
     ++cands.nFills;
   }
 
   // debug printout
-  _ri_debug << "Decoded " << boost::format("%2i") % nHPDbanks;
+  _ri_debug << "Decoded " << boost::format("%2i") % (nHPDbanks[Rich::Rich1]+nHPDbanks[Rich::Rich2]);
   _ri_debug << " PDs from Level1 Bank "
             << boost::format("%2i") % L1ID.data();
   _ri_debug << " : Size " << boost::format("%4i") % (bank.size()/4) << " words : Version "
@@ -1407,8 +1412,7 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
   const ShortType maxDataSize = MaxDataSize;
 
   // HPD count
-  unsigned int nHPDbanks(0);
-  DetectorArray<unsigned int> decodedHits = {{0,0}};
+  DetectorArray<unsigned int> nHPDbanks{{0,0}}, decodedHits{{0,0}};
 
   // Data bank size in words
   const int bankSize = bank.size() / 4;
@@ -1532,8 +1536,9 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
         // apply suppression of high occupancy HPDs
         if ( hpdHitCount < m_maxHPDOc )
         {
-          ++nHPDbanks;
-          decodedHits[pdID.rich()] += hpdHitCount;
+          const auto rich = pdID.rich();
+          ++nHPDbanks[rich];
+          decodedHits[rich] += hpdHitCount;
         }
         else
         {
@@ -1555,6 +1560,7 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
 
   // Add to the total number of decoded hits
   decodedData.addToTotalHits( decodedHits );
+  decodedData.addToActivePDs( nHPDbanks   );
 
   if ( m_summary )
   {
@@ -1565,13 +1571,13 @@ void RawDataFormatTool::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
     // Increment hit occupancy
     cands.nHits += decodedHits[Rich::Rich1] + decodedHits[Rich::Rich2];
     // Count number of HPD banks
-    cands.nHPDs += nHPDbanks;
+    cands.nHPDs += (nHPDbanks[Rich::Rich1]+nHPDbanks[Rich::Rich2]);
     // Count fills
     ++cands.nFills;
   }
 
   // debug printout
-  _ri_debug << "Decoded " << boost::format("%2i") % nHPDbanks;
+  _ri_debug << "Decoded " << boost::format("%2i") % (nHPDbanks[Rich::Rich1]+nHPDbanks[Rich::Rich2]);
   _ri_debug << " PDs from Level1 Bank "
             << boost::format("%2i") % base_L1ID.data();
   _ri_debug << " : Size " << boost::format("%4i") % (bank.size()/4) << " words : Version "
