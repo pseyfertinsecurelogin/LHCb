@@ -164,17 +164,37 @@ namespace Rich
       {
         return m_nTotalHits[rich];
       }
-      /// Append to the number of hits for the given RICH detector
-      void addToTotalHits( const Rich::DetectorType rich,
-                           const unsigned int nHits ) { m_nTotalHits[rich] += nHits; }
       /// Append to the number of hits for each RICH
       void addToTotalHits( const DetectorArray<unsigned int>& nHits )
       {
         for ( const auto rich : Rich::detectors() ) { m_nTotalHits[rich] += nHits[rich]; }
       }
+      /// Returns the total number of active PDs in the decoded data
+      unsigned int nActivePDs() const noexcept 
+      {
+        return m_nActivePDs[Rich::Rich1] + m_nActivePDs[Rich::Rich2]; 
+      }
+      /// Returns the total number of active PDs in the decoded data for the given RICH
+      unsigned int nActivePDs( const Rich::DetectorType rich ) const noexcept 
+      {
+        return m_nActivePDs[rich]; 
+      }
+      /// Append to the number of active PDs for each RICH
+      void addToActivePDs( const DetectorArray<unsigned int>& nPDs )
+      {
+        for ( const auto rich : Rich::detectors() ) { m_nActivePDs[rich] += nPDs[rich]; }
+      }
+      /// Append to the number of active PDs for the given
+      void addToActivePDs( const Rich::DetectorType rich,
+                           const unsigned int nPDs )
+      {
+        m_nActivePDs[rich] += nPDs;
+      }
     private:
       /// The total hit count for each RICH detector
       DetectorArray<unsigned int> m_nTotalHits = {{0,0}};
+      /// The total active PD count for each RICH detector
+      DetectorArray<unsigned int> m_nActivePDs = {{0,0}};
     };
     
     /// L1Map data locations
