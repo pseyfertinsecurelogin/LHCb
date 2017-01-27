@@ -13,6 +13,7 @@
 
 // STL
 #include <sstream>
+#include <array>
 
 // Gaudi
 #include "GaudiKernel/Point3DTypes.h"
@@ -105,8 +106,11 @@ public:
                  LHCb::RichSmartID& smartID,
                  const LHCb::RichTraceMode mode ) const override final;
 
+  /// Access the DeRichPD object for a given PD RichSmartID
+  const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const override final;
+
   /// Returns the detector element for the given PD number
-  const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const override;
+  const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const override final;
 
   /// Returns the detector element for the given PD number
   inline const DeRichHPD* deHPD( const Rich::DAQ::HPDCopyNumber HPDNumber ) const
@@ -131,7 +135,21 @@ public:
   /// sensitive volume identifier
   int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override final;
 
+  /// Returns the PD number for the given RichSmartID
+  Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const override final;
+
+  /// The maximum PD copy number for this panel
+  Rich::DAQ::HPDCopyNumber maxPdNumber() const override final;
+
 private: // methods
+
+  /// Returns the PD number for the given RichSmartID
+  inline Rich::DAQ::HPDCopyNumber _pdNumber( const LHCb::RichSmartID& smartID ) const
+  {
+    return Rich::DAQ::HPDCopyNumber( smartID.rich() == rich() && smartID.panel() == side() ?
+                                     smartID.pdCol() * nPDsPerCol() + smartID.pdNumInCol() :
+                                     nPDs() + 1 );
+  }
 
   /** Finds the HPD row and column that corresponds to the x,y coordinates
    *  of a point in the panel. The row and column are retuned in the smartID.
@@ -142,12 +160,6 @@ private: // methods
    */
   bool findHPDColAndPos( const Gaudi::XYZPoint& inPanel, LHCb::RichSmartID& id ) const;
 
-  /// Returns the PD number for the given RichSmartID
-  Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const override final;
-
-  /// Need to ask Sajan about this
-  bool pdGrandSize( const LHCb::RichSmartID& /** smartID **/ ) const override final { return false; }
-
   /// Check HPD panel acceptance
   LHCb::RichTraceMode::RayTraceResult checkPanelAcc( const Gaudi::XYZPoint & point ) const;
 
@@ -156,21 +168,21 @@ private: // methods
 
 private: // data
 
-  double m_HPDPitch;               ///< distance between HPDs
-  double m_HPDColPitch;            ///< distance between HPD columns
-  double m_OneOverHPDPitch;        ///< 1 / distance between HPDs (cached for speed)
-  double m_OneOverHPDColPitch;     ///< 1 / distance between HPD columns (cached for speed)
+  double m_HPDPitch{0};               ///< distance between HPDs
+  double m_HPDColPitch{0};            ///< distance between HPD columns
+  double m_OneOverHPDPitch{0};        ///< 1 / distance between HPDs (cached for speed)
+  double m_OneOverHPDColPitch{0};     ///< 1 / distance between HPD columns (cached for speed)
 
-  unsigned int m_pixelRows;        ///< Number of pixel rows
-  unsigned int m_pixelColumns;     ///< Number of pixel columns
+  unsigned int m_pixelRows{0};        ///< Number of pixel rows
+  unsigned int m_pixelColumns{0};     ///< Number of pixel columns
 
   /// The active HPD window radius (photocathode coverage) Squared
-  double m_activeRadiusSq;
+  double m_activeRadiusSq{0};
 
-  double m_pixelSize;              ///< The pixel size on the silicon sensor
-  double m_subPixelSize;           ///< The size of the subpixel (Alice mode)
-  double m_siliconHalfLengthX;     ///< Half size (x) of silicon sensor
-  double m_siliconHalfLengthY;     ///< Half size (y) of silicon sensor
+  double m_pixelSize{0};              ///< The pixel size on the silicon sensor
+  double m_subPixelSize{0};           ///< The size of the subpixel (Alice mode)
+  double m_siliconHalfLengthX{0};     ///< Half size (x) of silicon sensor
+  double m_siliconHalfLengthY{0};     ///< Half size (y) of silicon sensor
 
   Gaudi::Plane3D m_localPlane;         ///< detection plane in PDPanel coordinates
   Gaudi::XYZVector m_localPlaneNormal; ///< The normal vector of det plane in local coordinates
@@ -180,12 +192,11 @@ private: // data
    *  This plane is parrallel to m_localPlane, thus share the same normal vector
    */
   Gaudi::Plane3D m_localPlane2;
-  double m_localPlaneZdiff; ///< Shift in Z between localPlane2 and localPlane
+  double m_localPlaneZdiff{0}; ///< Shift in Z between localPlane2 and localPlane
 
-  double m_panelColumnSideEdge;    ///< Edge of the panel along the columns
-  double m_panelStartColPosEven;   ///< Bottom/Start point of the even HPD columns
-  double m_panelStartColPosOdd;    ///< Bottom/Start point of the odd HPD columns
-  double m_panelStartColPos;       ///< abs max of even and odd start points used as the edge across columns
+  double m_panelColumnSideEdge{0};    ///< Edge of the panel along the columns
+  std::array<double,2> m_panelStartColPosEvenOdd = {{0,0}}; ///< Bottom/Start point of the [even,odd] HPD columns
+  double m_panelStartColPos{0};       ///< abs max of even and odd start points used as the edge across columns
 
   std::vector<IDetectorElement*> m_DeSiSensors; ///< Container for the Si sensors as Det Elements
 
@@ -202,17 +213,8 @@ private: // data
 inline Gaudi::XYZPoint
 DeRichHPDPanel::detPointOnAnode( const LHCb::RichSmartID& smartID ) const
 {
-  return deHPD( pdNumber(smartID) ) -> detPointOnAnode( smartID );
+  return deHPD( _pdNumber(smartID) ) -> detPointOnAnode( smartID );
 }
-
-//=========================================================================
-//  convert a point from the global to the panel coodinate system
-//=========================================================================
-// inline Gaudi::XYZPoint DeRichHPDPanel::globalToPDPanel( const Gaudi::XYZPoint& globalPoint ) const
-// {
-//   const Gaudi::XYZPoint localPoint( geometry()->toLocal( globalPoint ) );
-//   return Gaudi::XYZPoint( localPoint.x(), localPoint.y(), localPoint.z()-m_detPlaneZ );
-// }
 
 //=========================================================================
 // Check HPD panel acceptance
@@ -220,7 +222,7 @@ DeRichHPDPanel::detPointOnAnode( const LHCb::RichSmartID& smartID ) const
 inline LHCb::RichTraceMode::RayTraceResult
 DeRichHPDPanel::checkPanelAcc( const Gaudi::XYZPoint & point ) const
 {
-  const auto uv = ( rich() == Rich::Rich1 ?
+  const auto uv = ( Rich::Rich1 == rich() ?
                     std::make_pair(point.y(),point.x()) :
                     std::make_pair(point.x(),point.y()) );
   return ( ( fabs(uv.first)  >= fabs(m_panelColumnSideEdge) ||

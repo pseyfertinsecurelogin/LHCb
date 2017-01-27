@@ -33,11 +33,11 @@ namespace Rich
           
           /// Access the best MCParticle match for the given track
           const LHCb::MCParticle *
-          mcParticle( const LHCb::Track * track, const double minWeight = 0.5 ) const;
+          mcParticle( const LHCb::Track & track, const double minWeight = 0.5 ) const;
 
           /// Get the MC RICH PID type for a given track
           Rich::ParticleIDType
-          mcParticleType( const LHCb::Track * track,
+          mcParticleType( const LHCb::Track & track,
                           const double minWeight = 0.5 ) const;
           
         private:

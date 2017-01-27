@@ -6,8 +6,6 @@
  *  @date   2012-10-18
  */
 
-#define DERICH2_CPP
-
 // Include files
 #include "RichDet/DeHorizRich.h"
 #include "RichDet/DeRichHPDPanel.h"
@@ -44,15 +42,14 @@ const CLID& DeHorizRich::classID()
 //=========================================================================
 StatusCode DeHorizRich::initialize()
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Initialize " << name() << endmsg;
+  _ri_debug << "Initialize " << name() << endmsg;
 
   if ( !DeRich::initialize() ) return StatusCode::FAILURE;
 
   const std::vector<double>& nominalCoC = param<std::vector<double> >("NominalSphMirrorCoC");
-  m_nominalCentreOfCurvatureLeft  =
+  m_nominalCentresOfCurvature[Rich::left] =
     Gaudi::XYZPoint(  nominalCoC[0], nominalCoC[1], nominalCoC[2] );
-  m_nominalCentreOfCurvatureRight =
+  m_nominalCentresOfCurvature[Rich::right] =
     Gaudi::XYZPoint( -nominalCoC[0], nominalCoC[1], nominalCoC[2] );
 
   m_sphMirrorRadius = param<double>("SphMirrorRadius");
@@ -62,31 +59,24 @@ StatusCode DeHorizRich::initialize()
   std::vector<double> nominalFMirrorPlane;
   nominalFMirrorPlane = param<std::vector<double> >("NominalSecMirrorPlane");
 
-  m_nominalPlaneLeft = Gaudi::Plane3D(nominalFMirrorPlane[0],nominalFMirrorPlane[1],
-                                      nominalFMirrorPlane[2],nominalFMirrorPlane[3]);
-  m_nominalPlaneRight = Gaudi::Plane3D(-nominalFMirrorPlane[0],nominalFMirrorPlane[1],
-                                       nominalFMirrorPlane[2],nominalFMirrorPlane[3]);
+  m_nominalPlanes[Rich::left]  = Gaudi::Plane3D(nominalFMirrorPlane[0],nominalFMirrorPlane[1],
+                                               nominalFMirrorPlane[2],nominalFMirrorPlane[3]);
+  m_nominalPlanes[Rich::right] = Gaudi::Plane3D(-nominalFMirrorPlane[0],nominalFMirrorPlane[1],
+                                                nominalFMirrorPlane[2],nominalFMirrorPlane[3]);
 
-  m_nominalNormalLeft  = m_nominalPlaneLeft.Normal();
-  m_nominalNormalRight = m_nominalPlaneRight.Normal();
+  m_nominalNormals[Rich::left]  = m_nominalPlanes[Rich::left].Normal();
+  m_nominalNormals[Rich::right] = m_nominalPlanes[Rich::right].Normal();
 
-  if ( msgLevel(MSG::DEBUG) )
-  {
-    debug() << "Spherical Mirror radius:" << m_sphMirrorRadius << endmsg;
-    debug() << "Nominal centre of curvature" << m_nominalCentreOfCurvatureLeft
-            << " , " << m_nominalCentreOfCurvatureRight << endmsg;
-
-    debug() << "Nominal normal " << Gaudi::XYZVector( m_nominalNormalLeft ) << " "
-            << Gaudi::XYZVector( m_nominalNormalRight ) << endmsg;
-  }
+  _ri_debug << "Spherical Mirror radius:" << m_sphMirrorRadius << endmsg;
+  _ri_debug << "Nominal centre of curvature" << m_nominalCentresOfCurvature << endmsg;
+  _ri_debug << "Nominal normal " << m_nominalNormals << endmsg;
 
   // get the refractive index of the window between gas radiator and photon detectors
   const std::string gasWinRefIndxLoc = param<std::string>("RichGasWindowRefIndexLoc");
   SmartDataPtr<TabulatedProperty> gasWinRefIndxTab( dataSvc(), gasWinRefIndxLoc );
   if ( gasWinRefIndxTab )
   {
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Loaded gas win ref index from: "<<gasWinRefIndxLoc<<endmsg;
+    _ri_debug << "Loaded gas win ref index from: "<<gasWinRefIndxLoc<<endmsg;
     m_gasWinRefIndex.reset( new Rich::TabulatedProperty1D( gasWinRefIndxTab ) );
     if ( !m_gasWinRefIndex->valid() )
     {
@@ -106,8 +96,7 @@ StatusCode DeHorizRich::initialize()
   SmartDataPtr<TabulatedProperty> gasWinAbsLenTab( dataSvc(), gasWinAbsLenLoc );
   if ( gasWinAbsLenTab )
   {
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Loaded gas win abs length from: "<<gasWinAbsLenLoc<<endmsg;
+    _ri_debug << "Loaded gas win abs length from: "<<gasWinAbsLenLoc<<endmsg;
     m_gasWinAbsLength.reset( new Rich::TabulatedProperty1D( gasWinAbsLenTab ) );
     if ( !m_gasWinAbsLength ->valid() )
     {
@@ -132,8 +121,7 @@ StatusCode DeHorizRich::initialize()
   }
   else
   {
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Loaded spherical mirror reflectivity from: "<<sphMirrorReflLoc<<endmsg;
+    _ri_debug << "Loaded spherical mirror reflectivity from: "<<sphMirrorReflLoc<<endmsg;
     m_nominalSphMirrorRefl.reset( new Rich::TabulatedProperty1D( sphMirrorRefl ) );
     if ( !m_nominalSphMirrorRefl->valid() )
     {
@@ -153,8 +141,7 @@ StatusCode DeHorizRich::initialize()
   }
   else
   {
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Loaded secondary mirror reflectivity from: "<<secMirrorReflLoc<<endmsg;
+    _ri_debug << "Loaded secondary mirror reflectivity from: "<<secMirrorReflLoc<<endmsg;
     m_nominalSecMirrorRefl.reset( new Rich::TabulatedProperty1D( secMirrorRefl ) );
     if ( !m_nominalSecMirrorRefl->valid() )
     {
@@ -181,52 +168,10 @@ StatusCode DeHorizRich::initialize()
 }
 
 //=========================================================================
-//  nominalCentreOfCurvature
-//=========================================================================
-const Gaudi::XYZPoint&
-DeHorizRich::nominalCentreOfCurvature(const Rich::Side side) const
-{
-  return ( Rich::right == side ?
-           m_nominalCentreOfCurvatureRight :
-           m_nominalCentreOfCurvatureLeft );
-}
-
-//=========================================================================
-//  nominalNormal
-//=========================================================================
-const Gaudi::XYZVector& DeHorizRich::nominalNormal(const Rich::Side side) const
-{
-  return ( Rich::right == side ? m_nominalNormalRight : m_nominalNormalLeft );
-}
-
-//=========================================================================
-//  nominalPlane
-//=========================================================================
-const Gaudi::Plane3D& DeHorizRich::nominalPlane(const Rich::Side side) const
-{
-  return ( Rich::left == side ? m_nominalPlaneLeft : m_nominalPlaneRight );
-}
-
-//=========================================================================
-//  side
-//=========================================================================
-Rich::Side DeHorizRich::side( const Gaudi::XYZPoint& point ) const
-{
-  return ( point.x() >= 0.0 ? Rich::left : Rich::right );
-}
-
-//=========================================================================
 // Access the name for a given panel
 //=========================================================================
 const std::string DeHorizRich::panelName( const Rich::Side panel ) const
 {
-
-  const std::vector<std::string>& panelLoc
-    = paramVect<std::string>("PDPanelDetElemLocations");
-  const std::string pname = panelLoc[panel];
-
-  return pname;
+  const auto & panelLoc = paramVect<std::string>("PDPanelDetElemLocations");
+  return panelLoc[panel];
 }
-
-
-

@@ -162,10 +162,10 @@ StatusCode DeRichGasRadiator::initialize()
 StatusCode DeRichGasRadiator::updateProperties()
 {
   // load parameters
-  const auto         photonEnergyLowLimit   = param<double>("PhotonMinimumEnergy");
-  const auto        photonEnergyHighLimit   = param<double>("PhotonMaximumEnergy");
-  const auto      ckvPhotonEnergyLowLimit   = param<double>("PhotonCkvMinimumEnergy");
-  const auto     ckvPhotonEnergyHighLimit   = param<double>("PhotonCkvMaximumEnergy");
+  const auto         photonEnergyLowLimit = param<double>("PhotonMinimumEnergy");
+  const auto        photonEnergyHighLimit = param<double>("PhotonMaximumEnergy");
+  const auto      ckvPhotonEnergyLowLimit = param<double>("PhotonCkvMinimumEnergy");
+  const auto     ckvPhotonEnergyHighLimit = param<double>("PhotonCkvMaximumEnergy");
   const unsigned int    photonEnergyNumBins = param<int>("PhotonEnergyNumBins");
   const unsigned int ckvPhotonEnergyNumBins = param<int>("CkvPhotonEnergyNumBins");
 

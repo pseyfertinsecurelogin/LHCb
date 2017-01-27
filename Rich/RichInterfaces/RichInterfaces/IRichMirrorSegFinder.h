@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHMIRRORSEGFINDER_H
-#define RICHINTERFACES_IRICHMIRRORSEGFINDER_H 1
+#pragma once
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -25,14 +24,11 @@
 // RichDet
 class DeRichSphMirror;
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichMirrorSegFinder( "Rich::IMirrorSegFinder", 1, 0 );
-
 namespace Rich
 {
 
   //-----------------------------------------------------------------------------
-  /** @class IMirrorSegFinder IRichMirrorSegFinder.h RichKernel/IRichMirrorSegFinder.h
+  /** @class IMirrorSegFinder RichInterfaces/IRichMirrorSegFinder.h
    *
    *  Interface to a tool to find the appropriate mirror segment for a given reflection point
    *
@@ -46,10 +42,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() { return IID_IRichMirrorSegFinder; }
+    /// Interface ID
+    DeclareInterfaceID( IMirrorSegFinder, 1, 0 );
 
     /** Locates the spherical mirror Segment given a reflection point,
      *  RICH identifier and panel
@@ -64,7 +58,6 @@ namespace Rich
     findSphMirror( const Rich::DetectorType rich,
                    const Rich::Side side,
                    const Gaudi::XYZPoint& reflPoint ) const = 0;
-
 
     /** Locates the secondary (spherical) mirror Segment given a reflection point,
      *  RICH identifier and panel
@@ -83,5 +76,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRICHMIRRORSEGFINDER_H

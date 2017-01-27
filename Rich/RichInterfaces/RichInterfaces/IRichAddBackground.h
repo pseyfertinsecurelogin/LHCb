@@ -9,8 +9,7 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHADDBACKGROUND_H
-#define RICHINTERFACES_IRICHADDBACKGROUND_H 1
+#pragma once
 
 // from STL
 #include <string>
@@ -23,9 +22,6 @@
 
 namespace Rich
 {
-
-  /// Tool Interface ID
-  static const InterfaceID IID_IRichAddBackground ( "Rich::IAddBackground", 1, 0 );
 
   /** @class IAddBackground RichKernel/IRichAddBackground.h
    *
@@ -40,8 +36,8 @@ namespace Rich
 
   public:
 
-    /// Return the interface ID
-    static const InterfaceID& interfaceID() { return IID_IRichAddBackground; }
+    /// Interface ID
+    DeclareInterfaceID( IAddBackground, 1, 0 );
 
   public:
 
@@ -57,5 +53,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRICHADDBACKGROUND_H

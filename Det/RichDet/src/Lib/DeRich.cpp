@@ -93,10 +93,6 @@ StatusCode DeRich::initialize ( )
     }
   }
 
-  // initialise various local cached data
-  //loadPDPanels();
-  //loadNominalQuantumEff();
-
   return StatusCode::SUCCESS;
 }
 

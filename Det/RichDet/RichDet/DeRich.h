@@ -71,7 +71,11 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal centre of curvature
    */
-  virtual const Gaudi::XYZPoint& nominalCentreOfCurvature(const Rich::Side side) const = 0;
+  inline const Gaudi::XYZPoint& 
+  nominalCentreOfCurvature(const Rich::Side side) const noexcept
+  {
+    return m_nominalCentresOfCurvature[side];
+  }
 
   /**
    * Returns the nominal normal vector of the flat mirror plane for this Rich
@@ -79,7 +83,11 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal normal vector
    */
-  virtual const Gaudi::XYZVector& nominalNormal(const Rich::Side side) const = 0;
+  inline const Gaudi::XYZVector& 
+  nominalNormal(const Rich::Side side) const noexcept
+  {
+    return m_nominalNormals[side];
+  }
 
   /**
    * Returns the nominal flat mirror plane for this Rich
@@ -87,7 +95,11 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal flat mirror plane
    */
-  virtual const Gaudi::Plane3D& nominalPlane(const Rich::Side side) const = 0;
+  inline const Gaudi::Plane3D& 
+  nominalPlane(const Rich::Side side) const noexcept
+  {
+    return m_nominalPlanes[side];
+  }
 
   /**
    * Check on which side of this Rich lies this point
@@ -95,17 +107,19 @@ public:
    * @param point A point in the global coordinate system
    * @return The side for this point
    */
-  virtual Rich::Side side( const Gaudi::XYZPoint& point ) const = 0;
+  inline Rich::Side side( const Gaudi::XYZPoint& point ) const noexcept
+  {
+    return ( Rich::Rich1 == rich()                            ?
+             ( point.y() >= 0.0 ? Rich::top  : Rich::bottom ) :
+             ( point.x() >= 0.0 ? Rich::left : Rich::right  ) );
+  }
 
   /**
    * Returns the detector type for this Rich
    *
    * @return The detector type
    */
-  inline Rich::DetectorType rich() const noexcept
-  {
-    return m_rich;
-  }
+  inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
   /**
    * Returns the RichSystem
@@ -146,16 +160,10 @@ public:
   }
 
   /// Use large PMTs
-  inline bool Rich2UseGrandPmt () const noexcept
-  {
-    return m_Rich2UseGrandPmt;
-  }
+  inline bool Rich2UseGrandPmt() const noexcept { return m_Rich2UseGrandPmt; }
 
-  /// Use large+small  PMTs
-  inline bool Rich2UseMixedPmt () const noexcept
-  {
-    return m_Rich2UseMixedPmt;
-  }
+  /// Use large+small PMTs
+  inline bool Rich2UseMixedPmt() const noexcept { return m_Rich2UseMixedPmt; }
 
   /**
    * Returns a pointer to the tabulated property that holds the refractive
@@ -218,20 +226,18 @@ public:
    * be used to test if the mirror segment is at the edge or not
    * @return Position (row/column) for this spherical mirror segment
    */
-  virtual Rich::MirrorSegPosition sphMirrorSegPos( const int mirrorNumber ) const;
-
+  Rich::MirrorSegPosition sphMirrorSegPos( const int mirrorNumber ) const;
+  
   /**
    * Method to find the row/column of a flat mirror segment. It can be used to
    * test if the mirror segment is at the edge or not
    *
    * @return Position (row/column) for this flat mirror segment
    */
-  virtual Rich::MirrorSegPosition secMirrorSegPos( const int mirrorNumber ) const;
-
+  Rich::MirrorSegPosition secMirrorSegPos( const int mirrorNumber ) const;
+  
   /// sensitive volume identifier for hpd version. to be phased out
   int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override;
-
-public:
 
   /// Access PD Panels
   inline DeRichPDPanel * pdPanel( const Rich::Side panel ) const noexcept 
@@ -278,12 +284,12 @@ protected:
   int m_Rich2PhotoDetectorArrayConfig{0};
 
   /** Use large PMTs in RICH2
-   * This is specific to RICH2, but the flags are in RICH1 part of DB since
-   * all the pmts are created there together. So at the moment giving the capability to access it from
-   * RICH1 or RICH2 detector elements as per convenience and saving cpu time. There is also the possibility of
-   * different array config in RICH1 in future. So keeping all the flags here makes it easier to
-   * navigate through them.
-   * The mixed pmt means some pmts are large and others are with standard size.
+   *  This is specific to RICH2, but the flags are in RICH1 part of DB since
+   *  all the pmts are created there together. So at the moment giving the capability to access it from
+   *  RICH1 or RICH2 detector elements as per convenience and saving cpu time. There is also the possibility of
+   *  different array config in RICH1 in future. So keeping all the flags here makes it easier to
+   *  navigate through them.
+   *  The mixed pmt means some pmts are large and others are with standard size.
    */
   bool m_Rich2UseGrandPmt{false};
 
@@ -301,6 +307,15 @@ protected:
 
   /// flat mirror reflectivity
   std::unique_ptr<const Rich::TabulatedProperty1D> m_nominalSecMirrorRefl;
+
+  /// Nominal planes for each panel
+  Rich::PanelArray<Gaudi::Plane3D> m_nominalPlanes = {{}};
+
+  /// The nominal normal vector of the flat mirror planes
+  Rich::PanelArray<Gaudi::XYZVector> m_nominalNormals = {{}};
+
+  /// The nominal centres of curvature of the spherical mirrors
+  Rich::PanelArray<Gaudi::XYZPoint> m_nominalCentresOfCurvature = {{}};
 
 private: // data
 
