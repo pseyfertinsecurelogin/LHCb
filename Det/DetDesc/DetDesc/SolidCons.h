@@ -4,6 +4,7 @@
 // STD and STL
 #include <cmath>
 #include <iostream>
+#include <memory>
 // Units
 #include "GaudiKernel/SystemOfUnits.h"
 // Geometry Definitions
@@ -85,7 +86,7 @@ public:
    *  @see ISolid
    *  @return pointer to "simplified" solid - "cover"
    */
-  const ISolid* cover () const override;
+  inline const ISolid* cover () const override { return m_cover.get(); }
 
   /** - printout to STD/STL stream
    *  - implementation  of ISolid abstract interface
@@ -292,11 +293,6 @@ protected:
 
 protected:
 
-  /** default protected constructor
-   *  @param Name name of conical tube segment
-   */
-  SolidCons( const std::string& Name = "Anonymous CONS") ;
-
   /** set bounding parameters
    */
   void setBP();
@@ -325,6 +321,7 @@ private:
   unsigned int intersectionTicksImpl( const aPoint  & Point,
                                       const aVector & Vector,
                                       ISolid::Ticks& ticks ) const;
+  void createCover();
 
 private:
 
@@ -339,6 +336,7 @@ private:
   int                     m_cons_coverModel        ;
   bool                    m_noPhiGap               ;
 
+  std::unique_ptr<ISolid> m_cover;
 };
 // ===========================================================================
 

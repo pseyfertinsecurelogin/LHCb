@@ -58,7 +58,7 @@ class SolidTrd final : public    virtual SolidBase             ,
    *  @see ISolid
    *  @return pointer to "simplified" solid - "cover"
    */
-  const ISolid* cover () const override;
+  inline const ISolid* cover () const override { return m_cover.get(); }
 
   /** - printout to STD/STL stream
    *  - implementation  of ISolid abstract interface
@@ -155,6 +155,9 @@ private:
    */
   void makeAll() ;
 
+  /// creation of cover
+  void createCover();
+
 private:
 
 
@@ -170,13 +173,11 @@ private:
   double                 m_trd_xHalfLength2 ;
   double                 m_trd_yHalfLength1 ;
   double                 m_trd_yHalfLength2 ;
+  /// cover
+  std::unique_ptr<ISolid> m_cover;
   ///@}
 };
 
 /// ===========================================================================
 #endif ///<   DETDESC_SOLIDTRD_H
 /// ===========================================================================
-
-
-
-

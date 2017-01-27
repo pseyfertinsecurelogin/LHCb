@@ -67,7 +67,7 @@ public:
    *  @see ISolid::cover()
    *  @return pointer to the most simplified cover
    */
-  const ISolid* coverTop () const  override;
+  inline const ISolid* cover() const override { return m_cover.get(); }
 
   /** add child solid to the solid union
    *  @param solid pointer to child solid
@@ -112,11 +112,11 @@ public:
 
   SolidUnion           ( const SolidUnion& ) ; ///< no copy
   SolidUnion& operator=( const SolidUnion& ) ; ///< no =
-
+  void createCover(); /// create/reset the cover pointer
+  
 private:
 
-  mutable std::unique_ptr<ISolid> m_coverTop ;
-
+  std::unique_ptr<ISolid> m_cover ;
   template <class aPoint>
   bool isInsideImpl(const aPoint& point) const;
 

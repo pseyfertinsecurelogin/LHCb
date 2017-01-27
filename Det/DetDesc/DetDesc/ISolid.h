@@ -6,6 +6,7 @@
 #include  <string>
 #include  <vector>
 /// Gaudi Kernel
+#include "DetDesc/IBoxCover.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Point3DTypes.h"
@@ -22,8 +23,8 @@
  *  @date   xx/xx/xxxx 
  */
 
-struct ISolid : extend_interfaces<IInterface>
-{
+struct ISolid : extend_interfaces<IInterface>,
+                public virtual IBoxCover {
   
   /** useful type definition for dealing 
    *  with intersections of the solid and the line 

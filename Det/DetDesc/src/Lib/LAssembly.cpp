@@ -16,41 +16,6 @@
  *  @author Sebastien Ponce
  */
 // ============================================================================
-/*  constructor
- *  @exception LVolumeException wrong paramaters value
- *  @param name name of logical volume 
- *  @param sensitivity  name of sensitive detector object (for simulation)
- *  @param magnetic  name of magnetic field object (for simulation)
- */
-// ============================================================================
-LAssembly::LAssembly
-( const std::string& name        , 
-  const std::string& sensitivity ,
-  const std::string& magnetic    )
-  : LogVolBase( name        , 
-                sensitivity , 
-                magnetic    )
-  , m_xMin( 1000000.)
-  , m_xMax(-1000000.)
-  , m_yMin( 1000000.)
-  , m_yMax(-1000000.)
-  , m_zMin( 1000000.)
-  , m_zMax(-1000000.)
-  , m_coverComputed( false )
-{}
-// ============================================================================
-// default constructor
-// ============================================================================
-LAssembly::LAssembly() : LogVolBase()
-  , m_xMin( 1000000.)
-  , m_xMax(-1000000.)
-  , m_yMin( 1000000.)
-  , m_yMax(-1000000.)
-  , m_zMin( 1000000.)
-  , m_zMax(-1000000.)
-  , m_coverComputed( false )
- {}
-// ============================================================================
 /* class/object identifier (static method)
  *  @return unique class identifier 
  */
@@ -207,22 +172,16 @@ unsigned int LAssembly::intersectLine
   /* line with null direction vector 
    * is not able to intersect any volume
    */
-  if( Vector.mag2() <= 0 ) { return 0 ; }       // RETURN !!!
+  if( Vector.mag2() <= 0 ) { return 0 ; }       // RETURN !!!  
   
-  
-  //== Check the 'cover'
-  if ( !m_coverComputed ) { 
-    LAssembly* myAss = const_cast<LAssembly*>( this );
-    myAss->computeCover();  
-  }
   Gaudi::XYZPoint p1 = Point + tickMin * Vector;
   Gaudi::XYZPoint p2 = Point + tickMax * Vector;
-  if ( (m_zMin > p1.z()) && (m_zMin > p2.z()) ) return 0 ;
-  if ( (m_zMax < p1.z()) && (m_zMax < p2.z()) ) return 0 ;
-  if ( (m_xMin > p1.x()) && (m_xMin > p2.x()) ) return 0 ;
-  if ( (m_xMax < p1.x()) && (m_xMax < p2.x()) ) return 0 ;
-  if ( (m_yMin > p1.y()) && (m_yMin > p2.y()) ) return 0 ;
-  if ( (m_yMax < p1.y()) && (m_yMax < p2.y()) ) return 0 ;
+  if ( (zMin() > p1.z()) && (zMin() > p2.z()) ) return 0 ;
+  if ( (zMax() < p1.z()) && (zMax() < p2.z()) ) return 0 ;
+  if ( (xMin() > p1.x()) && (xMin() > p2.x()) ) return 0 ;
+  if ( (xMax() < p1.x()) && (xMax() < p2.x()) ) return 0 ;
+  if ( (yMin() > p1.y()) && (yMin() > p2.y()) ) return 0 ;
+  if ( (yMax() < p1.y()) && (yMax() < p2.y()) ) return 0 ;
   
   /*  look for the intersections of the given 
    *  line with daughter elements construct the 
@@ -256,93 +215,37 @@ MsgStream&    LAssembly::printOut
 // ============================================================================
 //  
 // =============================================================================
-void LAssembly::computeCover() 
-{
-  
-  if ( m_coverComputed ) return;
-  
-  double pointX, pointY, pointZ = 0.;
-  Gaudi::XYZPoint motherPt( 0., 0., 0. );
-  int i, j, k;
-  
-  for ( ILVolume::PVolumes::const_iterator ipv = pvBegin(); 
-        pvEnd() != ipv; ++ipv ) {
-    IPVolume* pv = *ipv;
-    if ( 0 != pv ) {
-      const ISolid* mySolid = pv->lvolume()->solid();
-      if ( 0 != mySolid ) {  //== Solid => has a cover
-        const ISolid* iCover = mySolid->cover();
-        const SolidBase* cover = dynamic_cast<const SolidBase*>( iCover );
-        if ( 0 != cover ) {
-          //== Compute the 8 corners, transform to mother frame and build the 
-          //== envelop as a box (x,y,z Min/Max)
-          pointX=cover->xMin();
-          for ( i = 0 ; 2 > i ; ++i ) {
-            pointY=cover->yMin();
-            for ( j = 0 ; 2 > j ; ++j ) {
-              pointZ=cover->zMin();
-              for ( k = 0 ; 2 > k ; ++k ) {
-                motherPt = 
-                  pv->toMother( Gaudi::XYZPoint(pointX,pointY,pointZ ) );
-                if ( m_xMin > motherPt.x() ) m_xMin = motherPt.x();
-                if ( m_xMax < motherPt.x() ) m_xMax = motherPt.x();
-                if ( m_yMin > motherPt.y() ) m_yMin = motherPt.y();
-                if ( m_yMax < motherPt.y() ) m_yMax = motherPt.y();
-                if ( m_zMin > motherPt.z() ) m_zMin = motherPt.z();
-                if ( m_zMax < motherPt.z() ) m_zMax = motherPt.z();
-                pointZ=cover->zMax();
-              }
-              pointY = cover->yMax();
-            }
-            pointX = cover->xMax();
-          }
-        } else {
-          MsgStream log ( msgSvc() , "TransportSvc" );
-          log << MSG::ERROR << " === No cover for assembly " << name() 
-              << " pv " << pv->name() << endmsg;;
+void LAssembly::updateCover(const IPVolume* const pv) {
+  const ISolid* mySolid = pv->lvolume()->solid();
+  //== if it is a Solid, it has a cover -- otherwise, it is an assembly and thus an ISolid and an IBoxCover
+  const IBoxCover* boxCover = (mySolid ? mySolid->cover() : dynamic_cast<const IBoxCover*>(pv->lvolume()));
+  if (!boxCover) {
+    MsgStream log ( msgSvc() , "TransportSvc" );
+    log << MSG::ERROR << " === No cover for assembly " << name() 
+        << " pv " << pv->name() << endmsg;
+  } else {
+    //== Compute the 8 corners, transform to mother frame and build the 
+    //== envelop as a box (x,y,z Min/Max)
+    double pointX=boxCover->xMin();
+    for (int i = 0 ; 2 > i ; ++i ) {
+      double pointY=boxCover->yMin();
+      for (int j = 0 ; 2 > j ; ++j ) {
+        double pointZ=boxCover->zMin();
+        for (int k = 0 ; 2 > k ; ++k ) {
+          auto motherPt = pv->toMother(Gaudi::XYZPoint(pointX,pointY,pointZ));
+          if ( xMin() > motherPt.x() ) setXMin(motherPt.x());
+          if ( xMax() < motherPt.x() ) setXMax(motherPt.x());
+          if ( yMin() > motherPt.y() ) setYMin(motherPt.y());
+          if ( yMax() < motherPt.y() ) setYMax(motherPt.y());
+          if ( zMin() > motherPt.z() ) setZMin(motherPt.z());
+          if ( zMax() < motherPt.z() ) setZMax(motherPt.z());
+          pointZ=boxCover->zMax();
         }
-      } else {  //== No solid : This is an assembly
-        const LAssembly* assem = dynamic_cast<const LAssembly*>(pv->lvolume());
-        if ( 0 == assem ) {
-          MsgStream log ( msgSvc() , "TransportSvc" );
-          log << MSG::ERROR << " === No solid for assembly " << name() 
-              << " pv " << pv->name() << " not assembly !" << endmsg;
-        } else {
-          LAssembly* myAss = const_cast<LAssembly*>( assem );
-          //== Compute the cover of the assembly
-          myAss->computeCover();
-          //== Compute the 8 corners, transform to mother frame and build the 
-          //== envelop as a box (x,y,z Min/Max)
-          pointX = assem->xMin();
-          for ( i = 0 ; 2 > i ; ++i ) {
-            pointY = assem->yMin();
-            for ( j = 0 ; 2 > j ; ++j ) {
-              pointZ = assem->zMin();
-              for ( k = 0 ; 2 > k ; ++k ) {
-                motherPt = 
-                  pv->toMother( Gaudi::XYZPoint(pointX,pointY,pointZ ) );
-                if ( m_xMin > motherPt.x() ) m_xMin = motherPt.x();
-                if ( m_xMax < motherPt.x() ) m_xMax = motherPt.x();
-                if ( m_yMin > motherPt.y() ) m_yMin = motherPt.y();
-                if ( m_yMax < motherPt.y() ) m_yMax = motherPt.y();
-                if ( m_zMin > motherPt.z() ) m_zMin = motherPt.z();
-                if ( m_zMax < motherPt.z() ) m_zMax = motherPt.z();
-                pointZ =  assem->zMax();
-              }
-              pointY = assem->yMax();
-            }
-            pointX = assem->xMax();
-          }
-        }
-      }  
+        pointY = boxCover->yMax();
+      }
+      pointX = boxCover->xMax();
     }
   }
-  //  log << MSG::VERBOSE << "Assembly " << name() 
-  //    << " x [" << m_xMin << "," << m_xMax
-  //    << "], y [" << m_yMin << "," << m_yMax
-  //    << "], z [" << m_zMin << "," << m_zMax
-  //    << "]" << endmsg;
-  m_coverComputed = true;
 }
 // ============================================================================
 // The End 

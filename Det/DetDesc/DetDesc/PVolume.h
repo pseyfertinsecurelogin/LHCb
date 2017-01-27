@@ -219,10 +219,8 @@ public:
 
 protected:
 
-  /** find logical volume by name
-   *  @return pointet to logical volume
-   */
-  ILVolume*       findLogical () const ;
+  /** find logical volume by name */
+  void findLogical();
 
   /** Assertion
    *  @exception PVolumeException for wrong condition
@@ -263,11 +261,11 @@ private:
   // nominal transformationmatrix
   Gaudi::Transform3D          m_nominal       ;
   // transformation matrix
-  Gaudi::Transform3D          m_matrix        ;
+  Gaudi::Transform3D          m_matrix;
   // pointer to inverse transformation matrix
-  mutable boost::optional<Gaudi::Transform3D> m_imatrix       ;
+  boost::optional<Gaudi::Transform3D> m_imatrix;
   // pointer to logical volume
-  mutable ILVolume*       m_lvolume = nullptr      ;
+  ILVolume* m_lvolume = nullptr;
   // reference/object counter
   static std::atomic<unsigned long> s_volumeCounter ;
   // reference to dataSvc

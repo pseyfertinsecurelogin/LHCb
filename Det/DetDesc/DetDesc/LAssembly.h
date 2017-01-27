@@ -2,6 +2,7 @@
 #define DETDESC_LASSEMBLY_H 1
 // Include files
 // from DetDesc
+#include "DetDesc/IBoxCover.h"
 #include "DetDesc/LogVolBase.h"
 #include "DetDesc/CLIDLAssembly.h"
 #include "DetDesc/DetDesc.h"
@@ -21,23 +22,25 @@ static const std::string EmptyString("");
  *  @date   18/11/2001
  */
 
-class LAssembly : public LogVolBase
-{
+class LAssembly : public virtual IBoxCover,
+                  public LogVolBase {
   /// friend factory for instantiation
   friend class DataObjectFactory<LAssembly>;
 
 public:
 
-  /** constructor
-   *  @exception LVolumeException wrong paramaters value
-   *  @param name name of logical volume
-   *  @param sensitivity  name of sensitive detector object (for simulation)
-   *  @param magnetic  name of magnetic field object (for simulation)
-   */
-  LAssembly
-  ( const std::string& name             ,
-    const std::string& sensitivity = "" ,
-    const std::string& magnetic    = "" );
+  /// constructor
+  LAssembly(const std::string& name,
+            const std::string& sensitivity ,
+            const std::string& magnetic) :
+  LogVolBase(name, sensitivity, magnetic) {
+    m_xMin = 1000000.;
+    m_xMax = -1000000.;
+    m_yMin = 1000000.;
+    m_yMax = -1000000.;
+    m_zMin = 1000000.;
+    m_zMax = -1000000.;
+  }
 
 public:
 
@@ -196,27 +199,10 @@ public:
   MsgStream&    printOut
   ( MsgStream    & os             ) const override;
 
-  double xMin() const   { return m_xMin;  }
-  double xMax() const   { return m_xMax;  }
-  double yMin() const   { return m_yMin;  }
-  double yMax() const   { return m_yMax;  }
-  double zMin() const   { return m_zMin;  }
-  double zMax() const   { return m_zMax;  }
+protected:
 
-  void   computeCover ();
-
-  /** default constructor
-   */
-  LAssembly();
-
-private:
-  double m_xMin;
-  double m_xMax;
-  double m_yMin;
-  double m_yMax;
-  double m_zMin;
-  double m_zMax;
-  bool   m_coverComputed;
+  /// updates box cover integrating the new BoxCover
+  void updateCover(const IPVolume* const box) override;
 
 };
 

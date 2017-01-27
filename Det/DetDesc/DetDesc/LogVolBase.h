@@ -31,11 +31,11 @@ class IMessageSvc;
  *  @author  Marco Clemencic
  */
 
-class LogVolBase: public virtual ILVolume   ,
+class LogVolBase: public virtual ILVolume,
                   public         ValidDataObject
 {
 
-protected:
+public:
 
   /** constructor
    *  @exception LVolumeException wrong paramaters value
@@ -281,6 +281,10 @@ protected:
    *  @return pointer to created physical volume
    */
   IPVolume* createPVolume();
+
+  /// updates box cover integrating the new PVolume
+  /// default implementation is empty
+  virtual void updateCover(const IPVolume* const) {};
 
   /** Assertion
    *  @param assertion condition
