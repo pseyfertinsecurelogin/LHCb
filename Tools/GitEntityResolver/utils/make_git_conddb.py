@@ -91,11 +91,16 @@ def main():
     parser.add_option('--always-iovs',
                       action='store_true',
                       help='create IOVs file for sigle IOV in folder')
+    parser.add_option('--partition-payloads',
+                      action='store_true',
+                      help='store payloads in separate folders (by first '
+                           '2 chars of the name)')
 
     parser.set_defaults(tag_prefix='',
                         clean_iovs=True,
                         append=False,
-                        always_iovs=False)
+                        always_iovs=False,
+                        partition_payloads=False)
 
     opts, (dbfile, notes, repo_dir) = parser.parse_args()
 
@@ -208,7 +213,12 @@ def main():
                         if not os.path.exists(path):
                             os.makedirs(path)
                         value_id = checksum(value)[:10]
+                        if opts.partition_payloads:
+                            value_id = os.path.join(value_id[:2], value_id)
                         if not os.path.exists(os.path.join(path, value_id)):
+                            if opts.partition_payloads:
+                                if not os.path.exists(os.path.join(path, value_id[:2])):
+                                    os.makedirs(os.path.join(path, value_id[:2]))
                             with open(os.path.join(path, value_id), 'w') as f:
                                 f.write(value)
                         with open(os.path.join(path, 'IOVs'), 'a') as iovs:
