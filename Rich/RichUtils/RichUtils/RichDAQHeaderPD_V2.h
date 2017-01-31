@@ -90,18 +90,12 @@ namespace Rich
       public: // methods
 
         /// Default Constructor
-        RichDAQHeaderPD() : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords) { }
-
-        /// Copy constructor
-        RichDAQHeaderPD ( const RichDAQHeaderPD & header )
-          : HeaderPDBase(header.headerWords()) { }
+        RichDAQHeaderPD() = default;
 
         /// Constructor from a pointer to a data stream
         explicit RichDAQHeaderPD ( const LongType * data )
-          : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords) // header has one word only
-        {
-          headerWords()[0] = *(data++);
-        }
+          : HeaderPDBase( WordType(*(data++)) ) // header has one word only
+        { }
 
         /// Constructor from all data
         RichDAQHeaderPD ( const bool zSupp,          ///< Flag indicating if the block is zero suppressed
@@ -109,7 +103,6 @@ namespace Rich
                           const Level0ID  l0ID,      ///< The Level 0 hardware identifier
                           const ShortType dSize      ///< The data size word
                           )
-          : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords)
         {
           if ( !setZeroSuppressed(zSupp) || !setAliceMode(aMode) ||
                !setL0ID(l0ID)            || !setNEightBitBlocksPlusOne(dSize) )
@@ -121,7 +114,7 @@ namespace Rich
       public:
 
         /// reset for new data stream
-        inline void reset( ) { headerWords()[0] = 0; }
+        inline void reset( ) { setPrimaryHeaderWord( WordType(0) ); }
 
         /// reset for a new data stream
         inline void reset( const LongType * data )
@@ -136,7 +129,7 @@ namespace Rich
         inline Level0ID l0ID() const
         {
           return Level0ID
-            ( (headerWords()[0] & RichDAQHeaderPDCode::MaskL0ID) >> RichDAQHeaderPDCode::ShiftL0ID );
+            ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskL0ID) >> RichDAQHeaderPDCode::ShiftL0ID );
         }
 
         /// Set the Level0 ID
@@ -150,7 +143,7 @@ namespace Rich
         /// Retrieve the number of "8-bit data blocks plus one" with at least one hit
         inline ShortType nEightBitBlocksPlusOne() const
         {
-          return ( (headerWords()[0] & RichDAQHeaderPDCode::MaskNeightBitP1)
+          return ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskNeightBitP1)
                    >> RichDAQHeaderPDCode::ShiftNeightBitP1 );
         }
 
@@ -165,7 +158,7 @@ namespace Rich
         /// Retrieve the zero suppressed information
         inline bool zeroSuppressed() const
         {
-          return ( 0 != ( (headerWords()[0] & RichDAQHeaderPDCode::MaskZS)
+          return ( 0 != ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskZS)
                           >> RichDAQHeaderPDCode::ShiftZS ) );
         }
 
@@ -179,7 +172,7 @@ namespace Rich
         /// Retrieve the flag to say if the data is in ALICE mode
         inline bool aliceMode() const
         {
-          return ( 0 != ( (headerWords()[0] & RichDAQHeaderPDCode::MaskAlice)
+          return ( 0 != ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskAlice)
                           >> RichDAQHeaderPDCode::ShiftAlice ) );
         }
 

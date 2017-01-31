@@ -22,8 +22,6 @@ namespace Rich
     namespace RichDAQHeaderV4
     {
 
-      //RichDAQHeaderPD::~RichDAQHeaderPD() {}
-
       // Read correct number of data words from given stream
       // Note, after this call data pointer is incremented to the next word after the header
       void RichDAQHeaderPD::readFromDataStream( const LongType *& data )
@@ -31,15 +29,17 @@ namespace Rich
         if ( data )
         {
           // Read the first word (which gives us enough info to know the format)
-          headerWords()[0] = *data;
+          setPrimaryHeaderWord( WordType(*data) );
           // If extended mode, read the two L0 words (requires last line)
           if ( UNLIKELY( extendedFormat() ) )
           {
-            // Reset header to have 3 words
-            headerWords() = HeaderPDBase::HeaderWords(nHeaderWordsExtended,0);
-            headerWords()[0] = *(data++);
-            headerWords()[1] = *(data++);
-            headerWords()[2] = *(data++);
+            // Reset header to have 1+2 words
+            makeExtended();
+            // set the primary word
+            setPrimaryHeaderWord( WordType(*(data++)) );
+            // set the extended words
+            extendedHeaderWords()[0] = WordType(*(data++));
+            extendedHeaderWords()[1] = WordType(*(data++));
           }
           else
           {
@@ -58,12 +58,8 @@ namespace Rich
       {
         if ( nHeaderWords() != nHeaderWordsExtended )
         {
-          // Save the main (first) word
-          const auto tmpH = headerWords()[0];
-          // reset the backend vector to have size three
-          headerWords() = HeaderPDBase::HeaderWords(nHeaderWordsExtended,0);
-          // reset the first word
-          headerWords()[0] = tmpH;
+          extendedHeaderWords().clear();
+          extendedHeaderWords().resize( 2, WordType(0) );
         }
       }
 

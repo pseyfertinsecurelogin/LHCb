@@ -18,6 +18,7 @@ void HeaderPDBase::readFromDataStream( const LongType *& data )
 {
   for ( auto i = 0u; i < nHeaderWords(); ++i )
   {
-    headerWords()[i] = *(data++);
+    //  headerWords()[i] = *(data++);
+    setHeaderWord( i, *(data++) );
   }
 }

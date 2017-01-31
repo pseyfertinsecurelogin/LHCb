@@ -18,7 +18,6 @@
 #include "RichUtils/RichDAQParityFooter.h"
 #include "RichUtils/RichDAQL1IngressHeader.h"
 #include "RichUtils/RichMap.h"
-//#include "RichUtils/RichPoolMap.h"
 
 namespace Rich
 {
@@ -54,12 +53,13 @@ namespace Rich
           m_footer ( footer ) { }
       
       /// Constructor from PD data bank information
-      PDInfo( const LHCb::RichSmartID&   input,
-              const Header::HeaderWords& header,
-              const Footer::FooterWords& footer )
+      PDInfo( const LHCb::RichSmartID&           input,
+              const Header::WordType             headerPrimWord,
+              const Header::ExtendedHeaderWords& headerExWords,
+              const Footer::FooterWords&         footerWords )
         : m_pdID   ( input  ),
-          m_header ( header ),
-          m_footer ( footer ) { }
+          m_header ( headerPrimWord, headerExWords ),
+          m_footer ( footerWords ) { }
 
       /**  Access the PD ID (LHCb::RichSmartID) for this PD
        *   @attention It is possible this PDID is invalid (for instance
@@ -74,11 +74,11 @@ namespace Rich
       inline const Footer&           footer() const & noexcept { return m_footer; }
 
       /// set the Level1Input
-      inline void setPdID( const LHCb::RichSmartID& input ) noexcept { m_pdID  = input;  }
+      inline void setPdID( const LHCb::RichSmartID& input ) noexcept { m_pdID   = input;  }
       /// Set the Header
-      inline void setHeader( const Header & header )         noexcept { m_header = header; }
+      inline void setHeader( const Header & header )        noexcept { m_header = header; }
       /// Set the footer
-      inline void setFooter( const Footer & footer )         noexcept { m_footer = footer; }
+      inline void setFooter( const Footer & footer )        noexcept { m_footer = footer; }
 
       /// Read access to the RichSmartIDs for the hit pixels in this PD
       inline const LHCb::RichSmartID::Vector& smartIDs() const & { return m_smartIds; }

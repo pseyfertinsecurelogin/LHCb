@@ -119,12 +119,12 @@ namespace Rich
       os << endmsg << lines << endmsg;
 
       // Header
-      for ( const auto & H : header().headerWords() )
+      for ( const auto & H : header().allHeaderWords() )
       {
-        os << " h    | " << asHex(H) << "  |";
+        os << " h    | " << asHex(H.data()) << "  |";
         for ( int iCol = 31; iCol >= 0; --iCol )
         {
-          os << "  " << isBitOn( H, iCol );
+          os << "  " << isBitOn( H.data(), iCol );
         }
         os << endmsg;
       }
@@ -205,7 +205,7 @@ namespace Rich
     template< class Version, class Header, class Footer >
     ShortType HPDDataBankImp<Version,Header,Footer>::nHeaderWords() const
     {
-      return this->header().headerWords().size();
+      return this->header().nHeaderWords();
     }
 
     template< class Version, class Header, class Footer >
@@ -231,15 +231,24 @@ namespace Rich
     {
       return this->header().l1Suppressed();
     }
-    
+
     template< class Version, class Header, class Footer >
-    const HeaderPDBase::HeaderWords & HPDDataBankImp<Version,Header,Footer>::headerWords() const
+    HeaderPDBase::WordType 
+    HPDDataBankImp<Version,Header,Footer>::primaryHeaderWord() const
     {
-      return header().headerWords();
+      return header().primaryHeaderWord();
     }
-      
+
     template< class Version, class Header, class Footer >
-    const FooterPDBase::FooterWords & HPDDataBankImp<Version,Header,Footer>::footerWords() const
+    const HeaderPDBase::ExtendedHeaderWords & 
+    HPDDataBankImp<Version,Header,Footer>::extendedHeaderWords() const
+    {
+      return header().extendedHeaderWords();
+    }
+ 
+    template< class Version, class Header, class Footer >
+    const FooterPDBase::FooterWords & 
+    HPDDataBankImp<Version,Header,Footer>::footerWords() const
     {
       return footer().footerWords();
     }

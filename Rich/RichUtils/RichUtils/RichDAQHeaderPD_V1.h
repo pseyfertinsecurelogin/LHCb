@@ -90,18 +90,11 @@ namespace Rich
       public: // methods
 
         /// Default Constructor
-        RichDAQHeaderPD() : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords) { }
-
-        /// Copy constructor
-        RichDAQHeaderPD ( const RichDAQHeaderPD & header )
-          : HeaderPDBase(header.headerWords()) { }
+        RichDAQHeaderPD() = default;
 
         /// Constructor from a pointer to a data stream
         explicit RichDAQHeaderPD ( const LongType * data )
-          : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords)
-        {
-          headerWords()[0] = *(data++);
-        }
+          : HeaderPDBase( WordType(*(data++)) ) { }
 
         /// Constructor from all data
         RichDAQHeaderPD ( const bool zSupp,           ///< Flag indicating if the block is zero suppressed
@@ -109,7 +102,6 @@ namespace Rich
                           const ShortType dSize,      ///< The data size word
                           const ShortType startPD = 1 ///< New HPD flag
                           )
-          : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords)
         {
           if ( !setStartPD(startPD) || !setZeroSuppressed(zSupp)         ||
                !setL0ID(l0ID)       || !setNEightBitBlocksPlusOne(dSize) )
@@ -121,7 +113,7 @@ namespace Rich
       public:
 
         /// reset
-        inline void reset( ) { headerWords()[0] = 0; }
+        inline void reset( ) { setPrimaryHeaderWord( WordType(0) ); }
 
         /// reset for a new data stream
         inline void reset( const LongType * data )
@@ -144,13 +136,13 @@ namespace Rich
         inline Level0ID l0ID() const
         {
           return Level0ID
-            ( (headerWords()[0] & RichDAQHeaderPDCode::MaskL0ID) >> RichDAQHeaderPDCode::ShiftL0ID );
+            ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskL0ID) >> RichDAQHeaderPDCode::ShiftL0ID );
         }
 
         /// Retrieve the number of "8-bit data blocks plus one" with at least one hit
         inline ShortType nEightBitBlocksPlusOne() const
         {
-          return ( (headerWords()[0] & RichDAQHeaderPDCode::MaskHitCount)
+          return ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskHitCount)
                    >> RichDAQHeaderPDCode::ShiftHitCount );
         }
 
@@ -172,7 +164,7 @@ namespace Rich
         /// Is new PD bit set ?
         inline bool startPD() const
         {
-          return ( 0 != ( (headerWords()[0] & RichDAQHeaderPDCode::MaskStartPD)
+          return ( 0 != ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskStartPD)
                           >> RichDAQHeaderPDCode::ShiftStartPD ) );
         }
 
@@ -186,14 +178,15 @@ namespace Rich
         /// Retrieve the zero suppressed information
         inline bool zeroSuppressed() const
         {
-          return ( 0 != ( (headerWords()[0] & RichDAQHeaderPDCode::MaskZS)
+          return ( 0 != ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskZS)
                           >> RichDAQHeaderPDCode::ShiftZS ) );
         }
 
         /// WARNING : This method is not implemented for this class version
         inline unsigned int nDataWords() const
         {
-          throw GaudiException( "nDataWords() is not defined. Do Not Use","RichDAQHeaderV1",StatusCode::FAILURE);
+          throw GaudiException( "nDataWords() is not defined. Do Not Use","RichDAQHeaderV1",
+                                StatusCode::FAILURE );
           return 0;
         }
 

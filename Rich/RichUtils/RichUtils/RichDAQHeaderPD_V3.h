@@ -117,19 +117,16 @@ namespace Rich
       public: // methods
 
         /// Default Constructor
-        explicit RichDAQHeaderPD () : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords) { }
-
-        /// Copy constructor
-        RichDAQHeaderPD ( const RichDAQHeaderPD & header )
-          : HeaderPDBase(header.headerWords()) { }
+        explicit RichDAQHeaderPD () 
+          : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords,WordType(0)) { }
 
         /// Constructor from a pointer to a data stream
         explicit RichDAQHeaderPD ( const LongType * data )
-          : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords) // header has three words
+          : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords,WordType(0)) // header has three words
         {
-          headerWords()[0] = *(data++);
-          headerWords()[1] = *(data++);
-          headerWords()[2] = *(data++);
+          setPrimaryHeaderWord     ( WordType(*(data++)) );
+          extendedHeaderWords()[0] = WordType(*(data++));
+          extendedHeaderWords()[1] = WordType(*(data++));
         }
 
         /// Constructor from all data
@@ -138,7 +135,7 @@ namespace Rich
                           const Level0ID  l0ID,      ///< The Level 0 hardware identifier
                           const ShortType dSize      ///< The data size word
                           )
-          : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords)
+          : HeaderPDBase(RichDAQHeaderPDCode::nHeaderWords,WordType(0)) // header has three words
         {
           if ( !setZeroSuppressed(zSupp) || !setAliceMode(aMode) ||
                !setL0ID(l0ID)            || !setNEightBitBlocksPlusOne(dSize) )
@@ -152,9 +149,9 @@ namespace Rich
         /// reset for new data stream
         inline void reset( )
         {
-          headerWords()[0] = 0;
-          headerWords()[1] = 0;
-          headerWords()[2] = 0;
+          setPrimaryHeaderWord( WordType(0) );
+          extendedHeaderWords()[0] = WordType(0);
+          extendedHeaderWords()[1] = WordType(0);
         }
 
         /// reset for a new data stream
@@ -170,7 +167,7 @@ namespace Rich
         inline Level0ID l0ID() const
         {
           return Level0ID
-            ( (headerWords()[2] & RichDAQHeaderPDCode::MaskL0ID) >> RichDAQHeaderPDCode::ShiftL0ID );
+            ( (extendedHeaderWords()[1].data() & RichDAQHeaderPDCode::MaskL0ID) >> RichDAQHeaderPDCode::ShiftL0ID );
         }
 
         /// Set the Level0 ID
@@ -184,7 +181,7 @@ namespace Rich
         /// Retrieve the number of "8-bit data blocks plus one" with at least one hit
         inline ShortType nEightBitBlocksPlusOne() const
         {
-          return ( (headerWords()[0] & RichDAQHeaderPDCode::MaskNeightBitP1)
+          return ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskNeightBitP1)
                    >> RichDAQHeaderPDCode::ShiftNeightBitP1 );
         }
 
@@ -199,7 +196,7 @@ namespace Rich
         /// Retrieve the zero suppressed information
         inline bool zeroSuppressed() const
         {
-          return ( 0 != ( (headerWords()[0] & RichDAQHeaderPDCode::MaskZS)
+          return ( 0 != ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskZS)
                           >> RichDAQHeaderPDCode::ShiftZS ) );
         }
 
@@ -213,7 +210,7 @@ namespace Rich
         /// Retrieve the flag to say if the data is in ALICE mode
         inline bool aliceMode() const
         {
-          return ( 0 != ( (headerWords()[0] & RichDAQHeaderPDCode::MaskAlice)
+          return ( 0 != ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskAlice)
                           >> RichDAQHeaderPDCode::ShiftAlice ) );
         }
 
@@ -236,14 +233,14 @@ namespace Rich
         /// Retrieve the "memID" word
         inline unsigned int memID() const
         {
-          return ( (headerWords()[0] & RichDAQHeaderPDCode::MaskMemID)
+          return ( (primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskMemID)
                    >> RichDAQHeaderPDCode::ShiftMemID );
         }
 
         /// Retrieve the "memID" word
         inline EventID eventID() const
         {
-          return EventID( ((headerWords()[0] & RichDAQHeaderPDCode::MaskEventID)
+          return EventID( ((primaryHeaderWord().data() & RichDAQHeaderPDCode::MaskEventID)
                           >> RichDAQHeaderPDCode::ShiftEventID), RichDAQHeaderPDCode::BitsEventID );
         }
 
@@ -266,10 +263,10 @@ namespace Rich
       public: // methods not properly implemented, but included for compatibility
 
         /// Returns if this header (and the associated footer) are in extended mode or not (compact)
-        inline bool extendedFormat() const { return true; }
+        inline bool extendedFormat() const noexcept { return true; }
 
         /// Is the data from this HPD suppressed by the L1
-        inline bool l1Suppressed() const { return true; }
+        inline bool l1Suppressed() const noexcept { return true; }
 
       };
 

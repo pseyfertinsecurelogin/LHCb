@@ -484,7 +484,8 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
           const auto hpdInsert =
             ingressInfo.pdData().emplace( l1Input,
                                           PDInfo( LHCb::RichSmartID(),
-                                                  hpdBank->headerWords(),
+                                                  hpdBank->primaryHeaderWord(),
+                                                  hpdBank->extendedHeaderWords(),
                                                   hpdBank->footerWords() ) );
           // disable test (gives wrong warnings in TAE events)
           //if ( !p.second )
@@ -575,7 +576,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
                   }
 
                   // Is all 'OK' but header is in extended mode ?
-                  if ( OK && hpdBank->headerWords().size()>1 )
+                  if ( OK && hpdBank->nHeaderWords() > 1 )
                   {
                     std::ostringstream mess;
                     mess << "HPD L0ID=" << hpdBank->level0ID() << " " << hpdID
