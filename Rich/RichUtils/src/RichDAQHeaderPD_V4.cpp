@@ -1,4 +1,3 @@
-
 //=============================================================================================
 /** @file RichDAQHeaderPD_V4.cpp
  *
@@ -59,7 +58,7 @@ namespace Rich
         if ( nHeaderWords() != nHeaderWordsExtended )
         {
           extendedHeaderWords().clear();
-          extendedHeaderWords().resize( 2, WordType(0) );
+          extendedHeaderWords().resize( nHeaderWordsExtended-1, WordType(0) );
         }
       }
 
