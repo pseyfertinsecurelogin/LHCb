@@ -247,7 +247,23 @@ namespace Rich
                           >> RichDAQHeaderPDCode::ShiftEventID), RichDAQHeaderPDCode::BitsEventID );
         }
 
-      public: // methods not properly implemented, but included for compatbility
+      public: // Static methods to test specific flags in external data blocks
+
+        /// Test if this data block is for an ALICE mode HPD
+        inline static bool aliceMode( const LongType* word )
+        {
+          return ( 0 != ( (word[0] & RichDAQHeaderPDCode::MaskAlice)
+                          >> RichDAQHeaderPDCode::ShiftAlice ) );
+        }
+
+        /// Test if this data block is for a zero suppressed HPD
+        inline static bool zeroSuppressed( const LongType* word )
+        {
+          return ( 0 != ( (word[0] & RichDAQHeaderPDCode::MaskZS)
+                          >> RichDAQHeaderPDCode::ShiftZS ) );
+        }
+
+      public: // methods not properly implemented, but included for compatibility
 
         /// Returns if this header (and the associated footer) are in extended mode or not (compact)
         inline bool extendedFormat() const { return true; }

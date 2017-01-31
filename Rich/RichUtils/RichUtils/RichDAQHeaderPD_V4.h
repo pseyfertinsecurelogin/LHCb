@@ -260,6 +260,20 @@ namespace Rich
           return set( i, ShiftGTInhibit, MaskGTInhibit );
         }
 
+      public: // Static methods to test specific flags in external data blocks
+
+        /// Test if this data block is for an ALICE mode HPD
+        inline static bool aliceMode( const LongType* word )
+        {
+          return ( 0 != ( (word[0] & MaskAlice) >> ShiftAlice ) );
+        }
+
+        /// Test if this data block is for a zero suppressed HPD
+        inline static bool zeroSuppressed( const LongType* word )
+        {
+          return ( 0 != ( (word[0] & MaskZS) >> ShiftZS ) );
+        }
+
       public:
 
         /// Read correct number of data words from given stream

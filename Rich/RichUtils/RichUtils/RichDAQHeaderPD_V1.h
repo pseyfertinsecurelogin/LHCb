@@ -197,6 +197,15 @@ namespace Rich
           return 0;
         }
 
+      public: // Static methods to test specific flags in external data blocks
+
+        /// Test if this data block is for a zero suppressed HPD
+        inline static bool zeroSuppressed( const LongType* word )
+        {
+          return ( 0 != ( (word[0] & RichDAQHeaderPDCode::MaskZS)
+                          >> RichDAQHeaderPDCode::ShiftZS ) );
+        }
+        
       public: // methods not properly implemented, but included for compatbility
 
         /// Returns if this header (and the associated footer) are in extended mode or not (compact)

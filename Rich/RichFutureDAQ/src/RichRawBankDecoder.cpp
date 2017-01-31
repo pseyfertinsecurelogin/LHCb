@@ -228,13 +228,14 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
   if ( LHCb5 == version )
   {
 
-    // Header
-    RichDAQ_LHCb5::Header header( dataStart );
+    // Quick check of header for HPD data type
+    const bool isZS    = RichDAQ_LHCb5::Header::zeroSuppressed(dataStart);
+    const bool isAlice = RichDAQ_LHCb5::Header::aliceMode(dataStart);
 
-    // Decide to zero suppress or not depending on number of hits
-    if ( header.zeroSuppressed() )
+    // Construct the correct data block
+    if ( isZS )
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         dataBank = std::make_unique<RichDAQ_LHCb5::ZeroSuppAlice>( dataStart );
       }
@@ -245,7 +246,7 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
     }
     else
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         dataBank = std::make_unique<RichDAQ_LHCb5::NonZeroSuppAlice>( dataStart );
       }
@@ -259,13 +260,14 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
   else if ( LHCb4 == version )
   {
 
-    // Header
-    RichDAQ_LHCb4::Header header( dataStart );
+    // Quick check of header for HPD data type
+    const bool isZS    = RichDAQ_LHCb4::Header::zeroSuppressed(dataStart);
+    const bool isAlice = RichDAQ_LHCb4::Header::aliceMode(dataStart);
 
     // Decide to zero suppress or not depending on number of hits
-    if ( header.zeroSuppressed() )
+    if ( isZS )
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         Warning ( "LHCb4 data format does not support ZS Alice mode data" ).ignore();
       }
@@ -276,7 +278,7 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
     }
     else
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         dataBank = std::make_unique<RichDAQ_LHCb4::NonZeroSuppAlice>( dataStart );
       }
@@ -290,13 +292,14 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
   else if ( LHCb3 == version )
   {
 
-    // Header
-    RichDAQ_LHCb3::Header header( dataStart );
+    // Quick check of header for HPD data type
+    const bool isZS    = RichDAQ_LHCb3::Header::zeroSuppressed(dataStart);
+    const bool isAlice = RichDAQ_LHCb3::Header::aliceMode(dataStart);
 
     // Decide to zero suppress or not depending on number of hits
-    if ( header.zeroSuppressed() )
+    if ( isZS )
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         Warning ( "LHCb3 data format does not support ZS Alice mode data" ).ignore();
       }
@@ -307,7 +310,7 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
     }
     else
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         dataBank = std::make_unique<RichDAQ_LHCb3::NonZeroSuppAlice>( dataStart );
       }
@@ -321,11 +324,11 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
   else if ( LHCb2 == version )
   {
 
-    // Header
-    RichDAQ_LHCb2::Header header( dataStart );
+    // Quick check of header for HPD data type
+    const bool isZS = RichDAQ_LHCb2::Header::zeroSuppressed(dataStart);
 
     // Decide to zero suppress or not depending on number of hits
-    if ( header.zeroSuppressed() )
+    if ( isZS )
     {
       dataBank = std::make_unique<RichDAQ_LHCb2::ZeroSuppLHCb>( dataStart, dataSize );
     }
@@ -338,11 +341,11 @@ RawBankDecoder::createDataBank( const LongType * dataStart,
   else if ( LHCb1 == version )
   {
 
-    // Header
-    RichDAQ_LHCb1::Header header( dataStart );
+    // Quick check of header for HPD data type
+    const bool isZS = RichDAQ_LHCb1::Header::zeroSuppressed(dataStart);
     
     // Decide to zero suppress or not depending on number of hits
-    if ( header.zeroSuppressed() )
+    if ( isZS )
     {
       dataBank = std::make_unique<RichDAQ_LHCb1::ZeroSuppLHCb>( dataStart, dataSize );
     }

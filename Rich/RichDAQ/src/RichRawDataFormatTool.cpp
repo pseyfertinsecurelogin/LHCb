@@ -400,14 +400,14 @@ RawDataFormatTool::createDataBank( const LongType * dataStart,
   if ( LHCb5 == version )
   {
 
-    // Header
-    static RichDAQ_LHCb5::Header header;
-    header.reset( dataStart );
+    // Quick check of header for HPD data type
+    const bool isZS    = RichDAQ_LHCb5::Header::zeroSuppressed(dataStart);
+    const bool isAlice = RichDAQ_LHCb5::Header::aliceMode(dataStart);
 
     // Decide to zero suppress or not depending on number of hits
-    if ( header.zeroSuppressed() )
+    if ( isZS )
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         static RichDAQ_LHCb5::ZeroSuppAlice b;
         b.reset( dataStart );
@@ -422,7 +422,7 @@ RawDataFormatTool::createDataBank( const LongType * dataStart,
     }
     else
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         static RichDAQ_LHCb5::NonZeroSuppAlice b;
         b.reset( dataStart );
@@ -440,14 +440,14 @@ RawDataFormatTool::createDataBank( const LongType * dataStart,
   else if ( LHCb4 == version )
   {
 
-    // Header
-    static RichDAQ_LHCb4::Header header;
-    header.reset( dataStart );
+    // Quick check of header for HPD data type
+    const bool isZS    = RichDAQ_LHCb4::Header::zeroSuppressed(dataStart);
+    const bool isAlice = RichDAQ_LHCb4::Header::aliceMode(dataStart);
 
     // Decide to zero suppress or not depending on number of hits
-    if ( header.zeroSuppressed() )
+    if ( isZS )
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         Warning ( "LHCb4 data format does not support ZS Alice mode data" ).ignore();
       }
@@ -460,7 +460,7 @@ RawDataFormatTool::createDataBank( const LongType * dataStart,
     }
     else
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         static RichDAQ_LHCb4::NonZeroSuppAlice b;
         b.reset( dataStart );
@@ -478,14 +478,14 @@ RawDataFormatTool::createDataBank( const LongType * dataStart,
   else if ( LHCb3 == version )
   {
 
-    // Header
-    static RichDAQ_LHCb3::Header header;
-    header.reset( dataStart );
+    // Quick check of header for HPD data type
+    const bool isZS    = RichDAQ_LHCb3::Header::zeroSuppressed(dataStart);
+    const bool isAlice = RichDAQ_LHCb3::Header::aliceMode(dataStart);
 
     // Decide to zero suppress or not depending on number of hits
-    if ( header.zeroSuppressed() )
+    if ( isZS )
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         Warning ( "LHCb3 data format does not support ZS Alice mode data" ).ignore();
       }
@@ -498,7 +498,7 @@ RawDataFormatTool::createDataBank( const LongType * dataStart,
     }
     else
     {
-      if ( UNLIKELY(header.aliceMode()) )
+      if ( UNLIKELY(isAlice) )
       {
         static RichDAQ_LHCb3::NonZeroSuppAlice b;
         b.reset( dataStart );
@@ -516,12 +516,11 @@ RawDataFormatTool::createDataBank( const LongType * dataStart,
   else if ( LHCb2 == version )
   {
 
-    // Header
-    static RichDAQ_LHCb2::Header header;
-    header.reset( dataStart );
+    // Quick check of header for HPD data type
+    const bool isZS = RichDAQ_LHCb2::Header::zeroSuppressed(dataStart);
 
     // Decide to zero suppress or not depending on number of hits
-    if ( header.zeroSuppressed() )
+    if ( isZS )
     {
       static RichDAQ_LHCb2::ZeroSuppLHCb b;
       b.reset( dataStart, dataSize );
@@ -538,12 +537,11 @@ RawDataFormatTool::createDataBank( const LongType * dataStart,
   else if ( LHCb1 == version )
   {
 
-    // Header
-    static RichDAQ_LHCb1::Header header;
-    header.reset( dataStart );
+    // Quick check of header for HPD data type
+    const bool isZS = RichDAQ_LHCb1::Header::zeroSuppressed(dataStart);
 
     // Decide to zero suppress or not depending on number of hits
-    if ( header.zeroSuppressed() )
+    if ( isZS )
     {
       static RichDAQ_LHCb1::ZeroSuppLHCb b;
       b.reset( dataStart, dataSize );
