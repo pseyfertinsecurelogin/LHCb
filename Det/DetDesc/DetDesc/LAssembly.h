@@ -202,7 +202,7 @@ public:
 protected:
 
   /// updates box cover integrating the new BoxCover
-  void updateCover(const IPVolume* const box) override;
+  void updateCover(const IPVolume& box) override;
 
 };
 

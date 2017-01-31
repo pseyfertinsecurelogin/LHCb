@@ -284,7 +284,7 @@ protected:
 
   /// updates box cover integrating the new PVolume
   /// default implementation is empty
-  virtual void updateCover(const IPVolume* const) {};
+  virtual void updateCover(const IPVolume&) {};
 
   /** Assertion
    *  @param assertion condition
