@@ -46,20 +46,6 @@ namespace
 }
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-DeRichHPD::DeRichHPD ( const std::string & name ) : DeRichPD ( name  )
-{
-  for ( unsigned int field = 0; field < 2; ++field )
-  {
-    m_demagMapR.emplace_back   ( new Rich::TabulatedFunction1D() );
-    m_demagMapPhi.emplace_back ( new Rich::TabulatedFunction1D() );
-    m_magMapR.emplace_back     ( new Rich::TabulatedFunction1D() );
-    m_magMapPhi.emplace_back   ( new Rich::TabulatedFunction1D() );
-  }
-}
-
-//=============================================================================
 // Destructor
 //=============================================================================
 DeRichHPD::~DeRichHPD()
@@ -167,19 +153,36 @@ void DeRichHPD::loadMagSvc()
   if ( !m_magFieldSvc )
   {
     // get the magnetic field service
-    ISvcLocator* svcLocator = Gaudi::svcLocator();
+    auto svcLocator = Gaudi::svcLocator();
     if ( !svcLocator )
     {
       throw GaudiException( "ISvcLocator* points to nullptr!",
                             "DeRichHPD" , StatusCode::FAILURE );
     }
-    const auto scMag = svcLocator->service("MagneticFieldSvc",m_magFieldSvc);
-    if ( scMag.isFailure() )
+    if ( !svcLocator->service("MagneticFieldSvc",m_magFieldSvc) )
     {
       throw GaudiException( "Could not locate MagneticFieldSvc",
                             "DeRichHPD" , StatusCode::FAILURE );
     }
+    // Register a dependency for callbacks
+    updMgrSvc()->registerCondition( this, m_magFieldSvc, &DeRichHPD::updateFieldParams );
+    // Perform a first update of the parameters, just to be sure
+    updateFieldParams().ignore();
   }
+}
+
+//=========================================================================
+// Update the cached field parameters
+//=========================================================================
+StatusCode DeRichHPD::updateFieldParams()
+{
+  m_field = ( magSvc()->isDown() ? FieldPolarity::Down : FieldPolarity::Up );
+  m_isFieldON  = fabs(magSvc()->signedRelativeCurrent()) > 0.5;
+  _ri_debug << "Magnetic field update :" 
+            << ( m_isFieldON                     ? " ON"   : " OFF" )
+            << ( FieldPolarity::Down  == m_field ? " DOWN" : " UP"  )
+            << endmsg;
+  return StatusCode::SUCCESS;
 }
 
 //=========================================================================
@@ -203,7 +206,7 @@ StatusCode DeRichHPD::initHpdQuantumEff()
               << " from " << qePath+hID << endmsg;
       return StatusCode::FAILURE;
     }
-    m_pdQuantumEffFunc.reset( new Rich::TabulatedProperty1D( hpdQuantumEffTabProp ) );
+    m_pdQuantumEffFunc = std::make_shared<Rich::TabulatedProperty1D>( hpdQuantumEffTabProp );
   }
   else // use copy number to locate QE
   {
@@ -225,7 +228,7 @@ StatusCode DeRichHPD::initHpdQuantumEff()
                 << " from " << hpdQuantumEffCond.path() << endmsg;
         return StatusCode::FAILURE;
       }
-      m_pdQuantumEffFunc.reset( new Rich::TabulatedProperty1D( hpdQuantumEffTabProp ) );
+      m_pdQuantumEffFunc = std::make_shared<Rich::TabulatedProperty1D>( hpdQuantumEffTabProp );
     }
   }
 
@@ -244,11 +247,24 @@ StatusCode DeRichHPD::getParameters()
     return StatusCode::FAILURE;
   }
 
-  m_pixelSize    = deRich1->param<double>("RichHpdPixelXsize");
+  const auto pixXsize = deRich1->param<double>("RichHpdPixelXsize");
+  const auto pixYsize = deRich1->param<double>("RichHpdPixelYsize");
+
+  const std::string effnumPixCond = "RichEffectiveActiveNumPixelPerHpd";
+  m_effNumActivePixs = ( deRich1->exists(effnumPixCond) ? 
+                         deRich1->param<double>(effnumPixCond) : 784.763611 );
+
+  m_pixelSize    = pixXsize;
   m_activeRadius = deRich1->param<double>("RichHpdActiveInpRad");
 
-  if (deRich1->exists("RefractHPDQrtzWin") )
-    m_refactParams = deRich1->param<std::vector<double> >("RefractHPDQrtzWin");
+  m_pixelArea    = pixXsize * pixYsize;
+  const double demagScale = 4.8; // CRJ - Is this in the DB anywhere ?
+  m_effPixelArea = m_pixelArea * std::pow(demagScale,2);
+
+  if ( deRich1->exists("RefractHPDQrtzWin") )
+  {
+    m_refPs = deRich1->param<std::vector<double> >("RefractHPDQrtzWin");
+  }
   else
   {
     warning() << "No parameters for refraction on HPD window! "
@@ -390,7 +406,7 @@ StatusCode DeRichHPD::updateDemagProperties()
   _ri_debug << "Updating Demagnification properties for HPD:" << m_number << endmsg;
 
   StatusCode sc = StatusCode::SUCCESS;
-  for ( unsigned int field = 0; field<2; ++field )
+  for ( const auto field : { FieldPolarity::Down, FieldPolarity::Up } )
   {
     // Initialise the demagnifcation
     sc = fillHpdDemagTable(field);
@@ -417,7 +433,7 @@ StatusCode DeRichHPD::updateDemagProperties()
 //=========================================================================
 //  fillHpdDemagTable
 //=========================================================================
-StatusCode DeRichHPD::fillHpdDemagTable(const unsigned int field)
+StatusCode DeRichHPD::fillHpdDemagTable( const FieldPolarity field )
 {
 
   std::ostringstream paraLoc, detLoc;
@@ -431,7 +447,7 @@ StatusCode DeRichHPD::fillHpdDemagTable(const unsigned int field)
     error() << "Could not load "<<(XmlHpdDemagPath+"Sim_")<<m_number<<endmsg;
     return StatusCode::FAILURE;
   }
-  TabulatedProperty::Table & simTable = dem->table();
+  auto & simTable = dem->table();
   simTable.clear();
   simTable.reserve(simtotbins+1);
 
@@ -501,8 +517,8 @@ StatusCode DeRichHPD::fillHpdDemagTable(const unsigned int field)
 
   }
 
-  m_demagMapR[field]   -> initInterpolator ( tableR   );
-  m_demagMapPhi[field] -> initInterpolator ( tablePhi );
+  m_demagMapR[field]   . initInterpolator ( tableR   );
+  m_demagMapPhi[field] . initInterpolator ( tablePhi );
 
   return StatusCode::SUCCESS;
 }
@@ -510,7 +526,7 @@ StatusCode DeRichHPD::fillHpdDemagTable(const unsigned int field)
 //=========================================================================
 //  fillHpdMagTable
 //=========================================================================
-StatusCode DeRichHPD::fillHpdMagTable( const unsigned int field )
+StatusCode DeRichHPD::fillHpdMagTable( const FieldPolarity field )
 {
 
   // MDMS version
@@ -526,7 +542,7 @@ StatusCode DeRichHPD::fillHpdMagTable( const unsigned int field )
   // Load the MDMS parameters
   std::ostringstream paraLoc;  
   paraLoc << "hpd" << m_number << "_rec";
-  const std::vector<double>& coeff_rec = m_demagConds[field]->paramVect<double>(paraLoc.str());
+  const auto & coeff_rec = m_demagConds[field]->paramVect<double>(paraLoc.str());
 
   // Expected size of the MDMS parameters vector
   const unsigned int nMDMSParams = ( 0 == m_MDMS_version[field] ? 8  :
@@ -623,8 +639,8 @@ StatusCode DeRichHPD::fillHpdMagTable( const unsigned int field )
 
   } // bins
 
-  m_magMapR[field]   -> initInterpolator( tableR   );
-  m_magMapPhi[field] -> initInterpolator( tablePhi );
+  m_magMapR[field]   . initInterpolator( tableR   );
+  m_magMapPhi[field] . initInterpolator( tablePhi );
 
   if ( UNLIKELY( 2 == m_MDMS_version[field] ) )
   {
@@ -649,10 +665,9 @@ StatusCode DeRichHPD::fillHpdMagTable( const unsigned int field )
 bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
                                          const bool photoCathodeSide ) const
 {
-  const auto field = ( magSvc()->isDown() ? 0 : 1 );
 
   // Only versions 0, 1 or 2 possible
-  detectPoint = ( 2 > m_MDMS_version[field] ?
+  detectPoint = ( 2 > m_MDMS_version[m_field] ?
                   m_SiSensorToHPDMatrix * detectPoint  :
                   detectPoint - m_MDMSRotCentre );
   detectPoint.SetZ(0.0);
@@ -662,7 +677,7 @@ bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
   //const bool rAnodeOK = rAnode < m_siAnodeRCheck;
 
   double rCathode(0);
-  if ( UNLIKELY( 2 == m_MDMS_version[field] ) )
+  if ( UNLIKELY( 2 == m_MDMS_version[m_field] ) )
   {
     detectPoint = m_SiSensorToHPDMatrix * detectPoint;
     detectPoint.SetZ(0.0);
@@ -672,7 +687,7 @@ bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
   }
   else
   {
-    rCathode = magnification_RtoR(field)->value(rAnode);
+    rCathode = magnification_RtoR(m_field)->value(rAnode);
   }
 
   // check if this point could have come from the photoCathode
@@ -688,13 +703,13 @@ bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
   auto anodePhi = vdt::fast_atan2( detectPoint.Y(), detectPoint.X() );
   if ( detectPoint.Y() < 0 ) anodePhi += Gaudi::Units::twopi;
 
-  const auto result_phi = magnification_RtoPhi(field)->value( rAnode );
+  const auto result_phi = magnification_RtoPhi(m_field)->value( rAnode );
 
   auto new_phi = anodePhi + result_phi + Gaudi::Units::pi;
   if ( new_phi > Gaudi::Units::twopi ) new_phi -= Gaudi::Units::twopi;
 
   const auto& winRadius = ( photoCathodeSide ? m_winInR : m_winOutR );
-  if ( winRadius < rCathode ) return StatusCode::FAILURE;
+  if ( winRadius < rCathode ) return false;
 
   double vdtsin(0), vdtcos(0);
   vdt::fast_sincos(new_phi,vdtsin,vdtcos);
@@ -711,6 +726,7 @@ bool DeRichHPD::magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
 
   return true;
 }
+
 //=========================================================================
 //  magnification to cathode and transformation to Global coordinates
 //  with the magnet OFF
@@ -851,7 +867,7 @@ bool DeRichHPD::detectionPoint ( const double fracPixelCol,
                                  m_siliconHalfLengthY - fracPixelRow*m_pixelSize,
                                  0.0 );
   const auto sc =
-    ( m_UseHpdMagDistortions || fabs(magSvc()->signedRelativeCurrent()) > 0.5 ) ?
+    ( m_isFieldON || m_UseHpdMagDistortions ) ?
     magnifyToGlobalMagnetON  ( detectPoint, photoCathodeSide ) :
     magnifyToGlobalMagnetOFF ( detectPoint, photoCathodeSide ) ;
 
@@ -868,7 +884,7 @@ bool DeRichHPD::detectionPoint ( const LHCb::RichSmartID smartID,
                                  bool photoCathodeSide ) const
 {
   detectPoint = pointOnSilicon(smartID);
-  return ( ( m_UseHpdMagDistortions || fabs(magSvc()->signedRelativeCurrent()) > 0.5 ) ?
+  return ( ( m_isFieldON || m_UseHpdMagDistortions ) ?
            magnifyToGlobalMagnetON  ( detectPoint, photoCathodeSide ) :
            magnifyToGlobalMagnetOFF ( detectPoint, photoCathodeSide ) );
 }

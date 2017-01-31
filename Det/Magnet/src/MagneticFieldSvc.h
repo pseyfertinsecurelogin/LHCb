@@ -32,6 +32,7 @@ class MagneticFieldSvc : public extends<Service, ILHCbMagnetSvc>
 {
 
 public:
+
   /// Standard Constructor.
   /// @param  name   String with service name
   /// @param  svc    Pointer to service locator interface
@@ -62,11 +63,7 @@ public:
 
   bool useRealMap() const override; ///< True is using real map
 
-  double signedRelativeCurrent() const override
-  {
-    const int sign = ( isDown() ? -1 : +1 );
-    return std::abs(m_magFieldGrid.scaleFactor())*sign;
-  }
+  double signedRelativeCurrent() const override;
 
   // True if the down polarity map is loaded
   bool isDown() const override;
@@ -111,11 +108,20 @@ private:
 
   bool m_isDown = false; ///< Cache the field polarity
 
-  // update the cached field polarity
-  void cacheFieldPolarity() {
-    m_isDown = m_magFieldGrid.fieldVectorClosestPoint({ 0,0,5200}).y() < 0 ;
-  }
+  double m_signedCurrent{0}; ///< Cache the field current
 
+private:
+
+  // update the cached field polarity and current
+  void cacheFieldConstants()
+  {
+    // Polarity
+    m_isDown = m_magFieldGrid.fieldVectorClosestPoint( { 0, 0, 5200 } ).y() < 0 ;
+    // current
+    const int sign  = ( m_isDown ? -1 : +1 );
+    m_signedCurrent = std::abs(m_magFieldGrid.scaleFactor()) * sign;
+  }
+  
 };
 
 #endif  // MAGNETICFIELDSVC_H

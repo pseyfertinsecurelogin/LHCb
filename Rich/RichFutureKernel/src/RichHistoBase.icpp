@@ -36,9 +36,7 @@ using namespace Gaudi::Utils::Histos;
 template <class PBASE>
 void Rich::Future::HistoBase<PBASE>::initRichHistoConstructor()
 {
-  this -> declareProperty ( "NBins1DHistos", m_nBins1D = 100 );
-  this -> declareProperty ( "NBins2DHistos", m_nBins2D = 50  );
-  this -> setProperty     ( "HistoTopDir",  "RICH/" );
+  this -> setProperty ( "HistoTopDir",  "RICH/" );
 }
 
 //=============================================================================

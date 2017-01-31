@@ -9,9 +9,6 @@
  */
 //=============================================================================
 
-// STL
-#include <algorithm>
-
 // Gaudi
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/GaudiException.h"
@@ -90,7 +87,7 @@ StatusCode DeRichSystem::initialize()
   }
 
   // loop over detectors and conditions to set things up
-  for ( unsigned int i = 0; i < deRichLocs.size(); ++i)
+  for ( unsigned int i = 0; i < deRichLocs.size(); ++i )
   {
     m_detNumConds[(Rich::DetectorType)i] = detCondNames[i];
 
@@ -112,7 +109,7 @@ StatusCode DeRichSystem::initialize()
   // Load the RICH detectors
   for ( const auto rich : Rich::detectors() )
   {
-    SmartDataPtr<DetectorElement> deR( dataSvc(), DeRichLocations::location(rich) );
+    SmartDataPtr<DeRich> deR( dataSvc(), DeRichLocations::location(rich) );
     m_deRich[rich] = deR;
   }
 
@@ -943,7 +940,7 @@ DeRichSystem::getDePDLocation( const LHCb::RichSmartID& smartID ) const
       }
       else
       {
-        if( smartID.panel() == Rich::left )
+        if ( smartID.panel() == Rich::left )
         {
           loc = DeRichLocations::Rich2Panel0;
         }
@@ -960,30 +957,10 @@ DeRichSystem::getDePDLocation( const LHCb::RichSmartID& smartID ) const
 
 }
 
-//===========================================================================
-
-const Rich::DAQ::Level1LogicalID
-DeRichSystem::level1LogicalID( const LHCb::RichSmartID& smartID ) const
-{
-  return level1LogicalID( level1HardwareID(smartID) );
-}
-
-//===========================================================================
-
-unsigned int DeRichSystem::nPDs( const Rich::DetectorType rich ) const
-{
-  unsigned int nPDs = 0;
-  for ( const auto & PD : allPDRichSmartIDs() )
-  {
-    if ( PD.rich() == rich ) { ++nPDs; }
-  }
-  return nPDs;
-}
-
 //=========================================================================
 //  getDeRichLocations
 //=========================================================================
-std::vector<std::string> DeRichSystem::getDeRichLocations ( )
+std::vector<std::string> DeRichSystem::getDeRichLocations()
 {
   // find the Rich detectos
   SmartDataPtr<DetectorElement> afterMag(dataSvc(),"/dd/Structure/LHCb/AfterMagnetRegion");

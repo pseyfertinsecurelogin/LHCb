@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRichPixelClusteringTool_H
-#define RICHINTERFACES_IRichPixelClusteringTool_H 1
+#pragma once
 
 // STL
 #include <memory>
@@ -23,9 +22,6 @@
 
 // RICH Utils
 #include "RichUtils/RichPixelCluster.h"
-
-/// Static Interface Identification
-static const InterfaceID IID_IRichPixelClusteringTool( "Rich::DAQ::IPixelClusteringTool", 1, 0 );
 
 namespace Rich
 {
@@ -47,10 +43,8 @@ namespace Rich
 
     public:
 
-      /** static interface identification
-       *  @return unique interface identifier
-       */
-      static const InterfaceID& interfaceID() { return IID_IRichPixelClusteringTool; }
+      /// Interface ID
+      DeclareInterfaceID( IPixelClusteringTool, 1, 0 );
 
       /** Applies pixel clustering to the given PD RichSmartIDs
        *
@@ -67,5 +61,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHINTERFACES_IRichPixelClusteringTool_H

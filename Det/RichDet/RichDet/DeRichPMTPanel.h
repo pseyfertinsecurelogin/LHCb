@@ -50,6 +50,9 @@ public:
    */
   StatusCode initialize() override final;
 
+  // Access the DeRichPD object for a given PD RichSmartID
+  const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const override final;
+
   // Returns the detector element for the given PD number
   const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const override final;
 
@@ -77,33 +80,42 @@ public:
   bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const override final;
 
   /// Get tge sensitivevolumeID
-  int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const override final;
-
+  int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override final;
+  
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the PMT channel
    *  @return The detection point on the anode in global coordinates
    */
   Gaudi::XYZPoint detPointOnAnode( const LHCb::RichSmartID smartID ) const;
 
-private:
-
   /// Returns the PD number for the given RichSmartID
   Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const override;
 
-  /// Size of something ...
-  bool pdGrandSize( const LHCb::RichSmartID& smartID ) const  override;
+  // The maximum PD copy number for this panel
+  Rich::DAQ::HPDCopyNumber maxPdNumber() const override;
+
+private:
+
+  /// Returns the PD number for the given RichSmartID
+  inline Rich::DAQ::HPDCopyNumber _pdNumber( const LHCb::RichSmartID& smartID ) const 
+  {
+    return Rich::DAQ::HPDCopyNumber( smartID.rich()  == rich() && 
+                                     smartID.panel() == side() ?
+                                     ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() :
+                                     nPDs() + 1 );
+  }
 
   const DeRichPMT* dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const;
 
   std::vector<int> getPmtRowColFromPmtNum( const int aPmtNum );
   std::vector<int> getGrandPmtRowColFromPmtNum( const int aPmtNum );
 
-  int PmtModuleNumInPanelFromModuleNum(const int aMnum) const;
-  int PmtModuleNumInPanelFromModuleNumAlone(const int aMnum) const;
-  std::vector<int> PmtModuleRowColFromModuleNumInPanel(const int aMnum);
+  int PmtModuleNumInPanelFromModuleNum( const int aMnum ) const;
+  int PmtModuleNumInPanelFromModuleNumAlone( const int aMnum ) const;
+  std::vector<int> PmtModuleRowColFromModuleNumInPanel( const int aMnum );
 
   // Set the rich panel and side
-  StatusCode setRichPanelAndSide ( );
+  StatusCode setRichPanelAndSide();
 
   /// Update cached information on geometry changes
   StatusCode geometryUpdate();
@@ -132,11 +144,10 @@ private:
   int getModuleCopyNumber ( const std::string& aModuleName);
   void  RichSetupMixedSizePmtModules();
 
-
   bool isCurrentPmtModuleWithLens(const int aModuleNum);
   bool isCurrentPmtWithLens(const int aPMTNum) ;
   Gaudi::XYZPoint DemagnifyFromLens(const Gaudi::XYZPoint& aLensPoint) const ;
-  bool  ModuleIsWithGrandPMT(int aModuleNum ) const 
+  bool ModuleIsWithGrandPMT(const int aModuleNum ) const 
   {
     return (( aModuleNum >=0 && aModuleNum < (int) m_ModuleIsWithGrandPMT.size() ) ?
             m_ModuleIsWithGrandPMT[aModuleNum] : false);
@@ -181,10 +192,10 @@ private:
   double m_PmtAnodeEffectiveYPixelSize{0};
   double m_PmtMasterLateralSize{0};
   double m_RichPmtQuartzThickness{0};
-  double  m_RichPmtQuartzLocalZInPmt{0};
+  double m_RichPmtQuartzLocalZInPmt{0};
 
   int m_Rich1PmtLensPresence{0};
-  std::vector<int> m_Rich1PmtLensModuleCol;
+  std::vector<int>  m_Rich1PmtLensModuleCol;
   std::vector<bool> m_RichPmtModuleLensFlag;
   int m_totNumPmtModuleInRich1{0};
 
@@ -236,5 +247,7 @@ private:
 
   std::vector<int> m_Rich2MixedModuleArrayColumnSize{3,0};
   std::vector<bool> m_ModuleIsWithGrandPMT;
+
+  Rich::DAQ::HPDCopyNumber m_maxPDCopyN{0};
 
 };
