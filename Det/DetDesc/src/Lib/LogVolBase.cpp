@@ -214,8 +214,8 @@ IPVolume* LogVolBase::createPVolume ( const std::string&    PVname         ,
                               this, StatusCode::FAILURE );
   }
 
+  updateCover(*pv);
   m_pvolumes.push_back( pv.release() );
-  updateCover(pv.get());
   return m_pvolumes.back();
 }
 // ============================================================================
@@ -246,7 +246,7 @@ LogVolBase::createPVolume( const std::string&    PVname      ,
                               PVname+"(lv="+LVnameForPV+")",
                               this, StatusCode::FAILURE );
   }
-  updateCover(pv.get());
+  updateCover(*pv);
   m_pvolumes.push_back( pv.release() );
   return m_pvolumes.back();
 }

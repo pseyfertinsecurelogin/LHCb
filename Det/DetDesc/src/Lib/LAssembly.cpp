@@ -215,35 +215,29 @@ MsgStream&    LAssembly::printOut
 // ============================================================================
 //  
 // =============================================================================
-void LAssembly::updateCover(const IPVolume* const pv) {
-  const ISolid* mySolid = pv->lvolume()->solid();
+void LAssembly::updateCover(const IPVolume& pv) {
+  const ISolid* mySolid = pv.lvolume()->solid();
   //== if it is a Solid, it has a cover -- otherwise, it is an assembly and thus an ISolid and an IBoxCover
-  const IBoxCover* boxCover = (mySolid ? mySolid->cover() : dynamic_cast<const IBoxCover*>(pv->lvolume()));
+  const IBoxCover* boxCover = (mySolid ? mySolid->cover() : dynamic_cast<const IBoxCover*>(pv.lvolume()));
   if (!boxCover) {
     MsgStream log ( msgSvc() , "TransportSvc" );
     log << MSG::ERROR << " === No cover for assembly " << name() 
-        << " pv " << pv->name() << endmsg;
+        << " pv " << pv.name() << endmsg;
   } else {
     //== Compute the 8 corners, transform to mother frame and build the 
     //== envelop as a box (x,y,z Min/Max)
-    double pointX=boxCover->xMin();
-    for (int i = 0 ; 2 > i ; ++i ) {
-      double pointY=boxCover->yMin();
-      for (int j = 0 ; 2 > j ; ++j ) {
-        double pointZ=boxCover->zMin();
-        for (int k = 0 ; 2 > k ; ++k ) {
-          auto motherPt = pv->toMother(Gaudi::XYZPoint(pointX,pointY,pointZ));
+    for (auto pointX : { boxCover->xMin(), boxCover->xMax() } ) {
+      for (auto pointY : { boxCover->yMin(), boxCover->yMax() } ) {
+        for (auto pointZ : { boxCover->zMin(), boxCover->zMax() } ) {
+          auto motherPt = pv.toMother(Gaudi::XYZPoint(pointX,pointY,pointZ));
           if ( xMin() > motherPt.x() ) setXMin(motherPt.x());
           if ( xMax() < motherPt.x() ) setXMax(motherPt.x());
           if ( yMin() > motherPt.y() ) setYMin(motherPt.y());
           if ( yMax() < motherPt.y() ) setYMax(motherPt.y());
           if ( zMin() > motherPt.z() ) setZMin(motherPt.z());
           if ( zMax() < motherPt.z() ) setZMax(motherPt.z());
-          pointZ=boxCover->zMax();
         }
-        pointY = boxCover->yMax();
       }
-      pointX = boxCover->xMax();
     }
   }
 }
