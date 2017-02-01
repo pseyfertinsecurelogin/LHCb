@@ -10,15 +10,6 @@
  */
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-DeFTStation::DeFTStation( const std::string& name ) :
-DetectorElement ( std::move(name) )
-{   // constructor
-  m_layers.reserve(4);
-}
-
-//=============================================================================
 // classID function
 //=============================================================================
 const CLID& DeFTStation::clID () const {
@@ -32,7 +23,12 @@ StatusCode DeFTStation::initialize(){
   /// Loop over layers and add to layer vector
   for (auto iL = this->childBegin(); iL != this->childEnd(); ++iL) {
     DeFTLayer* layer = dynamic_cast<DeFTLayer*>(*iL);
-    if (layer) m_layers.push_back(layer);
+    if (layer) {
+      unsigned int layerID = layer->layerID();
+       if( layerID < 4 ) {
+         m_layers[layerID] = layer;
+       }
+    }
   }
 
   m_stationID = (unsigned int)param<int>("stationID");
@@ -44,6 +40,6 @@ StatusCode DeFTStation::initialize(){
 const DeFTLayer* DeFTStation::findLayer(const Gaudi::XYZPoint& aPoint) const {
   /// Find the layer and return a pointer to the layer from XYZ point
   auto iter = std::find_if(m_layers.begin(), m_layers.end(),
-      [&aPoint](const DeFTLayer* l){return l->isInside(aPoint); } );
+      [&aPoint](const DeFTLayer* l){return l ? l->isInside(aPoint) : false ; } );
   return iter != m_layers.end() ? *iter : nullptr;
 }

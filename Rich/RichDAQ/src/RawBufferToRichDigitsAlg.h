@@ -18,7 +18,7 @@
 #include "Event/RichDigit.h"
 
 // Interfaces
-#include "RichKernel/IRichRawBufferToSmartIDsTool.h"
+#include "RichInterfaces/IRichRawBufferToSmartIDsTool.h"
 
 namespace Rich
 {
@@ -35,7 +35,7 @@ namespace Rich
      */
     //-----------------------------------------------------------------------------
 
-    class RawBufferToRichDigitsAlg : public AlgBase
+    class RawBufferToRichDigitsAlg final : public AlgBase
     {
 
     public:
@@ -45,8 +45,8 @@ namespace Rich
 
       virtual ~RawBufferToRichDigitsAlg( ); ///< Destructor
 
-      virtual StatusCode initialize() final;    // Algorithm initialization
-      virtual StatusCode execute   () final;    // Algorithm execution
+      StatusCode initialize() override;    // Algorithm initialization
+      StatusCode execute   () override;    // Algorithm execution
 
     private: // data
 

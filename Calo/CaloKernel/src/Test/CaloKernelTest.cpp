@@ -1,26 +1,3 @@
-// $Id: CaloKernelTest.cpp,v 1.7 2003-12-09 10:14:42 cattanem Exp $ 
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $
-// ============================================================================
-// $Log: not supported by cvs2svn $
-// Revision 1.6  2002/04/22 16:56:05  ibelyaev
-//  move several files to Kernel/LHCbKernel package
-//
-// Revision 1.5  2002/03/28 12:10:11  ibelyaev
-//  minor fix in OS_iterator class
-//
-// Revision 1.4  2002/03/27 15:06:42  ibelyaev
-//  rename OutputStreamIterator to OS_iterator
-//
-// Revision 1.3  2002/03/26 18:37:06  ibelyaev
-//  some restructurisation and map wrappers
-//
-// Revision 1.2  2002/03/20 15:49:09  ibelyaev
-//  add simple adaptor for std::map/HashTable classes
-//
-// Revision 1.1.1.1  2001/11/25 14:07:38  ibelyaev
-// New Package: substitution of the  previous CaloGen package
-//
 // ============================================================================
 // STD & STL 
 #include <iostream>
@@ -28,7 +5,6 @@
 // local 
 #include "CaloKernel/CaloCellCode.h"
 #include "CaloKernel/CaloCellID.h"
-#include "CaloKernel/CaloCollection.h"
 #include "CaloKernel/CaloException.h"
 #include "CaloKernel/CaloVector.h"
 #include "CaloKernel/InputStreamIterator.h"

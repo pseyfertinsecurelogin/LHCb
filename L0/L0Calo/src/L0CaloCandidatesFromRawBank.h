@@ -1,4 +1,4 @@
-#ifndef L0CALO_L0CALOCANDIDATESFROMRAWBANK_H 
+#ifndef L0CALO_L0CALOCANDIDATESFROMRAWBANK_H
 #define L0CALO_L0CALOCANDIDATESFROMRAWBANK_H 1
 
 // Include files
@@ -7,7 +7,7 @@
 
 // From Event
 #include "Event/RawEvent.h"
-#include "Event/L0CaloCandidate.h" 
+#include "Event/L0CaloCandidate.h"
 
 // forward declaration
 namespace LHCb {
@@ -26,24 +26,24 @@ static const InterfaceID IID_L0CaloCandidatesFromRawBank ( "L0CaloCandidatesFrom
  *  @date   2006-11-06
  */
 class L0CaloCandidatesFromRawBank : public GaudiTool {
-public: 
+public:
 
   // Return the interface ID
   static const InterfaceID& interfaceID() { return IID_L0CaloCandidatesFromRawBank; }
 
   /// Standard constructor
-  L0CaloCandidatesFromRawBank( const std::string& type, 
+  L0CaloCandidatesFromRawBank( const std::string& type,
                                const std::string& name,
                                const IInterface* parent);
 
   virtual ~L0CaloCandidatesFromRawBank( ); ///< Destructor
 
-  virtual StatusCode initialize(); ///< Initialisation
+  StatusCode initialize() override; ///< Initialisation
 
   void convertRawBankToTES( std::vector<std::vector< unsigned int > >& data,
                             LHCb::L0CaloCandidates * outFull,
                             LHCb::L0CaloCandidates * out,
-                            const int version , 
+                            const int version ,
                             LHCb::RawBankReadoutStatus & readoutStatus );
 
 protected:

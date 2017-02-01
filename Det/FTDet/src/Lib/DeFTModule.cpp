@@ -10,13 +10,6 @@
  */
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-DeFTModule::DeFTModule( const std::string& name ) :
-DetectorElement ( std::move(name) ) {
-}
-
-//=============================================================================
 // classID function
 //=============================================================================
 const CLID& DeFTModule::clID () const {
@@ -42,7 +35,10 @@ StatusCode DeFTModule::initialize(){
   /// Loop over mats and add to mat vector
   for (auto iM = this->childBegin(); iM != this->childEnd(); ++iM) {
     DeFTMat* mat = dynamic_cast<DeFTMat*>(*iM);
-    if (mat) m_mats.push_back(mat);
+    if( mat ) {
+      unsigned int matID = mat->matID();
+      if( matID < 4 ) m_mats[matID] = mat;
+    }
   }
 
   // Get some useful geometric parameters from the database
@@ -68,7 +64,7 @@ StatusCode DeFTModule::initialize(){
 const DeFTMat* DeFTModule::findMat(const Gaudi::XYZPoint& aPoint) const {
   /// Find the layer and return a pointer to the layer from XYZ point
   auto iter = std::find_if(m_mats.begin(), m_mats.end(),
-      [&aPoint](const DeFTMat* m){return m->isInside(aPoint); } );
+      [&aPoint](const DeFTMat* m){return m ? m->isInside(aPoint) : false; } );
   return iter != m_mats.end() ? *iter : nullptr;
 }
 

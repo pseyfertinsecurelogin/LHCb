@@ -1,4 +1,3 @@
-
 // STL
 #include <cmath>
 #include <sstream>
@@ -22,9 +21,8 @@ DataChecks::compareLorentzVectors( const std::string & name,
 {
   const Gaudi::XYZVector av(a.px(),a.py(),a.pz());
   const Gaudi::XYZVector bv(b.px(),b.py(),b.pz());
-  const bool vOK = compareVectors ( name+":Vect",   av,    bv,    tolV );
-  const bool eOK = compareEnergies( name+":Energy", a.E(), b.E(), tolE );
-  return vOK && eOK;
+  return compareVectors ( name+":Vect",   av,    bv,    tolV ) &&
+         compareEnergies( name+":Energy", a.E(), b.E(), tolE );
 }
 
 bool

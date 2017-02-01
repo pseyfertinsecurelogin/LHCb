@@ -36,7 +36,6 @@ void Rich::CommonBase<PBASE>::initRichCommonConstructor()
 {
   m_regName = ( this->context().empty() ?
                 "RichToolRegistry" : this->context()+"_RichToolRegistry" );
-  m_deRichTool = nullptr;
   this->declareProperty( "ToolRegistryName", m_regName, "Tool Registry Name" );
 }
 
@@ -50,6 +49,12 @@ StatusCode Rich::CommonBase<PBASE>::initialize()
   const StatusCode sc = PBASE::initialize();
   if ( sc.isFailure() )
   { return this -> Error( "Failed to initialise Gaudi Base class", sc ); }
+
+  // Load some common tools by default
+  m_toolReg =
+    this -> template tool < IToolRegistry > ( "Rich::ToolRegistry",
+                                              m_regName );
+  m_jos = this -> template svc<IJobOptionsSvc>( "JobOptionsSvc" ); 
 
   // Printout from initialize
   if ( this -> msgLevel(MSG::DEBUG) )
@@ -71,18 +76,6 @@ StatusCode Rich::CommonBase<PBASE>::finalize()
 
   // Finalise base class and return
   return PBASE::finalize();
-}
-//=============================================================================
-
-//=============================================================================
-// Access job options service
-//=============================================================================
-template <class PBASE>
-IJobOptionsSvc* Rich::CommonBase<PBASE>::joSvc() const
-{
-  if ( !m_jos )
-  { m_jos = this -> template svc<IJobOptionsSvc>( "JobOptionsSvc" ); }
-  return m_jos;
 }
 //=============================================================================
 
@@ -168,13 +161,14 @@ Rich::CommonBase<PBASE>::my_getProperty( const std::string & name,
     for ( std::vector<const Property*>::const_reverse_iterator itProp = properties->rbegin();
           itProp != properties->rend(); ++itProp )
     {
-      if ( *itProp )
+      const Property* prop = *itProp;
+      if ( prop )
       {
         if ( this -> msgLevel(MSG::VERBOSE) )
-        { this->verbose() << " -> " << **itProp << endmsg; }
-        if ( property == (*itProp)->name() )
+        { this->verbose() << " -> " << *prop << endmsg; }
+        if ( property == prop->name() )
         {
-          sp = dynamic_cast<const PROPERTYTYPE*>(*itProp);
+          sp = dynamic_cast<const PROPERTYTYPE*>(prop);
           if ( nullptr != sp )
           {
             if ( this -> msgLevel(MSG::VERBOSE) )
@@ -188,7 +182,7 @@ Rich::CommonBase<PBASE>::my_getProperty( const std::string & name,
             mess << "Property " + property + " has wrong type : Expected "
                  << System::typeinfoName( typeid(PROPERTYTYPE) )
                  << " Found "
-                 << System::typeinfoName( typeid(**itProp) );
+                 << System::typeinfoName( typeid(*prop) );
             this -> Exception( mess.str() );
           }
         }

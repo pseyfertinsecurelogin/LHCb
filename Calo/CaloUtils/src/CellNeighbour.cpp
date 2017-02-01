@@ -15,19 +15,7 @@
  */
 // ============================================================================
 
-// ============================================================================
-/** the standard constructor
- *  @param Det pointer to calorimeter detector 
- */
-// ============================================================================
-CellNeighbour::CellNeighbour( const DeCalorimeter* Det )
-  : CellMatrix( Det ){}
 
-// ============================================================================
-/** Destructor 
- */
-// ============================================================================
-CellNeighbour::~CellNeighbour(){}
 
 // ============================================================================
 /** the major method. It returns "true" if the cell 
@@ -50,9 +38,7 @@ double CellNeighbour::operator()
   if ( !det()->valid( seed ) || !det()->valid( cell ) ) { return 0 ; }
   /// 
   const CaloNeighbors& neighbours = det()->neighborCells( seed ) ;
-  CaloNeighbors::const_iterator it = 
-    std::find ( neighbours.begin () , neighbours.end () , cell ) ;
-  ///
+  auto it = std::find ( neighbours.begin () , neighbours.end () , cell ) ;
   return neighbours.end() == it ? 0.0 : 1.0 ;
 }
 

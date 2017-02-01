@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef EVENT_PACKEDPARTICLE2INTS_H
 #define EVENT_PACKEDPARTICLE2INTS_H 1
 
@@ -46,7 +45,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedParticle2Ints; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedParticle2Ints::classID(); }
+    const CLID& clID() const override { return PackedParticle2Ints::classID(); }
 
   public:
 

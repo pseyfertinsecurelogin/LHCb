@@ -1,5 +1,5 @@
 // $Id: EventCountHisto.h,v 1.1 2009-02-11 17:12:33 rlambert Exp $
-#ifndef EVENTCOUNTHISTO_H 
+#ifndef EVENTCOUNTHISTO_H
 #define EVENTCOUNTHISTO_H 1
 
 // Include files
@@ -7,23 +7,23 @@
 
 
 /** @class EventCountHisto EventCountHisto.h
- *  
+ *
  *
  *  @author Robert Lambert
  *  @date   2007-01-08
  */
-class EventCountHisto final : public GaudiHistoAlg 
+class EventCountHisto final : public GaudiHistoAlg
 {
 
-public: 
+public:
 
   /// Standard constructor
   EventCountHisto( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~EventCountHisto( ) = default; ///< Destructor
 
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 private:
 

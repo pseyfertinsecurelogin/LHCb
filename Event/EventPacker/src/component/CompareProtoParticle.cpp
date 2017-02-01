@@ -1,4 +1,3 @@
-// $Id: CompareProtoParticle.cpp,v 1.2 2009-07-09 09:44:16 cattanem Exp $
 // Include files 
 
 // local
@@ -23,11 +22,6 @@ CompareProtoParticle::CompareProtoParticle( const std::string& name,
   declareProperty( "InputName", m_inputName = LHCb::ProtoParticleLocation::Charged );
   declareProperty( "TestName" , m_testName  = LHCb::ProtoParticleLocation::Charged+"Test" );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-CompareProtoParticle::~CompareProtoParticle() {} 
 
 //=============================================================================
 // Main execution

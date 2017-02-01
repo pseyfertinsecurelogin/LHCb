@@ -28,10 +28,10 @@ namespace LHCb  {
   public:
     /** Create a new event loop context
       * @param[in,out] refpCtxt  Reference to pointer to store the context
-      * 
+      *
       * @return StatusCode indicating success or failure
       */
-    virtual StatusCode createContext(Context*& refpCtxt) const;
+    StatusCode createContext(Context*& refpCtxt) const override;
 
     /// Service Constructor
     MIFSelector( const std::string& nam, ISvcLocator* svcloc )
@@ -61,42 +61,42 @@ namespace LHCb  {
     IMessageSvc*         m_msg;
   private:
     /// Usage of copy constructor is not allowed
-    MIFContext(const MIFContext&)  
-      : RawDataSelector::LoopContext(0), 
+    MIFContext(const MIFContext&)
+      : RawDataSelector::LoopContext(0),
         MDFIO(MDFIO::MDF_RECORDS,""), m_fileOffset(0), m_mifSel(0), m_mifFID(0)
     {
       m_header = 0;
       m_msg = 0;
-    } 
+    }
     /// Assignment is not allowed
     MIFContext& operator=(const MIFContext&)  {
       return *this;
     }
   public:
     /// Standard constructor
-    MIFContext(const MIFSelector* pSel) 
-      : RawDataSelector::LoopContext(pSel), MDFIO(MDFIO::MDF_RECORDS,pSel->name()), 
+    MIFContext(const MIFSelector* pSel)
+      : RawDataSelector::LoopContext(pSel), MDFIO(MDFIO::MDF_RECORDS,pSel->name()),
         m_fileOffset(0), m_mifSel(pSel), m_mifFID(0)
-    { 
+    {
       m_header = (MIFHeader*)new char[1024];
       m_msg = m_mifSel->msgSvc();
     }
-    /// Standard destructor 
+    /// Standard destructor
     virtual ~MIFContext();
-    MDFDescriptor getDataSpace(void* const /* ioDesc */, size_t len)  {
+    MDFDescriptor getDataSpace(void* const /* ioDesc */, size_t len) override {
       m_buff.reserve(len+m_sel->additionalSpace());
       return MDFDescriptor(m_buff.data(), m_buff.size());
     }
-    virtual StatusCode connect(const std::string& spec);
+    StatusCode connect(const std::string& spec) override;
     /// Receive event and update communication structure
-    virtual StatusCode receiveData(IMessageSvc* msg);
+    StatusCode receiveData(IMessageSvc* msg) override;
     /// Skip N events
-    virtual StatusCode skipEvents(IMessageSvc* msg,int numEvt);
+    StatusCode skipEvents(IMessageSvc* msg,int numEvt) override;
     /// Read raw byte buffer from input stream
-    virtual StatusCode readBuffer(void* const ioDesc, void* const data, size_t len);
-    long long offset()  const                       { return m_fileOffset;     }
+    StatusCode readBuffer(void* const ioDesc, void* const data, size_t len) override;
+    long long offset()  const override { return m_fileOffset;     }
     /// Raw data buffer (if it exists)
-    virtual MDFDescriptor data() const              { return m_data;           }
+    MDFDescriptor data() const override { return m_data;           }
   };
 }
 
@@ -109,8 +109,8 @@ StatusCode MIFSelector::createContext(Context*& refpCtxt) const {
   return StatusCode::SUCCESS;
 }
 
-/// Standard destructor 
-MIFContext::~MIFContext()  { 
+/// Standard destructor
+MIFContext::~MIFContext()  {
   delete [] (char*)m_header;
   for(FidMap::iterator i=m_fidMap.begin(); i!=m_fidMap.end();++i)  {
     Connection* c = (*i).second;
@@ -122,7 +122,7 @@ MIFContext::~MIFContext()  {
 }
 
 /// Read raw byte buffer from input stream
-StatusCode 
+StatusCode
 MIFContext::readBuffer(void* const ioDesc, void* const data, size_t len) {
   return m_ioMgr->read((IDataConnection*)ioDesc,data,len);
 }
@@ -135,8 +135,8 @@ StatusCode MIFContext::connect(const std::string& spec)  {
     StatusCode sc = m_ioMgr->connectRead(false,c.get());
     if ( sc.isSuccess() )  {
       MsgStream log(m_msg,"MIFSelector");
-      log << MSG::ALWAYS << "Connected to:" << spec << " " << c->pfn() 
-  /* << " " << fid */ 
+      log << MSG::ALWAYS << "Connected to:" << spec << " " << c->pfn()
+  /* << " " << fid */
     << endmsg;
       m_fidMap.emplace(fid,c.release());
       m_mifFID = fid;

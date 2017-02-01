@@ -1,4 +1,3 @@
-
 #include "Event/PackedTwoProngVertex.h"
 #include "Event/TwoProngVertex.h"
 #include "Event/StandardPacker.h"
@@ -25,10 +24,6 @@ UnpackTwoProngVertex::UnpackTwoProngVertex( const std::string& name,
   declareProperty( "OutputName", m_outputName = LHCb::TwoProngVertexLocation::Default );
   declareProperty( "AlwaysCreateOutput",      m_alwaysOutput = false     );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-UnpackTwoProngVertex::~UnpackTwoProngVertex() {} 
 
 //=============================================================================
 // Main execution

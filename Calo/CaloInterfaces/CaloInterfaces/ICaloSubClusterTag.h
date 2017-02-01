@@ -12,17 +12,14 @@
  *  @author Ivan Belyaev
  *  @date   01/04/2002
  */
-static const InterfaceID IID_ICaloSubClusterTag( "ICaloSubClusterTag" , 2 , 0 );
 
-class ICaloSubClusterTag : public virtual ICaloClusterTool{
-  
-public:
-  
+struct ICaloSubClusterTag : extend_interfaces<ICaloClusterTool>
+{
   /** static interface identification
    *  @see IInterface 
    *  @return unique interface identifier
    */
-  static const InterfaceID& interfaceID()  { return IID_ICaloSubClusterTag;};
+  DeclareInterfaceID(ICaloSubClusterTag , 3 , 0 );
   
   /** The main method 
    *  @param cluster pointer to ClaoCluster object to be selected/tagged 
@@ -39,8 +36,6 @@ public:
    */
   virtual StatusCode untag ( LHCb::CaloCluster* cluster ) const = 0 ;
   
-  /// virtual destructor
-  virtual ~ICaloSubClusterTag() {}
 };
 
 // ============================================================================

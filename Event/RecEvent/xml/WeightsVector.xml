@@ -9,6 +9,8 @@
       author = "Marco Cattaneo" 
       desc   = "Temporary class for storing primary vertex track weights, pending redesign of RecVertex"
       location = "Rec/Vertex/Weights" 
+      final = "TRUE"
+      defaultdestructor="FALSE"
       id     = "10031" >
 
       <import name="vector"  std="TRUE"/>

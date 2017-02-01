@@ -1,5 +1,4 @@
-// $Id: UnpackMCParticle.h,v 1.2 2009-11-06 18:34:34 jonrob Exp $
-#ifndef UNPACKMCPARTICLE_H 
+#ifndef UNPACKMCPARTICLE_H
 #define UNPACKMCPARTICLE_H 1
 
 // Include files
@@ -13,17 +12,15 @@
  *  @author Olivier Callot
  *  @date   2005-03-18
  */
-class UnpackMCParticle : public GaudiAlgorithm 
+class UnpackMCParticle : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   UnpackMCParticle( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~UnpackMCParticle(); ///< Destructor
-
-  virtual StatusCode execute(); ///< Algorithm execution
+  StatusCode execute() override; ///< Algorithm execution
 
 private:
 

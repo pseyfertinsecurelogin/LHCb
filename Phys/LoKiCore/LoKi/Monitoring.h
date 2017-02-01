@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MONITORING_H
 #define LOKI_MONITORING_H 1
@@ -91,10 +90,10 @@ namespace LoKi
         { m_stat = LoKi::Monitoring::getCounter ( m_cntdef ) ; }
       }
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Counter* clone() const { return new Counter(*this); }
+      Counter* clone() const override { return new Counter(*this); }
       /// MANDATORY: the only one essential method:
-      virtual typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
-        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const
+      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       {
         const auto result = m_cut.fun ( a ) ;
         /// get counter if needed
@@ -105,10 +104,10 @@ namespace LoKi
         return result ;                                               // RETURN
       }
       /// OPTIONAL: just a nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return m_cut.fillStream ( s ) ; }
       /// OPTIONAL: delegate ID:
-      virtual std::size_t id() const { return m_cut.id() ; }
+      std::size_t id() const override { return m_cut.id() ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -236,10 +235,10 @@ namespace LoKi
         , m_histo   ( histo )
       {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Plot* clone() const { return new Plot(*this); }
+      Plot* clone() const override { return new Plot(*this); }
       /// MANDATORY: the only one essential method:
-      virtual typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
-        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const
+      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       {
         // evaluate the functor
         const auto result = m_fun.fun ( a ) ;
@@ -252,10 +251,10 @@ namespace LoKi
         return result ;
       }
       /// OPTIONAL: just a nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return m_fun.fillStream ( s ) ; }
       /// delegate ID:
-      virtual std::size_t id() const { return m_fun.id() ; }
+      std::size_t id() const override { return m_fun.id() ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -386,10 +385,10 @@ namespace LoKi
         , m_prefix ( prefix ) {}
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Printer* clone() const { return new Printer ( *this ) ; }
+      Printer* clone() const override { return new Printer ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
-        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const
+      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+        ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       {
         // evaluat ethe underlying functor:
         const auto result = m_fun.fun ( a )        ;
@@ -400,10 +399,10 @@ namespace LoKi
         return result ;
       }
       /// OPTIONAL: just a nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return m_fun.fillStream ( s ) ; }
       /// OPTIONAL: delegate ID:
-      virtual std::size_t id() const { return m_fun.id() ; }
+      std::size_t id() const override { return m_fun.id() ; }
       // ======================================================================
     private:
       // ======================================================================

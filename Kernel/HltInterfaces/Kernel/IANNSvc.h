@@ -1,4 +1,4 @@
-#ifndef IANNSVC_H 
+#ifndef IANNSVC_H
 #define IANNSVC_H 1
 
 // Include files
@@ -13,19 +13,19 @@
  *
  * ANN: Assigned Names and Numbers
  *   or Assigned Numbers and Names
- *  
+ *
  *  functionality:
  *         Interface for obtaining names for numbers,
  *         and numbers given names... similar to the
  *         mapping of IP addresses to names.
  *
  *         The code relies on an invertable relation between
- *         names and numbers, i.e. it represent a 'bijective' 
+ *         names and numbers, i.e. it represent a 'bijective'
  *         mapping.
  *
  *         Each mapping is labeled by a 'major' key,
  *         i.e. for each major key, there exists an individual
- *         map from a set of numbers to a set of names, and 
+ *         map from a set of numbers to a set of names, and
  *         vice-versa.
  *
  *  @author Gerhard Raven
@@ -33,11 +33,9 @@
  */
 
 
-class IANNSvc : virtual public extend_interfaces<IANSvc>  {
-public:
-  DeclareInterfaceID(IANNSvc,3,0);
+struct IANNSvc : extend_interfaces<IANSvc>  {
   /// Return the interface ID
-  virtual ~IANNSvc() = default;
+  DeclareInterfaceID(IANNSvc,4,0);
 
   typedef IANSvc::major_key_type                      major_key_type;
   typedef IANSvc::minor_key_type                      minor_key_type;
@@ -50,9 +48,9 @@ public:
   virtual boost::optional<minor_value_type>  value(const major_key_type& major, int minor) const = 0;
 
   /// introspection, i.e. access to what is available: is a major present?
-  virtual bool hasMajor(const major_key_type& major) const = 0;
+  bool hasMajor(const major_key_type& major) const override = 0;
   ///                                                  return list of majors
-  virtual std::vector< major_key_type > majors() const = 0;
+  std::vector< major_key_type > majors() const override = 0;
   ///                                                  return minors for a given major
   virtual std::vector<minor_value_type> items(const major_key_type& major) const = 0;
   ///                                                  optimal return of map for later use without additional lookups

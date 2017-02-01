@@ -4,15 +4,6 @@
 // Factory implementation
 DECLARE_COMPONENT( ConfigStackAccessSvc )
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-ConfigStackAccessSvc::ConfigStackAccessSvc( const std::string& name,
-                                            ISvcLocator* pSvcLocator )
-    : base_class( name, pSvcLocator )
-{
-    declareProperty( "ConfigAccessSvcs", s_svcs = {{"ConfigDBAccessSvc"}} );
-}
 
 //=============================================================================
 // Initialization
@@ -133,10 +124,4 @@ ConfigStackAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias
     debug() << "write of " << alias << " to " << m_svcs.front().name() << ": "
             << ( id.invalid() ? "failed" : "OK" ) << endmsg;
     return id;
-}
-
-MsgStream& ConfigStackAccessSvc::msg( MSG::Level level ) const
-{
-    if ( !m_msg ) m_msg.reset( new MsgStream( msgSvc(), name() ) );
-    return *m_msg << level;
 }

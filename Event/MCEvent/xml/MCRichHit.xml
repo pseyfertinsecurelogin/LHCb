@@ -11,11 +11,11 @@
   * date:   2004-06-23                                                        *
   ************************************************************************* -->
 
-<class 
+<class
         name              = "MCRichHit"
-        author            = "Chris Jones    Christopher.Rob.Jones@cern.ch" 
-        desc              = "MC Rich HPD detector hit" 
-        id                = "12413" 
+        author            = "Chris Jones    Christopher.Rob.Jones@cern.ch"
+        desc              = "MC Rich HPD detector hit"
+        id                = "12413"
         location          = "MC/Rich/Hits"
         contObjectTypeDef = "TRUE" >
 
@@ -31,20 +31,20 @@
         <import name="Event/MCParticle.h"/>
         <import name="Event/MCRichDigitHistoryCode.h"/>
 
-        <relation name = 'MCParticle' 
-                  type = 'LHCb::MCParticle' 
+        <relation name = 'MCParticle'
+                  type = 'LHCb::MCParticle'
                   desc = 'Pointer to the MCParticle causing the hit (Normally the MCParticle from which the Cherenkov photon was radiated, but also can be an MCParticle that directly hits the HPD entrance window' />
 
-        <attribute name = 'entry' 
-                   type = 'Gaudi::XYZPoint' 
+        <attribute name = 'entry'
+                   type = 'Gaudi::XYZPoint'
                    desc = 'Entry point to the HPD silicon wafer (mm)' />
 
-        <attribute name = 'energy' 
-                   type = 'double' 
+        <attribute name = 'energy'
+                   type = 'double'
                    desc = 'Energy deposited in the HPD silicon wafer (MeV)' />
 
-        <attribute name = 'timeOfFlight' 
-                   type = 'double' 
+        <attribute name = 'timeOfFlight'
+                   type = 'double'
                    desc = 'Time of flight (ns)'/>
 
         <attribute name = 'sensDetID'
@@ -52,9 +52,9 @@
                    desc = 'Sensitive detector ID number. Uniquely identifies the hit HPD pixel using the RichSmartID channel encoding' />
 
         <attribute
-                desc = "Bit packed field containing RICH specific information" 
-                name = "historyCode" 
-                init = "0" 
+                desc = "Bit packed field containing RICH specific information"
+                name = "historyCode"
+                init = "0"
                 type = "bitfield">
                 <bitfield desc="The Rich detector"  length="2"  name="rich" type="Rich::DetectorType" getMeth="FALSE" setMeth="FALSE" />
                 <bitfield desc="If Cherenkov radiation, the radiator medium" length="5"  name="radiator" type="Rich::RadiatorType" getMeth="FALSE" setMeth="FALSE" />
@@ -70,15 +70,15 @@
                 <bitfield desc="Hit from a photon reflected by the kovar in the HPD"                              length="1"  name="hpdReflKovar"      />
                 <bitfield desc="Hit from a photon reflected by the kapton in the HPD"                             length="1"  name="hpdReflKapton"     />
                 <bitfield desc="Hit from a photon reflected by the PC/QW interface in the HPD"                    length="1"  name="hpdReflPCQW"       />
-                <bitfield desc="Hit from a photon created via scintillation in the radiator"                      length="1"  name="radScintillation"  /> 
+                <bitfield desc="Hit from a photon created via scintillation in the radiator"                      length="1"  name="radScintillation"  />
                 <bitfield desc="If an Aerogel SubTile hit, store the SubTile ID Number in the corresponding Full  tile "  length="6" name="AerogelSubTileID" />
                 <bitfield desc="If  a Hit has gone through a Lens in front of PMT this bit is set "               length="1"  name="pmtLensFlag"      />
-       
+
         </attribute>
 
-        <method 
-                name  = "rich" 
-                const = "TRUE" 
+        <method
+                name  = "rich"
+                const = "TRUE"
                 type  = "Rich::DetectorType"
                 desc  = "The RICH detector">
                 <code>
@@ -86,22 +86,22 @@
                    return (Rich::DetectorType)( ((m_historyCode &amp; richMask) &gt;&gt; richBits) - 1 );
                 </code>
         </method>
-          
-        <method 
-                desc = "set the RICH type" 
+
+        <method
+                desc = "set the RICH type"
                 name = "setRich">
                 <arg const="TRUE" inout="BYVALUE" name="value" type="Rich::DetectorType"/>
                 <code>
-                  // Shift bit-packed representation by +1 to start numbering from 0 
+                  // Shift bit-packed representation by +1 to start numbering from 0
                   const unsigned int val = (unsigned int)value + 1;
                   m_historyCode &amp;= ~richMask;
                   m_historyCode |= ((((unsigned int)val) &lt;&lt; richBits) &amp; richMask);
                 </code>
         </method>
 
-        <method 
-                name  = "radiator" 
-                const = "TRUE" 
+        <method
+                name  = "radiator"
+                const = "TRUE"
                 type  = "Rich::RadiatorType"
                 desc  = "If Cherenkov radiation, the radiator medium">
                 <code>
@@ -109,22 +109,22 @@
                    return (Rich::RadiatorType)(((m_historyCode &amp; radiatorMask) &gt;&gt; radiatorBits) - 1);
                 </code>
         </method>
-          
-        <method 
-                desc = "set the radiator type" 
+
+        <method
+                desc = "set the radiator type"
                 name = "setRadiator">
                 <arg const="TRUE" inout="BYVALUE" name="value" type="Rich::RadiatorType"/>
                 <code>
-                  // Shift bit-packed representation by +1 to start numbering from 0 
+                  // Shift bit-packed representation by +1 to start numbering from 0
                   const unsigned int val = (unsigned int)value + 1;
                   m_historyCode &amp;= ~radiatorMask;
                   m_historyCode |= ((((unsigned int)val) &lt;&lt; radiatorBits) &amp; radiatorMask);
                 </code>
         </method>
 
-        <method 
-                name  = "richInfoValid" 
-                const = "TRUE" 
+        <method
+                name  = "richInfoValid"
+                const = "TRUE"
                 type  = "bool"
                 desc  = "Returns true if RICH information is valid">
                 <code>
@@ -132,9 +132,9 @@
                 </code>
         </method>
 
-        <method 
-                name  = "radiatorInfoValid" 
-                const = "TRUE" 
+        <method
+                name  = "radiatorInfoValid"
+                const = "TRUE"
                 type  = "bool"
                 desc  = "Returns true if radiator information is valid">
                 <code>
@@ -142,62 +142,62 @@
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "gasQuartzCK"
-                const = "TRUE" 
-                desc  = "Returns true if this hit is CK radiation from charged tracks traversing the gas quartz windows" 
+                const = "TRUE"
+                desc  = "Returns true if this hit is CK radiation from charged tracks traversing the gas quartz windows"
                 type  = "bool" >
                 <code>
                   return radiator() == Rich::GasQuartzWin;
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "hpdQuartzCK"
-                const = "TRUE" 
-                desc  = "Returns true if this hit is CK radiation from charged tracks traversing the HPD quartz windows" 
+                const = "TRUE"
+                desc  = "Returns true if this hit is CK radiation from charged tracks traversing the HPD quartz windows"
                 type  = "bool" >
                 <code>
                   return radiator() == Rich::HPDQuartzWin;
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "nitrogenCK"
-                const = "TRUE" 
-                desc  = "Returns true if this hit is CK radiation from charged tracks traversing the nitrogen gas" 
+                const = "TRUE"
+                desc  = "Returns true if this hit is CK radiation from charged tracks traversing the nitrogen gas"
                 type  = "bool" >
                 <code>
                   return radiator() == Rich::Nitrogen;
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "aeroFilterCK"
-                const = "TRUE" 
-                desc  = "Returns true if this hit is CK radiation from charged tracks traversing the aerogel filter" 
+                const = "TRUE"
+                desc  = "Returns true if this hit is CK radiation from charged tracks traversing the aerogel filter"
                 type  = "bool" >
                 <code>
                   return radiator() == Rich::AerogelFilter;
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "isRICHRadiator"
-                const = "TRUE" 
-                desc  = "Returns true if this hit is Cherenkov radiation from the main radiators" 
+                const = "TRUE"
+                desc  = "Returns true if this hit is Cherenkov radiation from the main radiators"
                 type  = "bool" >
                 <code>
                    return ( radiator() == Rich::Aerogel ||
-                            radiator() == Rich::C4F10   || 
-                            radiator() == Rich::CF4     );  
+                            radiator() == Rich::C4F10   ||
+                            radiator() == Rich::CF4     );
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "hpdReflection"
-                const = "TRUE" 
-                desc  = "Returns true if this hit is from an optical reflection within the HPD" 
+                const = "TRUE"
+                desc  = "Returns true if this hit is from an optical reflection within the HPD"
                 type  = "bool" >
                 <code>
                   return ( hpdReflQWPC()   ||
@@ -211,23 +211,23 @@
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "isSignal"
-                const = "TRUE" 
-                desc  = "Returns true if this hit is unscattered and unreflected Cherenkov radiation from the main radiators" 
+                const = "TRUE"
+                desc  = "Returns true if this hit is unscattered and unreflected Cherenkov radiation from the main radiators"
                 type  = "bool" >
                 <code>
-                   return ( !isBackground() );  
+                   return ( !isBackground() );
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "isBackground"
-                const = "TRUE" 
-                desc  = "Returns true if this hit is a background hit" 
+                const = "TRUE"
+                desc  = "Returns true if this hit is a background hit"
                 type  = "bool" >
                 <code>
-                   return ( !isRICHRadiator() || ( scatteredPhoton()  || 
+                   return ( !isRICHRadiator() || ( scatteredPhoton()  ||
                                                    hpdReflection()    ||
                                                    hpdSiBackscatter() ||
                                                    chargedTrack()     ||
@@ -239,25 +239,25 @@
                 </code>
         </method>
 
-        <method 
+        <method
                 name  = "mcRichDigitHistoryCode"
-                const = "TRUE" 
-                desc  = "Returns an MCRichDigitHistoryCode object for this hit" 
+                const = "TRUE"
+                desc  = "Returns an MCRichDigitHistoryCode object for this hit"
                 type  = "LHCb::MCRichDigitHistoryCode" >
-                
+
         </method>
 
         <method
           name    = "fillStream"
           desc    = "Print this MCRichDigit in a human readable way"
           type    = "std::ostream&amp;"
-          virtual = "FALSE"
+          override = "TRUE"
           const   = "TRUE">
           <arg
             type = "std::ostream"
             name = "s"/>
         </method>
-        
+
 </class>
 
 </package>

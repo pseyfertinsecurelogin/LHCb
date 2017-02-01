@@ -30,8 +30,21 @@
   <class name    = "Gaudi::Math::ParticleParams"     />
   <class name    = "Gaudi::Math::FitMass"            />
   
+  <!---
+  <class name    = "Gaudi::Math::VctrOp"     />
+  <class name    = "Gaudi::Math::MtrxOp"     />
+  <class name    = "Gaudi::Math::MultiplyOp" />
+  <class name    = "Gaudi::Math::EqualOp"    />
+  --->
 
-
+  <function name = "Gaudi::Math::_vector_add_"   />
+  <function name = "Gaudi::Math::_vector_radd_"  />
+  <function name = "Gaudi::Math::_vector_sub_"   />
+  <function name = "Gaudi::Math::_vector_rsub_"  />
+  <function name = "Gaudi::Math::_vector_mul_"   />
+  <function name = "Gaudi::Math::_vector_rmul_"  />
+  <function name = "Gaudi::Math::_vector_div_"   />
+  
   <class name    = "Gaudi::Math::EigenSystems"            />
   <class name    = "Gaudi::Math::Chebyshev"               />
   <class name    = "Gaudi::Math::ChebyshevU"              />
@@ -90,8 +103,10 @@
   <class name    = "Gaudi::Math::HermiteSum"         />
   <class name    = "Gaudi::Math::Polynomial"         />
   <class name    = "Gaudi::Math::Bernstein"          />
+  <class name    = "Gaudi::Math::BernsteinEven"      />
   <class name    = "Gaudi::Math::BernsteinDualBasis" />
-  <class name    = "Gaudi::Math::Positive"         />
+  <class name    = "Gaudi::Math::Positive"           />
+  <class name    = "Gaudi::Math::PositiveEven"       />
   <class name    = "Gaudi::Math::Monothonic"       />
   <class name    = "Gaudi::Math::Convex"           />
   <class name    = "Gaudi::Math::ConvexOnly"       />

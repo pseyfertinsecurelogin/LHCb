@@ -1,4 +1,3 @@
-// $Id$
 // ===========================================================================
 #ifndef LOKI_GENCUTSHOLDER_H
 #define LOKI_GENCUTSHOLDER_H 1
@@ -20,9 +19,6 @@
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -145,8 +141,7 @@ namespace LoKi
     protected:
       // ======================================================================
       /// Standard constructor
-      GenEngineActor() ;
-      virtual ~GenEngineActor( ); // Destructor
+      GenEngineActor() = default;
       // ======================================================================
     private:
       // ======================================================================
@@ -155,17 +150,15 @@ namespace LoKi
       inline StatusCode _add
       ( const std::string& name , const TYPE& cut ) const ;
       // ======================================================================
-    private:
-      // ======================================================================
       // the copy contructor is disabled
-      GenEngineActor           ( const GenEngineActor& );
+      GenEngineActor           ( const GenEngineActor& ) = delete;
       // the assignement operator is disabled
-      GenEngineActor& operator=( const GenEngineActor& );
+      GenEngineActor& operator=( const GenEngineActor& ) = delete;
       // ======================================================================
     private:
       // ======================================================================
       // the tool itself
-      LoKi::Interface<LoKi::IGenHybridTool> m_tool ;
+      LoKi::Interface<LoKi::IGenHybridTool> m_tool = nullptr;
       // ======================================================================
     };
     // ========================================================================

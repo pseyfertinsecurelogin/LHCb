@@ -8,10 +8,6 @@
 // ============================================================================
 #include "GaudiKernel/IInterface.h"
 // ============================================================================
-// LoKiCore
-// ============================================================================
-#include "LoKi/Convertible.h"
-// ============================================================================
 /** @file
  *
  *  This file is a part of LoKi project -
@@ -42,8 +38,8 @@ namespace LoKi
   {
     bool operator() ( TYPE*       o )
     {
-      if ( 0 != o ) { o->addRef() ; }
-      return 0 != o ;
+      if ( o ) { o->addRef() ; }
+      return o != nullptr;
     }
   } ;
   // ==========================================================================
@@ -52,8 +48,8 @@ namespace LoKi
   {
     bool operator() ( IInterface* o )
     {
-      if ( 0 != o ) { o->addRef() ; }
-      return 0 != o ;
+      if ( o ) { o->addRef() ; }
+      return o != nullptr ;
     }
   } ;
   // ==========================================================================
@@ -67,7 +63,7 @@ namespace LoKi
   inline bool  addRef( TYPE* obj )
   {
     // create the proper actor
-    AddRef<TYPE,LoKi::Convertible<TYPE,IInterface>::value> actor ;
+    AddRef<TYPE,std::is_convertible<TYPE*,IInterface*>::value> actor ;
     // and perform the proper action!
     return actor ( obj ) ;
   }

@@ -4,9 +4,6 @@
  *
  *  Documentation of various core RICH namespaces
  *
- *  CVS Log :-
- *  $Id: RichNamespaces.h,v 1.5 2009-07-07 16:24:53 jonrob Exp $
- *
  *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
  *  @date   08/07/2004
  */

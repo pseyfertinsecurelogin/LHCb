@@ -23,23 +23,20 @@ namespace {
 // DetectorElement location from name
 std::string LHCb::CaloAlgUtils::DeCaloLocation( const std::string& name ){
   std::string det = CaloNameFromAlg( name );
-  if ( det == "Ecal" ) return  DeCalorimeterLocation::Ecal;
-  else if ( det == "Hcal")return  DeCalorimeterLocation::Hcal;
-  else if ( det == "Prs")return  DeCalorimeterLocation::Prs;
-  else if ( det == "Spd")return  DeCalorimeterLocation::Spd;
-  return "";
+  return  det == "Ecal" ?  DeCalorimeterLocation::Ecal :
+          det == "Hcal" ?  DeCalorimeterLocation::Hcal :
+          det == "Prs"  ?  DeCalorimeterLocation::Prs  :
+          det == "Spd"  ?  DeCalorimeterLocation::Spd  : "" ;
 }
 
 // Digit location from name (CaloDigits are context independent so far)
 std::string  LHCb::CaloAlgUtils::CaloDigitLocation( const std::string& name  , const std::string&){
   std::string det = CaloNameFromAlg( name );
   using namespace LHCb::CaloDigitLocation;
-  if ( det == "Ecal" ) return Ecal;
-  else if ( det == "Hcal")return Hcal;
-  else if ( det == "Prs")return  Prs;
-  else if ( det == "Spd")return  Spd;
-  // default is Ecal in offline mode
-  return Ecal;
+  return det == "Ecal" ? Ecal :
+         det == "Hcal" ? Hcal :
+         det == "Prs"  ? Prs  :
+         det == "Spd"  ? Spd  : Ecal; // default is Ecal in offline mode
 }
 
 
@@ -119,17 +116,9 @@ std::vector<std::string>  LHCb::CaloAlgUtils::TrackLocations(const std::string& 
   std::vector<std::string> locs;
   using namespace LHCb::TrackLocation;
 
-
-  // ----  push first the predefined contexts
-  // if( toUpper(context) == "HLT1UNFITTED" || toUpper(context) == "HLT1")locs.push_back("/HLT1/Track/Unfitted/Default");
-  // else if( toUpper(context) == "HLT1FITTED")locs.push_back( "/HLT1/Track/Fitted/Default");
-  // else if( toUpper(context) == "HLT2UNFITTED" || toUpper(context) == "HLT2")locs.push_back("/HLT2/Track/Unfitted/Default");
-  // else if( toUpper(context) == "HLT2FITTED")locs.push_back("/HLT2/Track/Fitted/Default");
   if( hltContext( context ) )locs.push_back("Hlt2/Track/Forward");
-  else if ( toUpper(context) == "OFFLINE" || context == "" )locs.push_back(Default);  // Rec/Track/Best
   else locs.push_back(Default); // default is offline
 
-  //locs.push_back( LHCb::CaloAlgUtils::PathFromContext( context , Default )); // no path from context for Tracks
 
   return locs;
 }

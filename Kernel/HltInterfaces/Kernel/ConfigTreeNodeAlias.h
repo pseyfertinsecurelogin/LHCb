@@ -24,31 +24,35 @@ public:
        bool invalid() const { return !valid(); }
        bool operator==(const alias_type& rhs) const { return m_alias == rhs.m_alias; }
        //@TODO: add hashing to speed up <...
-       bool operator<(const alias_type& rhs) const { return m_alias < rhs.m_alias; } 
+       bool operator<(const alias_type& rhs) const { return m_alias < rhs.m_alias; }
        std::ostream& print(std::ostream& os) const;
        std::istream& read(std::istream& is);
     private:
        std::string m_alias;
     };
-     
+
     ConfigTreeNodeAlias() = default;
 
     // protect top of alias namespace...
-    static ConfigTreeNodeAlias createTopLevel(const std::string& release, const std::string& runType, const ConfigTreeNode& top) 
-    { 
-        if (runType.empty()) return ConfigTreeNodeAlias(); 
-        digest_type d=top.digest(); return ConfigTreeNodeAlias(d,alias_type("TOPLEVEL") / release / runType / d.str()); 
+    static ConfigTreeNodeAlias createTopLevel(const std::string& release, const std::string& runType, const ConfigTreeNode& top)
+    {
+        if (runType.empty()) return ConfigTreeNodeAlias();
+        digest_type d=top.digest(); return ConfigTreeNodeAlias(d,alias_type("TOPLEVEL") / release / runType / d.str());
     }
-    static ConfigTreeNodeAlias createTCK(const ConfigTreeNode& top, unsigned int tck) 
+    static ConfigTreeNodeAlias createTCK(const ConfigTreeNode& top, unsigned int tck)
     { return ConfigTreeNodeAlias(top.digest(),alias_type("TCK") / boost::str(boost::format("0x%08x") %tck )); }
-    static ConfigTreeNodeAlias createTag(const ConfigTreeNode& top, const std::string& tag) 
+    static ConfigTreeNodeAlias createTag(const ConfigTreeNode& top, const std::string& tag)
     { return ConfigTreeNodeAlias(top.digest(),alias_type("TAG") / tag); }
 
     std::ostream& print(std::ostream& os) const;
     std::istream& read(std::istream& is);
 
-    bool operator!=(const ConfigTreeNodeAlias& rhs) const { return !operator==(rhs); }
-    bool operator==(const ConfigTreeNodeAlias& rhs) const { return m_ref == rhs.m_ref && m_alias == rhs.m_alias; }
+    friend bool operator==(const ConfigTreeNodeAlias& lhs,
+                           const ConfigTreeNodeAlias& rhs)
+    { return lhs.m_ref == rhs.m_ref && lhs.m_alias == rhs.m_alias; }
+    friend bool operator!=(const ConfigTreeNodeAlias& lhs,
+                           const ConfigTreeNodeAlias& rhs)
+    { return ! ( lhs == rhs ); }
 
     const digest_type& ref()   const { return m_ref; }   // value
     const alias_type&  alias() const { return m_alias; } // key

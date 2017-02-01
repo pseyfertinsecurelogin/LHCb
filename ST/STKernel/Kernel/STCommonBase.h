@@ -1,11 +1,7 @@
-
 //-----------------------------------------------------------------------------
 /** @file STCommonBase.h
  *
  *  Header file for ST base class : STCommonBase
- *
- *  CVS Log :-
- *  $Id: STCommonBase.h,v 1.8 2010-04-24 11:35:49 mneedham Exp $
  *
  *  @author Matthew Needham    Matthew.Needham@cern.ch
  *  @date   2005-11-10
@@ -19,7 +15,7 @@
 #include <string>
 #include <map>
 
-class ISTReadoutTool;
+struct ISTReadoutTool;
 class DeSTDetector;
 class DeSTSector;
 
@@ -64,7 +60,7 @@ namespace ST
      * @retval StatusCode::SUCCESS Initialization was successful
      * @retval StatusCode::FAILURE Initialization failed
      */
-    virtual StatusCode initialize();
+    StatusCode initialize() override;
 
     /** Finalization of the algorithm before deletion
      *
@@ -72,7 +68,7 @@ namespace ST
      * @retval StatusCode::SUCCESS Finalization was successful
      * @retval StatusCode::FAILURE Finalization failed
      */
-   virtual StatusCode finalize();
+   StatusCode finalize() override;
 
    /** get the top level detector element */
    DeSTDetector* tracker() const;
@@ -118,16 +114,16 @@ namespace ST
 
 
    /** declarePropery the ST way **/
-   Property* declareSTConfigProperty(const std::string& name,
+   ::Property* declareSTConfigProperty(const std::string& name,
                                std::string& value,
                                const std::string& def,
-                               const std::string& doc="none") const{
+                               const std::string& doc="none") {
     // add to the property to the list of flippable after the normal property declaration
     return addToFlipList(this->declareProperty(name, value = def , doc));
    }
 
    /** accessor to the list of things to be flipped */
-   const std::vector<Property*>& flipList() const;
+   const std::vector<::Property*>& flipList() const;
 
    /** safe finding of the sector - exception thrown if not valid */
    DeSTSector* findSector(const LHCb::STChannelID& aChannel) const;
@@ -137,7 +133,7 @@ namespace ST
 
   private:
    /** add to flipable list **/
-   Property* addToFlipList(Property* aProperty) const;
+   ::Property* addToFlipList(::Property* aProperty) const;
 
    void commonInit();
 
@@ -150,7 +146,7 @@ namespace ST
    std::string m_readoutToolName;
    std::string m_detType;
    bool m_forcedInit;
-   mutable std::vector<Property*> m_toBeFlipped;
+   mutable std::vector<::Property*> m_toBeFlipped;
 
   };
 }

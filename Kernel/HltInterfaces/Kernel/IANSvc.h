@@ -1,4 +1,3 @@
-// $Id: IANSvc.h,v 1.1 2008-06-25 14:14:17 graven Exp $
 #ifndef IANSVC_H 
 #define IANSVC_H 1
 
@@ -25,11 +24,9 @@
  */
 
 
-class IANSvc : virtual public extend_interfaces<INamedInterface>  {
-public:
+struct IANSvc : extend_interfaces<INamedInterface>  {
   /// Return the interface ID
-  DeclareInterfaceID(IANSvc,3,0);
-  virtual ~IANSvc() = default;
+  DeclareInterfaceID(IANSvc,4,0);
 
   typedef Gaudi::StringKey                                major_key_type;
   typedef Gaudi::StringKey                                minor_key_type;

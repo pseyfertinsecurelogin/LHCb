@@ -32,10 +32,7 @@
       <destructor
          desc="Destructor">
         <code>
-          if(m_pGenEvt !=0) 
-          {
           delete m_pGenEvt;
-          }
         </code>
       </destructor> 
       <attribute
@@ -45,7 +42,7 @@
       />
       <attribute
         desc="HepMC generator event"
-        name="pGenEvt" init="0"
+        name="pGenEvt" init="nullptr"
         type="HepMC::GenEvent*"
         nonconstaccessor="TRUE"
       />

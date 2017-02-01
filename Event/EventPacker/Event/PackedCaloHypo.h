@@ -93,10 +93,10 @@ namespace LHCb
   {
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
-    
+
   public:
 
     /// Standard constructor
@@ -107,8 +107,8 @@ namespace LHCb
     }
 
   public:
-    
-    virtual const CLID& clID()  const { return PackedCaloHypos::classID(); }
+
+    const CLID& clID()  const override { return PackedCaloHypos::classID(); }
     static  const CLID& classID()     { return CLID_PackedCaloHypos;       }
 
   public:
@@ -176,14 +176,7 @@ namespace LHCb
     typedef LHCb::CaloHypos             DataVector;
     typedef LHCb::PackedCaloHypos PackedDataVector;
 
-  private:
-
-    /// Default Constructor hidden
-    CaloHypoPacker() {}
-
-  public:
-
-    /// Default Constructor
+    /// Constructor
     CaloHypoPacker( const GaudiAlgorithm * p ) : m_pack(p) {}
 
   public:

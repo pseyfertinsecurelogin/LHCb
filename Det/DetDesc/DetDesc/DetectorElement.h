@@ -59,6 +59,7 @@ public:
   ///  Destructor
   ~DetectorElement() override;
 
+
 public:
 
   /**
@@ -310,7 +311,7 @@ public:
   unsigned long addRef() override;
   unsigned long release() override;
   StatusCode queryInterface( const InterfaceID& riid,
-                                     void** ppvInterface ) override;
+                             void** ppvInterface ) override;
 
 protected:
 
@@ -350,7 +351,7 @@ private:
   enum userParamKind { DOUBLE, INT, OTHER };
 
   /// reference to services
-  DetDesc::Services* m_services = nullptr;
+  DetDesc::ServicesPtr m_services;
 
 };
 

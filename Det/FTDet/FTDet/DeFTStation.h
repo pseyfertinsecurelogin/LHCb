@@ -22,11 +22,10 @@ static const CLID CLID_DeFTStation = 8602;
 
 class DeFTStation : public DetectorElement {
 
-  typedef std::vector<DeFTLayer*>       Layers;
 public: 
 
   /// Standard constructor
-  DeFTStation( const std::string& name = "" );
+  using DetectorElement::DetectorElement;
 
   /// Initialization method
   StatusCode initialize() override;
@@ -45,9 +44,9 @@ public:
   unsigned int stationID() const { return m_stationID;}
 
   /** @return Vector of pointers to the FT Layers */
-  const Layers&   layers()   const { return m_layers;   }
+  const std::array<DeFTLayer*,4>&  layers()  const { return m_layers; }
 
-  /** Find the FT Layer where a global point is
+   /** Find the FT Layer where a global point is
    *  @return Pointer to the relevant Layer
    */
   const DeFTLayer* findLayer(const Gaudi::XYZPoint& point) const;
@@ -60,7 +59,9 @@ public:
 
 private: // private data members
 
-  Layers m_layers;               ///< vector of pointers to layers
+  /// array of pointers to layers
+  std::array<DeFTLayer*,4> m_layers{{nullptr,nullptr,nullptr, nullptr}};
+
   unsigned int m_stationID;      ///< station ID number
 
 }; //end of class

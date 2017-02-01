@@ -27,8 +27,8 @@ class HCRawBankDecoder : public Decoder::HistoAlgBase {
   /// Destructor
   virtual ~HCRawBankDecoder();
 
-  virtual StatusCode initialize();  ///< Algorithm initialization
-  virtual StatusCode execute();     ///< Algorithm execution
+  StatusCode initialize() override;  ///< Algorithm initialization
+  StatusCode execute() override;     ///< Algorithm execution
 
  private:
   LHCb::HCDigits* m_digits;

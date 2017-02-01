@@ -13,16 +13,6 @@ namespace fs = boost::filesystem;
 // Factory implementation
 DECLARE_COMPONENT(ConfigFileAccessSvc)
 
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-ConfigFileAccessSvc::ConfigFileAccessSvc( const std::string& name, ISvcLocator* pSvcLocator)
-  : base_class ( name , pSvcLocator )
-{
-  declareProperty("Directory", m_dir = "");
-}
-
 //=============================================================================
 // Initialization
 //=============================================================================
@@ -31,13 +21,6 @@ StatusCode ConfigFileAccessSvc::initialize() {
   StatusCode status = Service::initialize();
   if ( !status.isSuccess() )   return status;
   return setProperties();
-}
-
-//=============================================================================
-// Finalization
-//=============================================================================
-StatusCode ConfigFileAccessSvc::finalize() {
-  return Service::finalize();
 }
 
 bool ConfigFileAccessSvc::create_directories( fs::path dir ) const {
@@ -64,7 +47,7 @@ fs::path ConfigFileAccessSvc::dir() const {
   }
   return fs::path(m_dir);
 }
-   
+
 fs::path
 ConfigFileAccessSvc::propertyConfigPath( const PropertyConfig::digest_type& digest ) const {
     std::string sref=digest.str();
@@ -262,9 +245,4 @@ ConfigFileAccessSvc::configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type
         }
     }
     return x;
-}
-
-MsgStream& ConfigFileAccessSvc::msg(MSG::Level level) const {
-     if (!m_msg) m_msg.reset( new MsgStream( msgSvc(), name() ));
-     return *m_msg << level;
 }

@@ -1,4 +1,4 @@
-#ifndef EVTTYPESVC_H 
+#ifndef EVTTYPESVC_H
 #define EVTTYPESVC_H 1
 
 // Include files
@@ -28,11 +28,11 @@
  */
 class EvtTypeSvc : public extends<Service,IEvtTypeSvc>
 {
-public: 
+public:
 
   /// Initialize the service.
   StatusCode initialize() override;
-  
+
   /// Finalize the service.
   StatusCode finalize() override;
 
@@ -63,23 +63,20 @@ public:
    *  @param  svc    Pointer to service locator interface
    */
   EvtTypeSvc( const std::string& name, ISvcLocator* svc );
-  
-  /// Destructor.
-  virtual ~EvtTypeSvc();
 
 private:
 
   /// Parse the input table containing all known event types and
   /// theirs' nicknames and ascii descriptor
   StatusCode parseFile( const std::string input );
-  
+
   /// Name of file with input table
   const std::string& inputFile() const {
     return m_inputFile;
   }
 
   /// Typedefs
-  
+
   // Data
   std::string  m_inputFile;    ///< Name of input file with necessary info
   std::vector<EvtTypeInfo> m_evtTypeInfos; ///< List of objects containing all EvtType info

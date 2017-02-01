@@ -71,11 +71,8 @@ class DeFTDetector : public DetectorElement {
 
 public:
 
-  // Typedefs
-  typedef std::vector<DeFTStation*>     Stations;
-
   /// Standard constructor
-  DeFTDetector( const std::string& name = "" );
+  using DetectorElement::DetectorElement;
 
   /** Initialization method 
    *  @return Status of initialization
@@ -101,7 +98,7 @@ public:
   int version() const { return m_FTversion; }
 
   /** @return Vector of pointers to the FT Stations */
-  const Stations& stations() const { return m_stations; }
+  const std::array<DeFTStation*,3>& stations() const { return m_stations; }
 
   /** Find the FT Station where a global point is
    *  @return Pointer to the relevant Station
@@ -170,12 +167,17 @@ public:
       const double seed) const;
 
   /// Get the total number of channels in the FT detector
+  int nStations() const { return m_nStations; }
+
+  /// Get the total number of channels in the FT detector
   int nChannels() const { return m_nTotChannels; }
 
 private: // private data members
 
   unsigned int m_FTversion = 0;
-  Stations m_stations;           ///< vector of pointers to stations
+
+  /// vector of pointers to stations
+  std::array<DeFTStation*,3> m_stations{{nullptr, nullptr, nullptr}};
   unsigned int m_nStations;
 
   unsigned int m_nModulesT1;

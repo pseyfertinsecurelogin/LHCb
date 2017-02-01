@@ -25,10 +25,10 @@ class DeFTQuarter : public DetectorElement {
 
 public:
   /** Some typedefs */
-  typedef std::vector<DeFTModule*> Modules;
+  typedef boost::container::static_vector<DeFTModule*,6> Modules;
 
-  /** Constructor */
-  DeFTQuarter( const std::string& name = "");
+  /// Standard constructor
+  using DetectorElement::DetectorElement;
 
   /** Retrieves reference to class identifier
    * @return the class identifier for this class
@@ -58,7 +58,7 @@ public:
   /** Flat vector of all FT modules
    * @return vector of modules
    */
-  const Modules& modules() const;
+  const Modules& modules() const { return m_modules; }
 
   /** @return quarterID */
   unsigned int quarterID() const { return m_quarterID; }
@@ -79,10 +79,6 @@ private:
 /// Find module methods
 inline const DeFTModule* DeFTQuarter::findModule(const LHCb::FTChannelID aChannel) const {
   return aChannel.module() < m_modules.size() ? m_modules[aChannel.module()] : nullptr;
-}
-
-inline const DeFTQuarter::Modules& DeFTQuarter::modules() const {
-  return m_modules;
 }
 
 #endif  // FTDET_DEFTQUARTER_H

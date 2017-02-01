@@ -29,15 +29,11 @@
  * @author Marco Clemencic <marco.clemencic@cern.ch>
  */
 DetectorElement::DetectorElement( const std::string&   /* name */ )
-  : m_services{ DetDesc::services() }
+: m_services{ DetDesc::services() }
 {
 }
 
-DetectorElement::~DetectorElement()
-{
-  // release services
-  m_services->release();
-}
+DetectorElement::~DetectorElement() = default;
 
 IDataProviderSvc* DetectorElement::dataSvc() const {
   return m_services->detSvc();
@@ -119,7 +115,7 @@ bool DetectorElement::hasCondition(const std::string &name) const {
 }
 
 SmartRef<Condition> DetectorElement::condition(const std::string &name) const {
-  ConditionMap::const_iterator cond = m_de_conditions.find(name);
+  auto cond = m_de_conditions.find(name);
   if ( cond == m_de_conditions.end() ) {
     std::ostringstream oss;
     oss << "Requested unknown condition '" << name << "' to '" << this->name() << "'";
@@ -130,7 +126,7 @@ SmartRef<Condition> DetectorElement::condition(const std::string &name) const {
 }
 
 void DetectorElement::createCondition(std::string &name, std::string &path) {
-  ConditionMap::const_iterator cond = m_de_conditions.find(name);
+  auto cond = m_de_conditions.find(name);
   Assert(cond == m_de_conditions.end(),
          "Could not add condition: " + name + " already present!" );
   long hint = linkMgr()->addLink(path,0);
@@ -140,12 +136,10 @@ void DetectorElement::createCondition(std::string &name, std::string &path) {
 //-- N. Gilardi; 2005.07.08 ---------------------------------------------
 /// Get the list of existing conditions.
 std::vector<std::string> DetectorElement::conditionNames() const {
-  std::vector<std::string> v;
-  ConditionMap::const_iterator      i;
-
-  for (i = m_de_conditions.begin(); i != m_de_conditions.end(); ++i){
-    v.push_back(i->first);
-  }
+  std::vector<std::string> v; v.reserve(m_de_conditions.size());
+  std::transform( m_de_conditions.begin(), m_de_conditions.end(),
+                  std::back_inserter(v),
+                  [](ConditionMap::const_reference i) { return i.first; } );
   return v;
 }
 // ----------------------------------------------------------------------
@@ -234,7 +228,7 @@ DetectorElement::createAlignment (const std::string& condition) {
   Assert( !alignment() ,
           "Could not create AlignmentInfo: it already exists!" );
   if( !m_de_iAlignment )
-    m_de_iAlignment.reset( new AlignmentInfo( this, condition ) );
+    m_de_iAlignment = std::make_unique<AlignmentInfo>( this, condition );
   return alignment();
 }
 
@@ -243,7 +237,7 @@ DetectorElement::createCalibration (const std::string& condition) {
   Assert( !calibration() ,
           "Could not create CalibrationInfo: it already exists!" );
   if( !m_de_iCalibration )
-    m_de_iCalibration.reset( new CalibrationInfo( this, condition ) );
+    m_de_iCalibration = std::make_unique<CalibrationInfo>( this, condition );
   return calibration();
 }
 
@@ -252,7 +246,7 @@ DetectorElement::createReadOut (const std::string& condition) {
   Assert( !readOut() ,
           "Could not create ReadOutCalibrationInfo: it already exists!" );
   if( !m_de_iReadOut )
-    m_de_iReadOut.reset( new ReadOutInfo( this, condition ) );
+    m_de_iReadOut = std::make_unique<ReadOutInfo>( this, condition );
   return readOut();
 }
 
@@ -261,7 +255,7 @@ DetectorElement::createSlowControl (const std::string& condition) {
   Assert( !slowControl() ,
           "Could not create SlowControlInfo: it already exists!" );
   if( !m_de_iSlowControl )
-    m_de_iSlowControl.reset( new SlowControlInfo( this, condition ) );
+    m_de_iSlowControl = std::make_unique<SlowControlInfo>( this, condition );
   return slowControl();
 }
 
@@ -270,7 +264,7 @@ DetectorElement::createFastControl (const std::string& condition) {
   Assert( !fastControl() ,
           "Could not create FastControlInfo: it already exists!" );
   if( !m_de_iFastControl )
-    m_de_iFastControl.reset( new FastControlInfo( this, condition ) );
+    m_de_iFastControl = std::make_unique<FastControlInfo>( this, condition );
   return fastControl();
 }
 //

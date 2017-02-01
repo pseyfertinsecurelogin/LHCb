@@ -23,7 +23,7 @@ namespace OTDAQ {
 
 /** @class OTRawBankEncoder OTRawBankEncoder.h
  *
- *  Encodes the channels and puts them in the raw bank. 
+ *  Encodes the channels and puts them in the raw bank.
  *
  *  @author Jan Amoraal
  *
@@ -38,44 +38,37 @@ namespace nGols {
  enum nGols { v2008 = 9u };
 }
 
-class OTRawBankEncoder : public GaudiTool, 
-                         virtual public IOTRawBankEncoder {
+class OTRawBankEncoder : public extends<GaudiTool, IOTRawBankEncoder> {
 
 public:
-  
+
   /// Standard constructor
   OTRawBankEncoder( const std::string& type,
 		    const std::string& name,
 		    const IInterface* parent );
-  
-  /// Destructor
-  virtual ~OTRawBankEncoder( ) ; ///< Destructor
-  
+
   /// Tool initialization
-  virtual StatusCode initialize();
- 
-  /// Tool finalize
-  //virtual StatusCode finalize(); 
-  
+  StatusCode initialize() override;
+
   /// Abstract virtual in IOTRawBankEncoder
-  StatusCode encodeChannels( const std::vector<LHCb::OTChannelID>& channels ) const;
-  
+  StatusCode encodeChannels( const std::vector<LHCb::OTChannelID>& channels ) const override;
+
 private:
   /// Some handy typedefs
   typedef std::vector< OTDAQ::OTBank > OTBanks;
   typedef std::vector< unsigned int >  OTRawBank;
-  
+
   void createBanks();
-  
+
   /// Returns the bank == Tell1 number for a given channel
   size_t channelToBank( const LHCb::OTChannelID& channel ) const;
   /// Creates a RawBank for a given bank
   const OTRawBank& createRawBank(const OTDAQ::OTBank& bank) const;
   /// Clear OTBanks and OTRawbank after each event
   void clear() const;
-      
+
   IOTChannelMapTool* m_channelmaptool;   ///< Pointer to IOTChannelMapTool
-  bool               m_addEmptyBanks;    ///< Falg to add empty banks 
+  bool               m_addEmptyBanks;    ///< Falg to add empty banks
   std::string        m_rawEventLocation; ///< Location of RawEvent
   mutable OTBanks    m_banks;            ///< Vector of banks
   mutable OTRawBank  m_rawBank;          ///< A raw bank. This goes into the raw buffer

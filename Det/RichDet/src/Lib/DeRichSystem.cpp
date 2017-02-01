@@ -17,8 +17,8 @@
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
-// RichKernel
-#include "RichKernel/RichHPDIdentifier.h"
+// RichUtils
+#include "RichUtils/RichHPDIdentifier.h"
 
 // LHCbKernel
 #include "Kernel/RichSmartID32.h"

@@ -111,13 +111,9 @@ public:
          addRef(); // Initial count set to 1
       }
 
-   ~CloseListener() override = default;
-
    /// Inform that a new incident has occurred
    void handle(const Incident& i) override {
-      if (i.type() == m_incident) {
-         m_file.reset();
-      }
+      if (i.type() == m_incident) m_file.reset();
    }
 
 private:
@@ -330,35 +326,30 @@ class CDB
         filter.push( io::back_inserter( compressed ) );
         io::copy( boost::make_iterator_range( str ), filter, 8192 );
         bool ok = compressed.size() < str.size(); // yes, it's better!
-        if ( ok ) str.swap( compressed );
+        if ( ok ) str = std::move( compressed );
         return ok ? 3 : 0;
     }
 
     std::vector<unsigned char> make_cdb_record( std::string str, uid_t uid, std::time_t t )
     {
         auto flags = compress( str );
-        std::vector<unsigned char> buffer( 12 + str.size(), 0 );
-        auto buf = std::begin( buffer );
-        *buf++ = 0;     // version number
-        *buf++ = flags; // compression
-        *buf++ = 0;     // reserved;
-        *buf++ = 0;     // reserved;
+        std::vector<unsigned char> buffer; buffer.reserve( 12 + str.size() );
+        buffer.emplace_back( 0 );     // version number
+        buffer.emplace_back( flags ); // compression
+        buffer.emplace_back( 0 );     // reserved;
+        buffer.emplace_back( 0 );     // reserved;
         assert( sizeof( uid_t ) == 4 );
-        *buf++ = ( uid & 0xff );
-        *buf++ = ( ( uid >> 8 ) & 0xff );
-        *buf++ = ( ( uid >> 16 ) & 0xff );
-        *buf++ = ( ( uid >> 24 ) & 0xff );
-        *buf++ = ( t & 0xff );
-        *buf++ = ( ( t >> 8 ) & 0xff );
-        *buf++ = ( ( t >> 16 ) & 0xff );
-        *buf++ = ( ( t >> 24 ) & 0xff );
-        if ( std::distance( std::begin( buffer ), buf ) != 12 ) {
-            std::cerr << "ERROR" << std::endl;
-        }
-        auto e = std::copy_n( std::begin( str ), str.size(), buf );
-        if ( e != std::end( buffer ) ) {
-            std::cerr << "ERROR" << std::endl;
-        }
+        buffer.emplace_back( uid & 0xff );
+        buffer.emplace_back( ( uid >> 8 ) & 0xff );
+        buffer.emplace_back( ( uid >> 16 ) & 0xff );
+        buffer.emplace_back( ( uid >> 24 ) & 0xff );
+        buffer.emplace_back( t & 0xff );
+        buffer.emplace_back( ( t >> 8 ) & 0xff );
+        buffer.emplace_back( ( t >> 16 ) & 0xff );
+        buffer.emplace_back( ( t >> 24 ) & 0xff );
+        if ( buffer.size() != 12 ) std::cerr << "ERROR" << std::endl;
+        std::copy_n( begin( str ), str.size(), back_inserter(buffer) );
+        if ( buffer.size() != 12 + str.size() ) std::cerr << "ERROR" << std::endl;
         return buffer;
     }
 
@@ -429,18 +420,6 @@ using namespace ConfigCDBAccessSvc_details;
 DECLARE_COMPONENT( ConfigCDBAccessSvc )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-ConfigCDBAccessSvc::ConfigCDBAccessSvc( const string& name,
-                                        ISvcLocator* pSvcLocator )
-    : base_class( name, pSvcLocator )
-{
-    declareProperty( "File", m_name = "" );
-    declareProperty( "Mode", m_mode = "ReadOnly" );
-    declareProperty( "CloseIncident", m_incident );
-}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode ConfigCDBAccessSvc::initialize()
@@ -465,17 +444,20 @@ StatusCode ConfigCDBAccessSvc::initialize()
 ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
 {
     if ( UNLIKELY(!m_file) ) {
+      std::unique_lock<std::mutex> lock(m_file_mtx);
+      if (LIKELY(!m_file)){
         if ( m_mode != "ReadOnly" && m_mode != "ReadWrite" &&
              m_mode != "Truncate" ) {
-            error() << "invalid mode: " << m_mode << endmsg;
+            error() << "invalid mode: " << m_mode.value() << endmsg;
             return nullptr;
         }
-        ios::openmode mode = ( m_mode == "ReadWrite" )
+  // todo: use Parse and toStream to make mode instead of m_mode a property...
+        ios::openmode mode = ( m_mode == "ReadWrite"
                                  ? ( ios::in | ios::out | ios::ate )
                                  : ( m_mode == "Truncate" )
                                        ? ( ios::in | ios::out | ios::trunc )
-                                       : ios::in;
-        if ( m_name.empty() ) {
+                                       : ios::in );
+        if ( m_name.value().empty() ) {
             std::string def( System::getEnv( "HLTTCKROOT" ) );
             if ( def.empty() ) {
                throw GaudiException("Environment variable HLTTCKROOT not specified and no explicit "
@@ -484,14 +466,15 @@ ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
             }
             m_name = def + "/config.cdb";
         }
-        info() << " opening " << m_name << " in mode " << m_mode << endmsg;
-        m_file.reset( new CDB( m_name, mode ) );
+        info() << " opening " << m_name.value() << " in mode " << m_mode.value() << endmsg;
+        m_file.reset( new CDB( m_name.value(), mode ) );
         if ( !*m_file ) {
-            error() << " Failed to open " << m_name << " in mode " << m_mode
+            error() << " Failed to open " << m_name.value() << " in mode " << m_mode.value()
                     << endmsg;
             error() << string( strerror( errno ) ) << endmsg;
             m_file.reset( );
         }
+      }
     }
     return m_file.get();
 }
@@ -537,13 +520,13 @@ boost::optional<T> ConfigCDBAccessSvc::read( const string& path ) const
 {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "trying to read " << path << endmsg;
     if ( file() == nullptr ) {
-        debug() << "file " << m_name << " not found" << endmsg;
+        debug() << "file " << m_name.value() << " not found" << endmsg;
         return boost::none;
     }
     T c;
     if ( !file()->readObject( c, path ) ) {
         if ( msgLevel( MSG::DEBUG ) )
-            debug() << "file " << path << " not found in container " << m_name
+            debug() << "file " << path << " not found in container " << m_name.value()
                     << endmsg;
         return boost::none;
     }
@@ -553,14 +536,14 @@ boost::optional<T> ConfigCDBAccessSvc::read( const string& path ) const
 template <typename T>
 bool ConfigCDBAccessSvc::write( const string& path, const T& object ) const
 {
-    boost::optional<T> current = read<T>( path );
+    auto current = read<T>( path );
     if ( current ) {
         if ( object == current.get() ) return true;
         error() << " object @ " << path
                 << "  already exists, but contents are different..." << endmsg;
         return false;
     }
-    if ( m_mode == "ReadOnly" ) {
+    if ( m_mode.value() == "ReadOnly" ) {
         error() << "attempted write, but file has been opened ReadOnly" << endmsg;
         return false;
     }
@@ -683,10 +666,4 @@ ConfigCDBAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias )
                 << endmsg;
         return ConfigTreeNodeAlias::alias_type();
     }
-}
-
-MsgStream& ConfigCDBAccessSvc::msg( MSG::Level level ) const
-{
-    if ( !m_msg ) m_msg.reset( new MsgStream( msgSvc(), name() ) );
-    return *m_msg << level;
 }

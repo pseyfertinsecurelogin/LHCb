@@ -38,7 +38,7 @@ namespace L0Muon {
     ~SUL0BufferCnv();
 
     /// Give a static type name to the unit : L0BufferSlaveUnit
-    std::string type() {
+    std::string type() override {
       return "L0BufferSlaveUnit";
     }
 
@@ -46,7 +46,7 @@ namespace L0Muon {
 
         @param ievt : current event number
     */
-    void write(int ievt);
+    void write(int ievt) override;
 
   private:
 

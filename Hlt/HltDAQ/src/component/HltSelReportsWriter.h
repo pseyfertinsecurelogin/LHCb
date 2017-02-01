@@ -1,5 +1,4 @@
-// $Id: HltSelReportsWriter.h,v 1.2 2010-05-19 21:09:15 graven Exp $
-#ifndef HLTSELREPORTSWRITER_H 
+#ifndef HLTSELREPORTSWRITER_H
 #define HLTSELREPORTSWRITER_H 1
 
 // Include files
@@ -13,7 +12,7 @@
 
 
 /** @class HltSelReportsWriter HltSelReportsWriter.h
- *  
+ *
  *
  *  @author Tomasz Skwarnicki
  *  @date   2008-07-25
@@ -22,14 +21,14 @@
  *
  */
 class HltSelReportsWriter : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
-  HltSelReportsWriter( const std::string& name, ISvcLocator* pSvcLocator );
-  ~HltSelReportsWriter() override = default; ///< Destructor
+  using GaudiAlgorithm::GaudiAlgorithm;
+
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
-  enum HeaderIDs { kVersionNumber=9 };
+  enum HeaderIDs { kVersionNumber=10 };
 
 
   enum SourceIDs { kSourceID_Dummy=0,
@@ -44,16 +43,16 @@ public:
 private:
 
   /// location of input H
-  StringProperty m_inputHltSelReportsLocation;
+  Gaudi::Property<std::string> m_inputHltSelReportsLocation { this, "InputHltSelReportsLocation",  LHCb::HltSelReportsLocation::Default };
 
   /// location of output
-  StringProperty m_outputRawEventLocation;
+  Gaudi::Property<std::string> m_outputRawEventLocation { this, "OutputRawEventLocation", LHCb::RawEventLocation::Default };
 
   /// SourceID to insert in the bank header (0-7)
-  IntegerProperty m_sourceID;
-  
+  Gaudi::Property<int> m_sourceID { this, "SourceID", kSourceID_Dummy };
+
   /// HltANNSvc for making selection names to int selection ID
-  IANNSvc* m_hltANNSvc = nullptr;
+  SmartIF<IANNSvc> m_hltANNSvc;
 };
 
 

@@ -54,7 +54,7 @@ namespace
     }
   }
   // ==========================================================================
-  struct NotPid : public std::unary_function<const HepMC::GenParticle*,bool>
+  struct NotPid
   {
     // ========================================================================
     /// constructor 
@@ -88,7 +88,7 @@ namespace
   /// the helper object for comparison 
   typedef Decays::Trees::CheckTree<const HepMC::GenParticle*> Equal ;  
   // ==========================================================================
-  struct _Pid :  public std::unary_function<const HepMC::GenParticle*,bool>
+  struct _Pid
   {
     /// constructor 
     _Pid ( const Decays::Nodes::Pid& pid ) : m_pid ( pid ) {}

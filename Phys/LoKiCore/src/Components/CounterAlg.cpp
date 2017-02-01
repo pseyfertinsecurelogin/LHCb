@@ -1,8 +1,7 @@
-// $Id$
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
-// GaudiAlg 
+// GaudiAlg
 // ============================================================================
 #include "GaudiAlg/GaudiAlgorithm.h"
 // ============================================================================
@@ -15,14 +14,14 @@
 #include "LoKi/Functor.h"
 #include "LoKi/ICoreFactory.h"
 // ============================================================================
-/** @file 
+/** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *                    $Revision$
@@ -30,33 +29,33 @@
  *                 by $Author$
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
   /** @class CounterAlg
    *  Simple algorithm to dealwith counters.
-   *  It has two modes: 
+   *  It has two modes:
    *
-   *    - "simple" mode, when certain counters are evaluated and are 
+   *    - "simple" mode, when certain counters are evaluated and are
    *       kept locally
    *
-   *    - "store-in-TES", when the values are also stored in TES in form of 
+   *    - "store-in-TES", when the values are also stored in TES in form of
    *                      Gaudi::Numbers object at specified location
    *                      the default location is "Counters/<ALGNAME>"
    *
-   *  @code 
-   * 
+   *  @code
+   *
    *    myCnt.Variables = {
-   *       'nSpd'           : "CONTAINS('Raw/Spd/Digits')" , 
-   *       'nVelo'          : "TrSOURCE('Rec/Track/Best', TrVELO) >> TrSIZE " , 
-   *       'hasTrueMCDecay' : "MCSOURCE('MC/Particles','[B_s0 -> J/psi(1S) phi(1020)]CC') >> MCSIZE" , 
-   *       'GEC-loose'      : "ACCEPT('Hlt::GEC/AcceptGESLoose')"     
+   *       'nSpd'           : "CONTAINS('Raw/Spd/Digits')" ,
+   *       'nVelo'          : "TrSOURCE('Rec/Track/Best', TrVELO) >> TrSIZE " ,
+   *       'hasTrueMCDecay' : "MCSOURCE('MC/Particles','[B_s0 -> J/psi(1S) phi(1020)]CC') >> MCSIZE" ,
+   *       'GEC-loose'      : "ACCEPT('Hlt::GEC/AcceptGESLoose')"
    *     }
    *
-   *    ## use non-standard location: 
+   *    ## use non-standard location:
    *    myCnt.Location = "/Event/MyCounters"
    *
-   *  @endcode 
+   *  @endcode
    *
    *  @author Vanya BELYAEV Ivan.BElyaev@cern.ch
    *  @date 2011-02-12
@@ -64,18 +63,18 @@ namespace LoKi
   class CounterAlg : public GaudiAlgorithm
   {
     // ========================================================================
-    /// friend factory for instantiation 
+    /// friend factory for instantiation
     friend class AlgFactory<LoKi::CounterAlg> ;
     // ========================================================================
   public:
     // ========================================================================
-    /// the main method: execute 
-    virtual StatusCode execute    () ;
-    /// proper initialization 
-    virtual StatusCode initialize () ;
-    /// proper finalization 
-    virtual StatusCode finalize   () ;
-    // ========================================================================    
+    /// the main method: execute
+    StatusCode execute    ()  override;
+    /// proper initialization
+    StatusCode initialize ()  override;
+    /// proper finalization
+    StatusCode finalize   ()  override;
+    // ========================================================================
   protected:
     // ========================================================================
     /** helper class to keep the N-tuple items
@@ -86,76 +85,76 @@ namespace LoKi
     {
     public:
       // ====================================================================
-      // the default constructor 
-      Item () 
+      // the default constructor
+      Item ()
         : m_fun  ( LoKi::BasicFunctors<void>::Constant ( -1.e+10 ) )
-        , m_cnt  ( 0 ) 
+        , m_cnt  ( 0 )
       {}
       // ====================================================================
     public:
       // ====================================================================
-      /// the variable name 
-      std::string                                                 m_name ; 
-      /// the functor itself 
+      /// the variable name
+      std::string                                                 m_name ;
+      /// the functor itself
       LoKi::Assignable<LoKi::BasicFunctors<void>::Function>::Type m_fun  ;
       /// helper counter
       StatEntity*                                                 m_cnt  ;
       // ====================================================================
     } ;
-    // ======================================================================      
-    /// the actual type of {"name":"functor"} map 
+    // ======================================================================
+    /// the actual type of {"name":"functor"} map
     typedef std::map<std::string,std::string>  Map   ;
-    /// the actual type of containter of items 
+    /// the actual type of containter of items
     typedef std::vector<Item>                  Items ;
-    // ========================================================================    
+    // ========================================================================
   protected:
     // ========================================================================
-    /** standard constructor 
-     *  @see GaudiAlgorithm 
-     *  @see      Algorithm 
+    /** standard constructor
+     *  @see GaudiAlgorithm
+     *  @see      Algorithm
      *  @see      AlgFactory
      *  @see     IAlgFactory
-     *  @param name the algorithm instance name 
-     *  @param pSvc pointer to Service Locator 
+     *  @param name the algorithm instance name
+     *  @param pSvc pointer to Service Locator
      */
     CounterAlg
-    ( const std::string& name , // the algorithm instance name 
+    ( const std::string& name , // the algorithm instance name
       ISvcLocator*       pSvc ) // pointer to the service locator
-      : GaudiAlgorithm ( name , pSvc ) 
+      : GaudiAlgorithm ( name , pSvc )
     //
-      , m_factory   ( "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC" ) 
+      , m_factory   ( "LoKi::Hybrid::CoreFactory/CoreFactory:PUBLIC" )
     //
-      , m_location  ( "Counters/" + name  ) 
-    {    
-      declareProperty 
-        ( "Preambulo"  , 
-          m_preambulo  , 
-          "The preambulo lines to be used for the temporary python script" ) 
+      , m_location  ( "Counters/" + name  )
+    {
+      declareProperty
+        ( "Preambulo"  ,
+          m_preambulo  ,
+          "The preambulo lines to be used for the temporary python script" )
         -> declareUpdateHandler  ( &LoKi::CounterAlg::handlePreambulo  , this ) ;
       //
-      declareProperty 
-        ( "Factory"   , 
-          m_factory   , 
-          "The type/name of LoKiBender \"hybrid\" factory: void->double" ) 
+      declareProperty
+        ( "Factory"   ,
+          m_factory   ,
+          "The type/name of LoKiBender \"hybrid\" factory: void->double" )
         -> declareUpdateHandler  ( &LoKi::CounterAlg::handleFactory    , this ) ;
       //
-      declareProperty 
-        ( "Variables" , 
-          m_map       , 
-          "The map { 'name' : 'functor'} of variables: void -> double " ) 
+      declareProperty
+        ( "Variables" ,
+          m_map       ,
+          "The map { 'name' : 'functor'} of variables: void -> double " )
         -> declareUpdateHandler  ( &LoKi::CounterAlg::handleVariables  , this ) ;
-      // 
-      declareProperty 
-        ( "Location"  , 
-          m_location  , 
+      //
+      declareProperty
+        ( "Location"  ,
+          m_location  ,
           "TES-location of counters" ) ;
-    } 
+    }
     // ========================================================================
   private:
     // ========================================================================
-    /// the copy constructor is disabled 
-    CounterAlg ( const CounterAlg& ) = delete ;      // the copy constructor is disabled 
-    /// the assignement operator is disabled 
+    /// the copy constructor is disabled
+    CounterAlg ( const CounterAlg& ) = delete ;      // the copy constructor is disabled
+    /// the assignement operator is disabled
     CounterAlg& operator=( const CounterAlg& ) = delete ; // the assignement is disabled
     // ========================================================================
   protected:
@@ -164,16 +163,16 @@ namespace LoKi
     void       handleFactory   ( Property& /* p */ )  ;
     void       handleVariables ( Property& /* p */ )  ;
     // ========================================================================
-    /// update variables 
+    /// update variables
     StatusCode updateItems () ;                // update variables
     // ========================================================================
-    /// the preambulo 
-    std::string preambulo() const 
+    /// the preambulo
+    std::string preambulo() const
     {
       const std::vector<std::string>& lines  = m_preambulo ;
       //
       std::string result ;
-      for ( auto iline = lines.begin() ; lines.end() != iline ; ++iline ) 
+      for ( auto iline = lines.begin() ; lines.end() != iline ; ++iline )
       {
         if ( lines.begin() != iline ) { result += "\n" ; }
         result += (*iline) ;
@@ -183,24 +182,24 @@ namespace LoKi
     // ========================================================================
   private:
     // ========================================================================
-    /// map pf variables 
-    Map                      m_map       ; // map pf variables 
-    /// the preambulo 
-    std::vector<std::string> m_preambulo ; // the preambulo 
-    ///  factory for functor decoding 
-    std::string              m_factory   ; //  factory for functor decoding 
-    ///  TES-location of counters 
-    std::string              m_location  ; //  TES-location of counters 
-    /// decoded vector of functors/items 
+    /// map pf variables
+    Map                      m_map       ; // map pf variables
+    /// the preambulo
+    std::vector<std::string> m_preambulo ; // the preambulo
+    ///  factory for functor decoding
+    std::string              m_factory   ; //  factory for functor decoding
+    ///  TES-location of counters
+    std::string              m_location  ; //  TES-location of counters
+    /// decoded vector of functors/items
     Items                    m_items     ;
     // ========================================================================
   };
   // ==========================================================================
-} //                                                      end of namespace LoKi 
+} //                                                      end of namespace LoKi
 // ============================================================================
 // the update handler for Preambulo
 // ============================================================================
-void LoKi::CounterAlg::handlePreambulo ( Property& /* p */ )  
+void LoKi::CounterAlg::handlePreambulo ( Property& /* p */ )
 {
   if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
   //
@@ -212,7 +211,7 @@ void LoKi::CounterAlg::handlePreambulo ( Property& /* p */ )
 // ============================================================================
 // the update handler for HltFactory
 // ============================================================================
-void LoKi::CounterAlg::handleFactory ( Property& /* p */ )  
+void LoKi::CounterAlg::handleFactory ( Property& /* p */ )
 {
   if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
   //
@@ -220,11 +219,11 @@ void LoKi::CounterAlg::handleFactory ( Property& /* p */ )
   //
   StatusCode sc = updateItems () ;
   Assert ( sc.isSuccess() , "Unable to set 'Variables'"   , sc ) ;
-}    
+}
 // ============================================================================
 // The update handler for Variables
 // ============================================================================
-void LoKi::CounterAlg::handleVariables ( Property& /* p */ )  
+void LoKi::CounterAlg::handleVariables ( Property& /* p */ )
 {
   if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
   //
@@ -234,16 +233,16 @@ void LoKi::CounterAlg::handleVariables ( Property& /* p */ )
   Assert ( sc.isSuccess() , "Unable to set 'Variables'"   , sc ) ;
 }
 // ============================================================================
-// update  variables 
+// update  variables
 // ============================================================================
-StatusCode LoKi::CounterAlg::updateItems ()                 // update variables 
+StatusCode LoKi::CounterAlg::updateItems ()                 // update variables
 {
   // get the factory
   LoKi::Hybrid::ICoreFactory* factory = tool<LoKi::Hybrid::ICoreFactory> ( m_factory , this ) ;
   //
   m_items.clear() ;
   m_items.reserve ( m_map.size() ) ;
-  for ( auto ivar = m_map.begin() ; m_map.end() != ivar ; ++ivar ) 
+  for ( auto ivar = m_map.begin() ; m_map.end() != ivar ; ++ivar )
   {
     Item item ;
     StatusCode sc = factory->get ( ivar->second , item.m_fun , preambulo() ) ;
@@ -254,21 +253,21 @@ StatusCode LoKi::CounterAlg::updateItems ()                 // update variables
     item.m_name =           ivar->first   ;
     item.m_cnt  = &counter( ivar->first ) ;
     //
-    m_items.push_back  ( item ) ; 
+    m_items.push_back  ( item ) ;
     //
     debug() << "The decoded variable name is '"
             << m_items.back().m_name << "'\t, the functor : '"
             << m_items.back().m_fun  << "'" << endmsg ;
-  }  
-  // 
-  release ( factory ) ; // we do not need the factory anymore 
+  }
+  //
+  release ( factory ) ; // we do not need the factory anymore
   //
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
 // standard initialization
 // ============================================================================
-StatusCode LoKi::CounterAlg::initialize () 
+StatusCode LoKi::CounterAlg::initialize ()
 {
   StatusCode sc = GaudiAlgorithm::initialize () ;
   if ( sc.isFailure() ) { return sc ; }
@@ -276,44 +275,44 @@ StatusCode LoKi::CounterAlg::initialize ()
   //
   // decode variables:
   //
-  if  ( ! m_map.empty() ) 
+  if  ( ! m_map.empty() )
   {
     sc = updateItems() ;
-    if ( sc.isFailure () ) { return Error ( "Unable to decode Variables", sc ) ; }  
+    if ( sc.isFailure () ) { return Error ( "Unable to decode Variables", sc ) ; }
   }
   //
   return StatusCode::SUCCESS ;
 }
-// ============================================================================ 
-// standard finalization 
 // ============================================================================
-StatusCode LoKi::CounterAlg::finalize   () 
+// standard finalization
+// ============================================================================
+StatusCode LoKi::CounterAlg::finalize   ()
 {
   m_items . clear() ;
   //
   return GaudiAlgorithm::finalize () ;
 }
 // ============================================================================
-// the main method: execute 
-// ============================================================================ 
-StatusCode LoKi::CounterAlg::execute () 
+// the main method: execute
+// ============================================================================
+StatusCode LoKi::CounterAlg::execute ()
 {
   setFilterPassed(true);
   //
   Gaudi::Numbers* numbers = nullptr ;
   //
-  // get(create) counters in TES (if needed) 
-  if ( !m_location.empty() ) 
-  { numbers = getOrCreate<Gaudi::Numbers,Gaudi::Numbers> 
+  // get(create) counters in TES (if needed)
+  if ( !m_location.empty() )
+  { numbers = getOrCreate<Gaudi::Numbers,Gaudi::Numbers>
       ( evtSvc() , m_location ) ; }
   //
   for ( auto item = m_items.cbegin() ; m_items.cend() != item ; ++item )
   {
-    // evaluate the variable 
+    // evaluate the variable
     const double value = (item->m_fun)() ;
     // update TES object
     if ( numbers ) { numbers->counters().update ( item->m_name , value ) ; }
-    // update local counters 
+    // update local counters
     item->m_cnt->add ( value ) ;
   }
   //
@@ -327,5 +326,5 @@ DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,CounterAlg)
 // ============================================================================
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

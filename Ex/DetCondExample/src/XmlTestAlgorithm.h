@@ -14,7 +14,7 @@
     Pointers to relevant DataObjects are retrieved at every new event.
     The retrieved objects are explicitly updated to ensure they are valid.
 
-    @author Andrea Valassi 
+    @author Andrea Valassi
     @date December 2001
 *///--------------------------------------------------------------------------
 
@@ -23,10 +23,10 @@ class XmlTestAlgorithm : public GaudiAlgorithm {
  public:
 
   /// Constructor.
-  XmlTestAlgorithm( const std::string& name, ISvcLocator* pSvcLocator ); 
+  XmlTestAlgorithm( const std::string& name, ISvcLocator* pSvcLocator );
 
   // Algorithm standard methods.
-  StatusCode execute();
+  StatusCode execute() override;
 
 };
 

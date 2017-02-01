@@ -56,8 +56,7 @@ namespace std {
 class TCKANNSvc : public extends<Service,IIndexedANNSvc>  {
 
 public:
-  TCKANNSvc( const std::string& name, ISvcLocator* pSvcLocator);
-  ~TCKANNSvc() = default ;
+  using extends::extends;
 
   StatusCode initialize() override;
   StatusCode finalize() override;
@@ -67,26 +66,15 @@ public:
 private:
 
   // properties
-  additionalIDs_t m_additionals;
+  Gaudi::Property<additionalIDs_t>  m_additionals {this, "AdditionalIDs" };
 
   mutable SmartIF<IPropertyConfigSvc>  m_propertyConfigSvc;
-  std::string       m_propertyConfigSvcName;
-  std::string       m_instanceName;
+  Gaudi::Property<std::string>       m_propertyConfigSvcName { this, "IPropertyConfigSvcInstance", "PropertyConfigSvc" };
+  Gaudi::Property<std::string>       m_instanceName { this, "InstanceName",  "HltANNSvc" };
   mutable std::map<TCK,const PropertyConfig*> m_cache; // TODO: flush cache if m_instanceName changes
 };
 
 DECLARE_COMPONENT( TCKANNSvc )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-TCKANNSvc::TCKANNSvc( const std::string& name, ISvcLocator* pSvcLocator)
-  : base_class( name , pSvcLocator )
-{
-  declareProperty("IPropertyConfigSvcInstance", m_propertyConfigSvcName = "PropertyConfigSvc");
-  declareProperty("InstanceName", m_instanceName = "HltANNSvc");
-  declareProperty("AdditionalIDs", m_additionals);
-}
 
 StatusCode
 TCKANNSvc::initialize()

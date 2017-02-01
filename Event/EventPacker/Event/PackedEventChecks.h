@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PACKEDEVENTCHECKS_H
 #define EVENT_PACKEDEVENTCHECKS_H 1
 
@@ -25,11 +24,6 @@ namespace DataPacking
    */
   class DataChecks
   {
-
-  private:
-
-    /// Standard constructor disallowed
-    DataChecks( ) { }
 
   public:
 

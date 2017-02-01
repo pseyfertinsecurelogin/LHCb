@@ -1,5 +1,5 @@
 // $Id: DataObjectVersionFilter.h,v 1.3 2009-11-10 09:27:51 jonrob Exp $
-#ifndef DATAOBJECTVERSIONFILTER_H 
+#ifndef DATAOBJECTVERSIONFILTER_H
 #define DATAOBJECTVERSIONFILTER_H 1
 
 // Include files
@@ -8,7 +8,7 @@
 
 
 /** @class DataObjectVersionFilter DataObjectVersionFilter.h
- *  
+ *
  *  Checks the version of a given DataObject in the TES, and sets FilterPassed according
  *  to a min and max version number. Useful to allow reprocessing of some data depending
  *  on the version number
@@ -16,17 +16,17 @@
  *  @author Chris Jones
  *  @date   2009-11-06
  */
-class DataObjectVersionFilter final : public GaudiAlgorithm 
+class DataObjectVersionFilter final : public GaudiAlgorithm
 {
 
-public: 
+public:
 
   /// Standard constructor
   DataObjectVersionFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~DataObjectVersionFilter( ) = default; ///< Destructor
 
-  virtual StatusCode execute();    ///< Algorithm execution
+  StatusCode execute() override;    ///< Algorithm execution
 
 private:
 

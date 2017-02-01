@@ -8,10 +8,6 @@
 #include "vdt/sincos.h"
 
 // From Gaudi
-#include "GaudiKernel/Bootstrap.h"
-#include "GaudiKernel/PropertyMgr.h"
-#include "GaudiKernel/IJobOptionsSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/PhysicalConstants.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 
@@ -22,6 +18,8 @@
 // From Velo
 #include "VeloDet/DeVeloPhiType.h"
 #include "Kernel/VeloChannelID.h"
+
+#include "getOutputLevel.h"
 
 namespace VeloDet {
   /** This function simply provides access to a local static
@@ -89,25 +87,18 @@ const CLID& DeVeloPhiType::clID()
 //==============================================================================
 StatusCode DeVeloPhiType::initialize()
 {
-  { // Trick from old DeVelo to set the output level
-    std::unique_ptr<PropertyMgr> pmgr{ new PropertyMgr() };
-    int outputLevel=0;
-    pmgr->declareProperty("OutputLevel", outputLevel);
-    auto jobSvc = Gaudi::svcLocator()->service<IJobOptionsSvc>("JobOptionsSvc");
-    if( jobSvc ) jobSvc->setMyProperties("DeVeloPhiType", pmgr.get()).ignore();
-    if ( 0 < outputLevel ) {
-      msgSvc()->setOutputLevel("DeVeloPhiType", outputLevel);
-    }
-  }
 
-  auto sc = DeVeloSensor::initialize();
+  auto sc = initOutputLevel(msgSvc(), "DeVeloPhiType");
+  if (!sc) return sc;
+
+  sc = DeVeloSensor::initialize();
   if(!sc.isSuccess()) {
     msg() << MSG::ERROR << "Failed to initialise DeVeloSensor" << endmsg;
     return sc;
   }
-  m_debug   = (msgSvc()->outputLevel("DeVeloPhiType") == MSG::DEBUG  ) ;
-  m_verbose = (msgSvc()->outputLevel("DeVeloPhiType") == MSG::VERBOSE) ;
-  if(m_verbose) m_debug = true;
+  const auto lvl = msgSvc()->outputLevel("DeVeloPhiType");
+  m_debug   = lvl <= MSG::DEBUG;
+  m_verbose = lvl <= MSG::VERBOSE;
 
   m_numberOfZones=2;
   m_nbInner = param<int>("NbPhiInner");
@@ -130,7 +121,7 @@ StatusCode DeVeloPhiType::initialize()
     vdt::fast_asin( m_innerDistToOrigin / m_middleRadius );
   m_outerTilt += phiAtBoundary;
   double phi = m_outerTilt - vdt::fast_asin( m_outerDistToOrigin/outerRadius() );
-  if(m_debug) msg() << MSG::DEBUG << "Phi (degree) inner "    
+  if(m_debug) msg() << MSG::DEBUG << "Phi (degree) inner "
 		    << m_phiOrigin/Gaudi::Units::degree
 		    << " at boundary " << phiAtBoundary/Gaudi::Units::degree
 		    << " and outside " << phi/Gaudi::Units::degree
@@ -343,7 +334,7 @@ StatusCode DeVeloPhiType::neighbour(const LHCb::VeloChannelID& start,
 //==============================================================================
 StatusCode DeVeloPhiType::isInActiveArea(const Gaudi::XYZPoint& point) const
 {
-  if(m_verbose) msg() << MSG::VERBOSE << "isInActiveArea: x=" << point.x() 
+  if(m_verbose) msg() << MSG::VERBOSE << "isInActiveArea: x=" << point.x()
 		      << ",y=" << point.y() << endmsg;
   //  check boundaries....
   double radius=point.Rho();
@@ -355,7 +346,7 @@ StatusCode DeVeloPhiType::isInActiveArea(const Gaudi::XYZPoint& point) const
     isInner=false;
   }
   // Dead region
-  if(m_middleRadius+(m_rGap/2.) > radius && 
+  if(m_middleRadius+(m_rGap/2.) > radius &&
      m_middleRadius-(m_rGap/2.) < radius){
     return StatusCode::FAILURE;
   }

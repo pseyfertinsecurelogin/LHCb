@@ -6,7 +6,7 @@ class RecToPVConverter : public GaudiAlgorithm
 {
 public:
   RecToPVConverter( const std::string&, ISvcLocator*) ;
-  StatusCode execute() ;
+  StatusCode execute()  override;
 private:
   std::string m_inputName ;
   std::string m_outputName ;
@@ -37,7 +37,7 @@ RecToPVConverter::RecToPVConverter( const std::string& name,
 // Main execution
 //=============================================================================
 
-StatusCode RecToPVConverter::execute() 
+StatusCode RecToPVConverter::execute()
 {
   const  auto recvertices = get<LHCb::RecVertex::Range>(m_inputName) ;
   auto slimvertices = new LHCb::PrimaryVertex::Container() ;

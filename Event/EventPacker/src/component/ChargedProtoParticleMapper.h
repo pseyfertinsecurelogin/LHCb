@@ -1,4 +1,3 @@
-
 #ifndef SRC_ChargedProtoParticleMapper_H
 #define SRC_ChargedProtoParticleMapper_H 1
 
@@ -30,22 +29,19 @@ public:
                               const std::string& name,
                               const IInterface* parent );
 
-  /// Destructor
-  virtual ~ChargedProtoParticleMapper();
-
 public:
 
   /** Returns the correctly configured and name instance of the
    *  Clusters unpacker, for the given path
    */
-  virtual Gaudi::Utils::TypeNameString algorithmForPath(const std::string &path);
+  Gaudi::Utils::TypeNameString algorithmForPath(const std::string &path) override;
 
 public:
 
   /** Instruct the DataOnDemandSvc to create DataObjects for the
    *  intermediate levels of a path we can handle.
    */
-  virtual std::string nodeTypeForPath(const std::string &path);
+  std::string nodeTypeForPath(const std::string &path) override;
 
 private:
 

@@ -1,4 +1,3 @@
-// $Id: CaloUtils.cpp,v 1.1 2009-11-28 19:12:40 ibelyaev Exp $
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -15,45 +14,33 @@
 // vector -> set converter 
 // ============================================================================
 LHCb::CaloCellID::Set 
-LHCb::CaloHelpers::toSet 
-( const LHCb::CaloCellID::Vector& inp ) 
+LHCb::CaloHelpers::toSet( const LHCb::CaloCellID::Vector& inp ) 
 {
-  LHCb::CaloCellID::Set out ;
-  out.insert ( inp.begin() , inp.end() ) ;
-  return out ;
+  return { inp.begin(), inp.end() };
 }  
 // ============================================================================
 // vector -> set converter 
 // ============================================================================
 LHCb::CaloDigit::Set
-LHCb::CaloHelpers::toSet 
-( const LHCb::CaloDigit::Vector&  inp )
+LHCb::CaloHelpers::toSet( const LHCb::CaloDigit::Vector&  inp )
 {
-  LHCb::CaloDigit::Set out ;
-  out.insert ( inp.begin() , inp.end() ) ;
-  return out ;
+  return { inp.begin(), inp.end() };
 } 
 // ============================================================================
 // set -> vector converter 
 // ============================================================================
 LHCb::CaloCellID::Vector
-LHCb::CaloHelpers::toVector 
-( const LHCb::CaloCellID::Set& inp ) 
+LHCb::CaloHelpers::toVector( const LHCb::CaloCellID::Set& inp ) 
 {
-  LHCb::CaloCellID::Vector out ;
-  out.insert ( out.end() , inp.begin() , inp.end() ) ;
-  return out ;
+  return { inp.begin(), inp.end() };
 }  
 // ============================================================================
 // set -> vetcor converter 
 // ============================================================================
 LHCb::CaloDigit::Vector
-LHCb::CaloHelpers::toVector 
-( const LHCb::CaloDigit::Set&  inp )
+LHCb::CaloHelpers::toVector( const LHCb::CaloDigit::Set&  inp )
 {
-  LHCb::CaloDigit::Vector out ;
-  out.insert ( out.end() , inp.begin() , inp.end() ) ;
-  return out ;
+  return {inp.begin(), inp.end()};
 }
 // ============================================================================
 // vector -> set converter 
@@ -110,9 +97,7 @@ LHCb::CaloCellID LHCb::CaloHelpers::_get_at_
   const size_t                 index ) 
 {
   if ( cells.size() <= index ) { return LHCb::CaloCellID() ; }
-  LHCb::CaloCellID::Set::const_iterator it = cells.begin() ;
-  std::advance ( it , index ) ;
-  return *it ;
+  return *std::next ( cells.begin() , index ) ;
 }
 // ========================================================================
 /*  get the digit from the set 
@@ -127,10 +112,8 @@ const LHCb::CaloDigit* LHCb::CaloHelpers::_get_at_
 ( const LHCb::CaloDigit::Set&  cells ,
   const size_t                 index ) 
 {
-  if ( cells.size() <= index ) { return 0 ; }
-  LHCb::CaloDigit::Set::const_iterator it = cells.begin() ;
-  std::advance ( it , index ) ;
-  return *it ;
+  if ( cells.size() <= index ) { return nullptr ; }
+  return *std::next ( cells.begin() , index ) ;
 }
 // ========================================================================
 // insert the object in set 

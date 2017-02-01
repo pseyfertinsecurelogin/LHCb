@@ -19,7 +19,7 @@ namespace LHCb{
                                  std::begin(needle),   std::end(needle),
                       [](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
           );
-          return (it != std::end(haystack) );
+          return it != std::end(haystack);
        }
 
         inline std::string to_string( boost::string_ref sr) {
@@ -55,9 +55,8 @@ namespace LHCb{
     }
 
     inline std::string PathFromContext( boost::string_ref context , boost::string_ref def ){
-      std::string uCont = details::toUpper( context );
 
-      if( uCont == "" || uCont == "OFFLINE" ) return details::to_string( def );          // default standard Offline
+      if( context.empty() || details::toUpper( context ) == "OFFLINE" ) return details::to_string( def );          // default standard Offline
 
       // non-standard locations
       auto index = def.find_first_of("/"); //FIXME: what if std::string::npos?

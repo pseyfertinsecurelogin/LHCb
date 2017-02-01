@@ -23,6 +23,8 @@ import sys
 import string
 import random
 
+DEFAULT_METHOD = 0
+
 def str_generator(size=6, chars=string.printable):
     return ''.join(random.choice(chars) for x in range(size))
 
@@ -34,9 +36,10 @@ class DetCondCompressionTest(unittest.TestCase):
     def setUp(self):
         unittest.TestCase.setUp(self)
         self.testin = 'data'
-        self.testout = ['0WFoAOAAABAAA/Td6WFoAAAFpIt42AgAhARwAAAAQz1jMAQADZGF0YQBj8/OtAAEYBGvp8KWQQpkNAQAAAAABWVo=',
-                        '1QlpoOTFBWSZTWa/mnnIAAAEBgCQABAAgADDMDHqCcXckU4UJCv5p5yA=']
-        self.Nmethods = 1 # number of methods
+        # depending of the LZMA settings in ROOT we may have different compressed values for the same input
+        self.testout = [('0WFoAOAAABAAA/Td6WFoAAAFpIt42AgAhARwAAAAQz1jMAQADZGF0YQBj8/OtAAEYBGvp8KWQQpkNAQAAAAABWVo=',
+                         '0WFoAOAAABAAA/Td6WFoAAAFpIt42AgAhAQAAAAA3J5fWAQADZGF0YQBj8/OtAAEYBGvp8KWQQpkNAQAAAAABWVo=')]
+        self.Nmethods = len(self.testout)
 
 #    def tearDown(self):
 #        unittest.TestCase.tearDown(self)
@@ -45,18 +48,19 @@ class DetCondCompressionTest(unittest.TestCase):
         """Check all compression methods"""
         for method in range(self.Nmethods):
             ret = CondDBCompression.compress(self.testin,method)
-            self.assertEquals(self.testout[method], ret)
+            self.assert_(ret in self.testout[method])
 
     def test_compression_default(self):
         """Check default compression method"""
         ret = CondDBCompression.compress(self.testin)
-        self.assertEquals(self.testout[0], ret)
+        self.assert_(ret in self.testout[DEFAULT_METHOD])
 
     def test_decompression(self):
         """Check decompression method"""
         for method in range(self.Nmethods):
-            ret = CondDBCompression.decompress(self.testout[method])
-            self.assertEquals(self.testin, ret)
+            for compressed in self.testout[method]:
+                ret = CondDBCompression.decompress(compressed)
+                self.assertEquals(self.testin, ret)
 
     def test_decompression_2(self):
         """Check decompression method with random string

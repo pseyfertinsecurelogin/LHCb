@@ -50,9 +50,9 @@ namespace LoKi
     public:
       // ======================================================================
       /// initialization of the tool
-      virtual StatusCode initialize () ;
+      StatusCode initialize ()  override;
       /// finalization   of the tool
-      virtual StatusCode finalize   () ;
+      StatusCode finalize   ()  override;
       // ======================================================================
     protected:
       // ======================================================================
@@ -76,12 +76,12 @@ namespace LoKi
       /// helper method to decrease amount of the typing
       template <class TYPE>
       void       _set
-      ( TYPE*& local , const TYPE& right ) ;
+      ( std::unique_ptr<TYPE>& local , const TYPE& right ) ;
       // ======================================================================
       template <class TYPE1,class TYPE2>
       StatusCode _get_
       ( const std::string&                                            code    ,
-        LoKi::Functor<TYPE1,TYPE2>*&                                  local   ,
+        std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&                  local   ,
         typename LoKi::Assignable<LoKi::Functor<TYPE1,TYPE2> >::Type& output  ) ;
       // ======================================================================
     public:
@@ -146,10 +146,8 @@ namespace LoKi
       std::vector<std::string>       m_cpplines   ; ///< header lines for C++ code
       ///
       // information about the created functors
-      typedef std::pair<std::string,std::string>  PAIR       ;
-      typedef std::map<std::string,PAIR>          FUNCTIONS  ;
-      typedef std::map<std::string,FUNCTIONS>     ALLFUNCS   ;
-      ALLFUNCS                       m_allfuncs   ;
+      typedef std::map<std::string,std::pair<std::string,std::string>> FUNCTIONS  ;
+      std::map<std::string,FUNCTIONS>             m_allfuncs   ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -160,20 +158,16 @@ namespace LoKi
 // helper method to decrease the typing
 // ============================================================================
 template <class TYPE>
-inline void LoKi::Hybrid::Base::_set ( TYPE*& local , const TYPE& right )
+inline void LoKi::Hybrid::Base::_set ( std::unique_ptr<TYPE>& local , const TYPE& right )
 {
-  if ( 0 != local )
-  {
+  if ( local ) {
     if ( msgLevel ( MSG::DEBUG ) )
     { Warning ( "setCut/Fun(): Existing 'Function/Predicate' is substituted !" ).ignore() ; } ;
-    delete local;
-    local = 0 ;
   }
   // clone it!
-  local = right.clone() ;
+  local.reset( right.clone() );
   // debug printput:
-  if ( msgLevel ( MSG::DEBUG ) )
-  {
+  if ( msgLevel ( MSG::DEBUG ) ) {
     debug() << "The 'cut' is set to be '" << (*local) << "' = '"
             << System::typeinfoName( typeid( *local) ) << endmsg  ;
   } ;
@@ -184,29 +178,24 @@ template <class TYPE1,class TYPE2>
 inline
 StatusCode LoKi::Hybrid::Base::_get_
 ( const std::string&                                            code    ,
-  LoKi::Functor<TYPE1,TYPE2>*&                                  local   ,
+  std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&                  local   ,
   typename LoKi::Assignable<LoKi::Functor<TYPE1,TYPE2> >::Type& output  )
 {
   // ==========================================================================
   //
   // 1) clear the placeholder, if needed
-  //
-  if ( NULL != local ) { delete local ; local = NULL ; }
-  //
   // 2') look for cached functors:
   typedef LoKi::CacheFactory< LoKi::Functor<TYPE1,TYPE2> > cache_t;
-  LoKi::Functor<TYPE1,TYPE2>* created =
-    ( !this->m_use_cache ? NULL :
-      cache_t::Factory::create ( cache_t::id ( LoKi::Cache::makeHash ( code ) ) ) );
+  local.reset(
+    ( !this->m_use_cache ? nullptr :
+      cache_t::Factory::create ( cache_t::id ( LoKi::Cache::makeHash ( code ) ) ) ) );
   //
-  if ( created )
-  {
-    local  = created ;
+  if ( local ) {
     output = *local ;
     //
     this->counter("# loaded from CACHE" ) += 1 ;
     //
-    delete local ; local = NULL ;
+    local.reset();
     //
     return StatusCode::SUCCESS ;    // RETURN
   }
@@ -218,14 +207,14 @@ StatusCode LoKi::Hybrid::Base::_get_
   const StatusCode sc = this->executeCode ( code ) ;
   if ( sc.isFailure() )
   { return Error ( "Error from LoKi::Hybrid::Base::executeCode", sc  ) ; } // RETURN
-  if ( NULL == local  )
+  if ( !local  )
   { return Error ( "Invalid object for the code"                     ) ; } // RETURN
   // assign the result
   output = *local ;                                                        // ASSIGN
   //
   this->counter("# loaded from PYTHON") += 1 ;
   //
-  delete local ; local = NULL ;
+  local.reset();
   //
   if ( this->m_makeCpp )
   {

@@ -1,4 +1,3 @@
-// $Id: CaloNeighbours.h,v 1.3 2009-10-25 15:01:49 ibelyaev Exp $
 // ============================================================================
 #ifndef CALOUTILS_CALONEIGHBOURS_H 
 #define CALOUTILS_CALONEIGHBOURS_H 1

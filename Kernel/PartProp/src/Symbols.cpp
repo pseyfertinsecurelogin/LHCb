@@ -1,6 +1,3 @@
-// $Id$
-// ============================================================================
-// CVS tag $Name: not supported by cvs2svn $, version $Revision$ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -53,16 +50,9 @@ Decays::Symbols& Decays::Symbols::instance()
   return s_symbols ;
 }
 // ============================================================================
-// destructor 
-// ============================================================================
-Decays::Symbols::~Symbols() {}
-// ============================================================================
 // constructor 
 // ============================================================================ 
 Decays::Symbols::Symbols () 
-  : m_nodes () 
-  , m_help  () 
-  , m_cc    ()
 {
   addSymbol ( "X"          , Decays::Nodes::Any      () , "Any particle"         ) ;
   //
@@ -162,7 +152,7 @@ bool Decays::Symbols::addSymbol
   // trim the arguments 
   boost::trim ( sym   ) ;
   // ==========================================================================  
-  NodeMap::const_iterator ifind = m_nodes.find ( sym ) ;
+  auto ifind = m_nodes.find ( sym ) ;
   if ( m_nodes.end () != ifind ) { return false ; }                   // RETURN 
   // add the node into the map 
   bool inserted = m_nodes.insert ( sym , node  ).second ;
@@ -228,7 +218,7 @@ StatusCode Decays::Symbols::symbol
 {
   // trim the argument 
   boost::trim ( sym ) ;
-  NodeMap::const_iterator ifind = m_nodes.find ( sym ) ;
+  auto ifind = m_nodes.find ( sym ) ;
   if ( m_nodes.end() != ifind ) 
   {
     node = ifind->second ;
@@ -244,8 +234,7 @@ size_t Decays::Symbols::symbols ( Decays::Symbols::Names& names ) const
 {
   // clear names ;
   names.clear() ;
-  for ( NodeMap::const_iterator inode = m_nodes.begin() ; 
-        m_nodes.end () != inode ; ++inode ) 
+  for ( auto inode = m_nodes.begin() ; m_nodes.end () != inode ; ++inode ) 
   { names.push_back ( inode->first ) ; }
   // sort it according to CC-criteria                               ATTENTION! 
   std::stable_sort ( names.begin() , names.end() , Decays::CC::CmpCC() ) ;
@@ -267,13 +256,12 @@ StatusCode Decays::Symbols::particles
   // check the service 
   if ( 0 == service ) { return StatusCode  ( InvalidService ) ; }     // RETURN 
   // 
-  typedef LHCb::IParticlePropertySvc::iterator iterator ;
-  iterator begin = service -> begin () ;
-  iterator end   = service -> end   () ;
+  auto begin = service -> begin () ;
+  auto end   = service -> end   () ;
   for ( ; end != begin ; ++begin ) 
   {
     const LHCb::ParticleProperty* pp = *begin ;
-    if ( 0 == pp ) { continue ; }
+    if ( !pp ) { continue ; }
     parts.push_back ( pp -> particle () ) ;
   }
   // sort it according to CC-criteria                                 ATTENTION!

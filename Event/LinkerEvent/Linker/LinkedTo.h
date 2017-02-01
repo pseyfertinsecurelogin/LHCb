@@ -22,7 +22,7 @@
 
 
 template < class TARGET, class SOURCE=ContainedObject>
-class LinkedTo {
+class LinkedTo final {
 public: 
   //== Typedefs to please Matt
   typedef typename std::vector<TARGET*>                  LRange;
@@ -65,8 +65,6 @@ public:
     m_curReference.setWeight( 0. );
   }; 
             
-  virtual ~LinkedTo( ) {} ///< Destructor
-  
   bool notFound() const { return (0 == m_links); }
 
    /** returns the first target related to the specified source.
@@ -74,11 +72,9 @@ public:
   TARGET* first( const SOURCE* source ) {
     if ( !m_links ) return nullptr;
     bool status = m_links->firstReference ( source->index(), source->parent(), m_curReference );
-    if ( !status ) {
-      m_curReference.setNextIndex( -1 );
-      return nullptr;
-    }
-    return currentTarget();
+    if ( status ) return currentTarget();
+    m_curReference.setNextIndex( -1 );
+    return nullptr;
   }
   
    /** returns the first target related to the source specified as a key.
@@ -128,27 +124,23 @@ public:
     return m_vect;
   }
 
-  LRangeIt beginRange()   { return m_vect.begin(); }
-  LRangeIt endRange()     { return m_vect.end(); }
-
-protected:
+private:
 
   TARGET* currentTarget() {
     if ( !m_links ) return nullptr;
     int myLinkID = m_curReference.linkID();
     LinkManager::Link* link = m_links->linkMgr()->link( myLinkID );
-    if ( 0 == link->object() ) {
+    if ( !link->object() ) {
       SmartDataPtr<DataObject> tmp( m_eventSvc, link->path() );
       link->setObject( tmp );
       if ( !tmp ) return nullptr;
     }
     ObjectContainerBase* parent = dynamic_cast<ObjectContainerBase*>(link->object() );
-    if ( !parent ) return nullptr;
-    TARGET* myObj = (TARGET*)parent->containedObject( m_curReference.objectKey() );
-    return myObj;
+    return parent ? static_cast<TARGET*>(parent->containedObject( m_curReference.objectKey() )) 
+                  : nullptr;
+
   }  
 
-private:
   IDataProviderSvc*   m_eventSvc;
   LHCb::LinksByKey*   m_links;
   LHCb::LinkReference m_curReference;

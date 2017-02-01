@@ -14,6 +14,8 @@ find_package(Boost)
 find_package(PythonLibs)
 find_package(RELAX)
 find_package(ROOT)
+# hide warnings from some external projects
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 gaudi_add_library(LoKiCoreLib
                   src/*.cpp

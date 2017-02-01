@@ -54,10 +54,6 @@ DeSTSector::DeSTSector( const std::string& name ) :
   // constructer (first strip means we number from 1)
 }
 
-DeSTSector::~DeSTSector() {
-  // destructer
-}
-
 std::ostream& DeSTSector::printOut( std::ostream& os ) const{
 
   // stream to cout

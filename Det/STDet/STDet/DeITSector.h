@@ -32,10 +32,7 @@ public:
   /** Constructor */
   DeITSector ( const std::string& name = "" ) ;
 
-  /** Destructor */
-  virtual ~DeITSector();
-
-  virtual unsigned int prodID() const;
+  unsigned int prodID() const override;
 
   /**
   * Retrieves reference to class identifier
@@ -47,14 +44,14 @@ public:
   * another reference to class identifier
   * @return the class identifier for this class
   */
-  const CLID& clID () const;
+  const CLID& clID () const override;
 
   /** initialization method
   * @return Status of initialisation
   */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
-  std::string conditionsPathName() const;
+  std::string conditionsPathName() const override;
 
 private:
 

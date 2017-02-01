@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_IMCHYBRIDTOOL_H 
 #define LOKI_IMCHYBRIDTOOL_H 1
@@ -36,9 +35,6 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2004-06-29
    *
-   *                    $Revision$
-   *  Last modification $Date$
-   *                 by $Author$
    */
   class GAUDI_API IMCHybridTool : public virtual IAlgTool 
   {
@@ -109,11 +105,6 @@ namespace LoKi
     virtual void set ( const LoKi::Types::MCSources&  cut ) = 0 ;
     /// set the C++ source for LHCb::MCVertex 
     virtual void set ( const LoKi::Types::MCVSources& cut ) = 0 ;
-    // ========================================================================
-  protected:
-    // ========================================================================
-    /// destructor : virtual and protected 
-    virtual ~IMCHybridTool() ;            // destructor : virtual and protected 
     // ========================================================================
   };
   // ==========================================================================

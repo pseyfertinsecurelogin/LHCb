@@ -18,7 +18,7 @@ DECLARE_TOOL_FACTORY( CaloDigitFilterTool )
 CaloDigitFilterTool::CaloDigitFilterTool( const std::string& type,
                                           const std::string& name,
                                           const IInterface* parent )
-  : GaudiTool ( type, name , parent )
+  : base_class ( type, name , parent )
 {
   declareInterface<ICaloDigitFilterTool>(this);
   declareProperty("MaskMap", m_maskMap);
@@ -44,15 +44,10 @@ CaloDigitFilterTool::CaloDigitFilterTool( const std::string& type,
   declareProperty("SetCounterLevel", m_setCounters = 1 );
 }
 //=============================================================================
-// Destructor
-//=============================================================================
-CaloDigitFilterTool::~CaloDigitFilterTool() {}
-
-//=============================================================================
 
 
 StatusCode CaloDigitFilterTool::initialize(){
-  StatusCode sc = GaudiTool::initialize(); // must be executed first
+  StatusCode sc = base_class::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by Calo2Dview
   if ( m_vertLoc.empty() ) 
   { m_vertLoc = (m_usePV3D) ? LHCb::RecVertexLocation::Velo3D : LHCb::RecVertexLocation::Primary; }
@@ -127,20 +122,20 @@ void CaloDigitFilterTool::getOffsetMap(const std::string& det){
                *(caloOffs->second) : createMaps(m_calo) );
     }
   }else{
-    if      ( det == "Ecal" ) { setMaps( m_ecalMaps ); }
-    else if ( det == "Hcal" ) { setMaps( m_hcalMaps ); }
-    else if ( det == "Prs"  ) { setMaps( m_prsMaps  ); }
-    else                      { setMaps( m_nullMaps ); }
+    setMaps ( det == "Ecal" ? m_ecalMaps  
+            : det == "Hcal" ? m_hcalMaps  
+            : det == "Prs"  ? m_prsMaps  
+            : m_nullMaps );
   }
 }
 
 //-----------------------
 double CaloDigitFilterTool::getOffset(LHCb::CaloCellID id, int scale,bool spd){
-  if( 0 == scale)return 0;
-  if( scale <= m_scalingMin)return 0;
+  if ( 0 == scale ) return 0;
+  if ( scale <= m_scalingMin ) return 0;
   const auto & table = (spd) ? offsets() : offsetsSPD();
   const auto it = table.find( id );
-  if( it == table.end() )return 0.;
+  if ( it == table.end() ) return 0.;
   const auto& ref =  it->second;
   //  overlap probabilty (approximate)
   constexpr double ncells = 6016.;
@@ -158,12 +153,9 @@ double CaloDigitFilterTool::getOffset(LHCb::CaloCellID id, int scale,bool spd){
 //-----------------------
 int  CaloDigitFilterTool::getMask(const std::string & det){
   auto it = m_maskMap.find( det );
-  if ( it == m_maskMap.end() ){
-    it = m_maskMap.find( "Default");
-    if( it == m_maskMap.end() )return 0;
-    else return it->second;
-  }
-  return it->second;
+  if ( it != m_maskMap.end() ) return it->second;
+  it = m_maskMap.find( "Default");
+  return  it != m_maskMap.end() ? it->second :  0;
 }
 
 //-----------------------
@@ -189,7 +181,7 @@ int CaloDigitFilterTool::getScale(){
 
 double CaloDigitFilterTool::offset(LHCb::CaloCellID id,bool spd){
   if( id.caloName() != m_caloName){
-    if( ! setDet( id.caloName() ))return 0.;
+    if( !setDet( id.caloName() ))return 0.;
   }
   int scale = getScale();
   return getOffset( id , scale,spd);
@@ -208,7 +200,7 @@ bool CaloDigitFilterTool::cleanDigits(const std::string & det, bool substr, bool
 
   std::string container =  LHCb::CaloAlgUtils::CaloDigitLocation( det );
   m_digits = getIfExists<LHCb::CaloDigits>( evtSvc(), container );
-  if( nullptr == m_digits )return false;
+  if( !m_digits )return false;
 
   //
   int scale = getScale();
@@ -217,7 +209,7 @@ bool CaloDigitFilterTool::cleanDigits(const std::string & det, bool substr, bool
   m_mOffs = 0.;
   int nOffs = 0;
   for ( LHCb::CaloDigit* digit : *m_digits ){
-    if(nullptr != digit) cleanDigit( digit , substr, scale , mask,spd);
+    if (digit) cleanDigit( *digit, substr, scale, mask, spd );
     nOffs++;
   }
 
@@ -230,13 +222,12 @@ bool CaloDigitFilterTool::cleanDigits(const std::string & det, bool substr, bool
 }
 
 //-----------------------
-void CaloDigitFilterTool::cleanDigit(LHCb::CaloDigit* digit, bool substr , int scale , bool mask,bool spd){
-  if(nullptr == digit)return;
-  LHCb::CaloCellID id = digit->cellID();
+void CaloDigitFilterTool::cleanDigit(LHCb::CaloDigit& digit, bool substr , int scale , bool mask,bool spd){
+  LHCb::CaloCellID id = digit.cellID();
 
   // apply mask
   if( mask && m_mask !=0 && m_calo->hasQuality( id  , (CaloCellQuality::Flag) m_mask) ){
-    digit->setE(0.);
+    digit.setE(0.);
     m_nMask++;
   }
 
@@ -246,9 +237,9 @@ void CaloDigitFilterTool::cleanDigit(LHCb::CaloDigit* digit, bool substr , int s
     if( scale < 0)scale = getScale();
     double offset = getOffset( id, scale,spd );
     if( 0. != offset ){
-      double e = digit->e() - offset;
+      double e = digit.e() - offset;
       if(  e < 0. ) e=0.;
-      digit->setE( e );
+      digit.setE( e );
       m_mOffs += offset/m_calo->cellGain( id ); // offset (in ADC)
     }
   }
@@ -261,27 +252,23 @@ unsigned int CaloDigitFilterTool::nVertices(){
   int nVert = 0;
   if( !m_usePV3D){
     LHCb::RecVertices* verts= getIfExists<LHCb::RecVertices>(evtSvc(),m_vertLoc);
-    if( nullptr != verts){
-      nVert = verts->size();
-      return nVert;
-    }
+    if( verts ) return verts->size();
   }
   // try PV3D if explicitely requested or if RecVertices not found
   if(!m_usePV3D)m_vertLoc = LHCb::RecVertexLocation::Velo3D;
   LHCb::VertexBases* verts= getIfExists<LHCb::VertexBases>( m_vertLoc );
-  if( nullptr != verts)nVert = verts->size();
-
+  if( verts ) nVert = verts->size();
   return nVert;
 }
 
 unsigned int CaloDigitFilterTool::nSpd(){
   const auto loc = LHCb::CaloAlgUtils::CaloDigitLocation( "SPD" );
   const auto * digits = getIfExists<LHCb::CaloDigits> (evtSvc(),loc );
-  return (nullptr != digits) ? digits->size() : 0;
+  return digits ? digits->size() : 0;
 }
 
 StatusCode CaloDigitFilterTool::finalize() {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
   incSvc() -> removeListener  ( this ) ;
-  return GaudiTool::finalize();  // must be called after all other actions
+  return base_class::finalize();  // must be called after all other actions
 }

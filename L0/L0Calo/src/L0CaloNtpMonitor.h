@@ -17,15 +17,15 @@ class DeCalorimeter ;
  public:
   /// Standard constructor
   L0CaloNtpMonitor( const std::string &name , ISvcLocator * pSvcLocator ) ;
-  
+
   virtual ~L0CaloNtpMonitor( ) ; ///< Destructor
-  
-  virtual StatusCode initialize() ; ///< Algorithm initialization
-  virtual StatusCode execute   () ; ///< Algorithm execution
-  
+
+  StatusCode initialize()  override; ///< Algorithm initialization
+  StatusCode execute   ()  override; ///< Algorithm execution
+
 protected:
 
-private: 
+private:
   std::string              m_inputDataSuffix ;
 
   DeCalorimeter * m_ecal            ; ///< Pointer to Ecal detector element

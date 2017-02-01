@@ -1,6 +1,6 @@
 #ifndef IOVDOMDOCUMENT_
 #define IOVDOMDOCUMENT_
-
+#include <memory>
 #include "GaudiKernel/Time.h"
 #include "GaudiKernel/IValidity.h"
 
@@ -8,9 +8,9 @@
 
 
 /** @class IOVDOMDocument XmlTools/IOVDOMDocument.h
- * 
+ *
  *  Small class to hold a DOMDocument together with a validity.
- * 
+ *
  *  @author Marco Clemencic
  *  @date   2006-02-01
  */
@@ -22,46 +22,46 @@ public:
   /// Constructor
   IOVDOMDocument(xercesc::DOMDocument *dom);
 
-  /// Destructor
-  virtual ~IOVDOMDocument();
 
   /// Return the contained DOMDocument.
-  inline xercesc::DOMDocument * getDOM() const { return m_dom; }
+  inline xercesc::DOMDocument * getDOM() const { return m_dom.get(); }
 
   // -------- Implementation of IValidity --------
-   
+
   /// is the Object valid? (it can be always invalid)
-  virtual bool isValid() const; 
+  bool isValid() const override;
 
   /// is the Object valid for a given time?
-  virtual bool isValid( const Gaudi::Time& time) const; 
+  bool isValid( const Gaudi::Time& time) const override;
 
   /// since what time the Objest is valid?
-  virtual const Gaudi::Time& validSince() const; 
+  const Gaudi::Time& validSince() const override;
 
   /// till  what time the Object is Valid?
-  virtual const Gaudi::Time& validTill() const;
+  const Gaudi::Time& validTill() const override;
 
   /// set the validity range of the Object
-  virtual void setValidity( const Gaudi::Time& since, const Gaudi::Time& until); 
+  void setValidity( const Gaudi::Time& since, const Gaudi::Time& until) override;
 
-  /// set the validity time of the Object 
-  virtual void setValiditySince( const Gaudi::Time& since); 
+  /// set the validity time of the Object
+  void setValiditySince( const Gaudi::Time& since) override;
 
-  /// set the validity time of the Object 
-  virtual void setValidityTill( const Gaudi::Time& until);
+  /// set the validity time of the Object
+  void setValidityTill( const Gaudi::Time& until) override;
 
 private:
-  
-  /// Time of the start of validity
-  Gaudi::Time m_since;
-  
-  /// Time of end of validity
-  Gaudi::Time m_until;
-  
-  /// The contained document
-  xercesc::DOMDocument *m_dom;
-};
 
+  /// Time of the start of validity
+  Gaudi::Time m_since = Gaudi::Time::epoch();
+
+  /// Time of end of validity
+  Gaudi::Time m_until = Gaudi::Time::max();
+
+  /// The contained document
+  struct release {
+    template <typename T> void operator()(T* p) const { if (p) p->release(); }
+  };
+  std::unique_ptr<xercesc::DOMDocument,release> m_dom;
+};
 
 #endif /*IOVDOMDOCUMENT_*/

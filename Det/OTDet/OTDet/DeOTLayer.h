@@ -1,4 +1,3 @@
-// $Id: DeOTLayer.h,v 1.18 2009-09-24 11:45:32 wouter Exp $
 #ifndef OTDET_DEOTLAYER_H
 #define OTDET_DEOTLAYER_H 1
 
@@ -18,7 +17,7 @@
  *
  *  This is the detector element class for an Outer Tracker Layer.
  *
- *  @author Jeroen van Tilburg jtilburg@nikhef.nl 
+ *  @author Jeroen van Tilburg jtilburg@nikhef.nl
  *  @date   04-04-2003
  */
 
@@ -34,33 +33,30 @@ class DeOTLayer : public DetectorElement {
 
   /** Constructor */
   DeOTLayer(const std::string& name = "") ;
-  
-  /** Destructor */
-  ~DeOTLayer() ;
-  
+
   /** Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const ;
+  const CLID& clID() const  override;
 
   /** Another reference to class identifier
    * @return the class identifier for this class
    */
   static const CLID& classID() { return CLID_DeOTLayer; }
-  
-  /** Initialization method 
+
+  /** Initialization method
    * @return Status of initialisation
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
-  /** Return layer id 
-   * @return layerID 
+  /** Return layer id
+   * @return layerID
    */
   unsigned int layerID() const;
-  
+
   /** Element id */
   LHCb::OTChannelID elementID() const;
-  
+
   /** Set element id */
   void setElementID(const LHCb::OTChannelID& chanID);
 
@@ -93,12 +89,12 @@ class DeOTLayer : public DetectorElement {
    * @return const pointer to detector element
    */
   DeOTQuarter* findQuarter(const Gaudi::XYZPoint& aPoint);
-  
+
   /** @return stereo angle of the layer */
   double angle() const;
-  
-  /** plane corresponding to the layer 
-  * @return the plane 
+
+  /** plane corresponding to the layer
+  * @return the plane
   */
   const Gaudi::Plane3D& plane() const;
   StatusCode cachePlane();
@@ -107,18 +103,18 @@ class DeOTLayer : public DetectorElement {
    * @return vector of quarters
    */
   const Quarters& quarters() const;
-  
+
  private:
    /// 4 quarters; starting from 0
   typedef OT::IndexToDetElementMap<DeOTQuarter, 4, 0> MapQuarters;
 
-  unsigned int m_stationID;       ///< stationID
-  unsigned int m_layerID;         ///< layer ID number
-  LHCb::OTChannelID m_elementID;  ///< element id
-  double m_stereoAngle;           ///< layer stereo angle 
-  Gaudi::Plane3D m_plane;         ///< plane corresponding to the layer
-  Quarters m_quarters;            ///< vector of quarters
-  MapQuarters m_mapQuarters;      ///< map quarters
+  unsigned int m_stationID = 0u;       ///< stationID
+  unsigned int m_layerID = 0u;         ///< layer ID number
+  LHCb::OTChannelID m_elementID = 0u;  ///< element id
+  double m_stereoAngle = 0.0;          ///< layer stereo angle
+  Gaudi::Plane3D m_plane;              ///< plane corresponding to the layer
+  Quarters m_quarters;                 ///< vector of quarters
+  MapQuarters m_mapQuarters;           ///< map quarters
 };
 
 // -----------------------------------------------------------------------------

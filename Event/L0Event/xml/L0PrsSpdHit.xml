@@ -6,7 +6,10 @@
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
   <package name="L0Event">
-    <class author="Olivier Callot" desc=" Fired cells in Prs or Spd." id="6007" name="L0PrsSpdHit">
+    <class author="Olivier Callot" desc=" Fired cells in Prs or Spd." id="6007" name="L0PrsSpdHit"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
+    >
       <location name = "Prs" place="Trig/L0/PrsRaw"/>
       <location name = "Spd" place="Trig/L0/SpdRaw"/>
 

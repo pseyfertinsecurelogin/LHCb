@@ -34,8 +34,6 @@ LbAppInit::LbAppInit( const std::string& name,
                       ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator ),
     m_engine(0),
-    m_randSvc(0),
-    m_condDBInfo(0),
     m_evtCounter(0),
     m_eventMax(0),
     m_appName(""),
@@ -67,49 +65,45 @@ StatusCode LbAppInit::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
 
-  IService* appMgr = svc<IService>( "ApplicationMgr" );
-  SmartIF<IProperty> propMgr( appMgr );
+  auto appMgr = service( "ApplicationMgr" );
+  auto propMgr = appMgr.as<IProperty>();
   std::string value ;
   sc = propMgr->getProperty( "EvtMax", value );
-  if( sc.isFailure() ) {
+  if( sc.isFailure() )
     return Error( " Fatal error while retrieving Property EvtMax " );
 
-  } else {
-    m_eventMax = std::atoi(value.c_str()) ;
-    always()
-      << "=================================================================="
-      << endmsg;
-    if( -1 == m_eventMax ) {
-      always() << "Requested to process all events on input file(s)" << endmsg;
-    }
-    else {
-      always() << "Requested to process " << m_eventMax << " events" << endmsg;
-    }
-    always()
-      << "=================================================================="
-      << endmsg;
+  m_eventMax = std::atoi(value.c_str()) ;
+  always()
+    << "=================================================================="
+    << endmsg;
+  if( -1 == m_eventMax ) {
+    always() << "Requested to process all events on input file(s)" << endmsg;
   }
+  else {
+    always() << "Requested to process " << m_eventMax << " events" << endmsg;
+  }
+  always()
+    << "=================================================================="
+    << endmsg;
+  
 
   sc = propMgr->getProperty( "AppName", value );
-  if( sc.isFailure() ) {
+  if( sc.isFailure() )
     return Error( " Fatal error while retrieving Property AppName " );
-  } else {
-    m_appName = value;
-  }
+  m_appName = value;
 
   sc = propMgr->getProperty( "AppVersion", value );
-  if( sc.isFailure() ) {
+  if( sc.isFailure() ) 
     return Error( " Fatal error while retrieving Property AppVersion " );
-  } else {
-    m_appVersion = value;
-  }
+  m_appVersion = value;
 
   if( m_preload ) {
     IGenericTool* preloadTool = tool<IGenericTool>( "PreloadGeometryTool" );
     preloadTool->execute();
+    release(preloadTool);
   }
 
-  m_condDBInfo = svc<ICondDBInfo>("CondDBCnvSvc", true );
+  m_condDBInfo = service("CondDBCnvSvc", true );
 
   // Retrieve event counter tool
   m_evtCounter = tool<IEventCounter>(m_evtCounterName);
@@ -203,13 +197,14 @@ void LbAppInit::printEventRun( long long event, int run,
 StatusCode LbAppInit::initRndm( const std::vector<long int>& seeds )
 {
   // Get the random number engine if not already done
-  if( 0 == m_randSvc ) m_randSvc = svc<IRndmGenSvc>( "RndmGenSvc", true );
-  if( 0 == m_engine  )
-  {
+  if( !m_randSvc ) {
+    m_randSvc = service( "RndmGenSvc", true );
+    if( !m_randSvc ) return Error( "Random number service not found!" );
+  }
+  if( !m_engine  ) {
     m_engine  = m_randSvc->engine();
-    if( 0 == m_engine ) {
-      return Error( "Random number engine not found!" );
-    } }
+    if( !m_engine ) return Error( "Random number engine not found!" );
+  }
   StatusCode sc = m_engine->setSeeds( seeds );
   if( sc.isFailure() ) return Error( "Unable to set random number seeds", sc );
 
@@ -223,7 +218,7 @@ StatusCode LbAppInit::initRndm( const std::vector<long int>& seeds )
     int shots  = m_skipFactor;
     double sum = 0.;
     Rndm::Numbers gauss;
-    gauss.initialize( m_randSvc , Rndm::Gauss(0.,1.0) );
+    gauss.initialize( m_randSvc.get() , Rndm::Gauss(0.,1.0) );
     while( 0 < --shots ) { sum += gauss() * sum ; }
   }
 

@@ -71,30 +71,29 @@ IDQFilter::FlagsType CondDBDQScanner::scan(const Gaudi::Time & since, const Gaud
       // prepare the IOpaqueAddress to be given to the PersistencySvc
       const long storageType = RelyConverter::getStorageType(m_condPath, desc);
       const std::string xml_data = (*data.get())["data"].data<std::string>();
-      IOpaqueAddress *addr = RelyConverter::createTmpAddress("conddb:" + m_condPath,
+      std::unique_ptr<IOpaqueAddress> addr{  RelyConverter::createTmpAddress("conddb:" + m_condPath,
                                                              storageType,
                                                              "Flags",
                                                              Condition::classID(),
                                                              xml_data,
                                                              info(),
-                                                             m_converter->addressCreator());
+                                                             m_converter->addressCreator()) };
       if (!addr){
         Exception("Failed to create temporary IOpaqueAddress");
         return flags; // never reached, but helps Coverity
       }
 
       // Retrieve the condition data
-      DataObject *obj = 0;
-      Condition *cond = 0;
-      if (m_converter->createObj(addr, obj).isFailure()
-          || m_converter->fillObjRefs(addr, obj).isFailure()
-          || (cond = dynamic_cast<Condition*>(obj)) == 0) { //assignment intended
-        delete addr;
-        if (obj) delete obj;
+      DataObject *obj = nullptr;
+      Condition *cond = nullptr;
+      if (m_converter->createObj(addr.get(), obj).isFailure()
+          || m_converter->fillObjRefs(addr.get(), obj).isFailure()
+          || (cond = dynamic_cast<Condition*>(obj)) == nullptr) { //assignment intended
+        addr.reset();
+        delete obj;
         Exception("Conversion of Condition failed");
         return flags; // never reached, but helps Coverity
       }
-      delete addr;
 
       // Merge the condition map with the collected one.
       const IDQFilter::FlagsType &condFlags = cond->param<IDQFilter::FlagsType>("map");

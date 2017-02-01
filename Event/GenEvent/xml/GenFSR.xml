@@ -5,7 +5,7 @@
 
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
-  <package name='GenEvent'>      
+  <package name='GenEvent'>
 
 <!-- GenFSR Class -->
 
@@ -19,7 +19,7 @@
       <location name="Default"
 		place="/FileRecords/GenFSR"/>
       <base name="DataObject"/>
- 
+
       <import name="stdio"/>
       <import name="math"/>
       <import name="vector"  std="TRUE"/>
@@ -36,7 +36,7 @@
          def="CounterValues"
          access="PUBLIC"
          />
-      
+
       <typedef
          desc="Generator counter"
 	 type="std::map &lt; int, CounterValues &gt;"
@@ -50,19 +50,19 @@
          def="CrossValues"
          access="PUBLIC"
          />
-      
+
       <typedef
          desc="Cross-Section"
          type="std::map &lt; int, CrossValues &gt;"
 	 def="CrossSection"
          access="PUBLIC"
-         />   
+         />
 
-      <typedef                                               
-         desc="Simulation string information container"                
-         type="std::map &lt; std::string, std::string &gt;"              
-         def="StringInfo"                     
-         access="PUBLIC"                                                                                                                       
+      <typedef
+         desc="Simulation string information container"
+         type="std::map &lt; std::string, std::string &gt;"
+         def="StringInfo"
+         access="PUBLIC"
          />
 
       <typedef
@@ -79,7 +79,7 @@
 	 type="StringInfo"
 	 name="stringInfos"
 	 />
-      
+
       <attribute
 	 desc="Numerical information related to the simulation conditions"
 	 type="IntInfo"
@@ -108,13 +108,13 @@
 	  }
 	</code>
       </method>
-	
-      <method 
+
+      <method
          desc="Get the int value of a FSR information"
-         type="int"  
-         name="getSimulationInfo" 
+         type="int"
+         name="getSimulationInfo"
          argList="std::string name, int def=0"
-         const="TRUE"  
+         const="TRUE"
          >
         <code>
 	  IntInfo::const_iterator i = m_intInfos.find(name);
@@ -122,12 +122,12 @@
         </code>
       </method>
 
-      <method                                       
-         desc="Get the string value of a FSR information"                                                      
+      <method
+         desc="Get the string value of a FSR information"
          type="std::string"
          name="getSimulationInfo"
          argList="std::string name, std::string def"
-         const="TRUE"                                                                   
+         const="TRUE"
          >
         <code>
           StringInfo::const_iterator i = m_stringInfos.find(name);
@@ -163,14 +163,14 @@
          desc="Increment the number of jobs used to create the FSR"
          type="void"
          name="incrementNJobs"
-         argList="const int nJobs=1"                                              
+         argList="const int nJobs=1"
 	 >
         <code>
 	  int info = getSimulationInfo("nJobs",0);
           addSimulationInfo("nJobs", info + nJobs);
         </code>
       </method>
-     
+
 <!-- ************************ Generator Level Counters ************************ -->
 
       <attribute
@@ -178,7 +178,7 @@
 	 type="GeneratorCounter"
 	 name="genCounters"
 	 />
-   
+
       <method
 	 desc="get method"
 	 name="getGenCounters"
@@ -196,12 +196,12 @@
 	 argList="const int key, const longlong value, const int incr=1"
 	 >
 	<code>
-	  CounterValues pair(incr, value); 
+	  CounterValues pair(incr, value);
 	  m_genCounters.insert(std::pair&lt; int, CounterValues &gt;(key, pair));
 	</code>
       </method>
 
-      <method 
+      <method
 	 desc="has information for specified Generator counter"
 	 name="hasGenCounter"
 	 const="TRUE"
@@ -222,7 +222,7 @@
 	<code>
 	  m_genCounters.erase(key);
 	</code>
-      </method>      
+      </method>
 
       <method
          desc="extract the informations associated with the given key."
@@ -237,7 +237,7 @@
           return m_genCounters.end() == i ? def : i-&gt;second;
         </code>
       </method>
-      
+
       <method
 	 desc="sums the counter values for existing keys and inserts a new key if needed"
          name="mergeGenCounters"
@@ -247,18 +247,18 @@
         <code>
 	  // sum counter values or add new key
 	  GeneratorCounter::const_iterator icounter;
-	  for (icounter = rhs_counter.begin(); icounter != rhs_counter.end(); icounter++) 
+	  for (icounter = rhs_counter.begin(); icounter != rhs_counter.end(); icounter++)
 	  {
 	     int key = (*icounter).first;
 	     CounterValues counterB = (*icounter).second;
 	     CounterValues counterA = getGenCounterInfo(key);
-	     if (hasGenCounter(key)) 
+	     if (hasGenCounter(key))
 	     {
                 eraseGenCounter(key);
 	     }
 	     addGenCounter(key, counterA.second+counterB.second, counterA.first+counterB.first);
 	  }
-	  
+
 	  return m_genCounters;
         </code>
       </method>
@@ -271,15 +271,15 @@
          >
         <code>
 	  // increment counter or add new key, only if data exists
-	  if (value!=-1) 
+	  if (value!=-1)
 	  {
 	     CounterValues pair(0,0);
-	     if (hasGenCounter(key)) 
+	     if (hasGenCounter(key))
 	     {
 	        pair = getGenCounterInfo(key);
                 eraseGenCounter(key);
 	     }
-	     
+
 	     addGenCounter(key, pair.second + value, pair.first+1);
 	  }
 
@@ -335,7 +335,7 @@
                 (key &gt;= 75 &amp;&amp; key &lt;= 80) || // B** Hadron counters
 	        (key &gt;= 85 &amp;&amp; key &lt;= 90) || // D** Hadron counters
                 (key == 91 || key == 92))                 // signal/anti-signal counters
-                   sum_flag = true;   
+                   sum_flag = true;
 
              if(!sum_flag)
              {
@@ -438,7 +438,7 @@
                den = sumGenCounters(counters_vec);
              }
 	  }
-	  
+
           return den;
         </code>
       </method>
@@ -457,7 +457,7 @@
 	     double efficiency = C*((double)num / (double)den);
 	     return efficiency;
 	  }
-	  else 
+	  else
 	  {
 	     double efficiency = 0;
 	     return efficiency;
@@ -485,17 +485,17 @@
 	     {
 	        error = C*sqrt((double)num * (1 + ((double)num / (double)den))) / ((double)den);
 	     }
-	  
+
 	     return error;
 	  }
 	  else
-	  { 
+	  {
 	     double error = 0;
 	     return error;
 	  }
         </code>
       </method>
-      
+
 <!-- ************************ Fractions and Cross-Sections ************************ -->
 
       <attribute
@@ -546,8 +546,8 @@
         <code>
           m_crossSections.erase(key);
 	  </code>
-      </method> 
-      
+      </method>
+
       <method
          desc="extract the informations associated with the given key."
          name="getCrossSectionInfo"
@@ -561,11 +561,11 @@
           return m_crossSections.end() == i ? def : i-&gt;second;
         </code>
       </method>
-        
-      <method                                                                  
-         desc="sum the cross-sections for existing keys and inserts a new key if needed"    
-         name="mergeCrossSections"                                                             
-         type="CrossSection"                                                   
+
+      <method
+         desc="sum the cross-sections for existing keys and inserts a new key if needed"
+         name="mergeCrossSections"
+         type="CrossSection"
 	 argList="const CrossSection rhs_cross, const GeneratorCounter rhs_counter"
 	 >
         <code>
@@ -576,12 +576,12 @@
 	     int keys = (*icross).first;
              double crossB = (*icross).second.second;
              double crossA = getCrossSectionInfo(keys).second;
-	    
+
 	     GeneratorCounter::const_iterator icounter;
 	     int keyc = 0;
 	     longlong countA = 0, countB = 0;
 	     std::string name = (*icross).second.first;
-	     
+
 	     for(icounter = rhs_counter.begin(); icounter != rhs_counter.end(); icounter++)
 	     {
 	        keyc = (*icounter).first;
@@ -591,21 +591,21 @@
 	           break;
 	        }
 	     }
-	  
+
 	     countA = getGenCounterInfo(keyc).second;
 
              if (hasCrossSection(keys))   eraseCrossSection(keys);
-	     
+
 	     CrossValues meanCross("",0);
-	  
+
 	     if(countB == 0 &amp;&amp; countA == 0)
 	        meanCross = std::make_pair(name, 0);
 	     else
 	        meanCross = std::make_pair(name, (crossA*countA+crossB*countB)/(countA+countB));
-	     
+
 	     addCrossSection(keys, meanCross);
-          } 
- 
+          }
+
           return m_crossSections;
         </code>
       </method>
@@ -619,7 +619,7 @@
          >
         <arg name="rhs" type="LHCb::GenFSR" const="TRUE"/>
         <code>
-	  if (this != &amp;rhs) 
+	  if (this != &amp;rhs)
 	  {
 	     // merge the cross sections
              mergeCrossSections(rhs.m_crossSections,rhs.m_genCounters);
@@ -642,18 +642,18 @@
          >
         <arg name="rhs" type="LHCb::GenFSR*" const="TRUE"/>
         <code>
-	  if (this != rhs) 
+	  if (this != rhs)
 	  {
 	     // merge the cross sections
 	     mergeCrossSections(rhs-&gt;m_crossSections,rhs-&gt;m_genCounters);
 
-	     // merge the generator level counters 
+	     // merge the generator level counters
 	     mergeGenCounters(rhs-&gt;m_genCounters);
-	  
+
              // increment the number of jobs
              incrementNJobs(rhs-&gt;getSimulationInfo("nJobs", 0));
 	  }
-	  
+
 	  return *this;
 	</code>
       </method>
@@ -683,13 +683,14 @@
 <!-- ************************ Printout ************************ -->
 
       <method
-	 desc="printout"
-	 name="fillStream"
-	 type="std::ostream&amp;"
-	 const="TRUE"
-	 >
-	<arg type="std::ostream" name="text" const="FALSE"/>
-	<code>
+        desc="printout"
+        name="fillStream"
+        type="std::ostream&amp;"
+        const="TRUE"
+        override="TRUE"
+      >
+        <arg type="std::ostream" name="text" const="FALSE"/>
+        <code>
 
 	  std::ostream&amp; s = const_cast&lt; std::ostream&amp; &gt;(text);
 
@@ -697,7 +698,7 @@
 	  s &lt;&lt; "  Hard Generator: " &lt;&lt; getSimulationInfo("hardGenerator", "");
 	  s &lt;&lt; "  Generation method: " &lt;&lt; getSimulationInfo("generationMethod", "");
 	  s &lt;&lt; "  DecFiles version: " &lt;&lt; getSimulationInfo("decFiles", "");
-	  s &lt;&lt; "  njobs:" &lt;&lt; getSimulationInfo("nJobs",0); 
+	  s &lt;&lt; "  njobs:" &lt;&lt; getSimulationInfo("nJobs",0);
 	  s &lt;&lt; std::endl &lt;&lt; std::endl;
 	  s &lt;&lt; " generator counters: ";
 	  GeneratorCounter::const_iterator icounter;
@@ -706,7 +707,7 @@
 	    int key = icounter-&gt;first;
             longlong value = icounter-&gt;second.second;
 	    std::string name = LHCb::GenCountersFSR::CounterKeyToString(key);
-	    if(name == "Unknown") 
+	    if(name == "Unknown")
 	    {
                CrossSection::const_iterator i = m_crossSections.find(key-100);
 	       name = i-&gt;second.first;
@@ -722,7 +723,7 @@
             int key = icross-&gt;first;
             double value = icross-&gt;second.second;
 	    std::string name = icross-&gt;second.first;
-            
+
 	    s &lt;&lt; name &lt;&lt; "  key: " &lt;&lt; key &lt;&lt; "  value: " &lt;&lt; value &lt;&lt; " / ";
           }
           s &lt;&lt; " }";
