@@ -43,14 +43,14 @@ namespace Rich
       if ( m_header.extendedFormat() )
       {
         // make sure the footer expects words
-        m_footer.setParityWord(0);
+        m_footer.setParityWord( typename Footer::WordType(0) );
         // then read the word(s) from the stream
         m_footer.readFromDataStream(data);
       }
     }
 
     template< class Version, class Header, class Footer >
-    LongType
+    typename Footer::WordType
     HPDDataBankImp<Version,Header,Footer>::
     createParityWord( const LHCb::RichSmartID::Vector & ids ) const
     {
@@ -61,7 +61,7 @@ namespace Rich
       {
         if ( hC[i]%2 == 1 ) setBit(parity,i);
       }
-      return parity;
+      return typename Footer::WordType(parity);
     }
 
     template< class Version, class Header, class Footer >
@@ -76,22 +76,22 @@ namespace Rich
         // yes, so compare to that "decoded" from the data
 
         // decoded parity word
-        const LongType decodedfoot = this->createParityWord(ids);
+        const auto decodedfoot = this->createParityWord(ids);
 
         // compare to expected
         if ( !this->footer().testParityWord(decodedfoot) )
         {
           os << MSG::ERROR << "Parity word indicates an error :-" << endmsg;
-          os <<   " -> decoded from data | " << asHex(decodedfoot) << " |";
+          os <<   " -> decoded from data | " << asHex(decodedfoot.data()) << " |";
           {for ( int iCol = 31; iCol >= 0; --iCol )
             {
-              os << " " << isBitOn( decodedfoot, iCol );
+              os << " " << isBitOn( decodedfoot.data(), iCol );
             }}
           os << endmsg;
-          os <<   " -> from footer word  | " << asHex(this->footer().parityWord()) << " |";
+          os <<   " -> from footer word  | " << asHex(this->footer().parityWord().data()) << " |";
           {for ( int iCol = 31; iCol >= 0; --iCol )
             {
-              os << " " << isBitOn( this->footer().parityWord(), iCol );
+              os << " " << isBitOn( this->footer().parityWord().data(), iCol );
             }}
           os << endmsg;
 
@@ -148,10 +148,10 @@ namespace Rich
       {
         for ( const auto & F : footer().footerWords() )
         {
-          os << " f    | " << asHex(F) << "  |";
+          os << " f    | " << asHex(F.data()) << "  |";
           for ( int iCol = 31; iCol >= 0; --iCol )
           {
-            os << "  " << isBitOn( F, iCol );
+            os << "  " << isBitOn( F.data(), iCol );
           }
           os << endmsg;
         }

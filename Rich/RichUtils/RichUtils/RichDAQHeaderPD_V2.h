@@ -9,8 +9,7 @@
  */
 //=============================================================================================
 
-#ifndef RICHUTILS_RICHDAQHEADERPD_V2_H
-#define RICHUTILS_RICHDAQHEADERPD_V2_H 1
+#pragma once
 
 // Base class
 #include "RichUtils/RichDAQHeaderPDBase.h"
@@ -109,6 +108,15 @@ namespace Rich
           {
             throw GaudiException("Data out of range","*RichDAQHeaderPDV2*",StatusCode::FAILURE);
           }
+        }
+
+      public:
+
+        /// Read correct number of data words from given stream
+        /// Note, after this call data pointer is incremented to the next word after the header
+        inline void readFromDataStream( const LongType *& data )
+        {
+          for ( auto i = 0u; i < nHeaderWords(); ++i ) { setHeaderWord( i, *(data++) ); }
         }
 
       public:
@@ -237,5 +245,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_RICHDAQHEADERPD_V2_H

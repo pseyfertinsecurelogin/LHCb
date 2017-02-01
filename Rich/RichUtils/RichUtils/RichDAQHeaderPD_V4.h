@@ -9,8 +9,7 @@
  */
 //=============================================================================================
 
-#ifndef RICHUTILS_RICHDAQHEADERPD_V4_H
-#define RICHUTILS_RICHDAQHEADERPD_V4_H 1
+#pragma once
 
 // Base class
 #include "RichUtils/RichDAQHeaderPDBase.h"
@@ -269,8 +268,23 @@ namespace Rich
 
         /// Read correct number of data words from given stream
         /// Note, after this call data pointer is incremented to the next word after the header
-        void readFromDataStream( const LongType *& data ) override;
+        inline void readFromDataStream( const LongType *& data )
+        {
+          // Read the first word (which gives us enough info to know the format)
+          setPrimaryHeaderWord( WordType(*(data++)) );
+          // If extended mode, read the two L0 words
+          if ( UNLIKELY( extendedFormat() ) )
+          {
+            // Reset extended header to have 2 words
+            extendedHeaderWords().clear();
+            extendedHeaderWords().reserve( nHeaderWordsExtended-1 );
+            extendedHeaderWords().emplace_back( *(data++) );
+            extendedHeaderWords().emplace_back( *(data++) );
+          }
+        }
 
+      public:
+        
         /// Retrieve the L0 headers
         inline L0Header l0Header() const
         {
@@ -297,8 +311,7 @@ namespace Rich
       public:
 
         /** Returns the number of words in the data block associated to this header
-         *  taking into account the bank type (zero-supressed or not)
-         */
+         *  taking into account the bank type (zero-supressed or not) */
         inline unsigned int nDataWords() const
         {
           return ( inhibit() ? 0 :
@@ -306,9 +319,15 @@ namespace Rich
                      ( aliceMode() ? MaxDataSizeALICE : MaxDataSize ) ) );
         }
 
-        /// Make sure this header has the extended L0 data words available
-        void makeExtended();
+      private:
 
+        /// Make sure this header has the extended L0 data words available
+        inline void makeExtended()
+        {
+          if ( nExtendedHeaderWords() != nHeaderWordsExtended-1 )
+          { extendedHeaderWords().resize( nHeaderWordsExtended-1, WordType(0) ); }
+        }
+        
       };
 
     } // RichDAQHeaderV4 namespace
@@ -330,5 +349,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_RICHDAQHEADERPD_V4_H

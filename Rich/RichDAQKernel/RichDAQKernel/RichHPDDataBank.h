@@ -284,7 +284,7 @@ namespace Rich
       virtual void fillRAWBank( RAWBank & rawData ) const override;
 
       /// Creates the parity word from the list of hoit pixels
-      LongType createParityWord( const LHCb::RichSmartID::Vector & ids ) const;
+      typename Footer::WordType createParityWord( const LHCb::RichSmartID::Vector & ids ) const;
 
       /// perform any data quality checks that can be done (such as parity word etc.)
       virtual bool checkDataIntegrity( const LHCb::RichSmartID::Vector & ids,

@@ -117,7 +117,7 @@ namespace Rich
 
       /// Read correct number of data words from given stream
       /// Note, after this call data pointer is incremented to the next word after the header
-      virtual void readFromDataStream( const LongType *& data );
+      //virtual void readFromDataStream( const LongType *& data );
 
       /// Write this head to a RAWBank of data words
       inline void fillRAWBank ( RAWBank & rawData ) const
