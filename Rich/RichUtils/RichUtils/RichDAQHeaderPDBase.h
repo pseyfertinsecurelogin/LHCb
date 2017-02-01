@@ -113,11 +113,7 @@ namespace Rich
         return allWords;
       }
 
-    public: // reading and writing
-
-      /// Read correct number of data words from given stream
-      /// Note, after this call data pointer is incremented to the next word after the header
-      //virtual void readFromDataStream( const LongType *& data );
+    public: // writing
 
       /// Write this head to a RAWBank of data words
       inline void fillRAWBank ( RAWBank & rawData ) const
