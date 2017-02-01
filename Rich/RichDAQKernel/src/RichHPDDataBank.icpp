@@ -37,11 +37,11 @@ namespace Rich
       // Use trick here with dataSize to allow compatibility with DC06/DC04 data
       // can be removed when no longer needed (together with dataSize variable)
       m_dataSize = ( 0 == dataSize ? m_header.nDataWords() : dataSize );
-      // skip to start of footer
-      data += m_dataSize;
       // initialise footer
-      if ( m_header.extendedFormat() )
+      if ( UNLIKELY( m_header.extendedFormat() ) )
       {
+        // skip to start of footer
+        data += m_dataSize;
         // make sure the footer expects words
         m_footer.setParityWord( typename Footer::WordType(0) );
         // then read the word(s) from the stream
