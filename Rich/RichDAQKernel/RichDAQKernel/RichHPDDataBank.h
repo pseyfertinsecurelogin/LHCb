@@ -86,8 +86,11 @@ namespace Rich
         return nHeaderWords() + nFooterWords() + nDataWords();
       }
 
-      /// Read access to header
-      virtual const HeaderPDBase::HeaderWords & headerWords() const = 0;
+      /// Read access to primary header word
+      virtual HeaderPDBase::WordType primaryHeaderWord() const = 0;
+
+      /// Read access to extended header words
+      virtual const HeaderPDBase::ExtendedHeaderWords & extendedHeaderWords() const = 0;
 
       /// Read access to footer
       virtual const FooterPDBase::FooterWords & footerWords() const = 0;
@@ -239,8 +242,11 @@ namespace Rich
         m_footer = footer;
       }
 
-      /// Read access to header
-      const HeaderPDBase::HeaderWords & headerWords() const override final;
+      /// Read access to extended header words
+      virtual const HeaderPDBase::ExtendedHeaderWords & extendedHeaderWords() const override final;
+
+      /// Read access to primary header word
+      HeaderPDBase::WordType primaryHeaderWord() const override final;
 
       /// Read access to footer
       const FooterPDBase::FooterWords & footerWords() const override final;
@@ -278,7 +284,7 @@ namespace Rich
       virtual void fillRAWBank( RAWBank & rawData ) const override;
 
       /// Creates the parity word from the list of hoit pixels
-      LongType createParityWord( const LHCb::RichSmartID::Vector & ids ) const;
+      typename Footer::WordType createParityWord( const LHCb::RichSmartID::Vector & ids ) const;
 
       /// perform any data quality checks that can be done (such as parity word etc.)
       virtual bool checkDataIntegrity( const LHCb::RichSmartID::Vector & ids,
