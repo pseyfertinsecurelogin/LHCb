@@ -1,8 +1,7 @@
-
 //-----------------------------------------------------------------------------
 /** @file RichGeomPhoton.h
  *
- *  Header file for RICH utility class : LHCb::RichGeomPhoton
+ *  Header file for RICH utility class : Rich::Future::GeomPhoton
  *
  *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
  *  @date   2017-02-06
@@ -30,7 +29,7 @@ namespace Rich
   namespace Future
   {
 
-    /** @class GeomPhoton RichGeomPhoton.h RichUtils/RichGeomPhoton.h
+    /** @class RecoPhoton RichGeomPhoton.h RichUtils/RichGeomPhoton.h
      *
      *  Basic representation of a Cherenkov photon
      *
