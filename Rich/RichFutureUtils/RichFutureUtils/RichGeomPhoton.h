@@ -61,7 +61,7 @@ namespace Rich
       RecoPhoton( const float theta,
                   const float phi,
                   const LHCb::RichSmartID smartID = LHCb::RichSmartID(),
-                  const float activeFrac = 0 ) : 
+                  const float activeFrac = 1 ) : 
         m_CherenkovTheta        ( theta      ),
         m_CherenkovPhi          ( phi        ),
         m_smartID               ( smartID    ),
@@ -111,7 +111,7 @@ namespace Rich
 
       /** Set accessor for the RichSmartID
        *  @param id The new RichSmartID */
-      inline void setSmartID ( const LHCb::RichSmartID& id ) noexcept { m_smartID = id; }
+      inline void setSmartID ( const LHCb::RichSmartID id ) noexcept { m_smartID = id; }
 
       /** Get accessor to RichSmartID
        *  @return the current value of RichSmartID */
@@ -136,7 +136,7 @@ namespace Rich
 
       /** The fraction of the RichTrackSegment trajectory this photon is associated
        *  with for which it is geometrically possible this photon was produced */
-      float m_activeSegmentFraction{0};
+      float m_activeSegmentFraction{1};
 
       /// Flag to indicate if an unambiguous photon or not
       bool m_unambigPhot{false};
