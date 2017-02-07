@@ -392,6 +392,9 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
   // Flag to indicate if a given L1 bank has been printed out in case of an error
   bool l1BankErrorDump = true;
 
+  // List of active L1 ingress inputs (define here so can be reused for each ingress)
+  L1IngressInputs inputs;
+
   // If we have some words to process, start the decoding
   if ( bankSize > 0 )
   {
@@ -434,11 +437,10 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
       }
 
       // get list of active ingress inputs
-      L1IngressInputs inputs;
       ingressWord.activeHPDInputs(inputs);
       _ri_debug << "  Found " << inputs.size() << " PDs with data blocks : " << inputs
                 << endmsg;
-
+      
       // Check the Ingress supression flag
       if ( ingressWord.hpdsSuppressed() )
       {
@@ -645,6 +647,9 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
         } // active HPDs
 
       } // ingress not suppressed
+
+      // clear the inputs for next time
+      inputs.clear();
 
     } // bank while loop
 

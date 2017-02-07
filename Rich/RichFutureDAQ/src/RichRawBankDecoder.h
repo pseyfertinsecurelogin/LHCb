@@ -117,7 +117,7 @@ namespace Rich
       void decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
                                     Rich::DAQ::L1Map & decodedData ) const;
 
-      /// Check if a given L1 ID should be decode
+      /// Check if a given L1 ID should be decoded
       inline bool okToDecode( const Rich::DAQ::Level1HardwareID L1ID ) const
       {
         // First check if we are decoding each RICH. 
