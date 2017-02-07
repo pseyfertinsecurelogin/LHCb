@@ -19,7 +19,7 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
 
 # Declare project name and version
 gaudi_project(LHCb v42r0
-              USE Gaudi v28r0
+              USE Gaudi v28r1
               DATA Gen/DecFiles
                    Det/SQLDDDB VERSION v7r*
                    FieldMap
