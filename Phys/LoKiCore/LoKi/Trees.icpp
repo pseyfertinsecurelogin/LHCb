@@ -39,7 +39,7 @@ inline Decays::Trees::Marked_<PARTICLE>::Marked_
 ( const Decays::iTree_<PARTICLE>& tree )
   : Decays::iTree_<PARTICLE>()
   , m_tree     ( tree )
-  , m_particle ( 0    )
+  , m_particle ( nullptr )
 {}
 // ============================================================================
 // copy constructor (ignore the marked particle)
@@ -49,7 +49,7 @@ inline Decays::Trees::Marked_<PARTICLE>::Marked_
 ( const Decays::Trees::Marked_<PARTICLE>&  right )
   : Decays::iTree_<PARTICLE> ( right )
   , m_tree ( right.m_tree )
-  , m_particle ( 0 )
+  , m_particle ( nullptr )
 {}
 // ============================================================================
 // move constructor (ignore the marked particle)
@@ -59,7 +59,7 @@ inline Decays::Trees::Marked_<PARTICLE>::Marked_
 (       Decays::Trees::Marked_<PARTICLE>&& right )
   : Decays::iTree_<PARTICLE> ( right )
   , m_tree ( std::move ( right.m_tree ) )
-  , m_particle ( 0 )
+  , m_particle ( nullptr )
 {}
 // ============================================================================
 // MANDATORY: the only one essential method:
@@ -68,10 +68,10 @@ template <class PARTICLE>
 inline bool Decays::Trees::Marked_<PARTICLE>::operator()
   ( typename Decays::iTree_<PARTICLE>::argument p ) const
 {
-  /// reset the particle
-  m_particle = 0  ;
+  // reset the particle ???
+  m_particle = nullptr ;
   const bool result = m_tree.tree ( p ) ;
-  if ( result ) { m_particle = p ; }   // KEEP THE PARTICLE !!!
+  if ( result ) { m_particle = p  ; }   // KEEP THE PARTICLE !!!
   return result ;
 }
 // ============================================================================
@@ -104,7 +104,7 @@ inline void
 Decays::Trees::Marked_<PARTICLE>::reset () const
 {
   // reset the own cache
-  m_particle = 0 ;
+  m_particle = nullptr ;
   // reset the tree
   m_tree.reset() ;
 }
@@ -116,15 +116,14 @@ inline size_t
 Decays::Trees::Marked_<PARTICLE>::collect
 ( typename Decays::iTree_<PARTICLE>::Collection& output ) const
 {
-  if ( 0 != m_particle )
+  if ( m_particle ) 
   {
-    output.push_back ( m_particle ) ;
+    output.push_back ( m_particle ) ; 
     return 1 + m_tree.collect ( output ) ;
   }
   return m_tree.collect ( output ) ;
 }
 // ============================================================================
-
 
 // ============================================================================
 // Stable_

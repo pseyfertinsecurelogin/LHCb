@@ -2598,8 +2598,7 @@ def decorateFinder ( finder , opers ) :
     _hasDecay_ = None 
     if hasattr ( opers , '__hasDecay__' ) :
         def _hasDecay_ ( self , container ) :
-            """
-            Check the presence of certain decay in the particle container
+            """Check the presence of certain decay in the particle container
             
             >>> finder    = ...  ## the decay finder 
             >>> container = ...  ## the container of particles
@@ -2613,19 +2612,25 @@ def decorateFinder ( finder , opers ) :
         
     _findDecay_ = None 
     if hasattr ( opers , '__findDecay__' ) :
-        def _findDecay_ ( self , input , output  ) :
-            """
-            Check the presence of certain decay in the particle container
+        def _findDecay_ ( self , input , *output  ) :
+            """Check the presence of certain decay in the particle container
             
             >>> finder = ...  ## the decay finder 
             >>> input  = ...  ## the input  container of particles
             >>> output = ...  ## the output container of 'good' decays
             >>> num = finder.findDecay ( input , output )
             >>> print ' # decays found: ', num
-            >>> for p in output : print p.decay() 
-            
+            >>> for p in output : print p.decay()
+
+            or :
+
+            >>> finder = ...  ## the decay finder 
+            >>> input  = ...  ## the input  container of particles
+            >>> output = finder.findDecay ( input )
+            >>> for p in output : print p.decay()
+                        
             """
-            return opers.__findDecay__ ( self , input , output )        
+            return opers.__findDecay__ ( self , input , *output )        
         # documentation:
         _findDecay_.__doc__ += opers.__findDecay__.__doc__ 
 

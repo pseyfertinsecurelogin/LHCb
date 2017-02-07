@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCTREEFACTORY_H 
 #define LOKI_MCTREEFACTORY_H 1
