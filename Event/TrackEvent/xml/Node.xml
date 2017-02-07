@@ -176,20 +176,13 @@
       />
 
       <method
-        name    = 'setStateVector'
+        name    = 'setState'
         desc    = 'Update the state vector'
-        argList = 'const Gaudi::TrackVector&amp; stateVector'>
+        argList = 'const Gaudi::TrackVector&amp; stateVector, const Gaudi::TrackSymMatrix&amp; stateCovariance, const double&amp; z'>
         <code>
   m_state.setState(stateVector);
-        </code>
-      </method>
-
-      <method
-        name    = 'setStateCovariance'
-        desc    = 'Update the state covariance'
-        argList = 'const Gaudi::TrackSymMatrix&amp; stateCovariance'>
-        <code>
   m_state.setCovariance(stateCovariance);
+  m_state.setZ(z);
         </code>
       </method>
 
