@@ -1,5 +1,5 @@
-#ifndef RICHFUTUREDAQ_RICHRAWBANKDECODER_H 
-#define RICHFUTUREDAQ_RICHRAWBANKDECODER_H 1
+
+#pragma once
 
 // STD
 #include <sstream>
@@ -162,7 +162,7 @@ namespace Rich
       const DeRichSystem * m_richSys = nullptr;
 
       /// Flag to turn on/off decoding of each RICH detector (default is both on)
-      Gaudi::Property< Rich::DetectorArray<bool> > m_richIsActive{ this, "ActiveRICHes", { true, true } };
+      Gaudi::Property< Rich::DetectorArray<bool> > m_richIsActive{ this, "Detectors", { true, true } };
 
       /// Flag to turn on/off the use of the ODIN data bank during decoding for integrity checks
       Gaudi::Property<bool> m_decodeUseOdin { this, "DecodeUsingODIN", false };
@@ -232,5 +232,3 @@ namespace Rich
     
   }
 }
-
-#endif // RICHFUTUREDAQ_RICHRAWBANKDECODER_H
