@@ -167,15 +167,8 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
     // Get bank version
     const auto version = bankVersion( bank );
 
-    // Is the RICH this L1 ID is for active ?
-    const auto rich = m_richSys->richDetector(L1ID);
-    if ( UNLIKELY( rich == Rich::InvalidDetector ) )
-    {
-      std::ostringstream mess;
-      mess << "L1 bank " << L1ID << " has an invalid RICH detector mapping -> Bank skipped";
-      Warning( mess.str() ).ignore();
-    }
-    else if ( m_richIsActive[rich] )
+    // Are we decoding this bank ?
+    if ( okToDecode(L1ID) )
     {
 
       // if configured, dump raw event before decoding
@@ -210,7 +203,7 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
         Exception( mess.str() );
       }
 
-    } // active RICH
+    } // L1 is decoded
 
   } // magic OK
 

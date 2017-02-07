@@ -117,6 +117,28 @@ namespace Rich
       void decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
                                     Rich::DAQ::L1Map & decodedData ) const;
 
+      /// Check if a given L1 ID should be decode
+      inline bool okToDecode( const Rich::DAQ::Level1HardwareID L1ID ) const
+      {
+        // First check if we are decoding each RICH. 
+        // If so, no need to lookup RICH type from ID 
+        bool ok = m_richIsActive[Rich::Rich1] && m_richIsActive[Rich::Rich2];
+        if ( UNLIKELY(!ok) )
+        {
+          // Now lookup the RICH type
+          const auto rich = m_richSys->richDetector(L1ID);
+          if ( UNLIKELY( rich == Rich::InvalidDetector ) )
+          {
+            std::ostringstream mess;
+            mess << "L1 bank " << L1ID << " has an invalid RICH detector mapping -> Bank skipped";
+            Warning( mess.str() ).ignore();
+            ok = false;
+          }
+          else { ok = m_richIsActive[rich]; }
+        }
+        return ok;
+      }
+
     private:
 
       /// Suppress hot pixels
