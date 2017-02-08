@@ -15,6 +15,8 @@
 /// \fixme backward compatibility with Gaudi <= v28r1
 #include "GaudiKernel/ThreadLocalContext.h"
 #define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
+#else
+#define SYSEX_ARGUMENT
 #endif
 
 
