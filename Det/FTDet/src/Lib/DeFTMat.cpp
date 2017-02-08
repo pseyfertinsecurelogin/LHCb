@@ -164,29 +164,7 @@ std::vector<std::pair<LHCb::FTChannelID, double>> DeFTMat::calculateChannels() c
   double xBegin = m_uBegin;
   double xEnd   = m_uBegin + m_nSiPMsInMat * m_sipmPitch;
 
-  // Find the first and last channels that are involved
-  LHCb::FTChannelID thisChannel = calculateChannel(xBegin);
-  LHCb::FTChannelID endChannel  = calculateChannel(xEnd);
-
-  // Estimate of the size of the vector and reserve memory
-  std::vector<std::pair<LHCb::FTChannelID, double>> channelsAndLeftEdges;
-  int vectorSize = int((xEnd - xBegin)/m_channelPitch)+1;
-  channelsAndLeftEdges.reserve(vectorSize);
-
-  // return empty vector when both channels are the same gap
-  if( thisChannel.channelID() == endChannel.channelID() )
-    return channelsAndLeftEdges;
-
-  // Loop over the intermediate channels
-  bool keepAdding = true;
-  while(keepAdding) {
-    double channelLeftEdge = localXfromChannel(thisChannel, -0.5);
-    // Add channel and left edge to output vector.
-    channelsAndLeftEdges.emplace_back(thisChannel, channelLeftEdge);
-    if( thisChannel == endChannel) keepAdding = false;
-    else thisChannel.next();
-  }
-  return channelsAndLeftEdges;
+  return (DeFTMat::calculateChannels(xBegin, xEnd, 0));
 }
 
 
