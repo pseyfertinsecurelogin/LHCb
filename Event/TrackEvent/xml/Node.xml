@@ -136,26 +136,6 @@
 	    />
 
       <attribute
-        type    = 'LHCb::State'
-        name    = 'forwardState'
-        access  = 'PROTECTED'
-        setMeth = 'TRUE'
-        getMeth = 'TRUE'
-        nonconstaccessor = 'FALSE'
-        desc    = 'Forward Fit State'
-      />
-
-      <attribute
-        type    = 'LHCb::State'
-        name    = 'backwardState'
-        access  = 'PROTECTED'
-        setMeth = 'TRUE'
-        getMeth = 'TRUE'
-        nonconstaccessor = 'FALSE'
-        desc    = 'Backward Fit State'
-      />
-
-      <attribute
         type    = 'double'
         name    = 'doca'
         access  = 'PROTECTED'
