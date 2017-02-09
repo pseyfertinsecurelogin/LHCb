@@ -26,7 +26,7 @@
       </constructor>      
 
       <constructor desc     = "Constructor"
-       argList  = "unsigned int sensDetID, int nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dXdY, double dZdY, bool isReflected">
+       argList  = "unsigned int sensDetID, double nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dXdY, double dZdY, bool isReflected">
         <code> 
           this->setKey(sensDetID); 
           m_nPhotonsVec.push_back(nPhotons);
@@ -56,7 +56,7 @@
       <method   name    = "addPhotons"
                 desc    = "Add number of photons, their associated MCHit, exit time, wavelength, if reflected"
                 type    = "void"
-                argList = "int nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dXdY, double dZdY, bool isReflected "
+                argList = "double nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dXdY, double dZdY, bool isReflected "
                 access  = "PUBLIC">
         <code> 
           m_nPhotonsVec.push_back(nPhotons);
@@ -79,7 +79,7 @@
 
       <attribute  name   = "nPhotonsVec"
                   desc   = "Vector of number of photons"
-                  type   = "std::vector &lt; int &gt;"
+                  type   = "std::vector &lt; double &gt;"
                   setMeth = "FALSE"
                   access = "PRIVATE"/>
 
