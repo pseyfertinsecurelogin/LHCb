@@ -434,7 +434,6 @@ bool Decays::Trees::MCInclusive::p_match
   
   // (0) treat specifically the special case 
   
-  const bool marked_ = marked() ;
   // Only one inclusive particle and look through the whole tree
 
   if ( 1 == nChildren () )
