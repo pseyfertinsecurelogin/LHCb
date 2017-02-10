@@ -167,15 +167,8 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
     // Get bank version
     const auto version = bankVersion( bank );
 
-    // Is the RICH this L1 ID is for active ?
-    const auto rich = m_richSys->richDetector(L1ID);
-    if ( UNLIKELY( rich == Rich::InvalidDetector ) )
-    {
-      std::ostringstream mess;
-      mess << "L1 bank " << L1ID << " has an invalid RICH detector mapping -> Bank skipped";
-      Warning( mess.str() ).ignore();
-    }
-    else if ( m_richIsActive[rich] )
+    // Are we decoding this bank ?
+    if ( okToDecode(L1ID) )
     {
 
       // if configured, dump raw event before decoding
@@ -210,7 +203,7 @@ void RawBankDecoder::decodeToSmartIDs( const LHCb::RawBank & bank,
         Exception( mess.str() );
       }
 
-    } // active RICH
+    } // L1 is decoded
 
   } // magic OK
 
@@ -399,6 +392,9 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
   // Flag to indicate if a given L1 bank has been printed out in case of an error
   bool l1BankErrorDump = true;
 
+  // List of active L1 ingress inputs (define here so can be reused for each ingress)
+  L1IngressInputs inputs;
+
   // If we have some words to process, start the decoding
   if ( bankSize > 0 )
   {
@@ -441,11 +437,10 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
       }
 
       // get list of active ingress inputs
-      L1IngressInputs inputs;
       ingressWord.activeHPDInputs(inputs);
       _ri_debug << "  Found " << inputs.size() << " PDs with data blocks : " << inputs
                 << endmsg;
-
+      
       // Check the Ingress supression flag
       if ( ingressWord.hpdsSuppressed() )
       {
@@ -652,6 +647,9 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
         } // active HPDs
 
       } // ingress not suppressed
+
+      // clear the inputs for next time
+      inputs.clear();
 
     } // bank while loop
 
