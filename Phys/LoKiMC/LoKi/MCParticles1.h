@@ -20,7 +20,7 @@ namespace LoKi
   {
     // ========================================================================
     /** @class DecNode
-     *  simple predicate, which acts on the particleID fo the particle
+     *  simple predicate, which acts on the particleID of the particle
      *  @see LHCb::ParticleID
      *  @see Decays::iNode
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl

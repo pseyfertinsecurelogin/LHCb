@@ -5,6 +5,7 @@
 // LoKiGen
 // ============================================================================
 #include "LoKi/LoKiGen.h"
+#include "LoKi/LoKiGen_dct.h"
 // ============================================================================
 /** @file
  *
@@ -22,10 +23,6 @@
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23 
- * 
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 // The END 

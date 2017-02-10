@@ -30,6 +30,11 @@
 #include "LoKi/MCChildSelector.h"
 #include "LoKi/MCDecayChain.h"
 #include "LoKi/MCDump.h"
+#include "LoKi/MCParticleCuts.h"
+#include "LoKi/MCVertexCuts.h"
+#include "LoKi/MCParticles1.h"
+#include "LoKi/MCParticles2.h"
+#include "LoKi/MCParticles3.h"
 // ============================================================================
 #include "LoKi/IMCDecay.h"
 #include "LoKi/FinderDict.h"
