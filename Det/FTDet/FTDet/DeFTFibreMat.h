@@ -304,6 +304,7 @@ public:
   static const unsigned int fmID_nbits_station = 2;
   static const unsigned int fmID_nbits_all     = fmID_nbits_module+fmID_nbits_quarter+fmID_nbits_layer+fmID_nbits_station;
   struct bfmID_V5 {
+    bfmID_V5() : module{0}, quarter{0}, layer{0}, station{0}, filling{0} {};
     unsigned int module  : fmID_nbits_module;    //from LSB to MSB bits
     unsigned int quarter : fmID_nbits_quarter;
     unsigned int layer   : fmID_nbits_layer;
@@ -312,7 +313,7 @@ public:
   };
   union FibreMatID_V5 {
     unsigned int ui;
-    bfmID_V5 bf;
+    bfmID_V5 bf{};
   };
 
 
