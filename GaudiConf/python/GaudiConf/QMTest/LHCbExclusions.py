@@ -1,4 +1,4 @@
-from GaudiTest import normalizeExamples, RegexpReplacer, LineSkipper
+from GaudiTesting.BaseTest import normalizeExamples, RegexpReplacer, LineSkipper
 
 preprocessor = (
     normalizeExamples +

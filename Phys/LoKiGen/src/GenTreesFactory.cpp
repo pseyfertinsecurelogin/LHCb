@@ -98,7 +98,15 @@ StatusCode Decays::Trees::factory
                                       daughters  ,
                                       alg        , 
                                       oscillated ) ;
-  
+  //
+  if ( inclusive && decay.marked() ) 
+  {
+    StatusCode code = StatusCode ( Decays::Trees::InclusiveMarked ) ; 
+    stream << "ERROR: 'Inclusive' & 'marked' can't be properly defined "
+           <<  code << std::endl ;
+    return code ;                                                     // RETURN 
+  }
+
   if ( optional.empty() ) 
   {
     if      ( !inclusive )                                   // exclusive decays 
