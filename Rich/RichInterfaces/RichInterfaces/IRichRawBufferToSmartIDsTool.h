@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHRAWBUFFERTOSMARTIDSTOOL_H
-#define RICHINTERFACES_IRICHRAWBUFFERTOSMARTIDSTOOL_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -24,9 +23,6 @@
 
 // RichUtils
 #include "RichUtils/RichDecodedData.h"
-
-/// Static Interface Identification
-static const InterfaceID IID_IRichRawBufferToSmartIDsTool( "Rich::DAQ::IRawBufferToSmartIDsTool", 1, 0 );
 
 namespace Rich
 {
@@ -57,10 +53,8 @@ namespace Rich
 
     public:
 
-      /** static interface identification
-       *  @return unique interface identifier
-       */
-      static const InterfaceID& interfaceID() { return IID_IRichRawBufferToSmartIDsTool; }
+      /// Interface ID
+      DeclareInterfaceID( IRawBufferToSmartIDsTool, 1, 0 );
 
       /** Access all RichSmartIDs, for all configured TAE spills
        *  @return Reference to the decoded RICH data structure
@@ -145,5 +139,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHINTERFACES_IRICHRAWBUFFERTOSMARTIDSTOOL_H

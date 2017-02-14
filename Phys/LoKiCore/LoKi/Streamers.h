@@ -235,6 +235,7 @@ operator >>
               input.end());
   return input;
 }
+
 // ============================================================================
 /** evaluate the vector function with scalar argument through
  *  the construction of the intermediate vector of length 1

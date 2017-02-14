@@ -232,13 +232,6 @@ void HltConfigSvc::handle(const Incident& /*incident*/)
 #include "GaudiKernel/ParsersFactory.h"
 // ============================================================================
 namespace Gaudi { namespace Parsers {
-StatusCode parse(TCK& result, const std::string& input )
-{
-  std::string s;
-  auto sc = parse(s,input);
-  result = ( sc ? TCK{s} : TCK{0} );
-  return sc;
-}
 
 StatusCode parse(std::map<TCK,std::string>& result, const std::string& input )
 {
@@ -254,12 +247,5 @@ StatusCode parse(std::map<TCK,std::string>& result, const std::string& input )
     }
     return sc;
 }
-}
-
-namespace Utils {
-std::ostream& toStream(const TCK& tck, std::ostream& os) {
-    return os << '\'' << tck.str() << '\'';
-}
-
 }
 }

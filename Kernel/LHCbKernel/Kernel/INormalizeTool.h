@@ -4,7 +4,6 @@
 // Include files
 #include "GaudiKernel/IAlgTool.h"
 
-static const InterfaceID IID_INormalizeTool("INormalizeTool", 1, 1);
 
 /** @class INormalizeTool INormalizeTool.h Kernel/INormalizeTool.h
  *  Interface class for generic normalisation tool
@@ -12,13 +11,10 @@ static const InterfaceID IID_INormalizeTool("INormalizeTool", 1, 1);
  *  @author Marco Cattaneo
  *  @date   2004-07-14
  */
-class INormalizeTool : virtual public IAlgTool {
-public:
+struct INormalizeTool : extend_interfaces<IAlgTool> {
 
   /// Retrieve interface ID
-  static const InterfaceID& interfaceID() {
-    return IID_INormalizeTool;
-  }
+  DeclareInterfaceID(INormalizeTool, 2, 0);
 
   /// Return a normalization value
   virtual double normalize() = 0;

@@ -15,6 +15,8 @@ namespace Rich
    *  Utility namespace providing basic ray tracing methods for
    *  intersecting and reflecting photons (line) off a sphere and plane.
    *
+   *  In part based on http://www.realtimerendering.com/int/
+   *
    *  @author Chris Jones
    *  @date   2016-03-02
    */
@@ -38,14 +40,14 @@ namespace Rich
                      const Gaudi::Plane3D& plane,
                      Gaudi::XYZPoint& intersection )
     {
-      bool OK = true;
+      const bool OK = true;
       const auto scalar = direction.Dot( plane.Normal() );
-      if ( UNLIKELY( fabs(scalar) < 1e-99 ) ) { OK = false; }
-      else
-      {
-        const auto distance = -(plane.Distance(position)) / scalar;
-        intersection = position + (distance*direction);
-      }
+      //if ( UNLIKELY( fabs(scalar) < 1e-99 ) ) { OK = false; }
+      //else
+      //{
+      const auto distance = -(plane.Distance(position)) / scalar;
+      intersection = position + (distance*direction);
+      //}
       return OK;
     }
 
@@ -75,21 +77,21 @@ namespace Rich
       bool OK = true;
       // for line sphere intersection look at http://www.realtimerendering.com/int/
       const auto a = direction.Mag2();
-      if ( UNLIKELY( 0 == a ) ) { OK = false; }
+      //if ( UNLIKELY( 0 == a ) ) { OK = false; }
+      //else
+      //{
+      const auto delta = position - CoC;
+      const auto     b = 2.0 * direction.Dot( delta );
+      const auto     c = delta.Mag2() - radius*radius;
+      const auto discr = b*b - 4.0*a*c;
+      if ( UNLIKELY( discr < 0 ) ) { OK = false; }
       else
       {
-        const auto delta = position - CoC;
-        const auto     b = 2.0 * direction.Dot( delta );
-        const auto     c = delta.Mag2() - radius*radius;
-        const auto discr = b*b - 4.0*a*c;
-        if ( UNLIKELY( discr < 0 ) ) { OK = false; }
-        else
-        {
-          const auto dist = 0.5 * ( std::sqrt(discr) - b ) / a;
-          // set intersection point
-          intersection = position + ( dist * direction );
-        }
+        const auto dist = 0.5 * ( std::sqrt(discr) - b ) / a;
+        // set intersection point
+        intersection = position + ( dist * direction );
       }
+      //}
       return OK;
     }
 
@@ -119,27 +121,26 @@ namespace Rich
                        const double radius )
     {
       bool OK = true;
-      // for line sphere intersection look at http://www.realtimerendering.com/int/
       const auto a = direction.Mag2();
-      if ( UNLIKELY( 0 == a ) ) { OK = false; }
+      //if ( UNLIKELY( 0 == a ) ) { OK = false; }
+      //else
+      //{
+      const auto delta = position - CoC;
+      const auto     b = 2.0 * direction.Dot( delta );
+      const auto     c = delta.Mag2() - radius*radius;
+      const auto discr = b*b - 4.0*a*c;
+      if ( UNLIKELY( discr < 0 ) ) { OK = false; }
       else
       {
-        const auto delta = position - CoC;
-        const auto     b = 2.0 * direction.Dot( delta );
-        const auto     c = delta.Mag2() - radius*radius;
-        const auto discr = b*b - 4.0*a*c;
-        if ( UNLIKELY( discr < 0 ) ) { OK = false; }
-        else
-        {
-          const auto dist = 0.5 * ( std::sqrt(discr) - b ) / a;
-          // change position to the intersection point
-          position += dist * direction;
-          // reflect the vector
-          // r = u - 2(u.n)n, r=reflction, u=insident, n=normal
-          const auto normal = position - CoC;
-          direction -= ( 2.0 * normal.Dot(direction) / normal.Mag2() ) * normal;
-        }
+        const auto dist = 0.5 * ( std::sqrt(discr) - b ) / a;
+        // change position to the intersection point
+        position += dist * direction;
+        // reflect the vector
+        // r = u - 2(u.n)n, r=reflection, u=incident, n=normal
+        const auto normal = position - CoC;
+        direction -= ( 2.0 * normal.Dot(direction) / normal.Mag2() ) * normal;
       }
+      //}
       return OK;
     }
 
@@ -149,7 +150,7 @@ namespace Rich
      *                           On output the reflection point
      *  @param[in,out] direction On input the starting direction. 
      *                           On output the reflected direction.
-     *  @param[in]     plane     The plane to refect off
+     *  @param[in]     plane     The plane to reflect off
      *
      *  @return Boolean indicating if the ray tracing was succesful
      *  @retval true  Ray tracing was successful
@@ -160,19 +161,19 @@ namespace Rich
                    Gaudi::XYZVector& direction,
                    const Gaudi::Plane3D& plane )
     {
-      bool OK = true;
+      const bool OK = true;
       // Plane normal
       const auto& normal = plane.Normal();
       // compute distance to the plane
       const auto scalar = direction.Dot(normal);
-      if ( UNLIKELY( fabs(scalar) < 1e-99 ) ) { OK = false; }
-      else
-      {
-        const auto distance = -(plane.Distance(position)) / scalar;
-        // change position to reflection point and update direction
-        position  += distance * direction;
-        direction -= 2.0 * scalar * normal;
-      }
+      //if ( UNLIKELY( fabs(scalar) < 1e-99 ) ) { OK = false; }
+      //else
+      //{
+      const auto distance = -(plane.Distance(position)) / scalar;
+      // change position to reflection point and update direction
+      position  += distance * direction;
+      direction -= 2.0 * scalar * normal;
+      //}
       return OK;
     }
 

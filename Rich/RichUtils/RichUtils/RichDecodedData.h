@@ -17,7 +17,7 @@
 #include "RichUtils/RichDAQHeaderPD_V4.h"
 #include "RichUtils/RichDAQParityFooter.h"
 #include "RichUtils/RichDAQL1IngressHeader.h"
-#include "RichUtils/RichPoolMap.h"
+#include "RichUtils/RichMap.h"
 
 namespace Rich
 {
@@ -29,7 +29,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   20/04/2007
      */
-    class PDInfo final // : public LHCb::MemPoolAlloc<PDInfo>
+    class PDInfo final 
     {
 
     public:
@@ -46,21 +46,20 @@ namespace Rich
 
       /// Constructor from PD data bank information
       PDInfo( const LHCb::RichSmartID& input,
-               const Header&            header,
-               const Footer&            footer )
+              const Header&            header,
+              const Footer&            footer )
         : m_pdID   ( input  ),
           m_header ( header ),
-          m_footer ( footer )
-      { }
-
+          m_footer ( footer ) { }
+      
       /// Constructor from PD data bank information
-      PDInfo( const LHCb::RichSmartID&   input,
-               const Header::HeaderWords& header,
-               const Footer::FooterWords& footer )
+      PDInfo( const LHCb::RichSmartID&           input,
+              const Header::WordType             headerPrimWord,
+              const Header::ExtendedHeaderWords& headerExWords,
+              const Footer::FooterWords&         footerWords )
         : m_pdID   ( input  ),
-          m_header ( header ),
-          m_footer ( footer )
-      { }
+          m_header ( headerPrimWord, headerExWords ),
+          m_footer ( footerWords ) { }
 
       /**  Access the PD ID (LHCb::RichSmartID) for this PD
        *   @attention It is possible this PDID is invalid (for instance
@@ -75,11 +74,11 @@ namespace Rich
       inline const Footer&           footer() const & noexcept { return m_footer; }
 
       /// set the Level1Input
-      inline void setPdID( const LHCb::RichSmartID& input ) noexcept { m_pdID  = input;  }
+      inline void setPdID( const LHCb::RichSmartID& input ) noexcept { m_pdID   = input;  }
       /// Set the Header
-      inline void setHeader( const Header & header )         noexcept { m_header = header; }
+      inline void setHeader( const Header & header )        noexcept { m_header = header; }
       /// Set the footer
-      inline void setFooter( const Footer & footer )         noexcept { m_footer = footer; }
+      inline void setFooter( const Footer & footer )        noexcept { m_footer = footer; }
 
       /// Read access to the RichSmartIDs for the hit pixels in this PD
       inline const LHCb::RichSmartID::Vector& smartIDs() const & { return m_smartIds; }
@@ -105,14 +104,14 @@ namespace Rich
     };
 
     /// Map for RICH PD data, sorted by PD number
-    using L1InToPDMap = Rich::PoolMap< Rich::DAQ::Level1Input, PDInfo >;
+    using L1InToPDMap = Rich::Map< Rich::DAQ::Level1Input, PDInfo >;
 
     /** @class IngressInfo RichUtils/RichDecodedData.h
      *  Information for each L1 ingress
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   20/04/2007
      */
-    class IngressInfo final // : public LHCb::MemPoolAlloc<IngressInfo>
+    class IngressInfo final
     {
 
     public:
@@ -149,27 +148,60 @@ namespace Rich
     };
 
     /// Map for PD data for each L1 ingress
-    using IngressMap = Rich::PoolMap< L1IngressID, IngressInfo >;
+    using IngressMap = Rich::Map< L1IngressID, IngressInfo >;
     
     /// Map for RICH PD data, sorted by Level1 board number
-    class L1Map final : public Rich::PoolMap< Level1HardwareID, IngressMap >
+    class L1Map final : public Rich::Map< Level1HardwareID, IngressMap >
     {
     public:
       /// Returns the total number of RICH hits in the decoded data
-      unsigned int nTotalHits() const noexcept { return m_nTotalHits; }
-      /// Sets the total number of RICH hits in the decoded data
-      void setNTotalHits( const unsigned int nHits ) { m_nTotalHits = nHits; }
-      /// Append to the number of hits
-      void addToTotalHits( const unsigned int nHits ) { m_nTotalHits += nHits; }
+      unsigned int nTotalHits() const noexcept 
+      {
+        return m_nTotalHits[Rich::Rich1] + m_nTotalHits[Rich::Rich2]; 
+      }
+      /// Returns the total number of hits in the decoded data for the given RICH detector
+      unsigned int nTotalHits( const Rich::DetectorType rich ) const noexcept
+      {
+        return m_nTotalHits[rich];
+      }
+      /// Append to the number of hits for each RICH
+      void addToTotalHits( const DetectorArray<unsigned int>& nHits )
+      {
+        for ( const auto rich : Rich::detectors() ) { m_nTotalHits[rich] += nHits[rich]; }
+      }
+      /// Returns the total number of active PDs in the decoded data
+      unsigned int nActivePDs() const noexcept 
+      {
+        return m_nActivePDs[Rich::Rich1] + m_nActivePDs[Rich::Rich2]; 
+      }
+      /// Returns the total number of active PDs in the decoded data for the given RICH
+      unsigned int nActivePDs( const Rich::DetectorType rich ) const noexcept 
+      {
+        return m_nActivePDs[rich]; 
+      }
+      /// Append to the number of active PDs for each RICH
+      void addToActivePDs( const DetectorArray<unsigned int>& nPDs )
+      {
+        for ( const auto rich : Rich::detectors() ) { m_nActivePDs[rich] += nPDs[rich]; }
+      }
+      /// Append to the number of active PDs for the given
+      void addToActivePDs( const Rich::DetectorType rich,
+                           const unsigned int nPDs )
+      {
+        m_nActivePDs[rich] += nPDs;
+      }
     private:
-      unsigned int m_nTotalHits{0};
+      /// The total hit count for each RICH detector
+      DetectorArray<unsigned int> m_nTotalHits = {{0,0}};
+      /// The total active PD count for each RICH detector
+      DetectorArray<unsigned int> m_nActivePDs = {{0,0}};
     };
     
     /// L1Map data locations
     namespace L1MapLocation
     {
       /// Default Location in TES for the decoded data map
-      static const std::string Default = "Raw/Rich/L1DataMap";
+      static const std::string Default = "Raw/Rich/L1Data/RICH1RICH2";
     }
 
   }

@@ -833,7 +833,8 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate
-      InAncestors ( const LoKi::MCTypes::MCCuts& cut ) ;
+      InAncestors ( const LoKi::MCTypes::MCCuts& cut               , 
+                    const bool                   decayOnly = false ) ;
       /// MANDATORY: clone method ("virtual constructor")
       InAncestors* clone() const  override;
       /// MANDATORY: the only one important method
@@ -849,7 +850,8 @@ namespace LoKi
     private:
       // ======================================================================
       /// the actual predicate
-      LoKi::MCTypes::MCCut m_cut ;                      // the actual predicate
+      LoKi::MCTypes::MCCut m_cut       ;                // the actual predicate
+      bool                 m_decayOnly ;
       // ======================================================================
     };
     // ========================================================================
@@ -865,7 +867,8 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate
-      NinAncestors ( const LoKi::MCTypes::MCCuts& cut ) ;
+      NinAncestors ( const LoKi::MCTypes::MCCuts& cut               , 
+                     const bool                   decayOnly = false ) ;
       /// MANDATORY: clone method ("virtual constructor")
       NinAncestors* clone() const  override;
       /// MANDATORY: the only one important method
@@ -876,12 +879,13 @@ namespace LoKi
     public:
       // ======================================================================
       /// the actual evaluator
-      int nInAncestors ( const LHCb::MCParticle* p ) const ;
+      unsigned int nInAncestors ( const LHCb::MCParticle* p ) const ;
       // ======================================================================
     private:
       // ======================================================================
       /// the actual predicate
-      LoKi::MCTypes::MCCut m_cut ;                      // the actual predicate
+      LoKi::MCTypes::MCCut m_cut       ;                // the actual predicate
+      bool                 m_decayOnly ;
       // ======================================================================
     };
     // ========================================================================
@@ -1719,7 +1723,7 @@ namespace LoKi
       // ======================================================================
       /** standard constructor
        *  @param cut cut to be checked
-       *  @param decayOnly flag to indicat the search through decay products only
+       *  @param decayOnly flag to indicate the search through decay products only
        */
       InTree  ( const LoKi::MCTypes::MCCuts& cut               ,
                 const bool                   decayOnly = false ) ;

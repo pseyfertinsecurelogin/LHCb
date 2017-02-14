@@ -3,6 +3,8 @@
 #include "boost/operators.hpp"
 #include "boost/format.hpp"
 
+class StatusCode;
+
 class TCK final : public boost::equality_comparable<TCK>,
                          boost::equality_comparable2<TCK,unsigned int> {
 public:
@@ -34,10 +36,21 @@ public:
         return *this;
     }
     bool valid() const { return m_unsigned != 0 ; }
+
+    friend std::ostream& operator<<(std::ostream& os, const TCK& tck)
+    { return os << tck.str(); }
+
+    // allow Gaudi::Property<TCK> :
+    friend std::ostream& toStream(const TCK& tck, std::ostream& os)
+    { return os << '\'' << tck << '\''; }
+    friend StatusCode parse(TCK& result, const std::string& input );
+
 private:
     std::string m_stringRep;
     unsigned int m_unsigned = 0;
 };
-inline std::ostream& operator<<(std::ostream& os, const TCK& tck)
-{ return os << tck.str(); }
+
+
+
+
 #endif

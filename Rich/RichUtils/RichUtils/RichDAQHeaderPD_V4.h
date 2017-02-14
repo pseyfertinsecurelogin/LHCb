@@ -9,8 +9,7 @@
  */
 //=============================================================================================
 
-#ifndef RICHUTILS_RICHDAQHEADERPD_V4_H
-#define RICHUTILS_RICHDAQHEADERPD_V4_H 1
+#pragma once
 
 // Base class
 #include "RichUtils/RichDAQHeaderPDBase.h"
@@ -23,15 +22,6 @@
 
 // L0 header
 #include "RichUtils/RichDAQL0Header.h"
-
-// CRJ : Need to put these here for SLC3/gcc323 compat.
-namespace
-{
-  /// Number of words in this header (normal format)
-  static const unsigned int nHeaderWordsNormal   = 1;
-  /// Number of words in this header (extended format)
-  static const unsigned int nHeaderWordsExtended = 3;
-}
 
 namespace Rich
 {
@@ -59,6 +49,13 @@ namespace Rich
        */
       class RichDAQHeaderPD final : public HeaderPDBase
       {
+
+      private:
+
+        /// Number of words in this header (normal format)
+        static const unsigned int nHeaderWordsNormal   = 1;
+        /// Number of words in this header (extended format)
+        static const unsigned int nHeaderWordsExtended = 3;
 
         // primary header word packing info
         //-----------------------------------------------------------------------------------------
@@ -104,22 +101,18 @@ namespace Rich
       public: // methods
 
         /// Default Constructor
-        explicit RichDAQHeaderPD() : HeaderPDBase(nHeaderWordsNormal) { }
-
-        /// Copy constructor
-        RichDAQHeaderPD ( const RichDAQHeaderPD & header )
-          : HeaderPDBase(header.headerWords()) { }
+        explicit RichDAQHeaderPD() = default;
 
         /// Constructor from a pointer to a data stream
         explicit RichDAQHeaderPD ( const LongType * data )
-          : HeaderPDBase(nHeaderWordsNormal)
         {
           readFromDataStream(data);
         }
 
         /// Constructor from raw header word(s)
-        explicit RichDAQHeaderPD( const HeaderPDBase::HeaderWords & words )
-          : HeaderPDBase(words) { }
+        RichDAQHeaderPD( const WordType                            primWord,
+                         const HeaderPDBase::ExtendedHeaderWords & exWords )
+          : HeaderPDBase(primWord,exWords) { }
 
         /// Constructor from all data
         RichDAQHeaderPD ( const bool zSupp,          ///< Flag indicating if the block is zero suppressed
@@ -130,7 +123,7 @@ namespace Rich
                           const EventID   evtID,     ///< The Event ID
                           const ShortType dSize      ///< The data size word
                           )
-          : HeaderPDBase( extFormat ? nHeaderWordsExtended : nHeaderWordsNormal )
+          : HeaderPDBase( extFormat ? nHeaderWordsExtended : nHeaderWordsNormal, WordType(0) )
         {
           setExtendedFormat ( extFormat );
           setZeroSuppressed ( zSupp     );
@@ -148,11 +141,8 @@ namespace Rich
         /// reset
         inline void reset( )
         {
-          if ( nHeaderWords() > 1 )
-          {
-            headerWords() = HeaderPDBase::HeaderWords(nHeaderWordsNormal,0);
-          }
-          headerWords()[0] = 0;
+          extendedHeaderWords().clear();
+          setPrimaryHeaderWord( WordType(0) );
         }
 
         /// reset for a new data stream
@@ -165,9 +155,9 @@ namespace Rich
       public:
 
         /// Retrieve the Level0 ID
-        inline Level0ID l0ID() const
+        inline Level0ID l0ID() const noexcept
         {
-          return Level0ID( (headerWords()[0] & MaskL0ID) >> ShiftL0ID );
+          return Level0ID( (primaryHeaderWord().data() & MaskL0ID) >> ShiftL0ID );
         }
 
         /// Set the Level0 ID
@@ -178,9 +168,9 @@ namespace Rich
         }
 
         /// Retrieve the event ID word
-        inline EventID eventID() const
+        inline EventID eventID() const noexcept
         {
-          return EventID( ((headerWords()[0] & MaskEventID) >> ShiftEventID), BitsEventID );
+          return EventID( ((primaryHeaderWord().data() & MaskEventID) >> ShiftEventID), BitsEventID );
         }
 
         /// Set the Event ID
@@ -193,11 +183,11 @@ namespace Rich
         }
 
         /// Retrieve the number of "8-bit data blocks" with at least one hit
-        inline ShortType nEightBitBlocks() const
+        inline ShortType nEightBitBlocks() const noexcept
         {
           // only trust nEightBitBlocks word if not GT inhibit
           return ( inhibit() ? 0 :
-                   ( (headerWords()[0] & MaskNeightBit) >> ShiftNeightBit ) );
+                   ( (primaryHeaderWord().data() & MaskNeightBit) >> ShiftNeightBit ) );
         }
 
         /// Set the number of "8-bit data blocks" with at least one hit
@@ -208,9 +198,9 @@ namespace Rich
         }
 
         /// Retrieve the zero suppressed information
-        inline bool zeroSuppressed() const
+        inline bool zeroSuppressed() const noexcept
         {
-          return ( 0 != ( (headerWords()[0] & MaskZS) >> ShiftZS ) );
+          return ( 0 != ( (primaryHeaderWord().data() & MaskZS) >> ShiftZS ) );
         }
 
         /// Set the zero suppression info
@@ -221,9 +211,9 @@ namespace Rich
         }
 
         /// Retrieve the flag to say if the data is in ALICE mode
-        inline bool aliceMode() const
+        inline bool aliceMode() const noexcept
         {
-          return ( 0 != ( (headerWords()[0] & MaskAlice) >> ShiftAlice ) );
+          return ( 0 != ( (primaryHeaderWord().data() & MaskAlice) >> ShiftAlice ) );
         }
 
         /// Set the flag to say if the data is in ALICE mode
@@ -234,9 +224,9 @@ namespace Rich
         }
 
         /// Returns if this header (and the associated footer) are in extended mode or not (compact)
-        inline bool extendedFormat() const
+        inline bool extendedFormat() const noexcept
         {
-          return ( 0 != ( (headerWords()[0] & MaskDataFormat) >> ShiftDataFormat ) );
+          return ( 0 != ( (primaryHeaderWord().data() & MaskDataFormat) >> ShiftDataFormat ) );
         }
 
         /// Set the data format bit
@@ -248,9 +238,9 @@ namespace Rich
         }
 
         /// Returns the HPD data inhibit flag
-        inline bool inhibit() const
+        inline bool inhibit() const noexcept
         {
-          return ( 0 != ( (headerWords()[0] & MaskGTInhibit) >> ShiftGTInhibit ) );
+          return ( 0 != ( (primaryHeaderWord().data() & MaskGTInhibit) >> ShiftGTInhibit ) );
         }
 
         /// Set the GT inhibit word
@@ -260,18 +250,47 @@ namespace Rich
           return set( i, ShiftGTInhibit, MaskGTInhibit );
         }
 
+      public: // Static methods to test specific flags in external data blocks
+
+        /// Test if this data block is for an ALICE mode HPD
+        inline static bool aliceMode( const LongType* word ) noexcept
+        {
+          return ( 0 != ( (word[0] & MaskAlice) >> ShiftAlice ) );
+        }
+
+        /// Test if this data block is for a zero suppressed HPD
+        inline static bool zeroSuppressed( const LongType* word ) noexcept
+        {
+          return ( 0 != ( (word[0] & MaskZS) >> ShiftZS ) );
+        }
+
       public:
 
         /// Read correct number of data words from given stream
         /// Note, after this call data pointer is incremented to the next word after the header
-        void readFromDataStream( const LongType *& data ) override;
+        inline void readFromDataStream( const LongType *& data )
+        {
+          // Read the first word (which gives us enough info to know the format)
+          setPrimaryHeaderWord( WordType(*(data++)) );
+          // If extended mode, read the two L0 words
+          if ( UNLIKELY( extendedFormat() ) )
+          {
+            // Reset extended header to have 2 words
+            extendedHeaderWords().clear();
+            extendedHeaderWords().reserve( nHeaderWordsExtended-1 );
+            extendedHeaderWords().emplace_back( *(data++) );
+            extendedHeaderWords().emplace_back( *(data++) );
+          }
+        }
 
+      public:
+        
         /// Retrieve the L0 headers
         inline L0Header l0Header() const
         {
           return ( extendedFormat() ?
-                   L0Header ( L0Header::Word0(headerWords()[1]),
-                              L0Header::Word1(headerWords()[2]) ) :
+                   L0Header ( L0Header::Word0(extendedHeaderWords()[0].data()),
+                              L0Header::Word1(extendedHeaderWords()[1].data()) ) :
                    L0Header ( L0Header::Word0(0), L0Header::Word1(0) ) );
         }
 
@@ -279,12 +298,12 @@ namespace Rich
         inline void setL0Headers( const L0Header & l0header )
         {
           makeExtended();
-          headerWords()[1] = l0header.word0().data();
-          headerWords()[2] = l0header.word1().data();
+          extendedHeaderWords()[0] = WordType(l0header.word0().data());
+          extendedHeaderWords()[1] = WordType(l0header.word1().data());
         }
 
         /// Check overall status of the header word
-        inline bool l1Suppressed() const
+        inline bool l1Suppressed() const noexcept
         {
           return inhibit();
         }
@@ -292,8 +311,7 @@ namespace Rich
       public:
 
         /** Returns the number of words in the data block associated to this header
-         *  taking into account the bank type (zero-supressed or not)
-         */
+         *  taking into account the bank type (zero-supressed or not) */
         inline unsigned int nDataWords() const
         {
           return ( inhibit() ? 0 :
@@ -301,9 +319,15 @@ namespace Rich
                      ( aliceMode() ? MaxDataSizeALICE : MaxDataSize ) ) );
         }
 
-        /// Make sure this header has the extended L0 data words available
-        void makeExtended();
+      private:
 
+        /// Make sure this header has the extended L0 data words available
+        inline void makeExtended()
+        {
+          if ( nExtendedHeaderWords() != nHeaderWordsExtended-1 )
+          { extendedHeaderWords().resize( nHeaderWordsExtended-1, WordType(0) ); }
+        }
+        
       };
 
     } // RichDAQHeaderV4 namespace
@@ -325,5 +349,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_RICHDAQHEADERPD_V4_H

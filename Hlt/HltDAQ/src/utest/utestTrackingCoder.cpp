@@ -92,7 +92,7 @@ struct ExampleTracks {
 
 
     tr->setFlags(1);
-    tr->setType(LHCb::Track::Velo);
+    tr->setType(LHCb::Track::Types::Velo);
 
     tr->addToLhcbIDs(LHCb::LHCbID(1));
     tr->addToLhcbIDs(LHCb::LHCbID(3));
@@ -101,7 +101,7 @@ struct ExampleTracks {
 
     tr=new LHCb::Track();
     tr->setFlags(1);
-    tr->setType(LHCb::Track::TT);
+    tr->setType(LHCb::Track::Types::TT);
 
     tr->addToLhcbIDs(LHCb::LHCbID(2));
     tr->addToLhcbIDs(LHCb::LHCbID(4));
@@ -110,7 +110,7 @@ struct ExampleTracks {
 
     tr=new LHCb::Track();
     tr->setFlags(8);
-    tr->setType(LHCb::Track::Long);
+    tr->setType(LHCb::Track::Types::Long);
 
     tr->addToLhcbIDs(LHCb::LHCbID(7));
     tr->addToLhcbIDs(LHCb::LHCbID(11));

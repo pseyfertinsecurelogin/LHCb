@@ -48,17 +48,19 @@ MessageSvc(OutputLevel = DEBUG)
 <argument name="validator"><text>
 ## 2nd check: find data
 expected = [
+    'TestCond             INFO Condition was updated',
     'TestCond             INFO Requested Conditions:',
     '--- Condition',
     'Validity: 0.0 -> 9223372036.854775807',
     '(std::string) data = dummy',
+    'TestCond             INFO Condition was updated',
     'TestCond             INFO Requested Conditions:',
     '--- Condition',
     'Validity: 0.0 -> 9223372036.854775807',
     '(std::string) data = real',
     ]
 
-regexp = r"^---|^Validity|^\(std::string\) data|.*Requested Conditions"
+regexp = r"^---|^Validity|^\(std::string\) data|.*Requested Conditions|TestCond.*was updated"
 outputlines = [ l.rstrip() for l in stdout.splitlines() ]
 
 # grep

@@ -44,7 +44,7 @@ namespace Rich
         // basically, we don't simulate bit errors, so parity word here is just zero
         if ( this->header().extendedFormat() )
         {
-          this->setFooter ( Footer(1,0) );
+          this->setFooter ( Footer(1,typename Footer::WordType(0)) );
         }
 
         // Fill the number of 8 bit words + 1 field in header

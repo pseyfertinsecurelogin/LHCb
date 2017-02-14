@@ -9,8 +9,7 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHDAQDEFINITIONS_H
-#define RICHUTILS_RICHDAQDEFINITIONS_H 1
+#pragma once
 
 // from STL
 #include <sstream>
@@ -965,5 +964,3 @@ namespace Rich
   }
 }
 //----------------------------------------------------------------------------------------------------
-
-#endif // RICHUTILS_RICHDAQDEFINITIONS_H

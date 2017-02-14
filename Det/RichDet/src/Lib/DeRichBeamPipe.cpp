@@ -22,11 +22,6 @@ const CLID CLID_DERichBeamPipe = 12050;  // User defined
 DeRichBeamPipe::DeRichBeamPipe ( const std::string & name )
   : DeRichBase ( name ) { }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-DeRichBeamPipe::~DeRichBeamPipe() { }
-
 // Retrieve Pointer to class defininition structure
 const CLID& DeRichBeamPipe::classID()
 {

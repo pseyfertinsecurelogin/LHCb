@@ -7,8 +7,7 @@
  *  @date   2004-06-18
  */
 
-#ifndef  RICHDET_DERICHSPHMIRROR_H
-#define  RICHDET_DERICHSPHMIRROR_H 1
+#pragma once
 
 // STL
 #include <memory>
@@ -45,7 +44,7 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRichSphMirror();
+  virtual ~DeRichSphMirror() = default;
 
   /**
    * Retrieves reference to class identifier
@@ -187,5 +186,3 @@ private: // data
   bool m_firstUpdate{true};
 
 };
-
-#endif    //  RICHDET_DERICHSPHMIRROR_H

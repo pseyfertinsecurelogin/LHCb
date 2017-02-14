@@ -9,8 +9,7 @@
  */
 //=============================================================================================
 
-#ifndef RICHUTILS_RichDAQFooterPDBase_H
-#define RICHUTILS_RichDAQFooterPDBase_H 1
+#pragma once
 
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
@@ -41,14 +40,16 @@ namespace Rich
 
     public:
 
+      /// Type for a single word. Strongly typed for safety.
+      using WordType = NumericType<LongType>;
       /// Type for header words
-      using FooterWords = LHCb::Boost::PoolAllocVector<LongType>;
+      using FooterWords = LHCb::STL::Vector<WordType>;
 
     public:
 
       /// Constructor with number of header words
       explicit FooterPDBase ( const ShortType nWords,
-                              const LongType  wordInit = 0 )
+                              const WordType  wordInit = WordType(0) )
         : m_footerWords(nWords,wordInit) { }
 
       /// Constructor from raw footer word(s)
@@ -82,14 +83,14 @@ namespace Rich
       {
         for ( FooterWords::size_type i = 0; i < nFooterWords(); ++i )
         {
-          footerWords()[i] = *(data++);
+          footerWords()[i] = WordType( *(data++) );
         }
       }
 
       /// Write this head to a RAWBank of data words
       inline void fillRAWBank ( RAWBank & rawData ) const
       {
-        for ( const auto& F : footerWords() ) { rawData.push_back(F); }
+        for ( const auto& F : footerWords() ) { rawData.push_back(F.data()); }
       }
 
     protected: // methods
@@ -99,7 +100,7 @@ namespace Rich
                        const ShortType shift,
                        const LongType  mask )
       {
-        footerWords()[0] = ( ((value << shift) & mask) | (footerWords()[0] & ~mask) );
+        footerWords()[0] = WordType( ((value << shift) & mask) | (footerWords()[0].data() & ~mask) );
         return true;
       }
 
@@ -115,7 +116,7 @@ namespace Rich
 
       /// Set the given footer word
       void setWord( const ShortType word,
-                    const LongType data )
+                    const WordType data )
       {
         footerWords()[word] = data;
       }
@@ -129,5 +130,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_RichDAQFooterPDBase_H
