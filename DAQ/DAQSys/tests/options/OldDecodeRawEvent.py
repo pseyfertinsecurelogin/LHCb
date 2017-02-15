@@ -42,7 +42,7 @@ DataOnDemandSvc().AlgMap["Raw/OT/Times"]          = "OTTimeCreator"
 DataOnDemandSvc().AlgMap["Raw/FT/LiteClusters"]    = FTClusters
 DataOnDemandSvc().AlgMap["Raw/Muon/Coords"]       = "MuonRec"
 DataOnDemandSvc().AlgMap["DAQ/ODIN"]              = "createODIN"
-#DataOnDemandSvc().AlgMap["Raw/Rich/Digits"]       = "Rich::DAQ::RawBufferToRichDigitsAlg/RichRawEventToDigits"
+DataOnDemandSvc().AlgMap["Raw/Rich/L1Data/RICH1RICH2"] = "Rich::Future::RawBankDecoder/RichFutureDecode"
 
 RawBankToSTClusterAlg("createITClusters").DetType          = "IT"
 RawBankToSTLiteClusterAlg("createITLiteClusters").DetType  = "IT"

@@ -98,11 +98,8 @@ Decoder("RawBankToSTClusterAlg/createTTClustersExpert",
 
 Decoder("Rich::Future::RawBankDecoder/RichFutureDecode",
         active=True, banks=['Rich'],
-        # Decoder class does not seem to support Functional algorithms
-        # where the input/output types are data handles. 
-        # Do not have time to fix this now so for the moment do not set the locations
         outputs={"DecodedDataLocation":None},
-        inputs={"RawEventLocation":None,"OdinLocation":None},
+        inputs={"RawEventLocation":None},
         required=["createODIN"],
         conf=DecoderDB)
 
