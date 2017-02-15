@@ -95,28 +95,15 @@ Decoder("RawBankToSTClusterAlg/createTTClustersExpert",
 #outputs={"clusterLocation":None}, set logically in the code, resetting may not work...
 
 #===========RICH===========
-#from Chris Jones, get the configurable for the used public tool
-from Configurables import RichTools
-t=RichTools().smartIDTool()
-#ensure it's a public tool...
-tname=t.getFullName().replace("/","/ToolSvc.")
 
-Decoder("Rich::DAQ::RawBufferToRichDigitsAlg/RichRawEventToDigits",
+Decoder("Rich::Future::RawBankDecoder/RichFutureDecode",
         active=True, banks=['Rich'],
-        outputs={"RichDigitsLocation":None},
-        properties={"DecodeBufferOnly":False},
-        publicTools=[tname],
-        conf=DecoderDB)
-
-t2=RichTools().rawDecoder()
-t2name=t2.getFullName()
-
-Decoder(tname, active=False,
-        privateTools=[t2name],
-        conf=DecoderDB)
-
-Decoder(t2name, active=False,
-        inputs={"RawEventLocations":None},
+        # Decoder class does not seem to support Functional algorithms
+        # where the input/output types are data handles. 
+        # Do not have time to fix this now so for the moment do not set the locations
+        outputs={"DecodedDataLocation":None},
+        inputs={"RawEventLocation":None,"OdinLocation":None},
+        required=["createODIN"],
         conf=DecoderDB)
 
 #===========IT===========
