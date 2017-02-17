@@ -459,6 +459,8 @@ def decorateFunctionOps ( funcs , opers ) :
     _round_     = None
     _jbit_      = None
     _jbits_     = None
+    _jdigit_    = None
+    _jdigits_   = None
 
     _sin_       = None 
     _cos_       = None 
@@ -871,12 +873,40 @@ def decorateFunctionOps ( funcs , opers ) :
             Get j1-j2 bits range of the result
             
             >>> fun   = ...
-            >>> fun_1 = jbit2 ( fun , 0 , 5  ) 
+            >>> fun_1 = jbits ( fun , 0 , 5  ) 
             
             Uses:\n
             """
             return opers.__jbits__ ( s , j1 , j2 )
         _jbits_ . __doc__  += opers.__jbits__ . __doc__
+
+    # math: get jth digit
+    if hasattr ( opers , '__jdigit__' ) :                    
+        def _jdigit_ ( s , j ) :
+            """
+            Get j-th digit of the result
+            
+            >>> fun   = ...
+            >>> fun_1 = jdigit ( fun , 1 ) 
+            
+            Uses:\n
+            """
+            return opers.__jdigit__ ( s , j )
+        _jdigit_ . __doc__  += opers.__jdigit__ . __doc__
+
+    # math: get j1-j2 digits range 
+    if hasattr ( opers , '__jdigits__' ) :                    
+        def _jdigits_ ( s , j1 , j2 ) :
+            """
+            Get j1-j2 digits range of the result
+            
+            >>> fun   = ...
+            >>> fun_1 = jdigits ( fun , 0 , 5  ) 
+            
+            Uses:\n
+            """
+            return opers.__jdigits__ ( s , j1 , j2 )
+        _jdigits_ . __doc__  += opers.__jdigits__ . __doc__
 
 
     # home-made math (just to be coherent)
@@ -1535,6 +1565,8 @@ def decorateFunctionOps ( funcs , opers ) :
         if _round_           : fun . __round__   = _round_     #
         if _jbit_            : fun . __jbit__    = _jbit_      #
         if _jbits_           : fun . __jbits__   = _jbits_     #
+        if _jdigit_          : fun . __jdigit__  = _jdigit_    #
+        if _jdigits_         : fun . __jdigits__ = _jdigits_   #
 
         if _mod_             : fun . __mod__     = _mod_       #
         # pseudo-math

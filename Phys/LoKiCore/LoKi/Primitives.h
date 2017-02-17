@@ -16,6 +16,7 @@
 // ============================================================================
 #include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/Bit.h"
+#include "LHCbMath/Digit.h"
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -2824,7 +2825,7 @@ namespace LoKi
     // ========================================================================
     /// constructor from the functor
     JBit ( const LoKi::Functor<TYPE,double>&    fun ,
-           const unsigned int                   j   )
+           const unsigned short                 j   )
       : LoKi::AuxFunBase ( std::tie ( fun , j ) )
       , LoKi::Functor<TYPE,bool>()
       , m_fun  ( fun )
@@ -2859,7 +2860,7 @@ namespace LoKi
     /// the functor itself
     LoKi::FunctorFromFunctor<TYPE,double> m_fun ;                // the functor
     /// the index
-    unsigned int                          m_j   ;                  // the index
+    unsigned short                        m_j   ;                  // the index
     // ========================================================================
   };
   // ==========================================================================
@@ -2890,9 +2891,9 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor from the functor
-    JBits ( const LoKi::Functor<TYPE,double>&    fun ,
-            const unsigned int                   j1  ,
-            const unsigned int                   j2  )
+    JBits ( const LoKi::Functor<TYPE,double>&     fun ,
+            const unsigned short                  j1  ,
+            const unsigned short                  j2  )
       : LoKi::AuxFunBase ( std::tie ( fun , j1 , j2 ) )
       , LoKi::Functor<TYPE,double>()
       , m_fun  ( fun )
@@ -2934,11 +2935,156 @@ namespace LoKi
     /// the functor itself
     LoKi::FunctorFromFunctor<TYPE,double> m_fun ;                // the functor
     /// the index1
-    unsigned int                          m_j1  ;                  // the index
+    unsigned short                       m_j1  ;                  // the index
     /// the index2
-    unsigned int                          m_j2  ;                  // the index
+    unsigned short                       m_j2  ;                  // the index
     // ========================================================================
   };
+  // ==========================================================================
+  /** @class JDigit
+   *  get the jth decimal digit of value.
+   *  The action :
+   *   - 1. f -> round ( f )
+   *   - 2. f -> abs   ( f )
+   *   - 3. gigit ( f , j )
+   *  @see Gaudi::Math::digit
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2017-02-16
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <>
+  class JDigit<void> final : public LoKi::Functor<void,double>
+#else
+  template <class TYPE>
+  class JDigit       final : public LoKi::Functor<TYPE,double>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename_v LoKi::Functor<TYPE,bool>::argument argument  ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /// constructor from the functor
+    JDigit ( const LoKi::Functor<TYPE,double>&    fun ,
+             const unsigned short                 j   )
+      : LoKi::AuxFunBase ( std::tie ( fun , j ) )
+      , LoKi::Functor<TYPE,double>()
+      , m_fun  ( fun )
+      , m_j    ( j   )
+    {
+      //
+      static_assert( boost::integer_traits<unsigned long>::is_specialized
+                  && boost::integer_traits<unsigned long>::is_integral
+                  &&!boost::integer_traits<unsigned long>::is_signed,
+                     "must have a unsigned integral type" );
+      //
+      this -> Assert ( j < (unsigned long) boost::integer_traits<unsigned long>::digits10 ,
+                       "Invalid digit index" ) ;
+      //
+    }
+    /// clone method (mandatory)
+    JDigit* clone() const override { return new JDigit ( *this ) ; }
+    /// the only one essential method ("function")
+    double operator() ( argument_a_unless_void ) const override
+    {
+      const unsigned long _ulv =
+        ::labs ( LHCb::Math::round ( this->m_fun.fun ( a_unless_void ) ) ) ;
+      //
+      return Gaudi::Math::digit ( _ulv , this->m_j ) ;
+    }
+    /// the basic printout method
+    std::ostream& fillStream( std::ostream& s ) const override
+    { return s << " jdigit("  << this->m_fun << "," << this->m_j << ") "; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// the functor itself
+    LoKi::FunctorFromFunctor<TYPE,double> m_fun ;                // the functor
+    /// the index
+    unsigned short                        m_j   ;                  // the index
+    // ========================================================================
+  };
+  // ==========================================================================
+  /** @class JDigits
+   *  get the content between j1 and j2 decimal digits of value.
+   *  The action :
+   *   - 1. f -> round ( f )
+   *   - 2. f -> abs   ( f )
+   *   - 3. Gaudi::Math::digits ( f , j1, j2  )
+   *  @see Gaudi::Math::digits
+   *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
+   *  @date 2011-04-02
+   */
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
+  template <>
+  class JDigits<void> final : public LoKi::Functor<void,double>
+#else
+  template <class TYPE>
+  class JDigits       final : public LoKi::Functor<TYPE,double>
+#endif
+  {
+  private:
+    // ========================================================================
+    typedef_void_TYPE
+    /// argument type
+    typedef typename_v LoKi::Functor<TYPE,double>::argument argument  ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /// constructor from the functor
+    JDigits ( const LoKi::Functor<TYPE,double>&    fun ,
+              const unsigned short                 j1  ,
+              const unsigned short                 j2  )
+      : LoKi::AuxFunBase ( std::tie ( fun , j1 , j2 ) )
+      , LoKi::Functor<TYPE,double>()
+      , m_fun  ( fun )
+      , m_j1  ( j1  )
+      , m_j2  ( j2  )
+    {
+      //
+      static_assert( boost::integer_traits<unsigned long>::is_specialized
+                     && boost::integer_traits<unsigned long>::is_integral
+                     &&!boost::integer_traits<unsigned long>::is_signed,
+                     "must have a unsigned integral type" );
+      //
+      this -> Assert ( j1 <  (unsigned long) boost::integer_traits<unsigned long>::digits10 ,
+                       "Invalid digit index-1" ) ;
+      this -> Assert ( j2 <= (unsigned long) boost::integer_traits<unsigned long>::digits10 ,
+                       "Invalid digit index-2" ) ;
+      this -> Assert ( j1 < j2 , "Invalid digit indices" ) ;
+      //
+    }
+    /// clone method (mandatory)
+    JDigits* clone() const override { return new JDigits ( *this ) ; }
+    /// the only one essential method ("function")
+    double operator() ( argument_a_unless_void ) const override
+    {
+      const unsigned long _ulv =
+        ::labs ( LHCb::Math::round ( this->m_fun.fun ( a_unless_void ) ) ) ;
+      //
+      return Gaudi::Math::digits ( _ulv , this->m_j1 , this -> m_j2 ) ;
+    }
+    /// the basic printout method
+    std::ostream& fillStream( std::ostream& s ) const override
+    { return s << " jdigits("  << this->m_fun
+               << "," << this->m_j1
+               << "," << this->m_j2
+               << ") "               ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// the functor itself
+    LoKi::FunctorFromFunctor<TYPE,double> m_fun ;                // the functor
+    /// the index1
+    unsigned short                        m_j1  ;                  // the index
+    /// the index2
+    unsigned short                        m_j2  ;                  // the index
+    // ========================================================================
+  };
+  // ==========================================================================
 #ifndef _GEN_LOKI_VOIDPRIMITIVES
   // ==========================================================================
   // OPTIONAL: the nice printout
