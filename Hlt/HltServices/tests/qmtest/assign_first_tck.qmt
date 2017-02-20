@@ -2,24 +2,31 @@
 <extension class="GaudiTest.GaudiExeTest" kind="test">
   <argument name="program"><text>python</text></argument>
   <argument name="args"><set>
-    <text>$HLTSERVICESROOT/tests/options/test_cdb.py</text>
+    <text>$HLTSERVICESROOT/tests/options/assign_tck.py</text>
+    <text>0x11291600</text>
   </set></argument>
   <argument name="use_temp_dir">
     <enumeral>true</enumeral>
   </argument>
   <argument name="prerequisites"><set>
-    <tuple><text>hltservices.assign_second_tck</text><enumeral>PASS</enumeral></tuple>
+    <tuple><text>hltservices.make_first_tck</text><enumeral>PASS</enumeral></tuple>
   </set></argument>
   <argument name="validator"><text>
 
 # Author: Roel Aaij
-# Purpose: Check if routing bits are reproduced
+# Purpose: Assign a TCK label to the first TCK needed to test the closing of the
+#          config.cdb file
 
 countErrorLines({"FATAL" : 0, "ERROR" : 0, "WARNING" : 0})
+findReferenceBlock("""
+ConfigCDBAccessSvc   INFO  opening TCKData/config.cdb in mode ReadWrite
+ConfigCDBAccessSvc   INFO  created AL/TCK/0x11291600
+""", id="CreateTCK")
+
 expected_string= &quot;PASSED&quot;
 if stdout.find(expected_string) == -1:
     causes.append('missing string')
-    result['hltservices.close_cdb_file.expected_string'] = result.Quote(expected_string)
+    result['hltservices.make_second_tck.expected_string'] = result.Quote(expected_string)
 
 </text></argument>
 </extension>
