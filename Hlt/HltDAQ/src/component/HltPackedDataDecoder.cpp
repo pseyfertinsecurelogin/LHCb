@@ -66,12 +66,7 @@ std::pair<DataObject*, size_t> HltPackedDataDecoder::loadObject(const std::strin
 StatusCode HltPackedDataDecoder::execute() {
   if (UNLIKELY(msgLevel(MSG::DEBUG))) debug() << "==> Execute" << endmsg;
 
-  auto* rawEvent = findFirstRawEvent();
-  if (!rawEvent) {
-    return Error("Raw event not found!");
-  }
-
-  const auto& rawBanksConst = rawEvent->banks(LHCb::RawBank::DstData);
+  const auto& rawBanksConst = findFirstRawBank(LHCb::RawBank::DstData);
   if (rawBanksConst.empty()) {
     return Warning("No appropriate HltPackedData raw bank in raw event. Quitting.",
                    StatusCode::SUCCESS, 10);
