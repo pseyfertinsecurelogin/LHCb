@@ -91,19 +91,11 @@ class TurboConf(LHCbConfigurableUser):
 
         linkPVs = DataLink('LinkHltPersistRecoPVs',
                            What=packing.outputs['Hlt2RecVertices'],
-                           Target='/Event/Turbo/PrimaryWithTracks')
-        DataOnDemandSvc().AlgMap[linkPVs.Target] = linkPVs
-
-    def _register_pv_links(self, pv_source):
-        from Configurables import Gaudi__DataLink as DataLink
-        linkPVs = DataLink('LinkHltVertexReportsPVs',
-                           What=pv_source,
                            Target='/Event/Rec/Vertex/Primary')
         DataOnDemandSvc().AlgMap[linkPVs.Target] = linkPVs
 
     def __apply_configuration__(self):
         self._register_unpackers()
-        pv_source = '/Event/Turbo/Primary'
 
         if self.getProp("DataType")=="2015":
             # do not neet decoder interference if using 2015 data
@@ -116,7 +108,6 @@ class TurboConf(LHCbConfigurableUser):
             
             self._register_pr_unpackers(packing)
             self._register_pr_links(packing)
-            pv_source = '/Event/Turbo/PrimaryWithTracks'
             
             # account for name change in 2015
             if self.getProp("DataType")=="2015":
@@ -128,8 +119,6 @@ class TurboConf(LHCbConfigurableUser):
                     newLoc1=newLoc.replace("Downstream","down")
                     newLoc2=newLoc1.replace("Neutral","neutral")
                     alg.InputName=newLoc2
-                    # Point to present PVs
-                    pv_source = '/Event/Turbo/Primary'
                     # Point to correct RichPID location
                     origLoc_rpid = alg.OutputName
                     newLoc_rpid = origLoc_rpid.replace("deuteron","")
@@ -137,4 +126,3 @@ class TurboConf(LHCbConfigurableUser):
                     if origLoc_rpid!=newLoc_rpid:
                         DataOnDemandSvc().AlgMap[alg.OutputName] = alg
 
-        self._register_pv_links(pv_source)
