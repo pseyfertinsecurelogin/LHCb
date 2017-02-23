@@ -21,16 +21,15 @@ class FTRawBankDecoder : public Decoder::AlgBase {
 public: 
   /// Standard constructor
   FTRawBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
-
+  
   ~FTRawBankDecoder( ) override = default; ///< Destructor
-
+  
   StatusCode execute() override; ///< Algorithm execution
 
 
 private:
   
-  std::string m_outputClusterLocation;
-
+  Gaudi::Property<std::string> m_outputClusterLocation  {this, "OutputLocation"  , LHCb::FTLiteClusterLocation::Default };
   std::unique_ptr<FTLiteClusters> operator()(const std::vector<LHCb::RawBank*>& banks) const;
 
 };

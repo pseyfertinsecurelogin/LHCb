@@ -22,17 +22,6 @@ constexpr static int s_nbSipmPerTELL40 = FTRawBank::NbSiPMPerTELL40;
 DECLARE_ALGORITHM_FACTORY( FTRawBankEncoder )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-FTRawBankEncoder::FTRawBankEncoder( const std::string& name,
-                                    ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty("InputLocation" , m_inputLocation  = LHCb::FTLiteClusterLocation::Default);
-  declareProperty("OutputLocation", m_outputLocation = LHCb::RawEventLocation::Default);
-}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode FTRawBankEncoder::initialize() {

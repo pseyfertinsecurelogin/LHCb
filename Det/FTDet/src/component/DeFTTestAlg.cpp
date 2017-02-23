@@ -13,14 +13,6 @@
 DECLARE_ALGORITHM_FACTORY( DeFTTestAlg )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-DeFTTestAlg::DeFTTestAlg( const std::string& name, ISvcLocator* pSvcLocator ) :
-GaudiTupleAlg( name, pSvcLocator)
-{
-}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode DeFTTestAlg::initialize() {

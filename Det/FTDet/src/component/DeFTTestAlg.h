@@ -24,7 +24,7 @@ class DeFTTestAlg : public GaudiTupleAlg {
 
 public:
   /// Standard constructor
-  DeFTTestAlg( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiTupleAlg::GaudiTupleAlg;
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution

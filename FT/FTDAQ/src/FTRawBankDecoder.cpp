@@ -26,8 +26,6 @@ DECLARE_ALGORITHM_FACTORY( FTRawBankDecoder )
   //new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Other, LHCb::RawEventLocation::Default};
   initRawEventSearch();
-  declareProperty("OutputLocation",m_outputClusterLocation=LHCb::FTLiteClusterLocation::Default);
-
 }
 
 //=============================================================================
