@@ -3,6 +3,7 @@
 
 
 // Include files
+#include <mutex>
 #include "GaudiKernel/MsgStream.h"
 #include "DetDesc/AlignmentCondition.h"
 #include "VeloDet/CLIDVeloAlignCond.h"
@@ -14,11 +15,6 @@
  */
 
 class IMessageSvc;
-
-#ifdef __INTEL_COMPILER        // Disable ICC remark from ROOT GenVector classes
-  #pragma warning(disable:1572) // floating-point equality and inequality comparisons are unreliable
-#pragma warning(push)
-#endif
 
 class VeloAlignCond : public AlignmentCondition {
 
@@ -88,19 +84,18 @@ protected:
 
 private:
 
-  /// cached Message Stream object
-  mutable std::unique_ptr<MsgStream> m_msgStream;
-
-  /// On demand access to MsgStream object
-  inline MsgStream & msg() const
-  {
-    if ( !m_msgStream ) m_msgStream.reset(new MsgStream( this->msgSvc(), "VeloAlignCond" ));
+  /// Thread safe on demand access to MsgStream object
+  inline MsgStream & msg() const {
+    std::call_once(m_msgSetFlag,
+		   [&]{m_msgStream.reset( new MsgStream( msgSvc(), "VeloAlignCond" ) );});
     return *m_msgStream;
   }
+  /// cached Message Stream object
+  mutable std::unique_ptr<MsgStream> m_msgStream;
+  /// making the msg() function above thread safe
+  mutable std::once_flag m_msgSetFlag;
+
 
 };
-#ifdef __INTEL_COMPILER // End disable ICC remark from ROOT GenVector classes
-  #pragma warning(pop)
-#endif
 
 #endif // VELODET_VELOALIGNCOND_H

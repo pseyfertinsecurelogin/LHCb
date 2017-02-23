@@ -53,7 +53,7 @@ namespace LHCb
     FieldVector fieldVectorClosestPoint( const Gaudi::XYZPoint& xyz ) const ;
 
     /// Return the magnetic field scale factor
-    double scaleFactor() const { return m_scaleFactor ; }
+    double scaleFactor() const noexcept { return m_scaleFactor ; }
 
     /// Update the scale factor
     void setScaleFactor( const double& s )

@@ -9,7 +9,7 @@
 #include "MDF/StreamDescriptor.h"
 
 // Forward declarations
-namespace Gaudi { 
+namespace Gaudi {
   class IIODataManager;
   class IDataConnection;
  }
@@ -40,7 +40,7 @@ namespace LHCb  {
       /// Connection specs of current file
       std::string                      m_conSpec;
       /// Data holder
-      mutable std::pair<char*,int>     m_data;
+      std::pair<char*,int>             m_data;
       /// Current file offset
       long long                        m_fileOffset;
       /// Pointer to file manager service
@@ -55,23 +55,16 @@ namespace LHCb  {
     public:
       /// Standard constructor
       LoopContext(const RawDataSelector* pSelector);
-      /// Standard destructor 
+      /// Standard destructor
       virtual ~LoopContext()                    { close();              }
       /// IEvtSelector::Context overload; context identifier
-      virtual void* identifier() const          { return (void*)m_sel;  }
+      virtual void* identifier() const override { return (void*)m_sel;  }
       /// Connection specification
       const std::string& specs() const          { return m_conSpec;     }
       /// Access to file offset(if possible)
       virtual long long offset()  const         { return m_fileOffset;  }
       /// Raw data buffer (if it exists)
       virtual std::pair<char*,int> data() const { return m_data;        }
-      /// Release data buffer and give ownership to caller
-      virtual std::pair<char*,int> releaseData() const {
-	std::pair<char*,int> tmp = m_data;
-	m_data.first  = 0;
-	m_data.second = 0;
-	return tmp;
-      }
       /// Receive event and update communication structure
       virtual StatusCode receiveData(IMessageSvc* msg) = 0;
       /// Skip N events
@@ -83,86 +76,86 @@ namespace LHCb  {
     };
 
     /// IService implementation: initialize the service
-    virtual StatusCode initialize();
+    StatusCode initialize() override;
 
     /// IService implementation: finalize the service
-    virtual StatusCode finalize();
+    StatusCode finalize() override;
 
 
     /** Create a new event loop context
       * @param[in,out] refpCtxt  Reference to pointer to store the context
-      * 
+      *
       * @return StatusCode indicating success or failure
       */
-    virtual StatusCode createContext(Context*& refpCtxt) const = 0;
+    StatusCode createContext(Context*& refpCtxt) const override = 0;
 
     /** Access last item in the iteration
       * @param[in,out] refContext Reference to the Context object.
       */
-    virtual StatusCode last(Context& /* refContext */ ) const    {
+    virtual StatusCode last(Context& /* refContext */ ) const override {
       return StatusCode::FAILURE;
     }
 
     /** Get next iteration item from the event loop context
       * @param[in,out] refCtxt   Reference to the context
-      * 
+      *
       * @return StatusCode indicating success or failure
       */
-    virtual StatusCode next(Context& refCtxt) const;
+    StatusCode next(Context& refCtxt) const override;
 
     /** Get next iteration item from the event loop context, but skip jump elements
       * @param[in,out] refCtxt   Reference to the context
       * @param[in]     jump      Number of events to be skipped
-      * 
+      *
       * @return StatusCode indicating success or failure
       */
-    virtual StatusCode next(Context& refCtxt,int jump) const;
+    StatusCode next(Context& refCtxt,int jump) const override;
 
     /** Get previous iteration item from the event loop context
       * @param[in,out] refCtxt   Reference to the context
-      * 
+      *
       * @return StatusCode indicating success or failure
       */
-    virtual StatusCode previous(Context& refCtxt) const;
+    StatusCode previous(Context& refCtxt) const override;
 
     /** Get previous iteration item from the event loop context, but skip jump elements
       * @param[in,out] refCtxt   Reference to the context
       * @param[in]     jump      Number of events to be skipped
-      * 
+      *
       * @return StatusCode indicating success or failure
       */
-    virtual StatusCode previous(Context& refCtxt,int jump) const;
+    StatusCode previous(Context& refCtxt,int jump) const override;
 
     /** Rewind the dataset
       * @param[in,out] refCtxt   Reference to the context
-      * 
+      *
       * @return StatusCode indicating success or failure
       */
-    virtual StatusCode rewind(Context& /* refCtxt */ ) const   {
+    StatusCode rewind(Context& /* refCtxt */ ) const override {
       return StatusCode::FAILURE;
     }
 
     /** Create new Opaque address corresponding to the current record
       * @param[in,out] refCtxt   Reference to the context
-      * 
+      *
       * @return StatusCode indicating success or failure
       */
-    virtual StatusCode createAddress(const Context& refCtxt, IOpaqueAddress*&) const;
+    StatusCode createAddress(const Context& refCtxt, IOpaqueAddress*&) const override;
 
     /** Release existing event iteration context
       * @param[in,out] refCtxt   Reference to the context
-      * 
+      *
       * @return StatusCode indicating success or failure
       */
-    virtual StatusCode releaseContext(Context*& refCtxt) const;
+    StatusCode releaseContext(Context*& refCtxt) const override;
 
     /** Will set a new criteria for the selection of the next list of events and will change
         the state of the context in a way to point to the new list.
-        
+
         @param cr The new criteria string.
         @param c  Reference pointer to the Context object.
     */
-    virtual StatusCode resetCriteria(const std::string& cr,Context& c)const;
+    StatusCode resetCriteria(const std::string& cr,Context& c)const override;
 
     /// Access to the file manager
     Gaudi::IIODataManager* fileMgr()  const  {   return m_ioMgr; }

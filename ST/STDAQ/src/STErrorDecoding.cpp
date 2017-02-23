@@ -13,7 +13,6 @@ using namespace LHCb;
 //
 // 2007-11-29: Mathias Knecht
 // Update 2008 M Needham
-// Update 2016 S Ponce
 //-----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
@@ -24,25 +23,33 @@ DECLARE_ALGORITHM_FACTORY( STErrorDecoding )
 // Standard constructor, initializes variables
 //=============================================================================
 STErrorDecoding::STErrorDecoding( const std::string& name,
-                                  ISvcLocator* pSvcLocator )
-: Consumer(name, pSvcLocator,
-           KeyValue{"RawEventLocations",
-                     Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Tracker,
-                                                            LHCb::RawEventLocation::Other,
-                                                            LHCb::RawEventLocation::Default)})
-{
+                          ISvcLocator* pSvcLocator)
+  : STDecodingBaseAlg ( name , pSvcLocator ){
+
   declareProperty("PrintErrorInfo", m_PrintErrorInfo = false);
 }
 
 //=============================================================================
 // Main execution
 //=============================================================================
-void STErrorDecoding::operator()(const LHCb::RawEvent& raw) const {
+StatusCode STErrorDecoding::execute() {
+
   // in fact all the work is delegated to the base class
+
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute " << endmsg;
-  auto errorBanks = decodeErrors(raw);
+
+  STTELL1BoardErrorBanks* errorBanks = getErrorBanks();
+
+  if (!errorBanks) {
+    // was not possible to decode the banks
+    return StatusCode::FAILURE;
+  }
+
   // print out the error banks
-  if ( m_PrintErrorInfo ) {
+  if ( m_PrintErrorInfo ){
     for (const auto& b : *errorBanks) info() << b << endmsg;
   }
+
+  return StatusCode::SUCCESS;
 }
+

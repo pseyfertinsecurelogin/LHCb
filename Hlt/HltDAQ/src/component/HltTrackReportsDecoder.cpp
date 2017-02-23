@@ -20,26 +20,15 @@ int sourceID( const RawBank& bank )
 {
      return bank.sourceID() >> HltTrackReportsWriter::kSourceID_BitShift;
 }
-
-constexpr struct cmp_sourceID_t {
-    bool operator()(int id, const RawBank* bank) const { return id < sourceID( *bank ); }
-    bool operator()(const RawBank* bank, int id) const { return sourceID( *bank ) < id; }
-} cmp_sourceID{};
-
 int seq( const RawBank& bank )
 {
     return bank.sourceID() & HltTrackReportsWriter::kSourceID_MinorMask;
 }
-static const std::vector<std::string> DefaultLabels = { "Velo", "VeloTTHPT","ForwardHPT" };
+constexpr struct select2nd_ {
+        template <typename U, typename V> 
+        const V& operator()(const std::pair<U,V>& p) const { return p.second; }
+} select2nd{};
 
-template <typename StringContainer>
-std::vector<std::string> prefix(const std::string& prefix, const StringContainer& strs ) {
-    std::vector<std::string> vs; vs.reserve(strs.size());
-    std::transform( strs.begin(), strs.end(),
-                    std::back_inserter(vs),
-                    [&](const std::string& s) {  return prefix + "/" + s; } );
-    return vs;
-}
 }
 
 //-----------------------------------------------------------------------------
@@ -59,14 +48,17 @@ DECLARE_ALGORITHM_FACTORY( HltTrackReportsDecoder )
 //=============================================================================
 HltTrackReportsDecoder::HltTrackReportsDecoder( const std::string& name,
                                                 ISvcLocator* pSvcLocator )
-: HltRawBankSplittingDecoder<LHCb::Tracks>( name , pSvcLocator,
-                            KeyValue{ "RawEventLocations", Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Trigger,
-                                                                                                  LHCb::RawEventLocation::Copied,
-                                                                                                  LHCb::RawEventLocation::Default )},
-                            KeyValues{ "OutputHltTrackReportsLocation", prefix( "Hlt/Track", DefaultLabels ) }
-                            )
+    : Decoder::AlgBase( name, pSvcLocator ), m_callcount( 0 )
 {
-    declareProperty( "OutputSourceId", m_map = { 1, 2, 4 } );
+    // new for decoders, initialize search path, and then call the base method
+    m_rawEventLocations = {LHCb::RawEventLocation::Trigger,
+                           LHCb::RawEventLocation::Copied,
+                           LHCb::RawEventLocation::Default};
+    initRawEventSearch();
+
+    declareProperty( "Output2SourceId", m_map = { { "Hlt/Track/Velo", 1 }, 
+                                                  { "Hlt/Track/VeloTTHPT", 2 }, 
+                                                  { "Hlt/Track/ForwardHPT", 4 } } );
 }
 
 //=============================================================================
@@ -78,14 +70,15 @@ StatusCode HltTrackReportsDecoder::initialize()
     if ( sc.isFailure() ) return sc; // error printed already by GaudiAlgorithm
 
     // Check validity of source IDs: max is 7, must be unique...
-    if ( std::any_of( std::begin(m_map), std::end(m_map), [](unsigned entry ) {
-            return entry > HltTrackReportsWriter::kSourceID_Max;
+    if ( std::any_of( std::begin(m_map), std::end(m_map), [](const std::pair<std::string,unsigned>& entry ) {
+            return entry.second > HltTrackReportsWriter::kSourceID_Max;
     }) ) {
         return Error( "Illegal SourceID specified; maximal allowed value is 7",
                       StatusCode::FAILURE );
     }
 
-    std::vector<unsigned> ids = m_map;
+    std::vector<unsigned> ids; ids.reserve(m_map.size());
+    std::transform( std::begin(m_map), std::end(m_map), std::back_inserter(ids), select2nd );
     std::sort(std::begin(ids), std::end(ids));
     if ( std::unique(std::begin(ids),std::end(ids)) != std::end(ids) ) {
         return Error( "Duplicate SourceID specified", StatusCode::FAILURE );
@@ -98,15 +91,26 @@ StatusCode HltTrackReportsDecoder::initialize()
 //=============================================================================
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
-
-Gaudi::Functional::vector_of_optional_<Tracks> HltTrackReportsDecoder::operator()(const LHCb::RawEvent& rawEvent) const
+StatusCode HltTrackReportsDecoder::execute()
 {
     ++m_callcount;
+    if ( msgLevel( MSG::DEBUG ) ) debug() << "==> Execute" << endmsg;
+
+    // get inputs
+    LHCb::RawEvent* rawEvent = findFirstRawEvent();
+    if ( !rawEvent ) return Error( " No RawEvent found. No HltTracks created." );
 
     // ----------------------------------------------------------
     // get the bank from RawEvent
     // ----------------------------------------------------------
-    std::vector<RawBank*> hltTrackReportsRawBanks = rawEvent.banks( RawBank::HltTrackReports );
+    std::vector<RawBank*> hltTrackReportsRawBanks =
+        rawEvent->banks( RawBank::HltTrackReports );
+
+    //warning() << hltTrackReportsRawBanks.size() << " raw banks found" << endmsg;
+    //for ( const auto & bank : hltTrackReportsRawBanks) {
+    //  warning() << "raw sourceID: " << bank->sourceID() << endmsg;
+    //  warning() << "SourceID: " << sourceID(*bank) << endmsg;
+    //}
 
     // check for bad banks:
     hltTrackReportsRawBanks.erase(
@@ -122,30 +126,33 @@ Gaudi::Functional::vector_of_optional_<Tracks> HltTrackReportsDecoder::operator(
         std::end( hltTrackReportsRawBanks ) );
 
     // sort by sourceID ( which is 'origin << somebits | sequential number' )
-    std::sort( begin( hltTrackReportsRawBanks ), end( hltTrackReportsRawBanks ), 
-               [=]( const RawBank* lhs, const RawBank* rhs ) 
-               { return lhs->sourceID() < rhs->sourceID(); } );
+    std::sort( std::begin( hltTrackReportsRawBanks ),
+               std::end( hltTrackReportsRawBanks ), [=]( const RawBank* lhs, const RawBank* rhs ) {
+                    return lhs->sourceID() < rhs->sourceID();
+               } );
+
+    constexpr struct cmp_sourceID_t {
+        bool operator()(int id, const RawBank* bank) const { return id < sourceID( *bank ); }
+        bool operator()(const RawBank* bank, int id) const { return sourceID( *bank ) < id; }
+    } cmp_sourceID{};
+
 
     // TODO: add some counters to track how many tracks per source ID per event...
-    auto indx = 0;
-    Gaudi::Functional::vector_of_optional_<Tracks> outputs(m_map.size());
     for ( const auto & entry : m_map ) {
-        auto& outputTracks = outputs[indx++];
 
-        auto range = std::equal_range( begin(hltTrackReportsRawBanks), 
-                                       end(hltTrackReportsRawBanks), entry, cmp_sourceID );
+        auto range = std::equal_range( std::begin( hltTrackReportsRawBanks ), 
+                                       std::end( hltTrackReportsRawBanks ), entry.second, cmp_sourceID );
         // if there is a valid bank, create the output -- even if it is an empty bank...
         // (which results in an empty output ;-). If there is no bank, then do NOT
         // create the output...
         if ( range.first == range.second ) {
-            //warning() << "Empty bank " << entry.first << endmsg;
-            continue;
-        }
+	  //warning() << "Empty bank " << entry.first << endmsg;
+	  continue;
+	}
 
-        // map source id -> index of outputs
-
-        outputTracks.emplace(); // create an empty container!
-
+        // create output container and put it on TES
+        auto  outputTracks = new Tracks();
+        put( outputTracks, entry.first );
         // verify all present in expected order...
         bool ok = true;
         std::accumulate( range.first, range.second, 0, [&ok]( int i, const RawBank* b ) {
@@ -153,8 +160,8 @@ Gaudi::Functional::vector_of_optional_<Tracks> HltTrackReportsDecoder::operator(
             return ++i;
         } );
         if ( !ok )
-            throw GaudiException( "Missing Sequential HltTrackReports RawBank part - quiting.",
-                                  name(), StatusCode::SUCCESS );
+            return Error( "Missing Sequential HltTrackReports RawBank part - quiting.",
+                          StatusCode::SUCCESS, 100 );
 
         // figure out the total size -- zero length (i.e. empty) bank is NOT an error
         unsigned int bankSize = std::accumulate( range.first,
@@ -169,22 +176,22 @@ Gaudi::Functional::vector_of_optional_<Tracks> HltTrackReportsDecoder::operator(
             decodeTracks( (*range.first)->data(), bankSize, *outputTracks );
         } else {
             // concatenate banks into a local array
-            std::vector<unsigned int> completeBank( bankSize );
-            auto p = std::accumulate( range.first, range.second, completeBank.data(),
+            std::unique_ptr<unsigned int> completeBank{new unsigned int[bankSize]};
+            auto p = std::accumulate( range.first, range.second, completeBank.get(),
                              []( unsigned int* p, const RawBank* bank ) {
                 return std::copy( bank->begin<unsigned int>(), bank->end<unsigned int>(), p );
             } );
-            assert( std::distance( completeBank.data(), p ) == bankSize ); 
+            assert( std::distance( completeBank.get(), p ) == bankSize ); 
             // do the actual decoding: see HltTrackingCoder.cpp
-            decodeTracks( completeBank.data(), bankSize, *outputTracks );
+            decodeTracks( completeBank.get(), bankSize, *outputTracks );
         }
 
-        counter( std::to_string( entry )) += outputTracks->size();
+	counter( entry.first ) += outputTracks->size();
         // for debug purposes print the contents of the outputLocation
         if ( msgLevel( MSG::VERBOSE ) ) {
             verbose() << "----------------------------------------\n";
             verbose() << "Decoded event " << m_callcount << endmsg;
-            verbose() << "Decoding source id " << entry  <<endmsg;
+            verbose() << "Decoding source id " << entry.second << " into TES " << entry.first <<endmsg;
             verbose() << outputTracks->size() << " Resurrected tracks: \n";
             std::for_each( std::begin(*outputTracks), std::end(*outputTracks),
                 [&](const LHCb::Track* track) {
@@ -196,6 +203,6 @@ Gaudi::Functional::vector_of_optional_<Tracks> HltTrackReportsDecoder::operator(
             } );
         }
     }
-    return outputs;
+    return StatusCode::SUCCESS;
 }
 #pragma GCC diagnostic pop

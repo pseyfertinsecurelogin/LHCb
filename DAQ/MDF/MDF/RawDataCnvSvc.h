@@ -11,6 +11,7 @@
 
 // Framework include files
 #include "GaudiKernel/ConversionSvc.h"
+#include "GaudiKernel/StreamBuffer.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiUtils/IIODataManager.h"
 #include "MDF/MDFIO.h"
@@ -24,7 +25,7 @@ class IRegistry;
 /*
  *    LHCb namespace declaration
  */
-namespace LHCb  {  
+namespace LHCb  {
 
   // Forward declarations
   class RawDataAddress;
@@ -34,7 +35,7 @@ namespace LHCb  {
   /** @class RawDataCnvSvc RawDataCnvSvc.h  MDF/RawDataCnvSvc.h
     *
     * Conversion service for the online data.
-    * 
+    *
     * @author  M.Frank
     * @version 1.0
     * @date    01/01/2005
@@ -50,6 +51,8 @@ namespace LHCb  {
     FileMap                m_fileMap;
 
     bool                   m_wrFlag;
+    /// Streambuffer to hold uncompressed data
+    StreamBuffer           m_data;
     /// Reference to data manager interface
     SmartIF<IDataManagerSvc> m_dataMgr;
     /// Reference to file manager service
@@ -60,8 +63,6 @@ namespace LHCb  {
     int                    m_genChecksum;
     /// Property: Properties for time alignment events
     int                    m_evtsBefore, m_evtsAfter;
-    /// Property: Flag to copy banks to the raw event (or only reference the banks)
-    int                    m_copyBanks;
     /// Property: Property to indicate input data type (RAW, RDST)
     std::string            m_sourceType;
     /// Property: Location of RAW banks in the TES
@@ -83,8 +84,23 @@ namespace LHCb  {
     /// Close all files disconnected from the IO manager
     virtual void closeDisconnected();
 
+    /// Commit output to buffer manager
+    virtual StatusCode commitDescriptors(void* ioDesc);
+
     /// Read raw banks
-    virtual StatusCode readRawBanks(RawDataAddress* pAddr);
+    virtual StatusCode readRawBanks(RawDataAddress* pAddr,MDFDescriptor& data);
+
+    /// Allocate data space for output
+    MDFDescriptor getDataSpace(void* const /* ioDesc */, size_t len) override {
+      m_data.reserve(len);
+      return MDFDescriptor(m_data.data(), m_data.size());
+    }
+
+    /// Write data block to stream
+    StatusCode writeBuffer(void* const ioDesc, const void* data, size_t len) override;
+
+    /// Read raw byte buffer from input stream
+    StatusCode readBuffer(void* const ioDesc, void* const data, size_t len) override;
 
     /// Helper to install opaque address leaf
     StatusCode regAddr(IRegistry* pReg,RawDataAddress* pA,CSTR path,const CLID& clid);
@@ -97,16 +113,17 @@ namespace LHCb  {
                                     RawDataAddress* pAddRaw,
                                     const std::vector<std::string>& names);
 
-    /// MDFIO interface: Allocate data space for input or output
-    virtual MDFDescriptor getDataSpace(void* const ioDesc, size_t len);
-
-    /// MDFIO interface: Write data block to output stream
-    virtual StatusCode writeBuffer(void* const ioDesc, const void* data, size_t len);
-
-    /// MDFIO interface: Read raw byte buffer from input stream
-    virtual StatusCode readBuffer(void* const ioDesc, void* const data, size_t len);
+    /// Decode a MEP (Multi event packets) record
+    StatusCode unpackMEP(const MDFDescriptor& dat, const std::string& loc, RawEvent* raw);
 
   public:
+    /** Initializing constructor
+      *  @param[in]   nam   Name of the service
+      *  @param[in]   typ   Storage type if different from MDF_StorageType
+      *  @param[in]   loc   Pointer to the service locator object
+      *  @return Initialized reference to service object
+      */
+    RawDataCnvSvc(CSTR nam, ISvcLocator* loc, long typ);
 
     /** Initializing constructor
       *  @param[in]   nam   Name of the service
@@ -115,17 +132,17 @@ namespace LHCb  {
       */
     RawDataCnvSvc(CSTR nam, ISvcLocator* loc);
 
-    /// Standard destructor      
+    /// Standard destructor
     virtual ~RawDataCnvSvc()  {}
 
     /// Service initialization
-    virtual StatusCode initialize();
+    StatusCode initialize() override;
 
     /// Service finalization
-    virtual StatusCode finalize();
+    StatusCode finalize() override;
 
     /// Concrete class type
-    virtual const CLID& objType() const;
+    const CLID& objType() const override;
 
     /** Object creation callback
       *  @param[in]   pAddr     Reference to opaque object address
@@ -133,7 +150,7 @@ namespace LHCb  {
       *
       *  @return Status code indicating success or failure
       */
-    virtual StatusCode createObj(IOpaqueAddress* pAddr, DataObject*& refpObj);
+    StatusCode createObj(IOpaqueAddress* pAddr, DataObject*& refpObj) override;
 
     /** Callback for reference processing (misused to attach leaves)
       *  @param[in]   pAddr     Reference to opaque object address
@@ -141,36 +158,36 @@ namespace LHCb  {
       *
       *  @return Status code indicating success or failure
       */
-    virtual StatusCode fillObjRefs(IOpaqueAddress* pAddr, DataObject* pObj);
+    StatusCode fillObjRefs(IOpaqueAddress* pAddr, DataObject* pObj) override;
 
     /// Connect the output file to the service with open mode.
-    virtual StatusCode connectOutput(CSTR name, CSTR mode);
+    StatusCode connectOutput(CSTR name, CSTR mode) override;
 
     /// Connect the output file to the service.
-    virtual StatusCode connectOutput(const std::string& output)  
+    virtual StatusCode connectOutput(const std::string& output) override
     { return this->ConversionSvc::connectOutput(output);        }
 
     /// Connect the input file to the service with READ mode
     virtual StatusCode connectInput(CSTR fname, void*& iodesc);
 
     /// Commit pending output.
-    virtual StatusCode commitOutput(CSTR , bool doCommit);
+    StatusCode commitOutput(CSTR , bool doCommit) override;
 
     /// Convert the transient object to the requested representation.
-    virtual StatusCode createRep(DataObject* pObject, IOpaqueAddress*& refpAddress);
+    StatusCode createRep(DataObject* pObject, IOpaqueAddress*& refpAddress) override;
 
-    /// Resolve the references of the converted object. 
-    virtual StatusCode fillRepRefs(IOpaqueAddress* pAddress,DataObject* pObject);
+    /// Resolve the references of the converted object.
+    StatusCode fillRepRefs(IOpaqueAddress* pAddress,DataObject* pObject) override;
 
     /// Create a Generic address using explicit arguments to identify a single object.
-    virtual StatusCode createAddress(long typ, const CLID& clid, const std::string* par, 
-                                     const unsigned long* ip, IOpaqueAddress*& refpAddress);
+    StatusCode createAddress(long typ, const CLID& clid, const std::string* par,
+                             const unsigned long* ip, IOpaqueAddress*& refpAddress) override;
 
     /// Convert an address in string form to object form
-    virtual StatusCode createAddress( long svc_type,
-				      const CLID& clid,
-				      const std::string& refAddress,
-				      IOpaqueAddress*& refpAddress)
+    StatusCode createAddress( long svc_type,
+                              const CLID& clid,
+                              const std::string& refAddress,
+                              IOpaqueAddress*& refpAddress) override
     { return this->ConversionSvc::createAddress(svc_type,clid,refAddress,refpAddress); }
 
   };

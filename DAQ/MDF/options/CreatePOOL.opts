@@ -1,0 +1,12 @@
+#include "$MDFROOT/options/MDFCheck.opts"
+#include "$MDFROOT/options/MDFdata.opts"
+ApplicationMgr.EvtMax                = 100000;
+ApplicationMgr.HistogramPersistency  = "NONE";
+//  Setup for ROOT I/O System
+ApplicationMgr.OutStream  += { "POOLMini" };
+#include "$GAUDIPOOLDBROOT/options/GaudiPoolDbRoot.opts"
+PoolDbCacheSvc.Dlls       += {"CLHEPRflx", "STLRflx", "GaudiKernelDict"};
+POOLMini.ItemList          = { "/Event#1", "/Event/DAQ#1" };
+POOLMini.Output            = "DATAFILE='PFN:mdfPOOL.dat' TYP='POOL_ROOTTREE' OPT='RECREATE'";
+ReadAlg.OutputLevel        = 2;
+PoolDbCacheSvc.OutputLevel = 1;

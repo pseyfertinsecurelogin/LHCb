@@ -47,7 +47,7 @@ namespace LHCb
 
   template <typename T,              /// The type
             unsigned NextSize = 32,  /// When needed, allocate size for 'NextSize' T's at once.
-            bool Mutex = true,       /// Do we need to protect access to the singleton with a mutex?
+            bool Mutex = false,      /// Do we need to protect access to the singleton with a mutex?
             typename Allocator = boost::default_user_allocator_new_delete /// The allocator
             >
   class MemPoolAlloc

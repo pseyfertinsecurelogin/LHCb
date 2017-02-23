@@ -17,17 +17,17 @@
 #include <vector>
 #include <iostream>
 #include <array>
-#include <stdint.h>
+#include <cstdint>
 
 // General namespace for RICH specific definitions documented in RichSide.h
 namespace Rich 
 {
 
   /// Number of RICH particle types (Electron, Muon, Pion, Kaon, Proton, Deuteron and 'Below Threshold')
-  static const int NParticleTypes     = 7;
+  static const uint8_t NParticleTypes     = 7;
 
   /// Number of 'real' RICH particle types (Electron, Muon, Pion, Kaon, Proton and Deuteron)
-  static const int NRealParticleTypes = 6;
+  static const uint8_t NRealParticleTypes = 6;
 
   //--------------------------------------------------------------------------
   /** @enum ParticleIDType

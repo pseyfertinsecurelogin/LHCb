@@ -9,8 +9,7 @@ for k,v in configurableInstanceFromString("DataOnDemandSvc").AlgMap.iteritems():
     if type(v) is str:
         v=configurableInstanceFromString(v)
     print "===================="
-    #  DataObjectHandleBase has ('xyz') instead of xyz
-    print k.strip("()").strip("'")
+    print k
     print "--------------------"
     print v.getFullName()
     props={}

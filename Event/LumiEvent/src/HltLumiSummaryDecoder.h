@@ -3,11 +3,10 @@
 
 // Include files
 // from Gaudi
-#include "Event/HltLumiSummary.h"
-#include "GaudiAlg/Transformer.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "DAQKernel/DecoderAlgBase.h"
 // std
 #include <string>
-#include <atomic>
 
 /** @class HltLumiSummaryDecoder HltLumiSummaryDecoder.h
  *
@@ -18,25 +17,22 @@
  *  @date   2008-08-01
  */
 
-// HenryIII Changed to use Transform Algorithm
-
-class HltLumiSummaryDecoder : public Gaudi::Functional::Transformer<
-                                  LHCb::HltLumiSummary(const LHCb::RawEvent&)
-                              >
-{
+class HltLumiSummaryDecoder : public Decoder::AlgBase {
 public:
   /// Standard constructor
   HltLumiSummaryDecoder(  const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode initialize() override;    ///< Algorithm initialization
-  LHCb::HltLumiSummary operator() (const LHCb::RawEvent& event) const override;    ///< Algorithm execution
+  StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
 
 private:
+  // data
+  std::string m_OutputContainerName;
 
-  // Statistics, mutable to allow statistics to be kept
-  mutable std::atomic<double> m_totDataSize = {0};
-  mutable std::atomic<int> m_nbEvents = {0};
+  // Statistics
+  double m_totDataSize;
+  int m_nbEvents;
 
 };
 

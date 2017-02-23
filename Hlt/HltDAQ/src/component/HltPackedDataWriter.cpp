@@ -15,20 +15,13 @@
 
 static const Gaudi::StringKey PackedObjectLocations{"PackedObjectLocations"};
 
-
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY(HltPackedDataWriter)
 
-
 HltPackedDataWriter::HltPackedDataWriter(const std::string& name, ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm(name, pSvcLocator)
+: GaudiAlgorithm(name, pSvcLocator)
 {
-  declareProperty("PackedContainers", m_packedContainers);
-  declareProperty("ContainerMap", m_containerMap);
-  declareProperty("OutputRawEventLocation",
-                  m_outputRawEventLocation=LHCb::RawEventLocation::Default);
-  auto* p = declareProperty("Compression", m_compression = LZMA);
-  p->declareUpdateHandler(
+  m_compression.declareUpdateHandler(
     [=](Property&) {
       switch (this->m_compression) {
         case NoCompression: { this->m_compressionAlg = ROOT::kUndefinedCompressionAlgorithm; break; }
@@ -38,9 +31,7 @@ HltPackedDataWriter::HltPackedDataWriter(const std::string& name, ISvcLocator* p
         }
     }
   );
-  p->useUpdateHandler(); // sync m_compressionAlg with m_compression
-  declareProperty("CompressionLevel", m_compressionLevel = 6);
-  declareProperty("EnableChecksum", m_enableChecksum = false);
+  m_compression.useUpdateHandler(); // sync m_compressionAlg with m_compression
 }
 
 template<typename PackedData>
@@ -183,7 +174,7 @@ StatusCode HltPackedDataWriter::execute() {
   const auto& output = compressed?m_compressedBuffer:m_buffer.buffer();
 
   // Write the data to the raw event
-  addBanks(*rawEvent, output, compressed?static_cast<Compression>(m_compression):NoCompression);
+  addBanks(*rawEvent, output, compressed?static_cast<Compression>(m_compression.value()):NoCompression);
 
   if (UNLIKELY(msgLevel(MSG::DEBUG))) {
     counter("Size of serialized data") += m_buffer.buffer().size();
@@ -228,7 +219,7 @@ void HltPackedDataWriter::addBanks(LHCb::RawEvent& rawEvent, const std::vector<u
   if (UNLIKELY(msgLevel(MSG::DEBUG))) {
     debug() << "Writing " << nbanks << " banks" << endmsg;
   }
-  
+
 
   for (unsigned int ibank = 0; ibank < nbanks; ++ibank) {
     uint16_t sourceID = sourceIDCommon | ((ibank << PartIDBits) & PartIDMask);

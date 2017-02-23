@@ -7,8 +7,7 @@
  *  @date   2003-11-06
  */
 
-#ifndef RICHDAQ_RICHZSPACKED_V1_H
-#define RICHDAQ_RICHZSPACKED_V1_H 1
+#pragma once
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
@@ -221,5 +220,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHDAQ_RICHZSPACKED_V1_H

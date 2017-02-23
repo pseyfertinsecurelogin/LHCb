@@ -82,6 +82,11 @@ namespace LoKi
   {
   public:
     // ========================================================================
+    /// the initialization of the algorithm
+    StatusCode initialize ()  override;
+    // ========================================================================
+  protected:
+    // ========================================================================
     /** standard constructor
      *  @see GaudiAlgorithm
      *  @see      Algorithm
@@ -93,13 +98,12 @@ namespace LoKi
     FilterAlg ( const std::string& name ,   // the algorithm instance name
                 ISvcLocator*       pSvc ) ; // pointer to the service locator
     // ========================================================================
-    /// the initialization of the algorithm
-    virtual StatusCode initialize () ;
+  private:
     // ========================================================================
     /// the copy constructor is disabled
-    FilterAlg ( const FilterAlg& ) = delete;        // the copy constructor is disabled
+    FilterAlg ( const FilterAlg& ) ;        // the copy constructor is disabled
     /// the assignement operator is disabled
-    FilterAlg& operator=( const FilterAlg& ) = delete;   // the assignement is disabled
+    FilterAlg& operator=( const FilterAlg& ) ;   // the assignement is disabled
     // ========================================================================
   public: // property update handlers
     // ========================================================================
@@ -156,7 +160,7 @@ namespace LoKi
     StatusCode i_decode ( FUNCTOR& functor )
     {
       // get the factory
-      auto _factory = tool<FACTORY> ( factory() , this ) ;
+      FACTORY* _factory = tool<FACTORY> ( factory() , this ) ;
       // use the factory
       StatusCode sc = _factory-> get ( code() , functor , preambulo () ) ;
       // release the factory (not needed anymore)
@@ -188,9 +192,9 @@ namespace LoKi
   private:
     // ========================================================================
     /// the type/name for LoKi/Bender "hybrid" factory
-    std::string m_factory = { "<UNSPECIFIED>" } ; // the type/name for LoKi/Bender "hybrid" factory
+    std::string m_factory   ; // the type/name for LoKi/Bender "hybrid" factory
     /// the filter/code criteria itself
-    std::string m_code = { "<unspecified>" };                // the filter/code criteria itself
+    std::string m_code      ;                // the filter/code criteria itself
     /// the preambulo itself
     std::vector<std::string> m_preambulo_ ;             // the preambulo itself
     /// the preambulo itself
@@ -199,11 +203,11 @@ namespace LoKi
   private:
     // ========================================================================
     /// flag which indicated that factory has been updated
-    bool m_factory_updated = false ;            // the factory has been updated
+    bool m_factory_updated   ;                  // the factory has been updated
     /// flag which indicated that code has been updated
-    bool m_code_updated = false ;                  // the code has been updated
+    bool m_code_updated      ;                     // the code has been updated
     /// flag which indicated that preambulo has been updated
-    bool m_preambulo_updated = false ;        // the preambulo has been updated
+    bool m_preambulo_updated ;                // the preambulo has been updated
     // ========================================================================
   };
   // ==========================================================================

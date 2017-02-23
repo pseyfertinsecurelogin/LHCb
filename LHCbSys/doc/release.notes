@@ -14,6 +14,785 @@
 </ul>
 </b>
 
+<H1><A NAME=v42r1>2017-01-31 LHCbSys v42r1</A></H1>
+This version uses Gaudi v28r1 and LCG_87 with ROOT 6.08.02.
+<p>
+This version is released on master branch. 
+
+<h2>New or changed functionalities</h2>
+
+<dl>
+<dt>[MR !530] Added `IGenericThreadSafeTool` interface for tools that can provide a const `execute()` method.
+<dd> A tool implementing `IGenericThreadSafeTool` can be used where `IGenericTool` is expected.
+<dd> This is a port to LHCb of gaudi/Gaudi!249.
+
+<dt>[MR !526, !532] Improvements to RunChangeHandlerSvc for 2017 data taking
+<dd> Avoid updating conditions if the XML content does not change (fixes LHCBPS-1668)
+<dd> Allow partitioning of the run number when formatting the string (805625ce)
+
+<dt>[MR !498] Add CommonMessaging to DetectorElement
+<dd> See discussion in LHCBPS-1680
+
+<dt>[MR !522] RichDet: add support to DeRichPD base class to allow access to the pixel areas.
+<dd> Useful in the reconstruction to allow adapting to the HPD/PMT differences in a transparent way.
+
+<dt>[MR !520] Update VectorClass to 1.26 upstream release
+<dd> Changelog since last LHCb version (1.23)
+<dt> <em>Projected future version (2018?)</em>
+<dd> use mask registers for boolean vectors of all sizes with AVX512VL
+<dd> use C++14
+<dd> replace long template argument lists by constant arrays
+<dt> <em>2016-12-21 version 1.26</em>
+<dd> added constant4ui template
+<dd> fixed error for complexvec.h with clang
+<dd> fixed error in vectormath_exp.h for MAX_VECTOR_SIZE < 512
+<dt><em>2016-11-25 version 1.25</em>
+<dd> scatter functions
+<dd> new functions to_float for unsigned integer vectors
+<dd> instrset_detect function can detect AVX512VL, AVX512BW, AVX512DQ
+<dd> functions hasF16C and hasAVX512ER for detecting instruction set extensions
+<dd> fix bugs in horizontal_and and pow(0,0) for AVX512
+<dd> functions improved for AVX512 and AVX512VL: pow, approx_recipr, approx_rsqrt
+<dd> functions improved for AVX512DQ: 64 bit multiplication, to_double, 32 and 64 bit rotate_left, round_to_int64, truncate_to_int64
+<dd> functions improved for AVX512ER: approx_recipr, approx_rsqrt, exponential functions
+<dt><em>2016-10-31 version 1.24</em>
+<dd> fix bug in Vec8uq constructor in vectori512e.h
+
+<dt>[MR !519] LHCbKernel/Kernel/STLExtensions.h: update make_array to a full implementation
+
+<dt>[MR !518] Add 2017 DataType
+<dd> Add 2017 DataType to DDDBConf
+<dd> Add a loaddddb2017 test
+<dd> In DDDBConf, set the initial time for 2016 to the end of the last fill of 2016
+<dd> In DetDescChecks: silence compilation warnings from Boost and ROOT
+
+<dt>[MR !512] Merge RichFuture functional packages into master
+
+<dt>[MR !517] Add new RichFuture MC utility classes
+
+<dt>[MR !451] Backport Rich 1D interpolator update from future branch
+
+<dt>[MR !499, !490, !482] LHCbMath
+<dd> Add Gauss-Lobatto interpolation
+<dd> Improve a bit existing constructors for Bernstein
+<dd> Add (and extend) qmtest for new interpolation functions (for MR !460)
+<dd> New functionality of polynomials is added (new method chebyshev_sum).
+<dd> New test for above is added.
+<dd> Speedup vector/matrix operations in Python
+<dd> Make operations more robust and more efficient
+<dd> Add negation operator
+<dd> Improve comparison
+<dd> Extend the test
+
+<dt>[MR !491] Minor functor cache tweaks
+<dd> Switch warnings in `HybridBase` for disabled python/cache functors to always
+<dd> Add `${LOKI_FUNCTORS_CACHE_POST_ACTION_OPTS}` to the functor cache source dependencies
+
+</dl>
+
+<h2>Performance optimisations</h2>
+<dl>
+<dt>[MR !460] DetDescSvc/src/PreloadGeometryTool.cpp: Keep DataStoreLoadAgent on stack (instead of on the heap)
+
+<dt>[MR !533] MagneticFieldSvc - Cache field current
+<dd> Currently the field service computes from scratch the signed current each time `signedRelativeCurrent()` is called. The value though cannot change outside of conditions updates, so instead cache the value together with the polarity when this happens, and just return the cached value.
+
+<dt>[MR !536, !527] RICH Decoded Data
+<dd> Extend decoded data to provide number of hits in each RICH subsystem separately
+<dd> Add the number of active (>0 hits) PDs to the RICH decoded data structure.
+<dd> Update a few static number types in LHCbKernel to use smaller 8bit types.
+
+<dt>[MR !535, !534, !531] RichDet
+<dd> Convert some data members in DeRichHPD from unique_ptr to direct data members, as no real need to allocate on the heap.
+<dd> Define an enum for the field type in DeRichHPD.
+<dd> Cache field parameters in RichDet + Remove null checks in ray tracing utils.
+<dd> Rework various DeRichX accessors for nominal parameters, to make them inline instead of virtual
+
+<dt>[MR !529] RichFuture
+<dd> Prefer DeclareInterfaceID
+<dd> Add a new interface specific to the mirror segment finder look up table tool. Recent optimisations in this tool mean the lookups are very fast, and the virtual overhead is no longer acceptable, around 15%. These calls are used heavily in the photon reconstruction and ray tracing thus a more efficient interface was required. The new one is specific to this tool, and provides efficient inlined access to the lookup. The original interface with virtual methods is still implemented, that allows (in principle) different implementations to be swap out at runtime. The user can pick which they want when loading the tool, by simply choosing the interface. Overall this one change saves 1.8% on the total time taken by the RichFuture Quartic photon reconstruction algorithm.
+
+</dl>
+
+<h2>Bug fixes</h2>
+<dl>
+<dt>[MR !509] RichDet: Fix PMT plane initialisation bug
+<dt>[MR !506] LHCbMath: Bernstein.h: minor fix for incorrect object creation
+<dt>[MR !479] LHCbMath: fix linear-algebra operations in PyROOT (broken in new ROOT)
+<dd> Fix operations with linear algebra objects (vectors and matrices) in PyROOT.
+<dd> The problem appears due to new ROOT. Now a new, a bit more robust way is implemented.
+<dt>[MR !467] Move initializer_list out of ranged-for loop
+<dd> For some reason previous construct had a problem with gcc62 but not gcc49
+<dt>[MR !466] Fix generation of trigger configurations
+<dd> There is a consistency check in `PropertyConfig::initProperties`, which attempts to verify that toString / fromString are each others inverse.
+<dd> With Gaudi v27r1, the check has no effect because the update handler does not seem to be passed to the clone.
+<dd> With Gaudi v28r0, this check is actually working and `fromString` triggers a call to the property's update handler.
+<dd> The latter is a problem for LoKi filters, because it triggers the functor decoding. Solution is to remove the update handler from the cloned property before doing the check. This will potentially miss bad behaviour in the update handler, like modifying the property value.
+<dt>[MR !463] HltRoutingBitsFilter: Fix default require mask
+<dd> Default used to be three times `0xFFFF`, when it should have been three times `0xFFFFFFFF` instead. So now it is three times `~0u` so it is set to 'all one bits' regardless of the word size.
+
+</dl>
+
+<h2>Changes to tests</h2>
+<dl>
+<dt>[MR !496] GaudiConf IOHelper and IOExtension tests: Update references to follow changes in printout
+<dd> To follow https://gitlab.cern.ch/gaudi/Gaudi/commit/6745199c52ede2e73cd518a12c7ada4ea2bfc2bf
+
+</dl>
+
+<h2>Thread safety</h2>
+<dl>
+
+<dt>[MR !516] Changes to Det/VeloDet, Velo/VeloDAQ and Event/VeloEvent to make the VELO detector element thread safe
+<dd> Removes all of the mutables from VeloDet (except for thread safe MsgService access). DeVeloSensor was being used to pass information about the decoding state between VeloDAQ and FastVelo. A new TES object Event/VeloEvent/xml/VeloDecodeStatus.xml (ClassID 4009) is used instead.
+<dd> Change goes together with MR lhcb/Rec!440
+<dd> See also LHCBPS-1680
+
+<dt>[MR !509] Update to make Det/RichDet thread safe.
+<dd> Plus various modernisations.
+
+<dt>[MR !483] Make TrajPoca threadsafe
+
+<dt>[MR !486] Make Rich/RichDAQKernel thread safe by removing mutable data members.
+
+<dt>[MR !482] DetDesc: make SolidTicks threadsafe
+
+</dl>
+
+<h2>Code modernisations and cleanups</h2>
+<dl>
+
+<dt>[MR !470] Remove all cmt files
+<dd> CMT is no longer supported as from Gaudi v28r0
+
+<dt>[MR !513] Fully qualify LHCb::Track enum values
+<dd> Necessary to be able to support Gaudi::Property&lt;enum_name&gt; in future, and removes any possible ambiguity in case there are multiple enums.
+
+<dt>[MR !459] Modernize DetCond
+<dd> prefer implicit destructors
+<dd> add final
+<dd> prefer STL algorithms over raw loops
+
+<dt>[MR !521, !458] Modernize HltDAQ
+<dd> Use DeclareInterfaceID
+<dd> Prefer struct for interfaces
+<dd> make lookup tables static const, and put in anonymous namespace
+<dd> prefer inheriting constructors
+<dd> prefer Gaudi::Property and direct member initialization
+<dd> prefer delegating to base class constructor   
+
+<dt>[MR !472, !457] Modernize HltServices
+<dd> Improve readN efficiency
+<dd> Prefer standalone functions in anonymous namespace
+<dd> Prefer attibutes over #pragma
+<dd> Prefer std::make_unique
+<dd> Add support for Gaudi::Property<TCK>
+<dd> Prefer boost::optional over std::unique_ptr
+<dd> prefer Gaudi::Property & direct member initialization
+<dd> prefer delegating to base class constructor
+<dd> prefer dedicated property type with custom toStream/parse over callback
+
+<dt>[MR !515] Modernize LHCbKernel
+<dd> derive interfaces from extend_interfaces
+<dd> prefer struct for interfaces
+<dd> use DeclareInterfaceID
+
+<dt>[MR !456] Modernize LoKiCore
+<dd> prefer switch over if-elseif-elseif-elseif-else
+<dd> prefer auto
+<dd> prefer implicit destructor
+<dd> prefer direct member initialization
+<dd> prefer STL algorithms over raw loops
+<dd> remove obsolete SVN/CVS keywords
+<dd> prefer SmartIF over plain svc pointer and explicit release
+<dd> prefer std::integral_constant over enum with single value
+<dd> prefer '\n' over std::endl when there is no reason to 'flush'
+<dd> remove conditional code for boost version &lt; 1.56
+<dd> prefer lambda as predicate
+<dd> prefer emplace_back over push_back
+<dd> consolidate several XYZSvc implementations into single templated svc method
+
+<dt>[MR !462] Modernize L0DU / L0Muon
+<dd> avoid having to create temporary std::string from const char* on every call to `encode` by using static const std::string
+<dd> prefer assignemnt over clear(), push_back()
+<dd> prefer by-value member data over owned pointers
+<dd> prefer switch over if-elseif-elseif-elseif-else
+<dd> prefer direct member initialization
+
+<dt>[MR !514] Prefer Gaudi::Property<TYPE> in RichFuture packages
+
+<dt>[MR !525] Remove two unnecessary Velo interfaces
+<dd> Remove unused files Kernel/IVeloClusterSelector.h and Kernel/IVeloChannelIDSelector.h
+<dd> Related to removal of VeloClusterContainerCopy in MR lhcb/Lbcom!111    
+<dd> See also LHCBPS-1680
+
+<dt>[MR !497] Modernize VeloClusterFilter
+<dd> use Gaudi::Property
+<dd> prefer std::make_unique
+
+<dt>[MR !478] Fix misleading indentation warnings
+<dd> Fix misleading indentation warnings in SimComponents/src/MCEventTypeFinder  and LoKiCore/src/Services.cpp
+<dd> LHCbMath: Suppress compilation warnings from Eigen (and  ROOT, CLHEP, Boost, already done at project level)
+<dd> LoKiCore: Suppress compilation warnings from ROOT and Boost (already done at project level)
+<dd> Remove a redundant StatusCode return in MCEventTypeFinder
+
+<dt>[MR !476] Fix clang warnings
+<dd> Ported from future. See !455
+
+<dt>[MR !471] Fix missing override (seen in Stripping)
+
+<dt>[MR !465] Fix typos in comments
+</dl>
+
+
+<H1><A NAME=v42r0>2016-11-28 LHCbSys v42r0</A></H1>
+This version uses Gaudi v28r0 and LCG_86 with ROOT 6.08.00.
+<p>
+This version is released on master branch. 
+
+<h2>New or changed functionalities</h2>
+<dl>
+
+<dt>[MR !415] Adapt conddb compression test to the changes in LZMA settings in ROOT 6.08
+
+<dt>[MR !257] Allow use of the latest global tag for a given CondDB partition
+<dd> When the special value `<latest:DataType>` (where `DataType` is the data type string) is used as global tag for a CondDB partition in the CondDB configurable, the latest global tag for the specified data type is used for that partition.
+<dd> See LHCBPS-1649
+
+<dt>[MR !409] Update LHCBCOND default tag for 2016 to cond-20161011
+
+<dt>[MR !253] Add deuteron to trigger Turbo reports
+<dd> See LHCBPS-1653
+
+<dt>[MR !236] Added  CaloCluster saturation and barycenter info in NeutralProtoParticle
+<dd> Allows to replay the Calo Correction starting from ProtoP info, i.e. without the full reconstruction
+
+<dt>LHCbMath
+<dd>[MR !302] Add "even" bernstein polynomials and their positive functions
+<dd>[MR !256] Easy treatment of SMatrix/SVectors in PyROOT
+
+<dt>Rich
+<dd>[MR !392] Add PanelArray alias to RichSide.h
+<dd>[MR !321, !317] Backport some RichFuture updates to master
+<dd>[MR !289] Rename various components HPD->PD + Add size data to decoded L1Map
+<dd>[MR !381] Improved formatting in RichPID::fillStream
+
+<dt>[MR !385] Update VectorClass to 1.23 
+
+<dt>[MR !348] Replace LoKiTracks with LoKiTrack to follow lhcb/Rec!268
+
+<dt>[MR !342] LHCbKernel: Add header for containing extensions to the STL not yet available, but likely to be in the future
+
+</dl>
+<h2>Bug fixes</h2>
+<dl>
+
+<dt>[MR !430] Fix bug in MCParticle.xml
+<dd> Weird "quasi copy-constructor" does not copy m_flags field. As an immediate result "fromSignal" information is lost for all MC tapes
+<dd> Fixed missing field and replaced this constructor with one taking a reference rather than a pointer
+
+<dt>[MR !453] LoKiHlt fixes
+<dd> Fix printout for ODIN_RUNEVT function
+<dd> Fix odin_runevts function
+
+<dt>LHCbMath fixes:
+<dd>[MR !418] Fix a bug in ValueWithError.cpp in estimation of uncertainty for igamma
+<dd>[MR !304] Bug fix in normalizaton of Gaudi::Math::PositiveEven polynomial
+
+<dt>[MR !277] Fix MemoryTool
+<dd> Fixes some counter and histogram filling bugs introduced in !230
+
+</dl>
+<h2>Changes to tests</h2>
+<dl>
+
+<dt>[MR !398] Fixed validation of some IOExample tests
+<dd> Output was basically ignored so far and the test always successful
+
+<dt>[MR !411] Fix broken test exposed by MR !398. Remove obsolete MC09 option
+
+<dt>[MR !358, !311] Fix for tests running against Gaudi v28r0
+<dd> Add a temporary exclusion to LHCbExclusions.py for new ```VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc``` message from Gaudi v28r0
+<dd> Remove obsolete exclusions and add forward compatibility Gaudi v28r0
+
+<dt>[MR !281] Remove obsolete tests
+<dd> Remove obsolete conftest, was testing SVNProjecDeps functionality of ```GaudiConf/python/GaudiConf/QMTest/ConfigurablesTest.py```
+<dd> Remove obsolete configurables test, was checking integrity of SVN project recursive checkout
+
+<dt>[MR !256] LHCbMath: add new QMTest
+
+<dt>[MR !259] HltDAQ: Add switch to routing bits test script to optionally limit the number of events.
+
+</dl>
+<h2>Thread safety</h2>
+<dl>
+
+<dt>[MR !427] Towards a thread-safe PropertyConfigSvc, ConfigCDBAccessSvc
+<dd> Add mutexes and locks to protect mutable state
+
+<dt>[MR !435] Protect XercesDOMParser with a mutex
+<dd> And replace a few std::string with const std::string&
+
+<dt>[MR !422] Modernize DetDescSvc and make TransportSvc thread safe
+
+<dt>[MR !239] RichKernel: make thread safe and split up
+<dd> Update a few classes to not do things that would not work in a parallel framework. E.g. const methods that update mutable cache data members on-demand. Instead, just cache the values up front in the constructors etc.
+<dd> Split up RichKernel into three separate packages, RichKernel, RichUtils and RichInterfaces to better support upgrade developments.
+
+</dl>
+<h2>Code modernisations (and sources of possible performance improvements)</h2>
+<dl>
+
+<dt>[MR !412, !309, !301, !291, !265, !264] Modernize Calo (CaloDAQ, CaloUtils, CaloInterfaces, CaloKernel)
+<dd> Add const to interfaces (where possible)
+<dd> Replace _setProperty with addition of IProperty to extend_interfaces
+<dd> Remove this-> from invocation of member functions
+<dd> Prefer range-based for loops
+<dd> Prefer std::make_unique over raw pointer + explicit delete
+<dd> Prefer constexpr functions
+<dd> Remove execute bit from source files
+<dd> Remove explicit destructors when the implicitly generated one will do the same
+<dd> Prefer STL algorithms over raw loops
+<dd> Prefer to initialize variables when they are declared
+<dd> Prefer override over final
+<dd> Add final to classes when possible
+<dd> Prefer pass-by-const-reference over pass-by-const-pointer if passing a nullptr is a guaranteed SEGV
+<dd> Prefer auto
+<dd> Make CaloInterfaces headers only
+<dd> Prefer DeclareInterfaceID over explicit code
+<dd> Prefer struct when a class has only public member functions/data
+<dd> Prefer extend_interfaces over explicit virtual inheritance
+<dd> Do not repeat pure virtual declarations
+<dd> Remove obsolete CVS and SVN keywords
+<dd> Remove unused CaloUtil.h
+<dd> Prefer standalone functions over member functions which do not use any class resources
+<dd> Do not explicitly disable default constructor which is not generated implicitly
+<dd> Do not explicitly invoke default member constructors in constructor
+<dd> Limit scope as much as possible
+<dd> Prefer override over virtual
+<dd> Prefer compare(...) over substr(..) == ... as it avoids a temporary string
+<dd> Enable CaloVector move constructor, and use it avoid a copy
+<dd> Prefer remove-erase in situ over double copy requiring temporary memory
+<dd> Prefer emplace_back over push_back of a temorary
+<dd> Add const when possible
+<dd> Add final when possible
+<dd> Make CaloVector final
+<dd> Remove unused CaloFunctionsCollection
+<dd> Prefer nullptr over 0
+<dd> Remove unused CaloCollection
+<dd> Remove deprecated std::{unary,binary}_function
+<dd> Prefer struct with overloaded operator() over templated struct with explicit specialized operator()
+<dd> Prefer std::{min,max}
+<dd> Make Calo2Dview methods const -removes need for internally-cached variables and allows many class methods to be const for the future framework.
+
+<dt>[MR !333, !353, !355, !359]  Modernize Calo & L0
+<dd> Make interfaces structs, and inherit from extend_interfaces<T>
+<dd> Prefer DeclareInterfaceID
+<dd> Remove obsolete SVN/CVS keywords
+<dd. Pass RawBank by const& instead of *
+<dd> Prefer STL algorithms over raw loops
+<dd> Prefer range-based for loops
+<dd> Prefer auto
+<dd> Prefer [begin,end) pointers over data,size to denote half-open range (which avoids decrementing size when data is increased)
+<dd> Prefer direct member initialization
+<dd> Prefer inheritance from extend over virtual public inheritance
+<dd> Prefer implicit destructors
+<dd> Remove unused _rootInTES
+
+<dt>[MR !373] Modernize CaloDet
+<dd> Remove execute bit from source files
+<dd> Do not call default member constructors from constructor
+<dd> Prefer implicit destructors over trivial explicit destructors
+<dd> Move 'if' statements out of loop
+<dd> Prefer SmartIF over raw pointer to Service
+<dd> Remove derived methods which only call their parent implementation
+
+<dt>[MR !308] Modernize DetCond
+<dd> Use error(),warning(),debug(),verbose() instead of explicit MsgStream
+<dd> Use SmartIF instead of raw pointer + explicit release()
+<dd> Use std::unique_ptr instead of raw pointer + explicit delete
+<dd> Prefer STL algorithms
+<dd> Prefer range-based for loops
+<dd> Prefer auto
+<dd> Prefer implicitly generated destructors
+
+<dt>[MR !438, !369, !351, !335, !310] Modernize DetDesc
+<dd> Mixture: move validity checks on parameters to a location prior to where they can generate a SIGFPE
+<dd> Replace std::unique_ptr with boost::optional
+<dd> Add (UN)LIKELY hints
+<dd> Prefer boost::string_ref over const std::string&
+<dd> Prefer lambda
+<dd> Reduce duplication
+<dd> Remove SVN/CVS keywords
+<dd> Less verbose line spacing
+<dd> Prefer direct member initialization
+<dd> Prefer non-virtual destructor if possible
+<dd> Prefer std::make_unique
+<dd> Prefer '\n' over std::endl
+<dd> Do not do explicit cleanup in destructor if it will be done implicitly
+<dd> Prefer range-based for loops
+<dd> Prefer implicit destructors over explicit trivial ones
+<dd> Prefer implicit copy c'tor (now that there are no user-defined destructors)
+<dd> Explicitly initialize members in Surface (Coverity issue 69262)
+<dd> Use static_cast instead of C-style cast
+<dd> Return std::unique_ptr from new_copy to clarify ownership
+<dd> Prefer override
+<dd> Use private inheritance in ParamList to hide extraneous interface methods
+<dd> Prefer pass-by-const-ref over pass-by-const-pointer when passing a nullptr resuls in a SEGV
+<dd> Prefer auto
+<dd> Prefer 'find' over 'count' to check for existence
+<dd> Make reference counting in Services thread safe by use of shared_ptr / weak_ptr
+<dd> Prefer static const data over member data if it is invariant
+<dd> Prefer struct over class if all member data/functions are public
+<dd> Add final if possible
+<dd> Remove commented out code
+
+<dt>[MR !354, !361, !319] Modernize DetDescSvc
+<dd> Prefer std::unique_ptr over raw pointer and explicit delete
+<dd> Add const
+<dd> Prefer STL algorithms over raw loops
+<dd> Fix ownership transfer
+<dd> Prefer auto, make constant string static
+<dd> Remove execute bit from file permissions
+<dd> Use std::unique_ptr in internal PlacedSolid
+<dd> Make internal PVolumes keep PVolumeElement by value instead of owned pointer
+<dd> Use boost::optional is a stand-in for std::unique_ptr when heap allocation should be avoided
+
+<dt>[MR !387] Make Event classes final
+<dd> Add final
+<dd> Remove trivial explicit destructors
+<dd> Fix bug in genClasses.py: attributes are strings
+<dd> Prefer emplace_back over push_back
+<dd> Make 'State' a concrete class, and remove virtual from its function declarations
+
+<dt>[MR !367] Modernize EventPacker
+<dd> Prefer implicitly generated destructors over explicit trivial destructors
+<dd> Do not explicitly disable constructors which are not implicitly generated
+<dd> Remove SVN/CVS keywords
+<dd> Prefer auto
+<dd> Prefer SmartIF over raw pointers to services
+<dd> Avoid copying strins more than strictly neccessary
+<dd> Prefer emplace_back with no arguments over emplace_back of a default constructed temporary
+
+<dt>[MR !402] Modernize FSRAlgs
+<dd> Prefer direct member initialization
+<dd> Prefer implicit destructors
+<dd> Prefer SmartIF over raw pointer to services
+<dd> Prefer auto
+<dd> Use CommonMessaging
+<dd> Prefer unique_ptr over raw pointer and explicit delete
+<dd> Avoid unnecessary indirection (i.e. keep vector by value instead of by owned pointer)
+
+<dt>[MR !404, !395, !366] Modernize HltDAQ
+<dd> Prefer implicit destructors
+<dd> Prefer std::unique_ptr over raw pointer + delete
+<dd> Remove SVN/CVS keywords
+<dd> Remove virtual functions which just call their baseclass implementation
+<dd> Tweak intersects to be more generic
+<dd> Prefer std::move over swap
+<dd> Prefer SmartIF for services
+<dd> Fix unused variable, initialise member data at declaration
+    
+<dt>[MR !405, !336] Modernize HltInterfaces
+<dd> Symmetrize binary operators
+<dd> Prefer STL algortihms over explicit raw loops
+<dd> In case of unexpected input, throw exception instead of returning default constructed object
+<dd> Prefer implicit destructors
+<dd> Make interfaces structs
+<dd> Rely on extend_interfaces to specify virtual
+<dd> Remove obsolete SVN keywords
+
+<dt>[MR !350] Modernize HltServices
+<dd> Use CommonMessaging instead of raw MsgStream
+<dd> Prefer SmartIF over raw Service pointer and explcit release
+
+<dt>[MR !408] Modernize L0
+<dd> Remove SVN/CVS keywords
+<dd> Prefer implicit destructors
+<dd> Prefer passing large objects (e.g. L0DUConfig) by const reference instead of by value
+<dd> Prefer direct member intialization
+<dd> Prefer range-based for loops
+
+<dt>[MR !388, !337, !328] Modernize LHCbKernel
+<dd> Prefer forwarding constructors to base-class
+<dd> Prefer struct in case all class member data/functions are public (including all interfaces)
+<dd> Add final
+<dd> Drop deprecated std::binary_function, std::unary_function
+<dd> Prefer non-templated functor structs with templated operator()
+<dd> Prefer emplace_back over push_back
+<dd> Prefer STL algorithms over raw loops
+<dd> Explicitly reserve std::vector sizes prior to push_back/emplace_back
+<dd> Avoid temporary copies -- prefer remove_if over copying
+<dd> Speed up LHCbID::channelID by making sure detectorType() is only called once
+<dd> Use extend_interfaces instead of explicit virtual inheritance
+<dd> Prefer DeclareInterFaceID
+<dd> Do not add explicit trivial destructors
+<dd> Prefer SmartIF over raw service pointer and explicit release
+<dd> Prefer auto
+<dd> Make CaloCellID 'final' and remove explicit destructor and explicit copy constructor
+<dt> Clean up fast alloc vector and list
+
+<dt>[MR !271] Modernize LinkerEvent
+<dd> Remove unused beginRange/endRange
+<dd> Add final
+<dd> Remove unnecessary virtual destructor
+<dd> Replace protected with private
+<dd> Add emplace_back, push_back
+<dd> Remove unnecessary default constructor
+
+<dt>[MR !267, !245, !452] Modernize LoKiCore
+<dd> Replace Convertible.h with std::is_convertible
+<dd> Do not compare pointers to 0, prefer nullptr over 0
+<dd> Add move constructor to BiFunction's FunctorFromFunctor
+<dd> Use copy-and-swap in BiFunctions's FunctorFromFunctor operator= and copy c'tor
+<dd> Add final when oppropriate
+<dd> Do not explicitly specify trivial destructors
+<dd> Prefer STL algorithms
+<dd> generalize and simplify Apply
+<dd> Add SFINAE-constrained  perfect forwarding in Math.h
+<dd> Implement Not and Negate as special case of UnaryOp
+<dd> Use override instead of virtual when appropriate
+<dd> Remove obsolete SVN keywords
+<dd> Add a Streamer operator>> for rvalues input
+<dd> Add numeric include, missing from a previous modernization
+<dd> Fix 'missing override' warnings appearing in downstream projects
+
+<dt>[MR !383, !268] Modernize LoKiGen
+<dd> Prefer implicit destructors over trivial explicit ones
+<dd> Prefer implicit copy constructors
+<dd> Do not explicitly disable default constructor that are not implicitly generated
+<dd> Remove CVS/SVN keywords
+<dd> Prefer '\n' over std::endl in the middle of output
+<dd> Do not call default member constructors from constructors
+<dd> Remove deprecated std::unary_function
+<dd> Prefer STL algorithms
+<dd> Explicitly call c'tor when defining constants
+<dd> Prefer override over virtual
+<dd> Prefer struct over class if every mem function/data member is public
+<dd> Add UNLIKELY hints in a few places
+
+<dt>[MR !410, !252] Modernize LoKiHlt
+<dd> Prefer delegating constructors
+<dd> Do not explicitly disable default constructor which is not implicitly generated
+<dd> Prefer boost::variant over explicit flag + switch
+<dd> Generate 'in situ' variant visitors from a collection of lambda functions which the relevant signatures
+<dd> Remove SVN keywords
+<dd> Prefer override over virtual
+<dd> Do not explicitly add virtual constructors if not needed
+<dd> Add 'final' if possible
+<dd> Prefer using over typedef
+<dd> Define constant object as const auto Obj = Type{}
+<dd> Do not explicitly invoke default constructors
+
+<dt>[MR !303] Modernise LokiHybrid
+<dd> Use std::unique_ptr instead of raw pointer + delete and adapt derived classes.
+<dd> Remove virtual methods which only invoke their baseclass implementation
+<dd> Remove explicit destructors where the implicit generated one is equivalent
+
+<dt>[MR !343, !349] Modernize LoKiMC
+<dd> Prefer implicit destructors, copy constructors
+<dd> Do not explicitly disable constructors which are not implicitly generated
+<dd> Do not explicitly call default member constructors in constructors
+<dd> Remove obsolete SVN/CVS keywords
+<dd> Prefer auto
+<dd> Remove obsolete unary_function
+
+<dt>[MR !338, !363] Modernize MCInterfaces and SimComponents
+<dd> Use DeclareInterface
+<dd> Prefer extend_interfaces or extends<> instead of explicit virtual inheritance
+<dd> Use struct for interfaces
+<dd> Prefer override
+<dd> Remove obsolete SVN/CVS keywords
+<dd> Add const to some interface methods
+<dd> Adapt code in SimComponents to const interfaces
+<dd> Avoid std::list
+<dd> Prefer STL algorithms
+<dd> Prefer range-based loops
+<dd> Use auto
+<dd> Remove trivial explicit destructors in favor of implicit destructors
+<dd> Use CommonMessaging methods instead of explict MsgStream
+<dd> Prefer direct member initialization
+<dd> Prefer '\n' over std::endl
+<dd> Do not explicitly disable constructors that are not implicilty generated
+<dd> Use CommonMessaging
+<dd> Prefer SmartIF for services
+<dd> Remove virtual from 'final' classes
+<dd> Remove use of boost::assign::list_of for non-C++11 compilers
+<dd> Prefer std::abs over fabs
+<dd> Replace VectorMap of pointers to MCReconstructble criteria with std::array of (optional) values in priority order
+<dd> Remove virtual fcn implementations that only call baseclass implementation
+
+<dt>[MR !305, !375, !377] Modernize Muon & L0
+<dd> Prefer STL algorithms over raw loops
+<dd> Prefer range-based for loops
+<dd> Keep MuonSystemLayout as static const instead of member data
+<dd> Prefer direct member initialization
+<dd> Prefer assignment of vector over clear() followed by push_back()
+<dd> Prefer std::unique_ptr over raw pointer with explicit delete
+<dd> Remove obsolete SVN keywords
+<dd> Add const
+<dd> Add final
+<dd> Prefer std::array over C-style array
+<dd> Remove use of deprecated std::binary_function
+<dd> Prefer override over virtual
+<dd> Prefer implicit destructors over trivial explicit destructors
+<dd> Reduce scope of variables as much as possible
+<dd> Prefer pass-by-& over pass-by-* in case passing a nullptr implies a SEGV
+<dd> Prefer emplace_back over push_back
+
+<dt>[MR !372] Modernize MuonDet
+<dd> Prefer implicit destructors over explicit trivial ones
+<dd> Remove CVS/SVN keywords
+<dd> Prefer std::unique_ptr over raw pointer + explicit delete
+<dd> Prefer direct member initialization
+<dd> Add const
+<dd> Remove virtual functions which effectively only call their parent implementation
+<dd> Add a FIXME/BUG comment
+<dd> Remove redundant return statements
+<dd> Avoid unneccessary casts
+<dd> Prefer auto
+
+<dt>[MR !371] Minor cleanup/modernization of ODIN decoding/encoding tools.
+
+<dt>[MR !407, MR !376] Modernize OTDAQ
+<dd> Symmetrize binary operators
+<dd> Prefer emplace_back over push_back
+<dd> Prefer implicit destructors
+<dd> Prefer inheritance from extends
+<dd> Remove SVN/CVS keywords
+<dd> Prefer direct member initialization
+<dd> Prefer DeclareInterfaceID
+<dd> Prefer struct in case all member functions/data are public
+<dd> Prefer std::array over C-style array
+<dd> Add final
+<dd> Prefer STL algorithms over raw loops
+<dd> Do not cast if not required
+<dd> Prefer implicit destructors over trivial explicit destructors
+<dd> Prefer range-based for loops
+<dd> Prefer inheritance from extends<> over explicit virtual inheritance
+<dd> Add const
+
+<dt>[MR !406] Modernize OTDet
+<dd> Remove SVN/CVS keywords
+<dd> Prefer implicit destructors
+<dd> Prefer boost::optional over std::unique_ptr for optional Calibration
+<dd> Prefer direct member initialization
+<dd> Prefer std::array over raw C-style array
+<dd> Add final
+<dd> Add UNLIKELY compiler hints
+
+<dt>[MR !261, !266]  Modernize PartProp
+<dd> Add 'final' qualifier when appropriate
+<dd> Do not (explicitly) implement destructor if not needed
+<dd> Do not explicitly disable default constructor which is not generated implicitly
+<dd> Remove obsolete SVN/CVS keywords
+<dd> Prefer std::unique_ptr over raw pointer and explicit delete
+<dd> Prefer range-based for loops
+<dd> Prefer auto for loop iterable
+<dd> Prefer info(), error(), debug() over explicit MsgStream
+<dd> Do not call default member constructors in constructors
+
+<dt>[MR !416] PhysEvent: trivial cleanup in Particle.cpp
+
+<dt>[MR !273] Modernize Relations
+<dd> Implement IsConvertible in terms of std::is_convertible
+<dd> Remove use of deprecated std::binary_function, std::bind1st, std::bind2nd
+<dd> Prefer = default copy c'tor over explicit implementation
+
+<dt>[MR !368, !440] Modernize RichDAQ, RichUtils
+<dd> Remove temporaries from emplace_back calls
+<dd> Clean up some final/override statements
+
+<dt>[MR !273] RichDAQ Split Up.
+<dd> Split up RichDAQ into a utility library 'RichDAQKernel' and a pure component library 'RichDAQ'.
+<dd> Allows reuse by a future 'RichDAQFuture' library using the new Gaudi framework.
+
+<dt>[MR !344] Improved implementation of DEBUG checkRange in RichSmartID that avoids costly string temporaries
+
+<dt>[MR !285] Protect debug and verbose printout ifdefs to avoid duplicate definitions
+
+<dt>[MR !403, !393, !365] Modernize STDAQ and STKernel
+<dd> Remove CVS/SVN keywords
+<dd> Prefer implicit destructors over explicit trivial ones
+<dd> Prefer range-based for loops
+<dd> Remove deprecated std::unary_function
+<dd> Prefer DeclareInterfaceID
+<dd> Prefer extend_interfaces over explicit virtual inheritance
+<dd> Prefer struct for public-only classes
+<dd> Make STTell1Board final, and do not make functions virtual
+<dd> Add final
+<dd> Prefer direct member initialization
+<dd> Symmetrize binary operators
+<dd> Remove use of boost::assign
+<dd> Remove use of BOOST_FOREACH
+
+<dt>[MR !370] Modernize STDet
+<dd> Prefer implicit destructors over explicitly defined trivial ones
+<dd> Remove SVN/CVS keywords
+<dd> Make static objects const
+<dd> Remove pre-c++11 use of boost::assign
+
+<dt>[MR !389] Modernize UpdateManagerSvc
+<dd> Use CommonMessaging
+<dd> Prefer STL algorithms over raw loops
+<dd> Prefer range-based loops
+<dd> Prefer SmartIF over raw pointer to service
+<dd> Prefer emplace_back oer push_back
+<dd> Prefer auto
+<dd> Keep MembFuncList::items by value instead of owning pointer
+
+<dt>[MR !364, !382] Modernize VeloDAQ
+<dd> Remove trivial explicit destructors
+<dd> Prefer SmartIF for services
+<dd> Prefer standalone function in anonymous namespace over member function that does not use any functionality of the class it is a member of.
+<dd> Prefer direct member initialization
+<dd> Prefer range-based for loops
+<dd> Replace string-based selection of filter with an enum and switch
+<dd> Add const
+<dd> Add final
+<dd> Removed unreachable debugging code
+<dd> Changed enums to constexpr int in Tell1Kernel
+<dd> Removed unused IncidentSvc
+<dt> Avoid use of PropertyMgr (deprecated in Gaudi v28r0)
+
+<dt>[MR !396, !360, !352] Modernize XmlTools
+<dd> Prefer std::unique_ptr with 'release' deleter over raw pointer and explicit call to release
+<dd> Prefer direct member initialization
+<dd> Directly use functions from cmath instead of adding a layer of indirection
+<dd> Remove SVN/CVS keywords
+<dd> Prefer Gaudi::Property with direct member initialization over declareProperty in c'tor
+<dd> Prefer passing string by const reference
+<dd> Replace hash_map with std::unordered_map
+<dd> Replace stack with std::stack
+<dd> Prefer struct in case all methods/data are public
+<dd> Use CommonMessaging
+<dt>[MR !360] Modernize XmlTools Evaluator
+<dd> In Evaluator, replace switch by variant visitation, avoid explicit casting to/from void* by using another variant.
+
+<dt>[MR !295] Replaced forward declaration of Property with include of Property.h
+<dd> See LHCBPS-1659
+
+<dt>[MR !362] Fix Coverity issues
+<dd> Fix USE_AFTER_FREE error in Phys/LoKiCore/src/Base.cpp (Coverity issue 64555)
+<dd> Fix uninitialised member in Det/DetDescSvc/src/EventClockSvc.cpp (Coverity issue 82276)
+<dd> Fix uninitialised members in L0/L0DU/src/L0DUConfigProvider.cpp (Coverity issue 64633)
+
+<dt>[MR !346] Fix "missing override" warnings
+<dd> Hide all warnings from Boost, ROOT, XercesC and CLHEP (see gaudi/Gaudi!205 and gaudi/Gaudi!192)
+<dd> See LHCBPS-1664.
+
+<dt>[MR !357] Fix clang warnings
+<dd> Fix class/struct mismatch introduced by MR !337 (SimComponents)
+<dd> Remove unused variables reported by clang (Bernstein.cpp)
+
+<dt>[MR !420] Fixed some remaining warnings in dbg and gcc62
+
+<dt>[MR !262, !263] Make source files non-executable
+
+</dl>
+
+
+
 <H1><A NAME=v41r1>2016-09-06 LHCbSys v41r1</A></H1>
 This version uses Gaudi v27r1 and LCG_84 with ROOT 6.06.02.
 <p>

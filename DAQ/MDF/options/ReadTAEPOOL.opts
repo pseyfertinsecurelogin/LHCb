@@ -1,0 +1,8 @@
+#include "$MDFROOT/options/MDFCheck.opts"
+ApplicationMgr.EvtMax                = 100000;
+ApplicationMgr.HistogramPersistency  = "NONE";
+EventSelector.PrintFreq              = 200;
+//  Setup for ROOT I/O System
+#include "$GAUDIPOOLDBROOT/options/GaudiPoolDbRoot.opts"
+PoolDbCacheSvc.Dlls       += {"CLHEPRflx", "STLRflx", "GaudiKernelDict"};
+EventSelector.Input                  = {"DATA='PFN:taePOOL.dat' TYP='POOL_ROOTTREE' OPT='OLD'" };

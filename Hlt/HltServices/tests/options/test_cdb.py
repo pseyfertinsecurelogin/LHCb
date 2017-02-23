@@ -1,23 +1,49 @@
-import sys, os, re
+import sys
+import os
 import subprocess
 import argparse
-import inspect
+import re
 
-parser = argparse.ArgumentParser(usage = 'usage: %(prog)s file')
+from GaudiConf import IOHelper
+from Gaudi.Configuration import EventSelector, ApplicationMgr
+from Configurables import LHCbApp, GaudiSequencer
+from PRConfig.TestFileDB import test_file_db
+from Configurables import IODataManager
+from Configurables import HistogramPersistencySvc
+from Configurables import ConfigCDBAccessSvc
+from Configurables import HltConfigSvc
+from Configurables import LoKiSvc
 
-parser.add_argument("--tck", type = str, dest = "tck", default = "",
-                    help = "What TCK")
+parser = argparse.ArgumentParser(usage='usage: %(prog)s')
+
+parser.add_argument("--tck", type=str, dest="tck", default="",
+                    help="What TCK")
 
 args = parser.parse_args()
 
-from PRConfig.TestFileDB import test_file_db
-files = test_file_db["HltServices-close_cdb_file"].filenames
 
-if not args.tck:
+def tcks(tck):
+    tck = int(tck, 16)
+    hlt1_tck, hlt2_tck = (0, 0)
+    if (tck & (1 << 28)) == (1 << 28):
+        hlt1_tck = tck
+    else:
+        hlt2_tck = tck
+    return hlt1_tck, hlt2_tck
+
+
+files = test_file_db["HltServices-close_cdb_file"].filenames
+expr = re.compile(r'0x[a-f\d]{8}')
+m = expr.search(os.path.split(files[0])[-1])
+
+if not args.tck and m:
+    hlt1_tck, hlt2_tck = tcks(m.group(0))
+elif not args.tck:
     # Use inspect's stack to get the file of the current frame: us
     script_dir = os.path.expandvars('$HLTDAQROOT/tests/options')
-    cmd = ['python', os.path.join(script_dir, 'get_tck.py'), '--odin', files[0]]
-    p = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
+    cmd = ['python', os.path.join(
+        script_dir, 'get_tck.py'), '--odin', files[0]]
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     o, e = p.communicate()
 
     if p.returncode:
@@ -42,18 +68,9 @@ if not args.tck:
         print 'FAILED'
         sys.exit(-1)
 else:
-    tck = int(args.tck, 16)
-    hlt1_tck, hlt2_tck = (0, 0)
-    if (tck & (1 << 28)) == (1 << 28):
-        hlt1_tck = tck
-    else:
-        hlt2_tck = tck
+    hlt1_tck, hlt2_tck = tcks(args.tck)
 
-        
 # General configuration
-from GaudiConf import IOHelper
-from Gaudi.Configuration import *
-from Configurables import LHCbApp
 app = LHCbApp()
 app.EvtMax = -1
 app.DataType = '2016'
@@ -62,55 +79,42 @@ app.DDDBtag = 'dddb-20150724'
 
 EventSelector().PrintFreq = 1000
 
-from Configurables import IODataManager
 IODataManager().DisablePFNWarning = True
 
-from Configurables import HistogramPersistencySvc
 HistogramPersistencySvc().OutputLevel = 5
 
 # Configure from TCK to get the routing bits from there
-from Configurables import ConfigCDBAccessSvc
 close_incident = 'TEST_CLOSE'
-accessSvc = ConfigCDBAccessSvc(File = '$HLTTCKROOT/config.cdb', CloseIncident = close_incident)
+accessSvc = ConfigCDBAccessSvc(
+    File='TCKData/config.cdb', CloseIncident=close_incident)
 
-from Configurables import HltConfigSvc
-HltConfigSvc().initialTCK = '0x{0:08x}'.format(hlt1_tck if not hlt2_tck else hlt2_tck)
+HltConfigSvc().initialTCK = '0x{0:08x}'.format(
+    hlt1_tck if not hlt2_tck else hlt2_tck)
 HltConfigSvc().checkOdin = True
 HltConfigSvc().OutputLevel = 5
 HltConfigSvc().ConfigAccessSvc = accessSvc.getFullName()
 
-# Remove some modules that don't live in the LHCb project
-# Empty the Hlt sequence to disable the HLT.
-# Point the RoutingBitsWriter at a copy of the raw event
-HltConfigSvc().ApplyTransformation = {'GaudiSequencer/Hlt' : {"Members" : {"'.*'" : ""}}}
-
 # Run HltConfigSvc first
 ApplicationMgr().ExtSvc.insert(0, HltConfigSvc().getFullName())
 
-topSeq = GaudiSequencer( "TopSequence" )
-from Configurables import createODIN
-topSeq.Members += [createODIN()]
-
-# Decode Hlt DecReports
-from DAQSys.Decoders import DecoderDB
-for dec in ("L0DUFromRawAlg/L0DUFromRaw",):
-    topSeq.Members.append(DecoderDB[dec].setup())
-
+topSeq = GaudiSequencer("TestSequence")
 ApplicationMgr().TopAlg = [topSeq]
 
-from Configurables import LoKiSvc
 LoKiSvc().Welcome = False
 
 IOHelper("MDF").inputFiles(files)
 
+
 def open_files():
     pid = os.getpid()
     proc_path = '/proc/{}/fd'.format(pid)
-    return sorted([os.path.realpath(os.path.join(proc_path, f)) for f in os.listdir(proc_path)])
+    of = os.listdir(proc_path)
+    return sorted([os.path.realpath(os.path.join(proc_path, f)) for f in of])
 
 from GaudiPython.Bindings import AppMgr, gbl, InterfaceCast
 gaudi = AppMgr()
 gaudi.initialize()
+
 
 def failed(lines):
     gaudi.finalize()
@@ -120,8 +124,10 @@ def failed(lines):
     print 'FAILED'
     sys.exit(-1)
 
+
 # Convenience
-incSvc = InterfaceCast(gbl.IIncidentSvc)(gaudi.service('IncidentSvc').getInterface())
+incSvc = InterfaceCast(gbl.IIncidentSvc)(
+    gaudi.service('IncidentSvc').getInterface())
 TES = gaudi.evtSvc()
 cdb_file = os.path.realpath(gaudi.service(accessSvc.getFullName()).File)
 
@@ -131,7 +137,8 @@ if cdb_file not in open_files():
 incSvc.fireIncident(gbl.Incident("GP", close_incident))
 
 if cdb_file in open_files():
-    failed(['CDB file not closed after firing close incident {}'.format(close_incident)])
+    failed(['CDB file not closed after '
+            'firing close incident {}'.format(close_incident)])
 
 while True:
     gaudi.run(1)

@@ -3,44 +3,49 @@
 
 #include "Kernel/VeloChannelID.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "GaudiKernel/AnyDataHandle.h"
-#include "GaudiKernel/DataObjectHandle.h"
 #include <string>
 
 class DeVelo;
 
 ///< A class to filter Velo clusters according to some defined criterion
 ///< Accepted filters are:
-///<    "Right": retains only clusters in the Velo Right
-///<    "Left" : retains only clusters in the Velo Left
-///<    "R"    : retains only clusters in R sensors
-///<    "Phi"  : retains only clusters in Phi sensors
-///<    "PU"  : retains only clusters in PU sensors
+///<   "Right" : retains only clusters in the Velo Right
+///<   "Left"  : retains only clusters in the Velo Left
+///<   "R"     : retains only clusters in R sensors
+///<   "Phi"   : retains only clusters in Phi sensors
+///<   "PU"    : retains only clusters in PU sensors
 
 class VeloClusterFilter : public GaudiAlgorithm {
 public:
-  VeloClusterFilter( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;
-  StatusCode execute   () override;
+  StatusCode execute()    override;
+
+  struct filter_t final {
+    enum class criterion_t { ALL = 0, LEFT, RIGHT, R, PHI, PU, OVERLAP };
+    criterion_t criterion;
+
+    filter_t( criterion_t c = criterion_t::ALL ) : criterion(c) {}
+    bool operator()(LHCb::VeloChannelID id) const;
+    const std::string& toString() const;
+    // add support for Gaudi::Property<filter_t>
+    friend std::ostream& toStream(const filter_t& crit, std::ostream& os);
+    friend StatusCode parse(filter_t& result, const std::string& input );
+  };
 
 private:
-  bool passesFilter(LHCb::VeloChannelID id) const;
-
-  std::string m_filterCriterion;
-  enum filter_t { ALL, LEFT, RIGHT, R, PHI, PU, OVERLAP } m_filter = ALL;
-
-  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_inputLiteClusterDh = {LHCb::VeloLiteClusterLocation::Default, Gaudi::DataHandle::Reader, this };
-  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_outputLiteClusterDh = {"/Event/Raw/Velo/LiteClustersCopy", Gaudi::DataHandle::Writer, this };
-  DataObjectHandle<LHCb::VeloClusters> m_inputClusterDh = { LHCb::VeloLiteClusterLocation::Default , Gaudi::DataHandle::Writer, this };
-  DataObjectHandle<LHCb::VeloClusters> m_outputClusterDh = {"/Event/Raw/Velo/ClustersCopy" , Gaudi::DataHandle::Writer, this };
-
-  int m_minNRClustersCut;
-  int m_minNPhiClustersCut;
-  int m_minNClustersCut;
-  int m_maxNRClustersCut;
-  int m_maxNPhiClustersCut;
-  int m_maxNClustersCut;
+  Gaudi::Property<std::string> m_inputLiteClusterLocation{ this, "InputLiteClusterLocation", LHCb::VeloLiteClusterLocation::Default };
+  Gaudi::Property<std::string> m_outputLiteClusterLocation{ this, "OutputLiteClusterLocation", "/Event/Raw/Velo/LiteClustersCopy" };
+  Gaudi::Property<std::string> m_inputClusterLocation{ this, "InputClusterLocation", LHCb::VeloClusterLocation::Default };
+  Gaudi::Property<std::string> m_outputClusterLocation{ this, "OutputClusterLocation", "/Event/Raw/Velo/ClustersCopy" };
+  Gaudi::Property<filter_t> m_filter{ this, "FilterOption", filter_t::criterion_t::ALL };
+  Gaudi::Property<int> m_minNRClustersCut{ this, "MinimumNumberOfRClusters",0 };
+  Gaudi::Property<int> m_minNPhiClustersCut{ this, "MinimumNumberOfPhiClusters",0 };
+  Gaudi::Property<int> m_minNClustersCut{ this, "MinimumNumberOfClusters",0 };
+  Gaudi::Property<int> m_maxNRClustersCut{ this, "MaximumNumberOfRClusters",100000 };
+  Gaudi::Property<int> m_maxNPhiClustersCut{ this, "MaximumNumberOfPhiClusters",100000 };
+  Gaudi::Property<int> m_maxNClustersCut{ this, "MaximumNumberOfClusters",100000 };
 
   DeVelo* m_velo = nullptr;                  ///< Detector element
 };

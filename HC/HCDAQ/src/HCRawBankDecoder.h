@@ -6,14 +6,12 @@
 #include "AIDA/IHistogram2D.h"
 
 // LHCb
-#include "GaudiAlg/GaudiHistoAlg.h"
-#include "GaudiAlg/Transformer.h"
+#include "DAQKernel/DecoderHistoAlgBase.h"
 
 #include "Event/HCDigit.h"
 
 namespace LHCb {
 class RawEvent;
-class ODIN;
 }
 
 /** @class HCRawBankDecoder.h
@@ -22,20 +20,22 @@ class ODIN;
  *
  */
 
-class HCRawBankDecoder final : public Gaudi::Functional::MultiTransformer<std::tuple<LHCb::HCDigits,LHCb::HCDigits>(const LHCb::RawEvent&, const LHCb::ODIN&),
-                                                                          Gaudi::Functional::Traits::BaseClass_t<GaudiHistoAlg>>
-{
+class HCRawBankDecoder : public Decoder::HistoAlgBase {
  public:
   /// Standard constructor
   HCRawBankDecoder(const std::string& name, ISvcLocator* pSvcLocator);
+  /// Destructor
+  virtual ~HCRawBankDecoder();
 
   StatusCode initialize() override;  ///< Algorithm initialization
-
-  ///< The transform callable
-  std::tuple<LHCb::HCDigits,LHCb::HCDigits>
-  operator()(const LHCb::RawEvent&,const LHCb::ODIN&) const final;
+  StatusCode execute() override;     ///< Algorithm execution
 
  private:
+  LHCb::HCDigits* m_digits;
+  LHCb::HCDigits* m_l0digits;
+
+  std::string m_digitLocation;
+  std::string m_l0digitLocation;
 
   bool m_skipTrigger;
   bool m_skipAdc;
@@ -47,10 +47,8 @@ class HCRawBankDecoder final : public Gaudi::Functional::MultiTransformer<std::t
   IHistogram2D* m_hTell1Errors;
   std::vector<IHistogram1D*> m_hBxDiff;
 
-  void decode(const LHCb::RawBank& bank,
-              LHCb::HCDigits& digits,
-              LHCb::HCDigits& l0_digits) const;
-  void decodeErrorBank(const LHCb::RawBank& bank, const int bxid) const;
+  bool decode(LHCb::RawBank* bank);
+  bool decodeErrorBank(LHCb::RawBank* bank, const int bxid);
 
 };
 

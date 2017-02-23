@@ -1,0 +1,7 @@
+#include "$MDFROOT/options/MDFCheck.opts"
+ApplicationMgr.EvtMax                = 100000;
+ApplicationMgr.HistogramPersistency  = "NONE";
+EventSelector.PrintFreq              = 1000;
+EventSelector.Input                  = { "DATA='file://mifData.dat' SVC='LHCb::MIFSelector'" };
+IODataManager.OutputLevel            = 1;
+IODataManager.AgeLimit               = 5;

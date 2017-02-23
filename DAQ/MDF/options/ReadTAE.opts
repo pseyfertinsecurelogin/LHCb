@@ -1,0 +1,12 @@
+#include "$MDFROOT/options/MDFCheck.opts"
+ApplicationMgr.EvtMax                = 100000;
+ApplicationMgr.HistogramPersistency  = "NONE";
+EventSelector.PrintFreq              = 200;
+EventSelector.Input                  = {"DATA='file://taeData.dat' SVC='LHCb::MDFSelector'" };
+//  Setup for ROOT I/O System
+ApplicationMgr.OutStream  += { "TAEMini" };
+#include "$GAUDIPOOLDBROOT/options/GaudiPoolDbRoot.opts"
+PoolDbCacheSvc.Dlls       += {"CLHEPRflx", "STLRflx", "GaudiKernelDict"};
+TAEMini.ItemList          = { "/Event#1", "/Event/DAQ#1", "/Event/Prev1/DAQ", "/Event/Prev2", "/Event/Next1/DAQ/RawEvent" };
+TAEMini.Output            = "DATAFILE='PFN:taePOOL.dat' TYP='POOL_ROOTTREE' OPT='RECREATE'";
+PoolDbCacheSvc.OutputLevel = 1;

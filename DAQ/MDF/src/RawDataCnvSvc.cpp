@@ -6,7 +6,7 @@
 //
 //  ====================================================================
 #include "MDF/RawDataConnection.h"
-//#include "MDF/RawEventHelpers.h"
+#include "MDF/RawEventHelpers.h"
 #include "MDF/RawDataAddress.h"
 #include "MDF/RawDataCnvSvc.h"
 #include "MDF/MDFHeader.h"
@@ -29,12 +29,6 @@
 using namespace std;
 using namespace LHCb;
 using namespace Gaudi;
-namespace LHCb  {
-  /// Unpacks the buffer given by the start and end pointers, and fill the rawevent structure
-  StatusCode unpackTAE(const char* start, const char* end, const std::string& loc, RawEvent* raw, bool c);
-  /// Return vector of TAE event names
-  std::vector<std::string> buffersTAE(const char* start);
-}
 
 namespace {
   struct MDFMapEntry  final {
@@ -48,13 +42,26 @@ namespace {
     ~RecursiveDetection()  { s_recursiveFlag = !s_recursiveFlag; }
     bool isRecursive() const    { return s_recursiveFlag; }
   };
-
-  // Temporary I/O context for buffered I/O
-  typedef std::pair<char*,int> MDFDescriptor;
-  typedef pair<void*,MDFDescriptor> io_context_t;
 }
 
 static string RAWDATA_INPUT = "RAW";
+
+// Initializing constructor
+RawDataCnvSvc::RawDataCnvSvc(CSTR nam, ISvcLocator* loc, long typ) 
+  : ConversionSvc(nam, loc, typ), MDFIO(MDFIO::MDF_RECORDS, nam), 
+    m_wrFlag(false)
+{
+  m_data.reserve(48*1024);
+  declareProperty("Compress",       m_compress=2);     // File compression
+  declareProperty("CreateChecksum", m_genChecksum=1);  // Generate checksum
+  declareProperty("EventsBefore",   m_evtsBefore=0);   // Events before T0
+  declareProperty("EventsAfter",    m_evtsAfter=0);    // Events after T0
+  declareProperty("DataType",       m_dataType=MDFIO::MDF_RECORDS);  // Input data type
+  declareProperty("BankLocation",   m_bankLocation=RawEventLocation::Default);  // Location of the banks in the TES
+  declareProperty("DstLocation",    m_dstLocation="DstEvent");                  // Location of DST banks in the TES
+  declareProperty("DataManager",    m_ioMgrName="Gaudi::IODataManager/IODataManager");
+  declareProperty("SourceType",     m_sourceType=RAWDATA_INPUT);
+}
 
 // Initializing constructor
 RawDataCnvSvc::RawDataCnvSvc(CSTR nam, ISvcLocator* loc) 
@@ -62,7 +69,7 @@ RawDataCnvSvc::RawDataCnvSvc(CSTR nam, ISvcLocator* loc)
     MDFIO(MDFIO::MDF_RECORDS, nam), 
     m_wrFlag(false)
 {
-  //m_data.reserve(48*1024);
+  m_data.reserve(48*1024);
   declareProperty("Compress",       m_compress=2);     // File compression
   declareProperty("ChecksumType",   m_genChecksum=1);  // Generate checksum
   declareProperty("EventsBefore",   m_evtsBefore=0);   // Events before T0
@@ -72,7 +79,6 @@ RawDataCnvSvc::RawDataCnvSvc(CSTR nam, ISvcLocator* loc)
   declareProperty("DstLocation",    m_dstLocation="DAQ/DstEvent");              // Location of DST banks in the TES
   declareProperty("DataManager",    m_ioMgrName="Gaudi::IODataManager/IODataManager");
   declareProperty("SourceType",     m_sourceType=RAWDATA_INPUT);
-  declareProperty("CopyBanks",      m_copyBanks = 1);
 }
 
 /// Service initialization
@@ -201,15 +207,36 @@ RawDataCnvSvc::createObj(IOpaqueAddress* pA, DataObject*& refpObj) {
           //  return error("TEST: Triggered access failure for "+pReg->identifier());
           if ( pReg && pAddRaw ) {
             std::unique_ptr<RawEvent> raw(new RawEvent());
-	    MDFDescriptor dat = accessRawData(pAddRaw);
-	    if ( dat.second > 0 )  {
-	      StatusCode sc = unpackTAE(dat.first,dat.first+dat.second,pReg->identifier(),raw.get(),m_copyBanks!=0);
-	      if ( sc.isSuccess() )   {
-		refpObj = raw.release();
-		return sc;
-	      }
-	    }
-	    return error("Failed to decode raw data from input from:"+pA->par()[0]);
+            StatusCode sc  = StatusCode::FAILURE;
+            int        typ = pAddRaw->type();
+            // MBM input from event selector: banks already filled...
+            if ( pAddRaw->banks() && typ == RawDataAddress::BANK_TYPE ) {
+              sc = adoptBanks(raw.get(),*pAddRaw->banks());
+              if ( sc.isSuccess() )   {
+                refpObj = raw.release();
+                return sc;
+              }
+            }
+            else {
+              MDFDescriptor dat = accessRawData(pAddRaw);
+              if ( dat.second > 0 )  {
+                if ( typ == RawDataAddress::DATA_TYPE ) {
+                  sc = unpackTAE(dat,pReg->identifier(),raw.get());
+                }
+                else if ( typ == RawDataAddress::MEP_TYPE ) {
+                  sc = unpackMEP(dat,pReg->identifier(),raw.get());
+                }
+                else {
+                  return error("UNKNOWN decoding requested - not yet implemented:"+pA->par()[0]);
+		}
+              }
+              if ( sc.isSuccess() )   {
+                refpObj = raw.release();
+                return sc;
+              }
+              return error("Failed to decode raw data from input from:"+pA->par()[0]);
+            }
+            return error("Failed to access raw data from input:"+pA->par()[0]);
           }
           return error("No valid object address present:"+
 		       (pReg ? pReg->identifier() : pA->par()[0]));
@@ -261,8 +288,8 @@ MDFDescriptor RawDataCnvSvc::accessRawData(RawDataAddress* pAddRaw)  {
   MDFDescriptor dat = pAddRaw->data();
   if ( dat.second == 0 )  {
     // Need to open MDF file to get access!
-    if ( readRawBanks(pAddRaw).isSuccess() )  {
-      return pAddRaw->data();
+    if ( readRawBanks(pAddRaw,dat).isSuccess() )  {
+      pAddRaw->setData(dat);
     }
   }
   return dat;
@@ -285,6 +312,52 @@ RawDataCnvSvc::registerRawAddresses(IRegistry* pReg,RawDataAddress* pAddRaw, con
   return regAddr(pReg,pAddRaw,"/DAQ",DataObject::classID());
 }
 
+/// Decode a MEP (Multi event packets) record
+StatusCode 
+RawDataCnvSvc::unpackMEP(const MDFDescriptor& dat, const string& loc, RawEvent* raw)  {
+  RecursiveDetection rec;            // Triggered by a retrieveObject call during
+  if ( !rec.isRecursive() )  {       // a call to fillObjRefs
+    map<unsigned int,vector<RawBank*> > evts;
+    unsigned int pID = 0;
+    StatusCode sc = decodeMEP((MEPEvent*)dat.first,pID,evts);
+    if ( sc.isSuccess() )  {
+      RawEvent* r = 0;
+      MsgStream log(msgSvc(), name());
+      map<unsigned int,vector<RawBank*> >::iterator it = evts.begin();
+      vector<string> names = buffersMEP(dat.first);
+      vector<string>::const_iterator i=names.begin();
+      setupMDFIO(msgSvc(),dataProvider());
+      for(; i != names.end() && it != evts.end(); ++i, ++it)   {
+        string obj_loc = (*i)+"/DAQ/RawEvent";
+        if ( obj_loc == loc )    {
+          r = raw;
+        }
+        else  {
+          SmartDataPtr<RawEvent> rawp( dataProvider(), obj_loc );
+          if( rawp ){
+            r = rawp;
+          }
+          else {
+            return error("Failed to access raw event at:"+obj_loc);
+          }
+        }
+        if( UNLIKELY(log.level() <= MSG::DEBUG) ) log << MSG::DEBUG
+           << "unpackMEP: Filling banks for " << obj_loc << " " << r->clID()
+           << " " << " [" << (*it).second.size() << " banks] (" << loc << ") "
+           << (void*)r << "<>" << (void*)raw << endmsg;
+        sc = adoptBanks(r,(*it).second);
+        if ( sc.isSuccess() )  {
+          continue;
+        }
+        return error("Failed to add MEP banks to raw event structure:"+obj_loc);
+      }
+      return StatusCode::SUCCESS;
+    }
+    return error("Failed to decode raw MEP data.");
+  }
+  return StatusCode::SUCCESS;
+}
+
 /// Callback for reference processing (misused to attach leaves)
 StatusCode RawDataCnvSvc::fillObjRefs(IOpaqueAddress* pA, DataObject* pObj)  {
   if ( pA && pObj )  {
@@ -292,52 +365,65 @@ StatusCode RawDataCnvSvc::fillObjRefs(IOpaqueAddress* pA, DataObject* pObj)  {
       IRegistry* pReg = pA->registry();
       RawDataAddress* pAddRaw = dynamic_cast<RawDataAddress*>(pA);
       if ( pReg && pAddRaw )  {
+	typedef RawDataAddress::Banks _B;
+	const _B* banks = pAddRaw->banks();
         string id = pReg->identifier().substr(6);
         if ( id.empty() )  {
-	  MDFDescriptor dat = pAddRaw->data();
-	  if ( dat.second>0 )  {
-	    return registerRawAddresses(pReg,pAddRaw,buffersTAE(dat.first));
-	  }
-	  return error("Failed to access raw data input:"+pA->par()[0]);
+          if ( banks && pAddRaw->type() == RawDataAddress::BANK_TYPE ) {
+            return regAddr(pReg, pAddRaw, "/DAQ", DataObject::classID());
+          }
+          else {
+            MDFDescriptor dat = pAddRaw->data();
+            if ( dat.second>0 )  {
+              if ( pAddRaw->type() == RawDataAddress::DATA_TYPE )
+                return registerRawAddresses(pReg,pAddRaw,buffersTAE(dat.first));
+              else if ( pAddRaw->type() == RawDataAddress::MEP_TYPE )
+                return registerRawAddresses(pReg,pAddRaw,buffersMEP(dat.first));
+              return regAddr(pReg, pAddRaw, "/DAQ", DataObject::classID());
+            }
+          }
+          return error("Failed to access raw data input:"+pA->par()[0]);
         }
         else if (id.substr(id.length()-4) == "/DAQ" )   {
 	  MDFDescriptor dat = pAddRaw->data();
-	  char* start = dat.first, *end = start+dat.second;
-	  while(start<end) {
-	    RawBank* b = (RawBank*)start;
-	    if ( b->type() == RawBank::DstAddress )   {
-	      // cout << "Reg:" << pReg->identifier() << "  " << m_dstLocation << endl;
-	      StatusCode sc = StatusCode::FAILURE;
-	      const char* objLoc = m_dstLocation.c_str();
-	      const char* regLoc = pReg->identifier().c_str();
-	      size_t regLen = pReg->identifier().length();
-	      if ( objLoc[0] == '/' && strncmp(objLoc,regLoc,regLen)==0 )
-		sc = regAddr(pReg, pAddRaw, objLoc+regLen+1, RawEvent::classID());
-	      else if ( objLoc[0] != '/' && strncmp(objLoc,"DAQ/",4)==0 )
-		sc = regAddr(pReg, pAddRaw, objLoc+4, RawEvent::classID());
-	      else
-		sc = regAddr(pReg, pAddRaw, m_dstLocation, RawEvent::classID());
-	      if ( sc.isSuccess() ) {
-		unsigned int *ptr = b->begin<unsigned int>();
-		long unsigned int clid = *ptr++, ip[2] = {*ptr++, *ptr++}, svc_typ = *ptr++;
-		size_t len = strlen((char*)ptr)+1;
-		string p[2] = { std::string((char*)ptr), std::string(((char*)ptr)+len)};
-		string raw_loc = ((char*)ptr)+len+1+p[1].length();
-		IOpaqueAddress* addr = 0;
-		// cout << "P0:" << p[0] << " P1:" << p[1] << " IP0:" << ip[0] << " IP1:" << ip[1] << " " << svc_typ << endl;
-		sc = m_addressCreator->createAddress(svc_typ,clid,p,ip,addr);
+          if ( dat.second>0 && pAddRaw->type() == RawDataAddress::DATA_TYPE )   {
+	    char* start = dat.first, *end = start+dat.second;
+	    while(start<end) {
+	      RawBank* b = (RawBank*)start;
+	      if ( b->type() == RawBank::DstAddress )   {
+		// cout << "Reg:" << pReg->identifier() << "  " << m_dstLocation << endl;
+		StatusCode sc = StatusCode::FAILURE;
+		const char* objLoc = m_dstLocation.c_str();
+		const char* regLoc = pReg->identifier().c_str();
+		size_t regLen = pReg->identifier().length();
+		if ( objLoc[0] == '/' && strncmp(objLoc,regLoc,regLen)==0 )
+		  sc = regAddr(pReg, pAddRaw, objLoc+regLen+1, RawEvent::classID());
+		else if ( objLoc[0] != '/' && strncmp(objLoc,"DAQ/",4)==0 )
+		  sc = regAddr(pReg, pAddRaw, objLoc+4, RawEvent::classID());
+		else
+		  sc = regAddr(pReg, pAddRaw, m_dstLocation, RawEvent::classID());
 		if ( sc.isSuccess() ) {
-		  sc = m_dataMgr->registerAddress(raw_loc,addr);
+		  unsigned int *ptr = b->begin<unsigned int>();
+		  long unsigned int clid = *ptr++, ip[2] = {*ptr++, *ptr++}, svc_typ = *ptr++;
+		  size_t len = strlen((char*)ptr)+1;
+		  string p[2] = { std::string((char*)ptr), std::string(((char*)ptr)+len)};
+		  string raw_loc = ((char*)ptr)+len+1+p[1].length();
+		  IOpaqueAddress* addr = 0;
+		  // cout << "P0:" << p[0] << " P1:" << p[1] << " IP0:" << ip[0] << " IP1:" << ip[1] << " " << svc_typ << endl;
+		  sc = m_addressCreator->createAddress(svc_typ,clid,p,ip,addr);
 		  if ( sc.isSuccess() ) {
-		    return sc;
+		    sc = m_dataMgr->registerAddress(raw_loc,addr);
+		    if ( sc.isSuccess() ) {
+		      return sc;
+		    }
+		    return error("Failed to register address to raw data "+p[1]+" in "+raw_loc);
 		  }
-		  return error("Failed to register address to raw data "+p[1]+" in "+raw_loc);
+		  return error("Failed to create address to raw data "+p[1]+" in "+raw_loc);
 		}
-		return error("Failed to create address to raw data "+p[1]+" in "+raw_loc);
+		return error("Failed to register address to DstEvent");
 	      }
-	      return error("Failed to register address to DstEvent");
+	      start += b->totalSize();
 	    }
-	    start += b->totalSize();
 	  }
 	  return regAddr(pReg, pAddRaw, "/RawEvent", RawEvent::classID());
 	}
@@ -364,10 +450,13 @@ StatusCode RawDataCnvSvc::commitOutput(CSTR , bool doCommit )   {
     if ( m_current != m_fileMap.end() )   {
       long typ = repSvcType();
       setupMDFIO(msgSvc(),dataProvider());
-      if ( typ == RAWDATA_StorageType )  {
-	io_context_t ctx((*m_current).second,MDFDescriptor(0,0));
-	StatusCode sc = commitRawBanks(m_compress,m_genChecksum,&ctx,m_bankLocation);
-	if ( ctx.second.first ) ::free(ctx.second.first);
+      if ( typ == RAWDATA_StorageType || typ == MBM_StorageType )  {
+        StatusCode sc = commitRawBanks(m_compress,m_genChecksum,(*m_current).second, m_bankLocation);
+        m_current = m_fileMap.end();
+        return sc;
+      }
+      else if ( typ == RAWDESC_StorageType )    {
+        StatusCode sc = commitDescriptors((*m_current).second);
         m_current = m_fileMap.end();
         return sc;
       }
@@ -376,6 +465,11 @@ StatusCode RawDataCnvSvc::commitOutput(CSTR , bool doCommit )   {
     return error("commitOutput> No valid output channel known.");
   }
   return StatusCode::SUCCESS;
+}
+
+/// Commit output to buffer manager
+StatusCode RawDataCnvSvc::commitDescriptors(void* /* ioDesc */)  {
+  return error("Event descriptor output is not implemented for this class!");
 }
 
 /// Convert the transient object to the requested representation.
@@ -410,6 +504,7 @@ StatusCode RawDataCnvSvc::createAddress(long typ,
                                         IOpaqueAddress*& refpAddress)    
 {
   RawDataAddress* pA = new RawDataAddress(typ, clid, par[0], par[1], ip[0], ip[1]);
+  pA->setType(RawDataAddress::DATA_TYPE);
   refpAddress = pA;
   return StatusCode::SUCCESS;
 }
@@ -469,23 +564,31 @@ StatusCode RawDataCnvSvc::closeIO(void* ioDesc)  const {
   return StatusCode::SUCCESS;
 }
 
+/// Read raw byte buffer from input stream
+StatusCode RawDataCnvSvc::readBuffer(void* const ioDesc, void* const data, size_t len)  {
+  MDFMapEntry* ent = (MDFMapEntry*)ioDesc;
+  if ( ent && ent->connection ) {
+    return m_ioMgr->read(ent->connection,data,len);
+  }
+  return StatusCode::FAILURE;
+}
+
 /// Read raw banks
-StatusCode RawDataCnvSvc::readRawBanks(RawDataAddress* pAddr)   {
-  io_context_t ctx(0,MDFDescriptor(0,0));
+StatusCode 
+RawDataCnvSvc::readRawBanks(RawDataAddress* pAddr, MDFDescriptor& result)   {
+  void* iodesc = 0;
   const string* par = pAddr->par();
-  StatusCode sc = connectInput(par[0], ctx.first);
+  StatusCode sc = connectInput(par[0], iodesc);
   if ( sc.isSuccess() )  {
     long long offset = pAddr->fileOffset();
-    MDFMapEntry* ent = (MDFMapEntry*)ctx.first;
+    MDFMapEntry* ent = (MDFMapEntry*)iodesc;
     if ( ent->connection )  {
       if ( m_ioMgr->seek(ent->connection, offset, SEEK_SET) != -1 )  {
         setupMDFIO(msgSvc(),dataProvider());
-        MDFDescriptor result = readBanks(&ctx);
+        result = readBanks(ent);
         if ( result.first )  {
-	  pAddr->adoptData(ctx.second);
           return StatusCode::SUCCESS;
         }
-	if ( ctx.second.first ) ::free(ctx.second.first);
         return error("Failed read raw data input from:"+par[0]);
       }
       return error("Cannot seek data record: [Invalid I/O operation]");
@@ -495,39 +598,14 @@ StatusCode RawDataCnvSvc::readRawBanks(RawDataAddress* pAddr)   {
   return error("Cannot read data record: [Failed to open file: "+par[0]+"]");
 }
 
-/// MDFIO interface: Allocate data space for output
-MDFDescriptor RawDataCnvSvc::getDataSpace(void* const ioDesc, size_t len)  {
-  io_context_t* ctx = (io_context_t*)ioDesc;
-  if ( ctx->second.second < int(len) )  {
-    ctx->second.first = (char*)::realloc(ctx->second.first,len);
-    ctx->second.second = len;
-  }
-  return ctx->second;
-}
-
-/// MDFIO interface: Read raw byte buffer from input stream
-StatusCode RawDataCnvSvc::readBuffer(void* const ioDesc, void* const data, size_t len)  {
-  io_context_t* ctx = (io_context_t*)ioDesc;
-  if ( ctx && ctx->first )  {
-    MDFMapEntry* ent = (MDFMapEntry*)ctx->first;
-    if ( ent->connection ) {
-      return m_ioMgr->read(ent->connection,data,len);
+/// Write data block to stream
+StatusCode RawDataCnvSvc::writeBuffer(void* iodesc, const void* data, size_t len)   {
+  MDFMapEntry* ent = (MDFMapEntry*)iodesc;
+  if ( ent && ent->connection )  {
+    if ( m_ioMgr->write(ent->connection, data, len).isSuccess() )  {
+      return StatusCode::SUCCESS;
     }
-  }
-  return StatusCode::FAILURE;
-}
-
-/// MDFIO interface: Write data block to stream
-StatusCode RawDataCnvSvc::writeBuffer(void* ioDesc, const void* data, size_t len)   {
-  io_context_t* ctx = (io_context_t*)ioDesc;
-  if ( ctx && ctx->first )  {
-    MDFMapEntry* ent = (MDFMapEntry*)ctx->first;
-    if ( ent->connection )  {
-      if ( m_ioMgr->write(ent->connection, data, len).isSuccess() )  {
-	return StatusCode::SUCCESS;
-      }
-      return error("Cannot write data record: [Invalid I/O operation]");
-    }
+    return error("Cannot write data record: [Invalid I/O operation]");
   }
   return error("Cannot write data record: [Invalid I/O descriptor]");
 }

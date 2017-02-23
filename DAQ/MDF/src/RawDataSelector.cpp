@@ -183,8 +183,9 @@ RawDataSelector::createAddress(const Context& ctxt, IOpaqueAddress*& pAddr) cons
   if ( pctxt ) {
     if ( pctxt->data().second>0 )  {
       RawDataAddress* pA = new RawDataAddress(RAWDATA_StorageType,m_rootCLID,pctxt->specs(),"0",0,0);
+      pA->setType(RawDataAddress::DATA_TYPE);
       pA->setFileOffset(pctxt->offset());
-      pA->adoptData(pctxt->releaseData());
+      pA->setData(pctxt->data());
       pAddr = pA;
       return S_OK;
     }

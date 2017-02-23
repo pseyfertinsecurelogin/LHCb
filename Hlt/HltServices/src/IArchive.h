@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <sstream>
-#include <sstream>
 #include "boost/iostreams/filtering_stream.hpp"
 #include "boost/optional.hpp"
 
@@ -29,22 +28,20 @@ public:
   template <typename SELECTOR>
   std::vector<std::string> files(const SELECTOR &selector = all) const {
     std::vector<std::string> f = contents();
-    f.erase(std::remove_if(std::begin(f), std::end(f),
+    f.erase(std::remove_if(begin(f), end(f),
                            [=](const std::string &s) { return !selector(s); }),
-            std::end(f));
+            end(f));
     return f;
   }
 
   template <typename T> boost::optional<T> get(const std::string &name) const {
     boost::iostreams::filtering_istream strm;
-    if (!setupStream(strm, name))
-      return {};
-    T t;
-    strm >> t;
-    return !strm.fail() ? t : boost::optional<T>();
+    if (!setupStream(strm, name)) return boost::none;
+    T t; strm >> t;
+    return boost::make_optional( !strm.fail() , std::move(t) );
   }
 
-  virtual  bool operator!() const  = 0;
+  virtual bool operator!() const  = 0;
   virtual bool writeable() const = 0;
   virtual bool append(const std::string &, std::stringstream &) = 0;
 

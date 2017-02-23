@@ -5,7 +5,7 @@ and also simple manipulators of the database it creates:
 validate(db), decodersForBank(db,bank,ignoreActive=False), decoderToLocation(db,location,ignoreActive=False)
 """
 from GaudiConf.Manipulations import configurableInstanceFromString, addPrivateToolFromString
-from GaudiKernel.DataObjectHandleBase import DataObjectHandleBase
+
 
 class Decoder(object):
     """
@@ -207,9 +207,6 @@ class Decoder(object):
                     raise TypeError(self.FullName+" cannot set property of type list to this string, "+self.FullName+" "+input.__str__())
                 elif ensuretype is list and type(input) is str:
                     self.Inputs[k]=[input]
-                elif ensuretype is DataObjectHandleBase:
-                    path = input if type(input) is str else ':'.join(input)
-                    self.Inputs[k] = DataObjectHandleBase(path)
                 else:
                     raise TypeError(self.FullName+" cannot convert input from type "+ str(type(input)) +" to "+ str(ensuretype))
         #then cascade downwards
@@ -225,8 +222,11 @@ class Decoder(object):
         #print "GAAAAAAAHHHHHHHHH!!!!!!", output, self.FullName
         if not self.isOutputSettable():
             raise AttributeError("My output is not settable "+self.FullName)
-        if type(self.Outputs) is list and len(self.Outputs):
-            raise TypeError(self.FullName+": outputs must be a dict, not "+ str(type(self.Outputs)))
+        #if type(self.Outputs) is list and len(self.Outputs):
+        #    if type(output) is list:
+        #        self.Outputs=output
+        #    elif type(output) is str:
+        #        self.Outputs=[output]
         if type(self.Outputs) is dict and len(self.Outputs):
             #print "recognized I can set the output"
             for k,op in self.Outputs.items():
@@ -268,29 +268,25 @@ class Decoder(object):
         Cascade down the database and find all output locations
         """
         outputs=[]
-        #maybe I'm just a list
         if type(self.Outputs) is list:
             outputs=outputs+self.Outputs
-        #or I'm a dict
         elif type(self.Outputs) is dict:
             for key in self.Outputs:
-                #do I have to be found from the configurable?
                 if self.Outputs[key] is None:
-                    #OK, find me then
                     ops=self.__getprop__(configurableInstanceFromString(self.FullName),key)
+                    if ops is not None and type(ops) is str:
+                        ops=[ops]
+                    for op in ops:
+                        if op not in outputs:
+                            outputs.append(op)
                 else:
-                    #no? well add me to the list
                     ops=self.Outputs[key]
-
-                #only add if not already in the list
-                if ops is not None and type(ops) is str:
-                    ops=[ops]
-                elif isinstance(ops, DataObjectHandleBase):
-                    ops = ops.Path.split(":")
-                for op in ops:
-                    if op not in outputs:
-                        outputs.append(op)
-        #cascade down the tools        
+                    if ops is not None and type(ops) is str:
+                        ops=[ops]
+                    for op in ops:
+                        if op not in outputs:
+                            outputs.append(op)
+        
         for tool in self.PrivateTools+self.PublicTools:
             if tool in self.__db__:
                 thieroutputs=self.__db__[tool].listOutputs()
@@ -312,18 +308,20 @@ class Decoder(object):
                 if self.Inputs[key] is None:
                     #OK, find me then
                     ips=self.__getprop__(configurableInstanceFromString(self.FullName),key)
+                    #only add if not already in the list
+                    if ips is not None and type(ips) is str:
+                        ips=[ips]
+                    for ip in ips:
+                        if ip not in inputs:
+                            inputs.append(ip)
                 else:
                     #no? well add me to the list
                     ips=self.Inputs[key]
-
-                #only add if not already in the list
-                if type(ips) is str:
-                    ips=[ips]
-                elif isinstance(ips, DataObjectHandleBase):
-                    ips = ips.Path.split(":")
-                for ip in ips:
-                    if ip not in inputs:
-                        inputs.append(ip)
+                    if ips is not None and type(ips) is str:
+                        ips=[ips]
+                    for ip in ips:
+                        if ip not in inputs:
+                            inputs.append(ip)
         #cascade down the tools
         for tool in self.PrivateTools+self.PublicTools:
             if tool in self.__db__:

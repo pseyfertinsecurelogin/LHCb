@@ -151,11 +151,11 @@ namespace LoKi
   private:
     // ========================================================================
     /// flag which indicated that factory has been updated
-    bool m_factory_updated   ;                  // the factory has been updated
+    bool m_factory_updated = false ;            // the factory has been updated
     /// flag which indicated that code has been updated
-    bool m_code_updated      ;                     // the code has been updated
+    bool m_code_updated = false ;                  // the code has been updated
     /// flag which indicated that preambulo has been updated
-    bool m_preambulo_updated ;                // the preambulo has been updated
+    bool m_preambulo_updated = false ;        // the preambulo has been updated
     // ========================================================================
   } ;
   // ==========================================================================

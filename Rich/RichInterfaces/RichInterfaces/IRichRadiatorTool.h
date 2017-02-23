@@ -9,8 +9,7 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRICHRADIATORTOOL_H
-#define RICHINTERFACES_IRICHRADIATORTOOL_H 1
+#pragma once
 
 // from STL
 #include <string>
@@ -25,8 +24,6 @@
 // from LHCbKernel
 #include "Kernel/RichRadiatorType.h"
 #include "Kernel/RichRadIntersection.h"
-
-static const InterfaceID IID_IRichRadiatorTool ( "Rich::IRadiatorTool", 1, 0 );
 
 namespace Rich
 {
@@ -44,8 +41,8 @@ namespace Rich
 
   public:
 
-    /// Return the interface ID
-    static const InterfaceID& interfaceID() { return IID_IRichRadiatorTool; }
+    /// Interface ID
+    DeclareInterfaceID( IRadiatorTool, 1, 0 );
 
     /** @brief Finds the intersections (entry/exit) with radiator.
      *
@@ -68,5 +65,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRICHRADIATORTOOL_H

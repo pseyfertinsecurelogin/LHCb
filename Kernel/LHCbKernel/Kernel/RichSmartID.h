@@ -314,11 +314,11 @@ namespace LHCb
     /// Constructor from unsigned 64 bit int
     explicit constexpr RichSmartID( const uint64_t key ) noexcept
       : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
-
+    
     /// Constructor from signed 32 bit int type
     explicit           RichSmartID( const int32_t key ) noexcept
       : m_key( reinterpret_cast<const LHCb::RichSmartID::KeyType&>(key) ) { }
-
+    
     /// Constructor from signed 64 bit int
     explicit constexpr RichSmartID( const int64_t key ) noexcept
       : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
@@ -784,41 +784,76 @@ namespace LHCb
 
   public:
 
-    // Implementation using a mutex for thread support
+    //     // Implementation using a mutex for thread support
+    // #ifndef GOD_NOALLOC
+
+    //     /// operator new
+    //     static void* operator new ( size_t size )
+    //     {
+    //       return ( sizeof(RichSmartID) == size ?
+    //                boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::malloc() :
+    //                ::operator new(size) );
+    //     }
+
+    //     /// placement operator new
+    //     static void* operator new ( size_t size, void* pObj )
+    //     {
+    //       return ::operator new (size,pObj);
+    //     }
+
+    //     /// operator delete
+    //     static void operator delete ( void* p )
+    //     {
+    //       boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::is_from(p) ?
+    //         boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::free(p) :
+    //         ::operator delete(p);
+    //     }
+
+    //     /// placement operator delete
+    //     static void operator delete ( void* p, void* pObj )
+    //     {
+    //       ::operator delete (p, pObj);
+    //     }
+
+    // #endif
+
+    // Implementation without thread support
 #ifndef GOD_NOALLOC
 
-  /// operator new
-  static void* operator new ( size_t size )
-  {
-    return ( sizeof(RichSmartID) == size ?
-             boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::malloc() :
-             ::operator new(size) );
-  }
+    /// operator new
+    static void* operator new ( size_t size )
+    {
+      using pool = boost::singleton_pool< RichSmartID, sizeof(RichSmartID),
+        boost::default_user_allocator_new_delete,
+        boost::details::pool::null_mutex, 128 >;
+      return ( sizeof(RichSmartID) == size ? pool::malloc() : ::operator new(size) );
+    }
 
-  /// placement operator new
-  static void* operator new ( size_t size, void* pObj )
-  {
-    return ::operator new (size,pObj);
-  }
+    /// placement operator new
+    static void* operator new ( size_t size, void* pObj )
+    {
+      return ::operator new ( size, pObj );
+    }
 
-  /// operator delete
-  static void operator delete ( void* p )
-  {
-    boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::is_from(p) ?
-      boost::singleton_pool<RichSmartID, sizeof(RichSmartID)>::free(p) :
-      ::operator delete(p);
-  }
-
-  /// placement operator delete
-  static void operator delete ( void* p, void* pObj )
-  {
-          ::operator delete (p, pObj);
-  }
-
+    /// operator delete
+    static void operator delete ( void* p )
+    {
+      using pool = boost::singleton_pool< RichSmartID, sizeof(RichSmartID),
+        boost::default_user_allocator_new_delete,
+        boost::details::pool::null_mutex, 128 >;
+      pool::is_from(p) ? pool::free(p) : ::operator delete(p);
+    }
+    
+    /// placement operator delete
+    static void operator delete ( void* p, void* pObj )
+    {
+      ::operator delete ( p, pObj );
+    }
+    
 #endif
-
+  
   public:
-
+    
     /// Print this RichSmartID in a human readable way
     std::ostream& fillStream( std::ostream& s,
 #ifdef NDEBUG
@@ -827,30 +862,30 @@ namespace LHCb
                               const bool dumpSmartIDBits = true
 #endif
                               ) const;
-
+    
     /** Return the output of the ostream printing of this object as a string.
      *  Mainly for use in GaudiPython. */
     std::string toString() const;
-
+    
   public:
-
+    
     /// Test if a given bit in the ID is on
     inline constexpr bool isBitOn( const int32_t pos ) const noexcept
     {
       return ( 0 != ( key() & ( 1 << pos ) ) );
     }
-
+    
     /// Print the ID as a series of bits (0/1)
     std::ostream& dumpBits( std::ostream& s ) const;
-
+    
   };
-
+  
   /// ostream operator
   inline std::ostream& operator<< (std::ostream& str, const RichSmartID& obj)
   {
     return obj.fillStream(str);
   }
-
+  
 }
 
 #endif

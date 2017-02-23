@@ -44,7 +44,7 @@ namespace Rich
         // basically, we don't simulate bit errors, so parity word here is just zero
         if ( this->header().extendedFormat() )
         {
-          this->setFooter ( Footer(1,0) );
+          this->setFooter ( Footer(1,typename Footer::WordType(0)) );
         }
 
         // Fill the number of 8 bit words + 1 field in header
@@ -89,10 +89,11 @@ namespace Rich
       RichNonZeroSuppData<Version,Header,Footer>::fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
                                                                     const LHCb::RichSmartID hpdID ) const
       {
-        m_nHits = 0; // reset number of hits to zero
-
         // reserve size in hit vector ( guess )
         ids.reserve( 96 );
+
+        // count hits made
+        ShortType nHits(0);
 
         // Fill with active channels
         for ( ShortType iRow = 0; iRow < MaxDataSize; ++iRow )
@@ -105,35 +106,12 @@ namespace Rich
               auto & id = ids.back();
               id.setPixelRow(iRow);
               id.setPixelCol(iCol);
-              ++m_nHits; // count hits
+              ++nHits;
             }
           }
         }
 
-        return m_nHits;
-      }
-      // ------------------------------------------------------------------------------------------------
-
-      // ------------------------------------------------------------------------------------------------
-      template< class Version, class Header, class Footer >
-      ShortType RichNonZeroSuppData<Version,Header,Footer>::hitCount() const
-      {
-        if ( m_nHits < 0 )
-        {
-          // not yet calculated, so need to do it here
-          m_nHits = 0;
-          for ( ShortType iRow = 0; iRow < MaxDataSize; ++iRow )
-          {
-            for ( ShortType iCol = 0; iCol < MaxDataSize; ++iCol )
-            {
-              if ( isPixelActive(iRow,iCol) )
-              {
-                ++m_nHits; // count hits
-              }
-            }
-          }
-        }
-        return static_cast<ShortType>(m_nHits);
+        return nHits;
       }
       // ------------------------------------------------------------------------------------------------
 

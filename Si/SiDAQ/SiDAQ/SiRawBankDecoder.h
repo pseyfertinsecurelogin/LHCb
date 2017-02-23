@@ -144,12 +144,12 @@ public:
     /** Equal 
      *  True if positions match 
      */
-    friend bool operator==(const pos_iterator& lhs, const pos_iterator& rhs) { return lhs.m_pos == rhs.m_pos; }
+    bool operator==(const pos_iterator& rhs) const { return m_pos == rhs.m_pos; }
 
     /** Not Equal 
      *  True if positions do not match 
      */
-    friend bool operator!=(const pos_iterator& lhs, const pos_iterator& rhs) { return lhs.m_pos != rhs.m_pos; }
+    bool operator!=(const pos_iterator& rhs) const { return m_pos != rhs.m_pos; }
 
     // dereferencing
 
@@ -240,12 +240,12 @@ public:
     /** Equal 
      *  True if positions match 
      */
-    friend bool operator==(const posadc_iterator& lhs, const posadc_iterator& rhs) { return lhs.m_pos == rhs.m_pos; }
+    bool operator==(const posadc_iterator& rhs) const { return m_pos == rhs.m_pos; }
 
     /** Not Equal 
      *  True if positions do not match 
      */
-    friend bool operator!=(const posadc_iterator& lhs, const posadc_iterator& rhs) { return lhs.m_pos != rhs.m_pos; }
+    bool operator!=(const posadc_iterator& rhs) const { return m_pos != rhs.m_pos; }
 
     // dereferencing
 

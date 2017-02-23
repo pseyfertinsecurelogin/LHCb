@@ -1,18 +1,6 @@
 // Include files
 
-#include <map>
-#include <string>
-#include <set>
 
-class StatusCode;
-namespace Gaudi { namespace Parsers {
-StatusCode parse(std::map<std::string, std::map<std::string,
-                 std::map< std::string, std::string> > >& result,
-                 const std::string& input ) ;
-
-StatusCode parse(std::set<std::string>& result,
-                 const std::string& input ) ;
-} }
 
 #include <sstream>
 #include <algorithm>
@@ -24,6 +12,9 @@ StatusCode parse(std::set<std::string>& result,
 #include "boost/filesystem/convenience.hpp"
 #include "boost/regex.hpp"
 
+// local
+#include "PropertyConfigSvc.h"
+
 // from Gaudi
 #include "GaudiKernel/System.h"
 #include "GaudiKernel/Algorithm.h"
@@ -33,33 +24,8 @@ StatusCode parse(std::set<std::string>& result,
 #include "GaudiKernel/IAuditor.h"
 #include "GaudiKernel/IAlgTool.h"
 
-// local
-#include "PropertyConfigSvc.h"
 
 using namespace std;
-
-namespace {
-
-template <typename T>
-struct equals_t  {
-    T arg0;
-
-    template <typename U>
-    bool operator()(const U& u) const { return arg0 == u; }
-};
-
-// note that in case of an r-value, we copy, in case of an l-value
-// or an l-value reference, we use a reference...
-template <typename T>
-equals_t<T> equals( T&& t ) { return equals_t<T>{std::forward<T>(t)}; }
-
-/// C++14 version:
-// template <typename T>
-// auto equals( T&& t ) { return [arg0=std::forward<T>(t)](const auto& arg) 
-//                               { return arg0 == arg; }; 
-// }
-}
-
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PropertyConfigSvc
@@ -72,12 +38,16 @@ DECLARE_COMPONENT( PropertyConfigSvc )
 
 
 namespace {
+    template <typename T>
+    auto equals( T&& t ) { return [arg0=std::forward<T>(t)]
+                                  (const auto& arg)
+                                  { return arg0 == arg; };
+    }
 
     // model this as output iterator
     class property2jos  : public std::iterator<std::output_iterator_tag,const PropertyConfig::Prop> {
          public:
             property2jos& operator++()   { return *this; }
-//            property2jos operator++(int) { return *this; } // Not yet implemented
             property2jos& operator*()    { return *this; }
             property2jos(IJobOptionsSvc* jos,const string& name, ostream* os=nullptr) :
                 m_jos(jos),m_name(name),m_properties(jos->getProperties(name)),m_out(os) { assert(m_jos); }
@@ -123,10 +93,10 @@ namespace {
             }
          private:
             const Property* find(const string& name) {
-               auto i = find_if(std::begin(*m_properties),
-                                std::end(*m_properties),
+               auto i = find_if(begin(*m_properties),
+                                end(*m_properties),
                                 [&](const Property* p) { return p->name()==name; } );
-               return i!=std::end(*m_properties) ? *i : nullptr;
+               return i!=end(*m_properties) ? *i : nullptr;
             }
             IJobOptionsSvc*                m_jos;
             string                         m_name;
@@ -135,20 +105,6 @@ namespace {
     };
 }
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-PropertyConfigSvc::PropertyConfigSvc( const string& name, ISvcLocator* pSvcLocator)
-  : base_class ( name , pSvcLocator )
-{
-  declareProperty("ConfigAccessSvc", s_accessSvc = "ConfigCDBAccessSvc");
-  declareProperty("prefetchConfig", m_prefetch);
-  declareProperty("SkipComponent", m_skip); // do not touch these algorithms configurations, NOR THEIR DEPENDENTS!
-  declareProperty("optionsfile", m_ofname);
-  declareProperty("createGraphVizFile", m_createGraphVizFile=false);
-  declareProperty("AllowFlowChanges",m_allowFlowChanges = false);
-  declareProperty("ApplyTransformation",m_transform);
-}
 
 //=============================================================================
 // Initialization
@@ -169,7 +125,7 @@ StatusCode PropertyConfigSvc::initialize() {
    if ( !m_toolSvc )  return StatusCode::FAILURE;
    m_toolSvc->registerObserver(this);
 
-   if (!m_ofname.empty()) m_os.reset( new boost::filesystem::ofstream( m_ofname.c_str() ) );
+   if (!m_ofname.empty()) m_os = std::make_unique<boost::filesystem::ofstream>( m_ofname.value() );
 
   // read table of pre-assigned, possible configurations for this job...
   // i.e. avoid reading _everything_ when we really need to be quick
@@ -301,8 +257,11 @@ PropertyConfigSvc::findInTree(const ConfigTreeNode::digest_type& configTree, con
 ConfigTreeNode::digest_type
 PropertyConfigSvc::resolveAlias(const ConfigTreeNodeAlias::alias_type& alias) const
 {
-    auto i = m_aliases.find(alias);
-    if (i!=m_aliases.end()) return i->second;
+    {
+        std::shared_lock<std::shared_timed_mutex> lock(m_aliases_mtx);
+        auto i = m_aliases.find(alias);
+        if (i!=m_aliases.end()) return i->second;
+    }
     auto node = m_accessSvc->readConfigTreeNodeAlias(alias);
     if (!node) {
         error() << " could not obtain alias " << alias << endmsg;
@@ -310,9 +269,14 @@ PropertyConfigSvc::resolveAlias(const ConfigTreeNodeAlias::alias_type& alias) co
     }
     // add it into alias cache
     ConfigTreeNode::digest_type ref = node->digest();
-    m_aliases.emplace( alias,ref );
-    // add to ConfigTreeNode cache now that we got it anyway...
-    if (m_nodes.find(ref)==m_nodes.end()) m_nodes.emplace( ref, *node );
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_aliases_mtx);
+        m_aliases.emplace( alias,ref );
+    }{
+        std::unique_lock<std::shared_timed_mutex> lock(m_nodes_mtx);
+        // add to ConfigTreeNode cache now that we got it anyway...
+        if (m_nodes.find(ref)==m_nodes.end()) m_nodes.emplace( ref, *node );
+    }
     info() << " resolved " << alias << " to " << ref << endmsg;
     return ref;
 }
@@ -327,9 +291,12 @@ PropertyConfigSvc::collectNodeRefs(const ConfigTreeNodeAlias::alias_type& alias)
 const PropertyConfigSvc::Tree2NodeMap_t::mapped_type&
 PropertyConfigSvc::collectNodeRefs(const ConfigTreeNode::digest_type& nodeRef) const
 {
-    // first check cache...
-    auto j = m_nodesInTree.find(nodeRef);
-    if (j!=m_nodesInTree.end()) return j->second;
+    {
+        std::shared_lock<std::shared_timed_mutex> lock(m_nodesInTree_mtx);
+        // first check cache...
+        auto j = m_nodesInTree.find(nodeRef);
+        if (j!=m_nodesInTree.end()) return j->second;
+    }
 
     //std::chrono::time_point<std::chrono::system_clock> start ;
     //start = std::chrono::system_clock::now();
@@ -337,7 +304,7 @@ PropertyConfigSvc::collectNodeRefs(const ConfigTreeNode::digest_type& nodeRef) c
     Tree2NodeMap_t::mapped_type nrefs; // note: we use list, as appending to a list
                                        // does not invalidate iterators!!!!
     nrefs.push_back(nodeRef);
-    for (auto i = std::begin(nrefs); i!= std::end(nrefs); ++i) { // WARNING: std::end(nrefs) updates in the body of the loop!!!
+    for (auto i = begin(nrefs); i!= end(nrefs); ++i) { // WARNING: end(nrefs) updates in the body of the loop!!!
         const ConfigTreeNode *node = resolveConfigTreeNode(*i);
         if (!node) {
             throw GaudiException("failed to resolve node ", this->name() + "::collectNodeRefs",StatusCode::FAILURE);
@@ -348,10 +315,10 @@ PropertyConfigSvc::collectNodeRefs(const ConfigTreeNode::digest_type& nodeRef) c
         // to insure the dependencies of the inserted elements are
         // taken into account... On top of that, the current linear
         // structure is sorted by dependency, which is kind of nice ;-)
-        std::copy_if( std::begin(node->nodes()), std::end(node->nodes()),
+        std::copy_if( begin(node->nodes()), end(node->nodes()),
                       std::back_inserter(nrefs) ,
                       [&nrefs](Tree2NodeMap_t::mapped_type::const_reference k) {
-                          return std::none_of(std::begin(nrefs),std::end(nrefs),equals(k));
+                          return std::none_of(begin(nrefs),end(nrefs),equals(k));
                       });
 
     }
@@ -359,8 +326,13 @@ PropertyConfigSvc::collectNodeRefs(const ConfigTreeNode::digest_type& nodeRef) c
     // std::cerr << "PropertyConfigSvc::collectNodeRefs: elapsed time to resolve " << nodeRef << " : " << elapsed_seconds.count() << std::endl;
 
     // insert in cache
-    auto rv = m_nodesInTree.emplace( nodeRef, nrefs );
-    return rv.first->second;
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_nodesInTree_mtx);
+        // we may be beaten to this point, and nodeRef may already be there,
+        // but that is OK / irrelevant ;-)
+        auto rv = m_nodesInTree.emplace( nodeRef, nrefs );
+        return rv.first->second;
+    }
 }
 
 const vector<PropertyConfig::digest_type>&
@@ -372,17 +344,22 @@ PropertyConfigSvc::collectLeafRefs(const ConfigTreeNodeAlias::alias_type& alias)
 const vector<PropertyConfig::digest_type>&
 PropertyConfigSvc::collectLeafRefs(const ConfigTreeNode::digest_type& nodeRef) const
 {
-     auto i  = m_leavesInTree.find(nodeRef);
-     if ( i != m_leavesInTree.end() ) return i->second;
-
+     {
+        std::shared_lock<std::shared_timed_mutex> lock(m_leavesInTree_mtx);
+        auto i  = m_leavesInTree.find(nodeRef);
+        if ( i != m_leavesInTree.end() ) return i->second;
+     }
      vector<PropertyConfig::digest_type> leafRefs;
      for (auto& i : collectNodeRefs(nodeRef) ) {
         const ConfigTreeNode *node = resolveConfigTreeNode(i);
         PropertyConfig::digest_type leafRef = node->leaf();
         if (leafRef.valid()) leafRefs.push_back(leafRef);
      }
-     auto rv = m_leavesInTree.emplace( nodeRef, std::move(leafRefs) );
-     return rv.first->second;
+     {
+        std::unique_lock<std::shared_timed_mutex> lock(m_leavesInTree_mtx);
+        auto rv = m_leavesInTree.emplace( nodeRef, std::move(leafRefs) );
+        return rv.first->second;
+     }
 }
 
 StatusCode
@@ -416,14 +393,14 @@ StatusCode
 PropertyConfigSvc::outOfSyncConfigs(const ConfigTreeNode::digest_type& configID,
                                     back_insert_iterator<vector<const PropertyConfig*> > newConfigs) const
 {
-    if (!configID.valid())  return StatusCode::FAILURE;
+    assert(configID.valid()); // caller already verified this!
     for (const auto& i : collectLeafRefs(configID) ) {
         const PropertyConfig *config = resolvePropertyConfig(i);
         if ( !config ) {
             error() << "Failed to resolve " <<  i << endmsg;
             return StatusCode::FAILURE;
         }
-        if ( m_skip.find( config->name() ) != std::end(m_skip) ) {
+        if ( m_skip.find( config->name() ) != end(m_skip) ) {
             warning() << " skipping configuration of " << config->name()
                       << " because it is in the 'skip' list"
                       << endmsg;
@@ -465,6 +442,10 @@ PropertyConfigSvc::outOfSyncConfigs(const ConfigTreeNode::digest_type& configID,
 StatusCode
 PropertyConfigSvc::configure(const ConfigTreeNode::digest_type& configID, bool callSetProperties) const
 {
+    //TODO: make thread safe!
+    //      move chcek on m_configPushed out of  outOfSyncConfigs
+    //      to avoid reading m_configPushed there, and restrict read/write
+    //      of m_configPushed to configure only!
     if(msgLevel(MSG::DEBUG)) debug() << " configuring using " << configID << endmsg;
     if (!configID.valid()) return StatusCode::FAILURE;
     setTopAlgs(configID); // do this last instead of first?
@@ -483,11 +464,11 @@ PropertyConfigSvc::configure(const ConfigTreeNode::digest_type& configID, bool c
             if ( boost::regex_match( fqname, re ) ) transformer.push_back( &trans.second );
         }
         if (!transformer.empty()) {
-          std::transform(std::begin(map), std::end(map),
+          std::transform(begin(map), end(map),
                          property2jos(m_joboptionsSvc, i->name(), m_os.get()),
                          transformer);
         } else {
-          std::copy(std::begin(map), std::end(map),
+          std::copy(begin(map), end(map),
                     property2jos(m_joboptionsSvc, i->name(), m_os.get()));
         }
         m_configPushed[i->name()] = i->digest();
@@ -549,7 +530,7 @@ PropertyConfigSvc::setTopAlgs(const ConfigTreeNode::digest_type& id) const {
     if(msgLevel(MSG::DEBUG)) debug() << " current TopAlgs: " << topAlgs.toString() << endmsg;
 
     if (!m_initialTopAlgs) {
-        m_initialTopAlgs.reset( new vector<string>( topAlgs.value() ) );
+        m_initialTopAlgs = topAlgs.value();
     }
 
     vector<const PropertyConfig*> ids;
@@ -557,7 +538,7 @@ PropertyConfigSvc::setTopAlgs(const ConfigTreeNode::digest_type& id) const {
     if (sc.isFailure()) return sc;
     list<string> request;
     std::transform(
-        std::begin(ids), std::end(ids), std::back_inserter(request),
+        begin(ids), end(ids), std::back_inserter(request),
         [](const PropertyConfig *i) { return i->fullyQualifiedName(); });
 
     // merge the current TopAlg, and requested TopAlg list, conserving
@@ -571,7 +552,7 @@ PropertyConfigSvc::setTopAlgs(const ConfigTreeNode::digest_type& id) const {
     //@TODO: find topAlgs before we touched them -- and use those to merge with...
 
 
-    list<string> merge( std::begin(*m_initialTopAlgs),std::end(*m_initialTopAlgs));
+    list<string> merge( begin(*m_initialTopAlgs),end(*m_initialTopAlgs));
 
     auto ireq = request.begin();
     while (ireq != request.end()) {
@@ -682,10 +663,13 @@ PropertyConfigSvc::createGraphVizFile(const ConfigTreeNode::digest_type& ref, co
 const PropertyConfig*
 PropertyConfigSvc::resolvePropertyConfig(const PropertyConfig::digest_type& ref) const
 {
-   auto i = m_configs.find(ref);
-   if (i!=m_configs.end()) {
-        if(msgLevel(MSG::DEBUG)) debug() << "already have an entry for id " << ref << endl;
-        return &(i->second);
+   {
+       std::shared_lock<std::shared_timed_mutex> lock(m_configs_mtx);
+       auto i = m_configs.find(ref);
+       if (i!=m_configs.end()) {
+            if(msgLevel(MSG::DEBUG)) debug() << "already have an entry for id " << ref << endl;
+            return &(i->second);
+       }
    }
    auto config = m_accessSvc->readPropertyConfig(ref);
    if (!config) {
@@ -697,8 +681,11 @@ PropertyConfigSvc::resolvePropertyConfig(const PropertyConfig::digest_type& ref)
                 << " points at " << config->digest().str() << endmsg;
         return nullptr;
    }
-   auto rv = m_configs.emplace(  ref, *config);
-   return &(rv.first->second);
+   {
+        std::unique_lock<std::shared_timed_mutex> lock(m_configs_mtx);
+        auto rv = m_configs.emplace(  ref, *config);
+        return &(rv.first->second);
+   }
 }
 
 const ConfigTreeNode*
@@ -712,10 +699,13 @@ const ConfigTreeNode*
 PropertyConfigSvc::resolveConfigTreeNode(const ConfigTreeNode::digest_type& ref) const
 {
    if(msgLevel(MSG::DEBUG)) debug() << " resolving nodeRef " << ref << endmsg;
-   auto i = m_nodes.find(ref);
-   if (i!=m_nodes.end()) {
-        if(msgLevel(MSG::DEBUG)) debug() << "already have an entry for id " << ref << endl;
-        return &(i->second);
+   {
+       std::shared_lock<std::shared_timed_mutex> lock(m_nodes_mtx);
+       auto i = m_nodes.find(ref);
+       if (i!=m_nodes.end()) {
+            if(msgLevel(MSG::DEBUG)) debug() << "already have an entry for id " << ref << endl;
+            return &(i->second);
+       }
    }
    assert(m_accessSvc);
    auto node = m_accessSvc->readConfigTreeNode(ref);
@@ -728,8 +718,11 @@ PropertyConfigSvc::resolveConfigTreeNode(const ConfigTreeNode::digest_type& ref)
                 << " points at " << node->digest().str() << endmsg;
         return nullptr;
    }
-   auto rv = m_nodes.emplace( ref, *node );
-   return &(rv.first->second);
+   {
+       std::unique_lock<std::shared_timed_mutex> lock(m_nodes_mtx);
+       auto rv = m_nodes.emplace( ref, *node );
+       return &(rv.first->second);
+   }
 }
 
 
@@ -737,13 +730,13 @@ PropertyConfig::Prop
 PropertyConfigSvc::Transformer::operator()(const PropertyConfig::Prop& in) {
    std::string out = in.second;
    for (const auto& i : m_list) { // vector of all component maps to apply
-       for (const auto& j : *i ) {  // map to apply
-           if (in.first != j.first) continue;
-           for (const auto& k : j.second ) {
-               boost::regex pattern(k.first);
-               out = boost::regex_replace(out, pattern, k.second);
-           }
+     for (const auto& j : *i ) {  // map to apply
+       if (in.first != j.first) continue;
+       for (const auto& k : j.second ) {
+         boost::regex pattern(k.first);
+         out = boost::regex_replace(out, pattern, k.second);
        }
+     }
    }
    if (out == in.second) return in;
    m_os <<  "Applying substitution " << m_c << "." << in.first << " : " << in.second << " => " << out << endmsg;

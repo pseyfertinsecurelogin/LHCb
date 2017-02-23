@@ -91,6 +91,35 @@ namespace LoKi
         typename Type::ConstVector&       output )
       { return finder.findDecay  ( input.begin() , input.end() , output ) ; }
       // ======================================================================
+    public:
+      // ======================================================================
+      static typename Type::ConstVector __findDecay__
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::Container&   input  )
+      { 
+        typename Type::ConstVector output ;
+        finder.findDecay  ( input.begin() , input.end() , output ) ; 
+        return output ;
+      }
+      // ======================================================================
+      static typename Type::ConstVector __findDecay__
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::Vector&      input  )
+      { 
+        typename Type::ConstVector output ;
+        finder.findDecay  ( input.begin() , input.end() , output ) ; 
+        return output ;
+      }
+      // ======================================================================
+      static typename Type::ConstVector __findDecay__
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::ConstVector& input  )
+      { 
+        typename Type::ConstVector output ;
+        finder.findDecay  ( input.begin() , input.end() , output ) ; 
+        return output ;
+      }
+      // ======================================================================
     } ;
     // ========================================================================
   } //                                             end of namespace LoKi::Dicts

@@ -7,8 +7,7 @@
  *  @date   2004-06-30
  */
 
-#ifndef RICHDET_RICHMIRRORSEGPOSITION_H
-#define RICHDET_RICHMIRRORSEGPOSITION_H 1
+#pragma once
 
 // std include
 #include <iostream>
@@ -113,5 +112,3 @@ inline std::ostream& operator << ( std::ostream& os,
 {
   return os << "Mirror Segment row:" << pos.row() << " column:" << pos.column();
 }
-
-#endif // RICHDET_RICHMIRRORSEGPOSITION_H

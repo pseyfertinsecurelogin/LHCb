@@ -19,7 +19,6 @@
 #include "SiDAQ/SiADCWord.h"
 #include "Kernel/STDecoder.h"
 #include "Kernel/StripRepresentation.h"
-#include "Kernel/STRawBankMap.h"
 
 using namespace LHCb;
 
@@ -27,72 +26,63 @@ using namespace LHCb;
 // Implementation file for class : RawBufferToSTClusterAlg
 //
 // 2004-01-07 : Matthew Needham   
-// 2016-10-07 : Sebastien Ponce
 //-----------------------------------------------------------------------------
 
 DECLARE_ALGORITHM_FACTORY( RawBankToSTClusterAlg )
 
 RawBankToSTClusterAlg::RawBankToSTClusterAlg( const std::string& name,
                                            ISvcLocator* pSvcLocator ):
-MultiTransformer(name, pSvcLocator,
-                 {KeyValue{"OdinLocation", LHCb::ODINLocation::Default},
-                  KeyValue{"RawEventLocations",
-                           Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Tracker,
-                                                                  LHCb::RawEventLocation::Other,
-                                                                  LHCb::RawEventLocation::Default)}},
-                 {KeyValue("clusterLocation", STClusterLocation::TTClusters),
-                  KeyValue("summaryLocation", STSummaryLocation::TTSummary)}) {
-  // Standard constructor, initializes variables
+STDecodingBaseAlg (name , pSvcLocator){
+ 
+ // Standard constructor, initializes variables
+  declareSTConfigProperty("clusterLocation", m_clusterLocation , STClusterLocation::TTClusters);
   declareSTConfigProperty("BankType", m_bankTypeString , "TT");
-  declareSTConfigProperty("PedestalBank", m_pedestalBankString , "TTPedestal");
-  declareSTConfigProperty("FullBank", m_fullBankString , "TTFull");
 }
 
 StatusCode RawBankToSTClusterAlg::initialize() {
+
   // Initialization
-  StatusCode sc = MultiTransformer::initialize();
-  if (sc.isFailure()) return Error("Failed to initialize", sc);
-  // pedestal bank
-  m_pedestalType = STRawBankMap::stringToType(m_pedestalBankString);
-  if (m_bankType == LHCb::RawBank::Velo){
-    fatal() << "Wrong detector type: only IT or TT !"<< endmsg;
-    return StatusCode::FAILURE;
-  }
-  // full bank
-  m_fullType =  STRawBankMap::stringToType(m_fullBankString);
-  if (m_fullType ==  LHCb::RawBank::Velo){
-    fatal() << "Wrong detector type: only IT or TT !"<< endmsg;
-    return StatusCode::FAILURE;
-  }
-  // Spill
-  computeSpillOffset(inputLocation<1>());
-  // return
-  return StatusCode::SUCCESS;
+  StatusCode sc = STDecodingBaseAlg::initialize();
+  return sc.isFailure() ? Error("Failed to initialize", sc)
+                        : StatusCode::SUCCESS;
 }
     
-std::tuple<LHCb::STClusters,LHCb::STSummary>
-RawBankToSTClusterAlg::operator()(const LHCb::ODIN& odin, const LHCb::RawEvent& rawEvt) const {
+StatusCode RawBankToSTClusterAlg::execute() {
+
   // make a new digits container
-  STClusters clusCont;
-  if (!validSpill(odin)) {
-    warning() << "Not a valid spill" << endmsg;
-  } else {
-    clusCont.reserve(2000);
-    // decode banks
-    LHCb::STSummary summary = decodeBanks(rawEvt, clusCont);
-    // sort
-    std::sort(clusCont.begin(),
-              clusCont.end(),
-              STDataFunctor::Less_by_Channel<const STCluster*>());
-    return std::make_tuple(std::move(clusCont), std::move(summary));
+  STClusters* clusCont = new STClusters();
+  clusCont->reserve(2000);
+  put(clusCont, m_clusterLocation);
+
+  if (!validSpill()) {
+    return Warning("Not a valid spill",StatusCode::SUCCESS, 1);
   }
-  return std::make_tuple(std::move(clusCont), LHCb::STSummary());
+
+  // Retrieve the RawEvent:
+  LHCb::RawEvent* rawEvt = nullptr;
+  for (const auto& p : m_rawEventLocations) {
+    rawEvt = getIfExists<LHCb::RawEvent>(p);
+    if (rawEvt) break;
+    }
+  if( !rawEvt ) return Warning("Failed to find raw data", StatusCode::SUCCESS,1);
+
+  // decode banks
+  StatusCode sc = decodeBanks(*rawEvt,clusCont);
+  if (sc.isFailure()){
+    return Error("Problems in decoding event skipped", sc);
+  }
+
+  // sort
+  std::sort(clusCont->begin(),
+            clusCont->end(),
+            STDataFunctor::Less_by_Channel<const STCluster*>());
+
+  return sc;
 }
 
-LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
-                                                   LHCb::STClusters& clusCont) const {
-  std::unique_ptr<LHCb::STTELL1BoardErrorBanks> errorBanks = nullptr;
-  bool errorBanksFailed = false;
+
+StatusCode RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
+                                              STClusters* clusCont ) const{
 
   // create Clusters from this type 
   bool pcnSync = true;
@@ -105,8 +95,9 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
   if (!missing.empty()){
     counter("lost Banks") += missing.size();
     if (tBanks.empty()){
+      createSummaryBlock(rawEvt,0, STDAQ::inValidPcn, false, 0,  bankList, missing, recoveredBanks);
       ++counter("no banks found");
-      return createSummaryBlock(rawEvt,0, STDAQ::inValidPcn, false, 0,  bankList, missing, recoveredBanks);
+      return StatusCode::SUCCESS;
     }
   }
 
@@ -117,9 +108,8 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
   if (pcn == STDAQ::inValidPcn && !m_skipErrors) {
     counter("skipped Banks") += tBanks.size();
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug() << "PCN vote failed with " << tBanks.size() << endmsg;
-    warning() << "PCN vote failed" << endmsg;
-    return STSummary();
+      debug() << "PCN vote failed with " << tBanks.size() << endmsg; 
+    return Warning("PCN vote failed", StatusCode::SUCCESS ,2 );
   }
     
   // loop over the banks of this type..
@@ -172,19 +162,10 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
       }
     }
 
-    STTELL1BoardErrorBank* errorBank = nullptr;
-    if (recover) {
-      if (!errorBanks.get() && !errorBanksFailed) {
-        try {
-          errorBanks = decodeErrors(rawEvt);
-        } catch (GaudiException &e) {
-          errorBanksFailed = true;
-          warning() << e.what() << endmsg;
-        }
-      }
-      if (errorBanks.get()) {
-        errorBank = errorBanks->object(bank->sourceID());
-      }
+    // ok this is a bit ugly.....
+    STTELL1BoardErrorBank* errorBank = 0;
+    if (recover){
+      errorBank = findErrorBank(bank->sourceID());
       // check what fraction we can recover
       if (errorBank !=0) recoveredBanks[bank->sourceID()] += errorBank->fractionOK(pcn);
     } 
@@ -222,10 +203,15 @@ LHCb::STSummary RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
 	} 
       }
     } // iterDecoder
-  } // bank
+    
 
+  } // bank
+   
   const unsigned int bsize = byteSize(tBanks);
-  return createSummaryBlock(rawEvt, clusCont.size(), pcn, pcnSync, bsize, bankList, missing, recoveredBanks);
+  createSummaryBlock(rawEvt, clusCont->size(), pcn, pcnSync, bsize, bankList, missing, recoveredBanks);
+
+  return StatusCode::SUCCESS;
+
 }
 
 void RawBankToSTClusterAlg::createCluster( const STClusterWord& aWord,
@@ -233,7 +219,7 @@ void RawBankToSTClusterAlg::createCluster( const STClusterWord& aWord,
                                            const std::vector<SiADCWord>& 
                                            adcValues,
                                            const STDAQ::version& bankVersion,
-                                           STClusters& clusCont) const{
+                                           STClusters* clusCont) const{
   // stream the neighbour sum
   std::vector<SiADCWord>::const_iterator iterADC = adcValues.begin();
   char neighbour = *iterADC;  
@@ -273,8 +259,8 @@ void RawBankToSTClusterAlg::createCluster( const STClusterWord& aWord,
                                                                adcs,neighbour, aBoard->boardID().id(), 
                                                                aWord.channelID(), spill());
 
-  if (!clusCont.object(nearestChan.first)) {
-    clusCont.insert(newCluster,nearestChan.first);
+  if (!clusCont->object(nearestChan.first)) {
+    clusCont->insert(newCluster,nearestChan.first);
   }   
   else {
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -286,28 +272,6 @@ void RawBankToSTClusterAlg::createCluster( const STClusterWord& aWord,
   return;
 }
 
-LHCb::STSummary RawBankToSTClusterAlg::createSummaryBlock(const RawEvent& rawEvt,
-                                                          const unsigned int& nclus,
-                                                          const unsigned int& pcn,
-                                                          const bool pcnsync,
-                                                          const unsigned int bytes,
-                                                          const std::vector<unsigned int>& bankList,
-                                                          const std::vector<unsigned int>& missing,
-                                                          const LHCb::STSummary::RecoveredInfo& recoveredBanks) const {
-  unsigned totalBytes = bytes;
-  // get the error banks
-  const auto& errorBanks = rawEvt.banks(LHCb::RawBank::BankType(m_errorType));
-  totalBytes += byteSize(errorBanks);
-  // get the pedestal banks
-  const auto& pBanks = rawEvt.banks(LHCb::RawBank::BankType(m_pedestalType));
-  totalBytes += byteSize(pBanks);
-  // get the full banks
-  const auto& fullBanks = rawEvt.banks(LHCb::RawBank::BankType(m_fullType));
-  totalBytes += byteSize(fullBanks);
-  return STSummary(nclus, pcn, pcnsync, totalBytes,
-                   fullBanks.size(), pBanks.size(),
-                   errorBanks.size(), bankList, missing, recoveredBanks);
-}
 
 double RawBankToSTClusterAlg::mean(const std::vector<SiADCWord>& adcValues) const
 {
@@ -322,6 +286,8 @@ double RawBankToSTClusterAlg::mean(const std::vector<SiADCWord>& adcValues) cons
   return (sum/totCharge);
 }
 
+
+
 StatusCode RawBankToSTClusterAlg::finalize() {
 
   const double failed = counter("skipped Banks").flag();
@@ -333,7 +299,7 @@ StatusCode RawBankToSTClusterAlg::finalize() {
   }
   info() << "Successfully processed " << 100* eff << " %"  << endmsg;
     
-  return MultiTransformer::finalize();
+  return STDecodingBaseAlg::finalize();
 }
 
 

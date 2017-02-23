@@ -12,10 +12,7 @@ known_extras=['Raw/Prs/Adcs', 'Hlt1/DecReports', 'Hlt2/DecReports',
               'Raw/Hcal/Adcs', 'Raw/Ecal/Adcs', 'Hlt/VertexReports',
               'Raw/Spd/Adcs', 'Hlt2/SelReports', 'Hlt1/Track/Velo',
               'Hlt/DecReports', 'Trig/L0/L0DUData', 'Hlt1/SelReports',
-              'Raw/Velo/PUClusters', 'Hlt2/VertexReports', 'Hlt/LumiSummary',
-              'Hlt1/SelReports/Candidates', 'Hlt2/SelReports/Candidates',
-              'Hlt/VertexReports/PV3D','Hlt/VertexReports/ProtoPV3D',
-              'Rec/TT/Summary', 'Rec/IT/Summary', 'Rec/UT/Summary']
+              'Raw/Velo/PUClusters', 'Hlt2/VertexReports', 'Hlt/LumiSummary']
 
 from GaudiConf.PersistRecoConf import PersistRecoPacking
 __packing = PersistRecoPacking()
@@ -61,7 +58,7 @@ def parse(stdout):
         dest=lines[0]
         algname=lines[1]
         #print lines[2]
-        exec("algprops="+lines[2].replace("PublicToolHandle","'PublicToolHandle'+").replace("DataObjectHandleBase","'DataObjectHandleBase'+"))
+        exec("algprops="+lines[2].replace("PublicToolHandle","'PublicToolHandle'+"))
         #algprops=dict(lines[2])
         result[dest]={algname: algprops}
     return result

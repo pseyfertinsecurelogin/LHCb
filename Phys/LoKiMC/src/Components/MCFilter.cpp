@@ -1,7 +1,6 @@
+// $Id$
 // ============================================================================
 // Include files
-// ============================================================================
-#include "GaudiAlg/FilterPredicate.h"
 // ============================================================================
 // MCEvent
 // ============================================================================
@@ -23,15 +22,11 @@
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
+ *                    $Revision$
+ *  Last modification $Date$
+ *                 by $Author$
  */
 // ============================================================================
-namespace
-{
-  // ==========================================================================
-  LoKi::BasicFunctors<LHCb::MCParticle::ConstVector>::BooleanConstant s_NONE =
-    LoKi::BasicFunctors<LHCb::MCParticle::ConstVector>::BooleanConstant ( false ) ;
-  // ==========================================================================
-}
 namespace LoKi
 {
   // ==========================================================================
@@ -41,14 +36,19 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-06-02
    */
-  class MCFilter : public Gaudi::Functional::FilterPredicate<bool(const LHCb::MCParticle::Container&),
-                                                             Gaudi::Functional::Traits::BaseClass_t<LoKi::FilterAlg> >
+  class MCFilter : public LoKi::FilterAlg
   {
+    // ========================================================================
+    /// friend factory for instantiation
+    friend class AlgFactory<LoKi::MCFilter> ;
+    // ========================================================================
   public:
     // ========================================================================
     /// the main method: execute
-    bool operator() (const LHCb::MCParticle::Container& particles) const override;
-    StatusCode finalize () override;
+    StatusCode execute  ()  override;
+    StatusCode finalize ()  override;
+    // ========================================================================
+  public:
     // ========================================================================
     /** Decode the functor (use the factory)
      *  @see LoKi::FilterAlg
@@ -62,6 +62,8 @@ namespace LoKi
       return StatusCode::SUCCESS ;
     }
     // ========================================================================
+  protected:
+    // ========================================================================
     /** standard constructor
      *  @see LoKi::FilterAlg
      *  @see GaudiAlgorithm
@@ -74,16 +76,22 @@ namespace LoKi
     MCFilter
     ( const std::string& name ,    // the algorithm instance name
       ISvcLocator*       pSvc ) ; // pointer to the service locator
+    /// virtual and protected destructor
+    virtual ~MCFilter () {} ;
     // ========================================================================
+  private:
+    // ========================================================================
+    /// the default constructor is disabled
+    MCFilter () ;                        // the default constructor is disabled
     /// the copy constructor is disabled
-    MCFilter ( const MCFilter& ) = delete;  // the copy constructor is disabled
+    MCFilter ( const MCFilter& ) ;          // the copy constructor is disabled
     /// the assignement operator is disabled
-    MCFilter& operator=( const MCFilter& ) = delete;// the assignement is disabled
+    MCFilter& operator=( const MCFilter& ) ;     // the assignement is disabled
     // ========================================================================
   private:
     // ========================================================================
     /// the functor itself
-    LoKi::Types::MCCutVal m_cut = s_NONE; // the functor itself
+    LoKi::Types::MCCutVal m_cut ; // the functor itself
     /// TES location of LHCb::MCParticle::Container object
     std::string m_location ;     // TES location of LHCb::MCParticle::Container
     // ========================================================================
@@ -91,6 +99,13 @@ namespace LoKi
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
+namespace
+{
+  // ==========================================================================
+  LoKi::BasicFunctors<LHCb::MCParticle::ConstVector>::BooleanConstant s_NONE =
+    LoKi::BasicFunctors<LHCb::MCParticle::ConstVector>::BooleanConstant ( false ) ;
+  // ==========================================================================
+}
 // ============================================================================
 /* standard constructor
  *  @see LoKi::FilterAlg
@@ -105,9 +120,18 @@ namespace LoKi
 LoKi::MCFilter::MCFilter
 ( const std::string& name , // the algorithm instance name
   ISvcLocator*       pSvc ) // pointer to the service locator
-  : FilterPredicate ( name , pSvc ,
-                      KeyValue{ "Location", LHCb::MCParticleLocation::Default } )
+  : LoKi::FilterAlg ( name , pSvc )
+// the functor itself
+  , m_cut      ( s_NONE )
+// TES location of LHCb::MCParticle::Constainer object
+  , m_location ( LHCb::MCParticleLocation::Default )
 {
+  //
+  declareProperty
+    ( "Location" ,
+      m_location ,
+      "TES location of LHCb::MCParticle::Container object" ) ;
+  //
   StatusCode sc = setProperty ( "Code" , "~MCEMPTY" ) ;
   Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
   sc = setProperty
@@ -125,23 +149,38 @@ StatusCode LoKi::MCFilter::finalize ()
 // ============================================================================
 // the main method: execute
 // ============================================================================
-bool LoKi::MCFilter::operator() (const LHCb::MCParticle::Container& particles) const // the main method
+StatusCode LoKi::MCFilter::execute () // the main method: execute
 {
-  if ( updateRequired() ) {
-    StatusCode sc = const_cast<LoKi::MCFilter*>(this)->decode() ;
+  if ( updateRequired() )
+  {
+    StatusCode sc = decode() ;
     Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
   }
   //
-  // copy all particles into single vector
-  // and use the functor
+  // get MC information from TES
   //
-  const bool result = m_cut ( { particles.begin(), particles.end() } ) ;
+  const LHCb::MCParticle::Container* particles =
+    get<LHCb::MCParticle::Container>( m_location ) ;
+  if ( 0 == particles ) { return StatusCode::FAILURE ; }
+  //
+  // copy all particles into single vector
+  //
+  LHCb::MCParticle::ConstVector parts ( particles -> begin () ,
+                                        particles -> end   () ) ;
+  //
+  // use the functor
+  //
+  const bool result = m_cut ( parts ) ;
   //
   // some statistics
   //
   counter ("#passed" ) += result ;
   //
-  return result;
+  // set the filter:
+  //
+  setFilterPassed ( result ) ;
+  //
+  return StatusCode::SUCCESS ;
 }
 // ============================================================================
 /// the factory (needed for instantiation)

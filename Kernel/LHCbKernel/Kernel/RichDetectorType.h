@@ -17,14 +17,14 @@
 #include <vector>
 #include <iostream>
 #include <array>
-#include <stdint.h>
+#include <cstdint>
 
 //  General namespace for RICH specific definitions documented in RichSide.h
 namespace Rich
 {
 
   /// Number of RICH detectors
-  static const unsigned int NRiches = 2;
+  static const uint8_t NRiches = 2;
 
   /** @enum Rich::DetectorType
    *

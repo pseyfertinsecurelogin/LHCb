@@ -4,9 +4,7 @@
 #include "STDecodingBaseAlg.h"
 #include "Event/RawBank.h"
 #include "Kernel/STDAQDefinitions.h"
-#include "GaudiAlg/Transformer.h"
 
-#include "Event/STSummary.h"
 #include "Event/STCluster.h"
 
 #include <vector>
@@ -31,33 +29,28 @@ namespace LHCb{
  class STLiteCluster;
 }
 
-typedef Gaudi::Functional::MultiTransformer<std::tuple<LHCb::STClusters,LHCb::STSummary>(const LHCb::ODIN&, const LHCb::RawEvent&),
-  Gaudi::Functional::Traits::BaseClass_t<STDecodingBaseAlg>> RawBankToSTClusterAlgBaseClass;
-
-class RawBankToSTClusterAlg : public RawBankToSTClusterAlgBaseClass {
+class RawBankToSTClusterAlg : public STDecodingBaseAlg {
 
 public:
 
   /// Standard constructor
   RawBankToSTClusterAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
-  /// initialize
-  StatusCode initialize() override;
-  /// finalize
-  StatusCode finalize() override;
-  /// Algorithm execution
-  std::tuple<LHCb::STClusters,LHCb::STSummary> operator()(const LHCb::ODIN&, const LHCb::RawEvent&) const override;
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute() override;    ///< Algorithm execution
+  StatusCode finalize() override; ///< finalize
+
 
 private:
 
-  LHCb::STSummary decodeBanks(const LHCb::RawEvent& rawEvt,
-                              LHCb::STClusters& clusCont) const;
+  StatusCode decodeBanks(const LHCb::RawEvent& rawEvt, LHCb::STClusters* digitCont ) const;
+
 
   void createCluster(const STClusterWord& aWord,
                      const STTell1Board* aBoard,
                      const std::vector<SiADCWord>& adcValues,
                      const STDAQ::version& bankVersion,
-                     LHCb::STClusters& clusCont) const;
+                     LHCb::STClusters* clusCont) const;
  
   double mean(const std::vector<SiADCWord>& adcValues) const;
    
@@ -65,22 +58,11 @@ private:
 				       const LHCb::STChannelID chan,
 				       const unsigned int fracStrip) const;
 
-  LHCb::STSummary createSummaryBlock(const LHCb::RawEvent& rawEvt,
-                                     const unsigned int& nclus,
-                                     const unsigned int& pcn, 
-                                     const bool pcnsync,
-                                     const unsigned int bytes,
-                                     const std::vector<unsigned int>& bankList,
-                                     const std::vector<unsigned int>& missing, 
-                                     const LHCb::STSummary::RecoveredInfo& recoveredBanks) const;
     
   double stripFraction(const double interStripPos) const;
 
-  std::string m_pedestalBankString;
-  LHCb::RawBank::BankType m_pedestalType; 
-
-  std::string m_fullBankString;
-  LHCb::RawBank::BankType m_fullType; 
+  /// Output location for STClusters
+  std::string m_clusterLocation;
 
   unsigned int m_nBits; 
 
@@ -91,8 +73,8 @@ private:
 #include "Kernel/STChannelID.h"
 
 inline LHCb::STLiteCluster RawBankToSTClusterAlg::word2LiteCluster(const STClusterWord aWord,
-                                                                   const LHCb::STChannelID chan,
-                                                                   const unsigned int fracStrip) const
+                                                             const LHCb::STChannelID chan,
+                                                             const unsigned int fracStrip) const
 {
   return LHCb::STLiteCluster(fracStrip,aWord.pseudoSizeBits(),aWord.hasHighThreshold(), chan, (detType()=="UT"));
 }

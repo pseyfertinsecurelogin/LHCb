@@ -36,9 +36,7 @@ using namespace Gaudi::Utils::Histos;
 template <class PBASE>
 void Rich::Future::HistoBase<PBASE>::initRichHistoConstructor()
 {
-  this -> declareProperty ( "NBins1DHistos", m_nBins1D = 100 );
-  this -> declareProperty ( "NBins2DHistos", m_nBins2D = 50  );
-  this -> setProperty     ( "HistoTopDir",  "RICH/" );
+  this -> setProperty ( "HistoTopDir",  "RICH/" );
 }
 
 //=============================================================================
@@ -120,7 +118,7 @@ Rich::Future::HistoBase<PBASE>::richHisto1D( const Rich::HistogramID & id,
                                              const unsigned int      bins,
                                              const std::string&      xAxisLabel,
                                              const std::string&      yAxisLabel,
-                                             const BinLabels&        binLabels ) const
+                                             const BinLabels&        binLabels )
 {
   // Already been booked ?
   auto *& h = m_1dhmap.getmap(id.packedData())[id.id()];
@@ -166,7 +164,7 @@ Rich::Future::HistoBase<PBASE>::richHisto2D( const Rich::HistogramID & id,
                                              const std::string&      yAxisLabel,
                                              const std::string&      zAxisLabel,
                                              const BinLabels&        xBinLabels,
-                                             const BinLabels&        yBinLabels ) const
+                                             const BinLabels&        yBinLabels )
 {
   // Already been booked ?
   auto *& h = m_2dhmap.getmap(id.packedData())[id.id()];
@@ -212,7 +210,7 @@ Rich::Future::HistoBase<PBASE>::richProfile1D( const Rich::HistogramID & id,
                                                const unsigned int      bins,
                                                const std::string&      xAxisLabel,
                                                const std::string&      yAxisLabel,
-                                               const BinLabels&        binLabels ) const
+                                               const BinLabels&        binLabels )
 {
   // Already been booked ?
   auto *& h = m_1dpmap.getmap(id.packedData())[id.id()];
@@ -258,7 +256,7 @@ Rich::Future::HistoBase<PBASE>::richProfile2D( const Rich::HistogramID &  id,
                                                const std::string&      yAxisLabel,
                                                const std::string&      zAxisLabel,
                                                const BinLabels&        xBinLabels,
-                                               const BinLabels&        yBinLabels ) const
+                                               const BinLabels&        yBinLabels )
 {
   // Already been booked ?
   auto *& h = m_2dpmap.getmap(id.packedData())[id.id()];

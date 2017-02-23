@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHDAQ_RICHNONZEROSUPPDATA_V1_H
-#define RICHDAQ_RICHNONZEROSUPPDATA_V1_H 1
+#pragma once
 
 // local
 #include "RichDAQKernel/RichHPDDataBank.h"
@@ -93,9 +92,6 @@ namespace Rich
         /// Destructor
         ~RichNonZeroSuppData() = default;
 
-        // Returns the hit count for this HPD
-        ShortType hitCount() const override final;
-
         // Fill a vector with RichSmartIDs for hit pixels
         ShortType fillRichSmartIDs( LHCb::RichSmartID::Vector & ids,
                                     const LHCb::RichSmartID hpdID ) const override final;
@@ -122,5 +118,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHDAQ_RICHNONZEROSUPPDATA_V1_H

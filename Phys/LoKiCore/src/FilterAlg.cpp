@@ -38,25 +38,37 @@ LoKi::FilterAlg::FilterAlg
 ( const std::string& name ,                     // the algorithm instance name 
   ISvcLocator*       pSvc )                  // pointer to the service locator
   : GaudiAlgorithm ( name , pSvc ) 
+// the type/name for LoKi/Bender "hybrid" factory 
+  , m_factory ( "<UNSPECIFIED>" )
+// the filter/code criteria itself 
+  , m_code   ( "<unspecified>" ) 
+// the preambulo 
+  , m_preambulo_ () 
+  // the preambulo 
+  , m_preambulo  ()
+  //
+  , m_factory_updated   ( false )
+  , m_code_updated      ( false )
+  , m_preambulo_updated ( false )
 {
   // the factory
   declareProperty 
     ( "Factory" , 
       m_factory , 
       "The type/name of LoKiBender \"hybrid\" factory" ) 
-    -> declareUpdateHandler ( [=](Property& p) {  this->updateFactory(p); } );
+    -> declareUpdateHandler ( &LoKi::FilterAlg::updateFactory  , this ) ;
   // the code 
   declareProperty 
     ( "Code"    , 
       m_code    , 
       "The Bender/Python code to be used" ) 
-    -> declareUpdateHandler ( [=](Property& p) { this->updateCode(p); } ) ;
+    -> declareUpdateHandler ( &LoKi::FilterAlg::updateCode     , this ) ;
   // the code 
   declareProperty 
     ( "Preambulo"  , 
       m_preambulo_ , 
       "The preambulo to be used for the temporary python script" ) 
-    -> declareUpdateHandler ( [=](Property& p) { this->updatePreambulo(p); } );
+    -> declareUpdateHandler ( &LoKi::FilterAlg::updatePreambulo , this ) ;
   // 
   Assert( setProperty ( "RegisterForContextService" , true ).isSuccess() ,
           "Unable to enforce the registration for Algorithm Context Service") ;

@@ -29,13 +29,17 @@ namespace LoKi
    */
   class VoidFilter : public LoKi::FilterAlg
   {
+    // ========================================================================
+    /// friend factory for instantiation
+    friend class AlgFactory<LoKi::VoidFilter> ;
+    // ========================================================================
   public:
     // ========================================================================
     /// the main method: execute
-    StatusCode execute  () override;
+    StatusCode execute  ()  override;
     // ========================================================================
     /// proper finalization
-    StatusCode finalize () override;
+    StatusCode finalize ()  override;
     // ========================================================================
   public:
     // ========================================================================
@@ -50,6 +54,8 @@ namespace LoKi
       Assert ( sc.isSuccess() , "Unable to decode the functor!" ) ;
       return StatusCode::SUCCESS ;
     }
+    // ========================================================================
+  protected:
     // ========================================================================
     /** standard constructor
      *  @see LoKi::FilterAlg

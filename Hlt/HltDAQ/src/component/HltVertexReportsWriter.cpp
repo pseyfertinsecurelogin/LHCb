@@ -39,21 +39,6 @@ static const Gaudi::StringKey Hlt2SelectionID{"Hlt2SelectionID"};
 DECLARE_ALGORITHM_FACTORY( HltVertexReportsWriter )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-HltVertexReportsWriter::HltVertexReportsWriter( const std::string& name,
-                                                      ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty("InputHltVertexReportsLocation",
-    m_inputHltVertexReportsLocation= LHCb::HltVertexReportsLocation::Default);
-  declareProperty("OutputRawEventLocation",
-    m_outputRawEventLocation= LHCb::RawEventLocation::Default);
-  declareProperty("SourceID",
-    m_sourceID= kSourceID_Dummy );
-}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode HltVertexReportsWriter::initialize() {

@@ -772,7 +772,7 @@ namespace LoKi
             typename TYPE  = typename details::LF<F>::type1,
             typename = details::require_signature<F,TYPE,double>>
   inline LoKi::JBit<TYPE>
-  jbit  ( F&& fun , unsigned int j   )
+  jbit  ( F&& fun , const unsigned short j   )
   { return { std::forward<F>(fun) , j } ;  }
   // ==========================================================================
   /** "jbits" the floating result to integer value
@@ -790,10 +790,47 @@ namespace LoKi
             typename TYPE  = typename details::LF<F>::type1,
             typename = details::require_signature<F,TYPE,double>>
   inline LoKi::JBits<TYPE>
-  jbits ( F&& fun , unsigned int j1, unsigned int j2  )
+  jbits ( F&& fun , const unsigned short j1, const unsigned short j2  )
+  { return { std::forward<F>(fun) , j1 , j2 } ;  }
+
+  // ==========================================================================
+  /** "jdigit" the floating result to integer value
+   *  get the jth decimal digit of value.
+   *  The action :
+   *   - 1. f -> round ( f )
+   *   - 2. f -> abs   ( f )
+   *   - 3. Gaudi::Math::digit ( f , j )
+   *  @see LoKi::JDigit
+   *  @see Gaudi::Math::digit
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2017-02-16
+   */
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename = details::require_signature<F,TYPE,double>>
+  inline LoKi::JDigit<TYPE>
+  jdigit  ( F&& fun , const unsigned short j   )
+  { return { std::forward<F>(fun) , j } ;  }
+  // ==========================================================================
+  /** "jdigits" the floating result to integer value
+   *  get the (j1-j2) digits of value.
+   *  The action :
+   *   - 1. f -> round ( f )
+   *   - 2. f -> abs   ( f )
+   *   - 3. Gaudi::Math::digits ( f , j1 , j2  )
+   *  @see LoKi::JDigits
+   *  @see Gaudi::Math::digits
+   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+   *  @date 2017-02-16
+   */
+  template <typename F,
+            typename TYPE  = typename details::LF<F>::type1,
+            typename = details::require_signature<F,TYPE,double>>
+  inline LoKi::JDigits<TYPE>
+  jdigits ( F&& fun , const unsigned short j1, const unsigned short j2  )
   { return { std::forward<F>(fun) , j1 , j2 } ;  }
   // ==========================================================================
-} //                                                      end of namespace LoKi
+} //                                          end of namespace LoKi
 // ============================================================================
 namespace LoKi
 {

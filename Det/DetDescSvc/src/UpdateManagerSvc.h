@@ -20,9 +20,6 @@
 #include <map>
 #include <exception>
 #include <algorithm>
-#include <shared_mutex>
-
-#include "DetDesc/ICondIOVResource.h"
 
 #ifndef WIN32
 #include <pthread.h>
@@ -40,16 +37,15 @@ class Condition;
  *  @author Marco Clemencic
  *  @date   2005-03-30
  */
-class UpdateManagerSvc: public extends<Service, IUpdateManagerSvc, IIncidentListener, ICondIOVResource> {
+class UpdateManagerSvc: public extends<Service,
+                                       IUpdateManagerSvc,
+                                       IIncidentListener> {
 public:
   /// Standard constructor
   using base_class::base_class;
 
   /// Initialize Service
   StatusCode initialize() override;
-
-  /// Start Service.
-  StatusCode start() override;
 
   /// Stop Service.
   /// Dump the status of the network of dependencies.
@@ -91,8 +87,6 @@ public:
   // ---- Implement IIncidentListener interface ----
   /// Handle BeginEvent incident.
   void handle(const Incident &inc) override;
-
-  ICondIOVResource::IOVLock reserve( const Gaudi::Time& eventTime ) const override;
 
 protected:
 
@@ -149,24 +143,12 @@ private:
   /// Allow SvcFactory to instantiate the service.
   friend class SvcFactory<UpdateManagerSvc>;
 
-  // Properties
-  Gaudi::Property<std::string> m_dataProviderName
-    {this, "DataProviderSvc", "DetectorDataSvc", "Name of the Data Provider"};
-  Gaudi::Property<std::string> m_detDataSvcName
-    {this, "DetDataSvc", "", "Name of the DetDataSvc, empty means _the same as data provider_"};
-  Gaudi::Property<bool> m_withoutBeginEvent
-    {this, "WithoutBeginEvent", false,
-     "Whether beginEvent is working or not. E.g. it is not in Hive"};
-  /// The syntax to define a condition is:<BR>
-  /// path := type1 name1 = value1; type2 name2 = value2; ...
-  Gaudi::Property<std::vector<std::string>> m_conditionsOveridesDesc
-    {this, "ConditionsOverride", {}, "List of condition definitions to override the ones in the transient store"};
-  Gaudi::Property<std::string> m_dotDumpFile
-    {this, "DotDumpFile", "", "Name of the dot (graphviz) file into which write the dump"};
-
   // ---------- data members ----------
   /// Handle to the Data Provider (where to find conditions).
   SmartIF<IDataProviderSvc> m_dataProvider;
+
+  /// Name of the Data Provider (set by the option DataProviderSvc, by default "DetectorDataSvc").
+  Gaudi::Property<std::string> m_dataProviderName { this, "DataProviderSvc", "DetectorDataSvc" };
 
   /// Name of the root node of the Transient Store.
   std::string       m_dataProviderRootName;
@@ -175,6 +157,9 @@ private:
   /// If the service is not found it is not fatal, but you cannot use the method newEvent()
   /// without the event time parameter (will always fail).
   SmartIF<IDetDataSvc> m_detDataSvc;
+
+  /// Name of the DetDataSvc (set by the option DetDataSvc, by default empty, which means <i>the same as data provider</i>).
+  Gaudi::Property<std::string> m_detDataSvcName { this, "DetDataSvc" };
 
   /// Pointer to the incident service;
   SmartIF<IIncidentSvc> m_incidentSvc;
@@ -191,16 +176,22 @@ private:
   /// Higher bound of intersection of head IOVs.
   Gaudi::Time                                                               m_head_until = 0;
 
+  /// List of condition definitions to override the ones in the transient store (option ConditionsOverride).
+  /// The syntax to define a condition is:<BR>
+  /// path := type1 name1 = value1; type2 name2 = value2; ...
+  Gaudi::Property<std::vector<std::string>> m_conditionsOveridesDesc { this, "ConditionsOverride" };
   /// Map containing the list of parsed condition definitions
   std::map<std::string,std::unique_ptr<Condition>> m_conditionsOverides;
+
+  /// Name of the dot (graphviz) file into which write the dump (http://www.graphviz.org)
+  /// (property DotDumpFile).
+  Gaudi::Property<std::string> m_dotDumpFile { this, "DotDumpFile" };
 
 #ifndef WIN32
   /// mutex lock used to avoid dependencies corruptions in a multi-thread environment.
   pthread_mutex_t m_busy = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
-  mutable std::shared_timed_mutex m_IOVresource;
-  mutable std::mutex m_IOVreserve_mutex;
 };
 
 #include "UpdateManagerSvc.icpp"

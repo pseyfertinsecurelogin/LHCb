@@ -5,7 +5,7 @@
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
-#include "GaudiKernel/AnyDataHandle.h"
+#include "VeloEvent/VeloDecodeStatus.h"
 
 #include "SiDAQ/SiRawBufferWord.h"
 
@@ -48,24 +48,36 @@ public:
 private:
 
   /** Decode raw buffer to lite clusters
-   * This decodes the raw buffer to VeloLiteClusters
+   * This decodes the raw buffer to VeloLiteClusters and
+   * adds a VeloLiteCluster::FastContainer to the TES.
    *
    * @see VeloLiteCluster
    */
-  LHCb::VeloLiteCluster::FastContainer decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks) const;
+  StatusCode decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks,
+				      LHCb::VeloDecodeStatus* decStatus) const;
 
   /** Decode raw buffer to clusters
-   * This decodes the raw buffer to VeloClusters
+   * This decodes the raw buffer to VeloClusters and
+   * adds themn to the TES.
    *
    * @see VeloCluster
    */
-  LHCb::VeloClusters decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks);
+  StatusCode decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks,
+				  LHCb::VeloDecodeStatus *decStatus) const;
 
   /** Write VeloClusters to stdout
    *
    *  @see VeloCluster
    */
   void dumpVeloClusters(const LHCb::VeloClusters& clusters) const;
+
+  /** Create empty banks
+   *
+   * Creates empty cluster and lite cluster banks on the TES.
+   * This called as a failsafe option in case the raw event
+   * is missing.
+   * */
+  void createEmptyBanks() const;
 
   /** Add DecodeVeloRawBuffer to list of failed algorithms
    *  if procAbort = true set the ProcStatus to "aborted" to show
@@ -81,7 +93,8 @@ private:
    */
   StatusCode replaceFullFromLite(LHCb::VeloClusters& clusters,
                                  unsigned int nSensor,
-                                 const std::vector<LHCb::RawBank*>& banks);
+                                 const std::vector<LHCb::RawBank*>& banks,
+				 LHCb::VeloDecodeStatus *decStatus) const;
 
   /// Add a fake lite cluster to the full cluster container
   void makeFakeCluster(LHCb::VeloLiteCluster const &liteCluster,
@@ -98,6 +111,8 @@ private:
 
   unsigned int m_forcedBankVersion; ///< user forced bank version
 
+  std::string m_veloLiteClusterLocation;
+  std::string m_veloClusterLocation;
 
   /// do we assume chip channels instead of strips in the raw buffer?
   /// (useful for some testbeam TELL1 cinfigurations, defaults to false)
@@ -126,12 +141,6 @@ private:
 
   /// default raw event locations: not set in options to allow comparison
   std::vector<std::string> m_defaultRawEventLocations;
-
-  /// data handler for writing lite clusters to the transient event store
-  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_liteClusters = { LHCb::VeloLiteClusterLocation::Default, Gaudi::DataHandle::Writer, this };
-
-  /// data handler for writing clusters to the transient event store
-  DataObjectHandle<LHCb::VeloClusters> m_clusters = { LHCb::VeloClusterLocation::Default, Gaudi::DataHandle::Writer, this};
 
 };
 #endif // DECODEVELORAWBUFFER_H

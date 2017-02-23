@@ -1,13 +1,15 @@
-#ifndef HLTSELREPORTSDECODER_H 
+#ifndef HLTSELREPORTSDECODER_H
 #define HLTSELREPORTSDECODER_H 1
 
 // Include files
 // from Gaudi
 #include "HltRawBankDecoderBase.h"
+
 #include "HltDAQ/IReportConvert.h"
+#include "HltDAQ/ReportConvertTool.h"
 
 /** @class HltSelReportsDecoder HltSelReportsDecoder.h
- *  
+ *
  *
  *  @author Tomasz Skwarnicki
  *  @date   2008-08-02
@@ -16,20 +18,19 @@
  *
  */
 
-class HltSelReportsDecoder : public HltRawBankMultiDecoder<LHCb::HltSelReports,LHCb::HltObjectSummary::Container> {
-public: 
+class HltSelReportsDecoder : public HltRawBankDecoderBase {
+public:
   /// Standard constructor
-  HltSelReportsDecoder( const std::string& name, ISvcLocator* pSvcLocator );
-
-  ///< Algorithm initialization
+  using HltRawBankDecoderBase::HltRawBankDecoderBase;
   StatusCode initialize() override;
-
-  ///< Algorithm execution
-  std::tuple<LHCb::HltSelReports,LHCb::HltObjectSummary::Container> operator()(const LHCb::RawEvent&) const override;
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
-  enum HeaderIDs { kVersionNumber=9 };
-  IReportConvert* m_conv = nullptr;   /// for converting objects in to summaries
+  enum HeaderIDs { kVersionNumber=10 };
+  /// location of output
+  Gaudi::Property<std::string> m_outputHltSelReportsLocation{ this,"OutputHltSelReportsLocation", LHCb::HltSelReportsLocation::Default};
+  /// for converting objects in to summaries
+  IReportConvert* m_conv = nullptr;
 };
 
 #endif // HLTSELREPORTSDECODER_H
