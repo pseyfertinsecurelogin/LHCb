@@ -1,4 +1,6 @@
 """High level configuration for Turbo."""
+from os.path import join
+
 from Configurables import LHCbConfigurableUser
 from Configurables import DataOnDemandSvc
 from PersistRecoConf import PersistRecoPacking
@@ -16,11 +18,13 @@ class TurboConf(LHCbConfigurableUser):
     __slots__ = {
         "DataType":    "",
         "PersistReco": False,
+        "RootInTES": "/Event/Turbo"
      }
 
     _propertyDocDct = {
        "DataType":    "Flag for backward compatibility with old data",
        "PersistReco": "Setup PersistReco (overrides some Turbo defaults)",
+       "RootInTES": "Where to link the unpacked PersistReco objects under"
     }
 
     __used_configurables__ = [
@@ -66,8 +70,11 @@ class TurboConf(LHCbConfigurableUser):
     def _register_pr_links(self, packing):
         """Set up DataOnDemandSvc to create links to standard rec locations."""
         from Configurables import TESMerger_LHCb__ProtoParticle_ as TESMergerProtoParticle
+        from Configurables import TESMerger_LHCb__Track_ as TESMergerTrack
         from Configurables import GaudiSequencer
         from Configurables import Gaudi__DataLink as DataLink
+
+        rootintes = self.getProp("RootInTES")
 
         mergeProtos = TESMergerProtoParticle("MergeProtos")
         mergeProtos.inputLocations = [
@@ -75,23 +82,36 @@ class TurboConf(LHCbConfigurableUser):
             packing.outputs["Hlt2DownstreamProtos"],
         ]
         mergeProtos.outputLocation = '/Event/Hlt2/Protos/Charged'
+        DataOnDemandSvc().AlgMap[mergeProtos.outputLocation] = mergeProtos
+
+        mergeTracks = TESMergerTrack("MergeTracks")
+        mergeTracks.inputLocations = [
+            packing.outputs["Hlt2LongTracks"],
+            packing.outputs["Hlt2DownstreamTracks"],
+        ]
+        mergeTracks.outputLocation = '/Event/Hlt2/TrackFitted/Charged'
+        DataOnDemandSvc().AlgMap[mergeTracks.outputLocation] = mergeTracks
+
         linkChargedProtos = DataLink('HltRecProtos',
                                      What=mergeProtos.outputLocation,
-                                     Target='/Event/Rec/ProtoP/Charged')
-        recProtos = GaudiSequencer("TurboProtosAsRec")
-        recProtos.Members = [mergeProtos, linkChargedProtos]
-        DataOnDemandSvc().AlgMap[linkChargedProtos.Target] = recProtos
+                                     Target=join(rootintes, 'Rec/ProtoP/Charged'))
+        DataOnDemandSvc().AlgMap[linkChargedProtos.Target] = linkChargedProtos
+
+        linkTracks = DataLink('HltRecTracks',
+                              What=mergeTracks.outputLocation,
+                              Target=join(rootintes, 'Rec/Track/Best'))
+        DataOnDemandSvc().AlgMap[linkTracks.Target] = linkTracks
 
         linkNeutralProtos = DataLink('HltRecNeutralProtos',
                                      What=packing.outputs["Hlt2NeutralProtos"],
-                                     Target='/Event/Rec/ProtoP/Neutrals')
+                                     Target=join(rootintes, 'Rec/ProtoP/Neutrals'))
         recNeutralProtos = GaudiSequencer("TurboNeutralProtosAsRec")
         recNeutralProtos.Members = [linkNeutralProtos]
         DataOnDemandSvc().AlgMap[linkNeutralProtos.Target] = recNeutralProtos
 
         linkPVs = DataLink('LinkHltPersistRecoPVs',
                            What=packing.outputs['Hlt2RecVertices'],
-                           Target='/Event/Rec/Vertex/Primary')
+                           Target=join(rootintes, 'Rec/Vertex/Primary'))
         DataOnDemandSvc().AlgMap[linkPVs.Target] = linkPVs
 
     def __apply_configuration__(self):
