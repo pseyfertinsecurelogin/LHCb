@@ -83,7 +83,6 @@
         name = 'chi2Upstream'
         desc = 'Upstream segment chi square'
         getMeth   = 'FALSE'
-        setMeth   = 'FALSE'
         access = 'PROTECTED' />
 
       <method
