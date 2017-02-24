@@ -14,8 +14,9 @@ def setup(tag, use_files=False, bare=False, conditions=['/dd/TestCondition']):
     if use_files:
         ger.Commit = ''
 
-    DDDBConf(DataType='2016')
-    CondDB(EnableRunStampCheck=False, Tags={'DDDB': tag})
+    DDDBConf(DataType='2016', DbRoot='git:/lhcb.xml')
+    CondDB(EnableRunStampCheck=False, Tags={'DDDB': tag},
+           LatestGlobalTagByDataTypes=[])
 
     ApplicationMgr().TopAlg.append(TestAlg(Conditions=conditions))
 
