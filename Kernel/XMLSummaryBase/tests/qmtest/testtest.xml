@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<summary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:noNamespaceSchemaLocation="XMLSummary.xsd">
+  <success>false</success>
+  <step>none</step>
+  <usage />
+  <input>
+  	<file GUID="" name="PFN:test/test.dst" status="none">2</file>
+  </input>
+  <output>
+  	<file GUID="" name="PFN:test/testoutput.dst" status="none">2</file>
+  </output>
+  <counters>
+  	<counter name="test/test">2</counter>
+  	<statEntity format="Flag Entries Flag2" max="100.0" min="0.0" name="test/testStat">200.0 200.0 200.0</statEntity>
+  </counters>
+  <lumiCounters />
+</summary>

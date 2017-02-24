@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<summary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:noNamespaceSchemaLocation="$XMLSUMMARYBASEROOT/xml/XMLSummary.xsd">
+	<success>True</success>
+	<step>finalize</step>
+	<usage>
+		<stat unit="KB" useOf="MemoryMaximum">1354012.0</stat>
+	</usage>
+	<input>
+		<file GUID="B82104A6-D90E-E211-BFA4-003048F0E7C4" name="PFN:root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_1.dst" status="full">1</file>
+		<file GUID="1AA99DA5-D90E-E211-9637-003048F0E7C4" name="PFN:root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_2.dst" status="full">1</file>
+		<file GUID="46D8D8A5-D90E-E211-A616-003048F0E7C4" name="PFN:root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_3.dst" status="full">1</file>
+		<file GUID="586E9FA5-D90E-E211-91EB-003048F0E7C4" name="PFN:root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_4.dst" status="full">1</file>
+		<file GUID="B69019A6-D90E-E211-AC4A-003048F0E7C4" name="PFN:root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/swtest/R08S14_smallfiles/R08S14EW_small_1_5.dst" status="full">1</file>
+	</input>
+	<output>
+		<file GUID="2013D75F-5FF3-E611-A4E0-1866DA2128C8" name="PFN:merged.dst" status="full">5</file>
+	</output>
+	<counters>
+		<counter name="CounterSummarySvc/handled">21</counter>
+	</counters>
+	<lumiCounters />
+</summary>

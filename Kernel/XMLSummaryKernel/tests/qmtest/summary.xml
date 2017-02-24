@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<summary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:noNamespaceSchemaLocation="$XMLSUMMARYBASEROOT/xml/XMLSummary.xsd">
+	<success>False</success>
+	<step>execute</step>
+	<usage>
+		<stat unit="KB" useOf="MemoryMaximum">1553988.0</stat>
+	</usage>
+	<input>
+		<file GUID="28B6CE68-6E10-E211-87CF-003048C5F645" name="PFN:root://eoslhcb.cern.ch//eos/lhcb/grid/prod/lhcb/swtest/lhcb/LHCb/Collision12/FULL.DST/00020330/0004/00020330_00042960_1.full.dst" status="part">3</file>
+	</input>
+	<output>
+		<file GUID="76A3A816-5FF3-E611-B0BB-1866DA2128C8" name="PFN:RootDst.root" status="part">3</file>
+	</output>
+	<counters />
+	<lumiCounters />
+</summary>

@@ -20,6 +20,7 @@ ExternalProject_Add(Vc
               -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
               -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 )
+
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/Vc DESTINATION include)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/lib/cmake/Vc DESTINATION cmake)
 install(FILES     ${CMAKE_BINARY_DIR}/lib/libVc.a DESTINATION lib)
