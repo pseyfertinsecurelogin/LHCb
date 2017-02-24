@@ -46,37 +46,110 @@
         type = 'LHCb::ChiSquare'
         name = 'chi2'
         desc = 'Track chi square'
+        getMeth   = 'FALSE'
         access = 'PROTECTED' />
+
+      <method
+        type    = 'const LHCb::ChiSquare&amp; '
+        name    = 'chi2'
+        const   = 'TRUE'
+        virtual   = 'TRUE'
+        desc    = 'Track chi square'>
+        <code>
+  return m_chi2;
+        </code>
+      </method>
 
       <attribute
         type = 'LHCb::ChiSquare'
         name = 'chi2Velo'
         desc = 'VELO segment chi square'
+        getMeth   = 'FALSE'
         access = 'PROTECTED' />
+
+      <method
+        type    = 'const LHCb::ChiSquare&amp; '
+        name    = 'chi2Velo'
+        const   = 'TRUE'
+        virtual   = 'TRUE'
+        desc    = 'VELO segment chi square'>
+        <code>
+  return m_chi2Velo;
+        </code>
+      </method>
 
       <attribute
         type = 'LHCb::ChiSquare'
         name = 'chi2Upstream'
         desc = 'Upstream segment chi square'
+        getMeth   = 'FALSE'
+        setMeth   = 'FALSE'
         access = 'PROTECTED' />
+
+      <method
+        type    = 'const LHCb::ChiSquare&amp; '
+        name    = 'chi2Upstream'
+        const   = 'TRUE'
+        virtual   = 'TRUE'
+        desc    = 'Upstream segment chi square'>
+        <code>
+  return m_chi2Upstream;
+        </code>
+      </method>
 
       <attribute
         type = 'LHCb::ChiSquare'
         name = 'chi2Long'
         desc = 'Velo-TT-T segment chi square'
+        getMeth   = 'FALSE'
         access = 'PROTECTED' />
+
+      <method
+        type    = 'const LHCb::ChiSquare&amp; '
+        name    = 'chi2Long'
+        const   = 'TRUE'
+        virtual   = 'TRUE'
+        desc    = 'Velo-TT-T segment chi square'>
+        <code>
+  return m_chi2Long;
+        </code>
+      </method>
 
       <attribute
         type = 'LHCb::ChiSquare'
         name = 'chi2Muon'
         desc = 'Muon segment chi square'
+        getMeth   = 'FALSE'
         access = 'PROTECTED' />
+
+      <method
+        type    = 'const LHCb::ChiSquare&amp; '
+        name    = 'chi2Muon'
+        const   = 'TRUE'
+        virtual   = 'TRUE'
+        desc    = 'Muon segment chi square'>
+        <code>
+  return m_chi2Muon;
+        </code>
+      </method>
 
       <attribute
         type = 'LHCb::ChiSquare'
         name = 'chi2Downstream'
         desc = 'Downstream segment chi square'
+        getMeth   = 'FALSE'
         access = 'PROTECTED' />
+
+      <method
+        type    = 'const LHCb::ChiSquare&amp; '
+        name    = 'chi2Downstream'
+        const   = 'TRUE'
+        virtual   = 'TRUE'
+        desc    = 'Downstream segment chi square'>
+        <code>
+  return m_chi2Downstream;
+        </code>
+      </method>
       
       <attribute
         type      = 'std::vector&lt;LHCb::Measurement*&gt;'
@@ -114,10 +187,10 @@
         type    = 'LHCb::ChiSquare'
         name    = 'chi2Match'
         desc    = 'Upstream versus downstream segment chi square'
+        virtual   = 'TRUE'
         const   = 'TRUE'>
         <code>
-  return LHCb::ChiSquare(m_chi2.chi2() - m_chi2Upstream.chi2() - m_chi2Downstream.chi2(),
-    m_chi2.nDoF() - m_chi2Upstream.nDoF() - m_chi2Downstream.chi2());
+  return m_chi2 - m_chi2Upstream - m_chi2Downstream;
         </code>
       </method>
 
