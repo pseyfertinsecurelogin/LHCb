@@ -11,8 +11,11 @@ from Configurables import ( CondDBEntityResolver,
 
 
 GIT_CONDDBS = {}
-try:
 
+# GitEntityResolver may not be available
+import Configurables
+if ('EntityResolverDispatcher' in Configurables.__all__ and
+        'GitEntityResolver' in Configurables.__all__):
     from Configurables import EntityResolverDispatcher, GitEntityResolver
     # look for git DBs
     def _gitconddbpath():
@@ -48,8 +51,6 @@ try:
     # allow forcing COOL CondDB if Git CondDBs are found
     if 'NO_GIT_CONDDB' in os.environ:
         GIT_CONDDBS = {}
-except ImportError:  # GitEntityResolver may not be available
-    pass
 
 
 from DetCond.Configuration import CondDB
