@@ -87,7 +87,7 @@ public:
     return out;
   }
 
-  void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const
+  void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const override
   {
     for ( auto& res : m_resolvers ) {
       SmartIF<ICondDBInfo> cdbInfo{res};
