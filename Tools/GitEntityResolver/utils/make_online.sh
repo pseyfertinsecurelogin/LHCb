@@ -34,7 +34,7 @@ fi
 done
 
 cd ONLINE
-git remote add origin ssh://git@gitlab.cern.ch:7999/clemenci/ONLINE.git
+git remote add origin ssh://git@gitlab.cern.ch:7999/lhcb-conddb/ONLINE.git
 
 cat <<EOF
 Now do:

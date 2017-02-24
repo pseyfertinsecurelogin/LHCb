@@ -25,7 +25,7 @@ make_git_conddb.py --tag-prefix=upgrade/ ${SQLITEUPGRADEDBPATH}/${name}.db ${SQL
 )
 
 cd ${name}
-git remote add origin ssh://git@gitlab.cern.ch:7999/clemenci/${name}.git
+git remote add origin ssh://git@gitlab.cern.ch:7999/lhcb-conddb/${name}.git
 
 git checkout master
 

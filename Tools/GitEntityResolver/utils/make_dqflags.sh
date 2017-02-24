@@ -7,7 +7,7 @@ name=DQFLAGS
 make_git_conddb.py ${SQLITEDBPATH}/${name}.db ${SQLITEDBPATH}/../doc/release_notes.xml ${name}
 
 cd ${name}
-git remote add origin ssh://git@gitlab.cern.ch:7999/clemenci/${name}.git
+git remote add origin ssh://git@gitlab.cern.ch:7999/lhcb-conddb/${name}.git
 
 git checkout dq-20161007
 git branch -f master dq-20161007

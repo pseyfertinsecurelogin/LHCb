@@ -7,7 +7,7 @@ name=LHCBCOND
 make_git_conddb.py ${SQLITEDBPATH}/${name}.db ${SQLITEDBPATH}/../doc/release_notes.xml ${name}
 
 cd ${name}
-git remote add origin ssh://git@gitlab.cern.ch:7999/clemenci/${name}.git
+git remote add origin ssh://git@gitlab.cern.ch:7999/lhcb-conddb/${name}.git
 
 git checkout cond-20170120-1
 git branch | grep branch- | xargs -r git branch -D
