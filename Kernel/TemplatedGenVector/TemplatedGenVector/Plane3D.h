@@ -250,8 +250,8 @@ namespace Math {
         // normalize the plane
         Scalar s = sqrt( fA*fA + fB*fB + fC*fC );
         // what to do if s = 0 ??
-        if ( s == 0) { fD = 0; return; }
-        Scalar w = 1./s;
+        //if ( s == 0 ) { fD = 0; return; }
+        Scalar w = Scalar(1)/s;
         fA *= w;
         fB *= w;
         fC *= w;
