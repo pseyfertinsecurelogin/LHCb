@@ -39,6 +39,11 @@ using std::chrono::time_point;
 // ============================================================================
 namespace LHCb {
 namespace Math {
+namespace avx2 {
+extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
+extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
+extern void similarity_5_7(const double* Ci, const double* Fi, double* Ti);
+}
 namespace avx {
 extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
 extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
@@ -58,17 +63,20 @@ extern void similarity_5_7(const double* Ci, const double* Fi, double* Ti);
 }
 
 
-enum ISet : std::int8_t { CLASSIC = -1, GENERIC = 0, SSE3 = 3, AVX = 7 };
+enum ISet : std::int8_t { CLASSIC = -1, GENERIC = 0, SSE3 = 3, AVX = 7, AVX2 = 8 };
 typedef std::function<void(const double* Ci, const double* Fi, double* Ti)> similarity_t;
 
-std::map<ISet, similarity_t>  vtbl_5_1 = { { ISet::AVX,  LHCb::Math::avx::similarity_5_1 },
-                                           { ISet::SSE3,  LHCb::Math::sse3::similarity_5_1 },
+std::map<ISet, similarity_t>  vtbl_5_1 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_1 },
+                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_1 },
+                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_1 },
                                            { ISet::GENERIC, LHCb::Math::generic::similarity_5_1 } };
-std::map<ISet, similarity_t>  vtbl_5_5 = { { ISet::AVX,  LHCb::Math::avx::similarity_5_5 },
-                                           { ISet::SSE3,  LHCb::Math::sse3::similarity_5_5 },
+std::map<ISet, similarity_t>  vtbl_5_5 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_5 },
+                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_5 },
+                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_5 },
                                            { ISet::GENERIC, LHCb::Math::generic::similarity_5_5 } };
-std::map<ISet, similarity_t>  vtbl_5_7 = { { ISet::AVX,  LHCb::Math::avx::similarity_5_7 },
-                                           { ISet::SSE3,  LHCb::Math::sse3::similarity_5_7 },
+std::map<ISet, similarity_t>  vtbl_5_7 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_7 },
+                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_7 },
+                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_7 },
                                            { ISet::GENERIC, LHCb::Math::generic::similarity_5_7 } };
 
 // Util class for test results
@@ -253,7 +261,8 @@ TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
                                    const double maxConditionNumber)
 {
 
-    bool hasAVX = hasInstructionSet(ISet::AVX);
+    bool hasAVX2 = hasInstructionSet(ISet::AVX2);
+    bool hasAVX  = hasInstructionSet(ISet::AVX);
     bool hasSSE3 = hasInstructionSet(ISet::SSE3);
     // Ugly, need to refactor the functions
     (void)Ftype; (void)Otype;
@@ -264,7 +273,8 @@ TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
     auto resGeneric = new SymMat[nbentries];
     auto resClassic = new Mat[nbentries];
     auto resSSE3 = new SymMat[nbentries];
-    auto resAVX = new SymMat[nbentries];
+    auto resAVX  = new SymMat[nbentries];
+    auto resAVX2 = new SymMat[nbentries];
 
     // Just a timing helper
     auto getTime = [] (time_point<high_resolution_clock> t0) {
@@ -320,6 +330,16 @@ TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
         results.timing[ISet::AVX] =  getTime(t0);
     }
 
+    // Checking AVX2
+    if (hasAVX2)
+    {
+        auto t0 = high_resolution_clock::now();
+        for(int i=0; i<nbentries; i++) {
+            (simFuncs[ISet::AVX2])(O[i].Array(), F[i].Array(), resAVX2[i].Array());
+        }
+        results.timing[ISet::AVX2] =  getTime(t0);
+    }
+
     // Checking the classic SMatrix method
     {
         auto t0 = high_resolution_clock::now();
@@ -341,7 +361,8 @@ TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
     // Now checking the results
     {
 
-        results.maxDiff[AVX] = 0;
+        results.maxDiff[AVX]  = 0;
+        results.maxDiff[AVX2] = 0;
         results.maxDiff[SSE3] = 0;
         results.maxDiff[GENERIC] = 0;
 
@@ -354,12 +375,17 @@ TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
             {
                 double tmpres = matrixMaxDiff(resClassic[i], resSSE3[i]);
                 if (tmpres > results.maxDiff[SSE3])
-                    results.maxDiff[SSE3] = tmpres; }
-
+                  results.maxDiff[SSE3] = tmpres; 
+            }
             {
                 double tmpres = matrixMaxDiff(resClassic[i], resAVX[i]);
                 if (tmpres > results.maxDiff[AVX])
                     results.maxDiff[AVX] = tmpres;
+            }
+            {
+                double tmpres = matrixMaxDiff(resClassic[i], resAVX2[i]);
+                if (tmpres > results.maxDiff[AVX2])
+                    results.maxDiff[AVX2] = tmpres;
             }
         }
 
@@ -378,6 +404,7 @@ TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
     delete[] resClassic;
     delete[] resSSE3;
     delete[] resAVX;
+    delete[] resAVX2;
 
     return results;
 }
@@ -410,12 +437,13 @@ int main()
 
     std::cout << std::endl << "Checking with different condition numbers" << std::endl;
     std::cout << "=========================================" << std::endl;
-    std::cout << "ConditionNumber\tGeneric\tSSE3\tAVX" << std::endl;
+    std::cout << "ConditionNumber\tGeneric\tSSE3\tAVX\tAVX2" << std::endl;
     for (int i=0; i<nbres; i++) {
         std::cout << results[i].conditionNumber
                   << "\t" << results[i].maxDiff[ISet::GENERIC]
                   << "\t" << results[i].maxDiff[ISet::SSE3]
                   << "\t" << results[i].maxDiff[ISet::AVX]
+                  << "\t" << results[i].maxDiff[ISet::AVX2]
                   << std::endl;
     }
 
@@ -430,13 +458,14 @@ int main()
 
     std::cout << std::endl << "Checking timing" << std::endl;
     std::cout << "=========================================" << std::endl;
-    std::cout << "Classic\tGeneric\tSSE3\tAVX" << std::endl;
+    std::cout << "Classic\tGeneric\tSSE3\tAVX\tAVX2" << std::endl;
     for (int i=0; i<testcount; i++) {
 
         std::cout << tresults[i].timing[ISet::CLASSIC]
                   << "\t" << tresults[i].timing[ISet::GENERIC]
                   << "\t" << tresults[i].timing[ISet::SSE3]
                   << "\t" << tresults[i].timing[ISet::AVX]
+                  << "\t" << tresults[i].timing[ISet::AVX2]
                   << std::endl;
     }
 

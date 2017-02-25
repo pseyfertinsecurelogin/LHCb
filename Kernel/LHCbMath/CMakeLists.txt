@@ -37,8 +37,10 @@ gaudi_add_dictionary(LHCbMath
 set_property(SOURCE src/Similarity_generic.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -O3 " )
 set_property(SOURCE src/Similarity_SSE3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -msse3 -O3 " )
 set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx -O3 " )
+set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx2 -mfma -O3 " )
 if(LCG_COMP STREQUAL gcc )
   set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -fabi-version=0 " )
+  set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -fabi-version=0 " )
 endif()
 
 if(GAUDI_BUILD_TESTS)
