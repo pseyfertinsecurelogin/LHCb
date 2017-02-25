@@ -4,6 +4,9 @@
 // Gaudi
 #include "GaudiKernel/Kernel.h"
 
+//#include "GaudiKernel/System.h"
+//System::typeinfoName( typeid(T) )
+
 // STL
 #include <iostream>
 #include <cmath>
@@ -145,9 +148,9 @@ namespace Rich
                      const PLANE& plane,
                      POINT& intersection )
     {
-      const typename FTYPE::mask_type OK = true;
-      const auto scalar   = direction.Dot( plane.Normal() );
-      const auto distance = -(plane.Distance(position)) / scalar;
+      const typename FTYPE::mask_type OK(true);
+      const FTYPE scalar   = direction.Dot( plane.Normal() );
+      const FTYPE distance = -(plane.Distance(position)) / scalar;
       intersection = position + (distance*direction);
       return OK;
     }
@@ -176,12 +179,12 @@ namespace Rich
                    const PLANE& plane )
     {
       const typename POINT::Scalar two(2.0);
-      const typename FTYPE::mask_type OK = true;
+      const typename FTYPE::mask_type OK(true);
       // Plane normal
-      const auto& normal  = plane.Normal();
+      const VECTOR normal  = plane.Normal();
       // compute distance to the plane
-      const auto scalar   = direction.Dot(normal);
-      const auto distance = -(plane.Distance(position)) / scalar;
+      const FTYPE scalar   = direction.Dot(normal);
+      const FTYPE distance = -(plane.Distance(position)) / scalar;
       // change position to reflection point and update direction
       position  += distance * direction;
       direction -= two * scalar * normal;
