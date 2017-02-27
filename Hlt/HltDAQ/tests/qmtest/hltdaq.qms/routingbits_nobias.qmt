@@ -6,6 +6,12 @@
     <text>--stream=nobias</text>
     <text>HltDAQ-routingbits_nobias</text>
   </set></argument>
+  <argument name="use_temp_dir">
+    <enumeral>true</enumeral>
+  </argument>
+  <argument name="prerequisites"><set>
+    <tuple><text>hltdaq.routingbits_full</text><enumeral>PASS</enumeral></tuple>
+  </set></argument>
   <argument name="validator"><text>
 
 # Author: Roel Aaij

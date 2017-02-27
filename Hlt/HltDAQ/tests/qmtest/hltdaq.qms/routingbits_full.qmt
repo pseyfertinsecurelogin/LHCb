@@ -6,6 +6,9 @@
     <text>--stream=full</text>
     <text>HltDAQ-routingbits_full</text>
   </set></argument>
+  <argument name="use_temp_dir">
+    <enumeral>true</enumeral>
+  </argument>
   <argument name="validator"><text>
 
 # Author: Roel Aaij
