@@ -4,6 +4,15 @@
 ! Purpose     :
 ! -----------------------------------------------------------------------------
 
+! 2017-02-27 - Vanya Belyaev
+ - Add new symbols for "nodes"
+   PosID, NegID ( "ID+" & "ID-" ) to probe positiev or negative PID.
+   IT is useful in conjunction with othe rmetasymbol, 
+   e.g. "Charm & ID+"  will define particle with single charm quark and 
+   "Charm & ID-" matched particle with single anti-charm quark 
+   Clearly these are not very well defined symbols  (for eg. charmonia),   
+   but stil they are very useful
+
 ! 2016-08-17 - Vanya Belyaev
  - update a bit DumpParticleProperties 
    - allow to define the explicit DDDB and CONDDB tags, DataType and Simulation flag 
