@@ -169,7 +169,7 @@ GitEntityResolver::~GitEntityResolver()
 
 StatusCode GitEntityResolver::initialize()
 {
-  StatusCode sc = AlgTool::initialize();
+  StatusCode sc = base_class::initialize();
   if ( !sc.isSuccess() ) return sc;
 
   DEBUG_MSG << "Initializing..." << endmsg;
@@ -230,7 +230,7 @@ StatusCode GitEntityResolver::finalize()
   // Finalize the Xerces-C++ XML subsystem
   xercesc::XMLPlatformUtils::Terminate();
 
-  return AlgTool::finalize();
+  return base_class::finalize();
 }
 
 const std::vector<std::string>& GitEntityResolver::protocols() const
