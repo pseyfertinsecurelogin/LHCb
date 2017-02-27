@@ -29,17 +29,10 @@ using namespace LHCb;
 //=============================================================================
 MuonDigitToRawBuffer::MuonDigitToRawBuffer( const std::string& name,
                                             ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ),
-    m_muonDet(NULL),
-    m_TotL1Board(0),
-    m_M1Tell1(0)
+: GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty("VType" , m_vtype=2) ;
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-MuonDigitToRawBuffer::~MuonDigitToRawBuffer(){}
 
 //=============================================================================
 // Initialisation. Check parameters
@@ -422,13 +415,8 @@ StatusCode MuonDigitToRawBuffer::ProcessV1()
       unsigned int odenumber=(m_muonDet->getDAQInfo())->getODENumberInTell1(i,iODE)-1;
       m_digitsInODE[odenumber].resize(0);
       firedInODE[odenumber]=0;
-
-
     }
-    for(int j=0;j<4;j++){
-      firedInPP[i*4+j]=0;
-
-    }
+    for(int j=0;j<4;j++) firedInPP[i*4+j]=0;
   }
   return StatusCode::SUCCESS;
 

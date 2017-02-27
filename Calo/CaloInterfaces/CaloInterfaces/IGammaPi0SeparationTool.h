@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef IGAMMAPI0SEPARATIONTOOL_H 
 #define IGAMMAPI0SEPARATIONTOOL_H 1
 
@@ -10,7 +9,6 @@
 #include "GaudiKernel/IAlgTool.h"
 #include "Event/CaloHypo.h"
 
-static const InterfaceID IID_IGammaPi0SeparationTool ( "IGammaPi0SeparationTool", 3, 0 );
 
 /** @class IGammaPi0SeparationTool IGammaPi0SeparationTool.h
  *  
@@ -18,14 +16,11 @@ static const InterfaceID IID_IGammaPi0SeparationTool ( "IGammaPi0SeparationTool"
  *  @author Miriam Calvo Gomez --
  *  @date   2010-03-29
  */
-class IGammaPi0SeparationTool : virtual public IAlgTool {
-public: 
+struct  IGammaPi0SeparationTool : extend_interfaces<IAlgTool> {
 
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_IGammaPi0SeparationTool; }
+  DeclareInterfaceID(IGammaPi0SeparationTool, 4, 0 );
 
-  virtual StatusCode initialize()=0;
-  virtual StatusCode finalize()=0;
 
   virtual double isPhoton(const LHCb::CaloHypo* hypo)=0;
   virtual double isPhoton(const double* v)=0;
@@ -41,10 +36,5 @@ public:
   virtual std::map<std::string,double> inputDataMap()=0;
   virtual std::map<std::string,double> inputPrsDataMap()=0;
   
-protected:
-
-  virtual ~IGammaPi0SeparationTool(){}             
-private:
-
 };
 #endif // IGAMMAPI0SEPARATIONTOOL_H

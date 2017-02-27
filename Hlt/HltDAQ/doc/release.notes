@@ -4,7 +4,58 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+! 2016-07-22 - Rosen Matev
+ - Compute checksums per location in addition to the global checksum
+ - Improve the debugging printout in HltPackedDataWriter/Decoder
+ - Use lambda instead of std::bind
+
+! 2016-07-19 - Rosen Matev
+ - Fix calculation of checksums for some packed objects and add protection.
+
+! 2016-06-29 - Roel Aaij
+ - Update tests for routing bits to use new entries in TestFileDB to get input
+   files.
+
+! 2016-06-21 - Rosen Matev
+ - Implement conversion on de-serializing such that from the packed object
+   load function one can do `buf.template io<uint16_t>(firstId);`, where
+   `firstId` is of a type different from `uint16_t`.
+
+! 2016-06-10 - Sascha Stahl
+ - Fix memory leak in HltPackedDataWriter.
+
+! 2016-05-23 - Roel Aaij
+ - Split code in to linker library and component library. All pre-exisiting
+   algorithms are in the component library.
+ - Add HltEvaluator, to be used as a base class for algorithms that evaluate
+   HLT_* functors.
+ - HltRoutingBitsWriter inherits from HltEvaluator.
+
+!========================= HltDAQ v4r28 2016-04-18 =========================
+
+! 2016-04-18 - Rosen Matev
+ - Improvements to HltPackedDataWriter/Decoder
+   o Add support for persisting packed RecVertex containers in the raw event
+   o Decouple links from locations of non-packed objects in the Hlt.
+     This allows for specifying custom object locations when decoding and
+     unpacking, which makes us more future-proof.
+   o Nicer registration of persistable packed objects in writer/decoder
+
+!========================= HltDAQ v4r27 2016-04-11 =========================
+
+! 2016-04-06 - Rosen Matev
+ - Improve failure error message in HltPackedDataWriter
+
+! 2016-04-06 - Rosen Matev
+ - Important changes to packed object persistence in raw banks
+   o Now persisting links between containers on the TES!
+   o Checksum calculation is controlled by EnableChecksum propert
+
 !========================= HltDAQ v4r26 2016-03-19 =========================
+
+! 2016-03-19 - Roel Aaij
+ - Add RawEventLocation property to HltRoutingBitsWriter.
+
 ! 2016-03-19 - Rosen Matev
  - Implement packed object persistence in the raw event.
    The existing DstData raw bank type is reused (with version 2).

@@ -28,6 +28,7 @@
         version           CDATA                            #IMPLIED
         location          CDATA                            #IMPLIED
         namespace         CDATA                            #IMPLIED
+        final             (TRUE | FALSE)                   "FALSE"
         stdVectorTypeDef  (TRUE | FALSE)                   "FALSE"
         keyedContTypeDef  (TRUE | FALSE)                   "FALSE"
         contObjectTypeDef (TRUE | FALSE)                   "FALSE"
@@ -105,6 +106,7 @@
         access           (PUBLIC | PROTECTED | PRIVATE)    "PUBLIC"
         const            (TRUE | FALSE)                    "FALSE"
         virtual          (TRUE | FALSE | PURE)             "FALSE"
+        override         (TRUE | FALSE)                    "FALSE"
         static           (TRUE | FALSE)                    "FALSE"
         inline           (TRUE | FALSE)                    "FALSE"
         friend           (TRUE | FALSE)                    "FALSE"

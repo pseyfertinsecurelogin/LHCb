@@ -11,6 +11,7 @@
 
 // STL
 #include <time.h>
+#include <algorithm>
 
 // Gaudi
 #include "GaudiKernel/SmartDataPtr.h"
@@ -46,9 +47,6 @@ DeRichHPDPanel::DeRichHPDPanel(const std::string & name) :
   m_pdType = LHCb::RichSmartID::HPDID;
 }
 
-// Standard Destructor
-DeRichHPDPanel::~DeRichHPDPanel() { }
-
 // Retrieve Pointer to class defininition structure
 const CLID& DeRichHPDPanel::classID()
 {
@@ -69,6 +67,9 @@ StatusCode DeRichHPDPanel::initialize()
 
   if ( msgLevel(MSG::DEBUG,msg) )
     msg << MSG::DEBUG << "Initialize " << name() << endmsg;
+
+  // cache the DeRichSystem pointer
+  m_deRichS = deRichSys();
 
   // register UMS dependency on local geometry
   updMgrSvc()->registerCondition( this, geometry(), &DeRichHPDPanel::geometryUpdate );
@@ -120,30 +121,38 @@ StatusCode DeRichHPDPanel::initialize()
 }
 
 //=========================================================================
+// The maximum PD copy number for this panel
+//=========================================================================
+Rich::DAQ::HPDCopyNumber DeRichHPDPanel::maxPdNumber() const
+{
+  return Rich::DAQ::HPDCopyNumber(m_DeHPDs.size());
+}
+
+//=========================================================================
 // convert a point on the silicon sensor to a smartID
 //=========================================================================
-StatusCode DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
-                                     LHCb::RichSmartID& id ) const
+bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
+                               LHCb::RichSmartID& id ) const
 {
   const auto inPanel = geometry()->toLocal(globalPoint);
 
   // find the HPD row/col of this point if not set
   if ( !id.pdIsSet() )
   {
-    if ( !findHPDColAndPos(inPanel,id) ) return StatusCode::FAILURE;
+    if ( !findHPDColAndPos(inPanel,id) ) return false;
   }
 
   // check if the HPD is active or dead
-  if ( !deRichSys()->pdIsActive( id ) ) return StatusCode::FAILURE;
+  if ( !m_deRichS->pdIsActive( id ) ) return false;
 
-  const auto HPDNumber = pdNumber(id);
-  if ( HPDNumber > nPDs() )
+  const auto HPDNumber = _pdNumber(id);
+  if ( HPDNumber.data() > nPDs() )
   {
     error() << "Inappropriate HPDNumber : " << HPDNumber;
-    return StatusCode::FAILURE;
+    return false;
   }
 
-  const auto inSilicon = m_DeSiSensors[HPDNumber]->geometry()->toLocalMatrix()*globalPoint;
+  const auto inSilicon = m_DeSiSensors[HPDNumber.data()]->geometry()->toLocalMatrix()*globalPoint;
 
   auto inSiliconX = inSilicon.x();
   auto inSiliconY = inSilicon.y();
@@ -167,7 +176,7 @@ StatusCode DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
   {
     error() << "Point " << inSilicon << " is outside the silicon box "
             << dePD(HPDNumber)->name() << endmsg;
-    return StatusCode::FAILURE;
+    return false;
   }
   
   // pixel 0,0 is at min x and max y (top left corner)
@@ -182,7 +191,7 @@ StatusCode DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
     ((m_siliconHalfLengthY-inSiliconY-pixelRow*m_pixelSize)/m_subPixelSize);
   id.setPixelSubRow ( subPixel );
 
-  return StatusCode::SUCCESS;
+  return true;
 }
 
 //=========================================================================
@@ -217,7 +226,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
   { return LHCb::RichTraceMode::RayTraceFailed; }
 
   // Find the correct DeRichHPD
-  const auto * HPD = deHPD( pdNumber(smartID) );
+  const auto * HPD = deHPD( _pdNumber(smartID) );
 
   // Refind intersection point using other local plane
   // ( Can reuse scalar as both local planes have the same normal vector )
@@ -242,7 +251,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
     else
     {
       // Inside an HPD
-      if ( !deRichSys()->pdIsActive(smartID) || // check if the HPD is active or dead
+      if ( !m_deRichS->pdIsActive(smartID) ||   // check if the HPD is active or dead
            ( mode.hpdKaptonShadowing() &&       // check for intersection with kapton shield
              HPD->testKaptonShadowing(pInPanel,vInPanel) ) )
       {
@@ -323,7 +332,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
         windowPointGlobal = HPD->geometry()->toGlobal( windowPointInHPD );
 
         // check if the HPD is active or dead
-        if ( !deRichSys()->pdIsActive(smartID) )
+        if ( !m_deRichS->pdIsActive(smartID) )
         {
           res = LHCb::RichTraceMode::OutsideHPDPanel;
         }
@@ -340,7 +349,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
 //=========================================================================
 //  return a list with all the valid readout channels (smartIDs)
 //=========================================================================
-StatusCode
+bool
 DeRichHPDPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels ) const
 {
 
@@ -378,7 +387,7 @@ DeRichHPDPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels 
 
   } // loop over HPDs
 
-  return StatusCode::SUCCESS;
+  return true;
 }
 
 //=========================================================================
@@ -425,34 +434,22 @@ bool DeRichHPDPanel::findHPDColAndPos ( const Gaudi::XYZPoint& inPanel,
 {
   bool OK = true;
 
-  const auto u = ( rich() == Rich::Rich1 ? inPanel.y() : inPanel.x() );
-  const auto v = ( rich() == Rich::Rich1 ? inPanel.x() : inPanel.y() );
-
+  const auto u = ( Rich::Rich1 == rich() ? inPanel.y() : inPanel.x() );
+  const auto v = ( Rich::Rich1 == rich() ? inPanel.x() : inPanel.y() );
+  
   // work out nearest column
-  //int HPDCol = static_cast<int>(std::floor((u-m_panelColumnSideEdge)/m_HPDColPitch));
-  // CRJ : Faster than floor. Gets it wrong for negative values, but these are reset
-  // to 0 anyway so does not matter
-  //int HPDCol = (int)((u-m_panelColumnSideEdge)/m_HPDColPitch);
   auto HPDCol = (long int)((u-m_panelColumnSideEdge)*m_OneOverHPDColPitch);
-  if      ( HPDCol >= (long int)nPDColumns() ) { OK = false; HPDCol = nPDColumns() - 1; }
-  else if ( HPDCol < 0                       ) { OK = false; HPDCol = 0;                }
+  if      ( HPDCol >= (long int)nPDColumns() ) { OK = false; HPDCol = nPDColumns()-1; }
+  else if ( HPDCol < 0                       ) { OK = false; HPDCol = 0;              }
 
   // nearest number in column
-  //int HPDNumInCol
-  //  = ( 0 == HPDCol%2 ?
-  //      static_cast<int>(std::floor((v-m_panelStartColPosEven)/m_HPDPitch)) :
-  //      static_cast<int>(std::floor((v-m_panelStartColPosOdd)/m_HPDPitch)) );
-  // CRJ : Faster than floor. Gets it wrong for negative values, but these are reset
-  // to 0 anyway so does not matter
-  // int HPDNumInCol = ( 0 == HPDCol%2 ?
-  //                     (int)((v-m_panelStartColPosEven)/m_HPDPitch) :
-  //                     (int)((v-m_panelStartColPosOdd )/m_HPDPitch) );
   auto HPDNumInCol = ( 0 == HPDCol%2 ?
-                       (long int)((v-m_panelStartColPosEven)*m_OneOverHPDPitch) :
-                       (long int)((v-m_panelStartColPosOdd )*m_OneOverHPDPitch) );
+                       (long int)((v-m_panelStartColPosEvenOdd[0])*m_OneOverHPDPitch) :
+                       (long int)((v-m_panelStartColPosEvenOdd[1])*m_OneOverHPDPitch) );
+  //auto HPDNumInCol = (long int)( (v-m_panelStartColPosEvenOdd[HPDCol%2]) * m_OneOverHPDPitch );
   if      ( HPDNumInCol >= (long int)nPDsPerCol() ) { OK = false; HPDNumInCol = nPDsPerCol()-1; }
   else if ( HPDNumInCol < 0                       ) { OK = false; HPDNumInCol = 0;              }
-  
+
   // Set HPD information in RichSmartID
   id.setPD( (int)HPDCol, (int)HPDNumInCol );
 
@@ -467,14 +464,21 @@ int DeRichHPDPanel::sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const
   // Create a RichSmartID for this RICH and panel
   LHCb::RichSmartID id( rich(), side() );
   // set the remaining fields from the position
-  return ( smartID(globalPoint,id).isSuccess() ?
-           id : LHCb::RichSmartID(rich(),side()) );
+  return ( smartID(globalPoint,id) ? id : LHCb::RichSmartID(rich(),side()) );
+}
+
+//=========================================================================
+// Access the DeRichPD object for a given PD RichSmartID
+//=========================================================================
+const DeRichPD* DeRichHPDPanel::dePD( const LHCb::RichSmartID pdID ) const
+{
+  return deHPD( _pdNumber(pdID) );
 }
 
 //=========================================================================
 // Returns the detector element for the given HPD number
 //=========================================================================
-const DeRichPD* DeRichHPDPanel::dePD( const unsigned int PDNumber ) const
+const DeRichPD* DeRichHPDPanel::dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const
 {
   return deHPD( PDNumber );
 }
@@ -495,30 +499,16 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   // Work out what Rich/panel I am
   if ( name().find("Rich1") != std::string::npos )
   {
-    m_rich = Rich::Rich1;
-    if ( centreGlobal.y() > 0.0 )
-    {
-      m_side = Rich::top;
-    }
-    else
-    {
-      m_side = Rich::bottom;
-    }
+    setRich( Rich::Rich1 );
+    setSide( centreGlobal.y() > 0.0 ? Rich::top : Rich::bottom );
   }
   else if ( name().find("Rich2") != std::string::npos )
   {
-    m_rich = Rich::Rich2;
-    if ( centreGlobal.x() > 0.0 )
-    {
-      m_side = Rich::left;
-    }
-    else
-    {
-      m_side = Rich::right;
-    }
+    setRich( Rich::Rich2 );
+    setSide( centreGlobal.x() > 0.0 ? Rich::left : Rich::right );
   }
-  if ( m_rich == Rich::InvalidDetector ||
-       m_side == Rich::InvalidSide )
+  if ( rich() == Rich::InvalidDetector ||
+       side() == Rich::InvalidSide )
   {
     msg << MSG::ERROR << "Error initializing HPD panel " << name() << endmsg;
     return StatusCode::FAILURE;
@@ -551,7 +541,7 @@ StatusCode DeRichHPDPanel::geometryUpdate()
     msg << MSG::DEBUG << "HPDColumns:" << nPDColumns() << " HPDNumberInColumns:"
         << nPDsPerCol() << endmsg;
 
-  if ( m_HPDColPitch  < activeRadius*2)
+  if ( m_HPDColPitch  < (activeRadius*2) )
   {
     msg << MSG::WARNING << "The active area is bigger by:"
         << (activeRadius*2 - fabs(m_HPDColPitch))/Gaudi::Units::mm
@@ -563,7 +553,7 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   const auto & startColPos = param<std::vector<double> >("StartColumnPosition");
   // work in u,v coordinates: u is across a column, v is along
   double HPD00u(0.0), HPD00v(0.0),  HPD10v(0.0);
-  if ( m_rich == Rich::Rich1 ) 
+  if ( Rich::Rich1 == rich() ) 
   {
     HPD00u = startColPos[1];
     HPD00v = startColPos[0];
@@ -587,18 +577,16 @@ StatusCode DeRichHPDPanel::geometryUpdate()
     msg << MSG::DEBUG << "HPDPitch:" << m_HPDPitch << " panelColumnSideEdge:"
         << m_panelColumnSideEdge << endmsg;
 
-  m_panelStartColPosEven = HPD00v - 0.5*m_HPDPitch;
-  m_panelStartColPosOdd  = HPD10v - 0.5*m_HPDPitch;
+  m_panelStartColPosEvenOdd[0] = HPD00v - 0.5*m_HPDPitch;
+  m_panelStartColPosEvenOdd[1] = HPD10v - 0.5*m_HPDPitch;
 
   // use the abs(largest) value as an overall panel edge
-  m_panelStartColPos = fabs( m_panelStartColPosEven );
-  if ( fabs( m_panelStartColPosOdd ) > m_panelStartColPos )
-    m_panelStartColPos = fabs( m_panelStartColPosOdd );
+  m_panelStartColPos = std::max( fabs(m_panelStartColPosEvenOdd[0]),
+                                 fabs(m_panelStartColPosEvenOdd[1]) );
 
   if ( msgLevel(MSG::DEBUG,msg) )
-    msg << MSG::DEBUG << "panelStartColPosEven:" << m_panelStartColPosEven
-        << " panelStartColPosOdd:" << m_panelStartColPosOdd
-        << " m_panelStartColPos:" << m_panelStartColPos
+    msg << MSG::DEBUG << "panelStartColPosEvenOdd: " << m_panelStartColPosEvenOdd
+        << " m_panelStartColPos: " << m_panelStartColPos
         << endmsg;
 
   // get the first HPD and follow down to the silicon block
@@ -665,21 +653,21 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   if ( msgLevel(MSG::VERBOSE,msg) )
   {
     msg << MSG::VERBOSE << "Ideal local centre of HPD#0 "
-        << geometry()->toLocal(deHPD(0)->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(0))->windowCentreInIdeal()) << endmsg;
     msg << MSG::VERBOSE << "Ideal local centre of HPD#" << nPDsPerCol()-1 << " "
-        << geometry()->toLocal(deHPD(nPDsPerCol()-1)->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(nPDsPerCol()-1))->windowCentreInIdeal()) << endmsg;
     msg << MSG::VERBOSE << "Ideal local centre of HPD#" << nPDsPerCol() << " "
-        << geometry()->toLocal(deHPD(nPDsPerCol())->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(nPDsPerCol()))->windowCentreInIdeal()) << endmsg;
     msg << MSG::VERBOSE << "Ideal local centre of HPD#" << 2*nPDsPerCol()-1 << " "
-        << geometry()->toLocal(deHPD(2*nPDsPerCol()-1)->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(2*nPDsPerCol()-1))->windowCentreInIdeal()) << endmsg;
   }
 
   // find the top of 3 HPDs to create a detection plane.
-  const auto pointA( deHPD(0)->windowCentreInIdeal() );
+  const auto pointA( deHPD(Rich::DAQ::HPDCopyNumber(0))->windowCentreInIdeal() );
   // for second point go to HPD at the end of the column.
-  const auto pointB( deHPD(nPDsPerCol()-1)->windowCentreInIdeal() );
+  const auto pointB( deHPD(Rich::DAQ::HPDCopyNumber(nPDsPerCol()-1))->windowCentreInIdeal() );
   // now point C at the other end.
-  const auto pointC( deHPD(nPDs()-nPDsPerCol()/2)->windowCentreInIdeal() );
+  const auto pointC( deHPD(Rich::DAQ::HPDCopyNumber(nPDs()-nPDsPerCol()/2))->windowCentreInIdeal() );
 
   m_detectionPlane   = Gaudi::Plane3D(pointA,pointB,pointC);
   m_localPlane       = geometry()->toLocalMatrix() * m_detectionPlane;
@@ -708,7 +696,7 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   // create a transform with an offset to accommodate both detector panels in one histogram
   // and correct the x=0 (Rich1) and y=0 (Rich2) to match (more or less) the global coordinates
   ROOT::Math::Translation3D localTranslation;
-  if ( rich() == Rich::Rich1 )
+  if ( Rich::Rich1 == rich() )
   {
     const int sign = ( side() == Rich::top ? 1 : -1 );
     localTranslation =  ROOT::Math::Translation3D( centreGlobal.x(), 
@@ -730,11 +718,9 @@ StatusCode DeRichHPDPanel::geometryUpdate()
 
 //=========================================================================
 
-unsigned int DeRichHPDPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
+Rich::DAQ::HPDCopyNumber DeRichHPDPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
 {
-  return ( smartID.rich() == rich() && smartID.panel() == side() ?
-           smartID.pdCol() * nPDsPerCol() + smartID.pdNumInCol() :
-           nPDs() + 1 );
+  return  _pdNumber(smartID);
 }
 
 //=========================================================================

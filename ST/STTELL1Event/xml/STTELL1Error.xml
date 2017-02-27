@@ -6,8 +6,8 @@
   <!-- location = address in TES -->
   <!-- classId = identifier -->
     <class name='STTELL1Error'
-	   id='9012' 
-	   author='Mathias Knecht' 
+	   id='9012'
+	   author='Mathias Knecht'
 	   desc='Error info from one PP-FPGA for a TELL1 board'
            virtual = 'FALSE'>
    <base name='KeyedObject&lt; int &gt; '/>
@@ -15,9 +15,9 @@
    <location name="UTError"   place="Raw/UT/Error"   />
    <location name="ITError"   place="Raw/IT/Error"   />
 
-   <constructor argList = 'const unsigned int word0, const unsigned int word1, 
-                           const unsigned int word2, const unsigned int word3, 
-                           const unsigned int word4' 
+   <constructor argList = 'const unsigned int word0, const unsigned int word1,
+                           const unsigned int word2, const unsigned int word3,
+                           const unsigned int word4'
                    desc='constructor fixed part of bank [5 words]'
                    initList = 'm_word0(word0), m_word1(word1), m_word2(word2),
                               m_word3(word3) , m_word4(word4), m_word5(0),
@@ -27,10 +27,10 @@
 
 
   <enum access = 'PUBLIC'
-    name = 'FailureMode' 
-    desc = 'enumerate failure modes' 
-    value = 'kNone = 0,  kCorruptedBank = 1, kOptLinkDisabled = 2 , kTlkLinkLoss = 3,  
-             kOptLinkNoClock  = 4, kSyncRAMFull = 5, kSyncEvtSize = 6, 
+    name = 'FailureMode'
+    desc = 'enumerate failure modes'
+    value = 'kNone = 0,  kCorruptedBank = 1, kOptLinkDisabled = 2 , kTlkLinkLoss = 3,
+             kOptLinkNoClock  = 4, kSyncRAMFull = 5, kSyncEvtSize = 6,
              kOptLinkNoEvent  = 7, kPseudoHeader = 8, kWrongPCN = 9'
     unknownValue = 'kNone'
     strTypConv = 'TRUE'>
@@ -48,7 +48,7 @@
      type   = "GaudiUtils::VectorMap&lt;unsigned int, LHCb::STTELL1Error::FailureMode &gt;"
      def    = "FailureInfo"
      desc   = "Vector of arx [ each 32 channels] with failure "
-     access = "PRIVATE" 
+     access = "PRIVATE"
   />
 
   <method
@@ -61,19 +61,19 @@
    <method
      name    = "linkInfo"
      desc    = "Extract the information associated with the specified key"
-        argList = "const unsigned int beetle, 
-                   const unsigned int port, 
+        argList = "const unsigned int beetle,
+                   const unsigned int port,
                    const unsigned int pcn"
         const   = "TRUE"
         type    = "LHCb::STTELL1Error::FailureMode"
     />
 
- 
+
   <method
      name    = "badLink"
      desc    = "link is bad for some reason"
-        argList = "const unsigned int beetle, 
-                   const unsigned int port, 
+        argList = "const unsigned int beetle,
+                   const unsigned int port,
                    const unsigned int pcn"
         const   = "TRUE"
         type    = "bool"
@@ -82,7 +82,7 @@
    <method
      name    = "linkID"
      desc    = "link identifier 0 - 23 "
-        argList = "const unsigned int beetle, 
+        argList = "const unsigned int beetle,
                    const unsigned int port "
         const   = "TRUE"
         type    = "unsigned int"
@@ -98,18 +98,18 @@
     argList = "const unsigned int link, const LHCb::STTELL1Error::FailureMode&amp;  mode"
     access = "PRIVATE"
   >
-  <code> 
+  <code>
  const unsigned int start = linkID(link,0u);
  for (unsigned int i  = start; i &lt; start + 4; ++i) {
    addLinkInfo(i, mode);
  }
     </code >
   </method>
- 
+
   <method
      name    = "findPCN"
      desc    = "find pcn for value for this beetle"
-        argList = "const unsigned int beetle" 
+        argList = "const unsigned int beetle"
         const   = "TRUE"
         type    = "unsigned int"
     />
@@ -171,7 +171,7 @@
          getMeth   = 'TRUE'
          checkMeth = 'FALSE' />
        	</attribute>
- 	   
+
       <attribute
        type    = 'bitfield'
        name    = 'word1'
@@ -202,7 +202,7 @@
          desc      = 'ADC data section length'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'Clust1'
@@ -211,7 +211,7 @@
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
          checkMeth = 'FALSE' />
-        
+
         </attribute>
      <attribute
        type    = 'bitfield'
@@ -227,7 +227,7 @@
          desc      = 'Number of clusters'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'PCN'
@@ -244,7 +244,7 @@
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
          checkMeth = 'FALSE' />
-    
+
 	</attribute>
      <attribute
        type    = 'bitfield'
@@ -275,7 +275,7 @@
          desc      = 'Indicates if an error occured. Without error, value is 0x0, with an error value is 0x14'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
 
 	</attribute>
      <attribute
@@ -292,7 +292,7 @@
          desc      = 'Indicates that no data has been received, one bit per link'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'OptLnkDisable'
@@ -309,7 +309,7 @@
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
          checkMeth = 'FALSE' />
-    
+
         <bitfield
          type      = 'unsigned int'
          name      = 'TLKLnkLoss'
@@ -349,7 +349,7 @@
          desc      = 'Indicates if the ADC value is between low and high thresholds, one per Analog Link'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'OptLnkNoClock'
@@ -366,7 +366,7 @@
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
          checkMeth = 'FALSE' />
-    
+
         <bitfield
          type      = 'unsigned int'
          name      = 'R2'
@@ -389,7 +389,7 @@
          desc      = 'PCN of the Beetle 0'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'PCNBeetle1'
@@ -397,7 +397,7 @@
          desc      = 'PCN of the Beetle 1'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
 	 <bitfield
          type      = 'unsigned int'
          name      = 'PCNBeetle2'
@@ -405,7 +405,7 @@
          desc      = 'PCN of the Beetle 2'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
 	 <bitfield
          type      = 'unsigned int'
          name      = 'PCNBeetle3'
@@ -413,8 +413,8 @@
          desc      = 'PCN of the Beetle 3'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
-	
+         checkMeth = 'FALSE' />
+
 	</attribute>
 
 
@@ -435,7 +435,7 @@
          desc      = 'PCN of the Beetle 4'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'PCNBeetle5'
@@ -443,7 +443,7 @@
          desc      = 'PCN of the Beetle 5'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
 	 <bitfield
          type      = 'unsigned int'
          name      = 'R3'
@@ -451,9 +451,9 @@
          desc      = 'Reserved bits for later use =0x8B8B'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
-	 
-	
+         checkMeth = 'FALSE' />
+
+
 	</attribute>
       <attribute
        type    = 'bitfield'
@@ -468,7 +468,7 @@
          desc      = 'I Header of the Beetle 0'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'IHeaderBeetle1'
@@ -476,7 +476,7 @@
          desc      = 'I Header of the Beetle 1'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'IHeaderBeetle2'
@@ -484,7 +484,7 @@
          desc      = 'I Header of the Beetle 2'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'IHeaderBeetle3'
@@ -492,7 +492,7 @@
          desc      = 'I Header of the Beetle 3'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'IHeaderBeetle4'
@@ -500,7 +500,7 @@
          desc      = 'I Header of the Beetle 4'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'IHeaderBeetle5'
@@ -508,7 +508,7 @@
          desc      = 'I Header of the Beetle 5'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
+         checkMeth = 'FALSE' />
        <bitfield
          type      = 'unsigned int'
          name      = 'R4'
@@ -516,10 +516,10 @@
          desc      = 'Reserved bits for later use'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
- 
-	
-	</attribute>  
+         checkMeth = 'FALSE' />
+
+
+	</attribute>
 	    <attribute
        type    = 'bitfield'
        name    = 'word10'
@@ -553,10 +553,10 @@
          checkMeth = 'FALSE' />
 
 	</attribute>
-	
-	
 
-	
+
+
+
 	    <attribute
        type    = 'bitfield'
        name    = 'word11'
@@ -587,12 +587,12 @@
          desc      = 'ADC data section length'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 
-	
+         checkMeth = 'FALSE' />
+
 	</attribute>
-	
-	
-	
+
+
+
 	    <attribute
        type    = 'bitfield'
        name    = 'word12'
@@ -623,11 +623,11 @@
          desc      = 'NZS bank length'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 	
-	
+         checkMeth = 'FALSE' />
+
 	</attribute>
-	
-	
+
+
 	    <attribute
        type    = 'bitfield'
        name    = 'word13'
@@ -658,7 +658,7 @@
          desc      = 'Pedestal bank length'
          setMeth   = 'FALSE'
          getMeth   = 'TRUE'
-         checkMeth = 'FALSE' /> 	
+         checkMeth = 'FALSE' />
 	</attribute>
 
    <attribute
@@ -669,8 +669,8 @@
      setMeth = "FALSE"
      access  = "PRIVATE" />
 
-     <method 
-     name = 'hasErrorInfo' 
+     <method
+     name = 'hasErrorInfo'
      desc = 'bank has optional error words'
      type = 'bool'
      const = 'TRUE'>
@@ -679,8 +679,8 @@
       </code>
       </method>
 
-    <method 
-     name = 'hasNZS' 
+    <method
+     name = 'hasNZS'
      desc = 'bank has optional NSZ bank word'
      type = 'bool'
      const = 'TRUE'>
@@ -689,8 +689,8 @@
       </code>
      </method>
 
-   <method 
-     name = 'hasPed' 
+   <method
+     name = 'hasPed'
      desc = 'bank has optional ped bank word'
      type = 'bool'
      const = 'TRUE'>
@@ -699,13 +699,13 @@
       </code>
      </method>
 
-   <method 
-     name = 'nOptionalWords' 
+   <method
+     name = 'nOptionalWords'
      desc = '# words Tell1 ppx sent for this bank'
      type = 'unsigned int'
      const = 'TRUE'>
      <code>
- unsigned int wCount = 0; 
+ unsigned int wCount = 0;
  if (hasErrorInfo() == true) wCount +=5;
  if (hasPed() == true) ++wCount;
  if (hasNZS() == true) ++wCount;
@@ -713,13 +713,13 @@
       </code>
      </method>
 
-   <method 
-     name = 'sentWords' 
+   <method
+     name = 'sentWords'
      desc = '# words Tell1 sent for this bank'
      type = 'unsigned int'
      const = 'TRUE'>
      <code>
- unsigned int wCount = 7 + nOptionalWords(); 
+ unsigned int wCount = 7 + nOptionalWords();
  return wCount;
       </code>
      </method>
@@ -756,17 +756,17 @@
      argList = "const unsigned int pcn">
    </method>
 
- 
-     <method 
-        name    = "fillStream" 
+
+     <method
+        name    = "fillStream"
         desc    = "Print out of error information"
-        type    = "std::ostream&amp;" 
-        virtual = "FALSE" 
+        type    = "std::ostream&amp;"
+        override = "TRUE"
         const   = "TRUE">
-        <arg 
-         type = "std::ostream" 
+        <arg
+         type = "std::ostream"
          name = "s"/>
-      </method>	
+      </method>
 
 
 	 </class>

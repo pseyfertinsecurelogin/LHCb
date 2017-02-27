@@ -9,8 +9,7 @@
  */
 //----------------------------------------------------------------------------
 
-#ifndef RICHDET_DERICHBASE_H
-#define RICHDET_DERICHBASE_H 1
+#pragma once
 
 // STL
 #include <memory>
@@ -27,8 +26,12 @@
 class DeRichSystem;
 
 // Some defines for debug/verbose messages...
-#define _ri_debug if( msgLevel(MSG::DEBUG)   ) debug()
-#define _ri_verbo if( msgLevel(MSG::VERBOSE) ) verbose()
+#ifndef _ri_debug
+#define _ri_debug if ( msgLevel(MSG::DEBUG)   ) debug()
+#endif
+#ifndef _ri_verbo
+#define _ri_verbo if ( msgLevel(MSG::VERBOSE) ) verbose()
+#endif
 
 /** @class DeRichBase RichDet/DeRichBase.h
  *
@@ -43,7 +46,8 @@ class DeRichBase : public DetectorElement
 public:
 
   /// Standard constructor
-  DeRichBase( const std::string & name = "" ) : DetectorElement ( name ) { }
+  DeRichBase( const std::string & name = "" ) 
+    : DetectorElement ( name ) { resetMsgStream(); }
 
   /// Destructor
   virtual ~DeRichBase( ) = default;
@@ -51,11 +55,11 @@ public:
 protected:
 
   /// Set the name for this detector element
-  inline void setMyName ( const std::string & name ) const
+  inline void setMyName ( const std::string & name )
   {
     m_myname = name;
     // force a new MsgStream object using this new name
-    m_msgStream.reset( nullptr );
+    resetMsgStream();
   }
 
   /** Returns the name of this particular Detector Element
@@ -63,8 +67,7 @@ protected:
    */
   inline const std::string & myName() const 
   { 
-    if ( m_myname.empty() ) { setMyName( name() ); }
-    return m_myname; 
+    return ( m_myname.empty() ? name() : m_myname ); 
   }
 
 protected:
@@ -73,11 +76,7 @@ protected:
    *
    *  @return Reference to the predefined stream
    */
-  inline MsgStream & msgStream() const
-  {
-    if ( !m_msgStream ) m_msgStream.reset( new MsgStream( msgSvc(), myName() ) );
-    return *m_msgStream.get();
-  }
+  inline MsgStream & msgStream() const noexcept { return *m_msgStream.get(); }
 
   /** Predefined configurable message stream for the efficient printouts
    *
@@ -158,17 +157,23 @@ protected:
     return sc;
   }
 
+private:
+
+  /// reset the message stream with the currently set name
+  void resetMsgStream() 
+  {
+    m_msgStream = std::make_unique<MsgStream>( msgSvc(), myName() );
+  }
+
 protected:
 
   /// Access DeRichSystem on demand
-  DeRichSystem * deRichSys() const;
+  DeRichSystem * deRichSys();
 
 private:
 
-  mutable std::string m_myname = "UNDEFINED";     ///< The name of this detector element
-  mutable std::unique_ptr<MsgStream> m_msgStream; ///< Message Stream Object
-  mutable DeRichSystem* m_deRichS = nullptr;      ///< Pointer to the overall RICH system object
+  std::string m_myname = "";     ///< The name of this detector element
+  std::unique_ptr<MsgStream> m_msgStream; ///< Message Stream Object
+  DeRichSystem* m_deRichS = nullptr;      ///< Pointer to the overall RICH system object
 
 };
-
-#endif // RICHDET_DERICHBASE_H

@@ -1,11 +1,13 @@
-// $Id: PackedRecVertex.h,v 1.4 2009-11-07 12:20:26 jonrob Exp $
 #ifndef EVENT_PACKEDRECVERTEX_H
 #define EVENT_PACKEDRECVERTEX_H 1
 
+// STL
 #include <string>
 #include <vector>
 
+// Gaudi
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
 
 // Kernel
 #include "Event/StandardPacker.h"
@@ -43,6 +45,26 @@ namespace LHCb
     unsigned short int firstTrack{0},  lastTrack{0};
     unsigned short int firstInfo{0},   lastInfo{0};
     int container{0};
+
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.io(
+        key, technique, chi2, nDoF,
+        x, y, z,
+        cov00, cov11, cov22, cov10, cov20, cov21,
+        firstTrack, lastTrack,
+        firstInfo, lastInfo
+        // "container" is not needed here as it is used only in the packing of
+        // custom stripping objects ((Un)PackParticlesAndVertices)
+      );
+    }
+
+    template<typename T>
+    inline void load(T& buf, unsigned int /*version*/) {
+      save(buf); // identical operation until version is incremented
+      container = 0;  // initialize "container" with a well defined value
+                      // as it is not serialized
+    }
   };
 
   // -----------------------------------------------------------------------
@@ -64,11 +86,11 @@ namespace LHCb
    *  @date   2008-11-14
    */
 
-  class PackedRecVertices : public DataObject 
+  class PackedRecVertices : public DataObject
   {
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
@@ -76,9 +98,9 @@ namespace LHCb
 
     /// Vector of packed objects
     typedef std::vector<LHCb::PackedRecVertex> Vector;
-  
+
   public:
-  
+
     /// Standard constructor
     PackedRecVertices( )
     {
@@ -90,7 +112,7 @@ namespace LHCb
 
   public:
 
-    virtual const CLID& clID()  const { return PackedRecVertices::classID(); }
+    const CLID& clID()  const override { return PackedRecVertices::classID(); }
     static  const CLID& classID()     { return CLID_PackedRecVertices;       }
 
   public:
@@ -115,6 +137,32 @@ namespace LHCb
 
     /// Access the packing version
     char packingVersion() const { return m_packingVersion; }
+
+    /// Describe serialization of object
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.template save<uint8_t>(m_packingVersion);
+      buf.template save<uint8_t>(version());
+      buf.save(m_vect);
+      buf.save(m_refs);
+      buf.save(m_extra);
+      buf.save(m_weights);
+    }
+
+    /// Describe de-serialization of object
+    template<typename T>
+    inline void load(T& buf) {
+      setPackingVersion(buf.template load<uint8_t>());
+      setVersion(buf.template load<uint8_t>());
+      if (m_packingVersion < 1 || m_packingVersion > defaultPackingVersion()) {
+        throw std::runtime_error("RecVertices packing version is not supported: "
+                                 + std::to_string(m_packingVersion));
+      }
+      buf.load(m_vect, m_packingVersion);
+      buf.load(m_refs);
+      buf.load(m_extra, m_packingVersion);
+      buf.load(m_weights);
+    }
 
   private:
 
@@ -165,7 +213,7 @@ namespace LHCb
     /// Pack a Vertex
     void pack( const Data & vert,
                PackedData & pvert,
-               const DataVector & verts, 
+               const DataVector & verts,
                PackedDataVector & pverts ) const;
 
     /// Pack Vertices
@@ -190,6 +238,19 @@ namespace LHCb
     /// Safe sqrt ...
     inline double safe_sqrt( const double x ) const
     { return ( x > 0 ? std::sqrt(x) : 0.0 ); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 1 == ver || 0 == ver );
+      if ( UNLIKELY(!OK) )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "RecVertexPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 

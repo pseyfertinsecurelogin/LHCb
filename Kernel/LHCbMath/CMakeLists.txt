@@ -9,11 +9,15 @@ gaudi_depends_on_subdirs(GaudiGSL
                          Kernel/VectorClass)
 
 find_package(Boost)
+find_package(CLHEP)
 find_package(GSL)
 find_package(ROOT COMPONENTS MathCore GenVector)
 find_package(VDT)
 find_package(Eigen)
 find_package(pyanalysis)
+# hide warnings from some external projects
+include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
+                           ${Boost_INCLUDE_DIRS} ${CLHEP_INCLUDE_DIRS})
 
 gaudi_install_headers(LHCbMath)
 
@@ -33,7 +37,8 @@ gaudi_add_dictionary(LHCbMath
 set_property(SOURCE src/Similarity_generic.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -O3 " )
 set_property(SOURCE src/Similarity_SSE3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -msse3 -O3 " )
 set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx -O3 " )
-if(LCG_COMP STREQUAL gcc )
+if(LCG_COMP STREQUAL "gcc" OR
+    (BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_LESS "5"))
   set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -fabi-version=0 " )
 endif()
 
@@ -110,14 +115,18 @@ if(GAUDI_BUILD_TESTS)
                        tests/TestSimilarityTiming.cpp
                        INCLUDE_DIRS Boost GSL ROOT
                        LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
-  gaudi_add_executable(TestEigenGeometry   
+  gaudi_add_executable(TestEigenGeometry
                        tests/TestEigenGeometry.cpp
                        INCLUDE_DIRS Boost GSL ROOT VDT Eigen
                        LINK_LIBRARIES Boost GSL ROOT VDT GaudiKernel LHCbMathLib)
-  gaudi_add_executable(TestXYZTypes   
+  gaudi_add_executable(TestXYZTypes
                        tests/TestXYZTypes.cpp
                        INCLUDE_DIRS Boost GSL ROOT VDT Eigen
                        LINK_LIBRARIES Boost GSL ROOT VDT GaudiKernel LHCbMathLib)
+  gaudi_add_executable(TestPolynomials
+                       tests/poly.cpp
+                       INCLUDE_DIRS Boost GSL ROOT
+                       LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
 endif()
 
 gaudi_install_python_modules()

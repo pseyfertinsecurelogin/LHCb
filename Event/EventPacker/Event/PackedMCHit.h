@@ -1,6 +1,7 @@
 #ifndef EVENT_PACKEDMCHIT_H
 #define EVENT_PACKEDMCHIT_H 1
 
+// STL
 #include <string>
 
 // Kernel
@@ -12,6 +13,7 @@
 // Gaudi
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/GaudiException.h"
 
 namespace LHCb
 {
@@ -73,7 +75,7 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMCHit> Vector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
@@ -83,7 +85,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedMCHits; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedMCHits::classID(); }
+    const CLID& clID() const  override { return PackedMCHits::classID(); }
 
   public:
 
@@ -105,7 +107,7 @@ namespace LHCb
     char   m_packingVersion{ defaultPackingVersion() };
 
     /// The packed data objects
-    Vector m_vect; 
+    Vector m_vect;
 
   };
 
@@ -128,17 +130,9 @@ namespace LHCb
     typedef LHCb::MCHits             DataVector;
     typedef LHCb::PackedMCHits PackedDataVector;
 
-  private:
 
-    /// Default Constructor hidden
-    MCHitPacker( ) {}
-    
-  public:
-    
     /// Constructor
     MCHitPacker( const GaudiAlgorithm * p ) : m_pack(p) {}
-    
-  public:
 
     /// Pack MCHits
     void pack( const DataVector & hits,
@@ -156,6 +150,19 @@ namespace LHCb
 
     /// Access the parent algorithm
     const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 1 == ver || 0 == ver );
+      if ( UNLIKELY(!OK) )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "MCHitPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 
@@ -223,7 +230,7 @@ namespace LHCb
   {
   public:
     MCVPHitPacker( const GaudiAlgorithm * parent ) : MCHitPacker(parent)
-    { 
+    {
       m_dispScale = 1.0e2;
       m_enScale   = 5.0e3;
     }
@@ -283,7 +290,7 @@ namespace LHCb
     {
       m_dispScale = 1.0e2;
       m_enScale   = 5.0e3;
-    }    
+    }
     static const std::string packedLocation()   { return LHCb::PackedMCHitLocation::IT; }
     static const std::string unpackedLocation() { return LHCb::MCHitLocation::IT;       }
   };
@@ -302,7 +309,7 @@ namespace LHCb
     {
       m_dispScale = 1.0e2;
       m_enScale   = 5.0e3;
-    }    
+    }
     static const std::string packedLocation()   { return LHCb::PackedMCHitLocation::SL; }
     static const std::string unpackedLocation() { return LHCb::MCHitLocation::SL;       }
   };

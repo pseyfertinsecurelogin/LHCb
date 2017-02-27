@@ -3,15 +3,22 @@
 #include "boost/operators.hpp"
 #include "boost/format.hpp"
 
+class StatusCode;
+
 class TCK final : public boost::equality_comparable<TCK>,
                          boost::equality_comparable2<TCK,unsigned int> {
 public:
     TCK() = default;
     explicit TCK(unsigned int i) : m_unsigned(i) { set(i); }
     explicit TCK(std::string s) { set(s); }
-    bool operator<(const TCK& rhs) const { return m_unsigned  < rhs.m_unsigned; }
-    bool operator==(const TCK& rhs) const { return m_unsigned == rhs.m_unsigned; }
-    bool operator==(unsigned int rhs) const { return m_unsigned == rhs; }
+    friend bool operator<(const TCK& lhs, const TCK& rhs)
+    { return lhs.m_unsigned  < rhs.m_unsigned; }
+    friend bool operator==(const TCK& lhs, const TCK& rhs)
+    { return lhs.m_unsigned == rhs.m_unsigned; }
+    friend bool operator==(const TCK& lhs, unsigned int rhs)
+    { return lhs.m_unsigned == rhs; }
+    friend bool operator==(unsigned int& lhs, const TCK& rhs)
+    { return lhs == rhs.m_unsigned; }
     TCK& operator++() { return set( ++m_unsigned ); }
     const std::string&  str() const { return m_stringRep; }
     unsigned int uint() const { return m_unsigned;  }
@@ -29,10 +36,21 @@ public:
         return *this;
     }
     bool valid() const { return m_unsigned != 0 ; }
+
+    friend std::ostream& operator<<(std::ostream& os, const TCK& tck)
+    { return os << tck.str(); }
+
+    // allow Gaudi::Property<TCK> :
+    friend std::ostream& toStream(const TCK& tck, std::ostream& os)
+    { return os << '\'' << tck << '\''; }
+    friend StatusCode parse(TCK& result, const std::string& input );
+
 private:
     std::string m_stringRep;
     unsigned int m_unsigned = 0;
 };
-inline std::ostream& operator<<(std::ostream& os, const TCK& tck)
-{ return os << tck.str(); }
+
+
+
+
 #endif

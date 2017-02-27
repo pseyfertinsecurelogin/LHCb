@@ -11,20 +11,21 @@
  *  @author Marco Clemencic
  *  @date   2009-02-02
  */
-class ODINEncodeTool : public ODINCodecBaseTool {
-public:
+class ODINEncodeTool final : public ODINCodecBaseTool
+{
+
+ public:
+
   /// Standard constructor
   ODINEncodeTool(const std::string& type,
                  const std::string& name,
                  const IInterface* parent);
 
-  virtual ~ODINEncodeTool(); ///< Destructor
-
   /// Initialize the tool
-  virtual inline StatusCode initialize();
+  inline StatusCode initialize() override;
 
   /// Do the conversion
-  virtual void execute();
+  void execute() override;
 
 private:
   /// Location in the transient store of the ODIN object.
@@ -63,18 +64,15 @@ ODINEncodeTool::ODINEncodeTool( const std::string& type,
                   "default is the content of LHCb::RawEventLocation::Default.");
 }
 //=============================================================================
-// Destructor
-//=============================================================================
-ODINEncodeTool::~ODINEncodeTool() {
-}
-//=============================================================================
 // Initialize
 //=============================================================================
-StatusCode ODINEncodeTool::initialize() {
+StatusCode ODINEncodeTool::initialize()
+{
   StatusCode sc = ODINCodecBaseTool::initialize(); // always first
   if (sc.isFailure()) return sc; // error message already printed
 
-  if (m_odinLocation.empty()) {
+  if (m_odinLocation.empty())
+  {
     // use the default
     m_odinLocation = LHCb::ODINLocation::Default;
   } else {
@@ -93,19 +91,23 @@ StatusCode ODINEncodeTool::initialize() {
 //=============================================================================
 // Main function
 //=============================================================================
-void ODINEncodeTool::execute() {
+void ODINEncodeTool::execute()
+{
   // Check if there is an ODIN object
   LHCb::RawEvent* raw = this->getIfExists<LHCb::RawEvent>(m_rawEventLocation);
-  if ( NULL != raw ) {
+  if ( raw )
+  {
     // Add the raw bank to the raw event
     debug() << "Getting " << m_rawEventLocation << endmsg;
 
     // pointer for a pre-existing bank
-    LHCb::RawBank *old_bank = 0;
+    LHCb::RawBank * old_bank = nullptr;
     // Check if have an ODIN bank already
-    const std::vector<LHCb::RawBank*>& odinBanks = raw->banks(LHCb::RawBank::ODIN);
-    if (!odinBanks.empty() ) {
-      if (m_force) {
+    const auto & odinBanks = raw->banks(LHCb::RawBank::ODIN);
+    if ( !odinBanks.empty() )
+    {
+      if (m_force)
+      {
         // we have to replace it... remember which it is, so we can do it if the
         // encoding is successful, just before adding the new bank
         old_bank = *odinBanks.begin();

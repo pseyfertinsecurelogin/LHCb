@@ -45,15 +45,16 @@ StatusCode FilterByBankType::initialize()
   // Loop over the list of possible BankTypes
   info() << ((m_passSelect) ? "Selecting" : "Ignoring" ) 
          << " events with banks: ";
-  unsigned int iBank = 0;
-  for( ; iBank < RawBank::LastType; ++iBank) {
+  for ( unsigned int iBank = 0; iBank < RawBank::LastType; ++iBank ) 
+  {
+    const auto bankName = RawBank::typeName( RawBank::BankType(iBank) );
     // make an enum vector from the string vector of bank names
-    std::vector<std::string>::const_iterator iBankName = m_bankNames.begin();
-    for( ; iBankName != m_bankNames.end(); ++iBankName ) {
+    for ( const auto & BankName : m_bankNames )
+    {
       // Use the regular expression
-      boost::regex e(*iBankName);
-      std::string bankName = RawBank::typeName( RawBank::BankType(iBank));
-      if( boost::regex_match( bankName, e) ) {
+      boost::regex e(BankName);
+      if( boost::regex_match( bankName, e) )
+      {
         m_bankTypes.push_back( RawBank::BankType(iBank) );
         info() << bankName << "(" << iBank << ")  " ;
       }
@@ -61,7 +62,7 @@ StatusCode FilterByBankType::initialize()
   }
   info() << endmsg;
   
-  return StatusCode::SUCCESS;
+  return sc;
 }
 
 //=============================================================================
@@ -76,21 +77,24 @@ StatusCode FilterByBankType::execute()
   setFilterPassed(!m_passSelect);
 
   // Get the raw data
-  RawEvent* raw = get<RawEvent>( m_inputLocation );
+  const auto * raw = get<RawEvent>( m_inputLocation );
 
   // Loop over the bank types
-  std::vector<RawBank::BankType>::const_iterator iBankType =m_bankTypes.begin();
-  while( !selectEvent && iBankType < m_bankTypes.end() ) {
+  auto iBankType = m_bankTypes.begin();
+  while( !selectEvent && iBankType < m_bankTypes.end() ) 
+  {
     
     // Get the bank in the RawEvent
-    const std::vector<RawBank*>& bank = raw->banks( *iBankType );
+    const auto & bank = raw->banks( *iBankType );
 
     // If bank exist mark the event
-    if ( bank.size() > 0 ) {
+    if ( bank.size() > 0 ) 
+    {
       selectEvent = true;
 
       // Make some printout if bank is found
-      if (msgLevel(MSG::DEBUG)) {
+      if (msgLevel(MSG::DEBUG))
+      {
         debug() << "Found " << bank.size() << " bank(s) of type " 
                 << *iBankType << " (" <<  (bank.front())->typeName() << ")." 
                 << endmsg;

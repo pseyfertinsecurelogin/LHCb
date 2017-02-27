@@ -1,12 +1,4 @@
-// Include files 
-
- // from Gaudi
-#include "GaudiKernel/AlgFactory.h" 
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiKernel/ToolFactory.h"
-#include "GaudiKernel/Auditor.h"
+// Include files
 
 // local
 #include "GenFSRRead.h"
@@ -16,7 +8,7 @@
 #include "Event/GenCountersFSR.h"
 #include "Event/CrossSectionsFSR.h"
 
-// to write a file                
+// to write a file
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -37,18 +29,12 @@ DECLARE_ALGORITHM_FACTORY( GenFSRRead )
 //=============================================================================
 GenFSRRead::GenFSRRead( const std::string& name,
                           ISvcLocator* pSvcLocator)
-: GaudiAlgorithm ( name , pSvcLocator ),
-  m_fileRecordSvc(NULL),
-  m_navigatorTool(NULL)
+: GaudiAlgorithm ( name , pSvcLocator )
 {
   // expect the data to be written at LHCb::GenFSRLocation::Default
-  declareProperty( "FileRecordLocation" , m_fileRecordName = "/FileRecords"        );  
+  declareProperty( "FileRecordLocation" , m_fileRecordName = "/FileRecords"        );
   declareProperty( "FSRName"            , m_FSRName        = "/GenFSR"             );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-GenFSRRead::~GenFSRRead() {} 
 
 //=============================================================================
 // Initialization
@@ -58,13 +44,13 @@ StatusCode GenFSRRead::initialize() {
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
-  
-  // get the File Records service              
-  m_fileRecordSvc = svc<IDataProviderSvc>("FileRecordDataSvc", true);
-  
-  // prepare navigator tool  
-  m_navigatorTool = tool<IFSRNavigator>("FSRNavigator", "FSRNavigator"); 
-  
+
+  // get the File Records service
+  m_fileRecordSvc = service("FileRecordDataSvc", true);
+
+  // prepare navigator tool
+  m_navigatorTool = tool<IFSRNavigator>("FSRNavigator", "FSRNavigator");
+
   return StatusCode::SUCCESS;
 }
 
@@ -74,7 +60,7 @@ StatusCode GenFSRRead::initialize() {
 StatusCode GenFSRRead::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
-  
+
   return StatusCode::SUCCESS;
 }
 
@@ -93,40 +79,40 @@ StatusCode GenFSRRead::finalize() {
 //=============================================================================
 
 
-//=============================================================================      
+//=============================================================================
 //  Dump the GenFSR informations
-//=============================================================================      
+//=============================================================================
 
 void GenFSRRead::dumpFSR()
 {
-  // root of store                                                                                                                            
+  // root of store
   std::string fileRecordRoot = m_fileRecordName;
-  // make an inventory of the FileRecord store                                                                                                
+  // make an inventory of the FileRecord store
   std::vector< std::string > addresses = m_navigatorTool->navigate(fileRecordRoot, m_FSRName);
-  
-  int nFSRs = 0;  
-  
+
+  int nFSRs = 0;
+
   for(std::vector< std::string >::iterator iAddr=addresses.begin(); iAddr!=addresses.end(); iAddr++)
     nFSRs += 1;
-    
+
   if(nFSRs != 0)
-  {    
+  {
     always() << "Dump the genFSR informations!" << endmsg;
-    
+
     for(std::vector< std::string >::iterator iAddr=addresses.begin(); iAddr!=addresses.end(); iAddr++)
     {
       std::string genRecordAddress = *iAddr;
       always() << "Address : " << genRecordAddress << endmsg;
-      
-      // read GenFSR                                                               
-      LHCb::GenFSR* genFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc, genRecordAddress);
-        
-      if (genFSR==NULL) 
+
+      // read GenFSR
+      LHCb::GenFSR* genFSR = getIfExists<LHCb::GenFSR>(m_fileRecordSvc.get(), genRecordAddress);
+
+      if (genFSR==NULL)
       {
-        Warning("A genFSR record was not found").ignore();     
+        Warning("A genFSR record was not found").ignore();
         if (msgLevel(MSG::DEBUG)) debug() << genRecordAddress << " not found" << endmsg;
       }
-      else 
+      else
       {
         always() << "READ FSR: " << genRecordAddress << endmsg;
         always() << *genFSR << endmsg;

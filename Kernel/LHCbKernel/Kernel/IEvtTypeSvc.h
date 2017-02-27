@@ -25,8 +25,8 @@ namespace LHCb
  *  to handle groups of Event type codes in an ordered, unique std::set
  *
  */
-class IEvtTypeSvc : public extend_interfaces<IService> {
-public:
+struct IEvtTypeSvc : extend_interfaces<IService> {
+
     DeclareInterfaceID(IEvtTypeSvc, 3 , 0);
 
   /// Given an event code number provide its Nick Name as in input table.

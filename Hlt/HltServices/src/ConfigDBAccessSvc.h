@@ -1,5 +1,4 @@
-// $Id: ConfigDBAccessSvc.h,v 1.1 2010-05-05 13:20:44 graven Exp $
-#ifndef CONFIGDBACCESSSVC_H 
+#ifndef CONFIGDBACCESSSVC_H
 #define CONFIGDBACCESSSVC_H 1
 
 // Include files
@@ -23,17 +22,16 @@ namespace coral {
 }
 
 /** @class ConfigDBAccessSvc ConfigDBAccessSvc.h
- *  
+ *
  *  functionality:
  *        read/write configure information to CORAL database
  *
  *  @author Gerhard Raven
  *  @date   2007-12-20
  */
-class ConfigDBAccessSvc : public extends1<Service,IConfigAccessSvc> {
+class ConfigDBAccessSvc : public extends<Service,IConfigAccessSvc> {
 public:
-  ConfigDBAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
-  ~ConfigDBAccessSvc( ) override = default;     ///< Destructor
+  using extends::extends;
 
   StatusCode initialize() override;    ///< Service initialization
   StatusCode finalize() override;      ///< Service initialization
@@ -50,21 +48,13 @@ public:
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type& alias) override;
 
 private:
-  MsgStream& msg(MSG::Level level) const;
-  MsgStream& verbose() const { return msg(MSG::VERBOSE); }
-  MsgStream& debug() const { return msg(MSG::DEBUG); }
-  MsgStream& info() const { return msg(MSG::INFO); }
-  MsgStream& warning() const { return msg(MSG::WARNING); }
-  MsgStream& error() const { return msg(MSG::ERROR); }
-  MsgStream& fatal() const { return msg(MSG::FATAL); }
-  MsgStream& always() const { return msg(MSG::ALWAYS); }
 
   template <typename T> struct table_traits;
 
   template <typename T> boost::optional<T>                 read(const typename table_traits<T>::key_type&);
   template <typename T> typename table_traits<T>::key_type write(const T& );
   template <typename T> void                               createTable();
-  
+
   StatusCode openConnection();
   StatusCode createSchema();
 
@@ -73,12 +63,11 @@ private:
   template <typename iter> void writeCacheEntries( const std::string&, const std::string&, iter, iter);
   void createCacheTables();
 
-  mutable std::unique_ptr<MsgStream>   m_msg;
-  std::string                          m_connection;
-  coral::ISessionProxy*                m_session = nullptr;
-  ICOOLConfSvc*                        m_coolConfSvc = nullptr;
-  bool                                 m_readOnly;
-  bool                                 m_createSchema;
+  Gaudi::Property<std::string>  m_connection { this, "Connection" };
+  coral::ISessionProxy*         m_session = nullptr;
+  ICOOLConfSvc*                 m_coolConfSvc = nullptr;
+  Gaudi::Property<bool>         m_readOnly { this, "ReadOnly", true };
+  Gaudi::Property<bool>         m_createSchema { this, "CreateSchema", false };
 
 };
 #endif // CONFIGDBACCESSSVC_H

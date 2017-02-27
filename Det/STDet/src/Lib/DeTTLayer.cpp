@@ -12,12 +12,7 @@
 #include <algorithm>
 #include <numeric>
 
-// Boost
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
-
 using namespace LHCb;
-using namespace boost::lambda;
 
 /** @file DeTTLayer.cpp
 *
@@ -30,15 +25,11 @@ using namespace boost::lambda;
 DeTTLayer::DeTTLayer( const std::string& name ) :
   DeSTLayer( name ),
   m_parent(NULL)
-{ 
+{
   // constructor
   m_modules.clear();
 }
 
-
-DeTTLayer::~DeTTLayer() {
-  // destructer
-}
 
 const CLID& DeTTLayer::clID () const
 {
@@ -51,7 +42,7 @@ StatusCode DeTTLayer::initialize() {
   MsgStream msg(msgSvc(), name() );
   StatusCode sc = DeSTLayer::initialize();
   if (sc.isFailure() ){
-    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg; 
+    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
   }
   else {
     m_parent = getParent<DeTTLayer>();
@@ -68,17 +59,18 @@ StatusCode DeTTLayer::initialize() {
 DeTTHalfModule* DeTTLayer::findHalfModule(const STChannelID aChannel){
 
   // return pointer to the station from channel
-  Children::iterator iter = std::find_if(m_modules.begin() , m_modules.end(), bind(&DeTTHalfModule::contains, _1, aChannel));
-  return (iter != m_modules.end() ? *iter: 0);
+  auto iter = std::find_if(m_modules.begin() , m_modules.end(),
+                           [&](const DeTTHalfModule* m) { return m->contains(aChannel);});
+  return iter != m_modules.end() ? *iter: nullptr;
 }
 
 DeTTHalfModule* DeTTLayer::findHalfModule(const Gaudi::XYZPoint& point) {
 
-  // find the half module 
-  Children::iterator iter = std::find_if(m_modules.begin(), m_modules.end(), 
-                                                            bind(&DeTTHalfModule::isInside, _1, point)); 
+  // find the half module
+  auto iter = std::find_if(m_modules.begin(), m_modules.end(),
+                           [&](const DeTTHalfModule* m) { return m->isInside(point);});
 
-  return (iter != m_modules.end() ? *iter: 0);
+  return iter != m_modules.end() ? *iter: nullptr;
 }
 
 
@@ -90,8 +82,8 @@ void DeTTLayer::flatten() {
      DeTTHalfModule::Children::const_iterator iterSector = tModule->sectors().begin();
      for ( ; iterSector !=  tModule->sectors().end() ; ++iterSector ){
        DeSTSector* tSector = *iterSector;
-       m_sectors.push_back(tSector);  
-     } //sectors     
+       m_sectors.push_back(tSector);
+     } //sectors
   } // half module
 
 }
@@ -99,7 +91,9 @@ void DeTTLayer::flatten() {
 
 double DeTTLayer::fractionActive() const {
 
-  return std::accumulate(m_modules.begin(), m_modules.end(), 0.0,  _1 + bind(&DeTTHalfModule::fractionActive,_2))/double(m_modules.size());   
+  return std::accumulate(m_modules.begin(), m_modules.end(), 0.0,
+            [](double f, const DeTTHalfModule* m) { return f+m->fractionActive(); }
+         )/double(m_modules.size());
 }
 
 

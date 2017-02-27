@@ -37,7 +37,7 @@ namespace DetDesc {
   /**
    * Gets an instance of Services
    */
-  Services* services();
+  ServicesPtr services();
 
 }
 

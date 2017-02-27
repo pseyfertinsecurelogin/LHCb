@@ -1,9 +1,11 @@
-// $Id: PackedTrack.h,v 1.8 2009-11-07 12:20:26 jonrob Exp $
 #ifndef EVENT_PACKEDTRACK_H
 #define EVENT_PACKEDTRACK_H 1
 
+// STL
 #include <string>
 #include <vector>
+#include <limits>
+#include <cstdint>
 
 // Kernel
 #include "Event/StandardPacker.h"
@@ -34,12 +36,12 @@ namespace LHCb
     int chi2PerDoF{0};
     int nDoF{0};
     unsigned int flags{0};
-    unsigned short int firstId{0};
-    unsigned short int lastId{0};
-    unsigned short int firstState{0};
-    unsigned short int lastState{0};
-    unsigned short int firstExtra{0};
-    unsigned short int lastExtra{0};
+    int firstId{0};
+    int lastId{0};
+    int firstState{0};
+    int lastState{0};
+    int firstExtra{0};
+    int lastExtra{0};
     //== Added for version 3, August 2009
     int likelihood{0};
     int ghostProba{0};
@@ -47,21 +49,35 @@ namespace LHCb
     //== Note that Nodes and Measurements on Track are transient only, an thus never stored.
 
     template<typename T>
-    inline void save(T& buf) const {
-      buf.io(
-        key,
-        chi2PerDoF, nDoF, flags,
-        firstId, lastId,
-        firstState, lastState,
-        firstExtra, lastExtra,
-        likelihood,
-        ghostProba
-      );
+    inline void save(T& buf) const
+    {
+      buf.io( key,
+              chi2PerDoF, nDoF, flags,
+              firstId, lastId,
+              firstState, lastState,
+              firstExtra, lastExtra,
+              likelihood,
+              ghostProba );
     }
 
     template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
-      save(buf); // identical operation until version is incremented
+    inline void load(T& buf, unsigned int version)
+    {
+      if (version == 4)
+      {
+        buf.io( key, chi2PerDoF, nDoF, flags );
+        buf.template io<uint16_t>(firstId);
+        buf.template io<uint16_t>(lastId);
+        buf.template io<uint16_t>(firstState);
+        buf.template io<uint16_t>(lastState);
+        buf.template io<uint16_t>(firstExtra);
+        buf.template io<uint16_t>(lastExtra);
+        buf.io( likelihood, ghostProba );
+      }
+      else
+      {
+        save( buf ); // identical operation for the latest version
+      }
     }
   };
 
@@ -101,19 +117,21 @@ namespace LHCb
     short int cov_43{0};
 
     template<typename T>
-    inline void save(T& buf) const {
-      buf.io(
-        flags,
-        x, y, z, tx, ty, p,
-        cov_00, cov_11, cov_22, cov_33, cov_44,
-        cov_10, cov_20, cov_21, cov_30, cov_31, cov_32, cov_40, cov_41, cov_42, cov_43
-      );
+    inline void save(T& buf) const
+    {
+      buf.io( flags,
+              x, y, z, tx, ty, p,
+              cov_00, cov_11, cov_22, cov_33, cov_44,
+              cov_10, cov_20, cov_21, cov_30, cov_31,
+              cov_32, cov_40, cov_41, cov_42, cov_43 );
     }
-    
+
     template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
+    inline void load(T& buf, unsigned int /*version*/)
+    {
       save(buf); // identical operation until version is incremented
     }
+
   };
 
   static const CLID CLID_PackedTracks = 1550;
@@ -150,7 +168,7 @@ namespace LHCb
 
   public:
 
-    virtual const CLID& clID()  const { return PackedTracks::classID(); }
+    const CLID& clID()  const override { return PackedTracks::classID(); }
     static  const CLID& classID()     { return CLID_PackedTracks;       }
 
   public:
@@ -168,20 +186,23 @@ namespace LHCb
     const std::vector<std::pair<int,int> >& extras() const { return m_extra; }
 
     /// Describe serialization of object
-    template<typename T> 
-    inline void save(T& buf) const {
-      buf.template save<uint8_t>(version());
+    template<typename T>
+    inline void save(T& buf) const
+    {
+      buf.template save<uint8_t>( version() );
       buf.save(m_vect);
       buf.save(m_state);
       buf.save(m_ids);
       buf.save(m_extra);
     }
-    
+
     /// Describe de-serialization of object
-    template<typename T> 
-    inline void load(T& buf) {
-      setVersion(buf.template load<uint8_t>());
-      if (version() != 4) {
+    template<typename T>
+    inline void load(T& buf)
+    {
+      setVersion( buf.template load<uint8_t>() );
+      if ( version() < 4 || version() > 5 )
+      {
         throw std::runtime_error("PackedTracks packing version is not supported: "
                                  + std::to_string(version()));
       }
@@ -273,15 +294,31 @@ namespace LHCb
     inline double safe_sqrt( const double x ) const
     { return ( x > 0 ? std::sqrt(x) : 0.0 ); }
 
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 0 <= ver && ver <= 5 );
+      if ( UNLIKELY(!OK) )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "TrackPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
+
+  public:
+
     /// Reset wraping bug counts
     inline void resetWrappingCounts() const
     {
-      m_firstIdHigh    = 0;
-      m_lastIdHigh     = 0;
-      m_firstStateHigh = 0;
-      m_lastStateHigh  = 0;
-      m_firstExtraHigh = 0;
-      m_lastExtraHigh  = 0;
+      m_firstIdHigh     = 0;
+      m_lastIdHigh      = 0;
+      m_firstStateHigh  = 0;
+      m_lastStateHigh   = 0;
+      m_firstExtraHigh  = 0;
+      m_lastExtraHigh   = 0;
+      m_lastPackedDataV = nullptr;
     }
 
   private:
@@ -298,6 +335,9 @@ namespace LHCb
     mutable int m_lastStateHigh{0};
     mutable int m_firstExtraHigh{0};
     mutable int m_lastExtraHigh{0};
+
+    // Cache the pointers to the last packed and unpacked containers
+    mutable const PackedDataVector * m_lastPackedDataV = nullptr;
 
   };
 

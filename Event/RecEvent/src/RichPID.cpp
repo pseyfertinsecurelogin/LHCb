@@ -9,6 +9,11 @@
  */
 //-----------------------------------------------------------------------------
 
+// STL
+#include <sstream>
+#include <algorithm>
+#include <string>
+
 // RichEvent includes
 #include "Event/RichPID.h"
 
@@ -62,16 +67,25 @@ std::ostream& LHCb::RichPID::fillStream( std::ostream& s ) const
   s << "[ ";
 
   // Formatting strings
-  const std::string sF = "%6.2f";
+  const std::string fF = "%6.2f"; // floats
+  const std::string iF = "%5i";   // ints
 
   // PID type
-  s << "Key=" << key() << " " << pidType();
+  s << "Key" << boost::format(iF) % key() << " " << pidType();
 
   // Track info
   if ( track() )
   {
-    s << " | Tk " << track()->key() << " " << track()->type()
-      << " " << boost::format(sF) % (track()->p()/Gaudi::Units::GeV)
+    // Track type
+    std::ostringstream tType;
+    tType << track()->type();
+    const unsigned int minTkTypeSize = 10;
+    auto S = tType.str();
+    if ( S.size() < minTkTypeSize ) { S.resize(minTkTypeSize,' '); }
+    // print
+    s << " | Tk " << boost::format(iF) % track()->key() 
+      << " " << S
+      << " " << boost::format(fF) % (track()->p()/Gaudi::Units::GeV)
       << " GeV";
   }
   else
@@ -80,10 +94,14 @@ std::ostream& LHCb::RichPID::fillStream( std::ostream& s ) const
   }
 
   // Active radiators
-  s << " |";
-  if ( usedAerogel()  ) { s << " " << Rich::text(Rich::Aerogel);  }
-  if ( usedRich1Gas() ) { s << " " << Rich::text(Rich::Rich1Gas); }
-  if ( usedRich2Gas() ) { s << " " << Rich::text(Rich::Rich2Gas); }
+  std::ostringstream rads;
+  if ( usedAerogel()  ) { rads << " " << Rich::text(Rich::Aerogel);  }
+  if ( usedRich1Gas() ) { rads << " " << Rich::text(Rich::Rich1Gas); }
+  if ( usedRich2Gas() ) { rads << " " << Rich::text(Rich::Rich2Gas); }
+  const unsigned int minRadsSize = 18; // nice for RICH1 and RICH2 gas
+  auto S = rads.str();
+  if ( S.size() < minRadsSize ) { S.resize(minRadsSize,' '); }
+  s << " |" << S;
 
   // Mass thresholds
   s << " | Thres ";
@@ -96,7 +114,7 @@ std::ostream& LHCb::RichPID::fillStream( std::ostream& s ) const
   s << " | DLLs ";
   for ( const auto pid : Rich::particles() )
   {
-    s << " " << boost::format(sF) % particleDeltaLL(pid);
+    s << " " << boost::format(fF) % particleDeltaLL(pid);
   }
 
   // Best ID

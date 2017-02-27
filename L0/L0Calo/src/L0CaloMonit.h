@@ -1,4 +1,4 @@
-#ifndef L0CALOMONIT_H 
+#ifndef L0CALOMONIT_H
 #define L0CALOMONIT_H 1
 
 // Include files
@@ -36,13 +36,13 @@ public:
   virtual ~L0CaloMonit( ) ;
 
   /// Initialization: book histograms
-  virtual StatusCode initialize() ;
+  StatusCode initialize()  override;
 
   /// Main execution routine: fill histograms and find hot cells
-  virtual StatusCode execute   () ;
+  StatusCode execute   ()  override;
 
   /// Finalization: print hot cells
-  virtual StatusCode finalize  () ;
+  StatusCode finalize  ()  override;
 
 private:
 

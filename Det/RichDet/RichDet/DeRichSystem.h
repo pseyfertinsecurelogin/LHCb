@@ -7,8 +7,10 @@
  *  @date   2006-01-26
  */
 
-#ifndef RICHDET_DERICHSYSTEM_H
-#define RICHDET_DERICHSYSTEM_H 1
+#pragma once
+
+// STL
+#include <algorithm>
 
 // base class
 #include "RichDet/DeRichBase.h"
@@ -18,12 +20,15 @@
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichSmartID.h"
 
-// RichKernel
-#include "RichKernel/RichDAQDefinitions.h"
-#include "RichKernel/RichMap.h"
+// RichUtils
+#include "RichUtils/RichDAQDefinitions.h"
+#include "RichUtils/RichMap.h"
 
 // local
 #include "RichDet/RichDetConfigType.h"
+#include "RichDet/DeRichPDPanel.h"
+#include "RichDet/DeRich.h"
+class DeRichPD;
 
 // External declarations
 extern const CLID CLID_DERichSystem;
@@ -48,12 +53,12 @@ public:
   DeRichSystem( const std::string & name = "" );
 
   /// Default destructor
-  virtual ~DeRichSystem();
+  virtual ~DeRichSystem() = default;
 
   /** Retrieves reference to class identifier
    *  @return the class identifier for this class
    */
-  const CLID& clID() const { return classID(); }
+  const CLID& clID() const override { return classID(); }
 
   /** Retrieves reference to class identifier
    *  @return the class identifier for this class
@@ -65,7 +70,7 @@ public:
    *  @retval StatusCode::FAILURE Initialisation failed, program should
    *  terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
 public:
 
@@ -100,22 +105,22 @@ public:
   const Rich::DAQ::HPDCopyNumber copyNumber( const LHCb::RichSmartID& smartID ) const;
 
   /// Returns a list of all active PDs identified by their RichSmartID
-  const LHCb::RichSmartID::Vector & activePDRichSmartIDs() const;
+  const LHCb::RichSmartID::Vector & activePDRichSmartIDs() const noexcept;
 
   /// Returns a list of all inactive PDs identified by their RichSmartID
-  const LHCb::RichSmartID::Vector & inactivePDRichSmartIDs() const;
+  const LHCb::RichSmartID::Vector & inactivePDRichSmartIDs() const noexcept;
 
   /// Returns a list of all (active and inactive) PDs identified by their RichSmartID
-  const LHCb::RichSmartID::Vector & allPDRichSmartIDs() const;
+  const LHCb::RichSmartID::Vector & allPDRichSmartIDs() const noexcept;
 
   /// Returns a list of all active PDs identified by their hardware IDs
-  const Rich::DAQ::HPDHardwareIDs & activePDHardwareIDs() const;
+  const Rich::DAQ::HPDHardwareIDs & activePDHardwareIDs() const noexcept;
 
   /// Returns a list of all inactive PDs identified by their hardware IDs
-  const Rich::DAQ::HPDHardwareIDs & inactivePDHardwareIDs() const;
+  const Rich::DAQ::HPDHardwareIDs & inactivePDHardwareIDs() const noexcept;
 
   /// Returns a list of all (active and inactive) PDs identified by their hardware IDs
-  const Rich::DAQ::HPDHardwareIDs & allPDHardwareIDs() const;
+  const Rich::DAQ::HPDHardwareIDs & allPDHardwareIDs() const noexcept;
 
   /** Ask whether a given PD is currently active or dead
    *  @param id The RichSmartID for the PD
@@ -229,20 +234,46 @@ public:
   Rich::DetectorType richDetector( const Rich::DAQ::Level1HardwareID& l1ID ) const;
 
   /// Direct access to the mapping between Level1 IDs and PD RichSmartIDs
-  const Rich::DAQ::L1ToSmartIDs & l1PDSmartIDs() const;
+  const Rich::DAQ::L1ToSmartIDs & l1PDSmartIDs() const noexcept;
 
   /// Direct access to the mapping between Level1 IDs and PD RichSmartIDs
-  const Rich::DAQ::L1ToHardIDs & l1PDHardIDs() const;
+  const Rich::DAQ::L1ToHardIDs & l1PDHardIDs() const noexcept;
 
   /// Returns a list of all valid Level1 board hardware IDs
-  const Rich::DAQ::Level1HardwareIDs & level1HardwareIDs() const;
+  const Rich::DAQ::Level1HardwareIDs & level1HardwareIDs() const noexcept;
 
   /// Returns the number of PDs in the given RICH detector
   unsigned int nPDs( const Rich::DetectorType rich ) const;
 
+  /// Returns the number of PDs in the given RICH detector and side
+  unsigned int nPDs( const Rich::DetectorType rich,
+                     const Rich::Side side ) const;
+  
   /// Returns the total number of PDs
-  unsigned int nPDs() const;
+  unsigned int nPDs() const noexcept;
 
+  /// Access the DeRichPanel for the given RICH and Panel
+  inline const DeRichPDPanel * dePDPanel( const Rich::DetectorType rich,
+                                          const Rich::Side side  ) const
+  {
+    return m_deRich[rich]->pdPanel(side);
+  }
+
+  /// Access the DeRichPanel for the given PD ID
+  inline const DeRichPDPanel * dePDPanel( const LHCb::RichSmartID pdID ) const
+  {
+    return dePDPanel( pdID.rich(), pdID.panel() );
+  }
+
+  /** Get the correct DeRichPD object for the given RichSmartID
+   *  @param[in] hpdID The RichSmartID for the PD
+   *  @return Pointer to the associated DeRichPD object
+   */
+  inline const DeRichPD * dePD( const LHCb::RichSmartID pdID ) const
+  {
+    return dePDPanel(pdID)->dePD(pdID);
+  }
+  
 public:
 
   /**
@@ -255,16 +286,13 @@ public:
 public:
 
   /// The photon detector type
-  inline Rich::RichPhDetConfigType RichPhotoDetConfig() const
+  inline Rich::RichPhDetConfigType RichPhotoDetConfig() const noexcept
   {
     return m_photDetConf;
   }
 
   /// The version of RichSystem
-  inline int systemVersion() const
-  {
-    return m_version;
-  }
+  inline int systemVersion() const noexcept { return m_version; }
 
 private: // methods
 
@@ -275,7 +303,7 @@ private: // methods
   StatusCode fillMaps( const Rich::DetectorType rich );
 
   /// Access on demand the Detector Elements for Rich1 and Rich2
-  DetectorElement * deRich( const Rich::DetectorType rich ) const;
+  DeRich * deRich( const Rich::DetectorType rich ) const noexcept;
 
   /// Save information to a map, checking first it is not already set
   template < class SOURCE, class TARGET, class MAP >
@@ -376,8 +404,7 @@ private: // data
   L1HIDToCopyN m_l1H2CopyN;
 
   /// Rich1 & Rich2 detector elements
-  mutable std::map<Rich::DetectorType, DetectorElement*> m_deRich = 
-    { { {Rich::Rich1,nullptr}, {Rich::Rich2,nullptr} } };
+  Rich::DetectorArray<DeRich*> m_deRich = {{}};
 
   /// Location of RICH Numbering schemes in Conditions DB
   std::map<Rich::DetectorType, std::string> m_detNumConds;
@@ -402,9 +429,17 @@ private: // data
 };
 
 //=========================================================================
+// Access the Detector Elements for Rich1 and Rich2
+//=========================================================================
+inline DeRich * DeRichSystem::deRich( const Rich::DetectorType rich ) const noexcept
+{
+  return m_deRich[rich];
+}
+
+//=========================================================================
 // activePDRichSmartIDs
 //=========================================================================
-inline const LHCb::RichSmartID::Vector& DeRichSystem::activePDRichSmartIDs() const
+inline const LHCb::RichSmartID::Vector& DeRichSystem::activePDRichSmartIDs() const noexcept
 {
   return m_activePDSmartIDs;
 }
@@ -412,7 +447,7 @@ inline const LHCb::RichSmartID::Vector& DeRichSystem::activePDRichSmartIDs() con
 //=========================================================================
 // inactivePDRichSmartIDs
 //=========================================================================
-inline const LHCb::RichSmartID::Vector& DeRichSystem::inactivePDRichSmartIDs() const
+inline const LHCb::RichSmartID::Vector& DeRichSystem::inactivePDRichSmartIDs() const noexcept
 {
   return m_inactivePDSmartIDs;
 }
@@ -420,7 +455,7 @@ inline const LHCb::RichSmartID::Vector& DeRichSystem::inactivePDRichSmartIDs() c
 //=========================================================================
 // allPDRichSmartIDs
 //=========================================================================
-inline const LHCb::RichSmartID::Vector& DeRichSystem::allPDRichSmartIDs() const
+inline const LHCb::RichSmartID::Vector& DeRichSystem::allPDRichSmartIDs() const noexcept
 {
   return m_allPDSmartIDs;
 }
@@ -428,7 +463,7 @@ inline const LHCb::RichSmartID::Vector& DeRichSystem::allPDRichSmartIDs() const
 //=========================================================================
 // activePDHardwareIDs
 //=========================================================================
-inline const Rich::DAQ::HPDHardwareIDs& DeRichSystem::activePDHardwareIDs() const
+inline const Rich::DAQ::HPDHardwareIDs& DeRichSystem::activePDHardwareIDs() const noexcept
 {
   return m_activePDHardIDs;
 }
@@ -436,7 +471,7 @@ inline const Rich::DAQ::HPDHardwareIDs& DeRichSystem::activePDHardwareIDs() cons
 //=========================================================================
 // activePDHardwareIDs
 //=========================================================================
-inline const Rich::DAQ::HPDHardwareIDs& DeRichSystem::inactivePDHardwareIDs() const
+inline const Rich::DAQ::HPDHardwareIDs& DeRichSystem::inactivePDHardwareIDs() const noexcept
 {
   return m_inactivePDHardIDs;
 }
@@ -444,7 +479,7 @@ inline const Rich::DAQ::HPDHardwareIDs& DeRichSystem::inactivePDHardwareIDs() co
 //=========================================================================
 // allPDHardwareIDs
 //=========================================================================
-inline const Rich::DAQ::HPDHardwareIDs& DeRichSystem::allPDHardwareIDs() const
+inline const Rich::DAQ::HPDHardwareIDs& DeRichSystem::allPDHardwareIDs() const noexcept
 {
   return m_allPDHardIDs;
 }
@@ -461,7 +496,8 @@ inline bool DeRichSystem::pdIsActive( const LHCb::RichSmartID& id ) const
 //=========================================================================
 // pdIsActive
 //=========================================================================
-inline bool DeRichSystem::pdIsActive( const Rich::DAQ::HPDHardwareID& id ) const
+inline bool
+DeRichSystem::pdIsActive( const Rich::DAQ::HPDHardwareID& id ) const
 {
   const auto & c = m_inactivePDHardIDs;
   return ( c.empty() || std::find(c.begin(),c.end(),id) == c.end() );
@@ -471,7 +507,7 @@ inline bool DeRichSystem::pdIsActive( const Rich::DAQ::HPDHardwareID& id ) const
 // l1PDSmartIDs
 // Access mapping between Level 1 IDs and PD RichSmartIDs
 //=========================================================================
-inline const Rich::DAQ::L1ToSmartIDs& DeRichSystem::l1PDSmartIDs() const
+inline const Rich::DAQ::L1ToSmartIDs& DeRichSystem::l1PDSmartIDs() const noexcept
 {
   return m_l12smartids;
 }
@@ -480,7 +516,7 @@ inline const Rich::DAQ::L1ToSmartIDs& DeRichSystem::l1PDSmartIDs() const
 // l1PDHardIDs
 // Access mapping between Level 1 IDs and PD RichSmartIDs
 //=========================================================================
-inline const Rich::DAQ::L1ToHardIDs& DeRichSystem::l1PDHardIDs() const
+inline const Rich::DAQ::L1ToHardIDs& DeRichSystem::l1PDHardIDs() const noexcept
 {
   return m_l12hardids;
 }
@@ -488,7 +524,8 @@ inline const Rich::DAQ::L1ToHardIDs& DeRichSystem::l1PDHardIDs() const
 //=========================================================================
 // level1 hardware IDs
 //=========================================================================
-inline const Rich::DAQ::Level1HardwareIDs& DeRichSystem::level1HardwareIDs() const
+inline const Rich::DAQ::Level1HardwareIDs& 
+DeRichSystem::level1HardwareIDs() const noexcept
 {
   return m_l1IDs;
 }
@@ -496,9 +533,42 @@ inline const Rich::DAQ::Level1HardwareIDs& DeRichSystem::level1HardwareIDs() con
 //=========================================================================
 // Number HPDs
 //=========================================================================
-inline unsigned int DeRichSystem::nPDs() const
+inline unsigned int DeRichSystem::nPDs() const noexcept
 {
   return allPDRichSmartIDs().size();
 }
 
-#endif    // RICHDET_DERICHSYSTEM_H
+//=========================================================================
+// L1 logical ID
+//=========================================================================
+inline const Rich::DAQ::Level1LogicalID
+DeRichSystem::level1LogicalID( const LHCb::RichSmartID& smartID ) const
+{
+  return level1LogicalID( level1HardwareID(smartID) );
+}
+
+//=========================================================================
+// PD per RICH
+//=========================================================================
+inline unsigned int 
+DeRichSystem::nPDs( const Rich::DetectorType rich ) const
+{
+  return std::count_if( allPDRichSmartIDs().begin(),
+                        allPDRichSmartIDs().end(),
+                        [&rich]( const auto& PD )
+                        { return PD.rich() == rich; } );
+}
+
+//=========================================================================
+// PD per RICH and side
+//=========================================================================
+inline unsigned int 
+DeRichSystem::nPDs( const Rich::DetectorType rich,
+                    const Rich::Side side ) const
+{
+  return std::count_if( allPDRichSmartIDs().begin(),
+                        allPDRichSmartIDs().end(),
+                        [&rich,&side]( const auto& PD )
+                        { return ( PD.rich()  == rich && 
+                                   PD.panel() == side ); } );
+}

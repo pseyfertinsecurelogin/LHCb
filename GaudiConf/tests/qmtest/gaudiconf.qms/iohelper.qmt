@@ -6,7 +6,7 @@
 # Author: rlambert
 # Purpose: check that IOHelper is working
 # Prerequisites: None
-# Common failure modes, severities and cures: 
+# Common failure modes, severities and cures:
 #               . MAJOR: Any failure of this test indicates a major problem with IOHelper
 #######################################################
 -->
@@ -16,6 +16,13 @@
   <argument name="reference"><text>../refs/test_iohelper.ref</text></argument>
   <argument name="validator"><text>
 from GaudiConf.QMTest.LHCbExclusions import preprocessor
+if preprocessor("[ 0x12345678 abc/test']") == "[test']":
+    # It's an old Gaudi, so we suffer from the bug fixed in
+    # https://gitlab.cern.ch/gaudi/Gaudi/merge_requests/263 and the
+    # fix to https://its.cern.ch/jira/browse/GAUDI-1290, so
+    # we must artifically hide some differences
+    from GaudiTesting.BaseTest import RegexpReplacer
+    preprocessor = preprocessor + RegexpReplacer(r"\[.*/([^/]*.*)\]", r"[\1]", "^\[Gaudi")
 validateWithReference(preproc = preprocessor)
 </text></argument>
 </extension>

@@ -1,4 +1,3 @@
-// $Id: PackedMuonPID.h,v 1.3 2009-11-10 10:24:09 jonrob Exp $
 #ifndef EVENT_PACKEDMUONPID_H
 #define EVENT_PACKEDMUONPID_H 1
 
@@ -34,7 +33,7 @@ namespace LHCb
     long long idtrack{-1};
     long long mutrack{-1};
     long long key{-1};
-    
+
     template<typename T>
     inline void save(T& buf) const {
       buf.io(
@@ -42,7 +41,7 @@ namespace LHCb
         idtrack, mutrack, key
       );
     }
-    
+
     template<typename T>
     inline void load(T& buf, unsigned int /*version*/) {
       save(buf); // identical operation until version is incremented
@@ -76,17 +75,17 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMuonPID> Vector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 2; }
-    
+
   public:
 
     /// Class ID
     static const CLID& classID() { return CLID_PackedMuonPIDs; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedMuonPIDs::classID(); }
+    const CLID& clID() const override { return PackedMuonPIDs::classID(); }
 
   public:
 
@@ -117,7 +116,7 @@ namespace LHCb
     inline void load(T& buf) {
       setPackingVersion(buf.template load<uint8_t>());
       setVersion(buf.template load<uint8_t>());
-      
+
       if (m_packingVersion < 2 || m_packingVersion > defaultPackingVersion()) {
         throw std::runtime_error("PackedMuonPIDs packing version is not supported: "
                                  + std::to_string(m_packingVersion));
@@ -127,11 +126,11 @@ namespace LHCb
 
   private:
 
-    /// Data packing version 
+    /// Data packing version
     char   m_packingVersion{ defaultPackingVersion() };
 
     /// The packed data objects
-    Vector m_vect; 
+    Vector m_vect;
 
   };
 
@@ -204,7 +203,7 @@ namespace LHCb
     bool isSupportedVer( const char& ver ) const
     {
       const bool OK = ( 2 == ver || 1 == ver || 0 == ver );
-      if ( !OK )
+      if ( UNLIKELY(!OK) )
       {
         std::ostringstream mess;
         mess << "Unknown packed data version " << (int)ver;

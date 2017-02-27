@@ -1,13 +1,3 @@
-// Include files
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-
-#include "DetDesc/ValidDataObject.h"
-#include "DetDesc/RunChangeIncident.h"
-
-#include <boost/format.hpp>
-
-// local
 #include "RunChangeHandlerSvc.h"
 
 DECLARE_SERVICE_FACTORY( RunChangeHandlerSvc )
@@ -15,28 +5,11 @@ DECLARE_SERVICE_FACTORY( RunChangeHandlerSvc )
 #define ON_DEBUG if (msgLevel(MSG::DEBUG))
 #define DEBUG_MSG ON_DEBUG debug()
 
-
 //-----------------------------------------------------------------------------
 // Implementation file for class : RunChangeHandlerSvc
 //
 // 2008-07-24 : Marco Clemencic
 //-----------------------------------------------------------------------------
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-RunChangeHandlerSvc::RunChangeHandlerSvc(const std::string &name, ISvcLocator *svcLoc):
-  base_class(name,svcLoc),
-  m_currentRun(0)
-{
-  declareProperty("Conditions", m_condDesc,
-   "Map defining what to use to replace the location of the source XML files.");
-}
-
-//=============================================================================
-// Destructor
-//=============================================================================
-RunChangeHandlerSvc::~RunChangeHandlerSvc() {}
 
 //=============================================================================
 // Initialize
@@ -55,10 +28,10 @@ StatusCode RunChangeHandlerSvc::initialize(){
   updMgrSvc();
 
   // Prepare the list of conditions
-  CondDescMap::iterator condDesc;
-  for (condDesc = m_condDesc.begin(); condDesc != m_condDesc.end(); ++condDesc) {
-    m_conditions.push_back(CondData(detectorSvc(),condDesc->first,condDesc->second));
-    updMgrSvc()->registerCondition(this,condDesc->first);
+  m_conditions.reserve(m_condDesc.size());
+  for (const auto& condDesc : m_condDesc) {
+    m_conditions.emplace_back(detectorSvc(),condDesc.first,condDesc.second);
+    updMgrSvc()->registerCondition(this,condDesc.first);
   }
   // FIXME: (MCl) This is a hack to be sure that the UMS knows about all the
   // objects we have to modify before we get to the first event.
@@ -111,45 +84,26 @@ void RunChangeHandlerSvc::handle(const Incident &inc) {
 
   m_currentRun = rci->runNumber();
   // update objects
-  update();
+  update(m_currentRun);
 }
 
 //=========================================================================
 // Flag for update all conditions
 //=========================================================================
-void RunChangeHandlerSvc::update(){
+void RunChangeHandlerSvc::update(unsigned long run) {
+  std::lock_guard<std::mutex> lock(m_updateMutex); // we cannot run this concurrently
+  FileHasher hasher;
   std::for_each(m_conditions.begin(), m_conditions.end(),
-                [this](CondData &cond) {this->update(cond);});
-}
-
-//=========================================================================
-// Flag for update one condition
-//=========================================================================
-void RunChangeHandlerSvc::update(CondData &cond){
-  // get the object and its registry
-  if (cond.object) {
-    IRegistry *reg = cond.object->registry();
-    if (reg) {
-      // get the opaque address
-      IOpaqueAddress *addr = reg->address();
-      if (addr) {
-        // This is a bit of a hack, but it is the only way of replacing the
-        // URL to use for an object.
-        std::string* par = const_cast<std::string*>(addr->par());
-	if( cond.pathTemplate.find("%") != std::string::npos )
-	  par[0] = (boost::format(cond.pathTemplate) % m_currentRun).str();
-	else
-	  par[0] = cond.pathTemplate ;
-
+                [this, run, &hasher](CondData &cond) {
+    try {
+      if (cond.needsUpdate(run, hasher)) {
         // notify the UMS and the object that they have to be updated.
-        cond.object->forceUpdateMode();
         updMgrSvc()->invalidate(cond.object.ptr());
-        // exit to avoid the trap at the end of the function
-        return;
       }
+    } catch(const std::exception& x) {
+      // something went wrong, so we change the exception type and rethrow
+      evtProc()->stopRun(); // schedule a stop
+      throw GaudiException(x.what(), name(), StatusCode::FAILURE);
     }
-  }
-  // If we get here, it means that we cannot manipulate the address
-  evtProc()->stopRun(); // schedule a stop
-  throw GaudiException("Cannot modify address for object at " + cond.object.path(), name(), StatusCode::FAILURE);
+  });
 }

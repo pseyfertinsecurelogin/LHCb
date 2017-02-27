@@ -1,6 +1,6 @@
 
 // STL
-//#include <random> // For flags tests. To be removed.
+#include <algorithm>
 
 // Event model
 #include "Event/MCParticle.h"
@@ -32,11 +32,6 @@ DECLARE_ALGORITHM_FACTORY( UnpackMCParticle )
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-UnpackMCParticle::~UnpackMCParticle() {}
-
-//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode UnpackMCParticle::execute() 
@@ -66,17 +61,17 @@ StatusCode UnpackMCParticle::execute()
   //static std::uniform_real_distribution<float> uniform(0,1);
 
   newMCParticles->reserve( dst->mcParts().size() );
-  for ( const LHCb::PackedMCParticle& src : dst->mcParts() )
+  for ( const auto & src : dst->mcParts() )
   {
 
-    LHCb::MCParticle* part = new LHCb::MCParticle( );
+    LHCb::MCParticle * part = new LHCb::MCParticle( );
     newMCParticles->insert( part, src.key );
 
-    const double px = pack.energy( src.px );
-    const double py = pack.energy( src.py );
-    const double pz = pack.energy( src.pz );
-    const double mass = src.mass;
-    const double E = std::sqrt( (px*px) + (py*py) + (pz*pz) + (mass*mass) );
+    const auto px = pack.energy( src.px );
+    const auto py = pack.energy( src.py );
+    const auto pz = pack.energy( src.pz );
+    const auto mass = src.mass;
+    const auto E = std::sqrt( (px*px) + (py*py) + (pz*pz) + (mass*mass) );
     part->setMomentum( Gaudi::LorentzVector( px, py, pz , E ) );
 
     part->setParticleID( LHCb::ParticleID(src.PID) );
@@ -94,18 +89,38 @@ StatusCode UnpackMCParticle::execute()
     }
     else { Error( "Corrupt MCParticle Origin MCVertex SmartRef detected" ).ignore(); }
 
+    // List of processed refs, to check for duplicates
+    std::vector<long long> processedRefs;
+    processedRefs.reserve( src.endVertices.size() );
+
+    // loop over refs and process
     for ( const auto& I : src.endVertices )
     {
-      if ( ( 0==pVer && pack.hintAndKey32( I, dst, newMCParticles, hintID, key ) ) ||
-           ( 0!=pVer && pack.hintAndKey64( I, dst, newMCParticles, hintID, key ) ) )
+      // Check for duplicates ...
+      if ( std::none_of( processedRefs.begin(), processedRefs.end(),
+                         [&I]( const auto& J ) { return I == J; } ) )
       {
-        SmartRef<LHCb::MCVertex> refV( newMCParticles, hintID, key );
-        part->addToEndVertices( refV );
+        // save this packed ref to the list of those already processed.
+        processedRefs.push_back(I);
+        // Unpack the ref and save to the vertex
+        hintID = key = 0;
+        if ( ( 0==pVer && pack.hintAndKey32( I, dst, newMCParticles, hintID, key ) ) ||
+             ( 0!=pVer && pack.hintAndKey64( I, dst, newMCParticles, hintID, key ) ) )
+        {
+          // Construct the smart ref
+          SmartRef<LHCb::MCVertex> ref( newMCParticles, hintID, key );
+          // save
+          part->addToEndVertices( ref );
+        }
+        else { Error( "Corrupt MCParticle End MCVertex SmartRef detected" ).ignore(); }
       }
-      else { Error( "Corrupt MCParticle End MCVertex SmartRef detected" ).ignore(); }
+      else
+      {
+        Warning( "Found duplicate in packed MCParticle end vertices", 
+                 StatusCode::SUCCESS ).ignore(); }
     }
   }
-
+  
   return StatusCode::SUCCESS;
 }
 

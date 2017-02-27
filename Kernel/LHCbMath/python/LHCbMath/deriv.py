@@ -56,9 +56,10 @@ __all__     = (
     "Variance"      , ## calculate "variance" for functions/distribitions, etc (scipy)
     "RMS"           , ## calculate "RMS"      for functions/distribitions, etc (scipy)
     "Skewness"      , ## calculate "skewness" for functions/distribitions, etc (scipy)
-    "Mediane"       , ## calculate "mediane"  for functions/distribitions, etc (scipy)
+    "Median"        , ## calculate "median"   for functions/distribitions, etc (scipy)
     "Quantile"      , ## calculate "quantile" for functions/distribitions, etc (scipy)
     "Mode"          , ## calculate "mode"     for functions/distribitions, etc (scipy)
+    "Width"         , ## calculate "width"    for functions/distribitions, etc (scipy)
     "CL_symm"       , ## calcualte symmetrical confidence intervals            (scipy)
     "CL_asymm"      , ## calcualte asymmetrical confidence intervals           (scipy)
     ##
@@ -70,9 +71,10 @@ __all__     = (
     "rms"           , ## calculate "RMS"      for functions/distribitions, etc (scipy)
     "skewness"      , ## calculate "skeness"  for functions/distribitions, etc (scipy)
     "kurtosis"      , ## calculate "kurtosis" for functions/distribitions, etc (scipy)
-    "mediane"       , ## calculate "mediane"  for functions/distribitions, etc (scipy)
+    "median"        , ## calculate "median"   for functions/distribitions, etc (scipy)
     "quantile"      , ## calculate "quantile" for functions/distribitions, etc (scipy)
     "mode"          , ## calculate "mode"     for functions/distribitions, etc (scipy)
+    "width"         , ## calculate "width"    for functions/distribitions, etc (scipy)
     "cl_symm"       , ## calculate symmetrical confidence intervals            (scipy)
     "cl_asymm"      , ## calculate asymmetrical confidence intervals           (scipy)
     ##
@@ -99,52 +101,66 @@ is_zero        = cpp.LHCb.Math.Zero     ('double')()
 ## are two floating point number close enough?
 is_equal       = cpp.LHCb.Math.Equal_To ('double')()
 
+
 # =============================================================================
 ## calculate 1st (and optionally 3rd)  derivative with the given step
-#  f'      is calculated as O(h**2)
-#  f^(III) is calculated as O(h**2)
+#  - f'      is calculated as O(h**2)
+#  - f^(III) is calculated as O(h**2)
 def _h2_ ( func , x , h , der = False ) :
-    """Calculate 1st (and optionally 3rd) derivative  with O(h*h) precision
+    """Calculate 1st (and optionally 3rd) derivative 
+    - f'      is calculated as O(h**2)
+    - f^(III) is calculated as O(h**2)
     """
     fm1 = func ( x - 1 * h )
     fp1 = func ( x + 1 * h )
 
-    d1   = (         -fm1 +  fp1        ) / (2 * h    )
+    d1   = 1.0 * ( fp1 - fm1  ) / (2 * h    )
     if not der : return d1 
     
     fm2 = func ( x - 2 * h )    
     fp2 = func ( x + 2 * h )
-    d3   = ( -fm2 + 2*fm1 -2*fp1 + fp2  ) / (2 * h*h*h)
+
+    d3  = -2.0 * ( fp1 - fm1 ) + ( fm2 - fm2 )   
+    d3 /= (2 * h*h*h)
 
     return d1,d3
 
 # =============================================================================
 ## calculate 1st (and optionally 5th) derivative with the given step
-#  f'     is calculated as O(h**4)
-#  f^(V)  is calculated as O(h**2)
+#  - f'     is calculated as O(h**4)
+#  - f^(V)  is calculated as O(h**2)
 def _h4_ ( func , x , h , der = False ) :
     """Calculate 1st (and optionally 5th) derivative  with O(h*h) precision
+    - f'     is calculated as O(h**4)
+    - f^(V)  is calculated as O(h**2)
     """    
     fm2 = func ( x - 2 * h )    
     fm1 = func ( x - 1 * h )
     fp1 = func ( x + 1 * h )
     fp2 = func ( x + 2 * h )
     
-    d1  = (         fm2 -8*fm1 +8*fp1 -  fp2       )/(12 * h   )
+    d1  = 8.0 * ( fp1 - fm1 ) - ( fp2 - fm2 )
+    d1 /= 12 * h 
+    
     if not der : return d1 
     
     fm3 = func ( x - 3 * h )    
     fp3 = func ( x + 3 * h )
-    d5  = ( -fm3 +4*fm2 -5*fm1 +5*fp1 -4*fp2 + fp3 )/( 2 * h**5)
+    
+    d5  =  5.0 * ( fp1 - fm1 ) - 4 * ( fp2 - fm2 ) + ( fp3 - fm3 )
+    d5 /= 2 * h**5 
     
     return d1,d5
 
+
 # =============================================================================
 ## calculate 1st (and optionally 7th) derivative with the given step
-#  f'      is calculated as O(h**6)
-#  f^(VII) is calculated as O(h**2)
+#  - f'      is calculated as O(h**6)
+#  - f^(VII) is calculated as O(h**2)
 def _h6_ ( func , x , h , der = False ) :
-    """Calculate 1st (and optionally 7th) derivative  with O(h*h) precision
+    """Calculate 1st (and optionally 7th) derivative
+    - f'      is calculated as O(h**6)
+    - f^(VII) is calculated as O(h**2)
     """        
     fm3 = func ( x - 3 * h )    
     fm2 = func ( x - 2 * h )    
@@ -153,22 +169,28 @@ def _h6_ ( func , x , h , der = False ) :
     fp2 = func ( x + 2 * h )
     fp3 = func ( x + 3 * h )
     
-    d1  = (         -fm3 + 9*fm2 -45*fm1 +45*fp1 - 9*fp2 +  fp3       )/(60 * h   )
+    d1  = 45.0 * ( fp1 - fm1 ) - 9 * ( fp2 - fm2 ) + 1 * ( fp3 - fm3 )
+    d1 /=  60*h
 
     if not der : return d1
     
     fm4 = func ( x - 4 * h )    
     fp4 = func ( x + 4 * h )
-    d7  = ( -fm4 + 6*fm3 -14*fm2 +14*fm1 -14*fp1 +14*fp2 -6*fp3 + fp4 )/( 2 * h**7)
+    
+    d7  = -14.0 * ( fp1 - fm1 ) + 14 * ( fp2 - fm2 ) - 6 * ( fp3 - fm3 ) + ( fp4 - fm4 )
+    d7 /= 2* h**7
     
     return d1,d7
 
+
 # =============================================================================
 ## calculate 1st (and optionally 9th) derivative with the given step
-#  f'     is calculated as O(h**8)
-#  f^(IX) is calculated as O(h**2)
+#  - f'     is calculated as O(h**8)
+#  - f^(IX) is calculated as O(h**2)
 def _h8_ ( func , x , h , der = False ) :
-    """Calculate 1st (and optionally 9th) derivative  with O(h*h) precision
+    """Calculate 1st (and optionally 9th) derivative
+    - f'     is calculated as O(h**8)
+    - f^(IX) is calculated as O(h**2)
     """            
     fm4 = func ( x - 4 * h )    
     fm3 = func ( x - 3 * h )    
@@ -179,24 +201,29 @@ def _h8_ ( func , x , h , der = False ) :
     fp3 = func ( x + 3 * h )
     fp4 = func ( x + 4 * h )
     
-    d1  = (       3*fm4 -32*fm3 +168*fm2 -672*fm1 +672*fp1 -168*fp2 +32*fp3 -3*fp4       )/(840 * h   )
-
+    d1  = 672.0 * ( fp1 - fm1 ) - 168 * ( fp2 - fm2  ) + 32 * ( fp3 - fm3 ) - 3  * ( fp4 - fm4 )
+    d1 /= 840 * h  
+    
     if not der : return d1 
     
     fm5 = func ( x - 5 * h )    
     fp5 = func ( x + 5 * h )
     d9  = ( -fm5 +8*fm4 -27*fm3 + 48*fm2 - 42*fm1 + 42*fp1 - 48*fp2 +27*fp3 -8*fp4 + fp5 )/(  2 * h**9)
+
+    d9  = 42.0 * ( fp1  - fm1 ) - 48 * ( fp2  - fm2  ) + 27 * ( fp3 - fm3 ) - 8 * ( fp4  - fm4 ) + ( fp5 - fm5  )  
+    d9 /=  2 * h**9
     
     return d1,d9
 
 # =============================================================================
 ## calculate 1st (and optionally 11th) derivative with the given step
-#  f'     is calculated as O(h**10)
-#  f^(XI) is calculated as O(h**2)
+#  - f'     is calculated as O(h**10)
+#  - f^(XI) is calculated as O(h**2)
 def _h10_ ( func , x , h , der = False ) :
-    """Calculate 1st (and optionally 11th) derivative  with O(h*h) precision
+    """Calculate 1st (and optionally 11th) derivative
+    - f'     is calculated as O(h**10)
+    - f^(XI) is calculated as O(h**2)
     """
-    
     fm5 = func ( x - 5 * h )    
     fm4 = func ( x - 4 * h )    
     fm3 = func ( x - 3 * h )    
@@ -208,26 +235,147 @@ def _h10_ ( func , x , h , der = False ) :
     fp4 = func ( x + 4 * h )
     fp5 = func ( x + 5 * h )
     
-    d1  = (       -2*fm5 +25*fm4 -150*fm3 +600*fm2 -2100*fm1 +2100*fp1 -600*fp2 +150*fp3 -25*fp4 + 2*fp5       )/(2520 * h    )
+    d1  =  2100.0 * ( fp1 - fm1 ) -  600 * ( fp2 - fm2 ) + 150 * ( fp3 - fm3 ) - 25 * ( fp4 - fm4 ) + 2 * ( fp5 - fm5 )
+    d1 /=  2520.0 * h 
+    
 
     if not der : return d1
     
-    fm6 = func ( x - 6 * h )    
-    fp6 = func ( x + 6 * h )
-    d11 = ( -fm6 +10*fm5 -44*fm4 +110*fm3 -165*fm2 + 132*fm1 - 132*fp1 +165*fp2 -110*fp3 +44*fp4 -10*fp5 + fp6 )/(   2 * h**11)
+    fm6  =  func ( x - 6 * h )    
+    fp6  =  func ( x + 6 * h )
+    
+    d11  = -132.0 * ( fp1 - fm1 ) + 165 * ( fp2 - fm2 ) - 110 * ( fp3 - fm3 ) + 44 * ( fp4 - fm4 ) - 10 * ( fp5 - fm5 ) + ( fp6 - fm6 ) 
+    d11 /= 2*h**11
     
     return d1,d11
+
+# =============================================================================
+## calculate 1st (and optionally 13th) derivative with the given step
+#  - f'     is calculated as O(h**12)
+#  - f^(XIII) is calculated as O(h**2)
+def _h12_ ( func , x , h , der = False ) :
+    """Calculate 1st (and optionally 13th) derivative
+    - f'     is calculated as O(h**12)
+    - f^(XIII) is calculated as O(h**2)
+    """
+    
+    fm6 = func ( x - 6 * h )    
+    fm5 = func ( x - 5 * h )    
+    fm4 = func ( x - 4 * h )    
+    fm3 = func ( x - 3 * h )    
+    fm2 = func ( x - 2 * h )    
+    fm1 = func ( x - 1 * h )
+    fp1 = func ( x + 1 * h )
+    fp2 = func ( x + 2 * h )
+    fp3 = func ( x + 3 * h )
+    fp4 = func ( x + 4 * h )
+    fp5 = func ( x + 5 * h )
+    fp6 = func ( x + 6 * h )
+    
+    d1  =  23760.0 * ( fp1 - fm1 ) - 7425 * ( fp2 - fm2 ) + 2200 * ( fp3 - fm3 ) - 495 * ( fp4 - fm4 ) + 72 * ( fp5 - fm5 ) - 5 * ( fp6 - fm6 )
+    d1 /=  27720.0 * h 
+    
+    if not der : return d1
+    
+    fm7  =  func ( x - 7 * h )    
+    fp7  =  func ( x + 7 * h )
+
+    d13  = 429.0 * ( fp1 - fm1 ) - 572 * ( fp2 - fm2 ) + 429 * ( fp3 - fm3 ) - 208 * ( fp4 - fm4 ) + 65 * ( fp5 - fm5 ) - 12 * ( fp6 - fm6 ) + ( fp7 - fm7 ) 
+    d13 /= 2*h**13
+    
+    return d1,d13
+
+# =============================================================================
+## calculate 1st (and optionally 15th) derivative with the given step
+#  - f'     is calculated as O(h**14)
+#  - f^(XV) is calculated as O(h**2)
+def _h14_ ( func , x , h , der = False ) :
+    """Calculate 1st (and optionally 15th) derivative
+    - f'     is calculated as O(h**12)
+    - f^(XV) is calculated as O(h**2)
+    """
+    
+    fm7 = func ( x - 7 * h )    
+    fm6 = func ( x - 6 * h )    
+    fm5 = func ( x - 5 * h )    
+    fm4 = func ( x - 4 * h )    
+    fm3 = func ( x - 3 * h )    
+    fm2 = func ( x - 2 * h )    
+    fm1 = func ( x - 1 * h )
+    fp1 = func ( x + 1 * h )
+    fp2 = func ( x + 2 * h )
+    fp3 = func ( x + 3 * h )
+    fp4 = func ( x + 4 * h )
+    fp5 = func ( x + 5 * h )
+    fp6 = func ( x + 6 * h )
+    fp7 = func ( x + 7 * h )
+    
+    d1  = 315315.0 * ( fp1 - fm1 ) - 105105 * ( fp2 - fm2 ) + 35035 * ( fp3 - fm3 ) - 9555 * ( fp4 - fm4 ) + 1911 * ( fp5 - fm5 ) - 245 * ( fp6 - fm6 ) + 15 * ( fp7 - fm7 ) 
+    d1 /= 360360.0 * h 
+    
+    if not der : return d1
+    
+    fm8  =  func ( x - 8 * h )    
+    fp8  =  func ( x + 8 * h )
+
+    d15  = -1430.0 * ( fp1 - fm1 ) + 2002 * ( fp2 - fm2 ) - 1638 * ( fp3 - fm3 ) + 910 * ( fp4 - fm4 ) - 350 * ( fp5 - fm5 ) + 90 * ( fp6 - fm6 ) - 14 * ( fp7 - fm7 ) + ( fp8 - fm8 ) 
+    d15 /= 2*h**15
+    
+    return d1,d15
+
+# =============================================================================
+## calculate 1st (and optionally 17th) derivative with the given step
+#  - f'     is calculated as O(h**16)
+#  - f^(XVII) is calculated as O(h**2)
+def _h16_ ( func , x , h , der = False ) :
+    """Calculate 1st (and optionally 17th) derivative
+    - f'       is calculated as O(h**16)
+    - f^(XVII) is calculated as O(h**2)
+    """
+    
+    fm8 = func ( x - 8 * h )    
+    fm7 = func ( x - 7 * h )    
+    fm6 = func ( x - 6 * h )    
+    fm5 = func ( x - 5 * h )    
+    fm4 = func ( x - 4 * h )    
+    fm3 = func ( x - 3 * h )    
+    fm2 = func ( x - 2 * h )    
+    fm1 = func ( x - 1 * h )
+    fp1 = func ( x + 1 * h )
+    fp2 = func ( x + 2 * h )
+    fp3 = func ( x + 3 * h )
+    fp4 = func ( x + 4 * h )
+    fp5 = func ( x + 5 * h )
+    fp6 = func ( x + 6 * h )
+    fp7 = func ( x + 7 * h )
+    fp8 = func ( x + 8 * h )
+    
+    d1  = 640640.0 * ( fp1 - fm1 ) - 224224 * ( fp2 - fm2 ) + 81536 * ( fp3 - fm3 ) - 25480 * ( fp4 - fm4 ) + 6272 * ( fp5 - fm5 ) - 1120 * ( fp6 - fm6 ) + 128 * ( fp7 - fm7 ) - 7 * ( fp8 - fm8 ) 
+    d1 /= 720720.0 * h 
+    
+    if not der : return d1
+    
+    fm9  =  func ( x - 9 * h )    
+    fp9  =  func ( x + 9 * h )
+
+    d17  = 4862.0 * ( fp1 - fm1 ) - 7072 * ( fp2 - fm2 ) + 6188 * ( fp3 - fm3 ) - 3808 * ( fp4 - fm4 ) + 1700 * ( fp5 - fm5 ) - 544 * ( fp6 - fm6 ) + 119 * ( fp7 - fm7 ) - 16 * ( fp8 - fm8 ) + ( fp9 - fm9 )  
+    d17 /= 2*h**17
+    
+    return d1,d17
 
 # =============================================================================
 # The actual setup for
 # =============================================================================
 _funcs_ = (
-    _h2_   ,
-    _h2_   ,
-    _h4_   ,
-    _h6_   ,
-    _h8_   ,
-    _h10_ 
+    _h2_   ,  ## 0 == 1 
+    _h2_   ,  ## 1 
+    _h4_   ,  ## 2 
+    _h6_   ,  ## 3
+    _h8_   ,  ## 4 
+    _h10_  ,  ## 5 
+    _h12_  ,  ## 6
+    _h14_  ,  ## 7
+    _h16_     ## 8
     )
 _numbers_ = (
     ( 0.5*10**(-10./ 3) ,
@@ -235,12 +383,18 @@ _numbers_ = (
       0.5*10**(-10./ 5) ,
       0.5*10**(-10./ 7) ,
       0.5*10**(-10./ 9) ,
-      0.5*10**(-10./11) ) , 
-    (    6 , 4.5324e-17 , 5.1422e-6 , 6.0554e-6 ) , ## I=1, J= 3  3-point rule 
-    (   30 , 6.0903e-17 , 8.5495e-4 , 7.4009e-4 ) , ## I=2, J= 5  5-point rule 
-    (  140 , 6.9349e-17 , 7.7091e-3 , 5.8046e-4 ) , ## I=3, J= 7  7-point rule 
-    (  630 , 7.4832e-17 , 2.6237e-2 , 1.8227e-2 ) , ## I=4, J= 9  9-point rule 
-    ( 2772 , 7.8754e-17 , 5.7292e-2 , 3.7753e-2 ) , ## I=5, J=11 11-point rule 
+      0.5*10**(-10./11) , 
+      0.5*10**(-10./13) , 
+      0.5*10**(-10./15) , 
+      0.5*10**(-10./17) ) , 
+    (      6 , 4.5324e-17 , 5.1422e-6 , 6.0554e-6 ) , ## I=1, J= 3  3-point rule 
+    (     30 , 6.0903e-17 , 8.5495e-4 , 7.4009e-4 ) , ## I=2, J= 5  5-point rule 
+    (    140 , 6.9349e-17 , 7.7091e-3 , 5.8046e-4 ) , ## I=3, J= 7  7-point rule 
+    (    630 , 7.4832e-17 , 2.6237e-2 , 1.8227e-2 ) , ## I=4, J= 9  9-point rule 
+    (   2772 , 7.8754e-17 , 5.7292e-2 , 3.7753e-2 ) , ## I=5, J=11 11-point rule 
+    (  12012 , 8.1738e-17 , 9.8468e-2 , 6.2500e-2 ) , ## I=6, J=13 13-point rule 
+    (  51480 , 8.4108e-17 , 1.4656e-1 , 9.0454e-1 ) , ## I=7, J=15 15-point rule 
+    ( 218790 , 8.6047e-17 , 1.9873e-1 , 1.2000e-1 ) , ## I=8, J=17 17-point rule 
     )
 # =============================================================================
 ## Calculate the first derivative for the function
@@ -270,7 +424,7 @@ def derivative ( fun , x , h = 0  , I = 2 , err = False ) :
     f0 = func(x)
 
     ## adjust the rule 
-    I  = min ( max ( I , 1 ) , 5 )
+    I  = min ( max ( I , 1 ) , 8 )
     J  = 2 * I + 1
     
     _dfun_ = _funcs_[I]
@@ -856,28 +1010,28 @@ class Kurtosis(Skewness) :
 
 
 # =============================================================================
-## @class Mediane 
-#  Calculate the mediane for the distribution or function  
+## @class Median 
+#  Calculate the median for the distribution or function  
 #  @code
 #  xmin,xmax = 0,math.pi 
-#  mediane   = Mediane ( xmin,xmax )  ## specify min/max
-#  value     = mediane ( math.sin  )
+#  median    = Median ( xmin,xmax )  ## specify min/max
+#  value     = median ( math.sin  )
 #  @endcode 
 #  @see https://en.wikipedia.org/wiki/Median#Inequality_relating_means_and_medians
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2015-07-12
-class Mediane(RMS) :
+class Median(RMS) :
     """
-    Calculate mediane for the distribution or function  
+    Calculate median for the distribution or function  
     >>> xmin,xmax = 0,math.pi 
-    >>> mediane   = Mediane ( xmin,xmax )  ## specify min/max
-    >>> value     = mediane ( math.sin  )
+    >>> median    = Median ( xmin,xmax )  ## specify min/max
+    >>> value     = median ( math.sin  )
     """
     def __init__ ( self , xmin , xmax ) :
         RMS.__init__ ( self , xmin , xmax , err = False )
 
-    ## calculate he mediane
-    def _mediane_ ( self , func , xmin , xmax , *args ) :
+    ## calculate he median
+    def _median_ ( self , func , xmin , xmax , *args ) :
         ## need to know the integral
         iint   = IntegralCache ( func ,  xmin , False , *args )
         half   = 2.0 / iint    ( xmax ) 
@@ -903,12 +1057,12 @@ class Mediane(RMS) :
         return result
 
         
-    ## calculate the mediane 
+    ## calculate the median 
     def __call__ ( self , func , *args ) :
-        return self._mediane_ ( func , self._xmin , self._xmax )
+        return self._median_ ( func , self._xmin , self._xmax )
 
     def __str__ ( self ) :
-        return "Mediane(%s,%s)" % ( self._xmin , self._xmax )
+        return "Median(%s,%s)" % ( self._xmin , self._xmax )
     
 # =============================================================================
 ## get the quantile
@@ -920,15 +1074,15 @@ class Mediane(RMS) :
 #  @endcode 
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2015-07-12
-class Quantile(Mediane) :
+class Quantile(Median) :
     """
-    Calculate mediane for the distribution or function  
+    Calculate quantiles for the distribution or function  
     >>> xmin,xmax = 0,math.pi 
     >>> quantile  = Quantile ( 0.1 , xmin,xmax )  ## specify min/max
     >>> value     = quantile ( math.sin  )
     """
     def __init__ ( self , Q , xmin , xmax ) :
-        Mediane.__init__ ( self , xmin , xmax )
+        Median.__init__ ( self , xmin , xmax )
         #
         if Q < 0 : raise ArrtibuteError ( 'Quantile is invalid %s' % Q )
         if Q > 1 : raise ArrtibuteError ( 'Quantile is invalid %s' % Q )
@@ -937,11 +1091,11 @@ class Quantile(Mediane) :
     def __str__ ( self ) :
         return "Quantile(%s,%s,%s)" % ( self._Q , self._xmin , self._xmax )
 
-    ## calculate the mediane 
+    ## calculate the median 
     def __call__ ( self , func , *args ) :
         ##
 
-        if    0.5 == self._Q : return Mediane.__call__ ( self , func , *args ) 
+        if    0.5 == self._Q : return Median.__call__ ( self , func , *args ) 
         elif  0.0 == self._Q : return self._xmin
         elif  1.0 == self._Q : return self._xmax
 
@@ -962,7 +1116,7 @@ class Quantile(Mediane) :
         while ( not isinstance ( xmn , float ) ) or ( not isinstance ( xmx , float ) ) or l>0.1 :   
         
             l /= 2            
-            m = self._mediane_ ( func , xmn , xmx , *args ) 
+            m = self._median_ ( func , xmn , xmx , *args ) 
             
             if   self._Q < p :
                 xmn   = xmn 
@@ -990,7 +1144,7 @@ class Quantile(Mediane) :
 #  @endcode 
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date   2015-07-12
-class Mode(Mediane) :
+class Mode(Median) :
     """
     Calculate the mode for the distribution or function  
     >>> xmin,xmax = 0,math.pi 
@@ -998,33 +1152,84 @@ class Mode(Mediane) :
     >>> value     = mode ( math.sin  )
     """
     def __init__ ( self , xmin , xmax ) :
-        Mediane.__init__ ( self , xmin , xmax )
+        Median.__init__ ( self , xmin , xmax )
         
     ## calculate the mode 
     def __call__ ( self , func , *args ) :
         ##
         
-        ## use mean    as intial aprpoximation for mode 
+        ## use mean    as intial approximation for mode 
         m1     = Mean   .__call__ ( self , func , *args )
         
-        ## use mediane as intial aprpoximation for mode 
-        ## m2     = Mediane.__call__ ( self , func , *args )
+        ## use median as intial approximation for mode 
+        ## m2     = Median.__call__ ( self , func , *args )
         
-        ## use the point intermediate between mean and mediane as approximation 
+        ## use the point intermediate between mean and median as approximation 
         ## m0     = 0.5 * ( m1 + m2 )
 
         m0 = m1 
+        ifun = lambda x,*a : -1.0 * float( func ( x , *a ) )
+        
         from scipy import optimize
-        result = optimize.minimize ( 
-            lambda x : -1 * float (func ( x ) )   , 
-            x0     = float ( m0 )                 ,
-            bounds = [ (self._xmin , self._xmax)] ,
+        result = optimize.minimize (
+            ifun                                   , 
+            x0     = float ( m0 )                  ,
+            bounds = [ (self._xmin , self._xmax) ] ,
             args   = args )
         
         return result.x[0]
     
     def __str__ ( self ) :
         return "Mode(%s,%s)" % ( self._xmin , self._xmax )
+
+# =============================================================================
+## @class Width
+#  Calculate the full width at half heigh for the distribution or function  
+#  @code
+#  xmin,xmax = 0,math.pi 
+#  width     = Width ( xmin,xmax )  ## specify min/max
+#  x1,x2     = width ( math.sin  )
+#  fwhm      = x2-x1
+#  @endcode 
+#  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+#  @date   2015-07-12
+class Width(Mode) :
+    """
+    Calculate the mode for the distribution or function  
+    >>> xmin,xmax = 0,math.pi 
+    >>> width     = Width ( xmin,xmax )  ## specify min/max
+    >>> x1,x2     = width ( math.sin )
+    >>> fwhm      = x2-x1
+    """
+    def __init__ ( self , xmin , xmax , height_factor = 0.5 ) :
+        Mode.__init__ ( self , xmin , xmax )
+        self._hfactor = height_factor
+        
+    ## calculate the width
+    def __call__ ( self , func , *args ) :
+        ##
+
+        ## get the position of the mode
+        m0  = Mode.__call__ ( self , func , *args )
+
+        ## function  value at the maximum
+        v0      = func ( m0 , *args )
+
+        ## half height 
+        vheight = 1.0 * v0 * self._hfactor
+
+        
+        ## use scipy to find solution 
+        from scipy import optimize        
+        ifun = lambda x,*a : float(func (x,*a))-vheight
+        x1 = optimize.brentq ( ifun , self._xmin , m0         , args = args )
+        x2 = optimize.brentq ( ifun , m0         , self._xmax , args = args ) 
+        
+        return x1,x2
+
+    def __str__ ( self ) :
+        return "Width(%s,%s,%s)" % ( self._xmin , self._xmax , self._hfactor)
+    
 
 # =============================================================================
 ## @class CL_symm
@@ -1285,8 +1490,7 @@ def sp_action ( func , actor , xmin = None , xmax = None ) :
 # @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 # @date 2015-07-11
 def moment ( func , N , xmin = None , xmax = None , err = False , x0 = 0 ) :
-    """
-    Get the moment for the distribution using scipy/numpy
+    """ Get the moment for the distribution using scipy/numpy
     >>> fun  = ...
     >>> mom5 = moment ( fun , 5 , xmin = 10 , xmax = 50 )
     """
@@ -1303,8 +1507,7 @@ def moment ( func , N , xmin = None , xmax = None , err = False , x0 = 0 ) :
 # @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 # @date 2015-07-11
 def central_moment ( func , N , xmin = None , xmax = None , err = False ) :
-    """
-    Get the central moment for the distribution using scipy/numpy
+    """Get the central moment for the distribution using scipy/numpy
     >>> fun  = ...
     >>> mom5 = central_moment ( fun , 5 , xmin = 10 , xmax = 50 )
     """
@@ -1321,8 +1524,7 @@ def central_moment ( func , N , xmin = None , xmax = None , err = False ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def mean ( func , xmin = None , xmax = None , err = False ) :
-    """
-    Get the mean-value for the distribution using scipy/numpy
+    """Get the mean-value for the distribution using scipy/numpy
     >>> fun = ...
     >>> m   = mean( fun , xmin = 10 , xmax = 50 )
     """
@@ -1340,8 +1542,7 @@ def mean ( func , xmin = None , xmax = None , err = False ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def variance ( func , xmin = None , xmax = None , err = False ) :
-    """
-    Get the variance for the distribution using scipy/numpy
+    """Get the variance for the distribution using scipy/numpy
     >>> fun = ...
     >>> v   = variance( fun , xmin = 10 , xmax = 50 )
     """
@@ -1360,8 +1561,7 @@ def variance ( func , xmin = None , xmax = None , err = False ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def rms ( func , xmin = None , xmax = None , err = False ) :
-    """
-    Get RMS for the distribution using scipy/numpy
+    """Get RMS for the distribution using scipy/numpy
     >>> fun = ...
     >>> v   = rms( fun , xmin = 10 , xmax = 50 )
     """
@@ -1380,8 +1580,7 @@ def rms ( func , xmin = None , xmax = None , err = False ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def skewness ( func , xmin = None , xmax = None , err = False ) :
-    """
-    Get the skewness for the distribution using scipy/numpy
+    """Get the skewness for the distribution using scipy/numpy
     >>> fun = ...
     >>> v   = skewness ( fun , xmin = -10 , xmax = 10 )
     """
@@ -1402,8 +1601,7 @@ def skewness ( func , xmin = None , xmax = None , err = False ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def kurtosis ( func , xmin = None , xmax = None , err = False ) :
-    """
-    Get the (exessive) kurtosis for the distribution using scipy/numpy
+    """Get the (exessive) kurtosis for the distribution using scipy/numpy
     >>> fun  = ...
     >>> kurt = kurtosis ( fun , xmin = 10 , xmax = 50 )
     """
@@ -1414,21 +1612,20 @@ def kurtosis ( func , xmin = None , xmax = None , err = False ) :
     return sp_action ( func , actor  , xmin , xmax )
 
 # =============================================================================
-## get the mediane the variable, considering function to be PDF 
+## get the median the variable, considering function to be PDF 
 #  @code 
 #  >>> fun = ...
-#  >>> med = mediane( fun , xmin = 10 , xmax = 50 )
+#  >>> med = median ( fun , xmin = 10 , xmax = 50 )
 #  @endcode
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
-def mediane ( func , xmin = None , xmax = None ) :
-    """
-    Get the mediane for the distribution using scipy/numpy
+def median ( func , xmin = None , xmax = None ) :
+    """Get the median for the distribution using scipy/numpy
     >>> fun = ...
-    >>> v   = mediane( fun , xmin = 10 , xmax = 50 )
+    >>> v   = median( fun , xmin = 10 , xmax = 50 )
     """
     ## get the functions from LHCbMath.deriv 
-    actor = lambda x1,x2 : Mediane ( x1 , x2 ) 
+    actor = lambda x1,x2 : Median ( x1 , x2 ) 
     ##
     return sp_action ( func , actor , xmin , xmax )
 
@@ -1441,8 +1638,7 @@ def mediane ( func , xmin = None , xmax = None ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def quantile ( func , Q , xmin = None , xmax = None , err = False , x0 = 0 ) :
-    """
-    Get quantile for the distribution using scipy/numpy
+    """Get quantile for the distribution using scipy/numpy
     >>> fun  = ...
     >>> quan = quantile ( fun , 0.1 , xmin = 10 , xmax = 50 )
     """
@@ -1459,8 +1655,7 @@ def quantile ( func , Q , xmin = None , xmax = None , err = False , x0 = 0 ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-07-11
 def mode ( func , xmin = None , xmax = None ) :
-    """
-    Get the mode for the distribution using scipy/numpy
+    """Get the mode for the distribution using scipy/numpy
     >>> fun = ...
     >>> v   = mode( fun ,  xmin = 10 , xmax = 50 )
     """
@@ -1468,6 +1663,27 @@ def mode ( func , xmin = None , xmax = None ) :
     ## use it! 
     ## get the functions from LHCbMath.deriv 
     actor = lambda x1,x2 : Mode  ( x1 , x2 ) 
+    return sp_action ( func , actor , xmin , xmax )
+
+# =============================================================================
+## get the width, considering function to be PDF 
+#  @code 
+#  >>> fun   = ...
+#  >>> x1,x2 = width( fun ,  xmin = 10 , xmax = 50 )
+#  >>> fwhm  = x2-x1
+#  @endcode
+#  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+#  @date 2015-07-11
+def width ( func , xmin = None , xmax = None , height_factor = 0.5 ) :
+    """ Get the width for the distribution using scipy/numpy
+    >>> fun   = ...
+    >>> x1,x2 = width ( fun ,  xmin = 10 , xmax = 50 )
+    >>> fwhm  = x2-x1   
+    """
+    ## get the functions from LHCbMath.deriv 
+    ## use it! 
+    ## get the functions from LHCbMath.deriv
+    actor = lambda x1,x2 : Width  ( x1 , x2 , height_factor ) 
     return sp_action ( func , actor , xmin , xmax )
 
 # =============================================================================
@@ -1482,7 +1698,7 @@ def mode ( func , xmin = None , xmax = None ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-08-03
 def cl_symm ( func , prob , xmin = None , xmax = None , x0 = None ) :
-    """
+    """ Symmetric confidence interval around x0    
     >>> fun  = lambda x : exp( - 0.5 * x * x )
     >>> x_1  = cl_symm ( fun , 0.68 , -10 , 10 )
     >>> print x_1 
@@ -1495,7 +1711,7 @@ def cl_symm ( func , prob , xmin = None , xmax = None , x0 = None ) :
     return sp_action ( func , actor , xmin , xmax )
 
 # =============================================================================
-## get the symmetric confidence interval around x0 for (xmin,xmax) interval 
+## get the asymmetric confidence interval around x0 for (xmin,xmax) interval 
 #  @code 
 #  fun  = lambda x : exp( - 0.5 * x * x ) 
 #  x_1,x_2  = cl_asymm ( fun , 0.68 , -10 , 10 )
@@ -1504,7 +1720,7 @@ def cl_symm ( func , prob , xmin = None , xmax = None , x0 = None ) :
 #  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
 #  @date 2015-08-03
 def cl_asymm ( func , prob , xmin = None , xmax = None ) :
-    """
+    """Asymmetric confidence interval around x0    
     >>> fun  = lambda x : exp( - 0.5 * x * x )
     >>> x_1,x_2  = cl_asymm ( fun , 0.68 , -10 , 10 )
     >>> print x_1,x_2 
@@ -1595,11 +1811,17 @@ if '__main__' == __name__ :
     var2 = Variance (0, math.pi)
     print 'sin@[0,pi]            variance: %s ' % var2 (math.sin) 
 
-    med  = Mediane  (0, math.pi)
-    print 'sin@[0,pi]             mediane: %s ' % med  (math.sin) 
+    med  = Median   (0, math.pi)
+    print 'sin@[0,pi]              median: %s ' % med  (math.sin) 
 
     mode_ = Mode     (0, math.pi)
     print 'sin@[0,pi]                mode: %s ' % mode_ (math.sin) 
+
+    def fwhm ( fun ) :
+        _w    =   Width   (0, math.pi)
+        x1,x2 = _w ( fun )
+        return x2-x1
+    print 'sin@[0,pi]                fwhm: %s ' % fwhm (math.sin) 
 
     rms_ = RMS     (0, math.pi)
     print 'sin@[0,pi]                 rms: %s ' % rms_  (math.sin) 

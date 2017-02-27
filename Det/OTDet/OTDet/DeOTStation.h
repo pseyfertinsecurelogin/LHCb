@@ -1,4 +1,3 @@
-// $Id: DeOTStation.h,v 1.12 2007-07-23 09:59:04 cattanem Exp $
 #ifndef OTDET_DEOTSTATION_H
 #define OTDET_DEOTSTATION_H 1
 
@@ -19,7 +18,7 @@
  *
  *  This is the detector element class for a Outer Tracker Station.
  *
- *  @author Jeroen van Tilburg jtilburg@nikhef.nl 
+ *  @author Jeroen van Tilburg jtilburg@nikhef.nl
  *  @date   04-04-2003
  */
 
@@ -28,41 +27,38 @@ static const CLID CLID_DeOTStation = 8102;
 class DeOTStation : public DetectorElement {
 
  public:
-  
+
   /** Some typedefs */
   typedef std::vector<DeOTStation*> Container;
   typedef std::vector<DeOTLayer*> Layers;
 
   /** Constructor */
   DeOTStation(const std::string& name = "") ;
-  
-  /** Destructor */
-  ~DeOTStation() = default;
-  
+
   /** Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const ;
-  
+  const CLID& clID() const  override;
+
   /** Another reference to class identifier
    * @return the class identifier for this class
    */
   static const CLID& classID() { return CLID_DeOTStation; };
-    
-  /** Initialization method 
+
+  /** Initialization method
    * @return Status of initialisation
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /** @return stationID */
   unsigned int stationID() const;
-  
+
   /** Element id */
   LHCb::OTChannelID elementID() const;
-  
+
   /** Set element id */
   void setElementID(const LHCb::OTChannelID& chanID);
-  
+
   /** Check contains channel
    *  @param  aChannel The channel to check
    *  @return bool
@@ -97,7 +93,7 @@ class DeOTStation : public DetectorElement {
    * @return vector of layers
    */
   const Layers& layers() const;
-  
+
  private:
   /// 4 layers; starting from 0
   typedef OT::IndexToDetElementMap<DeOTLayer, 4, 0> MapLayers;
@@ -130,11 +126,11 @@ inline bool DeOTStation::contains(const LHCb::OTChannelID aChannel) const {
 
 /// Find layer methods
 inline const DeOTLayer* DeOTStation::findLayer(const LHCb::OTChannelID& aChannel) const {
-  return m_mapLayers[aChannel.layer()]; 
+  return m_mapLayers[aChannel.layer()];
 }
 
 inline DeOTLayer* DeOTStation::findLayer(const LHCb::OTChannelID& aChannel) {
-  return m_mapLayers[aChannel.layer()]; 
+  return m_mapLayers[aChannel.layer()];
 }
 
 inline DeOTLayer* DeOTStation::findLayer(const Gaudi::XYZPoint& aPoint) {

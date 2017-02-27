@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -45,7 +44,7 @@ namespace
     }
   }
   // ==========================================================================
-  struct NotPid : public std::unary_function<const LHCb::MCParticle*,bool>
+  struct NotPid
   {
     /// constructor 
     NotPid ( const Decays::Nodes::Pid& pid ) : m_pid ( pid ) {}
@@ -76,7 +75,7 @@ namespace
   /// the helper object tfor comparison 
   typedef Decays::Trees::CheckTree<const LHCb::MCParticle*> Equal ;  
   // ==========================================================================
-  struct _Pid :  public std::unary_function<const LHCb::MCParticle*,bool>
+  struct _Pid
   {
     /// constructor 
     _Pid ( const Decays::Nodes::Pid& pid ) : m_pid ( pid ) {}
@@ -245,12 +244,9 @@ bool Decays::Trees::MCExclusive::marked() const
 bool Decays::Trees::MCExclusive::operator() 
   ( Decays::iTree_<const LHCb::MCParticle*>::argument p ) const
 {
-  if ( p_match(p) ) {
-    return true ;
-  } else {
-    reset() ; // cache should be empty when not matching
-    return false ;
-  }
+  if ( p_match(p) ) { return true ; }
+  reset () ; // cache should be empty when not matching
+  return false ;
 }
 // ============================================================================
 // MANDATORY: actual implementation of operator()
@@ -439,11 +435,12 @@ bool Decays::Trees::MCInclusive::p_match
   // (0) treat specifically the special case 
   
   // Only one inclusive particle and look through the whole tree
+
   if ( 1 == nChildren () )
   {
     LHCb::MCParticle::ConstVector d ;
     LoKi::MCChild::daughters ( p , d , decayOnly () ) ;
-    // in tree 
+    // in trees 
     if ( Decays::Trees::Sections == alg() ) 
     {
       return LoKi::MCAlgs::found 
@@ -594,6 +591,16 @@ bool Decays::Trees::MCOptional::valid() const
 {
   return MCExclusive::valid() && 0 != nChildren() && 0 != nOptional() && 
     Decays::valid ( optBegin( ), optEnd() ) ;
+}
+// ============================================================================
+// reset the collection cache
+// ============================================================================
+void Decays::Trees::MCOptional::reset() const 
+{
+  Decays::Trees::MCExclusive::i_reset () ; 
+  std::for_each
+    ( optBegin() , optEnd() ,
+      std::mem_fun_ref (&_Tree_<PARTICLE>::reset) ) ;
 }
 // ============================================================================
 // MANDATORY: the proper validation of the tree

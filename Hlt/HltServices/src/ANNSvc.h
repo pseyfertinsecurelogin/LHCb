@@ -1,4 +1,3 @@
-// $Id: ANNSvc.h,v 1.1 2010-05-05 13:20:43 graven Exp $
 #ifndef ANNSVC_H  
 #define ANNSVC_H 1
 
@@ -48,11 +47,7 @@ protected:
   virtual boost::optional<minor_value_type> handleUndefined(const major_key_type& major, int minor) const;
   virtual boost::optional<minor_value_type> handleUndefined(const major_key_type& major, const std::string& minor) const;
 
-  MsgStream& log() const { return m_log; }
-
-
 private:
-  mutable MsgStream m_log;
   
   typedef ANNSvcUtilities::bimap_t<minor_key_type, minor_mapped_type> bimap_type;
   typedef GaudiUtils::VectorMap< major_key_type, bimap_type* > maps_type;

@@ -48,7 +48,7 @@ StatusCode RawBufferToSmartIDsTool::initialize()
   // cached variables
   m_taeKey = taeKey(m_rawEventLocs);
 
-  if ( msgLevel(MSG::DEBUG) ) debug() << "RawEvent TAEs : " << m_rawEventLocs << endmsg;
+  _ri_debug << "RawEvent TAEs : " << m_rawEventLocs << endmsg;
 
   return sc;
 }
@@ -65,23 +65,23 @@ void RawBufferToSmartIDsTool::handle ( const Incident& /* incident */ )
 
 const LHCb::RichSmartID::Vector&
 RawBufferToSmartIDsTool::richSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs,
-                                       const LHCb::RichSmartID hpdID,
+                                       const LHCb::RichSmartID pdID,
                                        const bool createIfMissing ) const
 {
   // get the full data structure
-  const Rich::DAQ::L1Map & data = allRichSmartIDs(taeLocs);
+  const auto & data = allRichSmartIDs(taeLocs);
   // find the data vector
-  return richSmartIDs( hpdID, data, createIfMissing );
+  return richSmartIDs( pdID, data, createIfMissing );
 }
 
 const LHCb::RichSmartID::Vector&
-RawBufferToSmartIDsTool::richSmartIDs( const LHCb::RichSmartID hpdID,
+RawBufferToSmartIDsTool::richSmartIDs( const LHCb::RichSmartID pdID,
                                        const bool createIfMissing ) const
 {
   // get the full data structure
-  const Rich::DAQ::L1Map & data = allRichSmartIDs();
+  const auto & data = allRichSmartIDs();
   // find the data vector
-  return richSmartIDs( hpdID, data, createIfMissing );
+  return richSmartIDs( pdID, data, createIfMissing );
 }
 
 const LHCb::RichSmartID::Vector & RawBufferToSmartIDsTool::dummyVector() const
@@ -92,13 +92,13 @@ const LHCb::RichSmartID::Vector & RawBufferToSmartIDsTool::dummyVector() const
 }
 
 const LHCb::RichSmartID::Vector&
-RawBufferToSmartIDsTool::richSmartIDs( const LHCb::RichSmartID hpdID,
+RawBufferToSmartIDsTool::richSmartIDs( const LHCb::RichSmartID pdID,
                                        const Rich::DAQ::L1Map & data,
                                        const bool createIfMissing ) const
 {
   // find the data for the requested HPD ...
 
-  const LHCb::RichSmartID::Vector * found_data = NULL;
+  const LHCb::RichSmartID::Vector * found_data = nullptr;
 
   // First seach in a read-only way
 
@@ -115,9 +115,9 @@ RawBufferToSmartIDsTool::richSmartIDs( const LHCb::RichSmartID hpdID,
     {
       // Find HPDInfo for given hpd ?
       // Loop over HPDs in this ingress
-      for ( const auto& HPD : In.second.hpdData() )
+      for ( const auto& HPD : In.second.pdData() )
       {
-        if ( hpdID == HPD.second.hpdID() )
+        if ( pdID == HPD.second.pdID() )
         {
           found_data = &(HPD.second.smartIDs());
           break;
@@ -132,24 +132,24 @@ RawBufferToSmartIDsTool::richSmartIDs( const LHCb::RichSmartID hpdID,
   if ( !found_data && createIfMissing )
   {
     // Get some L1 information for this HPD from the DB
-    const Rich::DAQ::Level1HardwareID l1HID   = m_richSys->level1HardwareID(hpdID);
-    const Rich::DAQ::Level1Input      l1Input = m_richSys->level1InputNum(hpdID);
+    const auto l1HID   = m_richSys->level1HardwareID(pdID);
+    const auto l1Input = m_richSys->level1InputNum(pdID);
 
     // require non-const access to L1 Map
-    Rich::DAQ::L1Map & l1Map = *(const_cast<Rich::DAQ::L1Map*>(&data));
-    Rich::DAQ::IngressMap & ingressMap   = l1Map[l1HID];
-    Rich::DAQ::IngressInfo & ingressInfo = ingressMap[l1Input.ingressID()];
-    Rich::DAQ::HPDInfo & hpdInfo = ingressInfo.hpdData()[l1Input];
+    auto & l1Map = *(const_cast<Rich::DAQ::L1Map*>(&data));
+    auto & ingressMap   = l1Map[l1HID];
+    auto & ingressInfo = ingressMap[l1Input.ingressID()];
+    auto & hpdInfo = ingressInfo.pdData()[l1Input];
 
-    // check HPDID is invalid (should be as not set so far ....)
-    if ( hpdInfo.hpdID().isValid()   ) { Error( "HPDID already set ...." ).ignore();     }
+    // check PDID is invalid (should be as not set so far ....)
+    if ( hpdInfo.pdID().isValid()    ) { Error( "PDID already set ...." ).ignore();     }
     // check hit vector is empty
     if ( !hpdInfo.smartIDs().empty() ) { Error( "Hit list is not empty ...." ).ignore(); }
 
     // Set some information
-    hpdInfo.setHpdID(hpdID);
+    hpdInfo.setPdID(pdID);
     // Set what we can in the header / footer
-    //hpdInfo.header().setL0ID(m_richSys->level0ID(hpdID));
+    //hpdInfo.header().setL0ID(m_richSys->level0ID(pdID));
 
     // set found data pointer
     found_data = &(hpdInfo.smartIDs());
@@ -163,7 +163,7 @@ const Rich::DAQ::L1Map &
 RawBufferToSmartIDsTool::
 allRichSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs ) const
 {
-  Rich::DAQ::L1Map & data = m_richDataTAE[ taeKey(taeLocs) ];
+  auto & data = m_richDataTAE[ taeKey(taeLocs) ];
   if ( data.empty() )
   {
     // Use raw format tool to decode event
@@ -174,7 +174,7 @@ allRichSmartIDs( const IRawBufferToSmartIDsTool::RawEventLocations& taeLocs ) co
 
 const Rich::DAQ::L1Map & RawBufferToSmartIDsTool::allRichSmartIDs() const
 {
-  Rich::DAQ::L1Map & data = m_richDataTAE[ m_taeKey ];
+  auto & data = m_richDataTAE[ m_taeKey ];
   if ( data.empty() )
   {
     // Use raw format tool to decode event
@@ -219,12 +219,12 @@ RawBufferToSmartIDsTool::countTotalHits( const Rich::DAQ::L1Map & data,
         for ( const auto& In : L1.second )
         {
           // Loop over HPDs in this ingress
-          for ( const auto& HPD : In.second.hpdData() )
+          for ( const auto& HPD : In.second.pdData() )
           {
             // skip inhibited HPDs ?
             if ( HPD.second.header().inhibit() ) { continue; }
             // Is the smart ID valid ?
-            if ( !HPD.second.hpdID().isValid() ) { continue; }
+            if ( !HPD.second.pdID().isValid() )  { continue; }
             // all OK so count hits
             nHits += HPD.second.smartIDs().size();
           }

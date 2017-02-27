@@ -1,5 +1,3 @@
-// $Id$ 
-// ============================================================================
 #ifndef LHCbKernel_ParticleID_H
 #define LHCbKernel_ParticleID_H 1
 // ============================================================================
@@ -8,6 +6,7 @@
 #include <iosfwd>
 #include <string>
 #include <cmath>
+#include <tuple>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -29,7 +28,7 @@ namespace LHCb
    * @author Gloria Corti
    * created Mon Dec  1 12:25:08 2008
    */
-  class GAUDI_API ParticleID
+  class GAUDI_API ParticleID final
   {
   public:
     // ========================================================================
@@ -63,9 +62,7 @@ namespace LHCb
     /// Copy Constructor
     ParticleID(const ParticleID& orig) : m_pid ( orig.m_pid ) {}
     /// Default Constructor
-    ParticleID() : m_pid(0) {}
-    /// Default Destructor
-    ~ParticleID() {}
+    ParticleID() = default;
     // ========================================================================
   public:
     // ========================================================================
@@ -84,9 +81,7 @@ namespace LHCb
     {
       const unsigned int i1 = abspid()       ;
       const unsigned int i2 = other.abspid() ; 
-      return 
-        i1 < i2 ? true  : 
-        i2 < i1 ? false : m_pid < other.m_pid ;
+      return std::tie( i1, m_pid ) < std::tie( i2, other.m_pid );
     }
     // ========================================================================
   public:
@@ -198,7 +193,7 @@ namespace LHCb
   private:
     // ========================================================================
     /// PDG Code 
-    int m_pid; // PDG code
+    int m_pid = 0; // PDG code
     // ========================================================================
   }; // class ParticleID
   // ==========================================================================

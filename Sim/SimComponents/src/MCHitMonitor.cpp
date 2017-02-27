@@ -38,7 +38,7 @@ DECLARE_ALGORITHM_FACTORY( MCHitMonitor )
 
 MCHitMonitor::MCHitMonitor(const std::string& name,
 		     ISvcLocator* pSvcLocator):
-  GaudiHistoAlg(name, pSvcLocator), m_selector(0)
+  GaudiHistoAlg(name, pSvcLocator)
 {
   /// MCHitMonitor constructor
   this->declareProperty("mcPathString", m_MCHitPath="");
@@ -54,11 +54,6 @@ MCHitMonitor::MCHitMonitor(const std::string& name,
   this->declareProperty("minPathLength", m_minPathLength = 0.1*Gaudi::Units::mm); 
   this->declareProperty("nToCollect", m_nToCollect = 20000);
 
-}
-
-MCHitMonitor::~MCHitMonitor()
-{
-  /// destructor
 }
 
 StatusCode MCHitMonitor::initialize()
@@ -86,8 +81,8 @@ void MCHitMonitor::initHistograms()
   std::string tPath = this->histoPath()+"/"; 
   
  // make histograms per stations
- IHistogram1D* aHisto1D = 0;
- IHistogram2D* aHisto2D = 0;
+ IHistogram1D* aHisto1D = nullptr;
+ IHistogram2D* aHisto2D = nullptr;
 
  int nStation = m_Zstations.size();
  for (int iStation = 0 ;iStation<nStation; ++iStation){
@@ -113,7 +108,6 @@ void MCHitMonitor::initHistograms()
 
  }//loop stations
 
- return;
 }
  
 StatusCode MCHitMonitor::execute()
@@ -126,10 +120,7 @@ StatusCode MCHitMonitor::execute()
   counter("numberHits") += hitsCont->size();
 
   // loop over hits fill some histograms
-  LHCb::MCHits::const_iterator iHit = hitsCont->begin() ;
-  for ( ; iHit != hitsCont->end(); ++iHit ) {
-    fillHistograms(*iHit).ignore();
-  } // loop hits
+  for (const auto& ihit : *hitsCont) fillHistograms(ihit).ignore();
 
   return StatusCode::SUCCESS;
 }

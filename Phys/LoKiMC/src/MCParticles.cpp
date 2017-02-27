@@ -1,10 +1,10 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
 // STD &STL
 // ============================================================================
 #include <algorithm>
+#include <functional>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -52,7 +52,7 @@ LoKi::MCParticles::Momentum::result_type
 LoKi::MCParticles::Momentum::operator() 
   ( LoKi::MCParticles::Momentum::argument p ) const
 {
-  if ( 0 != p ) { return p -> momentum ().P() ; }    // RETURN 
+  if ( p ) { return p -> momentum ().P() ; }    // RETURN 
   Error (" Invalid Particle, return 'InvalidMomenum'") ;
   return LoKi::Constants::InvalidMomentum;                   // RETURN 
 }
@@ -69,7 +69,7 @@ LoKi::MCParticles::Energy::result_type
 LoKi::MCParticles::Energy::operator() 
   ( LoKi::MCParticles::Energy::argument p ) const
 {
-  if ( 0 != p ) { return p -> momentum () .e ()  ; }          // RETURN 
+  if ( p ) { return p -> momentum () .e ()  ; }          // RETURN 
   Error (" Invalid Particle, return 'InvalidEnergy'") ;
   return LoKi::Constants::InvalidEnergy;                     // RETURN 
 }
@@ -86,7 +86,7 @@ LoKi::MCParticles::Oscillated::result_type
 LoKi::MCParticles::Oscillated::operator() 
   ( LoKi::MCParticles::Oscillated::argument p ) const
 {
-  if ( 0 != p ) { return p -> hasOscillated() ; }          // RETURN 
+  if ( p ) { return p -> hasOscillated() ; }          // RETURN 
   Error (" Invalid Particle, return 'false'") ;
   return false ;                     // RETURN 
 }
@@ -103,7 +103,7 @@ LoKi::MCParticles::TransverseMomentum::result_type
 LoKi::MCParticles::TransverseMomentum::operator() 
   ( LoKi::MCParticles::TransverseMomentum::argument p ) const
 {
-  if ( 0 != p ) { return p -> momentum().Pt() ; }           // RETURN 
+  if ( p ) { return p -> momentum().Pt() ; }           // RETURN 
   Error(" Invalid Particle, return 'InvalidMomentum'") ;
   return LoKi::Constants::InvalidMomentum;                   // RETURN 
 }
@@ -121,7 +121,7 @@ LoKi::MCParticles::MomentumX::result_type
 LoKi::MCParticles::MomentumX::operator() 
   ( LoKi::MCParticles::MomentumX::argument p ) const
 {
-  if( 0 != p ) { return p -> momentum () . px () ; }    // RETURN 
+  if( p ) { return p -> momentum () . px () ; }    // RETURN 
   Error(" Invalid Particle, return 'InvalidMomenum'") ;
   return LoKi::Constants::InvalidMomentum;                   // RETURN 
 }
@@ -139,7 +139,7 @@ LoKi::MCParticles::MomentumY::result_type
 LoKi::MCParticles::MomentumY::operator() 
   ( LoKi::MCParticles::MomentumY::argument p ) const
 {
-  if( 0 != p ) { return p -> momentum () . py () ; }    // RETURN 
+  if( p ) { return p -> momentum () . py () ; }    // RETURN 
   Error(" Invalid Particle, return 'InvalidMomenum'") ;
   return LoKi::Constants::InvalidMomentum;                   // RETURN 
 }
@@ -157,7 +157,7 @@ LoKi::MCParticles::MomentumZ::result_type
 LoKi::MCParticles::MomentumZ::operator() 
   ( LoKi::MCParticles::MomentumZ::argument p ) const
 {
-  if( 0 != p ) { return p -> momentum () . pz () ; }    // RETURN 
+  if( p ) { return p -> momentum () . pz () ; }    // RETURN 
   Error(" Invalid Particle, return 'InvalidMomenum'") ;
   return LoKi::Constants::InvalidMomentum;                   // RETURN 
 }
@@ -175,7 +175,7 @@ LoKi::MCParticles::PseudoRapidity::result_type
 LoKi::MCParticles::PseudoRapidity::operator() 
   ( LoKi::MCParticles::PseudoRapidity::argument p ) const
 {
-  if( 0 != p ) { return eta ( p ) ; }    // RETURN 
+  if( p ) { return eta ( p ) ; }    // RETURN 
   Error(" Invalid Particle, return 'InvalidMomenum'") ;
   return LoKi::Constants::InvalidMomentum;                   // RETURN 
 }
@@ -217,7 +217,7 @@ LoKi::MCParticles::Rapidity::result_type
 LoKi::MCParticles::Rapidity::operator() 
   ( LoKi::MCParticles::Rapidity::argument p ) const
 {
-  if ( 0 != p ) { return y ( p ) ; }    // RETURN 
+  if ( p ) { return y ( p ) ; }    // RETURN 
   Error(" Invalid Particle, return 'InvalidMomenum'") ;
   return LoKi::Constants::InvalidMomentum;                   // RETURN 
 }
@@ -226,7 +226,7 @@ LoKi::MCParticles::Rapidity0::result_type
 LoKi::MCParticles::Rapidity0::operator() 
   ( LoKi::MCParticles::Rapidity0::argument p ) const
 {
-  if ( 0 != p ) { return y0 ( p ) ; }    // RETURN 
+  if ( p ) { return y0 ( p ) ; }    // RETURN 
   Error(" Invalid Particle, return 'InvalidMomenum'") ;
   return LoKi::Constants::InvalidMomentum;                   // RETURN 
 }
@@ -248,7 +248,7 @@ LoKi::MCParticles::Theta::result_type
 LoKi::MCParticles::Theta::operator() 
   ( LoKi::MCParticles::Theta::argument p ) const
 {
-  if( 0 != p ) { return p -> momentum () . theta () ; }    // RETURN 
+  if( p ) { return p -> momentum () . theta () ; }    // RETURN 
   Error(" Invalid Particle, return 'InvalidMomenum'");
   return LoKi::Constants::InvalidMomentum;                   // RETURN 
 }
@@ -266,7 +266,7 @@ LoKi::MCParticles::Phi::result_type
 LoKi::MCParticles::Phi::operator() 
   ( LoKi::MCParticles::Phi::argument p ) const
 {
-  if ( 0 != p ) { return adjust ( phi ( p ) ) ; }    // RETURN 
+  if ( p ) { return adjust ( phi ( p ) ) ; }    // RETURN 
   Error(" Invalid Particle, return 'InvalidMomenum'");
   return LoKi::Constants::InvalidMomentum;                   // RETURN 
 }
@@ -284,7 +284,7 @@ LoKi::MCParticles::Mass::result_type
 LoKi::MCParticles::Mass::operator() 
   ( LoKi::MCParticles::Mass::argument p ) const
 {
-  if( 0 != p ) { return p -> momentum () . M  () ; }     // RETURN 
+  if( p ) { return p -> momentum () . M  () ; }     // RETURN 
   Error(" Invalid Particle, return 'InvalidMass'");
   return LoKi::Constants::InvalidMass;                   // RETURN 
 }
@@ -302,7 +302,7 @@ LoKi::MCParticles::Identifier::result_type
 LoKi::MCParticles::Identifier::operator() 
   ( LoKi::MCParticles::Identifier::argument p ) const  
 {
-  if( 0 != p ) { return p -> particleID() . pid () ; }         // RETURN 
+  if( p ) { return p -> particleID() . pid () ; }         // RETURN 
   Error(" Invalid Particle, return 'InvalidID'");
   return LoKi::Constants::InvalidID;                           // RETURN 
 }
@@ -320,7 +320,7 @@ LoKi::MCParticles::AbsIdentifier::result_type
 LoKi::MCParticles::AbsIdentifier::operator() 
   ( LoKi::MCParticles::AbsIdentifier::argument p ) const  
 {
-  if( 0 != p ) { return p -> particleID() . abspid () ; }     // RETURN 
+  if( p ) { return p -> particleID() . abspid () ; }     // RETURN 
   Error(" Invalid Particle, return 'InvalidID'");
   return LoKi::Constants::InvalidID;                           // RETURN 
 }
@@ -329,67 +329,56 @@ LoKi::MCParticles::AbsIdentifier::operator()
 // ============================================================================
 LoKi::MCParticles::IsID::IsID ( const long                      id  ) 
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , LoKi::Pids::GetPids ( id ) 
 {}
 // ============================================================================
 LoKi::MCParticles::IsID::IsID( const unsigned long  id  ) 
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , LoKi::Pids::GetPids ( id ) 
 {}
 // ============================================================================
 LoKi::MCParticles::IsID::IsID( const LHCb::ParticleID&         id  ) 
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , LoKi::Pids::GetPids ( id ) 
 {}
 // ============================================================================
 LoKi::MCParticles::IsID::IsID( const std::string& id  ) 
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , LoKi::Pids::GetPids ( id ) 
 {}
 // ============================================================================
 LoKi::MCParticles::IsID::IsID( const std::vector<int>& id  ) 
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , LoKi::Pids::GetPids ( id ) 
 {}
 // ============================================================================
 LoKi::MCParticles::IsID::IsID( const std::vector<unsigned int>& id  ) 
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , LoKi::Pids::GetPids ( id ) 
 {}
 // ============================================================================
 LoKi::MCParticles::IsID::IsID( const std::vector<long>& id  ) 
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , LoKi::Pids::GetPids ( id ) 
 {}
 // ============================================================================
 LoKi::MCParticles::IsID::IsID( const std::vector<unsigned long>& id  ) 
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , LoKi::Pids::GetPids ( id ) 
 {}
 // ============================================================================
 LoKi::MCParticles::IsID::IsID( const std::vector<LHCb::ParticleID>& id  ) 
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , LoKi::Pids::GetPids ( id ) 
 {}
 // ============================================================================
 LoKi::MCParticles::IsID::IsID( const std::vector<std::string>& id  ) 
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , LoKi::Pids::GetPids ( id ) 
 {}
 // ============================================================================
 LoKi::MCParticles::IsID::IsID( const LoKi::Pids::GetPids& id  ) 
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , LoKi::Pids::GetPids ( id ) 
 {}
 // ============================================================================
@@ -417,7 +406,7 @@ LoKi::MCParticles::IsID::operator()
   ( LoKi::MCParticles::IsID::argument p ) const 
 {
   //
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("Invalid Particle, return 'False'");
     return false ;                     // RETURN 
@@ -502,7 +491,7 @@ LoKi::MCParticles::IsNotID::operator()
   ( LoKi::MCParticles::IsNotID::argument p ) const 
 {
   //
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("Invalid Particle, return 'False'");
     return false ;                     // RETURN 
@@ -593,7 +582,7 @@ LoKi::MCParticles::IsAbsID::operator()
   ( LoKi::MCParticles::IsAbsID::argument p ) const 
 {
   //
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("Invalid Particle, return 'False'");
     return false ;                     // RETURN 
@@ -687,7 +676,7 @@ LoKi::MCParticles::IsNotAbsID::operator()
   ( LoKi::MCParticles::IsNotAbsID::argument p ) const 
 {
   //
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("Invalid Particle, return 'False'");
     return false ;                     // RETURN 
@@ -731,7 +720,7 @@ LoKi::MCParticles::ThreeCharge::result_type
 LoKi::MCParticles::ThreeCharge::operator() 
   ( LoKi::MCParticles::ThreeCharge::argument p ) const  
 {
-  if( 0 != p ) { return p -> particleID().threeCharge()  ; } // RETURN 
+  if( p ) { return p -> particleID().threeCharge()  ; } // RETURN 
   Error(" Invalid Particle, return 'InvalidCharge'");
   return LoKi::Constants::InvalidCharge;                     // RETURN 
 }
@@ -749,26 +738,42 @@ LoKi::MCParticles::ProperLifeTime::result_type
 LoKi::MCParticles::ProperLifeTime::operator() 
   ( LoKi::MCParticles::ProperLifeTime::argument p ) const
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error(" Invalid Particle, return 'InvalidTime'");
     return LoKi::Constants::InvalidTime;                     // RETURN 
   }
   // 
-  if ( p->endVertices().empty() ) 
-  { return LoKi::Constants::InfiniteTime ; }                // RETURN}
-  //
-  const LHCb::MCVertex* endVertex = p->endVertices()[0] ;
-  if ( 0 == endVertex ) 
-  {
-    Error (" Invalid 'endVertex' , return 'InfiniteTime'");
-    return LoKi::Constants::InfiniteTime ;                  // RETURN 
-  };
   const LHCb::MCVertex* originVertex = p->originVertex() ;
-  if ( 0 == originVertex ) 
+  if ( !originVertex ) 
   {
     Error(" Invalid 'originVertex' , return 'InvalidTime'");
     return LoKi::Constants::InvalidTime;                     // RETURN 
+  }
+  //
+  if ( p->endVertices().empty() ) 
+  { return LoKi::Constants::InfiniteTime ; }                // RETURN}
+  //
+  // get the first vertex as "endVertex"
+  const LHCb::MCVertex* endVertex = p->endVertices()[0] ;
+  // try to find the decay vertex 
+  if ( !endVertex || ( LHCb::MCVertex::DecayVertex        != endVertex->type() && 
+                       LHCb::MCVertex::OscillatedAndDecay != endVertex->type() ) ) 
+  {
+    for ( const LHCb::MCVertex* ev :  p->endVertices() )
+    {
+      
+      if      ( !ev ) { continue ; } // CONTINUE 
+      else if ( LHCb::MCVertex::DecayVertex         == ev->type() ) { endVertex = ev ; break ; } // BREAK 
+      else if ( LHCb::MCVertex::OscillatedAndDecay  == ev->type() ) { endVertex = ev ; break ; } // BREAK 
+      else if ( LHCb::MCVertex::HadronicInteraction == ev->type() ) { endVertex = ev ; }         // ??? 
+    }
+  }
+  //
+  if ( !endVertex ) 
+  {
+    Error (" Invalid 'endVertex' , return 'InfiniteTime'");
+    return LoKi::Constants::InfiniteTime ;                  // RETURN 
   }
   // evaluate the distance 
   const double dist = ( endVertex     -> position() - 
@@ -810,15 +815,7 @@ LoKi::MCParticles::ProperLifeTime::fillStream
 //  constructor from Quark 
 // ============================================================================
 LoKi::MCParticles::HasQuark::HasQuark ( const LHCb::ParticleID::Quark quark ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
-  , m_quark ( quark  )
-{}
-// ============================================================================
-LoKi::MCParticles::HasQuark::HasQuark 
-( const LoKi::MCParticles::HasQuark& right ) 
-  : LoKi::AuxFunBase                        ( right ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate( right ) 
-  , m_quark ( right.m_quark  )
+  : m_quark ( quark  )
 {}
 // ============================================================================
 // the only one essential method 
@@ -827,7 +824,7 @@ LoKi::MCParticles::HasQuark::result_type
 LoKi::MCParticles::HasQuark::operator() 
   ( LoKi::MCParticles::HasQuark::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("MCParticle* point to NULL, returs 'false'");
     return false ;
@@ -869,7 +866,7 @@ LoKi::MCParticles::IsCharged::result_type
 LoKi::MCParticles::IsCharged::operator() 
   ( LoKi::MCParticles::IsCharged::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("MCParticle* point to NULL, returs 'false'");
     return false ;
@@ -892,7 +889,7 @@ LoKi::MCParticles::IsNeutral::result_type
 LoKi::MCParticles::IsNeutral::operator() 
   ( LoKi::MCParticles::IsNeutral::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("MCParticle* point to NULL, returs 'false'");
     return false ;
@@ -915,7 +912,7 @@ LoKi::MCParticles::IsLepton::result_type
 LoKi::MCParticles::IsLepton::operator() 
   ( LoKi::MCParticles::IsLepton::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("MCParticle* point to NULL, returs 'false'");
     return false ;
@@ -938,7 +935,7 @@ LoKi::MCParticles::IsMeson::result_type
 LoKi::MCParticles::IsMeson::operator() 
   ( LoKi::MCParticles::IsMeson::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("MCParticle* point to NULL, returs 'false'");
     return false ;
@@ -961,7 +958,7 @@ LoKi::MCParticles::IsBaryon::result_type
 LoKi::MCParticles::IsBaryon::operator() 
   ( LoKi::MCParticles::IsBaryon::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("MCParticle* point to NULL, returs 'false'");
     return false ;
@@ -984,7 +981,7 @@ LoKi::MCParticles::IsHadron::result_type
 LoKi::MCParticles::IsHadron::operator() 
   ( LoKi::MCParticles::IsHadron::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("MCParticle* point to NULL, returs 'false'");
     return false ;
@@ -1007,7 +1004,7 @@ LoKi::MCParticles::IsNucleus::result_type
 LoKi::MCParticles::IsNucleus::operator() 
   ( LoKi::MCParticles::IsNucleus::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error("MCParticle* point to NULL, returs 'false'");
     return false ;
@@ -1026,39 +1023,27 @@ LoKi::MCParticles::IsNucleus::fillStream
 // ============================================================================
 LoKi::MCParticles::FromMCDecayTree::FromMCDecayTree
 ( const LHCb::MCParticle* mcp )
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
-  , m_cont ( 1 , mcp ) {}
+  : m_cont ( 1 , mcp ) {}
 // ============================================================================
 LoKi::MCParticles::FromMCDecayTree::FromMCDecayTree
 ( const LoKi::MCTypes::MCRange& cnt  )
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
-  , m_cont ( cnt.begin() , cnt.end() ) {}
+  : m_cont ( cnt.begin() , cnt.end() ) {}
 // ============================================================================
 LoKi::MCParticles::FromMCDecayTree::FromMCDecayTree
 ( const LoKi::MCTypes::MCContainer& cnt  )
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
-  , m_cont ( cnt.begin() , cnt.end() ) {}
+  : m_cont ( cnt.begin() , cnt.end() ) {}
 // ============================================================================
 LoKi::MCParticles::FromMCDecayTree::FromMCDecayTree
 ( const LHCb::MCParticles* cnt  )
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
-  , m_cont () 
+  : m_cont () 
 {
-  if ( 0 == cnt ) { Error(" ::MCParticles* points to NULL!");}
+  if ( !cnt ) { Error(" ::MCParticles* points to NULL!");}
   else            
   { 
     m_cont.reserve ( cnt->size() ) ;
     std::copy( cnt->begin() , cnt->end() , std::back_inserter ( m_cont ) ) ; 
   }
 }
-// ============================================================================
-LoKi::MCParticles::FromMCDecayTree::FromMCDecayTree
-( const LoKi::MCParticles::FromMCDecayTree& right ) 
-  : LoKi::AuxFunBase                        ( right )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate( right )
-  , m_cont ( right.m_cont ) {}
-// ============================================================================
-LoKi::MCParticles::FromMCDecayTree::~FromMCDecayTree(){}
 // ============================================================================
 LoKi::MCParticles::FromMCDecayTree* 
 LoKi::MCParticles::FromMCDecayTree::clone() const 
@@ -1068,16 +1053,14 @@ LoKi::MCParticles::FromMCDecayTree::result_type
 LoKi::MCParticles::FromMCDecayTree::operator() 
   ( LoKi::MCParticles::FromMCDecayTree::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error( "MCParticle* points to NULL, return 'false'");
     return false ;
   }  
-  for ( MCCont::const_iterator it = m_cont.begin() ; 
-        m_cont.end() != it ; ++it ) 
+  for ( const LHCb::MCParticle* parent : m_cont )
   {
-    const LHCb::MCParticle* parent = *it ;
-    if ( 0 == parent ) 
+    if ( !parent ) 
     { Error("MCParticle* point to NULL, skip it ") ;    continue ; }
     if ( LoKi::MCTrees::fromMCTree( p , parent ) ) { return true ; } // RETURN
   }
@@ -1091,7 +1074,7 @@ LoKi::MCParticles::FromMCDecayTree::operator()
 // ============================================================================
 StatusCode  LoKi::MCParticles::FromMCDecayTree::add ( const LHCb::MCParticle* p ) 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   { Error ("add(): MCParticle* points to NULL") ; return StatusCode::FAILURE ; }
   m_cont.push_back( p ) ;
   return StatusCode::SUCCESS ;
@@ -1104,8 +1087,7 @@ StatusCode  LoKi::MCParticles::FromMCDecayTree::add ( const LHCb::MCParticle* p 
 // ============================================================================
 StatusCode  LoKi::MCParticles::FromMCDecayTree::remove ( const LHCb::MCParticle* p )
 {
-  MCCont::iterator it = 
-    std::remove ( m_cont.begin() , m_cont.end() , p ) ;
+  auto it = std::remove ( m_cont.begin() , m_cont.end() , p ) ;
   m_cont.erase ( it , m_cont.end() ) ;
   return StatusCode::SUCCESS ;
 }
@@ -1122,8 +1104,6 @@ LoKi::MCParticles::NinMCdownTree::NinMCdownTree
   , m_cut ( cut )
 {}
 // ============================================================================
-LoKi::MCParticles::NinMCdownTree::~NinMCdownTree(){}
-// ============================================================================
 LoKi::MCParticles::NinMCdownTree*
 LoKi::MCParticles::NinMCdownTree::clone() const
 { return new LoKi::MCParticles::NinMCdownTree(*this); }
@@ -1132,7 +1112,7 @@ LoKi::MCParticles::NinMCdownTree::result_type
 LoKi::MCParticles::NinMCdownTree::operator() 
   ( LoKi::MCParticles::NinMCdownTree::argument p ) const 
 {
-  if ( 0 == p ) { Warning ( "MCParticle* points to NULL" ) ; }
+  if ( !p ) { Warning ( "MCParticle* points to NULL" ) ; }
   
   double number = 0 ;
   // check the particle itself 
@@ -1141,23 +1121,17 @@ LoKi::MCParticles::NinMCdownTree::operator()
   // traverse the tree 
   
   // the traversal is not possible 
-  if ( 0 == p     ) { return number ; }
+  if ( !p     ) { return number ; }
   
   typedef SmartRefVector<LHCb::MCVertex>   EndVertices ;
   typedef SmartRefVector<LHCb::MCParticle> Products    ;
   
-  const EndVertices& endVertices = p->endVertices() ;
-  for ( EndVertices::const_iterator iv = endVertices.begin() ; 
-        endVertices.end() != iv ; ++iv ) 
+  for ( const LHCb::MCVertex* vertex : p->endVertices() )
   {
-    const LHCb::MCVertex* vertex = *iv ;
-    if ( 0 == vertex ) { continue ; }
-    const Products& products = vertex->products() ;
-    for ( Products::const_iterator ip = products.begin() ; 
-          products.end() != ip ; ++ip ) 
+    if ( !vertex ) { continue ; }
+    for ( const LHCb::MCParticle* mcp :vertex->products() )
     {
-      const LHCb::MCParticle* mcp = *ip ;
-      if ( 0 == mcp ) { continue ; }
+      if ( !mcp ) { continue ; }
       // start the recursion 
       number += (*this)(mcp) ;
     };
@@ -1171,23 +1145,12 @@ LoKi::MCParticles::NinMCdownTree::fillStream
 { return s << "NINMCDOWN(" << m_cut << ")" ; }
 // ============================================================================
 LoKi::MCParticles::MCMotherFunction::MCMotherFunction
-( const LoKi::MCParticles::MCMotherFunction& right ) 
-  : LoKi::AuxFunBase                        ( right )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ( right ) 
-  , m_val ( right.m_val ) 
-  , m_fun ( right.m_fun ) 
-{}
-// ============================================================================
-LoKi::MCParticles::MCMotherFunction::MCMotherFunction
 ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Function& fun , 
   const double                                                  val )
   : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
   , m_val ( val ) 
   , m_fun ( fun ) 
 {}
-// ============================================================================
-LoKi::MCParticles::MCMotherFunction::~MCMotherFunction(){}
 // ============================================================================
 LoKi::MCParticles::MCMotherFunction*
 LoKi::MCParticles::MCMotherFunction::clone() const 
@@ -1197,10 +1160,10 @@ LoKi::MCParticles::MCMotherFunction::result_type
 LoKi::MCParticles::MCMotherFunction::operator() 
   ( LoKi::MCParticles::MCMotherFunction::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   { Error ( ": MCParticle* point to NULL, return -1.e+6" ) ; return -1.e+6 ; }
   const LHCb::MCParticle* mother = p->mother() ;
-  if ( 0 == mother ) { return m_val ; }
+  if ( !mother ) { return m_val ; }
   return m_fun ( mother ) ;
 }
 // ============================================================================
@@ -1213,20 +1176,9 @@ LoKi::MCParticles::MCMotherPredicate::MCMotherPredicate
 ( const LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate& cut , 
   const bool                                val ) 
   : LoKi::AuxFunBase ( std::tie ( cut , val ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
   , m_val ( val ) 
   , m_cut ( cut ) 
 {}
-// ============================================================================
-LoKi::MCParticles::MCMotherPredicate::MCMotherPredicate
-( const LoKi::MCParticles::MCMotherPredicate& right ) 
-  : LoKi::AuxFunBase                        ( right )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate( right ) 
-  , m_val ( right.m_val ) 
-  , m_cut ( right.m_cut ) 
-{}
-// ============================================================================
-LoKi::MCParticles::MCMotherPredicate::~MCMotherPredicate(){}
 // ============================================================================
 LoKi::MCParticles::MCMotherPredicate*
 LoKi::MCParticles::MCMotherPredicate::clone() const 
@@ -1236,17 +1188,17 @@ LoKi::MCParticles::MCMotherPredicate::result_type
 LoKi::MCParticles::MCMotherPredicate::operator() 
   ( LoKi::MCParticles::MCMotherPredicate::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   { Error ( ": MCParticle* point to NULL, return 'false'" ) ; return false ; }
   const LHCb::MCParticle* mother = p->mother() ;
-  if ( 0 == mother ) { return m_val ; }
+  if ( !mother ) { return m_val ; }
   return m_cut ( mother ) ;
 }
 // ============================================================================
 std::ostream&
 LoKi::MCParticles::MCMotherPredicate::fillStream
 ( std::ostream& s ) const 
-{ return s << "MCMOTHCUT(" << m_cut << ( m_val ? ",True" : ",False" ) << ")" ; }
+{ return s << "MCMOTHCUT(" << m_cut << ( m_val ? ",True) " : ",False) " ) ; }
 // ============================================================================
 /*  constructor from 1 particle 
  *  @param object object to be compared 
@@ -1254,8 +1206,7 @@ LoKi::MCParticles::MCMotherPredicate::fillStream
 // ============================================================================
 LoKi::MCParticles::IsParticle::IsParticle
 ( const LHCb::MCParticle* object ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
-  , m_objects ( 1 , object )
+  : m_objects ( 1 , object )
 {}
 // ============================================================================
 /*  constructor from range of particles 
@@ -1264,24 +1215,8 @@ LoKi::MCParticles::IsParticle::IsParticle
 // ============================================================================
 LoKi::MCParticles::IsParticle::IsParticle
 ( const LoKi::MCTypes::MCRange& range ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
-  , m_objects ( range.begin() , range.end() )
+  : m_objects ( range.begin() , range.end() )
 {}
-// ============================================================================
-/*  copy constructor
- *  @param right  object to be copied 
- */
-// ============================================================================
-LoKi::MCParticles::IsParticle::IsParticle
-( const LoKi::MCParticles::IsParticle& right ) 
-  : LoKi::AuxFunBase                        ( right )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate( right ) 
-  , m_objects ( right.m_objects )
-{}
-// ============================================================================
-//  destructor (virtual)
-// ============================================================================
-LoKi::MCParticles::IsParticle::~IsParticle() { m_objects.clear() ; }
 // ============================================================================
 //  MANDATORY: clone method ('virtual constructor')
 // ============================================================================
@@ -1295,8 +1230,7 @@ LoKi::MCParticles::IsParticle::result_type
 LoKi::MCParticles::IsParticle::operator() 
   ( LoKi::MCParticles::IsParticle::argument p ) const 
 {
-  LHCb::MCParticle::ConstVector::const_iterator it = 
-    std::find( m_objects.begin() , m_objects.end() , p ) ;
+  auto it = std::find( m_objects.begin() , m_objects.end() , p ) ;
   return m_objects.end() != it ;
 }
 // ============================================================================
@@ -1311,24 +1245,8 @@ LoKi::MCParticles::IsParticle::fillStream
 // ============================================================================
 LoKi::MCParticles::IsContainedObject::IsContainedObject
 ( const ContainedObject* object )
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate() 
-  , m_objects ( 1 , object ) 
+  : m_objects ( 1 , object ) 
 {}
-// ============================================================================
-/*  copy constructor
- *  @param right  object to be copied 
- */
-// ============================================================================
-LoKi::MCParticles::IsContainedObject::IsContainedObject
-( const LoKi::MCParticles::IsContainedObject& right ) 
-  : LoKi::AuxFunBase                        ( right )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate( right ) 
-  , m_objects ( right.m_objects ) 
-{}
-// ============================================================================
-//  destructor (virtual)
-// ============================================================================
-LoKi::MCParticles::IsContainedObject::~IsContainedObject() { m_objects.clear() ; }
 // ============================================================================
 //  MANDATORY: clone method ('virtual constructor')
 // ============================================================================
@@ -1340,8 +1258,7 @@ LoKi::MCParticles::IsContainedObject::result_type
 LoKi::MCParticles::IsContainedObject::operator() 
   ( LoKi::MCParticles::IsContainedObject::argument p ) const 
 {
-  Objects::const_iterator it = 
-    std::find( m_objects.begin() , m_objects.end() , p ) ;
+  auto it = std::find( m_objects.begin() , m_objects.end() , p ) ;
   return m_objects.end() != it ;
 }
 // ============================================================================
@@ -1373,19 +1290,6 @@ LoKi::MCParticles::MomentumDistance::MomentumDistance
   m_vct.SetXYZT ( px , py , pz , e ) ;
 }
 // ============================================================================
-//  copy constructor
-// ============================================================================
-LoKi::MCParticles::MomentumDistance::MomentumDistance
-( const LoKi::MCParticles::MomentumDistance& right ) 
-  : LoKi::AuxFunBase                       ( right )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function( right ) 
-  , m_vct ( right.m_vct ) 
-{}
-// ============================================================================
-//  MANDATORY::virtual destructor
-// ============================================================================  
-LoKi::MCParticles::MomentumDistance::~MomentumDistance(){}
-// ============================================================================
 //  MANDATORY: clone function ("virtual constructor")
 // ============================================================================
 LoKi::MCParticles::MomentumDistance*
@@ -1398,7 +1302,7 @@ LoKi::MCParticles::MomentumDistance::result_type
 LoKi::MCParticles::MomentumDistance::operator() 
   ( LoKi::MCParticles::MomentumDistance::argument p ) const
 {
-  if ( 0 != p ) 
+  if ( p ) 
   { return LoKi::Kinematics::delta2euclidian ( p->momentum() , m_vct ) ; }
   Error ( "Invalid MCParticle*, return (InvalidMomentum)^2") ; 
   return 
@@ -1443,19 +1347,6 @@ LoKi::MCParticles::TransverseMomentumRel::TransverseMomentumRel
   , m_vct ( vct ) 
 {}
 // ============================================================================
-//  copy constructor 
-// ============================================================================
-LoKi::MCParticles::TransverseMomentumRel::TransverseMomentumRel 
-( const LoKi::MCParticles::TransverseMomentumRel& right ) 
-  : LoKi::AuxFunBase                        ( right )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function( right ) 
-  , m_vct ( right.m_vct ) 
-{}
-// ============================================================================
-//  MANDATORY: virtual destructor
-// ============================================================================
-LoKi::MCParticles::TransverseMomentumRel::~TransverseMomentumRel(){}
-// ============================================================================
 //  MANDATORY: clone function ("virtual constructor")
 // ============================================================================
 LoKi::MCParticles::TransverseMomentumRel*
@@ -1468,7 +1359,7 @@ LoKi::MCParticles::TransverseMomentumRel::result_type
 LoKi::MCParticles::TransverseMomentumRel::operator() 
   ( LoKi::MCParticles::TransverseMomentumRel::argument p ) const
 {
-  if ( 0 != p ) 
+  if ( p ) 
   { return LoKi::Kinematics::transverseMomentumDir( p->momentum() , m_vct ) ; }
   Error ( "Invalid MCParticle*, return 'InvalidMomentum'") ; 
   return LoKi::Constants::InvalidMomentum ;
@@ -1482,10 +1373,6 @@ LoKi::MCParticles::TransverseMomentumRel::fillStream ( std::ostream& s ) const
            << m_vct.Theta () << "," 
            << m_vct.Phi   () << ")" ; }
 // ============================================================================
-//  MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::MCParticles::ValidOrigin::~ValidOrigin(){}
-// ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::MCParticles::ValidOrigin*
@@ -1498,7 +1385,7 @@ LoKi::MCParticles::ValidOrigin::result_type
 LoKi::MCParticles::ValidOrigin::operator()
   ( LoKi::MCParticles::ValidOrigin::argument p ) const
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error ( " MCParticle* points to NULL, return 'false' ") ;
     return false ;
@@ -1527,10 +1414,6 @@ LoKi::MCParticles::MCVertexFunAdapter::MCVertexFunAdapter
   , m_err ( err   ) 
 {}
 // ============================================================================
-//  MANDATORY : virtual destructor 
-// ============================================================================
-LoKi::MCParticles::MCVertexFunAdapter::~MCVertexFunAdapter(){}
-// ============================================================================
 //  MANDATORY : clone method ("virtual constructor")
 // ============================================================================
 LoKi::MCParticles::MCVertexFunAdapter*
@@ -1543,7 +1426,7 @@ LoKi::MCParticles::MCVertexFunAdapter::result_type
 LoKi::MCParticles::MCVertexFunAdapter::operator() 
   ( LoKi::MCParticles::MCVertexFunAdapter::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error ( " MCParticle* points to NULL, return 'm_err'") ;
     return m_err ;
@@ -1568,8 +1451,7 @@ LoKi::MCParticles::MCVertexFunAdapter::fillStream
 LoKi::MCParticles::MCDecayPattern::MCDecayPattern 
 ( const std::string& decay  ,
   IMCDecayFinder*    finder ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
-  , m_finder ( finder ) 
+  : m_finder ( finder ) 
   , m_decay  ( decay  ) 
 {} 
 // ============================================================================
@@ -1582,26 +1464,9 @@ LoKi::MCParticles::MCDecayPattern::MCDecayPattern
 LoKi::MCParticles::MCDecayPattern::MCDecayPattern 
 ( const std::string&                     decay  ,
   const LoKi::Interface<IMCDecayFinder>& finder ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate()
-  , m_finder ( finder ) 
+  : m_finder ( finder ) 
   , m_decay  ( decay  ) 
 {} 
-// ============================================================================
-/*  copy constructor
- *  @param right object to be copied 
- */
-// ============================================================================
-LoKi::MCParticles::MCDecayPattern::MCDecayPattern 
-( const LoKi::MCParticles::MCDecayPattern& right ) 
-  : LoKi::AuxFunBase                        ( right )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate( right )
-  , m_finder ( right.m_finder ) 
-  , m_decay  ( right.m_decay  ) 
-{} 
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::MCParticles::MCDecayPattern::~MCDecayPattern() {}
 // ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -1616,7 +1481,7 @@ LoKi::MCParticles::MCDecayPattern::operator()
   ( LoKi::MCParticles::MCDecayPattern::argument p ) const 
 {
   const LHCb::MCParticle* mc = p ;
-  if ( 0 == p || 0 == mc ) 
+  if ( !p || !mc ) 
   {
     Error ( " MCParticle* points to NULL, return 'false'") ;
     return false ;
@@ -1665,15 +1530,6 @@ LoKi::MCParticles::MCFilter::MCFilter
   , m_selector( selector ) 
 {}
 // ============================================================================
-LoKi::MCParticles::MCFilter::MCFilter
-( const LoKi::MCParticles::MCFilter& right ) 
-  : LoKi::AuxFunBase                        ( right )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate ( right )
-  , m_selector( right.m_selector ) 
-{}
-// ============================================================================
-LoKi::MCParticles::MCFilter::~MCFilter(){}
-// ============================================================================
 LoKi::MCParticles::MCFilter*
 LoKi::MCParticles::MCFilter::clone() const 
 { return new MCFilter(*this) ; }
@@ -1682,7 +1538,7 @@ LoKi::MCParticles::MCFilter::result_type
 LoKi::MCParticles::MCFilter::operator()
   ( LoKi::MCParticles::MCFilter::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error ( " MCParticle* points to NULL, return 'false'") ;
     return false ;
@@ -1736,7 +1592,7 @@ LoKi::MCParticles::DeltaPhi::DeltaPhi ( const LHCb::MCParticle* p )
   : LoKi::MCParticles::Phi ()  
   , m_phi  ( )
 { 
-  if ( 0 == p ) { Exception("Invalid LHCb::MCParticle*") ;}
+  if ( !p ) { Exception("Invalid LHCb::MCParticle*") ;}
   m_phi = p->momentum().Phi() ;
   m_phi = adjust ( m_phi ) ; 
 }  
@@ -1747,7 +1603,7 @@ LoKi::MCParticles::DeltaPhi::result_type
 LoKi::MCParticles::DeltaPhi::operator() 
   ( LoKi::MCParticles::DeltaPhi::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error ("LHCb::MCParticle* points to NULL, return 'InvalidAngle'") ;
     return LoKi::Constants::InvalidAngle ;
@@ -1790,7 +1646,7 @@ LoKi::MCParticles::DeltaEta::DeltaEta ( const LHCb::MCParticle* p )
   : LoKi::MCParticles::PseudoRapidity () 
   , m_eta  ( )
 {
-  if ( 0 == p ) { Exception("Invalid LHCb::MCParticle*") ;}
+  if ( !p ) { Exception("Invalid LHCb::MCParticle*") ;}
   m_eta = p->momentum().Eta() ;
 } 
 // ============================================================================
@@ -1800,7 +1656,7 @@ LoKi::MCParticles::DeltaEta::result_type
 LoKi::MCParticles::DeltaEta::operator() 
   ( LoKi::MCParticles::DeltaEta::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error ("LHCb::MCParticle* points to NULL, return 'InvalidAngle'") ;
     return LoKi::Constants::InvalidAngle ;
@@ -1852,7 +1708,7 @@ LoKi::MCParticles::DeltaR2::result_type
 LoKi::MCParticles::DeltaR2::operator() 
   ( LoKi::MCParticles::DeltaR2::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error ("LHCb::MCParticle* points to NULL, return 'InvalidDistance'") ;
     return LoKi::Constants::InvalidDistance;
@@ -1880,17 +1736,7 @@ LoKi::MCParticles::MCReconstructible::MCReconstructible
 // ============================================================================
 LoKi::MCParticles::MCReconstructible::MCReconstructible
 ( const LoKi::Interface<IMCReconstructible>& tool ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Function() 
-  , m_eval ( tool ) 
-{}
-// ============================================================================
-// copy constructor 
-// ============================================================================
-LoKi::MCParticles::MCReconstructible::MCReconstructible
-( const LoKi::MCParticles::MCReconstructible& right )
-  : LoKi::AuxFunBase ( right )  
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function( right )  
-  , m_eval ( right.m_eval ) 
+  : m_eval ( tool ) 
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
@@ -1908,7 +1754,7 @@ LoKi::MCParticles::MCReconstructible::operator()
   static const IMCReconstructible::RecCategory s_bad = 
     IMCReconstructible::NoClassification ;
   //
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error ( "LHCb::MCParticle* points to NULL, return '" + 
             IMCReconstructible::text ( s_bad ) + "'" ) ;
@@ -1965,19 +1811,8 @@ LoKi::MCParticles::MCReconstructibleAs::MCReconstructibleAs
 LoKi::MCParticles::MCReconstructibleAs::MCReconstructibleAs
 ( const IMCReconstructible::RecCategory      cat  ,
   const LoKi::Interface<IMCReconstructible>& tool ) 
-  : LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate () 
-  , m_eval ( tool ) 
+  : m_eval ( tool ) 
   , m_cat ( cat )
-{}
-// ============================================================================
-// constructor from the holder and category
-// ============================================================================
-LoKi::MCParticles::MCReconstructibleAs::MCReconstructibleAs
-( const LoKi::MCParticles::MCReconstructibleAs& right ) 
-  : LoKi::AuxFunBase ( right )  
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate( right )  
-  , m_eval ( right.m_eval ) 
-  , m_cat  ( right.m_cat  ) 
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
@@ -1992,7 +1827,7 @@ LoKi::MCParticles::MCReconstructibleAs::result_type
 LoKi::MCParticles::MCReconstructibleAs::operator() 
   ( LoKi::MCParticles::MCReconstructibleAs::argument p ) const 
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error ("LHCb::MCParticle* points to NULL, return 'False'") ;
     return false ;
@@ -2045,17 +1880,6 @@ LoKi::MCParticles::ChildFunction::ChildFunction
   , m_bad   ( bad   ) 
 {}
 // ============================================================================
-// copy constructor 
-// ============================================================================
-LoKi::MCParticles::ChildFunction::ChildFunction
-( const LoKi::MCParticles::ChildFunction& right ) 
-  : LoKi::AuxFunBase ( right ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function( right ) 
-  , m_fun   ( right.m_fun   ) 
-  , m_index ( right.m_index ) 
-  , m_bad   ( right.m_bad   ) 
-{}
-// ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::MCParticles::ChildFunction* 
@@ -2068,7 +1892,7 @@ LoKi::MCParticles::ChildFunction::result_type
 LoKi::MCParticles::ChildFunction::operator() 
   ( LoKi::MCParticles::ChildFunction::argument p ) const 
 {
-  if ( 0 == p && 0 != m_index ) 
+  if ( !p && 0 != m_index ) 
   { 
     Error ( "LHCb::MCParticle* points to NULL, return " + 
             LoKi::Print::toString( m_bad ) ) ;
@@ -2076,7 +1900,7 @@ LoKi::MCParticles::ChildFunction::operator()
   }
   // extract the daughter 
   const LHCb::MCParticle* daughter = LoKi::Child::child ( p , m_index ) ;
-  if ( 0 == daughter ) { Warning ( "Daughter particle points to NULL" ) ; }
+  if ( !daughter ) { Warning ( "Daughter particle points to NULL" ) ; }
   return m_fun ( daughter ) ;
 }
 // ============================================================================
@@ -2126,17 +1950,6 @@ LoKi::MCParticles::ChildPredicate::ChildPredicate
   , m_bad   ( bad   )
 {}
 // ============================================================================
-// copy constructor 
-// ============================================================================
-LoKi::MCParticles::ChildPredicate::ChildPredicate 
-( const LoKi::MCParticles::ChildPredicate& right ) 
-  : LoKi::AuxFunBase ( right ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate ( right )
-  , m_cut   ( right.m_cut   )
-  , m_index ( right.m_index ) 
-  , m_bad   ( right.m_bad   )
-{}
-// ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::MCParticles::ChildPredicate* 
@@ -2149,7 +1962,7 @@ LoKi::MCParticles::ChildPredicate::result_type
 LoKi::MCParticles::ChildPredicate::operator()  
   ( LoKi::MCParticles::ChildPredicate::argument p ) const 
 {
-  if ( 0 == p && 0 != m_index ) 
+  if ( !p && 0 != m_index ) 
   { 
     Error ( "LHCb::MCParticle* points to NULL, return " + 
             LoKi::Print::toString( m_bad ) ) ;
@@ -2157,7 +1970,7 @@ LoKi::MCParticles::ChildPredicate::operator()
   }
   // extract the daughter 
   const LHCb::MCParticle* daughter = LoKi::Child::child ( p , m_index ) ;
-  if ( 0 == daughter ) { Warning ( "Daughter particle points to NULL" ) ; }
+  if ( !daughter ) { Warning ( "Daughter particle points to NULL" ) ; }
   return m_cut ( daughter ) ;
 }
 // ============================================================================
@@ -2187,16 +2000,6 @@ LoKi::MCParticles::InTree::InTree
   , m_decayOnly ( decayOnly ) 
 {}
 // ============================================================================
-// copy constructor 
-// ============================================================================
-LoKi::MCParticles::InTree::InTree  
-( const LoKi::MCParticles::InTree& right ) 
-  : LoKi::AuxFunBase ( right ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate ( right ) 
-  , m_cut       ( right.m_cut       ) 
-  , m_decayOnly ( right.m_decayOnly ) 
-{}
-// ============================================================================
 // MANDATORY: clone function ("virtual constructor")
 // ============================================================================
 LoKi::MCParticles::InTree*
@@ -2209,7 +2012,7 @@ LoKi::MCParticles::InTree::result_type
 LoKi::MCParticles::InTree::operator()
   ( LoKi::MCParticles::InTree::argument p ) const 
 {
-  if ( 0 == p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
+  if ( !p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
   return LoKi::MCAlgs::found ( p , m_cut , m_decayOnly ) ;
 }
 // ============================================================================
@@ -2230,19 +2033,8 @@ LoKi::MCParticles::NinTree::NinTree
 ( const LoKi::MCTypes::MCCuts& cut       , 
   const bool                   decayOnly ) 
   : LoKi::AuxFunBase ( std::tie ( cut , decayOnly  ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
-{}
-// ============================================================================
-// copy constructor 
-// ============================================================================
-LoKi::MCParticles::NinTree::NinTree  
-( const LoKi::MCParticles::NinTree& right ) 
-  : LoKi::AuxFunBase ( right ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ( right ) 
-  , m_cut       ( right.m_cut       ) 
-  , m_decayOnly ( right.m_decayOnly ) 
 {}
 // ============================================================================
 // MANDATORY: clone function ("virtual constructor")
@@ -2257,7 +2049,7 @@ LoKi::MCParticles::NinTree::result_type
 LoKi::MCParticles::NinTree::operator()
   ( LoKi::MCParticles::NinTree::argument p ) const 
 {
-  if ( 0 == p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
+  if ( !p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
   return LoKi::MCAlgs::count_if ( p , m_cut , m_decayOnly ) ;
 }
 // ============================================================================
@@ -2282,7 +2074,6 @@ LoKi::MCParticles::SumTree::SumTree
   const bool                   decayOnly , 
   const double                 result    ) 
   : LoKi::AuxFunBase ( std::tie ( fun , cut , decayOnly  , result ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -2302,23 +2093,10 @@ LoKi::MCParticles::SumTree::SumTree
   const bool                   decayOnly , 
   const double                 result    ) 
   : LoKi::AuxFunBase ( std::tie ( cut , fun , decayOnly  , result ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
   , m_res       ( result    ) 
-{}
-// ============================================================================
-// copy constructor 
-// ============================================================================
-LoKi::MCParticles::SumTree::SumTree  
-( const LoKi::MCParticles::SumTree& right ) 
-  : LoKi::AuxFunBase ( right ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ( right ) 
-  , m_fun       ( right.m_fun       ) 
-  , m_cut       ( right.m_cut       ) 
-  , m_decayOnly ( right.m_decayOnly ) 
-  , m_res       ( right.m_res       ) 
 {}
 // ============================================================================
 // MANDATORY: clone function ("virtual constructor")
@@ -2333,7 +2111,7 @@ LoKi::MCParticles::SumTree::result_type
 LoKi::MCParticles::SumTree::operator()
   ( LoKi::MCParticles::SumTree::argument p ) const 
 {
-  if ( 0 == p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
+  if ( !p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
   return LoKi::MCAlgs::accumulate 
     ( p , m_fun , m_cut , m_res ,  std::plus<result_type>() , m_decayOnly ) ;
 }
@@ -2363,7 +2141,6 @@ LoKi::MCParticles::MultTree::MultTree
   const bool                   decayOnly , 
   const double                 result    ) 
   : LoKi::AuxFunBase ( std::tie ( fun , cut , decayOnly  , result ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -2383,23 +2160,10 @@ LoKi::MCParticles::MultTree::MultTree
   const bool                   decayOnly , 
   const double                 result    ) 
   : LoKi::AuxFunBase ( std::tie ( cut , fun , decayOnly  , result ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
   , m_res       ( result    ) 
-{}
-// ============================================================================
-// copy constructor 
-// ============================================================================
-LoKi::MCParticles::MultTree::MultTree  
-( const LoKi::MCParticles::MultTree& right ) 
-  : LoKi::AuxFunBase ( right ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ( right ) 
-  , m_fun       ( right.m_fun       ) 
-  , m_cut       ( right.m_cut       ) 
-  , m_decayOnly ( right.m_decayOnly ) 
-  , m_res       ( right.m_res       ) 
 {}
 // ============================================================================
 // MANDATORY: clone function ("virtual constructor")
@@ -2414,7 +2178,7 @@ LoKi::MCParticles::MultTree::result_type
 LoKi::MCParticles::MultTree::operator()
   ( LoKi::MCParticles::MultTree::argument p ) const 
 {
-  if ( 0 == p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
+  if ( !p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
   return LoKi::MCAlgs::accumulate 
     ( p , m_fun , m_cut , m_res ,  std::multiplies<result_type>() , m_decayOnly ) ;
 }
@@ -2444,7 +2208,6 @@ LoKi::MCParticles::MinTree::MinTree
   const bool                   decayOnly , 
   const double                 result    ) 
   : LoKi::AuxFunBase ( std::tie ( fun , cut , decayOnly  , result ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -2464,23 +2227,10 @@ LoKi::MCParticles::MinTree::MinTree
   const bool                   decayOnly , 
   const double                 result    ) 
   : LoKi::AuxFunBase ( std::tie ( cut , fun , decayOnly  , result ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
   , m_res       ( result    ) 
-{}
-// ============================================================================
-// copy constructor 
-// ============================================================================
-LoKi::MCParticles::MinTree::MinTree  
-( const LoKi::MCParticles::MinTree& right ) 
-  : LoKi::AuxFunBase ( right ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ( right ) 
-  , m_fun       ( right.m_fun       ) 
-  , m_cut       ( right.m_cut       ) 
-  , m_decayOnly ( right.m_decayOnly ) 
-  , m_res       ( right.m_res       ) 
 {}
 // ============================================================================
 // MANDATORY: clone function ("virtual constructor")
@@ -2495,7 +2245,7 @@ LoKi::MCParticles::MinTree::result_type
 LoKi::MCParticles::MinTree::operator()
   ( LoKi::MCParticles::MinTree::argument p ) const 
 {
-  if ( 0 == p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
+  if ( !p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
   return LoKi::MCAlgs::accumulate 
     ( p , m_fun , m_cut , m_res ,  std::multiplies<result_type>() , m_decayOnly ) ;
 }
@@ -2525,7 +2275,6 @@ LoKi::MCParticles::MaxTree::MaxTree
   const bool                   decayOnly , 
   const double                 result    ) 
   : LoKi::AuxFunBase ( std::tie ( fun , cut , decayOnly  , result ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
@@ -2545,23 +2294,10 @@ LoKi::MCParticles::MaxTree::MaxTree
   const bool                   decayOnly , 
   const double                 result    ) 
   : LoKi::AuxFunBase ( std::tie ( cut , fun , decayOnly  , result ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function () 
   , m_fun       ( fun       ) 
   , m_cut       ( cut       ) 
   , m_decayOnly ( decayOnly ) 
   , m_res       ( result    ) 
-{}
-// ============================================================================
-// copy constructor 
-// ============================================================================
-LoKi::MCParticles::MaxTree::MaxTree  
-( const LoKi::MCParticles::MaxTree& right ) 
-  : LoKi::AuxFunBase ( right ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ( right ) 
-  , m_fun       ( right.m_fun       ) 
-  , m_cut       ( right.m_cut       ) 
-  , m_decayOnly ( right.m_decayOnly ) 
-  , m_res       ( right.m_res       ) 
 {}
 // ============================================================================
 // MANDATORY: clone function ("virtual constructor")
@@ -2576,7 +2312,7 @@ LoKi::MCParticles::MaxTree::result_type
 LoKi::MCParticles::MaxTree::operator()
   ( LoKi::MCParticles::MaxTree::argument p ) const 
 {
-  if ( 0 == p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
+  if ( !p ) { Warning ("LHCb::MCParticle* points to NULL" ) ; }
   return LoKi::MCAlgs::accumulate 
     ( p , m_fun , m_cut , m_res ,  std::multiplies<result_type>() , m_decayOnly ) ;
 }
@@ -2597,15 +2333,12 @@ std::ostream& LoKi::MCParticles::MaxTree::fillStream ( std::ostream& s ) const
 // constructor from the predicate 
 // ============================================================================
 LoKi::MCParticles::NinAncestors::NinAncestors 
-( const LoKi::MCTypes::MCCuts& cuts )
-  : LoKi::AuxFunBase ( std::tie ( cuts ) )
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ()
-  , m_cut ( cuts )
+( const LoKi::MCTypes::MCCuts& cuts      , 
+  const bool                   decayOnly ) 
+  : LoKi::AuxFunBase ( std::tie ( cuts , decayOnly ) )
+  , m_cut       ( cuts      )
+  , m_decayOnly ( decayOnly )
 {}
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::MCParticles::NinAncestors::~NinAncestors(){}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -2624,20 +2357,25 @@ LoKi::MCParticles::NinAncestors::operator()
 // ============================================================================
 // the actual evaluator 
 // ============================================================================
-int LoKi::MCParticles::NinAncestors::nInAncestors 
+unsigned int LoKi::MCParticles::NinAncestors::nInAncestors 
 ( const LHCb::MCParticle* p ) const 
 { 
-  if ( 0 == p )
+  if ( !p )
   {
     Error ( "LHCb::MCParticle* point to NULL, return 0") ;
     return 0 ;
   }
-  int found = 0 ;
-  const LHCb::MCParticle* mother = p->mother() ;
+  unsigned int found = 0 ;
+  const LHCb::MCVertex*   ov     = p->originVertex() ;
+  const LHCb::MCParticle* mother = nullptr == ov ? nullptr : ov->mother() ;
   while ( 0 != mother ) 
   {
+    if ( m_decayOnly && !ov->isDecay() ) { return found ; }
+    //
     if ( m_cut ( mother ) ) { return ++found  ; }   // COUNT 
-    mother = mother->mother() ;
+    //
+    ov     = mother->originVertex() ;
+    mother = nullptr == ov ? nullptr : ov->mother() ;
   }
   return found ;
 }
@@ -2646,21 +2384,18 @@ int LoKi::MCParticles::NinAncestors::nInAncestors
 // ============================================================================
 std::ostream& 
 LoKi::MCParticles::NinAncestors::fillStream( std::ostream& s ) const 
-{ return s << " MCNINANCESTORS( " << m_cut << " ) " ; }
-
+{ return s << " MCNINANCESTORS( " << m_cut << ( m_decayOnly ? ",True) " : ",False) " ) ; }
 // ============================================================================
 // constructor from the predicate 
 // ============================================================================
 LoKi::MCParticles::InAncestors::InAncestors 
-( const LoKi::MCTypes::MCCuts& cuts ) 
-  : LoKi::AuxFunBase ( std::tie ( cuts ) )
+( const LoKi::MCTypes::MCCuts& cuts      , 
+  const bool                   decayOnly ) 
+  : LoKi::AuxFunBase ( std::tie ( cuts , decayOnly ) )
   , LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate ()
-  , m_cut ( cuts )
+  , m_cut       ( cuts      )
+  , m_decayOnly ( decayOnly ) 
 {}
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::MCParticles::InAncestors::~InAncestors(){}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -2682,17 +2417,21 @@ LoKi::MCParticles::InAncestors::operator()
 bool LoKi::MCParticles::InAncestors::inAncestors 
 ( const LHCb::MCParticle* p ) const 
 { 
-  if ( 0 == p )
+  if ( !p )
   {
     Error ( "LHCb::MCParticle* point to NULL, return false") ;
     return false ;
   }
-  const LHCb::MCParticle* mother = p->mother() ;
-  while ( 0 != mother ) 
+  const LHCb::MCVertex*   ov     = p->originVertex() ;
+  const LHCb::MCParticle* mother = ( nullptr == ov ) ? nullptr : ov->mother() ;
+  //
+  while ( nullptr != mother ) 
   {
-    if ( m_cut ( mother ) ) { return true  ; }   // RETURN 
+    if ( m_decayOnly && !ov->isDecay() ) { return false ; }   // RETURN 
+    if ( m_cut ( mother )              ) { return true  ; }   // RETURN
     //
-    mother = mother->mother() ;                  //  
+    ov     = mother->originVertex() ;
+    mother = nullptr == ov ? nullptr : ov->mother() ;
   }
   return false ;
 }
@@ -2701,14 +2440,9 @@ bool LoKi::MCParticles::InAncestors::inAncestors
 // ============================================================================
 std::ostream& 
 LoKi::MCParticles::InAncestors::fillStream( std::ostream& s ) const 
-{ return s << " MCINANCESTORS( " << m_cut << " ) " ; }
+{ return s << " MCINANCESTORS( " << m_cut << ( m_decayOnly ? ",True) " : ",False) ") ; }
 // ============================================================================
 
-
-// ============================================================================
-// MANDATORY: virtual desructor 
-// ============================================================================
-LoKi::MCParticles::FromDecays::~FromDecays(){}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -2722,13 +2456,13 @@ LoKi::MCParticles::FromDecays::result_type
 LoKi::MCParticles::FromDecays::operator() 
   ( LoKi::MCParticles::FromDecays::argument p ) const
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error ( "LHCb::MCParticle* points to NULL, return false") ;
     return false ;
   }
   const LHCb::MCVertex* vertex = p->originVertex() ;
-  if ( 0 == vertex ) { return false ; }               // RETURN
+  if ( !vertex ) { return false ; }               // RETURN
   //
   while ( 0 != vertex ) 
   {
@@ -2756,11 +2490,6 @@ LoKi::MCParticles::FromDecays::fillStream( std::ostream& s ) const
 // ============================================================================
 
 
-
-// ============================================================================
-// MANDATORY: virtual desructor 
-// ============================================================================
-LoKi::MCParticles::FromInteractions::~FromInteractions(){}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -2774,13 +2503,13 @@ LoKi::MCParticles::FromInteractions::result_type
 LoKi::MCParticles::FromInteractions::operator() 
   ( LoKi::MCParticles::FromInteractions::argument p ) const
 {
-  if ( 0 == p ) 
+  if ( !p ) 
   {
     Error ( "LHCb::MCParticle* points to NULL, return false") ;
     return false ;
   }
   const LHCb::MCVertex* vertex = p->originVertex() ;
-  if ( 0 == vertex ) { return false ; }               // RETURN
+  if ( !vertex ) { return false ; }               // RETURN
   //
   while ( 0 != vertex ) 
   {
@@ -2812,13 +2541,30 @@ LoKi::MCParticles::FromInteractions::fillStream ( std::ostream& s ) const
 // ============================================================================
 std::string LoKi::MCParticles::hex_id ( const LHCb::MCParticle* particle ) 
 {
-  if ( 0 == particle ) { return "NULL" ; }
+  if ( !particle ) { return "NULL" ; }
   boost::format fmt ( "%p" ) ;
   const void * p = particle ;
   fmt % p ;
   return fmt.str() ;
 }
 
+
+// ============================================================================
+namespace 
+{
+  // hashing function 
+  const std::hash<const void*> s_hash {} ;
+}
+// ============================================================================
+// get hash function for HepMC::GenParticle 
+// ============================================================================
+std::size_t LoKi::MCParticles::hash ( const LHCb::MCParticle* particle ) 
+{ return !particle ? 0 : s_hash ( particle ) ; }
+// ============================================================================
+// get hash function for HepMC::GenVertex
+// ============================================================================
+std::size_t LoKi::MCParticles::hash ( const LHCb::MCVertex*   vertex ) 
+{ return !vertex ? 0 : s_hash( vertex ) ; }
 
 
 

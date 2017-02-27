@@ -30,8 +30,21 @@
   <class name    = "Gaudi::Math::ParticleParams"     />
   <class name    = "Gaudi::Math::FitMass"            />
   
+  <!---
+  <class name    = "Gaudi::Math::VctrOp"     />
+  <class name    = "Gaudi::Math::MtrxOp"     />
+  <class name    = "Gaudi::Math::MultiplyOp" />
+  <class name    = "Gaudi::Math::EqualOp"    />
+  --->
 
-
+  <function name = "Gaudi::Math::_vector_add_"   />
+  <function name = "Gaudi::Math::_vector_radd_"  />
+  <function name = "Gaudi::Math::_vector_sub_"   />
+  <function name = "Gaudi::Math::_vector_rsub_"  />
+  <function name = "Gaudi::Math::_vector_mul_"   />
+  <function name = "Gaudi::Math::_vector_rmul_"  />
+  <function name = "Gaudi::Math::_vector_div_"   />
+  
   <class name    = "Gaudi::Math::EigenSystems"            />
   <class name    = "Gaudi::Math::Chebyshev"               />
   <class name    = "Gaudi::Math::ChebyshevU"              />
@@ -66,12 +79,15 @@
   <class name    = "Gaudi::Math::Bugg"                    />
   <class name    = "Gaudi::Math::Flatte"                  />
   <class name    = "Gaudi::Math::Flatte2"                 />
+  <class name    = "Gaudi::Math::Swanson"                 />
   <class name    = "Gaudi::Math::LASS23L"                 />
   <class name    = "Gaudi::Math::Bugg23L"                 />
   <class name    = "Gaudi::Math::BW23L"                   />
   <class name    = "Gaudi::Math::Flatte23L"               />
   <class name    = "Gaudi::Math::Gounaris23L"             />
   <class name    = "Gaudi::Math::Voigt"                   />
+  <class name    = "Gaudi::Math::PseudoVoigt"             />
+  <class name    = "Gaudi::Math::Logistic"                />
   <class name    = "Gaudi::Math::StudentT"                />
   <class name    = "Gaudi::Math::BifurcatedStudentT"      />
   <class name    = "Gaudi::Math::Rho0"             />
@@ -81,13 +97,16 @@
   <class name    = "Gaudi::Math::WorkSpace"         >
     <field name  = "m_workspace" transient = "true"/>      
   </class>
-  <class name    = "Gaudi::Math::PolySum"          />
-  <class name    = "Gaudi::Math::ChebyshevSum"     />
-  <class name    = "Gaudi::Math::LegendreSum"      />
-  <class name    = "Gaudi::Math::HermiteSum"       />
-  <class name    = "Gaudi::Math::Polynomial"       />
-  <class name    = "Gaudi::Math::Bernstein"        />
-  <class name    = "Gaudi::Math::Positive"         />
+  <class name    = "Gaudi::Math::PolySum"            />
+  <class name    = "Gaudi::Math::ChebyshevSum"       />
+  <class name    = "Gaudi::Math::LegendreSum"        />
+  <class name    = "Gaudi::Math::HermiteSum"         />
+  <class name    = "Gaudi::Math::Polynomial"         />
+  <class name    = "Gaudi::Math::Bernstein"          />
+  <class name    = "Gaudi::Math::BernsteinEven"      />
+  <class name    = "Gaudi::Math::BernsteinDualBasis" />
+  <class name    = "Gaudi::Math::Positive"           />
+  <class name    = "Gaudi::Math::PositiveEven"       />
   <class name    = "Gaudi::Math::Monothonic"       />
   <class name    = "Gaudi::Math::Convex"           />
   <class name    = "Gaudi::Math::ConvexOnly"       />
@@ -119,6 +138,7 @@
   <class name    = "Gaudi::Math::Landau"           />
   <class name    = "Gaudi::Math::Argus"            />
   <class name    = "Gaudi::Math::Atlas"            />
+  <class name    = "Gaudi::Math::Sech"             />
   <class name    = "Gaudi::Math::ExpoPositive"     />
   <class name    = "Gaudi::Math::TwoExpoPositive"  />
   
@@ -143,8 +163,14 @@
   <class name    = "Gaudi::Math::LinearErr"    />
   <class name    = "Gaudi::Math::Parabola"     />
   <class name    = "Gaudi::Math::ParabolaErr"  />
-  <function pattern = "Gaudi::Math::Splines::*"  />
+  <function pattern = "Gaudi::Math::Splines::*"        />
   <class name    = "Gaudi::Math::NSphere"        />
+  
+  <function name = "Gaudi::Math::Interpolation::lagrange"  />
+  <function name = "Gaudi::Math::Interpolation::lagrange2" />
+  <function name = "Gaudi::Math::Interpolation::neville"   />
+  <function name = "Gaudi::Math::Interpolation::neville2"  />
+  <class    name = "Gaudi::Math::Interpolation::DATA"      />
   
   <class name    = "Gaudi::Math::Splines::DATA"    />
   <class name    = "Gaudi::Math::Splines::PAIR"    />
@@ -198,8 +224,11 @@
   <function name = "Gaudi::Math::atanh"           />
   <function name = "Gaudi::Math::erf"             />
   <function name = "Gaudi::Math::erfc"            />
+  <function name = "Gaudi::Math::erfi"            />
   <function name = "Gaudi::Math::tgamma"          />
   <function name = "Gaudi::Math::lgamma"          />
+  <function name = "Gaudi::Math::igamma"          />
+  <function name = "Gaudi::Math::psi"             />
   <function name = "Gaudi::Math::hypot"           />
   <function name = "Gaudi::Math::fma"             />
   <function name = "Gaudi::Math::chi2"            />
@@ -234,6 +263,8 @@
   <function name = "Gaudi::Math::kummer"            />  
   <function name = "Gaudi::Math::probit"            />  
   <function name = "Gaudi::Math::erfcx"             />  
+  <function name = "Gaudi::Math::faddeeva_w"        />  
+  <function name = "Gaudi::Math::dowson"            />  
   <function name = "Gaudi::Math::binomEff"          />
   <function name = "Gaudi::Math::binomEff2"         />
   <function name = "Gaudi::Math::wilsonEff"         />
@@ -289,7 +320,6 @@
   
   <class name = "Gaudi::Math::Chi2Fit"   />
 
-
   <function name = "Gaudi::Math::combine"            />
   <function name = "Gaudi::Math::HistoInterpolation" />
 
@@ -297,7 +327,7 @@
   <class name = "Gaudi::Math::Chi2Solution<4,2,double>::CMTRX2" />
   <class name = "Gaudi::Math::Chi2Solution<6,2,double>"         />
   <class name = "Gaudi::Math::Chi2Solution<6,2,double>::CMTRX2" />
-  
+
   <enum name = "GaudiMath::Interpolation::Type" />
 
   <enum name = "std::pair<double,int>" />

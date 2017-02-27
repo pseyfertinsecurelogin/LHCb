@@ -1,4 +1,3 @@
-// $Id: OTSpecificHeader.h,v 1.1 2008-06-03 12:59:25 wouter Exp $
 #ifndef OTDAQ_OTSPECIFICHEADER_H 
 #define OTDAQ_OTSPECIFICHEADER_H 1
 
@@ -6,9 +5,8 @@
 
 namespace OTDAQ {
 
-  class OTSpecificHeader
+  class OTSpecificHeader final
   {
-  private:
     unsigned int m_data ;
   public:
     /// 
@@ -49,7 +47,6 @@ namespace OTDAQ {
     unsigned int triggerType() const { return  (m_data&TriggerTypeMask)>>TriggerTypeShift ; }
     unsigned int eventID() const { return (m_data&EventIDMask)>>EventIDShift ; }
       
-    
     friend inline std::ostream& operator << ( std::ostream& os, const OTSpecificHeader& header)
     {
       return os << "[ triggerType = " << header.triggerType() 
@@ -57,7 +54,7 @@ namespace OTDAQ {
                 << ", bunchCounter = " << header.bunchCounter()
                 << ", numberOfGOLs = " << header.numberOfGOLs() << " ] " ;
     }
-  } ;
+  };
 }
 
 

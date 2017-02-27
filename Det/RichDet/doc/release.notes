@@ -4,7 +4,42 @@
 ! Purpose     : Interface to the xml description
 !-----------------------------------------------------------------------------
 
-!========================= RichDet v17r7 2016-03-16 =========================
+! 2016-09-06 - Chris Jones
+ - Adapt to the split up of RichKernel.
+
+! 2016-08-18 - Chris Jones
+ - Use Rich::DAQ::HPDCopyNumber instead of plain unsigned int as copy number
+   passed to dePD, deHPD and dePMT methods in the HPD and PMT Panel objects.
+ - Return Rich::DAQ::HPDCopyNumber instead of plain unsigned int from pdNumber
+   PD panel object methods.
+
+! 2016-07-12 - Chris Jones
+ - Fix some warnings due to virtual override attributes.
+
+! 2016-07-11 - Chris Jones
+ - Update some methods used heavily in the reconstruction to return a boolean
+   instead of a StatusCode, when only needed for a yes / no decision.
+
+! 2016-04-03 - Chris Jones
+ - Remove some unneccesary data members from TabulatedFunction1D, which are 
+   replicated as part of the GSL interpolators. Reduces their memory footprint.
+
+! 2016-04-02 - Chris Jones
+ - Add range checking and subsequent error reporting to TabulatedFunction1D
+   and TabulatedProperty1D.
+ - Reduce memory footprint of TabulatedProperty1D by making some data members
+   static.
+
+! 2016-03-31 - Chris Jones
+ - Add an anode radius check to DeRichHPD::magnifyToGlobalMagnetON to avoid
+   out of range interpolator calls.
+
+!========================= RichDet v17r7 2016-03-24 =========================
+! 2016-03-24 - Chris Jones
+ - Extend the range of data passed to the magnification interpolators in
+   DeRichHPD to avoid subsequent attempts to interpolate outside the valid
+   range, which causes problems with GSL 2.x.
+
 ! 2016-03-04 - Chris Jones
  - More improvements to DeRichBeamPipe. Change the API to take a start and end
    point for the direction to be tested, rather than a point and direction.

@@ -37,9 +37,6 @@ DeRichMultiSolidRadiator::DeRichMultiSolidRadiator(const std::string & name)
   m_radiators.reserve(300);
 }
 
-// Standard Destructor
-DeRichMultiSolidRadiator::~DeRichMultiSolidRadiator() {}
-
 // Retrieve Pointer to class defininition structure
 const CLID& DeRichMultiSolidRadiator::classID()
 {
@@ -48,8 +45,8 @@ const CLID& DeRichMultiSolidRadiator::classID()
 
 StatusCode DeRichMultiSolidRadiator::initialize()
 {
-  StatusCode sc = DeRichRadiator::initialize();
-  if ( sc.isFailure() ) return sc;
+  auto sc = DeRichRadiator::initialize();
+  if ( !sc ) return sc;
 
   // Declare UMS dependencies
   updMgrSvc()->registerCondition( this, geometry(),
@@ -68,8 +65,7 @@ StatusCode DeRichMultiSolidRadiator::initialize()
 //=========================================================================
 StatusCode DeRichMultiSolidRadiator::geometryUpdate()
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Geometry update" << endmsg;
+  _ri_debug << "Geometry update" << endmsg;
 
   // clear up first
   m_solids.clear();
@@ -112,6 +108,9 @@ StatusCode DeRichMultiSolidRadiator::geometryUpdate()
 
   m_firstUpdate = false;
 
+  // Check the HLT ref index
+  generateHltRefIndex();
+
   return StatusCode::SUCCESS;
 }
 
@@ -125,6 +124,8 @@ DeRichMultiSolidRadiator::addVolumes(const ILVolume* lv,
                                      const int VolIndex )
 {
   StatusCode sc =  StatusCode::SUCCESS;
+
+  _ri_debug << "In DeRichMultiSolidRadiator::addVolumes" << endmsg;
 
   // First determine if the subtiles exist or not. Depending upon this activate adding the
   // full tile volumes or sub tile volumes. For one may use any full tile and its subtile.
@@ -173,8 +174,7 @@ DeRichMultiSolidRadiator::addSubTileVolumes ( const ILVolume* lv,
                                               const std::string& volName,
                                               const Gaudi::Transform3D& toLowerLevel )
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Adding sub tile volumes" << endmsg;
+  _ri_debug << "Adding sub tile volumes" << endmsg;
 
   const std::string& aAgelLocation = DeRichLocations::Aerogel;
   std::string aAgelSubTileMasterLocation = aAgelLocation.substr(0,aAgelLocation.size()-7);
@@ -206,8 +206,7 @@ DeRichMultiSolidRadiator::addSubTileVolumes ( const ILVolume* lv,
                   << (*stpviter)->name() << endmsg;
           return StatusCode::FAILURE;
         }
-        if ( msgLevel(MSG::DEBUG) )
-          debug() << "Saving sub-tile " << curSubTileDeName << " to radiator list" << endmsg;
+        _ri_debug << "Saving sub-tile " << curSubTileDeName << " to radiator list" << endmsg;
         m_radiators.push_back( deRad );
 
       } // end loop over sub tiles
@@ -229,8 +228,7 @@ DeRichMultiSolidRadiator::addSubTileVolumes ( const ILVolume* lv,
                 << (*pviter)->name() << endmsg;
         return StatusCode::FAILURE;
       }
-      if ( msgLevel(MSG::DEBUG) )
-        debug() << "Loading " << radLoc << " " << tileNumStr << endmsg;
+      _ri_debug << "Loading " << radLoc << " " << tileNumStr << endmsg;
       m_fullTiles.push_back( deFullRad );
 
     } // end if , checking for Agel full tile
@@ -248,8 +246,7 @@ DeRichMultiSolidRadiator::addFullTileVolumes ( const ILVolume* lv,
                                                const std::string& volName,
                                                const Gaudi::Transform3D& toLowerLevel )
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Adding full tile volumes" << endmsg;
+  _ri_debug << "Adding full tile volumes" << endmsg;
 
   // while string volumes also store the total transformation to
   // get to/from the low level volume to the top level volume
@@ -262,8 +259,7 @@ DeRichMultiSolidRadiator::addFullTileVolumes ( const ILVolume* lv,
       m_toLowLevel.push_back( ((*pviter)->matrix()) * (toLowerLevel) );
       m_toTopLevel.push_back( (toLowerLevel.Inverse()) * ((*pviter)->matrixInv()) );
       m_solids.push_back( (*pviter)->lvolume()->solid() );
-      if ( msgLevel(MSG::DEBUG) )
-        debug() << "Storing pvolume " << (*pviter)->name() << endmsg;
+      _ri_debug << "Storing pvolume " << (*pviter)->name() << endmsg;
 
       // get the volume number
       const std::string::size_type numPos = (*pviter)->name().find(':');
@@ -284,8 +280,7 @@ DeRichMultiSolidRadiator::addFullTileVolumes ( const ILVolume* lv,
                 << (*pviter)->name() << endmsg;
         return StatusCode::FAILURE;
       }
-      if ( msgLevel(MSG::DEBUG) )
-        debug() << "Loading " << radLoc << " " << tileNumStr << endmsg;
+      _ri_debug << "Loading " << radLoc << " " << tileNumStr << endmsg;
       m_radiators.push_back( deRad );
       m_fullTiles.push_back( deRad );
 
@@ -485,8 +480,11 @@ DeRichMultiSolidRadiator::refractiveIndex( const double energy,
   // Loop over all tiles and form an average
   for ( const auto & rad : radiators() )
   {
+    if ( !rad ) { warning() << "Null radiator pointer" << endmsg; continue; }
+    const auto ind = rad->refIndex(hlt);
+    if ( !ind ) { warning() << "Null ref. index pointer" << endmsg; continue; }
     // Should this be a weighted average of some form ?
-    refIn += (*(rad->refIndex(hlt)))[energy*Gaudi::Units::eV];
+    refIn += (*ind)[energy*Gaudi::Units::eV];
   }
   return ( radiators().empty() ? refIn : refIn/radiators().size() );
 }

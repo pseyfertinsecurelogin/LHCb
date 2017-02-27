@@ -1,4 +1,3 @@
-// $Id: IFullGenEventCutTool.h,v 1.4 2005-12-31 17:30:37 robbep Exp $
 #ifndef MCINTERFACES_IFULLGENEVENTCUTTOOL_H 
 #define MCINTERFACES_IFULLGENEVENTCUTTOOL_H 1
 
@@ -20,12 +19,9 @@
  *  @date   2005-11-17
  */
 
-static const InterfaceID IID_IFullGenEventCutTool( "IFullGenEventCutTool" , 
-                                                   2 , 0 ) ;
+struct IFullGenEventCutTool : extend_interfaces<IAlgTool> {
 
-class IFullGenEventCutTool : virtual public IAlgTool {
-public:
-  static const InterfaceID& interfaceID() { return IID_IFullGenEventCutTool ; }
+  DeclareInterfaceID( IFullGenEventCutTool , 3 , 0 ) ;
 
   /** Apply the cut on a event.
    *  @param[in] theEvents      Container of all interactions in the event.

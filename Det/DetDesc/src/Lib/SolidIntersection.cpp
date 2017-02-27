@@ -1,4 +1,3 @@
-// $Id: SolidIntersection.cpp,v 1.14 2009-04-17 08:54:24 cattanem Exp $
 // ===========================================================================
 #include <iostream> 
 #include <string> 
@@ -26,9 +25,9 @@
  */
 // ============================================================================
 SolidIntersection::SolidIntersection( const std::string& name  , 
-                                      ISolid*            first )
+                                      std::unique_ptr<ISolid> first )
   : SolidBase    ( name         )
-  , SolidBoolean ( name , first )
+  , SolidBoolean ( name , std::move(first) )
 {}
 // ============================================================================
 
@@ -42,11 +41,6 @@ SolidIntersection::SolidIntersection( const std::string& name )
   , SolidBoolean ( name )
 {}
 // ============================================================================
-
-// ============================================================================
-/// destructor 
-// ============================================================================
-SolidIntersection::~SolidIntersection(){}
 
 // ============================================================================
 bool SolidIntersection::isInside( const Gaudi::XYZPoint   & point ) const 
@@ -69,12 +63,9 @@ bool SolidIntersection::isInsideImpl( const aPoint   & point ) const
 { 
   ///  is point inside the "main" volume?  
   if ( !first()->isInside( point ) ) { return false; }
-  /// find the first daughter in which the given point is NOT placed   
-  SolidBoolean::SolidChildrens::const_iterator ci = 
-    std::find_if( childBegin() , childEnd() , 
-                  std::not1(Solid::IsInside<aPoint>( point ) ) );
-  /// 
-  return ( childEnd() == ci ? true : false );   
+  /// return the 'and' of all children
+  return std::all_of( childBegin() , childEnd() , 
+                      Solid::IsInside<aPoint>( point ) );
 }
 
 // ============================================================================
@@ -84,9 +75,9 @@ bool SolidIntersection::isInsideImpl( const aPoint   & point ) const
  *  @return status code
  */
 // ============================================================================
-StatusCode  SolidIntersection::intersect( ISolid*               solid     , 
+StatusCode  SolidIntersection::intersect( std::unique_ptr<ISolid> solid       , 
                                           const Gaudi::Transform3D* mtrx      )
-{  return addChild( solid , mtrx ); }
+{  return addChild( std::move(solid) , mtrx ); }
 
 // ============================================================================
 /** add intersections 
@@ -97,9 +88,9 @@ StatusCode  SolidIntersection::intersect( ISolid*               solid     ,
  */
 // ============================================================================
 StatusCode  SolidIntersection::intersect 
-( ISolid*               solid    , 
+( std::unique_ptr<ISolid> solid  , 
   const Gaudi::XYZPoint&     position , 
   const Gaudi::Rotation3D&    rotation )
-{ return addChild( solid , position , rotation ) ; }
+{ return addChild( std::move(solid) , position , rotation ) ; }
 
 // ============================================================================

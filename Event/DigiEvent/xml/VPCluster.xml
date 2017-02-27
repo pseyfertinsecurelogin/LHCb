@@ -1,11 +1,14 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<!DOCTYPE gdd SYSTEM "gdd.dtd" > 
+<!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
   <package name = "DigiEvent">
     <class name = "VPCluster"
            id = "4504"
            author = "Marcin Kucharczyk"
-           desc = "This class represents a cluster of pixel hits">
+           desc = "This class represents a cluster of pixel hits"
+           final = "TRUE"
+           defaultdestructor="FALSE"
+           >
     <location name = "Default" place = "Raw/VP/Clusters"/>
     <import name = "vector" std = "TRUE"/>
     <import name = "Kernel/VPChannelID"/>
@@ -15,19 +18,19 @@
 
     <constructor desc = "Constructor"
                  argList = 'std::pair&lt;double, double&gt; fraction,
-                            const double x, const double y, const double z, 
+                            const double x, const double y, const double z,
                             std::vector&lt;LHCb::VPChannelID&gt; pixels'
                  initList = 'm_fraction(fraction), m_x(x), m_y(y), m_z(z), m_pixels(pixels)'>
     </constructor>
     <constructor desc = "Copy constructor"
                  initList = "KeyedObject&lt;LHCb::VPChannelID&gt;(),
-                             m_fraction(cluster.m_fraction), 
-                             m_x(cluster.m_x), m_y(cluster.m_y), m_z(cluster.m_z), 
+                             m_fraction(cluster.m_fraction),
+                             m_x(cluster.m_x), m_y(cluster.m_y), m_z(cluster.m_z),
                              m_pixels(cluster.m_pixels)">
       <arg const = 'TRUE' name = "cluster" type = "LHCb::VPCluster"/>
     </constructor>
 
-    <method type = "LHCb::VPCluster*" name = "clone" const = 'TRUE' access = "PUBLIC" 
+    <method type = "LHCb::VPCluster*" name = "clone" const = 'TRUE' access = "PUBLIC"
             desc = "Clone method">
       <code>
         return new LHCb::VPCluster(*this);
@@ -40,12 +43,12 @@
     <attribute name = "z" type = "double" desc = "global z coordinate"/>
     <attribute name = "pixels" type = "std::vector&lt;LHCb::VPChannelID&gt;" desc = "vector of channel IDs"/>
 
-    <method type = "LHCb::VPChannelID" name = "channelID" const = 'TRUE' 
+    <method type = "LHCb::VPChannelID" name = "channelID" const = 'TRUE'
             desc = "Return the cluster channelID = key">
       <code>return key();</code>
     </method>
 
-    <method type = "std::ostream&amp;" name = "fillStream" const = 'TRUE' virtual = "FALSE"
+    <method type = "std::ostream&amp;" name = "fillStream" const = 'TRUE' override = "TRUE"
             desc = "Print the cluster key = channelID">
       <arg type = "std::ostream" name = "s"/>
       <code>

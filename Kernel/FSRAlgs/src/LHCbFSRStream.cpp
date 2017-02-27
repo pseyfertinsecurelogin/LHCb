@@ -1,4 +1,3 @@
-// $Id: RecordStream.cpp,v 1.1 2008/12/10 18:37:36 marcocle Exp $
 #define LHCB_FSRSTREAM_CPP
 
 // Framework include files
@@ -18,10 +17,7 @@ DECLARE_ALGORITHM_FACTORY(LHCbFSRStream)
 
 // Standard Constructor
 LHCbFSRStream::LHCbFSRStream(const std::string& name, ISvcLocator* pSvcLocator)
-  : LHCbRecordStream(name, pSvcLocator),
-    m_ioFsrSvc(0),
-    m_doIOFsr(true),
-    m_cleanTree(true)
+  : LHCbRecordStream(name, pSvcLocator)
 {
   declareProperty("FSRCleaningDirectory",m_cleanRoot="/FileRecords");
   declareProperty("CleanTree",m_cleanTree=true);
@@ -29,59 +25,56 @@ LHCbFSRStream::LHCbFSRStream(const std::string& name, ISvcLocator* pSvcLocator)
 }
 
 
-StatusCode LHCbFSRStream::initialize() 
+StatusCode LHCbFSRStream::initialize()
 {
-  MsgStream log(msgSvc(), name());
   StatusCode sc=LHCbRecordStream::initialize();
   if (!sc.isSuccess() ) return sc;
   if (!m_doIOFsr) return sc;
-  
-  SmartIF<IIOFSRSvc> ioFsrSvc(serviceLocator()->service<IIOFSRSvc>("IOFSRSvc"));
-  if( !ioFsrSvc )  
-  {
+
+  m_ioFsrSvc = serviceLocator()->service("IOFSRSvc");
+  if( !m_ioFsrSvc )  {
+    MsgStream log(msgSvc(), name());
     log << MSG::ERROR << "Error retrieving IOFSRSvc." << endmsg;
     return StatusCode::FAILURE;
   }
-  m_ioFsrSvc=ioFsrSvc;
-  
+
   return sc;
-  
-  
 }
 
 
-StatusCode LHCbFSRStream::finalize() 
+StatusCode LHCbFSRStream::finalize()
 {
   MsgStream log(msgSvc(), name());
-  if (m_doIOFsr) 
+  if (m_doIOFsr)
   {
-    
+
     //clean any existing top-level FSR
     StatusCode sc=m_ioFsrSvc->cleanTopFSR();
     //it probably isn't there...
     sc.ignore();
-    
-    
+
+
     //add the IOFSR to the TES
     sc=m_ioFsrSvc->storeIOFSR(m_outputName);
-    if( !sc.isSuccess() )  
+    if( !sc.isSuccess() )
     {
       log << MSG::ERROR << "Error storing IOFSR." << endmsg;
     }
   }
-  
+
   //TODO cleanup the existing store, removing all empty directories
   if (m_cleanTree)
   {
     // Try and load the root DataObject for the configured stream
     SmartDataPtr<DataObject> root( m_pDataProvider, m_cleanRoot );
-    
+
     // if found, recursively clean
     if ( root ) cleanNodes( root, m_cleanRoot );
   }
-  
+
+  m_ioFsrSvc.reset();
   return LHCbRecordStream::finalize();
-  
+
 }
 
 void LHCbFSRStream::cleanNodes( DataObject * obj,
@@ -95,17 +88,17 @@ void LHCbFSRStream::cleanNodes( DataObject * obj,
     log << MSG::ERROR << "Maximum recursion limit reached...." << endmsg;
     return;
   }
-  
+
   SmartIF<IDataManagerSvc> mgr( m_pDataManager );
-  
+
   typedef std::vector<IRegistry*> Leaves;
   Leaves leaves;
-  
+
   // Load the leaves
   StatusCode sc = mgr->objectLeaves( obj, leaves );
   if ( sc )
   {
-    
+
     if ( !leaves.empty() )
     {
       for ( Leaves::const_iterator iL = leaves.begin(); leaves.end() != iL; ++iL )

@@ -11,7 +11,10 @@
     <class
       name        = 'HltDecReport'
       author      = 'Tomasz Skwarnicki'
-      desc        = 'Hlt Trigger Decision'>
+      desc        = 'Hlt Trigger Decision'
+      defaultdestructor = "FALSE"
+      final       = "TRUE"
+      >
 
       <attribute
         type = 'bitfield'
@@ -40,11 +43,11 @@
 	    type='unsigned int'
 	    name='numberOfCandidates'
 	    length='4'
-	    desc='number of selected candidates passing trigger decision criteria' 
+	    desc='number of selected candidates passing trigger decision criteria'
             setMeth ='FALSE'
 	    />
 
-	<bitfield 
+	<bitfield
             type='unsigned int'
 	    name='executionStage'
 	    length='8'
@@ -69,59 +72,59 @@
       <method
         name='setDecision'
         type='void'
-        argList='bool dec' 
+        argList='bool dec'
         desc='set decision bit; keep event= (dec==true)'
         >
         <code>
    m_decReport &amp;= ~decisionMask;
-   if( dec ){ 
-     m_decReport |= ((((unsigned int)1) &lt;&lt; decisionBits) &amp; decisionMask); 
+   if( dec ){
+     m_decReport |= ((((unsigned int)1) &lt;&lt; decisionBits) &amp; decisionMask);
    }
        </code>
-      </method>        
+      </method>
 
       <method
         name='setExecutionStage'
         type='void'
-        argList='int stage' 
+        argList='int stage'
         desc='Update code specifying highest step reached during the trigger line execution (0-255)'
         >
         <code>
   unsigned int val=(stage&lt;0)?0:((unsigned int)stage);
-  val=(val&lt;255)?val:255; 
+  val=(val&lt;255)?val:255;
   m_decReport &amp;= ~executionStageMask;
   m_decReport |= ((((unsigned int)val) &lt;&lt; executionStageBits)  &amp; executionStageMask);
        </code>
-      </method>        
+      </method>
 
       <method
         static='TRUE'
         type='unsigned int'
-        name='saturatedNumberOfCandidates' 
+        name='saturatedNumberOfCandidates'
         desc='if numberOfCandidates in HltDecReport equals this then actual number might have been larger'
         >
         <code>
   return numberOfCandidatesMask &gt;&gt; numberOfCandidatesBits;
         </code>
       </method>
-        
+
       <method
         name='setNumberOfCandidates'
         type='void'
-        argList='int noc' 
+        argList='int noc'
         desc='set numberOfCandidates; set to saturation value if larger than max allowed; set to 0 if negative'
         >
         <code>
   unsigned int val=(noc&lt;0)?0:((unsigned int)noc);
-  val=(val&lt;saturatedNumberOfCandidates())?val:saturatedNumberOfCandidates(); 
+  val=(val&lt;saturatedNumberOfCandidates())?val:saturatedNumberOfCandidates();
   m_decReport &amp;= ~numberOfCandidatesMask;
   m_decReport |= ((val &lt;&lt; numberOfCandidatesBits) &amp; numberOfCandidatesMask);
        </code>
-      </method>        
+      </method>
 
       <method
         type='unsigned int'
-        name='intSelectionID' 
+        name='intSelectionID'
         desc='deprecated backwards compatibility stub'
         const='TRUE'
         >
@@ -133,26 +136,26 @@
       <method
         static='TRUE'
         type='unsigned int'
-        name='illegalIntDecisionID' 
+        name='illegalIntDecisionID'
         desc='if intDecisionID in HltDecReport equals this then passed decision ID was out of allowed range'
         >
         <code>
   return (unsigned int)(intDecisionIDMask &gt;&gt; intDecisionIDBits);
         </code>
       </method>
-        
+
       <method
         name='setIntDecisionID'
         type='void'
-        argList='int decID' 
+        argList='int decID'
         desc='set intDecisionID; set to illegal value if out of allowed range'
         >
         <code>
   unsigned int val=(decID&lt;=0)?illegalIntDecisionID():((unsigned int)decID);
-  val=(val&lt;illegalIntDecisionID())?val:illegalIntDecisionID(); 
+  val=(val&lt;illegalIntDecisionID())?val:illegalIntDecisionID();
   m_decReport &amp;= ~intDecisionIDMask;
   m_decReport |= ((val &lt;&lt; intDecisionIDBits) &amp; intDecisionIDMask);
-        </code>   
+        </code>
       </method>
 
       <method
@@ -167,7 +170,7 @@
 
 
       <!-- non-trivial constructors -->
-        
+
       <constructor
         argList='unsigned int decRep'
 	initList='m_decReport(decRep)'
@@ -182,10 +185,10 @@
    m_decReport=0;
    setDecision(dec);
    setExecutionStage(stage);
-   setErrorBits(eb);          
+   setErrorBits(eb);
    setNumberOfCandidates(noc);
    setIntDecisionID(decID);
-        </code>   
+        </code>
       </constructor>
 
       <constructor
@@ -196,10 +199,10 @@
    m_decReport=0;
    setDecision(dec);
    setExecutionStage(0); // not specified
-   setErrorBits(eb);          
+   setErrorBits(eb);
    setNumberOfCandidates(noc);
    setIntDecisionID(decID);
-        </code>   
+        </code>
       </constructor>
 
       <!-- readable printout -->
@@ -220,8 +223,10 @@
       name        = 'HltDecReports'
       author      = 'Tomasz Skwarnicki'
       desc        = 'managed container of Hlt Trigger Decision Reports'
-      id          = '7521' >
-      
+      id          = '7521'
+      defaultdestructor = "FALSE"
+      >
+
       <location name='Default'  place='Hlt/DecReports' />
       <location name='Hlt1Default'  place='Hlt1/DecReports' />
       <location name='Hlt2Default'  place='Hlt2/DecReports' />
@@ -233,6 +238,7 @@
       <import name='GaudiKernel/VectorMap' />
       <import name='Event/HltDecReport' />
       <import name='vector' std='TRUE' />
+      <import name='algorithm' std='TRUE' />
 
       <typedef
         type   = 'GaudiUtils::VectorMap&lt; std::string, LHCb::HltDecReport &gt;'
@@ -283,15 +289,15 @@
 
       <!-- report accessor (for convenience) -->
 
-      <method 
+      <method
          name='decReport'
          type='const LHCb::HltDecReport*'
          argList = 'const std::string decisionName'
          desc='return pointer to Hlt Decision Report for given trigger decision name (==0 if not found)'
          const = 'TRUE' >
         <code>
-    Container::const_iterator rep = m_decReports.find(decisionName);
-    if( rep==m_decReports.end() )return 0;
+    auto rep = m_decReports.find(decisionName);
+    if( rep==m_decReports.end() )return nullptr;
     return &amp;(rep->second);
         </code>
       </method>
@@ -319,12 +325,9 @@
         <code>
     std::vector&lt;std::string&gt; names;
     names.reserve( m_decReports.size() );
-    Container::const_iterator it = m_decReports.begin();
-    while ( it != m_decReports.end()) names.push_back((it++)->first);
-
-    //std::transform( std::begin( m_decReports ), std::end( m_decReports ), 
-    //                std::back_inserter( names ),
-    //                []( const_reference i ) { return i.first ; } );
+    std::transform( begin(), end(),
+                    std::back_inserter( names ),
+                    []( const_reference i ) { return i.first ; } );
     return names;
         </code>
       </method>
@@ -341,7 +344,7 @@
           return m_decReports.begin();
        </code>
       </method>
-        
+
       <method
          name = 'end'
          type = 'LHCb::HltDecReports::Container::const_iterator'
@@ -352,7 +355,7 @@
           return m_decReports.end();
        </code>
       </method>
-        
+
       <method
          name = 'find'
          type = 'LHCb::HltDecReports::Container::const_iterator'
@@ -363,7 +366,7 @@
           return m_decReports.find(decisionName);
        </code>
       </method>
-        
+
      <!-- size -->
 
      <method
@@ -375,7 +378,7 @@
    return m_decReports.size();
        </code>
       </method>
-      
+
 
      <!-- reserve -->
 
@@ -389,7 +392,7 @@
      m_decReports.reserve(num);
        </code>
       </method>
-      
+
 
      <!-- insertor -->
 
@@ -397,7 +400,7 @@
         name='insert'
         type='StatusCode'
         argList='const std::string decisionName,const LHCb::HltDecReport decReport'
-        desc='insert HltDecReport for given decisionName, returns StatusCode::FAILURE if duplicate decision name'        
+        desc='insert HltDecReport for given decisionName, returns StatusCode::FAILURE if duplicate decision name'
       >
         <code>
    return  m_decReports.insert(decisionName,decReport).second ? StatusCode::SUCCESS
@@ -443,8 +446,9 @@
       <method
         name='fillStream'
         type='std::ostream&amp;'
-        desc='intelligent printout' 
-        const='TRUE' >
+        desc='intelligent printout'
+        const='TRUE'
+        override='TRUE' >
         <arg name="s" type="std::ostream"/>
       </method>
 

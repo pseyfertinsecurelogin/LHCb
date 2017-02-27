@@ -16,6 +16,8 @@
 	author           = "Chris Jones   Christopher.Rob.Jones@cern.ch" 
 	desc             = "RICH reconstruction summary object representing a single track" 
 	id               = "12451" 
+    final            = "TRUE"
+    defaultdestructor = "FALSE"
 	keyedContTypeDef = "TRUE" 
       	location         = "Rec/Rich/RichSummaryTracks"  
 	stdVectorTypeDef = "TRUE">

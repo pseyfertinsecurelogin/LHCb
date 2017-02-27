@@ -1,5 +1,3 @@
-// $Id: PackedMCRichHit.cpp,v 1.5 2010-04-11 14:27:14 jonrob Exp $
-
 // local
 #include "Event/PackedMCRichHit.h"
 
@@ -15,7 +13,7 @@ void MCRichHitPacker::pack( const DataVector & hits,
                             PackedDataVector & phits ) const
 {
   const auto ver = phits.packingVersion();
-  if ( 0 == ver || 1 == ver )
+  if ( isSupportedVer(ver) )
   {
     phits.data().reserve( hits.size() );
     for ( const auto * hit : hits )
@@ -41,19 +39,13 @@ void MCRichHitPacker::pack( const DataVector & hits,
       }
     }
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "MCRichHitPacker", StatusCode::FAILURE );
-  }
 }
 
 void MCRichHitPacker::unpack( const PackedDataVector & phits,
                               DataVector             & hits ) const
 {
   const auto ver = phits.packingVersion();
-  if ( 0 == ver || 1 == ver )
+  if ( isSupportedVer(ver) )
   {
     hits.reserve( phits.data().size() );
     for ( const auto & phit : phits.data() )
@@ -81,12 +73,6 @@ void MCRichHitPacker::unpack( const PackedDataVector & phits,
         else { parent().Error( "Corrupt MCRichHit MCParticle SmartRef detected." ).ignore(); }
       }
     }
-  }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "MCRichHitPacker", StatusCode::FAILURE );
   }
 }
 

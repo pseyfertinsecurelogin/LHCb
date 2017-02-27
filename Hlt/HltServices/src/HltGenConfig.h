@@ -1,4 +1,3 @@
-// $Id: HltGenConfig.h,v 1.12 2010-05-05 21:07:43 graven Exp $
 #ifndef HLTGENCONFIG_H
 #define HLTGENCONFIG_H 1
 
@@ -21,12 +20,11 @@
  *  @author Gerhard Raven
  *  @date   2007-10-24
  */
+using namespace std::literals::string_literals;
 class HltGenConfig : public GaudiAlgorithm, public IToolSvc::Observer
 {
   public:
-    HltGenConfig( const std::string& name, ISvcLocator* pSvcLocator );
-
-    ~HltGenConfig() override = default; ///< Destructor
+    using GaudiAlgorithm::GaudiAlgorithm;
 
     StatusCode initialize() override; ///< Algorithm initialization
     StatusCode execute() override;    ///< Algorithm execution
@@ -37,19 +35,20 @@ class HltGenConfig : public GaudiAlgorithm, public IToolSvc::Observer
   private:
     typedef unsigned int TCK_t;
 
-    IAlgManager* m_appMgr;
-    std::string s_accessSvc;
-    IConfigAccessSvc* m_accessSvc;
-    std::string s_configSvc;
-    IPropertyConfigSvc* m_configSvc;
-    std::vector<std::string> m_topConfig; ///< where to start when configuring
-    std::vector<std::string> m_svcConfig; ///< Which services to configure
-    std::string m_hltType; ///< what runtype do we label this config as?
-    std::string m_release; ///< what is the Moore release we use as a label?
-    std::string m_label;   ///< what is the label?
-    std::map<std::string, std::vector<std::string>> m_overrule;
-    std::vector<std::string> m_envVars; ///< Which environment variables do we put back in.
+    SmartIF<IAlgManager> m_appMgr;
+    Gaudi::Property<std::string> s_accessSvc { this, "ConfigAccessSvc"s, "ConfigTarFileAccessSvc"s };
+    SmartIF<IConfigAccessSvc> m_accessSvc;
+    Gaudi::Property<std::string> s_configSvc { this,  "PropertyConfigSvc"s, "PropertyConfigSvc"s };
+    SmartIF<IPropertyConfigSvc> m_configSvc;
+    Gaudi::Property<std::vector<std::string>> m_topConfig{ this, "ConfigTop",{  "Hlt"s  } } ; ///< where to start when configuring
+    Gaudi::Property<std::vector<std::string>> m_svcConfig{ this, "ConfigSvc",{ "ToolSvc"s, "HltANNSvc"s, "Hlt::Service"s }}; ///< Which services to configure
+    Gaudi::Property<std::string> m_hltType{ this, "HltType"s }; ///< what runtype do we label this config as?
+    Gaudi::Property<std::string> m_release{ this, "MooreRelease"s }; ///< what is the Moore release we use as a label?
+    Gaudi::Property<std::string> m_label{ this, "Label"s };   ///< what is the label?
+    Gaudi::Property<std::map<std::string, std::vector<std::string>>> m_overrule {this, "Overrule"s };
+    Gaudi::Property<std::vector<std::string>> m_envVars{ this, "EnvironmentVariables"s, {"PARAMFILESROOT"s}}; ///< Which environment variables do we put back in.
     std::unordered_map<std::string, std::string> m_envVarValues;
+    mutable std::unordered_set<std::string> m_overruled;
 
     StatusCode generateConfig() const;
 

@@ -27,24 +27,28 @@ class IIncidentSvc;
  *  @author Marco Clemencic
  *  @date   Jan 31, 2012
  */
-class DQFilter: public extends1<GaudiAlgorithm, IIncidentListener> {
+class DQFilter final : public extends1<GaudiAlgorithm, IIncidentListener>
+{
+
 public:
+
   /// Standard constructor
   DQFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
   /// Initialize the algorithm.
   /// Register to the UpdateManagerSvc as user of the Data Quality flags condition
   /// and, if not requested otherwise, register as BeginEvent listener.
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
   /// By default it does nothing, but if requested not to use the BeginEvent,
   /// it sets the
-  virtual StatusCode execute();
+  StatusCode execute() override;
   /// If registered as BeginEvent listener, unregister.
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
-  virtual void handle(const Incident&);
+  void handle(const Incident&) override;
 
 private:
+
   /// Flag to state if we have to filter at the level of the Begin Event
   /// incident or during the execute.
   bool m_beginEvent;
@@ -54,7 +58,7 @@ private:
   std::string m_acceptToolName;
 
   /// Pointer to the IAccept tool.
-  IAccept *m_acceptTool;
+  IAccept *m_acceptTool = nullptr;
 
   /// Pointer to the IncidentSvc.
   SmartIF<IIncidentSvc> m_incSvc;

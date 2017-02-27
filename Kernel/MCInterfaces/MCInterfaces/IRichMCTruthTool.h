@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------------
 /** @file IRichMCTruthTool.h
  *
@@ -36,11 +35,9 @@ namespace LHCb
 }
 namespace Rich
 {
-  class HPDPixelCluster;
+  class PDPixelCluster;
 }
 
-/// Static Interface Identification
-static const InterfaceID IID_IRichMCTruthTool( "Rich::IMCTruthTool", 1, 0 );
 
 namespace Rich
 {
@@ -57,15 +54,13 @@ namespace Rich
      */
     //------------------------------------------------------------------------------------
 
-    class IMCTruthTool : public virtual IAlgTool
+    struct IMCTruthTool : extend_interfaces<IAlgTool>
     {
-
-    public:
 
       /** static interface identification
        *  @return unique interface identifier
        */
-      static const InterfaceID& interfaceID() { return IID_IRichMCTruthTool; }
+      DeclareInterfaceID( IMCTruthTool, 1, 0 );
 
       /** get the MCRichHits associated to a given MCParticle
        *
@@ -92,7 +87,7 @@ namespace Rich
        *
        *  @return Vector of associated MCRichHits
        */
-      virtual void mcRichHits( const Rich::HPDPixelCluster& cluster,
+      virtual void mcRichHits( const Rich::PDPixelCluster& cluster,
                                SmartRefVector<LHCb::MCRichHit> & hits ) const = 0;
 
       /** Get a vector of MCParticles associated to given RichSmartID
@@ -112,7 +107,7 @@ namespace Rich
        *
        *  @return boolean indicating if any associated MCParticles where found
        */
-      virtual bool mcParticles( const Rich::HPDPixelCluster& cluster,
+      virtual bool mcParticles( const Rich::PDPixelCluster& cluster,
                                 std::vector<const LHCb::MCParticle*> & mcParts ) const = 0;
 
       /** Determines the particle mass hypothesis for a given MCParticle
@@ -180,7 +175,7 @@ namespace Rich
        *  @retval false No history objects were found
        */
       virtual bool
-      getMcHistories( const Rich::HPDPixelCluster& cluster,
+      getMcHistories( const Rich::PDPixelCluster& cluster,
                       std::vector<const LHCb::MCRichDigitSummary*> & histories ) const = 0;
 
       /** Checks if the given RichSmartID is the result of a background
@@ -195,18 +190,18 @@ namespace Rich
       virtual bool isBackground ( const LHCb::RichSmartID id ) const = 0;
 
       /** Checks if the given RichSmartID is the result of a photon which
-       *  underwent reflections inside the HPD
+       *  underwent reflections inside the PD
        *
        *  @param id RichSmartID
        *
-       *  @return Boolean indicating if the digit is an HPD reflection
+       *  @return Boolean indicating if the digit is an PD reflection
        *  @retval true  RichSmartID originated from a reflection hit
        *  @retval false RichSmartID did not undergo reflection
        */
       virtual bool isHPDReflection ( const LHCb::RichSmartID id ) const = 0;
 
       /** Checks if the given RichSmartID is the result of backscattering
-       *   of the HPD silicon sensor
+       *   of the PD silicon sensor
        *
        *  @param id RichSmartID
        *
@@ -250,21 +245,21 @@ namespace Rich
        *  @retval true  RichSmartIDs originated from a background hit
        *  @retval false RichSmartIDs originated from Cherenkov Radiation
        */
-      virtual bool isBackground ( const Rich::HPDPixelCluster& cluster ) const = 0;
+      virtual bool isBackground ( const Rich::PDPixelCluster& cluster ) const = 0;
 
       /** Checks if the given cluster of RichSmartIDs is the result of a photon which
-       *  underwent reflections inside the HPD
+       *  underwent reflections inside the PD
        *
        *  @param cluster Cluster of RichSmartIDs
        *
-       *  @return Boolean indicating if the cluster is an HPD reflection
+       *  @return Boolean indicating if the cluster is an PD reflection
        *  @retval true  RichSmartIDs originated from a reflection hit
        *  @retval false RichSmartIDs did not undergo reflection
        */
-      virtual bool isHPDReflection ( const Rich::HPDPixelCluster& cluster ) const = 0;
+      virtual bool isHPDReflection ( const Rich::PDPixelCluster& cluster ) const = 0;
 
       /** Checks if the given cluster of RichSmartIDs is the result of backscattering
-       *   of the HPD silicon sensor
+       *   of the PD silicon sensor
        *
        *  @param cluster Cluster of RichSmartIDs
        *
@@ -272,7 +267,7 @@ namespace Rich
        *  @retval true  RichSmartIDs originated from back-scattering
        *  @retval false RichSmartIDs did not originate from back-scattering
        */
-      virtual bool isSiBackScatter ( const Rich::HPDPixelCluster& cluster ) const = 0;
+      virtual bool isSiBackScatter ( const Rich::PDPixelCluster& cluster ) const = 0;
 
       /** Checks if the given cluster of RichSmartIDs is the result of scintillation
        *   of radiator
@@ -283,7 +278,7 @@ namespace Rich
        *  @retval true  RichSmartIDs originated from scintillation
        *  @retval false RichSmartIDs did not originate from scintillation
        */
-      virtual bool isRadScintillation ( const Rich::HPDPixelCluster& cluster ) const = 0;
+      virtual bool isRadScintillation ( const Rich::PDPixelCluster& cluster ) const = 0;
 
       /** Checks if the given cluster of RichSmartIDs is the result of true Cherenkov
        *  radiation from the given radiator. I.e. At least of of the associated
@@ -297,7 +292,7 @@ namespace Rich
        *  @retval true  RichSmartID did originate from Cherenkov radiation
        *  @retval false RichSmartID did not originate from Cherenkov radiation
        */
-      virtual bool isCherenkovRadiation( const Rich::HPDPixelCluster& cluster,
+      virtual bool isCherenkovRadiation( const Rich::PDPixelCluster& cluster,
                                          const Rich::RadiatorType rad ) const = 0;
 
       /** Checks if MC summary information for the RICH hits (RichSmartIDs) are available

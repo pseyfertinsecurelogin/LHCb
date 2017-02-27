@@ -9,8 +9,7 @@
  */
 //----------------------------------------------------------------------------
 
-#ifndef RICHDET_DERICHSINGLESOLIDRADIATOR_H
-#define RICHDET_DERICHSINGLESOLIDRADIATOR_H 1
+#pragma once
 
 // Include files
 #include "RichDet/DeRichRadiator.h"
@@ -41,13 +40,13 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRichSingleSolidRadiator();
+  virtual ~DeRichSingleSolidRadiator() = default;
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  inline const CLID& clID() const
+  inline const CLID& clID() const override
   {
     return classID();
   }
@@ -64,34 +63,34 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  virtual StatusCode initialize() override;
 
   // Finds the next intersection point with radiator.
   StatusCode nextIntersectionPoint(const Gaudi::XYZPoint& pGlobal,
                                    const Gaudi::XYZVector& vGlobal,
-                                   Gaudi::XYZPoint& returnPoint) const;
+                                   Gaudi::XYZPoint& returnPoint) const override;
 
   // Finds the entry and exit points of the radiator. For boolean solids
   // this is the first and last intersection point.
   virtual StatusCode intersectionPoints(const Gaudi::XYZPoint& position,
                                         const Gaudi::XYZVector& direction,
                                         Gaudi::XYZPoint& entryPoint,
-                                        Gaudi::XYZPoint& exitPoint ) const;
+                                        Gaudi::XYZPoint& exitPoint ) const override;
 
   // Finds the intersection points with radiator. For boolean solids there
   // can be more than two intersection points
-  unsigned int intersectionPoints(const Gaudi::XYZPoint& pGlobal,
-                                  const Gaudi::XYZVector& vGlobal,
-                                  std::vector<Gaudi::XYZPoint>& points) const;
+  virtual unsigned int intersectionPoints(const Gaudi::XYZPoint& pGlobal,
+                                          const Gaudi::XYZVector& vGlobal,
+                                          std::vector<Gaudi::XYZPoint>& points) const override;
 
   // Finds the intersections (entry/exit) with radiator. For boolean solids there
   //  can be more than one intersections
   virtual unsigned int intersections( const Gaudi::XYZPoint& pGlobal,
                                       const Gaudi::XYZVector& vGlobal,
-                                      Rich::RadIntersection::Vector& intersections ) const;
+                                      Rich::RadIntersection::Vector& intersections ) const override;
 
   // Returns the refractive index at the given photon energy for this radiator
-  virtual double refractiveIndex( const double energy, const bool hlt = true ) const;
+  virtual double refractiveIndex( const double energy, const bool hlt = true ) const override;
 
   /**
    * Returns a pointer to the material of this radiator
@@ -111,9 +110,7 @@ protected:
 
 private:
 
-  const ISolid* m_solid = nullptr;      ///< topmost solid of the radiator
+  const ISolid* m_solid = nullptr;      ///< top most solid of the radiator
   const Material* m_material = nullptr; ///< pointer to the radiator material
 
 };
-
-#endif    // RICHDET_DERICHSINGLESOLIDRADIATOR_H

@@ -12,6 +12,8 @@
       author="Olivier Deschamps"
       name="RawBankReadoutStatus"
       desc="Class for the status of RawBank decoding"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
       >
 
 
@@ -46,6 +48,7 @@
       <import name="sstream"   std="TRUE"/>
       <import name="map"       std="TRUE"/>
       <import name="algorithm" std="TRUE"/>
+      <import name="numeric"   std="TRUE"/>
       <import name="Event/RawBank"/>
 
       <typedef

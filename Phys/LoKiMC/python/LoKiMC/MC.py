@@ -80,7 +80,9 @@ LHCb.MCParticle  . nDaughters     = nChildren
 LHCb.MCParticle  . __nChildren__  = nChildren
 LHCb.MCParticle  . __nDaughters__ = nChildren
 
-LHCb.MCParticle.hex_id  = lambda s : LoKi.MCParticles.hex_id ( s ) 
+LHCb.MCParticle.hex_id   = lambda s : LoKi.MCParticles.hex_id ( s ) 
+LHCb.MCParticle.__hash__ = lambda s : LoKi.MCParticles.hash   ( s ) 
+LHCb.MCVertex  .__hash__ = lambda s : LoKi.MCParticles.hash   ( s ) 
 
 # =============================================================================
 ## get the child 

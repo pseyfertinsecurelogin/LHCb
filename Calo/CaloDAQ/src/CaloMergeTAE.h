@@ -1,4 +1,4 @@
-#ifndef CALOMERGETAE_H 
+#ifndef CALOMERGETAE_H
 #define CALOMERGETAE_H 1
 
 // Include files
@@ -10,20 +10,20 @@
 
 
 /** @class CaloMergeTAE CaloMergeTAE.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2008-10-24
  */
 class CaloMergeTAE : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   CaloMergeTAE( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~CaloMergeTAE( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 protected:
 
@@ -54,8 +54,8 @@ private:
 
   std::string m_outputDataLoc;
   std::string m_inExt;
-  
+
   DeCalorimeter* m_calo;
-  
+
 };
 #endif // CALOMERGETAE_H

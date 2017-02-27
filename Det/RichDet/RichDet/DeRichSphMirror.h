@@ -7,8 +7,7 @@
  *  @date   2004-06-18
  */
 
-#ifndef  RICHDET_DERICHSPHMIRROR_H
-#define  RICHDET_DERICHSPHMIRROR_H 1
+#pragma once
 
 // STL
 #include <memory>
@@ -45,13 +44,13 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRichSphMirror();
+  virtual ~DeRichSphMirror() = default;
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const
+  const CLID& clID() const override
   {
     return classID();
   }
@@ -68,7 +67,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /**
    * Retrieves the centre of curvarute of this mirror
@@ -187,5 +186,3 @@ private: // data
   bool m_firstUpdate{true};
 
 };
-
-#endif    //  RICHDET_DERICHSPHMIRROR_H

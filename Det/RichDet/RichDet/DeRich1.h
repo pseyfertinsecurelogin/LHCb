@@ -7,12 +7,10 @@
  *  @date   2004-06-18
  */
 
-#ifndef RICHDET_DERICH1_H
-#define RICHDET_DERICH1_H 1
+#pragma once
 
 // local
 #include "RichDet/DeRich.h"
-
 
 // External declarations
 extern const CLID CLID_DERich1;
@@ -25,7 +23,7 @@ extern const CLID CLID_DERich1;
  *  @date   2004-06-18
  */
 
-class DeRich1 : public DeRich 
+class DeRich1 : public DeRich
 {
 
 public:
@@ -38,13 +36,13 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRich1();
+  virtual ~DeRich1() = default;
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const { return classID(); }
+  const CLID& clID() const override { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -56,65 +54,14 @@ public:
    * Specific Rich1 initialisation
    * @return Status of initialisation
    */
-  virtual StatusCode initialize();
-
-  /**
-   * Returns the nominal centre of curvature of the spherical mirror for this Rich
-   *
-   * @param side Which side: top or bottom
-   * @return The nominal centre of curvature
-   */
-  virtual const Gaudi::XYZPoint& nominalCentreOfCurvature(const Rich::Side side) const;
-
-  /**
-   * Returns the nominal normal vector of the flat mirror plane for this Rich
-   *
-   * @param side Which side: top or bottom
-   * @return The nominal normal vector
-   */
-  virtual const Gaudi::XYZVector& nominalNormal(const Rich::Side side) const;
-
-  /**
-   * Returns the nominal flat mirror plane for this Rich
-   *
-   * @param side Which side: top or bottom
-   * @return The nominal flat mirror plane
-   */
-  virtual const Gaudi::Plane3D& nominalPlane(const Rich::Side side) const;
-
-  /**
-   * Check on which side of this Rich lies this point
-   *
-   * @param point A point in the global coordinate system
-   * @return The side for this point
-   */
-  virtual Rich::Side side( const Gaudi::XYZPoint& point) const;
+  StatusCode initialize() override;
 
 private:
 
   /// Access the name for a given panel
-  virtual const std::string panelName( const Rich::Side panel ) const;
+  const std::string panelName( const Rich::Side panel ) const override;
 
   /// Update Nominal mirror parameters
   StatusCode updateMirrorParams();
 
-private:
-
-  Gaudi::Plane3D m_nominalPlaneTop;    ///< The top nominal flat mirror plane
-  Gaudi::Plane3D m_nominalPlaneBottom; ///< The bottom nominal flat mirror plane
-
-  /// The nominal centre of curvature of the spherical mirror (negative side)
-  Gaudi::XYZPoint  m_nominalCentreOfCurvatureBottom;
-
-  /// The nominal centre of curvature of the spherical mirror (positive side)
-  Gaudi::XYZPoint  m_nominalCentreOfCurvatureTop;
-
-  /// The nominal normal vector of the flat mirror plane (negative side)
-  Gaudi::XYZVector m_nominalNormalBottom;
-
-  /// The nominal normal vector of the flat mirror plane (positive side)
-  Gaudi::XYZVector m_nominalNormalTop;
-
 };
-
-#endif    // RICHDET_DERICH1_H

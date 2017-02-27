@@ -1,6 +1,5 @@
-// $Id: Hlt.cpp,v 1.7 2010-05-18 07:13:33 cattanem Exp $
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -12,181 +11,97 @@
 #include "LoKi/Constants.h"
 #include "LoKi/HLT.h"
 // ============================================================================
-/** @file 
- *  Implementation file for namespace LoKi::HLT 
- *  @date 2008-09-19 
+/** @file
+ *  Implementation file for namespace LoKi::HLT
+ *  @date 2008-09-19
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  */
 // ============================================================================
-namespace 
+namespace
 {
   // ==========================================================================
-  inline bool isTurbo ( const LHCb::HltDecReport& rep ) 
+  inline bool isTurbo ( const LHCb::HltDecReport& rep )
   { return rep.executionStage()&0x80u; }
   // ==========================================================================
 }
 // ============================================================================
-// constructor from the decision name 
+// constructor form the decision names ("OR")
 // ============================================================================
-LoKi::HLT::HasDecision::HasDecision 
-( const std::string& name  ) 
-  : LoKi::AuxFunBase ( std::tie ( name ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate () 
-  , m_names ( 1 , name ) 
+LoKi::HLT::HasDecision::HasDecision
+( LoKi::HLT::HasDecision::Names names )
+  : LoKi::AuxFunBase ( std::tie ( names ) )
+  , m_names ( std::move(names) )
 {}
 // ============================================================================
-// constructor from the decision names 
-// ============================================================================
-LoKi::HLT::HasDecision::HasDecision 
-( const std::string& name1 , 
-  const std::string& name2 ) 
-  : LoKi::AuxFunBase ( std::tie ( name1 , name2 ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate () 
-  , m_names { name1, name2 }
-{
-}
-// ============================================================================
-// constructor from the decision names 
-// ============================================================================
-LoKi::HLT::HasDecision::HasDecision 
-( const std::string& name1 , 
-  const std::string& name2 ,
-  const std::string& name3 ) 
-  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate () 
-  , m_names { name1, name2, name3 }
-{
-}
-// ============================================================================
-// constructor from the decision names 
-// ============================================================================
-LoKi::HLT::HasDecision::HasDecision 
-( const std::string& name1 , 
-  const std::string& name2 ,
-  const std::string& name3 , 
-  const std::string& name4 ) 
-  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 , name4 ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate () 
-  , m_names { name1, name2, name3, name4 }
-{
-}
-// ============================================================================
-// constructor form the decision names ("OR") 
-// ============================================================================
-LoKi::HLT::HasDecision::HasDecision 
-( const LoKi::HLT::HasDecision::Names& names ) 
-  : LoKi::AuxFunBase ( std::tie ( names ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate () 
-  , m_names ( names ) 
-{}
-// ============================================================================
-// MANDATORY: the only one essential method 
+// MANDATORY: the only one essential method
 // ============================================================================
 LoKi::HLT::HasDecision::result_type
-LoKi::HLT::HasDecision::operator() 
-  ( LoKi::HLT::HasDecision::argument a ) const 
+LoKi::HLT::HasDecision::operator()
+  ( LoKi::HLT::HasDecision::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  return 
-    std::any_of( begin(), end(), [&](Names::const_reference n) 
+  return
+    std::any_of( begin(), end(), [&](Names::const_reference n)
                  { return a -> hasDecisionName ( n ); });
 }
 // ============================================================================
-// OPTIONAL: the nice printout 
+// OPTIONAL: the nice printout
 // ============================================================================
-std::ostream& LoKi::HLT::HasDecision::print 
-( std::ostream&      s    , 
+std::ostream& LoKi::HLT::HasDecision::print
+( std::ostream&      s    ,
   const std::string& name ) const
 {
-  switch ( names().size() ) 
+  switch ( names().size() )
   {
-  case 1 : 
-    return s << name << "('" 
-             <<   names().front()    << "') " ;  // RETURN 
-  case 2 : 
+  case 1 :
+    return s << name << "('"
+             <<   names().front()    << "') " ;  // RETURN
+  case 2 :
     return s << name << "('"
              << *(names().begin()  ) << "','"
-             << *(names().begin()+1) << "') " ;  // RETURN 
-  case 3 : 
+             << *(names().begin()+1) << "') " ;  // RETURN
+  case 3 :
     return s << name << "('"
              << *(names().begin()  ) << "','"
              << *(names().begin()+1) << "','"
-             << *(names().begin()+2) << "') " ;  // RETURN 
-  case 4 : 
-    return s << name << "('" 
+             << *(names().begin()+2) << "') " ;  // RETURN
+  case 4 :
+    return s << name << "('"
              << *(names().begin()  ) << "','"
              << *(names().begin()+1) << "','"
              << *(names().begin()+2) << "','"
-             << *(names().begin()+3) << "') " ;  // RETURN 
-    
+             << *(names().begin()+3) << "') " ;  // RETURN
+
   default:
-    return s << name << "(" 
+    return s << name << "("
              << Gaudi::Utils::toString ( names() ) << "') " ;  // RETURN
   }
   // This is unreachable
-  //  return s << name << "(" 
+  //  return s << name << "("
   //           << Gaudi::Utils::toString ( names() ) << "') " ;  // RETURN
 }
 // ============================================================================
 
 
 // ============================================================================
-// constructor from the decision names 
-// ============================================================================
-LoKi::HLT::PassDecision::PassDecision 
-( const std::string& name  )
-  : LoKi::AuxFunBase ( std::tie ( name ) ) 
-  , LoKi::HLT::HasDecision ( name )
-{}
-// ============================================================================
-// constructor from the decision names ("OR")
-// ============================================================================
-LoKi::HLT::PassDecision::PassDecision 
-( const std::string& name1 ,
-  const std::string& name2 )
-  : LoKi::AuxFunBase ( std::tie ( name1 , name2  ) ) 
-  , LoKi::HLT::HasDecision ( name1 , name2 )
-{}
-// ============================================================================
-// constructor from the decision names ("OR")
-// ============================================================================
-LoKi::HLT::PassDecision::PassDecision 
-( const std::string& name1 ,
-  const std::string& name2 ,
-  const std::string& name3 )
-  : LoKi::AuxFunBase ( std::tie ( name1 , name2  , name3 ) ) 
-  , LoKi::HLT::HasDecision ( name1 , name2 , name3 )
-{}
-// ============================================================================
-// constructor from the decision names ("OR")
-// ============================================================================
-LoKi::HLT::PassDecision::PassDecision 
-( const std::string& name1 ,
-  const std::string& name2 ,
-  const std::string& name3 ,
-  const std::string& name4 )
-  : LoKi::AuxFunBase ( std::tie ( name1 , name2  , name3 ,  name4 ) ) 
-  , LoKi::HLT::HasDecision ( name1 , name2 , name3 , name4 )
-{}
-// ============================================================================
 // constructor form the decision names ("OR")
 // ============================================================================
-LoKi::HLT::PassDecision::PassDecision 
-( const Names& names ) 
-  : LoKi::AuxFunBase ( std::tie ( names ) ) 
-  , LoKi::HLT::HasDecision ( names ) 
+LoKi::HLT::PassDecision::PassDecision
+( Names names )
+  : LoKi::AuxFunBase ( std::tie ( names ) )
+  , LoKi::HLT::HasDecision ( std::move(names) )
 {}
 // ============================================================================
-    
+
 
 
 
 // ============================================================================
-// MANDATORY: the only one essential method 
+// MANDATORY: the only one essential method
 // ============================================================================
 LoKi::HLT::PassDecision::result_type
-LoKi::HLT::PassDecision::operator() 
-  ( LoKi::HLT::PassDecision::argument a ) const 
+LoKi::HLT::PassDecision::operator()
+  ( LoKi::HLT::PassDecision::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   //
@@ -194,42 +109,40 @@ LoKi::HLT::PassDecision::operator()
   return std::any_of( begin(), end(),
                       [&](Names::const_reference name) {
     auto found = a -> find ( name ) ;
-    return  _e != found && found->second.decision (); 
+    return  _e != found && found->second.decision ();
   } );
 }
 // ============================================================================
-// MANDATORY: the only one essential method 
+// MANDATORY: the only one essential method
 // ============================================================================
 LoKi::HLT::Size::result_type
-LoKi::HLT::Size::operator() 
-  ( LoKi::HLT::Size::argument a ) const 
+LoKi::HLT::Size::operator()
+  ( LoKi::HLT::Size::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   return a -> size() ;
 }
 // ============================================================================
-// MANDATORY: the only one essential method 
+// MANDATORY: the only one essential method
 // ============================================================================
 LoKi::HLT::NPass::result_type
-LoKi::HLT::NPass::operator() 
-  ( LoKi::HLT::NPass::argument a ) const 
+LoKi::HLT::NPass::operator()
+  ( LoKi::HLT::NPass::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  //
   return std::count_if( std::begin(*a), std::end(*a),
                       [](LHCb::HltDecReports::Container::const_reference i) {
                             return i.second.decision();
   } );
 }
 // ============================================================================
-// MANDATORY: the only one essential method 
+// MANDATORY: the only one essential method
 // ============================================================================
 LoKi::HLT::Decision::result_type
-LoKi::HLT::Decision::operator() 
-  ( LoKi::HLT::Decision::argument a ) const 
+LoKi::HLT::Decision::operator()
+  ( LoKi::HLT::Decision::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  //
   return std::any_of( std::begin(*a), std::end(*a),
                       [](LHCb::HltDecReports::Container::const_reference i) {
                             return  i.second.decision() ;
@@ -238,117 +151,62 @@ LoKi::HLT::Decision::operator()
 
 
 // ============================================================================
-// constructor from one "special" decicion
-// ============================================================================
-LoKi::HLT::DecisionBut::DecisionBut 
-( const std::string& name )
-  : LoKi::AuxFunBase ( std::tie ( name ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate () 
-  , m_special ( 1 , name ) 
-{}
-// ============================================================================
-// constructor from two "special" decicions
-// ============================================================================
-LoKi::HLT::DecisionBut::DecisionBut 
-( const std::string& name1 , 
-  const std::string& name2 ) 
-  : LoKi::AuxFunBase ( std::tie ( name1 , name2 ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate () 
-  , m_special { name1, name2 }
-{
-}
-// ============================================================================
-// constructor from three "special" decicions
-// ============================================================================
-LoKi::HLT::DecisionBut::DecisionBut 
-( const std::string& name1 , 
-  const std::string& name2 , 
-  const std::string& name3 ) 
-  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate () 
-  , m_special { name1, name2, name3 }
-{
-}
-// ============================================================================
-// constructor from four "special" decicions
-// ============================================================================
-LoKi::HLT::DecisionBut::DecisionBut 
-( const std::string& name1 , 
-  const std::string& name2 , 
-  const std::string& name3 ,
-  const std::string& name4 ) 
-  : LoKi::AuxFunBase ( std::tie ( name1 , name2 , name3 , name4 ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate () 
-  , m_special{ name1, name2, name3, name4 }
-{
-}
-// ============================================================================
 // constructor from vector of "special" decicions
 // ============================================================================
-LoKi::HLT::DecisionBut::DecisionBut 
-( const LoKi::HLT::DecisionBut::Names& names ) 
-  : LoKi::AuxFunBase ( std::tie ( names ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate () 
-  , m_special ( names ) 
+LoKi::HLT::DecisionBut::DecisionBut
+( LoKi::HLT::DecisionBut::Names names )
+  : LoKi::AuxFunBase ( std::tie ( names ) )
+  , m_special ( std::move(names) )
 {}
 // ============================================================================
-// constructor from vector of "special" decicions
+// MANDATORY: the only one essential method
 // ============================================================================
-LoKi::HLT::DecisionBut::DecisionBut 
-( const std::vector<std::string>& names ) 
-  : LoKi::AuxFunBase ( std::tie ( names ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate () 
-  , m_special ( names.begin() , names.end() ) 
-{}
-// ============================================================================
-// MANDATORY: the only one essential method 
-// ============================================================================
-LoKi::HLT::DecisionBut::result_type 
-LoKi::HLT::DecisionBut::operator() 
-  ( LoKi::HLT::DecisionBut::argument a ) const 
+LoKi::HLT::DecisionBut::result_type
+LoKi::HLT::DecisionBut::operator()
+  ( LoKi::HLT::DecisionBut::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   //
   size_t nPositive = 0 ;
-  for ( const auto&  i: *a ) 
+  for ( const auto&  i: *a )
   {
-    // the decision 
+    // the decision
     if (!i.second.decision()) { continue ; }              // CONTINUE
     ++nPositive ;
     if ( nPositive > m_special.size ()  ||
-         m_special.end() == std::find ( m_special.begin () , 
-                                        m_special.end   () , 
-                                        i.first ) )  { 
-        return true ; 
-    } 
+         m_special.end() == std::find ( m_special.begin () ,
+                                        m_special.end   () ,
+                                        i.first ) )  {
+        return true ;
+    }
   }
   //
   return false ;
 }
 // ============================================================================
-// OPTIONAL: the nice printout 
+// OPTIONAL: the nice printout
 // ============================================================================
-std::ostream& LoKi::HLT::DecisionBut::fillStream 
-( std::ostream& s ) const 
+std::ostream& LoKi::HLT::DecisionBut::fillStream
+( std::ostream& s ) const
 {
   s << " HLT_PASSIGNORING(" ;
-  switch ( m_special.size() ) 
+  switch ( m_special.size() )
   {
-  case 1 : 
+  case 1 :
     s << "'"  << m_special[0] << "'"    ; break ;
-  case 2 : 
-    s << "'"  << m_special[0] << "'" 
+  case 2 :
+    s << "'"  << m_special[0] << "'"
       << ",'" << m_special[1] << "'"    ; break ;
-  case 3 : 
-    s << "'"  << m_special[0] << "'" 
+  case 3 :
+    s << "'"  << m_special[0] << "'"
       << ",'" << m_special[1] << "'"
       << ",'" << m_special[2] << "'"    ; break ;
-  case 4 : 
-    s << "'"  << m_special[0] << "'" 
+  case 4 :
+    s << "'"  << m_special[0] << "'"
       << ",'" << m_special[1] << "'"
       << ",'" << m_special[2] << "'"
       << ",'" << m_special[3] << "'"    ; break ;
-  default : 
+  default :
     s << Gaudi::Utils::toString ( m_special ) ;
   }
   //
@@ -358,278 +216,248 @@ std::ostream& LoKi::HLT::DecisionBut::fillStream
 
 
 // ============================================================================
-// constructor 
+// constructor
 // ============================================================================
 LoKi::HLT::HasDecisionSubString::HasDecisionSubString
-( const std::string& substr ) 
-  : LoKi::AuxFunBase ( std::tie ( substr ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate()
-  , m_substr ( substr ) 
+( const std::string& substr )
+  : LoKi::AuxFunBase ( std::tie ( substr ) )
+  , m_substr ( substr )
 {}
 // ============================================================================
-// destructor 
-// ============================================================================
-LoKi::HLT::HasDecisionSubString::~HasDecisionSubString(){}
-// ============================================================================
-// clone method 
+// clone method
 // ============================================================================
 LoKi::HLT::HasDecisionSubString*
-LoKi::HLT::HasDecisionSubString::clone() const 
+LoKi::HLT::HasDecisionSubString::clone() const
 { return new LoKi::HLT::HasDecisionSubString(*this) ; }
 // ============================================================================
-// the actual evaluation 
+// the actual evaluation
 // ============================================================================
 LoKi::HLT::HasDecisionSubString::result_type
-LoKi::HLT::HasDecisionSubString::operator() 
-  ( LoKi::HLT::HasDecisionSubString::argument a ) const 
+LoKi::HLT::HasDecisionSubString::operator()
+  ( LoKi::HLT::HasDecisionSubString::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // loop over all selecttions and match the names 
+  // loop over all selecttions and match the names
   return std::any_of( std::begin(*a), std::end(*a),
                       [&](LHCb::HltDecReports::Container::const_reference i) {
             return i.first.find( substr() ) != std::string::npos ;
   } );
 }
 // ============================================================================
-// printout 
+// printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::HasDecisionSubString::fillStream ( std::ostream& s ) const 
+std::ostream&
+LoKi::HLT::HasDecisionSubString::fillStream ( std::ostream& s ) const
 { return s << " HLT_HAS_SUBSTR('" << substr() << "') " ; }
 
 
 
 // ============================================================================
-// constructor 
+// constructor
 // ============================================================================
 LoKi::HLT::PassDecisionSubString::PassDecisionSubString
-( const std::string& substr ) 
-  : LoKi::AuxFunBase ( std::tie ( substr ) ) 
-  , LoKi::HLT::HasDecisionSubString( substr ) 
+( const std::string& substr )
+  : LoKi::AuxFunBase ( std::tie ( substr ) )
+  , LoKi::HLT::HasDecisionSubString( substr )
 {}
 // ============================================================================
-// destructor 
-// ============================================================================
-LoKi::HLT::PassDecisionSubString::~PassDecisionSubString(){}
-// ============================================================================
-// clone method 
+// clone method
 // ============================================================================
 LoKi::HLT::PassDecisionSubString*
-LoKi::HLT::PassDecisionSubString::clone() const 
+LoKi::HLT::PassDecisionSubString::clone() const
 { return new LoKi::HLT::PassDecisionSubString(*this) ; }
 // ============================================================================
-// the actual evaluation 
+// the actual evaluation
 // ============================================================================
 LoKi::HLT::PassDecisionSubString::result_type
-LoKi::HLT::PassDecisionSubString::operator() 
-  ( LoKi::HLT::PassDecisionSubString::argument a ) const 
+LoKi::HLT::PassDecisionSubString::operator()
+  ( LoKi::HLT::PassDecisionSubString::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // loop over all selecttions and match the names 
+  // loop over all selecttions and match the names
   return std::any_of( std::begin(*a), std::end(*a),
                       [&](LHCb::HltDecReports::Container::const_reference i) {
-                return  i.second.decision() && 
+                return  i.second.decision() &&
                         std::string::npos != i.first.find( substr() ) ;
   });
 }
 // ============================================================================
-// printout 
+// printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::PassDecisionSubString::fillStream ( std::ostream& s ) const 
+std::ostream&
+LoKi::HLT::PassDecisionSubString::fillStream ( std::ostream& s ) const
 { return s << " HLT_PASS_SUBSTR('" << substr() << "') " ; }
 
 
 
 
 // ============================================================================
-// constructor 
+// constructor
 // ============================================================================
 LoKi::HLT::DecisionButSubString::DecisionButSubString
-( const std::string& substr ) 
-  : LoKi::AuxFunBase ( std::tie ( substr ) ) 
-  , LoKi::HLT::PassDecisionSubString( substr ) 
+( const std::string& substr )
+  : LoKi::AuxFunBase ( std::tie ( substr ) )
+  , LoKi::HLT::PassDecisionSubString( substr )
 {}
 // ============================================================================
-// destructor 
-// ============================================================================
-LoKi::HLT::DecisionButSubString::~DecisionButSubString(){}
-// ============================================================================
-// clone method 
+// clone method
 // ============================================================================
 LoKi::HLT::DecisionButSubString*
-LoKi::HLT::DecisionButSubString::clone() const 
+LoKi::HLT::DecisionButSubString::clone() const
 { return new LoKi::HLT::DecisionButSubString(*this) ; }
 // ============================================================================
-// the actual evaluation 
+// the actual evaluation
 // ============================================================================
 LoKi::HLT::DecisionButSubString::result_type
-LoKi::HLT::DecisionButSubString::operator() 
-  ( LoKi::HLT::DecisionButSubString::argument a ) const 
+LoKi::HLT::DecisionButSubString::operator()
+  ( LoKi::HLT::DecisionButSubString::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // loop over all selections and match the names 
+  // loop over all selections and match the names
   return std::any_of( std::begin(*a), std::end(*a),
-                      [&](LHCb::HltDecReports::Container::const_reference i) { 
+                      [&](LHCb::HltDecReports::Container::const_reference i) {
     return  i.second.decision() && std::string::npos == i.first.find( substr() );
   } );
 }
 // ============================================================================
-// printout 
+// printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::DecisionButSubString::fillStream ( std::ostream& s ) const 
+std::ostream&
+LoKi::HLT::DecisionButSubString::fillStream ( std::ostream& s ) const
 { return s << " HLT_PASSIGNORING_SUBSTR('" << substr() << "') " ; }
 
 
 // ============================================================================
-// constructor 
+// constructor
 // ============================================================================
 LoKi::HLT::HasDecisionRegex::HasDecisionRegex
-( const std::string& substr ) 
-  : LoKi::AuxFunBase ( std::tie ( substr ) ) 
-  , LoKi::HLT::HasDecisionSubString( substr ) 
+( const std::string& substr )
+  : LoKi::AuxFunBase ( std::tie ( substr ) )
+  , LoKi::HLT::HasDecisionSubString( substr )
   , m_expression ( substr )
 {}
 // ============================================================================
-// destructor 
-// ============================================================================
-LoKi::HLT::HasDecisionRegex::~HasDecisionRegex(){}
-// ============================================================================
-// clone method 
+// clone method
 // ============================================================================
 LoKi::HLT::HasDecisionRegex*
-LoKi::HLT::HasDecisionRegex::clone() const 
+LoKi::HLT::HasDecisionRegex::clone() const
 { return new LoKi::HLT::HasDecisionRegex(*this) ; }
 // ============================================================================
-// the actual evaluation 
+// the actual evaluation
 // ============================================================================
 LoKi::HLT::HasDecisionRegex::result_type
-LoKi::HLT::HasDecisionRegex::operator() 
-  ( LoKi::HLT::HasDecisionRegex::argument a ) const 
+LoKi::HLT::HasDecisionRegex::operator()
+  ( LoKi::HLT::HasDecisionRegex::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // loop over all selections and match the names 
+  // loop over all selections and match the names
   return std::any_of(std::begin(*a),std::end(*a),
                      [&](LHCb::HltDecReports::Container::const_reference i) {
                         return boost::regex_match ( i.first , expression() );
                      } );
 }
 // ============================================================================
-// printout 
+// printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::HasDecisionRegex::fillStream ( std::ostream& s ) const 
+std::ostream&
+LoKi::HLT::HasDecisionRegex::fillStream ( std::ostream& s ) const
 { return s << " HLT_HAS_RE('" << substr() << "') " ; }
 
 // ============================================================================
-// constructor 
+// constructor
 // ============================================================================
 LoKi::HLT::PassDecisionRegex::PassDecisionRegex
-( const std::string& substr ) 
-  : LoKi::AuxFunBase ( std::tie ( substr ) ) 
-  , LoKi::HLT::HasDecisionRegex( substr ) 
+( const std::string& substr )
+  : LoKi::AuxFunBase ( std::tie ( substr ) )
+  , LoKi::HLT::HasDecisionRegex( substr )
 {}
 // ============================================================================
-// destructor 
-// ============================================================================
-LoKi::HLT::PassDecisionRegex::~PassDecisionRegex(){}
-// ============================================================================
-// clone method 
+// clone method
 // ============================================================================
 LoKi::HLT::PassDecisionRegex*
-LoKi::HLT::PassDecisionRegex::clone() const 
+LoKi::HLT::PassDecisionRegex::clone() const
 { return new LoKi::HLT::PassDecisionRegex(*this) ; }
 // ============================================================================
-// the actual evaluation 
+// the actual evaluation
 // ============================================================================
 LoKi::HLT::PassDecisionRegex::result_type
-LoKi::HLT::PassDecisionRegex::operator() 
-  ( LoKi::HLT::PassDecisionRegex::argument a ) const 
+LoKi::HLT::PassDecisionRegex::operator()
+  ( LoKi::HLT::PassDecisionRegex::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // loop over all selections and match the names 
+  // loop over all selections and match the names
   return std::any_of( std::begin(*a), std::end(*a),
                       [&](LHCb::HltDecReports::Container::const_reference i) {
-            return  i.second.decision() && 
+            return  i.second.decision() &&
                     boost::regex_match ( i.first , expression() );
   } );
 }
 // ============================================================================
-// printout 
+// printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::PassDecisionRegex::fillStream ( std::ostream& s ) const 
+std::ostream&
+LoKi::HLT::PassDecisionRegex::fillStream ( std::ostream& s ) const
 { return s << " HLT_PASS_RE('" << substr() << "') " ; }
 
 
 
 // ============================================================================
-// constructor 
+// constructor
 // ============================================================================
 LoKi::HLT::DecisionButRegex::DecisionButRegex
-( const std::string& substr ) 
-  : LoKi::AuxFunBase ( std::tie ( substr ) ) 
-  , LoKi::HLT::PassDecisionRegex( substr ) 
+( const std::string& substr )
+  : LoKi::AuxFunBase ( std::tie ( substr ) )
+  , LoKi::HLT::PassDecisionRegex( substr )
 {}
 // ============================================================================
-// destructor 
-// ============================================================================
-LoKi::HLT::DecisionButRegex::~DecisionButRegex(){}
-// ============================================================================
-// clone method 
+// clone method
 // ============================================================================
 LoKi::HLT::DecisionButRegex*
-LoKi::HLT::DecisionButRegex::clone() const 
+LoKi::HLT::DecisionButRegex::clone() const
 { return new LoKi::HLT::DecisionButRegex(*this) ; }
 // ============================================================================
-// the actual evaluation 
+// the actual evaluation
 // ============================================================================
 LoKi::HLT::DecisionButRegex::result_type
-LoKi::HLT::DecisionButRegex::operator() 
-  ( LoKi::HLT::DecisionButRegex::argument a ) const 
+LoKi::HLT::DecisionButRegex::operator()
+  ( LoKi::HLT::DecisionButRegex::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // loop over all selections and match the names 
-  return std::any_of( std::begin(*a), std::end(*a), 
+  // loop over all selections and match the names
+  return std::any_of( std::begin(*a), std::end(*a),
                       [&](LHCb::HltDecReports::Container::const_reference i) {
-      return i.second.decision() && 
+      return i.second.decision() &&
              !boost::regex_match( i.first , expression() )  ;
   } );
 }
 // ============================================================================
-// printout 
+// printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::DecisionButRegex::fillStream ( std::ostream& s ) const 
+std::ostream&
+LoKi::HLT::DecisionButRegex::fillStream ( std::ostream& s ) const
 { return s << " HLT_PASSIGNORING_RE('" << substr() << "') " ; }
 // ============================================================================
 
 // ============================================================================
-// constructor from the channel name 
+// constructor from the channel name
 // ============================================================================
-LoKi::HLT::ErrorBits::ErrorBits ( const std::string& name ) 
-  : LoKi::AuxFunBase ( std::tie ( name ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
-  , m_key ( name ) 
+LoKi::HLT::ErrorBits::ErrorBits ( const std::string& name )
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , m_key ( name )
 {}
 // ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::HLT::ErrorBits::~ErrorBits () {}
-// ============================================================================
 // MANDATORY: clone method ( "virtual constructor")
-// ============================================================================ 
-LoKi::HLT::ErrorBits* LoKi::HLT::ErrorBits::clone () const 
+// ============================================================================
+LoKi::HLT::ErrorBits* LoKi::HLT::ErrorBits::clone () const
 { return new LoKi::HLT::ErrorBits ( *this ) ; }
 // ============================================================================
-// MANDATORY: the only one essential methor 
+// MANDATORY: the only one essential methor
 // ============================================================================
 LoKi::HLT::ErrorBits::result_type
-LoKi::HLT::ErrorBits::operator() ( LoKi::HLT::ErrorBits::argument a ) const 
+LoKi::HLT::ErrorBits::operator() ( LoKi::HLT::ErrorBits::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // find the selection by name 
+  // find the selection by name
   auto isel = a->find ( m_key ) ;
   if ( isel != std::end(*a) ) return isel->second.errorBits() ;
   Error ( "No decision has been found for '" + m_key.str() + "', return -1" ) ;
@@ -637,72 +465,64 @@ LoKi::HLT::ErrorBits::operator() ( LoKi::HLT::ErrorBits::argument a ) const
   //
 }
 // ============================================================================
-// OPTIONAL: nice printout 
+// OPTIONAL: nice printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::ErrorBits::fillStream ( std::ostream& s ) const 
+std::ostream&
+LoKi::HLT::ErrorBits::fillStream ( std::ostream& s ) const
 { return s << " HLT_ERRORBITS('" + m_key.str() + ") " ; }
 // ============================================================================
 
 
 // ============================================================================
-// constructor from the channel name 
+// constructor from the channel name
 // ============================================================================
-LoKi::HLT::NonTurboPass::NonTurboPass ( const std::string& name ) 
-  : LoKi::AuxFunBase ( std::tie ( name ) ) 
-  , LoKi::HLT::HasDecisionRegex ( name ) 
+LoKi::HLT::NonTurboPass::NonTurboPass ( const std::string& name )
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , LoKi::HLT::HasDecisionRegex ( name )
 {}
 // ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::HLT::NonTurboPass::~NonTurboPass () {}
-// ============================================================================
 // MANDATORY: clone method ( "virtual constructor")
-// ============================================================================ 
-LoKi::HLT::NonTurboPass* LoKi::HLT::NonTurboPass::clone () const 
+// ============================================================================
+LoKi::HLT::NonTurboPass* LoKi::HLT::NonTurboPass::clone () const
 { return new LoKi::HLT::NonTurboPass ( *this ) ; }
 // ============================================================================
-// MANDATORY: the only one essential method 
+// MANDATORY: the only one essential method
 // ============================================================================
 LoKi::HLT::NonTurboPass::result_type
-LoKi::HLT::NonTurboPass::operator() 
-  ( LoKi::HLT::NonTurboPass::argument a ) const 
+LoKi::HLT::NonTurboPass::operator()
+  ( LoKi::HLT::NonTurboPass::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // loop over all selections and match the names 
+  // loop over all selections and match the names
   return std::any_of( std::begin(*a), std::end(*a),
                       [&](LHCb::HltDecReports::Container::const_reference i) {
-            return  ( !isTurbo(i.second) ) && i.second.decision()  && 
+            return  ( !isTurbo(i.second) ) && i.second.decision()  &&
                     boost::regex_match ( i.first , expression() );
   } );
   //
 }
 
 // ============================================================================
-// constructor from the channel name 
+// constructor from the channel name
 // ============================================================================
-LoKi::HLT::TurboPass::TurboPass ( const std::string& name ) 
-  : LoKi::AuxFunBase ( std::tie ( name ) ) 
-  , LoKi::HLT::HasDecisionRegex ( name ) 
+LoKi::HLT::TurboPass::TurboPass ( const std::string& name )
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , LoKi::HLT::HasDecisionRegex ( name )
 {}
 // ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::HLT::TurboPass::~TurboPass () {}
-// ============================================================================
 // MANDATORY: clone method ( "virtual constructor")
-// ============================================================================ 
-LoKi::HLT::TurboPass* LoKi::HLT::TurboPass::clone () const 
+// ============================================================================
+LoKi::HLT::TurboPass* LoKi::HLT::TurboPass::clone () const
 { return new LoKi::HLT::TurboPass ( *this ) ; }
 // ============================================================================
-// MANDATORY: the only one essential method 
+// MANDATORY: the only one essential method
 // ============================================================================
 LoKi::HLT::TurboPass::result_type
-LoKi::HLT::TurboPass::operator() 
-  ( LoKi::HLT::TurboPass::argument a ) const 
+LoKi::HLT::TurboPass::operator()
+  ( LoKi::HLT::TurboPass::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // loop over all selections and match the names 
+  // loop over all selections and match the names
   return std::any_of( std::begin(*a), std::end(*a),
                       [&](LHCb::HltDecReports::Container::const_reference i) {
             return  isTurbo(i.second) && i.second.decision() &&
@@ -712,196 +532,135 @@ LoKi::HLT::TurboPass::operator()
 }
 
 // ============================================================================
-// constructor from the channel name 
+// constructor from the channel name
 // ============================================================================
-LoKi::HLT::ExecutionStage::ExecutionStage ( const std::string& name ) 
-  : LoKi::AuxFunBase ( std::tie ( name ) ) 
-  , LoKi::HLT::ErrorBits ( name ) 
+LoKi::HLT::ExecutionStage::ExecutionStage ( const std::string& name )
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , LoKi::HLT::ErrorBits ( name )
 {}
 // ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::HLT::ExecutionStage::~ExecutionStage () {}
-// ============================================================================
 // MANDATORY: clone method ( "virtual constructor")
-// ============================================================================ 
-LoKi::HLT::ExecutionStage* LoKi::HLT::ExecutionStage::clone () const 
+// ============================================================================
+LoKi::HLT::ExecutionStage* LoKi::HLT::ExecutionStage::clone () const
 { return new LoKi::HLT::ExecutionStage ( *this ) ; }
 // ============================================================================
-// MANDATORY: the only one essential methor 
+// MANDATORY: the only one essential methor
 // ============================================================================
 LoKi::HLT::ExecutionStage::result_type
-LoKi::HLT::ExecutionStage::operator() 
-  ( LoKi::HLT::ExecutionStage::argument a ) const 
+LoKi::HLT::ExecutionStage::operator()
+  ( LoKi::HLT::ExecutionStage::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // find the selection by name 
+  // find the selection by name
   auto isel = a->find ( channel()  ) ;
   if ( isel != std::end(*a) ) return isel->second.executionStage () ;
-  Error ( "No decision has been found for '" + 
+  Error ( "No decision has been found for '" +
             channel().str() + "', return -1" ) ;
   return -1 ;
   //
 }
 // ============================================================================
-// OPTIONAL: nice printout 
+// OPTIONAL: nice printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::ExecutionStage::fillStream ( std::ostream& s ) const 
+std::ostream&
+LoKi::HLT::ExecutionStage::fillStream ( std::ostream& s ) const
 { return s << " HLT_EXECUTIONSTAGE('" + channel().str() + ") " ; }
 // ============================================================================
 
 // ============================================================================
-// constructor from the channel name 
+// constructor from the channel name
 // ============================================================================
-LoKi::HLT::NumberOfCandidates::NumberOfCandidates ( const std::string& name ) 
-  : LoKi::AuxFunBase ( std::tie ( name ) ) 
-  , LoKi::HLT::ErrorBits ( name ) 
+LoKi::HLT::NumberOfCandidates::NumberOfCandidates ( const std::string& name )
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , LoKi::HLT::ErrorBits ( name )
 {}
 // ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::HLT::NumberOfCandidates::~NumberOfCandidates () {}
-// ============================================================================
 // MANDATORY: clone method ( "virtual constructor")
-// ============================================================================ 
-LoKi::HLT::NumberOfCandidates* LoKi::HLT::NumberOfCandidates::clone () const 
+// ============================================================================
+LoKi::HLT::NumberOfCandidates* LoKi::HLT::NumberOfCandidates::clone () const
 { return new LoKi::HLT::NumberOfCandidates ( *this ) ; }
 // ============================================================================
-// MANDATORY: the only one essential methor 
+// MANDATORY: the only one essential methor
 // ============================================================================
 LoKi::HLT::NumberOfCandidates::result_type
-LoKi::HLT::NumberOfCandidates::operator() ( LoKi::HLT::NumberOfCandidates::argument a ) const 
+LoKi::HLT::NumberOfCandidates::operator() ( LoKi::HLT::NumberOfCandidates::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // find the selection by name 
+  // find the selection by name
   auto isel = a->find ( channel () ) ;
   if ( isel != std::end(*a)  ) return isel->second.numberOfCandidates () ;
-  Error ( "No decision has been found for '" 
+  Error ( "No decision has been found for '"
           + channel().str() + "', return -1" ) ;
   return -1 ;
 }
 // ============================================================================
-// OPTIONAL: nice printout 
+// OPTIONAL: nice printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::NumberOfCandidates::fillStream ( std::ostream& s ) const 
+std::ostream&
+LoKi::HLT::NumberOfCandidates::fillStream ( std::ostream& s ) const
 { return s << " HLT_NCANDIDATES('" + channel().str() + ") " ; }
 // ============================================================================
 
 // ============================================================================
-// constructor from the channel name 
+// constructor from the channel name
 // ============================================================================
 LoKi::HLT::Saturated::Saturated
 ( const std::string&      name )
-  : LoKi::AuxFunBase ( std::tie ( name ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate()
-  , m_key ( name ) 
+  : LoKi::AuxFunBase ( std::tie ( name ) )
+  , m_key ( name )
 {}
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::HLT::Saturated::~Saturated() {}
 // ============================================================================
 // MANDATORY: clone method ( "virtual constructor")
 // ============================================================================
 LoKi::HLT::Saturated*
 LoKi::HLT::Saturated::clone() const { return new Saturated(*this) ; }
 // ============================================================================
-// MANDATORY: the only one essential methor 
+// MANDATORY: the only one essential methor
 // ============================================================================
 LoKi::HLT::Saturated::result_type
-LoKi::HLT::Saturated::operator() 
-  ( LoKi::HLT::Saturated::argument a ) const 
+LoKi::HLT::Saturated::operator()
+  ( LoKi::HLT::Saturated::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // find the selection by name 
+  // find the selection by name
   auto isel = a->find ( channel () ) ;
   if ( isel != std::end(*a) )  {
-    return isel->second.numberOfCandidates () == 
+    return isel->second.numberOfCandidates () ==
            LHCb::HltDecReport::saturatedNumberOfCandidates() ;
   }
-  Error ( "No decision has been found for '" 
+  Error ( "No decision has been found for '"
             + channel().str() + "', return false" ) ;
   return false ;
   //
 }
 // ============================================================================
-// OPTIONAL: nice printout 
+// OPTIONAL: nice printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::Saturated::fillStream ( std::ostream& s ) const 
+std::ostream&
+LoKi::HLT::Saturated::fillStream ( std::ostream& s ) const
 { return s << " HLT_SATURATED('" + channel().str() + ") " ; }
 // ============================================================================
 
 // ============================================================================
-// constructor from the list of lines & mask 
+// constructor from the list of lines & mask
 // ============================================================================
 LoKi::HLT::CountErrorBits::CountErrorBits
-( const std::vector<std::string>&      lines , 
-  const unsigned int                   mask  ) 
-  : LoKi::AuxFunBase ( std::tie ( lines , mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
-  , m_lines ( lines.begin() , lines.end() ) 
+( const std::vector<std::string>&      lines ,
+  const unsigned int                   mask  )
+  : LoKi::AuxFunBase ( std::tie ( lines , mask ) )
+  , m_lines ( lines.begin() , lines.end() )
   , m_mask  ( mask )
 {}
 // ============================================================================
-// constructor from the list of lines & mask 
+// constructor from the list of lines & mask
 // ============================================================================
 LoKi::HLT::CountErrorBits::CountErrorBits
-( const std::vector<Gaudi::StringKey>&  lines , 
-  const unsigned int                    mask  ) 
-  : LoKi::AuxFunBase ( std::tie ( lines , mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
-  , m_lines ( lines ) 
+( const std::vector<Gaudi::StringKey>&  lines ,
+  const unsigned int                    mask  )
+  : LoKi::AuxFunBase ( std::tie ( lines , mask ) )
+  , m_lines ( lines )
   , m_mask  ( mask  )
 {}
-// ============================================================================
-// constructor from the lines & mask 
-// ============================================================================
-LoKi::HLT::CountErrorBits::CountErrorBits
-( const std::string& line1 , 
-  const std::string& line2 , 
-  const unsigned int mask  ) 
-  : LoKi::AuxFunBase ( std::tie ( line1 , line2 , mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
-  , m_lines { line1, line2 }
-  , m_mask  ( mask  )
-{
-}  
-// ============================================================================
-// constructor from the lines & mask 
-// ============================================================================
-LoKi::HLT::CountErrorBits::CountErrorBits
-( const std::string& line1 , 
-  const std::string& line2 , 
-  const std::string& line3 , 
-  const unsigned int mask  ) 
-  : LoKi::AuxFunBase ( std::tie ( line1 , line2 , line3 , mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
-  , m_lines { line1, line2, line3 }
-  , m_mask  ( mask  )
-{
-}
-// ============================================================================
-// constructor from the lines & mask 
-// ============================================================================
-LoKi::HLT::CountErrorBits::CountErrorBits
-( const std::string& line1 , 
-  const std::string& line2 , 
-  const std::string& line3 , 
-  const std::string& line4 , 
-  const unsigned int mask  ) 
-  : LoKi::AuxFunBase ( std::tie ( line1 , line2 , line3 , line4 ,  mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
-  , m_lines { line1, line2, line3, line4 }
-  , m_mask  ( mask  )
-{
-}
-// ============================================================================
-// MANDATORY: virtual desctructor 
-// ============================================================================
-LoKi::HLT::CountErrorBits::~CountErrorBits () {}
 // ============================================================================
 // MANDATORY: clone method ( "virtual constructor")
 // ============================================================================
@@ -909,20 +668,20 @@ LoKi::HLT::CountErrorBits*
 LoKi::HLT::CountErrorBits::clone() const
 { return new CountErrorBits ( *this ) ; }
 // ============================================================================
-// MANDATORY: the only one essential methor 
+// MANDATORY: the only one essential methor
 // ============================================================================
-LoKi::HLT::CountErrorBits::result_type 
-LoKi::HLT::CountErrorBits::operator() 
-  ( LoKi::HLT::CountErrorBits::argument a ) const 
+LoKi::HLT::CountErrorBits::result_type
+LoKi::HLT::CountErrorBits::operator()
+  ( LoKi::HLT::CountErrorBits::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
-  // loop over the lines 
+  // loop over the lines
   result_type result = 0 ;
   for ( const auto& line : m_lines )
   {
-    // find the selection by name 
+    // find the selection by name
     auto isel = a->find ( line ) ;
-    if ( isel == std::end(*a) ) 
+    if ( isel == std::end(*a) )
     {
       Error ( "No decision found for '" + line.str() + "'" ) ;
       continue ;
@@ -933,29 +692,29 @@ LoKi::HLT::CountErrorBits::operator()
   return result  ;
 }
 // ============================================================================
-// OPTIONAL: nice printout 
+// OPTIONAL: nice printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::CountErrorBits::fillStream ( std::ostream& s ) const 
-{ 
+std::ostream&
+LoKi::HLT::CountErrorBits::fillStream ( std::ostream& s ) const
+{
   s << " HLT_COUNT_ERRORBITS( " ;
   //
-  switch ( m_lines.size() ) 
+  switch ( m_lines.size() )
   {
-  case 2 : 
-    return s << "'"   << m_lines[0] 
-             << "','" << m_lines[1] 
+  case 2 :
+    return s << "'"   << m_lines[0]
+             << "','" << m_lines[1]
              << "',"  << m_mask     << ") " ;
-  case 3 : 
-    return s << "'"   << m_lines[0] 
-             << "','" << m_lines[1] 
-             << "','" << m_lines[2] 
+  case 3 :
+    return s << "'"   << m_lines[0]
+             << "','" << m_lines[1]
+             << "','" << m_lines[2]
              << "',"  << m_mask     << ") " ;
-  case 4 : 
-    return s << "'"   << m_lines[0] 
-             << "','" << m_lines[1] 
-             << "','" << m_lines[2] 
-             << "','" << m_lines[3] 
+  case 4 :
+    return s << "'"   << m_lines[0]
+             << "','" << m_lines[1]
+             << "','" << m_lines[2]
+             << "','" << m_lines[3]
              << "',"  << m_mask     << ") " ;
   default :
     break ;
@@ -969,31 +728,26 @@ LoKi::HLT::CountErrorBits::fillStream ( std::ostream& s ) const
 // ============================================================================
 // constructor from the regular expression & mask
 // ============================================================================
-LoKi::HLT::CountErrorBitsRegex::CountErrorBitsRegex 
-( const std::string&  expression , 
+LoKi::HLT::CountErrorBitsRegex::CountErrorBitsRegex
+( const std::string&  expression ,
   const unsigned int  mask       )
-  : LoKi::AuxFunBase ( std::tie ( expression  ,  mask ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function () 
-  , m_pattern    ( expression ) 
-  , m_expression ( expression ) 
-  , m_mask       ( mask ) 
+  : LoKi::AuxFunBase ( std::tie ( expression  ,  mask ) )
+  , m_pattern    ( expression )
+  , m_expression ( expression )
+  , m_mask       ( mask )
 {}
 // ============================================================================
-/// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::HLT::CountErrorBitsRegex::~CountErrorBitsRegex () {}
-// ============================================================================  
 // MANDATORY: clone method ( "virtual constructor")
 // ============================================================================
 LoKi::HLT::CountErrorBitsRegex*
-LoKi::HLT::CountErrorBitsRegex::clone() const 
+LoKi::HLT::CountErrorBitsRegex::clone() const
 { return new CountErrorBitsRegex ( *this ) ; }
 // ============================================================================
-// MANDATORY: the only one essential methor 
+// MANDATORY: the only one essential methor
 // ============================================================================
-LoKi::HLT::CountErrorBitsRegex::result_type 
-LoKi::HLT::CountErrorBitsRegex::operator() 
-  ( LoKi::HLT::CountErrorBitsRegex::argument a ) const 
+LoKi::HLT::CountErrorBitsRegex::result_type
+LoKi::HLT::CountErrorBitsRegex::operator()
+  ( LoKi::HLT::CountErrorBitsRegex::argument a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   //
@@ -1004,49 +758,44 @@ LoKi::HLT::CountErrorBitsRegex::operator()
   });
 }
 // ============================================================================
-// OPTIONAL: nice printout 
+// OPTIONAL: nice printout
 // ============================================================================
-std::ostream& 
-LoKi::HLT::CountErrorBitsRegex::fillStream ( std::ostream& s ) const 
+std::ostream&
+LoKi::HLT::CountErrorBitsRegex::fillStream ( std::ostream& s ) const
 { return s << " HLT_COUNT_ERRORBITS_RE('" << m_pattern << "' ) "; }
 // ============================================================================
 
 
 // ============================================================================
-// constructor from routing bits 
+// constructor from routing bits
 // ============================================================================
 LoKi::HLT::HltRoutingBits::HltRoutingBits
-( const LoKi::HLT::RoutingBits& bits ) 
-  : LoKi::AuxFunBase ( std::tie ( bits ) ) 
-  , LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate() 
-  , m_bits ( bits ) 
+( const LoKi::HLT::RoutingBits& bits )
+  : LoKi::AuxFunBase ( std::tie ( bits ) )
+  , m_bits ( bits )
 {}
-// ============================================================================
-// MANDATORY: virtual destructor 
-// ============================================================================
-LoKi::HLT::HltRoutingBits::~HltRoutingBits () {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::HLT::HltRoutingBits*
-LoKi::HLT::HltRoutingBits::clone() const 
+LoKi::HLT::HltRoutingBits::clone() const
 { return new HltRoutingBits ( *this ) ; }
 // ============================================================================
-// MANDATORY: the only one essential method 
+// MANDATORY: the only one essential method
 // ============================================================================
-LoKi::HLT::HltRoutingBits::result_type 
-LoKi::HLT::HltRoutingBits::operator() 
-  ( LoKi::HLT::HltRoutingBits::argument /* a */ ) const 
+LoKi::HLT::HltRoutingBits::result_type
+LoKi::HLT::HltRoutingBits::operator()
+  ( LoKi::HLT::HltRoutingBits::argument /* a */ ) const
 {
   return m_bits() ;
 }
 // ============================================================================
-// OPTIONAL: nice printout 
+// OPTIONAL: nice printout
 // ============================================================================
-std::ostream& LoKi::HLT::HltRoutingBits::fillStream ( std::ostream& s ) const 
+std::ostream& LoKi::HLT::HltRoutingBits::fillStream ( std::ostream& s ) const
 { return s << " HLT_" << m_bits ; }
 // ============================================================================
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

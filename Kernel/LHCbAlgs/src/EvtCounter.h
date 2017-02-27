@@ -12,38 +12,41 @@
  *  @author Patrick KOPPENBURG
  *  @date   2004-06-15
  */
-class EvtCounter : public extends2<GaudiTool,
-                                   IEventCounter,
-                                   IIncidentListener> {
-public:
+class EvtCounter final : public extends2<GaudiTool,
+                                         IEventCounter,
+                                         IIncidentListener>
+{
+
+ public:
 
   /// Standard constructor
   EvtCounter( const std::string& type,
               const std::string& name,
               const IInterface* parent);
 
-  virtual ~EvtCounter(){} ///< Destructor
+  virtual ~EvtCounter() = default; ///< Destructor
 
   /// IListener interface to be triggered at begin of event
-  virtual void handle(const Incident&) { this->incrementEventCounter(); }
+  void handle(const Incident&) override { this->incrementEventCounter(); }
 
   /// Initialize method
-  StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Get Event counter
-  long getEventCounter() const { return m_eventCounter; }
+  unsigned long long getEventCounter() const noexcept override { return m_eventCounter; }
 
   /// Increment Event counter
-  void incrementEventCounter() { ++m_eventCounter; }
+  void incrementEventCounter() override { ++m_eventCounter; }
 
   /// Set Event counter
-  void setEventCounter(long n) { m_eventCounter = n; }
+  void setEventCounter( unsigned long long n ) override { m_eventCounter = n; }
 
-protected:
+ private:
 
-private:
-  long m_eventCounter; ///< number of events processed
-  long m_initialCount; ///< allow to change the number used for the first event (property InitialCount)
+  unsigned long long m_eventCounter{0}; ///< number of events processed
+  unsigned long long m_initialCount; ///< allow to change the number used for the first event (property InitialCount)
   bool m_useIncident; ///< whether to increment of BeginEvent incident or not
+
 };
+
 #endif // EVTCOUNTER_H

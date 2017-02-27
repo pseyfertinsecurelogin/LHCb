@@ -1,4 +1,3 @@
-
 // local
 #include "Event/PackedMCRichSegment.h"
 
@@ -14,12 +13,12 @@ void MCRichSegmentPacker::pack( const DataVector & segs,
                                 PackedDataVector & psegs ) const
 {
   const auto ver = psegs.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  if ( isSupportedVer(ver) )
   {
     psegs.data().reserve( segs.size() );
     for ( const auto * seg : segs )
     {
-      psegs.data().emplace_back( PackedData() );
+      psegs.data().emplace_back( );
       auto & pseg = psegs.data().back();
 
       pseg.key = seg->key();
@@ -94,21 +93,15 @@ void MCRichSegmentPacker::pack( const DataVector & segs,
       
     }
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "MCRichSegmentPacker", StatusCode::FAILURE );
-  }
 }
 
 void MCRichSegmentPacker::unpack( const PackedDataVector & psegs,
                                   DataVector       & segs ) const
 {
-  segs.reserve( psegs.data().size() );
   const auto ver = psegs.packingVersion();
-  if ( 1 == ver || 0 == ver )
+  if ( isSupportedVer(ver) )
   {
+    segs.reserve( psegs.data().size() );
     for ( const auto & pseg : psegs.data() )
     {
       auto * seg = new Data();
@@ -179,12 +172,6 @@ void MCRichSegmentPacker::unpack( const PackedDataVector & psegs,
       }
 
     }
-  }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "MCRichSegmentPacker", StatusCode::FAILURE );
   }
 }
 

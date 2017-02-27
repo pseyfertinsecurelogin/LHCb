@@ -33,11 +33,11 @@
 const CLID CLID_DeRichSphMirror = 12030;  // User defined
 
 // Standard Constructor
-DeRichSphMirror::DeRichSphMirror(const std::string & name)
-  : DeRichBase( name ) { }
-
-// Standard Destructor
-DeRichSphMirror::~DeRichSphMirror() { }
+DeRichSphMirror::DeRichSphMirror( const std::string & name )
+  : DeRichBase( name ) 
+{
+  setMyName("DeRichSphMirror");
+}
 
 // Retrieve Pointer to class defininition structure
 const CLID& DeRichSphMirror::classID()
@@ -97,7 +97,6 @@ StatusCode DeRichSphMirror::intersects( const Gaudi::XYZPoint& globalP,
 //=========================================================================
 StatusCode DeRichSphMirror::updateGeometry()
 {
-
   // If first update, set dependency on geometry
   if ( m_firstUpdate )
     updMgrSvc()->registerCondition( this, geometry(),
@@ -368,7 +367,7 @@ StatusCode DeRichSphMirror::updateGeometry()
   }
 
   bool foundRefl( false );
-  for ( const auto & table : surf->tabulatedProperties() )
+  for ( auto & table : surf->tabulatedProperties() )
   {
     if ( table->type() == "REFLECTIVITY" )
     {
@@ -389,8 +388,7 @@ StatusCode DeRichSphMirror::updateGeometry()
             << m_reflectivity->tabProperty()->name() << endmsg;
     debug() << "Second volume is " << surf->secondVol() << endmsg;
   }
-  if ( msgLevel(MSG::VERBOSE) )
-    verbose() << m_reflectivity->tabProperty() << endmsg;
+  _ri_verbo << m_reflectivity->tabProperty() << endmsg;
 
   m_firstUpdate = false;
 

@@ -3,6 +3,13 @@
 ! Package manager : Olivier Deschamps odescham@in2p3.fr
 ! ====================================================================
 
+
+! 2016-09-05 - O. Deschamps
+  - DeCalorimeter.h :  new method cellADC(energy,cellID) to convert energy to ADC [-256,3839] & isSaturated(energy,cellID)
+
+! 2015-05-30 O. Deschamps
+ - DeCalorimeter: reduce verbosity of plane() method when the requested position is outside the active volume
+
 !========================= CaloDet v10r21 2016-01-27 =========================
 ! 2015-12-11 - Marco Cattaneo
  - DeSubCalorimeter: add a few more 'override' qualifications

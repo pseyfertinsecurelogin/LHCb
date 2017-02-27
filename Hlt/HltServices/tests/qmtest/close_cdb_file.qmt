@@ -1,0 +1,25 @@
+<?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+  <argument name="program"><text>python</text></argument>
+  <argument name="args"><set>
+    <text>$HLTSERVICESROOT/tests/options/test_cdb.py</text>
+  </set></argument>
+  <argument name="use_temp_dir">
+    <enumeral>true</enumeral>
+  </argument>
+  <argument name="prerequisites"><set>
+    <tuple><text>hltservices.assign_second_tck</text><enumeral>PASS</enumeral></tuple>
+  </set></argument>
+  <argument name="validator"><text>
+
+# Author: Roel Aaij
+# Purpose: Check if routing bits are reproduced
+
+countErrorLines({"FATAL" : 0, "ERROR" : 0, "WARNING" : 0})
+expected_string= &quot;PASSED&quot;
+if stdout.find(expected_string) == -1:
+    causes.append('missing string')
+    result['hltservices.close_cdb_file.expected_string'] = result.Quote(expected_string)
+
+</text></argument>
+</extension>

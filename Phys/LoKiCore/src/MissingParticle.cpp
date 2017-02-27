@@ -1,4 +1,3 @@
-// $Id$ 
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -17,9 +16,6 @@
  *  @date 2015-02-04 
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace 
@@ -47,15 +43,13 @@ LoKi::Kinematics::MissingParticle::MissingParticle
   , m_dir      ( direction.Unit()   ) 
   , m_mother2  ( mother   * mother  ) 
   , m_missing2 ( missing  * missing ) 
-  , m_v1  ( )  
-  , m_v2  ( )  
   , m_det (0) 
 { solve() ; }
 // ============================================================================
 /*  constructor from all arguments 
  *  @param mother the mass of mother particle 
  *  @param missing the mass of missing particle 
- *  @param p4  four momenutm of recotructed system 
+ *  @param p4  four momentum of reconstructed system 
  *  @param dir the flight direction of mother particle
  */
 // ============================================================================
@@ -64,15 +58,7 @@ LoKi::Kinematics::MissingParticle::MissingParticle
   const double               missing   ,
   const LoKi::LorentzVector& p4        , 
   const LoKi::ThreeVector&   direction )
-  //
-  : m_p4       ( p4                 )  
-  , m_dir      ( direction.Unit()   ) 
-  , m_mother2  ( mother   * mother  ) 
-  , m_missing2 ( missing  * missing ) 
-  , m_v1  ( )  
-  , m_v2  ( )  
-  , m_det (0) 
-{ solve() ; }
+  : MissingParticle( p4, direction, mother, missing ) { }
 // ============================================================================
 // get number of solutions (0,1 or 2) 
 // ============================================================================

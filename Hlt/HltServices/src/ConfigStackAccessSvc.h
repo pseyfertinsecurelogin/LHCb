@@ -1,5 +1,4 @@
-// $Id: ConfigStackAccessSvc.h,v 1.1 2010-05-05 13:20:44 graven Exp $
-#ifndef CONFIGFILEACCESSSVC_H 
+#ifndef CONFIGFILEACCESSSVC_H
 #define CONFIGFILEACCESSSVC_H 1
 
 // Include files
@@ -15,22 +14,21 @@
 
 
 /** @class ConfigStackAccessSvc ConfigStackAccessSvc.h
- *  
+ *
  *  functionality:
- *        read/write configure information from a 
+ *        read/write configure information from a
  *        'stack' of IConfigAccessSvc implementations
  *        writes always go to the 'top' layer of the stack,
  *        reads first go to the 'top' layer, and if it
- *        isn't found, go to the next layer, and if it 
+ *        isn't found, go to the next layer, and if it
  *        isn't found there, it goes to the next layer, and so on...
  *
  *  @author Gerhard Raven
  *  @date   2008-01-04
  */
-class ConfigStackAccessSvc : public extends1<Service, IConfigAccessSvc> {
+class ConfigStackAccessSvc : public extends<Service, IConfigAccessSvc> {
 public:
-  ConfigStackAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
-  ~ConfigStackAccessSvc( ) override = default;     ///< Destructor
+  using extends::extends;
 
   StatusCode initialize() override;    ///< Service initialization
   StatusCode finalize() override;    ///< Service finalization
@@ -47,17 +45,7 @@ public:
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type& alias) override;
 
 private:
-  MsgStream& verbose() const { return msg(MSG::VERBOSE); }
-  MsgStream& debug() const { return msg(MSG::DEBUG); }
-  MsgStream& info() const { return msg(MSG::INFO); }
-  MsgStream& warning() const { return msg(MSG::WARNING); }
-  MsgStream& error() const { return msg(MSG::ERROR); }
-  MsgStream& fatal() const { return msg(MSG::FATAL); }
-  MsgStream& always() const { return msg(MSG::ALWAYS); }
-  
-  std::vector<std::string>             s_svcs;
+  Gaudi::Property<std::vector<std::string>>             s_svcs { this, "ConfigAccessSvcs", {{"ConfigDBAccessSvc"}} };
   boost::ptr_vector<IConfigAccessSvc>  m_svcs;
-  mutable std::unique_ptr<MsgStream>     m_msg;
-  MsgStream& msg(MSG::Level level) const;
 };
 #endif // CONFIGFILEACCESSSVC_H

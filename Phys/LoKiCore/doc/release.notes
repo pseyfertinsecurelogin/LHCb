@@ -13,6 +13,25 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+! 2017-02-16 - Vanya Belyaev
+ - 1. add functors JDigit/JDigits 
+   2. add corresponding functions into LoKi namespace 
+   3. add corresponding python decorators 
+   4. add corresponding python wrappers 
+
+! 2016-07-29 - Marco Cattaneo
+ - Fix clang warnings: ToolFactory is now a struct, no longer a class
+
+! 2016-06-01 - Philip Ilten
+ - removed debug print statements introduced in r201631 to _getattr_SR_
+
+! 2016-05-30 - Dan Johnson
+ - Change HRCSUMADC return value to be 99999 when no Herschel information is
+   present, rather than -1 which would require a further HLT test
+
+! 2016-05-22 - Dan Johnson
+ - Add new LoKi functor to access Herschel station ADC sum from TES
+
 !========================= LoKiCore v11r30 2016-03-08 =========================
 
 ! 2016-03-08 - Marco Clemencic

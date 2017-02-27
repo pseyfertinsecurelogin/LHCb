@@ -25,11 +25,10 @@
  */
 
 
-class IIndexedANNSvc : virtual public extend_interfaces<INamedInterface>  {
+struct IIndexedANNSvc : extend_interfaces<INamedInterface>  {
 public:
   /// Return the interface ID
   DeclareInterfaceID(IIndexedANNSvc,2,0);
-  virtual ~IIndexedANNSvc() = default;
 
   virtual GaudiUtils::VectorMap<unsigned int, Gaudi::StringKey> i2s(unsigned int index, const Gaudi::StringKey& major) const = 0;
 };

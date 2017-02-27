@@ -7,8 +7,7 @@
  *  @date   2003-08-13
  */
 
-#ifndef RICHDET_RICH1DTABPROPERTY_H
-#define RICHDET_RICH1DTABPROPERTY_H 1
+#pragma once
 
 // Base class
 #include "RichDet/Rich1DTabFunc.h"
@@ -37,22 +36,19 @@ namespace Rich
 
   public:
 
-    /// Default Constructor with optional interpolator type argument
-    TabulatedProperty1D( const gsl_interp_type * interType = gsl_interp_linear ) 
-      : TabulatedFunction1D( interType ) { }
-    
+    /// Default Constructor 
+    TabulatedProperty1D( ) = default;
+
     /** Constructor from tabulated property and gsl interpolator type
      *
      *  @param tab         Pointer to a tabulated property
      *  @param registerUMS Flag to indicate if this interpolator should register
      *                     itself to the UMS, so that it is automatically updated
      *                     when the underlying TabulatedProperty is updated
-     *  @param interType   GSL Interpolator type. See
-     *                     http://www.gnu.org/software/gsl/manual/gsl-ref_26.html#SEC389
      */
     explicit TabulatedProperty1D( const TabulatedProperty * tab,
                                   const bool registerUMS = false,
-                                  const gsl_interp_type * interType = gsl_interp_linear );
+                                  const gsl_interp_type * interType = gsl_interp_cspline );
 
     /// Destructor
     virtual ~TabulatedProperty1D( );
@@ -87,8 +83,8 @@ namespace Rich
      *  @param interType GSL Interpolator type (If not given, currently configured type is used)
      */
     bool initInterpolator( const TabulatedProperty * tab,
-                           const bool registerUMS            = false,
-                           const gsl_interp_type * interType = nullptr );
+                           const bool registerUMS = false,
+                           const gsl_interp_type * interType = gsl_interp_cspline );
 
   private: // methods
 
@@ -104,19 +100,17 @@ namespace Rich
     /// Set up the UMS updates for the TabulatedProperty
     bool configureUMS( const TabulatedProperty * tab );
 
+    /** Issue an out of range warning
+     *  @param x    The requested x value
+     *  @param retx The x value to use (corrected to be in range)
+     *  @return x value to use
+     */
+    virtual double rangeWarning( const double x, const double retx ) const override;
+
   private: // data
 
     /// Pointer to the underlying TabulatedProperty
     const TabulatedProperty * m_tabProp = nullptr;
-
-    /// The service locator
-    ISvcLocator* m_svcLocator = nullptr;
-
-    /// The Message service
-    IMessageSvc* m_msgSvc = nullptr;
-
-    /// The Update Manager Service
-    IUpdateManagerSvc* m_updMgrSvc = nullptr;
 
     /// Flag to say if we have registered a dependency with the UMS
     bool m_registedUMS = false;
@@ -124,5 +118,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHDET_RICH1DTABPROPERTY_H

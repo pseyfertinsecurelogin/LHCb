@@ -29,17 +29,17 @@ namespace coral {
 class COOLConfSvc: public extends1<Service, ICOOLConfSvc> {
 public:
   /// Initialize COOL (CondDB) Configuration Service
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Finalize Service
-  virtual StatusCode finalize();
+  StatusCode finalize() override;
 
   // --------- ICOOLConfSvc implementation
   /// Access to the CORAL connection service used by COOL (if needed).
-  virtual coral::IConnectionService& connectionSvc();
+  coral::IConnectionService& connectionSvc() override;
 
   /// Get the COOL Database service (used to connect to the databases).
-  virtual cool::IDatabaseSvc& databaseSvc();
+  cool::IDatabaseSvc& databaseSvc() override;
 
 protected:
   /// Standard constructor

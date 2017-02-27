@@ -1,41 +1,41 @@
 #ifndef       DETDESC_DetectorElementEXCEPTION_H
-#define       DETDESC_DetectorElementEXCEPTION_H 1 
-/// GaudiKernel 
-#include "GaudiKernel/GaudiException.h" 
+#define       DETDESC_DetectorElementEXCEPTION_H 1
+/// GaudiKernel
+#include "GaudiKernel/GaudiException.h"
 //
 class DetectorElement;
-class MsgStream;          
+class MsgStream;
 
 /** @class DetectorElementException DetectorElementException.h DetDesc/DetectorElementException.h
 
-    Exception used in DetectorElement class 
-    
-    @author Vanya Belyaev 
+    Exception used in DetectorElement class
+
+    @author Vanya Belyaev
 */
 
 
 
-class DetectorElementException : public GaudiException 
-{  
+class DetectorElementException : public GaudiException
+{
   ///
 public:
-  /// constructor 
-  DetectorElementException( const std::string     & name                                   , 
-                            const DetectorElement * DetectorElement = nullptr              , 
-                            const StatusCode      &  sc             = StatusCode::FAILURE  ); 
-  /// constructor from exception 
-  DetectorElementException( const std::string     & name                                    , 
-                            const GaudiException  & Exception                               , 
-                            const DetectorElement * DetectorElement   = nullptr             , 
-                            const StatusCode      & sc                = StatusCode::FAILURE  ); 
-  /// virtual destructor 
+  /// constructor
+  DetectorElementException( const std::string     & name                                   ,
+                            const DetectorElement * DetectorElement = nullptr              ,
+                            const StatusCode      &  sc             = StatusCode::FAILURE  );
+  /// constructor from exception
+  DetectorElementException( const std::string     & name                                    ,
+                            const GaudiException  & Exception                               ,
+                            const DetectorElement * DetectorElement   = nullptr             ,
+                            const StatusCode      & sc                = StatusCode::FAILURE  );
+  /// virtual destructor
   virtual ~DetectorElementException() noexcept;
   ///
-  virtual std::ostream&    printOut ( std::ostream& os = std::cerr ) const ; 
+  std::ostream&    printOut ( std::ostream& os = std::cerr ) const  override;
   ///
-  virtual MsgStream&       printOut ( MsgStream&                   ) const ; 
+  MsgStream&       printOut ( MsgStream&                   ) const  override;
   ///
-  virtual GaudiException*  clone    ()                               const ;
+  GaudiException*  clone    ()                               const  override;
   ///
  private:
   ///

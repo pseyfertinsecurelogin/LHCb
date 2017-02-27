@@ -1,4 +1,3 @@
-// $Id: 
 #ifndef CALODAQ_ICALODATAPROVIDER_H 
 #define CALODAQ_ICALODATAPROVIDER_H 1
 
@@ -6,13 +5,11 @@
 // from STL
 #include <string>
 
-
 #include "CaloDAQ/ICaloReadoutTool.h"
 #include "Event/CaloAdc.h"
 #include "Event/CaloDigit.h"
 #include "CaloKernel/CaloVector.h"
 
-static const InterfaceID IID_ICaloDataProvider ( "ICaloDataProvider", 4, 0 );
 
 /** @class ICaloDataProvider ICaloDataProvider.h CaloDAQ/ICaloDataProvider.h
  *  Interface to the tool for fast decoding of CaloBanks
@@ -20,12 +17,10 @@ static const InterfaceID IID_ICaloDataProvider ( "ICaloDataProvider", 4, 0 );
  *  @author Olivier Deschamps
  *  @date   2007-02-27
  */
-class ICaloDataProvider : virtual public ICaloReadoutTool {
-public: 
+struct ICaloDataProvider : extend_interfaces<ICaloReadoutTool> {
 
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICaloDataProvider; }
-
+  DeclareInterfaceID( ICaloDataProvider, 5, 0 );
 
   virtual int adc(LHCb::CaloCellID id,int def=0)=0;
   virtual double digit(LHCb::CaloCellID id,double def=0.)=0;
@@ -38,9 +33,6 @@ public:
   virtual CaloAdcPair adcRange() = 0;
   virtual CaloAdcPair pinRange() = 0;
 
-protected:
-
-private:
 
 };
 #endif // CALODAQ_ICALODATAPROVIDER_H

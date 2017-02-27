@@ -76,10 +76,6 @@ DeOTModule::DeOTModule(const std::string& name) :
   /// Constructor
 }
 
-
-DeOTModule::~DeOTModule() { /// Destructor
-}
-
 const CLID& DeOTModule::clID() const {
   return classID();
 }
@@ -405,7 +401,7 @@ StatusCode DeOTModule::cacheInfo()
   Gaudi::XYZPoint g1 = globalPoint(0.0, yLower, 0.0);
   Gaudi::XYZPoint g2 = globalPoint(0.0, yUpper, 0.0);
   Gaudi::XYZVector dir = (g2 - g1).Unit() ;
-  
+
   /// trajs of middle of monolayers
   Gaudi::XYZPoint g3[2];
   /// 0 -> first monolayer
@@ -431,7 +427,7 @@ StatusCode DeOTModule::cacheInfo()
     for(int i=0; i<6; ++i) monoDx.push_back( m_monoDx[parmap[i]] ) ;
   } else {
     MsgStream msg( msgSvc(), name() );
-    msg << MSG::ERROR << "Cannot handle monolayeralignment vector of size: " << m_monoDx.size() << endreq ;
+    msg << MSG::ERROR << "Cannot handle monolayeralignment vector of size: " << m_monoDx.size() << endmsg ;
     return StatusCode::FAILURE ;
   }
 
@@ -451,11 +447,11 @@ StatusCode DeOTModule::cacheInfo()
       else if( bottomModule() && 1 - m_layerID%2 == mono )
 	y0 -= m_inefficientRegion;
     }
-    
+
     const double x0 = (xLower+xUpper)/2 - m_halfXPitch * (double( m_nStraws ) + m_monoXZero[mono]) ;
     const double z0 = (mono-0.5)*m_zPitch ;
     const double monosign = mono==0? 1 : -1 ;
-    
+
     if( monoDx.size()==2 ) {
       // this is easy
       std::array<Gaudi::XYZPoint,2> points ;
@@ -484,7 +480,7 @@ StatusCode DeOTModule::cacheInfo()
       m_trajFirstWire[mono].reset( new LHCb::OTWireTrajImp<3>( points, y0global, y1global ) ) ;
     }
   }
-  
+
   /// plane
   m_plane = Gaudi::Plane3D(g1, g2, g4[0] + 0.5*(g4[1]-g4[0]));
   m_entryPlane = Gaudi::Plane3D(m_plane.Normal(), globalPoint(0.,0.,-0.5*m_sensThickness));
@@ -511,7 +507,7 @@ StatusCode DeOTModule::cacheInfo()
     m_dy[imono] = yend - ybegin ;
     m_p0[imono] = p1 + (ybegin - p1.y())/dp.y() * dp ;
   }
-  
+
   // propagation velocity along y-direction (includes correction for readout side)
   m_propagationVelocityY = m_propagationVelocity * dir.y() ;
 
@@ -585,7 +581,7 @@ StatusCode DeOTModule::calibrationCallback() {
     }
     else m_walkrelation = OTDet::WalkRelation();
     checkWalkRelation(msg);
-    
+
     // add the global t0 to the given t0 parameters:
     const IDetectorElement* quarter = this->parentIDetectorElement();
     const IDetectorElement* layer = quarter->parentIDetectorElement();
@@ -626,15 +622,15 @@ StatusCode DeOTModule::statusCallback() {
   try {
     const std::vector<int>& statusflags = m_status->param< std::vector<int> >( "ChannelStatus" );
     if( statusflags.size() == nChannels() || statusflags.size() == MAXNUMCHAN ) // 1 t0 per channel
-      std::copy( statusflags.begin(), statusflags.end(), m_strawStatus ) ;
+      std::copy( statusflags.begin(), statusflags.end(), m_strawStatus.begin() ) ;
     else if( statusflags.size()== nChannels()/32 || statusflags.size()== 4 ) // 1 t0 per otis
       for( size_t ichan=0; ichan<nChannels(); ++ichan)
 	m_strawStatus[ichan] = statusflags[ichan/32] ;
     else if( statusflags.size() == 1 )      // 1 t0 per module
-      std::fill( m_strawStatus, m_strawStatus + MAXNUMCHAN, statusflags.front() ) ;
+      m_strawStatus.fill( statusflags.front() ) ;
     else {
       msg << MSG::ERROR << "Bad length of straw status vector in conditions: " << statusflags.size() << endmsg ;
-      std::fill( m_strawStatus, m_strawStatus + MAXNUMCHAN, 0 ) ;
+      m_strawStatus.fill( 0 ) ;
     }
   }
   catch (...) {
@@ -851,10 +847,10 @@ StatusCode DeOTModule::setMonoAlignment(const std::vector<double>& pars)
 {
   // Do this via the update service such that the condition is created.
   SmartRef<Condition> monoaligncondition = condition( m_monoalignConditionName ) ;
-  if(monoaligncondition->exists(m_monoalignParametersName)) 
+  if(monoaligncondition->exists(m_monoalignParametersName))
     monoaligncondition->param< std::vector<double> >(m_monoalignParametersName) = pars;
   else monoaligncondition->addParam(m_monoalignParametersName,pars, "Monolayer alignment parameters");
-  
+
   updMgrSvc()->invalidate( monoaligncondition.target() );
   StatusCode sc = updMgrSvc()->update( this );
   return sc ;

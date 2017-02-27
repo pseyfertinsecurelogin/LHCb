@@ -1,4 +1,4 @@
-#ifndef LINKER_ALLLINKS_H 
+#ifndef LINKER_ALLLINKS_H
 #define LINKER_ALLLINKS_H 1
 
 // STL
@@ -11,6 +11,7 @@
 #include "GaudiKernel/ObjectContainerBase.h"
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/SmartIF.h"
 #include "Event/LinksByKey.h"
 
 /** @class AllLinks AllLinks.h Linker/AllLinks.h
@@ -21,14 +22,14 @@
  */
 
 template < class TARGET, class SOURCE=ContainedObject >
-class AllLinks {
-public: 
-  
+class AllLinks final {
+public:
+
   /// Standard constructor
   AllLinks( IDataProviderSvc* eventSvc,
             IMessageSvc* msgSvc,
             std::string containerName ) {
-    m_eventSvc = eventSvc;          
+    m_eventSvc = eventSvc;
     std::string name = "Link/" + containerName;
     if ( containerName.compare(0,7,"/Event/") == 0 ) {
       name = "Link/" + containerName.substr(7);
@@ -41,7 +42,7 @@ public:
             << " not found." << endmsg;
       }
     } else {
-      //== Check proper template, only if specified. 
+      //== Check proper template, only if specified.
       if ( links->sourceClassID() != SOURCE::classID() &&
            CLID_ContainedObject   != SOURCE::classID()  ) {
         std::ostringstream message;
@@ -59,10 +60,8 @@ public:
     m_links = links;
     m_curReference.setNextIndex( -1 );
     m_curReference.setWeight( 0. );
-  }; 
-            
-  virtual ~AllLinks( ) {}; ///< Destructor
-  
+  };
+
   bool notFound() const { return !m_links; }
 
   TARGET* first( ) {
@@ -72,7 +71,7 @@ public:
     m_curReference.setNextIndex( (*m_iter).second );
     return next();
   }
-    
+
   TARGET* next( ) {
     if ( !m_links ) return nullptr;
     int nn = m_curReference.nextIndex();
@@ -85,42 +84,44 @@ public:
     m_curReference = m_links->linkReference()[nn] ;
     return currentTarget();
   }
-  
+
   double weight()   { return m_curReference.weight(); }
   int    key()      { return (*m_iter).first; }
   SOURCE* source()  { return currentSource(  (*m_iter).first ); }
 
-protected:
+private:
 
   TARGET* currentTarget() {
     if ( !m_links ) return nullptr;
     int myLinkID = m_curReference.linkID();
     LinkManager::Link* link = m_links->linkMgr()->link( myLinkID );
     if ( 0 == link->object() ) {
-      SmartDataPtr<DataObject> tmp( m_eventSvc, link->path() );
+      SmartDataPtr<DataObject> tmp( m_eventSvc.get(), link->path() );
       link->setObject( tmp );
       if ( !tmp ) return nullptr;
     }
-    ObjectContainerBase* parent = dynamic_cast<ObjectContainerBase*>(link->object() );
-    return parent ?  (TARGET*)parent->containedObject( m_curReference.objectKey() ) : nullptr;
-  }  
+    auto *parent = dynamic_cast<ObjectContainerBase*>( link->object() );
+    return parent ? static_cast<TARGET*>(parent->containedObject( m_curReference.objectKey() ))
+                  : nullptr;
+  }
 
  SOURCE* currentSource( int key ) {
     if ( !m_links ) return nullptr;
     int myLinkID = m_curReference.srcLinkID();
     if ( 0 > myLinkID ) return nullptr;
     LinkManager::Link* link = m_links->linkMgr()->link( myLinkID );
-    if ( 0 == link->object() ) {
-      SmartDataPtr<DataObject> tmp( m_eventSvc, link->path() );
+    if ( !link->object() ) {
+      SmartDataPtr<DataObject> tmp( m_eventSvc.get(), link->path() );
       link->setObject( tmp );
       if ( !tmp ) return nullptr;
     }
-    ObjectContainerBase* parent = dynamic_cast<ObjectContainerBase*>(link->object() );
-    return  parent ? (SOURCE*)parent->containedObject( key ) : nullptr;
-  }  
+    auto *parent = dynamic_cast<ObjectContainerBase*>( link->object() );
+    return  parent ? static_cast<SOURCE*>(parent->containedObject( key ))
+                   : nullptr;
+  }
 
-private:
-  IDataProviderSvc*   m_eventSvc;
+
+  SmartIF<IDataProviderSvc>   m_eventSvc;
   LHCb::LinksByKey*   m_links;
   LHCb::LinkReference m_curReference;
   std::vector<std::pair<int,int> >::const_iterator m_iter;

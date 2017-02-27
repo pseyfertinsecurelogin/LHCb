@@ -4,6 +4,7 @@
 // Include files
 #include <algorithm>
 #include <bitset>
+#include <mutex>
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
@@ -44,12 +45,12 @@ public:
   DeVeloSensor( const std::string& name = "" );
 
   /// object identifier (static method)
-  static  const CLID& classID() { return CLID_DeVeloSensor; };
+  static  const CLID& classID() { return CLID_DeVeloSensor; }
   /// object identification
-  virtual const CLID& clID()     const;
+  const CLID& clID()     const override;
 
   /// Initialise the DeVeloSensor from the XML
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
   /// Calculate the nearest channel to a 3-d point.
   virtual StatusCode pointToChannel(const Gaudi::XYZPoint& point,
@@ -74,7 +75,7 @@ public:
    *
    *  This is not a residual in 3D! The supplied 3-d point is assumed
    *  to be in the plane of the sensor and the residual is computed
-   *  in this plane. No check is performed whether the point is 
+   *  in this plane. No check is performed whether the point is
    *  actually on the sensor.
    */
   virtual StatusCode residual(const Gaudi::XYZPoint& point,
@@ -94,7 +95,7 @@ public:
    *
    *  This is not a residual in 3D! The supplied 3-d point is assumed
    *  to be in the plane of the sensor and the residual is computed
-   *  in this plane. No check is performed whether the point is 
+   *  in this plane. No check is performed whether the point is
    *  actually on the sensor.
    */
   virtual StatusCode residual(const Gaudi::XYZPoint& point,
@@ -120,7 +121,7 @@ public:
   /** Propagate a line to the sensor plane in the global frame.
    *
    *  The line is defined by a 3-d point and slope vector in the
-   *  global frame. The resulting 3-d point is the intersection 
+   *  global frame. The resulting 3-d point is the intersection
    *  of the line and the sensor plane. Note that the result is
    *  not guaranteed to actually be on the sensor.
    */
@@ -268,7 +269,7 @@ public:
   inline unsigned int moduleId() const {return m_moduleId;}
 
   /// Workaround to prevent hidden base class function
-  inline const std::type_info& type(const std::string &name) const
+  inline const std::type_info& type(const std::string &name) const override
                       {return ParamValidDataObject::type(name);}
   /// Returns the sensor type
   inline std::string type() const {return m_type;}
@@ -313,10 +314,12 @@ public:
 
   /// Convert routing line to strip number
   unsigned int RoutingLineToStrip(unsigned int routLine) const {
-    return m_mapRoutingLineToStrip[routLine];
+    return m_mapRoutingLineToStrip.at(routLine);
   }
   /// Convert strip number to routing line
-  unsigned int StripToRoutingLine(unsigned int strip) const {return m_mapStripToRoutingLine[strip];}
+  unsigned int StripToRoutingLine(unsigned int strip) const {
+    return m_mapStripToRoutingLine.at(strip);
+  }
 
   /// Get the chip number from the routing line
   unsigned int ChipFromRoutingLine(unsigned int routLine) const {
@@ -417,47 +420,9 @@ public:
 
   };
 
-  /** @class DeVeloSensor::Tell1EventInfo DeVeloSensor.h VeloDet/DeVeloSensor.h
-   *
-   *  Provides event-specific TELL1 information.
-   *  This information is only valid after the VELO ZS decoding stage.
-   *  The default state after construction or reset is 'bad', that is
-   *  the TELL1 is considered to have an error and the bank is 
-   *  considered not to have been decoded. The decoder will reset
-   *  and then change these flags to the true value in each event. 
-   *
-   *  @author Kurt Rinnert
-   *  @date   2011-10-05
-   */
-  class Tell1EventInfo {
-
-    public:
-
-      Tell1EventInfo() 
-        : m_hasError(true) 
-        , m_wasDecoded(false) 
-      { ; }
-
-      void reset() const { m_hasError=true; m_wasDecoded=false; }
-      void setHasError( const bool flag ) const { m_hasError=flag; }
-      void setWasDecoded( const bool flag ) const { m_wasDecoded=flag; }
-
-      bool hasError() const { return m_hasError; };
-      bool wasDecoded() const { return m_wasDecoded; };
-
-    private:
-
-      mutable bool m_hasError;
-      mutable bool m_wasDecoded;
-  };
-
   // condition and event related public methods
 
 public:
-  /** Retrieve event-specific TELL1 information. 
-   *  This information is only valid after the decoding stage.
-   */
-  const Tell1EventInfo& tell1EventInfo() const { return m_tell1EventInfo; }
 
   /** Check whether this sensor is read out at all (cached condition).
    *  This information is based on CondDB, i.e. it can change
@@ -520,13 +485,6 @@ private:
    */
   StatusCode registerConditionCallBacks();
 
-  /// On demand access to MsgStream object
-  inline MsgStream & msg() const
-  {
-    if ( !m_msgStream ) m_msgStream.reset(new MsgStream( msgSvc(), "DeVeloSensor" ));
-    return *m_msgStream;
-  }
-
 protected:
 
   unsigned int m_numberOfZones;
@@ -534,8 +492,8 @@ protected:
   static const unsigned int m_maxRoutingLine=2048;
   static const unsigned int m_numberOfStrips=2048;
 
-  mutable std::map<unsigned int, unsigned int> m_mapRoutingLineToStrip;//<Map of routing line to strips
-  mutable std::map<unsigned int, unsigned int> m_mapStripToRoutingLine;//<Map of strips to routing line
+  std::map<unsigned int, unsigned int> m_mapRoutingLineToStrip;//<Map of routing line to strips
+  std::map<unsigned int, unsigned int> m_mapStripToRoutingLine;//<Map of strips to routing line
   std::vector<std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint> > m_stripLimits;//<Begin and end point of strips
 
   IGeometryInfo* m_geometry;
@@ -576,17 +534,23 @@ private:
   bool m_tell1WithoutSensor;
 
   friend class DeVelo;
-  mutable int m_moduleId;//<Liverpool database module id
+  int m_moduleId;//<Liverpool database module id
 
   // Set output level for message service
   bool m_debug;
   bool m_verbose;
 
+  /// Thread safe on demand access to MsgStream object
+  inline MsgStream & msg() const {
+    std::call_once(m_msgSetFlag,
+		   [&]{m_msgStream.reset( new MsgStream( msgSvc(), "DeVeloSensor" ) );});
+    return *m_msgStream;
+  }
   /// cached Message Stream object
   mutable std::unique_ptr<MsgStream> m_msgStream;
+  /// making the msg() function above thread safe
+  mutable std::once_flag m_msgSetFlag;
 
-  /// event-specific TELL1 info
-  Tell1EventInfo m_tell1EventInfo;
 
 };
 #endif // VELODET_DEVELOSENSOR_H

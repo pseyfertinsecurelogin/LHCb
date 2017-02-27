@@ -1,0 +1,24 @@
+<lcgdict>
+
+  <class name  = "Rich::IDetParameters"                />
+  <class name  = "Rich::IMirrorSegFinder"              />
+  <class name  = "Rich::IParticleProperties"           />
+  <class name  = "Rich::DAQ::IPixelClusteringTool"     />
+  <class name  = "Rich::DAQ::IPixelSuppressionTool"    />
+  <class name  = "Rich::IRadiatorTool"                 />
+  <class name  = "Rich::DAQ::IRawBufferToSmartIDsTool" />
+  <class name  = "Rich::DAQ::IRawDataFormatTool"       />
+  <class name  = "Rich::IRayTracing"                   />
+  <class name  = "Rich::IRefractiveIndex"              />
+  <class name  = "Rich::ISmartIDTool"                  />
+  <class name  = "Rich::IToolRegistry"                 />
+  <class name  = "Rich::ISnellsLawRefraction"          />
+  <class name  = "Rich::IDetParameters::RadLimits"     />
+  <class name  = "Rich::IAddBackground"                />
+  <class name  = "Rich::IAddBackground::HPDBackgrounds"/>
+  <class name  = "Rich::IHPDOccupancyTool"             />
+  <class name  = "Rich::IGenericHPDAnalysisTool"       />
+  <class name  = "Rich::IGenericHPDAnalysisTool::Result"  />
+  <class name  = "Rich::IGenericHPDAnalysisTool::Results" />
+
+</lcgdict>

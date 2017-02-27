@@ -75,7 +75,7 @@ namespace Gaudi
       double sigmaL  () const { return m_sigmaL  ; }
       double sigmaR  () const { return m_sigmaR  ; }
       // ======================================================================
-      double sigma   () const { return 0.5  * ( m_sigmaL + m_sigmaR )            ; }         
+      double sigma   () const { return 0.5  * ( m_sigmaL + m_sigmaR )            ; }
       double asym    () const { return 0.5  * ( m_sigmaL - m_sigmaR ) / sigma () ; }
       // ======================================================================
     public:
@@ -151,7 +151,7 @@ namespace Gaudi
     public: // derived getters
       // ======================================================================
       double mean        () const { return   mu    () ; }
-      double mediane     () const { return   mu    () ; }
+      double median      () const { return   mu    () ; }
       double mode        () const { return   mu    () ; }
       //
       double variance    () const ;
@@ -232,7 +232,7 @@ namespace Gaudi
     public: // derived getters
       // ======================================================================
       double mean        () const ;
-      double mediane     () const { return   xi    () ; }
+      double median      () const { return   xi    () ; }
       //
       double variance    () const ;
       double dispersion  () const { return variance () ; }
@@ -381,7 +381,7 @@ namespace Gaudi
     /** @class Bukin
      *  ``Bukin-function'', aka "Modified Novosibirsk function"
      *  for description of asymmetric peaks with the exponential tails
-     *  
+     *
      *  @see http://arxiv.org/abs/1107.5751
      *  @see http://dx.doi.org/10.1007/JHEP06(2012)141
      *  @date 2011-04-19
@@ -424,7 +424,7 @@ namespace Gaudi
       double rho_R () const { return m_rho_R   ; }
       // ======================================================================
       double x1    () const { return m_x1      ; }
-      double x2    () const { return m_x2      ; }      
+      double x2    () const { return m_x2      ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -565,21 +565,21 @@ namespace Gaudi
      *  @see http://en.wikipedia.org/wiki/Crystal_Ball_function
      *
      *  for \f$\alpha>0\f$
-     * 
+     *
      *  \f[ f(x;\alpha,n,x_0,\sigma) = \frac{1}{ \sqrt{2\pi\sigma^2} } \left\{
      *  \begin{array}{ll}
-     *  \mathrm{e}^{-\frac{1}{2}\left(\frac{x-x_0}{\sigma}\right)^2} 
-     *  & \text{for}~\frac{x-x_0}\ge-\alpha\sigma \\ 
-     *  \mathrm{- \frac{\alpha^2}{2}} \times 
+     *  \mathrm{e}^{-\frac{1}{2}\left(\frac{x-x_0}{\sigma}\right)^2}
+     *  & \text{for}~\frac{x-x_0}\ge-\alpha\sigma \\
+     *  \mathrm{- \frac{\alpha^2}{2}} \times
      *  \left(  \frac{n+1}{ n+1 - \alpha^2 - \left|\alpha\right|\frac{x-x_0}{\sigma}}\right)^{n+1}
-     *  & \text{for}~\frac{x-x_0}\le-\alpha\sigma 
+     *  & \text{for}~\frac{x-x_0}\le-\alpha\sigma
      *  \end{array}
      *  \right.\f]
      *
-     * where 
+     * where
      *
-     * \f[ C = \frac{n+1}{\left|\alpha\right|\times \frac{1}{n} \times \mathrm{e}^{-\frac{\alpha^2}{2}}  \f] 
-     * \f[ B = \sqrt{\frac{\pi}{2}}\left(1+\mathrm{erf}\left(-\frac{\alpha}{\sqrt{2}}\right)\right) \f] 
+     * \f[ C = \frac{n+1}{\left|\alpha\right|\times \frac{1}{n} \times \mathrm{e}^{-\frac{\alpha^2}{2}}  \f]
+     * \f[ B = \sqrt{\frac{\pi}{2}}\left(1+\mathrm{erf}\left(-\frac{\alpha}{\sqrt{2}}\right)\right) \f]
      *
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-05-25
@@ -647,10 +647,10 @@ namespace Gaudi
       double m_alpha    ;  // parameter alpha
       /// parameter n
       double m_n        ;  // parameter n
-      /// helper constants 
-      double m_A        ;  // exp(-0.5*alpha^2) 
-      double m_B        ;  // integral over the gaussian part 
-      double m_C        ;  // integral over the power-law tail 
+      /// helper constants
+      double m_A        ;  // exp(-0.5*alpha^2)
+      double m_B        ;  // integral over the gaussian part
+      double m_C        ;  // integral over the power-law tail
       // ======================================================================
     } ;
     // ========================================================================
@@ -659,15 +659,15 @@ namespace Gaudi
      *  ``Crystal Ball-function'' suitable for \f$J/\psi/\Upsilon\f$-peaks
      *  @thank Matthew Needham
      *
-     *  Recommended constants for \f$J/psi\f$-peak: 
+     *  Recommended constants for \f$J/psi\f$-peak:
      *    -  \f$a_0 =  1.975   \f$
-     *    -  \f$a_1 =  0.0011  \f$ 
-     *    -  \f$a_2 = -0.00018 \f$ 
+     *    -  \f$a_1 =  0.0011  \f$
+     *    -  \f$a_2 = -0.00018 \f$
      *
-     *  Recommended constants for \f$\Upsilon\f$-peaks: 
+     *  Recommended constants for \f$\Upsilon\f$-peaks:
      *    -  \f$a_0 =  1.91    \f$
-     *    -  \f$a_1 =  0.0017  \f$ 
-     *    -  \f$a_2 = -5.22\times10^{-6} \f$ 
+     *    -  \f$a_1 =  0.0017  \f$
+     *    -  \f$a_2 = -5.22\times10^{-6} \f$
      *
      *  @see Gaudi::Math::CrystalBall
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
@@ -685,7 +685,7 @@ namespace Gaudi
        *  @param a2     a2       parameter
        */
       Needham
-      ( const double m0    = 3096.0     ,  // for J/psi 
+      ( const double m0    = 3096.0     ,  // for J/psi
         const double sigma =   13.5     ,
         const double a0    =    1.975   ,
         const double a1    =    0.0011  ,
@@ -726,7 +726,7 @@ namespace Gaudi
       double integral () const { return m_cb.integral() ; }
       /// get integral between low and high
       double integral ( const double low ,
-                        const double high ) const 
+                        const double high ) const
       { return m_cb.integral ( low , high ) ; }
       // ======================================================================
     private:
@@ -743,8 +743,8 @@ namespace Gaudi
     } ;
     // ========================================================================
     /** @class CrystalBallRightSide
-     *  ritgh-sided Crystal Ball function 
-     *  @see CrystalBall 
+     *  ritgh-sided Crystal Ball function
+     *  @see CrystalBall
      *  @date 2011-05-25
      */
     class GAUDI_API CrystalBallRightSide : public std::unary_function<double,double>
@@ -787,7 +787,7 @@ namespace Gaudi
       bool setMass  ( const double value ) { return setPeak ( value ) ; }
       bool setSigma ( const double value ) { return m_cb.setSigma ( value ) ; }
       bool setAlpha ( const double value ) { return m_cb.setAlpha ( value ) ; }
-      bool setN     ( const double value ) { return m_cb.setN     ( value ) ; }  
+      bool setN     ( const double value ) { return m_cb.setN     ( value ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -799,15 +799,15 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      /// the actual CB-function: 
+      /// the actual CB-function:
       Gaudi::Math::CrystalBall m_cb ;                 // the actual CB-function
       // ======================================================================
     } ;
     // ========================================================================
     /** @class CrystalBallDoubleSided
      *  ``Crystal Ball-function'' for description of gaussian with the tail
-     *  @see CrystalBall 
-     *  @see CrystalBallRightSide  
+     *  @see CrystalBall
+     *  @see CrystalBallRightSide
      *  @date 2011-05-25
      */
     class GAUDI_API CrystalBallDoubleSided
@@ -819,7 +819,7 @@ namespace Gaudi
        *  @param m0      m0          parameter
        *  @param sigma   sigma       parameter
        *  @param alpha_L alpha_L     parameter
-       *  @param n_L     n_L         parameter  (N-1 for "standard" definition) 
+       *  @param n_L     n_L         parameter  (N-1 for "standard" definition)
        *  @param alpha_R alpha_R parameter
        *  @param n_R     n_R         parameter  (N-1 for "standard" definition)
        */
@@ -883,34 +883,34 @@ namespace Gaudi
       double m_alpha_R  ;  // parameter alpha
       /// parameter N_R
       double m_n_R      ;  // parameter N
-      /// helper constants 
-      double m_AL       ;  // exp(-0.5*alpha_L^2) 
-      double m_AR       ;  // exp(-0.5*alpha_R^2) 
-      double m_B        ;  // integral over the gaussian part 
-      double m_TL       ;  // integral over the left  power-law tail 
+      /// helper constants
+      double m_AL       ;  // exp(-0.5*alpha_L^2)
+      double m_AR       ;  // exp(-0.5*alpha_R^2)
+      double m_B        ;  // integral over the gaussian part
+      double m_TL       ;  // integral over the left  power-law tail
       double m_TR       ;  // integral over the right power-law tail
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class Apolonios 
-     *  A modified gaussian with power-law tail on right side 
-     *  and an exponential tail on low-side 
-     * 
-     *  The function is proposed by Diego Martinez Santos 
+    /** @class Apolonios
+     *  A modified gaussian with power-law tail on right side
+     *  and an exponential tail on low-side
+     *
+     *  The function is proposed by Diego Martinez Santos
      *  @see https://indico.cern.ch/getFile.py/access?contribId=2&resId=1&materialId=slides&confId=262633
      *  @see http://arxiv.org/abs/1312.5000
      *  Here a bit modified version is used with redefined parameter <code>n</code>
-     *  to be coherent with local definitions of Crystal Ball  
-     * 
+     *  to be coherent with local definitions of Crystal Ball
+     *
      *  \f[ f(x;\alpha,n,x_0,\sigma) = \left\{
      *  \begin{array}{ll}
-     *  \mathrm{e}^{-\left|b\right|\sqrt{1+(\delta x)^2}} & \text{for}~~\delta x >-a \\ 
-     *  A \times \left( \frac{\left|n\right|+1}{ \left|n\right|+1 - \frac{(a+\delta x)\left|ab\right|} 
-     *  {\sqrt{1+a^2}} } \right)^{ \left|n\right|+1} & \text{otherwise} 
+     *  \mathrm{e}^{-\left|b\right|\sqrt{1+(\delta x)^2}} & \text{for}~~\delta x >-a \\
+     *  A \times \left( \frac{\left|n\right|+1}{ \left|n\right|+1 - \frac{(a+\delta x)\left|ab\right|}
+     *  {\sqrt{1+a^2}} } \right)^{ \left|n\right|+1} & \text{otherwise}
      *  \end{array}
-     *  \right. \f] 
+     *  \right. \f]
      *
-     * where 
+     * where
      *
      * \f[ \delta x  = \frac{ x - x_0}{\left|\sigma\right|} \f]
      * \f[ A = \mathrm{e}^{-\left|b\right|\sqrt{1+a^2}}     \f]
@@ -929,11 +929,11 @@ namespace Gaudi
        *  @param n      n        parameter (equal for N-1 for "standard" definition)
        *  @param b      b        parameter
        */
-      Apolonios 
+      Apolonios
       ( const double m0    = 0 ,
         const double sigma = 1 ,
         const double alpha = 2 ,
-        const double n     = 1 , 
+        const double n     = 1 ,
         const double b     = 1 ) ;
       /// destructor
       ~Apolonios () ;
@@ -983,11 +983,11 @@ namespace Gaudi
       /// parameter alpha
       double m_alpha    ;  // parameter alpha
       /// parameter n
-      double m_n        ;  // parameter 
-      /// parameter b 
+      double m_n        ;  // parameter
+      /// parameter b
       double m_b        ;  // parameter n
-      /// helper constants 
-      double m_A        ;  // exp(-0.5*alpha^2) 
+      /// helper constants
+      double m_A        ;  // exp(-0.5*alpha^2)
       // ======================================================================
     private:
       // ======================================================================
@@ -996,27 +996,27 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class Apolonios2 
+    /** @class Apolonios2
      *  "Bifurcated Apolonios"
-     *  A modified gaussian with asymmetric exponential tails on both sides 
-     * 
-     *  A convinient reparameterization is applied to keep reduce 
+     *  A modified gaussian with asymmetric exponential tails on both sides
+     *
+     *  A convinient reparameterization is applied to keep reduce
      *  the correlations between "sigma"s and "beta"
-     * 
-     *  \f[ f(x;\mu,\sigma_l,\sigma_r,\beta) \propto 
-     *  \mathrm{e}^{\left|\beta\right|( \left|\beta\right| - \sqrt{ \beta^2+\left(\delta x\right)^2}} 
-     *  \f] 
-     *     
-     * where 
+     *
+     *  \f[ f(x;\mu,\sigma_l,\sigma_r,\beta) \propto
+     *  \mathrm{e}^{\left|\beta\right|( \left|\beta\right| - \sqrt{ \beta^2+\left(\delta x\right)^2}}
+     *  \f]
+     *
+     * where
      *
      * \f[ \delta x  = \left\{ \begin{array}{ccc}
      *     \frac{x-\mu}{\sigma_l} & \text{for} & x \le \mu \\
      *     \frac{x-\mu}{\sigma_r} & \text{for} & x \gt \mu \\
      *     \end{array}
      *     \right.\f]
-     * 
-     *  Large betas corresponds to gaussian 
-     * 
+     *
+     *  Large betas corresponds to gaussian
+     *
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date  2013-12-01
      */
@@ -1034,7 +1034,7 @@ namespace Gaudi
         ( const double m0      = 0   ,
           const double sigmaL  = 1   ,
           const double alphaR  = 1   ,
-          const double beta    = 100 ) ;  // large beta correponds to gaussian 
+          const double beta    = 100 ) ;  // large beta correponds to gaussian
       /// destructor
       ~Apolonios2 () ;
       // ======================================================================
@@ -1052,7 +1052,7 @@ namespace Gaudi
       double sigmaL () const { return m_sigmaL ; }
       double sigmaR () const { return m_sigmaR ; }
       double beta   () const { return m_beta   ; }
-      // ======================================================================      
+      // ======================================================================
       double sigma  () const { return 0.5 * ( m_sigmaL + m_sigmaR )           ; }
       double asym   () const { return 0.5 * ( m_sigmaL - m_sigmaR ) / sigma() ; }
       double b2     () const { return m_beta * m_beta ; }
@@ -1080,8 +1080,8 @@ namespace Gaudi
       double m_sigmaL  ;  // the peak resolution
       /// the peak resolution
       double m_sigmaR  ;  // the peak resolution
-      /// parameter beta 
-      double m_beta    ;  // parameter beta 
+      /// parameter beta
+      double m_beta    ;  // parameter beta
       // ======================================================================
     private:
       // ======================================================================
@@ -1188,7 +1188,7 @@ namespace Gaudi
       // ======================================================================
       /// evaluate 2-body phase space
       double operator () ( const double x ) const ;
-      /// integral 
+      /// integral
       double integral    ( const double xmin , const double xmax ) const ;
       // ======================================================================
     public:
@@ -1365,7 +1365,7 @@ namespace Gaudi
       /// evaluate N-body phase space near left threhsold
       double operator () ( const double x    ) const ;
       // ======================================================================
-    public: // integrals  
+    public: // integrals
       // ======================================================================
       double integral ( const double xmin , const double xmax ) const ;
       // ======================================================================
@@ -1405,7 +1405,7 @@ namespace Gaudi
       /// evaluate N/L-body phase space near right  threhsold
       double operator () ( const double x ) const ;
       // ======================================================================
-    public: // integrals  
+    public: // integrals
       // ======================================================================
       double integral ( const double xmin , const double xmax ) const ;
       // ======================================================================
@@ -1497,8 +1497,8 @@ namespace Gaudi
     } ;
     // ========================================================================
     /** @class PhaseSpacePol
-     *  simple function to represent the product of N-body phase space 
-     *  and positive polynomial 
+     *  simple function to represent the product of N-body phase space
+     *  and positive polynomial
      *  @see Gaudi::Math::PhaseSpaceNL
      *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
@@ -1514,28 +1514,28 @@ namespace Gaudi
        *  @param threshold_H the high-mass threshold
        *  @param l           how many particles we consider
        *  @param n           total number of particles ( n>l!)
-       *  @param N           degree of polynomial 
+       *  @param N           degree of polynomial
        */
       PhaseSpacePol ( const double         threshold_L =  0 ,
                       const double         threshold_H = 10 ,
                       const unsigned short l           =  2 ,
-                      const unsigned short n           =  3 , 
+                      const unsigned short n           =  3 ,
                       const unsigned short N           =  1 ) ; // degree of polynomial
       // =====================================================================
-      /** constructor from phase space and polynomial degree 
-       *  @param ps          phase space factor 
-       *  @param N           degree of polynomial 
+      /** constructor from phase space and polynomial degree
+       *  @param ps          phase space factor
+       *  @param N           degree of polynomial
        */
       PhaseSpacePol ( const PhaseSpaceNL&  ps      ,
                       const unsigned short N  =  1 ) ; // degree of polynomial
       // ======================================================================
-      /** constructor from phase space and polynomial degree 
-       *  @param ps          phase space factor 
-       *  @param N           degree of polynomial 
+      /** constructor from phase space and polynomial degree
+       *  @param ps          phase space factor
+       *  @param N           degree of polynomial
        */
       PhaseSpacePol ( const PhaseSpaceNL&  ps      ,
-                      const unsigned short N       , 
-                      const double         xlow    , 
+                      const unsigned short N       ,
+                      const double         xlow    ,
                       const double         xhigh   ) ;
       /// destructor
       ~PhaseSpacePol () ;                                     // deststructor
@@ -1548,24 +1548,24 @@ namespace Gaudi
     public:
       // ======================================================================
       const Gaudi::Math::PhaseSpaceNL& phasespace () const { return m_phasespace ; }
-      const Gaudi::Math::Positive&     polynom    () const { return m_positive   ; }      
-      const Gaudi::Math::Positive&     positive   () const { return m_positive   ; }      
+      const Gaudi::Math::Positive&     polynom    () const { return m_positive   ; }
+      const Gaudi::Math::Positive&     positive   () const { return m_positive   ; }
       // ======================================================================
     public:
       // ======================================================================
       /// get number of parameters
       std::size_t npars () const { return m_positive.npars () ; }
       /// set k-parameter
-      bool setPar       ( const unsigned short k , const double value ) 
+      bool setPar       ( const unsigned short k , const double value )
       { return m_positive.setPar ( k , value ) ; }
       /// set k-parameter
       bool setParameter ( const unsigned short k , const double value )
       { return setPar   ( k , value ) ; }
-      /// get the parameter value 
-      double  par       ( const unsigned short k ) const 
+      /// get the parameter value
+      double  par       ( const unsigned short k ) const
       { return m_positive.par ( k ) ; }
-      /// get the parameter value 
-      double  parameter ( const unsigned short k ) const 
+      /// get the parameter value
+      double  parameter ( const unsigned short k ) const
       { return m_positive.par ( k ) ; }
       // ======================================================================
     public:
@@ -1578,9 +1578,9 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      /// the phase space 
-      Gaudi::Math::PhaseSpaceNL   m_phasespace ; // the phase space 
-      Gaudi::Math::Positive       m_positive   ; // the positive polynom 
+      /// the phase space
+      Gaudi::Math::PhaseSpaceNL   m_phasespace ; // the phase space
+      Gaudi::Math::Positive       m_positive   ; // the positive polynom
       // ======================================================================
     private:
       // ======================================================================
@@ -1684,7 +1684,7 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    /// base class for formfactors 
+    /// base class for formfactors
     class FormFactor ;
     // ========================================================================
     namespace FormFactors
@@ -1752,11 +1752,11 @@ namespace Gaudi
                     const double         m2       ,
                     const unsigned short L        ,
                     const FormFactor&    f ) ;
-      /// copy constructor 
+      /// copy constructor
       BreitWigner ( const BreitWigner&  bw ) ;
       ///
       // ======================================================================
-      /// move constructor 
+      /// move constructor
       BreitWigner (       BreitWigner&& bw ) ;
       // ======================================================================
       /// destructor
@@ -1809,10 +1809,10 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the value of formfactor at given m 
+      /// get the value of formfactor at given m
       double            formfactor ( const double m ) const ;
-      /// get the formfactor itself 
-      const FormFactor* 
+      /// get the formfactor itself
+      const Gaudi::Math::FormFactor*
         formfactor () const { return m_formfactor ; }
       // ======================================================================
     public:
@@ -1838,13 +1838,13 @@ namespace Gaudi
       double            m_m2         ;
       /// the orbital momentum
       unsigned int      m_L          ; // the orbital momentum
-      /// the formfactor 
-      const FormFactor* m_formfactor ; // the formfactor 
+      /// the formfactor
+      const Gaudi::Math::FormFactor* m_formfactor ; // the formfactor
       // ======================================================================
     private:
       // ======================================================================
-      /// assignement operator is disabled 
-      BreitWigner& operator=( const BreitWigner& ) ; // no assignement 
+      /// assignement operator is disabled
+      BreitWigner& operator=( const BreitWigner& ) ; // no assignement
       // ======================================================================
     private:
       // ======================================================================
@@ -1942,7 +1942,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /// calculate the function
-      virtual double operator() ( const double x ) const ;
+      double operator() ( const double x ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -1969,14 +1969,14 @@ namespace Gaudi
     public:
       // ======================================================================
       /** constructor  from all parameters
-       *  \f$ f \rigtharrow A_1 + A_2\f$ 
+       *  \f$ f \rigtharrow A_1 + A_2\f$
        *  @param m0    the mass
        *  @param m0g1  parameter \f$ m_0\times g_1\f$
        *  @param g2og2 parameter \f$ g2/g_1       \f$
-       *  @param mA1   mass of A1 
-       *  @param mA2   mass of A2 
-       *  @param mB1   mass of B1 
-       *  @param mB2   mass of B2 
+       *  @param mA1   mass of A1
+       *  @param mA2   mass of A2
+       *  @param mB1   mass of B1
+       *  @param mB2   mass of B2
        */
       Flatte  ( const double m0    = 980   ,
                 const double m0g1  = 165   ,
@@ -1993,7 +1993,7 @@ namespace Gaudi
       /// get the value of Flatte function
       virtual double operator() ( const double x ) const ;
       /// get the value of Flatte amplitude
-      std::complex<double> amplitude ( const double x ) const 
+      std::complex<double> amplitude ( const double x ) const
       { return flatte_amp ( x ) ; }
       // ======================================================================
     public:
@@ -2024,7 +2024,7 @@ namespace Gaudi
       // ======================================================================
       double thresholdA () const { return mA1() + mA2() ; }
       double thresholdB () const { return mB1() + mB2() ; }
-      double threshold  () const 
+      double threshold  () const
       { return std::min ( thresholdA () , thresholdB () ) ; }
       // ======================================================================
     public:
@@ -2078,14 +2078,14 @@ namespace Gaudi
     public:
       // ======================================================================
       /** constructor  from all parameters
-       *  \f$ f \rigtharrow B_1 + B_2\f$ 
+       *  \f$ f \rigtharrow B_1 + B_2\f$
        *  @param m0    the mass
        *  @param m0g1  parameter \f$ m_0\times g_1\f$
        *  @param g2og2 parameter \f$ g2/g_1       \f$
-       *  @param mA1   mass of A1 
-       *  @param mA2   mass of A2 
-       *  @param mB1   mass of B1 
-       *  @param mB2   mass of B2 
+       *  @param mA1   mass of A1
+       *  @param mA2   mass of A2
+       *  @param mB1   mass of B1
+       *  @param mB2   mass of B2
        */
       Flatte2 ( const double m0    = 980   ,
                 const double m0g1  = 165   ,
@@ -2102,16 +2102,16 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the value of Flatte function (KK-channel)
-      virtual double operator() ( const double x ) const ;
+      double operator() ( const double x ) const  override;
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class Voight
-     *  simple Voightian function: 
+    /** @class Voigt
+     *  simple Voigtian function:
      *  convolution of Lorenzian (non-relativistic Breit-Wigner function)
-     *  with Gaussian resoltuion 
+     *  with Gaussian resoltuion
      *  @see http://en.wikipedia.org/wiki/Voigt_profile
-     *  The implementation relied on Faddeeva function 
+     *  The implementation relied on Faddeeva function
      *  @see http://en.wikipedia.org/wiki/Faddeeva_function
      *  @see http://ab-initio.mit.edu/wiki/index.php/Faddeeva_Package
      *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
@@ -2143,7 +2143,7 @@ namespace Gaudi
       double gamma  () const { return m_gamma   ; }
       double sigma  () const { return m_sigma   ; }
       // ======================================================================
-      /** full width at half maximum 
+      /** full width at half maximum
        *  @see http://en.wikipedia.org/wiki/Voigt_profile
        */
       double fwhm   () const ;
@@ -2169,6 +2169,107 @@ namespace Gaudi
       double m_m0     ;
       double m_gamma  ;
       double m_sigma  ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// integration workspace
+      Gaudi::Math::WorkSpace m_workspace ;    // integration workspace
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class PseudoVoigt
+     *  Simplified verison of Voigt profile
+     *  @see T. Ida, M. Ando and H. Toraya,
+     *       "Extended pseudo-Voigt function for approximating the Voigt profile"
+     *       J. Appl. Cryst. (2000). 33, 1311-1316
+     *  @see doi:10.1107/S0021889800010219
+     *  @see http://dx.doi.org/10.1107/S0021889800010219
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-13
+     */
+    class GAUDI_API PseudoVoigt
+      : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      ///  constructor  from the three parameters
+      PseudoVoigt  ( const double m0     = 1      ,
+                     const double gamma  = 0.004  ,
+                     const double sigma  = 0.001  ) ;
+      /// destructor
+      virtual ~PseudoVoigt () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the value of Voigt function
+      // ======================================================================
+      virtual double operator() ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      double m0     () const { return m_m0      ; }
+      double mass   () const { return   m0   () ; }
+      double peak   () const { return   m0   () ; }
+      double gamma  () const { return m_gamma   ; }
+      double sigma  () const { return m_sigma   ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      bool setM0     ( const double x ) ;
+      bool setMass   ( const double x ) { return setM0 ( x ) ; }
+      bool setPeak   ( const double x ) { return setM0 ( x ) ; }
+      bool setGamma  ( const double x ) ;
+      bool setSigma  ( const double x ) ;
+      // ======================================================================
+    public: // helper constants
+      // ======================================================================
+      double fwhm_gauss      () const ;
+      double fwhm_lorentzian () const { return 2 * m_gamma ; }
+      double rho             () const
+      { return fwhm_lorentzian() / ( fwhm_lorentzian() + fwhm_gauss() ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral
+      virtual double integral () const ;
+      /// get the integral between low and high limits
+      virtual double integral ( const double low  ,
+                                const double high ) const ;
+      // ======================================================================
+    public: // get parameters of the four components
+      // ======================================================================
+      /// get widths of the components
+      double w   ( const unsigned short i ) const { return i < 4 ? m_w  [i] : 0.0 ; }
+      /// get stength of the components
+      double eta ( const unsigned short i ) const { return i < 4 ? m_eta[i] : 0.0 ; }
+      // ======================================================================
+    public: // get the separate components
+      // ======================================================================
+      /// get the Gaussian component
+      double gaussian   ( const double x ) const ;
+      /// get the Lorentzian component
+      double lorentzian ( const double x ) const ;
+      /// get the Irrational  component
+      double irrational ( const double x ) const ;
+      /// get the squared hyperbolic secant component
+      double sech2      ( const double x ) const ;
+      // ======================================================================
+    private:  // calculate internal data
+      // ======================================================================
+      void update () ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      double m_m0     ;
+      double m_gamma  ;
+      double m_sigma  ;
+      // ======================================================================
+    private: // some data
+      // ======================================================================
+      /// the widths/gammas of four components: Gaussian,Lorentzian,rIrational and Sech2
+      std::vector<double> m_w   ;
+      //// the strengths of four components
+      std::vector<double>  m_eta ;
       // ======================================================================
     private:
       // ======================================================================
@@ -2278,27 +2379,27 @@ namespace Gaudi
     } //                                               end of namespace Jackson
     // ========================================================================
     /** @class FormFactor
-     *  abstract class to implement various formfactors 
+     *  abstract class to implement various formfactors
      */
-    class FormFactor 
+    class FormFactor
     {
     public :
       // ======================================================================
-      /// the only important method 
+      /// the only important method
       virtual double operator()
       ( const double m  , const double m0 ,
         const double m1 , const double m2 ) const  = 0 ;
-      /// virtual destructor 
+      /// virtual destructor
       virtual ~FormFactor () ;
-      /// clone method ("virtual constructor" ) 
+      /// clone method ("virtual constructor" )
       virtual  FormFactor* clone() const = 0 ;
       // ======================================================================
     } ;
     // ========================================================================
-    namespace FormFactors 
+    namespace FormFactors
     {
       // ======================================================================
-      /** Formfactor for Breit-Wigner amplitude 
+      /** Formfactor for Breit-Wigner amplitude
        *  parameterization for \f$\rho(\omega)\f$-function from (A.1)
        *  J.D.Jackson,
        *  "Remarks on the Phenomenological Analysis of Resonances",
@@ -2308,62 +2409,62 @@ namespace Gaudi
       {
       public:
         // ====================================================================
-        /// default constructor 
+        /// default constructor
         Jackson () ;
         /// constructor from enum
         Jackson ( const Gaudi::Math::FormFactors::JacksonRho rho ) ;
-        /// constructor from rho-function 
+        /// constructor from rho-function
         Jackson (       Gaudi::Math::FormFactors::rho_fun    rho ) ;
-        /// virtual destructor 
-        virtual ~Jackson  () ; 
+        /// virtual destructor
+        virtual ~Jackson  () ;
         /// clone method ("virtual constructor")
-        virtual  Jackson* clone() const  ;
-        /// the only important method 
-        virtual double operator() ( const double m  , const double m0 ,
-                                    const double m1 , const double m2 ) const ;
+        Jackson* clone() const   override;
+        /// the only important method
+        double operator() ( const double m  , const double m0 ,
+                            const double m1 , const double m2 ) const override;
         // ====================================================================
       private:
         // ====================================================================
-        /// the finction itself 
-        Gaudi::Math::FormFactors::rho_fun m_rho ; // the finction itself 
+        /// the finction itself
+        Gaudi::Math::FormFactors::rho_fun m_rho ; // the finction itself
         // ====================================================================
       } ;
       // ======================================================================
       /** Blatt-Weisskopf formfactor/barrier factor
-       *  actually it is "traslation" of 
-       *  Blatt-Weiskopf barrier factor into in Jackson's "rho"-function 
+       *  actually it is "traslation" of
+       *  Blatt-Weiskopf barrier factor into in Jackson's "rho"-function
        */
       class BlattWeisskopf : public Gaudi::Math::FormFactor
       {
       public:
         // ====================================================================
-        /// orbital momentum 
+        /// orbital momentum
         enum Case {
-          Zero  = 0 , 
-          One   = 1 , 
-          Two   = 2 , 
-          Three = 3 , 
-          Four  = 4 , 
-          Five  = 5 
+          Zero  = 0 ,
+          One   = 1 ,
+          Two   = 2 ,
+          Three = 3 ,
+          Four  = 4 ,
+          Five  = 5
         } ;
         // ====================================================================
       public:
         // ====================================================================
-        /// constructor from enum and barrier factor 
+        /// constructor from enum and barrier factor
         BlattWeisskopf ( const Case   L , const double b ) ;
         /// default constructor (needed for  serialization)
         BlattWeisskopf () ;
-        /// virtual destructor 
-        virtual ~BlattWeisskopf () ; 
+        /// virtual destructor
+        virtual ~BlattWeisskopf () ;
         /// clone method ("virtual constructor")
-        virtual  BlattWeisskopf* clone() const  ;
-        /// the only important method 
-        virtual double operator() ( const double m  , const double m0 ,
-                                    const double m1 , const double m2 ) const ;
+        BlattWeisskopf* clone() const   override;
+        /// the only important method
+        double operator() ( const double m  , const double m0 ,
+                            const double m1 , const double m2 ) const override;
         // ====================================================================
       protected:
         // ====================================================================
-        /// get the barrier factor 
+        /// get the barrier factor
         double   b ( const double z , const double z0 ) const ;
         // ====================================================================
       private:
@@ -2374,6 +2475,115 @@ namespace Gaudi
       } ;
       // ======================================================================
     } // end of namespace Gaudi:Math::FormFactors
+    // ========================================================================
+    /** @class Swanson
+     *  Swanson's parameterization of S-wave cusp
+     *  @see LHCb-PAPER-2016-019 appendix D
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-11
+     */
+    class GAUDI_API Swanson : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /// constructor from all parameters (numbers are arbitrary...)
+      Swanson ( const double         m1     = 0.139 ,   // the first  real particle
+                const double         m2     = 0.139 ,   // the second real particle
+                const double         m1_0   = 0.135 ,   // the first  particle for cusp
+                const double         m2_0   = 0.135 ,   // the second particle for cusp
+                const double         beta_0 = 0.300 ,   // beta_0 parameter
+                const unsigned short L      = 0     ) ; // orbital momentum for real particles
+      /// constructor from all parameters
+      Swanson ( const double         m1             ,   // the first  real particle
+                const double         m2             ,   // the second real particle
+                const double         m1_0           ,   // the first  particle for cusp
+                const double         m2_0           ,   // the second particle for cusp
+                const double         beta_0         ,   // beta_0 parameter
+                const unsigned short L              ,   // orbital momentum for real particles
+                const Gaudi::Math::FormFactors::JacksonRho  r ) ; //  formfactor
+      /// constructor from all parameters
+      Swanson ( const double         m1             ,   // the first  real particle
+                const double         m2             ,   // the second real particle
+                const double         m1_0           ,   // the first particle for cusp
+                const double         m2_0           ,   // the second particle for cusp
+                const double         beta_0         ,   // beta_0 parameter
+                const unsigned short L              ,   // orbital momentum for real particles
+                const Gaudi::Math::FormFactor&    f ) ; // formfactor
+      /// constructor from all parameters
+      Swanson ( const BreitWigner&   bw             ,   // breit-wigner
+                const double         m1_0           ,   // the first  particle for cusp
+                const double         m2_0           ,   // the second particle for cusp
+                const double         beta_0         ) ; // beta_0 parameter
+      /// copy constructor
+      Swanson ( const Swanson&  sw ) ;
+      /// destructor
+      virtual ~Swanson() ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// calculate the Swanson shape
+      double operator () ( const double x ) const { return swanson ( x ) ; }
+      /// calculate the Swanson shape
+      double swanson     ( const double x ) const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// calculate complex amplitude
+      std::complex<double> amplitude ( const double x ) const ;
+      // ======================================================================
+    public: // getters
+      // ======================================================================
+      /// get beta_0 parameter
+      double  beta0 () const { return m_beta0 ; }  // get beta_0 parameter
+      /// mass of the first particle
+      double  m1    () const { return m_m1    ; }  // mass of first particle
+      /// mass of the second particle
+      double  m2    () const { return m_m2    ; }  // mass of the second particle
+      // ======================================================================
+    public: // derived getters
+      // ======================================================================
+      double mmin () const { return m_bw.m1() + m_bw.m2() ; }
+      double cusp () const { return    m_m1   +    m_m2   ; }
+      // ======================================================================
+    public: // setters
+      // ======================================================================
+      /// set new value for beta_0
+      bool setBeta0  ( const double value ) ;
+      /// set new value for beta_0
+      bool setBeta_0 ( const double value ) { return setBeta0 ( value ) ; }
+      /// set new valeu for m1
+      bool setM1_0   ( const double value ) ;
+      /// set new valeu for m2
+      bool setM2_0   ( const double value ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the integral between low and high limits
+      virtual double integral  ( const double low  ,
+                                 const double high ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// assignement operator is disabled
+      Swanson& operator=( const Swanson& ) ; // no assignement
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// use Breit-Wigner to keep parameters of real particles
+      Gaudi::Math::BreitWigner   m_bw ;
+      /// the mass of the first  particle
+      double            m_m1         ; // the mass of the first  particle
+      /// the mass of the second particle
+      double            m_m2         ; // the mass of the second particle
+      /// beta0 parameter
+      double            m_beta0      ; // beta0 parameter
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// integration workspace
+      Gaudi::Math::WorkSpace m_workspace ;    // integration workspace
+      // ======================================================================
+    } ;
     // ========================================================================
     /** @class LASS
      *  The LASS parameterization (Nucl. Phys. B296, 493 (1988))
@@ -2754,7 +2964,7 @@ namespace Gaudi
                 const double         m3 = 3097.0 / 1000 ,  // MeV
                 const double         m  = 5278.0 / 1000 ,  // MeV
                 const unsigned short L  =    1          ) ;
-      /** constructor from bugg & phase space parameters 
+      /** constructor from bugg & phase space parameters
        *  @param m3 the mass of the third  particle
        *  @param m  the mass of the mother particle (m>m1+m2+m3)
        *  @param L  the angular momentum between the first pair and the third
@@ -2763,8 +2973,8 @@ namespace Gaudi
                 const double             m3 = 3097.0 / 1000 ,  // MeV
                 const double             m  = 5278.0 / 1000 ,  // MeV
                 const unsigned short     L  =    1          ) ;
-      
-      
+
+
       /// destructor
       ~Bugg23L () ;
       // ======================================================================
@@ -2777,7 +2987,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the amlitude  (not normalized!)
-      std::complex<double> amplitude (  const double x ) const 
+      std::complex<double> amplitude (  const double x ) const
       { return m_bugg.amplitude ( x ) ; }
       /// get the phase space factor (taking into account L)
       double phaseSpace ( const double x ) const { return m_ps  ( x ) ; }
@@ -2806,11 +3016,11 @@ namespace Gaudi
       double               adler       ( const double x ) const
       { return m_bugg.adler      ( x ) ; } // adler factor
       /// ratio of 2pi-phase spaces
-      double               rho2_ratio  ( const double x ) const 
+      double               rho2_ratio  ( const double x ) const
       { return m_bugg.rho2_ratio ( x ) ; }
       /// ratio of 4pi-phase spaces
-      std::complex<double> rho4_ratio  ( const double x ) const 
-      { return m_bugg.rho4_ratio ( x ) ; }        
+      std::complex<double> rho4_ratio  ( const double x ) const
+      { return m_bugg.rho4_ratio ( x ) ; }
       /// b-factor for 2-pi coupling
       double b ( const double x ) const { return m_bugg. b ( x ) ; }
       // ======================================================================
@@ -2838,10 +3048,10 @@ namespace Gaudi
       // ======================================================================
       bool setG2   ( const double value  ) { return m_bugg.setG2   ( value ) ; }
       bool setB1   ( const double value  ) { return m_bugg.setB1   ( value ) ; }
-      bool setB2   ( const double value  ) { return m_bugg.setB2   ( value ) ; } 
-      bool setS1   ( const double value  ) { return m_bugg.setS1   ( value ) ; }  
-      bool setS2   ( const double value  ) { return m_bugg.setS2   ( value ) ; }  
-      bool setA    ( const double value  ) { return m_bugg.setA    ( value ) ; }  
+      bool setB2   ( const double value  ) { return m_bugg.setB2   ( value ) ; }
+      bool setS1   ( const double value  ) { return m_bugg.setS1   ( value ) ; }
+      bool setS2   ( const double value  ) { return m_bugg.setS2   ( value ) ; }
+      bool setA    ( const double value  ) { return m_bugg.setA    ( value ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -2853,8 +3063,8 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      /// bugg function 
-      Gaudi::Math::Bugg          m_bugg       ; // bugg function 
+      /// bugg function
+      Gaudi::Math::Bugg          m_bugg       ; // bugg function
       /// phase space
       Gaudi::Math::PhaseSpace23L m_ps         ; // phase space
       // ======================================================================
@@ -3054,7 +3264,7 @@ namespace Gaudi
     // ========================================================================
     /** @class Gounaris23L
      *  parametrisation of rho0 for
-     *  two pion mass distribution 
+     *  two pion mass distribution
      *
      *  G.J.Gounaris and J.J.Sakurai,
      *  "Finite width corrections to the vector meson dominance
@@ -3429,6 +3639,11 @@ namespace Gaudi
       double integral ( const double low  ,
                         const double high ) const ;
       // ======================================================================
+    public: // quantiles
+      // ======================================================================
+      /// calculate the quantile   (0<p<1)
+      double quantile ( const double p ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// shape
@@ -3509,6 +3724,11 @@ namespace Gaudi
       virtual double integral ( const double low  ,
                                 const double high ) const ;
       // ======================================================================
+    public: // quantiles
+      // ======================================================================
+      /// calculate the quantile   (0<p<1)
+      double quantile ( const double p ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       /// helper gamma distribution
@@ -3538,15 +3758,20 @@ namespace Gaudi
     public:
       // ======================================================================
       /// calculate log-gamma distribution shape
-      virtual double operator() ( const double x    ) const ;
+      double operator() ( const double x    ) const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the integral
       double integral () const ;
       /// get the integral between low and high limits
-      virtual double integral   ( const double low  ,
-                                  const double high ) const ;
+      double integral   ( const double low  ,
+                          const double high ) const override;
+      // ======================================================================
+    public: // quantiles
+      // ======================================================================
+      /// calculate the quantile   (0<p<1)
+      double quantile ( const double p ) const ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -3810,11 +4035,11 @@ namespace Gaudi
        *  @param alpha \f$\alpha\f$-parameter
        *  @param beta  \f$\beta\f$-parameter
        *  @param scale scale-parameter
-       *  @param low   shift-parameter 
+       *  @param low   shift-parameter
        */
       BetaPrime ( const double alpha = 3 ,
-                  const double beta  = 3 , 
-                  const double scale = 1 , 
+                  const double beta  = 3 ,
+                  const double scale = 1 ,
                   const double shift = 0 ) ;
       /// destructor
       ~BetaPrime () ;
@@ -3871,12 +4096,12 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class Landau 
+    /** @class Landau
      *  http://en.wikipedia.org/wiki/Landau_distribution
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-05-11
      */
-    class GAUDI_API Landau 
+    class GAUDI_API Landau
       : public std::unary_function<double,double>
     {
     public:
@@ -3885,9 +4110,9 @@ namespace Gaudi
        *  @param alpha \f$\alpha\f$-parameter
        *  @param beta  \f$\beta\f$-parameter
        *  @param scale scale-parameter
-       *  @param low   shift-parameter 
+       *  @param low   shift-parameter
        */
-      Landau ( const double scale = 1 , 
+      Landau ( const double scale = 1 ,
                const double shift = 0 ) ;
       /// destructor
       ~Landau () ;
@@ -3922,27 +4147,27 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class SinhAsinh 
-     *  
-     *  Jones, M. C.; Pewsey, A. (2009). 
-     *  "Sinh-arcsinh distributions". Biometrika 96 (4): 761. 
+    /** @class SinhAsinh
+     *
+     *  Jones, M. C.; Pewsey, A. (2009).
+     *  "Sinh-arcsinh distributions". Biometrika 96 (4): 761.
      *  doi:10.1093/biomet/asp053
      *  http://oro.open.ac.uk/22510
      *
-     *  Location & scale  parameters are the 
-     *  usual representation of the family of 
-     *  distributions 
-     *  - \f$\epsilon\f$ parameter control the skewness 
-     *  - \f$\delta\f$   parameter control the kurtosis 
-     *  Normal distribtion reappears as \f$\epsilon=0\f$ 
-     *  and \f$\delta=1\f$ 
-     *  The heavy tails correspond to \f$\delta<1\f$, 
+     *  Location & scale  parameters are the
+     *  usual representation of the family of
+     *  distributions
+     *  - \f$\epsilon\f$ parameter control the skewness
+     *  - \f$\delta\f$   parameter control the kurtosis
+     *  Normal distribtion reappears as \f$\epsilon=0\f$
+     *  and \f$\delta=1\f$
+     *  The heavy tails correspond to \f$\delta<1\f$,
      *  light tails correpond to \f$\delta>1\f$
-     *  
+     *
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2014-08-02
      */
-    class GAUDI_API SinhAsinh 
+    class GAUDI_API SinhAsinh
       : public std::unary_function<double,double>
     {
     public:
@@ -3954,8 +4179,8 @@ namespace Gaudi
        *  @param delta    \f$\delta\f$-parameter    \f$0<\epsilon<+\inf\f$
        */
       SinhAsinh  ( const double location  = 1   ,
-                   const double scale     = 1   , 
-                   const double epsilon   = 0   , 
+                   const double scale     = 1   ,
+                   const double epsilon   = 0   ,
                    const double delta     = 1   ) ;
       /// destructor
       ~SinhAsinh() ;
@@ -3968,17 +4193,17 @@ namespace Gaudi
       double operator() ( const double x ) const { return pdf ( x ) ; }
       // ======================================================================
     public: // direct getters
-      // ======================================================================      
+      // ======================================================================
       double location () const { return mu    () ; }
       double scale    () const { return sigma () ; }
-      // ======================================================================      
+      // ======================================================================
       double mu       () const { return m_mu      ; }
       double sigma    () const { return m_sigma   ; }
       double epsilon  () const { return m_epsilon ; }
       double delta    () const { return m_delta   ; }
-      // ======================================================================      
-    public: // setters 
-      // ======================================================================      
+      // ======================================================================
+    public: // setters
+      // ======================================================================
       bool setLocation ( const double value ) { return setMu    ( value ) ; }
       bool setScale    ( const double value ) { return setSigma ( value ) ; }
       bool setMu       ( const double value ) ;
@@ -4001,31 +4226,31 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class JohnsonSU 
-     *  
-     *  Johnson, N. L. (1949) 
+    /** @class JohnsonSU
+     *
+     *  Johnson, N. L. (1949)
      *  "Systems of frequency curves generated by methods of translation"
      *  Biometrika 36: 149–176 JSTOR 2332539
      *  @see https://en.wikipedia.org/wiki/Johnson_SU_distribution
      *
-     *  When variable \f$x\f$ follows Johnson-SU distribution, 
-     *  the variable 
+     *  When variable \f$x\f$ follows Johnson-SU distribution,
+     *  the variable
      *  \f$ z = \gamma + \delta \sinh^{-1}\frac{ x - \xi}{\lambda} \f$
      *  follows normal distribtion with mean 0 and sigma 1.
      *
      *  Note:
-     *  Symmetric case of JonhsonSU distribution is 
-     *  recovere by \f$\delta\rightarrow0\f$ for 
-     *  "sinh-asinh" distribution, see 
-     *  Jones, M. C.; Pewsey, A. (2009). 
-     *  "Sinh-arcsinh distributions". Biometrika 96 (4): 761. 
+     *  Symmetric case of JonhsonSU distribution is
+     *  recovere by \f$\delta\rightarrow0\f$ for
+     *  "sinh-asinh" distribution, see
+     *  Jones, M. C.; Pewsey, A. (2009).
+     *  "Sinh-arcsinh distributions". Biometrika 96 (4): 761.
      *  doi:10.1093/biomet/asp053
      *  http://oro.open.ac.uk/22510
-     *  
+     *
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2015-07-11
      */
-    class GAUDI_API JohnsonSU 
+    class GAUDI_API JohnsonSU
       : public std::unary_function<double,double>
     {
     public:
@@ -4036,10 +4261,10 @@ namespace Gaudi
        *  @param delta  \f$\delta\f$-parameter    \f$   0<\delta<+\inf\f$
        *  @param gamma  \f$\gamma\f$-parameter    \f$-\inf<\epsilon<+\inf\f$
        */
-      JohnsonSU  ( const double xi      = 0 ,   // related to location 
+      JohnsonSU  ( const double xi      = 0 ,   // related to location
                    const double lambda  = 1 ,   // related to variance
-                   const double delta   = 1 ,   // shape 
-                   const double gamma   = 0 ) ; // shape 
+                   const double delta   = 1 ,   // shape
+                   const double gamma   = 0 ) ; // shape
       /// destructor
       ~JohnsonSU () ;
       // ======================================================================
@@ -4051,22 +4276,22 @@ namespace Gaudi
       double operator() ( const double x ) const { return pdf ( x ) ; }
       // ======================================================================
     public: // direct getters
-      // ======================================================================      
+      // ======================================================================
       double xi       () const { return m_xi       ; }
       double lam      () const { return m_lambda   ; }
-      double lambda   () const { return lambda  () ; }
+      double lambda   () const { return m_lambda   ; }
       double delta    () const { return m_delta    ; }
       double gamma    () const { return m_gamma    ; }
-      // ======================================================================      
+      // ======================================================================
     public:
-      // ======================================================================      
+      // ======================================================================
       double mean       () const ;
       double variance   () const ;
       double dispersion () const { return variance () ; }
       double sigma      () const { return std::sqrt ( variance() ) ; }
-      // ======================================================================      
-    public: // setters 
-      // ======================================================================      
+      // ======================================================================
+    public: // setters
+      // ======================================================================
       bool setXi       ( const double value ) ;
       bool setLambda   ( const double value ) ;
       bool setDelta    ( const double value ) ;
@@ -4087,8 +4312,8 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    /** @class Atlas 
-     *  Modified gaussian function 
+    /** @class Atlas
+     *  Modified gaussian function
      *  \f$  f(x) \propto \exp( -frac{\delta x^{1+\frac{1}{1+\deltax/2}}}{2})\f$,
      *  where \f$\delta x = \left| x - \mu \right|/\sigma\f$
      *  Function is taken from http://arxiv.org/abs/arXiv:1507.07099
@@ -4100,7 +4325,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /** constructor with all parameters
-       *  @param mean  \f$\mu\f$-parameter 
+       *  @param mean  \f$\mu\f$-parameter
        *  @param sigma \f$\sigma\f$-parameter
        */
       Atlas   ( const double mean   = 0  ,
@@ -4110,9 +4335,9 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// evaluate atlas function 
+      /// evaluate atlas function
       double pdf        ( const double x ) const ;
-      /// evaluate atlas function 
+      /// evaluate atlas function
       double operator() ( const double x ) const { return pdf ( x ) ; }
       // ======================================================================
     public: // direct getters
@@ -4123,11 +4348,11 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get mode 
+      /// get mode
       double mode     () const { return mean() ; }
-      /// get variance:  good numerical approximation 
-      double variance () const ; 
-      /// get rms :  good numerical approximation 
+      /// get variance:  good numerical approximation
+      double variance () const ;
+      /// get rms :  good numerical approximation
       double rms      () const ;
       // ======================================================================
     public: // direct setters
@@ -4136,7 +4361,7 @@ namespace Gaudi
       bool   setSigma ( const double value ) ;
       // ======================================================================
     public: // integrals
-      // ======================================================================      
+      // ======================================================================
       double integral ( const double low  ,
                         const double high ) const ;
       /// integral from -infinity to +infinity
@@ -4144,24 +4369,191 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      /// parameteter "mu", mean, mode 
-      double m_mean  ; // parameter mu,mean,mode 
-      /// parameter   "sigma" 
-      double m_sigma ; // parameter sigma 
+      /// parameteter "mu", mean, mode
+      double m_mean  ; // parameter mu,mean,mode
+      /// parameter   "sigma"
+      double m_sigma ; // parameter sigma
       // ======================================================================
     private:
       // ======================================================================
       /// workspace
       Gaudi::Math::WorkSpace m_workspace ;
       // ======================================================================
-     } ;
+    } ;
     // ========================================================================
-    /** @class Argus 
+    /** @class Sech
+     *  Hyperbolic secant distribution or "inverse-cosh" distribution
+     *
+     *  The hyperbolic secant distribution shares many properties with the
+     *  standard normal distribution:
+     *  - it is symmetric with unit variance and zero mean,
+     *    median and mode
+     *  -its pdf is proportional to its characteristic function.
+     *
+     *  However, the hyperbolic secant distribution is leptokurtic;
+     *  that is, it has a more acute peak near its mean, and heavier tails,
+     *  compared with the standard normal distribution.
+     *
+     *  \f$ f(x,\mu,\sigma) \propto \frac{1}{2} \sech ( \frac{\pi}{2}\frac{x-\mu}{\sigma} )\f$
+     *  @see https://en.wikipedia.org/wiki/Hyperbolic_secant_distribution
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-04-25
+     */
+    class GAUDI_API Sech : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /** constructor with all parameters
+       *  @param mean  \f$\mu\f$-parameter
+       *  @param sigma \f$\sigma\f$-parameter
+       */
+      Sech   ( const double mean   = 0  ,
+               const double sigma  = 1  ) ;
+      /// destructor
+      ~Sech () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// evaluate sech function
+      double pdf        ( const double x ) const ;
+      /// evaluate sech function
+      double operator() ( const double x ) const { return pdf ( x ) ; }
+      // ======================================================================
+    public: // direct getters
+      // ======================================================================
+      double mean   () const { return m_mean   ; }
+      /// get parameters "sigma"
+      double sigma  () const { return m_sigma  ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get mode
+      double mode     () const { return mean()            ; }
+      /// get variance
+      double variance () const { return m_sigma * m_sigma ; }
+      /// get rms
+      double rms      () const { return m_sigma           ; }
+      /// get skewness
+      double skewness () const { return 0 ; }
+      /// get kurtosis
+      double kurtosis () const { return 2 ; }
+      // ======================================================================
+    public: // direct setters
+      // ======================================================================
+      bool   setMean  ( const double value ) ;
+      bool   setSigma ( const double value ) ;
+      // ======================================================================
+    public: // quantile (0<p<1)
+      // ======================================================================
+      /// get quantile (0<p<1)
+      double quantile ( const double p ) const ;
+      // ======================================================================
+    public: // integrals
+      // ======================================================================
+      /// get integral from low to high
+      double integral ( const double low  ,
+                        const double high ) const ;
+      /// integral from -infinity to +infinity
+      double integral () const ;
+      /// evaluate atlas function
+      double cdf      ( const double x ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// parameteter "mu", mean, mode
+      double m_mean  ; // parameter mu,mean,mode
+      /// parameter   "sigma"
+      double m_sigma ; // parameter sigma
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class Logistic
+     *  aka "Sech-square"
+     *  \f$ f(x;\mu;s) = \frac{1}{4s}sech^2\left(\frac{x-\mu}{2s}\right)\f$,
+     *  where
+     *  \f$  s = \sigma \frac{\sqrt{3}}{\pi}\f$
+     *  @see https://en.wikipedia.org/wiki/Logistic_distribution
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-14
+     */
+    class GAUDI_API Logistic : public std::unary_function<double,double>
+    {
+    public:
+      // ======================================================================
+      /** constructor with all parameters
+       *  @param mean  \f$\mu  \f$-parameter
+       *  @param sigma \f$sigma\f$-parameter
+       */
+      Logistic  ( const double mean  = 0  ,
+                  const double sigma = 1  ) ;
+      /// destructor
+      ~Logistic () ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// evaluate sech function
+      double pdf        ( const double x ) const ;
+      /// evaluate sech function
+      double operator() ( const double x ) const { return pdf ( x ) ; }
+      // ======================================================================
+    public: // direct getters
+      // ======================================================================
+      double mean   () const { return m_mean   ; }
+      /// get parameters "sigma"
+      double sigma  () const { return m_sigma  ; }
+      /// get "s"
+      double s      () const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get mode
+      double mode     () const { return mean () ; }
+      /// get median
+      double median   () const { return mean () ; }
+      /// get variance
+      double variance () const { return m_sigma * m_sigma ; }
+      /// get rms
+      double rms      () const { return m_sigma ; }
+      /// get skewness
+      double skewness () const { return   0 ; }
+      /// get kurtosis
+      double kurtosis () const { return 1.2 ; }
+      // ======================================================================
+    public: // quanilies
+      // ======================================================================
+      /// quantile fnuiction  (0<p<1)
+      double quantile ( const double p ) const ;
+      // ======================================================================
+    public: // direct setters
+      // ======================================================================
+      bool   setMean  ( const double value ) ;
+      bool   setSigma ( const double value ) ;
+      // ======================================================================
+    public: // integrals
+      // ======================================================================
+      /// get integral from low to high
+      double integral ( const double low  ,
+                        const double high ) const ;
+      /// integral from -infinity to +infinity
+      double integral () const ;
+      /// evaluate Logistc CDF function
+      double cdf      ( const double x ) const ;
+      // ======================================================================
+    private:
+      // ======================================================================
+      /// parameteter "mu", mean, mode
+      double m_mean  ; // parameter mu,mean,mode
+      /// parameter   "sigma"
+      double m_sigma ; // parameter sigma
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class Argus
      *  http://en.wikipedia.org/wiki/ARGUS_distribution
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-05-11
      */
-    class GAUDI_API Argus 
+    class GAUDI_API Argus
       : public std::unary_function<double,double>
     {
     public:
@@ -4170,10 +4562,10 @@ namespace Gaudi
        *  @param alpha \f$\alpha\f$-parameter
        *  @param beta  \f$\beta\f$-parameter
        *  @param scale scale-parameter
-       *  @param low   shift-parameter 
+       *  @param low   shift-parameter
        */
       Argus  ( const double shape  = 1   ,
-               const double high   = 1   , 
+               const double high   = 1   ,
                const double low    = 0   ) ;
       /// destructor
       ~Argus () ;
@@ -4191,9 +4583,9 @@ namespace Gaudi
       double low    () const { return m_low    ; }
       double high   () const { return m_high   ; }
       // ======================================================================
-    protected: 
+    protected:
       // ======================================================================
-      double  y_ ( const double x ) const 
+      double  y_ ( const double x ) const
       { return ( x - m_low  ) / ( m_high - m_low ) ; }
       // ======================================================================
     public: // direct setters
@@ -4218,8 +4610,8 @@ namespace Gaudi
     // ========================================================================
     /** @class ExpoPositive
      *  useful function for parameterizing smooth background:
-     *  product of the exponential and positive polinonmial 
-     *  @see Gaudi::Math::Positive 
+     *  product of the exponential and positive polinonmial
+     *  @see Gaudi::Math::Positive
      */
     class GAUDI_API ExpoPositive :  public std::unary_function<double,double>
     {
@@ -4227,45 +4619,45 @@ namespace Gaudi
       // ======================================================================
       /// constructor from the order
       ExpoPositive ( const unsigned short       N     =  0 ,
-                     const double               tau   =  0 , // exponent  
+                     const double               tau   =  0 , // exponent
                      const double               xmin  =  0 ,
                      const double               xmax  =  1 ) ;
       // ======================================================================
       /// constructor from N phases
       ExpoPositive ( const std::vector<double>& pars       ,
-                     const double               tau   =  0 , // exponent 
+                     const double               tau   =  0 , // exponent
                      const double               xmin  =  0 ,
                      const double               xmax  =  1 ) ;
-      
+
       // ======================================================================
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x ) const ; 
+      double operator () ( const double x ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get exponential 
+      /// get exponential
       double tau    () const { return m_tau ;}
-      /// get bnew valeu for the exponent  
+      /// set new value for the exponent
       bool   setTau ( const  double value ) ;
       /// get number of polinomial parameters
       std::size_t npars () const { return 1 + m_positive.npars() ; }
       /// set k-parameter
-      bool setPar       ( const unsigned short k , const double value ) 
-      { return 
-          m_positive.npars() == k ? 
-          setTau            (     value ) : 
+      bool setPar       ( const unsigned short k , const double value )
+      { return
+          m_positive.npars() == k ?
+          setTau            (     value ) :
           m_positive.setPar ( k , value ) ; }
       /// set k-parameter
       bool setParameter ( const unsigned short k , const double value )
       { return setPar   ( k , value ) ; }
-      /// get the parameter value 
-      double  par       ( const unsigned short k ) const 
-      { 
-        return 
-          m_positive.npars() == k ? 
-          tau            (   )    : 
+      /// get the parameter value
+      double  par       ( const unsigned short k ) const
+      {
+        return
+          m_positive.npars() == k ?
+          tau            (   )    :
           m_positive.par ( k )    ; }
       // ======================================================================
     public:
@@ -4276,13 +4668,13 @@ namespace Gaudi
       double xmin () const { return m_positive.xmin () ; }
       /// get upper edge
       double xmax () const { return m_positive.xmax () ; }
-      /// transform variables 
+      /// transform variables
       double x ( const double t ) const { return m_positive. x ( t )  ; }
       double t ( const double x ) const { return m_positive. t ( x )  ; }
       // ======================================================================
     public:
       // ======================================================================
-      /// get the underlying positive function 
+      /// get the underlying positive function
       const Gaudi::Math::Positive&  positive  () const { return m_positive  ; }
       // ======================================================================
     public:
@@ -4297,12 +4689,12 @@ namespace Gaudi
       // ======================================================================
     };
     // ========================================================================
-    // 2D-models 
+    // 2D-models
     // ========================================================================
-    /** @class PS2DPol 
-     *  The 2D-function: 
+    /** @class PS2DPol
+     *  The 2D-function:
      *  \f$ f(x,y) = Ps(x)*Ps(y)*P_{pos}(x,y) \f$, where
-     *  \f$Ps\f$ denotes phase-space function and 
+     *  \f$Ps\f$ denotes phase-space function and
      * \f$P_{pos}\f$ denotes the positive polynomial
      */
     class GAUDI_API PS2DPol
@@ -4312,18 +4704,18 @@ namespace Gaudi
     public:
       // ======================================================================
       /// constructor from the order
-      PS2DPol ( const PhaseSpaceNL&   psx = PhaseSpaceNL () , 
-                const PhaseSpaceNL&   psy = PhaseSpaceNL () , 
+      PS2DPol ( const PhaseSpaceNL&   psx = PhaseSpaceNL () ,
+                const PhaseSpaceNL&   psy = PhaseSpaceNL () ,
                 const unsigned short  Nx  =  1 ,
                 const unsigned short  Ny  =  1 ) ;
       /// constructor from the order
-      PS2DPol ( const PhaseSpaceNL&   psx     , 
-                const PhaseSpaceNL&   psy     , 
+      PS2DPol ( const PhaseSpaceNL&   psx     ,
+                const PhaseSpaceNL&   psy     ,
                 const unsigned short  Nx      ,
-                const unsigned short  Ny      , 
-                const double          xmin    , 
-                const double          xmax    , 
-                const double          ymin    , 
+                const unsigned short  Ny      ,
+                const double          xmin    ,
+                const double          xmax    ,
+                const double          ymin    ,
                 const double          ymax    ) ;
       // ======================================================================
     public:
@@ -4336,62 +4728,62 @@ namespace Gaudi
       /// get number of parameters
       std::size_t npars () const { return m_positive.npars () ; }
       /// set k-parameter
-      bool setPar       ( const unsigned int k , const double value ) 
+      bool setPar       ( const unsigned int k , const double value )
       { return m_positive.setPar ( k , value ) ;}
       /// set k-parameter
       bool setParameter ( const unsigned int k , const double value )
       { return setPar   ( k , value ) ; }
       /// get the parameter value
-      double  par       ( const unsigned int k ) const 
+      double  par       ( const unsigned int k ) const
       { return m_positive.par ( k ) ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
-      /// get nX & nY 
+      /// get nX & nY
       unsigned short nX () const { return m_positive.nX () ; }
       unsigned short nY () const { return m_positive.nY () ; }
       // ======================================================================
     public:
       // ======================================================================
-      /** get the integral over 2D-region 
-       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
+      /** get the integral over 2D-region
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f]
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
-      double integral ( const double xlow , const double xhigh , 
+      double integral ( const double xlow , const double xhigh ,
                         const double ylow , const double yhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
-       *  @param x     variable 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
+      /** integral over x-dimension
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f]
+       *  @param x     variable
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
-      double integrateX ( const double y    , 
+      double integrateX ( const double y    ,
                           const double xlow , const double xhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
-       *  @param y     variable 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
+      /** integral over x-dimension
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f]
+       *  @param y     variable
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
        */
-      double integrateY ( const double x    , 
+      double integrateY ( const double x    ,
                           const double ylow , const double yhigh ) const ;
       // ======================================================================
     public:
       // ======================================================================
       const Gaudi::Math::PhaseSpaceNL& psX         () const { return m_psx      ; }
-      const Gaudi::Math::PhaseSpaceNL& psY         () const { return m_psy      ; }      
+      const Gaudi::Math::PhaseSpaceNL& psY         () const { return m_psy      ; }
       const Gaudi::Math::PhaseSpaceNL& phasespaceX () const { return psX ()     ; }
-      const Gaudi::Math::PhaseSpaceNL& phasespaceY () const { return psY ()     ; }      
+      const Gaudi::Math::PhaseSpaceNL& phasespaceY () const { return psY ()     ; }
       const Gaudi::Math::Positive2D&   positive    () const { return m_positive ; }
-      const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }      
+      const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }
       // ====================================== ===============================
     private:
       // ======================================================================
-      /// the actual (positive) bernstein polynomial in 2D 
+      /// the actual (positive) bernstein polynomial in 2D
       Gaudi::Math::Positive2D   m_positive ; // the actual bernstein polynomial
-      /// Phase space 
+      /// Phase space
       Gaudi::Math::PhaseSpaceNL m_psx      ;
       Gaudi::Math::PhaseSpaceNL m_psy      ;
       // ======================================================================
@@ -4402,10 +4794,10 @@ namespace Gaudi
       // ======================================================================
     };
     // ========================================================================
-    /** @class PS2DPolSym 
-     *  The symmetric 2D-function: 
+    /** @class PS2DPolSym
+     *  The symmetric 2D-function:
      *  \f$ f(x,y) = Ps(x)*Ps(y)*P_{sym}(x,y) \f$, where
-     *  \f$Ps\f$ denotes phase-space function and 
+     *  \f$Ps\f$ denotes phase-space function and
      * \f$P_{sym}\f$ denotes the symmetric positive polynomial
      */
     class GAUDI_API PS2DPolSym
@@ -4415,12 +4807,12 @@ namespace Gaudi
     public:
       // ======================================================================
       /// constructor from the order
-      PS2DPolSym ( const PhaseSpaceNL&   ps = PhaseSpaceNL() , 
+      PS2DPolSym ( const PhaseSpaceNL&   ps = PhaseSpaceNL() ,
                    const unsigned short  N  =  1             ) ;
       /// constructor from the order
-      PS2DPolSym ( const PhaseSpaceNL&   ps      , 
+      PS2DPolSym ( const PhaseSpaceNL&   ps      ,
                    const unsigned short  N       ,
-                   const double          xmin    , 
+                   const double          xmin    ,
                    const double          xmax    ) ;
       // ======================================================================
     public:
@@ -4433,72 +4825,72 @@ namespace Gaudi
       /// get number of parameters
       std::size_t npars () const { return m_positive.npars () ; }
       /// set k-parameter
-      bool setPar       ( const unsigned int k , const double value ) 
+      bool setPar       ( const unsigned int k , const double value )
       { return m_positive.setPar ( k , value ) ;}
       /// set k-parameter
       bool setParameter ( const unsigned int k , const double value )
       { return setPar   ( k , value ) ; }
       /// get the parameter value
-      double  par       ( const unsigned int k ) const 
+      double  par       ( const unsigned int k ) const
       { return m_positive.par ( k ) ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      /** get the integral over 2D-region 
-       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
+      /** get the integral over 2D-region
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f]
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
-      double integral ( const double xlow , const double xhigh , 
+      double integral ( const double xlow , const double xhigh ,
                         const double ylow , const double yhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
-       *  @param x     variable 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
+      /** integral over x-dimension
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f]
+       *  @param x     variable
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
-      double integrateX ( const double y    , 
+      double integrateX ( const double y    ,
                           const double xlow , const double xhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
-       *  @param y     variable 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
+      /** integral over x-dimension
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f]
+       *  @param y     variable
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
        */
-      double integrateY ( const double x    , 
+      double integrateY ( const double x    ,
                           const double ylow , const double yhigh ) const ;
       // ======================================================================
     public:
       // ======================================================================
       const Gaudi::Math::PhaseSpaceNL&  psX         () const { return m_ps       ; }
-      const Gaudi::Math::PhaseSpaceNL&  psY         () const { return m_ps       ; }      
+      const Gaudi::Math::PhaseSpaceNL&  psY         () const { return m_ps       ; }
       const Gaudi::Math::PhaseSpaceNL&  phasespaceX () const { return psX()      ; }
-      const Gaudi::Math::PhaseSpaceNL&  phasespaceY () const { return psY()      ; }      
+      const Gaudi::Math::PhaseSpaceNL&  phasespaceY () const { return psY()      ; }
       const Gaudi::Math::Positive2DSym& positive    () const { return m_positive ; }
-      const Gaudi::Math::Positive2DSym& polynom     () const { return m_positive ; }      
+      const Gaudi::Math::Positive2DSym& polynom     () const { return m_positive ; }
       // ====================================== ===============================
     private:
       // ======================================================================
-      /// the actual (positive) bernstein polynomial in 2D 
+      /// the actual (positive) bernstein polynomial in 2D
       Gaudi::Math::Positive2DSym m_positive ; // the actual bernstein polynomial
-      /// Phase space 
+      /// Phase space
       Gaudi::Math::PhaseSpaceNL m_ps        ;
       // ======================================================================
     private:
       // ======================================================================
-      /// workspace for numerical integration 
+      /// workspace for numerical integration
       Gaudi::Math::WorkSpace m_workspace    ;
       // ======================================================================
     };
     // ========================================================================
-    /** @class ExpoPS2DPol 
-     *  The 2D-function: 
+    /** @class ExpoPS2DPol
+     *  The 2D-function:
      *  \f$ f(x,y) = exp(tau*x)*Ps(y)*P_{pos}(x,y) \f$, where
-     *  \f$Ps\f$ denotes phase-space function and 
+     *  \f$Ps\f$ denotes phase-space function and
      * \f$P_{pos}\f$ denotes the positive polynomial
      */
     class GAUDI_API ExpoPS2DPol
@@ -4508,18 +4900,18 @@ namespace Gaudi
     public:
       // ======================================================================
       /// constructor from the order
-      ExpoPS2DPol ( const PhaseSpaceNL&   psy  = PhaseSpaceNL() , 
-                    const double          xmin = 0 , 
+      ExpoPS2DPol ( const PhaseSpaceNL&   psy  = PhaseSpaceNL() ,
+                    const double          xmin = 0 ,
                     const double          xmax = 1 ,
                     const unsigned short  Nx   = 1 ,
                     const unsigned short  Ny   = 1 ) ;
       /// constructor from the order
-      ExpoPS2DPol ( const PhaseSpaceNL&   psy     , 
-                    const double          xmin    , 
+      ExpoPS2DPol ( const PhaseSpaceNL&   psy     ,
+                    const double          xmin    ,
                     const double          xmax    ,
                     const unsigned short  Nx      ,
-                    const unsigned short  Ny      , 
-                    const double          ymin    , 
+                    const unsigned short  Ny      ,
+                    const double          ymin    ,
                     const double          ymax    ) ;
       // ======================================================================
     public:
@@ -4532,17 +4924,17 @@ namespace Gaudi
       /// get number of parameters
       std::size_t npars () const { return m_positive.npars () ; }
       /// set k-parameter
-      bool setPar       ( const unsigned int k , const double value ) 
+      bool setPar       ( const unsigned int k , const double value )
       { return m_positive.setPar ( k , value ) ;}
       /// set k-parameter
       bool setParameter ( const unsigned int k , const double value )
       { return setPar   ( k , value ) ; }
       /// get the parameter value
-      double  par       ( const unsigned int k ) const 
+      double  par       ( const unsigned int k ) const
       { return m_positive.par ( k ) ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
-      /// get nX & nY 
+      /// get nX & nY
       unsigned short nX () const { return m_positive.nX () ; }
       unsigned short nY () const { return m_positive.nY () ; }
       // ======================================================================
@@ -4550,51 +4942,51 @@ namespace Gaudi
       // ======================================================================
       /// get tau
       double         tau () const { return m_tau ;}
-      /// set tau 
+      /// set tau
       bool           setTau ( const double val ) ;
       // ======================================================================
     public:
       // ======================================================================
-      /** get the integral over 2D-region 
-       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
+      /** get the integral over 2D-region
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f]
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
-      double integral ( const double xlow , const double xhigh , 
+      double integral ( const double xlow , const double xhigh ,
                         const double ylow , const double yhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
-       *  @param x     variable 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
+      /** integral over x-dimension
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f]
+       *  @param x     variable
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
-      double integrateX ( const double y    , 
+      double integrateX ( const double y    ,
                           const double xlow , const double xhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
-       *  @param y     variable 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
+      /** integral over x-dimension
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f]
+       *  @param y     variable
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
        */
-      double integrateY ( const double x    , 
+      double integrateY ( const double x    ,
                           const double ylow , const double yhigh ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      const Gaudi::Math::PhaseSpaceNL& psY         () const { return m_psy      ; }      
+      const Gaudi::Math::PhaseSpaceNL& psY         () const { return m_psy      ; }
       const Gaudi::Math::PhaseSpaceNL& phasespaceY () const { return psY ()     ; }
       const Gaudi::Math::Positive2D&   positive    () const { return m_positive ; }
-      const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }      
+      const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }
       // ====================================== ===============================
     private:
       // ======================================================================
-      /// the actual (positive) bernstein polynomial in 2D 
+      /// the actual (positive) bernstein polynomial in 2D
       Gaudi::Math::Positive2D   m_positive ; // the actual bernstein polynomial
-      /// Phase space 
+      /// Phase space
       Gaudi::Math::PhaseSpaceNL m_psy      ;
-      /// exponential 
+      /// exponential
       double                    m_tau      ;
       // ======================================================================
     private:
@@ -4604,8 +4996,8 @@ namespace Gaudi
       // ======================================================================
     };
     // ========================================================================
-    /** @class Expo2DPol 
-     *  The 2D-function: 
+    /** @class Expo2DPol
+     *  The 2D-function:
      *  \f$ f(x,y) = exp(x)*expo(y)*P_{pos}(x,y) \f$, where
      * \f$P_{pos}\f$ denotes the positive polynomial
      */
@@ -4616,9 +5008,9 @@ namespace Gaudi
     public:
       // ======================================================================
       /// constructor from the order
-      Expo2DPol ( const double          xmin = 0  , 
+      Expo2DPol ( const double          xmin = 0  ,
                   const double          xmax = 1  ,
-                  const double          ymin = 0  , 
+                  const double          ymin = 0  ,
                   const double          ymax = 1  ,
                   const unsigned short  Nx   =  1 ,
                   const unsigned short  Ny   =  1 ) ;
@@ -4633,17 +5025,17 @@ namespace Gaudi
       /// get number of parameters
       std::size_t npars () const { return m_positive.npars () ; }
       /// set k-parameter
-      bool setPar       ( const unsigned int k , const double value ) 
+      bool setPar       ( const unsigned int k , const double value )
       { return m_positive.setPar ( k , value ) ;}
       /// set k-parameter
       bool setParameter ( const unsigned int k , const double value )
       { return setPar   ( k , value ) ; }
       /// get the parameter value
-      double  par       ( const unsigned int k ) const 
+      double  par       ( const unsigned int k ) const
       { return m_positive.par ( k ) ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
-      /// get nX & nY 
+      /// get nX & nY
       unsigned short nX () const { return m_positive.nX () ; }
       unsigned short nY () const { return m_positive.nY () ; }
       // ======================================================================
@@ -4652,55 +5044,55 @@ namespace Gaudi
       /// get tau
       double         tauX    () const { return m_tauX ;}
       double         tauY    () const { return m_tauY ;}
-      /// set tau 
+      /// set tau
       bool           setTauX ( const double val ) ;
       bool           setTauY ( const double val ) ;
       // ======================================================================
     public:
       // ======================================================================
-      /** get the integral over 2D-region 
-       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
+      /** get the integral over 2D-region
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f]
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
-      double integral ( const double xlow , const double xhigh , 
+      double integral ( const double xlow , const double xhigh ,
                         const double ylow , const double yhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
-       *  @param x     variable 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
+      /** integral over x-dimension
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f]
+       *  @param x     variable
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
-      double integrateX ( const double y    , 
+      double integrateX ( const double y    ,
                           const double xlow , const double xhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
-       *  @param y     variable 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
+      /** integral over x-dimension
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f]
+       *  @param y     variable
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
        */
-      double integrateY ( const double x    , 
+      double integrateY ( const double x    ,
                           const double ylow , const double yhigh ) const ;
       // ======================================================================
     public:
       // ======================================================================
       const Gaudi::Math::Positive2D&   positive    () const { return m_positive ; }
-      const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }      
+      const Gaudi::Math::Positive2D&   polynom     () const { return m_positive ; }
       // ====================================== ===============================
     private:
       // ======================================================================
-      /// the actual (positive) bernstein polynomial in 2D 
+      /// the actual (positive) bernstein polynomial in 2D
       Gaudi::Math::Positive2D   m_positive ; // the actual bernstein polynomial
-      /// exponential 
+      /// exponential
       double                    m_tauX     ;
       double                    m_tauY     ;
       // ======================================================================
     };
     // ========================================================================
-    /** @class Expo2DPolSym 
-     *  The 2D-function: 
+    /** @class Expo2DPolSym
+     *  The 2D-function:
      *  \f$ f(x,y) = exp(x)*expo(y)*P_{sym}(x,y) \f$, where
      * \f$P_{pos}\f$ denotes the symmetric positive polynomial
      */
@@ -4711,7 +5103,7 @@ namespace Gaudi
     public:
       // ======================================================================
       /// constructor from the order
-      Expo2DPolSym ( const double          xmin = 0 , 
+      Expo2DPolSym ( const double          xmin = 0 ,
                      const double          xmax = 1 ,
                      const unsigned short  N    = 1 ) ;
       // ======================================================================
@@ -4725,17 +5117,17 @@ namespace Gaudi
       /// get number of parameters
       std::size_t npars () const { return m_positive.npars () ; }
       /// set k-parameter
-      bool setPar       ( const unsigned int k , const double value ) 
+      bool setPar       ( const unsigned int k , const double value )
       { return m_positive.setPar ( k , value ) ;}
       /// set k-parameter
       bool setParameter ( const unsigned int k , const double value )
       { return setPar   ( k , value ) ; }
       /// get the parameter value
-      double  par       ( const unsigned int k ) const 
+      double  par       ( const unsigned int k ) const
       { return m_positive.par ( k ) ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
-      /// get nX & nY 
+      /// get nX & nY
       unsigned short n  () const { return m_positive.nX () ; }
       unsigned short nX () const { return m_positive.nX () ; }
       unsigned short nY () const { return m_positive.nY () ; }
@@ -4744,54 +5136,54 @@ namespace Gaudi
       // ======================================================================
       /// get tau
       double         tau     () const { return m_tau  ;}
-      /// set tau 
+      /// set tau
       bool           setTau  ( const double val ) ;
       // ======================================================================
     public:
       // ======================================================================
-      /** get the integral over 2D-region 
-       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f] 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
+      /** get the integral over 2D-region
+       *  \f[ \int_{x_low}^{x_high}\int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}x\mathrm{d}y\f]
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
-      double integral ( const double xlow , const double xhigh , 
+      double integral ( const double xlow , const double xhigh ,
                         const double ylow , const double yhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f] 
-       *  @param x     variable 
-       *  @param ylow  low  edge in y 
-       *  @param yhigh high edge in y 
+      /** integral over x-dimension
+       *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y) \mathrm{d}y\f]
+       *  @param x     variable
+       *  @param ylow  low  edge in y
+       *  @param yhigh high edge in y
        */
-      double integrateX ( const double y    , 
+      double integrateX ( const double y    ,
                           const double xlow , const double xhigh ) const ;
-      /** integral over x-dimension 
-       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f] 
-       *  @param y     variable 
-       *  @param xlow  low  edge in x 
-       *  @param xhigh high edge in x 
+      /** integral over x-dimension
+       *  \f[ \int_{x_low}^{x_high} \mathcal{B}(x,y) \mathrm{d}x\f]
+       *  @param y     variable
+       *  @param xlow  low  edge in x
+       *  @param xhigh high edge in x
        */
-      double integrateY ( const double x    , 
+      double integrateY ( const double x    ,
                           const double ylow , const double yhigh ) const ;
       // ======================================================================
-    public:  // expose some internmals 
+    public:  // expose some internmals
       // ======================================================================
       const Gaudi::Math::Positive2DSym& positive () const { return m_positive ; }
-      const Gaudi::Math::Positive2DSym& polynom  () const { return m_positive ; }      
+      const Gaudi::Math::Positive2DSym& polynom  () const { return m_positive ; }
       // ====================================== ===============================
     private:
       // ======================================================================
-      /// the actual (positive) bernstein polynomial in 2D 
+      /// the actual (positive) bernstein polynomial in 2D
       Gaudi::Math::Positive2DSym m_positive ; // the actual bernstein polynomial
-      /// exponential 
+      /// exponential
       double                     m_tau      ;
       // ======================================================================
     };
     // ========================================================================
-    /** @class GenSigmoid 
-     *  Sigmoid function, modulated by the positive polynomial 
-     *  \f$ f(x) = ( 1 + tanh( \alpha ( x  - x_0) ) \times P_{pos} (x) \f$ 
+    /** @class GenSigmoid
+     *  Sigmoid function, modulated by the positive polynomial
+     *  \f$ f(x) = ( 1 + tanh( \alpha ( x  - x_0) ) \times P_{pos} (x) \f$
      *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
      *  @date 2015-02-07
      */
@@ -4800,29 +5192,29 @@ namespace Gaudi
     public:
       // ============================================================
       /// constructor from polynom and parameters "alpha" and "x0"
-      Sigmoid 
-        ( const Gaudi::Math::Positive& poly      , 
+      Sigmoid
+        ( const Gaudi::Math::Positive& poly      ,
           const double                 alpha = 0 ,
           const double                 x0    = 0 ) ;
       /// constructor from polynom and parameter "alpha"
-      Sigmoid 
-        ( const unsigned short             N = 0 , 
-          const double                 xmin  = 0 , 
-          const double                 xmax  = 1 , 
-          const double                 alpha = 0 , 
+      Sigmoid
+        ( const unsigned short             N = 0 ,
+          const double                 xmin  = 0 ,
+          const double                 xmax  = 1 ,
+          const double                 alpha = 0 ,
           const double                 x0    = 0 ) ;
       /// constructor from polynom and parameter "alpha"
       Sigmoid
         ( const std::vector<double>&   pars       ,
           const double                 xmin  =  0 ,
           const double                 xmax  =  1 ,
-          const double                 alpha =  0 , 
+          const double                 alpha =  0 ,
           const double                 x0    =  0 ) ;
       // ======================================================================
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x ) const ; 
+      double operator () ( const double x ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4837,27 +5229,27 @@ namespace Gaudi
     public:
       // ======================================================================
       double xmin () const { return m_positive.xmin () ; }
-      double xmax () const { return m_positive.xmax () ; }      
+      double xmax () const { return m_positive.xmax () ; }
       // ======================================================================
     public:
       // ======================================================================
       /// get number of parameters
       std::size_t npars () const { return 2 + m_positive.npars () ; }
       /// set k-parameter
-      bool setPar       ( const unsigned short k , const double value ) 
-      { return 
-          m_positive.npars()     == k ? setAlpha ( value ) : 
-          m_positive.npars() + 1 == k ? setX0    ( value ) : 
+      bool setPar       ( const unsigned short k , const double value )
+      { return
+          m_positive.npars()     == k ? setAlpha ( value ) :
+          m_positive.npars() + 1 == k ? setX0    ( value ) :
           m_positive.setPar (  k  , value ) ; }
       /// set k-parameter
       bool setParameter ( const unsigned short k , const double value )
       { return setPar   ( k , value ) ; }
-      /// get the parameter value 
-      double  par       ( const unsigned short k ) const 
-      { return 
+      /// get the parameter value
+      double  par       ( const unsigned short k ) const
+      { return
           m_positive.npars()     == k ? alpha () :
           m_positive.npars() + 1 == k ? x0    () : m_positive.par ( k ) ; }
-      /// get the parameter value 
+      /// get the parameter value
       double  parameter ( const unsigned short k ) const { return par ( k ) ; }
       // ======================================================================
     public:
@@ -4868,8 +5260,8 @@ namespace Gaudi
       // ======================================================================
       /// get the integral between xmin and xmax
       double integral   () const ;
-      /// get the integral between low and high 
-      double integral   ( const double low  , 
+      /// get the integral between low and high
+      double integral   ( const double low  ,
                           const double high ) const ;
       // ======================================================================
     private:
@@ -4878,17 +5270,17 @@ namespace Gaudi
       double                 m_alpha    ;
       double                 m_x0       ;
       // ======================================================================
-    private: 
+    private:
       // ======================================================================
-      /// workspace for integration 
+      /// workspace for integration
       Gaudi::Math::WorkSpace m_workspace ;
-      // ======================================================================    
+      // ======================================================================
     };
     // ========================================================================
     /** @class TwoExpos
      *  simple difference of two exponents
-     *  \f$ f \propto 
-     *        \mathrm{e}^{-a_1    x}       -\mathrm{e}^{-a_2 x} = 
+     *  \f$ f \propto
+     *        \mathrm{e}^{-a_1    x}       -\mathrm{e}^{-a_2 x} =
      *        \mathrm{e}^{-\alpha x}\left(1-\mathrm{e}^{-\delta x}\right) \f$
      *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
      *  @date 2015-02-07
@@ -4897,89 +5289,89 @@ namespace Gaudi
     {
     public:
       // ======================================================================
-      TwoExpos ( const double alpha = 1 , 
-                 const double delta = 1 , 
+      TwoExpos ( const double alpha = 1 ,
+                 const double delta = 1 ,
                  const double x0    = 0 ) ;
       // ======================================================================
     public:
-      // ======================================================================   
-      /// get the value 
+      // ======================================================================
+      /// get the value
       double operator() ( const double x ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get alpha 
+      /// get alpha
       double alpha () const { return m_alpha ; }
-      /// get delta 
+      /// get delta
       double delta () const { return m_delta ; }
-      /// get x0 
+      /// get x0
       double x0    () const { return m_x0    ; }
       // ======================================================================
     public:
       // ======================================================================
-      /// slope for the first  exponent 
+      /// slope for the first  exponent
       double a1         () const { return m_alpha           ; }
-      /// slope for the second exponent  
+      /// slope for the second exponent
       double a2         () const { return m_alpha + m_delta ; }
-      /// mean-value (for -inf,+inf) interval 
+      /// mean-value (for -inf,+inf) interval
       double mean       () const ;
-      /// mode 
+      /// mode
       double mode       () const ;
-      /// variance  
+      /// variance
       double variance   () const ;
-      /// dispersion 
+      /// dispersion
       double dispersion () const { return variance () ; }
-      /// sigma 
+      /// sigma
       double sigma      () const ;
       // get normalization constant
       double norm       () const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// slope for the first  exponent 
+      /// slope for the first  exponent
       double tau1       () const { return -a1() ; }
-      /// slope for the second exponent  
+      /// slope for the second exponent
       double tau2       () const { return -a2() ; }
       // ======================================================================
     public:
       // ======================================================================
       bool setAlpha ( const double value ) ;
-      bool setDelta ( const double value ) ;      
-      bool setX0    ( const double value ) ;      
+      bool setDelta ( const double value ) ;
+      bool setX0    ( const double value ) ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral between -inf and +inf 
+      /// get the integral between -inf and +inf
       double integral    () const ;
-      /// get the integral between low and high 
-      double integral    ( const double low  , 
+      /// get the integral between low and high
+      double integral    ( const double low  ,
                            const double high ) const ;
-      /// get the derivative at given value 
+      /// get the derivative at given value
       double derivative  ( const double x    ) const ;
-      /// get the second at given value 
+      /// get the second at given value
       double derivative2 ( const double x    ) const ;
-      /// get the Nth derivative at given value 
-      double derivative  ( const double   x  , 
+      /// get the Nth derivative at given value
+      double derivative  ( const double   x  ,
                            const unsigned N  ) const ;
       // ======================================================================
-    private: 
+    private:
       // ======================================================================
       double m_alpha ;
       double m_delta ;
       double m_x0    ;
       // ======================================================================
-    } ;  
+    } ;
     // ========================================================================
     /** @class TwoExpoPositive
-     *  simple difference of two exponents modulated with positive polynomials 
-     *  @see TwoExpos 
-     *  @see Positive 
-     *  @see ExpoPositive 
-     *  \f$ f(x) = e_2(x) * p_n(x) \f$, where 
-     *  \f$ e_2(x) \propto 
-     *        \mathrm{e}^{-a_1    x}       -\mathrm{e}^{-a_2 x} = 
+     *  simple difference of two exponents modulated with positive polynomials
+     *  @see TwoExpos
+     *  @see Positive
+     *  @see ExpoPositive
+     *  \f$ f(x) = e_2(x) * p_n(x) \f$, where
+     *  \f$ e_2(x) \propto
+     *        \mathrm{e}^{-a_1    x}       -\mathrm{e}^{-a_2 x} =
      *        \mathrm{e}^{-\alpha x}\left(1-\mathrm{e}^{-\delta x}\right) \f$
-     *  and $p_2(s)$ is positive polynomial function 
+     *  and $p_2(s)$ is positive polynomial function
      *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
      *  @date 2015-03-28
      */
@@ -4987,39 +5379,39 @@ namespace Gaudi
     {
     public:
       // ======================================================================
-      TwoExpoPositive  
-        ( const unsigned short N = 1 , 
-          const double alpha     = 1 , 
-          const double delta     = 1 , 
+      TwoExpoPositive
+        ( const unsigned short N = 1 ,
+          const double alpha     = 1 ,
+          const double delta     = 1 ,
           const double x0        = 0 ,
-          const double xmin      = 0 , 
+          const double xmin      = 0 ,
           const double xmax      = 1 ) ;
       // ======================================================================
-      TwoExpoPositive  
-        ( const std::vector<double>& pars , 
-          const double alpha  = 1 , 
-          const double delta  = 1 , 
+      TwoExpoPositive
+        ( const std::vector<double>& pars ,
+          const double alpha  = 1 ,
+          const double delta  = 1 ,
           const double x0     = 0 ,
-          const double xmin   = 0 , 
+          const double xmin   = 0 ,
           const double xmax   = 1 ) ;
       // ======================================================================
-      TwoExpoPositive  
-        ( const Positive& poly    ,  
-          const double alpha  = 1 , 
-          const double delta  = 1 , 
+      TwoExpoPositive
+        ( const Positive& poly    ,
+          const double alpha  = 1 ,
+          const double delta  = 1 ,
           const double x0     = 0 ) ;
       // ======================================================================
-      TwoExpoPositive  
-        ( const Positive& poly   , 
+      TwoExpoPositive
+        ( const Positive& poly   ,
           const TwoExpos& expos  ) ;
       // ======================================================================
-      TwoExpoPositive  
-        ( const TwoExpos& expos  , 
+      TwoExpoPositive
+        ( const TwoExpos& expos  ,
           const Positive& poly   ) ;
       // ======================================================================
     public:
-      // ======================================================================   
-      /// get the value 
+      // ======================================================================
+      /// get the value
       double operator() ( const double x ) const ;
       // ======================================================================
     public:
@@ -5027,18 +5419,18 @@ namespace Gaudi
       /// get number of polinomial parameters
       std::size_t npars () const { return 3 + m_positive.npars() ; }
       /// set k-parameter
-      bool setPar       ( const unsigned short k , const double value ) 
-      { return 
-          m_positive.npars()     == k ? setAlpha ( value ) : 
-          m_positive.npars() + 1 == k ? setDelta ( value ) : 
-          m_positive.npars() + 2 == k ? setX0    ( value ) : 
+      bool setPar       ( const unsigned short k , const double value )
+      { return
+          m_positive.npars()     == k ? setAlpha ( value ) :
+          m_positive.npars() + 1 == k ? setDelta ( value ) :
+          m_positive.npars() + 2 == k ? setX0    ( value ) :
           m_positive.setPar ( k , value ) ; }
       /// set k-parameter
       bool setParameter ( const unsigned short k , const double value )
       { return setPar   ( k , value ) ; }
-      /// get the parameter value 
-      double  par       ( const unsigned short k ) const 
-      { return 
+      /// get the parameter value
+      double  par       ( const unsigned short k ) const
+      { return
           m_positive.npars()     == k ? alpha () :
           m_positive.npars() + 1 == k ? delta () :
           m_positive.npars() + 2 == k ? x0    () : m_positive.par ( k ) ; }
@@ -5051,28 +5443,28 @@ namespace Gaudi
       double xmin () const { return m_positive.xmin () ; }
       /// get upper edge
       double xmax () const { return m_positive.xmax () ; }
-      /// transform variables 
+      /// transform variables
       double x ( const double t ) const { return m_positive. x ( t )  ; }
       double t ( const double x ) const { return m_positive. t ( x )  ; }
       // ======================================================================
     public:
       // ======================================================================
-      /// get alpha 
+      /// get alpha
       double alpha () const { return m_2exp.alpha () ; }
-      /// get delta 
+      /// get delta
       double delta () const { return m_2exp.delta () ; }
-      /// get x0 
+      /// get x0
       double x0    () const { return m_2exp.x0    () ; }
       // ======================================================================
     public:
       // ======================================================================
-      /// slope for the first  exponent 
+      /// slope for the first  exponent
       double a1         () const { return m_2exp.a1   () ; }
-      /// slope for the second exponent  
+      /// slope for the second exponent
       double a2         () const { return m_2exp.a2   () ; }
-      /// slope for the first  exponent 
+      /// slope for the first  exponent
       double tau1       () const { return m_2exp.tau1 () ; }
-      /// slope for the second exponent  
+      /// slope for the second exponent
       double tau2       () const { return m_2exp.tau2 () ; }
       // ======================================================================
     public:
@@ -5083,94 +5475,94 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral between xmin and xmax 
+      /// get the integral between xmin and xmax
       double integral    () const ;
-      /// get the integral between low and high 
-      double integral    ( const double low  , 
+      /// get the integral between low and high
+      double integral    ( const double low  ,
                            const double high ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get the underlying positive function 
+      /// get the underlying positive function
       const Gaudi::Math::Positive&  positive  () const { return m_positive  ; }
-      /// get the underlying exponents       
+      /// get the underlying exponents
       const Gaudi::Math::TwoExpos&  twoexpos  () const { return m_2exp      ; }
       // ======================================================================
-    private: 
+    private:
       // ======================================================================
       Gaudi::Math::Positive m_positive ;
       Gaudi::Math::TwoExpos m_2exp     ;
       // ======================================================================
-    } ;  
+    } ;
     // ========================================================================
     /** @class Tsallis
-     * 
-     *  Useful function to describe pT-spectra of particles 
      *
-     *  - C. Tsallis, 
+     *  Useful function to describe pT-spectra of particles
+     *
+     *  - C. Tsallis,
      *  "Possible generalization of Boltzmann-Gibbs statistics,
      *  J. Statist. Phys. 52 (1988) 479.
-     *  - C. Tsallis, 
-     *  Nonextensive statistics: theoretical, experimental and computational 
+     *  - C. Tsallis,
+     *  Nonextensive statistics: theoretical, experimental and computational
      *  evidences and connections, Braz. J. Phys. 29 (1999) 1.
-     * 
-     *  \f[ \frac{d\sigma}{dp_T} \propto  
+     *
+     *  \f[ \frac{d\sigma}{dp_T} \propto
      *    p_T\times \left( 1 + \frac{E_{kin}}{Tn}\right)^{-n}\f],
-     *  where \f$E_{kin} = \sqrt{p_T^2-M^2}-M\f$ 
-     *  is transverse kinetic energy 
+     *  where \f$E_{kin} = \sqrt{p_T^2-M^2}-M\f$
+     *  is transverse kinetic energy
      *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
      *  @date 2015-07-11
-     */ 
+     */
     class GAUDI_API Tsallis : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
-      /** constructor from all parameters 
+      /** constructor from all parameters
        *  @param mass particle mass  (M>0)
-       *  @param n    n-parameter    (N>1)  
+       *  @param n    n-parameter    (N>1)
        *  @param T    T-parameter    (T>0)
        */
-      Tsallis 
-        ( const double mass         = 0   , 
-          const double n            = 10  ,  
+      Tsallis
+        ( const double mass         = 0   ,
+          const double n            = 10  ,
           const double T            = 1.1 ) ;
-      /// destructor 
+      /// destructor
       ~Tsallis() ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get Tsallis PDF  
+      /// get Tsallis PDF
       double pdf ( const double x ) const ;
-      /// get Tsallis PDF  
+      /// get Tsallis PDF
       double operator() ( const double x ) const { return pdf ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
       /// get mass-parameter
       double mass () const { return m_mass  ; } // get mass-parameter
-      /// get n-parameter 
+      /// get n-parameter
       double n    () const { return m_n     ; } // get n-parameter
-      /// get T-parameter 
-      double T    () const { return m_T     ; } // get T-parameter 
+      /// get T-parameter
+      double T    () const { return m_T     ; } // get T-parameter
       // ======================================================================
-      // aliases 
+      // aliases
       // ======================================================================
       /// get mass-parameter
       double m    () const { return  mass () ; } // get mass-parameter
-      /// get mass-parameter 
+      /// get mass-parameter
       double M    () const { return  mass () ; } // get mass-parameter
-      /// get n-parameter 
+      /// get n-parameter
       double N    () const { return  n    () ; } // get n-parameter
       // ======================================================================
-    public:      
+    public:
       // ======================================================================
-      /// update mass-parameter 
-      bool setMass ( const double value ) ; // update mass-parameter 
+      /// update mass-parameter
+      bool setMass ( const double value ) ; // update mass-parameter
       bool setM    ( const double value ) { return setMass ( value ) ; }
-      /// update n-parameter 
-      bool setN    ( const double value ) ; // update n-parameter 
-      /// update T-parameter 
-      bool setT    ( const double value ) ; // update T-parameter 
+      /// update n-parameter
+      bool setN    ( const double value ) ; // update n-parameter
+      /// update T-parameter
+      bool setT    ( const double value ) ; // update T-parameter
       // ======================================================================
     public:
       // ======================================================================
@@ -5179,18 +5571,18 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the transverse kinetic energy 
-      inline double eTkin ( const double x ) const 
-      { return std::sqrt ( x * x + m_mass * m_mass ) - m_mass ; }  
+      /// get the transverse kinetic energy
+      inline double eTkin ( const double x ) const
+      { return std::sqrt ( x * x + m_mass * m_mass ) - m_mass ; }
       // ======================================================================
-      /// get the transverse mass 
-      inline double mT   ( const double x ) const 
-      { return std::sqrt ( x * x + m_mass * m_mass ) ; }  
+      /// get the transverse mass
+      inline double mT   ( const double x ) const
+      { return std::sqrt ( x * x + m_mass * m_mass ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral between low and high 
-      double integral    ( const double low  , 
+      /// get the integral between low and high
+      double integral    ( const double low  ,
                            const double high ) const ;
       // ======================================================================
     private:
@@ -5204,74 +5596,74 @@ namespace Gaudi
       /// workspace
       Gaudi::Math::WorkSpace m_workspace ; // workspace
       // ======================================================================
-    } ;  
+    } ;
     // ========================================================================
     /** @class QGSM
-     * 
-     *  Useful function to describe pT-spectra of particles 
+     *
+     *  Useful function to describe pT-spectra of particles
      *
      * - A. B. Kaidalov and O. I. Piskunova, Z. Phys. C 30 (1986) 145.
-     * - O. I. Piskounova, arXiv:1301.6539 [hep-ph]; 
+     * - O. I. Piskounova, arXiv:1301.6539 [hep-ph];
      * - O. I. Piskounova, arXiv:1405.4398 [hep-ph].
-     * - A. A. Bylinkin and O. I. Piskounova, 
+     * - A. A. Bylinkin and O. I. Piskounova,
      *  "Transverse momentum distributions of baryons at LHC energies",
      *  arXiv:1501.07706.
      *
-     *  \f[ \frac{d\sigma}{dp_T} \propto 
-     *  p_T \times \mathrm{e}^{ -b_0 (m_T-m)} \f], 
+     *  \f[ \frac{d\sigma}{dp_T} \propto
+     *  p_T \times \mathrm{e}^{ -b_0 (m_T-m)} \f],
      *  where transverse mass is defined as \f$m_T = \sqrt{p_T^2+m^2}\f$
      *
      *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
      *  @date 2015-07-11
-     */ 
+     */
     class GAUDI_API QGSM: public std::unary_function<double,double>
     {
     public:
       // ======================================================================
-      /** constructor from all parameters 
+      /** constructor from all parameters
        *  @param mass particle mass        (M>0)
        *  @param b    b-parameter/slope    (b>0)
        */
-      QGSM 
-        ( const double mass         = 0   ,    // partile mass 
-          const double b            = 1   ) ;  // slope 
-      /// destructor 
+      QGSM
+        ( const double mass         = 0   ,    // partile mass
+          const double b            = 1   ) ;  // slope
+      /// destructor
       ~QGSM () ;
       // ======================================================================
     public:
       // ======================================================================
-      /// define QGSM pdf 
+      /// define QGSM pdf
       double pdf ( const double x ) const ;
-      /// define QGSM pdf 
+      /// define QGSM pdf
       double operator() ( const double x ) const { return pdf ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================
       /// get mass-parameter
       double mass () const { return m_mass  ; } // get mass-parameter
-      /// get n-parameter 
-      double b    () const { return m_b     ; } // get b-parameter 
+      /// get n-parameter
+      double b    () const { return m_b     ; } // get b-parameter
       // ======================================================================
-      // aliases 
+      // aliases
       // ======================================================================
       /// get mass-parameter
       double m    () const { return  mass () ; } // get mass-parameter
-      /// get mass-parameter 
+      /// get mass-parameter
       double M    () const { return  mass () ; } // get mass-parameter
-      /// get b-parameter 
+      /// get b-parameter
       double B    () const { return  b    () ; } // get n-parameter
-      /// get b-parameter 
+      /// get b-parameter
       double B0   () const { return  b    () ; } // get n-parameter
-      /// get b-parameter 
+      /// get b-parameter
       double b0   () const { return  b    () ; } // get n-parameter
       // =====================================================================
-    public:      
+    public:
       // ======================================================================
-      /// update mass-parameter 
-      bool setMass ( const double value ) ; // update mass-parameter 
+      /// update mass-parameter
+      bool setMass ( const double value ) ; // update mass-parameter
       bool setM    ( const double value ) { return setMass ( value ) ; }
-      /// update b-parameter 
-      bool setB    ( const double value ) ; // update b-parameter 
+      /// update b-parameter
+      bool setB    ( const double value ) ; // update b-parameter
       // ======================================================================
     public:
       // ======================================================================
@@ -5280,18 +5672,18 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// get the transverse kinetic energy 
-      inline double eTkin ( const double x ) const 
-      { return mT( x ) - m_mass ; }  
+      /// get the transverse kinetic energy
+      inline double eTkin ( const double x ) const
+      { return mT( x ) - m_mass ; }
       // ======================================================================
-      /// get the transverse mass 
-      inline double mT   ( const double x ) const 
-      { return std::sqrt ( x * x + m_mass * m_mass ) ; }  
+      /// get the transverse mass
+      inline double mT   ( const double x ) const
+      { return std::sqrt ( x * x + m_mass * m_mass ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral between low and high 
-      double integral    ( const double low  , 
+      /// get the integral between low and high
+      double integral    ( const double low  ,
                            const double high ) const ;
       // ======================================================================
     private:
@@ -5304,14 +5696,14 @@ namespace Gaudi
       /// workspace
       Gaudi::Math::WorkSpace m_workspace ; // workspace
       // ======================================================================
-    } ;  
+    } ;
     // ========================================================================
-    // forward declarations 
-    class FourinerSum ;
-    class CosineSum   ;    
+    // forward declarations
+    class FourierSum ;
+    class CosineSum  ;
     // ========================================================================
     /** @class FourierSum
-     *  Fourier sum 
+     *  Fourier sum
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-07-26
      */
@@ -5319,13 +5711,13 @@ namespace Gaudi
     {
     public:
       // ======================================================================
-      /** @param degree  degree 
-       *  @param xmin    low  edge 
-       *  @param xmax    high edge 
-       *  @param fejer   use fejer summation 
+      /** @param degree  degree
+       *  @param xmin    low  edge
+       *  @param xmax    high edge
+       *  @param fejer   use fejer summation
        */
-      FourierSum ( const unsigned short degree = 0     ,   // degree            
-                   const double         xmin   = 0     ,   // low edge 
+      FourierSum ( const unsigned short degree = 0     ,   // degree
+                   const double         xmin   = 0     ,   // low edge
                    const double         xmax   = 1     ,   // high edge
                    const bool           fejer  = false );  // use Fejer summation
       /// constructor from cosine serie
@@ -5333,18 +5725,18 @@ namespace Gaudi
       /// constructor from Fourier series and fejer flag
       FourierSum ( const FourierSum& sum  , const bool fejer ) ;
       // ======================================================================
-    protected:  // protected constructor from parameters 
+    protected:  // protected constructor from parameters
       // ======================================================================
-      /// protected constructor from parameters 
-      FourierSum ( const std::vector<double>& pars  , 
-                   const double               xmin  , 
-                   const double               xmax  , 
+      /// protected constructor from parameters
+      FourierSum ( const std::vector<double>& pars  ,
+                   const double               xmin  ,
+                   const double               xmax  ,
                    const double               fejer );
       // ======================================================================
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x ) const 
+      double operator () ( const double x ) const
       { return m_fejer ? fejer_sum ( x ) : fourier_sum ( x ) ; }
       // ======================================================================
     public:
@@ -5370,22 +5762,22 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// degree  of polynomial 
+      /// degree  of polynomial
       unsigned short degree () const { return ( m_pars.size() - 1 ) / 2 ; }
-      /// number of parameters 
+      /// number of parameters
       unsigned short npars  () const { return m_pars.size()     ; }
       /// all zero ?
       bool           zero   () const ;
       /** set k-parameter
        *  @param k index
-       *  @param value new value 
-       *  @return true if parameter is actually changed 
+       *  @param value new value
+       *  @return true if parameter is actually changed
        */
       bool setPar          ( const unsigned short k , const double value ) ;
       /** set k-parameter
        *  @param k index
-       *  @param value new value 
-       *  @return true if parameter is actually changed 
+       *  @param value new value
+       *  @return true if parameter is actually changed
        */
       bool setParameter    ( const unsigned short k , const double value )
       { return setPar      ( k , value ) ; }
@@ -5396,43 +5788,43 @@ namespace Gaudi
       double  parameter    ( const unsigned short k ) const { return par ( k ) ; }
       /// get all parameters:
       const std::vector<double>& pars () const { return m_pars ; }
-      /// get k-th cos-parameter 
+      /// get k-th cos-parameter
       double a ( const unsigned short k ) const { return par ( 2 * k     ) ; }
-      /// get k-th sin-parameter 
-      double b ( const unsigned short k ) const 
-      { return 1 <= k ? par   ( 2 * k - 1 ) : 0 ; }  
-      // set cosine terms 
-      bool setA ( const unsigned short k , const double value ) 
+      /// get k-th sin-parameter
+      double b ( const unsigned short k ) const
+      { return 1 <= k ? par   ( 2 * k - 1 ) : 0 ; }
+      // set cosine terms
+      bool setA ( const unsigned short k , const double value )
       { return setPar ( 2 * k , value ) ; }
-      // set cosine terms 
-      bool setB ( const unsigned short k , const double value ) 
+      // set cosine terms
+      bool setB ( const unsigned short k , const double value )
       { return 1<= k ? setPar ( 2 * k - 1 , value ) : false ; }
       /** get the magnitude of nth-harmonic
        *  \f$m_k = \sqrt( a^2_k + b^2_k) \f$
        */
       double mag    ( const unsigned short k ) const ;
-      /// get the phase for n-th harmonic 
+      /// get the phase for n-th harmonic
       double phase  ( const unsigned short k ) const ;
-      // ======================================================================
-    public: 
-      // ======================================================================
-      /// get Fejer sum 
-      FourierSum fejer_sum   () const ;                       // get Fejer sum 
       // ======================================================================
     public:
       // ======================================================================
-      /// get the derivative at point x 
+      /// get Fejer sum
+      FourierSum fejer_sum   () const ;                       // get Fejer sum
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the derivative at point x
       double     derivative   ( const double x ) const ;
-      /// get the derivative as function 
+      /// get the derivative as function
       FourierSum derivative   ( ) const ;
-      /// get nth derivative as function 
+      /// get nth derivative as function
       FourierSum derivative_n ( const unsigned short n ) const ;
       // ======================================================================
     public:
-      // ======================================================================      
-      // get integral between low and high 
+      // ======================================================================
+      // get integral between low and high
       double     integral   ( const double low , const double high ) const ;
-      /** get integral as function 
+      /** get integral as function
        *  @param c0  integration constant
        */
       FourierSum integral   ( const double c0 = 0 ) const ;
@@ -5444,54 +5836,69 @@ namespace Gaudi
        *  @return convolution witgh gaussian
        */
       FourierSum   convolve     ( const double sigma     ) const ;
-      /** deconvolute with optional regularization 
-       *  @param sigma sigma of gaussian 
+      /** deconvolute with optional regularization
+       *  @param sigma sigma of gaussian
        *  @param delta parameter of Tikhonov's regularization
        *  for delta<=0, no regularization
        *  @return regularised deconvolution
        */
-      FourierSum deconvolve     ( const double sigma     , 
+      FourierSum deconvolve     ( const double sigma     ,
                                   const double delta = 0 ) const ;
-      /**  get the effective cut-off (==number of effective harmonics) 
-       *   of Tikhonov's regularization 
+      /**  get the effective cut-off (==number of effective harmonics)
+       *   of Tikhonov's regularization
        *   \f$ n \equiv  \sqrt{2 \ln \delta} \frac{\pi\sigma}{L} \f$
-       *   @param sigma  gaussian resoltuion 
-       *   @param delta  regularization parameter 
-       *   @return number of effective harmonic 
+       *   @param sigma  gaussian resoltuion
+       *   @param delta  regularization parameter
+       *   @return number of effective harmonic
        */
-      double     regularization ( const double sigma     , 
+      double     regularization ( const double sigma     ,
                                   const double delta     ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// simple  manipulations with polynoms: scale it! 
-      FourierSum& operator *= ( const double a ) ;     // scale it! 
-      /// simple  manipulations with polynoms: scale it! 
-      FourierSum& operator /= ( const double a ) ;     // scale it! 
+      /// simple  manipulations with polynoms: scale it!
+      FourierSum& operator *= ( const double a ) ;     // scale it!
+      /// simple  manipulations with polynoms: scale it!
+      FourierSum& operator /= ( const double a ) ;     // scale it!
       /// simple  manipulations with polynoms: add constant
-      FourierSum& operator += ( const double a ) ;     // add constant 
-      /// simple  manipulations with polynoms: subtract constant 
-      FourierSum& operator -= ( const double a ) ;     // subtract constant 
+      FourierSum& operator += ( const double a ) ;     // add constant
+      /// simple  manipulations with polynoms: subtract constant
+      FourierSum& operator -= ( const double a ) ;     // subtract constant
+      // ======================================================================
+    public:
+      // ======================================================================
+      /** sum of two Fourier series (with the same interval!)
+       *  @param other the first fourier sum
+       *  @return the sum of two Fourier series
+       */
+      FourierSum sum ( const FourierSum& other ) const ;
+      // ======================================================================
+      /** get "shifted" fourier sum
+       *  \f$ g(x) \equiv f ( x - a ) \f$
+       *  @param a the bias aprameter
+       *  @return the shifted fourier sum
+       */
+      FourierSum shift ( const double a ) const ;
       // ======================================================================
     private:
       // ======================================================================
       /// actual vector of coefficients
-      std::vector<double> m_pars ; // actual vector of coefficients      
-      /// low edge  
-      double m_xmin  ;             // the low edge 
-      /// high edge  
-      double m_xmax  ;             // the high edge       
-      /// scale factor 
-      double m_scale ;             // scale factor 
-      /// delta 
-      double m_delta ;             // delta 
+      std::vector<double> m_pars ; // actual vector of coefficients
+      /// low edge
+      double m_xmin  ;             // the low edge
+      /// high edge
+      double m_xmax  ;             // the high edge
+      /// scale factor
+      double m_scale ;             // scale factor
+      /// delta
+      double m_delta ;             // delta
       /// summation algorithm
       bool m_fejer   ;             // summation algorithm
-      // ======================================================================
+       // ======================================================================
     } ;
     // ========================================================================
     /** @class CosineSum
-     *  Fourier sum over cosines 
+     *  Fourier sum over cosines
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-07-26
      */
@@ -5499,32 +5906,32 @@ namespace Gaudi
     {
     public:
       // ======================================================================
-      /** @param degree  degree 
-       *  @param xmin    low  edge 
-       *  @param xmax    high edge 
-       *  @param fejer   use fejer summation 
+      /** @param degree  degree
+       *  @param xmin    low  edge
+       *  @param xmax    high edge
+       *  @param fejer   use fejer summation
        */
-      CosineSum ( const unsigned short degree = 0     ,    // degree            
-                  const double         xmin   = 0     ,    // low edge 
+      CosineSum ( const unsigned short degree = 0     ,    // degree
+                  const double         xmin   = 0     ,    // low edge
                   const double         xmax   = 1     ,    // high edge
                   const bool           fejer  = false ) ;  // use Fejer summation
-      /// constructor from Fourier sum 
+      /// constructor from Fourier sum
       CosineSum ( const FourierSum&    sum            ) ;
       /// constructor from Fourier series and fejer flag
       CosineSum ( const CosineSum&     sum  , const bool fejer ) ;
       // ======================================================================
-    protected:  // protected constructor from parameters 
+    protected:  // protected constructor from parameters
       // ======================================================================
-      /// protected constructor from parameters 
-      CosineSum ( const std::vector<double>& pars  , 
-                  const double               xmin  , 
-                  const double               xmax  , 
+      /// protected constructor from parameters
+      CosineSum ( const std::vector<double>& pars  ,
+                  const double               xmin  ,
+                  const double               xmax  ,
                   const double               fejer );
       // ======================================================================
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x ) const 
+      double operator () ( const double x ) const
       { return m_fejer ? fejer_sum ( x ) : fourier_sum ( x ) ; }
       // ======================================================================
     public:
@@ -5550,22 +5957,22 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// degree  of polynomial 
+      /// degree  of polynomial
       unsigned short degree () const { return m_pars.size() - 1 ; }
-      /// number of parameters 
+      /// number of parameters
       unsigned short npars  () const { return m_pars.size()     ; }
       /// all zero ?
       bool           zero   () const ;
       /** set k-parameter
        *  @param k index
-       *  @param value new value 
-       *  @return true if parameter is actually changed 
+       *  @param value new value
+       *  @return true if parameter is actually changed
        */
       bool setPar          ( const unsigned short k , const double value ) ;
       /** set k-parameter
        *  @param k index
-       *  @param value new value 
-       *  @return true if parameter is actually changed 
+       *  @param value new value
+       *  @return true if parameter is actually changed
        */
       bool setParameter    ( const unsigned short k , const double value )
       { return setPar      ( k , value ) ; }
@@ -5576,31 +5983,31 @@ namespace Gaudi
       double  parameter    ( const unsigned short k ) const { return par ( k ) ; }
       /// get all parameters:
       const std::vector<double>& pars () const { return m_pars ; }
-      /// get k-th cos-parameter 
+      /// get k-th cos-parameter
       double a    ( const unsigned short k ) const { return par ( k     ) ; }
-      // set cosine terms 
-      bool   setA ( const unsigned short k , const double value ) 
+      // set cosine terms
+      bool   setA ( const unsigned short k , const double value )
       { return setPar ( k , value ) ; }
       // ======================================================================
-    public: 
-      // ======================================================================
-      /// get Fejer sum 
-      CosineSum fejer_sum   () const ;                         // get Fejer sum 
-      // ====================================================================== 
     public:
       // ======================================================================
-      /// get the derivative at point x 
+      /// get Fejer sum
+      CosineSum fejer_sum   () const ;                         // get Fejer sum
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// get the derivative at point x
       double     derivative ( const double x ) const ;
-      /// get the derivative as function 
+      /// get the derivative as function
       FourierSum derivative ( ) const ;
-      /// get nth derivative as function 
+      /// get nth derivative as function
       FourierSum derivative_n ( const unsigned short n ) const ;
       // ======================================================================
     public:
-      // ======================================================================      
-      // get integral between low and high 
+      // ======================================================================
+      // get integral between low and high
       double     integral   ( const double low , const double high ) const ;
-      /** get integral as function 
+      /** get integral as function
        *  @param c0  integration constant
        */
       FourierSum integral   ( const double c0 = 0 ) const ;
@@ -5612,51 +6019,86 @@ namespace Gaudi
        *  @return convolution witgh gaussian
        */
       CosineSum   convolve     ( const double sigma     ) const ;
-      /** deconvolute with optional regularization 
-       *  @param sigma sigma of gaussian 
+      /** deconvolute with optional regularization
+       *  @param sigma sigma of gaussian
        *  @param delta parameter of Tikhonov's regularization
        *  for delta<=0, no regularization
        *  @return regularised deconvolution
        */
-      CosineSum deconvolve     ( const double sigma     , 
+      CosineSum deconvolve     ( const double sigma     ,
                                  const double delta = 0 ) const ;
-      /** get the effective cut-off (==number of terms/harmonics) 
-       *  of Tikhonov's regularization 
+      /** get the effective cut-off (==number of terms/harmonics)
+       *  of Tikhonov's regularization
        *  \f$ n \equiv  \sqrt{2 \ln \delta} \frac{\pi\sigma}{L} \f$
-       *  @param sigma  gaussian resoltuion 
-       *  @param delta  regularization parameter 
-       *  @return number of effective harmonic 
+       *  @param sigma  gaussian resoltuion
+       *  @param delta  regularization parameter
+       *  @return number of effective harmonic
        */
-      double    regularization ( const double sigma     , 
+      double    regularization ( const double sigma     ,
                                  const double delta     ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// simple  manipulations with polynoms: scale it! 
-      CosineSum& operator *= ( const double a ) ;     // scale it! 
-      /// simple  manipulations with polynoms: scale it! 
-      CosineSum& operator /= ( const double a ) ;     // scale it! 
+      /// simple  manipulations with polynoms: scale it!
+      CosineSum& operator *= ( const double a ) ;     // scale it!
+      /// simple  manipulations with polynoms: scale it!
+      CosineSum& operator /= ( const double a ) ;     // scale it!
       /// simple  manipulations with polynoms: add constant
-      CosineSum& operator += ( const double a ) ;     // add constant 
-      /// simple  manipulations with polynoms: subtract constant 
-      CosineSum& operator -= ( const double a ) ;     // subtract constant 
+      CosineSum& operator += ( const double a ) ;     // add constant
+      /// simple  manipulations with polynoms: subtract constant
+      CosineSum& operator -= ( const double a ) ;     // subtract constant
+      // ======================================================================
+    public:
+      // ======================================================================
+      /** sum of two Fourier series (with the same interval!)
+       *  @param other the first fourier sum
+       *  @return the sum of two Fourier series
+       */
+      CosineSum sum ( const CosineSum& other ) const ;
       // ======================================================================
     private:
       // ======================================================================
       /// actual vector of coefficients
-      std::vector<double> m_pars ; // actual vector of coefficients      
-      /// low edge  
-      double m_xmin  ;             // the low edge 
-      /// high edge  
-      double m_xmax  ;             // the high edge       
-      /// scale factor 
-      double m_scale ;             // scale factor 
+      std::vector<double> m_pars ; // actual vector of coefficients
+      /// low edge
+      double m_xmin  ;             // the low edge
+      /// high edge
+      double m_xmax  ;             // the high edge
+      /// scale factor
+      double m_scale ;             // scale factor
       /// summation algorithm
       bool m_fejer   ;             // summation algorithm
       // ======================================================================
     } ;
     // ========================================================================
-  } //                                             end of namespace Gaudi::Math
+    /** make a sum of two fourier series (with the same interval!)
+     *  @param s1 the first fourier sum
+     *  @param s2 the first fourier sum
+     *  @return s1+s2
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-26
+     */
+    GAUDI_API
+    FourierSum sum ( const FourierSum& s1 , const FourierSum& s2 ) ;
+    // ========================================================================
+    /** make a sum of two fourier cosine series (with the same interval!)
+     *  @param s1 the first fourier cosine sum
+     *  @param s2 the first fourier cosine sum
+     *  @return s1+s2
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2016-06-26
+     */
+    GAUDI_API
+    CosineSum sum ( const CosineSum& s1 , const CosineSum& s2 ) ;
+    // ========================================================================
+    /// sum of two fourier series
+    inline FourierSum operator+( const FourierSum& a ,
+                                 const FourierSum& b ) { return a.sum ( b ) ; }
+    /// sum of two cosine series
+    inline CosineSum  operator+( const CosineSum&  a ,
+                                 const CosineSum&  b ) { return a.sum ( b ) ; }
+    // ========================================================================
+  } //                                  end of namespace Gaudi::Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================

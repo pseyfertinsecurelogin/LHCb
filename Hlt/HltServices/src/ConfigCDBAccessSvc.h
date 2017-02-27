@@ -1,19 +1,22 @@
-// $Id: ConfigTarFileAccessSvc.h,v 1.1 2010-05-05 13:20:44 graven Exp $
-#ifndef CONFIGCDBACCESSSVC_H 
+#ifndef CONFIGCDBACCESSSVC_H
 #define CONFIGCDBACCESSSVC_H 1
 
 // Include files
 #include <string>
 #include <memory>
+
+// boost
 #include "boost/optional.hpp"
+
 // from Gaudi
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/MsgStream.h"
+#include <GaudiKernel/IIncidentListener.h>
 
 #include "Kernel/IConfigAccessSvc.h"
 
 /** @class ConfigFileAccessSvc ConfigFileAccessSvc.h
- *  
+ *
  *  functionality:
  *        read/write configure information to files
  *
@@ -25,10 +28,9 @@ namespace ConfigCDBAccessSvc_details  {
    class CDB;
 }
 
-class ConfigCDBAccessSvc : public extends1<Service,IConfigAccessSvc> {
+class ConfigCDBAccessSvc : public extends<Service,IConfigAccessSvc> {
 public:
-  ConfigCDBAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
-  ~ConfigCDBAccessSvc( ) override = default;     ///< Destructor
+  using extends::extends;
 
   StatusCode initialize() override;    ///< Service initialization
   StatusCode finalize() override;      ///< Service initialization
@@ -43,21 +45,20 @@ public:
   ConfigTreeNodeAlias::alias_type writeConfigTreeNodeAlias(const ConfigTreeNodeAlias&) override;
 
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type&) override;
+
+  StatusCode stop() override;
+
 private:
-  MsgStream& verbose() const { return msg(MSG::VERBOSE); }
-  MsgStream& debug() const { return msg(MSG::DEBUG); }
-  MsgStream& info() const { return msg(MSG::INFO); }
-  MsgStream& warning() const { return msg(MSG::WARNING); }
-  MsgStream& error() const { return msg(MSG::ERROR); }
-  MsgStream& fatal() const { return msg(MSG::FATAL); }
-  MsgStream& always() const { return msg(MSG::ALWAYS); }
-  
+
   ConfigCDBAccessSvc_details::CDB*  file() const;
 
-  mutable std::unique_ptr<MsgStream> m_msg;
-  mutable std::string                m_name;   ///< filename of tar file from which to read configurations
-  std::string                        m_mode;   ///< which flags to specify when opening the tar file
+  mutable Gaudi::Property<std::string> m_name{ this, "File" } ;   ///< filename of tar file from which to read configurations
+  // todo: use Parse and toStream directly
+  Gaudi::Property<std::string>         m_mode{ this, "Mode", "ReadOnly" };   ///< which flags to specify when opening the tar file
+  Gaudi::Property<std::string>         m_incident { this, "CloseIncident" };   ///< the incident to
+  mutable std::mutex                                       m_file_mtx;
   mutable std::unique_ptr<ConfigCDBAccessSvc_details::CDB> m_file;
+  std::unique_ptr<IIncidentListener> m_initListener;
 
   template <typename T> boost::optional<T> read(const std::string& path) const;
   template <typename T> bool write(const std::string& path,const T& object) const;
@@ -65,6 +66,5 @@ private:
   std::string configTreeNodePath( const ConfigTreeNode::digest_type& digest ) const;
   std::string configTreeNodeAliasPath( const ConfigTreeNodeAlias::alias_type& alias ) const;
 
-  MsgStream& msg(MSG::Level level) const;
 };
 #endif // CONFIGTARFILEACCESSSVC_H

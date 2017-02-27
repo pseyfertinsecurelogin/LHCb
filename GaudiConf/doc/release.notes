@@ -3,6 +3,34 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+! 2016-07-27 - Marco Cattaneo
+ - IOHelper: remove test on GaudiSvc version before v18r16 as it is obsolete and
+   relies on CMT support which will soon be removed
+
+! 2016-04-27 - Rosen Matev
+ - Fix offline location for neutrals for persist reco
+
+!========================= GaudiConf v19r20 2016-04-21 =========================
+
+! 2016-04-21 - Rosen Matev
+ - Separate out Turbo configuration from DstConf into TurboConf.
+   PersistReco = True enables unpacking of PR data and linking to the proper PVs
+
+! 2016-04-20 - Rosen Matev
+ - Add explicit dependency on EventPacker
+
+!========================= GaudiConf v19r19 2016-04-18 =========================
+
+! 2016-04-18 - Rosen Matev
+ - Separate out packing configuration for persist reco.
+   This eliminates duplication in HltPersistReco and DAQSys.Decoders.
+
+!========================= GaudiConf v19r18 2016-04-11 =========================
+
+! 2016-04-06 - Rosen Matev
+ - DstConf: Add persist reco unpackers for downstream Rich PID and MuonSegments
+   and EcalSplitClusters
+
 !========================= GaudiConf v19r17 2016-03-16 =========================
 ! 2016-03-16 - Gloria Corti
  - SimConf: Add possibility to write Bls and Bcm MCHits

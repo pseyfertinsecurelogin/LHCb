@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCDECAYS_H
 #define LOKI_MCDECAYS_H 1
@@ -37,11 +36,11 @@ namespace Decays
      *  "semi-exclusive" decay (as well as any decay with the fixed
      *  number of components for comparisons).
      *
-     *  Define the regular decay, e.g. \f$ B^0 \to \pi^+ \pi^- \f$: 
+     *  Define the regular decay, e.g. \f$ B^0 \to \pi^+ \pi^- \f$:
      *
-     *  @code 
+     *  @code
      *
-     *   // " B0 -> pi+ pi- " 
+     *   // " B0 -> pi+ pi- "
      *
      *   using namespace Decays ;
      *   typedef Decays::Trees::MCExclusive::TreeList Children ;
@@ -49,24 +48,24 @@ namespace Decays
      *   Children children ;
      *   children.push_back ( Trees::MCExclusive( "pi+" ) ) ;
      *   children.push_back ( Trees::MCExclusive( "pi-" ) ) ;
-     * 
-     *   const Trees::MCExclusive decay 
-     *                ( "B0"     ,    // the parent 
-     *                  children ) ;  // children  
-     * 
-     *  @endcode 
-     * 
-     *  Define the "decay-in-sections", e.g. all following 
-     *  decays will be correctly matched with the descriptor 
+     *
+     *   const Trees::MCExclusive decay
+     *                ( "B0"     ,    // the parent
+     *                  children ) ;  // children
+     *
+     *  @endcode
+     *
+     *  Define the "decay-in-sections", e.g. all following
+     *  decays will be correctly matched with the descriptor
      *  <c>" B0 --> pi+ pi- pi0 "</c>":
-     *    - \f$ B^0 \to \left( \rho^0 \to \pi^+ \pi^-   \right) 
+     *    - \f$ B^0 \to \left( \rho^0 \to \pi^+ \pi^-   \right)
      *               \left( \pi^0  \to \gamma \gamma \right) \f$
-     *    - \f$ B^0 \to \left( \rho^+ \to \pi^+ \pi^0   \right) \pi^-\f$ 
-     *    - \f$ B^0 \to \left( \rho^- \to \pi^- \pi^0   \right) \pi^+\f$ 
+     *    - \f$ B^0 \to \left( \rho^+ \to \pi^+ \pi^0   \right) \pi^-\f$
+     *    - \f$ B^0 \to \left( \rho^- \to \pi^- \pi^0   \right) \pi^+\f$
      *
-     *  @code 
+     *  @code
      *
-     *   // " B0 --> pi+ pi- pi0 " 
+     *-   // " B0 --> pi+ pi- pi0 "
      *
      *   using namespace Decays ;
      *   typedef Decays::Trees::MCExclusive::SubTrees Children ;
@@ -75,26 +74,26 @@ namespace Decays
      *   children.push_back ( Trees::MCExclusive ( "pi+" ) ) ;
      *   children.push_back ( Trees::MCExclusive ( "pi-" ) ) ;
      *   children.push_back ( Trees::MCExclusive ( "pi0" ) ) ;
-     * 
-     *   const Trees::MCExclusive decay 
-     *                ( "B0"            ,   // the parent 
-     *                  children        ,   // children  
-     *                  Trees::Sections ) ; // matching algorithm 
-     * 
-     *  @endcode 
-     * 
-     * 
-     *  <c>Algorithm</c> and <c>DecayOnly</c> are defined through 
+     *
+     *   const Trees::MCExclusive decay
+     *                ( "B0"            ,   // the parent
+     *                  children        ,   // children
+     *                  Trees::Sections ) ; // matching algorithm
+     *
+     *  @endcode
+     *
+     *
+     *  <c>Algorithm</c> and <c>DecayOnly</c> are defined through
      *  the type of "arrow":
      *
-     *     - <c>"->"</c> Search withing the direct daughter particles, 
-     *                   ignore the partricles form "non-decay" vertices 
-     *     - <c>"-->"</c> Search withing the decay sections. 
-     *                   ignore the partricles form "non-decay" vertices 
-     *     - <c>"-x>"</c> Search withing the direct daughter particles, 
-     *                    including the particles from non-decay vertices 
-     *     - <c>"--x>"</c> Search withing the decay sections. 
-     *                    including the particles from non-decay vertices 
+     *     - <c>"->"</c> Search withing the direct daughter particles,
+     *                   ignore the partricles form "non-decay" vertices
+     *     - <c>"-->"</c> Search withing the decay sections.
+     *                   ignore the partricles form "non-decay" vertices
+     *     - <c>"-x>"</c> Search withing the direct daughter particles,
+     *                    including the particles from non-decay vertices
+     *     - <c>"--x>"</c> Search withing the decay sections.
+     *                    including the particles from non-decay vertices
      *
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-13
@@ -104,7 +103,7 @@ namespace Decays
     protected:
       // ======================================================================
       typedef const LHCb::MCParticle*                                PARTICLE ;
-      /// type provider 
+      /// type provider
       typedef Decays::Trees::Types_<PARTICLE>                        Types    ;
       // ======================================================================
     public:
@@ -114,7 +113,7 @@ namespace Decays
       // ======================================================================
     public:
       // ======================================================================
-      /** full constructor from the node (mother), subtrees & flags 
+      /** full constructor from the node (mother), subtrees & flags
        *  @param mother the mother node
        *  @param children the list of daughter substrees
        *  @param alg the matching algorithm
@@ -145,7 +144,7 @@ namespace Decays
       MCExclusive
       ( const Oscillation          oscillated ,
         const Decays::iNode&       mother     ) ;
-      /** constructor from the decay and flags 
+      /** constructor from the decay and flags
        *  @param decay the decay descriptor
        *  @param alg the matching algorithm
        *  @param decayOnly the flag to search only through decay products
@@ -156,30 +155,28 @@ namespace Decays
         const Alg                  alg        = Daughters ,
         const bool                 decayOnly  = true      ,
         const Oscillation          oscillated = Undefined ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MCExclusive () {}
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  MCExclusive* clone() const { return new MCExclusive ( *this ) ; }
+      MCExclusive* clone() const override { return new MCExclusive ( *this ) ; }
       /// MANDATORY: the only one essential method:
-      virtual bool operator()
-        ( Decays::iTree_<PARTICLE>::argument p ) const ;
+      bool operator()
+        ( Decays::iTree_<PARTICLE>::argument p ) const override;
       /// MANDATORY: check the validity
-      virtual bool valid() const ;
+      bool valid() const  override;
       /// MANDATORY: validate the tree
-      virtual StatusCode validate 
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate
+      ( const LHCb::IParticlePropertySvc* svc ) const override;
       /// MANDATORY: reset the tree
-      virtual void reset () const ;
+      void reset () const  override;
       /// collect the marked elements
-      virtual size_t collect
-      ( Decays::iTree_<PARTICLE>::Collection& output ) const ;
+      size_t collect
+      ( Decays::iTree_<PARTICLE>::Collection& output ) const override;
       /// has marked decays in tree ?
-      virtual bool marked() const ;
+      bool marked() const  override;
       /// MANDATORY: the specific printout
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
@@ -263,7 +260,7 @@ namespace Decays
       TreeList::const_iterator  childBegin () const { return m_children.begin () ; }
       TreeList::const_iterator  childEnd   () const { return m_children.end   () ; }
       TreeList::const_reference front      () const { return m_children.front () ; }
-      TreeList::const_reference back       () const { return m_children.back  () ; }        
+      TreeList::const_reference back       () const { return m_children.back  () ; }
       // ======================================================================
       size_t nChildren () const { return m_children.size() ; }
       // ======================================================================
@@ -279,11 +276,6 @@ namespace Decays
       // ======================================================================
       inline bool mother ( const LHCb::ParticleID& pid ) const
       { return m_mother.node ( pid ) ;  }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      MCExclusive () ;                   // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -306,11 +298,11 @@ namespace Decays
      *  subtrees ("children"). Essentially it represent the
      *  inclusive decays.
      *
-     *  Define the regular decay, e.g. \f$ B^0 \to \pi^+ \pi^- + ... \f$: 
+     *  Define the regular decay, e.g. \f$ B^0 \to \pi^+ \pi^- + ... \f$:
      *
-     *  @code 
+     *  @code
      *
-     *   // " B0 -> pi+ pi- ... " 
+     *   // " B0 -> pi+ pi- ... "
      *
      *   using namespace Decays ;
      *   typedef Decays::Trees::MCExclusive::TreeList Children ;
@@ -318,29 +310,29 @@ namespace Decays
      *   Children children ;
      *   children.push_back ( Trees::MCExclusive( "pi+" ) ) ;
      *   children.push_back ( Trees::MCExclusive( "pi-" ) ) ;
-     * 
-     *   const Trees::MCInclusive decay 
-     *                ( "B0"     ,    // the parent 
-     *                  children ) ;  // children  
-     * 
-     *  @endcode 
-     * 
-     *  Define the "decay-in-sections", e.g. all following 
-     *  decays will be correctly matched with the descriptor 
+     *
+     *   const Trees::MCInclusive decay
+     *                ( "B0"     ,    // the parent
+     *                  children ) ;  // children
+     *
+     *  @endcode
+     *
+     *  Define the "decay-in-sections", e.g. all following
+     *  decays will be correctly matched with the descriptor
      *  <c>" B0 --> pi+ pi- pi0 "</c>":
-     *    - \f$ B^0 \to \left( \rho^0 \to \pi^+ \pi^-  + ... \right) 
+     *    - \f$ B^0 \to \left( \rho^0 \to \pi^+ \pi^-  + ... \right)
      *               \left( \pi^0  \to \gamma \gamma \right) \f$
-     *    - \f$ B^0 \to \left( \rho^0 \to \pi^+ \pi^- \right) 
+     *    - \f$ B^0 \to \left( \rho^0 \to \pi^+ \pi^- \right)
      *               \left( \pi^0  \to \gamma \gamma \right) + ... \f$
-     *    - \f$ B^0 \to \left( \rho^+ \to \pi^+ \pi^0  + ... \right) \pi^-\f$ 
-     *    - \f$ B^0 \to \left( \rho^+ \to \pi^+ \pi^0  \right) \pi^- + ... \f$ 
-     *    - \f$ B^0 \to \left( \rho^- \to \pi^- \pi^0  + ... \right) \pi^+\f$ 
-     *    - \f$ B^0 \to \left( \rho^- \to \pi^- \pi^0   \right) + ... \pi^+\f$ 
-     *    - \f$ B^0 \to \pi^+ \pi^- \pi^0 + ... \f$ 
+     *    - \f$ B^0 \to \left( \rho^+ \to \pi^+ \pi^0  + ... \right) \pi^-\f$
+     *    - \f$ B^0 \to \left( \rho^+ \to \pi^+ \pi^0  \right) \pi^- + ... \f$
+     *    - \f$ B^0 \to \left( \rho^- \to \pi^- \pi^0  + ... \right) \pi^+\f$
+     *    - \f$ B^0 \to \left( \rho^- \to \pi^- \pi^0   \right) + ... \pi^+\f$
+     *    - \f$ B^0 \to \pi^+ \pi^- \pi^0 + ... \f$
      *
-     *  @code 
+     *  @code
      *
-     *   // " B0 --> pi+ pi- pi0 ... " 
+     *   // " B0 --> pi+ pi- pi0 ... "
      *
      *   using namespace Decays ;
      *   typedef Decays::Trees::MCExclusive::TreeList Children ;
@@ -349,38 +341,38 @@ namespace Decays
      *   children.push_back ( Trees::MCExclusive ( "pi+" ) ) ;
      *   children.push_back ( Trees::MCExclusive ( "pi-" ) ) ;
      *   children.push_back ( Trees::MCExclusive ( "pi0" ) ) ;
-     * 
-     *   const Trees::MCInclusive decay 
-     *                ( "B0"            ,   // the parent 
-     *                  children        ,   // children  
-     *                  Trees::Sections ) ; // matching algorithm 
-     * 
-     *  @endcode 
      *
-     *  <c>Algorithm</c> and <c>DecayOnly</c> are defined through 
+     *   const Trees::MCInclusive decay
+     *                ( "B0"            ,   // the parent
+     *                  children        ,   // children
+     *                  Trees::Sections ) ; // matching algorithm
+     *
+     *  @endcode
+     *
+     *  <c>Algorithm</c> and <c>DecayOnly</c> are defined through
      *  the type of "arrow":
      *
-     *     - <c>"->"</c> Search withing the direct daughter particles, 
-     *                   ignore the partricles form "non-decay" vertices 
-     *     - <c>"-->"</c> Search withing the decay sections. 
-     *                   ignore the partricles form "non-decay" vertices 
-     *     - <c>"-x>"</c> Search withing the direct daughter particles, 
-     *                    including the particles from non-decay vertices 
-     *     - <c>"--x>"</c> Search withing the decay sections. 
-     *                    including the particles from non-decay vertices 
+     *     - <c>"->"</c> Search withing the direct daughter particles,
+     *                   ignore the partricles form "non-decay" vertices
+     *     - <c>"-->"</c> Search withing the decay sections.
+     *                   ignore the partricles form "non-decay" vertices
+     *     - <c>"-x>"</c> Search withing the direct daughter particles,
+     *                    including the particles from non-decay vertices
+     *     - <c>"--x>"</c> Search withing the decay sections.
+     *                    including the particles from non-decay vertices
      *
-     *  The most convinine tway to create the inclusive decay is from 
+     *  The most convinine tway to create the inclusive decay is from
      *  the regular decay:
-     * 
-     *  @code 
+     *
+     *  @code
      *
      *   using namespace Decays ;
-     * 
-     *   const Trees::MCExclsuive& regular = .... ;   
-     * 
+     *
+     *   const Trees::MCExclsuive& regular = .... ;
+     *
      *   const Trees::MCInclusive decay ( regular ) ;
-     * 
-     *  @endcode 
+     *
+     *  @endcode
      *
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-04-13
@@ -413,8 +405,8 @@ namespace Decays
         const Alg                  alg        = Daughters ,
         const bool                 decayOnly  = true      ,
         const Oscillation          oscillated = Undefined ) ;
-      /** constructor from the decay descriptor and flags 
-       *  @param decay the decay 
+      /** constructor from the decay descriptor and flags
+       *  @param decay the decay
        *  @param alg the matching algorithm
        *  @param decayOnly the flag to search only through decay products
        *  @param oscillated check the oscilaltion flag
@@ -424,33 +416,30 @@ namespace Decays
         const Alg                  alg        = Daughters ,
         const bool                 decayOnly  = true      ,
         const Oscillation          oscillated = Undefined ) ;
-      /// constructor from any exclusive 
+      /// constructor from any exclusive
       MCInclusive ( const MCExclusive& exclusive ) ;
-      // ======================================================================
-      /// MANDATORY: virtual destructor
-      virtual ~MCInclusive () {}
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  MCInclusive* clone() const { return new MCInclusive ( *this ) ; }
+      MCInclusive* clone() const override { return new MCInclusive ( *this ) ; }
       /// MANDATORY: check the validity of the tree
-      virtual bool valid() const ;
+      bool valid() const  override;
       /// MANDATORY: the specific printout
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
       /// MANDATORY: implementation of operator()
-      virtual bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const ;
+      bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// add one more node to the tree
-      MCInclusive& operator+= ( const Decays::iTree_<PARTICLE>& tree ) 
+      MCInclusive& operator+= ( const Decays::iTree_<PARTICLE>& tree )
       { addDaughter ( tree ) ; return *this ; }
       /// add one more node to the tree
-      MCInclusive& operator+= ( const Decays::iNode& node ) 
+      MCInclusive& operator+= ( const Decays::iNode& node )
       { addDaughter ( node ) ; return *this ; }
       /// add one more node to the tree
       MCInclusive& operator+= ( const Decays::Decay::Item&   node )
@@ -465,10 +454,6 @@ namespace Decays
       MCInclusive& operator+= ( const LHCb::ParticleProperty*    node )
       { addDaughter ( node ) ; return *this ; }
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      MCInclusive () ;                   // the default constructor is disabled
       // ======================================================================
     };
     // ========================================================================
@@ -484,11 +469,11 @@ namespace Decays
     public:
       // ======================================================================
       /** full constructor from the node (mother) and subtrees
-       *  @param mother the mother node 
-       *  @param children the list of children 
-       *  @param optional the list of optional components 
-       *  @param alg the matching algorithm 
-       *  @param decayOnly the flag to search only through decay products 
+       *  @param mother the mother node
+       *  @param children the list of children
+       *  @param optional the list of optional components
+       *  @param alg the matching algorithm
+       *  @param decayOnly the flag to search only through decay products
        *  @param oscillation check the oscilaltion flag
        */
       MCOptional
@@ -499,11 +484,11 @@ namespace Decays
         const bool                 decayOnly  = true        ,
         const Oscillation          oscillated = Undefined   ) ;
       // ======================================================================
-      /** constructor from decay descriptor, optional and flags 
+      /** constructor from decay descriptor, optional and flags
        *  @param decay the decay descriptor
-       *  @param optional the list of optional components 
-       *  @param alg the matching algorithm 
-       *  @param decayOnly the flag to search only through decay products 
+       *  @param optional the list of optional components
+       *  @param alg the matching algorithm
+       *  @param decayOnly the flag to search only through decay products
        *  @param oscillation check the oscilaltion flag
        */
       MCOptional
@@ -512,32 +497,32 @@ namespace Decays
         const Alg                  alg        = Daughters   ,
         const bool                 decayOnly  = true        ,
         const Oscillation          oscillated = Undefined   ) ;
-      /// constructor form the constructed tree 
-      MCOptional 
-      ( const MCExclusive& right                  , 
+      /// constructor form the constructed tree
+      MCOptional
+      ( const MCExclusive& right                  ,
         const TreeList&    optional = TreeList () ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~MCOptional () {}
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  MCOptional* clone() const
+      MCOptional* clone() const override
       { return new MCOptional ( *this ) ; }
       /// MANDATORY: check the validity of the tree
-      virtual bool valid() const ;
+      bool valid() const  override;
       /// MANDATORY: the specific printout
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       /// MANDATORY: the proper validation of the tree
-      virtual  StatusCode validate 
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate
+      ( const LHCb::IParticlePropertySvc* svc ) const override;
       /// has marked decays in tree ?
-      virtual bool marked() const ;
+      bool marked() const  override;
+      /// MANDATORY: reset the tree
+      void reset () const  override;
       // ======================================================================
     private:
       // ======================================================================
       /// MANDATORY: implementation of operator()
-      virtual bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const ;
+      bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -563,10 +548,10 @@ namespace Decays
     public:
       // ======================================================================
       /// add one more node to the tree
-      MCOptional& operator+= ( const Decays::iTree_<PARTICLE>& node ) 
+      MCOptional& operator+= ( const Decays::iTree_<PARTICLE>& node )
       { addDaughter ( node ) ; return *this ; }
       /// add one more node to the tree
-      MCOptional& operator+= ( const Decays::iNode& node ) 
+      MCOptional& operator+= ( const Decays::iNode& node )
       { addDaughter ( node ) ; return *this ; }
       /// add one more node to the tree
       MCOptional& operator+= ( const Decays::Decay::Item&   node )
@@ -590,11 +575,6 @@ namespace Decays
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      MCOptional () ;                    // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the optional particles in the tree
       TreeList m_optional ;               // the optional particles in the tree
       // ======================================================================
@@ -610,10 +590,10 @@ namespace Decays
     public:
       // ======================================================================
       /** full constructor from the node (mother) and subtrees
-       *  @param mother the mother node 
+       *  @param mother the mother node
        *  @param children the list of children
-       *  @param alg the matching algorithm 
-       *  @param decayOnly the flag to search only through decay products 
+       *  @param alg the matching algorithm
+       *  @param decayOnly the flag to search only through decay products
        *  @param oscillation check the oscilaltion flag
        */
       Photos
@@ -622,48 +602,46 @@ namespace Decays
         const Decays::Trees::Alg alg        = Daughters ,
         const bool               decayOnly  = true      ,
         const Oscillation        oscillated = Undefined ) ;
-      /** constructor from the decay descriptor and flags 
-       *  @param decay the decay descriptor 
-       *  @param alg the matching algorithm 
-       *  @param decayOnly the flag to search only through decay products 
+      /** constructor from the decay descriptor and flags
+       *  @param decay the decay descriptor
+       *  @param alg the matching algorithm
+       *  @param decayOnly the flag to search only through decay products
        *  @param oscillation check the oscilaltion flag
-       */  
+       */
       Photos
       ( const Decays::Decay&     decay                  ,
         const Decays::Trees::Alg alg        = Daughters ,
         const bool               decayOnly  = true      ,
         const Oscillation        oscillated = Undefined ) ;
-      /// constructor from MC-exclusive )                   
+      /// constructor from MC-exclusive )
       Photos ( const MCExclusive& decay ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Photos () {}
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Photos* clone() const { return new Photos ( *this ) ; }
+      Photos* clone() const override { return new Photos ( *this ) ; }
       /// MANDATORY: check the validness
-      virtual bool valid () const
+      bool valid () const override
       { return m_photon.valid() && MCExclusive::valid() ; }
       /// MANDATORY: the proper validation of the tree
-      virtual  StatusCode validate 
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate
+      ( const LHCb::IParticlePropertySvc* svc ) const override;
       /// MANDATORY: the specific printout
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
       /// MANDATORY: implementation of operator()
-      virtual bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const ;
+      bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// add one more node to the tree
-      Photos& operator+= ( const Decays::iTree_<PARTICLE>& node ) 
-      { addDaughter ( node ) ; return *this ; }          
+      Photos& operator+= ( const Decays::iTree_<PARTICLE>& node )
+      { addDaughter ( node ) ; return *this ; }
       /// add one more node to the tree
-      Photos& operator+= ( const Decays::iNode& node ) 
-      { addDaughter ( node ) ; return *this ; }          
+      Photos& operator+= ( const Decays::iNode& node )
+      { addDaughter ( node ) ; return *this ; }
       /// add one more node to the tree
       Photos& operator+= ( const Decays::Decay::Item&   node )
       { addDaughter ( node ) ; return *this ; }
@@ -676,11 +654,6 @@ namespace Decays
       /// add one more node to the tree
       Photos& operator+= ( const LHCb::ParticleProperty*    node )
       { addDaughter ( node ) ; return *this ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Photos () ;                        // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -701,11 +674,11 @@ namespace Decays
     public:
       // ======================================================================
       /** full constructor from the node (mother) and subtrees
-       *  @param mother the mother node 
-       *  @param children the list of children 
-       *  @param optional the list of optional components 
-       *  @param alg the matching algorithm 
-       *  @param decayOnly the flag to search only through decay products 
+       *  @param mother the mother node
+       *  @param children the list of children
+       *  @param optional the list of optional components
+       *  @param alg the matching algorithm
+       *  @param decayOnly the flag to search only through decay products
        *  @param oscillation check the oscilaltion flag
        */
       PhotosOptional
@@ -715,11 +688,11 @@ namespace Decays
         const Alg            alg        = Daughters   ,
         const bool           decayOnly  = true        ,
         const Oscillation    oscillated = Undefined   ) ;
-      /** constructor from decay descriptor, optional and flags 
+      /** constructor from decay descriptor, optional and flags
        *  @param decay the decay descriptor
-       *  @param optional the list of optional components 
-       *  @param alg the matching algorithm 
-       *  @param decayOnly the flag to search only through decay products 
+       *  @param optional the list of optional components
+       *  @param alg the matching algorithm
+       *  @param decayOnly the flag to search only through decay products
        *  @param oscillation check the oscilaltion flag
        */
       PhotosOptional
@@ -731,38 +704,36 @@ namespace Decays
       /// constructor from MCOptional
       PhotosOptional ( const MCOptional& right ) ;
       /// constructor from the tree with optional stuff
-      PhotosOptional 
+      PhotosOptional
       ( const MCExclusive& right    ,
-        const TreeList&    optional ) ;          
-      /// MANDATORY: virtual destructor
-      virtual ~PhotosOptional () {}
+        const TreeList&    optional ) ;
       // ======================================================================
     public:
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  PhotosOptional* clone() const
+      PhotosOptional* clone() const override
       { return new PhotosOptional ( *this ) ; }
       /// MANDATORY: the specific printout
-      virtual  std::ostream& fillStream( std::ostream& s ) const ;
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
       /// MANDATORY: check the validness
-      virtual bool valid () const ;
+      bool valid () const  override;
       /// MANDATORY: the proper validation of the tree
-      virtual  StatusCode validate 
-      ( const LHCb::IParticlePropertySvc* svc ) const ;
+      StatusCode validate
+      ( const LHCb::IParticlePropertySvc* svc ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// MANDATORY: implementation of operator()
-      virtual bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const ;
+      bool p_match ( Decays::iTree_<PARTICLE>::argument p ) const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// add one more node to the tree
-      PhotosOptional& operator+= ( const Decays::iTree_<PARTICLE>& node ) 
+      PhotosOptional& operator+= ( const Decays::iTree_<PARTICLE>& node )
       { addDaughter ( node ) ; return *this ; }
       /// add one more node to the tree
-      PhotosOptional& operator+= ( const Decays::iNode& node ) 
+      PhotosOptional& operator+= ( const Decays::iNode& node )
         { addDaughter ( node ) ; return *this ; }
       /// add one more node to the tree
       PhotosOptional& operator+= ( const Decays::Decay::Item&   node )
@@ -779,11 +750,6 @@ namespace Decays
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      PhotosOptional () ;                // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// the photon subtree/node ("photon")
       Decays::Nodes::Pid m_photon     ;   // the photon subtree/node ("photon")
       // ======================================================================
@@ -791,7 +757,7 @@ namespace Decays
     // ========================================================================
     // treat properly the stable trees
     // ========================================================================
-    template <> bool Stable_<const LHCb::MCParticle*>::operator() 
+    template <> bool Stable_<const LHCb::MCParticle*>::operator()
       ( Decays::iTree_<const LHCb::MCParticle*>::argument p ) const ;
     // ========================================================================
   } //                                           end of namespace Decays::Trees

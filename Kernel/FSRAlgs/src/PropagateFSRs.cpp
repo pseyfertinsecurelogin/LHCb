@@ -28,22 +28,10 @@ DECLARE_ALGORITHM_FACTORY( PropagateFSRs )
 //=============================================================================
 PropagateFSRs::PropagateFSRs( const std::string& name,
                                 ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ),
-    m_fileRecordSvc(0),
-    m_rawEventLocation(""),
-    m_incSvc(0),
-    m_filename(""),
-    m_ioDataManager(0),
-    m_fidMap(),
-    m_knownFiles()
+  : GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty( "RawEventLocation"  ,  m_rawEventLocation = LHCb::RawEventLocation::Default );
-  
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-PropagateFSRs::~PropagateFSRs() {} 
 
 //=============================================================================
 // Initialization
@@ -55,9 +43,9 @@ StatusCode PropagateFSRs::initialize() {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
   // get the File Records service
-  m_fileRecordSvc = svc<IDataProviderSvc>("FileRecordDataSvc", true);
+  m_fileRecordSvc = service("FileRecordDataSvc", true);
   
-  m_incSvc = svc<IIncidentSvc> ( "IncidentSvc" , true );
+  m_incSvc = service ( "IncidentSvc" , true );
   
   //check extended file incidents are defined
 #ifdef GAUDI_FILE_INCIDENTS

@@ -14,7 +14,7 @@
     @date December 2001
 *///--------------------------------------------------------------------------
 
-class IFastControl : virtual public IConditionInfo
+struct IFastControl : virtual IConditionInfo
 {
 
 };

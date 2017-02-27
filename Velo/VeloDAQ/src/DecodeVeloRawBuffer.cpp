@@ -54,18 +54,13 @@ DecodeVeloRawBuffer::DecodeVeloRawBuffer( const std::string& name,
   m_defaultRawEventLocations={LHCb::RawEventLocation::Velo,    // When only VELO retained in stripping
 			      LHCb::RawEventLocation::Other,   // Stripping default
 			      LHCb::RawEventLocation::Default};// RAW default
-			
+
   m_rawEventLocations.resize(m_defaultRawEventLocations.size(),"");
   std::copy(m_defaultRawEventLocations.begin(),
 	    m_defaultRawEventLocations.end(),m_rawEventLocations.begin());
   initRawEventSearch();
 }
 
-
-//=============================================================================
-// Destructor
-//=============================================================================
-DecodeVeloRawBuffer::~DecodeVeloRawBuffer() {}
 
 //=============================================================================
 // Initialisation. Check parameters
@@ -116,9 +111,6 @@ StatusCode DecodeVeloRawBuffer::initialize() {
     info() << "Using '" << m_rawEventLocations << "' as search path for the RawEvent object" << endmsg;
   }
 
-  // Pointer to IncidentSvc
-  m_incidentSvc = svc<IIncidentSvc>("IncidentSvc",true);
-
   return StatusCode::SUCCESS;
 }
 
@@ -127,13 +119,11 @@ StatusCode DecodeVeloRawBuffer::initialize() {
 //=============================================================================
 StatusCode DecodeVeloRawBuffer::execute() {
 
-  // reset TELL1 event info on all sensors to 'bad'.
-  // it is necessary to do this here to handle the case of unknown source
-  // IDs correctly.
-  for ( std::vector<DeVeloSensor*>::const_iterator si=m_velo->sensorsBegin();
-      si != m_velo->sensorsEnd();
-      ++si ) {
-    (*si)->tell1EventInfo().reset();
+  auto decStatus =
+    getIfExists<LHCb::VeloDecodeStatus>(m_veloLiteClusterLocation+"DecStatus");
+  if( !decStatus ){
+    decStatus = new LHCb::VeloDecodeStatus();
+    put(decStatus,m_veloLiteClusterLocation+"DecStatus");
   }
 
   // Retrieve the RawEvent:
@@ -143,6 +133,7 @@ StatusCode DecodeVeloRawBuffer::execute() {
     if( msgLevel( MSG::DEBUG ) )
       debug() << "Raw Event not found in " << m_rawEventLocations << endmsg;
     createEmptyBanks();
+    put(decStatus,m_veloLiteClusterLocation+"DecStatus");
     return StatusCode::SUCCESS;
   }
 
@@ -152,13 +143,13 @@ StatusCode DecodeVeloRawBuffer::execute() {
 
   // decode to lite clusters, if requested, bail out if something goes wrong
   if (m_decodeToVeloLiteClusters) {
-    sc = decodeToVeloLiteClusters(banks);
+    sc = decodeToVeloLiteClusters(banks,decStatus);
     if (sc.isFailure()) return sc;
   }
 
   // decode to clusters, if requested, bail out if something goes wrong
   if (m_decodeToVeloClusters) {
-    sc = decodeToVeloClusters(banks);
+    sc = decodeToVeloClusters(banks,decStatus);
     if (sc.isFailure()) return sc;
   }
 
@@ -169,8 +160,9 @@ StatusCode DecodeVeloRawBuffer::execute() {
 // Private helpers
 //=============================================================================
 
-StatusCode DecodeVeloRawBuffer::decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks) const
-{
+StatusCode DecodeVeloRawBuffer::
+decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks,
+			 LHCb::VeloDecodeStatus *decStatus) const {
   LHCb::VeloLiteCluster::FastContainer* fastCont = new LHCb::VeloLiteCluster::FastContainer();
 
   // make sure we have enough capacity in the container
@@ -210,10 +202,6 @@ StatusCode DecodeVeloRawBuffer::decodeToVeloLiteClusters(const std::vector<LHCb:
                                                        *fastCont, m_ignoreErrors);
     }
 
-    // reset the TELL1 event info in case the flags for this sensor were cleared in
-    // a another decoder branch
-    sensor->tell1EventInfo().reset();
-
     if( nClusters == -1 ) {
       if ( !m_ignoreErrors ) {
         if ( msgLevel( MSG::DEBUG ) ) debug() << "Header error bit set in raw bank source ID "
@@ -222,10 +210,9 @@ StatusCode DecodeVeloRawBuffer::decodeToVeloLiteClusters(const std::vector<LHCb:
                          rb->sourceID()),
                   "HeaderErrorVeloBuffer",HeaderErrorBit,false);
         // no clusters produced so continue
+	decStatus->setDecoderState(sensor->sensorNumber(),false);
         continue;
       }
-    } else { // there was no error, update TELL1 event info
-      sensor->tell1EventInfo().setHasError(false);
     }
 
     if ( m_doLengthCheck && (rb->size() != byteCount) ) {
@@ -239,9 +226,9 @@ StatusCode DecodeVeloRawBuffer::decodeToVeloLiteClusters(const std::vector<LHCb:
       // assume all clusters from the bad sensor at the end
       if (nClusters>0) fastCont->resize( fastCont->size() - nClusters );
       // a wrong byte count is also considered an error
-      sensor->tell1EventInfo().setHasError(true);
-    } else { // we got clusters decoded from this bank, update TELL1 event info
-      sensor->tell1EventInfo().setWasDecoded(true);
+      decStatus->setDecoderState(sensor->sensorNumber(),false);
+    } else { // we got clusters decoded from this bank, update decode status
+      decStatus->setDecoderState(sensor->sensorNumber(),true);
     }
   }
   if( fastCont->size() > m_maxVeloClusters){
@@ -257,7 +244,7 @@ StatusCode DecodeVeloRawBuffer::decodeToVeloLiteClusters(const std::vector<LHCb:
   return StatusCode::SUCCESS;
 }
 
-StatusCode DecodeVeloRawBuffer::decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks)
+StatusCode DecodeVeloRawBuffer::decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks,LHCb::VeloDecodeStatus* decStatus) const
 {
   auto clusters = std::unique_ptr<LHCb::VeloClusters>(new LHCb::VeloClusters());
 
@@ -289,10 +276,6 @@ StatusCode DecodeVeloRawBuffer::decodeToVeloClusters(const std::vector<LHCb::Raw
           "BadTELL1IDMapping",BadTELL1IDMapping,false);
       continue;
     }
-
-    // reset the TELL1 event info in case the flags for this sensor were cleared in
-    // a another decoder branch
-    sensor->tell1EventInfo().reset();
 
     unsigned int bankVersion = m_forcedBankVersion ? m_forcedBankVersion : rb->version();
 
@@ -338,10 +321,9 @@ StatusCode DecodeVeloRawBuffer::decodeToVeloClusters(const std::vector<LHCb::Raw
               rb->sourceID()),
             "HeaderErrorVeloBuffer",HeaderErrorBit,false);
         // no clusters produced so continue
+	decStatus->setDecoderState(sensor->sensorNumber(), false);
         continue;
       }
-    } else { // there was no error, update TELL1 event info
-      sensor->tell1EventInfo().setHasError(false);
     }
 
     if (rb->size() != byteCount) {
@@ -352,14 +334,13 @@ StatusCode DecodeVeloRawBuffer::decodeToVeloClusters(const std::vector<LHCb::Raw
       failEvent(format("Raw data corruption in the VELO, bank source ID %i",
             rb->sourceID()),
           "CorruptVeloBuffer",CorruptVeloBuffer,false);
-      sensor->tell1EventInfo().setHasError(true);
+      decStatus->setDecoderState(sensor->sensorNumber(), false);
       StatusCode sc = replaceFullFromLite(*clusters,sensor->sensorNumber(),
-                                          banks);
+                                          banks, decStatus);
       if(!sc) return Error("Failed to convert lite to fake full VELO clusters");
     } else { // we got clusters decoded from this bank, update TELL1 event info
-      sensor->tell1EventInfo().setWasDecoded(true);
+      decStatus->setDecoderState(sensor->sensorNumber(), true);
     }
-
   }
 
   if( clusters->size() > m_maxVeloClusters){
@@ -433,7 +414,8 @@ void DecodeVeloRawBuffer::failEvent(const std::string &ErrorText,
 StatusCode DecodeVeloRawBuffer::
 replaceFullFromLite(LHCb::VeloClusters& clusters,
                     unsigned int nSensor,
-                    const std::vector<LHCb::RawBank*>& banks) const {
+                    const std::vector<LHCb::RawBank*>& banks,
+		    LHCb::VeloDecodeStatus *decStatus) const {
 
   unsigned int msgCount = 1;
   if ( msgLevel(MSG::DEBUG) ) msgCount = 10;
@@ -445,7 +427,7 @@ replaceFullFromLite(LHCb::VeloClusters& clusters,
   if(!veloLiteClusters){
     // not asked to decode in options and no DOD setup :(
     // But we are the decoder! We can make the container ourselves
-    StatusCode sc = decodeToVeloLiteClusters(banks);
+    StatusCode sc = decodeToVeloLiteClusters(banks,decStatus);
     if (sc.isFailure()) return sc;
     veloLiteClusters = get<LHCb::VeloLiteCluster::FastContainer>(m_veloLiteClusterLocation);
   }

@@ -17,17 +17,13 @@
  *  @author Olivier Deschamps
  *  @date   2009-04-07
  */
-class CaloAdcFromRaw : public GaudiAlgorithm {
+class CaloAdcFromRaw final : public GaudiAlgorithm {
 public: 
   /// Standard constructor
   CaloAdcFromRaw( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~CaloAdcFromRaw( ); ///< Destructor
-
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-
-protected:
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 private:
   std::string m_detectorName;
@@ -36,9 +32,9 @@ private:
   std::string m_l0Location;
   std::string m_l0BitLocation;
   int m_offset;
-  bool m_calib;
-  DeCalorimeter* m_calo;
-  ICaloDataProvider*    m_data;
-  ICaloL0DataProvider*  m_l0data;
+  bool m_calib = false;
+  DeCalorimeter* m_calo = nullptr;
+  ICaloDataProvider*    m_data = nullptr;
+  ICaloL0DataProvider*  m_l0data = nullptr;
 };
 #endif // CALOADCFROMRAW_H

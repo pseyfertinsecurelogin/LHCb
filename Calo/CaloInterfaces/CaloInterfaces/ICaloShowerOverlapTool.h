@@ -12,7 +12,6 @@ namespace LHCb{
   class CaloCluster;
 }
 
-static const InterfaceID IID_ICaloShowerOverlapTool ( "ICaloShowerOverlapTool", 1, 0 );
 
 /** @class ICaloShowerOverlapTool ICaloShowerOverlapTool.h
  *  
@@ -20,21 +19,14 @@ static const InterfaceID IID_ICaloShowerOverlapTool ( "ICaloShowerOverlapTool", 
  *  @author Olivier Deschamps
  *  @date   2014-06-03
  */
-class ICaloShowerOverlapTool : virtual public IAlgTool {
-public: 
-
+struct ICaloShowerOverlapTool : extend_interfaces<IAlgTool> 
+{
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICaloShowerOverlapTool; }
+  DeclareInterfaceID(ICaloShowerOverlapTool, 2, 0 );
 
-  virtual StatusCode initialize()=0;
   virtual StatusCode setProfile(std::string)=0;
   virtual void process(const LHCb::CaloCluster* c1,const LHCb::CaloCluster* c2,
                        int spd=0,int niter=5,bool propagateInitialWeights=false)=0;
   
-
-protected:
-
-private:
-
 };
 #endif // ICALOSHOWEROVERLAPTOOL_H

@@ -1,6 +1,5 @@
-// $Id: $
-#ifndef RICHDET_DERICHPMT_H
-#define RICHDET_DERICHPMT_H 1
+
+#pragma once
 
 // Include files
 // DetDesc
@@ -38,15 +37,15 @@ class DeRichPMT : public DeRichPD
 public:
 
   /// Standard constructor
-  DeRichPMT(const std::string & name = "" );
+  DeRichPMT ( const std::string & name = "" );
 
-  virtual ~DeRichPMT( ); ///< Destructor
+  virtual ~DeRichPMT( ) = default; ///< Destructor
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const { return classID(); }
+  const CLID& clID() const override final { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -60,33 +59,36 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override final;
 
   // @brief Converts a RichSmartID to a point in global coordinates.
-  virtual StatusCode detectionPoint ( const LHCb::RichSmartID smartID,
-                                      Gaudi::XYZPoint& detectPoint,
-                                      bool photoCathodeSide = false ) const;
+  bool detectionPoint ( const LHCb::RichSmartID smartID,
+                        Gaudi::XYZPoint& detectPoint,
+                        bool photoCathodeSide = false ) const override final;
 
   // Converts an x,y point from the anode to the photocathode in the
   // coordinate system of the PMT.
-  virtual StatusCode detectionPoint ( const double fracPixelCol,
-                                      const double fracPixelRow,
-                                      Gaudi::XYZPoint& detectPoint,
-                                      const bool photoCathodeSide = true ) const;
+  bool detectionPoint ( const double fracPixelCol,
+                        const double fracPixelRow,
+                        Gaudi::XYZPoint& detectPoint,
+                        const bool photoCathodeSide = true ) const override final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the PMT channel
    *  @return The detection point on the anode in global coordinates
    */
-  Gaudi::XYZPoint detPointOnAnode ( const LHCb::RichSmartID smartID ) const;
+  Gaudi::XYZPoint detPointOnAnode ( const LHCb::RichSmartID& smartID ) const;
 
-  void setPmtLensFlag(bool aflag)  {m_PmtLensFlag=aflag;}
-  int pmtCopyNumber() {  return m_number;}
-  bool PmtLensFlag()  {  return m_PmtLensFlag;}
+  int pmtCopyNumber() const noexcept { return m_number; }
+
+  void setPmtLensFlag( const bool aflag ) { m_PmtLensFlag = aflag; }
+
+  bool PmtLensFlag() const noexcept { return m_PmtLensFlag; }
   
-  void setPmtIsGrandFlag(bool aflagG ) {m_PmtIsGrand  = aflagG ;}   
-  bool PmtIsGrand()  {  return m_PmtIsGrand;}
-    
+  void setPmtIsGrandFlag( const bool isGrand );
+
+  bool PmtIsGrand() const noexcept { return m_PmtIsGrand; }
+
 private:
 
   StatusCode getPMTParameters();
@@ -94,61 +96,59 @@ private:
   StatusCode updateGeometry();
   Gaudi::XYZPoint getAnodeHitCoordFromPixelNum( const double fracPixelCol,
                                                 const double fracPixelRow ) const;
-
+  
   Gaudi::XYZPoint getAnodeHitCoordFromGrandPixelNum( const double fracPixelCol,
-                                                const double fracPixelRow ) const;
-
+                                                     const double fracPixelRow ) const;
+  
   Gaudi::XYZPoint getAnodeHitCoordFromMultTypePixelNum( const double fracPixelCol,
                                                         const double fracPixelRow,
-                                                const LHCb::RichSmartID smartID  ) const;
-
-
-  Gaudi::XYZPoint RichPmtLensReconFromPhCath(  const Gaudi::XYZPoint & aPhCathCoord  ) const ;
-
-private:
-
-  IDetectorElement* m_dePmtAnode = nullptr; ///< The PMT Anode detector element
-  int m_number;                    ///<Pmt number (should be the same as copy number)
-  std::string  m_PmtQELocation;
-
-  double m_PmtAnodeXSize;
-  double m_PmtAnodeYSize;
-  double m_PmtAnodeZSize;
-
-  double m_PmtAnodeLocationInPmt;
-  double m_PmtPixelXSize;
-  double m_PmtPixelYSize;
-  double m_PmtPixelGap;
-  double m_PmtEffectivePixelXSize;
-  double m_PmtEffectivePixelYSize;
-  double m_PmtAnodeHalfThickness;
-  double m_PmtNumPixCol;
-  double m_PmtNumPixRow;
-  double m_PmtQwZSize;
-  double m_QwToAnodeZDist ;
-  bool m_PmtLensFlag{false};
-  double m_PmtLensMagnificationRatio;
-  double m_PmtLensRoc;
+                                                        const LHCb::RichSmartID& smartID ) const;
   
-  double m_GrandPmtAnodeXSize;
-  double m_GrandPmtAnodeYSize;
-  double m_GrandPmtAnodeZSize;
-  double m_GrandPmtPixelXSize;
-  double m_GrandPmtPixelYSize;
-  double m_GrandPmtPixelGap;
-  double m_GrandPmtEdgePixelXSize;
-  double m_GrandPmtEdgePixelYSize;
-  double m_GrandPmtEffectivePixelXSize;
-  double m_GrandPmtEffectivePixelYSize;
-  double m_GrandPmtEdgePixelXDiff;
-  double m_GrandPmtEdgePixelYDiff;
-  double m_GrandPmtAnodeHalfThickness;
+  Gaudi::XYZPoint RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) const;
+  
+private:
+  
+  IDetectorElement* m_dePmtAnode = nullptr; ///< The PMT Anode detector element
+  int m_number{0};                    ///<Pmt number (should be the same as copy number)
+  std::string m_PmtQELocation;
+
+  double m_PmtAnodeXSize{0};
+  double m_PmtAnodeYSize{0};
+  double m_PmtAnodeZSize{0};
+
+  double m_PmtAnodeLocationInPmt{0};
+  double m_PmtPixelXSize{0};
+  double m_PmtPixelYSize{0};
+  double m_PmtPixelGap{0};
+  double m_PmtEffectivePixelXSize{0};
+  double m_PmtEffectivePixelYSize{0};
+  double m_PmtAnodeHalfThickness{0};
+  double m_PmtNumPixCol{0};
+  double m_PmtNumPixRow{0};
+  double m_PmtQwZSize{0};
+  double m_QwToAnodeZDist{0};
+  bool m_PmtLensFlag{false};
+  double m_PmtLensMagnificationRatio{0};
+  double m_PmtLensRoc{0};
+
+  double m_GrandPmtAnodeXSize{0};
+  double m_GrandPmtAnodeYSize{0};
+  double m_GrandPmtAnodeZSize{0};
+  double m_GrandPmtPixelXSize{0};
+  double m_GrandPmtPixelYSize{0};
+  double m_GrandPmtPixelGap{0};
+  double m_GrandPmtEdgePixelXSize{0};
+  double m_GrandPmtEdgePixelYSize{0};
+  double m_GrandPmtEffectivePixelXSize{0};
+  double m_GrandPmtEffectivePixelYSize{0};
+  double m_GrandPmtEdgePixelXDiff{0};
+  double m_GrandPmtEdgePixelYDiff{0};
+  double m_GrandPmtAnodeHalfThickness{0};
   bool m_Rich2UseGrandPmt{false};
   bool m_Rich2UseMixedPmt{false};
-  double m_Rich1Rich2ZDivideLimit;
-  int m_Rich2PmtArrayConfig;
+  int m_Rich2PmtArrayConfig{0};
   bool m_PmtIsGrand{false};
-  
-};
 
-#endif // RICHDET_DERICHPMT_H
+  Rich::DetectorType m_rich = Rich::InvalidDetector;
+
+};

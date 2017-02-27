@@ -9,6 +9,7 @@
 #include "GaudiKernel/Point3DTypes.h"
 
 #include <cstdlib>
+#include <numeric>
 
 /** @file MultipleMagneticFieldSvc.cpp
  *  Implementation of MultipleMagneticFieldSvc class

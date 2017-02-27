@@ -23,30 +23,25 @@ DECLARE_ALGORITHM_FACTORY( PrintHeader )
 PrintHeader::PrintHeader( const std::string& name,
                           ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
-  , m_nEvents(0)
 {
   declareProperty("PrintFileName",  m_printFile = false ); 
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-PrintHeader::~PrintHeader() {}
-
-
-//=============================================================================
 // Main execution
 //=============================================================================
-StatusCode PrintHeader::execute() {
-
-  m_nEvents++;
+StatusCode PrintHeader::execute() 
+{
+  // count events
+  ++m_nEvents;
 
   // Get event number from the ODIN bank
-  LHCb::ODIN* odin = getIfExists<LHCb::ODIN> ( LHCb::ODINLocation::Default );
-  if ( NULL != odin ){
+  auto * odin = getIfExists<LHCb::ODIN> ( LHCb::ODINLocation::Default );
+  if ( odin )
+  {
     info() << "Run "     << odin->runNumber()
            << ", Event " << odin->eventNumber() << endmsg;
-  } else Warning("No ODIN Header").ignore();
+  } else { Warning("No ODIN Header").ignore(); }
        
   setFilterPassed(true);
   
@@ -56,10 +51,9 @@ StatusCode PrintHeader::execute() {
 //=============================================================================
 //  Finalize
 //=============================================================================
-StatusCode PrintHeader::finalize() {
-
+StatusCode PrintHeader::finalize()
+{
   info() << "Filtered " << m_nEvents << " events" << endmsg;
-
   return GaudiAlgorithm::finalize();  // must be called after all other actions
 }
 

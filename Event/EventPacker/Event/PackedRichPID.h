@@ -1,7 +1,7 @@
-// $Id: PackedRichPID.h,v 1.5 2010-03-09 18:35:20 jonrob Exp $
 #ifndef EVENT_PACKEDRICHPID_H
 #define EVENT_PACKEDRICHPID_H 1
 
+// STL
 #include <string>
 #include <sstream>
 
@@ -29,9 +29,9 @@ namespace LHCb
    */
   struct PackedRichPID
   {
-    int pidResultCode{0};                      
+    int pidResultCode{0};
     int dllEl{0},dllMu{0},dllPi{0},dllKa{0},dllPr{0};
-    long long track{-1};          
+    long long track{-1};
     int dllBt{0};
     long long key{0};
     int dllDe{0};
@@ -60,10 +60,10 @@ namespace LHCb
       buf.io(dllBt);
       buf.io(key);
       buf.io(dllDe);
-      
+
       // - Example 1, adding fields
       // if (version >= 5) buf.io(dllIon)
-      
+
       // - Example 2, expanding (changing) field type
       // int -> long long pidResultCode
       // if (version >= 5) {
@@ -113,7 +113,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedRichPIDs; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedRichPIDs::classID(); }
+    const CLID& clID() const override { return PackedRichPIDs::classID(); }
 
   public:
 
@@ -155,7 +155,7 @@ namespace LHCb
     char   m_packingVersion{ defaultPackingVersion() };
 
     /// The packed data objects
-    Vector m_vect; 
+    Vector m_vect;
 
   };
 
@@ -229,7 +229,7 @@ namespace LHCb
     bool isSupportedVer( const char& ver ) const
     {
       const bool OK = ( 0 <= ver && ver <= 4 );
-      if ( !OK )
+      if ( UNLIKELY(!OK) )
       {
         std::ostringstream mess;
         mess << "Unknown packed data version " << (int)ver;

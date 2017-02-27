@@ -17,16 +17,12 @@
  *  @date   2008-03-06
  */
 
-class OTChannelMapTool : public GaudiTool,
-			 virtual public IOTChannelMapTool
+class OTChannelMapTool : public extends<GaudiTool, IOTChannelMapTool>
 {
 
 public:
   /// Standard constructor
   OTChannelMapTool( const std::string& type, const std::string& name, const IInterface* parent);
-
-  /// Destructor
-  ~OTChannelMapTool( ) ; ///< Destructor
 
   /// initialization
   StatusCode initialize() override;
@@ -49,32 +45,24 @@ private:
 private:
   // data
   mutable OTDAQ::ChannelMap::Detector m_channelmap ;
-  mutable int m_currentBankVersion ;
+  mutable int m_currentBankVersion = OTBankVersion::DEFAULT;
 };
-
 
 //=============================================================================
 // Declaration in the Tool Factory
 //=============================================================================
 DECLARE_TOOL_FACTORY( OTChannelMapTool )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 OTChannelMapTool::OTChannelMapTool( const std::string& type,
-				    const std::string& name,
-				    const IInterface* parent )
-  : GaudiTool ( type, name , parent ),
-    m_currentBankVersion(OTBankVersion::DEFAULT)
+                                    const std::string& name,
+                                    const IInterface* parent )
+: base_class ( type, name , parent )
 {
   declareInterface<IOTChannelMapTool>(this);
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-OTChannelMapTool::~OTChannelMapTool() {}
-
 //=============================================================================
 
 //=============================================================================
@@ -85,7 +73,7 @@ StatusCode OTChannelMapTool::initialize()
 
   if ( msgLevel( MSG::DEBUG ) ) debug()<<"initializing OTChannelMapTool"<<endmsg;
 
-  StatusCode sc = GaudiTool::initialize();
+  StatusCode sc = base_class::initialize();
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
 
   updateChannelMap() ;
@@ -104,10 +92,6 @@ void OTChannelMapTool::setBankVersion( int bankversion ) const
 
 OTDAQ::EModuleLayout OTChannelMapTool::computeLayout( const DeOTModule& mod )
 {
-  //int isOddLayer = mod.layerID() & 0x1;
-  //int isPositiveY = mod.quarterID() / 0x2 ;
-  //int isShortModule = mod.nChannels() <= 64 ;
-
   int rc(0) ;
   if( mod.quarterID() <=1 )                        rc += 1 ; // negative y
   if( mod.layerID()%2 ==0 )                        rc += 2 ; // even layer
@@ -232,15 +216,15 @@ void OTChannelMapTool::updateChannelMap() const
   }
 
   // now fill the decoding table for each layout
-  for( LayoutMap::const_iterator it = layoutmap.begin(); it != layoutmap.end(); ++it) {
-    if ( msgLevel( MSG::DEBUG ) ) debug() << "Number of modules of type " << it->first
-                                          << " is " << it->second.size() << endmsg ;
+  for( const auto& it : layoutmap ) {
+    if ( msgLevel( MSG::DEBUG ) ) debug() << "Number of modules of type " << it.first
+                                          << " is " << it.second.size() << endmsg ;
 
     // create a new module
     OTDAQ::ChannelMap::Module module ;
 
     // set the number of channels
-    module.m_nstraws = 2*computeNumStrawPerMono(it->first) ;
+    module.m_nstraws = 2*computeNumStrawPerMono(it.first) ;
 
     // what happens next depends on the bank version. eventually, we
     // can also read a file that corrects the channel map
@@ -255,7 +239,7 @@ void OTChannelMapTool::updateChannelMap() const
        case OTBankVersion::SIM:
        case OTBankVersion::v3:
          for ( unsigned ichan = 0; ichan < OTDAQ::ChannelMap::Module::NumChannels; ++ichan )
-           module.m_channelToStraw[ichan] =computeStrawV3( it->first, ichan ) ;
+           module.m_channelToStraw[ichan] =computeStrawV3( it.first, ichan ) ;
      }
 
     // if( m_currentBankVersion == OTBankVersion::DC06 ) {
@@ -263,14 +247,14 @@ void OTChannelMapTool::updateChannelMap() const
     // 	module.m_channelToStraw[ichan] = computeStrawDC06(ichan) ;
     //     } else {
     //       for(unsigned int ichan = 0; ichan < OTDAQ::ChannelMap::Module::NumChannels; ++ichan)
-    //         module.m_channelToStraw[ichan] =computeStrawV3( it->first, ichan ) ;
+    //         module.m_channelToStraw[ichan] =computeStrawV3( it.first, ichan ) ;
     //     }
 
     // finally, fill the inverse table
     module.fillStrawToChannelMap() ;
 
     // finally set the module
-    m_channelmap.m_modules[it->first] = module ;
+    m_channelmap.m_modules[it.first] = module ;
   }
 
   // now you can set specific things for special modules (e.g. from a file). the recipee is:

@@ -34,7 +34,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_GenericBuffer ; }
 
     /// Class ID
-    virtual const CLID& clID() const { return GenericBuffer::classID(); }
+    const CLID& clID() const override { return GenericBuffer::classID(); }
 
   private:
 

@@ -34,44 +34,44 @@ namespace LHCb
     PiecewiseTrajectory(const PiecewiseTrajectory& rhs);
 
     // clone thyself...
-    virtual std::unique_ptr<Trajectory> clone() const;
+    std::unique_ptr<Trajectory> clone() const override;
 
     /// Point on the trajectory at mu
-    Point position( double mu ) const;
+    Point position( double mu ) const override;
 
     /// First derivative of the trajectory at mu
-    Vector direction( double mu ) const;
+    Vector direction( double mu ) const override;
 
     /// Second derivative of the trajectory at mu
-    Vector curvature( double mu ) const;
+    Vector curvature( double mu ) const override;
 
     /// Create a parabolic approximation to the trajectory
     /// at mu
     void expansion( double arclength,
-                            Point& p,
-                            Vector& dp,
-                            Vector& ddp ) const;
+                    Point& p,
+                    Vector& dp,
+                    Vector& ddp ) const override;
     /// Determine the distance in arclenghts to the
     /// closest point on the trajectory to a given point
-    double muEstimate( const Point& ) const;
+    double muEstimate( const Point& ) const override;
 
     /// Number of arclengths until deviation of the trajectory from the expansion
     /// reaches the given tolerance.
     double distTo1stError( double arclength,
                            double tolerance,
-                           int pathDirection = +1 ) const ;
+                           int pathDirection = +1 ) const override;
 
     /// Number of arclengths until deviation of the trajectory from the expansion
     /// reaches the given tolerance.
     double distTo2ndError( double arclength,
                            double tolerance,
-                           int pathDirection = +1 ) const;
+                           int pathDirection = +1 ) const override;
 
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). .
     using Trajectory::arclength;
-    virtual double arclength(double mu1, double mu2) const { return mu2 - mu1 ; }
+    double arclength(double mu1, double mu2) const override { return mu2 - mu1 ; }
 
     // functions specific to a PieceWiseTrajectory
     // note: we _will_ assume ownership of the passed Trajectory!
@@ -89,8 +89,8 @@ namespace LHCb
      std::pair<const Trajectory*, double> loc(double mu) const;
 
      // generic forwarding to local trajectories
-     template <typename FUN> auto local(double mu, FUN fun) const 
-     -> typename std::result_of<FUN(const LHCb::Trajectory*,double)>::type 
+     template <typename FUN> auto local(double mu, FUN fun) const
+     -> typename std::result_of<FUN(const LHCb::Trajectory*,double)>::type
      {
         auto j = loc(mu);
         return fun(j.first,j.second);

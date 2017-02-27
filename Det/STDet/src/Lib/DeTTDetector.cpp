@@ -18,13 +18,11 @@
 using namespace LHCb;
 
 DeTTDetector::DeTTDetector( const std::string& name ) :
-  DeSTDetector( name )  
-{ 
+  DeSTDetector( name )
+{
   // constructer
   m_sectors.clear();
 }
-
-DeTTDetector::~DeTTDetector() = default;
 
 const CLID& DeTTDetector::clID () const
 {
@@ -34,11 +32,11 @@ const CLID& DeTTDetector::clID () const
 StatusCode DeTTDetector::initialize() {
 
   // init the base class
- 
+
   StatusCode sc = DeSTDetector::initialize();
   if (sc.isFailure() ){
     MsgStream msg(msgSvc(), name() );
-    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg; 
+    msg << MSG::ERROR << "Failed to initialize detector element" << endmsg;
   }
   else {
     // make a flat list of sectors
@@ -61,12 +59,12 @@ DeSTSector* DeTTDetector::findSector(const Gaudi::XYZPoint& aPoint) const {
   DeSTStation* tStation = findStation(aPoint);
   if (tStation){
     DeTTStation* aStation = static_cast<DeTTStation*>(tStation);
-    DeTTLayer* aLayer = aStation->findLayer(aPoint);    
+    DeTTLayer* aLayer = aStation->findLayer(aPoint);
     if (aLayer){
       DeTTHalfModule* aModule = aLayer->findHalfModule(aPoint);
       if (aModule){
         aSector = aModule->findSector(aPoint);
-      } // module   
+      } // module
     } // layer
   }   // station
   return aSector;
@@ -87,7 +85,7 @@ DeSTBaseElement* DeTTDetector::findTopLevelElement(const std::string& nickname) 
     // its a station
     return findStation(chan);
   }
-  // too bad 
+  // too bad
   return nullptr;
 }
 

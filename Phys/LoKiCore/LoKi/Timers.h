@@ -1,9 +1,9 @@
-#ifndef LOKI_TIMERS_H 
+#ifndef LOKI_TIMERS_H
 #define LOKI_TIMERS_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 #include <string>
 // ============================================================================
@@ -17,14 +17,14 @@
 // ============================================================================
 #include "LoKi/Functor.h"
 // ============================================================================
-/** @file 
+/** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *  ``C++ ToolKit  for Smart and Friendly Physics Analysis''
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
@@ -33,10 +33,10 @@
 namespace LoKi
 {
   // ==========================================================================
-  /** @class Timer 
-   *  Helepr class for implementation of timers 
+  /** @class Timer
+   *  Helepr class for implementation of timers
    *  @see LoKi::Functors::Timer_
-   *  @see LoKi::timer 
+   *  @see LoKi::timer
    *  @see Chrono
    *  @see ChronoEntity
    *  @see ChronoSvc
@@ -45,33 +45,33 @@ namespace LoKi
   {
   public:
     // ========================================================================
-    /// constructor from the timer name 
+    /// constructor from the timer name
     Timer ( const std::string& name ) ;
-    /// destructor 
-    virtual ~Timer () ; // destructor 
+    /// destructor
+    virtual ~Timer () ; // destructor
     // ========================================================================
   public:
     // ========================================================================
-    /// get the timer name 
-    const std::string& name() const { return m_name ; }   // get the timer name 
+    /// get the timer name
+    const std::string& name() const { return m_name ; }   // get the timer name
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled 
-    Timer () ;                           // the default constructor is disabled 
+    /// the default constructor is disabled
+    Timer () ;                           // the default constructor is disabled
     // ========================================================================
   private:
     // ========================================================================
-    /// the actual name of timer 
-    std::string m_name ;                            // the actual name of timer 
-    // ========================================================================    
+    /// the actual name of timer
+    std::string m_name ;                            // the actual name of timer
+    // ========================================================================
   };
   // ==========================================================================
-  namespace Functors  
+  namespace Functors
   {
     // ========================================================================
     /** @class Timer_
-     *  Helper class for monitoring/timing of LoKi functors 
+     *  Helper class for monitoring/timing of LoKi functors
      *  @see ChronoEntity
      *  @see Chrono
      *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
@@ -82,67 +82,57 @@ namespace LoKi
     {
     public :
       // ======================================================================
-      /// constructor from functor&timer 
-      Timer_ ( const LoKi::Functor<TYPE1,TYPE2>& fun    , 
-               ChronoEntity*                     timer  ) 
-        : LoKi::Functor<TYPE1,TYPE2> () 
-        , m_fun   ( fun   )
-        , m_svc   ( )
-        , m_tname ( ) 
+      /// constructor from functor&timer
+      Timer_ ( const LoKi::Functor<TYPE1,TYPE2>& fun    ,
+               ChronoEntity*                     timer  )
+        : m_fun   ( fun   )
         , m_timer ( timer )
         , m_first ( false )
-      {}  
-      /// constructor from functor&service&timer name 
-      Timer_ ( const LoKi::Functor<TYPE1,TYPE2>& fun    , 
-               IChronoSvc*                       svc    , 
+      {}
+      /// constructor from functor&service&timer name
+      Timer_ ( const LoKi::Functor<TYPE1,TYPE2>& fun    ,
+               IChronoSvc*                       svc    ,
                const std::string&                timer  )
-        : LoKi::Functor<TYPE1,TYPE2> () 
-        , m_fun   ( fun   )
+        : m_fun   ( fun   )
         , m_svc   ( svc   )
-        , m_tname ( timer ) 
-        , m_timer ( 0     )
-        , m_first ( true  )
+        , m_tname ( timer )
       {
-        if ( !m_svc && this->gaudi() ) 
-        { 
+        if ( !m_svc && this->gaudi() )
+        {
           SmartIF<IChronoSvc> cs ( this->lokiSvc().getObject() ) ;
           m_svc = cs.get() ;
         }
       }
-      /// constructor from functor&timer name 
-      Timer_ ( const LoKi::Functor<TYPE1,TYPE2>& fun    , 
-               const std::string&                timer  ) 
-        : LoKi::AuxFunBase ( std::tie ( fun , timer ) )  
-        , LoKi::Functor<TYPE1,TYPE2> () 
+      /// constructor from functor&timer name
+      Timer_ ( const LoKi::Functor<TYPE1,TYPE2>& fun    ,
+               const std::string&                timer  )
+        : LoKi::AuxFunBase ( std::tie ( fun , timer ) )
         , m_fun   ( fun   )
-        , m_svc   ()
-        , m_tname ( timer ) 
-        , m_timer ( 0     )
-        , m_first ( true  )
-      { 
-        if ( this->gaudi() ) 
-        { 
+        , m_tname ( timer )
+      {
+        if ( this->gaudi() )
+        {
           SmartIF<IChronoSvc> cs ( this->lokiSvc().getObject() ) ;
           m_svc = cs.get() ;
-        } 
+        }
       }
-      /// MANDATORY: virtual destructor 
-      virtual ~Timer_ () 
+      /// destructor
+      virtual ~Timer_ ()
       { if ( this->m_svc && !this->gaudi() ) { this->m_svc.reset() ; } }
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Timer_ * clone() const { return new Timer_ ( *this ) ; }
-      /// MANDATORY: the only one essenital method 
-      virtual typename LoKi::Functor<TYPE1,TYPE2>::result_type operator() 
-      ( typename LoKi::Functor<TYPE1,TYPE2>::argument a ) const 
+      Timer_ * clone() const override { return new Timer_ ( *this ) ; }
+      /// MANDATORY: the only one essenital method
+      typename LoKi::Functor<TYPE1,TYPE2>::result_type operator()
+      ( typename LoKi::Functor<TYPE1,TYPE2>::argument a ) const override
       {
         //
-        if ( 0 == m_timer && m_first && !m_svc ) 
+        if ( !m_timer && m_first && !m_svc )
         {
           SmartIF<IChronoSvc> cs ( this->lokiSvc().getObject() ) ;
           m_svc = cs.get() ;
         }
         //
-        if ( 0 == m_timer && m_first && !(!m_svc ) )
+        if ( !m_timer && m_first && !(!m_svc ) )
         { m_timer = m_svc->chronoStart ( m_tname ) ; }
         //
         Chrono _timer ( m_timer ) ;
@@ -151,20 +141,19 @@ namespace LoKi
         return m_fun.fun ( a ) ;
       }
       // ======================================================================
-      /// optional: nice printout 
-      virtual std::ostream& fillStream ( std::ostream& s ) const 
+      /// optional: nice printout
+      std::ostream& fillStream ( std::ostream& s ) const override
       {
         //
-        if ( 0 == m_timer && m_tname.empty() && !m_svc ) { return s << m_fun ; }
+        if ( !m_timer && m_tname.empty() && !m_svc ) { return s << m_fun ; }
         //
-        s << " timer(" << m_fun ;
-        return s << ",'" << m_tname << "')" ;
+        return s << " timer(" << m_fun << ",'" << m_tname << "')" ;
       }
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled 
-      Timer_ () ;                        // the default constructor is disabled 
+      /// the default constructor is disabled
+      Timer_ () ;                        // the default constructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -173,16 +162,16 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the functor 
+      /// the functor
       LoKi::FunctorFromFunctor<TYPE1,TYPE2> m_fun   ;   // the functor
-      /// the service 
-      mutable LoKi::Interface<IChronoSvc>   m_svc   ;   // the service 
-      /// the timer name 
-      std::string                           m_tname ;   // the timer name 
-      /// the actual timer 
-      mutable ChronoEntity*                 m_timer ;   // the actual timer 
+      /// the service
+      mutable LoKi::Interface<IChronoSvc>   m_svc   ;   // the service
+      /// the timer name
+      std::string                           m_tname ;   // the timer name
+      /// the actual timer
+      mutable ChronoEntity*                 m_timer = nullptr ;   // the actual timer
       /// the first time?
-      mutable bool                          m_first ;   // the first time?
+      mutable bool                          m_first = true;   // the first time?
       // ======================================================================
     };
     // ========================================================================
@@ -192,67 +181,60 @@ namespace LoKi
     {
     public :
       // ======================================================================
-      /// constructor from functor&timer 
-      Timer_ ( const LoKi::Functor<void,TYPE2>& fun    , 
-              ChronoEntity*                    timer  ) 
-        : LoKi::Functor<void,TYPE2> () 
+      /// constructor from functor&timer
+      Timer_ ( const LoKi::Functor<void,TYPE2>& fun    ,
+              ChronoEntity*                    timer  )
+        : LoKi::Functor<void,TYPE2> ()
         , m_fun   ( fun   )
-        , m_svc   ( )
-        , m_tname ( ) 
         , m_timer ( timer )
         , m_first ( false )
-      {}  
-      /// constructor from functor&service&timer name 
-      Timer_ ( const LoKi::Functor<void,TYPE2>& fun    , 
-               IChronoSvc*                      svc    , 
+      {}
+      /// constructor from functor&service&timer name
+      Timer_ ( const LoKi::Functor<void,TYPE2>& fun    ,
+               IChronoSvc*                      svc    ,
                const std::string&               timer  )
-        : LoKi::Functor<void,TYPE2> () 
+        : LoKi::Functor<void,TYPE2> ()
         , m_fun   ( fun   )
         , m_svc   ( svc   )
-        , m_tname ( timer ) 
-        , m_timer ( 0     )
-        , m_first ( true  )
+        , m_tname ( timer )
       {
-        if ( !m_svc && this->gaudi() ) 
-        {
-          SmartIF<IChronoSvc> cs ( this->lokiSvc().getObject() ) ;
-          m_svc = cs.get() ;
-        } 
-      }
-      /// constructor from functor&timer name 
-      Timer_ ( const LoKi::Functor<void,TYPE2>& fun    , 
-               const std::string&               timer  ) 
-        : LoKi::AuxFunBase ( std::tie ( fun , timer ) ) 
-        , LoKi::Functor<void,TYPE2> () 
-        , m_fun   ( fun   )
-        , m_svc   ()
-        , m_tname ( timer ) 
-        , m_timer ( 0     )
-        , m_first ( true  )
-      {
-        if ( this->gaudi() ) 
+        if ( !m_svc && this->gaudi() )
         {
           SmartIF<IChronoSvc> cs ( this->lokiSvc().getObject() ) ;
           m_svc = cs.get() ;
         }
       }
-      /// MANDATORY: virtual destructor 
-      virtual ~Timer_ () 
+      /// constructor from functor&timer name
+      Timer_ ( const LoKi::Functor<void,TYPE2>& fun    ,
+               const std::string&               timer  )
+        : LoKi::AuxFunBase ( std::tie ( fun , timer ) )
+        , LoKi::Functor<void,TYPE2> ()
+        , m_fun   ( fun   )
+        , m_tname ( timer )
+      {
+        if ( this->gaudi() )
+        {
+          SmartIF<IChronoSvc> cs ( this->lokiSvc().getObject() ) ;
+          m_svc = cs.get() ;
+        }
+      }
+      /// MANDATORY: virtual destructor
+      virtual ~Timer_ ()
       { if ( this->m_svc && !this->gaudi() ) { this->m_svc.reset() ; } }
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Timer_ * clone() const { return new Timer_ ( *this ) ; }
+      Timer_ * clone() const override { return new Timer_ ( *this ) ; }
       // ======================================================================
-      /// MANDATORY: the only one essenital method 
-      virtual typename LoKi::Functor<void,TYPE2>::result_type operator() () const 
+      /// MANDATORY: the only one essenital method
+      typename LoKi::Functor<void,TYPE2>::result_type operator() () const override
       {
         //
-        if ( 0 == m_timer && m_first && !m_svc ) 
+        if ( !m_timer && m_first && !m_svc )
         {
           SmartIF<IChronoSvc> cs ( this->lokiSvc().getObject() ) ;
           m_svc = cs.get() ;
         }
         //
-        if ( 0 == m_timer && m_first && !(!m_svc ) )
+        if ( !m_timer && m_first && !(!m_svc ) )
         { m_timer = m_svc->chronoStart ( m_tname ) ; }
         //
         //
@@ -264,8 +246,8 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled 
-      Timer_ () ;                        // the default constructor is disabled 
+      /// the default constructor is disabled
+      Timer_ () ;                        // the default constructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -274,22 +256,22 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      /// the functor 
+      /// the functor
       LoKi::FunctorFromFunctor<void,TYPE2>  m_fun   ;   // the functor
-      /// the service 
-      mutable LoKi::Interface<IChronoSvc>   m_svc   ;   // the service 
-      /// the timer name 
-      std::string                           m_tname ;   // the timer name 
-      /// the actual timer 
-      mutable ChronoEntity*                 m_timer ;   // the actual timer 
+      /// the service
+      mutable LoKi::Interface<IChronoSvc>   m_svc   ;   // the service
+      /// the timer name
+      std::string                           m_tname ;   // the timer name
+      /// the actual timer
+      mutable ChronoEntity*                 m_timer = nullptr;   // the actual timer
       /// the first time?
-      mutable bool                          m_first ;   // the first time?
+      mutable bool                          m_first = true;   // the first time?
       // ======================================================================
     };
     // ========================================================================
   } // end of namespace LoKi::Functors
   // ========================================================================
-  /** get the timer functor 
+  /** get the timer functor
    *  @see LoKi::Timer
    *  @see ChronoEntity
    *  @see Chrono
@@ -297,13 +279,13 @@ namespace LoKi
    *  @date 2011-02-02
    */
   template <class TYPE1,class TYPE2>
-  inline 
-  LoKi::Functors::Timer_<TYPE1,TYPE2> timer 
-  ( const LoKi::Functor<TYPE1,TYPE2>& fun    , 
-    ChronoEntity*                    timer  ) 
+  inline
+  LoKi::Functors::Timer_<TYPE1,TYPE2> timer
+  ( const LoKi::Functor<TYPE1,TYPE2>& fun    ,
+    ChronoEntity*                    timer  )
   { return LoKi::Functors::Timer_<TYPE1,TYPE2>( fun , timer ) ; }
   // ==========================================================================
-  /** get the timer functor 
+  /** get the timer functor
    *  @see LoKi::Timer
    *  @see ChronoEntity
    *  @see Chrono
@@ -311,14 +293,14 @@ namespace LoKi
    *  @date 2011-02-02
    */
   template <class TYPE1,class TYPE2>
-  inline 
-  LoKi::Functors::Timer_<TYPE1,TYPE2> timer 
-  ( const LoKi::Functor<TYPE1,TYPE2>& fun    , 
-    IChronoSvc*                      svc    , 
+  inline
+  LoKi::Functors::Timer_<TYPE1,TYPE2> timer
+  ( const LoKi::Functor<TYPE1,TYPE2>& fun    ,
+    IChronoSvc*                      svc    ,
     const std::string&               timer  )
   { return LoKi::Functors::Timer_<TYPE1,TYPE2>( fun , svc , timer ) ; }
   // ==========================================================================
-  /** get the timer functor 
+  /** get the timer functor
    *  @see LoKi::Timer
    *  @see ChronoEntity
    *  @see Chrono
@@ -326,13 +308,13 @@ namespace LoKi
    *  @date 2011-02-02
    */
   template <class TYPE1,class TYPE2>
-  inline 
-  LoKi::Functors::Timer_<TYPE1,TYPE2> timer 
-  ( const LoKi::Functor<TYPE1,TYPE2>& fun    , 
+  inline
+  LoKi::Functors::Timer_<TYPE1,TYPE2> timer
+  ( const LoKi::Functor<TYPE1,TYPE2>& fun    ,
     const std::string&               timer  )
   { return LoKi::Functors::Timer_<TYPE1,TYPE2>( fun , timer ) ; }
   // ==========================================================================
-  /** get the timer functor 
+  /** get the timer functor
    *  @see LoKi::Timer
    *  @see ChronoEntity
    *  @see Chrono
@@ -340,37 +322,37 @@ namespace LoKi
    *  @date 2011-02-02
    */
   template <class TYPE1,class TYPE2>
-  inline 
-  LoKi::Functors::Timer_<TYPE1,TYPE2> timer 
-  ( const LoKi::Functor<TYPE1,TYPE2>& fun    , 
+  inline
+  LoKi::Functors::Timer_<TYPE1,TYPE2> timer
+  ( const LoKi::Functor<TYPE1,TYPE2>& fun    ,
     const LoKi::Timer&                timer  )
   { return LoKi::Functors::Timer_<TYPE1,TYPE2>( fun , timer.name() ) ; }
   // ==========================================================================
-  /// operator form of timers 
+  /// operator form of timers
   template <class TYPE1, class TYPE2>
-  inline 
+  inline
   LoKi::FunctorFromFunctor<TYPE1,TYPE2>
-  operator %( const LoKi::Timer&                timer  , 
+  operator %( const LoKi::Timer&                timer  ,
               const LoKi::Functor<TYPE1,TYPE2>& fun    )
   {
     if ( timer.name().empty() ) { return fun ; }
-    return LoKi::Functors::Timer_<TYPE1,TYPE2>( fun , timer.name() ) ; 
+    return LoKi::Functors::Timer_<TYPE1,TYPE2>( fun , timer.name() ) ;
   }
   // ==========================================================================
-} //                                                      end of namespace LoKi 
+} //                                                      end of namespace LoKi
 // ============================================================================
-/// operator form of timers 
+/// operator form of timers
 template <class TYPE1, class TYPE2>
-inline 
+inline
 LoKi::FunctorFromFunctor<TYPE1,TYPE2>
-operator %( ChronoEntity*                     timer  , 
+operator %( ChronoEntity*                     timer  ,
             const LoKi::Functor<TYPE1,TYPE2>& fun    )
 {
   if ( 0 == timer ) { return fun ; }
   return LoKi::Functors::Timer_<TYPE1,TYPE2> ( fun , timer ) ;
 }
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_TIMERS_H
 // ============================================================================

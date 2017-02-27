@@ -9,6 +9,8 @@
       name        = 'HltLumiResult'
       author      = 'Jaap Panman'
       desc        = 'Result class for Lumi in Hlt'
+      defaultdestructor = "FALSE"
+      final       = "TRUE"
       id = '7515'
       serializers = 'TRUE'>
 
@@ -26,17 +28,6 @@
       &DataObject;
       <base name="DataObject"/>
 
-      <method
-        name="clone"
-        desc="Clone LumiResult"
-        type="LHCb::HltLumiResult*"
-        const="TRUE"
-	virtual="TRUE"
-	>
-	<code>
-          return new HltLumiResult(*this);
-	</code>
-      </method>
 
       <method
         desc="Assignment operator"

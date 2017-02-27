@@ -7,7 +7,7 @@
 
 <gdd>
   <package name = "RecEvent">
-    
+
     <class
 	author = "Juan Palacios"
 	desc = "Reconstructed Vertices"
@@ -16,7 +16,7 @@
 	keyedContTypeDef = "TRUE"
 	id = "10030"
 	>
-      
+
       <import name="GaudiKernel/NamedRange"/>
       <import name="GaudiKernel/SharedObjectsContainer"/>
       <import name="Event/Track.h"/>
@@ -30,7 +30,7 @@
 	  desc   = "Container type for shared PVs (without ownership)"
 	  access = "PUBLIC"
 	  />
-      
+
       <typedef
 	  type   = "Gaudi::NamedRange_&lt;ConstVector&gt;"
 	  def    = "Range"
@@ -88,8 +88,8 @@
         desc="Clone vertex"
         type="LHCb::RecVertex*"
         const="TRUE"
-	virtual="TRUE"
-	>
+        override="TRUE"
+      >
       </method>
 
       <method
@@ -97,8 +97,8 @@
         desc="Is the vertex a primary?"
         type="bool"
         const="TRUE"
-	virtual="TRUE"
-	>
+        override="TRUE"
+      >
       </method>
 
       <attribute
@@ -111,7 +111,7 @@
       <attribute
         type    = "SmartRefVector&lt;LHCb::Track&gt;"
         name    = "tracks"
-        desc    = "Tracks this vertex was made from" 
+        desc    = "Tracks this vertex was made from"
         setMeth = "FALSE"
         getMeth = "TRUE"
       />
@@ -124,8 +124,8 @@
         getMeth = "TRUE"
       />
 
-      <method 
-	name = "setTracks" 
+      <method
+	name = "setTracks"
 	type = "void"
 	desc = "Set the tracks for this PV. Weights are implicitly set to 1 for each" >
         <arg const="TRUE" name="tracks" type="SmartRefVector&lt;LHCb::Track&gt;"/>
@@ -135,16 +135,16 @@
         </code>
       </method>
 
-      <method 
-	name = "addToTracks" 
+      <method
+	name = "addToTracks"
 	type = "void"
         argList="const LHCb::Track* track"
 	desc = "Add a track to the track list, with an implicit weight of 1.0" >
         <code>  addToTracks( track, 1.0 ); </code>
       </method>
 
-      <method 
-	name = "addToTracks" 
+      <method
+	name = "addToTracks"
 	type = "void"
         argList="const LHCb::Track* track, const float weight"
 	desc = "Add a track to the track list, with the given weight" >
@@ -154,48 +154,48 @@
         </code>
       </method>
 
-      <method 
-	name = "removeFromTracks" 
+      <method
+	name = "removeFromTracks"
 	type = "void"
         argList="const LHCb::Track* track"
 	desc = "Remove the given track from the list of tracks and its associated weight" >
       </method>
 
-      <method 
-	name = "clearTracks" 
+      <method
+	name = "clearTracks"
 	type = "void"
 	desc = "Remove all tracks, and their associated weights, from this vertex" >
-        <code>  
-          m_tracks.clear(); 
+        <code>
+          m_tracks.clear();
           m_weights.clear();
         </code>
       </method>
 
-      <method 
-	name  = "tracksWithWeights" 
+      <method
+	name  = "tracksWithWeights"
 	type  = "TrackWithWeightVector"
         const = "TRUE"
 	desc  = "Access the tracks with their associated weights" >
       </method>
 
-      <method 
-	name  = "setTracksWithWeights" 
+      <method
+	name  = "setTracksWithWeights"
 	type  = "void"
         const = "FALSE"
         argList="const TrackWithWeightVector&amp; tracksAndWeights"
 	desc  = "Set the tracks with their associated weights" >
       </method>
 
-      <method 
-	name  = "setTrackWeight" 
+      <method
+	name  = "setTrackWeight"
 	type  = "bool"
         const = "FALSE"
         argList="const LHCb::Track* track, const float weight"
 	desc  = "Set the weight for the given Track. Returns true if weight is successfuly set, false if the track is not part of this vertex" >
       </method>
 
-      <method 
-	name  = "trackWeight" 
+      <method
+	name  = "trackWeight"
 	type  = "std::pair&lt;bool,float&gt;"
         const = "TRUE"
         argList="const LHCb::Track* track"
@@ -206,7 +206,7 @@
          name    = "fillStream"
          desc    = "Print this RecVertex in a human readable way"
          type    = "std::ostream&amp;"
-         virtual = "FALSE"
+         override = "TRUE"
          const   = "TRUE">
          <arg
            type = "std::ostream"

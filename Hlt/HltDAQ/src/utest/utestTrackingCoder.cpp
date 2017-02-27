@@ -2,7 +2,7 @@
 #define BOOST_TEST_MODULE utestTrackingCoder
 #include <boost/test/unit_test.hpp>
 
-#include "../HltTrackingCoder.h"
+#include "HltDAQ/HltTrackingCoder.h"
 #include <vector>
 #include <algorithm>
 #include "Event/Track.h"
@@ -26,15 +26,15 @@ equal(const Container& c1, const Container& c2, Cmp cmp) {
 // Check for equal LHCbIDs
 bool
 equalLHCbIDs(const LHCb::Tracks& tracks, const LHCb::Tracks& reftracks){
-  return  equal(tracks, reftracks, [](const LHCb::Track* t1, const LHCb::Track* t2) { 
-                           return t1->lhcbIDs() == t2->lhcbIDs() ; 
+  return  equal(tracks, reftracks, [](const LHCb::Track* t1, const LHCb::Track* t2) {
+                           return t1->lhcbIDs() == t2->lhcbIDs() ;
                        } );
 }
- 
+
 // Check for equal types
 bool
 equalMeta(const LHCb::Tracks& tracks, const LHCb::Tracks& reftracks){
-  return  equal(tracks, reftracks, [](const LHCb::Track* t1, const LHCb::Track* t2) { 
+  return  equal(tracks, reftracks, [](const LHCb::Track* t1, const LHCb::Track* t2) {
                            return t1->type() == t2->type() &&
                                   t1->flags() == t2->flags();
                        } );
@@ -65,7 +65,7 @@ equalStates(const LHCb::Tracks& tracks, const LHCb::Tracks& reftracks){
         double* cov = states[i]->covariance().Array();
         double* refcov = refstates[i]->covariance().Array();
         for(unsigned int ic=0;ic<15;++ic){
-          result &= (fabs(cov[ic]-refcov[ic]) < 0.001*fabs(refcov[ic])); 
+          result &= (fabs(cov[ic]-refcov[ic]) < 0.001*fabs(refcov[ic]));
         }
         if(!result){
           std::cout << states[i]->covariance() << std::endl;
@@ -75,24 +75,24 @@ equalStates(const LHCb::Tracks& tracks, const LHCb::Tracks& reftracks){
       } // end loop over states
       return true;
 
-        } ); 
+        } );
 }
 
 
 // The test fixture: Create a container of tracks to encode
 // This can be used as a common starting point for all tests
 struct ExampleTracks {
-  
+
   LHCb::Tracks m_tracks;                  // collection of tracks
   std::vector<unsigned int> m_rawbank;   // corresponding RawBank
- 
+
   ExampleTracks() {
     BOOST_TEST_MESSAGE("setup example tracks");
     auto tr=new LHCb::Track();
 
-    
+
     tr->setFlags(1);
-    tr->setType(LHCb::Track::Velo);
+    tr->setType(LHCb::Track::Types::Velo);
 
     tr->addToLhcbIDs(LHCb::LHCbID(1));
     tr->addToLhcbIDs(LHCb::LHCbID(3));
@@ -101,7 +101,7 @@ struct ExampleTracks {
 
     tr=new LHCb::Track();
     tr->setFlags(1);
-    tr->setType(LHCb::Track::TT);
+    tr->setType(LHCb::Track::Types::TT);
 
     tr->addToLhcbIDs(LHCb::LHCbID(2));
     tr->addToLhcbIDs(LHCb::LHCbID(4));
@@ -110,17 +110,17 @@ struct ExampleTracks {
 
     tr=new LHCb::Track();
     tr->setFlags(8);
-    tr->setType(LHCb::Track::Long);
-     
+    tr->setType(LHCb::Track::Types::Long);
+
     tr->addToLhcbIDs(LHCb::LHCbID(7));
     tr->addToLhcbIDs(LHCb::LHCbID(11));
     tr->addToLhcbIDs(LHCb::LHCbID(13));
     tr->addToLhcbIDs(LHCb::LHCbID(17));
-    
+
     // add a State to this track
     Gaudi::TrackVector v(1,-1,1,-1,1);
 
-    // build an example covariance matrix 
+    // build an example covariance matrix
     // put the upper triangle intp vector
     double val[15] = {1.1,0.21,0.31,0.41,0.51,    // first row
 		      1.2,0.22,0.32,0.42,
@@ -143,21 +143,21 @@ struct ExampleTracks {
 
     LHCb::State Michigan(v,cov,220.,LHCb::State::ClosestToBeam);
     tr->addToStates(Michigan);
-    
+
     m_tracks.add(tr);
-    
+
     // format:                   flags nIDs  IDs    nStates States(Loc, z, par)
-    std::vector<unsigned int> bank = { 1,    3,  1,3,5,    0,      
+    std::vector<unsigned int> bank = { 1,    3,  1,3,5,    0,
                                        9,    3,  2,4,6,    0,
                                        3,    4,  7,11,13,17,
                                        2,  // 2 states in this track
                                        3 , 2000000, 10000, 4294957296, 100000000, 4194967296, 100, // state at location 3
                                        10488, 10954, 114017543, 118321596, 12247449, 5483, 7777, 5284, // its cov
-                                       9912, 7407, 5115, 11911, 9391, 7090, 4968, 
+                                       9912, 7407, 5115, 11911, 9391, 7090, 4968,
                                        1 , 2200000, 10000, 4294957296, 100000000, 4194967296, 100, // // state at location 1
                                        10488, 10954, 114017543, 118321596, 12247449, 5483, 7777, 5284, // its cov
-                                       9912, 7407, 5115, 11911, 9391, 7090, 4968 
-    }; 
+                                       9912, 7407, 5115, 11911, 9391, 7090, 4968
+    };
     m_rawbank = bank;
   }
 
@@ -171,7 +171,7 @@ struct ExampleTracks {
 // Each test in this suite will use the ExampleTracks fixture
 // fixtures are setup and teared down for each test individually
 BOOST_FIXTURE_TEST_SUITE(TrackingCoder, ExampleTracks)
- 
+
 BOOST_AUTO_TEST_CASE(comparetracks)
 {
   BOOST_CHECK(equalLHCbIDs(m_tracks,m_tracks));
@@ -195,12 +195,12 @@ BOOST_AUTO_TEST_CASE(encodeNoStates)
   {
     tr->clearStates();
   }
-  std::vector<unsigned int> bank = { 1,    3,  1,3,5,    0,      
+  std::vector<unsigned int> bank = { 1,    3,  1,3,5,    0,
                                      9,    3,  2,4,6,    0,
                                      3,    4,  7,11,13,17,
                                      0,  // 0 states in this track
-                               
-  }; 
+
+  };
   myTracks.m_rawbank = bank;
   encodeTracks(myTracks.m_tracks,rawBank, false);
   BOOST_CHECK(rawBank.size() == myTracks.m_rawbank.size()  );
@@ -245,4 +245,3 @@ BOOST_AUTO_TEST_CASE(en_de_codeNoStates)
 
 
 BOOST_AUTO_TEST_SUITE_END()
-

@@ -1,4 +1,3 @@
-// $Id: RawEventHelpers.cpp,v 1.49 2010-03-16 22:12:40 frankb Exp $
 //  ====================================================================
 //  RawEventHelpers.cpp
 //  --------------------------------------------------------------------
@@ -17,6 +16,7 @@
 #include <iostream>
 #include <cstring> // For memcpy with gcc 4.3
 #include <memory>  // For memcpy with gcc 4.3
+#include <numeric> // For std::accumulate
 
 #ifdef _WIN32
 #define NOATOM

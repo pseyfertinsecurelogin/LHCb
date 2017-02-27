@@ -30,14 +30,13 @@ DECLARE_ALGORITHM_FACTORY(CaloDetTestAlgorithm)
 CaloDetTestAlgorithm::CaloDetTestAlgorithm( const std::string& name   ,
                             ISvcLocator*       svcloc )
   : GaudiAlgorithm ( name , svcloc ) 
-  , m_DetData(  )
 {
   declareProperty("DetDataLocation" , m_DetData ) ;
   
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  std::string detectorName = name.substr( index, 4 ); 
-  if ( name.substr(index,3) == "Prs" ) detectorName = "Prs";
-  if ( name.substr(index,3) == "Spd" ) detectorName = "Spd";
+  std::string detectorName = ( name.compare(index,3,"Prs") == 0 ?  "Prs"
+                             : name.compare(index,3,"Spd") == 0 ?  "Spd"
+                             : name.substr( index, 4 ) );
   if("Ecal" == detectorName){
     m_DetData = DeCalorimeterLocation::Ecal; 
   }else  if("Hcal" == detectorName){
@@ -50,11 +49,6 @@ CaloDetTestAlgorithm::CaloDetTestAlgorithm( const std::string& name   ,
   
 }
 
-// ============================================================================
-/** destructor
- */
-// ============================================================================
-CaloDetTestAlgorithm::~CaloDetTestAlgorithm() {}
 
 // ============================================================================
 /** standard algorithm initialization 
@@ -98,18 +92,6 @@ StatusCode CaloDetTestAlgorithm::initialize()
 
   
   return StatusCode::SUCCESS;
-}
-
-// ============================================================================
-/** standard algorithm execution 
- *  @return status code 
- */
-// ============================================================================
-StatusCode CaloDetTestAlgorithm::execute() 
-{  
-
-  return StatusCode::SUCCESS;
-
 }
 
 // ============================================================================

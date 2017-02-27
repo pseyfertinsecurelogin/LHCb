@@ -1,4 +1,3 @@
-//$Id: SlowControlInfo.h,v 1.1 2006-04-20 14:39:56 ranjard Exp $
 #ifndef DETDESC_SLOWCONTROLINFO_H
 #define DETDESC_SLOWCONTROLINFO_H 1
 
@@ -18,19 +17,13 @@
     @date December 2001
 *///--------------------------------------------------------------------------
 
-class SlowControlInfo: virtual public ConditionInfo,
-                       virtual public ISlowControl
+struct SlowControlInfo: ConditionInfo, virtual ISlowControl
 {
-
- public: 
-  
   /// Constructor
   SlowControlInfo( IDetectorElement* de,
-		   const std::string& condition );
+		   const std::string& condition )
+  : ConditionInfo( de, condition ) {}
 
-  /// Destructor 
-  virtual ~SlowControlInfo();
-  
 };
 
 #endif // DETDESC_SLOWCONTROLINFO_H

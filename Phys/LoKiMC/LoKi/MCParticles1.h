@@ -1,6 +1,5 @@
-// $Id$
 // ============================================================================
-#ifndef LOKI_MCPARTICLES1_H 
+#ifndef LOKI_MCPARTICLES1_H
 #define LOKI_MCPARTICLES1_H 1
 // ============================================================================
 // Include files
@@ -9,19 +8,19 @@
 // ============================================================================
 #include "Kernel/iNode.h"
 // ============================================================================
-// LoKi 
+// LoKi
 // ============================================================================
 #include "LoKi/iTree.h"
 #include "LoKi/MCTypes.h"
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
   namespace MCParticles
   {
     // ========================================================================
     /** @class DecNode
-     *  simple predicate, which acts on the particleID fo the particle
+     *  simple predicate, which acts on the particleID of the particle
      *  @see LHCb::ParticleID
      *  @see Decays::iNode
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
@@ -36,19 +35,12 @@ namespace LoKi
       DecNode ( const Decays::iNode& node ) ;
       /// constructor from the actual node
       DecNode ( const std::string&   node ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DecNode() {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual DecNode* clone() const { return new DecNode ( *this ) ; }
+      DecNode* clone() const override { return new DecNode ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      DecNode () ;                       // the default constructor is disabled
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -71,7 +63,7 @@ namespace LoKi
       std::string          m_string ;
       // ======================================================================
     };
-    // ========================================================================    
+    // ========================================================================
     /** @class DecTree
      *  simple predicate, which acts on the decay structuire/tree for the particle
      *  @see Decays::iTree
@@ -97,19 +89,12 @@ namespace LoKi
       DecTree ( const iTree&       node ) ;
       /// constructor from the actual node
       DecTree ( const std::string& node ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~DecTree() {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual DecTree* clone() const { return new DecTree ( *this ) ; }
+      DecTree* clone() const override { return new DecTree ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual result_type operator() ( argument p ) const ;
+      result_type operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      DecTree () ;                       // the default constructor is disabled
+      std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -136,7 +121,7 @@ namespace LoKi
       // ======================================================================
     };
     // ========================================================================
-  } //                                       end of namespace LoKi::MCParticles 
+  } //                                       end of namespace LoKi::MCParticles
   // ==========================================================================
   namespace Cuts
   {
@@ -197,11 +182,11 @@ namespace LoKi
      */
     typedef LoKi::MCParticles::DecTree                              MCDECTREE ;
     // ========================================================================
-  } // end of namespace LoKi::Cuts 
+  } // end of namespace LoKi::Cuts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_MCPARTICLES1_H
 // ============================================================================

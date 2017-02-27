@@ -4,9 +4,10 @@
 #include "Event/MCVertex.h"
 #include "Event/MCParticle.h"
 
-namespace LHCb{
-  namespace MC{
-  
+namespace LHCb
+{
+  namespace MC
+{  
     /** z of the first interaction vertex of a particle 
     * Silly interactions PhotoElectric, RICHPhotoElectric
                          Cerenkov and DeltaRay are ignored

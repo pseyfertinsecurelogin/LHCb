@@ -1,5 +1,4 @@
-// $Id: L0CaloCandidate.cpp,v 1.7 2009-08-12 09:16:24 ibelyaev Exp $
-// Include files 
+// Include files
 #include <vector>
 #include "GaudiKernel/SystemOfUnits.h"
 
@@ -61,16 +60,17 @@ MsgStream& LHCb::L0CaloCandidate::fillStream( MsgStream& msg ) const {
 //=========================================================================
 //  Operators for printing on Gaudi Stream
 //=========================================================================
-MsgStream& LHCb::operator<<( MsgStream& ms, const LHCb::L0CaloCandidate& cand) {
-  return cand.fillStream( ms );
-}
-
-MsgStream& LHCb::operator<<( MsgStream& ms, const LHCb::L0CaloCandidate* cand) {
-  if ( 0 != cand ) {
-    return cand->fillStream( ms );
+namespace LHCb {
+  MsgStream& operator<<( MsgStream& ms, const L0CaloCandidate& cand) {
+    return cand.fillStream( ms );
   }
-  ms << "L0CaloCandidate* points to null";
-  return ms;
-}
 
+  MsgStream& operator<<( MsgStream& ms, const L0CaloCandidate* cand) {
+    if ( 0 != cand ) {
+      return cand->fillStream( ms );
+    }
+    ms << "L0CaloCandidate* points to null";
+    return ms;
+  }
+}
 //=============================================================================

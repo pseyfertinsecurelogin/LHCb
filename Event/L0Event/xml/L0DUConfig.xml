@@ -24,7 +24,10 @@
     <class
      author="Olivier Deschamps"
      desc="This class represents the keyed L0DU Configuration"
-     name="L0DUConfig">
+     name="L0DUConfig"
+      final  = "TRUE"
+      defaultdestructor = "FALSE"
+     >
       <base   name = "KeyedObject&lt;unsigned int&gt;" />
       &KeyedObject;
       
@@ -39,6 +42,7 @@
       <import name="Event/L0DUTemplateConfig"/> 
       <import name="string" std="TRUE"/>
       <import name="algorithm" std="TRUE"/>
+      <import name="numeric" std="TRUE"/>
 
       <typedef
         def    = "Base"
@@ -93,7 +97,7 @@
       </method>
 
 
-      <method name  = "description" desc = "L0DUConfig  short description" type  = "std::string" > </method>
+      <method name  = "description" desc = "L0DUConfig  short description" type  = "std::string" const ='TRUE' > </method>
       <method name  = "summary" desc = "L0DUConfig full summary after processing" type  = "std::string" > </method>
 
 

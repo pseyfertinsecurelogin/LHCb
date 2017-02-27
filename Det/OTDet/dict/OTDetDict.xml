@@ -2,7 +2,9 @@
   <class name="DeOTDetector"     />
   <class name="DeOTStation"      />
   <class name="DeOTLayer"        />
-  <class name="DeOTModule"       />
+  <class name="DeOTModule"       >
+    <field name="m_trajFirstWire" transient="true"/>
+  </class>
   <class name="DeOTQuarter"      />
   <class name="std::vector<DeOTStation*>" />    
   <class name="std::vector<DeOTLayer*>"   />    

@@ -1,5 +1,4 @@
 // Include files 
-#include <stdlib.h>
 
 // from Event
 #include "Event/MCParticle.h"
@@ -21,20 +20,12 @@ DECLARE_ALGORITHM_FACTORY( PrintMCDecayTreeAlg )
 // Standard constructor, initializes variables
 //=============================================================================
 PrintMCDecayTreeAlg::PrintMCDecayTreeAlg( const std::string& name,
-                              ISvcLocator* pSvcLocator)
-  : 
-  GaudiAlgorithm ( name , pSvcLocator ), m_printTool(0),
-  m_printToolName(  "PrintMCDecayTreeTool" ),
-  m_particleLocation( LHCb::MCParticleLocation::Default )
+                                          ISvcLocator* pSvcLocator)
+: GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty( "PrintTool", m_printToolName );
   declareProperty( "MCParticleLocation", m_particleLocation );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-PrintMCDecayTreeAlg::~PrintMCDecayTreeAlg() {}
 
 //=============================================================================
 // Initialisation. Check parameters
@@ -47,7 +38,7 @@ StatusCode PrintMCDecayTreeAlg::initialize() {
 
   m_printTool = tool<IPrintMCDecayTreeTool>( m_printToolName, this );
 
-  return StatusCode::SUCCESS;
+  return sc;
 }
 
 //=============================================================================
@@ -61,27 +52,11 @@ StatusCode PrintMCDecayTreeAlg::execute() {
       verbose() << "Getting MCParticles from " << m_particleLocation << endmsg;
   }
 
-  LHCb::MCParticles* parts = 
-    get<LHCb::MCParticles>( m_particleLocation);
-
-  LHCb::MCParticles::iterator iPart;
-  for( iPart = parts->begin(); iPart != parts->end(); iPart++ ) {
-    if( ((*iPart)->originVertex() == NULL) ||
-        ((*iPart)->originVertex()->mother() == NULL) )
-      m_printTool->printTree( *iPart, -1 );
+  for( const auto& part : *get<LHCb::MCParticles>( m_particleLocation) ) {
+    if( !part->originVertex() || !part->originVertex()->mother()  )
+      m_printTool->printTree( part, -1 );
   }
   
   return StatusCode::SUCCESS;
 }
-
-//=============================================================================
-//  Finalize
-//=============================================================================
-StatusCode PrintMCDecayTreeAlg::finalize() {
-
-  if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Finalize" << endmsg;
-
-  return GaudiAlgorithm::finalize();
-}
-
 //=============================================================================

@@ -1,4 +1,3 @@
-// $Id: ICaloCosmicsTool.h,v 1.4 2008-12-10 09:57:07 cattanem Exp $
 #ifndef ICALOCOSMICSTOOL_H 
 #define ICALOCOSMICSTOOL_H 1
 
@@ -13,7 +12,6 @@
 // forward declarations
 class DeCalorimeter;
 
-static const InterfaceID IID_ICaloCosmicsTool ( "ICaloCosmicsTool", 1, 1 );
 
 /** @class ICaloCosmicsTool ICaloCosmicsTool.h
  *  
@@ -21,13 +19,10 @@ static const InterfaceID IID_ICaloCosmicsTool ( "ICaloCosmicsTool", 1, 1 );
  *  @author Olivier Deschamps
  *  @date   2008-04-07
  */
-class ICaloCosmicsTool : virtual public IAlgTool {
-public: 
+struct ICaloCosmicsTool : extend_interfaces<IAlgTool> {
 
-  // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICaloCosmicsTool; }
+  DeclareInterfaceID( ICaloCosmicsTool, 2, 0 );
 
-  virtual StatusCode finalize()=0;
   virtual StatusCode processing()=0;
 
   virtual Gaudi::XYZPoint referencePoint()=0;
@@ -48,11 +43,6 @@ public:
   virtual bool timed()=0;
   virtual double kernel()=0;
  
-
-protected:
-
-private:
-
 
 };
 #endif // ICALOCOSMICSTOOL_H

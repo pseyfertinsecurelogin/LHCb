@@ -26,11 +26,12 @@ __all__     = (
     'log'    , 'log10'  , 'log1p'  , 
     'sqrt'   , 'cbrt'   , 'pow'    ,   
     'sin'    , 'cos'    , 'tan'    , 
-    'sinh'   , 'cosh'   , 'tanh'   ,
+    'sinh'   , 'cosh'   , 'tanh'   , 'sech'   ,
     'asin'   , 'acos'   , 'atan'   , 
     'asinh'  , 'acosh'  , 'atanh'  ,
-    'erf'    , 'erfc'   , 'erfcx'  , 'probit' , 
-    'gamma'  , 'tgamma' , 'lgamma' ,
+    'erf'    , 'erfc'   , 'erfi'   , 'erfcx'  ,
+    'probit' , 
+    'gamma'  , 'tgamma' , 'lgamma' , 'igamma' , 
     'exp2'   , 'log2'   ,
     'hypot'  , 'fma'  
     )
@@ -187,6 +188,11 @@ def tanh ( x ) :
     if fun : return fun()
     return math.tanh ( x )
 
+_erf_   = cpp.Gaudi.Math.erf 
+_erfc_  = cpp.Gaudi.Math.erfc
+_erfi_  = cpp.Gaudi.Math.erfi
+_erfcx_ = cpp.Gaudi.Math.erfcx
+
 # =============================================================================
 ## define ``erf'' function 
 #  @see https://en.wikipedia.org/wiki/Error_function
@@ -196,18 +202,40 @@ def erf ( x ) :
     """
     fun = getattr ( x , '__erf__' , None )
     if fun : return fun()
-    return math.erf ( x )
+    return _erf_ ( x )
 
 # =============================================================================
 ## define ``erfc'' function 
 #  @see https://en.wikipedia.org/wiki/Error_function
 def erfc ( x ) :
-    """ Complemenatry function taking into account the uncertainties
+    """ Complemenatry error function taking into account the uncertainties
     - see https://en.wikipedia.org/wiki/Error_function
     """
     fun = getattr ( x , '__erfc__' , None )
     if fun : return fun()
-    return math.erfc ( x )
+    return _erfc_( x )
+
+# =============================================================================
+## define ``erfcx'' function 
+#  @see https://en.wikipedia.org/wiki/Error_function
+def erfcx ( x ) :
+    """ Complemenatry scaled error function taking into account the uncertainties
+    - see https://en.wikipedia.org/wiki/Error_function
+    """
+    fun = getattr ( x , '__erfcx__' , None )
+    if fun : return fun()
+    return _erfcx_( x )
+
+# =============================================================================
+## define ``erfi'' function 
+#  @see https://en.wikipedia.org/wiki/Error_function
+def erfi ( x ) :
+    """ Imaginary error function taking into account the uncertainties
+    - see https://en.wikipedia.org/wiki/Error_function
+    """
+    fun = getattr ( x , '__erfi__' , None )
+    if fun : return fun()
+    return _erfi_( x )
 
 # =============================================================================
 ## define ``asin'' function 
@@ -285,18 +313,32 @@ def lgamma ( x ) :
     if fun : return fun()
     return math.lgamma ( x )
 
-
-_erfcx_ = cpp.Gaudi.Math.erfcx 
+_igamma_ = cpp.Gaudi.Math.igamma 
 # =============================================================================
-## define ``erfc'' function 
-#  @see https://en.wikipedia.org/wiki/Error_function
-def erfcx ( x ) :
-    """ Scaled complementary error function taking into account the uncertainties
-    - see https://en.wikipedia.org/wiki/Error_function
+## define ``igamma'' function
+#  \f$ f(x) = \frac{1}{\Gamma(x)}\f$
+#  @see https://en.wikipedia.org/wiki/Reciprocal_gamma_function
+def igamma ( x ) :
+    """'igamma' function taking into account the uncertainties
+    \f$ f(x) = \frac{1}{\Gamma(x)}\f$
+    - see https://en.wikipedia.org/wiki/Reciprocal_gamma_function
     """
-    fun = getattr ( x , '__erfcx__' , None )
+    fun = getattr ( x , '__igamma__' , None )
     if fun : return fun()
-    return _erfcx_ ( x )
+    return _igamma_ ( x )
+
+
+
+_sech_ = cpp.Gaudi.Math.sech 
+# =============================================================================
+## define ``sech'' function 
+def sech ( x ) :
+    """ Sech-function:
+    sech(x)=1/cosh(x)
+    """
+    fun = getattr ( x , '__sech__' , None )
+    if fun : return fun()
+    return _sech_ ( x )
 
 _probit_ = cpp.Gaudi.Math.probit  
 # =============================================================================
@@ -322,7 +364,7 @@ _fma_ = cpp.Gaudi.Math.fma
 #  @return  fma(x,y,z)
 #  @warning invalid and small covariances are ignored
 def fma ( x , y , z , cxy = 0 , cxz = 0 , cyz = 0 ) : 
-    """ evaluate fma(x,y,z)=x*y+z witn uncertainties 
+    """ Evaluate fma(x,y,z)=x*y+z with uncertainties 
     """
     _x = VE ( x )
     _y = VE ( y )
@@ -359,15 +401,16 @@ if '__main__' == __name__ :
     print '*'*120
     
     vars  = [ VE ( 0.001 , 0.0001**2 ) , VE(1,0) , VE(1,0.1**2) , VE(10,0.01**2) ]
-    funcs = [ exp   , expm1  ,
-              log   , log10  , log1p  , 
-              sqrt  , cbrt   ,
-              sin   , cos    , tan    ,
-              sinh  , cosh   , tanh   ,
-              asin  , acos   , atan   ,
-              asinh , acosh  , atanh  ,
-              erf   , erfc   , erfcx  , probit , 
-              gamma , tgamma , lgamma ]
+    funcs = [ exp    , expm1  ,
+              log    , log10  , log1p  , 
+              sqrt   , cbrt   ,
+              sin    , cos    , tan    ,
+              sinh   , cosh   , tanh   , sech   , 
+              asin   , acos   , atan   ,
+              asinh  , acosh  , atanh  ,
+              erf    , erfc   , erfi   , erfcx  ,
+              probit , 
+              gamma  , tgamma , lgamma , igamma ]
 
     ## use helper object:
     from LHCbMath.deriv import EvalVE 

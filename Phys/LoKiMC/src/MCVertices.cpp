@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -229,8 +228,6 @@ LoKi::MCVertices::MCVertexDistance::MCVertexDistance
   else { m_point = point->position(); }
 }
 // ============================================================================
-LoKi::MCVertices::MCVertexDistance::~MCVertexDistance(){}
-// ============================================================================
 LoKi::MCVertices::MCVertexDistance*
 LoKi::MCVertices::MCVertexDistance::clone() const
 { return new MCVertexDistance ( *this ) ; }
@@ -259,8 +256,6 @@ LoKi::MCVertices::MCVFunAsMCFun::MCVFunAsMCFun
   , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ()
   , m_fun ( fun )
 {}
-// ============================================================================
-LoKi::MCVertices::MCVFunAsMCFun::~MCVFunAsMCFun(){}
 // ============================================================================
 LoKi::MCVertices::MCVFunAsMCFun*
 LoKi::MCVertices::MCVFunAsMCFun::clone() const
@@ -316,8 +311,6 @@ LoKi::MCVertices::MCVPFunAsMCFun::MCVPFunAsMCFun
   : LoKi::AuxFunBase ( std::tie ( fun ) ) 
   , LoKi::MCVertices::MCVFunAsMCFun ( fun )
 {}
-// ============================================================================
-LoKi::MCVertices::MCVPFunAsMCFun::~MCVPFunAsMCFun(){}
 // ============================================================================
 LoKi::MCVertices::MCVPFunAsMCFun*
 LoKi::MCVertices::MCVPFunAsMCFun::clone() const
@@ -389,10 +382,6 @@ LoKi::MCVertices::MCVFunction::MCVFunction
   , m_index ( 0      )
   , m_cut   ( cuts   )
 {}
-// ============================================================================
-// virtual descructor
-// ============================================================================
-LoKi::MCVertices::MCVFunction::~MCVFunction(){}
 // ============================================================================
 // clone method (mandatory!)
 // ============================================================================
@@ -470,18 +459,6 @@ LoKi::MCVertices::MCVFunction::operator()
   return func() ( v ) ;
   //
 }
-
-// some default destructors
-LoKi::MCVertices::TypeOfMCVertex::~TypeOfMCVertex() {}
-LoKi::MCVertices::TimeOfFlight::~TimeOfFlight() {}
-LoKi::MCVertices::VertexTime::~VertexTime() {}
-LoKi::MCVertices::VertexPositionX::~VertexPositionX() {}
-LoKi::MCVertices::VertexPositionY::~VertexPositionY() {}
-LoKi::MCVertices::VertexPositionZ::~VertexPositionZ() {}
-LoKi::MCVertices::Primary::~Primary() {}
-LoKi::MCVertices::Decay::~Decay() {}
-LoKi::MCVertices::Key::~Key() {}
-
 
 // ============================================================================
 // The END

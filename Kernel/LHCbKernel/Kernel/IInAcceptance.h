@@ -26,9 +26,9 @@ namespace LHCb
  *  @date   2005-07-22
  */
 // ============================================================================
-class IInAcceptance : virtual public IAlgTool
+struct IInAcceptance : extend_interfaces<IAlgTool>
 {
-public:
+  DeclareInterfaceID( IInAcceptance, 2, 0 ) ;
 
   /** check the track is in acceptance of given "detector"
    *  @param track track to be checked
@@ -36,13 +36,6 @@ public:
    */
   virtual bool inAcceptance ( const LHCb::Track* track ) const = 0 ;
 
-public:
-  /// Return the unique interface identifier
-  static const InterfaceID& interfaceID() ;
-protected:
-  // virtual and protected destructor
-  virtual ~IInAcceptance() ;
-private:
 };
 
 // ============================================================================

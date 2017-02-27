@@ -7,8 +7,7 @@
  *  @date   2006-11-27
  */
 
-#ifndef RICHDET_DERICHBEAMPIPE_H
-#define RICHDET_DERICHBEAMPIPE_H 1
+#pragma once
 
 // STL
 #include <memory>
@@ -40,7 +39,7 @@ class DeRichBeamPipe : public DeRichBase
 {
 
 private:
-  
+
   /// Internal representation of a line
   //using LINE = Gaudi::Math::Line<Gaudi::XYZPoint,Gaudi::XYZVector>;
 
@@ -66,13 +65,13 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRichBeamPipe();
+  virtual ~DeRichBeamPipe() = default;
 
   /**
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const { return classID(); }
+  const CLID& clID() const override { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -86,7 +85,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override;
 
 public:
 
@@ -106,7 +105,7 @@ public:
                                                const Gaudi::XYZPoint& end,
                                                Gaudi::XYZPoint& entryPoint,
                                                Gaudi::XYZPoint& exitPoint ) const;
-  /** 
+  /**
    *  Test if a given direction intersects the beam-pipe volume at all.
    *  Faster than intersectionPoints since it does not compute the intersection points
    *  in global coordinates.
@@ -157,8 +156,8 @@ private:
     const auto beamx  = ( m_m[0] * beamz ) + m_c[0];
     const auto beamy  = ( m_m[1] * beamz ) + m_c[1];
     const auto beamR2 = ( m_m[2] * beamz ) + m_c[2];
-    const auto dist2  = ( std::pow(beamx-p.x(),2) + 
-                          std::pow(beamy-p.y(),2) + 
+    const auto dist2  = ( std::pow(beamx-p.x(),2) +
+                          std::pow(beamy-p.y(),2) +
                           std::pow(beamz-p.z(),2) );
     //info() << "Point " << p << endmsg;
     //info() << "Beam  " << beamx << " " << beamy << " " << beamz << endmsg;
@@ -193,4 +192,3 @@ inline std::ostream& operator << ( std::ostream& s,
   return s << DeRichBeamPipe::text( type );
 }
 
-#endif    // RICHDET_DERICHBEAMPIPE_H

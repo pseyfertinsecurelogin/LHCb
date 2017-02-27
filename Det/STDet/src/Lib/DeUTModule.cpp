@@ -6,12 +6,9 @@
 
 #include <algorithm>
 
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <numeric>
 
 using namespace LHCb;
-using namespace boost::lambda;
 
 /** @file DeUTModule.cpp
  *
@@ -24,11 +21,6 @@ using namespace boost::lambda;
 
 DeUTModule::DeUTModule( const std::string& name ) :
   DeSTBaseElement( name )
-{
-}
-
-
-DeUTModule::~DeUTModule()
 {
 }
 

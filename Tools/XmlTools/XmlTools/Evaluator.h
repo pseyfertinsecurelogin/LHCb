@@ -1,9 +1,11 @@
 // -*- C++ -*-
-// $Id: Evaluator.h,v 1.1 2005-12-07 15:08:51 jpalac Exp $
 // ---------------------------------------------------------------------------
 
 #ifndef XMLTOOLS_EVALUATOR_H
 #define XMLTOOLS_EVALUATOR_H
+
+
+#include <memory>
 
 namespace XmlTools {
 
@@ -25,14 +27,14 @@ namespace XmlTools {
  * @ingroup evaluator
  */
 class Evaluator {
- public: 
+ public:
 
   /**
    * List of possible statuses.
    * Status of the last operation can be obtained with status().
    * In case if status() is an ERROR the corresponding error message
    * can be printed with print_error().
-   * 
+   *
    * @see status
    * @see error_position
    * @see print_error
@@ -60,10 +62,10 @@ class Evaluator {
   /**
    * Destructor.
    */
-  ~Evaluator(); 
+  ~Evaluator();
 
   /**
-   * Evaluates the arithmetic expression given as character string. 
+   * Evaluates the arithmetic expression given as character string.
    * The expression may consist of numbers, variables and functions
    * separated by arithmetic (+, - , /, *, ^, **) and logical
    * operators (==, !=, >, >=, <, <=, &&, ||).
@@ -84,7 +86,7 @@ class Evaluator {
   /**
    * Returns position in the input string where the problem occured.
    */
-  int error_position() const; 
+  int error_position() const;
 
   /**
    * Prints error message if status() is an ERROR.
@@ -92,7 +94,7 @@ class Evaluator {
   void print_error() const;
 
   /**
-   * Adds to the dictionary a variable with given value. 
+   * Adds to the dictionary a variable with given value.
    * If a variable with such a name already exist in the dictionary,
    * then status will be set to WARNING_EXISTING_VARIABLE.
    *
@@ -118,7 +120,7 @@ class Evaluator {
    * then status will be set to WARNING_EXISTING_FUNCTION.
    *
    * @param name function name.
-   * @param fun pointer to the real function in the user code. 
+   * @param fun pointer to the real function in the user code.
    */
   void setFunction(const char * name, double (*fun)());
 
@@ -128,7 +130,7 @@ class Evaluator {
    * then status will be set to WARNING_EXISTING_FUNCTION.
    *
    * @param name function name.
-   * @param fun pointer to the real function in the user code. 
+   * @param fun pointer to the real function in the user code.
    */
   void setFunction(const char * name, double (*fun)(double));
 
@@ -138,7 +140,7 @@ class Evaluator {
    * then status will be set to WARNING_EXISTING_FUNCTION.
    *
    * @param name function name.
-   * @param fun pointer to the real function in the user code. 
+   * @param fun pointer to the real function in the user code.
    */
   void setFunction(const char * name, double (*fun)(double,double));
 
@@ -148,7 +150,7 @@ class Evaluator {
    * then status will be set to WARNING_EXISTING_FUNCTION.
    *
    * @param name function name.
-   * @param fun pointer to the real function in the user code. 
+   * @param fun pointer to the real function in the user code.
    */
   void setFunction(const char * name, double (*fun)(double,double,double));
 
@@ -158,7 +160,7 @@ class Evaluator {
    * then status will be set to WARNING_EXISTING_FUNCTION.
    *
    * @param name function name.
-   * @param fun pointer to the real function in the user code. 
+   * @param fun pointer to the real function in the user code.
    */
   void setFunction(const char * name,
 		   double (*fun)(double,double,double,double));
@@ -169,14 +171,14 @@ class Evaluator {
    * then status will be set to WARNING_EXISTING_FUNCTION.
    *
    * @param name function name.
-   * @param fun pointer to the real function in the user code. 
+   * @param fun pointer to the real function in the user code.
    */
   void setFunction(const char * name,
                    double (*fun)(double,double,double,double,double));
 
   /**
    * Finds the variable in the dictionary.
-   * 
+   *
    * @param  name name of the variable.
    * @return true if such a variable exists, false otherwise.
    */
@@ -184,25 +186,25 @@ class Evaluator {
 
   /**
    * Finds the function in the dictionary.
-   * 
+   *
    * @param  name name of the function to be unset.
-   * @param  npar number of parameters of the function.  
+   * @param  npar number of parameters of the function.
    * @return true if such a function exists, false otherwise.
    */
   bool findFunction(const char * name, int npar) const;
 
   /**
    * Removes the variable from the dictionary.
-   * 
+   *
    * @param name name of the variable.
    */
   void removeVariable(const char * name);
 
   /**
    * Removes the function from the dictionary.
-   * 
+   *
    * @param name name of the function to be unset.
-   * @param npar number of parameters of the function.  
+   * @param npar number of parameters of the function.
    */
   void removeFunction(const char * name, int npar);
 
@@ -250,10 +252,11 @@ class Evaluator {
                         double mole     = 1.0,
                         double candela  = 1.0);
 
-private: 
-  void * p;                                 // private data 
-  Evaluator(const Evaluator &);             // copy constructor is not allowed
-  Evaluator & operator=(const Evaluator &); // assignment is not allowed
+  struct Struct;
+private:
+  std::unique_ptr<Struct> m_p;                       // private data
+  Evaluator(const Evaluator &) = delete ;            // copy constructor is not allowed
+  Evaluator & operator=(const Evaluator &) = delete; // assignment is not allowed
 };
 
 } // namespace XmlTools

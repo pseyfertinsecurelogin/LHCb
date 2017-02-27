@@ -1,4 +1,3 @@
-// $Id: HltConfigSvc.cpp,v 1.2 2010-06-10 13:52:00 cattanem Exp $
 // Include files
 
 #include <algorithm>
@@ -35,38 +34,6 @@ static const ConfigTreeNodeAlias::alias_type TCK_{ std::string("TCK/") };
 
 // Declaration of the Service Factory
 DECLARE_COMPONENT( HltConfigSvc )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-HltConfigSvc::HltConfigSvc( const std::string& name, ISvcLocator* pSvcLocator)
-  : base_class( name , pSvcLocator )
-  , m_decodeOdin("ODINDecodeTool",this)
-{
-  declareProperty("TCK2ConfigMap", m_tck2config_)->declareUpdateHandler( &HltConfigSvc::updateMap, this);
-  declareProperty("initialTCK", m_initialTCK_ )->declareUpdateHandler( &HltConfigSvc::updateInitial, this); 
-  declareProperty("checkOdin", m_checkOdin = true);
-  declareProperty("maskL0TCK", m_maskL0TCK = false);
-  declareProperty("HltDecReportsLocations", m_outputContainerName = {"/Event/Hlt1/DecReports","/Event/Hlt2/DecReports"} );
-  declareProperty("Hlt2Mode", m_hlt2Mode = false);
-  declareProperty("TaskNameRegex", m_taskNameRegex = "^(?:LHCb[A2]?|FEST)_HLT([^_]*)_Moore([12])_([0-9]+)");
-  declareProperty("Hlt2TCKCondition", m_tckConditionPath = "/dd/Conditions/Online/LHCb/RunInfo/HLT2");
-}
-
-//=============================================================================
-void HltConfigSvc::updateMap(Property&) {
-  m_tck2config.clear();
-  std::transform( std::begin(m_tck2config_), std::end(m_tck2config_),
-                  std::inserter( m_tck2config, std::end(m_tck2config) ),
-                  []( const std::pair<std::string,std::string>& i) {
-                     return std::make_pair( TCK{i.first}, i.second );
-                  } );
-}
-
-//=============================================================================
-void HltConfigSvc::updateInitial(Property&) {
-    m_initialTCK = TCK{m_initialTCK_};
-}
 
 
 //=============================================================================
@@ -118,11 +85,11 @@ StatusCode HltConfigSvc::initialize()
      tck2id( TCK{ tck.alias().str().substr(4) } );
 
   // find the ID of the initial TCK
-  auto initialID = tck2id( TCK{ m_initialTCK } );
+  auto initialID = tck2id( m_initialTCK );
 
   // configure everyone from the a-priori specified TCK
   status = configure( initialID, false );
-  if (status.isSuccess()) m_configuredTCK = TCK{ m_initialTCK };
+  if (status.isSuccess()) m_configuredTCK = m_initialTCK;
   return status;
 }
 
@@ -133,7 +100,7 @@ StatusCode HltConfigSvc::start()
    m_id = ~0u;
    // see if we're running online... LHCb[A2]?_HLTA0110_Moore[12]_#
    std::string taskName{System::argv()[0]};
-   static boost::regex expr{m_taskNameRegex};
+   boost::regex expr{m_taskNameRegex.value()};
    boost::smatch what;
    bool match = boost::regex_match(taskName, what, expr);
    size_t n = what.size();
@@ -245,7 +212,7 @@ StatusCode HltConfigSvc::updateTCK()
 void HltConfigSvc::createHltDecReports()
 {
    for ( const auto& location :  m_outputContainerName ) {
-      std::unique_ptr<LHCb::HltDecReports> hdr( new LHCb::HltDecReports() );
+      auto hdr = std::make_unique<LHCb::HltDecReports>();
       hdr->setConfiguredTCK(m_configuredTCK.uint());
       hdr->setTaskID(m_id);
       m_evtSvc->registerObject(location,hdr.release());
@@ -257,4 +224,28 @@ void HltConfigSvc::handle(const Incident& /*incident*/)
 {
    if (m_checkOdin) updateTCK().ignore();
    createHltDecReports();
+}
+
+// ============================================================================
+// Gaudi
+// ============================================================================
+#include "GaudiKernel/ParsersFactory.h"
+// ============================================================================
+namespace Gaudi { namespace Parsers {
+
+StatusCode parse(std::map<TCK,std::string>& result, const std::string& input )
+{
+    result.clear();
+    std::map<std::string,std::string> m;
+    auto sc = parse(m, input);
+    if (sc) {
+        std::transform( std::begin(m), std::end(m),
+                        std::inserter( result, std::end(result) ),
+                        []( const std::pair<std::string,std::string>& i) {
+                           return std::make_pair( TCK{i.first}, i.second );
+                        } );
+    }
+    return sc;
+}
+}
 }

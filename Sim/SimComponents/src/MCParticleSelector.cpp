@@ -32,7 +32,6 @@ MCParticleSelector::MCParticleSelector( const std::string& type,
   declareInterface<IMCParticleSelector>(this);
 }
 
-MCParticleSelector::~MCParticleSelector() { }
 
 StatusCode MCParticleSelector::initialize()
 {
@@ -53,7 +52,7 @@ StatusCode MCParticleSelector::initialize()
   return sc;
 }
 
-bool MCParticleSelector::accept(const LHCb::MCParticle* aParticle) const 
+bool MCParticleSelector::accept(const LHCb::MCParticle* aParticle) const
 {
   // select particles of some quality ...
 
@@ -64,10 +63,10 @@ bool MCParticleSelector::accept(const LHCb::MCParticle* aParticle) const
   const int charge = aParticle->particleID().threeCharge();
   if ( (0 == charge && !m_selNeutral) ||
        (0 != charge && !m_selCharged) ) return false;
-                                                                           
+
   // origin vertex
   const LHCb::MCVertex* origin = aParticle->originVertex();
-  if ( (NULL == origin) || 
+  if ( (NULL == origin) ||
        (origin->position().z() > m_zOrigin) ) return false;
 
 
@@ -91,12 +90,12 @@ bool MCParticleSelector::accept(const LHCb::MCParticle* aParticle) const
        (aParticle->particleID().abspid() == 11) ) return false;
 
   // reject interactions
-  if ( m_rejectInteractions && 
+  if ( m_rejectInteractions &&
        LHCb::MC::zInteraction(aParticle) < m_zInteraction) return false;
-  
+
   // select only b decay products ?
   if ( m_selBprods && !fromBdecay(aParticle) ) return false;
-  
+
   // all OK
   return true;
 }
@@ -106,8 +105,7 @@ bool MCParticleSelector::fromBdecay( const LHCb::MCParticle * aParticle ) const
   // loop back and see if there is a B in the history
   bool fromB = false;
   const LHCb::MCParticle * motherP = aParticle->mother();
-  while ( motherP != NULL && false == fromB ) 
-  {
+  while ( motherP && !fromB ) {
     fromB   = motherP->particleID().hasBottom();
     motherP = motherP->mother();
   }

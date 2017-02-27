@@ -4,6 +4,9 @@
 ! Purpose     : Encode and decode Raw banks for ST
 !-----------------------------------------------------------------------------
 
+! 2016-05-19 - Mark Tobin
+ - update TAE decoding options files.
+
 !========================= STDAQ v4r9 2016-03-16 =========================
 ! 2016-03-04 - Gerhard Raven
  - C++11 modernization

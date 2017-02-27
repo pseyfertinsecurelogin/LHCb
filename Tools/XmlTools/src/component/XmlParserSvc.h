@@ -1,20 +1,20 @@
-// $Id: XmlParserSvc.h,v 1.12 2009-05-04 15:03:48 ocallot Exp $
 #ifndef DETDESCCNV_XMLPARSERSVC_H
 #define DETDESCCNV_XMLPARSERSVC_H
 
 // Include files
 #include <map>
+#include <mutex>
 
 #include <xercesc/sax/ErrorHandler.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
 
-#include <GaudiKernel/Service.h> 
+#include <GaudiKernel/Service.h>
 #include "GaudiKernel/MsgStream.h"
 
 #include "XmlTools/IXmlParserSvc.h"
 
 // Forward and external declarations
-class IXmlEntityResolver;
+struct IXmlEntityResolver;
 class IDetDataSvc;
 class IToolSvc;
 class IAlgTool;
@@ -32,7 +32,7 @@ template <class TYPE> class SvcFactory;
  */
 class XmlParserSvc : public extends<Service, IXmlParserSvc>,
                      virtual public xercesc::ErrorHandler {
-  
+
 public:
 
   /**
@@ -40,12 +40,7 @@ public:
    * @param name   String with service name
    * @param svc    Pointer to service locator interface
    */
-  XmlParserSvc (const std::string& name, ISvcLocator* svc);
-
-  /**
-   * default destructor
-   */
-  ~XmlParserSvc() override;
+  using base_class::base_class;
 
   /// Initialize the service
   StatusCode initialize() override;
@@ -89,7 +84,7 @@ public:
   //////////////////////////////////////////////////////
 
   /**
-   * Receives notification of a warning. 
+   * Receives notification of a warning.
    * The parser will use this method to report conditions that are not errors
    * or fatal errors as defined by the XML 1.0 recommendation. The default
    * behaviour is to display the warning via the Message service.
@@ -99,7 +94,7 @@ public:
   void warning( const xercesc::SAXParseException& exception ) override;
 
   /**
-   * Receives notification of a recoverable error. 
+   * Receives notification of a recoverable error.
    * This corresponds to the definition of "error" in section 1.2 of the W3C
    * XML 1.0 Recommendation. For example, a validating parser would use
    * this callback to report the violation of a validity constraint. The default
@@ -110,18 +105,18 @@ public:
   void error( const xercesc::SAXParseException& exception ) override;
 
   /**
-   * Receives notification of a non-recoverable error. 
+   * Receives notification of a non-recoverable error.
    * This corresponds to the definition of "fatal error" in section 1.2 of the
    * W3C XML 1.0 Recommendation. For example, a parser would use this callback
    * to report the violation of a well-formedness constraint. The default
    * behaviour is to display the error via the Message service.
    * @param exception the error information encapsulated in a SAX parse
-   * exception. 
+   * exception.
    */
   void fatalError( const xercesc::SAXParseException& exception ) override;
 
   /**
-   * Resets the Error handler object on its reuse. 
+   * Resets the Error handler object on its reuse.
    * This method helps in reseting the Error handler object implementational
    * defaults each time the Error handler is begun.
    * The default implementation does nothing
@@ -130,7 +125,7 @@ public:
 
 
 private:
-  
+
   /**
    * Caches the new document, parsed from the given file
    * Since this adds an item into the cache, this may remove another
@@ -150,20 +145,20 @@ private:
   /// Return the pointer to the detector data service (loading it if not yet done).
   IDetDataSvc *detDataSvc();
 
-  /// Utilities to print...
-  MsgStream& info()    { return *m_msg << MSG::INFO; }
-  
-  MsgStream& debug()   { return *m_msg << MSG::DEBUG; }
-  
-  MsgStream& warning() { return *m_msg << MSG::WARNING; }
-
-  MsgStream& error()   { return *m_msg << MSG::ERROR; }  
-  
-  inline bool msgLevel( const MSG::Level level ) const { return m_msg->level() <= level; }
 
 private:
 
   /// the actual DOM parser
+  //
+  // from https://xerces.apache.org/xerces-c/faq-parse-3.html#faq-6:
+  // Within an address space, an instance of the parser may be used without
+  // restriction from a single thread, or an instance of the parser can be
+  // accessed from multiple threads, provided the application guarantees that
+  // only one thread has entered a method of the parser at any one time.
+  //
+  // i.e. we need to protect the parser with a mutex...
+  //
+  std::mutex m_parser_mtx;
   std::unique_ptr<xercesc::XercesDOMParser> m_parser;
 
   /**
@@ -173,7 +168,7 @@ private:
    * Thus, a 0 value allows to have a FIFO cache behavior, while a bigger
    * value tends to keep only reused items.
    */
-  unsigned int m_cacheBehavior;
+  Gaudi::Property<unsigned int> m_cacheBehavior { this, "CacheBehavior",  2 };
 
   /**
    * a structure containing a cached document, its birthDate and its utility.
@@ -205,34 +200,34 @@ private:
    * not taken into account
    */
   unsigned int m_cacheAge = 0;
-  
+
   /// The maximum number of cached documents
-  unsigned int m_maxDocNbInCache;
+  Gaudi::Property<unsigned int> m_maxDocNbInCache { this, "MaxDocNbInCache", 10 };
 
   /// Name of the service which will provide the xercesc::EntityResolver pointer (option "EntityResolver").
-  std::string m_resolverName;
+  Gaudi::Property<std::string> m_resolverName { this, "EntityResolver", "",
+                                                "Name of the tool providing the IXmlEntityResolver interface."};
 
   /// Pointer to the IXmlEntityResolver tool interface (for bookkeeping).
   IAlgTool *m_resolverTool = nullptr;
-  
+
   /// Pointer to the IXmlEntityResolver.
   SmartIF<IXmlEntityResolver> m_resolver;
 
   /// Name of the service which will provide the event time (option "DetectorDataSvc", default = "DetectorDataSvc").
-  std::string m_detDataSvcName;
-  
+  Gaudi::Property<std::string> m_detDataSvcName { this, "DetectorDataSvc", "DetectorDataSvc" };
+
   /// Pointer to the detector data service
   SmartIF<IDetDataSvc> m_detDataSvc;
-  
+
   /// Pointer to the ToolSvc.
   SmartIF<IToolSvc> m_toolSvc;
 
-  /// Pointer to a message stream
-  std::unique_ptr<MsgStream> m_msg;
-
   /// Flag to decide if we measure time...
-  bool m_measureTime;
-  bool m_printTime;
+  // Property to measure overall timing
+  Gaudi::Property<bool> m_measureTime { this,  "MeasureTime", false };
+  // Property to print timing for each parse
+  Gaudi::Property<bool> m_printTime { this,  "PrintTime", false };
   double m_sumCpu = 0;
   double m_sumClock = 0;
 };

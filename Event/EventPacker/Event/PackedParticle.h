@@ -1,7 +1,7 @@
-// $Id: PackedParticle.h,v 1.2 2010-05-19 09:04:08 jonrob Exp $
 #ifndef EVENT_PACKEDPARTICLE_H
 #define EVENT_PACKEDPARTICLE_H 1
 
+// STL
 #include <string>
 
 // Kernel
@@ -34,17 +34,17 @@ namespace LHCb
     int measMass{0};          ///< Measured mass
     int measMassErr{0};       ///< Error on the measured mass
     int lv_px{0},lv_py{0},lv_pz{0}; ///< 3D Momemtum part of Lorentz vector
-    float lv_mass{0};         ///< Mass part of Lorentz vector 
+    float lv_mass{0};         ///< Mass part of Lorentz vector
     int refx{0},refy{0},refz{0};    ///< reference point
 
     // Momentum Cov matrix
-    int momCov00{0},momCov11{0},momCov22{0},momCov33{0}; 
+    int momCov00{0},momCov11{0},momCov22{0},momCov33{0};
     short int momCov10{0};
     short int momCov20{0},momCov21{0};
     short int momCov30{0},momCov31{0},momCov32{0};
 
     // Position Cov matrix
-    int posCov00{0},posCov11{0},posCov22{0}; 
+    int posCov00{0},posCov11{0},posCov22{0};
     short int posCov10{0};
     short int posCov20{0},posCov21{0};
 
@@ -58,13 +58,13 @@ namespace LHCb
     unsigned int firstExtra{0}, lastExtra{0};
 
     // End Vertex
-    long long vertex{-1};  
+    long long vertex{-1};
 
     // ProtoParticle
     long long proto{-1};
 
     // daughters
-    unsigned int firstDaughter{0}, lastDaughter{0};  
+    unsigned int firstDaughter{0}, lastDaughter{0};
 
   };
 
@@ -104,7 +104,7 @@ namespace LHCb
     typedef std::vector<long long> Daughters;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
@@ -114,7 +114,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedParticles; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedParticles::classID(); }
+    const CLID& clID() const override { return PackedParticles::classID(); }
 
   public:
 
@@ -150,7 +150,7 @@ namespace LHCb
     /// The packed data objects
     Vector m_vect;
 
-    /// The extra info 
+    /// The extra info
     PackedExtraInfoVector m_extra;
 
     /// Vector of packed daughter smartrefs

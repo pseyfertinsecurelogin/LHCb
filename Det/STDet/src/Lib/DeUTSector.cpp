@@ -26,11 +26,6 @@ DeUTSector::DeUTSector( const std::string& name ) :
   DeSTSector( name ),
   m_parent(NULL),
   m_row(0u)
-{ 
-}
-
-
-DeUTSector::~DeUTSector()
 {
 }
 
@@ -72,24 +67,24 @@ StatusCode DeUTSector::initialize()
     } else {
       setID(m_parent->firstSector() + tSize - subID);
     }
-   
+
     // row..
     m_row = id() - m_parent->firstSector() + 1;
 
     // build the id
     const STChannelID parentID = m_parent->elementID();
-    STChannelID chan(STChannelID::typeUT,parentID.station(),parentID.layer(), 
+    STChannelID chan(STChannelID::typeUT,parentID.station(),parentID.layer(),
                      parentID.detRegion(),  id(), 0);
     setElementID(chan);
 
     // get the nickname
-    m_nickname = UTNames().UniqueSectorToString(chan); 
+    m_nickname = UTNames().UniqueSectorToString(chan);
 
     // see if stereo
     const unsigned int layer = chan.layer();
     m_isStereo = false;
     if ( (chan.station() == UTNames::UTa && layer == 2) ||
-         (chan.station() == UTNames::UTb && layer == 1))  m_isStereo = true; 
+         (chan.station() == UTNames::UTb && layer == 1))  m_isStereo = true;
 
     // get the attached sensors
     std::vector<DeUTSensor*> sensors = getChildren<DeUTSector>();
@@ -101,12 +96,12 @@ StatusCode DeUTSector::initialize()
     m_hybridType = "N";
     if ( DeSTSector::type() == "Dual" ) m_hybridType = "D";
     if ( DeSTSector::type() == "Quad" ) m_hybridType = "Q";
-        
+
     using namespace boost;
     std::string region = lexical_cast<std::string>(chan.detRegion());
     std::string col    = moduleNumber( chan.detRegion(), parentID.station());
     std::string sector = lexical_cast<std::string>(subID);
-    
+
     m_conditionPathName = UTNames().UniqueLayerToString(chan) + "LayerR"
       + region + "Module" + col + "Sector" + sector;
 
@@ -125,23 +120,23 @@ StatusCode DeUTSector::initialize()
 //   std::cout << " Sector :  "  << name()
 //             << "\n Chan " << elementID()
 //             << "\n Nickname: " << nickname()
-//             << "\n ID " << id() 
-//             << "\n type  " << type() 
-//             << "\n pitch " << pitch() 
+//             << "\n ID " << id()
+//             << "\n type  " << type()
+//             << "\n pitch " << pitch()
 //             << "\n strip " << nStrip()
 //             << "\n capacitance " << capacitance()/Gaudi::Units::picofarad
 //             << "\n thickness " << thickness()
 //             << "\n measEff " << measEff()
 //             << "\n dead width " << deadWidth()
 //             << "\n center " << globalCentre()
-//             << "\n Sector status " << sectorStatus() 
-//             << "\n fraction active " << fractionActive() 
+//             << "\n Sector status " << sectorStatus()
+//             << "\n fraction active " << fractionActive()
 //             << "\n column " << column()
 //             << "\n row " << row()
 //             << "\n prodID " << prodID()
 //             << "\n conditionsPath " << conditionsPathName()
 //             << "\n moduleType " << moduleType()
-//             << std::endl; 
+//             << std::endl;
 
   return StatusCode::SUCCESS;
 }

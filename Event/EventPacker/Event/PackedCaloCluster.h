@@ -1,6 +1,7 @@
 #ifndef EVENT_PackedCaloCluster_H
 #define EVENT_PackedCaloCluster_H 1
 
+// STL
 #include <string>
 
 // Kernel
@@ -12,6 +13,7 @@
 // Gaudi
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/GaudiException.h"
 
 namespace LHCb
 {
@@ -110,17 +112,17 @@ namespace LHCb
     typedef std::vector<LHCb::PackedCaloClusterEntry> ClusterEntryVector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 0; }
-    
+
   public:
 
     /// Class ID
     static const CLID& classID() { return CLID_PackedCaloClusters; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedCaloClusters::classID(); }
+    const CLID& clID() const override { return PackedCaloClusters::classID(); }
 
   public:
 
@@ -170,7 +172,7 @@ namespace LHCb
     char m_packingVersion{ defaultPackingVersion() };
 
     /// The packed data objects
-    ClusterVector m_clusters; 
+    ClusterVector m_clusters;
 
     /// Packed Calo Entries
     ClusterEntryVector m_entries;
@@ -195,24 +197,17 @@ namespace LHCb
     typedef LHCb::PackedCaloCluster         PackedData;
     typedef LHCb::CaloClusters              DataVector;
     typedef LHCb::PackedCaloClusters  PackedDataVector;
-    static const std::string& packedLocation()   
+    static const std::string& packedLocation()
     {
-      return LHCb::PackedCaloClusterLocation::Default; 
+      return LHCb::PackedCaloClusterLocation::Default;
     }
-    static const std::string& unpackedLocation() 
+    static const std::string& unpackedLocation()
     {
-      return LHCb::CaloClusterLocation::Default; 
+      return LHCb::CaloClusterLocation::Default;
     }
 
-  private:
-
-    /// Default Constructor hidden
-    CaloClusterPacker() {}
-
-  public:
-
-    /// Default Constructor
-    CaloClusterPacker( const GaudiAlgorithm * p ) : m_pack(p) {}
+    /// Constructor
+    CaloClusterPacker( const GaudiAlgorithm * p ) : m_pack(p) { }
 
   public:
 
@@ -240,6 +235,19 @@ namespace LHCb
     /// Safe sqrt ...
     inline double safe_sqrt( const double x ) const
     { return ( x > 0 ? std::sqrt(x) : 0.0 ); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 0 == ver );
+      if ( UNLIKELY(!OK) )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "RichPIDPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 

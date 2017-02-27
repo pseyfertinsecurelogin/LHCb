@@ -1,4 +1,3 @@
-// $Id: ConfigTarFileAccessSvc.h,v 1.1 2010-05-05 13:20:44 graven Exp $
 #ifndef CONFIGARCHIVEACCESSSVC_H 
 #define CONFIGARCHIVEACCESSSVC_H 
 
@@ -41,19 +40,9 @@ public:
   ConfigTreeNodeAlias::alias_type writeConfigTreeNodeAlias(const ConfigTreeNodeAlias&) override;
 
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type&) override;
-protected:
-  MsgStream& verbose() const { return msg(MSG::VERBOSE); }
-  MsgStream& debug() const { return msg(MSG::DEBUG); }
-  MsgStream& info() const { return msg(MSG::INFO); }
-  MsgStream& warning() const { return msg(MSG::WARNING); }
-  MsgStream& error() const { return msg(MSG::ERROR); }
-  MsgStream& fatal() const { return msg(MSG::FATAL); }
-  MsgStream& always() const { return msg(MSG::ALWAYS); }
 
 private:
   virtual IArchive*  file() const = 0;
-
-  mutable std::unique_ptr<MsgStream>   m_msg;
 
   template <typename T> boost::optional<T> read(const std::string& path) const;
   template <typename T> bool write(const std::string& path,const T& object) const;
@@ -61,6 +50,5 @@ private:
   std::string configTreeNodePath( const ConfigTreeNode::digest_type& digest ) const;
   std::string configTreeNodeAliasPath( const ConfigTreeNodeAlias::alias_type& alias ) const;
 
-  MsgStream& msg(MSG::Level level) const;
 };
 #endif // CONFIGTARFILEACCESSSVC_H

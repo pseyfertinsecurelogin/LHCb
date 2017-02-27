@@ -9,13 +9,13 @@
  */
 //=============================================================================
 
-#ifndef RICHDET_DERICHHPD_H
-#define RICHDET_DERICHHPD_H 1
+#pragma once
 
 // STL
 #include <cmath>
 #include <array>
 #include <vector>
+#include <cstdint>
 
 // DetDesc
 #include "DetDesc/IGeometryInfo.h"
@@ -43,10 +43,11 @@ class DeRichHPD : public DeRichPD
 {
 
 public:
+
   /**
    * Constructor for this class
    */
-  explicit DeRichHPD( const std::string & name = "" );
+  explicit DeRichHPD( const std::string & name = "" ) : DeRichPD ( name ) { }
 
   /**
    * Default destructor
@@ -57,7 +58,7 @@ public:
    * Retrieves reference to class identifier
    * @return the class identifier for this class
    */
-  const CLID& clID() const { return classID(); }
+  const CLID& clID() const override final { return classID(); }
 
   /**
    * Retrieves reference to class identifier
@@ -71,7 +72,7 @@ public:
    * @retval StatusCode::FAILURE Initialisation failed, program should
    * terminate
    */
-  virtual StatusCode initialize();
+  StatusCode initialize() override final;
 
 public:
 
@@ -81,7 +82,7 @@ public:
    */
   Gaudi::XYZPoint windowCentreIn() const
   {
-    return geometry()->toGlobal(m_pvWindow->toMother(Gaudi::XYZPoint(0,0,m_winInR)) );
+    return geometry()->toGlobal(m_pvWindow->toMother({0,0,m_winInR}) );
   }
 
   /**
@@ -91,7 +92,7 @@ public:
   Gaudi::XYZPoint windowCentreInIdeal() const
   {
     return ( geometry()->toGlobalMatrixNominal() *
-             m_pvWindow->toMother(Gaudi::XYZPoint(0,0,m_winInR)) );
+             m_pvWindow->toMother({0,0,m_winInR}) );
   }
 
   /** Get the point on the centre of the HPD window on the inside surface in the mother
@@ -109,66 +110,29 @@ public:
    */
   Gaudi::XYZPoint windowCentreOut() const
   {
-    return geometry()->toGlobal( m_pvWindow->toMother(Gaudi::XYZPoint(0,0,m_winOutR)) );
+    return geometry()->toGlobal( m_pvWindow->toMother({0,0,m_winOutR}) );
   }
 
   // @brief Converts a RichSmartID to a point in global coordinates.
-  virtual StatusCode detectionPoint ( const LHCb::RichSmartID smartID,
-                                      Gaudi::XYZPoint& detectPoint,
-                                      bool photoCathodeSide = false ) const;
+  bool detectionPoint ( const LHCb::RichSmartID smartID,
+                        Gaudi::XYZPoint& detectPoint,
+                        bool photoCathodeSide = false ) const override final;
 
 
   // Converts an x,y point from the anode to the photocathode in the
   // coordinate system of the HPD.
-  virtual StatusCode detectionPoint ( const double fracPixelCol,
-                                      const double fracPixelRow,
-                                      Gaudi::XYZPoint& detectPoint,
-                                      const bool photoCathodeSide = true ) const;
+  bool detectionPoint ( const double fracPixelCol,
+                        const double fracPixelRow,
+                        Gaudi::XYZPoint& detectPoint,
+                        const bool photoCathodeSide = true ) const override final;
 
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the HPD channel
    *  @return The detection point on the anode in global coordinates
    */
-  Gaudi::XYZPoint detPointOnAnode( const LHCb::RichSmartID smartID ) const;
-
-  /** Retrieves the demagnification interpolation function for the HPD R coordinate.
-   *  For a given R on the HPD cathode returns the R on the anode.
-   *  @return A pointer to the demagnification function for R(R)
-   */
-  inline const Rich::TabulatedFunction1D* 
-  demagnification_RtoR( const int field = 0 ) const noexcept
+  inline Gaudi::XYZPoint detPointOnAnode( const LHCb::RichSmartID smartID ) const
   {
-    return m_demagMapR[ field > 0 ? 1 : 0 ].get();
-  }
-
-  /** Retrieves the demagnification interpolation function for the HPD phi coordinate.
-   *  For a given R on the HPD cathode returns the phi on the anode.
-   *  @return A pointer to the demagnification function for phi(R)
-   */
-  inline const Rich::TabulatedFunction1D*
-  demagnification_RtoPhi( const int field = 0 ) const noexcept
-  {
-    return m_demagMapPhi[ field > 0 ? 1 : 0 ].get();
-  }
-
-  /** Retrieves the magnification interpolation function for the HPD R coordinate.
-   *  For a given R on the HPD anode returns the R on the cathode.
-   *  @return A pointer to the magnification function for R(R)
-   */
-  inline const Rich::TabulatedFunction1D* 
-  magnification_RtoR( const int field = 0 ) const noexcept
-  {
-    return m_magMapR[ field > 0 ? 1 : 0 ].get();
-  }
-
-  /** Retrieves the magnification interpolation function for the HPD phi coordinate.
-   *  For a given R on the HPD anode returns the phi on the cathode.
-   *  @return A pointer to the magnification function for phi(R)
-   */
-  inline const Rich::TabulatedFunction1D* 
-  magnification_RtoPhi( const int field = 0 ) const noexcept
-  {
-    return m_magMapPhi[ field > 0 ? 1 : 0 ].get();
+    return ( m_deSiSensor->geometry()->toGlobal( pointOnSilicon(smartID) ) );
   }
 
   /** Converts the given RichSmartID to the position on the silicon wafer,
@@ -178,7 +142,7 @@ public:
    */
   inline Gaudi::XYZPoint pointOnSilicon ( const LHCb::RichSmartID smartID ) const
   {
-    return Gaudi::XYZPoint( xOnSilicon(smartID), yOnSilicon(smartID), 0.0 );
+    return { xOnSilicon(smartID), yOnSilicon(smartID), 0.0 };
   }
 
   /** Get the tranformation from the HPD panel coordinate system to the HPD quartz
@@ -232,7 +196,7 @@ public:
   bool testKaptonShadowing( const Gaudi::XYZPoint&  pInPanel,
                             const Gaudi::XYZVector& vInPanel ) const;
 
-  /** Intersect a given direction, from a given point, with the outer surface 
+  /** Intersect a given direction, from a given point, with the outer surface
    *  of the HPD window in the global LHCb frame
    *
    *  @param[in]  position      The start point to use for the ray tracing
@@ -246,7 +210,61 @@ public:
   bool intersectEntryWindow ( const Gaudi::XYZPoint& position,
                               const Gaudi::XYZVector& direction,
                               Gaudi::XYZPoint& intersection ) const;
-  
+
+public: // types
+
+  /// Field polarity
+  enum FieldPolarity : uint8_t { Down = 0, Up = 1 };
+
+  /// Number of field polarities (just for explicitness...)
+  static const uint8_t NPolarities = 2;
+
+public:
+
+  /** Retrieves the demagnification interpolation function for the HPD R coordinate.
+   *  For a given R on the HPD cathode returns the R on the anode.
+   *  Only valid values for field are 0 (DOWN) or 1 (UP)
+   *  @return A pointer to the demagnification function for R(R)
+   */
+  inline const Rich::TabulatedFunction1D*
+  demagnification_RtoR( const FieldPolarity field = FieldPolarity::Down ) const noexcept
+  {
+    return &m_demagMapR[ field ];
+  }
+
+  /** Retrieves the demagnification interpolation function for the HPD phi coordinate.
+   *  For a given R on the HPD cathode returns the phi on the anode.
+   *  Only valid values for field are 0 (DOWN) or 1 (UP)
+   *  @return A pointer to the demagnification function for phi(R)
+   */
+  inline const Rich::TabulatedFunction1D*
+  demagnification_RtoPhi( const FieldPolarity field = FieldPolarity::Down ) const noexcept
+  {
+    return &m_demagMapPhi[ field ];
+  }
+
+  /** Retrieves the magnification interpolation function for the HPD R coordinate.
+   *  For a given R on the HPD anode returns the R on the cathode.
+   *  Only valid values for field are 0 (DOWN) or 1 (UP)
+   *  @return A pointer to the magnification function for R(R)
+   */
+  inline const Rich::TabulatedFunction1D*
+  magnification_RtoR( const FieldPolarity field = FieldPolarity::Down ) const noexcept
+  {
+    return &m_magMapR[ field ];
+  }
+
+  /** Retrieves the magnification interpolation function for the HPD phi coordinate.
+   *  For a given R on the HPD anode returns the phi on the cathode.
+   *  Only valid values for field are 0 (DOWN) or 1 (UP)
+   *  @return A pointer to the magnification function for phi(R)
+   */
+  inline const Rich::TabulatedFunction1D*
+  magnification_RtoPhi( const FieldPolarity field = FieldPolarity::Down ) const noexcept
+  {
+    return &m_magMapPhi[ field ];
+  }
+
 private: // functions
 
   /** Returns the silicon x coordinate for the given RichSmartID
@@ -255,7 +273,7 @@ private: // functions
    */
   inline double xOnSilicon( const LHCb::RichSmartID smartID ) const
   {
-    return smartID.pixelCol()*m_pixelSize + m_pixelSize/2.0 - m_siliconHalfLengthX;
+    return ( ( (double)smartID.pixelCol() + 0.5 ) * m_pixelSize ) - m_siliconHalfLengthX;
   }
 
   /** Returns the silicon y coordinate for the given RichSmartID
@@ -264,18 +282,14 @@ private: // functions
    */
   inline double yOnSilicon( const LHCb::RichSmartID smartID ) const
   {
-    return m_siliconHalfLengthY - smartID.pixelRow()*m_pixelSize - m_pixelSize/2.0;
+    return m_siliconHalfLengthY - ( ( (double)smartID.pixelRow() + 0.5 ) * m_pixelSize );
   }
 
   /// parameterised extra radius for the defraction in the HPD window
   inline double extraRadiusForRefraction( const double r ) const
   {
-    const auto  rr = r*r;
-    const auto rrr = r*rr;
-    return ( m_refactParams[3]*rrr +
-             m_refactParams[2]*rr  +
-             m_refactParams[1]*r   +
-             m_refactParams[0]     );
+    return ( m_refPs[0] + 
+             ( ( ( ( m_refPs[3] * r ) + m_refPs[2] ) * r + m_refPs[1] ) * r ) );
   }
 
   /// Get parameters from Rich1
@@ -287,32 +301,31 @@ private: // functions
   /// Update the magnification and demagnification information
   StatusCode updateDemagProperties();
 
+  /// Update the cached field parameters
+  StatusCode updateFieldParams();
+
   /// go from a point on silicon to a point on the photo-cathode with magnet ON
-  StatusCode magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint, 
-                                      const bool photoCathodeSide ) const;
+  bool magnifyToGlobalMagnetON( Gaudi::XYZPoint& detectPoint,
+                                const bool photoCathodeSide ) const;
 
   /// go from a point on silicon to a point on the photo-cathode with magnet OFF
-  StatusCode magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint, 
-                                       const bool photoCathodeSide ) const;
+  bool magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint,
+                                 const bool photoCathodeSide ) const;
 
   /// Initialise the interpolators for demagnification (cathode to anode)
-  StatusCode fillHpdDemagTable( const unsigned int field );
+  StatusCode fillHpdDemagTable( const FieldPolarity field );
 
   /// Initialise the interpolators for magnification (anode to cathode)
-  StatusCode fillHpdMagTable( const unsigned int field );
+  StatusCode fillHpdMagTable( const FieldPolarity field );
 
   /// Initialise the HPD quantum eff function
   StatusCode initHpdQuantumEff();
 
   /// Access magnetic field service on demand
-  inline ILHCbMagnetSvc * magSvc() const
-  {
-    if ( !m_magFieldSvc ) { loadMagSvc(); }
-    return m_magFieldSvc;
-  }
+  inline ILHCbMagnetSvc * magSvc() const noexcept { return m_magFieldSvc; }
 
-  /// Load the Magnetic field service when required
-  void loadMagSvc() const;
+  /// Load the Magnetic field service
+  void loadMagSvc();
 
   /** It returns the rotation angle \Delta\phi [rad] as a function of the
    * radial entrance
@@ -349,6 +362,19 @@ private: // functions
 
 private: // data
 
+  // cached field parameters
+
+  /// Field polarity
+  FieldPolarity m_field{Down};
+
+  /// Is field ON or OFF
+  bool m_isFieldON{true};
+
+private:
+
+  /// version of MDMS corrections, for both field polarities
+  std::array<int,NPolarities> m_MDMS_version = {{0,0}};
+
   IDetectorElement* m_deSiSensor = nullptr;  ///< The silicon sensor detector element
 
   const IPVolume* m_pvWindow = nullptr;      ///< The pv for the HPD quartz window
@@ -356,7 +382,7 @@ private: // data
 
   const ISolid* m_kaptonSolid = nullptr;     ///< Pointer to the kapton solid
 
-  int m_number{0};                    ///< HPD number (should be the same as copy number)
+  int m_number{0};               ///< HPD number (should be the same as copy number)
 
   double m_winInR{0};            ///< Inner radius of HPD window squared
   double m_winOutR{0};           ///< Outter radius of HPD window squared
@@ -369,26 +395,27 @@ private: // data
   double m_pixelSize{0};           ///< The pixel size on the silicon sensor
   double m_siliconHalfLengthX{0};  ///< Si sensor half size in x
   double m_siliconHalfLengthY{0};  ///< Si sensor half size in y
+  double m_siAnodeRCheck{0};       ///< Max Anode radius on Si sensor
 
   /// The demagnification factor of the HPD. Element [0] is the linear
   /// term, and element[1] the non-linear term for small corrections.
-  double m_deMagFactor[2] = {0,0};
+  std::array<double,2> m_deMagFactor = {{0,0}};
   double m_magnificationCoef1{0};
   double m_magnificationCoef2{0};
 
   /// Interpolated function for HPD R for demagnification
-  std::vector< std::unique_ptr<Rich::TabulatedFunction1D> > m_demagMapR;
+  std::array< Rich::TabulatedFunction1D, NPolarities > m_demagMapR;
   /// Interpolated function for HPD phi for demagnification
-  std::vector< std::unique_ptr<Rich::TabulatedFunction1D> > m_demagMapPhi;
+  std::array< Rich::TabulatedFunction1D, NPolarities > m_demagMapPhi;
   /// Interpolated function for HPD R for magnification
-  std::vector< std::unique_ptr<Rich::TabulatedFunction1D> > m_magMapR;
+  std::array< Rich::TabulatedFunction1D, NPolarities > m_magMapR;
   /// Interpolated function for HPD phi for magnification
-  std::vector< std::unique_ptr<Rich::TabulatedFunction1D> > m_magMapPhi;
+  std::array< Rich::TabulatedFunction1D, NPolarities > m_magMapPhi;
 
   /// Demagnification parameters condition
   std::vector< SmartRef<Condition> > m_demagConds;
 
-  std::vector<double> m_refactParams = {0,0,0,0}; ///< refraction parameters for quartz window
+  std::vector<double> m_refPs = {0,0,0,0}; ///< refraction parameters for quartz window
 
   /// Flag to indicate the full treatment of magnetic distortions should be performed
   bool m_UseHpdMagDistortions{true};
@@ -398,9 +425,6 @@ private: // data
 
   /// magnitude of the longitudinal B field
   double m_LongitudinalBField{0};
-
-  /// version of MDMS corrections, for both field polarities
-  int m_MDMS_version[2] = {0,0};
 
   // Cached parameters for speed reasons.
   Gaudi::Transform3D m_SiSensorToHPDMatrix; ///< silicon to HPD transform
@@ -420,17 +444,6 @@ private: // data
   Gaudi::XYZVector m_windowCoCglobal;
 
   /// pointer to the magnetic field service
-  mutable ILHCbMagnetSvc * m_magFieldSvc = nullptr;
+  ILHCbMagnetSvc * m_magFieldSvc = nullptr;
 
 };
-
-//=========================================================================
-//  convert a RichSmartID to a point on the anode (global coord system)
-//=========================================================================
-inline Gaudi::XYZPoint
-DeRichHPD::detPointOnAnode( const LHCb::RichSmartID smartID ) const
-{
-  return ( m_deSiSensor->geometry()->toGlobal( pointOnSilicon(smartID) ) );
-}
-
-#endif    // RICHDET_DERICHHPD_H

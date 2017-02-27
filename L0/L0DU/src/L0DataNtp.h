@@ -1,4 +1,4 @@
-#ifndef L0DATANTP_H 
+#ifndef L0DATANTP_H
 #define L0DATANTP_H 1
 
 // Include files
@@ -10,20 +10,20 @@
 
 
 /** @class L0DataNtp L0DataNtp.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2012-04-10
  */
 class L0DataNtp : public GaudiTupleAlg {
-public: 
+public:
   /// Standard constructor
   L0DataNtp( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~L0DataNtp( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
 protected:
 

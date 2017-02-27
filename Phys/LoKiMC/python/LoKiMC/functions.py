@@ -366,6 +366,11 @@ MCCOSPHITR   = LoKi.MCParticles.CosPhiTr
 MCANGLEPHITR = LoKi.MCParticles.AnglePhiTr
 
 
+## @see LoKi::Cuts::MCINCLUSIVE
+MCINCLUSIVE      = LoKi.MCParticles.FromInclusive 
+## @see LoKi::Cuts::MCFROMINCLUSIVE
+MCFROMINCLUSIVE  = LoKi.MCParticles.FromInclusive
+
 # =============================================================================
 if '__main__' == __name__ :
     

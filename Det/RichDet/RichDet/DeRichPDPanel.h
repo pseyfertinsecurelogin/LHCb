@@ -9,8 +9,7 @@
  */
 //=============================================================================
 
-#ifndef RICHDET_DERICHPDPANEL_H
-#define RICHDET_DERICHPDPANEL_H 1
+#pragma once
 
 // Gaudi
 #include "GaudiKernel/Transform3DTypes.h"
@@ -23,6 +22,9 @@
 // LHCbKernel
 #include "Kernel/RichSmartID.h"
 #include "Kernel/RichTraceMode.h"
+
+// RichUtils
+#include "RichUtils/RichDAQDefinitions.h"
 
 //=============================================================================
 /** @class DeRichPDPanel DeRichPDPanel.h RichDet/DeRichPDPanel.h
@@ -43,7 +45,7 @@ public:
   DeRichPDPanel( const std::string & name = "" );
 
   /// Destructor
-  virtual ~DeRichPDPanel( );
+  virtual ~DeRichPDPanel( ) = default;
 
 public:
 
@@ -101,23 +103,14 @@ public:
    *                                for refraction. If true use the photocathode side
    *
    *  @return StatusCode indicating if the conversion was successful or not
-   *  @retval StatusCode::SUCCESS Conversion to photocathode was OK
-   *  @retval StatusCode::FAILURE Impossible conversion to photocathode
+   *  @retval true  Conversion to photocathode was OK
+   *  @retval false Impossible conversion to photocathode
    */
-  StatusCode detectionPoint( const LHCb::RichSmartID smartID,
-                             Gaudi::XYZPoint& detectPoint,
-                             bool photoCathodeSide = false ) const
+  bool detectionPoint( const LHCb::RichSmartID smartID,
+                       Gaudi::XYZPoint& detectPoint,
+                       bool photoCathodeSide = false ) const
   {
     return this->dePD(smartID)->detectionPoint(smartID,detectPoint,photoCathodeSide);
-  }
-
-  /** Access the DeRichPD object for a given PD RichSmartID
-   *  @param[in] pdID The PD RichSmartID identifier
-   *  @return Pointer to the associated DeRichPD object
-   */
-  const DeRichPD * dePD( const LHCb::RichSmartID pdID ) const
-  {
-    return this->dePD(this->pdNumber(pdID));
   }
 
   /** Get the global to local (PD panel) transform. The local frame is defined with an offset
@@ -137,8 +130,14 @@ public:
   
 public: // virtual methods. Derived classes must implement these
 
+  /** Access the DeRichPD object for a given PD RichSmartID
+   *  @param[in] pdID The PD RichSmartID identifier
+   *  @return Pointer to the associated DeRichPD object
+   */
+  virtual const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const = 0;
+
   /// Returns the detector element for the given PD number
-  virtual const DeRichPD* dePD( const unsigned int PDNumber ) const = 0;
+  virtual const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const = 0;
 
   /** @brief Returns the intersection point with an HPD window given a vector
    *  and a point.
@@ -190,18 +189,14 @@ public: // virtual methods. Derived classes must implement these
    *  @param[out] id          The RichSmartID for the given point
    *
    *  @return Status of conversion
-   *  @retval StatusCode::FAILURE Point outside silicon pixel sensor or in a position that
+   *  @retval false Point outside silicon pixel sensor or in a position that
    *          could not have originated from the photocathode.
    */
-  virtual StatusCode smartID( const Gaudi::XYZPoint& globalPoint,
-                              LHCb::RichSmartID& id ) const = 0;
+  virtual bool smartID( const Gaudi::XYZPoint& globalPoint,
+                        LHCb::RichSmartID& id ) const = 0;
 
   /// Returns the PD number for the given RichSmartID
-  virtual unsigned int pdNumber( const LHCb::RichSmartID& smartID ) const = 0;
-  ///Returns true when the given smartID corresponds to a GrandPMT.  
-  // For hpds and for standard pmts returns false.
-
-  virtual bool pdGrandSize( const LHCb::RichSmartID& smartID ) const = 0;
+  virtual Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const = 0;
 
   /**
    * Adds to the given vector all the available readout channels in this PD panel
@@ -209,20 +204,30 @@ public: // virtual methods. Derived classes must implement these
    * @param readoutChannels Vector of valid pixel IDs
    *
    * @return Status code
-   * @retval StatusCode::SUCCESS Readout channel list was successfully determined
-   * @retval StatusCode::FAILURE An error occured whilst determining the readout channels
+   * @retval true  Readout channel list was successfully determined
+   * @retval false An error occured whilst determining the readout channels
    */
-  virtual StatusCode
+  virtual bool
   readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const = 0;
+  
+  /** The maximum PD copy number for this panel
+   *  Useful as for the PMTs this is not easily derived from the number of PD
+   *  as they are not completely sequential */
+  virtual Rich::DAQ::HPDCopyNumber maxPdNumber() const = 0;
+
+protected:
+
+  /// Set the RICH type
+  void setRich( const Rich::DetectorType rich ) noexcept { m_rich = rich; }
+
+  /// Set the side type
+  void setSide( const Rich::Side side ) noexcept { m_side = side; }
 
 protected: // Parameters that must be properly configured in the derived classes
 
   unsigned int m_PDColumns{0};    ///< Number of PD columns in the panel
   unsigned int m_PDNumInCol{0};   ///< Number of PDs in each column
   unsigned int m_PDMax{0};        ///< Total number of PDs in this panel
-
-  Rich::DetectorType m_rich = Rich::InvalidDetector;   ///< The RICH detector type
-  Rich::Side m_side = Rich::InvalidSide;    ///< The RICH PD panel (up, down, left or right)
 
   /// The PD technology type (HPD or MaPMT)
   LHCb::RichSmartID::IDType m_pdType = LHCb::RichSmartID::Undefined;
@@ -231,11 +236,14 @@ protected: // Parameters that must be properly configured in the derived classes
 
   double m_detPlaneZ{0};   ///< The z position of the detection plane in an PD panel
 
-  Gaudi::Plane3D m_detectionPlane;     ///< detection plane in global coordinates
+  Gaudi::Plane3D m_detectionPlane; ///< detection plane in global coordinates
 
-  Gaudi::Transform3D m_globalToPDPanelTransform;  ///< global to PD plane (local) transform
-  Gaudi::Transform3D m_PDPanelToGlobalTransform;  ///< local (PD plane) to global transform
+  Gaudi::Transform3D m_globalToPDPanelTransform; ///< global to PD plane (local) transform
+  Gaudi::Transform3D m_PDPanelToGlobalTransform; ///< local (PD plane) to global transform
+
+private:
+
+  Rich::DetectorType m_rich = Rich::InvalidDetector; ///< The RICH detector type
+  Rich::Side m_side = Rich::InvalidSide;             ///< The RICH PD panel (up, down, left or right)
 
 };
-
-#endif // RICHDET_DERICHPDPANEL_H

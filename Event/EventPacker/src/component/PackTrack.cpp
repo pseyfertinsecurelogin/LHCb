@@ -29,11 +29,6 @@ DECLARE_ALGORITHM_FACTORY( PackTrack )
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-PackTrack::~PackTrack() {}
-
-//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode PackTrack::execute()
@@ -50,7 +45,7 @@ StatusCode PackTrack::execute()
   // Output
   LHCb::PackedTracks* out = new LHCb::PackedTracks();
   put( out, m_outputName );
-  out->setVersion( 4 );
+  out->setVersion( 5 );
 
   // Track Packer
   const LHCb::TrackPacker packer(this);

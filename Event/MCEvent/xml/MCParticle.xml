@@ -24,12 +24,12 @@
         desc="4-momentum-vector"
         name="momentum"
         type="Gaudi::LorentzVector"
-        init="0.0, 0.0, 0.0, -1*Gaudi::Units::GeV" 
+        init="0.0, 0.0, 0.0, -1*Gaudi::Units::GeV"
        />
-       <constructor 
-           desc     = "Copy Constructor" 
-           argList  = "const LHCb::MCParticle* right"
-           initList = "KeyedObject&lt;int&gt;(), m_momentum(right->momentum()), m_particleID(right->particleID()), m_originVertex(right->originVertex()), m_endVertices(right->endVertices())" 
+       <constructor
+           desc     = "Copy Constructor[Attention: the key is NOT copied!]"
+           argList  = "const LHCb::MCParticle&amp; right"
+           initList = "KeyedObject&lt;int&gt;(), m_momentum(right.m_momentum), m_particleID(right.m_particleID),m_flags(right.m_flags),m_originVertex(right.m_originVertex), m_endVertices(right.m_endVertices)"
            > <code/> </constructor>
 
       <method
@@ -39,7 +39,7 @@
         const="TRUE"
         >
         <code>
-          return new LHCb::MCParticle(this);
+          return new LHCb::MCParticle(*this);
         </code>
       </method>
 
@@ -50,7 +50,7 @@
         const="TRUE"
         >
         <code>
-          LHCb::MCParticle *clone = new LHCb::MCParticle(this);
+          LHCb::MCParticle *clone = new LHCb::MCParticle(*this);
           clone -> setKey(this->key());
           return clone;
         </code>
@@ -88,9 +88,9 @@
        <method
         name="p"
         const="TRUE"
-        desc="short cut for |P|" 
+        desc="short cut for |P|"
         type="double"
-       > 
+       >
          <code> return m_momentum.R(); </code>
        </method>
        <method
@@ -167,7 +167,7 @@
         name="primaryVertex"
         type="const LHCb::MCVertex*"
        >
-         <code> 
+         <code>
            return ( originVertex() ? originVertex()->primaryVertex() : NULL ) ;
          </code>
        </method>
@@ -183,16 +183,16 @@
           name    = "fillStream"
           desc    = "Print this MCParticle in a human readable way"
           type    = "std::ostream&amp;"
-          virtual = "FALSE"
+          override = "TRUE"
           const   = "TRUE">
           <arg
             type = "std::ostream"
             name = "s"/>
        </method>
 
-      <attribute 
+      <attribute
                 name = "flags"
-                desc = "Bit-packed information on how this MCParticle was produced" 
+                desc = "Bit-packed information on how this MCParticle was produced"
                 init = "0"
                 type = "bitfield">
       <bitfield desc="Flag to indicate if this particle was produced as part of the signal decay tree" length="1" name="fromSignal" />

@@ -1,4 +1,3 @@
-// $Id: LinkedFromKey.h,v 1.1 2008-03-14 10:06:19 ocallot Exp $
 #ifndef LINKER_LINKEDFROMKEY_H 
 #define LINKER_LINKEDFROMKEY_H 1
 
@@ -12,12 +11,7 @@
  *  @date   2008-03-14
  */
 
-template <class TARGET, class KEY=int> class LinkedFromKey : public LinkedFrom<ContainedObject, TARGET, KEY> {
-public:
-  LinkedFromKey( IDataProviderSvc* eventSvc,
-                 IMessageSvc* msgSvc,
-                 std::string containerName ) 
-    : LinkedFrom<ContainedObject, TARGET, KEY>( eventSvc, msgSvc, containerName ) { };
-  ~LinkedFromKey() {};
-};
+template <class TARGET, class KEY=int> 
+using LinkedFromKey = LinkedFrom<ContainedObject, TARGET, KEY>;
+
 #endif // LINKER_LINKEDFROMKEY_H

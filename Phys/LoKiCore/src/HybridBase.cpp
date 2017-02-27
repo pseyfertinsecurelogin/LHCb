@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -13,6 +12,7 @@
 #include <memory>
 #include <set>
 #include <map>
+#include <numeric>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -30,6 +30,8 @@
 // ============================================================================
 #include "boost/algorithm/string/trim.hpp"
 #include "boost/algorithm/string/replace.hpp"
+#include "boost/algorithm/string/predicate.hpp"
+#include "boost/algorithm/string/erase.hpp"
 #include "boost/format.hpp"
 #include "boost/lexical_cast.hpp"
 // ============================================================================
@@ -71,8 +73,8 @@ namespace
     boost::trim ( code ) ;
     if ( code.empty() )                { return code ; }
     // check for paired quotes:
-    std::string::const_iterator ifront = code.begin () + 1 ;
-    std::string::const_iterator iback  = code.end   () - 1 ;
+    auto ifront = code.begin () + 1 ;
+    auto iback  = code.end   () - 1 ;
     //
     if ( *ifront != *iback ) { return code ; }
     //
@@ -92,57 +94,49 @@ LoKi::Hybrid::Base::Base
   : GaudiTool ( type , name , parent )
     //
   , m_pyInit     ( false )
-  , m_cpplines   ( { "#include \"GaudiKernel/Kernel.h\""            ,  
-                     "#include \"GaudiKernel/System.h\""            , 
+  , m_cpplines   ( { "#include \"GaudiKernel/Kernel.h\""            ,
+                     "#include \"GaudiKernel/System.h\""            ,
                      "#include \"GaudiKernel/SystemOfUnits.h\""     ,
                      "#include \"GaudiKernel/PhysicalConstants.h\"" ,
-                     "#include \"LoKi/Functors.h\""                 , 
+                     "#include \"LoKi/Functors.h\""                 ,
                      "#include \"LoKi/CacheFactory.h\""             ,
                      "#include \"LoKi/FunctorCache.h\""             , } )
-  , m_allfuncs   () 
 {
-  declareProperty ( "ShowCode" , 
-                    m_showCode = false, 
+  declareProperty ( "ShowCode" ,
+                    m_showCode = false,
                     "Flag to display the prepared python code") ;
   //
-  // use Environment variable 
+  // use Environment variable
   //
-  declareProperty ( "MakeCpp"  , 
-                    m_makeCpp    = "UNKNOWN" != System::getEnv("LOKI_GENERATE_CPPCODE"), 
+  declareProperty ( "MakeCpp"  ,
+                    m_makeCpp    = "UNKNOWN" != System::getEnv("LOKI_GENERATE_CPPCODE"),
                     "Generate C++ code for created functors ") ;
   //
-  declareProperty ( "UsePython"  , 
-                    m_use_python = "UNKNOWN" == System::getEnv("LOKI_DISABLE_PYTHON"), 
+  declareProperty ( "UsePython"  ,
+                    m_use_python = "UNKNOWN" == System::getEnv("LOKI_DISABLE_PYTHON"),
                     "Use Python as factory for LoKi-functors ") ;
   //
-  declareProperty ( "UseCache"  , 
-                    m_use_cache  = "UNKNOWN" == System::getEnv("LOKI_DISABLE_CACHE" ), 
+  declareProperty ( "UseCache"  ,
+                    m_use_cache  = "UNKNOWN" == System::getEnv("LOKI_DISABLE_CACHE" ),
                     "Use C++ cache for LoKi-functors ") ;
   //
   // make reasonable default name
   //
   m_cppname = this->name() ;
-  if ( 0 == m_cppname.find ( "ToolSvc." ) ) { m_cppname.erase ( 0 , 8 ) ; }
-  while ( std::string::npos != m_cppname.find ( '.' ) ) 
-  { m_cppname.replace ( m_cppname.find ( '.' )  , 1 , "_"  ) ; }
-  while ( std::string::npos != m_cppname.find ( ' ' ) ) 
-  { m_cppname.replace ( m_cppname.find ( ' ' )  , 1 , "_"  ) ; }
-  while ( std::string::npos != m_cppname.find ( "::" ) ) 
-  { m_cppname.replace ( m_cppname.find ( "::" ) , 2 , "__" ) ; }
+  if ( boost::algorithm::starts_with(  m_cppname,  "ToolSvc." ) ) { m_cppname.erase ( 0 , 8 ) ; }
+  std::replace_if( m_cppname.begin(), m_cppname.end(),
+                   [](const char& c) { return c=='.' || c== ' '; }, '_');
+  boost::algorithm::replace_all( m_cppname, "::","__");
   m_cppname.insert ( 0 , "FUNCTORS_" ) ;
   //
-  declareProperty ( "CppFileName", 
-                    m_cppname    , 
+  declareProperty ( "CppFileName",
+                    m_cppname    ,
                     "File name for C++ code for created functors ") ;
   //
-  declareProperty ( "CppLines" , 
-                    m_cpplines , 
+  declareProperty ( "CppLines" ,
+                    m_cpplines ,
                     "C++ (header) lines to be included") ;
 }
-// ============================================================================
-// Destructor (virtual and protected)
-// ============================================================================
-LoKi::Hybrid::Base::~Base() {}
 // ============================================================================
 // initialization of the tool
 // ============================================================================
@@ -153,8 +147,8 @@ StatusCode LoKi::Hybrid::Base::initialize ()
   // force the loading/initialization of  LoKi Service
   svc<LoKi::ILoKiSvc>( "LoKiSvc" , true ) ;
   // Messages
-  if ( !m_use_python ) Warning( "Python Functors are DISABLED",    sc ).ignore();
-  if ( !m_use_cache  ) Warning( "C++ Cache Functors are DISABLED", sc ).ignore();
+  if ( !m_use_python ) Print( "Python Functors are DISABLED", sc, MSG::ALWAYS ) ;
+  if ( !m_use_cache  ) Print( "C++ Cache Functors are DISABLED", sc, MSG::ALWAYS ) ;
   // return
   return ( m_use_python || m_use_cache ? sc : Error( "No Functors enabled" ) );
 }
@@ -188,7 +182,7 @@ StatusCode LoKi::Hybrid::Base::finalize  ()
   //
   if ( Py_IsInitialized() && m_pyInit ) { Warning ( "Python is still initialized!" ) ; }
   //
-  // Write C++ code 
+  // Write C++ code
   //
   if ( m_makeCpp ) { writeCpp () ; }
   //
@@ -207,10 +201,10 @@ namespace
   // ==========================================================================
   std::string toString ( PyObject* o )
   {
-    if ( 0 == o ) { return "NULL"; }
+    if ( !o ) { return "NULL"; }
     PyObject* str = PyObject_Str ( o ) ;
     std::string tmp ;
-    if ( 0 != str ) { tmp = PyString_AS_STRING (str ) ; }
+    if ( str ) { tmp = PyString_AS_STRING (str ) ; }
     Py_XDECREF ( str ) ;
     return tmp ;
   }
@@ -234,7 +228,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
 
   // local scope
   PyObject* locals  = PyEval_GetLocals  () ;
-  if ( 0 == locals )
+  if ( !locals )
   {
     debug() << "PyEval_GetLocals:  'locals'  points to NULL" << endmsg ;
     if ( PyErr_Occurred() ) { PyErr_Print() ; }
@@ -242,7 +236,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
   // global scope
   PyObject* globals = PyEval_GetGlobals () ;
   bool globnew = false ;
-  if ( 0 == globals )
+  if ( !globals )
   {
     debug() << "PyEval_GetGlobals: 'globals' points to NULL" << endmsg ;
     if ( PyErr_Occurred() ) { PyErr_Print() ; }
@@ -261,22 +255,19 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
       Py_file_input  , globals  , locals ) ;
 
   bool ok = true ;
-  if ( 0 == result )
+  if ( !result )
   {
     ok = false ;
 
-    PyObject* o1 = 0 ;
-    PyObject* o2 = 0 ;
-    PyObject* o3 = 0 ;
+    PyObject* o1 = nullptr ;
+    PyObject* o2 = nullptr ;
+    PyObject* o3 = nullptr ;
     PyErr_Fetch              ( &o1 , &o2 , &o3 ) ;
     PyErr_NormalizeException ( &o1 , &o2 , &o3 ) ;
 
-    if ( 0 != o1 )
-    { error () << " PyError Type      : " << toString ( o1 ) << endmsg ; }
-    if ( 0 != o2 )
-    { error () << " PyError Value     : " << toString ( o2 ) << endmsg ; }
-    if ( 0 != o3 )
-    { error () << " PyError Traceback : " << toString ( o3 ) << endmsg ; }
+    if ( o1 ) { error () << " PyError Type      : " << toString(o1) << endmsg; }
+    if ( o2 ) { error () << " PyError Value     : " << toString(o2) << endmsg; }
+    if ( o3 ) { error () << " PyError Traceback : " << toString(o3) << endmsg; }
 
     PyObject* pyErr = o2 ;
 
@@ -305,33 +296,27 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
 
       if ( 0 != filename )
       { info () << "Filename: " << toString ( filename ) << endmsg ; }
-      if ( 0 != lineno   )
-      {
+      if ( 0 != lineno   ) {
         info () << "Lineno  : " << toString ( lineno   ) << endmsg ;
         if ( PyInt_Check ( lineno ) ) { _lineno = PyInt_AsLong ( lineno ) ;  }
       }
-      if ( 0 != offset   )
-      {
+      if ( 0 != offset   ) {
         info () << "offset  : " << toString ( offset   ) << endmsg ;
         if ( PyInt_Check ( offset ) ) { _offset = PyInt_AsLong ( offset ) ;  }
       }
-      if ( 0 != text     )
-      {
+      if ( 0 != text     ) {
         _text = toString ( text ) ;
         info () << "text    : " << _text << endmsg ;
       }
-      if ( 0 != msg      )
-      {
+      if ( 0 != msg      ) {
         _msg  = toString ( msg ) ;
         info () << "msg     : " << _msg  << endmsg ;
       }
-      if ( 0 != message  )
-      {
+      if ( 0 != message  ) {
         _message = toString ( message ) ;
         info () << "message : " << _message << endmsg ;
       }
-      if ( 0 != prntfal  )
-      {
+      if ( 0 != prntfal  ) {
         info () << "prntfal : " << toString( prntfal )  << endmsg ;
       }
 
@@ -362,9 +347,7 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
 
       // restore for printout
       PyErr_Restore ( o1 , o2 , o3 ) ;
-    }
-    else
-    {
+    } else {
       // restore for printout
       PyErr_Restore ( o1 , o2 , o3 ) ;
     }
@@ -418,49 +401,47 @@ std::string LoKi::Hybrid::Base::makeCode
   //
   std::ostringstream stream ;
   // start the code:
-  stream << "# " << std::string(78,'=') << std::endl ;
+  stream << "# " << std::string(78,'=') << '\n' ;
   stream << "# python pseudomodule, generated for the tool '"
-         << name() << "'" << std::endl ;
-  stream << "# " << std::string(78,'=') << std::endl ;
-  stream << "# Arguments: "  << std::endl ;
-  stream << "# \tcode    = " << Gaudi::Utils::toString ( _code   )  << std::endl ;
-  stream << "# \tactor   = " << Gaudi::Utils::toString ( actor   )  << std::endl ;
-  stream << "# \tmodules = " << Gaudi::Utils::toString ( modules )  << std::endl ;
-  stream << "# \tlines   = " << Gaudi::Utils::toString ( lines   )  << std::endl ;
-  stream << "# \tcontext = " << Gaudi::Utils::toString ( addComment ( "\n" + context ) )  << std::endl ;
-  stream << "# " << std::string(78,'=') << std::endl ;
+         << name() << "'" << '\n' ;
+  stream << "# " << std::string(78,'=') << '\n' ;
+  stream << "# Arguments:\n" ;
+  stream << "# \tcode    = " << Gaudi::Utils::toString ( _code   )  << '\n' ;
+  stream << "# \tactor   = " << Gaudi::Utils::toString ( actor   )  << '\n' ;
+  stream << "# \tmodules = " << Gaudi::Utils::toString ( modules )  << '\n' ;
+  stream << "# \tlines   = " << Gaudi::Utils::toString ( lines   )  << '\n' ;
+  stream << "# \tcontext = " << Gaudi::Utils::toString ( addComment ( "\n" + context ) )  << '\n' ;
+  stream << "# " << std::string(78,'=') << '\n' ;
   // define imported modules:
-  stream << "##        MODULES :" << std::endl ;
+  stream << "##        MODULES :\n" ;
   for ( Strings::const_iterator imodule = modules.begin() ;
         modules.end() != imodule ; ++imodule )
   {
-    stream << "from " << (*imodule) << " import *" << std::endl ;
+    stream << "from " << (*imodule) << " import *\n" ;
   }
-  stream << "## End of MODULES  " << std::endl ;
-  stream << "## The ACTOR :"              << std::endl ;
-  stream << "_actor=" << actor << std::endl ;
+  stream << "## End of MODULES\n" ;
+  stream << "## The ACTOR :\n" ;
+  stream << "_actor=" << actor << '\n' ;
   // put additional lines:
-  stream << "##        LINES :" << std::endl ;
-  for ( Strings::const_iterator iline = lines.begin() ;
-        lines.end() != iline ; ++iline )
-  { stream << (*iline) << std::endl ; }
-  stream << "## end of LINES  " << std::endl ;
+  stream << "##        LINES :\n" ;
+  for ( const auto& l : lines ) { stream << l << '\n' ; }
+  stream << "## end of LINES  " << '\n' ;
   // put the context
-  stream << "##        CONTEXT :" << std::endl ;
-  if ( !context.empty() ) { stream << context << std::endl ; }
-  stream << "## End of CONTEXT  " << std::endl ;
-  stream << "##        CODE :"    << std::endl ;
-  stream << "_code="  << _code    << std::endl ;
-  stream << "## End of CODE :"    << std::endl ;
-  stream << "sc=_actor.process('" << name() << "',_code)" << std::endl ;
-  stream << "# " << std::string(78,'=') << std::endl ;
-  stream << "# The END "                << std::endl ;
-  stream << "# " << std::string(78,'=') << std::endl ;
+  stream << "##        CONTEXT :\n" ;
+  if ( !context.empty() ) { stream << context << '\n' ; }
+  stream << "## End of CONTEXT\n" ;
+  stream << "##        CODE :\n" ;
+  stream << "_code="  << _code    << '\n' ;
+  stream << "## End of CODE :\n" ;
+  stream << "sc=_actor.process('" << name() << "',_code)\n" ;
+  stream << "# " << std::string(78,'=') << '\n' ;
+  stream << "# The END\n" ;
+  stream << "# " << std::string(78,'=') << '\n' ;
   //
   std::string result = stream.str() ;
   if ( msgLevel ( MSG::DEBUG ) || showCode() )
   {
-    debug() << "Generated Python code:" << std::endl
+    debug() << "Generated Python code:\n"
             << result
             << endmsg ;
   }
@@ -468,23 +449,20 @@ std::string LoKi::Hybrid::Base::makeCode
   return result ;
 }
 // ============================================================================
-// write C++ code 
+// write C++ code
 // ============================================================================
-namespace 
+namespace
 {
   inline std::ostream&
-  writeLines ( const std::vector<std::string>& lines  , 
+  writeLines ( const std::vector<std::string>& lines  ,
                std::ostream&                   stream )
   {
-    for ( std::vector<std::string>::const_iterator iline = lines.begin() ;
-          lines.end() != iline ; ++iline ) 
-    { stream << ( *iline ) << std::endl ;}
-    //
+    for ( const auto& l : lines ) stream << l << '\n' ;
     return stream ;
   }
 }
 // ============================================================================
-namespace 
+namespace
 {
   // ==========================================================================
   typedef std::pair<std::string,std::string>  _PAIR       ;
@@ -495,94 +473,69 @@ namespace
   const _ALLFUNCS                 s_emptyfuncs ;
   // ==========================================================================
   std::unique_ptr<std::ostream>
-  openFile ( std::string                     namebase                 , 
-             const unsigned short            findex                   , 
-             const std::vector<std::string>& lines     = s_emptylines , 
-             const _ALLFUNCS&                allfuncs  = s_emptyfuncs )  
+  openFile ( std::string                     namebase                 ,
+             const unsigned short            findex                   ,
+             const std::vector<std::string>& lines     = s_emptylines ,
+             const _ALLFUNCS&                allfuncs  = s_emptyfuncs )
   {
-    // 
-    // construct the file name 
+    //
+    // construct the file name
     //  1) remove trailing .cpp
-    std::string::size_type p = namebase.find(".cpp") ;
-    if ( std::string::npos != p ) { namebase.erase ( p ) ; }
-    //  2) remove blanks 
-    p = namebase.find (' ' ) ;
-    while ( std::string::npos != p ) 
-    { namebase.replace ( p , 1 , "_") ; p = namebase.find ( ' ' ) ; }
-    //  3) construct the name 
+    if ( boost::algorithm::ends_with( namebase, ".cpp" ) ) boost::algorithm::erase_tail( namebase, 4 );
+    //  2) replace blanks  by underscore
+    std::replace( namebase.begin(), namebase.end(), ' ','_' );
+    //  3) construct the name
     boost::format fname ( "%s_%04d.cpp" ) ;
-    fname % namebase % findex ; 
+    fname % namebase % findex ;
     //
-    std::unique_ptr<std::ostream> file ( new std::ofstream ( fname.str() ) ) ;
+    auto file = std::make_unique<std::ofstream>( fname.str() );
     //
-    *file 
-      << "/** The file is generated on : " << System::hostName()   << std::endl 
-      << " *  at : "        << Gaudi::Time::current().format(true) << std::endl
-      << " *  by : "        << System::accountName()               << std::endl 
-      << " */"                                                     << std::endl ;
+    *file << "/** The file is generated on : " << System::hostName()   << '\n'
+          << " *  at : "        << Gaudi::Time::current().format(true) << '\n'
+          << " *  by : "        << System::accountName()               << '\n'
+          << " */\n" ;
     //
     // write the include directives
-    *file << "\n// Explicitly declared include files: "           << std::endl ;
-    for ( std::vector<std::string>::const_iterator iline = lines.begin() ; 
-          lines.end() != iline ; ++iline ) { *file << *iline << std::endl ; }
-    *file << std::endl ;
+    *file << "\n// Explicitly declared include files:\n" ;
+    for ( const auto& l : lines ) { *file << l << '\n' ; }
+    *file << '\n' ;
     //
     std::set<std::string> morelines ;
-    for ( _ALLFUNCS::const_iterator ifunc = allfuncs.begin() ; 
-          allfuncs.end() != ifunc ; ++ifunc ) 
-    {
-      const _FUNCTIONS& funcs = ifunc->second ;
-      for ( _FUNCTIONS::const_iterator icode = funcs.begin() ; 
-            funcs.end() != icode ; ++icode )
-      {
-        if ( std::string::npos != icode->first.find ( "LoKiPhys"           ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiPhys.h\""                ) ; }
-        // if ( std::string::npos != icode->first.find ( "LoKiPhysMC"         ) ) 
-        // { morelines.insert ( "#include \"LoKi/LoKiPhysMC.h\""              ) ; }
-        if ( std::string::npos != icode->first.find ( "LoKiTracks"         ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiTracks.h\""              ) ; }
-        if ( std::string::npos != icode->first.find ( "LoKiArrayFunctors"  ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiArrayFunctors.h\""       ) ; }
-        if ( std::string::npos != icode->first.find ( "LoKiProtoParticles" ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiProtoParticles.h\""      ) ; }
-        if ( std::string::npos != icode->first.find ( "LoKiHlt"            ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiHlt.h\""                 ) ; }
-        if ( std::string::npos != icode->first.find ( "LoKiNumbers"        ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiNumbers.h\""             ) ; }
-        if ( std::string::npos != icode->first.find ( "LoKiTrigger"        ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiTrigger.h\""             ) ; }
-        if ( std::string::npos != icode->first.find ( "LoKiCore"           ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiCore.h\""                ) ; }
-        if ( std::string::npos != icode->first.find ( ".algorithms"        ) ) 
-        { morelines.insert ( "#include \"LoKi/AlgFunctors.h\""             ) ; }
-        if ( std::string::npos != icode->first.find ( "ALG_"               ) ) 
-        { morelines.insert ( "#include \"LoKi/AlgFunctors.h\""             ) ; }
-        if ( std::string::npos != icode->first.find ( "TC_"                ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiTrigger.h\""             ) ; }
-        if ( std::string::npos != icode->first.find ( "TS_"                ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiTrigger.h\""             ) ; }
-        if ( std::string::npos != icode->first.find ( "ODIN_"              ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiHlt.h\""                 ) ; }
-        if ( std::string::npos != icode->first.find ( "L0_"                ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiHlt.h\""                 ) ; }
-        if ( std::string::npos != icode->first.find ( "HDR_"               ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiHlt.h\""                 ) ; }
-        if ( std::string::npos != icode->first.find ( "HLT_"               ) ) 
-        { morelines.insert ( "#include \"LoKi/LoKiHlt.h\""                 ) ; }
-      }  
+    for ( const auto& ifunc : allfuncs ) {
+      for ( auto& icode : ifunc.second ) {
+        for ( const auto& s : { std::make_pair("LoKiPhys",          "#include \"LoKi/LoKiPhys.h\""),
+                            //  std::make_pair("LoKiPhysMC",        "#include \"LoKi/LoKiPhysMC.h\""),
+                                std::make_pair("LoKiTrack",         "#include \"LoKi/LoKiTrack.h\""),
+                                std::make_pair("LoKiArrayFunctors", "#include \"LoKi/LoKiArrayFunctors.h\""),
+                                std::make_pair("LoKiProtoParticles","#include \"LoKi/LoKiProtoParticles.h\""),
+                                std::make_pair("LoKiHlt",           "#include \"LoKi/LoKiHlt.h\""),
+                                std::make_pair("LoKiNumbers",       "#include \"LoKi/LoKiNumbers.h\""),
+                                std::make_pair("LoKiTrigger",       "#include \"LoKi/LoKiTrigger.h\""),
+                                std::make_pair("LoKiCore",          "#include \"LoKi/LoKiCore.h\""),
+                                std::make_pair(".algorithms",       "#include \"LoKi/AlgFunctors.h\""),
+                                std::make_pair("ALG_",              "#include \"LoKi/AlgFunctors.h\""),
+                                std::make_pair("TC_",               "#include \"LoKi/LoKiTrigger.h\""),
+                                std::make_pair("TS_",               "#include \"LoKi/LoKiTrigger.h\""),
+                                std::make_pair("ODIN_",             "#include \"LoKi/LoKiHlt.h\""),
+                                std::make_pair("L0_",               "#include \"LoKi/LoKiHlt.h\""),
+                                std::make_pair("HDR_",              "#include \"LoKi/LoKiHlt.h\""),
+                                std::make_pair("HLT_",              "#include \"LoKi/LoKiHlt.h\"") } ) {
+          if ( std::string::npos != icode.first.find ( s.first ) )
+          { morelines.insert ( s.second ) ; }
+        }
+      }
     }
-    // additional include files 
-    *file << "\n// Additional include files: " << std::endl ;
-    for ( std::set<std::string>::const_iterator iline = morelines.begin() ; 
-          morelines.end() != iline ; ++iline ) { *file << *iline << std::endl ; }
-    *file << std::endl ;
+    // additional include files
+    *file << "\n// Additional include files: " << '\n' ;
+    for ( const auto& l : morelines ) { *file << l << '\n' ; }
+    *file << '\n' ;
     //
-    return file ;
+    return std::move(file) ; // must std::move to convert from std::fstream to std::ostream...
   }
   // ==========================================================================
 }
 // ============================================================================
-void LoKi::Hybrid::Base::writeCpp () const 
+void LoKi::Hybrid::Base::writeCpp () const
 {
   //
   std::unique_ptr<std::ostream> file ;
@@ -594,61 +547,47 @@ void LoKi::Hybrid::Base::writeCpp () const
   //
   const std::string split_ = System::getEnv( "LOKI_GENERATE_CPPCODE" ) ;
   //
-  // Positive: write N-files 
-  // Negative: write N-functors per file 
-  // Zero    : write one file 
-  // 
-#if defined(BOOST_VERSION) && BOOST_VERSION>105599
+  // Positive: write N-files
+  // Negative: write N-functors per file
+  // Zero    : write one file
   //
-  // for Boost >= 1.56
-  if ( !boost::conversion::try_lexical_cast ( split_, split ) ) { split = 0 ; }
   //
-#else 
+  if ( !boost::conversion::try_lexical_convert ( split_, split ) ) { split = 0 ; }
   //
-  // for Boost < 1.56 
-  try  { split = boost::lexical_cast<int> ( split_ ) ; }
-  catch( const boost::bad_lexical_cast& /* e */ ) { split = 0 ; }
-  //
-#endif 
   //
   // number of files (if defined)
   const unsigned int n_files = 0 < split ? (unsigned int) split : 0 ;
   //
-  // total number of functors 
-  unsigned int ftotal = 0 ;
-  for ( ALLFUNCS::const_iterator ia = m_allfuncs.begin() ; m_allfuncs.end() != ia ; ++ia ) 
-  { ftotal += ia->second.size() ; }
+  // total number of functors
+  auto ftotal = std::accumulate( m_allfuncs.begin(), m_allfuncs.end(), 0,
+                                 [](int i, const std::pair<std::string,FUNCTIONS>& fs)
+                                 { return i+fs.second.size(); } );
   //
   // number of functors per file
-  const unsigned int i_split = 
-    0 > split ?  std::abs ( split ) : 
+  const unsigned int i_split =
+    0 > split ?  std::abs ( split ) :
     0 < split ?  int ( double ( ftotal ) / split ) + 1 : 0 ;
   //
-  for ( ALLFUNCS::const_iterator ia = m_allfuncs.begin() ; m_allfuncs.end() != ia ; ++ia ) 
-  {
+  for ( const auto& ia : m_allfuncs ) {
     //
-    const std::string& cpptype = ia->first  ;
-    const FUNCTIONS&   funcs   = ia->second ;
-    for ( FUNCTIONS::const_iterator ic = funcs.begin() ; funcs.end() != ic ; ++ic ) 
-    {
+    const std::string& cpptype = ia.first  ;
+    for ( const auto& ic : ia.second ) {
       //
-      const std::string& cppcode = ic->second.first  ;
-      const std::string& pytype  = ic->second.second ;
-      const std::string& pycode  = ic->first         ;
+      const std::string& cppcode = ic.second.first  ;
+      const std::string& pytype  = ic.second.second ;
+      const std::string& pycode  = ic.first         ;
       //
-      if ( !file ) { file = openFile ( m_cppname , ++ifile , m_cpplines , m_allfuncs ) ; } ;
+      if ( !file ) file = openFile( m_cppname , ++ifile , m_cpplines , m_allfuncs );
       //
-      *file << "\n// FUNCTOR #" 
-            << ++iwrite     << "/" 
-            << funcs.size() << "" << std::endl ;
+      *file << "\n// FUNCTOR #"
+            << ++iwrite     << "/"
+            << ia.second.size() << "" << '\n' ;
       //
-      // write actual C++ code 
-      LoKi::Cache::makeCode ( *file      , 
-                              cpptype    ,
-                              cppcode    ,
-                              pycode     , 
-                              pytype     ) ;
-      *file << std::endl ;
+      // write actual C++ code
+      LoKi::Cache::makeCode ( *file      ,
+                              cpptype    , cppcode    ,
+                              pycode     , pytype     ) ;
+      *file << '\n' ;
       //
       if ( 1 <= i_split && 0 == iwrite % i_split ) { file.reset() ; }
       //
@@ -658,10 +597,8 @@ void LoKi::Hybrid::Base::writeCpp () const
   // close the file
   file.reset() ;
   //
-  if ( 0 < n_files ) 
-  {
-    while ( ifile < n_files ) 
-    {
+  if ( 0 < n_files ) {
+    while ( ifile < n_files ) {
       file = openFile ( m_cppname , ++ifile ) ;
       file.reset() ;
     }

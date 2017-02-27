@@ -1,12 +1,12 @@
 // $Id: MEPTester.cpp,v 1.1 2009-02-06 09:37:57 frankb Exp $
 // Include files from Gaudi
-#include "GaudiKernel/SmartIF.h" 
-#include "GaudiKernel/Algorithm.h" 
-#include "GaudiKernel/IRegistry.h" 
-#include "GaudiKernel/IDataManagerSvc.h" 
-#include "GaudiKernel/IDataProviderSvc.h" 
-#include "GaudiKernel/SmartDataPtr.h" 
-#include "GaudiKernel/MsgStream.h" 
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/MsgStream.h"
 #include "Event/RawEvent.h"
 #include "MDF/RawEventPrintout.h"
 #include "MDF/OnlineRunInfo.h"
@@ -18,7 +18,7 @@
  */
 namespace LHCb  {
   /** @class MEPTester MEPTester.cpp
-  *  Creates and fills dummy RawEvent  
+  *  Creates and fills dummy RawEvent
   *
   *  @author Markus Frank
   *  @date   2005-10-13
@@ -26,7 +26,7 @@ namespace LHCb  {
   class MEPTester : public Algorithm {
     int m_numPrint;  ///< Property "Print". Number of events with printout
     int  m_numDump;   ///< Number of events with dump
-  public: 
+  public:
     /// Standard constructor
     MEPTester(const std::string& nam,ISvcLocator* svc) : Algorithm(nam,svc){
       declareProperty("Print", m_numPrint=10);
@@ -35,11 +35,11 @@ namespace LHCb  {
     /// Destructor
     virtual ~MEPTester()              {                                     }
     /// Algorithm initialization
-    virtual StatusCode initialize()   {      return StatusCode::SUCCESS;    }
+    StatusCode initialize() override {      return StatusCode::SUCCESS;    }
     /// Algorithm finalization
-    virtual StatusCode finalize()     {      return StatusCode::SUCCESS;    }
+    StatusCode finalize() override {      return StatusCode::SUCCESS;    }
     /// Main execution
-    virtual StatusCode execute()  {
+    StatusCode execute() override {
       //typedef std::map<std::string,RawEvent*> _E;
       typedef std::vector<std::pair<std::string,RawEvent*> > _E;
       typedef std::vector<IRegistry*> _L;
@@ -63,7 +63,7 @@ namespace LHCb  {
                 path = (*i)->identifier()+"/DAQ/RawEvent";
               else if ( id == "DAQ" )
                 path = (*i)->identifier()+"/RawEvent";
-              else 
+              else
                 path = "";
               if ( !path.empty() )  {
                 SmartDataPtr<RawEvent> raw(eventSvc(),path);
@@ -71,15 +71,15 @@ namespace LHCb  {
               }
             }
             if ( evt_count < m_numPrint ) {
-              log << MSG::ALWAYS << "+------------------> MEP [" << evt_count << "]" << endmsg;              
+              log << MSG::ALWAYS << "+------------------> MEP [" << evt_count << "]" << endmsg;
               for(_E::const_iterator ir=evts.begin(); ir!=evts.end(); ++ir) {
                 log << MSG::ALWAYS << "+-> " << std::setw(30) << std::left << (*ir).first << " ";
                 const _B& odin = (*ir).second->banks(RawBank::ODIN);
                 if ( odin.size() == 1 )  {
                   OnlineRunInfo* inf = odin[0]->begin<OnlineRunInfo>();
-                  log << " Run:"   << std::setw(6) << inf->Run 
+                  log << " Run:"   << std::setw(6) << inf->Run
                       << " Orbit:" << std::setw(3) << inf->Orbit
-                      << " L0:"    << std::setw(6) << inf->L0ID 
+                      << " L0:"    << std::setw(6) << inf->L0ID
                       << " BID:"   << std::setw(3) << inf->bunchID;
                 }
                 log << endmsg;

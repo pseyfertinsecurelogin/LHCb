@@ -1,5 +1,5 @@
 // $Id: OdinTypesFilter.h,v 1.2 2008/08/21 16:33:08 odescham Exp $
-#ifndef COMPONENT_ODINTYPESFILTER_H 
+#ifndef COMPONENT_ODINTYPESFILTER_H
 #define COMPONENT_ODINTYPESFILTER_H 1
 
 // Include files
@@ -8,21 +8,21 @@
 
 
 /** @class OdinTypesFilter OdinTypesFilter.h component/OdinTypesFilter.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2008-02-05
  */
 class OdinTypesFilter : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   OdinTypesFilter( const std::string& name, ISvcLocator* pSvcLocator );
 
   virtual ~OdinTypesFilter( ); ///< Destructor
 
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
-  virtual StatusCode finalize  ();    ///< Algorithm finalization
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
+  StatusCode finalize  () override;    ///< Algorithm finalization
 
 protected:
 
@@ -35,7 +35,7 @@ private:
   int m_winmin,m_winmax;
   long m_all;
   long m_acc;
-  
+
 
 };
 #endif // COMPONENT_ODINTYPESFILTER_H

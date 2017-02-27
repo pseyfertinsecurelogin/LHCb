@@ -1,7 +1,7 @@
-// $Id: PackedMCRichHit.h,v 1.4 2009-11-07 12:20:26 jonrob Exp $
 #ifndef EVENT_PACKEDMCRICHHIT_H
 #define EVENT_PACKEDMCRICHHIT_H 1
 
+// STL
 #include <string>
 
 // Kernel
@@ -13,6 +13,7 @@
 // Gaudi
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/GaudiException.h"
 
 namespace LHCb
 {
@@ -61,7 +62,7 @@ namespace LHCb
     typedef std::vector<LHCb::PackedMCRichHit> Vector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 1; }
 
@@ -71,7 +72,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedMCRichHits; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedMCRichHits::classID(); }
+    const CLID& clID() const override { return PackedMCRichHits::classID(); }
 
   public:
 
@@ -93,7 +94,7 @@ namespace LHCb
     char   m_packingVersion{ defaultPackingVersion() };
 
     /// The packed data objects
-    Vector m_vect; 
+    Vector m_vect;
 
   };
 
@@ -146,6 +147,19 @@ namespace LHCb
 
     /// Access the parent algorithm
     const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 1 == ver || 0 == ver );
+      if ( UNLIKELY(!OK) )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "MCRichHitPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 

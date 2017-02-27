@@ -41,7 +41,7 @@ IOHelper().inputFiles([
 (0, '')
 (0, '')
 - change service tests
-[<Gaudi::RootCnvSvc/FileRecordCnvSvc at 0x182cb3d0>, <Gaudi::RootCnvSvc/RootCnvSvc at 0x182ca340>, 'LHCb::RawDataCnvSvc', 'Gaudi::MultiFileCatalog/FileCatalog', 'Gaudi::IODataManager/IODataManager']
+[Gaudi__RootCnvSvc('FileRecordCnvSvc'), Gaudi__RootCnvSvc('RootCnvSvc'), 'LHCb::RawDataCnvSvc', 'Gaudi::MultiFileCatalog/FileCatalog', 'Gaudi::IODataManager/IODataManager']
 =============================
 ROOT
 =============================
@@ -91,7 +91,7 @@ IOHelper().inputFiles([
 (0, '')
 (0, '')
 - change service tests
-[<Gaudi::RootCnvSvc/FileRecordCnvSvc at 0x182cb3d0>, <Gaudi::RootCnvSvc/RootCnvSvc at 0x182ca340>, 'LHCb::RawDataCnvSvc', 'Gaudi::MultiFileCatalog/FileCatalog', 'Gaudi::IODataManager/IODataManager']
+[Gaudi__RootCnvSvc('FileRecordCnvSvc'), Gaudi__RootCnvSvc('RootCnvSvc'), 'LHCb::RawDataCnvSvc', 'Gaudi::MultiFileCatalog/FileCatalog', 'Gaudi::IODataManager/IODataManager']
 =============================
 MDF
 =============================

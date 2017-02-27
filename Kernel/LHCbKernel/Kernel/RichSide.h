@@ -12,20 +12,24 @@
 #ifndef LHCBKERNEL_RICHSIDE_H
 #define LHCBKERNEL_RICHSIDE_H 1
 
-// Include files
+// STL files
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cstdint>
+#include <array>
+
+// Kernel
 #include "Kernel/RichDetectorType.h"
 
 namespace Rich
 {
 
   /// Total number of PD panels
-  static const unsigned int NTotalPDPanels   = 4;
+  static const uint8_t NTotalPDPanels   = 4;
 
   /// Number of PD panels per RICH detector
-  static const unsigned int NPDPanelsPerRICH = 2;
+  static const uint8_t NPDPanelsPerRICH = 2;
 
   /** @enum Rich::Side
    *
@@ -35,7 +39,7 @@ namespace Rich
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   08/07/2004
    */
-  enum Side
+  enum Side : int8_t
     {
       InvalidSide  = -1, ///< Invalid side
       top          = 0,  ///< Upper panel in RICH1
@@ -72,6 +76,10 @@ namespace Rich
   {
     return s << Rich::text( side );
   }
+
+  /// Type for fixed size arrays with RICH panel information
+  template < typename TYPE >
+  using PanelArray = std::array< TYPE, NPDPanelsPerRICH >;
 
 }
 

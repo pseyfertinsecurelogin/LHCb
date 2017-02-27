@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_FINDERDICT_H 
+#ifndef LOKI_FINDERDICT_H
 #define LOKI_FINDERDICT_H 1
 // ============================================================================
 // Include files
@@ -25,14 +25,14 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
   namespace Dicts
   {
     // ========================================================================
     /** @class FinderDict LoKi/FinderDict.h
-     *  
+     *
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date   2009-06-28
      */
@@ -40,64 +40,93 @@ namespace LoKi
     struct FinderDicts_
     {
       // ======================================================================
-      /// get the actual "stripped" type 
+      /// get the actual "stripped" type
       typedef typename LoKi::GetType<TYPE>::Type Type ;
       // ======================================================================
     public:
       // ======================================================================
       static bool __hasDecay__
-      ( const Decays::Finder_<TYPE>&      finder , 
-        const typename Type::Container&   input  ) 
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::Container&   input  )
       { return finder.hasDecay  ( input.begin() , input.end() ) ; }
       // ======================================================================
       static bool __hasDecay__
-      ( const Decays::Finder_<TYPE>&      finder , 
-        const typename Type::ConstVector& input  ) 
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::ConstVector& input  )
       { return finder.hasDecay  ( input.begin() , input.end() ) ; }
       // ======================================================================
       static bool __hasDecay__
-      ( const Decays::Finder_<TYPE>&      finder , 
-        const typename Type::Vector&      input  ) 
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::Vector&      input  )
       { return finder.hasDecay  ( input.begin() , input.end() ) ; }
       // ======================================================================
       static bool __hasDecay__
-      ( const Decays::Finder_<TYPE>&      finder , 
-        const SmartRefVector<Type>&       input  ) 
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const SmartRefVector<Type>&       input  )
       { return finder.hasDecay  ( input.begin() , input.end() ) ; }
       // ======================================================================
     public:
       // ======================================================================
       static size_t __findDecay__
-      ( const Decays::Finder_<TYPE>&      finder , 
-        const typename Type::Container&   input  , 
-        typename Type::ConstVector&       output ) 
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::Container&   input  ,
+        typename Type::ConstVector&       output )
       { return finder.findDecay  ( input.begin() , input.end() , output ) ; }
       // ======================================================================
       static size_t __findDecay__
-      ( const Decays::Finder_<TYPE>&      finder , 
-        const typename Type::ConstVector& input  , 
-        typename Type::ConstVector&       output ) 
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::ConstVector& input  ,
+        typename Type::ConstVector&       output )
       { return finder.findDecay  ( input.begin() , input.end() , output ) ; }
       // ======================================================================
       static size_t __findDecay__
-      ( const Decays::Finder_<TYPE>&      finder , 
-        const typename Type::Vector&      input  , 
-        typename Type::ConstVector&       output ) 
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::Vector&      input  ,
+        typename Type::ConstVector&       output )
       { return finder.findDecay  ( input.begin() , input.end() , output ) ; }
       // ======================================================================
       static size_t __findDecay__
-      ( const Decays::Finder_<TYPE>&      finder , 
-        const SmartRefVector<Type>&       input  , 
-        typename Type::ConstVector&       output ) 
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const SmartRefVector<Type>&       input  ,
+        typename Type::ConstVector&       output )
       { return finder.findDecay  ( input.begin() , input.end() , output ) ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      static typename Type::ConstVector __findDecay__
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::Container&   input  )
+      { 
+        typename Type::ConstVector output ;
+        finder.findDecay  ( input.begin() , input.end() , output ) ; 
+        return output ;
+      }
+      // ======================================================================
+      static typename Type::ConstVector __findDecay__
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::Vector&      input  )
+      { 
+        typename Type::ConstVector output ;
+        finder.findDecay  ( input.begin() , input.end() , output ) ; 
+        return output ;
+      }
+      // ======================================================================
+      static typename Type::ConstVector __findDecay__
+      ( const Decays::Finder_<TYPE>&      finder ,
+        const typename Type::ConstVector& input  )
+      { 
+        typename Type::ConstVector output ;
+        finder.findDecay  ( input.begin() , input.end() , output ) ; 
+        return output ;
+      }
       // ======================================================================
     } ;
     // ========================================================================
-  } //                                             end of namespace LoKi::Dicts 
+  } //                                             end of namespace LoKi::Dicts
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_FINDERDICT_H
 // ============================================================================

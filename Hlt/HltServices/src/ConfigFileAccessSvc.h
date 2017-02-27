@@ -1,5 +1,4 @@
-// $Id: ConfigFileAccessSvc.h,v 1.1 2010-05-05 13:20:44 graven Exp $
-#ifndef CONFIGFILEACCESSSVC_H 
+#ifndef CONFIGFILEACCESSSVC_H
 #define CONFIGFILEACCESSSVC_H 1
 
 // Include files
@@ -14,20 +13,18 @@
 #include "Kernel/IConfigAccessSvc.h"
 
 /** @class ConfigFileAccessSvc ConfigFileAccessSvc.h
- *  
+ *
  *  functionality:
  *        read/write configure information to files
  *
  *  @author Gerhard Raven
  *  @date   2007-12-14
  */
-class ConfigFileAccessSvc : public extends1<Service, IConfigAccessSvc> {
+class ConfigFileAccessSvc : public extends<Service, IConfigAccessSvc> {
 public:
-  ConfigFileAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
-  ~ConfigFileAccessSvc( ) override = default;     ///< Destructor
+  using extends::extends;
 
   StatusCode initialize() override;    ///< Service initialization
-  StatusCode finalize() override;      ///< Service initialization
 
   boost::optional<PropertyConfig>  readPropertyConfig(const PropertyConfig::digest_type& ref) override;
   PropertyConfig::digest_type      writePropertyConfig(const PropertyConfig& config) override;
@@ -40,18 +37,10 @@ public:
 
   std::vector<ConfigTreeNodeAlias> configTreeNodeAliases(const ConfigTreeNodeAlias::alias_type&) override;
 private:
-  MsgStream& verbose() const { return msg(MSG::VERBOSE); }
-  MsgStream&   debug() const { return msg(MSG::DEBUG);   }
-  MsgStream&    info() const { return msg(MSG::INFO);    }
-  MsgStream& warning() const { return msg(MSG::WARNING); }
-  MsgStream&   error() const { return msg(MSG::ERROR);   }
-  MsgStream&   fatal() const { return msg(MSG::FATAL);   }
-  MsgStream&  always() const { return msg(MSG::ALWAYS);  }
 
   boost::filesystem::path dir() const;
-   
-  mutable std::unique_ptr<MsgStream> m_msg;
-  mutable std::string                m_dir;   ///< where to read/write configurations from/to?
+
+  mutable Gaudi::Property<std::string> m_dir { this, "Directory" };   ///< where to read/write configurations from/to?
 
   // TODO: replace fs::path with a concrete config...
   bool isCompatible(const ConfigTreeNodeAlias& alias, const boost::filesystem::path& dirName ) const;
@@ -61,6 +50,5 @@ private:
   boost::filesystem::path configTreeNodeAliasPath( const ConfigTreeNodeAlias::alias_type& alias ) const;
   bool create_directories( boost::filesystem::path dir ) const;
 
-  MsgStream& msg(MSG::Level level) const;
 };
 #endif // CONFIGFILEACCESSSVC_H

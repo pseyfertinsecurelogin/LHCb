@@ -5,7 +5,13 @@
   <argument name="reference"><text>../refs/2009dst.ref</text></argument>
   <argument name="validator"><text>
 from GaudiConf.QMTest.LHCbExclusions import preprocessor as LHCbPreprocessor
-preprocessor = LHCbPreprocessor
+preprocessor = LHCbPreprocessor + \
+  LineSkipper(["DetectorDataSvc   SUCCESS Detector description database: conddb:/lhcb.xml"]) + \
+  LineSkipper(["DetectorPersist...   INFO Added successfully Conversion service:XmlCnvSvc"]) + \
+  LineSkipper(["InputCopyStream"]) + \
+  LineSkipper(["ONLINE_xxxxxx        INFO Connected to database "]) + \
+  LineSkipper(["COOLConfSvc          INFO CORAL Connection Retrial"]) + \
+  LineSkipper(["FileRecordPersi...   INFO Added successfully Conversion service:FileRecordCnvSvc"])
 validateWithReference(preproc = preprocessor)
 </text></argument>
   <argument name="prerequisites"><set>

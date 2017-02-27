@@ -4,7 +4,7 @@
 // ============================================================================
 // Include files
 // ============================================================================
-#include <boost/shared_ptr.hpp>
+#include <memory>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -52,18 +52,13 @@ namespace LoKi
        *  @param location     TES-location
        *  @param useRootInTES RootInTES-flag
        */
-      Get ( const std::string& location            ,
-            const bool         useRootInTES = true ) ;
+      explicit Get ( const std::string& location            ,
+                     const bool         useRootInTES = true ) ;
       /// virtual destructor
       virtual ~Get() ;
       // ======================================================================
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// default constructor is disabled
-      Get () ;                                // defalt constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
@@ -81,7 +76,7 @@ namespace LoKi
     protected:
       // ======================================================================
       void setLocation ( const std::string& value ) { m_location = value ; }
-      /// acquire algorithm or service 
+      /// acquire algorithm or service
       void getAlgSvc   () const ;
       // ======================================================================
     private:
@@ -114,21 +109,14 @@ namespace LoKi
       /** constructor from TES location & "rootInTes"-flag
        *  @see GaudiCommon<TYPE>::exists
        */
-      Exists ( const std::string& location            ,
-               const bool         useRootInTes = true ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Exists() ;
+      explicit Exists ( const std::string& location            ,
+                        const bool         useRootInTes = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Exists* clone() const ;
+      Exists* clone() const override;
       /// MANDATORY: the only one essential method
-      virtual  result_type operator() ( /* argument v */ ) const ;
+      bool operator() ( /* argument v */ ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Exists() ;                        // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -153,23 +141,51 @@ namespace LoKi
        *  @see GaudiCommon<TYPE>::exists
        *  @see GaudiCommon<TYPE>::get
        */
-      Contains ( const std::string& location            ,
-                 const bool         useRootInTes = true ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Contains () ;
+      explicit Contains ( const std::string& location            ,
+                          const bool         useRootInTes = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Contains* clone() const ;
+      Contains* clone() const override;
+      /** MANDATORY: the only one essential method
+       *  @return number of elements in container, -1 for non-existing container
+       */
+      double operator() ( /* argument v */ ) const override;
+      /// OPTIONAL: nice printout
+      std::ostream& fillStream ( std::ostream& s ) const override;
+      // ======================================================================
+    } ;
+    // ========================================================================
+    /** @class HrcSumAdc
+     *  Simple query to sum contents of Herschel Digits for a station
+     *  @author Dan JOHNSON  daniel.johnson@cern.ch
+     *  @date 2016-05-17
+     */
+    class GAUDI_API HrcSumAdc
+      : public LoKi::Functor<void,double>
+      , public LoKi::TES::Get
+    {
+    public:
+      // ======================================================================
+      /** constructor from TES location & "rootInTes"-flag
+       *  @see GaudiCommon<TYPE>::exists
+       *  @see GaudiCommon<TYPE>::get
+       */
+      HrcSumAdc ( const std::string& location              ,
+                  const std::string& stationName           ,
+                  const bool         useRootInTes = true ) ;
+      /// MANDATORY: clone method ("virtual constructor")
+      HrcSumAdc* clone() const override ;
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      virtual  result_type operator() ( /* argument v */ ) const ;
+      double operator() ( /* argument v */ ) const override ;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const override ;
+      const std::string& stationName     () const { return m_stationName    ; }
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      Contains () ;                      // the default constructor is disabled
+      /// the station name
+      std::string m_stationName         ; // the Herschel station name
       // ======================================================================
     } ;
     // ========================================================================
@@ -196,27 +212,20 @@ namespace LoKi
        */
       Counter ( const std::string& location              ,
                 const std::string& counter               ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Counter () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Counter* clone() const ;
+      Counter* clone() const override;
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      virtual  result_type operator() ( /* argument v */ ) const ;
+      result_type operator() ( /* argument v */ ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the counter name
       const std::string& counter () const { return m_counter ; }
       double             bad     () const { return m_bad     ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Counter () ;                       // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -260,26 +269,19 @@ namespace LoKi
       Stat ( const std::string&       location              ,
              const std::string&       counter               ,
              const StatEntityGetter&  function              ) ;
-      /// MANDATORY: virtual destructor
-      virtual ~Stat () ;
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Stat* clone() const ;
+      Stat* clone() const override;
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      virtual  result_type operator() ( /* argument v */ ) const ;
+      result_type operator() ( ) const override;
       /// OPTIONAL: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Stat () ;                          // the default constructor is disabled
+      std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// Helper object used to extract information from the StatEntity object.
-      boost::shared_ptr<StatEntityGetter> m_getter;
+      std::shared_ptr<StatEntityGetter> m_getter;
       // ======================================================================
     } ;
     // ========================================================================
@@ -340,6 +342,22 @@ namespace LoKi
      *  @date 2010-02-13
      */
     typedef LoKi::TES::Contains                                      CONTAINS ;
+    // ========================================================================
+    /** @typedef HRCSUMADC
+     *  Function to find Herschel station sum digits
+     *
+     *  @code
+     *
+     *    400 > HRCSUMADC ( "/Raw/HC/Sum", "B2" )
+     *
+     *  @endcode
+     *
+     *  @see LoKi::TES::HrcSumAdc
+     *  @author Dan JOHNSON  daniel.johnson@cern.ch
+     *  @date 2016-05-17
+     */
+    typedef LoKi::TES::HrcSumAdc                                    HRCSUMADC ;
+
     // ========================================================================
     /** @typedef EXISTS
      *  Trivial checker/predicate for existence of object in TES

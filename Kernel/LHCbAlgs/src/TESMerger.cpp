@@ -15,21 +15,26 @@
 #include "Event/Particle.h"
 
 
-template <class T> class TESMerger: public GaudiAlgorithm {
+template <class T> class TESMerger final : public GaudiAlgorithm
+{
 
 public:
+
   TESMerger(const std::string& name,
-              ISvcLocator* pSvcLocator);
-  virtual StatusCode execute();
+            ISvcLocator* pSvcLocator);
+
+  StatusCode execute() override;
 
 private:
+
   std::vector<std::string> m_inputLocations;
   std::string m_outputLocation;
+
 };
-  
+
 template <class T>
 TESMerger<T>::TESMerger(const std::string& name,
-                       ISvcLocator* pSvcLocator):
+                        ISvcLocator* pSvcLocator):
   GaudiAlgorithm(name, pSvcLocator)
 {
   // constructor
@@ -40,19 +45,18 @@ TESMerger<T>::TESMerger(const std::string& name,
 template <class T>
 StatusCode TESMerger<T>::execute()
 {
-  //SharedObjectsContainer<T>* out = new SharedObjectsContainer<T>() ;
-  KeyedContainer<T, Containers::HashMap >* out = new KeyedContainer<T, Containers::HashMap >() ;
+  using ContT = KeyedContainer< T , Containers::HashMap >;
+
+  auto * out = new ContT() ;
   put( out, m_outputLocation) ;
-  
-  for( std::vector<std::string>::const_iterator ilist = m_inputLocations.begin() ;
-       ilist != m_inputLocations.end(); ++ilist) {
-    //typename Gaudi::NamedRange_<std::vector<const T*> > cont_in = get<typename Gaudi::NamedRange_<std::vector<const T*> > >(*ilist) ;
-    //KeyedContainer<T, Containers::HashMap >* cont_in = getOrCreate<KeyedContainer<T, Containers::HashMap >, KeyedContainer<T, Containers::HashMap > >(*ilist) ;
-    KeyedContainer<T, Containers::HashMap >* cont_in = getIfExists<KeyedContainer<T, Containers::HashMap > >(*ilist) ;
-    if(cont_in){
-      for(auto i_obj = cont_in->begin(); 
-          i_obj != cont_in->end(); ++i_obj) 
-        out->insert( (*i_obj)->clone() ) ;
+
+  for ( const auto & loc : m_inputLocations )
+  {
+    auto * cont_in = getIfExists<ContT>(loc) ;
+    if ( cont_in )
+    {
+      for ( const auto * obj : *cont_in )
+      { out->insert( obj->clone() ) ; }
     }
   }
   return StatusCode::SUCCESS;

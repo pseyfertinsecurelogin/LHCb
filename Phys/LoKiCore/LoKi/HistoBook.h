@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_HISTOBOOK_H 
+#ifndef LOKI_HISTOBOOK_H
 #define LOKI_HISTOBOOK_H 1
 // ============================================================================
 // Include files
@@ -9,14 +9,14 @@
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/HistoDef.h"
 // ============================================================================
-// GaudiAlg 
+// GaudiAlg
 // ============================================================================
 #include "GaudiAlg/HistoID.h"
 // ============================================================================
-// forward decalrations 
+// forward decalrations
 // ============================================================================
-class GaudiHistoAlg  ;
-class GaudiHistoTool ;
+struct GaudiHistoAlg ;
+struct GaudiHistoTool;
 class IHistoTool     ;
 class IHistogramSvc  ;
 class IAlgContextSvc ;
@@ -35,7 +35,7 @@ class IAlgContextSvc ;
  *  @date 2007-11-28
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // forward decalration
   class Histo ;
@@ -44,27 +44,27 @@ namespace LoKi
   {
     // ========================================================================
     /** helper function to book 1D-histogram
-     *  @attention it books the histogram through IHistogramSvc 
-     *  @param path full path in Histogram Data Store 
+     *  @attention it books the histogram through IHistogramSvc
+     *  @param path full path in Histogram Data Store
      *  @param hist histogram description
-     *  @param svc  histogram service 
-     *  @return booked histogram 
-     */ 
-    GAUDI_API 
+     *  @param svc  histogram service
+     *  @return booked histogram
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
     ( const std::string&       path  ,
-      const Gaudi::Histo1DDef& hist  , 
+      const Gaudi::Histo1DDef& hist  ,
       IHistogramSvc*           svc   ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
-     *  @attention it books the histogram through IHistogramSvc 
-     *  @param dir  directory path in Histogram Data Store 
-     *  @param id   histogram identifier 
+     *  @attention it books the histogram through IHistogramSvc
+     *  @param dir  directory path in Histogram Data Store
+     *  @param id   histogram identifier
      *  @param hist histogram description
-     *  @param svc  histogram service 
-     *  @return booked histogram 
-     */ 
-    GAUDI_API 
+     *  @param svc  histogram service
+     *  @return booked histogram
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
     ( const std::string&       dir      ,
       const std::string&       id       ,
@@ -72,14 +72,14 @@ namespace LoKi
       IHistogramSvc*           svc  = 0 ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
-     *  @attention it books the histogram through IHistogramSvc 
-     *  @param dir  directory path in Histogram Data Store 
-     *  @param id   histogram identifier 
+     *  @attention it books the histogram through IHistogramSvc
+     *  @param dir  directory path in Histogram Data Store
+     *  @param id   histogram identifier
      *  @param hist histogram description
-     *  @param svc  histogram service 
-     *  @return booked histogram 
-     */ 
-    GAUDI_API 
+     *  @param svc  histogram service
+     *  @return booked histogram
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
     ( const std::string&       dir      ,
       const int                id       ,
@@ -87,14 +87,14 @@ namespace LoKi
       IHistogramSvc*           svc  = 0 ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
-     *  @attention it books the histogram through IHistogramSvc 
-     *  @param dir  directory path in Histogram Data Store 
-     *  @param id   histogram identifier 
+     *  @attention it books the histogram through IHistogramSvc
+     *  @param dir  directory path in Histogram Data Store
+     *  @param id   histogram identifier
      *  @param hist histogram description
-     *  @param svc  histogram service 
-     *  @return booked histogram 
-     */ 
-    GAUDI_API 
+     *  @param svc  histogram service
+     *  @return booked histogram
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
     ( const std::string&       dir      ,
       const GaudiAlg::ID&      id       ,
@@ -103,133 +103,133 @@ namespace LoKi
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @param alg  the algorithm, whcih owns the histogram
-     *  @param id   histogram identifier 
+     *  @param id   histogram identifier
      *  @param hist histogram desctription
-     *  @return booked histogram 
-     */ 
-    GAUDI_API 
+     *  @return booked histogram
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
-    ( const GaudiHistoAlg*     alg      , 
+    ( const GaudiHistoAlg*     alg      ,
       const std::string&       id       ,
       const Gaudi::Histo1DDef& hist     ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @param tool the tool, which owns the histogram
-     *  @param dir  directory path in Histogram Data Store 
-     *  @param id   histogram identifier 
+     *  @param dir  directory path in Histogram Data Store
+     *  @param id   histogram identifier
      *  @param hist histogram desctription
-     */ 
-    GAUDI_API 
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
-    ( const GaudiHistoTool*    tool , 
+    ( const GaudiHistoTool*    tool ,
       const std::string&       id   ,
       const Gaudi::Histo1DDef& hist ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @param tool the tool, which owns the histogram
-     *  @param dir  directory path in Histogram Data Store 
-     *  @param id   histogram identifier 
+     *  @param dir  directory path in Histogram Data Store
+     *  @param id   histogram identifier
      *  @param hist histogram desctription
-     */ 
-    GAUDI_API 
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
-    ( const IHistoTool*        tool , 
+    ( const IHistoTool*        tool ,
       const std::string&       id   ,
       const Gaudi::Histo1DDef& hist ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @param alg  the algorithm, whcih owns the histogram
-     *  @param id   histogram identifier 
+     *  @param id   histogram identifier
      *  @param hist histogram desctription
-     */ 
-    GAUDI_API 
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
-    ( const GaudiHistoAlg*     alg  , 
+    ( const GaudiHistoAlg*     alg  ,
       const GaudiAlg::ID&      id   ,
       const Gaudi::Histo1DDef& hist ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @param tool the tool, which owns the histogram
-     *  @param id   histogram identifier 
+     *  @param id   histogram identifier
      *  @param hist histogram desctription
-     */ 
-    GAUDI_API 
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
-    ( const GaudiHistoTool*    tool , 
+    ( const GaudiHistoTool*    tool ,
       const GaudiAlg::ID&      id   ,
       const Gaudi::Histo1DDef& hist ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @param tool the tool, which owns the histogram
-     *  @param dir  directory path in Histogram Data Store 
-     *  @param id   histogram identifier 
+     *  @param dir  directory path in Histogram Data Store
+     *  @param id   histogram identifier
      *  @param hist histogram desctription
-     */ 
-    GAUDI_API 
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
-    ( const IHistoTool*        tool , 
+    ( const IHistoTool*        tool ,
       const GaudiAlg::ID&      id   ,
       const Gaudi::Histo1DDef& hist ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
-     *  @param svc the context service 
-     *  @param id   histogram identifier 
+     *  @param svc the context service
+     *  @param id   histogram identifier
      *  @param hist histogram desctription
-     */ 
-    GAUDI_API 
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
-    ( const IAlgContextSvc*    svc  , 
+    ( const IAlgContextSvc*    svc  ,
       const GaudiAlg::ID&      id   ,
       const Gaudi::Histo1DDef& hist ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
-     *  @param svc the context service 
-     *  @param id   histogram identifier 
+     *  @param svc the context service
+     *  @param id   histogram identifier
      *  @param hist histogram desctription
-     */ 
-    GAUDI_API 
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
-    ( const IAlgContextSvc*    svc  , 
+    ( const IAlgContextSvc*    svc  ,
       const std::string&       id   ,
       const Gaudi::Histo1DDef& hist ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @attention it looks for the appropriate Histo-algorithm within "context"
-     *  @param svc the context service 
-     *  @param id   histogram identifier 
+     *  @param svc the context service
+     *  @param id   histogram identifier
      *  @param hist histogram desctription
-     *  @param svc context service 
-     *  @return booked histogram 
-     */ 
-    GAUDI_API 
+     *  @param svc context service
+     *  @return booked histogram
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
     ( const Gaudi::Histo1DDef& hist     ,
-      const std::string&       id       , 
+      const std::string&       id       ,
       const IAlgContextSvc*    svc  = 0 ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @attention it looks for the appropriate Histo-algorithm within "context"
-     *  @param svc the context service 
-     *  @param id   histogram identifier 
+     *  @param svc the context service
+     *  @param id   histogram identifier
      *  @param hist histogram desctription
-     *  @param svc context service 
-     *  @return booked histogram 
-     */ 
-    GAUDI_API 
+     *  @param svc context service
+     *  @return booked histogram
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
     ( const Gaudi::Histo1DDef& hist     ,
-      const int                id       , 
+      const int                id       ,
       const IAlgContextSvc*    svc  = 0 ) ;
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @attention it looks for the appropriate Histo-algorithm within "context"
-     *  @param svc the context service 
-     *  @param id   histogram identifier 
+     *  @param svc the context service
+     *  @param id   histogram identifier
      *  @param hist histogram desctription
-     *  @param svc context service 
-     *  @return booked histogram 
-     */ 
-    GAUDI_API 
+     *  @param svc context service
+     *  @return booked histogram
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book
     ( const Gaudi::Histo1DDef& hist     ,
       const GaudiAlg::ID&      id       ,
@@ -237,16 +237,16 @@ namespace LoKi
     // ========================================================================
     /** helper function to book 1D-histogram
      *  @param hist histogram desctription
-     *  @return booked histogram 
-     */ 
-    GAUDI_API 
+     *  @return booked histogram
+     */
+    GAUDI_API
     AIDA::IHistogram1D* book ( const LoKi::Histo& histo ) ;
     // ========================================================================
   } // end of namespace LoKi::HistoBook
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_HISTOBOOK_H
 // ============================================================================

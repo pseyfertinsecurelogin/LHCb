@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef ICALOHYPOESTIMATOR_H 
 #define ICALOHYPOESTIMATOR_H 1
 
@@ -12,7 +11,6 @@
 #include "Event/Track.h"
 #include "CaloInterfaces/ICaloHypo2Calo.h"
 
-static const InterfaceID IID_ICaloHypoEstimator ( "ICaloHypoEstimator", 3, 0 );
 
 
 
@@ -78,7 +76,10 @@ namespace CaloDataType{
                     isNotE,
                     ClusterCode,
                     ClusterFrac,
-                    Last // dummy end (56)
+                    Saturation,
+                    ClusterAsX,
+                    ClusterAsY,
+                    Last // dummy end (59)
   };                
 
   static const  int TypeMask[Last] ={  // 0x1 : neutral ; 0x2 : charged ; 0x3 : both
@@ -87,7 +88,8 @@ namespace CaloDataType{
     0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3,0x3, // 12
     0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x1,  // 8  Gamma/Pi0 input (Ecal-based)
     0x1,0x1,0x1,0x1,0x1,0x1,0x1,0x1,  // 8  Gamma/Pi0 input (Prs-based)  
-    0x1,0x1,0x3,0x3 //4
+    0x1,0x1,0x3,0x3, //4
+    0x1,0x1,0x1 //3
   };
   static const  std::string Name[Last] = {
     "HypoE"     , // 0
@@ -146,7 +148,10 @@ namespace CaloDataType{
     "isNotH",
     "isNotE",
     "ClusterCode",
-    "ClusterFrac"
+    "ClusterFrac",
+    "Saturation",
+    "ClusterAsX",
+    "ClusterAsY"
   };
 }
 
@@ -174,19 +179,16 @@ namespace CaloClusterType{
  *  @author Olivier Deschamps
  *  @date   2010-08-18
  */
-class ICaloHypoEstimator : virtual public IAlgTool {
-public: 
+struct ICaloHypoEstimator : extend_interfaces<IAlgTool> 
+{
 
   // Return the interface ID
-  static const InterfaceID& interfaceID() { return IID_ICaloHypoEstimator; }
+  DeclareInterfaceID(ICaloHypoEstimator, 5, 0 );
 
   typedef std::map<CaloDataType::DataType, double> caloDataType;
   typedef std::map<CaloMatchType::MatchType, const LHCb::Track*> caloMatchType;
   typedef std::map<CaloClusterType::ClusterType, const LHCb::CaloCluster*> caloClusterType;
-
   
-  virtual StatusCode initialize()=0;
-  virtual StatusCode finalize()=0;
   virtual double data(const LHCb::CaloCluster* cluster ,CaloDataType::DataType type, double def = 0.)=0;
   virtual double data(const LHCb::CaloHypo* hypo ,CaloDataType::DataType type, double def = 0)=0;
   virtual StatusCode _setProperty(const std::string&, const std::string&)=0;
@@ -195,8 +197,6 @@ public:
   virtual const LHCb::Track*  toTrack(CaloMatchType::MatchType match)=0;
   virtual const LHCb::CaloCluster* toCluster(CaloClusterType::ClusterType clus=CaloClusterType::SplitOrMain)=0;
 
-protected:
-private:
   
 };
 #endif // ICALOHYPOESTIMATOR_H

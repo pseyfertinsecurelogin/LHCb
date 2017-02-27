@@ -1,4 +1,3 @@
-// $Id: CaloUtils.h,v 1.1 2009-11-28 19:12:40 ibelyaev Exp $
 // ============================================================================
 #ifndef CALOUTILS_CALOUTILS_H 
 #define CALOUTILS_CALOUTILS_H 1

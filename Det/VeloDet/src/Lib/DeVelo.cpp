@@ -5,10 +5,6 @@
 #include <algorithm>
 
 // From Gaudi
-#include "GaudiKernel/Bootstrap.h"
-#include "GaudiKernel/PropertyMgr.h"
-#include "GaudiKernel/IJobOptionsSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
 #include "GaudiKernel/SystemOfUnits.h"
 
@@ -16,6 +12,7 @@
 
 // Local
 #include "VeloDet/DeVelo.h"
+#include "getOutputLevel.h"
 
 /** @file DeVelo.cpp
  *
@@ -50,26 +47,16 @@ const CLID& DeVelo::clID () const { return DeVelo::classID() ; }
 // ============================================================================
 StatusCode DeVelo::initialize() {
 
-  // Trick from old DeVelo to set the output level
-  {
-      PropertyMgr pmgr;
-      int outputLevel=0;
-      pmgr.declareProperty("OutputLevel", outputLevel);
-      auto jobSvc = Gaudi::svcLocator()->service<IJobOptionsSvc>("JobOptionsSvc");
-      if (!jobSvc) return StatusCode::FAILURE;
-      auto sc = jobSvc->setMyProperties("DeVelo", &pmgr);
-      if (!sc) return StatusCode::FAILURE;
-      if ( outputLevel > 0 ) {
-        msgSvc()->setOutputLevel("DeVelo", outputLevel);
-      }
-  }
-  m_debug   = (msgSvc()->outputLevel("DeVelo") == MSG::DEBUG  ) ;
-  m_verbose = (msgSvc()->outputLevel("DeVelo") == MSG::VERBOSE) ;
-  if( m_verbose ) m_debug = true;
+  auto sc = initOutputLevel(msgSvc(), "DeVelo");
+  if (!sc) return sc;
+
+  const auto lvl = msgSvc()->outputLevel("DeVelo");
+  m_debug   = lvl <= MSG::DEBUG;
+  m_verbose = lvl <= MSG::VERBOSE;
 
   if( m_debug ) msg() << MSG::DEBUG << "Initialising DeVelo " << endmsg;
   // Initialise the detector element
-  auto sc = DetectorElement::initialize();
+  sc = DetectorElement::initialize();
   if( sc.isFailure() ) {
     msg() << MSG::ERROR << "Failure to initialize DetectorElement" << endmsg;
     return sc ;
@@ -177,13 +164,16 @@ StatusCode DeVelo::initialize() {
 
     // associated sensors on the left side
     DeVeloRType*   lRS = *iRS;
-    DeVeloPhiType* lPS = const_cast<DeVeloPhiType*>(phiSensor(lRS->sensorNumber()+64));
+    DeVeloPhiType* lPS =
+      dynamic_cast<DeVeloPhiType*>(m_sensors.at((lRS->sensorNumber()+64)));
     lRS->setAssociatedPhiSensor(lPS);
     if (lPS) lPS->setAssociatedRSensor(lRS);
 
     // associated sensors on the right side
-    DeVeloRType*   rRS = const_cast<DeVeloRType*>(rSensor(lRS->sensorNumber()+1));
-    DeVeloPhiType* rPS = const_cast<DeVeloPhiType*>(phiSensor(lPS->sensorNumber()+1));
+    DeVeloRType*   rRS =
+      dynamic_cast<DeVeloRType*>(m_sensors.at(lRS->sensorNumber()+1));
+    DeVeloPhiType* rPS =
+      dynamic_cast<DeVeloPhiType*>(m_sensors.at(lPS->sensorNumber()+1));
     if (rRS) rRS->setAssociatedPhiSensor(rPS);
     if (rPS) rPS->setAssociatedRSensor(rRS);
 
@@ -344,7 +334,7 @@ StatusCode DeVelo::updateTell1ToSensorsCondition()
     unsigned int sensorNumber = static_cast<unsigned int>(*j);
     unsigned int moduleId      = static_cast<unsigned int>(*k);
 
-    const DeVeloSensor* sens=sensor(sensorNumber);
+    DeVeloSensor* sens=m_sensors.at(sensorNumber);
     if(!sens) {
       msg() << MSG::ERROR << "No such sensor " << sensorNumber << endmsg;
       return StatusCode::FAILURE;

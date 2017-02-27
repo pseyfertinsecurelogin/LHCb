@@ -5,6 +5,7 @@
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
+#include "VeloEvent/VeloDecodeStatus.h"
 
 #include "SiDAQ/SiRawBufferWord.h"
 
@@ -30,10 +31,8 @@ public:
   /// Standard constructor
   DecodeVeloRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~DecodeVeloRawBuffer( ); ///< Destructor
-
-  virtual StatusCode initialize();    ///< Algorithm initialization
-  virtual StatusCode execute   ();    ///< Algorithm execution
+  StatusCode initialize() override;    ///< Algorithm initialization
+  StatusCode execute   () override;    ///< Algorithm execution
 
   enum AlgStatusType{
     OK = 0,
@@ -54,7 +53,8 @@ private:
    *
    * @see VeloLiteCluster
    */
-  StatusCode decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks) const;
+  StatusCode decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks,
+				      LHCb::VeloDecodeStatus* decStatus) const;
 
   /** Decode raw buffer to clusters
    * This decodes the raw buffer to VeloClusters and
@@ -62,7 +62,8 @@ private:
    *
    * @see VeloCluster
    */
-  StatusCode decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks);
+  StatusCode decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks,
+				  LHCb::VeloDecodeStatus *decStatus) const;
 
   /** Write VeloClusters to stdout
    *
@@ -92,7 +93,8 @@ private:
    */
   StatusCode replaceFullFromLite(LHCb::VeloClusters& clusters,
                                  unsigned int nSensor,
-                                 const std::vector<LHCb::RawBank*>& banks) const;
+                                 const std::vector<LHCb::RawBank*>& banks,
+				 LHCb::VeloDecodeStatus *decStatus) const;
 
   /// Add a fake lite cluster to the full cluster container
   void makeFakeCluster(LHCb::VeloLiteCluster const &liteCluster,
@@ -136,8 +138,6 @@ private:
 
   /// Check when decoding lite clusters that the bank length is correct
   bool m_doLengthCheck;
-
-  IIncidentSvc* m_incidentSvc = nullptr;  ///< Pointer to the incident service.
 
   /// default raw event locations: not set in options to allow comparison
   std::vector<std::string> m_defaultRawEventLocations;

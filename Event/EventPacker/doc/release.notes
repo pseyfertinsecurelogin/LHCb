@@ -4,6 +4,42 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+! 2016-08-17 - Chris Jones
+ - Add checks to MCParticle and MCVertex unpackers to filter out duplicates.
+
+! 2016-07-15 - Chris Jones
+ - Improve error messages from PackCluster.
+ - Make cluster locations in PackCluster configurable options.
+
+! 2016-06-21 - Rosen Matev
+ - Implement backward compatibility for reading v4 PackedTrack objects
+
+! 2016-06-07 - Chris Jones
+ - Improvements to the version checking. Make sure (almost) all packers
+   carry out a min and max version check, to make sure the data they are
+   packing or unpacking is in the supported version range. Future proofs
+   the code against future changes.
+
+! 2016-06-01 - Chris Jones
+ - Improvements to the last commit, as suggested by Gerhard.
+ - Update the packed indices in PackedTrack from short int to int, to fix
+   the wrapping issue for future data.
+ - Fix a bug introduced during a recent update to remove the need for 
+   dynamic casts during the event loop, that probably introduce the bug
+   leading to the wrapping issues with LHCbIDs.
+
+! 2016-05-31 - Chris Jones
+ - Add some protection to the track packer to prevent out of range access to
+   the various packed containers in the packed track object.
+   Caused by very very large numbers of tracks, when the wrapping protection
+   Olivier added appears to no longer work. Ultimately, that protection
+   should also be fixed...
+
+!========================= EventPacker v5r11 2016-04-18 =========================
+
+! 2016-04-14 - Rosen Matev
+ - Add serialization functions for PackedRecVertex and PackedRecVertices.
+
 !========================= EventPacker v5r10 2016-03-18 =========================
 ! 2016-03-18 - Rosen Matev
  - Add serialization functions to packed objects.

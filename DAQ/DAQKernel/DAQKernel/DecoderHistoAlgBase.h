@@ -47,7 +47,7 @@ namespace Decoder
 
   protected:
     ///avoid getIfExists name resolution for now
-    virtual inline LHCb::RawEvent* getIfExistsRaw(const std::string loc, bool rootOnTes) const
+    inline LHCb::RawEvent* getIfExistsRaw(const std::string loc, bool rootOnTes) const override
     {
     	return GaudiHistoAlg::getIfExists<LHCb::RawEvent>(loc,rootOnTes);
     }

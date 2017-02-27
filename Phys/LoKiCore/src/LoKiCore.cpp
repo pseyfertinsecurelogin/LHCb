@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files 
 // ============================================================================
@@ -29,7 +28,6 @@
 #include "LoKi/ConstIterator.h"
 #include "LoKi/ConstReference.h"
 #include "LoKi/ConstView.h"
-#include "LoKi/Convertible.h"
 #include "LoKi/CoreCuts.h"
 #include "LoKi/CoreEngineActor.h"
 #include "LoKi/CoreEngine.h"

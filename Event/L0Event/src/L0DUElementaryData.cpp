@@ -1,4 +1,3 @@
-// $Id: L0DUElementaryData.cpp,v 1.11 2010-01-22 09:12:42 odescham Exp $
 // Include files 
 #include <utility>
 #include <string>

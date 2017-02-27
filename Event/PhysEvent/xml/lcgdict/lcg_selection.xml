@@ -4,12 +4,13 @@
   <class name = "std::vector<const LHCb::Particle*>::iterator" />
   <class name = "std::vector<const LHCb::Vertex*>" />
   
-  <class name    = "LHCb::Particle::Selection" />
-  <class pattern = "Gaudi::*Range*LHCb::Particle*" />
+  <class name = "LHCb::Particle::Selection" />
+  <class name = "LHCb::Particle::Range" />
+  <class name = "Gaudi::Range_< std::vector<const LHCb::Particle*> >" />
 
-  <class name    = "LHCb::RelatedInfoMap"       />
-  <class name    = "LHCb::RelatedInfoMap::MAP"  />
-  <class name    = "LHCb::RelatedInfoMap::VECT" />
-  <class name    = "LHCb::RelatedInfoMap::VAL"  />
+  <class name = "LHCb::RelatedInfoMap"       />
+  <class name = "LHCb::RelatedInfoMap::MAP"  />
+  <class name = "LHCb::RelatedInfoMap::VECT" />
+  <class name = "LHCb::RelatedInfoMap::VAL"  />
   
 </lcgdict>

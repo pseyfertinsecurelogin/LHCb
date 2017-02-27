@@ -1,7 +1,7 @@
-// $Id: PackedWeightsVector.h,v 1.5 2010-03-09 18:35:20 jonrob Exp $
 #ifndef EVENT_PackedWeightsVector_H
 #define EVENT_PackedWeightsVector_H 1
 
+// STL
 #include <string>
 
 // Kernel
@@ -13,6 +13,7 @@
 // Gaudi
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/GaudiException.h"
 
 namespace LHCb
 {
@@ -31,7 +32,7 @@ namespace LHCb
     PackedWeight() = default;
 
     /// Constructor from values
-    PackedWeight( const int       _key , 
+    PackedWeight( const int       _key ,
                   const short int _weight )
       : key(_key), weight(_weight)
     {}
@@ -51,7 +52,7 @@ namespace LHCb
   {
     unsigned short int firstWeight{0};  ///< index to first weight
     unsigned short int lastWeight{0};   ///< index to last weight
-    unsigned int pvKey{0};              ///< The PV Key
+    unsigned       int pvKey{0};        ///< The PV Key
   };
 
   // -----------------------------------------------------------------------
@@ -83,7 +84,7 @@ namespace LHCb
     typedef std::vector<LHCb::PackedWeight> WeightVector;
 
   public:
-    
+
     /// Default Packing Version
     static char defaultPackingVersion() { return 0; }
 
@@ -93,7 +94,7 @@ namespace LHCb
     static const CLID& classID() { return CLID_PackedWeightsVector; }
 
     /// Class ID
-    virtual const CLID& clID() const { return PackedWeightsVector::classID(); }
+    const CLID& clID() const override { return PackedWeightsVector::classID(); }
 
   public:
 
@@ -121,10 +122,10 @@ namespace LHCb
     char m_packingVersion{ defaultPackingVersion() };
 
     /// The packed data objects
-    WeightsVector m_weights; 
-    
+    WeightsVector m_weights;
+
     /// Vector of all weights
-    WeightVector m_weight; 
+    WeightVector m_weight;
 
   };
 
@@ -177,6 +178,19 @@ namespace LHCb
 
     /// Access the parent algorithm
     const GaudiAlgorithm& parent() const { return *(m_pack.parent()); }
+
+    /// Check if the given packing version is supported
+    bool isSupportedVer( const char& ver ) const
+    {
+      const bool OK = ( 1 == ver || 0 == ver );
+      if ( UNLIKELY(!OK) )
+      {
+        std::ostringstream mess;
+        mess << "Unknown packed data version " << (int)ver;
+        throw GaudiException( mess.str(), "WeightsVectorPacker", StatusCode::FAILURE );
+      }
+      return OK;
+    }
 
   private:
 

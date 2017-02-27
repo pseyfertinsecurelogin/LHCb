@@ -18,6 +18,7 @@
 #include <cassert>
 #include <algorithm>
 #include <type_traits>
+#include <numeric>
 
 /// implementation details for ChebyshevApprox
 namespace ChebyshevApproxImpl

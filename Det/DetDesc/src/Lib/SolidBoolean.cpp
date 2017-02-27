@@ -2,6 +2,7 @@
 // STD & STL
 #include <functional>
 #include <algorithm>
+#include <numeric>
 
 /** GaudiKernel package */
 #include   "GaudiKernel/StatusCode.h"
@@ -30,11 +31,11 @@
  */
 // ============================================================================
 SolidBoolean::SolidBoolean( const std::string& name  ,
-                            ISolid*            solid )
+                            std::unique_ptr<ISolid> solid )
   : SolidBase     ( name  )
-  , m_sb_first    ( solid )
+  , m_sb_first    ( std::move(solid) )
 {
-  if( !solid )
+  if( !m_sb_first )
     { throw SolidException("SolidBoolean:: ISolid* points to NULL!"); }
   /// set bounding parameters
   setBP();
@@ -55,8 +56,7 @@ SolidBoolean::SolidBoolean( const std::string& name  )
 SolidBoolean::~SolidBoolean()
 {
   /// delete all daughters
-  for(auto it = childBegin(); childEnd() != it ; ++it )
-  { delete *it ; }
+  for(auto& c : m_sb_childrens) delete c;
 }
 
 // ============================================================================
@@ -101,12 +101,12 @@ ISolid* SolidBoolean::reset()
  *  @return status code
  */
 // ============================================================================
-StatusCode SolidBoolean::addChild( ISolid*                  child ,
+StatusCode SolidBoolean::addChild( std::unique_ptr<ISolid>      child ,
                                    const Gaudi::Transform3D*    mtrx  )
 {
   if( !child  ) { return StatusCode::FAILURE; }
   SolidChild* pChild =
-    new  SolidChild( child , mtrx , "Child For " + name () );
+    new  SolidChild( std::move(child) , mtrx , "Child For " + name () );
   if( !pChild ) { return StatusCode::FAILURE; }
   m_sb_childrens.push_back(pChild);
   checkTickContainerCapacity() ;
@@ -120,13 +120,13 @@ StatusCode SolidBoolean::addChild( ISolid*                  child ,
  *  @param rotation rotation
  */
 // ============================================================================
-StatusCode SolidBoolean::addChild   ( ISolid*               child    ,
+StatusCode SolidBoolean::addChild   ( std::unique_ptr<ISolid>  child    ,
                                       const Gaudi::XYZPoint&     position ,
                                       const Gaudi::Rotation3D&    rotation )
 {
   if( !child  ) { return StatusCode::FAILURE; }
   SolidChild* pChild =
-    new  SolidChild( child , position , rotation , "Child For " + name () );
+    new  SolidChild( std::move(child) , position , rotation , "Child For " + name () );
   if( !pChild ) { return StatusCode::FAILURE; }
   m_sb_childrens.push_back(pChild);
   checkTickContainerCapacity() ;

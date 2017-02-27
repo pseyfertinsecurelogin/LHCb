@@ -24,30 +24,31 @@ DECLARE_TOOL_FACTORY( FSRNavigator )
 FSRNavigator::FSRNavigator( const std::string& type,
                                 const std::string& name,
                                 const IInterface* parent )
-  : GaudiTool ( type, name , parent ),
-    m_ToolName(""), m_fileRecordSvc(0)
+  : base_class ( type, name , parent )
 {
   declareInterface<IFSRNavigator>(this);
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-FSRNavigator::~FSRNavigator() {} 
-
 //=============================================================================
 // Initialisation
 //=============================================================================
 StatusCode FSRNavigator::initialize() {
 
-  StatusCode sc = GaudiTool::initialize(); // must be executed first
+  StatusCode sc = base_class::initialize(); // must be executed first
   if ( !sc ) return sc ; 
 
   // get the File Records service
-  m_fileRecordSvc = svc<IDataProviderSvc>("FileRecordDataSvc", true);
+  m_fileRecordSvc = service("FileRecordDataSvc", true);
 
   return StatusCode::SUCCESS;
 }
 
+//=============================================================================
+// Finalisation
+//=============================================================================
+StatusCode FSRNavigator::finalize() {
+  m_fileRecordSvc.reset();
+  return base_class::finalize(); // must be executed last
+}
 //=============================================================================
 std::vector< std::string > FSRNavigator::navigate(std::string rootname, std::string tag) {
   // navigate recursively through the FileRecord store and report addresses which contain the tag

@@ -1,4 +1,3 @@
-// $Id: CaloDataFunctor.h,v 1.9 2008-11-07 07:48:33 cattanem Exp $
 // ============================================================================
 #ifndef EVENT_CALODATAFUNCTOR_H
 #define EVENT_CALODATAFUNCTOR_H 1
@@ -7,6 +6,8 @@
 // ============================================================================
 #include <functional>
 #include <cmath>
+#include <type_traits>
+#include <iterator>
 // ============================================================================
 // MathCore
 // ============================================================================
@@ -20,6 +21,8 @@
 #include "Event/CaloClusterEntry.h"
 #include "Event/CaloDigit.h"
 #include "Event/CaloDigitStatus.h"
+#include "Event/CaloCluster.h"
+#include "Event/CaloHypo.h"
 
 template <class TYPE>
 class SmartRef  ;     // GaudiKernel
@@ -43,55 +46,35 @@ namespace LHCb
      *  The simple structure that "extracts" CaloCellID code from the class
      *  The 'generic implemntation relies on existence of TYPE::cellID() method
      *
-     *  For class CaloCluster there exist a templated specialization
-     *   (in the file Event/ClusterCellID.h
-     *
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2004-10-22
      */
     // ==========================================================================
-    template<class TYPE>
-    class CellID :
-      public std::unary_function<const TYPE,LHCb::CaloCellID>
+    constexpr struct CellID_t
     {
-    public:
+      template<class TYPE, typename = typename std::enable_if<!std::is_pointer<TYPE>::value>::type>
       LHCb::CaloCellID operator() ( const TYPE& obj ) const
       { return obj.cellID() ; }
-    };
-    // ==========================================================================
-    template <class TYPE>
-    class CellID<const TYPE> : public CellID<TYPE> {};
-    // ==========================================================================
-    template <class TYPE>
-    class CellID<TYPE*> :
-      public std::unary_function<const TYPE*,LHCb::CaloCellID>
-    {
-    public:
-      CellID(): m_eval(){};
-      LHCb::CaloCellID operator() ( const TYPE* obj ) const
-      { return 0 == obj ? LHCb::CaloCellID() : m_eval( *obj ) ; };
-    private:
-      CellID<const TYPE> m_eval ;
-    };
-    // ==========================================================================
-    template <class TYPE>
-    class CellID<SmartRef<TYPE> >       :
-      public CellID<const TYPE*>     {} ;
-    // ==========================================================================
-    template <class TYPE>
-    class CellID<const SmartRef<TYPE> > :
-      public CellID<SmartRef<TYPE> > {} ;
-    // ==========================================================================
 
-    // ==========================================================================
-    template <>
-    class CellID<LHCb::CaloCellID>
-      : public std::unary_function<const LHCb::CaloCellID,LHCb::CaloCellID>
-    {
-    public:
+      template<class TYPE>
+      LHCb::CaloCellID operator() ( const TYPE* obj ) const
+      { return obj ? (*this)(*obj) : LHCb::CaloCellID() ; }
+
+      template<class TYPE>
+      LHCb::CaloCellID operator() ( const SmartRef<TYPE> & ref ) const
+      { return (*this)(ref.target()); }
+
       LHCb::CaloCellID operator() ( const LHCb::CaloCellID& id ) const
       { return id ; } ;
-    };
+
+      LHCb::CaloCellID operator() ( const LHCb::CaloCluster& cluster ) const
+      { return cluster.seed() ; }
+
+      LHCb::CaloCellID operator() ( const LHCb::CaloHypo& hypo ) const
+      { return !hypo.clusters().empty() ? (*this)( hypo.clusters().front() )
+                                        : LHCb::CaloCellID() ; }
+
+    } CellID {};
     // ==========================================================================
 
     // ==========================================================================
@@ -99,17 +82,11 @@ namespace LHCb
      *
      *  Comparison of the energy of the object with given threshold
      *
-     *  "TYPE" is required to have valid comparison with 0, and
-     *  implemented "->e()" method, e.g. pointer or smart reference
-     *  to CaloDigit, MCCaloDigit, MCCaloHit object.
-     *
-     *  The specialization exists for CaloClusterEntry object
-     *
      *  Example:
      *  select all digits with are over the threshold:
      *  @code
      *  CaloDigits* digits = ... ;
-     *  Over_E_Threshold<const CaloDigit*> cmp( 1 * GeV );
+     *  Over_E_Threshold cmp( 1 * GeV );
      *  CaloDigits::const_iterator it =
      *  std::stable_partition( digits->begin() ,
      *                         digits->end()   ,
@@ -124,9 +101,7 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template <class TYPE>
-    struct Over_E_Threshold :
-      public std::unary_function<const TYPE , bool >
+    class Over_E_Threshold
     {
     public:
       /** constructor (explicit)
@@ -138,45 +113,19 @@ namespace LHCb
        *  @param  obj  object
        *  @return result of comparison with threshold
        */
+      template <class TYPE>
       inline bool operator() ( const TYPE& obj  ) const
-      { return  ( !obj )  ? false : obj->e() > m_threshold ; };
+      { return obj && obj->e() > m_threshold ; }
+
+      inline bool operator() ( const LHCb::CaloClusterEntry& obj  ) const
+      {
+        return obj.digit() && ( obj.digit()->e() * obj.fraction() > m_threshold );
+      };
     private:
-      double m_threshold; ///< the actual threshold value for the energy
+      double m_threshold{0}; ///< the actual threshold value for the energy
     };
     // ==========================================================================
 
-    // ==========================================================================
-    /** specialization of the general functor for class CaloClusterEntry
-     *
-     *  @see Over_E_Threshold
-     *  @see CaloClusterEntry
-     *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
-     *  @date 26/11/1999
-     */
-    template <>
-    struct Over_E_Threshold<LHCb::CaloClusterEntry> :
-      public std::unary_function<const LHCb::CaloClusterEntry , bool >
-    {
-    public:
-      /** constructor (explicit)
-       *  @param threshold   threshold on energy of the object
-       */
-      explicit Over_E_Threshold( double threshold = 0.0 )
-        : m_threshold( threshold ) {};
-      /** compare the energy of the object with threshold value
-       *  @param  obj  object
-       *  @return result of comparison with threshold
-       */
-      inline bool operator() ( const LHCb::CaloClusterEntry& obj  ) const
-      {
-        return
-          ( !obj.digit() ) ? false :
-          (  obj.digit()->e() * obj.fraction() ) > m_threshold ;
-      };
-    private:
-      double m_threshold; ///< the actual threshold value for the energy
-    };
-    // ==========================================================================
 
     // ==========================================================================
     /** @class EnergyTransverse CaloDataFunctor.h Event/CaloDataFucntor.h
@@ -184,7 +133,7 @@ namespace LHCb
      *  Calculate the transverse energy for the object
      *
      *  "TYPE" is required to have valid comparison with 0 and
-     *  implemented "->e()" methods and valid CellID<TYPE>, e.g. pointer
+     *  implemented "->e()" methods and valid CellID, e.g. pointer
      *  or smart reference to CaloDigit, MCCaloDigit, CaloCluster
      *  objects.
      *
@@ -199,9 +148,8 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template<class  TYPE, class DETECTOR >
+    template<class DETECTOR >
     class EnergyTransverse
-      : public std::unary_function< const TYPE , double >
     {
     public:
       /** constructor
@@ -212,26 +160,22 @@ namespace LHCb
       ( DETECTOR detector     ,
         double   deltaZ   = 0 )
         : m_det ( detector )
-        , m_dz  ( deltaZ   )
-        , m_cell(          ) {};
+        , m_dz  ( deltaZ   ) {}
 
       /** calculate the transverse energy of the object
        *  @param  obj   object
        *  @return the transverse energy of the object
        */
+      template <typename TYPE>
       inline double operator () ( const TYPE& obj ) const
       {
-        if ( !obj ) { return 0; }
-        const LHCb::CaloCellID cell  = m_cell( obj )  ;
-        // cell center
-        const Gaudi::XYZPoint& point = m_det->cellCenter ( cell ) ;
-        //
-        return obj->e() * sin ( point.Theta() )  ;
-      };
+        return ( obj ? 
+                 obj->e() * std::sin( m_det->cellCenter(CellID(obj)).Theta() ) :
+                 0.0 );
+      }
     private:
       mutable DETECTOR m_det  ;  ///< detector element
-      double  m_dz            ;  ///< dz correction
-      CellID<TYPE>     m_cell ;
+      double  m_dz{0}         ;  ///< dz correction
     };
     // ==========================================================================
 
@@ -240,12 +184,6 @@ namespace LHCb
      *
      *  Comparison of the transverse energy of the object with
      *  given threshold value
-     *
-     *  "TYPE" is required to have valid comparison with 0 and
-     *  implemented "->e()" method and valid specialiszation of
-     *  EnergyTransverse<TYPE,DETECTOR> structure  e.g. pointer
-     *  or smart reference to CaloDigit, MCCaloDigit, CaloCluster
-     *  objects.
      *
      *  "DETECTOR"  is required to have implemented methods,
      *    e.g. pointer or smart pointer to DeCalorimeter object:
@@ -258,32 +196,32 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template < class TYPE, class DETECTOR >
-    class Over_Et_Threshold :
-      public std::unary_function< const TYPE , bool >
+    template < class DETECTOR >
+    class Over_Et_Threshold
     {
       /// typedef for Et estimator
-      typedef EnergyTransverse<TYPE,DETECTOR>  ET;
+      typedef EnergyTransverse<DETECTOR>  ET;
     public:
       /** constructor
        *  @param Detector         "DETECTOR" object
        *  @param Threshold        transverse energy threshold
        *  @param DeltaZ           z-correction to position of shower maximum
        */
-      Over_Et_Threshold ( DETECTOR Detector            ,
+      Over_Et_Threshold ( DETECTOR Detector,
                           double   Threshold = 0 ,
-                          double   DeltaZ = 0         )
+                          double   DeltaZ = 0    )
         : m_et       ( Detector  , DeltaZ )
-        , m_threshold( Threshold          ) {};
+        , m_threshold( Threshold          ) {}
       /** compare the threshold energy of the object with threshold value
        *  @param  obj  object
        *  @return result of comparison with threshold
        */
+      template <typename TYPE>
       inline bool operator() ( const TYPE& obj  ) const
-      {  return ( !obj ) ? false : ( m_et( obj ) > m_threshold ) ; };
+      { return obj && ( m_et( obj ) > m_threshold ) ; }
     private:
-      ET        m_et         ;      ///< e_t estimator
-      double    m_threshold  ;      ///< threshold value for energy
+      ET        m_et            ;      ///< e_t estimator
+      double    m_threshold{0}  ;      ///< threshold value for energy
     };
     // ==========================================================================
 
@@ -301,10 +239,9 @@ namespace LHCb
      *  sort container of MCCaloDigits in ascending order
      *  @code
      *  MCCaloDigits* digits = ... ;
-     *  Less_by_Energy<const CaloDigit*> cmp;
      *  std::stable_sort( digits->begin() ,
      *                    digits->end()   ,
-     *                    cmp             );
+     *                    Less_by_Energy             );
      *  @endcode
      *
      *  For "inversion" of comparison criteria use Inverse
@@ -313,49 +250,19 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template <class TYPE1,class TYPE2 = TYPE1 >
-    class Less_by_Energy :
-      public std::binary_function<const TYPE1,const TYPE2,bool>
+    constexpr struct Less_by_Energy_t
     {
-    public:
       /** compare the energy of one object with the energy of
        *  another object
        *  @param obj1   first  object
        *  @param obj2   second object
        *  @return  result of energy comparison
        */
+      template <class TYPE1,class TYPE2 = TYPE1 >
       inline bool operator() ( const TYPE1& obj1 , const TYPE2& obj2 ) const
       {
-        return
-          ( !obj1 )  ? true  : ( !obj2 )  ? false : obj1->e() < obj2->e() ;
+        return !obj1 || ( obj2 && obj1->e() < obj2->e() ) ;
       }
-      ///
-    };
-    // ==========================================================================
-
-    // ==========================================================================
-    /** full specialization of general functor for class CaloClusterEntry
-     *
-     *  For "inversion" of compariosn criteria use Inverse
-     *  @see Inverse
-     *
-     *  @see CaloClusterEntry
-     *  @see Less_by_Energy
-     *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
-     *  @date 26/11/1999
-     */
-    template <>
-    class Less_by_Energy<LHCb::CaloClusterEntry> :
-      public std::binary_function
-    <const LHCb::CaloClusterEntry,const LHCb::CaloClusterEntry,bool>
-    {
-    public:
-      /** compare the energy of one object with the energy of
-       *  another object
-       *  @param obj1   first  object
-       *  @param obj2   second object
-       *  @return  result of energy comparison
-       */
       inline bool operator()
         ( const LHCb::CaloClusterEntry& obj1 ,
           const LHCb::CaloClusterEntry& obj2 ) const
@@ -367,7 +274,9 @@ namespace LHCb
           ( obj2.digit()->e() * obj2.fraction() ) ;
       }
       ///
-    };
+    } Less_by_Energy {};
+    // ==========================================================================
+
     // ==========================================================================
 
     // ==========================================================================
@@ -375,11 +284,6 @@ namespace LHCb
      *
      *  Comparison of the transverse energy of one object with
      *  the transverse energy of another object
-     *
-     *  "TYPE" is required to have valid comparison with 0 and
-     *  implemented "->e()" method and valid specialization of
-     *  EnergyTransverse<TYPE1,DETECTOR>, e.g. pointer
-     *  or smart reference to MCCaloHit, CaloDigit, MCCaloDigit objects.
      *
      *  "DETECTOR"  is required to have implemented methods,
      *   e.g. pointer or smart pointer to DeCalorimeter object:
@@ -394,7 +298,7 @@ namespace LHCb
      *  transverse energy
      *  @code
      *  CaloDigits* digits = ... ;
-     *  Less_by_TrnasverseEnergy<const CaloDigit*,Detector*> cmp( detector );
+     *  Less_by_TrnasverseEnergy<Detector*> cmp( detector );
      *  std::stable_sort( digits->begin() ,
      *                    digits->end()   ,
      *                    cmp             );
@@ -406,14 +310,11 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template < class TYPE , class DETECTOR , class TYPE2 = TYPE >
-    class Less_by_TransverseEnergy :
-      public std::binary_function< const TYPE , const TYPE2 , bool>
+    template < class DETECTOR >
+    class Less_by_TransverseEnergy
     {
-      /// useful typedef for Et estimator for TYPE
-      typedef   EnergyTransverse< TYPE  , DETECTOR >       ET  ;
-      /// useful typedef for Et estimator for TYPE2
-      typedef   EnergyTransverse< TYPE2 , DETECTOR >       ET2 ;
+      /// useful typedef for Et estimator
+      typedef   EnergyTransverse< DETECTOR >       ET  ;
     public:
       /** constructor
        *  @param Detector "DETECTOR" object
@@ -422,25 +323,22 @@ namespace LHCb
       Less_by_TransverseEnergy
       ( DETECTOR Detector     ,
         double   DeltaZ   = 0 )
-        : m_et ( Detector , DeltaZ )
-        , m_et2( Detector , DeltaZ ) {};
+        : m_et ( Detector , DeltaZ ) {}
       /** compare the transverse energy of one object with the
        *  transverse energy of  another object
        *  @param obj1   first  object
        *  @param obj2   second object
        *  @return  result of energy comparison
        */
+      template <typename TYPE, typename TYPE2 >
       inline bool operator() ( const TYPE&  obj1 ,
                                const TYPE2& obj2 ) const
       {
-        return
-          ( !obj1 ) ? true  :
-          ( !obj2 ) ? false : m_et( obj1 ) < m_et2( obj2 ) ;
+        return !obj1 || ( obj2 && ( m_et( obj1 ) < m_et( obj2 ) ) );
       }
     private:
 
       ET  m_et  ;      ///< e_t estimator
-      ET2 m_et2 ;      ///< e_t estimator
     };
     // ==========================================================================
 
@@ -465,9 +363,7 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template <class TYPE>
-    struct Accumulate_Energy :
-      public std::binary_function<double,const TYPE, double>
+    constexpr struct Accumulate_Energy_t
     {
     public:
       /** accumulate the energy of the objkect
@@ -475,10 +371,11 @@ namespace LHCb
        *  @param   object  object
        *  @return  accumulated energy
        */
+      template <class TYPE>
       inline double  operator() ( double&     Energy  ,
                                   const TYPE& object     ) const
-      { return ( !object ) ? Energy : Energy += object->e() ; };
-    };
+      { return ( !object ) ? Energy : Energy += object->e() ; }
+    } Accumulate_Energy {};
     // ==========================================================================
 
     // ==========================================================================
@@ -511,12 +408,11 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template <class TYPE,class DETECTOR>
+    template <class DETECTOR>
     class Accumulate_TransverseEnergy
-      : public std::binary_function<double,const TYPE,double>
     {
       /// useful typedef for Et estimator
-      typedef   EnergyTransverse<TYPE,DETECTOR>        ET;
+      typedef   EnergyTransverse<DETECTOR>        ET;
     public:
       /** constructor
        *  @param  Detector  "DETECTOR" object
@@ -524,14 +420,15 @@ namespace LHCb
        */
       Accumulate_TransverseEnergy ( DETECTOR Detector     ,
                                     double   DeltaZ   = 0 )
-        : m_et      ( Detector , DeltaZ  ) {};
+        : m_et ( Detector , DeltaZ  ) { }
       /** accumulate the transverse energy of the objects
        *  @param   Energy  accumulated transverce energy
        *  @param   obj     object
        *  @return  accumulated transverse energy
        */
+      template <typename TYPE>
       inline double  operator() ( double& Energy  , const TYPE& obj ) const
-      { return ( !obj ) ? Energy : Energy += m_et( obj )  ; };
+      { return ( !obj ) ? Energy : Energy += m_et( obj )  ; }
     private:
       ET        m_et ;    ///< e_t estimator
     };
@@ -544,32 +441,26 @@ namespace LHCb
      *  given value (equality test). Coudl be used for location
      *  of objects with given cellID  within the containers.
      *
-     *  "TYPE" is required to have valid  CellID<TYPE> specialization,
-     *  e.g. pointer or smart reference to MCCaloHit, CaloDigit,
-     *  MCCaloDigit object
-     *
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 26/11/1999
      */
-    template <class TYPE>
-    class IsCaloCellID : public std::unary_function<const TYPE&,bool>
+    class IsCaloCellID
     {
     public:
       /** constructor
        *  @param CellID  cell identifier to be compared with
        */
       explicit IsCaloCellID ( const LHCb::CaloCellID& CellID )
-        : m_cellID ( CellID )
-        , m_cell   (        ) {};
+        : m_cellID ( CellID ) { }
       /** compare cell identifier of the object with given value
        *  @param obj  object
        *  @return  result of comparison (equality test)
        */
+      template <class TYPE>
       inline bool operator() ( const TYPE& obj ) const
-      { return ( !obj ) ? false : m_cell( obj )  == m_cellID ; }
+      { return obj &&  CellID( obj )  == m_cellID ; }
     private:
-      LHCb::CaloCellID   m_cellID  ; ///< reference CaloCellID
-      CellID<TYPE> m_cell    ;
+      LHCb::CaloCellID  m_cellID ; ///< reference CaloCellID
     };
     // ==========================================================================
 
@@ -593,14 +484,14 @@ namespace LHCb
       for ( ; begin != end ; ++begin )
       {
         // get the digit
-        const LHCb::CaloDigit*       digit  = begin->digit()  ;
+        const LHCb::CaloDigit * digit = begin->digit()  ;
         /// skip nulls
-        if( 0 == digit                         ) { continue ; }
+        if( ! digit ) { continue ; }
         /// check the status and skip useless digits
         if( !( begin->status() & LHCb::CaloDigitStatus::UseForEnergy ) )
         { continue ; }
         // accumulate the energy
-        energy +=  digit->e() * begin->fraction() ;
+        energy += digit->e() * begin->fraction() ;
       }
       return energy ;
     }
@@ -659,14 +550,14 @@ namespace LHCb
         double eDigit = digit->e() * begin->fraction() ;
         if( ( begin->status() & LHCb::CaloDigitStatus::UseForEnergy   ) !=0 ){
           e += eDigit    ;        // accumulate digit energy
-        }  
-        if( ( begin->status() & LHCb::CaloDigitStatus::UseForPosition ) != 0 ) { 
+        }
+        if( ( begin->status() & LHCb::CaloDigitStatus::UseForPosition ) != 0 ) {
           epos += eDigit ;        // accumulate digit energy for position
           ++num ;
           const Gaudi::XYZPoint pos = de->cellCenter( digit->cellID() );
           x += eDigit * pos.x() ;
           y += eDigit * pos.y() ;
-        }        
+        }
       }
       // at least one useful digit ?
       if( 0 == num               ) { return StatusCode( 202 ) ; }
@@ -744,9 +635,9 @@ namespace LHCb
                         IT end                 ,
                         const LHCb::CaloDigit* digit )
     {
-      for( ; begin != end ; ++begin )
-      { if ( digit == begin->digit() ) { return begin; } }
-      return end;
+      using Arg = typename std::iterator_traits<IT>::reference;
+      return std::find_if( begin, end, 
+                           [&](Arg arg) { return arg->digit() == digit; } );
     }
     // ==========================================================================
 
@@ -771,9 +662,8 @@ namespace LHCb
                          IT end                            ,
                          const LHCb::CaloDigitStatus::Status& st )
     {
-      for( ; begin != end ; ++begin )
-      { if( st & ( begin->status() ) ) {  return begin; } }
-      return end;
+      using Arg = typename std::iterator_traits<IT>::reference;
+      return std::find_if( begin, end, [&](Arg arg) { return  st & arg.status(); } );
     }
     // ==========================================================================
 
@@ -787,15 +677,7 @@ namespace LHCb
      */
     template <class Compare>
     struct Inverse
-      : public std::binary_function
-      < typename Compare::second_argument_type,
-        typename Compare::first_argument_type,
-        typename Compare::result_type >
     {
-      /// shortcut for first argument type
-      typedef typename Inverse<Compare>::first_argument_type  Arg1 ;
-      /// shortcut for first argument type
-      typedef typename Inverse<Compare>::second_argument_type Arg2 ;
       /// constructor
       Inverse( const Compare& cmp ) : m_cmp ( cmp ) {};
       /** the only one essential method
@@ -804,10 +686,9 @@ namespace LHCb
        *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
        *  @date 12 May 2002
        */
-      inline typename Inverse<Compare>::result_type operator()
-        ( const typename Inverse<Compare>::first_argument_type&  arg1 ,
-          const typename Inverse<Compare>::second_argument_type& arg2 ) const
-      { return m_cmp( arg2 , arg1 ) ;}
+      template <typename Arg1, typename Arg2>
+      auto operator() ( Arg1&& arg1 , Arg2&& arg2 ) const
+      { return m_cmp( std::forward<Arg2>(arg2) , std::forward<Arg1>(arg1) ) ;}
     private:
       // underlying comparison criteria
       Compare  m_cmp;
@@ -822,7 +703,7 @@ namespace LHCb
      *  Example:
      *  @code
      *  CaloClusters* clusters = ... ;
-     *  Less_by_Energy<const CaloCluster*> cmp;
+     *  Less_by_Energy cmp;
      *  // sort clusters in ascending order:
      *  std::stable_sort( clusters->begin() ,
      *                    clusters->end()   ,          cmp   ) ;
@@ -842,28 +723,27 @@ namespace LHCb
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 31/03/2002
      */
-    class DigitFromCalo :
-      public std::unary_function<const LHCb::CaloDigit*,bool>
+    class DigitFromCalo
     {
     public:
+      DigitFromCalo() = delete;
       /** constructor
        *  @param calo  calorimeter name
        */
       explicit DigitFromCalo( const std::string& calo )
-        : m_calo( CaloCellCode::CaloNumFromName( calo ) ) {} ;
+        : m_calo( CaloCellCode::CaloNumFromName( calo ) ) {}
       /** constructor
        *  @param calo  calorimeter index
        */
       explicit DigitFromCalo( const int  calo )
-        : m_calo(                                calo   ) {} ;
+        : m_calo(                                calo   ) {}
       /** the only essential method
        *  @param digit pointer to CaloDigit object
        *  @return true if digit belongs to the predefined calorimeter
        */
       inline bool operator() ( const LHCb::CaloDigit* digit ) const
       {
-        if( 0 == digit ) { return false ; }
-        return (int) digit->cellID().calo() == m_calo ;
+        return digit && static_cast<int>(digit->cellID().calo()) == m_calo ;
       };
       /** change the currect calorimeter
        *  @param calo new calorimeter name
@@ -875,10 +755,7 @@ namespace LHCb
        */
       inline void setCalo( const int  calo ) { m_calo = calo ; };
     private:
-      /// default constructor is private
-      DigitFromCalo();
-    private:
-      int m_calo ;
+      int m_calo{0} ;
 
     };
     // ==========================================================================
@@ -891,16 +768,12 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    template <class TYPE>
-    class Calo : public std::unary_function<const TYPE,int>
+    constexpr struct Calo_t
     {
-    public:
-      Calo(): m_cellID(){};
+      template <class TYPE>
       int operator() ( const TYPE& obj ) const
-      { return m_cellID( obj ).calo() ; }
-    private:
-      CellID<TYPE> m_cellID ;
-    };
+      { return CellID( obj ).calo() ; }
+    } Calo {};
     // ==========================================================================
 
     // ==========================================================================
@@ -910,26 +783,19 @@ namespace LHCb
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2004-10-22
      */
-    template <class TYPE>
-    class IsFromCalo : public std::unary_function<const TYPE,bool>
+    class IsFromCalo
     {
     public:
+      IsFromCalo() = delete;
       /// constructor from calorimeter index
-      IsFromCalo  ( int index )
-        : m_index ( index )
-        , m_calo  ( ) {} ;
+      IsFromCalo  ( int index ) : m_index ( index ) {}
       /// constructor from calorimeter name
-      IsFromCalo  ( const std::string& name )
-        : m_index ( CaloCellCode::CaloNumFromName ( name ) )
-        , m_calo  ( ) {} ;
-    public:
+      IsFromCalo  ( const std::string& name ) : IsFromCalo( CaloCellCode::CaloNumFromName ( name ) ) {}
+      template <class TYPE>
       bool operator() ( const TYPE& obj ) const
-      { return m_calo( obj ) == m_index ; }
+      { return Calo( obj ) == m_index ; }
     private:
-      IsFromCalo() ;
-    private:
-      int        m_index ;
-      Calo<TYPE> m_calo  ;
+      int        m_index{0} ;
     };
     // ==========================================================================
 
@@ -941,16 +807,11 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    template <class TYPE>
-    class CaloArea : public std::unary_function<const TYPE,int>
+    constexpr struct CaloArea_t
     {
-    public:
-      CaloArea(): m_cellID(){};
-      int operator() ( const TYPE& obj ) const
-      { return m_cellID( obj ).area() ; }
-    private:
-      CellID<TYPE> m_cellID ;
-    };
+      template <class TYPE>
+      int operator() ( const TYPE& obj ) const { return CellID( obj ).area() ; }
+    } CaloArea {};
     // ==========================================================================
 
     // ==========================================================================
@@ -960,21 +821,16 @@ namespace LHCb
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2004-10-22
      */
-    template <class TYPE>
-    class IsFromArea : public std::unary_function<const TYPE,bool>
+    class IsFromArea
     {
     public:
-      IsFromArea  ( int index )
-        : m_index ( index )
-        , m_area  ( ) {} ;
-    public:
+      IsFromArea() = delete;
+      explicit IsFromArea  ( int index ) : m_index ( index ) {}
+      template <class TYPE>
       bool operator() ( const TYPE& obj ) const
-      { return m_area( obj ) == m_index ; }
+      { return CaloArea( obj ) == m_index ; }
     private:
-      IsFromArea() ;
-    private:
-      int            m_index ;
-      CaloArea<TYPE> m_area  ;
+      int            m_index{0} ;
     };
     // ==========================================================================
 
@@ -987,16 +843,13 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    template <class TYPE>
-    class CaloRow : public std::unary_function<const TYPE,int>
+    constexpr struct CaloRow_t
     {
-    public:
-      CaloRow(): m_cellID(){};
+      template <class TYPE>
       int operator() ( const TYPE& obj ) const
-      { return m_cellID( obj ).row() ; }
-    private:
-      CellID<TYPE> m_cellID ;
-    };
+      { return CellID( obj ).row() ; }
+
+    } CaloRow {};
     // ==========================================================================
 
     // ==========================================================================
@@ -1005,21 +858,15 @@ namespace LHCb
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2004-10-22
      */
-    template <class TYPE>
-    class IsFromRow : public std::unary_function<const TYPE,bool>
+    class IsFromRow
     {
     public:
-      IsFromRow   ( int index )
-        : m_index ( index )
-        , m_row   ( ) {} ;
-    public:
-      bool operator() ( const TYPE& obj ) const
-      { return m_row( obj ) == m_index ; }
+      IsFromRow() = delete;
+      explicit IsFromRow   ( int index ) : m_index ( index ) {}
+      template <class TYPE> bool operator() ( const TYPE& obj ) const
+      { return CaloRow( obj ) == m_index ; }
     private:
-      IsFromRow() ;
-    private:
-      int            m_index ;
-      CaloRow<TYPE>  m_row   ;
+      int            m_index{0} ;
     };
     // ==========================================================================
 
@@ -1031,16 +878,12 @@ namespace LHCb
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2004-10-22
      */
-    template <class TYPE>
-    class CaloColumn : public std::unary_function<const TYPE,int>
+    constexpr struct CaloColumn_t
     {
-    public:
-      CaloColumn(): m_cellID(){};
+      template <class TYPE>
       int operator() ( const TYPE& obj ) const
-      { return m_cellID( obj ).col() ; }
-    private:
-      CellID<TYPE> m_cellID ;
-    };
+      { return CellID( obj ).col() ; }
+    } CaloColumn {};
     // ==========================================================================
 
     // ==========================================================================
@@ -1049,21 +892,15 @@ namespace LHCb
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2004-10-22
      */
-    template <class TYPE>
-    class IsFromColumn : public std::unary_function<const TYPE,bool>
+    class IsFromColumn
     {
     public:
-      IsFromColumn  ( int index )
-        : m_index   ( index )
-        , m_column  ( ) {} 
-    public:
-      bool operator() ( const TYPE& obj ) const
-      { return m_column( obj ) == m_index ; }
+      IsFromColumn() = delete;
+      IsFromColumn  ( int index ) : m_index   ( index ) {}
+      template <class TYPE> bool operator() ( const TYPE& obj ) const
+      { return CaloClumn( obj ) == m_index ; }
     private:
-      IsFromColumn() ;
-    private:
-      int              m_index ;
-      CaloColumn<TYPE> m_column  ;
+      int              m_index{0} ;
     };
     // ==========================================================================
 

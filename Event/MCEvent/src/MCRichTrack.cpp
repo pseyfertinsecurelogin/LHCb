@@ -4,8 +4,6 @@
  *
  *  Implementation file for class : MCRichTrack
  *
- *  $Id: MCRichTrack.cpp,v 1.2 2006-03-01 09:38:42 jonrob Exp $
- *
  *  @author  Chris Jones  Christopher.Rob.Jones@cern.ch
  *  @date    2004-01-22
  */
@@ -18,15 +16,14 @@
 const LHCb::MCRichSegment * 
 LHCb::MCRichTrack::segmentInRad( const Rich::RadiatorType rad ) const
 {
-  const LHCb::MCRichSegment * segment = 0;
-  for ( SmartRefVector<MCRichSegment>::const_iterator iSeg = mcSegments().begin();
-        iSeg != mcSegments().end(); ++iSeg ) 
+  const LHCb::MCRichSegment * segment = nullptr;
+  for ( const auto & seg : mcSegments() )
   {
-    if ( *iSeg && rad == (*iSeg)->radiator() ) 
+    if ( seg.target() && rad == seg->radiator() ) 
     {
-      if (segment != 0) 
+      if ( segment ) 
       { std::cout << "WARNING : MCRichTrack has multiple segments for the same radiator !!" << std::endl; }
-      segment = *iSeg;
+      segment = seg;
     }
   }
   return segment;

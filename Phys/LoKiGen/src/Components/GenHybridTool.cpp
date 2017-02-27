@@ -1,10 +1,9 @@
-// $Id$
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/System.h" 
+#include "GaudiKernel/System.h"
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -13,17 +12,17 @@
 #include "LoKi/IGenHybridTool.h"
 #include "LoKi/IGenHybridFactory.h"
 // ============================================================================
-// Local 
+// Local
 // ============================================================================
-/** @file 
+/** @file
  *  definitione and the implementation file for class LoKi::Hybrid::GenTool
- *  
- *  This file is a part of LoKi project - 
+ *
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -32,242 +31,242 @@
  *  Last modification $Date$
  *                 by $Author$
  */
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  namespace Hybrid 
+  namespace Hybrid
   {
     // ========================================================================
-    /** @class GenTool 
+    /** @class GenTool
      *
-     *  Concrete impelmentation of LoKi::IGenHybridTool interface 
-     *  This file is a part of LoKi project - 
+     *  Concrete impelmentation of LoKi::IGenHybridTool interface
+     *  This file is a part of LoKi project -
      *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
      *
      *  The package has been designed with the kind help from
-     *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
-     *  contributions and advices from G.Raven, J.van Tilburg, 
+     *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+     *  contributions and advices from G.Raven, J.van Tilburg,
      *  A.Golutvin, P.Koppenburg have been used in the design.
      *
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2004-06-29
      */
-    class GenTool 
-      : public       LoKi::Hybrid::Base 
-      , public virtual IGenHybridTool 
-      , public virtual IGenHybridFactory 
+    class GenTool
+      : public       LoKi::Hybrid::Base
+      , public virtual IGenHybridTool
+      , public virtual IGenHybridFactory
     {
       // friend factory forn instantiation
-      friend class ToolFactory<LoKi::Hybrid::GenTool> ;
+      friend struct ToolFactory<LoKi::Hybrid::GenTool> ;
     public:
       // ======================================================================
-      /// initialization of the tool 
-      virtual StatusCode initialize () ;
-      /// finalization   of the tool 
-      virtual StatusCode finalize  () ;
+      /// initialization of the tool
+      StatusCode initialize ()  override;
+      /// finalization   of the tool
+      StatusCode finalize  ()  override;
       // ======================================================================
     public:
       // ======================================================================
-      // predicates 
+      // predicates
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param cuts the placeholder for the result 
-       *  @return StatusCode 
+       *  @param cuts the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string& pycode  , 
-        LoKi::Types::GCut& cuts    , 
-        const std::string& context ) 
+      StatusCode get
+      ( const std::string& pycode  ,
+        LoKi::Types::GCut& cuts    ,
+        const std::string& context ) override
       { return _get ( pycode , m_gcuts  , cuts , context ) ; }
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param cuts the placeholder for the result 
-       *  @return StatusCode 
+       *  @param cuts the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&  pycode  , 
+      StatusCode get
+      ( const std::string&  pycode  ,
         LoKi::Types::GVCut& cuts    ,
-        const std::string&  context ) 
+        const std::string&  context ) override
       { return _get ( pycode , m_gvcuts  , cuts , context ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      // functions 
+      // functions
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param func the placeholder for the result 
-       *  @return StatusCode 
+       *  @param func the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string& pycode  , 
-        LoKi::Types::GFun& func    , 
-        const std::string& context ) 
+      StatusCode get
+      ( const std::string& pycode  ,
+        LoKi::Types::GFun& func    ,
+        const std::string& context ) override
       { return _get ( pycode , m_gfunc  , func , context ) ; }
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param func the placeholder for the result 
-       *  @return StatusCode 
+       *  @param func the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&  pycode  , 
-        LoKi::Types::GVFun& func    , 
-        const std::string&  context ) 
+      StatusCode get
+      ( const std::string&  pycode  ,
+        LoKi::Types::GVFun& func    ,
+        const std::string&  context ) override
       { return _get ( pycode , m_gvfunc  , func , context ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      // maps 
+      // maps
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param func the placeholder for the result 
-       *  @return StatusCode 
+       *  @param func the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&  pycode  , 
-        LoKi::Types::GMap&  func    , 
-        const std::string&  context ) 
+      StatusCode get
+      ( const std::string&  pycode  ,
+        LoKi::Types::GMap&  func    ,
+        const std::string&  context ) override
       { return _get ( pycode , m_gmap  , func , context ) ; }
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param func the placeholder for the result 
-       *  @return StatusCode 
+       *  @param func the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&   pycode  , 
-        LoKi::Types::GVMap&  func    , 
-        const std::string&   context ) 
+      StatusCode get
+      ( const std::string&   pycode  ,
+        LoKi::Types::GVMap&  func    ,
+        const std::string&   context ) override
       { return _get ( pycode , m_gvmap  , func , context ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      // pipes 
+      // pipes
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param func the placeholder for the result 
-       *  @return StatusCode 
+       *  @param func the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&  pycode  , 
-        LoKi::Types::GPipe& func    , 
-        const std::string&  context ) 
+      StatusCode get
+      ( const std::string&  pycode  ,
+        LoKi::Types::GPipe& func    ,
+        const std::string&  context ) override
       { return _get ( pycode , m_gpipe  , func , context ) ; }
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param func the placeholder for the result 
-       *  @return StatusCode 
+       *  @param func the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&   pycode  , 
-        LoKi::Types::GVPipe& func    , 
-        const std::string&   context ) 
+      StatusCode get
+      ( const std::string&   pycode  ,
+        LoKi::Types::GVPipe& func    ,
+        const std::string&   context ) override
       { return _get ( pycode , m_gvpipe  , func , context ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // fun-vals
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param func the placeholder for the result 
-       *  @return StatusCode 
+       *  @param func the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&    pycode  , 
-        LoKi::Types::GFunVal& func    , 
-        const std::string&    context ) 
+      StatusCode get
+      ( const std::string&    pycode  ,
+        LoKi::Types::GFunVal& func    ,
+        const std::string&    context ) override
       { return _get ( pycode , m_gfunval  , func , context ) ; }
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param func the placeholder for the result 
-       *  @return StatusCode 
+       *  @param func the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&     pycode  , 
-        LoKi::Types::GVFunVal& func    , 
-        const std::string&     context ) 
+      StatusCode get
+      ( const std::string&     pycode  ,
+        LoKi::Types::GVFunVal& func    ,
+        const std::string&     context ) override
       { return _get ( pycode , m_gvfunval  , func , context ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // cut-vals
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param func the placeholder for the result 
-       *  @return StatusCode 
+       *  @param func the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&    pycode  , 
-        LoKi::Types::GCutVal& func    , 
-        const std::string&    context ) 
+      StatusCode get
+      ( const std::string&    pycode  ,
+        LoKi::Types::GCutVal& func    ,
+        const std::string&    context ) override
       { return _get ( pycode , m_gcutval  , func , context ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // sources
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param func the placeholder for the result 
-       *  @return StatusCode 
+       *  @param func the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&     pycode  , 
-        LoKi::Types::GSource&  func    , 
-        const std::string&     context ) 
+      StatusCode get
+      ( const std::string&     pycode  ,
+        LoKi::Types::GSource&  func    ,
+        const std::string&     context ) override
       { return _get ( pycode , m_gsource  , func , context ) ; }
       // ======================================================================
-      /** "Factory": get the the object form python code 
+      /** "Factory": get the the object form python code
        *  @param pycode the python pseudo-code of the function
-       *  @param func the placeholder for the result 
-       *  @return StatusCode 
+       *  @param func the placeholder for the result
+       *  @return StatusCode
        */
-      virtual StatusCode get
-      ( const std::string&      pycode  , 
-        LoKi::Types::GVSource&  func    , 
-        const std::string&      context ) 
+      StatusCode get
+      ( const std::string&      pycode  ,
+        LoKi::Types::GVSource&  func    ,
+        const std::string&      context ) override
       { return _get ( pycode , m_gvsource , func , context ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      // predicates 
+      // predicates
       // ======================================================================
       /// set the C++ predicate for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GCuts&   cut ) 
+      void set ( const LoKi::Types::GCuts&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gcuts , cut ) ; }
       /// set the C++ predicate for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVCuts&   cut ) 
+      void set ( const LoKi::Types::GVCuts&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvcuts , cut ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      // functions 
+      // functions
       // ======================================================================
       /// set the C++ function for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GFunc&   cut ) 
+      void set ( const LoKi::Types::GFunc&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gfunc  , cut ) ; }
       /// set the C++ function for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVFunc&   cut ) 
+      void set ( const LoKi::Types::GVFunc&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvfunc  , cut ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      // maps 
+      // maps
       // ======================================================================
       /// set the C++ "map" for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GMaps&   cut ) 
+      void set ( const LoKi::Types::GMaps&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gmap  , cut ) ; }
       /// set the C++ "map" for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVMaps&   cut ) 
+      void set ( const LoKi::Types::GVMaps&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvmap  , cut ) ; }
       // ======================================================================
     public:
@@ -275,10 +274,10 @@ namespace LoKi
       // pipes
       // ======================================================================
       /// set the C++ "pipe" for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GPipes&   cut ) 
+      void set ( const LoKi::Types::GPipes&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gpipe  , cut ) ; }
       /// set the C++ "pipe" for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVPipes&   cut ) 
+      void set ( const LoKi::Types::GVPipes&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvpipe , cut ) ; }
       // ======================================================================
     public:
@@ -286,10 +285,10 @@ namespace LoKi
       // funvals
       // ======================================================================
       /// set the C++ "fun-val" for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GFunVals&   cut ) 
+      void set ( const LoKi::Types::GFunVals&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gfunval  , cut ) ; }
       /// set the C++ "pipe" for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVFunVals&   cut ) 
+      void set ( const LoKi::Types::GVFunVals&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvfunval , cut ) ; }
       // ======================================================================
     public:
@@ -297,7 +296,7 @@ namespace LoKi
       // cutvals
       // ======================================================================
       /// set the C++ "cut-val" for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GCutVals&   cut ) 
+      void set ( const LoKi::Types::GCutVals&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gcutval  , cut ) ; }
       // ======================================================================
     public:
@@ -305,10 +304,10 @@ namespace LoKi
       // sources
       // ======================================================================
       /// set the C++ "source" for HepMC::GenParticle
-      virtual void set ( const LoKi::Types::GSources&   cut ) 
+      void set ( const LoKi::Types::GSources&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gsource  , cut ) ; }
       /// set the C++ "source" for HepMC::GenVertex
-      virtual void set ( const LoKi::Types::GVSources&   cut ) 
+      void set ( const LoKi::Types::GVSources&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvsource , cut ) ; }
       // ======================================================================
     protected:
@@ -318,54 +317,50 @@ namespace LoKi
       ( const std::string& type   ,
         const std::string& name   ,
         const IInterface*  parent ) ;
-      /// destrcutor 
-      virtual ~GenTool();
       // ======================================================================
     private:
       // ======================================================================
-      // the default constructor is disabled 
-      GenTool() ; ///< the default constructor is disabled     
-      // the copy constructor is disabled 
-      GenTool           ( const GenTool& )  ; ///< the copy constructor is disabled 
-      // the assignement operator  is disabled 
-      GenTool& operator=( const GenTool& )  ; ///< no assignement 
+      // the copy constructor is disabled
+      GenTool           ( const GenTool& )  ; ///< the copy constructor is disabled
+      // the assignement operator  is disabled
+      GenTool& operator=( const GenTool& )  ; ///< no assignement
       // ======================================================================
     private:
       // ======================================================================
       /// helper method to save many lines:
       template <class TYPE1,class TYPE2>
-      inline StatusCode _get 
-      ( const std::string& pycode  , 
-        TYPE1*&            local   , 
-        TYPE2&             output  , 
+      inline StatusCode _get
+      ( const std::string& pycode  ,
+        std::unique_ptr<TYPE1>& local   ,
+        TYPE2&             output  ,
         const std::string& context ) ;
       // ======================================================================
     protected:
       // ======================================================================
       //
-      //   local holders of cuts 
+      //   local holders of cuts
       //
       // predicates:
-      LoKi::Types::GCuts*      m_gcuts      ;
-      LoKi::Types::GVCuts*     m_gvcuts     ;
+      std::unique_ptr<LoKi::Types::GCuts>      m_gcuts      ;
+      std::unique_ptr<LoKi::Types::GVCuts>     m_gvcuts     ;
       // functions:
-      LoKi::Types::GFunc*      m_gfunc      ;    
-      LoKi::Types::GVFunc*     m_gvfunc     ;    
+      std::unique_ptr<LoKi::Types::GFunc>      m_gfunc      ;
+      std::unique_ptr<LoKi::Types::GVFunc>     m_gvfunc     ;
       // maps:
-      LoKi::Types::GMaps*      m_gmap       ;    
-      LoKi::Types::GVMaps*     m_gvmap      ;    
-      // pipes: 
-      LoKi::Types::GPipes*     m_gpipe      ;    
-      LoKi::Types::GVPipes*    m_gvpipe     ;    
-      // fun-vals: 
-      LoKi::Types::GFunVals*   m_gfunval    ;    
-      LoKi::Types::GVFunVals*  m_gvfunval   ;    
-      // cut-vals: 
-      LoKi::Types::GCutVals*   m_gcutval    ;    
+      std::unique_ptr<LoKi::Types::GMaps>      m_gmap       ;
+      std::unique_ptr<LoKi::Types::GVMaps>     m_gvmap      ;
+      // pipes:
+      std::unique_ptr<LoKi::Types::GPipes>     m_gpipe      ;
+      std::unique_ptr<LoKi::Types::GVPipes>    m_gvpipe     ;
+      // fun-vals:
+      std::unique_ptr<LoKi::Types::GFunVals>   m_gfunval    ;
+      std::unique_ptr<LoKi::Types::GVFunVals>  m_gvfunval   ;
+      // cut-vals:
+      std::unique_ptr<LoKi::Types::GCutVals>   m_gcutval    ;
       // sources:
-      LoKi::Types::GSources*    m_gsource   ;    
-      LoKi::Types::GVSources*   m_gvsource  ;    
-      // 
+      std::unique_ptr<LoKi::Types::GSources>    m_gsource   ;
+      std::unique_ptr<LoKi::Types::GVSources>   m_gvsource  ;
+      //
       typedef std::vector<std::string> Modules ;
       Modules     m_modules ;
       std::string m_actor   ;
@@ -381,26 +376,26 @@ namespace LoKi
 // helper method to sdave many lines:
 // ============================================================================
 template <class TYPE1,class TYPE2>
-inline StatusCode LoKi::Hybrid::GenTool::_get 
-( const std::string& pycode  , 
-  TYPE1*&            local   , 
+inline StatusCode LoKi::Hybrid::GenTool::_get
+( const std::string& pycode  ,
+  std::unique_ptr<TYPE1>&  local   ,
   TYPE2&             output  ,
-  const std::string& context ) 
+  const std::string& context )
 {
-  // prepare the actual python code 
-  std::string code = 
+  // prepare the actual python code
+  std::string code =
     makeCode  ( m_modules , m_actor , pycode , m_lines , context ) ;
   // define and lock the scope:
   LoKi::Hybrid::GenLock lock ( this ) ;   ///< ATTENTION: the scope is locked!!
   // clear the placeholder:
-  if ( 0 != local ) { delete local ; local = 0 ; }
-  // execute the code 
+  local.reset();
+  // execute the code
   StatusCode sc = executeCode ( code ) ;
-  if ( sc.isFailure() ) 
-  { return Error ( "Error from LoKi::Hybrid::Base::executeCode"      ) ; } // RETURN 
-  if ( 0 == local     ) 
-  { return Error ( "Invaid object for the code '"+pycode+"'" ) ; } // RETURN 
-  // assign the result 
+  if ( sc.isFailure() )
+  { return Error ( "Error from LoKi::Hybrid::Base::executeCode"      ) ; } // RETURN
+  if ( !local     )
+  { return Error ( "Invaid object for the code '"+pycode+"'" ) ; } // RETURN
+  // assign the result
   output = *local ;                                                // ASSIGN
   //
   return StatusCode::SUCCESS ;
@@ -410,37 +405,14 @@ DECLARE_NAMESPACE_TOOL_FACTORY(LoKi::Hybrid,GenTool)
 // ============================================================================
 // Standard constructor
 // ============================================================================
-LoKi::Hybrid::GenTool::GenTool 
+LoKi::Hybrid::GenTool::GenTool
 ( const std::string& type   ,
   const std::string& name   ,
   const IInterface*  parent )
   : LoKi::Hybrid::Base ( type , name , parent )
-  // predicates:
-  , m_gcuts       ( 0 )
-  , m_gvcuts      ( 0 )
-  // functions:
-  , m_gfunc       ( 0 )
-  , m_gvfunc      ( 0 )
-  // maps:
-  , m_gmap        ( 0 )
-  , m_gvmap       ( 0 )
-  // pipes:
-  , m_gpipe       ( 0 )
-  , m_gvpipe      ( 0 )
-  // fun-vals:
-  , m_gfunval     ( 0 )
-  , m_gvfunval    ( 0 )
-  // cut-vals:
-  , m_gcutval     ( 0 )
-  // sources
-  , m_gsource     ( 0 )
-  , m_gvsource    ( 0 )
-  //
-  , m_modules   (   ) 
-  , m_actor     ( "LoKi.Hybrid.GenEngine()" ) 
-  , m_lines     ()
+  , m_actor     ( "LoKi.Hybrid.GenEngine()" )
 {
-  // 
+  //
   declareInterface<LoKi::IGenHybridTool>   ( this ) ;
   declareInterface<LoKi::IGenHybridFactory>( this ) ;
   //
@@ -451,52 +423,48 @@ LoKi::Hybrid::GenTool::GenTool
   declareProperty ( "Modules" , m_modules , "Python modules to be imported"          ) ;
   declareProperty ( "Actor"   , m_actor   , "The processing engine"                  ) ;
   declareProperty ( "Lines"   , m_lines   , "Additional Python lines to be executed" ) ;
-} 
+}
 // ============================================================================
-/// Destructor (virtual and protected) 
+// initialization of the tool
 // ============================================================================
-LoKi::Hybrid::GenTool::~GenTool() {}
-// ============================================================================
-// initialization of the tool 
-// ============================================================================
-StatusCode LoKi::Hybrid::GenTool::initialize () 
+StatusCode LoKi::Hybrid::GenTool::initialize ()
 {
   StatusCode sc = LoKi::Hybrid::Base::initialize() ;
-  if ( sc.isFailure() ) { return sc ; }  
+  if ( sc.isFailure() ) { return sc ; }
   if ( msgLevel ( MSG::DEBUG ) ) { m_lines.insert( m_lines.begin() , "dir()") ; }
   return StatusCode::SUCCESS ;
-} 
+}
 // ============================================================================
-// finalization of the tool 
+// finalization of the tool
 // ============================================================================
-StatusCode LoKi::Hybrid::GenTool::finalize  () 
+StatusCode LoKi::Hybrid::GenTool::finalize  ()
 {
   // predicates:
-  if ( 0 != m_gcuts     ) { delete m_gcuts     ; m_gcuts     = 0  ; }
-  if ( 0 != m_gvcuts    ) { delete m_gvcuts    ; m_gvcuts    = 0  ; }
+  m_gcuts.reset();
+  m_gvcuts.reset();
   // functions:
-  if ( 0 != m_gfunc     ) { delete m_gfunc     ; m_gfunc     = 0  ; }
-  if ( 0 != m_gvfunc    ) { delete m_gvfunc    ; m_gvfunc    = 0  ; }
+  m_gfunc.reset();
+  m_gvfunc.reset();
   // maps:
-  if ( 0 != m_gmap      ) { delete m_gmap      ; m_gmap      = 0  ; }
-  if ( 0 != m_gvmap     ) { delete m_gvmap     ; m_gvmap     = 0  ; }
+  m_gmap.reset();
+  m_gvmap.reset();
   // pipes:
-  if ( 0 != m_gpipe     ) { delete m_gpipe     ; m_gpipe     = 0  ; }
-  if ( 0 != m_gvpipe    ) { delete m_gvpipe    ; m_gvpipe    = 0  ; }
+  m_gpipe.reset();
+  m_gvpipe.reset();
   // funvals:
-  if ( 0 != m_gfunval   ) { delete m_gfunval   ; m_gfunval   = 0  ; }
-  if ( 0 != m_gvfunval  ) { delete m_gvfunval  ; m_gvfunval  = 0  ; }
+  m_gfunval.reset();
+  m_gvfunval.reset();
   // cutvals:
-  if ( 0 != m_gcutval   ) { delete m_gcutval   ; m_gcutval   = 0  ; }
+  m_gcutval.reset();
   // sources:
-  if ( 0 != m_gsource   ) { delete m_gsource   ; m_gsource   = 0  ; }
-  if ( 0 != m_gvsource  ) { delete m_gvsource  ; m_gvsource  = 0  ; }
+  m_gsource.reset();
+  m_gvsource.reset();
   //
-  // finalize the base 
+  // finalize the base
   return LoKi::Hybrid::Base::finalize() ;
 }
 // ============================================================================
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

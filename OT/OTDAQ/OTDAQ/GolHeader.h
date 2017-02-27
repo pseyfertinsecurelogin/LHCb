@@ -1,10 +1,9 @@
-// $Id: GolHeader.h,v 1.1 2008-06-03 12:59:25 wouter Exp $
 #ifndef OTDAQ_GOLHEADER_H 
 #define OTDAQ_GOLHEADER_H 1
 
 namespace OTDAQ {
 
-  class GolHeader
+  class GolHeader final
   {
   public:
     
@@ -145,12 +144,12 @@ namespace OTDAQ {
 // Including forward declarations
 
   inline GolHeader::GolHeader(int iWord,
-                                  int iStation,
-                                  int iLayer,
-                                  int iQuarter,
-                                  int iModule,
-                                  int iOtisErFlag,
-                                  int iNumberOfHits) 
+                              int iStation,
+                              int iLayer,
+                              int iQuarter,
+                              int iModule,
+                              int iOtisErFlag,
+                              int iNumberOfHits) 
   {
     
     m_data = (iWord << wordBits) +
@@ -182,7 +181,7 @@ namespace OTDAQ {
   inline unsigned int GolHeader::otis1SEU() const
   {
     return (unsigned int)((m_data & otis1SEUMask ) >> otis1SEUBits );
-}
+  }
   
   inline unsigned int GolHeader::otis2SEU() const
   {

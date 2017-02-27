@@ -1,4 +1,3 @@
-
 #ifndef EVENT_PACKEDEVENTCHECKS_H
 #define EVENT_PACKEDEVENTCHECKS_H 1
 
@@ -25,11 +24,6 @@ namespace DataPacking
    */
   class DataChecks
   {
-
-  private:
-
-    /// Standard constructor disallowed
-    DataChecks( ) { }
 
   public:
 
@@ -148,7 +142,7 @@ namespace DataPacking
                              const TYPE& b ) const
     {
       const bool ok = ( a == b );
-      if ( UNLIKELY(!ok && parent) )
+      if ( UNLIKELY( !ok && parent ) )
       {
         parent->warning() << name << " comparison failed :-" << endmsg
                           << " Original = " << a << endmsg

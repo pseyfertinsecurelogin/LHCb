@@ -1,6 +1,7 @@
 /// STL and STD
 #include <cmath>
 #include <iostream>
+#include <numeric>
 /// DetDesc
 #include "DetDesc/MaterialException.h"
 #include "DetDesc/Element.h"

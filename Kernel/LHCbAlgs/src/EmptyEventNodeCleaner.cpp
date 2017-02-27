@@ -14,17 +14,11 @@
 //=============================================================================
 EmptyEventNodeCleaner::EmptyEventNodeCleaner( const std::string& name,
                                               ISvcLocator* pSvcLocator )
-  : GaudiAlgorithm ( name , pSvcLocator ),
-    m_dataSvc      ( NULL               )
+  : GaudiAlgorithm ( name , pSvcLocator )
 {
   declareProperty( "InputStream", m_inputStream = "/Event" );
   declareProperty( "DataService", m_dataSvcName = "EventDataSvc" );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-EmptyEventNodeCleaner::~EmptyEventNodeCleaner() {}
 
 //=============================================================================
 // Initialization
@@ -79,10 +73,10 @@ void EmptyEventNodeCleaner::cleanNodes( DataObject * obj,
 
     if ( !leaves.empty() )
     {
-      for ( Leaves::const_iterator iL = leaves.begin(); leaves.end() != iL; ++iL )
+      for ( auto iL = leaves.begin(); leaves.end() != iL; ++iL )
       {
         const std::string & id = (*iL)->identifier();
-        DataObject* tmp(NULL);
+        DataObject* tmp(nullptr);
         sc = m_dataSvc->findObject( id, tmp );
         if ( sc && tmp )
         {

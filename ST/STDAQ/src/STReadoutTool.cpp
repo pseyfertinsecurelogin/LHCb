@@ -1,5 +1,3 @@
-// $Id: STReadoutTool.cpp,v 1.15 2009-10-30 12:54:19 mtobin Exp $
-
 // STDAQ
 #include "STReadoutTool.h"
 
@@ -30,11 +28,9 @@ using namespace LHCb;
 STReadoutTool::STReadoutTool(const std::string& type,
                             const std::string& name,
                             const IInterface* parent):
-  GaudiTool( type, name, parent ),
-  m_nBoard(0),
-  m_tracker(NULL)
+  GaudiTool( type, name, parent )
 {
-  // constructer
+  // constructor
   declareProperty("printMapping", m_printMapping = false );
   declareProperty("writeMappingToXML", m_writeXML = false );
   declareProperty("footer", m_footer = "</DDDB>");
@@ -51,7 +47,7 @@ STReadoutTool::STReadoutTool(const std::string& type,
 }
 
 STReadoutTool::~STReadoutTool() {
-  /// destructer
+  /// destructor
   clear();
 }
 

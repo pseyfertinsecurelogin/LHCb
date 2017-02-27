@@ -1,4 +1,3 @@
-// $Id: PackMCVertex.cpp,v 1.7 2009-11-26 10:50:49 cattanem Exp $
 // Include files
 
 // from Boost
@@ -30,11 +29,6 @@ DECLARE_ALGORITHM_FACTORY( PackMCVertex )
   declareProperty( "AlwaysCreateOutput",         m_alwaysOutput = false     );
   declareProperty( "DeleteInput",                m_deleteInput  = false     );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-PackMCVertex::~PackMCVertex() {}
 
 //=============================================================================
 // Main execution
@@ -77,7 +71,7 @@ StatusCode PackMCVertex::execute()
   for ( const LHCb::MCVertex* vert : *verts )
   {
     out->mcVerts().emplace_back( LHCb::PackedMCVertex() );
-    LHCb::PackedMCVertex& newVert = out->mcVerts().back();
+    auto & newVert = out->mcVerts().back();
 
     newVert.key  = vert->key();
     newVert.x    = pack.position( vert->position().x() );
@@ -125,12 +119,11 @@ StatusCode PackMCVertex::execute()
                          pack.reference64( out, vert->mother()->parent(),
                                            vert->mother()->key() ) );
     }
-    for ( SmartRefVector<LHCb::MCParticle>::const_iterator itP = vert->products().begin();
-          vert->products().end() != itP; ++itP ) 
+    for ( const auto & P : vert->products() )
     {
       newVert.products.push_back( 0==pVer ? 
-                                  pack.reference32( out, (*itP)->parent(), (*itP)->key() ) :
-                                  pack.reference64( out, (*itP)->parent(), (*itP)->key() ) );
+                                  pack.reference32( out, P->parent(), P->key() ) :
+                                  pack.reference64( out, P->parent(), P->key() ) );
     }
 
     if( msgLevel(MSG::VERBOSE) ) verbose() << "Vertex packed OK" << endmsg;

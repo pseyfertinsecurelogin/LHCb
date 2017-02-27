@@ -1,4 +1,3 @@
-// $Id: PackedMCRichDigitSummary.cpp,v 1.5 2010-04-11 14:27:14 jonrob Exp $
 
 // local
 #include "Event/PackedMCRichDigitSummary.h"
@@ -15,7 +14,7 @@ void MCRichDigitSummaryPacker::pack( const DataVector & sums,
                                      PackedDataVector & psums ) const
 {
   const auto ver = psums.packingVersion();
-  if ( 0 == ver || 1 == ver )
+  if ( isSupportedVer(ver) )
   {
     psums.data().reserve( sums.size() );
     for ( const auto * sum : sums )
@@ -38,19 +37,13 @@ void MCRichDigitSummaryPacker::pack( const DataVector & sums,
       }
     }
   }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "MCRichDigitSummaryPacker", StatusCode::FAILURE );
-  }
 }
 
 void MCRichDigitSummaryPacker::unpack( const PackedDataVector & psums,
                                        DataVector       & sums ) const
 {
   const auto ver = psums.packingVersion();
-  if ( 0 == ver || 1 == ver )
+  if ( isSupportedVer(ver) )
   {
     sums.reserve( psums.data().size() );
     for ( const auto & psum : psums.data() )
@@ -73,12 +66,6 @@ void MCRichDigitSummaryPacker::unpack( const PackedDataVector & psums,
         else { parent().Error( "Corrupt MCRichDigitSummary MCParticle SmartRef detected." ).ignore(); }
       }
     }
-  }
-  else
-  {
-    std::ostringstream mess;
-    mess << "Unknown packed data version " << (int)ver;
-    throw GaudiException( mess.str(), "MCRichDigitSummaryPacker", StatusCode::FAILURE );
   }
 }
 
