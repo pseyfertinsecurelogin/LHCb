@@ -51,6 +51,9 @@ public:
   /// Initialize the tool
   StatusCode initialize() override;
 
+  /// Start the tool
+  StatusCode start() override;
+
   /// Finalize the tool
   StatusCode finalize() override;
 
@@ -85,6 +88,9 @@ private:
                                                 "name of the IDetDataSvc, used to get the current event time"};
   Gaudi::Property<std::string> m_ignoreRegex{this, "Ignore", "",
                                              "regular expression matching paths that should be ignored"};
+  Gaudi::Property<bool> m_reopenOnStart{this, "ReopenOnStart", false,
+                                        "close and reopen the Git repository during start transition, "
+                                        "useful after a fork"};
 
   /// internal flag used to track if we are using the Git database or checked out files
   bool m_useFiles = false;

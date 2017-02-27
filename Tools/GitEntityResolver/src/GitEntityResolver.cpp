@@ -221,6 +221,20 @@ StatusCode GitEntityResolver::initialize()
   return sc;
 }
 
+StatusCode GitEntityResolver::start()
+{
+  StatusCode sc = base_class::start();
+  if (m_reopenOnStart) {
+    DEBUG_MSG << "reopen repository" << endmsg;
+    m_repository.reset();
+    m_pathToRepository.useUpdateHandler();
+    if ( UNLIKELY( !m_repository ) )
+      throw GaudiException( "failed to reopen Git repository: '" + m_pathToRepository.value() + "'", name(),
+                            StatusCode::FAILURE );
+  }
+  return sc;
+}
+
 StatusCode GitEntityResolver::finalize()
 {
 
