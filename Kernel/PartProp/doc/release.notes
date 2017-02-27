@@ -5,6 +5,9 @@
 ! -----------------------------------------------------------------------------
 
 ! 2017-02-27 - Vanya Belyaev
+ - increase precision for the printout of mass/width-properties
+
+! 2017-02-27 - Vanya Belyaev
  - Add new symbols for "nodes"
    PosID, NegID ( "ID+" & "ID-" ) to probe positiev or negative PID.
    IT is useful in conjunction with othe rmetasymbol, 
