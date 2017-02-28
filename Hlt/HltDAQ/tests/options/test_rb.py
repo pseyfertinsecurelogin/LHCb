@@ -21,77 +21,43 @@ from Configurables import ToolSvc
 from PRConfig.TestFileDB import test_file_db
 from Gaudi.Configuration import importOptions
 
-parser = argparse.ArgumentParser(usage='usage: %(prog)s stream file')
+parser = argparse.ArgumentParser(
+    usage='usage: %(prog)s test_file_db_entry stream tck')
 
-parser.add_argument("-s", "--stream", type=str, dest="stream", default="",
+parser.add_argument("db_entry", nargs=1)
+parser.add_argument("stream", type=str, nargs=1,
                     help="Which stream")
-parser.add_argument("--tck", type=str, dest="tck", default="",
+parser.add_argument("tck", type=str, nargs=1,
                     help="What TCK")
 parser.add_argument("-n", "--nevents", type=int, dest="nevt", default=-1,
                     help="Maximum number of events")
-parser.add_argument("db_entry", nargs=1)
 
 args = parser.parse_args()
 
 file = test_file_db[args.db_entry[0]].filenames[0]
 
-if not args.tck:
-    # Use inspect's stack to get the file of the current frame: us
-    script_dir = os.path.dirname(inspect.stack()[0][1])
-    cmd = ['python', os.path.join(script_dir, 'get_tck.py'), file]
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    o, e = p.communicate()
-
-    if p.returncode:
-        print 'Failed to get TCK'
-        print o
-        print 'FAILED'
-        sys.exit(-1)
-
-    output = [l.strip() for l in o.split('\n') if l.strip()]
-    hlt1_tck, hlt2_tck = output[-1].split()
-    try:
-        hlt1_tck, hlt2_tck = (int(hlt1_tck, 16), int(hlt2_tck, 16))
-    except ValueError:
-        print o
-        print 'Could not determine TCK from {}'.format(file)
-        print 'FAILED'
-        sys.exit(-1)
-
-    if not (hlt1_tck and hlt2_tck):
-        print o
-        print 'Could not determine TCK from {}, both are 0'.format(file)
-        print 'FAILED'
-        sys.exit(-1)
-else:
-    tck = int(args.tck, 16)
-    hlt1_tck, hlt2_tck = (0, 0)
-    if (tck & (1 << 28)) == (1 << 28):
-        hlt1_tck = tck
-    else:
-        hlt2_tck = tck
-
-if hlt2_tck and (args.stream.capitalize() not in ('Turbo', 'Full', 'Turcal',
-                                                  'Beamgas', 'Nobias',
-                                                  'Turboraw')):
-    print 'Stream must be set when running on an HLT2 accepted file'
+hlt2_tck = int(args.tck[0], 16)
+if (hlt2_tck & (2 << 28)) != (2 << 28):
+    print parser.usage
     print 'FAILED'
     sys.exit(-1)
 
-if not os.path.exists('0x%08x.props'):
-    script_dir = os.path.dirname(inspect.stack()[0][1])
-    cmd = ['python', os.path.join(script_dir, 'get_properties.py'),
-           '0x%08x' % hlt2_tck if hlt2_tck else hlt1_tck]
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    o, e = p.communicate()
+stream = args.stream[0].capitalize()
+if stream not in ('Turbo', 'Full', 'Turcal', 'Beamgas', 'Nobias',
+                  'Turboraw'):
+    print 'Stream must be set'
+    print 'FAILED'
+    sys.exit(-1)
 
-    if p.returncode:
-        print 'Failed to get properties'
-        print o
-        print 'FAILED'
-        sys.exit(-1)
+script_dir = os.path.dirname(inspect.stack()[0][1])
+db_file = os.path.join(script_dir, '..', 'data',
+                       '0x%08x.props' % hlt2_tck)
+if not os.path.exists(db_file):
+    print 'Properties db for TCK 0x%08x is missing.' % hlt2_tck
+    print 'FAILED'
+    sys.exit(-1)
 
-db = shelve.open('0x%08x.props' % hlt2_tck if hlt2_tck else hlt1_tck)
+db = shelve.open(db_file, 'r')
 writer_props = db['writers']
 factory_props = db['factories']
 
@@ -140,7 +106,7 @@ killer = bankKiller('KillRoutingBits', BankTypes=['HltRoutingBits'],
 # Configure the routing bits writer
 rb_name = '{stream}{stage}RoutingBitsWriter'
 rb_name = rb_name.format(stage='Hlt1' if not hlt2_tck else 'Hlt2',
-                         stream=args.stream.capitalize())
+                         stream=stream)
 props = writer_props['HltRoutingBitsWriter/' + rb_name]
 writer = HltRoutingBitsWriter(rb_name,
                               Hlt1DecReportsLocation='Hlt1/DecReports',

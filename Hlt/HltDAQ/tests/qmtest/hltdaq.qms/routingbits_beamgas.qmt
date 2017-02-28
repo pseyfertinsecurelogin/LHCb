@@ -3,14 +3,9 @@
   <argument name="program"><text>python</text></argument>
   <argument name="args"><set>
     <text>$HLTDAQROOT/tests/options/test_rb.py</text>
-    <text>--stream=beamgas</text>
     <text>HltDAQ-routingbits_beamgas</text>
-  </set></argument>
-  <argument name="use_temp_dir">
-    <enumeral>true</enumeral>
-  </argument>
-  <argument name="prerequisites"><set>
-    <tuple><text>hltdaq.routingbits_full</text><enumeral>PASS</enumeral></tuple>
+    <text>beamgas</text>
+    <text>0x212c1603</text>
   </set></argument>
   <argument name="validator"><text>
 
