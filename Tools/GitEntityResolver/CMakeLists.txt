@@ -25,9 +25,12 @@ if (git2_FOUND)
 
   gaudi_install_headers(GitEntityResolver)
 
+  gaudi_install_scripts()
+
   gaudi_add_test(QMTest QMTEST
                  ENVIRONMENT GIT_TEST_REPOSITORY=${CMAKE_CURRENT_BINARY_DIR}/test_repo/DDDB
                              PYTHONPATH+=${CMAKE_CURRENT_SOURCE_DIR}/tests/python)
+
 else()
   message(FATAL_ERROR "libgit2 not found, cannot build GitEntityResolver")
 endif()
