@@ -21,7 +21,9 @@ if (git2_FOUND)
                    INCLUDE_DIRS Boost
                    LINK_LIBRARIES XmlToolsLib Boost)
   target_link_libraries(GitEntityResolver ${git2_LDFLAGS})
-  gaudi_env(PREPEND LD_LIBRARY_PATH ${git2_LIBRARY_DIRS})
+  if(git2_LIBRARY_DIRS)
+    gaudi_env(PREPEND LD_LIBRARY_PATH ${git2_LIBRARY_DIRS})
+  endif()
 
   gaudi_install_headers(GitEntityResolver)
 
