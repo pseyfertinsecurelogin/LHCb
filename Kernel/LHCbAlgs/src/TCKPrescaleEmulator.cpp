@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Gaudi
 #include "GaudiKernel/IAlgManager.h"
@@ -9,6 +9,17 @@
 #include "OfflineDeterministicPrescaler.h"
 // local
 #include "TCKPrescaleEmulator.h"
+
+
+#ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
+/// \fixme backward compatibility with Gaudi <= v28r1
+#include "GaudiKernel/ThreadLocalContext.h"
+#define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
+#else
+#define SYSEX_ARGUMENT
+#endif
+
+
 using namespace LHCb;
 //-----------------------------------------------------------------------------
 // Implementation file for class : TCKPrescaleEmulator
@@ -64,7 +75,7 @@ StatusCode TCKPrescaleEmulator::initialize()
   }
 
   //If "LinesToKill" hasn't been filled, fill it with sensible defaults, if it has been filled, make sure the user knows
-  if ( m_linesToKill.empty() ) 
+  if ( m_linesToKill.empty() )
   {
     m_linesToKill.push_back("Hlt1Global");
     m_linesToKill.push_back("Hlt2Global");
@@ -96,7 +107,7 @@ StatusCode TCKPrescaleEmulator::initialize()
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode TCKPrescaleEmulator::execute() 
+StatusCode TCKPrescaleEmulator::execute()
 {
   StatusCode sc = StatusCode::SUCCESS;
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
@@ -112,7 +123,7 @@ StatusCode TCKPrescaleEmulator::execute()
     std::string lineName;
     std::string strip= "Decision";
     //loop over the Decreports
-    for(const auto& dec : *decreports) 
+    for(const auto& dec : *decreports)
     {
       //Get the name of line, if it ends with "Decision" remove it:
       lineName =  dec.first;
@@ -125,7 +136,7 @@ StatusCode TCKPrescaleEmulator::execute()
         Algorithm* myAlg= prescalers[lineName];
         //If the algorithm with this lineName exists and is enabled:
         if(myAlg && myAlg->isEnabled()){
-          StatusCode result = myAlg->sysExecute();
+          StatusCode result = myAlg->sysExecute(SYSEX_ARGUMENT);
           if ( ! result.isSuccess() ) return StatusCode::FAILURE;
           //If the ODP wants the line killed:
           if(!myAlg->filterPassed()){
@@ -272,7 +283,7 @@ StatusCode TCKPrescaleEmulator::getPrescalesFromTCK(unsigned int tck,
   }
 
   //Make products of pre, post scales, print (if verbose)
-  if(UNLIKELY( msgLevel(MSG::VERBOSE))) 
+  if(UNLIKELY( msgLevel(MSG::VERBOSE)))
   { verbose() << "Line" << " : " << "Prescale" << " : " << "Postscale" << " : " << "Product" << endmsg;}
   for ( const auto & i : prescales )
   {
@@ -295,7 +306,7 @@ StatusCode TCKPrescaleEmulator::getPrescalesFromTCK(unsigned int tck,
 StatusCode TCKPrescaleEmulator::getPrescalers()
 {
   if(UNLIKELY( msgLevel(MSG::DEBUG))){debug() << "Initialising prescalers " << endmsg;}
-  
+
   StatusCode final = StatusCode::SUCCESS;
   prescalers.clear();
 
@@ -327,7 +338,7 @@ StatusCode TCKPrescaleEmulator::getPrescalers()
       if(UNLIKELY( msgLevel(MSG::VERBOSE)))
       {verbose() << "AppManager doesn't already have an instance of " << theName << endmsg;}
       //== Set the Context if not in the jobOptions list
-      if ( ""  != context() || ""  != rootInTES()  ) 
+      if ( ""  != context() || ""  != rootInTES()  )
       {
         bool foundContext = false;
         bool foundRootInTES = false;
@@ -429,7 +440,7 @@ StatusCode TCKPrescaleEmulator::getPrescalers()
       // TODO: (MCl) it is possible to avoid the dynamic_cast in most of the
       //             cases by keeping the result of createSubAlgorithm.
       auto *  myAlg = dynamic_cast<Algorithm*>(myIAlg.get());
-      if ( myAlg ) 
+      if ( myAlg )
       {
         // Note: The reference counting is kept by the system of sub-algorithms
         prescalers.insert(std::make_pair(it.first,myAlg));
@@ -497,7 +508,7 @@ StatusCode TCKPrescaleEmulator::updatePrescalers()
         double ratio = i.second/(*j).second;
         if(ratio<=1.0){
           //MC >0 ratio <=1 means prescales are compatible, fill.
-          if(UNLIKELY( msgLevel(MSG::VERBOSE))) 
+          if(UNLIKELY( msgLevel(MSG::VERBOSE)))
           { verbose() << i.first  << " TCK, MC are compatible. ratio: " << ratio << endmsg;}
           scaleProductsToApply.insert(std::make_pair(i.first,ratio));
           pre->update(ratio);
@@ -514,7 +525,7 @@ StatusCode TCKPrescaleEmulator::updatePrescalers()
           pre->update(1.0);
         }
       }else{
-        if( i.second > 0.0 ) 
+        if( i.second > 0.0 )
         {
           //MC =0, TCK >0 means prescales incompatible (can't create decisions where there are none!) complain, set to 0%:
           sc = StatusCode::FAILURE;
@@ -552,7 +563,7 @@ StatusCode TCKPrescaleEmulator::updatePrescalers()
   for ( const auto & i : scaleProductsInMC )
   {
     auto j = scaleProductsToApply.find(i.first);
-    if ( j == scaleProductsToApply.end() ) 
+    if ( j == scaleProductsToApply.end() )
     {
       if (msgLevel(MSG::DEBUG)) debug() << " MC contains a line not in the TCK: "<< i.first <<" prescaling it to zero" << endmsg;
       scaleProductsToApply.insert(std::make_pair(i.first,0.0));
@@ -573,11 +584,10 @@ bool TCKPrescaleEmulator::endedWith(const std::string &lineName, const std::stri
 //=========================================================================
 //  Extract data from Trigger
 //=========================================================================
-StatusCode TCKPrescaleEmulator::i_cacheTriggerData() 
+StatusCode TCKPrescaleEmulator::i_cacheTriggerData()
 {
   if (UNLIKELY( msgLevel(MSG::DEBUG))) debug() << "callback Trigger:" << endmsg;
   m_triggerTCK = (unsigned int) m_condTrigger->param<int>("TCK");
   if (UNLIKELY( msgLevel(MSG::VERBOSE))) verbose() << "tck from callback: " << m_triggerTCK << endmsg;
   return StatusCode::SUCCESS;
 }
-

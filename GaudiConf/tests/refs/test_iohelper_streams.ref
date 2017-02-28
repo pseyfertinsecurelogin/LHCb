@@ -3,7 +3,7 @@ None
 =============================
 - streams
 [InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT')]
-[InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), LHCb::MDFWriter('LHCb::MDFWriter'), OutputStream('OutputStream'), RecordStream('FSRTagCollectionStreamSomethingElseWeirdROOT'), TagCollectionStream('SomethingElseWeirdROOT'), 'InputCopyStream']
+[InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), LHCb__MDFWriter('LHCb::MDFWriter'), OutputStream('OutputStream'), RecordStream('FSRTagCollectionStreamSomethingElseWeirdROOT'), TagCollectionStream('SomethingElseWeirdROOT'), 'InputCopyStream']
 DATAFILE='out1.dst' SVC='RootCnvSvc' OPT='REC'
 DATAFILE='out1.dst' SVC='FileRecordCnvSvc' OPT='REC'
 file://file2.mdf
@@ -22,7 +22,7 @@ ROOT
 =============================
 - streams
 [InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT')]
-[InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), InputCopyStream('InputCopyStream'), LHCb::MDFWriter('LHCb::MDFWriter'), OutputStream('OutputStream'), RecordStream('FSRTagCollectionStreamSomethingElseWeirdROOT'), TagCollectionStream('SomethingElseWeirdROOT'), 'InputCopyStream']
+[InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), InputCopyStream('InputCopyStream'), LHCb__MDFWriter('LHCb::MDFWriter'), OutputStream('OutputStream'), RecordStream('FSRTagCollectionStreamSomethingElseWeirdROOT'), TagCollectionStream('SomethingElseWeirdROOT'), 'InputCopyStream']
 DATAFILE='out1.dst' SVC='RootCnvSvc' OPT='REC'
 DATAFILE='out1.dst' SVC='FileRecordCnvSvc' OPT='REC'
 DATAFILE='out1.dst' SVC='RootCnvSvc' OPT='REC'
@@ -47,7 +47,7 @@ MDF
 # WARNING: FSRs can not be written to MDF file  out2.dst . Set writeFSR to False to supress this warning
 - streams
 [InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), InputCopyStream('SomethingWeirdMDF')]
-[InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), InputCopyStream('SomethingWeirdMDF'), InputCopyStream('InputCopyStream'), LHCb::MDFWriter('LHCb::MDFWriter'), OutputStream('OutputStream'), TagCollectionStream('SomethingElseWeirdMDF'), RecordStream('FSRTagCollectionStreamSomethingElseWeirdROOT'), TagCollectionStream('SomethingElseWeirdROOT'), 'InputCopyStream']
+[InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), InputCopyStream('SomethingWeirdROOT'), RecordStream('FSRInputCopyStreamSomethingWeirdROOT'), InputCopyStream('SomethingWeirdMDF'), InputCopyStream('InputCopyStream'), LHCb__MDFWriter('LHCb::MDFWriter'), OutputStream('OutputStream'), TagCollectionStream('SomethingElseWeirdMDF'), RecordStream('FSRTagCollectionStreamSomethingElseWeirdROOT'), TagCollectionStream('SomethingElseWeirdROOT'), 'InputCopyStream']
 DATAFILE='out1.dst' SVC='RootCnvSvc' OPT='REC'
 DATAFILE='out1.dst' SVC='FileRecordCnvSvc' OPT='REC'
 DATAFILE='out1.dst' SVC='RootCnvSvc' OPT='REC'

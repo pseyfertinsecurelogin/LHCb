@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Gaudi
 #include "GaudiKernel/IAlgManager.h"
@@ -9,6 +9,16 @@
 #include "DeterministicPrescaler.h"
 // local
 #include "TurboPrescaler.h"
+
+
+#ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
+/// \fixme backward compatibility with Gaudi <= v28r1
+#include "GaudiKernel/ThreadLocalContext.h"
+#define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
+#else
+#define SYSEX_ARGUMENT
+#endif
+
 
 using namespace LHCb;
 //-----------------------------------------------------------------------------
@@ -39,7 +49,7 @@ TurboPrescaler::TurboPrescaler( const std::string& name,
   declareProperty("IPropertyConfigSvcInstance", m_propertyConfigSvcName = "PropertyConfigSvc");
 }
 
-StatusCode TurboPrescaler::initialize() 
+StatusCode TurboPrescaler::initialize()
 {
   const StatusCode sc = GaudiAlgorithm::initialize();
   if ( !sc ) return sc;
@@ -61,16 +71,16 @@ StatusCode TurboPrescaler::execute()
 
   // Get the input reports and if the TCK changes, refresh list of prescales
   auto decreports = getIfExists<HltDecReports>(m_hltDecReportsLocation);
-  if ( decreports ) 
+  if ( decreports )
   {
 
     auto tck = decreports->configuredTCK();
-    if ( 0 == m_lastTCK ) 
+    if ( 0 == m_lastTCK )
     {
       getPrescalesFromTCK(tck,m_prescalesInput, m_postscalesInput, m_scaleProductsInput);
     }
 
-    if ( tck != m_lastTCK || 0 == m_lastTCK ) 
+    if ( tck != m_lastTCK || 0 == m_lastTCK )
     {
       m_lastTCK=tck;
       updatePrescalers();
@@ -91,7 +101,7 @@ StatusCode TurboPrescaler::execute()
     std::string strip= "Decision";
 
     //loop over the Decreports
-    for ( const auto& dec : *decreports ) 
+    for ( const auto& dec : *decreports )
     {
 
       //Get the name of line, if it ends with "Decision" remove it:
@@ -103,23 +113,23 @@ StatusCode TurboPrescaler::execute()
       report = dec.second;
 
       //We only care about lines that fired:
-      if ( report.decision() ) 
+      if ( report.decision() )
       {
-        
+
         //Pull the DeterministicPrescaler for this line from out map of DPs:
         auto * prescaler = prescalers[lineName];
 
         // Execute prescaler
-        if ( prescaler && prescaler->isEnabled() ) 
+        if ( prescaler && prescaler->isEnabled() )
         {
-          const auto result = prescaler->sysExecute();
+          const auto result = prescaler->sysExecute(SYSEX_ARGUMENT);
           if ( ! result.isSuccess() ) return StatusCode::FAILURE;
           //If the DP wants the line killed:
           if ( !prescaler->filterPassed() )
           {
             report.setDecision(false);
           }
-          else 
+          else
           {
             globalPass = true;
           }
@@ -134,10 +144,10 @@ StatusCode TurboPrescaler::execute()
   return sc;
 }
 
-void TurboPrescaler::getPrescalesFromTCK( unsigned int tck, 
-                                          StringMap &prescales, 
+void TurboPrescaler::getPrescalesFromTCK( unsigned int tck,
+                                          StringMap &prescales,
                                           StringMap &postscales,
-                                          StringMap &scaleProducts ) 
+                                          StringMap &scaleProducts )
 {
   prescales.clear();
   postscales.clear();
@@ -162,7 +172,7 @@ void TurboPrescaler::getPrescalesFromTCK( unsigned int tck,
     {
 
       //Check that fullyQualifiedName contains "DeterministicPrescaler"
-      if ( std::string::npos != config->fullyQualifiedName().find(m_scalerName) ) 
+      if ( std::string::npos != config->fullyQualifiedName().find(m_scalerName) )
       {
 
         //If it does, get the name
@@ -172,7 +182,7 @@ void TurboPrescaler::getPrescalesFromTCK( unsigned int tck,
         //Loop to find the property "AcceptFraction"
         for ( const auto & i : config->properties() )
         {
-          if ( i.first == "AcceptFraction" ) 
+          if ( i.first == "AcceptFraction" )
           {
             double scale = -9999.;
             try {
@@ -182,11 +192,11 @@ void TurboPrescaler::getPrescalesFromTCK( unsigned int tck,
               Warning("could not find pre/post scale in " + i.first).ignore();
               scale=-9999.;
             }
-            if ( scale > -9999. ) 
+            if ( scale > -9999. )
             {
               // Is it a Prescale, Postscale, or something else?
               //prescale:
-              if ( endedWith(lineName,m_preScalerName) ) 
+              if ( endedWith(lineName,m_preScalerName) )
               {
                 lineName.erase(lineName.end()-m_preScalerName.length(),lineName.end());
                 prescales[lineName]=scale; //Write the prescale to a map
@@ -239,7 +249,7 @@ void TurboPrescaler::setupPrescalers()
 
   for ( const auto & it : m_outputPS )
   {
-  
+
     std::string tn = "DeterministicPrescaler/";
     tn.append(it.first);
     tn.append("DPForPrescaleOffline");
@@ -253,9 +263,9 @@ void TurboPrescaler::setupPrescalers()
 
     if ( !myIAlg.isValid() )
     {
-      
+
       //Set the acceptfraction and verbosity for the DP:
-      if ( UNLIKELY( msgLevel(MSG::VERBOSE)) ) 
+      if ( UNLIKELY( msgLevel(MSG::VERBOSE)) )
         verbose() << "Setting an acceptfraction for " << theName << endmsg;
       IntegerProperty outputLevelProperty( "OutputLevel", MSG::WARNING);
       jos->addPropertyToCatalogue( theName, outputLevelProperty ).ignore();
@@ -281,19 +291,19 @@ void TurboPrescaler::setupPrescalers()
       const auto sc = myIAlg->sysStart () ;
       if  ( sc.isFailure() ) { result = sc ; }
     }
-    if ( result.isSuccess() ) 
+    if ( result.isSuccess() )
     {
       Algorithm*  myAlg = dynamic_cast<Algorithm*>(myIAlg.get());
-      if ( myAlg ) 
+      if ( myAlg )
       {
         prescalers.insert( std::make_pair(it.first,myAlg) );
-      } 
-      else 
+      }
+      else
       {
         warning() << theName << " is not an Algorithm - failed dynamic_cast"
                   << endmsg;
       }
-    } 
+    }
     else
     {
       warning() << "Unable to find or create " << theName << endmsg;
@@ -313,10 +323,10 @@ void TurboPrescaler::updatePrescalers()
     auto j = m_outputPS.find(i.first);
     if ( j != m_outputPS.end() )
     {
-      if ( (*j).second > 0.0 ) 
+      if ( (*j).second > 0.0 )
       {
         const double ratio = (*j).second / i.second;
-        if ( ratio <= 1.0 ) 
+        if ( ratio <= 1.0 )
         {
           DoubleProperty acceptFractionProperty( "AcceptFraction", ratio);
           pre->setProperty(acceptFractionProperty);
@@ -334,10 +344,9 @@ void TurboPrescaler::updatePrescalers()
   }
 }
 
-bool TurboPrescaler::endedWith( const std::string &lineName, 
+bool TurboPrescaler::endedWith( const std::string &lineName,
                                 const std::string &ending )
 {
   return ( lineName.length() > ending.length() &&
            ( 0 == lineName.compare (lineName.length() - ending.length(), ending.length(), ending) ) );
 }
-
