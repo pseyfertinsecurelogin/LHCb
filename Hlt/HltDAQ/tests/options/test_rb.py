@@ -1,7 +1,6 @@
 import re
 import sys
 import os
-import subprocess
 import argparse
 import inspect
 import shelve
@@ -15,6 +14,7 @@ from Configurables import LHCbApp, EventSelector
 from Configurables import ApplicationMgr, GaudiSequencer
 from Configurables import IODataManager
 from Configurables import HistogramPersistencySvc
+from Configurables import HltRoutingBitsFilter
 from DAQSys.Decoders import DecoderDB
 from Configurables import LoKiSvc
 from Configurables import ToolSvc
@@ -77,25 +77,18 @@ HistogramPersistencySvc().OutputLevel = 5
 topSeq = GaudiSequencer("TopSequence")
 
 # Filter nanofied events if the file is HLT2 accepted
-if hlt2_tck:
-    from Configurables import HltRoutingBitsFilter
-    nano_filter = HltRoutingBitsFilter(
-        'NonNanoFilter', RequireMask=[0x0, 0x0, 0x80000000])
-    topSeq.Members += [nano_filter]
+nano_filter = HltRoutingBitsFilter(
+    'NonNanoFilter', RequireMask=[0x0, 0x0, 0x80000000])
+topSeq.Members += [nano_filter]
 
 importOptions('$L0TCK/L0DUConfig.opts')
 
 # Decode Hlt DecReports
-for dec in ("L0DUDecoder/L0DUFromRaw",
-            "HltDecReportsDecoder/Hlt1DecReportsDecoder"):
+for dec in ("HltDecReportsDecoder/Hlt1DecReportsDecoder",
+            "HltDecReportsDecoder/Hlt2DecReportsDecoder"):
     topSeq.Members.append(DecoderDB[dec].setup())
     # tell HltConfigSvc to leave the just explicitly configured decoders
     # alone..
-
-if hlt2_tck:
-    topSeq.Members.append(
-        DecoderDB["HltDecReportsDecoder/Hlt2DecReportsDecoder"].setup())
-
 
 copier = RawEventCopy(
     "RawEventCopy", Destination='/Event/DAQ/CopyRawEvent', DeepCopy=True)
