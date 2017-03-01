@@ -20,13 +20,9 @@
 #ifndef LHCbROOT_Math_GenVector_CylindricalEta3D
 #define LHCbROOT_Math_GenVector_CylindricalEta3D  1
 
-#ifndef LHCbROOT_Math_Math
 #include "Math/Math.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_etaMax
 #include "TemplatedGenVector/etaMax.h"
-#endif
 
 
 #include <limits>
@@ -281,17 +277,11 @@ private:
 
 // move implementations here to avoid circle dependencies
 
-#ifndef LHCbROOT_Math_GenVector_Cartesian3D
 #include "TemplatedGenVector/Cartesian3D.h"
-#endif
 
 #if defined(__MAKECINT__) || defined(G__DICTIONARY)
-#ifndef LHCbROOT_Math_GenVector_GenVector_exception
 #include "TemplatedGenVector/GenVector_exception.h"
-#endif
-#ifndef LHCbROOT_Math_GenVector_Polar3D
 #include "TemplatedGenVector/Polar3D.h"
-#endif
 #endif
 
 namespace LHCbROOT {

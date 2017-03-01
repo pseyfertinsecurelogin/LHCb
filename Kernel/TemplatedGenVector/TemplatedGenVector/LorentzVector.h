@@ -18,17 +18,11 @@
 #ifndef LHCbROOT_Math_GenVector_LorentzVector
 #define LHCbROOT_Math_GenVector_LorentzVector  1
 
-#ifndef LHCbROOT_Math_GenVector_PxPyPzE4D
 #include "TemplatedGenVector/PxPyPzE4D.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_DisplacementVector3D
 #include "TemplatedGenVector/DisplacementVector3D.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_GenVectorIO
 #include "TemplatedGenVector/GenVectorIO.h"
-#endif
 
 
 

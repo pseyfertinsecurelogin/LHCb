@@ -17,31 +17,24 @@
 #define LHCbROOT_Math_GenVector_Translation3D  1
 
 
-#ifndef LHCbROOT_Math_GenVector_DisplacementVector3D
 #include "TemplatedGenVector/DisplacementVector3D.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_PositionVector3Dfwd
+#include "TemplatedGenVector/Plane3D.h"
+
 #include "TemplatedGenVector/PositionVector3Dfwd.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_LorentzVectorfwd
 #include "TemplatedGenVector/LorentzVectorfwd.h"
-#endif
 
 #include <iostream>
-
+#include <type_traits>
 
 
 namespace LHCbROOT {
 
 namespace Math {
 
-
-  //template < typename FTYPE >
-  //class Plane3D;
-
-
+namespace Impl {
+ 
 //____________________________________________________________________________________________________
 /**
     Class describing a 3 dimensional translation. It can be combined (using the operator *)
@@ -55,24 +48,23 @@ namespace Math {
 
 */
 
-  template < typename FTYPE >
-  class Translation3D {
+template <typename T = double>
+class Translation3D {
 
-  private:
-
-    //typedef PositionVector3D<Cartesian3D<FTYPE>, DefaultCoordinateSystemTag > XYZPoint;
 
   public:
-    
-    typedef FTYPE Scalar;
 
-    typedef DisplacementVector3D<Cartesian3D<FTYPE>, DefaultCoordinateSystemTag >  Vector;
+    typedef T Scalar;
+
+    typedef DisplacementVector3D<Cartesian3D<T>, DefaultCoordinateSystemTag >  Vector;
+
+
 
 
    /**
        Default constructor ( zero translation )
    */
-    Translation3D() = default;
+   Translation3D() {}
 
    /**
       Construct given a pair of pointers or iterators defining the
@@ -87,7 +79,7 @@ namespace Math {
    /**
       Construct from x,y,z values representing the translation
    */
-   Translation3D(FTYPE dx, FTYPE dy, FTYPE dz) :
+   Translation3D(T dx, T dy, T dz) :
       fVect( Vector(dx, dy, dz) )
    {  }
 
@@ -109,7 +101,8 @@ namespace Math {
 
    */
    template<class CoordSystem, class Tag>
-   Translation3D (const  PositionVector3D<CoordSystem,Tag> & p1, const PositionVector3D<CoordSystem,Tag> & p2 ) :
+   Translation3D ( const PositionVector3D<CoordSystem,Tag> & p1,
+                   const PositionVector3D<CoordSystem,Tag> & p2 ) :
       fVect(p2-p1)
    { }
 
@@ -155,7 +148,7 @@ namespace Math {
       Set the components from 3 scalars
    */
    void
-   SetComponents (FTYPE  dx, FTYPE  dy, FTYPE  dz ) {
+   SetComponents (T  dx, T  dy, T  dz ) {
       fVect.SetCoordinates(dx,dy,dz);
    }
 
@@ -163,7 +156,7 @@ namespace Math {
       Get the components into 3 scalars
    */
    void
-   GetComponents (FTYPE &dx, FTYPE &dy, FTYPE &dz) const {
+   GetComponents (T &dx, T &dy, T &dz) const {
       fVect.GetCoordinates(dx,dy,dz);
    }
 
@@ -172,7 +165,7 @@ namespace Math {
       Set the XYZ vector components from 3 scalars
    */
    void
-   SetXYZ (FTYPE  dx, FTYPE  dy, FTYPE  dz ) {
+   SetXYZ (T  dx, T  dy, T  dz ) {
       fVect.SetXYZ(dx,dy,dz);
    }
 
@@ -185,11 +178,16 @@ namespace Math {
    */
    template<class CoordSystem, class Tag >
    PositionVector3D<CoordSystem,Tag> operator() (const PositionVector3D <CoordSystem,Tag> & p) const {
-      PositionVector3D<CoordSystem,Tag>  tmp;
-      tmp.SetXYZ (p.X() + fVect.X(),
-                  p.Y() + fVect.Y(),
-                  p.Z() + fVect.Z() ) ;
-      return tmp;
+      return PositionVector3D<CoordSystem,Tag> ( p.X() + fVect.X(),
+                                                 p.Y() + fVect.Y(),
+                                                 p.Z() + fVect.Z() );
+   }
+   /**
+     Transformation operation
+   */
+   template<class CoordSystem, class Tag > 
+   PositionVector3D<CoordSystem,Tag> operator * ( const PositionVector3D<CoordSystem,Tag> & v ) const {
+     return operator() (v);
    }
 
    /**
@@ -200,7 +198,14 @@ namespace Math {
    DisplacementVector3D<CoordSystem,Tag> operator() (const DisplacementVector3D <CoordSystem,Tag> & v) const {
       return  v;
    }
-
+   /**
+     Transformation operation
+   */
+   template<class CoordSystem, class Tag > 
+   DisplacementVector3D<CoordSystem,Tag> operator * ( const DisplacementVector3D<CoordSystem,Tag> & v ) const {
+     return operator() (v);
+   }
+  
    /**
       Transformation operation for points between different coordinate system tags
    */
@@ -211,55 +216,50 @@ namespace Math {
       p2 =  operator()(tmp);
     }
 
-
    /**
       Transformation operation for Displacement Vector of different coordinate systems
    */
    template<class CoordSystem,  class Tag1, class Tag2 >
-   void Transform (const DisplacementVector3D <CoordSystem,Tag1> & v1, DisplacementVector3D <CoordSystem,Tag2> & v2  ) const {
+   void Transform ( const DisplacementVector3D <CoordSystem,Tag1> & v1,
+                    DisplacementVector3D <CoordSystem,Tag2> & v2  ) const {
       // just copy v1 in v2
-      v2.SetXYZ(v1.X(), v1.Y(), v1.Z() );
+      v2.SetXYZ( v1.X(), v1.Y(), v1.Z() );
    }
 
    /**
       Transformation operation for a Lorentz Vector in any  coordinate system
       A LorentzVector contains a displacement vector so no translation applies as well
    */
-   template <class CoordSystem >
-   LorentzVector<CoordSystem> operator() (const LorentzVector<CoordSystem> & q) const {
-      return  q;
+   template <class CoordSystem>
+   LorentzVector<CoordSystem> operator() ( const LorentzVector<CoordSystem> & q ) const {
+      return q;
+   }
+   /**
+     Transformation operation
+   */
+   template<class CoordSystem> 
+   LorentzVector<CoordSystem> operator * ( const LorentzVector<CoordSystem> & q ) const {
+     return operator() (q);
    }
 
    /**
       Transformation on a 3D plane
    */
-    // Plane3D<FTYPE> operator() (const Plane3D<FTYPE> & plane) const
-    // {
-    //   // transformations on a 3D plane
-    //   auto n = plane.Normal();
-    //   // take a point on the plane. Use origin projection on the plane
-    //   // ( -ad, -bd, -cd) if (a**2 + b**2 + c**2 ) = 1
-    //   auto d = plane.HesseDistance();
-    //   XYZPoint p( - d * n.X() , - d *n.Y(), -d *n.Z() );
-    //   return Plane3D<FTYPE> ( operator() (n), operator() (p) );
-    // }
-
-   /**
-      Transformation operation for Vectors. Apply same rules as operator()
-      depending on type of vector.
-      Will work only for DisplacementVector3D, PositionVector3D and LorentzVector
-   */
-   template<class AVector >
-   AVector operator * (const AVector & v) const {
-      return operator() (v);
+   Plane3D<T> operator() ( const Plane3D<T> & plane ) const
+   {
+     // transformations on a 3D plane
+     const Vector n = plane.Normal();
+     // take a point on the plane. Use origin projection on the plane
+     // ( -ad, -bd, -cd) if (a**2 + b**2 + c**2 ) = 1
+     const T d = plane.HesseDistance();
+     PositionVector3D<Cartesian3D<T> > p( - d * n.X() , - d * n.Y(), - d * n.Z() );
+     return PLANE( operator() (n), operator() (p) );
    }
-
-
 
    /**
       multiply (combine) with another transformation in place
    */
-   Translation3D & operator *= (const Translation3D  & t) {
+   Translation3D<T> & operator *= (const Translation3D<T>  & t) {
       fVect+= t.Vect();
       return *this;
    }
@@ -267,8 +267,8 @@ namespace Math {
    /**
       multiply (combine) two transformations
    */
-   Translation3D operator * (const Translation3D  & t) const {
-      return Translation3D( fVect + t.Vect() );
+   Translation3D<T> operator * (const Translation3D<T>  & t) const {
+      return Translation3D<T>( fVect + t.Vect() );
    }
 
    /**
@@ -281,20 +281,20 @@ namespace Math {
    /**
       Return the inverse of the transformation.
    */
-   Translation3D Inverse() const {
-      return Translation3D( -fVect.X(), -fVect.Y(),-fVect.Z() );
+   Translation3D<T> Inverse() const {
+      return Translation3D<T>( -fVect.X(), -fVect.Y(),-fVect.Z() );
    }
 
 
    /**
       Equality/inequality operators
    */
-   bool operator == (const Translation3D & rhs) const {
+   bool operator == (const Translation3D<T> & rhs) const {
       if( fVect != rhs.fVect )  return false;
       return true;
    }
 
-   bool operator != (const Translation3D & rhs) const {
+   bool operator != (const Translation3D<T> & rhs) const {
       return ! operator==(rhs);
    }
 
@@ -313,20 +313,27 @@ private:
 // global functions
 
 // TODO - I/O should be put in the manipulator form
-  template < typename FTYPE >
-  std::ostream & operator<< (std::ostream & os, const Translation3D<FTYPE> & t)
-  {
-    // TODO - this will need changing for machine-readable issues
-    //        and even the human readable form needs formatiing improvements 
-    FTYPE m[3];
-    t.GetComponents(m, m+3);
-    os << "\n" << m[0] << "  " << m[1] << "  " << m[2] << "\n";
-    return os;
-  }
+
+template <class T>
+std::ostream & operator<< (std::ostream & os, const Translation3D<T> & t)
+{
+   // TODO - this will need changing for machine-readable issues
+   //        and even the human readable form needs formatiing improvements
+
+   T m[3];
+   t.GetComponents(m, m+3);
+   return os << "\n" << m[0] << "  " << m[1] << "  " << m[2] << "\n";
+}
 
 // need a function Transform = Translation * Rotation ???
 
-   } // end namespace Math
+} // end namespace Impl
+
+// typedefs for double and float versions
+typedef Impl::Translation3D<double> Translation3D;
+typedef Impl::Translation3D<float>  Translation3DF;
+
+} // end namespace Math
 
 } // end namespace LHCbROOT
 

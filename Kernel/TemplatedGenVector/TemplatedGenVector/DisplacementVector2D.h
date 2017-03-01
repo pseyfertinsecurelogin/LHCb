@@ -17,25 +17,15 @@
 #ifndef LHCbROOT_Math_GenVector_DisplacementVector2D
 #define LHCbROOT_Math_GenVector_DisplacementVector2D  1
 
-#ifndef LHCbROOT_Math_GenVector_Cartesian2D
 #include "TemplatedGenVector/Cartesian2D.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_PositionVector2Dfwd
 #include "TemplatedGenVector/PositionVector2Dfwd.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_GenVectorIO
 #include "TemplatedGenVector/GenVectorIO.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_BitReproducible
 #include "TemplatedGenVector/BitReproducible.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_CoordinateSystemTags
 #include "TemplatedGenVector/CoordinateSystemTags.h"
-#endif
 
 //#include "TemplatedGenVector/Expression2D.h"
 

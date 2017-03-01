@@ -19,13 +19,9 @@
 #ifndef LHCbROOT_Math_GenVector_Polar3D
 #define LHCbROOT_Math_GenVector_Polar3D  1
 
-#ifndef LHCbROOT_Math_Math
 #include "Math/Math.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_eta
 #include "TemplatedGenVector/eta.h"
-#endif
 
 
 namespace LHCbROOT {
@@ -250,17 +246,11 @@ private:
 
 // move implementations here to avoid circle dependencies
 
-#ifndef LHCbROOT_Math_GenVector_Cartesian3D
 #include "TemplatedGenVector/Cartesian3D.h"
-#endif
 
 #if defined(__MAKECINT__) || defined(G__DICTIONARY)
-#ifndef LHCbROOT_Math_GenVector_GenVector_exception
 #include "TemplatedGenVector/GenVector_exception.h"
-#endif
-#ifndef LHCbROOT_Math_GenVector_CylindricalEta3D
 #include "TemplatedGenVector/CylindricalEta3D.h"
-#endif
 #endif
 
 

@@ -18,13 +18,9 @@
 #ifndef LHCbROOT_Math_GenVector_PxPyPzE4D
 #define LHCbROOT_Math_GenVector_PxPyPzE4D  1
 
-#ifndef LHCbROOT_Math_GenVector_eta
 #include "TemplatedGenVector/eta.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_GenVector_exception
 #include "TemplatedGenVector/GenVector_exception.h"
-#endif
 
 
 #include <cmath>
@@ -358,12 +354,8 @@ private:
 #if defined(__MAKECINT__) || defined(G__DICTIONARY)
 // move implementations here to avoid circle dependencies
 
-#ifndef LHCbROOT_Math_GenVector_PtEtaPhiE4D
 #include "TemplatedGenVector/PtEtaPhiE4D.h"
-#endif
-#ifndef LHCbROOT_Math_GenVector_PtEtaPhiM4D
 #include "TemplatedGenVector/PtEtaPhiM4D.h"
-#endif
 
 namespace LHCbROOT {
 

@@ -19,13 +19,9 @@
 //        The intention is to seraparte them into a few .cpp files instead,
 //        so that users needing one form need not incorporate code for them all.
 
-#include <cmath>
-#include <limits>
-
+#include "TemplatedGenVector/3DConversions.h"
 
 #include "Math/Math.h"
-
-#include "TemplatedGenVector/3DConversions.h"
 
 #include "TemplatedGenVector/Rotation3D.h"
 #include "TemplatedGenVector/AxisAngle.h"
@@ -36,6 +32,8 @@
 #include "TemplatedGenVector/RotationY.h"
 #include "TemplatedGenVector/RotationZ.h"
 
+#include <cmath>
+#include <limits>
 
 namespace LHCbROOT {
 namespace Math {
