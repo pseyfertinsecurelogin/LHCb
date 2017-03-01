@@ -19,7 +19,6 @@ from DAQSys.Decoders import DecoderDB
 from Configurables import LoKiSvc
 from Configurables import ToolSvc
 from PRConfig.TestFileDB import test_file_db
-from Gaudi.Configuration import importOptions
 
 parser = argparse.ArgumentParser(
     usage='usage: %(prog)s test_file_db_entry stream tck')
@@ -80,8 +79,6 @@ topSeq = GaudiSequencer("TopSequence")
 nano_filter = HltRoutingBitsFilter(
     'NonNanoFilter', RequireMask=[0x0, 0x0, 0x80000000])
 topSeq.Members += [nano_filter]
-
-importOptions('$L0TCK/L0DUConfig.opts')
 
 # Decode Hlt DecReports
 for dec in ("HltDecReportsDecoder/Hlt1DecReportsDecoder",
