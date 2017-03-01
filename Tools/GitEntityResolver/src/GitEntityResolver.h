@@ -91,6 +91,8 @@ private:
   Gaudi::Property<bool> m_reopenOnStart{this, "ReopenOnStart", false,
                                         "close and reopen the Git repository during start transition, "
                                         "useful after a fork"};
+  Gaudi::Property<bool> m_limitToLastCommitTime{this, "LimitToLastCommitTime", false,
+                                                "force upper limit of IOVs is last commit time"};
 
   /// internal flag used to track if we are using the Git database or checked out files
   bool m_useFiles = false;
@@ -159,6 +161,8 @@ private:
   SmartIF<IDetDataSvc> m_detDataSvc;
 
   std::regex m_ignore;
+
+  Gaudi::Time m_lastCommitTime = Gaudi::Time::max();
 };
 
 #endif // GITENTITYRESOLVER_H

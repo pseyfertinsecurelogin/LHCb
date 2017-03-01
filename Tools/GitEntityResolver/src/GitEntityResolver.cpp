@@ -200,6 +200,13 @@ StatusCode GitEntityResolver::initialize()
       if ( m_commit.value().compare( oid ) != 0 )
         debug() << "commit '" << m_commit.value() << "' corresponds to " << oid << endmsg;
     }
+    if ( UNLIKELY( m_limitToLastCommitTime ) ) {
+      // get the time of the requested commit/tag
+      m_lastCommitTime = Gaudi::Time(git_commit_time((git_commit*)obj.get()), 0);
+      DEBUG_MSG << "limit validity to commit time: "
+                << m_lastCommitTime.format(false, "%Y-%m-%d %H:%M:%S")
+                << "." << m_lastCommitTime.nanoformat() << " UTC" << endmsg;
+    }
   }
 
   // Initialize the Xerces-C++ XML subsystem
@@ -269,12 +276,25 @@ GitEntityResolver::IOVInfo GitEntityResolver::i_getIOVInfo( const std::string& u
   const std::string iovs_url = url + "/IOVs";
   if ( i_exists( iovs_url ) ) {
     auto data              = i_open( iovs_url ).first;
-    std::int_fast64_t time = m_detDataSvc->eventTime().ns();
+    const auto when = m_detDataSvc->eventTime();
+    std::int_fast64_t time = when.ns();
     DEBUG_MSG << "getting payload key for " << url << " at " << time << endmsg;
 
     std::string line;
-    std::int_fast64_t current = 0, since = 0, until = Gaudi::Time::max().ns();
+    std::int_fast64_t current = 0, since = 0, until = m_lastCommitTime.ns();
     std::string key;
+
+    if ( UNLIKELY( time >= until && FSMState() == Gaudi::StateMachine::RUNNING ) ) {
+      std::stringstream msg;
+      // this message is not appropriate, but matches the message used in CondDBAccessSvc
+      msg << "Database not up-to-date. Latest known update is at "
+          << m_lastCommitTime.format(false, "%Y-%m-%d %H:%M:%S") << "." << m_lastCommitTime.nanoformat()
+          << " UTC, event time is "
+          << when.format(false, "%Y-%m-%d %H:%M:%S") << "." << when.nanoformat()
+          << " UTC";
+      throw GaudiException( msg.str(), name(), StatusCode::FAILURE );
+    }
+
     while ( std::getline( *data, line ) ) {
       std::istringstream is{line};
       is >> current;
