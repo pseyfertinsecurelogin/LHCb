@@ -59,7 +59,9 @@ copytree(src_data, path)
 
 check_call(['git', 'init', path])
 check_call(['git', 'add', '.'], cwd=path)
-check_call(['git', 'commit', '-m', 'initial version'], cwd=path)
+env = dict(os.environ)
+env['GIT_COMMITTER_DATE'] = env['GIT_AUTHOR_DATE'] = '1483225200'
+check_call(['git', 'commit', '-m', 'initial version'], cwd=path, env=env)
 check_call(['git', 'tag', 'v0'], cwd=path)
 
 # change values for tag 'v1'

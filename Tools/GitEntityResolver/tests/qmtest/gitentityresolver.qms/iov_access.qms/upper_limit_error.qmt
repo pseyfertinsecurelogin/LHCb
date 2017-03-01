@@ -1,0 +1,64 @@
+<?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension/
+/en.dtd'>
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+<argument name="program"><text>gaudirun.py</text></argument>
+<argument name="args"><set>
+  <text>-v</text>
+  <text>${DETDESCCHECKSROOT}/options/LoadDDDB.py</text>
+</set></argument>
+<argument name="options"><text>
+from Gaudi.Configuration import *
+from GitTestOptions import setup
+setup(tag='v0', conditions=['/dd/Changing'])
+
+from Configurables import EventClockSvc, FakeEventTime
+
+ecs = EventClockSvc()
+ecs.addTool(FakeEventTime, 'EventTimeDecoder')
+# tuned from the content of /dd/Changing for tag v0
+ecs.EventTimeDecoder.StartTime = 1442403000000000000
+ecs.EventTimeDecoder.TimeStep = 18399600000000000
+
+allConfigurables['ToolSvc.GitDDDB'].LimitToLastCommitTime = True
+
+ApplicationMgr(EvtMax=4)
+
+</text></argument>
+<argument name="exit_code"><integer>4</integer></argument>
+<argument name="validator"><text>
+from subprocess import check_output
+import os
+import re
+
+tag = 'v0'
+repository = os.environ['GIT_TEST_REPOSITORY']
+commit_id = check_output(['git', 'rev-parse', tag], cwd=repository)
+parameter = 0
+
+countErrorLines({'ERROR': 2, 'FATAL':1})
+
+findReferenceBlock('''
+ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
+ToolSvc.GitDDDB     DEBUG Initializing...
+ToolSvc.GitDDDB     DEBUG commit '{tag}' corresponds to {commit_id}
+ToolSvc.GitDDDB     DEBUG limit validity to commit time: 2016-12-31 23:00:00.0 UTC
+ToolSvc.GitDDDB     DEBUG Successfully initialized.
+'''.format(repository=repository, commit_id=commit_id, tag=tag),
+id='GitEntityResolver.initialization')
+
+findReferenceBlock('''
+LoadDDDB             INFO Database {repository} tag {tag}
+'''.format(repository=repository, commit_id=commit_id, tag=tag),
+id='reported_tag')
+
+findReferenceBlock('''
+UpdateManagerSvc    ERROR ToolSvc.GitDDDB	Database not up-to-date. Latest known update is at 2016-12-31 23:00:00.0 UTC, event time is 2017-06-16 08:30:00.0 UTC	 StatusCode=FAILURE
+UpdateManagerSvc    FATAL ***** The update failed. I schedule a stop of the run *****
+''', id='update_failure')
+
+</text></argument>
+<argument name="prerequisites"><set>
+  <tuple><text>gitentityresolver.prepare</text><enumeral>PASS</enumeral></tuple>
+</set></argument>
+<argument name="use_temp_dir"><enumeral>true</enumeral></argument>
+</extension>
