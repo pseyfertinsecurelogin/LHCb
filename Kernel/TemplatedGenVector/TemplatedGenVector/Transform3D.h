@@ -18,21 +18,13 @@
 
 
 
-#ifndef LHCbROOT_Math_GenVector_DisplacementVector3D
 #include "TemplatedGenVector/DisplacementVector3D.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_PositionVector3D
 #include "TemplatedGenVector/PositionVector3D.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_Rotation3D
 #include "TemplatedGenVector/Rotation3D.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_Translation3D
 #include "TemplatedGenVector/Translation3D.h"
-#endif
 
 
 #include "TemplatedGenVector/AxisAnglefwd.h"
@@ -43,9 +35,8 @@
 #include "TemplatedGenVector/RotationYfwd.h"
 #include "TemplatedGenVector/RotationZfwd.h"
 
-#include "TemplatedGenVector/Plane3D.h"
-
 #include <iostream>
+#include <type_traits>
 
 //#include "Math/Vector3Dfwd.h"
 
@@ -54,6 +45,9 @@
 namespace LHCbROOT {
 
 namespace Math {
+
+namespace Impl {
+
 
 //_________________________________________________________________________________________
 /**
@@ -80,15 +74,16 @@ namespace Math {
 
 */
 
-template < typename FTYPE >
+template <typename T = double>
 class Transform3D {
 
 
 public:
-  
-   typedef FTYPE Scalar;
-   typedef DisplacementVector3D<Cartesian3D<FTYPE>, DefaultCoordinateSystemTag >  Vector;
-   typedef PositionVector3D<Cartesian3D<FTYPE>, DefaultCoordinateSystemTag >      Point;
+
+   typedef T Scalar;
+
+   typedef  DisplacementVector3D<Cartesian3D<T>, DefaultCoordinateSystemTag >  Vector;
+   typedef  PositionVector3D<Cartesian3D<T>, DefaultCoordinateSystemTag >      Point;
 
 
    enum ETransform3DMatrixIndex {
@@ -127,7 +122,7 @@ public:
    /**
       Construct from a rotation and then a translation described by a Translation3D class
    */
-    Transform3D( const Rotation3D & r, const Translation3D<FTYPE> & t)
+   Transform3D( const Rotation3D & r, const Translation3D<T> & t)
    {
       AssignFrom( r, t.Vect() );
    }
@@ -151,7 +146,7 @@ public:
       Rotation3D class
    */
    template <class ARotation>
-   Transform3D( const ARotation & r, const Translation3D<FTYPE> & t)
+   Transform3D( const ARotation & r, const Translation3D<T> & t)
    {
       AssignFrom( Rotation3D(r), t.Vect() );
    }
@@ -222,13 +217,13 @@ public:
       Construct from a translation only, represented by a Translation3D class
       and with an identity rotation
    */
-   explicit Transform3D( const Translation3D<FTYPE> & t) {
-     AssignFrom(t.Vect());
+   explicit Transform3D( const Translation3D<T> & t) {
+      AssignFrom(t.Vect());
    }
 
 
 
-   //#if !defined(__MAKECINT__) && !defined(G__DICTIONARY)  // this is ambigous with Scalar * , Scalar *
+   //#if !defined(__MAKECINT__) && !defined(G__DICTIONARY)  // this is ambigous with double * , double *
 
 
 #ifdef OLD_VERSION
@@ -247,95 +242,187 @@ public:
    }
 #endif
 
-
+public:
+  
    /**
       Construct transformation from one coordinate system defined by three
       points (origin + two axis) to
       a new coordinate system defined by other three points (origin + axis)
+      Scalar version.
       @param fr0  point defining origin of original reference system
       @param fr1  point defining first axis of original reference system
       @param fr2  point defining second axis of original reference system
       @param to0  point defining origin of transformed reference system
       @param to1  point defining first axis transformed reference system
       @param to2  point defining second axis transformed reference system
-
    */
+  template < typename SCALAR = T >
    Transform3D
-   (const Point & fr0, const Point & fr1, const Point & fr2,
-    const Point & to0, const Point & to1, const Point & to2 )
+   ( const Point & fr0, const Point & fr1, const Point & fr2,
+     const Point & to0, const Point & to1, const Point & to2,
+     typename std::enable_if<std::is_arithmetic<SCALAR>::value>::type* = nullptr )
    {
      // takes impl. from CLHEP ( E.Chernyaev). To be checked
-     
-     Vector x1,y1,z1, x2,y2,z2;
-     x1 = (fr1 - fr0).Unit();
-     y1 = (fr2 - fr0).Unit();
-     x2 = (to1 - to0).Unit();
-     y2 = (to2 - to0).Unit();
+    
+     Vector x1 = (fr1 - fr0).Unit();
+     Vector y1 = (fr2 - fr0).Unit();
+     Vector x2 = (to1 - to0).Unit();
+     Vector y2 = (to2 - to0).Unit();
      
      //   C H E C K   A N G L E S
+
+     const T cos1 = x1.Dot(y1);
+     const T cos2 = x2.Dot(y2);
      
-     Scalar cos1, cos2;
-     cos1 = x1.Dot(y1);
-     cos2 = x2.Dot(y2);
-     
-     if (std::fabs(1.0-cos1) <= 0.000001 || std::fabs(1.0-cos2) <= 0.000001) {
+     if ( std::fabs( T(1) - cos1 ) <= T(0.000001) ||
+          std::fabs( T(1) - cos2 ) <= T(0.000001) ) {
        std::cerr << "Transform3D: Error : zero angle between axes" << std::endl;
        SetIdentity();
-     } 
-     else 
-     {
-       if (std::fabs(cos1-cos2) > 0.000001) {
+     } else {
+       if ( std::fabs(cos1-cos2) > T(0.000001) ) {
          std::cerr << "Transform3D: Warning: angles between axes are not equal"
                    << std::endl;
        }
-      
+
        //   F I N D   R O T A T I O N   M A T R I X
+
+       Vector z1 = (x1.Cross(y1)).Unit();
+       y1        = z1.Cross(x1);
        
-       z1 = (x1.Cross(y1)).Unit();
-       y1  = z1.Cross(x1);
+       Vector z2 = (x2.Cross(y2)).Unit();
+       y2        = z2.Cross(x2);
        
-       z2 = (x2.Cross(y2)).Unit();
-       y2  = z2.Cross(x2);
+       T x1x = x1.x();      T x1y = x1.y();      T x1z = x1.z();
+       T y1x = y1.x();      T y1y = y1.y();      T y1z = y1.z();
+       T z1x = z1.x();      T z1y = z1.y();      T z1z = z1.z();
        
-       Scalar x1x = x1.x();      Scalar x1y = x1.y();      Scalar x1z = x1.z();
-       Scalar y1x = y1.x();      Scalar y1y = y1.y();      Scalar y1z = y1.z();
-       Scalar z1x = z1.x();      Scalar z1y = z1.y();      Scalar z1z = z1.z();
+       T x2x = x2.x();      T x2y = x2.y();      T x2z = x2.z();
+       T y2x = y2.x();      T y2y = y2.y();      T y2z = y2.z();
+       T z2x = z2.x();      T z2y = z2.y();      T z2z = z2.z();
        
-       Scalar x2x = x2.x();      Scalar x2y = x2.y();      Scalar x2z = x2.z();
-       Scalar y2x = y2.x();      Scalar y2y = y2.y();      Scalar y2z = y2.z();
-       Scalar z2x = z2.x();      Scalar z2y = z2.y();      Scalar z2z = z2.z();
+       T detxx =  (y1y *z1z  - z1y *y1z );
+       T detxy = -(y1x *z1z  - z1x *y1z );
+       T detxz =  (y1x *z1y  - z1x *y1y );
+       T detyx = -(x1y *z1z  - z1y *x1z );
+       T detyy =  (x1x *z1z  - z1x *x1z );
+       T detyz = -(x1x *z1y  - z1x *x1y );
+       T detzx =  (x1y *y1z  - y1y *x1z );
+       T detzy = -(x1x *y1z  - y1x *x1z );
+       T detzz =  (x1x *y1y  - y1x *x1y );
        
-       Scalar detxx =  (y1y *z1z  - z1y *y1z );
-       Scalar detxy = -(y1x *z1z  - z1x *y1z );
-       Scalar detxz =  (y1x *z1y  - z1x *y1y );
-       Scalar detyx = -(x1y *z1z  - z1y *x1z );
-       Scalar detyy =  (x1x *z1z  - z1x *x1z );
-       Scalar detyz = -(x1x *z1y  - z1x *x1y );
-       Scalar detzx =  (x1y *y1z  - y1y *x1z );
-       Scalar detzy = -(x1x *y1z  - y1x *x1z );
-       Scalar detzz =  (x1x *y1y  - y1x *x1y );
-       
-       Scalar txx = x2x *detxx + y2x *detyx + z2x *detzx;
-       Scalar txy = x2x *detxy + y2x *detyy + z2x *detzy;
-       Scalar txz = x2x *detxz + y2x *detyz + z2x *detzz;
-       Scalar tyx = x2y *detxx + y2y *detyx + z2y *detzx;
-       Scalar tyy = x2y *detxy + y2y *detyy + z2y *detzy;
-       Scalar tyz = x2y *detxz + y2y *detyz + z2y *detzz;
-       Scalar tzx = x2z *detxx + y2z *detyx + z2z *detzx;
-       Scalar tzy = x2z *detxy + y2z *detyy + z2z *detzy;
-       Scalar tzz = x2z *detxz + y2z *detyz + z2z *detzz;
+       T txx = x2x *detxx + y2x *detyx + z2x *detzx;
+       T txy = x2x *detxy + y2x *detyy + z2x *detzy;
+       T txz = x2x *detxz + y2x *detyz + z2x *detzz;
+       T tyx = x2y *detxx + y2y *detyx + z2y *detzx;
+       T tyy = x2y *detxy + y2y *detyy + z2y *detzy;
+       T tyz = x2y *detxz + y2y *detyz + z2y *detzz;
+       T tzx = x2z *detxx + y2z *detyx + z2z *detzx;
+       T tzy = x2z *detxy + y2z *detyy + z2z *detzy;
+       T tzz = x2z *detxz + y2z *detyz + z2z *detzz;
        
        //   S E T    T R A N S F O R M A T I O N
        
-       Scalar dx1 = fr0.x(), dy1 = fr0.y(), dz1 = fr0.z();
-       Scalar dx2 = to0.x(), dy2 = to0.y(), dz2 = to0.z();
+       T dx1 = fr0.x(), dy1 = fr0.y(), dz1 = fr0.z();
+       T dx2 = to0.x(), dy2 = to0.y(), dz2 = to0.z();
        
        SetComponents(txx, txy, txz, dx2-txx*dx1-txy*dy1-txz*dz1,
                      tyx, tyy, tyz, dy2-tyx*dx1-tyy*dy1-tyz*dz1,
                      tzx, tzy, tzz, dz2-tzx*dx1-tzy*dy1-tzz*dz1);
+       
      }
    }
 
+   /**
+      Construct transformation from one coordinate system defined by three
+      points (origin + two axis) to
+      a new coordinate system defined by other three points (origin + axis)
+      Vectorised version.
+      @param fr0  point defining origin of original reference system
+      @param fr1  point defining first axis of original reference system
+      @param fr2  point defining second axis of original reference system
+      @param to0  point defining origin of transformed reference system
+      @param to1  point defining first axis transformed reference system
+      @param to2  point defining second axis transformed reference system
+   */
+  template < typename SCALAR = T >
+   Transform3D
+   ( const Point & fr0, const Point & fr1, const Point & fr2,
+     const Point & to0, const Point & to1, const Point & to2,
+     typename std::enable_if<!std::is_arithmetic<SCALAR>::value>::type* = nullptr )
+   {
+     // takes impl. from CLHEP ( E.Chernyaev). To be checked
+    
+     Vector x1 = (fr1 - fr0).Unit();
+     Vector y1 = (fr2 - fr0).Unit();
+     Vector x2 = (to1 - to0).Unit();
+     Vector y2 = (to2 - to0).Unit();
+     
+     //   C H E C K   A N G L E S
+
+     const T cos1 = x1.Dot(y1);
+     const T cos2 = x2.Dot(y2);
+
+     const auto m1 = ( abs( T(1) - cos1 ) <= T(0.000001) ||
+                       abs( T(1) - cos2 ) <= T(0.000001) );
+     
+     const auto m2 = ( abs(cos1-cos2) > T(0.000001) );
+     if ( any_of(m2) ) {
+       std::cerr << "Transform3D: Warning: angles between axes are not equal"
+                 << std::endl;
+     }
+     
+     //   F I N D   R O T A T I O N   M A T R I X
+     
+     Vector z1 = (x1.Cross(y1)).Unit();
+     y1        = z1.Cross(x1);
+     
+     Vector z2 = (x2.Cross(y2)).Unit();
+     y2        = z2.Cross(x2);
+     
+     T x1x = x1.x();      T x1y = x1.y();      T x1z = x1.z();
+     T y1x = y1.x();      T y1y = y1.y();      T y1z = y1.z();
+     T z1x = z1.x();      T z1y = z1.y();      T z1z = z1.z();
+     
+     T x2x = x2.x();      T x2y = x2.y();      T x2z = x2.z();
+     T y2x = y2.x();      T y2y = y2.y();      T y2z = y2.z();
+     T z2x = z2.x();      T z2y = z2.y();      T z2z = z2.z();
+     
+     T detxx =  (y1y *z1z  - z1y *y1z );
+     T detxy = -(y1x *z1z  - z1x *y1z );
+     T detxz =  (y1x *z1y  - z1x *y1y );
+     T detyx = -(x1y *z1z  - z1y *x1z );
+     T detyy =  (x1x *z1z  - z1x *x1z );
+     T detyz = -(x1x *z1y  - z1x *x1y );
+     T detzx =  (x1y *y1z  - y1y *x1z );
+     T detzy = -(x1x *y1z  - y1x *x1z );
+     T detzz =  (x1x *y1y  - y1x *x1y );
+     
+     T txx = x2x *detxx + y2x *detyx + z2x *detzx;
+     T txy = x2x *detxy + y2x *detyy + z2x *detzy;
+     T txz = x2x *detxz + y2x *detyz + z2x *detzz;
+     T tyx = x2y *detxx + y2y *detyx + z2y *detzx;
+     T tyy = x2y *detxy + y2y *detyy + z2y *detzy;
+     T tyz = x2y *detxz + y2y *detyz + z2y *detzz;
+     T tzx = x2z *detxx + y2z *detyx + z2z *detzx;
+     T tzy = x2z *detxy + y2z *detyy + z2z *detzy;
+     T tzz = x2z *detxz + y2z *detyz + z2z *detzz;
+     
+     //   S E T    T R A N S F O R M A T I O N
+     
+     T dx1 = fr0.x(), dy1 = fr0.y(), dz1 = fr0.z();
+     T dx2 = to0.x(), dy2 = to0.y(), dz2 = to0.z();
+     
+     SetComponents(txx, txy, txz, dx2-txx*dx1-txy*dy1-txz*dz1,
+                   tyx, tyy, tyz, dy2-tyx*dx1-tyy*dy1-tyz*dz1,
+                   tzx, tzy, tzz, dz2-tzx*dx1-tzy*dy1-tzz*dz1);
+
+     if ( any_of(m1) )
+     {
+       std::cerr << "Transform3D: Error : zero angle between axes" << std::endl;
+       SetIdentity(m1);
+     }
+     
+   }
 
    // use compiler generated copy ctor, copy assignmet and dtor
 
@@ -353,9 +440,9 @@ public:
    /**
       Raw constructor from 12 Scalar components
    */
-   Transform3D(Scalar  xx, Scalar  xy, Scalar  xz, Scalar dx,
-               Scalar  yx, Scalar  yy, Scalar  yz, Scalar dy,
-               Scalar  zx, Scalar  zy, Scalar  zz, Scalar dz)
+   Transform3D(T  xx, T  xy, T  xz, T dx,
+               T  yx, T  yy, T  yz, T dy,
+               T  zx, T  zy, T  zz, T dz)
    {
       SetComponents (xx, xy, xz, dx, yx, yy, yz, dy, zx, zy, zz, dz);
    }
@@ -368,7 +455,7 @@ public:
       are described by the 4-th column
    */
    template<class ForeignMatrix>
-   Transform3D & operator= (const ForeignMatrix & m) {
+   Transform3D<T> & operator= (const ForeignMatrix & m) {
       SetComponents(m);
       return *this;
    }
@@ -416,7 +503,8 @@ public:
    */
    template<class IT>
    void GetComponents(IT begin) const {
-      std::copy ( fM, fM+12, begin );
+      using namespace std;
+      copy ( fM, fM+12, begin );
    }
 
    /**
@@ -451,9 +539,9 @@ public:
       Set the components from 12 scalars
    */
    void
-   SetComponents (Scalar  xx, Scalar  xy, Scalar  xz, Scalar dx,
-                  Scalar  yx, Scalar  yy, Scalar  yz, Scalar dy,
-                  Scalar  zx, Scalar  zy, Scalar  zz, Scalar dz) {
+   SetComponents (T  xx, T  xy, T  xz, T dx,
+                  T  yx, T  yy, T  yz, T dy,
+                  T  zx, T  zy, T  zz, T dz) {
       fM[kXX]=xx;  fM[kXY]=xy;  fM[kXZ]=xz;  fM[kDX]=dx;
       fM[kYX]=yx;  fM[kYY]=yy;  fM[kYZ]=yz;  fM[kDY]=dy;
       fM[kZX]=zx;  fM[kZY]=zy;  fM[kZZ]=zz;  fM[kDZ]=dz;
@@ -463,9 +551,9 @@ public:
       Get the components into 12 scalars
    */
    void
-   GetComponents (Scalar &xx, Scalar &xy, Scalar &xz, Scalar &dx,
-                  Scalar &yx, Scalar &yy, Scalar &yz, Scalar &dy,
-                  Scalar &zx, Scalar &zy, Scalar &zz, Scalar &dz) const {
+   GetComponents (T &xx, T &xy, T &xz, T &dx,
+                  T &yx, T &yy, T &yz, T &dy,
+                  T &zx, T &zy, T &zz, T &dz) const {
       xx=fM[kXX];  xy=fM[kXY];  xz=fM[kXZ];  dx=fM[kDX];
       yx=fM[kYX];  yy=fM[kYY];  yz=fM[kYZ];  dy=fM[kDY];
       zx=fM[kZX];  zy=fM[kZY];  zz=fM[kZZ];  dz=fM[kDZ];
@@ -505,9 +593,9 @@ public:
    */
    template <class AnyRotation>
    AnyRotation Rotation() const {
-      return AnyRotation(Rotation3D(fM[kXX], fM[kXY], fM[kXZ],
-                                    fM[kYX], fM[kYY], fM[kYZ],
-                                    fM[kZX], fM[kZY], fM[kZZ] ) );
+      return AnyRotation( Rotation3D( fM[kXX], fM[kXY], fM[kXZ],
+                                      fM[kYX], fM[kYY], fM[kYZ],
+                                      fM[kZX], fM[kZY], fM[kZZ] ) );
    }
 
    /**
@@ -521,8 +609,8 @@ public:
    /**
       Get the translation representing the 3D transformation in a Cartesian vector
    */
-   Translation3D<FTYPE> Translation() const {
-      return Translation3D<FTYPE>( fM[kDX], fM[kDY], fM[kDZ] );
+   Translation3D<T> Translation() const {
+      return Translation3D<T>( fM[kDX], fM[kDY], fM[kDZ] );
    }
 
    /**
@@ -563,27 +651,40 @@ public:
    /**
       Transformation operation for Position Vector in any coordinate system
    */
-   template<class CoordSystem >
+   template<class CoordSystem>
    PositionVector3D<CoordSystem> operator() (const PositionVector3D <CoordSystem> & p) const {
-      Point xyzNew = operator() ( Point(p) );
-      return  PositionVector3D<CoordSystem> (xyzNew);
+      return PositionVector3D<CoordSystem> ( operator() ( Point(p) ) );
    }
-
+   /**
+      Transformation operation for Position Vector in any coordinate system
+   */
+   template<class CoordSystem>
+   PositionVector3D<CoordSystem> operator * ( const PositionVector3D<CoordSystem>& v ) const {
+     return operator() (v);
+   }
+     
    /**
       Transformation operation for Displacement Vector in any coordinate system
    */
    template<class CoordSystem >
    DisplacementVector3D<CoordSystem> operator() (const DisplacementVector3D <CoordSystem> & v) const {
-      auto xyzNew = operator() ( Vector(v) );
-      return  DisplacementVector3D<CoordSystem> (xyzNew);
+      return DisplacementVector3D<CoordSystem> ( operator() ( Vector(v) ) );
    }
-
+   /**
+      Transformation operation for Displacement Vector in any coordinate system
+   */
+   template<class CoordSystem >
+   DisplacementVector3D<CoordSystem> operator * (const DisplacementVector3D<CoordSystem> & v) const {
+     return operator() (v);
+   }
+     
    /**
       Transformation operation for points between different coordinate system tags
    */
    template<class CoordSystem, class Tag1, class Tag2 >
-   void Transform (const PositionVector3D <CoordSystem,Tag1> & p1, PositionVector3D <CoordSystem,Tag2> & p2  ) const {
-      Point xyzNew = operator() ( Point(p1.X(), p1.Y(), p1.Z()) );
+   void Transform (const PositionVector3D <CoordSystem,Tag1> & p1,
+                   PositionVector3D <CoordSystem,Tag2> & p2  ) const {
+      const Point xyzNew = operator() ( Point(p1.X(), p1.Y(), p1.Z()) );
       p2.SetXYZ( xyzNew.X(), xyzNew.Y(), xyzNew.Z() );
    }
 
@@ -592,8 +693,9 @@ public:
       Transformation operation for Displacement Vector of different coordinate systems
    */
    template<class CoordSystem,  class Tag1, class Tag2 >
-   void Transform (const DisplacementVector3D <CoordSystem,Tag1> & v1, DisplacementVector3D <CoordSystem,Tag2> & v2  ) const {
-      auto xyzNew = operator() ( Vector(v1.X(), v1.Y(), v1.Z() ) );
+   void Transform (const DisplacementVector3D <CoordSystem,Tag1> & v1,
+                   DisplacementVector3D <CoordSystem,Tag2> & v2  ) const {
+      const Vector xyzNew = operator() ( Vector(v1.X(), v1.Y(), v1.Z() ) );
       v2.SetXYZ( xyzNew.X(), xyzNew.Y(), xyzNew.Z() );
    }
 
@@ -602,54 +704,49 @@ public:
    */
    template <class CoordSystem >
    LorentzVector<CoordSystem> operator() (const LorentzVector<CoordSystem> & q) const {
-      Vector xyzNew = operator() ( Vector(q.Vect() ) );
-      return  LorentzVector<CoordSystem> (xyzNew.X(), xyzNew.Y(), xyzNew.Z(), q.E() );
+      const Vector xyzNew = operator() ( Vector(q.Vect() ) );
+      return  LorentzVector<CoordSystem> ( xyzNew.X(), xyzNew.Y(), xyzNew.Z(), q.E() );
+   }
+   /**
+      Transformation operation for a Lorentz Vector in any  coordinate system
+   */
+   template <class CoordSystem >
+   LorentzVector<CoordSystem> operator * (const LorentzVector<CoordSystem> & q) const {
+     return operator() (q);
    }
 
    /**
       Transformation on a 3D plane
    */
-   Plane3D<FTYPE> operator() (const Plane3D<FTYPE> & plane) const
+   Plane3D<T> operator() (const Plane3D<T> & plane) const
    {
      // transformations on a 3D plane
-     auto n = plane.Normal();
+     const Vector n = plane.Normal();
      // take a point on the plane. Use origin projection on the plane
      // ( -ad, -bd, -cd) if (a**2 + b**2 + c**2 ) = 1
-     auto d = plane.HesseDistance();
+     const T d = plane.HesseDistance();
      Point p( - d * n.X() , - d *n.Y(), -d *n.Z() );
-     return Plane3D<FTYPE> ( operator() (n), operator() (p) );
+     return Plane3D<T>( operator() (n), operator() (p) );
    }
-
 
    // skip transformation for arbitrary vectors - not really defined if point or displacement vectors
-
-   // same but with operator *
-   /**
-      Transformation operation for Vectors. Apply same rules as operator()
-      depending on type of vector.
-      Will work only for DisplacementVector3D, PositionVector3D and LorentzVector
-   */
-   template<class AVector >
-   AVector operator * (const AVector & v) const {
-      return operator() (v);
-   }
-
-
 
    /**
       multiply (combine) with another transformation in place
    */
-   inline Transform3D & operator *= (const Transform3D  & t);
+   inline Transform3D<T> & operator *= (const Transform3D<T>  & t);
 
    /**
       multiply (combine) two transformations
    */
-   inline Transform3D operator * (const Transform3D  & t) const;
+   inline Transform3D<T> operator * (const Transform3D<T>  & t) const;
 
    /**
-       Invert the transformation in place
+       Invert the transformation in place (scalar)
    */
-   void Invert()
+   template< typename SCALAR = T >
+   typename std::enable_if< std::is_arithmetic<SCALAR>::value, void >::type
+   Invert()
    {
      //
      // Name: Transform3D::inverse                     Date:    24.09.96
@@ -657,33 +754,82 @@ public:
      //
      // Function: Find inverse affine transformation.
      
-     Scalar detxx = fM[kYY]*fM[kZZ] - fM[kYZ]*fM[kZY];
-     Scalar detxy = fM[kYX]*fM[kZZ] - fM[kYZ]*fM[kZX];
-     Scalar detxz = fM[kYX]*fM[kZY] - fM[kYY]*fM[kZX];
-     Scalar det   = fM[kXX]*detxx - fM[kXY]*detxy + fM[kXZ]*detxz;
-     if (det == 0) {
+     T detxx = fM[kYY]*fM[kZZ] - fM[kYZ]*fM[kZY];
+     T detxy = fM[kYX]*fM[kZZ] - fM[kYZ]*fM[kZX];
+     T detxz = fM[kYX]*fM[kZY] - fM[kYY]*fM[kZX];
+     T det   = fM[kXX]*detxx - fM[kXY]*detxy + fM[kXZ]*detxz;
+     if ( det == T(0) ) {
        std::cerr << "Transform3D::inverse error: zero determinant" << std::endl;
        return;
      }
-     det = 1./det; detxx *= det; detxy *= det; detxz *= det;
-     Scalar detyx = (fM[kXY]*fM[kZZ] - fM[kXZ]*fM[kZY] )*det;
-     Scalar detyy = (fM[kXX]*fM[kZZ] - fM[kXZ]*fM[kZX] )*det;
-     Scalar detyz = (fM[kXX]*fM[kZY] - fM[kXY]*fM[kZX] )*det;
-     Scalar detzx = (fM[kXY]*fM[kYZ] - fM[kXZ]*fM[kYY] )*det;
-     Scalar detzy = (fM[kXX]*fM[kYZ] - fM[kXZ]*fM[kYX] )*det;
-     Scalar detzz = (fM[kXX]*fM[kYY] - fM[kXY]*fM[kYX] )*det;
+     det = T(1)/det;
+     detxx *= det; detxy *= det; detxz *= det;
+     T detyx = (fM[kXY]*fM[kZZ] - fM[kXZ]*fM[kZY] )*det;
+     T detyy = (fM[kXX]*fM[kZZ] - fM[kXZ]*fM[kZX] )*det;
+     T detyz = (fM[kXX]*fM[kZY] - fM[kXY]*fM[kZX] )*det;
+     T detzx = (fM[kXY]*fM[kYZ] - fM[kXZ]*fM[kYY] )*det;
+     T detzy = (fM[kXX]*fM[kYZ] - fM[kXZ]*fM[kYX] )*det;
+     T detzz = (fM[kXX]*fM[kYY] - fM[kXY]*fM[kYX] )*det;
      SetComponents
-       (detxx, -detyx,  detzx, -detxx*fM[kDX]+detyx*fM[kDY]-detzx*fM[kDZ],
+       ( detxx, -detyx,  detzx, -detxx*fM[kDX]+detyx*fM[kDY]-detzx*fM[kDZ],
         -detxy,  detyy, -detzy,  detxy*fM[kDX]-detyy*fM[kDY]+detzy*fM[kDZ],
-        detxz, -detyz,  detzz, -detxz*fM[kDX]+detyz*fM[kDY]-detzz*fM[kDZ]);
+         detxz, -detyz,  detzz, -detxz*fM[kDX]+detyz*fM[kDY]-detzz*fM[kDZ] );
+   }
+
+   /**
+       Invert the transformation in place (vectorised)
+   */
+   template< typename SCALAR = T >
+   typename std::enable_if< !std::is_arithmetic<SCALAR>::value, void >::type
+   Invert()
+   {
+     //
+     // Name: Transform3D::inverse                     Date:    24.09.96
+     // Author: E.Chernyaev (IHEP/Protvino)            Revised:
+     //
+     // Function: Find inverse affine transformation.
+     
+     T detxx = fM[kYY]*fM[kZZ] - fM[kYZ]*fM[kZY];
+     T detxy = fM[kYX]*fM[kZZ] - fM[kYZ]*fM[kZX];
+     T detxz = fM[kYX]*fM[kZY] - fM[kYY]*fM[kZX];
+     T det   = fM[kXX]*detxx - fM[kXY]*detxy + fM[kXZ]*detxz;
+     const auto detZmask = ( det == T(0) );
+     if ( any_of(detZmask) ) {
+       std::cerr << "Transform3D::inverse error: zero determinant" << std::endl;
+       det(detZmask) = T(1);
+     }
+     det = T(1)/det;
+     detxx *= det; detxy *= det; detxz *= det;    
+     T detyx = (fM[kXY]*fM[kZZ] - fM[kXZ]*fM[kZY] )*det;
+     T detyy = (fM[kXX]*fM[kZZ] - fM[kXZ]*fM[kZX] )*det;
+     T detyz = (fM[kXX]*fM[kZY] - fM[kXY]*fM[kZX] )*det;
+     T detzx = (fM[kXY]*fM[kYZ] - fM[kXZ]*fM[kYY] )*det;
+     T detzy = (fM[kXX]*fM[kYZ] - fM[kXZ]*fM[kYX] )*det;
+     T detzz = (fM[kXX]*fM[kYY] - fM[kXY]*fM[kYX] )*det;
+     // Set det=0 cases to 0
+     if ( any_of(detZmask) ) {
+       detxx(detZmask) = T(0);
+       detxy(detZmask) = T(0);
+       detxz(detZmask) = T(0);
+       detyx(detZmask) = T(0);
+       detyy(detZmask) = T(0);
+       detyz(detZmask) = T(0);
+       detzx(detZmask) = T(0);
+       detzy(detZmask) = T(0);
+       detzz(detZmask) = T(0);
+     }
+     // set final components
+     SetComponents
+       ( detxx, -detyx,  detzx, -detxx*fM[kDX]+detyx*fM[kDY]-detzx*fM[kDZ],
+        -detxy,  detyy, -detzy,  detxy*fM[kDX]-detyy*fM[kDY]+detzy*fM[kDZ],
+         detxz, -detyz,  detzz, -detxz*fM[kDX]+detyz*fM[kDY]-detzz*fM[kDZ] );
    }
    
-
    /**
       Return the inverse of the transformation.
    */
-   Transform3D Inverse() const {
-      Transform3D t(*this);
+   Transform3D<T> Inverse() const {
+      Transform3D<T> t(*this);
       t.Invert();
       return t;
    }
@@ -691,29 +837,28 @@ public:
 
    /**
       Equality operator. Check equality for each element
-      To do: use Scalar tolerance
+      To do: use T tolerance
    */
-   bool operator == (const Transform3D & rhs) const {
-      if( fM[0] != rhs.fM[0] )  return false;
-      if( fM[1] != rhs.fM[1] )  return false;
-      if( fM[2] != rhs.fM[2] )  return false;
-      if( fM[3] != rhs.fM[3] )  return false;
-      if( fM[4] != rhs.fM[4] )  return false;
-      if( fM[5] != rhs.fM[5] )  return false;
-      if( fM[6] != rhs.fM[6] )  return false;
-      if( fM[7] != rhs.fM[7] )  return false;
-      if( fM[8] != rhs.fM[8] )  return false;
-      if( fM[9] != rhs.fM[9] )  return false;
-      if( fM[10]!= rhs.fM[10] ) return false;
-      if( fM[11]!= rhs.fM[11] ) return false;
-      return true;
+   bool operator == (const Transform3D<T> & rhs) const {
+     return ( fM[0] == rhs.fM[0]  &&
+              fM[1] == rhs.fM[1]  &&
+              fM[2] == rhs.fM[2]  &&
+              fM[3] == rhs.fM[3]  &&
+              fM[4] == rhs.fM[4]  &&
+              fM[5] == rhs.fM[5]  &&
+              fM[6] == rhs.fM[6]  &&
+              fM[7] == rhs.fM[7]  &&
+              fM[8] == rhs.fM[8]  &&
+              fM[9] == rhs.fM[9]  &&
+              fM[10]== rhs.fM[10] &&
+              fM[11]== rhs.fM[11] );
    }
 
    /**
       Inequality operator. Check equality for each element
-      To do: use Scalar tolerance
+      To do: use T tolerance
    */
-   bool operator != (const Transform3D & rhs) const {
+   bool operator != (const Transform3D<T> & rhs) const {
       return ! operator==(rhs);
    }
 
@@ -723,11 +868,11 @@ protected:
    /**
       make transformation from first a rotation then a translation
    */
-   void  AssignFrom( const Rotation3D & r, const Vector & v)
+   void AssignFrom( const Rotation3D & r, const Vector & v)
    {
      // assignment  from rotation + translation
      
-     Scalar rotData[9];
+     T rotData[9];
      r.GetComponents(rotData, rotData +9);
      // first raw
      for (int i = 0; i < 3; ++i)
@@ -740,12 +885,13 @@ protected:
        fM[kZX+i] = rotData[6+i];
      
      // translation data
-     Scalar vecData[3];
+     T vecData[3];
      v.GetCoordinates(vecData, vecData+3);
      fM[kDX] = vecData[0];
      fM[kDY] = vecData[1];
      fM[kDZ] = vecData[2];
    }
+
 
    /**
       make transformation from only rotations (zero translation)
@@ -753,25 +899,25 @@ protected:
    void  AssignFrom( const Rotation3D & r)
    {
      // assign from only a rotation  (null translation)
-     Scalar rotData[9];
+     T rotData[9];
      r.GetComponents(rotData, rotData +9);
      for (int i = 0; i < 3; ++i) {
        for (int j = 0; j < 3; ++j)
          fM[4*i + j] = rotData[3*i+j];
        // empty vector data
-       fM[4*i + 3] = 0;
+       fM[4*i + 3] = T(0);
      }
    }
 
    /**
       make transformation from only translation (identity rotations)
    */
-   void  AssignFrom( const Vector & v)
+   void AssignFrom( const Vector & v )
    {
      // assign from a translation only (identity rotations)
-     fM[kXX] = 1.0;  fM[kXY] = 0.0; fM[kXZ] = 0.0; fM[kDX] = v.X();
-     fM[kYX] = 0.0;  fM[kYY] = 1.0; fM[kYZ] = 0.0; fM[kDY] = v.Y();
-     fM[kZX] = 0.0;  fM[kZY] = 0.0; fM[kZZ] = 1.0; fM[kDZ] = v.Z();
+     fM[kXX] = T(1);  fM[kXY] = T(0); fM[kXZ] = T(0); fM[kDX] = v.X();
+     fM[kYX] = T(0);  fM[kYY] = T(1); fM[kYZ] = T(0); fM[kDY] = v.Y();
+     fM[kZX] = T(0);  fM[kZY] = T(0); fM[kZZ] = T(1); fM[kDZ] = v.Z();
    }
    
    /**
@@ -780,15 +926,28 @@ protected:
    void SetIdentity()
    {
      //set identity ( identity rotation and zero translation)
-     fM[kXX] = 1.0;  fM[kXY] = 0.0; fM[kXZ] = 0.0; fM[kDX] = 0.0;
-     fM[kYX] = 0.0;  fM[kYY] = 1.0; fM[kYZ] = 0.0; fM[kDY] = 0.0;
-     fM[kZX] = 0.0;  fM[kZY] = 0.0; fM[kZZ] = 1.0; fM[kDZ] = 0.0;
+     fM[kXX] = T(1);  fM[kXY] = T(0); fM[kXZ] = T(0); fM[kDX] = T(0);
+     fM[kYX] = T(0);  fM[kYY] = T(1); fM[kYZ] = T(0); fM[kDY] = T(0);
+     fM[kZX] = T(0);  fM[kZY] = T(0); fM[kZZ] = T(1); fM[kDZ] = T(0);
    }
-   
+
+   /**
+      Set identity transformation (identity rotation , zero translation)
+      vectorised version that sets using a mask
+   */
+   template< typename SCALAR = T >
+   typename std::enable_if< !std::is_arithmetic<SCALAR>::value, void >::type
+   SetIdentity( const typename SCALAR::mask_type m )
+   {
+     //set identity ( identity rotation and zero translation)
+     fM[kXX](m) = T(1);  fM[kXY](m) = T(0); fM[kXZ](m) = T(0); fM[kDX](m) = T(0);
+     fM[kYX](m) = T(0);  fM[kYY](m) = T(1); fM[kYZ](m) = T(0); fM[kDY](m) = T(0);
+     fM[kZX](m) = T(0);  fM[kZY](m) = T(0); fM[kZZ](m) = T(1); fM[kDZ](m) = T(0);
+   }
+
 private:
 
-
-   Scalar fM[12];    // transformation elements (3x4 matrix)
+   T fM[12];    // transformation elements (3x4 matrix)
 
 };
 
@@ -796,8 +955,9 @@ private:
 
 
 // inline functions (combination of transformations)
-template < typename FTYPE >
-inline Transform3D<FTYPE> & Transform3D<FTYPE>::operator *= (const Transform3D<FTYPE>  & t)
+   
+template <class T>
+inline Transform3D<T> & Transform3D<T>::operator *= (const Transform3D<T>  & t)
 {
    // combination of transformations
 
@@ -820,26 +980,26 @@ inline Transform3D<FTYPE> & Transform3D<FTYPE>::operator *= (const Transform3D<F
 }
 
 
-template < typename FTYPE >
-inline Transform3D<FTYPE> Transform3D<FTYPE>::operator * (const Transform3D<FTYPE>  & t) const
+template <class T>
+inline Transform3D<T> Transform3D<T>::operator * (const Transform3D<T>  & t) const
 {
    // combination of transformations
 
-   return Transform3D<FTYPE>(fM[kXX]*t.fM[kXX]+fM[kXY]*t.fM[kYX]+fM[kXZ]*t.fM[kZX],
-                      fM[kXX]*t.fM[kXY]+fM[kXY]*t.fM[kYY]+fM[kXZ]*t.fM[kZY],
-                      fM[kXX]*t.fM[kXZ]+fM[kXY]*t.fM[kYZ]+fM[kXZ]*t.fM[kZZ],
-                      fM[kXX]*t.fM[kDX]+fM[kXY]*t.fM[kDY]+fM[kXZ]*t.fM[kDZ]+fM[kDX],
-
-                      fM[kYX]*t.fM[kXX]+fM[kYY]*t.fM[kYX]+fM[kYZ]*t.fM[kZX],
-                      fM[kYX]*t.fM[kXY]+fM[kYY]*t.fM[kYY]+fM[kYZ]*t.fM[kZY],
-                      fM[kYX]*t.fM[kXZ]+fM[kYY]*t.fM[kYZ]+fM[kYZ]*t.fM[kZZ],
-                      fM[kYX]*t.fM[kDX]+fM[kYY]*t.fM[kDY]+fM[kYZ]*t.fM[kDZ]+fM[kDY],
-
-                      fM[kZX]*t.fM[kXX]+fM[kZY]*t.fM[kYX]+fM[kZZ]*t.fM[kZX],
-                      fM[kZX]*t.fM[kXY]+fM[kZY]*t.fM[kYY]+fM[kZZ]*t.fM[kZY],
-                      fM[kZX]*t.fM[kXZ]+fM[kZY]*t.fM[kYZ]+fM[kZZ]*t.fM[kZZ],
-                      fM[kZX]*t.fM[kDX]+fM[kZY]*t.fM[kDY]+fM[kZZ]*t.fM[kDZ]+fM[kDZ]  );
-
+  return Transform3D<T>(fM[kXX]*t.fM[kXX]+fM[kXY]*t.fM[kYX]+fM[kXZ]*t.fM[kZX],
+                        fM[kXX]*t.fM[kXY]+fM[kXY]*t.fM[kYY]+fM[kXZ]*t.fM[kZY],
+                        fM[kXX]*t.fM[kXZ]+fM[kXY]*t.fM[kYZ]+fM[kXZ]*t.fM[kZZ],
+                        fM[kXX]*t.fM[kDX]+fM[kXY]*t.fM[kDY]+fM[kXZ]*t.fM[kDZ]+fM[kDX],
+                        
+                        fM[kYX]*t.fM[kXX]+fM[kYY]*t.fM[kYX]+fM[kYZ]*t.fM[kZX],
+                        fM[kYX]*t.fM[kXY]+fM[kYY]*t.fM[kYY]+fM[kYZ]*t.fM[kZY],
+                        fM[kYX]*t.fM[kXZ]+fM[kYY]*t.fM[kYZ]+fM[kYZ]*t.fM[kZZ],
+                        fM[kYX]*t.fM[kDX]+fM[kYY]*t.fM[kDY]+fM[kYZ]*t.fM[kDZ]+fM[kDY],
+                        
+                        fM[kZX]*t.fM[kXX]+fM[kZY]*t.fM[kYX]+fM[kZZ]*t.fM[kZX],
+                        fM[kZX]*t.fM[kXY]+fM[kZY]*t.fM[kYY]+fM[kZZ]*t.fM[kZY],
+                        fM[kZX]*t.fM[kXZ]+fM[kZY]*t.fM[kYZ]+fM[kZZ]*t.fM[kZZ],
+                        fM[kZX]*t.fM[kDX]+fM[kZY]*t.fM[kDY]+fM[kZZ]*t.fM[kDZ]+fM[kDZ]  );
+  
 }
 
 
@@ -855,44 +1015,44 @@ inline Transform3D<FTYPE> Transform3D<FTYPE>::operator * (const Transform3D<FTYP
    combine a translation and a rotation to give a transform3d
    First the translation then the rotation
  */
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Rotation3D & r, const Translation3D<FTYPE> & t) {
-   return Transform3D<FTYPE>( r, r(t.Vect()) );
+template <class T>
+inline Transform3D<T> operator * (const Rotation3D & r, const Translation3D<T> & t) {
+   return Transform3D<T>( r, r(t.Vect()) );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const RotationX & r, const Translation3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const RotationX & r, const Translation3D<T> & t) {
    Rotation3D r3(r);
-   return Transform3D<FTYPE>( r3, r3(t.Vect()) );
+   return Transform3D<T>( r3, r3(t.Vect()) );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const RotationY & r, const Translation3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const RotationY & r, const Translation3D<T> & t) {
    Rotation3D r3(r);
-   return Transform3D<FTYPE>( r3, r3(t.Vect()) );
+   return Transform3D<T>( r3, r3(t.Vect()) );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const RotationZ & r, const Translation3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const RotationZ & r, const Translation3D<T> & t) {
    Rotation3D r3(r);
-   return Transform3D<FTYPE>( r3, r3(t.Vect()) );
+   return Transform3D<T>( r3, r3(t.Vect()) );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const RotationZYX & r, const Translation3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const RotationZYX & r, const Translation3D<T> & t) {
    Rotation3D r3(r);
-   return Transform3D<FTYPE>( r3, r3(t.Vect()) );
+   return Transform3D<T>( r3, r3(t.Vect()) );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const AxisAngle & r, const Translation3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const AxisAngle & r, const Translation3D<T> & t) {
    Rotation3D r3(r);
-   return Transform3D<FTYPE>( r3, r3(t.Vect()) );
+   return Transform3D<T>( r3, r3(t.Vect()) );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const EulerAngles & r, const Translation3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const EulerAngles & r, const Translation3D<T> & t) {
    Rotation3D r3(r);
-   return Transform3D<FTYPE>( r3, r3(t.Vect()) );
+   return Transform3D<T>( r3, r3(t.Vect()) );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Quaternion & r, const Translation3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const Quaternion & r, const Translation3D<T> & t) {
    Rotation3D r3(r);
-   return Transform3D<FTYPE>( r3, r3(t.Vect()) );
+   return Transform3D<T>( r3, r3(t.Vect()) );
 }
 
 // ------ combination of a  rotation (first)  and then a translation ------
@@ -901,37 +1061,37 @@ inline Transform3D<FTYPE> operator * (const Quaternion & r, const Translation3D<
    combine a rotation and a translation to give a transform3d
    First a rotation then the translation
  */
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Translation3D<FTYPE> & t, const Rotation3D & r) {
-   return Transform3D<FTYPE>( r, t.Vect());
+template <class T>
+inline Transform3D<T> operator * (const Translation3D<T> & t, const Rotation3D & r) {
+   return Transform3D<T>( r, t.Vect());
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Translation3D<FTYPE> & t, const RotationX & r) {
-   return Transform3D<FTYPE>( Rotation3D(r) , t.Vect());
+template <class T>
+inline Transform3D<T> operator * (const Translation3D<T> & t, const RotationX & r) {
+   return Transform3D<T>( Rotation3D(r) , t.Vect());
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Translation3D<FTYPE> & t, const RotationY & r) {
-   return Transform3D<FTYPE>( Rotation3D(r) , t.Vect());
+template <class T>
+inline Transform3D<T> operator * (const Translation3D<T> & t, const RotationY & r) {
+   return Transform3D<T>( Rotation3D(r) , t.Vect());
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Translation3D<FTYPE> & t, const RotationZ & r) {
-   return Transform3D<FTYPE>( Rotation3D(r) , t.Vect());
+template <class T>
+inline Transform3D<T> operator * (const Translation3D<T> & t, const RotationZ & r) {
+   return Transform3D<T>( Rotation3D(r) , t.Vect());
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Translation3D<FTYPE> & t, const RotationZYX & r) {
-   return Transform3D<FTYPE>( Rotation3D(r) , t.Vect());
+template <class T>
+inline Transform3D<T> operator * (const Translation3D<T> & t, const RotationZYX & r) {
+   return Transform3D<T>( Rotation3D(r) , t.Vect());
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Translation3D<FTYPE> & t, const EulerAngles & r) {
-   return Transform3D<FTYPE>( Rotation3D(r) , t.Vect());
+template <class T>
+inline Transform3D<T> operator * (const Translation3D<T> & t, const EulerAngles & r) {
+   return Transform3D<T>( Rotation3D(r) , t.Vect());
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Translation3D<FTYPE> & t, const Quaternion & r) {
-   return Transform3D<FTYPE>( Rotation3D(r) , t.Vect());
+template <class T>
+inline Transform3D<T> operator * (const Translation3D<T> & t, const Quaternion & r) {
+   return Transform3D<T>( Rotation3D(r) , t.Vect());
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Translation3D<FTYPE> & t, const AxisAngle & r) {
-   return Transform3D<FTYPE>( Rotation3D(r) , t.Vect());
+template <class T>
+inline Transform3D<T> operator * (const Translation3D<T> & t, const AxisAngle & r) {
+   return Transform3D<T>( Rotation3D(r) , t.Vect());
 }
 
 // ------ combination of a Transform3D and a pure translation------
@@ -940,19 +1100,19 @@ inline Transform3D<FTYPE> operator * (const Translation3D<FTYPE> & t, const Axis
    combine a transformation and a translation to give a transform3d
    First the translation then the transform3D
  */
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Transform3D<FTYPE> & t, const Translation3D<FTYPE> & d) {
+template <class T>
+inline Transform3D<T> operator * (const Transform3D<T> & t, const Translation3D<T> & d) {
    Rotation3D r = t.Rotation();
-   return Transform3D<FTYPE>( r, r( d.Vect() ) + t.Translation().Vect()  );
+   return Transform3D<T>( r, r( d.Vect() ) + t.Translation().Vect()  );
 }
 
 /**
    combine a translation and a transformation to give a transform3d
    First the transformation then the translation
  */
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Translation3D<FTYPE> & d, const Transform3D<FTYPE> & t) {
-   return Transform3D<FTYPE>( t.Rotation(), t.Translation().Vect() + d.Vect());
+template <class T>
+inline Transform3D<T> operator * (const Translation3D<T> & d, const Transform3D<T> & t) {
+   return Transform3D<T>( t.Rotation(), t.Translation().Vect() + d.Vect());
 }
 
 // ------ combination of a Transform3D and any rotation------
@@ -962,37 +1122,37 @@ inline Transform3D<FTYPE> operator * (const Translation3D<FTYPE> & d, const Tran
    combine a transformation and a rotation to give a transform3d
    First the rotation then the transform3D
  */
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Transform3D<FTYPE> & t, const Rotation3D & r) {
-   return Transform3D<FTYPE>( t.Rotation()*r ,  t.Translation()  );
+template <class T>
+inline Transform3D<T> operator * (const Transform3D<T> & t, const Rotation3D & r) {
+   return Transform3D<T>( t.Rotation()*r ,  t.Translation()  );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Transform3D<FTYPE> & t, const RotationX & r) {
-   return Transform3D<FTYPE>( t.Rotation()*r ,  t.Translation()  );
+template <class T>
+inline Transform3D<T> operator * (const Transform3D<T> & t, const RotationX & r) {
+   return Transform3D<T>( t.Rotation()*r ,  t.Translation()  );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Transform3D<FTYPE> & t, const RotationY & r) {
-   return Transform3D<FTYPE>( t.Rotation()*r ,  t.Translation()  );
+template <class T>
+inline Transform3D<T> operator * (const Transform3D<T> & t, const RotationY & r) {
+   return Transform3D<T>( t.Rotation()*r ,  t.Translation()  );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Transform3D<FTYPE> & t, const RotationZ & r) {
-   return Transform3D<FTYPE>( t.Rotation()*r ,  t.Translation()  );
+template <class T>
+inline Transform3D<T> operator * (const Transform3D<T> & t, const RotationZ & r) {
+   return Transform3D<T>( t.Rotation()*r ,  t.Translation()  );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Transform3D<FTYPE> & t, const RotationZYX & r) {
-   return Transform3D<FTYPE>( t.Rotation()*r ,  t.Translation()  );
+template <class T>
+inline Transform3D<T> operator * (const Transform3D<T> & t, const RotationZYX & r) {
+   return Transform3D<T>( t.Rotation()*r ,  t.Translation()  );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Transform3D<FTYPE> & t, const EulerAngles & r) {
-   return Transform3D<FTYPE>( t.Rotation()*r ,  t.Translation()  );
+template <class T>
+inline Transform3D<T> operator * (const Transform3D<T> & t, const EulerAngles & r) {
+   return Transform3D<T>( t.Rotation()*r ,  t.Translation()  );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Transform3D<FTYPE> & t, const AxisAngle & r) {
-   return Transform3D<FTYPE>( t.Rotation()*r ,  t.Translation()  );
+template <class T>
+inline Transform3D<T> operator * (const Transform3D<T> & t, const AxisAngle & r) {
+   return Transform3D<T>( t.Rotation()*r ,  t.Translation()  );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Transform3D<FTYPE> & t, const Quaternion & r) {
-   return Transform3D<FTYPE>( t.Rotation()*r ,  t.Translation()  );
+template <class T>
+inline Transform3D<T> operator * (const Transform3D<T> & t, const Quaternion & r) {
+   return Transform3D<T>( t.Rotation()*r ,  t.Translation()  );
 }
 
 
@@ -1001,44 +1161,44 @@ inline Transform3D<FTYPE> operator * (const Transform3D<FTYPE> & t, const Quater
    combine a rotation and a transformation to give a transform3d
    First the transformation then the rotation
  */
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Rotation3D & r, const Transform3D<FTYPE> & t) {
-   return Transform3D<FTYPE>( r * t.Rotation(), r * t.Translation().Vect() );
+template <class T>
+inline Transform3D<T> operator * (const Rotation3D & r, const Transform3D<T> & t) {
+   return Transform3D<T>( r * t.Rotation(), r * t.Translation().Vect() );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const RotationX & r, const Transform3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const RotationX & r, const Transform3D<T> & t) {
    Rotation3D r3d(r);
-   return Transform3D<FTYPE>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
+   return Transform3D<T>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const RotationY & r, const Transform3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const RotationY & r, const Transform3D<T> & t) {
    Rotation3D r3d(r);
-   return Transform3D<FTYPE>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
+   return Transform3D<T>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const RotationZ & r, const Transform3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const RotationZ & r, const Transform3D<T> & t) {
    Rotation3D r3d(r);
-   return Transform3D<FTYPE>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
+   return Transform3D<T>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const RotationZYX & r, const Transform3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const RotationZYX & r, const Transform3D<T> & t) {
    Rotation3D r3d(r);
-   return Transform3D<FTYPE>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
+   return Transform3D<T>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const EulerAngles & r, const Transform3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const EulerAngles & r, const Transform3D<T> & t) {
    Rotation3D r3d(r);
-   return Transform3D<FTYPE>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
+   return Transform3D<T>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const AxisAngle & r, const Transform3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const AxisAngle & r, const Transform3D<T> & t) {
    Rotation3D r3d(r);
-   return Transform3D<FTYPE>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
+   return Transform3D<T>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
 }
-template < typename FTYPE >
-inline Transform3D<FTYPE> operator * (const Quaternion & r, const Transform3D<FTYPE> & t) {
+template <class T>
+inline Transform3D<T> operator * (const Quaternion & r, const Transform3D<T> & t) {
    Rotation3D r3d(r);
-   return Transform3D<FTYPE>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
+   return Transform3D<T>( r3d * t.Rotation(), r3d * t.Translation().Vect() );
 }
 
 
@@ -1048,21 +1208,27 @@ inline Transform3D<FTYPE> operator * (const Quaternion & r, const Transform3D<FT
 /**
    print the 12 components of the Transform3D
  */
-  template < typename FTYPE >
-  std::ostream & operator<< (std::ostream & os, const Transform3D<FTYPE> & t)
-  {
-    // TODO - this will need changing for machine-readable issues
-    //        and even the human readable form needs formatting improvements
-    
-    typename Transform3D<FTYPE>::Scalar m[12];
-    t.GetComponents(m, m+12);
-    os << "\n" << m[0] << "  " << m[1] << "  " << m[2] << "  " << m[3] ;
-    os << "\n" << m[4] << "  " << m[5] << "  " << m[6] << "  " << m[7] ;
-    os << "\n" << m[8] << "  " << m[9] << "  " << m[10]<< "  " << m[11] << "\n";
-    return os;
-  }
+template <class T>
+std::ostream & operator<< (std::ostream & os, const Transform3D<T> & t)
+{
+  // TODO - this will need changing for machine-readable issues
+  //        and even the human readable form needs formatting improvements
+  
+  T m[12];
+  t.GetComponents(m, m+12);
+  os << "\n" << m[0] << "  " << m[1] << "  " << m[2] << "  " << m[3] ;
+  os << "\n" << m[4] << "  " << m[5] << "  " << m[6] << "  " << m[7] ;
+  os << "\n" << m[8] << "  " << m[9] << "  " << m[10]<< "  " << m[11] << "\n";
+  return os;
+}
 
-   } // end namespace Math
+} // end namespace Impl
+
+// typedefs for double and float versions
+typedef Impl::Transform3D<double> Transform3D;
+typedef Impl::Transform3D<float>  Transform3DF;
+
+} // end namespace Math
 
 } // end namespace LHCbROOT
 

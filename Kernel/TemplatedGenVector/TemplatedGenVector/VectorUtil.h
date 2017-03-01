@@ -18,9 +18,7 @@
 #ifndef LHCbROOT_Math_GenVector_VectorUtil
 #define LHCbROOT_Math_GenVector_VectorUtil  1
 
-#ifndef LHCbROOT_Math_Math
 #include "Math/Math.h"
-#endif
 
 
 #include "TemplatedGenVector/Boost.h"

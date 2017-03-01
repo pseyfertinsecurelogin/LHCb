@@ -16,21 +16,13 @@
 #ifndef LHCbROOT_Math_GenVector_PositionVector2D
 #define LHCbROOT_Math_GenVector_PositionVector2D  1
 
-#ifndef LHCbROOT_Math_GenVector_DisplacementVector2Dfwd
 #include "TemplatedGenVector/DisplacementVector2D.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_GenVectorIO
 #include "TemplatedGenVector/GenVectorIO.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_BitReproducible
 #include "TemplatedGenVector/BitReproducible.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_CoordinateSystemTags
 #include "TemplatedGenVector/CoordinateSystemTags.h"
-#endif
 
 
 namespace LHCbROOT {

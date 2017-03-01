@@ -18,30 +18,18 @@
 #ifndef LHCbROOT_Math_GenVector_RotationZYX
 #define LHCbROOT_Math_GenVector_RotationZYX  1
 
-#ifndef LHCbROOT_Math_Math
 #include "Math/Math.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_Rotation3D
 #include "TemplatedGenVector/Rotation3D.h"
-#endif
 
 
-#ifndef LHCbROOT_Math_GenVector_DisplacementVector3D
 #include "TemplatedGenVector/DisplacementVector3D.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_PositionVector3D
 #include "TemplatedGenVector/PositionVector3D.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_LorentzVector
 #include "TemplatedGenVector/LorentzVector.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_3DConversions
 #include "TemplatedGenVector/3DConversions.h"
-#endif
 
 
 #include <algorithm>

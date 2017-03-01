@@ -19,13 +19,9 @@
 #ifndef LHCbROOT_Math_GenVector_Polar2D
 #define LHCbROOT_Math_GenVector_Polar2D  1
 
-#ifndef LHCbROOT_Math_Math
 #include "Math/Math.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_etaMax
 #include "TemplatedGenVector/etaMax.h"
-#endif
 
 
 
@@ -226,14 +222,10 @@ private:
 
 // move implementations here to avoid circle dependencies
 
-#ifndef LHCbROOT_Math_GenVector_Cartesian2D
 #include "TemplatedGenVector/Cartesian2D.h"
-#endif
 
 #if defined(__MAKECINT__) || defined(G__DICTIONARY)
-#ifndef LHCbROOT_Math_GenVector_GenVector_exception
 #include "TemplatedGenVector/GenVector_exception.h"
-#endif
 #endif
 
 namespace LHCbROOT {

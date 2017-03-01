@@ -64,10 +64,13 @@ namespace Rich
       const VECTOR delta = position - CoC;
       const FTYPE      b = two * direction.Dot( delta );
       const FTYPE      c = delta.Mag2() - radius*radius;
-      const FTYPE  discr = b*b - four*a*c;
+      FTYPE        discr = b*b - four*a*c;
       typename FTYPE::mask_type OK = discr > FTYPE::Zero();
       if ( any_of(OK) )
       {
+        // Zero out the negative values in discr, to prevent sqrt(-ve)
+        discr(!OK) = FTYPE::Zero();
+        // distance
         const FTYPE dist = half * ( sqrt(discr) - b ) / a;
         // set intersection point
         intersection = position + ( dist * direction );
@@ -110,10 +113,13 @@ namespace Rich
       const VECTOR delta = position - CoC;
       const FTYPE      b = two * direction.Dot( delta );
       const FTYPE      c = delta.Mag2() - radius*radius;
-      const FTYPE  discr = b*b - four*a*c;
+      FTYPE        discr = b*b - four*a*c;
       typename FTYPE::mask_type OK = discr > FTYPE::Zero();
       if ( any_of(OK) )
       {
+        // Zero out the negative values in discr, to prevent sqrt(-ve)
+        discr(!OK) = FTYPE::Zero();
+        // compute the distance
         const FTYPE dist = half * ( sqrt(discr) - b ) / a;
         // change position to the intersection point
         position += dist * direction;
@@ -122,6 +128,7 @@ namespace Rich
         const VECTOR normal = position - CoC;
         direction -= ( two * normal.Dot(direction) / normal.Mag2() ) * normal;
       }
+      // return the mask indicating which results should be used
       return OK;
     }
 

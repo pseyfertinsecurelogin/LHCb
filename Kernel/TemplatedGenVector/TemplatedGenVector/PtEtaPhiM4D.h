@@ -18,17 +18,11 @@
 #ifndef LHCbROOT_Math_GenVector_PtEtaPhiM4D
 #define LHCbROOT_Math_GenVector_PtEtaPhiM4D  1
 
-#ifndef LHCbROOT_Math_Math
 #include "Math/Math.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_etaMax
 #include "TemplatedGenVector/etaMax.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_GenVector_exception
 #include "TemplatedGenVector/GenVector_exception.h"
-#endif
 
 
 //#define TRACE_CE
@@ -396,9 +390,7 @@ private:
 
 
 // move implementations here to avoid circle dependencies
-#ifndef LHCbROOT_Math_GenVector_PxPyPzE4D
 #include "TemplatedGenVector/PxPyPzE4D.h"
-#endif
 
 
 

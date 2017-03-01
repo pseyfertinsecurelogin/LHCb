@@ -16,13 +16,9 @@
 #ifndef LHCbROOT_Math_GenVector_Cylindrical3D
 #define LHCbROOT_Math_GenVector_Cylindrical3D  1
 
-#ifndef LHCbROOT_Math_Math
 #include "Math/Math.h"
-#endif
 
-#ifndef LHCbROOT_Math_GenVector_eta
 #include "TemplatedGenVector/eta.h"
-#endif
 
 #include <limits>
 
@@ -110,10 +106,12 @@ public :
    {rho=fRho; zz=fZ; phi=fPhi;}
 
 private:
-   inline static Scalar pi() { return M_PI; }
-   inline void Restrict() {
+   inline static Scalar pi() { return Scalar(M_PI); }
+   inline void Restrict()
+   {
+      using namespace std;
       if ( fPhi <= -pi() || fPhi > pi() )
-         fPhi = fPhi - std::floor( fPhi/(2*pi()) +.5 ) * 2*pi();
+         fPhi = fPhi - floor( fPhi/(2*pi()) +.5 ) * 2*pi();
       return;
    }
 public:
@@ -124,13 +122,16 @@ public:
    Scalar Z()     const { return fZ;   }
    Scalar Phi()   const { return fPhi; }
 
-   Scalar X()     const { return fRho*std::cos(fPhi); }
-   Scalar Y()     const { return fRho*std::sin(fPhi); }
+   Scalar X()     const { using namespace std; return fRho*cos(fPhi); }
+   Scalar Y()     const { using namespace std; return fRho*sin(fPhi); }
 
    Scalar Mag2()  const { return fRho*fRho + fZ*fZ;   }
-   Scalar R()     const { return std::sqrt( Mag2());  }
+   Scalar R()     const { using namespace std; return sqrt( Mag2());  }
    Scalar Perp2() const { return fRho*fRho;           }
-   Scalar Theta() const { return (fRho==0 && fZ==0 ) ? 0 : atan2(fRho,fZ); }
+   Scalar Theta() const {
+     using namespace std;
+     return (fRho==Scalar(0) && fZ==Scalar(0) ) ? Scalar(0) : atan2(fRho,fZ);
+   }
 
    // pseudorapidity - use same implementation as in Cartesian3D
    Scalar Eta() const {
@@ -253,20 +254,12 @@ private:
 
 // move implementations here to avoid circle dependencies
 
-#ifndef LHCbROOT_Math_GenVector_Cartesian3D
 #include "TemplatedGenVector/Cartesian3D.h"
-#endif
 
 #if defined(__MAKECINT__) || defined(G__DICTIONARY)
-#ifndef LHCbROOT_Math_GenVector_GenVector_exception
 #include "TemplatedGenVector/GenVector_exception.h"
-#endif
-#ifndef LHCbROOT_Math_GenVector_CylindricalEta3D
 #include "TemplatedGenVector/CylindricalEta3D.h"
-#endif
-#ifndef LHCbROOT_Math_GenVector_Polar3D
 #include "TemplatedGenVector/Polar3D.h"
-#endif
 #endif
 
 namespace LHCbROOT {
