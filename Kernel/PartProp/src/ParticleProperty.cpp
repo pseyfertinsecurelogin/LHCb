@@ -210,9 +210,9 @@ std::ostream& LHCb::ParticleProperties::printAsTable_
   fmt += "| %|-18.18s|"   ;  // the name
   fmt += "| %|12d| "      ;  // PDGID
   fmt += "| %|=4s| "      ;  // charge
-  fmt += "| %|7.4g|"      ;  // mass
+  fmt += "| %|9.6g|"      ;  // mass
   fmt +=   " %|-3s| "     ;  // unit
-  fmt += "| %|10.4g|"     ;  // lifetime/gamma/ctau
+  fmt += "| %|11.5g|"     ;  // lifetime/gamma/ctau
   fmt +=   " %|-3s| "     ;  // unit
   fmt += "| %|=10.4g| "   ;  // maxwidth
   fmt += "| %|=20.20s|"   ;  // evtgen name
@@ -222,9 +222,9 @@ std::ostream& LHCb::ParticleProperties::printAsTable_
   hdr += "| %|=18.18s|"   ;  // the name
   hdr += "| %|=12.12s| "  ;  // PDGID
   hdr += "| %|=4.4s| "    ;  // charge
-  hdr += "| %|=12.12s|"   ;  // mass
+  hdr += "| %|=14.14s|"   ;  // mass
   // hdr +=   "%|=5.5s|"     ;  // unit
-  hdr += "| %|=15.15s|"   ;  // lifetime/gamma/ctau
+  hdr += "| %|=16.16s|"   ;  // lifetime/gamma/ctau
   //hdr +=   "%|=5.5s|"     ;  // unit
   hdr += "| %|=10.10g| "  ;  // maxwidth
   hdr += "| %|=20.20s|"   ;  // evtgen name
