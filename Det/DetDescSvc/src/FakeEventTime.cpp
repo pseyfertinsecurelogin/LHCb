@@ -14,49 +14,23 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( FakeEventTime )
+DECLARE_COMPONENT( FakeEventTime )
 
+#define ON_DEBUG if (msgLevel(MSG::DEBUG))
+#define DEBUG_MSG ON_DEBUG debug()
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-FakeEventTime::FakeEventTime( const std::string& type,
-                              const std::string& name,
-                              const IInterface* parent )
-  : AlgTool ( type, name , parent )
-{
-  declareInterface<IEventTimeDecoder>(this);
-}
 //=========================================================================
 //  Initialization
 //=========================================================================
 StatusCode FakeEventTime::initialize ( ) {
   // base class initialization
-	StatusCode sc = AlgTool::initialize();
-	if (!sc.isSuccess()) return sc;
+  StatusCode sc = base_class::initialize();
+  if (!sc.isSuccess()) return sc;
 
-  // local initialization
-	MsgStream log(msgSvc(),name());
-  if( log.level() <= MSG::DEBUG )
-    log << MSG::DEBUG << "--- initialize ---" << endmsg;
+  info() << "Event times generated from " << m_startTime.value() << " with steps of " << m_timeStep.value() << endmsg;
 
-  log << MSG::INFO << "Event times generated from " << m_startTime.value() << " with steps of " << m_timeStep.value() << endmsg;
-
-  return StatusCode::SUCCESS;
+  return sc;
 }
-
-//=========================================================================
-//  Finalization
-//=========================================================================
-StatusCode FakeEventTime::finalize ( ) {
-	// local finalization
-	MsgStream log(msgSvc(),name());
-  if( log.level() <= MSG::DEBUG )
-    log << MSG::DEBUG << "--- finalize ---" << endmsg;
-
-  return AlgTool::finalize();
-}
-
 
 //=========================================================================
 //  Return the time of current event
