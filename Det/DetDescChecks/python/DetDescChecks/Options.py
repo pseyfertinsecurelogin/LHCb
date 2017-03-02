@@ -8,10 +8,10 @@ def LoadDDDBTest(datatype, sim=False, loctags=True, paths=None):
 
     # Configure the detector description
     DDDBConf(DataType = datatype,
-             Simulation = sim)
+             Simulation = sim,
+             IgnoreHeartBeat = True)
     # Set up conditions database configuration (ignore checks for up-to-date)
-    CondDB(IgnoreHeartBeat = True,
-           EnableRunStampCheck = False,
+    CondDB(EnableRunStampCheck = False,
            LatestGlobalTagByDataTypes = [datatype],
            LatestLocalTagsByDataType  = [datatype] if loctags else [])
     # Set up application

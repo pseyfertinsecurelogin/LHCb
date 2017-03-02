@@ -532,7 +532,10 @@ class CondDB(ConfigurableUser):
                             #Only apply HeartBeatCondition for ONLINE
                             if isinstance(ly, CondDBAccessSvc) and ly.getName().startswith("ONLINE_"):
                                 self.propagateProperty("HeartBeatCondition", ly)
-
+        # GitONLINE is configured in DDDBConf, but it's better to check here
+        # for backward compatibility
+        if 'ToolSvc.GitONLINE' in allConfigurables:
+            allConfigurables['ToolSvc.GitONLINE'].LimitToLastCommitTime = not self.getProp("IgnoreHeartBeat")
         if not self.getProp("Simulation"):
             # Standard configurations
             #  - Reconstruction / analysis
