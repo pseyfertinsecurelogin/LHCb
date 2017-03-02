@@ -2,9 +2,12 @@
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Kernel.h"
-#include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/IEventProcessor.h"
 #include "DetCond/ICondDBReader.h"
+#include "DetDesc/RunChangeIncident.h"
+
+#define ON_DEBUG if (UNLIKELY(msgLevel(MSG::DEBUG)))
+#define DEBUG_MSG ON_DEBUG debug()
 
 /** Simple service to check if the run stamp condition exists for the current
  *  event.
@@ -53,7 +56,7 @@ public:
       error() << "Cannot get IncidentSvc" << endmsg;
       return StatusCode::FAILURE;
     }
-    m_incSvc->addListener(this, IncidentType::BeginEvent);
+    m_incSvc->addListener(this, IncidentType::RunChange);
 
     m_condDBReader = serviceLocator()->service(m_condDBReaderName);
     if (UNLIKELY(!m_condDBReader)) {
@@ -61,58 +64,51 @@ public:
       return StatusCode::FAILURE;
     }
 
-    m_detSvc = serviceLocator()->service("DetectorDataSvc");
-    if (UNLIKELY(!m_detSvc)) {
-      error() << "Cannot get DetectorDataSvc" << endmsg;
-      return StatusCode::FAILURE;
-    }
-
     m_evtProc = serviceLocator();
-    if (UNLIKELY(!m_detSvc)) {
+    if (UNLIKELY(!m_evtProc)) {
       error() << "Cannot get IEventProcessor" << endmsg;
       return StatusCode::FAILURE;
     }
 
-    // reset the IOV for the current run (to something not valid)
-    m_currentRunIOV = {Gaudi::Time::epoch(), Gaudi::Time::epoch()};
     return sc;
   }
   /// Deregister as BeginEvent listener and release reference to services.
   StatusCode stop() override {
-    m_incSvc->removeListener(this, IncidentType::BeginEvent);
+    m_incSvc->removeListener(this, IncidentType::RunChange);
     m_incSvc.reset();
     m_condDBReader.reset();
-    m_detSvc.reset();
     m_evtProc.reset();
     return Service::stop();
   }
   /// Handle the BeginEvent incident to check if the RunStamp condition exists.
-  void handle(const Incident&) override {
-    auto when = m_detSvc->eventTime();
-    // run the check only if the current event time falls outside the boundaries
-    // of the current run
-    if (when < m_currentRunIOV.since || when >= m_currentRunIOV.until) {
-      if (UNLIKELY(msgLevel(MSG::DEBUG)))
-        debug() << "Checking '" << m_runStampCondition
-                << "' for event time " << when << endmsg;
-      ICondDBReader::DataPtr p;
-      std::string desc;
-      StatusCode sc = m_condDBReader->getObject(m_runStampCondition, when,
-          p, desc,
-          m_currentRunIOV.since, m_currentRunIOV.until);
-      if (!sc) {
-        // we didn't manage to get the entry from the DB: we do not have data
-        // for this run
-        error() << "Database not up-to-date. No valid data for run at "
-            << when.format(false, "%Y-%m-%d %H:%M:%S")
-            << "." << when.nanoformat() << " UTC" << endmsg;
-        m_evtProc->stopRun();
-      } else if (UNLIKELY(msgLevel(MSG::DEBUG))) {
-        debug() << "Found '" << m_runStampCondition
-          << "' valid in [" <<  m_currentRunIOV.since
-          << ", " << m_currentRunIOV.until << ")" << endmsg;
-      }
+  void handle(const Incident& inc) override {
+    DEBUG_MSG << inc.type() << " incident received" << endmsg;
+
+    const RunChangeIncident* rci = dynamic_cast<const RunChangeIncident*>(&inc);
+    if (!rci) {
+      error() << "Cannot dynamic_cast the incident to RunChangeIncident, "
+                 "run change ignored" << endmsg;
+      return;
     }
+
+    auto when = rci->eventTime();
+    DEBUG_MSG << "Checking '" << m_runStampCondition.value()
+              << "' for event time " << when << endmsg;
+    ICondDBReader::DataPtr p;
+    std::string desc;
+    Gaudi::Time since, until;
+    StatusCode sc = m_condDBReader->getObject(m_runStampCondition, when,
+        p, desc, since, until);
+    if (!sc) {
+      // we didn't manage to get the entry from the DB: we do not have data
+      // for this run
+      error() << "Database not up-to-date. No valid data for run at "
+          << when.format(false, "%Y-%m-%d %H:%M:%S")
+          << "." << when.nanoformat() << " UTC" << endmsg;
+      m_evtProc->stopRun();
+    } else
+      DEBUG_MSG << "Found '" << m_runStampCondition.value()
+                << "' valid in [" <<  since << ", " << until << ")" << endmsg;
   }
 private:
   Gaudi::Property<std::string> m_runStampCondition{this, "RunStamp", "/Conditions/Online/LHCb/RunStamp.xml",
@@ -124,13 +120,8 @@ private:
   SmartIF<IIncidentSvc> m_incSvc;
   /// reference to the CondDB reader.
   SmartIF<ICondDBReader> m_condDBReader;
-  /// reference to the detector transient store.
-  SmartIF<IDetDataSvc> m_detSvc;
   /// reference to the event processor.
   SmartIF<IEventProcessor> m_evtProc;
-
-  /// IOV of the current RunStamp.
-  ICondDBReader::IOV m_currentRunIOV;
 };
 
 DECLARE_COMPONENT(RunStampCheck)

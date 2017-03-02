@@ -1,11 +1,5 @@
-// Include files
-
-// from Gaudi
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-
-// local
 #include "FakeEventTime.h"
+#include "DetDesc/RunChangeIncident.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FakeEventTime
@@ -28,8 +22,33 @@ StatusCode FakeEventTime::initialize ( ) {
   if (!sc.isSuccess()) return sc;
 
   info() << "Event times generated from " << m_startTime.value() << " with steps of " << m_timeStep.value() << endmsg;
+  info() << "Run numbers generated from " << m_startRun.value() << " every " << m_eventsPerRun.value() << " events" << endmsg;
 
   return sc;
+}
+
+StatusCode FakeEventTime::start() {
+  StatusCode sc = base_class::start();
+
+  m_incSvc = serviceLocator()->service("IncidentSvc", true);
+  if ( !m_incSvc )
+    throw GaudiException("Service [IncidentSvc] not found", name(),
+                         StatusCode::FAILURE);
+
+  return sc;
+}
+
+StatusCode FakeEventTime::stop() {
+  m_incSvc.reset();
+  return base_class::stop();
+}
+
+void FakeEventTime::i_increment() {
+  m_startTime += m_timeStep;
+  if (++m_evtCount == m_eventsPerRun) {
+    m_evtCount = 0;
+    m_startRun++;
+  }
 }
 
 //=========================================================================
@@ -44,10 +63,13 @@ Gaudi::Time FakeEventTime::getTime ( ) const {
 
   // Here we should get the time from the EventDataSvc
   Gaudi::Time currentTime(m_startTime);
+  if (m_evtCount == 0) {
+    m_incSvc->fireIncident(RunChangeIncident(name(), m_startRun, currentTime));
+  }
 
- // increment for the next event
+  // increment for the next event
   FakeEventTime *myPtr = const_cast<FakeEventTime *>(this);
-  myPtr->m_startTime += m_timeStep;
+  myPtr->i_increment();
 
   return currentTime;
 }
