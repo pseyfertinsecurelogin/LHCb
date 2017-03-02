@@ -31,16 +31,11 @@
  *  \see https://its.cern.ch/jira/browse/LBCORE-831
  *  \see https://its.cern.ch/jira/browse/LHCBPS-1421
  */
-class RunStampCheck: public extends1<Service, IIncidentListener> {
+class RunStampCheck: public extends<Service, IIncidentListener> {
 public:
   /// Constructor. Declares properties.
-  RunStampCheck(const std::string& name, ISvcLocator* svcloc):
-    base_class(name, svcloc) {
-    declareProperty("RunStamp", m_runStampCondition,
-        "Path in the conditions database of the RunStamp condition.");
-    declareProperty("CondDBReader", m_condDBReaderName,
-        "Name of the ICondDBReader instance to query for the RunStamp.");
-  }
+  using extends::extends;
+
   /// Connect to the required services and register as BeginEvent listener.
   StatusCode start() override {
     StatusCode sc = Service::start();
@@ -62,7 +57,7 @@ public:
 
     m_condDBReader = serviceLocator()->service(m_condDBReaderName);
     if (UNLIKELY(!m_condDBReader)) {
-      error() << "Cannot get " << m_condDBReaderName << endmsg;
+      error() << "Cannot get " << m_condDBReaderName.value() << endmsg;
       return StatusCode::FAILURE;
     }
 
@@ -120,10 +115,11 @@ public:
     }
   }
 private:
-  /// Path in the conditions database of the RunStamp condition.
-  std::string m_runStampCondition = "/Conditions/Online/LHCb/RunStamp.xml";
-  /// Path in the conditions database of the RunStamp condition.
-  std::string m_condDBReaderName = "CondDBCnvSvc";
+  Gaudi::Property<std::string> m_runStampCondition{this, "RunStamp", "/Conditions/Online/LHCb/RunStamp.xml",
+    "Path in the conditions database of the RunStamp condition."};
+  Gaudi::Property<std::string> m_condDBReaderName{this, "CondDBReader", "CondDBCnvSvc",
+    "Name of the ICondDBReader instance to query for the RunStamp."};
+
   /// reference to the incident service.
   SmartIF<IIncidentSvc> m_incSvc;
   /// reference to the CondDB reader.
