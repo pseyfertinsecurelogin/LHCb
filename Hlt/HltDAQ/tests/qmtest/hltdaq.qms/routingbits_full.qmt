@@ -3,8 +3,9 @@
   <argument name="program"><text>python</text></argument>
   <argument name="args"><set>
     <text>$HLTDAQROOT/tests/options/test_rb.py</text>
-    <text>--stream=full</text>
     <text>HltDAQ-routingbits_full</text>
+    <text>full</text>
+    <text>0x212c1603</text>
   </set></argument>
   <argument name="validator"><text>
 
