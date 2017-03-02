@@ -560,7 +560,11 @@ class CondDB(ConfigurableUser):
         if self.getProp("EnableRunStampCheck"):
             from Configurables import RunStampCheck
             rsc = RunStampCheck()
-            self.propagateProperty("RunStampCondition", rsc)
+            if 'ToolSvc.GitONLINE' in allConfigurables:
+                if not rsc.isPropertySet('ValidRunsList'):
+                    rsc.ValidRunsList = 'git:///Conditions/Online/valid_runs.txt'
+            else:
+                self.propagateProperty("RunStampCondition", rsc)
             ApplicationMgr().ExtSvc.append(rsc)
 
         # Load the CALIBOFF layer above everything if it exists

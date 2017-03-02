@@ -9,10 +9,10 @@ def LoadDDDBTest(datatype, sim=False, loctags=True, paths=None):
     # Configure the detector description
     DDDBConf(DataType = datatype,
              Simulation = sim,
-             IgnoreHeartBeat = True)
+             IgnoreHeartBeat = True,
+             EnableRunStampCheck = False)
     # Set up conditions database configuration (ignore checks for up-to-date)
-    CondDB(EnableRunStampCheck = False,
-           LatestGlobalTagByDataTypes = [datatype],
+    CondDB(LatestGlobalTagByDataTypes = [datatype],
            LatestLocalTagsByDataType  = [datatype] if loctags else [])
     # Set up application
     main = GaudiSequencer(MeasureTime=True)

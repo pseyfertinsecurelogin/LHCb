@@ -69,7 +69,8 @@ class DDDBConf(ConfigurableUser):
                   "AutoTags"  : False,
                   "InitialTime" : "Safe",
                   "OnlineMode" : False,
-                  "IgnoreHeartBeat": False
+                  "IgnoreHeartBeat": False,
+                  "EnableRunStampCheck": False
                    }
     _propertyDocDct = {
                        'DbRoot' : """ Root file of the detector description """,
@@ -78,7 +79,8 @@ class DDDBConf(ConfigurableUser):
                        'AutoTags'  : """ Perform automatic resolution of CondDB tags """,
                        'InitialTime' : """ How to set the initial time. None/'Safe' uses a list of dummy times for each year and sets that time. 'Now' uses the current time. Sepcifying a number assumes that is a time in utc.""",
                        'OnlineMode' : """ To use to run online jobs (Monitoring, ...) """,
-                       'IgnoreHeartBeat': """ Disable check on latest update of ONLINE CondDB """
+                       'IgnoreHeartBeat': """ Disable check on latest update of ONLINE CondDB """,
+                       'EnableRunStampCheck': """ Enable the check for run stamp (valid data for the run) """
                        }
 
     __used_configurables__ = [ CondDB ]
@@ -112,10 +114,10 @@ class DDDBConf(ConfigurableUser):
         ##########################################################################
         xmlCnvSvc = XmlCnvSvc(AllowGenericConversion = True)
 
-        # fine tune the default for heart-beat
-        self._properties["IgnoreHeartBeat"].setDefault(
-            (self.getProp("OnlineMode") or self.getProp("Simulation"))
-        )
+        # fine tune the defaults for heart-beat and run-stamp checks
+        ignore_hb = self.getProp("OnlineMode") or self.getProp("Simulation")
+        self._properties["IgnoreHeartBeat"].setDefault(ignore_hb)
+        self._properties["EnableRunStampCheck"].setDefault(not ignore_hb)
 
         if using_git:
             if self.getProp("Simulation"):

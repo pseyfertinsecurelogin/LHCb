@@ -112,10 +112,10 @@ namespace
     // sub-folders are considered as container of conditions
     for ( boost::string_ref f : files ) {
       f = basename( f );
-      // Ignore folders with the .xml extension.
+      // Ignore folders with .xml or .txt extension.
       // We never used .xml for Online conditions and after the Hlt1/Hlt2 split
       // we need to avoid automatic mapping for the .xml files.
-      if ( !boost::string_ref{f}.ends_with( ".xml" ) ) {
+      if ( !( f.ends_with( ".xml" ) || f.ends_with( ".txt" ) ) ) {
         xml << "<conditionref href=\"" << name << '/' << f << "\"/>";
       }
     }

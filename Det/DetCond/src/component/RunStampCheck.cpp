@@ -3,6 +3,7 @@
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/IEventProcessor.h"
+#include "GaudiKernel/IFileAccess.h"
 #include "DetCond/ICondDBReader.h"
 #include "DetDesc/RunChangeIncident.h"
 
@@ -58,10 +59,34 @@ public:
     }
     m_incSvc->addListener(this, IncidentType::RunChange);
 
-    m_condDBReader = serviceLocator()->service(m_condDBReaderName);
-    if (UNLIKELY(!m_condDBReader)) {
-      error() << "Cannot get " << m_condDBReaderName.value() << endmsg;
-      return StatusCode::FAILURE;
+    if ( m_validRunsList.empty() ) {
+      m_condDBReader = serviceLocator()->service(m_condDBReaderName);
+      if (UNLIKELY(!m_condDBReader)) {
+        error() << "Cannot get " << m_condDBReaderName.value() << endmsg;
+        return StatusCode::FAILURE;
+      }
+    } else {
+      m_fileAccess = serviceLocator()->service("VFSSvc");
+      if (UNLIKELY(!m_fileAccess)) {
+        error() << "Cannot get VFSSvc" << endmsg;
+        return StatusCode::FAILURE;
+      }
+
+      DEBUG_MSG << "opening " << m_validRunsList.value() << endmsg;
+      auto data = m_fileAccess->open( m_validRunsList );
+      if ( !data || !data->good() ) {
+        error() << "Cannot access " << m_validRunsList.value() << endmsg;
+        return StatusCode::FAILURE;
+      }
+
+      std::string line;
+      unsigned int run;
+      while ( std::getline( *data, line ) ) {
+        std::istringstream is{line};
+        is >> run;
+        m_validRuns.emplace(run);
+      }
+      DEBUG_MSG << "loaded " << m_validRuns.size() << " valid run numbers" << endmsg;
     }
 
     m_evtProc = serviceLocator();
@@ -77,6 +102,7 @@ public:
     m_incSvc->removeListener(this, IncidentType::RunChange);
     m_incSvc.reset();
     m_condDBReader.reset();
+    m_fileAccess.reset();
     m_evtProc.reset();
     return Service::stop();
   }
@@ -91,37 +117,55 @@ public:
       return;
     }
 
-    auto when = rci->eventTime();
-    DEBUG_MSG << "Checking '" << m_runStampCondition.value()
-              << "' for event time " << when << endmsg;
-    ICondDBReader::DataPtr p;
-    std::string desc;
-    Gaudi::Time since, until;
-    StatusCode sc = m_condDBReader->getObject(m_runStampCondition, when,
-        p, desc, since, until);
-    if (!sc) {
-      // we didn't manage to get the entry from the DB: we do not have data
-      // for this run
-      error() << "Database not up-to-date. No valid data for run at "
-          << when.format(false, "%Y-%m-%d %H:%M:%S")
-          << "." << when.nanoformat() << " UTC" << endmsg;
-      m_evtProc->stopRun();
-    } else
-      DEBUG_MSG << "Found '" << m_runStampCondition.value()
-                << "' valid in [" <<  since << ", " << until << ")" << endmsg;
+    const auto when = rci->eventTime();
+
+    if ( m_condDBReader ) {
+      DEBUG_MSG << "Checking '" << m_runStampCondition.value()
+                << "' for event time " << when << endmsg;
+      ICondDBReader::DataPtr p;
+      std::string desc;
+      Gaudi::Time since, until;
+      StatusCode sc = m_condDBReader->getObject(m_runStampCondition, when,
+          p, desc, since, until);
+      if (!sc) {
+        // we didn't manage to get the entry from the DB: we do not have data
+        // for this run
+        error() << "Database not up-to-date. No valid data for run at "
+            << when.format(false, "%Y-%m-%d %H:%M:%S")
+            << "." << when.nanoformat() << " UTC" << endmsg;
+        m_evtProc->stopRun();
+      } else
+        DEBUG_MSG << "Found '" << m_runStampCondition.value()
+                  << "' valid in [" <<  since << ", " << until << ")" << endmsg;
+    } else {
+      if ( m_validRuns.find( rci->runNumber() ) == end(m_validRuns) ) {
+        error() << "Database not up-to-date. No valid data for run "
+            << rci->runNumber() << " at "
+            << when.format(false, "%Y-%m-%d %H:%M:%S")
+            << "." << when.nanoformat() << " UTC" << endmsg;
+        m_evtProc->stopRun();
+      }
+    }
   }
 private:
   Gaudi::Property<std::string> m_runStampCondition{this, "RunStamp", "/Conditions/Online/LHCb/RunStamp.xml",
     "Path in the conditions database of the RunStamp condition."};
   Gaudi::Property<std::string> m_condDBReaderName{this, "CondDBReader", "CondDBCnvSvc",
     "Name of the ICondDBReader instance to query for the RunStamp."};
+  Gaudi::Property<std::string> m_validRunsList{this, "ValidRunsList", "",
+    "URI (for VFSSvc) to a file with the list of valid runs. "
+    "If this option is set, RunStamp and CondDBReader are ignored"};
 
   /// reference to the incident service.
   SmartIF<IIncidentSvc> m_incSvc;
   /// reference to the CondDB reader.
   SmartIF<ICondDBReader> m_condDBReader;
+  /// reference to the VFSSvc.
+  SmartIF<IFileAccess> m_fileAccess;
   /// reference to the event processor.
   SmartIF<IEventProcessor> m_evtProc;
+
+  std::set<unsigned int> m_validRuns;
 };
 
 DECLARE_COMPONENT(RunStampCheck)
