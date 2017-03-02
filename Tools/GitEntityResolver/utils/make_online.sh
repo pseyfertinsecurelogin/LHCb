@@ -34,6 +34,11 @@ fi
 done
 
 cd ONLINE
+
+# get the time of the latest Tick (heart beat) to use it as commit time
+export GIT_COMMITTER_DATE=$(python -c "from CondDBUI import CondDB; print int(CondDB('sqlite_file:${SQLITEDBPATH}/${name}.db/ONLINE').getPayloadList('/Conditions/Online/LHCb/Tick', 9223372036854775806L, 9223372036854775807L)[0][1]/1e9)")
+git commit --quiet --amend --date ${GIT_COMMITTER_DATE} -C HEAD
+
 git remote add origin ssh://git@gitlab.cern.ch:7999/lhcb-conddb/ONLINE.git
 
 cat <<EOF

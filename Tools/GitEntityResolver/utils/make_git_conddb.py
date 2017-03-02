@@ -179,7 +179,7 @@ def main():
         else:
             nodes = db.getAllNodes()
         for node in nodes:
-            if os.path.basename(node) in ('InstLumi', ):
+            if os.path.basename(node) in ('InstLumi', 'Tick'):
                 continue  # ignore this condition object
             # print node
             data = db.getPayloadList(node, IOV_MIN, IOV_MAX, None,
