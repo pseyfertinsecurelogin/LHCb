@@ -56,6 +56,19 @@ def extract_tags_infos(notes, partition):
 
     tags_xpath = ("./lhcb:global_tag/lhcb:partition/"
                   "[lhcb:name='{0}']/..").format(partition)
+
+    class DTCollector(object):
+        def __init__(self):
+            self.assigned_datatypes = set()
+        def __call__(self, el):
+            branches = []
+            for dt in [dt.text for dt in el.findall('lhcb:type', ns)]:
+                if dt not in self.assigned_datatypes:
+                    self.assigned_datatypes.add(dt)
+                    branches.append('dt-' + dt)
+            return branches
+    datatype_branches = DTCollector()
+
     return dict((el.find('lhcb:tag', ns).text,
                  (
                     # we use a dummy time
@@ -63,8 +76,10 @@ def extract_tags_infos(notes, partition):
                     committers.get(el.find('lhcb:contributor', ns).text),
                     el.find(("lhcb:partition/[lhcb:name='{0}']/"
                              "lhcb:base").format(partition), ns).text,
+                    datatype_branches(el),
                  ))
                 for el in notes.findall(tags_xpath, ns))
+
 
 def fix_lines_ends(data):
     '''
@@ -95,12 +110,19 @@ def main():
                       action='store_true',
                       help='store payloads in separate folders (by first '
                            '2 chars of the name)')
+    parser.add_option('--no-head',
+                      action='store_false', dest='do_head',
+                      help='do not process HEAD tag')
+    parser.add_option('--no-force-branches',
+                      action='store_true',
+                      help='do not force creation of datatype branches')
 
     parser.set_defaults(tag_prefix='',
                         clean_iovs=True,
                         append=False,
                         always_iovs=False,
-                        partition_payloads=False)
+                        partition_payloads=False,
+                        do_head=True)
 
     opts, (dbfile, notes, repo_dir) = parser.parse_args()
 
@@ -132,7 +154,8 @@ def main():
                       root_node.tagInsertionTime(t.name)
                                .coralTimeStamp().total_nanoseconds())
     # tags_to_copy = tags_to_copy[-5:]
-    tags_to_copy.append(head_tag)
+    if opts.do_head:
+        tags_to_copy.append(head_tag)
 
     if os.path.exists(repo_dir):
         print 'retrieve existing tags in', repo_dir
@@ -154,13 +177,14 @@ def main():
         print 'processing tag %s (%d/%d)' % (tag, count, len(tags_to_copy))
 
         if tag in tags_infos:
-            date, author, base = tags_infos[tag]
+            date, author, base, branches = tags_infos[tag]
             base = opts.tag_prefix + base
         else:
             # default author
             author = 'Marco Clemencic <marco.clemencic@cern.ch>'
             date = tag_time(tag)
             base = 'HEAD'
+            branches = []
 
         if base in existing_tags:
             print 'get base tag %s' % (base,)
@@ -239,6 +263,12 @@ def main():
         if tag != 'HEAD':
             check_output(['git', 'tag', opts.tag_prefix + tag], cwd=repo_dir)
             existing_tags.add(opts.tag_prefix + tag)
+            for branch in branches:
+                print 'creating branch', branch, '(from %s)' % (opts.tag_prefix + tag)
+                cmd = ['git', 'branch', '-f', branch, opts.tag_prefix + tag]
+                if opts.no_force_branches:
+                    cmd.remove('-f')
+                check_output(cmd, cwd=repo_dir)
 
     print 80 * '-'
     print 'creating branches for tip tags'
