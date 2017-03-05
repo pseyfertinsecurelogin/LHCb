@@ -41,7 +41,7 @@ def remove_iovs(path):
             os.remove(os.path.join(root, 'IOVs'))
             # prune the directory if empty
             if files == ['IOVs'] and not dirs:
-                os.remove(root)
+                os.rmdir(root)
 
 
 def flatten_iovs(iovs, nested=''):
@@ -123,25 +123,29 @@ def remove_dummy_entries(data):
     return new_data
 
 
-def process(repo):
+def process(repo, partition=True):
     print 'reducing IOVs...'
     for iovs in iov_files(repo):
         path = os.path.dirname(iovs)
         print '  processing', path
         data = remove_dummy_entries(flatten_iovs(parse_iovs(path)))
         remove_iovs(path)  # at this point we should not need old files
-        data = partition_iovs(data)
+        if partition:
+            data = partition_iovs(data)
         write_iovs(path, data)
 
 
 def main():
     from optparse import OptionParser
     parser = OptionParser(usage='%prog [options] repository')
+    parser.add_option('--partition', action='store_true')
+    parser.add_option('--no-partition', action='store_false', dest='partition')
+    parser.set_defaults(partition=True)
 
     opts, args = parser.parse_args()
     if len(args) != 1:
         parser.error('can work only on one repository at a time')
-    process(args[0])
+    process(args[0], opts.partition)
 
 
 if __name__ == '__main__':
