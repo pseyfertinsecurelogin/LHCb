@@ -193,9 +193,14 @@ def main():
         if base in tip_tags:
             tip_tags.remove(base)
 
-        if not opts.append and len(os.listdir(repo_dir)) > 1:
+        if opts.append:
+            # flatten IOVs before appending
+            clean_iovs(repo_dir, partition=False)
+        elif len(os.listdir(repo_dir)) > 1:
+            # if not appending and the dest dir is not empty, clean it up
             print 'cleaning up'
             check_output(['git', 'rm', '-r', '.'], cwd=repo_dir)
+
 
         print 'dumping content of %s' % (tag,)
         if tag != 'HEAD':
