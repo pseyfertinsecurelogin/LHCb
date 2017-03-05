@@ -1,69 +1,66 @@
-import sys, os, re
-import subprocess
+import re
+import sys
+import os
 import argparse
 import inspect
+import shelve
+import Configurables
 
-parser = argparse.ArgumentParser(usage = 'usage: %(prog)s stream file')
+from Configurables import HltRoutingBitsWriter
+from Configurables import bankKiller
+from Configurables import LHCb__RawEventCopy as RawEventCopy
+from GaudiConf import IOHelper
+from Configurables import LHCbApp, EventSelector
+from Configurables import ApplicationMgr, GaudiSequencer
+from Configurables import IODataManager
+from Configurables import HistogramPersistencySvc
+from Configurables import HltRoutingBitsFilter
+from DAQSys.Decoders import DecoderDB
+from Configurables import LoKiSvc
+from Configurables import ToolSvc
+from PRConfig.TestFileDB import test_file_db
 
-parser.add_argument("-s", "--stream", type = str, dest = "stream", default = "",
-                    help = "Which stream")
-parser.add_argument("--tck", type = str, dest = "tck", default = "",
-                    help = "What TCK")
-parser.add_argument("-n", "--nevents", type = int, dest = "nevt", default = -1,
-                    help = "Maximum number of events")
-parser.add_argument("db_entry", nargs = 1)
+parser = argparse.ArgumentParser(
+    usage='usage: %(prog)s test_file_db_entry stream tck')
+
+parser.add_argument("db_entry", nargs=1)
+parser.add_argument("stream", type=str, nargs=1,
+                    help="Which stream")
+parser.add_argument("tck", type=str, nargs=1,
+                    help="What TCK")
+parser.add_argument("-n", "--nevents", type=int, dest="nevt", default=-1,
+                    help="Maximum number of events")
 
 args = parser.parse_args()
 
-from PRConfig.TestFileDB import test_file_db
 file = test_file_db[args.db_entry[0]].filenames[0]
 
-if not args.tck:
-    # Use inspect's stack to get the file of the current frame: us
-    script_dir = os.path.dirname(inspect.stack()[0][1])
-    cmd = ['python', os.path.join(script_dir, 'get_tck.py'), file]
-    p = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
-    o, e = p.communicate()
-
-    if p.returncode:
-        print 'Failed to get TCK'
-        print o
-        print 'FAILED'
-        sys.exit(-1)
-
-    output = [l.strip() for l in o.split('\n') if l.strip()]
-    hlt1_tck, hlt2_tck = output[-1].split()
-    try:
-        hlt1_tck, hlt2_tck = (int(hlt1_tck, 16), int(hlt2_tck, 16))
-    except ValueError:
-        print o
-        print 'Could not determine TCK from {}'.format(file)
-        print 'FAILED'
-        sys.exit(-1)
-
-    if not (hlt1_tck and hlt2_tck):
-        print o
-        print 'Could not determine TCK from {}, both are 0'.format(file)
-        print 'FAILED'
-        sys.exit(-1)
-else:
-    tck = int(args.tck, 16)
-    hlt1_tck, hlt2_tck = (0, 0)
-    if (tck & (1 << 28)) == (1 << 28):
-        hlt1_tck = tck
-    else:
-        hlt2_tck = tck
-
-if hlt2_tck and (args.stream.capitalize() not in ('Turbo', 'Full', 'Turcal',
-                                                  'Beamgas', 'Nobias', 'Turboraw')):
-    print 'Stream must be set when running on an HLT2 accepted file'
+hlt2_tck = int(args.tck[0], 16)
+if (hlt2_tck & (2 << 28)) != (2 << 28):
+    print parser.usage
     print 'FAILED'
     sys.exit(-1)
 
+stream = args.stream[0].capitalize()
+if stream not in ('Turbo', 'Full', 'Turcal', 'Beamgas', 'Nobias',
+                  'Turboraw'):
+    print 'Stream must be set'
+    print 'FAILED'
+    sys.exit(-1)
+
+script_dir = os.path.dirname(inspect.stack()[0][1])
+db_file = os.path.join(script_dir, '..', 'data',
+                       '0x%08x.props' % hlt2_tck)
+if not os.path.exists(db_file):
+    print 'Properties db for TCK 0x%08x is missing.' % hlt2_tck
+    print 'FAILED'
+    sys.exit(-1)
+
+db = shelve.open(db_file, 'r')
+writer_props = db['writers']
+factory_props = db['factories']
+
 # General configuration
-from GaudiConf import IOHelper
-from Gaudi.Configuration import *
-from Configurables import LHCbApp
 app = LHCbApp()
 app.EvtMax = -1
 app.DataType = '2016'
@@ -72,72 +69,75 @@ app.DDDBtag = 'dddb-20150724'
 
 EventSelector().PrintFreq = 1000
 
-from Configurables import IODataManager
 IODataManager().DisablePFNWarning = True
 
-from Configurables import HistogramPersistencySvc
 HistogramPersistencySvc().OutputLevel = 5
 
-# Configure from TCK to get the routing bits from there
-from Configurables import ConfigCDBAccessSvc
-accessSvc = ConfigCDBAccessSvc(File = '$HLTTCKROOT/config.cdb')
-
-from Configurables import HltConfigSvc
-HltConfigSvc().initialTCK = '0x{0:08x}'.format(hlt1_tck if not hlt2_tck else hlt2_tck)
-HltConfigSvc().checkOdin = not hlt2_tck
-HltConfigSvc().OutputLevel = 5
-HltConfigSvc().ConfigAccessSvc = accessSvc.getFullName()
-# Remove some modules that don't live in the LHCb project
-# Empty the Hlt sequence to disable the HLT.
-# Point the RoutingBitsWriter at a copy of the raw event
-HltConfigSvc().ApplyTransformation = {".*LoKi.*/.*Factory.*" : {"Modules" : {r",[ ]*'LoKiTrigger.[a-z]*'" : ""},
-                                                                "Lines"   : {r",[ ]*'import HltTracking.Hlt1StreamerConf'" : ""} },
-                                      'GaudiSequencer/Hlt' : {"Members" : {"'.*'" : ""}},
-                                      'HltRoutingBitsWriter/.*RoutingBitsWriter' : {'RawEventLocation' : {"DAQ/.*RawEvent" : "DAQ/CopyRawEvent"},
-                                                                                    'UpdateExistingRawBank' : {"True" : "False"}}}
-# Write these DecReports somewhere else so the decoder can run
-HltConfigSvc().HltDecReportsLocations = ['Hlt1/EmptyDecReports']
-ApplicationMgr().ExtSvc.insert(0, HltConfigSvc().getFullName())
-
-topSeq = GaudiSequencer( "TopSequence" )
-from Configurables import createODIN
-topSeq.Members += [createODIN()]
+topSeq = GaudiSequencer("TopSequence")
 
 # Filter nanofied events if the file is HLT2 accepted
-if hlt2_tck:
-    from Configurables import HltRoutingBitsFilter
-    nano_filter = HltRoutingBitsFilter('NonNanoFilter', RequireMask = [0x0, 0x0, 0x80000000])
-    topSeq.Members += [nano_filter]
+nano_filter = HltRoutingBitsFilter(
+    'NonNanoFilter', RequireMask=[0x0, 0x0, 0x80000000])
+topSeq.Members += [nano_filter]
 
 # Decode Hlt DecReports
-from DAQSys.Decoders import DecoderDB
-for dec in ("L0DUFromRawAlg/L0DUFromRaw",
-            "HltDecReportsDecoder/Hlt1DecReportsDecoder"):
+for dec in ("HltDecReportsDecoder/Hlt1DecReportsDecoder",
+            "HltDecReportsDecoder/Hlt2DecReportsDecoder"):
     topSeq.Members.append(DecoderDB[dec].setup())
+    # tell HltConfigSvc to leave the just explicitly configured decoders
+    # alone..
 
-if hlt2_tck:
-    topSeq.Members.append(DecoderDB["HltDecReportsDecoder/Hlt2DecReportsDecoder"].setup())
+copier = RawEventCopy(
+    "RawEventCopy", Destination='/Event/DAQ/CopyRawEvent', DeepCopy=True)
+killer = bankKiller('KillRoutingBits', BankTypes=['HltRoutingBits'],
+                    DefaultIsKill=False,
+                    RawEventLocations=['DAQ/CopyRawEvent'])
 
-from Configurables import HltRoutingBitsWriter
-from Configurables import bankKiller
-from Configurables import LHCb__RawEventCopy as RawEventCopy
+# Configure the routing bits writer
+rb_name = '{stream}{stage}RoutingBitsWriter'
+rb_name = rb_name.format(stage='Hlt1' if not hlt2_tck else 'Hlt2',
+                         stream=stream)
+props = writer_props['HltRoutingBitsWriter/' + rb_name]
+writer = HltRoutingBitsWriter(rb_name,
+                              Hlt1DecReportsLocation='Hlt1/DecReports',
+                              Hlt2DecReportsLocation='Hlt2/DecReports',
+                              RoutingBits=eval(props['RoutingBits']),
+                              RawEventLocation="DAQ/CopyRawEvent",
+                              UpdateExistingRawBank=False)
 
-copier = RawEventCopy("RawEventCopy", Destination = '/Event/DAQ/CopyRawEvent', DeepCopy = True)
-killer = bankKiller('KillRoutingBits', BankTypes = ['HltRoutingBits'], DefaultIsKill = False,
-                    RawEventLocations = ['DAQ/CopyRawEvent'])
-writer = HltRoutingBitsWriter('{stream}{stage}RoutingBitsWriter'.format(stage = 'Hlt1' if not hlt2_tck else 'Hlt2',
-                                                                        stream = args.stream.capitalize()))
+
+# Configure the LoKi factories
+# Get rid of a few things we don't need that live in dependent projects
+subs = {"Modules": r",[ ]*'LoKiTrigger.[a-z]*'",
+        "Lines": r",[ ]*'import HltTracking.Hlt1StreamerConf'"}
+
+for factory, props in factory_props.iteritems():
+    factory_type, factory_name = factory.split('/')
+    factory_type = factory_type.replace(':', '_')
+    try:
+        ft = getattr(Configurables, factory_type)
+    except AttributeError:
+        continue
+    ToolSvc().addTool(ft, factory_name)
+    fact = getattr(ToolSvc(), factory_name)
+    for prop, val in props.iteritems():
+        if prop in subs:
+            val = re.sub(subs[prop], '', val)
+        setattr(fact, prop, eval(val))
+
+
 topSeq.Members += [copier, killer, writer]
 
 ApplicationMgr().TopAlg = [topSeq]
 
-from Configurables import LoKiSvc
 LoKiSvc().Welcome = False
 
 IOHelper("MDF").inputFiles([file])
 
+
 from GaudiPython.Bindings import AppMgr, gbl
 gaudi = AppMgr()
+
 gaudi.initialize()
 TES = gaudi.evtSvc()
 
@@ -165,7 +165,8 @@ while (args.nevt == -1) or (nEvt < args.nevt):
     if diff:
         odin = TES['DAQ/ODIN']
         print 'Different routing bits!:'
-        print '{0} {1}: {2}'.format(odin.runNumber(), odin.eventNumber(), list(diff))
+        print '{0} {1}: {2}'.format(odin.runNumber(), odin.eventNumber(),
+                                    list(diff))
         error = True
         break
 

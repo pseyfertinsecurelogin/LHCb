@@ -11,6 +11,9 @@
 
 #pragma once
 
+// STL
+#include <vector>
+
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 
@@ -18,17 +21,19 @@
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichSide.h"
 #include "Kernel/RichTraceMode.h"
+#include "Kernel/RichSmartID.h"
 
 // MathCore
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
 
-// forward dec
+// forward decs
 namespace LHCb
 {
   class RichTrackSegment;
 }
+class DeRichSphMirror;
 
 namespace Rich
 {
@@ -57,6 +62,45 @@ namespace Rich
 
       /// Interface ID
       DeclareInterfaceID( IRayTracing, 1, 0 );
+
+    public: // vector methods
+
+      /// Return type for the vectorised raytracing
+      class Result
+      {
+      public:
+        /// Ray tracing status code
+        LHCb::RichTraceMode::RayTraceResult result{ LHCb::RichTraceMode::RayTraceFailed };
+        /// Detection point
+        Gaudi::XYZPoint detectionPoint; 
+        /// Channel ID for detection point
+        LHCb::RichSmartID smartID;     
+        /// Pointer to the associated primary mirror detector element
+        const DeRichSphMirror * primaryMirror { nullptr };
+        /// Pointer to the associated secondary mirror detector element
+        const DeRichSphMirror * secondaryMirror { nullptr };
+      public:
+        /// Container of results
+        using Vector = std::vector<Result>;
+      };
+
+      /** For a given detector, ray-traces a given set of directions from a given point to
+       *  the photo detectors.
+       *
+       *  @param[in]  startPoint  The start point to use for the ray tracing
+       *  @param[in]  startDirs   The directions to ray trace from the start point
+       *  @param[in]  trSeg       The track segment associated to the photon direction to update
+       *  @param[in]  mode        The ray tracing mode configuration
+       *
+       *  @return Vector of ray tracing result objects
+       */
+      virtual Result::Vector
+      traceToDetector ( const Gaudi::XYZPoint& startPoint,
+                        const std::vector<Gaudi::XYZVector>& startDirs,
+                        const LHCb::RichTrackSegment& trSeg,
+                        const LHCb::RichTraceMode mode = LHCb::RichTraceMode() ) const = 0;
+
+    public: // scalar methods
 
       /** For a given detector, ray-traces a given direction from a given point to
        *  the photo detectors. Returns the result in the form of a RichGeomPhoton
