@@ -209,10 +209,10 @@ class DstConf(LHCbConfigurableUser):
                         SimConf().addSubDetSimInfo(writer)
                         DigiConf().addMCHitLinks(writer)
                         DigiConf().addMCHitLinksExtended(writer)
+                        DigiConf().addMCParticleLinksExtended(writer)
                     if dType in ["XDST", "LDST"]:
                         # Links from Digits to MCParticles
                         DigiConf().addMCParticleLinks(writer)
-                        DigiConf().addMCParticleLinksExtended(writer)
 
 
     def _doWriteROOT( self, items, optItems ):
