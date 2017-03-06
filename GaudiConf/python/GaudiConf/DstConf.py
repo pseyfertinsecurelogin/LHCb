@@ -208,9 +208,11 @@ class DstConf(LHCbConfigurableUser):
                         # Add the MCHits (from Gauss) and links to them (from Boole)
                         SimConf().addSubDetSimInfo(writer)
                         DigiConf().addMCHitLinks(writer)
+                        DigiConf().addMCHitLinksExtended(writer)
                     if dType in ["XDST", "LDST"]:
                         # Links from Digits to MCParticles
                         DigiConf().addMCParticleLinks(writer)
+                        DigiConf().addMCParticleLinksExtended(writer)
 
 
     def _doWriteROOT( self, items, optItems ):
