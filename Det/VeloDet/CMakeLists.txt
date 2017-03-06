@@ -15,20 +15,20 @@ find_package(VDT)
 gaudi_add_library(VeloDetLib
                   src/Lib/*.cpp
                   PUBLIC_HEADERS VeloDet
-		  INCLUDE_DIRS VDT Boost
-		  LINK_LIBRARIES VDT Boost DetDescLib DetDescCnvLib GaudiAlgLib LHCbKernel LHCbMathLib)
+                  INCLUDE_DIRS VDT Boost
+                  LINK_LIBRARIES VDT Boost DetDescLib DetDescCnvLib GaudiAlgLib LHCbKernel LHCbMathLib)
 
 gaudi_add_module(VeloDet
                  src/component/*.cpp
-		 INCLUDE_DIRS VDT Boost
-		 LINK_LIBRARIES VDT Boost DetDescLib DetDescCnvLib GaudiAlgLib LHCbKernel LHCbMathLib VeloDetLib)
+                 INCLUDE_DIRS VDT Boost
+                 LINK_LIBRARIES VDT Boost DetDescLib DetDescCnvLib GaudiAlgLib LHCbKernel LHCbMathLib VeloDetLib)
 
 gaudi_add_dictionary(VeloDet
                      dict/VeloDetDict.h
                      dict/VeloDetDict.xml
-		     INCLUDE_DIRS VDT Boost
-		     LINK_LIBRARIES VDT Boost DetDescLib DetDescCnvLib GaudiAlgLib LHCbKernel LHCbMathLib VeloDetLib
+                     INCLUDE_DIRS VDT Boost
+                     LINK_LIBRARIES VDT Boost DetDescLib DetDescCnvLib GaudiAlgLib LHCbKernel LHCbMathLib VeloDetLib
                      OPTIONS "-U__MINGW32__")
 
 
-gaudi_add_test(QMTest QMTEST)
+gaudi_add_test(QMTest QMTEST ENVIRONMENT NO_GIT_CONDDB=1)
