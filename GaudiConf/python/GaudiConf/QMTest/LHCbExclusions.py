@@ -1,4 +1,11 @@
-from GaudiTesting.BaseTest import normalizeExamples, RegexpReplacer, LineSkipper
+from GaudiTesting.BaseTest import (normalizeExamples, RegexpReplacer,
+                                   LineSkipper, FilePreprocessor)
+
+
+gitCondDBFixes = (RegexpReplacer(when='Detector description database:',
+                                 orig='conddb:/', repl='git:/') +
+                  LineSkipper(['CORAL Connection Retrial',
+                               'Connected to database "ONLINE"']))
 
 preprocessor = (
     normalizeExamples +
@@ -41,3 +48,7 @@ preprocessor = (
       regexps = [r"DEBUG Property \['Name': Value\] =  '(Timeline|(Extra|Data)(In|Out)puts)'",
                 ])
    )
+
+from DDDB.Configuration import GIT_CONDDBS
+if GIT_CONDDBS:
+    preprocessor = preprocessor + gitCondDBFixes
