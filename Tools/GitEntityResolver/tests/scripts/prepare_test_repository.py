@@ -97,7 +97,7 @@ write_IOVs([(EPOCH, '../2016/v1')], dir2017)
 os.remove(join(path, 'changing.xml', 'v0.xml'))
 os.remove(join(path, 'changing.xml', 'v1.xml'))
 
-check_call(['git', 'add', 'changing.xml'], cwd=path)
+check_call(['git', 'add', '--all', 'changing.xml'], cwd=path)
 check_call(['git', 'commit', '-am', 'v1 data'], cwd=path)
 check_call(['git', 'tag', 'v1'], cwd=path)
 
