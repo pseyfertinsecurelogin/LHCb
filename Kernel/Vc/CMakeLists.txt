@@ -19,6 +19,7 @@ ExternalProject_Add(Vc
               -DBUILD_TESTING=OFF
               -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
               -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+   PATCH_COMMAND sed -i "s|\@CMAKE_INSTALL_PREFIX\@|\${CMAKE_CURRENT_LIST_DIR}/../..|g" cmake/VcConfig.cmake.in && sed -i "s|cmake/Vc|../cmake/Vc|g" cmake/VcConfig.cmake.in
 )
 
 install(DIRECTORY ${CMAKE_BINARY_DIR}/include/Vc DESTINATION include)
