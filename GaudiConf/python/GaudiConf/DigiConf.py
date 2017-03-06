@@ -139,7 +139,7 @@ class DigiConf(LHCbConfigurableUser):
         if 'Muon' in dets :
             writer.ItemList += ["/Event/Link/Raw/Muon/Digits#1"]
 
-    def addMCParticleLinksExtended( self, writer ):
+    def addMCParticleLinksSpillover( self, writer ):
         
         # Links to MCParticles (including spillover)
         dets = self.getProp("Detectors")
@@ -179,7 +179,7 @@ class DigiConf(LHCbConfigurableUser):
         if 'FT' in dets :
             writer.ItemList += ["/Event/Link/Raw/FT/LiteClusters2MCHits#1"]
             
-    def addMCHitLinksExtended( self, writer ):
+    def addMCHitLinksSpillover( self, writer ):
 
         # Links to MCHits (including spillover)
         dets = self.getProp("Detectors")
@@ -234,7 +234,7 @@ class DigiConf(LHCbConfigurableUser):
             self.addMCParticleLinks(writer)
             self.addMCCaloInfo(writer)
             if dType == "Extended":
-                self.addMCParticleLinksExtended(writer)
+                self.addMCParticleLinksSpillover(writer)
 
             # Reconstructible Info
             self.addMCTrackInfo(writer)
@@ -242,7 +242,7 @@ class DigiConf(LHCbConfigurableUser):
             # MCHit Links
             self.addMCHitLinks(writer)
             if dType == "Extended":
-                self.addMCHitLinksExtended(writer)
+                self.addMCHitLinksSpillover(writer)
 
             # Add TAE RawEvents when enabled
             taePrev = self.getProp("TAEPrev")
