@@ -1,9 +1,6 @@
 // Include files
 
 // from Gaudi
-#include "Event/FTLiteCluster.h"
-#include "Event/FTCluster.h"
-
 #include "Event/RawEvent.h"
 
 // local
@@ -19,24 +16,6 @@
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( FTRawBankDecoder )
 
-namespace {
-
-StatusCode retrieveModuleMat(int quartSipmNb, int quarter, unsigned &locmod, unsigned &locmat)
-{
-  if (UNLIKELY(quarter<0 || quarter>3 || quartSipmNb > 127)) return StatusCode::FAILURE;
-
-  locmat = ( quarter < 2 ? 1 : 0 );
-  int intermod = quartSipmNb / 16;
-  if((quarter % 2) != 0) { // x positive part
-    locmod = ( intermod < 5 ? intermod : 10 );
-  } else {  // x negative part
-    locmod = ( intermod > 0 ? intermod + 4 : 11 );
-  }
-
-  return StatusCode::SUCCESS;
-}
-
-}
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
@@ -47,8 +26,6 @@ StatusCode retrieveModuleMat(int quartSipmNb, int quarter, unsigned &locmod, uns
   //new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Other, LHCb::RawEventLocation::Default};
   initRawEventSearch();
-  declareProperty("OutputLocation",m_outputClusterLocation=LHCb::FTLiteClusterLocation::Default,"Output location for clusters");
-
 }
 
 //=============================================================================
@@ -69,27 +46,30 @@ StatusCode FTRawBankDecoder::execute() {
 
   auto clus = (*this)( rawEvent->banks(LHCb::RawBank::FTCluster) );
   if (!clus) return StatusCode::FAILURE;
+  if( msgLevel( MSG::DEBUG ) )
+    debug() << "Created " << clus->size() << " FTLiteClusters" << endmsg;
   put( clus.release(), m_outputClusterLocation);
   return StatusCode::SUCCESS;
 }
 
-std::unique_ptr<FastClusterContainer<LHCb::FTLiteCluster,int>>
+std::unique_ptr<FTLiteClusters>
 FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
 {
-  std::unique_ptr<FastClusterContainer<LHCb::FTLiteCluster,int>> clus{ new FastClusterContainer<LHCb::FTLiteCluster,int>() };
+  std::unique_ptr<FTLiteClusters> clus{ new FTLiteClusters() };
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
 
   for ( const LHCb::RawBank* bank : banks) {
     int source  = bank->sourceID();
-    unsigned layer   = source/4;
-    int quarter = source & 3;
+    unsigned station = source/16 + 1u; // JvT: this should be done by a mapping!
+    unsigned layer   = (source & 12) /4;  // JvT: this should be done by a mapping!
+    unsigned quarter = source & 3; // JvT: this should be done by a mapping!
     auto size    = bank->size(); // in bytes, multiple of 4
 
-    if ( msgLevel(MSG::DEBUG) ) debug() << "source " << source << " layer "
-                                        << layer << " quarter "
-                                        << quarter << " size " << size << endmsg;
-    if ( 1 != bank->version()  ) {
+    if ( msgLevel(MSG::VERBOSE) ) verbose() << "source " << source
+        << " station " << station << " layer " << layer
+        << " quarter " << quarter << " size " << size << endmsg;
+    if ( bank->version() != 2 ) {
       error() << "** Unsupported FT bank version " << bank->version()
               << " for source " << source << " size " << size << " bytes."
               << endmsg;
@@ -100,37 +80,33 @@ FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
     auto last = bank->end<short int>();
     while( first != last ) {
       int sipmHeader = *first++;
-      if ( first == last && 0 == sipmHeader ) continue;  // padding at the end...
-      int QuarterSiPMNber = ( sipmHeader >> FTRawBank::sipmShift );
-      unsigned module = 99;
-      unsigned mat = 9;
-
-      StatusCode sc = retrieveModuleMat(QuarterSiPMNber,quarter,module,mat);
-      if(UNLIKELY(sc.isFailure())) return nullptr;
-
-      unsigned mySiPM = QuarterSiPMNber & 15;
+      if ( first == last && sipmHeader == 0 ) continue;  // padding at the end...
+      unsigned modulesipm = ( sipmHeader >> FTRawBank::sipmShift );
+      unsigned module = modulesipm >> FTRawBank::sipmShift ;
+      unsigned mat  = (modulesipm & 15 ) >> 2; // hardcoded: this should be replaced by mapping
+      unsigned sipm = modulesipm & 3;          // hardcoded: this should be replaced by mapping
       int nClus  = ( sipmHeader & FTRawBank::nbClusMaximum );
-      if (UNLIKELY( msgLevel(MSG::DEBUG) && nClus > 0) )
-        debug() << "   SiPM " << mySiPM << " nClus " << nClus
-                << " size " << std::distance(first,last) << endmsg;
+      if (UNLIKELY( msgLevel(MSG::VERBOSE) && nClus > 0) )
+        verbose() << "  Module " << module << " mat " << mat << " SiPM " << sipm
+                  << " nClusters " << nClus << endmsg;
       if (UNLIKELY(nClus>std::distance(first,last))) {
-        warning() << " inconsistent size of rawbank " << endmsg;
+        warning() << "Inconsistent size of rawbank. #clusters in header="
+                  << nClus << ", #clusters in bank=" << std::distance(first,last) << endmsg;
         return nullptr;
       }
+
       std::transform( first, first+nClus,
                       std::back_inserter(*clus),
                       [&](short int c) -> LHCb::FTLiteCluster {
+        unsigned channel= ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
         int fraction = ( c >> FTRawBank::fractionShift ) & FTRawBank::fractionMaximum;
-        unsigned cell     = ( c >> FTRawBank::cellShift     ) & FTRawBank::cellMaximum;
-        int sipmId   = ( c >> FTRawBank::sipmIdShift   ) & FTRawBank::sipmIdMaximum;
-        int cSize    = 1+(( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum); // add 1 to make sure to keep clusters with size 1,2,3 and 4 using 2 bits to encode the cluster size in the data format
-        int charge   = ( c >> FTRawBank::chargeShift   ) & FTRawBank::chargeMaximum;
+        int cSize    = ( c >> FTRawBank::sizeShift     ) & FTRawBank::sizeMaximum;
         if ( msgLevel( MSG::VERBOSE ) ) {
-          verbose() << format(  "  cell %4d sipmId %3d frac %3d charge %5d size %3d code %4.4x",
-                                cell, sipmId,fraction, charge, cSize, c ) << endmsg;
+          verbose() << format(  "    channel %4d frac %3d size %3d code %4.4x",
+                                channel, fraction, cSize, c ) << endmsg;
         }
-        return  { LHCb::FTChannelID{ layer, module, mat, mySiPM, cell },
-                  fraction, cSize, charge };
+        return  { LHCb::FTChannelID{ station, layer, quarter, module, mat, sipm, channel },
+                  fraction, cSize };
       } );
       first += nClus;
     }

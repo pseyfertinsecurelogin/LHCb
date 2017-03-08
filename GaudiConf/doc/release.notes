@@ -3,6 +3,9 @@
 ! package manager: M.Cattaneo
 !------------------------------------------------------------------------------
 
+! 2016-12-14 - Jeroen van Tilburg
+ - Fixed location of Linker tables in DigiWriter.
+
 ! 2016-07-27 - Marco Cattaneo
  - IOHelper: remove test on GaudiSvc version before v18r16 as it is obsolete and
    relies on CMT support which will soon be removed
