@@ -113,7 +113,7 @@ StatusCode Calo2Dview::initialize() {
   // Init the derived values
   // ? no need for m_calo->YtoXratio() ?
   for( auto& cp: m_caloParams ){
-    cp.xsize = cp.ysize = cell_sizes(cp);
+    if (cp.calo != nullptr) cp.xsize = cp.ysize = cell_sizes(cp);
   }
 
   return StatusCode::SUCCESS;

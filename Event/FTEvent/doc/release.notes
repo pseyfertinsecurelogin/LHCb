@@ -4,6 +4,11 @@
 ! Purpose     : Event model for FT digitisation and reconstruction
 !-----------------------------------------------------------------------------
 
+! 2016-12-14 - Jeroen van Tilburg
+ - Adapt to new channel numbering scheme.
+ - Store PE in the MCFTDigit. ADC is now really 2 bit.
+ - FTLiteCluster contains now 20 bit for channelID + 1 bit fraction + 1 bit size.
+
 !========================= FTEvent v1r8 2015-11-23 =========================
 ! 2015-11-13 - Jacco de Vries
  - Added properties and methods to MCFTDeposit to keep track of noise.

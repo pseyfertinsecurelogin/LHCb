@@ -9,7 +9,7 @@
     <class name   = "MCFTDeposit"
            id     = "14001"
            author = "Eric Cogneras"
-           desc   = "This class represents the total energy deposited in each FTChannelID by the crossing MCHits"
+           desc   = "This class represents the total photons deposited in each FTChannelID by the crossing MCHits"
            serializers="FALSE">
       <import   name = "Kernel/FTChannelID" />
       <import   name = "Event/MCHit" />
@@ -20,16 +20,13 @@
       &KeyedObject;
 
       <constructor desc     = "Constructor"
-		   argList  = "LHCb::FTChannelID&amp; id, LHCb::MCHit* aHit, double energy, double energyRef, double time, double timeRef">
+		   argList  = "LHCb::FTChannelID&amp; id, LHCb::MCHit* aHit, int photons, double time, bool isReflected">
         <code> this->setKey(id); 
 	  m_mcHitVec.push_back(aHit);
-	  m_energyVec.push_back(energy);
-	  m_energyRefVec.push_back(energyRef);
+	  m_photonVec.push_back(photons);
 	  m_timeVec.push_back(time);
-	  m_timeRefVec.push_back(timeRef);
-    m_thNoiseCont = 0;
-    m_afterplCont = 0;
-    m_xtalkCont = 0;
+    m_isReflectedVec.push_back(isReflected);
+    m_noisePhotons = 0;
 	</code>
       </constructor>
 
@@ -48,26 +45,23 @@
       <method    name   = "addMCHit"
                  desc   = "Add MCHit, energies and times to the relevant vectors"
                  type   = "void"
-		 argList = "LHCb::MCHit* aHit, double energy, double energyRef, double time, double timeRef "
+		 argList = "LHCb::MCHit* aHit, int photons, double time, bool isReflected "
                  access = "PUBLIC">
         <code> 
 	  m_mcHitVec.push_back(aHit);
-	  m_energyVec.push_back(energy);
-	  m_energyRefVec.push_back(energyRef);
+	  m_photonVec.push_back(photons);
 	  m_timeVec.push_back(time);
-	  m_timeRefVec.push_back(timeRef);
+    m_isReflectedVec.push_back(isReflected);
 	</code>
       </method>
 
-      <method    name    = "addNoise"
-                 desc    = "keep track of added Noise"
+      <method    name    = "countNoise"
+                 desc    = "keep track of added noise photons"
                  type    = "void"
-                 argList = "int noiseType, int noiseValue"
+                 argList = "int newNoisePhotons"
                  access  = "PUBLIC">
           <code>
-            if(noiseType==0) { m_thNoiseCont += noiseValue; }
-            if(noiseType==1) { m_afterplCont += noiseValue; }
-            if(noiseType==2) { m_xtalkCont   += noiseValue; }
+            m_noisePhotons += newNoisePhotons;
           </code>
       </method>
 
@@ -77,42 +71,26 @@
 		 setMeth = "FALSE"
                  access = "PRIVATE"/>
 
-      <attribute name   = "energyVec"
-                 desc   = "Vector of energy deposits"
-                 type   = "std::vector &lt; double &gt;"
-		 setMeth = "FALSE"
-                 access = "PRIVATE"/>
-
-      <attribute name   = "energyRefVec"
-                 desc   = "Vector of energy deposits"
+      <attribute name   = "photonVec"
+                 desc   = "Vector of photon deposits"
                  type   = "std::vector &lt; double &gt;"
 		 setMeth = "FALSE"
                  access = "PRIVATE"/>
 
       <attribute name   = "timeVec"
-                 desc   = "Vector of energy deposits"
+                 desc   = "Vector of time deposits"
                  type   = "std::vector &lt; double &gt;"
 		 setMeth = "FALSE"
                  access = "PRIVATE"/>
 
-      <attribute name   = "timeRefVec"
-                 desc   = "Vector of energy deposits"
-                 type   = "std::vector &lt; double &gt;"
+      <attribute name   = "isReflectedVec"
+                 desc   = "Vector of isReflected flags"
+                 type   = "std::vector &lt; bool &gt;"
 		 setMeth = "FALSE"
                  access = "PRIVATE"/>
 
-      <attribute name   = "thNoiseCont"
-                 desc   = "Counter for thermal noise PEs"
-                 type   = "int"
-                setMeth = "FALSE"
-                 access = "PRIVATE" />
-      <attribute name   = "afterplCont"
-                 desc   = "Counter for afterpulse PEs"
-                 type   = "int"
-                setMeth = "FALSE"
-                 access = "PRIVATE" />
-      <attribute name   = "xtalkCont"
-                 desc   = "Counter for xtalk PEs"
+      <attribute name   = "noisePhotons"
+                 desc   = "Counter for added noise photons"
                  type   = "int"
                 setMeth = "FALSE"
                  access = "PRIVATE" />

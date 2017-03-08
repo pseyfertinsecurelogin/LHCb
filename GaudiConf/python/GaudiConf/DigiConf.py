@@ -135,9 +135,16 @@ class DigiConf(LHCbConfigurableUser):
         if 'OT' in dets :
             writer.ItemList += ["/Event/Link/Raw/OT/Times#1"]
         if 'FT' in dets :
-            writer.ItemList += ["/Event/Link/Raw/FT/Clusters#1"]
+            writer.ItemList += ["/Event/Link/Raw/FT/LiteClusters#1"]
         if 'Muon' in dets :
             writer.ItemList += ["/Event/Link/Raw/Muon/Digits#1"]
+
+    def addMCParticleLinksSpillover( self, writer ):
+        
+        # Links to MCParticles (including spillover)
+        dets = self.getProp("Detectors")
+        if 'FT' in dets :
+            writer.ItemList += ["/Event/Link/Raw/FT/LiteClustersWithSpillover#1"]
 
     def addMCTrackInfo( self, writer ):
         
@@ -170,9 +177,14 @@ class DigiConf(LHCbConfigurableUser):
         if 'OT' in dets :
             writer.ItemList += ["/Event/Link/Raw/OT/Times2MCHits#1"]
         if 'FT' in dets :
-            writer.ItemList += ["/Event/Link/Raw/FT/Clusters2MCHits#1"]
+            writer.ItemList += ["/Event/Link/Raw/FT/LiteClusters2MCHits#1"]
             
-            
+    def addMCHitLinksSpillover( self, writer ):
+
+        # Links to MCHits (including spillover)
+        dets = self.getProp("Detectors")
+        if 'FT' in dets :
+            writer.ItemList += ["/Event/Link/Raw/FT/LiteClusters2MCHitsWithSpillover#1"]
 
     def _defineOutputData( self, dType, writer ):
         """
@@ -221,12 +233,16 @@ class DigiConf(LHCbConfigurableUser):
             # MCParticle links
             self.addMCParticleLinks(writer)
             self.addMCCaloInfo(writer)
+            if dType == "Extended":
+                self.addMCParticleLinksSpillover(writer)
 
             # Reconstructible Info
             self.addMCTrackInfo(writer)
 
             # MCHit Links
             self.addMCHitLinks(writer)
+            if dType == "Extended":
+                self.addMCHitLinksSpillover(writer)
 
             # Add TAE RawEvents when enabled
             taePrev = self.getProp("TAEPrev")

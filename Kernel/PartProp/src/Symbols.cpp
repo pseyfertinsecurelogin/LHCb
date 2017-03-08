@@ -54,46 +54,49 @@ Decays::Symbols& Decays::Symbols::instance()
 // ============================================================================ 
 Decays::Symbols::Symbols () 
 {
-  addSymbol ( "X"          , Decays::Nodes::Any      () , "Any particle"         ) ;
+  addSymbol ( "X"             , Decays::Nodes::Any      () , "Any particle"         ) ;
   //
-  addSymbol ( "Hadron"     , Decays::Nodes::Hadron   () , "Any hadron"           ) ;
-  addSymbol ( "Meson"      , Decays::Nodes::Meson    () , "Any meson"            ) ;
-  addSymbol ( "Baryon"     , Decays::Nodes::Baryon   () , "Any baryon"           ) ;
-  addSymbol ( "Nucleus"    , Decays::Nodes::Nucleus  () , "Any nucleus"          ) ;
-  addSymbol ( "Lepton"     , Decays::Nodes::Lepton   () , "Any lepton"           ) ;
-  addSymbol ( "l"          , Decays::Nodes::Ell      () , "Any charged lepton"   ) ;
-  addSymbol ( "l+"         , Decays::Nodes::EllPlus  () , "Any positive lepton"  , "l-" ) ;
-  addSymbol ( "l-"         , Decays::Nodes::EllMinus () , "Any negative lepton"  , "l+" ) ;
-  addSymbol ( "Nu"         , Decays::Nodes::Nu       () , "Any neutral lepton"   ) ;
-  addSymbol ( "Neutrino"   , Decays::Nodes::Nu       () , "Any neutral lepton"   ) ;
+  addSymbol ( "Hadron"        , Decays::Nodes::Hadron   () , "Any hadron"           ) ;
+  addSymbol ( "Meson"         , Decays::Nodes::Meson    () , "Any meson"            ) ;
+  addSymbol ( "Baryon"        , Decays::Nodes::Baryon   () , "Any baryon"           ) ;
+  addSymbol ( "Nucleus"       , Decays::Nodes::Nucleus  () , "Any nucleus"          ) ;
+  addSymbol ( "Lepton"        , Decays::Nodes::Lepton   () , "Any lepton"           ) ;
+  addSymbol ( "l"             , Decays::Nodes::Ell      () , "Any charged lepton"   ) ;
+  addSymbol ( "l+"            , Decays::Nodes::EllPlus  () , "Any positive lepton"  , "l-" ) ;
+  addSymbol ( "l-"            , Decays::Nodes::EllMinus () , "Any negative lepton"  , "l+" ) ;
+  addSymbol ( "Nu"            , Decays::Nodes::Nu       () , "Any neutral lepton"   ) ;
+  addSymbol ( "Neutrino"      , Decays::Nodes::Nu       () , "Any neutral lepton"   ) ;
   //
-  addSymbol ( "X0"         , Decays::Nodes::Neutral  () , "Any neutral particle" ) ;
-  addSymbol ( "Xq"         , Decays::Nodes::Charged  () , "Any charged particle" ) ;
-  addSymbol ( "X+"         , Decays::Nodes::Positive () , "Any positive particle" , "X-" ) ;
-  addSymbol ( "X-"         , Decays::Nodes::Negative () , "Any negative particle" , "X+" ) ;
+  addSymbol ( "X0"            , Decays::Nodes::Neutral  () , "Any neutral particle" ) ;
+  addSymbol ( "Xq"            , Decays::Nodes::Charged  () , "Any charged particle" ) ;
+  addSymbol ( "X+"            , Decays::Nodes::Positive () , "Any positive particle" , "X-" ) ;
+  addSymbol ( "X-"            , Decays::Nodes::Negative () , "Any negative particle" , "X+" ) ;
+  //
+  addSymbol ( "ID+"           , Decays::Nodes::PosID    () , "Any particle with positive ID" , "ID-" ) ;
+  addSymbol ( "ID-"           , Decays::Nodes::NegID    () , "Any particle with negative ID" , "ID+" ) ;
   // 
-  addSymbol ( "Xd"         , Decays::Nodes::HasQuark ( LHCb::ParticleID::down    )  , "Any particle with d-quark" ) ;
-  addSymbol ( "Xu"         , Decays::Nodes::HasQuark ( LHCb::ParticleID::up      )  , "Any particle with u-quark" ) ;
-  addSymbol ( "Xs"         , Decays::Nodes::HasQuark ( LHCb::ParticleID::strange )  , "Any particle with s-quark" ) ;
-  addSymbol ( "Xc"         , Decays::Nodes::HasQuark ( LHCb::ParticleID::charm   )  , "Any particle with c-quark" ) ;
-  addSymbol ( "Xb"         , Decays::Nodes::HasQuark ( LHCb::ParticleID::bottom  )  , "Any particle with b-quark" ) ;
-  addSymbol ( "Xt"         , Decays::Nodes::HasQuark ( LHCb::ParticleID::top     )  , "Any particle with t-quark" ) ;
+  addSymbol ( "Xd"            , Decays::Nodes::HasQuark ( LHCb::ParticleID::down    )  , "Any particle with d-quark" ) ;
+  addSymbol ( "Xu"            , Decays::Nodes::HasQuark ( LHCb::ParticleID::up      )  , "Any particle with u-quark" ) ;
+  addSymbol ( "Xs"            , Decays::Nodes::HasQuark ( LHCb::ParticleID::strange )  , "Any particle with s-quark" ) ;
+  addSymbol ( "Xc"            , Decays::Nodes::HasQuark ( LHCb::ParticleID::charm   )  , "Any particle with c-quark" ) ;
+  addSymbol ( "Xb"            , Decays::Nodes::HasQuark ( LHCb::ParticleID::bottom  )  , "Any particle with b-quark" ) ;
+  addSymbol ( "Xt"            , Decays::Nodes::HasQuark ( LHCb::ParticleID::top     )  , "Any particle with t-quark" ) ;
   //
-  addSymbol ( "Down"       , Decays::Nodes::HasQuark ( LHCb::ParticleID::down    )  , "Any particle with d-quark" ) ;
-  addSymbol ( "Up"         , Decays::Nodes::HasQuark ( LHCb::ParticleID::up      )  , "Any particle with u-quark" ) ;
-  addSymbol ( "Strange"    , Decays::Nodes::HasQuark ( LHCb::ParticleID::strange )  , "Any particle with s-quark" ) ;
-  addSymbol ( "Charm"      , Decays::Nodes::HasQuark ( LHCb::ParticleID::charm   )  , "Any particle with c-quark" ) ;
-  addSymbol ( "Bottom"     , Decays::Nodes::HasQuark ( LHCb::ParticleID::bottom  )  , "Any particle with b-quark" ) ;
-  addSymbol ( "Beauty"     , Decays::Nodes::HasQuark ( LHCb::ParticleID::bottom  )  , "Any particle with b-quark" ) ;
-  addSymbol ( "Top"        , Decays::Nodes::HasQuark ( LHCb::ParticleID::top     )  , "Any particle with t-quark" ) ;
+  addSymbol ( "Down"          , Decays::Nodes::HasQuark ( LHCb::ParticleID::down    )  , "Any particle with d-quark" ) ;
+  addSymbol ( "Up"            , Decays::Nodes::HasQuark ( LHCb::ParticleID::up      )  , "Any particle with u-quark" ) ;
+  addSymbol ( "Strange"       , Decays::Nodes::HasQuark ( LHCb::ParticleID::strange )  , "Any particle with s-quark" ) ;
+  addSymbol ( "Charm"         , Decays::Nodes::HasQuark ( LHCb::ParticleID::charm   )  , "Any particle with c-quark" ) ;
+  addSymbol ( "Bottom"        , Decays::Nodes::HasQuark ( LHCb::ParticleID::bottom  )  , "Any particle with b-quark" ) ;
+  addSymbol ( "Beauty"        , Decays::Nodes::HasQuark ( LHCb::ParticleID::bottom  )  , "Any particle with b-quark" ) ;
+  addSymbol ( "Top"           , Decays::Nodes::HasQuark ( LHCb::ParticleID::top     )  , "Any particle with t-quark" ) ;
   // 
-  addSymbol ( "Scalar"     , Decays::Nodes::JSpin ( 1 ) , "Any scalar particle j=0"      ) ;
-  addSymbol ( "Spinor"     , Decays::Nodes::JSpin ( 2 ) , "Any spinor particle j=1/2"    ) ;
-  addSymbol ( "OneHalf"    , Decays::Nodes::JSpin ( 2 ) , "Any spinor particle j=1/2"    ) ;
-  addSymbol ( "Vector"     , Decays::Nodes::JSpin ( 3 ) , "Any vector particle j=1"      ) ;
-  addSymbol ( "ThreeHalf"  , Decays::Nodes::JSpin ( 4 ) , "Any particle with spin j=3/2" ) ;
-  addSymbol ( "Tensor"     , Decays::Nodes::JSpin ( 5 ) , "Any tensor particle j=2"      ) ;
-  addSymbol ( "FiveHalf"   , Decays::Nodes::JSpin ( 6 ) , "Any particle with spin j=5/2" ) ;
+  addSymbol ( "Scalar"        , Decays::Nodes::JSpin ( 1 ) , "Any scalar particle j=0"      ) ;
+  addSymbol ( "Spinor"        , Decays::Nodes::JSpin ( 2 ) , "Any spinor particle j=1/2"    ) ;
+  addSymbol ( "OneHalf"       , Decays::Nodes::JSpin ( 2 ) , "Any spinor particle j=1/2"    ) ;
+  addSymbol ( "Vector"        , Decays::Nodes::JSpin ( 3 ) , "Any vector particle j=1"      ) ;
+  addSymbol ( "ThreeHalf"     , Decays::Nodes::JSpin ( 4 ) , "Any particle with spin j=3/2" ) ;
+  addSymbol ( "Tensor"        , Decays::Nodes::JSpin ( 5 ) , "Any tensor particle j=2"      ) ;
+  addSymbol ( "FiveHalf"      , Decays::Nodes::JSpin ( 6 ) , "Any particle with spin j=5/2" ) ;
   //
   addSymbol ( "ShortLived"    , Decays::Nodes::ShortLived_   () , "Any short-ilved particle" ) ;
   addSymbol ( "LongLived"     , Decays::Nodes::LongLived_    () , "Any long-lived particle"  ) ;
