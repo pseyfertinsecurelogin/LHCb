@@ -52,6 +52,24 @@ void PackedDataChecksum::processObject(const LHCb::PackedProtoParticles& x, cons
 }
 
 template<>
+void PackedDataChecksum::processObject(const LHCb::PackedParticles& x, const std::string& key) {
+  process(key, x.packingVersion());
+  process(key, x.version());
+  processVector(key, x.data());
+  processVector(key, x.daughters());
+  processVector(key, x.extra());
+}
+
+template<>
+void PackedDataChecksum::processObject(const LHCb::PackedVertices& x, const std::string& key) {
+  process(key, x.packingVersion());
+  process(key, x.version());
+  processVector(key, x.data());
+  processVector(key, x.outgoingParticles());
+  processVector(key, x.extras());
+}
+
+template<>
 void PackedDataChecksum::processObject(const LHCb::PackedRecVertices& x, const std::string& key) {
   process(key, x.packingVersion());
   process(key, x.version());
@@ -142,5 +160,25 @@ void PackedDataChecksum::process(const std::string& key, const LHCb::PackedRecVe
               // skip x.container since it is not serialized, see PackedRecVertex.h
 }
 
+template<>
+void PackedDataChecksum::process(const std::string& key, const LHCb::PackedParticle& x) {
+  processMany(key,
+              x.particleID, x.measMass, x.measMassErr, x.lv_px, x.lv_py, x.lv_pz, x.lv_mass,
+              x.refx, x.refy, x.refz, x.momCov00, x.momCov11, x.momCov22, x.momCov33, x.momCov10, x.momCov20,
+              x.momCov21, x.momCov30, x.momCov31, x.momCov32, x.posCov00, x.posCov11, x.posCov22, x.posCov10,
+              x.posCov20, x.posCov21, x.pmCov00, x.pmCov01, x.pmCov02, x.pmCov10, x.pmCov11, x.pmCov12,
+              x.pmCov20, x.pmCov21, x.pmCov22, x.pmCov30, x.pmCov31, x.pmCov32,
+              x.vertex, x.proto, x.firstExtra, x.lastExtra, x.firstDaughter, x.lastDaughter);
+}
+
+template<>
+void PackedDataChecksum::process(const std::string& key, const LHCb::PackedVertex& x) {
+  processMany(key,
+              x.key, x.technique, x.chi2, x.nDoF,
+              x.x, x.y, x.z,
+              x.cov00, x.cov11, x.cov22, x.cov10, x.cov20, x.cov21,
+              x.firstOutgoingPart, x.lastOutgoingPart,
+              x.firstInfo, x.lastInfo);
+}
 
 }  // namespace PackedDataPersistence

@@ -7,6 +7,8 @@
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedCaloHypo.h"
 #include "Event/PackedProtoParticle.h"
+#include "Event/PackedParticle.h"
+#include "Event/PackedVertex.h"
 #include "Event/PackedRecVertex.h"
 
 #include "PackedDataChecksum.h"
@@ -51,6 +53,8 @@ StatusCode HltPackedDataWriter::initialize() {
   register_object<LHCb::PackedMuonPIDs>();
   register_object<LHCb::PackedCaloHypos>();
   register_object<LHCb::PackedProtoParticles>();
+  register_object<LHCb::PackedParticles>();
+  register_object<LHCb::PackedVertices>();
   register_object<LHCb::PackedCaloClusters>();
   register_object<LHCb::PackedRecVertices>();
 
@@ -233,4 +237,3 @@ void HltPackedDataWriter::addBanks(LHCb::RawEvent& rawEvent, const std::vector<u
     rawEvent.adoptBank(bank, true);
   }
 }
-

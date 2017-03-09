@@ -10,6 +10,8 @@
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedCaloHypo.h"
 #include "Event/PackedProtoParticle.h"
+#include "Event/PackedParticle.h"
+#include "Event/PackedVertex.h"
 #include "Event/PackedRecVertex.h"
 
 namespace PackedDataPersistence {
