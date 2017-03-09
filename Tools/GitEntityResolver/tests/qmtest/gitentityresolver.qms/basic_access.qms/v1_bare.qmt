@@ -27,6 +27,8 @@ findReferenceBlock('''
 ToolSvc.GitDDDB     DEBUG Initializing...
 ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
 ToolSvc.GitDDDB     DEBUG commit '{tag}' corresponds to {commit_id}
+ToolSvc.GitDDDB   VERBOSE ServiceLocatorHelper::service: found service IncidentSvc
+ToolSvc.GitDDDB     DEBUG registering to IncidentSvc
 ToolSvc.GitDDDB     DEBUG Successfully initialized.
 '''.format(repository=repository, commit_id=commit_id, tag=tag),
 id='GitEntityResolver.initialization')
@@ -35,6 +37,16 @@ findReferenceBlock('''
 LoadDDDB             INFO Database {repository} tag {tag}
 '''.format(repository=repository, commit_id=commit_id, tag=tag),
 id='reported_tag')
+
+findReferenceBlock('''
+DetCondTest::Te...   INFO /dd/TestCondition was updated
+LoadDDDB             INFO Loading the DDDB
+ToolSvc.GitDDDB     DEBUG resolveEntity(systemId = "git:/changing.xml")
+ToolSvc.GitDDDB     DEBUG open("git:/changing.xml")
+ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
+'''.format(repository=repository),
+id='GitEntityResolver.reopen_after_BeginEvent')
+
 
 # grep
 stripped_output = '\n'.join(l for l in stdout.splitlines()

@@ -27,6 +27,8 @@ findReferenceBlock('''
 ToolSvc.GitDDDB     DEBUG Initializing...
 ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
 ToolSvc.GitDDDB     DEBUG commit '{tag}' corresponds to {commit_id}
+ToolSvc.GitDDDB   VERBOSE ServiceLocatorHelper::service: found service IncidentSvc
+ToolSvc.GitDDDB     DEBUG registering to IncidentSvc
 ToolSvc.GitDDDB     DEBUG Successfully initialized.
 '''.format(repository=repository, commit_id=commit_id, tag=tag),
 id='GitEntityResolver.initialization')

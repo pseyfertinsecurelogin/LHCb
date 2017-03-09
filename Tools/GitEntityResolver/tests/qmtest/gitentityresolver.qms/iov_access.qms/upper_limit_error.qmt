@@ -42,6 +42,8 @@ ToolSvc.GitDDDB     DEBUG Initializing...
 ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
 ToolSvc.GitDDDB     DEBUG commit '{tag}' corresponds to {commit_id}
 ToolSvc.GitDDDB     DEBUG limit validity to commit time: 2016-12-31 23:00:00.0 UTC
+ToolSvc.GitDDDB   VERBOSE ServiceLocatorHelper::service: found service IncidentSvc
+ToolSvc.GitDDDB     DEBUG registering to IncidentSvc
 ToolSvc.GitDDDB     DEBUG Successfully initialized.
 '''.format(repository=repository, commit_id=commit_id, tag=tag),
 id='GitEntityResolver.initialization')

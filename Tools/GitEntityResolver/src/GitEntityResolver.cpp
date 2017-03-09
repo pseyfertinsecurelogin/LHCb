@@ -210,6 +210,15 @@ StatusCode GitEntityResolver::initialize()
     }
   }
 
+  m_incSvc = service<IIncidentSvc>( "IncidentSvc" );
+  if ( m_incSvc ) {
+    DEBUG_MSG << "registering to IncidentSvc" << endmsg;
+    // we use a very low priority for BeginEvent to be triggered after UpdateManagerSvc
+    m_incSvc->addListener(this, IncidentType::BeginEvent, -100);
+  } else {
+    warning() << "cannot get IncidentSvc, automatic disconnect not possible" << endmsg;
+  }
+
   // Initialize the Xerces-C++ XML subsystem
   try {
 
@@ -245,6 +254,11 @@ StatusCode GitEntityResolver::start()
 StatusCode GitEntityResolver::finalize()
 {
 
+  if ( m_incSvc ) {
+    DEBUG_MSG << "deregistering from IncidentSvc" << endmsg;
+    m_incSvc->removeListener(this);
+  }
+
   m_repository.reset();
   m_detDataSvc.reset();
 
@@ -252,6 +266,11 @@ StatusCode GitEntityResolver::finalize()
   xercesc::XMLPlatformUtils::Terminate();
 
   return base_class::finalize();
+}
+
+void GitEntityResolver::handle(const Incident&) {
+  // disconnect from the repository
+  m_repository.reset();
 }
 
 const std::vector<std::string>& GitEntityResolver::protocols() const

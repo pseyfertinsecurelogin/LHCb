@@ -5,6 +5,8 @@
 #include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/IFileAccess.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/Time.h"
 #include "GitEntityResolver/helpers.h"
 #include "Kernel/ICondDBInfo.h"
@@ -40,7 +42,7 @@ namespace Gaudi
  *  @author Marco Clemencic
  *  @date   2016-07-21
  */
-class GitEntityResolver : public extends<AlgTool, IXmlEntityResolver, IFileAccess, ICondDBInfo>,
+class GitEntityResolver : public extends<AlgTool, IXmlEntityResolver, IFileAccess, ICondDBInfo, IIncidentListener>,
                           virtual public xercesc::EntityResolver
 {
 public:
@@ -77,6 +79,9 @@ public:
    *  @param  tags vector of DB name, tag pairs. Empty if DB not available
    */
   void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const override;
+
+  /// Inform that a new incident has occurred
+  void handle(const Incident&) override;
 
 private:
   Gaudi::Property<std::string> m_pathToRepository{this, "PathToRepository", "",
@@ -159,6 +164,8 @@ private:
 
   /// used to get the current event time
   SmartIF<IDetDataSvc> m_detDataSvc;
+
+  SmartIF<IIncidentSvc> m_incSvc;
 
   std::regex m_ignore;
 
