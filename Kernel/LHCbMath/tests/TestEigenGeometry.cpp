@@ -19,10 +19,10 @@
 #include "vdt/sqrt.h"
 
 // Eigen type to use for 3D Vector
-typedef LHCb::Math::Eigen::XYZVector EigenXYZVector;
+typedef LHCb::Math::Eigen::XYZVector<double> EigenXYZVector;
 
 // Eigen type to use for 3D Point
-typedef LHCb::Math::Eigen::XYZPoint EigenXYZPoint;
+typedef LHCb::Math::Eigen::XYZPoint<double> EigenXYZPoint;
 
 // VectorClass type to use for 3D Vector
 //typedef LHCb::Math::VectorClass::XYZVector VClassXYZVector;
