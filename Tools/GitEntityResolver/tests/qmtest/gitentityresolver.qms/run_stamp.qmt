@@ -63,4 +63,8 @@ if outputlines != expected:
     result["GaudiTest.output.expected"] = result.Quote("\n".join(expected))
     result["GaudiTest.output.found"] = result.Quote("\n".join(outputlines))
 </text></argument>
+<argument name="prerequisites"><set>
+  <tuple><text>gitentityresolver.prepare</text><enumeral>PASS</enumeral></tuple>
+</set></argument>
+<argument name="use_temp_dir"><enumeral>true</enumeral></argument>
 </extension>
