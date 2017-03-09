@@ -26,7 +26,7 @@ class DDDBConf(ConfigurableUser):
                    }
     _propertyDocDct = {
                        'DbRoot' : """ Root file of the detector description """,
-                       'DataType' : """ Symbolic name for the data type. Allowed values: ["2016", "2015", "2013", "2012", "2011", "2010", "2009","2008","Upgrade"] """,
+                       'DataType' : """ Symbolic name for the data type. Allowed values: ["2017", "2016", "2015", "2013", "2012", "2011", "2010", "2009","2008","Upgrade"] """,
                        'Simulation' : """ Boolean flag to select the simulation or real-data configuration """,
                        'AutoTags'  : """ Perform automatic resolution of CondDB tags """,
                        'InitialTime' : """ How to set the initial time. None/'Safe' uses a list of dummy times for each year and sets that time. 'Now' uses the current time. Sepcifying a number assumes that is a time in utc.""",
@@ -195,7 +195,7 @@ class DDDBConf(ConfigurableUser):
         # Set the tags
         self.__set_tag__(["DDDB"],     "dddb-20150724" )
         if not self.getProp("Simulation"):
-            self.__set_tag__(["LHCBCOND"], "cond-20161011" )
+            self.__set_tag__(["LHCBCOND"], "cond-20170120-1" )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             # set initialization time to a safe default
             self.__set_init_time__(datetime(2017, 12, 31, 23, 59))
@@ -207,7 +207,7 @@ class DDDBConf(ConfigurableUser):
         # Set the tags
         self.__set_tag__(["DDDB"],     "dddb-20150724" )
         if not self.getProp("Simulation"):
-            self.__set_tag__(["LHCBCOND"], "cond-20161011" )
+            self.__set_tag__(["LHCBCOND"], "cond-20170120-1" )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             # set initialization time to a safe default
             self.__set_init_time__(datetime(2016, 12, 5, 5, 3)) # End of fill 5575
@@ -219,7 +219,7 @@ class DDDBConf(ConfigurableUser):
         # Set the tags
         self.__set_tag__(["DDDB"],     "dddb-20150724" )
         if not self.getProp("Simulation"):
-            self.__set_tag__(["LHCBCOND"], "cond-20151016" )
+            self.__set_tag__(["LHCBCOND"], "cond-20170120" )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             self.__set_init_time__(datetime(2015, 12, 13, 12, 8)) # End of fill 4720
 
