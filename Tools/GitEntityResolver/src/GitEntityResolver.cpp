@@ -142,15 +142,23 @@ std::ostream& operator<<( std::ostream& s, const GitEntityResolver::IOVInfo& inf
 #define VERBOSE_MSG ON_VERBOSE verbose()
 
 GitEntityResolver::GitEntityResolver( const std::string& type, const std::string& name, const IInterface* parent )
-    : base_class( type, name, parent )
+    : base_class( type, name, parent ),
+    m_repository{ [this]() -> git_repository_ptr::storage_t {
+      DEBUG_MSG << "opening Git repository '" << m_pathToRepository.value() << "'" << endmsg;
+      auto res = git_call<git_repository_ptr::storage_t>( this->name(), "cannot open repository", m_pathToRepository.value(),
+                                                          git_repository_open, m_pathToRepository.value().c_str() );
+      if ( UNLIKELY( !res ) )
+        throw GaudiException( "invalid Git repository: '" + m_pathToRepository.value() + "'", this->name(),
+                              StatusCode::FAILURE );
+      return std::move( res );
+    }}
 {
   // Initialize Git library
   git_libgit2_init();
 
   m_pathToRepository.declareUpdateHandler( [this]( Property& ) -> void {
-    DEBUG_MSG << "opening Git repository '" << m_pathToRepository.value() << "'" << endmsg;
-    m_repository = git_call<git_repository_ptr>( this->name(), "cannot open repository", m_pathToRepository.value(),
-                                                 git_repository_open, m_pathToRepository.value().c_str() );
+    // on update of the property we disconnect
+    m_repository.reset();
   } );
 
   m_ignoreRegex.declareUpdateHandler( [this]( Property& ) -> void {
@@ -173,13 +181,6 @@ StatusCode GitEntityResolver::initialize()
   if ( !sc.isSuccess() ) return sc;
 
   DEBUG_MSG << "Initializing..." << endmsg;
-
-  if ( !m_repository ) {
-    m_pathToRepository.useUpdateHandler();
-    if ( UNLIKELY( !m_repository ) )
-      throw GaudiException( "invalid Git repository: '" + m_pathToRepository.value() + "'", name(),
-                            StatusCode::FAILURE );
-  }
 
   m_useFiles = m_commit.empty();
   if ( m_useFiles ) {
@@ -233,9 +234,8 @@ StatusCode GitEntityResolver::start()
   StatusCode sc = base_class::start();
   if (m_reopenOnStart) {
     DEBUG_MSG << "reopen repository" << endmsg;
-    m_repository.reset();
-    m_pathToRepository.useUpdateHandler();
-    if ( UNLIKELY( !m_repository ) )
+    m_repository.reset(); // disconnect
+    if ( UNLIKELY( !m_repository ) ) // reconnect
       throw GaudiException( "failed to reopen Git repository: '" + m_pathToRepository.value() + "'", name(),
                             StatusCode::FAILURE );
   }

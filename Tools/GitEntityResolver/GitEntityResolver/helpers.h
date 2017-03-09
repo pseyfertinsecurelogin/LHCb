@@ -5,7 +5,7 @@
 #include <boost/filesystem.hpp>
 #include <git2.h>
 #include <string>
-#include <vector>
+#include <mutex>
 
 namespace std
 {
@@ -20,7 +20,51 @@ namespace std
 }
 
 using git_object_ptr     = std::unique_ptr<git_object>;
-using git_repository_ptr = std::unique_ptr<git_repository>;
+
+/// Helper class to allow on-demand connection to the git repository.
+class git_repository_ptr {
+public:
+  using storage_t = std::unique_ptr<git_repository>;
+  using factory_t = std::function<storage_t()>;
+  using pointer = storage_t::pointer;
+  using reference = std::add_lvalue_reference<storage_t::element_type>::type;
+
+  git_repository_ptr(factory_t factory): m_factory( std::move( factory ) ) {}
+
+  pointer get() const {
+    {
+      std::lock_guard<std::mutex> guard(m_ptr_mutex);
+      if ( !m_ptr ){
+        m_ptr = m_factory();
+        if ( !m_ptr ) throw std::runtime_error("unable create object");
+      }
+    }
+    return m_ptr.get();
+  }
+
+  reference operator*() const {
+    return *get();
+  }
+
+  pointer operator->() const {
+    return get();
+  }
+
+  explicit operator bool() const {
+    return get();
+  }
+
+  void reset() {
+    std::lock_guard<std::mutex> guard(m_ptr_mutex);
+    m_ptr.reset();
+  }
+
+private:
+
+  factory_t m_factory;
+  mutable storage_t m_ptr;
+  mutable std::mutex m_ptr_mutex;
+};
 
 namespace Git
 {

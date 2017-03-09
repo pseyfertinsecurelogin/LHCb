@@ -27,8 +27,8 @@ commit_id = None
 countErrorLines()
 
 findReferenceBlock('''
-ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
 ToolSvc.GitDDDB     DEBUG Initializing...
+ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
 ToolSvc.GitDDDB      INFO using checked out files in {repository}
 ToolSvc.GitDDDB     DEBUG Successfully initialized.
 '''.format(repository=repository, commit_id=commit_id, tag=tag),

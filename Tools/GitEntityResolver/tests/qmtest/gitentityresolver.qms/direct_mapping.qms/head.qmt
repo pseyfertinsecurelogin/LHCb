@@ -27,8 +27,8 @@ commit_id = check_output(['git', 'rev-parse', tag], cwd=repository)
 countErrorLines()
 
 findReferenceBlock('''
-ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
 ToolSvc.GitDDDB     DEBUG Initializing...
+ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
 ToolSvc.GitDDDB     DEBUG commit '{tag}' corresponds to {commit_id}
 ToolSvc.GitDDDB     DEBUG Successfully initialized.
 '''.format(repository=repository, commit_id=commit_id, tag=tag),
