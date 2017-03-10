@@ -12,7 +12,8 @@ def LoadDDDBTest(datatype, sim=False, loctags=True, paths=None):
              IgnoreHeartBeat = True,
              EnableRunStampCheck = False)
     # Set up conditions database configuration (ignore checks for up-to-date)
-    CondDB(LatestGlobalTagByDataTypes = [datatype],
+    CondDB(Upgrade = datatype == "Upgrade",
+           LatestGlobalTagByDataTypes = [datatype],
            LatestLocalTagsByDataType  = [datatype] if loctags else [])
     # Set up application
     main = GaudiSequencer(MeasureTime=True)
