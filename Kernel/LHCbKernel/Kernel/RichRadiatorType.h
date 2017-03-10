@@ -17,14 +17,14 @@
 #include <vector>
 #include <iostream>
 #include <array>
-#include <stdint.h>
+#include <cstdint>
 
 // General namespace for RICH specific definitions documented in RichSide.h
 namespace Rich
 {
 
   /// Number of RICH radiators
-  static const int NRadiatorTypes = 3;
+  static const uint8_t NRadiatorTypes = 3;
 
   /** @enum Rich::RadiatorType
    *
