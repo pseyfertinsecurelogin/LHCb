@@ -107,12 +107,90 @@ public:
    * @param point A point in the global coordinate system
    * @return The side for this point
    */
-  inline Rich::Side side( const Gaudi::XYZPoint& point ) const noexcept
+  template < typename POINT >
+  inline 
+  typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value, Rich::Side >::type
+  side( const POINT& point ) const noexcept
   {
     return ( Rich::Rich1 == rich()                            ?
-             ( point.y() >= 0.0 ? Rich::top  : Rich::bottom ) :
-             ( point.x() >= 0.0 ? Rich::left : Rich::right  ) );
+             ( point.y() >= 0 ? Rich::top  : Rich::bottom ) :
+             ( point.x() >= 0 ? Rich::left : Rich::right  ) );
   }
+
+  // /**
+  //  * Check on which side of this Rich lies this point
+  //  *
+  //  * @param point A point in the global coordinate system
+  //  * @return The side for this point
+  //  */
+  // template < typename POINT, typename SIDES >
+  // inline 
+  // typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value, void >::type
+  // sides( const POINT& point, SIDES& sides ) const noexcept
+  // {
+  //   if ( Rich::Rich1 == rich() )
+  //   {
+      
+  //     //if ( point.y() >= POINT::Scalar::Zero() )
+  //     //{
+  //     //  sides = SIDES(Rich::top);
+  //     // }
+  //     //else
+  //     // {
+  //     // sides = SIDES(Rich::bottom);
+  //     // }
+
+
+  //     //const typename SIDES::mask_type m = ( point.y() >= POINT::Scalar::Zero() );
+  //     //Vc::iff( m, SIDES(Rich::top), SIDES(Rich::bottom) );
+  //     //sides = SIDES(Rich::bottom);
+  //     //sides( m ) = SIDES(Rich::top);
+  //   }
+  //   else
+  //   {
+  //     //sides = SIDES(Rich::right);
+  //     //sides( point.x() >= POINT::Scalar::Zero() ) = SIDES(Rich::left);
+  //   }
+  // }
+
+  /**
+   * Check on which side of this Rich lies this (x,y) point
+   *
+   * @param point A point in the global coordinate system
+   * @return The side for this point
+   */
+  template< typename TYPE >
+  inline 
+  typename std::enable_if< std::is_arithmetic<TYPE>::value, Rich::Side >::type
+  side( const TYPE x, const TYPE y ) const noexcept
+  {
+    return ( Rich::Rich1 == rich()                  ?
+             ( y >= 0 ? Rich::top  : Rich::bottom ) :
+             ( x >= 0 ? Rich::left : Rich::right  ) );
+  }
+
+  // /**
+  //  * Check on which side of this Rich lies this point
+  //  *
+  //  * @param point A point in the global coordinate system
+  //  * @return The side for this point
+  //  */
+  // template < typename TYPE, typename SIDES >
+  // inline 
+  // typename std::enable_if< !std::is_arithmetic<TYPE>::value, void >::type
+  // sides( const TYPE x, const TYPE y, SIDES& sides ) const noexcept
+  // {
+  //   if ( Rich::Rich1 == rich() )
+  //   {
+  //     sides = SIDES(Rich::bottom);
+  //     sides( y >= TYPE::Zero() ) = SIDES(Rich::top);
+  //   }
+  //   else
+  //   {
+  //     sides = SIDES(Rich::right);
+  //     sides( x >= TYPE::Zero() ) = SIDES(Rich::left);
+  //   }
+  // }
 
   /**
    * Returns the detector type for this Rich

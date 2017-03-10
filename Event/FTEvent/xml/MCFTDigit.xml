@@ -21,8 +21,8 @@
       &KeyedObject;
 
       <constructor desc     = "Constructor"
-		   argList  = "LHCb::FTChannelID&amp; id, int adc, const LHCb::MCFTDeposit* deposit" 
-                   initList = "m_adcCount(adc),m_deposit(deposit)">
+		   argList  = "LHCb::FTChannelID&amp; id, float PE, int adc, const LHCb::MCFTDeposit* deposit" 
+                   initList = "m_photoElectrons(PE),m_adcCount(adc),m_deposit(deposit)">
         <code> this->setKey(id); </code>
       </constructor>
 
@@ -45,9 +45,14 @@
 		 access  = "PUBLIC">
 	<code> return d1-&gt;channelID() &lt; d2-&gt;channelID(); </code>
       </method>
+      
+      <attribute name   = "photoElectrons"
+                 desc   = "photoElectrons for ChannelID"
+                 type   = "float"
+                 access = "PRIVATE"/>
 
       <attribute name   = "adcCount"
-                 desc   = "ADC Count for ChannelID"
+                 desc   = "ADC Counts (2bit ADC PE threshold check) for ChannelID"
                  type   = "int"
                  access = "PRIVATE"/>
 

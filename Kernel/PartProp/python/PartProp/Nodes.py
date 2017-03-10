@@ -250,6 +250,9 @@ Not       = Decays.Nodes.Not          # type
 Invalid   = Decays.Nodes.Invalid ()   # instance
 _Node     = Decays.Nodes._Node        # type
 
+PosId     = Decays.Nodes.PosID ()     # instance
+NegId     = Decays.Nodes.NegID ()     # instance
+
 Up        = HasQuark ( LHCb.ParticleID.up      )
 Down      = HasQuark ( LHCb.ParticleID.down    )
 Strange   = HasQuark ( LHCb.ParticleID.strange )

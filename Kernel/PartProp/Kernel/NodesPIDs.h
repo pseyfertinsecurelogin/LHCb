@@ -712,6 +712,56 @@ namespace Decays
       // ======================================================================
     } ;
     // ========================================================================
+    /** @class PosID 
+     *  - It matches the particles with positive ID 
+     *  - Useful way to separate e.g. charm particle and charm antiparticle 
+     *  - Useful mainly in boolean operatios, e.g. <code>Charm & ID+ </code>
+     *  - Charge conjugation could be fragile 
+     *  @author Vanya BELYAEV Ivan.Belyaev@iep.ru
+     *  @date 2017-02-24
+     */
+    class GAUDI_API PosID : public Decays::iNode
+    {
+    public:
+      // ======================================================================
+      /// MANDATORY: clone method ("virtual constructor")
+      PosID* clone () const   override;
+      /// MANDATORY: the only one essential method
+      bool operator() ( const LHCb::ParticleID& /* p */ ) const  override;
+      /// MANDATORY: the specific printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
+      /// MANDATORY: check the validity
+      bool valid() const  override;
+      /// MANDATORY: the proper validation of the node
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
+      // ======================================================================
+    };
+    // ========================================================================
+    /** @class NegID 
+     *  - It matches the particles with negative ID 
+     *  - Useful way to separate e.g. charm particle and charm antiparticle 
+     *  - Useful mainly in boolean operatios, e.g. <code>Charm & ID- </code>
+     *  - Charge conjugation could be fragile 
+     *  @author Vanya BELYAEV Ivan.Belyaev@iep.ru
+     *  @date 2017-02-24
+     */
+    class GAUDI_API NegID : public Decays::iNode
+    {
+    public:
+      // ======================================================================
+      /// MANDATORY: clone method ("virtual constructor")
+      NegID* clone () const   override;
+      /// MANDATORY: the only one essential method
+      bool operator() ( const LHCb::ParticleID& /* p */ ) const  override;
+      /// MANDATORY: the specific printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
+      /// MANDATORY: check the validity
+      bool valid() const  override;
+      /// MANDATORY: the proper validation of the node
+      StatusCode validate ( const LHCb::IParticlePropertySvc* svc ) const  override;
+      // ======================================================================
+    };
+    // ========================================================================
     class GAUDI_API Symbol : public Decays::iNode
     {
     public :
