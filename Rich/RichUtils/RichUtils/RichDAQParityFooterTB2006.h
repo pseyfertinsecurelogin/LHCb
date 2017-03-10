@@ -9,8 +9,7 @@
  */
 //=============================================================================================
 
-#ifndef RICHUTILS_RICHDAQPARITYFOOTERTB2006_H
-#define RICHUTILS_RICHDAQPARITYFOOTERTB2006_H 1
+#pragma once
 
 #include "RichUtils/RichDAQFooterPDBase.h"
 
@@ -41,19 +40,19 @@ namespace Rich
       inline bool hasParityWord() const noexcept { return true; }
 
       /// Access the parity word
-      inline Rich::DAQ::LongType parityWord() const
+      inline WordType parityWord() const
       {
         return footerWords()[0];
       }
 
       /// Set the parity word
-      inline void setParityWord( const Rich::DAQ::LongType word )
+      inline void setParityWord( const WordType word )
       {
         this->setWord( 0, word );
       }
 
       /// Test the parity word
-      inline bool testParityWord( const LongType refWord ) const 
+      inline bool testParityWord( const WordType refWord ) const 
       { 
         return ( refWord == this->parityWord() );
       }
@@ -62,5 +61,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_RICHDAQPARITYFOOTERTB2006_H

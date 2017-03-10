@@ -9,8 +9,7 @@
  */
 //=============================================================================================
 
-#ifndef RICHUTILS_RICHDAQPARITYFOOTER_H
-#define RICHUTILS_RICHDAQPARITYFOOTER_H 1
+#pragma once
 
 #include "RichUtils/RichDAQFooterPDBase.h"
 
@@ -44,7 +43,7 @@ namespace Rich
 
       /// Constructor with given size
       ParityFooter( const ShortType nWords,
-                    const LongType  wordInit = 0 ) 
+                    const WordType  wordInit = WordType(0) ) 
         : FooterPDBase(nWords,wordInit) { }
 
       /// Constructor from raw footer word(s)
@@ -58,22 +57,22 @@ namespace Rich
       }
 
       /// Access the parity word
-      inline Rich::DAQ::LongType parityWord() const
+      inline WordType parityWord() const
       {
-        return ( hasParityWord() ? footerWords()[0] : 0 );
+        return ( hasParityWord() ? footerWords()[0] : WordType(0) );
       }
 
       /// Set the parity word
-      inline void setParityWord( const Rich::DAQ::LongType word )
+      inline void setParityWord( const WordType word )
       {
         makeParityAvailable();
         this->setWord( 0, word );
       }
 
       /// Test the parity word
-      inline bool testParityWord( const LongType /* refWord */ ) const 
+      inline bool testParityWord( const WordType /* refWord */ ) const 
       { 
-        return ( 0 == this->parityWord() );
+        return ( WordType(0) == this->parityWord() );
       }
 
     private:
@@ -83,7 +82,7 @@ namespace Rich
       {
         if ( !hasParityWord() )
         {
-          footerWords() = FooterPDBase::FooterWords(1,0);
+          footerWords() = FooterPDBase::FooterWords(1,WordType(0));
         } 
       }
 
@@ -91,5 +90,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_RICHDAQPARITYFOOTER_H
