@@ -3,8 +3,6 @@
 <gdd>
   <package name='TrackEvent'>
 
-<!-- ================ OTMeasurement class definition ================ -->
-
     <class
       name        = 'ChiSquare'
       author      = 'Wouter Hulsbergen'
