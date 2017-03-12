@@ -1,6 +1,5 @@
 
-#ifndef RICHUTILS_ZipRange_H
-#define RICHUTILS_ZipRange_H 1
+#pragma once
 
 // Gaudi
 #include "GaudiAlg/FunctionalDetails.h"
@@ -12,7 +11,7 @@ namespace Rich
 {
 
   //-----------------------------------------------------------------------------
-  /** @namespace Rich::Range
+  /** @namespace Ranges
    *
    *  Namespace for RICH Range utities
    *
@@ -40,5 +39,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_ZipRange_H

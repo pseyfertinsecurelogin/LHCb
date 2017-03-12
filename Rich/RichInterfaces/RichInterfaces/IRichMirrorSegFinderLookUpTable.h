@@ -142,9 +142,16 @@ namespace Rich
           }
         }
         /// Find the mirror for a given position
-        inline const DeRichSphMirror* find( const Gaudi::XYZPoint& p ) const noexcept
+        template< typename POINT >
+        inline const DeRichSphMirror* find( const POINT& p ) const noexcept
         {
           return mirrors[ m_lookupTable.get( xIndex(p.x()), yIndex(p.y()) ) ];
+        }
+        /// Find the mirror for a given position (x,y)
+        template< typename TYPE >
+        inline const DeRichSphMirror* find( const TYPE x, const TYPE y ) const noexcept
+        {
+          return mirrors[ m_lookupTable.get( xIndex(x), yIndex(y) ) ];
         }
       private:
         /// Get the mirror closest to a given (x,y) point
@@ -219,14 +226,16 @@ namespace Rich
           return m_minY + (i/m_incY) + (0.5/m_incY);
         }
         /// Get the x index
-        inline unsigned int xIndex( const double x ) const noexcept
+        template< typename TYPE >
+        inline unsigned int xIndex( const TYPE x ) const noexcept
         {
           return ( x < minX() ? 0            :
                    x > maxX() ? nXBins() - 1 :
                    (unsigned int)((x-minX())*m_incX) );
         }
         /// Get the y index
-        inline unsigned int yIndex( const double y ) const noexcept
+        template< typename TYPE >
+        inline unsigned int yIndex( const TYPE y ) const noexcept
         {
           return ( y < minY() ? 0            :
                    y > maxY() ? nYBins() - 1 :
@@ -299,10 +308,17 @@ namespace Rich
                                 m2->mirrorCentre().X() ); } );
         }
         /// Find the mirror for a given position
-        inline const DeRichSphMirror* find( const Gaudi::XYZPoint& p ) const noexcept
+        template< typename POINT >
+        inline const DeRichSphMirror* find( const POINT& p ) const noexcept
         {
           return ( p.x() < 0 ? mirrors[0] : mirrors[1] );
         }
+        /// Find the mirror for a given position (x,y)
+        template< typename TYPE >
+        inline const DeRichSphMirror* find( const TYPE x, const TYPE /* y */ ) const noexcept
+        {
+          return ( x < 0 ? mirrors[0] : mirrors[1] );
+        }      
       public:
         /// Vector of all mirrors in this panel
         Mirrors mirrors;
@@ -348,12 +364,22 @@ namespace Rich
           m_r2Finder[Rich::right] .init(); 
         }
         /// Find the mirror for the given RICH, panel and point
+        template< typename POINT >
         inline const DeRichSphMirror* find( const Rich::DetectorType rich,
                                             const Rich::Side side,
-                                            const Gaudi::XYZPoint& p ) const noexcept
+                                            const POINT& p ) const noexcept
         {
           return ( Rich::Rich1 == rich ?
                    m_r1Finder[side].find(p) : m_r2Finder[side].find(p) );
+        }
+        /// Find the mirror for the given RICH, panel and point (x,y)
+        template< typename TYPE >
+        inline const DeRichSphMirror* find( const Rich::DetectorType rich,
+                                            const Rich::Side side,
+                                            const TYPE x, const TYPE y ) const noexcept
+        {
+          return ( Rich::Rich1 == rich ?
+                   m_r1Finder[side].find(x,y) : m_r2Finder[side].find(x,y) );
         }
         /// Get the list of mirrors
         const Mirrors& mirrors( const Rich::DetectorType rich,
@@ -394,10 +420,11 @@ namespace Rich
        *
        *  @return Const pointer to DeRichSphMirror object for the associated mirror segment
        */
+      template< typename POINT >
       inline const DeRichSphMirror*
       findSphMirror( const Rich::DetectorType rich,
                      const Rich::Side side,
-                     const Gaudi::XYZPoint& reflPoint ) const noexcept
+                     const POINT& reflPoint ) const noexcept
       { 
         // Find the mirror from the lookup map
         return m_sphMirrFinder.find( rich, side, reflPoint );
@@ -412,13 +439,54 @@ namespace Rich
        *
        *  @return Const pointer to DeRichSphMirror object for the associated mirror segment
        */
+      template< typename POINT >
       inline const DeRichSphMirror*
       findSecMirror( const Rich::DetectorType rich,
                      const Rich::Side side,
-                     const Gaudi::XYZPoint& reflPoint ) const noexcept
+                     const POINT& reflPoint ) const noexcept
       {
         // Find the mirror from the lookup map
         return m_secMirrFinder.find( rich, side, reflPoint );
+      }
+
+    public:
+
+      /** Locates the spherical mirror Segment given a reflection point,
+       *  RICH identifier and panel
+       *
+       *  @param rich       The RICH detector
+       *  @param side       The RICH HPD panel side
+       *  @param reflPoint  The reflection point on the spherical mirror
+       *
+       *  @return Const pointer to DeRichSphMirror object for the associated mirror segment
+       */
+      template< typename TYPE >
+      inline const DeRichSphMirror*
+      findSphMirror( const Rich::DetectorType rich,
+                     const Rich::Side side,
+                     const TYPE x, const TYPE y ) const noexcept
+      { 
+        // Find the mirror from the lookup map
+        return m_sphMirrFinder.find( rich, side, x, y );
+      }
+      
+      /** Locates the secondary (spherical) mirror Segment given a reflection point,
+       *  RICH identifier and panel
+       *
+       *  @param rich       The RICH detector
+       *  @param side       The RICH HPD panel side
+       *  @param reflPoint  The reflection point on the secondary mirror
+       *
+       *  @return Const pointer to DeRichSphMirror object for the associated mirror segment
+       */
+      template< typename TYPE >
+      inline const DeRichSphMirror*
+      findSecMirror( const Rich::DetectorType rich,
+                     const Rich::Side side,
+                     const TYPE x, const TYPE y ) const noexcept
+      {
+        // Find the mirror from the lookup map
+        return m_secMirrFinder.find( rich, side, x, y );
       }
       
     };

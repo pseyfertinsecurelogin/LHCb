@@ -2,6 +2,7 @@
 #define DICT_RICHUTILSDICT_H 1
 
 #include "RichFutureUtils/RichHypoData.h"
+#include "RichFutureUtils/RichGeomPhoton.h"
 
 // instanciate templated classes
 namespace 
