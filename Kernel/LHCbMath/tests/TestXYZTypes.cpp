@@ -34,15 +34,15 @@ int main ( int /*argc*/, char** /*argv*/ )
     const Gaudi::XYZVector gv( x(gen),  x(gen),  x(gen) );
 
     // make some Eigen types
-    const LHCb::Math::Eigen::XYZPoint  ep( gp );
-    const LHCb::Math::Eigen::XYZVector ev( gv );
+    const LHCb::Math::Eigen::XYZPoint<double>  ep( gp );
+    const LHCb::Math::Eigen::XYZVector<double> ev( gv );
 
     // Test some planes
     const float a(x(gen)), b(x(gen)), c(x(gen)), d(x(gen));
 
     const Gaudi::Plane3D             gplane( a,b,c,d );
 
-    const LHCb::Math::Eigen::Plane3D eplane( gplane );
+    const LHCb::Math::Eigen::Plane3D<double> eplane( gplane );
 
     const Gaudi::Plane3D gplane2 = eplane;
 
