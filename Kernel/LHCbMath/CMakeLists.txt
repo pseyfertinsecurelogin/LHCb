@@ -37,7 +37,10 @@ gaudi_add_dictionary(LHCbMath
 set_property(SOURCE src/Similarity_generic.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -O3 " )
 set_property(SOURCE src/Similarity_SSE3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -msse3 -O3 " )
 set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx -O3 " )
-set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx2 -mfma -O3 " )
+# Temporarily use only AVX with the AVX2+FMA target. 
+# Can be reverted once all build platforms support AVX2 (i.e. SLC6 has updated binutils).
+set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx -O3 " )
+#set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx2 -mfma -O3 " )
 if(LCG_COMP STREQUAL "gcc" OR
     (BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_LESS "5"))
   set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -fabi-version=0 " )
