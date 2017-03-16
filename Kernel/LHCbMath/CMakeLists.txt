@@ -34,13 +34,29 @@ gaudi_add_dictionary(LHCbMath
                      LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib
                      OPTIONS "-U__MINGW32__")
 
+
+# Determine if AVX2 is supported
+set(AVX2_BUILD_FLAGS " -mavx -O3 ")
+exec_program(${CMAKE_CXX_COMPILER} ARGS -print-prog-name=as OUTPUT_VARIABLE _as)
+if(NOT _as)
+  message(ERROR "Could not find the 'as' assembler...")
+else()
+  exec_program(${_as} ARGS --version OUTPUT_VARIABLE _as_version)
+  string(REGEX REPLACE "\\([^\\)]*\\)" "" _as_version "${_as_version}")
+  string(REGEX MATCH "[1-9]\\.[0-9]+(\\.[0-9]+)?" _as_version "${_as_version}")
+  if(_as_version VERSION_LESS "2.21.0")
+     message(WARNING "binutils is too old to support AVX2+FMA... Falling back to AVX only.")
+  else()
+     set(AVX2_BUILD_FLAGS " -mavx2 -mfma -O3 ")
+  endif()
+endif()
+message(STATUS "AVX2 build flags = " ${AVX2_BUILD_FLAGS})
+
 set_property(SOURCE src/Similarity_generic.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -O3 " )
 set_property(SOURCE src/Similarity_SSE3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -msse3 -O3 " )
 set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx -O3 " )
-# Temporarily use only AVX with the AVX2+FMA target. 
-# Can be reverted once all build platforms support AVX2 (i.e. SLC6 has updated binutils).
-set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx -O3 " )
-#set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx2 -mfma -O3 " )
+set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2_BUILD_FLAGS} )
+
 if(LCG_COMP STREQUAL "gcc" OR
     (BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_LESS "5"))
   set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -fabi-version=0 " )
