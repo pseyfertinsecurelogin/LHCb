@@ -4,6 +4,7 @@
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/IEventProcessor.h"
 #include "GaudiKernel/IFileAccess.h"
+#include "GaudiKernel/IDetDataSvc.h"
 #include "DetCond/ICondDBReader.h"
 #include "DetDesc/RunChangeIncident.h"
 
@@ -108,6 +109,8 @@ public:
   }
   /// Handle the BeginEvent incident to check if the RunStamp condition exists.
   void handle(const Incident& inc) override {
+    static bool first_event = true;
+
     DEBUG_MSG << inc.type() << " incident received" << endmsg;
 
     const RunChangeIncident* rci = dynamic_cast<const RunChangeIncident*>(&inc);
@@ -120,6 +123,15 @@ public:
     const auto when = rci->eventTime();
 
     if ( m_condDBReader ) {
+      if ( UNLIKELY( first_event ) ) {
+        first_event = false;
+        // because of a flaw in the way RunChange incidents are invoked, the event time in the DetDataSvc
+        // for the first even may be badly off, triggering a load of the wrong ONLINE early shapshot
+        auto dds = serviceLocator()->service<IDetDataSvc>("DetectorDataSvc");
+        if ( dds ) { // we do not really care if we did not manage to set the correct event time
+          dds->setEventTime( when );
+        }
+      }
       DEBUG_MSG << "Checking '" << m_runStampCondition.value()
                 << "' for event time " << when << endmsg;
       ICondDBReader::DataPtr p;
