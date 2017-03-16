@@ -69,7 +69,7 @@ StatusCode HltPackedDataDecoder::execute() {
 
   const auto& rawBanksConst = findFirstRawBank(LHCb::RawBank::DstData);
   if (rawBanksConst.empty()) {
-    return Warning("No appropriate HltPackedData raw bank in raw event. Quitting.",
+    return Warning("No HltPackedData raw bank (the DstData bank) in raw event. Quitting.",
                    StatusCode::SUCCESS, 10);
   }
 
