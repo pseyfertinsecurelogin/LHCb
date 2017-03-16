@@ -124,6 +124,8 @@ namespace LHCb
     bool hasTop     () const { return hasQuark ( top     ) ; }
     /// Quark contents
     bool hasQuark   ( const Quark& q ) const;
+    /// Is a single quark of any type
+    bool isQuark    () const ;
     /// Contains quarks but not a nucleus
     bool hasQuarks  () const ;
     /// Atomic number if a nucleus
