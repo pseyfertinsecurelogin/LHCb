@@ -411,12 +411,14 @@ std::ostream& LHCb::ParticleID::printQuark( const long q, std::ostream& s )
 {
   switch ( q ) 
   {
-  case LHCb::ParticleID::down    : return s << "LHCb.ParticleID.down"    ;
-  case LHCb::ParticleID::up      : return s << "LHCb.ParticleID.up"      ;
-  case LHCb::ParticleID::strange : return s << "LHCb.ParticleID.strange" ;
-  case LHCb::ParticleID::charm   : return s << "LHCb.ParticleID.charm"   ;
-  case LHCb::ParticleID::bottom  : return s << "LHCb.ParticleID.bottom"  ;
-  case LHCb::ParticleID::top     : return s << "LHCb.ParticleID.top"     ;
+  case LHCb::ParticleID::down         : return s << "LHCb.ParticleID.down"         ;
+  case LHCb::ParticleID::up           : return s << "LHCb.ParticleID.up"           ;
+  case LHCb::ParticleID::strange      : return s << "LHCb.ParticleID.strange"      ;
+  case LHCb::ParticleID::charm        : return s << "LHCb.ParticleID.charm"        ;
+  case LHCb::ParticleID::bottom       : return s << "LHCb.ParticleID.bottom"       ;
+  case LHCb::ParticleID::top          : return s << "LHCb.ParticleID.top"          ;
+  case LHCb::ParticleID::bottom_prime : return s << "LHCb.ParticleID.bottom_prime" ;
+  case LHCb::ParticleID::top_prime    : return s << "LHCb.ParticleID.top_prime"    ;
   default : ;
   }
   return s << "LHCb.ParticleID.Quark(" << q << ")";
