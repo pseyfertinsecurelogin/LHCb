@@ -98,6 +98,10 @@ private:
 
   /// Helper class to propagate info about needed IOV.
   struct IOVInfo {
+    IOVInfo() = default;
+    IOVInfo( std::string k, const Gaudi::Time& s, const Gaudi::Time& u ):
+        key( std::move( k ) ),
+        since( s ), until( u ) {}
     std::string key   = "";
     Gaudi::Time since = Gaudi::Time::epoch();
     Gaudi::Time until = Gaudi::Time::max();
