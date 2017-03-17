@@ -54,7 +54,10 @@ namespace LHCb
       bottom           ,
       top              ,
       bottom_prime     ,
-      top_prime
+      top_prime        ,
+
+      first = down     ,
+      last = top_prime
     } ;
     // ========================================================================
   public:

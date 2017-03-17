@@ -188,7 +188,10 @@ int LHCb::ParticleID::nLambda( ) const
 // ============================================================================
 bool LHCb::ParticleID::isQuark() const
 {
-  return abspid() < 11;
+  return (
+    (LHCb::ParticleID::Quark::first <= abspid()) &&
+    (abspid() <= LHCb::ParticleID::Quark::last)
+  );
 }
 
 // ============================================================================
