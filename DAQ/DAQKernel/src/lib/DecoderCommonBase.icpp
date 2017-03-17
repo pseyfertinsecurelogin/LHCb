@@ -133,7 +133,6 @@ Decoder::CommonBase<PBASE>::findFirstRawBank(const LHCb::RawBank::BankType i) co
       raw = this->tryEventAt(loc);
       if ( raw && !raw->banks(i).empty() )
       {
-          m_tryFirstRawEventLocation=loc;
           return raw->banks(i);
       }
   }
