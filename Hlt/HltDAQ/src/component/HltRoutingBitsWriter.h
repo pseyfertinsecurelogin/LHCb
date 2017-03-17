@@ -45,7 +45,9 @@ private:
    void updateBits( Property& /* p */ );
 
    std::unordered_map<unsigned int, EvalVariant> m_evaluators;
-   bool m_updateBank;
+   Gaudi::Property<bool> m_updateBank { this, "UpdateExistingRawBank", false };
+   Gaudi::Property<std::string> m_raw_location { this, "RawEventLocation", LHCb::RawEventLocation::Default };
+   Gaudi::Property<std::map<unsigned int,std::string>> m_bits { this, "RoutingBits" };
 
 };
 #endif // HLTROUTINGBITSWRITER_H

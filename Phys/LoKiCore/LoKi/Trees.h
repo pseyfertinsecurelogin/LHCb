@@ -89,10 +89,10 @@ namespace Decays
     private:
       // ======================================================================
       /// the actual tree
-      Decays::Tree_<PARTICLE> m_tree ;                       // the actual tree
+      Decays::Tree_<PARTICLE>    m_tree ;                   // the actual tree
       // ======================================================================
       /// the particle itself
-      mutable PARTICLE  m_particle ;                     // the particle itself
+      mutable PARTICLE           m_particle ;            // the particle itself
       // ======================================================================
     } ;
     // ========================================================================
@@ -1047,6 +1047,7 @@ namespace Decays
       ChildrenForStable        , // Children   for Stable
       OptionalForStable        , // Optional   for Stable
       InclusiveForStable       , // Inclusive  for Stable
+      InclusiveMarked          , // Inclusive & Marked in conflict 
       InvalidBranch              // Invalid combination of flags
     };
     // ========================================================================

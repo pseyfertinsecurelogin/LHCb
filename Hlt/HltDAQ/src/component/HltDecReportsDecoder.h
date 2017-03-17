@@ -17,7 +17,7 @@
 class HltDecReportsDecoder : public HltRawBankDecoderBase {
 public: 
   /// Standard constructor
-  HltDecReportsDecoder( const std::string& name, ISvcLocator* pSvcLocator );
+  using HltRawBankDecoderBase::HltRawBankDecoderBase;
 
   ~HltDecReportsDecoder() override = default ; ///< Destructor
   StatusCode execute() override;    ///< Algorithm execution
@@ -29,6 +29,6 @@ private:
   int decodeHDR(I i, I end,  LHCb::HltDecReports& output, const Table& table) const ;
 
   /// location of output
-  StringProperty m_outputHltDecReportsLocation;
+  Gaudi::Property<std::string> m_outputHltDecReportsLocation { this, "OutputHltDecReportsLocation", LHCb::HltDecReportsLocation::Default };
 };
 #endif // HLTDECREPORTSDECODER_H

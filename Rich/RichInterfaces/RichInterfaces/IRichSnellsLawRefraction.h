@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRichSnellsLawRefraction_H
-#define RICHINTERFACES_IRichSnellsLawRefraction_H 1
+#pragma once
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
@@ -24,9 +23,6 @@ namespace LHCb
 {
   class RichTrackSegment;
 }
-
-/// Static Interface Identification
-static const InterfaceID IID_IRichSnellsLawRefraction( "Rich::ISnellsLawRefraction", 1, 0 );
 
 namespace Rich
 {
@@ -47,10 +43,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() { return IID_IRichSnellsLawRefraction; }
+       /// Interface ID
+    DeclareInterfaceID( ISnellsLawRefraction, 1, 0 );
 
     /** Correct the direction vector and start point for refraction in going from Aerogel to Rich1Gas.
      *
@@ -99,5 +93,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRichSnellsLawRefraction_H

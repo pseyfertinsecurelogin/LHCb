@@ -6,7 +6,7 @@
 # Author: rlambert
 # Purpose: Test IOHelper's handling of input/output streams
 # Prerequisites: None
-# Common failure modes, severities and cures: 
+# Common failure modes, severities and cures:
 #               . MAJOR: Any failure indicates a major problem with how IOHelper handles streams
 #######################################################
 -->
@@ -16,6 +16,12 @@
   <argument name="reference"><text>../refs/test_iohelper_streams.ref</text></argument>
   <argument name="validator"><text>
 from GaudiConf.QMTest.LHCbExclusions import preprocessor
+import Configurables
+if repr(Configurables.Gaudi__Examples__EvtColAlg("x")).startswith("Gaudi::Examples::"):
+    # It's an old Gaudi, so we miss the fix to https://its.cern.ch/jira/browse/GAUDI-1290
+    # we must artifically hide some differences
+    from GaudiTesting.BaseTest import RegexpReplacer
+    preprocessor = preprocessor + RegexpReplacer("__", "::", "SomethingWeird")
 validateWithReference(preproc = preprocessor)
 </text></argument>
 </extension>

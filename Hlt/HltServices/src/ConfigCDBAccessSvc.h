@@ -30,7 +30,7 @@ namespace ConfigCDBAccessSvc_details  {
 
 class ConfigCDBAccessSvc : public extends<Service,IConfigAccessSvc> {
 public:
-  ConfigCDBAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
+  using extends::extends;
 
   StatusCode initialize() override;    ///< Service initialization
   StatusCode finalize() override;      ///< Service initialization
@@ -52,9 +52,11 @@ private:
 
   ConfigCDBAccessSvc_details::CDB*  file() const;
 
-  mutable std::string                m_name;   ///< filename of tar file from which to read configurations
-  std::string                        m_mode;   ///< which flags to specify when opening the tar file
-  std::string                        m_incident;   ///< the incident to
+  mutable Gaudi::Property<std::string> m_name{ this, "File" } ;   ///< filename of tar file from which to read configurations
+  // todo: use Parse and toStream directly
+  Gaudi::Property<std::string>         m_mode{ this, "Mode", "ReadOnly" };   ///< which flags to specify when opening the tar file
+  Gaudi::Property<std::string>         m_incident { this, "CloseIncident" };   ///< the incident to
+  mutable std::mutex                                       m_file_mtx;
   mutable std::unique_ptr<ConfigCDBAccessSvc_details::CDB> m_file;
   std::unique_ptr<IIncidentListener> m_initListener;
 

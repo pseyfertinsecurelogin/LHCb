@@ -4,6 +4,9 @@
 ! Purpose: LHCb specific Kernel classes
 !--------------------------------------------------------------------------------
 
+! 2016-12-14 - Jeroen van Tilburg
+ - FTChannelID: Adapt to new channel numbering scheme.
+
 ! 2016-08-18 - Chris Jones
  - Update RichSmartID with some additional typedefs to better specify the 
    various data types.

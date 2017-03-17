@@ -17,28 +17,6 @@
 DECLARE_SERVICE_FACTORY(XmlCnvSvc)
 
 // -----------------------------------------------------------------------
-// Standard Constructor
-// -----------------------------------------------------------------------
-XmlCnvSvc::XmlCnvSvc (const std::string& name, ISvcLocator* svc) :
-  base_class(name, svc, XML_StorageType)
-{
-
-  // gets the AllowGenericConversion property value
-  declareProperty ("AllowGenericConversion", m_genericConversion = false);
-
-  // gets the DtdLocation property value
-  declareProperty ("DtdLocation", m_dtdLocation = "");
-
-  // Whether to check parameters for units or not
-  declareProperty ("CheckUnits", m_checkUnits = true);
-
-  // Name of the XmlParserSvc to use
-  declareProperty ("XmlParserSvc", m_parserSvcName = "XmlParserSvc");
-}
-
-
-
-// -----------------------------------------------------------------------
 // Initialize the service.
 // -----------------------------------------------------------------------
 StatusCode XmlCnvSvc::initialize() {
@@ -197,7 +175,7 @@ IOVDOMDocument* XmlCnvSvc::parseString (std::string source) {
   }
 
   // Then feed the string to the XML parser
-  if (m_parserSvc) return m_parserSvc->parseString (source);
+  if (m_parserSvc) return m_parserSvc->parseString (std::move(source));
   if( msgLevel(MSG::DEBUG) )  debug() << "null result returned in parseString" << endmsg;
   return nullptr;
 }
@@ -324,7 +302,7 @@ bool XmlCnvSvc::removeParameter (const char* name) {
 // -----------------------------------------------------------------------
 // skipSum
 // -----------------------------------------------------------------------
-std::string::size_type XmlCnvSvc::skipSum (std::string s,
+std::string::size_type XmlCnvSvc::skipSum (const std::string& s,
                                            std::string::size_type start,
                                            std::string::size_type end) {
   auto result = start;
@@ -344,7 +322,7 @@ std::string::size_type XmlCnvSvc::skipSum (std::string s,
 // -----------------------------------------------------------------------
 // skipProduct
 // -----------------------------------------------------------------------
-std::string::size_type XmlCnvSvc::skipProduct (std::string s,
+std::string::size_type XmlCnvSvc::skipProduct (const std::string& s,
                                                std::string::size_type start,
                                                std::string::size_type end) {
   auto result = start;
@@ -367,7 +345,7 @@ std::string::size_type XmlCnvSvc::skipProduct (std::string s,
 // -----------------------------------------------------------------------
 // skipExpr
 // -----------------------------------------------------------------------
-std::string::size_type XmlCnvSvc::skipExpr (std::string s,
+std::string::size_type XmlCnvSvc::skipExpr (const std::string& s,
                                   std::string::size_type start,
                                   std::string::size_type end) {
   // deal with the unary plus/minus
@@ -446,7 +424,7 @@ std::string::size_type XmlCnvSvc::skipExpr (std::string s,
 // -----------------------------------------------------------------------
 // sumHasUnit
 // -----------------------------------------------------------------------
-bool XmlCnvSvc::sumHasUnit (std::string s,
+bool XmlCnvSvc::sumHasUnit (const std::string& s,
                  std::string::size_type baseIndex,
                  std::string::size_type lastIndex) {
   bool result = true;
@@ -468,7 +446,7 @@ bool XmlCnvSvc::sumHasUnit (std::string s,
 // -----------------------------------------------------------------------
 // productHasUnit
 // -----------------------------------------------------------------------
-bool XmlCnvSvc::productHasUnit (std::string s,
+bool XmlCnvSvc::productHasUnit (const std::string& s,
                      std::string::size_type baseIndex,
                      std::string::size_type lastIndex) {
   bool result = false;
@@ -490,7 +468,7 @@ bool XmlCnvSvc::productHasUnit (std::string s,
 // -----------------------------------------------------------------------
 // exprHasUnit
 // -----------------------------------------------------------------------
-bool XmlCnvSvc::exprHasUnit (std::string s,
+bool XmlCnvSvc::exprHasUnit (const std::string& s,
                              std::string::size_type baseIndex,
                              std::string::size_type lastIndex) {
   // deal with the unary minus

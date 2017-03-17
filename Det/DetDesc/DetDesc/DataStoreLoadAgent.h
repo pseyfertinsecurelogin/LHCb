@@ -1,4 +1,3 @@
-// $Id: DataStoreLoadAgent.h,v 1.1 2005-03-18 15:47:08 cattanem Exp $
 #ifndef DATASTORELOADAGENT_H
 #define DATASTORELOADAGENT_H 1
 
@@ -15,9 +14,7 @@
 class DataStoreLoadAgent: public IDataStoreAgent {
 public:
   /// Standard constructor
-  DataStoreLoadAgent( );
-
-  virtual ~DataStoreLoadAgent( ); ///< Destructor
+  DataStoreLoadAgent( ) = default;
 
   bool 	analyse (IRegistry *pObject, int level) override;
 
@@ -41,7 +38,7 @@ public:
 protected:
 
 private:
-  int m_loadedObjects;
-  int m_maxDepth;
+  int m_loadedObjects = 0;
+  int m_maxDepth = 0;
 };
 #endif // DATASTORELOADAGENT_H

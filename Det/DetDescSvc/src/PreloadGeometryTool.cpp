@@ -23,7 +23,7 @@ DECLARE_TOOL_FACTORY( PreloadGeometryTool )
 PreloadGeometryTool::PreloadGeometryTool( const std::string& type,
                                           const std::string& name,
                                           const IInterface* parent )
-  : base_class ( type, name , parent )
+: base_class ( type, name , parent )
 {
   declareInterface<IGenericTool>(this);
 }
@@ -33,13 +33,13 @@ PreloadGeometryTool::PreloadGeometryTool( const std::string& type,
 //=============================================================================
 void PreloadGeometryTool::execute()
 {
-  std::unique_ptr<DataStoreLoadAgent> loadAgent ( new DataStoreLoadAgent() );
+  DataStoreLoadAgent loadAgent;
   auto dataMgr = service<IDataManagerSvc>("DetectorDataSvc", true);
   info() << "Preloading detector geometry..." << endmsg;
-  const auto sc = dataMgr->traverseTree(loadAgent.get());
+  const auto sc = dataMgr->traverseTree(&loadAgent);
   if ( sc ) {
-    info() << "Loaded " << loadAgent->loadedObjects() << " objects to depth of "
-           << loadAgent->maxDepth() << " levels" << endmsg;
+    info() << "Loaded " << loadAgent.loadedObjects() << " objects to depth of "
+           << loadAgent.maxDepth() << " levels" << endmsg;
   } else {
     error() << "Problem loading geometry" << endmsg;
   }

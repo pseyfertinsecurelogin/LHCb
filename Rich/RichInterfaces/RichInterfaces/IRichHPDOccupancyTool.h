@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHINTERFACES_IRichHPDOccupancyTool_H
-#define RICHINTERFACES_IRichHPDOccupancyTool_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -20,9 +19,6 @@
 
 // Kernel
 #include "Kernel/RichSmartID.h"
-
-/// Static Interface Identification
-static const InterfaceID IID_IRichHPDOccupancyTool( "Rich::DAQ::IHPDOccupancyTool", 1, 0 );
 
 namespace Rich
 {
@@ -42,10 +38,8 @@ namespace Rich
 
   public:
 
-    /** static interface identification
-     *  @return unique interface identifier
-     */
-    static const InterfaceID& interfaceID() { return IID_IRichHPDOccupancyTool; }
+    /// Interface ID
+    DeclareInterfaceID( IHPDOccupancyTool, 1, 0 );
 
     /** Returns the average occupancy for the given HPD
      *
@@ -59,5 +53,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHINTERFACES_IRichHPDOccupancyTool_H

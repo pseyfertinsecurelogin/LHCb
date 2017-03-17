@@ -4,6 +4,7 @@
 // Include files
 #include <cmath>
 #include "vdt/asin.h"
+#include <mutex>
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
@@ -471,15 +472,16 @@ private:
     return (std::abs(d0/radius) < 1.) ? (vdt::fast_asin(d0/radius) - c0) : (vdt::fast_asin(1.) - c0);
   }
 
-  /// cached Message Stream object
-  mutable std::unique_ptr<MsgStream> m_msgStream;
-
-  /// On demand access to MsgStream object
-  inline MsgStream & msg() const
-  {
-    if ( !m_msgStream ) m_msgStream.reset( new MsgStream( msgSvc(), "DeVeloPhiType" ) );
+  /// Thread safe on demand access to MsgStream object
+  inline MsgStream & msg() const {
+    std::call_once(m_msgSetFlag,
+		   [&]{m_msgStream.reset( new MsgStream( msgSvc(), "DeVeloPhiType" ) );});
     return *m_msgStream;
   }
+  /// cached Message Stream object
+  mutable std::unique_ptr<MsgStream> m_msgStream;
+  /// making the msg() function above thread safe
+  mutable std::once_flag m_msgSetFlag;
 
 };
 

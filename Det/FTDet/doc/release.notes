@@ -4,6 +4,12 @@
 ! Responsible : Diego Milanes
 !--------------------------------------------------------------------------
 
+! 2016-12-14 - Jeroen van Tilburg
+  Big changes:
+ - Adapt to new FT geometry and numbering scheme
+ - Major cleanup of legacy code.
+ - New functionalities.
+
 !========================= FTDet v2r13 2016-03-16 =========================
 ! 2016-02-08 - Luigi Del Buono
  - Optimized as I could the temporary hack (due to hardware numbering convention changes not propagated in

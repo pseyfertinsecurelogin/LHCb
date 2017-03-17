@@ -120,7 +120,7 @@ StatusCode VeloClustersToRaw::execute() {
 
 //=============================================================================
 StatusCode VeloClustersToRaw::storeBank( const unsigned int sensor,
-    std::vector<const LHCb::VeloCluster*>::const_iterator& clusterIter) const {
+    std::vector<const LHCb::VeloCluster*>::const_iterator& clusterIter) {
 
 
   // Sensor and TELL1 Id might be different, e.g in a test beam
@@ -157,8 +157,7 @@ StatusCode VeloClustersToRaw::storeBank( const unsigned int sensor,
 }
 
 unsigned int VeloClustersToRaw::makeBank ( const unsigned int sensor,
-    std::vector<const LHCb::VeloCluster*>::const_iterator& clusterIter ) const
-{
+    std::vector<const LHCb::VeloCluster*>::const_iterator& clusterIter ) {
   // clear bank
   m_rawData.clear();
 

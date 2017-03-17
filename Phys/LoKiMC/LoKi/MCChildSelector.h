@@ -120,6 +120,85 @@ namespace LoKi
       // ======================================================================
     };
     // ========================================================================
+    /** Trivial accessor to the daughter "decay" particles for the 
+     *  given MC-particle
+     */    
+    GAUDI_API
+    const LHCb::MCParticle* child 
+    ( const LHCb::MCParticle*   mother           , 
+      const Decays::iNode&      node             ,
+      const bool                decayOnly = true ) ;
+    // ========================================================================
+    /** Trivial accessor to the daughter "decay" particles for the 
+     *  given MC-particle
+     */    
+    GAUDI_API
+    const LHCb::MCParticle* child 
+    ( const LHCb::MCParticle*        mother     , 
+      const Decays::IMCDecay::iTree& c          ) ;
+    // ========================================================================
+    /** Trivial accessor to the daughter "decay" particles for the 
+     *  given MC-particle
+     */    
+    GAUDI_API
+    const LHCb::MCParticle* child
+    ( const LHCb::MCParticle*         mother    ,
+      const Decays::IMCDecay::Finder& c         ) ;
+    // ========================================================================
+    /** Trivial accessor to the daughter "decay" particles for the 
+     *  given MC-particle
+     */    
+    GAUDI_API
+    const LHCb::MCParticle* child
+    ( const LHCb::MCParticle*         mother    ,
+      const std::string&              c         ) ;
+    // ========================================================================
+    /** Trivial accessor to the daughter "decay" particles for the 
+     *  given MC-particle
+     */    
+    GAUDI_API
+    const LHCb::MCParticle* child
+    ( const LHCb::MCParticle*         mother           ,
+      const LoKi::MCTypes::MCCuts&    cut              ,
+      const bool                      decayOnly = true ) ;
+    // ========================================================================
+    /// accessor to certain children particles for the given particle 
+    GAUDI_API 
+    LHCb::MCParticle::ConstVector
+    children 
+    ( const LHCb::MCParticle*        particle , 
+      const Decays::iNode&           node             ,
+      const bool                     decayOnly = true ) ;
+    // ========================================================================
+    /// accessor to certain children particles for the given particle 
+    GAUDI_API 
+    LHCb::MCParticle::ConstVector
+    children 
+    ( const LHCb::MCParticle*        particle , 
+      const Decays::IMCDecay::iTree& c       ) ;
+    // ========================================================================
+    /// accessor to certain children particles for the given particle 
+    GAUDI_API 
+    LHCb::MCParticle::ConstVector
+    children 
+    ( const LHCb::MCParticle*         particle , 
+      const Decays::IMCDecay::Finder& c        ) ;
+    // ========================================================================
+    /// accessor to certain children particles for the given particle 
+    GAUDI_API 
+    LHCb::MCParticle::ConstVector
+    children 
+    ( const LHCb::MCParticle*        particle , 
+      const std::string&             c        ) ;
+    // ========================================================================
+    /// accessor to certain children particles for the given particle 
+    GAUDI_API 
+    LHCb::MCParticle::ConstVector
+    children 
+    ( const LHCb::MCParticle*         particle ,
+      const LoKi::MCTypes::MCCuts&    cut              ,
+      const bool                      decayOnly = true ) ;
+    // ========================================================================    
   } //                                           end of namespace LoKi::MCChild
   // ==========================================================================
   namespace Child

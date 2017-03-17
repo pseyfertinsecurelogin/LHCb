@@ -6,8 +6,6 @@
  *  @date   2004-06-18
  */
 
-#define DERICH2_CPP
-
 // Include files
 #include "RichDet/DeRich2.h"
 #include "RichDet/DeRichHPDPanel.h"
@@ -33,9 +31,6 @@ DeRich2::DeRich2(const std::string & name) : DeRich ( name )
   setMyName("DeRich2");
 }
 
-// Standard Destructor
-DeRich2::~DeRich2() = default;
-
 // Retrieve Pointer to class defininition structure
 const CLID& DeRich2::classID()
 {
@@ -46,8 +41,7 @@ const CLID& DeRich2::classID()
 
 StatusCode DeRich2::initialize()
 {
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Initialize " << name() << endmsg;
+  _ri_debug << "Initialize " << name() << endmsg;
 
   if ( !DeRich::initialize() ) return StatusCode::FAILURE;
 
@@ -65,7 +59,7 @@ StatusCode DeRich2::initialize()
   const auto * pvGasWindow = geometry()->lvolume()->pvolume("pvRich2QuartzWindow:0");
   if ( pvGasWindow )
   {
-    for ( const auto& mat : pvGasWindow->lvolume()->material()->tabulatedProperties() )
+    for ( auto& mat : pvGasWindow->lvolume()->material()->tabulatedProperties() )
     {
       if ( mat )
       {
@@ -107,8 +101,7 @@ StatusCode DeRich2::initialize()
   }
   else
   {
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Loaded spherical mirror reflectivity from: "<<sphMirrorReflLoc<<endmsg;
+    _ri_debug << "Loaded spherical mirror reflectivity from: "<<sphMirrorReflLoc<<endmsg;
     m_nominalSphMirrorRefl.reset( new Rich::TabulatedProperty1D( sphMirrorRefl ) );
     if ( !m_nominalSphMirrorRefl->valid() )
     {
@@ -130,8 +123,7 @@ StatusCode DeRich2::initialize()
   }
   else
   {
-    if ( msgLevel(MSG::DEBUG) )
-      debug() << "Loaded secondary mirror reflectivity from: "<<secMirrorReflLoc<<endmsg;
+    _ri_debug << "Loaded secondary mirror reflectivity from: "<<secMirrorReflLoc<<endmsg;
     m_nominalSecMirrorRefl.reset( new Rich::TabulatedProperty1D( secMirrorRefl ) );
     if ( !m_nominalSecMirrorRefl->valid() )
     {
@@ -139,14 +131,13 @@ StatusCode DeRich2::initialize()
     }
   }
 
-  // Force loading of the HPD panels now
-  //hpdPanel(Rich::left);
-  //hpdPanel(Rich::right);
+  // initialise various local cached data
+  loadPDPanels();
+  loadNominalQuantumEff();
 
-   // Trigger first update
+  // Trigger first update
   const auto sc = updMgrSvc()->update(this);
   if ( sc.isFailure() ) { fatal() << "UMS updates failed" << endmsg; }
-
   return sc;
 }
 
@@ -162,16 +153,10 @@ StatusCode DeRich2::updateMirrorParams()
     debug() << "RoC      " << param<double>("SphMirrorRadius") << endmsg;
   }
 
-  //const std::vector<double>& nominalCoC = param<std::vector<double> >("NominalSphMirrorCoC");
-  //m_nominalCentreOfCurvatureLeft  =
-  //  Gaudi::XYZPoint(  nominalCoC[0], nominalCoC[1], nominalCoC[2] );
-  //m_nominalCentreOfCurvatureRight =
-  //  Gaudi::XYZPoint( -nominalCoC[0], nominalCoC[1], nominalCoC[2] );
-
   // Load the primary mirror segments to compute the 'nominal' settings
   {
-    m_nominalCentreOfCurvatureLeft  = Gaudi::XYZPoint(0,0,0);
-    m_nominalCentreOfCurvatureRight = Gaudi::XYZPoint(0,0,0);
+    m_nominalCentresOfCurvature[Rich::left] = Gaudi::XYZPoint(0,0,0);
+    m_nominalCentresOfCurvature[Rich::right] = Gaudi::XYZPoint(0,0,0);
     unsigned int nLeft(0), nRight(0);
     double avroc{0};
     for ( const auto& loc : paramVect<std::string>("SphericalMirrorDetElemLocations") )
@@ -181,41 +166,28 @@ StatusCode DeRich2::updateMirrorParams()
       const auto coc = mirror->centreOfCurvature();
       const auto cen = mirror->mirrorCentre();
       const auto roc = mirror->radius();
-      if ( msgLevel(MSG::DEBUG) )
-        debug() << loc
+      _ri_debug << loc
                 << " Centre = " << cen
                 << " Plane " << plane.Normal() << " " << plane.HesseDistance()
                 << " RoC = " << roc
                 << " CoC = " << coc << endmsg;
-      if ( cen.x() > 0 ) { ++nLeft;  m_nominalCentreOfCurvatureLeft  += Gaudi::XYZVector(coc); }
-      else               { ++nRight; m_nominalCentreOfCurvatureRight += Gaudi::XYZVector(coc); }
+      if ( cen.x() > 0 ) { ++nLeft;  m_nominalCentresOfCurvature[Rich::left]  += Gaudi::XYZVector(coc); }
+      else               { ++nRight; m_nominalCentresOfCurvature[Rich::right] += Gaudi::XYZVector(coc); }
       avroc += roc;
     }
-    m_nominalCentreOfCurvatureLeft  /= (double)nLeft;
-    m_nominalCentreOfCurvatureRight /= (double)nRight;
+    m_nominalCentresOfCurvature[Rich::left]  /= (double)nLeft;
+    m_nominalCentresOfCurvature[Rich::right] /= (double)nRight;
     m_sphMirrorRadius = avroc / (double)(nLeft+nRight);
   }
 
   //m_sphMirrorRadius = param<double>("SphMirrorRadius");
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Nominal centre of curvature "
-            << m_nominalCentreOfCurvatureLeft << " , " << m_nominalCentreOfCurvatureRight
-            << endmsg;
+  _ri_debug << "Nominal centre of curvature " << m_nominalCentresOfCurvature << endmsg;
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Nominal Radius of Curvature = " << m_sphMirrorRadius << endmsg;
+  _ri_debug << "Nominal Radius of Curvature = " << m_sphMirrorRadius << endmsg;
 
   // get the parameters of the nominal flat mirror plane in the form
   // Ax+By+Cz+D=0
-
-  // std::vector<double> nominalFMirrorPlane;
-  // nominalFMirrorPlane = param<std::vector<double> >("NominalSecMirrorPlane");
-
-  // m_nominalPlaneLeft = Gaudi::Plane3D(nominalFMirrorPlane[0],nominalFMirrorPlane[1],
-  //                                     nominalFMirrorPlane[2],nominalFMirrorPlane[3]);
-  // m_nominalPlaneRight = Gaudi::Plane3D(-nominalFMirrorPlane[0],nominalFMirrorPlane[1],
-  //                                      nominalFMirrorPlane[2],nominalFMirrorPlane[3]);
 
   // Load the secondary mirrors to compute the 'nominal' settings
   {
@@ -227,8 +199,7 @@ StatusCode DeRich2::updateMirrorParams()
       SmartDataPtr<DeRichSphMirror> mirror( dataSvc(), loc );
       auto plane = mirror->centreNormalPlane();
       const auto cen = mirror->mirrorCentre();
-      if ( msgLevel(MSG::DEBUG) )
-        debug() << loc
+      _ri_debug << loc
                 << " Centre = " << mirror->mirrorCentre()
                 << " Plane " << plane.Normal() << " " << plane.HesseDistance()
                 << " RoC = " << mirror->radius()
@@ -240,67 +211,28 @@ StatusCode DeRich2::updateMirrorParams()
       params[3] += plane.D();
       ++( cen.x() > 0 ? nLeft : nRight );
     }
-    m_nominalPlaneLeft  = Gaudi::Plane3D( nominalFMirrorPlaneLeft[0]/(double)nLeft,
-                                          nominalFMirrorPlaneLeft[1]/(double)nLeft,
-                                          nominalFMirrorPlaneLeft[2]/(double)nLeft,
-                                          nominalFMirrorPlaneLeft[3]/(double)nLeft );
-    m_nominalPlaneRight = Gaudi::Plane3D( nominalFMirrorPlaneRight[0]/(double)nRight,
-                                          nominalFMirrorPlaneRight[1]/(double)nRight,
-                                          nominalFMirrorPlaneRight[2]/(double)nRight,
-                                          nominalFMirrorPlaneRight[3]/(double)nRight );
+    
+    m_nominalPlanes[Rich::left]  = Gaudi::Plane3D( nominalFMirrorPlaneLeft[0]/(double)nLeft,
+                                                   nominalFMirrorPlaneLeft[1]/(double)nLeft,
+                                                   nominalFMirrorPlaneLeft[2]/(double)nLeft,
+                                                   nominalFMirrorPlaneLeft[3]/(double)nLeft );
+    m_nominalPlanes[Rich::right] = Gaudi::Plane3D( nominalFMirrorPlaneRight[0]/(double)nRight,
+                                                   nominalFMirrorPlaneRight[1]/(double)nRight,
+                                                   nominalFMirrorPlaneRight[2]/(double)nRight,
+                                                   nominalFMirrorPlaneRight[3]/(double)nRight );
   }
 
-  if ( msgLevel(MSG::DEBUG) )
-  {
-    debug() << "Nominal Plane Left " << m_nominalPlaneLeft.Normal()
-            << " " << m_nominalPlaneLeft.HesseDistance() << endmsg;
-    debug() << "Nominal Plane Right " << m_nominalPlaneRight.Normal()
-            << " " << m_nominalPlaneRight.HesseDistance() << endmsg;
-  }
+  _ri_debug << "Nominal Plane Left " << m_nominalPlanes[Rich::left].Normal()
+            << " " << m_nominalPlanes[Rich::left].HesseDistance() << endmsg;
+  _ri_debug << "Nominal Plane Right " << m_nominalPlanes[Rich::right].Normal()
+            << " " << m_nominalPlanes[Rich::right].HesseDistance() << endmsg;
 
-  m_nominalNormalLeft  = m_nominalPlaneLeft.Normal();
-  m_nominalNormalRight = m_nominalPlaneRight.Normal();
+  m_nominalNormals[Rich::left]  = m_nominalPlanes[Rich::left].Normal();
+  m_nominalNormals[Rich::right] = m_nominalPlanes[Rich::right].Normal();
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "Nominal normal " << m_nominalNormalLeft << " "
-            << m_nominalNormalRight << endmsg;
+  _ri_debug << "Nominal normal " << m_nominalNormals << endmsg;
 
   return StatusCode::SUCCESS;
-}
-
-//=========================================================================
-//  nominalCentreOfCurvature
-//=========================================================================
-const Gaudi::XYZPoint&
-DeRich2::nominalCentreOfCurvature(const Rich::Side side) const
-{
-  return ( Rich::right == side ?
-           m_nominalCentreOfCurvatureRight :
-           m_nominalCentreOfCurvatureLeft );
-}
-
-//=========================================================================
-//  nominalNormal
-//=========================================================================
-const Gaudi::XYZVector& DeRich2::nominalNormal(const Rich::Side side) const
-{
-  return ( Rich::right == side ? m_nominalNormalRight : m_nominalNormalLeft );
-}
-
-//=========================================================================
-//  nominalPlane
-//=========================================================================
-const Gaudi::Plane3D& DeRich2::nominalPlane(const Rich::Side side) const
-{
-  return ( Rich::left == side ? m_nominalPlaneLeft : m_nominalPlaneRight );
-}
-
-//=========================================================================
-//  side
-//=========================================================================
-Rich::Side DeRich2::side( const Gaudi::XYZPoint& point ) const
-{
-  return ( point.x() >= 0.0 ? Rich::left : Rich::right );
 }
 
 //=========================================================================

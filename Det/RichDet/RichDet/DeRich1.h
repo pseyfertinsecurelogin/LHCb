@@ -7,12 +7,10 @@
  *  @date   2004-06-18
  */
 
-#ifndef RICHDET_DERICH1_H
-#define RICHDET_DERICH1_H 1
+#pragma once
 
 // local
 #include "RichDet/DeRich.h"
-
 
 // External declarations
 extern const CLID CLID_DERich1;
@@ -38,7 +36,7 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRich1();
+  virtual ~DeRich1() = default;
 
   /**
    * Retrieves reference to class identifier
@@ -58,38 +56,6 @@ public:
    */
   StatusCode initialize() override;
 
-  /**
-   * Returns the nominal centre of curvature of the spherical mirror for this Rich
-   *
-   * @param side Which side: top or bottom
-   * @return The nominal centre of curvature
-   */
-  const Gaudi::XYZPoint& nominalCentreOfCurvature(const Rich::Side side) const override;
-
-  /**
-   * Returns the nominal normal vector of the flat mirror plane for this Rich
-   *
-   * @param side Which side: top or bottom
-   * @return The nominal normal vector
-   */
-  const Gaudi::XYZVector& nominalNormal(const Rich::Side side) const override;
-
-  /**
-   * Returns the nominal flat mirror plane for this Rich
-   *
-   * @param side Which side: top or bottom
-   * @return The nominal flat mirror plane
-   */
-  const Gaudi::Plane3D& nominalPlane(const Rich::Side side) const override;
-
-  /**
-   * Check on which side of this Rich lies this point
-   *
-   * @param point A point in the global coordinate system
-   * @return The side for this point
-   */
-  Rich::Side side( const Gaudi::XYZPoint& point) const override;
-
 private:
 
   /// Access the name for a given panel
@@ -98,23 +64,4 @@ private:
   /// Update Nominal mirror parameters
   StatusCode updateMirrorParams();
 
-private:
-
-  Gaudi::Plane3D m_nominalPlaneTop;    ///< The top nominal flat mirror plane
-  Gaudi::Plane3D m_nominalPlaneBottom; ///< The bottom nominal flat mirror plane
-
-  /// The nominal centre of curvature of the spherical mirror (negative side)
-  Gaudi::XYZPoint  m_nominalCentreOfCurvatureBottom;
-
-  /// The nominal centre of curvature of the spherical mirror (positive side)
-  Gaudi::XYZPoint  m_nominalCentreOfCurvatureTop;
-
-  /// The nominal normal vector of the flat mirror plane (negative side)
-  Gaudi::XYZVector m_nominalNormalBottom;
-
-  /// The nominal normal vector of the flat mirror plane (positive side)
-  Gaudi::XYZVector m_nominalNormalTop;
-
 };
-
-#endif    // RICHDET_DERICH1_H

@@ -11,6 +11,7 @@
 #include "LoKi/MCParticles.h"
 #include "LoKi/MCParticles1.h"
 #include "LoKi/MCParticles2.h"
+#include "LoKi/MCParticles3.h"
 #include "LoKi/MCPIDOperators.h"
 // ============================================================================
 /** @file

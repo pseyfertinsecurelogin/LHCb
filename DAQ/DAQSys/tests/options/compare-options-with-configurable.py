@@ -1,3 +1,4 @@
+from GaudiKernel.DataObjectHandleBase import DataObjectHandleBase
 import commands
 
 try:

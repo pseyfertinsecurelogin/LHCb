@@ -983,9 +983,9 @@
         const   = 'TRUE'>
         <code>
           bool hasTPart = false;
-          if (type() == Track::Ttrack
-          || type() == Track::Downstream
-          || type() == Track::Long) hasTPart = true;
+          if (type() == Track::Types::Ttrack
+          || type() == Track::Types::Downstream
+          || type() == Track::Types::Long) hasTPart = true;
           return hasTPart;
         </code>
       </method>
@@ -997,10 +997,10 @@
         const   = 'TRUE'>
         <code>
           bool hasVPart = false;
-          if (type() == Track::Velo
-          || type() == Track::VeloR
-          || type() == Track::Upstream
-          || type() == Track::Long) hasVPart = true;
+          if (type() == Track::Types::Velo
+          || type() == Track::Types::VeloR
+          || type() == Track::Types::Upstream
+          || type() == Track::Types::Long) hasVPart = true;
           return hasVPart;
         </code>
       </method>
@@ -1012,9 +1012,9 @@
         const   = 'TRUE'>
         <code>
           bool hasTTPart = false;
-          if (type() == Track::Downstream
-          || type() == Track::Upstream
-          || type() == Track::Long) hasTTPart = true;
+          if (type() == Track::Types::Downstream
+          || type() == Track::Types::Upstream
+          || type() == Track::Types::Long) hasTTPart = true;
           return hasTTPart;
   #ifdef __INTEL_COMPILER // End disable ICC remark
     #pragma warning(pop)
@@ -1029,9 +1029,9 @@
         const   = 'TRUE'>
         <code>
           bool hasUTPart = false;
-          if (type() == Track::Downstream
-          || type() == Track::Upstream
-          || type() == Track::Long) hasUTPart = true;
+          if (type() == Track::Types::Downstream
+          || type() == Track::Types::Upstream
+          || type() == Track::Types::Long) hasUTPart = true;
           return hasUTPart;
         </code>
       </method>

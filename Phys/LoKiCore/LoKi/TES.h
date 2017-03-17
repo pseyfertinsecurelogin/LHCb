@@ -269,14 +269,12 @@ namespace LoKi
       Stat ( const std::string&       location              ,
              const std::string&       counter               ,
              const StatEntityGetter&  function              ) ;
-      /// MANDATORY: virtual destructor
-      ~Stat () override;
       /// MANDATORY: clone method ("virtual constructor")
       Stat* clone() const override;
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      result_type operator() ( /* argument v */ ) const override;
+      result_type operator() ( ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================

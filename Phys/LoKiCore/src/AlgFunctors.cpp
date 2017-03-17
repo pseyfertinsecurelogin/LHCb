@@ -33,6 +33,13 @@
 #pragma warning(disable:2259) // non-pointer conversion may lose significant bits
 #pragma warning(disable:1572) // floating-point equality and inequality comparisons are unreliable
 #endif
+#ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
+/// \fixme backward compatibility with Gaudi <= v28r1
+#include "GaudiKernel/ThreadLocalContext.h"
+#define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
+#else
+#define SYSEX_ARGUMENT
+#endif
 // ============================================================================
 /** @file
  *  Implementation file for functions from namespace LoKi::Algorithms
@@ -368,7 +375,7 @@ LoKi::Algorithms::Run::operator() () const
   //
   if ( !isExecuted ( algorithm() ) )
   {
-    StatusCode sc = algorithm()->sysExecute() ;  // EXECUTE IT!!!
+    StatusCode sc = algorithm()->sysExecute(SYSEX_ARGUMENT) ;  // EXECUTE IT!!!
     if ( sc.isFailure() )
     {
       Error("Error from algorithm '" + algName() + "' sysExecute", sc );
@@ -428,12 +435,10 @@ LoKi::Algorithms::AnyPassed::AnyPassed
 // ============================================================================
 LoKi::Algorithms::AnyPassed::~AnyPassed()
 {
-  for ( auto ia = m_algorithms.begin() ; m_algorithms.end() != ia ; ++ia )
-  {
-    if ( ( *ia )  && !gaudi() )
-    {
+  for ( auto& ia : m_algorithms) {
+    if ( ia && !gaudi() ) {
       // Warning("IAlgorithm: manual reset!") ;
-      ia->reset() ;
+      ia.reset() ;
     }
   }
 }
@@ -587,7 +592,7 @@ LoKi::Algorithms::RunAll::operator() () const
     }
     //
     if ( !isExecuted ( alg ) ) {
-      StatusCode sc = alg->sysExecute() ;  // EXECUTE IT!!!
+      StatusCode sc = alg->sysExecute(SYSEX_ARGUMENT) ;  // EXECUTE IT!!!
       if ( sc.isFailure() ) {
         Error("Error from algorithm '" + alg->name() + "' sysExecute", sc );
         return false ;                                                // RETURN

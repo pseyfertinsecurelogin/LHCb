@@ -120,10 +120,10 @@ namespace LoKi
       virtual ~Timer_ ()
       { if ( this->m_svc && !this->gaudi() ) { this->m_svc.reset() ; } }
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Timer_ * clone() const { return new Timer_ ( *this ) ; }
+      Timer_ * clone() const override { return new Timer_ ( *this ) ; }
       /// MANDATORY: the only one essenital method
-      virtual typename LoKi::Functor<TYPE1,TYPE2>::result_type operator()
-      ( typename LoKi::Functor<TYPE1,TYPE2>::argument a ) const
+      typename LoKi::Functor<TYPE1,TYPE2>::result_type operator()
+      ( typename LoKi::Functor<TYPE1,TYPE2>::argument a ) const override
       {
         //
         if ( !m_timer && m_first && !m_svc )
@@ -142,7 +142,7 @@ namespace LoKi
       }
       // ======================================================================
       /// optional: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       {
         //
         if ( !m_timer && m_tname.empty() && !m_svc ) { return s << m_fun ; }
@@ -222,10 +222,10 @@ namespace LoKi
       virtual ~Timer_ ()
       { if ( this->m_svc && !this->gaudi() ) { this->m_svc.reset() ; } }
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Timer_ * clone() const { return new Timer_ ( *this ) ; }
+      Timer_ * clone() const override { return new Timer_ ( *this ) ; }
       // ======================================================================
       /// MANDATORY: the only one essenital method
-      virtual typename LoKi::Functor<void,TYPE2>::result_type operator() () const
+      typename LoKi::Functor<void,TYPE2>::result_type operator() () const override
       {
         //
         if ( !m_timer && m_first && !m_svc )

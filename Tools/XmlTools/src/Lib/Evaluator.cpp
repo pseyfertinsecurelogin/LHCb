@@ -70,20 +70,8 @@ namespace {
     inline std::string to_string(boost::string_ref str) {
         return std::string( str.data(), str.size() );
     }
-    inline std::string operator+(const std::string& s1, boost::string_ref s2) {
-        return s1+to_string(s2);
-    }
-    inline std::string operator+(const char* s1, boost::string_ref s2) {
-        return s1+to_string(s2);
-    }
     inline std::string operator+(char s1, boost::string_ref s2) {
         return s1+to_string(s2);
-    }
-    inline std::string operator+(boost::string_ref s1, const std::string& s2) {
-        return to_string(s1)+s2;
-    }
-    inline std::string operator+(boost::string_ref s1, const char* s2) {
-        return to_string(s1)+s2;
     }
 }
 #define SKIP_BLANKS                      \
@@ -189,7 +177,7 @@ static int operand(pchar begin, pchar end, double & result,
  *   begin  - pointer to the first character of the operand.           *
  *   end    - pointer to the last character of the character string.   *
  *   result - value of the operand.                                    *
- *   endp   - pointer to the character where the evaluation stoped.    *
+ *   endp   - pointer to the character where the evaluation stopped.   *
  *   dictionary - dictionary of available variables and functions.     *
  *                                                                     *
  ***********************************************************************/
@@ -358,7 +346,7 @@ static int maker(int op, std::stack<double> & val)
  *   end    - pointer to the end of the character string (it is needed *
  *            for recursive call of engine(), when there is no '\0').  *
  *   result - result of the evaluation.                                *
- *   endp   - pointer to the character where the evaluation stoped.    *
+ *   endp   - pointer to the character where the evaluation stopped.   *
  *   dictionary - dictionary of available variables and functions.     *
  *                                                                     *
  ***********************************************************************/

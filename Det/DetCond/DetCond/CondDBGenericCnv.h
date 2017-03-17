@@ -6,6 +6,7 @@
 #include <functional>
 
 #include "GaudiKernel/Converter.h"
+#include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/Time.h"
 
@@ -15,7 +16,6 @@
 
 // Forward and external declarations
 class ISvcLocator;
-class IDetDataSvc;
 class DataObject;
 
 template <class TYPE> class CnvFactory;
@@ -69,8 +69,6 @@ protected:
 
   /// Standard constructor
   CondDBGenericCnv(ISvcLocator* svc,const CLID& clid);
-
-  virtual ~CondDBGenericCnv( ); ///< Destructor
 
   /**
    * Ask to the DetectorDataSvc the curren event time.

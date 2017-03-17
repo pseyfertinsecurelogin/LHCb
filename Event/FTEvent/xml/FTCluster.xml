@@ -21,7 +21,7 @@
       &KeyedObject;
 
       <constructor desc     = "Constructor"
-                   argList  = "LHCb::FTChannelID&amp; id , double fraction, int size, int charge"
+                   argList  = "LHCb::FTChannelID&amp; id , double fraction, int size, float charge"
                    initList = "m_fraction(fraction), m_size(size), m_charge(charge)">
         <code> this->setKey(id); </code>
       </constructor>
@@ -39,7 +39,7 @@
       </method>
 
       <attribute name   = "fraction"
-                 desc   = "Fractional part of the channel ID, when barycentre si computed. between 0 and 1"
+                 desc   = "Fractional part of the channel ID, when barycentre si computed. between -0.25 and 0.75"
                  type   = "double"
                  access = "PUBLIC"/>
 
@@ -50,7 +50,7 @@
 
       <attribute name   = "charge"
                  desc   = "Total charge in ADC count"
-                 type   = "int"
+                 type   = "float"
                  access = "PUBLIC"/>
 
     </class>

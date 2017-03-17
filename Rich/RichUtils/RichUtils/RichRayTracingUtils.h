@@ -1,11 +1,13 @@
 
-#ifndef RICHUTILS_RICHRAYTRACINGUTILS_H
-#define RICHUTILS_RICHRAYTRACINGUTILS_H 1
+#pragma once
 
-// MathCore
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
-#include "GaudiKernel/Plane3DTypes.h"
+// Gaudi
+#include "GaudiKernel/Kernel.h"
+
+// STL
+#include <iostream>
+#include <cmath>
+#include <type_traits>
 
 namespace Rich
 {
@@ -15,39 +17,13 @@ namespace Rich
    *  Utility namespace providing basic ray tracing methods for
    *  intersecting and reflecting photons (line) off a sphere and plane.
    *
+   *  In part based on http://www.realtimerendering.com/int/
+   *
    *  @author Chris Jones
    *  @date   2016-03-02
    */
   namespace RayTracingUtils
   {
-
-    /** Intersect a given direction, from a given point, with a given plane.
-     *
-     *  @param[in]  position      The start point to use for the ray tracing
-     *  @param[in]  direction     The direction to ray trace from the start point
-     *  @param[in]  plane         The plane to intersect
-     *  @param[out] intersection  The intersection point of the direction with the plane
-     *
-     *  @return Boolean indicating the status of the ray tracing
-     *  @retval true  Ray tracing was successful
-     *  @retval false Ray tracing was unsuccessful
-     */
-    inline bool
-    intersectPlane ( const Gaudi::XYZPoint& position,
-                     const Gaudi::XYZVector& direction,
-                     const Gaudi::Plane3D& plane,
-                     Gaudi::XYZPoint& intersection )
-    {
-      bool OK = true;
-      const auto scalar = direction.Dot( plane.Normal() );
-      if ( UNLIKELY( fabs(scalar) < 1e-99 ) ) { OK = false; }
-      else
-      {
-        const auto distance = -(plane.Distance(position)) / scalar;
-        intersection = position + (distance*direction);
-      }
-      return OK;
-    }
 
     /** Intersect a given direction, from a given point, with a given spherical shell.
      *
@@ -65,30 +41,30 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    inline bool
-    intersectSpherical ( const Gaudi::XYZPoint& position,
-                         const Gaudi::XYZVector& direction,
-                         const Gaudi::XYZPoint& CoC,
-                         const double radius,
-                         Gaudi::XYZPoint& intersection )
+    template < typename POINT, typename VECTOR, typename FTYPE >
+    inline 
+    typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
+                             std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                             std::is_arithmetic<FTYPE>::value, bool >::type
+    intersectSpherical ( const POINT& position,
+                         const VECTOR& direction,
+                         const POINT& CoC,
+                         const FTYPE radius,
+                         POINT& intersection )
     {
-      bool OK = true;
+      constexpr FTYPE zero(0), two(2.0), four(4.0), half(0.5);
       // for line sphere intersection look at http://www.realtimerendering.com/int/
-      const auto a = direction.Mag2();
-      if ( UNLIKELY( 0 == a ) ) { OK = false; }
-      else
+      const FTYPE      a = direction.Mag2();
+      const VECTOR delta = position - CoC;
+      const FTYPE      b = two * direction.Dot( delta );
+      const FTYPE      c = delta.Mag2() - radius*radius;
+      const FTYPE  discr = b*b - four*a*c;
+      const bool      OK = discr > zero;
+      if ( OK )
       {
-        const auto delta = position - CoC;
-        const auto     b = 2.0 * direction.Dot( delta );
-        const auto     c = delta.Mag2() - radius*radius;
-        const auto discr = b*b - 4.0*a*c;
-        if ( UNLIKELY( discr < 0 ) ) { OK = false; }
-        else
-        {
-          const auto dist = 0.5 * ( std::sqrt(discr) - b ) / a;
-          // set intersection point
-          intersection = position + ( dist * direction );
-        }
+        const FTYPE dist = half * ( std::sqrt(discr) - b ) / a;
+        // set intersection point
+        intersection = position + ( dist * direction );
       }
       return OK;
     }
@@ -112,34 +88,61 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    inline bool
-    reflectSpherical ( Gaudi::XYZPoint& position,
-                       Gaudi::XYZVector& direction,
-                       const Gaudi::XYZPoint& CoC,
-                       const double radius )
+    template < typename POINT, typename VECTOR, typename FTYPE >
+    inline 
+    typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
+                             std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                             std::is_arithmetic<FTYPE>::value, bool >::type 
+    reflectSpherical ( POINT& position,
+                       VECTOR& direction,
+                       const POINT& CoC,
+                       const FTYPE radius )
     {
-      bool OK = true;
-      // for line sphere intersection look at http://www.realtimerendering.com/int/
-      const auto a = direction.Mag2();
-      if ( UNLIKELY( 0 == a ) ) { OK = false; }
-      else
+      constexpr FTYPE zero(0), two(2.0), four(4.0), half(0.5);
+      const FTYPE      a = direction.Mag2();
+      const VECTOR delta = position - CoC;
+      const FTYPE      b = two * direction.Dot( delta );
+      const FTYPE      c = delta.Mag2() - radius*radius;
+      const FTYPE  discr = b*b - four*a*c;
+      const bool      OK = discr > zero;
+      if ( OK )
       {
-        const auto delta = position - CoC;
-        const auto     b = 2.0 * direction.Dot( delta );
-        const auto     c = delta.Mag2() - radius*radius;
-        const auto discr = b*b - 4.0*a*c;
-        if ( UNLIKELY( discr < 0 ) ) { OK = false; }
-        else
-        {
-          const auto dist = 0.5 * ( std::sqrt(discr) - b ) / a;
-          // change position to the intersection point
-          position += dist * direction;
-          // reflect the vector
-          // r = u - 2(u.n)n, r=reflction, u=insident, n=normal
-          const auto normal = position - CoC;
-          direction -= ( 2.0 * normal.Dot(direction) / normal.Mag2() ) * normal;
-        }
+        const FTYPE dist = half * ( std::sqrt(discr) - b ) / a;
+        // change position to the intersection point
+        position += dist * direction;
+        // reflect the vector
+        // r = u - 2(u.n)n, r=reflection, u=incident, n=normal
+        const VECTOR normal = position - CoC;
+        direction -= ( two * normal.Dot(direction) / normal.Mag2() ) * normal;
       }
+      return OK;
+    }
+
+    /** Intersect a given direction, from a given point, with a given plane.
+     *
+     *  @param[in]  position      The start point to use for the ray tracing
+     *  @param[in]  direction     The direction to ray trace from the start point
+     *  @param[in]  plane         The plane to intersect
+     *  @param[out] intersection  The intersection point of the direction with the plane
+     *
+     *  @return Boolean indicating the status of the ray tracing
+     *  @retval true  Ray tracing was successful
+     *  @retval false Ray tracing was unsuccessful
+     */
+    template < typename POINT, typename VECTOR, typename PLANE >
+    inline 
+    typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
+                             std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                             std::is_arithmetic<typename PLANE::Scalar>::value, bool >::type
+    intersectPlane ( const POINT& position,
+                     const VECTOR& direction,
+                     const PLANE& plane,
+                     POINT& intersection )
+    {
+      const bool OK = true;
+      const auto scalar   = direction.Dot( plane.Normal() );
+      const auto distance = -(plane.Distance(position)) / scalar;
+      intersection = position + (distance*direction);
       return OK;
     }
 
@@ -149,30 +152,31 @@ namespace Rich
      *                           On output the reflection point
      *  @param[in,out] direction On input the starting direction. 
      *                           On output the reflected direction.
-     *  @param[in]     plane     The plane to refect off
+     *  @param[in]     plane     The plane to reflect off
      *
      *  @return Boolean indicating if the ray tracing was succesful
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    inline bool
-    reflectPlane ( Gaudi::XYZPoint& position,
-                   Gaudi::XYZVector& direction,
-                   const Gaudi::Plane3D& plane )
+    template < typename POINT, typename VECTOR, typename PLANE >
+    inline 
+    typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
+                             std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                             std::is_arithmetic<typename PLANE::Scalar>::value, bool >::type
+    reflectPlane ( POINT& position,
+                   VECTOR& direction,
+                   const PLANE& plane )
     {
-      bool OK = true;
+      constexpr typename POINT::Scalar two(2.0);
+      const bool OK = true;
       // Plane normal
-      const auto& normal = plane.Normal();
+      const auto& normal  = plane.Normal();
       // compute distance to the plane
-      const auto scalar = direction.Dot(normal);
-      if ( UNLIKELY( fabs(scalar) < 1e-99 ) ) { OK = false; }
-      else
-      {
-        const auto distance = -(plane.Distance(position)) / scalar;
-        // change position to reflection point and update direction
-        position  += distance * direction;
-        direction -= 2.0 * scalar * normal;
-      }
+      const auto scalar   = direction.Dot(normal);
+      const auto distance = -(plane.Distance(position)) / scalar;
+      // change position to reflection point and update direction
+      position  += distance * direction;
+      direction -= two * scalar * normal;
       return OK;
     }
 
@@ -180,4 +184,6 @@ namespace Rich
 
 }
 
-#endif // RICHUTILS_RICHRAYTRACINGUTILS_H
+// Now also include the vector versions...
+#include "RichUtils/RichVectorRayTracingUtils.h"
+

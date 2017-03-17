@@ -1,7 +1,7 @@
 ################################################################################
 # Package: LHCbSys
 ################################################################################
-gaudi_subdir(LHCbSys v41r1)
+gaudi_subdir(LHCbSys v42r1)
 
 gaudi_depends_on_subdirs(Associators/MCAssociators
                          Calo/CaloDAQ
@@ -77,6 +77,8 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Kernel/XMLSummaryBase
                          Kernel/XMLSummaryKernel
                          Kernel/VectorClass
+                         Kernel/Vc
+                         Kernel/TemplatedGenVector
                          L0/L0Base
 			 L0/L0Calo
 			 L0/L0DU
@@ -96,6 +98,11 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Rich/RichKernel
                          Rich/RichUtils
                          Rich/RichInterfaces
+                         Rich/RichFutureKernel
+                         Rich/RichFutureDAQ
+                         Rich/RichFutureUtils
+                         Rich/RichFutureMCUtils
+                         Rich/RichFutureInterfaces
 			 ST/STDAQ
                          ST/STKernel
                          ST/STTELL1Event

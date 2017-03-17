@@ -35,8 +35,6 @@ public:
                      const XMLCh *const             bufId,
                      xercesc::MemoryManager *const  manager = xercesc::XMLPlatformUtils::fgMemoryManager );
 
-
-
   // -------- Implementation of IValidity --------
 
   /// is the Object valid? (it can be always invalid)

@@ -1,24 +1,23 @@
-// $Id: HltRoutingBitsFilter.cpp,v 1.5 2010-04-07 16:59:08 jpalac Exp $
-// Include files 
+// Include files
 #include <vector>
 
 // from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h" 
-#include "Event/RawEvent.h" 
-#include "Event/RawBank.h" 
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "Event/RawEvent.h"
+#include "Event/RawBank.h"
 
-#include "DAQKernel/DecoderAlgBase.h" 
+#include "DAQKernel/DecoderAlgBase.h"
 
 
 class HltRoutingBitsFilter : public Decoder::AlgBase {
-public: 
+public:
   HltRoutingBitsFilter( const std::string& name, ISvcLocator* pSvcLocator );
-  ~HltRoutingBitsFilter() override = default; ///< Destructor
   StatusCode initialize() override;    ///< Algorithm initialisation
   StatusCode execute   () override;    ///< Algorithm execution
 private:
-  std::vector<unsigned int> m_r,m_v;
-  
+
+  Gaudi::Property<std::vector<unsigned int>> m_r{ this, "RequireMask",{ ~0u,~0u,~0u } },
+                                             m_v{ this, "VetoMask",   {  0u, 0u, 0u } };
 };
 
 
@@ -39,15 +38,9 @@ HltRoutingBitsFilter::HltRoutingBitsFilter( const std::string& name,
                                         ISvcLocator* pSvcLocator)
 : Decoder::AlgBase ( name , pSvcLocator )
 {
-
-  declareProperty("VetoMask", m_v = std::vector<unsigned int>(3, 0x0));
-  declareProperty("RequireMask", m_r = std::vector<unsigned int>(3, 0xFFFF));
-  
   //new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Copied, LHCb::RawEventLocation::Default};
   initRawEventSearch();
-  
-
 }
 
 //=============================================================================
@@ -70,13 +63,13 @@ StatusCode HltRoutingBitsFilter::initialize() {
 //=============================================================================
 StatusCode HltRoutingBitsFilter::execute() {
 
-  
+
   LHCb::RawEvent* rawEvent = findFirstRawEvent();
   if( ! rawEvent ){
     setFilterPassed(true);
     return Error("No RawEvent found at any location",
                  StatusCode::SUCCESS,0);
-  }  
+  }
 
   const std::vector<LHCb::RawBank*>& banks = rawEvent->banks(LHCb::RawBank::HltRoutingBits);
   if (banks.size()!=1) {
@@ -91,7 +84,7 @@ StatusCode HltRoutingBitsFilter::execute() {
   }
   const unsigned int *data = banks.front()->data();
 
-  
+
   bool veto = false;
   bool req  = false;
   for (unsigned i=0;i<3 && !veto; ++i) {

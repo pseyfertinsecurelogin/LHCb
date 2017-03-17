@@ -369,18 +369,19 @@ std::ostream& LoKi::Odin::RunEvtNumber::fillStream ( std::ostream& s ) const
   s << "ODIN_RUNEVT ( " ;
   //
   return dispatch_variant( m_runevts,
-        [&](const runevt_range& rng) -> std::ostream&
-        { if (rng.first.run()==rng.second.run() && rng.first.evt()+1==rng.second.evt() ) {
-            return s << rng.first.run() << " , " << rng.first.event() ;
-          }
-          return s << Gaudi::Utils::toString ( rng.first ) << " , "
-                   << Gaudi::Utils::toString ( rng.second   ) << " ) " ;
-        },
-        [&](const runevt_list&  lst) -> std::ostream&
-        { return Gaudi::Utils::toStream( lst, s ) << ")";  } );
+                           [&](const runevt_range& rng) -> std::ostream&
+                           { if (rng.first.run()==rng.second.run() && rng.first.evt()+1==rng.second.evt() ) 
+                             {
+                               return s << rng.first.run()   << " , " 
+                                        << rng.first.event() << " ) " ;
+                             }
+                             return s << Gaudi::Utils::toString ( rng.first   ) << " , "
+                                      << Gaudi::Utils::toString ( rng.second  ) << " ) " ;
+                           },
+                           [&](const runevt_list&  lst) -> std::ostream&
+                           { return Gaudi::Utils::toStream( lst, s ) << ")";  } );
 }
 // ============================================================================
-
 
 
 // ============================================================================

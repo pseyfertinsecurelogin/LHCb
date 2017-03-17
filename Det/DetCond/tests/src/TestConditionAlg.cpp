@@ -18,9 +18,7 @@ namespace DetCondTest {
 class TestConditionAlg : public GaudiAlgorithm {
 public:
   /// Standard constructor
-  TestConditionAlg( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~TestConditionAlg( ); ///< Destructor
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
@@ -30,45 +28,30 @@ protected:
 
   void i_dump();
 
-  /// Names of the conditions to print
-  std::vector<std::string> m_condPaths;
-
-  /// Flag to decide if the conditions have to be loaded also during the
-  /// initialize step.
-  bool m_loadAtInit;
-
-  /// Container of the conditions to print
-  std::vector<std::string> m_conditionDeps;
+  Gaudi::Property<std::vector<std::string>> m_condPaths{this, "Conditions", {},
+      "list of paths to conditions in the detector transient store"};
+  Gaudi::Property<bool> m_loadAtInit{this, "LoadDuringInitialize", false,
+      "load the requested conditions already during the initialization"};
+  Gaudi::Property<std::vector<std::string>> m_conditionDeps{this, "ConditionsDependencies", {},
+        "declare dependencies between objects (as a list of strings 'A -> B') "
+        "to indicate that the condition A depends on B."};
 
   /// Container of the conditions to print
   GaudiUtils::Map<std::string,Condition*> m_conditions;
+
+  struct CondUpdateMonitor {
+    CondUpdateMonitor(MsgStream& _log, std::string _path):
+      log{_log}, path{std::move(_path)} {}
+    virtual StatusCode handler() {
+      log << MSG::INFO << path << " was updated" << endmsg;
+      return StatusCode::SUCCESS;
+    }
+    MsgStream& log;
+    std::string path;
+  };
+  std::vector<CondUpdateMonitor> m_updateMonitors;
+
 };
-
-//-----------------------------------------------------------------------------
-// Implementation file for class : TestConditionAlg
-//
-// 2008-06-27 : Marco CLEMENCIC
-//-----------------------------------------------------------------------------
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-TestConditionAlg::TestConditionAlg( const std::string& name,
-                                    ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-{
-  declareProperty("Conditions", m_condPaths,
-      "list of paths to conditions in the detector transient store");
-  declareProperty("LoadDuringInitialize", m_loadAtInit = false,
-      "load the requested conditions already during the initialization");
-  declareProperty("ConditionsDependencies", m_conditionDeps,
-      "declare dependencies between objects as a list of strings 'A -> B') "
-      "to indicate that the condition A depends on B.");
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-TestConditionAlg::~TestConditionAlg() {}
 
 namespace {
   void printDepsError(MsgStream& stream,
@@ -88,35 +71,44 @@ StatusCode TestConditionAlg::initialize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
-  std::vector<std::string>::const_iterator path;
-  for (path = m_condPaths.begin(); path != m_condPaths.end(); ++path){
-    registerCondition<TestConditionAlg>(*path,m_conditions[*path],NULL);
+  m_updateMonitors.reserve(m_condPaths.size());
+  for (const auto& path: m_condPaths){
+#if __cplusplus > 201402L
+    // C++ 17 version
+    auto mon = &m_updateMonitors.emplace_back(msgStream(), path);
+#else
+    m_updateMonitors.emplace_back(msgStream(), path);
+    auto mon = &m_updateMonitors.back();
+#endif
+    updMgrSvc()->registerCondition( mon, path, &CondUpdateMonitor::handler, m_conditions[path] );
+    registerCondition<TestConditionAlg>( mon );
   }
 
-  std::vector<std::string>::const_iterator deps;
-  for (deps = m_conditionDeps.begin(); deps != m_conditionDeps.end(); ++deps) {
-    std::string::size_type pos = deps->find("->");
+  std::size_t cnt = 0;
+  for (const auto& deps: m_conditionDeps) {
+    std::string::size_type pos = deps.find("->");
     if (pos == std::string::npos) {
-      printDepsError(error(), deps - m_conditionDeps.begin(), "missing '->'", *deps);
+      printDepsError(error(), cnt, "missing '->'", deps);
       return StatusCode::FAILURE;
     }
     std::string::size_type p0, p1;
-    p0 = deps->find_first_not_of(" \n\r\t");
-    p1 = deps->find_last_not_of(" \n\r\t", pos - 1) + 1;
-    std::string first(*deps, p0, p1 - p0);
+    p0 = deps.find_first_not_of(" \n\r\t");
+    p1 = deps.find_last_not_of(" \n\r\t", pos - 1) + 1;
+    std::string first(deps, p0, p1 - p0);
     if (first.empty()) {
-      printDepsError(error(), deps - m_conditionDeps.begin(), "missing first argument", *deps);
+      printDepsError(error(), cnt, "missing first argument", deps);
       return StatusCode::FAILURE;
     }
-    p0 = deps->find_first_not_of(" \n\r\t", pos + 2);
-    p1 = deps->find_last_not_of(" \n\r\t") + 1;
-    std::string second(*deps, p0, p1 - p0);
+    p0 = deps.find_first_not_of(" \n\r\t", pos + 2);
+    p1 = deps.find_last_not_of(" \n\r\t") + 1;
+    std::string second(deps, p0, p1 - p0);
     if (second.empty()) {
-      printDepsError(error(), deps - m_conditionDeps.begin(), "missing second argument", *deps);
+      printDepsError(error(), cnt, "missing second argument", deps);
       return StatusCode::FAILURE;
     }
     info() << "Declaring dependency of '" << first << "' on '" << second << "'" << endmsg;
     updMgrSvc()->registerCondition(getDet<Condition>(first), second);
+    ++cnt;
   }
 
   if (m_loadAtInit) {
@@ -161,9 +153,8 @@ StatusCode TestConditionAlg::finalize() {
 void TestConditionAlg::i_dump()
 {
   info() << "Requested Conditions:\n";
-  GaudiUtils::Map<std::string,Condition*>::iterator it;
-  for (it = m_conditions.begin(); it != m_conditions.end(); ++it) {
-    info() << "--- " << it->first << "\n" << *(it->second) << "\n";
+  for (const auto& item: m_conditions) {
+    info() << "--- " << item.first << "\n" << *(item.second) << "\n";
   }
   info() << endmsg;
 }

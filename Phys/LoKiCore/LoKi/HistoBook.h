@@ -15,8 +15,8 @@
 // ============================================================================
 // forward decalrations
 // ============================================================================
-class GaudiHistoAlg  ;
-class GaudiHistoTool ;
+struct GaudiHistoAlg ;
+struct GaudiHistoTool;
 class IHistoTool     ;
 class IHistogramSvc  ;
 class IAlgContextSvc ;

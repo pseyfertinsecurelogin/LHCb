@@ -10,8 +10,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHGEOMPHOTON_H
-#define RICHUTILS_RICHGEOMPHOTON_H 1
+#pragma once
 
 // std include
 #include <iostream>
@@ -54,7 +53,7 @@ namespace LHCb
   public:
 
     /// Default Constructor
-    RichGeomPhoton() { }
+    RichGeomPhoton() = default;
 
   public:
 
@@ -424,5 +423,3 @@ namespace LHCb
   };
 
 } // end LHCb namespace
-
-#endif // RICHUTILS_RICHGEOMPHOTON_H

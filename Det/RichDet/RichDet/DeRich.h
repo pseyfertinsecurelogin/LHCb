@@ -6,8 +6,7 @@
  *  @date   2004-06-18
  */
 
-#ifndef RICHDET_DERICH_H
-#define RICHDET_DERICH_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -55,7 +54,7 @@ public:
   /**
    * Default destructor
    */
-  virtual ~DeRich();
+  virtual ~DeRich() = default;
 
   /**
    * This is where most of the geometry is read and variables initialised
@@ -72,7 +71,11 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal centre of curvature
    */
-  virtual const Gaudi::XYZPoint& nominalCentreOfCurvature(const Rich::Side side) const = 0;
+  inline const Gaudi::XYZPoint& 
+  nominalCentreOfCurvature(const Rich::Side side) const noexcept
+  {
+    return m_nominalCentresOfCurvature[side];
+  }
 
   /**
    * Returns the nominal normal vector of the flat mirror plane for this Rich
@@ -80,7 +83,11 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal normal vector
    */
-  virtual const Gaudi::XYZVector& nominalNormal(const Rich::Side side) const = 0;
+  inline const Gaudi::XYZVector& 
+  nominalNormal(const Rich::Side side) const noexcept
+  {
+    return m_nominalNormals[side];
+  }
 
   /**
    * Returns the nominal flat mirror plane for this Rich
@@ -88,7 +95,11 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal flat mirror plane
    */
-  virtual const Gaudi::Plane3D& nominalPlane(const Rich::Side side) const = 0;
+  inline const Gaudi::Plane3D& 
+  nominalPlane(const Rich::Side side) const noexcept
+  {
+    return m_nominalPlanes[side];
+  }
 
   /**
    * Check on which side of this Rich lies this point
@@ -96,27 +107,104 @@ public:
    * @param point A point in the global coordinate system
    * @return The side for this point
    */
-  virtual Rich::Side side( const Gaudi::XYZPoint& point ) const = 0;
+  template < typename POINT >
+  inline 
+  typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value, Rich::Side >::type
+  side( const POINT& point ) const noexcept
+  {
+    return ( Rich::Rich1 == rich()                            ?
+             ( point.y() >= 0 ? Rich::top  : Rich::bottom ) :
+             ( point.x() >= 0 ? Rich::left : Rich::right  ) );
+  }
+
+  // /**
+  //  * Check on which side of this Rich lies this point
+  //  *
+  //  * @param point A point in the global coordinate system
+  //  * @return The side for this point
+  //  */
+  // template < typename POINT, typename SIDES >
+  // inline 
+  // typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value, void >::type
+  // sides( const POINT& point, SIDES& sides ) const noexcept
+  // {
+  //   if ( Rich::Rich1 == rich() )
+  //   {
+      
+  //     //if ( point.y() >= POINT::Scalar::Zero() )
+  //     //{
+  //     //  sides = SIDES(Rich::top);
+  //     // }
+  //     //else
+  //     // {
+  //     // sides = SIDES(Rich::bottom);
+  //     // }
+
+
+  //     //const typename SIDES::mask_type m = ( point.y() >= POINT::Scalar::Zero() );
+  //     //Vc::iff( m, SIDES(Rich::top), SIDES(Rich::bottom) );
+  //     //sides = SIDES(Rich::bottom);
+  //     //sides( m ) = SIDES(Rich::top);
+  //   }
+  //   else
+  //   {
+  //     //sides = SIDES(Rich::right);
+  //     //sides( point.x() >= POINT::Scalar::Zero() ) = SIDES(Rich::left);
+  //   }
+  // }
+
+  /**
+   * Check on which side of this Rich lies this (x,y) point
+   *
+   * @param point A point in the global coordinate system
+   * @return The side for this point
+   */
+  template< typename TYPE >
+  inline 
+  typename std::enable_if< std::is_arithmetic<TYPE>::value, Rich::Side >::type
+  side( const TYPE x, const TYPE y ) const noexcept
+  {
+    return ( Rich::Rich1 == rich()                  ?
+             ( y >= 0 ? Rich::top  : Rich::bottom ) :
+             ( x >= 0 ? Rich::left : Rich::right  ) );
+  }
+
+  // /**
+  //  * Check on which side of this Rich lies this point
+  //  *
+  //  * @param point A point in the global coordinate system
+  //  * @return The side for this point
+  //  */
+  // template < typename TYPE, typename SIDES >
+  // inline 
+  // typename std::enable_if< !std::is_arithmetic<TYPE>::value, void >::type
+  // sides( const TYPE x, const TYPE y, SIDES& sides ) const noexcept
+  // {
+  //   if ( Rich::Rich1 == rich() )
+  //   {
+  //     sides = SIDES(Rich::bottom);
+  //     sides( y >= TYPE::Zero() ) = SIDES(Rich::top);
+  //   }
+  //   else
+  //   {
+  //     sides = SIDES(Rich::right);
+  //     sides( x >= TYPE::Zero() ) = SIDES(Rich::left);
+  //   }
+  // }
 
   /**
    * Returns the detector type for this Rich
    *
    * @return The detector type
    */
-  inline Rich::DetectorType rich() const noexcept
-  {
-    return m_rich;
-  }
+  inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
   /**
    * Returns the RichSystem
    *
    * @return The DeRichSystem object
    */
-  inline DeRichSystem* deRichSystem() const noexcept
-  {
-    return deRichSys();
-  }
+  inline DeRichSystem* deRichSystem() noexcept { return deRichSys(); }
 
   /**
    * Returns the nominal spherical mirror radius for this Rich
@@ -150,16 +238,10 @@ public:
   }
 
   /// Use large PMTs
-  inline bool Rich2UseGrandPmt () const noexcept
-  {
-    return m_Rich2UseGrandPmt;
-  }
+  inline bool Rich2UseGrandPmt() const noexcept { return m_Rich2UseGrandPmt; }
 
-  /// Use large+small  PMTs
-  inline bool Rich2UseMixedPmt () const noexcept
-  {
-    return m_Rich2UseMixedPmt;
-  }
+  /// Use large+small PMTs
+  inline bool Rich2UseMixedPmt() const noexcept { return m_Rich2UseMixedPmt; }
 
   /**
    * Returns a pointer to the tabulated property that holds the refractive
@@ -192,7 +274,6 @@ public:
   inline const std::shared_ptr<const Rich::TabulatedProperty1D>&
   nominalPDQuantumEff() const noexcept
   {
-    if ( !m_nominalPDQuantumEff ) { loadNominalQuantumEff(); }
     return m_nominalPDQuantumEff;
   }
 
@@ -223,23 +304,32 @@ public:
    * be used to test if the mirror segment is at the edge or not
    * @return Position (row/column) for this spherical mirror segment
    */
-  virtual Rich::MirrorSegPosition sphMirrorSegPos( const int mirrorNumber ) const;
-
+  Rich::MirrorSegPosition sphMirrorSegPos( const int mirrorNumber ) const;
+  
   /**
    * Method to find the row/column of a flat mirror segment. It can be used to
    * test if the mirror segment is at the edge or not
    *
    * @return Position (row/column) for this flat mirror segment
    */
-  virtual Rich::MirrorSegPosition secMirrorSegPos( const int mirrorNumber ) const;
-
+  Rich::MirrorSegPosition secMirrorSegPos( const int mirrorNumber ) const;
+  
   /// sensitive volume identifier for hpd version. to be phased out
-  int sensitiveVolumeID(const Gaudi::XYZPoint& globalPoint) const override;
+  int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override;
 
-public:
+  /// Access PD Panels
+  inline DeRichPDPanel * pdPanel( const Rich::Side panel ) const noexcept 
+  {
+    return m_PDPanels[panel];
+  }
 
-  /// Access PD Panels on demand
-  DeRichPDPanel * pdPanel( const Rich::Side panel ) const;
+protected:
+
+  /// Load on demand the nominal PD Q.E.
+  void loadNominalQuantumEff();
+
+  /// Load the PD panels
+  void loadPDPanels();
 
 private:
 
@@ -247,13 +337,10 @@ private:
   virtual const std::string panelName( const Rich::Side panel ) const;
 
   /// Load on demand the nominal HPD Q.E.
-  const Rich::TabulatedProperty1D * loadNominalHPDQuantumEff() const;
+  std::shared_ptr<const Rich::TabulatedProperty1D> loadNominalHPDQuantumEff();
 
   /// Load on demand the nominal PMT Q.E.
-  const Rich::TabulatedProperty1D * loadNominalPMTQuantumEff() const;
-
-  /// Load on demand the nominal PD Q.E.
-  void loadNominalQuantumEff() const;
+  std::shared_ptr<const Rich::TabulatedProperty1D> loadNominalPMTQuantumEff();
 
 protected:
 
@@ -275,12 +362,12 @@ protected:
   int m_Rich2PhotoDetectorArrayConfig{0};
 
   /** Use large PMTs in RICH2
-   * This is specific to RICH2, but the flags are in RICH1 part of DB since
-   * all the pmts are created there together. So at the moment giving the capability to access it from
-   * RICH1 or RICH2 detector elements as per convenience and saving cpu time. There is also the possibility of
-   * different array config in RICH1 in future. So keeping all the flags here makes it easier to
-   * navigate through them.
-   * The mixed pmt means some pmts are large and others are with standard size.
+   *  This is specific to RICH2, but the flags are in RICH1 part of DB since
+   *  all the pmts are created there together. So at the moment giving the capability to access it from
+   *  RICH1 or RICH2 detector elements as per convenience and saving cpu time. There is also the possibility of
+   *  different array config in RICH1 in future. So keeping all the flags here makes it easier to
+   *  navigate through them.
+   *  The mixed pmt means some pmts are large and others are with standard size.
    */
   bool m_Rich2UseGrandPmt{false};
 
@@ -299,10 +386,19 @@ protected:
   /// flat mirror reflectivity
   std::unique_ptr<const Rich::TabulatedProperty1D> m_nominalSecMirrorRefl;
 
+  /// Nominal planes for each panel
+  Rich::PanelArray<Gaudi::Plane3D> m_nominalPlanes = {{}};
+
+  /// The nominal normal vector of the flat mirror planes
+  Rich::PanelArray<Gaudi::XYZVector> m_nominalNormals = {{}};
+
+  /// The nominal centres of curvature of the spherical mirrors
+  Rich::PanelArray<Gaudi::XYZPoint> m_nominalCentresOfCurvature = {{}};
+
 private: // data
 
   /// Pointers to the PD panels of this Rich detector
-  mutable std::array<DeRichPDPanel*,Rich::NRiches> m_PDPanels{{nullptr,nullptr}};
+  Rich::DetectorArray<DeRichPDPanel*> m_PDPanels{{nullptr,nullptr}};
 
   /// flag to test if the xml supports mirror position info
   bool m_positionInfo{false};
@@ -313,8 +409,6 @@ private: // data
   int m_secMirrorSegCols{0};  ///< number of secondary mirror columns
 
   /// PD quantum efficiency
-  mutable std::shared_ptr<const Rich::TabulatedProperty1D> m_nominalPDQuantumEff;
+  std::shared_ptr<const Rich::TabulatedProperty1D> m_nominalPDQuantumEff;
 
 };
-
-#endif    // RICHDET_DERICH_H
