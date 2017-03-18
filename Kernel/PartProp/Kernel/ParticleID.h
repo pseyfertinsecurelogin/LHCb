@@ -47,12 +47,17 @@ namespace LHCb
     } ;
     /// Quark PDG codes
     enum Quark { 
-      down=1  ,
-      up      ,
-      strange ,
-      charm   ,
-      bottom  ,
-      top
+      down=1           ,
+      up               ,
+      strange          ,
+      charm            ,
+      bottom           ,
+      top              ,
+      bottom_prime     ,
+      top_prime        ,
+
+      first = down     ,
+      last = top_prime
     } ;
     // ========================================================================
   public:
@@ -123,7 +128,13 @@ namespace LHCb
     /// Quark contents
     bool hasTop     () const { return hasQuark ( top     ) ; }
     /// Quark contents
+    bool hasBottomPrime () const { return hasQuark ( bottom_prime ) ; }
+    /// Quark contents
+    bool hasTopPrime    () const { return hasQuark ( top_prime    ) ; }
+    /// Quark contents
     bool hasQuark   ( const Quark& q ) const;
+    /// Is a single quark of any type
+    bool isQuark    () const ;
     /// Contains quarks but not a nucleus
     bool hasQuarks  () const ;
     /// Atomic number if a nucleus
