@@ -58,8 +58,8 @@ src_data = join(dirname(__file__), 'data', 'test_repo')
 copytree(src_data, path)
 
 check_call(['git', 'init', path])
-check_call(['git', 'config', '--local', 'user.name', 'Test User'], cwd=path)
-check_call(['git', 'config', '--local', 'user.email', 'test.user@no.where'],
+check_call(['git', 'config', '-f', '.git/config', 'user.name', 'Test User'], cwd=path)
+check_call(['git', 'config', '-f', '.git/config', 'user.email', 'test.user@no.where'],
            cwd=path)
 check_call(['git', 'add', '.'], cwd=path)
 env = dict(os.environ)
