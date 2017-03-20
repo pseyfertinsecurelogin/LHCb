@@ -2,7 +2,6 @@
 #include "LHCbMath/Similarity.h"
 #include "LHCbMath/CPUDispatch.h"
 #include <type_traits>
-#include "VectorClass/instrset.h"
 
 namespace {
   template <typename Vtbl, typename Trampoline, typename... Args>
