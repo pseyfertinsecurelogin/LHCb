@@ -28,6 +28,9 @@ namespace LHCb
      *  first element is the CPU ID enum and the second element is the dispatch function
      *  to use for that instruction set.
      *
+     *  Entries in the initializer list must be sorted in order of decreasing CPU ID 
+     *  (i.e. fastest first). A check is applied to enforce this.
+     *
      *  @return The selected dispatch function.
      */
     template< typename Vtbl >
