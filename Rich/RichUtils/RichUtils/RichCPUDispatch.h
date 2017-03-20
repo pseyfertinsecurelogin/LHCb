@@ -2,7 +2,7 @@
 #pragma once
 
 // STL
-# include <map>
+#include <string>
 
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
