@@ -132,7 +132,12 @@ void TrackFitResult::copy( const TrackFitResult& rhs )
   reset();
   m_nIter    = rhs.m_nIter ;
   m_pScatter = rhs.m_pScatter ;
-
+  m_chi2           = rhs.m_chi2;
+  m_chi2Velo       = rhs.m_chi2Velo;
+  m_chi2Upstream   = rhs.m_chi2Upstream;
+  m_chi2Long       = rhs.m_chi2Long;
+  m_chi2Muon       = rhs.m_chi2Muon;
+  m_chi2Downstream = rhs.m_chi2Downstream;
 
   // copy the measurements. make a map from old to new measurements.
   std::map<const Measurement*, Measurement*> measurementmap ;
