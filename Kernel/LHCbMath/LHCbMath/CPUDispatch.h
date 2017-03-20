@@ -24,7 +24,7 @@ namespace LHCb
     
     /** @brief Method to set a dispatch function from a list of options based on CPU ID.
      *
-     *  Expects to be passed an initializer list of the form of a std::pair where the
+     *  Expects to be passed an initializer list of the form of list of std::pairs where the
      *  first element is the CPU ID enum and the second element is the dispatch function
      *  to use for that instruction set.
      *
