@@ -84,15 +84,15 @@
       />
 
       <attribute 
-	desc    = "Vector of Taggers" 
-	name    = "taggers" 
-	type    = "std::vector&lt;LHCb::Tagger&gt;"
+	      desc    = "Vector of Taggers" 
+	      name    = "taggers" 
+	      type    = "std::vector&lt;LHCb::Tagger&gt;"
       />
 
       <attribute 
-	desc = "decision of opposite side taggers only"
-	name = "decisionOS"
-	type = "short int"
+	      desc = "decision of opposite side taggers only"
+	      name = "decisionOS"
+	      type = "short int"
         init = "0"
       />
 
@@ -106,7 +106,7 @@
       <method
         name    = "addTagger"
         type    = "void"
-	argList = "LHCb::Tagger HAS"
+	      argList = "LHCb::Tagger HAS"
         desc    = "Add one Tagger">
         <code>  
           m_taggers.push_back(HAS); 
