@@ -4,6 +4,7 @@
 // STL
 #include <string>
 #include <iterator>
+#include <algorithm>
 
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
@@ -26,6 +27,7 @@ namespace LHCb
     decltype(auto) dispatch( const Vtbl& vtbl )
     {
       // make sure list is sorted in strict decreasing CPU ID
+      // needed for the following search to find the right implementation
       {
         ID lastID = UNKNOWN;
         for ( const auto & i : vtbl ) 

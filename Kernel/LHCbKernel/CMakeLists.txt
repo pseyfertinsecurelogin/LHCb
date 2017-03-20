@@ -6,7 +6,6 @@ gaudi_subdir(LHCbKernel v16r1)
 gaudi_depends_on_subdirs(GaudiAlg
                          GaudiKernel
                          GaudiObjDesc
-                         Kernel/VectorClass
                          Kernel/LHCbMath)
 
 find_package(Boost COMPONENTS system)
