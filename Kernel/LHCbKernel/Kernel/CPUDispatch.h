@@ -3,6 +3,7 @@
 
 // STL
 #include <string>
+#include <iterator>
 
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
@@ -10,7 +11,7 @@
 // Vector Class
 #include "VectorClass/instrset.h"
 
-namespace Rich
+namespace LHCb
 {
 
   /// Namespace for CPU dispatch helper methods
