@@ -22,7 +22,14 @@ namespace LHCb
     /// Enum for CPU capabilities
     enum ID { GENERIC = 0, SSE3 = 3, SSE4 = 6, AVX = 7, AVX2 = 8, UNKNOWN = 999999 };
     
-    /// Method to set a dispatch function from a list of options based on CPU ID
+    /** @brief Method to set a dispatch function from a list of options based on CPU ID.
+     *
+     *  Expects to be passed an initializer list of the form of a std::pair where the
+     *  first element is the CPU ID enum and the second element is the dispatch function
+     *  to use for that instruction set.
+     *
+     *  @return The selected dispatch function.
+     */
     template< typename Vtbl >
     decltype(auto) dispatch( const Vtbl& vtbl )
     {
