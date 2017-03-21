@@ -27,6 +27,11 @@
 // ============================================================================
 namespace LHCb {
 namespace Math {
+namespace avx2 {
+    extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
+    extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
+    extern void similarity_5_7(const double* Ci, const double* Fi, double* Ti);
+}
 namespace avx {
     extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
     extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
@@ -46,17 +51,20 @@ namespace generic {
 }
 
 
-enum ISet : std::int8_t { GENERIC = 0, SSE3 = 3, AVX = 7 };
+enum ISet : std::int8_t { GENERIC = 0, SSE3 = 3, AVX = 7, AVX2 = 8 };
 typedef std::function<void(const double* Ci, const double* Fi, double* Ti)> similarity_t;
 
-std::map<ISet, similarity_t>  vtbl_5_1 = { { ISet::AVX,  LHCb::Math::avx::similarity_5_1 },
-                                           { ISet::SSE3,  LHCb::Math::sse3::similarity_5_1 },
+std::map<ISet, similarity_t>  vtbl_5_1 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_1 },
+                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_1 },
+                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_1 },
                                            { ISet::GENERIC, LHCb::Math::generic::similarity_5_1 } };
-std::map<ISet, similarity_t>  vtbl_5_5 = { { ISet::AVX,  LHCb::Math::avx::similarity_5_5 },
-                                           { ISet::SSE3,  LHCb::Math::sse3::similarity_5_5 },
+std::map<ISet, similarity_t>  vtbl_5_5 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_5 },
+                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_5 },
+                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_5 },
                                            { ISet::GENERIC, LHCb::Math::generic::similarity_5_5 } };
-std::map<ISet, similarity_t>  vtbl_5_7 = { { ISet::AVX,  LHCb::Math::avx::similarity_5_7 },
-                                           { ISet::SSE3,  LHCb::Math::sse3::similarity_5_7 },
+std::map<ISet, similarity_t>  vtbl_5_7 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_7 },
+                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_7 },
+                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_7 },
                                            { ISet::GENERIC, LHCb::Math::generic::similarity_5_7 } };
 
 
@@ -69,7 +77,7 @@ std::map<ISet, similarity_t>  vtbl_5_7 = { { ISet::AVX,  LHCb::Math::avx::simila
  */ 
 bool hasInstructionSet(ISet lvl) 
 {
-  int level = instrset_detect();
+  const auto level = instrset_detect();
   return (level >= static_cast<int>(lvl));
 }
 
@@ -216,29 +224,32 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
   
   bool doSSE3 = true;
   bool doAVX = true;
+  bool doAVX2 = true;
   if (instructionSet == ISet::AVX) 
   {
     doSSE3 = false;
   } else if (instructionSet == ISet::SSE3) 
   {
     doAVX = false;
+    doAVX2 = false;
   }
-
-  
-
  
   // Setting the threshold for error
   double diffThreshold = 1e-15  * conditionNumber;
   // Checking the instruction sets available
-  bool hasAVX = hasInstructionSet(ISet::AVX);
+  bool hasAVX  = hasInstructionSet(ISet::AVX);
+  bool hasAVX2 = hasInstructionSet(ISet::AVX2);
   bool hasSSE3 = hasInstructionSet(ISet::SSE3);
   if (printResults)
     std::cout << "Has SSE3: " <<  hasSSE3 
-              << " Has AVX: " << hasAVX << std::endl;
+              << " Has AVX: " << hasAVX 
+              << " Has AVX2: " << hasAVX2 
+              << std::endl;
 
   bool SSE3Diff = false;
   bool AVXDiff = false;
-  SymMat target, targetSSE3, targetAVX;
+  bool AVX2Diff = false;
+  SymMat target, targetSSE3, targetAVX, targetAVX2;
 
   // Running the transform for the generic method  
   (simFuncs[ISet::GENERIC])(origin.Array(), F.Array(), target.Array());
@@ -299,11 +310,37 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
       return 77; 
     }    
   }
+
+  // Checking AVX2
+  if (doAVX2) 
+  { 
+    if (hasAVX2) 
+    {
+      (simFuncs[ISet::AVX2])( origin.Array(), F.Array(), targetAVX2.Array() );
+      if (printResults) 
+      {  
+        std::cout << "AVX2 similarity transform result" << std::endl;      
+        std::cout << targetAVX2 << std::endl;
+      }
+      
+      auto cmpAVX2Res = compareSMatrix(targetAVX2, target, true, diffThreshold);
+      auto cmpAVX2    = cmpAVX2Res.first;
+      AVX2Diff = cmpAVX2Res.second;
+      
+      if (printResults)
+        std::cout << "AVX2 Differences" << std::endl << cmpAVX2 << std::endl;
+    } else 
+    {
+      // Cannot test AVX if not present
+      // Returning a special value to tell gaudi this was untested...
+      return 77; 
+    }    
+  }
   
     
   // Checking if we found errors
   int retval = 0;
-  if (SSE3Diff || AVXDiff) 
+  if (SSE3Diff || AVXDiff || AVX2Diff) 
   {
     retval = 1;
     
@@ -328,7 +365,10 @@ int main(int argc, char *argv[])
   ISet instructionSet = ISet::GENERIC; // Test ALL by default...
   if (argc > 1) {
     std::string arg = std::string(argv[1]);
-    if (arg == "AVX") 
+    if (arg == "AVX2") 
+    {
+      instructionSet = ISet::AVX2;
+    } else if (arg == "AVX") 
     {
       instructionSet = ISet::AVX;
     } else if (arg == "SSE3") 
