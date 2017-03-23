@@ -47,7 +47,10 @@ def checksum(data):
 
 
 def extract_tags_infos(notes, partition):
-    'extract tags informations from a release_notes.xml file'
+    '''extract tags informations from a release_notes.xml file
+
+    Return a dictionary {'tagname': (datestring, author, basetag,
+                                     datatype_branches)}'''
     # Analyze relese notes
     ns = {'lhcb': 'http://lhcb.cern.ch'}
     notes = ET.parse(notes)
@@ -101,7 +104,7 @@ def main():
     'script logic'
     start_time = datetime.now()
 
-    parser = OptionParser(usage='%prog [options] dbfile notes-xml repo_dir')
+    parser = OptionParser(usage='%prog [options] dbfile [notes-xml] repo_dir')
 
     parser.add_option('--tag-prefix',
                       help='prefix to use for the generated tags')
@@ -127,23 +130,53 @@ def main():
     parser.add_option('--no-force-branches',
                       action='store_true',
                       help='do not force creation of datatype branches')
+    parser.add_option('-t', '--tag',
+                      action='append', dest='tags',
+                      help='tags to extract if notes-xml is not provided')
+    parser.add_option('--name',
+                      help='name of the COOL database in the SQLite file '
+                      '(default: the file name without extension)')
 
     parser.set_defaults(tag_prefix='',
                         clean_iovs=True,
                         append=False,
                         always_iovs=False,
                         partition_payloads=False,
-                        do_head=True)
+                        do_head=True,
+                        tags=[])
 
-    opts, (dbfile, notes, repo_dir) = parser.parse_args()
+    opts, args = parser.parse_args()
 
-    name = os.path.splitext(os.path.basename(dbfile))[0]
+    if len(args) == 3:
+        (dbfile, notes, repo_dir) = args
+        if opts.tags:
+            parser.error('tags cannot be specified in conjunction to a notes '
+                         'xml')
+    elif len(args) == 2:
+        (dbfile, repo_dir) = args
+        notes = None
+        if not opts.tags and not opts.do_head:
+            parser.error('no notes-xml nor list of tags provided')
+        if 'HEAD' in opts.tags:  # HEAD is treated in a special way
+            opts.do_head = True
+            opts.tags.remove('HEAD')
+    else:
+        parser.error('wrong number of arguments')
+
+    name = opts.name or os.path.splitext(os.path.basename(dbfile))[0]
     if 'ONLINE' in name:
         name = 'ONLINE'
     cool_url = 'sqlite_file:{0}/{1}'.format(dbfile, name)
 
-    print 'parsing release notes...'
-    tags_infos = extract_tags_infos(notes, name)
+    if notes is None:
+        tags_infos = dict((opts.tags[i], ('1970-01-01T00:00:00',
+                                          'nobody <nobody@no.where>',
+                                          '' if not i else opts.tags[i - 1],
+                                          []))
+                          for i in range(len(opts.tags)))
+    else:
+        print 'parsing release notes...'
+        tags_infos = extract_tags_infos(notes, name)
 
     print 'loading CondDBUI...'
     from CondDBUI import CondDB
