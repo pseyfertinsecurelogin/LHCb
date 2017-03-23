@@ -18,7 +18,7 @@ public:
   /// Constructor
   RunChangeIncident(const std::string& source, // Source(service or alg) name)
                     unsigned long run,
-                    const Gaudi::Time& evtTime)
+                    const Gaudi::Time& evtTime = Gaudi::Time::max())
   : Incident(source, IncidentType::RunChange), m_run(run), m_eventTime(evtTime) {}
 
   /// Get the new run number
