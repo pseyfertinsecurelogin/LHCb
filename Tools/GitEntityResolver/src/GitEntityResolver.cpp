@@ -150,7 +150,7 @@ GitEntityResolver::GitEntityResolver( const std::string& type, const std::string
       if ( UNLIKELY( !res ) )
         throw GaudiException( "invalid Git repository: '" + m_pathToRepository.value() + "'", this->name(),
                               StatusCode::FAILURE );
-      return std::move( res );
+      return res;
     }}
 {
   // Initialize Git library
