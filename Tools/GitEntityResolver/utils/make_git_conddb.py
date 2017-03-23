@@ -4,12 +4,10 @@ Small script to convert a DDDB COOL/SQLite database to a Git repository.
 '''
 
 import os
-import sys
 import re
-import time
 from optparse import OptionParser
 from xml.etree import ElementTree as ET
-from subprocess import check_output, STDOUT
+from subprocess import check_output
 from hashlib import sha1
 from datetime import datetime
 from clean_iovs import process as clean_iovs
@@ -22,9 +20,13 @@ SYSTEM_RE = re.compile(r'(SYSTEM\s+)(?:"|\')([^"\']+)(:?"|\')')
 
 
 def fix_system_refs(data, fullpath, path):
+    '''
+    helper to fix explicit references to conddb: with references to git:
+    '''
     curr_dir = os.path.dirname(path)
 
     def repl(match):
+        'replacement function'
         if match.group(2).startswith('conddb:/'):
             newpath = match.group(2)[8:]
         else:
@@ -38,12 +40,14 @@ def fix_system_refs(data, fullpath, path):
 
 
 def checksum(data):
+    'compute SHA1 checksum of a string'
     s = sha1()
     s.update(data)
     return s.hexdigest()
 
 
 def extract_tags_infos(notes, partition):
+    'extract tags informations from a release_notes.xml file'
     # Analyze relese notes
     ns = {'lhcb': 'http://lhcb.cern.ch'}
     notes = ET.parse(notes)
@@ -51,13 +55,19 @@ def extract_tags_infos(notes, partition):
     committers = dict((el.find('lhcb:name', ns).text,
                        '{0} <{1}>'.format(el.find('lhcb:name', ns).text,
                                           el.find('lhcb:email', ns).text
-                                            .replace('__AT__', '@')))
+                                          .replace('__AT__', '@')))
                       for el in notes.findall('./lhcb:maintainer', ns))
 
     tags_xpath = ("./lhcb:global_tag/lhcb:partition/"
                   "[lhcb:name='{0}']/..").format(partition)
 
     class DTCollector(object):
+        '''
+        helper to collect data type for the tags
+
+        only data types not yet assigned are taken into account for a given
+        tag element (tags are sorted from most recent to oldest)
+        '''
         def __init__(self):
             self.assigned_datatypes = set()
         def __call__(self, el):
@@ -71,12 +81,12 @@ def extract_tags_infos(notes, partition):
 
     return dict((el.find('lhcb:tag', ns).text,
                  (
-                    # we use a dummy time
-                    el.find('lhcb:date', ns).text + 'T00:00:00',
-                    committers.get(el.find('lhcb:contributor', ns).text),
-                    el.find(("lhcb:partition/[lhcb:name='{0}']/"
-                             "lhcb:base").format(partition), ns).text,
-                    datatype_branches(el),
+                     # we use a dummy time
+                     el.find('lhcb:date', ns).text + 'T00:00:00',
+                     committers.get(el.find('lhcb:contributor', ns).text),
+                     el.find(("lhcb:partition/[lhcb:name='{0}']/"
+                              "lhcb:base").format(partition), ns).text,
+                     datatype_branches(el)
                  ))
                 for el in notes.findall(tags_xpath, ns))
 
@@ -88,6 +98,7 @@ def fix_lines_ends(data):
     return '\n'.join(l.rstrip() for l in data.splitlines()) + '\n'
 
 def main():
+    'script logic'
     start_time = datetime.now()
 
     parser = OptionParser(usage='%prog [options] dbfile notes-xml repo_dir')
@@ -140,6 +151,7 @@ def main():
     root_node = db.getCOOLNode('/')
 
     def tag_time(t):
+        'convert tag instertion time to ISO string'
         t = int(root_node.tagInsertionTime(t)
                 .coralTimeStamp().total_nanoseconds() * 1.e-9)
         return str(datetime.fromtimestamp(t))
@@ -152,7 +164,7 @@ def main():
     tags_to_copy = [t for t in tags_to_copy if t.name in tags_infos]
     tags_to_copy.sort(key=lambda t:
                       root_node.tagInsertionTime(t.name)
-                               .coralTimeStamp().total_nanoseconds())
+                      .coralTimeStamp().total_nanoseconds())
     # tags_to_copy = tags_to_copy[-5:]
     if opts.do_head:
         tags_to_copy.append(head_tag)
@@ -214,7 +226,7 @@ def main():
             data = db.getPayloadList(node, IOV_MIN, IOV_MAX, None,
                                      tag if node not in
                                      single_version_nodes else 'HEAD')
-            for payload, since, until, channel, insertion_time in data:
+            for payload, since, until, channel, _ in data:
                 for key in payload:
                     if not payload[key]:  # skip empty entries
                         continue
@@ -225,11 +237,10 @@ def main():
                                 '{0}/{1}@{2}'.format(os.path.dirname(node),
                                                      key,
                                                      os.path.basename(node)))
-                    if channel or (
-                          os.path.basename(path) in ('MagnetScale.xml',
-                                                     'RichHpdSurface.xml',
-                                                     'HpdLogVol.xml')
-                          ):
+                    if (channel or
+                            os.path.basename(path) in ('MagnetScale.xml',
+                                                       'RichHpdSurface.xml',
+                                                       'HpdLogVol.xml')):
                         path = path + ':{0}'.format(channel)
                     value = fix_system_refs(payload[key], path, node)
                     value = fix_lines_ends(value)
