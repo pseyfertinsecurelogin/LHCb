@@ -36,7 +36,7 @@ gaudi_add_dictionary(LHCbMath
 
 
 # Determine if AVX2 is supported
-set(AVX2_BUILD_FLAGS " -mavx ")
+set(AVX2_BUILD_FLAGS " -mavx -O3 ")
 exec_program(${CMAKE_CXX_COMPILER} ARGS -print-prog-name=as OUTPUT_VARIABLE _as)
 if(NOT _as)
   message(ERROR "Could not find the 'as' assembler...")
@@ -47,13 +47,13 @@ else()
   if(_as_version VERSION_LESS "2.21.0")
      message(WARNING "binutils is too old to support AVX2+FMA... Falling back to AVX only.")
   else()
-     set(AVX2_BUILD_FLAGS " -mavx2 -mfma ")
+     set(AVX2_BUILD_FLAGS " -mavx2 -mfma -O3 ")
   endif()
 endif()
 message(STATUS "AVX2 build flags = " ${AVX2_BUILD_FLAGS})
 
 set_property(SOURCE src/Similarity_SSE3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -msse3 " )
-set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx " )
+set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx -O3 " )
 set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2_BUILD_FLAGS} )
 
 if(LCG_COMP STREQUAL "gcc" OR
