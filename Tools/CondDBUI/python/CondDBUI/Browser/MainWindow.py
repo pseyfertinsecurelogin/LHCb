@@ -3,19 +3,19 @@
 #
 #  Definition of the browser MainWindow class.
 
-from PyQt4.QtCore import (Qt, QObject,
-                          SIGNAL, SLOT,
-                          QVariant, QDateTime,
-                          QSettings,
-                          QSize, QPoint,
-                          PYQT_VERSION_STR, qVersion)
-from PyQt4.QtGui import (QApplication, QMainWindow, QMessageBox,
-                         QHeaderView,
-                         QLabel, QIcon,
-                         QMenu, QAction,
-                         QTextDocument,
-                         QTextCursor,
-                         QStyle, QStyleFactory)
+from .Qt import (Qt, QObject,
+                 pyqtSlot, pyqtSignal,
+                 QDateTime,
+                 QSettings,
+                 QSize, QPoint,
+                 PYQT_VERSION_STR, qVersion,
+                 QApplication, QMainWindow, QMessageBox,
+                 QHeaderView,
+                 QLabel, QIcon,
+                 QMenu, QAction,
+                 QTextDocument,
+                 QTextCursor,
+                 QStyle, QStyleFactory)
 
 from Ui_MainWindow import Ui_MainWindow
 
@@ -32,6 +32,13 @@ import os
 
 ## Class containing the logic of the application.
 class MainWindow(QMainWindow, Ui_MainWindow):
+    # Signals
+    changedPath = pyqtSignal(str)
+    changedPathChannel = pyqtSignal(str, 'unsigned int')
+    databaseOpen = pyqtSignal(bool)
+    databaseOpenReadOnly = pyqtSignal(bool)
+    openedDB = pyqtSignal(object)
+
     ## Constructor.
     #  Initialises the base class and defines some internal structures.
     def __init__(self, parent = None, flags = Qt.Widget):
@@ -54,8 +61,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self._connectionString = None
         # Maximum number of entries in the list of recent databases
         self.maxRecentEntries = 10
-        # Whether to show the welcome message
-        self._showWelcome = True # set in readSettings
         # External editor, to be passed to the add condition dialog
         self._externalEditor = "emacs" # set in readSettings
         # Prepare the GUI.
@@ -78,49 +83,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.iovView.setModel(self.models["iovs"])
         self.fieldsView.setModel(self.models["fields"])
         for m in [self.models[n] for n in ["tree", "nodes", "iovs", "fields"]]:
-            QObject.connect(self, SIGNAL("openedDB"), m.connectDB)
-        QObject.connect(self, SIGNAL("openedDB"), tagsGlobalCache.setDB)
+            self.openedDB.connect(m.connectDB)
+        self.openedDB.connect(tagsGlobalCache.setDB)
 
-        QObject.connect(self.hierarchyTreeView.selectionModel(), SIGNAL("currentChanged(QModelIndex,QModelIndex)"),
-                        self.selectedItem)
+        self.hierarchyTreeView.selectionModel().currentChanged.connect(self.selectedItem)
 
         # special settings for the tags model
         tagsmodel = self.models["tags"]
-        QObject.connect(self, SIGNAL("changedPath"), tagsmodel.setPath)
-        QObject.connect(self.hideAutoCheckBox, SIGNAL("stateChanged(int)"), tagsmodel.setHideAutoTags)
-        QObject.connect(tagsmodel, SIGNAL("setViewEnabled(bool)"), self.tagComboBox, SLOT("setEnabled(bool)"))
-        QObject.connect(tagsmodel, SIGNAL("setViewEnabled(bool)"), self.hideAutoCheckBox, SLOT("setEnabled(bool)"))
+        self.changedPath.connect(tagsmodel.setPath)
+        self.hideAutoCheckBox.stateChanged.connect(tagsmodel.setHideAutoTags)
+        tagsmodel.setViewEnabled.connect(self.tagComboBox.setEnabled)
+        tagsmodel.setViewEnabled.connect(self.hideAutoCheckBox.setEnabled)
         tagsmodel.setHideAutoTags(self.hideAutoCheckBox.checkState())
         # connection for the iovModel
         iovsmodel = self.models["iovs"]
-        QObject.connect(self, SIGNAL("changedPathChannel"), iovsmodel.setPathChannel)
-        QObject.connect(self.sinceFilterWidget, SIGNAL("validityKeyChange"), iovsmodel.setSince)
-        QObject.connect(self.untilFilterWidget, SIGNAL("validityKeyChange"), iovsmodel.setUntil)
-        QObject.connect(self.tagComboBox, SIGNAL("currentIndexChanged(QString)"), iovsmodel.setTag)
-        QObject.connect(iovsmodel, SIGNAL("setViewEnabled(bool)"), self.iovView, SLOT("setEnabled(bool)"))
+        self.changedPathChannel.connect(iovsmodel.setPathChannel)
+        self.sinceFilterWidget.validityKeyChange.connect(iovsmodel.setSince)
+        self.untilFilterWidget.validityKeyChange.connect(iovsmodel.setUntil)
+        self.tagComboBox.currentIndexChanged[str].connect(iovsmodel.setTag)
+        iovsmodel.setViewEnabled.connect(self.iovView.setEnabled)
         self.iovView.setEnabled(False)
-        self.iovView.horizontalHeader().setResizeMode(QHeaderView.ResizeToContents)
-        QObject.connect(self.iovView.selectionModel(), SIGNAL("currentChanged(QModelIndex,QModelIndex)"),
-                        iovsmodel.selectionChanged)
-        QObject.connect(iovsmodel, SIGNAL("setCurrentIndex(QModelIndex,QItemSelectionModel::SelectionFlags)"),
-                        self.iovView.selectionModel(), SLOT("setCurrentIndex(QModelIndex,QItemSelectionModel::SelectionFlags)"))
-        QObject.connect(self.iovUTCCheckBox, SIGNAL("stateChanged(int)"), iovsmodel.setShowUTC)
+        hh = self.iovView.horizontalHeader()
+        if hasattr(hh, 'setSectionResizeMode'): # Qt5
+            hh.setSectionResizeMode(QHeaderView.ResizeToContents)
+        else: # Qt4
+            hh.setResizeMode(QHeaderView.ResizeToContents)
+        self.iovView.selectionModel().currentChanged.connect(iovsmodel.selectionChanged)
+        iovsmodel.setCurrentIndex.connect(self.iovView.selectionModel().setCurrentIndex)
+        self.iovUTCCheckBox.stateChanged.connect(iovsmodel.setShowUTC)
         iovsmodel.setShowUTC(self.iovUTCCheckBox.checkState())
         # Use a consistent DisplayFormat
         iovsmodel.setDisplayFormat(self.sinceFilterWidget.displayFormat())
 
         # connection for the fields model
         fieldsmodel = self.models["fields"]
-        QObject.connect(self, SIGNAL("changedPath"), fieldsmodel.setPath)
-        #QObject.connect(fieldsmodel, SIGNAL("setViewEnabled(bool)"), self.fieldsView, SLOT("setEnabled(bool)"))
+        self.changedPath.connect(fieldsmodel.setPath)
+        #fieldsmodel.setViewEnabled.connect(self.fieldsView.setEnabled)
         #self.fieldsView.setEnabled(False)
-        QObject.connect(fieldsmodel, SIGNAL("setViewEnabled(bool)"), self.payloadGroupBox, SLOT("setVisible(bool)"))
+        fieldsmodel.setViewEnabled.connect(self.payloadGroupBox.setVisible)
         self.payloadGroupBox.setVisible(False)
 
-        QObject.connect(self.fieldsView.selectionModel(), SIGNAL("currentChanged(QModelIndex,QModelIndex)"),
-                        fieldsmodel.selectionChanged)
-        QObject.connect(fieldsmodel, SIGNAL("setCurrentIndex(QModelIndex,QItemSelectionModel::SelectionFlags)"),
-                        self.fieldsView.selectionModel(), SLOT("setCurrentIndex(QModelIndex,QItemSelectionModel::SelectionFlags)"))
+        self.fieldsView.selectionModel().currentChanged.connect(fieldsmodel.selectionChanged)
+        fieldsmodel.setCurrentIndex.connect(self.fieldsView.selectionModel().setCurrentIndex)
 
         # Filter panel
         # Default startup values for the IOV filter.
@@ -131,73 +135,68 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         #iovsmodel.setUntil(self.untilFilterWidget.toValidityKey())
 
         # When created, we have to ensure that everything is grayed out.
-        self.emit(SIGNAL("databaseOpen(bool)"), False)
+        self.databaseOpen.emit(False)
         self.menuEdit.setEnabled(False)
         self.menuAdvanced.setEnabled(False)
 
         # Triggers for the update of the central panel
-        QObject.connect(self.iovView.selectionModel(), SIGNAL("currentChanged(QModelIndex,QModelIndex)"),
-                        self.showData)
-        QObject.connect(self.fieldsView.selectionModel(), SIGNAL("currentChanged(QModelIndex,QModelIndex)"),
-                        self.showData)
+        self.iovView.selectionModel().currentChanged.connect(self.showData)
+        self.fieldsView.selectionModel().currentChanged.connect(self.showData)
 
         # Add the list of actions to show/hide the panels
         self.menuPanels.addAction(self.browsePanel.toggleViewAction())
         self.menuPanels.addAction(self.filterPanel.toggleViewAction())
 
         self.readSettings()
-        if self._showWelcome:
-            self._showWelcome = self.showWelcomeInfo(cancel = True)
 
     ## Store settings into the configuration file
     def writeSettings(self):
         settings = QSettings()
 
         settings.beginGroup("MainWindow")
-        settings.setValue("Size", QVariant(self.size()))
-        settings.setValue("Pos", QVariant(self.pos()))
+        settings.setValue("Size", self.size())
+        settings.setValue("Pos", self.pos())
         settings.endGroup()
 
         settings.beginGroup("BrowsePanel")
-        settings.setValue("Visible", QVariant(self.browsePanel.isVisible()))
-        settings.setValue("Floating", QVariant(self.browsePanel.isFloating()))
-        settings.setValue("Size", QVariant(self.browsePanel.size()))
-        settings.setValue("Pos", QVariant(self.browsePanel.pos()))
+        settings.setValue("Visible", self.browsePanel.isVisible())
+        settings.setValue("Floating", self.browsePanel.isFloating())
+        settings.setValue("Size", self.browsePanel.size())
+        settings.setValue("Pos", self.browsePanel.pos())
         settings.endGroup()
 
         settings.beginGroup("FilterPanel")
-        settings.setValue("Visible", QVariant(self.filterPanel.isVisible()))
-        settings.setValue("Floating", QVariant(self.filterPanel.isFloating()))
-        settings.setValue("Size", QVariant(self.filterPanel.size()))
-        settings.setValue("Pos", QVariant(self.filterPanel.pos()))
+        settings.setValue("Visible", self.filterPanel.isVisible())
+        settings.setValue("Floating", self.filterPanel.isFloating())
+        settings.setValue("Size", self.filterPanel.size())
+        settings.setValue("Pos", self.filterPanel.pos())
         settings.endGroup()
 
         settings.beginGroup("DataView")
-        settings.setValue("FixedWidthFont", QVariant(self.dataView.isFixedWidthFont()))
+        settings.setValue("FixedWidthFont", self.dataView.isFixedWidthFont())
         settings.endGroup()
 
         settings.beginGroup("FindDialog")
         d = self.dataView.findDialog
-        settings.setValue("Visible", QVariant(d.isVisible()))
-        settings.setValue("Pos", QVariant(d.pos()))
-        settings.setValue("Flags", QVariant(d.getFindFlags()))
-        settings.setValue("WrappedSearch", QVariant(d.getWrappedSearch()))
+        settings.setValue("Visible", d.isVisible())
+        settings.setValue("Pos", d.pos())
+        settings.setValue("Flags", d.getFindFlags())
+        settings.setValue("WrappedSearch", d.getWrappedSearch())
         settings.endGroup()
 
-        settings.setValue("IOVs/UTC", QVariant(self.iovUTCCheckBox.isChecked()))
+        settings.setValue("IOVs/UTC", self.iovUTCCheckBox.isChecked())
 
         settings.beginWriteArray("Recent")
         recents = self.menuRecent.actions()
         i = 0
         for action in recents:
             settings.setArrayIndex(i)
-            settings.setValue("ConnString", QVariant(action.text()))
+            settings.setValue("ConnString", action.text())
             i += 1
         settings.endArray()
 
         settings.beginGroup("Misc")
-        settings.setValue("ShowWelcome", QVariant(self._showWelcome))
-        settings.setValue("ExternalEditor", QVariant(self._externalEditor))
+        settings.setValue("ExternalEditor", self._externalEditor)
         settings.endGroup()
 
     ## Load settings from the configuration file
@@ -205,53 +204,50 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         settings = QSettings()
 
         settings.beginGroup("MainWindow")
-        self.resize(settings.value("Size", QVariant(QSize(965, 655))).toSize())
-        self.move(settings.value("Pos", QVariant(QPoint(0, 0))).toPoint())
+        self.resize(settings.value("Size", QSize(965, 655)))
+        self.move(settings.value("Pos", QPoint(0, 0)))
         settings.endGroup()
 
         settings.beginGroup("BrowsePanel")
-        self.browsePanel.setVisible(settings.value("Visible", QVariant(True)).toBool())
-        self.browsePanel.setFloating(settings.value("Floating", QVariant(False)).toBool())
-        self.browsePanel.resize(settings.value("Size", QVariant(QSize(250, 655))).toSize())
-        self.browsePanel.move(settings.value("Pos", QVariant(QPoint(0, 0))).toPoint())
+        self.browsePanel.setVisible(settings.value("Visible", True, type=bool))
+        self.browsePanel.setFloating(settings.value("Floating", False, type=bool))
+        self.browsePanel.resize(settings.value("Size", QSize(250, 655)))
+        self.browsePanel.move(settings.value("Pos", QPoint(0, 0)))
         settings.endGroup()
 
         settings.beginGroup("FilterPanel")
-        self.filterPanel.setVisible(settings.value("Visible", QVariant(True)).toBool())
-        self.filterPanel.setFloating(settings.value("Floating", QVariant(False)).toBool())
-        self.filterPanel.resize(settings.value("Size", QVariant(QSize(270, 655))).toSize())
-        self.filterPanel.move(settings.value("Pos", QVariant(QPoint(0, 0))).toPoint())
+        self.filterPanel.setVisible(settings.value("Visible", True, type=bool))
+        self.filterPanel.setFloating(settings.value("Floating", False, type=bool))
+        self.filterPanel.resize(settings.value("Size", QSize(270, 655)))
+        self.filterPanel.move(settings.value("Pos", QPoint(0, 0)))
         settings.endGroup()
 
         settings.beginGroup("DataView")
-        self.dataView.setFixedWidthFont(settings.value("FixedWidthFont", QVariant(False)).toBool())
+        self.dataView.setFixedWidthFont(settings.value("FixedWidthFont", False, type=bool))
         settings.endGroup()
 
         settings.beginGroup("FindDialog")
         d = self.dataView.findDialog
-        d.setVisible(settings.value("Visible", QVariant(False)).toBool())
-        d.move(settings.value("Pos", QVariant(QPoint(0, 0))).toPoint())
-        # Note: QVariant.toInt returns a tuple with the result of the conversion
-        # and a boolean for the successful conversion
-        d.setFindFlags(settings.value("Flags", QVariant(0)).toInt()[0])
-        d.setWrappedSearch(settings.value("WrappedSearch", QVariant(True)).toBool())
+        d.setVisible(settings.value("Visible", False, type=bool))
+        d.move(settings.value("Pos", QPoint(0, 0)))
+        d.setFindFlags(settings.value("Flags", 0, type=int))
+        d.setWrappedSearch(settings.value("WrappedSearch", True, type=bool))
         settings.endGroup()
 
-        self.iovUTCCheckBox.setChecked(settings.value("IOVs/UTC", QVariant(True)).toBool())
+        self.iovUTCCheckBox.setChecked(settings.value("IOVs/UTC", True, type=bool))
 
         size = settings.beginReadArray("Recent")
         for i in range(size):
             settings.setArrayIndex(i)
-            conn = settings.value("ConnString").toString()
+            conn = settings.value("ConnString", type=str)
             action = QAction(self)
             action.setText(conn)
-            QObject.connect(action, SIGNAL("triggered()"), self.openRecentDatabase)
+            action.triggered.connect(self.openRecentDatabase)
             self.menuRecent.addAction(action)
         settings.endArray()
 
         settings.beginGroup("Misc")
-        self._showWelcome = settings.value("ShowWelcome", QVariant(True)).toBool()
-        self._externalEditor = str(settings.value("ExternalEditor", QVariant("emacs")).toString())
+        self._externalEditor = str(settings.value("ExternalEditor", "emacs"))
         settings.endGroup()
 
     ## Close Event handler
@@ -269,15 +265,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             conn = connStrings[name]
             action = QAction(self)
             action.setText(name)
-            action.setData(QVariant(conn))
+            action.setData(conn)
             action.setStatusTip(conn)
-            QObject.connect(action, SIGNAL("triggered()"), self.openStandardDatabase)
+            action.triggered.connect(self.openStandardDatabase)
             self.menuStandard.addAction(action)
             self.defaultDatabases[name] = action
         self.menuStandard.setEnabled(not self.menuStandard.isEmpty())
 
     ## Slot called by the actions in the menu "Database->Standard".
     #  It can also be called passing the name of one of those databases.
+    @pyqtSlot()
     def openStandardDatabase(self, name = None, readOnly = True):
         if name is None:
             sender = self.sender()
@@ -286,10 +283,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 sender = self.defaultDatabases[name]
             else:
                 QMessageBox.critical(self, "Database nickname not known",
-                                     "The conditions database '%s' is not in the list of known database." % name)
+                                     "The conditions database '%s' is not in "
+                                     "the list of known database." % name)
                 return
         # Open the database using the connection string in the action
-        self.openDatabase(str(sender.data().toString()), readOnly = readOnly)
+        self.openDatabase(str(sender.data()), readOnly = readOnly)
 
     ## Slot called by the actions in the menu "Database->Recent"
     def openRecentDatabase(self):
@@ -331,7 +329,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if action is None:
             action = QAction(self)
             action.setText(connString)
-            QObject.connect(action, SIGNAL("triggered()"), self.openRecentDatabase)
+            action.triggered.connect(self.openRecentDatabase)
         # if the menu is not empty
         if self.menuRecent.actions():
             # add the action at the beginning of the list
@@ -365,10 +363,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     raise
                 title = "%s - %s" % (connString, self.appName)
                 # Notify the widgets that the database is open
-                self.emit(SIGNAL("databaseOpen(bool)"), True)
+                self.databaseOpen.emit(True)
                 # Notify the widgets if the database is open in read-only mode
                 editable = not readOnly
-                self.emit(SIGNAL("databaseOpenReadOnly(bool)"), bool(readOnly))
+                self.databaseOpenReadOnly.emit(bool(readOnly))
                 self.menuEdit.setEnabled(editable)
                 self.menuAdvanced.setEnabled(editable)
                 if editable:
@@ -383,7 +381,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.db = None
                 title = self.appName
                 # Notify the widgets that there is no database open
-                self.emit(SIGNAL("databaseOpen(bool)"), False)
+                self.databaseOpen.emit(False)
                 self.menuEdit.setEnabled(False)
                 self.menuAdvanced.setEnabled(False)
             self.setWindowTitle(title)
@@ -392,7 +390,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self._connectionString = connString
             self._addToRecents(connString)
             # update the DB instance of the models
-            self.emit(SIGNAL("openedDB"), self.db)
+            self.openedDB.emit(self.db)
         except:
             self.exceptionDialog()
 
@@ -423,22 +421,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         and the Python API to COOL: PyCool.</p>
         <p>The Graphical Library is PyQt %s, based on Qt %s</p>
         <p><i>Marco Clemencic, Nicolas Gilardi</i></p>''' \
-        % (app.objectName(), app.applicationVersion(), PYQT_VERSION_STR, qVersion())
+        % (app.applicationName(), app.applicationVersion(), PYQT_VERSION_STR, qVersion())
 
         QMessageBox.about(self, app.objectName(), message)
 
-    ## Slots to react to a selected item in the structure view
+    ## Slot to react to a selected item in the structure view
+    @pyqtSlot('QModelIndex')
     def selectedItem(self, index):
         item = index.internalPointer()
         if self._path != (item.path, item.channel):
             try:
                 i = self.models["nodes"].nodes.index(item.path)
                 self._path = (item.path, item.channel)
-                self.emit(SIGNAL("changedPath"), item.path)
+                self.changedPath.emit(item.path)
                 if item.leaf and not item.children:
-                    self.emit(SIGNAL("changedPathChannel"), item.path, item.channel)
+                    self.changedPathChannel.emit(item.path, item.channel or 0)
                 else:
-                    self.emit(SIGNAL("changedPathChannel"), None, None)
+                    self.changedPathChannel.emit('', 0)
                 # Nodes can be deleted only if the database is in r/w mode and
                 # they are Folders or empty FolderSets
                 self.actionDelete_node.setEnabled(not self.db.readOnly
@@ -453,7 +452,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 i = -1
             self.pathComboBox.setCurrentIndex(i)
 
-    ## Slots to react to a selected entry in the path combo box
+    ## Slot to react to a selected entry in the path combo box
+    @pyqtSlot(str)
     def selectedPath(self, path):
         path = str(path)
         if self._path != (path, None) and path:
@@ -461,11 +461,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.hierarchyTreeView.setCurrentIndex(index)
             self._path = (path, None)
             item = index.internalPointer()
-            self.emit(SIGNAL("changedPath"), item.path)
+            self.changedPath.emit(item.path)
             if item.leaf and not item.children:
-                self.emit(SIGNAL("changedPathChannel"), path, None)
+                self.changedPathChannel.emit(path, 0)
             else:
-                self.emit(SIGNAL("changedPathChannel"), None, None)
+                self.changedPathChannel.emit('', 0)
             # Nodes can be deleted only if they are Folders or empty FolderSets
             self.actionDelete_node.setEnabled(item.leaf or not item.children)
 
@@ -531,7 +531,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     #  of node if specified.
     def _refreshModels(self, selectPath = None):
         # trigger a refresh of the caches in the models
-        self.emit(SIGNAL("openedDB"), self.db)
+        self.openedDB.emit(self.db)
         self._selectPath(selectPath)
 
     ## Helper function to select a path in both the combo box and the hierarchy
@@ -654,7 +654,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     copyTool.append(connStr, selectionList)
                 else:
                     # FIXME : https://sft.its.cern.ch/jira/browse/ROOT-5603
-                    targetDb = CondDB(connStr,create_new_db=True,readOnly=False).db                    
+                    targetDb = CondDB(connStr,create_new_db=True,readOnly=False).db
                     copyTool.copy(targetDb, selectionList)
             except:
                 self.exceptionDialog()
@@ -754,30 +754,3 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     ## Copy the current connection string to the clipboard.
     def copyConnStrToClipboard(self):
         QApplication.clipboard().setText(self._connectionString)
-    ## Display the initial info message to notify that this is the new version
-    #  of the CondDBBrowser.
-    def showWelcomeInfo(self, cancel = False):
-        mb = QMessageBox(self)
-        mb.setWindowTitle("Welcome to the CondDBBrowser")
-        mb.setText("""<html><body>
-<p>Welcome to the Qt4-based version of the CondDBBrowser.</p>
-<p>This is a complete rewrite of the old application,  which includes a lot of
-improvements and clean up.</p>
-<p>Since it is completely new, some features may not work. In that case you can
-still use the old version invoking <tt>CondDBBrowserOld.py</tt></p>
-<p>Among the improvements you can find:
-<ul>
-<li>based on Qt4</li>
-<li>better responsiveness</li>
-<li>contextual menus</li>
-<li>improved managing of recent and standard databases</li>
-<li>extensive usage of tooltips</li>
-</ul></p>
-<p>If you find a bug post it to <a href="https://savannah.cern.ch/bugs/?group=lhcbcore">savannah</a>, for comments and
-suggestions send an email to <a href="mailto:Marco.Clemencic@cern.ch">Marco Clemencic</a>.</p>
-</body></html>""")
-        ok = mb.addButton(QMessageBox.Ok)
-        if cancel:
-            mb.addButton(QMessageBox.Cancel)
-        mb.exec_()
-        return mb.clickedButton() != ok

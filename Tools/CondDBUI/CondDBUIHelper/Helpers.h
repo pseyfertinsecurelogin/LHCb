@@ -1,5 +1,14 @@
 #ifndef CONDDBUIHELPER_HELPERS_H
 #define CONDDBUIHELPER_HELPERS_H
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+
+#ifdef _XOPEN_SOURCE
+#undef _XOPEN_SOURCE
+#endif
+
 #include "Python.h"
 #include "CoolKernel/IFolder.h"
 #include "CoolKernel/IFolderSet.h"
