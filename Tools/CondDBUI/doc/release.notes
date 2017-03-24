@@ -3,6 +3,16 @@
 ! package manager : Marco Clemencic
 ! ====================================================================
 
+! 2016-03-22 - Marco Clemencic
+ - removed obsolete CondDBBrowserOld.py
+ - upgraded PyQt code to new conventions (usable for both Qt4 and Qt5)
+ - removed CondDBUIDict, not needed with ROOT 6
+ - do not use version control system to set CondDBBrowser version
+   (use CMakeLists.txt content)
+ - added the CondDBBrowser target to build only what is needed for it
+ - allow switching from Qt4 to Qt5 at build time with the CMake cache variable
+   DESIRED_QT_VERSION (requires Gaudi > v27r1)
+
 !========================= CondDBUI v3r36 2016-01-27 =========================
 ! 2015-11-27 - Marco Clemencic
  - Added missing bit of the fix.

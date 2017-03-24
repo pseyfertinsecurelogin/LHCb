@@ -96,8 +96,6 @@
     </property>
     <addaction name="actionAbout" />
     <addaction name="actionAbout_Qt" />
-    <addaction name="separator" />
-    <addaction name="actionWelcome_message" />
    </widget>
    <widget class="QMenu" name="menuPanels" >
     <property name="title" >
@@ -881,7 +879,7 @@
   </connection>
   <connection>
    <sender>actionCopy_path</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>copyPathToClipboard()</slot>
    <hints>
@@ -1025,7 +1023,7 @@
   </connection>
   <connection>
    <sender>actionCopy_connection_string</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>copyConnStrToClipboard()</slot>
    <hints>
@@ -1055,22 +1053,6 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>actionWelcome_message</sender>
-   <signal>activated()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>showWelcomeInfo()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>523</x>
-     <y>290</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>aboutQt()</slot>
@@ -1095,7 +1077,6 @@
   <slot>showHierarchyContextMenu(QPoint)</slot>
   <slot>copyPathToClipboard()</slot>
   <slot>copyConnStrToClipboard()</slot>
-  <slot>showWelcomeInfo()</slot>
   <signal>openedDB(P*)</signal>
   <signal>databaseOpen(bool)</signal>
   <signal>databaseOpenReadOnly(bool)</signal>

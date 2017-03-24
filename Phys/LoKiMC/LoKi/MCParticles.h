@@ -2051,6 +2051,58 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
+    /** @class Signal
+     *  Is it a SIGNAL particle?
+     *  @see LHCb::MCParticle::fromSignal
+     *  @see LoKi::Cuts::MCSIGNAL 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2010-02-18
+     */
+    class GAUDI_API Signal
+      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
+    {
+    public:
+      // ======================================================================
+      /// MANDATORY: clone method ("virtual constructor")
+      Signal* clone() const  override;
+      /// MANDATORY: the only one essential method
+      result_type operator() ( argument p ) const  override;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
+      // ======================================================================
+    private:
+      // ======================================================================
+      inline bool signal ( const LHCb::MCParticle* p ) const 
+      { return nullptr != p && p->fromSignal() ; }
+      // ======================================================================      
+    } ;
+    // ========================================================================
+    /** @class FromSignal
+     *  Is it from a SIGNAL particle?
+     *  @see LHCb::MCParticle::
+     *  @see LoKi::Cuts::MCFROMSIGNAL 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2010-02-18
+     */
+    class GAUDI_API FromSignal
+      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
+    {
+    public:
+      // ======================================================================
+      /// MANDATORY: clone method ("virtual constructor")
+      FromSignal* clone() const  override;
+      /// MANDATORY: the only one essential method
+      result_type operator() ( argument p ) const  override;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
+      // ======================================================================
+    private:
+      // ======================================================================
+      inline bool signal ( const LHCb::MCParticle* p ) const 
+      { return nullptr != p && p->fromSignal() ; }
+      // ======================================================================      
+    } ;
+    // ========================================================================
     /** @class FromInteractions
      *  simple predicate to check if the particle comes from 'interactions'
      *  using LHCb::MCVertex::MCVertexType
@@ -2065,6 +2117,7 @@ namespace LoKi
      *     - LHCb::MCVertex::OscillatedAndDecay
      *     - LHCb::MCVertex::ppCollision
      *
+     *  @see LoKi::Cuts::MCFROMXS 
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-18
      */
