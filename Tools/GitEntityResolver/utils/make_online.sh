@@ -37,7 +37,7 @@ cd ONLINE
 
 echo "generate the list of valid runs"
 grep -r RunNumber Conditions/Online/LHCb/RunStamp.xml | sed -n 's/.*>\([0-9]\+\)<.*/\1/p' | sort -n > Conditions/Online/valid_runs.txt.tmp
-(seq 1 $(head -1 Conditions/Online/valid_runs.txt.tmp) ; cat Conditions/Online/valid_runs.txt.tmp) | uniq > Conditions/Online/valid_runs.txt
+(seq 0 $(head -1 Conditions/Online/valid_runs.txt.tmp) ; cat Conditions/Online/valid_runs.txt.tmp) | uniq > Conditions/Online/valid_runs.txt
 rm -f Conditions/Online/valid_runs.txt.tmp
 git add Conditions/Online/valid_runs.txt
 git rm -r Conditions/Online/LHCb/RunStamp.xml
