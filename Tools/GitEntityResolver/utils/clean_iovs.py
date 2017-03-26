@@ -62,7 +62,7 @@ def partition_iovs(data):
     from os.path import join
 
     def to_ts(d):
-        return int((d - date.fromtimestamp(0)).total_seconds() * 1e9)
+        return int((d - datetime.utcfromtimestamp(0).date()).total_seconds() * 1e9)
 
     def to_key(d):
         return d.strftime('%Y-%m')
@@ -73,7 +73,7 @@ def partition_iovs(data):
     def month_key(since):
         if since == 0:
             return None
-        return to_key(date.fromtimestamp(since * 1e-9))
+        return to_key(datetime.utcfromtimestamp(since * 1e-9).date())
 
     top_iovs = []
     nested_iovs = {}
