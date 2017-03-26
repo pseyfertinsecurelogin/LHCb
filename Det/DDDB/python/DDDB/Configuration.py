@@ -195,7 +195,7 @@ class DDDBConf(ConfigurableUser):
         # Set the tags
         self.__set_tag__(["DDDB"],     "dddb-20150724" )
         if not self.getProp("Simulation"):
-            self.__set_tag__(["LHCBCOND"], "cond-20170120-1" )
+            self.__set_tag__(["LHCBCOND"], "cond-20170325" )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             # set initialization time to a safe default
             self.__set_init_time__(datetime(2017, 12, 31, 23, 59))
@@ -207,7 +207,7 @@ class DDDBConf(ConfigurableUser):
         # Set the tags
         self.__set_tag__(["DDDB"],     "dddb-20150724" )
         if not self.getProp("Simulation"):
-            self.__set_tag__(["LHCBCOND"], "cond-20170120-1" )
+            self.__set_tag__(["LHCBCOND"], "cond-20170325" )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             # set initialization time to a safe default
             self.__set_init_time__(datetime(2016, 12, 5, 5, 3)) # End of fill 5575
@@ -219,7 +219,7 @@ class DDDBConf(ConfigurableUser):
         # Set the tags
         self.__set_tag__(["DDDB"],     "dddb-20150724" )
         if not self.getProp("Simulation"):
-            self.__set_tag__(["LHCBCOND"], "cond-20170120" )
+            self.__set_tag__(["LHCBCOND"], "cond-20170323" )
             self.__set_tag__(["CALIBOFF"], "head-2015604" )
             self.__set_init_time__(datetime(2015, 12, 13, 12, 8)) # End of fill 4720
 
