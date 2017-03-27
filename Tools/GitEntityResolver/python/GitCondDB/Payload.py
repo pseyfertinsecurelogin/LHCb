@@ -9,7 +9,7 @@ from hashlib import sha1
 SYSTEM_RE = re.compile(r'(SYSTEM\s+)(?:"|\')([^"\']+)(:?"|\')')
 
 
-def fix_system_refs(data, fullpath, path):
+def fix_system_refs(data, root, path):
     '''
     helper to fix explicit references to conddb: with references to git:
     '''
@@ -20,9 +20,8 @@ def fix_system_refs(data, fullpath, path):
         if match.group(2).startswith('conddb:/'):
             newpath = match.group(2)[8:]
         else:
-            fullpath = os.path.normpath(os.path.join(curr_dir,
-                                                     match.group(2)))
-            newpath = os.path.relpath(fullpath, path)
+            newpath = os.path.normpath(os.path.join(curr_dir, match.group(2)))
+            newpath = os.path.relpath(newpath, root)
         return '{0}"git:/{1}"'.format(match.group(1), newpath)
     return (SYSTEM_RE.sub(repl, data)
             .replace('"Conditions/MainCatalog.xml',
