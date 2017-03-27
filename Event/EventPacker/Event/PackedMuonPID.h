@@ -26,19 +26,25 @@ namespace LHCb
    */
   struct PackedMuonPID
   {
+    long long idtrack{-1};
+    long long mutrack{-1};
+    long long key{-1};
     int MuonLLMu{0};
     int MuonLLBg{0};
     int nShared{0};
     int status{0};
-    long long idtrack{-1};
-    long long mutrack{-1};
-    long long key{-1};
+    int chi2Corr{0};
+    int muonMVA1{0};
+    int muonMVA2{0};
+    int muonMVA3{0};
+    int muonMVA4{0};
 
     template<typename T>
     inline void save(T& buf) const {
       buf.io(
+        idtrack, mutrack, key,        
         MuonLLMu, MuonLLBg, nShared, status,
-        idtrack, mutrack, key
+        chi2Corr, muonMVA1, muonMVA2, muonMVA3, muonMVA4
       );
     }
 

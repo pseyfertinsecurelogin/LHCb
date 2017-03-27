@@ -88,7 +88,7 @@ void PackedDataChecksum::processVector(const std::string& key, const std::vector
 static_assert(sizeof(LHCb::PackedTrack) == 56, "PackedTrack has changed!");  // padded!
 static_assert(sizeof(LHCb::PackedState) == 68, "PackedState has changed!");
 static_assert(sizeof(LHCb::PackedRichPID) == 56, "PackedRichPID has changed!");  // padded!
-static_assert(sizeof(LHCb::PackedMuonPID) == 40, "PackedMuonPID has changed!");
+static_assert(sizeof(LHCb::PackedMuonPID) == 64, "PackedMuonPID has changed!");
 static_assert(sizeof(LHCb::PackedCaloCluster) == 72, "PackedCaloCluster has changed!");  // padded!
 static_assert(sizeof(LHCb::PackedCaloClusterEntry) == 16, "PackedCaloClusterEntry has changed!");  // padded!
 static_assert(sizeof(LHCb::PackedCaloHypo) == 76, "PackedCaloHypo has changed!");

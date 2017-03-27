@@ -4,6 +4,9 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+! 2017-03-27 - Ricardo Vazquez Gomez
+ - Add 5 variables to MuonPID packers
+
 ! 2016-08-17 - Chris Jones
  - Add checks to MCParticle and MCVertex unpackers to filter out duplicates.
 

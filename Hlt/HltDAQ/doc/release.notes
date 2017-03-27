@@ -4,6 +4,9 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+! 2017-03-27 - Ricardo Vazquez Gomez
+ - Update the checksum taking into account the added variables in the MuonPID struct
+
 ! 2016-07-22 - Rosen Matev
  - Compute checksums per location in addition to the global checksum
  - Improve the debugging printout in HltPackedDataWriter/Decoder

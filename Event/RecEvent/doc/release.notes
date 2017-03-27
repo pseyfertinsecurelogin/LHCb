@@ -4,6 +4,9 @@
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output)
 !-----------------------------------------------------------------------------
 
+! 2017-03-27 - Ricardo Vazquez Gomez
+ - Add chi2 with correlated hits of muonTrack and 4 flavours of MVA operators
+
 ! 2016-09-05 - Olivier Deschamps
   - ProtoParticle : add Ecal staturation & barycenter info for neutral protoP
 
