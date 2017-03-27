@@ -2,22 +2,22 @@
 
 /// Constructor
 ValidInputSource::ValidInputSource ( const XMLByte *const           srcDocBytes,
-                                     const unsigned int             byteCount,
+                                     const XMLSize_t                byteCount,
                                      const XMLCh *const             bufId,
                                      const bool                     adoptBuffer,
                                      xercesc::MemoryManager *const  manager ):
-  xercesc::MemBufInputSource(srcDocBytes,byteCount,bufId,adoptBuffer,manager),
-  m_since(Gaudi::Time::epoch()),
-  m_until(Gaudi::Time::max())
+  xercesc::MemBufInputSource( srcDocBytes, byteCount, bufId, adoptBuffer, manager ),
+  m_since( Gaudi::Time::epoch() ),
+  m_until( Gaudi::Time::max() )
 {}
 
 /// Constructor
 ValidInputSource::ValidInputSource ( std::string                    buffer,
                                      const XMLCh *const             bufId,
                                      xercesc::MemoryManager *const  manager ):
-  xercesc::MemBufInputSource(reinterpret_cast<const XMLByte*>(buffer.data()),static_cast<unsigned int>(buffer.size()),bufId,false,manager),
-  m_since(Gaudi::Time::epoch()),
-  m_until(Gaudi::Time::max()),
+  xercesc::MemBufInputSource( reinterpret_cast<const XMLByte*>(buffer.data()), buffer.size(), bufId, false, manager ),
+  m_since( Gaudi::Time::epoch() ),
+  m_until( Gaudi::Time::max() ),
   m_buffer( std::move(buffer) ) // keep the buffer alive for the lifetime of 'this'
 {}
 

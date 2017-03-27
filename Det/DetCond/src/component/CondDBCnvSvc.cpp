@@ -180,7 +180,6 @@ ICondDBReader::IOVList CondDBCnvSvc::getIOVs(const std::string & path, const IOV
 
 void CondDBCnvSvc::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags) const
 {
-  tags.clear();
   m_dbReader->defaultTags(tags);
 }
 

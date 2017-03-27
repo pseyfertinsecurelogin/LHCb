@@ -20,6 +20,7 @@ ecs = EventClockSvc(InitialTime = ts(2015, 6, 10, 12, 00)) # no RunStamp for thi
 ecs.addTool(FakeEventTime, "EventTimeDecoder")
 ecs.EventTimeDecoder.StartTime = ts(2015, 6, 9, 12, 00)
 ecs.EventTimeDecoder.TimeStep = 24 * 60 * 60 * 1000000000 # 1 day
+ecs.EventTimeDecoder.EventsPerRun = 1
 
 RSTEST = CondDBAccessSvc("RSTEST", ConnectionString="sqlite_file:../data/RSTEST.db/RSTEST")
 
