@@ -10,10 +10,7 @@ from xml.etree import ElementTree as ET
 from subprocess import check_output
 from hashlib import sha1
 from datetime import datetime
-from clean_iovs import process as clean_iovs
-
-IOV_MIN = 0
-IOV_MAX = 0x7fffffffffffffff
+from GitCondDB.IOVs import clean_iovs, IOV_MIN, IOV_MAX
 
 
 SYSTEM_RE = re.compile(r'(SYSTEM\s+)(?:"|\')([^"\']+)(:?"|\')')
