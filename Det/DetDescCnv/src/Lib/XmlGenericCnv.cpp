@@ -281,6 +281,8 @@ StatusCode XmlGenericCnv::createObj (IOpaqueAddress* addr,
             fatal() << "An exception went out of the conversion process : ";
             e.printOut ( *m_msg );
             fatal() << endmsg;
+            fatal() << "address = "
+                    << ( isAString ? addr->par()[2] : addr->par()[0] ) << "#" << addr->par()[1] << endmsg;
             sc =  e.code();
           }
         } else { // (element == NULL)

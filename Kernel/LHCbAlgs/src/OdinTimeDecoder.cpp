@@ -73,6 +73,13 @@ Gaudi::Time OdinTimeDecoder::getTime ( ) const
   {
     DEBUG_MSG << "GPS Time = " << odin->gpsTime() << endmsg;
 
+    try {
+      last_time = odin->eventTime();
+    } catch(TimeException &e) {
+      Warning("Problem with ODIN GPS Time '" + e.message() + "', ignored",
+              StatusCode::SUCCESS).ignore();
+    }
+
     // We need to trigger a RunChange incident if the run number changes or
     // we switch from flagging mode to filtering mode.
     if ((m_currentRun != odin->runNumber()) ||
@@ -89,13 +96,7 @@ Gaudi::Time OdinTimeDecoder::getTime ( ) const
       }
       m_currentRun = odin->runNumber();
       m_flaggingMode = odin->isFlagging();
-      incSvc()->fireIncident(RunChangeIncident(name(), m_currentRun));
-    }
-    try {
-      last_time = odin->eventTime();
-    } catch(TimeException &e) {
-      Warning("Problem with ODIN GPS Time '" + e.message() + "', ignored",
-              StatusCode::SUCCESS).ignore();
+      incSvc()->fireIncident(RunChangeIncident(name(), m_currentRun, last_time));
     }
   }
 

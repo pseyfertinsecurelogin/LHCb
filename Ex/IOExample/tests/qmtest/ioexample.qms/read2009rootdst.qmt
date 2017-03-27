@@ -6,7 +6,7 @@
   <argument name="validator"><text>
 from GaudiConf.QMTest.LHCbExclusions import preprocessor as LHCbPreprocessor
 preprocessor = LHCbPreprocessor + \
-  LineSkipper(["DetectorDataSvc   SUCCESS Detector description database: conddb:/lhcb.xml"]) + \
+  LineSkipper(["DetectorDataSvc   SUCCESS Detector description database:"]) + \
   LineSkipper(["DetectorPersist...   INFO Added successfully Conversion service:XmlCnvSvc"]) + \
   LineSkipper(["InputCopyStream"]) + \
   LineSkipper(["ONLINE_xxxxxx        INFO Connected to database "]) + \
