@@ -732,7 +732,7 @@ class CondDBIoVModel(BaseIoVModel):
             oldSize = len(self._allIoVs)
             tag = self.tag()
             if tag != self.HEAD:
-                tag = self.db.resolveTag(_folder,self.tag())
+                tag = self.db.resolveTag(self._folder, self.tag())
             # Note: we use "self._actualSince - 1" and not "self._actualSince"
             # because COOL returns also the object that includes the upper limit,
             # but we already have it.
