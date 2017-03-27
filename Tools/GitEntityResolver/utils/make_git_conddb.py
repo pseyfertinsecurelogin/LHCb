@@ -4,43 +4,12 @@ Small script to convert a DDDB COOL/SQLite database to a Git repository.
 '''
 
 import os
-import re
 from optparse import OptionParser
 from xml.etree import ElementTree as ET
 from subprocess import check_output
-from hashlib import sha1
 from datetime import datetime
 from GitCondDB.IOVs import clean_iovs, IOV_MIN, IOV_MAX
-
-
-SYSTEM_RE = re.compile(r'(SYSTEM\s+)(?:"|\')([^"\']+)(:?"|\')')
-
-
-def fix_system_refs(data, fullpath, path):
-    '''
-    helper to fix explicit references to conddb: with references to git:
-    '''
-    curr_dir = os.path.dirname(path)
-
-    def repl(match):
-        'replacement function'
-        if match.group(2).startswith('conddb:/'):
-            newpath = match.group(2)[8:]
-        else:
-            fullpath = os.path.normpath(os.path.join(curr_dir,
-                                                     match.group(2)))
-            newpath = os.path.relpath(fullpath, path)
-        return '{0}"git:/{1}"'.format(match.group(1), newpath)
-    return (SYSTEM_RE.sub(repl, data)
-            .replace('"Conditions/MainCatalog.xml',
-                     '"conddb:/Conditions/MainCatalog.xml'))
-
-
-def checksum(data):
-    'compute SHA1 checksum of a string'
-    s = sha1()
-    s.update(data)
-    return s.hexdigest()
+from GitCondDB.Payload import *
 
 
 def extract_tags_infos(notes, partition):
@@ -90,12 +59,6 @@ def extract_tags_infos(notes, partition):
                  ))
                 for el in notes.findall(tags_xpath, ns))
 
-
-def fix_lines_ends(data):
-    '''
-    Change \\r\\n to \\n and remove spaces at end of lines.
-    '''
-    return '\n'.join(l.rstrip() for l in data.splitlines()) + '\n'
 
 def main():
     'script logic'
@@ -282,7 +245,7 @@ def main():
                     else:
                         if not os.path.exists(path):
                             os.makedirs(path)
-                        value_id = checksum(value)[:10]
+                        value_id = payload_filename(value)
                         if opts.partition_payloads:
                             value_id = os.path.join(value_id[:2], value_id)
                         if not os.path.exists(os.path.join(path, value_id)):
