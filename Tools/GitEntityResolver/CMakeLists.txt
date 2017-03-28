@@ -36,3 +36,6 @@ if (git2_FOUND)
 else()
   message(FATAL_ERROR "libgit2 not found, cannot build GitEntityResolver")
 endif()
+
+gaudi_add_test(python COMMAND nosetests --with-doctest -v
+                              ${CMAKE_CURRENT_SOURCE_DIR}/python)
