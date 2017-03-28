@@ -141,3 +141,19 @@ def clean_iovs(repo, partition=True):
         if partition:
             data = partition_iovs(data)
         write_iovs(path, data)
+
+
+def add_iov(iovs, payload_key, since, until):
+    '''
+    take a flat IOVs list and override the payloads in the range [since, until)
+    with the specified one in the given range
+    '''
+    from itertools import takewhile, dropwhile, chain
+    def last(iterable):
+        for x in iterable:
+            pass
+        return x
+    return chain(takewhile(lambda x: x[0] < since, iovs),
+                 [(since, payload_key)],
+                 [(until, last(takewhile(lambda x: x[0] <= until, iovs))[1])] if until != IOV_MAX else [],
+                 dropwhile(lambda x: x[0] <= until, iovs))
