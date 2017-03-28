@@ -4,6 +4,9 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+! 2017-03-28 - Ricardo Vazquez Gomez
+ - add function for padding in MuonPID
+
 ! 2017-03-27 - Ricardo Vazquez Gomez
  - Update the checksum taking into account the added variables in the MuonPID struct
 

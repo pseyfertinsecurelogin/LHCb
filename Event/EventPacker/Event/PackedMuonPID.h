@@ -21,18 +21,20 @@ namespace LHCb
    *
    *  Packed MuonPID
    *
+   *  Version = 3, adds new variables to the muonPID: chi2 of correlated hits + MVA methods
+   *
    *  @author Christopher Rob Jones
    *  @date   2009-10-13
    */
   struct PackedMuonPID
   {
-    long long idtrack{-1};
-    long long mutrack{-1};
-    long long key{-1};
     int MuonLLMu{0};
     int MuonLLBg{0};
     int nShared{0};
     int status{0};
+    long long idtrack{-1};
+    long long mutrack{-1};
+    long long key{-1};
     int chi2Corr{0};
     int muonMVA1{0};
     int muonMVA2{0};
@@ -42,15 +44,24 @@ namespace LHCb
     template<typename T>
     inline void save(T& buf) const {
       buf.io(
-        idtrack, mutrack, key,        
         MuonLLMu, MuonLLBg, nShared, status,
+        idtrack, mutrack, key,        
         chi2Corr, muonMVA1, muonMVA2, muonMVA3, muonMVA4
       );
     }
 
     template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
-      save(buf); // identical operation until version is incremented
+    inline void load(T& buf, unsigned int version) {
+      if(version == 3){
+        buf.io(
+          MuonLLMu, MuonLLBg, nShared, status,
+          idtrack, mutrack, key,
+          chi2Corr, muonMVA1, muonMVA2, muonMVA3, muonMVA4
+        );
+      }
+      else {
+        save(buf); // identical operation until version is incremented
+      }
     }
   };
 
@@ -83,7 +94,7 @@ namespace LHCb
   public:
 
     /// Default Packing Version
-    static char defaultPackingVersion() { return 2; }
+    static char defaultPackingVersion() { return 3; }
 
   public:
 
@@ -123,7 +134,7 @@ namespace LHCb
       setPackingVersion(buf.template load<uint8_t>());
       setVersion(buf.template load<uint8_t>());
 
-      if (m_packingVersion < 2 || m_packingVersion > defaultPackingVersion()) {
+      if (m_packingVersion < 3 || m_packingVersion > defaultPackingVersion()) {
         throw std::runtime_error("PackedMuonPIDs packing version is not supported: "
                                  + std::to_string(m_packingVersion));
       }
@@ -208,7 +219,7 @@ namespace LHCb
     /// Check if the given packing version is supported
     bool isSupportedVer( const char& ver ) const
     {
-      const bool OK = ( 2 == ver || 1 == ver || 0 == ver );
+      const bool OK = ( 3 == ver || 2 == ver || 1 == ver || 0 == ver );
       if ( UNLIKELY(!OK) )
       {
         std::ostringstream mess;

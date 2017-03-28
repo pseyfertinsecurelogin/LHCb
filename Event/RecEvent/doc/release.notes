@@ -4,6 +4,9 @@
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output)
 !-----------------------------------------------------------------------------
 
+! 2017-03-28 - Ricardo Vazquez Gomez
+ - Reorder the attributes in xml not to break backwards compatibility
+
 ! 2017-03-27 - Ricardo Vazquez Gomez
  - Add chi2 with correlated hits of muonTrack and 4 flavours of MVA operators
 
