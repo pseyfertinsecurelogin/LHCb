@@ -149,11 +149,14 @@ def add_iov(iovs, payload_key, since, until):
     with the specified one in the given range
     '''
     from itertools import takewhile, dropwhile, chain
+    if type(iovs) is not list:
+        iovs = list(iovs)
     def last(iterable):
         for x in iterable:
             pass
         return x
     return chain(takewhile(lambda x: x[0] < since, iovs),
                  [(since, payload_key)],
-                 [(until, last(takewhile(lambda x: x[0] <= until, iovs))[1])] if until != IOV_MAX else [],
+                 [(until, last(takewhile(lambda x: x[0] <= until, iovs))[1])]
+                 if until != IOV_MAX else [],
                  dropwhile(lambda x: x[0] <= until, iovs))
