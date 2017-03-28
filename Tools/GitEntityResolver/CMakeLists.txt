@@ -37,5 +37,6 @@ else()
   message(FATAL_ERROR "libgit2 not found, cannot build GitEntityResolver")
 endif()
 
+gaudi_install_python_modules()
 gaudi_add_test(python COMMAND nosetests --with-doctest -v
                               ${CMAKE_CURRENT_SOURCE_DIR}/python)
