@@ -29,23 +29,29 @@ This version is released on master branch.
 <dd> LHCBCOND, 2015: cond-20170323    
 
 <dt>[MR !576, !579] Port CondDbBrowser to Qt5
-<dd> Closes LHCBPS-1502
+<dd> Fixes LHCBPS-1502
 
-<dt>[MR !489] New FT geometry
+<dt>[MR !489] New FT (v6.1) geometry
 <dd> N.B. Backward incompatible, cannot read old geometry with this version
 <dd> Closes LHCBSCIFI-29
 
 <dt>[MR !571] Add ParticleID::isQuark method
+<dd> Returns ```true``` if the absolute ID of the particle is less than 11
+<dd> Fixes LHCBPS-1718
 
 <dt>[MR !573] LoKiMC: add two new predicates:  MCSIGNAL and MCFROMSIGNAL
-
-<dt>[MR !572] HybridBase acquire GIL
+<dd> to select "signal" particles, based on ```LHCb::MCParticle::fromSignal```
 
 <dt>[MR !567] Fixes for Turbo and PersistReco truth-matching and PersistReco persistence
+<dd> See detailed explanation in lhcb/DaVinci!51
 
-<dt>[MR !560] PartProps:- Add new symbols for "nodes"
+<dt>[MR !560] PartProps:- Add new symbols for "nodes" to probe positive or negative PID
+<dd> C++ types : PosID & NegID
+<dd> python instances: PosId & NegId
+<dd> symbols: ID+ & ID- 
+<dd> e.g. "Charm & ID+" will define particle with single charm quark and "Charm & ID-" matched particle with single anti-charm quark
 
-<dt>[MR !552, 557] Update Decoders.py to use new RICH functional decoder
+<dt>[MR !552, 559] Update Decoders.py to use new RICH functional decoder
 <dd> Adds support for `DataHandles` in `Decoders.py` and related modules.
 <dd> See LHCBPS-1701
 
@@ -56,7 +62,6 @@ This version is released on master branch.
 <dd> Add corresponding python math wrappers
 <dd> Extend the test in LoKiNumbers
 
-
 </dl>
 
 <h2>Performance optimisations</h2>
@@ -64,9 +69,11 @@ This version is released on master branch.
 
 <dt>[MR !566] LHCbMath : Add AVX2+FMA target + Move CPU dispatch method to helper header file.
 
-<dt>[MR !551] Changes to event model classes to support TrackVectorFitter
-
 <dt>[MR !565] Add support for SIMD vectorised RICH ray tracing
+<dd> Add a private package for GenVector (Kernel/TemplatedGenVector). Temporary until  https://github.com/root-project/root/pull/394 is released
+<dd> Extend the ray tracing tool interface with vectorised methods.
+<dd> Extend the ray tracing utils header file with vectorised implementations.
+
 
 <dt>[MR !556] Add `invoke` to STLExtensions.h
 <dd> Based on http://en.cppreference.com/w/cpp/utility/functional/invoke
@@ -114,8 +121,23 @@ This version is released on master branch.
 
 </dl>
 
+<h2>Thread safety</h2>
+<dl>
+<dt>[MR !572] HybridBase acquire Global Interpreter Lock
+<dd> The code interacting with Python didn't acquire the GIL. This was not necessary as there are no threads in Python and gaudirun.py acquires it for the main thread. Since the GIL is recursive inside a given thread, acquiring it here doesn't harm and makes the code more future proof.
+<dd> Related to gaudi/Gaudi!302.
+
+</dl>
+
 <h2>Code modernisations and cleanups</h2>
 <dl>
+<dt>[MR !574] Remove private Vc package. Now part of LCG 88 release
+
+<dt>[MR !551] Refactoring to support TrackVectorFitter while preserving TrackMasterFitter compatibility
+<dd> Refactor LHCb::Node to include some LHCb::FitNode definitions.
+<dd> Added LHCb::ChiSquare to Event/ (previously defined in Rec::FitEvent/).
+<dd> Added chi2 types (TT, downstream, etc.) to TrackFitResult (from FitEvent/KalmanFitResult).
+
 <dt>[MR !558, !577] Fix compiler detection in Kernel/LHCbMath to work with gaudi/Gaudi!289
 <dd> The fix is backward compatible
 
