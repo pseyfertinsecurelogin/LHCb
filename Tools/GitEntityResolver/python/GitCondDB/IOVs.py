@@ -46,6 +46,8 @@ def remove_iovs(path):
             # remove the IOVs file if present
             os.remove(os.path.join(root, 'IOVs'))
             # prune the directory if empty
+            # (with topdown == False dirs is set before we recurse and prune)
+            dirs = [d for d in dirs if os.path.exists(os.path.join(root, d))]
             if files == ['IOVs'] and not dirs:
                 os.rmdir(root)
 
