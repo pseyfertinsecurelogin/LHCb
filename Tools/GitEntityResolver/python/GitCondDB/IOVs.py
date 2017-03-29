@@ -2,6 +2,7 @@
 Utils for IOVs manipulations in Git CondDBs.
 '''
 import os
+import logging
 from datetime import datetime
 
 
@@ -112,7 +113,7 @@ def write_iovs(path, data):
     '''
     if not os.path.exists(path):
         os.mkdir(path)
-    print '  writing %s/IOVs' % path
+    logging.debug('writing %s/IOVs', path)
     with open(os.path.join(path, 'IOVs'), 'w') as iovs:
         for since, key in data:
             if not isinstance(key, basestring):
@@ -132,10 +133,10 @@ def remove_dummy_entries(data):
 
 
 def clean_iovs(repo, partition=True):
-    print 'reducing IOVs...'
+    logging.debug('reducing IOVs...')
     for iovs in iov_files(repo):
         path = os.path.dirname(iovs)
-        print '  processing', path
+        logging.debug('processing %s', path)
         data = remove_dummy_entries(flatten_iovs(parse_iovs(path)))
         remove_iovs(path)  # at this point we should not need old files
         if partition:

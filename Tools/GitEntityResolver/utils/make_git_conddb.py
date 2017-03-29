@@ -4,6 +4,7 @@ Small script to convert a DDDB COOL/SQLite database to a Git repository.
 '''
 
 import os
+import logging
 from optparse import OptionParser
 from xml.etree import ElementTree as ET
 from subprocess import check_output
@@ -106,6 +107,8 @@ def main():
                         tags=[])
 
     opts, args = parser.parse_args()
+
+    logging.basicConfig(level=logging.DEBUG)
 
     if len(args) == 3:
         (dbfile, notes, repo_dir) = args

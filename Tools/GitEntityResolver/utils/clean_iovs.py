@@ -2,6 +2,7 @@
 '''
 Small script to simplify/reduce/fix IOVs files in a Git repository.
 '''
+import logging
 from GitCondDB.IOVs import clean_iovs
 
 
@@ -13,8 +14,12 @@ def main():
     parser.set_defaults(partition=True)
 
     opts, args = parser.parse_args()
+
+    logging.basicConfig(level=logging.DEBUG)
+
     if len(args) != 1:
         parser.error('can work only on one repository at a time')
+
     clean_iovs(args[0], opts.partition)
 
 
