@@ -40,7 +40,7 @@
         <bitfield name="InAcceptance"   length="1" desc="Boolean: True if track extraoplation is in the Muon acceptance"/>
         <bitfield name="PreSelMomentum" length="1" desc="Boolean: True if track has minimal momentum"/>
       	<bitfield name="IsMuonLoose"    length="1" desc="Boolean: Is track a muon (looser defintion) ?"/>
-	      <bitfield name="IsMuonTight"    length="1" desc="Boolean: Is track a muon (with x,y crossing requirement for muon hits) ?"/>
+	<bitfield name="IsMuonTight"    length="1" desc="Boolean: Is track a muon (with x,y crossing requirement for muon hits) ?"/>
       </attribute>
 
       <relation type="LHCb::Track" name="IDTrack"
