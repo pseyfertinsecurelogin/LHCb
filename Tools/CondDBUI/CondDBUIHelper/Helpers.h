@@ -9,6 +9,11 @@
 #undef _XOPEN_SOURCE
 #endif
 
+// it seems that sometimes (in cling) this macro gets redefined
+#ifdef Py_single_input
+#undef Py_single_input
+#endif
+
 #include "Python.h"
 #include "CoolKernel/IFolder.h"
 #include "CoolKernel/IFolderSet.h"
