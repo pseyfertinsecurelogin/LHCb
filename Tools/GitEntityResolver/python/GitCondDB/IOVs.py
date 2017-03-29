@@ -149,7 +149,7 @@ def add_iov(iovs, payload_key, since, until):
     with the specified one in the given range
     '''
     from itertools import takewhile, dropwhile, chain
-    if type(iovs) is not list:
+    if isinstance(iovs, list):
         iovs = list(iovs)
     def last(iterable):
         for x in iterable:
