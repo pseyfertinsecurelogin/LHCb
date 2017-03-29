@@ -119,6 +119,8 @@ This version is released on master branch.
 <dd> This is a partial fix for LHCBPS-1692
 <dd> It may effectively change the result of the tests because it ends up using a slightly different preprocessor when comparing logfiles to refs.
 
+<dt>[MR !583] Fix detcond.check_db_reading test for a redefined macro in Python+cling
+
 </dl>
 
 <h2>Thread safety</h2>
