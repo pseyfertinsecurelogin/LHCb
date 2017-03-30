@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 '''
-Script to add a set of files to Git CondDB with
+Script to add a set of files to Git CondDB (for an optional IOV).
 '''
 import os
-import sys
 import shutil
 import logging
 from GitCondDB.IOVs import (IOV_MIN, IOV_MAX,
