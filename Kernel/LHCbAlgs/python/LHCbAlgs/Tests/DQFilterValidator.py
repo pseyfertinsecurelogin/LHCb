@@ -6,7 +6,7 @@ __author__ = "Marco Clemencic <marco.clemencic@cern.ch>"
 import re, string
 from pprint import pformat
 
-from GaudiTest import cmpTreesDicts, getCmpFailingValues
+from GaudiTesting.BaseTest import cmpTreesDicts, getCmpFailingValues
 
 
 def count(keys, lines):
@@ -30,11 +30,11 @@ def checkEff(name, expected, stdout, result, causes):
             eff = tuple(map(int, eff[1:3]))
             break
 
-    result["GaudiTest.%s.expected" % name] = result.Quote(pformat(expected))
+    result["GaudiTesting.%s.expected" % name] = result.Quote(pformat(expected))
 
     if eff != expected:
         causes.append(name)
-        result["GaudiTest.%s.found" % name] = result.Quote(pformat(eff))
+        result["GaudiTesting.%s.found" % name] = result.Quote(pformat(eff))
 
 def checkCounts(expected, stdout, result, causes):
     ## Check DQFilter messages
@@ -43,12 +43,12 @@ def checkCounts(expected, stdout, result, causes):
 
     counts = count(expected.keys(), lines)
 
-    result["GaudiTest.DQFilterOut.expected"] = result.Quote(pformat(expected))
+    result["GaudiTesting.DQFilterOut.expected"] = result.Quote(pformat(expected))
 
     failed = cmpTreesDicts(expected, counts)
     if failed:
         causes.append("DQFilter output")
-        result["GaudiTest.DQFilterOut.found"] = result.Quote(pformat(counts))
+        result["GaudiTesting.DQFilterOut.found"] = result.Quote(pformat(counts))
         msg = "%s: %s != %s" % getCmpFailingValues(expected, counts, failed)
-        result["GaudiTest.DQFilterOut.failure_on"] = result.Quote(msg)
+        result["GaudiTesting.DQFilterOut.failure_on"] = result.Quote(msg)
 
