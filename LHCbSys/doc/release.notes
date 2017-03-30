@@ -14,6 +14,142 @@
 </ul>
 </b>
 
+<H1><A NAME=v42r2>2017-03-28 LHCbSys v42r2</A></H1>
+This version uses Gaudi v28r2 and LCG_82 with ROOT 6.08.06.
+<p>
+This version is released on master branch. 
+
+<h2>New or changed functionalities</h2>
+
+<dl>
+<dt>[MR !557] Implementation of Git-based Conditions Database
+
+<dt>[MR !580] Update default database tags to the latest ones
+<dd> LHCBCOND, 2016, 2017: cond-20170325
+<dd> LHCBCOND, 2015: cond-20170323    
+
+<dt>[MR !576, !579] Port CondDbBrowser to Qt5
+<dd> Fixes LHCBPS-1502
+
+<dt>[MR !489] New FT (v6.1) geometry
+<dd> N.B. Backward incompatible, cannot read old geometry with this version
+<dd> Closes LHCBSCIFI-29
+
+<dt>[MR !571] Add ParticleID::isQuark method
+<dd> Returns ```true``` if the absolute ID of the particle is less than 11
+<dd> Fixes LHCBPS-1718
+
+<dt>[MR !573] LoKiMC: add two new predicates:  MCSIGNAL and MCFROMSIGNAL
+<dd> to select "signal" particles, based on ```LHCb::MCParticle::fromSignal```
+
+<dt>[MR !567] Fixes for Turbo and PersistReco truth-matching and PersistReco persistence
+<dd> See detailed explanation in lhcb/DaVinci!51
+
+<dt>[MR !560] PartProps:- Add new symbols for "nodes" to probe positive or negative PID
+<dd> C++ types : PosID & NegID
+<dd> python instances: PosId & NegId
+<dd> symbols: ID+ & ID- 
+<dd> e.g. "Charm & ID+" will define particle with single charm quark and "Charm & ID-" matched particle with single anti-charm quark
+
+<dt>[MR !552, 559] Update Decoders.py to use new RICH functional decoder
+<dd> Adds support for `DataHandles` in `Decoders.py` and related modules.
+<dd> See LHCBPS-1701
+
+<dt>[MR !553] LoKiCore: add functors JDigit/JDigits
+<dd> Add "primitive" functors JDigit/JDigits to LoKiCore
+<dd> Add corresponding math functions into LoKi namespace
+<dd> Add corresponding python decorators
+<dd> Add corresponding python math wrappers
+<dd> Extend the test in LoKiNumbers
+
+</dl>
+
+<h2>Performance optimisations</h2>
+<dl>
+
+<dt>[MR !566] LHCbMath : Add AVX2+FMA target + Move CPU dispatch method to helper header file.
+
+<dt>[MR !565] Add support for SIMD vectorised RICH ray tracing
+<dd> Add a private package for GenVector (Kernel/TemplatedGenVector). Temporary until  https://github.com/root-project/root/pull/394 is released
+<dd> Extend the ray tracing tool interface with vectorised methods.
+<dd> Extend the ray tracing utils header file with vectorised implementations.
+
+
+<dt>[MR !556] Add `invoke` to STLExtensions.h
+<dd> Based on http://en.cppreference.com/w/cpp/utility/functional/invoke
+
+<dt>[MR !546] Some streamlining to the data types used by the RICH future stack.
+<dd> Main change is a future specific version of the `GeomPhoton` object into `RichFutureUtils` and a streamlined the implementation to remove a number of data members not needed for the core reconstruction.
+<dd> In all, removed 5 3D (double) vector types and 2 (64 bit) pointers from the Photon object type created by the photon reconstruction algorithms.
+<dd> A new `RichFutureInterfaces` packages was required, with a forked ray tracing interface using the new type.
+
+<dt>[MR !544] Various CPU improvements to the Rich DAQ decoding
+<dd> Avoid the need to create a full header object just to peek ahead to see if the data is zero suppressed or in Alice mode. Add some inline static methods to do this more efficiently.
+<dd> Avoid the need to allocate vector storage in the PD Header base object for the default case (one header word).
+
+</dl>
+
+<h2>Bug fixes</h2>
+<dl>
+<dt>[MR !564] Calo2Dview: protect against missing Spd and Prs (for Upgrade)
+
+<dt>[MR !547] LoKiCore/LoKiMC/LoKiGen
+<dd> "fix" the issue with inclusive&marked (*MC*&*HepMC*) decays
+<dd> Add corresponding error code & disable creation of such trees via the factory
+<dd> Provide viable alternative: few **MCINCLUSIVE** functor/predicate
+    ```
+       >>> get ( '/Event/MC/Particles' , MCINCLUSIVE (  'Beauty' , 'Stable' ) )
+    ```
+<dd> Provide missing signatures for *PARTICLE*.child and *PARTICLE*.children
+<dd> Provide missing overloads for *Finder*
+
+</dl>
+
+<h2>Changes to tests</h2>
+<dl>
+<dt>[MR !444] Added loaddddb test for Upgrade geometry
+
+<dt>[MR !561] Fix HltDAQ routing bits tests
+
+<dt>[MR !554] Fix the HltServices tests using existing TCKs by generating TCKs instead.
+<dd> Takes some code from the TCKUtils backend to create the TCK entries, but the test passes and should now be forward compatible.
+<dd> The only thing that is still used from the files is the TCK encoded in the ODIN banks, which is used by the HltConfigSvc to load the required configuration. The TCKs that are created by the tests have these same numbers, to avoid having to doctor the ODIN banks.
+
+<dt>[MR !540] Replace GaudiTest.py by GaudiTesting
+<dd> This is a partial fix for LHCBPS-1692
+<dd> It may effectively change the result of the tests because it ends up using a slightly different preprocessor when comparing logfiles to refs.
+
+<dt>[MR !583] Fix detcond.check_db_reading test for a redefined macro in Python+cling
+
+</dl>
+
+<h2>Thread safety</h2>
+<dl>
+<dt>[MR !572] HybridBase acquire Global Interpreter Lock
+<dd> The code interacting with Python didn't acquire the GIL. This was not necessary as there are no threads in Python and gaudirun.py acquires it for the main thread. Since the GIL is recursive inside a given thread, acquiring it here doesn't harm and makes the code more future proof.
+<dd> Related to gaudi/Gaudi!302.
+
+</dl>
+
+<h2>Code modernisations and cleanups</h2>
+<dl>
+<dt>[MR !574] Remove private Vc package. Now part of LCG 88 release
+
+<dt>[MR !551] Refactoring to support TrackVectorFitter while preserving TrackMasterFitter compatibility
+<dd> Refactor LHCb::Node to include some LHCb::FitNode definitions.
+<dd> Added LHCb::ChiSquare to Event/ (previously defined in Rec::FitEvent/).
+<dd> Added chi2 types (TT, downstream, etc.) to TrackFitResult (from FitEvent/KalmanFitResult).
+
+<dt>[MR !558, !577] Fix compiler detection in Kernel/LHCbMath to work with gaudi/Gaudi!289
+<dd> The fix is backward compatible
+
+<dt>[MR !548] Follow up on gaudi/Gaudi!273
+<dd> Removed GaudiMTTools
+<dd> Added backward compatible hack for new sysExecute signature
+
+</dl>
+
+
 <H1><A NAME=v42r1>2017-01-31 LHCbSys v42r1</A></H1>
 This version uses Gaudi v28r1 and LCG_87 with ROOT 6.08.02.
 <p>
