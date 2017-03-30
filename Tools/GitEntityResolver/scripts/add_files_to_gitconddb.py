@@ -54,12 +54,15 @@ def _add_file_with_iov(data, dest, iov):
             _write_file(os.path.join(dest, old_payload_name), old_data)
             new_payload_name = payload_filename(data)
             _write_file(os.path.join(dest, new_payload_name), data)
+            data = []
+            if iov[0] > IOV_MIN:
+                data.append((IOV_MIN, old_payload_name))
+            data.append((iov[0], new_payload_name))
+            if iov[1] < IOV_MAX:
+                data.append((iov[1], old_payload_name))
             _write_file(os.path.join(dest, 'IOVs'), '\n'.join(
                 '{0} {1}'.format(since, payload)
-                for since, payload in [(IOV_MIN, old_payload_name),
-                                       (iov[0], new_payload_name),
-                                       (iov[1], old_payload_name)]
-                if since < IOV_MAX
+                for since, payload in data
             ) + '\n')
     else:
         orig_iovs = parse_iovs(dest)

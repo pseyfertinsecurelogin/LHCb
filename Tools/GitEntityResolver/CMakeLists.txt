@@ -40,3 +40,7 @@ endif()
 gaudi_install_python_modules()
 gaudi_add_test(python COMMAND nosetests --with-doctest -v
                               ${CMAKE_CURRENT_SOURCE_DIR}/python)
+gaudi_add_test(scripts COMMAND nosetests --with-doctest -v
+                               ${CMAKE_CURRENT_SOURCE_DIR}/scripts
+                               ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_scripts
+                       ENVIRONMENT PYTHONPATH+=${CMAKE_CURRENT_SOURCE_DIR}/scripts)
