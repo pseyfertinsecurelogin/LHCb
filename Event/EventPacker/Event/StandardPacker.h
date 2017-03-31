@@ -222,8 +222,8 @@ public:
   /** returns the fraction as double from the short int value */
   inline double fraction( const short int k ) const { return double(k) / Packer::FRACTION_SCALE; }
 
-  /** returns the mav as double from the int value */
-  inline double fraction( const int k )       const { return double(k) / Packer::MVA_SCALE; }
+  /** returns the mva as double from the int value */
+  inline double mva( const int k )            const { return double(k) / Packer::MVA_SCALE; }
 
   /** returns the time as double from the int value */
   inline double time( const int k )           const { return double(k) / Packer::TIME_SCALE; }
