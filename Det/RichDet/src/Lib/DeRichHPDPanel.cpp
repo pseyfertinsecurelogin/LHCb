@@ -354,7 +354,7 @@ DeRichHPDPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels 
 {
 
   // Square of active radius
-  const auto activeRadiusSq = m_siliconHalfLengthX*m_siliconHalfLengthX;
+  const auto activeRadiusSq = std::pow( m_siliconHalfLengthX, 2 );
 
   for ( unsigned int PD = 0; PD < nPDs(); ++PD )
   {
