@@ -30,11 +30,11 @@ def checkEff(name, expected, stdout, result, causes):
             eff = tuple(map(int, eff[1:3]))
             break
 
-    result["GaudiTesting.%s.expected" % name] = result.Quote(pformat(expected))
+    result["GaudiTest.%s.expected" % name] = result.Quote(pformat(expected))
 
     if eff != expected:
         causes.append(name)
-        result["GaudiTesting.%s.found" % name] = result.Quote(pformat(eff))
+        result["GaudiTest.%s.found" % name] = result.Quote(pformat(eff))
 
 def checkCounts(expected, stdout, result, causes):
     ## Check DQFilter messages
@@ -43,12 +43,12 @@ def checkCounts(expected, stdout, result, causes):
 
     counts = count(expected.keys(), lines)
 
-    result["GaudiTesting.DQFilterOut.expected"] = result.Quote(pformat(expected))
+    result["GaudiTest.DQFilterOut.expected"] = result.Quote(pformat(expected))
 
     failed = cmpTreesDicts(expected, counts)
     if failed:
         causes.append("DQFilter output")
-        result["GaudiTesting.DQFilterOut.found"] = result.Quote(pformat(counts))
+        result["GaudiTest.DQFilterOut.found"] = result.Quote(pformat(counts))
         msg = "%s: %s != %s" % getCmpFailingValues(expected, counts, failed)
-        result["GaudiTesting.DQFilterOut.failure_on"] = result.Quote(msg)
+        result["GaudiTest.DQFilterOut.failure_on"] = result.Quote(msg)
 
