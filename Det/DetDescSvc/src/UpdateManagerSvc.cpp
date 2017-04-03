@@ -764,12 +764,21 @@ void UpdateManagerSvc::handle(const Incident &inc) {
   if ( inc.type() == IncidentType::BeginEvent ) {
     if( msgLevel(MSG::DEBUG) )
       debug() << "New BeginEvent incident received" << endmsg;
-    StatusCode sc = UpdateManagerSvc::newEvent();
+    StatusCode sc = StatusCode::FAILURE;
+    try {
+      sc = UpdateManagerSvc::newEvent();
+    } catch( const GaudiException& exc ) {
+      error() << exc << endmsg;
+    }
+    catch( const std::exception& exc ) {
+      error() << "std::exception: " << exc.what() << endmsg;
+    }
+    catch(...) {
+      error() << "unknown exception" << endmsg;
+    }
     if (!sc.isSuccess()) {
       fatal() << "***** The update failed. I schedule a stop of the run *****" << endmsg;
       m_evtProc->stopRun();
-      // The exception is ignored by the IncidentSvc
-      // throw UpdateManagerException("Failed to perform the update","*UpdateManagerSvc*",sc);
     }
   }
 }

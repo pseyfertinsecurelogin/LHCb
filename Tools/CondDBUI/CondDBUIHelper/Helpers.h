@@ -1,5 +1,19 @@
 #ifndef CONDDBUIHELPER_HELPERS_H
 #define CONDDBUIHELPER_HELPERS_H
+
+#ifdef _POSIX_C_SOURCE
+#undef _POSIX_C_SOURCE
+#endif
+
+#ifdef _XOPEN_SOURCE
+#undef _XOPEN_SOURCE
+#endif
+
+// it seems that sometimes (in cling) this macro gets redefined
+#ifdef Py_single_input
+#undef Py_single_input
+#endif
+
 #include "Python.h"
 #include "CoolKernel/IFolder.h"
 #include "CoolKernel/IFolderSet.h"

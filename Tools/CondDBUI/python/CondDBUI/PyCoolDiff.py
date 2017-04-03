@@ -45,8 +45,7 @@ def diff( originalDB, modifiedDB, diffDB,
     original database will reproduce the data of the second database.
     originalDB, modifiedDB and diffDB have to be COOL connection strings.
     """
-    import cppyy
-    Helpers = cppyy.gbl.CondDBUI.Helpers
+    from .Helpers import Helpers
 
     _log.debug("Get COOL Database Service")
     global _app

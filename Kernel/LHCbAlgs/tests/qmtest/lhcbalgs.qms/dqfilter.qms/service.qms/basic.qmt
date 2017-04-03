@@ -9,6 +9,9 @@ from Configurables import (CondDB, EventClockSvc, FakeEventTime,
                            DQAcceptTool, BasicDQFilter, CondDBDQScanner)
 from Configurables import DetCondTest__TestConditionAlg as TestCond
 
+from Configurables import DDDBConf
+DDDBConf(DbRoot='conddb:/lhcb.xml')
+
 conddb = CondDB()
 conddb.addAlternative(path = "/Conditions/DQ", dbFile = "../data/DQFLAGS.db")
 conddb.addAlternative(path = "/Conditions/Online/LHCb/RunParameters", dbFile = "../data/DQFLAGS.db")

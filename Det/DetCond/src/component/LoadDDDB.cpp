@@ -46,11 +46,10 @@ StatusCode LoadDDDB::initialize() {
     debug() << "==> Initialize" << endmsg;
 
   std::vector<LHCb::CondDBNameTagPair> tmp;
-  svc<ICondDBInfo>("CondDBCnvSvc",true)->defaultTags(tmp);
+  svc<ICondDBInfo>( "XmlParserSvc", true )->defaultTags( tmp );
 
-  std::vector<LHCb::CondDBNameTagPair>::iterator db;
-  for ( db = tmp.begin(); db != tmp.end(); ++db ) {
-    info() << "Database " << db->first << " tag " << db->second << endmsg;
+  for ( auto& item: tmp ) {
+    info() << "Database " << item.first << " tag " << item.second << endmsg;
   }
 
   updMgrSvc(); // trigger the initialization of the Condition Update sub-system
@@ -70,19 +69,19 @@ StatusCode LoadDDDB::execute() {
     detSvc()->addPreLoadItem(m_treeToLoad);
     detSvc()->preLoad();
   } catch (GaudiException &x) {
-    fatal() << "Gaught GaudiException" << endmsg;
+    fatal() << "Caught GaudiException" << endmsg;
     int i = 0;
     for ( GaudiException *ex = &x; 0 != ex; ex = ex->previous() ) {
       fatal() << std::string(i++,' ') << " ==> " << ex->what() << endmsg;
     }
     return StatusCode::FAILURE;
   } catch (std::exception &x) {
-    fatal() << "Gaught exception '" << System::typeinfoName(typeid(x)) << "'"
+    fatal() << "Caught exception '" << System::typeinfoName(typeid(x)) << "'"
               << endmsg;
     fatal() << " ==> " << x.what() << endmsg;
     return StatusCode::FAILURE;
   } catch (...) {
-    fatal() << "Gaught unknown exception!!" << endmsg;
+    fatal() << "Caught unknown exception!!" << endmsg;
     return StatusCode::FAILURE;
   }
   info() << "done." << endmsg;

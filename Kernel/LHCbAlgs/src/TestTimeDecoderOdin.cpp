@@ -39,7 +39,7 @@ TestTimeDecoderOdin::TestTimeDecoderOdin( const std::string& type,
 //=========================================================================
 //  Return the time of current event
 //=========================================================================
-Gaudi::Time TestTimeDecoderOdin::getTime ( ) const 
+Gaudi::Time TestTimeDecoderOdin::getTime ( ) const
 {
 
   // As a real EventTimeDecoder, the event time can be retrieved only in RUNNING
@@ -70,9 +70,9 @@ Gaudi::Time TestTimeDecoderOdin::getTime ( ) const
 
   put(odin,LHCb::ODINLocation::Default);
 
-  incSvc()->fireIncident(RunChangeIncident(name(), m_currentRun));
-
   last_time = odin->eventTime();
+
+  incSvc()->fireIncident(RunChangeIncident(name(), m_currentRun, last_time));
 
   return last_time;
 }

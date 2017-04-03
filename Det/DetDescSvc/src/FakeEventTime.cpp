@@ -1,11 +1,5 @@
-// Include files
-
-// from Gaudi
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-
-// local
 #include "FakeEventTime.h"
+#include "DetDesc/RunChangeIncident.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FakeEventTime
@@ -14,49 +8,48 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( FakeEventTime )
+DECLARE_COMPONENT( FakeEventTime )
 
+#define ON_DEBUG if (msgLevel(MSG::DEBUG))
+#define DEBUG_MSG ON_DEBUG debug()
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-FakeEventTime::FakeEventTime( const std::string& type,
-                              const std::string& name,
-                              const IInterface* parent )
-  : AlgTool ( type, name , parent )
-{
-  declareInterface<IEventTimeDecoder>(this);
-}
 //=========================================================================
 //  Initialization
 //=========================================================================
 StatusCode FakeEventTime::initialize ( ) {
   // base class initialization
-	StatusCode sc = AlgTool::initialize();
-	if (!sc.isSuccess()) return sc;
+  StatusCode sc = base_class::initialize();
+  if (!sc.isSuccess()) return sc;
 
-  // local initialization
-	MsgStream log(msgSvc(),name());
-  if( log.level() <= MSG::DEBUG )
-    log << MSG::DEBUG << "--- initialize ---" << endmsg;
+  info() << "Event times generated from " << m_startTime.value() << " with steps of " << m_timeStep.value() << endmsg;
+  info() << "Run numbers generated from " << m_startRun.value() << " every " << m_eventsPerRun.value() << " events" << endmsg;
 
-  log << MSG::INFO << "Event times generated from " << m_startTime.value() << " with steps of " << m_timeStep.value() << endmsg;
-
-  return StatusCode::SUCCESS;
+  return sc;
 }
 
-//=========================================================================
-//  Finalization
-//=========================================================================
-StatusCode FakeEventTime::finalize ( ) {
-	// local finalization
-	MsgStream log(msgSvc(),name());
-  if( log.level() <= MSG::DEBUG )
-    log << MSG::DEBUG << "--- finalize ---" << endmsg;
+StatusCode FakeEventTime::start() {
+  StatusCode sc = base_class::start();
 
-  return AlgTool::finalize();
+  m_incSvc = serviceLocator()->service("IncidentSvc", true);
+  if ( !m_incSvc )
+    throw GaudiException("Service [IncidentSvc] not found", name(),
+                         StatusCode::FAILURE);
+
+  return sc;
 }
 
+StatusCode FakeEventTime::stop() {
+  m_incSvc.reset();
+  return base_class::stop();
+}
+
+void FakeEventTime::i_increment() {
+  m_startTime += m_timeStep;
+  if (++m_evtCount == m_eventsPerRun) {
+    m_evtCount = 0;
+    m_startRun++;
+  }
+}
 
 //=========================================================================
 //  Return the time of current event
@@ -70,10 +63,13 @@ Gaudi::Time FakeEventTime::getTime ( ) const {
 
   // Here we should get the time from the EventDataSvc
   Gaudi::Time currentTime(m_startTime);
+  if (m_evtCount == 0) {
+    m_incSvc->fireIncident(RunChangeIncident(name(), m_startRun, currentTime));
+  }
 
- // increment for the next event
+  // increment for the next event
   FakeEventTime *myPtr = const_cast<FakeEventTime *>(this);
-  myPtr->m_startTime += m_timeStep;
+  myPtr->i_increment();
 
   return currentTime;
 }

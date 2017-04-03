@@ -1,7 +1,7 @@
 ################################################################################
 # Package: LHCbSys
 ################################################################################
-gaudi_subdir(LHCbSys v42r1)
+gaudi_subdir(LHCbSys v42r2)
 
 gaudi_depends_on_subdirs(Associators/MCAssociators
                          Calo/CaloDAQ
@@ -77,6 +77,7 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Kernel/XMLSummaryBase
                          Kernel/XMLSummaryKernel
                          Kernel/VectorClass
+                         Kernel/TemplatedGenVector
                          L0/L0Base
 			 L0/L0Calo
 			 L0/L0DU
