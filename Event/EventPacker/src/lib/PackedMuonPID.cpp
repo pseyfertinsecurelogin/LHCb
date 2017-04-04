@@ -21,10 +21,10 @@ void MuonPIDPacker::pack( const Data & pid,
     ppid.MuonLLBg = m_pack.deltaLL(pid.MuonLLBg());
     if(ver > 2){
       ppid.chi2Corr = m_pack.fltPacked(pid.chi2Corr());
-      ppid.muonMVA1 = m_pack.fltPacked(pid.muonMVA1());
-      ppid.muonMVA2 = m_pack.fltPacked(pid.muonMVA2());
-      ppid.muonMVA3 = m_pack.fltPacked(pid.muonMVA3());
-      ppid.muonMVA4 = m_pack.fltPacked(pid.muonMVA4());
+      ppid.muonMVA1 = m_pack.mva(pid.muonMVA1());
+      ppid.muonMVA2 = m_pack.mva(pid.muonMVA2());
+      ppid.muonMVA3 = m_pack.mva(pid.muonMVA3());
+      ppid.muonMVA4 = m_pack.mva(pid.muonMVA4());
     }
     ppid.nShared  = (int)pid.nShared();
     ppid.status   = (int)pid.Status();
@@ -82,10 +82,10 @@ void MuonPIDPacker::unpack( const PackedData       & ppid,
     pid.setMuonLLBg( m_pack.deltaLL(ppid.MuonLLBg) );
     if(ver > 2){
       pid.setChi2Corr( m_pack.fltPacked(ppid.chi2Corr) );
-      pid.setMuonMVA1( m_pack.fltPacked(ppid.muonMVA1) );
-      pid.setMuonMVA2( m_pack.fltPacked(ppid.muonMVA2) );
-      pid.setMuonMVA3( m_pack.fltPacked(ppid.muonMVA3) );
-      pid.setMuonMVA4( m_pack.fltPacked(ppid.muonMVA4) );
+      pid.setMuonMVA1( m_pack.mva(ppid.muonMVA1) );
+      pid.setMuonMVA2( m_pack.mva(ppid.muonMVA2) );
+      pid.setMuonMVA3( m_pack.mva(ppid.muonMVA3) );
+      pid.setMuonMVA4( m_pack.mva(ppid.muonMVA4) );
     }
     pid.setNShared( ppid.nShared );
     pid.setStatus( ppid.status );

@@ -52,15 +52,14 @@ namespace LHCb
 
     template<typename T>
     inline void load(T& buf, unsigned int version) {
-      if(version == 3){
+      if(version == 2){
         buf.io(
           MuonLLMu, MuonLLBg, nShared, status,
-          idtrack, mutrack, key,
-          chi2Corr, muonMVA1, muonMVA2, muonMVA3, muonMVA4
+          idtrack, mutrack, key
         );
       }
       else {
-        save(buf); // identical operation until version is incremented
+        save(buf); // identical operation for the latest version
       }
     }
   };
@@ -134,7 +133,7 @@ namespace LHCb
       setPackingVersion(buf.template load<uint8_t>());
       setVersion(buf.template load<uint8_t>());
 
-      if (m_packingVersion < 3 || m_packingVersion > defaultPackingVersion()) {
+      if (m_packingVersion < 2 || m_packingVersion > defaultPackingVersion()) {
         throw std::runtime_error("PackedMuonPIDs packing version is not supported: "
                                  + std::to_string(m_packingVersion));
       }
