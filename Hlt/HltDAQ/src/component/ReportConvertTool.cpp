@@ -720,7 +720,12 @@ namespace {
           , {"3#Muon.Status",                   {3,3}}
           , {"4#Muon.IsMuon",                   {4,4}}
           , {"5#Muon.IsMuonLoose",              {5,5}}
-          , {"6#Muon.IsMuonTight",              {6,6}}}
+          , {"6#Muon.IsMuonTight",              {6,6}}
+          , {"7#Muon.chi2Corr",                 {7,7}}
+          , {"8#Muon.muonMVA1",                 {8,8}}
+          , {"9#Muon.muonMVA2",                 {9,9}}
+          , {"10#Muon.muonMVA3",                {10,10}}
+          , {"11#Muon.muonMVA4",                {11,11}}}
       }
       , { 4
         , {{"0#Muon.MuonLLMu",                  {0,0}}
@@ -729,7 +734,12 @@ namespace {
           , {"3#Muon.Status",                   {3,3}}
           , {"4#Muon.IsMuon",                   {4,4}}
           , {"5#Muon.IsMuonLoose",              {5,5}}
-          , {"6#Muon.IsMuonTight",              {6,6}}}
+          , {"6#Muon.IsMuonTight",              {6,6}}
+          , {"7#Muon.chi2Corr",                 {7,7}}
+          , {"8#Muon.muonMVA1",                 {8,8}}
+          , {"9#Muon.muonMVA2",                 {9,9}}
+          , {"10#Muon.muonMVA3",                {10,10}}
+          , {"11#Muon.muonMVA4",                {11,11}}}
       }
     };
     //===========================================================================
@@ -1367,6 +1377,11 @@ void ReportConvertTool::MuonPIDObject2Summary( HltObjectSummary::Info* info , co
       case 4: info->insert( mpid.first, float( object->IsMuon() ) ); break;
       case 5: info->insert( mpid.first, float( object->IsMuonLoose() ) ); break;
       case 6: info->insert( mpid.first, float( object->IsMuonTight() ) ); break;
+      case 7: info->insert( mpid.first, float( object->chi2Corr() ) ); break;
+      case 8: info->insert( mpid.first, float( object->muonMVA1() ) ); break;
+      case 9: info->insert( mpid.first, float( object->muonMVA2() ) ); break;
+      case 10: info->insert( mpid.first, float( object->muonMVA3() ) ); break;
+      case 11: info->insert( mpid.first, float( object->muonMVA4() ) ); break;
     }
   }
 
@@ -1758,6 +1773,11 @@ void ReportConvertTool::MuonPIDObjectFromSummary( const HltObjectSummary::Info* 
       case 4: object->setIsMuon( int( x ) ); break;
       case 5: object->setIsMuonLoose( int( x ) ); break;
       case 6: object->setIsMuonTight( int( x ) ); break;
+      case 7: object->setChi2Corr( int( x ) ); break;
+      case 8: object->setMuonMVA1( int( x ) ); break;
+      case 9: object->setMuonMVA2( int( x ) ); break;
+      case 10: object->setMuonMVA3( int( x ) ); break;
+      case 11: object->setMuonMVA4( int( x ) ); break;
     }
   }
 
