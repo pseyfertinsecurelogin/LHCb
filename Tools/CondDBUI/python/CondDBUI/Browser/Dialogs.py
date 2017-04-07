@@ -517,7 +517,7 @@ class AddConditionDialog(QDialog, Ui_AddConditionDialog):
                 selmodel.select(index,
                                 QItemSelectionModel.ClearAndSelect | QItemSelectionModel.Rows)
     def changedSelection(self, newSelection, oldSelection):
-        rows = self.conditionsStackView.selectedRows()
+        rows = self.conditionsStackView.selectedIndexes()
         count = len(rows)
         self.upButton.setEnabled(count == 1)
         self.downButton.setEnabled(count == 1)
