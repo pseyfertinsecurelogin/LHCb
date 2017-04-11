@@ -41,16 +41,15 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POINT, typename VECTOR, typename FTYPE >
-    inline 
-    typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
-                             std::is_arithmetic<typename VECTOR::Scalar>::value && 
-                             std::is_arithmetic<FTYPE>::value, bool >::type
-    intersectSpherical ( const POINT& position,
-                         const VECTOR& direction,
-                         const POINT& CoC,
-                         const FTYPE radius,
-                         POINT& intersection )
+    template < typename POINT, typename VECTOR, typename FTYPE,
+               typename = typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
+                                                   std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                                                   std::is_arithmetic<FTYPE>::value >::type >
+    inline bool intersectSpherical ( const POINT& position,
+                                     const VECTOR& direction,
+                                     const POINT& CoC,
+                                     const FTYPE radius,
+                                     POINT& intersection )
     {
       constexpr FTYPE zero(0), two(2.0), four(4.0), half(0.5);
       // for line sphere intersection look at http://www.realtimerendering.com/int/
@@ -88,15 +87,14 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POINT, typename VECTOR, typename FTYPE >
-    inline 
-    typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
-                             std::is_arithmetic<typename VECTOR::Scalar>::value && 
-                             std::is_arithmetic<FTYPE>::value, bool >::type 
-    reflectSpherical ( POINT& position,
-                       VECTOR& direction,
-                       const POINT& CoC,
-                       const FTYPE radius )
+    template < typename POINT, typename VECTOR, typename FTYPE,
+               typename = typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
+                                                   std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                                                   std::is_arithmetic<FTYPE>::value >::type >
+    inline bool reflectSpherical ( POINT& position,
+                                   VECTOR& direction,
+                                   const POINT& CoC,
+                                   const FTYPE radius )
     {
       constexpr FTYPE zero(0), two(2.0), four(4.0), half(0.5);
       const FTYPE      a = direction.Mag2();
@@ -129,15 +127,14 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POINT, typename VECTOR, typename PLANE >
-    inline 
-    typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
-                             std::is_arithmetic<typename VECTOR::Scalar>::value && 
-                             std::is_arithmetic<typename PLANE::Scalar>::value, bool >::type
-    intersectPlane ( const POINT& position,
-                     const VECTOR& direction,
-                     const PLANE& plane,
-                     POINT& intersection )
+    template < typename POINT, typename VECTOR, typename PLANE,
+               typename = typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
+                                                   std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                                                   std::is_arithmetic<typename PLANE::Scalar>::value >::type >
+    inline bool intersectPlane ( const POINT& position,
+                                 const VECTOR& direction,
+                                 const PLANE& plane,
+                                 POINT& intersection )
     {
       const bool OK = true;
       const auto scalar   = direction.Dot( plane.Normal() );
@@ -158,15 +155,14 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POINT, typename VECTOR, typename PLANE >
-    inline 
-    typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
-                             std::is_arithmetic<typename VECTOR::Scalar>::value && 
-                             std::is_arithmetic<typename PLANE::Scalar>::value, bool >::type
-    reflectPlane ( POINT& position,
-                   VECTOR& direction,
-                   const PLANE& plane )
-    {
+     template < typename POINT, typename VECTOR, typename PLANE,
+                typename = typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value && 
+                                                    std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                                                    std::is_arithmetic<typename PLANE::Scalar>::value >::type >
+     inline bool reflectPlane ( POINT& position,
+                                VECTOR& direction,
+                                const PLANE& plane )
+     {
       constexpr typename POINT::Scalar two(2.0);
       const bool OK = true;
       // Plane normal
