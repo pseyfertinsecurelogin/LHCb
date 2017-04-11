@@ -25,7 +25,7 @@ public:
 
   /// Constructor
   ValidInputSource ( const XMLByte *const           srcDocBytes,
-                     const unsigned int             byteCount,
+                     const XMLSize_t                byteCount,
                      const XMLCh *const             bufId,
                      const bool                     adoptBuffer = false,
                      xercesc::MemoryManager *const  manager = xercesc::XMLPlatformUtils::fgMemoryManager );

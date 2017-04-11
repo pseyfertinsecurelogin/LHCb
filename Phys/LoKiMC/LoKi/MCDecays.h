@@ -516,6 +516,8 @@ namespace Decays
       ( const LHCb::IParticlePropertySvc* svc ) const override;
       /// has marked decays in tree ?
       bool marked() const  override;
+      /// MANDATORY: reset the tree
+      void reset () const  override;
       // ======================================================================
     private:
       // ======================================================================

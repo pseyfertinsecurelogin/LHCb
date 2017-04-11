@@ -73,11 +73,8 @@ namespace
   { return std::binary_search ( cnt.begin () , cnt.end () , val ) ; }
   // =========================================================================
 }
-
-
-
-
-namespace Decays {
+namespace Decays 
+{
   // ============================================================================
   /*  Create the "OR" of two nodes
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
@@ -170,7 +167,6 @@ namespace Decays {
   { return Decays::Nodes::Pid ( o2 ) && o1 ; }
   // ============================================================================
 } // namespace Decays
-
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -837,9 +833,63 @@ std::ostream& Decays::Nodes::Heavy::fillStream ( std::ostream& s ) const
 { return s << " Heavy( " << high () << ") "  ; }
 // ===========================================================================
 
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+Decays::Nodes::PosID*
+Decays::Nodes::PosID::clone() const { return new PosID(*this) ; }
+// ============================================================================
+// MANDATORY: check the validity
+// ============================================================================
+bool Decays::Nodes::PosID::valid() const { return true ; }
+// ============================================================================
+// MANDATORY: the proper validation of the node
+// ============================================================================
+StatusCode Decays::Nodes::PosID::validate
+( const LHCb::IParticlePropertySvc* /*svc */ )  const
+{ return StatusCode ( StatusCode::SUCCESS , true ) ; }
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+bool Decays::Nodes::PosID::operator()
+  ( const LHCb::ParticleID&  p ) const { return 0 < p.pid() ; }
+// ============================================================================
+// MANDATORY: the specific printout
+// ===========================================================================
+std::ostream& Decays::Nodes::PosID::fillStream ( std::ostream& s ) const
+{ return s << " ID+ "  ; }
+// ===========================================================================
+
+// ============================================================================
+// MANDATORY: clone method ("virtual constructor")
+// ============================================================================
+Decays::Nodes::NegID*
+Decays::Nodes::NegID::clone() const { return new NegID(*this) ; }
+// ============================================================================
+// MANDATORY: check the validity
+// ============================================================================
+bool Decays::Nodes::NegID::valid() const { return true ; }
+// ============================================================================
+// MANDATORY: the proper validation of the node
+// ============================================================================
+StatusCode Decays::Nodes::NegID::validate
+( const LHCb::IParticlePropertySvc* /*svc */ )  const
+{ return StatusCode ( StatusCode::SUCCESS , true ) ; }
+// ============================================================================
+// MANDATORY: the only one essential method
+// ============================================================================
+bool Decays::Nodes::NegID::operator()
+  ( const LHCb::ParticleID&  p ) const { return 0 > p.pid() ; }
+// ============================================================================
+// MANDATORY: the specific printout
+// ===========================================================================
+std::ostream& Decays::Nodes::NegID::fillStream ( std::ostream& s ) const
+{ return s << " ID- "  ; }
+// ===========================================================================
+
 
 // ===========================================================================
-//  constructor fomr the symbol
+//  constructor from the symbol
 // ===========================================================================
 Decays::Nodes::Symbol::Symbol ( const std::string& s )
   : Decays::iNode()

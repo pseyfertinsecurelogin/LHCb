@@ -1,7 +1,7 @@
 ################################################################################
 # Package: CaloUtils
 ################################################################################
-gaudi_subdir(CaloUtils v10r6)
+gaudi_subdir(CaloUtils)
 
 gaudi_depends_on_subdirs(Calo/CaloInterfaces
                          Det/CaloDet
@@ -12,6 +12,11 @@ gaudi_depends_on_subdirs(Calo/CaloInterfaces
                          Event/RecEvent
                          GaudiAlg
                          Kernel/LHCbMath)
+
+# hide warnings from some external projects
+find_package(Boost)
+find_package(ROOT)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 find_package(AIDA)
 

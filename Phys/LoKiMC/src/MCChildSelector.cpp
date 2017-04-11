@@ -25,6 +25,7 @@
 #include "LoKi/MCExtract.h"
 #include "LoKi/MCAlgs.h"
 #include "LoKi/MCParticles1.h"
+#include "LoKi/MCChild.h"
 // ============================================================================
 /** @file 
  *  implementation file for class LoKi::MCChild::Selector 
@@ -493,6 +494,100 @@ LoKi::MCChild::Selector::child
 }
 // ============================================================================
 
+
+// ============================================================================
+/*  Trivial accessor to the daughter "decay" particles for the 
+ *  given MC-particle
+ */    
+// ============================================================================
+const LHCb::MCParticle* LoKi::MCChild::child 
+( const LHCb::MCParticle*   mother    , 
+  const Decays::iNode&      node      ,
+  const bool                decayOnly ) 
+{ return child ( mother , LoKi::MCChild::Selector ( node , decayOnly ) ) ; }
+// ========================================================================
+/*  Trivial accessor to the daughter "decay" particles for the 
+ *  given MC-particle
+ */    
+// ============================================================================
+const LHCb::MCParticle* LoKi::MCChild::child 
+( const LHCb::MCParticle*        mother     , 
+  const Decays::IMCDecay::iTree& c          ) 
+{ return child ( mother , LoKi::MCChild::Selector ( c ) ) ; }
+// ========================================================================
+/*  Trivial accessor to the daughter "decay" particles for the 
+ *  given MC-particle
+ */    
+// ============================================================================
+const LHCb::MCParticle* LoKi::MCChild::child
+( const LHCb::MCParticle*         mother    ,
+  const Decays::IMCDecay::Finder& c         ) 
+{ return child ( mother , LoKi::MCChild::Selector ( c ) ) ; }
+// ========================================================================
+/*  Trivial accessor to the daughter "decay" particles for the 
+ *  given MC-particle
+ */    
+// ============================================================================
+const LHCb::MCParticle* LoKi::MCChild::child
+( const LHCb::MCParticle*         mother    ,
+  const std::string&              c         ) 
+{ return child ( mother , LoKi::MCChild::Selector ( c ) ) ; }
+// ========================================================================
+/*  Trivial accessor to the daughter "decay" particles for the 
+ *  given MC-particle
+ */    
+// ============================================================================
+const LHCb::MCParticle* LoKi::MCChild::child
+( const LHCb::MCParticle*         mother    ,
+  const LoKi::MCTypes::MCCuts&    cut       ,
+  const bool                      decayOnly ) 
+{ return child ( mother , LoKi::MCChild::Selector ( cut , decayOnly ) ) ; }
+// ============================================================================
+
+
+// ===========================================================================
+// accessor to certain children particles for the given particle 
+// ============================================================================
+LHCb::MCParticle::ConstVector
+LoKi::MCChild::children 
+( const LHCb::MCParticle*        particle  , 
+  const Decays::iNode&           node      ,
+  const bool                     decayOnly ) 
+{ return children ( particle , LoKi::MCChild::Selector ( node , decayOnly ) ) ; }
+// ===========================================================================
+// accessor to certain children particles for the given particle 
+// ============================================================================
+LHCb::MCParticle::ConstVector
+LoKi::MCChild::children 
+( const LHCb::MCParticle*        particle , 
+  const Decays::IMCDecay::iTree& c        ) 
+{ return children ( particle , LoKi::MCChild::Selector ( c ) ) ; }
+// ===========================================================================
+// accessor to certain children particles for the given particle 
+// ============================================================================
+LHCb::MCParticle::ConstVector
+LoKi::MCChild::children 
+( const LHCb::MCParticle*        particle , 
+  const Decays::IMCDecay::Finder& c       ) 
+{ return children ( particle , LoKi::MCChild::Selector ( c ) ) ; }
+// ===========================================================================
+// accessor to certain children particles for the given particle 
+// ============================================================================
+LHCb::MCParticle::ConstVector
+LoKi::MCChild::children 
+( const LHCb::MCParticle*        particle , 
+  const std::string&             c        ) 
+{ return children ( particle , LoKi::MCChild::Selector ( c ) ) ; }
+// ===========================================================================
+// accessor to certain children particles for the given particle 
+// ============================================================================
+LHCb::MCParticle::ConstVector
+LoKi::MCChild::children 
+( const LHCb::MCParticle*         particle  ,
+  const LoKi::MCTypes::MCCuts&    cut       ,
+  const bool                      decayOnly ) 
+{ return children ( particle , LoKi::MCChild::Selector ( cut , decayOnly ) ) ; }
+// ========================================================================    
 
 // ============================================================================
 // The END 

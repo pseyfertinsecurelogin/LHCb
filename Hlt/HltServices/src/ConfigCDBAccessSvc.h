@@ -56,7 +56,6 @@ private:
   // todo: use Parse and toStream directly
   Gaudi::Property<std::string>         m_mode{ this, "Mode", "ReadOnly" };   ///< which flags to specify when opening the tar file
   Gaudi::Property<std::string>         m_incident { this, "CloseIncident" };   ///< the incident to
-
   mutable std::mutex                                       m_file_mtx;
   mutable std::unique_ptr<ConfigCDBAccessSvc_details::CDB> m_file;
   std::unique_ptr<IIncidentListener> m_initListener;

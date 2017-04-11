@@ -61,6 +61,7 @@ StatusCode Decays::Trees::factory
   const bool                                                      inclusive  ,
   const Decays::Trees::Types_<const LHCb::MCParticle*>::TreeList& optional   , 
   std::ostream&                                                   stream     )
+  
 {
   if ( !Decays::Trees::valid( arrow ) ) 
   { 
@@ -68,19 +69,19 @@ StatusCode Decays::Trees::factory
     stream << "ERROR: Invalid arrow : " << arrow << " " << code << std::endl ;
     return code ;
   }            
-  
   // decode the arrow 
   const Decays::Trees::Alg alg       = Decays::Trees::algorithm ( arrow ) ;
   const bool               photos    = Decays::Trees::photos    ( arrow ) ;
   const bool               decayOnly = Decays::Trees::decayOnly ( arrow ) ;
-  
+  //
   if ( inclusive && !optional.empty() ) 
   {
     StatusCode code = StatusCode ( Decays::Trees::InclusiveOptional ) ; 
     stream << "ERROR: 'Inclusive' & 'optional' are mutually exclusive "
            <<  code << std::endl ;
     return code ;                                                     // RETURN
-  }        
+  }
+  //
   if ( inclusive && photos            ) 
   { 
     StatusCode code = StatusCode ( Decays::Trees::InclusivePhotos   ) ; 
@@ -88,13 +89,22 @@ StatusCode Decays::Trees::factory
            << code << std::endl ;
     return code ;                                                      // RETURN
   }        
-  
+  //  
   // create the basic decay tree: 
   Decays::Trees::MCExclusive decay ( mother     , 
                                      daughters  ,
                                      alg        , 
                                      decayOnly  , 
                                      oscillated ) ;
+  //
+  if ( inclusive && decay.marked() ) 
+  {
+    StatusCode code = StatusCode ( Decays::Trees::InclusiveMarked ) ; 
+    stream << "ERROR: 'Inclusive' & 'marked' can't be properly defined "
+           <<  code << std::endl ;
+    return code ;                                                     // RETURN    
+  }
+  
   // final decoration
   if ( optional.empty() ) 
   {

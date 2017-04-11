@@ -14,7 +14,7 @@
  */
 class HltPackedDataWriter: public GaudiAlgorithm {
 public:
-  
+
   enum HeaderIDs{kVersionNumber = 2};
 
   /// Bit postions in the SourceID word
@@ -39,11 +39,11 @@ public:
 
   /// Standard constructor
   HltPackedDataWriter(const std::string& name, ISvcLocator* pSvcLocator);
-  
+
   StatusCode initialize() override; ///< Algorithm initialization
   StatusCode execute() override; ///< Algorithm execution
   StatusCode finalize() override; ///< Algorithm finalization
-  
+
   /// Return the part ID from the SourceID word
   static unsigned int partID(uint16_t sourceID) {
     return (sourceID & PartIDMask) >> PartIDBits;
@@ -53,7 +53,7 @@ public:
     return static_cast<Compression>((sourceID & CompressionMask) >> CompressionBits);
   }
 
-  
+
 private:
   /// Put the (compressed) data buffer into raw banks and register them.
   void addBanks(LHCb::RawEvent& rawEvent, const std::vector<uint8_t>& data, Compression compression);
@@ -63,21 +63,21 @@ private:
   template<typename PackedData> void register_object();
 
   /// Property giving the locations of packed containers to be persisted
-  std::vector<std::string> m_packedContainers;
+  Gaudi::Property<std::vector<std::string>> m_packedContainers{ this,"PackedContainers"};
   /// Property giving the mapping between containers and packed containers
-  std::map<std::string, std::string> m_containerMap;
+  Gaudi::Property<std::map<std::string, std::string>> m_containerMap{ this,"ContainerMap"};
   /// Property giving the location of the raw event
-  StringProperty m_outputRawEventLocation;
+  Gaudi::Property<std::string> m_outputRawEventLocation { this, "OutputRawEventLocation", LHCb::RawEventLocation::Default};
   /// Property setting the compression algorithm
-  int m_compression;
+  Gaudi::Property<int> m_compression { this, "Compression", LZMA};
   /// Property setting the compression level
-  int m_compressionLevel;
+  Gaudi::Property<int> m_compressionLevel{ this, "CompressionLevel", 6};
   /// Property enabling calculation and print of checksums
-  bool m_enableChecksum;
+  Gaudi::Property<bool> m_enableChecksum{ this,"EnableChecksum", false};
 
   /// HltANNSvc for making selection names to int selection ID
   SmartIF<IANNSvc> m_hltANNSvc;
-  
+
   /// Map between CLIDs and save functions
   std::map<CLID, std::function<size_t(const DataObject&, const std::string&)> > m_savers;
   /// Buffer for serialization of the packed objects

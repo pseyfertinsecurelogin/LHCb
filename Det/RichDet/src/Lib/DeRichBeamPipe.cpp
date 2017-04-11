@@ -180,47 +180,6 @@ DeRichBeamPipe::intersectionPoints( const Gaudi::XYZPoint& start,
 }
 
 //=========================================================================
-// Test if a given direction intersects the beam-pipe volume at all.
-//=========================================================================
-
-bool 
-DeRichBeamPipe::testForIntersection( const Gaudi::XYZPoint& start,
-                                     const Gaudi::XYZPoint& end ) const
-{
-
-  // fast test on if the start and end points are close enough to the
-  // the beam axis in global coords
-  bool inter = isCloseBy(start,end);
-  
-  // If close enough, run full test
-  if ( inter )
-  {
-    // get point and direction in local coordinates
-    const auto pLocal = geometry()->toLocal(start);
-    const auto vLocal = geometry()->toLocalMatrix()*(end-start);
-    // run full intersection test
-    ISolid::Ticks ticks;
-    inter = 0 != m_localCone->intersectionTicks( pLocal, vLocal, ticks );
-  }
-  
-  // // test against running the full test always
-  // {
-  //   const auto pLocal = geometry()->toLocal(start);
-  //   const auto vLocal = geometry()->toLocalMatrix()*(end-start);
-  //   ISolid::Ticks ticks;
-  //   const bool testinter = ( 0 != m_localCone->intersectionTicks(pLocal,vLocal,ticks) );
-  //   if ( testinter != inter )
-  //   {
-  //     info() << " -> Mis-match : " << testinter << " " << inter
-  //            << " " << pLocal << " " << vLocal << endmsg;
-  //   }
-  //   //else { info() << " Beam OK !!" << endmsg; }
-  // }
-
-  return inter;
-}
-
-//=========================================================================
 //  text conversion
 //=========================================================================
 std::string

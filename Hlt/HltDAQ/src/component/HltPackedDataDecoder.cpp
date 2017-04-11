@@ -28,6 +28,7 @@ HltPackedDataDecoder::HltPackedDataDecoder(const std::string& name,
   // The default m_sourceID=0 triggers a warning in HltRawBankDecoderBase::initialize
   // Since we only care about HLT2 persistence, set it explicitly:
   setProperty("SourceID", kSourceID_Hlt2);
+  m_rawEventLocations.push_back(LHCb::RawEventLocation::PersistReco);
 }
 
 template<typename PackedData>
@@ -78,7 +79,7 @@ StatusCode HltPackedDataDecoder::execute() {
 
   const auto& rawBanksConst = rawEvent->banks(LHCb::RawBank::DstData);
   if (rawBanksConst.empty()) {
-    return Warning("No appropriate HltPackedData raw bank in raw event. Quitting.",
+    return Warning("No HltPackedData raw bank (the DstData bank) in raw event. Quitting.",
                    StatusCode::SUCCESS, 10);
   }
 
@@ -162,7 +163,7 @@ StatusCode HltPackedDataDecoder::execute() {
       continue;
     }
     std::string containerPath = locationIt->second;
-    
+
     if (UNLIKELY(msgLevel(MSG::DEBUG))) {
       debug() << "Reading " << storedObjectSize << " bytes "
               << "for object with CLID " << classID << " into TES location "

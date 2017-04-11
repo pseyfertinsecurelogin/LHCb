@@ -833,7 +833,8 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate
-      InAncestors ( const LoKi::MCTypes::MCCuts& cut ) ;
+      InAncestors ( const LoKi::MCTypes::MCCuts& cut               , 
+                    const bool                   decayOnly = false ) ;
       /// MANDATORY: clone method ("virtual constructor")
       InAncestors* clone() const  override;
       /// MANDATORY: the only one important method
@@ -849,7 +850,8 @@ namespace LoKi
     private:
       // ======================================================================
       /// the actual predicate
-      LoKi::MCTypes::MCCut m_cut ;                      // the actual predicate
+      LoKi::MCTypes::MCCut m_cut       ;                // the actual predicate
+      bool                 m_decayOnly ;
       // ======================================================================
     };
     // ========================================================================
@@ -865,7 +867,8 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate
-      NinAncestors ( const LoKi::MCTypes::MCCuts& cut ) ;
+      NinAncestors ( const LoKi::MCTypes::MCCuts& cut               , 
+                     const bool                   decayOnly = false ) ;
       /// MANDATORY: clone method ("virtual constructor")
       NinAncestors* clone() const  override;
       /// MANDATORY: the only one important method
@@ -876,12 +879,13 @@ namespace LoKi
     public:
       // ======================================================================
       /// the actual evaluator
-      int nInAncestors ( const LHCb::MCParticle* p ) const ;
+      unsigned int nInAncestors ( const LHCb::MCParticle* p ) const ;
       // ======================================================================
     private:
       // ======================================================================
       /// the actual predicate
-      LoKi::MCTypes::MCCut m_cut ;                      // the actual predicate
+      LoKi::MCTypes::MCCut m_cut       ;                // the actual predicate
+      bool                 m_decayOnly ;
       // ======================================================================
     };
     // ========================================================================
@@ -1719,7 +1723,7 @@ namespace LoKi
       // ======================================================================
       /** standard constructor
        *  @param cut cut to be checked
-       *  @param decayOnly flag to indicat the search through decay products only
+       *  @param decayOnly flag to indicate the search through decay products only
        */
       InTree  ( const LoKi::MCTypes::MCCuts& cut               ,
                 const bool                   decayOnly = false ) ;
@@ -2047,6 +2051,58 @@ namespace LoKi
       // ======================================================================
     } ;
     // ========================================================================
+    /** @class Signal
+     *  Is it a SIGNAL particle?
+     *  @see LHCb::MCParticle::fromSignal
+     *  @see LoKi::Cuts::MCSIGNAL 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2010-02-18
+     */
+    class GAUDI_API Signal
+      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
+    {
+    public:
+      // ======================================================================
+      /// MANDATORY: clone method ("virtual constructor")
+      Signal* clone() const  override;
+      /// MANDATORY: the only one essential method
+      result_type operator() ( argument p ) const  override;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
+      // ======================================================================
+    private:
+      // ======================================================================
+      inline bool signal ( const LHCb::MCParticle* p ) const 
+      { return nullptr != p && p->fromSignal() ; }
+      // ======================================================================      
+    } ;
+    // ========================================================================
+    /** @class FromSignal
+     *  Is it from a SIGNAL particle?
+     *  @see LHCb::MCParticle::
+     *  @see LoKi::Cuts::MCFROMSIGNAL 
+     *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
+     *  @date 2010-02-18
+     */
+    class GAUDI_API FromSignal
+      : public LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate
+    {
+    public:
+      // ======================================================================
+      /// MANDATORY: clone method ("virtual constructor")
+      FromSignal* clone() const  override;
+      /// MANDATORY: the only one essential method
+      result_type operator() ( argument p ) const  override;
+      /// OPTIONAL: the nice printout
+      std::ostream& fillStream ( std::ostream& s ) const  override;
+      // ======================================================================
+    private:
+      // ======================================================================
+      inline bool signal ( const LHCb::MCParticle* p ) const 
+      { return nullptr != p && p->fromSignal() ; }
+      // ======================================================================      
+    } ;
+    // ========================================================================
     /** @class FromInteractions
      *  simple predicate to check if the particle comes from 'interactions'
      *  using LHCb::MCVertex::MCVertexType
@@ -2061,6 +2117,7 @@ namespace LoKi
      *     - LHCb::MCVertex::OscillatedAndDecay
      *     - LHCb::MCVertex::ppCollision
      *
+     *  @see LoKi::Cuts::MCFROMXS 
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-18
      */
