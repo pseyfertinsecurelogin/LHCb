@@ -1,4 +1,3 @@
-
 // local
 #include "TrackToMCParticleRelations.h"
 
@@ -47,7 +46,7 @@ TrackToMCParticleRelations::operator()( const LHCb::Tracks& tks,
     {
       if ( !tk ) continue;
 
-      if ( UNLIKELY(m_allowMultMPs) )
+      if ( m_allowMultMPs )
       {
         // Save all the MCPs for each track
         const auto * mcp = linker.first( tk );
