@@ -140,15 +140,15 @@ StatusCode HltPackedDataWriter::execute() {
       const auto& location = linkMgr->link(id)->path();
 
       auto packedLocation = m_containerMap.find(location);
-      if (packedLocation == std::end(m_containerMap)) {
-        status = Error("Cannot persist link to " + location +
-                       ". Location is not in ContainerMap!");
-        continue;
+
+      auto persistedLocation = location;
+      if (packedLocation != std::end(m_containerMap)) {
+        persistedLocation = packedLocation->second;
       }
 
-      auto linkID = m_hltANNSvc->value(PackedObjectLocations, packedLocation->second);
+      auto linkID = m_hltANNSvc->value(PackedObjectLocations, persistedLocation);
       if (!linkID) {
-        status = Error("Requested to persist link to " + packedLocation->second +
+        status = Error("Requested to persist link to " + persistedLocation +
                        " but no ID is registered for it in the HltANNSvc!");
         continue;
       }
@@ -157,7 +157,7 @@ StatusCode HltPackedDataWriter::execute() {
 
       if (UNLIKELY(msgLevel(MSG::DEBUG))) {
         debug() << "Packed link " << id << "/" << nlinks << " to " << location
-                << " (" << packedLocation->second << ") with ID " << linkID->second << endmsg;
+                << " (" << persistedLocation << ") with ID " << linkID->second << endmsg;
       }
     }
     if (!status) return status;

@@ -187,23 +187,21 @@ StatusCode HltPackedDataDecoder::execute() {
 
     // Restore the links to other containers on the TES
     for (const auto& linkLocationID: linkLocationIDs) {
-      auto packedLocation = locationsMap.find(linkLocationID);
-      if (packedLocation == std::end(locationsMap)) {
+      auto persistedLocation = locationsMap.find(linkLocationID);
+      if (persistedLocation == std::end(locationsMap)) {
         Error("Packed object location not found in ANNSvc for id=" +
               std::to_string(linkLocationID) +
               ". Skipping this link, unpacking may fail!").ignore();
         continue;
       }
 
-      auto location = m_containerMap.find(packedLocation->second);
-      if (location == std::end(m_containerMap)) {
-        Error("Cannot restore link to " + packedLocation->second.str() +
-              (". Packed location is not in ContainerMap! "
-               "Skipping this link, unpacking may fail!")).ignore();
-        continue;
+      auto location = persistedLocation->second;
+      auto mappedLocation = m_containerMap.find(persistedLocation->second);
+      if (mappedLocation != std::end(m_containerMap)) {
+        location = mappedLocation->second;
       }
 
-      dataObject->linkMgr()->addLink(location->second, nullptr);
+      dataObject->linkMgr()->addLink(location, nullptr);
     }
   }
 
