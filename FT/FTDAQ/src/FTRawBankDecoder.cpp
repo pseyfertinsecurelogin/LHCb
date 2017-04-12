@@ -55,7 +55,7 @@ StatusCode FTRawBankDecoder::execute() {
 std::unique_ptr<FTLiteClusters>
 FTRawBankDecoder::operator()(const std::vector<LHCb::RawBank*>& banks) const
 {
-  std::unique_ptr<FTLiteClusters> clus{ new FTLiteClusters() };
+  auto clus = std::make_unique<FTLiteClusters>();
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
 

@@ -84,16 +84,35 @@ LHCb::FTChannelID DeFTMat::calculateChannelAndFrac(double localX,
 
   // Find the die that is hit and the local position within the die
   int hitDie = std::min(std::max(0, int(xInSiPM / m_diePitch)), m_nDiesInSiPM - 1);
-  double xInDie = xInSiPM - (hitDie * m_diePitch);
+  double chanInDie = (xInSiPM - (hitDie * m_diePitch)) / m_channelPitch;
 
   // Find the channel that is hit and the local position within the channel
-  int hitChan = std::min( std::max(0, int(xInDie / m_channelPitch)), m_nChannelsInDie-1);
-  double xInChan = xInDie - (hitChan * m_channelPitch);
-  frac = xInChan/m_channelPitch - 0.5;
+  int hitChan = std::min( std::max(0, int(chanInDie)), m_nChannelsInDie-1);
+  frac = chanInDie - hitChan - 0.5;
 
   // Construct channelID
   return LHCb::FTChannelID(stationID(), layerID(), quarterID(), moduleID(), matID(),
       hitSiPM, hitChan+(hitDie*m_nChannelsInDie));
+}
+
+// Get the relevant channel boundaries
+std::vector<std::pair<LHCb::FTChannelID, double>> DeFTMat::calculateChannels(
+    LHCb::FTChannelID thisChannel, LHCb::FTChannelID endChannel) const
+{
+  // Reserve memory
+  std::vector<std::pair<LHCb::FTChannelID, double>> channelsAndLeftEdges;
+  channelsAndLeftEdges.reserve(endChannel - thisChannel);
+
+  // Loop over the intermediate channels
+  bool keepAdding = true;
+  while(keepAdding) {
+    double channelLeftEdge = localXfromChannel(thisChannel, -0.5);
+    // Add channel and left edge to output vector.
+    channelsAndLeftEdges.emplace_back(thisChannel, channelLeftEdge);
+    if( thisChannel == endChannel) keepAdding = false;
+    thisChannel.next();
+  }
+  return channelsAndLeftEdges;
 }
 
 // Get the relevant channel boundaries
@@ -111,27 +130,24 @@ std::vector<std::pair<LHCb::FTChannelID, double>> DeFTMat::calculateChannels(
   LHCb::FTChannelID thisChannel = calculateChannelAndFrac(xBegin-xOffset, fracBegin);
   LHCb::FTChannelID endChannel  = calculateChannelAndFrac(xEnd  +xOffset, fracEnd);
 
-  // Estimate of the size of the vector and reserve memory
-  std::vector<std::pair<LHCb::FTChannelID, double>> channelsAndLeftEdges;
-  int vectorSize = int((xEnd - xBegin)/m_channelPitch)+1+2*numOfAdditionalChannels;
-  channelsAndLeftEdges.reserve(vectorSize);
-
   // return empty vector when both channels are the same gap
   if( thisChannel.channelID() == endChannel.channelID() &&
       std::abs(fracBegin) > 0.5 && std::abs(fracEnd) > 0.5 && fracBegin*fracEnd > 0.25 )
-    return channelsAndLeftEdges;
+    return std::vector<std::pair<LHCb::FTChannelID, double>>();
 
-  // Loop over the intermediate channels
-  bool keepAdding = true;
-  while(keepAdding) {
-    double channelLeftEdge = localXfromChannel(thisChannel, -0.5);
-    // Add channel and left edge to output vector.
-    channelsAndLeftEdges.emplace_back(thisChannel, channelLeftEdge);
-    if( thisChannel == endChannel) keepAdding = false;
-    else thisChannel.next();
-  }
-  return channelsAndLeftEdges;
+  return DeFTMat::calculateChannels( thisChannel, endChannel);
 }
+
+// Get all the relevant channel boundaries in a mat
+std::vector<std::pair<LHCb::FTChannelID, double>> DeFTMat::calculateChannels() const
+{
+  LHCb::FTChannelID thisChannel = (stationID(), layerID(), quarterID(), moduleID(), matID(), 0u);
+  LHCb::FTChannelID endChannel  = (stationID(), layerID(), quarterID(), moduleID(), matID(),
+      m_nChannelsInSiPM * m_nSiPMsInMat - 1);
+
+  return DeFTMat::calculateChannels( thisChannel, endChannel);
+}
+
 
 // Find the local x-position for a given channel+fraction
 double DeFTMat::localXfromChannel(const LHCb::FTChannelID channelID,
