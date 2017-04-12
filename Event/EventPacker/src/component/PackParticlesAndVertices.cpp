@@ -22,7 +22,20 @@ PackParticlesAndVertices::PackParticlesAndVertices( const std::string& name,
   declareProperty( "DeleteInput",        m_deleteInput   = false    );
   declareProperty( "EnableCheck",        m_enableCheck   = false    );
   declareProperty( "VetoedContainers",   m_vetoedConts  );
+  declareProperty( "AlwaysCreateContainers", m_createConts );
   //setProperty( "OutputLevel", 1 );
+}
+
+StatusCode PackParticlesAndVertices::initialize()
+{
+  const StatusCode sc = GaudiAlgorithm::initialize();
+  if ( sc.isFailure() ) return sc;
+
+  if ( m_alwaysOutput && m_createConts.empty() )
+    warning() << "AlwaysCreateOutput is true but AlwaysCreateContainers "
+                 "is empty!" << endmsg;
+
+  return sc;
 }
 
 //=============================================================================
@@ -64,11 +77,12 @@ StatusCode PackParticlesAndVertices::execute()
   // Find Particles
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedParticleLocation::InStream;
     const auto & names = tesMap[clIdParticles];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedParticles* pparts = new LHCb::PackedParticles();
-      put( pparts, m_inputStream + LHCb::PackedParticleLocation::InStream );
+      put( pparts, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process Particle containers :" << endmsg;
       toBeDeleted.reserve( names.size() + toBeDeleted.size() );
@@ -90,11 +104,12 @@ StatusCode PackParticlesAndVertices::execute()
   // Find Vertices
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedVertexLocation::InStream;
     const auto & names = tesMap[clIdVertices];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedVertices* pverts = new LHCb::PackedVertices();
-      put( pverts, m_inputStream + LHCb::PackedVertexLocation::InStream );
+      put( pverts, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process Vertex containers :" << endmsg;
       toBeDeleted.reserve( names.size() + toBeDeleted.size() );
@@ -116,11 +131,12 @@ StatusCode PackParticlesAndVertices::execute()
   // Find Flavour Tags
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedFlavourTagLocation::InStream;
     const auto & names = tesMap[clIdFlavourTags];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedFlavourTags * pfts = new LHCb::PackedFlavourTags();
-      put( pfts, m_inputStream + LHCb::PackedFlavourTagLocation::InStream );
+      put( pfts, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process FlavourTag containers :" << endmsg;
       toBeDeleted.reserve( names.size() + toBeDeleted.size() );
@@ -143,12 +159,13 @@ StatusCode PackParticlesAndVertices::execute()
   // Find Rec Vertices
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedRecVertexLocation::InStream;
     const auto & names = tesMap[clIdRecVertices];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedRecVertices* prverts = new LHCb::PackedRecVertices();
       prverts->setPackingVersion( LHCb::PackedRecVertices::defaultPackingVersion() );
-      put( prverts, m_inputStream + LHCb::PackedRecVertexLocation::InStream );
+      put( prverts, outputLocation );
       prverts->setVersion( 2 ); // CRJ - Increment version for new RecVertex with weights
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process RecVertices containers :" << endmsg;
@@ -173,11 +190,12 @@ StatusCode PackParticlesAndVertices::execute()
   // Find Particle2 Vert Relations
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedRelationsLocation::InStream;
     const auto & names = tesMap[clIdPart2Vert];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedRelations* prels = new LHCb::PackedRelations();
-      put( prels, m_inputStream + LHCb::PackedRelationsLocation::InStream );
+      put( prels, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process Particle2Vertex Relation containers :" << endmsg;
       toBeDeleted.reserve( names.size() + toBeDeleted.size() );
@@ -201,11 +219,12 @@ StatusCode PackParticlesAndVertices::execute()
   // Find Particle to Ints
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedRelationsLocation::P2Int;
     const auto & names = tesMap[clIdPart2Int];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedRelations * pPartIds = new LHCb::PackedRelations();
-      put( pPartIds, m_inputStream + LHCb::PackedRelationsLocation::P2Int );
+      put( pPartIds, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process Particle2Int Relation containers :" << endmsg;
       toBeDeleted.reserve( names.size() + toBeDeleted.size() );
@@ -229,11 +248,12 @@ StatusCode PackParticlesAndVertices::execute()
   // Find Particle to Related Info
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedRelatedInfoLocation::InStream;
     const auto & names = tesMap[clIdPart2RelInfo];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedRelatedInfoRelations * pPartIds = new LHCb::PackedRelatedInfoRelations();
-      put( pPartIds, m_inputStream + LHCb::PackedRelatedInfoLocation::InStream );
+      put( pPartIds, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "Found " << names.size() << " RelatedInfo containers : "
                 << names << endmsg;
@@ -262,13 +282,14 @@ StatusCode PackParticlesAndVertices::execute()
   // Find ProtoParticles
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedProtoParticleLocation::InStream;
     const auto & names = tesMap[clIdProtoParticles];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedProtoParticles * pprotos = new LHCb::PackedProtoParticles();
       pprotos->setVersion( 2 ); // CRJ : Why set this ?
       pprotos->setPackingVersion( LHCb::PackedProtoParticles::defaultPackingVersion() );
-      put( pprotos, m_inputStream + LHCb::PackedProtoParticleLocation::InStream );
+      put( pprotos, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process ProtoParticle containers :" << endmsg;
       toBeDeleted.reserve( names.size() + toBeDeleted.size() );
@@ -291,12 +312,13 @@ StatusCode PackParticlesAndVertices::execute()
   // Find MuonPIDs
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedMuonPIDLocation::InStream;
     const auto & names = tesMap[clIdMuonPIDs];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedMuonPIDs * ppids = new LHCb::PackedMuonPIDs();
       ppids->setPackingVersion( LHCb::PackedMuonPIDs::defaultPackingVersion() );
-      put( ppids, m_inputStream + LHCb::PackedMuonPIDLocation::InStream );
+      put( ppids, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process MuonPID containers :" << endmsg;
       toBeDeleted.reserve( names.size() + toBeDeleted.size() );
@@ -318,12 +340,13 @@ StatusCode PackParticlesAndVertices::execute()
   // Find RichPIDs
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedRichPIDLocation::InStream;
     const auto & names = tesMap[clIdRichPIDs];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedRichPIDs * ppids = new LHCb::PackedRichPIDs();
       ppids->setPackingVersion( LHCb::PackedRichPIDs::defaultPackingVersion() );
-      put( ppids, m_inputStream + LHCb::PackedRichPIDLocation::InStream );
+      put( ppids, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process RichPID containers :" << endmsg;
       toBeDeleted.reserve( names.size() + toBeDeleted.size() );
@@ -345,12 +368,13 @@ StatusCode PackParticlesAndVertices::execute()
   // Find Tracks
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedTrackLocation::InStream;
     const auto & names = tesMap[clIdTracks];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedTracks * ptracks = new LHCb::PackedTracks();
       ptracks->setVersion( 5 );
-      put( ptracks, m_inputStream + LHCb::PackedTrackLocation::InStream );
+      put( ptracks, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process Track containers :" << endmsg;
       toBeDeleted.reserve( names.size() + toBeDeleted.size() );
@@ -375,11 +399,12 @@ StatusCode PackParticlesAndVertices::execute()
   // Find Particle -> MC relations
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedRelationsLocation::P2MCP;
     const auto & names = tesMap[clIdPart2MCPart];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedRelations* prels = new LHCb::PackedRelations();
-      put( prels, m_inputStream + LHCb::PackedRelationsLocation::P2MCP );
+      put( prels, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process Particle2MCParticle Relation containers :" << endmsg;
       toBeDeleted.reserve( names.size() + toBeDeleted.size() );
@@ -403,11 +428,12 @@ StatusCode PackParticlesAndVertices::execute()
   // Find Proto -> MC relations
   //==============================================================================
   {
+    auto outputLocation = m_inputStream + LHCb::PackedWeightedRelationsLocation::PP2MCP;
     const auto & names = tesMap[clIdProto2MCPart];
-    if ( !names.empty() )
+    if ( !names.empty() || alwaysCreate( outputLocation ) )
     {
       LHCb::PackedWeightedRelations* prels = new LHCb::PackedWeightedRelations();
-      put( prels, m_inputStream + LHCb::PackedWeightedRelationsLocation::PP2MCP );
+      put( prels, outputLocation );
       if ( msgLevel( MSG::DEBUG ) )
         debug() << "=== Process ProtoParticle2MCParticle Relation containers :" << endmsg;
       toBeDeleted.reserve( names.size() + toBeDeleted.size() );

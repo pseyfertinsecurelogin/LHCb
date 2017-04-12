@@ -52,6 +52,8 @@ public:
 
   StatusCode execute() override; ///< Algorithm execution
 
+  StatusCode initialize() override; ///< Initialize the algorithm instance.
+
 private:
 
   // Relation types
@@ -69,6 +71,9 @@ private:
 
   /// Test if a TES container is Veto'ed from being packed
   bool isVetoed( const std::string& id ) const;
+
+  /// Test if an output location should always be created
+  bool alwaysCreate( const std::string& id ) const;
 
   /// Build the ClassID to TES location(s) map
   void buildTESMap( const DataObject* obj,
@@ -133,6 +138,7 @@ private:
   bool m_deleteInput;        ///< Delete the containers after packing if true.
   bool m_enableCheck;        ///< Flag to turn on automatic unpacking and checking of the output post-packing
   std::vector<std::string> m_vetoedConts; ///< Vetoed containers. Will not be packed.
+  std::vector<std::string> m_createConts; ///< Always create these containers
   StandardPacker m_pack;     ///< Standard packer
 
 };
@@ -277,6 +283,16 @@ inline bool PackParticlesAndVertices::isVetoed( const std::string& id ) const
     else          { debug() << "  --> Selected ... " << id << endmsg; }
   }
   return vetoed;
+}
+
+//==============================================================================
+// Test if an output TES location should always be created
+//==============================================================================
+inline bool PackParticlesAndVertices::alwaysCreate( const std::string& id ) const
+{
+  return m_alwaysOutput && ( std::find( m_createConts.begin(),
+                                        m_createConts.end(),
+                                        id ) != m_createConts.end() );
 }
 
 #endif // PACKPARTICLESANDVERTICES_H
