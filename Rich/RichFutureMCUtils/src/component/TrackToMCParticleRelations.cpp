@@ -17,14 +17,17 @@ TrackToMCParticleRelations( const std::string& name, ISvcLocator* pSvcLocator )
                     KeyValue{ "MCParticlesLocation", LHCb::MCParticleLocation::Default } },
                   { KeyValue{ "TrackToMCParticlesRelations", 
                               Rich::Future::MC::Relations::TrackToMCParticles } } )
-{ }
+{
+  // debugging
+  //setProperty( "OutputLevel", MSG::VERBOSE );
+}
 
 Rich::Future::MC::Relations::TkToMCPRels
 TrackToMCParticleRelations::operator()( const LHCb::Tracks& tks, 
                                         const LHCb::MCParticles& ) const
 {
   // make a relations table
-  Relations::TkToMCPRels rels( tks.size() );
+  Relations::TkToMCPRels rels( 3 * tks.size() );
 
   // The location in the TES for the tracks we have been given
   const auto & tkLoc = inputLocation<0>();
@@ -40,20 +43,78 @@ TrackToMCParticleRelations::operator()( const LHCb::Tracks& tks,
   {
   
     // loop over the tracks and fill relations table
-    for ( const auto * tk : tks )
+    for ( auto * tk : tks )
     {
       if ( !tk ) continue;
-      const auto * mcp = linker.first( tk );
-      while ( mcp )
+
+      if ( UNLIKELY(m_allowMultMPs) )
       {
-        rels.i_push( tk, mcp, linker.weight() ); // NB! i_push is used!     
-        mcp = linker.next();
+        // Save all the MCPs for each track
+        const auto * mcp = linker.first( tk );
+        while ( mcp )
+        {
+          _ri_verbo << std::setprecision(20) 
+                    << "Track " << tk->key() << " MCP " << mcp->key() 
+                    << " weight " << linker.weight() << endmsg;
+          rels.i_push( tk, mcp, linker.weight() ); // NB! i_push is used!     
+          mcp = linker.next();
+        }
+      }
+      else
+      {
+        // find best MCP based on weight and save only that
+        double bestWeight = -1;
+        const LHCb::MCParticle * bestMCP = nullptr;
+        const auto * mcp = linker.first( tk );
+        while ( mcp )
+        {
+          if ( linker.weight() > bestWeight )
+          {
+            bestWeight = linker.weight();
+            bestMCP    = mcp;
+          }
+          mcp = linker.next();
+        }
+        if ( bestMCP ) 
+        {
+          _ri_verbo << std::setprecision(20) 
+                    << "Track " << tk->key() << " MCP " << bestMCP->key() 
+                    << " weight " << bestWeight << endmsg;
+          rels.i_push( tk, bestMCP, bestWeight ); // NB! i_push is used!     
+        }
+      }
+
+    }
+
+    if ( msgLevel(MSG::DEBUG) )
+    {
+      verbose() << "Rels before sort" << endmsg;
+      for ( const auto& i : rels.i_relations() )
+      {
+        verbose() << std::setprecision(20) 
+                  << "  TK " << i.from()->key() 
+                  << "  MCP " << i.to()->key() 
+                  << "  Weight " << i.weight() 
+                  << endmsg;
       }
     }
 
     // MANDATORY usage of i_sort after i_push 
     rels.i_sort();
 
+    if ( msgLevel(MSG::DEBUG) )
+    {
+      verbose() << "Rels after sort" << endmsg;
+      for ( const auto& i : rels.i_relations() )
+      {
+        verbose() << std::setprecision(20) 
+                  << "  TK " << i.from()->key() 
+                  << "  MCP " << i.to()->key() 
+                  << "  Weight " << i.weight() 
+                  << endmsg;
+      }
+    }
+    
   }
 
   // check for some "strange" status 
