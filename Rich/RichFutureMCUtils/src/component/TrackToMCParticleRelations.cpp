@@ -26,7 +26,7 @@ TrackToMCParticleRelations::operator()( const LHCb::Tracks& tks,
                                         const LHCb::MCParticles& ) const
 {
   // make a relations table
-  Relations::TkToMCPRels rels( 3 * tks.size() );
+  Relations::TkToMCPRels rels( 2 * tks.size() );
 
   // The location in the TES for the tracks we have been given
   const auto & tkLoc = inputLocation<0>();
