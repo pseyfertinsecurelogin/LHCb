@@ -242,6 +242,9 @@ class genSrcUtils(importUtils.importUtils):
             s += '  /// %s\n  ' % metAtt['desc']
             if metAtt.has_key('template') : s += 'template <%s>\n  ' % metAtt['template']
             indent += 2
+            if metAtt['explicit'] == 'TRUE':
+                s += 'explicit '
+                indent += 9
             if metAtt['static'] == 'TRUE':
                 s += 'static '
                 indent += 7
