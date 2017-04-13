@@ -39,6 +39,24 @@
  *
  *  Packs Particles, Vertices and related information.
  *
+ *  If one always wants to create the packed locations, regardless of whether there
+ *  are any related objects to be packed, one should set the `AlwaysCreateOutput` to
+ *  true and set the `AlwaysCreateContainers` list to the desired locations.
+ *
+ *  For example, the following configures the tool to always create the packed
+ *  particles location:
+ *
+ *  @code
+ *  from Configurables import PackParticlesAndVertices
+ *  input_stream = '/Event'
+ *  ppvs = PackParticlesAndVertices()
+ *  ppvs.InputStream = input_stream
+ *  ppvs.AlwaysCreateOutput = True
+ *  ppvs.AlwaysCreateContainers = [
+ *      '{0}/pPhys/Particles'.format(input_stream)
+ *  ]
+ *  @endcode
+ *
  *  @author Olivier Callot
  *  @date   2012-01-23
  */
