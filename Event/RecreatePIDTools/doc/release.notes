@@ -4,6 +4,9 @@
 ! Purpose     : Components to fully rebuild PIDs from packed DST
 !-----------------------------------------------------------------------------
 
+! 2017-04-13 - Ricardo Vazquez Gomez
+ - Modify the MuonPId from ProtoParticle to access the new MuonID variables
+
 !========================= RecreatePIDTools v1r9 2016-03-16 =========================
 ! 2016-02-02 - Chris Jones
  - Add a check to RichPIDsFromProtoParticlesAlg to detect when old unpacked

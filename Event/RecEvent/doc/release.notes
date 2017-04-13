@@ -4,6 +4,9 @@
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output)
 !-----------------------------------------------------------------------------
 
+! 2017-04-13 - Ricardo Vazquez Gomez
+ - Modify the ProtoParticle to add the new MuonID information
+
 ! 2017-03-28 - Ricardo Vazquez Gomez
  - Reorder the attributes in xml not to break backwards compatibility
 
