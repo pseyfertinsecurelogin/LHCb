@@ -171,12 +171,18 @@ XMLSummarySvc::finalize()
 
   //need to get return code from AppMgr
 
-  int gaudiReturn=0;
+  int gaudiReturn = Gaudi::ReturnCode::Success;
 
   SmartIF<IProperty> appmgr(serviceLocator()->service("ApplicationMgr"));
   gaudiReturn=Gaudi::getAppReturnCode(appmgr);
 
-
+  if ( gaudiReturn != Gaudi::ReturnCode::Success &&
+       std::any_of(begin(m_successExitCodes), end(m_successExitCodes),
+                   [gaudiReturn] (const int x) { return x == gaudiReturn; }) ) {
+    // remap exit code to success
+    Gaudi::setAppReturnCode(appmgr, Gaudi::ReturnCode::Success, true).ignore();
+    gaudiReturn = Gaudi::ReturnCode::Success;
+  }
   //IntegerProperty returnCode("ReturnCode",0);
 
   //const IntegerProperty returnCode=(const IntegerProperty) getProperty("ReturnCode");//Gaudi::Utils::getProperty(&returnCode);
@@ -197,7 +203,7 @@ XMLSummarySvc::finalize()
   {
     PyGILGuard gil;
     PyObject_CallMethod(m_summary, chr("set_step"), chr("s,i"), chr("finalize"),
-                        int(gaudiReturn==0));
+                        int(gaudiReturn == Gaudi::ReturnCode::Success));
   }
 
   log << MSG::INFO << "filling counters..." << endmsg;

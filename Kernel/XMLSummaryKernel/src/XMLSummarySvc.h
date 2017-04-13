@@ -113,6 +113,8 @@ public:
 
 private:
 
+  Gaudi::Property<std::vector<int>> m_successExitCodes{this, "SuccessExitCodes", {}, "non-zero exit codes that should be remapped to success"};
+
   /// Allow SvcFactory to instantiate the service.
   friend class SvcFactory<XMLSummarySvc>;
   IIncidentSvc* m_incSvc; ///the incident service
