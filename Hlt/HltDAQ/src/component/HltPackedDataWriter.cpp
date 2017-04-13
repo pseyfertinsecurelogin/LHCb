@@ -10,6 +10,9 @@
 #include "Event/PackedParticle.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedRecVertex.h"
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
 
 #include "PackedDataChecksum.h"
 #include "PackedDataBuffer.h"
@@ -53,10 +56,13 @@ StatusCode HltPackedDataWriter::initialize() {
   register_object<LHCb::PackedMuonPIDs>();
   register_object<LHCb::PackedCaloHypos>();
   register_object<LHCb::PackedProtoParticles>();
+  register_object<LHCb::PackedCaloClusters>();
   register_object<LHCb::PackedParticles>();
   register_object<LHCb::PackedVertices>();
-  register_object<LHCb::PackedCaloClusters>();
   register_object<LHCb::PackedRecVertices>();
+  register_object<LHCb::PackedFlavourTags>();
+  register_object<LHCb::PackedRelations>();
+  register_object<LHCb::PackedRelatedInfoRelations>();
 
   info() << "Configured to persist containers ";
   for (const auto& path: m_packedContainers) {

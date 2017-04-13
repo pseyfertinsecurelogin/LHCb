@@ -13,6 +13,9 @@
 #include "Event/PackedParticle.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedRecVertex.h"
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
 
 namespace PackedDataPersistence {
 

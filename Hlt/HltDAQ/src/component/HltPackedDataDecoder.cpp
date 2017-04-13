@@ -10,6 +10,9 @@
 #include "Event/PackedParticle.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedRecVertex.h"
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
 
 #include "HltPackedDataWriter.h"
 #include "HltPackedDataDecoder.h"
@@ -45,10 +48,13 @@ StatusCode HltPackedDataDecoder::initialize() {
   register_object<LHCb::PackedMuonPIDs>();
   register_object<LHCb::PackedCaloHypos>();
   register_object<LHCb::PackedProtoParticles>();
+  register_object<LHCb::PackedCaloClusters>();
   register_object<LHCb::PackedParticles>();
   register_object<LHCb::PackedVertices>();
-  register_object<LHCb::PackedCaloClusters>();
   register_object<LHCb::PackedRecVertices>();
+  register_object<LHCb::PackedFlavourTags>();
+  register_object<LHCb::PackedRelations>();
+  register_object<LHCb::PackedRelatedInfoRelations>();
 
   if (UNLIKELY(m_enableChecksum)) {
     m_checksum = new PackedDataPersistence::PackedDataChecksum();

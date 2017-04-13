@@ -36,6 +36,17 @@ namespace LHCb
     unsigned int first{0}, last{0};
     // reference
     long long reference{-1};
+
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.io(
+       first, last, reference
+      );
+    }
+    template<typename T>
+    inline void load(T& buf, unsigned int /*version*/) {
+      save(buf); // identical operation until version is incremented
+     }
   };
 
   // -----------------------------------------------------------------------
@@ -118,6 +129,29 @@ namespace LHCb
 
     /// Read access to the data vector
     const Vector & data() const { return relations(); }
+
+    /// Describe serialization of object
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.template save<uint8_t>(m_packingVersion);
+      buf.template save<uint8_t>(version());
+      buf.save(m_info);
+      buf.save(m_relations);
+      buf.save(m_containers);
+    }
+    /// Describe de-serialization of object
+    template<typename T>
+    inline void load(T& buf) {
+      setPackingVersion(buf.template load<uint8_t>());
+      setVersion(buf.template load<uint8_t>());
+      if (m_packingVersion > defaultPackingVersion()) {
+        throw std::runtime_error("PackedPartToRelatedInfoRelations packing version is not supported: "
+                                 + std::to_string(m_packingVersion));
+      }
+      buf.load(m_info, m_packingVersion);
+      buf.load(m_relations, m_packingVersion);
+      buf.load(m_containers, m_packingVersion);
+    }
 
   private:
 

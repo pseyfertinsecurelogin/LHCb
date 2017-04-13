@@ -79,6 +79,32 @@ void PackedDataChecksum::processObject(const LHCb::PackedRecVertices& x, const s
   processVector(key, x.weights());
 }
 
+template<>
+void PackedDataChecksum::processObject(const LHCb::PackedFlavourTags& x, const std::string& key) {
+  process(key, x.packingVersion());
+  process(key, x.version());
+  processVector(key, x.data());
+  processVector(key, x.taggers());
+  processVector(key, x.taggeringPs());
+}
+
+template<>
+void PackedDataChecksum::processObject(const LHCb::PackedRelations& x, const std::string& key) {
+  process(key, x.version());
+  processVector(key, x.relations());
+  processVector(key, x.sources());
+  processVector(key, x.dests());
+}
+
+template<>
+void PackedDataChecksum::processObject(const LHCb::PackedRelatedInfoRelations& x, const std::string& key) {
+  process(key, x.packingVersion());
+  process(key, x.version());
+  processVector(key, x.info());
+  processVector(key, x.relations());
+  processVector(key, x.containers());
+}
+
 template<typename T>
 void PackedDataChecksum::process(const std::string& key, const T& x) {
   m_result[key].process_bytes((void*)&x, sizeof(x));
