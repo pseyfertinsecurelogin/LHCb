@@ -4,6 +4,9 @@
 ! Purpose     : Components to fully rebuild PIDs from packed DST
 !-----------------------------------------------------------------------------
 
+! 2017-04-14 - Ricardo Vazquez Gomez 
+ - improve naming of new MuonID variables in ProtoParticle
+
 ! 2017-04-13 - Ricardo Vazquez Gomez
  - Modify the MuonPId from ProtoParticle to access the new MuonID variables
 

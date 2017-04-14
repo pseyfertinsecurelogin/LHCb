@@ -137,11 +137,11 @@ void ChargedProtoParticleAddMuonInfo::updateMuon( LHCb::ProtoParticle * proto ) 
   proto->addInfo( LHCb::ProtoParticle::MuonMuLL,     muonPID->MuonLLMu() );
   proto->addInfo( LHCb::ProtoParticle::MuonBkgLL,    muonPID->MuonLLBg() );
   proto->addInfo( LHCb::ProtoParticle::MuonNShared,  muonPID->nShared()  );
-  proto->addInfo( LHCb::ProtoParticle::chi2Corr,     muonPID->chi2Corr() );
-  proto->addInfo( LHCb::ProtoParticle::muonMVA1,     muonPID->muonMVA1() ); 
-  proto->addInfo( LHCb::ProtoParticle::muonMVA2,     muonPID->muonMVA2() );
-  proto->addInfo( LHCb::ProtoParticle::muonMVA3,     muonPID->muonMVA3() );
-  proto->addInfo( LHCb::ProtoParticle::muonMVA4,     muonPID->muonMVA4() );
+  proto->addInfo( LHCb::ProtoParticle::MuonChi2Corr, muonPID->chi2Corr() );
+  proto->addInfo( LHCb::ProtoParticle::MuonMVA1,     muonPID->muonMVA1() ); 
+  proto->addInfo( LHCb::ProtoParticle::MuonMVA2,     muonPID->muonMVA2() );
+  proto->addInfo( LHCb::ProtoParticle::MuonMVA3,     muonPID->muonMVA3() );
+  proto->addInfo( LHCb::ProtoParticle::MuonMVA4,     muonPID->muonMVA4() );
 
   // print full ProtoParticle content
   if ( msgLevel(MSG::VERBOSE) ) verbose() << *proto << endmsg;

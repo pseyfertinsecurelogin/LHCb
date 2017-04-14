@@ -101,11 +101,11 @@ LHCb::ProtoParticle::removeMuonInfo()
   erased += this->eraseInfo( LHCb::ProtoParticle::MuonMuLL );
   erased += this->eraseInfo( LHCb::ProtoParticle::MuonBkgLL );
   erased += this->eraseInfo( LHCb::ProtoParticle::MuonNShared );
-  erased += this->eraseInfo( LHCb::ProtoParticle::chi2Corr);
-  erased += this->eraseInfo( LHCb::ProtoParticle::muonMVA1);
-  erased += this->eraseInfo( LHCb::ProtoParticle::muonMVA2);
-  erased += this->eraseInfo( LHCb::ProtoParticle::muonMVA3);
-  erased += this->eraseInfo( LHCb::ProtoParticle::muonMVA4);
+  erased += this->eraseInfo( LHCb::ProtoParticle::MuonChi2Corr);
+  erased += this->eraseInfo( LHCb::ProtoParticle::MuonMVA1);
+  erased += this->eraseInfo( LHCb::ProtoParticle::MuonMVA2);
+  erased += this->eraseInfo( LHCb::ProtoParticle::MuonMVA3);
+  erased += this->eraseInfo( LHCb::ProtoParticle::MuonMVA4);
   erased += this->eraseInfo( LHCb::ProtoParticle::MuonPIDStatus );
   // Set MuonPID pointer to NULL
   this->setMuonPID(nullptr);
@@ -218,11 +218,11 @@ LHCb::ProtoParticle::convertExtraInfo(const std::string& name)
   if ( "MuonMuLL"          == name ) { return LHCb::ProtoParticle::MuonMuLL; }
   if ( "MuonBkgLL"         == name ) { return LHCb::ProtoParticle::MuonBkgLL; }
   if ( "MuonNShared"       == name ) { return LHCb::ProtoParticle::MuonNShared; }
-  if ( "chi2Corr"          == name ) { return LHCb::ProtoParticle::chi2Corr; }
-  if ( "muonMVA1"          == name ) { return LHCb::ProtoParticle::muonMVA1; }
-  if ( "muonMVA2"          == name ) { return LHCb::ProtoParticle::muonMVA2; }
-  if ( "muonMVA3"          == name ) { return LHCb::ProtoParticle::muonMVA3; }
-  if ( "muonMVA4"          == name ) { return LHCb::ProtoParticle::muonMVA4; }
+  if ( "MuonChi2Corr"      == name ) { return LHCb::ProtoParticle::MuonChi2Corr; }
+  if ( "MuonMVA1"          == name ) { return LHCb::ProtoParticle::MuonMVA1; }
+  if ( "MuonMVA2"          == name ) { return LHCb::ProtoParticle::MuonMVA2; }
+  if ( "MuonMVA3"          == name ) { return LHCb::ProtoParticle::MuonMVA3; }
+  if ( "MuonMVA4"          == name ) { return LHCb::ProtoParticle::MuonMVA4; }
   if ( "MuonPIDStatus"     == name ) { return LHCb::ProtoParticle::MuonPIDStatus; }
   if ( "InAccMuon"         == name ) { return LHCb::ProtoParticle::InAccMuon; }
   if ( "InAccSpd"          == name ) { return LHCb::ProtoParticle::InAccSpd; }

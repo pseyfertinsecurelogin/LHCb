@@ -148,11 +148,11 @@ StatusCode MuonPIDsFromProtoParticlesAlg::execute()
         pid->setMuonLLMu( (*iP)->info(ProtoParticle::MuonMuLL,    0) );
         pid->setMuonLLBg( (*iP)->info(ProtoParticle::MuonBkgLL,   0) );
         pid->setNShared ( static_cast<int>((*iP)->info(ProtoParticle::MuonNShared, 0)) );
-        pid->setChi2Corr( (*iP)->info(ProtoParticle::chi2Corr,    0) );
-        pid->setMuonMVA1( (*iP)->info(ProtoParticle::muonMVA1,    0) );        
-        pid->setMuonMVA2( (*iP)->info(ProtoParticle::muonMVA2,    0) );
-        pid->setMuonMVA3( (*iP)->info(ProtoParticle::muonMVA3,    0) );
-        pid->setMuonMVA4( (*iP)->info(ProtoParticle::muonMVA4,    0) );
+        pid->setChi2Corr( (*iP)->info(ProtoParticle::MuonChi2Corr,    0) );
+        pid->setMuonMVA1( (*iP)->info(ProtoParticle::MuonMVA1,    0) );        
+        pid->setMuonMVA2( (*iP)->info(ProtoParticle::MuonMVA2,    0) );
+        pid->setMuonMVA3( (*iP)->info(ProtoParticle::MuonMVA3,    0) );
+        pid->setMuonMVA4( (*iP)->info(ProtoParticle::MuonMVA4,    0) );
 
         // Work around for old MuonPID data objects without IsMuonLoose
         if ( !pid->IsMuonLoose()  && pid->IsMuon() ) { pid->setIsMuonLoose(true); }

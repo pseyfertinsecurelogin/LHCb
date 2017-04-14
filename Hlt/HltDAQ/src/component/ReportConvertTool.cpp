@@ -44,7 +44,7 @@ namespace {
        LHCb::RecSummary::nMuonTracks,
        LHCb::RecSummary::nPVs
   };
-  static const std::array<LHCb::ProtoParticle::additionalInfo,67> s_proto_map = {
+  static const std::array<LHCb::ProtoParticle::additionalInfo,72> s_proto_map = {
       LHCb::ProtoParticle::IsPhoton,//381
       LHCb::ProtoParticle::IsNotE,//382
       LHCb::ProtoParticle::IsNotH,//383
@@ -111,7 +111,12 @@ namespace {
       LHCb::ProtoParticle::ProbNNk,//
       LHCb::ProtoParticle::ProbNNp,//
       LHCb::ProtoParticle::ProbNNghost, //
-      LHCb::ProtoParticle::CombDLLd//605
+      LHCb::ProtoParticle::CombDLLd,//605
+      LHCb::ProtoParticle::MuonChi2Corr,//
+      LHCb::ProtoParticle::MuonMVA1,//
+      LHCb::ProtoParticle::MuonMVA2,//
+      LHCb::ProtoParticle::MuonMVA3,//
+      LHCb::ProtoParticle::MuonMVA4//
   };
     //===========================================================================
     /// Version unordered_map for LHCb::Particle in the Turbo stream
@@ -720,14 +725,18 @@ namespace {
           , {"3#Muon.Status",                   {3,3}}
           , {"4#Muon.IsMuon",                   {4,4}}
           , {"5#Muon.IsMuonLoose",              {5,5}}
-          , {"6#Muon.IsMuonTight",              {6,6}}
-          , {"7#Muon.chi2Corr",                 {7,7}}
-          , {"8#Muon.muonMVA1",                 {8,8}}
-          , {"9#Muon.muonMVA2",                 {9,9}}
-          , {"10#Muon.muonMVA3",                {10,10}}
-          , {"11#Muon.muonMVA4",                {11,11}}}
+          , {"6#Muon.IsMuonTight",              {6,6}}}
       }
       , { 4
+        , {{"0#Muon.MuonLLMu",                  {0,0}}
+          , {"1#Muon.MuonLLBg",                 {1,1}}
+          , {"2#Muon.NShared",                  {2,2}}
+          , {"3#Muon.Status",                   {3,3}}
+          , {"4#Muon.IsMuon",                   {4,4}}
+          , {"5#Muon.IsMuonLoose",              {5,5}}
+          , {"6#Muon.IsMuonTight",              {6,6}}}
+      }
+      , { 11
         , {{"0#Muon.MuonLLMu",                  {0,0}}
           , {"1#Muon.MuonLLBg",                 {1,1}}
           , {"2#Muon.NShared",                  {2,2}}

@@ -4,6 +4,9 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+! 2017-04-14 - Ricardo Vazquez Gomez
+ - fix the ReportCovertTool and increase the versions
+
 ! 2017-04-06 - Ricardo Vazquez Gomez
  - modify the turbo report to add the new variables in the muonPID
 
