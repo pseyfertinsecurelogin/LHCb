@@ -3,6 +3,10 @@
 ! Responsible : Olivier Deschamps odescham@in2p3.fr
 !------------------------------------------------------------------------------
 
+
+! 2017-04-14 - Olivier Deschamps
+ - Calo2DView : add protection against invalid CellID
+
 !========================= CaloUtils v10r6 2016-01-27 =========================
 ! 2015-12-17 - Marco Cattaneo
  - CovarianceEstimator.cpp: 
