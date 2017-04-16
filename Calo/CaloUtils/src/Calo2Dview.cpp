@@ -250,7 +250,6 @@ void Calo2Dview::resetTitle(const HistoID& unit, std::string title) const {
     std::string tit = getTitle( title, calo, i );
     if( histoExists(lun)) histo2D(lun)->setTitle(tit);
     // second kind
-// >>>>>>> 0c9c38d... modernise-Calo2Dview
     std::string name = (std::string) unit;
     int index = name.find_last_of("/") +1 ; 
     std::string suff = name.substr( index, name.length() );
@@ -354,6 +353,8 @@ void Calo2Dview::fillCalo2D(const HistoID& unit, const LHCb::CaloCellID& id, dou
   const auto& cp = m_caloParams[calo];
   const auto* detPtr = cp.calo;
   if( detPtr == nullptr ) return;
+  if( ! detPtr->valid(id) )return;
+
 
   // check the cellID is consistent with the calo
   if(m_caloViewMap[ unit ] != calo){
@@ -438,6 +439,7 @@ void Calo2Dview::fillCaloPin2D(const HistoID& unit, const LHCb::CaloCellID& id, 
   const auto& cp = m_caloParams[id.calo()];
   const auto detPtr = cp.calo;
   if( detPtr == nullptr ) return;
+  if( ! detPtr->valid(id) )return;
   if( !id.isPin() ) return;
   if( value < m_threshold ) return;  
 
