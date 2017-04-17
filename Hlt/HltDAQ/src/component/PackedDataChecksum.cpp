@@ -188,8 +188,8 @@ void PackedDataChecksum::process(const std::string& key, const LHCb::PackedRecVe
               x.x, x.y, x.z,
               x.cov00, x.cov11, x.cov22, x.cov10, x.cov20, x.cov21,
               x.firstTrack, x.lastTrack,
-              x.firstInfo, x.lastInfo);
-              // skip x.container since it is not serialized, see PackedRecVertex.h
+              x.firstInfo, x.lastInfo,
+              x.container);
 }
 
 template<>
