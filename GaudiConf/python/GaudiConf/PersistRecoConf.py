@@ -1,4 +1,6 @@
 """Packing configuration for HLT persisted reconstruction."""
+from collections import OrderedDict
+
 from Gaudi.Configuration import *
 from Configurables import PackProtoParticle, UnpackProtoParticle
 from Configurables import PackTrack, UnpackTrack
@@ -18,6 +20,17 @@ __all__ = [
 __author__ = "Rosen Matev"
 
 
+def _location_2016_to_2015(location):
+    return (location
+            .replace("Long", "long")
+            .replace("Downstream", "down")
+            .replace("Neutral", "neutral"))
+
+
+def _od_rename(x, keymap):
+    return OrderedDict((keymap.get(k, k), v) for k, v in x.items())
+
+
 class PackingDescriptor(object):
     """Holds information of how and where to (un)pack objects.
 
@@ -34,8 +47,15 @@ class PackingDescriptor(object):
         self.packer = packer
         self.unpacker = unpacker
 
+    def copy(self, **kwargs):
+        new = PackingDescriptor(self.name, self.location, self.packer,
+                                self.unpacker)
+        for k, v in kwargs.items():
+            setattr(new, k, v)
+        return new
 
-standardDescriptors = [
+
+_standardDescriptors = [
     # Charged proto particles
     PackingDescriptor(
         name='Hlt2LongProtos',
@@ -115,7 +135,30 @@ standardDescriptors = [
         packer=PackCaloHypo, unpacker=UnpackCaloHypo),
 ]
 
-standardOutputs = {
+standardDescriptors = {}
+# Transform the 2016 descriptors into OrderedDict{name: descriptor}
+# without changing all the lines above. Unset descriptor.name
+standardDescriptors['2016'] = OrderedDict(
+    (i.name, i.copy(name=None)) for i in _standardDescriptors
+)
+
+# In 2015 packed locations were named slightly differently
+standardDescriptors['2015'] = OrderedDict(
+    (k, v.copy(location=_location_2016_to_2015(v.location)))
+    for k, v in standardDescriptors['2016'].items()
+)
+
+standardDescriptors['2017'] = standardDescriptors['2016'].copy()
+standardDescriptors['2017'] = _od_rename(
+    standardDescriptors['2017'],
+    {'Hlt2DownstreamPIDMuonSegments': 'Hlt2MuonPIDSegments',
+     'Hlt2LongMuonPIDs': 'Hlt2MuonPIDs'}
+)
+
+
+standardOutputs = {}
+
+standardOutputs['2016'] = {
     "Hlt2LongProtos":                "/Event/Hlt2/Long/Protos",
     "Hlt2DownstreamProtos":          "/Event/Hlt2/Downstream/Protos",
     "Hlt2LongRichPIDs":
@@ -139,6 +182,36 @@ standardOutputs = {
     "Hlt2CaloSplitPhotonHypos":      "/Event/Hlt2/PID/CALO/Calo/SplitPhotons",
 }
 
+# In 2015 the RICH locations were different
+standardOutputs['2015'] = standardOutputs['2016'].copy()
+standardOutputs['2015']["Hlt2LongRichPIDs"] = (
+    "/Event/Hlt2/TrackFitted/Long/PID/RICH"
+    "/electronmuonpionkaonprotonbelowThreshold/Rich1GasRich2GasLong")
+standardOutputs['2015']["Hlt2DownstreamRichPIDs"] = (
+    "/Event/Hlt2/TrackFitted/Downstream/PID/RICH"
+    "/electronmuonpionkaonprotonbelowThreshold/Rich1GasRich2GasDownstream")
+
+# In 2017 we unpack into a prefixed location /Event/Turbo
+standardOutputs["2017"] = {
+    "Hlt2LongProtos":           "/Event/Turbo/Long/Protos",
+    "Hlt2DownstreamProtos":     "/Event/Turbo/Downstream/Protos",
+    "Hlt2LongRichPIDs":         "/Event/Turbo/PID/Rich/Long",
+    "Hlt2DownstreamRichPIDs":   "/Event/Turbo/PID/Rich/Downstream",
+    "Hlt2MuonPIDs":             "/Event/Turbo/PID/Muon",
+    "Hlt2MuonPIDSegments":      "/Event/Turbo/Track/Best/Muon",
+    "Hlt2LongTracks":           "/Event/Turbo/Track/Best/Long",
+    "Hlt2DownstreamTracks":     "/Event/Turbo/Track/Best/Downstream",
+    "Hlt2VeloPVTracks":         "/Event/Turbo/Track/FittedVeloInPV",
+    "Hlt2RecVertices":          "/Event/Turbo/Vertex/PV3D",
+    "Hlt2NeutralProtos":        "/Event/Turbo/Neutral/Protos",
+    "Hlt2CaloClusters":         "/Event/Turbo/PID/Calo/EcalClusters",
+    "Hlt2EcalSplitClusters":    "/Event/Turbo/PID/Calo/EcalSplitClusters",
+    "Hlt2CaloElectronHypos":    "/Event/Turbo/PID/Calo/Electrons",
+    "Hlt2CaloPhotonHypos":      "/Event/Turbo/PID/Calo/Photons",
+    "Hlt2CaloMergedPi0Hypos":   "/Event/Turbo/PID/Calo/MergedPi0s",
+    "Hlt2CaloSplitPhotonHypos": "/Event/Turbo/PID/Calo/SplitPhotons",
+}
+
 
 # We need to register the locations of (non-reconstructed) data
 # that is referenced by the some of the packed objects.
@@ -158,26 +231,27 @@ class PersistRecoPacking(object):
         This can be upgraded to an LHCbConfigurableUser if the need arises.
 
     """
-    def __init__(self, descriptors=standardDescriptors,
+    def __init__(self, datatype, descriptors=standardDescriptors,
                  inputs={}, outputs=standardOutputs):
         """Collection of packed object descriptors.
 
         Args:
-            descriptors: List of PackingDescriptor objects.
+            descriptors: Dict of the form
+                {datatype: <OrderedDict of PackingDescriptor objects>}.
             inputs: Dict of the form {descriptor_name: input_location}.
                 Used for configuration of packing.
-            outputs: Dict of the form {descriptor_name: output_location}.
+            outputs: Dict of the form
+                {datatype: {descriptor_name: output_location}}.
                 Used for configuration of unpacking.
         """
-        self._descriptors = descriptors
-        names = [d.name for d in descriptors]
-        self.inputs = {k: inputs[k] for k in inputs if k in names}
-        self.outputs = {k: outputs[k] for k in outputs if k in names}
+        self._descriptors = descriptors[datatype]
+        self.inputs = inputs
+        self.outputs = outputs[datatype]
         self.external = externalLocations
 
     def packedLocations(self):
         """Return a list with the packed object locations."""
-        return [d.location for d in self._descriptors]
+        return [d.location for d in self._descriptors.values()]
 
     def externalLocations(self):
         """Return the list of external object locations."""
@@ -186,31 +260,33 @@ class PersistRecoPacking(object):
     def unpackers(self):
         """Return the list of unpacking algorithms."""
         algs = []
-        for d in self._descriptors:
-            alg = d.unpacker('Unpack' + d.name)
+        for name, d in self._descriptors.items():
+            alg = d.unpacker('Unpack' + name)
             alg.InputName = d.location
-            alg.OutputName = self.outputs[d.name]
+            alg.OutputName = self.outputs[name]
             algs.append(alg)
         return algs
 
     def packedToOutputLocationMap(self):
         """Return the dict {packed_location: output_location}."""
-        m = {d.location: self.outputs[d.name] for d in self._descriptors}
+        m = {d.location: self.outputs[name]
+             for name, d in self._descriptors.items()}
         m.update({x: x for x in self.external})
         return m
 
     def packers(self):
         """Return the list of packing algorithms."""
         algs = []
-        for d in self._descriptors:
-            alg = d.packer('Pack' + d.name)
-            alg.InputName = self.inputs[d.name]
+        for name, d in self._descriptors.items():
+            alg = d.packer('Pack' + name)
+            alg.InputName = self.inputs[name]
             alg.OutputName = d.location
             algs.append(alg)
         return algs
 
     def inputToPackedLocationMap(self):
         """Return the dict {input_location: packed_location}."""
-        m = {self.inputs[d.name]: d.location for d in self._descriptors}
+        m = {self.inputs[name]: d.location
+             for name, d in self._descriptors.items()}
         m.update({x: x for x in self.external})
         return m
