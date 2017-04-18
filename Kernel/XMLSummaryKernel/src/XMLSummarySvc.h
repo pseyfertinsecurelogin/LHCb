@@ -1,4 +1,3 @@
-
 #ifndef GAUDISVC_XMLSUMMARYSVC_H
 #define GAUDISVC_XMLSUMMARYSVC_H
 
@@ -24,9 +23,6 @@ namespace Gaudi
 {
   class IIODataManager;
 }
-
-template <class TYPE> class SvcFactory;
-
 
 /** @class XMLSummarySvc XMLSummarySvc.h
  *
@@ -57,11 +53,9 @@ template <class TYPE> class SvcFactory;
  *  @author Robert Lambert
  *  @date   2009-09-11
  */
-class XMLSummarySvc
-  : public extends1<Service, ICounterSummarySvc>
-  , public virtual IIncidentListener {
-
+class XMLSummarySvc : public extends<Service, ICounterSummarySvc, IIncidentListener> {
 public:
+  using extends::extends;
 
   //a list of pairs is used, as referring to the entry by key is not required
   //sorting is also not required, and would waste time
@@ -79,10 +73,6 @@ public:
   StatusCode finalize() override;
 
   StatusCode stop() override;
-
-
-
-  XMLSummarySvc( const std::string& name, ISvcLocator* svc );
 
   // ==========================================================================
   // ICounterSummarySvc interface
@@ -108,31 +98,21 @@ public:
   void handle ( const Incident& )  override;
   // ==========================================================================
 
-  // Destructor.
-  virtual ~XMLSummarySvc();
-
 private:
 
+  Gaudi::Property<std::string> m_xmlfile{this, "xmlfile", "summary.xml", "name of XML file to write"};
+  Gaudi::Property<std::string> m_xsdfile{this, "xsdfile", "$XMLSUMMARYBASEROOT/xml/XMLSummary.xsd", "name of the schema to use"};
+  Gaudi::Property<std::vector<std::string>> m_counterList{this, "CounterList", {".*"}, "regex list of integer counters to write"};
+  Gaudi::Property<std::vector<std::string>> m_statEntityList{this, "StatEntityList", {".*"}, "regex list of StatEntity counters to write"};
+  Gaudi::Property<int> m_freq{this, "UpdateFreq", 500, "force writeout of the file every x incidents"};
+  Gaudi::Property<std::string> m_beginIncident{this, "BeginEventIncident", IncidentType::BeginEvent, "type of incident to regard as begin event"};
+  Gaudi::Property<std::string> m_endIncident{this, "EndEventIncident", IncidentType::EndEvent, "type of incident to regard as end event"};
   Gaudi::Property<std::vector<int>> m_successExitCodes{this, "SuccessExitCodes", {}, "non-zero exit codes that should be remapped to success"};
 
-  /// Allow SvcFactory to instantiate the service.
-  friend class SvcFactory<XMLSummarySvc>;
-  IIncidentSvc* m_incSvc; ///the incident service
-  Gaudi::IIODataManager * m_ioDataManager; ///the pointer to the data manager service
-  ///RegEx list of integer counters to write. Set by property "CounterList".
-  std::vector<std::string> m_counterList;
-  ///RegEx list of StatEntity counters to write. Set by property "StatEntityList".
-  std::vector<std::string> m_statEntityList;
-  ///name of the xmlfile to write. Set by property xmlfile.
-  std::string m_xmlfile;
-  ///name of the schema to use. Set by property xsdfile.
-  std::string m_xsdfile;
-  ///type of incident to regard as begin event
-  std::string m_beginIncident;
-  ///type of incident to regard as end event
-  std::string m_endIncident;
+  IIncidentSvc* m_incSvc = nullptr; ///the incident service
+  Gaudi::IIODataManager* m_ioDataManager = nullptr; ///the pointer to the data manager service
 
-  PyObject * m_summary; ///the pointer to the python object
+  PyObject* m_summary = nullptr; ///the pointer to the python object
   StatEntity m_handled; ///simple counter of #handled events
   StatEntity m_ended; ///simple counter of #begin-end
 
@@ -141,18 +121,15 @@ private:
 
   std::string m_filename; ///the current open filename
 
-  ///force writeout of the file every x incidents, set by property UpdateFreq
-  int m_freq;
-
   ///has the xml object been configured?
-  bool m_configured;
+  bool m_configured = false;
   ///is the object still configured?
   inline bool isConfigured() const;
   ///has stop been called?
-  bool m_stopped;
+  bool m_stopped = false;
 
   ///has at least one input file been opened in this job?
-  bool m_hasinput;
+  bool m_hasinput = false;
 
   ///counters are filled in the finalise method, using these internal functions
   StatusCode fillcounters();

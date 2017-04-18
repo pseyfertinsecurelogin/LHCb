@@ -13,7 +13,7 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-DECLARE_SERVICE_FACTORY(XMLSummarySvc)
+DECLARE_COMPONENT(XMLSummarySvc)
 
 using namespace std;
 
@@ -37,54 +37,6 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////////
 //
-
-XMLSummarySvc::XMLSummarySvc(const std::string& name, ISvcLocator* svc )
-  : base_class( name, svc ),
-    m_incSvc(0),
-    m_ioDataManager(0),
-    m_counterList(0),
-    m_statEntityList(0),
-    m_xmlfile(""),
-    m_xsdfile(""),
-    m_summary(0),
-    m_handled(),
-    m_ended(),
-    m_addedCounters(0),
-    m_filename(""),
-    m_freq(-1),
-    m_configured(false),
-    m_stopped(false),
-    m_hasinput(false),
-    m_fidMap()
-{
-
-  //declare the filename to write. If the string is empty, no file will be written
-  declareProperty("xmlfile",m_xmlfile="summary.xml");
-  //declare the schema to read.
-  declareProperty("xsdfile",m_xsdfile="$XMLSUMMARYBASEROOT/xml/XMLSummary.xsd");
-  //declare the list of simple counters to write.
-  //These counters must be passed, "declared", by their algorithms. RegularExpressions are allowed
-  declareProperty("CounterList",
-                  m_counterList=std::vector<std::string>(1,".*"));
-  //declare the list of stat entities to write.
-  //These counters must be passed, "declared", by their algorithms. RegularExpressions are allowed
-  declareProperty("StatEntityList",
-                  m_statEntityList=std::vector<std::string>(1,".*"));
-  declareProperty("UpdateFreq",m_freq=500);
-
-  declareProperty("BeginEventIncident", m_beginIncident = IncidentType::BeginEvent);
-  declareProperty("EndEventIncident", m_endIncident = IncidentType::EndEvent);
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-XMLSummarySvc::~XMLSummarySvc()
-{
-
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 
 StatusCode
 XMLSummarySvc::initialize()
@@ -447,11 +399,11 @@ StatusCode XMLSummarySvc::fillcounter(const NameStatTypePair & count)
     {
     case Gaudi::CounterSummary::SaveSimpleCounter:
       type_name="fill_counter";
-      check=Gaudi::Utils::RegEx::matchOr(count.first.first,m_counterList);
+      check=Gaudi::Utils::RegEx::matchOr(count.first.first, m_counterList.value());
       break;
     case Gaudi::CounterSummary::SaveStatEntity:
       type_name="fill_counter";
-      check=Gaudi::Utils::RegEx::matchOr(count.first.first,m_statEntityList);
+      check=Gaudi::Utils::RegEx::matchOr(count.first.first, m_statEntityList.value());
       stat_ent=true;
       break;
     case Gaudi::CounterSummary::SaveAlwaysSimpleCounter:
@@ -518,7 +470,7 @@ StatusCode XMLSummarySvc::writeXML(MSG::Level lev)
 
   log << MSG::VERBOSE << "ready to write xml file " << m_xmlfile << " " << m_summary << endmsg;
   PyGILGuard gil;
-  PyObject_CallMethod(m_summary, chr("write"), chr("s"),chr(m_xmlfile.c_str()));
+  PyObject_CallMethod(m_summary, chr("write"), chr("s"), chr(m_xmlfile.value().c_str()));
   log << lev << "Wrote xml file " << m_xmlfile << endmsg;
   return StatusCode::SUCCESS;
 }
@@ -594,7 +546,7 @@ StatusCode XMLSummarySvc::prepareXML()
 
   //Call the class to make an instance
   //XMLSummaryBase.summary.Summary(m_xsdfile)
-  PyObject* schema=PyString_FromString(chr(m_xsdfile.c_str()));
+  PyObject* schema=PyString_FromString(chr(m_xsdfile.value().c_str()));
   m_summary=PyObject_CallFunctionObjArgs(m_summary, schema, NULL);
   if (m_summary==NULL) return StatusCode::FAILURE;
 
