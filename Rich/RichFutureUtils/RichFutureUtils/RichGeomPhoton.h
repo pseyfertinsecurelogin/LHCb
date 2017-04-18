@@ -41,6 +41,9 @@ namespace Rich
 
     public:
 
+      /// The floating point precision to use
+      using Scalar = float;
+
       /// Container of photons
       using Vector = LHCb::STL::Vector<RecoPhoton>;
 
@@ -57,10 +60,10 @@ namespace Rich
        *  @param phi   Cherenkov angle phi
        *  @param activeFrac The fraction of the associated segment that this photon could have been radiated from
        */
-      RecoPhoton( const float theta,
-                  const float phi,
+      RecoPhoton( const Scalar theta,
+                  const Scalar phi,
                   const LHCb::RichSmartID smartID = LHCb::RichSmartID(),
-                  const float activeFrac = 1 ) : 
+                  const Scalar activeFrac = 1 ) : 
         m_CherenkovTheta        ( theta      ),
         m_CherenkovPhi          ( phi        ),
         m_smartID               ( smartID    ),
@@ -70,19 +73,19 @@ namespace Rich
 
       /** Set accessor for the Cherenkov theta angle
        *  @param theta the new value for the Cherenkov theta angle */
-      inline void setCherenkovTheta ( const float theta ) noexcept { m_CherenkovTheta = theta; }
+      inline void setCherenkovTheta ( const Scalar theta ) noexcept { m_CherenkovTheta = theta; }
 
       /** Get accessor for the Cherenkov theta angle
        *  @return the current value of the Cherenkov theta angle */
-      inline float CherenkovTheta () const noexcept { return m_CherenkovTheta; }
+      inline Scalar CherenkovTheta () const noexcept { return m_CherenkovTheta; }
 
       /** Set accessor for Cherenkov phi angle
        *  @param phi the new value for the Cherenkov phi angle */
-      inline void setCherenkovPhi (const float phi) noexcept { m_CherenkovPhi = phi; }
+      inline void setCherenkovPhi (const Scalar phi) noexcept { m_CherenkovPhi = phi; }
 
       /** Get accessor for Cherenkov phi angle
        *  @return the current value of the Cherenkov phi angle */
-      inline float CherenkovPhi () const noexcept { return m_CherenkovPhi; }
+      inline Scalar CherenkovPhi () const noexcept { return m_CherenkovPhi; }
 
       /**
        * Set accessor for the current active segment fraction.
@@ -91,7 +94,7 @@ namespace Rich
        *
        * @param fraction the new value for the active fraction
        */
-      inline void setActiveSegmentFraction ( const float fraction ) noexcept
+      inline void setActiveSegmentFraction ( const Scalar fraction ) noexcept
       {
         m_activeSegmentFraction = fraction;
       }
@@ -103,7 +106,7 @@ namespace Rich
        *
        * @return the current value of the current active segment fraction.
        */
-      inline float activeSegmentFraction () const noexcept
+      inline Scalar activeSegmentFraction () const noexcept
       {
         return m_activeSegmentFraction;
       }
@@ -125,17 +128,17 @@ namespace Rich
     private:
 
       /// Cherenkov angle theta
-      float m_CherenkovTheta{0};  
+      Scalar m_CherenkovTheta{0};  
 
       /// Cherenkov angle phi
-      float m_CherenkovPhi{0};     
+      Scalar m_CherenkovPhi{0};     
 
       /// The channel ID for the photon detection point
       LHCb::RichSmartID m_smartID; 
 
       /** The fraction of the RichTrackSegment trajectory this photon is associated
        *  with for which it is geometrically possible this photon was produced */
-      float m_activeSegmentFraction{1};
+      Scalar m_activeSegmentFraction{1};
 
       /// Flag to indicate if an unambiguous photon or not
       bool m_unambigPhot{false};
@@ -166,8 +169,6 @@ namespace Rich
 
     public:
 
-
-
       /** Constructor from full photon information
        *
        *  @param theta Cherenkov angle theta
@@ -181,15 +182,15 @@ namespace Rich
        *  @param activeFrac The fraction of the associate segment that this photon 
        *                    could have been radiated from
        */
-      GeomPhoton( const float theta,
-                  const float phi,
+      GeomPhoton( const Scalar theta,
+                  const Scalar phi,
                   const Gaudi::XYZPoint & emissionPoint,
                   const Gaudi::XYZVector & emissionDir,
                   const Gaudi::XYZPoint & detectionPoint,
                   const Gaudi::XYZPoint & sphMirrReflPoint,
                   const Gaudi::XYZPoint & flatMirrReflPoint,
                   const LHCb::RichSmartID smartID = LHCb::RichSmartID(),
-                  const float activeFrac = 0 ) :
+                  const Scalar activeFrac = 0 ) :
         RecoPhoton               ( theta, phi, smartID, activeFrac ),
         m_emissionPoint          ( emissionPoint     ),
         m_emissionDir            ( emissionDir       ),
@@ -209,14 +210,14 @@ namespace Rich
        *  @param activeFrac The fraction of the associate segment that this photon 
        *                    could have been radiated from
        */
-      GeomPhoton( const float theta,
-                  const float phi,
+      GeomPhoton( const Scalar theta,
+                  const Scalar phi,
                   const Gaudi::XYZPoint & emissionPoint,
                   const Gaudi::XYZPoint & detectionPoint,
                   const Gaudi::XYZPoint & sphMirrReflPoint,
                   const Gaudi::XYZPoint & flatMirrReflPoint,
                   const LHCb::RichSmartID smartID = LHCb::RichSmartID(),
-                  const float activeFrac = 0 ) :
+                  const Scalar activeFrac = 0 ) :
         RecoPhoton               ( theta, phi, smartID, activeFrac ),
         m_emissionPoint          ( emissionPoint     ),
         m_detectionPoint         ( detectionPoint    ),
