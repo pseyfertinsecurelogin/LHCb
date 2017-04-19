@@ -1,0 +1,94 @@
+// $Id$
+// ============================================================================
+// Include files 
+// ============================================================================
+// STD & STL 
+// ============================================================================
+#include <iostream>
+#include <random>
+#include <iomanip>
+#include <limits>
+// ============================================================================
+// VDT
+// ============================================================================
+#include "vdt/sincos.h"
+#include "vdt/asin.h"
+#include "vdt/sqrt.h"
+#include "vdt/tan.h"
+#include "vdt/atan2.h"
+#include "vdt/log.h"
+#include "vdt/exp.h"
+// ============================================================================
+/** @file
+ *  Test VDT Math Precision
+ */
+// ============================================================================
+int main()
+{
+  // random number generator
+  std::default_random_engine gen;
+
+  // Distributions
+  std::uniform_real_distribution<double> ran_atan2(-0.1,0.1);
+  std::uniform_real_distribution<double> ran_logexp(1e-4,1);
+  std::uniform_real_distribution<double> ran_sqrt(0,100);
+  std::uniform_real_distribution<double> ran_sincos(-M_PI,M_PI);
+
+  // number of tests
+  const unsigned int nTests = 100;
+
+  // run the double tests
+  std::cout << std::setprecision(std::numeric_limits<double>::digits10+1);
+  for ( unsigned int iTest = 0; iTest < nTests; ++iTest )
+  {
+    // atan2
+    const double dx{ran_atan2(gen)}, dy{ran_atan2(gen)};
+    const double tang = vdt::fast_atan2(dx,dy);
+    std::cout << "vdt::fast_atan2("<<dx<<","<<dy<<") = " << tang << std::endl;
+    std::cout << "vdt::fast_tan("<<tang<<") = " <<  vdt::fast_tan(tang) << std::endl;
+    // exp and log
+    const double x{ran_logexp(gen)};
+    const double e = vdt::fast_exp(x);
+    std::cout << "vdt::fast_exp("<<x<<") = " << e << std::endl;
+    std::cout << "vdt::fast_log("<<e<<") = " << vdt::fast_log(e) << std::endl;
+    // sqrt
+    const double xx{ran_sqrt(gen)};
+    std::cout << "vdt::fast_isqrt("<<xx<<") = " << vdt::fast_isqrt(xx) << std::endl;
+    // sin cos
+    const double angle{ran_sincos(gen)};
+    double cosang(0), sinang(0);
+    vdt::fast_sincos( angle, sinang, cosang );
+    std::cout << "vdt::fast_cossin("<<angle<<") = " << sinang << " " << cosang << std::endl;
+    std::cout << "vdt::fast_asin("<<sinang<<") = " << vdt::fast_asin(sinang) << std::endl;
+    std::cout << "vdt::fast_acos("<<cosang<<") = " << vdt::fast_acos(cosang) << std::endl;
+  }
+
+  // run the float tests  
+  std::cout << std::setprecision(std::numeric_limits<float>::digits10+1);
+  for ( unsigned int iTest = 0; iTest < nTests; ++iTest )
+  {
+    // atan2
+    const float fx {(float)ran_atan2(gen)}, fy{(float)ran_atan2(gen)};
+    const float tang = vdt::fast_atan2f(fx,fy);
+    std::cout << "vdt::fast_atan2f("<<fx<<","<<fy<<") = " << tang << std::endl;
+    std::cout << "vdt::fast_tanf("<<tang<<") = " <<  vdt::fast_tanf(tang) << std::endl;
+    // exp and log
+    const float x{(float)ran_logexp(gen)};
+    const float e = vdt::fast_expf(x);
+    std::cout << "vdt::fast_expf("<<x<<") = " << e << std::endl;
+    std::cout << "vdt::fast_logf("<<e<<") = " << vdt::fast_logf(e) << std::endl;
+    // sqrt
+    const float xx{(float)ran_sqrt(gen)};
+    std::cout << "vdt::fast_isqrtf("<<xx<<") = " << vdt::fast_isqrtf(xx) << std::endl;
+    // sin cos
+    const float angle{(float)ran_sincos(gen)};
+    float cosang(0), sinang(0);
+    vdt::fast_sincosf( angle, sinang, cosang );
+    std::cout << "vdt::fast_cossinf("<<angle<<") = " << sinang << " " << cosang << std::endl;
+    std::cout << "vdt::fast_asinf("<<sinang<<") = " << vdt::fast_asinf(sinang) << std::endl;
+    std::cout << "vdt::fast_acosf("<<cosang<<") = " << vdt::fast_acosf(cosang) << std::endl;
+  }
+
+  return 0;
+}
+//=============================================================================
