@@ -13,6 +13,9 @@
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
 
+! 2017-04-19 - Olli Lupton
+ - Initialise m_event to 0 in LoKi::AuxFunBase 
+
 ! 2017-02-16 - Vanya Belyaev
  - 1. add functors JDigit/JDigits 
    2. add corresponding functions into LoKi namespace 
