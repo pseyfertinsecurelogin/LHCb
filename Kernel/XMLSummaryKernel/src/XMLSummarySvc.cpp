@@ -462,10 +462,10 @@ StatusCode XMLSummarySvc::writeXML(MSG::Level lev)
 
   }
 
-  log << MSG::VERBOSE << "ready to write xml file " << m_xmlfile << " " << m_summary << endmsg;
+  log << MSG::VERBOSE << "ready to write xml file " << m_xmlfile.value() << " " << m_summary << endmsg;
   PyGILGuard gil;
   PyObject_CallMethod(m_summary, chr("write"), chr("s"), chr(m_xmlfile.value().c_str()));
-  log << lev << "Wrote xml file " << m_xmlfile << endmsg;
+  log << lev << "Wrote xml file " << m_xmlfile.value() << endmsg;
   return StatusCode::SUCCESS;
 }
 StatusCode XMLSummarySvc::printXML(MSG::Level lev) const
@@ -478,7 +478,7 @@ StatusCode XMLSummarySvc::printXML(MSG::Level lev) const
     return StatusCode::FAILURE;
 
   }
-  log << MSG::VERBOSE << "ready to write to screen " << m_xmlfile << " " << m_summary << endmsg;
+  log << MSG::VERBOSE << "ready to write to screen " << m_xmlfile.value() << " " << m_summary << endmsg;
 
   PyGILGuard gil;
   PyObject* res = PyObject_CallMethod(m_summary, chr("xml"), chr(""));
