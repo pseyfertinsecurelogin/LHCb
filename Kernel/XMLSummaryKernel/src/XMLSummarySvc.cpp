@@ -54,7 +54,7 @@ XMLSummarySvc::initialize()
 
   //prepare the IODataManager service
   sc=service("IODataManager", m_ioDataManager);//, false);//,false);
-  if(!sc.isSuccess() || m_ioDataManager== NULL) return StatusCode::FAILURE;
+  if(!sc.isSuccess() || m_ioDataManager== nullptr) return StatusCode::FAILURE;
 
   //get the python object, then initialize it
   sc=prepareXML();
@@ -68,35 +68,31 @@ XMLSummarySvc::initialize()
   //temp
   m_filename="PFN:/path/filename.dst";
   //todo fill the list of file/GUIDs from somewhere
-  std::vector<std::string> filenames(0);
+  std::vector<std::string> filenames;
   //try this
-  std::vector<Gaudi::IDataConnection*> connections=m_ioDataManager->connections(NULL);
-  for(std::vector<Gaudi::IDataConnection*>::const_iterator it=connections.begin();
-      it!=connections.end(); it++)
+  auto connections = m_ioDataManager->connections(nullptr);
+  for(const auto& conn: connections)
   {
-    if((*it) == NULL) continue;
-    if((*it)->pfn() != "") filenames.push_back((*it)->pfn());
+    if(conn && !conn->pfn().empty())
+      filenames.push_back(conn->pfn());
   }
 
 
   {
     PyGILGuard gil;
     //fill the initial list of filenames
-    for(std::vector<std::string>::const_iterator i=filenames.begin();
-        i!=filenames.end();
-        i++)
+    for(const auto& fn: filenames)
     {
       PyObject_CallMethod(m_summary,
                           chr("fill_input"),
                           chr("s"),
-                          chr(i->c_str())
+                          chr(fn.c_str())
                           );
     }
   }
   //output the file, and write to the stdout
   printXML(MSG::DEBUG).ignore();
   writeXML(MSG::INFO).ignore();
-
 
   log << MSG::DEBUG << "initialized successfully" << endmsg;
   return StatusCode::SUCCESS;
@@ -169,7 +165,7 @@ XMLSummarySvc::finalize()
   writeXML(MSG::INFO).ignore();
 
   //stop once finalize is called!
-  m_summary=NULL;
+  m_summary=nullptr;
 
   return Service::finalize();
 
@@ -204,10 +200,10 @@ void XMLSummarySvc::addCounter(
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 inline bool XMLSummarySvc::isConfigured() const
 {
-  if (m_summary==NULL || !m_configured) return false;
+  if (m_summary==nullptr || !m_configured) return false;
   PyGILGuard gil;
   PyObject* res = PyObject_CallMethod(m_summary, chr("test"), chr(""));
-  if (res==NULL || res==Py_None) return false;
+  if (res==nullptr || res==Py_None) return false;
   return res==Py_True;
 
 }
@@ -368,11 +364,9 @@ StatusCode XMLSummarySvc::fillcounters()
   Gaudi::CounterSummary::SaveType saveType=Gaudi::CounterSummary::SaveSimpleCounter;
   while(true)
   {
-    for (NameStatList::const_iterator i=m_addedCounters.begin();
-         i!=m_addedCounters.end(); i++)
+    for (const auto& cnt: m_addedCounters)
     {
-      if(saveType!=i->second) continue;
-      fillcounter(*i).ignore();
+      if(cnt.second == saveType) fillcounter(cnt).ignore();
     }
 
     if(saveType==Gaudi::CounterSummary::SaveAlwaysStatEntity) break;
@@ -488,7 +482,7 @@ StatusCode XMLSummarySvc::printXML(MSG::Level lev) const
 
   PyGILGuard gil;
   PyObject* res = PyObject_CallMethod(m_summary, chr("xml"), chr(""));
-  if (res==NULL || res==Py_None || !PyString_Check(res))
+  if (res==nullptr || res==Py_None || !PyString_Check(res))
   {
     log << MSG::DEBUG << "Cannot print XML" << endmsg;
     return StatusCode::FAILURE;
@@ -501,7 +495,7 @@ StatusCode XMLSummarySvc::printXML(MSG::Level lev) const
 StatusCode XMLSummarySvc::prepareIncSvc()
 {
   StatusCode sc=service("IncidentSvc", m_incSvc, false);
-  if(!sc.isSuccess() || m_incSvc== NULL) return StatusCode::FAILURE;
+  if(!sc.isSuccess() || m_incSvc== nullptr) return StatusCode::FAILURE;
 
   m_incSvc->addListener( this, m_endIncident);
   //m_incSvc->addListener( this, m_beginIncident);
@@ -537,18 +531,18 @@ StatusCode XMLSummarySvc::prepareXML()
   //import XMLSummaryBase.summary
   PyObject* pName=PyString_FromString("XMLSummaryBase.summary");
   m_summary = PyImport_Import(pName);
-  if (m_summary==NULL) return StatusCode::FAILURE;
+  if (m_summary==nullptr) return StatusCode::FAILURE;
 
   //Get the summary class object from the module
   //XMLSummaryBase.summary.Summary
   m_summary = PyObject_GetAttrString(m_summary, "Summary");
-  if (m_summary==NULL) return StatusCode::FAILURE;
+  if (m_summary==nullptr) return StatusCode::FAILURE;
 
   //Call the class to make an instance
   //XMLSummaryBase.summary.Summary(m_xsdfile)
   PyObject* schema=PyString_FromString(chr(m_xsdfile.value().c_str()));
-  m_summary=PyObject_CallFunctionObjArgs(m_summary, schema, NULL);
-  if (m_summary==NULL) return StatusCode::FAILURE;
+  m_summary=PyObject_CallFunctionObjArgs(m_summary, schema, nullptr);
+  if (m_summary==nullptr) return StatusCode::FAILURE;
 
   log << MSG::DEBUG << "xml summary object created" << endmsg;
   m_configured=true;
