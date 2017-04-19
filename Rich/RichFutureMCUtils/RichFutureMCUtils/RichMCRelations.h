@@ -22,12 +22,10 @@ namespace Rich
       {
 
         /// Type for Track <-> MCparticle relations
-        using TkToMCPRels = LHCb::RelationWeighted2D<LHCb::Track,LHCb::MCParticle,double>;
+        using TkToMCPRels = LHCb::RelationWeighted2D<LHCb::Track*,LHCb::MCParticle*,double>;
 
         /// Default TES location for Track <-> MCparticle relations
         static const std::string TrackToMCParticles = "MC/Rich/TrackToMCParticleRelations";
-
-       
 
       }
     }

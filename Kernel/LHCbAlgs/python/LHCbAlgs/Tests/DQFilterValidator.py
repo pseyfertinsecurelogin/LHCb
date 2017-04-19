@@ -6,7 +6,7 @@ __author__ = "Marco Clemencic <marco.clemencic@cern.ch>"
 import re, string
 from pprint import pformat
 
-from GaudiTest import cmpTreesDicts, getCmpFailingValues
+from GaudiTesting.BaseTest import cmpTreesDicts, getCmpFailingValues
 
 
 def count(keys, lines):

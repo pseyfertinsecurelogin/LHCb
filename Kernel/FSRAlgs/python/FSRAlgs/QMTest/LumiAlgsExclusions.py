@@ -1,4 +1,4 @@
-from GaudiTest import LineSkipper
+from GaudiTesting.BaseTest import LineSkipper
 from GaudiConf.QMTest.LHCbExclusions import preprocessor as LHCbPreprocessor
 
 preprocessor = LHCbPreprocessor + \

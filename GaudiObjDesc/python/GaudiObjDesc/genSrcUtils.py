@@ -242,6 +242,9 @@ class genSrcUtils(importUtils.importUtils):
             s += '  /// %s\n  ' % metAtt['desc']
             if metAtt.has_key('template') : s += 'template <%s>\n  ' % metAtt['template']
             indent += 2
+            if metAtt['explicit'] == 'TRUE':
+                s += 'explicit '
+                indent += 9
             if metAtt['static'] == 'TRUE':
                 s += 'static '
                 indent += 7
@@ -252,10 +255,16 @@ class genSrcUtils(importUtils.importUtils):
                 s += 'friend '
                 indent += 7
         else :
+            if metAtt['friend'] == 'TRUE' :
+                s += 'namespace ' + self.namespace.rstrip(':') + ' {\n'
+                indent -= len(scopeName)
+            else :
+                scopeName += '::'
             if metAtt.has_key('template') : s += 'template <%s>\n' % metAtt['template']
             s += 'inline '
-            scopeName += '::'
             indent += len(scopeName) + 7
+
+
         constF = ''
         if metAtt['const'] == 'TRUE' : constF = ' const'
         pList = []
@@ -267,7 +276,10 @@ class genSrcUtils(importUtils.importUtils):
         if not scopeName and metRet[:len(self.namespace)] == self.namespace :
             metRet = metRet[len(self.namespace):]
         indent += len(metRet) + len(metAtt['name'])
-        s += metRet + scopeName + metAtt['name'] + '('
+        if scopeName and metAtt['friend'] == 'TRUE' :
+            s += metRet + metAtt['name'] + '('
+        else :
+            s += metRet + scopeName + metAtt['name'] + '('
         if len(pList):
             if scopeName : s += pList[0].split('=')[0]                                # in implementation strip off default arguments
             else         : s += pList[0]
@@ -284,6 +296,7 @@ class genSrcUtils(importUtils.importUtils):
             s += ';\n\n'
         else :
             s += ' \n{\n%s\n}\n\n' % met['code'][0]['cont']
+            if metAtt['friend'] == 'TRUE' : s+='}\n\n'
         return s
 #--------------------------------------------------------------------------------
     def genMethods(self,modifier,godClass,clname=''):

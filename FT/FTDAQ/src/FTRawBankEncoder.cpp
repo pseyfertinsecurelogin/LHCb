@@ -49,7 +49,7 @@ StatusCode FTRawBankEncoder::execute() {
 
   for (auto &b : m_sipmData ) for (auto &pm : b ) pm.clear();
 
-  for ( const auto cluster : *clusters ) {
+  for ( const auto& cluster : *clusters ) {
     LHCb::FTChannelID id = cluster.channelID();
 
     unsigned int bankNumber = id.quarter() + 4*id.layer() + 16*(id.station()-1u);   //== Temp, assumes 1 TELL40 per quarter.
@@ -68,7 +68,7 @@ StatusCode FTRawBankEncoder::execute() {
     if (data.size() > FTRawBank::nbClusMaximum ) continue; // JvT: should be 9 (only for non-central)
     // one extra word for sipm number + nbClus
     if ( data.empty() ) data.push_back( sipmNumber << FTRawBank::sipmShift );
-    data.push_back( ( id.channel()           << FTRawBank::cellShift ) |
+    data.push_back( ( id.channel()          << FTRawBank::cellShift ) |
                     ( cluster.fractionBit() << FTRawBank::fractionShift ) |
                     ( cluster.isLarge()     << FTRawBank::sizeShift )
                    );

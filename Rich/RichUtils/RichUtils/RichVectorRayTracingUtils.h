@@ -4,9 +4,6 @@
 // Gaudi
 #include "GaudiKernel/Kernel.h"
 
-//#include "GaudiKernel/System.h"
-//System::typeinfoName( typeid(T) )
-
 // STL
 #include <iostream>
 #include <cmath>
@@ -46,12 +43,11 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POINT, typename VECTOR, typename FTYPE >
-    inline 
-    typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
-                             !std::is_arithmetic<typename VECTOR::Scalar>::value && 
-                             !std::is_arithmetic<FTYPE>::value, 
-                             typename FTYPE::mask_type >::type
+    template < typename POINT, typename VECTOR, typename FTYPE,
+               typename = typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
+                                                   !std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                                                   !std::is_arithmetic<FTYPE>::value >::type >
+    inline typename FTYPE::mask_type
     intersectSpherical ( const POINT& position,
                          const VECTOR& direction,
                          const POINT& CoC,
@@ -97,12 +93,11 @@ namespace Rich
      *  @retval true  Ray tracing was successful
      *  @retval false Ray tracing was unsuccessful
      */
-    template < typename POINT, typename VECTOR, typename FTYPE >
-    inline 
-    typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
-                             !std::is_arithmetic<typename VECTOR::Scalar>::value && 
-                             !std::is_arithmetic<FTYPE>::value, 
-                             typename FTYPE::mask_type >::type 
+    template < typename POINT, typename VECTOR, typename FTYPE,
+               typename = typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
+                                                   !std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                                                   !std::is_arithmetic<FTYPE>::value >::type > 
+    inline typename FTYPE::mask_type
     reflectSpherical ( POINT& position,
                        VECTOR& direction,
                        const POINT& CoC,
@@ -144,12 +139,11 @@ namespace Rich
      *  @retval false Ray tracing was unsuccessful
      */
     template < typename POINT, typename VECTOR, typename PLANE,
-               typename FTYPE = typename POINT::Scalar >
-    inline 
-    typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
-                             !std::is_arithmetic<typename VECTOR::Scalar>::value && 
-                             !std::is_arithmetic<typename PLANE::Scalar>::value, 
-                             typename FTYPE::mask_type >::type
+               typename FTYPE = typename POINT::Scalar,
+               typename = typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
+                                                   !std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                                                   !std::is_arithmetic<typename PLANE::Scalar>::value >::type >
+    inline typename FTYPE::mask_type
     intersectPlane ( const POINT& position,
                      const VECTOR& direction,
                      const PLANE& plane,
@@ -175,12 +169,11 @@ namespace Rich
      *  @retval false Ray tracing was unsuccessful
      */
     template < typename POINT, typename VECTOR, typename PLANE,
-               typename FTYPE = typename POINT::Scalar >
-    inline 
-    typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
-                             !std::is_arithmetic<typename VECTOR::Scalar>::value && 
-                             !std::is_arithmetic<typename PLANE::Scalar>::value, 
-                             typename FTYPE::mask_type >::type
+               typename FTYPE = typename POINT::Scalar,
+               typename = typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
+                                                   !std::is_arithmetic<typename VECTOR::Scalar>::value && 
+                                                   !std::is_arithmetic<typename PLANE::Scalar>::value >::type >
+    inline typename FTYPE::mask_type
     reflectPlane ( POINT& position,
                    VECTOR& direction,
                    const PLANE& plane )

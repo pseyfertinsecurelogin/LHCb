@@ -370,9 +370,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.menuEdit.setEnabled(editable)
                 self.menuAdvanced.setEnabled(editable)
                 if editable:
-                    # The "Delete Node" entry should be active only
-                    # when a node is selected (when opening a new db there is
-                    # no selection)
+                    # The "Add Condition" and "Delete Node" entries should be
+                    # active only when a node is selected (when opening a new
+                    # db there is no selection)
+                    self.actionAdd_condition.setEnabled(False)
                     self.actionDelete_node.setEnabled(False)
                     # ... same for the "new tag" and "delete tag"
                     self.actionNew_tag.setEnabled(False)
@@ -385,7 +386,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.menuEdit.setEnabled(False)
                 self.menuAdvanced.setEnabled(False)
             self.setWindowTitle(title)
-            self._path = None
+            self._path = (None, None)
             # remember the used connection string
             self._connectionString = connString
             self._addToRecents(connString)
@@ -438,6 +439,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     self.changedPathChannel.emit(item.path, item.channel or 0)
                 else:
                     self.changedPathChannel.emit('', 0)
+                self.actionAdd_condition.setEnabled(not self.db.readOnly)
                 # Nodes can be deleted only if the database is in r/w mode and
                 # they are Folders or empty FolderSets
                 self.actionDelete_node.setEnabled(not self.db.readOnly

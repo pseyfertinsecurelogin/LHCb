@@ -110,6 +110,7 @@
         static           (TRUE | FALSE)                    "FALSE"
         inline           (TRUE | FALSE)                    "FALSE"
         friend           (TRUE | FALSE)                    "FALSE"
+        explicit         (TRUE | FALSE)                    "FALSE"
         type             CDATA                             "void"
         argList          CDATA                             #IMPLIED
         useBase          CDATA                             #IMPLIED

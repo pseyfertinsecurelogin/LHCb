@@ -194,11 +194,13 @@ StatusCode HCRawBankDecoderHlt::cacheMapping() {
       if (masks[j] == 0) m_masked[channel + offset] = false;
     }
   }
-  for (unsigned int i = 0; i < nChannels; ++i) {
-    info() << "Channel" << endmsg;
-    const std::string stb = m_masked[i] ? "--" : stations[m_station[i]];
-    const std::string stf = m_masked[i + nChannels] ? "--" : stations[m_station[i + nChannels]];
-    info() << format("   %2d   ", i) << stb << "  " << stf << endmsg;
-  } 
+  if (msgLevel(MSG::DEBUG)) {
+    for (unsigned int i = 0; i < nChannels; ++i) {
+      debug() << "Channel" << endmsg;
+      const std::string stb = m_masked[i] ? "--" : stations[m_station[i]];
+      const std::string stf = m_masked[i + nChannels] ? "--" : stations[m_station[i + nChannels]];
+      debug() << format("   %2d   ", i) << stb << "  " << stf << endmsg;
+    }
+  }
   return StatusCode::SUCCESS;
 }
