@@ -38,6 +38,13 @@ namespace {
 ///////////////////////////////////////////////////////////////////////////
 //
 
+#define ON_DEBUG if (msgLevel(MSG::DEBUG))
+#define DEBUG_MSG ON_DEBUG debug()
+
+#define ON_VERBOSE if (msgLevel(MSG::VERBOSE))
+#define VERBOSE_MSG ON_VERBOSE verbose()
+
+
 StatusCode
 XMLSummarySvc::initialize()
 {
@@ -45,12 +52,11 @@ XMLSummarySvc::initialize()
   StatusCode sc = Service::initialize();
   if (!sc.isSuccess()) return sc;
 
-  MsgStream log( msgSvc(), name() );
-  log << MSG::DEBUG << "initialize" << endmsg;
+  DEBUG_MSG << "initialize" << endmsg;
 
   //prepare the incident service
   sc = prepareIncSvc();
-  if (!sc.isSuccess()) log << MSG::WARNING << "could not init incSvc" << endmsg;
+  if (!sc.isSuccess()) warning() << "could not init incSvc" << endmsg;
 
   //prepare the IODataManager service
   sc=service("IODataManager", m_ioDataManager);//, false);//,false);
@@ -94,7 +100,7 @@ XMLSummarySvc::initialize()
   printXML(MSG::DEBUG).ignore();
   writeXML(MSG::INFO).ignore();
 
-  log << MSG::DEBUG << "initialized successfully" << endmsg;
+  DEBUG_MSG << "initialized successfully" << endmsg;
   return StatusCode::SUCCESS;
 
 }
@@ -105,12 +111,10 @@ StatusCode
 XMLSummarySvc::finalize()
 {
 
-  MsgStream log( msgSvc(), name() );
-
-  log << MSG::DEBUG << "finalize" << endmsg;
+  DEBUG_MSG << "finalize" << endmsg;
   if(!isConfigured())
   {
-    log << MSG::DEBUG << "no longer configured" << endmsg;
+    DEBUG_MSG << "no longer configured" << endmsg;
     return Service::finalize();
   }
 
@@ -144,7 +148,7 @@ XMLSummarySvc::finalize()
   //Gaudi::getAppReturnCode(this);
   //getProperty(this,"ReturnCode");
   //Gaudi::getAppReturnCode(m_propertyMgr);
-  log << MSG::DEBUG << "gaudi return code" << gaudiReturn << endmsg;
+  DEBUG_MSG << "gaudi return code" << gaudiReturn << endmsg;
 
 
   //write collected counters
@@ -154,9 +158,9 @@ XMLSummarySvc::finalize()
                         int(gaudiReturn == Gaudi::ReturnCode::Success));
   }
 
-  log << MSG::INFO << "filling counters..." << endmsg;
+  info() << "filling counters..." << endmsg;
   fillcounters().ignore();
-  log << MSG::INFO << "counters filled OK" << endmsg;
+  info() << "counters filled OK" << endmsg;
 
   //finally add memory usage
   fillUsage().ignore();
@@ -212,19 +216,16 @@ void XMLSummarySvc::handle( const Incident& incident )
   //check extended file incidents are defined
 #ifdef GAUDI_FILE_INCIDENTS
 
-  MsgStream log( msgSvc(), name() );
-
   if (!isConfigured())
   {
-    log << MSG::DEBUG << "the summary object is no longer available "
+    DEBUG_MSG << "the summary object is no longer available "
         << incident.type() << " Ignored" << endmsg;
     return;
 
   }
 
-  if(incident.type()!=m_endIncident && incident.type()!=m_beginIncident)
-    log << MSG::VERBOSE << incident.type() << ":" << incident.source() << endmsg;
-  //elif(incident.source()=="EventLoopMgr")
+  ON_VERBOSE if(incident.type()!=m_endIncident && incident.type()!=m_beginIncident)
+    verbose() << incident.type() << ":" << incident.source() << endmsg;
 
   //std::string GUID="";m_GUID;
   std::string filename=m_filename;
@@ -303,8 +304,8 @@ void XMLSummarySvc::handle( const Incident& incident )
 
     //actually add to the summary
     std::string GUID=file2GUID(filename);
-    if(incident.type()!=m_endIncident && incident.type()!=m_beginIncident)
-      log << MSG::VERBOSE << method <<"(" << filename << "," << GUID << "," << status << "," << addevents << ")" << endmsg;
+    ON_VERBOSE if(incident.type()!=m_endIncident && incident.type()!=m_beginIncident)
+      verbose() << method <<"(" << filename << "," << GUID << "," << status << "," << addevents << ")" << endmsg;
 
     PyGILGuard gil;
     PyObject_CallMethod(m_summary,
@@ -445,50 +446,51 @@ StatusCode XMLSummarySvc::fillcounter(const NameStatTypePair & count)
 }
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-StatusCode XMLSummarySvc::writeXML(MSG::Level lev)
+StatusCode XMLSummarySvc::writeXML(const MSG::Level lev)
 {
-  MsgStream log( msgSvc(), name() );
+  if (!msgLevel(lev)) return StatusCode::SUCCESS;
+
   if (m_xmlfile=="")
   {
-    log << lev << "no xml file to be written " << m_xmlfile << endmsg;
+    msgStream(lev) << "no xml file to be written " << m_xmlfile << endmsg;
     return StatusCode::SUCCESS;
   }
   if (!isConfigured())
   {
-    MsgStream log( msgSvc(), name() );
-    log << MSG::DEBUG << "the summary object is no longer available" << endmsg;
-    log << lev << "xml file not written as PyObject was lost" << endmsg;
+    DEBUG_MSG << "the summary object is no longer available" << endmsg;
+    msgStream(lev) << "xml file not written as PyObject was lost" << endmsg;
     return StatusCode::FAILURE;
 
   }
 
-  log << MSG::VERBOSE << "ready to write xml file " << m_xmlfile.value() << " " << m_summary << endmsg;
+  VERBOSE_MSG << "ready to write xml file " << m_xmlfile.value() << " " << m_summary << endmsg;
   PyGILGuard gil;
   PyObject_CallMethod(m_summary, chr("write"), chr("s"), chr(m_xmlfile.value().c_str()));
-  log << lev << "Wrote xml file " << m_xmlfile.value() << endmsg;
+  msgStream(lev) << "Wrote xml file " << m_xmlfile.value() << endmsg;
   return StatusCode::SUCCESS;
 }
-StatusCode XMLSummarySvc::printXML(MSG::Level lev) const
+StatusCode XMLSummarySvc::printXML(const MSG::Level lev) const
 {
-  MsgStream log( msgSvc(), name() );
+  if (!msgLevel(lev)) return StatusCode::SUCCESS;
+
   if (!isConfigured())
   {
-    log << MSG::DEBUG << "the summary object is no longer available" << endmsg;
-    log << lev << "xml file not written as PyObject was lost" << endmsg;
+    DEBUG_MSG << "the summary object is no longer available" << endmsg;
+    msgStream(lev) << "xml file not written as PyObject was lost" << endmsg;
     return StatusCode::FAILURE;
 
   }
-  log << MSG::VERBOSE << "ready to write to screen " << m_xmlfile.value() << " " << m_summary << endmsg;
+  VERBOSE_MSG << "ready to write to screen " << m_xmlfile.value() << " " << m_summary << endmsg;
 
   PyGILGuard gil;
   PyObject* res = PyObject_CallMethod(m_summary, chr("xml"), chr(""));
   if (res==nullptr || res==Py_None || !PyString_Check(res))
   {
-    log << MSG::DEBUG << "Cannot print XML" << endmsg;
+    DEBUG_MSG << "Cannot print XML" << endmsg;
     return StatusCode::FAILURE;
   }
 
-  log << lev << PyString_AsString(res) << endmsg;
+  msgStream(lev) << PyString_AsString(res) << endmsg;
   return StatusCode::SUCCESS;
 }
 
@@ -512,16 +514,13 @@ StatusCode XMLSummarySvc::prepareIncSvc()
 
 #endif //GAUDI_FILE_INCIDENTS
 
-  MsgStream log( msgSvc(), name() );
-  log << MSG::DEBUG << "registered with incSvc" << endmsg;
+  DEBUG_MSG << "registered with incSvc" << endmsg;
 
   return StatusCode::SUCCESS;
 }
 
 StatusCode XMLSummarySvc::prepareXML()
 {
-
-  MsgStream log( msgSvc(), name() );
 
   // Initialize the python session if needed
   if (!Py_IsInitialized()) Py_Initialize();
@@ -544,14 +543,12 @@ StatusCode XMLSummarySvc::prepareXML()
   m_summary=PyObject_CallFunctionObjArgs(m_summary, schema, nullptr);
   if (m_summary==nullptr) return StatusCode::FAILURE;
 
-  log << MSG::DEBUG << "xml summary object created" << endmsg;
+  DEBUG_MSG << "xml summary object created" << endmsg;
   m_configured=true;
   return StatusCode::SUCCESS;
 }
 std::string XMLSummarySvc::file2GUID(const std::string & filename)
 {
-  MsgStream log( msgSvc(), name() );
-
   FidMap::iterator j = m_fidMap.find(filename);
   if (j != m_fidMap.end() ) return j->second;
   std::string shortname=AFN2name(filename);
@@ -564,8 +561,6 @@ std::string XMLSummarySvc::file2GUID(const std::string & filename)
   m_fidMap[filename]=con->fid();
   m_fidMap[shortname]=con->fid();
   return con->fid();
-  //return "";
-
 }
 std::string XMLSummarySvc::AFN2name(const std::string & filename) const
 {
@@ -586,8 +581,7 @@ StatusCode XMLSummarySvc::fillUsage()
 
   if (!isConfigured())
   {
-    MsgStream log( msgSvc(), name() );
-    log << MSG::DEBUG << "the summary object is no longer available" << endmsg;
+    DEBUG_MSG << "the summary object is no longer available" << endmsg;
     return StatusCode::FAILURE;
 
   }
@@ -603,8 +597,7 @@ StatusCode XMLSummarySvc::fillUsage()
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 StatusCode XMLSummarySvc::stop()
 {
-  MsgStream log( msgSvc(), name() );
-  log << MSG::DEBUG << "STOPPED" << endmsg;
+  DEBUG_MSG << "STOPPED" << endmsg;
   m_stopped=true;
   return Service::stop();
 

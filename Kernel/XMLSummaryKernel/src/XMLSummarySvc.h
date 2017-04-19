@@ -144,8 +144,8 @@ private:
   ///shorcut to define the summary object
   StatusCode prepareXML();
   ///shorcut to write the summary
-  StatusCode writeXML(MSG::Level lev=MSG::VERBOSE);
-  StatusCode printXML(MSG::Level lev=MSG::VERBOSE) const;
+  StatusCode writeXML(const MSG::Level lev=MSG::VERBOSE);
+  StatusCode printXML(const MSG::Level lev=MSG::VERBOSE) const;
 
   std::string file2GUID(const std::string & filename);
   std::string AFN2name(const std::string & filename) const;
