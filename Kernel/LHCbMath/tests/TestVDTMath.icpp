@@ -23,6 +23,15 @@
  *  Test VDT Math Precision
  */
 // ============================================================================
+// Truncate the give value to a given d.p.
+template < typename TYPE >
+inline TYPE tru( const TYPE x )
+{
+  constexpr int scale = 100000; // 5 d.p.
+  const int i = std::round( x * scale );
+  return (TYPE)(i)/scale;  
+}
+// main program
 int main()
 {
   // random number generator
@@ -42,20 +51,20 @@ int main()
   for ( unsigned int iTest = 0; iTest < nTests; ++iTest )
   {
     // atan2
-    const double dx{ran_atan2(gen)}, dy{ran_atan2(gen)};
+    const double dx{tru(ran_atan2(gen))}, dy{tru(ran_atan2(gen))};
     const double tang = vdt::fast_atan2(dx,dy);
     std::cout << "vdt::fast_atan2("<<dx<<","<<dy<<") = " << tang << std::endl;
     std::cout << "vdt::fast_tan("<<tang<<") = " <<  vdt::fast_tan(tang) << std::endl;
     // exp and log
-    const double x{ran_logexp(gen)};
+    const double x{tru(ran_logexp(gen))};
     const double e = vdt::fast_exp(x);
     std::cout << "vdt::fast_exp("<<x<<") = " << e << std::endl;
     std::cout << "vdt::fast_log("<<e<<") = " << vdt::fast_log(e) << std::endl;
     // sqrt
-    const double xx{ran_sqrt(gen)};
+    const double xx{tru(ran_sqrt(gen))};
     std::cout << "vdt::fast_isqrt("<<xx<<") = " << vdt::fast_isqrt(xx) << std::endl;
     // sin cos
-    const double angle{ran_sincos(gen)};
+    const double angle{tru(ran_sincos(gen))};
     double cosang(0), sinang(0);
     vdt::fast_sincos( angle, sinang, cosang );
     std::cout << "vdt::fast_cossin("<<angle<<") = " << sinang << " " << cosang << std::endl;
@@ -68,20 +77,20 @@ int main()
   for ( unsigned int iTest = 0; iTest < nTests; ++iTest )
   {
     // atan2
-    const float fx {(float)ran_atan2(gen)}, fy{(float)ran_atan2(gen)};
+    const float fx {tru((float)ran_atan2(gen))}, fy{tru((float)ran_atan2(gen))};
     const float tang = vdt::fast_atan2f(fx,fy);
     std::cout << "vdt::fast_atan2f("<<fx<<","<<fy<<") = " << tang << std::endl;
     std::cout << "vdt::fast_tanf("<<tang<<") = " <<  vdt::fast_tanf(tang) << std::endl;
     // exp and log
-    const float x{(float)ran_logexp(gen)};
+    const float x{tru((float)ran_logexp(gen))};
     const float e = vdt::fast_expf(x);
     std::cout << "vdt::fast_expf("<<x<<") = " << e << std::endl;
     std::cout << "vdt::fast_logf("<<e<<") = " << vdt::fast_logf(e) << std::endl;
     // sqrt
-    const float xx{(float)ran_sqrt(gen)};
+    const float xx{tru((float)ran_sqrt(gen))};
     std::cout << "vdt::fast_isqrtf("<<xx<<") = " << vdt::fast_isqrtf(xx) << std::endl;
     // sin cos
-    const float angle{(float)ran_sincos(gen)};
+    const float angle{tru((float)ran_sincos(gen))};
     float cosang(0), sinang(0);
     vdt::fast_sincosf( angle, sinang, cosang );
     std::cout << "vdt::fast_cossinf("<<angle<<") = " << sinang << " " << cosang << std::endl;
