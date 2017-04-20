@@ -66,6 +66,22 @@ namespace LHCb
     // daughters
     unsigned int firstDaughter{0}, lastDaughter{0};
 
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.io(
+        key, particleID, measMass, measMassErr, lv_px, lv_py, lv_pz, lv_mass,
+        refx, refy, refz, momCov00, momCov11, momCov22, momCov33,
+        momCov10, momCov20, momCov21, momCov30, momCov31, momCov32,
+        posCov00, posCov11, posCov22, posCov10, posCov20, posCov21,
+        pmCov00, pmCov01, pmCov02, pmCov10, pmCov11, pmCov12,
+        pmCov20, pmCov21, pmCov22, pmCov30, pmCov31, pmCov32,
+        firstExtra, lastExtra, vertex, proto, firstDaughter, lastDaughter
+      );
+    }
+    template<typename T>
+    inline void load(T& buf, unsigned int /*version*/) {
+      save(buf); // identical operation until version is incremented
+     }
   };
 
   // -----------------------------------------------------------------------
@@ -141,6 +157,29 @@ namespace LHCb
 
     /// Read access to the extra info
     const Daughters & daughters() const { return m_daughters; }
+
+    /// Describe serialization of object
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.template save<uint8_t>(m_packingVersion);
+      buf.template save<uint8_t>(version());
+      buf.save(m_vect);
+      buf.save(m_extra);
+      buf.save(m_daughters);
+    }
+    /// Describe de-serialization of object
+    template<typename T>
+    inline void load(T& buf) {
+      setPackingVersion(buf.template load<uint8_t>());
+      setVersion(buf.template load<uint8_t>());
+      if (m_packingVersion < 1 || m_packingVersion > defaultPackingVersion()) {
+        throw std::runtime_error("PackedParticles packing version is not supported: "
+                                 + std::to_string(m_packingVersion));
+      }
+      buf.load(m_vect, m_packingVersion);
+      buf.load(m_extra, m_packingVersion);
+      buf.load(m_daughters);
+    }
 
   private:
 

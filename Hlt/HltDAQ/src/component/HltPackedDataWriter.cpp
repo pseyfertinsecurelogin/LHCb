@@ -7,7 +7,12 @@
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedCaloHypo.h"
 #include "Event/PackedProtoParticle.h"
+#include "Event/PackedParticle.h"
+#include "Event/PackedVertex.h"
 #include "Event/PackedRecVertex.h"
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
 
 #include "PackedDataChecksum.h"
 #include "PackedDataBuffer.h"
@@ -52,7 +57,12 @@ StatusCode HltPackedDataWriter::initialize() {
   register_object<LHCb::PackedCaloHypos>();
   register_object<LHCb::PackedProtoParticles>();
   register_object<LHCb::PackedCaloClusters>();
+  register_object<LHCb::PackedParticles>();
+  register_object<LHCb::PackedVertices>();
   register_object<LHCb::PackedRecVertices>();
+  register_object<LHCb::PackedFlavourTags>();
+  register_object<LHCb::PackedRelations>();
+  register_object<LHCb::PackedRelatedInfoRelations>();
 
   info() << "Configured to persist containers ";
   for (const auto& path: m_packedContainers) {
@@ -136,15 +146,15 @@ StatusCode HltPackedDataWriter::execute() {
       const auto& location = linkMgr->link(id)->path();
 
       auto packedLocation = m_containerMap.find(location);
-      if (packedLocation == std::end(m_containerMap)) {
-        status = Error("Cannot persist link to " + location +
-                       ". Location is not in ContainerMap!");
-        continue;
+
+      auto persistedLocation = location;
+      if (packedLocation != std::end(m_containerMap)) {
+        persistedLocation = packedLocation->second;
       }
 
-      auto linkID = m_hltANNSvc->value(PackedObjectLocations, packedLocation->second);
+      auto linkID = m_hltANNSvc->value(PackedObjectLocations, persistedLocation);
       if (!linkID) {
-        status = Error("Requested to persist link to " + packedLocation->second +
+        status = Error("Requested to persist link to " + persistedLocation +
                        " but no ID is registered for it in the HltANNSvc!");
         continue;
       }
@@ -153,7 +163,7 @@ StatusCode HltPackedDataWriter::execute() {
 
       if (UNLIKELY(msgLevel(MSG::DEBUG))) {
         debug() << "Packed link " << id << "/" << nlinks << " to " << location
-                << " (" << packedLocation->second << ") with ID " << linkID->second << endmsg;
+                << " (" << persistedLocation << ") with ID " << linkID->second << endmsg;
       }
     }
     if (!status) return status;
@@ -233,4 +243,3 @@ void HltPackedDataWriter::addBanks(LHCb::RawEvent& rawEvent, const std::vector<u
     rawEvent.adoptBank(bank, true);
   }
 }
-
