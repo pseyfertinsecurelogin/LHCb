@@ -399,7 +399,9 @@ Decoder("HltLumiSummaryDecoder",
         conf=DecoderDB)
 
 from GaudiConf.PersistRecoConf import PersistRecoPacking
-__packing = PersistRecoPacking()
+# The following decoder depends on the data type. By default you
+# get whatever is below, but "framework users" should override it!
+__packing = PersistRecoPacking('2017')
 Decoder("HltPackedDataDecoder/Hlt2PackedDataDecoder",
         active=True, banks=["DstData"],
         inputs={"RawEventLocations": None},
