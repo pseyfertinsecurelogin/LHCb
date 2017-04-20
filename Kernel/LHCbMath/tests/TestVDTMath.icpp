@@ -47,56 +47,74 @@ int main()
   // number of tests
   const unsigned int nTests = 100;
 
+  // precision for results printout
+  const auto dp = std::numeric_limits<double>::digits10+1;
+  const auto fp = std::numeric_limits<float >::digits10+1;
+
   // run the double tests
-  std::cout << std::setprecision(std::numeric_limits<double>::digits10+1);
   for ( unsigned int iTest = 0; iTest < nTests; ++iTest )
   {
     // atan2
     const double dx{tru(ran_atan2(gen))}, dy{tru(ran_atan2(gen))};
     const double tang = vdt::fast_atan2(dx,dy);
-    std::cout << "vdt::fast_atan2("<<dx<<","<<dy<<") = " << tang << std::endl;
-    std::cout << "vdt::fast_tan("<<tang<<") = " <<  vdt::fast_tan(tang) << std::endl;
+    std::cout << std::setprecision(5) << "vdt::fast_atan2("<<dx<<","<<dy<<") = " 
+              << std::setprecision(dp) << tang << std::endl;
+    std::cout << std::setprecision(dp) << "vdt::fast_tan("<<tang<<") = " 
+              << std::setprecision(dp) <<  vdt::fast_tan(tang) << std::endl;
     // exp and log
     const double x{tru(ran_logexp(gen))};
     const double e = vdt::fast_exp(x);
-    std::cout << "vdt::fast_exp("<<x<<") = " << e << std::endl;
-    std::cout << "vdt::fast_log("<<e<<") = " << vdt::fast_log(e) << std::endl;
+    std::cout << std::setprecision(5) << "vdt::fast_exp("<<x<<") = " 
+              << std::setprecision(dp) << e << std::endl;
+    std::cout << std::setprecision(dp) << "vdt::fast_log("<<e<<") = " 
+              << std::setprecision(dp) << vdt::fast_log(e) << std::endl;
     // sqrt
     const double xx{tru(ran_sqrt(gen))};
-    std::cout << "vdt::fast_isqrt("<<xx<<") = " << vdt::fast_isqrt(xx) << std::endl;
+    std::cout << std::setprecision(5) << "vdt::fast_isqrt("<<xx<<") = " 
+              << std::setprecision(dp) << vdt::fast_isqrt(xx) << std::endl;
     // sin cos
     const double angle{tru(ran_sincos(gen))};
     double cosang(0), sinang(0);
     vdt::fast_sincos( angle, sinang, cosang );
-    std::cout << "vdt::fast_cossin("<<angle<<") = " << sinang << " " << cosang << std::endl;
-    std::cout << "vdt::fast_asin("<<sinang<<") = " << vdt::fast_asin(sinang) << std::endl;
-    std::cout << "vdt::fast_acos("<<cosang<<") = " << vdt::fast_acos(cosang) << std::endl;
+    std::cout << std::setprecision(5) << "vdt::fast_cossin("<<angle<<") = " 
+              << std::setprecision(dp)<< sinang << " " << cosang << std::endl;
+    std::cout << std::setprecision(dp) << "vdt::fast_asin("<<sinang<<") = " 
+              << std::setprecision(dp) << vdt::fast_asin(sinang) << std::endl;
+    std::cout << std::setprecision(dp) << "vdt::fast_acos("<<cosang<<") = " 
+              << std::setprecision(dp) << vdt::fast_acos(cosang) << std::endl;
   }
 
   // run the float tests  
-  std::cout << std::setprecision(std::numeric_limits<float>::digits10+1);
   for ( unsigned int iTest = 0; iTest < nTests; ++iTest )
   {
     // atan2
     const float fx {tru((float)ran_atan2(gen))}, fy{tru((float)ran_atan2(gen))};
     const float tang = vdt::fast_atan2f(fx,fy);
-    std::cout << "vdt::fast_atan2f("<<fx<<","<<fy<<") = " << tang << std::endl;
-    std::cout << "vdt::fast_tanf("<<tang<<") = " <<  vdt::fast_tanf(tang) << std::endl;
+    std::cout << std::setprecision(5) << "vdt::fast_atan2f("<<fx<<","<<fy<<") = " 
+              << std::setprecision(fp) << tang << std::endl;
+    std::cout << std::setprecision(fp) << "vdt::fast_tanf("<<tang<<") = " 
+              << std::setprecision(fp) <<  vdt::fast_tanf(tang) << std::endl;
     // exp and log
     const float x{tru((float)ran_logexp(gen))};
     const float e = vdt::fast_expf(x);
-    std::cout << "vdt::fast_expf("<<x<<") = " << e << std::endl;
-    std::cout << "vdt::fast_logf("<<e<<") = " << vdt::fast_logf(e) << std::endl;
+    std::cout << std::setprecision(5) << "vdt::fast_expf("<<x<<") = " 
+              << std::setprecision(fp) << e << std::endl;
+    std::cout << std::setprecision(fp) << "vdt::fast_logf("<<e<<") = " 
+              << std::setprecision(fp) << vdt::fast_logf(e) << std::endl;
     // sqrt
     const float xx{tru((float)ran_sqrt(gen))};
-    std::cout << "vdt::fast_isqrtf("<<xx<<") = " << vdt::fast_isqrtf(xx) << std::endl;
+    std::cout << std::setprecision(5) << "vdt::fast_isqrtf("<<xx<<") = " 
+              << std::setprecision(fp) << vdt::fast_isqrtf(xx) << std::endl;
     // sin cos
     const float angle{tru((float)ran_sincos(gen))};
     float cosang(0), sinang(0);
     vdt::fast_sincosf( angle, sinang, cosang );
-    std::cout << "vdt::fast_cossinf("<<angle<<") = " << sinang << " " << cosang << std::endl;
-    std::cout << "vdt::fast_asinf("<<sinang<<") = " << vdt::fast_asinf(sinang) << std::endl;
-    std::cout << "vdt::fast_acosf("<<cosang<<") = " << vdt::fast_acosf(cosang) << std::endl;
+    std::cout << std::setprecision(5) << "vdt::fast_cossinf("<<angle<<") = " 
+              << std::setprecision(fp) << sinang << " " << cosang << std::endl;
+    std::cout << std::setprecision(fp) << "vdt::fast_asinf("<<sinang<<") = " 
+              << std::setprecision(fp) << vdt::fast_asinf(sinang) << std::endl;
+    std::cout << std::setprecision(fp) << "vdt::fast_acosf("<<cosang<<") = " 
+              << std::setprecision(fp) << vdt::fast_acosf(cosang) << std::endl;
   }
 
   return 0;
