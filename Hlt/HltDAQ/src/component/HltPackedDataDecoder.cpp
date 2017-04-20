@@ -7,7 +7,12 @@
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedCaloHypo.h"
 #include "Event/PackedProtoParticle.h"
+#include "Event/PackedParticle.h"
+#include "Event/PackedVertex.h"
 #include "Event/PackedRecVertex.h"
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
 
 #include "HltPackedDataWriter.h"
 #include "HltPackedDataDecoder.h"
@@ -44,7 +49,12 @@ StatusCode HltPackedDataDecoder::initialize() {
   register_object<LHCb::PackedCaloHypos>();
   register_object<LHCb::PackedProtoParticles>();
   register_object<LHCb::PackedCaloClusters>();
+  register_object<LHCb::PackedParticles>();
+  register_object<LHCb::PackedVertices>();
   register_object<LHCb::PackedRecVertices>();
+  register_object<LHCb::PackedFlavourTags>();
+  register_object<LHCb::PackedRelations>();
+  register_object<LHCb::PackedRelatedInfoRelations>();
 
   if (UNLIKELY(m_enableChecksum)) {
     m_checksum = new PackedDataPersistence::PackedDataChecksum();
@@ -183,23 +193,21 @@ StatusCode HltPackedDataDecoder::execute() {
 
     // Restore the links to other containers on the TES
     for (const auto& linkLocationID: linkLocationIDs) {
-      auto packedLocation = locationsMap.find(linkLocationID);
-      if (packedLocation == std::end(locationsMap)) {
+      auto persistedLocation = locationsMap.find(linkLocationID);
+      if (persistedLocation == std::end(locationsMap)) {
         Error("Packed object location not found in ANNSvc for id=" +
               std::to_string(linkLocationID) +
               ". Skipping this link, unpacking may fail!").ignore();
         continue;
       }
 
-      auto location = m_containerMap.find(packedLocation->second);
-      if (location == std::end(m_containerMap)) {
-        Error("Cannot restore link to " + packedLocation->second.str() +
-              (". Packed location is not in ContainerMap! "
-               "Skipping this link, unpacking may fail!")).ignore();
-        continue;
+      auto location = persistedLocation->second;
+      auto mappedLocation = m_containerMap.find(persistedLocation->second);
+      if (mappedLocation != std::end(m_containerMap)) {
+        location = mappedLocation->second;
       }
 
-      dataObject->linkMgr()->addLink(location->second, nullptr);
+      dataObject->linkMgr()->addLink(location, nullptr);
     }
   }
 
