@@ -4,6 +4,21 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+! 2017-04-21 - Ricardo Vazquez Gomez
+ - fix extraInfo in Protoparticle in ReportCovertTool
+
+! 2017-04-14 - Ricardo Vazquez Gomez
+ - fix the ReportCovertTool and increase the versions
+
+! 2017-04-06 - Ricardo Vazquez Gomez
+ - modify the turbo report to add the new variables in the muonPID
+
+! 2017-03-28 - Ricardo Vazquez Gomez
+ - add function for padding in MuonPID
+
+! 2017-03-27 - Ricardo Vazquez Gomez
+ - Update the checksum taking into account the added variables in the MuonPID struct
+
 ! 2016-07-22 - Rosen Matev
  - Compute checksums per location in addition to the global checksum
  - Improve the debugging printout in HltPackedDataWriter/Decoder

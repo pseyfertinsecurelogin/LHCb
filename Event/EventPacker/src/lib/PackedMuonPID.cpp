@@ -19,6 +19,13 @@ void MuonPIDPacker::pack( const Data & pid,
   {
     ppid.MuonLLMu = m_pack.deltaLL(pid.MuonLLMu());
     ppid.MuonLLBg = m_pack.deltaLL(pid.MuonLLBg());
+    if(ver > 2){
+      ppid.chi2Corr = m_pack.fltPacked(pid.chi2Corr());
+      ppid.muonMVA1 = m_pack.mva(pid.muonMVA1());
+      ppid.muonMVA2 = m_pack.mva(pid.muonMVA2());
+      ppid.muonMVA3 = m_pack.mva(pid.muonMVA3());
+      ppid.muonMVA4 = m_pack.mva(pid.muonMVA4());
+    }
     ppid.nShared  = (int)pid.nShared();
     ppid.status   = (int)pid.Status();
     if ( pid.idTrack() )
@@ -73,6 +80,13 @@ void MuonPIDPacker::unpack( const PackedData       & ppid,
   {
     pid.setMuonLLMu( m_pack.deltaLL(ppid.MuonLLMu) );
     pid.setMuonLLBg( m_pack.deltaLL(ppid.MuonLLBg) );
+    if(ver > 2){
+      pid.setChi2Corr( m_pack.fltPacked(ppid.chi2Corr) );
+      pid.setMuonMVA1( m_pack.mva(ppid.muonMVA1) );
+      pid.setMuonMVA2( m_pack.mva(ppid.muonMVA2) );
+      pid.setMuonMVA3( m_pack.mva(ppid.muonMVA3) );
+      pid.setMuonMVA4( m_pack.mva(ppid.muonMVA4) );
+    }
     pid.setNShared( ppid.nShared );
     pid.setStatus( ppid.status );
     if ( -1 != ppid.idtrack )
@@ -138,6 +152,11 @@ StatusCode MuonPIDPacker::check( const Data & dataA,
   // DLLs
   ok &= ch.compareDoubles( "MuonLLMu", dataA.MuonLLMu(), dataB.MuonLLMu() );
   ok &= ch.compareDoubles( "MuonLLBg", dataA.MuonLLBg(), dataB.MuonLLBg() );
+  ok &= ch.compareDoubles( "chi2Corr", dataA.chi2Corr(), dataB.chi2Corr() );
+  ok &= ch.compareDoubles( "muonMVA1", dataA.muonMVA1(), dataB.muonMVA1() );
+  ok &= ch.compareDoubles( "muonMVA2", dataA.muonMVA2(), dataB.muonMVA2() );
+  ok &= ch.compareDoubles( "muonMVA3", dataA.muonMVA3(), dataB.muonMVA3() );
+  ok &= ch.compareDoubles( "muonMVA4", dataA.muonMVA4(), dataB.muonMVA4() );
 
   // force printout for tests
   //ok = false;

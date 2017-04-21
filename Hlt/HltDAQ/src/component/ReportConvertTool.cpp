@@ -44,7 +44,7 @@ namespace {
        LHCb::RecSummary::nMuonTracks,
        LHCb::RecSummary::nPVs
   };
-  static const std::array<LHCb::ProtoParticle::additionalInfo,67> s_proto_map = {
+  static const std::array<LHCb::ProtoParticle::additionalInfo,72> s_proto_map = {
       LHCb::ProtoParticle::IsPhoton,//381
       LHCb::ProtoParticle::IsNotE,//382
       LHCb::ProtoParticle::IsNotH,//383
@@ -111,7 +111,12 @@ namespace {
       LHCb::ProtoParticle::ProbNNk,//
       LHCb::ProtoParticle::ProbNNp,//
       LHCb::ProtoParticle::ProbNNghost, //
-      LHCb::ProtoParticle::CombDLLd//605
+      LHCb::ProtoParticle::CombDLLd,//605
+      LHCb::ProtoParticle::MuonChi2Corr,//
+      LHCb::ProtoParticle::MuonMVA1,//
+      LHCb::ProtoParticle::MuonMVA2,//
+      LHCb::ProtoParticle::MuonMVA3,//
+      LHCb::ProtoParticle::MuonMVA4//
   };
     //===========================================================================
     /// Version unordered_map for LHCb::Particle in the Turbo stream
@@ -538,6 +543,79 @@ namespace {
         ,  {"65#Proto.extraInfo.ProbNNghost",           {61,65}}
         ,  {"66#Proto.extraInfo.CombDLLd",              {62,66}}}
       }
+      , { 11
+        , {{"0#Proto.extraInfo.IsPhoton",               { 0, 0}}
+        ,  {"1#Proto.extraInfo.IsNotE",                 { 1, 1}}
+        ,  {"2#Proto.extraInfo.IsNotH",                 {12, 2}}
+        ,  {"3#Proto.extraInfo.EcalPIDe",               {23, 3}}
+        ,  {"4#Proto.extraInfo.PrsPIDe",                {34, 4}}
+        ,  {"5#Proto.extraInfo.BremPIDe",               {45, 5}}
+        ,  {"6#Proto.extraInfo.HcalPIDe",               {55, 6}}
+        ,  {"7#Proto.extraInfo.HcalPIDmu",              {63, 7}}
+        ,  {"8#Proto.extraInfo.EcalPIDmu",              {64, 8}}
+        ,  {"9#Proto.extraInfo.CaloTrMatch",            {65, 9}}
+        ,  {"10#Proto.extraInfo.CaloElectronMatch",     { 2,10}}
+        ,  {"11#Proto.extraInfo.CaloBremMatch",         { 3,11}}
+        ,  {"12#Proto.extraInfo.CaloNeutralSpd",        { 4,12}}
+        ,  {"13#Proto.extraInfo.CaloNeutralPrs",        { 5,13}}
+        ,  {"14#Proto.extraInfo.CaloNeutralEcal",       { 6,14}}
+        ,  {"15#Proto.extraInfo.CaloNeutralHcal2Ecal",  { 7,15}}
+        ,  {"16#Proto.extraInfo.CaloNeutralE49",        { 8,16}}
+        ,  {"17#Proto.extraInfo.CaloNeutralID",         { 9,17}}
+        ,  {"18#Proto.extraInfo.CaloDepositID",         {10,18}}
+        ,  {"19#Proto.extraInfo.ShowerShape",           {11,19}}
+        ,  {"20#Proto.extraInfo.ClusterMass",           {13,20}}
+        ,  {"21#Proto.extraInfo.CaloSpdE",              {14,21}}
+        ,  {"22#Proto.extraInfo.CaloPrsE",              {15,22}}
+        ,  {"23#Proto.extraInfo.CaloEcalE",             {16,23}}
+        ,  {"24#Proto.extraInfo.CaloHcalE",             {17,24}}
+        ,  {"25#Proto.extraInfo.CaloEcalChi2",          {18,25}}
+        ,  {"26#Proto.extraInfo.CaloBremChi2",          {19,26}}
+        ,  {"27#Proto.extraInfo.CaloClusChi2",          {20,27}}
+        ,  {"28#Proto.extraInfo.CaloNeutralPrsM",       {21,28}}
+        ,  {"29#Proto.extraInfo.CaloShapeFr2r4",        {22,29}}
+        ,  {"30#Proto.extraInfo.CaloShapeKappa",        {24,30}}
+        ,  {"31#Proto.extraInfo.CaloShapeAsym",         {25,31}}
+        ,  {"32#Proto.extraInfo.CaloShapeE1",           {26,32}}
+        ,  {"33#Proto.extraInfo.CaloShapeE2",           {27,33}}
+        ,  {"34#Proto.extraInfo.CaloPrsShapeE2",        {28,34}}
+        ,  {"35#Proto.extraInfo.CaloPrsShapeEmax",      {29,35}}
+        ,  {"36#Proto.extraInfo.CaloPrsShapeFr2",       {30,36}}
+        ,  {"37#Proto.extraInfo.CaloPrsShapeAsym",      {31,37}}
+        ,  {"38#Proto.extraInfo.CaloPrsM",              {32,38}}
+        ,  {"39#Proto.extraInfo.CaloPrsM15",            {33,39}}
+        ,  {"40#Proto.extraInfo.CaloPrsM30",            {35,40}}
+        ,  {"41#Proto.extraInfo.CaloPrsM45",            {36,41}}
+        ,  {"42#Proto.extraInfo.CaloClusterCode",       {37,42}}
+        ,  {"43#Proto.extraInfo.CaloClusterFrac",       {38,43}}
+        ,  {"44#Proto.extraInfo.CombDLLe",              {39,44}}
+        ,  {"45#Proto.extraInfo.CombDLLmu",             {40,45}}
+        ,  {"46#Proto.extraInfo.CombDLLpi",             {41,46}}
+        ,  {"47#Proto.extraInfo.CombDLLk",              {42,47}}
+        ,  {"48#Proto.extraInfo.CombDLLp",              {43,48}}
+        ,  {"49#Proto.extraInfo.InAccBrem",             {44,49}}
+        ,  {"50#Proto.extraInfo.InAccSpd",              {46,50}}
+        ,  {"51#Proto.extraInfo.InAccPrs",              {47,51}}
+        ,  {"52#Proto.extraInfo.InAccEcal",             {48,52}}
+        ,  {"53#Proto.extraInfo.InAccHcal",             {49,53}}
+        ,  {"54#Proto.extraInfo.VeloCharge",            {50,54}}
+        ,  {"56#Proto.extraInfo.CaloChargedID",         {51,56}}
+        ,  {"57#Proto.extraInfo.CaloChargedEcal",       {52,57}}
+        ,  {"58#Proto.extraInfo.CaloChargedPrs",        {53,58}}
+        ,  {"59#Proto.extraInfo.CaloChargedSpd",        {54,59}}
+        ,  {"60#Proto.extraInfo.ProbNNe",               {56,60}}
+        ,  {"61#Proto.extraInfo.ProbNNmu",              {57,61}}
+        ,  {"62#Proto.extraInfo.ProbNNpi",              {58,62}}
+        ,  {"63#Proto.extraInfo.ProbNNk",               {59,63}}
+        ,  {"64#Proto.extraInfo.ProbNNp",               {60,64}}
+        ,  {"65#Proto.extraInfo.ProbNNghost",           {61,65}}
+        ,  {"66#Proto.extraInfo.CombDLLd",              {62,66}}
+        ,  {"67#Proto.extraInfo.MuonChi2Corr",          {66,67}}
+        ,  {"68#Proto.extraInfo.MuonMVA1",              {67,68}}
+        ,  {"69#Proto.extraInfo.MuonMVA2",              {68,69}}
+        ,  {"70#Proto.extraInfo.MuonMVA3",              {69,70}}
+        ,  {"71#Proto.extraInfo.MuonMVA4",              {70,71}}}
+      }
     };
     //===========================================================================
     /// Version unordered_map for LHCb::ProtoParticle in the Full stream
@@ -730,6 +808,20 @@ namespace {
           , {"4#Muon.IsMuon",                   {4,4}}
           , {"5#Muon.IsMuonLoose",              {5,5}}
           , {"6#Muon.IsMuonTight",              {6,6}}}
+      }
+      , { 11
+        , {{"0#Muon.MuonLLMu",                  {0,0}}
+          , {"1#Muon.MuonLLBg",                 {1,1}}
+          , {"2#Muon.NShared",                  {2,2}}
+          , {"3#Muon.Status",                   {3,3}}
+          , {"4#Muon.IsMuon",                   {4,4}}
+          , {"5#Muon.IsMuonLoose",              {5,5}}
+          , {"6#Muon.IsMuonTight",              {6,6}}
+          , {"7#Muon.chi2Corr",                 {7,7}}
+          , {"8#Muon.muonMVA1",                 {8,8}}
+          , {"9#Muon.muonMVA2",                 {9,9}}
+          , {"10#Muon.muonMVA3",                {10,10}}
+          , {"11#Muon.muonMVA4",                {11,11}}}
       }
     };
     //===========================================================================
@@ -1367,6 +1459,11 @@ void ReportConvertTool::MuonPIDObject2Summary( HltObjectSummary::Info* info , co
       case 4: info->insert( mpid.first, float( object->IsMuon() ) ); break;
       case 5: info->insert( mpid.first, float( object->IsMuonLoose() ) ); break;
       case 6: info->insert( mpid.first, float( object->IsMuonTight() ) ); break;
+      case 7: info->insert( mpid.first, float( object->chi2Corr() ) ); break;
+      case 8: info->insert( mpid.first, float( object->muonMVA1() ) ); break;
+      case 9: info->insert( mpid.first, float( object->muonMVA2() ) ); break;
+      case 10: info->insert( mpid.first, float( object->muonMVA3() ) ); break;
+      case 11: info->insert( mpid.first, float( object->muonMVA4() ) ); break;
     }
   }
 
@@ -1758,6 +1855,11 @@ void ReportConvertTool::MuonPIDObjectFromSummary( const HltObjectSummary::Info* 
       case 4: object->setIsMuon( int( x ) ); break;
       case 5: object->setIsMuonLoose( int( x ) ); break;
       case 6: object->setIsMuonTight( int( x ) ); break;
+      case 7: object->setChi2Corr( int( x ) ); break;
+      case 8: object->setMuonMVA1( int( x ) ); break;
+      case 9: object->setMuonMVA2( int( x ) ); break;
+      case 10: object->setMuonMVA3( int( x ) ); break;
+      case 11: object->setMuonMVA4( int( x ) ); break;
     }
   }
 
