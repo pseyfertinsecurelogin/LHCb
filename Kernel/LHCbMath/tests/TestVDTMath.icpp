@@ -85,7 +85,8 @@ int main()
     const double angle{tru(ran_sincos(gen),idp)};
     double cosang(0), sinang(0);
     vdt::fast_sincos( angle, sinang, cosang );
-    sinang = tru(sinang,dp);    cosang = tru(cosang,dp);
+    sinang = tru(sinang,dp);    
+    cosang = tru(cosang,dp);
     std::cout << std::setprecision(idp) << "vdt::fast_cossin("<<angle<<") = " 
               << std::setprecision(dp)<< sinang << " " << cosang << std::endl;
     std::cout << std::setprecision(dp) << "vdt::fast_asin("<<sinang<<") = " 
