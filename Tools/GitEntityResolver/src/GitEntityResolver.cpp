@@ -193,6 +193,7 @@ StatusCode GitEntityResolver::initialize()
   } else {
     auto obj = git_call<git_object_ptr>( name(), "cannot resolve commit", m_commit.value(), git_revparse_single,
                                          m_repository.get(), m_commit.value().c_str() );
+    info() << "using commit '" << m_commit.value() << "'" << endmsg;
     ON_DEBUG
     {
       char oid[GIT_OID_HEXSZ + 1] = {0};
