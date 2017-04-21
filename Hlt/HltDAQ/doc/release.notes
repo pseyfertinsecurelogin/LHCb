@@ -4,6 +4,9 @@
 ! Purpose     : Hlt RawBanks writers/decoders/monitors
 !------------------------------------------------------------------------------
 
+! 2017-04-21 - Ricardo Vazquez Gomez
+ - fix extraInfo in Protoparticle in ReportCovertTool
+
 ! 2017-04-14 - Ricardo Vazquez Gomez
  - fix the ReportCovertTool and increase the versions
 
