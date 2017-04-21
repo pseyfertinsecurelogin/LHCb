@@ -193,14 +193,17 @@ StatusCode GitEntityResolver::initialize()
   } else {
     auto obj = git_call<git_object_ptr>( name(), "cannot resolve commit", m_commit.value(), git_revparse_single,
                                          m_repository.get(), m_commit.value().c_str() );
-    info() << "using commit '" << m_commit.value() << "'" << endmsg;
-    ON_DEBUG
-    {
+    if ( LIKELY( msgLevel( MSG::INFO ) ) ) {
+      auto& log = info();
+      log << "using commit '" << m_commit.value() << "'";
+
       char oid[GIT_OID_HEXSZ + 1] = {0};
       git_oid_fmt( oid, git_object_id( obj.get() ) );
 
       if ( m_commit.value().compare( oid ) != 0 )
-        debug() << "commit '" << m_commit.value() << "' corresponds to " << oid << endmsg;
+        log << " corresponding to " << oid;
+
+      log << endmsg;
     }
     if ( UNLIKELY( m_limitToLastCommitTime ) ) {
       // get the time of the requested commit/tag
