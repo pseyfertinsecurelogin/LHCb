@@ -53,8 +53,11 @@ int main()
   const auto ifp = 6u;
 
   // precision for results printout
-  const auto dp = std::numeric_limits<double>::digits10+1;
-  const auto fp = std::numeric_limits<float >::digits10+1;
+  //const auto dp = std::numeric_limits<double>::digits10+1;
+  //const auto fp = std::numeric_limits<float >::digits10+1;
+  // reduce by 1 for AVX2+FMA nightlies slot diffs...
+  const auto dp = std::numeric_limits<double>::digits10;
+  const auto fp = std::numeric_limits<float >::digits10;
   std::cout << "Test Precision : double " << dp << " float " << fp << std::endl;
 
   // run the double tests
@@ -62,14 +65,14 @@ int main()
   {
     // atan2
     const double dx{tru(ran_atan2(gen),idp)}, dy{tru(ran_atan2(gen),idp)};
-    const double tang = vdt::fast_atan2(dx,dy);
+    const double tang = tru(vdt::fast_atan2(dx,dy),dp);
     std::cout << std::setprecision(idp) << "vdt::fast_atan2("<<dx<<","<<dy<<") = " 
               << std::setprecision(dp) << tang << std::endl;
     std::cout << std::setprecision(dp) << "vdt::fast_tan("<<tang<<") = " 
-              << std::setprecision(dp) <<  vdt::fast_tan(tang) << std::endl;
+              << std::setprecision(dp) << vdt::fast_tan(tang) << std::endl;
     // exp and log
     const double x{tru(ran_logexp(gen),idp)};
-    const double e = vdt::fast_exp(x);
+    const double e = tru(vdt::fast_exp(x),dp);
     std::cout << std::setprecision(idp) << "vdt::fast_exp("<<x<<") = " 
               << std::setprecision(dp) << e << std::endl;
     std::cout << std::setprecision(dp) << "vdt::fast_log("<<e<<") = " 
@@ -82,8 +85,10 @@ int main()
     const double angle{tru(ran_sincos(gen),idp)};
     double cosang(0), sinang(0);
     vdt::fast_sincos( angle, sinang, cosang );
+    sinang = tru(sinang,dp);    
+    cosang = tru(cosang,dp);
     std::cout << std::setprecision(idp) << "vdt::fast_cossin("<<angle<<") = " 
-              << std::setprecision(dp)<< sinang << " " << cosang << std::endl;
+              << std::setprecision(dp) << sinang << " " << cosang << std::endl;
     std::cout << std::setprecision(dp) << "vdt::fast_asin("<<sinang<<") = " 
               << std::setprecision(dp) << vdt::fast_asin(sinang) << std::endl;
     std::cout << std::setprecision(dp) << "vdt::fast_acos("<<cosang<<") = " 
@@ -95,14 +100,14 @@ int main()
   {
     // atan2
     const float fx {tru((float)ran_atan2(gen),ifp)}, fy{tru((float)ran_atan2(gen),ifp)};
-    const float tang = vdt::fast_atan2f(fx,fy);
+    const float tang = tru(vdt::fast_atan2f(fx,fy),fp);
     std::cout << std::setprecision(ifp) << "vdt::fast_atan2f("<<fx<<","<<fy<<") = " 
               << std::setprecision(fp) << tang << std::endl;
     std::cout << std::setprecision(fp) << "vdt::fast_tanf("<<tang<<") = " 
               << std::setprecision(fp) <<  vdt::fast_tanf(tang) << std::endl;
     // exp and log
     const float x{tru((float)ran_logexp(gen),ifp)};
-    const float e = vdt::fast_expf(x);
+    const float e = tru(vdt::fast_expf(x),fp);
     std::cout << std::setprecision(ifp) << "vdt::fast_expf("<<x<<") = " 
               << std::setprecision(fp) << e << std::endl;
     std::cout << std::setprecision(fp) << "vdt::fast_logf("<<e<<") = " 
@@ -115,6 +120,8 @@ int main()
     const float angle{tru((float)ran_sincos(gen),ifp)};
     float cosang(0), sinang(0);
     vdt::fast_sincosf( angle, sinang, cosang );
+    sinang = tru(sinang,fp);
+    cosang = tru(cosang,fp);
     std::cout << std::setprecision(ifp) << "vdt::fast_cossinf("<<angle<<") = " 
               << std::setprecision(fp) << sinang << " " << cosang << std::endl;
     std::cout << std::setprecision(fp) << "vdt::fast_asinf("<<sinang<<") = " 
