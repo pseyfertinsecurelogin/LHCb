@@ -4,6 +4,18 @@
 ! Purpose     : LHCb Event model. Reconstruction classes (Brunel output)
 !-----------------------------------------------------------------------------
 
+! 2017-04-14 - Ricardo Vazquez Gomez
+ - fix naming of new variables in ProtoParticle
+
+! 2017-04-13 - Ricardo Vazquez Gomez
+ - Modify the ProtoParticle to add the new MuonID information
+
+! 2017-03-28 - Ricardo Vazquez Gomez
+ - Reorder the attributes in xml not to break backwards compatibility
+
+! 2017-03-27 - Ricardo Vazquez Gomez
+ - Add chi2 with correlated hits of muonTrack and 4 flavours of MVA operators
+
 ! 2016-09-05 - Olivier Deschamps
   - ProtoParticle : add Ecal staturation & barycenter info for neutral protoP
 

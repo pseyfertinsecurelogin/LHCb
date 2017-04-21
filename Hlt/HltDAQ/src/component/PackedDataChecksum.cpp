@@ -132,7 +132,7 @@ void PackedDataChecksum::processVector(const std::string& key, const std::vector
 static_assert(sizeof(LHCb::PackedTrack) == 56, "PackedTrack has changed!");  // padded!
 static_assert(sizeof(LHCb::PackedState) == 68, "PackedState has changed!");
 static_assert(sizeof(LHCb::PackedRichPID) == 56, "PackedRichPID has changed!");  // padded!
-static_assert(sizeof(LHCb::PackedMuonPID) == 40, "PackedMuonPID has changed!");
+static_assert(sizeof(LHCb::PackedMuonPID) == 64, "PackedMuonPID has changed!");  // padded!
 static_assert(sizeof(LHCb::PackedCaloCluster) == 72, "PackedCaloCluster has changed!");  // padded!
 static_assert(sizeof(LHCb::PackedCaloClusterEntry) == 16, "PackedCaloClusterEntry has changed!");  // padded!
 static_assert(sizeof(LHCb::PackedCaloHypo) == 76, "PackedCaloHypo has changed!");
@@ -162,6 +162,13 @@ void PackedDataChecksum::process(const std::string& key, const LHCb::PackedRichP
   processMany(key,
               x.pidResultCode, x.dllEl, x.dllMu, x.dllPi, x.dllKa, x.dllPr,
               x.track, x.dllBt, x.key, x.dllDe);
+}
+template<>
+void PackedDataChecksum::process(const std::string& key, const LHCb::PackedMuonPID& x) {
+  processMany(key,
+              x.MuonLLMu, x.MuonLLBg, x.nShared, x.status,
+              x.idtrack, x.mutrack, x.key,
+              x.chi2Corr, x.muonMVA1, x.muonMVA2, x.muonMVA3, x.muonMVA4);
 }
 template<>
 void PackedDataChecksum::process(const std::string& key, const LHCb::PackedCaloClusterEntry& x) {
