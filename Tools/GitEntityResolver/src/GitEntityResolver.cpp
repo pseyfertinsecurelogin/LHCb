@@ -215,6 +215,9 @@ StatusCode GitEntityResolver::initialize()
     DEBUG_MSG << "registering to IncidentSvc" << endmsg;
     // we use a very low priority for BeginEvent to be triggered after UpdateManagerSvc
     m_incSvc->addListener(this, IncidentType::BeginEvent, -100);
+    // we use a very high priority for special incident APP_INITIALIZED to be
+    // called before fork/checkpoint in Online environment
+    m_incSvc->addListener(this, "APP_INITIALIZED", 100);
   } else {
     warning() << "cannot get IncidentSvc, automatic disconnect not possible" << endmsg;
   }
