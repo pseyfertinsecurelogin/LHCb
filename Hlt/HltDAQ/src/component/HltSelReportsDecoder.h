@@ -26,7 +26,7 @@ public:
   StatusCode execute   () override;    ///< Algorithm execution
 
 private:
-  enum HeaderIDs { kVersionNumber=10 };
+  enum HeaderIDs { kVersionNumber=11 };
   /// location of output
   Gaudi::Property<std::string> m_outputHltSelReportsLocation{ this,"OutputHltSelReportsLocation", LHCb::HltSelReportsLocation::Default};
   /// for converting objects in to summaries

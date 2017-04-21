@@ -21,6 +21,8 @@ namespace LHCb
    *
    *  Packed MuonPID
    *
+   *  Version = 3, adds new variables to the muonPID: chi2 of correlated hits + MVA methods
+   *
    *  @author Christopher Rob Jones
    *  @date   2009-10-13
    */
@@ -33,18 +35,32 @@ namespace LHCb
     long long idtrack{-1};
     long long mutrack{-1};
     long long key{-1};
+    int chi2Corr{0};
+    int muonMVA1{0};
+    int muonMVA2{0};
+    int muonMVA3{0};
+    int muonMVA4{0};
 
     template<typename T>
     inline void save(T& buf) const {
       buf.io(
         MuonLLMu, MuonLLBg, nShared, status,
-        idtrack, mutrack, key
+        idtrack, mutrack, key,        
+        chi2Corr, muonMVA1, muonMVA2, muonMVA3, muonMVA4
       );
     }
 
     template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
-      save(buf); // identical operation until version is incremented
+    inline void load(T& buf, unsigned int version) {
+      if(version == 2){
+        buf.io(
+          MuonLLMu, MuonLLBg, nShared, status,
+          idtrack, mutrack, key
+        );
+      }
+      else {
+        save(buf); // identical operation for the latest version
+      }
     }
   };
 
@@ -77,7 +93,7 @@ namespace LHCb
   public:
 
     /// Default Packing Version
-    static char defaultPackingVersion() { return 2; }
+    static char defaultPackingVersion() { return 3; }
 
   public:
 
@@ -202,7 +218,7 @@ namespace LHCb
     /// Check if the given packing version is supported
     bool isSupportedVer( const char& ver ) const
     {
-      const bool OK = ( 2 == ver || 1 == ver || 0 == ver );
+      const bool OK = ( 3 == ver || 2 == ver || 1 == ver || 0 == ver );
       if ( UNLIKELY(!OK) )
       {
         std::ostringstream mess;
