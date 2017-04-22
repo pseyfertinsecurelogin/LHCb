@@ -298,8 +298,8 @@ StatusCode DeRichPMTPanel::geometryUpdate()
 
     if ( side() == Rich::top )
     {
-      const auto& aPmtR1P0DetPlaneDirCos=firstRich->param<std::vector<double> >("Rich1TopPmtDetectorPlaneDirCos");
-      const auto& aPmtR1P0DetPlanePoint  = firstRich->param<std::vector<double> >("Rich1TopPmtDetPlanePoint");
+      const auto aPmtR1P0DetPlaneDirCos = firstRich->param<std::vector<double> >("Rich1TopPmtDetectorPlaneDirCos");
+      const auto aPmtR1P0DetPlanePoint  = firstRich->param<std::vector<double> >("Rich1TopPmtDetPlanePoint");
       aOffset = fabs (m_PmtModulePlaneHalfSizeR1[1]) ;
       aDir = Gaudi::XYZVector(aPmtR1P0DetPlaneDirCos[0],aPmtR1P0DetPlaneDirCos[1], aPmtR1P0DetPlaneDirCos[2]);
       aPon = Gaudi::XYZPoint( aPmtR1P0DetPlanePoint[0], aPmtR1P0DetPlanePoint[1],  aPmtR1P0DetPlanePoint[2]);
@@ -308,8 +308,8 @@ StatusCode DeRichPMTPanel::geometryUpdate()
     else if ( side () == Rich::bottom )
     {
       sign =-1;
-      const auto& aPmtR1P1DetPlaneDirCos=firstRich->param<std::vector<double> >("Rich1BotPmtDetectorPlaneDirCos");
-      const auto& aPmtR1P1DetPlanePoint = firstRich->param<std::vector<double> >("Rich1BotPmtDetPlanePoint");
+      const auto aPmtR1P1DetPlaneDirCos = firstRich->param<std::vector<double> >("Rich1BotPmtDetectorPlaneDirCos");
+      const auto aPmtR1P1DetPlanePoint  = firstRich->param<std::vector<double> >("Rich1BotPmtDetPlanePoint");
       aOffset = fabs( m_PmtModulePlaneHalfSizeR1[3]);
       aDir = Gaudi::XYZVector(aPmtR1P1DetPlaneDirCos[0],aPmtR1P1DetPlaneDirCos[1], aPmtR1P1DetPlaneDirCos[2]);
       aPon = Gaudi::XYZPoint( aPmtR1P1DetPlanePoint[0], aPmtR1P1DetPlanePoint[1],  aPmtR1P1DetPlanePoint[2]);
@@ -355,36 +355,34 @@ StatusCode DeRichPMTPanel::geometryUpdate()
     const Gaudi::XYZPoint globalpointR(geometry()->toGlobal(localpointR));
     m_detectionPlane_exterior = Gaudi::Plane3D(globalpointP,globalpointQ,globalpointR);
 
-
     aPon = globalpointA;
 
     if ( side() == Rich::left )
     {
       aOffset = fabs (m_PmtModulePlaneHalfSizeR2[0]) ;
-      if(m_Rich2UseGrandModule) {
+      if(m_Rich2UseGrandModule)
+      {
         aOffset = fabs (m_GrandPmtModulePlaneHalfSizeR2[0]) ;
-        if(m_Rich2UseMixedModule) {
+        if(m_Rich2UseMixedModule)
+        {
           aOffset = fabs (m_MixedPmtModulePlaneHalfSizeR2[0]) ;
         }
-
       }
-
-
     }
     else if ( side () == Rich::right )
     {
       sign=-1;
       aOffset = fabs( m_PmtModulePlaneHalfSizeR2[2]);
-      if(m_Rich2UseGrandModule) {
-
+      if(m_Rich2UseGrandModule)
+      {
         aOffset = fabs( m_GrandPmtModulePlaneHalfSizeR2[2]);
-        if( m_Rich2UseMixedModule) {
+        if( m_Rich2UseMixedModule)
+        {
           aOffset = fabs (m_MixedPmtModulePlaneHalfSizeR2[2]) ;
         }
-
       }
-
     }
+
   }
 
   m_localOffset = aOffset;
@@ -432,8 +430,8 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
 {
   StatusCode sc = StatusCode::SUCCESS;
 
-  if(  ( m_PmtModulePlaneHalfSizeR1.empty() ) ||
-       ( m_PmtModulePlaneHalfSizeR2.empty() )  )
+  //if(  ( m_PmtModulePlaneHalfSizeR1.empty() ) ||
+  //     ( m_PmtModulePlaneHalfSizeR2.empty() )  )
   {
     auto * firstRich = getFirstDeRich();
     if ( !firstRich )
@@ -442,14 +440,13 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
       return StatusCode::FAILURE;
     }
 
-    m_RichPmtNumModulesInRowCol.fill(0);
     m_RichPmtNumModulesInRowCol[0]=1;
     m_RichPmtNumModulesInRowCol[1]=1;
 
     // keep some the RICH1 papameters inside the if block
     if ( rich() == Rich::Rich1 )
     {
-      m_PmtModulePlaneHalfSizeR1 = firstRich->param<std::vector<double> >("Rich1PMTModulePlaneHalfSize");
+      m_PmtModulePlaneHalfSizeR1 = toarray<double,4>( firstRich->param<std::vector<double> >("Rich1PMTModulePlaneHalfSize") );
       const auto aRich1PmtNumModulesInRow = firstRich->param<int> ("Rich1NumberOfModulesInRow" );
       const auto aRich1PmtNumModulesInCol = firstRich->param<int> ("Rich1NumberOfModulesInCol" );
       m_RichPmtNumModulesInRowCol[0]=aRich1PmtNumModulesInRow;
@@ -472,7 +469,7 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
     }
 
 
-    m_PmtModulePlaneHalfSizeR2 = firstRich->param<std::vector<double> >("Rich2PMTModulePlaneHalfSize");
+    m_PmtModulePlaneHalfSizeR2 = toarray<double,4>( firstRich->param<std::vector<double> >("Rich2PMTModulePlaneHalfSize") );
     m_PmtModulePitch = firstRich->param<double>("RichPmtModulePitch");
     m_PmtModulePitchInv = ( fabs(m_PmtModulePitch)>0 ? 1.0/m_PmtModulePitch : 0.0 );
     const auto aRich2PmtNumModulesInRow = firstRich->param<int> ( "Rich2NumberOfModulesInRow" );
@@ -483,12 +480,12 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
     // info()<< "DeRichPmtplane  getPanelGeometryInfo  m_RichPmtNumModulesInRowCol "
     //       <<  m_RichPmtNumModulesInRowCol <<endmsg;
 
-    m_RichPmtModuleCopyNumBeginPanel=
-      firstRich->param<std::vector<int> > ("RichPmtModuleNumBeginInPanels");
-    m_RichPmtModuleCopyNumEndPanel=
-      firstRich->param<std::vector<int> > ("RichPmtModuleNumEndInPanels");
+    m_RichPmtModuleCopyNumBeginPanel =
+      toarray<int,4>( firstRich->param<std::vector<int> > ("RichPmtModuleNumBeginInPanels") );
+    m_RichPmtModuleCopyNumEndPanel =
+      toarray<int,4>( firstRich->param<std::vector<int> > ("RichPmtModuleNumEndInPanels") );
     m_RichPmtModuleActiveAreaHalfSize=
-      firstRich->param<std::vector<double> >("RichPMTModuleActiveAreaHalfSize" );
+      toarray<double,2>( firstRich->param<std::vector<double> >("RichPMTModuleActiveAreaHalfSize") );
 
     m_PmtPitch=firstRich->param<double>("RichPmtPitch");
     m_PmtPitchInv = ( fabs(m_PmtPitch)>0 ? 1.0/m_PmtPitch : 0.0 );
@@ -533,11 +530,11 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
       if ( firstRich->exists("Rich2GrandPMTModulePlaneHalfSize") )
       {
 
-        m_GrandPmtModulePlaneHalfSizeR2 = firstRich->param<std::vector<double> >("Rich2GrandPMTModulePlaneHalfSize");
+        m_GrandPmtModulePlaneHalfSizeR2 = toarray<double,4>( firstRich->param<std::vector<double> >("Rich2GrandPMTModulePlaneHalfSize") );
         m_GrandPmtModulePitch = firstRich->param<double>("RichGrandPmtModulePitch");
         m_GrandPmtModulePitchInv = ( fabs(m_GrandPmtModulePitch)>0 ? 1.0/m_GrandPmtModulePitch : 0.0 );
-        m_RichGrandPmtModuleActiveAreaHalfSize=
-          firstRich->param<std::vector<double> >("RichGrandPMTModuleActiveAreaHalfSize" );
+        m_RichGrandPmtModuleActiveAreaHalfSize =
+          toarray<double,2>( firstRich->param<std::vector<double> >("RichGrandPMTModuleActiveAreaHalfSize") );
         m_GrandPmtPitch=firstRich->param<double>("RichGrandPmtPitch");
         m_GrandPmtPitchInv = ( fabs(m_GrandPmtPitch)>0 ? 1.0/m_GrandPmtPitch : 0.0 );
 
@@ -565,16 +562,18 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
         m_GrandPmtMasterLateralSize = firstRich->param<double>("RichGrandPmtMasterLateralSize" );
         m_GrandNumPmtInRichModule = firstRich->param<int> ("RichTotNumGrandPmtInModule");
 
-
-        m_NumGrandPmtInRowCol.resize(2);
         m_NumGrandPmtInRowCol[0] = firstRich->param<int> ("RichGrandPmtNumInModuleRow");
         m_NumGrandPmtInRowCol[1] = firstRich->param<int> ("RichGrandPmtNumInModuleCol");
         m_Rich2TotNumGrandPmts = firstRich->param<int>  ( "Rich2TotNumGrandPmt"    );
         m_Rich2TotNumStdPmts=0;
-        if(m_Rich2UseMixedModule) {
-          if( firstRich->exists("Rich2MixedPMTModulePlaneHalfSize") ){
-            m_MixedPmtModulePlaneHalfSizeR2 = firstRich->param<std::vector<double> >("Rich2MixedPMTModulePlaneHalfSize");
-            m_MixedStdPmtModulePlaneHalfSizeR2 =firstRich->param<std::vector<double> >("Rich2MixedStdPMTModulePlaneHalfSize" );
+        if(m_Rich2UseMixedModule) 
+        {
+          if( firstRich->exists("Rich2MixedPMTModulePlaneHalfSize") )
+          {
+            m_MixedPmtModulePlaneHalfSizeR2 = 
+              toarray<double,4>( firstRich->param<std::vector<double> >("Rich2MixedPMTModulePlaneHalfSize") );
+            m_MixedStdPmtModulePlaneHalfSizeR2 = 
+              toarray<double,4>( firstRich->param<std::vector<double> >("Rich2MixedStdPMTModulePlaneHalfSize") );
             m_Rich2TotNumStdModules = firstRich->param<int> ("Rich2TotNumStdModules" );
             m_totNumPmtModuleInRich = aRich1NumModules + m_Rich2TotNumGrandModules+m_Rich2TotNumStdModules;
             m_NumPmtModuleInRich[2] = (m_Rich2TotNumGrandModules+m_Rich2TotNumStdModules)/2; //rich2left
@@ -615,12 +614,10 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
       m_PmtModuleWithLensPitch = firstRich->param<double>("RichLensPmtModulePitch");
       m_PmtModuleWithLensPitchInv = ( fabs(m_PmtModuleWithLensPitch)>0 ? 1.0/m_PmtModuleWithLensPitch : 0.0 );
       m_PmtLensPitch=firstRich->param<double>("RichLensPmtPitch");
-      m_Rich1PmtPanelWithLensXSize = firstRich->param<std::vector<double> > ("Rich1PMTModuleLensPlaneXEdge");
-      m_Rich1PmtPanelWithLensYSize = firstRich->param<std::vector<double> > ( "Rich1PMTModuleLensPlaneYEdge"   );
+      m_Rich1PmtPanelWithLensXSize = toarray<double,2>( firstRich->param<std::vector<double> > ("Rich1PMTModuleLensPlaneXEdge") );
+      m_Rich1PmtPanelWithLensYSize = toarray<double,2>( firstRich->param<std::vector<double> > ("Rich1PMTModuleLensPlaneYEdge") );
 
-      m_Rich1PmtPanelWithLensColSize = firstRich->param<std::vector<int> > ( "Rich1PmtLensModuleColumnsSize"  );
-
-      m_RichNumLensPmtinModuleRowCol.resize(2);
+      m_Rich1PmtPanelWithLensColSize = toarray<int,2>( firstRich->param<std::vector<int> >("Rich1PmtLensModuleColumnsSize")  );
 
       m_RichNumLensPmtinModuleRowCol[0] =  firstRich->param<int> ( "RichLensPmtNumInModuleRow" );
       m_RichNumLensPmtinModuleRowCol[1] =  firstRich->param<int> ( "RichLensPmtNumInModuleCol" );
@@ -871,7 +868,7 @@ DeRichPMTPanel::findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
         }
         else
         {
-          if ( fabs(y) <  fabs(m_MixedStdPmtModulePlaneHalfSizeR2 [1]) )
+          if ( fabs(y) <  fabs(m_MixedStdPmtModulePlaneHalfSizeR2[1]) )
           {
             aModuleCol = (int) (fabs( (x-m_MixedStdPmtModulePlaneHalfSizeR2[0])*m_PmtModulePitchInv));
             aModuleRow = (int) (fabs( (y-m_MixedStdPmtModulePlaneHalfSizeR2[1])*m_PmtModulePitchInv));
@@ -880,11 +877,11 @@ DeRichPMTPanel::findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
           else
           {
             aModuleCol = (int) (fabs( (x-m_MixedPmtModulePlaneHalfSizeR2[0])*m_GrandPmtModulePitchInv ));
-            if ( y < m_MixedStdPmtModulePlaneHalfSizeR2 [1] )
+            if ( y < m_MixedStdPmtModulePlaneHalfSizeR2[1] )
             {
               aModuleRow = (int) (fabs( (y-m_MixedPmtModulePlaneHalfSizeR2[1])*m_GrandPmtModulePitchInv));
             }
-            else if (y >= fabs(m_MixedStdPmtModulePlaneHalfSizeR2 [1]))
+            else if (y >= fabs(m_MixedStdPmtModulePlaneHalfSizeR2[1]))
             {
               aModuleRow = (int) (fabs( (y- (fabs(m_MixedStdPmtModulePlaneHalfSizeR2 [1])))*m_GrandPmtModulePitchInv));
               aModuleRow +=  ( m_Rich2MixedModuleArrayColumnSize[0]+    m_Rich2MixedModuleArrayColumnSize[1]);
@@ -916,7 +913,7 @@ DeRichPMTPanel::findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
         }
         else
         {
-          if ( fabs(y) < fabs( m_MixedStdPmtModulePlaneHalfSizeR2 [3]) )
+          if ( fabs(y) < fabs( m_MixedStdPmtModulePlaneHalfSizeR2[3]) )
           {
 
             aModuleCol = (int) (fabs( (x-m_MixedStdPmtModulePlaneHalfSizeR2[2])*m_PmtModulePitchInv));
@@ -932,9 +929,9 @@ DeRichPMTPanel::findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
             {
               aModuleRow = (int) (fabs( (y-m_MixedPmtModulePlaneHalfSizeR2[3])*m_GrandPmtModulePitchInv));
             }
-            else if ( y <= (-1.0*m_MixedStdPmtModulePlaneHalfSizeR2 [3] ) )
+            else if ( y <= (-1.0*m_MixedStdPmtModulePlaneHalfSizeR2[3] ) )
             {
-              aModuleRow = (int) (fabs(   (y- (-1.0*m_MixedStdPmtModulePlaneHalfSizeR2 [3]))*m_GrandPmtModulePitchInv));
+              aModuleRow = (int) (fabs(   (y- (-1.0*m_MixedStdPmtModulePlaneHalfSizeR2[3]))*m_GrandPmtModulePitchInv));
               aModuleRow += ( m_Rich2MixedModuleArrayColumnSize[0] + m_Rich2MixedModuleArrayColumnSize[1]);
             }
 
@@ -1030,15 +1027,8 @@ DeRichPMTPanel::findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
       if ( aPmtPixelCol < 0 ) aPmtPixelCol = 0;
       if ( aPmtPixelRow < 0 ) aPmtPixelRow = 0;
 
-
-      // info() <<"  pixel col row from local coord to store "<<aPmtPixelCol <<"   "<<aPmtPixelRow<<endmsg;
-
-
       aCh[2] = aPmtPixelCol;
       aCh[3] = aPmtPixelRow;
-
-      //id.setPixelRow(aPmtPixelRow);
-      // id.setPixelCol(aPmtPixelCol);
 
     }
     else
