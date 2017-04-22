@@ -336,9 +336,9 @@ inline int DeRichPMTPanel::getGrandPmtNumFromRowCol(int PRow, int PCol ) const
   // corresponding edges.
 
   if      ( PRow < 0                         ) { PRow = 0; }
-  else if ( PRow >= m_NumGrandPmtInRowCol[1] ) { PRow = m_NumGrandPmtInRowCol[1]-1; }
+  else if ( PRow >= m_NumGrandPmtInRowCol[1] ) { PRow = m_NumGrandPmtInRowCol[1] - 1; }
   if      ( PCol < 0                         ) { PCol = 0; }
-  if      ( PCol >= m_NumGrandPmtInRowCol[0] ) { PCol = m_NumGrandPmtInRowCol[0]-1; }
+  else if ( PCol >= m_NumGrandPmtInRowCol[0] ) { PCol = m_NumGrandPmtInRowCol[0] - 1; }
 
   return ( PCol + ( PRow*m_NumGrandPmtInRowCol[0] ) );
 }
@@ -377,7 +377,7 @@ DeRichPMTPanel::PmtModuleRowColFromModuleNumInPanel( const int aMnum )
   if ( Rich::Rich1 == rich() )
   {
     MRow = (int) (aMnum/m_RichPmtNumModulesInRowCol[0]);
-    MCol = aMnum -MRow*m_RichPmtNumModulesInRowCol[0];
+    MCol = aMnum - MRow*m_RichPmtNumModulesInRowCol[0];
   }
   else //if ( rich() == Rich::Rich2 || rich() == Rich::Rich )
   {
