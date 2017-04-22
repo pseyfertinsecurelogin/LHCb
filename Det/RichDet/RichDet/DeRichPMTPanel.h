@@ -304,7 +304,7 @@ private:
 
 };
 
-inline int DeRichPMTPanel::getPmtNumFromRowCol(int PRow, int PCol ) const
+inline int DeRichPMTPanel::getPmtNumFromRowCol( int PRow, int PCol ) const
 {
   // for values outside the range, set the closest value to the
   // corresponding edges.
@@ -317,7 +317,7 @@ inline int DeRichPMTPanel::getPmtNumFromRowCol(int PRow, int PCol ) const
   return ( PCol + ( PRow*m_NumPmtInRowCol[0] ) );
 }
 
-inline int DeRichPMTPanel::getLensPmtNumFromRowCol(int PRow, int PCol ) const
+inline int DeRichPMTPanel::getLensPmtNumFromRowCol( int PRow, int PCol ) const
 {
   // for values outside the range, set the closest value to the
   // corresponding edges.
@@ -330,7 +330,7 @@ inline int DeRichPMTPanel::getLensPmtNumFromRowCol(int PRow, int PCol ) const
   return ( PCol + ( PRow*m_RichNumLensPmtinModuleRowCol[0] ) );
 }
 
-inline int DeRichPMTPanel::getGrandPmtNumFromRowCol(int PRow, int PCol ) const
+inline int DeRichPMTPanel::getGrandPmtNumFromRowCol( int PRow, int PCol ) const
 {
   // for values outside the range, set the closest value to the
   // corresponding edges.
@@ -343,7 +343,7 @@ inline int DeRichPMTPanel::getGrandPmtNumFromRowCol(int PRow, int PCol ) const
   return ( PCol + ( PRow*m_NumGrandPmtInRowCol[0] ) );
 }
 
-inline int DeRichPMTPanel::PmtModuleNumInPanelFromModuleNum(const int aMnum) const
+inline int DeRichPMTPanel::PmtModuleNumInPanelFromModuleNum( const int aMnum ) const
 {
   return ( Rich::Rich1 == rich() ?
            ( side() == Rich::top ? 
