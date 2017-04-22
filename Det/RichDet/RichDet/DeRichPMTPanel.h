@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <algorithm>
 
 // Gaudi
 #include "GaudiKernel/Point3DTypes.h"
@@ -198,6 +199,16 @@ private:
             m_ModuleIsWithGrandPMT[aModuleNum] : false);
   }
 
+  template< typename TYPE, std::size_t N >
+  decltype(auto) toarray( const std::vector<TYPE>& v ) const
+  {
+    if ( v.size() != N ) 
+    { throw GaudiException("Vector to Array Size error","DeRichPMTPanel",StatusCode::FAILURE); }
+    std::array<TYPE,N> a;
+    std::copy( v.begin(), v.end(), a.begin() );
+    return a;
+  }
+
 private:
 
   /// Container for the PMT Modules as Det Elements
@@ -209,16 +220,16 @@ private:
   /// Container for the PMTAnodes as Det Elements
   std::vector<IDeElemV> m_DePMTAnodes{1,IDeElemV(2,nullptr)};
 
-  std::vector<double> m_PmtModulePlaneHalfSizeR1;
-  std::vector<double> m_PmtModulePlaneHalfSizeR2;
+  std::array<double,4> m_PmtModulePlaneHalfSizeR1 = {{}};
+  std::array<double,4> m_PmtModulePlaneHalfSizeR2 = {{}};
   double m_PmtModulePitch{0};
   double m_PmtModulePitchInv{0};
   double m_PmtPitch{0};
   double m_PmtPitchInv{0};
   std::array<int,4> m_RichPmtNumModulesInRowCol = {{}};
-  std::vector<int> m_RichPmtModuleCopyNumBeginPanel{4,0};
-  std::vector<int> m_RichPmtModuleCopyNumEndPanel{4,0};
-  std::vector<double> m_RichPmtModuleActiveAreaHalfSize{2,0};
+  std::array<int,4> m_RichPmtModuleCopyNumBeginPanel = {{}};
+  std::array<int,4> m_RichPmtModuleCopyNumEndPanel = {{}};
+  std::array<double,2> m_RichPmtModuleActiveAreaHalfSize = {{}};
   std::array<int,2> m_NumPmtInRowCol = {{}};
   std::array<int,4> m_NumPmtModuleInRich = {{}};
   int m_NumPmtInRichModule{0};
@@ -257,10 +268,10 @@ private:
   double m_PmtModuleWithLensPitch{0};
   double m_PmtModuleWithLensPitchInv{0};
   double m_PmtLensPitch{0};
-  std::vector<double> m_Rich1PmtPanelWithLensXSize{2,0};
-  std::vector<double> m_Rich1PmtPanelWithLensYSize{2,0};
-  std::vector<int>    m_Rich1PmtPanelWithLensColSize{2,0};
-  std::vector<int>    m_RichNumLensPmtinModuleRowCol{2,0};
+  std::array<double,2> m_Rich1PmtPanelWithLensXSize = {{}};
+  std::array<double,2> m_Rich1PmtPanelWithLensYSize = {{}};
+  std::array<int,2>    m_Rich1PmtPanelWithLensColSize = {{}};
+  std::array<int,2>    m_RichNumLensPmtinModuleRowCol = {{}};
   double m_Rich1LensMagnificationFactor{0};
   double m_Rich1LensDemagnificationFactor{0};
 
@@ -268,12 +279,12 @@ private:
   int   m_Rich2ArrayConfig{0};
   bool  m_Rich2UseMixedModule{false};
 
-  std::vector<double> m_GrandPmtModulePlaneHalfSizeR2;
-  std::vector<double> m_MixedPmtModulePlaneHalfSizeR2;
-  std::vector<double> m_MixedStdPmtModulePlaneHalfSizeR2;
+  std::array<double,4> m_GrandPmtModulePlaneHalfSizeR2 = {{}};
+  std::array<double,4> m_MixedPmtModulePlaneHalfSizeR2 = {{}};
+  std::array<double,4> m_MixedStdPmtModulePlaneHalfSizeR2 = {{}};
   double m_GrandPmtModulePitch{0};
   double m_GrandPmtModulePitchInv{0};
-  std::vector<double> m_RichGrandPmtModuleActiveAreaHalfSize{2,0};
+  std::array<double,2> m_RichGrandPmtModuleActiveAreaHalfSize = {{}};
   double m_GrandPmtPitch{0};
   double m_GrandPmtPitchInv{0};
   double m_GrandPmtAnodeXSize{0};
@@ -291,7 +302,7 @@ private:
   double m_GrandPmtAnodeEffectiveYPixelSizeInv{0};
   double m_GrandPmtMasterLateralSize{0};
   int m_GrandNumPmtInRichModule{0};
-  std::vector<int> m_NumGrandPmtInRowCol{2,0};
+  std::array<int,2> m_NumGrandPmtInRowCol = {{}};
   int m_Rich2TotNumGrandPmts{0};
   int m_Rich2TotNumStdPmts{0};
   int m_Rich2TotNumGrandModules{0};
