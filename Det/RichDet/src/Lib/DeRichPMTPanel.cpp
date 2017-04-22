@@ -957,9 +957,9 @@ DeRichPMTPanel::findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
 
     const auto xp = inModule.x();
     const auto yp = inModule.y();
-    int aPmtCol  = -1;
-    int aPmtRow  = -1;
-    int  aPmtNum = -1;
+    int aPmtCol = -1;
+    int aPmtRow = -1;
+    int aPmtNum = -1;
 
     if ( aModuleWithLens== 0 )
     {
@@ -986,8 +986,8 @@ DeRichPMTPanel::findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
 
     if ( aPmtNum > -1 )
     {
-      aCh [0] = aModuleNum;
-      aCh [1] = aPmtNum;
+      aCh[0] = aModuleNum;
+      aCh[1] = aPmtNum;
 
       //       id.setPD(aModuleNum,aPmtNum);
 
