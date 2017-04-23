@@ -1,16 +1,20 @@
 #include "LinePersistenceSvcCommon.h"
 
 ILinePersistenceSvc::Locations
-LinePersistenceSvcCommon::locationsToPersistImpl(const LHCb::HltDecReports& hdr, const NameListPerLine& locationsMap) const {
+LinePersistenceSvcCommon::locationsToPersistImpl(
+  const LHCb::HltDecReports& hdr, const std::set<std::string>& lines,
+  const NameListPerLine& locationsMap) const
+{
   ILinePersistenceSvc::Locations locations;
   for (const auto& pair : hdr) {
-    if (pair.second.decision()) {
+    if (pair.second.decision() && lines.count(pair.first)) {
       auto lineLocations = locationsMap.find(pair.first);
       if (lineLocations == std::end(locationsMap)) {
         throw GaudiException("Decision name not in Locations map.",
                              this->name(), StatusCode::FAILURE);
       }
-      locations.push_back(lineLocations->second);
+      locations.insert(std::begin(lineLocations->second),
+                       std::end(lineLocations->second));
     }
   }
   return locations;
@@ -18,10 +22,13 @@ LinePersistenceSvcCommon::locationsToPersistImpl(const LHCb::HltDecReports& hdr,
 
 
 ILinePersistenceSvc::RawBanks
-LinePersistenceSvcCommon::rawBanksToPersistImpl(const LHCb::HltDecReports& hdr, const RawBanksPerLine& rawBanksMap) const {
+LinePersistenceSvcCommon::rawBanksToPersistImpl(
+  const LHCb::HltDecReports& hdr, const std::set<std::string>& lines,
+  const RawBanksPerLine& rawBanksMap) const
+{
   ILinePersistenceSvc::RawBanks rawBanks;
   for (const auto& pair : hdr) {
-    if (pair.second.decision()) {
+    if (pair.second.decision() && lines.count(pair.first)) {
       auto lineRawBanks = rawBanksMap.find(pair.first);
       if (lineRawBanks == std::end(rawBanksMap)) {
         throw GaudiException("Decision name not in RawBankTypes map.",
@@ -35,7 +42,9 @@ LinePersistenceSvcCommon::rawBanksToPersistImpl(const LHCb::HltDecReports& hdr, 
 
 
 LinePersistenceSvcCommon::RawBanksPerLine
-LinePersistenceSvcCommon::typeNamesToBitset(const NameListPerLine& rawBankTypesMap) const {
+LinePersistenceSvcCommon::typeNamesToBitset(
+  const NameListPerLine& rawBankTypesMap) const
+{
   RawBanksPerLine result;
   for (const auto& pair : rawBankTypesMap) {
     ILinePersistenceSvc::RawBanks rawBanks{};

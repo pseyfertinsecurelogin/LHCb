@@ -15,8 +15,10 @@ public:
   StatusCode initialize() override;
   StatusCode finalize() override;
 
-  Locations locationsToPersist(const LHCb::HltDecReports& hdr) const override;
-  RawBanks rawBanksToPersist(const LHCb::HltDecReports& hdr) const override;
+  Locations locationsToPersist(const LHCb::HltDecReports& hdr,
+    const std::set<std::string>& lines) const override;
+  RawBanks rawBanksToPersist(const LHCb::HltDecReports& hdr,
+    const std::set<std::string>& lines) const override;
 
 private:
   using LineRequests = std::tuple<NameListPerLine, RawBanksPerLine>;
@@ -60,16 +62,20 @@ StatusCode TCKLinePersistenceSvc::finalize() {
 
 
 ILinePersistenceSvc::Locations
-TCKLinePersistenceSvc::locationsToPersist(const LHCb::HltDecReports& hdr) const {
+TCKLinePersistenceSvc::locationsToPersist(
+  const LHCb::HltDecReports& hdr, const std::set<std::string>& lines) const
+{
   auto requests = lineRequests(hdr.configuredTCK());
-  return locationsToPersistImpl(hdr, std::get<0>(requests));
+  return locationsToPersistImpl(hdr, lines, std::get<0>(requests));
 }
 
 
 ILinePersistenceSvc::RawBanks
-TCKLinePersistenceSvc::rawBanksToPersist(const LHCb::HltDecReports& hdr) const {
+TCKLinePersistenceSvc::rawBanksToPersist(
+  const LHCb::HltDecReports& hdr, const std::set<std::string>& lines) const
+{
   auto requests = lineRequests(hdr.configuredTCK());
-  return rawBanksToPersistImpl(hdr, std::get<1>(requests));
+  return rawBanksToPersistImpl(hdr, lines, std::get<1>(requests));
 }
 
 

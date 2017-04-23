@@ -11,8 +11,10 @@ class HltLinePersistenceSvc : public extends<Service, ILinePersistenceSvc>,
 public:
   HltLinePersistenceSvc(const std::string& name, ISvcLocator* svcLocator);
 
-  Locations locationsToPersist(const LHCb::HltDecReports& hdr) const override;
-  RawBanks rawBanksToPersist(const LHCb::HltDecReports& hdr) const override;
+  Locations locationsToPersist(const LHCb::HltDecReports& hdr,
+    const std::set<std::string>& lines) const override;
+  RawBanks rawBanksToPersist(const LHCb::HltDecReports& hdr,
+    const std::set<std::string>& lines) const override;
 
 private:
   Gaudi::Property<NameListPerLine> m_locations{this, "Locations", {},
@@ -36,12 +38,16 @@ HltLinePersistenceSvc::HltLinePersistenceSvc(const std::string& name, ISvcLocato
 
 
 ILinePersistenceSvc::Locations
-HltLinePersistenceSvc::locationsToPersist(const LHCb::HltDecReports& hdr) const {
-  return locationsToPersistImpl(hdr, m_locations);
+HltLinePersistenceSvc::locationsToPersist(
+  const LHCb::HltDecReports& hdr, const std::set<std::string>& lines) const
+{
+  return locationsToPersistImpl(hdr, lines, m_locations);
 }
 
 
 ILinePersistenceSvc::RawBanks
-HltLinePersistenceSvc::rawBanksToPersist(const LHCb::HltDecReports& hdr) const {
-  return rawBanksToPersistImpl(hdr, m_rawBanks);
+HltLinePersistenceSvc::rawBanksToPersist(
+  const LHCb::HltDecReports& hdr, const std::set<std::string>& lines) const
+{
+  return rawBanksToPersistImpl(hdr, lines, m_rawBanks);
 }
