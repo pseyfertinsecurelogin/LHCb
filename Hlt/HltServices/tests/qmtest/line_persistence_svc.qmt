@@ -1,0 +1,14 @@
+<?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<!--
+#######################################################
+# Check that HltLinePersistenceSvc behaves as expected.
+#
+# Author: Rosen Matev
+#######################################################
+-->
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+  <argument name="program"><text>python</text></argument>
+  <argument name="args"><set>
+    <text>$HLTSERVICESROOT/tests/options/line_persistence_svc.py</text>
+  </set></argument>
+</extension>
