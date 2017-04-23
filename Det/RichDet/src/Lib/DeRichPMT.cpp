@@ -171,7 +171,7 @@ StatusCode DeRichPMT::getPMTParameters()
   const double Rich1Rich2ZDivideLimit = 6000.0;
   
   // Which RICH are we in ?
-  const auto atestPoint = Gaudi::XYZPoint (0.0,0.0,0.0);
+  const Gaudi::XYZPoint atestPoint(0.0,0.0,0.0);
   const auto atestGlobalPoint = geometry()->toGlobalMatrix() * atestPoint ;
   m_rich = ( atestGlobalPoint.z() > Rich1Rich2ZDivideLimit ? Rich::Rich2 : Rich::Rich1 );
 
@@ -326,7 +326,7 @@ DeRichPMT::getAnodeHitCoordFromPixelNum( const double fracPixelCol,
   const auto xh = ( fracPixelCol - (m_PmtNumPixCol-1) * 0.5 ) * m_PmtEffectivePixelXSize;
   const auto yh = ( fracPixelRow - (m_PmtNumPixRow-1) * 0.5 ) * m_PmtEffectivePixelYSize;
   const auto zh = m_PmtAnodeHalfThickness;
-  return Gaudi::XYZPoint( xh,yh,zh );
+  return { xh,yh,zh };
 }
 
 //============================================================================================
@@ -346,7 +346,7 @@ DeRichPMT::getAnodeHitCoordFromGrandPixelNum( const double fracPixelCol,
   const auto yh = ( fracPixelRow - (m_PmtNumPixRow-1) * 0.5 ) * aYEffPixel;
   const auto zh = m_GrandPmtAnodeHalfThickness;
 
-  return Gaudi::XYZPoint( xh,yh,zh );
+  return { xh,yh,zh };
 }
 
 //=============================================================================
