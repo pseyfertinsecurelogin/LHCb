@@ -470,8 +470,8 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
 
 
     m_PmtModulePlaneHalfSizeR2 = toarray<double,4>( firstRich->param<std::vector<double> >("Rich2PMTModulePlaneHalfSize") );
-    m_PmtModulePitch = firstRich->param<double>("RichPmtModulePitch");
-    m_PmtModulePitchInv = ( fabs(m_PmtModulePitch)>0 ? 1.0/m_PmtModulePitch : 0.0 );
+    const auto PmtModulePitch = firstRich->param<double>("RichPmtModulePitch");
+    m_PmtModulePitchInv = ( fabs(PmtModulePitch)>0 ? 1.0/PmtModulePitch : 0.0 );
     const auto aRich2PmtNumModulesInRow = firstRich->param<int> ( "Rich2NumberOfModulesInRow" );
     const auto aRich2PmtNumModulesInCol = firstRich->param<int> ( "Rich2NumberOfModulesInCol" );
     m_RichPmtNumModulesInRowCol[2]=aRich2PmtNumModulesInRow;
@@ -487,8 +487,8 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
     m_RichPmtModuleActiveAreaHalfSize=
       toarray<double,2>( firstRich->param<std::vector<double> >("RichPMTModuleActiveAreaHalfSize") );
 
-    m_PmtPitch=firstRich->param<double>("RichPmtPitch");
-    m_PmtPitchInv = ( fabs(m_PmtPitch)>0 ? 1.0/m_PmtPitch : 0.0 );
+    const auto PmtPitch = firstRich->param<double>("RichPmtPitch");
+    m_PmtPitchInv = ( fabs(PmtPitch)>0 ? 1.0/PmtPitch : 0.0 );
 
     m_NumPmtInRowCol[0]  = firstRich->param<int> ("RichPmtNumInModuleRow");
     m_NumPmtInRowCol[1]  = firstRich->param<int> ("RichPmtNumInModuleCol");
@@ -514,14 +514,15 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
     m_PmtAnodeYEdge = -0.5*(m_PmtAnodeYSize+m_PmtPixelGap);
     m_AnodeXPixelSize = firstRich->param<double> ("RichPmtPixelXSize" );
     m_AnodeYPixelSize = firstRich->param<double> ("RichPmtPixelYSize" );
-    m_PmtAnodeEffectiveXPixelSize = m_AnodeXPixelSize+m_PmtPixelGap;
-    m_PmtAnodeEffectiveYPixelSize = m_AnodeYPixelSize+m_PmtPixelGap;
-    m_PmtAnodeEffectiveXPixelSizeInv = 1.0/m_PmtAnodeEffectiveXPixelSize;
-    m_PmtAnodeEffectiveYPixelSizeInv = 1.0/m_PmtAnodeEffectiveYPixelSize;
+    const auto PmtAnodeEffectiveXPixelSize = m_AnodeXPixelSize+m_PmtPixelGap;
+    const auto PmtAnodeEffectiveYPixelSize = m_AnodeYPixelSize+m_PmtPixelGap;
+    m_PmtAnodeEffectiveXPixelSizeInv = 1.0/PmtAnodeEffectiveXPixelSize;
+    m_PmtAnodeEffectiveYPixelSizeInv = 1.0/PmtAnodeEffectiveYPixelSize;
     m_PmtMasterLateralSize = firstRich->param<double>("RichPmtMasterLateralSize" );
-    m_Rich1TotNumPmts = firstRich->param<int>("Rich1TotNumPmt");
-    m_Rich2TotNumPmts = firstRich->param<int>("Rich2TotNumPmt");
-    m_Rich2TotNumStdPmts = m_Rich2TotNumPmts ;
+    const auto Rich1TotNumPmts = firstRich->param<int>("Rich1TotNumPmt");
+    const auto Rich2TotNumPmts = firstRich->param<int>("Rich2TotNumPmt");
+    m_totNumPMTs = Rich1TotNumPmts + Rich2TotNumPmts;
+    m_Rich2TotNumStdPmts = Rich2TotNumPmts ;
     m_RichPmtQuartzThickness = firstRich->param<double>("RichPmtQuartzZSize" );
     m_RichPmtQuartzLocalZInPmt= firstRich->param<double>("RichPmtQuartzZPosInPmt");
 
@@ -531,18 +532,18 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
       {
 
         m_GrandPmtModulePlaneHalfSizeR2 = toarray<double,4>( firstRich->param<std::vector<double> >("Rich2GrandPMTModulePlaneHalfSize") );
-        m_GrandPmtModulePitch = firstRich->param<double>("RichGrandPmtModulePitch");
-        m_GrandPmtModulePitchInv = ( fabs(m_GrandPmtModulePitch)>0 ? 1.0/m_GrandPmtModulePitch : 0.0 );
+        const auto GrandPmtModulePitch = firstRich->param<double>("RichGrandPmtModulePitch");
+        m_GrandPmtModulePitchInv = ( fabs(GrandPmtModulePitch)>0 ? 1.0/GrandPmtModulePitch : 0.0 );
         m_RichGrandPmtModuleActiveAreaHalfSize =
           toarray<double,2>( firstRich->param<std::vector<double> >("RichGrandPMTModuleActiveAreaHalfSize") );
-        m_GrandPmtPitch=firstRich->param<double>("RichGrandPmtPitch");
-        m_GrandPmtPitchInv = ( fabs(m_GrandPmtPitch)>0 ? 1.0/m_GrandPmtPitch : 0.0 );
+        const auto GrandPmtPitch = firstRich->param<double>("RichGrandPmtPitch");
+        m_GrandPmtPitchInv = ( fabs(GrandPmtPitch)>0 ? 1.0/GrandPmtPitch : 0.0 );
 
         m_Rich2TotNumGrandModules=  firstRich->param<int> ("Rich2TotNumGrandModules" );
         m_Rich2TotNumStdModules=0;
         m_totNumPmtModuleInRich = aRich1NumModules + m_Rich2TotNumGrandModules;
-        m_NumPmtModuleInRich[2]=m_Rich2TotNumGrandModules/2; //rich2left
-        m_NumPmtModuleInRich[3]=m_Rich2TotNumGrandModules/2; //rich2right
+        m_NumPmtModuleInRich[2] = m_Rich2TotNumGrandModules/2; //rich2left
+        m_NumPmtModuleInRich[3] = m_Rich2TotNumGrandModules/2; //rich2right
 
 
         m_GrandPmtAnodeXSize = firstRich->param<double>("RichGrandPmtAnodeXSize");
@@ -555,10 +556,10 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
         m_GrandPmtAnodeYEdge = -0.5*(m_GrandPmtAnodeYSize+m_GrandPmtPixelGap);
         m_GrandAnodeXPixelSize = firstRich->param<double> ("RichGrandPmtPixelXSize" );
         m_GrandAnodeYPixelSize = firstRich->param<double> ("RichGrandPmtPixelYSize" );
-        m_GrandPmtAnodeEffectiveXPixelSize= m_GrandAnodeXPixelSize+m_GrandPmtPixelGap;
-        m_GrandPmtAnodeEffectiveYPixelSize= m_GrandAnodeYPixelSize+m_GrandPmtPixelGap;
-        m_GrandPmtAnodeEffectiveXPixelSizeInv = 1.0/m_GrandPmtAnodeEffectiveXPixelSize;
-        m_GrandPmtAnodeEffectiveYPixelSizeInv = 1.0/m_GrandPmtAnodeEffectiveYPixelSize;
+        const auto GrandPmtAnodeEffectiveXPixelSize = m_GrandAnodeXPixelSize+m_GrandPmtPixelGap;
+        const auto GrandPmtAnodeEffectiveYPixelSize = m_GrandAnodeYPixelSize+m_GrandPmtPixelGap;
+        m_GrandPmtAnodeEffectiveXPixelSizeInv = 1.0/GrandPmtAnodeEffectiveXPixelSize;
+        m_GrandPmtAnodeEffectiveYPixelSizeInv = 1.0/GrandPmtAnodeEffectiveYPixelSize;
         m_GrandPmtMasterLateralSize = firstRich->param<double>("RichGrandPmtMasterLateralSize" );
         m_GrandNumPmtInRichModule = firstRich->param<int> ("RichTotNumGrandPmtInModule");
 
@@ -597,22 +598,22 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
 
     // setup the Lens Flag.
 
-    m_totNumPmtModuleInRich1 = firstRich-> param<int> ("Rich1TotNumModules" );
+    m_totNumPmtModuleInRich1 = firstRich->param<int> ("Rich1TotNumModules" );
 
-    m_Rich1PmtLensPresence=0;
+    m_Rich1PmtLensPresence = 0;
     m_Rich1PmtLensModuleCol.clear();
 
     if ( exists("Rich1PmtLensPresence") )
     {
-      m_Rich1PmtLensPresence  = firstRich->  param<int>("Rich1PmtLensPresence");
+      m_Rich1PmtLensPresence = firstRich->param<int>("Rich1PmtLensPresence");
     }
 
     if ( m_Rich1PmtLensPresence >= 1 ) {
 
-      m_Rich1PmtLensModuleCol = firstRich->  param<std::vector<int> >("Rich1PmtLensModuleColumns");
+      m_Rich1PmtLensModuleCol = firstRich->param<std::vector<int> >("Rich1PmtLensModuleColumns");
       m_PmtMasterWithLensLateralSize = firstRich->param<double>("RichLensPmtMasterLateralSize" );
-      m_PmtModuleWithLensPitch = firstRich->param<double>("RichLensPmtModulePitch");
-      m_PmtModuleWithLensPitchInv = ( fabs(m_PmtModuleWithLensPitch)>0 ? 1.0/m_PmtModuleWithLensPitch : 0.0 );
+      const auto PmtModuleWithLensPitch = firstRich->param<double>("RichLensPmtModulePitch");
+      m_PmtModuleWithLensPitchInv = ( fabs(PmtModuleWithLensPitch)>0 ? 1.0/PmtModuleWithLensPitch : 0.0 );
       m_PmtLensPitch=firstRich->param<double>("RichLensPmtPitch");
       m_Rich1PmtPanelWithLensXSize = toarray<double,2>( firstRich->param<std::vector<double> > ("Rich1PMTModuleLensPlaneXEdge") );
       m_Rich1PmtPanelWithLensYSize = toarray<double,2>( firstRich->param<std::vector<double> > ("Rich1PMTModuleLensPlaneYEdge") );
@@ -621,9 +622,9 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
 
       m_RichNumLensPmtinModuleRowCol[0] =  firstRich->param<int> ( "RichLensPmtNumInModuleRow" );
       m_RichNumLensPmtinModuleRowCol[1] =  firstRich->param<int> ( "RichLensPmtNumInModuleCol" );
-      m_Rich1LensMagnificationFactor = firstRich->param<double> ("RichPmtLensMagnficationFactor" );
-      m_Rich1LensDemagnificationFactor = ( fabs(m_Rich1LensMagnificationFactor)>0 ?
-                                           1.0/m_Rich1LensMagnificationFactor : 0.0 );
+      const auto Rich1LensMagnificationFactor = firstRich->param<double> ("RichPmtLensMagnficationFactor" );
+      m_Rich1LensDemagnificationFactor = ( fabs(Rich1LensMagnificationFactor)>0 ?
+                                           1.0/Rich1LensMagnificationFactor : 0.0 );
 
       Rich1SetupPMTModulesWithLens();
 
@@ -1101,7 +1102,7 @@ DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
   bool isInPmtAnodeAcc = false;
   if ( isInPanelAcc )
   {
-    int aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone(aC[0]);
+    const auto aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone(aC[0]);
     const auto coordinPmt = ( (m_DePMTs [aModuleNumInPanel] [aC[1]]) ->
                               geometry()->toLocalMatrix() * windowPointGlobal );
 
@@ -1274,15 +1275,13 @@ const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNu
 {
   const DeRichPMT * dePmt = nullptr;
 
-  const unsigned int aTotNumPmt = m_Rich1TotNumPmts + m_Rich2TotNumPmts;
-
-  if ( PmtCopyNumber.data() < aTotNumPmt )
+  if ( PmtCopyNumber.data() < m_totNumPMTs )
   {
     const auto Mnum = (unsigned int) (PmtCopyNumber.data()/m_NumPmtInRichModule);
-    const unsigned int MNumInCurPanel = PmtModuleNumInPanelFromModuleNumAlone(Mnum);
-    const auto Pnum =  PmtCopyNumber.data() - ( Mnum * m_NumPmtInRichModule );
+    const auto MNumInCurPanel = PmtModuleNumInPanelFromModuleNumAlone(Mnum);
+    const auto Pnum = PmtCopyNumber.data() - ( Mnum * m_NumPmtInRichModule );
 
-    if ( UNLIKELY( MNumInCurPanel >= m_DePMTs.size() ||
+    if ( UNLIKELY( MNumInCurPanel >= (int)m_DePMTs.size() ||
                    Pnum >= m_DePMTs[MNumInCurPanel].size() ) )
     {
       std::ostringstream mess;
