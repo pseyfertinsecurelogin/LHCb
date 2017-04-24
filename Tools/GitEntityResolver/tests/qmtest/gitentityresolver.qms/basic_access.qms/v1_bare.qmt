@@ -43,7 +43,7 @@ DetCondTest::Te...   INFO /dd/TestCondition was updated
 LoadDDDB             INFO Loading the DDDB
 ToolSvc.GitDDDB     DEBUG resolveEntity(systemId = "git:/changing.xml")
 ToolSvc.GitDDDB     DEBUG open("git:/changing.xml")
-ToolSvc.GitDDDB      INFO opening Git repository '{repository}'
+ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
 '''.format(repository=repository),
 id='GitEntityResolver.reopen_after_BeginEvent')
 

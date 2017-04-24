@@ -142,11 +142,12 @@ std::ostream& operator<<( std::ostream& s, const GitEntityResolver::IOVInfo& inf
 #define VERBOSE_MSG ON_VERBOSE verbose()
 
 GitEntityResolver::GitEntityResolver( const std::string& type, const std::string& name, const IInterface* parent )
-    : base_class( type, name, parent ),
-    m_repository{ [this]() -> git_repository_ptr::storage_t {
-      info() << "opening Git repository '" << m_pathToRepository.value() << "'" << endmsg;
-      auto res = git_call<git_repository_ptr::storage_t>( this->name(), "cannot open repository", m_pathToRepository.value(),
-                                                          git_repository_open, m_pathToRepository.value().c_str() );
+    : base_class( type, name, parent ), m_repository{[this]() -> git_repository_ptr::storage_t {
+      ( FSMState() < Gaudi::StateMachine::RUNNING ? info() : debug() ) << "opening Git repository '"
+                                                                       << m_pathToRepository.value() << "'" << endmsg;
+      auto res =
+          git_call<git_repository_ptr::storage_t>( this->name(), "cannot open repository", m_pathToRepository.value(),
+                                                   git_repository_open, m_pathToRepository.value().c_str() );
       if ( UNLIKELY( !res ) )
         throw GaudiException( "invalid Git repository: '" + m_pathToRepository.value() + "'", this->name(),
                               StatusCode::FAILURE );
