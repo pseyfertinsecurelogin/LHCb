@@ -110,8 +110,7 @@ private:
   /// Returns the PD number for the given RichSmartID
   inline Rich::DAQ::HPDCopyNumber _pdNumber( const LHCb::RichSmartID& smartID ) const 
   {
-    return Rich::DAQ::HPDCopyNumber( smartID.rich()  == rich() && 
-                                     smartID.panel() == side() ?
+    return Rich::DAQ::HPDCopyNumber( smartID.rich() == rich() && smartID.panel() == side() ?
                                      ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() :
                                      nPDs() + 1 );
   }
@@ -220,11 +219,12 @@ private:
   /// Container for the PMTAnodes as Det Elements
   std::vector<IDeElemV> m_DePMTAnodes{1,IDeElemV(2,nullptr)};
 
+  /// Total number of PMT
+  unsigned int m_totNumPMTs{0};
+
   std::array<double,4> m_PmtModulePlaneHalfSizeR1 = {{}};
   std::array<double,4> m_PmtModulePlaneHalfSizeR2 = {{}};
-  double m_PmtModulePitch{0};
   double m_PmtModulePitchInv{0};
-  double m_PmtPitch{0};
   double m_PmtPitchInv{0};
   std::array<int,4> m_RichPmtNumModulesInRowCol = {{}};
   std::array<int,4> m_RichPmtModuleCopyNumBeginPanel = {{}};
@@ -243,8 +243,6 @@ private:
   double m_PmtAnodeYEdge{0};
   double m_AnodeXPixelSize{0};
   double m_AnodeYPixelSize{0};
-  double m_PmtAnodeEffectiveXPixelSize{0};
-  double m_PmtAnodeEffectiveYPixelSize{0};
   double m_PmtAnodeEffectiveXPixelSizeInv{0};
   double m_PmtAnodeEffectiveYPixelSizeInv{0};
   double m_PmtMasterLateralSize{0};
@@ -258,21 +256,17 @@ private:
 
   Gaudi::Plane3D m_localPlane;
   Gaudi::XYZVector m_localPlaneNormal;
-  // Gaudi::Plane3D m_localPlane2;
-  int m_Rich1TotNumPmts{0};
-  int m_Rich2TotNumPmts{0};
+ 
   Gaudi::Plane3D m_detectionPlane_exterior;
   // Access info related to PMT Lens flag
 
   double m_PmtMasterWithLensLateralSize{0};
-  double m_PmtModuleWithLensPitch{0};
   double m_PmtModuleWithLensPitchInv{0};
   double m_PmtLensPitch{0};
   std::array<double,2> m_Rich1PmtPanelWithLensXSize = {{}};
   std::array<double,2> m_Rich1PmtPanelWithLensYSize = {{}};
   std::array<int,2>    m_Rich1PmtPanelWithLensColSize = {{}};
   std::array<int,2>    m_RichNumLensPmtinModuleRowCol = {{}};
-  double m_Rich1LensMagnificationFactor{0};
   double m_Rich1LensDemagnificationFactor{0};
 
   bool  m_Rich2UseGrandModule{false};
@@ -282,10 +276,8 @@ private:
   std::array<double,4> m_GrandPmtModulePlaneHalfSizeR2 = {{}};
   std::array<double,4> m_MixedPmtModulePlaneHalfSizeR2 = {{}};
   std::array<double,4> m_MixedStdPmtModulePlaneHalfSizeR2 = {{}};
-  double m_GrandPmtModulePitch{0};
   double m_GrandPmtModulePitchInv{0};
   std::array<double,2> m_RichGrandPmtModuleActiveAreaHalfSize = {{}};
-  double m_GrandPmtPitch{0};
   double m_GrandPmtPitchInv{0};
   double m_GrandPmtAnodeXSize{0};
   double m_GrandPmtAnodeYSize{0};
@@ -296,8 +288,6 @@ private:
   double m_GrandPmtAnodeYEdge{0};
   double m_GrandAnodeXPixelSize{0};
   double m_GrandAnodeYPixelSize{0};
-  double m_GrandPmtAnodeEffectiveXPixelSize{0};
-  double m_GrandPmtAnodeEffectiveYPixelSize{0};
   double m_GrandPmtAnodeEffectiveXPixelSizeInv{0};
   double m_GrandPmtAnodeEffectiveYPixelSizeInv{0};
   double m_GrandPmtMasterLateralSize{0};
