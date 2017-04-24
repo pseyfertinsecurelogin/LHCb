@@ -104,6 +104,7 @@ private:
   using IDRiPMTV   = std::vector<DeRichPMT*>;
   using ArraySetup = std::array<int,4>;
   using RowCol     = std::array<int,2>;
+  using XYArray    = std::array<double,2>;
 
 private:
 
@@ -221,6 +222,9 @@ private:
 
   /// Total number of PMT
   unsigned int m_totNumPMTs{0};
+
+  /// (X,Y) panel hald sizes for this panel
+  XYArray m_xyHalfSize = {{}};
 
   std::array<double,4> m_PmtModulePlaneHalfSizeR1 = {{}};
   std::array<double,4> m_PmtModulePlaneHalfSizeR2 = {{}};
@@ -357,14 +361,14 @@ inline int DeRichPMTPanel::PmtModuleNumInPanelFromModuleNum( const int aMnum ) c
 
 inline int DeRichPMTPanel::PmtModuleNumInPanelFromModuleNumAlone( const int aMnum ) const
 {
-  return ( aMnum  >= m_RichPmtModuleCopyNumBeginPanel[0] &&
-           aMnum  <= m_RichPmtModuleCopyNumEndPanel[0]   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[0] :
-           aMnum  >= m_RichPmtModuleCopyNumBeginPanel[1] &&
-           aMnum  <= m_RichPmtModuleCopyNumEndPanel[1]   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[1] :
-           aMnum  >= m_RichPmtModuleCopyNumBeginPanel[2] &&
-           aMnum  <= m_RichPmtModuleCopyNumEndPanel[2]   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[2] :
-           aMnum  >= m_RichPmtModuleCopyNumBeginPanel[3] &&
-           aMnum  <= m_RichPmtModuleCopyNumEndPanel[3]   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[3] :
+  return ( aMnum >= m_RichPmtModuleCopyNumBeginPanel[0] &&
+           aMnum <= m_RichPmtModuleCopyNumEndPanel[0]   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[0] :
+           aMnum >= m_RichPmtModuleCopyNumBeginPanel[1] &&
+           aMnum <= m_RichPmtModuleCopyNumEndPanel[1]   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[1] :
+           aMnum >= m_RichPmtModuleCopyNumBeginPanel[2] &&
+           aMnum <= m_RichPmtModuleCopyNumEndPanel[2]   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[2] :
+           aMnum >= m_RichPmtModuleCopyNumBeginPanel[3] &&
+           aMnum <= m_RichPmtModuleCopyNumEndPanel[3]   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[3] :
            -1 );
 }
 
@@ -390,9 +394,43 @@ DeRichPMTPanel::PmtModuleRowColFromModuleNumInPanel( const int aMnum )
 }
 
 inline Gaudi::XYZPoint
-DeRichPMTPanel::DemagnifyFromLens(const Gaudi::XYZPoint& aLensPoint) const
+DeRichPMTPanel::DemagnifyFromLens( const Gaudi::XYZPoint& aLensPoint ) const
 {
   return { aLensPoint.x() * m_Rich1LensDemagnificationFactor,
            aLensPoint.y() * m_Rich1LensDemagnificationFactor,
            aLensPoint.z() };
+}
+
+inline bool DeRichPMTPanel::isInPmtPanel( const Gaudi::XYZPoint& aPointInPanel ) const
+{
+  return ( fabs(aPointInPanel.x()) < m_xyHalfSize[0] &&
+           fabs(aPointInPanel.y()) < m_xyHalfSize[1] );
+}
+
+inline bool DeRichPMTPanel::isInPmt( const Gaudi::XYZPoint& aPointInPmt, 
+                                     const bool aFlagGrandPMT ) const
+{
+  const auto aPmtH = ( ( aFlagGrandPMT && rich() == Rich::Rich2 ) ?
+                       ( m_GrandPmtMasterLateralSize*0.5) : (m_PmtMasterLateralSize*0.5) );
+  return ( fabs(aPointInPmt.x()) < aPmtH && 
+           fabs(aPointInPmt.y()) < aPmtH );
+}
+
+inline bool DeRichPMTPanel::isInPmtAnodeLateralAcc( const Gaudi::XYZPoint& aPointInPmtAnode, 
+                                                    const bool aFlagGrandPMT  ) const
+{
+  const auto xp = fabs(aPointInPmtAnode.x());
+  const auto yp = fabs(aPointInPmtAnode.y());
+  return ( aFlagGrandPMT  && rich() == Rich::Rich2 ?
+           ( ( xp < fabs( m_GrandPmtAnodeXEdge ) ) &&
+             ( yp < fabs( m_GrandPmtAnodeYEdge ) ) ) :
+           ( ( xp < fabs( m_PmtAnodeXEdge ) ) &&
+             ( yp < fabs( m_PmtAnodeYEdge ) ) ) );
+}
+
+inline Gaudi::XYZPoint 
+DeRichPMTPanel::detPointOnAnode( const LHCb::RichSmartID smartID ) const
+{
+  const auto* aPMT = dePMT( _pdNumber( smartID ) );
+  return ( aPMT ? aPMT->detPointOnAnode(smartID) : Gaudi::XYZPoint(0,0,0) );
 }
