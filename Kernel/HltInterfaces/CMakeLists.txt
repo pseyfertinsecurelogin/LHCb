@@ -4,6 +4,7 @@
 gaudi_subdir(HltInterfaces v6r6)
 
 gaudi_depends_on_subdirs(Event/DAQEvent
+                         Event/HltEvent
                          GaudiKernel
                          Kernel/LHCbMath)
 
@@ -18,12 +19,12 @@ gaudi_add_library(HltInterfaces
                   src/*.cpp
                   PUBLIC_HEADERS Kernel
                   INCLUDE_DIRS Boost
-                  LINK_LIBRARIES Boost DAQEventLib GaudiKernel LHCbMathLib)
+                  LINK_LIBRARIES Boost DAQEventLib HltEvent GaudiKernel LHCbMathLib)
 
 gaudi_add_dictionary(HltInterfaces
                      dict/HltInterfacesDict.h
                      dict/HltInterfacesDict.xml
                      INCLUDE_DIRS Boost
-                     LINK_LIBRARIES Boost DAQEventLib GaudiKernel LHCbMathLib HltInterfaces
+                     LINK_LIBRARIES Boost DAQEventLib HltEvent GaudiKernel LHCbMathLib HltInterfaces
                      OPTIONS "-U__MINGW32__")
 
