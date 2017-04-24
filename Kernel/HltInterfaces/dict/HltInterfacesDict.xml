@@ -12,5 +12,6 @@
   <class name = "boost::optional<PropertyConfig>" />
   <class name = "ConfigTreeNodeAlias::alias_type" />
   <class name = "IConfigTreeEditor" />
+  <class name = "ILinePersistenceSvc" />
   <function pattern = "Hlt::firedRoutingBits*" />
 </lcgdict>

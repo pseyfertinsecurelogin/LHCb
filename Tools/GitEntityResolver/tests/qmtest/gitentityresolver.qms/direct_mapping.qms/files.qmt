@@ -28,7 +28,7 @@ countErrorLines()
 
 findReferenceBlock('''
 ToolSvc.GitDDDB     DEBUG Initializing...
-ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
+ToolSvc.GitDDDB      INFO opening Git repository '{repository}'
 ToolSvc.GitDDDB      INFO using checked out files in {repository}
 ToolSvc.GitDDDB   VERBOSE ServiceLocatorHelper::service: found service IncidentSvc
 ToolSvc.GitDDDB     DEBUG registering to IncidentSvc
