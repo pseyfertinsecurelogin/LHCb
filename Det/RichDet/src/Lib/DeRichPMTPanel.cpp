@@ -1055,7 +1055,7 @@ DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
 
   const auto aC = findPMTArraySetup(windowPointGlobal);
   sc = sc && setRichPmtSmartID( aC, smartID );
-  if ( !sc ) { return  LHCb::RichTraceMode::RayTraceFailed; }
+  if ( !sc ) { return LHCb::RichTraceMode::RayTraceFailed; }
 
   const auto isInPanelAcc = isInPmtPanel( panelIntersection );
   bool isInPmtAnodeAcc = false;
