@@ -144,7 +144,7 @@ std::ostream& operator<<( std::ostream& s, const GitEntityResolver::IOVInfo& inf
 GitEntityResolver::GitEntityResolver( const std::string& type, const std::string& name, const IInterface* parent )
     : base_class( type, name, parent ),
     m_repository{ [this]() -> git_repository_ptr::storage_t {
-      DEBUG_MSG << "opening Git repository '" << m_pathToRepository.value() << "'" << endmsg;
+      info() << "opening Git repository '" << m_pathToRepository.value() << "'" << endmsg;
       auto res = git_call<git_repository_ptr::storage_t>( this->name(), "cannot open repository", m_pathToRepository.value(),
                                                           git_repository_open, m_pathToRepository.value().c_str() );
       if ( UNLIKELY( !res ) )
@@ -193,13 +193,17 @@ StatusCode GitEntityResolver::initialize()
   } else {
     auto obj = git_call<git_object_ptr>( name(), "cannot resolve commit", m_commit.value(), git_revparse_single,
                                          m_repository.get(), m_commit.value().c_str() );
-    ON_DEBUG
-    {
+    if ( LIKELY( msgLevel( MSG::INFO ) ) ) {
+      auto& log = info();
+      log << "using commit '" << m_commit.value() << "'";
+
       char oid[GIT_OID_HEXSZ + 1] = {0};
       git_oid_fmt( oid, git_object_id( obj.get() ) );
 
       if ( m_commit.value().compare( oid ) != 0 )
-        debug() << "commit '" << m_commit.value() << "' corresponds to " << oid << endmsg;
+        log << " corresponding to " << oid;
+
+      log << endmsg;
     }
     if ( UNLIKELY( m_limitToLastCommitTime ) ) {
       // get the time of the requested commit/tag
