@@ -234,10 +234,10 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
   panelIntersection = pInPanel + distance*vInPanel;
 
   // default acceptance is inside an HPD
-  LHCb::RichTraceMode::RayTraceResult res = LHCb::RichTraceMode::InHPDTube;
+  LHCb::RichTraceMode::RayTraceResult res = LHCb::RichTraceMode::InPDTube;
 
   // how are the checks to be done ?
-  if ( mode.detPrecision() != LHCb::RichTraceMode::FullHPDs )
+  if ( mode.detPrecision() != LHCb::RichTraceMode::FullPDs )
   {
     // do it quickly using a simplified HPD acceptance (window description)
 
@@ -255,14 +255,14 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
            ( mode.hpdKaptonShadowing() &&       // check for intersection with kapton shield
              HPD->testKaptonShadowing(pInPanel,vInPanel) ) )
       {
-        res = LHCb::RichTraceMode::OutsideHPDPanel;
+        res = LHCb::RichTraceMode::OutsidePDPanel;
       }
     }
 
     // If we are approximating the HPDs as flat circles, or if we are outside an HPD
     // just using the panel intersection point
-    if ( mode.detPrecision() == LHCb::RichTraceMode::FlatHPDs ||
-         res                 != LHCb::RichTraceMode::InHPDTube )
+    if ( mode.detPrecision() == LHCb::RichTraceMode::FlatPDs ||
+         res                 != LHCb::RichTraceMode::InPDTube )
     {
       // set the window point to panel intersection point
       windowPointGlobal = geometry()->toGlobal( panelIntersection );
@@ -290,7 +290,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
       // set final point using panel intersection
       windowPointGlobal = geometry()->toGlobal( panelIntersection );
       // set acceptance flag to outside the HPDPanel
-      res = LHCb::RichTraceMode::OutsideHPDPanel;
+      res = LHCb::RichTraceMode::OutsidePDPanel;
     }
     else
     {
@@ -334,7 +334,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
         // check if the HPD is active or dead
         if ( !m_deRichS->pdIsActive(smartID) )
         {
-          res = LHCb::RichTraceMode::OutsideHPDPanel;
+          res = LHCb::RichTraceMode::OutsidePDPanel;
         }
 
       } // found intersection with HPD window
@@ -422,8 +422,8 @@ DeRichHPDPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
   hitPosition = geometry()->toGlobal( panelIntersection );
 
   // return final acceptance
-  return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectHPDPanel ?
-           checkPanelAcc(panelIntersection) : LHCb::RichTraceMode::InHPDPanel );
+  return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectPDPanel ?
+           checkPanelAcc(panelIntersection) : LHCb::RichTraceMode::InPDPanel );
 }
 
 //=========================================================================
