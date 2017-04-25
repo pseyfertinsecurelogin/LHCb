@@ -32,8 +32,9 @@
 		      type = "bool"
 		    static = "TRUE"
 		    access = "PUBLIC">
-	    <code> return ( p1-&gt;sensDetID() == p2-&gt;sensDetID() ) ?
-	                    p1-&gt;posX() &lt; p2-&gt;posX() : p1-&gt;sensDetID() &lt; p2-&gt;sensDetID();</code>
+	    <!--code> return ( p1-&gt;sensDetID() == p2-&gt;sensDetID() ) ?
+	                    p1-&gt;posX() &lt; p2-&gt;posX() : p1-&gt;sensDetID() &lt; p2-&gt;sensDetID();</code-->
+	    <code> return ( p1-&gt;sensDetID() &lt; p2-&gt;sensDetID() ) ;</code>
       </method>
  
       <attribute  name   = "sensDetID"
