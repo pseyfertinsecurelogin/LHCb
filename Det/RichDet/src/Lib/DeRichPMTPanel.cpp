@@ -95,6 +95,7 @@ StatusCode DeRichPMTPanel::initialize()
   for ( auto det_it = detelems.begin(); det_it != detelems.end(); ++det_it )
   {
     //info()<<"  det it names  "<<( det_it - detelems.begin() ) <<"  "<<(*det_it)->name() <<endmsg;
+    // info() << (*det_it)->name() << endmsg;
 
     if ( std::string::npos != (*det_it)->name().find("MAPMT_MODULE:") )
     {
@@ -110,10 +111,10 @@ StatusCode DeRichPMTPanel::initialize()
 
       // save to list of PMT Modules
       m_DePMTModules.push_back( dePMTModule );
-      int aCurrentModuleCopyNumber = getModuleCopyNumber( dePMTModule ->name() );
+      const auto aCurrentModuleCopyNumber = getModuleCopyNumber( dePMTModule->name() );
 
       int aNumPmtInCurrentRichModule = (int) dePMTModule->childIDetectorElements().size();
-      std::vector<DeRichPMT*> DePmtsInCurModule(aNumPmtInCurrentRichModule,nullptr);
+      std::vector<DeRichPMT*>        DePmtsInCurModule(aNumPmtInCurrentRichModule,nullptr);
       std::vector<IDetectorElement*> DePmtAnodesInCurModule(aNumPmtInCurrentRichModule,nullptr);
 
       // register UMS dependency.
@@ -132,20 +133,22 @@ StatusCode DeRichPMTPanel::initialize()
           if ( std::string::npos != (*det_it_pm)->name().find("MAPMT:") )
           {
             // get PMT
+            //info() << (*det_it_pm)->name() << endmsg;
             SmartDataPtr<DeRichPMT> dePMT( dataSvc(), (*det_it_pm)->name() );
 
             if ( dePMT )
             {
-
-              // DeRichPMT * dePMT = (DeRichPMT*)  (*det_it_pm);
               // register UMS dependency
               updMgrSvc()->registerCondition( this, dePMT->geometry(),
                                               &DeRichPMTPanel::geometryUpdate );
               // get the current pmt and save.
               const auto curPmtNum     = det_it_pm - dePMTModule->childIDetectorElements().begin();
               const auto curPmtCopyNum = dePMT->pmtCopyNumber();
-              dePMT->setPmtLensFlag( isCurrentPmtWithLens(curPmtCopyNum) );
+
+              // CRJ - These should be set by the DePMT class itself....
+              dePMT->setPmtLensFlag   ( isCurrentPmtWithLens(curPmtCopyNum) );
               dePMT->setPmtIsGrandFlag( ModuleIsWithGrandPMT(aCurrentModuleCopyNumber)  );
+
               DePmtsInCurModule[curPmtNum] = dePMT;
 
               if ( ! dePMT->childIDetectorElements().empty() )
@@ -189,8 +192,8 @@ StatusCode DeRichPMTPanel::initialize()
 
         } // end loop over pmts in  a module
 
-        m_DePMTs.push_back( DePmtsInCurModule);
-        m_DePMTAnodes.push_back(DePmtAnodesInCurModule);
+        m_DePMTs.push_back     ( std::move(DePmtsInCurModule)      );
+        m_DePMTAnodes.push_back( std::move(DePmtAnodesInCurModule) );
 
       }
       else
@@ -449,7 +452,7 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
   
   const auto aRich1NumModules = firstRich->param<int> ("Rich1TotNumModules" );
   const auto aRich2NumModules = firstRich->param<int> ("Rich2TotNumModules" );
-  m_Rich2TotNumStdModules=aRich2NumModules;
+  m_Rich2TotNumStdModules = aRich2NumModules;
   m_totNumPmtModuleInRich = aRich1NumModules + aRich2NumModules;
   
   m_NumPmtModuleInRich[0]=aRich1NumModules/2; //rich1top
@@ -1102,7 +1105,7 @@ const DeRichPD* DeRichPMTPanel::dePD( const Rich::DAQ::HPDCopyNumber PmtCopyNumb
 
 const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const
 {
-  const DeRichPMT* dePmt = nullptr;
+  const DeRichPMT * dePmt = nullptr;
 
   if ( PmtCopyNumber.data() < m_totNumPMTs )
   {

@@ -79,15 +79,17 @@ public:
    */
   Gaudi::XYZPoint detPointOnAnode ( const LHCb::RichSmartID& smartID ) const;
 
-  int pmtCopyNumber() const noexcept { return m_number; }
+  inline int pmtModuleNumber() const noexcept { return m_moduleNum; }
 
-  void setPmtLensFlag( const bool aflag ) { m_PmtLensFlag = aflag; }
+  inline int pmtCopyNumber() const noexcept { return m_copyNum; }
 
-  bool PmtLensFlag() const noexcept { return m_PmtLensFlag; }
+  inline void setPmtLensFlag( const bool aflag ) { m_PmtLensFlag = aflag; }
+
+  inline bool PmtLensFlag() const noexcept { return m_PmtLensFlag; }
   
   void setPmtIsGrandFlag( const bool isGrand );
 
-  bool PmtIsGrand() const noexcept { return m_PmtIsGrand; }
+  inline bool PmtIsGrand() const noexcept { return m_PmtIsGrand; }
 
 private:
 
@@ -109,7 +111,10 @@ private:
 private:
   
   IDetectorElement* m_dePmtAnode = nullptr; ///< The PMT Anode detector element
-  int m_number{0};                    ///<Pmt number (should be the same as copy number)
+
+  int m_moduleNum{0}; ///< Module number
+  int m_copyNum{0};   ///< Copy number
+
   std::string m_PmtQELocation;
 
   double m_PmtAnodeXSize{0};
