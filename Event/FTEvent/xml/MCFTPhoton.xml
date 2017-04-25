@@ -26,7 +26,7 @@
                            m_wavelength(wavelength), m_posX(posX), m_posZ(posZ),
                            m_dXdY(dXdY), m_dZdY(dZdY), m_isReflected(isReflected)"  />                           
                            
-      <method name = "lowerByMatIDAndX"
+      <method name = "lowerByMatID"
 		      desc = "Comparison for sorting by matID and x-position"
 		   argList = "MCFTPhoton* p1, MCFTPhoton* p2"
 		      type = "bool"
