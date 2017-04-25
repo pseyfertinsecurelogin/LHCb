@@ -227,5 +227,5 @@ DeRichHPDPanel::checkPanelAcc( const Gaudi::XYZPoint & point ) const
                     std::make_pair(point.x(),point.y()) );
   return ( ( fabs(uv.first)  >= fabs(m_panelColumnSideEdge) ||
              fabs(uv.second) >= m_panelStartColPos ) ?
-           LHCb::RichTraceMode::OutsideHPDPanel : LHCb::RichTraceMode::InHPDPanel );
+           LHCb::RichTraceMode::OutsidePDPanel : LHCb::RichTraceMode::InPDPanel );
 }
