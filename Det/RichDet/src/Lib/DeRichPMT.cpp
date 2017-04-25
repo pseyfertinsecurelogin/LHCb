@@ -55,14 +55,23 @@ StatusCode DeRichPMT::initialize()
   if ( msgLevel(MSG::DEBUG,msg) )
     msg << MSG::DEBUG << "Initialize " << myName() << endmsg;
 
-  // extract PMT overall copy number from detector element name
+  // extract PMT overall module and copy number from detector element name
   const auto pos2 = name().find(":");
   if ( std::string::npos == pos2 )
   {
-    msg << MSG::FATAL << "A PMT without a number!" << endmsg;
+    msg << MSG::FATAL << "A PMT without a module number" << endmsg;
     return StatusCode::FAILURE;
   }
-  m_number = atoi( name().substr(pos2+1).c_str() );
+  const auto s1   = name().substr(pos2+1);
+  const auto pos3 = s1.find("/MAPMT:");
+  if ( std::string::npos == pos3 )
+  {
+    msg << MSG::FATAL << "A PMT without a copy number" << endmsg;
+    return StatusCode::FAILURE;
+  }
+  m_moduleNum = atoi( s1.substr(0,pos3).c_str() );
+  m_copyNum   = atoi( s1.substr(pos3+7).c_str() );
+  //info() << name() << " " << m_moduleNum << " " << m_copyNum  << endmsg;
 
   m_dePmtAnode = ( !childIDetectorElements().empty() ?
                    childIDetectorElements().front() : nullptr );

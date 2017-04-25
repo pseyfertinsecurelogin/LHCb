@@ -280,7 +280,7 @@ private:
   }
 
   /// setup flags for grand Modules
-  int getModuleCopyNumber ( const std::string& aModuleName);
+  int getModuleCopyNumber( const std::string& aModuleName );
 
   inline bool isCurrentPmtModuleWithLens(const int aModuleNum) const noexcept
   {
@@ -301,19 +301,21 @@ private:
              aLensPoint.z() };
   }
 
-  inline bool ModuleIsWithGrandPMT(const int aModuleNum ) const noexcept
+  inline bool ModuleIsWithGrandPMT( const int aModuleNum ) const noexcept
   {
-    return (( aModuleNum >=0 && aModuleNum < (int) m_ModuleIsWithGrandPMT.size() ) ?
-            m_ModuleIsWithGrandPMT[aModuleNum] : false);
+    return ( aModuleNum >= 0 && 
+             aModuleNum <  (int) m_ModuleIsWithGrandPMT.size() ?
+             m_ModuleIsWithGrandPMT[aModuleNum] : false );
   }
 
 private:
 
+  /// utility method to convert a vector to an array of the same size.
   template< typename TYPE, std::size_t N >
   decltype(auto) toarray( const std::vector<TYPE>& v ) const
   {
     if ( v.size() != N ) 
-    { throw GaudiException("Vector to Array Size error","DeRichPMTPanel",StatusCode::FAILURE); }
+    { throw GaudiException("Vector to Array Size Error","DeRichPMTPanel",StatusCode::FAILURE); }
     std::array<TYPE,N> a;
     std::copy( v.begin(), v.end(), a.begin() );
     return a;
