@@ -23,6 +23,7 @@
 
 // Forward declarations
 class DeRichSphMirror;
+class DeRichPD;
 
 namespace Rich
 {
@@ -331,6 +332,18 @@ namespace Rich
         return m_secondaryMirror;
       }
 
+      /// Set the associated photon detector
+      inline void setPhotonDetector( const DeRichPD * pd ) noexcept
+      {
+        m_pd = pd;
+      }
+
+      /// Access the associated photon detector
+      inline const DeRichPD * photonDetector() const noexcept
+      {
+        return m_pd;
+      }
+
       /**
        * Set accessor for the spherical mirror reflection point
        * @param sphMirReflectionPoint the new value for the spherical mirror reflection point
@@ -409,10 +422,13 @@ namespace Rich
       Gaudi::XYZPoint m_flatMirReflectionPoint;  ///< The secondary mirror reflection point
 
       /// Pointer to the associated primary mirror detector element
-      const DeRichSphMirror * m_primaryMirror = nullptr;
+      const DeRichSphMirror * m_primaryMirror   = nullptr;
 
       /// Pointer to the associated secondary mirror detector element
       const DeRichSphMirror * m_secondaryMirror = nullptr;
+
+      /// Pointer to the associated RICH photon detector
+      const DeRichPD        * m_pd              = nullptr;
 
     };
 
