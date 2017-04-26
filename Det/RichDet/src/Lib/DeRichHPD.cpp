@@ -196,7 +196,7 @@ StatusCode DeRichHPD::initHpdQuantumEff()
   if ( deRichSys()->exists( "HpdQuantumEffCommonLoc" ) )  // use hardware ID to locate QE
   {
     // convert copy number to smartID
-    const auto id = deRichSys()->richSmartID(Rich::DAQ::HPDCopyNumber(m_number));
+    const auto id = deRichSys()->richSmartID(Rich::DAQ::PDCopyNumber(m_number));
     const auto qePath   = deRichSys()->param<std::string>("HpdQuantumEffCommonLoc");
     const std::string hID( deRichSys()->hardwareID(id) );
     SmartDataPtr<TabulatedProperty> hpdQuantumEffTabProp( dataSvc(), qePath+hID );

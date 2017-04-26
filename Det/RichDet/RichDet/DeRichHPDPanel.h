@@ -96,7 +96,7 @@ public:
                  const Gaudi::XYZPoint& pGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
-                 const DeRichPD*& dePD,
+                 const DeRichPD*& pd,
                  const LHCb::RichTraceMode mode ) const override final;
 
   // Returns the intersection point with the detector plane given a vector and a point.
@@ -105,17 +105,17 @@ public:
                  const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& hitPosition,
                  LHCb::RichSmartID& smartID,
-                 const DeRichPD*& dePD,
+                 const DeRichPD*& pd,
                  const LHCb::RichTraceMode mode ) const override final;
 
   /// Access the DeRichPD object for a given PD RichSmartID
   const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const override final;
 
   /// Returns the detector element for the given PD number
-  const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const override final;
+  const DeRichPD* dePD( const Rich::DAQ::PDPanelIndex PDNumber ) const override final;
 
   /// Returns the detector element for the given PD number
-  inline const DeRichHPD* deHPD( const Rich::DAQ::HPDCopyNumber HPDNumber ) const
+  inline const DeRichHPD* deHPD( const Rich::DAQ::PDPanelIndex HPDNumber ) const
   {
     // CRJ : should this just be < ??
     const DeRichHPD * deHPD = ( HPDNumber.data() <= nPDs() ?
@@ -137,20 +137,20 @@ public:
   /// sensitive volume identifier
   int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override final;
 
-  /// Returns the PD number for the given RichSmartID
-  Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const override final;
+  /// Returns the number for the given RichSmartID
+  Rich::DAQ::PDPanelIndex pdNumber( const LHCb::RichSmartID& smartID ) const override final;
 
-  /// The maximum PD copy number for this panel
-  Rich::DAQ::HPDCopyNumber maxPdNumber() const override final;
+  /// The maximum PD number for this panel
+  Rich::DAQ::PDPanelIndex maxPdNumber() const override final;
 
 private: // methods
 
   /// Returns the PD number for the given RichSmartID
-  inline Rich::DAQ::HPDCopyNumber _pdNumber( const LHCb::RichSmartID& smartID ) const
+  inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID& smartID ) const
   {
-    return Rich::DAQ::HPDCopyNumber( smartID.rich() == rich() && smartID.panel() == side() ?
-                                     smartID.pdCol() * nPDsPerCol() + smartID.pdNumInCol() :
-                                     nPDs() + 1 );
+    return Rich::DAQ::PDPanelIndex( smartID.rich() == rich() && smartID.panel() == side() ?
+                                    smartID.pdCol() * nPDsPerCol() + smartID.pdNumInCol() :
+                                    nPDs() + 1 );
   }
 
   /** Finds the HPD row and column that corresponds to the x,y coordinates

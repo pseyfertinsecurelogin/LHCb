@@ -1,7 +1,6 @@
 
 // STL
 #include <sstream>
-#include <time.h>
 #include <vector>
 
 // Gaudi
@@ -118,8 +117,8 @@ StatusCode DeRichPMTPanel::initialize()
       m_DePMTModules.push_back( dePMTModule );
       const auto aCurrentModuleCopyNumber = getModuleCopyNumber( dePMTModule->name() );
 
-      int aNumPmtInCurrentRichModule = (int) dePMTModule->childIDetectorElements().size();
-      std::vector<DeRichPMT*>        DePmtsInCurModule(aNumPmtInCurrentRichModule,nullptr);
+      const auto aNumPmtInCurrentRichModule = (int) dePMTModule->childIDetectorElements().size();
+      std::vector<DeRichPMT*>        DePmtsInCurModule     (aNumPmtInCurrentRichModule,nullptr);
       std::vector<IDetectorElement*> DePmtAnodesInCurModule(aNumPmtInCurrentRichModule,nullptr);
 
       // register UMS dependency.
@@ -150,23 +149,6 @@ StatusCode DeRichPMTPanel::initialize()
               // get the current pmt and save.
               const auto curPmtNum     = det_it_pm - dePMTModule->childIDetectorElements().begin();
               const auto curPmtCopyNum = dePMT->pmtCopyNumber();
-
-              // // get the smartID for this PMT
-              // const auto pdSmartID = deRichSys()->richSmartID( Rich::DAQ::HPDCopyNumber(curPmtCopyNum) );
-              // // convert the smart ID to a local pd number
-              // const auto localPanelCopyNum = _pdNumber(pdSmartID).data();
-              // info() << curPmtCopyNum << " " << localPanelCopyNum << endmsg;
-              // if ( m_copyNumToPMT.size() < (unsigned int)localPanelCopyNum+1 )
-              // {
-              //   warning() << "Resizing PMT vector..." << endmsg;
-              //   m_copyNumToPMT.resize(localPanelCopyNum+1,nullptr); 
-              // }
-              // if ( m_copyNumToPMT[localPanelCopyNum] && 
-              //      m_copyNumToPMT[localPanelCopyNum] != dePMT )
-              // {
-              //   warning() << "PMT vector mismatch" << endmsg;
-              // }
-              // m_copyNumToPMT[localPanelCopyNum] = dePMT;
 
               // CRJ - These should be set by the DePMT class itself....
               dePMT->setPmtLensFlag   ( isCurrentPmtWithLens(curPmtCopyNum) );
@@ -211,10 +193,11 @@ StatusCode DeRichPMTPanel::initialize()
               return StatusCode::FAILURE;
             }
 
-          }// end test pmt name
+          } // end test pmt name
 
-        } // end loop over pmts in  a module
+        } // end loop over pmts in a module
 
+        // move here as we are done with them afterwards
         m_DePMTs.push_back     ( std::move(DePmtsInCurModule)      );
         m_DePMTAnodes.push_back( std::move(DePmtAnodesInCurModule) );
 
@@ -237,7 +220,7 @@ StatusCode DeRichPMTPanel::initialize()
   return update;
 }
 
-Rich::DAQ::HPDCopyNumber DeRichPMTPanel::maxPdNumber() const
+Rich::DAQ::PDPanelIndex DeRichPMTPanel::maxPdNumber() const
 {
   return m_maxPDCopyN;
 }
@@ -407,7 +390,11 @@ bool DeRichPMTPanel::smartID( const Gaudi::XYZPoint& globalPoint,
                               LHCb::RichSmartID& id ) const
 {
   id = m_panelID; // sets RICH, panel and type
-  setRichPmtSmartID( findPMTArraySetup(globalPoint), id ) ;
+  const auto a = findPMTArraySetup(globalPoint);
+  // get PMT module number in panel
+  const auto pdNumInPanel = PmtModuleNumInPanelFromModuleNumAlone(a[0]);
+  setRichPmtSmartID( pdNumInPanel, a[1], a[2], a[3], id );
+  //setRichPmtSmartID( a[0], a[1], a[2], a[3], id );
   return true;
 }
 
@@ -431,9 +418,9 @@ StatusCode DeRichPMTPanel::getPanelGeometryInfo()
     m_RichPmtNumModulesInRowCol[0] = aRich1PmtNumModulesInRow;
     m_RichPmtNumModulesInRowCol[1] = aRich1PmtNumModulesInCol;
   }
-  m_Rich2UseGrandModule=false;
-  m_Rich2UseMixedModule=false;
-  m_Rich2ArrayConfig=0;
+  m_Rich2UseGrandModule = false;
+  m_Rich2UseMixedModule = false;
+  m_Rich2ArrayConfig    = 0;
   if ( firstRich->exists("Rich2PMTArrayConfig") )
   {
     m_Rich2ArrayConfig = firstRich->param<int>("Rich2PMTArrayConfig");
@@ -709,8 +696,8 @@ int DeRichPMTPanel::getPmtModuleNumFromRowCol( int MRow, int MCol ) const
   }
   else //if ( rich() == Rich::Rich2 || rich() == Rich::Rich )
   {
-    if ( MRow >= m_RichPmtNumModulesInRowCol[3]  ) MRow = m_RichPmtNumModulesInRowCol[3]-1;
-    if ( MCol >=  m_RichPmtNumModulesInRowCol[2] ) MCol = m_RichPmtNumModulesInRowCol[2]-1;
+    if ( MRow >= m_RichPmtNumModulesInRowCol[3] ) MRow = m_RichPmtNumModulesInRowCol[3]-1;
+    if ( MCol >= m_RichPmtNumModulesInRowCol[2] ) MCol = m_RichPmtNumModulesInRowCol[2]-1;
 
     aMNum = MRow + ( MCol*m_RichPmtNumModulesInRowCol[3] );
     if ( side() == Rich::left)
@@ -1006,10 +993,11 @@ DeRichPMTPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
                                const Gaudi::XYZVector& vGlobal,
                                Gaudi::XYZPoint& hitPosition,
                                LHCb::RichSmartID& smartID,
-                               const DeRichPD*& dePD,
+                               const DeRichPD*& pd,
                                const LHCb::RichTraceMode mode ) const
 {
-  Gaudi::XYZPoint panelIntersection = Gaudi::XYZPoint(0.0,0.0,0.0);  // define a dummy point and fill correctly later.
+  // define a dummy point and fill correctly later.
+  Gaudi::XYZPoint panelIntersection(0,0,0);  
 
   auto sc = getPanelInterSection(pGlobal,vGlobal,panelIntersection);
   if ( !sc ) { return LHCb::RichTraceMode::RayTraceFailed; }
@@ -1020,12 +1008,20 @@ DeRichPMTPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
   // sets RICH, panel and type
   smartID = m_panelID;
 
-  // Cannot set DeRichPD here...
-  dePD = nullptr;
+  // get the PMT info
+  const auto aC = findPMTArraySetup(hitPosition);
 
-  // get the PMT info and set in the smartID
-  setRichPmtSmartID( findPMTArraySetup(hitPosition), smartID );
+  // get PMT module number in panel
+  const auto pdNumInPanel = PmtModuleNumInPanelFromModuleNumAlone(aC[0]);
+
+  // set in the smartID
+  setRichPmtSmartID( pdNumInPanel, aC[1], aC[2], aC[3], smartID );
+  //setRichPmtSmartID( aC[0], aC[1], aC[2], aC[3], smartID );
+
+  // Set PD pointer to nearest PD
+  pd = m_DePMTs[pdNumInPanel][aC[1]];
  
+  // return final status
   return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectPDPanel ? 
            isInPmtPanel(panelIntersection) ? LHCb::RichTraceMode::InPDPanel : LHCb::RichTraceMode::OutsidePDPanel :
            LHCb::RichTraceMode::InPDPanel );
@@ -1036,10 +1032,11 @@ DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
                                const Gaudi::XYZPoint& pGlobal,
                                Gaudi::XYZPoint& windowPointGlobal,
                                LHCb::RichSmartID& smartID,
-                               const DeRichPD*& dePD,
+                               const DeRichPD*& pd,
                                const LHCb::RichTraceMode mode ) const
 {
-  Gaudi::XYZPoint panelIntersection(0,0,0);  // define a dummy point and fill correctly later.
+  // define a dummy point and fill correctly later.
+  Gaudi::XYZPoint panelIntersection(0,0,0); 
 
   auto sc = getPanelInterSection(pGlobal,vGlobal,panelIntersection);
   if ( !sc ) { return LHCb::RichTraceMode::RayTraceFailed; }
@@ -1063,16 +1060,19 @@ DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
     if ( mode.detPlaneBound() != LHCb::RichTraceMode::IgnorePDAcceptance )
     {
 
-      // get the PMT info and set in the smartID
+      // get the PMT info
       const auto aC = findPMTArraySetup(windowPointGlobal);
-      setRichPmtSmartID( aC, smartID );
 
       // get module in panel number
       const auto aModuleNumInPanel = PmtModuleNumInPanelFromModuleNumAlone(aC[0]);
+
+      // set in the smartID
+      setRichPmtSmartID( aModuleNumInPanel, aC[1], aC[2], aC[3], smartID );
+      //setRichPmtSmartID( aC[0], aC[1], aC[2], aC[3], smartID );
       
       // get the DePMT object
       const auto pmt = m_DePMTs[aModuleNumInPanel][aC[1]];
-      dePD = pmt;
+      pd = pmt;
       
       // coordinate in the PMT
       const auto coordinPmt = ( pmt->geometry()->toLocalMatrix() * windowPointGlobal );
@@ -1117,36 +1117,48 @@ bool DeRichPMTPanel::getPanelInterSection ( const Gaudi::XYZPoint& pGlobal,
   return sc;
 }
 
-Rich::DAQ::HPDCopyNumber DeRichPMTPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
+Rich::DAQ::PDPanelIndex DeRichPMTPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
 {
   return _pdNumber( smartID );
 }
 
 const DeRichPD* DeRichPMTPanel::dePD( const LHCb::RichSmartID pdID ) const
 {
-  return dePMT( _pdNumber( pdID ) );
+  // get the lookup indices from the smart ID
+  unsigned int pdCol   = pdID.pdCol();
+  unsigned int pdInCol = pdID.pdNumInCol();  
+
+  // if need be correct the pdCol (for data when it was incorrectly filled)
+  if ( pdCol >= m_DePMTs.size() ) { pdCol = PmtModuleNumInPanelFromModuleNumAlone(pdCol); }
+
+  // return the pointer from the array
+  return m_DePMTs[pdCol][pdInCol];
+ 
+  // get the old way
+  //return dePMT( _pdNumber( pdID ) );
 }
 
-const DeRichPD* DeRichPMTPanel::dePD( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const
+const DeRichPD* DeRichPMTPanel::dePD( const Rich::DAQ::PDPanelIndex PmtNumber ) const
 {
-  return dePMT( PmtCopyNumber );
+  return dePMT( PmtNumber );
 }
 
-const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const
+const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const
 {
   const DeRichPMT * dePmt = nullptr;
 
-  if ( PmtCopyNumber.data() < m_totNumPMTs )
+  if ( PmtNumber.data() < m_totNumPMTs )
   {
-    const auto Mnum = (unsigned int) (PmtCopyNumber.data()/m_NumPmtInRichModule);
+    const auto Mnum = (unsigned int) (PmtNumber.data()/m_NumPmtInRichModule);
+    //info() << "dePMT in " << PmtNumber << " " << Mnum << endmsg;
     const auto MNumInCurPanel = PmtModuleNumInPanelFromModuleNumAlone(Mnum);
-    const auto Pnum = PmtCopyNumber.data() - ( Mnum * m_NumPmtInRichModule );
+    const auto Pnum = PmtNumber.data() - ( Mnum * m_NumPmtInRichModule );
 
     if ( UNLIKELY( MNumInCurPanel >= (int)m_DePMTs.size() ||
                    Pnum >= m_DePMTs[MNumInCurPanel].size() ) )
     {
       std::ostringstream mess;
-      mess << "DeRichPMTPanel: Inappropriate PMT module and pmt numbers "
+      mess << "DeRichPMTPanel::dePMT : Inappropriate PMT module and pmt numbers "
            << MNumInCurPanel << " " << Pnum;
 
       throw GaudiException( mess.str(), "*DeRichPMTPanel*", StatusCode::FAILURE );
@@ -1160,16 +1172,9 @@ const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNu
   else
   {
     std::ostringstream mess;
-    mess << "DeRichPMTPanel: Inappropriate PmtcopyNumber : " << PmtCopyNumber;
+    mess << "DeRichPMTPanel: Inappropriate PmtcopyNumber : " << PmtNumber;
     throw GaudiException( mess.str(), "*DeRichPMTPanel*", StatusCode::FAILURE );
   }
-
-  // // test new method
-  // const DeRichPMT * dePmtNEW = m_copyNumToPMT[PmtCopyNumber.data()];
-  // info() << PmtCopyNumber << endmsg; 
-  // if ( dePmtNEW ) { info() << dePmtNEW->name() << endmsg; } else { info() << "NULL" << endmsg; }
-  // if ( dePmt    ) { info() << dePmt->name() << endmsg;    } else { info() << "NULL" << endmsg; }
-  // if ( dePmtNEW != dePmt ) { info() << "MOOO" << endmsg;  }
 
   return dePmt;
 }
@@ -1261,7 +1266,7 @@ int DeRichPMTPanel::getModuleCopyNumber( const std::string& aModuleName )
   const auto pos2 = aModuleName.find(":");
   if ( std::string::npos == pos2 )
   {
-    error() << "A PMTModule  without a number!   " <<aModuleName<< endmsg;
+    error() << "A PMTModule without a number!   " << aModuleName << endmsg;
   }
   else
   {
