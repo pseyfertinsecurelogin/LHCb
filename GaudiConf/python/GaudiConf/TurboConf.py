@@ -3,7 +3,6 @@ from os.path import join
 
 from Configurables import LHCbConfigurableUser
 from Configurables import DataOnDemandSvc
-from Configurables import DecodeRawEvent
 from PersistRecoConf import PersistRecoPacking
 from DAQSys.Decoders import DecoderDB
 from DAQSys.DecoderClass import Decoder
@@ -31,7 +30,7 @@ class TurboConf(LHCbConfigurableUser):
     }
 
     __used_configurables__ = [
-        DecodeRawEvent,  # we need to modify a decoder, so apply this after
+        "DecodeRawEvent",  # we need to modify a decoder, so apply this after
     ]
 
     @classmethod
