@@ -67,6 +67,8 @@ This version is released on master branch.
 <dd> See LBHLT-310 and Hlt!261
 <dd> Cleanup 2015 adhoc configuration in TurboConf.py
 
+<dt>[MR !612] Make sure DecodeRawEvent is configured after TurboConf
+
 <dt>[MR !593] Implement AlwaysCreateOutput for PackParticlesAndVertices
 <dd> ```AlwaysCreateOutput``` property was defined but never used within the code
 <dd> Add a new property ```AlwaysCreateContainers```, which lists the output locations that are to be created regardless of the existence of the input
