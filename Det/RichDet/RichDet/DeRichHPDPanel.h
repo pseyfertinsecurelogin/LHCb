@@ -96,6 +96,7 @@ public:
                  const Gaudi::XYZPoint& pGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
+                 const DeRichPD*& dePD,
                  const LHCb::RichTraceMode mode ) const override final;
 
   // Returns the intersection point with the detector plane given a vector and a point.
@@ -104,6 +105,7 @@ public:
                  const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& hitPosition,
                  LHCb::RichSmartID& smartID,
+                 const DeRichPD*& dePD,
                  const LHCb::RichTraceMode mode ) const override final;
 
   /// Access the DeRichPD object for a given PD RichSmartID

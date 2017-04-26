@@ -202,6 +202,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
                                const Gaudi::XYZPoint& pGlobal,
                                Gaudi::XYZPoint& windowPointGlobal,
                                LHCb::RichSmartID& smartID,
+                               const DeRichPD*& dePD,
                                const LHCb::RichTraceMode mode ) const
 {
 
@@ -227,6 +228,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
 
   // Find the correct DeRichHPD
   const auto * HPD = deHPD( _pdNumber(smartID) );
+  dePD = HPD;
 
   // Refind intersection point using other local plane
   // ( Can reuse scalar as both local planes have the same normal vector )
@@ -398,6 +400,7 @@ DeRichHPDPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
                                const Gaudi::XYZVector& vGlobal,
                                Gaudi::XYZPoint& hitPosition,
                                LHCb::RichSmartID& smartID,
+                               const DeRichPD*& dePD,
                                const LHCb::RichTraceMode mode ) const
 {
 
@@ -420,6 +423,9 @@ DeRichHPDPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
 
   // set final position
   hitPosition = geometry()->toGlobal( panelIntersection );
+
+  // Cannot set DeRichPD here...
+  dePD = nullptr;
 
   // return final acceptance
   return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectPDPanel ?
