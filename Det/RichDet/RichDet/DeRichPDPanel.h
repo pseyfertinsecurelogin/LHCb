@@ -159,6 +159,7 @@ public: // virtual methods. Derived classes must implement these
                  const Gaudi::XYZPoint& pGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
+                 const DeRichPD*& dePD,
                  const LHCb::RichTraceMode mode ) const = 0;
 
   /** @brief Returns the intersection point with the detector plane given a vector
@@ -179,6 +180,7 @@ public: // virtual methods. Derived classes must implement these
                  const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& hitPosition,
                  LHCb::RichSmartID& smartID,
+                 const DeRichPD*& dePD,
                  const LHCb::RichTraceMode mode ) const = 0;
 
   /** @brief Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.

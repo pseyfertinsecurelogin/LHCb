@@ -70,6 +70,7 @@ public:
                  const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& hitPosition,
                  LHCb::RichSmartID& smartID,
+                 const DeRichPD*& dePD,
                  const LHCb::RichTraceMode mode ) const override final;
 
   // Returns the intersection point with an HPD window given a vector and a point.
@@ -78,6 +79,7 @@ public:
                  const Gaudi::XYZPoint& pGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
+                 const DeRichPD*& dePD,
                  const LHCb::RichTraceMode mode ) const override final;
 
   // Adds to the given vector all the available readout channels in this HPD panel
@@ -105,7 +107,7 @@ public:
 private: 
 
   using IDeElemV   = std::vector<IDetectorElement*>;
-  using IDRiPMTV   = std::vector<DeRichPMT*>;
+  using DRiPMTV    = std::vector<DeRichPMT*>;
   using ArraySetup = std::array<int,4>;
   using RowCol     = std::array<int,2>;
   using XYArray    = std::array<double,2>;
@@ -329,8 +331,11 @@ private:
   /// Container for the PMT Modules as Det Elements
   IDeElemV m_DePMTModules{1,nullptr};
 
-  ///< Container for the PMTs
-  std::vector<IDRiPMTV> m_DePMTs{1,IDRiPMTV(2,nullptr)};
+  ///< Container for the PMTs, sorted by panel
+  std::vector<DRiPMTV> m_DePMTs{1,DRiPMTV(2,nullptr)};
+
+  /// container for the PMTs sorted by copy number (for access speed)
+  //DRiPMTV m_copyNumToPMT;
 
   /// Container for the PMTAnodes as Det Elements
   std::vector<IDeElemV> m_DePMTAnodes{1,IDeElemV(2,nullptr)};

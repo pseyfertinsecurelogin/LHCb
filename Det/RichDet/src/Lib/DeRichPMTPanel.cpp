@@ -79,7 +79,9 @@ StatusCode DeRichPMTPanel::initialize()
   // register UMS dependency on local geometry
   updMgrSvc()->registerCondition( this, geometry(), &DeRichPMTPanel::geometryUpdate );
 
-  // get the pmtmodule and pmt  detector elements
+  // CRJ the rest of this method needs to be moved to geometryUpdate so it gets freshed when needed.
+
+  // get the pmtmodule and pmt detector elements
   m_DePMTs.clear();
   m_DePMTModules.clear();
   m_DePMTAnodes.clear();
@@ -89,6 +91,9 @@ StatusCode DeRichPMTPanel::initialize()
   m_DePMTModules.reserve(numCurModules);
   m_DePMTs.reserve(numCurModules);
   m_DePMTAnodes.reserve(numCurModules);
+
+  // reset copy number to PMT vector
+  //m_copyNumToPMT.assign( m_totNumPMTs, nullptr );
 
   const auto & detelems = childIDetectorElements();
 
@@ -138,12 +143,30 @@ StatusCode DeRichPMTPanel::initialize()
 
             if ( dePMT )
             {
+
               // register UMS dependency
               updMgrSvc()->registerCondition( this, dePMT->geometry(),
                                               &DeRichPMTPanel::geometryUpdate );
               // get the current pmt and save.
               const auto curPmtNum     = det_it_pm - dePMTModule->childIDetectorElements().begin();
               const auto curPmtCopyNum = dePMT->pmtCopyNumber();
+
+              // // get the smartID for this PMT
+              // const auto pdSmartID = deRichSys()->richSmartID( Rich::DAQ::HPDCopyNumber(curPmtCopyNum) );
+              // // convert the smart ID to a local pd number
+              // const auto localPanelCopyNum = _pdNumber(pdSmartID).data();
+              // info() << curPmtCopyNum << " " << localPanelCopyNum << endmsg;
+              // if ( m_copyNumToPMT.size() < (unsigned int)localPanelCopyNum+1 )
+              // {
+              //   warning() << "Resizing PMT vector..." << endmsg;
+              //   m_copyNumToPMT.resize(localPanelCopyNum+1,nullptr); 
+              // }
+              // if ( m_copyNumToPMT[localPanelCopyNum] && 
+              //      m_copyNumToPMT[localPanelCopyNum] != dePMT )
+              // {
+              //   warning() << "PMT vector mismatch" << endmsg;
+              // }
+              // m_copyNumToPMT[localPanelCopyNum] = dePMT;
 
               // CRJ - These should be set by the DePMT class itself....
               dePMT->setPmtLensFlag   ( isCurrentPmtWithLens(curPmtCopyNum) );
@@ -983,6 +1006,7 @@ DeRichPMTPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
                                const Gaudi::XYZVector& vGlobal,
                                Gaudi::XYZPoint& hitPosition,
                                LHCb::RichSmartID& smartID,
+                               const DeRichPD*& dePD,
                                const LHCb::RichTraceMode mode ) const
 {
   Gaudi::XYZPoint panelIntersection = Gaudi::XYZPoint(0.0,0.0,0.0);  // define a dummy point and fill correctly later.
@@ -995,6 +1019,9 @@ DeRichPMTPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
 
   // sets RICH, panel and type
   smartID = m_panelID;
+
+  // Cannot set DeRichPD here...
+  dePD = nullptr;
 
   // get the PMT info and set in the smartID
   setRichPmtSmartID( findPMTArraySetup(hitPosition), smartID );
@@ -1009,6 +1036,7 @@ DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
                                const Gaudi::XYZPoint& pGlobal,
                                Gaudi::XYZPoint& windowPointGlobal,
                                LHCb::RichSmartID& smartID,
+                               const DeRichPD*& dePD,
                                const LHCb::RichTraceMode mode ) const
 {
   Gaudi::XYZPoint panelIntersection(0,0,0);  // define a dummy point and fill correctly later.
@@ -1044,6 +1072,7 @@ DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
       
       // get the DePMT object
       const auto pmt = m_DePMTs[aModuleNumInPanel][aC[1]];
+      dePD = pmt;
       
       // coordinate in the PMT
       const auto coordinPmt = ( pmt->geometry()->toLocalMatrix() * windowPointGlobal );
@@ -1134,6 +1163,13 @@ const DeRichPMT* DeRichPMTPanel::dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNu
     mess << "DeRichPMTPanel: Inappropriate PmtcopyNumber : " << PmtCopyNumber;
     throw GaudiException( mess.str(), "*DeRichPMTPanel*", StatusCode::FAILURE );
   }
+
+  // // test new method
+  // const DeRichPMT * dePmtNEW = m_copyNumToPMT[PmtCopyNumber.data()];
+  // info() << PmtCopyNumber << endmsg; 
+  // if ( dePmtNEW ) { info() << dePmtNEW->name() << endmsg; } else { info() << "NULL" << endmsg; }
+  // if ( dePmt    ) { info() << dePmt->name() << endmsg;    } else { info() << "NULL" << endmsg; }
+  // if ( dePmtNEW != dePmt ) { info() << "MOOO" << endmsg;  }
 
   return dePmt;
 }
