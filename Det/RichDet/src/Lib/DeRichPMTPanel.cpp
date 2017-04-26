@@ -1129,6 +1129,7 @@ const DeRichPD* DeRichPMTPanel::dePD( const LHCb::RichSmartID pdID ) const
   unsigned int pdInCol = pdID.pdNumInCol();  
 
   // if need be correct the pdCol (for data when it was incorrectly filled)
+  // this is temporary, can be removed when no longer needed...
   if ( pdCol >= m_DePMTs.size() ) { pdCol = PmtModuleNumInPanelFromModuleNumAlone(pdCol); }
 
   // return the pointer from the array
