@@ -4,7 +4,7 @@
 <gdd>
 
   <package name="PhysEvent">
-    <class 
+    <class
       name      = "Tagger"
       author    = "Marco Musy, Julian Wishahi"
       allocator = "NO"
@@ -20,22 +20,22 @@
         desc = "The type of tagger which has produced this decision"
         strTypConv = "TRUE"
         unknownValue = 'unknown'
-        value= "none         = 0, 
-                unknown      = 1, 
-                OS_Muon      = 2, 
-                OS_Electron  = 3, 
-                OS_Kaon      = 4, 
-                SS_Kaon      = 5, 
-                SS_Pion      = 6, 
-                jetCharge    = 7, 
-                OS_jetCharge = 8, 
-                SS_jetCharge = 9, 
-                VtxCharge    = 10, 
-                Topology     = 11, 
-                OS_nnetKaon  = 12, 
-                SS_nnetKaon  = 13, 
-                SS_Proton    = 14, 
-                OS_Charm     = 15, 
+        value= "none         = 0,
+                unknown      = 1,
+                OS_Muon      = 2,
+                OS_Electron  = 3,
+                OS_Kaon      = 4,
+                SS_Kaon      = 5,
+                SS_Pion      = 6,
+                jetCharge    = 7,
+                OS_jetCharge = 8,
+                SS_jetCharge = 9,
+                VtxCharge    = 10,
+                Topology     = 11,
+                OS_nnetKaon  = 12,
+                SS_nnetKaon  = 13,
+                SS_Proton    = 14,
+                OS_Charm     = 15,
                 SS_PionBDT   = 16,
                 OSMuon       = 10100,
                 OSElectron   = 10200,
@@ -53,7 +53,7 @@
     <constructor
         desc = "Copy Constructor"
         argList  = "const Tagger&amp; c"
-        initList = "m_type(c.type()), m_decision(c.decision()), m_omega(c.omega()), m_taggerParts(c.taggerParts())">
+        initList = "m_type(c.type()), m_decision(c.decision()), m_omega(c.omega()), m_mvaValue(c.mvaValue()), m_charge(c.charge()), m_taggerParts(c.taggerParts())">
         <code/>
     </constructor>
 
@@ -64,20 +64,34 @@
         init = "0"
     />
 
-    <attribute 
-	    desc = "decision of tagger"
-	    name = "decision"
-	    type = "short int"
+    <attribute
+        desc = "decision of tagger"
+        name = "decision"
+        type = "short int"
         init = "0"
     />
-		
-    <attribute 
+
+    <attribute
         desc = "wrong tag fraction of tagger from MC tuning"
         name = "omega"
         type = "float"
         init = "0.50"
-    />		
- 
+    />
+
+    <attribute
+        desc = "raw output of the mva"
+        name = "mvaValue"
+        type = "float"
+        init = "0.50"
+    />
+
+    <attribute
+        desc = "(weighted) charge of the tagging particle"
+        name = "charge"
+        type = "float"
+        init = "0"
+    />
+
     <relation
         name="taggerParts"
         desc="Vector of Particle(s) used to build the Tagger"
