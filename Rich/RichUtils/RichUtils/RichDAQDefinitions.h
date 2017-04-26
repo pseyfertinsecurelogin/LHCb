@@ -570,7 +570,7 @@ namespace Rich
       }
     };
 
-    /** @class  HPDCopyNumber RichUtils/RichDAQDefinitions.h
+    /** @class PDCopyNumber RichUtils/RichDAQDefinitions.h
      *
      *  The Geant4 copy number equivalent. A different way to locate HPDs.
      *  The number starts at 0 at Rich1,Top,HPDColumn=0,NumInCol=0 and reaches
@@ -579,13 +579,32 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   24/07/2008
      */
-    class HPDCopyNumber final : public NumericType<ShortType>
+    class PDCopyNumber final : public NumericType<ShortType>
     {
     public :
       /// Default Constructor
-      HPDCopyNumber() = default;
+      PDCopyNumber() = default;
       /// Constructor with value
-      explicit HPDCopyNumber ( const ShortType id )
+      explicit PDCopyNumber ( const ShortType id )
+        : NumericType<ShortType>(id) { }
+    };
+    /// Temporary alias (to be removed)
+    using HPDCopyNumber = PDCopyNumber;
+
+    /** @class PDPanelIndex RichUtils/RichDAQDefinitions.h
+     *
+     *  PD Index within a panel. Does not neccessary run concurrently.
+     *
+     *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
+     *  @date   24/07/2008
+     */
+    class PDPanelIndex final : public NumericType<ShortType>
+    {
+    public :
+      /// Default Constructor
+      PDPanelIndex() = default;
+      /// Constructor with value
+      explicit PDPanelIndex ( const ShortType id )
         : NumericType<ShortType>(id) { }
     };
 
@@ -777,18 +796,18 @@ namespace std
   template <> struct hash<const Rich::DAQ::HPDL1InputID&>
   { inline size_t operator() ( const Rich::DAQ::HPDL1InputID id ) const { return (size_t)id.data(); } } ;
 
-  /// HPDCopyNumber hash function
-  template <> struct hash<Rich::DAQ::HPDCopyNumber>
-  { inline size_t operator() ( Rich::DAQ::HPDCopyNumber id ) const { return (size_t)id.data(); } } ;
-  /// HPDCopyNumber hash function
-  template <> struct hash<Rich::DAQ::HPDCopyNumber&>
-  { inline size_t operator() ( Rich::DAQ::HPDCopyNumber id ) const { return (size_t)id.data(); } } ;
-  /// HPDCopyNumber hash function
-  template <> struct hash<const Rich::DAQ::HPDCopyNumber>
-  { inline size_t operator() ( const Rich::DAQ::HPDCopyNumber id ) const { return (size_t)id.data(); } } ;
-  /// HPDCopyNumber hash function
-  template <> struct hash<const Rich::DAQ::HPDCopyNumber&>
-  { inline size_t operator() ( const Rich::DAQ::HPDCopyNumber id ) const { return (size_t)id.data(); } } ;
+  /// PDCopyNumber hash function
+  template <> struct hash<Rich::DAQ::PDCopyNumber>
+  { inline size_t operator() ( Rich::DAQ::PDCopyNumber id ) const { return (size_t)id.data(); } } ;
+  /// PDCopyNumber hash function
+  template <> struct hash<Rich::DAQ::PDCopyNumber&>
+  { inline size_t operator() ( Rich::DAQ::PDCopyNumber id ) const { return (size_t)id.data(); } } ;
+  /// PDCopyNumber hash function
+  template <> struct hash<const Rich::DAQ::PDCopyNumber>
+  { inline size_t operator() ( const Rich::DAQ::PDCopyNumber id ) const { return (size_t)id.data(); } } ;
+  /// PDCopyNumber hash function
+  template <> struct hash<const Rich::DAQ::PDCopyNumber&>
+  { inline size_t operator() ( const Rich::DAQ::PDCopyNumber id ) const { return (size_t)id.data(); } } ;
 
   /// Level1CopyNumber hash function
   template <> struct hash<Rich::DAQ::Level1CopyNumber>
@@ -912,18 +931,18 @@ namespace GaudiUtils
   template <> struct Hash<const Rich::DAQ::HPDL1InputID&>
   { inline size_t operator() ( const Rich::DAQ::HPDL1InputID id ) const noexcept { return (size_t)id.data(); } } ;
 
-  /// HPDCopyNumber Hash function
-  template <> struct Hash<Rich::DAQ::HPDCopyNumber>
-  { inline size_t operator() ( Rich::DAQ::HPDCopyNumber id ) const noexcept { return (size_t)id.data(); } } ;
-  /// HPDCopyNumber Hash function
-  template <> struct Hash<Rich::DAQ::HPDCopyNumber&>
-  { inline size_t operator() ( Rich::DAQ::HPDCopyNumber id ) const noexcept { return (size_t)id.data(); } } ;
-  /// HPDCopyNumber Hash function
-  template <> struct Hash<const Rich::DAQ::HPDCopyNumber>
-  { inline size_t operator() ( const Rich::DAQ::HPDCopyNumber id ) const noexcept { return (size_t)id.data(); } } ;
-  /// HPDCopyNumber Hash function
-  template <> struct Hash<const Rich::DAQ::HPDCopyNumber&>
-  { inline size_t operator() ( const Rich::DAQ::HPDCopyNumber id ) const noexcept { return (size_t)id.data(); } } ;
+  /// PDCopyNumber Hash function
+  template <> struct Hash<Rich::DAQ::PDCopyNumber>
+  { inline size_t operator() ( Rich::DAQ::PDCopyNumber id ) const noexcept { return (size_t)id.data(); } } ;
+  /// PDCopyNumber Hash function
+  template <> struct Hash<Rich::DAQ::PDCopyNumber&>
+  { inline size_t operator() ( Rich::DAQ::PDCopyNumber id ) const noexcept { return (size_t)id.data(); } } ;
+  /// PDCopyNumber Hash function
+  template <> struct Hash<const Rich::DAQ::PDCopyNumber>
+  { inline size_t operator() ( const Rich::DAQ::PDCopyNumber id ) const noexcept { return (size_t)id.data(); } } ;
+  /// PDCopyNumber Hash function
+  template <> struct Hash<const Rich::DAQ::PDCopyNumber&>
+  { inline size_t operator() ( const Rich::DAQ::PDCopyNumber id ) const noexcept { return (size_t)id.data(); } } ;
 
   /// Level1CopyNumber Hash function
   template <> struct Hash<Rich::DAQ::Level1CopyNumber>
@@ -948,15 +967,15 @@ namespace Rich
   namespace DAQ
   {
 
-    /// Map for RICH HPD data, sorted by HPD number
+    /// Map for RICH PD data, sorted by PD number
     using PDMap = std::map< const LHCb::RichSmartID, LHCb::RichSmartID::Vector >;
 
-    /// Mapping from Level1 ID to list of HPD RichSmartIDs
+    /// Mapping from Level1 ID to list of PD RichSmartIDs
     using L1ToSmartIDs = GaudiUtils::HashMap< const Level1HardwareID, LHCb::RichSmartID::Vector >;
     /// Pair type in a L1ToSmartIDs
     using L1ToSmartIDsPair = std::pair< const Level1HardwareID, LHCb::RichSmartID::Vector >;
 
-    /// Mapping from Level1 ID to list of HPD RichSmartIDs
+    /// Mapping from Level1 ID to list of PD RichSmartIDs
     using L1ToHardIDs = GaudiUtils::HashMap< const Level1HardwareID, HPDHardwareIDs >;
     /// Pair type in a L1ToHardIDs
     using L1ToHardIDsPair = std::pair< const Level1HardwareID, HPDHardwareIDs >;
