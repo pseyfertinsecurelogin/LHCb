@@ -111,7 +111,7 @@ This version is released on master branch.
 <h2>Changes to tests</h2>
 <dl>
 <dt>[MR !585] Replace GaudiTest.py by GaudiTesting - see LHCBPS-1692
-
+<dt>[MR !613] Add exclusion for Git CondDB INFO messages
 </dl>
 
 
