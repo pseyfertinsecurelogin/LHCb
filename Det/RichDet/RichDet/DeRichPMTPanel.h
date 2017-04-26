@@ -58,7 +58,7 @@ public:
   const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const override final;
 
   // Returns the detector element for the given PD number
-  const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const override final;
+  const DeRichPD* dePD( const Rich::DAQ::PDPanelIndex PDNumber ) const override final;
 
   // Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
   bool smartID( const Gaudi::XYZPoint& globalPoint,
@@ -70,7 +70,7 @@ public:
                  const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& hitPosition,
                  LHCb::RichSmartID& smartID,
-                 const DeRichPD*& dePD,
+                 const DeRichPD*& pd,
                  const LHCb::RichTraceMode mode ) const override final;
 
   // Returns the intersection point with an HPD window given a vector and a point.
@@ -79,7 +79,7 @@ public:
                  const Gaudi::XYZPoint& pGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
-                 const DeRichPD*& dePD,
+                 const DeRichPD*& pd,
                  const LHCb::RichTraceMode mode ) const override final;
 
   // Adds to the given vector all the available readout channels in this HPD panel
@@ -99,10 +99,10 @@ public:
   }
 
   /// Returns the PD number for the given RichSmartID
-  Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const override;
+  Rich::DAQ::PDPanelIndex pdNumber( const LHCb::RichSmartID& smartID ) const override;
 
   // The maximum PD copy number for this panel
-  Rich::DAQ::HPDCopyNumber maxPdNumber() const override;
+  Rich::DAQ::PDPanelIndex maxPdNumber() const override;
 
 private: 
 
@@ -130,14 +130,18 @@ private: // setup methods
 private:
 
   /// Returns the PD number for the given RichSmartID
-  inline Rich::DAQ::HPDCopyNumber _pdNumber( const LHCb::RichSmartID& smartID ) const noexcept
+  inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID& smartID ) const noexcept
   {
-    return Rich::DAQ::HPDCopyNumber( smartID.rich() == rich() && smartID.panel() == side() ?
-                                     ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() :
-                                     nPDs() + 1 );
+    //if ( smartID.rich() != rich() || smartID.panel() != side() )
+    //{ 
+    //  error() << "_pdNumber RICH and side error " << smartID << endmsg;
+    //}
+    return Rich::DAQ::PDPanelIndex( smartID.rich() == rich() && smartID.panel() == side() ?
+                                    ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() :
+                                    nPDs() + 1 );
   }
 
-  const DeRichPMT* dePMT( const Rich::DAQ::HPDCopyNumber PmtCopyNumber ) const;
+  const DeRichPMT* dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const;
 
   inline RowCol getPmtRowColFromPmtNum( const int aPmtNum ) const noexcept
   {
@@ -164,6 +168,19 @@ private:
 
   inline int PmtModuleNumInPanelFromModuleNumAlone( const int aMnum ) const noexcept
   {
+    //info() << "PmtModuleNumInPanelFromModuleNumAlone Begin " << m_RichPmtModuleCopyNumBeginPanel << endmsg;
+    //info() << "PmtModuleNumInPanelFromModuleNumAlone End   " << m_RichPmtModuleCopyNumEndPanel   << endmsg;
+    // const auto i = ( aMnum >= m_RichPmtModuleCopyNumBeginPanel[0] &&
+    //                  aMnum <= m_RichPmtModuleCopyNumEndPanel[0]   ? 0 :
+    //                  aMnum >= m_RichPmtModuleCopyNumBeginPanel[1] &&
+    //                  aMnum <= m_RichPmtModuleCopyNumEndPanel[1]   ? 1 :
+    //                  aMnum >= m_RichPmtModuleCopyNumBeginPanel[2] &&
+    //                  aMnum <= m_RichPmtModuleCopyNumEndPanel[2]   ? 2 :
+    //                  aMnum >= m_RichPmtModuleCopyNumBeginPanel[3] &&
+    //                  aMnum <= m_RichPmtModuleCopyNumEndPanel[3]   ? 3 :
+    //          -1 );
+    //info() << "PmtModuleNumInPanelFromModuleNumAlone " << aMnum << " i = " << i << endmsg;
+
     return ( aMnum >= m_RichPmtModuleCopyNumBeginPanel[0] &&
              aMnum <= m_RichPmtModuleCopyNumEndPanel[0]   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[0] :
              aMnum >= m_RichPmtModuleCopyNumBeginPanel[1] &&
@@ -199,12 +216,16 @@ private:
 
   ArraySetup findPMTArraySetup(const Gaudi::XYZPoint& inPanel) const;
 
-  inline void setRichPmtSmartID( const ArraySetup & aPmtHitChannel,
+  template< typename TYPE >
+  inline void setRichPmtSmartID( const TYPE pdCol,
+                                 const TYPE pdInCol,
+                                 const TYPE pixCol,
+                                 const TYPE pixRow,
                                  LHCb::RichSmartID& id ) const noexcept
   {
-    id.setPD(aPmtHitChannel[0],aPmtHitChannel[1]);
-    id.setPixelRow(aPmtHitChannel[3]);
-    id.setPixelCol(aPmtHitChannel[2]);
+    id.setPD(pdCol,pdInCol); 
+    id.setPixelCol(pixCol);
+    id.setPixelRow(pixRow);
   }
   
   DetectorElement* getFirstDeRich() const;
@@ -334,9 +355,6 @@ private:
   ///< Container for the PMTs, sorted by panel
   std::vector<DRiPMTV> m_DePMTs{1,DRiPMTV(2,nullptr)};
 
-  /// container for the PMTs sorted by copy number (for access speed)
-  //DRiPMTV m_copyNumToPMT;
-
   /// Container for the PMTAnodes as Det Elements
   std::vector<IDeElemV> m_DePMTAnodes{1,IDeElemV(2,nullptr)};
 
@@ -425,6 +443,6 @@ private:
   std::vector<int> m_Rich2MixedModuleArrayColumnSize{3,0};
   std::vector<bool> m_ModuleIsWithGrandPMT;
 
-  Rich::DAQ::HPDCopyNumber m_maxPDCopyN{0};
+  Rich::DAQ::PDPanelIndex m_maxPDCopyN{0};
 
 };
