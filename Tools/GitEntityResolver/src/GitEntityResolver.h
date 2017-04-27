@@ -19,13 +19,6 @@
 
 #include <boost/utility/string_ref.hpp>
 
-// this should be defined in GaudiKernel/Time.h, but the version there is not
-// found by ADL
-namespace Gaudi
-{
-  inline bool operator<( const Time& t1, const Time& t2 ) { return t1.ns() < t2.ns(); }
-}
-
 /** Allow use of a Git repository as a source of XML files for XercesC.
  *
  *  An instance of this tool can be used to allow inclusion of XML DTDs and documents
