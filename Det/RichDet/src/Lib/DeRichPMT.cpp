@@ -80,11 +80,9 @@ StatusCode DeRichPMT::initialize()
     return StatusCode::FAILURE;
   }
 
-  updMgrSvc()->registerCondition( this, geometry(),
-                                  &DeRichPMT::updateGeometry );
-  updMgrSvc()->registerCondition( this, m_dePmtAnode->geometry(),
-                                  &DeRichPMT::updateGeometry );
-
+  // register for updates when geometry changes
+  updMgrSvc()->registerCondition( this, geometry(), &DeRichPMT::updateGeometry );
+  updMgrSvc()->registerCondition( this, m_dePmtAnode->geometry(), &DeRichPMT::updateGeometry );
   // Update PMT QE values whenever DeRichSystem updates
   updMgrSvc()->registerCondition( this, deRichSys(), &DeRichPMT::initPMTQuantumEff );
 
@@ -130,51 +128,57 @@ StatusCode DeRichPMT::getPMTParameters()
   m_effNumActivePixs = ( deRich->exists(effnumPixCond) ? 
                          (FType)deRich->param<int>(effnumPixCond) : 64.0 );
 
-  m_PmtAnodeXSize = deRich->param<double> ("RichPmtAnodeXSize" );
-  m_PmtAnodeYSize = deRich->param<double> ("RichPmtAnodeYSize" );
-  m_PmtAnodeZSize = deRich->param<double> ("RichPmtAnodeZSize" );
-  m_PmtAnodeLocationInPmt = deRich->param<double>("RichPmtSiliconDetectorLocalZlocation" );
-  m_PmtPixelXSize = deRich->param<double>( "RichPmtPixelXSize");
-  m_PmtPixelYSize = deRich->param<double>( "RichPmtPixelYSize");
-  m_PmtPixelGap = deRich->param<double> ( "RichPmtPixelGap" );
-  m_PmtEffectivePixelXSize = m_PmtPixelXSize + m_PmtPixelGap;
-  m_PmtEffectivePixelYSize = m_PmtPixelYSize + m_PmtPixelGap;
-  m_PmtAnodeHalfThickness = m_PmtAnodeZSize/2.0;
+  // CRJ - To reduce PMT memory size do not load parameters not used yet ...
+
+  //m_PmtAnodeXSize = deRich->param<double> ("RichPmtAnodeXSize" );
+  //m_PmtAnodeYSize = deRich->param<double> ("RichPmtAnodeYSize" );
+  const auto PmtAnodeZSize = deRich->param<double> ("RichPmtAnodeZSize" );
+  const auto PmtAnodeLocationInPmt = deRich->param<double>("RichPmtSiliconDetectorLocalZlocation" );
+  const auto PmtPixelXSize = deRich->param<double>( "RichPmtPixelXSize");
+  const auto PmtPixelYSize = deRich->param<double>( "RichPmtPixelYSize");
+  const auto PmtPixelGap = deRich->param<double> ( "RichPmtPixelGap" );
+  m_PmtEffectivePixelXSize = PmtPixelXSize + PmtPixelGap;
+  m_PmtEffectivePixelYSize = PmtPixelYSize + PmtPixelGap;
+  m_PmtAnodeHalfThickness = PmtAnodeZSize/2.0;
   m_PmtNumPixCol = deRich->param<int> ("RichPmtNumPixelCol");
+  m_PmtNumPixRow = deRich->param<int> ("RichPmtNumPixelRow");
+  m_PmtNumPixColFrac = (m_PmtNumPixCol-1) * 0.5;
+  m_PmtNumPixRowFrac = (m_PmtNumPixRow-1) * 0.5;
 
-  m_PmtNumPixRow   = deRich->param<int>    ( "RichPmtNumPixelRow" );
-  m_PmtQwZSize     = deRich->param<double> ( "RichPmtQuartzZSize" );
-  m_QwToAnodeZDist = deRich->param<double> ( "RichPmtQWToSiMaxDist" );
+  m_PmtQwZSize   = deRich->param<double> ( "RichPmtQuartzZSize" );
+  const auto QwToAnodeZDist = deRich->param<double> ( "RichPmtQWToSiMaxDist" );
 
-  m_Rich2PmtArrayConfig = 0;
+  m_zShift = QwToAnodeZDist + PmtAnodeLocationInPmt;
+
+  int Rich2PmtArrayConfig = 0;
 
   if ( deRich->exists ("Rich2PMTArrayConfig") )
   {
 
-    m_Rich2PmtArrayConfig = deRich->param<int>("Rich2PMTArrayConfig");
+    Rich2PmtArrayConfig = deRich->param<int>("Rich2PMTArrayConfig");
     if ( deRich->exists ("RichGrandPmtAnodeXSize" ) )
     {
-      m_GrandPmtAnodeXSize     = deRich->param<double>( "RichGrandPmtAnodeXSize" );
-      m_GrandPmtAnodeYSize     = deRich->param<double>( "RichGrandPmtAnodeYSize" );
-      m_GrandPmtAnodeZSize     = deRich->param<double>( "RichGrandPmtAnodeZSize" );
-      m_GrandPmtPixelXSize     = deRich->param<double>( "RichGrandPmtPixelXSize" );
-      m_GrandPmtPixelYSize     = deRich->param<double>( "RichGrandPmtPixelYSize" );
-      m_GrandPmtPixelGap       = deRich->param<double>( "RichGrandPmtPixelGap" );
+      //m_GrandPmtAnodeXSize     = deRich->param<double>( "RichGrandPmtAnodeXSize" );
+      //m_GrandPmtAnodeYSize     = deRich->param<double>( "RichGrandPmtAnodeYSize" );
+      const auto GrandPmtAnodeZSize     = deRich->param<double>( "RichGrandPmtAnodeZSize" );
+      const auto GrandPmtPixelXSize     = deRich->param<double>( "RichGrandPmtPixelXSize" );
+      const auto GrandPmtPixelYSize     = deRich->param<double>( "RichGrandPmtPixelYSize" );
+      const auto GrandPmtPixelGap       = deRich->param<double>( "RichGrandPmtPixelGap" );
       m_GrandPmtEdgePixelXSize = deRich->param<double>( "RichGrandPmtEdgePixelXSize");
       m_GrandPmtEdgePixelYSize = deRich->param<double>( "RichGrandPmtEdgePixelYSize");
-      m_GrandPmtEffectivePixelXSize = m_GrandPmtPixelXSize + m_GrandPmtPixelGap;
-      m_GrandPmtEffectivePixelYSize = m_GrandPmtPixelYSize + m_GrandPmtPixelGap;
-      m_GrandPmtEdgePixelXDiff = m_GrandPmtEdgePixelXSize - m_GrandPmtPixelXSize;
-      m_GrandPmtEdgePixelYDiff = m_GrandPmtEdgePixelYSize - m_GrandPmtPixelYSize;
-      m_GrandPmtAnodeHalfThickness = m_GrandPmtAnodeZSize/2.0;
+      m_GrandPmtEffectivePixelXSize = GrandPmtPixelXSize + GrandPmtPixelGap;
+      m_GrandPmtEffectivePixelYSize = GrandPmtPixelYSize + GrandPmtPixelGap;
+      //m_GrandPmtEdgePixelXDiff = m_GrandPmtEdgePixelXSize - GrandPmtPixelXSize;
+      //m_GrandPmtEdgePixelYDiff = m_GrandPmtEdgePixelYSize - GrandPmtPixelYSize;
+      m_GrandPmtAnodeHalfThickness = GrandPmtAnodeZSize/2.0;
     }
 
   }
   m_Rich2UseGrandPmt = false;
-  if ( m_Rich2PmtArrayConfig >= 1 ) 
+  if ( Rich2PmtArrayConfig >= 1 ) 
   {
     m_Rich2UseGrandPmt = true;
-    if ( m_Rich2PmtArrayConfig == 2 ) 
+    if ( Rich2PmtArrayConfig == 2 ) 
     {
       m_Rich2UseMixedPmt = true;
     }
@@ -217,10 +221,24 @@ void DeRichPMT::setPmtIsGrandFlag( const bool isGrand )
 {
   m_PmtIsGrand = isGrand;
   // Update cached size parameters
-  m_pixelArea = ( isGrand ?
-                  m_GrandPmtPixelXSize * m_GrandPmtPixelYSize :
-                  m_PmtPixelXSize      * m_PmtPixelYSize );
-  m_effPixelArea = m_pixelArea; // PMTs have no demagnification
+  const auto * deRich = getFirstRich();
+  if ( deRich )
+  {
+    if ( isGrand )
+    {
+      const auto GrandPmtPixelXSize = deRich->param<double>( "RichGrandPmtPixelXSize" );
+      const auto GrandPmtPixelYSize = deRich->param<double>( "RichGrandPmtPixelYSize" );
+      m_pixelArea = GrandPmtPixelXSize * GrandPmtPixelYSize;
+    }
+    else
+    {
+      const auto PmtPixelXSize = deRich->param<double>( "RichPmtPixelXSize");
+      const auto PmtPixelYSize = deRich->param<double>( "RichPmtPixelYSize");
+      m_pixelArea = PmtPixelXSize * PmtPixelYSize;
+    }
+    m_effPixelArea = m_pixelArea; // PMTs have no demagnification
+  }
+  else { error() << "Could not load First Rich" << endmsg; }
 }
 
 //=============================================================================
@@ -239,8 +257,7 @@ StatusCode DeRichPMT::initPMTQuantumEff()
 
 StatusCode DeRichPMT::updateGeometry()
 {
-  StatusCode sc = getPMTParameters();
-  return sc;
+  return getPMTParameters();
 }
 
 //=============================================================================
@@ -258,7 +275,7 @@ bool DeRichPMT::detectionPoint ( const double fracPixelCol,
   // output is expected to be in the PMT coord system.
   // for now assume negligible refraction effect at the QW.
  
-  const auto zPh = aLocalHit.z() + m_QwToAnodeZDist +  m_PmtAnodeLocationInPmt ;
+  const auto zPh = aLocalHit.z() + m_zShift;
 
   if ( photoCathodeSide )
   {
@@ -282,15 +299,15 @@ DeRichPMT::RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) co
 {
 
   const auto aPhCaRsq_Coord = ( std::pow(aPhCathCoord.x(),2) + std::pow(aPhCathCoord.y(),2) );
-  const auto aPhCaR_Coord =  ( aPhCaRsq_Coord > 0.0 ? std::sqrt(aPhCaRsq_Coord) : 0.0 );
-  const auto aPhCaRsq_Phi = vdt::fast_atan2( aPhCathCoord.y(), aPhCathCoord.x() );
-  const auto aXSignLocal = ( aPhCathCoord.x() > 0 ? 1 : -1 );
-  const auto aYSignLocal = ( aPhCathCoord.y() > 0 ? 1 : -1 );
+  const auto aPhCaR_Coord   = ( aPhCaRsq_Coord > 0.0 ? std::sqrt(aPhCaRsq_Coord) : 0.0 );
+  const auto aPhCaRsq_Phi   = vdt::fast_atan2( aPhCathCoord.y(), aPhCathCoord.x() );
+  const auto aXSignLocal    = ( aPhCathCoord.x() > 0 ? 1 : -1 );
+  const auto aYSignLocal    = ( aPhCathCoord.y() > 0 ? 1 : -1 );
 
   double sinphi(0), cosphi(0);
   vdt::fast_sincos( aPhCaRsq_Phi, sinphi, cosphi );
-  const auto aLensRecXLocal = fabs((aPhCaR_Coord*m_PmtLensMagnificationRatio)*cosphi)* aXSignLocal;
-  const auto aLensRecYLocal = fabs((aPhCaR_Coord*m_PmtLensMagnificationRatio)*sinphi)* aYSignLocal;
+  const auto aLensRecXLocal = fabs((aPhCaR_Coord*m_PmtLensMagnificationRatio)*cosphi) * aXSignLocal;
+  const auto aLensRecYLocal = fabs((aPhCaR_Coord*m_PmtLensMagnificationRatio)*sinphi) * aYSignLocal;
 
   const auto Rsq = std::pow(aPhCaR_Coord*m_PmtLensMagnificationRatio,2);
 
@@ -305,11 +322,13 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
                                 Gaudi::XYZPoint& detectPoint,
                                 bool photoCathodeSide ) const
 {
-  const auto aPixCol  = (FType) ( smartID.pixelCol() );
-  const auto aPixRow  = (FType) ( smartID.pixelRow() );
-  const auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( aPixCol, aPixRow, smartID );
+  //const auto aPixCol  = (FType) ( smartID.pixelCol() );
+  //const auto aPixRow  = (FType) ( smartID.pixelRow() );
+  const auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(), 
+                                                               smartID.pixelRow(),
+                                                               smartID );
 
-  const auto zPh = aLocalHit.z() + m_QwToAnodeZDist + m_PmtAnodeLocationInPmt ;
+  const auto zPh = aLocalHit.z() + m_zShift;
 
   // for now assume negligible refraction effect at the QW.
 
@@ -328,26 +347,6 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
   }
 
   return true;
-}
-
-//============================================================================================
-
-Gaudi::XYZPoint
-DeRichPMT::getAnodeHitCoordFromGrandPixelNum( const FType fracPixelCol,
-                                              const FType fracPixelRow ) const
-{
-  const auto aXEffPixel =
-    ((fracPixelCol==0) || (fracPixelCol==( m_PmtNumPixCol-1)) ) ?  
-    m_GrandPmtEdgePixelXSize : m_GrandPmtEffectivePixelXSize;
-  const auto aYEffPixel =
-    ((fracPixelRow==0) || (fracPixelRow==( m_PmtNumPixRow-1)) ) ? 
-    m_GrandPmtEdgePixelYSize : m_GrandPmtEffectivePixelYSize;
-
-  const auto xh = ( fracPixelCol - (m_PmtNumPixCol-1) * 0.5 ) * aXEffPixel;
-  const auto yh = ( fracPixelRow - (m_PmtNumPixRow-1) * 0.5 ) * aYEffPixel;
-  const auto zh = m_GrandPmtAnodeHalfThickness;
-
-  return { xh, yh, zh };
 }
 
 //===============================================================================================
