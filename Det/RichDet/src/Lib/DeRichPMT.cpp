@@ -71,7 +71,6 @@ StatusCode DeRichPMT::initialize()
   }
   m_moduleNum = atoi( s1.substr(0,pos3).c_str() );
   m_copyNum   = atoi( s1.substr(pos3+7).c_str() );
-  //info() << name() << " " << m_moduleNum << " " << m_copyNum  << endmsg;
 
   m_dePmtAnode = ( !childIDetectorElements().empty() ?
                    childIDetectorElements().front() : nullptr );
@@ -80,8 +79,6 @@ StatusCode DeRichPMT::initialize()
     fatal() << "DePMT : Cannot find PmtAnode detector element" << endmsg;
     return StatusCode::FAILURE;
   }
-
-  sc = sc && getPMTParameters();
 
   updMgrSvc()->registerCondition( this, geometry(),
                                   &DeRichPMT::updateGeometry );
@@ -100,33 +97,39 @@ StatusCode DeRichPMT::initialize()
 
 //=============================================================================
 
-StatusCode DeRichPMT::getPMTParameters()
+DetectorElement * DeRichPMT::getFirstRich()
 {
-  StatusCode sc = StatusCode::SUCCESS;
-
+  DetectorElement * de{nullptr};
   SmartDataPtr<DetectorElement> afterMag(dataSvc(),"/dd/Structure/LHCb/AfterMagnetRegion");
   if ( !afterMag )
   {
     error() << "Could not load AfterMagnetRegion det elem" << endmsg;
-    return StatusCode::FAILURE;
   }
-
-  const std::string firstRichLoc = ( afterMag->exists("RichDetectorLocations") ?
-                                     afterMag->paramVect<std::string>("RichDetectorLocations")[0] :
-                                     DeRichLocations::Rich1 );
-
-  SmartDataPtr<DetectorElement> deRich(dataSvc(), firstRichLoc );
-  if ( !deRich )
+  else
   {
-    error() << "Could not load DeRich for DeRichPMTPanel" << endmsg;
-    return StatusCode::FAILURE;
+    const auto firstRichLoc = ( afterMag->exists("RichDetectorLocations") ?
+                                afterMag->paramVect<std::string>("RichDetectorLocations")[0] :
+                                DeRichLocations::Rich1 );
+    SmartDataPtr<DetectorElement> deRich( dataSvc(), firstRichLoc );
+    if ( deRich ) { de = deRich; }
   }
+  if ( !de ) { error() << "Could not load DeRich for DeRichPMTPanel" << endmsg; }
+  return de;
+}
+
+//=============================================================================
+
+StatusCode DeRichPMT::getPMTParameters()
+{
+  StatusCode sc = StatusCode::SUCCESS;
+
+  const auto * deRich = getFirstRich();
+  if ( !deRich ) { return StatusCode::FAILURE; }
 
   const std::string effnumPixCond = "RichPmtTotNumPixel";
   m_effNumActivePixs = ( deRich->exists(effnumPixCond) ? 
-                         (double)deRich->param<int>(effnumPixCond) : 64.0 );
+                         (FType)deRich->param<int>(effnumPixCond) : 64.0 );
 
-  m_PmtQELocation = deRich->param<std::string>("RichPmtQETableName");
   m_PmtAnodeXSize = deRich->param<double> ("RichPmtAnodeXSize" );
   m_PmtAnodeYSize = deRich->param<double> ("RichPmtAnodeYSize" );
   m_PmtAnodeZSize = deRich->param<double> ("RichPmtAnodeZSize" );
@@ -177,7 +180,7 @@ StatusCode DeRichPMT::getPMTParameters()
     }
   }
 
-  const double Rich1Rich2ZDivideLimit = 6000.0;
+  const FType Rich1Rich2ZDivideLimit = 6000.0;
   
   // Which RICH are we in ?
   const Gaudi::XYZPoint atestPoint(0.0,0.0,0.0);
@@ -186,7 +189,7 @@ StatusCode DeRichPMT::getPMTParameters()
 
   if ( exists("RichPmtLensMagnficationFactor") ) 
   {
-    m_PmtLensMagnificationRatio=deRich->param<double> ("RichPmtLensMagnficationFactor"  );
+    m_PmtLensMagnificationRatio = deRich->param<double>("RichPmtLensMagnficationFactor"  );
   }
   else
   {
@@ -195,11 +198,11 @@ StatusCode DeRichPMT::getPMTParameters()
 
   if ( exists("RichPmtLensRadiusofCurvature") )
   {
-    m_PmtLensRoc =deRich->param<double> ("RichPmtLensRadiusofCurvature" );
+    m_PmtLensRoc2 = std::pow( deRich->param<double>("RichPmtLensRadiusofCurvature"), 2 );
   }
   else 
   {
-    m_PmtLensRoc = 100000.0;
+    m_PmtLensRoc2 = std::pow( 100000.0, 2 );
   }
 
   // Default initialise some DePD base parameters
@@ -224,7 +227,10 @@ void DeRichPMT::setPmtIsGrandFlag( const bool isGrand )
 
 StatusCode DeRichPMT::initPMTQuantumEff()
 {
-  SmartDataPtr<TabulatedProperty> pmtQuantumEffTabProp( dataSvc(), m_PmtQELocation );
+  const auto * deRich = getFirstRich();
+  if ( !deRich ) { return StatusCode::FAILURE; }
+  const auto PmtQELocation = deRich->param<std::string>("RichPmtQETableName");
+  SmartDataPtr<TabulatedProperty> pmtQuantumEffTabProp( dataSvc(), PmtQELocation );
   m_pdQuantumEffFunc = std::make_shared<Rich::TabulatedProperty1D>( pmtQuantumEffTabProp );
   return StatusCode::SUCCESS;
 }
@@ -233,10 +239,7 @@ StatusCode DeRichPMT::initPMTQuantumEff()
 
 StatusCode DeRichPMT::updateGeometry()
 {
-  StatusCode  sc = StatusCode::SUCCESS;
-
-  // To Be Done
-
+  StatusCode sc = getPMTParameters();
   return sc;
 }
 
@@ -279,7 +282,7 @@ DeRichPMT::RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) co
 {
 
   const auto aPhCaRsq_Coord = ( std::pow(aPhCathCoord.x(),2) + std::pow(aPhCathCoord.y(),2) );
-  const auto aPhCaR_Coord =  (aPhCaRsq_Coord>0.0) ? std::sqrt(aPhCaRsq_Coord) : 0.0;
+  const auto aPhCaR_Coord =  ( aPhCaRsq_Coord > 0.0 ? std::sqrt(aPhCaRsq_Coord) : 0.0 );
   const auto aPhCaRsq_Phi = vdt::fast_atan2( aPhCathCoord.y(), aPhCathCoord.x() );
   const auto aXSignLocal = ( aPhCathCoord.x() > 0 ? 1 : -1 );
   const auto aYSignLocal = ( aPhCathCoord.y() > 0 ? 1 : -1 );
@@ -288,11 +291,12 @@ DeRichPMT::RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) co
   vdt::fast_sincos( aPhCaRsq_Phi, sinphi, cosphi );
   const auto aLensRecXLocal = fabs((aPhCaR_Coord*m_PmtLensMagnificationRatio)*cosphi)* aXSignLocal;
   const auto aLensRecYLocal = fabs((aPhCaR_Coord*m_PmtLensMagnificationRatio)*sinphi)* aYSignLocal;
-  const auto Rsq = (aPhCaR_Coord*m_PmtLensMagnificationRatio )*(aPhCaR_Coord*m_PmtLensMagnificationRatio);
 
-  const auto aLensRecZStd = aPhCathCoord.z()+std::sqrt((m_PmtLensRoc*m_PmtLensRoc)- Rsq );
+  const auto Rsq = std::pow(aPhCaR_Coord*m_PmtLensMagnificationRatio,2);
 
-  return Gaudi::XYZPoint(aLensRecXLocal,aLensRecYLocal,aLensRecZStd);
+  const auto aLensRecZStd = aPhCathCoord.z() + std::sqrt( m_PmtLensRoc2 - Rsq );
+
+  return { aLensRecXLocal, aLensRecYLocal, aLensRecZStd };
 }
 
 //=============================================================================
@@ -301,8 +305,8 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
                                 Gaudi::XYZPoint& detectPoint,
                                 bool photoCathodeSide ) const
 {
-  const auto aPixCol  = (double) ( smartID.pixelCol() );
-  const auto aPixRow  = (double) ( smartID.pixelRow() );
+  const auto aPixCol  = (FType) ( smartID.pixelCol() );
+  const auto aPixRow  = (FType) ( smartID.pixelRow() );
   const auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( aPixCol, aPixRow, smartID );
 
   const auto zPh = aLocalHit.z() + m_QwToAnodeZDist + m_PmtAnodeLocationInPmt ;
@@ -326,23 +330,11 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
   return true;
 }
 
-//=============================================================================
-
-Gaudi::XYZPoint
-DeRichPMT::getAnodeHitCoordFromPixelNum( const double fracPixelCol,
-                                         const double fracPixelRow ) const
-{
-  const auto xh = ( fracPixelCol - (m_PmtNumPixCol-1) * 0.5 ) * m_PmtEffectivePixelXSize;
-  const auto yh = ( fracPixelRow - (m_PmtNumPixRow-1) * 0.5 ) * m_PmtEffectivePixelYSize;
-  const auto zh = m_PmtAnodeHalfThickness;
-  return { xh,yh,zh };
-}
-
 //============================================================================================
 
 Gaudi::XYZPoint
-DeRichPMT::getAnodeHitCoordFromGrandPixelNum( const double fracPixelCol,
-                                              const double fracPixelRow ) const
+DeRichPMT::getAnodeHitCoordFromGrandPixelNum( const FType fracPixelCol,
+                                              const FType fracPixelRow ) const
 {
   const auto aXEffPixel =
     ((fracPixelCol==0) || (fracPixelCol==( m_PmtNumPixCol-1)) ) ?  
@@ -355,27 +347,15 @@ DeRichPMT::getAnodeHitCoordFromGrandPixelNum( const double fracPixelCol,
   const auto yh = ( fracPixelRow - (m_PmtNumPixRow-1) * 0.5 ) * aYEffPixel;
   const auto zh = m_GrandPmtAnodeHalfThickness;
 
-  return { xh,yh,zh };
-}
-
-//=============================================================================
-
-Gaudi::XYZPoint
-DeRichPMT::getAnodeHitCoordFromMultTypePixelNum( const double fracPixelCol,
-                                                 const double fracPixelRow ,
-                                                 const LHCb::RichSmartID& smartID ) const
-{
-  return ( ( smartID.rich() == Rich::Rich2 ) && PmtIsGrand() ?
-           getAnodeHitCoordFromGrandPixelNum(fracPixelCol,fracPixelRow) :
-           getAnodeHitCoordFromPixelNum( fracPixelCol , fracPixelRow ) );
+  return { xh, yh, zh };
 }
 
 //===============================================================================================
 
 Gaudi::XYZPoint DeRichPMT::detPointOnAnode ( const LHCb::RichSmartID& smartID ) const
 {
-  const auto aPixCol = (double) (smartID.pixelCol());
-  const auto aPixRow = (double) (smartID.pixelRow());
+  const auto aPixCol = (FType) (smartID.pixelCol());
+  const auto aPixRow = (FType) (smartID.pixelRow());
   const auto aLocalAnodeCoord = getAnodeHitCoordFromMultTypePixelNum(aPixCol,aPixRow,smartID );
   return ( m_dePmtAnode->geometry()->toGlobal(aLocalAnodeCoord) );
 }

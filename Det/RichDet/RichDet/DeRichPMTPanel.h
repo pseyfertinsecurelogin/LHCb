@@ -6,6 +6,7 @@
 #include <vector>
 #include <array>
 #include <algorithm>
+#include <cstdint>
 
 // Gaudi
 #include "GaudiKernel/Point3DTypes.h"
@@ -106,10 +107,11 @@ public:
 
 private: 
 
+  using Int        = std::int16_t;
   using IDeElemV   = std::vector<IDetectorElement*>;
   using DRiPMTV    = std::vector<DeRichPMT*>;
-  using ArraySetup = std::array<int,4>;
-  using RowCol     = std::array<int,2>;
+  using ArraySetup = std::array<Int,4>;
+  using RowCol     = std::array<Int,2>;
   using XYArray    = std::array<double,2>;
 
 private: // setup methods
@@ -125,48 +127,45 @@ private: // setup methods
   void RichSetupMixedSizePmtModules();
 
   // Set the rich panel and side
-  bool setRichPanelAndSide();
+  bool setRichAndSide();
 
 private:
 
   /// Returns the PD number for the given RichSmartID
-  inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID& smartID ) const noexcept
+  inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID smartID ) const noexcept
   {
-    //if ( smartID.rich() != rich() || smartID.panel() != side() )
-    //{ 
-    //  error() << "_pdNumber RICH and side error " << smartID << endmsg;
-    //}
-    return Rich::DAQ::PDPanelIndex( smartID.rich() == rich() && smartID.panel() == side() ?
-                                    ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() :
-                                    nPDs() + 1 );
+    // check for now. to be removed.
+    if ( smartID.rich() != rich() || smartID.panel() != side() )
+    { 
+      error() << "_pdNumber RICH and side error " << smartID << endmsg;
+    }
+    // Should never get different rich or panel, so skip check
+    //return Rich::DAQ::PDPanelIndex( smartID.rich() == rich() && smartID.panel() == side() ?
+    //                                ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() :
+    //                                nPDs() + 1 );
+    return Rich::DAQ::PDPanelIndex( ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() );
   }
 
   const DeRichPMT* dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const;
 
-  inline RowCol getPmtRowColFromPmtNum( const int aPmtNum ) const noexcept
+  inline RowCol getPmtRowColFromPmtNum( const Int aPmtNum ) const noexcept
   {
-    const auto aPRow = (int) (aPmtNum/m_NumPmtInRowCol[0]);
-    return { aPRow, aPmtNum - (aPRow*m_NumPmtInRowCol[0]) };
+    const Int aPRow = (aPmtNum/m_NumPmtInRowCol[0]);
+    return { aPRow, (Int)( aPmtNum - (aPRow*m_NumPmtInRowCol[0]) ) };
   }
 
-  inline RowCol getGrandPmtRowColFromPmtNum( const int aPmtNum ) const noexcept
+  inline RowCol getGrandPmtRowColFromPmtNum( const Int aPmtNum ) const noexcept
   {
-    const auto aPRow = (int) (aPmtNum/m_NumGrandPmtInRowCol[0]);
-    return { aPRow, aPmtNum - ( aPRow*m_NumGrandPmtInRowCol[0]) };
+    const Int aPRow = (aPmtNum/m_NumGrandPmtInRowCol[0]);
+    return { aPRow, (Int)( aPmtNum - (aPRow*m_NumGrandPmtInRowCol[0]) ) };
   }
 
-  inline int PmtModuleNumInPanelFromModuleNum( const int aMnum ) const noexcept
+  inline Int PmtModuleNumInPanelFromModuleNum( const Int aMnum ) const noexcept
   {
-    return ( Rich::Rich1 == rich() ?
-             ( side() == Rich::top ? 
-               aMnum - m_RichPmtModuleCopyNumBeginPanel[0] : 
-               aMnum - m_RichPmtModuleCopyNumBeginPanel[1] ) :
-             ( side() == Rich::left ?
-               aMnum - m_RichPmtModuleCopyNumBeginPanel[2] :
-               aMnum - m_RichPmtModuleCopyNumBeginPanel[3] ) );
+    return aMnum - m_RichPmtModuleCopyNumBeginPanel[m_CurPanelNum];
   }
 
-  inline int PmtModuleNumInPanelFromModuleNumAlone( const int aMnum ) const noexcept
+  inline Int PmtModuleNumInPanelFromModuleNumAlone( const Int aMnum ) const noexcept
   {
     //info() << "PmtModuleNumInPanelFromModuleNumAlone Begin " << m_RichPmtModuleCopyNumBeginPanel << endmsg;
     //info() << "PmtModuleNumInPanelFromModuleNumAlone End   " << m_RichPmtModuleCopyNumEndPanel   << endmsg;
@@ -192,7 +191,7 @@ private:
              -1 );
   }
 
-  inline RowCol PmtModuleRowColFromModuleNumInPanel( const int aMnum ) const noexcept
+  inline RowCol PmtModuleRowColFromModuleNumInPanel( const Int aMnum ) const noexcept
   {
     RowCol rc = {-1,-1};
     auto & MRow = rc[0];
@@ -200,19 +199,19 @@ private:
     
     if ( Rich::Rich1 == rich() )
     {
-      MRow = (int) (aMnum/m_RichPmtNumModulesInRowCol[0]);
+      MRow = (Int) (aMnum/m_RichPmtNumModulesInRowCol[0]);
       MCol = aMnum - MRow*m_RichPmtNumModulesInRowCol[0];
     }
     else //if ( rich() == Rich::Rich2 || rich() == Rich::Rich )
     {
-      MCol = (int) (aMnum/m_RichPmtNumModulesInRowCol[3]);
+      MCol = (Int) (aMnum/m_RichPmtNumModulesInRowCol[3]);
       MRow = aMnum - MCol*m_RichPmtNumModulesInRowCol[3];
     }
     
     return rc;
   }
 
-  int getPmtModuleNumFromRowCol( int MRow, int MCol ) const;
+  Int getPmtModuleNumFromRowCol( Int MRow, Int MCol ) const;
 
   ArraySetup findPMTArraySetup(const Gaudi::XYZPoint& inPanel) const;
 
@@ -228,16 +227,14 @@ private:
     id.setPixelRow(pixRow);
   }
   
-  DetectorElement* getFirstDeRich() const;
+  const DetectorElement * getFirstDeRich() const;
   
-  inline int getNumModulesInThisPanel() const noexcept
+  inline Int getNumModulesInThisPanel() const noexcept
   {
-    return ( Rich::Rich1 == rich() ?
-             ( side() == Rich::top  ? m_NumPmtModuleInRich[0] : m_NumPmtModuleInRich[1] ) :
-             ( side() == Rich::left ? m_NumPmtModuleInRich[2] : m_NumPmtModuleInRich[3] ) );
+    return m_NumPmtModuleInRich[m_CurPanelNum];
   }
   
-  inline int getPmtNumFromRowCol( int PRow, int PCol ) const noexcept
+  inline Int getPmtNumFromRowCol( Int PRow, Int PCol ) const noexcept
   {
     // for values outside the range, set the closest value to the
     // corresponding edges. 
@@ -248,7 +245,7 @@ private:
     return ( PCol + ( PRow*m_NumPmtInRowCol[0] ) );
   }
 
-  inline int getGrandPmtNumFromRowCol( int PRow, int PCol ) const noexcept
+  inline Int getGrandPmtNumFromRowCol( Int PRow, Int PCol ) const noexcept
   {
     // for values outside the range, set the closest value to the
     // corresponding edges.
@@ -291,7 +288,7 @@ private:
                               const Gaudi::XYZVector& vGlobal ,
                               Gaudi::XYZPoint& panelIntersection ) const;
 
-  inline int getLensPmtNumFromRowCol( int PRow, int PCol ) const noexcept
+  inline Int getLensPmtNumFromRowCol( Int PRow, Int PCol ) const noexcept
   {
     // for values outside the range, set the closest value to the
     // corresponding edges.
@@ -303,17 +300,17 @@ private:
   }
 
   /// setup flags for grand Modules
-  int getModuleCopyNumber( const std::string& aModuleName );
+  Int getModuleCopyNumber( const std::string& aModuleName );
 
-  inline bool isCurrentPmtModuleWithLens(const int aModuleNum) const noexcept
+  inline bool isCurrentPmtModuleWithLens(const Int aModuleNum) const noexcept
   {
     return ( aModuleNum < m_totNumPmtModuleInRich1 ?
              m_RichPmtModuleLensFlag[aModuleNum] : false );
   }
   
-  inline bool isCurrentPmtWithLens(const int aPMTNum) const noexcept
+  inline bool isCurrentPmtWithLens( const Int aPMTNum ) const noexcept
   {
-    const int aModuleNum = aPMTNum/m_NumPmtInRichModule;
+    const Int aModuleNum = aPMTNum/m_NumPmtInRichModule;
     return isCurrentPmtModuleWithLens(aModuleNum);
   }
 
@@ -324,22 +321,22 @@ private:
              aLensPoint.z() };
   }
 
-  inline bool ModuleIsWithGrandPMT( const int aModuleNum ) const noexcept
+  inline bool ModuleIsWithGrandPMT( const Int aModuleNum ) const noexcept
   {
     return ( aModuleNum >= 0 && 
-             aModuleNum <  (int) m_ModuleIsWithGrandPMT.size() ?
+             aModuleNum <  (Int) m_ModuleIsWithGrandPMT.size() ?
              m_ModuleIsWithGrandPMT[aModuleNum] : false );
   }
 
 private:
 
   /// utility method to convert a vector to an array of the same size.
-  template< typename TYPE, std::size_t N >
-  decltype(auto) toarray( const std::vector<TYPE>& v ) const
+  template< typename OUTTYPE, std::size_t N, typename INTYPE = OUTTYPE >
+  decltype(auto) toarray( const std::vector<INTYPE>& v ) const
   {
     if ( v.size() != N ) 
     { throw GaudiException("Vector to Array Size Error","DeRichPMTPanel",StatusCode::FAILURE); }
-    std::array<TYPE,N> a;
+    std::array<OUTTYPE,N> a;
     std::copy( v.begin(), v.end(), a.begin() );
     return a;
   }
@@ -348,6 +345,9 @@ private:
 
   /// SmartID for this panel
   LHCb::RichSmartID m_panelID;
+
+  /// Index for this panel
+  std::int8_t m_CurPanelNum{-1};
 
   /// Container for the PMT Modules as Det Elements
   IDeElemV m_DePMTModules{1,nullptr};
@@ -361,26 +361,26 @@ private:
   /// Total number of PMT
   unsigned int m_totNumPMTs{0};
 
-  /// (X,Y) panel hald sizes for this panel
+  /// (X,Y) panel half sizes for this panel
   XYArray m_xyHalfSize = {{}};
 
   std::array<double,4> m_PmtModulePlaneHalfSizeR1 = {{}};
   std::array<double,4> m_PmtModulePlaneHalfSizeR2 = {{}};
   double m_PmtModulePitchInv{0};
   double m_PmtPitchInv{0};
-  std::array<int,4> m_RichPmtNumModulesInRowCol = {{}};
-  std::array<int,4> m_RichPmtModuleCopyNumBeginPanel = {{}};
-  std::array<int,4> m_RichPmtModuleCopyNumEndPanel = {{}};
+  std::array<Int,4> m_RichPmtNumModulesInRowCol = {{}};
+  std::array<Int,4> m_RichPmtModuleCopyNumBeginPanel = {{}};
+  std::array<Int,4> m_RichPmtModuleCopyNumEndPanel = {{}};
   std::array<double,2> m_RichPmtModuleActiveAreaHalfSize = {{}};
-  std::array<int,2> m_NumPmtInRowCol = {{}};
-  std::array<int,4> m_NumPmtModuleInRich = {{}};
-  int m_NumPmtInRichModule{0};
-  int m_totNumPmtModuleInRich{0};
+  std::array<Int,2> m_NumPmtInRowCol = {{}};
+  std::array<Int,4> m_NumPmtModuleInRich = {{}};
+  Int m_NumPmtInRichModule{0};
+  Int m_totNumPmtModuleInRich{0};
   double m_PmtAnodeXSize{0};
   double m_PmtAnodeYSize{0};
   double m_PmtPixelGap{0};
-  int m_PmtPixelsInRow{0};
-  int m_PmtPixelsInCol{0};
+  Int m_PmtPixelsInRow{0};
+  Int m_PmtPixelsInCol{0};
   double m_PmtAnodeXEdge{0};
   double m_PmtAnodeYEdge{0};
   double m_AnodeXPixelSize{0};
@@ -391,10 +391,10 @@ private:
   double m_RichPmtQuartzThickness{0};
   double m_RichPmtQuartzLocalZInPmt{0};
 
-  int m_Rich1PmtLensPresence{0};
+  Int m_Rich1PmtLensPresence{0};
   std::vector<int>  m_Rich1PmtLensModuleCol;
   std::vector<bool> m_RichPmtModuleLensFlag;
-  int m_totNumPmtModuleInRich1{0};
+  Int m_totNumPmtModuleInRich1{0};
 
   Gaudi::Plane3D m_localPlane;
   Gaudi::XYZVector m_localPlaneNormal;
@@ -407,12 +407,12 @@ private:
   double m_PmtLensPitch{0};
   std::array<double,2> m_Rich1PmtPanelWithLensXSize = {{}};
   std::array<double,2> m_Rich1PmtPanelWithLensYSize = {{}};
-  std::array<int,2>    m_Rich1PmtPanelWithLensColSize = {{}};
-  std::array<int,2>    m_RichNumLensPmtinModuleRowCol = {{}};
+  std::array<Int,2>    m_Rich1PmtPanelWithLensColSize = {{}};
+  std::array<Int,2>    m_RichNumLensPmtinModuleRowCol = {{}};
   double m_Rich1LensDemagnificationFactor{0};
 
   bool  m_Rich2UseGrandModule{false};
-  int   m_Rich2ArrayConfig{0};
+  Int   m_Rich2ArrayConfig{0};
   bool  m_Rich2UseMixedModule{false};
 
   std::array<double,4> m_GrandPmtModulePlaneHalfSizeR2 = {{}};
@@ -424,8 +424,8 @@ private:
   double m_GrandPmtAnodeXSize{0};
   double m_GrandPmtAnodeYSize{0};
   double m_GrandPmtPixelGap{0};
-  int  m_GrandPmtPixelsInRow{0};
-  int  m_GrandPmtPixelsInCol{0};
+  Int  m_GrandPmtPixelsInRow{0};
+  Int  m_GrandPmtPixelsInCol{0};
   double m_GrandPmtAnodeXEdge{0};
   double m_GrandPmtAnodeYEdge{0};
   double m_GrandAnodeXPixelSize{0};
@@ -433,12 +433,12 @@ private:
   double m_GrandPmtAnodeEffectiveXPixelSizeInv{0};
   double m_GrandPmtAnodeEffectiveYPixelSizeInv{0};
   double m_GrandPmtMasterLateralSize{0};
-  int m_GrandNumPmtInRichModule{0};
-  std::array<int,2> m_NumGrandPmtInRowCol = {{}};
-  int m_Rich2TotNumGrandPmts{0};
-  int m_Rich2TotNumStdPmts{0};
-  int m_Rich2TotNumGrandModules{0};
-  int m_Rich2TotNumStdModules{0};
+  Int m_GrandNumPmtInRichModule{0};
+  std::array<Int,2> m_NumGrandPmtInRowCol = {{}};
+  Int m_Rich2TotNumGrandPmts{0};
+  Int m_Rich2TotNumStdPmts{0};
+  Int m_Rich2TotNumGrandModules{0};
+  Int m_Rich2TotNumStdModules{0};
 
   std::vector<int> m_Rich2MixedModuleArrayColumnSize{3,0};
   std::vector<bool> m_ModuleIsWithGrandPMT;

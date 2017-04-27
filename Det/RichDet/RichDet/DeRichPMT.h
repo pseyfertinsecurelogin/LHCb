@@ -1,7 +1,10 @@
 
 #pragma once
 
-// Include files
+// STL
+#include <cmath>
+#include <cstdint>
+
 // DetDesc
 #include "DetDesc/IGeometryInfo.h"
 #include "DetDesc/IPVolume.h"
@@ -14,9 +17,6 @@
 
 // GSL
 #include "gsl/gsl_math.h"
-
-// STL
-#include <cmath>
 
 // External declarations
 extern const CLID CLID_DERichPMT;
@@ -93,66 +93,89 @@ public:
 
 private:
 
+  // CRJ Use float not double to reduce memory footprint
+  //using FType = double;
+  using FType = float;
+
+private:
+
+  DetectorElement * getFirstRich();
+
   StatusCode getPMTParameters();
   StatusCode initPMTQuantumEff();
   StatusCode updateGeometry();
-  Gaudi::XYZPoint getAnodeHitCoordFromPixelNum( const double fracPixelCol,
-                                                const double fracPixelRow ) const;
+
+private:
+
+  inline Gaudi::XYZPoint getAnodeHitCoordFromPixelNum( const FType fracPixelCol,
+                                                       const FType fracPixelRow ) const
+  {
+    const auto xh = ( fracPixelCol - (m_PmtNumPixCol-1) * 0.5 ) * m_PmtEffectivePixelXSize;
+    const auto yh = ( fracPixelRow - (m_PmtNumPixRow-1) * 0.5 ) * m_PmtEffectivePixelYSize;
+    const auto zh = m_PmtAnodeHalfThickness;
+    return { xh, yh, zh };
+  }
   
-  Gaudi::XYZPoint getAnodeHitCoordFromGrandPixelNum( const double fracPixelCol,
-                                                     const double fracPixelRow ) const;
+  Gaudi::XYZPoint getAnodeHitCoordFromGrandPixelNum( const FType fracPixelCol,
+                                                     const FType fracPixelRow ) const;
   
-  Gaudi::XYZPoint getAnodeHitCoordFromMultTypePixelNum( const double fracPixelCol,
-                                                        const double fracPixelRow,
-                                                        const LHCb::RichSmartID& smartID ) const;
+  inline Gaudi::XYZPoint 
+  getAnodeHitCoordFromMultTypePixelNum( const FType fracPixelCol,
+                                        const FType fracPixelRow,
+                                        const LHCb::RichSmartID& smartID ) const
+  {
+    return ( ( smartID.rich() == Rich::Rich2 ) && PmtIsGrand() ?
+             getAnodeHitCoordFromGrandPixelNum(fracPixelCol,fracPixelRow) :
+             getAnodeHitCoordFromPixelNum( fracPixelCol , fracPixelRow ) );
+  }
   
   Gaudi::XYZPoint RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) const;
   
 private:
-  
-  IDetectorElement* m_dePmtAnode = nullptr; ///< The PMT Anode detector element
+
+  FType m_QwToAnodeZDist{0};
+  FType m_PmtAnodeLocationInPmt{0};
+
+  bool m_PmtLensFlag{false};
+  FType m_PmtLensRoc2{0};
+  FType m_PmtLensMagnificationRatio{0};
 
   int m_moduleNum{0}; ///< Module number
   int m_copyNum{0};   ///< Copy number
 
-  std::string m_PmtQELocation;
+  FType m_PmtAnodeXSize{0};
+  FType m_PmtAnodeYSize{0};
+  FType m_PmtAnodeZSize{0};
 
-  double m_PmtAnodeXSize{0};
-  double m_PmtAnodeYSize{0};
-  double m_PmtAnodeZSize{0};
+  FType m_PmtPixelXSize{0};
+  FType m_PmtPixelYSize{0};
+  FType m_PmtPixelGap{0};
+  FType m_PmtEffectivePixelXSize{0};
+  FType m_PmtEffectivePixelYSize{0};
+  FType m_PmtAnodeHalfThickness{0};
+  FType m_PmtNumPixCol{0};
+  FType m_PmtNumPixRow{0};
+  FType m_PmtQwZSize{0};
 
-  double m_PmtAnodeLocationInPmt{0};
-  double m_PmtPixelXSize{0};
-  double m_PmtPixelYSize{0};
-  double m_PmtPixelGap{0};
-  double m_PmtEffectivePixelXSize{0};
-  double m_PmtEffectivePixelYSize{0};
-  double m_PmtAnodeHalfThickness{0};
-  double m_PmtNumPixCol{0};
-  double m_PmtNumPixRow{0};
-  double m_PmtQwZSize{0};
-  double m_QwToAnodeZDist{0};
-  bool m_PmtLensFlag{false};
-  double m_PmtLensMagnificationRatio{0};
-  double m_PmtLensRoc{0};
-
-  double m_GrandPmtAnodeXSize{0};
-  double m_GrandPmtAnodeYSize{0};
-  double m_GrandPmtAnodeZSize{0};
-  double m_GrandPmtPixelXSize{0};
-  double m_GrandPmtPixelYSize{0};
-  double m_GrandPmtPixelGap{0};
-  double m_GrandPmtEdgePixelXSize{0};
-  double m_GrandPmtEdgePixelYSize{0};
-  double m_GrandPmtEffectivePixelXSize{0};
-  double m_GrandPmtEffectivePixelYSize{0};
-  double m_GrandPmtEdgePixelXDiff{0};
-  double m_GrandPmtEdgePixelYDiff{0};
-  double m_GrandPmtAnodeHalfThickness{0};
+  FType m_GrandPmtAnodeXSize{0};
+  FType m_GrandPmtAnodeYSize{0};
+  FType m_GrandPmtAnodeZSize{0};
+  FType m_GrandPmtPixelXSize{0};
+  FType m_GrandPmtPixelYSize{0};
+  FType m_GrandPmtPixelGap{0};
+  FType m_GrandPmtEdgePixelXSize{0};
+  FType m_GrandPmtEdgePixelYSize{0};
+  FType m_GrandPmtEffectivePixelXSize{0};
+  FType m_GrandPmtEffectivePixelYSize{0};
+  FType m_GrandPmtEdgePixelXDiff{0};
+  FType m_GrandPmtEdgePixelYDiff{0};
+  FType m_GrandPmtAnodeHalfThickness{0};
   bool m_Rich2UseGrandPmt{false};
   bool m_Rich2UseMixedPmt{false};
-  int m_Rich2PmtArrayConfig{0};
+  std::uint8_t m_Rich2PmtArrayConfig{0};
   bool m_PmtIsGrand{false};
+
+  IDetectorElement * m_dePmtAnode = nullptr; ///< The PMT Anode detector element
 
   Rich::DetectorType m_rich = Rich::InvalidDetector;
 
