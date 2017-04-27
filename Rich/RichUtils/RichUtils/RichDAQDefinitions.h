@@ -14,6 +14,7 @@
 // from STL
 #include <sstream>
 #include <vector>
+#include <cstdint>
 
 // GaudiKernel
 #include "GaudiKernel/Kernel.h"
@@ -31,10 +32,10 @@ namespace Rich
     //---------------------------------------------------------------------------------
 
     /// DAQ long type definition
-    using LongType  = unsigned int;
+    using LongType  = std::uint32_t;
 
     /// DAQ short type definition
-    using ShortType = unsigned int;
+    using ShortType = std::uint32_t;
 
     //---------------------------------------------------------------------------------
 
