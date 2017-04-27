@@ -30,6 +30,7 @@ class TurboConf(LHCbConfigurableUser):
     }
 
     __used_configurables__ = [
+        "DecodeRawEvent",  # we need to modify a decoder, so apply this after
     ]
 
     @classmethod
