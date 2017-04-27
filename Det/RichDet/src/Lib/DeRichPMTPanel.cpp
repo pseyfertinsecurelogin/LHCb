@@ -685,7 +685,7 @@ DeRichPMTPanel::getPmtModuleNumFromRowCol( Int MRow, Int MCol ) const
 DeRichPMTPanel::ArraySetup 
 DeRichPMTPanel::findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
 {
-  ArraySetup aCh = {};
+  ArraySetup aCh{{}};
 
   const auto inPanel = geometry()->toLocal(aGlobalPoint);
   const auto x =  inPanel.x();
