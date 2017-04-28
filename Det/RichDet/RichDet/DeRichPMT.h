@@ -77,7 +77,7 @@ public:
 
   inline int pmtCopyNumber() const noexcept { return m_copyNum; }
 
-  inline void setPmtLensFlag( const bool aflag ) { m_PmtLensFlag = aflag; }
+  inline void setPmtLensFlag( const bool aflag ) noexcept { m_PmtLensFlag = aflag; }
 
   inline bool PmtLensFlag() const noexcept { return m_PmtLensFlag; }
   
