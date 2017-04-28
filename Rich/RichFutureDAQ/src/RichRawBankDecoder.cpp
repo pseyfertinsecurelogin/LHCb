@@ -29,7 +29,9 @@ RawBankDecoder::RawBankDecoder( const std::string& name,
                                                LHCb::RawEventLocation::Default } ) },
                     KeyValue{ "OdinLocation", LHCb::ODINLocation::Default } },
                   { KeyValue{ "DecodedDataLocation", L1MapLocation::Default } } )
-{ }
+{
+  //setProperty( "OutputLevel", MSG::VERBOSE );
+}
 
 //=============================================================================
 
