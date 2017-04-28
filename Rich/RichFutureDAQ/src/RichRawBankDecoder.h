@@ -6,6 +6,7 @@
 #include <string>
 #include <set>
 #include <memory>
+#include <limits>
 
 // Gaudi Array properties ( must be first ...)
 #include "GaudiKernel/ParsersFactory.h"
@@ -217,7 +218,8 @@ namespace Rich
         bool m_pixelsToSuppress = false;
         
         /// Max HPD Occupancy Cut
-        Gaudi::Property<unsigned int> m_maxHPDOc { this, "MaxHPDOccupancy", 999999 };
+        Gaudi::Property<Rich::DAQ::ShortType> m_maxHPDOc
+        { this, "MaxHPDOccupancy", std::numeric_limits<Rich::DAQ::ShortType>::max() };
         
         /** Turn on/off detailed error messages.
          *

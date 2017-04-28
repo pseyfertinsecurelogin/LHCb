@@ -503,7 +503,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2005
      */
-    class HPDL1InputID final : public NumericType<LongType>
+    class HPDL1InputID final : public NumericType<ShortType>
     {
     public :
       // Define the number of bits for each field
