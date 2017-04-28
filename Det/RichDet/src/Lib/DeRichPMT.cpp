@@ -262,38 +262,6 @@ StatusCode DeRichPMT::updateGeometry()
 
 //=============================================================================
 
-bool DeRichPMT::detectionPoint ( const double fracPixelCol,
-                                 const double fracPixelRow,
-                                 Gaudi::XYZPoint& detectPoint,
-                                 const bool photoCathodeSide ) const
-{
-  const auto aLocalHit = ( Rich::Rich2 == m_rich && PmtIsGrand() ? 
-                           getAnodeHitCoordFromGrandPixelNum( fracPixelCol,fracPixelRow ):
-                           getAnodeHitCoordFromPixelNum     ( fracPixelCol,fracPixelRow ) );
-
-  // detectPoint  =  geometry()->toGlobalMatrix() * aPhCathHit ; // not used since the
-  // output is expected to be in the PMT coord system.
-  // for now assume negligible refraction effect at the QW.
- 
-  const auto zPh = aLocalHit.z() + m_zShift;
-
-  if ( photoCathodeSide )
-  {
-    const Gaudi::XYZPoint aPhCathHit ( aLocalHit.x(), aLocalHit.y(), zPh    );
-    detectPoint = ( m_PmtLensFlag ? RichPmtLensReconFromPhCath(aPhCathHit) : aPhCathHit );
-  }
-  else
-  {
-    const auto zQwExt = zPh + m_PmtQwZSize;
-    const Gaudi::XYZPoint aQWExtHit  ( aLocalHit.x(), aLocalHit.y(), zQwExt );
-    detectPoint = ( m_PmtLensFlag ? RichPmtLensReconFromPhCath(aQWExtHit)  : aQWExtHit );
-  }
-
-  return true;
-}
-
-//=============================================================================
-
 Gaudi::XYZPoint 
 DeRichPMT::RichPmtLensReconFromPhCath( const Gaudi::XYZPoint & aPhCathCoord ) const
 {
@@ -322,11 +290,9 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
                                 Gaudi::XYZPoint& detectPoint,
                                 bool photoCathodeSide ) const
 {
-  //const auto aPixCol  = (FType) ( smartID.pixelCol() );
-  //const auto aPixRow  = (FType) ( smartID.pixelRow() );
   const auto aLocalHit = getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(), 
                                                                smartID.pixelRow(),
-                                                               smartID );
+                                                               smartID.rich() );
 
   const auto zPh = aLocalHit.z() + m_zShift;
 
@@ -353,10 +319,9 @@ bool DeRichPMT::detectionPoint( const LHCb::RichSmartID smartID,
 
 Gaudi::XYZPoint DeRichPMT::detPointOnAnode ( const LHCb::RichSmartID& smartID ) const
 {
-  const auto aPixCol = (FType) (smartID.pixelCol());
-  const auto aPixRow = (FType) (smartID.pixelRow());
-  const auto aLocalAnodeCoord = getAnodeHitCoordFromMultTypePixelNum(aPixCol,aPixRow,smartID );
-  return ( m_dePmtAnode->geometry()->toGlobal(aLocalAnodeCoord) );
+  return ( m_dePmtAnode->geometry()->toGlobal( getAnodeHitCoordFromMultTypePixelNum( smartID.pixelCol(),
+                                                                                     smartID.pixelRow(),
+                                                                                     smartID.rich() ) ) );
 }
 
 //=============================================================================

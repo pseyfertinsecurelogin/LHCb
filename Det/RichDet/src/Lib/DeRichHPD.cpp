@@ -849,34 +849,6 @@ bool DeRichHPD::testKaptonShadowing( const Gaudi::XYZPoint&  pInPanel,
 }
 
 //=========================================================================
-// Converts a pair to a point in global coordinates
-//=========================================================================
-bool DeRichHPD::detectionPoint ( const double fracPixelCol,
-                                 const double fracPixelRow,
-                                 Gaudi::XYZPoint& detectPoint,
-                                 const bool photoCathodeSide ) const
-{
-  if ( fracPixelCol < 0.0 || fracPixelRow < 0.0 )
-  {
-    error() << "Negative pixel coordinate " << fracPixelCol << ","
-            << fracPixelRow << endmsg;
-    return false;
-  }
-
-  detectPoint = Gaudi::XYZPoint( fracPixelCol*m_pixelSize - m_siliconHalfLengthX,
-                                 m_siliconHalfLengthY - fracPixelRow*m_pixelSize,
-                                 0.0 );
-  const auto sc =
-    ( m_isFieldON || m_UseHpdMagDistortions ) ?
-    magnifyToGlobalMagnetON  ( detectPoint, photoCathodeSide ) :
-    magnifyToGlobalMagnetOFF ( detectPoint, photoCathodeSide ) ;
-
-  detectPoint = geometry()->toLocal(detectPoint);
-
-  return sc;
-}
-
-//=========================================================================
 // Converts a RichSmartID to a point in global coordinates.
 //=========================================================================
 bool DeRichHPD::detectionPoint ( const LHCb::RichSmartID smartID,
