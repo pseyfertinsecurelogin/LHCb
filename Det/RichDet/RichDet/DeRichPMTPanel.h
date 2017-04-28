@@ -95,7 +95,7 @@ public:
    */
   inline Gaudi::XYZPoint detPointOnAnode( const LHCb::RichSmartID smartID ) const
   {
-    const auto* aPMT = dePMT( _pdNumber( smartID ) );
+    const auto * aPMT = dePMT( smartID );
     return ( aPMT ? aPMT->detPointOnAnode(smartID) : Gaudi::XYZPoint(0,0,0) );
   }
 
@@ -147,6 +147,23 @@ private:
   }
 
   const DeRichPMT* dePMT( const Rich::DAQ::PDPanelIndex PmtNumber ) const;
+
+  inline const DeRichPMT* dePMT( const LHCb::RichSmartID pdID ) const
+  {
+    // get the lookup indices from the smart ID
+    auto pdCol   = pdID.pdCol();
+    auto pdInCol = pdID.pdNumInCol();  
+    
+    // if need be correct the pdCol (for data when it was incorrectly filled)
+    // this is temporary, can be removed when no longer needed...
+    if ( pdCol >= m_DePMTs.size() ) { pdCol = PmtModuleNumInPanelFromModuleNumAlone(pdCol); }
+    
+    // return the pointer from the array
+    return m_DePMTs[pdCol][pdInCol];
+
+    // get the old way
+    //return dePMT( _pdNumber( pdID ) );
+  }
 
   inline RowCol getPmtRowColFromPmtNum( const Int aPmtNum ) const noexcept
   {

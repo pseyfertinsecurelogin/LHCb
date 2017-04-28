@@ -1092,19 +1092,7 @@ Rich::DAQ::PDPanelIndex DeRichPMTPanel::pdNumber( const LHCb::RichSmartID& smart
 
 const DeRichPD* DeRichPMTPanel::dePD( const LHCb::RichSmartID pdID ) const
 {
-  // get the lookup indices from the smart ID
-  auto pdCol   = pdID.pdCol();
-  auto pdInCol = pdID.pdNumInCol();  
-
-  // if need be correct the pdCol (for data when it was incorrectly filled)
-  // this is temporary, can be removed when no longer needed...
-  if ( pdCol >= m_DePMTs.size() ) { pdCol = PmtModuleNumInPanelFromModuleNumAlone(pdCol); }
-
-  // return the pointer from the array
-  return m_DePMTs[pdCol][pdInCol];
- 
-  // get the old way
-  //return dePMT( _pdNumber( pdID ) );
+  return dePMT(pdID);
 }
 
 const DeRichPD* DeRichPMTPanel::dePD( const Rich::DAQ::PDPanelIndex PmtNumber ) const
