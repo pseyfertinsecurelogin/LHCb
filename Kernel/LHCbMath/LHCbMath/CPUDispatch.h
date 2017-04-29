@@ -5,6 +5,7 @@
 #include <string>
 #include <iterator>
 #include <algorithm>
+#include <stdlib.h>
 
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
@@ -31,6 +32,9 @@ namespace LHCb
      *  Entries in the initializer list must be sorted in order of decreasing CPU ID 
      *  (i.e. fastest first). A check is applied to enforce this.
      *
+     *  Specific SIMD instuction sets can be disabled by simply defining certain environment
+     *  variables. For instance, to disable AVX2 implementations define 'LHCBMATH_DISABLE_AVX2'.
+     *
      *  @return The selected dispatch function.
      */
     template< typename Vtbl >
@@ -55,9 +59,14 @@ namespace LHCb
       const auto level = instrset_detect();
       
       // find pointer to the appropriate version
-      const auto impl = std::find_if( std::begin(vtbl), std::end(vtbl),
-                                      [&level]( const auto j )
-                                      { return level >= j.first; } );
+      const auto impl = 
+        std::find_if( std::begin(vtbl), std::end(vtbl),
+                      [&level]( const auto j )
+                      { return ( ( AVX2 == j.first && getenv("LHCBMATH_DISABLE_AVX2") ) ||
+                                 ( AVX  == j.first && getenv("LHCBMATH_DISABLE_AVX")  ) ||
+                                 ( SSE4 == j.first && getenv("LHCBMATH_DISABLE_SSE4") ) ||
+                                 ( SSE3 == j.first && getenv("LHCBMATH_DISABLE_SSE3") ) ? false :
+                                 level >= j.first ); } );
       if ( impl == std::end(vtbl) )
       {
         throw GaudiException( "No implementation for instruction set level " + std::to_string(level),
