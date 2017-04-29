@@ -31,11 +31,17 @@ namespace Rich
 
     //---------------------------------------------------------------------------------
 
+    /// DAQ 64 bit word type
+    using LLongType = std::uint64_t;
+
     /// DAQ long type definition
     using LongType  = std::uint32_t;
 
     /// DAQ short type definition
     using ShortType = std::uint16_t;
+
+    /// DAQ index type definition
+    using IndexType = std::uint8_t;
 
     //---------------------------------------------------------------------------------
 
@@ -157,7 +163,7 @@ namespace Rich
       /// Update the internal data
       inline void setData( const TYPE id ) noexcept { m_id = id; }
       /// test if a given bit is  'on'
-      inline bool isBitOn( const Rich::DAQ::ShortType pos ) const
+      inline bool isBitOn( const Rich::DAQ::IndexType pos ) const noexcept
       {
         return ( 0 != (m_id & (1<<pos)) );
       }
@@ -178,14 +184,14 @@ namespace Rich
     {
     public :
       // Define the number of bits for each field
-      static const ShortType  BitsHPD =  1;  ///< Number of bits for HPD ID
-      static const ShortType  BitsL0  =  10; ///< Number of bits for L0 ID
+      static const IndexType  BitsHPD =  1;  ///< Number of bits for HPD ID
+      static const IndexType  BitsL0  =  10; ///< Number of bits for L0 ID
       // Create the shift registers
-      static const ShortType  ShiftHPD = 0;
-      static const ShortType  ShiftL0  = ShiftHPD + BitsHPD;
+      static const IndexType  ShiftHPD = 0;
+      static const IndexType  ShiftL0  = ShiftHPD + BitsHPD;
       // Create the Masks
-      static const LongType  MaskHPD = ((1 << BitsHPD)-1) << ShiftHPD;
-      static const LongType  MaskL0  = ((1 << BitsL0)-1) << ShiftL0;
+      static const ShortType  MaskHPD = ((1 << BitsHPD)-1) << ShiftHPD;
+      static const ShortType  MaskL0  = ((1 << BitsL0)-1) << ShiftL0;
       // Create the max values that can be stored in each field
       static const ShortType  MaxHPD = ( 1 << BitsHPD ) - 1;
       static const ShortType  MaxL0  = ( 1 << BitsL0 ) - 1;
@@ -201,29 +207,29 @@ namespace Rich
        *  @param hpdnum HPD bit number (0 or 1)
        */
       explicit Level0ID ( const ShortType l0num,
-                          const ShortType hpdnum )
+                          const ShortType hpdnum ) noexcept
       {
         setHPD ( hpdnum );
         setL0  ( l0num  );
       }
       /// Return the HPD number (0 or 1)
-      inline ShortType hpd() const
+      inline ShortType hpd() const noexcept
       {
         return ( (data() & MaskHPD) >> ShiftHPD );
       }
       /// Set the HPD number (0 or 1)
-      inline bool setHPD( const ShortType hpd )
+      inline bool setHPD( const ShortType hpd ) noexcept
       {
         return ( dataInRange(hpd,MaxHPD) ?
                  set( hpd, ShiftHPD, MaskHPD ) : false );
       }
       /// Return the L0 board number
-      inline ShortType l0() const
+      inline ShortType l0() const noexcept
       {
         return ( (data() & MaskL0) >> ShiftL0 );
       }
       /// Set the L0 board number
-      inline bool setL0( const ShortType l0 )
+      inline bool setL0( const ShortType l0 ) noexcept
       {
         return ( dataInRange(l0,MaxL0) ?
                  set( l0, ShiftL0, MaskL0 ) : false );
@@ -231,8 +237,8 @@ namespace Rich
     private: // methods
       /// Set the data value for a given mask and shift value
       inline bool set( const ShortType value,
-                       const ShortType shift,
-                       const LongType  mask )
+                       const IndexType shift,
+                       const ShortType  mask ) noexcept
       {
         setData( ((value << shift) & mask) | (data() & ~mask) );
         return true;
@@ -254,7 +260,7 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   24/01/2007
      */
-    class EventID final : public NumericType<unsigned long long>
+    class EventID final : public NumericType<LLongType>
     {
     public:
       /// Default constructor
@@ -265,20 +271,20 @@ namespace Rich
       template<class NUMTYPE>
       EventID ( const NUMTYPE   id,
                 const ShortType aBits )
-        : NumericType<unsigned long long> ( (unsigned long long)id ),
-          m_nActiveBits                   ( aBits         ) { }
+        : NumericType<LLongType> ( (LLongType)id ),
+          m_nActiveBits          ( aBits         ) { }
       /// Constructor from value
       template<class NUMTYPE>
       explicit EventID ( const NUMTYPE id )
-        : NumericType<unsigned long long> ( (unsigned long long)id     ),
-          m_nActiveBits                   ( 8*sizeof(NUMTYPE) ) { }
+        : NumericType<LLongType> ( (LLongType)id     ),
+          m_nActiveBits          ( 8*sizeof(NUMTYPE) ) { }
       /// Return the number of active bits
-      inline ShortType activeBits() const { return m_nActiveBits; }
+      inline ShortType activeBits() const noexcept { return m_nActiveBits; }
       /// Set the number of active bits
-      inline void setActiveBits(const ShortType bits) { m_nActiveBits = bits; }
+      inline void setActiveBits(const ShortType bits) noexcept { m_nActiveBits = bits; }
     public:
-      /// Operator unsigned long long
-      inline operator unsigned long long() const { return data(); }
+      /// Operator LLongtype
+      inline operator LLongType() const noexcept { return data(); }
     public:
       /// Overloaded output to ostream
       friend inline std::ostream & operator << ( std::ostream & evtID_os, const EventID & id )
@@ -291,23 +297,23 @@ namespace Rich
       }
     public:
       /// Operator == that takes into account the correct number of bits
-      inline bool operator== ( const EventID& id ) const
+      inline bool operator== ( const EventID& id ) const noexcept
       {
         // Compute which how many bits the words should in common, so we only compare these
-        const ShortType lowBits = ( this->activeBits() < id.activeBits() ?
-                                    this->activeBits() : id.activeBits() );
-        const LongType mask = ((1 << lowBits)-1);
+        const auto lowBits = ( this->activeBits() < id.activeBits() ?
+                               this->activeBits() : id.activeBits() );
+        const auto mask = ((1 << lowBits)-1);
         // compare the bits and return
         return ( (this->data() & mask) == (id.data() & mask) );
       }
       /// Operator != that takes into account the correct number of bits
-      inline bool operator!= ( const EventID& id ) const
+      inline bool operator!= ( const EventID& id ) const noexcept
       {
         return ! this->operator==(id);
       }
     private:
       /// Number of sensitive bits in this EventID
-      ShortType m_nActiveBits { 8*sizeof(unsigned long long) };
+      ShortType m_nActiveBits { 8*sizeof(LLongType) };
     };
 
     /** @class BXID RichUtils/RichDAQDefinitions.h
@@ -336,12 +342,12 @@ namespace Rich
         : NumericType<LongType> ( (LongType)id ),
           m_nActiveBits         ( aBits        ) { }
       /// Return the number of active bits
-      inline ShortType activeBits() const { return m_nActiveBits; }
+      inline ShortType activeBits() const noexcept { return m_nActiveBits; }
       /// Set the number of active bits
-      inline void setActiveBits(const ShortType bits) { m_nActiveBits = bits; }
+      inline void setActiveBits(const ShortType bits) noexcept { m_nActiveBits = bits; }
     public:
       /// Operator LongType
-      inline operator LongType() const { return data(); }
+      inline operator LongType() const noexcept { return data(); }
     public:
       /// Overloaded output to ostream
       friend inline std::ostream & operator << ( std::ostream & os, const BXID & id )
@@ -354,17 +360,17 @@ namespace Rich
       }
     public:
       /// Operator == that takes into account the correct number of bits
-      inline bool operator== ( const BXID& id ) const
+      inline bool operator== ( const BXID& id ) const noexcept
       {
         // Compute which how many bits the words should in common, so we only compare these
-        const ShortType lowBits = ( this->activeBits() < id.activeBits() ?
-                                    this->activeBits() : id.activeBits() );
-        const LongType mask = ((1 << lowBits)-1);
+        const auto lowBits = ( this->activeBits() < id.activeBits() ?
+                               this->activeBits() : id.activeBits() );
+        const auto mask = ((1 << lowBits)-1);
         // compare the bits and return
         return ( (this->data() & mask) == (id.data() & mask) );
       }
       /// Operator != that takes into account the correct number of bits
-      inline bool operator!= ( const BXID& id ) const
+      inline bool operator!= ( const BXID& id ) const noexcept
       {
         return ! this->operator==(id);
       }
@@ -380,14 +386,14 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2005
      */
-    class Level1LogicalID final : public NumericType<ShortType>
+    class Level1LogicalID final : public NumericType<LongType>
     {
     public :
       /// Default Constructor
       Level1LogicalID() = default;
       /// Constructor with value
-      explicit Level1LogicalID ( const ShortType id )
-        : NumericType<ShortType>(id) { }
+      explicit Level1LogicalID ( const LongType id )
+        : NumericType<LongType>(id) { }
     };
 
     /** @class Level1HardwareID RichUtils/RichDAQDefinitions.h
@@ -482,14 +488,14 @@ namespace Rich
      *  @author Chris Jones   Christopher.Rob.Jones@cern.ch
      *  @date   11/11/2005
      */
-    class HPDHardwareID final : public NumericType<ShortType>
+    class HPDHardwareID final : public NumericType<LongType>
     {
     public :
       /// Default Constructor
       HPDHardwareID() = default;
       /// Constructor with value
-      explicit HPDHardwareID ( const ShortType id )
-        : NumericType<ShortType>(id) { }
+      explicit HPDHardwareID ( const LongType id )
+        : NumericType<LongType>(id) { }
     };
 
     /** @class HPDL1InputID RichUtils/RichDAQDefinitions.h
@@ -507,14 +513,14 @@ namespace Rich
     {
     public :
       // Define the number of bits for each field
-      static const ShortType  BitsIn =  8; ///< Number of bits for input number
-      static const ShortType  BitsB  =  8; ///< Number of bits for board number
+      static const IndexType  BitsIn =  8; ///< Number of bits for input number
+      static const IndexType  BitsB  =  8; ///< Number of bits for board number
       // Create the shift registers
-      static const ShortType  ShiftIn = 0;
-      static const ShortType  ShiftB  = ShiftIn + BitsIn;
+      static const IndexType  ShiftIn = 0;
+      static const IndexType  ShiftB  = ShiftIn + BitsIn;
       // Create the Masks
-      static const LongType  MaskIn = ((1 << BitsIn)-1) << ShiftIn;
-      static const LongType  MaskB  = ((1 << BitsB) -1) << ShiftB ;
+      static const ShortType  MaskIn = ((1 << BitsIn)-1) << ShiftIn;
+      static const ShortType  MaskB  = ((1 << BitsB) -1) << ShiftB ;
       // Create the max values that can be stored in each field
       static const ShortType  MaxIn = ( 1 << BitsIn ) - 1;
       static const ShortType  MaxB  = ( 1 << BitsB ) - 1;
@@ -533,23 +539,23 @@ namespace Rich
         setInputNumber(input);
       }
       /// Return the Level1 board number
-      inline Level1HardwareID boardNumber() const
+      inline Level1HardwareID boardNumber() const noexcept
       {
         return Level1HardwareID( (data() & MaskB) >> ShiftB );
       }
       /// Set the Level1 board number
-      inline bool setBoardNumber( const Level1HardwareID board )
+      inline bool setBoardNumber( const Level1HardwareID board ) noexcept
       {
         return ( dataInRange(board.data(),MaxB) ?
                  set( board.data(), ShiftB, MaskB ) : false );
       }
       /// Return the input number
-      inline Level1Input inputNumber() const
+      inline Level1Input inputNumber() const noexcept
       {
         return Level1Input( (data() & MaskIn) >> ShiftIn );
       }
       /// Set the input number
-      inline bool setInputNumber( const Level1Input input )
+      inline bool setInputNumber( const Level1Input input ) noexcept
       {
         return ( dataInRange(input.data(),MaxIn) ?
                  set( input.data(), ShiftIn, MaskIn ) : false );
@@ -557,15 +563,15 @@ namespace Rich
     private: // methods
       /// Set the data value for a given mask and shift value
       inline bool set( const ShortType value,
-                       const ShortType shift,
-                       const LongType  mask )
+                       const IndexType shift,
+                       const ShortType  mask ) noexcept
       {
         setData( ((value << shift) & mask) | (data() & ~mask) );
         return true;
       }
       /// tests whether a given value is in range for a given data field
       inline bool dataInRange( const ShortType value,
-                               const ShortType max ) const
+                               const ShortType max ) const noexcept
       {
         return ( value <= max );
       }
