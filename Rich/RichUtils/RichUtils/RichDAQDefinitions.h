@@ -15,6 +15,7 @@
 #include <sstream>
 #include <vector>
 #include <cstdint>
+#include <map>
 
 // GaudiKernel
 #include "GaudiKernel/Kernel.h"
@@ -199,9 +200,8 @@ namespace Rich
       /// Default Constructor
       Level0ID() = default;
       /// Constructor from bit packed word
-      explicit Level0ID ( const ShortType id )
-        : NumericType<ShortType>(id)
-      { }
+      explicit Level0ID ( const ShortType id ) noexcept
+        : NumericType<ShortType>(id) { }
       /** Constructor from L0 and HPD number
        *  @param l0num  L0 board number
        *  @param hpdnum HPD bit number (0 or 1)
@@ -332,7 +332,7 @@ namespace Rich
       BXID( const BXID& ) = default;
       /// Constructor from value
       template<class NUMTYPE>
-      explicit BXID ( const NUMTYPE id )
+      explicit BXID ( const NUMTYPE id ) noexcept
         : NumericType<LongType> ( (LongType)id      ),
           m_nActiveBits         ( 8*sizeof(NUMTYPE) ) { }
       /// Constructor from value and number of bits
@@ -392,7 +392,7 @@ namespace Rich
       /// Default Constructor
       Level1LogicalID() = default;
       /// Constructor with value
-      explicit Level1LogicalID ( const LongType id )
+      explicit Level1LogicalID ( const LongType id ) noexcept
         : NumericType<LongType>(id) { }
     };
 
@@ -409,7 +409,7 @@ namespace Rich
       /// Default Constructor
       Level1HardwareID() = default;
       /// Constructor with value
-      explicit Level1HardwareID ( const ShortType id )
+      explicit Level1HardwareID ( const ShortType id ) noexcept
         : NumericType<ShortType>(id) { }
     };
 
@@ -426,7 +426,7 @@ namespace Rich
       /// Default Constructor
       L1IngressID() = default;
       /// Constructor with value
-      explicit L1IngressID ( const ShortType id )
+      explicit L1IngressID ( const ShortType id ) noexcept
         : NumericType<ShortType>(id) { }
     };
 
@@ -460,7 +460,7 @@ namespace Rich
       /// Default Constructor
       Level1Input() = default;
       /// Constructor with value
-      explicit Level1Input ( const ShortType id )
+      explicit Level1Input ( const ShortType id ) noexcept
         : NumericType<ShortType>(id) { }
       /// Constructor from an Ingress ID and Ingress input number
       Level1Input( const L1IngressID ingress,       ///< The ingress ID
@@ -494,7 +494,7 @@ namespace Rich
       /// Default Constructor
       HPDHardwareID() = default;
       /// Constructor with value
-      explicit HPDHardwareID ( const LongType id )
+      explicit HPDHardwareID ( const LongType id ) noexcept
         : NumericType<LongType>(id) { }
     };
 
@@ -528,7 +528,7 @@ namespace Rich
       /// Default Constructor
       HPDL1InputID() = default;
       /// Constructor from bit packed word
-      explicit HPDL1InputID ( const ShortType id )
+      explicit HPDL1InputID ( const ShortType id ) noexcept
         : NumericType<ShortType>(id) { }
       /// Constructor from a L1 ID and input number
       HPDL1InputID ( const Level1HardwareID l1ID,    ///< The L1 board hardware ID
@@ -592,7 +592,7 @@ namespace Rich
       /// Default Constructor
       PDCopyNumber() = default;
       /// Constructor with value
-      explicit PDCopyNumber ( const ShortType id )
+      explicit PDCopyNumber ( const ShortType id ) noexcept
         : NumericType<ShortType>(id) { }
     };
     /// Temporary alias (to be removed)
@@ -611,7 +611,7 @@ namespace Rich
       /// Default Constructor
       PDPanelIndex() = default;
       /// Constructor with value
-      explicit PDPanelIndex ( const ShortType id )
+      explicit PDPanelIndex ( const ShortType id ) noexcept
         : NumericType<ShortType>(id) { }
     };
 
@@ -628,7 +628,7 @@ namespace Rich
       /// Default Constructor
       Level1CopyNumber() = default;
       /// Constructor with value
-      explicit Level1CopyNumber ( const ShortType id )
+      explicit Level1CopyNumber ( const ShortType id ) noexcept
         : NumericType<ShortType>(id) { }
     };
 
