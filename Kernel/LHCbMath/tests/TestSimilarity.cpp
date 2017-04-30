@@ -211,35 +211,25 @@ std::pair<M, bool> compareSMatrix(M& A, M& B, bool symetric=true,
 }
 
 
-
 template <typename Mat, typename SymMat>
 int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
                            std::map<ISet, similarity_t>&  simFuncs,
-                           int printResults = true, ISet instructionSet = ISet::GENERIC) 
+                           int printResults = true, ISet iSet = ISet::GENERIC) 
 {
 
   // Checking the instruction sets to do
   // if ISet::GENERIC => test all
-  // if ISet::AVX/ SSE3 => just do that one
-  
-  bool doSSE3 = true;
-  bool doAVX = true;
-  bool doAVX2 = true;
-  if (instructionSet == ISet::AVX) 
-  {
-    doSSE3 = false;
-  } else if (instructionSet == ISet::SSE3) 
-  {
-    doAVX = false;
-    doAVX2 = false;
-  }
+  // if ISet::AVX2/AVX/SSE3 => just do that one
+  const bool doSSE3 = ( iSet == ISet::SSE3 || iSet == ISet::GENERIC ); 
+  const bool doAVX  = ( iSet == ISet::AVX  || iSet == ISet::GENERIC );
+  const bool doAVX2 = ( iSet == ISet::AVX2 || iSet == ISet::GENERIC );
  
   // Setting the threshold for error
-  double diffThreshold = 1e-15  * conditionNumber;
+  const double diffThreshold = 1e-15  * conditionNumber;
   // Checking the instruction sets available
-  bool hasAVX  = hasInstructionSet(ISet::AVX);
-  bool hasAVX2 = hasInstructionSet(ISet::AVX2);
-  bool hasSSE3 = hasInstructionSet(ISet::SSE3);
+  const bool hasAVX  = hasInstructionSet(ISet::AVX);
+  const bool hasAVX2 = hasInstructionSet(ISet::AVX2);
+  const bool hasSSE3 = hasInstructionSet(ISet::SSE3);
   if (printResults)
     std::cout << "Has SSE3: " <<  hasSSE3 
               << " Has AVX: " << hasAVX 
@@ -362,22 +352,22 @@ int main(int argc, char *argv[])
   std::vector<double> condNumbers = { 1, 1e6, 1e9 };
   
   // Checking args to see the test to do
-  ISet instructionSet = ISet::GENERIC; // Test ALL by default...
-  if (argc > 1) {
-    std::string arg = std::string(argv[1]);
-    if (arg == "AVX2") 
+  ISet iSet = ISet::GENERIC; // Test ALL by default...
+  if ( argc > 1 ) {
+    const auto arg = std::string(argv[1]);
+    if        (arg == "AVX2") 
     {
-      instructionSet = ISet::AVX2;
+      iSet = ISet::AVX2;
     } else if (arg == "AVX") 
     {
-      instructionSet = ISet::AVX;
+      iSet = ISet::AVX;
     } else if (arg == "SSE3") 
     {
-      instructionSet = ISet::SSE3;
+      iSet = ISet::SSE3;
     }    
   }
 
-  std::cout << "Checking instruction set :" << instructionSet << std::endl;
+  std::cout << "Checking instruction set :" << iSet << std::endl;
 
   std::cout << "============= Similarity_5_5 Test =============" << std::endl;
   for(int i=0; i<testcount; i++) 
@@ -387,7 +377,7 @@ int main(int argc, char *argv[])
       Gaudi::SymMatrix5x5 origin;
       fillRandomSMatrix(F, r);
       fillSMatrixSymWithCondNumber<Gaudi::Matrix5x5,Gaudi::SymMatrix5x5>(origin, r, condNumber);
-      int ret = compareInstructionSets(F, origin, condNumber, vtbl_5_5, (i%5000) == 0, instructionSet);
+      const int ret = compareInstructionSets(F, origin, condNumber, vtbl_5_5, (i%5000) == 0, iSet);
       if (ret > 0) return ret;
     } 
   }
@@ -401,7 +391,7 @@ int main(int argc, char *argv[])
       Gaudi::SymMatrix5x5 origin;
       fillRandomSMatrix(F, r);
       fillSMatrixSymWithCondNumber<Gaudi::Matrix5x5,Gaudi::SymMatrix5x5>(origin, r, condNumber);
-      int ret = compareInstructionSets(F, origin, condNumber,  vtbl_5_7, (i%5000) == 0, instructionSet);
+      const int ret = compareInstructionSets(F, origin, condNumber,  vtbl_5_7, (i%5000) == 0, iSet);
       if (ret > 0) return ret;
     }  
   }
@@ -414,8 +404,8 @@ int main(int argc, char *argv[])
        Gaudi::SymMatrix5x5 origin;
        fillRandomSMatrix(F, r);
        fillSMatrixSymWithCondNumber<Gaudi::Matrix5x5,Gaudi::SymMatrix5x5>(origin, r, condNumber);
-       int ret = compareInstructionSets(F, origin, condNumber, vtbl_5_1, (i%5000) == 0, instructionSet);
-        if (ret > 0) return ret;
+       const int ret = compareInstructionSets(F, origin, condNumber, vtbl_5_1, (i%5000) == 0, iSet);
+       if (ret > 0) return ret;
      }    
    }
 
