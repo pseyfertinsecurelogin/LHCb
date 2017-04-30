@@ -39,10 +39,10 @@ namespace Rich
     using LongType  = std::uint32_t;
 
     /// DAQ short type definition
-    using ShortType = std::uint16_t;
+    using ShortType = std::uint32_t;
 
     /// DAQ index type definition
-    using IndexType = std::uint8_t;
+    using IndexType = std::uint32_t;
 
     //---------------------------------------------------------------------------------
 
