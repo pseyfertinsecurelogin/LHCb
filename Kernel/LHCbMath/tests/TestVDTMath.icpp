@@ -20,6 +20,9 @@
 #include "vdt/log.h"
 #include "vdt/exp.h"
 // ============================================================================
+// Vector Class
+#include "VectorClass/instrset.h"
+// ============================================================================
 /** @file
  *  Test VDT Math Precision
  */
@@ -36,6 +39,27 @@ inline TYPE tru( const TYPE x, const unsigned int p )
 // main program
 int main()
 {
+
+  // get instruction set level of CPU
+  const int cpulevel = instrset_detect();
+
+  // the compilation level
+#ifdef INSTRSET
+  const int complevel = INSTRSET;
+#else
+  const int complevel = 999;
+#endif
+
+  // test if the CPU supports the compiled level
+  // if not, return the code that informs Gaudi the test was not run.
+  if ( cpulevel < complevel ) 
+  {
+    std::cout << "CPU level " << cpulevel << " does not support compilation level " << complevel 
+              << " test will not be run"
+              << std::endl;
+    return 77; 
+  }
+
   // random number generator
   std::default_random_engine gen;
 

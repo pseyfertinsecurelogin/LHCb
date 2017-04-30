@@ -151,22 +151,22 @@ if(GAUDI_BUILD_TESTS)
   set_property(SOURCE tests/TestVDTMathSSE4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -msse4.2 " )
   gaudi_add_executable(TestVDTMathSSE4
                        tests/TestVDTMathSSE4.cpp
-                       INCLUDE_DIRS VDT
+                       INCLUDE_DIRS VDT Kernel/VectorClass
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
   set_property(SOURCE tests/TestVDTMathAVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx " )
   gaudi_add_executable(TestVDTMathAVX
                        tests/TestVDTMathAVX.cpp
-                       INCLUDE_DIRS VDT
+                       INCLUDE_DIRS VDT Kernel/VectorClass
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
   set_property(SOURCE tests/TestVDTMathAVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathAVX2
                        tests/TestVDTMathAVX2.cpp
-                       INCLUDE_DIRS VDT
+                       INCLUDE_DIRS VDT Kernel/VectorClass
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
   set_property(SOURCE tests/TestVDTMathAVX2FMA.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
   gaudi_add_executable(TestVDTMathAVX2FMA
                        tests/TestVDTMathAVX2FMA.cpp
-                       INCLUDE_DIRS VDT
+                       INCLUDE_DIRS VDT Kernel/VectorClass
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
   # Force -O3 on all VDT test application builds
   #set_property(SOURCE tests/TestVDTMathSSE4.cpp    APPEND_STRING PROPERTY COMPILE_FLAGS " -O3 " )
