@@ -101,53 +101,57 @@ void fillRandomSMatrix(Mat &F, TRandom& r, bool symmetric=false)
 template <typename Mat>
 Mat orthogonalizeMatrix(Mat &M, bool &processOk)
 {
+  processOk = false;
+  Mat Q;
+  
+  // Checking that we have a square matrix
+  if ( M.kRows != M.kCols )
+  {
     processOk = false;
+  }
+  else
+  {
+
     int n = M.kRows;
-    Mat Q;
     Mat U;
 
-    // Checking that we have a square matrix
-    if (M.kRows != M.kCols)
-    {
-        processOk = false;
-        return Q;
-    }
-
-
     for (int i=0; i<n; i++) {
-
-        // Initializing U with the original column from M
+      
+      // Initializing U with the original column from M
+      for(int k=0; k<n; k++) {
+        U(k,i) = M(k, i);
+      }
+      
+      // Iterate of already established basis vectors to make sure we have an orthogonal vector
+      for (int j=0; j<i; j++) {
+        // Computing the scalar product
+        double_t sp = 0.0;
         for(int k=0; k<n; k++) {
-            U(k,i) = M(k, i);
+          sp += Q(k, j) * M(k, i);
         }
-
-        // Iterate of already established basis vectors to make sure we have an orthogonal vector
-        for (int j=0; j<i; j++) {
-            // Computing the scalar product
-            double_t sp = 0.0;
-            for(int k=0; k<n; k++) {
-                sp += Q(k, j) * M(k, i);
-            }
-
-            // Now doing the actual projection
-            for (int k = 0; k < n; k++) {
-                U(k, i) += -sp * Q(k, j);
-            }
-        }
-
-        double_t norm = 0.0;
+        
+        // Now doing the actual projection
         for (int k = 0; k < n; k++) {
-            norm += U(k, i) * U(k, i);
+          U(k, i) += -sp * Q(k, j);
         }
-        norm = sqrt(norm);
-        for (int k = 0; k < n; k++) {
-            Q(k, i) = U(k, i) / norm;
-        }
+      }
+      
+      double_t norm = 0.0;
+      for (int k = 0; k < n; k++) {
+        norm += U(k, i) * U(k, i);
+      }
+      norm = sqrt(norm);
+      for (int k = 0; k < n; k++) {
+        Q(k, i) = U(k, i) / norm;
+      }
     }
+    
     processOk = true;
-    return Q;
-}
 
+  }
+
+  return Q;
+}
 
 /**
  * Generate a random SymMatrix with a given max Condition number
@@ -162,27 +166,27 @@ void fillSMatrixSymWithCondNumber(SymMat &F, TRandom& r, double condNumber)
 
     do
     {
-        fillRandomSMatrix(T, r);
-        Q = orthogonalizeMatrix(T, processOk);
+      fillRandomSMatrix(T, r);
+      Q = orthogonalizeMatrix(T, processOk);
     } while (!processOk);
-
+    
     Mat tQ = ROOT::Math::Transpose(Q);
 
     Mat D;
     D(0,0) = 1;
     for (int i=1; i < 5; i++)
     {
-        D(i, i) = r.Rndm() * condNumber;
+      D(i, i) = r.Rndm() * condNumber;
     }
-
+    
     Mat origin;
     origin = Q * D * tQ;
-
+    
     for (int i = 0; i < F.kRows; i++)
     {
-        for(int j=0; j<=i; j++)
-        {
-            F(i, j) = origin(i,j);
+      for(int j=0; j<=i; j++)
+      {
+        F(i, j) = origin(i,j);
         }
     }
 }
@@ -195,19 +199,20 @@ template <typename M>
 std::pair<M, bool> compareSMatrix(M& A, M& B, bool symetric=true,
                                   double diffThreshold=1e-15)
 {
-    M cmpres;
-    bool hasDiff = false;
-    for (int i=0; i< A.kCols; i++)
-        for (int j=(symetric==true?i:0); j< A.kRows; j++)
-        {
-            cmpres(i, j) = (A(i,j) - B(i,j));
-            if (TMath::Abs(cmpres(i,j)) > diffThreshold)
-            {
-              hasDiff = true;
-            }
-        }
-
-    return std::make_pair(cmpres, hasDiff);
+  M cmpres;
+  bool hasDiff = false;
+  for ( int i = 0; i < A.kCols; ++i )
+  {
+    for ( int j = ( symetric ? i : 0 ); j < A.kRows; ++j )
+    {
+      cmpres(i,j) = (A(i,j) - B(i,j));
+      if ( TMath::Abs(cmpres(i,j)) > diffThreshold )
+      {
+        hasDiff = true;
+      }
+    }
+  }
+  return std::make_pair(cmpres, hasDiff);
 }
 
 
@@ -231,10 +236,12 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
   const bool hasAVX2 = hasInstructionSet(ISet::AVX2);
   const bool hasSSE3 = hasInstructionSet(ISet::SSE3);
   if (printResults)
+  {
     std::cout << "Has SSE3: " <<  hasSSE3 
               << " Has AVX: " << hasAVX 
               << " Has AVX2: " << hasAVX2 
               << std::endl;
+  }
 
   bool SSE3Diff = false;
   bool AVXDiff = false;
