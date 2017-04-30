@@ -329,14 +329,7 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
   
     
   // Checking if we found errors
-  int retval = 0;
-  if (SSE3Diff || AVXDiff || AVX2Diff) 
-  {
-    retval = 1;
-    
-  }
-  
-  return retval;
+  return ( SSE3Diff || AVXDiff || AVX2Diff ? 1 : 0 );
 } 
 // ============================================================================
 // Main method                                                                      
