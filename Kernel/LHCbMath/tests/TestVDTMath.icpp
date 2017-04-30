@@ -54,8 +54,8 @@ int main()
   // if not, return the code that informs Gaudi the test was not run.
   if ( cpulevel < complevel ) 
   {
-    std::cout << "CPU level " << cpulevel << " does not support compilation level " << complevel 
-              << " test will not be run"
+    std::cout << "CPU level " << cpulevel 
+              << " does not support compilation level " << complevel << ". Test will not be run."
               << std::endl;
     return 77; 
   }
