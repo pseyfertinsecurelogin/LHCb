@@ -63,11 +63,11 @@ namespace Rich
       static const ShortType ShiftHPDsSuppressed = ShiftIngressID  + BitsIngressID;
 
       // The masks
-      static const ShortType MaskEventID         = (ShortType) ((1 << BitsEventID)-1)        << ShiftEventID;
-      static const ShortType MaskBXID            = (ShortType) ((1 << BitsBXID)-1)           << ShiftBXID;
-      static const ShortType MaskActiveHPDs      = (ShortType) ((1 << BitsActiveHPDs)-1)     << ShiftActiveHPDs ;
-      static const ShortType MaskIngressID       = (ShortType) ((1 << BitsIngressID)-1)      << ShiftIngressID ;
-      static const ShortType MaskHPDsSuppressed  = (ShortType) ((1 << BitsHPDsSuppressed)-1) << ShiftHPDsSuppressed;
+      static const LongType MaskEventID         = (LongType) ((1 << BitsEventID)-1)        << ShiftEventID;
+      static const LongType MaskBXID            = (LongType) ((1 << BitsBXID)-1)           << ShiftBXID;
+      static const LongType MaskActiveHPDs      = (LongType) ((1 << BitsActiveHPDs)-1)     << ShiftActiveHPDs ;
+      static const LongType MaskIngressID       = (LongType) ((1 << BitsIngressID)-1)      << ShiftIngressID ;
+      static const LongType MaskHPDsSuppressed  = (LongType) ((1 << BitsHPDsSuppressed)-1) << ShiftHPDsSuppressed;
 
       // the max values storable
       static const ShortType MaxEventID          = (ShortType) ( 1 << BitsEventID        ) - 1;

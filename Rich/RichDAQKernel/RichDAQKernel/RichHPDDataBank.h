@@ -347,16 +347,16 @@ namespace Rich
       }
 
       /// Set a given bit in a data word on
+      template< typename DTYPE, typename ITYPE >
       inline void
-      setBit( ShortType & data,
-              const ShortType pos,
-              const ShortType value = 1 ) const noexcept
+      setBit( DTYPE & data, const ITYPE pos, const ITYPE value = 1 ) const noexcept
       {
         data |= value<<pos;
       }
 
-      /// Test if a LongType is even or odd
-      inline bool isEven( const LongType data ) const noexcept
+      /// Test if a given type is even or odd
+      template< typename T >
+      inline bool isEven( const T data ) const noexcept
       {
         return ( (data & 0x1) == 0 );
       }

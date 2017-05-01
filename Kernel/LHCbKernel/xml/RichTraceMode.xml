@@ -17,9 +17,9 @@
 
         <enum name="RayTraceResult" desc="The result of the ray tracing" access="PUBLIC" >
           <enumval name="RayTraceFailed"  value="0"  desc="The ray tracing failed"/>
-          <enumval name="OutsideHPDPanel" value="1"  desc="The ray tracing succeeded and but was outside the acceptance of the HPD panels"/>
-          <enumval name="InHPDPanel"      value="2"  desc="The ray tracing succeeded and fell into the acceptance of an HPD panel"/>
-          <enumval name="InHPDTube"       value="3"  desc="The ray tracing succeeded and fell into the acceptance of an HPD tube"/>
+          <enumval name="OutsidePDPanel"  value="1"  desc="The ray tracing succeeded and but was outside the acceptance of the PD panels"/>
+          <enumval name="InPDPanel"       value="2"  desc="The ray tracing succeeded and fell into the acceptance of an PD panel"/>
+          <enumval name="InPDTube"        value="3"  desc="The ray tracing succeeded and fell into the acceptance of an PD tube"/>
         </enum>
 
         <method
@@ -36,24 +36,24 @@
           </code>
         </method>
 
-        <enum name="DetectorPrecision" desc="Flag the precision mode to use when calculating the HPD acceptance on the HPD panels. Only applies if DetectorPlaneBoundary enum is set to RespectHPDTubes" access="PUBLIC" >
-          <enumval name="FlatHPDs"      value="0"  desc="Approximate the HPD window acceptance by circles on a plane (fastest)"/>
-          <enumval name="SphericalHPDs" value="1"  desc="Models the HPD entrance window by a simple sphere + circular acceptance (fast)"/>
-          <enumval name="FullHPDs"      value="2"  desc="Use the full detector description for the HPDs (slower)"/>
+        <enum name="DetectorPrecision" desc="Flag the precision mode to use when calculating the PD acceptance on the PD panels. Only applies if DetectorPlaneBoundary enum is set to RespectPDTubes" access="PUBLIC" >
+          <enumval name="FlatPDs"      value="0"  desc="Approximate the PD window acceptance by circles on a plane (fastest)"/>
+          <enumval name="SphericalPDs" value="1"  desc="Models the PD entrance window by a simple sphere + circular acceptance (fast)"/>
+          <enumval name="FullPDs"      value="2"  desc="Use the full detector description for the PDs (slower)"/>
         </enum>
 
-        <enum name="DetectorPlaneBoundary" desc="Flag how to treat the HPD panel and HPD tube acceptances when performing the ray tracing" access="PUBLIC" >
-          <enumval name="IgnoreHPDAcceptance" value="1"  desc="Ignore the HPDs acceptance entirely (both the average HPD panel and individual tubes)"/>
-          <enumval name="RespectHPDPanel"     value="2"  desc="Respect the average physical boundaries of the HPDs on the panel plane"/>
-          <enumval name="RespectHPDTubes"     value="3"  desc="Respect the individual HPD acceptances"/>
+        <enum name="DetectorPlaneBoundary" desc="Flag how to treat the PD panel and PD tube acceptances when performing the ray tracing" access="PUBLIC" >
+          <enumval name="IgnorePDAcceptance" value="1"  desc="Ignore the PDs acceptance entirely (both the average PD panel and individual tubes)"/>
+          <enumval name="RespectPDPanel"     value="2"  desc="Respect the average physical boundaries of the PDs on the panel plane"/>
+          <enumval name="RespectPDTubes"     value="3"  desc="Respect the individual PD acceptances"/>
         </enum>
 
         <constructor
                  desc     = "Default Constructor"
                  initList = "m_data(0)" >
                 <code>
-                  setDetPlaneBound ( LHCb::RichTraceMode::IgnoreHPDAcceptance );
-                  setDetPrecision  ( LHCb::RichTraceMode::FlatHPDs            );
+                  setDetPlaneBound ( LHCb::RichTraceMode::IgnorePDAcceptance );
+                  setDetPrecision  ( LHCb::RichTraceMode::FlatPDs            );
                 </code>
         </constructor>
 
@@ -62,12 +62,12 @@
                 explicit = "TRUE"
                 initList = "m_data(0)" >
                 <arg const="TRUE" name="bound"                                     inout="BYVALUE" type="LHCb::RichTraceMode::DetectorPlaneBoundary" />
-                <arg const="TRUE" name="detPrec = LHCb::RichTraceMode::FlatHPDs"   inout="BYVALUE" type="LHCb::RichTraceMode::DetectorPrecision" />
+                <arg const="TRUE" name="detPrec = LHCb::RichTraceMode::FlatPDs"    inout="BYVALUE" type="LHCb::RichTraceMode::DetectorPrecision" />
                 <arg const="TRUE" name="forcedSide = false"                        inout="BYVALUE" type="bool" />
                 <arg const="TRUE" name="respectOuter = false"                      inout="BYVALUE" type="bool" />
                 <arg const="TRUE" name="respectMirrSegs = false"                   inout="BYVALUE" type="bool" />
                 <arg const="TRUE" name="checkBeamPipeIntersects = false"           inout="BYVALUE" type="bool" />
-                <arg const="TRUE" name="checkHPDKaptonShadowing = false"           inout="BYVALUE" type="bool" />
+                <arg const="TRUE" name="checkPDKaptonShadowing = false"            inout="BYVALUE" type="bool" />
                 <arg const="TRUE" name="aeroRefraction = false"                    inout="BYVALUE" type="bool" />
                 <code>
                   setDetPlaneBound      ( bound           );
@@ -76,7 +76,7 @@
                   setOutMirrorBoundary  ( respectOuter    );
                   setMirrorSegBoundary  ( respectMirrSegs );
                   setBeamPipeIntersects ( checkBeamPipeIntersects );
-                  setHpdKaptonShadowing ( checkHPDKaptonShadowing );
+                  setHpdKaptonShadowing ( checkPDKaptonShadowing );
                   setAeroRefraction     ( aeroRefraction          );
                 </code>
         </constructor>
@@ -86,13 +86,13 @@
            name = "data"
            init = "0"
            type = "bitfield" >
-           <bitfield desc="The HPD modelling precision to use"     length="4" name="detPrecision"   type="LHCb::RichTraceMode::DetectorPrecision" />
-           <bitfield desc="The HPD tube and panel acceptance mode" length="4" name="detPlaneBound"  type="LHCb::RichTraceMode::DetectorPlaneBoundary" />
+           <bitfield desc="The PD modelling precision to use"     length="4" name="detPrecision"   type="LHCb::RichTraceMode::DetectorPrecision" />
+           <bitfield desc="The PD tube and panel acceptance mode" length="4" name="detPlaneBound"  type="LHCb::RichTraceMode::DetectorPlaneBoundary" />
            <bitfield desc="Flag to force the side to use in the ray-tracing"            length="1" name="forcedSide" />
            <bitfield desc="Flag to respect the overall outer boundaries of the mirrors" length="1" name="outMirrorBoundary" />
            <bitfield desc="Flag to respect the individual mirror segment boundaries (i.e. the small gaps between them)" length="1" name="mirrorSegBoundary" />
            <bitfield desc="Flag to turn on rejection of trajectories which intersect the beam pipe inside the RICH detectors" length="1" name="beamPipeIntersects" />
-           <bitfield desc="Flag to turn on the checking for shadowing by the HPD kapton" length="1" name="hpdKaptonShadowing" />
+           <bitfield desc="Flag to turn on the checking for shadowing by the PD kapton" length="1" name="hpdKaptonShadowing" />
            <bitfield desc="Flag to turn on the refraction correction at the exit of the Aerogel volume into the Rich1Gas" length="1" name="aeroRefraction" />
         </attribute>
 

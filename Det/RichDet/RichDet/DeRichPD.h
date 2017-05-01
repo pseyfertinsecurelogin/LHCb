@@ -72,25 +72,6 @@ public: // virtual methods to be implemented by derived classes
                                 Gaudi::XYZPoint& detectPoint,
                                 bool photoCathodeSide = false ) const = 0;
 
-  /** @brief Converts an x,y point from the anode to the photocathode in the
-   *         coordinate system of the HPD.
-   *
-   *  The point can be given either on the inside of the HPD window (photocathode) if
-   *  photoCathodeSide=true or on the outside including refraction correction if
-   *  photoCathodeSide=false
-   *
-   *  @param[in]  anodePoint The <x,y> pair on the anode in pixel coordinates
-   *  @param[out] detectPoint The position in HPD coordinates
-   *  @param[in]  photoCathodeSide Set to false to include refraction on HPD window
-   *  @return StatusCode indicating if the conversion was successful or not
-   *  @retval true  Conversion was successful
-   *  @retval false Conversion failed
-   */
-  virtual bool detectionPoint ( const double fracPixelCol,
-                                const double fracPixelRow,
-                                Gaudi::XYZPoint& detectPoint,
-                                const bool photoCathodeSide = true ) const = 0;
-
 public:
 
   /// Access the actual physical area of the pixels in the PD (in mm^2)

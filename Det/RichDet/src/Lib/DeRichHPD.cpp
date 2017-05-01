@@ -196,7 +196,7 @@ StatusCode DeRichHPD::initHpdQuantumEff()
   if ( deRichSys()->exists( "HpdQuantumEffCommonLoc" ) )  // use hardware ID to locate QE
   {
     // convert copy number to smartID
-    const auto id = deRichSys()->richSmartID(Rich::DAQ::HPDCopyNumber(m_number));
+    const auto id = deRichSys()->richSmartID(Rich::DAQ::PDCopyNumber(m_number));
     const auto qePath   = deRichSys()->param<std::string>("HpdQuantumEffCommonLoc");
     const std::string hID( deRichSys()->hardwareID(id) );
     SmartDataPtr<TabulatedProperty> hpdQuantumEffTabProp( dataSvc(), qePath+hID );
@@ -846,34 +846,6 @@ bool DeRichHPD::testKaptonShadowing( const Gaudi::XYZPoint&  pInPanel,
   return ( 0 != m_kaptonSolid->intersectionTicks( pInKapton,
                                                   vInKapton,
                                                   kaptonTicks ) );
-}
-
-//=========================================================================
-// Converts a pair to a point in global coordinates
-//=========================================================================
-bool DeRichHPD::detectionPoint ( const double fracPixelCol,
-                                 const double fracPixelRow,
-                                 Gaudi::XYZPoint& detectPoint,
-                                 const bool photoCathodeSide ) const
-{
-  if ( fracPixelCol < 0.0 || fracPixelRow < 0.0 )
-  {
-    error() << "Negative pixel coordinate " << fracPixelCol << ","
-            << fracPixelRow << endmsg;
-    return false;
-  }
-
-  detectPoint = Gaudi::XYZPoint( fracPixelCol*m_pixelSize - m_siliconHalfLengthX,
-                                 m_siliconHalfLengthY - fracPixelRow*m_pixelSize,
-                                 0.0 );
-  const auto sc =
-    ( m_isFieldON || m_UseHpdMagDistortions ) ?
-    magnifyToGlobalMagnetON  ( detectPoint, photoCathodeSide ) :
-    magnifyToGlobalMagnetOFF ( detectPoint, photoCathodeSide ) ;
-
-  detectPoint = geometry()->toLocal(detectPoint);
-
-  return sc;
 }
 
 //=========================================================================

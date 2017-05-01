@@ -34,15 +34,15 @@ namespace Rich
     public: // definitions
 
       /// Number of bits for each row or column number
-      static const Rich::DAQ::ShortType BitsHit    = 5;
+      static const Rich::DAQ::IndexType BitsHit    = 5;
 
       // shift registers
-      static const Rich::DAQ::ShortType ShiftRow0  = 0;
-      static const Rich::DAQ::ShortType ShiftCol0  = ShiftRow0 + BitsHit;
-      static const Rich::DAQ::ShortType ShiftRow1  = ShiftCol0 + BitsHit;
-      static const Rich::DAQ::ShortType ShiftCol1  = ShiftRow1 + BitsHit;
-      static const Rich::DAQ::ShortType ShiftRow2  = ShiftCol1 + BitsHit;
-      static const Rich::DAQ::ShortType ShiftCol2  = ShiftRow2 + BitsHit;
+      static const Rich::DAQ::IndexType ShiftRow0  = 0;
+      static const Rich::DAQ::IndexType ShiftCol0  = ShiftRow0 + BitsHit;
+      static const Rich::DAQ::IndexType ShiftRow1  = ShiftCol0 + BitsHit;
+      static const Rich::DAQ::IndexType ShiftCol1  = ShiftRow1 + BitsHit;
+      static const Rich::DAQ::IndexType ShiftRow2  = ShiftCol1 + BitsHit;
+      static const Rich::DAQ::IndexType ShiftCol2  = ShiftRow2 + BitsHit;
 
       // The masks
       static const Rich::DAQ::LongType  MaskRow0   = ((1 << BitsHit)-1) << ShiftRow0;
