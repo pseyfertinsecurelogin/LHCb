@@ -28,7 +28,8 @@
   <class name  = "Rich::DAQ::L1InputWithinIngress"     />
   <class name  = "Rich::DAQ::Level1Input"              />
   <class name  = "Rich::DAQ::HPDHardwareID"            />
-  <class name  = "Rich::DAQ::HPDCopyNumber"            />
+  <class name  = "Rich::DAQ::PDCopyNumber"             />
+  <class name  = "Rich::DAQ::PDPanelIndex"             />
   <class name  = "Rich::DAQ::HPDL1InputID"             />
   <class name  = "Rich::DAQ::HPDHardwareIDs"           />
   <class name  = "Rich::DAQ::Level0IDs"                />

@@ -96,13 +96,13 @@ public:
    *  @param copyNumber The PD Copy Number
    *  @return The corresponding PD RichSmartID
    */
-  const LHCb::RichSmartID richSmartID( const Rich::DAQ::HPDCopyNumber& copyNumber ) const;
+  const LHCb::RichSmartID richSmartID( const Rich::DAQ::PDCopyNumber& copyNumber ) const;
 
   /** Convert a RICH smartID to the corresponding PD Copy Number
    *  @param smartID The PD RichSmartID
    *  @return The corresponding PD Copy Number
    */
-  const Rich::DAQ::HPDCopyNumber copyNumber( const LHCb::RichSmartID& smartID ) const;
+  const Rich::DAQ::PDCopyNumber copyNumber( const LHCb::RichSmartID& smartID ) const;
 
   /// Returns a list of all active PDs identified by their RichSmartID
   const LHCb::RichSmartID::Vector & activePDRichSmartIDs() const noexcept;
@@ -392,11 +392,11 @@ private: // data
   Rich::DAQ::Level1HardwareIDs m_l1IDs;
 
   /// smartID to copy number map
-  typedef GaudiUtils::HashMap< const LHCb::RichSmartID, Rich::DAQ::HPDCopyNumber > SmartIDToCopyN;
+  typedef GaudiUtils::HashMap< const LHCb::RichSmartID, Rich::DAQ::PDCopyNumber > SmartIDToCopyN;
   SmartIDToCopyN m_smartid2copyNumber;
 
   /// copy number to smartID map
-  typedef GaudiUtils::HashMap< const Rich::DAQ::HPDCopyNumber, LHCb::RichSmartID > CopyNToSmartID;
+  typedef GaudiUtils::HashMap< const Rich::DAQ::PDCopyNumber, LHCb::RichSmartID > CopyNToSmartID;
   CopyNToSmartID m_copyNumber2smartid;
 
   /// L1 Logical ID to L1 Copy Number

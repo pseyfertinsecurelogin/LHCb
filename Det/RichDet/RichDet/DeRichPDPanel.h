@@ -137,7 +137,7 @@ public: // virtual methods. Derived classes must implement these
   virtual const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const = 0;
 
   /// Returns the detector element for the given PD number
-  virtual const DeRichPD* dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const = 0;
+  virtual const DeRichPD* dePD( const Rich::DAQ::PDPanelIndex PDNumber ) const = 0;
 
   /** @brief Returns the intersection point with an HPD window given a vector
    *  and a point.
@@ -159,6 +159,7 @@ public: // virtual methods. Derived classes must implement these
                  const Gaudi::XYZPoint& pGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
+                 const DeRichPD*& dePD,
                  const LHCb::RichTraceMode mode ) const = 0;
 
   /** @brief Returns the intersection point with the detector plane given a vector
@@ -179,6 +180,7 @@ public: // virtual methods. Derived classes must implement these
                  const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& hitPosition,
                  LHCb::RichSmartID& smartID,
+                 const DeRichPD*& dePD,
                  const LHCb::RichTraceMode mode ) const = 0;
 
   /** @brief Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
@@ -196,7 +198,7 @@ public: // virtual methods. Derived classes must implement these
                         LHCb::RichSmartID& id ) const = 0;
 
   /// Returns the PD number for the given RichSmartID
-  virtual Rich::DAQ::HPDCopyNumber pdNumber( const LHCb::RichSmartID& smartID ) const = 0;
+  virtual Rich::DAQ::PDPanelIndex pdNumber( const LHCb::RichSmartID& smartID ) const = 0;
 
   /**
    * Adds to the given vector all the available readout channels in this PD panel
@@ -210,10 +212,10 @@ public: // virtual methods. Derived classes must implement these
   virtual bool
   readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const = 0;
   
-  /** The maximum PD copy number for this panel
+  /** The maximum PD number for this panel
    *  Useful as for the PMTs this is not easily derived from the number of PD
    *  as they are not completely sequential */
-  virtual Rich::DAQ::HPDCopyNumber maxPdNumber() const = 0;
+  virtual Rich::DAQ::PDPanelIndex maxPdNumber() const = 0;
 
 protected:
 

@@ -123,9 +123,9 @@ StatusCode DeRichHPDPanel::initialize()
 //=========================================================================
 // The maximum PD copy number for this panel
 //=========================================================================
-Rich::DAQ::HPDCopyNumber DeRichHPDPanel::maxPdNumber() const
+Rich::DAQ::PDPanelIndex DeRichHPDPanel::maxPdNumber() const
 {
-  return Rich::DAQ::HPDCopyNumber(m_DeHPDs.size());
+  return Rich::DAQ::PDPanelIndex(m_DeHPDs.size());
 }
 
 //=========================================================================
@@ -202,6 +202,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
                                const Gaudi::XYZPoint& pGlobal,
                                Gaudi::XYZPoint& windowPointGlobal,
                                LHCb::RichSmartID& smartID,
+                               const DeRichPD*& pd,
                                const LHCb::RichTraceMode mode ) const
 {
 
@@ -219,7 +220,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
 
   // get panel intersection point
   auto distance = -m_localPlane2.Distance(pInPanel) * scalar_inv;
-  auto panelIntersection = pInPanel + distance*vInPanel;
+  auto panelIntersection = pInPanel + (distance*vInPanel);
 
   // Set HPD column and row numbers in smart ID
   if ( !findHPDColAndPos(panelIntersection,smartID) )
@@ -227,6 +228,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
 
   // Find the correct DeRichHPD
   const auto * HPD = deHPD( _pdNumber(smartID) );
+  pd = HPD;
 
   // Refind intersection point using other local plane
   // ( Can reuse scalar as both local planes have the same normal vector )
@@ -234,10 +236,10 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
   panelIntersection = pInPanel + distance*vInPanel;
 
   // default acceptance is inside an HPD
-  LHCb::RichTraceMode::RayTraceResult res = LHCb::RichTraceMode::InHPDTube;
+  LHCb::RichTraceMode::RayTraceResult res = LHCb::RichTraceMode::InPDTube;
 
   // how are the checks to be done ?
-  if ( mode.detPrecision() != LHCb::RichTraceMode::FullHPDs )
+  if ( mode.detPrecision() != LHCb::RichTraceMode::FullPDs )
   {
     // do it quickly using a simplified HPD acceptance (window description)
 
@@ -255,14 +257,14 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
            ( mode.hpdKaptonShadowing() &&       // check for intersection with kapton shield
              HPD->testKaptonShadowing(pInPanel,vInPanel) ) )
       {
-        res = LHCb::RichTraceMode::OutsideHPDPanel;
+        res = LHCb::RichTraceMode::OutsidePDPanel;
       }
     }
 
     // If we are approximating the HPDs as flat circles, or if we are outside an HPD
     // just using the panel intersection point
-    if ( mode.detPrecision() == LHCb::RichTraceMode::FlatHPDs ||
-         res                 != LHCb::RichTraceMode::InHPDTube )
+    if ( mode.detPrecision() == LHCb::RichTraceMode::FlatPDs ||
+         res                 != LHCb::RichTraceMode::InPDTube )
     {
       // set the window point to panel intersection point
       windowPointGlobal = geometry()->toGlobal( panelIntersection );
@@ -290,7 +292,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
       // set final point using panel intersection
       windowPointGlobal = geometry()->toGlobal( panelIntersection );
       // set acceptance flag to outside the HPDPanel
-      res = LHCb::RichTraceMode::OutsideHPDPanel;
+      res = LHCb::RichTraceMode::OutsidePDPanel;
     }
     else
     {
@@ -334,7 +336,7 @@ DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
         // check if the HPD is active or dead
         if ( !m_deRichS->pdIsActive(smartID) )
         {
-          res = LHCb::RichTraceMode::OutsideHPDPanel;
+          res = LHCb::RichTraceMode::OutsidePDPanel;
         }
 
       } // found intersection with HPD window
@@ -398,6 +400,7 @@ DeRichHPDPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
                                const Gaudi::XYZVector& vGlobal,
                                Gaudi::XYZPoint& hitPosition,
                                LHCb::RichSmartID& smartID,
+                               const DeRichPD*& pd,
                                const LHCb::RichTraceMode mode ) const
 {
 
@@ -421,9 +424,12 @@ DeRichHPDPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
   // set final position
   hitPosition = geometry()->toGlobal( panelIntersection );
 
+  // Set PD pointer to the closest PD
+  pd = dePD(smartID);
+
   // return final acceptance
-  return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectHPDPanel ?
-           checkPanelAcc(panelIntersection) : LHCb::RichTraceMode::InHPDPanel );
+  return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectPDPanel ?
+           checkPanelAcc(panelIntersection) : LHCb::RichTraceMode::InPDPanel );
 }
 
 //=========================================================================
@@ -478,7 +484,7 @@ const DeRichPD* DeRichHPDPanel::dePD( const LHCb::RichSmartID pdID ) const
 //=========================================================================
 // Returns the detector element for the given HPD number
 //=========================================================================
-const DeRichPD* DeRichHPDPanel::dePD( const Rich::DAQ::HPDCopyNumber PDNumber ) const
+const DeRichPD* DeRichHPDPanel::dePD( const Rich::DAQ::PDPanelIndex PDNumber ) const
 {
   return deHPD( PDNumber );
 }
@@ -653,21 +659,21 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   if ( msgLevel(MSG::VERBOSE,msg) )
   {
     msg << MSG::VERBOSE << "Ideal local centre of HPD#0 "
-        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(0))->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::PDPanelIndex(0))->windowCentreInIdeal()) << endmsg;
     msg << MSG::VERBOSE << "Ideal local centre of HPD#" << nPDsPerCol()-1 << " "
-        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(nPDsPerCol()-1))->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::PDPanelIndex(nPDsPerCol()-1))->windowCentreInIdeal()) << endmsg;
     msg << MSG::VERBOSE << "Ideal local centre of HPD#" << nPDsPerCol() << " "
-        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(nPDsPerCol()))->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::PDPanelIndex(nPDsPerCol()))->windowCentreInIdeal()) << endmsg;
     msg << MSG::VERBOSE << "Ideal local centre of HPD#" << 2*nPDsPerCol()-1 << " "
-        << geometry()->toLocal(deHPD(Rich::DAQ::HPDCopyNumber(2*nPDsPerCol()-1))->windowCentreInIdeal()) << endmsg;
+        << geometry()->toLocal(deHPD(Rich::DAQ::PDPanelIndex(2*nPDsPerCol()-1))->windowCentreInIdeal()) << endmsg;
   }
 
   // find the top of 3 HPDs to create a detection plane.
-  const auto pointA( deHPD(Rich::DAQ::HPDCopyNumber(0))->windowCentreInIdeal() );
+  const auto pointA( deHPD(Rich::DAQ::PDPanelIndex(0))->windowCentreInIdeal() );
   // for second point go to HPD at the end of the column.
-  const auto pointB( deHPD(Rich::DAQ::HPDCopyNumber(nPDsPerCol()-1))->windowCentreInIdeal() );
+  const auto pointB( deHPD(Rich::DAQ::PDPanelIndex(nPDsPerCol()-1))->windowCentreInIdeal() );
   // now point C at the other end.
-  const auto pointC( deHPD(Rich::DAQ::HPDCopyNumber(nPDs()-nPDsPerCol()/2))->windowCentreInIdeal() );
+  const auto pointC( deHPD(Rich::DAQ::PDPanelIndex(nPDs()-nPDsPerCol()/2))->windowCentreInIdeal() );
 
   m_detectionPlane   = Gaudi::Plane3D(pointA,pointB,pointC);
   m_localPlane       = geometry()->toLocalMatrix() * m_detectionPlane;
@@ -718,7 +724,7 @@ StatusCode DeRichHPDPanel::geometryUpdate()
 
 //=========================================================================
 
-Rich::DAQ::HPDCopyNumber DeRichHPDPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
+Rich::DAQ::PDPanelIndex DeRichHPDPanel::pdNumber( const LHCb::RichSmartID& smartID ) const
 {
   return  _pdNumber(smartID);
 }
