@@ -415,7 +415,7 @@ int main(int argc, char *argv[])
     for (auto condNumber: condNumbers) {   
       Gaudi::Matrix1x5 F;
       Gaudi::SymMatrix5x5 origin;
-      Gaudi::Matrix1x5 target;
+      Gaudi::Matrix1x1 target; // really just a double, but need a matrix with 'Array'...
       fillRandomSMatrix(F,r);
       fillSMatrixSymWithCondNumber<Gaudi::Matrix5x5,Gaudi::SymMatrix5x5>(origin, r, condNumber);
       const auto ret = compareInstructionSets(origin, F, target, condNumber, vtbl_5_1, (i%5000) == 0, iSet);
