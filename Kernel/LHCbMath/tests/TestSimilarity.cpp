@@ -11,6 +11,7 @@
 // VectorClass 
 // ============================================================================
 #include "VectorClass/instrset.h"
+#include "VectorClass/vectorclass.h"
 // ============================================================================
 // Gaudi and ROOT types
 // ============================================================================
@@ -21,7 +22,6 @@
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/Similarity.h"
-
 // ============================================================================
 // Advance declaration for similarity methods
 // ============================================================================
@@ -67,7 +67,6 @@ std::map<ISet, similarity_t>  vtbl_5_7 = { { ISet::AVX2,    LHCb::Math::avx2::si
                                            { ISet::SSE3,    LHCb::Math::sse3::similarity_5_7 },
                                            { ISet::GENERIC, LHCb::Math::generic::similarity_5_7 } };
 
-
 // ============================================================================
 // Util methods
 // ============================================================================
@@ -89,10 +88,12 @@ void fillRandomSMatrix(Mat &F, TRandom& r, bool symmetric=false)
 {
   
   for (int i=0; i<F.kRows; i++) 
+  {
     for (int j=(symmetric==true?i:0); j<F.kCols; j++) 
     {
       F(i, j) = r.Rndm();
     }
+  }
 }
 
 /**
@@ -216,10 +217,14 @@ std::pair<M, bool> compareSMatrix(M& A, M& B, bool symetric=true,
 }
 
 
-template <typename Mat, typename SymMat>
-int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
-                           std::map<ISet, similarity_t>&  simFuncs,
-                           int printResults = true, ISet iSet = ISet::GENERIC) 
+template <typename Mat, typename SymMat, typename TargetMat>
+int compareInstructionSets( const SymMat &origin,
+                            Mat &F, 
+                            TargetMat & target,
+                            const double conditionNumber,
+                            std::map<ISet,similarity_t>&  simFuncs,
+                            const bool printResults = true, 
+                            const ISet iSet = ISet::GENERIC ) 
 {
 
   // Checking the instruction sets to do
@@ -235,21 +240,26 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
   const bool hasAVX  = hasInstructionSet(ISet::AVX);
   const bool hasAVX2 = hasInstructionSet(ISet::AVX2);
   const bool hasSSE3 = hasInstructionSet(ISet::SSE3);
+
+  bool SSE3Diff = false;
+  bool AVXDiff  = false;
+  bool AVX2Diff = false;
+
   if (printResults)
   {
     std::cout << "Has SSE3: " <<  hasSSE3 
               << " Has AVX: " << hasAVX 
               << " Has AVX2: " << hasAVX2 
               << std::endl;
+    std::cout << "ISet = " << iSet 
+              << " | DoSSE3: " << doSSE3 
+              << " DoAVX: " << doAVX 
+              << " Do AVX2: " << doAVX2 
+              << std::endl;
   }
 
-  bool SSE3Diff = false;
-  bool AVXDiff = false;
-  bool AVX2Diff = false;
-  SymMat target, targetSSE3, targetAVX, targetAVX2;
-
   // Running the transform for the generic method  
-  (simFuncs[ISet::GENERIC])(origin.Array(), F.Array(), target.Array());
+  (simFuncs[ISet::GENERIC])( origin.Array(), F.Array(), target.Array());
   if (printResults) 
   {  
     std::cout << "Generic similarity transform result" << std::endl;
@@ -260,6 +270,7 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
   { 
     if (hasSSE3)
     {    
+      TargetMat targetSSE3;
       // Checking SSE3
       (simFuncs[ISet::SSE3])( origin.Array(), F.Array(), targetSSE3.Array() );
       if (printResults) 
@@ -269,11 +280,10 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
       }
       
       auto cmpSSE3Res = compareSMatrix(targetSSE3, target, true, diffThreshold);
-      auto cmpSSE3= cmpSSE3Res.first;
       SSE3Diff = cmpSSE3Res.second;
       
       if (printResults)
-        std::cout << "SSE3 Differences" << std::endl << cmpSSE3 << std::endl;
+        std::cout << "SSE3 Differences" << std::endl << cmpSSE3Res.first << std::endl;
     } else 
     {
       // Cannot test SSE3 if not present
@@ -287,6 +297,7 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
   { 
     if (hasAVX) 
     {
+      TargetMat targetAVX;
       (simFuncs[ISet::AVX])( origin.Array(), F.Array(), targetAVX.Array() );
       if (printResults) 
       {  
@@ -295,11 +306,10 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
       }
       
       auto cmpAVXRes = compareSMatrix(targetAVX, target, true, diffThreshold);
-      auto cmpAVX= cmpAVXRes.first;
       AVXDiff = cmpAVXRes.second;
       
       if (printResults)
-        std::cout << "AVX Differences" << std::endl << cmpAVX << std::endl;
+        std::cout << "AVX Differences" << std::endl << cmpAVXRes.first << std::endl;
     } else 
     {
       // Cannot test AVX if not present
@@ -313,6 +323,7 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
   { 
     if (hasAVX2) 
     {
+      TargetMat targetAVX2;
       (simFuncs[ISet::AVX2])( origin.Array(), F.Array(), targetAVX2.Array() );
       if (printResults) 
       {  
@@ -320,12 +331,11 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
         std::cout << targetAVX2 << std::endl;
       }
       
-      auto cmpAVX2Res = compareSMatrix(targetAVX2, target, true, diffThreshold);
-      auto cmpAVX2    = cmpAVX2Res.first;
+      auto cmpAVX2Res = compareSMatrix( targetAVX2, target, true, diffThreshold );
       AVX2Diff = cmpAVX2Res.second;
       
       if (printResults)
-        std::cout << "AVX2 Differences" << std::endl << cmpAVX2 << std::endl;
+        std::cout << "AVX2 Differences" << std::endl << cmpAVX2Res.first << std::endl;
     } else 
     {
       // Cannot test AVX if not present
@@ -333,7 +343,6 @@ int compareInstructionSets(Mat &F, SymMat &origin, double conditionNumber,
       return 77; 
     }    
   }
-  
     
   // Checking if we found errors
   return ( SSE3Diff || AVXDiff || AVX2Diff ? 1 : 0 );
@@ -346,71 +355,75 @@ int main(int argc, char *argv[])
 { 
 
   TRandom3 r(1);
-  int testcount=10000;
+
+  const int testcount = 10000;
   
   // Condition numbers to test
-  std::vector<double> condNumbers = { 1, 1e6, 1e9 };
+  const std::vector<double> condNumbers = { 1.0, 1e6, 1e9 };
   
   // Checking args to see the test to do
   ISet iSet = ISet::GENERIC; // Test ALL by default...
   if ( argc > 1 ) {
     const auto arg = std::string(argv[1]);
-    if        (arg == "AVX2") 
+    if      (arg == "AVX2") 
     {
       iSet = ISet::AVX2;
-    } else if (arg == "AVX") 
+    } 
+    else if (arg == "AVX") 
     {
       iSet = ISet::AVX;
-    } else if (arg == "SSE3") 
+    }
+    else if (arg == "SSE3") 
     {
       iSet = ISet::SSE3;
     }    
   }
 
-  std::cout << "Checking instruction set :" << iSet << std::endl;
+  std::cout << "Checking instruction set : " << iSet << std::endl;
 
   std::cout << "============= Similarity_5_5 Test =============" << std::endl;
-  for(int i=0; i<testcount; i++) 
+  for ( int i = 0; i < testcount; ++i ) 
   {
     for (auto condNumber: condNumbers) {   
       Gaudi::Matrix5x5 F;
       Gaudi::SymMatrix5x5 origin;
+      Gaudi::SymMatrix5x5 target;
       fillRandomSMatrix(F, r);
       fillSMatrixSymWithCondNumber<Gaudi::Matrix5x5,Gaudi::SymMatrix5x5>(origin, r, condNumber);
-      const int ret = compareInstructionSets(F, origin, condNumber, vtbl_5_5, (i%5000) == 0, iSet);
+      const auto ret = compareInstructionSets(origin, F, target, condNumber, vtbl_5_5, (i%5000) == 0, iSet);
       if (ret > 0) return ret;
     } 
   }
-
   
   std::cout << "============= Similarity_5_7 Test =============" << std::endl;
-  for(int i=0; i<testcount; i++) 
+  for( int i = 0; i < testcount; ++i ) 
   {
     for (auto condNumber: condNumbers) {   
-      ROOT::Math::SMatrix<double,7,5> F;
       Gaudi::SymMatrix5x5 origin;
-      fillRandomSMatrix(F, r);
-      fillSMatrixSymWithCondNumber<Gaudi::Matrix5x5,Gaudi::SymMatrix5x5>(origin, r, condNumber);
-      const int ret = compareInstructionSets(F, origin, condNumber,  vtbl_5_7, (i%5000) == 0, iSet);
+      ROOT::Math::SMatrix<double,7,5> F;
+      Gaudi::SymMatrix7x7 target;
+      fillRandomSMatrix(F,r);
+      fillSMatrixSymWithCondNumber<Gaudi::Matrix5x5,Gaudi::SymMatrix5x5>(origin,r,condNumber);
+      const auto ret = compareInstructionSets(origin, F, target, condNumber,  vtbl_5_7, (i%5000) == 0, iSet);
       if (ret > 0) return ret;
     }  
   }
-
-   std::cout << "============= Similarity_5_1 Test =============" << std::endl;
-   for(int i=0; i<testcount; i++) 
-   {
-     for (auto condNumber: condNumbers) {   
-       Gaudi::Matrix1x5 F;
-       Gaudi::SymMatrix5x5 origin;
-       fillRandomSMatrix(F, r);
-       fillSMatrixSymWithCondNumber<Gaudi::Matrix5x5,Gaudi::SymMatrix5x5>(origin, r, condNumber);
-       const int ret = compareInstructionSets(F, origin, condNumber, vtbl_5_1, (i%5000) == 0, iSet);
-       if (ret > 0) return ret;
-     }    
-   }
-
-  return 0;
   
+  std::cout << "============= Similarity_5_1 Test =============" << std::endl;
+  for ( int i = 0; i < testcount; ++i ) 
+  {
+    for (auto condNumber: condNumbers) {   
+      Gaudi::Matrix1x5 F;
+      Gaudi::SymMatrix5x5 origin;
+      Gaudi::Matrix1x5 target;
+      fillRandomSMatrix(F,r);
+      fillSMatrixSymWithCondNumber<Gaudi::Matrix5x5,Gaudi::SymMatrix5x5>(origin, r, condNumber);
+      const auto ret = compareInstructionSets(origin, F, target, condNumber, vtbl_5_1, (i%5000) == 0, iSet);
+      if (ret > 0) return ret;
+    }    
+  }
+  
+  return 0;
 }
 // ============================================================================
 //                                                                      The END 
