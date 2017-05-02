@@ -54,8 +54,7 @@ else()
 endif()
 message(STATUS "AVX2FMA build flags = " ${AVX2FMA_BUILD_FLAGS})
 set_property(SOURCE src/Similarity_SSE3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -msse3 " )
-set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -O3 -mavx " )
-set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -O3 " )
+set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx " )
 set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
 if(LCG_COMP STREQUAL "gcc" OR
     (BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_LESS "5"))
@@ -168,11 +167,6 @@ if(GAUDI_BUILD_TESTS)
                        tests/TestVDTMathAVX2FMA.cpp
                        INCLUDE_DIRS VDT Kernel/VectorClass
                        LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
-  # Force -O3 on all VDT test application builds
-  #set_property(SOURCE tests/TestVDTMathSSE4.cpp    APPEND_STRING PROPERTY COMPILE_FLAGS " -O3 " )
-  #set_property(SOURCE tests/TestVDTMathAVX.cpp     APPEND_STRING PROPERTY COMPILE_FLAGS " -O3 " )
-  #set_property(SOURCE tests/TestVDTMathAVX2.cpp    APPEND_STRING PROPERTY COMPILE_FLAGS " -O3 " )
-  #set_property(SOURCE tests/TestVDTMathAVX2FMA.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -O3 " )
 
 endif()
 
