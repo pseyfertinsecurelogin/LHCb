@@ -64,8 +64,7 @@ LHCb::RawBank* ODINCodecBaseTool::i_encode(const LHCb::ODIN *odin) {
   // Note that we cannot delete it, so better that there is no failure after
   // this line.
   auto data = LHCb::ODINCodec::encode(*odin);
-  LHCb::RawBank* bank = LHCb::RawEvent::createBank(0, LHCb::RawBank::ODIN, VERSION, SIZE);
-  *reinterpret_cast<std::array<unsigned int, SIZE>*>(bank->data()) = data;
+  LHCb::RawBank* bank = LHCb::RawEvent::createBank(0, LHCb::RawBank::ODIN, VERSION, SIZE, data.data());
   return bank;
 }
 //=============================================================================

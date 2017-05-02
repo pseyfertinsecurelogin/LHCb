@@ -153,8 +153,8 @@ ODIN LHCb::ODINCodec::decode( const RawBank& bank, const bool ignoreBankVersion 
 }
 
 
-std::array<unsigned int, Bank::SIZE> LHCb::ODINCodec::encode( const LHCb::ODIN& odin ) {
-  std::array<unsigned int, Bank::SIZE> data;
+Bank::array LHCb::ODINCodec::encode( const LHCb::ODIN& odin ) {
+  Bank::array data;
   data[LHCb::ODIN::RunNumber] = odin.runNumber();
   data[LHCb::ODIN::EventType] = ((odin.eventType() << LHCb::ODIN::EventTypeBits) & LHCb::ODIN::EventTypeMask) |
     ((odin.calibrationStep() << LHCb::ODIN::CalibrationStepBits) & LHCb::ODIN::CalibrationStepMask);
