@@ -4,17 +4,13 @@
   <argument name="program"><text>gaudirun.py</text></argument>
   <argument name="args"><set>
     <text>-v</text>
-    <text>../../options/LoadDDDB.py</text>
   </set></argument>
 <argument name="timeout"><integer>1200</integer></argument>
 <argument name="options"><text>
-
 from Gaudi.Configuration import *
-from Configurables import DDDBConf, CondDB
+from DetDescChecks.Options import LoadDDDBTest
 
-DDDBConf(DataType = "2012")
-CondDB().Simulation = True
-CondDB().UseLatestTags = ["2012"]
+LoadDDDBTest("2012", sim=True)
 
 </text></argument>
 <argument name="validator"><text>

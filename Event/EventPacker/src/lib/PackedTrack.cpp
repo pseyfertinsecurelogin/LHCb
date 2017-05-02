@@ -271,16 +271,16 @@ void TrackPacker::unpack( const PackedData       & ptrack,
     //== Cleanup extraInfo and set likelihood/ghostProbability for old data
     if ( UNLIKELY( ver <= 2 ) )
     {
-      track.eraseInfo(LHCb::Track::PatQuality);
-      track.eraseInfo(LHCb::Track::Cand1stQPat);
-      track.eraseInfo(LHCb::Track::Cand2ndQPat);
-      track.eraseInfo(LHCb::Track::NCandCommonHits);
-      track.eraseInfo(LHCb::Track::Cand1stChi2Mat);
-      track.eraseInfo(LHCb::Track::Cand2ndChi2Mat);
-      track.eraseInfo(LHCb::Track::MatchChi2);
-      track.eraseInfo(LHCb::Track::TsaLikelihood);
-      track.eraseInfo(LHCb::Track::nPRVeloRZExpect);
-      track.eraseInfo(LHCb::Track::nPRVelo3DExpect);
+      track.eraseInfo(LHCb::Track::AdditionalInfo::PatQuality);
+      track.eraseInfo(LHCb::Track::AdditionalInfo::Cand1stQPat);
+      track.eraseInfo(LHCb::Track::AdditionalInfo::Cand2ndQPat);
+      track.eraseInfo(LHCb::Track::AdditionalInfo::NCandCommonHits);
+      track.eraseInfo(LHCb::Track::AdditionalInfo::Cand1stChi2Mat);
+      track.eraseInfo(LHCb::Track::AdditionalInfo::Cand2ndChi2Mat);
+      track.eraseInfo(LHCb::Track::AdditionalInfo::MatchChi2);
+      track.eraseInfo(LHCb::Track::AdditionalInfo::TsaLikelihood);
+      track.eraseInfo(LHCb::Track::AdditionalInfo::nPRVeloRZExpect);
+      track.eraseInfo(LHCb::Track::AdditionalInfo::nPRVelo3DExpect);
       track.setLikelihood      ( track.info(   1, 999 ) ); // was the key of likelihood...
       track.setGhostProbability( track.info( 102, 999 ) ); // was the key of ghost probability
       track.eraseInfo(   1 );

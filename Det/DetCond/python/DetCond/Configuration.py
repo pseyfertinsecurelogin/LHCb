@@ -467,7 +467,7 @@ class CondDB(ConfigurableUser):
         # Access to ConditionsDB
         ##########################################################################
         conns = self.getProp("PartitionConnectionString")
-        tags = self.getProp("Tags")
+        tags = dict(self.getProp("Tags"))
         # DB partitions
         partition = {}
         parttypes = [ ("DDDB",     CondDBAccessSvc),
@@ -532,7 +532,10 @@ class CondDB(ConfigurableUser):
                             #Only apply HeartBeatCondition for ONLINE
                             if isinstance(ly, CondDBAccessSvc) and ly.getName().startswith("ONLINE_"):
                                 self.propagateProperty("HeartBeatCondition", ly)
-
+        # GitONLINE is configured in DDDBConf, but it's better to check here
+        # for backward compatibility
+        if 'ToolSvc.GitONLINE' in allConfigurables:
+            allConfigurables['ToolSvc.GitONLINE'].LimitToLastCommitTime = not self.getProp("IgnoreHeartBeat")
         if not self.getProp("Simulation"):
             # Standard configurations
             #  - Reconstruction / analysis
@@ -557,7 +560,11 @@ class CondDB(ConfigurableUser):
         if self.getProp("EnableRunStampCheck"):
             from Configurables import RunStampCheck
             rsc = RunStampCheck()
-            self.propagateProperty("RunStampCondition", rsc)
+            if 'ToolSvc.GitONLINE' in allConfigurables:
+                if not rsc.isPropertySet('ValidRunsList'):
+                    rsc.ValidRunsList = 'git:///Conditions/Online/valid_runs.txt'
+            else:
+                self.propagateProperty("RunStampCondition", rsc)
             ApplicationMgr().ExtSvc.append(rsc)
 
         # Load the CALIBOFF layer above everything if it exists
@@ -620,6 +627,16 @@ class CondDB(ConfigurableUser):
         from Gaudi.Configuration import VFSSvc
         from Configurables       import CondDBEntityResolver
         VFSSvc().FileAccessTools.append(CondDBEntityResolver())
+        for partition in ['DDDB', 'LHCBCOND', 'SIMCOND', 'ONLINE', 'CALIBOFF', 'DQFLAGS']:
+            ger = allConfigurables.get('ToolSvc.Git{0}'.format(partition))
+            if ger:
+                if not ger.isPropertySet('Commit'):
+                    ger.Commit = self.getProp("Tags").get(partition, 'HEAD')
+                    if self.getProp('Upgrade'):
+                        ger.Commit = 'upgrade/' + ger.Commit
+                VFSSvc().FileAccessTools.append(ger)
+                if localTags.get(partition):
+                    log.warning('local tags in %s are ignored', partition)
 
 
 # Exported symbols

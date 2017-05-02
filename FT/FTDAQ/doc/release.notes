@@ -4,6 +4,10 @@
 ! Purpose     : Code/Decode the FT raw data
 !-----------------------------------------------------------------------------
 
+! 2016-12-14 - Jeroen van Tilburg
+ - Adapt to new channel numbering scheme.
+ - Input for encoding is now LiteClusters. 
+
 !========================= FTDAQ v1r8 2016-03-16 =========================
 ! 2016-02-06 - Gerhard Raven
  - modernize FTRawBank{En,De}coder

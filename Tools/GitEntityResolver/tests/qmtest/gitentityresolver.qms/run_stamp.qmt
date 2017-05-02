@@ -1,0 +1,70 @@
+<?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+<argument name="program"><text>gaudirun.py</text></argument>
+<argument name="args"><set>
+<text>-v</text>
+</set></argument>
+<argument name="options"><text>
+from Gaudi.Configuration import *
+from Configurables import EventClockSvc, FakeEventTime, RunStampCheck, DDDBConf
+from GitTestOptions import setup
+
+setup(tag='HEAD')
+
+def ts(*args):
+    from datetime import datetime
+    epoch = datetime(1970, 1, 1)
+    return int((datetime(*args) - epoch).total_seconds() * 1000000000)
+
+ecs = EventClockSvc(InitialTime = ts(2015, 6, 10, 12, 00))
+ecs.addTool(FakeEventTime, "EventTimeDecoder")
+ecs.EventTimeDecoder.StartTime = ts(2015, 6, 9, 12, 00)
+ecs.EventTimeDecoder.TimeStep = 24 * 60 * 60 * 1000000000 # 1 day
+ecs.EventTimeDecoder.StartRun = 100
+ecs.EventTimeDecoder.EventsPerRun = 1
+
+DDDBConf(EnableRunStampCheck=True)
+
+RunStampCheck(OutputLevel=DEBUG,
+              ValidRunsList='git://valid_runs.txt')
+
+algMgr = ApplicationMgr(EvtSel = "NONE", EvtMax = 4)
+#MessageSvc(OutputLevel = 1)
+
+def tweakVFS():
+    from Gaudi.Configuration import VFSSvc
+    vfs = VFSSvc()
+    vfs.FileAccessTools = [vfs.FileAccessTools[0],
+                           allConfigurables['ToolSvc.GitDDDB']]
+appendPostConfigAction(tweakVFS)
+</text></argument>
+<argument name="exit_code"><integer>4</integer></argument>
+<argument name="validator"><text>
+outputlines = [ l.rstrip() for l in stdout.splitlines() ]
+
+## Check that we find the expected lines in the right order
+expected = '''
+RunStampCheck       DEBUG opening git://valid_runs.txt
+RunStampCheck       DEBUG loaded 12 valid run numbers
+RunStampCheck       ERROR Database not up-to-date. No valid data for run 102 at 2015-06-11 12:00:00.0 UTC
+EventLoopMgr      SUCCESS Terminating event processing loop due to a stop scheduled by an incident listener
+EventLoopMgr      SUCCESS Terminating event processing loop due to scheduled stop
+'''.strip().splitlines()
+
+regexp = '^(RunStampCheck.*(opening|loaded|Found|Database)|.*Terminating event processing)'
+# grep
+import re
+exp = re.compile(regexp)
+outputlines = [ l for l in outputlines if exp.match(l) ]
+
+if outputlines != expected:
+    causes.append("output")
+    result["GaudiTest.output.regexp"] = result.Quote(regexp)
+    result["GaudiTest.output.expected"] = result.Quote("\n".join(expected))
+    result["GaudiTest.output.found"] = result.Quote("\n".join(outputlines))
+</text></argument>
+<argument name="prerequisites"><set>
+  <tuple><text>gitentityresolver.prepare</text><enumeral>PASS</enumeral></tuple>
+</set></argument>
+<argument name="use_temp_dir"><enumeral>true</enumeral></argument>
+</extension>

@@ -2,6 +2,7 @@
 #define       VELODET_DEVELO_H 1
 // ============================================================================
 
+#include <mutex>
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
 
@@ -29,9 +30,6 @@
 
 static const CLID CLID_DeVelo = 8100;
 
-#ifdef __INTEL_COMPILER        // Disable ICC remark
-  #pragma warning(disable:177) // variable was declared but never referenced
-#endif
 namespace DeVeloLocation{
   static const std::string& Default="/dd/Structure/LHCb/BeforeMagnetRegion/Velo";
 }
@@ -552,16 +550,6 @@ private:
    */
   StatusCode registerConditionCallBacks();
 
-  /// On demand access to MsgStream object
-  inline MsgStream & msg() const
-  {
-    if ( !m_msgStream ) m_msgStream.reset( new MsgStream( msgSvc(), "DeVelo" ) );
-    return *m_msgStream;
-  }
-
-  ///========================================================================
-protected:
-
 private:
 
   /// Find DeVeloSensors inside DeVelo detector element tree.
@@ -656,7 +644,7 @@ private:
   unsigned int m_nRightPUSensors;
 
   /// Indices of R, Phi and Pile Up sensors in list of all sensors sorted by z
-  mutable std::vector<DeVeloSensor*> m_sensors;
+  std::vector<DeVeloSensor*> m_sensors;
 
   /// Custom operator for sorting sensors in terms of z position
   struct less_Z {
@@ -687,8 +675,16 @@ private:
   bool m_debug;
   bool m_verbose;
 
+  /// Thread safe on demand access to MsgStream object
+  inline MsgStream & msg() const {
+    std::call_once(m_msgSetFlag,
+		   [&]{m_msgStream.reset( new MsgStream( msgSvc(), "DeVelo" ) );});
+    return *m_msgStream;
+  }
   /// cached Message Stream object
   mutable std::unique_ptr<MsgStream> m_msgStream;
+  /// making the msg() function above thread safe
+  mutable std::once_flag m_msgSetFlag;
 
   double m_sensVolCut;
 };

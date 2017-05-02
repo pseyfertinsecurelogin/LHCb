@@ -1,7 +1,7 @@
 ################################################################################
 # Package: DetDescChecks
 ################################################################################
-gaudi_subdir(DetDescChecks v5r13)
+gaudi_subdir(DetDescChecks)
 
 gaudi_depends_on_subdirs(Det/DDDB
                          Det/DetDesc
@@ -14,12 +14,12 @@ gaudi_depends_on_subdirs(Det/DDDB
                          GaudiSvc
                          RootHistCnv)
 
-find_package(AIDA)
+find_package(ROOT)
 find_package(Boost)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 gaudi_add_module(DetDescChecks
                  src/*.cpp
-                 INCLUDE_DIRS Boost AIDA
                  LINK_LIBRARIES Boost DetDescLib DetDescCnvLib GaudiAlgLib)
 
 gaudi_install_python_modules()

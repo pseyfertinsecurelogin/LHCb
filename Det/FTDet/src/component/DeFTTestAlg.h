@@ -1,14 +1,15 @@
-// $Id: $
 #ifndef DEFTTESTALG_H
 #define DEFTTESTALG_H 1
 
 // Gaudi
-//#include "GaudiAlg/GaudiAlgorithm.h"
-#include "GaudiAlg/GaudiTupleAlg.h"
-#include "GaudiAlg/Tuples.h"
+#include "GaudiAlg/GaudiTupleAlg.h" 
+
+// LHCb Event
+#include "Event/MCHit.h"
 
 // FTDet
-class DeFTDetector;
+#include "FTDet/DeFTDetector.h"
+
 
 /** @class DeFTTestAlg DeFTTestAlg.h "FTDet/DeFTTestAlg.h"
  *
@@ -19,26 +20,22 @@ class DeFTDetector;
  *  @date   2012-04-25
  */
 
-//class DeFTTestAlg : public GaudiAlgorithm {
-class DeFTTestAlg : public GaudiTupleAlg {
+class DeFTTestAlg : public GaudiTupleAlg { 
 
 public:
-
   /// Standard constructor
-  DeFTTestAlg( const std::string& name, ISvcLocator* pSvcLocator );
-
-  ~DeFTTestAlg( ); ///< Destructor
+  using GaudiTupleAlg::GaudiTupleAlg;
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-  StatusCode finalize  () override;    ///< Algorithm finalization
-
-protected:
 
 private:
 
-  DeFTDetector* m_deFT; ///< A pointer to the top-level FT det. element
-  std::string m_mcHitsLocation; ///< TES location of the FT MC hits
+  /// A pointer to the top-level FT det. element
+  DeFTDetector* m_deFT = nullptr;
 
+  Gaudi::Property<std::string> m_mcHitsLocation{ this,
+    "MCHitsLocation", LHCb::MCHitLocation::FT,
+    "TES location of the FT MCHits" };
 };
 #endif // DEFTTESTALG_H

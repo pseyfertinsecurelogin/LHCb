@@ -1,33 +1,24 @@
-#ifndef FAKEEVENTTIME_H
-#define FAKEEVENTTIME_H 1
+#pragma once
 
-// Include files
-// from Gaudi
 #include "GaudiKernel/AlgTool.h"
-#include "GaudiKernel/IEventTimeDecoder.h"            // Interface
+#include "GaudiKernel/IEventTimeDecoder.h"
+#include "GaudiKernel/IIncidentSvc.h"
 
-class IDataProviderSvc;
-
-/** @class FakeEventTime FakeEventTime.h
- *
- *  Basic implementation of an EventTimeDecoder.
+/** Basic implementation of an EventTimeDecoder.
  *  It just provides fake event times.
  *
  *  @author Marco Clemencic
  *  @date   2006-09-21
  */
-class FakeEventTime : public AlgTool, virtual public IEventTimeDecoder {
+class FakeEventTime : public extends<AlgTool, IEventTimeDecoder> {
 public:
   /// Standard constructor
-  FakeEventTime( const std::string& type,
-                 const std::string& name,
-                 const IInterface* parent);
+  using extends::extends;
 
   /// Initialization
   StatusCode initialize() override;
-
-  /// Finalization
-  StatusCode finalize() override;
+  StatusCode start() override;
+  StatusCode stop() override;
 
   // --- implementation of IEventTimeDecoder ---
 
@@ -36,14 +27,20 @@ public:
 
 private:
 
-  // ---------- data members ----------
+  Gaudi::Property<long long> m_startTime { this, "StartTime",  0,
+    "First event time (when simluating them)." };
+  Gaudi::Property<long long> m_timeStep { this, "TimeStep",  0,
+    "Event time increment (when simluating event times), 0 means no simulation." };
 
-  /// First event time (when simluating them).
-  /// Set by the option StartTime (default = 0)
-  Gaudi::Property<long long> m_startTime { this, "StartTime",  0 };
-  /// Event time increment (when simluating event times).
-  /// Set by the option TimeStep (default = 0, which means no simulation)
-  Gaudi::Property<long long> m_timeStep { this, "TimeStep",  0 };
+  Gaudi::Property<unsigned long> m_startRun { this, "StartRun",  0,
+    "First run number to simulate" };
+  Gaudi::Property<unsigned long> m_eventsPerRun { this, "EventsPerRun",  0,
+    "Number of events (calls) before changing run number, 0 means no change" };
 
+  unsigned long m_evtCount = 0;
+
+  SmartIF<IIncidentSvc> m_incSvc;
+
+  /// internal method to increment the state
+  void i_increment();
 };
-#endif // FAKEEVENTTIME_H

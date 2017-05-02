@@ -83,6 +83,12 @@ namespace
     return trimCode ( std::string ( ifront , iback ) ) ;
   }
   // ==========================================================================
+  /// Helper class to protect calls to Python code with the GIL.
+  struct PyGILGuard {
+    PyGILGuard(): gstate(PyGILState_Ensure()) {}
+    ~PyGILGuard() { PyGILState_Release(gstate); }
+    PyGILState_STATE gstate;
+  };
 }
 // ============================================================================
 // Standard constructor
@@ -170,12 +176,15 @@ StatusCode LoKi::Hybrid::Base::finalize  ()
     line += "\tprint 'len(_exithandlers)=',len(atexit._exithandlers)    # " + name() + "\n" ;
     line += "\tatexit._exithandlers=[]                                  # " + name() + "\n" ;
     line += "                                                           # " + name() + "\n" ;
-    const int result =  PyRun_SimpleString ( line.c_str() ) ;
-    if ( 0 != result )
     {
-      Warning ( "Error code from PyRun_SimpleString" , 1000 + result ).ignore() ;
-      warning() << "The problematic code is \n" << line << endmsg ;
-      if ( PyErr_Occurred() ) { PyErr_Print() ; }
+      PyGILGuard guard{};
+      const int result =  PyRun_SimpleString ( line.c_str() ) ;
+      if ( 0 != result )
+      {
+        Warning ( "Error code from PyRun_SimpleString" , 1000 + result ).ignore() ;
+        warning() << "The problematic code is \n" << line << endmsg ;
+        if ( PyErr_Occurred() ) { PyErr_Print() ; }
+      }
     }
     Py_Finalize () ;
   }
@@ -202,6 +211,7 @@ namespace
   std::string toString ( PyObject* o )
   {
     if ( !o ) { return "NULL"; }
+    PyGILGuard guard{};
     PyObject* str = PyObject_Str ( o ) ;
     std::string tmp ;
     if ( str ) { tmp = PyString_AS_STRING (str ) ; }
@@ -224,7 +234,8 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
   // Check the proper python environment:
   if ( !Py_IsInitialized() ) { return Error("Python is not initialized yet!") ; }
 
-  // play with raw Python
+  // play with raw Python, ensuring we have the GIL.
+  PyGILGuard guard{};
 
   // local scope
   PyObject* locals  = PyEval_GetLocals  () ;

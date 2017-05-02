@@ -1940,9 +1940,9 @@ namespace Gaudi
                   const double xmin   , 
                   const double xmax   )
       {
-        return Gaudi::Math::Bernstein::Bernstein ( xbegin , xend ,
-                                                   ybegin , yend , 
-                                                   xmin   , xmax ) ;
+        return Gaudi::Math::Bernstein ( xbegin , xend ,
+                                        ybegin , yend , 
+                                        xmin   , xmax ) ;
       }
       // ======================================================================
       /** construct interpolation polynomial (in Bernstein form)

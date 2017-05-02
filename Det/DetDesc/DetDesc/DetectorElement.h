@@ -16,6 +16,7 @@
 
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/CommonMessaging.h"
 
 #include "DetDesc/Condition.h"
 #include "DetDesc/Services.h"
@@ -45,7 +46,7 @@ class IRegistry;
  *  @author Juan Palacios
 */
 
-class DetectorElement: public ParamValidDataObject,
+class DetectorElement: public CommonMessaging<ParamValidDataObject>,
                        virtual public IDetectorElement {
 
   friend class DataObjectFactory<DetectorElement> ;
@@ -77,6 +78,8 @@ public:
   static const   CLID& classID()       { return CLID_DetectorElement; }
 
   const std::string& name () const override;
+
+  SmartIF<ISvcLocator>& serviceLocator() const override { return m_services->svcLocator(); }
 
   /// Check if the condition called 'name' is in the list of conditionrefs.
   bool hasCondition(const std::string &name) const override;
@@ -320,7 +323,6 @@ protected:
   void setGeometry( IGeometryInfo* geoInfo ) { m_de_iGeometry.reset(geoInfo); }
 
   IDataProviderSvc*  dataSvc () const;
-  IMessageSvc*       msgSvc  () const;
   IUpdateManagerSvc* updMgrSvc() const;
 
   // technicalities

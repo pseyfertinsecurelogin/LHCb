@@ -3,7 +3,8 @@
 ################################################################################
 gaudi_subdir(XmlTools v6r9)
 
-gaudi_depends_on_subdirs(GaudiKernel)
+gaudi_depends_on_subdirs(GaudiKernel
+                         Kernel/LHCbKernel)
 
 find_package(XercesC)
 

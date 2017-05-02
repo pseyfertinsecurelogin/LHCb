@@ -36,4 +36,4 @@ gaudi_add_dictionary(DetCond
 gaudi_install_python_modules()
 
 
-gaudi_add_test(QMTest QMTEST)
+gaudi_add_test(QMTest QMTEST ENVIRONMENT NO_GIT_CONDDB=1)

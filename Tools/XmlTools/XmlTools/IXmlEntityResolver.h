@@ -1,22 +1,15 @@
 #ifndef XMLTOOLS_IXMLENTITYRESOLVER_H 
 #define XMLTOOLS_IXMLENTITYRESOLVER_H 1
 
-// Include files
-// from STL
-#include <string>
-
 // from Gaudi
 #include "GaudiKernel/IInterface.h"
-#include "GaudiKernel/IAlgTool.h"
 
 #include "xercesc/sax/EntityResolver.hpp"
 
 
-/** @class IXmlEntityResolver IXmlEntityResolver.h XmlTools/IXmlEntityResolver.h
- *  
- *  Interface to allow a service to provide a specialized xerces::EntityResolver.
+/** Interface to allow a service or tool to provide a specialized xerces::EntityResolver.
  *  The XmlParserSvc.EntityResolverSvc must be set to the name of the service implementing this interface
- *  in order to use the specialized xerces::EntityResolver to handle special stemIDs
+ *  in order to use the specialized xerces::EntityResolver to handle special system IDs
  *  (like "conddb:/...").
  *
  *  @author Marco Clemencic

@@ -208,6 +208,8 @@ class DstConf(LHCbConfigurableUser):
                         # Add the MCHits (from Gauss) and links to them (from Boole)
                         SimConf().addSubDetSimInfo(writer)
                         DigiConf().addMCHitLinks(writer)
+                        DigiConf().addMCHitLinksSpillover(writer)
+                        DigiConf().addMCParticleLinksSpillover(writer)
                     if dType in ["XDST", "LDST"]:
                         # Links from Digits to MCParticles
                         DigiConf().addMCParticleLinks(writer)

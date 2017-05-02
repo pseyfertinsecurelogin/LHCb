@@ -105,8 +105,10 @@ def round ( o ) :
     if hasattr ( o , '__round__' ) : return o.__round__()
     return long ( o )
 
-def jbit  ( o , j )       : return o.__jbit__  ( j       ) 
-def jbits ( o , j1 , j2 ) : return o.__jbits__ ( j1 , j2 ) 
+def jbit    ( o , j )       : return o.__jbit__    ( j       ) 
+def jbits   ( o , j1 , j2 ) : return o.__jbits__   ( j1 , j2 ) 
+def jdigit  ( o , j )       : return o.__jdigit__  ( j       ) 
+def jdigits ( o , j1 , j2 ) : return o.__jdigits__ ( j1 , j2 ) 
 
 _std_min_ = min 
 def min  ( o , *a ) :

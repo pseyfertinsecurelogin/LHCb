@@ -1,4 +1,4 @@
-#ifndef IREPORTCONVERT_H 
+#ifndef IREPORTCONVERT_H
 #define IREPORTCONVERT_H 1
 
 #include <string>
@@ -22,19 +22,16 @@
 using LHCb::HltObjectSummary;
 using LHCb::HltSelRepRBStdInfo;
 
-static const InterfaceID IID_IReportConvert("IReportConvert", 1 , 0);
-class IReportConvert : virtual public IAlgTool { 
-  
-  public:
+struct IReportConvert : extend_interfaces<IAlgTool> {
+
+    DeclareInterfaceID(IReportConvert, 2 , 0);
+
     virtual void setReportVersion(int) = 0;
     virtual void setReportVersionLatest() = 0;
-    virtual int  getReportVersion() = 0;
+    virtual int  getReportVersion() = 0;  //TODO/FIXME: add const!
     virtual int getLatestVersion() = 0;
     virtual int getSizeSelRepParticleLatest() = 0;
-    
-    /// Retrieve interface ID
-    static const InterfaceID& interfaceID() { return IID_IReportConvert; } // Actual operator function
-    
+
     // Decode the sub-bank properly
     virtual void SummaryFromRaw( HltObjectSummary::Info*, HltSelRepRBStdInfo::StdInfo*, int ) = 0;
     //

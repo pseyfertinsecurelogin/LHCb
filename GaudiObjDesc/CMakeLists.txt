@@ -6,6 +6,7 @@ gaudi_subdir(GaudiObjDesc v11r24)
 gaudi_depends_on_subdirs(GaudiKernel)
 
 # required for nosetests and lxml
+find_package(LibXml2)
 find_package(pytools)
 
 gaudi_install_python_modules()

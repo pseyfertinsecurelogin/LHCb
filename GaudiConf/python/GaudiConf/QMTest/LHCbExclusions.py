@@ -1,4 +1,9 @@
-from GaudiTest import normalizeExamples, RegexpReplacer, LineSkipper
+from GaudiTesting.BaseTest import normalizeExamples, RegexpReplacer, LineSkipper
+
+gitCondDBFixes = (RegexpReplacer(when='Detector description database:',
+                                 orig='conddb:/', repl='git:/') +
+                  LineSkipper(['CORAL Connection Retrial',
+                               'INFO Connected to database']))
 
 preprocessor = (
     normalizeExamples +
@@ -36,8 +41,13 @@ preprocessor = (
                  "INFO  'CnvServices':",
                  "DEBUG Property ['Name': Value] =  'IsIOBound':False",
                  "#properties =",
-                 "VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc"
+                 "VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc",
+                 "Run numbers generated from 0 every 0 events"
                 ],
       regexps = [r"DEBUG Property \['Name': Value\] =  '(Timeline|(Extra|Data)(In|Out)puts)'",
                 ])
    )
+
+from DDDB.Configuration import GIT_CONDDBS
+if GIT_CONDDBS:
+    preprocessor = preprocessor + gitCondDBFixes

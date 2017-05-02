@@ -4,17 +4,13 @@
   <argument name="program"><text>gaudirun.py</text></argument>
   <argument name="args"><set>
     <text>-v</text>
-    <text>../../options/LoadDDDB.py</text>
   </set></argument>
 <argument name="timeout"><integer>1200</integer></argument>
 <argument name="options"><text>
-
 from Gaudi.Configuration import *
-from Configurables import DDDBConf, CondDB
+from DetDescChecks.Options import LoadDDDBTest
 
-DDDBConf(DataType = "2016")
-CondDB().UseLatestTags = ["2016"]
-CondDB().EnableRunStampCheck = False
+LoadDDDBTest("2016")
 
 </text></argument>
 <argument name="validator"><text>

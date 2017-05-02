@@ -39,10 +39,6 @@ IDataProviderSvc* DetectorElement::dataSvc() const {
   return m_services->detSvc();
 }
 
-IMessageSvc* DetectorElement::msgSvc() const {
-  return m_services->msgSvc();
-}
-
 IUpdateManagerSvc* DetectorElement::updMgrSvc() const {
   return m_services->updMgrSvc();
 }

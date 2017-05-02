@@ -285,8 +285,7 @@ class CondDB(object):
         self.readOnly = readOnly
 
         # Opening the Database access
-        import cppyy
-        Helpers = cppyy.gbl.CondDBUI.Helpers
+        from .Helpers import Helpers
 
         dbsvc = coolApp().databaseService()
         try:
@@ -454,7 +453,7 @@ class CondDB(object):
                 if folder.versioningMode() == cool.FolderVersioning.MULTI_VERSION:
                     if tag == '': tag = self.defaultTag
                     if tag.upper() not in [ '', 'HEAD' ]:
-                        # Detection of the existence of the needed tag 
+                        # Detection of the existence of the needed tag
                         obj = folder.findObject(cool.ValidityKey(when), channelID, self.resolveTag(folder, tag))
                     else:
                         obj = folder.findObject(cool.ValidityKey(when), channelID)
@@ -515,8 +514,7 @@ class CondDB(object):
             third integer is the channel ID, and the last integer is the insertion time.
         '''
         from PyCool import cool
-        import cppyy
-        Helpers = cppyy.gbl.CondDBUI.Helpers
+        from .Helpers import Helpers
 
         assert self.db != None, "No database connected !"
         if channelID != None:
@@ -884,8 +882,7 @@ class CondDB(object):
             none
         '''
         from PyCool import cool
-        import cppyy
-        Helpers = cppyy.gbl.CondDBUI.Helpers
+        from .Helpers import Helpers
 
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
@@ -913,8 +910,7 @@ class CondDB(object):
         outputs:
             none
         '''
-        import cppyy
-        Helpers = cppyy.gbl.CondDBUI.Helpers
+        from .Helpers import Helpers
 
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
@@ -1260,7 +1256,7 @@ class CondDB(object):
 
             for n in nodestree:
                 x = self.getCOOLNode(n)
-                
+
                 try:
                     # try to delete an already present relation
                     self.deleteTagRelation(x,tag)
@@ -1332,10 +1328,9 @@ class CondDB(object):
         """
         Return the local tag associated with the parent tag given.
         """
-        import cppyy
-        Helpers = cppyy.gbl.CondDBUI.Helpers
+        from .Helpers import Helpers
         localtag = Helpers.findTagRelation(node, tag)
-        if localtag == "": 
+        if localtag == "":
             raise RuntimeError('No child tag can be found in node')
             return ""
         return localtag
@@ -1344,8 +1339,7 @@ class CondDB(object):
         """
         Return the local tag associated with the parent tag given.
         """
-        import cppyy
-        Helpers = cppyy.gbl.CondDBUI.Helpers
+        from .Helpers import Helpers
 
         if type(path) is str:
             doraise = False
@@ -1353,7 +1347,7 @@ class CondDB(object):
         else:
             n = path
         localtag = Helpers.resolveTag(n, tag)
-        if localtag == "": 
+        if localtag == "":
             if doraise: raise RuntimeError('No child tag can be found in node')
             else: return None
         return localtag
@@ -1481,7 +1475,7 @@ class CondDB(object):
             for key in storageKeys:
                 recordSpec.extend(key,
                                   getattr(cool.StorageType, storageKeys[key]))
-            
+
             if versionMode == 'MULTI':
                 folderSpec = cool.FolderSpecification(cool.FolderVersioning.MULTI_VERSION, recordSpec)
             else:
@@ -1563,11 +1557,11 @@ class CondDB(object):
                 if not writeDuplicate:
                     # Do not write the same xml content twice
                     dbxmlstr = ""
-                    try: 
+                    try:
                         dbobj = folder.findObject(since, channelID)
                         dbpayload = dict(self.payload(dbobj))
                         for key in payloadKeys:#NB: Only works with the case of only one key
-                            if payload[key] == str(dbpayload[key]): 
+                            if payload[key] == str(dbpayload[key]):
                                 print "identical content for path %s, no overwriting" %path
                                 doWrite = False
                     except: pass

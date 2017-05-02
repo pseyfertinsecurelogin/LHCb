@@ -81,6 +81,7 @@ def checkPID( pid ) :
     print ' hasBottom   ' , pid.hasBottom     ()
     print ' hasTop      ' , pid.hasTop        ()
     print ' hasQuarks   ' , pid.hasQuarks     ()
+    print ' isQuark     ' , pid.isQuark       ()
     print ' threeCharge ' , pid.threeCharge   ()
     print ' jSpin       ' , pid.jSpin         ()
     print ' sSpin       ' , pid.sSpin         ()
@@ -94,6 +95,10 @@ def checkPID( pid ) :
 lb = LHCb.ParticleID(5122)
 
 checkPID ( lb )
+
+c = LHCb.ParticleID(LHCb.ParticleID.charm)
+
+checkPID ( c )
 
 nuc = [ 2212, 1000020040, 1000822080, 450000000 ]
 for i in nuc:

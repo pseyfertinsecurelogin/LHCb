@@ -2,7 +2,6 @@
 #define DETDESC_CONDITIONINFO_H 1
 
 #include <string>
-#include <atomic>
 
 // Base class
 #include "DetDesc/Services.h"
@@ -69,7 +68,7 @@ class ConditionInfo : virtual public IConditionInfo
   Condition* m_condition;
 
   /// reference count
-  mutable std::atomic<unsigned long> m_count;
+  unsigned long m_count;
 
   /// reference to dataSvc
   DetDesc::ServicesPtr m_services;
