@@ -84,7 +84,7 @@ bool hasInstructionSet(ISet lvl)
  * Generate a random Matrix and a SymMatrix
  */
 template <typename Mat>
-void fillRandomSMatrix(Mat &F, TRandom& r, bool symmetric=false) 
+void fillRandomSMatrix(Mat &F, TRandom& r, const bool symmetric=false) 
 {
   
   for (int i=0; i<F.kRows; i++) 
@@ -100,7 +100,7 @@ void fillRandomSMatrix(Mat &F, TRandom& r, bool symmetric=false)
  * Orthogonalize a SMatrix
  */
 template <typename Mat>
-Mat orthogonalizeMatrix(Mat &M, bool &processOk)
+Mat orthogonalizeMatrix(const Mat &M, bool &processOk)
 {
   processOk = false;
   Mat Q;
@@ -158,7 +158,7 @@ Mat orthogonalizeMatrix(Mat &M, bool &processOk)
  * Generate a random SymMatrix with a given max Condition number
  */
 template <typename Mat, typename SymMat>
-void fillSMatrixSymWithCondNumber(SymMat &F, TRandom& r, double condNumber)
+void fillSMatrixSymWithCondNumber(SymMat &F, TRandom& r, const double condNumber)
 {
 
     Mat T;
@@ -172,7 +172,7 @@ void fillSMatrixSymWithCondNumber(SymMat &F, TRandom& r, double condNumber)
     } while (!processOk);
     
     Mat tQ = ROOT::Math::Transpose(Q);
-
+    
     Mat D;
     D(0,0) = 1;
     for (int i=1; i < 5; i++)
@@ -188,7 +188,7 @@ void fillSMatrixSymWithCondNumber(SymMat &F, TRandom& r, double condNumber)
       for(int j=0; j<=i; j++)
       {
         F(i, j) = origin(i,j);
-        }
+      }
     }
 }
 
@@ -197,8 +197,10 @@ void fillSMatrixSymWithCondNumber(SymMat &F, TRandom& r, double condNumber)
  * Compare SymMatrices
  */
 template <typename M>
-std::pair<M, bool> compareSMatrix(M& A, M& B, bool symetric=true,
-                                  double diffThreshold=1e-15)
+std::pair<M, bool> compareSMatrix( const M& A, 
+                                   const M& B, 
+                                   const bool symetric=true,
+                                   const double diffThreshold=1e-15)
 {
   M cmpres;
   bool hasDiff = false;
