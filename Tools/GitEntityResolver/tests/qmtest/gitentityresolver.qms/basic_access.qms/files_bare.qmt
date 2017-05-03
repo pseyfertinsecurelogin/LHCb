@@ -25,7 +25,7 @@ parameter = -123
 
 findReferenceBlock('''
 ToolSvc.GitDDDB     DEBUG Initializing...
-ToolSvc.GitDDDB     DEBUG opening Git repository '{repository}'
+ToolSvc.GitDDDB      INFO opening Git repository '{repository}'
 ToolSvc.GitDDDB     ERROR cannot use files in a Git bare repository
 '''.format(repository=repository, commit_id=commit_id, tag=tag),
 id='GitEntityResolver.initialization')

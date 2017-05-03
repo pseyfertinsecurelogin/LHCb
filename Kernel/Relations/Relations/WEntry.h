@@ -16,8 +16,6 @@
 // ============================================================================
 #include "Relations/ObjectTypeTraits.h"
 // ============================================================================
-
-
 namespace Relations 
 {
   /** @struct WEntry_ 
@@ -82,42 +80,39 @@ namespace Relations
   public:
     // ========================================================================
     /// accessor to the "FROM" object ( const     version )
-    inline From     from   () const { return m_from ; }
+    inline From     from   () const noexcept { return m_from ; }
     /// accessor to the "TO"   object ( const     version )
-    inline To       to     () const { return m_to   ; }
+    inline To       to     () const noexcept { return m_to   ; }
     /// accessor to the "WEIGHT"   object (     const version )
-    inline Weight   weight () const { return m_weight ; }
+    inline Weight   weight () const noexcept { return m_weight ; }
     /// the conversion operator       ( const     version )
-    inline operator To     () const { return m_to   ; }
+    inline operator To     () const noexcept { return m_to   ; }
     // ========================================================================
   public:
     // ========================================================================
     /// for Python @warning  "from" is reserved keyword in Python 
-    inline From _from  () const { return from  () ; }
+    inline From _from      () const noexcept { return from  () ; }
     /// for Python
-    inline To   _to    () const { return to    () ; }
+    inline To   _to        () const noexcept { return to    () ; }
     /// for Python
-    inline Weight  _weight () const { return weight () ; }
+    inline Weight  _weight () const noexcept { return weight () ; }
     // ========================================================================
   public:
     // ========================================================================
     /// comparison operator 
-    inline bool operator<( const WEntry_& entry ) const 
+    inline bool operator<( const WEntry_& entry ) const noexcept
     { 
       static const LessF _lessF = LessF() ;
-      static const LessT _lessT = LessT() ;
       static const LessW _lessW = LessW() ;
-      return 
-        _lessF ( this->m_from   , entry.m_from   ) ? true  :
-        _lessF ( entry.m_from   , this->m_from   ) ? false :
-        _lessW ( this->m_weight , entry.m_weight ) ? true  : 
-        _lessW ( entry.m_weight , this->m_weight ) ? false :
-        _lessT ( this->m_to     , entry.m_to     )         ; }
+      return ( _lessF ( this->m_from   , entry.m_from   ) ? true  :
+               _lessF ( entry.m_from   , this->m_from   ) ? false :
+               _lessW ( this->m_weight , entry.m_weight )        ); 
+    }
     // ========================================================================
   public:
     // ========================================================================
-    mutable FromInner m_from ;
-    mutable ToInner   m_to   ;
+    mutable FromInner   m_from   ;
+    mutable ToInner     m_to     ;
     mutable WeightInner m_weight ;
     // ========================================================================
   } ;

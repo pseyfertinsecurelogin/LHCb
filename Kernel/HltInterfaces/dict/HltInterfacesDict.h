@@ -3,7 +3,6 @@
 
 #include "Kernel/IANNSvc.h"
 #include "Kernel/IANSvc.h"
-#include "Kernel/IANSvc.h"
 #include "Kernel/ConfigTreeNodeAlias.h"
 #include "Kernel/ConfigTreeNode.h"
 #include "Kernel/PropertyConfig.h"
@@ -12,6 +11,7 @@
 #include "Kernel/IConfigTreeEditor.h"
 #include "Kernel/ReadRoutingBits.h"
 #include "Kernel/IHltMonitorSvc.h"
+#include "Kernel/ILinePersistenceSvc.h"
 
 namespace {
 

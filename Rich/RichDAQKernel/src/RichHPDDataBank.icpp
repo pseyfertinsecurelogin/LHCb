@@ -54,12 +54,12 @@ namespace Rich
     HPDDataBankImp<Version,Header,Footer>::
     createParityWord( const LHCb::RichSmartID::Vector & ids ) const
     {
-      LongType parity(0);
+      ShortType parity(0);
       std::vector<unsigned int> hC(BitsPerDataWord,0);
       for ( const auto& id : ids ) { ++hC[id.pixelCol()]; }
       for ( unsigned int i = 0; i<BitsPerDataWord; ++i )
       {
-        if ( hC[i]%2 == 1 ) setBit(parity,i);
+        if ( hC[i]%2 == 1 ) { setBit(parity,i); }
       }
       return typename Footer::WordType(parity);
     }
