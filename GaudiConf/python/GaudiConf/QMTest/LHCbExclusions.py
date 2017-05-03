@@ -1,3 +1,4 @@
+import os
 from GaudiTesting.BaseTest import normalizeExamples, RegexpReplacer, LineSkipper
 
 gitCondDBFixes = (RegexpReplacer(when='Detector description database:',
@@ -15,6 +16,9 @@ preprocessor = (
         repl = r'') +
     RegexpReplacer(when = "/afs/cern.ch/lhcb/software/releases",
         orig = r'/afs/cern.ch/lhcb/software/releases',
+        repl = r'') +
+    RegexpReplacer(when = "%s/build" % os.getenv('WORKSPACE'),
+        orig = r'%s/build' % os.getenv('WORKSPACE'),
         repl = r'') +
     RegexpReplacer(when = "/DBASE/TCK/HltTCK/",
         orig = r'/v[0-9]+r[0-9]+p?[0-9]*/',
