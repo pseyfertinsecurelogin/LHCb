@@ -38,15 +38,25 @@
                 OS_Charm     = 15,
                 SS_PionBDT   = 16,
                 OSMuon       = 10100,
+                OSMuonDev    = 10110,
                 OSElectron   = 10200,
+                OSElectronDev = 10210,
                 OSKaon       = 10300,
+                OSKaonDev    = 10310,
                 OSVtxCh      = 10400,
+                OSVtxChDev   = 10410,
                 OSCharm      = 10500,
+                OSCharmDev   = 10510,
                 OSProton     = 10600,
+                OSProtonDev  = 10610,
                 SSKaon       = 20100,
+                SSKaonDev    = 20110,
                 SSPion       = 20200,
+                SSPionDev    = 20210,
                 SSProton     = 20300,
-                SSLambda     = 20400"
+                SSProtonDev  = 20310,
+                SSLambda     = 20400,
+                SSLambdaDev  = 20410"
         access = "PUBLIC"
     />
 
