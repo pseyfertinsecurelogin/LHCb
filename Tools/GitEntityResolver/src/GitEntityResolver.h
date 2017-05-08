@@ -19,6 +19,11 @@
 
 #include <boost/utility/string_ref.hpp>
 
+// Temporary hack to be backward compatible with a change in Gaudi
+// introducing an operator< on Time. To be dropped once we only compile
+// against Gaudi versions where the operator is defined
+namespace Gaudi { using ::operator<; }
+
 /** Allow use of a Git repository as a source of XML files for XercesC.
  *
  *  An instance of this tool can be used to allow inclusion of XML DTDs and documents
