@@ -6,15 +6,14 @@
 #include <numeric>
 
 // From Event
-#include "Event/L0CaloCandidate.h"
-#include "Event/L0CaloAdc.h"
+//#include "Event/L0CaloCandidate.h"
+//#include "Event/L0CaloAdc.h"
 
 // From Kernel
-#include "Kernel/CaloCellID.h"
+//#include "Kernel/CaloCellID.h"
 
 //
-//  Level-0 Herschel trigger simulation algorithm
-//  Compute L0HC quantities from Herschel full information
+//  Level-0 Herschel trigger emulation algorithm
 //
 
 DECLARE_ALGORITHM_FACTORY( L0HCAlg )
@@ -31,7 +30,8 @@ L0HCAlg::L0HCAlg( const std::string & name , ISvcLocator * pSvcLocator)
 {
   declareProperty("L0DigitLocation",
                   m_l0digitLocation = LHCb::HCDigitLocation::L0);
-  m_spdMult = std::vector< int >( 16 , 0 ) ;
+  m_HCMult_B = std::vector< int >( 12 , 0 ) ;
+  m_HCMult_F = std::vector< int >(  8 , 0 ) ;
 }
 
 //=============================================================================
@@ -48,9 +48,27 @@ StatusCode L0HCAlg::initialize() {
   if ( sc.isFailure() ) return sc; 
 
   if( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
-
+  
+  // Check if the mapping is available in the conditions database.
+  const std::string location = "Conditions/ReadoutConf/HC/Mapping";
+  if (existDet<Condition>(location)) {
+    registerCondition(location, m_cond, &L0HCAlg::cacheMapping);
+    // First update.
+    sc = updMgrSvc()->update(this);
+    if (sc.isFailure()) {
+      return Error("Cannot update mapping.", StatusCode::FAILURE);
+    }
+  } else {
+    warning() << "Cannot find " << location << " in database" << endmsg;
+    mapChannels(m_channelsB0, 0, true);
+    mapChannels(m_channelsB1, 1, true);
+    mapChannels(m_channelsB2, 2, true);
+    mapChannels(m_channelsF1, 1, false);
+    mapChannels(m_channelsF2, 2, false);
+  }
+  
   // Get Herschel digits.
-  LHCb::HCDigits* l0digits = getIfExists<LHCb::HCDigits>(m_l0digitLocation);
+  l0digits = getIfExists<LHCb::HCDigits>(m_l0digitLocation);
   warning() << "No default HCDigits location has yet been defined -- beware" << endmsg;
   if ( !l0digits ) {
     // should always be available ...
@@ -65,76 +83,37 @@ StatusCode L0HCAlg::initialize() {
 //=============================================================================
 StatusCode L0HCAlg::execute() {
   // Get the Herschel information. Adds it to the m_ecalFe[] objects
-  addHerschelData( ) ;
+  addHCData( ) ;
   
-  // Save the candidates in CaloProcessor data location (for L0DU) 
-  LHCb::L0ProcessorDatas* L0Calo = new LHCb::L0ProcessorDatas() ;
-  std::string procName =  LHCb::L0ProcessorDataLocation::Calo; // NO L0-context location for procData
-  put( L0Calo, procName ) ;
+  // Save the candidates in HCProcessor data location (for L0DU) 
+  LHCb::L0ProcessorDatas* L0HC = new LHCb::L0ProcessorDatas() ;
+  std::string procName =  LHCb::L0ProcessorDataLocation::HC;
+  put( L0HC, procName ) ;
 
-  // Spd multiplicity counter
-  int totSpdMult = std::accumulate( m_spdMult.begin() , m_spdMult.end() , 0 ) ;
-  code = 0x10000 + ( totSpdMult << L0DUBase::Calo::Sum::Shift ) ;
-  LHCb::L0ProcessorData* spdMult = 
-    new LHCb::L0ProcessorData ( L0DUBase::Fiber::CaloSpdMult, code ) ;
-  L0Calo -> add( spdMult ) ;
+  // Herschel B-side multiplicity counter
+  int totHCMult_B = std::accumulate( m_HCMult_B.begin() , m_HCMult_B.end() , 0 ) ;
+  code = 0x10000 + ( totHCMult_B << L0DUBase::Calo::Sum::Shift ) ; // what bit-shift should be employed here?
+  LHCb::L0ProcessorData* HCMult_B = 
+    new LHCb::L0ProcessorData ( L0DUBase::Fiber::CaloPi0Global, code ) ;
+  L0HC -> add( HCMult_B ) ;
 
+  // Herschel F-side multiplicity counter
+  int totHCMult_F = std::accumulate( m_HCMult_F.begin() , m_HCMult_F.end() , 0 ) ;
+  code = 0x10000 + ( totHCMult_F << L0DUBase::Calo::Sum::Shift ) ;
+  LHCb::L0ProcessorData* HCMult_F = 
+    new LHCb::L0ProcessorData ( L0DUBase::Fiber::CaloPi0Local, code ) ;
+  L0HC -> add( HCMult_F ) ;
+  
   // Debug now the L0 candidates
   if ( msgLevel( MSG::DEBUG ) ) {
     LHCb::L0ProcessorDatas::const_iterator item;
-    debug() << "== L0ProcessorData Summary: " << L0Calo->size() 
+    debug() << "== L0ProcessorData Summary: " << L0HC->size() 
             << " entries." << endmsg ;
-    for( item = L0Calo->begin() ; L0Calo->end() != item ; ++item ) {
+    for( item = L0HC->begin() ; L0HC->end() != item ; ++item ) {
       LHCb::L0ProcessorData* cand = (*item);
       debug() << format( "Key %2d Word %8x", cand->key(), cand->word() ) 
               << endmsg ;
     }
-  }
-  
-  // Now save the L0CaloCandidates: create a RAW bank and then decode it
-  // Prepare the raw banks, and save them.
-  m_rawOutput[ 0 ].clear() ;
-  m_rawOutput[ 1 ].clear() ;
-
-  // saveInRawEvent( IO , SLAVE , MASK ) 
-  // IO    --- 0 for input link, 1 for output of Selection board 
-  // SLAVE --- 0 for all selection board except hadron ones 
-  // MASK  --- always 0 on MC, used only in real data 
-
-  // Rhe SPD part 
-  std::vector< int >::iterator itSpd ;
-  int kk = 0 ;
-  for ( itSpd = m_spdMult.begin() ; itSpd != m_spdMult.end() ; ++itSpd )
-    saveInRawEvent( 0 , 0 , 0 , L0DUBase::CaloType::SpdMult , kk++ , 
-                    (*itSpd) , 1 ) ;
-  saveInRawEvent( 1 , 0 , 0 , L0DUBase::CaloType::SpdMult , 0 , 
-                  totSpdMult , 1 ) ;
-
-  // Store the RAW bank if required.
-  if ( writeBanks() ) {
-    m_nbEvents++;
-    m_totRawSize = m_totRawSize + m_rawOutput[0].size() + 
-      m_rawOutput[1].size();
-    LHCb::RawEvent* raw = 
-      getOrCreate<LHCb::RawEvent,LHCb::RawEvent>( LHCb::RawEventLocation::Default );
-    raw->addBank( 0, LHCb::RawBank::L0Calo, m_bankVersion , m_rawOutput[0] );
-    raw->addBank( 1, LHCb::RawBank::L0Calo, m_bankVersion , m_rawOutput[1] );
-  }
-
-  if( writeOnTES() ) {
-    std::string name = dataLocation( LHCb::L0CaloCandidateLocation::Default ) ;
-    std::string nameFull = dataLocation( LHCb::L0CaloCandidateLocation::Full ) ;
-    LHCb::L0CaloCandidates * outFull = new LHCb::L0CaloCandidates( ) ;
-    LHCb::L0CaloCandidates * out = new LHCb::L0CaloCandidates() ;
-    put( outFull , nameFull , IgnoreRootInTES ) ;
-    put( out, name , IgnoreRootInTES ) ;
-    if ( msgLevel( MSG::DEBUG ) ) 
-      debug() << "L0CaloCandidatesFromRawBank Registered output in TES" 
-              << endmsg ;
-
-    LHCb::RawBankReadoutStatus readoutStatus( LHCb::RawBank::L0Calo ) ;
-    m_bankToTES -> convertRawBankToTES( m_rawOutput, outFull, out , 
-                                        m_bankVersion , readoutStatus );
   }
 
   return StatusCode::SUCCESS;
@@ -143,7 +122,7 @@ StatusCode L0HCAlg::execute() {
 //=============================================================================
 // Finalize.
 //=============================================================================
-StatusCode L0CaloAlg::finalize() {
+StatusCode L0HCAlg::finalize() {
   if ( 0 != m_nbEvents ) {
     info() << format( "Average bank size : %7.1f words RAW.", 
                       m_totRawSize/m_nbEvents )
@@ -153,72 +132,113 @@ StatusCode L0CaloAlg::finalize() {
 }
 
 //=============================================================================
-// Add the Spd information to the ECAL Front-end card
+// Add the Herschel information 
 //=============================================================================
-void L0CaloAlg::addSpdData( ) {
+void L0HCAlg::addHCData( ) {
 
-  for ( unsigned int i = 0 ; i < m_spdMult.size() ; ++i )  
-    m_spdMult[ i ] = 0 ;
-
-  LHCb::CaloCellID id;
-
-  // Get digits. Sum in front-end cards.
-  // Adds to the (possible) neighboring cards if at the border (row/col = 0)
-  // and if the card has neighboring cards
-  int card, row,  col  ;
-  int down, left, corner  ;
-  int spdCard( 0 ) , slot( 0 ) , crate( 0 ) , identif( 0 ) ;
-
-  std::vector<LHCb::CaloCellID>& ids = m_PrsSpdIds.second;
-  if ( msgLevel( MSG::DEBUG ) ) 
-    debug() << "Found " << ids.size() << " SPD bits" << endmsg;
-
-  for ( std::vector<LHCb::CaloCellID>::const_iterator itID = ids.begin();
-        ids.end() != itID; ++itID ) {
-    id = *itID;
-
-    if ( msgLevel( MSG::VERBOSE ) ) verbose() << id << endmsg;
-
-    m_ecal->cardAddress(id, card, row, col );
-    m_ecal->cardNeighbors( card, down, left, corner );    
- 
-    m_ecalFe[card].setSpd( col, row );
-    if ( (0 == row) && (0 <= down) ) 
-      m_ecalFe[down].setSpd( col, nRowCaloCard );
-    if ( (0 == col) && (0 <= left) ) 
-      m_ecalFe[left].setSpd( nColCaloCard, row );
-    if ( (0 == col) && (0 == row) && (0 <= corner) ) 
-      m_ecalFe[corner].setSpd( nColCaloCard, nRowCaloCard );
-    
-    spdCard  = m_prs -> cardNumber( id ) ;
-    slot     = m_prs -> cardSlot( spdCard ) ;
-    crate    = m_prs -> cardCrate( spdCard ) ;
-    identif = 2 * crate ; 
-    if ( slot >= 8 ) identif += 1 ;
-    m_spdMult[ identif ] += 1 ;
-    if ( m_spdMult[ identif ] > 1023 ) m_spdMult[ identif ] = 1023 ;
+  // Assign zeros to m_HCMult_B and m_HCMult_F
+  for ( unsigned int i = 0 ; i < m_HCMult_B.size() ; ++i )  
+    m_HCMult_B[ i ] = 0 ;
+  for ( unsigned int i = 0 ; i < m_HCMult_F.size() ; ++i )  
+    m_HCMult_F[ i ] = 0 ;
+  
+  // Construct F-side sum
+  for (unsigned int i = 0; i < 2; ++i) {
+  	// Loop over all quadrants on this station
+    for (unsigned int j = 0; j < 4; ++j) {
+      // Find CellID for this quadrant
+      LHCb::HCCellID id(m_channels[i][j]);
+      
+      // Retrieve the L0 digit 
+      const LHCb::HCDigit* digit = l0digits->object(id); // ??TODO this ID is wrong.
+      
+      if (!digit) {
+        warning() << "Cannot retrieve digit for " << ch << endmsg;
+        continue;
+      }
+      
+      // Extract and store the result
+      int adc = digit->adc();
+      m_HCMult_F[ i*4 + j ] = adc;
+    }
+  }
+      
+  // Construct B-side sum
+  for (unsigned int i = 2; i < 5; ++i) {
+  	// Loop over all quadrants on this station
+    for (unsigned int j = 0; j < 4; ++j) {
+      // Find CellID for this quadrant
+      LHCb::HCCellID id(m_channels[i][j]);
+      
+      // Retrieve the L0 digit 
+      const LHCb::HCDigit* digit = l0digits->object(id); // ??TODO this ID is wrong.
+      
+      if (!digit) {
+        warning() << "Cannot retrieve digit for " << ch << endmsg;
+        continue;
+      }
+      
+      // Extract and store the result
+      int adc = digit->adc();
+      m_HCMult_F[ (i-2)*4 + j ] = adc;
+    }
   }
 }
 
 //=============================================================================
-//  Save a candidate in the Raw bank for SPD
+//  Save the Herschel channel mapping
 //=============================================================================
-void L0CaloAlg::saveInRawEvent ( int io , int slave , int mask , int type, 
-                                 int cardNumber , int spdMult ,
-                                 unsigned int bank ) {
-  //== Coding for Raw: IO (msb 1 bit) , Slave (2 bits) ,
-  // Mask (1 bit) , type (4 bits), id (4 bits) and
-  // multiplicity (lsb 10 bits). 
-  if ( 0 == spdMult ) return;
+StatusCode L0HCAlg::cacheMapping() {
+  // Extract crate IDs and channel numbers from CondDB
+  m_crateB = m_cond->param<int>("CrateB");
+  m_crateF = m_cond->param<int>("CrateF");
+  m_channelsB0 = m_cond->paramVect<int>("ChannelsB0");
+  m_channelsB1 = m_cond->paramVect<int>("ChannelsB1");
+  m_channelsB2 = m_cond->paramVect<int>("ChannelsB2");
+  m_channelsF1 = m_cond->paramVect<int>("ChannelsF1");
+  m_channelsF2 = m_cond->paramVect<int>("ChannelsF2");
+  mapChannels(m_channelsB0, 0, true);
+  mapChannels(m_channelsB1, 1, true);
+  mapChannels(m_channelsB2, 2, true);
+  mapChannels(m_channelsF1, 1, false);
+  mapChannels(m_channelsF2, 2, false);
+  return StatusCode::SUCCESS;
+}
 
-  if (type != L0DUBase::CaloType::SpdMult ) {
-    warning()<<"Should be of type CaloSpdMult and is of type " 
-             << type << endmsg ;
-    return ;
-  }  
+//=============================================================================
+// Setup the channel map for a given station.
+//=============================================================================
+bool L0HCAlg::mapChannels(const std::vector<int>& channels,
+                                    const unsigned int station,
+                                    const bool bwd) {
+  // Indices 0,1 are F-side; 2,3,4 are B-side                                  
+  const unsigned int offset = bwd ? 0 : 2;
+  
+  // Check if the input is valid and if not return 0 mapping
+  if (channels.size()) {
+    std::string s = bwd ? "B" : "F";
+    s += std::to_string(station);
+    warning() << "Invalid channel map for station " << s << endmsg;
+    m_channels[station + offset].assign(4, 0);
+    return false;
+  }
+  
+  // Determine whether dealing with F-side or B-side crate
+  const unsigned int crate = bwd ? m_crateB : m_crateF;
+  
+  // Resize mapping vector for 4 quadrants
+  m_channels[station + offset].resize(4);
 
-  int word = ( io << 31 ) | ( slave << 29 ) | ( mask << 28 ) | 
-    ( type << 24 ) | ( cardNumber << 10 ) | spdMult ;
-  m_rawOutput[ bank ].push_back( word );
-} 
-
+  // Loop over the four quadrants and assign channel numbers
+  for (unsigned int i = 0; i < 4; ++i) {
+    if (channels[i] < 0) {
+      std::string s = bwd ? "B" : "F";
+      s += std::to_string(station);
+      warning() << "Invalid channel number " << channels[i]
+                << " for quadrant " << s << i << endmsg;
+      continue;
+    }
+    m_channels[station + offset][i] = (crate << 6) | channels[i];
+  }
+  return true;
+}
