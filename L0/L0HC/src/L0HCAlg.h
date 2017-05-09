@@ -45,8 +45,13 @@ private:
   std::vector<int> m_channelsB2			  	;
   std::vector<int> m_channelsF1			  	;
   std::vector<int> m_channelsF2			  	;
+  /// Channel numbers for each quadrant
+  std::vector<std::vector<unsigned int> > m_channels;
 
   LHCb::HCDigits* l0digits  			  	; /// Herschel trigger digits
+
+  double m_totRawSize = 0.0 ;
+  int    m_nbEvents   = 0   ;
   
   std::vector< int > m_HCMult_B, m_HCMult_F ; ///< Multiplicity of Herschel B- or F-side
 

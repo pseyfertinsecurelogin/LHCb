@@ -90,7 +90,7 @@ StatusCode L0HCAlg::execute() {
 
   // Herschel B-side multiplicity counter
   int totHCMult_B = std::accumulate( m_HCMult_B.begin() , m_HCMult_B.end() , 0 ) ;
-  code = 0x10000 + ( totHCMult_B << L0DUBase::Calo::Sum::Shift ) ; // what bit-shift should be employed here?
+  unsigned int code = 0x10000 + ( totHCMult_B << L0DUBase::Calo::Sum::Shift ) ; // what bit-shift should be employed here?
   LHCb::L0ProcessorData* HCMult_B = 
     new LHCb::L0ProcessorData ( L0DUBase::Fiber::CaloPi0Global, code ) ;
   L0HC -> add( HCMult_B ) ;
@@ -149,7 +149,8 @@ void L0HCAlg::addHCData( ) {
       
       // Retrieve the L0 digit 
       const LHCb::HCDigit* digit = l0digits->object(id); // ??TODO this ID is wrong.
-      
+      const std::string ch = "Counter F" + std::to_string(i) + std::to_string(j);
+       
       if (!digit) {
         warning() << "Cannot retrieve digit for " << ch << endmsg;
         continue;
@@ -170,6 +171,7 @@ void L0HCAlg::addHCData( ) {
       
       // Retrieve the L0 digit 
       const LHCb::HCDigit* digit = l0digits->object(id); // ??TODO this ID is wrong.
+      const std::string ch = "Counter B" + std::to_string(i-2) + std::to_string(j);
       
       if (!digit) {
         warning() << "Cannot retrieve digit for " << ch << endmsg;
