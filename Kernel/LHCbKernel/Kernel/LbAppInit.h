@@ -97,10 +97,6 @@ protected:
 
 private:
 
-  void releaseMemoryPools() const; ///< Release memory pools
-
-private:
-
   /// Property to skip some random numbers (default is zero)
   int  m_skipFactor;
 
@@ -131,7 +127,7 @@ private:
 
   unsigned long long m_increment; ///< Number of events to measure memory on
   unsigned long long m_lastMem;   ///< Last memory usage
-  unsigned long long m_memPurgeLimit; ///< Memory limit to trigger a purge of the pools
+  long long m_memPurgeLimit; ///< Memory limit to trigger a purge of the pools
 
   long long m_minMemDelta; ///< Minimum memory delta to trigger a message
 
