@@ -8,7 +8,6 @@ gaudi_depends_on_subdirs(DAQ/DAQUtils
                          Det/DetDesc
                          Event/DAQEvent
                          Event/DigiEvent
-                         GaudiAlg
                          Kernel/LHCbKernel
 
 #Calo/CaloDAQ
@@ -22,7 +21,7 @@ find_package(AIDA)
 gaudi_add_module(L0HC
                  src/*.cpp
                  INCLUDE_DIRS AIDA HC/HCDAQ
-                 LINK_LIBRARIES DetDesc DAQEvent DigiEvent GaudiAlg LHCbKernel LinkerEvent L0Base DAQKernelLib)
+                 LINK_LIBRARIES DetDesc DAQEvent DigiEvent LHCbKernel LinkerEvent L0Base DAQKernelLib)
 
 gaudi_env(SET L0HCOPTS \${L0HCROOT}/options)
 

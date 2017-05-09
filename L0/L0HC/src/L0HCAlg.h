@@ -5,8 +5,10 @@
 #include "L0Base/L0AlgBase.h"
 
 // Local classes
-#include "TriggerCard.h"
-#include "L0Candidate.h"
+// from LHCb
+//#include "Kernel/IEventTupleTool.h"
+#include "DetDesc/Condition.h"
+#include "Event/HCDigit.h"
 
 /** @class L0HCAlg L0HCAlg.h
  *
@@ -33,6 +35,7 @@ protected:
 private:
   // Local variables
   Condition *    m_cond = nullptr         	; ///< Pointer to conditions DB
+  std::string m_l0digitLocation             ; ///< L0-digits location
   
   unsigned int m_crateB					  	; /// Number of B-side crate
   unsigned int m_crateF					  	; /// Number of F-side crate
@@ -51,8 +54,6 @@ private:
   StatusCode cacheMapping();
   /// Setup the mapping for a given station.
   bool mapChannels(const std::vector<int>& channels,
-                   const std::vector<int>& refs,
-                   const std::vector<int>& masks,
                    const unsigned int station, const bool bwd);
 
 };

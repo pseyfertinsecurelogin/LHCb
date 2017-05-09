@@ -6,6 +6,7 @@
 #include <numeric>
 
 // From Event
+#include "Event/L0ProcessorData.h"
 //#include "Event/L0CaloCandidate.h"
 //#include "Event/L0CaloAdc.h"
 
@@ -24,9 +25,6 @@ DECLARE_ALGORITHM_FACTORY( L0HCAlg )
 //=============================================================================
 L0HCAlg::L0HCAlg( const std::string & name , ISvcLocator * pSvcLocator)
   : L0AlgBase( name , pSvcLocator )
-  , m_validPrs()
-  , m_validPrsInner()
-  , m_rawOutput  ( 2 )
 {
   declareProperty("L0DigitLocation",
                   m_l0digitLocation = LHCb::HCDigitLocation::L0);
