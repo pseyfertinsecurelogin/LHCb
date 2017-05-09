@@ -31,7 +31,7 @@ class LbAppInit : public GaudiAlgorithm
 public:
 
   /// Standard constructor
-  LbAppInit( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;     ///< Algorithm initialization
   StatusCode execute   () override;     ///< Algorithm execution
@@ -97,40 +97,30 @@ protected:
 
 private:
 
-  /// Property to skip some random numbers (default is zero)
-  int  m_skipFactor;
-
-  /// Property to use only one seed (default is false)
-  bool m_singleSeed;
-
-  /// Property to preload the geometry (default is false)
-  bool m_preload;
+  Gaudi::Property<int>  m_skipFactor { this, "SkipFactor",          0 }; ///< Skip some random numbers
+  Gaudi::Property<bool> m_singleSeed { this, "SingleSeed",      false }; ///< Use only one seed
+  Gaudi::Property<bool> m_preload    { this, "PreloadGeometry", false }; ///< Preload the geometry
 
   /** @brief Property for event print frequency
    *  Values > 0 indicate the rate at which event messages should be printed
    *  Values < 0 suppress event messages entirely
    */
-  int m_printFreq;
-
-  /// Property to print also the event time (default is false)
-  bool m_printTime;
+  Gaudi::Property<int>           m_printFreq      { this, "PrintFreq",             1 };
+  Gaudi::Property<bool>          m_printTime      { this, "PrintEventTime",    false }; ///< Print also the event time
+  Gaudi::Property<std::string>   m_evtCounterName { this, "EvtCounter", "EvtCounter" }; ///< Name of EventCounter tool
+  Gaudi::Property<unsigned long long> m_increment { this, "Increment",           100 }; ///< Number of events to measure memory on
+  Gaudi::Property<long long>     m_memPurgeLimit  { this, "MemoryPurgeLimit",     -1 }; ///< OBSOLETE
+  Gaudi::Property<long long>     m_minMemDelta    { this, "MinMemoryDelta",       16 }; ///< Minimum memory delta (kB) to trigger a message
 
   // Member data
-  IRndmEngine*  m_engine;       ///< Pointer to random number engine
-  SmartIF<IRndmGenSvc>  m_randSvc;      ///< Pointer to random number service
-  SmartIF<ICondDBInfo>  m_condDBInfo;   ///< Pointer to Info interface of CondDB service
-  IEventCounter* m_evtCounter;  ///< Pointer to EventCounter interface
-  std::string   m_evtCounterName;  ///< Name of EventCounter tool
-  long long  m_eventMax;     ///< Number of events requested (ApplicationMgr.EvtMax)
-  std::string   m_appName;      ///< Application Name
-  std::string   m_appVersion;   ///< Application Version
-
-  unsigned long long m_increment; ///< Number of events to measure memory on
-  unsigned long long m_lastMem;   ///< Last memory usage
-  long long m_memPurgeLimit; ///< Memory limit to trigger a purge of the pools
-
-  long long m_minMemDelta; ///< Minimum memory delta to trigger a message
+  IRndmEngine*         m_engine = nullptr;     ///< Pointer to random number engine
+  SmartIF<IRndmGenSvc> m_randSvc;              ///< Pointer to random number service
+  SmartIF<ICondDBInfo> m_condDBInfo;           ///< Pointer to Info interface of CondDB service
+  IEventCounter*       m_evtCounter = nullptr; ///< Pointer to EventCounter interface
+  long long            m_eventMax = 0;         ///< Number of events requested (ApplicationMgr.EvtMax)
+  std::string          m_appName = "";         ///< Application Name
+  std::string          m_appVersion = "";      ///< Application Version
+  unsigned long long   m_lastMem = 0;          ///< Last memory usage
 
 };
-
 #endif // LBAPPINIT_H

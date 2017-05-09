@@ -24,32 +24,6 @@
 // and in all component libraries depending on LHCbKernel. Moved to LHCbApps
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-LbAppInit::LbAppInit( const std::string& name,
-                      ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ),
-    m_engine(0),
-    m_evtCounter(0),
-    m_eventMax(0),
-    m_appName(""),
-    m_appVersion("")
-  , m_lastMem(0)
-{
-  declareProperty( "SkipFactor",      m_skipFactor = 0     );
-  declareProperty( "SingleSeed",      m_singleSeed = false );
-  declareProperty( "PreloadGeometry", m_preload    = false );
-  declareProperty( "PrintFreq",       m_printFreq  = 1     );
-  declareProperty( "PrintEventTime",  m_printTime  = false );
-  declareProperty( "EvtCounter",      m_evtCounterName = "EvtCounter" );
-  declareProperty( "Increment",       m_increment = 100,
-                   "Number of events to measure memory");
-  declareProperty( "MemoryPurgeLimit",m_memPurgeLimit = -1, "OBSOLETE option");
-  declareProperty( "MinMemoryDelta", m_minMemDelta = 16,
-                   "The minimum change in memory usage (KB) to trigger a message" );
-}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode LbAppInit::initialize() {
