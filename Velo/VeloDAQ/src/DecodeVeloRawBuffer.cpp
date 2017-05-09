@@ -139,8 +139,6 @@ StatusCode DecodeVeloRawBuffer::execute() {
 
   const std::vector<LHCb::RawBank*>& banks = rawEvent->banks(LHCb::RawBank::Velo);
 
-  StatusCode sc;
-
   // decode to lite clusters, if requested, bail out if something goes wrong
   if (m_decodeToVeloLiteClusters) {
     // put clusters into Event Store
