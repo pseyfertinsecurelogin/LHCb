@@ -9,122 +9,71 @@
     <class name   = "MCFTPhoton"
            id     = "14005"
            author = "Violaine Bellee, Julian Wishahi"
-           desc   = "This class represents all photons exiting a fibre mat as a result of the crossing MCHits."
+           desc   = "This class represents a photon in a fibre mat as a result of crossing MCHits."
            serializers="FALSE">
+      <base     name="ContainedObject"/>
+      &ContainedObject;
       <import   name = "Event/MCHit" />
       <location name = "Default"   place="MC/FT/Photons"   />
 
-      <template name = "KeyedObjectDict" t1="unsigned int"/>
-      <base     name = "KeyedObject&lt;unsigned int&gt;" />
-      &KeyedObject;
-
-      <constructor  desc     = "Constructor"
-                    argList  = "unsigned int sensDetID">
-        <code> 
-          this->setKey(sensDetID); 
-        </code>
-      </constructor>      
-
-      <constructor desc     = "Constructor"
-       argList  = "unsigned int sensDetID, double nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dXdY, double dZdY, bool isReflected">
-        <code> 
-          this->setKey(sensDetID); 
-          m_nPhotonsVec.push_back(nPhotons);
-          m_mcHitVec.push_back(mcHit);
-          m_timeVec.push_back(time);
-          m_wavelengthVec.push_back(wavelength);
-          m_posXVec.push_back(posX);
-          m_posZVec.push_back(posZ);
-          m_dXdYVec.push_back(dXdY);
-          m_dZdYVec.push_back(dZdY);
-          m_isReflectedVec.push_back(isReflected);
-        </code>
-      </constructor>
-
-      <destructor  desc="destructor">
-        <code> // dummy  </code>
-      </destructor>
-
-      <method   name   = "sensDetID"
-                desc   = "Retrieve the sensDetID, key of the object"
-                type   = "unsigned int"
-                const  = "TRUE"
-                access = "PUBLIC">
-        <code> return key(); </code>
+      <constructor desc = "Constructor"
+                argList = "int sensDetID, double nPhotons, 
+                           const LHCb::MCHit* mcHit, double time, 
+                           double wavelength, double posX, double posZ, 
+                           double dXdY, double dZdY, bool isReflected"
+               initList = "m_sensDetID(sensDetID), m_nPhotons(nPhotons),
+                           m_mcHit(mcHit), m_time(time),
+                           m_wavelength(wavelength), m_posX(posX), m_posZ(posZ),
+                           m_dXdY(dXdY), m_dZdY(dZdY), m_isReflected(isReflected)"  />                           
+                           
+      <method name = "lowerByMatID"
+		      desc = "Comparison for sorting by matID and x-position"
+		   argList = "MCFTPhoton* p1, MCFTPhoton* p2"
+		      type = "bool"
+		    static = "TRUE"
+		    access = "PUBLIC">
+	    <code> return ( p1-&gt;sensDetID() &lt; p2-&gt;sensDetID() ) ;</code>
       </method>
+ 
+      <attribute  name   = "sensDetID"
+                  desc   = "ID of the mat"
+                  type   = "int"/>
 
-      <method   name    = "addPhotons"
-                desc    = "Add number of photons, their associated MCHit, exit time, wavelength, if reflected"
-                type    = "void"
-                argList = "double nPhotons, const LHCb::MCHit* mcHit, double time, double wavelength, double posX, double posZ, double dXdY, double dZdY, bool isReflected "
-                access  = "PUBLIC">
-        <code> 
-          m_nPhotonsVec.push_back(nPhotons);
-          m_mcHitVec.push_back(mcHit);
-          m_timeVec.push_back(time);
-          m_wavelengthVec.push_back(wavelength);
-          m_posXVec.push_back(posX);
-          m_posZVec.push_back(posZ);
-          m_dXdYVec.push_back(dXdY);
-          m_dZdYVec.push_back(dZdY);
-          m_isReflectedVec.push_back(isReflected);
-        </code>
-      </method>
+      <attribute  name   = "nPhotons"
+                  desc   = "Number of photons"
+                  type   = "double"/>
 
-      <attribute  name   = "mcHitVec"
-                  desc   = "Vector of MCHits"
-                  type   = "std::vector &lt; const LHCb::MCHit* &gt;"
-                  setMeth = "FALSE"
-                  access = "PRIVATE"/>
+      <attribute  name   = "mcHit"
+                  desc   = "Pointer to orignal MCHit"
+                  type   = "const LHCb::MCHit*"/>
 
-      <attribute  name   = "nPhotonsVec"
-                  desc   = "Vector of number of photons"
-                  type   = "std::vector &lt; double &gt;"
-                  setMeth = "FALSE"
-                  access = "PRIVATE"/>
+      <attribute  name   = "time"
+                  desc   = "Exit time of the photons at the fibre ends"
+                  type   = "double"/>
 
-      <attribute  name   = "timeVec"
-                  desc   = "Vector of exit times of the photons at the fibre ends"
-                  type   = "std::vector &lt; double &gt;"
-                  setMeth = "FALSE"
-                  access = "PRIVATE"/>
+      <attribute  name   = "wavelength"
+                  desc   = "Wavelength of the photons at the fibre ends"
+                  type   = "double"/>
 
-      <attribute  name   = "wavelengthVec"
-                  desc   = "Vector of exit wavelengths of the photons at the fibre ends"
-                  type   = "std::vector &lt; double &gt;"
-                  setMeth = "FALSE"
-                  access = "PRIVATE"/>
+      <attribute  name   = "posX"
+                  desc   = "x coordinate (local) of the photons at the fibre ends"
+                  type   = "double"/>
 
-      <attribute  name   = "posXVec"
-                  desc   = "Vector of x coordinates of the exit points of the photons at the fibre ends (local coordinates)"
-                  type   = "std::vector &lt; double &gt;"
-                  setMeth = "FALSE"
-                  access = "PRIVATE"/>
+      <attribute  name   = "posZ"
+                  desc   = "z coordinate (local) of the photons at the fibre ends"
+                  type   = "double"/>
 
-      <attribute  name   = "posZVec"
-                  desc   = "Vector of z coordinates of the exit points of the photons at the fibre ends (local coordinates)"
-                  type   = "std::vector &lt; double &gt;"
-                  setMeth = "FALSE"
-                  access = "PRIVATE"/>
-
-      <attribute  name   = "dXdYVec"
-                  desc   = "Vector of dx/dy of the direction vector of the photons at the fibre ends (local coordinates)"
-                  type   = "std::vector &lt; double &gt;"
-                  setMeth = "FALSE"
-                  access = "PRIVATE"/>
-
-      <attribute  name   = "dZdYVec"
-                  desc   = "Vector of dz/dy of the direction vector of the photons at the fibre ends (local coordinates)"
-                  type   = "std::vector &lt; double &gt;"
-                  setMeth = "FALSE"
-                  access = "PRIVATE"/>
-
-      <attribute  name   = "isReflectedVec"
-                  desc   = "Vector of isReflected flags"
-                  type   = "std::vector &lt; bool &gt;"
-                  setMeth = "FALSE"
-                  access = "PRIVATE"/>
-
+      <attribute  name   = "dXdY"
+                  desc   = "dx/dy direction (local) of the photons at the fibre ends"
+                  type   = "double" />
+ 
+      <attribute  name   = "dZdY"
+                  desc   = "dz/dy direction (local) of the photons at the fibre ends"
+                  type   = "double" />
+ 
+      <attribute  name   = "isReflected"
+                  desc   = "isReflected flags"
+                  type   = "bool"/>
 
     </class>
   </package>
