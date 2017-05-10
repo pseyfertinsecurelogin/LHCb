@@ -1,4 +1,3 @@
-// $Id: L0DUMultiTrends.h,v 1.3 2010-02-02 11:27:02 odescham Exp $
 #ifndef L0DUMULTITRENDS_H
 #define L0DUMULTITRENDS_H 1
 
@@ -27,12 +26,9 @@ public:
   /// Standard constructor
   L0DUMultiTrends( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0DUMultiTrends( ); ///< Destructor
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
-
-protected:
 
 private:
   int tck2int(std::string otck);

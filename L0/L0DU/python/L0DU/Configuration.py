@@ -409,11 +409,11 @@ class L0Conf(LHCbConfigurableUser) :
             #log.info("Using Fast decoding for L0DU (rootInTES: %s)"%(rootintes))
             l0du   = decodeL0DU(rootintes)
             from Configurables import  L0DUDecoder
-            l0du.addTool(L0DUDecoder,name = "L0DUDecoder")
-            l0du.L0DUDecoder.FillDataMap         = False
-            l0du.L0DUDecoder.EncodeProcessorData = False
-            l0du.L0DUDecoder.Emulate             = False
-            l0du.L0DUDecoder.StatusOnTES         = False
+            decoder = l0du.addTool(L0DUDecoder,name = "L0DUDecoder")
+            decoder.FillDataMap         = False
+            decoder.EncodeProcessorData = False
+            decoder.Emulate             = False
+            decoder.StatusOnTES         = False
             l0du.WriteProcData                   = False
 
         # Ensure that TCK is recognized when decoding the L0DU

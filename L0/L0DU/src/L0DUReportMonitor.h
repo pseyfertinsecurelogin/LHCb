@@ -1,4 +1,3 @@
-// $Id: L0DUReportMonitor.h,v 1.7 2010-01-20 16:30:58 odescham Exp $
 #ifndef L0DUREPORTMONITOR_H
 #define L0DUREPORTMONITOR_H 1
 
@@ -22,13 +21,9 @@ public:
   /// Standard constructor
   L0DUReportMonitor( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0DUReportMonitor( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
-
-protected:
 
 private:
   typedef std::map<std::string , int>                              SeqMap;

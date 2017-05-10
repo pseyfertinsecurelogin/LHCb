@@ -24,25 +24,14 @@ DECLARE_COMPONENT( L0Pattern )
 //=============================================================================
 L0Pattern::L0Pattern( const std::string& name,
                                           ISvcLocator* pSvcLocator)
-  : GaudiTupleAlg ( name , pSvcLocator )
-    , m_config(0)
-    , m_emulator(0)
-    , m_fromRaw(0)
-    , m_datas(0)
-    , m_bcid(0)
+: GaudiTupleAlg ( name , pSvcLocator )
 {
   declareProperty( "L0DUEmulatorTool"  , m_emulatorTool= "L0DUEmulatorTool");
   declareProperty( "L0DUFromRawTool"   , m_fromRawTool = "L0DUFromRawTool" );
   declareProperty( "L0DUConfigTool"    , m_configTool  = "L0PatternConfig");
   declareProperty( "TCKList"           , m_list);
   declareProperty( "resetBCID"         , m_setbcid = true);
-
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-L0Pattern::~L0Pattern() {}
 
 //=============================================================================
 // Initialisation. Check parameters

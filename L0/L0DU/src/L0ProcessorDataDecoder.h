@@ -1,4 +1,3 @@
-// $Id: L0ProcessorDataDecoder.h,v 1.5 2008-01-29 16:03:36 odescham Exp $
 #ifndef L0DU_L0PROCESSORDATADECODER_H
 #define L0DU_L0PROCESSORDATADECODER_H
 
@@ -15,8 +14,6 @@ class L0ProcessorDataDecoder : public GaudiTool, virtual public IL0ProcessorData
                    const std::string& name   ,
                    const IInterface*  parent ) ;
 
-  virtual ~L0ProcessorDataDecoder () ;
-
   StatusCode initialize ()  override;
   StatusCode finalize ()  override;
   bool   setL0ProcessorData(std::vector<std::string> dataLocs ) override;
@@ -29,10 +26,10 @@ class L0ProcessorDataDecoder : public GaudiTool, virtual public IL0ProcessorData
   bool   isValid() override {return m_ok;}
 
 private:
-  LHCb::L0ProcessorDatas* m_dataContainer;
-  IL0CondDBProvider* m_condDB;
-  bool   m_ok;
-  bool   m_hasHC;
+  LHCb::L0ProcessorDatas m_dataContainer;
+  IL0CondDBProvider* m_condDB = nullptr;
+  bool   m_ok = false;
+  bool   m_hasHC = false;
 };
 
 #endif // L0DU_L0PROCESSORDATADECODER_H

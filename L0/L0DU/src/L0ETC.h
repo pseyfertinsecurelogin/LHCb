@@ -20,15 +20,13 @@ public:
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
 
-protected:
-
 private:
   /// ETC name
   std::string m_collectionName;
   /// L0 channels
   std::vector<std::string> m_l0channels ;
 
-  long m_events ; ///< Number of events
+  long m_events = 0; ///< Number of events
 
 };
 #endif // L0ETC_H

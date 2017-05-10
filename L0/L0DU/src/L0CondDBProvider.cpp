@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Gaudi
 #include "GaudiKernel/SystemOfUnits.h"
@@ -31,10 +31,6 @@ L0CondDBProvider::L0CondDBProvider( const std::string& type,
   declareInterface<IL0CondDBProvider>(this);
   declareProperty("RAMBCID" , m_mapRam);
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-L0CondDBProvider::~L0CondDBProvider() {} 
 
 //=============================================================================
 StatusCode L0CondDBProvider::initialize(){
@@ -42,7 +38,7 @@ StatusCode L0CondDBProvider::initialize(){
   StatusCode sc = GaudiTool::initialize();
   if(sc.isFailure())return sc;
 
-  m_ecal = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal ); 
+  m_ecal = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
 
   // RAM(BCID)
   m_rams += "{";
@@ -51,15 +47,15 @@ StatusCode L0CondDBProvider::initialize(){
     std::string vsn = (*it).first;
     std::vector<int> rMap = (*it).second;
     if( rMap.size() != m_cycle){
-      fatal() << " The RAM(BCID) vsn = '" << vsn << "' is badly defined (" << rMap.size() << "/" << m_cycle 
+      fatal() << " The RAM(BCID) vsn = '" << vsn << "' is badly defined (" << rMap.size() << "/" << m_cycle
               << ") elements" << endmsg;
       return StatusCode::FAILURE;
     }
-    
-    m_rams += vsn ; 
-    if(m_mapRam.size() > 1)m_rams += "|"; 
+
+    m_rams += vsn ;
+    if(m_mapRam.size() > 1)m_rams += "|";
   }
-  m_rams += "}"; 
+  m_rams += "}";
   info() << "Registered RAM(BCID) versions = " << m_rams << endmsg;
   return StatusCode::SUCCESS;
 }
@@ -76,7 +72,7 @@ double L0CondDBProvider::scale(unsigned int base ){
 }
 
 
-double L0CondDBProvider::caloEtScale(){  
+double L0CondDBProvider::caloEtScale(){
   m_gain = m_ecal->condition( "Gain" );
   double caloEtScale = 0.0;
   if ( 0 == m_gain ){
@@ -90,7 +86,7 @@ double L0CondDBProvider::caloEtScale(){
     Error("Parameter 'L0EtBin' not found in Ecal 'Gain'",StatusCode::SUCCESS).ignore();
     counter("'L0EtBin' parameter not found in 'Gain' condition")+=1;
   }
-  if ( msgLevel(MSG::DEBUG) ) 
+  if ( msgLevel(MSG::DEBUG) )
     debug() << "CaloEt scale set to " << caloEtScale << " MeV" << endmsg;
   return caloEtScale;
 }

@@ -1,5 +1,5 @@
 // from Gaudi
-#include "GaudiKernel/IRegistry.h" 
+#include "GaudiKernel/IRegistry.h"
 
 // LHCb
 #include "Event/MCHeader.h"
@@ -21,10 +21,8 @@ DECLARE_COMPONENT( L0ETC )
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-L0ETC::L0ETC( const std::string& name,
-              ISvcLocator* pSvcLocator)
-  : GaudiTupleAlg ( name , pSvcLocator )
-    , m_events(0)
+L0ETC::L0ETC( const std::string& name, ISvcLocator* pSvcLocator)
+: GaudiTupleAlg ( name , pSvcLocator )
 {
     declareProperty( "CollectionName", m_collectionName = "<not set>");
 }
@@ -67,23 +65,23 @@ StatusCode L0ETC::execute() {
   setFilterPassed(true);
 
   m_events++ ;
-  
+
   // This is what it is about...
   Tuple tup = evtCol(1,m_collectionName);
-  
+
   // pick up the location of the event --
   // this is what makes the tag collection a collection...
   DataObject* pObject = get<DataObject>("/Event");
   if (pObject!=0) {
-    StatusCode sc = tup->column("Address", pObject->registry()->address() ); 
+    StatusCode sc = tup->column("Address", pObject->registry()->address() );
     if (!sc) return sc;
   } else {
     Error("    not able to retrieve IOpaqueAddress").ignore();
   }
-  
+
   // Retrieve informations about event
   const LHCb::MCHeader *evtHeader = getIfExists<LHCb::MCHeader>(LHCb::MCHeaderLocation::Default);
-  if ( NULL != evtHeader ){
+  if ( evtHeader ){
     tup->column("event", (int)evtHeader->evtNumber() ).ignore();
     tup->column("run",   (int)evtHeader->runNumber() ).ignore();
   } else {
@@ -94,21 +92,17 @@ StatusCode L0ETC::execute() {
 
   // get L0 result
   const LHCb::L0DUReport* L0 = getIfExists<LHCb::L0DUReport>(LHCb::L0DUReportLocation::Default);
-  if ( NULL != L0 ){
+  if ( L0 ){
     tup->column ( "L0",  L0->decision() ).ignore() ;
-    for ( std::vector<std::string>::const_iterator c = m_l0channels.begin();
-          c != m_l0channels.end(); ++c){
-      if( msgLevel(MSG::VERBOSE) ) 
-        verbose() << *c << " says " << L0->channelDecisionByName(*c) << endmsg ;
-      tup->column ( (*c), L0->channelDecisionByName(*c)  ).ignore() ;
+    for ( const auto& c : m_l0channels ) {
+      if( msgLevel(MSG::VERBOSE) )
+        verbose() << c << " says " << L0->channelDecisionByName(c) << endmsg ;
+      tup->column ( c, L0->channelDecisionByName(c)  ).ignore() ;
     }
   } else {
     Warning("    not able to retrieve L0DUReport").ignore();
     tup->column ( "L0", false ).ignore() ;
-    for ( std::vector<std::string>::const_iterator c = m_l0channels.begin();
-          c != m_l0channels.end(); ++c){
-      tup->column ( (*c), false ).ignore() ;
-    }
+    for ( const auto& c : m_l0channels ) tup->column ( c, false ).ignore() ;
   }
   //  tup->write(); // do not write out. This is done by evtcol svc
 

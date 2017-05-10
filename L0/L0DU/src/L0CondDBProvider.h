@@ -20,16 +20,12 @@ public:
             const std::string& name,
             const IInterface* parent);
 
-  virtual ~L0CondDBProvider( ); ///< Destructor
-
   StatusCode initialize() override;
   double scale(unsigned int base) override;
   double caloEtScale() override;
   double muonPtScale() override;
   const std::vector<int> RAMBCID(std::string vsn) override;
   int RAMBCID(std::string vsn,int bcid) override;
-
-protected:
 
 private:
   DeCalorimeter* m_ecal;

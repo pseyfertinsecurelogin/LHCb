@@ -52,13 +52,13 @@ private:
   StatusCode dataTree(LHCb::L0DUElementaryData* data, LHCb::L0DUElementaryData::Map dataMap);
 
   //
-  LHCb::L0DUReport             m_report;              ///<  L0DU Report
-  bool                         m_muCleaning;          ///<  Activate muon cleaning
-  bool                         m_muZeroSup;           ///<  Activate muon 0-suppression
-  bool                         m_emuBX;               ///<  Emulate Prev2/Prev1/Next2/Next1 data in the bank
-  std::vector<int>             m_muHighest;           ///<  Array of  index of the 3 highest muon (Pt-decreasing order)
-  int                          m_muPattern;           ///<  Pattern of muon cleaning
-  int                          m_nMu;
+  LHCb::L0DUReport          m_report;              ///<  L0DU Report
+  bool                      m_muCleaning;          ///<  Activate muon cleaning
+  bool                      m_muZeroSup;           ///<  Activate muon 0-suppression
+  bool                      m_emuBX;               ///<  Emulate Prev2/Prev1/Next2/Next1 data in the bank
+  std::vector<int>          m_muHighest;           ///<  Array of  index of the 3 highest muon (Pt-decreasing order)
+  int                       m_muPattern;           ///<  Pattern of muon cleaning
+  int                       m_nMu;
   IL0ProcessorDataDecoder*  m_decoder;
   IL0CondDBProvider*        m_condDB;
   IEventTimeDecoder*        m_odin;

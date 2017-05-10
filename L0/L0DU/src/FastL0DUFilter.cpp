@@ -1,5 +1,5 @@
 // $Id: FastL0DUFilter.cpp,v 1.3 2010-01-27 23:35:23 odescham Exp $
-// Include files 
+// Include files
 
 // local
 #include "FastL0DUFilter.h"
@@ -34,11 +34,6 @@ FastL0DUFilter::FastL0DUFilter( const std::string& name,
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-FastL0DUFilter::~FastL0DUFilter() {} 
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode FastL0DUFilter::initialize() {
@@ -69,7 +64,7 @@ StatusCode FastL0DUFilter::execute() {
   rawEvt= get<LHCb::RawEvent>( rawLoc );
   for( std::vector<LHCb::RawBank*>::const_iterator itB = (&rawEvt->banks(   LHCb::RawBank::L0DU ))->begin();
        itB != (&rawEvt->banks(   LHCb::RawBank::L0DU ))->end() ; itB++){
-    
+
 
     LHCb::RawBank* bank = *itB;
     if( NULL == bank || 0 == bank->size() )continue;
@@ -77,7 +72,7 @@ StatusCode FastL0DUFilter::execute() {
     if( 1 != bank->version() && 2!= bank->version() ){
       Warning( "Inconsistent L0DU bank version" ).ignore();
       continue;
-    }    
+    }
     unsigned int* data = bank->data();
 
     data += 2;
@@ -92,7 +87,7 @@ StatusCode FastL0DUFilter::execute() {
       data++;
       unsigned int  nmu       = (*data & 0xF0000000 ) >> 28;
       offset = 2 + (int) ( (nmu+1)/2 ) + (int) ( (nmu+3)/4 ) ;
-    }    
+    }
     // here we are
     data += offset;
     unsigned int rsda       = (*data & 0x0000FFFF );
@@ -104,21 +99,21 @@ StatusCode FastL0DUFilter::execute() {
     data += 1;
     long elEt  = (*data & 0x000000FF ) ;
     data += 1;
-    long haEt  = (*data & 0x000000FF ) ;    
+    long haEt  = (*data & 0x000000FF ) ;
 
     // HARDCODED algorithm --------------------------------------------------------
     bool newdec = ( haEt >= m_haCut && spdMult >= m_spdCut) || ( muPt >= m_muCut ) ;
     // ----------------------------------------------------------------------------
 
     bool decision = m_useDecInBank ? dec : newdec;
-    
+
     if ( msgLevel( MSG::DEBUG) ){
-      debug() << " decision : " << decision << endmsg;      
+      debug() << " decision : " << decision << endmsg;
       debug() << " SumEt  : " << sumEt << " Threshold : " << m_sumCut << endmsg;
       debug() << " SpdMult: " << spdMult << " Threshold : " << m_spdCut << endmsg;
       debug() << " el(Et) : " << elEt  << " Threshold : " << m_elCut << endmsg;
-      debug() << " ha(Et) : " << haEt  << " Threshold : " << m_haCut << endmsg; 
-      debug() << " mu(Pt) : " << muPt  << " Threshold : " << m_muCut << endmsg; 
+      debug() << " ha(Et) : " << haEt  << " Threshold : " << m_haCut << endmsg;
+      debug() << " mu(Pt) : " << muPt  << " Threshold : " << m_muCut << endmsg;
     }
     if ( decision  ){
       setFilterPassed(true);
@@ -126,7 +121,7 @@ StatusCode FastL0DUFilter::execute() {
       if ( msgLevel( MSG::DEBUG) )debug() << " ----> ACCEPT EVENT " << endmsg;
     }
   }
-  
+
   return StatusCode::SUCCESS;
 }
 

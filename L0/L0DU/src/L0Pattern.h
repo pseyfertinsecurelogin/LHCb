@@ -24,7 +24,6 @@ public:
   /// Standard constructor
   L0Pattern( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~L0Pattern( ); ///< Destructor
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
@@ -35,11 +34,11 @@ private:
 
 
   // Tools
-  IL0DUConfigProvider* m_config;
-  IL0DUEmulatorTool*   m_emulator;
-  IL0DUFromRawTool*    m_fromRaw;
-  LHCb::L0ProcessorDatas* m_datas;
-  unsigned long m_bcid;
+  IL0DUConfigProvider* m_config = nullptr;
+  IL0DUEmulatorTool*   m_emulator = nullptr;
+  IL0DUFromRawTool*    m_fromRaw = nullptr;
+  LHCb::L0ProcessorDatas* m_datas = nullptr;
+  unsigned long m_bcid = 0;
   //
   std::string m_emulatorTool;
   std::string m_fromRawTool;

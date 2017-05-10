@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Gaudi
 #include "AIDA/IHistogram1D.h"
@@ -7,7 +7,7 @@
 #include "GaudiKernel/SystemOfUnits.h"
 // from LHCb
 #include "Event/L0DUReport.h"
-#include "Event/ODIN.h" 
+#include "Event/ODIN.h"
 // local
 #include "L0DUMultiTrends.h"
 
@@ -42,34 +42,29 @@ L0DUMultiTrends::L0DUMultiTrends( const std::string& name,
     m_count(0)
 {
   declareProperty( "L0DUEmulatorTool"  , m_emulatorTool= "L0DUEmulatorTool");
-  declareProperty( "L0DUFromRawTool"   , m_fromRawTool = "L0DUFromRawTool" );  
+  declareProperty( "L0DUFromRawTool"   , m_fromRawTool = "L0DUFromRawTool" );
   declareProperty( "L0DUConfigTool"    , m_configTool  = "L0DUConfig");
   declareProperty( "TCKList"           , m_list);
   declareProperty( "NumberOfPredefinedTriggers", m_nPredTriggers = 4 ); // Must be set according to L0DUConfigProvider list
   declareProperty( "TrendingStep"      , m_trendStep=60   ); // N seconds/step
   declareProperty( "TrendingPeriod"    , m_trendPeriod=300); // N steps/display
-  declareProperty( "TimedTrending"     , m_tTrend=true ); // 
-  declareProperty( "DecisionMonitorMask", m_dMon=LHCb::L0DUDecision::Any ); // 
-  declareProperty( "SubTriggersMonitor" , m_sMon=true   ); // 
-  declareProperty( "ChannelsMonitor"    , m_cMon=false  ); // 
-  declareProperty( "RatesMonitor"       , m_rate=false  ); // 
-} 
-
-//=============================================================================
-// Destructor
-//=============================================================================
-L0DUMultiTrends::~L0DUMultiTrends() {}
+  declareProperty( "TimedTrending"     , m_tTrend=true ); //
+  declareProperty( "DecisionMonitorMask", m_dMon=LHCb::L0DUDecision::Any ); //
+  declareProperty( "SubTriggersMonitor" , m_sMon=true   ); //
+  declareProperty( "ChannelsMonitor"    , m_cMon=false  ); //
+  declareProperty( "RatesMonitor"       , m_rate=false  ); //
+}
 
 //=============================================================================
 // Initialisation. Check parameters
 //=============================================================================
 StatusCode L0DUMultiTrends::initialize() {
-  
+
   StatusCode sc = GaudiTupleAlg::initialize() ;
-  if( sc.isFailure() ) 
+  if( sc.isFailure() )
   { return Error("Could not initialize base class CaudiAlgorithm",sc);}
   info() << "==> Initialize" << endmsg;
-  
+
   // get the tools
   m_fromRaw   = tool<IL0DUFromRawTool>( m_fromRawTool , m_fromRawTool , this );
   m_emulator  = tool<IL0DUEmulatorTool>(m_emulatorTool, m_emulatorTool);
@@ -91,9 +86,9 @@ StatusCode L0DUMultiTrends::initialize() {
   }
 
   // Histogramming
-  m_bin = m_list.size() + 2;  
+  m_bin = m_list.size() + 2;
 
-  m_oBin = m_trendPeriod - 1; // origin trending bin  
+  m_oBin = m_trendPeriod - 1; // origin trending bin
   return StatusCode::SUCCESS;
 }
 
@@ -104,7 +99,7 @@ StatusCode L0DUMultiTrends::execute() {
   m_count++;
   using namespace LHCb;
   using namespace L0DUDecision;
-  
+
   // get processor data
   if(!m_fromRaw->decodeBank()){
     Error("Unable to decode L0DU rawBank", StatusCode::SUCCESS).ignore();
@@ -112,13 +107,13 @@ StatusCode L0DUMultiTrends::execute() {
   }
   m_datas =  m_fromRaw->L0ProcessorDatas();
 
-  // check 
+  // check
   if( NULL == m_fromRaw->report().configuration() )Warning("report->L0DUConfig point to NULL").ignore();
 
   // book histogram (first event)
   if(m_book){
-    booking("Counters/"); 
-    if( m_rate )booking("Rates/"); 
+    booking("Counters/");
+    if( m_rate )booking("Rates/");
     setLabels();
     m_book =false;
   }
@@ -136,7 +131,7 @@ StatusCode L0DUMultiTrends::execute() {
       if( NULL != h1d )fill( h1d , -1. ,1.);
     }
   }
-  
+
 
   // bin 0 = current config (from raw)
   int bin = 0;
@@ -176,7 +171,7 @@ StatusCode L0DUMultiTrends::execute() {
         //        if( !m_tTrend )m_origin = odin->eventNumber();
         if( !m_tTrend )m_origin = m_count;
         m_hasOrigin = true;
-      }      
+      }
 
       long diff = (time - m_origin);
       //      if( !m_tTrend )diff = odin->eventNumber() - m_origin;
@@ -188,10 +183,10 @@ StatusCode L0DUMultiTrends::execute() {
         long bin2 = m_oBin+nStep;
         // slide
         if( bin2 >= m_trendPeriod){
-          int shift = bin2-m_trendPeriod+1; 
-          if ( msgLevel(MSG::DEBUG) ) 
-            debug() << "Sliding origin = " << m_origin 
-                    << " time " << time << " s - eventNumber " << odin->eventNumber() 
+          int shift = bin2-m_trendPeriod+1;
+          if ( msgLevel(MSG::DEBUG) )
+            debug() << "Sliding origin = " << m_origin
+                    << " time " << time << " s - eventNumber " << odin->eventNumber()
                     << "  diff = " << diff << "   shift = " << shift <<endmsg;
           slideHistos(shift);
           doRates();
@@ -215,13 +210,13 @@ StatusCode L0DUMultiTrends::execute() {
             ic++;
             std::string conf="Emul"+Gaudi::Utils::toString( ic )+"/";
             if((Physics & m_dMon)!= 0&& config->emulatedDecision(Physics ))
-              tFill("Counters/Trending/Decisions/"+conf+"Physics",bin2 ); 
+              tFill("Counters/Trending/Decisions/"+conf+"Physics",bin2 );
             if((Beam1 & m_dMon) != 0 && config->emulatedDecision(Beam1   ))
-              tFill("Counters/Trending/Decisions/"+conf+"Beam1", bin2 ); 
+              tFill("Counters/Trending/Decisions/"+conf+"Beam1", bin2 );
             if((Beam2 & m_dMon) != 0 &&  config->emulatedDecision(Beam2  ))
-              tFill("Counters/Trending/Decisions/"+conf+"Beam2", bin2 ); 
+              tFill("Counters/Trending/Decisions/"+conf+"Beam2", bin2 );
           }
-        } 
+        }
         if( m_sMon ){
           std::vector<std::string> temp = m_list;
           temp.push_back( std::string("data") );
@@ -248,11 +243,11 @@ StatusCode L0DUMultiTrends::execute() {
               if( "data" == *i && m_fromRaw->report().triggerDecisionByName( name ) ){
                 tFill( unit, bin2 );
               }else if( trigger->emulatedDecision() ){
-                tFill( unit, bin2 ); 
-              } 
+                tFill( unit, bin2 );
+              }
             }
-          }  
-        } 
+          }
+        }
         if( m_cMon ){
           std::vector<std::string> temp = m_list;
           temp.push_back( std::string("data") );
@@ -278,12 +273,12 @@ StatusCode L0DUMultiTrends::execute() {
               if( "data" == *i && m_fromRaw->report().channelDecisionByName( name ) ){
                 tFill( unit, bin2 );
               }else if( channel->emulatedDecision() ){
-                tFill( unit, bin2 ); 
-              } 
+                tFill( unit, bin2 );
+              }
             }
           }
         }
-      } 
+      }
     }else{
       Warning("Trending requested but ODIN bank is absent").ignore();
       counter("Missing ODIN information") += 1;
@@ -308,13 +303,13 @@ StatusCode L0DUMultiTrends::finalize() {
 void L0DUMultiTrends::setLabels(){
   // Comparaison histos labelling
   for( std::map<std::string,AIDA::IHistogram1D*>::iterator ih = m_cMap.begin() ; m_cMap.end() != ih ; ++ih ){
-    std::string unit = (*ih).first;    
+    std::string unit = (*ih).first;
     AIDA::IHistogram1D* h1d = histo1D( HistoID ( unit ) );
     if( NULL == h1d )continue;
     TH1D* th1d = Gaudi::Utils::Aida2ROOT::aida2root( h1d );
     TAxis* xAxis = th1d->GetXaxis();
     xAxis->SetBinLabel( 1 , "Event counter" );
-    xAxis->SetBinLabel( 2 , std::string("Data TCK=" + tck2string( m_fromRaw->report().tck())).c_str() );  
+    xAxis->SetBinLabel( 2 , std::string("Data TCK=" + tck2string( m_fromRaw->report().tck())).c_str() );
     long i = 0;
     for(std::vector<std::string>::iterator it = m_list.begin() ; it != m_list.end() ; it++){
       int itck = tck2int( *it );
@@ -324,7 +319,7 @@ void L0DUMultiTrends::setLabels(){
       xAxis->SetBinLabel( 2 + i, std::string("Emul TCK=" + *it).c_str() );
     }
     xAxis->LabelsOption( "" );
-  }  
+  }
   return;
 }
 
@@ -351,10 +346,10 @@ void L0DUMultiTrends::cFillSubTriggers(){
       std::string name = trigger->name();
       std::string unit = "Counters/SubTriggers/" + name;
       if( *i == "data" && m_fromRaw->report().triggerDecisionByName( name ) )cFill(unit , bin);
-      else if( trigger->emulatedDecision( ) )cFill( unit , bin );    
+      else if( trigger->emulatedDecision( ) )cFill( unit , bin );
     }
   }
-  
+
   return;
 }
 
@@ -381,10 +376,10 @@ void L0DUMultiTrends::cFillChannels(){
       std::string name = channel->name();
       std::string unit = "Counters/Channels/" + name;
       if( *i == "data" && m_fromRaw->report().channelDecisionByName( name ) )cFill(unit , bin);
-      else if( channel->emulatedDecision( ) )cFill( unit , bin );    
+      else if( channel->emulatedDecision( ) )cFill( unit , bin );
     }
   }
-  
+
   return;
 }
 
@@ -461,8 +456,8 @@ void L0DUMultiTrends::tBookSubTriggers( std::string pref){
       title += LHCb::L0DUDecision::Name[trigger->decisionType()] + "|" + name;
       title +=  "' trending decision for ";
       if( *i == "data" )title += " the data configuration";
-      else title += " the emulated TCK="+(*i); 
-      tBook( pref + unit ,title ); 
+      else title += " the emulated TCK="+(*i);
+      tBook( pref + unit ,title );
     }
   }
 }
@@ -498,8 +493,8 @@ void L0DUMultiTrends::tBookChannels( std::string pref){
       title += LHCb::L0DUDecision::Name[channel->decisionType()] + "|" + name;
       title +=  "' trending decision for ";
       if( *i == "data" )title += " the data configuration";
-      else title += " the emulated TCK="+(*i); 
-      tBook( pref + unit ,title ); 
+      else title += " the emulated TCK="+(*i);
+      tBook( pref + unit ,title );
     }
   }
 }
@@ -533,7 +528,7 @@ void L0DUMultiTrends::tFill(std::string unit , int bin){
   //if( h1d != NULL && 0 <= bin && bin< m_trendPeriod)fill( h1d , bin , weight );
   return;
 }
- 
+
 void L0DUMultiTrends::tBook(std::string unit , std::string title){
   AIDA::IHistogram1D* h1d = book1D( HistoID(unit) ,title, (double) -m_trendPeriod, 0., m_trendPeriod );
   //AIDA::IHistogram1D* h1d = book1D( HistoID(unit) ,title, 0.,  (double) m_trendPeriod , m_trendPeriod );
@@ -569,7 +564,7 @@ void L0DUMultiTrends::booking(std::string pref){
     if( (Beam2   & m_dMon) != 0 )cBook(pref+"Decisions/Beam2"  ,"L0|Beam2 decision "
                                        + std::string((pref == "Rates/") ? "rates" : "") + " versus TCK");
   }
-  
+
   // SubTriggers
   if( m_sMon ){
     cBookSubTriggers( m_fromRaw->report().configuration() , pref);
@@ -578,9 +573,9 @@ void L0DUMultiTrends::booking(std::string pref){
       LHCb::L0DUConfig* config   = m_config->config( itck );
       if( NULL != config )continue;
       cBookSubTriggers( config , pref);
-    } 
+    }
   }
-  
+
   // Channels
   if( m_cMon ){
     cBookChannels( m_fromRaw->report().configuration() , pref);
@@ -589,9 +584,9 @@ void L0DUMultiTrends::booking(std::string pref){
       LHCb::L0DUConfig* config   = m_config->config( itck );
       if( NULL != config )continue;
       cBookChannels( config , pref);
-    } 
+    }
   }
-  
+
   //=========== Trending histos =========
   if ( 0 < m_trendPeriod ){
     if( "Counters/" == pref)tBook( pref + "Trending/Event" , "Trending event counter");
@@ -616,14 +611,14 @@ void L0DUMultiTrends::booking(std::string pref){
         tBook(pref+"Trending/Decisions/"+conf+"Beam2"  , "L0|Beam2   trending decision "
               + std::string((pref == "Rates/") ? "rates" : "") + " Emul TCK="+*it );
       }
-    }    
+    }
     if( m_sMon )tBookSubTriggers(pref);
     if( m_cMon )tBookChannels(pref);
   }
 
 
 
-  return; 
+  return;
 }
 
 int L0DUMultiTrends::tck2int(std::string otck){
@@ -646,9 +641,9 @@ std::string L0DUMultiTrends::tck2string( int itck ){
 
 
 void L0DUMultiTrends::doRates(){
-  
+
   if( !m_rate)return;
-  
+
   // comparaison histo : normalize with 1st bin
   for(std::map<std::string,AIDA::IHistogram1D*>::const_iterator ih = m_cMap.begin();ih != m_cMap.end() ; ++ih){
     std::string name = (*ih).first;
@@ -657,7 +652,7 @@ void L0DUMultiTrends::doRates(){
     int index = name.find_first_of("/")+1;
     AIDA::IHistogram1D* h2 = m_cMap["Rates/" + name.substr(index,std::string::npos) ];
     if( NULL == h1 || NULL == h2 ) continue;
-    
+
     double norm = h1 -> binHeight( 0 );
     if( 0 == norm )continue;
     TH1D* th2 = Gaudi::Utils::Aida2ROOT::aida2root( h2 );
@@ -669,7 +664,7 @@ void L0DUMultiTrends::doRates(){
       th2->SetBinError  ( i+1, sqrt(n*(norm-n)/norm)/norm );
     }
   }
-  
+
 
   // trending histos : divide
   AIDA::IHistogram1D* h0 = m_tMap[ "Counters/Trending/Event" ];

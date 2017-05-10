@@ -46,7 +46,7 @@ public:
       warning() << "requested TCK is not a 16 bit word" << endmsg;
       return 0;
     }
-    std::map<std::string,LHCb::L0DUConfigs*>::iterator it = m_configs.find( slot );
+    auto it = m_configs.find( slot );
     if( it == m_configs.end() )createConfig(slot);
 
     it = m_configs.find( slot );
@@ -62,7 +62,7 @@ public:
   LHCb::L0DUConfigs*  configs(std::string slot="T0") override {
     if (!m_uptodate) { reset();update(); }
     if( slot == "") slot = "T0";
-    return m_configs[slot];
+    return m_configs[slot].get();
   }
 
 
@@ -98,7 +98,7 @@ private:
   StatusCode createChannels();
   StatusCode createTriggers();
   void predefinedTriggers();
-  bool getDataList(const std::string, std::vector<std::string>& );
+  bool getDataList(const std::string&, std::vector<std::string>& );
   std::vector<std::string> triggerNameFromData( std::vector<std::string> );
   bool configChecker();
   bool conditionCheck(LHCb::L0DUElementaryCondition* condition);
@@ -110,7 +110,11 @@ private:
   LHCb::L0DUChannel::Map m_channelsMap;
   LHCb::L0DUTrigger::Map m_triggersMap;
 
-  std::map<std::string,LHCb::L0DUConfigs*> m_configs;
+  struct ConfigsReleaser {
+      void operator()(LHCb::L0DUConfigs* p) { if (p) p->release(); }
+  };
+  using L0DUConfigsPtr = std::unique_ptr<LHCb::L0DUConfigs,ConfigsReleaser>;
+  std::map<std::string,L0DUConfigsPtr> m_configs;
 
   LHCb::L0DUConfig*  m_config = nullptr;
 

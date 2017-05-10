@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Event
 #include "Event/L0DUReport.h"
@@ -45,10 +45,6 @@ L0DataNtp::L0DataNtp( const std::string& name,
   m_list.push_back("!*Add*"); // no address
 
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-L0DataNtp::~L0DataNtp() {} 
 
 //=============================================================================
 // Initialization
@@ -63,7 +59,7 @@ StatusCode L0DataNtp::initialize() {
   m_l0conf= tool<IL0DUConfigProvider>( "L0DUMultiConfigProvider","L0DUConfig");
 
   return StatusCode::SUCCESS;
-} 
+}
 
 //=============================================================================
 // Main execution
@@ -71,7 +67,7 @@ StatusCode L0DataNtp::initialize() {
 StatusCode L0DataNtp::execute() {
 
   Tuple ntp = nTuple(500,"L0DataNtp" ,CLID_ColumnWiseTuple);
-  
+
 
   StatusCode sc;
   //===== Processing
@@ -91,7 +87,7 @@ StatusCode L0DataNtp::execute() {
 
   // L0DU emulated Decision (incl. downscaling !!) Useful on MC data
   if( !m_tcks.empty() ){
-    
+
     LHCb::L0ProcessorDatas* proDatas= m_l0->L0ProcessorDatas();
     for( std::vector<std::string>::iterator it=m_tcks.begin();m_tcks.end()!=it;++it ){
       std::string stck =  *it;
@@ -107,11 +103,11 @@ StatusCode L0DataNtp::execute() {
       sc=ntp->column( "L0Emu_TCK"+stck, dec);
     }
   }
-  
+
 
   sc=ntp->write();
 
-  return sc; 
+  return sc;
 }
 
 
