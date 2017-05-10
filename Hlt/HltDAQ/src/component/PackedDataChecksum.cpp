@@ -139,7 +139,7 @@ static_assert(sizeof(LHCb::PackedCaloHypo) == 76, "PackedCaloHypo has changed!")
 static_assert(sizeof(LHCb::PackedProtoParticle) == 40, "PackedProtoParticle has changed!");
 static_assert(sizeof(LHCb::PackedRecVertex) == 60, "PackedRecVertex has changed!");  // padded!
 static_assert(sizeof(LHCb::PackedFlavourTag) == 32, "PackedFlavourTag has changed!");
-static_assert(sizeof(LHCb::PackedTagger) == 16, "PackedTagger has changed!");  // padded!
+static_assert(sizeof(LHCb::PackedTagger) == 20, "PackedTagger has changed!");  // padded!
 static_assert(sizeof(LHCb::PackedRelation) == 16, "PackedRelation has changed!");
 static_assert(sizeof(LHCb::PackedRelatedInfoMap) == 16, "PackedRelatedInfoMap has changed!");
 static_assert(sizeof(LHCb::PackedVertex) == 72, "PackedVertex has changed!");  // padded!
