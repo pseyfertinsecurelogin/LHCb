@@ -9,7 +9,7 @@
      * FlavourTag class definition                                  *
      ****************************************************************-->
       <class
-       desc  = "The result of the tagging algorithm" 
+       desc  = "The result of the tagging algorithm"
        name  = "FlavourTag"
        author= "Marco Musy"
        id    = "805"
@@ -32,7 +32,7 @@
       <enum
         desc  = "Possible result of the tagging algorithm"
         name  = "TagResult"
-        value = "b = -1, bbar = 1, none = 0" 
+        value = "b = -1, bbar = 1, none = 0"
         access= "PUBLIC"
       />
 
@@ -83,13 +83,13 @@
         init = "0.50"
       />
 
-      <attribute 
-	      desc    = "Vector of Taggers" 
-	      name    = "taggers" 
+      <attribute
+	      desc    = "Vector of Taggers"
+	      name    = "taggers"
 	      type    = "std::vector&lt;LHCb::Tagger&gt;"
       />
 
-      <attribute 
+      <attribute
 	      desc = "decision of opposite side taggers only"
 	      name = "decisionOS"
 	      type = "short int"
@@ -108,8 +108,8 @@
         type    = "void"
 	      argList = "LHCb::Tagger HAS"
         desc    = "Add one Tagger">
-        <code>  
-          m_taggers.push_back(HAS); 
+        <code>
+          m_taggers.push_back(HAS);
           return;
         </code>
       </method>

@@ -20,86 +20,86 @@
         desc = "The type of tagger which has produced this decision"
         strTypConv = "TRUE"
         unknownValue = 'unknown'
-        value= "none         = 0,
-                unknown      = 1,
-                OS_Muon      = 2,
-                OS_Electron  = 3,
-                OS_Kaon      = 4,
-                SS_Kaon      = 5,
-                SS_Pion      = 6,
-                jetCharge    = 7,
-                OS_jetCharge = 8,
-                SS_jetCharge = 9,
-                VtxCharge    = 10,
-                Topology     = 11,
-                OS_nnetKaon  = 12,
-                SS_nnetKaon  = 13,
-                SS_Proton    = 14,
-                OS_Charm     = 15,
-                SS_PionBDT   = 16,
-                OSMuon       = 10100,
-                OSMuonDev    = 10110,
-                OSElectron   = 10200,
-                OSElectronDev = 10210,
-                OSKaon       = 10300,
-                OSKaonDev    = 10310,
-                OSVtxCh      = 10400,
-                OSVtxChDev   = 10410,
-                OSCharm      = 10500,
-                OSCharmDev   = 10510,
-                OSProton     = 10600,
-                OSProtonDev  = 10610,
-                SSKaon       = 20100,
-                SSKaonDev    = 20110,
-                SSPion       = 20200,
-                SSPionDev    = 20210,
-                SSProton     = 20300,
-                SSProtonDev  = 20310,
-                SSLambda     = 20400,
-                SSLambdaDev  = 20410"
+        value= "none          = 0,
+                unknown       = 1,
+                OS_Muon       = 2,
+                OS_Electron   = 3,
+                OS_Kaon       = 4,
+                SS_Kaon       = 5,
+                SS_Pion       = 6,
+                jetCharge     = 7,
+                OS_jetCharge  = 8,
+                SS_jetCharge  = 9,
+                VtxCharge     = 10,
+                Topology      = 11,
+                OS_nnetKaon   = 12,
+                SS_nnetKaon   = 13,
+                SS_Proton     = 14,
+                OS_Charm      = 15,
+                SS_PionBDT    = 16,
+                OSMuon        = 10100,
+                OSMuonDev     = 10199,
+                OSElectron    = 10200,
+                OSElectronDev = 10299,
+                OSKaon        = 10300,
+                OSKaonDev     = 10399,
+                OSVtxCh       = 10400,
+                OSVtxChDev    = 10499,
+                OSCharm       = 10500,
+                OSCharmDev    = 10599,
+                OSProton      = 10600,
+                OSProtonDev   = 10699,
+                SSKaon        = 20100,
+                SSKaonDev     = 20199,
+                SSPion        = 20200,
+                SSPionDev     = 20299,
+                SSProton      = 20300,
+                SSProtonDev   = 20399,
+                SSLambda      = 20400,
+                SSLambdaDev   = 20499"
         access = "PUBLIC"
     />
 
     <constructor
         desc = "Copy Constructor"
         argList  = "const Tagger&amp; c"
-        initList = "m_type(c.type()), m_decision(c.decision()), m_omega(c.omega()), m_mvaValue(c.mvaValue()), m_charge(c.charge()), m_taggerParts(c.taggerParts())">
+        initList = "m_type(c.type()), m_decision(c.decision()), m_omega(c.omega()), m_charge(c.charge()), m_mvaValue(c.mvaValue()), m_taggerParts(c.taggerParts())">
         <code/>
     </constructor>
 
     <attribute
-        desc = "The type of tagger"
         name = "type"
-        type = "unsigned int"
+        desc = "The type of tagger"
+        type = "unsigned short int"
         init = "0"
     />
 
     <attribute
-        desc = "decision of tagger"
         name = "decision"
+        desc = "decision of tagger"
         type = "short int"
         init = "0"
     />
 
     <attribute
-        desc = "wrong tag fraction of tagger from MC tuning"
         name = "omega"
+        desc = "wrong tag fraction of tagger from MC tuning"
         type = "float"
         init = "0.50"
     />
 
     <attribute
-        desc = "raw output of the mva"
-        name = "mvaValue"
-        type = "float"
-        init = "0.50"
-    />
-
-    <attribute
-        desc = "(weighted) charge of the tagging particle"
         name = "charge"
+        desc = "(weighted) charge of the tagging particle"
         type = "float"
-        init = "0"
+        init = "0.0"
+    />
+
+    <attribute
+        name = "mvaValue"
+        desc = "raw output of the mva"
+        type = "float"
+        init = "0.0"
     />
 
     <relation
@@ -108,6 +108,8 @@
         multiplicity="N"
         type="LHCb::Particle"
     />
+
+
 
     </class>
   </package>
