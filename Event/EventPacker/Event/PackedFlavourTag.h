@@ -69,7 +69,6 @@ namespace LHCb
     unsigned short int type{0}; ///< The type of tagger
     short int      decision{0}; ///< Decision of tagger
     short int         omega{0}; ///< Wrong tag fraction of tagger
-
     unsigned int firstTagP{0}, lastTagP{0}; ///< Tagging particles
     short int    charge{0};     ///< Charge used for classification
     int          mvaValue{0};   ///< MVA used for classification
