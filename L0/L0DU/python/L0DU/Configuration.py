@@ -8,6 +8,7 @@ from Configurables import LHCbConfigurableUser
 
 from L0Algs import L0CaloFromRawAlgName , emulateL0Calo   , decodeL0Calo , monitorL0Calo
 from L0Algs import L0MuonFromRawAlgName , emulateL0Muon   , decodeL0Muon , monitorL0Muon
+from L0Algs import L0HCFromRawAlgName   , emulateL0HC     , decodeL0HC
 from L0Algs import L0DUFromRawAlgName   , emulateL0DU     , decodeL0DU   , monitorL0DU
 from L0Algs import                        emulateL0PileUp
 
@@ -128,9 +129,10 @@ class L0Conf(LHCbConfigurableUser) :
         """ Return a Gaudi Sequencer with the algorithms to decode the L0Calo, L0Muon and L0DU data. """
         l0decodingSeq = GaudiSequencer( name )
 
-        # L0Calo, L0Muon and L0DU decoding algorithms
+        # L0Calo, L0Muon, L0HC and L0DU decoding algorithms
         l0calo = decodeL0Calo()
         l0muon = decodeL0Muon()
+        l0hc   = decodeL0HC()
         l0du   = decodeL0DU()
         
         # Write on TES
@@ -140,18 +142,19 @@ class L0Conf(LHCbConfigurableUser) :
             l0du.WriteOnTES   = writeOnTes
 
         # Build the sequence 
-        l0decodingSeq.Members+=[ l0calo, l0muon, l0du ]
+        l0decodingSeq.Members+=[ l0calo, l0muon, l0hc, l0du ]
         
         return l0decodingSeq
 
     def l0emulatorSeq(self, name="L0EmulatorSeq", writeBanks=None, writeOnTes=None ):
-        """ Return a Gaudi Sequencer with the algorithms to run the L0Calo, L0Muon, L0PileUp and L0DU emulators. """
+        """ Return a Gaudi Sequencer with the algorithms to run the L0Calo, L0Muon, L0PileUp, L0HC, and L0DU emulators. """
         l0emulatorSeq = GaudiSequencer( name )
 
         # L0Calo, L0Muon, L0PileUp and L0DU emulating algorithms
         l0calo   = emulateL0Calo()
         l0muon   = emulateL0Muon()
         l0pileup = emulateL0PileUp()
+        l0hc     = emulateL0HC()
         l0du     = emulateL0DU()
 
         # Raw banks
@@ -169,9 +172,9 @@ class L0Conf(LHCbConfigurableUser) :
             l0du.WriteOnTES   = writeOnTes
 
         # Build the sequence in two steps :
-        # First :  run L0Calo + L0Muon + PUVeto emulators
+        # First :  run L0Calo + L0Muon + PUVeto + L0HC emulators
         l0processorSeq = GaudiSequencer( "sub"+name )
-        l0processorSeq.Members+=[ l0calo, l0muon, l0pileup ]
+        l0processorSeq.Members+=[ l0calo, l0muon, l0pileup, l0hc ]
         l0emulatorSeq.Members+=[ l0processorSeq ]
         # Second : run L0DU emulator
         l0emulatorSeq.Members+=[l0du]

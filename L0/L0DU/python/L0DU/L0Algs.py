@@ -16,6 +16,7 @@ they are used in L0Conf
 L0CaloAlgName        = "L0Calo"
 L0MuonAlgName        = "L0Muon"
 L0PileUpAlgName      = "L0PuVeto"
+L0HCAlgName          = "L0HC"
 L0DUAlgName          = "L0DU"
 
 ## L0Calo algorithm
@@ -57,6 +58,17 @@ def emulateL0DU(suffix=''):
     from Configurables import L0DUAlg
     return L0DUAlg(L0DUAlgName+suffix)
 
+## L0HC algorithm
+def emulateL0HC(suffix=''):
+    """ Returns the algorithm to emulate the L0HC."""
+    from Configurables import L0HCAlg
+    return L0HCAlg(L0HCAlgName+suffix)
+
+## L0HC sequence
+def emulateL0HCSeq(suffix=''):
+    """ Returns a list with the algorithm to emulate the L0HC."""
+    return [ emulateL0HC(suffix) ]
+    
 ## L0DU sequence
 def emulateL0DUSeq(suffix=''):
     """ Returns a list with the algorithm to emulate the L0DU."""
@@ -68,6 +80,7 @@ def emulateL0DUSeq(suffix=''):
 
 L0CaloFromRawAlgName = "L0CaloFromRaw"
 L0MuonFromRawAlgName = "L0MuonFromRaw"
+L0HCFromRawAlgName   = "L0HCFromRaw"
 L0DUFromRawAlgName   = "L0DUFromRaw"
 
 ## L0Calo algorithm
@@ -91,7 +104,18 @@ def decodeL0Muon(suffix=''):
 def decodeL0MuonSeq(suffix=''):
     """ Returns a list with the algorithm to decode the L0Muon data."""
     return [ decodeL0Muon(suffix) ] 
-     
+
+## L0HC algorithm
+def decodeL0HC(suffix=''):
+    """ Returns the algorithm to decode the L0HC data."""
+    from Configurables import HCRawBankDecoder 
+    return HCRawBankDecoder(L0HCFromRawAlgName+suffix)
+
+## L0HC sequence
+def decodeL0HCSeq(suffix=''):
+    """ Returns a list with the algorithm to decode the L0HC data."""
+    return [ decodeL0HC(suffix) ] 
+         
 ## L0DU algorithm
 def decodeL0DU(suffix=''):
     """ Returns the algorithm to decode the L0DU data."""
