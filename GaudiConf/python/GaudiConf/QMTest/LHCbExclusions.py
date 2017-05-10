@@ -4,7 +4,9 @@ from GaudiTesting.BaseTest import normalizeExamples, RegexpReplacer, LineSkipper
 gitCondDBFixes = (RegexpReplacer(when='Detector description database:',
                                  orig='conddb:/', repl='git:/') +
                   LineSkipper(['CORAL Connection Retrial',
-                               'INFO Connected to database']))
+                               'INFO Connected to database',
+                               'INFO opening Git repository',
+                               'INFO using commit']))
 
 preprocessor = (
     normalizeExamples +

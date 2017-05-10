@@ -28,8 +28,11 @@ public:
   std::tuple<LHCb::HltSelReports,LHCb::HltObjectSummary::Container> operator()(const LHCb::RawEvent&) const override;
 
 private:
-  enum HeaderIDs { kVersionNumber=9 };
-  IReportConvert* m_conv = nullptr;   /// for converting objects in to summaries
+  enum HeaderIDs { kVersionNumber=11 };
+  /// location of output
+  Gaudi::Property<std::string> m_outputHltSelReportsLocation{ this,"OutputHltSelReportsLocation", LHCb::HltSelReportsLocation::Default};
+  /// for converting objects in to summaries
+  IReportConvert* m_conv = nullptr;
 };
 
 #endif // HLTSELREPORTSDECODER_H

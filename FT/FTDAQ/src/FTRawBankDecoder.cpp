@@ -36,8 +36,7 @@ FTLiteClusters
 FTRawBankDecoder::operator()(const LHCb::RawEvent& rawEvent) const
 {
   const auto& banks = rawEvent.banks(LHCb::RawBank::FTCluster);
-
-  FastClusterContainer<LHCb::FTLiteCluster,int> clus {};
+  FTLiteClusters clus;
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "Number of raw banks " << banks.size() << endmsg;
 

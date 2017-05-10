@@ -180,7 +180,7 @@ namespace LoKi
   private:
     // ========================================================================
     /// the event ID
-    mutable unsigned long long m_event ;                        // the event ID
+    mutable unsigned long long m_event = 0;                     // the event ID
     /// constructor arguments
     std::string                m_cargs ;   // constructor arguments
     /// =======================================================================

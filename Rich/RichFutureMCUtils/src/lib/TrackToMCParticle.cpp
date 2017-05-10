@@ -10,12 +10,9 @@ TrackToMCParticle::mcParticle( const LHCb::Track & track,
 {
   const LHCb::MCParticle * mcP = nullptr;
 
-  // Get the range for the given track
-  const auto mcRange = m_rels.relations( &track );
-
   // loop over the found relations and pick the best
   double bestWeight = -1;
-  for ( const auto MC : mcRange )
+  for ( const auto MC : mcParticleRange(track) )
   {
     if ( MC.to() )
     {
@@ -31,16 +28,42 @@ TrackToMCParticle::mcParticle( const LHCb::Track & track,
   return mcP;
 }
 
+LHCb::MCParticle::ConstVector 
+TrackToMCParticle::mcParticles( const LHCb::Track & track,
+                                const bool includeNull,
+                                const double minWeight ) const
+{
+  // Get the MCParticle range for this track
+  const auto mcPR = mcParticleRange(track);
+  // MCPs to return
+  LHCb::MCParticle::ConstVector mcPs;
+  mcPs.reserve( mcPR.empty() ? 1 : mcPR.size() );
+  // select MCPs to return
+  for ( const auto MC : mcPR ) 
+  {
+    if ( MC.weight() > minWeight ) { mcPs.push_back(MC.to()); }
+  }
+  // if none selected, add a nullptr
+  if ( includeNull && mcPs.empty() ) { mcPs.push_back(nullptr); }
+  // return
+  return mcPs;
+}
+
 Rich::ParticleIDType
 TrackToMCParticle::mcParticleType( const LHCb::Track & track,
                                    const double minWeight ) const
 {
   // get the MCParticle
   const auto mcP = mcParticle( track, minWeight );
+  // return the type
+  return mcParticleType(mcP);
+}
 
+Rich::ParticleIDType
+TrackToMCParticle::mcParticleType( const LHCb::MCParticle * mcP ) const
+{
   // get the PDG code for this particle
   const auto id = ( mcP ? abs(mcP->particleID().pid()) : 0 );
-  
   // map to RICH type. Hardcode PDG codes here instead of using
   // the particle properties service. Probably safe !
   return ( 11         == id ? Rich::Electron :

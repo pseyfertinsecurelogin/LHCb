@@ -8,92 +8,54 @@
   <package name="FTEvent">
     <class name   = "MCFTDeposit"
            id     = "14001"
-           author = "Eric Cogneras"
-           desc   = "This class represents the total photons deposited in each FTChannelID by the crossing MCHits"
+           author = "Jeroen van Tilburg"
+           desc   = "Number of photons deposited in each FTChannelID by the crossing MCHits"
            serializers="FALSE">
+      <base     name="ContainedObject"/>
+      &ContainedObject;
       <import   name = "Kernel/FTChannelID" />
       <import   name = "Event/MCHit" />
       <location name = "Default"   place="MC/FT/Deposits"   />
 
-      <template name = "KeyedObjectDict" t1="LHCb::FTChannelID"/>
-      <base     name = "KeyedObject&lt;LHCb::FTChannelID&gt;" />
-      &KeyedObject;
+      <constructor desc = "Constructor"
+                argList = "LHCb::FTChannelID&amp; id, const LHCb::MCHit* aHit, 
+                           int nPhotons, double time, bool isReflected"
+               initList = "m_channelID(id), m_mcHit(aHit), m_nPhotons(nPhotons),
+                           m_time(time), m_isReflected(isReflected)" />
 
-      <constructor desc     = "Constructor"
-		   argList  = "LHCb::FTChannelID&amp; id, LHCb::MCHit* aHit, int photons, double time, bool isReflected">
-        <code> this->setKey(id); 
-	  m_mcHitVec.push_back(aHit);
-	  m_photonVec.push_back(photons);
-	  m_timeVec.push_back(time);
-    m_isReflectedVec.push_back(isReflected);
-    m_noisePhotons = 0;
-	</code>
-      </constructor>
-
-      <destructor  desc="destructor">
-        <code> // dummy  </code>
-      </destructor>
-
-      <method    name   = "channelID"
-                 desc   = "Retrieve the FTChannelID, key of the object"
-                 type   = "const LHCb::FTChannelID&amp;"
-                 const  = "TRUE"
-                 access = "PUBLIC">
-        <code> return key(); </code>
+      <method name = "lowerByChannelID"
+              desc = "Comparison for sorting by channel ID"
+           argList = "MCFTDeposit* d1, MCFTDeposit* d2"
+              type = "bool"
+            static = "TRUE"
+            access = "PUBLIC">
+         <code> return d1-&gt;channelID() &lt; d2-&gt;channelID(); </code>
       </method>
 
-      <method    name   = "addMCHit"
-                 desc   = "Add MCHit, energies and times to the relevant vectors"
-                 type   = "void"
-		 argList = "LHCb::MCHit* aHit, int photons, double time, bool isReflected "
-                 access = "PUBLIC">
-        <code> 
-	  m_mcHitVec.push_back(aHit);
-	  m_photonVec.push_back(photons);
-	  m_timeVec.push_back(time);
-    m_isReflectedVec.push_back(isReflected);
-	</code>
-      </method>
+      <attribute  name    = "channelID"
+                  desc    = "The FTChannelID of this deposit"
+                  type    = "const LHCb::FTChannelID"
+                  setMeth = "FALSE"/>
 
-      <method    name    = "countNoise"
-                 desc    = "keep track of added noise photons"
-                 type    = "void"
-                 argList = "int newNoisePhotons"
-                 access  = "PUBLIC">
-          <code>
-            m_noisePhotons += newNoisePhotons;
-          </code>
-      </method>
+      <attribute  name    = "mcHit"
+                  desc    = "Pointer to MCHit"
+                  type    = "const LHCb::MCHit*"
+                  setMeth = "FALSE"/>
 
-      <attribute name   = "mcHitVec"
-                 desc   = "Vector of MCHits"
-                 type   = "std::vector &lt; LHCb::MCHit* &gt;"
-		 setMeth = "FALSE"
-                 access = "PRIVATE"/>
+      <attribute  name    = "nPhotons"
+                  desc    = "Number of photons"
+                  type    = "int"
+                  setMeth = "FALSE"/>
 
-      <attribute name   = "photonVec"
-                 desc   = "Vector of photon deposits"
-                 type   = "std::vector &lt; double &gt;"
-		 setMeth = "FALSE"
-                 access = "PRIVATE"/>
+      <attribute  name    = "time"
+                  desc    = "Time of the deposit"
+                  type    = "double"
+                  setMeth = "FALSE"/>
 
-      <attribute name   = "timeVec"
-                 desc   = "Vector of time deposits"
-                 type   = "std::vector &lt; double &gt;"
-		 setMeth = "FALSE"
-                 access = "PRIVATE"/>
-
-      <attribute name   = "isReflectedVec"
-                 desc   = "Vector of isReflected flags"
-                 type   = "std::vector &lt; bool &gt;"
-		 setMeth = "FALSE"
-                 access = "PRIVATE"/>
-
-      <attribute name   = "noisePhotons"
-                 desc   = "Counter for added noise photons"
-                 type   = "int"
-                setMeth = "FALSE"
-                 access = "PRIVATE" />
+      <attribute  name    = "isReflected"
+                  desc    = "isReflected flag"
+                  type    = "bool"
+                  setMeth = "FALSE"/>
 
     </class>
   </package>

@@ -29,7 +29,9 @@ RawBankDecoder::RawBankDecoder( const std::string& name,
                                                LHCb::RawEventLocation::Default } ) },
                     KeyValue{ "OdinLocation", LHCb::ODINLocation::Default } },
                   { KeyValue{ "DecodedDataLocation", L1MapLocation::Default } } )
-{ }
+{
+  //setProperty( "OutputLevel", MSG::VERBOSE );
+}
 
 //=============================================================================
 
@@ -384,7 +386,7 @@ void RawBankDecoder::decodeToSmartIDs_2007( const LHCb::RawBank & bank,
   DetectorArray<unsigned int> nHPDbanks{{0,0}}, decodedHits{{0,0}};
 
   // Data bank size in 32 bit words
-  const int bankSize = bank.size() / 4;
+  const auto bankSize = bank.size() / 4;
 
   // Get bank version
   const auto version = bankVersion( bank );
@@ -681,7 +683,7 @@ void RawBankDecoder::decodeToSmartIDs_2006TB( const LHCb::RawBank & bank,
   DetectorArray<unsigned int> nHPDbanks{{0,0}}, decodedHits{{0,0}};
 
   // Data bank size in words
-  const int bankSize = bank.size() / 4;
+  const auto bankSize = bank.size() / 4;
 
   // Get bank version
   const auto version = bankVersion( bank );
@@ -807,7 +809,7 @@ void RawBankDecoder::decodeToSmartIDs_DC0406( const LHCb::RawBank & bank,
   DetectorArray<unsigned int> nHPDbanks{{0,0}}, decodedHits{{0,0}};
 
   // Data bank size in words
-  const int bankSize = bank.size() / 4;
+  const auto bankSize = bank.size() / 4;
 
   // Get bank version
   const auto version = bankVersion( bank );
@@ -974,7 +976,7 @@ RawBankDecoder::decodeToSmartIDs_MaPMT0( const LHCb::RawBank & bank,
   _ri_debug << "FlatList Decoding L1 bank " << L1ID << endmsg;
 
   // Data bank size in 32 bit words
-  const int bankSize = bank.size() / 4;
+  const auto bankSize = bank.size() / 4;
 
   // various counts
   DetectorArray<unsigned int> decodedHits{{0,0}};
@@ -1113,7 +1115,7 @@ void RawBankDecoder::dumpRawBank( const LHCb::RawBank & bank,
   const auto version = bankVersion( bank );
 
   // Data bank size in words
-  const int bankSize = bank.size() / 4;
+  const auto bankSize = bank.size() / 4;
 
   std::ostringstream magicAsHex;
   magicAsHex << std::hex << bank.magic();

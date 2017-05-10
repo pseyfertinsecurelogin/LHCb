@@ -41,6 +41,18 @@ namespace LHCb
 
     // Taggers
     unsigned int firstTagger{0}, lastTagger{0};
+
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.io(
+        key, decision, omega, decisionOS, omegaOS,
+        taggedB, firstTagger, lastTagger
+      );
+    }
+    template<typename T>
+    inline void load(T& buf, unsigned int /*version*/) {
+      save(buf); // identical operation until version is incremented
+     }
   };
 
   // ----------------------------------------------------------------------------------------
@@ -59,6 +71,17 @@ namespace LHCb
     short int         omega{0}; ///< Wrong tag fraction of tagger from MC tuning
     // Tagging Particles
     unsigned int firstTagP{0}, lastTagP{0};
+
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.io(
+        type, decision, omega, firstTagP, lastTagP
+      );
+    }
+    template<typename T>
+    inline void load(T& buf, unsigned int /*version*/) {
+      save(buf); // identical operation until version is incremented
+     }
   };
 
   // ----------------------------------------------------------------------------------------
@@ -129,6 +152,29 @@ namespace LHCb
     const TaggingParticles& taggeringPs() const { return m_taggingPs; }
     /// Access to taggers
     TaggingParticles& taggeringPs()             { return m_taggingPs; }
+
+    /// Describe serialization of object
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.template save<uint8_t>(m_packingVersion);
+      buf.template save<uint8_t>(version());
+      buf.save(m_vect);
+      buf.save(m_taggers);
+      buf.save(m_taggingPs);
+    }
+    /// Describe de-serialization of object
+    template<typename T>
+    inline void load(T& buf) {
+      setPackingVersion(buf.template load<uint8_t>());
+      setVersion(buf.template load<uint8_t>());
+      if (m_packingVersion > defaultPackingVersion()) {
+        throw std::runtime_error("PackedFlavourTags packing version is not supported: "
+                                 + std::to_string(m_packingVersion));
+      }
+      buf.load(m_vect, m_packingVersion);
+      buf.load(m_taggers, m_packingVersion);
+      buf.load(m_taggingPs);
+    }
 
   private:
 

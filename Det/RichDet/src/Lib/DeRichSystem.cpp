@@ -363,7 +363,7 @@ StatusCode DeRichSystem::fillMaps( const Rich::DetectorType rich )
     const Rich::DAQ::Level1HardwareID L1ID   ( *iL1    );
     const Rich::DAQ::Level0ID         L0ID   ( *iL0    );
     const Rich::DAQ::Level1Input      L1IN   ( *iL1In  );
-    const Rich::DAQ::HPDCopyNumber    copyN  ( *icopyN );
+    const Rich::DAQ::PDCopyNumber     copyN  ( *icopyN );
 
     // debug printout
     _ri_verbo << "PD     " << pdID
@@ -695,7 +695,7 @@ DeRichSystem::level1InputNum( const Rich::DAQ::HPDHardwareID& hardID ) const
 //  richSmartID from copy number
 //=========================================================================
 const LHCb::RichSmartID
-DeRichSystem::richSmartID( const Rich::DAQ::HPDCopyNumber& copyNumber ) const
+DeRichSystem::richSmartID( const Rich::DAQ::PDCopyNumber& copyNumber ) const
 {
   // See if this Level0 hardware ID is known
   const auto id = m_copyNumber2smartid.find( copyNumber );
@@ -713,7 +713,7 @@ DeRichSystem::richSmartID( const Rich::DAQ::HPDCopyNumber& copyNumber ) const
 //=========================================================================
 // Obtain the Copy Number number for a given RichSmartID
 //=========================================================================
-const Rich::DAQ::HPDCopyNumber
+const Rich::DAQ::PDCopyNumber
 DeRichSystem::copyNumber( const LHCb::RichSmartID& smartID ) const
 {
   // See if this RichSmartID is known

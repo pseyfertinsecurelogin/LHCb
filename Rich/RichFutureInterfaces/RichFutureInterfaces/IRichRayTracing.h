@@ -34,6 +34,7 @@ namespace LHCb
   class RichTrackSegment;
 }
 class DeRichSphMirror;
+class DeRichPD;
 
 namespace Rich
 {
@@ -76,9 +77,11 @@ namespace Rich
         /// Channel ID for detection point
         LHCb::RichSmartID smartID;     
         /// Pointer to the associated primary mirror detector element
-        const DeRichSphMirror * primaryMirror { nullptr };
+        const DeRichSphMirror * primaryMirror   { nullptr };
         /// Pointer to the associated secondary mirror detector element
         const DeRichSphMirror * secondaryMirror { nullptr };
+        /// Pointer to the associated DeRichPD object (if available)
+        const DeRichPD        * photonDetector  { nullptr };
       public:
         /// Container of results
         using Vector = std::vector<Result>;

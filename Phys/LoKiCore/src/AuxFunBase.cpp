@@ -87,8 +87,6 @@ bool LoKi::AuxFunBase::setLoKiSvc
 // constructor from arguments string
 // ============================================================================
 LoKi::AuxFunBase::AuxFunBase ( )
-  : m_event   ( 0     )
-  , m_cargs   (       )  
 {
 #ifdef LOKI_DEBUG
   // increment the instance counter

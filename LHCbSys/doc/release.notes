@@ -14,6 +14,109 @@
 </ul>
 </b>
 
+<H1><A NAME=v42r3>2017-04-24 LHCbSys v42r3</A></H1>
+This version uses Gaudi v28r2 and LCG_82 with ROOT 6.08.06.
+<p>
+This version is released on master branch. 
+
+<h2>New or changed functionalities</h2>
+<dl>
+<dt>[MR !595] Refactored and improved Git CondDB support tools
+
+<dt>[MR !607] Register to the special incident APP_INITIALIZED to disconnect from Git CondDB
+<dd> The ```APP_INITIALIZED``` incident is issued by Gaudi Online tasks after the initialization is completed, to trigger checkpointing or prepare for forking.
+<dd>Disconnecting from Git at this point prevents issues with changes in the Git CondDB internal files.
+
+<dt>[MR !596] Add the possibility to remap failure return codes to success in XMLSummarySvc
+<dd> see GAUDI-1301
+
+<dt>[MR !581] Update the MuonPID class to add 5 new variables
+
+<dt>[MR !606] Add services for keeping track of line persistence requests
+<dd> Inspired by the comments in LBHLT-233, but extended to include the persistence of reconstructed objects in addition to raw banks.
+<dd> ```ILinePersistenceSvc``` interface defines two methods:
+<ul>
+<li> ```locationsToPersist(const HltDecReports&, const std::set<std::string>& lines)``` returns the union of locations that were requested by all lines from ```lines``` that fired in the given HltDecReports object.
+<li> ```rawBanksToPersist(const HltDecReports&, const std::set<std::string>& lines)``` returns the union of the requested raw banks for all lines from `lines` that fired in the given HltDecReports object.
+</ul>
+<dd> Two implementations are provided:
+<ul>
+<li> ```HltLinePersistenceSvc``` takes care of the Moore use case and is configured by the TCK
+<li> ```TCKLinePersistenceSvc``` is meant to be used offline and uses the TCK in the ```HltDecReports``` to "configure itself".
+</ul>
+<dd> The configuration of ```HltLinePersistenceSvc``` consists of:
+<ul>
+<li> ```Locations``` -- a map ```{DecisionName: list of locations}```
+<li> ```RawBankTypes``` -- a map ```{DecisionName: list of raw bank type names}```
+</ul>
+
+<dt>[MR !599] Selective persistence for Flexible Turbo (LHCBPS-1633, in particular LBHLT-134)
+<dd> Add ```save``` and ```load``` methods for Packed Objects to allow persistence in raw event format for:
+<ul>
+<li> ```PackedParticles```
+<li> ```PackedVertices```
+<li> ```PackedRelations```
+<li> ```PackedFlavourTags```
+<li> ```PackedRelatedInfoRelations```
+</ul>
+<dd> Packed objects above are included in ```HltPackedDataWriter(Decoder)``` to perform serialization and de-serialization of objects.
+<dd> `HltPackedDataWriter(Decoder)` are adapted to be less strict about the locations in the ContainerMap property. This is needed in order to support many-to-one relations
+<dd> ```PackedRecVertex::container``` is added to the serialization. Since there is no versioning of the serialization, the packing version is incremented without changing the packing behaviour.
+
+<dt>[MR !600] Make PersistRecoConf data-type-aware and add 2017 locations
+<dd> See LBHLT-310 and Hlt!261
+<dd> Cleanup 2015 adhoc configuration in TurboConf.py
+
+<dt>[MR !612] Make sure DecodeRawEvent is configured after TurboConf
+
+<dt>[MR !593] Implement AlwaysCreateOutput for PackParticlesAndVertices
+<dd> ```AlwaysCreateOutput``` property was defined but never used within the code
+<dd> Add a new property ```AlwaysCreateContainers```, which lists the output locations that are to be created regardless of the existence of the input
+<dd> Triggered by LBHLT-134
+
+<dt>[MR !586] Changes for implementation of detailed FT digitization
+
+
+</dl>
+
+<h2>Performance optimisations</h2>
+<dl>
+<dt>[MR !584] inline the DeRichBeamPipe intersection methods
+</dl>
+
+<h2>Bug fixes</h2>
+<dl>
+<dt>[MR !604] Fix event number initialisation in LoKi::AuxFunBase
+
+<dt>[MR !592] RICH Future : Fix build platform differences.
+<dd> Improves the RICH MC utility classes to better support cases where a single Track can have multiple MCParticles associated to.
+
+<dt>[MR !598] Add protection against invalid cellID in Fix2Dview
+
+<dt>[MR !594] Fix some issues with the CondDBBrowser after !576
+
+<dt>[MR !591] Fix GaudiObjDesc generation of friend functions
+
+<dt>[MR !589] Explicitly search for libxml2 to ensure the version shipped with the LCG is used.
+<dd> When building on plus (online), the system version was picked up, which lead to silent segfaults when generating headers using god.py.
+
+</dl>
+
+<h2>Monitoring changes</h2>
+<dl>
+<dt>[MR !608, !611] Print INFO message for the used tag in Git CondDB in initialize (else DEBUG)
+
+<dt>[MR !590] Move some output of the HcRawBankDecoderHlt to debug.
+
+</dl>
+
+<h2>Changes to tests</h2>
+<dl>
+<dt>[MR !585] Replace GaudiTest.py by GaudiTesting - see LHCBPS-1692
+<dt>[MR !613] Add exclusion for Git CondDB INFO messages
+</dl>
+
+
 <H1><A NAME=v42r2>2017-03-28 LHCbSys v42r2</A></H1>
 This version uses Gaudi v28r2 and LCG_82 with ROOT 6.08.06.
 <p>

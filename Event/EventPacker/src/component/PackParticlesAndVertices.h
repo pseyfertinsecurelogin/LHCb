@@ -39,6 +39,24 @@
  *
  *  Packs Particles, Vertices and related information.
  *
+ *  If one always wants to create the packed locations, regardless of whether there
+ *  are any related objects to be packed, one should set the `AlwaysCreateOutput` to
+ *  true and set the `AlwaysCreateContainers` list to the desired locations.
+ *
+ *  For example, the following configures the tool to always create the packed
+ *  particles location:
+ *
+ *  @code
+ *  from Configurables import PackParticlesAndVertices
+ *  input_stream = '/Event'
+ *  ppvs = PackParticlesAndVertices()
+ *  ppvs.InputStream = input_stream
+ *  ppvs.AlwaysCreateOutput = True
+ *  ppvs.AlwaysCreateContainers = [
+ *      '{0}/pPhys/Particles'.format(input_stream)
+ *  ]
+ *  @endcode
+ *
  *  @author Olivier Callot
  *  @date   2012-01-23
  */
@@ -51,6 +69,8 @@ public:
   PackParticlesAndVertices( const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode execute() override; ///< Algorithm execution
+
+  StatusCode initialize() override; ///< Initialize the algorithm instance.
 
 private:
 
@@ -69,6 +89,9 @@ private:
 
   /// Test if a TES container is Veto'ed from being packed
   bool isVetoed( const std::string& id ) const;
+
+  /// Test if an output location should always be created
+  bool alwaysCreate( const std::string& id ) const;
 
   /// Build the ClassID to TES location(s) map
   void buildTESMap( const DataObject* obj,
@@ -133,6 +156,7 @@ private:
   bool m_deleteInput;        ///< Delete the containers after packing if true.
   bool m_enableCheck;        ///< Flag to turn on automatic unpacking and checking of the output post-packing
   std::vector<std::string> m_vetoedConts; ///< Vetoed containers. Will not be packed.
+  std::vector<std::string> m_createConts; ///< Always create these containers
   StandardPacker m_pack;     ///< Standard packer
 
 };
@@ -277,6 +301,16 @@ inline bool PackParticlesAndVertices::isVetoed( const std::string& id ) const
     else          { debug() << "  --> Selected ... " << id << endmsg; }
   }
   return vetoed;
+}
+
+//==============================================================================
+// Test if an output TES location should always be created
+//==============================================================================
+inline bool PackParticlesAndVertices::alwaysCreate( const std::string& id ) const
+{
+  return m_alwaysOutput && ( std::find( m_createConts.begin(),
+                                        m_createConts.end(),
+                                        id ) != m_createConts.end() );
 }
 
 #endif // PACKPARTICLESANDVERTICES_H

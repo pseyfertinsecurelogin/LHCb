@@ -18,7 +18,7 @@ known_extras=['Raw/Prs/Adcs', 'Hlt1/DecReports', 'Hlt2/DecReports',
               'Rec/TT/Summary', 'Rec/IT/Summary', 'Rec/UT/Summary']
 
 from GaudiConf.PersistRecoConf import PersistRecoPacking
-__packing = PersistRecoPacking()
+__packing = PersistRecoPacking("2017")  # this needs to match Decoders.py
 known_extras += __packing.packedLocations()
 
 #known differences, none :)
