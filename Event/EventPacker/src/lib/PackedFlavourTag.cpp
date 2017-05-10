@@ -47,11 +47,6 @@ void FlavourTagPacker::pack( const Data & ft,
       ptagger.type     = T.type();
       ptagger.decision = T.decision();
       ptagger.omega    = m_pack.fraction( T.omega() );
-      // for packing versions 1 and above add mva and charge to PackedTagger
-      if (ver > 0) {
-        ptagger.charge = m_pack.fraction(T.charge());
-        ptagger.mvaValue = m_pack.mva(T.mvaValue());
-      }
 
       // tagging particles
       ptagger.firstTagP = pfts.taggeringPs().size();
@@ -67,6 +62,11 @@ void FlavourTagPacker::pack( const Data & ft,
       }
       ptagger.lastTagP = pfts.taggeringPs().size();
 
+      // for packing versions 1 and above add mva and charge to PackedTagger
+      if (ver > 0) {
+        ptagger.charge = m_pack.fraction(T.charge());
+        ptagger.mvaValue = m_pack.mva(T.mvaValue());
+      }
     }
 
     pft.lastTagger = pfts.taggers().size();
@@ -149,12 +149,6 @@ void FlavourTagPacker::unpack( const PackedData       & pft,
       tagger.setDecision( ptagger.decision               );
       tagger.setOmega   ( m_pack.fraction(ptagger.omega) );
 
-      // for packing versions 1 and above retrieve mva and charge to PackedTagger
-      if (ver > 0){
-        tagger.setCharge  ( m_pack.fraction(ptagger.charge) );
-        tagger.setMvaValue( m_pack.mva(ptagger.mvaValue)    );
-      }
-
       // tagging particles
       for ( auto iP = ptagger.firstTagP; iP < ptagger.lastTagP; ++iP )
       {
@@ -168,10 +162,13 @@ void FlavourTagPacker::unpack( const PackedData       & pft,
         else { parent().Error("Corrupt FlavourTag Tagging Particle SmartRef found").ignore(); }
       }
 
+      // for packing versions 1 and above retrieve mva and charge to PackedTagger
+      if (ver > 0){
+        tagger.setCharge  ( m_pack.fraction(ptagger.charge) );
+        tagger.setMvaValue( m_pack.mva(ptagger.mvaValue)    );
+      }
     }
-
   }
-
 }
 
 void FlavourTagPacker::unpack( const PackedDataVector & pfts,
