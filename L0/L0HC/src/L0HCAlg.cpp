@@ -72,8 +72,8 @@ StatusCode L0HCAlg::initialize() {
 StatusCode L0HCAlg::execute() {
 
   // Retrieve Herschel digits
-  l0digits = getIfExists<LHCb::HCDigits>(m_digitLocation);
-  if ( !l0digits ) {
+  digits = getIfExists<LHCb::HCDigits>(m_digitLocation);
+  if ( !digits ) {
     // should always be available ...
 	return Error( "Cannot load the HCDigits data object", StatusCode::SUCCESS );
   }
