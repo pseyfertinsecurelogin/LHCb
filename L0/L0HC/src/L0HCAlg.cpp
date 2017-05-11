@@ -7,11 +7,6 @@
 
 // From Event
 #include "Event/L0ProcessorData.h"
-//#include "Event/L0CaloCandidate.h"
-//#include "Event/L0CaloAdc.h"
-
-// From Kernel
-//#include "Kernel/CaloCellID.h"
 
 //
 //  Level-0 Herschel trigger emulation algorithm
@@ -72,7 +67,7 @@ StatusCode L0HCAlg::initialize() {
 }
 
 //=============================================================================
-// Execute: Compute the calo trigger information
+// Execute: Compute the Herschel trigger information
 //=============================================================================
 StatusCode L0HCAlg::execute() {
 
