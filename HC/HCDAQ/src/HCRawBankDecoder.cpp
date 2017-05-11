@@ -28,7 +28,6 @@ DECLARE_ALGORITHM_FACTORY(HCRawBankDecoder)
 HCRawBankDecoder::HCRawBankDecoder(const std::string& name,
                                    ISvcLocator* pSvcLocator)
     : Decoder::HistoAlgBase(name, pSvcLocator),
-	: L0FromRawBase ( name , pSvcLocator ),
       m_digits(NULL), m_l0digits(NULL) {
 
   declareProperty("DigitLocation", 
