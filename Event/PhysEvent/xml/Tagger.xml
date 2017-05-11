@@ -63,7 +63,7 @@
     <constructor
         desc = "Copy Constructor"
         argList  = "const Tagger&amp; c"
-        initList = "m_type(c.type()), m_decision(c.decision()), m_omega(c.omega()), m_charge(c.charge()), m_mvaValue(c.mvaValue()), m_taggerParts(c.taggerParts())">
+        initList = "m_type(c.type()), m_decision(c.decision()), m_omega(c.omega()), m_mvaValue(c.mvaValue()), m_charge(c.charge()), m_taggerParts(c.taggerParts())">
         <code/>
     </constructor>
 
@@ -89,15 +89,15 @@
     />
 
     <attribute
-        name = "charge"
-        desc = "(weighted) charge of the tagging particle"
+        name = "mvaValue"
+        desc = "raw output of the mva"
         type = "float"
         init = "0.0"
     />
 
     <attribute
-        name = "mvaValue"
-        desc = "raw output of the mva"
+        name = "charge"
+        desc = "(weighted) charge of the tagging particle"
         type = "float"
         init = "0.0"
     />

@@ -70,12 +70,12 @@ namespace LHCb
     short int      decision{0}; ///< Decision of tagger
     short int         omega{0}; ///< Wrong tag fraction of tagger
     unsigned int firstTagP{0}, lastTagP{0}; ///< Tagging particles
-    short int    charge{0};     ///< Charge used for classification
     int          mvaValue{0};   ///< MVA used for classification
+    short int    charge{0};     ///< Charge used for classification
 
     template<typename T>
     inline void save(T& buf) const {
-      buf.io(type, decision, omega, firstTagP, lastTagP, charge, mvaValue);
+      buf.io(type, decision, omega, firstTagP, lastTagP, mvaValue, charge);
     }
     template<typename T>
     inline void load(T& buf, unsigned int version) {

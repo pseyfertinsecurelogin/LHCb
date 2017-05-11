@@ -64,8 +64,8 @@ void FlavourTagPacker::pack( const Data & ft,
 
       // for packing versions 1 and above add mva and charge to PackedTagger
       if (ver > 0) {
-        ptagger.charge = m_pack.fraction(T.charge());
         ptagger.mvaValue = m_pack.mva(T.mvaValue());
+        ptagger.charge = m_pack.fraction(T.charge());
       }
     }
 
@@ -164,8 +164,8 @@ void FlavourTagPacker::unpack( const PackedData       & pft,
 
       // for packing versions 1 and above retrieve mva and charge to PackedTagger
       if (ver > 0){
-        tagger.setCharge  ( m_pack.fraction(ptagger.charge) );
         tagger.setMvaValue( m_pack.mva(ptagger.mvaValue)    );
+        tagger.setCharge  ( m_pack.fraction(ptagger.charge) );
       }
     }
   }
@@ -249,8 +249,8 @@ StatusCode FlavourTagPacker::check( const Data & dataA,
       ok &= ch.compareInts(   "TaggerType",     iA->type(),     iB->type()     );
       ok &= ch.compareInts(   "TaggerDecision", iA->decision(), iB->decision() );
       ok &= ch.compareFloats( "TaggerOmega",    iA->omega(),    iB->omega()    );
-      ok &= ch.compareFloats( "TaggerCharge",   iA->charge(),   iB->charge()   );
       ok &= ch.compareFloats( "TaggerMVAValue", iA->mvaValue(), iB->mvaValue() );
+      ok &= ch.compareFloats( "TaggerCharge",   iA->charge(),   iB->charge()   );
 
       const bool pSizeOK = ch.compareInts( "TaggerPSize",
                                            iA->taggerParts().size(),
