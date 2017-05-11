@@ -20,8 +20,7 @@ class RawEvent;
  *
  */
 
-class HCRawBankDecoder : public Decoder::HistoAlgBase
-					   : public L0FromRawBase {
+class HCRawBankDecoder : public Decoder::HistoAlgBase {
  public:
   /// Standard constructor
   HCRawBankDecoder(const std::string& name, ISvcLocator* pSvcLocator);
