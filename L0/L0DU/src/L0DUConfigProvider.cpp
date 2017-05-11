@@ -41,11 +41,11 @@ namespace {
    // Try to find, in the Haystack, the Needle - ignore case
   inline bool contains_ci(boost::string_ref haystack, boost::string_ref needle)
   {
-     auto it = std::search( std::begin(haystack), std::end(haystack),
-                            std::begin(needle),   std::end(needle),
+     auto it = std::search( begin(haystack), end(haystack),
+                            begin(needle),   end(needle),
                  [](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
      );
-     return it != std::end(haystack);
+     return it != end(haystack);
   }
 
 
@@ -258,7 +258,6 @@ void L0DUConfigProvider::createConfig(std::string slot){
 }
 
 
-
 void L0DUConfigProvider::printConfig(const LHCb::L0DUConfig& config,std::string slot) const {
   if( slot == "") slot = "T0";
   info() << "**** L0DU Config loading : L0TCK = " << format("0x%04X" , config.tck()) << " for slot "
@@ -322,16 +321,8 @@ std::vector<std::string> L0DUConfigProvider::Parse(std::string flag, std::vector
               << separators.first << "data" << separators.second << endmsg;
 
   std::vector<std::string> values;
-  for(std::vector<std::string>::iterator iconfig= config.begin(); iconfig != config.end(); iconfig++){
-    std::string val;
-    // produce case-insensitive result
-    std::string conf(*iconfig);
-    std::string uConf(conf);
-    std::string uFlag(flag);
-    std::transform( conf.begin() , conf.end() , uConf.begin () , ::toupper ) ;
-    std::transform( flag.begin() , flag.end() , uFlag.begin () , ::toupper ) ;
-    int index = uConf.find( uFlag );
-    if(index != -1 ){
+  for(auto iconfig= config.begin(); iconfig != config.end(); iconfig++){
+    if (contains_ci(*iconfig,flag)) {
       if( msgLevel(MSG::VERBOSE) )
         verbose() << "Flag '" << flag << "' found in the data string '" << *iconfig << "'" << endmsg;
 
@@ -344,13 +335,13 @@ std::vector<std::string> L0DUConfigProvider::Parse(std::string flag, std::vector
         return values;
       }
       while(id >= 0){
-        int from = iconfig->find(separators.first,id);
-        int to   = iconfig->find(separators.second,from+1);
-        if(from != -1 && to != -1){
-          val = iconfig->substr(from+1, to-from-1);
+        auto from = iconfig->find(separators.first,id);
+        auto to   = iconfig->find(separators.second,from+1);
+        if(from != std::string::npos && to != std::string::npos){
+          auto val = iconfig->substr(from+1, to-from-1);
           if( msgLevel(MSG::VERBOSE) )
             verbose() << "parsed value = '" << val << "'" <<endmsg;
-          values.push_back( val );
+          values.push_back( std::move(val) );
           id = iconfig->find(separators.first,to+1);
         }
         else{
@@ -375,21 +366,13 @@ std::vector<std::string> L0DUConfigProvider::Parse(std::string flag, std::vector
 StatusCode L0DUConfigProvider::createData(){
   //===== create compound data
   int id = m_dataMap.size();
-  for(ConfigIterator iconfig = m_data.begin(); iconfig != m_data.end() ; ++iconfig){
+  for(auto iconfig = m_data.begin(); iconfig != m_data.end() ; ++iconfig){
     std::vector<std::string> values;
 
     // check all tags exist
-    for(std::vector<std::string>::iterator itag = iconfig->begin() ; itag != iconfig->end() ; itag++){
-      bool ok = false;
-      for(auto iflag = s_dataFlags.begin();iflag!=s_dataFlags.end();iflag++){
-        std::string uTag(*itag);
-        std::string uFlag(*iflag);
-        std::transform( itag->begin() , itag->end() , uTag.begin () , ::toupper ) ;
-        std::transform( iflag->begin() , iflag->end() , uFlag.begin () , ::toupper ) ;
-        int index = uTag.find( uFlag );
-        if( index > -1) ok=true;
-      }
-      if( !ok ){
+    for(auto itag = iconfig->begin() ; itag != iconfig->end() ; itag++){
+      if( std::none_of( s_dataFlags.begin(), s_dataFlags.end(),
+                        [&](const std::string& df) { return contains_ci(*itag,df); } ) ) {
         error() << "Description tag : '" << *itag << "' is unknown for the new DATA defined via options (num =  "
                 << iconfig-m_data.begin()  << ")" << endmsg;
         info()  << "Allowed flags for new data description are : " << s_dataFlags << endmsg;
@@ -412,7 +395,7 @@ StatusCode L0DUConfigProvider::createData(){
     std::string dataName = *(values.begin()); // The NAME
 
     // Check the data already exist or not
-    LHCb::L0DUElementaryData::Map::iterator it = m_dataMap.find( dataName );
+    auto it = m_dataMap.find( dataName );
     if( it != m_dataMap.end() ){
       warning() << "One L0DUElementaryData  with name : '" << dataName
                 <<"' already exists - Please check your settings" << endmsg;
@@ -486,7 +469,7 @@ StatusCode L0DUConfigProvider::createConditions(){
 
 
   int id = m_conditionsMap.size();
-  for(ConfigIterator iconfig = m_conditions.begin(); iconfig != m_conditions.end() ; ++iconfig){
+  for(auto iconfig = m_conditions.begin(); iconfig != m_conditions.end() ; ++iconfig){
     std::vector<std::string> values;
 
     // check all tags exist
@@ -515,7 +498,7 @@ StatusCode L0DUConfigProvider::createConditions(){
     std::string conditionName = *(values.begin()); // The NAME
 
   // Check the condition already exist or not (if yes overwrite it)
-    LHCb::L0DUElementaryCondition::Map::iterator ic = m_conditionsMap.find( conditionName );
+    auto ic = m_conditionsMap.find( conditionName );
     if( ic != m_conditionsMap.end() ){
       warning() << "One L0DUElementaryCondition with name : '" << conditionName
                 <<"' already exists  - Please check your settings" << endmsg;
@@ -591,13 +574,8 @@ StatusCode L0DUConfigProvider::createConditions(){
       return StatusCode::FAILURE;
     }
 
-    std::string comp =  *(values.begin()); // The COMPARATOR
-
-    bool ok = false;
-    for(std::vector<std::string>::const_iterator icomp = s_comparators.begin();icomp!=s_comparators.end();++icomp){
-      if( comp == *icomp){ok=true;break;}
-    }
-    if(!ok){
+    const std::string& comp =  values.front(); // The COMPARATOR
+    if(std::find(s_comparators.begin(),s_comparators.end(),comp)==s_comparators.end()){
       fatal() << "requested comparator "<< comp <<" is not allowed " << endmsg;
       info() << "Allowes comparators are : " << s_comparators << endmsg;
       return StatusCode::FAILURE;
@@ -612,8 +590,8 @@ StatusCode L0DUConfigProvider::createConditions(){
       return StatusCode::FAILURE;
     }
 
-    std::string cut =  *(values.begin()); // The THRESHOLD
-    std::stringstream str("");
+    const std::string& cut =  values.front(); // The THRESHOLD
+    std::stringstream str;
     str << cut;
     unsigned long threshold;
     str >> threshold ;
@@ -719,8 +697,8 @@ StatusCode L0DUConfigProvider::createChannels(){
 
     // check all tags exist
     for(const auto& tag : *iconfig) {
-      if (std::none_of( s_chanFlags.begin(), s_chanFlags.end(),
-                        [&](const std::string& cF) { return contains_ci( tag, cF ); } ) ) {
+      if (std::none_of( begin(s_chanFlags), end(s_chanFlags),
+                        [&](const std::string& s) { return contains_ci(tag,s); } ) ) {
         error() << "Description tag : '" << tag << "' is unknown for the new CHANNEL defined via options (num =  "
                 << iconfig-m_channels.begin()  << ")" << endmsg;
         info()  << "Allowed flags for new CHANNEL description are : " << s_chanFlags << endmsg;
@@ -932,18 +910,10 @@ StatusCode L0DUConfigProvider::createTriggers(){
   for(ConfigIterator iconfig = m_triggers.begin(); iconfig != m_triggers.end() ; ++iconfig){
 
     // check all tags exist
-    for(std::vector<std::string>::iterator itag = iconfig->begin() ; itag != iconfig->end() ; itag++){
-      bool ok = false;
-      for(std::vector<std::string>::const_iterator iflag = s_trigFlags.begin();iflag!=s_trigFlags.end();iflag++){
-        std::string uTag(*itag);
-        std::string uFlag(*iflag);
-        std::transform( itag->begin() , itag->end() , uTag.begin () , ::toupper ) ;
-        std::transform( iflag->begin() , iflag->end() , uFlag.begin () , ::toupper ) ;
-        int index = (uTag).find( uFlag );
-        if( index > -1)ok=true;
-      }
-      if( !ok ){
-        error() << "Description tag : '" << *itag << "' is unknown for the new TRIGGER set defined via options (num =  "
+    for(const auto& tag : *iconfig) {
+      if( std::none_of( s_trigFlags.begin(), s_trigFlags.end(),
+                        [&](const std::string& s) { return contains_ci(tag,s); }) ){
+        error() << "Description tag : '" << tag << "' is unknown for the new TRIGGER set defined via options (num =  "
                 << iconfig-m_triggers.begin()  << ")" << endmsg;
         info()  << "Allowed flags for new TRIGGER description are : " << s_trigFlags << endmsg;
         return StatusCode::FAILURE;
