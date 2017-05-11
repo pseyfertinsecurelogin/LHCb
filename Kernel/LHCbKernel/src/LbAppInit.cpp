@@ -11,10 +11,6 @@
 #include "GaudiAlg/IGenericTool.h"
 #include "GaudiKernel/Memory.h"
 
-#ifndef GOD_NOALLOC
-#include "GaudiObjDesc/MemoryPoolAllocatorReleaser.h"
-#endif
-
 // local
 #include "Kernel/LbAppInit.h"
 
@@ -25,34 +21,7 @@
 //-----------------------------------------------------------------------------
 
 // Factory not declared here to avoid it appearing in the LHCbKernel library
-// and in all component libraries depending on LHCBKernel. Moved to LHCbApps
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-LbAppInit::LbAppInit( const std::string& name,
-                      ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ),
-    m_engine(0),
-    m_evtCounter(0),
-    m_eventMax(0),
-    m_appName(""),
-    m_appVersion("")
-  , m_lastMem(0)
-{
-  declareProperty( "SkipFactor",      m_skipFactor = 0     );
-  declareProperty( "SingleSeed",      m_singleSeed = false );
-  declareProperty( "PreloadGeometry", m_preload    = false );
-  declareProperty( "PrintFreq",       m_printFreq  = 1     );
-  declareProperty( "PrintEventTime",  m_printTime  = false );
-  declareProperty( "EvtCounter",      m_evtCounterName = "EvtCounter" );
-  declareProperty( "Increment",       m_increment = 100,
-                   "Number of events to measure memory");
-  declareProperty( "MemoryPurgeLimit",m_memPurgeLimit = 3400 * 1000, // 3.4GB
-                   "The memory threshold at which to trigger a purge of the boost pools");
-  declareProperty( "MinMemoryDelta", m_minMemDelta = 16,
-                   "The minimum change in memory usage (KB) to trigger a message" );
-}
+// and in all component libraries depending on LHCbKernel. Moved to LHCbApps
 
 //=============================================================================
 // Initialization
@@ -104,6 +73,9 @@ StatusCode LbAppInit::initialize() {
   // Retrieve event counter tool
   m_evtCounter = tool<IEventCounter>(m_evtCounterName);
 
+  if( m_memPurgeLimit != -1 ) 
+    warning() << "MemPurgeLimit property is obsolete, please remove it" << endmsg;
+
   return StatusCode::SUCCESS;
 }
 
@@ -130,14 +102,6 @@ StatusCode LbAppInit::execute()
       info() << "Memory has changed from " << m_lastMem << " to " << mem << " KB"
              << " (" << memDiff << "KB, " << 100.*memDiff/m_lastMem << "%)"
              << " in last " << m_increment << " events" << endmsg ;
-      if ( mem > m_memPurgeLimit )
-      {
-
-        Info( "Memory exceeds limit of " + std::to_string(m_memPurgeLimit)
-            + " KB -> Purging pools", StatusCode::SUCCESS, 1 ).ignore();
-        releaseMemoryPools();
-        mem = System::virtualMemory();
-      }
       m_lastMem = mem;
     }
   }
@@ -150,8 +114,6 @@ StatusCode LbAppInit::execute()
 //=============================================================================
 StatusCode LbAppInit::finalize()
 {
-  releaseMemoryPools();
-
   always()
     << "=================================================================="
     << endmsg;;
@@ -284,32 +246,6 @@ const std::vector<LHCb::CondDBNameTagPair> LbAppInit::condDBTags() {
 //=============================================================================
 long LbAppInit::eventCounter() const {
   return m_evtCounter->getEventCounter();
-}
-
-//=============================================================================
-// Release unused memory in Boost memory pools
-//=============================================================================
-void LbAppInit::releaseMemoryPools() const
-{
-#ifndef GOD_NOALLOC
-
-  const unsigned long long vmem_b = System::virtualMemory();
-
-  if (msgLevel(MSG::DEBUG)) {
-    Gaudi::MemoryPoolAllocatorReleaser::releaseMemory(debug());
-  } else {
-    Gaudi::MemoryPoolAllocatorReleaser::releaseMemory();
-  }
-
-  const unsigned long long vmem_a = System::virtualMemory();
-
-  if ( msgLevel(MSG::DEBUG) && vmem_b != vmem_a )
-  {
-    debug() << "Memory change after pool release = "
-            << (long long)(vmem_a-vmem_b) << " KB" << endmsg;
-  }
-
-#endif
 }
 
 //=============================================================================
