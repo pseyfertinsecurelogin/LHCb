@@ -105,11 +105,11 @@ StatusCode L0HCAlg::execute() {
   LHCb::L0ProcessorDatas* L0HC = new LHCb::L0ProcessorDatas();
   put(L0HC, LHCb::L0ProcessorDataLocation::HC);
 
-  // What bit-shift should be employed here?
-  const unsigned int codeB = 0x10000 + (multB << L0DUBase::Calo::Sum::Shift);
+  // Using the same bit-shift as for Calo Pi0Global/Local data word; Et goes in bits 1-8 of the 32
+  const unsigned int codeB = 0x10000 + (multB << L0DUBase::Calo::Et::Shift );
   L0HC->add(new LHCb::L0ProcessorData(L0DUBase::Fiber::CaloPi0Global, codeB));
 
-  const unsigned int codeF = 0x10000 + (multF << L0DUBase::Calo::Sum::Shift);
+  const unsigned int codeF = 0x10000 + (multF << L0DUBase::Calo::Et::Shift );
   L0HC->add(new LHCb::L0ProcessorData(L0DUBase::Fiber::CaloPi0Local, codeF));
 
   // Debug now the L0 candidates
