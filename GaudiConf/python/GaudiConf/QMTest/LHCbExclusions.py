@@ -1,5 +1,5 @@
 import os
-from GaudiTesting.BaseTest import normalizeExamples, RegexpReplacer, LineSkipper
+from GaudiTesting.BaseTest import normalizeExamples, RegexpReplacer, LineSkipper, SortGroupOfLines
 
 gitCondDBFixes = (RegexpReplacer(when='Detector description database:',
                                  orig='conddb:/', repl='git:/') +
@@ -51,7 +51,8 @@ preprocessor = (
                  "Run numbers generated from 0 every 0 events"
                 ],
       regexps = [r"DEBUG Property \['Name': Value\] =  '(Timeline|(Extra|Data)(In|Out)puts)'",
-                ])
+                ]) +
+    SortGroupOfLines(r'.*SUCCESS (Number of counters : |Exceptions/Errors/Warnings/Infos Statistics :| #WARNINGS   =| #ERRORS   =|List of booked \dD histograms in directory).*')
    )
 
 from DDDB.Configuration import GIT_CONDDBS
