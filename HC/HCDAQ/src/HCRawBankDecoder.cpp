@@ -5,6 +5,7 @@
 // Gaudi
 #include "GaudiUtils/Aida2ROOT.h"
 #include "GaudiUtils/HistoLabels.h"
+#include "L0Base/L0FromRawBase.h"
 
 // LHCb
 // Event/DAQEvent
