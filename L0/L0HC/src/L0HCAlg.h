@@ -35,7 +35,7 @@ protected:
 private:
   // Local variables
   Condition *    m_cond = nullptr         	; ///< Pointer to conditions DB
-  std::string m_l0digitLocation             ; ///< L0-digits location
+  std::string    m_digitLocation            ; ///< Herschel digits location
   
   unsigned int m_crateB					  	; /// Number of B-side crate
   unsigned int m_crateF					  	; /// Number of F-side crate
@@ -48,7 +48,7 @@ private:
   /// Channel numbers for each quadrant
   std::vector<std::vector<unsigned int> > m_channels;
 
-  LHCb::HCDigits* l0digits  			  	; /// Herschel trigger digits
+  LHCb::HCDigits* digits  			  	    ; /// Herschel digits
 
   double m_totRawSize = 0.0 ;
   int    m_nbEvents   = 0   ;

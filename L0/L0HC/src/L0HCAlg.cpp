@@ -26,8 +26,8 @@ DECLARE_ALGORITHM_FACTORY( L0HCAlg )
 L0HCAlg::L0HCAlg( const std::string & name , ISvcLocator * pSvcLocator)
   : L0AlgBase( name , pSvcLocator )
 {
-  declareProperty("L0DigitLocation",
-                  m_l0digitLocation = LHCb::HCDigitLocation::L0);
+  declareProperty("DigitLocation",
+		  	  	  m_digitLocation = LHCb::HCDigitLocation::Default);
   m_HCMult_B = std::vector< int >( 12 , 0 ) ;
   m_HCMult_F = std::vector< int >(  8 , 0 ) ;
 }
@@ -38,7 +38,7 @@ L0HCAlg::L0HCAlg( const std::string & name , ISvcLocator * pSvcLocator)
 L0HCAlg::~L0HCAlg() { }
 
 //=============================================================================
-// Initialization: Retrieve the Herschel L0 trigger bits from the TES where 
+// Initialization: Retrieve the Herschel digits from the TES where
 //				   they should have been placed by HCRawBankDecoder
 //=============================================================================
 StatusCode L0HCAlg::initialize() {
@@ -65,13 +65,8 @@ StatusCode L0HCAlg::initialize() {
     mapChannels(m_channelsF2, 2, false);
   }
   
-  // Get Herschel digits.
-  l0digits = getIfExists<LHCb::HCDigits>(m_l0digitLocation);
+  // Temporary warning
   warning() << "No default HCDigits location has yet been defined -- beware" << endmsg;
-  if ( !l0digits ) {
-    // should always be available ...
-    return Error( "Cannot load the HCDigits data object", StatusCode::SUCCESS );
-  }
   
   return StatusCode::SUCCESS;
 }
@@ -80,6 +75,14 @@ StatusCode L0HCAlg::initialize() {
 // Execute: Compute the calo trigger information
 //=============================================================================
 StatusCode L0HCAlg::execute() {
+
+  // Retrieve Herschel digits
+  l0digits = getIfExists<LHCb::HCDigits>(m_digitLocation);
+  if ( !l0digits ) {
+    // should always be available ...
+	return Error( "Cannot load the HCDigits data object", StatusCode::SUCCESS );
+  }
+
   // Get the Herschel information. Adds it to the m_ecalFe[] objects
   addHCData( ) ;
   
@@ -141,46 +144,53 @@ void L0HCAlg::addHCData( ) {
     m_HCMult_F[ i ] = 0 ;
   
   // Construct F-side sum
-  for (unsigned int i = 0; i < 2; ++i) {
+  for (unsigned int i = 0; i < 3; ++i) {
   	// Loop over all quadrants on this station
     for (unsigned int j = 0; j < 4; ++j) {
       // Find CellID for this quadrant
       LHCb::HCCellID id(m_channels[i][j]);
       
-      // Retrieve the L0 digit 
-      const LHCb::HCDigit* digit = l0digits->object(id); // ??TODO this ID is wrong.
-      const std::string ch = "Counter F" + std::to_string(i) + std::to_string(j);
+      // Retrieve the digit
+      const LHCb::HCDigit* digit = digits->object(id);
+      const std::string ch = "Counter B" + std::to_string(i) + std::to_string(j);
        
       if (!digit) {
         warning() << "Cannot retrieve digit for " << ch << endmsg;
         continue;
       }
       
-      // Extract and store the result
+      // Extract data ADC
       int adc = digit->adc();
-      m_HCMult_F[ i*4 + j ] = adc;
+
+      // Compute trigger bit
+      int trig_bit = (adc>300); // TODO: Fake threshold at 300
+      m_HCMult_B[ i*4 + j ] = trig_bit;
     }
   }
       
-  // Construct B-side sum
-  for (unsigned int i = 2; i < 5; ++i) {
+  // Construct F-side sum
+  for (unsigned int i = 3; i < 5; ++i) {
   	// Loop over all quadrants on this station
     for (unsigned int j = 0; j < 4; ++j) {
       // Find CellID for this quadrant
       LHCb::HCCellID id(m_channels[i][j]);
       
-      // Retrieve the L0 digit 
-      const LHCb::HCDigit* digit = l0digits->object(id); // ??TODO this ID is wrong.
-      const std::string ch = "Counter B" + std::to_string(i-2) + std::to_string(j);
+      // Retrieve the digit
+      const LHCb::HCDigit* digit = digits->object(id);
+      const std::string ch = "Counter F" + std::to_string(i-2) + std::to_string(j);
       
       if (!digit) {
         warning() << "Cannot retrieve digit for " << ch << endmsg;
         continue;
       }
       
-      // Extract and store the result
+      // Extract data ADC
       int adc = digit->adc();
-      m_HCMult_F[ (i-2)*4 + j ] = adc;
+
+      // Compute trigger bit
+      int trig_bit = (adc>300); // TODO: Fake threshold at 300
+
+      m_HCMult_F[ (i-3)*4 + j ] = trig_bit;
     }
   }
 }
@@ -211,7 +221,7 @@ StatusCode L0HCAlg::cacheMapping() {
 bool L0HCAlg::mapChannels(const std::vector<int>& channels,
                                     const unsigned int station,
                                     const bool bwd) {
-  // Indices 0,1 are F-side; 2,3,4 are B-side                                  
+  // Indices 0,1,2 are B-side; 3,4 are F-side
   const unsigned int offset = bwd ? 0 : 2;
   
   // Check if the input is valid and if not return 0 mapping
