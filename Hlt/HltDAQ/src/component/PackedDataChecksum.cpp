@@ -202,7 +202,7 @@ void PackedDataChecksum::process(const std::string& key, const LHCb::PackedRecVe
 template<>
 void PackedDataChecksum::process(const std::string& key, const LHCb::PackedTagger& x) {
   processMany(key,
-              x.type, x.decision, x.omega, x.firstTagP, x.lastTagP);
+              x.type, x.decision, x.omega, x.firstTagP, x.lastTagP, x.mvaValue, x.charge);
 }
 
 template<>
