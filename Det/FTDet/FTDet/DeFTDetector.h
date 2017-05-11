@@ -223,4 +223,7 @@ inline const DeFTMat* DeFTDetector::findMat(const LHCb::FTChannelID& aChannel) c
   return m ? m->findMat(aChannel) : 0;
 }
 
+
+
+
 #endif // DEFTDETECTOR_H

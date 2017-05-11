@@ -4,6 +4,8 @@ from os.path import join
 from Configurables import LHCbConfigurableUser
 from Configurables import DataOnDemandSvc
 from PersistRecoConf import PersistRecoPacking
+from DAQSys.Decoders import DecoderDB
+from DAQSys.DecoderClass import Decoder
 
 __author__ = "Sean Benson, Rosen Matev"
 
@@ -28,6 +30,7 @@ class TurboConf(LHCbConfigurableUser):
     }
 
     __used_configurables__ = [
+        "DecodeRawEvent",  # we need to modify a decoder, so apply this after
     ]
 
     @classmethod
@@ -117,32 +120,23 @@ class TurboConf(LHCbConfigurableUser):
     def __apply_configuration__(self):
         self._register_unpackers()
 
-        if self.getProp("DataType")=="2015":
-            # do not neet decoder interference if using 2015 data
-            from DAQSys.Decoders import DecoderDB
-            from DAQSys.DecoderClass import Decoder
-            Decoder("HltPackedDataDecoder/Hlt2PackedDataDecoder",active=False,conf=DecoderDB)
+        # Remove standard decoder
+        decoder = DecoderDB.pop("HltPackedDataDecoder/Hlt2PackedDataDecoder")
+        assert not decoder.wasUsed(), ('Hlt2PackedDataDecoder was '
+                                       'aready setup, cannot remove!')
 
         if self.getProp('PersistReco'):
-            packing = PersistRecoPacking()
-            
+            packing = PersistRecoPacking(self.getProp('DataType'))
+
+            # Setup decoder for all but 2015 (no serialization)
+            if self.getProp("DataType") in ["2016", "2017", "2018"]:
+                Decoder("HltPackedDataDecoder/Hlt2PackedDataDecoder",
+                        active=True, banks=["DstData"],
+                        inputs={"RawEventLocations": None},
+                        outputs=packing.packedLocations(),
+                        properties={"ContainerMap":
+                                    packing.packedToOutputLocationMap()},
+                        conf=DecoderDB)
+
             self._register_pr_unpackers(packing)
             self._register_pr_links(packing)
-            
-            # account for name change in 2015
-            if self.getProp("DataType")=="2015":
-                unpackers = packing.unpackers()
-                for alg in unpackers:
-                    # Fix packed location
-                    origLoc = alg.InputName
-                    newLoc=origLoc.replace("Long","long")
-                    newLoc1=newLoc.replace("Downstream","down")
-                    newLoc2=newLoc1.replace("Neutral","neutral")
-                    alg.InputName=newLoc2
-                    # Point to correct RichPID location
-                    origLoc_rpid = alg.OutputName
-                    newLoc_rpid = origLoc_rpid.replace("deuteron","")
-                    alg.OutputName = newLoc_rpid
-                    if origLoc_rpid!=newLoc_rpid:
-                        DataOnDemandSvc().AlgMap[alg.OutputName] = alg
-

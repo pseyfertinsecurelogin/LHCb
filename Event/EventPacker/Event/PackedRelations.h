@@ -21,6 +21,17 @@ namespace LHCb
     long long container{0};
     int start{0};
     int end{0};
+
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.io(
+        container, start, end
+      );
+    }
+    template<typename T>
+    inline void load(T& buf, unsigned int /*version*/) {
+      save(buf); // identical operation until version is incremented
+     }
   };
 
   // =================== Unweighted Relations =========================
@@ -53,6 +64,7 @@ namespace LHCb
     /// Class ID
     const CLID& clID() const  override { return PackedRelations::classID(); }
 
+
   public:
 
     std::vector<PackedRelation>&       relations()       { return m_relations; }
@@ -63,6 +75,34 @@ namespace LHCb
 
     std::vector<long long>&            dests()           { return m_dest; }
     const std::vector<long long>&      dests()     const { return m_dest; }
+
+    /// Describe serialization of object
+    template<typename T>
+    inline void save(T& buf) const
+    {
+      // the object does not define a packing version, so save 0
+      buf.template save<uint8_t>(0);
+      buf.template save<uint8_t>(version());
+      buf.save(m_relations);
+      buf.save(m_source);
+      buf.save(m_dest);
+    }
+
+    /// Describe de-serialization of object
+    template<typename T>
+    inline void load(T& buf)
+    {
+      // the object does not define a packing version, but we save one
+      auto packingVersion = buf.template load<uint8_t>();
+      setVersion(buf.template load<uint8_t>());
+      if (packingVersion != 0) {
+        throw std::runtime_error("PackedRelations packing version is not supported: "
+                                 + std::to_string(packingVersion));
+      }
+      buf.load(m_relations, packingVersion);
+      buf.load(m_source);
+      buf.load(m_dest);
+    }
 
   private:
 

@@ -42,15 +42,15 @@ namespace Rich
       {
 
         /// Number of bits for each address
-        static const ShortType BitsAddress = 7;
+        static const IndexType BitsAddress = 7;
         /// Number of bits for each bit field
-        static const ShortType BitsField   = 8;
+        static const IndexType BitsField   = 8;
 
         // shift registers
-        static const ShortType ShiftField0    = 0;
-        static const ShortType ShiftAddress0  = ShiftField0 + BitsField;
-        static const ShortType ShiftField1    = ShiftAddress0 + 1 + BitsAddress;
-        static const ShortType ShiftAddress1  = ShiftField1 + BitsField;
+        static const IndexType ShiftField0    = 0;
+        static const IndexType ShiftAddress0  = ShiftField0 + BitsField;
+        static const IndexType ShiftField1    = ShiftAddress0 + 1 + BitsAddress;
+        static const IndexType ShiftAddress1  = ShiftField1 + BitsField;
 
         // The masks
         static const LongType  MaskField0   = (LongType) ((1 << BitsField)-1)   << ShiftField0;

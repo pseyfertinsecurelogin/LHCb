@@ -76,7 +76,7 @@ class NewDatabaseDialog(QDialog, Ui_NewDatabaseDialog):
             self.filenameEdit.setText(name)
     ## Check if the inputs are suitable for a connection string
     def validInputs(self):
-        return not self.filenameEdit.text().isEmpty() and self.dbNameValidator.isAcceptable
+        return bool(self.filenameEdit.text()) and self.dbNameValidator.isAcceptable
     ## Return the current connection string implied by the content of the dialog
     def connectionString(self):
         if self.validInputs():
@@ -114,9 +114,9 @@ class OpenDatabaseDialog(QDialog, Ui_OpenDatabaseDialog):
         valid = False
         currIndex = self.tabWidget.currentIndex()
         if currIndex == 0:
-            valid = not self.filenameEdit.text().isEmpty() and self.dbNameValidator.isAcceptable
+            valid = bool(self.filenameEdit.text()) and self.dbNameValidator.isAcceptable
         elif currIndex == 1:
-            valid = not self.connStringEdit.text().isEmpty()
+            valid = bool(self.connStringEdit.text())
         return valid
     ## Return the current connection string implied by the content of the dialog
     def connectionString(self):
@@ -517,7 +517,7 @@ class AddConditionDialog(QDialog, Ui_AddConditionDialog):
                 selmodel.select(index,
                                 QItemSelectionModel.ClearAndSelect | QItemSelectionModel.Rows)
     def changedSelection(self, newSelection, oldSelection):
-        rows = self.conditionsStackView.selectedRows()
+        rows = self.conditionsStackView.selectedIndexes()
         count = len(rows)
         self.upButton.setEnabled(count == 1)
         self.downButton.setEnabled(count == 1)
@@ -672,9 +672,9 @@ class CreateSliceDialog(QDialog, Ui_CreateSliceDialog):
         self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(self.validInputs())
     ## Check if the inputs are suitable for a connection string
     def validInputs(self):
-        return not self.filename.text().isEmpty() \
-                and self.dbNameValidator.isAcceptable \
-                and self.selectionsModel.rowCount()
+        return bool(self.filename.text() and
+                    self.dbNameValidator.isAcceptable and
+                    self.selectionsModel.rowCount())
     ## Return the current connection string implied by the content of the dialog
     def connectionString(self):
         if self.validInputs():
@@ -761,7 +761,7 @@ class NewTagDialog(QDialog, Ui_NewTagDialog):
         # Ensure consistency of the UI
         self.checkValidData()
     def checkValidData(self):
-        ok = not self.tag.text().isEmpty()
+        ok = bool(self.tag.text())
         self.buttonBox.button(QDialogButtonBox.Ok).setEnabled(ok)
     def setChildTagsPartVisible(self, visible):
         for w in [self.childTags, self.childTagsLabel, self.fillChildTagsBtn]:

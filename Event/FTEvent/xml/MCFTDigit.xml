@@ -21,14 +21,10 @@
       &KeyedObject;
 
       <constructor desc     = "Constructor"
-		   argList  = "LHCb::FTChannelID&amp; id, float PE, int adc, const LHCb::MCFTDeposit* deposit" 
-                   initList = "m_photoElectrons(PE),m_adcCount(adc),m_deposit(deposit)">
+		   argList  = "LHCb::FTChannelID&amp; id, float PE, int adc, std::vector&lt; const LHCb::MCFTDeposit* &gt; deposits" 
+                   initList = "m_photoElectrons(PE),m_adcCount(adc),m_deposits(deposits)">
         <code> this->setKey(id); </code>
       </constructor>
-
-      <destructor  desc="destructor">
-        <code> // dummy  </code>
-      </destructor>
 
       <method    name   = "channelID"
                  desc   = "Retrieve the FTChannelID, key of the object"
@@ -43,7 +39,7 @@
 		 type    = "bool"
 		 static  = "TRUE"
 		 access  = "PUBLIC">
-	<code> return d1-&gt;channelID() &lt; d2-&gt;channelID(); </code>
+        <code> return d1-&gt;channelID() &lt; d2-&gt;channelID(); </code>
       </method>
       
       <attribute name   = "photoElectrons"
@@ -56,10 +52,10 @@
                  type   = "int"
                  access = "PRIVATE"/>
 
-      <attribute name   = "deposit"
-                 desc   = "the MCFTDeposit corresponding to this digit"
-                 type   = "const LHCb::MCFTDeposit*"
-                 setMeth = "FALSE"
+      <attribute name   = "deposits"
+                 desc   = "the MCFTDeposits corresponding to this digit"
+                 type   = "std::vector&lt; const LHCb::MCFTDeposit* &gt;"
+                 setMeth= "FALSE"
                  access = "PRIVATE"/>
 
 

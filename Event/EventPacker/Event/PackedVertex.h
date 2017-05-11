@@ -53,6 +53,21 @@ namespace LHCb
     /// last info
     unsigned int lastInfo{0};
 
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.io(
+        key, technique, chi2, nDoF,
+        x, y, z,
+        cov00, cov11, cov22,
+        cov10, cov20, cov21,
+        firstOutgoingPart, lastOutgoingPart,
+        firstInfo, lastInfo
+      );
+    }
+    template<typename T>
+    inline void load(T& buf, unsigned int /*version*/) {
+      save(buf); // identical operation until version is incremented
+     }
   };
 
   // -----------------------------------------------------------------------
@@ -131,6 +146,29 @@ namespace LHCb
 
     /// Read access the extra info
     const ExtraInfoVector& extras() const { return m_extra; }
+
+    /// Describe serialization of object
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.template save<uint8_t>(m_packingVersion);
+      buf.template save<uint8_t>(version());
+      buf.save(m_vect);
+      buf.save(m_parts);
+      buf.save(m_extra);
+    }
+    /// Describe de-serialization of object
+    template<typename T>
+    inline void load(T& buf) {
+      setPackingVersion(buf.template load<uint8_t>());
+      setVersion(buf.template load<uint8_t>());
+      if (m_packingVersion < 1 || m_packingVersion > defaultPackingVersion()) {
+        throw std::runtime_error("PackedParticles packing version is not supported: "
+                                 + std::to_string(m_packingVersion));
+      }
+      buf.load(m_vect, m_packingVersion);
+      buf.load(m_parts);
+      buf.load(m_extra, m_packingVersion);
+    }
 
   private:
 

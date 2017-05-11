@@ -31,6 +31,7 @@ namespace Packer
   const double TIME_SCALE       = 1.0e5;  ///< 0.0001 ns resolution
   const double DELTALL_SCALE    = 1.0e4;  ///< 0.0001 precision
   const double MASS_SCALE       = 1.0e3;  ///< 1 keV steps
+  const double MVA_SCALE        = 1.0e5;  ///< Scale for MVAs
 }
 
 class StandardPacker
@@ -76,6 +77,12 @@ public:
   inline short int fraction( const double top, const double bot ) const
   {
     return fraction( fabs(bot) > 0 ? top/bot : 0.0 );
+  }
+
+  /** returns an int for a double 'mva' x */
+  inline int mva( const double x ) const
+  {
+    return packDouble( x * Packer::MVA_SCALE );
   }
 
   /** returns an int for a double time (TOF) value */
@@ -214,6 +221,9 @@ public:
 
   /** returns the fraction as double from the short int value */
   inline double fraction( const short int k ) const { return double(k) / Packer::FRACTION_SCALE; }
+
+  /** returns the mva as double from the int value */
+  inline double mva( const int k )            const { return double(k) / Packer::MVA_SCALE; }
 
   /** returns the time as double from the int value */
   inline double time( const int k )           const { return double(k) / Packer::TIME_SCALE; }

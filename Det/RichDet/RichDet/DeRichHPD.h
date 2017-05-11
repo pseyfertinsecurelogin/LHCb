@@ -118,14 +118,6 @@ public:
                         Gaudi::XYZPoint& detectPoint,
                         bool photoCathodeSide = false ) const override final;
 
-
-  // Converts an x,y point from the anode to the photocathode in the
-  // coordinate system of the HPD.
-  bool detectionPoint ( const double fracPixelCol,
-                        const double fracPixelRow,
-                        Gaudi::XYZPoint& detectPoint,
-                        const bool photoCathodeSide = true ) const override final;
-
   /** Converts a RichSmartID to a point on the anode in global coordinates.
    *  @param[in] smartID The RichSmartID for the HPD channel
    *  @return The detection point on the anode in global coordinates

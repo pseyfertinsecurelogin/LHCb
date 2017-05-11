@@ -58,6 +58,21 @@ public:
   /** @return stationID */
   unsigned int stationID() const;
 
+  /** @return unique matID */
+  unsigned int uniqueMatID() const;
+
+  /** @return unique moduleID */
+  unsigned int uniqueModuleID() const;
+
+  /** @return unique quarterID */
+  unsigned int uniqueQuarterID() const;
+
+  /** @return  unique layerID */
+  unsigned int uniqueLayerID() const;
+
+  /** @return unique stationID */
+  unsigned int uniqueStationID() const;
+
   /** Element id */
   LHCb::FTChannelID elementID() const;
 
@@ -100,15 +115,34 @@ public:
    */
   LHCb::FTChannelID calculateChannelAndFrac(double localX, double& frac) const;
 
+  /** Get the list of SiPM channels between two channels
+   *  @param provide first and last channels
+   *  Fills a vector of FTChannelIDs, and a vector of the
+   *  corresponding left edges (along x) in the local frame.
+   */
+  std::vector<std::pair<LHCb::FTChannelID, double>>
+    calculateChannels(LHCb::FTChannelID thisChannel,
+                      LHCb::FTChannelID endChannel) const ;
+
   /** Get the list of SiPM channels traversed by the hit.
    *  The particle trajectory is a straight line defined by:
    *  @param provide local entry and exit point
+   *  @param provide the number of additional channels to add
    *  Fills a vector of FTChannelIDs, and a vector of the
    *  corresponding left edges (along x) in the local frame.
    */
   std::vector<std::pair<LHCb::FTChannelID, double>>
     calculateChannels(const double localEntry, const double localExit,
                       const unsigned int numOfAdditionalChannels ) const;
+
+  /** Get the list of SiPM channels in the mat
+   *  Need to make clear what happens if there is a gap
+   *  @param empty
+   *  Fills a vector of FTChannelIDs, and a vector of the
+   *  corresponding left edges (along x) in the local frame.
+   */
+  std::vector<std::pair<LHCb::FTChannelID, double>>
+    calculateChannels() const;
 
   /** Get the distance from the hit to the SiPM
    *  @param localPoint is the position of the half module in local coordinates
@@ -199,6 +233,23 @@ inline unsigned int DeFTMat::layerID() const {
 inline unsigned int DeFTMat::stationID() const {
   return m_elementID.station();
 }
+
+inline unsigned int DeFTMat::uniqueMatID() const {
+  return m_elementID.uniqueMat();
+}
+
+inline unsigned int DeFTMat::uniqueModuleID() const {
+  return m_elementID.uniqueModule();
+}
+
+inline unsigned int DeFTMat::uniqueQuarterID() const {
+  return m_elementID.uniqueQuarter();
+}
+
+inline unsigned int DeFTMat::uniqueLayerID() const {
+  return m_elementID.uniqueLayer();
+}
+
 
 inline LHCb::FTChannelID DeFTMat::elementID() const {
   return m_elementID;

@@ -398,13 +398,14 @@ namespace LHCb
      *  @param theta The angle between input direction and the segment
      *  @param phi   The azimuthal angle of the direction around the segment
      */
-    template < typename TYPE >
-    inline void angleToDirection ( const Gaudi::XYZVector & direction,
-                                   TYPE & theta,
-                                   TYPE & phi ) const
+    template < typename VECTOR, typename TYPE >
+    inline void __attribute__((always_inline))
+      angleToDirection ( const VECTOR & direction,
+                         TYPE & theta,
+                         TYPE & phi ) const
     {
       // create vector in track reference frame
-      const Gaudi::XYZVector rotDir{ rotationMatrix() * direction };
+      const auto rotDir = rotationMatrix() * direction;
       // compute theta and phi directly from the vector components
       phi   = myatan2( (TYPE)rotDir.y(), (TYPE)rotDir.x() );
       theta = myatan2( (TYPE)std::sqrt( std::pow((TYPE)rotDir.x(),2) +
@@ -423,8 +424,9 @@ namespace LHCb
      *  @return The vector at the given theta and phi angles to this track segment
      */
     template < typename TYPE >
-    inline Gaudi::XYZVector vectorAtThetaPhi ( const TYPE theta,
-                                               const TYPE phi ) const
+    inline Gaudi::XYZVector __attribute__((always_inline))
+      vectorAtThetaPhi ( const TYPE theta,
+                         const TYPE phi ) const
     {
       TYPE sinTheta(0), cosTheta(0), sinPhi(0), cosPhi(0);
       mysincos( theta, sinTheta, cosTheta );
@@ -441,10 +443,11 @@ namespace LHCb
      *
      *  @return The vector at the given theta and phi angles to this track segment
      */
-    inline Gaudi::XYZVector vectorAtCosSinThetaPhi ( const double cosTheta,
-                                                     const double sinTheta,
-                                                     const double cosPhi,
-                                                     const double sinPhi ) const
+    template< typename THETA, typename PHI >
+    inline Gaudi::XYZVector vectorAtCosSinThetaPhi ( const THETA cosTheta,
+                                                     const THETA sinTheta,
+                                                     const PHI cosPhi,
+                                                     const PHI sinPhi ) const
     {
       return rotationMatrix2() * Gaudi::XYZVector( sinTheta*cosPhi,
                                                    sinTheta*sinPhi,

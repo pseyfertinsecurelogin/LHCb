@@ -53,17 +53,27 @@ namespace LHCb
         x, y, z,
         cov00, cov11, cov22, cov10, cov20, cov21,
         firstTrack, lastTrack,
-        firstInfo, lastInfo
-        // "container" is not needed here as it is used only in the packing of
-        // custom stripping objects ((Un)PackParticlesAndVertices)
+        firstInfo, lastInfo,
+        container
       );
     }
 
     template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
-      save(buf); // identical operation until version is incremented
-      container = 0;  // initialize "container" with a well defined value
-                      // as it is not serialized
+    inline void load(T& buf, unsigned int version) {
+      if (version == 1) {
+        buf.io(
+          key, technique, chi2, nDoF,
+          x, y, z,
+          cov00, cov11, cov22, cov10, cov20, cov21,
+          firstTrack, lastTrack,
+          firstInfo, lastInfo
+        );
+        // in packing version 1, container was not serialized!
+        container = 0;  // initialize "container" with a well defined value
+                        // as it is not serialized
+      } else {
+        save(buf); // identical operation for the latest version
+      }
     }
   };
 
@@ -92,7 +102,7 @@ namespace LHCb
   public:
 
     /// Default Packing Version
-    static char defaultPackingVersion() { return 1; }
+    static char defaultPackingVersion() { return 2; }
 
   public:
 
@@ -242,7 +252,7 @@ namespace LHCb
     /// Check if the given packing version is supported
     bool isSupportedVer( const char& ver ) const
     {
-      const bool OK = ( 1 == ver || 0 == ver );
+      const bool OK = ( 2 == ver || 1 == ver || 0 == ver );
       if ( UNLIKELY(!OK) )
       {
         std::ostringstream mess;
