@@ -138,7 +138,6 @@ class L0Conf(LHCbConfigurableUser) :
         # L0Calo, L0Muon, L0HC and L0DU decoding algorithms
         l0calo = decodeL0Calo()
         l0muon = decodeL0Muon()
-        l0hc   = decodeL0HC()
         l0du   = decodeL0DU()
         
         # Write on TES
@@ -148,7 +147,7 @@ class L0Conf(LHCbConfigurableUser) :
             l0du.WriteOnTES   = writeOnTes
 
         # Build the sequence 
-        l0decodingSeq.Members+=[ l0calo, l0muon, l0hc, l0du ]
+        l0decodingSeq.Members+=[ l0calo, l0muon, l0du ]
         
         return l0decodingSeq
 
