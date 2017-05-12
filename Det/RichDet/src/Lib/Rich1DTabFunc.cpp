@@ -143,6 +143,22 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   // Initialise the fast interpolator
   m_fastInterp.init( minX, maxX, gslSpline.get(), nsamples );
 
+  // // printout
+  // std::cout << "Input data :-" << std::endl;
+  // for ( const auto d : data )
+  // {
+  //   std::cout << "  " << d.first << ", " << d.second << std::endl;
+  // }
+  // std::cout << "Interpolator scan :- " << std::endl;
+  // const unsigned int nScans = 100;
+  // const auto inc = ( maxX - minX ) / nScans;
+  // double xx = minX;
+  // for ( unsigned int i = 0; i < nScans; ++i )
+  // {
+  //   std::cout << "  " << xx << " = " << value(xx) << std::endl;
+  //   xx += inc;
+  // } 
+
   return true;
 }
 
