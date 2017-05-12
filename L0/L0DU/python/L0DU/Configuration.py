@@ -135,7 +135,7 @@ class L0Conf(LHCbConfigurableUser) :
         """ Return a Gaudi Sequencer with the algorithms to decode the L0Calo, L0Muon and L0DU data. """
         l0decodingSeq = GaudiSequencer( name )
 
-        # L0Calo, L0Muon, L0HC and L0DU decoding algorithms
+        # L0Calo, L0Muon and L0DU decoding algorithms
         l0calo = decodeL0Calo()
         l0muon = decodeL0Muon()
         l0du   = decodeL0DU()
