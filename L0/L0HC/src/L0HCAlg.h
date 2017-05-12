@@ -24,7 +24,13 @@ class L0HCAlg : public L0AlgBase {
   /// Pointer to conditions DB
   Condition* m_cond = nullptr;
   /// Herschel digits location
+  std::string m_l0digitLocation;
   std::string m_digitLocation;
+  
+  /// Flag for emulation of Herschel trigger bit construction, using raw Herschel data and a given threshold
+  bool m_emulateHCFETrigPGA ;
+  /// Flag for creation of fake L0HCDigits, all counters over threshold
+  bool m_fakeHCL0Digits ;
 
   /// Number of B-side crate
   unsigned int m_crateB;

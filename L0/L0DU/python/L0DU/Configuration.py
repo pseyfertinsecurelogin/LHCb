@@ -10,7 +10,7 @@ from L0Algs import L0CaloFromRawAlgName , emulateL0Calo   , decodeL0Calo , monit
 from L0Algs import L0MuonFromRawAlgName , emulateL0Muon   , decodeL0Muon , monitorL0Muon
 from L0Algs import L0DUFromRawAlgName   , emulateL0DU     , decodeL0DU   , monitorL0DU
 from L0Algs import                        emulateL0PileUp
-from L0Algs import emulateL0HCSeq
+from L0Algs import L0HCAlgName          , emulateL0HCSeq
 
 ## @class L0Conf
 #  Configurable for the L0 trigger (simulation, emulation, decoding, monitoring and filtering)
@@ -54,6 +54,9 @@ class L0Conf(LHCbConfigurableUser) :
         # Output file
         ,"ETCOutput"      : "L0ETC.root"
         ,"DataType"       : ""
+        # Herschel-specific options
+        ,"EmulateHCFETrigPGA" : False
+        ,"FakeHCL0Digits"     : False
         }
 
     _propertyDocDct = {
@@ -91,6 +94,9 @@ class L0Conf(LHCbConfigurableUser) :
         ,"ETCSequencer"   : """ Sequencer filled with the algorithm and stream to write out a L0-ETC."""
         ,"ETCOutput"      : """ Name of ETC output file."""
         ,"DataType"       : """ Data type, used to set up default TCK """
+        # Herschel-specific options
+        ,"EmulateHCFETrigPGA" : """ If True, compute the Herschel L0 trigger bit sum based on the values of the raw ADCs in each counter with respect to a threshold. """
+        ,"FakeHCL0Digits"     : """ If True, set all Herschel trigger bits to 1 ie all counters over-threshold. """
          }
 
 
@@ -156,8 +162,15 @@ class L0Conf(LHCbConfigurableUser) :
         l0pileup = emulateL0PileUp()
         l0du     = emulateL0DU()
         
-        # L0HC emulation algorithm comes as a list since the HCRawBankDecoder must be run first
-        l0hc_seq = emulateL0HCSeq()
+        # L0HC emulation algorithm 
+        l0hc     = emulateL0HC()
+        if self.getProp("EmulateHCFETrigPGA"):
+            l0hc.EmulateHCFETrigPGA = True
+        if self.getProp("FakeHCL0Digits"):
+            l0hc.FakeHCL0Digits = True
+        # Now construct a list since the HCRawBankDecoder must be run first before Herschel emulation
+        from Configurables import HCRawBankDecoder
+        l0hc_seq = [ HCRawBankDecoder(L0HCAlgName+"_decoder"), l0hc ]
 
         # Raw banks
         if writeBanks is not None:

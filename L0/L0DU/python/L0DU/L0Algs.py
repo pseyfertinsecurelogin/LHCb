@@ -52,17 +52,17 @@ def emulateL0PileUpSeq(suffix=''):
     """ Returns a list with the algorithm to emulate the L0PileUp."""
     return [ emulateL0PileUp(suffix) ]
 
+## L0HC algorithm
+def emulateL0HC(suffix=''):
+    """ Returns the algorithm to emulate the L0HC."""
+    from Configurables import L0HCAlg 
+    return [ L0HCAlg(L0HCAlgName"_emulate_"+suffix) ]
+    
 ## L0DU algorithm
 def emulateL0DU(suffix=''):
     """ Returns the algorithm to emulate the L0DU."""
     from Configurables import L0DUAlg
     return L0DUAlg(L0DUAlgName+suffix)
-
-## L0HC sequence
-def emulateL0HCSeq(suffix=''):
-    """ Returns a list with the algorithm to decode the Herschel raw bank and the algorithm to emulate the L0HC."""
-    from Configurables import HCRawBankDecoder, L0HCAlg 
-    return [ HCRawBankDecoder(L0HCAlgName+"_decode_"+suffix), L0HCAlg(L0HCAlgName"_emulate_"+suffix) ]
     
 ## L0DU sequence
 def emulateL0DUSeq(suffix=''):

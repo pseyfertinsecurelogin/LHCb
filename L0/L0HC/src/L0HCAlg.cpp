@@ -12,8 +12,14 @@ DECLARE_ALGORITHM_FACTORY(L0HCAlg)
 L0HCAlg::L0HCAlg(const std::string& name, ISvcLocator* pSvcLocator)
     : L0AlgBase(name, pSvcLocator) {
 
+  declareProperty("L0DigitLocation",
+                  m_l0digitLocation = LHCb::HCDigitLocation::L0);
   declareProperty("DigitLocation",
                   m_digitLocation = LHCb::HCDigitLocation::Default);
+  declareProperty("EmulateHCFETrigPGA",
+                  m_emulateHCFETrigPGA = false );
+  declareProperty("FakeHCL0Digits",
+                  m_fakeHCL0Digits = false );
   declareProperty("ChannelsB0", m_channelsB0);
   declareProperty("ChannelsB1", m_channelsB1);
   declareProperty("ChannelsB2", m_channelsB2);
@@ -59,45 +65,90 @@ StatusCode L0HCAlg::initialize() {
 //=============================================================================
 StatusCode L0HCAlg::execute() {
   // Retrieve Herschel digits
-  LHCb::HCDigits* digits = getIfExists<LHCb::HCDigits>(m_digitLocation);
+  LHCb::HCDigits* l0digits = getIfExists<LHCb::HCDigits>( m_l0digitLocation );
+  LHCb::HCDigits* digits   = getIfExists<LHCb::HCDigits>( m_digitLocation   );
+  if (!l0digits) {
+    Warning("Cannot retrieve HC L0digits from " + m_l0digitLocation).ignore();
+  }
   if (!digits) {
-    return Error("Cannot retrieve HC digits from " + m_digitLocation,
-                 StatusCode::SUCCESS);
+    Warning("Cannot retrieve HC digits from " + m_digitLocation).ignore();
   }
-
+  
+  // If EITHER the raw or L0 Herschel digits are absent, fake the Herschel L0 multiplicity to be all-counters saturated
+  if (!l0digits || !digits) {
+  	Warning("Either the raw or L0 Herschel digits are absent. Will fake Herschel L0 multiplicity as if all counters saturated").ignore();
+  	m_fakeHCL0Digits = true ;
+  }
+  			
   unsigned int multB = 0;
-  // Construct B-side sum
-  for (unsigned int i = 0; i < 3; ++i) {
-    // Loop over all quadrants on this station
-    for (unsigned int j = 0; j < 4; ++j) {
-      // Find the cell ID for this quadrant
-      LHCb::HCCellID id(m_channels[i][j]);
-      // Retrieve the digit
-      const LHCb::HCDigit* digit = digits->object(id);
-      if (!digit) {
-        const std::string ch = "B" + std::to_string(i) + std::to_string(j);
-        Warning("Cannot retrieve digit for " + ch).ignore();
-        continue;
-      }
-      if (digit->adc() > 300) ++multB;
-    }
-  }
-
   unsigned int multF = 0;
-  // Construct F-side sum
-  for (unsigned int i = 3; i < 5; ++i) {
-    // Loop over all quadrants on this station
-    for (unsigned int j = 0; j < 4; ++j) {
-      // Find the cell ID for this quadrant
-      LHCb::HCCellID id(m_channels[i][j]);
-      // Retrieve the digit
-      const LHCb::HCDigit* digit = digits->object(id);
-      if (!digit) {
-        const std::string ch = "F" + std::to_string(i - 2) + std::to_string(j);
-        Warning("Cannot retrieve digit for " + ch).ignore();
-        continue;
+  
+  if (m_fakeHCL0Digits) {
+    Warning("Cannot retrieve HC L0digits from " + m_l0digitLocation).ignore();
+  	multB = 12 ; // Set all B and F counter trigger bits over-threshold
+  	multF = 8  ;
+  }
+  else {
+    // Construct B-side sum
+    for (unsigned int i = 0; i < 3; ++i) {
+      // Loop over all quadrants on this station
+      for (unsigned int j = 0; j < 4; ++j) {
+        // Find the cell ID for this quadrant
+        LHCb::HCCellID id(m_channels[i][j]);
+      
+        // If emulating the Herschel FE trigPGA then determine the HC trig bit from the raw data
+        if (m_emulateHCFETrigPGA) {
+          // Retrieve the digit
+          const LHCb::HCDigit* digit = digits->object(id);
+          if (!digit) {
+            const std::string ch = "B" + std::to_string(i) + std::to_string(j);
+            Warning("Cannot retrieve digit for " + ch).ignore();
+            continue;
+          }
+          if (digit->adc() > 300) ++multB;
+        } 
+        else { // otherwise simply extract the L0 HCDigit and pass it on
+          // Retrieve the L0 digit
+          const LHCb::HCDigit* l0digit = l0digits->object(id);
+          if (!digit) {
+            const std::string ch = "B" + std::to_string(i) + std::to_string(j);
+            Warning("Cannot retrieve digit for " + ch).ignore();
+            continue;
+          }
+          multB += l0digit->adc() ;
+        }
       }
-      if (digit->adc() > 300) ++multF;
+    }
+    
+    // Construct F-side sum
+    for (unsigned int i = 3; i < 5; ++i) {
+      // Loop over all quadrants on this station
+      for (unsigned int j = 0; j < 4; ++j) {
+        // Find the cell ID for this quadrant
+        LHCb::HCCellID id(m_channels[i][j]);
+      
+        // If emulating the Herschel FE trigPGA then determine the HC trig bit from the raw data
+        if (m_emulateHCFETrigPGA) {
+          // Retrieve the digit
+          const LHCb::HCDigit* digit = digits->object(id);
+          if (!digit) {
+            const std::string ch = "F" + std::to_string(i - 2) + std::to_string(j);
+            Warning("Cannot retrieve digit for " + ch).ignore();
+            continue;
+          }
+          if (digit->adc() > 300) ++multF;
+        }
+        else { // otherwise simply extract the L0 HCDigit and pass it on
+          // Retrieve the L0 digit
+          const LHCb::HCDigit* l0digit = l0digits->object(id);
+          if (!digit) {
+            const std::string ch = "F" + std::to_string(i) + std::to_string(j);
+            Warning("Cannot retrieve digit for " + ch).ignore();
+            continue;
+          }
+          multF += l0digit->adc() ;
+        }     
+      }
     }
   }
 
