@@ -110,7 +110,7 @@ StatusCode L0HCAlg::execute() {
         else { // otherwise simply extract the L0 HCDigit and pass it on
           // Retrieve the L0 digit
           const LHCb::HCDigit* l0digit = l0digits->object(id);
-          if (!digit) {
+          if (!l0digit) {
             const std::string ch = "B" + std::to_string(i) + std::to_string(j);
             Warning("Cannot retrieve digit for " + ch).ignore();
             continue;
@@ -141,7 +141,7 @@ StatusCode L0HCAlg::execute() {
         else { // otherwise simply extract the L0 HCDigit and pass it on
           // Retrieve the L0 digit
           const LHCb::HCDigit* l0digit = l0digits->object(id);
-          if (!digit) {
+          if (!l0digit) {
             const std::string ch = "F" + std::to_string(i) + std::to_string(j);
             Warning("Cannot retrieve digit for " + ch).ignore();
             continue;
