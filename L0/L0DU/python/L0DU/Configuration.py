@@ -10,7 +10,7 @@ from L0Algs import L0CaloFromRawAlgName , emulateL0Calo   , decodeL0Calo , monit
 from L0Algs import L0MuonFromRawAlgName , emulateL0Muon   , decodeL0Muon , monitorL0Muon
 from L0Algs import L0DUFromRawAlgName   , emulateL0DU     , decodeL0DU   , monitorL0DU
 from L0Algs import                        emulateL0PileUp
-from L0Algs import L0HCAlgName          , emulateL0HCSeq
+from L0Algs import L0HCAlgName          , emulateL0HC
 
 ## @class L0Conf
 #  Configurable for the L0 trigger (simulation, emulation, decoding, monitoring and filtering)
