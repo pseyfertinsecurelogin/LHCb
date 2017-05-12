@@ -56,7 +56,7 @@ def emulateL0PileUpSeq(suffix=''):
 def emulateL0HC(suffix=''):
     """ Returns the algorithm to emulate the L0HC."""
     from Configurables import L0HCAlg 
-    return [ L0HCAlg(L0HCAlgName"_emulate_"+suffix) ]
+    return L0HCAlg(L0HCAlgName"_emulate_"+suffix)
     
 ## L0DU algorithm
 def emulateL0DU(suffix=''):
