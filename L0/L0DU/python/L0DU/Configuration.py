@@ -301,8 +301,8 @@ class L0Conf(LHCbConfigurableUser) :
 
         if self.getProp("ReplayL0DU"):
             # Decode the l0du to produce the processor data (input to simulation)
-            decoding = decodeL0DU()
-            decoding.WriteProcData = True 
+            # Do not write the L0DU report 
+            decoding = decodeL0DU( WriteProcData = True, WriteOnTES = False)
             decoding.ProcessorDataLocation  = "Trig/L0/L0DUData"
             # Emulate the l0du from the processor data
             emulation = emulateL0DU()        
@@ -408,13 +408,6 @@ class L0Conf(LHCbConfigurableUser) :
         if self.getProp("FastL0DUDecoding"):
             #log.info("Using Fast decoding for L0DU (rootInTES: %s)"%(rootintes))
             l0du   = decodeL0DU(rootintes)
-            from Configurables import  L0DUDecoder
-            decoder = l0du.addTool(L0DUDecoder,name = "L0DUDecoder")
-            decoder.FillDataMap         = False
-            decoder.EncodeProcessorData = False
-            decoder.Emulate             = False
-            decoder.StatusOnTES         = False
-            l0du.WriteProcData                   = False
 
         # Ensure that TCK is recognized when decoding the L0DU
         if self.getProp("EnsureKnownTCK"):
@@ -560,7 +553,7 @@ class L0Conf(LHCbConfigurableUser) :
             single = L0DUConfigProvider('ToolSvc.L0DUConfig')
             for p,v in orig.getValuedProperties().items() : setattr(single,p,v)
             single.TCK = L0TCK
-            l0du   = decodeL0DU()
+            l0du = decodeL0DU()
             l0du.L0DUConfigProviderType = 'L0DUConfigProvider'
             from Configurables import L0DUAlg
             L0DUAlg('L0DU').L0DUConfigProviderType = 'L0DUConfigProvider'
