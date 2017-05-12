@@ -53,6 +53,7 @@ StatusCode L0HCAlg::initialize() {
     if (m_thresholdsF2.size() == 4) m_thresholds[4] = m_thresholdsF2;
   }
 
+  m_channels.assign(5, std::vector<unsigned int>(4,0));
   // Check if the mapping is available in the conditions database.
   const std::string location = "Conditions/ReadoutConf/HC/Mapping";
   if (existDet<Condition>(location)) {
