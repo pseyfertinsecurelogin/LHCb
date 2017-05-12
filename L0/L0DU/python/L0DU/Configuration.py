@@ -55,8 +55,13 @@ class L0Conf(LHCbConfigurableUser) :
         ,"ETCOutput"      : "L0ETC.root"
         ,"DataType"       : ""
         # Herschel-specific options
-        ,"EmulateHCFETrigPGA" : False
-        ,"FakeHCL0Digits"     : False
+        ,"TriggerBitsFromADCs" : False
+        ,"L0HCAlgThresholdsB0" : None # Should defalut be {0,0,0,0}?
+        ,"L0HCAlgThresholdsB1" : None
+        ,"L0HCAlgThresholdsB2" : None
+        ,"L0HCAlgThresholdsF1" : None
+        ,"L0HCAlgThresholdsF2" : None
+        ,"FakeHCL0Digits"      : False
         }
 
     _propertyDocDct = {
@@ -95,7 +100,12 @@ class L0Conf(LHCbConfigurableUser) :
         ,"ETCOutput"      : """ Name of ETC output file."""
         ,"DataType"       : """ Data type, used to set up default TCK """
         # Herschel-specific options
-        ,"EmulateHCFETrigPGA" : """ If True, compute the Herschel L0 trigger bit sum based on the values of the raw ADCs in each counter with respect to a threshold. """
+        ,"TriggerBitsFromADCs" : """ If True, compute the Herschel L0 trigger bit sum based on the values of the raw ADCs in each counter with respect to a threshold. """
+        ,"L0HCAlgThresholdsB0" : """ Herschel B0 thresholds if computing L0 HC trigger bits """
+        ,"L0HCAlgThresholdsB1" : """ Herschel B1 thresholds if computing L0 HC trigger bits """
+        ,"L0HCAlgThresholdsB2" : """ Herschel B2 thresholds if computing L0 HC trigger bits """
+        ,"L0HCAlgThresholdsF1" : """ Herschel F1 thresholds if computing L0 HC trigger bits """
+        ,"L0HCAlgThresholdsF2" : """ Herschel F2 thresholds if computing L0 HC trigger bits """
         ,"FakeHCL0Digits"     : """ If True, set all Herschel trigger bits to 1 ie all counters over-threshold. """
          }
 
@@ -163,8 +173,13 @@ class L0Conf(LHCbConfigurableUser) :
         
         # L0HC emulation algorithm 
         l0hc     = emulateL0HC()
-        if self.getProp("EmulateHCFETrigPGA"):
-            l0hc.EmulateHCFETrigPGA = True
+        if self.getProp("TriggerBitsFromADCs"):
+            l0hc.TriggerBitsFromADCs = True
+            l0hc.ThresholdsB0 = self.getProp("L0HCAlgThresholdsB0")
+            l0hc.ThresholdsB1 = self.getProp("L0HCAlgThresholdsB1")
+            l0hc.ThresholdsB2 = self.getProp("L0HCAlgThresholdsB2")
+            l0hc.ThresholdsF1 = self.getProp("L0HCAlgThresholdsF1")
+            l0hc.ThresholdsF2 = self.getProp("L0HCAlgThresholdsF2")
         if self.getProp("FakeHCL0Digits"):
             l0hc.FakeHCL0Digits = True
         # Now construct a list since the HCRawBankDecoder must be run first before Herschel emulation
