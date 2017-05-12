@@ -10,7 +10,7 @@ from L0Algs import L0CaloFromRawAlgName , emulateL0Calo   , decodeL0Calo , monit
 from L0Algs import L0MuonFromRawAlgName , emulateL0Muon   , decodeL0Muon , monitorL0Muon
 from L0Algs import L0DUFromRawAlgName   , emulateL0DU     , decodeL0DU   , monitorL0DU
 from L0Algs import                        emulateL0PileUp
-from L0Algs import L0HCAlgName          , emulateL0HCSeq
+from L0Algs import L0HCAlgName          , emulateL0HC
 
 ## @class L0Conf
 #  Configurable for the L0 trigger (simulation, emulation, decoding, monitoring and filtering)
@@ -135,10 +135,9 @@ class L0Conf(LHCbConfigurableUser) :
         """ Return a Gaudi Sequencer with the algorithms to decode the L0Calo, L0Muon and L0DU data. """
         l0decodingSeq = GaudiSequencer( name )
 
-        # L0Calo, L0Muon, L0HC and L0DU decoding algorithms
+        # L0Calo, L0Muon and L0DU decoding algorithms
         l0calo = decodeL0Calo()
         l0muon = decodeL0Muon()
-        l0hc   = decodeL0HC()
         l0du   = decodeL0DU()
         
         # Write on TES
@@ -148,7 +147,7 @@ class L0Conf(LHCbConfigurableUser) :
             l0du.WriteOnTES   = writeOnTes
 
         # Build the sequence 
-        l0decodingSeq.Members+=[ l0calo, l0muon, l0hc, l0du ]
+        l0decodingSeq.Members+=[ l0calo, l0muon, l0du ]
         
         return l0decodingSeq
 
