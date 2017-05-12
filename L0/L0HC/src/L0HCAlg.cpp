@@ -203,7 +203,7 @@ bool L0HCAlg::mapChannels(const std::vector<int>& channels,
   const unsigned int offset = bwd ? 0 : 2;
 
   // Check if the input is valid and if not return 0 mapping
-  if (channels.size()) {
+  if (channels.size() != 4) {
     std::string s = bwd ? "B" : "F";
     s += std::to_string(station);
     warning() << "Invalid channel map for station " << s << endmsg;
