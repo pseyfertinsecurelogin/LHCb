@@ -6,7 +6,7 @@
 
 /** @class L0HCAlg L0HCAlg.h
  *
- *  Algorithm responsible of producing the L0 Herschel information.
+ *  Algorithm responsible for producing the L0 Herschel information.
  *
  *  @author  Dan Johnson
  *  @date    2 May 2017
@@ -14,7 +14,7 @@
 
 class L0HCAlg : public L0AlgBase {
  public:
-  L0HCAlg(const std::string& name, ISvcLocator* pSvcLocator);
+  L0HCAlg(const std::string &name, ISvcLocator *pSvcLocator);
   virtual ~L0HCAlg();
 
   StatusCode initialize() override;  ///< Algorithm initialization
@@ -22,15 +22,18 @@ class L0HCAlg : public L0AlgBase {
 
  private:
   /// Pointer to conditions DB
-  Condition* m_cond = nullptr;
-  /// Herschel digits location
+  Condition *m_cond = nullptr;
+
+  /// TES location of Herschel L0 digits
   std::string m_l0digitLocation;
+  /// TES location of Herschel digits
   std::string m_digitLocation;
-  
-  /// Flag for emulation of Herschel trigger bit construction, using raw Herschel data and a given threshold
-  bool m_emulateHCFETrigPGA ;
+
+  /// Flag for emulation of Herschel trigger bit construction, using raw
+  /// Herschel data and a given threshold
+  bool m_triggerBitsFromADCs;
   /// Flag for creation of fake L0HCDigits, all counters over threshold
-  bool m_fakeHCL0Digits ;
+  bool m_fakeHCL0Digits;
 
   /// Number of B-side crate
   unsigned int m_crateB;
@@ -45,12 +48,25 @@ class L0HCAlg : public L0AlgBase {
   std::vector<int> m_channelsF2;
 
   /// Channel numbers for each quadrant
-  std::vector<std::vector<unsigned int> > m_channels;
+  std::vector<std::vector<unsigned int>> m_channels;
+
+  /// Thresholds (in case the trigger bits are computed from the ADCs).
+  std::vector<int> m_thresholdsB0;
+  std::vector<int> m_thresholdsB1;
+  std::vector<int> m_thresholdsB2;
+  std::vector<int> m_thresholdsF1;
+  std::vector<int> m_thresholdsF2;
+
+  /// Thresholds for each quadrant
+  std::vector<std::vector<int>> m_thresholds;
+
+  /// Return the number of counters with a signal above threshold.
+  unsigned int multiplicity(const LHCb::HCDigits &digits, const bool bwd) const;
 
   /// Cache database content
   StatusCode cacheMapping();
   /// Setup the mapping for a given station.
-  bool mapChannels(const std::vector<int>& channels, const unsigned int station,
+  bool mapChannels(const std::vector<int> &channels, const unsigned int station,
                    const bool bwd);
 };
 
