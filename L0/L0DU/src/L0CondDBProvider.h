@@ -29,7 +29,7 @@ public:
 
 private:
   DeCalorimeter* m_ecal = nullptr;
-  Condition* m_gain = nullptr;
+  const Condition* m_gain = nullptr;
   std::map<std::string,std::vector<int> > m_mapRam;
   unsigned int m_cycle = 3564;
   std::string m_rams;

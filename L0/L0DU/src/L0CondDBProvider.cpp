@@ -39,9 +39,9 @@ StatusCode L0CondDBProvider::initialize(){
   // RAM(BCID)
   m_rams += "{";
   if(m_mapRam.size() > 1)m_rams += "|";
-  for(auto it = m_mapRam.begin(); m_mapRam.end() != it; ++it){
-    std::string vsn = (*it).first;
-    std::vector<int> rMap = (*it).second;
+  for(const auto& mp : m_mapRam) {
+    const std::string& vsn = mp.first;
+    const std::vector<int>& rMap = mp.second;
     if( rMap.size() != m_cycle){
       fatal() << " The RAM(BCID) vsn = '" << vsn << "' is badly defined (" << rMap.size() << "/" << m_cycle
               << ") elements" << endmsg;
@@ -73,7 +73,7 @@ double L0CondDBProvider::scale(unsigned int base ){
 double L0CondDBProvider::caloEtScale(){
   m_gain = m_ecal->condition( "Gain" );
   double caloEtScale = 0.0;
-  if ( 0 == m_gain ){
+  if ( !m_gain ){
     Error("Condition 'Gain' not found in Ecal",StatusCode::SUCCESS).ignore();
     counter("'Gain' condition not found for Ecal")+=1;
     return 0.0;

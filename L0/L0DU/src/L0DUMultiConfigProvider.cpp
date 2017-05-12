@@ -89,7 +89,7 @@ LHCb::L0DUConfig*  L0DUMultiConfigProvider::config( long tck ,std::string slot){
 
   // first : handle the 'template' configuration
   if( tck == LHCb::L0DUTemplateConfig::TCKValue ){
-    if( m_template[slot])return m_template[slot];
+    if( m_template[slot]) return m_template[slot];
     LHCb::L0DUConfig* temp = loadConfig( LHCb::L0DUTemplateConfig::Name ,slot );
     m_template[slot] = temp;
     return temp;

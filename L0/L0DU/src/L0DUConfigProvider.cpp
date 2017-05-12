@@ -39,7 +39,7 @@ namespace {
                                                         { std::string("Other"),  3 } };
 
    // Try to find, in the Haystack, the Needle - ignore case
-  inline bool contains_ci(boost::string_ref haystack, boost::string_ref needle)
+  bool contains_ci(boost::string_ref haystack, boost::string_ref needle)
   {
      auto it = std::search( begin(haystack), end(haystack),
                             begin(needle),   end(needle),
@@ -48,6 +48,13 @@ namespace {
      return it != end(haystack);
   }
 
+  bool icompare(std::string const& a, std::string const& b)
+  {
+      return a.size()==b.size() &&
+             std::equal(b.begin(), b.end(), a.begin(),
+                        [](char ch1, char ch2)
+                        { return std::toupper(ch1) == std::toupper(ch2); });
+  }
 
 
 }
@@ -88,7 +95,6 @@ L0DUConfigProvider::L0DUConfigProvider( const std::string& type,
 
   declareProperty( "TCK"                     , m_tck  = m_template ? format("0x%04X" , LHCb::L0DUTemplateConfig::TCKValue )
                    : nam )->declareUpdateHandler(&L0DUConfigProvider::handler,this);
-
 
  // expert usage
   declareProperty("ForceConditionOrdering" , m_forceOrder = false)->declareUpdateHandler(&L0DUConfigProvider::handler,this);
@@ -133,7 +139,7 @@ void L0DUConfigProvider::handler(Property& ) {
     if (!m_template && FSMState() >= Gaudi::StateMachine::INITIALIZED ) {
         // on-the-fly update of properties only allowed for template!
         error() << "only template L0DUConfig can be updated after  Initialize has been called" << endmsg;
-        throw GaudiException("L0DUConfig: update of properties only allowd for template","",StatusCode::FAILURE);
+        throw GaudiException("L0DUConfig: update of properties only allowed for template","",StatusCode::FAILURE);
     }
     m_uptodate=false;
 }
@@ -584,14 +590,12 @@ StatusCode L0DUConfigProvider::createConditions(){
       return StatusCode::FAILURE;
     }
     bool reported = true;
-    if(reports.size() == 1 ){
+    if (!reports.empty()) {
       const std::string& report = reports.front();
-      std::string uReport(report);
-      std::transform( report.begin() , report.end() , uReport.begin () , ::toupper ) ;
-      if( uReport == "FALSE" ){
+      if( icompare(report,"FALSE") ){
         reported = false;
         info() << "The condition '" << conditionName << "' is NOT to be reported in L0DUReport " << endmsg;
-      }else if( uReport != "TRUE"){
+      }else if( !icompare(report,"TRUE")){
         error() << "the CONDITION '" << conditionName << "' report should be True or False" << endmsg;
         return StatusCode::FAILURE;
       }
@@ -730,10 +734,8 @@ StatusCode L0DUConfigProvider::createChannels(){
       return StatusCode::FAILURE;
     }else if( enables.size() == 1){
       Warning("L0DUChannel flag 'Enable' is deprecated - please move to 'Mask' instead",StatusCode::SUCCESS).ignore();
-      std::string item(*(enables.begin()));
-      std::string uItem(item);
-      std::transform( item.begin() , item.end() , uItem.begin () , ::toupper ) ;
-      if( uItem == "FALSE" ){
+      const std::string& item = enables.front();
+      if( icompare(item,"FALSE") ){
         type = LHCb::L0DUDecision::Disable;
       }else{
         error() << "Decision type for channel '" << channelName << "' is badly defined -  Please check your setting" << endmsg;
@@ -741,34 +743,30 @@ StatusCode L0DUConfigProvider::createChannels(){
       }
     }else if( disables.size() == 1){
       Warning("L0DUChannel flag 'Disable' is deprecated - please move to 'Mask' instead",StatusCode::SUCCESS).ignore();
-      std::string item(*(disables.begin()));
-      std::string uItem(item);
-      std::transform( item.begin() , item.end() , uItem.begin () , ::toupper ) ;
-      if( uItem == "TRUE" ){
+      const std::string& item = disables.front();
+      if( icompare(item,"TRUE") ){
         type = LHCb::L0DUDecision::Disable;
       }else{
         error() << "Decision type for channel '" << channelName << "' is badly defined -  Please check your setting" << endmsg;
         return StatusCode::FAILURE;
       }
     }else if( masks.size() == 1){
-      std::string item(*(masks.begin()));
-      std::string uItem(item);
-      std::transform( item.begin() , item.end() , uItem.begin () , ::toupper ) ;
-      if( uItem == "1" || uItem == "0X1" || uItem == "001" || uItem == "Physics" ){
+      const std::string& item = masks.front();
+      if( item == "1" || icompare(item,"0X1") || item == "001" || icompare(item,"Physics") ){
         type = LHCb::L0DUDecision::Physics;
-      }else if( uItem == "2" || uItem == "0X2" || uItem == "010" || uItem == "Beam1" ){
+      }else if( item == "2" || icompare(item,"0X2") || item == "010" || icompare(item,"Beam1") ){
         type = LHCb::L0DUDecision::Beam1;
-      }else if( uItem == "4" || uItem == "0X4" || uItem == "100" || uItem == "Beam2" ){
+      }else if( item == "4" || icompare(item,"0X4") || item == "100" || icompare(item,"Beam2") ){
         type = LHCb::L0DUDecision::Beam2;
-      } else if( uItem == "011" || uItem == "3" || uItem == "0x3" ){
+      } else if( item == "011" || item == "3" || icompare(item,"0x3") ){
         type = 3;
-      } else if( uItem == "101" || uItem == "5" || uItem == "0x5" ){
+      } else if( item == "101" || item == "5" || icompare(item,"0x5") ){
         type = 5;
-      } else if( uItem == "110" || uItem == "6" || uItem == "0x6" ){
+      } else if( item == "110" || item == "6" || icompare(item,"0x6") ){
         type = 6;
-      } else if( uItem == "111" || uItem == "7" || uItem == "0x7" ){
+      } else if( item == "111" || item == "7" || icompare(item,"0x7") ){
         type = 7;
-      } else if( uItem == "000" || uItem == "0" || uItem == "0x0" ){
+      } else if( item == "000" || item == "0" || icompare(item,"0x0") ){
         type = 0;
       }else {
         error() << "Decision type for channel '" << channelName << "' is badly defined -  Please check your setting" << endmsg;
@@ -855,7 +853,7 @@ StatusCode L0DUConfigProvider::createTriggers(){
   StatusCode sc = createChannels();
   if(sc.isFailure())return sc;
 
-  if(m_channels.size()   == 0  || m_conditions.size() == 0)return StatusCode::SUCCESS;
+  if(m_channels.empty() || m_conditions.empty())return StatusCode::SUCCESS;
 
   // pre-defined triggers
   predefinedTriggers();
@@ -901,18 +899,13 @@ StatusCode L0DUConfigProvider::createTriggers(){
 
     // the index (facultatif)
     // ---------
-    int index = id;
     values = Parse("index", *iconfig);
-    if(values.size() > 0){
-      std::stringstream str;
-      str << values.front(); // The INDEX
-      str >> index;
-    }
-    else if(values.size() > 1){
+    if(values.size() > 1) {
       error() << "Should be an unique index for the new SubTrigger: "
               << triggerName << " (found "<< values.size() << ")" << endmsg;
       return StatusCode::FAILURE;
     }
+    int index = ( values.empty() ? id : std::stoi( values.front() ) ); // The INDEX
     // check the index is not already used
     auto ii = std::find_if( m_triggersMap.begin(), m_triggersMap.end(),
                             [index](typename LHCb::L0DUTrigger::Map::const_reference tm)
@@ -922,19 +915,16 @@ StatusCode L0DUConfigProvider::createTriggers(){
         return StatusCode::FAILURE;
     }
 
-
     // The decision type (facultatif)
     // -----------------
     std::vector<std::string> types = Parse("type", *iconfig);
     int mask = LHCb::L0DUDecision::Physics;
     if(!types.empty()){
-      std::string item(*(types.begin()));
-      std::string uItem(item);
-      std::transform( item.begin() , item.end() , uItem.begin () , ::toupper ) ;
-      if( item == "PHYSICS" ) mask = LHCb::L0DUDecision::Physics;
-      else if( item == "BEAM1" ) mask = LHCb::L0DUDecision::Beam1;
-      else if( item == "BEAM2" ) mask = LHCb::L0DUDecision::Beam2;
-      else{
+      const std::string& item = types.front();
+      if ( icompare(item,"PHYSICS") ) mask = LHCb::L0DUDecision::Physics;
+      else if ( icompare(item,"BEAM1") ) mask = LHCb::L0DUDecision::Beam1;
+      else if ( icompare(item,"BEAM2") ) mask = LHCb::L0DUDecision::Beam2;
+      else {
         error() << "Trigger type '" << item << "' is not valid (must be PHYSICS, BEAM1 or BEAM2)" << endmsg;
         return StatusCode::FAILURE;
       }
@@ -1214,7 +1204,7 @@ bool L0DUConfigProvider::conditionOrdering(){
 
 bool L0DUConfigProvider::configChecker(){
 
-  if(m_conditionsMap.size() == 0 && m_channelsMap.size() == 0)return true;
+  if(m_conditionsMap.empty() && m_channelsMap.empty())return true;
 
   using namespace L0DUBase;
   // check number of channels
@@ -1252,7 +1242,7 @@ bool L0DUConfigProvider::configChecker(){
   // check number of conditions / type
   unsigned int k = 0;
   double maxRate = -1.;
-  std::string tCheck="";
+  std::string tCheck;
   for( const auto& conds : m_condOrder ) {
     double ctRate = 0.;
     if( conds.size() == 0){k++;continue;}
@@ -1311,9 +1301,7 @@ bool L0DUConfigProvider::configChecker(){
     }
   }
 
-
   std::string order = "OK" ;
-
 
   if( m_reOrder){
     order = "SWAP";
@@ -1334,8 +1322,10 @@ bool L0DUConfigProvider::configChecker(){
          << " ; reported  : " << m_reported<<"/" << m_conditionsMap.size() << endmsg;
   info() << "- Usage : #Conditions/type (max)  :"<< tCheck << endmsg;
   for ( const auto& ic : m_conditionsMap ) {
-    std::string stamp =( (std::find(m_knownBXs.begin(),m_knownBXs.end(), ic.second->bx() ) == m_knownBXs.end() )) ? "Warning" : "Info   ";
-    if( ic.second && ic.second->bx() != 0)info()<<"- "<< stamp <<" : the condition '" << ic.first << "' relies on BX=["<<Gaudi::Utils::toString(ic.second->bx())<<"]"<<endmsg;
+    if( ic.second && ic.second->bx() != 0) {
+      auto  stamp =( (std::find(m_knownBXs.begin(),m_knownBXs.end(), ic.second->bx() ) == m_knownBXs.end() )) ? "Warning" : "Info   ";
+      info()<<"- "<< stamp <<" : the condition '" << ic.first << "' relies on BX=["<<Gaudi::Utils::toString(ic.second->bx())<<"]"<<endmsg;
+    }
   }
   return ok;
 }
