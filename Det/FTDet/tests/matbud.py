@@ -16,7 +16,7 @@ from math import *
 # BEGIN CONFIG
 z1 = 7620. * unit.mm
 z2 = 9439. * unit.mm
-eta_min = 2.
+eta_min = 1.5
 eta_max = 5.5
 version = '0.1'
 contact = 'nis.meinert@cern.ch'
@@ -222,15 +222,15 @@ def round_mm2cm(x): return round(x, -1)
 fxmax, fymax = getFxFyFromPhiAndEta(270., eta_min)[0], getFxFyFromPhiAndEta(0., eta_min)[1]
 xmax, ymax = map(lambda x: round_mm2cm(x*z1), (fxmax, fymax))
 
-cartitleAppx = ' (shooting from (0,0,0) towards (x,y,{0}mm))'.format(z1)
-poltitleAppx = ' (shooting from (0,0,0), #phi=0 corresponds to 12 o\'clock)'
-hortitleAppx = ' (shooting horizontally)'
+#cartitleAppx = ' (shooting from (0,0,0) towards (x,y,{0}mm), between #it{z}=%3d and %3d mm)' % (z1,z1,z2)
+poltitleAppx = ' (between #it{z}=%3d and %3d mm, #phi=0 corresponds to 12 o\'clock)' % (z1, z2)
+hortitleAppx = ' (between #it{z}=%3d and %3d mm)' % (z1, z2)
 
-hRad_car = TH2D('radiation_cartesian', 'Radidation length' + cartitleAppx + ';x(mm);y(mm)',
-                200, -xmax, xmax, 200, -ymax, ymax)
-
-hInt_car = TH2D('interaction_cartesian', 'Interaction length' + cartitleAppx + ';x(mm);y(mm)',
-                200, -xmax, xmax, 200, -ymax, ymax)
+#hRad_car = TH2D('radiation_cartesian', 'Radiation length' + cartitleAppx + ';#it{x}[mm];#it{y}[mm]',
+#                200, -xmax, xmax, 200, -ymax, ymax)
+#
+#hInt_car = TH2D('interaction_cartesian', 'Interaction length' + cartitleAppx + ';#it{x}[mm];#it{y}[mm]',
+#                200, -xmax, xmax, 200, -ymax, ymax)
 
 hRad_pol = TH2D('radiation_polar', 'Radiation length' + poltitleAppx + ';#phi(#circ);#eta',
                 2*72, -180, 180, 2*80, eta_min, eta_max)
@@ -238,13 +238,13 @@ hRad_pol = TH2D('radiation_polar', 'Radiation length' + poltitleAppx + ';#phi(#c
 hInt_pol = TH2D('interaction_polar', 'Interaction length' + poltitleAppx + ';#phi(#circ);#eta',
                 2*72, -180, 180, 2*80, eta_min, eta_max)
 
-hRad_hor = TH2D('radiation_horizontal', 'Radidation length' + hortitleAppx + ';x(mm);y(mm)',
+hRad_hor = TH2D('radiation_horizontal', 'Radiation length' + hortitleAppx + ';#it{x}[mm];#it{y}[mm]',
                 200, -xmax, xmax, 200, -ymax, ymax)
 
-hInt_hor = TH2D('interaction_horizontal', 'Interaction length' + hortitleAppx + ';x(mm);y(mm)',
+hInt_hor = TH2D('interaction_horizontal', 'Interaction length' + hortitleAppx + ';#it{x}[mm];#it{y}[mm]',
                 200, -xmax, xmax, 200, -ymax, ymax)
 
-fill(radialFill_car, hRad_car, hInt_car);
+#fill(radialFill_car, hRad_car, hInt_car);
 fill(radialFill_pol, hRad_pol, hInt_pol);
 fill(horizontalFill, hRad_hor, hInt_hor);
 
@@ -253,11 +253,11 @@ if not interactiveMode:
     of.Close()
 else:
     print 'Created the following histograms:'
-    print ' - hRad_car: radiation length in cartesian coordinates'
-    print ' - hInt_car: interaction length in cartesian coordinates'
+    #print ' - hRad_car: radiation length in cartesian coordinates'
+    #print ' - hInt_car: interaction length in cartesian coordinates'
     print ' - hRad_pol: radiation length in polar coordinates'
     print ' - hInt_pol: interaction length in polar coordinates'
     print ' - hRad_hor: radiation length for horizontally shooting'
     print ' - hInt_hor: interaction length for horizontally shooting'
     print '\nThese histograms are available via their respective names, e.g.'
-    print '> hRad_car.Draw(\"colz\")'
+    print '> hRad_pol.Draw(\"colz\")'
