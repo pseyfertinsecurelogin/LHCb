@@ -8,9 +8,9 @@ from Configurables import LHCbConfigurableUser
 
 from L0Algs import L0CaloFromRawAlgName , emulateL0Calo   , decodeL0Calo , monitorL0Calo
 from L0Algs import L0MuonFromRawAlgName , emulateL0Muon   , decodeL0Muon , monitorL0Muon
-from L0Algs import L0HCFromRawAlgName   , emulateL0HC     , decodeL0HC
 from L0Algs import L0DUFromRawAlgName   , emulateL0DU     , decodeL0DU   , monitorL0DU
 from L0Algs import                        emulateL0PileUp
+from L0Algs import emulateL0HCSeq
 
 ## @class L0Conf
 #  Configurable for the L0 trigger (simulation, emulation, decoding, monitoring and filtering)
@@ -154,8 +154,10 @@ class L0Conf(LHCbConfigurableUser) :
         l0calo   = emulateL0Calo()
         l0muon   = emulateL0Muon()
         l0pileup = emulateL0PileUp()
-        l0hc     = emulateL0HC()
         l0du     = emulateL0DU()
+        
+        # L0HC emulation algorithm comes as a list since the HCRawBankDecoder must be run first
+        l0hc_seq = emulateL0HCSeq()
 
         # Raw banks
         if writeBanks is not None:
@@ -174,7 +176,7 @@ class L0Conf(LHCbConfigurableUser) :
         # Build the sequence in two steps :
         # First :  run L0Calo + L0Muon + PUVeto + L0HC emulators
         l0processorSeq = GaudiSequencer( "sub"+name )
-        l0processorSeq.Members+=[ l0calo, l0muon, l0pileup, l0hc ]
+        l0processorSeq.Members+=[ l0calo, l0muon, l0pileup ] + l0hc_seq
         l0emulatorSeq.Members+=[ l0processorSeq ]
         # Second : run L0DU emulator
         l0emulatorSeq.Members+=[l0du]
