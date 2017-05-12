@@ -88,7 +88,7 @@ StatusCode L0DUAlg::initialize() {
   if ( msgLevel(MSG::DEBUG) )
     debug() << " loading the configuration for TCK = " << m_tck << " /  " << itck << endmsg;
   m_config   = m_confTool->config( itck );
-  if( NULL == m_config){
+  if( !m_config ) {
     error() << " Unable to load the configuration for TCK = " << m_tck << " /  " << itck << endmsg;
     return StatusCode::FAILURE;
   }

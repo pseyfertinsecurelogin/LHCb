@@ -44,11 +44,11 @@ StatusCode L0DataFilter::initialize() {
   info() << "L0DU data selection : " << endmsg;
   unsigned int k=1;
   if( m_logical != "AND" && m_logical != "OR")return Error("Logical must be 'AND' or 'OR'",StatusCode::FAILURE);
-  for(auto i=m_selection.begin();m_selection.end() != i;++i){
-    if( (i->second).size() != 2)return Error("Selection syntax is : 'DataName' : {'comparator','threshold'}",StatusCode::FAILURE);
-    const std::string& name = i->first;
-    const std::string& comp = (i->second)[0];
-    const std::string& st = (i->second)[1];
+  for(const auto& i : m_selection) {
+    if( (i.second).size() != 2)return Error("Selection syntax is : 'DataName' : {'comparator','threshold'}",StatusCode::FAILURE);
+    const std::string& name = i.first;
+    const std::string& comp = i.second[0];
+    const std::string& st = i.second[1];
     if( comp != ">" && comp != "<" && comp != ">=" && comp != "<=" && comp != "==")
       return Error("Comparator must be '>', '>=', '<', '<=' or '=='",StatusCode::FAILURE);
     info() << "  - ("<<name<<" "<<comp<<" "<<st<<") " ;
@@ -80,10 +80,10 @@ StatusCode L0DataFilter::execute() {
   //===== Processing
   bool oSel = false;
   bool aSel = true;
-  for(auto i=m_selection.begin();m_selection.end() != i;++i){
-    const std::string& name = i->first;
-    const std::string& comp = (i->second)[0];
-    const std::string& st = (i->second)[1];
+  for(const auto& i : m_selection) {
+    const std::string& name = i.first;
+    const std::string& comp = i.second[0];
+    const std::string& st = i.second[1];
     int threshold;
     std::istringstream is( st.c_str() );
     is >> threshold;

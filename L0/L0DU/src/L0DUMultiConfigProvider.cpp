@@ -20,7 +20,6 @@
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( L0DUMultiConfigProvider )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
@@ -138,11 +137,8 @@ LHCb::L0DUConfig*  L0DUMultiConfigProvider::loadConfig( const std::string& tck ,
   m_provider = tool<IL0DUConfigProvider>("L0DUConfigProvider" , s.str(),this );
 
 
-  int itck;
-  int index = tck.rfind("0x") +2 ;
-  std::string stck = tck.substr( index, tck.length() );
-  std::istringstream is( stck.c_str() );
-  is >> std::hex >> itck;
+  auto index = tck.rfind("0x") + 2 ;
+  int itck = std::stoi(tck.substr( index ),nullptr,16);
 
   if ( msgLevel(MSG::DEBUG) )
     debug() << "TCK = '"<<tck <<"' -> decimal value = " << itck << endmsg ;

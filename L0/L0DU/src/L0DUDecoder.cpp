@@ -142,8 +142,8 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
   }
   report.setTck( tck );
 
-  LHCb::L0DUConfig *config = m_config;
-  if (!config || config->tck()!= tck ) {
+  const LHCb::L0DUConfig *config = m_config;
+  if ( !config || config->tck()!= tck ) {
     config = m_confTool->config( tck , "T0");
     m_config = config;
   }

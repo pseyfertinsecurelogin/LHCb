@@ -13,7 +13,7 @@
  *  @author Olivier Deschamps
  *  @date   2007-10-13
  */
-class L0CondDBProvider : public GaudiTool, virtual public IL0CondDBProvider {
+class L0CondDBProvider : public extends<GaudiTool, IL0CondDBProvider> {
 public:
   /// Standard constructor
   L0CondDBProvider( const std::string& type,
@@ -28,10 +28,10 @@ public:
   int RAMBCID(std::string vsn,int bcid) override;
 
 private:
-  DeCalorimeter* m_ecal;
-  Condition* m_gain;
+  DeCalorimeter* m_ecal = nullptr;
+  Condition* m_gain = nullptr;
   std::map<std::string,std::vector<int> > m_mapRam;
-  unsigned int m_cycle;
+  unsigned int m_cycle = 3564;
   std::string m_rams;
 };
 #endif // L0CONDDBPROVIDER_H

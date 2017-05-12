@@ -16,17 +16,13 @@
 // Declaration of the Tool Factory
 DECLARE_COMPONENT( L0CondDBProvider )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 L0CondDBProvider::L0CondDBProvider( const std::string& type,
                     const std::string& name,
                     const IInterface* parent )
-  : GaudiTool ( type, name , parent ),
-    m_ecal(NULL),
-    m_gain(),
-    m_cycle(3564)
+  : base_class ( type, name , parent )
 {
   declareInterface<IL0CondDBProvider>(this);
   declareProperty("RAMBCID" , m_mapRam);
@@ -35,7 +31,7 @@ L0CondDBProvider::L0CondDBProvider( const std::string& type,
 //=============================================================================
 StatusCode L0CondDBProvider::initialize(){
   if ( msgLevel(MSG::DEBUG) ) debug() << "Initialize L0CondDBProvider" <<endmsg;
-  StatusCode sc = GaudiTool::initialize();
+  StatusCode sc = base_class::initialize();
   if(sc.isFailure())return sc;
 
   m_ecal = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
@@ -43,7 +39,7 @@ StatusCode L0CondDBProvider::initialize(){
   // RAM(BCID)
   m_rams += "{";
   if(m_mapRam.size() > 1)m_rams += "|";
-  for(std::map<std::string,std::vector<int> >::iterator it = m_mapRam.begin(); m_mapRam.end() != it; ++it){
+  for(auto it = m_mapRam.begin(); m_mapRam.end() != it; ++it){
     std::string vsn = (*it).first;
     std::vector<int> rMap = (*it).second;
     if( rMap.size() != m_cycle){
@@ -63,9 +59,11 @@ StatusCode L0CondDBProvider::initialize(){
 
 
 double L0CondDBProvider::scale(unsigned int base ){
-  if( L0DUBase::Type::Digit   == base)return 1;
-  if( L0DUBase::Type::CaloEt  == base)return caloEtScale();
-  if( L0DUBase::Type::MuonPt  == base)return muonPtScale();
+  switch (base) {
+    case L0DUBase::Type::Digit  : return 1;
+    case L0DUBase::Type::CaloEt : return caloEtScale();
+    case L0DUBase::Type::MuonPt : return muonPtScale();
+  }
   Error("Unknown scale type", StatusCode::SUCCESS).ignore();
   counter("Unknown scale type")+=1;
   return 0.;
@@ -101,7 +99,7 @@ double L0CondDBProvider::muonPtScale(){
 
 const std::vector<int> L0CondDBProvider::RAMBCID(std::string vsn){
   const std::vector<int> empty;
-  std::map<std::string,std::vector<int> >::iterator it = m_mapRam.find(vsn);
+  auto it = m_mapRam.find(vsn);
   if( it == m_mapRam.end() ){
     Warning("The RAM(BCID) with the requested version " + vsn + " has not been found" ).ignore();
     return empty;

@@ -1,5 +1,5 @@
 // Include files
-
+#include "Kernel/STLExtensions.h"
 // from LHCb
 #include "Event/ODIN.h"
 // local
@@ -21,17 +21,7 @@ DECLARE_COMPONENT( L0DUEmulatorTool )
 L0DUEmulatorTool::L0DUEmulatorTool( const std::string& type,
                                   const std::string& name,
                                   const IInterface* parent )
-  : base_class ( type, name , parent ),
-    m_report(),
-    m_muCleaning(),
-    m_muZeroSup(),
-    m_muHighest(),
-    m_muPattern(0),
-    m_decoder(NULL),
-    m_condDB(NULL),
-    m_odin(NULL),
-    m_config(NULL),
-    m_begEvent(true)
+  : base_class ( type, name , parent )
 {
   declareInterface<IL0DUEmulatorTool>(this);
   declareProperty( "MuonCleaning" , m_muCleaning = false);   // set to false as long as the L0Muon cleaning is commented in the firmware.
@@ -123,9 +113,7 @@ StatusCode L0DUEmulatorTool::fillData(){
   // - process the L0Muon data (per bX - assume the bX are set for all muons in the same way)
   m_muHighest.clear(); // reset
   m_muPattern=0;       // reset
-  const std::vector<int>& BXs = bxList( L0DUBase::Muon1::Pt );
-  for( std::vector<int>::const_iterator ibx=BXs.begin();BXs.end()!=ibx;ibx++){
-    int bx = *ibx;
+  for( const auto& bx : bxList( L0DUBase::Muon1::Pt ) ) {
 
     // - collect the 4x2 pT
     std::vector<unsigned long> muonVec;
@@ -232,18 +220,18 @@ StatusCode L0DUEmulatorTool::fillData(){
   // -------------------------------------
   // Data processing of user-defined data
   // ------------------------------------
-  for( LHCb::L0DUElementaryData::Map::iterator idata = dataMap.begin();idata != dataMap.end() ; idata++){
+  for( auto idata = dataMap.begin();idata != dataMap.end() ; idata++){
     LHCb::L0DUElementaryData* data = (*idata).second;
     // Fill RAM(BCID)
     const std::string dataName = data->name();
     int index = dataName.rfind("(BCID)");
-    if( (int) dataName.rfind("RAM") != (int) std::string::npos && index != (int) std::string::npos ){
+    if( dataName.rfind("RAM") != std::string::npos && index != (int) std::string::npos ){
       std::string ram = dataName.substr(0,index);
       // get BCID from ODIN
       m_odin->getTime();
       unsigned int odBX = 0;
       const LHCb::ODIN* odin = getIfExists<LHCb::ODIN> ( LHCb::ODINLocation::Default );
-      if( NULL != odin ){
+      if( odin ){
         odBX = odin->bunchId();
       }else{
         Warning( "Emtpy location for ODIN '"+ LHCb::ODINLocation::Default +"'" ,StatusCode::SUCCESS).ignore();
@@ -261,8 +249,8 @@ StatusCode L0DUEmulatorTool::fillData(){
   if( msgLevel(MSG::VERBOSE)) {
     verbose() << "User-defined data filled " << endmsg;
     verbose() << " ---> data summary " << endmsg;
-    for( LHCb::L0DUElementaryData::Map::iterator idata = dataMap.begin();idata != dataMap.end() ; idata++){
-      verbose() << "Data :  " << ((*idata).second)->summary() <<endmsg;
+    for ( const auto& data : dataMap ) {
+      verbose() << "Data :  " << data.second->summary() <<endmsg;
     }
   }
 
@@ -274,22 +262,20 @@ void L0DUEmulatorTool::setDataValue(LHCb::L0DUElementaryData* l0Data,
                                     const std::array<unsigned int,L0DUBase::Index::Size>& base){
 
   l0Data->setScaleAndSaturation(scale(base) , max(base)  );
-  const std::vector<int>& BXs = bxList( base );
-  for( std::vector<int>::const_iterator ibx=BXs.begin();BXs.end()!=ibx;ibx++){
-    l0Data->setDigit( digit( base, *ibx ) , *ibx );
+  for( const auto& bx : bxList( base ) ) {
+    l0Data->setDigit( digit( base, bx ) , bx );
     if( msgLevel(MSG::VERBOSE))
-      verbose() << "Set Data digit " << l0Data->name() << " : " <<digit(base, *ibx) << " : scale  = " << scale(base)
-                << " for BX="<< Gaudi::Utils::toString(*ibx)<< endmsg;
+      verbose() << "Set Data digit " << l0Data->name() << " : " <<digit(base, bx) << " : scale  = " << scale(base)
+                << " for BX="<< Gaudi::Utils::toString(bx)<< endmsg;
   }
 }
 //===========================================================================================================
 StatusCode  L0DUEmulatorTool::dataTree(LHCb::L0DUElementaryData* data, LHCb::L0DUElementaryData::Map dataMap   ){
   if( data->type() != LHCb::L0DUElementaryData::Compound )return StatusCode::SUCCESS;
-  for(std::vector<std::string>::const_iterator iop =  data->componentsName().begin() ; iop != data->componentsName().end();iop++){
-    if( dataMap.find(*iop) == dataMap.end() )
-      return Warning("dataTree: the data '"+*iop+"' is not defined in the L0DUConfig data map",StatusCode::FAILURE);
-    LHCb::L0DUElementaryData* preData = dataMap[ *iop ];
-    data->addComponent( preData );
+  for( const auto& iop : data->componentsName() ) {
+    if( dataMap.find(iop) == dataMap.end() )
+      return Warning("dataTree: the data '"+iop+"' is not defined in the L0DUConfig data map",StatusCode::FAILURE);
+    data->addComponent( dataMap[ iop ] );
   }
   return StatusCode::SUCCESS;
 }
@@ -301,8 +287,8 @@ StatusCode L0DUEmulatorTool::processing(){
 
   // downscaling counters updated once per event (paranoid pretection against multi-call of the emulator processing  / event)
 
-  std::map<unsigned int,bool>::iterator it = m_procMap.find( m_config->tck() );
-  if( it == m_procMap.end() || (*it).second ){
+  auto it = m_procMap.find( m_config->tck() );
+  if( it == m_procMap.end() || it->second ){
     m_config->updateCounters( true );
     m_procMap[ m_config->tck() ]=false;
   } else {
@@ -331,18 +317,14 @@ const LHCb::L0DUReport L0DUEmulatorTool::emulatedReport(){
   m_report.setDecisionValue( m_config->emulatedDecisionValue()  );
   m_report.setSumEt( digit(L0DUBase::Sum::Et) );
 
-
-  LHCb::L0DUElementaryCondition::Map& conditionMap  = m_config->conditions();
-  LHCb::L0DUChannel::Map&             channelMap    = m_config->channels();
-
-  for( LHCb::L0DUChannel::Map::iterator ichan = channelMap.begin() ; ichan != channelMap.end() ; ichan++){
-    LHCb::L0DUChannel* channel = (*ichan).second ;
+  for( const auto& chan : m_config->channels() ) {
+    LHCb::L0DUChannel* channel = chan.second ;
     m_report.setChannelDecision(channel->name(), channel->emulatedDecision() );
     m_report.setChannelPreDecision(channel->name(), channel->emulatedPreDecision() );
   }
 
-  for( LHCb::L0DUElementaryCondition::Map::iterator icond = conditionMap.begin() ; icond != conditionMap.end() ; icond++){
-    LHCb::L0DUElementaryCondition* condition = (*icond).second ;
+  for( const auto& cond : m_config->conditions() ) {
+    LHCb::L0DUElementaryCondition* condition = cond.second ;
     if(condition->reported())m_report.setConditionValue(condition->name(), condition->emulatedValue() );
   }
   return m_report;
@@ -402,7 +384,6 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
     unsigned int nBxp = (m_emuBX) ? 2: 0;
     unsigned int nBxm = (m_emuBX) ? 2: 0;
 
-
     // global header ( simulation : no PGA f/w version )
     unsigned int ec_size = (m_report.conditionsValueSummaries().size() ) & 0x3 ;
     unsigned int tc_size = (m_report.channelsDecisionSummaries().size() ) & 0x3;
@@ -414,24 +395,25 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
     // ------------
     // PGA3-Block
     // -----------
-    std::vector<int> ptMu;
-    std::vector<int> adMu;
-    ptMu.push_back( digit( L0DUBase::Muon1::Pt   ) | ( digit( L0DUBase::Muon1::Sign    ) << 7 ) );
-    ptMu.push_back( digit( L0DUBase::Muon2::Pt   ) | ( digit( L0DUBase::Muon2::Sign    ) << 7 ) );
-    ptMu.push_back( digit( L0DUBase::Muon3::Pt   ) | ( digit( L0DUBase::Muon3::Sign    ) << 7 ) );
-    ptMu.push_back( digit( L0DUBase::Muon4::Pt   ) | ( digit( L0DUBase::Muon4::Sign    ) << 7 ) );
-    ptMu.push_back( digit( L0DUBase::Muon5::Pt   ) | ( digit( L0DUBase::Muon5::Sign    ) << 7 ) );
-    ptMu.push_back( digit( L0DUBase::Muon6::Pt   ) | ( digit( L0DUBase::Muon6::Sign    ) << 7 ) );
-    ptMu.push_back( digit( L0DUBase::Muon7::Pt   ) | ( digit( L0DUBase::Muon7::Sign    ) << 7 ) );
-    ptMu.push_back( digit( L0DUBase::Muon8::Pt   ) | ( digit( L0DUBase::Muon8::Sign    ) << 7 ) );
-    adMu.push_back( digit( L0DUBase::Muon1::Address)  | (0 << 13)  );
-    adMu.push_back( digit( L0DUBase::Muon2::Address)  | (1 << 13)  );
-    adMu.push_back( digit( L0DUBase::Muon3::Address)  | (2 << 13)  );
-    adMu.push_back( digit( L0DUBase::Muon4::Address)  | (3 << 13)  );
-    adMu.push_back( digit( L0DUBase::Muon5::Address)  | (4 << 13)  );
-    adMu.push_back( digit( L0DUBase::Muon6::Address)  | (5 << 13)  );
-    adMu.push_back( digit( L0DUBase::Muon7::Address)  | (6 << 13)  );
-    adMu.push_back( digit( L0DUBase::Muon8::Address)  | (7 << 13)  );
+    auto ptMu = LHCb::make_array(
+      digit( L0DUBase::Muon1::Pt ) | ( digit( L0DUBase::Muon1::Sign ) << 7 ),
+      digit( L0DUBase::Muon2::Pt ) | ( digit( L0DUBase::Muon2::Sign ) << 7 ),
+      digit( L0DUBase::Muon3::Pt ) | ( digit( L0DUBase::Muon3::Sign ) << 7 ),
+      digit( L0DUBase::Muon4::Pt ) | ( digit( L0DUBase::Muon4::Sign ) << 7 ),
+      digit( L0DUBase::Muon5::Pt ) | ( digit( L0DUBase::Muon5::Sign ) << 7 ),
+      digit( L0DUBase::Muon6::Pt ) | ( digit( L0DUBase::Muon6::Sign ) << 7 ),
+      digit( L0DUBase::Muon7::Pt ) | ( digit( L0DUBase::Muon7::Sign ) << 7 ),
+      digit( L0DUBase::Muon8::Pt ) | ( digit( L0DUBase::Muon8::Sign ) << 7 ) );
+
+    auto adMu = LHCb::make_array(
+      digit(L0DUBase::Muon1::Address) | (0 << 13),
+      digit(L0DUBase::Muon2::Address) | (1 << 13),
+      digit(L0DUBase::Muon3::Address) | (2 << 13),
+      digit(L0DUBase::Muon4::Address) | (3 << 13),
+      digit(L0DUBase::Muon5::Address) | (4 << 13),
+      digit(L0DUBase::Muon6::Address) | (5 << 13),
+      digit(L0DUBase::Muon7::Address) | (6 << 13),
+      digit(L0DUBase::Muon8::Address) | (7 << 13) );
 
     unsigned int nmuons  =0;
     unsigned int muPt[2]={0,0};
@@ -558,13 +540,8 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
       for(unsigned int i=0;i< ec_size;++i)l0Block.push_back(0);// Next2 conditions-map
       l0Block.push_back( digit(L0DUBase::Sum::Et , +1) | digit(L0DUBase::Sum::Et , +2)<< 16); // SumEt Prev2/Prev1
     }
-
-  }
-  else{
+  } else{
     warning() << "L0DU RawBank version " << version << " is not defined " << endmsg;
   }
   return l0Block;
 }
-
-
-

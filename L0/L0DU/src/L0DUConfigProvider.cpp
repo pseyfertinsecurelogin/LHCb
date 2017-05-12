@@ -572,22 +572,20 @@ StatusCode L0DUConfigProvider::createConditions(){
       return StatusCode::FAILURE;
     }
 
-    std::stringstream str;
-    str << values.front(); // The THRESHOLD
-    unsigned long threshold;
-    str >> threshold ;
+    unsigned long threshold = std::stoul( values.front() ); // The THRESHOLD
 
 
     // report  (facultatif)
     //----------
     std::vector<std::string> reports = Parse("reported", *iconfig);
-    bool reported = true;
     if( reports.size() > 1 ){
       error() << "Should be an unique report for the new CONDITION : "
               << conditionName << " (found "<< reports.size() << ")" << endmsg;
       return StatusCode::FAILURE;
-    }else if(reports.size() == 1 ){
-      std::string report = *(reports.begin());
+    }
+    bool reported = true;
+    if(reports.size() == 1 ){
+      const std::string& report = reports.front();
       std::string uReport(report);
       std::transform( report.begin() , report.end() , uReport.begin () , ::toupper ) ;
       if( uReport == "FALSE" ){
@@ -604,18 +602,13 @@ StatusCode L0DUConfigProvider::createConditions(){
 
     // the index (facultatif)
     //----------
-    int index = id;
     values = Parse("index", *iconfig);
-    if(values.size() > 0){
-      std::stringstream str;
-      str << values.front(); // The INDEX
-      str >> index;
-    }
-    else if(values.size() > 1){
+    if(values.size() > 1){
       error() << "Should be an unique index for the new CONDITION : "
               << conditionName << " (found "<< values.size() << ")" << endmsg;
       return StatusCode::FAILURE;
     }
+    int  index = ( values.empty() ? id : std::stoi( values.front())); // The INDEX
     // check the index is not already used
     for(const auto& ii : m_conditionsMap) {
       if(index == ii.second->index() ) {
@@ -627,15 +620,15 @@ StatusCode L0DUConfigProvider::createConditions(){
     // the BX (facultative)
     //---------------------
     values = Parse("bx", *iconfig);
-    int bx=0;
     if(values.size() > 1){
       error() << "Should be an unique BX for the CONDITION : "
               << conditionName << " (found "<< values.size() << ")" << endmsg;
       return StatusCode::FAILURE;
-    }else if(values.size() == 1){
-      std::stringstream str;
-      str << values.front(); // The BX
-      str >> bx;
+    }
+
+    int bx=0;
+    if(values.size() == 1){
+      bx = std::stoi( values.front() ); // The BX
       if( (std::find(m_knownBXs.begin(),m_knownBXs.end(), bx ) == m_knownBXs.end() ))
         Warning("'"+conditionName+"' : L0DU firmware can only be configured for BX="+Gaudi::Utils::toString(m_knownBXs)
                 ,StatusCode::SUCCESS,5).ignore();
@@ -714,10 +707,7 @@ StatusCode L0DUConfigProvider::createChannels(){
       return StatusCode::FAILURE;
     }
 
-    std::stringstream str;
-    str << values.front(); // The rate
-    double rate;
-    str>> rate;
+    double rate = std::stod(values.front()); // The rate
 
     if(rate<0. || rate > 100.){
       error() << "The channel accept rate " << rate << " (%) rate should be between 0 and 100" << endmsg;
@@ -791,19 +781,13 @@ StatusCode L0DUConfigProvider::createChannels(){
 
     // the index (facultatif)
     // ---------
-    int index = id;
     values = Parse("index", *iconfig);
-    if(values.size() > 0){
-      std::string id =  *(values.begin()); // The INDEX
-      std::stringstream str("");
-      str << id;
-      str >> index;
-    }
-    else if(values.size() > 1){
+    if (values.size()>1) {
       error() << "Should be an unique index for the new CHANNEL : "
               << channelName << " (found "<< values.size() << ")" << endmsg;
       return StatusCode::FAILURE;
     }
+    int index = ( values.empty() ? id : std::stoi( values.front() ) ); // The INDEX
     // check the index is not already used
     for (const auto& ii : m_channelsMap) {
       if(index == ii.second->index() ){

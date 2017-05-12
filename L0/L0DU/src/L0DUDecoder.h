@@ -35,7 +35,7 @@ private:
 
   IL0DUConfigProvider*   m_confTool = nullptr;
   IL0CondDBProvider*     m_conddb   = nullptr;
-  mutable std::atomic<LHCb::L0DUConfig*> m_config = { nullptr };
+  mutable std::atomic<const LHCb::L0DUConfig*> m_config = { nullptr };
   bool m_ensureKnownTCK = false;
 };
 #endif // L0DUFROMRAWHLT1TOOL_H

@@ -1,4 +1,3 @@
-// $Id: FastL0DUFilter.cpp,v 1.3 2010-01-27 23:35:23 odescham Exp $
 // Include files
 
 // local
@@ -61,13 +60,10 @@ StatusCode FastL0DUFilter::execute() {
     counter("RawEvent is missing")+=1;
     return StatusCode::SUCCESS;
   }
-  rawEvt= get<LHCb::RawEvent>( rawLoc );
-  for( std::vector<LHCb::RawBank*>::const_iterator itB = (&rawEvt->banks(   LHCb::RawBank::L0DU ))->begin();
-       itB != (&rawEvt->banks(   LHCb::RawBank::L0DU ))->end() ; itB++){
+  rawEvt = get<LHCb::RawEvent>( rawLoc );
+  for( const auto& bank : rawEvt->banks(LHCb::RawBank::L0DU) ) {
 
-
-    LHCb::RawBank* bank = *itB;
-    if( NULL == bank || 0 == bank->size() )continue;
+    if( !bank || bank->size() == 0 )continue;
     if( m_source != bank->sourceID() )continue;
     if( 1 != bank->version() && 2!= bank->version() ){
       Warning( "Inconsistent L0DU bank version" ).ignore();
