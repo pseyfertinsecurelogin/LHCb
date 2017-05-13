@@ -151,12 +151,15 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   const unsigned int maxSamples = 1000;
   const unsigned int nData      = data.size();
   // determine the minimum number of sample points based on the min X inc
-  const unsigned int minXPts    = ( minXinc > 0 ? std::lround((maxX-minX)/minXinc) : maxSamples );
-  const unsigned int nsamples   = std::max( 2*nData, std::min( maxSamples, minXPts ) ); 
+  const unsigned int minXPts  = ( minXinc>0 ? std::lround((maxX-minX)/minXinc) : maxSamples );
+  const unsigned int nsamples = std::max( nData, std::min(maxSamples,minXPts) ); 
   if ( nsamples < minXPts ) 
   { 
-    std::cout << "Rich::TabulatedFunction1D WARNING : Sample points " 
-              << nsamples << " < min X diff points " << minXPts << std::endl; 
+    std::ostringstream mess;
+    mess << "Sample points " << nsamples << " < min X diff points " << minXPts;
+    initInterpolator();
+    throw GaudiException( mess.str(), "*Rich::TabulatedFunction1D*", StatusCode::FAILURE );
+    return false;
   }
 
   // Initialise the fast interpolator
