@@ -15,7 +15,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <memory>
 #include <type_traits>
 
