@@ -19,14 +19,6 @@ DECLARE_COMPONENT( L0ETC )
 
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-L0ETC::L0ETC( const std::string& name, ISvcLocator* pSvcLocator)
-: GaudiTupleAlg ( name , pSvcLocator )
-{
-    declareProperty( "CollectionName", m_collectionName = "<not set>");
-}
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode L0ETC::initialize() {
@@ -67,12 +59,12 @@ StatusCode L0ETC::execute() {
   m_events++ ;
 
   // This is what it is about...
-  Tuple tup = evtCol(1,m_collectionName);
+  Tuple tup = evtCol(1,m_collectionName.value());
 
   // pick up the location of the event --
   // this is what makes the tag collection a collection...
   DataObject* pObject = get<DataObject>("/Event");
-  if (pObject!=0) {
+  if (pObject) {
     StatusCode sc = tup->column("Address", pObject->registry()->address() );
     if (!sc) return sc;
   } else {

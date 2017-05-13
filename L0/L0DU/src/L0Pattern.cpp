@@ -1,5 +1,5 @@
 // Include files
-
+#include "Kernel/STLExtensions.h"
 // L0Event
 #include "Event/L0DUReport.h"
 #include <algorithm>
@@ -20,20 +20,6 @@
 DECLARE_COMPONENT( L0Pattern )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-L0Pattern::L0Pattern( const std::string& name,
-                                          ISvcLocator* pSvcLocator)
-: GaudiTupleAlg ( name , pSvcLocator )
-{
-  declareProperty( "L0DUEmulatorTool"  , m_emulatorTool= "L0DUEmulatorTool");
-  declareProperty( "L0DUFromRawTool"   , m_fromRawTool = "L0DUFromRawTool" );
-  declareProperty( "L0DUConfigTool"    , m_configTool  = "L0PatternConfig");
-  declareProperty( "TCKList"           , m_list);
-  declareProperty( "resetBCID"         , m_setbcid = true);
-}
-
-//=============================================================================
 // Initialisation. Check parameters
 //=============================================================================
 StatusCode L0Pattern::initialize() {
@@ -48,13 +34,11 @@ StatusCode L0Pattern::initialize() {
   m_emulator  = tool<IL0DUEmulatorTool>(m_emulatorTool, m_emulatorTool);
   m_config    = tool<IL0DUConfigProvider>("L0DUMultiConfigProvider" , m_configTool);
 
-
-
   // Check
-  if(m_list.empty())return Error("Empty list of TCK");
-  for(std::vector<std::string>::iterator it = m_list.begin() ; it != m_list.end() ; it++){
-    for(std::vector<std::string>::iterator jt = it+1  ; jt != m_list.end() ; jt++){
-      if( (*it) == (*jt) ){
+  if (m_list.value().empty()) return Error("Empty list of TCK");
+  for(auto it = m_list.value().begin() ; it != m_list.value().end() ; ++it){
+    for(auto jt = std::next(it); jt != m_list.value().end() ; ++jt){
+      if ( (*it) == (*jt) ){
         warning() << "The requested TCK " << *it << " appears twice in the TCKList " << endmsg;
         warning() << "Emulator may give wrong result due to  downscaling - please clean the list ..." << endmsg;
         return StatusCode::FAILURE;
@@ -68,12 +52,9 @@ StatusCode L0Pattern::initialize() {
 // Main execution
 //=============================================================================
 StatusCode L0Pattern::execute() {
-
   using namespace LHCb;
 
-
   Tuple ntp = nTuple(500 , "L0DU pattern" ,CLID_ColumnWiseTuple);
-
 
   // get processor data
   if(!m_fromRaw->decodeBank()){
@@ -85,60 +66,59 @@ StatusCode L0Pattern::execute() {
     return StatusCode::SUCCESS;
   }
 
-
   m_datas =  m_fromRaw->L0ProcessorDatas();
 
   // built 12 bits BCID
   unsigned long sature = 0xDEB;
   if( m_bcid > sature )m_bcid=0 ;
   // set bcid to the L0DU data words
-  if(m_setbcid){
-    encode(m_bcid , L0DUBase::Electron::BCID     );
-    encode(m_bcid , L0DUBase::Photon::BCID       );
-    encode(m_bcid , L0DUBase::Hadron::BCID       );
-    encode(m_bcid , L0DUBase::Pi0Global::BCID    );
-    encode(m_bcid , L0DUBase::Pi0Local::BCID     );
-    encode(m_bcid , L0DUBase::Sum::BCID          );
-    encode(m_bcid , L0DUBase::Spd::BCID          );
-    encode(m_bcid , L0DUBase::Muon1::BCID1       );
-    encode(m_bcid , L0DUBase::Muon1::BCID2       );
-    encode(m_bcid , L0DUBase::Muon3::BCID1       );
-    encode(m_bcid , L0DUBase::Muon3::BCID2       );
-    encode(m_bcid , L0DUBase::Muon5::BCID1       );
-    encode(m_bcid , L0DUBase::Muon5::BCID2       );
-    encode(m_bcid , L0DUBase::Muon7::BCID1       );
-    encode(m_bcid , L0DUBase::Muon7::BCID2       );
-    encode(m_bcid , L0DUBase::PileUp::BCID1      );
-    encode(m_bcid , L0DUBase::PileUp::BCID2      );
+  if (m_setbcid) {
+    encode( m_bcid, L0DUBase::Electron::BCID  );
+    encode( m_bcid, L0DUBase::Photon::BCID    );
+    encode( m_bcid, L0DUBase::Hadron::BCID    );
+    encode( m_bcid, L0DUBase::Pi0Global::BCID );
+    encode( m_bcid, L0DUBase::Pi0Local::BCID  );
+    encode( m_bcid, L0DUBase::Sum::BCID       );
+    encode( m_bcid, L0DUBase::Spd::BCID       );
+    encode( m_bcid, L0DUBase::Muon1::BCID1    );
+    encode( m_bcid, L0DUBase::Muon1::BCID2    );
+    encode( m_bcid, L0DUBase::Muon3::BCID1    );
+    encode( m_bcid, L0DUBase::Muon3::BCID2    );
+    encode( m_bcid, L0DUBase::Muon5::BCID1    );
+    encode( m_bcid, L0DUBase::Muon5::BCID2    );
+    encode( m_bcid, L0DUBase::Muon7::BCID1    );
+    encode( m_bcid, L0DUBase::Muon7::BCID2    );
+    encode( m_bcid, L0DUBase::PileUp::BCID1   );
+    encode( m_bcid, L0DUBase::PileUp::BCID2   );
   }
-
-
 
   // RSDA vs TCK
   std::vector<int> rsda,tcks,report;
   // Run emulator over various configuration
-  for(std::vector<std::string>::iterator it = m_list.begin() ; it != m_list.end() ; it++){
-    if( "0x" != (*it).substr( 0, 2 ) ){
-      Error("SKIP the requested TCK value " + *it + " (MUST be in hexadecimal format '0x" + *it + "')").ignore();
+  for (const auto& l : m_list) {
+    if ( l.compare( 0, 2, "0x" ) != 0  ) {
+      Error("SKIP the requested TCK value " + l + " (MUST be in hexadecimal format '0x" + l + "')").ignore();
       continue;
     }
-    int itck;
-    std::istringstream is( *it );
-    is >> std::hex >> itck;
+    int itck = std::stoi( l, nullptr, 16 );;
     LHCb::L0DUConfig* config = m_config->config( itck );
     if (!config) return Error("Unknown TCK",StatusCode::SUCCESS);
     m_emulator->process(config , m_datas);
 
     unsigned int rs = 0;
-    if( m_fromRaw->version() == 1 ){
-      rs = m_bcid & 0xFFF;
-      rs |= ( config->emulatedDecision(LHCb::L0DUDecision::Physics) ) << 12;
-    }
-    else if( m_fromRaw->version() == 2 ){
-      rs = (m_bcid & 0x3FF);
-      rs |= ( config->emulatedDecision(LHCb::L0DUDecision::Physics) ) << 12;
-      rs |= ( config->emulatedDecision(LHCb::L0DUDecision::Beam2)   ) << 11;
-      rs |= ( config->emulatedDecision(LHCb::L0DUDecision::Beam1)   ) << 10;
+    switch( m_fromRaw->version()) {
+      case 1 : {
+        rs = (m_bcid & 0xFFF);
+        rs |= ( config->emulatedDecision(LHCb::L0DUDecision::Physics) ) << 12;
+        break;
+      }
+      case 2 : {
+        rs = (m_bcid & 0x3FF);
+        rs |= ( config->emulatedDecision(LHCb::L0DUDecision::Physics) ) << 12;
+        rs |= ( config->emulatedDecision(LHCb::L0DUDecision::Beam2)   ) << 11;
+        rs |= ( config->emulatedDecision(LHCb::L0DUDecision::Beam1)   ) << 10;
+        break;
+      }
     }
 
     rsda.push_back( rs );
@@ -153,35 +133,27 @@ StatusCode L0Pattern::execute() {
     report.push_back(pattern);
 
     // printout
-    debug()<< " === TCK=" << *it << "====" << endmsg;
-    for( LHCb::L0DUChannel::Map::iterator ic=channels.begin();channels.end()!=ic;++ic){
-      //debug() << "   - channel : " <<ic->first <<  " decision = " << ic->second->emulatedDecision() << endmsg;
-      debug() << "   - channel : " <<ic->first <<  " decision = " << ic->second->summary() << endmsg;
+    debug()<< " === TCK=" << l << "====" << endmsg;
+    for( const auto & c : channels ) {
+      //debug() << "   - channel : " <<c.first <<  " decision = " << ic.second->emulatedDecision() << endmsg;
+      debug() << "   - channel : " <<c.first <<  " decision = " << c.second->summary() << endmsg;
     }
   }
 
-  StatusCode sc;
-  sc=ntp->farray("rsda"    , rsda   ,"nConfig", m_list.size() );
-  sc=ntp->farray("tck"     , tcks   ,"nConfig", m_list.size() );
-  sc=ntp->farray("report"  , report ,"nConfig", m_list.size() );
+  ntp->farray( "rsda",   rsda,   "nConfig", m_list.size() ).ignore();
+  ntp->farray( "tck",    tcks,   "nConfig", m_list.size() ).ignore();
+  ntp->farray( "report", report, "nConfig", m_list.size() ).ignore();
 
   // DATA
-  std::vector<int> word,lsb,msb,typ;
-  for(L0ProcessorDatas::const_iterator idata = m_datas->begin(); idata != m_datas->end(); idata++ ) {
-    word.push_back ( (*idata)->word() ) ;
-    lsb.push_back( (*idata)->lsb() ) ;
-    msb.push_back( (*idata)->msb() ) ;
-    typ.push_back( (*idata)->key() ) ;
-  }
-  sc=ntp->farray("word" , word ,"nData", 24 );
-  sc=ntp->farray("lsb"  , lsb  ,"nData", 24 );
-  sc=ntp->farray("msb"  , msb  ,"nData", 24 );
-  sc=ntp->farray("fiber", typ  ,"nData", 24 );
-  sc=ntp->column("bcid" , m_bcid      );
+  ntp->farray( { { "word",  [](LHCb::L0ProcessorData* pd) { return pd->word(); } },
+                 { "lsb",   [](LHCb::L0ProcessorData* pd) { return pd->lsb(); } },
+                 { "msb",   [](LHCb::L0ProcessorData* pd) { return pd->msb(); } },
+                 { "fiber", [](LHCb::L0ProcessorData* pd) { return pd->key(); } } },
+               m_datas->begin(), m_datas->end(),"nData", 24 ).ignore();
+  ntp->column("bcid",  m_bcid ).ignore();
 
   m_bcid++;
-  sc = ntp->write();
-  return sc ;
+  return ntp->write();
 }
 
 void L0Pattern::encode(unsigned int data, const std::array<unsigned int, L0DUBase::Index::Size>& base){
