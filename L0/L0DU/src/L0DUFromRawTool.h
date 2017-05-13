@@ -49,7 +49,7 @@ public:
   LHCb::L0ProcessorDatas* L0ProcessorDatas() override {return m_processorDatas.get();}
   const std::map<std::string, std::pair<unsigned int,double> >& datas() const override {return m_dataMap;}
 
-  virtual StatusCode  _setProperty(const std::string& p,const std::string& v) override {return  setProperty(p,v);};
+  StatusCode  _setProperty(const std::string& p,const std::string& v) override {return  setProperty(p,v);};
 
 private:
   bool decoding(int ibank);

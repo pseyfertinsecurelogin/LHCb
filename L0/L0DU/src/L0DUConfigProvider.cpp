@@ -56,31 +56,24 @@ namespace {
                         { return std::toupper(ch1) == std::toupper(ch2); });
   }
 
-std::vector<std::string>
-triggerNameFromData( const std::vector<std::string>& dataList ){
-
-  std::vector<std::string> name;
-
-  // The actual trigger->data association definition
-
-  // 1st pass for the main trigger : L0Muon, L0Ecal, L0Hcal
-  bool hasTrigger = false;
-  for(const auto& id : dataList) {
-    auto id_matches = [&id](const char* cs) { return id.compare(0,4,cs) == 0; };
-    if (id_matches("Muon") || id_matches("DiMu") ){
-      name.push_back( "L0Muon" ) ;
-      hasTrigger = true;
-    } else if( id_matches("Elec") || id_matches("Phot") || id_matches("Loca") || id_matches("Glob") ){
-      name.push_back( "L0Ecal" );
-      hasTrigger = true;
-    } else if( id_matches("Hadr") ){
-      name.push_back( "L0Hcal" );
-      hasTrigger = true;
+  std::vector<std::string>
+  triggerNameFromData( const std::vector<std::string>& dataList ){
+    std::vector<std::string> name;
+    // The actual trigger->data association definition
+    // 1st pass for the main trigger : L0Muon, L0Ecal, L0Hcal
+    for(const auto& id : dataList) {
+      auto id_matches = [&id](const char* cs) { return id.compare(0,4,cs) == 0; };
+      if (id_matches("Muon") || id_matches("DiMu") ){
+        name.push_back( "L0Muon" ) ;
+      } else if( id_matches("Elec") || id_matches("Phot") || id_matches("Loca") || id_matches("Glob") ){
+        name.push_back( "L0Ecal" );
+      } else if( id_matches("Hadr") ){
+        name.push_back( "L0Hcal" );
+      }
     }
+    if( name.empty() ) name.push_back( "Other" );
+    return name;
   }
-  if( !hasTrigger) name.push_back( "Other" );
-  return name;
-}
 
 }
 //=============================================================================
@@ -89,10 +82,8 @@ triggerNameFromData( const std::vector<std::string>& dataList ){
 L0DUConfigProvider::L0DUConfigProvider( const std::string& type,
                             const std::string& name,
                             const IInterface* parent )
-  : GaudiTool ( type, name , parent )
+: base_class ( type, name , parent )
 {
-  declareInterface<IL0DUConfigProvider>(this);
-
   declareProperty( "constData"               , m_constData  )->declareUpdateHandler(&L0DUConfigProvider::handler,this);
   declareProperty( "Data"                    , m_data       )->declareUpdateHandler(&L0DUConfigProvider::handler,this);
   declareProperty( "Conditions"              , m_conditions )->declareUpdateHandler(&L0DUConfigProvider::handler,this);
@@ -109,14 +100,13 @@ L0DUConfigProvider::L0DUConfigProvider( const std::string& type,
   declareProperty( "FullDescription"         , m_detail  = false)->declareUpdateHandler(&L0DUConfigProvider::handler,this);
   // TCK from name
   int idx = name.find_last_of(".")+1;
-  std::string nam = name.substr(idx,std::string::npos);
+  std::string nam = name.substr(idx);
   if ( (nam == LHCb::L0DUTemplateConfig::Name) | (nam == "L0DUConfig")) {
       m_template = true;
   } else {
       size_t index = nam.rfind("0x");
       nam = (index != std::string::npos ) ? nam.substr( index ) : "0x0000";
   }
-
 
   declareProperty( "TCK"                     , m_tck  = m_template ? format("0x%04X" , LHCb::L0DUTemplateConfig::TCKValue )
                    : nam )->declareUpdateHandler(&L0DUConfigProvider::handler,this);
@@ -129,10 +119,6 @@ L0DUConfigProvider::L0DUConfigProvider( const std::string& type,
     m_detail = true;
     m_check = true;
   }
-
-  // The BXs the firmware can use in the algorithm
-  m_knownBXs.push_back(0);
-  m_knownBXs.push_back(-1);
 }
 
 
@@ -144,7 +130,7 @@ StatusCode L0DUConfigProvider::finalize(){
   info() <<  "--------------- TCK = " << format("0x%04X" , m_tckopts) << "------------------"<<endmsg;
   configChecker();
   reset();
-  return GaudiTool::finalize();
+  return base_class::finalize();
 }
 
 //=============================================================================
@@ -152,7 +138,7 @@ StatusCode L0DUConfigProvider::finalize(){
 //=============================================================================
 StatusCode L0DUConfigProvider::initialize(){
   if ( msgLevel(MSG::DEBUG) ) debug() << "Initialize L0DUConfigProvider" << endmsg;
-  StatusCode sc = GaudiTool::initialize();
+  StatusCode sc = base_class::initialize();
   if(sc.isFailure())return sc;
 
   //get condDB tool
@@ -184,7 +170,6 @@ void L0DUConfigProvider::reset() {
   m_pData = 0;
   m_cData = 0;
 
-
   if ( msgLevel(MSG::DEBUG) )
     debug() << "Deleting " <<  m_conditionsMap.size() << " L0DUElementaryConditions* " << endmsg;
   for(auto& i : m_conditionsMap) delete i.second;
@@ -201,9 +186,7 @@ void L0DUConfigProvider::reset() {
 
 StatusCode L0DUConfigProvider::update() {
   int index = m_tck.rfind("0x") + 2 ;
-  std::string tck = m_tck.substr( index, m_tck.length() );
-  std::istringstream is( tck.c_str() );
-  is >> std::hex >> m_tckopts  ;
+  m_tckopts = std::stoi(m_tck.substr(index),nullptr,16);
 
   // init
   int num = L0DUBase::NumberOf::Data + L0DUBase::NumberOf::Compounds; // incl. BCID

@@ -7,7 +7,7 @@
 #include  "L0Interfaces/IL0ProcessorDataDecoder.h"
 #include  "L0Interfaces/IL0CondDBProvider.h"
 
-class L0ProcessorDataDecoder : public GaudiTool, virtual public IL0ProcessorDataDecoder{
+class L0ProcessorDataDecoder : public extends<GaudiTool, IL0ProcessorDataDecoder> {
  public:
 
   L0ProcessorDataDecoder ( const std::string& type   ,

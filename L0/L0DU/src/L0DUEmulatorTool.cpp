@@ -21,7 +21,7 @@ DECLARE_COMPONENT( L0DUEmulatorTool )
 L0DUEmulatorTool::L0DUEmulatorTool( const std::string& type,
                                   const std::string& name,
                                   const IInterface* parent )
-  : base_class ( type, name , parent )
+: base_class ( type, name , parent )
 {
   declareInterface<IL0DUEmulatorTool>(this);
   declareProperty( "MuonCleaning" , m_muCleaning = false);   // set to false as long as the L0Muon cleaning is commented in the firmware.

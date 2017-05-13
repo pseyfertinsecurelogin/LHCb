@@ -92,7 +92,7 @@ StatusCode L0DUFromRawAlg::execute() {
   if( writeProcData() ) {
     LHCb::L0ProcessorDatas* datas = new LHCb::L0ProcessorDatas();
     put (datas  , m_procDataLocation , IgnoreRootInTES);
-    for(const auto& it : * m_fromRaw->L0ProcessorDatas() ) {
+    for(const auto& it : *m_fromRaw->L0ProcessorDatas() ) {
       datas->insert (new LHCb::L0ProcessorData( *it ));
     }
   }

@@ -39,7 +39,6 @@ StatusCode L0DataFilter::initialize() {
 
   if( m_selection.empty()) info() << "No selection is defined - filter has no effect" << endmsg;
 
-
   // check property
   info() << "L0DU data selection : " << endmsg;
   unsigned int k=1;
@@ -71,7 +70,7 @@ StatusCode L0DataFilter::execute() {
 
   std::string loc = dataLocation( m_l0Location );
   const  LHCb::L0DUReport* l0 = getIfExists<LHCb::L0DUReport>( loc );
-  if( NULL == l0 ){
+  if( !l0 ){
     counter("Report not found") += 1;
     setFilterPassed( false );
     return Warning("L0DUReport not found at location : '" + loc + "' - the event is rejected", StatusCode::SUCCESS );
@@ -100,8 +99,8 @@ StatusCode L0DataFilter::execute() {
   }
 
   bool accept = true;
-  if( m_logical == "AND") accept = m_revert ? !aSel : aSel;
-  else if( m_logical == "OR") accept = m_revert ? !oSel : oSel;
+  if( m_logical == "AND") accept = ( m_revert ? !aSel : aSel );
+  else if( m_logical == "OR") accept = ( m_revert ? !oSel : oSel );
   counter(" -> ALL (AND) ") += (int) aSel;
   counter(" -> ALL (OR)"  ) += (int) oSel;
   counter(" -> Accept") += (int) accept;

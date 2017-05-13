@@ -20,7 +20,7 @@
  *  @author Olivier Deschamps
  *  @date   2007-10-10
  */
-class L0DUEmulatorTool : public extends<GaudiTool, IL0DUEmulatorTool, IIncidentListener >{
+class L0DUEmulatorTool : public extends<GaudiTool, IL0DUEmulatorTool, IIncidentListener> {
 public:
   /// Standard constructor
   L0DUEmulatorTool( const std::string& type,

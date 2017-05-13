@@ -28,18 +28,7 @@ DECLARE_COMPONENT( L0DUMultiTrends )
 //=============================================================================
 L0DUMultiTrends::L0DUMultiTrends( const std::string& name,
                                           ISvcLocator* pSvcLocator)
-  : GaudiTupleAlg ( name , pSvcLocator ) ,
-    m_config(NULL),
-    m_emulator(NULL),
-    m_fromRaw(NULL),
-    m_datas(NULL),
-    m_odin(NULL),
-    m_book(true),
-    m_hasOrigin(false),
-    m_bin(2),
-    m_origin(0),
-    m_oBin(299),
-    m_count(0)
+: GaudiTupleAlg ( name , pSvcLocator )
 {
   declareProperty( "L0DUEmulatorTool"  , m_emulatorTool= "L0DUEmulatorTool");
   declareProperty( "L0DUFromRawTool"   , m_fromRawTool = "L0DUFromRawTool" );
@@ -71,13 +60,12 @@ StatusCode L0DUMultiTrends::initialize() {
   m_config    = tool<IL0DUConfigProvider>("L0DUMultiConfigProvider" , m_configTool);
   m_odin      = tool<IEventTimeDecoder>("OdinTimeDecoder","OdinDecoder",this);
 
-
   // Check
   if ( msgLevel(MSG::DEBUG) && m_list.empty())
     debug() << "Empty list of TCKs - only data TCK will be monitored" << endmsg;
-  for(std::vector<std::string>::iterator it = m_list.begin() ; it != m_list.end() ; it++){
-    for(std::vector<std::string>::iterator jt = it+1  ; jt != m_list.end() ; jt++){
-      if( (*it) == (*jt) ){
+  for (auto it = m_list.begin() ; it != m_list.end() ; it++){
+    for (auto jt = std::next(it)  ; jt != m_list.end() ; jt++){
+      if ( (*it) == (*jt) ){
         warning() << "The requested TCK " << *it << " appears twice in the TCKList " << endmsg;
         warning() << "Emulator may give wrong result due to  downscaling - please clean the list ..." << endmsg;
         return StatusCode::FAILURE;
@@ -87,7 +75,6 @@ StatusCode L0DUMultiTrends::initialize() {
 
   // Histogramming
   m_bin = m_list.size() + 2;
-
   m_oBin = m_trendPeriod - 1; // origin trending bin
   return StatusCode::SUCCESS;
 }
@@ -108,7 +95,7 @@ StatusCode L0DUMultiTrends::execute() {
   m_datas =  m_fromRaw->L0ProcessorDatas();
 
   // check
-  if( NULL == m_fromRaw->report().configuration() )Warning("report->L0DUConfig point to NULL").ignore();
+  if( !m_fromRaw->report().configuration() )Warning("report->L0DUConfig point to NULL").ignore();
 
   // book histogram (first event)
   if(m_book){
@@ -145,7 +132,7 @@ StatusCode L0DUMultiTrends::execute() {
   for(std::vector<std::string>::iterator it = m_list.begin() ; it != m_list.end() ; it++){
     int itck = tck2int( *it );
     LHCb::L0DUConfig* config   = m_config->config( itck );
-    if( NULL == config )continue;
+    if( !config )continue;
     m_emulator->process(config , m_datas);
     bin++;
     if( m_dMon != 0 ){
@@ -160,7 +147,7 @@ StatusCode L0DUMultiTrends::execute() {
   if( m_cMon)cFillChannels();
 
   // =============== trending =====================
-  if(m_trendPeriod > 0 && NULL != m_odin){
+  if(m_trendPeriod > 0 && m_odin){
     // get ODIN time
     unsigned long time = (unsigned long) ( (double) m_odin->getTime().ns()/Gaudi::Units::second);
     const LHCb::ODIN* odin = getIfExists<LHCb::ODIN> ( LHCb::ODINLocation::Default );

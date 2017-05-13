@@ -57,19 +57,19 @@ private:
 
 
   // Tools
-  IL0DUConfigProvider* m_config;
-  IL0DUEmulatorTool*   m_emulator;
-  IL0DUFromRawTool*    m_fromRaw;
-  LHCb::L0ProcessorDatas* m_datas;
-  IEventTimeDecoder* m_odin;
+  IL0DUConfigProvider* m_config = nullptr;
+  IL0DUEmulatorTool*   m_emulator = nullptr;
+  IL0DUFromRawTool*    m_fromRaw = nullptr;
+  LHCb::L0ProcessorDatas* m_datas = nullptr;
+  IEventTimeDecoder* m_odin = nullptr;
   //
   std::string m_emulatorTool;
   std::string m_fromRawTool;
   std::string m_configTool;
   std::vector<std::string> m_list;
-  bool m_book;
-  bool m_hasOrigin;
-  int m_bin;
+  bool m_book = true;
+  bool m_hasOrigin = false;
+  int m_bin = 2;
   int m_nPredTriggers;
   bool m_tTrend ;
   // trending
@@ -80,8 +80,8 @@ private:
   bool m_cMon;
   bool m_rate;
   //
-  unsigned long m_origin;
-  unsigned long m_oBin;
-  unsigned long m_count;
+  unsigned long m_origin = 0;
+  unsigned long m_oBin = 299;
+  unsigned long m_count = 0;
 };
 #endif // L0DUMULTITRENDS_H

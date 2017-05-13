@@ -19,7 +19,7 @@
 
  *  @date   2007-09-19
  */
-class L0DUConfigProvider : public GaudiTool, virtual public IL0DUConfigProvider {
+class L0DUConfigProvider : public extends<GaudiTool, IL0DUConfigProvider> {
 public:
   /// Standard constructor
   L0DUConfigProvider( const std::string& type,
@@ -31,7 +31,7 @@ public:
 
   LHCb::L0DUConfig*  config(long tck = LHCb::L0DUTemplateConfig::TCKValue ,std::string slot="T0") override {
     if (!m_uptodate) { reset();update(); }
-    if( slot == "") slot = "T0";
+    if( slot.empty() ) slot = "T0";
     // first : handle TEMPLATE configuration
     if( m_template && tck == LHCb::L0DUTemplateConfig::TCKValue ){
         if ( msgLevel(MSG::DEBUG) )
@@ -44,28 +44,25 @@ public:
                                    << m_tckopts << " CHECK your options ! " << endmsg;
     if(tck < 0 || tck > 0xFFFF){
       warning() << "requested TCK is not a 16 bit word" << endmsg;
-      return 0;
+      return nullptr;
     }
     auto it = m_configs.find( slot );
-    if( it == m_configs.end() )createConfig(slot);
+    if ( it == m_configs.end() ) createConfig(slot);
 
     it = m_configs.find( slot );
-    if( it == m_configs.end() ){ // if re-creating failed (paranoid test)
+    if ( it == m_configs.end() ) { // if re-creating failed (paranoia test)
       warning() << " no configs container found for slot " << slot << endmsg;
-      return 0;
+      return nullptr;
     }
 
     // it exists
-    return m_configs[slot]->object(tck);
+    return it->second->object(tck);
   }
 
-  LHCb::L0DUConfigs*  configs(std::string slot="T0") override {
-    if (!m_uptodate) { reset();update(); }
-    if( slot == "") slot = "T0";
-    return m_configs[slot].get();
+  LHCb::L0DUConfigs* configs(std::string slot="T0") override {
+    if ( !m_uptodate ) { reset(); update(); }
+    return m_configs[slot.empty() ? "T0" : slot].get();
   }
-
-
 
 private:
   void handler(Property&);
@@ -131,6 +128,6 @@ private:
   unsigned int m_reported = 0;
   std::vector<int> m_FOIx;
   std::vector<int> m_FOIy;
-  std::vector<int> m_knownBXs;
+  std::vector<int> m_knownBXs = { 0,-1 }; // The BXs the firmware can use in the algorithm
 };
 #endif // L0DUCONFIGPROVIDER_H

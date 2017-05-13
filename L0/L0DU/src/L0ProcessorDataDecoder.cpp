@@ -1,6 +1,5 @@
 // ============================================================================
 
-// Detector Element
 // local
 #include "L0ProcessorDataDecoder.h"
 
@@ -18,7 +17,7 @@ DECLARE_COMPONENT( L0ProcessorDataDecoder )
 L0ProcessorDataDecoder::L0ProcessorDataDecoder( const std::string& type   ,
                                                 const std::string& name   ,
                                                 const IInterface*  parent )
-: GaudiTool ( type, name , parent )
+: base_class ( type, name , parent )
 {
   declareInterface<IL0ProcessorDataDecoder> ( this ) ;
 }
@@ -27,22 +26,21 @@ StatusCode L0ProcessorDataDecoder::initialize ()
 {
   if ( msgLevel(MSG::DEBUG) )
     debug() << "Initialize L0ProcessorDataDecoder" << endmsg;
-  StatusCode sc = GaudiTool::initialize();
+  StatusCode sc = base_class::initialize();
   if(sc.isFailure())return sc;
   m_condDB = tool<IL0CondDBProvider>("L0CondDBProvider");
   m_dataContainer.clear();
   return StatusCode::SUCCESS;
 }
 
-
+// ============================================================================
 StatusCode L0ProcessorDataDecoder::finalize ()
 {
   if ( msgLevel(MSG::DEBUG) ) debug() << "release L0ProcessoDataDecoder" << endmsg;
   m_dataContainer.clear();
-  return GaudiTool::finalize();
+  return base_class::finalize();
 }
 
-// ============================================================================
 // ============================================================================
 bool L0ProcessorDataDecoder::setL0ProcessorData(std::vector<LHCb::L0ProcessorDatas*> datass){
   m_dataContainer.clear();
@@ -66,9 +64,7 @@ bool L0ProcessorDataDecoder::setL0ProcessorData(std::vector<LHCb::L0ProcessorDat
 
 // ============================================================================
 bool L0ProcessorDataDecoder::setL0ProcessorData(LHCb::L0ProcessorDatas* datas){
-  std::vector<LHCb::L0ProcessorDatas*> datass;
-  datass.push_back(datas);
-  return setL0ProcessorData(datass);
+  return setL0ProcessorData( { datas } );
 }
 
 bool L0ProcessorDataDecoder::setL0ProcessorData(std::vector<std::string> dataLocs){
@@ -160,4 +156,3 @@ unsigned long L0ProcessorDataDecoder::digit( const std::array<unsigned int,L0DUB
   m_ok=true;
   return val;
 }
-
