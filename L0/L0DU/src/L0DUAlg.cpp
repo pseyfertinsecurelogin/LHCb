@@ -123,7 +123,7 @@ StatusCode L0DUAlg::execute() {
   }
 
   // push Report and Config on TES
-  if(m_writeOnTES){
+  if(writeOnTES()){
     if ( msgLevel(MSG::DEBUG) ) debug() <<"Push L0DUReport on TES" << endmsg;
     LHCb::L0DUReport* report = new LHCb::L0DUReport(m_emulator->emulatedReport());
     std::string loc = dataLocation( m_reportLocation );
@@ -131,7 +131,7 @@ StatusCode L0DUAlg::execute() {
   }
 
   //push bank in RawBuffer
-  if(m_writeBanks){
+  if(writeBanks()){
     if ( msgLevel(MSG::DEBUG) )
       debug() << "Insert RawBank in rawEvent" << endmsg;
     const std::vector<unsigned int> block = m_emulator->bank(m_rawVsn);

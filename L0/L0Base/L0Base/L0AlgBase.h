@@ -1,5 +1,4 @@
-// $Id: L0AlgBase.h,v 1.3 2010-01-20 16:03:20 odescham Exp $
-#ifndef L0ALGBASE_H 
+#ifndef L0ALGBASE_H
 #define L0ALGBASE_H 1
 
 // Include files
@@ -8,26 +7,23 @@
 
 
 /** @class L0AlgBase L0AlgBase.h
- *  
+ *
  *
  *  @author Julien Cogan
  *  @date   2009-10-20
  */
 class L0AlgBase : public GaudiHistoAlg {
-public: 
-  /// Standard constructor
-  L0AlgBase( const std::string& name, ISvcLocator* pSvcLocator );
-  
-  virtual ~L0AlgBase( ); ///< Destructor
-  
+public:
+  using GaudiHistoAlg::GaudiHistoAlg;
+
 protected:
-  
+
 /** if algorithm should write L0XXXCandidates on TES
  *  The location will be the "default" location + l0context
  *  as suffix
  */
-  bool writeOnTES() const { return m_writeOnTES ; } ; 
-  
+  bool writeOnTES() const { return m_writeOnTES ; } ;
+
   /** The suffix to append to the default locations where
    *  to store the objects on the TES
    */
@@ -37,17 +33,16 @@ protected:
    *  @param[in] standardLocation "default" path where objects are stored
    */
   std::string dataLocation( const std::string & standardLocation ) const {
-    return ( rootInTES() + standardLocation + l0context() ) ; } ;  
+    return ( rootInTES() + standardLocation + l0context() ) ; } ;
 
   /** If algorithm should write the raw banks it emulates
    */
   bool writeBanks() const { return m_writeBanks ; } ;
-  
-  bool m_writeBanks;       ///< Flag to activate the writing of the raw banks
-  bool m_writeOnTES;       ///< Flag to activate the writing of the Candidates/Report on the TES
-  std::string m_l0context; ///< Suffix appended to the default location in TES
 
 private:
+  Gaudi::Property<bool> m_writeBanks { this,       "WriteBanks"  , true}; ///< Flag to activate the writing of the raw banks
+  Gaudi::Property<bool> m_writeOnTES { this,       "WriteOnTES"  , false};///< Flag to activate the writing of the Candidates/Report on the TES
+  Gaudi::Property<std::string> m_l0context { this, "L0Context"   , ""};   ///< Suffix appended to the default location in TES
 
 };
 #endif // L0ALGBASE_H

@@ -1,4 +1,4 @@
-#ifndef L0FROMRAWBASE_H 
+#ifndef L0FROMRAWBASE_H
 #define L0FROMRAWBASE_H 1
 
 // Include files
@@ -14,7 +14,7 @@
  *  @date   2009-10-20
  */
 class L0FromRawBase : public Decoder::AlgBase {
-public: 
+public:
   /// Standard constructor
   L0FromRawBase( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -37,20 +37,23 @@ protected:
   /** The suffix to append to the default locations where
    *  to store the objects on the TES
    */
-  std::string l0context() const { return m_l0context ; } ;
-  
+  const std::string& l0context() const { return m_l0context ; } ;
+
   /** returns the location where to write the data on TES
    *  @param[in] standardLocation "default" path where objects are stored
    */
   std::string dataLocation( const std::string & standardLocation ) const {
     return ( rootInTES() + standardLocation + l0context() ) ; } ;
 
-  bool m_writeProcData;    ///< Flag to activate the writing of the processor data
-  bool m_writeOnTES;       ///< Flag to activate the writing of the Candidates/Report on the TES
-  std::string m_l0context; ///< Suffix appended to the default location in TES
+  bool useRootInTES() const { return m_useRootInTES; }
+  bool statusOnTES() const { return m_statusOnTES; }
+private:
+  Gaudi::Property<bool> m_writeProcData  { this, "WriteProcData", false };    ///< Flag to activate the writing of the processor data
+  Gaudi::Property<bool> m_writeOnTES {this, "WriteOnTES", true };       ///< Flag to activate the writing of the Candidates/Report on the TES
+  Gaudi::Property<std::string> m_l0context { this, "L0Context"} ; ///< Suffix appended to the default location in TES
 
-  bool m_statusOnTES;      ///< Flag to activate the writing of the decoding status on the TES
-  bool m_useRootInTES;     ///< Flag to use RootInTES in the raw bank location 
+  bool m_statusOnTES = true;      ///< Flag to activate the writing of the decoding status on the TES
+  bool m_useRootInTES;     ///< Flag to use RootInTES in the raw bank location
 
 };
 #endif // L0FROMRAWBASE_H
