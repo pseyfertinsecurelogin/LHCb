@@ -125,6 +125,18 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
     if ( x[i] > maxX ) { maxX = x[i]; }
   }
 
+  // find the min distance in x between consecutive (x,y) data points
+  auto minXinc = boost::numeric::bounds<double>::highest();
+  {
+    auto iA = data.begin();
+    auto iB = iA; ++iB;
+    for ( ; iB != data.end(); ++iB, ++iA )
+    {
+      const auto diff = fabs( iA->first - iB->first );
+      if ( diff < minXinc ) { minXinc = diff; }
+    }
+  }
+  
   // Initialise the interpolators
   const auto err = gsl_spline_init ( gslSpline.get(), x.get(), y.get(), data.size() );
   if ( err )
@@ -136,9 +148,16 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   }
 
   // Determine the number of sample points for the fast fixed binned interpolator
+  const unsigned int maxSamples = 1000;
   const unsigned int nData      = data.size();
-  const unsigned int maxSamples = 600;
-  const unsigned int nsamples   = std::max( nData, std::min( 2 * nData, maxSamples ) );
+  // determine the minimum number of sample points based on the min X inc
+  const unsigned int minXPts    = ( minXinc > 0 ? ( maxX - minX ) / minXinc : maxSamples );
+  const unsigned int nsamples   = std::max( 2*nData, std::min( maxSamples, minXPts ) ); 
+  if ( nsamples < minXPts ) 
+  { 
+    std::cout << "Rich::TabulatedFunction1D WARNING : Sample points " 
+              << nsamples << " < min X diff points " << minXPts << std::endl; 
+  }
 
   // Initialise the fast interpolator
   m_fastInterp.init( minX, maxX, gslSpline.get(), nsamples );
@@ -147,7 +166,7 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   // std::cout << "Input data :-" << std::endl;
   // for ( const auto d : data )
   // {
-  //   std::cout << "  " << d.first << ", " << d.second << std::endl;
+  //  std::cout << "  " << d.first << ", " << d.second << std::endl;
   // }
   // std::cout << "Interpolator scan :- " << std::endl;
   // const unsigned int nScans = 100;
@@ -155,8 +174,8 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   // double xx = minX;
   // for ( unsigned int i = 0; i < nScans; ++i )
   // {
-  //   std::cout << "  " << xx << " = " << value(xx) << std::endl;
-  //   xx += inc;
+  //  std::cout << "  " << xx << " = " << value(xx) << std::endl;
+  //  xx += inc;
   // } 
 
   return true;
