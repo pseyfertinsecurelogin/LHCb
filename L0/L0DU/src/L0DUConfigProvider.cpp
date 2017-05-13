@@ -56,6 +56,31 @@ namespace {
                         { return std::toupper(ch1) == std::toupper(ch2); });
   }
 
+std::vector<std::string>
+triggerNameFromData( const std::vector<std::string>& dataList ){
+
+  std::vector<std::string> name;
+
+  // The actual trigger->data association definition
+
+  // 1st pass for the main trigger : L0Muon, L0Ecal, L0Hcal
+  bool hasTrigger = false;
+  for(const auto& id : dataList) {
+    auto id_matches = [&id](const char* cs) { return id.compare(0,4,cs) == 0; };
+    if (id_matches("Muon") || id_matches("DiMu") ){
+      name.push_back( "L0Muon" ) ;
+      hasTrigger = true;
+    } else if( id_matches("Elec") || id_matches("Phot") || id_matches("Loca") || id_matches("Glob") ){
+      name.push_back( "L0Ecal" );
+      hasTrigger = true;
+    } else if( id_matches("Hadr") ){
+      name.push_back( "L0Hcal" );
+      hasTrigger = true;
+    }
+  }
+  if( !hasTrigger) name.push_back( "Other" );
+  return name;
+}
 
 }
 //=============================================================================
@@ -228,8 +253,8 @@ void L0DUConfigProvider::createConfig(std::string slot){
 
   m_config->setDefinition( m_def);
 
-  if(m_recipe == ""){
-    std::stringstream recipe("");
+  if (m_recipe.empty()) {
+    std::stringstream recipe;
     recipe << "Undefined recipe name for TCK=" <<  format("0x%04X" , m_tckopts ) ;
     m_config->setRecipe( recipe.str() );
   }else{
@@ -239,7 +264,7 @@ void L0DUConfigProvider::createConfig(std::string slot){
   m_config->setData( m_dataMap );
   m_config->setConditions( m_conditionsMap );
   m_config->setChannels( m_channelsMap );
-  if(m_triggersMap.size() !=0)m_config->setTriggers( m_triggersMap);
+  if (!m_triggersMap.empty()) m_config->setTriggers( m_triggersMap);
   auto it = m_configs.find( slot );
   if(it == m_configs.end()){
     auto configs = new LHCb::L0DUConfigs();
@@ -248,8 +273,8 @@ void L0DUConfigProvider::createConfig(std::string slot){
     assert(ret.second);
     it = ret.first;
   }
-  if( !m_FOIx.empty() )m_config->setMuonFOIx( m_FOIx );
-  if( !m_FOIy.empty() )m_config->setMuonFOIy( m_FOIy );
+  if ( !m_FOIx.empty() ) m_config->setMuonFOIx( m_FOIx );
+  if ( !m_FOIy.empty() ) m_config->setMuonFOIy( m_FOIy );
 
   it->second->insert( m_config );
   //=====================================
@@ -283,7 +308,7 @@ void L0DUConfigProvider::predefinedData( ) {
   using namespace L0DUBase;
 
   for(unsigned i = 0 ; i < NumberOf::Data ; ++i){
-    std::string name = PredefinedData::Name[i];
+    const std::string& name = PredefinedData::Name[i];
     auto data = std::make_unique<LHCb::L0DUElementaryData>(i,LHCb::L0DUElementaryData::Predefined,name);
     if ( msgLevel(MSG::DEBUG) )
       debug() << "Predefined Data : " << data->description() << endmsg;
@@ -311,7 +336,7 @@ void L0DUConfigProvider::constantData(){
 
 
 //===============================================================
-std::vector<std::string> L0DUConfigProvider::Parse(std::string flag, std::vector<std::string> config ){
+std::vector<std::string> L0DUConfigProvider::Parse(const std::string& flag, const std::vector<std::string>& config ){
 
   const std::pair<std::string,std::string>& separators = *begin(m_sepMap);
   if(m_sepMap.size() != 1)
@@ -341,24 +366,18 @@ std::vector<std::string> L0DUConfigProvider::Parse(std::string flag, std::vector
             verbose() << "parsed value = '" << val << "'" <<endmsg;
           values.push_back( std::move(val) );
           id = iconfig.find(separators.first,to+1);
-        }
-        else{
+        } else{
           id = -1;
           error() << "Unable to parse the tag " << iconfig
                   << " due to a missing separator (" <<separators.first<<"..."<<separators.second<<")"<< endmsg;
           values.clear();
           return values;
         }
-
       }
     }
   }
   return values;
 }
-
-
-
-
 
 //===============================================================
 StatusCode L0DUConfigProvider::createData(){
@@ -390,16 +409,15 @@ StatusCode L0DUConfigProvider::createData(){
 
       return StatusCode::FAILURE;
     }
-    std::string dataName = *(values.begin()); // The NAME
+    std::string dataName = values.front(); // The NAME
 
     // Check the data already exist or not
     auto it = m_dataMap.find( dataName );
-    if( it != m_dataMap.end() ){
+    if ( it != m_dataMap.end() ) {
       warning() << "One L0DUElementaryData  with name : '" << dataName
                 <<"' already exists - Please check your settings" << endmsg;
       return StatusCode::FAILURE;
     }
-
 
     //  The operator
     // -------------
@@ -425,7 +443,6 @@ StatusCode L0DUConfigProvider::createData(){
 
     unsigned int dim = iop->second;
 
-
     // the operands
     //--------------
     std::vector<std::string> operands = Parse("data", *iconfig);
@@ -450,7 +467,6 @@ StatusCode L0DUConfigProvider::createData(){
       debug() << "Created Data : " << data->description() << endmsg;
     m_dataMap[dataName]=data.release();
     id++;
-
   }
   return StatusCode::SUCCESS;
 }
@@ -461,7 +477,6 @@ StatusCode L0DUConfigProvider::createConditions(){
 
   StatusCode sc = createData();
   if(sc.isFailure())return sc;
-
 
   int id = m_conditionsMap.size();
   for(auto iconfig = m_conditions.begin(); iconfig != m_conditions.end() ; ++iconfig){
@@ -525,7 +540,7 @@ StatusCode L0DUConfigProvider::createConditions(){
         debug() <<"RAM(BCID) L0DU DATA for RAM vsn = " << vsn << " HAS BEEN DEFINED" <<endmsg;
       //check the RAM version exists
       const std::vector<int> ram = m_condDB->RAMBCID( vsn );
-      if( ram.size() == 0){
+      if ( ram.empty() ) {
         fatal() << "RAM(BCID) versions '" << vsn << "' is not registered" << endmsg;
         return StatusCode::FAILURE;
       }
@@ -579,7 +594,6 @@ StatusCode L0DUConfigProvider::createConditions(){
     }
 
     unsigned long threshold = std::stoul( values.front() ); // The THRESHOLD
-
 
     // report  (facultatif)
     //----------
@@ -666,7 +680,7 @@ StatusCode L0DUConfigProvider::createChannels(){
   if(sc.isFailure())return sc;
 
   int id = m_channelsMap.size();
-  for(ConfigIterator iconfig = m_channels.begin(); iconfig != m_channels.end() ; ++iconfig){
+  for(auto iconfig = m_channels.begin(); iconfig != m_channels.end() ; ++iconfig){
 
     // check all tags exist
     for(const auto& tag : *iconfig) {
@@ -691,7 +705,7 @@ StatusCode L0DUConfigProvider::createChannels(){
       return StatusCode::FAILURE;
     }
 
-    std::string channelName = *(values.begin()); // The NAME
+    std::string channelName = values.front(); // The NAME
 
     // Check if the channel already exists
     auto ic = m_channelsMap.find(channelName);
@@ -794,19 +808,16 @@ StatusCode L0DUConfigProvider::createChannels(){
       }
     }
 
-
     // create channel
     auto channel = std::make_unique<LHCb::L0DUChannel>( index,  channelName , irate , type );
 
     // The conditions
     // --------------
     values = Parse("condition", *iconfig);
-
     if ( values.empty() ){
       error() << "The channel " << channelName << " has no ElementaryCondition" << endmsg;
       return StatusCode::FAILURE;
     }
-
 
     // add Elementary Condition(s)
     for(const auto& icond : values) {
@@ -819,17 +830,16 @@ StatusCode L0DUConfigProvider::createChannels(){
       }
       if( m_conditionsMap.end() == ic ){
         // check if the name  is a previously defined channel
-        if( m_channelsMap.end() != icc && icond != channelName ){
-          // YES it is - add all the conditions from this channel
-          for(const auto& iccc : icc->second->elementaryConditions()) {
-            channel->addElementaryCondition ( iccc.second ) ;
-          }
-        } else{
+        if( m_channelsMap.end() == icc || icond == channelName ){
           fatal() << " Can not set-up the '" <<  channelName
                   << "' L0DU Channel "
                   << " because the required '" << icond
                   << "' is neither a  defined ElementaryCondition nor a defined Channel." << endmsg;
           return StatusCode::FAILURE;
+        }
+        // YES it is - add all the conditions from this channel
+        for(const auto& iccc : icc->second->elementaryConditions()) {
+          channel->addElementaryCondition ( iccc.second ) ;
         }
       } else {
         channel->addElementaryCondition ( ic->second ) ;
@@ -860,7 +870,7 @@ StatusCode L0DUConfigProvider::createTriggers(){
 
   // Additional user-defined triggers
   int id = m_triggersMap.size();
-  for(ConfigIterator iconfig = m_triggers.begin(); iconfig != m_triggers.end() ; ++iconfig){
+  for(auto  iconfig = m_triggers.begin(); iconfig != m_triggers.end() ; ++iconfig){
 
     // check all tags exist
     for(const auto& tag : *iconfig) {
@@ -931,10 +941,9 @@ StatusCode L0DUConfigProvider::createTriggers(){
     }
 
     // create trigger
-    auto trigger = std::unique_ptr<LHCb::L0DUTrigger>(new LHCb::L0DUTrigger(index,  triggerName , mask) );
+    auto trigger = std::make_unique<LHCb::L0DUTrigger>(index,  triggerName , mask);
 
-
-     // The channels
+    // The channels
     // --------------
     std::vector<std::string> channels = Parse("channel", *iconfig);
 
@@ -945,23 +954,21 @@ StatusCode L0DUConfigProvider::createTriggers(){
 
     // check all requested channels exists
     for(const auto& chan : channels ) {
-      LHCb::L0DUChannel::Map::iterator ic  = m_channelsMap.find( chan );
-      LHCb::L0DUTrigger::Map::iterator icc = m_triggersMap.find( chan );
+      auto ic  = m_channelsMap.find( chan );
+      auto icc = m_triggersMap.find( chan );
       if( m_triggersMap.end() != icc && m_channelsMap.end() != ic){
         error() << "A Channel  and a SubTrigger have the same name - please check your setting " << endmsg;
         return StatusCode::FAILURE;
       }
       if( m_channelsMap.end() == ic ){
-        if( m_triggersMap.end() != icc && chan != triggerName ){
-          LHCb::L0DUChannel::Map chanFromTrigMap = icc->second->channels();
-          for( const auto& ccc : chanFromTrigMap ) trigger->addChannel( ccc.second );
-        } else {
+        if( m_triggersMap.end() == icc || chan == triggerName ){
           fatal() << " Can not set-up the '" <<  triggerName
                   << "' L0DU SubTrigger "
                   << " because the required '" << chan
                   << "' is neither a  defined Channel nor a defined SubTrigger." << endmsg;
           return StatusCode::FAILURE;
         }
+        for( const auto& ccc : icc->second->channels()) trigger->addChannel( ccc.second );
       } else {
         trigger->addChannel ( ic->second );
       }
@@ -1037,30 +1044,6 @@ bool L0DUConfigProvider::getDataList(const std::string& dataName, std::vector<st
   return ok;
 }
 
-std::vector<std::string> L0DUConfigProvider::triggerNameFromData( std::vector<std::string> dataList ){
-
-  std::vector<std::string> name;
-
-  // The actual trigger->data association definition
-
-  // 1st pass for the main trigger : L0Muon, L0Ecal, L0Hcal
-  bool hasTrigger = false;
-  for(const auto& id : dataList) {
-    auto id_matches = [&id](const char* cs) { return id.compare(0,4,cs) == 0; };
-    if (id_matches("Muon") || id_matches("DiMu") ){
-      name.push_back( "L0Muon" ) ;
-      hasTrigger = true;
-    } else if( id_matches("Elec") || id_matches("Phot") || id_matches("Loca") || id_matches("Glob") ){
-      name.push_back( "L0Ecal" );
-      hasTrigger = true;
-    } else if( id_matches("Hadr") ){
-      name.push_back( "L0Hcal" );
-      hasTrigger = true;
-    }
-  }
-  if( !hasTrigger) name.push_back( "Other" );
-  return name;
-}
 
 
 bool L0DUConfigProvider::conditionCheck(LHCb::L0DUElementaryCondition* condition){
@@ -1120,7 +1103,7 @@ bool L0DUConfigProvider::conditionCheck(LHCb::L0DUElementaryCondition* condition
     return false;
   }
   //  if( condition->threshold() == 0 && condition->comparator() == ">" ){ // special case for empty register
-  //  std::vector<LHCb::L0DUElementaryCondition*>::iterator it = m_condOrder[order].begin();
+  //  auto it = m_condOrder[order].begin();
   //  m_condOrder[order].insert(it, condition);
   //}else{
   m_condOrder[ order ].push_back( condition );
@@ -1196,7 +1179,6 @@ bool L0DUConfigProvider::conditionOrdering(){
       }
     }
   }
-
   return true;
 }
 

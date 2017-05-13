@@ -73,9 +73,8 @@ private:
   void reset();
 
   void createConfig(std::string slot="T0");
-  std::vector<std::string> Parse(std::string flag, std::vector<std::string> config );
+  std::vector<std::string> Parse(const std::string& flag, const std::vector<std::string>& config );
   typedef std::vector<std::vector<std::string> > ConfigType;
-  typedef ConfigType::iterator ConfigIterator;
 
   std::map<std::string,std::string> m_sepMap;
   std::map<std::string,int> m_constData;
@@ -99,7 +98,6 @@ private:
   StatusCode createTriggers();
   void predefinedTriggers();
   bool getDataList(const std::string&, std::vector<std::string>& );
-  std::vector<std::string> triggerNameFromData( std::vector<std::string> );
   bool configChecker();
   bool conditionCheck(LHCb::L0DUElementaryCondition* condition);
   bool conditionOrdering();
