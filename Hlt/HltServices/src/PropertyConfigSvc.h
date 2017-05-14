@@ -35,6 +35,16 @@ StatusCode parse(std::set<std::string>& result,
 #include "Kernel/IPropertyConfigSvc.h"
 #include "Kernel/PropertyConfig.h"
 
+template <typename T, typename Mutex = std::shared_timed_mutex> // C++17: replace with shared_mutex...
+class Synced {
+    T m_obj;
+    mutable Mutex m_mtx;
+public:
+    template <typename F> auto with_wlock(F&& f) -> decltype(auto)
+    { auto lock=std::unique_lock<Mutex>{m_mtx}; return f(m_obj); }
+    template <typename F> auto with_rlock(F&& f) const -> decltype(auto)
+    { auto lock=std::shared_lock<Mutex>{m_mtx}; return f(m_obj); }
+};
 
 /** @class PropertyConfigSvc PropertyConfigSvc.h
  *
@@ -132,20 +142,11 @@ private:
   SmartIF<IAppMgrUI>                   m_appMgrUI;
   SmartIF<IConfigAccessSvc>            m_accessSvc;
 
-  mutable std::shared_timed_mutex      m_configs_mtx; // C++17: replace with stared_mutex...
-  mutable PropertyConfigMap_t          m_configs;  // config ref -> config (leaf)
-
-  mutable std::shared_timed_mutex      m_nodes_mtx;
-  mutable ConfigTreeNodeMap_t          m_nodes;    // node   ref -> node
-
-  mutable std::shared_timed_mutex                   m_aliases_mtx;
-  mutable ConfigTreeNodeAliasMap_t     m_aliases;    // node   ref -> node
-
-  mutable std::shared_timed_mutex      m_leavesInTree_mtx;
-  mutable Tree2LeafMap_t               m_leavesInTree; // top level node ref -> config refs (leaves)
-
-  mutable std::shared_timed_mutex      m_nodesInTree_mtx;
-  mutable Tree2NodeMap_t               m_nodesInTree; // top level node ref -> node refs
+  mutable Synced<PropertyConfigMap_t>    m_configs;  // config ref -> config (leaf)
+  mutable Synced<ConfigTreeNodeMap_t>    m_nodes;    // node   ref -> node
+  mutable Synced<ConfigTreeNodeAliasMap_t> m_aliases;    // node   ref -> node
+  mutable Synced<Tree2LeafMap_t>         m_leavesInTree; // top level node ref -> config refs (leaves)
+  mutable Synced<Tree2NodeMap_t>         m_nodesInTree; // top level node ref -> node refs
 
   mutable ConfigPushed_t               m_configPushed;
   std::map<std::string,IAlgTool*>      m_toolmap;

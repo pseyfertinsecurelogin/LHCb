@@ -200,7 +200,7 @@ StatusCode HltGenConfig::generateConfig() const {
                                    [&](const std::string &name) {
         IService *svc { nullptr };
         return sl->getService(Gaudi::Utils::TypeNameString(name), svc, false).isSuccess() ? svc : nullptr;
-   } );
+  } );
   if (sc.isFailure()) return sc;
   sc = getDependencies( std::begin(m_topConfig), std::end(m_topConfig),
                         std::back_inserter(depRefs),
