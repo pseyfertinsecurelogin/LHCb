@@ -152,7 +152,7 @@ class L0Conf(LHCbConfigurableUser) :
         # L0Calo, L0Muon and L0DU decoding algorithms
         l0calo = decodeL0Calo()
         l0muon = decodeL0Muon()
-        l0du   = decodeL0DU(WriteOnTES = writeOnTES)
+        l0du   = decodeL0DU(WriteOnTES = writeOnTes)
         
         # Write on TES
         if writeOnTes is not None:     
