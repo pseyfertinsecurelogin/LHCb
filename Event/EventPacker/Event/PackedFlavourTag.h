@@ -68,20 +68,22 @@ namespace LHCb
   {
     unsigned short int type{0}; ///< The type of tagger
     short int      decision{0}; ///< Decision of tagger
-    short int         omega{0}; ///< Wrong tag fraction of tagger from MC tuning
-    // Tagging Particles
-    unsigned int firstTagP{0}, lastTagP{0};
+    short int         omega{0}; ///< Wrong tag fraction of tagger
+    unsigned int firstTagP{0}, lastTagP{0}; ///< Tagging particles
+    int          mvaValue{0};   ///< MVA used for classification
+    short int    charge{0};     ///< Charge used for classification
 
     template<typename T>
     inline void save(T& buf) const {
-      buf.io(
-        type, decision, omega, firstTagP, lastTagP
-      );
+      buf.io(type, decision, omega, firstTagP, lastTagP, mvaValue, charge);
     }
     template<typename T>
-    inline void load(T& buf, unsigned int /*version*/) {
-      save(buf); // identical operation until version is incremented
-     }
+    inline void load(T& buf, unsigned int version) {
+      switch(version) {
+        case 0:   buf.io(type, decision, omega, firstTagP, lastTagP); break;
+        default:  save(buf); break;
+      }
+    }
   };
 
   // ----------------------------------------------------------------------------------------
@@ -119,7 +121,7 @@ namespace LHCb
   public:
 
     /// Default Packing Version
-    static char defaultPackingVersion() { return 0; }
+    static char defaultPackingVersion() { return 1; }
 
   public:
 
@@ -260,7 +262,7 @@ namespace LHCb
     /// Check if the given packing version is supported
     bool isSupportedVer( const char& ver ) const
     {
-      const bool OK = ( 0 == ver );
+      const bool OK = ( 1 == ver || 0 == ver );
       if ( UNLIKELY(!OK) )
       {
         std::ostringstream mess;
