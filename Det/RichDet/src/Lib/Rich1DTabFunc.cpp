@@ -165,6 +165,14 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   // Initialise the fast interpolator
   m_fastInterp.init( minX, maxX, gslSpline.get(), nsamples );
 
+  // // check the interpolator is able to reproduce the inout (x,y) data points
+  // const auto minDiff = 1e-6;
+  // for ( const auto & d : data )
+  // {
+  //   const auto diff = fabs( d.second - value(d.first) );
+  //   std::cout << "Diff = " << d.second << " " << diff << std::endl;
+  // }
+
   // // printout
   // std::cout << "Input data :-" << std::endl;
   // for ( const auto d : data )
