@@ -91,6 +91,8 @@ TabulatedProperty1D::initInterpolator( const TabulatedProperty * tab,
   Data data;
   for ( const auto & t : tab->table() ) { data[t.first] = t.second; }
 
+  //std::cout << tab->name() << std::endl;
+
   // init the underlying GSL interpolator
   m_OK = this->TabulatedFunction1D::initInterpolator(data,interType);
 

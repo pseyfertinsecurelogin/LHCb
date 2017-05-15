@@ -736,14 +736,14 @@ bool DeRichHPD::magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint,
 {
   detectPoint = m_SiSensorToHPDMatrix * detectPoint;
   detectPoint.SetZ(0.0);
-  const double rAnode = detectPoint.R();
+  const auto rAnode = detectPoint.R();
 
   // To go from the cathode to the anode Ra = Rc*(-d0 + d1*Rc)
   // The minus sign in d0 is for the cross-focussing effect
   // To go from the anode to the cathode solve: d1*Rc^2 - d0*Rc - Ra = 0
   // The difference is that Ra is now positive.
   // Chose the solution with the minus sign
-  double rCathode =
+  auto rCathode =
     ( m_deMagFactor[1] > 1e-6 ?
       ((m_deMagFactor[0]-std::sqrt(std::pow(m_deMagFactor[0],2)-4*m_deMagFactor[1]*rAnode))/
        (2*m_deMagFactor[1])) :
@@ -757,15 +757,15 @@ bool DeRichHPD::magnifyToGlobalMagnetOFF( Gaudi::XYZPoint& detectPoint,
   if ( !photoCathodeSide ) rCathode += extraRadiusForRefraction(rCathode);
 
   // the minus sign is for the cross-focussing
-  const double scaleUp = ( rAnode>0 ? -rCathode/rAnode : 0 );
+  const auto scaleUp = ( rAnode>0 ? -rCathode/rAnode : 0 );
 
-  const double xWindow = scaleUp*detectPoint.x();
-  const double yWindow = scaleUp*detectPoint.y();
-  const double XsqPlusYsq = xWindow*xWindow+yWindow*yWindow;
+  const auto xWindow = scaleUp*detectPoint.x();
+  const auto yWindow = scaleUp*detectPoint.y();
+  const auto XsqPlusYsq = xWindow*xWindow+yWindow*yWindow;
 
-  const double winRadiusSq = ( photoCathodeSide ? m_winInRsq : m_winOutRsq );
+  const auto winRadiusSq = ( photoCathodeSide ? m_winInRsq : m_winOutRsq );
   if ( winRadiusSq < XsqPlusYsq ) return false;
-  const double zWindow = std::sqrt(winRadiusSq - XsqPlusYsq);
+  const auto zWindow = std::sqrt(winRadiusSq - XsqPlusYsq);
 
   detectPoint = m_fromWindowToGlobal * Gaudi::XYZPoint(xWindow,yWindow,zWindow);
 
