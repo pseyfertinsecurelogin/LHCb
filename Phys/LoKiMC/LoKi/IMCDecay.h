@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_IMCDECAY_H 
+#ifndef LOKI_IMCDECAY_H
 #define LOKI_IMCDECAY_H 1
 // ============================================================================
 // Include files
@@ -14,7 +14,7 @@
 // ============================================================================
 namespace LHCb { class MCParticle ; }
 // ============================================================================
-namespace Decays 
+namespace Decays
 {
   // ==========================================================================
   /** @class IMCDecay LoKi/IMCDecay.h
@@ -22,36 +22,30 @@ namespace Decays
    *  @author Ivan BELYAEV
    *  @date   2009-05-22
    */
-  class GAUDI_API IMCDecay : public virtual IDecayNode
+  struct GAUDI_API IMCDecay : extend_interfaces<IDecayNode>
   {
     // ========================================================================
-  public:
-    // ========================================================================
-    /// the actual type of the tree 
+    /// the actual type of the tree
     typedef Decays::Tree_<const LHCb::MCParticle*>                       Tree ;
-    /// the actual type of the tree 
+    /// the actual type of the tree
     typedef Decays::iTree_<const LHCb::MCParticle*>                     iTree ;
     /// the actual type of decay finder:
     typedef Decays::Finder_<const LHCb::MCParticle*>                   Finder ;
     // ========================================================================
-  public:
-    // ========================================================================
     /** create the decay tree from the descriptor
-     *  @param descriptor (INPUT)  the decay descriptor 
-     *  @param tree       (OUTPUT) the decay tree 
+     *  @param descriptor (INPUT)  the decay descriptor
+     *  @param tree       (OUTPUT) the decay tree
      */
     virtual Tree tree ( const std::string& decay = "" ) const = 0 ;
     // ========================================================================
-  public:
-    // ========================================================================
-    /// the unique interface ID 
-    static const InterfaceID& interfaceID() ;        // the unique interface ID 
+    /// the unique interface ID
+    DeclareInterfaceID( IMCDecay , 2 , 0 );
     // ========================================================================
   } ;
   // ==========================================================================
-} // end of namespace Decays 
+} // end of namespace Decays
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_IMCDECAY_H
 // ============================================================================
