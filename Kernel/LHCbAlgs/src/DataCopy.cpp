@@ -252,7 +252,7 @@ StatusCode Gaudi::DataCopy::execute()
   if ( m_what   . empty () )
   { return Warning ( "Nothing to be copied"    , ok ) ; }
   if ( m_target . empty () )
-  { return Warning ( "Targer is not specified" , ok ) ; }
+  { return Warning ( "Target is not specified" , ok ) ; }
   if ( m_what  == m_target )
   { return Warning ( "No need to copy"         , ok ) ; }
   //
@@ -265,17 +265,18 @@ StatusCode Gaudi::DataCopy::execute()
                      m_never_fail ? StatusCode::SUCCESS : StatusCode::FAILURE ) ;
   }
   //
-  // DataObject* object = obj ;
+  DataObject* object = obj ;
   //
   StatusCode sc =
     m_copy ?
-    evtSvc () -> registerObject ( m_target , obj ) :
-    evtSvc () -> linkObject     ( m_target , obj ) ;
+    evtSvc () -> registerObject ( m_target , object ) :
+    evtSvc () -> linkObject     ( m_target , object ) ;
   //
   if ( sc.isFailure() )
   {
     setFilterPassed ( false ) ;
-    return Warning ( "Unable copy/link" , m_never_fail ? ok : sc ) ;
+    return Warning  ( "Unable copy/link " + m_what + " -> " + m_target , 
+                      m_never_fail ? ok : sc ) ;
   }
   //
   setFilterPassed ( true ) ;
