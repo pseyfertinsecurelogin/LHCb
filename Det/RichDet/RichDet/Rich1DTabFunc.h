@@ -152,18 +152,20 @@ namespace Rich
         // set min and max X
         m_minX = minX;
         m_maxX = maxX;
-        // set 1/increment
-        m_incXinv = (TYPE)(nsamples) / ( maxX - minX );
+        // set increment and 1/increment
+        const auto incX = ( maxX - minX ) / (TYPE)(nsamples);
+        m_incXinv       = 1.0 / incX;
         // accelerator for te GSL calls
         GSLAccelerator::Ptr acc ( gsl_interp_accel_alloc() );
         // Fill the data storage
         m_data.reserve(nsamples);
         for ( unsigned int i = 0; i < nsamples; ++i )
         {
-          const TYPE binXmin = std::max( minX, minX    + ( i   / m_incXinv ) );
-          const TYPE binXmax = std::min( maxX, binXmin + ( 1.0 / m_incXinv ) );
-          m_data.emplace_back( binXmin, gsl_spline_eval(gslS,binXmin,acc.get()),
-                               binXmax, gsl_spline_eval(gslS,binXmax,acc.get()) );
+          const TYPE binXmin = std::max( minX, minX    + ( i * incX ) );
+          const TYPE binXmax = std::min( maxX, binXmin + (     incX ) );
+          const TYPE binYmin = gsl_spline_eval( gslS, binXmin, acc.get() );
+          const TYPE binYmax = gsl_spline_eval( gslS, binXmax, acc.get() );
+          m_data.emplace_back( binXmin, binYmin, binXmax, binYmax );
         }
       }
       
@@ -210,11 +212,11 @@ namespace Rich
             const auto bto   = std::min(to,bin.maxX());
             // average height for this trapezoid
             const auto h = ( !weightByX ? 
-                             ( bin.getY(bto)       + bin.getY(bfrom)         ) * 0.5 :
+                             (      bin.getY(bto)  +        bin.getY(bfrom)  ) * 0.5 :
                              ( (bto*bin.getY(bto)) + (bfrom*bin.getY(bfrom)) ) * 0.5 ); 
             // sum the area (trapezoid)
             sum += ( ( bto - bfrom ) * h );
-          }      
+          }
         }
         return sum;
       }
@@ -230,10 +232,13 @@ namespace Rich
     private:
 
       /// Get the look up index for a given x
-      inline unsigned int xIndex( const TYPE& x ) const noexcept
+      inline unsigned int xIndex( const TYPE x ) const noexcept
       {
-        // Assume range checking is done elsewhere
-        return (unsigned int)( (x-m_minX) * m_incXinv );
+        return( x <= m_minX ? 0u :
+                x >= m_maxX ? m_data.size()-1 :
+                (unsigned int)( (x-m_minX) * m_incXinv ) );
+        // range check done in main TabulatedFunction1D value method so skip here
+        //return (unsigned int)( (x-m_minX) * m_incXinv );
       }
       
     private:
@@ -245,10 +250,10 @@ namespace Rich
       TYPE m_incXinv{0};
 
       /// The minimum valid x
-      double m_minX{0};
+      TYPE m_minX{0};
       
       /// The maximum valid x
-      double m_maxX{0};
+      TYPE m_maxX{0};
       
     };
 
@@ -334,6 +339,18 @@ namespace Rich
 
   private:
 
+    /// Check lower bound
+    inline bool checkLowerBound( const double x ) const noexcept
+    {
+      return ( minX() <= x );
+    }
+
+    /// Check upper bound
+    inline bool checkUpperBound( const double x ) const noexcept
+    {
+      return ( x <= maxX() );
+    }
+
     /** Issue an out of range warning
      *  @param x    The requested x value
      *  @param retx The x value to use (corrected to be in range)
@@ -345,10 +362,12 @@ namespace Rich
      *  @param x The x value to check
      *  @return The x value to use
      */
-    double checkRange( const double x ) const
+    inline double checkRange( const double x ) const noexcept
     {
-      return ( withinInputRange(x) ? x :
-               x < minX() ? rangeWarning(x,minX()) : rangeWarning(x,maxX()) );
+      const auto lOK = checkLowerBound(x);
+      const auto uOK = checkUpperBound(x);
+      return( lOK && uOK ? x :
+              !lOK ? rangeWarning(x,minX()) : rangeWarning(x,maxX()) );
     }
 
   public:
@@ -480,7 +499,7 @@ namespace Rich
      */
     inline bool withinInputRange( const double x ) const noexcept
     {
-      return ( x <= maxX() && minX() <= x );
+      return checkLowerBound(x) && checkUpperBound(x);
     }
     
   public:
