@@ -15,7 +15,6 @@
 class L0HCAlg : public L0AlgBase {
  public:
   L0HCAlg(const std::string &name, ISvcLocator *pSvcLocator);
-  virtual ~L0HCAlg();
 
   StatusCode initialize() override;  ///< Algorithm initialization
   StatusCode execute() override;     ///< Algorithm execution
