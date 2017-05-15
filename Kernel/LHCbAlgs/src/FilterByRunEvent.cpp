@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 #include "Event/ODIN.h"
 
@@ -22,7 +22,6 @@ FilterByRunEvent::FilterByRunEvent( const std::string& name,
                                     ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
 {
-  m_events.clear();
   declareProperty( "RunEventNumList", m_events );
   declareProperty( "PassSelectedEvents", m_passSelect = true );
 }
@@ -46,26 +45,26 @@ StatusCode FilterByRunEvent::execute()
 
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute" << endmsg;
 
-  // code goes here  
+  // code goes here
   setFilterPassed(!m_passSelect);
 
   // Get the run and event number from the ODIN bank
   const auto * odin = get<LHCb::ODIN> ( LHCb::ODINLocation::Default );
 
   // Get run/event from ODIn and make comparison object
-  const auto runEv = std::make_pair( (int)odin->runNumber(), 
+  const auto runEv = std::make_pair( (int)odin->runNumber(),
                                      (int)odin->eventNumber() );
 
-  const bool lcl_sel = std::any_of( m_events.begin(), m_events.end(), 
+  const bool lcl_sel = std::any_of( m_events.begin(), m_events.end(),
                                     [&runEv]( const auto & p )
                                     { return runEv == p; } );
-                                    
+
   const bool lcl_pass = ( m_passSelect ? lcl_sel : !lcl_sel );
 
   setFilterPassed( lcl_pass );
 
   if ( lcl_pass )
-    info() << "Passing Run "   << odin->runNumber() 
+    info() << "Passing Run "   << odin->runNumber()
            << " event number " << odin->eventNumber() << endmsg;
 
   return StatusCode::SUCCESS;
