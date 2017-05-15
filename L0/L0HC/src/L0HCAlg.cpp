@@ -7,31 +7,6 @@
 DECLARE_ALGORITHM_FACTORY(L0HCAlg)
 
 //=============================================================================
-// Constructor
-//=============================================================================
-L0HCAlg::L0HCAlg(const std::string &name, ISvcLocator *pSvcLocator)
-    : L0AlgBase(name, pSvcLocator) {
-  declareProperty("L0DigitLocation",
-                  m_l0digitLocation = LHCb::HCDigitLocation::L0);
-  declareProperty("DigitLocation",
-                  m_digitLocation = LHCb::HCDigitLocation::Default);
-  declareProperty("TriggerBitsFromADCs", m_triggerBitsFromADCs = false);
-  declareProperty("FakeHCL0Digits", m_fakeHCL0Digits = false);
-
-  declareProperty("ChannelsB0", m_channelsB0);
-  declareProperty("ChannelsB1", m_channelsB1);
-  declareProperty("ChannelsB2", m_channelsB2);
-  declareProperty("ChannelsF1", m_channelsF1);
-  declareProperty("ChannelsF2", m_channelsF2);
-
-  declareProperty("ThresholdsB0", m_thresholdsB0 = {0, 0, 0, 0});
-  declareProperty("ThresholdsB1", m_thresholdsB1 = {0, 0, 0, 0});
-  declareProperty("ThresholdsB2", m_thresholdsB2 = {0, 0, 0, 0});
-  declareProperty("ThresholdsF1", m_thresholdsF1 = {0, 0, 0, 0});
-  declareProperty("ThresholdsF2", m_thresholdsF2 = {0, 0, 0, 0});
-}
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode L0HCAlg::initialize() {
@@ -67,6 +42,10 @@ StatusCode L0HCAlg::initialize() {
     mapChannels(m_channelsF2, 2, false);
   }
 
+  // Check for meaningful setting of the flags
+  if(m_triggerBitsFromADCs && m_fakeHCL0Digits) {
+  	return Error("Requested to fake Herschel L0 trigger bits *and* derive them from raw data. Choose one.");
+  }
   return StatusCode::SUCCESS;
 }
 
