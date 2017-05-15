@@ -106,17 +106,17 @@ StatusCode XmlGenericCnv::createObj (IOpaqueAddress* addr,
                                      DataObject*&    refpObject)  {
 
   StatusCode sc = StatusCode::FAILURE;
-   
+
   // maked sure the address is not null
   if (0 == addr) {
     return StatusCode::FAILURE;
   }
 
   // parses the xml file or the xml string and retrieves a DOM document
-  IOVDOMDocument* document = NULL;
+  IOVDOMDocument* document = nullptr;
   bool isAString = 1 == addr->ipar()[0];
 
-  // displays the address for debug purposes 
+  // displays the address for debug purposes
   if ( isAString ) {
     if( msgLevel(MSG::DEBUG) ) {
       debug() << "Address for string: orig. path = " << addr->par()[2]
@@ -155,7 +155,7 @@ StatusCode XmlGenericCnv::createObj (IOpaqueAddress* addr,
     return StatusCode::FAILURE;
   }
 
-  if (document != NULL) {
+  if (document) {
     // checks version of the file
     // first find the "DDDB" or "materials" element
     xercesc::DOMNodeList* list = document->getDOM()->getChildNodes();
@@ -177,7 +177,7 @@ StatusCode XmlGenericCnv::createObj (IOpaqueAddress* addr,
       }
     }
     // check if it exists
-    if (mainNode != NULL) {
+    if (mainNode) {
       // checks the version attribute
       std::string versionAttribute;
       std::string defaultMajorVersion;
@@ -203,7 +203,7 @@ StatusCode XmlGenericCnv::createObj (IOpaqueAddress* addr,
         majorVersion = versionAttribute.substr (0, dotPos);
         minorVersion = versionAttribute.substr (dotPos + 1);
       }
-       
+
       // I need `defaultMajorVersion'.`defaultMinorVersion'
       if (majorVersion == defaultMajorVersion) { // fine
         if (minorVersion != defaultMinorVersion) { // not perfect, just warn
@@ -247,13 +247,13 @@ StatusCode XmlGenericCnv::createObj (IOpaqueAddress* addr,
         if (std::string::npos != slashPosition) {
           objectName= objectName.substr(slashPosition + 1);
         }
-  
+
         if ( mustSubstitute ) {  //== Only in the last part of the string... A bit dangerous
           std::string::size_type indx = objectName.find( numeral );
           if ( indx == objectName.size() - numeral.size() ) {
             objectName = objectName.substr(0,indx) + "-KEY-";
           }
-        }        
+        }
 
         if( msgLevel(MSG::VERBOSE) )
           verbose() << "getElementByID for " << objectName << endmsg;
@@ -349,7 +349,7 @@ StatusCode XmlGenericCnv::internalCreateObj (xercesc::DOMElement* element,
       }
     }
   }
-  
+
   // creates an object for the node found
   StatusCode sc = converter->i_createObj (element, refpObject);
   if (sc.isFailure()) {
@@ -385,11 +385,11 @@ StatusCode XmlGenericCnv::internalCreateObj (xercesc::DOMElement* element,
             << " with text node containing : \""
             << dom2Std (textNode->getData())
             << endmsg;
-      }     
+      }
     }
     childNode = childNode->getNextSibling();
   }
-  
+
   // ends up the object construction
   return converter->i_processObj(refpObject, address);
 } // end internalCreateObj
@@ -412,13 +412,13 @@ StatusCode XmlGenericCnv::updateObj (IOpaqueAddress* pAddress,
   ValidDataObject* pVDO = dynamic_cast<ValidDataObject*>(pObject);
   ValidDataObject* pNewVDO = dynamic_cast<ValidDataObject*>(pNewObject);
   if ( 0 == pVDO || 0 == pNewVDO ) {
-    error() << "Cannot update objects other than ValidDataObject: " 
+    error() << "Cannot update objects other than ValidDataObject: "
             << "update() must be defined!"
             << endmsg;
     return StatusCode::FAILURE;
   }
   // Deep copy the new Condition into the old DataObject
-  pVDO->update( *pNewVDO );  
+  pVDO->update( *pNewVDO );
 
   // Delete the useless Condition
   delete pNewVDO;
@@ -453,7 +453,7 @@ StatusCode XmlGenericCnv::i_createObj (xercesc::DOMElement* /*childElement*/,
   return StatusCode::FAILURE;
 }
 
-  
+
 // -----------------------------------------------------------------------
 // Fill an object with a new child element
 // -----------------------------------------------------------------------
@@ -463,7 +463,7 @@ StatusCode XmlGenericCnv::i_fillObj (xercesc::DOMElement* /*childElement*/,
   return StatusCode::SUCCESS;
 }
 
-  
+
 // -----------------------------------------------------------------------
 // Fill an object with a new text child
 // -----------------------------------------------------------------------
@@ -490,7 +490,7 @@ IOpaqueAddress*
 XmlGenericCnv::createAddressForHref (std::string href,
                                      CLID clid,
                                      IOpaqueAddress* parent) const {
-  
+
   // expand environment variables in href
   std::string oldPath=href;
   if (AddressTools::hasEnvironmentVariable(href) ) {
@@ -501,14 +501,14 @@ XmlGenericCnv::createAddressForHref (std::string href,
                             StatusCode::FAILURE);
     }
     if( msgLevel(MSG::VERBOSE) )
-      verbose() << "path expanded to " << href << endmsg;    
+      verbose() << "path expanded to " << href << endmsg;
   }
-  
+
   // The URL can be of the format
   // "<protocol>://<path>[#object_name]"
   // or
   // "conddb:<path>[:channel_id][#object_name]"
-  
+
   // Is it a CondDB address ?
   bool condDB = m_have_CONDDB_StorageType && (0==href.find("conddb:/"));
   if (condDB) {
@@ -529,25 +529,25 @@ XmlGenericCnv::createAddressForHref (std::string href,
       columnPos = href.npos; // let's pretend that we didn't find it
     }
     size_t pathEnd = href.size();
-    
+
     std::string entryName,path;
     unsigned int channelId = 0;
-    
+
     if ( hashPos != href.npos ) {
       // I do have an object_name
       pathEnd = hashPos;
       entryName = "/" + href.substr(hashPos+1);
     }
-    
+
     if ( columnPos != href.npos ) {
       // I do have a channel id
       pathEnd = columnPos;
       std::istringstream chString(href.substr(columnPos + 1, hashPos - columnPos - 1));
       chString >> channelId;
     }
-    
+
     path = href.substr(start, pathEnd - start);
-    
+
     if ( entryName.empty() ) {
       // this means that I didn't find '#' or the name was not given (ex: "conddb:/path/to/folder#")
       entryName = "/" + path.substr(path.find_last_of('/')+1);
@@ -558,7 +558,7 @@ XmlGenericCnv::createAddressForHref (std::string href,
                 << " channelId=" << channelId
                 << " and entryName=" << entryName << endmsg;
     // Then build a new Address
-    return createCondDBAddress (path, entryName, channelId, clid);    
+    return createCondDBAddress (path, entryName, channelId, clid);
   } else {
     if( msgLevel(MSG::VERBOSE) )
       verbose() << "Href points to a regular URL: " << href << endmsg;
@@ -588,7 +588,7 @@ XmlGenericCnv::createAddressForHref (std::string href,
         entryName = entryName.substr(0,entryName.size()-4);
       }
     }
-    
+
     if( location.empty() ) {
       // This means that "href" has the form "#objectID" and referenced
       // object resides in the same file we are currently parsing
@@ -682,7 +682,7 @@ XmlGenericCnv::createAddressForHref (std::string href,
       verbose() << "Now build an XML address for location=" << location
                 << " and entryName=" << entryName << endmsg;
     // Then build a new Address
-    return createXmlAddress (location, entryName, clid);  
+    return createXmlAddress (location, entryName, clid);
   }
 }
 
@@ -694,7 +694,7 @@ IOpaqueAddress* XmlGenericCnv::createXmlAddress (std::string location,
                                                  CLID clid) const {
 
   //MsgStream log( msgSvc(), "XmlGenericCnv" );
-  
+
   const std::string par[2] = {location, entryName};
   const unsigned long isString = 0; // address: filename (0) or string (1)?
   const unsigned long ipar[1] = { isString };
@@ -756,4 +756,4 @@ const std::string XmlGenericCnv::dom2Std (const XMLCh* domString) {
   }
   return stdString;
 }
- 
+
