@@ -1,9 +1,9 @@
-// $Id: $
 #ifndef FILESTAGER_H
 #define FILESTAGER_H 1
 
 #include <vector>
 #include <string>
+#include <memory>
 
 // boost
 #include <boost/filesystem.hpp>
@@ -12,7 +12,6 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/multi_index/mem_fun.hpp>
-#include <boost/foreach.hpp>
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
@@ -35,12 +34,10 @@
  *  @author Roel Aaij
  *  @date   2009-11-21
  */
-class FileStagerSvc : public extends1< Service, IFileStagerSvc > {
+class FileStagerSvc : public extends< Service, IFileStagerSvc > {
 public:
 
    FileStagerSvc( const std::string& name, ISvcLocator* svcLoc );
-
-   virtual~ FileStagerSvc( );
 
    StatusCode initialize() override;
 
@@ -60,19 +57,9 @@ private:
       FileWrapper( File* file )
          : m_file( file )
       {
-
       }
 
-      FileWrapper( const FileWrapper& other )
-         : m_file( other.m_file )
-      {
-
-      }
-
-      ~FileWrapper()
-      {
-
-      }
+      FileWrapper( const FileWrapper& other ) = default;
 
       File* file() const
       {
@@ -84,10 +71,10 @@ private:
          return m_file->original();
       }
 
-   private:
 
-      // Private methods
-      FileWrapper& operator=( const FileWrapper& other );
+      FileWrapper& operator=( const FileWrapper& other ) = delete;
+
+   private:
 
       File* m_file;
 
@@ -128,27 +115,42 @@ private:
    mutable fileContainer_t m_files;
 
    // Data
-   boost::thread* m_thread;
+   std::unique_ptr<boost::thread> m_thread;
    std::string m_stageStart;
-   int m_garbagePID;
+   int m_garbagePID = 0;
    const_original_iterator m_stageIt;
 
    // Services
    // SmartIF< Gaudi::IIODataManager > m_dataManager;
 
    // Properties
-   std::string m_tmpdir;
-   size_t m_stageNFiles;
-   size_t m_tries;
-   size_t m_copyTries;
+   Gaudi::Property<std::string> m_tmpdir
+   { this, "Tempdir", "", "The base of the temporary directory "
+                          "where the files will be staged" };
+   Gaudi::Property<size_t> m_stageNFiles
+   { this,  "StageNFiles",  2, "The number of files to stage" };
+   Gaudi::Property<size_t> m_tries
+   { this,  "DiskspaceTries",  10, "The number of times to retry "
+                    "whether there is sufficient diskspace" };
+   Gaudi::Property<size_t> m_copyTries
+   { this,  "CopyTries", 5, "Retry copying if it fails." };
    boost::filesystem::path m_tempdir;
-   bool m_initialized;
-   bool m_retry;
-   bool m_stageLocalFiles;
-   // std::string m_dataManagerName;
-   std::string m_garbageCommand;
-   bool m_checkLocalGarbage;
-   bool m_keepFiles;
+   bool m_initialized = false;
+   Gaudi::Property<bool> m_retry
+   { this,  "RetryStaging", false, "Retry staging once it's failed." };
+   Gaudi::Property<bool> m_stageLocalFiles
+   { this,  "StageLocalFiles", false, "Stage files beginning with file:." };
+   // Gaudi::Property<std::string> m_dataManagerName
+   // { this, "DataManagerName","Gaudi::StagedIODataManager/IODataManager" ,
+   //                  "Name of the IODataManager to use for proper disconnection." };
+   Gaudi::Property<std::string> m_garbageCommand
+   { this,  "GarbageCollectorCommand", "garbage.exe" ,
+                    "Command for the garbage collector." };
+   Gaudi::Property<bool> m_checkLocalGarbage
+   { this,  "CheckForLocalGarbageCollector", true,
+                    "Check if the garbage collector command is in the local directory." };
+   Gaudi::Property<bool> m_keepFiles
+   { "KeepFiles",  false, "Keep staged files" };
 
    // Helper Methods
    void stage();

@@ -14,13 +14,12 @@
  *  @author Roel Aaij
  *  @date   2009-11-22
  */
-class File {
-public: 
-   
+class File final {
+public:
+
    File( const std::string& original, const std::string& command,
          const std::string& remote, const std::string& temp );
 
-   virtual ~File();
 
    const std::string& original() const
    {
