@@ -62,7 +62,7 @@ class L0Conf(LHCbConfigurableUser) :
         ,"L0HCAlgThresholdsB2"   : {0,0,0,0}
         ,"L0HCAlgThresholdsF1"   : {0,0,0,0}
         ,"L0HCAlgThresholdsF2"   : {0,0,0,0}
-        ,"FakeHCL0Digits"        : False
+        ,"FakeHCL0Digits"        : None
         }
 
     _propertyDocDct = {
@@ -492,7 +492,14 @@ class L0Conf(LHCbConfigurableUser) :
                     emulateL0Muon().LUTVersion = "V3"
                 elif datatype == "2015" or datatype == "2016":
                     emulateL0Muon().LUTVersion = "V8"
-
+        
+        # Set Herschel emulation off by default if datatype not declared to be 2017 or 2018
+        if not self.isPropertySet("EmulateHC") :
+            if self.getProp("DataType") in [ "2017", "2018" ] :
+                self.setProp("EmulateHC", True)
+            else :
+                self.setProp("EmulateHC", False)
+      
     def _dataOnDemand(self,rootintes):
         """Configure the DataOnDemand service for L0."""
         from Configurables import DataOnDemandSvc
