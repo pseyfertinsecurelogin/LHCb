@@ -8,7 +8,7 @@ using namespace ROOT::Math;
 
 std::unique_ptr<Trajectory> LineTraj::clone() const
 {
-  return std::unique_ptr<Trajectory>(new LineTraj(*this));
+  return std::make_unique<LineTraj>(*this);
 }
 
 

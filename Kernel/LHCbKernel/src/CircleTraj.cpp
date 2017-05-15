@@ -19,7 +19,7 @@ using namespace Gaudi;
 
 std::unique_ptr<Trajectory> CircleTraj::clone() const
 {
-  return std::unique_ptr<Trajectory>(new CircleTraj(*this));
+  return std::make_unique<CircleTraj>(*this);
 }
 
 CircleTraj::CircleTraj( const Point& origin,

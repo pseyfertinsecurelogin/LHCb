@@ -1,7 +1,6 @@
 #ifndef _SiDataFunctor_H_
 #define _SiDataFunctor_H_
 
-#include <functional>
 #include <numeric>
 
 
@@ -17,40 +16,31 @@
 namespace SiDataFunctor {
 
 // functors
-template <typename TYPE>
-  class CompareByChannel
-    : public std::binary_function<const TYPE, const typename TYPE::chan_type, bool> {
-
-  public:
+  template <typename TYPE>
+  struct CompareByChannel final {
 
     typedef typename TYPE::chan_type comp_type;
 
-    inline bool operator() (const TYPE& obj,const comp_type& testID) const{
+    bool operator() (const TYPE& obj,const comp_type& testID) const{
       return (testID > obj.channelID());
     }
 
-
-    inline bool operator() (const comp_type& testID, const TYPE& obj ) const{
+    bool operator() (const comp_type& testID, const TYPE& obj ) const{
       return ( obj.channelID() > testID);
     }
   };
 
   /// class for accumulating energy
   template <class TYPE>
-    class Accumulate_Charge
-    : public std::binary_function<double,TYPE, double>{
-  public:
-    inline double  operator() ( double& charge  , TYPE obj ) const {
+  struct Accumulate_Charge final {
+    double  operator() ( double& charge  , TYPE obj ) const {
       return ( !obj ) ? charge :  charge+= obj->totalCharge() ; };
     ///
- };
+  };
 
   template <class TYPE1, class TYPE2 = TYPE1 >
-  class Less_by_Channel
-    : public std::binary_function<TYPE1,TYPE2,bool>
+  struct Less_by_Channel final
   {
-  public:
-
     /** compare the channel of one object with the
      *  channel of another object
      *  @param obj1   first  object
@@ -65,11 +55,9 @@ template <typename TYPE>
   };
 
 
- template <class TYPE1, class TYPE2 = TYPE1 >
-  class Less_by_Charge
-    : public std::binary_function<TYPE1,TYPE2,bool>
+  template <class TYPE1, class TYPE2 = TYPE1 >
+  struct Less_by_Charge final
   {
-  public:
 
     /** compare the dep charge of one object with the
      *  dep Charge  of another object
@@ -88,15 +76,3 @@ template <typename TYPE>
 }
 
 #endif // _SiDataFunctor_H_
-
-
-
-
-
-
-
-
-
-
-
-
