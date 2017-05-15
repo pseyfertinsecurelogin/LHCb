@@ -403,9 +403,8 @@ namespace Decays
       // reset the cache
       inline void i_reset () const
       {
-        std::for_each
-          ( childBegin() , childEnd() ,
-            std::mem_fun_ref (&_Tree_<PARTICLE>::reset) ) ;
+        std::for_each( childBegin() , childEnd() ,
+                       [](const _Tree_<PARTICLE>& t) { t.reset(); });
       }
       // ======================================================================
       const Decays::iNode& mother () const { return m_mother ; }

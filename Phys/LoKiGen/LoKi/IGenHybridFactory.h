@@ -36,14 +36,10 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-06-10
    */
-  class GAUDI_API IGenHybridFactory : public virtual IAlgTool
+  struct GAUDI_API IGenHybridFactory : extend_interfaces<IAlgTool>
   {
-  public:
     // ========================================================================
-    /// Return the unique interface ID
-    static const InterfaceID& interfaceID() ;
-    // ========================================================================
-  public:
+    DeclareInterfaceID( IGenHybridFactory , 5 , 0 ) ;
     // ========================================================================
     // predicates
     // ========================================================================
@@ -69,8 +65,6 @@ namespace LoKi
       LoKi::Types::GVCut& cuts         ,
       const std::string&  context = "" )  = 0 ;
     // ========================================================================
-  public:
-    // ========================================================================
     // functions
     // ========================================================================
     /** "Factory": get the the object form python code
@@ -94,8 +88,6 @@ namespace LoKi
     ( const std::string&  pycode       ,
       LoKi::Types::GVFun& func         ,
       const std::string&  context = "" )  = 0 ;
-    // ========================================================================
-  public:
     // ========================================================================
     // maps
     // ========================================================================
@@ -121,8 +113,6 @@ namespace LoKi
       LoKi::Types::GVMap& func         ,
       const std::string&  context = "" )  = 0 ;
     // ========================================================================
-  public:
-    // ========================================================================
     // pipes
     // ========================================================================
     /** "Factory": get the the object form python code
@@ -146,8 +136,6 @@ namespace LoKi
     ( const std::string&   pycode       ,
       LoKi::Types::GVPipe& func         ,
       const std::string&   context = "" )  = 0 ;
-    // ========================================================================
-  public:
     // ========================================================================
     // fun-vals
     // ========================================================================
@@ -173,8 +161,6 @@ namespace LoKi
       LoKi::Types::GVFunVal& func         ,
       const std::string&     context = "" )  = 0 ;
     // ========================================================================
-  public:
-    // ========================================================================
     // cut-vals
     // ========================================================================
     /** "Factory": get the the object form python code
@@ -187,8 +173,6 @@ namespace LoKi
     ( const std::string&    pycode       ,
       LoKi::Types::GCutVal& func         ,
       const std::string&    context = "" )  = 0 ;
-    // ========================================================================
-  public:
     // ========================================================================
     // sources
     // ========================================================================
