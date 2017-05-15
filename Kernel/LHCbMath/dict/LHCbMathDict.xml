@@ -178,11 +178,6 @@
   <class name    = "Gaudi::Math::WStatEntity"      />
   <class name    = "Gaudi::Math::NStatEntity"      />
 
-  <class name    = "std::unary_function<double,double>"/>
-  <class name    = "std::unary_function<double,Gaudi::Math::ValueWithError>"/>
-  <class name    = "std::binary_function<double,double,double>"/>
-  <class name    = "std::binary_function<double,double,Gaudi::Math::ValueWithError>"/>
-
   <class name = "std::allocator<std::pair<double,double> >"/>
   <class name = "std::allocator<std::pair<double,Gaudi::Math::ValueWithError> >"/>
   

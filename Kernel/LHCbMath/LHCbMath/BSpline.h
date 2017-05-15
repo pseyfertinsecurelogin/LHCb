@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LHCBMATH_BPLINE_H
 #define LHCBMATH_BPLINE_H 1
@@ -8,7 +7,6 @@
 // STD & STL
 // ============================================================================
 #include <vector>
-#include <functional>
 // ============================================================================
 // LHCbMath
 // ============================================================================
@@ -35,7 +33,7 @@ namespace Gaudi
      *  @see http://link.springer.com/chapter/10.1007%2F978-3-0348-7692-6_6
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      */
-    class GAUDI_API BSpline : public std::unary_function<double,double>
+    class GAUDI_API BSpline
     {
       // ======================================================================
     public:
@@ -274,7 +272,7 @@ namespace Gaudi
      *  @see http://en.wikipedia.org/wiki/B-spline
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      */
-    class GAUDI_API PositiveSpline : public std::unary_function<double,double>
+    class GAUDI_API PositiveSpline
     {
       // ======================================================================
     public:
@@ -314,7 +312,7 @@ namespace Gaudi
       /// constructor from the basic spline
       PositiveSpline ( const BSpline& spline ) ;
       /// destructor
-      virtual ~PositiveSpline() ;
+      virtual ~PositiveSpline() = default;
       // ======================================================================
     public:
       // ======================================================================
@@ -486,8 +484,6 @@ namespace Gaudi
       /// constructor from the basic spline
       ConvexOnlySpline ( const BSpline&        spline     ,
                          const bool            increasing ) ;
-      /// destructor
-      virtual ~ConvexOnlySpline() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -569,8 +565,6 @@ namespace Gaudi
       /// constructor from the basic spline
       MonothonicSpline ( const BSpline&        spline     ,
                          const bool            increasing ) ;
-      /// destructor
-      virtual ~MonothonicSpline() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -655,8 +649,6 @@ namespace Gaudi
       ConvexSpline
         ( const MonothonicSpline& spline     ,
           const bool              convex      ) ;
-      /// destructor
-      virtual ~ConvexSpline() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -680,7 +672,7 @@ namespace Gaudi
     /** @class Spline2D
      *  Non-negative spline in 2D
      */
-    class GAUDI_API  Spline2D : public std::binary_function<double,double,double>
+    class GAUDI_API  Spline2D
     {
       // ======================================================================
     public:
@@ -800,7 +792,7 @@ namespace Gaudi
     /** @class Spline2DSym
      *  Non-negative symmetric spline in 2D
      */
-    class GAUDI_API  Spline2DSym : public std::binary_function<double,double,double>
+    class GAUDI_API  Spline2DSym
     {
       // ======================================================================
     public:
