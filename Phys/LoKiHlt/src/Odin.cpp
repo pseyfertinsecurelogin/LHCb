@@ -36,6 +36,20 @@
 
 namespace {
 
+#if  __cplusplus > 201402L
+
+// C++17 version: https://godbolt.org/g/2vAZQt
+template <typename... lambda_ts>
+struct composer_t : lambda_ts...
+{
+  template <typename... T>
+  composer_t(T&&... t) : lambda_ts(std::forward<T>(t))...  {}
+
+  using lambda_ts::operator()...;
+};
+
+#else
+
 template <typename... lambda_ts>
 struct composer_t;
 
@@ -59,7 +73,7 @@ struct composer_t<lambda_t, more_lambda_ts...> : lambda_t, composer_t<more_lambd
   using lambda_t::operator();
   using super_t::operator();
 };
-
+#endif
 
 template <typename... lambda_ts>
 composer_t<std::decay_t<lambda_ts>...>
@@ -370,9 +384,9 @@ std::ostream& LoKi::Odin::RunEvtNumber::fillStream ( std::ostream& s ) const
   //
   return dispatch_variant( m_runevts,
                            [&](const runevt_range& rng) -> std::ostream&
-                           { if (rng.first.run()==rng.second.run() && rng.first.evt()+1==rng.second.evt() ) 
+                           { if (rng.first.run()==rng.second.run() && rng.first.evt()+1==rng.second.evt() )
                              {
-                               return s << rng.first.run()   << " , " 
+                               return s << rng.first.run()   << " , "
                                         << rng.first.event() << " ) " ;
                              }
                              return s << Gaudi::Utils::toString ( rng.first   ) << " , "
