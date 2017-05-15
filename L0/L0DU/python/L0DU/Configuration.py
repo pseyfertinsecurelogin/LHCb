@@ -55,6 +55,7 @@ class L0Conf(LHCbConfigurableUser) :
         ,"ETCOutput"      : "L0ETC.root"
         ,"DataType"       : ""
         # Herschel-specific options
+        ,"EmulateHC"             : False
         ,"HCTriggerBitsFromADCs" : False
         ,"L0HCAlgThresholdsB0"   : {0,0,0,0}
         ,"L0HCAlgThresholdsB1"   : {0,0,0,0}
@@ -100,6 +101,7 @@ class L0Conf(LHCbConfigurableUser) :
         ,"ETCOutput"      : """ Name of ETC output file."""
         ,"DataType"       : """ Data type, used to set up default TCK """
         # Herschel-specific options
+        ,"EmulateHC"          : """ Flag whether or not to emulate Herschel. False by default for backward compatibility """
         ,"HCTriggerBitsFromADCs" : """ If True, compute the Herschel L0 trigger bit sum based on the values of the raw ADCs in each counter with respect to a threshold. """
         ,"L0HCAlgThresholdsB0" : """ Herschel B0 thresholds if computing L0 HC trigger bits """
         ,"L0HCAlgThresholdsB1" : """ Herschel B1 thresholds if computing L0 HC trigger bits """
@@ -139,7 +141,9 @@ class L0Conf(LHCbConfigurableUser) :
                 rootintes += '/'
                 rootintes = rootintes.replace('//','/')
             rootInTESOnDemand_checked.append(rootintes)
-        self.setProp("RootInTESOnDemand",rootInTESOnDemand_checked)    
+        self.setProp("RootInTESOnDemand",rootInTESOnDemand_checked)  
+        if self.getProp("HCTriggerBitsFromADCs") and self.getProp("FakeHCL0Digits"):
+            raise L0ConfError("HCTriggerBitsFromADCs","FakeHCL0Digits","Does not make sense to request computed and faked Herschel L0 trigger bits simultaneously")  
 
     def l0decodingSeq(self, name="L0FromRawSeq" , writeOnTes=None ):
         """ Return a Gaudi Sequencer with the algorithms to decode the L0Calo, L0Muon and L0DU data. """
@@ -201,9 +205,11 @@ class L0Conf(LHCbConfigurableUser) :
             l0du.WriteOnTES   = writeOnTes
 
         # Build the sequence in two steps :
-        # First :  run L0Calo + L0Muon + PUVeto + L0HC emulators
+        # First :  run L0Calo + L0Muon + PUVeto (+ L0HC, if requested) emulators
         l0processorSeq = GaudiSequencer( "sub"+name )
-        l0processorSeq.Members+=[ l0calo, l0muon, l0pileup ] + l0hc_seq
+        l0processorSeq.Members+=[ l0calo, l0muon, l0pileup ]
+        if self.getProp("EmulateHC") :
+            l0processorSeq.Members += l0hc_seq
         l0emulatorSeq.Members+=[ l0processorSeq ]
         # Second : run L0DU emulator
         l0emulatorSeq.Members+=[l0du]
