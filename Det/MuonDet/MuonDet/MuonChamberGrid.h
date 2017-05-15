@@ -24,7 +24,7 @@ public:
   StatusCode initialize() override;
 
   //Returns distances relative to chamber dimension
-  std::vector< std::pair<MuonFrontEndID, std::vector<float> > > listOfPhysChannels(double x_enter,double y_enter,
+  std::vector< std::pair<MuonFrontEndID, std::array<float,4> > > listOfPhysChannels(double x_enter,double y_enter,
 										   double x_exit,double y_exit);
 
   double retLenght(int nLx,  std::vector<double> my_list);
