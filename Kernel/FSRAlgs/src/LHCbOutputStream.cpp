@@ -38,41 +38,10 @@ DECLARE_COMPONENT(LHCbOutputStream)
 LHCbOutputStream::LHCbOutputStream(const std::string& name, ISvcLocator* pSvcLocator)
 : Algorithm(name, pSvcLocator)
 {
-  m_doPreLoad      = true;
-  m_doPreLoadOpt   = false;
-  m_verifyItems    = true;
-  m_output         = "";
-  m_outputName     = "";
-  m_outputType     = "UPDATE";
-  m_storeName      = "EventDataSvc";
-  m_persName       = "EventPersistencySvc";
-  m_agent          = std::make_unique<LHCbOutputStreamAgent>(this);
-  ///in the baseclass, always fire the incidents by default
-  ///in e.g. RecordStream this will be set to false, and configurable
-  m_fireIncidents  = true;
-  declareProperty("ItemList",         m_itemNames);
-  declareProperty("OptItemList",      m_optItemNames);
-  declareProperty("AlgDependentItemList", m_algDependentItemList);
-  declareProperty("Preload",          m_doPreLoad);
-  declareProperty("PreloadOptItems",  m_doPreLoadOpt);
-  declareProperty("Output",           m_output);
-  declareProperty("OutputFile",       m_outputName);
-  declareProperty("EvtDataSvc",       m_storeName);
-  declareProperty("EvtConversionSvc", m_persName);
-  declareProperty("AcceptAlgs",       m_acceptNames);
-  declareProperty("RequireAlgs",      m_requireNames);
-  declareProperty("VetoAlgs",         m_vetoNames);
-  declareProperty("VerifyItems",      m_verifyItems);
-  ///in the baseclass, always fire the incidents by default
-  ///in RecordStream this will be set to false, and configurable
-
   // Associate action handlers with the AcceptAlgs, RequireAlgs and VetoAlgs.
   m_acceptNames.declareUpdateHandler ( &LHCbOutputStream::acceptAlgsHandler , this );
   m_requireNames.declareUpdateHandler( &LHCbOutputStream::requireAlgsHandler, this );
   m_vetoNames.declareUpdateHandler   ( &LHCbOutputStream::vetoAlgsHandler   , this );
-
-  //setProperty( "OutputLevel", 2 );
-
 }
 
 
@@ -332,9 +301,9 @@ StatusCode LHCbOutputStream::collectObjects()   {
   }
 
   // Traverse the tree and collect the requested objects (tolerate missing items here)
-  for ( Items::iterator i = m_optItemList.begin(); i != m_optItemList.end(); i++ )    {
-    DataObject* obj = 0;
-    m_currentItem = (*i);
+  for ( auto i = m_optItemList.begin(); i != m_optItemList.end(); i++ )    {
+    DataObject* obj = nullptr;
+    m_currentItem = *i;
     StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(), obj);
     if ( iret.isSuccess() )  {
       iret = m_pDataManager->traverseSubTree(obj, m_agent.get());
@@ -347,27 +316,21 @@ StatusCode LHCbOutputStream::collectObjects()   {
   }
 
   // Collect objects dependent on particular algorithms
-  for ( AlgDependentItems::const_iterator iAlgItems = m_algDependentItems.begin();
-        iAlgItems != m_algDependentItems.end(); ++iAlgItems )
-  {
-    Algorithm * alg    = iAlgItems->first;
-    const Items& items = iAlgItems->second;
+  for ( const auto& iAlgItems : m_algDependentItems ) {
+    Algorithm * alg    = iAlgItems.first;
+    const Items& items = iAlgItems.second;
     if ( alg->isExecuted() && alg->filterPassed() )
     {
       ON_DEBUG
         log << MSG::DEBUG << "Algorithm '" << alg->name() << "' fired. Adding " << items << endmsg;
-      for ( Items::const_iterator i = items.begin(); i != items.end(); ++i )
-      {
-        DataObject* obj = NULL;
-        m_currentItem = (*i);
+      for ( const auto& i : items ) {
+        DataObject* obj = nullptr;
+        m_currentItem = i;
         StatusCode iret = m_pDataProvider->retrieveObject(m_currentItem->path(),obj);
-        if ( iret.isSuccess() )
-        {
+        if ( iret.isSuccess() ) {
           iret = m_pDataManager->traverseSubTree(obj,m_agent.get());
           if ( !iret.isSuccess() ) { status = iret; }
-        }
-        else
-        {
+        } else {
           log << MSG::ERROR << "Cannot write mandatory (algorithm dependent) object(s) (Not found) "
               << m_currentItem->path() << endmsg;
           status = iret;
@@ -382,11 +345,11 @@ StatusCode LHCbOutputStream::collectObjects()   {
     std::set<DataObject*> unique;
     std::vector<DataObject*> tmp; // temporary vector with the reduced list
     tmp.reserve(m_objects.size());
-    for (std::vector<DataObject*>::iterator o = m_objects.begin(); o != m_objects.end(); ++o) {
-      if (!unique.count(*o)) {
-        // if the pointer is not in the set, add it to both the set and the temporary vector
-        unique.insert(*o);
-        tmp.push_back(*o);
+    for (auto& o : m_objects) {
+      if (unique.find(o)==unique.end()) {
+        // the pointer is not in the set, add it to both the set and the temporary vector
+        unique.insert(o);
+        tmp.push_back(o);
       }
     }
     m_objects.swap(tmp); // swap the data of the two vectors
@@ -404,28 +367,24 @@ void LHCbOutputStream::clearSelection()     {
 // Find single item identified by its path (exact match)
 DataStoreItem*
 LHCbOutputStream::findItem(const std::string& path)  {
-  for(Items::const_iterator i=m_itemList.begin(); i != m_itemList.end(); ++i)  {
-    if ( (*i)->path() == path )  return (*i);
-  }
-  for(Items::const_iterator j=m_optItemList.begin(); j != m_optItemList.end(); ++j)  {
-    if ( (*j)->path() == path )  return (*j);
-  }
-  return 0;
+  auto matchesPath = [&](const DataStoreItem* dsi)
+                     { return dsi->path() == path; };
+  auto i = std::find_if( m_itemList.begin(), m_itemList.end(),
+                         matchesPath );
+  if (i!=m_itemList.end()) return *i;
+  i = std::find_if( m_optItemList.begin(), m_optItemList.end(),
+                    matchesPath );
+  if (i!=m_optItemList.end()) return *i;
+  return nullptr;
 }
 
 // Add item to output streamer list
 void LHCbOutputStream::addItem(Items& itms, const std::string& descriptor)   {
   MsgStream log(msgSvc(), name());
-  int level = 0;
   size_t sep = descriptor.rfind("#");
   std::string obj_path (descriptor,0,sep);
   std::string slevel   (descriptor,sep+1,descriptor.length());
-  if ( slevel == "*" )  {
-    level = 9999999;
-  }
-  else   {
-    level = atoi(slevel.c_str());
-  }
+  int level = (  slevel == "*"  ? 9999999 : std::atoi(slevel.c_str() ) );
   if ( m_verifyItems )  {
     size_t idx = obj_path.find("/",1);
     while(idx != std::string::npos)  {
@@ -496,30 +455,27 @@ StatusCode LHCbOutputStream::connectConversionSvc()   {
   // The default service is the same for input as for output.
   // If this is not desired, then a specialized LHCbOutputStream must overwrite
   // this value.
-  if ( dbType.length() > 0 || svc.length() > 0 )   {
-    std::string typ = dbType.length()>0 ? dbType : svc;
-    SmartIF<IPersistencySvc> ipers(serviceLocator()->service(m_persName));
-    if( !ipers.isValid() )   {
-      log << MSG::FATAL << "Unable to locate IPersistencySvc interface of " << m_persName << endmsg;
-      return StatusCode::FAILURE;
-    }
-    IConversionSvc *cnvSvc = 0;
-    status = ipers->getService(typ, cnvSvc);
-    if( !status.isSuccess() )   {
-      log << MSG::FATAL << "Unable to locate IConversionSvc interface of database type " << typ << endmsg;
-      return status;
-    }
-    // Increase reference count and keep service.
-    m_pConversionSvc = cnvSvc;
-  }
-  else
-  {
+  if ( dbType.length() == 0 && svc.length() == 0 )   {
     log << MSG::FATAL
         << "Unable to locate IConversionSvc interface (Unknown technology) " << endmsg
         << "You either have to specify a technology name or a service name!" << endmsg
         << "Please correct the job option \"" << name() << ".Output\" !"     << endmsg;
     return StatusCode::FAILURE;
   }
+  std::string typ = dbType.length()>0 ? dbType : svc;
+  SmartIF<IPersistencySvc> ipers(serviceLocator()->service(m_persName));
+  if( !ipers.isValid() )   {
+    log << MSG::FATAL << "Unable to locate IPersistencySvc interface of " << m_persName << endmsg;
+    return StatusCode::FAILURE;
+  }
+  IConversionSvc *cnvSvc = nullptr;
+  status = ipers->getService(typ, cnvSvc);
+  if( !status.isSuccess() )   {
+    log << MSG::FATAL << "Unable to locate IConversionSvc interface of database type " << typ << endmsg;
+    return status;
+  }
+  // Increase reference count and keep service.
+  m_pConversionSvc = cnvSvc;
   return StatusCode::SUCCESS;
 }
 
@@ -555,8 +511,7 @@ void LHCbOutputStream::requireAlgsHandler( Property& /* theProp */ )  {
 
 StatusCode LHCbOutputStream::decodeVetoAlgs( )  {
   MsgStream log(msgSvc(), name());
-  ON_DEBUG
-    log << MSG::DEBUG << "VetoAlgs    : " << m_vetoNames.value() << endmsg;
+  ON_DEBUG debug() << "VetoAlgs    : " << m_vetoNames.value() << endmsg;
   return decodeAlgorithms( m_vetoNames, &m_vetoAlgs );
 }
 
@@ -570,28 +525,21 @@ void LHCbOutputStream::vetoAlgsHandler( Property& /* theProp */ )  {
 
 Algorithm* LHCbOutputStream::decodeAlgorithm( const std::string& theName )
 {
-  Algorithm * theAlgorithm = NULL;
+  Algorithm * theAlgorithm = nullptr;
 
   SmartIF<IAlgManager> theAlgMgr(serviceLocator());
-  if ( theAlgMgr.isValid() )
-  {
+  if ( theAlgMgr.isValid() ) {
     // Check whether the supplied name corresponds to an existing
     // Algorithm object.
     SmartIF<IAlgorithm> &theIAlg = theAlgMgr->algorithm(theName);
-    if ( theIAlg.isValid() )
-    {
-      try
-      {
+    if ( theIAlg.isValid() ) {
+      try {
         theAlgorithm = dynamic_cast<Algorithm*>(theIAlg.get());
-      }
-      catch(...)
-      {
+      } catch(...) {
         // do nothing
       }
     }
-  }
-  else
-  {
+  } else {
     MsgStream log( msgSvc( ), name( ) );
     log << MSG::FATAL << "Can't locate ApplicationMgr!!!" << endmsg;
   }
@@ -611,45 +559,22 @@ StatusCode LHCbOutputStream::decodeAlgorithms( StringArrayProperty& theNames,
 {
   // Reset the list of Algorithms
   theAlgs->clear( );
-
-  StatusCode result = StatusCode::SUCCESS;
-
   // Build the list of Algorithms from the names list
-  const std::vector<std::string> nameList = theNames.value( );
-  for ( std::vector<std::string>::const_iterator it = nameList.begin();
-        it != nameList.end(); ++it )
-  {
-
-    Algorithm * theAlgorithm = decodeAlgorithm( *it );
-    if ( theAlgorithm )
-    {
+  for ( const auto& name : theNames.value( ) ) {
+    Algorithm * theAlgorithm = decodeAlgorithm( name );
+    if ( theAlgorithm ) {
       // Check that the specified algorithm doesn't already exist in the list
-      for ( std::vector<Algorithm*>::iterator ita = theAlgs->begin();
-            ita != theAlgs->end(); ++ita )
-      {
-        Algorithm * existAlgorithm = (*ita);
-        if ( theAlgorithm == existAlgorithm )
-        {
-          result = StatusCode::FAILURE;
-          break;
-        }
-      }
-      if ( result.isSuccess( ) )
-      {
+      auto existsAlg = std::find( theAlgs->begin(), theAlgs->end(), theAlgorithm );
+      if ( existsAlg== theAlgs->end() ) {
         theAlgorithm->addRef();
         theAlgs->push_back( theAlgorithm );
       }
+    } else {
+      MsgStream log( msgSvc( ), this->name( ) );
+      log << MSG::INFO << name << " doesn't exist - ignored" << endmsg;
     }
-    else
-    {
-      MsgStream log( msgSvc( ), name( ) );
-      log << MSG::INFO << *it << " doesn't exist - ignored" << endmsg;
-    }
-
   }
-  result = StatusCode::SUCCESS;
-
-  return result;
+  return StatusCode::SUCCESS;
 }
 
 bool LHCbOutputStream::isEventAccepted( ) const  {

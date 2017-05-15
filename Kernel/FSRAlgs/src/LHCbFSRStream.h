@@ -17,8 +17,6 @@ class LHCbFSRStream : public LHCbRecordStream     {
 public:
   /// Standard algorithm Constructor
   LHCbFSRStream(const std::string&, ISvcLocator*);
-  /// Standard Destructor
-  virtual ~LHCbFSRStream() {}
   /// Algorithm overload: initialization
   StatusCode initialize() override;
   /// Algorithm overload: finalization
@@ -31,13 +29,11 @@ protected:
   void cleanNodes(DataObject * obj,
                   const std::string & location,
                   unsigned int nRecCount = 0 );
-
 private:
   SmartIF<IIOFSRSvc> m_ioFsrSvc; ///<reference to IOFSR service
   bool m_doIOFsr = true; //set to false to skip all the IOFSR stuff
   bool m_cleanTree = true; //set to false to skip cleaning the FSR tree
   std::string m_cleanRoot; //clean from where in the FSR tree
-
 };
 
 #endif // LHCB_LHCBFSRSTREAM_H
