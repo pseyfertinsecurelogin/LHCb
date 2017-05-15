@@ -17,17 +17,6 @@
 // Declaration of the Tool Factory
 DECLARE_TOOL_FACTORY(CheckMCEventTool)
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-CheckMCEventTool::CheckMCEventTool( const std::string& type,
-                                    const std::string& name,
-                                    const IInterface* parent )
-: base_class ( type, name , parent )
-{
-  declareInterface<ICheckTool>(this);
-}
-
 StatusCode CheckMCEventTool::check()
 {
   // If already processed this event, return previous status

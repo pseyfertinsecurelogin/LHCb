@@ -16,18 +16,6 @@
 // Declaration of the Tool Factory
 DECLARE_TOOL_FACTORY( FlagSignalChain )
 
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-FlagSignalChain::FlagSignalChain( const std::string& type,
-                                  const std::string& name,
-                                  const IInterface* parent )
-: base_class ( type, name , parent )
-{
-  declareInterface<IFlagSignalChain>(this);
-}
-
 //==============================================================================
 // Set from signal flag
 //==============================================================================

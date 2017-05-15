@@ -19,6 +19,154 @@
 //
 // 20/04/2002 : Olivier Dormond
 //-----------------------------------------------------------------------------
+namespace {
+    static const std::string s_brackets { "{}()[]" };// sanity check the brackets in the decay descriptor
+
+    template <typename C>
+    void delete_(C* c) {
+        if( !c ) return;
+        for( auto& m : *c) delete m;
+        delete c;
+    }
+}
+class MCDecayFinder::ParticleMatcher final
+{
+  public:
+    ParticleMatcher( LHCb::IParticlePropertySvc *ppSvc );
+    ParticleMatcher( ParticleMatcher &copy );
+    ParticleMatcher( std::string *name, LHCb::IParticlePropertySvc *ppSvc );
+    ParticleMatcher( Quarks q1, Quarks q2, Quarks q3,
+                     LHCb::IParticlePropertySvc *ppSvc );
+    ParticleMatcher( Quantums quantum, Relations relation, double value,
+                     LHCb::IParticlePropertySvc *ppSvc );
+    bool test( const LHCb::MCParticle *part,
+              LHCb::MCParticle::ConstVector *collect=nullptr );
+    void setLift( void ) { lift = true; }
+    bool getLift( void ) { return lift; }
+    void setEmpty( void ) { empty_f = true; }
+    bool getEmpty( void ) { return empty_f; }
+    void setQmark( void ) { qmark = true; }
+    bool getQmark( void ) { return qmark; }
+    void setConjugate( void ) { conjugate = true; }
+    bool getConjugate( void ) { return conjugate; }
+    void setOscillate( void ) { oscillate = true; }
+    void setNotOscillate( void ) { noscillate = true; }
+    bool getOscillate( void ) { return oscillate; }
+    bool getNotOscillate( void ) { return noscillate; }
+    void setInverse( void ) { inverse = true; }
+    bool getInverse( void ) { return inverse; }
+    void setStable( void ) { stable = true; }
+    bool getStable( void ) { return stable; }
+    bool getExact( void ) { return !qmark && !inverse
+                              && !conjugate && (type==id); }
+    void conjugateID( void );
+    std::string describe( void );
+  private:
+    int conjugatedID( int id );
+    enum Type { notest, id, quark, quantum } type;
+    union {
+      struct { Quarks q1, q2, q3; } quarks;
+      int stdHepID;
+      struct { Quantums q; Relations r; double d; } relation;
+    } parms;
+    bool lift = false;
+    bool empty_f = false;
+    bool qmark = false;
+    bool conjugate = false;
+    bool oscillate = false;
+    bool noscillate = false;
+    bool inverse = false;
+    bool stable = false;
+    LHCb::IParticlePropertySvc *m_ppSvc = nullptr;
+};
+
+class MCDecayFinder::Descriptor final
+{
+  public:
+    Descriptor( LHCb::IParticlePropertySvc *ppSvc, double resonnanceThreshold );
+    Descriptor( Descriptor &copy );
+    Descriptor( ParticleMatcher *mother, LHCb::IParticlePropertySvc *ppSvc,
+                double resonnanceThreshold );
+
+    ~Descriptor();
+
+    template<class iter> bool test( const iter first, const iter last,
+                                    const LHCb::MCParticle *&previous_result ) {
+      iter start;
+      if( previous_result &&
+          ((start=std::find(first,last,previous_result)) == last) ) {
+        previous_result = nullptr;
+        return false; // Bad previous_result
+      }
+      if( previous_result )
+        start++;
+
+      if( !mother ) { // No mother == pp collision
+        std::list<const LHCb::MCParticle*> prims;
+        for( auto i=(previous_result ? start : first); i != last; i++ ) {
+          const LHCb::MCVertex *origin = (*i)->originVertex();
+          if( origin && origin->mother() )
+            continue;
+          prims.push_back(*i);
+        }
+        if( skipResonance )
+          filterResonances( prims );
+        if( testDaughters(prims) ) {
+          previous_result = (const LHCb::MCParticle *)1;
+          return true;
+        }
+        if( getAlternate() )
+          getAlternate()->test(first,last,previous_result);
+        return false;
+      }
+
+      auto part_i = (previous_result ? start : first);
+      while( (part_i != last) && (test(*part_i) == false) )
+        part_i++;
+
+      if( part_i != last ) {
+        previous_result = *part_i;
+        return true;
+      }
+      return false;
+    }
+    bool test(const LHCb::MCParticle *mother,
+              LHCb::MCParticle::ConstVector *collect=nullptr,
+              std::vector<std::pair<const LHCb::MCParticle*,
+              LHCb::MCParticle::ConstVector >
+                         > *subTree=nullptr);
+
+    void setAlternate( Descriptor *a ) { alternate.reset(a); }
+    Descriptor *getAlternate( void ) { return alternate.get(); }
+
+    void setMother( ParticleMatcher *m ) { mother.reset( m ); }
+
+    void addDaughter( Descriptor *daughter );
+    std::vector<Descriptor *> &getDaughters( void ) { return daughters; }
+
+    void setElipsis( void ) { elipsis = true; }
+    bool getElipsis( void ) { return elipsis; }
+    void setResonance( void ) { skipResonance = true; }
+    void conjugate( void );
+    std::string describe( void );
+  private:
+    bool testDaughters( std::list<const LHCb::MCParticle*> &parts,
+                        LHCb::MCParticle::ConstVector *collect=nullptr,
+              std::vector<std::pair<const LHCb::MCParticle*,LHCb::MCParticle::ConstVector >
+                         > *subTree=nullptr );
+    void addNonResonantDaughters( std::list<const LHCb::MCParticle*> &parts,
+                                  const LHCb::MCParticle *part );
+    void filterResonances( std::list<const LHCb::MCParticle*> &parts );
+
+    std::unique_ptr<ParticleMatcher> mother;
+    std::vector<Descriptor *> daughters; // wildcard mother at the end!
+    bool skipResonance = false;
+    bool elipsis = false;
+    double m_resThreshold = 0;
+    LHCb::IParticlePropertySvc *m_ppSvc = nullptr;
+
+    std::unique_ptr<Descriptor> alternate;
+};
 
 DECLARE_TOOL_FACTORY( MCDecayFinder )
 
@@ -29,7 +177,7 @@ MCDecayFinder::MCDecayFinder( const std::string& type,
                               const std::string& name,
                               const IInterface* parent )
   : GaudiTool ( type, name , parent ),
-    m_ppSvc(0), m_source("B0 -> pi+ pi-"), m_decay(0), m_members(0), m_brackets("{}()[]")
+    m_ppSvc(0), m_source("B0 -> pi+ pi-"), m_decay(0), m_members(0)
 {
 
   declareInterface<IMCDecayFinder>(this);
@@ -46,7 +194,7 @@ MCDecayFinder::MCDecayFinder( const std::string& type,
 MCDecayFinder::~MCDecayFinder( )
 {
   delete m_decay;
-  delete m_members;
+  delete_(m_members);
 }
 
 //=============================================================================
@@ -75,38 +223,28 @@ StatusCode MCDecayFinder::setDecay( std::string decay ){
   Descriptor *old_decay = m_decay;
   std::vector<ParticleMatcher *> *old_members = m_members;
   // Be sure we don't get a old piece if the feature is not used.
-  m_decay = NULL;
-  m_members = NULL;
+  m_decay = nullptr;
+  m_members = nullptr;
 
   if (msgLevel(MSG::DEBUG)) debug() << "Setting decay to " << decay << endmsg;
   if( sanityCheck(decay) && compile(decay) ) {
     if (msgLevel(MSG::DEBUG)) debug() << "The compilation of the decay was successfull"
             << endmsg;
     m_source = decay;
-    if( old_decay )
-      delete old_decay;
-    if( old_members ) {
-      std::vector<ParticleMatcher *>::iterator pm_i;
-      for( pm_i = old_members->begin(); pm_i != old_members->end(); pm_i++ )
-        delete *pm_i;
-      old_members->clear();
-      delete old_members;
-    }
+    delete old_decay;
+    delete_(old_members);
     return StatusCode::SUCCESS;
   }
 
   // Restore previous decay if compilation failed.
-  if( m_decay && (m_decay != old_decay) )
+  if ( m_decay != old_decay) {
     delete m_decay;
-  m_decay = old_decay;
-  if( m_members && (m_members != old_members) ) {
-    std::vector<ParticleMatcher *>::iterator pm_i;
-    for( pm_i = m_members->begin(); pm_i != m_members->end(); pm_i++ )
-      delete *pm_i;
-    m_members->clear();
-    delete m_members;
+    m_decay = old_decay;
   }
-  m_members = old_members;
+  if ( m_members != old_members ) {
+    delete_(m_members);
+    m_members = old_members;
+  }
   err() << "Could not compile the decay description: " << decay << endmsg;
 
   return StatusCode::FAILURE;
@@ -115,7 +253,7 @@ StatusCode MCDecayFinder::setDecay( std::string decay ){
 std::string MCDecayFinder::revert( void ) const {
   std::string result = "";
   if( !m_decay ) return result;
-  bool alt = m_decay->getAlternate() != NULL;
+  bool alt = m_decay->getAlternate() != nullptr;
   if( alt ) result += "{ ";
   Descriptor *a = m_decay;
   while( a ) {
@@ -133,13 +271,9 @@ std::string MCDecayFinder::revert( void ) const {
 bool MCDecayFinder::compile( std::string &source )
 {
   yy_buffer_state *bs = yy_scan_string( source.c_str() );
-  try
-  {
-    if( yparse() )
-      throw("Syntax Error");
-  }
-  catch( DescriptorError e )
-  {
+  try {
+    if( yparse() ) throw("Syntax Error");
+  } catch( DescriptorError e ) {
     err() << "Invalid decay description '"
           << source << "'" << endmsg;
     err() << e.cause() << endmsg;
@@ -156,7 +290,7 @@ bool MCDecayFinder::hasDecay( const  LHCb::MCParticle::ConstVector &event ) cons
 {
   if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endmsg;
   if (!m_decay)   Exception("Trying to find an unspecified decay!");
-  const LHCb::MCParticle *drop_me = NULL;
+  const LHCb::MCParticle *drop_me = nullptr;
   bool r =  m_decay->test( event.begin(), event.end(), drop_me );
   return r ;
 }
@@ -175,7 +309,7 @@ bool MCDecayFinder::hasDecay( const LHCb::MCParticles &event ) const
 {
   if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endmsg;
   if (!m_decay) Exception("Trying to find an unspecified decay!");
-  const LHCb::MCParticle *drop_me = NULL;
+  const LHCb::MCParticle *drop_me = nullptr;
     bool r = m_decay->test( event.begin(), event.end(), drop_me );
     if (!r && UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "Could not find decay" << endmsg;
     return r ;
@@ -195,8 +329,7 @@ bool MCDecayFinder::hasDecay( ) const
 {
   LHCb::MCParticles* mcparts =
     get<LHCb::MCParticles>(LHCb::MCParticleLocation::Default );
-  if( !mcparts )
-  {
+  if( !mcparts ) {
     fatal() << "Unable to find MC particles at '"
             << LHCb::MCParticleLocation::Default << "'" << endmsg;
     return false;
@@ -208,8 +341,7 @@ bool MCDecayFinder::findDecay( const LHCb::MCParticle *&previous_result ) const
 {
   LHCb::MCParticles* mcparts =
     get<LHCb::MCParticles>(LHCb::MCParticleLocation::Default );
-  if( !mcparts )
-  {
+  if( !mcparts ) {
     fatal() << "Unable to find MC particles at '"
             << LHCb::MCParticleLocation::Default << "'" << endmsg;
     return false;
@@ -222,12 +354,10 @@ void MCDecayFinder::descendants( const LHCb::MCParticle *head,
                                  bool leaf ) const
 {
   bool term = true;
-  for( auto vi = head->endVertices().begin(); vi != head->endVertices().end(); vi++ )
-  {
-    for( auto pi = (*vi)->products().begin(); pi != (*vi)->products().end(); pi++ )
-    {
+  for( const auto& v : head->endVertices() ) {
+    for( const auto& p : v->products() ) {
       term = false;
-      descendants( *pi, result, leaf );
+      descendants( p, result, leaf );
     }
   }
 
@@ -241,15 +371,13 @@ void MCDecayFinder::decayMembers( const LHCb::MCParticle *head,
   if( m_members ) {
     LHCb::MCParticle::ConstVector flat;
     descendants( head, flat, false );
-    for( auto pi = flat.begin(); pi != flat.end(); pi++ ) {
-      for( auto mi = m_members->begin(); mi != m_members->end(); mi++ )
-        if( (*mi)->test(*pi) ) {
-          members.push_back(*pi);
-          break;
-        }
-    }
+    std::copy_if( flat.begin(), flat.end(),
+                  std::back_inserter(members),
+                  [&](const LHCb::MCParticle* p) {
+                    return std::any_of( m_members->begin(), m_members->end(),
+                                        [&](const auto& m) { return m->test(p); } );
+                  } );
   }
-
   m_decay->test(head, &members);
 }
 
@@ -259,23 +387,18 @@ void MCDecayFinder::decaySubTrees(
                                   LHCb::MCParticle::ConstVector >
                                   > & subtrees ) const
 {
-  m_decay->test(head, NULL, &subtrees);
+  m_decay->test(head, nullptr, &subtrees);
 }
 
 MCDecayFinder::Descriptor::Descriptor( LHCb::IParticlePropertySvc *ppSvc,
                                        double rThre)
-  : mother(0), daughters(0), skipResonance(false),
-    elipsis(false), m_resThreshold(rThre), m_ppSvc(ppSvc), alternate(0)
+  : m_resThreshold(rThre), m_ppSvc(ppSvc)
 {}
 
 MCDecayFinder::Descriptor::Descriptor( Descriptor &copy )
-  : mother(0), daughters(0), skipResonance(false),
-    elipsis(false), m_resThreshold(0), m_ppSvc(0), alternate(0)
 {
-  if( copy.mother )
-    mother = new ParticleMatcher(*copy.mother);
-  std::vector<Descriptor *>::iterator d;
-  for( d=copy.daughters.begin(); d!=copy.daughters.end(); d++ ) {
+  if( copy.mother ) mother = std::make_unique<ParticleMatcher>(*copy.mother);
+  for(auto d=copy.daughters.begin(); d!=copy.daughters.end(); d++ ) {
     daughters.push_back(new Descriptor(**d));
   }
   skipResonance = copy.skipResonance;
@@ -287,15 +410,12 @@ MCDecayFinder::Descriptor::Descriptor( Descriptor &copy )
 MCDecayFinder::Descriptor::Descriptor( ParticleMatcher *m,
                                        LHCb::IParticlePropertySvc *ppSvc,
                                        double rThre)
-  : mother(m), daughters(0), skipResonance(false),
-    elipsis(false), m_resThreshold(rThre), m_ppSvc(ppSvc), alternate(0)
+  : mother(m), m_resThreshold(rThre), m_ppSvc(ppSvc)
 {}
 
 MCDecayFinder::Descriptor::~Descriptor()
 {
-  delete mother;
   for( auto& d : daughters ) delete d;
-  delete alternate;
 }
 
 std::string MCDecayFinder::Descriptor::describe( void )
@@ -402,8 +522,8 @@ void MCDecayFinder::Descriptor::addDaughter( Descriptor *daughter )
     daughters.insert( daughters.begin(), daughter );
     return;
   }
-  auto d=daughters.begin();
-  while( d!=daughters.end() && (*d)->mother->getExact() ) d++;
+  auto d=std::find_if_not(daughters.begin(),daughters.end(),
+                          [](const auto& _) { return _->mother->getExact(); } );
   daughters.insert( d, daughter );
 }
 
@@ -442,9 +562,9 @@ void MCDecayFinder::Descriptor::addNonResonantDaughters(
 void MCDecayFinder::Descriptor::filterResonances( std::list<const LHCb::MCParticle*>
                                                    &parts )
 {
-  std::list<const LHCb::MCParticle*>::iterator pi;
-  std::list<const LHCb::MCParticle*>::iterator npi;
-  for( pi=parts.begin(); m_ppSvc && pi!=parts.end(); pi = npi ) {
+  if (!m_ppSvc) return;
+  auto pi=parts.begin();
+  while( pi!=parts.end() ) {
     const LHCb::ParticleProperty *pp = m_ppSvc->find( (*pi)->particleID() );
     if(!pp) {
       //      throw DescriptorError(std::string("Unknown particle '")+"'");
@@ -453,31 +573,23 @@ void MCDecayFinder::Descriptor::filterResonances( std::list<const LHCb::MCPartic
       break;
     }
 
-    if( pp->lifetime() < m_resThreshold )
-    {
+    if( pp->lifetime() < m_resThreshold ) {
       const LHCb::MCParticle *part = *pi;
-      npi = pi;
-      npi++;
-      parts.erase(pi);
+      pi = parts.erase(pi);
       addNonResonantDaughters( parts, part ); // Daughters are prepended.
     } else
-      npi = ++pi;
+      ++pi;
   }
 }
 
 void MCDecayFinder::Descriptor::conjugate( void )
 {
-  if( mother )
-    mother->conjugateID();
-  std::vector<Descriptor *>::iterator d;
-  for( d = daughters.begin(); d != daughters.end(); d++ )
-    (*d)->conjugate();
+  if( mother ) mother->conjugateID();
+  for(auto& d : daughters) d->conjugate();
 }
 
 MCDecayFinder::ParticleMatcher::ParticleMatcher( LHCb::IParticlePropertySvc *ppSvc )
-  : type(notest), lift(false), empty_f(false), qmark(false), conjugate(false),
-    oscillate(false), noscillate(false), inverse(false), stable(false),
-    m_ppSvc(ppSvc)
+  : type(notest), m_ppSvc(ppSvc)
 {}
 
 MCDecayFinder::ParticleMatcher::ParticleMatcher( ParticleMatcher &copy )
@@ -515,22 +627,16 @@ MCDecayFinder::ParticleMatcher::ParticleMatcher( ParticleMatcher &copy )
 
 MCDecayFinder::ParticleMatcher::ParticleMatcher( std::string *name,
                                                  LHCb::IParticlePropertySvc *ppSvc )
-  : type(id), lift(false), empty_f(false), qmark(false), conjugate(false),
-    oscillate(false), noscillate(false), inverse(false), stable(false),
-    m_ppSvc(ppSvc)
+  : type(id), m_ppSvc(ppSvc)
 {
   const LHCb::ParticleProperty *pp = m_ppSvc->find(*name);
-  if( pp )
-    parms.stdHepID = pp->pid().pid();
-  else
-    throw DescriptorError(std::string("Unknown particle '")+*name+"'");
+  if( !pp ) throw DescriptorError(std::string("Unknown particle '")+*name+"'");
+  parms.stdHepID = pp->pid().pid();
 }
 
 MCDecayFinder::ParticleMatcher::ParticleMatcher(Quarks q1, Quarks q2, Quarks q3,
                                                 LHCb::IParticlePropertySvc *ppSvc )
-  : type(quark), lift(false), empty_f(false), qmark(false), conjugate(false),
-    oscillate(false), noscillate(false), inverse(false), stable(false),
-    m_ppSvc(ppSvc)
+  : type(quark), m_ppSvc(ppSvc)
 {
   parms.quarks.q1 = q1;
   parms.quarks.q2 = q2;
@@ -539,9 +645,7 @@ MCDecayFinder::ParticleMatcher::ParticleMatcher(Quarks q1, Quarks q2, Quarks q3,
 
 MCDecayFinder::ParticleMatcher::ParticleMatcher(Quantums q,Relations r,double d,
                                                 LHCb::IParticlePropertySvc *ppSvc )
-  : type(quantum), lift(false), empty_f(false), qmark(false), conjugate(false),
-    oscillate(false), noscillate(false), inverse(false), stable(false),
-    m_ppSvc(ppSvc)
+  : type(quantum), m_ppSvc(ppSvc)
 {
   parms.relation.q = q;
   parms.relation.r = r;
@@ -550,7 +654,7 @@ MCDecayFinder::ParticleMatcher::ParticleMatcher(Quantums q,Relations r,double d,
 
 std::string MCDecayFinder::ParticleMatcher::describe( )
 {
-  std::string result = "";
+  std::string result;
   if( stable )     result += '(';
   if( lift )       result += '^';
   if( qmark )      result += '?';
@@ -670,15 +774,12 @@ static int firstQuark( int id )
 {
   int q;
 
-  if( !isHadron(id) || isIon(id) )
-    return 0;
+  if( !isHadron(id) || isIon(id) ) return 0;
 
-  if( isMeson(id) )
-  {
+  if( isMeson(id) ) {
     q = quarkTwo(id);
     q *= QuarksCharge[q];
-  }
-  else
+  } else
     q = quarkOne(id);
 
   return q*(id>0 ? 1 : -1);
@@ -686,21 +787,18 @@ static int firstQuark( int id )
 
 static int secondQuark( int id )
 {
+
+  if( !isHadron(id) || isIon(id) ) return 0;
+
   int q;
-
-  if( !isHadron(id) || isIon(id) )
-    return 0;
-
-  if( isMeson(id) )
-  {
+  if( isMeson(id) ) {
     q = quarkThree(id);
     int r = quarkTwo(id);
     if( QuarksCharge[q] == QuarksCharge[r] )
       q *= -QuarksCharge[q];
     else
       q *= QuarksCharge[q];
-  }
-  else
+  } else
     q = quarkTwo(id);
 
   return q*(id>0 ? 1 : -1);
@@ -708,16 +806,8 @@ static int secondQuark( int id )
 
 static int thirdQuark( int id )
 {
-  int q;
-
-  if( !isHadron(id) || isIon(id) )
-    return 0;
-
-  if( isMeson(id) )
-    q = 0;
-  else
-    q = quarkThree(id);
-
+  if( !isHadron(id) || isIon(id) ) return 0;
+  int q = ( isMeson(id) ? 0 : quarkThree(id) );
   return q*(id>0 ? 1 : -1);
 }
 
@@ -741,8 +831,7 @@ MCDecayFinder::ParticleMatcher::test( const LHCb::MCParticle *part,
     if( inverse )    result = !result;
     if( stable ) {
       int n = 0;
-      SmartRefVector<LHCb::MCVertex>::const_iterator vi;
-      for ( vi = part->endVertices().begin();
+      for ( auto vi = part->endVertices().begin();
             vi != part->endVertices().end(); vi++)
         n += (*vi)->products().size();
       result = result && (n == 0);
@@ -920,9 +1009,9 @@ bool MCDecayFinder::sanityCheck(const std::string & decay)
     //check for mismatched brackets, first make the string with only brackets
   std::string bstring="";
 
-  for(std::string::const_iterator itd=decay.begin(); itd != decay.end(); itd++)
+  for(auto itd=decay.cbegin(); itd != decay.cend(); itd++)
   {
-    for(std::string::const_iterator itb=m_brackets.begin(); itb != m_brackets.end() && itd != decay.end(); itb++)
+    for(auto itb=s_brackets.begin(); itb != s_brackets.end() && itd != decay.end(); itb++)
 	  {
 	    if(*itb == *itd)
       {
@@ -950,13 +1039,13 @@ bool MCDecayFinder::sanityCheck(const std::string & decay)
 
     //loop over possible bracket combinations
     //iterate over n and n+1, to get opening and closing bracket
-    for(unsigned int itb=0; bstring.size()>1 && itb < m_brackets.size()-1; itb+=2)
+    for(unsigned int itb=0; bstring.size()>1 && itb < s_brackets.size()-1; itb+=2)
 	  {
 	    //loop over the string
 	    for(unsigned int itd=0; bstring.size()>1 && itd < bstring.size()-1; itd+=1)
       {
         //remove matching brackets
-        if(bstring[itd]==m_brackets[itb] && bstring[itd+1]==m_brackets[itb+1])
+        if(bstring[itd]==s_brackets[itb] && bstring[itd+1]==s_brackets[itb+1])
         {
           if (msgLevel(MSG::VERBOSE)) verbose() << "Removing : " << bstring[itd] << bstring[itd+1] << endmsg;
           bstring.erase(itd,2);
@@ -991,12 +1080,12 @@ bool MCDecayFinder::sanityCheck(const std::string & decay)
 
     for(unsigned int iclose=0; bstring.size()!=0 && iclose<bstring.size(); iclose++)
 	  {
-	    if(bstring[iclose]==m_brackets[1])
+	    if(bstring[iclose]==s_brackets[1])
       {
         //find the opening bracket for this
 		for(unsigned int iopen=iclose-1; true; iopen--)
     {
-      if(bstring[iopen]==m_brackets[0])
+      if(bstring[iopen]==s_brackets[0])
       {
         //check there is at least one comma
         unsigned int comma=iopen+1;

@@ -17,15 +17,9 @@
  *  @author Christian Jacoby (LPHE, EPFL, Lausanne)
  *  @date   2004-03-18
  */
-class VisPrimVertTool : public GaudiTool, virtual public IVisPrimVertTool {
+class VisPrimVertTool : public extends<GaudiTool, IVisPrimVertTool> {
 public:
-  /// Standard constructor
-  VisPrimVertTool( const std::string& type,
-                  const std::string& name,
-                  const IInterface* parent );
-
-  /// Initialize
-  StatusCode initialize() override;
+  using base_class::base_class;
 
   long countVertices() const override;
   bool isVisible(const LHCb::MCVertex* pv ) const override
@@ -35,8 +29,9 @@ public:
 
 private:
 
-  long m_nTracks;
-  bool m_veloAndSeed;
+  // Number of tracks defining a PV: m_nTracks, by default= 2
+  Gaudi::Property<long> m_nTracks {this, "TrackNum", 2 };
+  Gaudi::Property<bool> m_veloAndSeed { this, "VeloAndSeed", true };
 
 };
 #endif // VISPRIMVERTTOOL_VISPRIMVERTTOOL_H

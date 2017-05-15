@@ -3,21 +3,13 @@
 //-----------------------------------------------------------------------------
 // Implementation file for class : ForcedBDecayTool v1.0
 //
-// 2007-02-06 : Marco Musy 
+// 2007-02-06 : Marco Musy
 //-----------------------------------------------------------------------------
 
 using namespace LHCb;
 
 // Declaration of the Algorithm Factory
 DECLARE_TOOL_FACTORY( ForcedBDecayTool )
-
-//=============================================================================
-ForcedBDecayTool::ForcedBDecayTool( const std::string& type,
-				    const std::string& name,
-				    const IInterface* parent ) :
-  GaudiTool ( type, name, parent ) { 
-  declareInterface<IForcedBDecayTool>(this);
-}
 
 //=============================================================================
 const MCParticle* ForcedBDecayTool::forcedB() {
@@ -29,7 +21,7 @@ const MCParticle* ForcedBDecayTool::forcedB() {
     for ( auto p = (*q)->pGenEvt()->particles_begin(); p != (*q)->pGenEvt()->particles_end();   ++p ) {
       if( (*p)->status() != 889 ) continue;
       BS = associatedofHEP(*p);
-      if(BS) break; 
+      if(BS) break;
     }
   }
   return BS;
@@ -42,8 +34,8 @@ MCParticle* ForcedBDecayTool::associatedofHEP(HepMC::GenParticle* hepmcp) {
   int mid = hepmcp->pdg_id();
   auto imc = std::find_if( mcpart->begin(), mcpart->end(),
                            [&](const MCParticle* p) {
-    return p->particleID().hasBottom() && 
-           p->particleID().pid() == mid; 
+    return p->particleID().hasBottom() &&
+           p->particleID().pid() == mid;
   });
   return imc!=mcpart->end() ? *imc :  nullptr ;
 }

@@ -195,145 +195,10 @@ public:
 
 private:
   /// The opaque representation of a particle matcher
-  class ParticleMatcher
-  {
-  public:
-    ParticleMatcher( LHCb::IParticlePropertySvc *ppSvc );
-    ParticleMatcher( ParticleMatcher &copy );
-    ParticleMatcher( std::string *name, LHCb::IParticlePropertySvc *ppSvc );
-    ParticleMatcher( Quarks q1, Quarks q2, Quarks q3,
-                     LHCb::IParticlePropertySvc *ppSvc );
-    ParticleMatcher( Quantums quantum, Relations relation, double value,
-                     LHCb::IParticlePropertySvc *ppSvc );
-    bool test( const LHCb::MCParticle *part,
-              LHCb::MCParticle::ConstVector *collect=NULL );
-    void setLift( void ) { lift = true; }
-    bool getLift( void ) { return lift; }
-    void setEmpty( void ) { empty_f = true; }
-    bool getEmpty( void ) { return empty_f; }
-    void setQmark( void ) { qmark = true; }
-    bool getQmark( void ) { return qmark; }
-    void setConjugate( void ) { conjugate = true; }
-    bool getConjugate( void ) { return conjugate; }
-    void setOscillate( void ) { oscillate = true; }
-    void setNotOscillate( void ) { noscillate = true; }
-    bool getOscillate( void ) { return oscillate; }
-    bool getNotOscillate( void ) { return noscillate; }
-    void setInverse( void ) { inverse = true; }
-    bool getInverse( void ) { return inverse; }
-    void setStable( void ) { stable = true; }
-    bool getStable( void ) { return stable; }
-    bool getExact( void ) { return !qmark && !inverse
-                              && !conjugate && (type==id); }
-    void conjugateID( void );
-    std::string describe( void );
-  private:
-    int conjugatedID( int id );
-    enum Type { notest, id, quark, quantum } type;
-    union {
-      struct { Quarks q1, q2, q3; } quarks;
-      int stdHepID;
-      struct { Quantums q; Relations r; double d; } relation;
-    } parms;
-    bool lift;
-    bool empty_f;
-    bool qmark;
-    bool conjugate;
-    bool oscillate;
-    bool noscillate;
-    bool inverse;
-    bool stable;
-    LHCb::IParticlePropertySvc *m_ppSvc;
-  };
+  class ParticleMatcher;
 
   /// The opaque representation of the decay chain.
-  class Descriptor final
-  {
-  public:
-    Descriptor( LHCb::IParticlePropertySvc *ppSvc, double resonnanceThreshold );
-    Descriptor( Descriptor &copy );
-    Descriptor( ParticleMatcher *mother, LHCb::IParticlePropertySvc *ppSvc,
-                double resonnanceThreshold );
-
-    ~Descriptor();
-
-    template<class iter> bool test( const iter first, const iter last,
-                                    const LHCb::MCParticle *&previous_result ) {
-      iter start;
-      if( previous_result &&
-          ((start=std::find(first,last,previous_result)) == last) ) {
-        previous_result = NULL;
-        return false; // Bad previous_result
-      }
-      if( previous_result )
-        start++;
-
-      if( mother == NULL ) { // No mother == pp collision
-        std::list<const LHCb::MCParticle*> prims;
-        for( auto i=(previous_result ? start : first); i != last; i++ ) {
-          const LHCb::MCVertex *origin = (*i)->originVertex();
-          if( origin && origin->mother() )
-            continue;
-          prims.push_back(*i);
-        }
-        if( skipResonance )
-          filterResonances( prims );
-        if( testDaughters(prims) ) {
-          previous_result = (const LHCb::MCParticle *)1;
-          return true;
-        }
-        if( getAlternate() )
-          getAlternate()->test(first,last,previous_result);
-        return false;
-      }
-
-      auto part_i = (previous_result ? start : first);
-      while( (part_i != last) && (test(*part_i) == false) )
-        part_i++;
-
-      if( part_i != last ) {
-        previous_result = *part_i;
-        return true;
-      }
-      return false;
-    }
-    bool test(const LHCb::MCParticle *mother,
-              LHCb::MCParticle::ConstVector *collect=NULL,
-              std::vector<std::pair<const LHCb::MCParticle*,
-              LHCb::MCParticle::ConstVector >
-                         > *subTree=NULL);
-
-    void setAlternate( Descriptor *a ) { alternate = a; }
-    Descriptor *getAlternate( void ) { return alternate; }
-
-    void setMother( ParticleMatcher *m ) { mother = m; }
-
-    void addDaughter( Descriptor *daughter );
-    std::vector<Descriptor *> &getDaughters( void ) { return daughters; }
-
-    void setElipsis( void ) { elipsis = true; }
-    bool getElipsis( void ) { return elipsis; }
-    void setResonance( void ) { skipResonance = true; }
-    void conjugate( void );
-    std::string describe( void );
-  private:
-    bool testDaughters( std::list<const LHCb::MCParticle*> &parts,
-                        LHCb::MCParticle::ConstVector *collect=NULL,
-              std::vector<std::pair<const LHCb::MCParticle*,LHCb::MCParticle::ConstVector >
-                         > *subTree=NULL );
-    void addNonResonantDaughters( std::list<const LHCb::MCParticle*> &parts,
-                                  const LHCb::MCParticle *part );
-    void filterResonances( std::list<const LHCb::MCParticle*> &parts );
-
-    ParticleMatcher *mother;
-    std::vector<Descriptor *> daughters; // wildcard mother at the end!
-    bool skipResonance;
-    bool elipsis;
-    double m_resThreshold;
-    LHCb::IParticlePropertySvc *m_ppSvc;
-
-    Descriptor *alternate;
-  };
+  class Descriptor;
 
   class DescriptorError
   {
@@ -386,11 +251,8 @@ private:
   static const char * const yrule[];
 #endif
 
-
   ///extra sanity checks to avoid segfaults, R. Lambert 04-03-2009
   bool sanityCheck(const std::string & decay);
-
-  const std::string m_brackets;//="{}()[]" sanity check the brackets in the decay descriptor
 
 public:
   static YYSTYPE ylval;

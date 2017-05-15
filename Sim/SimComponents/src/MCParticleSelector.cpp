@@ -4,34 +4,8 @@
 #include "MCParticleSelector.h"
 #include "Event/MCFun.h"
 
-#include "boost/limits.hpp"
-#include "boost/numeric/conversion/bounds.hpp"
 
 DECLARE_TOOL_FACTORY ( MCParticleSelector )
-
-MCParticleSelector::MCParticleSelector( const std::string& type,
-                                        const std::string& name,
-                                        const IInterface* parent ) :
-  GaudiTool( type, name, parent )
-{
-  // JOs
-  declareProperty("zOrigin",      m_zOrigin      = boost::numeric::bounds<double>::highest() );
-  declareProperty("pMin",         m_pMin         = 0.0*Gaudi::Units::GeV );
-  declareProperty("pMax",         m_pMax         = boost::numeric::bounds<double>::highest() );
-  declareProperty("betaGammaMin", m_betaGammaMin = 0.0 );
-  declareProperty("etaMin",       m_etaMin       = -boost::numeric::bounds<double>::highest() );
-  declareProperty("etaMax",       m_etaMax       =  boost::numeric::bounds<double>::highest() );
-  declareProperty("rejectElectrons", m_rejectElectrons  = false );
-  declareProperty("SelectChargedParticles", m_selCharged = true );
-  declareProperty("SelectNeutralParticles", m_selNeutral = true );
-  declareProperty("rejectInteractions", m_rejectInteractions = false );
-  declareProperty("zInteraction", m_zInteraction = -boost::numeric::bounds<double>::highest() );
-  declareProperty("SelectOnlyBDecayProducts", m_selBprods = false );
-
-  // interface
-  declareInterface<IMCParticleSelector>(this);
-}
-
 
 StatusCode MCParticleSelector::initialize()
 {
