@@ -29,8 +29,6 @@ public:
 
 private:
   enum HeaderIDs { kVersionNumber=11 };
-  /// location of output
-  Gaudi::Property<std::string> m_outputHltSelReportsLocation{ this,"OutputHltSelReportsLocation", LHCb::HltSelReportsLocation::Default};
   /// for converting objects in to summaries
   IReportConvert* m_conv = nullptr;
 };
