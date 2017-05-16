@@ -125,7 +125,7 @@ namespace Rich
         TYPE m_const{0};
         /// The bin min x
         TYPE m_minX{0};
-        /// The bin max X
+        /// The bin max x
         TYPE m_maxX{0};
       public:
         /// type for storage of data points
@@ -237,11 +237,11 @@ namespace Rich
       /// Get the look up index for a given x
       inline unsigned int xIndex( const TYPE x ) const noexcept
       {
-        return( x <= m_minX ? 0u :
-                x >= m_maxX ? m_data.size()-1 :
-                (unsigned int)( (x-m_minX) * m_incXinv ) );
+        //return( x <= m_minX ? 0u :
+        //        x >= m_maxX ? m_data.size()-1 :
+        //        (unsigned int)( (x-m_minX) * m_incXinv ) );
         // range check done in main TabulatedFunction1D value method so skip here
-        //return (unsigned int)( (x-m_minX) * m_incXinv );
+        return (unsigned int)( (x-m_minX) * m_incXinv );
       }
       
     private:
@@ -361,16 +361,15 @@ namespace Rich
      */
     virtual double rangeWarning( const double x, const double retx ) const;
 
-    /** x value range check
+    /** Sanitise the input x value to enforce being inside the min max range.
      *  @param x The x value to check
      *  @return The x value to use
      */
-    inline double checkRange( const double x ) const noexcept
+    inline double sanitiseRange( const double x ) const noexcept
     {
-      const auto lOK = checkLowerBound(x);
-      const auto uOK = checkUpperBound(x);
-      return( lOK && uOK ? x :
-              !lOK ? rangeWarning(x,minX()) : rangeWarning(x,maxX()) );
+      return ( !checkLowerBound(x) ? rangeWarning(x,minX()) :
+               !checkUpperBound(x) ? rangeWarning(x,maxX()) :
+               x                                            );
     }
 
   public:
@@ -383,7 +382,9 @@ namespace Rich
      */
     inline double value( const double x ) const noexcept
     {
-      return m_fastInterp.value(checkRange(x));
+      return ( !checkLowerBound(x) ? rangeWarning(x,minY()) :
+               !checkUpperBound(x) ? rangeWarning(x,maxY()) :
+               m_fastInterp.value( x )                      );
     }
 
     /**  Returns the function value (y) for the given parameter (x) value
@@ -404,7 +405,8 @@ namespace Rich
     inline double meanX ( const double from, 
                           const double to ) const
     {
-      return m_fastInterp.meanX(checkRange(from),checkRange(to));
+      return m_fastInterp.meanX( sanitiseRange(from),
+                                 sanitiseRange(to) );
     }
 
     /** Computes the definite integral of the function between limits
@@ -417,8 +419,8 @@ namespace Rich
     inline double integral ( const double from,  
                              const double to ) const
     {
-      return m_fastInterp.integral( checkRange(from), 
-                                    checkRange(to) );
+      return m_fastInterp.integral( sanitiseRange(from), 
+                                    sanitiseRange(to) );
     }
 
     /** Computes the first derivative of the function at the given parameter point
@@ -429,7 +431,7 @@ namespace Rich
      */
     inline double firstDerivative( const double x ) const
     {
-      return m_fastInterp.firstDerivative(checkRange(x));
+      return m_fastInterp.firstDerivative( sanitiseRange(x) );
     }
     
     /** Computes the R.M.S. value between the given parameter limits.
