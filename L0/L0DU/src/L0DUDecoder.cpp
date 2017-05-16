@@ -145,7 +145,13 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
     m_config = config;
   }
 
-  report.setConfiguration( config );
+  if ( UNLIKELY(!config) ) {
+    std::stringstream s;
+    s << " Unable to load the configuration for tck = " <<  format("0x%04X", tck) << " --> Incomplete L0DUReport" ;
+    Warning(s.str(), StatusCode::SUCCESS).ignore();
+  } else {
+    report.setConfiguration( config );
+  }
 
   //== PGA3-block header
   ++data;
