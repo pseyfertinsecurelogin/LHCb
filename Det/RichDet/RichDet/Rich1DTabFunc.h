@@ -345,13 +345,13 @@ namespace Rich
     /// Check lower bound
     inline bool checkLowerBound( const double x ) const noexcept
     {
-      return ( minX() <= x );
+      return ( minX() < x );
     }
 
     /// Check upper bound
     inline bool checkUpperBound( const double x ) const noexcept
     {
-      return ( x <= maxX() );
+      return ( x < maxX() );
     }
 
     /** Issue an out of range warning
