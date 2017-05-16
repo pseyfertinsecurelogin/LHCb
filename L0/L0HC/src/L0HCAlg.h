@@ -37,7 +37,7 @@ class L0HCAlg : public L0AlgBase {
   Gaudi::Property< std::vector<int> > m_thresholdsB1{this, "ThresholdsB1", {0,0,0,0} , "B1 thresholds"};
   Gaudi::Property< std::vector<int> > m_thresholdsB2{this, "ThresholdsB2", {0,0,0,0} , "B2 thresholds"};
   Gaudi::Property< std::vector<int> > m_thresholdsF1{this, "ThresholdsF1", {0,0,0,0} , "F1 thresholds"};
-  Gaudi::Property< std::vector<int> > m_thresholdsF2{this, "ThresholdsF2", {0,0,0,0} , "F2 thresholdsg"}; 
+  Gaudi::Property< std::vector<int> > m_thresholdsF2{this, "ThresholdsF2", {0,0,0,0} , "F2 thresholds"}; 
   
  private:
   /// Pointer to conditions DB
@@ -47,6 +47,9 @@ class L0HCAlg : public L0AlgBase {
   unsigned int m_crateB;
   /// Number of F-side crate
   unsigned int m_crateF;
+  
+  /// Channel numbers for each quadrant
+  std::vector<std::vector<unsigned int>> m_channels;
 
   /// Thresholds for each quadrant
   std::vector<std::vector<int>> m_thresholds;
