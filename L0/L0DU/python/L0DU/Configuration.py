@@ -55,14 +55,14 @@ class L0Conf(LHCbConfigurableUser) :
         ,"ETCOutput"      : "L0ETC.root"
         ,"DataType"       : ""
         # Herschel-specific options
-        ,"EmulateHC"             : False
+        ,"EmulateHC"             : None
         ,"HCTriggerBitsFromADCs" : False
         ,"L0HCAlgThresholdsB0"   : {0,0,0,0}
         ,"L0HCAlgThresholdsB1"   : {0,0,0,0}
         ,"L0HCAlgThresholdsB2"   : {0,0,0,0}
         ,"L0HCAlgThresholdsF1"   : {0,0,0,0}
         ,"L0HCAlgThresholdsF2"   : {0,0,0,0}
-        ,"FakeHCL0Digits"        : None
+        ,"FakeHCL0Digits"        : False
         }
 
     _propertyDocDct = {
