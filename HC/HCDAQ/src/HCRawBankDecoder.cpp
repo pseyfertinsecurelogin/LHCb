@@ -236,7 +236,7 @@ bool HCRawBankDecoder::decode(LHCb::RawBank* bank) {
         }
         const unsigned int channel = (word >> offset) & 0x3F;
         const int prs = (word >> (offset + 6)) & 1;
-        const int spd = (word >> (offset + 7)) & 1;
+        //const int spd = (word >> (offset + 7)) & 1;
         const int adc = prs;
         if (UNLIKELY(msgLevel(MSG::VERBOSE))) {
           verbose() << format("Channel: %06u ", channel) 
