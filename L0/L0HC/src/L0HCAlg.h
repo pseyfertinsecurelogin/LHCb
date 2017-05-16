@@ -20,8 +20,8 @@ class L0HCAlg : public L0AlgBase {
   StatusCode execute() override;     ///< Algorithm execution
 
   // Properties of the algorithm
-  Gaudi::Property< std::str > m_l0digitLocation{this, "L0DigitLocation", LHCb::HCDigitLocation::L0,      "TES location of Herschel L0 digits"};
-  Gaudi::Property< std::str > m_digitLocation  {this, "DigitLocation",   LHCb::HCDigitLocation::Default, "TES location of Herschel digits"};
+  Gaudi::Property< std::string > m_l0digitLocation{this, "L0DigitLocation", LHCb::HCDigitLocation::L0,      "TES location of Herschel L0 digits"};
+  Gaudi::Property< std::string > m_digitLocation  {this, "DigitLocation",   LHCb::HCDigitLocation::Default, "TES location of Herschel digits"};
   Gaudi::Property< bool >     m_triggerBitsFromADCs {this, "TriggerBitsFromADCs", false ,                "Cause Herschel trigger bit computation using raw Herschel data and thresholds defined below"};
   Gaudi::Property< bool >     m_fakeHCL0Digits {this, "FakeHCL0Digits",  false ,                         "Cause creation of fake L0HCDigits, where all counters are over threshold"};
  
@@ -43,23 +43,10 @@ class L0HCAlg : public L0AlgBase {
   /// Pointer to conditions DB
   Condition *m_cond = nullptr;
 
-  /// Flag for creation of fake L0HCDigits, all counters over threshold
-  bool m_fakeHCL0Digits;
-
   /// Number of B-side crate
   unsigned int m_crateB;
   /// Number of F-side crate
   unsigned int m_crateF;
-
-  /// Channel numbers for each quadrant
-  std::vector<std::vector<unsigned int>> m_channels;
-
-  /// Thresholds (in case the trigger bits are computed from the ADCs).
-  std::vector<int> m_thresholdsB0;
-  std::vector<int> m_thresholdsB1;
-  std::vector<int> m_thresholdsB2;
-  std::vector<int> m_thresholdsF1;
-  std::vector<int> m_thresholdsF2;
 
   /// Thresholds for each quadrant
   std::vector<std::vector<int>> m_thresholds;
