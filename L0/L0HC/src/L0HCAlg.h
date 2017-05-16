@@ -26,11 +26,11 @@ class L0HCAlg : public L0AlgBase {
   Gaudi::Property< bool >     m_fakeHCL0Digits {this, "FakeHCL0Digits",  false ,                         "Cause creation of fake L0HCDigits, where all counters are over threshold"};
  
   // Define channel mapping
-  Gaudi::Property< std::vector<int> > m_channelsB0{this, "ChannelsB0", {} , "B0 channel mapping"};
-  Gaudi::Property< std::vector<int> > m_channelsB1{this, "ChannelsB1", {} , "B1 channel mapping"};
-  Gaudi::Property< std::vector<int> > m_channelsB2{this, "ChannelsB2", {} , "B2 channel mapping"};
-  Gaudi::Property< std::vector<int> > m_channelsF1{this, "ChannelsF1", {} , "F1 channel mapping"};
-  Gaudi::Property< std::vector<int> > m_channelsF2{this, "ChannelsF2", {} , "F2 channel mapping"};
+  Gaudi::Property< std::vector<int> > m_channelsB0{this, "ChannelsB0", {47,46,45,44} , "B0 channel mapping"};
+  Gaudi::Property< std::vector<int> > m_channelsB1{this, "ChannelsB1", {23,22,21,20} , "B1 channel mapping"};
+  Gaudi::Property< std::vector<int> > m_channelsB2{this, "ChannelsB2", {11,10, 9, 8} , "B2 channel mapping"};
+  Gaudi::Property< std::vector<int> > m_channelsF1{this, "ChannelsF1", {23,22,21,46} , "F1 channel mapping"};
+  Gaudi::Property< std::vector<int> > m_channelsF2{this, "ChannelsF2", {11,10, 9, 8} , "F2 channel mapping"};
  
   // Define channel mapping
   Gaudi::Property< std::vector<int> > m_thresholdsB0{this, "ThresholdsB0", {0,0,0,0} , "B0 thresholds"};
