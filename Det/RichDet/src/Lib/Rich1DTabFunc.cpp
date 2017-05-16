@@ -316,7 +316,7 @@ TabulatedFunction1D::combine( const ConstVector & funcs,
 
 //============================================================================
 
-double 
+double
 TabulatedFunction1D::rangeWarning( const double x, const double retx ) const
 {
   std::cerr << "Rich::TabulatedFunction1D : WARNING : Out-Of-Range x = " << x
