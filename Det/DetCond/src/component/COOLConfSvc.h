@@ -45,8 +45,6 @@ protected:
   /// Standard constructor
   COOLConfSvc(const std::string& name, ISvcLocator* svcloc);
 
-  virtual ~COOLConfSvc( ); ///< Destructor
-
 private:
 
   inline cool::Application *coolApplication(){

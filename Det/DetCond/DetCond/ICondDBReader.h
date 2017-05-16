@@ -34,9 +34,6 @@ public:
   /// InterfaceID
   DeclareInterfaceID(ICondDBReader, 2, 1);
 
-  /// virtual destructor
-  virtual ~ICondDBReader() {}
-
   typedef std::shared_ptr<const cool::IRecord> DataPtr;
 
   /// Helper class to easily manage an interval of validity as a pair of Gaudi::Time
@@ -50,8 +47,8 @@ public:
     /// Boundaries of the interval.
     Gaudi::Time since, until;
     /// Define a simple order between two IOV instances.
-    inline bool operator<(const IOV& rhs) const {
-      return since < rhs.since;
+    friend bool operator<(const IOV& lhs, const IOV& rhs) {
+      return std::tie(lhs.since,lhs.until) < std::tie(rhs.since,rhs.until);
     }
   };
 

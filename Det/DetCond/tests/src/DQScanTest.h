@@ -23,27 +23,28 @@ public:
   typedef std::vector<IOVPropType> IOVListPropType;
 
   /// Standard constructor
-  DQScanTest(const std::string& name, ISvcLocator* pSvcLocator);
-  virtual ~DQScanTest(); ///< Destructor
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
-protected:
+
 private:
 
   /// Type/name of the IDQScanner instance.
   /// (property DQScanner)
-  std::string m_DQScannerName;
+  Gaudi::Property<std::string> m_DQScannerName
+  {this, "DQScanner", "CondDBDQScanner", "Type/name of the IDQScanner instance to use."};
 
   /// List of IOVs (with time specified in seconds) to try to retrieve (property).
-  IOVListPropType m_iovsProp;
+  Gaudi::Property<IOVListPropType> m_iovsProp
+  { this, "IOVs", IOVListPropType{}, "List of IOVs (specified in seconds) to scan."};
 
   /// List of IOVs to try to retrieve.
   ICondDBReader::IOVList m_iovs;
 
   /// Pointer to the IDQScanner instance.
-  IDQScanner *m_scanner;
+  IDQScanner *m_scanner = nullptr;
 };
 
 }
