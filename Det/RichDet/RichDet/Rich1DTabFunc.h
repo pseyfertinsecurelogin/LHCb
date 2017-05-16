@@ -15,7 +15,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <memory>
 #include <type_traits>
 
@@ -33,7 +33,7 @@ namespace Rich
    *
    *  Uses a home made fixed binned linear interpolator, initialised from the input
    *  (x,y) data points using a GSL interpolator. 
-   *  Default GSL interpolator type is gsl_interp_cspline.
+   *  Default GSL interpolator type is gsl_interp_linear.
    *
    *  For other possibilities see
    *  http://www.gnu.org/software/gsl/manual/html_node/Interpolation.html
@@ -275,7 +275,7 @@ namespace Rich
     TabulatedFunction1D( const double x[],
                          const double y[],
                          const unsigned int size,
-                         const gsl_interp_type * interType = gsl_interp_cspline )
+                         const gsl_interp_type * interType = gsl_interp_linear )
     {
       initInterpolator ( x, y, size, interType );
     }
@@ -291,7 +291,7 @@ namespace Rich
      */
     TabulatedFunction1D( const std::vector<double> & x,
                          const std::vector<double> & y,
-                         const gsl_interp_type * interType = gsl_interp_cspline )
+                         const gsl_interp_type * interType = gsl_interp_linear )
     {
       initInterpolator ( x, y, interType );
     }
@@ -302,7 +302,7 @@ namespace Rich
      *  @param interType GSL Interpolator type
      */
     TabulatedFunction1D( const std::map<double,double> & data,
-                         const gsl_interp_type * interType = gsl_interp_cspline )
+                         const gsl_interp_type * interType = gsl_interp_linear )
     {
       initInterpolator( data, interType );
     }
@@ -313,7 +313,7 @@ namespace Rich
      *  @param interType GSL Interpolator type
      */
     TabulatedFunction1D( const std::vector< std::pair<double,double> > & data,
-                         const gsl_interp_type * interType = gsl_interp_cspline )
+                         const gsl_interp_type * interType = gsl_interp_linear )
     {
       initInterpolator( data, interType );
     }
@@ -335,7 +335,7 @@ namespace Rich
     static std::unique_ptr<TabulatedFunction1D> 
     combine( const ConstVector & funcs,
              const unsigned int samples = 100,
-             const gsl_interp_type * interType = gsl_interp_cspline ); 
+             const gsl_interp_type * interType = gsl_interp_linear ); 
 
   private:
 
@@ -516,7 +516,7 @@ namespace Rich
     bool initInterpolator( const double x[],
                            const double y[],
                            const unsigned int size,
-                           const gsl_interp_type * interType = gsl_interp_cspline );
+                           const gsl_interp_type * interType = gsl_interp_linear );
 
     /** Initialisation from std::vectors containing x and y values
      *
@@ -528,21 +528,21 @@ namespace Rich
      */
     bool initInterpolator( const std::vector<double> & x,
                            const std::vector<double> & y,
-                           const gsl_interp_type * interType = gsl_interp_cspline );
+                           const gsl_interp_type * interType = gsl_interp_linear );
 
     /** Initialisation from a map of x,y values
      *
      *  @param data      map containing x(key) and y(data) values
      */
     bool initInterpolator( const std::map<double,double> & data,
-                           const gsl_interp_type * interType = gsl_interp_cspline );
+                           const gsl_interp_type * interType = gsl_interp_linear );
 
     /** Initialisation from a vector of a pair of x,y values
      *
      *  @param data      std::vector containing and pair of x(first) and y(second) values
      */
     bool initInterpolator( const std::vector< std::pair<double,double> > & data,
-                           const gsl_interp_type * interType = gsl_interp_cspline );
+                           const gsl_interp_type * interType = gsl_interp_linear );
 
   protected: // methods
 

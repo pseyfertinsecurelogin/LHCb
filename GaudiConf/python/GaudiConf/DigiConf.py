@@ -294,7 +294,7 @@ class DigiConf(LHCbConfigurableUser):
             DataOnDemandSvc().AlgMap["MC/Rich/DigitSummaries"] = unp
 
     def __apply_configuration__(self):
-        GaudiKernel.ProcessJobOptions.PrintOn()
+        GaudiKernel.ProcessJobOptions.PrintOn(force=True)
         self.setOtherProps(SimConf(),["SpilloverPaths","EnableUnpack","EnablePack","DataType"])
         self._doWrite()
         if self.getProp("EnableUnpack") : self._doUnpacking()

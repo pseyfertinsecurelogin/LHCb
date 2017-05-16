@@ -239,7 +239,6 @@ class RawEventFormatConf(ConfigurableUser):
     
     def __apply_configuration__(self):
         #don't do anything if explicitly configured
-        print "############ CONFIGURING RawEventFormatConf!! ###############"
         self.loadIfRequired()
 
 
