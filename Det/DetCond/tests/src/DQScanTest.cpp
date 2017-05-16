@@ -17,7 +17,6 @@ namespace Gaudi {
 // local
 #include "DQScanTest.h"
 
-#include "boost/foreach.hpp"
 
 namespace {
   inline long long s2ns(unsigned int s) {
@@ -34,25 +33,6 @@ DECLARE_NAMESPACE_ALGORITHM_FACTORY(DetCondTest, DQScanTest)
 
 namespace DetCondTest {
 // ============================================================================
-// Standard constructor, initializes variables
-// ============================================================================
-DQScanTest::DQScanTest(const std::string& name, ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm(name, pSvcLocator), m_scanner(0)
-{
-  declareProperty("DQScanner",
-                  m_DQScannerName = "CondDBDQScanner",
-                  "Type/name of the IDQScanner instance to use.");
-  declareProperty("IOVs",
-                  m_iovsProp,
-                  "List of IOVs (specified in seconds) to scan.");
-}
-
-// ============================================================================
-// Destructor
-// ============================================================================
-DQScanTest::~DQScanTest() {}
-
-// ============================================================================
 // Initialization
 // ============================================================================
 StatusCode DQScanTest::initialize() {
@@ -64,8 +44,8 @@ StatusCode DQScanTest::initialize() {
   m_scanner = tool<IDQScanner>(m_DQScannerName);
 
   m_iovs.clear();
-  BOOST_FOREACH(IOVPropType &iov, m_iovsProp) {
-    m_iovs.push_back(ICondDBReader::IOV(Gaudi::Time(s2ns(iov.first)), Gaudi::Time(s2ns(iov.second))));
+  for(IOVPropType &iov: m_iovsProp) {
+    m_iovs.emplace_back(Gaudi::Time(s2ns(iov.first)), Gaudi::Time(s2ns(iov.second)));
   }
 
   return StatusCode::SUCCESS;
@@ -79,10 +59,9 @@ StatusCode DQScanTest::execute() {
 
   info() << "Execute" << endmsg;
 
-  BOOST_FOREACH(ICondDBReader::IOV &iov, m_iovs) {
+  for(const auto& iov: m_iovs) {
     always() << "Process IOV " << iov.since << " -> " << iov.until << endmsg;
-    IDQFilter::FlagsType result = m_scanner->scan(iov.since, iov.until);
-    always() << "-> Flags: " << result << endmsg;
+    always() << "-> Flags: " << m_scanner->scan(iov.since, iov.until) << endmsg;
   }
 
   return StatusCode::SUCCESS;
@@ -97,7 +76,7 @@ StatusCode DQScanTest::finalize() {
   if (release(m_scanner).isFailure()) {
     warning() << "Failed to release tool " << m_DQScannerName << endmsg;
   }
-  m_scanner = 0;
+  m_scanner = nullptr;
 
   return GaudiAlgorithm::finalize(); // must be called after all other actions
 }
