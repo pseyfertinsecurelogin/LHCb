@@ -15,7 +15,7 @@
 #include <vector>
 #include <map>
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <memory>
 #include <type_traits>
 
@@ -33,7 +33,7 @@ namespace Rich
    *
    *  Uses a home made fixed binned linear interpolator, initialised from the input
    *  (x,y) data points using a GSL interpolator. 
-   *  Default GSL interpolator type is gsl_interp_cspline.
+   *  Default GSL interpolator type is gsl_interp_linear.
    *
    *  For other possibilities see
    *  http://www.gnu.org/software/gsl/manual/html_node/Interpolation.html
@@ -125,7 +125,7 @@ namespace Rich
         TYPE m_const{0};
         /// The bin min x
         TYPE m_minX{0};
-        /// The bin max X
+        /// The bin max x
         TYPE m_maxX{0};
       public:
         /// type for storage of data points
@@ -152,18 +152,20 @@ namespace Rich
         // set min and max X
         m_minX = minX;
         m_maxX = maxX;
-        // set 1/increment
-        m_incXinv = (TYPE)(nsamples) / ( maxX - minX );
+        // set increment and 1/increment
+        const auto incX = ( maxX - minX ) / (TYPE)(nsamples);
+        m_incXinv       = 1.0 / incX;
         // accelerator for te GSL calls
         GSLAccelerator::Ptr acc ( gsl_interp_accel_alloc() );
         // Fill the data storage
         m_data.reserve(nsamples);
         for ( unsigned int i = 0; i < nsamples; ++i )
         {
-          const TYPE binXmin = std::max( minX, minX    + ( i   / m_incXinv ) );
-          const TYPE binXmax = std::min( maxX, binXmin + ( 1.0 / m_incXinv ) );
-          m_data.emplace_back( binXmin, gsl_spline_eval(gslS,binXmin,acc.get()),
-                               binXmax, gsl_spline_eval(gslS,binXmax,acc.get()) );
+          const TYPE binXmin = std::max( minX, minX    + ( i * incX ) );
+          const TYPE binXmax = std::min( maxX, binXmin + (     incX ) );
+          const TYPE binYmin = gsl_spline_eval( gslS, binXmin, acc.get() );
+          const TYPE binYmax = gsl_spline_eval( gslS, binXmax, acc.get() );
+          m_data.emplace_back( binXmin, binYmin, binXmax, binYmax );
         }
       }
       
@@ -210,11 +212,11 @@ namespace Rich
             const auto bto   = std::min(to,bin.maxX());
             // average height for this trapezoid
             const auto h = ( !weightByX ? 
-                             ( bin.getY(bto)       + bin.getY(bfrom)         ) * 0.5 :
+                             (      bin.getY(bto)  +        bin.getY(bfrom)  ) * 0.5 :
                              ( (bto*bin.getY(bto)) + (bfrom*bin.getY(bfrom)) ) * 0.5 ); 
             // sum the area (trapezoid)
             sum += ( ( bto - bfrom ) * h );
-          }      
+          }
         }
         return sum;
       }
@@ -233,9 +235,12 @@ namespace Rich
     private:
 
       /// Get the look up index for a given x
-      inline unsigned int xIndex( const TYPE& x ) const noexcept
+      inline unsigned int xIndex( const TYPE x ) const noexcept
       {
-        // Assume range checking is done elsewhere
+        //return( x <= m_minX ? 0u :
+        //        x >= m_maxX ? m_data.size()-1 :
+        //        (unsigned int)( (x-m_minX) * m_incXinv ) );
+        // range check done in main TabulatedFunction1D value method so skip here
         return (unsigned int)( (x-m_minX) * m_incXinv );
       }
       
@@ -248,10 +253,10 @@ namespace Rich
       TYPE m_incXinv{0};
 
       /// The minimum valid x
-      double m_minX{0};
+      TYPE m_minX{0};
       
       /// The maximum valid x
-      double m_maxX{0};
+      TYPE m_maxX{0};
       
     };
 
@@ -273,7 +278,7 @@ namespace Rich
     TabulatedFunction1D( const double x[],
                          const double y[],
                          const unsigned int size,
-                         const gsl_interp_type * interType = gsl_interp_cspline )
+                         const gsl_interp_type * interType = gsl_interp_linear )
     {
       initInterpolator ( x, y, size, interType );
     }
@@ -289,7 +294,7 @@ namespace Rich
      */
     TabulatedFunction1D( const std::vector<double> & x,
                          const std::vector<double> & y,
-                         const gsl_interp_type * interType = gsl_interp_cspline )
+                         const gsl_interp_type * interType = gsl_interp_linear )
     {
       initInterpolator ( x, y, interType );
     }
@@ -300,7 +305,7 @@ namespace Rich
      *  @param interType GSL Interpolator type
      */
     TabulatedFunction1D( const std::map<double,double> & data,
-                         const gsl_interp_type * interType = gsl_interp_cspline )
+                         const gsl_interp_type * interType = gsl_interp_linear )
     {
       initInterpolator( data, interType );
     }
@@ -311,7 +316,7 @@ namespace Rich
      *  @param interType GSL Interpolator type
      */
     TabulatedFunction1D( const std::vector< std::pair<double,double> > & data,
-                         const gsl_interp_type * interType = gsl_interp_cspline )
+                         const gsl_interp_type * interType = gsl_interp_linear )
     {
       initInterpolator( data, interType );
     }
@@ -333,9 +338,21 @@ namespace Rich
     static std::unique_ptr<TabulatedFunction1D> 
     combine( const ConstVector & funcs,
              const unsigned int samples = 100,
-             const gsl_interp_type * interType = gsl_interp_cspline ); 
+             const gsl_interp_type * interType = gsl_interp_linear ); 
 
   private:
+
+    /// Check lower bound
+    inline bool checkLowerBound( const double x ) const noexcept
+    {
+      return ( minX() <= x );
+    }
+
+    /// Check upper bound
+    inline bool checkUpperBound( const double x ) const noexcept
+    {
+      return ( x <= maxX() );
+    }
 
     /** Issue an out of range warning
      *  @param x    The requested x value
@@ -344,14 +361,15 @@ namespace Rich
      */
     virtual double rangeWarning( const double x, const double retx ) const;
 
-    /** x value range check
+    /** Sanitise the input x value to enforce being inside the min max range.
      *  @param x The x value to check
      *  @return The x value to use
      */
-    double checkRange( const double x ) const
+    inline double sanitiseRange( const double x ) const noexcept
     {
-      return ( withinInputRange(x) ? x :
-               x < minX() ? rangeWarning(x,minX()) : rangeWarning(x,maxX()) );
+      return ( !checkLowerBound(x) ? rangeWarning(x,minX()) :
+               !checkUpperBound(x) ? rangeWarning(x,maxX()) :
+               x                                            );
     }
 
   public:
@@ -364,7 +382,9 @@ namespace Rich
      */
     inline double value( const double x ) const noexcept
     {
-      return m_fastInterp.value(checkRange(x));
+      return ( !checkLowerBound(x) ? rangeWarning(x,minY()) :
+               !checkUpperBound(x) ? rangeWarning(x,maxY()) :
+               m_fastInterp.value( x )                      );
     }
 
     /**  Returns the function value (y) for the given parameter (x) value
@@ -385,7 +405,8 @@ namespace Rich
     inline double meanX ( const double from, 
                           const double to ) const
     {
-      return m_fastInterp.meanX(checkRange(from),checkRange(to));
+      return m_fastInterp.meanX( sanitiseRange(from),
+                                 sanitiseRange(to) );
     }
 
     /** Computes the definite integral of the function between limits
@@ -398,8 +419,8 @@ namespace Rich
     inline double integral ( const double from,  
                              const double to ) const
     {
-      return m_fastInterp.integral( checkRange(from), 
-                                    checkRange(to) );
+      return m_fastInterp.integral( sanitiseRange(from), 
+                                    sanitiseRange(to) );
     }
 
     /** Computes the first derivative of the function at the given parameter point
@@ -410,7 +431,7 @@ namespace Rich
      */
     inline double firstDerivative( const double x ) const
     {
-      return m_fastInterp.firstDerivative(checkRange(x));
+      return m_fastInterp.firstDerivative( sanitiseRange(x) );
     }
     
     /** Computes the R.M.S. value between the given parameter limits.
@@ -483,7 +504,7 @@ namespace Rich
      */
     inline bool withinInputRange( const double x ) const noexcept
     {
-      return ( x <= maxX() && minX() <= x );
+      return checkLowerBound(x) && checkUpperBound(x);
     }
 
     /// Access the number of data points
@@ -503,7 +524,7 @@ namespace Rich
     bool initInterpolator( const double x[],
                            const double y[],
                            const unsigned int size,
-                           const gsl_interp_type * interType = gsl_interp_cspline );
+                           const gsl_interp_type * interType = gsl_interp_linear );
 
     /** Initialisation from std::vectors containing x and y values
      *
@@ -515,21 +536,21 @@ namespace Rich
      */
     bool initInterpolator( const std::vector<double> & x,
                            const std::vector<double> & y,
-                           const gsl_interp_type * interType = gsl_interp_cspline );
+                           const gsl_interp_type * interType = gsl_interp_linear );
 
     /** Initialisation from a map of x,y values
      *
      *  @param data      map containing x(key) and y(data) values
      */
     bool initInterpolator( const std::map<double,double> & data,
-                           const gsl_interp_type * interType = gsl_interp_cspline );
+                           const gsl_interp_type * interType = gsl_interp_linear );
 
     /** Initialisation from a vector of a pair of x,y values
      *
      *  @param data      std::vector containing and pair of x(first) and y(second) values
      */
     bool initInterpolator( const std::vector< std::pair<double,double> > & data,
-                           const gsl_interp_type * interType = gsl_interp_cspline );
+                           const gsl_interp_type * interType = gsl_interp_linear );
 
   protected: // methods
 

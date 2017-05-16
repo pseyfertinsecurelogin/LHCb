@@ -91,6 +91,8 @@ TabulatedProperty1D::initInterpolator( const TabulatedProperty * tab,
   Data data;
   for ( const auto & t : tab->table() ) { data[t.first] = t.second; }
 
+  //std::cout << tab->name() << std::endl;
+
   // init the underlying GSL interpolator
   m_OK = this->TabulatedFunction1D::initInterpolator(data,interType);
 
@@ -178,6 +180,7 @@ TabulatedProperty1D::rangeWarning( const double x, const double retx ) const
   std::cerr << "Rich::TabulatedProperty1D "
             << tabProperty()->name()
             << " : WARNING : Out-Of-Range x = " << x
-            << " Valid Range = " << minX() << " to " << maxX() << std::endl;
+            << " Valid Range = " << minX() << " to " << maxX() 
+            << std::endl;
   return retx;
 }
