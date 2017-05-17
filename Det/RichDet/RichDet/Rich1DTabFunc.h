@@ -177,7 +177,7 @@ namespace Rich
         return m_data[ xIndex(x) ].getY(x);
       }
 
-      // Access the first derivative (slope) at given x
+      /// Access the first derivative (slope) at given x
       inline TYPE firstDerivative( const TYPE x ) const noexcept
       {
         return m_data[ xIndex(x) ].slope();
@@ -221,7 +221,7 @@ namespace Rich
         return sum;
       }
 
-      // Compute the mean value of x in the given range
+      /// Compute the mean value of x in the given range
       inline TYPE meanX ( const TYPE from, 
                           const TYPE to ) const
     {
