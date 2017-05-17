@@ -31,7 +31,7 @@ namespace Rich
    *  @todo Figure out why releasing the services during destruction causes a crash
    */
 
-  class TabulatedProperty1D : public TabulatedFunction1D
+  class TabulatedProperty1D final : public TabulatedFunction1D
   {
 
   public:
