@@ -155,7 +155,6 @@ OTRawBankEncoder::OTRawBankEncoder( const std::string& type,
                                     const IInterface* parent )
   : extends( type, name , parent ), m_channelmaptool(0)
 {
-  declareInterface<IOTRawBankEncoder>(this);
   declareProperty( "AddEmptyBanks"   , m_addEmptyBanks = true                               );
   declareProperty( "RawEventLocation", m_rawEventLocation = LHCb::RawEventLocation::Default );
 }
