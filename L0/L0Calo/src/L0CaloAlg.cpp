@@ -526,8 +526,8 @@ StatusCode L0CaloAlg::execute() {
   // Store the various candidates
   electron.saveCandidate ( L0DUBase::Fiber::CaloElectron  , L0Calo ) ;
   photon.saveCandidate   ( L0DUBase::Fiber::CaloPhoton    , L0Calo ) ;
-  //pi0Local.saveCandidate ( L0DUBase::Fiber::CaloPi0Local  , L0Calo ) ;
-  //pi0Global.saveCandidate( L0DUBase::Fiber::CaloPi0Global , L0Calo ) ;
+  pi0Local.saveCandidate ( L0DUBase::Fiber::CaloPi0Local  , L0Calo ) ;
+  pi0Global.saveCandidate( L0DUBase::Fiber::CaloPi0Global , L0Calo ) ;
 
   // now compute the highest per SB
   L0Candidate hadronMaster( m_hcal ) , hadronSlave1( m_hcal ) ,
