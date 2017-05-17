@@ -98,8 +98,8 @@ namespace Rich
         Bin( const TYPE lowX,  const TYPE lowY, 
              const TYPE highX, const TYPE highY )
         {
-          m_minX = lowX;
-          m_maxX = highX;
+          m_minX  = lowX;
+          m_maxX  = highX;
           m_slope = ( lowY - highY ) / ( lowX - highX );
           m_const = lowY - ( lowX * m_slope );
         }
@@ -237,11 +237,10 @@ namespace Rich
       /// Get the look up index for a given x
       inline unsigned int xIndex( const TYPE x ) const noexcept
       {
-        //return( x <= m_minX ? 0u :
-        //        x >= m_maxX ? m_data.size()-1 :
-        //        (unsigned int)( (x-m_minX) * m_incXinv ) );
-        // range check done in main TabulatedFunction1D value method so skip here
-        return (unsigned int)( (x-m_minX) * m_incXinv );
+        return( x <= m_minX ? 0u :
+                x >= m_maxX ? m_data.size()-1 :
+                (unsigned int)( (x-m_minX) * m_incXinv ) );
+        //return (unsigned int)( (x-m_minX) * m_incXinv );
       }
       
     private:
@@ -345,13 +344,13 @@ namespace Rich
     /// Check lower bound
     inline bool checkLowerBound( const double x ) const noexcept
     {
-      return ( minX() < x );
+      return ( minX() <= x );
     }
 
     /// Check upper bound
     inline bool checkUpperBound( const double x ) const noexcept
     {
-      return ( x < maxX() );
+      return ( x <= maxX() );
     }
 
     /** Issue an out of range warning
@@ -382,9 +381,11 @@ namespace Rich
      */
     inline double value( const double x ) const noexcept
     {
-      return ( !checkLowerBound(x) ? rangeWarning(x,minY()) :
-               !checkUpperBound(x) ? rangeWarning(x,maxY()) :
-               m_fastInterp.value( x )                      );
+      // range checking is now performed by the fast interpolator
+      //return ( !checkLowerBound(x) ? rangeWarning(x,minY()) :
+      //         !checkUpperBound(x) ? rangeWarning(x,maxY()) :
+      //         m_fastInterp.value( x )                      );
+      return m_fastInterp.value( x );
     }
 
     /**  Returns the function value (y) for the given parameter (x) value
@@ -429,7 +430,7 @@ namespace Rich
      *
      *  @return the first derivative
      */
-    inline double firstDerivative( const double x ) const
+    inline double firstDerivative( const double x ) const noexcept
     {
       return m_fastInterp.firstDerivative( sanitiseRange(x) );
     }
