@@ -57,11 +57,11 @@ class L0Conf(LHCbConfigurableUser) :
         # Herschel-specific options
         ,"EmulateHC"             : None
         ,"HCTriggerBitsFromADCs" : False
-        ,"L0HCAlgThresholdsB0"   : {0,0,0,0}
-        ,"L0HCAlgThresholdsB1"   : {0,0,0,0}
-        ,"L0HCAlgThresholdsB2"   : {0,0,0,0}
-        ,"L0HCAlgThresholdsF1"   : {0,0,0,0}
-        ,"L0HCAlgThresholdsF2"   : {0,0,0,0}
+        ,"L0HCAlgThresholdsB0"   : [0,0,0,0]
+        ,"L0HCAlgThresholdsB1"   : [0,0,0,0]
+        ,"L0HCAlgThresholdsB2"   : [0,0,0,0]
+        ,"L0HCAlgThresholdsF1"   : [0,0,0,0]
+        ,"L0HCAlgThresholdsF2"   : [0,0,0,0]
         ,"FakeHCL0Digits"        : False
         }
 
