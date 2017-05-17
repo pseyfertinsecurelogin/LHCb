@@ -609,22 +609,28 @@ namespace Rich
     //--------------------------------------------------------------------------------------
 
     /// Local definition of a RawBank constructed from 32bit ints
-    using RAWBank           = std::vector< LongType >;
+    //using RAWBank           = std::vector< LongType >;
+    typedef std::vector< LongType > RAWBank;
 
     /// Vector of HPD Hardware IDs
-    using HPDHardwareIDs    = std::vector< HPDHardwareID >;
+    //using HPDHardwareIDs    = std::vector< HPDHardwareID >;
+    typedef std::vector< HPDHardwareID > HPDHardwareIDs;
 
     /// Vector of Level 0 IDs
-    using Level0IDs         = std::vector< Level0ID >;
+    //using Level0IDs         = std::vector< Level0ID >;
+    typedef std::vector< Level0ID > Level0IDs;
 
     /// Vector of Level 1 hardware IDs
-    using Level1HardwareIDs = std::vector< Level1HardwareID >;
+    //using Level1HardwareIDs = std::vector< Level1HardwareID >;
+    typedef std::vector< Level1HardwareID > Level1HardwareIDs;
 
     /// Vector of Level 1 logical IDs
-    using Level1LogicalIDs  = std::vector< Level1LogicalID >;
+    //using Level1LogicalIDs  = std::vector< Level1LogicalID >;
+    typedef std::vector< Level1LogicalID > Level1LogicalIDs;
 
     /// Vector of L1InputWithinIngress
-    using L1IngressInputs   = std::vector< L1InputWithinIngress >;
+    //using L1IngressInputs   = std::vector< L1InputWithinIngress >;
+    typedef std::vector< L1InputWithinIngress > L1IngressInputs;
 
     //--------------------------------------------------------------------------------------
 
