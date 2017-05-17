@@ -22,6 +22,10 @@ namespace cool {
   class IRecord;
 }
 
+// This is needed otherwise the bool operator<(const IOV&,const IOV&) does
+// not find operator<(Gaudi::Time,Gaudi::Time). -- remove once gaudi/Gaudi!290 is merged
+namespace Gaudi { using ::operator<; }
+
 /** @class ICondDBReader ICondDBReader.h DetCond/ICondDBReader.h
  *
  *  Interface to retrieve data from the conditions database.
