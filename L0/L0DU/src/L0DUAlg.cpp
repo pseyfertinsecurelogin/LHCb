@@ -35,7 +35,6 @@ L0DUAlg::L0DUAlg( const std::string& name,
   m_dataLocations.push_back(LHCb::L0ProcessorDataLocation::Calo);
   m_dataLocations.push_back(LHCb::L0ProcessorDataLocation::Muon);
   m_dataLocations.push_back(LHCb::L0ProcessorDataLocation::PileUp);
-  m_dataLocations.push_back(LHCb::L0ProcessorDataLocation::HC);
  // configure DAQ
   declareProperty( "BankVersion"             , m_rawVsn   = 2 );
   declareProperty( "EmulatorTool"            , m_emulatorType="L0DUEmulatorTool");
