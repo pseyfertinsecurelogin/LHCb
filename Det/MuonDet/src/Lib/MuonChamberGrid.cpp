@@ -281,11 +281,11 @@ MuonChamberGrid::listOfPhysChannels(double x_enter,double y_enter,
         input.setFEIDY(Yloop);
         input.setReadout(m_readoutType[iRd]);
 
-        keepTemporary.emplace_back( input, LHCb::make_array<float>(
-                                                myX - retLenght(Xloop,x_rdout),
-                                                myY - retLenght(Yloop,y_rdout),
-                                                retLenght(Xloop+1,x_rdout) - myX,
-                                                retLenght(Yloop+1,y_rdout) - myY) );
+        keepTemporary.emplace_back( input, LHCb::make_array(
+                                              float(  myX - retLenght(Xloop,x_rdout) ),
+                                              float(  myY - retLenght(Yloop,y_rdout) ),
+                                              float(  retLenght(Xloop+1,x_rdout) - myX ),
+                                              float(  retLenght(Yloop+1,y_rdout) - myY) ));
         const auto& myBoundary = keepTemporary.back().second;
 
         if(debug) std::cout<< "Hit processing.  RT:: "
