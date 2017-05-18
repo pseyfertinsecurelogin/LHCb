@@ -98,8 +98,8 @@ namespace Rich
         Bin( const TYPE lowX,  const TYPE lowY, 
              const TYPE highX, const TYPE highY )
         {
-          m_minX = lowX;
-          m_maxX = highX;
+          m_minX  = lowX;
+          m_maxX  = highX;
           m_slope = ( lowY - highY ) / ( lowX - highX );
           m_const = lowY - ( lowX * m_slope );
         }
@@ -125,7 +125,7 @@ namespace Rich
         TYPE m_const{0};
         /// The bin min x
         TYPE m_minX{0};
-        /// The bin max X
+        /// The bin max x
         TYPE m_maxX{0};
       public:
         /// type for storage of data points
@@ -152,18 +152,20 @@ namespace Rich
         // set min and max X
         m_minX = minX;
         m_maxX = maxX;
-        // set 1/increment
-        m_incXinv = (TYPE)(nsamples) / ( maxX - minX );
+        // set increment and 1/increment
+        const auto incX = ( maxX - minX ) / (TYPE)(nsamples);
+        m_incXinv       = 1.0 / incX;
         // accelerator for te GSL calls
         GSLAccelerator::Ptr acc ( gsl_interp_accel_alloc() );
         // Fill the data storage
         m_data.reserve(nsamples);
         for ( unsigned int i = 0; i < nsamples; ++i )
         {
-          const TYPE binXmin = std::max( minX, minX    + ( i   / m_incXinv ) );
-          const TYPE binXmax = std::min( maxX, binXmin + ( 1.0 / m_incXinv ) );
-          m_data.emplace_back( binXmin, gsl_spline_eval(gslS,binXmin,acc.get()),
-                               binXmax, gsl_spline_eval(gslS,binXmax,acc.get()) );
+          const TYPE binXmin = std::max( minX, minX    + ( i * incX ) );
+          const TYPE binXmax = std::min( maxX, binXmin + (     incX ) );
+          const TYPE binYmin = gsl_spline_eval( gslS, binXmin, acc.get() );
+          const TYPE binYmax = gsl_spline_eval( gslS, binXmax, acc.get() );
+          m_data.emplace_back( binXmin, binYmin, binXmax, binYmax );
         }
       }
       
@@ -175,7 +177,7 @@ namespace Rich
         return m_data[ xIndex(x) ].getY(x);
       }
 
-      // Access the first derivative (slope) at given x
+      /// Access the first derivative (slope) at given x
       inline TYPE firstDerivative( const TYPE x ) const noexcept
       {
         return m_data[ xIndex(x) ].slope();
@@ -210,16 +212,16 @@ namespace Rich
             const auto bto   = std::min(to,bin.maxX());
             // average height for this trapezoid
             const auto h = ( !weightByX ? 
-                             ( bin.getY(bto)       + bin.getY(bfrom)         ) * 0.5 :
+                             (      bin.getY(bto)  +        bin.getY(bfrom)  ) * 0.5 :
                              ( (bto*bin.getY(bto)) + (bfrom*bin.getY(bfrom)) ) * 0.5 ); 
             // sum the area (trapezoid)
             sum += ( ( bto - bfrom ) * h );
-          }      
+          }
         }
         return sum;
       }
 
-      // Compute the mean value of x in the given range
+      /// Compute the mean value of x in the given range
       inline TYPE meanX ( const TYPE from, 
                           const TYPE to ) const
     {
@@ -230,10 +232,12 @@ namespace Rich
     private:
 
       /// Get the look up index for a given x
-      inline unsigned int xIndex( const TYPE& x ) const noexcept
+      inline unsigned int xIndex( const TYPE x ) const noexcept
       {
-        // Assume range checking is done elsewhere
-        return (unsigned int)( (x-m_minX) * m_incXinv );
+        return( x <= m_minX ? 0u :
+                x >= m_maxX ? m_data.size()-1 :
+                (unsigned int)( (x-m_minX) * m_incXinv ) );
+        //return (unsigned int)( (x-m_minX) * m_incXinv );
       }
       
     private:
@@ -245,10 +249,10 @@ namespace Rich
       TYPE m_incXinv{0};
 
       /// The minimum valid x
-      double m_minX{0};
+      TYPE m_minX{0};
       
       /// The maximum valid x
-      double m_maxX{0};
+      TYPE m_maxX{0};
       
     };
 
@@ -334,6 +338,18 @@ namespace Rich
 
   private:
 
+    /// Check lower bound
+    inline bool checkLowerBound( const double x ) const noexcept
+    {
+      return ( minX() <= x );
+    }
+
+    /// Check upper bound
+    inline bool checkUpperBound( const double x ) const noexcept
+    {
+      return ( x <= maxX() );
+    }
+
     /** Issue an out of range warning
      *  @param x    The requested x value
      *  @param retx The x value to use (corrected to be in range)
@@ -341,14 +357,15 @@ namespace Rich
      */
     virtual double rangeWarning( const double x, const double retx ) const;
 
-    /** x value range check
+    /** Sanitise the input x value to enforce being inside the min max range.
      *  @param x The x value to check
      *  @return The x value to use
      */
-    double checkRange( const double x ) const
+    inline double sanitiseRange( const double x ) const noexcept
     {
-      return ( withinInputRange(x) ? x :
-               x < minX() ? rangeWarning(x,minX()) : rangeWarning(x,maxX()) );
+      return ( !checkLowerBound(x) ? rangeWarning(x,minX()) :
+               !checkUpperBound(x) ? rangeWarning(x,maxX()) :
+               x                                            );
     }
 
   public:
@@ -361,7 +378,11 @@ namespace Rich
      */
     inline double value( const double x ) const noexcept
     {
-      return m_fastInterp.value(checkRange(x));
+      // range checking is now performed by the fast interpolator
+      //return ( !checkLowerBound(x) ? rangeWarning(x,minY()) :
+      //         !checkUpperBound(x) ? rangeWarning(x,maxY()) :
+      //         m_fastInterp.value( x )                      );
+      return m_fastInterp.value( x );
     }
 
     /**  Returns the function value (y) for the given parameter (x) value
@@ -382,7 +403,8 @@ namespace Rich
     inline double meanX ( const double from, 
                           const double to ) const
     {
-      return m_fastInterp.meanX(checkRange(from),checkRange(to));
+      return m_fastInterp.meanX( sanitiseRange(from),
+                                 sanitiseRange(to) );
     }
 
     /** Computes the definite integral of the function between limits
@@ -395,8 +417,8 @@ namespace Rich
     inline double integral ( const double from,  
                              const double to ) const
     {
-      return m_fastInterp.integral( checkRange(from), 
-                                    checkRange(to) );
+      return m_fastInterp.integral( sanitiseRange(from), 
+                                    sanitiseRange(to) );
     }
 
     /** Computes the first derivative of the function at the given parameter point
@@ -405,9 +427,9 @@ namespace Rich
      *
      *  @return the first derivative
      */
-    inline double firstDerivative( const double x ) const
+    inline double firstDerivative( const double x ) const noexcept
     {
-      return m_fastInterp.firstDerivative(checkRange(x));
+      return m_fastInterp.firstDerivative( sanitiseRange(x) );
     }
     
     /** Computes the R.M.S. value between the given parameter limits.
@@ -480,7 +502,7 @@ namespace Rich
      */
     inline bool withinInputRange( const double x ) const noexcept
     {
-      return ( x <= maxX() && minX() <= x );
+      return checkLowerBound(x) && checkUpperBound(x);
     }
     
   public:

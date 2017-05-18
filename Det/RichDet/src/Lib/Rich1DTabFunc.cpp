@@ -37,7 +37,10 @@ bool TabulatedFunction1D::initInterpolator( const double x[],
   for ( unsigned int i = 0; i < size; ++i ) { data[ x[i] ] = y[i]; }
 
   // initialise interpolation
-  return ( m_OK = initInterpolator( data, interType ) );
+  m_OK = initInterpolator( data, interType );
+
+  // return final status
+  return m_OK;
 }
 
 //============================================================================
@@ -65,6 +68,7 @@ bool TabulatedFunction1D::initInterpolator( const std::vector<double> & x,
     m_OK = initInterpolator( data, interType );
   }
 
+  // return final status
   return m_OK;
 }
 
@@ -79,7 +83,10 @@ TabulatedFunction1D::initInterpolator( const std::vector< std::pair<double,doubl
   for ( auto i = data.begin(); i != data.end(); ++i ) { data_map[i->first] = i->second; }
 
   // initialise interpolation
-  return ( m_OK = initInterpolator( data_map, interType ) );
+  m_OK = initInterpolator( data_map, interType );
+
+  // return final status
+  return m_OK;
 }
 
 //============================================================================
@@ -316,7 +323,7 @@ TabulatedFunction1D::combine( const ConstVector & funcs,
 
 //============================================================================
 
-double 
+double
 TabulatedFunction1D::rangeWarning( const double x, const double retx ) const
 {
   std::cerr << "Rich::TabulatedFunction1D : WARNING : Out-Of-Range x = " << x
