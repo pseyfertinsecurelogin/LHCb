@@ -2,7 +2,6 @@
 #include <set>
 
 // boost
-#include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 
 // Framework include files
@@ -183,13 +182,13 @@ StatusCode StagedIODataManager::disconnect(Connection* con)
       else if ( ::strncasecmp(dsn.c_str(),"PFN:",4)==0 )
          dsn = dataset.substr(4);
 
-      FidMap::iterator j = m_fidMap.find(dataset);
+      auto j = m_fidMap.find(dataset);
       if ( j != m_fidMap.end() )
       {
          std::vector<FidMap::iterator> toRemove( 1, j );
          std::string fid;
          while ( true ) {
-            FidMap::iterator it = m_fidMap.find(j->second);
+            auto it = m_fidMap.find(j->second);
             if ( it != m_fidMap.end() ) toRemove.push_back( it );
             if ( it == m_fidMap.end() ) {
                break;
@@ -201,16 +200,13 @@ StatusCode StagedIODataManager::disconnect(Connection* con)
          }
 
          std::string gfal_name = "gfal:guid:" + fid;
-         for ( std::vector<FidMap::iterator>::const_iterator it = toRemove.begin(), end = toRemove.end();
-               it != end; ++it ) {
-            m_fidMap.erase(*it);
-         }
-         ConnectionMap::iterator i=m_connectionMap.find(fid);
+         for ( const auto& i : toRemove) m_fidMap.erase(i);
+         auto i=m_connectionMap.find(fid);
          if ( (j=m_fidMap.find(gfal_name)) != m_fidMap.end() )
             m_fidMap.erase(j);
          if ( i != m_connectionMap.end() )
          {
-            if ( (*i).second )
+            if ( i->second )
             {
                IDataConnection* c = (*i).second->connection;
                std::string pfn = c->pfn();
@@ -222,7 +218,7 @@ StatusCode StagedIODataManager::disconnect(Connection* con)
                   log << MSG::INFO << "Disconnect from dataset " << dsn
                       << " [" << fid << "]" << endmsg;
                }
-               delete (*i).second;
+               delete i->second;
                m_connectionMap.erase(i);
             }
          }
@@ -252,19 +248,19 @@ StatusCode StagedIODataManager::reconnect(Entry* e)
       if ( sc.isSuccess() && e->ioType == Connection::READ ) {
          std::vector<Entry*> to_retire;
          e->connection->resetAge();
-         for(ConnectionMap::iterator i=m_connectionMap.begin(); i!=m_connectionMap.end();++i) {
-            IDataConnection* c = (*i).second->connection;
-            if ( e->connection != c && c->isConnected() && !(*i).second->keepOpen ) {
+         for( auto& i : m_connectionMap ) {
+            IDataConnection* c = i.second->connection;
+            if ( e->connection != c && c->isConnected() && !i.second->keepOpen ) {
                c->ageFile();
                if ( c->age() > m_ageLimit ) {
-                  to_retire.push_back((*i).second);
+                  to_retire.push_back(i.second);
                }
             }
          }
          if ( !to_retire.empty() ) {
             MsgStream log(msgSvc(),name());
-            for(std::vector<Entry*>::iterator j=to_retire.begin(); j!=to_retire.end();++j) {
-               IDataConnection* c = (*j)->connection;
+            for(auto& j : to_retire ) {
+               IDataConnection* c = j->connection;
                c->disconnect();
                log << MSG::INFO << "Disconnect from dataset " << c->pfn()
                    << " [" << c->fid() << "]" << endmsg;
@@ -294,7 +290,7 @@ IIODataManager::Connection* StagedIODataManager::connection(CSTR dataset) const
          break;
       }
    }
-      
+
    if ( j != m_fidMap.end() ) {
       ConnectionMap::const_iterator i = m_connectionMap.find( j->second );
       if ( i != m_connectionMap.end() ) {
@@ -439,7 +435,7 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
                   return IDataConnection::BAD_DATA_CONNECTION;
                }
             }
-            log << MSG::DEBUG << "connectDataIO (LFN) fid: " 
+            log << MSG::DEBUG << "connectDataIO (LFN) fid: "
                 << fid << endmsg;
             break;
          case PFN:
@@ -459,7 +455,7 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
                   fid = dsn;
                }
             }
-            log << MSG::DEBUG << "connectDataIO (PFN) fid: " 
+            log << MSG::DEBUG << "connectDataIO (PFN) fid: "
                 << fid << endmsg;
             break;
          }
@@ -471,7 +467,7 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
          ConnectionMap::iterator fi = m_connectionMap.find(fid);
          if ( fi == m_connectionMap.end() )
          {
-            log << MSG::DEBUG << "connectDataIO (PFN): no entry in connectionMap" 
+            log << MSG::DEBUG << "connectDataIO (PFN): no entry in connectionMap"
                 << endmsg;
 
             // Let's see what the stager gives us.
@@ -493,11 +489,10 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
                connection->setFID( fid );
                connection->setPFN( dsn );
             }
-            Entry* e = new Entry(technology, keep_open, rw, connection);
+            auto e = std::make_unique<Entry>(technology, keep_open, rw, connection);
             // Here we open the file!
-            if ( !reconnect(e).isSuccess() )
+            if ( !reconnect(e.get()).isSuccess() )
             {
-               delete e;
                if ( m_quarantine ) s_badFiles.insert(dsn);
                m_incSvc->fireIncident(Incident(dsn,IncidentType::FailInputFile));
                error("connectDataIO> Cannot connect to database: PFN="+dsn+" FID="+fid,false).ignore();
@@ -516,15 +511,15 @@ StagedIODataManager::connectDataIO(int typ, IoType rw, CSTR dataset, CSTR techno
                       << " -- processing continues" << endmsg;
                }
             }
-            m_connectionMap.insert( std::make_pair( fid, e ) );
-            log << MSG::DEBUG << "connectDataIO (PFN)" << endmsg 
+            m_connectionMap.insert( std::make_pair( fid, e.release() ) );
+            log << MSG::DEBUG << "connectDataIO (PFN)" << endmsg
                 << "connection fid: " <<  connection->fid() << endmsg
                 << "fid: " << fid << endmsg << "dsn: " << dsn << endmsg;
             return S_OK;
          } else {
             // Here we open the file!
             Connection* c = fi->second->connection;
-            log << MSG::DEBUG << "connectDataIO (PFN): using entry in connectionMap" 
+            log << MSG::DEBUG << "connectDataIO (PFN): using entry in connectionMap"
                 << endmsg
                 << "connection fid: " <<  c->fid() << endmsg
                 << "fid: " << fid << endmsg << "dsn: " << dsn << endmsg;

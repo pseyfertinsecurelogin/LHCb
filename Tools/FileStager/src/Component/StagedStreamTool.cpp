@@ -6,7 +6,6 @@
 #include <vector>
 
 // boost
-#include <boost/foreach.hpp>
 #include <boost/regex.hpp>
 
 // from Gaudi
@@ -50,35 +49,25 @@ StagedStreamTool::StagedStreamTool( const std::string& type,
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-StagedStreamTool::~StagedStreamTool()
-{
-
-}
-
-//=============================================================================
 StatusCode StagedStreamTool::initialize()
 {
-   MsgStream logger( msgSvc(), name() );
-
    StatusCode status = DataStreamTool::initialize();
    if( !status.isSuccess() )  {
-      logger << MSG::FATAL << "Error. Cannot initialize base class." << endmsg;
+      fatal() << "Error. Cannot initialize base class." << endmsg;
       return status;
    }
 
    // Get a reference to the FileStagerSvc
    m_stagerSvc = serviceLocator()->service("FileStagerSvc");
    if( !m_stagerSvc.isValid() )  {
-      logger << MSG::FATAL << "Error retrieving FileStagerSvc." << endmsg;
+      fatal() << "Error retrieving FileStagerSvc." << endmsg;
       return StatusCode::FAILURE;
    }
 
    // Get a reference to the IFileCatalog
    m_catalog = serviceLocator()->service( m_catalogSvc );
    if( !m_catalog.isValid() )  {
-      logger << MSG::FATAL << "Error retrieving Catalog." << endmsg;
+      fatal() << "Error retrieving Catalog." << endmsg;
       return StatusCode::FAILURE;
    }
 
@@ -89,15 +78,14 @@ StatusCode StagedStreamTool::initialize()
 StatusCode StagedStreamTool::addStreams(const StreamSpecs & inputs) {
 
    StatusCode status = StatusCode::SUCCESS;
-   MsgStream logger( msgSvc(), name() );
 
-   BOOST_FOREACH( const string& input, inputs ) {
+   for( const string& input: inputs ) {
       status = addStream( input );
       if ( !status.isSuccess() ) break;
    }
 
    vector< Descriptor > descriptors;
-   BOOST_FOREACH( const std::string& descriptor, inputs ) {
+   for( const std::string& descriptor: inputs ) {
       try {
          Descriptor d = extractFilename( descriptor );
          descriptors.push_back( d );
@@ -105,9 +93,9 @@ StatusCode StagedStreamTool::addStreams(const StreamSpecs & inputs) {
          return StatusCode::FAILURE;
       }
    }
-   
+
    vector< string > files;
-   BOOST_FOREACH( const Descriptor& descriptor, descriptors ) {
+   for( const Descriptor& descriptor: descriptors ) {
       if ( descriptor.type() == LFN ) {
          string file = descriptor.descriptor();
          string lfn = descriptor.descriptor().substr( 4 );
@@ -119,14 +107,14 @@ StatusCode StagedStreamTool::addStreams(const StreamSpecs & inputs) {
             if ( !entries.empty() ) {
                // We'll stage the PFN
                file = entries[ 0 ].first;
-            } 
+            }
          }
-         logger << MSG::DEBUG << "Adding " << file << " to files to be staged " 
+         debug() << "Adding " << file << " to files to be staged "
                 << " for lfn: " << lfn << endmsg;
          files.push_back( file );
       } else {
          // Try with whatever we have
-         logger << MSG::DEBUG << "Adding: " << descriptor.descriptor() 
+         debug() << "Adding: " << descriptor.descriptor()
                 << " to the list of files to be staged." << endmsg;
          files.push_back( descriptor.descriptor() );
       }
@@ -143,18 +131,14 @@ StatusCode StagedStreamTool::addStreams(const StreamSpecs & inputs) {
 StatusCode StagedStreamTool::clear()
 {
    StatusCode sc = m_stagerSvc->clearFiles();
-   if ( sc.isSuccess() ) {
-      return DataStreamTool::clear();
-   } else {
-      return sc;
-   }
+   if ( !sc.isSuccess() ) return sc;
+   return DataStreamTool::clear();
 }
 
 //=============================================================================
 StagedStreamTool::Descriptor
 StagedStreamTool::extractFilename( const std::string& descriptor )
 {
-   MsgStream logger( msgSvc(), name() );
 
    boost::smatch match;
    boost::match_flag_type flags = boost::match_default;
@@ -166,12 +150,12 @@ StagedStreamTool::extractFilename( const std::string& descriptor )
             return Descriptor( LFN, match.str( 1 ) );
          }
       } else {
-         logger << MSG::ERROR << "could not extract filename from descriptor: "
+         error() << "could not extract filename from descriptor: "
                 << descriptor << endmsg;
          throw std::exception();
       }
    } else {
-      logger << MSG::ERROR << "bad descriptor: " << descriptor << endmsg;
+      error() << "bad descriptor: " << descriptor << endmsg;
       throw std::exception();
    }
    // To get rid of warning, will never be reached.
