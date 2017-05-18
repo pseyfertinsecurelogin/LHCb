@@ -19,12 +19,6 @@
 // 20/04/2002 : Olivier Dormond
 //-----------------------------------------------------------------------------
 namespace {
-bool set2vec(const LHCb::EventTypeSet& aset,std::vector<long unsigned int>& avec)
-{
-  avec.clear();
-  avec.insert(avec.end(), aset.begin(), aset.end() );
-  return !avec.empty();
-}
 bool vec2set(const std::vector<long unsigned int>& avec, LHCb::EventTypeSet& aset)
 {
   aset.clear();
