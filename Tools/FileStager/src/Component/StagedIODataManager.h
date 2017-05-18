@@ -22,10 +22,10 @@ class IFileCatalog;
  * is available in the bookkeeping and uses it instead of the original dsn.
  *
  */
-class StagedIODataManager : public extends1< Service, IIODataManager > {
+class StagedIODataManager : public extends< Service, IIODataManager > {
 protected:
    typedef const std::string& CSTR;
-   struct Entry  {
+   struct Entry  final {
       std::string      type;
       IoType           ioType;
       IDataConnection* connection;
@@ -71,8 +71,6 @@ public:
     */
    StagedIODataManager(CSTR nam, ISvcLocator* loc);
 
-   /// Standard destructor
-   virtual ~StagedIODataManager()  {}
 
    /// IService implementation: initialize the service
    StatusCode initialize() override;
