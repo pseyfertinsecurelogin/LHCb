@@ -14,12 +14,12 @@ StatusCode MCParticleSelector::initialize()
   if ( sc.isFailure() ) { return sc; }
 
   // printout selection criteria
-  info() << "MCParticle Momentum cut     : " << m_pMin/Gaudi::Units::GeV << " GeV/c < P < " << m_pMax << " GeV/c" << endmsg;
-  info() << "           Beta * gamma cut : " << m_betaGammaMin << " < beta*gamma" << endmsg;
-  info() << "           Eta cut          : " << m_etaMin << " < P < " << m_etaMax << endmsg;
+  info() << "MCParticle Momentum cut     : " << m_pMin.value()/Gaudi::Units::GeV << " GeV/c < P < " << m_pMax.value() << " GeV/c" << endmsg;
+  info() << "           Beta * gamma cut : " << m_betaGammaMin.value() << " < beta*gamma" << endmsg;
+  info() << "           Eta cut          : " << m_etaMin.value() << " < P < " << m_etaMax.value() << endmsg;
   if ( m_rejectElectrons ) info() << "           Will reject electrons" << endmsg;
   if ( m_selBprods       ) info() << "           Will only select B decay products" << endmsg;
-  if ( m_rejectInteractions ) info() << "           Will reject particles from interations before z=" << m_zInteraction << endmsg;
+  if ( m_rejectInteractions ) info() << "           Will reject particles from interations before z=" << m_zInteraction.value() << endmsg;
   if ( !m_selCharged ) info() << "           Will reject charged particles" << endmsg;
   if ( !m_selNeutral ) info() << "           Will reject neutral particles" << endmsg;
 
