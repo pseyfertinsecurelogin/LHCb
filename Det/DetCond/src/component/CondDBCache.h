@@ -23,7 +23,7 @@
 
 #include "DetCond/ICondDBReader.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /** @class CondDBCache CondDBCache.h component/CondDBCache.h
  *
@@ -193,7 +193,7 @@ private:
     CondFolder(const std::string &descr):
       description(descr),sticky(true) {}
     std::string description;
-    boost::shared_ptr<cool::IRecordSpecification> spec;
+    std::shared_ptr<cool::IRecordSpecification> spec;
     StorageType items;
     ChannelNamesMapType channelNames;
     bool sticky;
