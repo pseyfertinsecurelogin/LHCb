@@ -10,7 +10,7 @@ DECLARE_TOOL_FACTORY ( MCParticleSelector )
 StatusCode MCParticleSelector::initialize()
 {
   // Initialize base class
-  const StatusCode sc = GaudiTool::initialize();
+  const StatusCode sc = base_class::initialize();
   if ( sc.isFailure() ) { return sc; }
 
   // printout selection criteria
