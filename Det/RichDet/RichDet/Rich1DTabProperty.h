@@ -31,7 +31,7 @@ namespace Rich
    *  @todo Figure out why releasing the services during destruction causes a crash
    */
 
-  class TabulatedProperty1D : public TabulatedFunction1D
+  class TabulatedProperty1D final : public TabulatedFunction1D
   {
 
   public:
@@ -48,7 +48,7 @@ namespace Rich
      */
     explicit TabulatedProperty1D( const TabulatedProperty * tab,
                                   const bool registerUMS = false,
-                                  const gsl_interp_type * interType = gsl_interp_cspline );
+                                  const gsl_interp_type * interType = gsl_interp_linear );
 
     /// Destructor
     virtual ~TabulatedProperty1D( );
@@ -84,7 +84,7 @@ namespace Rich
      */
     bool initInterpolator( const TabulatedProperty * tab,
                            const bool registerUMS = false,
-                           const gsl_interp_type * interType = gsl_interp_cspline );
+                           const gsl_interp_type * interType = gsl_interp_linear );
 
   private: // methods
 
