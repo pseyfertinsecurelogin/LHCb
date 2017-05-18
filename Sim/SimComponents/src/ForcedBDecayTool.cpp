@@ -17,8 +17,8 @@ const MCParticle* ForcedBDecayTool::forcedB() {
   //check what is the B forced to decay
   const MCParticle *BS = nullptr;
   HepMCEvents* hepVect = get<HepMCEvents>( HepMCEventLocation::Default );
-  for( auto q=hepVect->begin(); q!=hepVect->end(); ++q ) {
-    for ( auto p = (*q)->pGenEvt()->particles_begin(); p != (*q)->pGenEvt()->particles_end();   ++p ) {
+  for( auto& q : *hepVect) {
+    for ( auto p = q->pGenEvt()->particles_begin(); p != q->pGenEvt()->particles_end();   ++p ) {
       if( (*p)->status() != 889 ) continue;
       BS = associatedofHEP(*p);
       if(BS) break;

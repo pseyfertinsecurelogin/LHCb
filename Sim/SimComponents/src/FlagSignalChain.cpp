@@ -21,14 +21,11 @@ DECLARE_TOOL_FACTORY( FlagSignalChain )
 //==============================================================================
 void FlagSignalChain::setFromSignalFlag( const LHCb::MCParticle* mother ) {
 
-  for ( auto iv = mother->endVertices().begin();
-        iv != mother->endVertices().end(); iv++ ) {
-    for ( auto idau = (*iv)->products().begin();
-          idau != (*iv)->products().end(); idau++ ) {
-      const LHCb::MCParticle* mcpc = *idau;
-      LHCb::MCParticle* mcp = const_cast< LHCb::MCParticle* >( mcpc ) ;
+  for ( auto& v : mother->endVertices() ) {
+    for ( const auto& mcpc : v->products() ) {
+      LHCb::MCParticle* mcp = const_cast< LHCb::MCParticle* >( mcpc.target() ) ;
       mcp->setFromSignal(true);
-      setFromSignalFlag( *idau );
+      setFromSignalFlag( mcpc );
     }
   }
 }

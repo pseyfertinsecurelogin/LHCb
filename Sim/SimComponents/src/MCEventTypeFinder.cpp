@@ -275,21 +275,18 @@ StatusCode MCEventTypeFinder::findDecayType(LHCb::EventTypeSet& found, const LHC
   if(UNLIKELY(msgLevel(MSG::DEBUG)))
     debug() << "findDecayType called, with MCParticles"  << endmsg;
 
-  if(mc_mothers.empty())
-    {
+  if(mc_mothers.empty()) {
       warning() << "passed empty MCParticle vector" << endmsg;
       return StatusCode::SUCCESS;
-    }
+  }
 
 
-  for(LHCb::MCParticles::const_iterator iParticle=mc_mothers.begin(); iParticle!=mc_mothers.end(); iParticle++)
-    {
-      if(!(*iParticle)) continue;
+  for(const auto& p : mc_mothers) {
+      if(!p) continue;
       //in acceptance?
-      if((*iParticle)->pseudoRapidity()<m_acc_min || (*iParticle)->pseudoRapidity()>m_acc_max) continue;
-
-      findDecayType(found, (*iParticle) ) ;
-    }
+      if(p->pseudoRapidity()<m_acc_min || p->pseudoRapidity()>m_acc_max) continue;
+      findDecayType(found, p ) ;
+  }
 
 
   if(dimuon(mc_mothers)) appendDiMuon(found);// it's a dimuon event
@@ -367,14 +364,14 @@ StatusCode MCEventTypeFinder::constructDecayType(LHCb::EventTypeSet& found, cons
   bool posmuon=false;
   bool negmuon=false;
 
-  for(LHCb::MCParticle::ConstVector::const_iterator iParticle=mc_mothers.begin(); iParticle!=mc_mothers.end(); iParticle++)
+  for(const auto& p : mc_mothers)
     {
-      if(!(*iParticle)) continue;
+      if(!p) continue;
 
       //in acceptance?
-      if((*iParticle)->pseudoRapidity()<m_acc_min || (*iParticle)->pseudoRapidity()>m_acc_max) continue;
+      if(p->pseudoRapidity()<m_acc_min || p->pseudoRapidity()>m_acc_max) continue;
 
-      long int dec=constructDecayType(*iParticle);
+      long int dec=constructDecayType(p);
       if(dec > int(m_incb)) found.insert(dec);
       else if(dec==m_muonp) posmuon=true;
       else if(dec==m_muonm) negmuon=true;
@@ -398,14 +395,14 @@ StatusCode MCEventTypeFinder::constructDecayType(LHCb::EventTypeSet& found, cons
   bool posmuon=false;
   bool negmuon=false;
 
-  for(LHCb::MCParticles::const_iterator iParticle=mc_mothers.begin(); iParticle!=mc_mothers.end(); iParticle++)
+  for(const auto& p : mc_mothers)
     {
-      if(!(*iParticle)) continue;
+      if(!p) continue;
 
       //in acceptance?
-      if((*iParticle)->pseudoRapidity()<m_acc_min || (*iParticle)->pseudoRapidity()>m_acc_max) continue;
+      if(p->pseudoRapidity()<m_acc_min || p->pseudoRapidity()>m_acc_max) continue;
 
-      long int dec=constructDecayType(*iParticle);
+      long int dec=constructDecayType(p);
       if(dec > int(m_incb)) found.insert(dec);
       if(dec==m_muonp) posmuon=true;
       else if(dec==m_muonm) negmuon=true;
@@ -482,10 +479,10 @@ long int MCEventTypeFinder::constructDecayType(const LHCb::MCParticle * mc_mothe
 
   const LHCb::ParticleID mID = mc_mother->particleID();
   if (mID.pid()==m_muonp) return m_muonp;
-  else if (mID.pid()==m_muonm) return m_muonm;
-  else if(abs(mID.pid())==m_tau) return categoriseTau(mc_mother, dimuon);
-  else if(mID.isMeson() || mID.isBaryon()) return categoriseHadron(mc_mother, dimuon);
-  else return 0;
+  if (mID.pid()==m_muonm) return m_muonm;
+  if (abs(mID.pid())==m_tau) return categoriseTau(mc_mother, dimuon);
+  if (mID.isMeson() || mID.isBaryon()) return categoriseHadron(mc_mother, dimuon);
+  return 0;
 
 }
 long int MCEventTypeFinder::categoriseHadron(const LHCb::MCParticle * mc_mother, bool & dimuon )
@@ -613,11 +610,9 @@ int MCEventTypeFinder::determineDecay(const LHCb::MCParticle * mc_mother, bool &
 
     }
   //iterate over decay vertices
-  for(SmartRefVector<LHCb::MCVertex>::const_iterator iV=mc_mother->endVertices().begin();
-      iV!=mc_mother->endVertices().end();  iV++) //iterate over daughters
-    for(SmartRefVector<LHCb::MCParticle>::const_iterator iP=(*iV)->products().begin();
-	iP!=(*iV)->products().end(); iP++)
-      determineDecay(*iP, nJPsi, ncharm, nmuon, pmuon, nmudec,  pmudec, nelectron, ntracks, neut, dec, neutrino);
+  for(const auto& v : mc_mother->endVertices()) //iterate over daughters
+    for(const auto& p : v->products() )
+      determineDecay(p, nJPsi, ncharm, nmuon, pmuon, nmudec,  pmudec, nelectron, ntracks, neut, dec, neutrino);
 
   return 0;
 
@@ -643,14 +638,14 @@ bool MCEventTypeFinder::dimuon(const LHCb::MCParticles & mc_mothers)
 {
   bool pmuon=false, nmuon=false;
 
-  for(LHCb::MCParticles::const_iterator iParticle=mc_mothers.begin(); iParticle!=mc_mothers.end(); iParticle++)
+  for(const auto& p : mc_mothers)
     {
-      if(!(*iParticle)) continue;
+      if(!p) continue;
 
       //in acceptance?
-      if((*iParticle)->pseudoRapidity()<m_acc_min || (*iParticle)->pseudoRapidity()>m_acc_max) continue; //don't check if a particle is explicitly passed
-      if((*iParticle)->particleID().pid()==m_muonp) pmuon=true;
-      else if((*iParticle)->particleID().pid()==m_muonm) nmuon=true;
+      if(p->pseudoRapidity()<m_acc_min || p->pseudoRapidity()>m_acc_max) continue; //don't check if a particle is explicitly passed
+      if(p->particleID().pid()==m_muonp) pmuon=true;
+      else if(p->particleID().pid()==m_muonm) nmuon=true;
     }
   return (pmuon && nmuon);
 

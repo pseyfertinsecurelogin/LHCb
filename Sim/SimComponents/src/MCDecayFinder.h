@@ -130,7 +130,7 @@ public:
   StatusCode initialize( ) override;
 
   /// Get/Set the decay string to find
-  std::string decay( void ) const override { return m_source; }
+  std::string decay( ) const override { return m_source; }
   StatusCode setDecay( std::string decay ) override;
 
   std::string revert( ) const override;
@@ -138,7 +138,7 @@ public:
   /// Does the described decay exists in the event?
   bool hasDecay( const LHCb::MCParticle::ConstVector &event ) const override;
   bool hasDecay( const LHCb::MCParticle::Container &event ) const override;
-  bool hasDecay( void ) const override;
+  bool hasDecay( ) const override;
 
   /** Try to find the (next) match of the decay in the event.
    *
@@ -203,7 +203,7 @@ private:
   {
   public:
     DescriptorError( std::string s ) : msg(s) {}
-    std::string &cause( void ) { return msg; }
+    std::string &cause( ) { return msg; }
   private:
     std::string msg;
   };
@@ -219,12 +219,12 @@ private:
 
 #include "mcparser.h"
 
-  int yparse( void );
+  int yparse( );
   void yerror( std::string msg ) { throw DescriptorError(msg); }
 
-  int ylex( void );
+  int ylex( );
 
-  int yygrowstack( void );
+  int yygrowstack( );
 
   static const short int ylhs[];
   static const short int ylen[];
