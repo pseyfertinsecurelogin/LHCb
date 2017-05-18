@@ -116,7 +116,7 @@ struct yy_buffer_state;
  * this avoids most segfaults
  *
  */
-class MCDecayFinder : public GaudiTool, virtual public IMCDecayFinder
+class MCDecayFinder : public extends<GaudiTool, IMCDecayFinder>
 {
 public:
   /// Standard Constructor
@@ -125,7 +125,7 @@ public:
                  const IInterface* parent );
 
   /// Destructor
-  virtual ~MCDecayFinder( ); ///< Destructor
+  ~MCDecayFinder( ) override; ///< Destructor
 
   StatusCode initialize( ) override;
 
@@ -184,6 +184,7 @@ public:
                                             LHCb::MCParticle::ConstVector  >
                                  > & subtrees ) const override;
 
+private:
   /// Enumaration types used internally.
   enum Quarks { empty, up, down, charm, strange, top, bottom, antiup,
                 antidown, anticharm, antistrange, antitop, antibottom };
@@ -192,8 +193,6 @@ public:
                   CP_quantum, c_quantum, s_quantum, t_quantum, b_quantum };
   enum Relations { eq_rel=1, lesseq_rel, greatereq_rel, less_rel, greater_rel,
                    noteq_rel };
-
-private:
   /// The opaque representation of a particle matcher
   class ParticleMatcher;
 
@@ -209,11 +208,12 @@ private:
     std::string msg;
   };
 
-  LHCb::IParticlePropertySvc *m_ppSvc;
-  std::string m_source;
-  Descriptor *m_decay;
-  std::vector<ParticleMatcher *> *m_members;
-  double m_resThreshold;
+  LHCb::IParticlePropertySvc *m_ppSvc = nullptr;
+  std::string m_source = "B0 -> pi+ pi-";
+  Descriptor *m_decay = nullptr;
+  std::vector<ParticleMatcher *> *m_members = nullptr;
+  Gaudi::Property<double> m_resThreshold
+  { this, "ResonanceThreshold", 1e-15*Gaudi::Units::second };
 
   bool compile( std::string &decay );
 

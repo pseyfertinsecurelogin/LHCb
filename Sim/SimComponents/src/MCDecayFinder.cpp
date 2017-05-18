@@ -3,6 +3,8 @@
 #include <functional>
 #include <algorithm>
 
+#include "boost/variant.hpp"
+
 // from Gaudi
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/SystemOfUnits.h"
@@ -22,18 +24,140 @@
 namespace {
     static const std::string s_brackets { "{}()[]" };// sanity check the brackets in the decay descriptor
 
+
     template <typename C>
     void delete_(C* c) {
         if( !c ) return;
         for( auto& m : *c) delete m;
         delete c;
     }
+
+static inline int DIGIT( int n, int id )
+{
+  int base = 1;
+  for( ; n; n-- ) base *= 10;
+  return ((std::abs(id)%(10*base))/base);
 }
+
+static inline int quarkOne( int id )
+{
+  return DIGIT(3,id);
+}
+
+static inline int quarkTwo( int id )
+{
+  return DIGIT(2,id);
+}
+
+static inline int quarkThree( int id )
+{
+  return DIGIT(1,id);
+}
+
+static inline bool isIon( int id )
+{
+  return( 1==DIGIT(10,id) );
+}
+
+static inline bool isHadron( int id )
+{
+  return abs(id)>=110;
+}
+
+static inline bool isMeson( int id )
+{
+  return( isHadron(id) && !isIon(id) && 0==quarkOne(id) );
+}
+
+static const int QuarksCharge[] = { 0, -1, 1, -1, 1, -1, 1 };
+
+static int firstQuark( int id )
+{
+  int q;
+
+  if( !isHadron(id) || isIon(id) ) return 0;
+
+  if( isMeson(id) ) {
+    q = quarkTwo(id);
+    q *= QuarksCharge[q];
+  } else
+    q = quarkOne(id);
+
+  return q*(id>0 ? 1 : -1);
+}
+
+static int secondQuark( int id )
+{
+
+  if( !isHadron(id) || isIon(id) ) return 0;
+
+  int q;
+  if( isMeson(id) ) {
+    q = quarkThree(id);
+    int r = quarkTwo(id);
+    if( QuarksCharge[q] == QuarksCharge[r] )
+      q *= -QuarksCharge[q];
+    else
+      q *= QuarksCharge[q];
+  } else
+    q = quarkTwo(id);
+
+  return q*(id>0 ? 1 : -1);
+}
+
+static int thirdQuark( int id )
+{
+  if( !isHadron(id) || isIon(id) ) return 0;
+  int q = ( isMeson(id) ? 0 : quarkThree(id) );
+  return q*(id>0 ? 1 : -1);
+}
+
+template <typename... lambda_ts>
+struct composer_t;
+
+template <typename lambda_t>
+struct composer_t<lambda_t> : lambda_t {
+  composer_t(const lambda_t& lambda): lambda_t{lambda} { }
+  composer_t(lambda_t&& lambda): lambda_t{std::move(lambda)} { }
+
+  using lambda_t::operator();
+};
+
+template <typename lambda_t, typename... more_lambda_ts>
+struct composer_t<lambda_t, more_lambda_ts...> : lambda_t, composer_t<more_lambda_ts...> {
+  using super_t = composer_t<more_lambda_ts...>;
+
+  template <typename... lambda_ts>
+  composer_t(const lambda_t& lambda, lambda_ts&&... more_lambdas): lambda_t{lambda}, super_t{std::forward<lambda_ts>(more_lambdas)...} { }
+  template <typename... lambda_ts>
+  composer_t(lambda_t&& lambda, lambda_ts&&... more_lambdas): lambda_t{std::move(lambda)}, super_t{std::forward<lambda_ts>(more_lambdas)...} { }
+
+  using lambda_t::operator();
+  using super_t::operator();
+};
+
+
+template <typename... lambda_ts>
+composer_t<std::decay_t<lambda_ts>...>
+compose(lambda_ts&&... lambdas)
+{ return {std::forward<lambda_ts>(lambdas)...}; }
+
+
+
+auto dispatch_variant = [](auto&& variant, auto&&... lambdas) -> decltype(auto) {
+  return boost::apply_visitor( compose( std::forward<decltype(lambdas)>(lambdas)... ),
+                               std::forward<decltype(variant)>(variant) );
+};
+
+
+
+}
+
+
 class MCDecayFinder::ParticleMatcher final
 {
   public:
     ParticleMatcher( LHCb::IParticlePropertySvc *ppSvc );
-    ParticleMatcher( ParticleMatcher &copy );
     ParticleMatcher( std::string *name, LHCb::IParticlePropertySvc *ppSvc );
     ParticleMatcher( Quarks q1, Quarks q2, Quarks q3,
                      LHCb::IParticlePropertySvc *ppSvc );
@@ -41,34 +165,34 @@ class MCDecayFinder::ParticleMatcher final
                      LHCb::IParticlePropertySvc *ppSvc );
     bool test( const LHCb::MCParticle *part,
               LHCb::MCParticle::ConstVector *collect=nullptr );
-    void setLift( void ) { lift = true; }
-    bool getLift( void ) { return lift; }
-    void setEmpty( void ) { empty_f = true; }
-    bool getEmpty( void ) { return empty_f; }
-    void setQmark( void ) { qmark = true; }
-    bool getQmark( void ) { return qmark; }
-    void setConjugate( void ) { conjugate = true; }
-    bool getConjugate( void ) { return conjugate; }
-    void setOscillate( void ) { oscillate = true; }
-    void setNotOscillate( void ) { noscillate = true; }
-    bool getOscillate( void ) { return oscillate; }
-    bool getNotOscillate( void ) { return noscillate; }
-    void setInverse( void ) { inverse = true; }
-    bool getInverse( void ) { return inverse; }
-    void setStable( void ) { stable = true; }
-    bool getStable( void ) { return stable; }
-    bool getExact( void ) { return !qmark && !inverse
-                              && !conjugate && (type==id); }
-    void conjugateID( void );
-    std::string describe( void );
+    void setLift( ) { lift = true; }
+    bool getLift( ) { return lift; }
+    void setEmpty( ) { empty_f = true; }
+    bool getEmpty( ) { return empty_f; }
+    void setQmark( ) { qmark = true; }
+    bool getQmark( ) { return qmark; }
+    void setConjugate( ) { conjugate = true; }
+    bool getConjugate( ) { return conjugate; }
+    void setOscillate( ) { oscillate = true; }
+    void setNotOscillate( ) { noscillate = true; }
+    bool getOscillate( ) { return oscillate; }
+    bool getNotOscillate( ) { return noscillate; }
+    void setInverse( ) { inverse = true; }
+    bool getInverse( ) { return inverse; }
+    void setStable( ) { stable = true; }
+    bool getStable( ) { return stable; }
+    bool getExact( ) { return !qmark && !inverse
+                              && !conjugate && parms.which()==1; }
+    void conjugateID( );
+    std::string describe( );
   private:
     int conjugatedID( int id );
-    enum Type { notest, id, quark, quantum } type;
-    union {
-      struct { Quarks q1, q2, q3; } quarks;
-      int stdHepID;
-      struct { Quantums q; Relations r; double d; } relation;
-    } parms;
+
+    struct quark_t   { Quarks q1, q2, q3; };
+    struct quantum_t { Quantums q; Relations r; double d; };
+    struct stdhep_t  { int id; };
+    boost::variant< boost::blank, stdhep_t, quark_t, quantum_t > parms;
+
     bool lift = false;
     bool empty_f = false;
     bool qmark = false;
@@ -77,7 +201,7 @@ class MCDecayFinder::ParticleMatcher final
     bool noscillate = false;
     bool inverse = false;
     bool stable = false;
-    LHCb::IParticlePropertySvc *m_ppSvc = nullptr;
+    const LHCb::IParticlePropertySvc *m_ppSvc = nullptr;
 };
 
 class MCDecayFinder::Descriptor final
@@ -137,18 +261,18 @@ class MCDecayFinder::Descriptor final
                          > *subTree=nullptr);
 
     void setAlternate( Descriptor *a ) { alternate.reset(a); }
-    Descriptor *getAlternate( void ) { return alternate.get(); }
+    Descriptor *getAlternate( ) { return alternate.get(); }
 
     void setMother( ParticleMatcher *m ) { mother.reset( m ); }
 
     void addDaughter( Descriptor *daughter );
-    std::vector<Descriptor *> &getDaughters( void ) { return daughters; }
+    std::vector<Descriptor *> &getDaughters( ) { return daughters; }
 
-    void setElipsis( void ) { elipsis = true; }
-    bool getElipsis( void ) { return elipsis; }
-    void setResonance( void ) { skipResonance = true; }
-    void conjugate( void );
-    std::string describe( void );
+    void setElipsis( ) { elipsis = true; }
+    bool getElipsis( ) { return elipsis; }
+    void setResonance( ) { skipResonance = true; }
+    void conjugate( );
+    std::string describe( );
   private:
     bool testDaughters( std::list<const LHCb::MCParticle*> &parts,
                         LHCb::MCParticle::ConstVector *collect=nullptr,
@@ -176,15 +300,9 @@ DECLARE_TOOL_FACTORY( MCDecayFinder )
 MCDecayFinder::MCDecayFinder( const std::string& type,
                               const std::string& name,
                               const IInterface* parent )
-  : GaudiTool ( type, name , parent ),
-    m_ppSvc(0), m_source("B0 -> pi+ pi-"), m_decay(0), m_members(0)
+  : base_class ( type, name , parent )
 {
-
-  declareInterface<IMCDecayFinder>(this);
-
   declareProperty( "Decay", m_source );
-  declareProperty( "ResonanceThreshold",
-                   m_resThreshold = 1e-15*Gaudi::Units::second );
 }
 
 //=============================================================================
@@ -200,14 +318,14 @@ MCDecayFinder::~MCDecayFinder( )
 //=============================================================================
 
 StatusCode MCDecayFinder::initialize(){
-  StatusCode sc = GaudiTool::initialize();
+  StatusCode sc = base_class::initialize();
   if (!sc) return sc;
 
   if (msgLevel(MSG::DEBUG)) debug() << "==> Initializing" << endmsg;
 
   m_ppSvc = svc<LHCb::IParticlePropertySvc>( "LHCb::ParticlePropertySvc", true );
 
-  if( m_source.length() == 0 ){
+  if( m_source.empty() ){
     return Warning( "No decay specified!", StatusCode::SUCCESS );
   }
   if( compile(m_source) ){
@@ -250,10 +368,10 @@ StatusCode MCDecayFinder::setDecay( std::string decay ){
   return StatusCode::FAILURE;
 }
 
-std::string MCDecayFinder::revert( void ) const {
-  std::string result = "";
+std::string MCDecayFinder::revert( ) const {
+  std::string result;
   if( !m_decay ) return result;
-  bool alt = m_decay->getAlternate() != nullptr;
+  bool alt = ( m_decay->getAlternate() != nullptr );
   if( alt ) result += "{ ";
   Descriptor *a = m_decay;
   while( a ) {
@@ -291,8 +409,7 @@ bool MCDecayFinder::hasDecay( const  LHCb::MCParticle::ConstVector &event ) cons
   if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endmsg;
   if (!m_decay)   Exception("Trying to find an unspecified decay!");
   const LHCb::MCParticle *drop_me = nullptr;
-  bool r =  m_decay->test( event.begin(), event.end(), drop_me );
-  return r ;
+  return m_decay->test( event.begin(), event.end(), drop_me );
 }
 
 bool MCDecayFinder::findDecay( const LHCb::MCParticle::ConstVector& event,
@@ -310,9 +427,9 @@ bool MCDecayFinder::hasDecay( const LHCb::MCParticles &event ) const
   if (msgLevel(MSG::VERBOSE)) verbose() << "About to test the event" << endmsg;
   if (!m_decay) Exception("Trying to find an unspecified decay!");
   const LHCb::MCParticle *drop_me = nullptr;
-    bool r = m_decay->test( event.begin(), event.end(), drop_me );
-    if (!r && UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "Could not find decay" << endmsg;
-    return r ;
+  bool r = m_decay->test( event.begin(), event.end(), drop_me );
+  if (!r && UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "Could not find decay" << endmsg;
+  return r ;
 }
 
 bool MCDecayFinder::findDecay( const LHCb::MCParticles &event,
@@ -398,8 +515,8 @@ MCDecayFinder::Descriptor::Descriptor( LHCb::IParticlePropertySvc *ppSvc,
 MCDecayFinder::Descriptor::Descriptor( Descriptor &copy )
 {
   if( copy.mother ) mother = std::make_unique<ParticleMatcher>(*copy.mother);
-  for(auto d=copy.daughters.begin(); d!=copy.daughters.end(); d++ ) {
-    daughters.push_back(new Descriptor(**d));
+  for(const auto& d : copy.daughters) {
+    daughters.push_back(new Descriptor(*d));
   }
   skipResonance = copy.skipResonance;
   elipsis  = copy.elipsis;
@@ -418,31 +535,20 @@ MCDecayFinder::Descriptor::~Descriptor()
   for( auto& d : daughters ) delete d;
 }
 
-std::string MCDecayFinder::Descriptor::describe( void )
+std::string MCDecayFinder::Descriptor::describe( )
 {
-  std::string result = "";
-  if( !daughters.empty() )
-    result += '(';
-  if( mother )
-    result += mother->describe();
-  else
-    result += "pp";
-  if( !daughters.empty() ) {
-    if( skipResonance )
-      result += " => ";
-    else
-      result += " -> ";
-    std::vector<Descriptor *>::const_iterator di;
-    for( di=daughters.begin(); di!=daughters.end(); di++ ) {
+  std::string result;
+  if ( !daughters.empty() ) result += '(';
+  result += ( mother ? mother->describe() :"pp" );
+  if ( !daughters.empty() ) {
+    result += ( skipResonance ? " => " : " -> " );
+    for ( auto di=daughters.begin(); di!=daughters.end(); di++ ) {
       result += (*di)->describe();
-      if( *di != daughters.back() )
-        result += ' ';
+      if ( *di != daughters.back() ) result += ' ';
     }
   }
-  if( elipsis )
-    result += " ...";
-  if( !daughters.empty() )
-    result += ')';
+  if( elipsis ) result += " ...";
+  if( !daughters.empty() ) result += ')';
   return result;
 }
 
@@ -527,34 +633,31 @@ void MCDecayFinder::Descriptor::addDaughter( Descriptor *daughter )
   daughters.insert( d, daughter );
 }
 
-void MCDecayFinder::Descriptor::addNonResonantDaughters(
-                                                         std::list<const LHCb::MCParticle*> &parts,
+void MCDecayFinder::Descriptor::addNonResonantDaughters( std::list<const LHCb::MCParticle*> &parts,
                                                          const LHCb::MCParticle *part )
 {
-  for ( auto vi = part->endVertices().begin();
-        vi != part->endVertices().end(); vi++ )
+  if (!m_ppSvc) return;
+  for ( const auto&  vi : part->endVertices() )
   {
-    if(! *vi) break;
-    for ( auto idau = (*vi)->products().begin();
-          m_ppSvc && idau != (*vi)->products().end(); idau++ )
+    if( !vi ) break;
+    for ( const auto& idau : vi->products() )
     {
-      if(! *idau) break;
+      if( !idau) break;
 
-      const LHCb::ParticleProperty *pp = m_ppSvc->find( (*idau)->particleID() );
-      //      std::cout << "addNonResonantDaughters " << (*idau)->particleID() << " " << pp << std::endl ;
+      const LHCb::ParticleProperty *pp = m_ppSvc->find( idau->particleID() );
+      //      std::cout << "addNonResonantDaughters " << idau->particleID() << " " << pp << std::endl ;
 
-      if(!pp)
-      {
+      if(!pp) {
         // throw DescriptorError(std::string("Unknown particle '")+"'");
         std::cout << "MCDecayFinder::Descriptor::addNonResonantDaughters WARNING Particle property not obtainable for "
-                  << (*idau)->particleID() << std::endl ;
+                  << idau->particleID() << std::endl ;
         break;
       }
 
       if( pp->lifetime() >= m_resThreshold )
-        parts.push_front(*idau);
+        parts.push_front(idau);
       else
-        addNonResonantDaughters( parts, *idau );
+        addNonResonantDaughters( parts, idau );
     }
   }
 }
@@ -589,68 +692,27 @@ void MCDecayFinder::Descriptor::conjugate( void )
 }
 
 MCDecayFinder::ParticleMatcher::ParticleMatcher( LHCb::IParticlePropertySvc *ppSvc )
-  : type(notest), m_ppSvc(ppSvc)
+: parms{ boost::blank{} }, m_ppSvc(ppSvc)
 {}
-
-MCDecayFinder::ParticleMatcher::ParticleMatcher( ParticleMatcher &copy )
-{
-  type = copy.type;
-  lift = copy.lift;
-  empty_f = copy.empty_f;
-  qmark = copy.qmark;
-  conjugate = copy.conjugate;
-  oscillate = copy.oscillate;
-  noscillate = copy.noscillate;
-  inverse = copy.inverse;
-  stable = copy.stable;
-  m_ppSvc = copy.m_ppSvc;
-  switch( type )
-  {
-  case id:
-    parms.stdHepID = copy.parms.stdHepID;
-    break;
-  case quark:
-    parms.quarks.q1 = copy.parms.quarks.q1;
-    parms.quarks.q2 = copy.parms.quarks.q2;
-    parms.quarks.q3 = copy.parms.quarks.q3;
-    break;
-  case quantum:
-    parms.relation.q = copy.parms.relation.q;
-    parms.relation.r = copy.parms.relation.r;
-    parms.relation.d = copy.parms.relation.d;
-    break;
-  case notest:
-  default:
-    break;
-  }
-}
 
 MCDecayFinder::ParticleMatcher::ParticleMatcher( std::string *name,
                                                  LHCb::IParticlePropertySvc *ppSvc )
-  : type(id), m_ppSvc(ppSvc)
+: m_ppSvc(ppSvc)
 {
   const LHCb::ParticleProperty *pp = m_ppSvc->find(*name);
   if( !pp ) throw DescriptorError(std::string("Unknown particle '")+*name+"'");
-  parms.stdHepID = pp->pid().pid();
+  parms = stdhep_t{ pp->pid().pid() };
 }
 
 MCDecayFinder::ParticleMatcher::ParticleMatcher(Quarks q1, Quarks q2, Quarks q3,
                                                 LHCb::IParticlePropertySvc *ppSvc )
-  : type(quark), m_ppSvc(ppSvc)
-{
-  parms.quarks.q1 = q1;
-  parms.quarks.q2 = q2;
-  parms.quarks.q3 = q3;
-}
+: parms{quark_t{ q1, q2, q3 }}, m_ppSvc(ppSvc)
+{ }
 
 MCDecayFinder::ParticleMatcher::ParticleMatcher(Quantums q,Relations r,double d,
                                                 LHCb::IParticlePropertySvc *ppSvc )
-  : type(quantum), m_ppSvc(ppSvc)
-{
-  parms.relation.q = q;
-  parms.relation.r = r;
-  parms.relation.d = d;
-}
+: parms{ quantum_t{ q,r,d } }, m_ppSvc(ppSvc)
+{ }
 
 std::string MCDecayFinder::ParticleMatcher::describe( )
 {
@@ -662,68 +724,40 @@ std::string MCDecayFinder::ParticleMatcher::describe( )
   if( oscillate )  result += '[';
   if( noscillate ) result += '[';
   if( inverse )    result += '!';
-  switch( type ) {
-  case notest:
-    result += "## MUST NOT COMPILE ##";
-    break;
-  case id:
-    if(!m_ppSvc) break;
-    if(!m_ppSvc->find(LHCb::ParticleID(parms.stdHepID))) throw DescriptorError(std::string("Unknown particle"));;
-    result += m_ppSvc->find(LHCb::ParticleID(parms.stdHepID))->particle();
-    break;
-  case quark:
-    result += "<X";
-    switch( parms.quarks.q1 ) {
-    case up:          result +='u';  break;
-    case down:        result +='d';  break;
-    case charm:       result +='c';  break;
-    case strange:     result +='s';  break;
-    case top:         result +='t';  break;
-    case bottom:      result +='b';  break;
-    case antiup:      result +="u~"; break;
-    case antidown:    result +="d~"; break;
-    case anticharm:   result +="c~"; break;
-    case antistrange: result +="s~"; break;
-    case antitop:     result +="t~"; break;
-    case antibottom:  result +="b~"; break;
-    case empty:                      break;
-    }
-    switch( parms.quarks.q2 ) {
-    case up:          result +='u';  break;
-    case down:        result +='d';  break;
-    case charm:       result +='c';  break;
-    case strange:     result +='s';  break;
-    case top:         result +='t';  break;
-    case bottom:      result +='b';  break;
-    case antiup:      result +="u~"; break;
-    case antidown:    result +="d~"; break;
-    case anticharm:   result +="c~"; break;
-    case antistrange: result +="s~"; break;
-    case antitop:     result +="t~"; break;
-    case antibottom:  result +="b~"; break;
-    case empty:                      break;
-    }
-    switch( parms.quarks.q3 ) {
-    case up:          result +='u';  break;
-    case down:        result +='d';  break;
-    case charm:       result +='c';  break;
-    case strange:     result +='s';  break;
-    case top:         result +='t';  break;
-    case bottom:      result +='b';  break;
-    case antiup:      result +="u~"; break;
-    case antidown:    result +="d~"; break;
-    case anticharm:   result +="c~"; break;
-    case antistrange: result +="s~"; break;
-    case antitop:     result +="t~"; break;
-    case antibottom:  result +="b~"; break;
-    case empty:                      break;
-    }
-    result += '>';
-    break;
-  case quantum:
-    result += "## NOT IMPLEMENTED ##";
-    break;
-  }
+  dispatch_variant( parms,
+        [&](const boost::blank&){ result += "## MUST NOT COMPILE ##"; },
+        [&](const stdhep_t& stdhep) {
+            if(!m_ppSvc) return;
+            if(!m_ppSvc->find(LHCb::ParticleID(stdhep.id))) throw DescriptorError(std::string("Unknown particle"));;
+            result += m_ppSvc->find(LHCb::ParticleID(stdhep.id))->particle();
+        },
+        [&](const quark_t& quarks) {
+            auto append = [](std::string& s, Quarks q) {
+                switch( q ) {
+                    case up:          s +='u';  break;
+                    case down:        s +='d';  break;
+                    case charm:       s +='c';  break;
+                    case strange:     s +='s';  break;
+                    case top:         s +='t';  break;
+                    case bottom:      s +='b';  break;
+                    case antiup:      s +="u~"; break;
+                    case antidown:    s +="d~"; break;
+                    case anticharm:   s +="c~"; break;
+                    case antistrange: s +="s~"; break;
+                    case antitop:     s +="t~"; break;
+                    case antibottom:  s +="b~"; break;
+                    case empty:                 break;
+                };
+            };
+            result += "<X";
+            append( result, quarks.q1 );
+            append( result, quarks.q2 );
+            append( result, quarks.q3 );
+            result += '>';
+        },
+        [&](const quantum_t&) { result += "## NOT IMPLEMENTED ##"; }
+   );
+
   if( noscillate ) result += "]nos";
   if( oscillate )  result += "]os";
   if( conjugate )  result += "]cc";
@@ -731,220 +765,90 @@ std::string MCDecayFinder::ParticleMatcher::describe( )
   return result;
 }
 
-static inline int DIGIT( int n, int id )
-{
-  int base = 1;
-  for( ; n; n-- ) base *= 10;
-  return ((abs(id)%(10*base))/base);
-}
-
-static inline int quarkOne( int id )
-{
-  return DIGIT(3,id);
-}
-
-static inline int quarkTwo( int id )
-{
-  return DIGIT(2,id);
-}
-
-static inline int quarkThree( int id )
-{
-  return DIGIT(1,id);
-}
-
-static inline bool isIon( int id )
-{
-  return( 1==DIGIT(10,id) );
-}
-
-static inline bool isHadron( int id )
-{
-  return abs(id)>=110;
-}
-
-static inline bool isMeson( int id )
-{
-  return( isHadron(id) && !isIon(id) && 0==quarkOne(id) );
-}
-
-static const int QuarksCharge[] = { 0, -1, 1, -1, 1, -1, 1 };
-
-static int firstQuark( int id )
-{
-  int q;
-
-  if( !isHadron(id) || isIon(id) ) return 0;
-
-  if( isMeson(id) ) {
-    q = quarkTwo(id);
-    q *= QuarksCharge[q];
-  } else
-    q = quarkOne(id);
-
-  return q*(id>0 ? 1 : -1);
-}
-
-static int secondQuark( int id )
-{
-
-  if( !isHadron(id) || isIon(id) ) return 0;
-
-  int q;
-  if( isMeson(id) ) {
-    q = quarkThree(id);
-    int r = quarkTwo(id);
-    if( QuarksCharge[q] == QuarksCharge[r] )
-      q *= -QuarksCharge[q];
-    else
-      q *= QuarksCharge[q];
-  } else
-    q = quarkTwo(id);
-
-  return q*(id>0 ? 1 : -1);
-}
-
-static int thirdQuark( int id )
-{
-  if( !isHadron(id) || isIon(id) ) return 0;
-  int q = ( isMeson(id) ? 0 : quarkThree(id) );
-  return q*(id>0 ? 1 : -1);
-}
-
 bool
 MCDecayFinder::ParticleMatcher::test( const LHCb::MCParticle *part,
                                       LHCb::MCParticle::ConstVector *collect )
 {
-  bool result = false;
-  switch( type ) {
-  case notest:
-    result = true;
-    break;
-  case id:
-    result = (parms.stdHepID == part->particleID().pid());
-    if( conjugate ) {
-      int cc_id = conjugatedID( parms.stdHepID );
-      result = result || (cc_id == part->particleID().pid());
-    }
-    if( oscillate )  result = result && part->hasOscillated();
-    if( noscillate ) result = result && (!part->hasOscillated());
-    if( inverse )    result = !result;
-    if( stable ) {
-      int n = 0;
-      for ( auto vi = part->endVertices().begin();
-            vi != part->endVertices().end(); vi++)
-        n += (*vi)->products().size();
-      result = result && (n == 0);
-    }
-    break;
-  case quark:
-    {
-      static Quarks Q[] = { empty, down, up, strange, charm, bottom, top };
-      static Quarks AQ[] = { empty, antidown, antiup, antistrange,
-                             anticharm, antibottom, antitop };
-      int q = firstQuark(part->particleID().pid());
-      Quarks q1 = (q<0 ? AQ[-q] : Q[q]);
-      Quarks cq1 = (q<0 ? Q[-q] : AQ[q]); // cc hypothesis
-      q = secondQuark(part->particleID().pid());
-      Quarks q2 = (q<0 ? AQ[-q] : Q[q]);
-      Quarks cq2 = (q<0 ? Q[-q] : AQ[q]); // cc hypothesis
-      q = thirdQuark(part->particleID().pid());
-      Quarks q3 = (q<0 ? AQ[-q] : Q[q]);
-      Quarks cq3 = (q<0 ? Q[-q] : AQ[q]); // cc hypothesis
+  bool result = dispatch_variant( parms,
+    [&](const boost::blank&) { return true; },
+    [&](const stdhep_t& stdhep) {
+        bool result = (stdhep.id == part->particleID().pid());
+        if( conjugate ) {
+          int cc_id = conjugatedID( stdhep.id );
+          result = result || (cc_id == part->particleID().pid());
+        }
+        if( oscillate )  result = result && part->hasOscillated();
+        if( noscillate ) result = result && (!part->hasOscillated());
+        if( inverse )    result = !result;
+        if( stable ) {
+          result = result && std::any_of( part->endVertices().begin(),
+                                          part->endVertices().end(),
+                                          [](const auto& v)
+                                          { return !v->products().empty(); } );
+        }
+        return result;
+    },
+    [&]( const quark_t& quarks) {
+        static const Quarks Q[]  = { empty, down, up, strange, charm, bottom, top };
+        static const Quarks AQ[] = { empty, antidown, antiup, antistrange,
+                               anticharm, antibottom, antitop };
+        int q = firstQuark(part->particleID().pid());
+        Quarks q1 = (q<0 ? AQ[-q] : Q[q]);
+        Quarks cq1 = (q<0 ? Q[-q] : AQ[q]); // cc hypothesis
+        q = secondQuark(part->particleID().pid());
+        Quarks q2 = (q<0 ? AQ[-q] : Q[q]);
+        Quarks cq2 = (q<0 ? Q[-q] : AQ[q]); // cc hypothesis
+        q = thirdQuark(part->particleID().pid());
+        Quarks q3 = (q<0 ? AQ[-q] : Q[q]);
+        Quarks cq3 = (q<0 ? Q[-q] : AQ[q]); // cc hypothesis
 
-      // Shortcuts
-      Quarks pq1 = parms.quarks.q1;
-      Quarks pq2 = parms.quarks.q2;
-      Quarks pq3 = parms.quarks.q3;
+        // We don't care of the ordering so we check all permutations.
+        auto cmp3 = [](quark_t qqq1,quark_t qqq2 ) {
+            auto cmp = [](quark_t qqq1, Quarks q_1,Quarks q_2,Quarks q_3) {
+                return ( qqq1.q1 == q_1 || qqq1.q1 == empty ) &&
+                       ( qqq1.q2 == q_2 || qqq1.q2 == empty ) &&
+                       ( qqq1.q3 == q_3 || qqq1.q3 == empty );
+            };
+            return cmp(qqq1, qqq2.q1,qqq2.q2,qqq2.q3) ||
+                   cmp(qqq1, qqq2.q1,qqq2.q3,qqq2.q2) ||
+                   cmp(qqq1, qqq2.q2,qqq2.q1,qqq2.q3) ||
+                   cmp(qqq1, qqq2.q2,qqq2.q3,qqq2.q1) ||
+                   cmp(qqq1, qqq2.q3,qqq2.q1,qqq2.q2) ||
+                   cmp(qqq1, qqq2.q3,qqq2.q2,qqq2.q1) ;
+        };
 
-      // We don't care of the ordering so we check all permutations.
-      // q1, q2, q3
-      if( (pq1 == q1 || pq1 == empty) && (pq2 == q2 || pq2 == empty) &&
-          (pq3 == q3 || pq3 == empty) )
-        result = true;
-      // q1, q3, q2
-      else if( (pq1 == q1 || pq1 == empty) && (pq2 == q3 || pq2 == empty) &&
-               (pq3 == q2 || pq3 == empty) )
-        result = true;
-      // q2, q1, q3
-      else if( (pq1 == q2 || pq1 == empty) && (pq2 == q1 || pq2 == empty) &&
-               (pq3 == q3 || pq3 == empty) )
-        result = true;
-      // q2, q3, q1
-      else if( (pq1 == q2 || pq1 == empty) && (pq2 == q3 || pq2 == empty) &&
-               (pq3 == q1 || pq3 == empty) )
-        result = true;
-      // q3, q1, q2
-      else if( (pq1 == q3 || pq1 == empty) && (pq2 == q1 || pq2 == empty) &&
-               (pq3 == q2 || pq3 == empty) )
-        result = true;
-      // q3, q2, q1
-      else if( (pq1 == q3 || pq1 == empty) && (pq2 == q2 || pq2 == empty) &&
-               (pq3 == q1 || pq3 == empty) )
-        result = true;
-
-      // Should we check for the charge conjugated particle ?
-      if( !conjugate )
-        break; // No. Ok. Everything done.
-
-      // cq1, cq2, cq3
-      if( (pq1 == cq1 || pq1 == empty) && (pq2 == cq2 || pq2 == empty) &&
-          (pq3 == cq3 || pq3 == empty) )
-        result = true;
-      // cq1, cq3, cq2
-      else if( (pq1 == cq1 || pq1 == empty) && (pq2 == cq3 || pq2 == empty) &&
-               (pq3 == cq2 || pq3 == empty) )
-        result = true;
-      // cq2, cq1, cq3
-      else if( (pq1 == cq2 || pq1 == empty) && (pq2 == cq1 || pq2 == empty) &&
-               (pq3 == cq3 || pq3 == empty) )
-        result = true;
-      // cq2, cq3, cq1
-      else if( (pq1 == cq2 || pq1 == empty) && (pq2 == cq3 || pq2 == empty) &&
-               (pq3 == cq1 || pq3 == empty) )
-        result = true;
-      // cq3, cq1, cq2
-      else if( (pq1 == cq3 || pq1 == empty) && (pq2 == cq1 || pq2 == empty) &&
-               (pq3 == cq2 || pq3 == empty) )
-        result = true;
-      // cq3, cq2, cq1
-      else if( (pq1 == cq3 || pq1 == empty) && (pq2 == cq2 || pq2 == empty) &&
-               (pq3 == cq1 || pq3 == empty) )
-        result = true;
-    }
-    break;
-  case quantum:
-    // ******* NOT IMPLEMENTED YES *******
-    return false;
-  }
+        //                                         Should we check for the charge conjugated particle ?
+        return cmp3( quarks, quark_t{q1,q2,q3}) || ( conjugate && cmp3(quarks, quark_t{cq1,cq2,cq3}) );
+    },
+    [&](const quantum_t& ) {
+        // ******* NOT IMPLEMENTED YET *******
+        return false;
+    } );
   if( result && lift && collect )
     collect->push_back( const_cast<LHCb::MCParticle*>(part) );
   return result;
 }
 
-void MCDecayFinder::ParticleMatcher::conjugateID( void )
+void MCDecayFinder::ParticleMatcher::conjugateID( )
 {
-  if( type == id )
-    parms.stdHepID = conjugatedID( parms.stdHepID );
-  else if( type != notest )
-    throw DescriptorError("Charge conjugate only allowed"
-                          " on explicit particle or '?'");
+  dispatch_variant( parms,
+                    [](boost::blank&) { },
+                    [&](stdhep_t& stdhep) { stdhep.id = this->conjugatedID( stdhep.id ); },
+                    [](const auto&) {
+                        throw DescriptorError("Charge conjugate only allowed"
+                                              " on explicit particle or '?'");
+                    } );
 }
 
 int MCDecayFinder::ParticleMatcher::conjugatedID( int id )
 {
-  if(m_ppSvc)
-  {
+  if(m_ppSvc) {
     const LHCb::ParticleProperty * pp=m_ppSvc->find(LHCb::ParticleID(id));
-    if(pp)
-    {
-      const LHCb::ParticleProperty *anti=pp->antiParticle();
-      if(anti) return anti->pid().pid();
-      else return id; //assume it has no antiparticle
-
+    if(!pp) {
+            throw DescriptorError("A particle was not known in the prop service");
     }
-    throw DescriptorError("A particle was not known in the prop service");
-
+    const LHCb::ParticleProperty *anti=pp->antiParticle();
+    return anti ? anti->pid().pid() : id ; // if !anti, assume it has no antiparticle
   }
   //else warning() << "Particle property service not defined, guessing conjugate ID" << endmsg;
 
@@ -992,7 +896,7 @@ int MCDecayFinder::ParticleMatcher::conjugatedID( int id )
 bool MCDecayFinder::sanityCheck(const std::string & decay)
 {
   //check for more than one lot of '...'
-  std::size_t apos = decay.find("...");
+  auto apos = decay.find("...");
   if(apos!=std::string::npos)
   {
     apos++;
@@ -1007,26 +911,18 @@ bool MCDecayFinder::sanityCheck(const std::string & decay)
 
   }
     //check for mismatched brackets, first make the string with only brackets
-  std::string bstring="";
+  std::string bstring;
+  std::copy_if( decay.cbegin(), decay.cend(),
+                std::back_inserter(bstring),
+                [](const char& c) {
+                    return std::any_of( s_brackets.begin(), s_brackets.end(),
+                                        [&](const char& b) { return b==c; } );
+                } );
 
-  for(auto itd=decay.cbegin(); itd != decay.cend(); itd++)
-  {
-    for(auto itb=s_brackets.begin(); itb != s_brackets.end() && itd != decay.end(); itb++)
-	  {
-	    if(*itb == *itd)
-      {
-        bstring += *itb;
-        break;
-      }
-
-	  }
-
-  }
   //check the number of brackets matches up
   if (msgLevel(MSG::VERBOSE)) verbose() << "Checking brackets " << bstring << endmsg;
-  if(bstring.size()==0) return true;
-  if(bstring.size()%2!=0)
-  {
+  if(bstring.empty()) return true;
+  if(bstring.size()%2!=0) {
     warning() << "There is an uneven number of brackets in: " << bstring << endmsg;
     return false;
   }
@@ -1063,17 +959,15 @@ bool MCDecayFinder::sanityCheck(const std::string & decay)
     if (start==bstring.size()) break;
   }
   if (msgLevel(MSG::VERBOSE)) verbose() << "Removed matching brackets now: " << bstring << endmsg;
-  if(bstring.size()>0)
-  {
+  if(!bstring.empty()) {
     warning() << "There are mismatched brackets in this decay descriptor. The non-matching brackets are: " << bstring << endmsg;
     return false;
-      }
+  }
   //now check for at least one comma between all curly brackets
 
   bstring=decay;
 
-  while(bstring.size()!=0)
-  {
+  while(!bstring.empty()) {
     const unsigned int start=bstring.size();
 
     //find the first closing bracket }
