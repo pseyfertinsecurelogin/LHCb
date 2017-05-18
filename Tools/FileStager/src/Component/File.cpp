@@ -9,7 +9,6 @@
 
 // boost
 #include <boost/cstdint.hpp>
-#include <boost/foreach.hpp>
 #include <boost/regex.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
@@ -53,12 +52,6 @@ File::File( const string& original,
             const string& temporary )
    : m_original( original ), m_command( command ), m_remote( remote ),
      m_temporary( temporary ), m_staged( false ), m_good( false )
-{
-
-}
-
-//=============================================================================
-File::~File()
 {
 
 }
@@ -147,7 +140,7 @@ boost::uintmax_t get_size( const string& command, const unsigned int lineno,
       if (lineno >= lines.size()) {
          string error = "Invalid output from " + command;
          stringstream s;
-         s << "Could not get size from command output line " 
+         s << "Could not get size from command output line "
            << lineno << ".\n";
          for (vector<string>::const_iterator it = lines.begin(), end = lines.end();
               it != end; ++ it) {
@@ -175,7 +168,7 @@ boost::uintmax_t get_size( const string& command, const unsigned int lineno,
          string error = "Invalid output from " + command;
          stringstream s;
          s << "Could not get size from command output line " << line
-           << " as the number at position " << matchno << ":" 
+           << " as the number at position " << matchno << ":"
            << numbers[matchno] << ".\n";
          throw GaudiException( error, s.str(), StatusCode::FAILURE );
       }

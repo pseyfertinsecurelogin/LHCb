@@ -1,4 +1,3 @@
-// $Id: StagedStreamTool.h,v 1.3 2007/01/15 16:48:21 hmd Exp $
 #ifndef STAGINGSTREAMTOOL_H
 #define STAGINGSTREAMTOOL_H 1
 
@@ -37,8 +36,6 @@ public:
                       const std::string& name,
                       const IInterface* parent );
 
-   virtual ~StagedStreamTool( ); ///< Destructor
-
    StatusCode initialize() override;
 
    StatusCode addStreams(const StreamSpecs &) override;
@@ -55,15 +52,10 @@ public:
       COLLECTION
    };
 
-   class Descriptor {
+   class Descriptor final {
    public:
       Descriptor( Type type, const std::string& descriptor )
          : m_type( type ), m_descriptor( descriptor )
-      {
-
-      }
-
-      virtual ~Descriptor()
       {
 
       }
@@ -86,9 +78,9 @@ public:
    };
 
    /// Fake copy constructor (never implemented).
-   StagedStreamTool(const StagedStreamTool&);
+   StagedStreamTool(const StagedStreamTool&) = delete;
    /// Fake assignment operator (never implemented).
-   StagedStreamTool& operator= (const StagedStreamTool&);
+   StagedStreamTool& operator= (const StagedStreamTool&) = delete;
 
    // Services
    SmartIF<IFileStagerSvc>  m_stagerSvc;

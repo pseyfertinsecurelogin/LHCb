@@ -19,12 +19,10 @@ class StageManager;
  *   @version 1.0
  *
  */
-class GAUDI_API IFileStagerSvc : virtual public IInterface
+struct GAUDI_API IFileStagerSvc : extend_interfaces<IInterface>
 {
-public:
-
    /// InterfaceID
-   DeclareInterfaceID( IFileStagerSvc, 1, 0 );
+   DeclareInterfaceID( IFileStagerSvc, 2, 0 );
 
    virtual StatusCode getLocal( const std::string& filename, std::string& local ) = 0;
 
