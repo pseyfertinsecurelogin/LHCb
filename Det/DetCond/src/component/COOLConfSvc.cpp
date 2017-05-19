@@ -57,7 +57,7 @@ namespace
      * @author Marco Clemencic
      * @date   2007-05-02
      */
-    class Comparator: public std::binary_function<const dbDesc_t*,const dbDesc_t*,bool>
+    class Comparator
     {
       typedef boost::rand48 RandomGenType;
       typedef RandomGenType::result_type WeightType;
@@ -104,7 +104,7 @@ namespace
       {}
 
       /// Main function
-      result_type operator() (first_argument_type a, second_argument_type b) const
+      bool operator() (const dbDesc_t* a, const dbDesc_t* b) const
       {
         return getWeight(a->serviceParameter(a->serverNameParam()))
                <
@@ -180,10 +180,6 @@ COOLConfSvc::COOLConfSvc(const std::string& name, ISvcLocator* svcloc):
   declareProperty("CoralConnectionRetrialTimeOut", m_retrialTimeOut = 15*60,
                   "How long to keep retrying before giving up (in seconds).");
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-COOLConfSvc::~COOLConfSvc() {}
 
 //=============================================================================
 // Access to COOL DatabaseSvc

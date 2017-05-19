@@ -22,6 +22,10 @@ namespace cool {
   class IRecord;
 }
 
+// This is needed otherwise the bool operator<(const IOV&,const IOV&) does
+// not find operator<(Gaudi::Time,Gaudi::Time). -- remove once gaudi/Gaudi!290 is merged
+namespace Gaudi { using ::operator<; }
+
 /** @class ICondDBReader ICondDBReader.h DetCond/ICondDBReader.h
  *
  *  Interface to retrieve data from the conditions database.
@@ -33,9 +37,6 @@ class ICondDBReader : virtual public ICondDBInfo {
 public:
   /// InterfaceID
   DeclareInterfaceID(ICondDBReader, 2, 1);
-
-  /// virtual destructor
-  virtual ~ICondDBReader() {}
 
   typedef std::shared_ptr<const cool::IRecord> DataPtr;
 
@@ -50,8 +51,8 @@ public:
     /// Boundaries of the interval.
     Gaudi::Time since, until;
     /// Define a simple order between two IOV instances.
-    inline bool operator<(const IOV& rhs) const {
-      return since < rhs.since;
+    friend bool operator<(const IOV& lhs, const IOV& rhs) {
+      return std::tie(lhs.since,lhs.until) < std::tie(rhs.since,rhs.until);
     }
   };
 
