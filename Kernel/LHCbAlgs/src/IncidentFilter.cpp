@@ -42,9 +42,7 @@ namespace Gaudi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-10-05
    */
-  class IncidentFilter
-    : public            GaudiAlgorithm
-    , public virtual IIncidentListener
+  class IncidentFilter : public extends<GaudiAlgorithm, IIncidentListener>
   {
     // ========================================================================
     friend class AlgFactory<Gaudi::IncidentFilter> ;
@@ -69,17 +67,13 @@ namespace Gaudi
     IncidentFilter
     ( const std::string& name ,
       ISvcLocator*       pSvc ) ;                       // standard constructor
-    /// virtual destructor
-    virtual ~IncidentFilter () = default ;              //   virtual destructor
     // ========================================================================
   private:
     // ========================================================================
-    /// the default constructor is disabled
-    IncidentFilter  () ;                              // no default constructor
     /// the copy constructor is disabled
-    IncidentFilter  ( const IncidentFilter& ) ;         //  no copy constructor
+    IncidentFilter  ( const IncidentFilter& ) = delete; //  no copy constructor
     /// the assignement operator is disabled
-    IncidentFilter& operator=( const IncidentFilter& ); //       no assignement
+    IncidentFilter& operator=( const IncidentFilter& )= delete;//no assignement
     // ========================================================================
   protected:
     // ========================================================================
@@ -97,8 +91,8 @@ namespace Gaudi
     // ========================================================================
   private:
     // ========================================================================
-    bool                     m_veto          ;
-    bool                     m_decision      ;
+    bool                     m_veto     = false;
+    bool                     m_decision = false;
     //
     typedef std::vector<std::string> LIST    ;
     LIST m_incidents     ;
@@ -133,17 +127,6 @@ namespace Gaudi
     IncidentVeto
     ( const std::string& name ,
       ISvcLocator*       pSvc ) ;                       // standard constructor
-    /// virtual destructor
-    virtual ~IncidentVeto () = default ;                //   virtual destructor
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    IncidentVeto  () ;                              // no default constructor
-    /// the copy constructor is disabled
-    IncidentVeto  ( const IncidentVeto& ) ;         //  no copy constructor
-    /// the assignement operator is disabled
-    IncidentVeto& operator=( const IncidentVeto& ); //       no assignement
     // ========================================================================
   } ; //                                            end of class IncidentFilter
   // ==========================================================================
@@ -156,12 +139,7 @@ namespace Gaudi
 Gaudi::IncidentFilter::IncidentFilter
 ( const std::string& name ,
   ISvcLocator*       pSvc )                        // standard constructor
-  : GaudiAlgorithm  ( name , pSvc )
-//
-  , m_veto          ( false )
-  , m_decision      ( false )
-  , m_incidents     ( )
-  , m_old_incidents ( )
+  : base_class  ( name , pSvc )
 //
 {
   // ==========================================================================
@@ -178,12 +156,12 @@ Gaudi::IncidentFilter::IncidentFilter
 StatusCode Gaudi::IncidentFilter::initialize ()
 {
   //
-  StatusCode sc = GaudiAlgorithm::initialize() ;
+  StatusCode sc = base_class::initialize() ;
   if ( sc.isFailure() ) { return sc ; }
   //
   subscribe () ;
   //
-  return StatusCode::SUCCESS ;
+  return sc;
 }
 // ============================================================================
 // finalize
@@ -193,7 +171,7 @@ StatusCode Gaudi::IncidentFilter::finalize ()
   //
   unsubscribe () ;
   //
-  return GaudiAlgorithm::finalize () ;
+  return base_class::finalize () ;
 }
 // ============================================================================
 // subscribe incidents
@@ -243,7 +221,7 @@ void Gaudi::IncidentFilter::handler_1 ( ::Property&  /* p */ )
   //
   if ( m_old_incidents == m_incidents                ) { return ; }
   //
-  // unsibscribe old incidents
+  // unsubscribe old incidents
   IIncidentSvc* isvc = svc<IIncidentSvc>( "IncidentSvc" ) ;
   //
   for ( const auto & item :  m_old_incidents )
