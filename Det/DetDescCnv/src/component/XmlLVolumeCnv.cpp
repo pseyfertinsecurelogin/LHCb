@@ -21,7 +21,15 @@
 
 #include "XmlLVolumeCnv.h"
 
+namespace {
+    template <typename Type>
+    bool is_any_of(const XMLCh* tag, std::initializer_list<Type> c) {
+        return std::any_of( begin(c), end(c),
+                            [&](const auto& i)
+                            { return 0 == xercesc::XMLString::compareString(i,tag); } );
 
+    }
+}
 // -----------------------------------------------------------------------
 // Instantiation of a static factory class used by clients to create
 // instances of this service
@@ -174,9 +182,9 @@ XmlLVolumeCnv::~XmlLVolumeCnv () {
 // Tests whether the tag denotes a boolean solid
 // -----------------------------------------------------------------------
 bool XmlLVolumeCnv::isBooleanSolid (const XMLCh* tag) const {
-  return 0 == xercesc::XMLString::compareString(unionString, tag) ||
-         0 == xercesc::XMLString::compareString(subtractionString, tag) ||
-         0 == xercesc::XMLString::compareString(intersectionString, tag);
+  return is_any_of( tag, { std::cref(unionString),
+                           std::cref(subtractionString),
+                           std::cref(intersectionString) } );
 } // end isBooleanSolid
 
 
@@ -184,13 +192,10 @@ bool XmlLVolumeCnv::isBooleanSolid (const XMLCh* tag) const {
 // Tests whether the tag denotes a simple solid
 // -----------------------------------------------------------------------
 bool XmlLVolumeCnv::isSimpleSolid (const XMLCh* tag) const {
-  return 0 == xercesc::XMLString::compareString(boxString, tag) ||
-         0 == xercesc::XMLString::compareString(trdString, tag) ||
-         0 == xercesc::XMLString::compareString(trapString, tag) ||
-         0 == xercesc::XMLString::compareString(consString, tag) ||
-         0 == xercesc::XMLString::compareString(polyconeString, tag) ||
-         0 == xercesc::XMLString::compareString(tubsString, tag) ||
-         0 == xercesc::XMLString::compareString(sphereString, tag) ;
+  return is_any_of( tag, { std::cref(boxString), std::cref(trdString),
+                           std::cref(trapString), std::cref(consString),
+                           std::cref(polyconeString), std::cref(tubsString),
+                           std::cref(sphereString) } );
 } // end isSimpleSolid
 
 
@@ -206,12 +211,9 @@ bool XmlLVolumeCnv::isSolid (const XMLCh* tag) const {
 // Tests whether the tag denotes a transformation
 // -----------------------------------------------------------------------
 bool XmlLVolumeCnv::isTransformation (const XMLCh* tag) const {
-  return 0 == xercesc::XMLString::compareString(transformationString, tag) ||
-         0 == xercesc::XMLString::compareString(posXYZString, tag) ||
-         0 == xercesc::XMLString::compareString(posRPhiZString, tag) ||
-         0 == xercesc::XMLString::compareString(posRThPhiString, tag) ||
-         0 == xercesc::XMLString::compareString(rotXYZString, tag) ||
-         0 == xercesc::XMLString::compareString(rotAxisString, tag);
+  return is_any_of( tag, { std::cref(transformationString), std::cref(posXYZString),
+                           std::cref(posRPhiZString), std::cref(posRThPhiString),
+                           std::cref(rotXYZString), std::cref(rotAxisString) } );
 } // end isTransformation
 
 
@@ -219,9 +221,9 @@ bool XmlLVolumeCnv::isTransformation (const XMLCh* tag) const {
 // Tests whether the tag denotes a parametrized physical volume
 // -----------------------------------------------------------------------
 bool XmlLVolumeCnv::isParamphysvol (const XMLCh* tag) const {
-  return 0 == xercesc::XMLString::compareString(paramphysvolString, tag) ||
-         0 == xercesc::XMLString::compareString(paramphysvol2DString, tag) ||
-         0 == xercesc::XMLString::compareString(paramphysvol3DString, tag);
+  return is_any_of(tag, { std::cref(paramphysvolString),
+                          std::cref(paramphysvol2DString),
+                          std::cref(paramphysvol3DString) } );
 } // end isTransformation
 
 
@@ -284,11 +286,9 @@ std::string XmlLVolumeCnv::locateElement (const xercesc::DOMElement* element) co
 // Create the name of a physical volume
 // -----------------------------------------------------------------------
 std::string XmlLVolumeCnv::createPvName (const PVolumeItem& pv) const {
-  if (!pv.indexed) return pv.physvolName;
   // builds the actual name of the volume
-  std::ostringstream ost;
-  ost << pv.physvolName << ":" << pv.tag;
-  return ost.str();
+  return pv.indexed ? pv.physvolName + ":" + std::to_string(pv.tag)
+                    : pv.physvolName;
 }
 
 // -----------------------------------------------------------------------
@@ -318,7 +318,7 @@ StatusCode XmlLVolumeCnv::internalCreateObj (xercesc::DOMElement* element,
   unsigned int i = 0;
   while (i < childNodes->getLength() &&
          childNodes->item(i)->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) {
-    i += 1;
+    ++i;
   }
 
   // if no child, return
@@ -337,11 +337,11 @@ StatusCode XmlLVolumeCnv::internalCreateObj (xercesc::DOMElement* element,
     // deal with the solid itself
     solid = dealWithSolid (childElement);
     // finds the next child
-    i += 1;
+    ++i;
     while (i < childNodes->getLength() &&
            childNodes->item(i)->getNodeType() !=
            xercesc::DOMNode::ELEMENT_NODE) {
-      i += 1;
+      ++i;
     }
     // if there is more children, try to see if it is a transformation
     if (i < childNodes->getLength()) {
@@ -366,7 +366,7 @@ StatusCode XmlLVolumeCnv::internalCreateObj (xercesc::DOMElement* element,
         while (i < childNodes->getLength() &&
                childNodes->item(i)->getNodeType() !=
                xercesc::DOMNode::ELEMENT_NODE) {
-          i += 1;
+          ++i;
         }
       }
     }
@@ -429,8 +429,7 @@ StatusCode XmlLVolumeCnv::internalCreateObj (xercesc::DOMElement* element,
       // deals with a surface and adds it to the logical volume
       std::string address = dealWithSurf(childElement);
       long linkID = dataObj->linkMgr()->addLink(address, nullptr);
-      SmartRef<Surface> reference (dataObj.get(), linkID);
-      dataObj->surfaces().push_back(reference);
+      dataObj->surfaces().emplace_back(dataObj.get(), linkID);
     } else {
       // Something goes wrong, does it?
       MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -444,11 +443,11 @@ StatusCode XmlLVolumeCnv::internalCreateObj (xercesc::DOMElement* element,
     }
 
     //XmlLVolumeCnv:: gets the next child
-    i += 1;
+    ++i;
     while (i < childNodes->getLength() &&
            childNodes->item(i)->getNodeType() !=
            xercesc::DOMNode::ELEMENT_NODE) {
-      i += 1;
+      ++i;
     }
   }
   refpObject = dataObj.release();
@@ -479,7 +478,7 @@ XmlLVolumeCnv::dealWithPhysvol(const xercesc::DOMElement* element) const {
     while (i < childNodes->getLength() &&
            childNodes->item(i)->getNodeType() !=
            xercesc::DOMNode::ELEMENT_NODE) {
-      i += 1;
+      ++i;
     }
     // is there is one, deal with the transformation
     if (i < childNodes->getLength()) {
@@ -490,7 +489,7 @@ XmlLVolumeCnv::dealWithPhysvol(const xercesc::DOMElement* element) const {
   // raise an error message
   while (i < childNodes->getLength() &&
          childNodes->item(i)->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) {
-    i += 1;
+    ++i;
   }
   if (i < childNodes->getLength()) {
     MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -525,7 +524,7 @@ XmlLVolumeCnv::dealWithPhysvol(const xercesc::DOMElement* element) const {
   result.indexed = indexed;
   result.logvolName = logvolAttribute;
   result.transformation = std::move(transformation);
-  if ( 0 != m_numeral.size() ) {
+  if ( !m_numeral.empty() ) {
     replaceTagInString( result.logvolName );
     replaceTagInString( result.physvolName );
   }
@@ -623,7 +622,7 @@ XmlLVolumeCnv::dealWithParamphysvol(const xercesc::DOMElement* element,
   unsigned int i = 0;
   while (i < childNodes->getLength() &&
          childNodes->item(i)->getNodeType() != xercesc::DOMNode::ELEMENT_NODE) {
-    i += 1;
+    ++i;
   }
 
   // is there is one, it should be a physvol or a paramphysvol
@@ -670,7 +669,7 @@ XmlLVolumeCnv::dealWithParamphysvol(const xercesc::DOMElement* element,
       while (j < childNodes->getLength() &&
              childNodes->item(j)->getNodeType() !=
              xercesc::DOMNode::ELEMENT_NODE) {
-        j += 1;
+        ++j;
       }
       // is there is one child, deal with the transformation
       if (j < childNodes->getLength()) {
@@ -683,7 +682,7 @@ XmlLVolumeCnv::dealWithParamphysvol(const xercesc::DOMElement* element,
     while (j < childNodes->getLength() &&
            childNodes->item(j)->getNodeType()
            != xercesc::DOMNode::ELEMENT_NODE) {
-      j += 1;
+      ++j;
     }
     if (j < childNodes->getLength()) {
       MsgStream log(msgSvc(), "XmlLVolumeCnv" );
@@ -979,11 +978,11 @@ XmlLVolumeCnv::dealWithBooleanChildren(const xercesc::DOMElement* element) const
         auto solid = dealWithSolid(childElement);
         // see if there is a transformation afterwards
         std::unique_ptr<Gaudi::Transform3D> transformation;
-        i += 1;
+        ++i;
         while (i < childNodes->getLength() &&
                childNodes->item(i)->getNodeType() !=
                xercesc::DOMNode::ELEMENT_NODE) {
-          i += 1;
+          ++i;
         }
         if (i < childNodes->getLength()) {
           childNode = childNodes->item(i);
@@ -1003,10 +1002,10 @@ XmlLVolumeCnv::dealWithBooleanChildren(const xercesc::DOMElement* element) const
             << " : this " << tagName << " makes no sense to a boolean solid. "
             << "A solid is needed here. It will be ignored" << endmsg;
         xercesc::XMLString::release(&tagNameString);
-        i += 1;
+        ++i;
       }
     } else {
-      i += 1;
+      ++i;
     }
   }
   // returns
@@ -1532,11 +1531,11 @@ XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element,
   xercesc::DOMElement* childElement = (xercesc::DOMElement*) childNode;
 
   // put index on the next node
-  *index += 1;
+  ++*index;
   while (*index < childNodes->getLength() &&
          childNodes->item(*index)->getNodeType() !=
          xercesc::DOMNode::ELEMENT_NODE) {
-    *index += 1;
+    ++*index;
   }
 
   // the result
@@ -1602,11 +1601,11 @@ XmlLVolumeCnv::dealWithTransformation(const xercesc::DOMElement* element,
 
     // if needed, put index on the next node
     if (foundRotation) {
-      *index += 1;
+      ++*index;
       while (*index < childNodes->getLength() &&
              childNodes->item(*index)->getNodeType() !=
              xercesc::DOMNode::ELEMENT_NODE) {
-        *index += 1;
+        ++*index;
       }
     }
   }

@@ -1,4 +1,3 @@
-// $Id: FilterByRunEvent.h,v 1.4 2008-12-09 13:17:31 spradlin Exp $
 #ifndef FILTERBYRUNEVENT_H
 #define FILTERBYRUNEVENT_H 1
 
@@ -58,8 +57,6 @@ public:
 
   /// Standard constructor
   FilterByRunEvent( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~FilterByRunEvent( ) = default; ///< Destructor
 
   StatusCode execute() override;    ///< Algorithm execution
 

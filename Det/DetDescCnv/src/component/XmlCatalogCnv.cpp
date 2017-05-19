@@ -108,7 +108,7 @@ StatusCode XmlCatalogCnv::i_createObj (xercesc::DOMElement* /*element*/,
                                        DataObject*& refpObject) {
   // creates an object for the node found
   refpObject = new DataObject();
-  
+
   // returns
   return StatusCode::SUCCESS;
 } // end i_createObj
@@ -203,13 +203,13 @@ StatusCode XmlCatalogCnv::i_fillObj (xercesc::DOMElement* childElement,
   // We will create an address for this element
   IOpaqueAddress* xmlAddr = 0;
   // take care whether it is a reference or not
-  XMLCh* tagNameEnd = new XMLCh[4];
+  XMLCh tagNameEnd[4];
   xercesc::XMLString::subString
     (tagNameEnd,
      tagName,
      xercesc::XMLString::stringLen(tagName) - 3,
      xercesc::XMLString::stringLen(tagName));
-  
+
   // in order to handle properly both XML files and CondDB XML strings
   // we use always the "createAddressForHref" system
   std::string referenceValue;
@@ -222,8 +222,6 @@ StatusCode XmlCatalogCnv::i_fillObj (xercesc::DOMElement* childElement,
   }
   // creates the address
   xmlAddr = createAddressForHref (referenceValue, clsID, address);
-
-  delete[] tagNameEnd;
 
   StatusCode status = StatusCode::FAILURE;
   SmartIF<IDataManagerSvc> mgr( dataProvider() );
@@ -239,10 +237,10 @@ StatusCode XmlCatalogCnv::i_fillObj (xercesc::DOMElement* childElement,
     xmlAddr->release();
     xmlAddr = 0;
     StatusCode stcod = ERROR_ADDING_TO_TS;
-    throw XmlCnvException 
+    throw XmlCnvException
       ("Error adding registry entry to detector transient store", stcod);
   }
-  
+
   // returns
   return StatusCode::SUCCESS;
 } // end i_fillObj
@@ -260,16 +258,16 @@ void XmlCatalogCnv::checkConverterExistence (const CLID& clsID) {
         << "class ID "
         << clsID << ", proper converter not found" << endmsg;
     throw XmlCnvException ("Unknown class ID", StatusCode(INVALID_CLASS_ID));
-    
+
   }
-#if 0 
+#if 0
   bool cnvExists = false;
   ICnvManager* cnvMgr;
-  
+
   StatusCode stcod = serviceLocator()->queryInterface (IID_ICnvManager,
                                                        (void **)&cnvMgr);
   if (stcod.isFailure()) {
-    stcod.setCode (CANT_QUERY_INTERFACE);  
+    stcod.setCode (CANT_QUERY_INTERFACE);
     throw XmlCnvException ("Query to ICnvManager interface failed", stcod);
   }
 
@@ -282,9 +280,9 @@ void XmlCatalogCnv::checkConverterExistence (const CLID& clsID) {
     log << MSG::ERROR
         << "class ID "
         << clsID << ", proper converter not found" << endmsg;
-    stcod.setCode (INVALID_CLASS_ID);  
+    stcod.setCode (INVALID_CLASS_ID);
     throw XmlCnvException ("Unknown class ID", stcod);
-  } 
+  }
 #endif
 }
 

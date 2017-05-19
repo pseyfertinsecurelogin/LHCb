@@ -55,7 +55,7 @@ namespace Rich
     RadIntersection( ) { }
 
     /// Default destructor
-    ~RadIntersection( ) = default; 
+    ~RadIntersection( ) = default;
 
     /// Default Copy Constructor
     RadIntersection( const RadIntersection& ) = default;
@@ -240,11 +240,8 @@ namespace Rich
     private: // utility classes
 
       /// Functor to sort RichSmartIDs by Rich then panel numbers
-      class SortByZ
-        : std::binary_function< const Rich::RadIntersection&, const Rich::RadIntersection&, bool >
+      struct SortByZ
       {
-
-      public:
 
         /** Sort operator for the RadIntersection
          *
@@ -255,7 +252,7 @@ namespace Rich
          *
          *  @return bool indicating if i1 should be listed before i2
          */
-        inline bool operator() ( const Rich::RadIntersection& i1, 
+        inline bool operator() ( const Rich::RadIntersection& i1,
                                  const Rich::RadIntersection& i2 ) const
         {
           return ( i1.entryPoint().z() < i2.entryPoint().z() );
@@ -274,8 +271,8 @@ namespace Rich
       /// Sort the vector of intersections into order increasing Z position
       inline static void sortByZ( Rich::RadIntersection::Vector & intersections )
       {
-        std::stable_sort( intersections.begin(), 
-                          intersections.end(), 
+        std::stable_sort( intersections.begin(),
+                          intersections.end(),
                           Rich::RadIntersection::Sorter::SortByZ() );
       }
 

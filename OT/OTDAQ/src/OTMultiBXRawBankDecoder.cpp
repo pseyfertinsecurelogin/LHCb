@@ -82,9 +82,12 @@ protected:
   StatusCode decodeAll() const ;
 
 private:
-  ToolHandle<IOTRawBankDecoder> m_decoder ;
-  std::vector<std::string> m_rawEventLocations ;
-  bool m_selectEarliestHit ;
+  ToolHandle<IOTRawBankDecoder> m_decoder { "OTRawBankDecoder/OTSingleBXRawBankDecoder" };
+  Gaudi::Property<std::vector<std::string>> m_rawEventLocations {
+      this, "RawEventLocations", {LHCb::RawEventLocation::Default,
+		                          "Prev1/DAQ/RawEvent",
+		                          "Next1/DAQ/RawEvent"} };
+  Gaudi::Property<bool> m_selectEarliestHit { this, "SelectEarliestHit",true} ;
   mutable std::unique_ptr<LocalHelpers::DetectorHitData> m_hitdata ;
 };
 
@@ -132,24 +135,11 @@ DECLARE_TOOL_FACTORY( OTMultiBXRawBankDecoder )
 // Standard constructor, initializes variables
 //=============================================================================
 OTMultiBXRawBankDecoder::OTMultiBXRawBankDecoder( const std::string& type,
-                                    const std::string& name,
-                                    const IInterface* parent )
-  : base_class ( type, name , parent ),
-    m_decoder("OTRawBankDecoder/OTSingleBXRawBankDecoder")
+                                                  const std::string& name,
+                                                  const IInterface* parent )
+: base_class ( type, name , parent )
 {
-  declareInterface<IOTRawBankDecoder>(this);
   declareProperty("RawBankDecoder",m_decoder);
-  declareProperty("RawEventLocations",m_rawEventLocations=
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L
-		  {LHCb::RawEventLocation::Default,
-		   "Prev1/DAQ/RawEvent",
-		   "Next1/DAQ/RawEvent"}
-#else
-                  boost::assign::list_of(LHCb::RawEventLocation::Default)
-                  ("Prev1/DAQ/RawEvent")("Next1/DAQ/RawEvent")
-#endif
-		  );
-  declareProperty("SelectEarliestHit",m_selectEarliestHit=true) ;
 }
 //=============================================================================
 
