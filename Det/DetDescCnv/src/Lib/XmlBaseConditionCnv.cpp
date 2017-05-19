@@ -346,7 +346,6 @@ const CLID& XmlBaseConditionCnv::classID() {
 
 
 #include "boost/algorithm/string/trim.hpp"
-
 namespace {
   /** helper function to convert 1d or 2d histogram from the string
    *  representation (custom or root xml) and add it to the Condition
@@ -370,7 +369,7 @@ namespace {
 
     bool _old_st = histo.AddDirectoryStatus();
     histo.AddDirectory( kFALSE );
-    histo.SetDirectory( NULL   );
+    histo.SetDirectory( nullptr );
 
     boost::algorithm::trim( value ) ;
     StatusCode sc = Gaudi::Parsers::parse( histo, value );
