@@ -99,7 +99,7 @@ struct TestResults {
  */
 bool hasInstructionSet(ISet lvl)
 {
-    int level = instrset_detect();
+    const auto level = instrset_detect();
     return (level >= static_cast<int>(lvl));
 }
 
