@@ -9,6 +9,7 @@
   - L0DUFromRawTool   : implement data name aliases
   - Configuration.py  : configure L0DUAlg for Herschel usage when EmulateHC=True
   
+
 ! 2016-06-06 - Olivier Deschamps
   - L0DUFromRawTool : add an option to mimic a sequence of consecutive events 
                       -> Overwrite SumEtPrev1/Prev2 with the t0/Prev1 data from the previous read event
