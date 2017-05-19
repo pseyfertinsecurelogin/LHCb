@@ -15,17 +15,6 @@
 // Declaration of the tool Factory
 DECLARE_TOOL_FACTORY( OTReadOutWindow )
 
-OTReadOutWindow::OTReadOutWindow(const std::string& type,
-                                 const std::string& name,
-                                 const IInterface* parent) :
-  base_class( type, name, parent )
-{
-  declareInterface<IOTReadOutWindow>(this);
-  declareProperty("startReadoutGate",  m_startReadOutGate= { 28.0*Gaudi::Units::ns,
-                                                             30.0*Gaudi::Units::ns,
-                                                             32.0*Gaudi::Units::ns });
-  declareProperty("sizeOfReadoutGate", m_sizeOfReadOutGate = 75.0*Gaudi::Units::ns);
-}
 
 StatusCode OTReadOutWindow::initialize()
 {
