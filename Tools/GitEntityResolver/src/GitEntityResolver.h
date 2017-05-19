@@ -21,10 +21,7 @@
 
 // this should be defined in GaudiKernel/Time.h, but the version there is not
 // found by ADL
-namespace Gaudi
-{
-  inline bool operator<( const Time& t1, const Time& t2 ) { return t1.ns() < t2.ns(); }
-}
+namespace Gaudi { using ::operator<; }
 
 /** Allow use of a Git repository as a source of XML files for XercesC.
  *
