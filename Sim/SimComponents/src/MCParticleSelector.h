@@ -45,8 +45,8 @@ private: // data
   Gaudi::Property<double> m_pMax { this,"pMax", boost::numeric::bounds<double>::highest() };  ///< Maximum momentum
   Gaudi::Property<double> m_betaGammaMin { this,"betaGammaMin", 0.0 };                                        ///< Minimum cut on beta * gamma
 
-  Gaudi::Property<double> m_etaMax { this,"etaMin", -boost::numeric::bounds<double>::highest() };  ///< Max eta cut
-  Gaudi::Property<double> m_etaMin { this,"etaMax",  boost::numeric::bounds<double>::highest() };  ///< Min eta cut
+  Gaudi::Property<double> m_etaMin { this,"etaMin", -boost::numeric::bounds<double>::highest() };  ///< Min eta cut
+  Gaudi::Property<double> m_etaMax { this,"etaMax",  boost::numeric::bounds<double>::highest() };  ///< Max eta cut
 
   Gaudi::Property<bool> m_selCharged { this,"SelectChargedParticles", true };  ///< Select charged particles
   Gaudi::Property<bool> m_selNeutral { this,"SelectNeutralParticles", true };  ///< Select neutral particles

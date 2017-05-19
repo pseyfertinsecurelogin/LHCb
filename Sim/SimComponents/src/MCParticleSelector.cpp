@@ -14,7 +14,7 @@ StatusCode MCParticleSelector::initialize()
   if ( sc.isFailure() ) { return sc; }
 
   // printout selection criteria
-  info() << "MCParticle Momentum cut     : " << m_pMin.value()/Gaudi::Units::GeV << " GeV/c < P < " << m_pMax.value() << " GeV/c" << endmsg;
+  info() << "MCParticle Momentum cut     : " << m_pMin.value()/Gaudi::Units::GeV << " GeV/c < P < " << m_pMax.value()/Gaudi::Units::GeV << " GeV/c" << endmsg;
   info() << "           Beta * gamma cut : " << m_betaGammaMin.value() << " < beta*gamma" << endmsg;
   info() << "           Eta cut          : " << m_etaMin.value() << " < P < " << m_etaMax.value() << endmsg;
   if ( m_rejectElectrons ) info() << "           Will reject electrons" << endmsg;
