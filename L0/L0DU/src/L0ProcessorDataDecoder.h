@@ -32,6 +32,7 @@ private:
   LHCb::L0ProcessorDatas* m_dataContainer;
   bool   m_ok;
   IL0CondDBProvider* m_condDB;
+  bool   m_hasHC;
 };
 
 #endif // L0DU_L0PROCESSORDATADECODER_H

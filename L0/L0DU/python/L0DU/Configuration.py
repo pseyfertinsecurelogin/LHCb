@@ -210,6 +210,7 @@ class L0Conf(LHCbConfigurableUser) :
         l0processorSeq.Members+=[ l0calo, l0muon, l0pileup ]
         if self.getProp("EmulateHC") :
             l0processorSeq.Members += l0hc_seq
+            l0du.AddHerschel = True
         l0emulatorSeq.Members+=[ l0processorSeq ]
         # Second : run L0DU emulator
         l0emulatorSeq.Members+=[l0du]

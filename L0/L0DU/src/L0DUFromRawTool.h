@@ -132,7 +132,15 @@ inline void L0DUFromRawTool::encode(const std::string& name, unsigned int data ,
 }
 
 inline void L0DUFromRawTool::dataMap(const std::string& name, unsigned int data,double scale){
-  if(m_fill) m_dataMap[name]=std::make_pair(data,scale);
+  if(m_fill){
+    m_dataMap[name]=std::make_pair(data,scale);
+    std::map<std::string,std::string>::const_iterator it=L0DUBase::PredefinedData::Alias.find(name);
+    // add the alias in the embededd map
+    if( it != L0DUBase::PredefinedData::Alias.end()){
+      std::string alias = it->second;  
+      m_dataMap[alias]=std::make_pair(data,scale);
+    }
+  } 
 }
 
 inline bool L0DUFromRawTool::nextData(){
