@@ -21,8 +21,8 @@ L0ProcessorDataDecoder::L0ProcessorDataDecoder
   const IInterface*  parent ) 
   : GaudiTool ( type, name , parent )
   , m_dataContainer(NULL)
-  , m_ok(false)
   , m_condDB(NULL)
+  , m_ok(false)
   , m_hasHC(false)
 {
   declareInterface<IL0ProcessorDataDecoder> ( this ) ;  
@@ -60,13 +60,13 @@ bool L0ProcessorDataDecoder::setL0ProcessorData(std::vector<LHCb::L0ProcessorDat
   m_ok=true;
   for(std::vector<LHCb::L0ProcessorDatas*>::iterator it=datass.begin();datass.end()!=it;it++){
     LHCb::L0ProcessorDatas* datas = *it;
-    if(NULL == datas){
+    if(nullptr == datas){
       Warning("Data container points to NULL ",StatusCode::SUCCESS).ignore();
       m_ok = false;
       break;
     }
     for(LHCb::L0ProcessorDatas::iterator itt=datas->begin();datas->end()!=itt;itt++){
-      if( m_dataContainer->object( (*itt)->key() ) != NULL ){
+      if( m_dataContainer->object( (*itt)->key() ) != nullptr ){
         Warning("Fiber "+Gaudi::Utils::toString((*itt)->key())+" is used twice - Data not inserted", StatusCode::SUCCESS).ignore();
         continue;
       }
@@ -88,28 +88,28 @@ bool L0ProcessorDataDecoder::setL0ProcessorData(std::vector<std::string> dataLoc
   m_ok=true;
   // check whether the fiber receives HC data
   m_hasHC=false;
-  for(std::vector<std::string>::iterator it=dataLocs.begin();dataLocs.end()!=it;it++){
-    if( *it == LHCb::L0ProcessorDataLocation::HC || *it == LHCb::L0ProcessorDataLocation::L0HC ){
-      const LHCb::L0ProcessorDatas* datas = getIfExists<LHCb::L0ProcessorDatas>( *it ) ;
-      if( NULL != datas && datas->size() != 0 )m_hasHC=true;      
+  for ( const auto& loc : dataLocs ) { 
+    if( loc == LHCb::L0ProcessorDataLocation::HC || loc == LHCb::L0ProcessorDataLocation::L0HC ){
+      const LHCb::L0ProcessorDatas* datas = getIfExists<LHCb::L0ProcessorDatas>( loc ) ;
+      if( nullptr != datas && datas->size() != 0 )m_hasHC=true;      
       if( ! m_hasHC )Warning("Expected Herschel L0ProcessorData container is not found or is empty",StatusCode::SUCCESS).ignore();
       break;
     }
   }
   // collect the data
-  for(std::vector<std::string>::iterator it=dataLocs.begin();dataLocs.end()!=it;it++){
-    bool isCalo = ( *it == LHCb::L0ProcessorDataLocation::Calo || *it == LHCb::L0ProcessorDataLocation::L0Calo );    
-    const LHCb::L0ProcessorDatas* datas = getIfExists<LHCb::L0ProcessorDatas>( *it ) ;
-    if( NULL == datas ){ 
-      Warning("L0ProcessorData container not found at " + *it , StatusCode::SUCCESS).ignore();
+  for ( const auto& loc : dataLocs ) { 
+    bool isCalo = ( loc == LHCb::L0ProcessorDataLocation::Calo || loc == LHCb::L0ProcessorDataLocation::L0Calo );    
+    const LHCb::L0ProcessorDatas* datas = getIfExists<LHCb::L0ProcessorDatas>( loc ) ;
+    if( nullptr == datas ){ 
+      Warning("L0ProcessorData container not found at " + loc , StatusCode::SUCCESS).ignore();
       m_ok=false;
       continue;
     }
-    if( msgLevel(MSG::VERBOSE) ) verbose() << "inserting data from " << *it << endmsg;
+    if( msgLevel(MSG::VERBOSE) ) verbose() << "inserting data from " << loc << endmsg;
     for(LHCb::L0ProcessorDatas::const_iterator itt=datas->begin();datas->end()!=itt;itt++){
       if( isCalo && m_hasHC && 
           ( (*itt)->key() == L0DUBase::Fiber::CaloPi0Global ||  (*itt)->key() == L0DUBase::Fiber::CaloPi0Local) ){
-        if( msgLevel(MSG::VERBOSE) ) verbose() << "CaloPI0 fibers to be replaced by HC fibers " << *it << endmsg;
+        if( msgLevel(MSG::VERBOSE) ) verbose() << "CaloPI0 fibers to be replaced by HC fibers " << loc << endmsg;
       }else{
           m_dataContainer->insert(*itt);
       }      

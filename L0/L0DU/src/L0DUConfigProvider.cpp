@@ -543,7 +543,7 @@ StatusCode L0DUConfigProvider::createConditions(){
 
     std::string data =  *(values.begin()); // The dataName
     // check for aliases
-    std::map<std::string,std::string>::const_iterator it=L0DUBase::PredefinedData::Alias.find(data);
+    auto it=L0DUBase::PredefinedData::Alias.find(data);
     if( it != L0DUBase::PredefinedData::Alias.end()) data = it->second;  
 
     // Special case : create RAM(BCID) data on-the-fly

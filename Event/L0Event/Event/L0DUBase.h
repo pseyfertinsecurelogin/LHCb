@@ -3,7 +3,7 @@
 #ifndef      L0MUON_L0DUBASE_H
 #define      L0MUON_L0DUBASE_H 1
 #include <string>
-
+#include <map>
 namespace L0DUBase{
   
 

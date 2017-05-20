@@ -101,7 +101,7 @@ StatusCode L0DUAlg::initialize() {
   info()<< "The L0DUConfig (TCK=" << m_tck << ") have been succesfully loaded" << endmsg;    
 
   // add HRC to data location when requested (warning data must exist !)
-  std::string locHC = LHCb::L0ProcessorDataLocation::HC;
+  const std::string locHC = LHCb::L0ProcessorDataLocation::HC;
   bool isHC=false;
   for(std::vector<std::string>::iterator iloc=m_dataLocations.begin();m_dataLocations.end()!=iloc;iloc++){
     if( *iloc == locHC ){isHC=true;break;} // HC location already set in the dataLocations list by user (warning : data must really exist !!)
