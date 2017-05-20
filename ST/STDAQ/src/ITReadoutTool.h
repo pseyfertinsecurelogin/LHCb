@@ -19,7 +19,7 @@ class ITReadoutTool: public STReadoutTool{
 
 public:
 
-  /// Constructer
+  /// Constructor
   ITReadoutTool(const std::string& type,
                 const std::string& name,
                 const IInterface* parent);
@@ -41,7 +41,7 @@ private:
 
   StatusCode createBoards();
 
-  unsigned int m_firstStation;
+  unsigned int m_firstStation = 512;
 
 
 };

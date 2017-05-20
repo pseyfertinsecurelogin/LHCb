@@ -167,19 +167,14 @@ unsigned int STDecodingBaseAlg::pcnVote(const std::vector<RawBank* >& banks) con
   for (const auto& bank : banks) {
     STDecoder decoder(bank->data());
     // only the good are allowed to vote [the US system..]
-    if (!decoder.header().hasError()) ++pcns[(decoder.header().pcn())];
+    if (!decoder.header().hasError()) ++pcns[decoder.header().pcn()];
    } // banks
 
-  unsigned int majorityVote = STDAQ::inValidPcn;
-  unsigned int maxValue = 0;
-  for (auto iter = pcns.begin(); iter != pcns.end() ; ++iter){
-    if (iter->second > maxValue){
-      majorityVote = iter->first;
-      maxValue = iter->second;
-    }
-  } // iter
-
-  return majorityVote;
+  auto max = std::max_element( pcns.begin(), pcns.end(),
+                               [](const std::pair<unsigned int, unsigned int>& lhs,
+                                  const std::pair<unsigned int, unsigned int>& rhs)
+                               { return lhs.second < rhs.second; } );
+  return max == pcns.end() ? STDAQ::inValidPcn : max->first;
 }
 
 bool STDecodingBaseAlg::checkDataIntegrity(STDecoder& decoder,
@@ -190,9 +185,8 @@ bool STDecodingBaseAlg::checkDataIntegrity(STDecoder& decoder,
   // check the consistancy of the data
 
   bool ok = true;
-
   auto iterDecoder = decoder.posAdcBegin();
-  for ( ;iterDecoder != decoder.posAdcEnd(); ++iterDecoder){
+  for (;iterDecoder != decoder.posAdcEnd(); ++iterDecoder){
 
     const STClusterWord aWord = iterDecoder->first;
 
@@ -285,8 +279,7 @@ StatusCode STDecodingBaseAlg::decodeErrors() const{
  if (itf.empty()){
    if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
      debug() <<"event has no error banks " << endmsg;
- }
- else {
+ } else {
     ++counter("events with error banks");
     counter("total # error banks") += itf.size();
  }
@@ -402,7 +395,7 @@ std::string STDecodingBaseAlg::toSpill(const std::string& location) const{
   for (const auto& name : {std::string{"Prev"}, std::string{"Next"}} ) {
     std::string::size_type iPos = location.find(name);
     if (iPos != std::string::npos){
-      std::string startSpill = location.substr(iPos,location.size() - iPos);
+      std::string startSpill = location.substr(iPos);
       std::string::size_type iPos2 = startSpill.find("/");
       theSpill = startSpill.substr(0,iPos2);
       break;

@@ -17,13 +17,13 @@
 class STErrorDecoding : public STDecodingBaseAlg {
 public:
   /// Standard constructor
-  STErrorDecoding( const std::string& name, ISvcLocator* pSvcLocator );
+  using STDecodingBaseAlg::STDecodingBaseAlg;
 
   StatusCode execute   () override;    ///< Algorithm execution
 
 private:
 
-  bool m_PrintErrorInfo;
+  Gaudi::Property<bool> m_PrintErrorInfo { this, "PrintErrorInfo", false };
 
 };
 #endif // STERRORDECODING_H

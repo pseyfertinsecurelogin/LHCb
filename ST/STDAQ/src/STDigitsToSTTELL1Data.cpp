@@ -22,7 +22,7 @@ using namespace LHCb;
 //-----------------------------------------------------------------------------
 // Implementation file for class : RawBufferToSTClusterAlg
 //
-// 2004-01-07 : Matthew Needham   
+// 2004-01-07 : Matthew Needham
 //-----------------------------------------------------------------------------
 
 DECLARE_ALGORITHM_FACTORY( STDigitsToSTTELL1Data )
@@ -35,25 +35,24 @@ ST::AlgBase (name , pSvcLocator)
  // Standard constructor, initializes variables
  declareSTConfigProperty( "outputLocation", m_outputLocation , STTELL1DataLocation::TTSubPeds);
  declareSTConfigProperty( "inputLocation", m_inputLocation , STDigitLocation::TTDigits);
- 
+
 }
-    
+
 StatusCode STDigitsToSTTELL1Data::execute() {
 
   // Retrieve the digits
   const STDigits* digitCont = get<STDigits>(m_inputLocation);
 
   // make a new digits container
-  STTELL1Datas* outCont = new STTELL1Datas();
-  
-  StatusCode sc = createTell1Data(digitCont,outCont);
-  
+  auto outCont = std::make_unique<STTELL1Datas>();
+
+  StatusCode sc = createTell1Data(digitCont,outCont.get());
+
   if (sc.isFailure()) {
-    delete outCont;
     return Warning("Problems creating Tell1 data", StatusCode::FAILURE, 1);
   }
-  
-  put(outCont, m_outputLocation);
+
+  put(outCont.release(), m_outputLocation);
   return StatusCode::SUCCESS;
 }
 
@@ -69,24 +68,21 @@ StatusCode STDigitsToSTTELL1Data::createTell1Data(const STDigits* digits, STTELL
     STTell1Board* board = readoutTool()->findByOrder(i);
     STTELL1Data::Data dataVec;
     dataVec.resize(STDAQ::noptlinks);
-    for(STTELL1Data::Data::iterator j=dataVec.begin(); j!= dataVec.end(); ++j)
-      j->resize(LHCbConstants::nStripsInBeetle);
+    for(auto& dv : dataVec) dv.resize(LHCbConstants::nStripsInBeetle);
     STTELL1Data* tell1Data = new STTELL1Data(dataVec);
     int key = (int)board->boardID().id();
     outCont->insert(tell1Data,key);
   }  //nBoard
 
   // then its just one big loop
-  for (STDigits::const_iterator iterD = digits->begin(); iterD != digits->end(); ++iterD){
-     STDAQ::chanPair aPair = readoutTool()->offlineChanToDAQ((*iterD)->channelID(),0.0);
+  for (const auto& digit : *digits) {
+     STDAQ::chanPair aPair = readoutTool()->offlineChanToDAQ(digit->channelID(),0.0);
      STTELL1Data* adcBank = outCont->object(aPair.first.id());
      STTELL1Data::Data& dataVec = adcBank->data();
      const unsigned int beetle = aPair.second/LHCbConstants::nStripsInBeetle;
      const unsigned int strip = aPair.second%LHCbConstants::nStripsInBeetle;
-     dataVec[beetle][strip] = int((*iterD)->depositedCharge());
-  } // iterD
+     dataVec[beetle][strip] = int(digit->depositedCharge());
+  }
 
   return StatusCode::SUCCESS;
 }
-
-
