@@ -1,4 +1,3 @@
-// $Id: L0DUEmulatorTool.h,v 1.7 2010-02-23 20:06:08 odescham Exp $
 #ifndef L0DUEMULATORTOOL_H
 #define L0DUEMULATORTOOL_H 1
 
@@ -21,14 +20,12 @@
  *  @author Olivier Deschamps
  *  @date   2007-10-10
  */
-class L0DUEmulatorTool : public GaudiTool, virtual public IL0DUEmulatorTool, virtual public IIncidentListener{
+class L0DUEmulatorTool : public extends<GaudiTool, IL0DUEmulatorTool, IIncidentListener >{
 public:
   /// Standard constructor
   L0DUEmulatorTool( const std::string& type,
                    const std::string& name,
                    const IInterface* parent);
-
-  virtual ~L0DUEmulatorTool( ); ///< Destructor
 
   StatusCode initialize() override;
   StatusCode process(LHCb::L0DUConfig* config, LHCb::L0ProcessorDatas* datas) override;
@@ -40,19 +37,16 @@ public:
   void handle(const Incident& /* inc */ ) override {
     if ( msgLevel(MSG::DEBUG) ) debug() << "IIncident Svc reset" << endmsg;
     m_begEvent = true ;
-    for (std::map<unsigned int, bool>::iterator it = m_procMap.begin(); m_procMap.end() != it; ++it ){
-      (*it).second = true;
-    }
+    for (auto& i: m_procMap) i.second = true;
   }
 
-protected:
 private:
-  std::vector<int> bxList(const unsigned int   base[L0DUBase::Index::Size]);
-  unsigned long digit(const unsigned int   base[L0DUBase::Index::Size],int bx=0);
-  double        scale(const unsigned int   base[L0DUBase::Index::Size]);
-  long          max  (const unsigned int   base[L0DUBase::Index::Size]);
+  std::vector<int> bxList(const std::array<unsigned int,L0DUBase::Index::Size>& base);
+  unsigned long digit(const std::array<unsigned int, L0DUBase::Index::Size>& base,int bx=0);
+  double        scale(const std::array<unsigned int, L0DUBase::Index::Size>& base);
+  long          max  (const std::array<unsigned int, L0DUBase::Index::Size>& base);
   void setDataValue(LHCb::L0DUElementaryData* data,
-                    const unsigned int  base[L0DUBase::Index::Size]);
+                    const std::array<unsigned int,L0DUBase::Index::Size>& base);
   StatusCode processing();
   StatusCode fillData();
   StatusCode dataTree(LHCb::L0DUElementaryData* data, LHCb::L0DUElementaryData::Map dataMap);

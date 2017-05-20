@@ -845,7 +845,7 @@ double L0DUFromRawTool::dataScaled(const std::string& name) const {
 
 
 
-double L0DUFromRawTool::scale(const unsigned int base[L0DUBase::Index::Size]) const {
+double L0DUFromRawTool::scale(const std::array<unsigned int, L0DUBase::Index::Size>& base) const {
   return m_condDB->scale( base[L0DUBase::Index::Scale] );
 }
 

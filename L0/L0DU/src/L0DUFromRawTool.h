@@ -54,10 +54,10 @@ public:
 private:
   bool decoding(int ibank);
   bool getL0DUBanksFromRaw();
-  inline void encode(const std::string& name, unsigned int data ,  const unsigned int base[L0DUBase::Index::Size],int bx=0);
+  inline void encode(const std::string& name, unsigned int data ,  const std::array<unsigned int, L0DUBase::Index::Size>& base,int bx=0);
   inline void dataMap(const std::string& name, unsigned int data , double scale = 1.);
   void fillBCIDData();
-  double scale(const unsigned int base[L0DUBase::Index::Size]) const;
+  double scale(const std::array<unsigned int, L0DUBase::Index::Size>& base) const;
   inline bool nextData();
   void putStatusOnTES();
   //
@@ -114,7 +114,7 @@ private:
 
 
 
-inline void L0DUFromRawTool::encode(const std::string& name, unsigned int data ,  const unsigned int base[L0DUBase::Index::Size],int bx){
+inline void L0DUFromRawTool::encode(const std::string& name, unsigned int data ,  const std::array<unsigned int,L0DUBase::Index::Size>& base, int bx){
   if(name != "")dataMap(name,data,scale(base));
   if(!m_encode)return;
   LHCb::L0ProcessorData* fiber = m_processorDatas->object( base[ L0DUBase::Index::Fiber ]  )  ;

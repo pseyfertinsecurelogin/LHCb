@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // L0Event
 #include "Event/L0DUReport.h"
@@ -24,7 +24,7 @@ DECLARE_ALGORITHM_FACTORY( L0Pattern )
 //=============================================================================
 L0Pattern::L0Pattern( const std::string& name,
                                           ISvcLocator* pSvcLocator)
-  : GaudiTupleAlg ( name , pSvcLocator ) 
+  : GaudiTupleAlg ( name , pSvcLocator )
     , m_config(0)
     , m_emulator(0)
     , m_fromRaw(0)
@@ -32,12 +32,12 @@ L0Pattern::L0Pattern( const std::string& name,
     , m_bcid(0)
 {
   declareProperty( "L0DUEmulatorTool"  , m_emulatorTool= "L0DUEmulatorTool");
-  declareProperty( "L0DUFromRawTool"   , m_fromRawTool = "L0DUFromRawTool" );  
+  declareProperty( "L0DUFromRawTool"   , m_fromRawTool = "L0DUFromRawTool" );
   declareProperty( "L0DUConfigTool"    , m_configTool  = "L0PatternConfig");
   declareProperty( "TCKList"           , m_list);
   declareProperty( "resetBCID"         , m_setbcid = true);
-  
-} 
+
+}
 
 //=============================================================================
 // Destructor
@@ -48,17 +48,17 @@ L0Pattern::~L0Pattern() {}
 // Initialisation. Check parameters
 //=============================================================================
 StatusCode L0Pattern::initialize() {
-  
+
   StatusCode sc = GaudiTupleAlg::initialize() ;
-  if( sc.isFailure() ) 
+  if( sc.isFailure() )
   { return Error("Could not initialize base class CaudiAlgorithm",sc);}
   info() << "==> Initialize" << endmsg;
-  
+
   // get the tools
   m_fromRaw   = tool<IL0DUFromRawTool>( m_fromRawTool , m_fromRawTool , this );
   m_emulator  = tool<IL0DUEmulatorTool>(m_emulatorTool, m_emulatorTool);
   m_config    = tool<IL0DUConfigProvider>("L0DUMultiConfigProvider" , m_configTool);
-  
+
 
 
   // Check
@@ -84,22 +84,22 @@ StatusCode L0Pattern::execute() {
 
 
   Tuple ntp = nTuple(500 , "L0DU pattern" ,CLID_ColumnWiseTuple);
-  
-  
+
+
   // get processor data
   if(!m_fromRaw->decodeBank()){
     Error("Unable to decode L0DU rawBank", StatusCode::SUCCESS).ignore();
     return StatusCode::SUCCESS;
-  } 
+  }
   if(m_fromRaw->version() == 0){
     Error("L0Pattern production only works with bank version > 0").ignore();
     return StatusCode::SUCCESS;
   }
-  
+
 
   m_datas =  m_fromRaw->L0ProcessorDatas();
-  
-  // built 12 bits BCID 
+
+  // built 12 bits BCID
   unsigned long sature = 0xDEB;
   if( m_bcid > sature )m_bcid=0 ;
   // set bcid to the L0DU data words
@@ -122,7 +122,7 @@ StatusCode L0Pattern::execute() {
     encode(m_bcid , L0DUBase::PileUp::BCID1      );
     encode(m_bcid , L0DUBase::PileUp::BCID2      );
   }
-  
+
 
 
   // RSDA vs TCK
@@ -138,7 +138,7 @@ StatusCode L0Pattern::execute() {
     is >> std::hex >> itck;
     LHCb::L0DUConfig* config = m_config->config( itck );
     if (!config) return Error("Unknown TCK",StatusCode::SUCCESS);
-    m_emulator->process(config , m_datas); 
+    m_emulator->process(config , m_datas);
 
     unsigned int rs = 0;
     if( m_fromRaw->version() == 1 ){
@@ -155,14 +155,14 @@ StatusCode L0Pattern::execute() {
     rsda.push_back( rs );
     tcks.push_back( itck );
     // channel pattern
-    LHCb::L0DUChannel::Map channels = config->channels();    
+    LHCb::L0DUChannel::Map channels = config->channels();
     long pattern = std::accumulate( channels.begin(), channels.end(),
                                     0L, [](long p, const std::pair<std::string,LHCb::L0DUChannel*> c) {
                                        const LHCb::L0DUChannel* channel = c.second;
                                        return p | ( channel->emulatedDecision()  << channel->id() );
                               });
     report.push_back(pattern);
-  
+
     // printout
     debug()<< " === TCK=" << *it << "====" << endmsg;
     for( LHCb::L0DUChannel::Map::iterator ic=channels.begin();channels.end()!=ic;++ic){
@@ -175,7 +175,7 @@ StatusCode L0Pattern::execute() {
   sc=ntp->farray("rsda"    , rsda   ,"nConfig", m_list.size() );
   sc=ntp->farray("tck"     , tcks   ,"nConfig", m_list.size() );
   sc=ntp->farray("report"  , report ,"nConfig", m_list.size() );
-  
+
   // DATA
   std::vector<int> word,lsb,msb,typ;
   for(L0ProcessorDatas::const_iterator idata = m_datas->begin(); idata != m_datas->end(); idata++ ) {
@@ -195,9 +195,9 @@ StatusCode L0Pattern::execute() {
   return sc ;
 }
 
-void L0Pattern::encode(unsigned int data, const unsigned int base[L0DUBase::Index::Size]){
+void L0Pattern::encode(unsigned int data, const std::array<unsigned int, L0DUBase::Index::Size>& base){
   LHCb::L0ProcessorData* fiber = m_datas->object( base[ L0DUBase::Index::Fiber ]  )  ;
-  unsigned int word = fiber->word();  
+  unsigned int word = fiber->word();
   word |= ( (data << base[L0DUBase::Index::Shift]) & base[L0DUBase::Index::Mask] );
   fiber->setWord( word);
   if( L0DUBase::Fiber::Empty != base[ L0DUBase::Index::Fiber2 ]  ) {
