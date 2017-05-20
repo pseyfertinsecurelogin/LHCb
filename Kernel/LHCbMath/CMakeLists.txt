@@ -36,7 +36,8 @@ gaudi_add_dictionary(LHCbMath
 
 
 # Determine if AVX2 is supported
-set(AVX2_BUILD_FLAGS " -mavx -O3 ")
+set(AVX2_BUILD_FLAGS " -mavx ")
+set(AVX2FMA_BUILD_FLAGS " -mavx ")
 exec_program(${CMAKE_CXX_COMPILER} ARGS -print-prog-name=as OUTPUT_VARIABLE _as)
 if(NOT _as)
   message(ERROR "Could not find the 'as' assembler...")
@@ -47,15 +48,14 @@ else()
   if(_as_version VERSION_LESS "2.21.0")
      message(WARNING "binutils is too old to support AVX2+FMA... Falling back to AVX only.")
   else()
-     set(AVX2_BUILD_FLAGS " -mavx2 -mfma -O3 ")
+     set(AVX2_BUILD_FLAGS " -mavx2 ")
+     set(AVX2FMA_BUILD_FLAGS " -mavx2 -mfma ")
   endif()
 endif()
-message(STATUS "AVX2 build flags = " ${AVX2_BUILD_FLAGS})
-
+message(STATUS "AVX2FMA build flags = " ${AVX2FMA_BUILD_FLAGS})
 set_property(SOURCE src/Similarity_SSE3.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -msse3 " )
-set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx -O3 " )
-set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2_BUILD_FLAGS} )
-
+set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx " )
+set_property(SOURCE src/Similarity_AVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
 if(LCG_COMP STREQUAL "gcc" OR
     (BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_LESS "5"))
   set_property(SOURCE src/Similarity_AVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -fabi-version=0 " )
@@ -147,6 +147,27 @@ if(GAUDI_BUILD_TESTS)
                        tests/poly.cpp
                        INCLUDE_DIRS Boost GSL ROOT
                        LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib)
+  set_property(SOURCE tests/TestVDTMathSSE4.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -msse4.2 " )
+  gaudi_add_executable(TestVDTMathSSE4
+                       tests/TestVDTMathSSE4.cpp
+                       INCLUDE_DIRS VDT Kernel/VectorClass
+                       LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
+  set_property(SOURCE tests/TestVDTMathAVX.cpp APPEND_STRING PROPERTY COMPILE_FLAGS " -mavx " )
+  gaudi_add_executable(TestVDTMathAVX
+                       tests/TestVDTMathAVX.cpp
+                       INCLUDE_DIRS VDT Kernel/VectorClass
+                       LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
+  set_property(SOURCE tests/TestVDTMathAVX2.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2_BUILD_FLAGS} )
+  gaudi_add_executable(TestVDTMathAVX2
+                       tests/TestVDTMathAVX2.cpp
+                       INCLUDE_DIRS VDT Kernel/VectorClass
+                       LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
+  set_property(SOURCE tests/TestVDTMathAVX2FMA.cpp APPEND_STRING PROPERTY COMPILE_FLAGS ${AVX2FMA_BUILD_FLAGS} )
+  gaudi_add_executable(TestVDTMathAVX2FMA
+                       tests/TestVDTMathAVX2FMA.cpp
+                       INCLUDE_DIRS VDT Kernel/VectorClass
+                       LINK_LIBRARIES VDT GaudiKernel LHCbMathLib)
+
 endif()
 
 gaudi_install_python_modules()

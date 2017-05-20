@@ -45,7 +45,7 @@ namespace LHCb
           if ( i.first >= lastID ) 
           {
             throw GaudiException( "Dispatch table must be strictly in decreasing ID order",
-                                  "Rich::CPU::dispatch", StatusCode::FAILURE );
+                                  "LHCb::CPU::dispatch", StatusCode::FAILURE );
           }
           lastID = i.first;
         }
@@ -61,7 +61,7 @@ namespace LHCb
       if ( impl == std::end(vtbl) )
       {
         throw GaudiException( "No implementation for instruction set level " + std::to_string(level),
-                              "Rich::CPU::dispatch", StatusCode::FAILURE );
+                              "LHCb::CPU::dispatch", StatusCode::FAILURE );
       }
       
       // return the impl
