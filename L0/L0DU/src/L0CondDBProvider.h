@@ -20,11 +20,11 @@ public:
 
   StatusCode initialize() override;
 
-  double scale(unsigned int base) override;
-  double caloEtScale() override;
-  double muonPtScale() override;
-  const std::vector<int> RAMBCID(std::string vsn) override;
-  int RAMBCID(std::string vsn,int bcid) override;
+  double scale(unsigned int base) const override;
+  double caloEtScale() const override;
+  double muonPtScale() const override;
+  const std::vector<int> RAMBCID(std::string vsn) const override;
+  int RAMBCID(std::string vsn,int bcid) const override;
 
 private:
   const DeCalorimeter* m_ecal = nullptr;
