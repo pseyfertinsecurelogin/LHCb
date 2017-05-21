@@ -58,5 +58,6 @@ private:
 
   // PGA3 block building
   std::map<std::string,double> m_muonMap;
+  bool m_addHC;
 };
 #endif // L0DUAlg_H

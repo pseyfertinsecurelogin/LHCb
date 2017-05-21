@@ -542,7 +542,9 @@ StatusCode L0DUConfigProvider::createConditions(){
     }
 
     std::string data =  *(values.begin()); // The dataName
-
+    // check for aliases
+    auto it=L0DUBase::PredefinedData::Alias.find(data);
+    if( it != L0DUBase::PredefinedData::Alias.end()) data = it->second;  
 
     // Special case : create RAM(BCID) data on-the-fly
     if( data.rfind("RAM") != std::string::npos && data.rfind("(BCID)") != std::string::npos ){
@@ -576,7 +578,13 @@ StatusCode L0DUConfigProvider::createConditions(){
       info() << " The predefined L0DU Data are : " << endmsg;
       for (LHCb::L0DUElementaryData::Map::iterator idata = m_dataMap.begin() ;
            idata != m_dataMap.end() ;idata++){
-        info() <<  " -->  "<< idata->second->name()  <<  endmsg;
+        std::string knownName=idata->second->name();
+        std::string knownAlias="";
+        for( std::map<std::string,std::string>::const_iterator ia = L0DUBase::PredefinedData::Alias.begin() ;
+             ia !=  L0DUBase::PredefinedData::Alias.end();ia++){
+          if ( ia->second == knownName) knownAlias = " ( aka "+ia->first +" )";
+        }
+        info() <<  " -->  "<< knownName  <<  knownAlias << endmsg;
       }
       return StatusCode::FAILURE;
     }
