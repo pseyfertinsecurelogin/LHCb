@@ -1216,7 +1216,7 @@ bool L0DUConfigProvider::configChecker(){
     if(ctRate >= maxRate){
       tCheck = ( ctRate > maxRate ) ? "" : tCheck + "&";
       maxRate = ctRate;
-      const LHCb::L0DUElementaryCondition* cond = *(conds.begin());
+      const LHCb::L0DUElementaryCondition* cond = conds.front();
       const LHCb::L0DUElementaryData* data= ( cond ? cond->data() : nullptr );
       std::string nData = ( data ? data->name() : "???" );
       tCheck += "["+nData+ " : " +Gaudi::Utils::toString(conds.size())+"/"+Gaudi::Utils::toString(m_condMax[k])+"]";
