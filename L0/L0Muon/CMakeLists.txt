@@ -22,3 +22,4 @@ gaudi_add_module(L0Muon
                  INCLUDE_DIRS Boost Event/DigiEvent L0/L0Interfaces Muon/MuonDAQ
                  LINK_LIBRARIES Boost DetDescLib DAQEventLib DAQKernelLib L0Event L0Base L0MuonKernel ProcessorKernel MuonKernelLib)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

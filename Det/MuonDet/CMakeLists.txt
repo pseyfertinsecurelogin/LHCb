@@ -23,3 +23,4 @@ gaudi_add_dictionary(MuonDet
                      LINK_LIBRARIES DetDescCnvLib GaudiAlgLib LHCbKernel MuonKernelLib MuonDetLib
                      OPTIONS "-U__MINGW32__")
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

@@ -13,3 +13,4 @@ gaudi_add_dictionary(L0Interfaces
 
 gaudi_install_headers(L0Interfaces)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

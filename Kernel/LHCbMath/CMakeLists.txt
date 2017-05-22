@@ -172,3 +172,4 @@ gaudi_install_python_modules()
 
 gaudi_add_test(QMTest QMTEST)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

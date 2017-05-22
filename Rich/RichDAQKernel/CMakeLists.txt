@@ -12,3 +12,4 @@ gaudi_add_library(RichDAQKernel
                   PUBLIC_HEADERS RichDAQKernel
                   INCLUDE_DIRS Event/DAQEvent GaudiKernel RichUtils
                   LINK_LIBRARIES RichUtils LHCbKernel)
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

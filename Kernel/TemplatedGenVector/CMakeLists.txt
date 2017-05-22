@@ -9,3 +9,4 @@ gaudi_add_library(TemplatedGenVectorLib
                   src/*.cxx
                   PUBLIC_HEADERS TemplatedGenVector
                   INCLUDE_DIRS TemplatedGenVector)
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

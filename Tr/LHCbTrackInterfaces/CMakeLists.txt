@@ -17,3 +17,4 @@ gaudi_add_dictionary(LHCbTrackInterfaces
 
 gaudi_install_headers(TrackInterfaces)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

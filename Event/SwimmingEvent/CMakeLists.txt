@@ -15,3 +15,4 @@ gaudi_add_dictionary(SwimmingEvent
 
 gaudi_install_headers(Event)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

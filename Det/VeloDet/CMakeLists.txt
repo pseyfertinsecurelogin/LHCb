@@ -32,3 +32,4 @@ gaudi_add_dictionary(VeloDet
 
 
 gaudi_add_test(QMTest QMTEST ENVIRONMENT NO_GIT_CONDDB=1)
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

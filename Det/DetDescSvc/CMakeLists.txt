@@ -30,3 +30,4 @@ gaudi_add_unit_test(test_RunChangeHandler
                     INCLUDE_DIRS OpenSSL
                     LINK_LIBRARIES XercesC DetDescLib ${OPENSSL_CRYPTO_LIBRARY}
                     TYPE Boost)
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

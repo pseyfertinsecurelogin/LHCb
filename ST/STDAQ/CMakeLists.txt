@@ -22,3 +22,4 @@ gaudi_add_module(STDAQ
                  INCLUDE_DIRS DAQ/DAQUtils Event/DigiEvent Si/SiDAQ
                  LINK_LIBRARIES DetDescLib STDetLib DAQEventLib RecEvent GaudiAlgLib GaudiKernel LHCbKernel STKernelLib STTELL1Event)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

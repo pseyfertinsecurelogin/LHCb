@@ -18,3 +18,4 @@ gaudi_add_dictionary(CaloInterfaces
                      OPTIONS "-U__MINGW32__")
 
 gaudi_install_headers(CaloInterfaces)
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

@@ -18,3 +18,4 @@ gaudi_add_library(LinkerEvent
 god_build_dictionary(xml/*.xml
                      LINK_LIBRARIES LHCbKernel LinkerEvent)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

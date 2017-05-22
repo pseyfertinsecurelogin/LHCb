@@ -20,3 +20,4 @@ gaudi_add_module(DetDescCnv
                  INCLUDE_DIRS XercesC
                  LINK_LIBRARIES XercesC DetDescLib GaudiKernel XmlToolsLib DetDescCnvLib)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

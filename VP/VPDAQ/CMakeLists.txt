@@ -17,3 +17,4 @@ gaudi_add_module(VPDAQ
                  INCLUDE_DIRS AIDA Event/DigiEvent
                  LINK_LIBRARIES DAQEventLib DAQKernelLib GaudiAlgLib LHCbKernel)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

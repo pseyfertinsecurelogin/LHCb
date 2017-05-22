@@ -15,3 +15,4 @@ gaudi_add_module(FTDAQ
                  INCLUDE_DIRS Boost Event/FTEvent
                  LINK_LIBRARIES DAQEventLib DAQKernelLib GaudiAlgLib)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

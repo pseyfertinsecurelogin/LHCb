@@ -25,3 +25,4 @@ god_build_dictionary(xml/*.xml
                      INCLUDE_DIRS Event/EventBase
                      LINK_LIBRARIES DAQEventLib GaudiAlgLib GaudiKernel LHCbKernel)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

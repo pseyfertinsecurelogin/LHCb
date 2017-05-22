@@ -59,3 +59,4 @@ install(FILES cmake/LoKiFunctorsCachePostActionOpts.py
         DESTINATION cmake)
 
 gaudi_add_test(QMTest QMTEST)
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

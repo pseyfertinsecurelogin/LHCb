@@ -23,3 +23,4 @@ god_build_dictionary(xml/*.xml
                      INCLUDE_DIRS Event/EventBase
                      LINK_LIBRARIES LHCbKernel PartPropLib MCEvent)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

@@ -18,3 +18,4 @@ gaudi_add_module(L0Calo
 
 gaudi_env(SET L0CALOOPTS \${L0CALOROOT}/options)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

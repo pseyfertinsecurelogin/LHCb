@@ -16,3 +16,4 @@ gaudi_add_library(DAQKernelLib
                   LINK_LIBRARIES DAQEventLib GaudiAlgLib GaudiUtilsLib LHCbKernel)
 
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

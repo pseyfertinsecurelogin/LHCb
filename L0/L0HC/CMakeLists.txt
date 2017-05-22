@@ -26,3 +26,4 @@ gaudi_add_module(L0HC
 
 gaudi_env(SET L0HCOPTS \${L0HCROOT}/options)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

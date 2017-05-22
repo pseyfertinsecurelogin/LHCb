@@ -30,3 +30,4 @@ gaudi_add_dictionary(RichUtils
                      INCLUDE_DIRS Eigen AIDA Boost
                      LINK_LIBRARIES Boost DAQEventLib GaudiUtilsLib LHCbKernel RichUtils
                      OPTIONS "-U__MINGW32__")
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

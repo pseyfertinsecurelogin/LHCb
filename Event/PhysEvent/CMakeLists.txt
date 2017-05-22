@@ -22,3 +22,4 @@ god_build_dictionary(xml/*.xml
                      EXTEND dict/lcgDict.h
                      LINK_LIBRARIES RecEvent GaudiKernel LHCbKernel LHCbMathLib PhysEvent)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )
