@@ -21,3 +21,4 @@ gaudi_add_dictionary(DAQEvent
                      LINK_LIBRARIES GaudiKernel DAQEventLib
                      OPTIONS --comments)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

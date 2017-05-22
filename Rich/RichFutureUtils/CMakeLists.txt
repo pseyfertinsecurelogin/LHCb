@@ -24,3 +24,4 @@ gaudi_add_dictionary(RichFutureUtils
                      INCLUDE_DIRS AIDA Boost
                      LINK_LIBRARIES GaudiUtilsLib LHCbKernel RichUtils RichFutureUtils
                      OPTIONS "-U__MINGW32__")
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

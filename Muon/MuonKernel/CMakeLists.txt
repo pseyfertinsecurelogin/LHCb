@@ -10,3 +10,4 @@ gaudi_add_library(MuonKernelLib
                   PUBLIC_HEADERS MuonKernel
                   LINK_LIBRARIES LHCbKernel)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

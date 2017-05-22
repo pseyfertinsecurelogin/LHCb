@@ -14,3 +14,4 @@ gaudi_add_library(VectorClassLib
 
 # Disable some warnings
 set_property(SOURCE src/ranvec1.cpp PROPERTY COMPILE_FLAGS " -Wno-overflow -Wno-sign-compare -Wno-strict-aliasing " )
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

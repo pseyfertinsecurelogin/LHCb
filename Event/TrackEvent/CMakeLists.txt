@@ -24,3 +24,4 @@ god_build_dictionary(xml/*.xml
                      INCLUDE_DIRS GSL Boost
                      LINK_LIBRARIES GSL Boost LHCbKernel TrackEvent)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

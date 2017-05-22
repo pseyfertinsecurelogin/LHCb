@@ -13,3 +13,4 @@ gaudi_add_library(MDF_ROOT
                   INCLUDE_DIRS ROOT
                   LINK_LIBRARIES ROOT MDFLib)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

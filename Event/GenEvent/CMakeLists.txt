@@ -24,3 +24,4 @@ god_build_dictionary(xml/*.xml
                      INCLUDE_DIRS HepMC ROOT Event/EventBase
                      LINK_LIBRARIES HepMC ROOT GaudiObjDescLib GenEvent)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

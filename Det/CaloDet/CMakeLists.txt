@@ -28,3 +28,4 @@ gaudi_add_dictionary(CaloDet
 
 gaudi_env(SET CALODETOPTS \${CALODETROOT}/options)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

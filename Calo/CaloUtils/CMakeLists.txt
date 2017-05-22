@@ -35,3 +35,4 @@ gaudi_add_dictionary(CaloUtils
 
 gaudi_install_python_modules()
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

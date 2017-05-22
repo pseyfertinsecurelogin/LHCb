@@ -25,3 +25,4 @@ god_build_dictionary(xml/*.xml
                      INCLUDE_DIRS Event/DigiEvent Event/EventBase
                      LINK_LIBRARIES TrackEvent LHCbMathLib PartPropLib RecEvent)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

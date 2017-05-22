@@ -32,3 +32,6 @@ gaudi_project(LHCb v42r3
                    RawEventFormat
                    TCK/HltTCK
 		   TCK/L0TCK VERSION v5r*)
+
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )
+SET(CMAKE_CXX_FLAGS "-I/afs/cern.ch/sw/lcg/external/llvm/3.9/x86_64-centos7/lib/clang/3.9.0/include/ ${CMAKE_CXX_FLAGS}")

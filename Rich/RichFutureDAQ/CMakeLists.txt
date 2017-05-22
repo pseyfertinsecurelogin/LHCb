@@ -14,3 +14,4 @@ gaudi_add_module(RichFutureDAQ
                  src/*.cpp
                  INCLUDE_DIRS Rich/RichFutureKernel Event/DAQEvent Event/DAQEvent RichUtils RichDAQKernel
                  LINK_LIBRARIES RichDetLib DAQEventLib RichFutureKernel RichDAQKernel)
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

@@ -14,3 +14,4 @@ gaudi_add_library(ProcessorKernel
                   INCLUDE_DIRS Boost XercesC
                   LINK_LIBRARIES Boost XercesC LHCbKernel)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

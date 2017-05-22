@@ -23,3 +23,4 @@ gaudi_install_python_modules()
 
 gaudi_env(SET L0DUOPTS \${L0DUROOT}/options)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

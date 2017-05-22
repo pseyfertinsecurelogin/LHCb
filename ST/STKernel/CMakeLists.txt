@@ -28,3 +28,4 @@ gaudi_add_dictionary(STKernel
                      LINK_LIBRARIES Boost STDetLib DAQEventLib RecEvent GaudiAlgLib GaudiKernel LHCbKernel STKernelLib
                      OPTIONS "-U__MINGW32__ -DBOOST_DISABLE_ASSERTS")
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

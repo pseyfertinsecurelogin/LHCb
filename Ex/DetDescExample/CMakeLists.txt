@@ -17,3 +17,4 @@ gaudi_add_executable(DetDescExample
                      src/*.cpp
                      LINK_LIBRARIES CaloDetLib DetDescCnvLib GaudiAlgLib)
 
+SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )
