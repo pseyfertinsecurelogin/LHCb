@@ -96,6 +96,9 @@ public:
   /** Returns the pitch between two channels (250 micron) */
   double channelPitch() const { return m_channelPitch; }
 
+  /** Returns the width of the fibre mat */
+  double fibreMatWidth() const { return m_sizeX; }
+
   /** Get the length of the fibre in this mat */
   double fibreLength() const { return m_sizeY; }
 
@@ -209,6 +212,7 @@ private :
   double m_channelPitch;           ///< readout channel pitch (250 micron)
   double m_sipmPitch;              ///< pitch between SiPMs in mat
   double m_diePitch;               ///< pitch between dies in SiPM
+  double m_sizeX;                  ///< Width in x of the mat
   double m_sizeY;                  ///< Length in y of the fibre in the mat
   double m_sizeZ;                  ///< Thickness of the fibre mat (nominal: 1.3 mm)
 
