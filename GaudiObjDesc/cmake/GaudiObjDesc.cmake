@@ -81,6 +81,7 @@ function(god_build_headers)
   endforeach()
 
   gaudi_get_package_name(package)
+  set_property(GLOBAL APPEND PROPERTY GOD_GENERATED_FILES "${generated_files}")
   add_custom_target(${package}GODHeaders ALL DEPENDS ${generated_files})
 
   # notify the framework that this directory produces headers via this target

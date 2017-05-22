@@ -1,26 +1,33 @@
 find_program(iwyu_tool NAMES iwyu_tool.py)
 set(IWYU_MAPPING_FILE ${CMAKE_SOURCE_DIR}/cmake/include_rules.imp)
 set(IWYU_WORK_DIR ${CMAKE_BINARY_DIR}/iwyu)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/iwyu)
 add_custom_target(run-iwyu
   COMMAND ${iwyu_tool} -p ${IWYU_WORK_DIR}
-  -- mapping_file=${IWYU_MAPPING_FILE}
+  -- mapping_file=${IWYU_MAPPING_FILE} > ${IWYU_WORK_DIR}
   WORKING_DIR=${IWYU_WORK_DIR}
   DEPENDS ${GODHeaders}
   COMMENT "run iwyu"
   )
 
-# TODO: exclude dicts
-# TODO: exclude GOD-generated classes
-
 file(WRITE ${CMAKE_BINARY_DIR}/strip-json.py "#!/bin/python
+godfiles=[]\n")
+get_property(god_gen_file GLOBAL PROPERTY GOD_GENERATED_FILES)
+message(STATUS "GOD_GENERATED_FILES is ${god_gen_file}")
+foreach(genfile ${god_gen_file})
+  file(APPEND ${CMAKE_BINARY_DIR}/strip-json.py
+    "godfiles+=['${genfile}']\n")
+endforeach(genfile)
+
+file(APPEND ${CMAKE_BINARY_DIR}/strip-json.py "
 import json
 import re
 with open('${CMAKE_BINARY_DIR}/compile_commands.json') as f:
     jjj = json.load(f)
 jm = []
 for j in jjj:
-    if re.match('.*Dict.cpp',j['file']) is None:
-        jm.append([j])
+    if j['file'] not in godfiles and re.match('.*Dict.cpp',j['file']) is None:
+        jm.append(j)
 for j in jm:
     j['command'] = re.sub('-Wall','',j['command'])
     j['command'] = re.sub('-Wextra','',j['command'])
@@ -33,6 +40,5 @@ with open('${IWYU_WORK_DIR}/compile_commands.json','w') as outfile:
 add_custom_target(manipulate_compilation_database
   COMMAND python ${CMAKE_BINARY_DIR}/strip-json.py
   WORKING_DIR=${CMAKE_BINARY_DIR}
-  DEPENDS configure
   )
-add_dependency(run-iwyu manipulate_compilation_database)
+add_dependencies(run-iwyu manipulate_compilation_database)
