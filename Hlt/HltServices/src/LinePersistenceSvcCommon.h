@@ -16,6 +16,10 @@ protected:
   ILinePersistenceSvc::Locations locationsToPersistImpl(
     const LHCb::HltDecReports& hdr, const std::set<std::string>& lines,
     const NameListPerLine& locationsMap) const;
+  ILinePersistenceSvc::Locations turboPPLocationsToPersistImpl(
+    const LHCb::HltDecReports& hdr, const std::set<std::string>& lines,
+    const std::set<std::string>& turboPPLines,
+    const NameListPerLine& locationsMap) const;
   ILinePersistenceSvc::RawBanks rawBanksToPersistImpl(
     const LHCb::HltDecReports& hdr, const std::set<std::string>& lines,
     const RawBanksPerLine& rawBanksMap) const;
