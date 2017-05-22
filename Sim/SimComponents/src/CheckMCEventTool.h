@@ -19,9 +19,7 @@
 class CheckMCEventTool : public extends<GaudiTool, ICheckTool> {
 public:
   /// Standard constructor
-  CheckMCEventTool( const std::string& type,
-                    const std::string& name,
-                    const IInterface* parent);
+  using base_class::base_class;
 
   StatusCode check() override; ///< Perform the check
 

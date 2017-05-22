@@ -28,9 +28,7 @@ class MsgStream;
 class PrintMCDecayTreeTool : public extends<GaudiTool, IPrintMCDecayTreeTool> {
 public:
   /// Standard Constructor
-  PrintMCDecayTreeTool( const std::string& type,
-                      const std::string& name,
-                      const IInterface* parent );
+  using base_class::base_class;
 
   StatusCode initialize( ) override;
 
@@ -65,18 +63,17 @@ private:
                              MsgStream &log ) const;
 
   SmartIF<LHCb::IParticlePropertySvc> m_ppSvc; ///< Pointer to particle property service
-  int m_depth;         ///< Depth of printing for tree
-  int m_treeWidth;     ///< width of the tree drawing
-  int m_fWidth;        ///< width of the data fields
-  int m_fPrecision;    ///< precision of the data fields
-  std::string m_arrow; ///< arrow drawing
-  std::string m_informationsDeprecated; ///< For backward compatibility. Will be removed
-  std::string m_information; ///< The specification of the values to print
+  Gaudi::Property<int> m_depth {this, "PrintDepth",  999 };        ///< Depth of printing for tree
+  Gaudi::Property<int> m_treeWidth {this, "TreeWidth", 20 };      ///< width of the tree drawing
+  Gaudi::Property<int> m_fWidth {this, "FieldWidth", 10 };        ///< width of the data fields
+  Gaudi::Property<int> m_fPrecision {this, "FieldPrecision", 2 }; ///< precision of the data fields
+  Gaudi::Property<std::string> m_arrow {this, "Arrow",  "+-->" };          ///< arrow drawing
+  Gaudi::Property<std::string> m_informationsDeprecated{ this, "Informations" }; ///< For backward compatibility. Will be removed
+  Gaudi::Property<std::string> m_information {this, "Information", "Name E M P Pt phi Vz" }; ///< The specification of the values to print
   std::vector<InfoKeys> m_keys; ///< The list of information to print
-  double m_energyUnit ; /// Unit for energies, momenta and masses
-  double m_lengthUnit ; /// Unit for distances
-  std::string m_energyUnitName; ///< Unit for energies, momenta and masses
-  std::string m_lengthUnitName; ///< Unit for distances
-
+  Gaudi::Property<double> m_energyUnit {this,"EnergyUnit", Gaudi::Units::MeV }; /// Unit for energies, momenta and masses
+  Gaudi::Property<double> m_lengthUnit {this,"LengthUnit", Gaudi::Units::mm }; /// Unit for distances
+  std::string m_energyUnitName{"MeV"}; ///< Unit for energies, momenta and masses
+  std::string m_lengthUnitName{"mm"}; ///< Unit for distances
 };
 #endif // PRINTMDECAYTREETOOL_H

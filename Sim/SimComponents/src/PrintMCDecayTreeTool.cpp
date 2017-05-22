@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Gaudi
 #include "GaudiKernel/MsgStream.h"
@@ -28,29 +28,6 @@ DECLARE_TOOL_FACTORY( PrintMCDecayTreeTool )
 using namespace Gaudi::Units;
 
 //=============================================================================
-// Standard creator, initializes variables
-//=============================================================================
-PrintMCDecayTreeTool::PrintMCDecayTreeTool( const std::string& type,
-                                            const std::string& name,
-                                            const IInterface* parent )
-  : base_class( type, name, parent ), 
-    m_energyUnitName("MeV"), m_lengthUnitName("mm")
-{
-
-  declareInterface<IPrintMCDecayTreeTool>(this);
-
-  declareProperty( "PrintDepth", m_depth = 999 );
-  declareProperty( "TreeWidth", m_treeWidth = 20 );
-  declareProperty( "FieldWidth", m_fWidth = 10 );
-  declareProperty( "FieldPrecision", m_fPrecision = 2 );
-  declareProperty( "Arrow", m_arrow = "+-->" );
-  declareProperty( "Informations", m_informationsDeprecated = "" );
-  declareProperty( "Information", m_information = "Name E M P Pt phi Vz" );
-  declareProperty( "EnergyUnit", m_energyUnit = MeV );
-  declareProperty( "LengthUnit", m_lengthUnit = mm );
-}
-
-//=============================================================================
 // initialise
 //=============================================================================
 StatusCode PrintMCDecayTreeTool::initialize( ){
@@ -65,12 +42,12 @@ StatusCode PrintMCDecayTreeTool::initialize( ){
     warning() << "Use ``Information'' instead." << endmsg ;
     m_information = m_informationsDeprecated ;
   }
-  
+
 
   std::size_t oldpos = 0, pos;
   do {
-    pos=m_information.find( ' ', oldpos );
-    std::string tok(m_information, oldpos, pos-oldpos);
+    pos=m_information.value().find( ' ', oldpos );
+    std::string tok{m_information.value(), oldpos, pos-oldpos};
     if( tok=="Name" )       m_keys.push_back(Name);
     else if( tok=="PID" )   m_keys.push_back(PID);
     else if( tok=="E" )     m_keys.push_back(E);
@@ -101,12 +78,12 @@ StatusCode PrintMCDecayTreeTool::initialize( ){
   else if (m_energyUnit == GeV) m_energyUnitName = "GeV" ;
   else if (m_energyUnit == MeV) m_energyUnitName = "MeV" ;
   else if (m_energyUnit <= 0) {
-    err() << "You have chosen a unit for energies: " 
+    err() << "You have chosen a unit for energies: "
           << m_energyUnit << endmsg;
     return StatusCode::FAILURE ;
-  } 
+  }
   else {
-    warning() << "You have chosen a non-standard unit for energies: " 
+    warning() << "You have chosen a non-standard unit for energies: "
               << m_energyUnit << endmsg;
     m_energyUnitName = "???" ;
   }
@@ -114,15 +91,15 @@ StatusCode PrintMCDecayTreeTool::initialize( ){
   else if (m_lengthUnit == cm) m_lengthUnitName = "cm" ;
   else if (m_lengthUnit == m) m_lengthUnitName = "m" ;
   else if (m_lengthUnit <= 0) {
-    err() << "You have chosen a unit for lengths: " 
+    err() << "You have chosen a unit for lengths: "
           << m_lengthUnit << endmsg;
     return StatusCode::FAILURE ;
-  } 
+  }
   else {
-    warning() << "You have chosen a non-standard unit for lengths: " 
+    warning() << "You have chosen a non-standard unit for lengths: "
               << m_lengthUnit << endmsg;
     m_lengthUnitName = "??" ;
-    
+
   }
 
   return StatusCode::SUCCESS;
@@ -140,7 +117,7 @@ MsgStream& PrintMCDecayTreeTool::printHeader( MsgStream& log ) const
   bool name_key = ( std::find(m_keys.begin(), m_keys.end(), Name)!=m_keys.end() );
 
   int n_keys = m_keys.size() - (name_key ? 1 : 0);
-  int width = n_keys*m_fWidth + (name_key ? m_treeWidth : 0);
+  int width = n_keys*m_fWidth + (name_key ? m_treeWidth.value() : 0);
   int left  = (width - title->length() - 2 )/2;
   int right =  width - title->length() - 2 - left;
 
@@ -170,7 +147,7 @@ MsgStream& PrintMCDecayTreeTool::printHeader( MsgStream& log ) const
     case phi:       log << std::setw(m_fWidth) << "phi";       break;
     case eta:       log << std::setw(m_fWidth) << "eta";       break;
     case flags:     log << std::setw(m_fWidth) << "Flags ";    break;
-    case fromSignal:  log <<  std::setw(m_fWidth) << "fromSignal";     break; 
+    case fromSignal:  log <<  std::setw(m_fWidth) << "fromSignal";     break;
     case idcl:      log << std::setw(m_fWidth) << "ID CL";     break;
     }
 
@@ -194,7 +171,7 @@ MsgStream& PrintMCDecayTreeTool::printHeader( MsgStream& log ) const
     case phi:       log << std::setw(m_fWidth) << "mrad";      break;
     case eta:       log << std::setw(m_fWidth) << "prap";      break;
     case flags:     log << std::setw(m_fWidth) << " ";     break;
-    case fromSignal:  log <<  std::setw(m_fWidth) << " ";     break; 
+    case fromSignal:  log <<  std::setw(m_fWidth) << " ";     break;
     case idcl:      log << std::setw(m_fWidth) << " ";         break;
     }
 
@@ -203,7 +180,7 @@ MsgStream& PrintMCDecayTreeTool::printHeader( MsgStream& log ) const
 //=============================================================================
 // printInfo (MCParticle)
 //=============================================================================
-MsgStream& PrintMCDecayTreeTool::printInfo( const std::string &prefix, 
+MsgStream& PrintMCDecayTreeTool::printInfo( const std::string &prefix,
                                             const LHCb::MCParticle *part,
                                             MsgStream &log ) const
 {
@@ -315,11 +292,11 @@ MsgStream& PrintMCDecayTreeTool::printInfo( const std::string &prefix,
 //=============================================================================
 // Print decay tree for a given MCparticle
 //=============================================================================
-void PrintMCDecayTreeTool::printTree( const LHCb::MCParticle* mother, 
+void PrintMCDecayTreeTool::printTree( const LHCb::MCParticle* mother,
                                       int maxDepth ) const
 {
   if( maxDepth == -1 ) maxDepth = m_depth;
-  
+
   if( !mother ) {
     err() << "printTree called with NULL MCParticle" << endmsg;
     return;
@@ -373,7 +350,7 @@ void PrintMCDecayTreeTool::printAsTree( const LHCb::MCParticles& event ) const
 //=============================================================================
 // printDecayTree (MCParticle)
 //=============================================================================
-MsgStream& PrintMCDecayTreeTool::printDecayTree( const LHCb::MCParticle *mother, 
+MsgStream& PrintMCDecayTreeTool::printDecayTree( const LHCb::MCParticle *mother,
                                            const std::string &prefix,
                                            int depth,
                                            MsgStream &log ) const
