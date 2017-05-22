@@ -38,7 +38,3 @@ gaudi_project(LHCb v42r4
                    RawEventFormat
                    TCK/HltTCK
 		   TCK/L0TCK VERSION v5r*)
-
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )
-
-include( ${CMAKE_SOURCE_DIR}/cmake/IWYU.cmake )
