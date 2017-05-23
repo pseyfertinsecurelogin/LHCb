@@ -70,7 +70,7 @@ for j in jm:
     j['command'] = re.sub('-Wsuggest-override','-Wno-gnu-include-next -Wno-c99-extensions -Wno-unknown-warning-option -I/afs/cern.ch/sw/lcg/external/llvm/3.9/x86_64-centos7/lib/clang/3.9.0/include/',j['command'])
 
 with open('${IWYU_WORK_DIR}/compile_commands.json','w') as outfile:
-    json.dump(jm, outfile)")
+    json.dump(jm, outfile, indent=2)")
 
 add_custom_target(manipulate_compilation_database
   COMMAND python ${CMAKE_BINARY_DIR}/strip-json.py
