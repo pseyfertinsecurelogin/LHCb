@@ -3,6 +3,7 @@ set(IWYU_MAPPING_FILE ${CMAKE_SOURCE_DIR}/cmake/include_rules.imp)
 set(IWYU_WORK_DIR ${CMAKE_BINARY_DIR}/iwyu)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/iwyu)
 if(iwyu_tool)
+  find_program(fix_includes NAMES fix_includes.py)
   message(FATAL "FOUND IWYU w/o PATH SETUP???")
   add_custom_target(run-iwyu
     COMMAND ${iwyu_tool} -p ${IWYU_WORK_DIR}
@@ -10,8 +11,20 @@ if(iwyu_tool)
     WORKING_DIR=${IWYU_WORK_DIR}
     COMMENT "run iwyu"
     )
+  add_custom_target(iwyu-check
+    COMMAND ${fix_includes} -n < ${IWYU_WORK_DIR}/iwyu.log
+    WORKING_DIR=${IWYU_WORK_DIR}
+    COMMENT "check if iwyu wants changes"
+    )
+  add_custom_target(iwyu-apply
+    COMMAND ${fix_includes} < ${IWYU_WORK_DIR}/iwyu.log
+    WORKING_DIR=${IWYU_WORK_DIR}
+    COMMENT "apply iwyu changes"
+    )
 else()
   find_program(iwyu_tool NAMES iwyu_tool.py
+    HINTS "/tmp/pseyfert/tmp.iCzgEqwMfJ/install/bin/")
+  find_program(fix_includes NAMES fix_includes.py
     HINTS "/tmp/pseyfert/tmp.iCzgEqwMfJ/install/bin/")
   set(gcc_config_version 4.9.3)
   set(clang_config_version 3.9)
@@ -43,6 +56,22 @@ else()
     -- --mapping_file=${IWYU_MAPPING_FILE} > ${IWYU_WORK_DIR}/iwyu.log 2>&1
     WORKING_DIR=${IWYU_WORK_DIR}
     COMMENT "run iwyu"
+    )
+  add_custom_target(iwyu-check
+    ${CMAKE_COMMAND} -E env
+    PATH=${iwyu_path}
+    LD_LIBRARY_PATH=${iwyu_ld_path}
+    ${fix_includes} -n < ${IWYU_WORK_DIR}/iwyu.log
+    WORKING_DIR=${IWYU_WORK_DIR}
+    COMMENT "check if iwyu wants changes"
+    )
+  add_custom_target(iwyu-apply
+    ${CMAKE_COMMAND} -E env
+    PATH=${iwyu_path}
+    LD_LIBRARY_PATH=${iwyu_ld_path}
+    ${fix_includes} < ${IWYU_WORK_DIR}/iwyu.log
+    WORKING_DIR=${IWYU_WORK_DIR}
+    COMMENT "apply iwyu changes"
     )
 endif()
 
@@ -78,3 +107,5 @@ add_custom_target(manipulate_compilation_database
   )
 add_dependencies(run-iwyu manipulate_compilation_database)
 add_dependencies(run-iwyu GODHeaders)
+add_dependencies(iwyu-apply run-iwyu)
+add_dependencies(all iwyu-apply)
