@@ -6,7 +6,7 @@ if(iwyu_tool)
   message(FATAL "FOUND IWYU w/o PATH SETUP???")
   add_custom_target(run-iwyu
     COMMAND ${iwyu_tool} -p ${IWYU_WORK_DIR}
-    -- --mapping_file=${IWYU_MAPPING_FILE} > ${IWYU_WORK_DIR}/iwyu.log
+    -- --mapping_file=${IWYU_MAPPING_FILE} > ${IWYU_WORK_DIR}/iwyu.log 2>&1
     WORKING_DIR=${IWYU_WORK_DIR}
     DEPENDS ${GODHeaders}
     COMMENT "run iwyu"
@@ -41,7 +41,7 @@ else()
     PATH=${iwyu_path}
     LD_LIBRARY_PATH=${iwyu_ld_path}
     ${iwyu_tool} -p ${IWYU_WORK_DIR}
-    -- --mapping_file=${IWYU_MAPPING_FILE} > ${IWYU_WORK_DIR}/iwyu.log
+    -- --mapping_file=${IWYU_MAPPING_FILE} > ${IWYU_WORK_DIR}/iwyu.log 2>&1
     WORKING_DIR=${IWYU_WORK_DIR}
     DEPENDS ${GODHeaders}
     COMMENT "run iwyu"
@@ -69,7 +69,7 @@ for j in jm:
     j['command'] = re.sub('-Wall','',j['command'])
     j['command'] = re.sub('-Wextra','',j['command'])
     j['command'] = re.sub('-fabi-version=0','',j['command'])
-    j['command'] = re.sub('-Wsuggest-override','-Wno-gnu-include-next -Wno-c99-extensions -Wno-unkown-warning-option -I/afs/cern.ch/sw/lcg/external/llvm/3.9/x86_64-centos7/lib/clang/3.9.0/include/',j['command'])
+    j['command'] = re.sub('-Wsuggest-override','-Wno-gnu-include-next -Wno-c99-extensions -Wno-unknown-warning-option -I/afs/cern.ch/sw/lcg/external/llvm/3.9/x86_64-centos7/lib/clang/3.9.0/include/',j['command'])
 
 with open('${IWYU_WORK_DIR}/compile_commands.json','w') as outfile:
     json.dump(jm, outfile)")
