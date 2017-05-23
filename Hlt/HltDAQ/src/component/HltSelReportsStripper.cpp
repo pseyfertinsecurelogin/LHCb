@@ -1,3 +1,5 @@
+#include <algorithm>
+
 // Include files
 #include "Event/HltSelReports.h"
 #include "Event/HltObjectSummary.h"
@@ -61,11 +63,9 @@ public:
 
     LHCb::HltSelReports outputSelReports;
     for(const auto& selReport : inputSelReports) {
-      for (auto line : m_lines){
-	if (line == selReport.first) {
-	  outputSelReports.insert(line, selReport.second);
-	}
-      }
+      if (std::find(std::begin(m_lines), std::end(m_lines), selReport.first) !=
+          std::end(m_lines))
+        outputSelReports.insert(selReport.first, selReport.second);
     }
     // --------------------------------------------------------
     
