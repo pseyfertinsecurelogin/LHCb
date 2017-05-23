@@ -118,7 +118,8 @@ class TurboConf(LHCbConfigurableUser):
         DataOnDemandSvc().AlgMap[linkPVs.Target] = linkPVs
 
     def __apply_configuration__(self):
-        self._register_unpackers()
+        if self.getProp("DataType") in ["2015", "2016"]:
+            self._register_unpackers()
 
         # Remove standard decoder
         decoder = DecoderDB.pop("HltPackedDataDecoder/Hlt2PackedDataDecoder")
