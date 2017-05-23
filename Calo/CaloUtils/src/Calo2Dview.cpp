@@ -157,7 +157,7 @@ void Calo2Dview::bookCalo2D(const HistoID& unit, const std::string title, unsign
   if( !m_geo ){
     // Book histo
     TH2* th2 = nullptr;
-    if( !m_profile ){
+    if( m_profile ){
       const auto p2d = GaudiHistoAlg::bookProfile2D( unit, title,
         (double) cp.fCard, (double) cp.lCard, cp.lCard-cp.fCard, 
         0., (double) cp.nChan, cp.nChan );
