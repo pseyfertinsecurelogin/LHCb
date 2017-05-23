@@ -8,7 +8,6 @@ if(iwyu_tool)
     COMMAND ${iwyu_tool} -p ${IWYU_WORK_DIR}
     -- --mapping_file=${IWYU_MAPPING_FILE} > ${IWYU_WORK_DIR}/iwyu.log 2>&1
     WORKING_DIR=${IWYU_WORK_DIR}
-    DEPENDS ${GODHeaders}
     COMMENT "run iwyu"
     )
 else()
@@ -43,7 +42,6 @@ else()
     ${iwyu_tool} -p ${IWYU_WORK_DIR}
     -- --mapping_file=${IWYU_MAPPING_FILE} > ${IWYU_WORK_DIR}/iwyu.log 2>&1
     WORKING_DIR=${IWYU_WORK_DIR}
-    DEPENDS ${GODHeaders}
     COMMENT "run iwyu"
     )
 endif()
@@ -79,3 +77,4 @@ add_custom_target(manipulate_compilation_database
   WORKING_DIR=${CMAKE_BINARY_DIR}
   )
 add_dependencies(run-iwyu manipulate_compilation_database)
+add_dependencies(run-iwyu GODHeaders)
