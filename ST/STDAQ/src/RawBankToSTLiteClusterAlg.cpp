@@ -130,7 +130,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(RawEvent* rawEvt,STLiteCluster
     STTell1Board* aBoard = readoutTool()->findByBoardID(STTell1ID((*iterBank)->sourceID()));
     if (!aBoard && !m_skipErrors){
       Warning( "Invalid source ID --> skip bank"+ std::to_string((*iterBank)->sourceID()),
-               StatusCode::SUCCESS,2);
+               StatusCode::SUCCESS,2).ignore();
       ++counter("skipped Banks");
       continue;
     }
@@ -139,7 +139,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(RawEvent* rawEvt,STLiteCluster
 
    if ((*iterBank)->magic() != RawBank::MagicPattern) {
       Warning( "wrong magic pattern "+ std::to_string((*iterBank)->sourceID()),
-               StatusCode::SUCCESS,2);
+               StatusCode::SUCCESS,2).ignore();
       counter("skipped Banks") += tBanks.size();
       continue;
     }

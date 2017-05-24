@@ -264,7 +264,7 @@ void RawBankToSTClusterAlg::createCluster( const STClusterWord& aWord,
   } else {
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "Cluster already exists not inserted: " << aBoard->boardID()<< " " <<  aWord.channelID() << endmsg;
-    Warning("Failed to insert cluster --> exists in container", StatusCode::SUCCESS , 100);
+    Warning("Failed to insert cluster --> exists in container", StatusCode::SUCCESS , 100).ignore();
   }
 
 }
