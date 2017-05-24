@@ -41,7 +41,6 @@ setup.*
 cleanup.*
 version.cmt
 genConf/
-QMTest/
 test_results/
 *-slc[56]-*/
 i686-winxp-vc9-dbg/
