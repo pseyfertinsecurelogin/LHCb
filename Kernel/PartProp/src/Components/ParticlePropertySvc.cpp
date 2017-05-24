@@ -212,12 +212,6 @@ namespace LHCb
           "The map of charge-conjugation & protected symbols" )
         -> declareUpdateHandler (&LHCb::ParticlePropertySvc::updateCC   , this ) ;
     }
-    /// virtual destructor
-    virtual ~ParticlePropertySvc()
-    {
-      // delete all properties
-      for ( auto& i : m_set ) { delete i; }
-    }
     // ========================================================================
   private: // update handler
     // ========================================================================
@@ -303,7 +297,7 @@ namespace LHCb
   private: // "vizible" particle data
     // ========================================================================
     /// the actual storage of all properties
-    typedef std::set<LHCb::ParticleProperty*>                             Set ;
+    typedef std::set<std::unique_ptr<LHCb::ParticleProperty>> Set ;
     /// the actual type of map: { "name" : "property" }
     typedef GaudiUtils::VectorMap<std::string,     const LHCb::ParticleProperty*> NameMap ;
     /// the actual type of map: { "pid"  : "property" }
@@ -648,16 +642,16 @@ StatusCode LHCb::ParticlePropertySvc::addParticle
   //
   // 1) find the object with same name & pid in set:
   auto it = std::find_if( m_set.begin() , m_set.end() ,
-                          [&]( const LHCb::ParticleProperty* s) {
+                          [&]( const std::unique_ptr<LHCb::ParticleProperty>& s) {
          return s->name() == pp.name() && s->pid() == pp.pid();
   } );
   // 2) object is found, redefine it!
   LHCb::ParticleProperty* newp = nullptr ;
-  if ( m_set.end() != it ) { newp = *it ; }
+  if ( m_set.end() != it ) { newp = it->get() ; }
   // new property ?
   if ( !newp ) {
-    newp = new LHCb::ParticleProperty( pp ) ;
-    it = m_set.insert ( newp ).first  ;
+    it = m_set.insert ( std::make_unique<LHCb::ParticleProperty>(pp) ).first  ;
+    newp = it->get();
   } else if ( diff ( *newp , pp ) ) {
      *newp = pp ;  // NB: redefine the properties
   }

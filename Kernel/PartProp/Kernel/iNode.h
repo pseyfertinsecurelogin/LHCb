@@ -34,11 +34,6 @@ namespace Decays
    */
   class GAUDI_API iNode
   {
-  private:
-    // ========================================================================
-    /// fake STL base
-    typedef std::unary_function<LHCb::ParticleID,bool>                  _Base ;
-    // ========================================================================
   public:
     // ========================================================================
     /** the basic operation: comparison of the particle PID with the node
