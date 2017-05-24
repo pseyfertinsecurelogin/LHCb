@@ -1,54 +1,53 @@
 // ============================================================================
-#ifndef LOKI_MCFINDER_H 
+#ifndef LOKI_MCFINDER_H
 #define LOKI_MCFINDER_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
-#include <functional>
 // ============================================================================
-// LoKiCore 
+// LoKiCore
 // ============================================================================
 #include "LoKi/Interface.h"
 #include "LoKi/MCFinderObj.h"
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2006-03-11 
+ *  @date 2006-03-11
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  /// forward declaration 
-  class MCFinderObj ; 
+  /// forward declaration
+  class MCFinderObj ;
   // ==========================================================================
   /** @class MCFinder MCFinder.h LoKi/MCFinder.h
    *
-   *  Helper class whcih simplify the manipulation with 
-   *  the class LoKi::IMCFinderObj 
+   *  Helper class whcih simplify the manipulation with
+   *  the class LoKi::IMCFinderObj
    *
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-03-11
    */
   class GAUDI_API MCFinder : public LoKi::Interface<LoKi::MCFinderObj>
   {
-  public: 
+  public:
     // ========================================================================
     /// Standard constructor
-    MCFinder ( const LoKi::MCFinderObj* ); 
-    /// implicit conversion to the pointer 
-    operator const LoKi::MCFinderObj* () const ; 
+    MCFinder ( const LoKi::MCFinderObj* );
+    /// implicit conversion to the pointer
+    operator const LoKi::MCFinderObj* () const ;
     /// check for pointer validity:
     bool operator! () const { return validPointer() ; }
     // ========================================================================
@@ -56,7 +55,7 @@ namespace LoKi
   // ==========================================================================
 } //                                                  end of the namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_MCFINDER_H
 // ============================================================================

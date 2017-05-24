@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -22,9 +21,6 @@
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -76,17 +72,11 @@ namespace LoKi
     MCFilter
     ( const std::string& name ,    // the algorithm instance name
       ISvcLocator*       pSvc ) ; // pointer to the service locator
-    /// virtual and protected destructor
-    virtual ~MCFilter () {} ;
     // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    MCFilter () ;                        // the default constructor is disabled
     /// the copy constructor is disabled
-    MCFilter ( const MCFilter& ) ;          // the copy constructor is disabled
+    MCFilter ( const MCFilter& ) = delete;  // the copy constructor is disabled
     /// the assignement operator is disabled
-    MCFilter& operator=( const MCFilter& ) ;     // the assignement is disabled
+    MCFilter& operator=( const MCFilter& ) = delete;//the assignement is disabled
     // ========================================================================
   private:
     // ========================================================================

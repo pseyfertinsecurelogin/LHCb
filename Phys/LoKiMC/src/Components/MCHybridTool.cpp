@@ -344,17 +344,11 @@ namespace LoKi
       ( const std::string& type   ,
         const std::string& name   ,
         const IInterface*  parent ) ;
-      /// destrcutor
-      virtual ~MCTool();
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      MCTool () ;                        // the default constructor is disabled
       /// the copy constructor is disabled
-      MCTool( const MCTool& )  ;            // the copy constructor is disabled
+      MCTool( const MCTool& ) = delete;     // the copy constructor is disabled
       /// the assignement operator  is disabled
-      MCTool& operator=( const MCTool& )  ;                   // no assignement
+      MCTool& operator=( const MCTool& ) = delete;            // no assignement
       // ======================================================================
     private:
       // ======================================================================
@@ -448,10 +442,6 @@ LoKi::Hybrid::MCTool::MCTool
   declareProperty ( "Actor"   , m_actor   , "The processing engine"                  ) ;
   declareProperty ( "Lines"   , m_lines   , "Additional Python lines to be executed" ) ;
 }
-// ============================================================================
-/// Destructor (virtual and protected)
-// ============================================================================
-LoKi::Hybrid::MCTool::~MCTool() {}
 // ============================================================================
 // initialization of the tool
 // ============================================================================
