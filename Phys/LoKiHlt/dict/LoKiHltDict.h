@@ -212,8 +212,6 @@ namespace
   {
     // ========================================================================
     /// O1
-    std::unary_function<const LHCb::ODIN*,double>  m_f01 ;
-    std::unary_function<const LHCb::ODIN*,bool>    m_f02 ;
     /// function
     LoKi::FunctorFromFunctor<const LHCb::ODIN*,double>                 m_001  ;
     /// predicate
@@ -229,8 +227,6 @@ namespace
     LoKi::Constant<const LHCb::ODIN*,bool>                             m_co02 ;
     // ========================================================================
     /// L0
-    std::unary_function<const LHCb::L0DUReport*,double>        m_f011  ;
-    std::unary_function<const LHCb::L0DUReport*,bool>          m_f021  ;
     /// function
     LoKi::FunctorFromFunctor<const LHCb::L0DUReport*,double>   m_0011  ;
     /// predicate
@@ -246,8 +242,6 @@ namespace
     LoKi::Constant<const LHCb::L0DUReport*,bool>               m_co021 ;
     // ========================================================================
     /// HDR
-    std::unary_function<const LHCb::HltDecReports*,double>        m_f012  ;
-    std::unary_function<const LHCb::HltDecReports*,bool>          m_f022  ;
     /// function
     LoKi::FunctorFromFunctor<const LHCb::HltDecReports*,double>   m_0012  ;
     /// predicate
