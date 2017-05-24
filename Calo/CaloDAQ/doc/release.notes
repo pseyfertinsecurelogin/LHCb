@@ -5,6 +5,11 @@
 !-----------------------------------------------------------------------------
 
 
+! 2017-05-24 - O. Deschamps
+  - Fix bugs :  - switched  noSPD and SPD offset maps
+                - mixing offset maps between caloDet when offset maps are updates
+                - dereferencing when offset maps are updated
+
 ! 2016-08-22 - O. Deschamps
   - reduce verbosity
 
