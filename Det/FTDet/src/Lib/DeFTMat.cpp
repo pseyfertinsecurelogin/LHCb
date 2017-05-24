@@ -52,6 +52,7 @@ StatusCode DeFTMat::initialize(){
 
   // Get the boundaries of the layer
   const SolidBox* box = dynamic_cast<const SolidBox*> (geometry()->lvolume()->solid()->coverTop());
+  m_sizeX = box->xsize();
   m_sizeY = box->ysize();
   m_sizeZ = box->zsize();
 
