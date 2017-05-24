@@ -1,6 +1,5 @@
-// $Id$
 // ============================================================================
-#ifndef LHCBMATH_HESSE_H 
+#ifndef LHCBMATH_HESSE_H
 #define LHCBMATH_HESSE_H 1
 // ============================================================================
 // Include files
@@ -9,10 +8,11 @@
 // ============================================================================
 #include "GaudiKernel/StatusCode.h"
 // ============================================================================
-// GSL 
+// GSL
 // ============================================================================
 #include "gsl/gsl_vector.h"
 #include "gsl/gsl_matrix.h"
+#include "gsl/gsl_linalg.h"
 // ============================================================================
 namespace Gaudi
 {
@@ -22,41 +22,46 @@ namespace Gaudi
     // ========================================================================
     namespace GSL
     {
+      namespace details {
+          struct gsl_deleter {
+              void operator()(gsl_vector* p) const { if (p) gsl_vector_free(p); }
+              void operator()(gsl_matrix* p) const { if (p) gsl_matrix_free(p); }
+              void operator()(gsl_permutation* p) const { if (p) gsl_permutation_free(p); }
+          };
+      }
       // ======================================================================
       /** @class Hesse
        *  evaluate the hessian for the function
        *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
        *  @date 2012-05-27
-       */      
-      class GAUDI_API Hesse 
+       */
+      class GAUDI_API Hesse final
       {
       public:
         // ====================================================================
-        /// the actual type of function to be used for hessian calculation 
+        /// the actual type of function to be used for hessian calculation
         typedef double (*function) ( const gsl_vector  * x, void* params ) ;
         // ====================================================================
       public:
         // ====================================================================
-        /*  constructor with all parameters 
-         *  @param f      the function to be used 
-         *  @param x      the point for hessian to be evaluated 
-         *  @param params the parameters for the function 
+        /*  constructor with all parameters
+         *  @param f      the function to be used
+         *  @param x      the point for hessian to be evaluated
+         *  @param params the parameters for the function
          *  @param h the step-size (guess)
          */
         Hesse ( function          f      ,
                 const gsl_vector* x      ,
-                void*             params , 
+                void*             params ,
                 const double      h      ) ;
-        /// destructor 
-        ~Hesse() ;                                                // destructor 
         // ====================================================================
       private:
         // ====================================================================
-        /// the default constructor is disabled 
+        /// the default constructor is disabled
         Hesse () ;                         // default constrictor is disabled
-        /// the copy constructor is disabled 
+        /// the copy constructor is disabled
         Hesse ( const Hesse& ) ;           // the copy constructor is disabled
-        /// the assignement operator is disabled 
+        /// the assignement operator is disabled
         Hesse& operator=( const Hesse& ) ; // no assignement
         // ====================================================================
       public:
@@ -68,71 +73,71 @@ namespace Gaudi
         // ====================================================================
         /// size of the problem
         std::size_t       size  () const { return m_x->size ; }
-        /// get the hesse matrix 
-        const gsl_matrix* hesse () const { return m_hesse ; }
-        /// get the inverse hesse ("covariance") matrix 
-        const gsl_matrix* cov2  () const { return m_cov2  ; }
+        /// get the hesse matrix
+        const gsl_matrix* hesse () const { return m_hesse.get() ; }
+        /// get the inverse hesse ("covariance") matrix
+        const gsl_matrix* cov2  () const { return m_cov2.get()  ; }
         // ====================================================================
       private:
         // ====================================================================
-        /// the function 
-        function          m_func   ; // the function 
-        /// the point 
-        const gsl_vector* m_x      ; // the point 
-        /// parameters 
-        void*             m_params ; // the parameters 
-        /// step-size 
-        double            m_h      ; // the step-size 
+        /// the function
+        function          m_func   ; // the function
+        /// the point
+        const gsl_vector* m_x      ; // the point
+        /// parameters
+        void*             m_params ; // the parameters
+        /// step-size
+        double            m_h      ; // the step-size
         // ====================================================================
       private:
         // ====================================================================
         /// the actual hessian
-        gsl_matrix* m_hesse ;                        // the actual hesse matrix 
-        /// the axuxillary matrix 
-        gsl_matrix* m_aux   ;                        // the axuxillary matrix 
-        /// the inverse hesse matrix 
-        gsl_matrix* m_cov2  ;                       // the inverse hesse matrix 
-        /// 
+        std::unique_ptr<gsl_matrix,details::gsl_deleter> m_hesse ;                        // the actual hesse matrix
+        /// the axuxillary matrix
+        std::unique_ptr<gsl_matrix,details::gsl_deleter> m_aux   ;                        // the axuxillary matrix
+        /// the inverse hesse matrix
+        std::unique_ptr<gsl_matrix,details::gsl_deleter> m_cov2  ;                       // the inverse hesse matrix
+        ///
         // ====================================================================
       private:
         // ====================================================================
         /// helper vector
-        gsl_vector* m_a ;  // helper vector
+        std::unique_ptr<gsl_vector,details::gsl_deleter> m_a ;  // helper vector
         /// helper vector
-        gsl_vector* m_b ;  // helper vector
+        std::unique_ptr<gsl_vector,details::gsl_deleter> m_b ;  // helper vector
         // ====================================================================
       } ;
       // ======================================================================
       /** invert the matrix using LU decomposition
-       *  @param matrix (UPDATE) the matrix to be inverted 
-       *  @param result (UPDATE) the result 
-       *  @return status code 
+       *  @param matrix (UPDATE) the matrix to be inverted
+       *  @param result (UPDATE) the result
+       *  @return status code
        *  @attention the input matrix will be screwed up!
        *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
        *  @date 2012-05-28
        */
-      GAUDI_API 
-      StatusCode invert_LU_1 ( gsl_matrix* matrix , 
+      GAUDI_API
+      StatusCode invert_LU_1 ( gsl_matrix* matrix ,
                                gsl_matrix* result ) ;
       // ======================================================================
       /** invert the matrix using LU decomposition
-       *  @param matrix (INPUT) the matrix to be inverted 
-       *  @param result (UPDATE) the result 
-       *  @return status code 
-       *  @attention the input matrix will be preserved 
+       *  @param matrix (INPUT) the matrix to be inverted
+       *  @param result (UPDATE) the result
+       *  @return status code
+       *  @attention the input matrix will be preserved
        *  @author Vanya BELYAEV  Ivan.Belyaev@itep.ru
        *  @date 2012-05-28
        */
-      GAUDI_API 
+      GAUDI_API
       StatusCode invert_LU_2 ( const gsl_matrix* matrix ,
                                gsl_matrix*       result ) ;
       // ======================================================================
-    } //                                      end of namespace Gaudi::Math::GSL 
+    } //                                      end of namespace Gaudi::Math::GSL
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LHCBMATH_HESSE_H
 // ============================================================================

@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LHCBMATH_BERNSTEIN_H
 #define LHCBMATH_BERNSTEIN_H 1
@@ -7,7 +6,6 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <functional>
 #include <algorithm>
 #include <vector>
 #include <array>
@@ -146,13 +144,13 @@ namespace Gaudi
        *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
        */
       template <class XITERATOR,class YITERATOR>
-        Bernstein ( XITERATOR    xbegin , 
+        Bernstein ( XITERATOR    xbegin ,
                     XITERATOR    xend   ,
-                    YITERATOR    ybegin , 
+                    YITERATOR    ybegin ,
                     YITERATOR    yend   ,
                     const double xmin   ,
-                    const double xmax   ) 
-        : Gaudi::Math::PolySum ( xbegin == xend ? 0 : std::distance ( xbegin , xend  ) -1 ) 
+                    const double xmax   )
+        : Gaudi::Math::PolySum ( xbegin == xend ? 0 : std::distance ( xbegin , xend  ) -1 )
         , m_xmin ( std::min ( xmin , xmax ) )
         , m_xmax ( std::max ( xmin , xmax ) )
       {
@@ -160,7 +158,7 @@ namespace Gaudi
         const unsigned int NY = std::distance ( ybegin , yend ) ;
         std::vector<long double> _t ( std::max ( N , 1u ) ) ;
         //
-        std::transform ( xbegin , xend   , _t.begin() , 
+        std::transform ( xbegin , xend   , _t.begin() ,
                          [this]( const double v ) { return this->t(v) ; } ) ;
         //
         std::vector<long double> _f ( N ) ;
@@ -173,9 +171,9 @@ namespace Gaudi
         w[0] =  1.0  ;
         c[0] = _f[0] ;
         //
-        for ( unsigned int s = 1 ; s < N ; ++s ) 
+        for ( unsigned int s = 1 ; s < N ; ++s )
         {
-          /// calculate the divided differences 
+          /// calculate the divided differences
           for ( unsigned int k = N - 1 ; s <= k ; --k )
           {
             const long double fk  = _f[k  ] ;
@@ -186,15 +184,15 @@ namespace Gaudi
           }
           //
           const long double xs1 = _t[s-1] ;
-          for ( unsigned int j = s ; 1 <= j ; --j ) 
+          for ( unsigned int j = s ; 1 <= j ; --j )
           {
             w[j] =  j * w[j-1] * ( 1 - xs1 ) / s  - ( s - j ) * xs1 * w[j] / s ;
-            c[j] =  j * c[j-1]               / s  + ( s - j )       * c[j] / s  + w[j] * _f[s] ; 
+            c[j] =  j * c[j-1]               / s  + ( s - j )       * c[j] / s  + w[j] * _f[s] ;
           }
           w[0]  = -w[0] *   xs1 ;
           c[0] +=  w[0] * _f[s] ;
         }
-        ///  finally set parameters 
+        ///  finally set parameters
         for ( unsigned short i = 0 ; i < N ; ++i ) { setPar ( i , c[i] ) ; }
       }
       // ======================================================================
@@ -594,7 +592,6 @@ namespace Gaudi
      *  @date 2016-07-03
      */
     class GAUDI_API BernsteinDualBasis
-      : public std::unary_function<double,double>
     {
       // ======================================================================
     public :
@@ -612,7 +609,7 @@ namespace Gaudi
       /// cconstructor
       BernsteinDualBasis  (       BernsteinDualBasis&& right ) ;
       /// destructor
-      ~BernsteinDualBasis () ;
+      ~BernsteinDualBasis () = default;
       // ======================================================================
     public:
       // ======================================================================
@@ -643,7 +640,7 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@iep.ru
      *  @date 2016-10-02
      */
-    class GAUDI_API BernsteinEven: public std::unary_function<double,double>
+    class GAUDI_API BernsteinEven
     {
     public:
       // ======================================================================
@@ -807,7 +804,7 @@ namespace Gaudi
      *  parameters \f$ \alpha_i(p_0,p_1,....p_{n-1})\f$ form
      *  n-dimension sphere
      */
-    class GAUDI_API Positive : public std::unary_function<double,double>
+    class GAUDI_API Positive
     {
       // ======================================================================
     public:
@@ -831,7 +828,7 @@ namespace Gaudi
       /// move
       Positive (       Positive&& right ) ;
       // ======================================================================
-      virtual ~Positive () ;
+      virtual ~Positive () = default;
       // ======================================================================
     public:
       // ======================================================================
@@ -976,7 +973,7 @@ namespace Gaudi
      *  @see Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2016-10-02
      */
-    class GAUDI_API PositiveEven : public std::unary_function<double,double>
+    class GAUDI_API PositiveEven
     {
       // ======================================================================
     public:
@@ -1148,8 +1145,6 @@ namespace Gaudi
       /// move
       Monothonic (       Monothonic&& right ) = default ;
       // ======================================================================
-      virtual ~Monothonic() ;
-      // ======================================================================
     public:
       // ======================================================================
       /// increasing ?
@@ -1221,8 +1216,6 @@ namespace Gaudi
       /// move
       Convex (       Convex&&        right     ) = default ;
       // ======================================================================
-      virtual ~Convex() ;
-      // ======================================================================
     public:
       // ======================================================================
       /// convex     ?
@@ -1279,8 +1272,6 @@ namespace Gaudi
       /// move
       ConvexOnly (       ConvexOnly&&  right     ) = default ;
       // ======================================================================
-      virtual ~ConvexOnly() ;
-      // ======================================================================
     public:
       // ======================================================================
       /// convex     ?
@@ -1308,7 +1299,6 @@ namespace Gaudi
      *  The Bernstein's polynomial of order Nx*Ny
      */
     class GAUDI_API Bernstein2D
-      : public std::binary_function<double,double,double>
     {
       // ======================================================================
     public:
@@ -1483,7 +1473,6 @@ namespace Gaudi
      *  non-negative coefficients
      */
     class GAUDI_API Positive2D
-      : public std::binary_function<double,double,double>
     {
       // ======================================================================
     public:
@@ -1616,7 +1605,6 @@ namespace Gaudi
      *  The symmetric Bernstein's polynomial of order N*N
      */
     class GAUDI_API Bernstein2DSym
-      : public std::binary_function<double,double,double>
     {
       // ======================================================================
     public:
@@ -1773,7 +1761,6 @@ namespace Gaudi
      *  non-negative coefficients
      */
     class GAUDI_API Positive2DSym
-      : public std::binary_function<double,double,double>
     {
       // ======================================================================
     public:
@@ -1894,7 +1881,7 @@ namespace Gaudi
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
-// add couple of functions into Gaudi::Math::Interpolation namespace 
+// add couple of functions into Gaudi::Math::Interpolation namespace
 // ============================================================================
 namespace Gaudi
 {
@@ -1906,127 +1893,127 @@ namespace Gaudi
     {
       // ======================================================================
       /** construct interpolation polynomial (in Bernstein form)
-       *  @param xbegin   begin-iterator for vector of abscissas 
-       *  @param xend     end-iterator for vector of abscissas 
+       *  @param xbegin   begin-iterator for vector of abscissas
+       *  @param xend     end-iterator for vector of abscissas
        *  @param ybegin   begin-iterator for vector of function
        *  @param yend     end-iterator for vector of function
        *  @param xmin     low  edge for Bernstein polynomial
        *  @param xmax     high edge for Bernstein polynomial
-       *  - if vector of y is longer  than vector x, extra values are ignored 
-       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+       *  - if vector of y is longer  than vector x, extra values are ignored
+       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero
        *  It relies on Newton-Bernstein algorithm
        *  @see http://arxiv.org/abs/1510.09197
-       *  @see Mark Ainsworth and Manuel A. Sanches, 
-       *       "Computing of Bezier control points of Largangian interpolant 
+       *  @see Mark Ainsworth and Manuel A. Sanches,
+       *       "Computing of Bezier control points of Largangian interpolant
        *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
        *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
-       *  @see Gaudi::Math::Bernstein 
-       *  @code 
+       *  @see Gaudi::Math::Bernstein
+       *  @code
        *  std::array<double,5> x = ... ; // abscissas
-       *  std::vector<double,> f = ... ; // function values 
-       *  Gaudi::Math::Bernstein p = bernstein ( x.begin() , x.end() , 
+       *  std::vector<double,> f = ... ; // function values
+       *  Gaudi::Math::Bernstein p = bernstein ( x.begin() , x.end() ,
        *                                           f.begin() , f.end() , -1 , 1 );
        *  std::cout << " interpolant at x=0.1 is " << p(0.1) << std::endl ;
        *  std::cout << " interpolant at x=0.2 is " << p(0.2) << std::endl ;
-       *  @endcode 
+       *  @endcode
        */
       template <class XITERATOR, class YITERATOR>
-      inline 
+      inline
       Gaudi::Math::Bernstein
-      bernstein ( XITERATOR    xbegin , 
-                  XITERATOR    xend   ,  
-                  YITERATOR    ybegin , 
-                  YITERATOR    yend   , 
-                  const double xmin   , 
+      bernstein ( XITERATOR    xbegin ,
+                  XITERATOR    xend   ,
+                  YITERATOR    ybegin ,
+                  YITERATOR    yend   ,
+                  const double xmin   ,
                   const double xmax   )
       {
         return Gaudi::Math::Bernstein ( xbegin , xend ,
-                                        ybegin , yend , 
+                                        ybegin , yend ,
                                         xmin   , xmax ) ;
       }
       // ======================================================================
       /** construct interpolation polynomial (in Bernstein form)
-       *  @param func     the function 
-       *  @param xbegin   begin-iterator for vector of abscissas 
-       *  @param xend     end-iterator for vector of abscissas 
+       *  @param func     the function
+       *  @param xbegin   begin-iterator for vector of abscissas
+       *  @param xend     end-iterator for vector of abscissas
        *  @param xmin low  edge for Bernstein polynomial
-       *  @param xmax high edge for Bernstein polynomial       
-       *  - if vector of y is longer  than vector x, extra values are ignored 
-       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+       *  @param xmax high edge for Bernstein polynomial
+       *  - if vector of y is longer  than vector x, extra values are ignored
+       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero
        *  It relies on Newton-Bernstein algorithm
        *  @see http://arxiv.org/abs/1510.09197
-       *  @see Mark Ainsworth and Manuel A. Sanches, 
-       *       "Computing of Bezier control points of Largangian interpolant 
+       *  @see Mark Ainsworth and Manuel A. Sanches,
+       *       "Computing of Bezier control points of Largangian interpolant
        *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
        *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
-       *  @see Gaudi::Math::Bernstein 
-       *  @code 
+       *  @see Gaudi::Math::Bernstein
+       *  @code
        *  auto f = [] ( double t ) { return std::sin ( t ) ; }
        *  std::array<double,5> x = ... ; // abscissas
        *  Gaudi::Math::Bernstein p = interpolate ( f , x.begin() , x.end() , -1 , 1 );
        *  std::cout << " interpolant at x=0.1 is " << p(0.1) << std::endl ;
        *  std::cout << " interpolant at x=0.2 is " << p(0.2) << std::endl ;
-       *  @endcode 
+       *  @endcode
        */
       template <class XITERATOR, class FUNCTION>
-      inline 
+      inline
       Gaudi::Math::Bernstein
-      bernstein ( FUNCTION     func   , 
-                  XITERATOR    xbegin ,  
-                  XITERATOR    xend   ,  
-                  const double xmin   , 
+      bernstein ( FUNCTION     func   ,
+                  XITERATOR    xbegin ,
+                  XITERATOR    xend   ,
+                  const double xmin   ,
                   const double xmax   )
       {
         const unsigned int N = std::distance ( xbegin , xend ) ;
         std::vector<double> f ( N ) ;
         std::transform ( xbegin , xend , f.begin () , func ) ;
         return Gaudi::Math::Bernstein ( xbegin    , xend    ,
-                                        f.begin() , f.end() , 
+                                        f.begin() , f.end() ,
                                         xmin      , xmax    ) ;
       }
       // ================================================================================
-      /** construct interpolation polynomial (in Bernstein form) using Gauss-Lobatto grid, 
+      /** construct interpolation polynomial (in Bernstein form) using Gauss-Lobatto grid,
        *  that minimises Runge's effect.
-       *  @param func      the function 
-       *  @param N         the interpolation  degree 
+       *  @param func      the function
+       *  @param N         the interpolation  degree
        *  @param xmin low  edge for Bernstein polynomial
-       *  @param xmax high edge for Bernstein polynomial       
-       *  - if vector of y is longer  than vector x, extra values are ignored 
-       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+       *  @param xmax high edge for Bernstein polynomial
+       *  - if vector of y is longer  than vector x, extra values are ignored
+       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero
        *  It relies on Newton-Bernstein algorithm
        *  @see http://arxiv.org/abs/1510.09197
-       *  @see Mark Ainsworth and Manuel A. Sanches, 
-       *       "Computing of Bezier control points of Largangian interpolant 
+       *  @see Mark Ainsworth and Manuel A. Sanches,
+       *       "Computing of Bezier control points of Largangian interpolant
        *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
        *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
-       *  @see Gaudi::Math::Bernstein 
-       *  @code 
+       *  @see Gaudi::Math::Bernstein
+       *  @code
        *  auto f = [] ( double t ) { return std::sin ( t ) ; }
        *  Gaudi::Math::Bernstein p = lobatto ( f , 5 , -1 , 1 );
        *  std::cout << " interpolant at x=0.1 is " << p(0.1) << std::endl ;
        *  std::cout << " interpolant at x=0.2 is " << p(0.2) << std::endl ;
-       *  @endcode 
-       */  
+       *  @endcode
+       */
       template <class FUNCTION>
-      inline 
+      inline
       Gaudi::Math::Bernstein
-      lobatto  ( FUNCTION             func , 
-                 const unsigned short N    , 
-                 const double         xmin , 
+      lobatto  ( FUNCTION             func ,
+                 const unsigned short N    ,
+                 const double         xmin ,
                  const double         xmax )
       {
         // trivial case:
-        if ( 0 == N ) 
+        if ( 0 == N )
         {
-          //  trivial grid 
+          //  trivial grid
           const double x = 0.5 * ( xmin + xmax ) ;
           const double y = func ( x ) ;
-          return Gaudi::Math::Bernstein ( &x   , &x + 1 , 
-                                          &y   , &y + 1 , 
+          return Gaudi::Math::Bernstein ( &x   , &x + 1 ,
+                                          &y   , &y + 1 ,
                                           xmin , xmax   ) ;
         }
         //
-        std::vector<double> x ( N + 1 ) ;        
+        std::vector<double> x ( N + 1 ) ;
         //
         const double x_min = std::min ( xmin , xmax ) ;
         const double x_max = std::max ( xmin , xmax ) ;
@@ -2035,58 +2022,58 @@ namespace Gaudi
         const double xhd = 0.5 * ( x_max - x_min ) ;
         //
         const long double pi_N1 = M_PIl / ( N  - 1 ) ;
-        auto _xi_ = [xhs,xhd,pi_N1] ( const unsigned short k ) 
+        auto _xi_ = [xhs,xhd,pi_N1] ( const unsigned short k )
           { return xhs - std::cos ( pi_N1 * k ) * xhd  ; } ;
         x.front() = x_min ;
         x.back () = x_max ;
         for ( unsigned short i = 1 ; i + 1 < N ; ++i ) { x[i] =  _xi_ ( i )  ; }
         //
-        return bernstein ( func , 
-                           x.begin () , x.end () , 
+        return bernstein ( func ,
+                           x.begin () , x.end () ,
                            xmin       , xmax     ) ;
       }
       // ================================================================================
-      /** construct interpolation polynomial (in Bernstein form) using Gauss-Lobatto grid, 
+      /** construct interpolation polynomial (in Bernstein form) using Gauss-Lobatto grid,
        *  that minimises Runge's effect.
-       *  @param func      the function 
-       *  @param N         the interpolation  degree 
+       *  @param func      the function
+       *  @param N         the interpolation  degree
        *  @param xmin low  edge for Bernstein polynomial
-       *  @param xmax high edge for Bernstein polynomial       
-       *  - if vector of y is longer  than vector x, extra values are ignored 
-       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+       *  @param xmax high edge for Bernstein polynomial
+       *  - if vector of y is longer  than vector x, extra values are ignored
+       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero
        *  It relies on Newton-Bernstein algorithm
        *  @see http://arxiv.org/abs/1510.09197
-       *  @see Mark Ainsworth and Manuel A. Sanches, 
-       *       "Computing of Bezier control points of Largangian interpolant 
+       *  @see Mark Ainsworth and Manuel A. Sanches,
+       *       "Computing of Bezier control points of Largangian interpolant
        *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
        *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
-       *  @see Gaudi::Math::Bernstein 
-       *  @code 
+       *  @see Gaudi::Math::Bernstein
+       *  @code
        *  auto f = [] ( double t ) { return std::sin ( t ) ; }
        *  Gaudi::Math::Bernstein p = lobatto<5> ( f , -1 , 1 );
        *  std::cout << " interpolant at x=0.1 is " << p(0.1) << std::endl ;
        *  std::cout << " interpolant at x=0.2 is " << p(0.2) << std::endl ;
-       *  @endcode 
-       */  
+       *  @endcode
+       */
       template <unsigned short N, class FUNCTION>
-      inline 
+      inline
       Gaudi::Math::Bernstein
-      lobatto  ( FUNCTION             func , 
-                 const double         xmin , 
+      lobatto  ( FUNCTION             func ,
+                 const double         xmin ,
                  const double         xmax )
       {
         // trivial case:
-        if ( 0 == N ) 
+        if ( 0 == N )
         {
-          //  trivial grid 
+          //  trivial grid
           const double x = 0.5 * ( xmin + xmax ) ;
           const double y = func ( x ) ;
-          return Gaudi::Math::Bernstein ( &x   , &x + 1 , 
-                                          &y   , &y + 1 , 
+          return Gaudi::Math::Bernstein ( &x   , &x + 1 ,
+                                          &y   , &y + 1 ,
                                           xmin , xmax   ) ;
         }
         //
-        std::array<double,N+1> x ;        
+        std::array<double,N+1> x ;
         //
         const double x_min = std::min ( xmin , xmax ) ;
         const double x_max = std::max ( xmin , xmax ) ;
@@ -2095,106 +2082,106 @@ namespace Gaudi
         const double xhd = 0.5 * ( x_max - x_min ) ;
         //
         const long double pi_N1 = M_PIl / ( N  - 1 ) ;
-        auto _xi_ = [xhs,xhd,pi_N1] ( const unsigned short k ) 
+        auto _xi_ = [xhs,xhd,pi_N1] ( const unsigned short k )
           { return xhs - std::cos ( pi_N1 * k ) * xhd  ; } ;
         x.front () = x_min ;
         x.back  () = x_max ;
-        for ( unsigned short i = 1 ; i + 1 < N ; ++i ) 
+        for ( unsigned short i = 1 ; i + 1 < N ; ++i )
         { x[i] =  _xi_ ( i )  ; }
         //
-        return bernstein ( func , 
-                           x.begin () , x.end () , 
+        return bernstein ( func ,
+                           x.begin () , x.end () ,
                            xmin       , xmax     ) ;
       }
       // ======================================================================
       /** construct interpolation polynomial (in Bernstein form)
-       *  @param x       vector of abscissas 
-       *  @param y       vector of function values 
+       *  @param x       vector of abscissas
+       *  @param y       vector of function values
        *  @param xmin low  edge for Bernstein polynomial
-       *  @param xmax high edge for Bernstein polynomial       
-       *  - if vector of y is longer  than vector x, extra values are ignored 
-       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+       *  @param xmax high edge for Bernstein polynomial
+       *  - if vector of y is longer  than vector x, extra values are ignored
+       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero
        *  It relies on Newton-Bernstein algorithm
        *  @see http://arxiv.org/abs/1510.09197
-       *  @see Mark Ainsworth and Manuel A. Sanches, 
-       *       "Computing of Bezier control points of Largangian interpolant 
+       *  @see Mark Ainsworth and Manuel A. Sanches,
+       *       "Computing of Bezier control points of Largangian interpolant
        *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
        *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
-       *  @see Gaudi::Math::Bernstein 
-       *  @code 
+       *  @see Gaudi::Math::Bernstein
+       *  @code
        *  std::vector<double> x = ... ; // abscissas
-       *  std::vector<double> y = ... ; // functionvalues 
+       *  std::vector<double> y = ... ; // functionvalues
        *  Gaudi::Math::Bernstein p = interpolate ( x , y , -1 , 1 );
        *  std::cout << " interpolant at x=0.1 is " << p(0.1) << std::endl ;
        *  std::cout << " interpolant at x=0.2 is " << p(0.2) << std::endl ;
-       *  @endcode 
+       *  @endcode
        */
-      GAUDI_API 
+      GAUDI_API
       Gaudi::Math::Bernstein
-      bernstein ( const std::vector<double>& x    ,  
-                  const std::vector<double>& y    , 
-                  const double               xmin , 
+      bernstein ( const std::vector<double>& x    ,
+                  const std::vector<double>& y    ,
+                  const double               xmin ,
                   const double               xmax );
       // ======================================================================
       /** construct interpolation polynomial (in Bernstein form)
-       *  @param func    the function 
-       *  @param x       vector of abscissas 
+       *  @param func    the function
+       *  @param x       vector of abscissas
        *  @param xmin low  edge for Bernstein polynomial
        *  @param xmax high edge for Bernstein polynomial
-       *  - if vector of y is longer  than vector x, extra values are ignored 
-       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+       *  - if vector of y is longer  than vector x, extra values are ignored
+       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero
        *  It relies on Newton-Bernstein algorithm
        *  @see http://arxiv.org/abs/1510.09197
-       *  @see Mark Ainsworth and Manuel A. Sanches, 
-       *       "Computing of Bezier control points of Largangian interpolant 
+       *  @see Mark Ainsworth and Manuel A. Sanches,
+       *       "Computing of Bezier control points of Largangian interpolant
        *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
        *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
-       *  @see Gaudi::Math::Bernstein 
-       *  @code 
+       *  @see Gaudi::Math::Bernstein
+       *  @code
        *  auto f = [] ( double t ) { return std::sin ( t ) ; }
        *  std::vector<double> x = ... ; // abscissas
        *  Gaudi::Math::Bernstein p = interpolate ( f , x , -1 , 1 );
        *  std::cout << " interpolant at x=0.1 is " << p(0.1) << std::endl ;
        *  std::cout << " interpolant at x=0.2 is " << p(0.2) << std::endl ;
-       *  @endcode 
+       *  @endcode
        */
-      GAUDI_API 
+      GAUDI_API
       Gaudi::Math::Bernstein
-      bernstein ( std::function<double(double)> func , 
+      bernstein ( std::function<double(double)> func ,
                   const std::vector<double>&    x    ,
-                  const double                  xmin , 
+                  const double                  xmin ,
                   const double                  xmax ) ;
       // ======================================================================
-      /** construct interpolation polynomial (in Bernstein form) using Gauss-Lobatto grid, 
+      /** construct interpolation polynomial (in Bernstein form) using Gauss-Lobatto grid,
        *  that minimises Runge's effect.
-       *  @param func      the function 
-       *  @param N         the interpolation  degree 
+       *  @param func      the function
+       *  @param N         the interpolation  degree
        *  @param xmin low  edge for Bernstein polynomial
-       *  @param xmax high edge for Bernstein polynomial       
-       *  - if vector of y is longer  than vector x, extra values are ignored 
-       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero  
+       *  @param xmax high edge for Bernstein polynomial
+       *  - if vector of y is longer  than vector x, extra values are ignored
+       *  - if vector of y is shorter than vector x, missing entries are assumed to be zero
        *  It relies on Newton-Bernstein algorithm
        *  @see http://arxiv.org/abs/1510.09197
-       *  @see Mark Ainsworth and Manuel A. Sanches, 
-       *       "Computing of Bezier control points of Largangian interpolant 
+       *  @see Mark Ainsworth and Manuel A. Sanches,
+       *       "Computing of Bezier control points of Largangian interpolant
        *       in arbitrary dimension", arXiv:1510.09197 [math.NA]
        *  @see http://adsabs.harvard.edu/abs/2015arXiv151009197A
-       *  @see Gaudi::Math::Bernstein 
-       *  @code 
+       *  @see Gaudi::Math::Bernstein
+       *  @code
        *  auto f = [] ( double t ) { return std::sin ( t ) ; }
        *  Gaudi::Math::Bernstein p = bernstein ( f , 5 , -1 , 1 );
        *  std::cout << " interpolant at x=0.1 is " << p(0.1) << std::endl ;
        *  std::cout << " interpolant at x=0.2 is " << p(0.2) << std::endl ;
-       *  @endcode 
-       */  
+       *  @endcode
+       */
       GAUDI_API
       Gaudi::Math::Bernstein
-      bernstein ( std::function<double(double)> func , 
-                  const unsigned short          N    , 
-                  const double                  xmin , 
+      bernstein ( std::function<double(double)> func ,
+                  const unsigned short          N    ,
+                  const double                  xmin ,
                   const double                  xmax ) ;
       // ======================================================================
-    } //                            end of namespace Gaudi::Math::Interpolation  
+    } //                            end of namespace Gaudi::Math::Interpolation
     // ========================================================================
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================
