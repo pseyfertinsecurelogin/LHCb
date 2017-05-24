@@ -31,7 +31,7 @@ SolidUnion::SolidUnion( const std::string& name  ,
 {
   if( UNLIKELY(!SolidBoolean::first()) )
     { throw SolidException(" SolidUnion:: ISolid* points to NULL!"); }
-  createCover();
+  createCoverTop();
 }
 // ============================================================================
 
@@ -116,11 +116,11 @@ StatusCode  SolidUnion::unite ( std::unique_ptr<ISolid>  child    ,
 /** create the cover box
  */
 // ============================================================================
-void SolidUnion::createCover() {
+void SolidUnion::createCoverTop() {
     const double x =  std::max( std::abs(xMin()), std::abs(xMax()) );
     const double y =  std::max( std::abs(yMin()), std::abs(yMax()) );
     const double z =  std::max( std::abs(zMin()), std::abs(zMax()) );
-    m_cover = std::make_unique<SolidBox> ("CoverTop for " + name () , x , y, z  ) ;
+    m_coverTop = std::make_unique<SolidBox> ("CoverTop for " + name () , x , y, z  ) ;
 }
 // ============================================================================
 
@@ -133,11 +133,8 @@ StatusCode SolidUnion::updateBP()
 {
   if( childBegin() == childEnd() ) { return StatusCode::SUCCESS ; }
   // get last child
-  SolidChild* child =
+  SolidChild* base =
     *( childBegin() + ( childEnd() - childBegin() - 1 ) );
-  // cast it!
-  SolidBase* base = dynamic_cast<SolidBase*> (child);
-  if( !base ) { return StatusCode::FAILURE ; }
   //
   setXMin   ( std::min( base->xMin(), xMin() ) );
   setXMax   ( std::max( base->xMax(), xMax() ) );
@@ -152,7 +149,7 @@ StatusCode SolidUnion::updateBP()
   setRhoMax ( std::max( base->rhoMax(), rhoMax() ) );
   //
   checkBP();
-  createCover();
+  createCoverTop();
   return StatusCode::SUCCESS;
 }
 // ============================================================================
