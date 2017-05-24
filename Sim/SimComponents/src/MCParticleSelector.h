@@ -7,6 +7,9 @@
 // interface
 #include "MCInterfaces/IMCParticleSelector.h"
 
+#include "boost/limits.hpp"
+#include "boost/numeric/conversion/bounds.hpp"
+
 /** @class MCParticleSelector MCParticleSelector.h
  *
  *  Class for selection of MCParticles given a criteria
@@ -16,21 +19,16 @@
  *  @date   13/3/2002
  */
 
-class MCParticleSelector : public GaudiTool,
-                           virtual public IMCParticleSelector
+class MCParticleSelector : public extends<GaudiTool, IMCParticleSelector>
 {
 
 public:
 
   /// constructor
-  MCParticleSelector( const std::string& type,
-                      const std::string& name,
-                      const IInterface* parent );
+  using base_class::base_class;
 
    // Tool initialization
   StatusCode initialize() override;
-
-public:
 
   // select
   bool accept(const LHCb::MCParticle* aParticle) const override;
@@ -42,23 +40,23 @@ private: // methods
 
 private: // data
 
-  double m_zOrigin;       ///< Maximum z position of origin vertex
-  double m_pMin;          ///< Minimum momentum
-  double m_pMax;          ///< Maximum momentum
-  double m_betaGammaMin;  ///< Minimum cut on beta * gamma
+  Gaudi::Property<double> m_zOrigin { this,"zOrigin", boost::numeric::bounds<double>::highest() };  ///< Maximum z position of origin vertex
+  Gaudi::Property<double> m_pMin { this,"pMin", 0.0*Gaudi::Units::GeV };                      ///< Minimum momentum
+  Gaudi::Property<double> m_pMax { this,"pMax", boost::numeric::bounds<double>::highest() };  ///< Maximum momentum
+  Gaudi::Property<double> m_betaGammaMin { this,"betaGammaMin", 0.0 };                                        ///< Minimum cut on beta * gamma
 
-  double m_etaMax;        ///< Max eta cut
-  double m_etaMin;        ///< Min eta cut
+  Gaudi::Property<double> m_etaMin { this,"etaMin", -boost::numeric::bounds<double>::highest() };  ///< Min eta cut
+  Gaudi::Property<double> m_etaMax { this,"etaMax",  boost::numeric::bounds<double>::highest() };  ///< Max eta cut
 
-  bool m_selCharged;      ///< Select charged particles
-  bool m_selNeutral;      ///< Select neutral particles
+  Gaudi::Property<bool> m_selCharged { this,"SelectChargedParticles", true };  ///< Select charged particles
+  Gaudi::Property<bool> m_selNeutral { this,"SelectNeutralParticles", true };  ///< Select neutral particles
 
-  bool m_rejectElectrons;    ///< Reject electrons
+  Gaudi::Property<bool> m_rejectElectrons { this,"rejectElectrons", false };   ///< Reject electrons
 
-  bool m_rejectInteractions; ///< Reject interactions
-  double m_zInteraction;     ///< z of the interaction
+  Gaudi::Property<bool> m_rejectInteractions { this,"rejectInteractions", false };                         ///< Reject interactions
+  Gaudi::Property<double> m_zInteraction { this,"zInteraction", -boost::numeric::bounds<double>::highest() };///< z of the interaction
 
-  bool m_selBprods;         ///< Select only b decay products
+  Gaudi::Property<bool> m_selBprods { this,"SelectOnlyBDecayProducts", false };  ///< Select only b decay products
 
 };
 

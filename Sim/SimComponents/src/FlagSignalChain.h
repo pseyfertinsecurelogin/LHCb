@@ -15,11 +15,9 @@
  *  @date   2015-07-23
  */
 struct FlagSignalChain : extends<GaudiTool,IFlagSignalChain> {
-public:
+
   /// Standard constructor
-  FlagSignalChain( const std::string& type,
-                   const std::string& name,
-                   const IInterface* parent);
+  using base_class::base_class;
 
   /// Set flag if particle is from signal
   void setFromSignalFlag( const LHCb::MCParticle* mcPart ) override;

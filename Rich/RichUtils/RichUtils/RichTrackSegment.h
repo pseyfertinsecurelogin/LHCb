@@ -275,15 +275,15 @@ namespace LHCb
                       Rich::RadIntersection::Vector && intersects, ///< The radiator intersections
                       const Rich::RadiatorType rad,  ///< The radiator type
                       const Rich::DetectorType rich, ///< The detector type
-                      StateErrors&& entryErrs = StateErrors{}, ///< The segment errors at the entry point
-                      StateErrors&& exitErrs  = StateErrors{}  ///< The segment errors at the exit point
+                      const StateErrors& entryErrs = StateErrors{}, ///< The segment errors at the entry point
+                      const StateErrors& exitErrs  = StateErrors{}  ///< The segment errors at the exit point
                       )
       : m_type             ( t                     ),
         m_radIntersections ( std::move(intersects) ),
         m_radiator         ( rad                   ),
         m_rich             ( rich                  ),
-        m_errorsEntry      ( std::move(entryErrs)  ),
-        m_errorsExit       ( std::move(exitErrs)   ),
+        m_errorsEntry      ( entryErrs             ),
+        m_errorsExit       ( exitErrs              ),
         m_avPhotonEnergy   ( avPhotEn(rad)         )
     {
       m_errorsMiddle = ( Rich::Rich1Gas == rad ? exitErrors() : entryErrors() ); // CRJ : Is this best ?
@@ -324,27 +324,27 @@ namespace LHCb
      *
      *  In addition the middle point and the momentum vector at that point are given explicitly.
      *
-     *  Information is noved in this implementation.
+     *  Information is moved in this implementation.
      */
     RichTrackSegment( const SegmentType t,           ///< The segment type
                       Rich::RadIntersection::Vector && intersects, ///< The radiator intersections
-                      Gaudi::XYZPoint  && middP,     ///< The mid point in the radiator
-                      Gaudi::XYZVector && middV,     ///< The momentum vector at the radiator mid point
-                      const Rich::RadiatorType rad,  ///< The radiator type
-                      const Rich::DetectorType rich, ///< The detector type
-                      StateErrors&& entryErrors  = StateErrors{}, ///< The segment errors at the entry point
-                      StateErrors&& middleErrors = StateErrors{}, ///< The segment errors at the mid point
-                      StateErrors&& exitErrors   = StateErrors{}  ///< The segment errors at the exit point
+                      const Gaudi::XYZPoint & middP,  ///< The mid point in the radiator
+                      const Gaudi::XYZVector & middV, ///< The momentum vector at the radiator mid point
+                      const Rich::RadiatorType rad,   ///< The radiator type
+                      const Rich::DetectorType rich,  ///< The detector type
+                      const StateErrors& entryErrors  = StateErrors{}, ///< The segment errors at the entry point
+                      const StateErrors& middleErrors = StateErrors{}, ///< The segment errors at the mid point
+                      const StateErrors& exitErrors   = StateErrors{}  ///< The segment errors at the exit point
                       )
       : m_type             ( t                       ),
         m_radIntersections ( std::move(intersects)   ),
-        m_middlePoint      ( std::move(middP)        ),
-        m_middleMomentum   ( std::move(middV)        ),
+        m_middlePoint      ( middP                   ),
+        m_middleMomentum   ( middV                   ),
         m_radiator         ( rad                     ),
         m_rich             ( rich                    ),
-        m_errorsEntry      ( std::move(entryErrors)  ),
-        m_errorsMiddle     ( std::move(middleErrors) ),
-        m_errorsExit       ( std::move(exitErrors)   ),
+        m_errorsEntry      ( entryErrors             ),
+        m_errorsMiddle     ( middleErrors            ),
+        m_errorsExit       ( exitErrors              ),
         m_avPhotonEnergy   ( avPhotEn(rad)           )
     {
       initThreePoints();

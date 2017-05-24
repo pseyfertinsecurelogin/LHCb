@@ -27,7 +27,6 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/assign/std/vector.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
@@ -50,10 +49,6 @@ namespace fs = boost::filesystem;
 namespace ba = boost::algorithm;
 namespace pt = boost::posix_time;
 namespace bio = boost::iostreams;
-namespace {
-   using namespace boost;
-   using namespace assign;
-}
 #endif
 
 namespace {
@@ -64,6 +59,7 @@ namespace {
    using std::istream;
    using std::getline;
    using std::map;
+   using namespace boost;
 }
 
 extern char** environ;
@@ -72,35 +68,9 @@ DECLARE_SERVICE_FACTORY( FileStagerSvc )
 
 //=============================================================================
 FileStagerSvc::FileStagerSvc( const string& name, ISvcLocator* svcLoc )
-   : base_class( name, svcLoc ), m_thread( 0 ), m_garbagePID( 0 ),
-     m_initialized( false )
+   : base_class( name, svcLoc )
 {
-
-   declareProperty( "Tempdir", m_tmpdir = "", "The base of the temporary directory "
-                    "where the files will be staged" );
-   declareProperty( "StageNFiles", m_stageNFiles = 2, "The number of files to stage" );
-   declareProperty( "KeepFiles", m_keepFiles = false, "Keep staged files" )
-   ->declareUpdateHandler( &FileStagerSvc::keepFilesHandler, this );
-   declareProperty( "DiskspaceTries", m_tries = 10, "The number of times to retry "
-                    "whether there is sufficient diskspace" );
-   declareProperty( "RetryStaging", m_retry = false, "Retry staging once it's failed." );
-   declareProperty( "CopyTries", m_copyTries = 5, "Retry copying if it fails." );
-   declareProperty( "StageLocalFiles", m_stageLocalFiles = false,
-                    "Stage files beginning with file:." );
-   declareProperty( "GarbageCollectorCommand", m_garbageCommand = "garbage.exe" ,
-                    "Command for the garbage collector." );
-   declareProperty( "CheckForLocalGarbageCollector", m_checkLocalGarbage = true,
-                    "Check if the garbage collector command is in the local directory." );
-   // declareProperty( "DataManagerName",
-   //                  m_dataManagerName = "Gaudi::StagedIODataManager/IODataManager" ,
-   //                  "Name of the IODataManager to use for proper disconnection." );
-
-}
-
-//=============================================================================
-FileStagerSvc::~FileStagerSvc()
-{
-
+   m_keepFiles.declareUpdateHandler( &FileStagerSvc::keepFilesHandler, this );
 }
 
 #ifndef WIN32
@@ -111,19 +81,19 @@ StatusCode FileStagerSvc::initialize()
    StatusCode sc = Service::initialize();
 
    // Check if the property was set, if not try TMPDIR and else set to .
-   if (m_tmpdir.empty()) {
+   if (m_tmpdir.value().empty()) {
       const char* dir = getenv("TMPDIR");
-      if (0 != dir) {
+      if ( dir) {
          m_tmpdir = dir;
-         ba::trim_right_if( m_tmpdir, ba::is_any_of( "/" ) );
+         ba::trim_right_if( m_tmpdir.value(), ba::is_any_of( "/" ) );
       } else {
          m_tmpdir = fs::initial_path().string();
       }
    }
 
    // Check if the base dir exists.
-   if ( !fs::exists( m_tmpdir ) && !fs::create_directories( m_tmpdir ) ) {
-      error() << "Base temp dir " << m_tmpdir << " does not exist and could not be created."
+   if ( !fs::exists( m_tmpdir.value() ) && !fs::create_directories( m_tmpdir.value() ) ) {
+      error() << "Base temp dir " << m_tmpdir.value() << " does not exist and could not be created."
               << endmsg;
       sc = StatusCode::FAILURE;
       return sc;
@@ -131,29 +101,19 @@ StatusCode FileStagerSvc::initialize()
 
    // Check if there is an environment variable which ends in JOBID set.
    // If so, always switch off keep file mode.
-   if (checkJobID()) {
-      m_keepFiles = false;
-   }
+   if (checkJobID()) m_keepFiles = false;
 
    // Create the temporary directory.
-   if ( !keepFiles() ) {
-      // Create a random directory, we're not keeping the files
-      fs::path p( m_tmpdir + "/FileStagerSvc_XXXXXX" );
-      const char* temp = p.string().c_str();
-      char buf[ 200 ];
-      snprintf( buf, 200, "%s", temp );
-      const char* tmpdir = mkdtemp( buf );
-      m_tmpdir = tmpdir;
-   } else {
-      // Create a standard directory, not pretty, but it works.
-      fs::path p( m_tmpdir + "/FileStagerSvc" );
-      fs::create_directories( p );
-      m_tmpdir = p.string();
-   }
+   // Create a random directory, we're not keeping the files
+   // else Create a standard directory, not pretty, but it works.
+   fs::path p = (!keepFiles() ? fs::unique_path( m_tmpdir.value() + "/FileStagerSvc-%%%%-%%%%-%%%%-%%%%" )
+                              : fs::path( m_tmpdir.value() + "/FileStagerSvc" ) );
+   fs::create_directories( p );
+   m_tmpdir = p.string();
 
    // Check if the temp dir is ok.
-   if ( !fs::exists( m_tmpdir ) ) {
-      error() << "Could not create temp dir " << m_tmpdir << endmsg;
+   if ( !fs::exists( m_tmpdir.value() ) ) {
+      error() << "Could not create temp dir " << m_tmpdir.value() << endmsg;
       sc = StatusCode::FAILURE;
       return sc;
    }
@@ -170,8 +130,8 @@ StatusCode FileStagerSvc::initialize()
 StatusCode FileStagerSvc::finalize()
 {
    StatusCode sc = clearFiles();
-   if ( !keepFiles() && fs::exists( m_tmpdir ) ) {
-      fs::remove( m_tmpdir );
+   if ( !keepFiles() && fs::exists( m_tmpdir.value() ) ) {
+      fs::remove( m_tmpdir.value() );
    }
 
    if ( !keepFiles() ) {
@@ -230,7 +190,7 @@ StatusCode FileStagerSvc::getLocal( const string& filename, string& local )
          return StatusCode::FAILURE;
       } else if ( openFile->good() && openFile->staged() ) {
          local = openFile->temporary();
-         // Delete previous file if necessary
+         // remove previous file if necessary
          removePrevious( openIt );
          return StatusCode::SUCCESS;
       }
@@ -247,7 +207,7 @@ StatusCode FileStagerSvc::getLocal( const string& filename, string& local )
       }
    }
 
-   // Delete previous file if necessary
+   // remove previous file if necessary
    removePrevious( openIt );
 
    // Wait for the file to be staged
@@ -268,8 +228,7 @@ StatusCode FileStagerSvc::getLocal( const string& filename, string& local )
                 << " as " << openFile->temporary() << endmsg;
       local = filename;
       m_thread->join();
-      delete m_thread;
-      m_thread = 0;
+      m_thread.reset();
       removeFiles();
       return StatusCode::FAILURE;
    }
@@ -289,7 +248,7 @@ StatusCode FileStagerSvc::addFiles( const vector< string >& files )
       return StatusCode::FAILURE;
    }
 
-   BOOST_FOREACH( const string& filename, files ) {
+   for( const string& filename: files ) {
       File* file = createFile( filename );
       if ( file ) m_files.insert( FileWrapper( file ) );
    }
@@ -297,12 +256,12 @@ StatusCode FileStagerSvc::addFiles( const vector< string >& files )
    if ( !m_files.empty() ) {
       filesByPosition_t& filesByPosition = m_files.get< listTag >();
       m_stageStart = filesByPosition.begin()->original();
-      m_thread = new thread( bind( &FileStagerSvc::stage, this ) );
+      m_thread = std::make_unique<thread>( bind( &FileStagerSvc::stage, this ) );
    }
 
    if ( outputLevel() <=  MSG::DEBUG ) {
       debug() << "Files queued for staging:" << endmsg;
-      BOOST_FOREACH( const FileWrapper& wrapper, m_files.get< listTag >() ) {
+      for( const FileWrapper& wrapper: m_files.get< listTag >() ) {
          debug() << wrapper.original() << endmsg;
       }
    }
@@ -316,17 +275,15 @@ StatusCode FileStagerSvc::clearFiles()
    if ( m_thread ) {
       m_thread->interrupt();
       m_thread->join();
-      delete m_thread;
-      m_thread = 0;
+      m_thread.reset();
    }
 
    // Cleanup staged files
    removeFiles();
 
    // Clear the internal container
-   BOOST_FOREACH( const FileWrapper& wrapper, m_files.get< listTag >() ) {
-      File* file = wrapper.file();
-      if ( file ) delete file;
+   for( const FileWrapper& wrapper: m_files.get< listTag >() ) {
+      delete wrapper.file();
    }
    m_files.clear();
    return StatusCode::SUCCESS;
@@ -337,11 +294,8 @@ void FileStagerSvc::stage()
 {
    {
       lock_guard< recursive_mutex > fileLock( m_fileMutex );
-      if ( m_files.size() == 0 ) {
-         return;
-      } else {
-         m_stageIt = m_files.get< originalTag >().find( m_stageStart );
-      }
+      if ( m_files.empty() ) return;
+      m_stageIt = m_files.get< originalTag >().find( m_stageStart );
    }
 
    while ( 1 ) {
@@ -349,7 +303,7 @@ void FileStagerSvc::stage()
          string temp;
          fs::path temporaryPath;
 
-         File* stageFile = 0;
+         File* stageFile = nullptr;
          {
             // Locate the file that will be staged
             stageFile = m_stageIt->file();
@@ -369,7 +323,7 @@ void FileStagerSvc::stage()
                uintmax_t space = diskspace();
                size_t tries = 0;
                while ( space < stageFile->size() + 1 && tries < m_tries ) {
-                  warning() << "No enough diskspace in " << m_tmpdir
+                  warning() << "No enough diskspace in " << m_tmpdir.value()
                             << " sleeping 60 seconds before retrying" << endmsg;
                   boost::this_thread::sleep( pt::seconds( 60 ) );
                   ++tries;
@@ -457,7 +411,7 @@ void FileStagerSvc::stage()
 
             if ( ret != 0 ) {
                error() << "Staging failed error output: " << endmsg;
-               BOOST_FOREACH( const string& line, lines ) {
+               for( const string& line: lines ) {
                   error() << line;
                }
                error() << endmsg;
@@ -509,12 +463,12 @@ void FileStagerSvc::stage()
 //=============================================================================
 boost::uintmax_t FileStagerSvc::diskspace() const
 {
-   fs::path tmp( m_tmpdir );
+   fs::path tmp( m_tmpdir.value() );
    fs::space_info space = fs::space( tmp );
    if ( space.available != std::numeric_limits< uintmax_t >::max() ) {
       return space.available / 1024;
    } else {
-      throw GaudiException( "Checking space in " + m_tmpdir + " failed.",
+      throw GaudiException( "Checking space in " + m_tmpdir.value() + " failed.",
                             "filesystem exception", StatusCode::FAILURE );
       return 0;
    }
@@ -526,15 +480,14 @@ void FileStagerSvc::restartStaging( const string& filename )
    if ( m_thread ) {
       m_thread->interrupt();
       m_thread->join();
-      delete m_thread;
-      m_thread = 0;
+      m_thread.reset();
    }
    // Remove remaining files
    removeFiles();
 
    // Restart staging
    m_stageStart = filename;
-   m_thread = new thread( bind( &FileStagerSvc::stage, this ) );
+   m_thread = std::make_unique<thread>( bind( &FileStagerSvc::stage, this ) );
 }
 
 //=============================================================================
@@ -587,7 +540,7 @@ void FileStagerSvc::removePrevious( const_original_iterator it )
    filesByPosition_t& filesByPosition = m_files.get< listTag >();
    const_position_iterator pos = m_files.project< listTag >( it );
 
-   // Delete files if possible
+   // remove files if possible
    if ( pos == filesByPosition.begin() ) {
       return;
    } else {
@@ -629,62 +582,41 @@ StatusCode FileStagerSvc::garbage()
             command = it->path();
       }
    }
-   vector< string > arguments;
-   arguments += command.filename().string(), lexical_cast< string >( ppid ), m_tmpdir;
+   constexpr auto N = 3;
+   const std::array< std::string, N > arguments = { command.filename().string(), lexical_cast< string >( ppid ), m_tmpdir.value() };
 
    // Put the arguments into the correct format for execvp
-   size_t n = arguments.size();
-   char** args = new char*[ n + 1 ];
-   for ( size_t i = 0; i < n; ++i ) args[ i ] = new char[ 1024 ];
-   args[ n ] = 0;
-   for ( size_t i = 0; i < arguments.size(); ++i ) {
-      const std::string& arg = arguments.at( i );
-      snprintf( args[ i ], 1024, "%s", arg.c_str() );
-   }
+   const char* args[ N+1 ];
+   std::transform( std::begin(arguments), std::end(arguments), args,
+                   [](const std::string& s) { return s.c_str(); } );
+   args[ N ] = nullptr;
 
    // pass parent pid to stagemonitor for monitoring
    m_garbagePID = fork();
    if ( m_garbagePID < 0 ) {
       error() << "Failed to fork the garbage collector" << endmsg;
-
-      // delete memory reserved for args
-      for ( size_t i = 0; i < n; ++i ) delete[] args[ i ];
-      delete[] args;
-
       return StatusCode::FAILURE;
    } else if ( m_garbagePID == 0 ) {
 
-      // close the wrong end of the pipe
+      // close the other end of the pipe
       close( pipefds[ 0 ] );
 
       // The setsid() function creates a new session;
       if( setsid() < 0 ) {
-         if (write( pipefds[ 1 ], &errno, sizeof( int ) ) == sizeof(int))
-           _exit( 0 );
-         else
-           _exit( 1 );
+         _exit( (write( pipefds[ 1 ], &errno, sizeof( int ) ) == sizeof(int)) ? 0 : 1 );
       }
 
-      execvp( command.string().c_str(), args );
+      execvp( command.string().c_str(), const_cast<char**>(args) );
 
       // exec should not return, but we got something.
-      // delete memory reserved for args
-      for ( size_t i = 0; i < n; ++i ) delete[] args[ i ];
-      delete[] args;
 
-      // send what we go to the parent.
-      if (write( pipefds[ 1 ], &errno, sizeof( int ) ) == sizeof(int))
-        _exit( 0 );
-      else
-        _exit( 1 );
+      // send what we got to the parent.
+      _exit( (write( pipefds[ 1 ], &errno, sizeof( int ) ) == sizeof(int)) ? 0 : 1 );
    } else {
-      // delete memory reserved for args
-      for ( size_t i = 0; i < n; ++i ) delete[] args[ i ];
-      delete[] args;
 
       int count = 0, err = 0;
 
-      // Close the wrong end of the pipe.
+      // Close the other end of the pipe.
       close( pipefds[ 1 ] );
 
       // Check if we have something
@@ -738,7 +670,7 @@ File* FileStagerSvc::createFile( const string& filename )
       ba::erase_range( extension, range );
    }
 
-   temp << m_tmpdir << "/" << boost::format( "%|x|" ) % hash( remote ) << extension;
+   temp << m_tmpdir.value() << "/" << boost::format( "%|x|" ) % hash( remote ) << extension;
 
    File* f = new File( file, command, remote, temp.str() );
    f->setGood( true );
@@ -748,9 +680,7 @@ File* FileStagerSvc::createFile( const string& filename )
 //=============================================================================
 void FileStagerSvc::keepFilesHandler( Property& property )
 {
-   if ( keepFiles() && checkJobID() ) {
-      m_keepFiles = false;
-   }
+   if ( keepFiles() && checkJobID() ) m_keepFiles = false;
 
    // printout message
    if ( msgLevel( MSG::DEBUG ) ) {
@@ -772,9 +702,7 @@ bool FileStagerSvc::checkJobID() const
    while ( *env_ptr ) {
       string var( *env_ptr );
       size_t pos = var.find( "=" );
-      if ( pos == string::npos ) {
-         continue;
-      }
+      if ( pos == string::npos ) continue;
       const string name(var.substr( 0, pos ));
       if ( regex_match( name.begin(), name.end(), matches, re_jobid, flags ) ) {
          warning() << "Keep files mode has been switched off since the presence of the "

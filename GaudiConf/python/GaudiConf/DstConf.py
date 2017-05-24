@@ -619,7 +619,7 @@ class DstConf(LHCbConfigurableUser):
 
         if dType != 'NONE':
             if hasattr( self, "PackSequencer" ): self._doPack()
-            GaudiKernel.ProcessJobOptions.PrintOn()
+            GaudiKernel.ProcessJobOptions.PrintOn(force=True)
             self._doWrite(dType, pType, sType)
             GaudiKernel.ProcessJobOptions.PrintOff()
 

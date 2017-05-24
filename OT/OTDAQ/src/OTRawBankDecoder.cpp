@@ -130,7 +130,7 @@ namespace OTRawBankDecoderHelpers {
       m_totalNumberOfHits = 0;
       for(auto imod = begin(); imod != end(); ++imod) imod->clearevent();
       m_ottimes.clear();
-      
+
     }
 
     const LHCb::RawEvent* rawEvent() const { return m_event; }
@@ -385,17 +385,9 @@ OTRawBankDecoder::OTRawBankDecoder( const std::string& type,
                                     const IInterface* parent )
     : base_class( type, name , parent )
 {
-  declareInterface<IOTRawBankDecoder>(this);
-  declareProperty("countsPerBX", m_countsPerBX );
-  declareProperty("numberOfBX", m_numberOfBX );
-  declareProperty("timePerBX", m_timePerBX );
-  declareProperty("ForceBankVersion", m_forcebankversion = OTBankVersion::UNDEFINED );
-  declareProperty("TimeWindow", m_timewindow );
-  declareProperty("VetoOutOfTimeHitPairs", m_vetoOutOfTimeHitPairs = true);
   //new for decoders, initialize search path, and then call the base method
   m_rawEventLocations = {LHCb::RawEventLocation::Tracker, LHCb::RawEventLocation::Other, LHCb::RawEventLocation::Default};
   initRawEventSearch();
-
 }
 
 //=============================================================================
@@ -425,18 +417,18 @@ StatusCode OTRawBankDecoder::initialize()
   IOTReadOutWindow* aReadOutWindow = tool<IOTReadOutWindow>("OTReadOutWindow");
   m_startReadOutGate  = aReadOutWindow->startReadOutGate();
 
-  m_nsPerTdcCount = m_timePerBX/ double(m_countsPerBX);
+  m_nsPerTdcCount = m_timePerBX/double(m_countsPerBX);
 
   if( m_forcebankversion != OTBankVersion::UNDEFINED ) {
     warning() << "Forcing bank version to be " << m_forcebankversion << endmsg;
   }
 
-  info() << " countsPerBX = " << m_countsPerBX
-         << " numberOfBX  = " << m_numberOfBX
-         << " timePerBX = " << m_timePerBX
-         << " ForceBankVersion = " << m_forcebankversion;
-  if (m_timewindow.first<m_timewindow.second) {
-         info() << " require window [" << m_timewindow.first <<","<<m_timewindow.second << "]";
+  info() << " countsPerBX = " << m_countsPerBX.value()
+         << " numberOfBX  = " << m_numberOfBX.value()
+         << " timePerBX = " << m_timePerBX.value()
+         << " ForceBankVersion = " << m_forcebankversion.value();
+  if (m_timewindow.value().first<m_timewindow.value().second) {
+         info() << " require window [" << m_timewindow.value().first <<","<<m_timewindow.value().second << "]";
 	 if (m_vetoOutOfTimeHitPairs)
 	   info() << ", vetoing out of time hit pairs";
   }
@@ -606,7 +598,7 @@ StatusCode OTRawBankDecoder::decodeGolHeaders(const LHCb::RawEvent& event) const
                 << " size=" << ibank->size()/4 << " bankversion=" << ibank->version() << endmsg;
 
       // Choose decoding based on bank version
-      int bVersion = m_forcebankversion != OTBankVersion::UNDEFINED ? m_forcebankversion : ibank->version();
+      int bVersion = m_forcebankversion != OTBankVersion::UNDEFINED ? m_forcebankversion.value() : ibank->version();
       StatusCode sc;
       switch( bVersion ) {
         case OTBankVersion::DC06:
@@ -616,8 +608,7 @@ StatusCode OTRawBankDecoder::decodeGolHeaders(const LHCb::RawEvent& event) const
           // Note: SIM and v3 currently (22/07/2008) uses same decoding.
           //       If SIM changes w.r.t. to the real decoding then we'll need
           //       to change it here.
-        case OTBankVersion::SIM:
-          m_channelmaptool->setBankVersion( bVersion );
+        case OTBankVersion::SIM: // [[fallthrough]]
         case OTBankVersion::v3:
           m_channelmaptool->setBankVersion( bVersion );
           sc = decodeGolHeadersV3(*ibank,bVersion);
@@ -677,7 +668,7 @@ StatusCode OTRawBankDecoder::decode( LHCb::OTLiteTimeContainer& ottimes ) const
   // reserve and copy
   ottimes.clear();
   ottimes.reserve( numhits );
-  for( const OTRawBankDecoderHelpers::Module& mod : *m_detectordata) 
+  for( const OTRawBankDecoderHelpers::Module& mod : *m_detectordata)
     ottimes.insert(ottimes.end(), mod.ottimes().begin(), mod.ottimes().end() );
   // We'll need some proper error handling.
   return StatusCode::SUCCESS;

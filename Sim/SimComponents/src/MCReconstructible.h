@@ -43,17 +43,13 @@
  *  @date   2004-04-28
  */
 //-----------------------------------------------------------------------------
-class MCReconstructible : public GaudiTool,
-                          virtual public IMCReconstructible,
-                          virtual public IIncidentListener
+class MCReconstructible : public extends<GaudiTool, IMCReconstructible, IIncidentListener>
 {
 
 public:
 
   /// Standard constructor
-  MCReconstructible( const std::string& type,
-                     const std::string& name,
-                     const IInterface* parent);
+  using base_class::base_class;
 
   /// Initialize
   StatusCode initialize() override;
@@ -103,10 +99,10 @@ private: // data
   double m_yECALOut = 3030.0*Gaudi::Units::mm  ;
 
   /// Threshold for Et gammas reconstructibility
-  double m_lowEt    = 200*Gaudi::Units::MeV    ;
+  Gaudi::Property<double> m_lowEt { this, "NeutralEtMin", 200*Gaudi::Units::MeV };
 
   /// Allow primary particles
-  bool m_allowPrimary;
+  Gaudi::Property<bool> m_allowPrimary{ this, "AllowPrimaryParticles", true };
 
   /// Pointer to MCTrackInfo object
   mutable std::unique_ptr<MCTrackInfo> m_tkInfo;
@@ -114,11 +110,11 @@ private: // data
   /// MCParticle selector
   IMCParticleSelector * m_mcSel = nullptr;
 
-  std::vector<std::string> m_chargedLongCriteria;
-  std::vector<std::string> m_chargedUpstreamCriteria;
-  std::vector<std::string> m_chargedDownstreamCriteria;
-  std::vector<std::string> m_chargedVeloCriteria;
-  std::vector<std::string> m_chargedTCriteria;
+  Gaudi::Property<std::vector<std::string>> m_chargedLongCriteria {this, "ChargedLong", {"hasVeloAndT"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedUpstreamCriteria {this, "ChargedUpstream", {"hasVelo", "hasTT"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedDownstreamCriteria {this, "ChargedDownstream", {"hasT", "hasTT"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedVeloCriteria {this, "ChargedVelo", {"hasVelo"}};
+  Gaudi::Property<std::vector<std::string>> m_chargedTCriteria {this, "ChargedTtrack", {"hasT"}};
 
   // the boost::optional is required to delay the construction...
   std::array<boost::optional<std::pair<IMCReconstructible::RecCategory,

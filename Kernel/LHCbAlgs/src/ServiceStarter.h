@@ -21,8 +21,7 @@ namespace LHCbAlgsTest
   public:
 
     /// Standard constructor
-    ServiceStarter(const std::string& name, ISvcLocator* pSvcLocator);
-    virtual ~ServiceStarter() = default; ///< Destructor
+    using GaudiAlgorithm::GaudiAlgorithm;
 
     StatusCode initialize() override;    ///< Algorithm initialization
     StatusCode start     () override;    ///< Algorithm start
@@ -36,10 +35,12 @@ namespace LHCbAlgsTest
   private:
 
     /// Service to get.
-    std::string m_serviceName;
+    Gaudi::Property<std::string> m_serviceName
+    { this, "Service", {}, "Service to retrieve."};
 
     /// When to get the service;
-    std::string m_phase;
+    Gaudi::Property<std::string> m_phase
+    { this, "Phase", {}, "When to retrieve the service (initialize, start, execute)." };
 
     /// Internal reference to the retrieved service.
     SmartIF<IService> m_service;

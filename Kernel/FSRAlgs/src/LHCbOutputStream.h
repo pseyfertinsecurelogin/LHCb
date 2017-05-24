@@ -35,23 +35,23 @@ protected:
   /// Reference to the incident service
   SmartIF<IIncidentSvc> m_incidentSvc;
   /// Flag indicating whether data pre-loading should be performed
-  bool                     m_doPreLoad;
+  Gaudi::Property<bool> m_doPreLoad { this,"Preload", true };
   /// Flag indicating whether optional items should be preloaded
-  bool                     m_doPreLoadOpt;
+  Gaudi::Property<bool> m_doPreLoadOpt { this,"PreloadOptItems", false };
   /// Flag to indicate that item consistency should be checked
-  bool                     m_verifyItems;
+  Gaudi::Property<bool> m_verifyItems { this,"VerifyItems", true };
   /// Name of the service managing the data store
-  std::string              m_storeName;
+  Gaudi::Property<std::string> m_storeName{ this, "EvtDataSvc", "EventDataSvc" } ;
   /// Name of the persistency service capable to write data from the store
-  std::string              m_persName;
+  Gaudi::Property<std::string> m_persName{ this, "EvtConversionSvc", "EventPersistencySvc" } ;
   /// Name of the output file specification
-  std::string              m_output;
+  Gaudi::Property<std::string> m_output{ this, "Output" } ;
   /// Name of the output file
-  std::string              m_outputName;
+  Gaudi::Property<std::string> m_outputName{ this, "OutputFile" } ;
   /// Output type: NEW(NEW,CREATE,WRITE,RECREATE), UPDATE)
-  std::string              m_outputType;
+  std::string m_outputType = "UPDATE";
   /// Keep reference of agent
-  std::unique_ptr<LHCbOutputStreamAgent> m_agent;
+  std::unique_ptr<LHCbOutputStreamAgent> m_agent = std::make_unique<LHCbOutputStreamAgent>(this);
   /// Keep reference to the data provider service
   SmartIF<IDataProviderSvc>        m_pDataProvider;
   /// Keep reference to the data manager service
@@ -61,16 +61,16 @@ protected:
   /// Keep track of the current item
   DataStoreItem*           m_currentItem;
   /// Vector of item names
-  ItemNames                m_itemNames;
+  Gaudi::Property<ItemNames> m_itemNames{ this, "ItemList" };
   /// Vector of items to be saved to this stream
   Items                    m_itemList;
   /// Vector of item names
-  ItemNames                m_optItemNames;
+  Gaudi::Property<ItemNames> m_optItemNames{ this, "OptItemList" };
   /// Vector of optional items to be saved to this stream
   Items                    m_optItemList;
   /** Mapping between algorithm names, and a list of items for which, if the
    *  algorithm in question accepted the event, they should be also stored. */
-  AlgDependentItemNames    m_algDependentItemList;
+  Gaudi::Property<AlgDependentItemNames> m_algDependentItemList{ this, "AlgDependentItemList" };
   /// Items to be saved for specific algorithms
   AlgDependentItems        m_algDependentItems;
   /// Collection of objects being selected
@@ -78,11 +78,11 @@ protected:
   /// Number of events written to this output stream
   int                      m_events;
   /// Vector of names of Algorithms that this stream accepts
-  StringArrayProperty      m_acceptNames;
+  Gaudi::Property<std::vector<std::string>> m_acceptNames{ this, "AcceptAlgs"};
   /// Vector of names of Algorithms that this stream requires
-  StringArrayProperty      m_requireNames;
+  Gaudi::Property<std::vector<std::string>> m_requireNames{ this, "RequireAlgs"};
   /// Vector of names of Algorithms that this stream is vetoed by
-  StringArrayProperty      m_vetoNames;
+  Gaudi::Property<std::vector<std::string>> m_vetoNames{ this, "VetoAlgs"};
   /// Vector of Algorithms that this stream accepts
   std::vector<Algorithm*>  m_acceptAlgs;
   /// Vector of Algorithms that this stream requires
@@ -119,7 +119,9 @@ protected:
   virtual StatusCode writeObjects();
 
   ///should I fire incidents for writing opening/closing etc?
-  bool m_fireIncidents;
+  ///in the baseclass, always fire the incidents by default
+  ///in RecordStream this will be set to false, and configurable
+  bool m_fireIncidents = true;
 
   /// Tell if the instance has been configured with input items or not.
   virtual bool hasInput() const;

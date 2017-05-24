@@ -88,13 +88,11 @@ struct IEvtTypeSvc;
  *                      you could set this to 4.9 if you really want "in the acceptance"
  *
  */
-class MCEventTypeFinder : public GaudiTool, virtual public IMCEventTypeFinder
+class MCEventTypeFinder : public extends<GaudiTool, IMCEventTypeFinder>
 {
 public:
   /// Standard Constructor
-  MCEventTypeFinder( const std::string& type,
-                 const std::string& name,
-                 const IInterface* parent );
+  using base_class::base_class;
 
   StatusCode initialize( ) override;
 
@@ -135,29 +133,31 @@ public:
 
     ///using the std::set to append parents
     void appendParents(LHCb::EventTypeSet& aset);
-    ///convert a std::set to a std::vector
-    bool set2vec(LHCb::EventTypeSet& aset,std::vector<long unsigned int>& avec);
-    ///convert a std::set to a std::vector
-    bool vec2set(std::vector<long unsigned int>& avec,LHCb::EventTypeSet& aset);
 
     SmartIF<IEvtTypeSvc> m_evtTypeSvc;        ///< pointer to the event type service
     std::vector<IMCDecayFinder*> m_mcFinders;        ///< Vector of pointers to tools :)
     StatusCode fillMCTools(void);
-    std::vector<long unsigned int> m_inputTypes; ///<Set in the options of this tool, "Types"
+    //override the total list of types taken from the decfiles to a smaller sub-class of types
+    Gaudi::Property<std::vector<long unsigned int>> m_inputTypes { this, "Types" }; ///<Set in the options of this tool, "Types"
     LHCb::EventTypeSet m_allTypes; ///<what types are being searched for?
     std::vector<bool> m_decProdCut;///<"Is this decay a DecProdCut??"
 
-    long unsigned int m_mbias;///=30000000, modified in fillMCTools, if required
-    const long unsigned int m_incb;///=10000000
-    const long unsigned int m_incc;///=20000000
-    const long unsigned int m_diMuon;///=12000
-    const int m_muonp;///=-13
-    const int m_muonm;///=13
-    const int m_tau;///=15
-    double m_acc_min;///n=1.6-ish, 400 mrad, set using option acc_min
-    double m_acc_max;///n=6-ish, 5 mrad, set using option acc_max
-    const std::string m_decProdStr1; ///<"DecProdCut"
-    const std::string m_decProdStr2; ///<"InAcc"
+    long unsigned int m_mbias=30000000; // modified in fillMCTools, if required
+    const long unsigned int m_incb=10000000;
+    const long unsigned int m_incc=20000000;
+    const long unsigned int m_diMuon=12000;
+    const int m_muonp=-13;
+    const int m_muonm=13;
+    const int m_tau=15;
+  //define the minimum acceptance for a decprodcut,  by default this is 400 mrad, eta > 1.60-ish
+  //you could set this to 2.0 if you really want "in the acceptance"
+    Gaudi::Property<double> m_acc_min { this, "acc_min", -log(tan(0.4/2.0))};///n=1.6-ish, 400 mrad, set using option acc_min
+  //define the maximum acceptance for a decprodcut, by default this is 5 mrad eta < 6-ish.
+  //could set to 4.9 if you really want "in the acceptance"
+    Gaudi::Property<double> m_acc_max { this, "acc_max", -log(tan(0.05/2.0))};///n=6-ish, 5 mrad, set using option acc_max
+
+    const std::string m_decProdStr1 = "DecProdCut";
+    const std::string m_decProdStr2 = "InAcc";
 
     static bool m_temp;
 

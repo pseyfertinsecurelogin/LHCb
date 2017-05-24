@@ -81,7 +81,7 @@ public:
     if (!FPE::Guard::has_working_implementation) { // note: this is a compile-time constant...
       throw GaudiException("FPEAuditor: no FPE trapping support on this architecture...","",StatusCode::FAILURE);
     }
-    if (m_activateSuperGuard) m_superGuard.reset( new FPE::Guard( m_mask.value() ) );
+    if (m_activateSuperGuard) m_superGuard = std::make_unique<FPE::Guard>( m_mask.value() );
     return StatusCode::SUCCESS;
   }
   StatusCode finalize() override
@@ -98,7 +98,7 @@ public:
   {
     if ( activeAt(eventType) ) {
       bool veto = ( std::find(m_veto.begin(),m_veto.end(),s) != m_veto.end()) ;
-      m_guards.push_back( std::make_pair( s, new FPE::Guard( m_mask.value(), veto) ) );
+      m_guards.emplace_back( s, std::make_unique<FPE::Guard>( m_mask.value(), veto) );
     }
   }
 
@@ -116,10 +116,8 @@ public:
       {
         throw GaudiException("FPEAuditor: inbalance of before/after calls...","",StatusCode::FAILURE);
       }
-      auto & p = m_guards.back();
-      if ( p.first != s )
+      if ( m_guards.back().first != s )
       { throw GaudiException("FPEAuditor: unexpected stack state...","",StatusCode::FAILURE); }
-      delete p.second;
       m_guards.pop_back();
     }
   }
@@ -134,11 +132,11 @@ private:
     // m_guards is empty. So we make an exception to the rule that m_guards
     // cannot be empty for that particular corner case by ignoring the 'after'
     // call (which is the right thing to do ;-)...
-    return (m_guards.empty() && type == "Initialize" && SmartIF<IAuditorSvc>(i).isValid());
+    return m_guards.empty() && type == "Initialize" && SmartIF<IAuditorSvc>(i).isValid();
   }
 
   mutable MsgStream                                m_log;
-  std::vector<std::pair<std::string,FPE::Guard*> > m_guards;
+  std::vector<std::pair<std::string,std::unique_ptr<FPE::Guard>>> m_guards;
   std::unique_ptr<FPE::Guard>                      m_superGuard;
   FPEMaskProperty                                  m_mask;
   std::vector<std::string>                         m_when, m_veto;
@@ -152,23 +150,10 @@ FPEAuditor::FPEAuditor( const std::string& name, ISvcLocator* pSvcLocator)
   , m_log( msgSvc() , name )
 {
   declareProperty("TrapOn", m_mask.set(
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L
     {"DivByZero", "Invalid", "Overflow"}
-#else
-    boost::assign::list_of("DivByZero")("Invalid")("Overflow")
-#endif
   ).property() );
   declareProperty("ActivateAt", m_when =
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L
     {"Initialize", "ReInitialize", "Execute", "BeginRun", "EndRun", "Finalize"}
-#else
-    boost::assign::list_of("Initialize")
-                  ("ReInitialize")
-                  ("Execute")
-                  ("BeginRun")
-                  ("EndRun")
-                  ("Finalize")
-#endif
   );
   declareProperty("DisableTrapFor", m_veto );
   declareProperty("EnableGlobal", m_activateSuperGuard = false );

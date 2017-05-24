@@ -22,32 +22,11 @@
 DECLARE_TOOL_FACTORY( MCReconstructible )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-MCReconstructible::MCReconstructible( const std::string& type,
-                                      const std::string& name,
-                                      const IInterface* parent )
-: GaudiTool  ( type, name , parent      )
-{
-  // Interface
-  declareInterface<IMCReconstructible>(this);
-  // job options
-  declareProperty( "AllowPrimaryParticles", m_allowPrimary = true );
-  declareProperty("ChargedLong", m_chargedLongCriteria = {"hasVeloAndT"});
-  declareProperty("ChargedUpstream", m_chargedUpstreamCriteria = {"hasVelo", "hasTT"});
-  declareProperty("ChargedDownstream", m_chargedDownstreamCriteria = {"hasT", "hasTT"});
-  declareProperty("ChargedVelo", m_chargedVeloCriteria = {"hasVelo"});
-  declareProperty("ChargedTtrack", m_chargedTCriteria = {"hasT"});
-  declareProperty("NeutralEtMin", m_lowEt);
-}
-
-
-//=============================================================================
 // Initialize
 //=============================================================================
 StatusCode MCReconstructible::initialize()
 {
-  const StatusCode sc = GaudiTool::initialize();
+  const StatusCode sc = base_class::initialize();
   if ( sc.isFailure() ) return sc;
 
   // tools
@@ -58,11 +37,11 @@ StatusCode MCReconstructible::initialize()
 
   using namespace LHCb::MC;
   // n.b prioritized list - the order matters!
-  m_critMap[0].emplace( ChargedLong,       m_chargedLongCriteria      );
-  m_critMap[1].emplace( ChargedUpstream,   m_chargedUpstreamCriteria  );
-  m_critMap[2].emplace( ChargedDownstream, m_chargedDownstreamCriteria);
-  m_critMap[3].emplace( ChargedVelo,       m_chargedVeloCriteria      );
-  m_critMap[4].emplace( ChargedTtrack,     m_chargedTCriteria         );
+  m_critMap[0].emplace( ChargedLong,       m_chargedLongCriteria.value()      );
+  m_critMap[1].emplace( ChargedUpstream,   m_chargedUpstreamCriteria.value()  );
+  m_critMap[2].emplace( ChargedDownstream, m_chargedDownstreamCriteria.value());
+  m_critMap[3].emplace( ChargedVelo,       m_chargedVeloCriteria.value()      );
+  m_critMap[4].emplace( ChargedTtrack,     m_chargedTCriteria.value()         );
 
   // Calorimeter geometry
   DeCalorimeter* m_calo = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );

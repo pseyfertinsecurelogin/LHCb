@@ -3,7 +3,7 @@
 #ifndef      L0MUON_L0DUBASE_H
 #define      L0MUON_L0DUBASE_H 1
 #include <string>
-
+#include <map>
 namespace L0DUBase{
   
 
@@ -54,6 +54,14 @@ namespace L0DUBase{
       "Muon1(Add)","Muon2(Add)","Muon3(Add)",
       "Muon1(Sgn)","Muon2(Sgn)","Muon3(Sgn)",
     };
+    // Herschel aliases
+    static const std::map<std::string,std::string> Alias={
+      {"HRC(F)","LocalPi0(Et)"}, 
+      {"HRC(B)","GlobalPi0(Et)"},
+      {"HRCF(Add)","LocalPi0(Add)"}, 
+      {"HRCB(Add)","GlobalPi0(Add)"}
+    };    
+
     static const unsigned int CompoundType[NumberOf::Data]={
       CompoundData::CaloEt,CompoundData::CaloEt,CompoundData::CaloEt,CompoundData::CaloEt,CompoundData::CaloEt,
       CompoundData::None,CompoundData::None,

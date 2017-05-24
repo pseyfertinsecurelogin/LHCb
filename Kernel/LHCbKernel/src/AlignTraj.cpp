@@ -39,7 +39,7 @@ namespace {
 
 std::unique_ptr<LHCb::Trajectory> AlignTraj::clone() const
 {
-  return std::unique_ptr<LHCb::Trajectory>(new AlignTraj(*this));
+  return std::make_unique<AlignTraj>(*this);
 }
 
 

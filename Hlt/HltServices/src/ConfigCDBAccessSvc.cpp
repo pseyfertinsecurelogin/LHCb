@@ -24,14 +24,6 @@
 #include "boost/filesystem/path.hpp"
 #include "boost/filesystem/operations.hpp"
 
-#if 0
-#include "boost/integer_traits.hpp"
-using boost::uint8_t;
-using boost::uint16_t;
-using boost::uint32_t;
-using boost::uint64_t;
-#endif
-
 #include "GaudiKernel/System.h"
 #include "GaudiKernel/StringKey.h"
 #include "GaudiKernel/IIncidentSvc.h"

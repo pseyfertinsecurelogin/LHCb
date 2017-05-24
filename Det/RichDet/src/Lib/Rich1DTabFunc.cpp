@@ -37,7 +37,10 @@ bool TabulatedFunction1D::initInterpolator( const double x[],
   for ( unsigned int i = 0; i < size; ++i ) { data[ x[i] ] = y[i]; }
 
   // initialise interpolation
-  return ( m_OK = initInterpolator( data, interType ) );
+  m_OK = initInterpolator( data, interType );
+
+  // return final status
+  return m_OK;
 }
 
 //============================================================================
@@ -65,6 +68,7 @@ bool TabulatedFunction1D::initInterpolator( const std::vector<double> & x,
     m_OK = initInterpolator( data, interType );
   }
 
+  // return final status
   return m_OK;
 }
 
@@ -79,7 +83,10 @@ TabulatedFunction1D::initInterpolator( const std::vector< std::pair<double,doubl
   for ( auto i = data.begin(); i != data.end(); ++i ) { data_map[i->first] = i->second; }
 
   // initialise interpolation
-  return ( m_OK = initInterpolator( data_map, interType ) );
+  m_OK = initInterpolator( data_map, interType );
+
+  // return final status
+  return m_OK;
 }
 
 //============================================================================
@@ -125,6 +132,18 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
     if ( x[i] > maxX ) { maxX = x[i]; }
   }
 
+  // find the min distance in x between consecutive (x,y) data points
+  auto minXinc = boost::numeric::bounds<double>::highest();
+  {
+    auto iA = data.begin();
+    auto iB = iA; ++iB;
+    for ( ; iB != data.end(); ++iB, ++iA )
+    {
+      const auto diff = fabs( iA->first - iB->first );
+      if ( diff < minXinc ) { minXinc = diff; }
+    }
+  }
+  
   // Initialise the interpolators
   const auto err = gsl_spline_init ( gslSpline.get(), x.get(), y.get(), data.size() );
   if ( err )
@@ -136,12 +155,46 @@ bool TabulatedFunction1D::initInterpolator( const std::map<double,double> & data
   }
 
   // Determine the number of sample points for the fast fixed binned interpolator
+  const unsigned int maxSamples = 1000;
   const unsigned int nData      = data.size();
-  const unsigned int maxSamples = 600;
-  const unsigned int nsamples   = std::max( nData, std::min( 2 * nData, maxSamples ) );
+  // determine the minimum number of sample points based on the min X inc
+  const unsigned int minXPts  = ( minXinc>0 ? std::lround((maxX-minX)/minXinc) : maxSamples );
+  const unsigned int nsamples = std::max( nData, std::min(maxSamples,minXPts) ); 
+  if ( nsamples < minXPts ) 
+  { 
+    std::ostringstream mess;
+    mess << "Sample points " << nsamples << " < min X diff points " << minXPts;
+    initInterpolator();
+    throw GaudiException( mess.str(), "*Rich::TabulatedFunction1D*", StatusCode::FAILURE );
+    return false;
+  }
 
   // Initialise the fast interpolator
   m_fastInterp.init( minX, maxX, gslSpline.get(), nsamples );
+
+  // // check the interpolator is able to reproduce the inout (x,y) data points
+  // const auto minDiff = 1e-6;
+  // for ( const auto & d : data )
+  // {
+  //   const auto diff = fabs( d.second - value(d.first) );
+  //   std::cout << "Diff = " << d.second << " " << diff << std::endl;
+  // }
+
+  // // printout
+  // std::cout << "Input data :-" << std::endl;
+  // for ( const auto d : data )
+  // {
+  //  std::cout << "  " << d.first << ", " << d.second << std::endl;
+  // }
+  // std::cout << "Interpolator scan :- " << std::endl;
+  // const unsigned int nScans = 100;
+  // const auto inc = ( maxX - minX ) / nScans;
+  // double xx = minX;
+  // for ( unsigned int i = 0; i < nScans; ++i )
+  // {
+  //  std::cout << "  " << xx << " = " << value(xx) << std::endl;
+  //  xx += inc;
+  // } 
 
   return true;
 }
@@ -270,7 +323,7 @@ TabulatedFunction1D::combine( const ConstVector & funcs,
 
 //============================================================================
 
-double 
+double
 TabulatedFunction1D::rangeWarning( const double x, const double retx ) const
 {
   std::cerr << "Rich::TabulatedFunction1D : WARNING : Out-Of-Range x = " << x

@@ -2,7 +2,6 @@
 #define _STDataFunctor_H_
 
 #include <cmath>
-#include <functional>
 #include <numeric>
 
 #include "Kernel/STChannelID.h"
@@ -22,7 +21,6 @@ namespace STDataFunctor {
 // functors
 template <class TYPE1, class TYPE2 = TYPE1 >
   class Less_by_Channel
-    : public std::binary_function<TYPE1,TYPE2,bool>
   {
   public:
 
@@ -44,7 +42,6 @@ template <class TYPE1, class TYPE2 = TYPE1 >
 // for the detector element the channelID is called the elemented ID
 template <class TYPE1, class TYPE2 = TYPE1 >
   class Less_by_ElementID
-    : public std::binary_function<TYPE1,TYPE2,bool>
   {
   public:
 
@@ -67,7 +64,6 @@ template <class TYPE1, class TYPE2 = TYPE1 >
 
 template <class TYPE1, class TYPE2 = TYPE1 >
   class Less_by_Key
-    : public std::binary_function<TYPE1,TYPE2,bool>
   {
   public:
 
@@ -88,7 +84,6 @@ template <class TYPE1, class TYPE2 = TYPE1 >
 
 template <class TYPE1, class TYPE2 = TYPE1 >
   class Less_by_depositedCharge
-    : public std::binary_function<TYPE1,TYPE2,bool>
   {
   public:
 
@@ -109,9 +104,7 @@ template <class TYPE1, class TYPE2 = TYPE1 >
 
 /// class for accumulating energy
 template <class TYPE>
-  class Accumulate_Charge
-    : public std::binary_function<double,TYPE, double>{
-public:
+  struct Accumulate_Charge {
     inline double  operator() ( double& charge  , TYPE obj ) const {
       return ( !obj ) ? charge :  charge+= obj->depositedCharge() ; };
     ///
@@ -119,16 +112,14 @@ public:
 
 // class for accumulating charge2
 template <class TYPE>
-  class Accumulate_Charge2
-    : public std::binary_function<double,TYPE, double>{
-public:
+  struct Accumulate_Charge2 {
     inline double  operator() ( double& charge2  , TYPE obj ) const {
       return ( !obj ) ? charge2 :  charge2+= std::pow(obj->depositedCharge(),2) ; };
     ///
 };
 
 template <class TYPE>
-class station_eq: public std::unary_function<TYPE,bool>{
+class station_eq {
    LHCb::STChannelID aChan;
 public:
   explicit station_eq(const LHCb::STChannelID& testChan) : aChan(testChan){}
@@ -137,7 +128,7 @@ public:
 };
 
 template <class TYPE>
-class layer_eq: public std::unary_function<TYPE,bool>{
+class layer_eq {
    LHCb::STChannelID aChan;
 public:
   explicit layer_eq(const LHCb::STChannelID& testChan) : aChan(testChan){}
@@ -146,7 +137,7 @@ public:
 };
 
 template <class TYPE>
-class sector_eq: public std::unary_function<TYPE,bool>{
+class sector_eq {
    LHCb::STChannelID aChan;
 public:
   explicit sector_eq(const LHCb::STChannelID& testChan) : aChan(testChan){}
@@ -155,7 +146,7 @@ public:
 };
 
 template <class TYPE>
-class compByStation_LB: public std::binary_function<const TYPE, const LHCb::STChannelID, bool>{
+class compByStation_LB {
 public:
   inline bool operator() (const TYPE& obj, const LHCb::STChannelID& testID) const{
     return ((!obj) ? false : testID.station() >obj->channelID().station());
@@ -163,7 +154,7 @@ public:
 };
 
 template <class TYPE>
-class compByStation_UB: public std::binary_function<const LHCb::STChannelID,const TYPE ,bool>{
+class compByStation_UB {
 public:
   inline bool operator() (const LHCb::STChannelID& testID, const TYPE& obj) const{
     return ((!obj) ? false : testID.station() >obj->channelID().station());
@@ -171,7 +162,7 @@ public:
 };
 
 template <class TYPE>
-class compByLayer_LB: public std::binary_function<const TYPE, const LHCb::STChannelID, bool>{
+class compByLayer_LB {
    LHCb::STChannelID testID;
 public:
   inline bool operator() (const TYPE& obj,const LHCb::STChannelID& testID) const{
@@ -180,7 +171,7 @@ public:
 };
 
 template <class TYPE>
-class compByLayer_UB: public std::binary_function<const LHCb::STChannelID,const TYPE ,bool>{
+class compByLayer_UB {
    LHCb::STChannelID testID;
 public:
   inline bool operator()(const LHCb::STChannelID& testID, const TYPE& obj) const{
@@ -189,7 +180,7 @@ public:
 };
 
 template <class TYPE>
-class compBySector_LB: public std::binary_function<const TYPE, const LHCb::STChannelID, bool>{
+class compBySector_LB {
    LHCb::STChannelID testID;
 public:
   inline bool operator() (const TYPE& obj,const LHCb::STChannelID& testID) const{
@@ -198,7 +189,7 @@ public:
 };
 
 template <class TYPE>
-class compBySector_UB: public std::binary_function<const LHCb::STChannelID, const TYPE ,bool>{
+class compBySector_UB {
    LHCb::STChannelID testID;
 public:
   inline bool operator() (const LHCb::STChannelID& testID, const TYPE& obj) const{

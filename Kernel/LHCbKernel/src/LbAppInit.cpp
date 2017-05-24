@@ -11,10 +11,6 @@
 #include "GaudiAlg/IGenericTool.h"
 #include "GaudiKernel/Memory.h"
 
-#ifndef GOD_NOALLOC
-#include "GaudiObjDesc/MemoryPoolAllocatorReleaser.h"
-#endif
-
 // local
 #include "Kernel/LbAppInit.h"
 
@@ -25,7 +21,7 @@
 //-----------------------------------------------------------------------------
 
 // Factory not declared here to avoid it appearing in the LHCbKernel library
-// and in all component libraries depending on LHCBKernel. Moved to LHCbApps
+// and in all component libraries depending on LHCbKernel. Moved to LHCbApps
 
 //=============================================================================
 // Initialization
@@ -73,6 +69,9 @@ StatusCode LbAppInit::initialize() {
 
   m_condDBInfo = service("CondDBCnvSvc", true);
 
+  if( m_memPurgeLimit != -1 ) 
+    warning() << "MemPurgeLimit property is obsolete, please remove it" << endmsg;
+
   return StatusCode::SUCCESS;
 }
 
@@ -92,13 +91,6 @@ void LbAppInit::checkMem() const {
       info() << "Memory has changed from " << m_lastMem << " to " << mem << " KB"
              << " (" << memDiff << "KB, " << 100.*memDiff/m_lastMem << "%)"
              << " in last " << m_increment.value() << " events" << endmsg ;
-      if (mem > m_memPurgeLimit) {
-
-        Info("Memory exceeds limit of " + std::to_string(m_memPurgeLimit)
-            + " KB -> Purging pools", StatusCode::SUCCESS, 1).ignore();
-        releaseMemoryPools();
-        mem = System::virtualMemory();
-      }
       m_lastMem = mem;
     }
   }
@@ -108,8 +100,6 @@ void LbAppInit::checkMem() const {
 //  Finalize
 //=============================================================================
 StatusCode LbAppInit::finalize() {
-  releaseMemoryPools();
-
   always()
     << "=================================================================="
     << endmsg;;
@@ -239,23 +229,3 @@ const std::vector<LHCb::CondDBNameTagPair> LbAppInit::condDBTags() const {
 }
 
 //=============================================================================
-// Release unused memory in Boost memory pools
-//=============================================================================
-void LbAppInit::releaseMemoryPools() const {
-#ifndef GOD_NOALLOC
-  const unsigned long long vmem_b = System::virtualMemory();
-
-  if (msgLevel(MSG::DEBUG)) {
-    Gaudi::MemoryPoolAllocatorReleaser::releaseMemory(debug());
-  } else {
-    Gaudi::MemoryPoolAllocatorReleaser::releaseMemory();
-  }
-
-  const unsigned long long vmem_a = System::virtualMemory();
-
-  if (msgLevel(MSG::DEBUG) && vmem_b != vmem_a) {
-    debug() << "Memory change after pool release = "
-            << (long long)(vmem_a-vmem_b) << " KB" << endmsg;
-  }
-#endif
-}

@@ -17,14 +17,10 @@
  *  @author Marco Musy
  *  @date   2006-10-02
  */
-class ForcedBDecayTool : public GaudiTool,
-	virtual public IForcedBDecayTool {
+class ForcedBDecayTool : public extends<GaudiTool, IForcedBDecayTool> {
 public:
   /// Standard constructor
-  ForcedBDecayTool( const std::string& type,
-		    const std::string& name,
-		    const IInterface* parent );
-
+  using base_class::base_class;
 
   const LHCb::MCParticle* forcedB(void) override;
 
