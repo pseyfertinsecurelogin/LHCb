@@ -4,7 +4,6 @@
 // STD & STL
 // ============================================================================
 #include <cmath>
-#include <functional>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -92,7 +91,7 @@ LoKi::GenParticles::Identifier::result_type
 LoKi::GenParticles::Identifier::operator()
   ( LoKi::GenParticles::Identifier:: argument p ) const
 {
-  if ( UNLIKELY( !p ) ) { 
+  if ( UNLIKELY( !p ) ) {
     Error ( "HepMC::GenParticle* points to NULL, return InvalidID" ) ;
     return LoKi::Constants::InvalidID ;
   }
@@ -193,7 +192,7 @@ LoKi::GenParticles::MomentumDistance::MomentumDistance
   const double py ,
   const double pz ,
   const double e  )
-  : LoKi::AuxFunBase ( std::tie ( px , py , pz , e ) ) 
+  : LoKi::AuxFunBase ( std::tie ( px , py , pz , e ) )
 {
   m_vct.SetXYZT( px , py , pz , e ) ;
 }
@@ -204,7 +203,7 @@ LoKi::GenParticles::MomentumDistance::MomentumDistance
 // ============================================================================
 LoKi::GenParticles::MomentumDistance::MomentumDistance
 ( const LoKi::LorentzVector& vct )
-  : LoKi::AuxFunBase ( std::tie ( vct ) ) 
+  : LoKi::AuxFunBase ( std::tie ( vct ) )
   , m_vct ( vct )
 {}
 // ============================================================================
@@ -1069,7 +1068,7 @@ LoKi::GenParticles::DecNode::operator()
     return false ;
   }
   //
-  if ( !m_node.valid() ) 
+  if ( !m_node.valid() )
   {
     LoKi::ILoKiSvc* ls = lokiSvc() ;
     SmartIF<LHCb::IParticlePropertySvc> ppSvc ( ls ) ;
@@ -1093,7 +1092,7 @@ std::ostream& LoKi::GenParticles::DecNode::fillStream( std::ostream& s ) const
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
 LoKi::GenParticles::LongLived*
-LoKi::GenParticles::LongLived::clone() const 
+LoKi::GenParticles::LongLived::clone() const
 { return new LoKi::GenParticles::LongLived(*this) ;}
 // ============================================================================
 // OPTIONAL: the nice printout
@@ -1515,76 +1514,76 @@ LoKi::GenParticles::ChildCut::fillStream( std::ostream& s ) const
 // ============================================================================
 
 // ============================================================================
-// IsID 
+// IsID
 // ============================================================================
-LoKi::GenParticles::IsID::IsID ( const long                      id  ) 
+LoKi::GenParticles::IsID::IsID ( const long                      id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate() 
-  , LoKi::Pids::GetPids ( id ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const unsigned long  id  ) 
+LoKi::GenParticles::IsID::IsID( const unsigned long  id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate() 
-  , LoKi::Pids::GetPids ( id ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const LHCb::ParticleID&         id  ) 
+LoKi::GenParticles::IsID::IsID( const LHCb::ParticleID&         id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate() 
-  , LoKi::Pids::GetPids ( id ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::string& id  ) 
+LoKi::GenParticles::IsID::IsID( const std::string& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate() 
-  , LoKi::Pids::GetPids ( id ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<int>& id  ) 
+LoKi::GenParticles::IsID::IsID( const std::vector<int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate() 
-  , LoKi::Pids::GetPids ( id ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<unsigned int>& id  ) 
+LoKi::GenParticles::IsID::IsID( const std::vector<unsigned int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate() 
-  , LoKi::Pids::GetPids ( id ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<long>& id  ) 
+LoKi::GenParticles::IsID::IsID( const std::vector<long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate() 
-  , LoKi::Pids::GetPids ( id ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<unsigned long>& id  ) 
+LoKi::GenParticles::IsID::IsID( const std::vector<unsigned long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate() 
-  , LoKi::Pids::GetPids ( id ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<LHCb::ParticleID>& id  ) 
+LoKi::GenParticles::IsID::IsID( const std::vector<LHCb::ParticleID>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate() 
-  , LoKi::Pids::GetPids ( id ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<std::string>& id  ) 
+LoKi::GenParticles::IsID::IsID( const std::vector<std::string>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate() 
-  , LoKi::Pids::GetPids ( id ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const LoKi::Pids::GetPids& id  ) 
+LoKi::GenParticles::IsID::IsID( const LoKi::Pids::GetPids& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate() 
-  , LoKi::Pids::GetPids ( id ) 
+  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
+  , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
 LoKi::GenParticles::IsID*
-LoKi::GenParticles::IsID::clone() const 
+LoKi::GenParticles::IsID::clone() const
 { return new LoKi::GenParticles::IsID(*this) ; }
 // ============================================================================
 std::ostream& LoKi::GenParticles::IsID::fillStream( std::ostream& s ) const
@@ -1597,80 +1596,80 @@ std::ostream& LoKi::GenParticles::IsID::fillStream( std::ostream& s ) const
   else if ( 1 == m_ints.size()  ) { Gaudi::Utils::toStream ( m_ints [0] , s ) ; }
   else                            { Gaudi::Utils::toStream ( m_ints     , s ) ; }
   //
-  return s << ")" ; 
+  return s << ")" ;
 }
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsID::result_type 
-LoKi::GenParticles::IsID::operator() 
-  ( LoKi::GenParticles::IsID::argument p ) const 
+LoKi::GenParticles::IsID::result_type
+LoKi::GenParticles::IsID::operator()
+  ( LoKi::GenParticles::IsID::argument p ) const
 {
   //
-  if ( 0 == p ) 
+  if ( 0 == p )
   {
     Error("Invalid Particle, return 'False'");
-    return false ;                     // RETURN 
+    return false ;                     // RETURN
   }
   //
-  return in_list ( p->pdg_id() ) ;  
+  return in_list ( p->pdg_id() ) ;
 }
 
 // ============================================================================
-// IsNotID 
+// IsNotID
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID ( const long                id  ) 
+LoKi::GenParticles::IsNotID::IsNotID ( const long                id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const unsigned long  id  ) 
+LoKi::GenParticles::IsNotID::IsNotID( const unsigned long  id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const LHCb::ParticleID&         id  ) 
+LoKi::GenParticles::IsNotID::IsNotID( const LHCb::ParticleID&         id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::string& id  ) 
+LoKi::GenParticles::IsNotID::IsNotID( const std::string& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<int>& id  ) 
+LoKi::GenParticles::IsNotID::IsNotID( const std::vector<int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<unsigned int>& id  ) 
+LoKi::GenParticles::IsNotID::IsNotID( const std::vector<unsigned int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<long>& id  ) 
+LoKi::GenParticles::IsNotID::IsNotID( const std::vector<long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<unsigned long>& id  ) 
+LoKi::GenParticles::IsNotID::IsNotID( const std::vector<unsigned long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<LHCb::ParticleID>& id  ) 
+LoKi::GenParticles::IsNotID::IsNotID( const std::vector<LHCb::ParticleID>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<std::string>& id  ) 
+LoKi::GenParticles::IsNotID::IsNotID( const std::vector<std::string>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
 LoKi::GenParticles::IsNotID*
-LoKi::GenParticles::IsNotID::clone() const 
+LoKi::GenParticles::IsNotID::clone() const
 { return new LoKi::GenParticles::IsNotID(*this) ; }
 // ============================================================================
 std::ostream& LoKi::GenParticles::IsNotID::fillStream( std::ostream& s ) const
@@ -1683,84 +1682,84 @@ std::ostream& LoKi::GenParticles::IsNotID::fillStream( std::ostream& s ) const
   else if ( 1 == m_ints.size()  ) { Gaudi::Utils::toStream ( m_ints [0] , s ) ; }
   else                            { Gaudi::Utils::toStream ( m_ints     , s ) ; }
   //
-  return s << ")" ; 
+  return s << ")" ;
 }
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsNotID::result_type 
-LoKi::GenParticles::IsNotID::operator() 
-  ( LoKi::GenParticles::IsNotID::argument p ) const 
+LoKi::GenParticles::IsNotID::result_type
+LoKi::GenParticles::IsNotID::operator()
+  ( LoKi::GenParticles::IsNotID::argument p ) const
 {
   //
-  if ( 0 == p ) 
+  if ( 0 == p )
   {
     Error("Invalid Particle, return 'False'");
-    return false ;                     // RETURN 
+    return false ;                     // RETURN
   }
   return not_in_list ( p->pdg_id () ) ;
 }
 
 // ============================================================================
-// IsAbsID 
+// IsAbsID
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const long id  ) 
+LoKi::GenParticles::IsAbsID::IsAbsID ( const long id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const unsigned long  id  ) 
+LoKi::GenParticles::IsAbsID::IsAbsID ( const unsigned long  id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const LHCb::ParticleID&         id  ) 
+LoKi::GenParticles::IsAbsID::IsAbsID ( const LHCb::ParticleID&         id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::string& id  ) 
+LoKi::GenParticles::IsAbsID::IsAbsID ( const std::string& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<int>& id  ) 
+LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<unsigned int>& id  ) 
+LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<unsigned int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<long>& id  ) 
+LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<unsigned long>& id  ) 
+LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<unsigned long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<LHCb::ParticleID>& id  ) 
+LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<LHCb::ParticleID>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<std::string>& id  ) 
+LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<std::string>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const LoKi::Pids::GetPids& id  ) 
+LoKi::GenParticles::IsAbsID::IsAbsID ( const LoKi::Pids::GetPids& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsID ( id ) 
+  , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
 LoKi::GenParticles::IsAbsID*
-LoKi::GenParticles::IsAbsID::clone() const 
+LoKi::GenParticles::IsAbsID::clone() const
 { return new LoKi::GenParticles::IsAbsID(*this) ; }
 // ============================================================================
 std::ostream& LoKi::GenParticles::IsAbsID::fillStream( std::ostream& s ) const
@@ -1773,85 +1772,85 @@ std::ostream& LoKi::GenParticles::IsAbsID::fillStream( std::ostream& s ) const
   else if ( 1 == m_ints.size()  ) { Gaudi::Utils::toStream ( m_ints [0] , s ) ; }
   else                            { Gaudi::Utils::toStream ( m_ints     , s ) ; }
   //
-  return s << ")" ; 
+  return s << ")" ;
 }
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsAbsID::result_type 
-LoKi::GenParticles::IsAbsID::operator() 
-  ( LoKi::GenParticles::IsAbsID::argument p ) const 
+LoKi::GenParticles::IsAbsID::result_type
+LoKi::GenParticles::IsAbsID::operator()
+  ( LoKi::GenParticles::IsAbsID::argument p ) const
 {
   //
-  if ( 0 == p ) 
+  if ( 0 == p )
   {
     Error("Invalid Particle, return 'False'");
-    return false ;                     // RETURN 
+    return false ;                     // RETURN
   }
   //
   return in_abs_list ( p->pdg_id() ) ;
 }
 
 // ============================================================================
-// IsNotAbsID 
+// IsNotAbsID
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const long         id  ) 
+LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const long         id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsAbsID ( id ) 
+  , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const unsigned long id  ) 
+LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const unsigned long id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsAbsID ( id ) 
+  , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const LHCb::ParticleID&         id  ) 
+LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const LHCb::ParticleID&         id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsAbsID ( id ) 
+  , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::string& id  ) 
+LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::string& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsAbsID ( id ) 
+  , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<int>& id  ) 
+LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsAbsID ( id ) 
+  , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<unsigned int>& id  ) 
+LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<unsigned int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsAbsID ( id ) 
+  , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<long>& id  ) 
+LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsAbsID ( id ) 
+  , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<unsigned long>& id  ) 
+LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<unsigned long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsAbsID ( id ) 
+  , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<LHCb::ParticleID>& id  ) 
+LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<LHCb::ParticleID>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsAbsID ( id ) 
+  , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<std::string>& id  )  
+LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<std::string>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsAbsID ( id ) 
+  , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const LoKi::Pids::GetPids& id  ) 
+LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const LoKi::Pids::GetPids& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::GenParticles::IsAbsID ( id ) 
+  , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
 LoKi::GenParticles::IsNotAbsID*
-LoKi::GenParticles::IsNotAbsID::clone() const 
+LoKi::GenParticles::IsNotAbsID::clone() const
 { return new LoKi::GenParticles::IsNotAbsID(*this) ; }
 // ============================================================================
 
@@ -1865,20 +1864,20 @@ std::ostream& LoKi::GenParticles::IsNotAbsID::fillStream( std::ostream& s ) cons
   else if ( 1 == m_ints.size()  ) { Gaudi::Utils::toStream ( m_ints [0] , s ) ; }
   else                            { Gaudi::Utils::toStream ( m_ints     , s ) ; }
   //
-  return s << ")" ; 
+  return s << ")" ;
 }
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::result_type 
-LoKi::GenParticles::IsNotAbsID::operator() 
-  ( LoKi::GenParticles::IsNotAbsID::argument p ) const 
+LoKi::GenParticles::IsNotAbsID::result_type
+LoKi::GenParticles::IsNotAbsID::operator()
+  ( LoKi::GenParticles::IsNotAbsID::argument p ) const
 {
   //
-  if ( 0 == p ) 
+  if ( 0 == p )
   {
     Error("Invalid Particle, return 'False'");
-    return false ;                     // RETURN 
+    return false ;                     // RETURN
   }
   //
   return not_in_abs_list ( p->pdg_id() ) ;
@@ -1887,9 +1886,9 @@ LoKi::GenParticles::IsNotAbsID::operator()
 
 
 // ============================================================================
-// get unique string for HepMC::Particle 
+// get unique string for HepMC::Particle
 // ============================================================================
-std::string LoKi::GenParticles::hex_id ( const HepMC::GenParticle* particle ) 
+std::string LoKi::GenParticles::hex_id ( const HepMC::GenParticle* particle )
 {
   if ( 0 == particle ) { return "NULL" ; }
   boost::format fmt ( "%p" ) ;
@@ -1901,20 +1900,20 @@ std::string LoKi::GenParticles::hex_id ( const HepMC::GenParticle* particle )
 
 
 // ============================================================================
-namespace 
+namespace
 {
-  // hashing function 
+  // hashing function
   const std::hash<const void*> s_hash {} ;
 }
 // ============================================================================
-// get hash function for HepMC::GenParticle 
+// get hash function for HepMC::GenParticle
 // ============================================================================
-std::size_t LoKi::GenParticles::hash ( const HepMC::GenParticle* particle ) 
+std::size_t LoKi::GenParticles::hash ( const HepMC::GenParticle* particle )
 { return 0 == particle ? 0 : s_hash ( particle ) ; }
 // ============================================================================
 // get hash function for HepMC::GenVertex
 // ============================================================================
-std::size_t LoKi::GenParticles::hash ( const HepMC::GenVertex*   vertex ) 
+std::size_t LoKi::GenParticles::hash ( const HepMC::GenVertex*   vertex )
 { return 0 == vertex ? 0 : s_hash( vertex ) ; }
 
 
