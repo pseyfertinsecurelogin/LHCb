@@ -69,8 +69,7 @@ StatusCode CaloDigitFilterTool::caloUpdate(){
   // loop over all current maps and recreate
   for ( auto & maps : m_offsetMap ) { createMaps(maps.first,false); }
   const auto offsets = m_offsetMap.find(m_calo);
-  if( offsets == m_offsetMap.end() )return StatusCode::FAILURE; // should not happen
-  setMaps( *(offsets->second)  ); // reset the local maps for the current calo
+  setMaps( offsets != m_offsetMap.end() ? *(offsets->second) : createMaps(m_calo) );
   return StatusCode::SUCCESS;
 }
 
