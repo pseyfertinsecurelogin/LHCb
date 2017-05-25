@@ -1,63 +1,213 @@
-from Configurables import ApplicationMgr, LHCbApp, GaudiSequencer
+"""Test the HltSelReportsStripper and related data flow.
+
+The realistic data flow where HltSelReportsStripper will be used is
+1. HltSelReportsDecoder
+2. HltSelReportsStripper
+3. bankKiller
+4. HltSelReportsWriter
+
+Here we test that HltSelReportsStripper selects what we expect, that it
+correctly clones all the HltSummaryObjects and that the writing and the
+subsequent decoding gives identical objects to those in the original
+SelReports.
+
+"""
+from __future__ import print_function
+import math
+
+from Gaudi.Configuration import DEBUG, VERBOSE, INFO
+from Configurables import ApplicationMgr, EventSelector, GaudiSequencer
+from Configurables import LHCbApp
 from Configurables import HltRoutingBitsFilter
+from Configurables import bankKiller
+from Configurables import LHCb__RawEventCopy as RawEventCopy
 from Configurables import IODataManager
 from Configurables import HistogramPersistencySvc
 from Configurables import HltSelReportsStripper
+from Configurables import HltSelReportsWriter
 from DAQSys.Decoders import DecoderDB
+from Configurables import LHCbTimingAuditor, LHCbSequencerTimerTool, AuditorSvc
+from PRConfig.TestFileDB import test_file_db
+
+import GaudiPython
+
+LEVEL = INFO
+
+# Setup the timing table
+LHCbTimingAuditor('TIMER').addTool(LHCbSequencerTimerTool, name="TIMER")
+ApplicationMgr().ExtSvc.append('AuditorSvc')
+AuditorSvc().Auditors.append(LHCbTimingAuditor('TIMER'))
+ApplicationMgr().AuditAlgorithms = True
 
 # Setup the input data
-from PRConfig.TestFileDB import test_file_db
 test_file_db['HltDAQ-routingbits_turbo'].run(configurable=LHCbApp())
+# LHCbApp().SkipEvents =
+EventSelector().PrintFreq = 100
+
+# Get rid of warnings
 IODataManager().DisablePFNWarning = True
 HistogramPersistencySvc().OutputLevel = 5
 
-topSeq = GaudiSequencer("TopSequence")
-ApplicationMgr().TopAlg = [topSeq]
 
 # Filter nanofied events if the file is HLT2 accepted
-content_filter = HltRoutingBitsFilter(
-    'RBFilter', RequireMask=[0x0, 0x0, 0x80000000])
-topSeq.Members.append(content_filter)
-
+content_filter = HltRoutingBitsFilter('RBFilter')
+content_filter.RequireMask = [0x0, 0x0, 0x80000000]
 
 decoder = DecoderDB['HltSelReportsDecoder/Hlt2SelReportsDecoder']
-topSeq.Members.append(decoder.setup())
+decoder.Properties['OutputLevel'] = LEVEL
 
 stripper = HltSelReportsStripper()
-stripper.Input = decoder.listOutputs()[0]
-stripper.Output = 'Hlt2/SelReportsFiltered'
-stripper.Lines = [
+stripper.InputHltSelReportsLocation = decoder.listOutputs()[0]
+stripper.OutputHltSelReportsLocation = 'Hlt2/SelReportsFiltered'
+stripper.OutputHltObjectSummariesLocation = (
+    str(stripper.OutputHltSelReportsLocation) + '/Candidates')
+stripper.SelectionNames = [
     'Hlt2DiMuonBDecision',
     'Hlt2Topo2BodyDecision',
     'Hlt2RecSummary',
 ]
-topSeq.Members.append(stripper)
+stripper.OutputLevel = LEVEL
+
+copyRaw = RawEventCopy()
+copyRaw.Destination = "DAQ/RawEventOriginal"
+
+killer = bankKiller("Hlt2SelRepKiller")
+killer.BankTypes = ["HltSelReports"]
+killer.DefaultIsKill = False
+killer.KillSourceID = 2 << 13
+
+writer = HltSelReportsWriter('Hlt2SelReportsWriter')
+writer.SourceID = 2
+writer.InputHltSelReportsLocation = str(stripper.OutputHltSelReportsLocation)
+writer.OutputLevel = LEVEL
 
 
-import GaudiPython
+decoder2 = decoder.clone('HltSelReportsDecoder/SecondDecoder')
+# decoder2.Inputs = {'RawEventLocations': ['DAQ/RawEvent']}
+decoder2.Outputs = {'OutputHltSelReportsLocation':
+                    'Hlt2/SelReportsFilteredFromRaw'}
+decoder2.Properties['OutputLevel'] = LEVEL
+
+
+topSeq = GaudiSequencer("TopSequence")
+topSeq.Members = [
+    content_filter,
+    copyRaw,
+    decoder.setup(),
+    stripper,
+    killer,
+    writer,
+    decoder2.setup(),
+]
+ApplicationMgr().TopAlg = [topSeq]
+
+
 gaudi = GaudiPython.AppMgr()
 TES = gaudi.evtsvc()
 RawBank = GaudiPython.gbl.LHCb.RawBank
 
-# for i in range(2):
+
+def bank_size(raw):
+    """Return the size of the first HltSelReports bank for HLT2."""
+    for b in raw.banks(RawBank.HltSelReports):
+        if b.sourceID() >> 13 & 7 == 2:
+            return b.size()
+    return -1
+
+
+def iter_vector(v):
+    for i in range(v.size()):
+        yield v[i]
+
+
+def safe_str(x):
+    """Return repr(x) while checking there is no precision loss."""
+    s = repr(x)
+    assert float(s) == x or math.isnan(x)
+    return s
+
+
+def hos_to_pod(hos):
+    """Convert HltObjectSummary to plain python objects."""
+    return {
+        'summarizedObjectCLID': hos.summarizedObjectCLID(),
+        'numericalInfo':
+            {k: safe_str(v) for k, v in hos.numericalInfo().iteritems()},
+        'lhcbIDs': [x.lhcbID() for x in iter_vector(hos.lhcbIDs())],
+        'substructure':
+            [hos_to_pod(sub) for sub in
+             iter_vector(hos.substructure())],
+        'substructureExtended':
+            [hos_to_pod(sub) for sub in
+             iter_vector(hos.substructureExtended())],
+    }
+
+
+def lhcbids(hos):
+    ids = [(hos['summarizedObjectCLID'], tuple(hos['lhcbIDs']))]
+    ids.extend(sum((lhcbids(sub) for sub in hos['substructure']), []))
+    ids.extend(sum((lhcbids(sub) for sub in hos['substructureExtended']), []))
+    return ids
+
+
+def assert_equal(expected, result, msg):
+    if result != expected:
+        import pprint
+        import difflib
+        diff = difflib.ndiff(
+            pprint.pformat(expected).splitlines(),
+            pprint.pformat(result).splitlines(),
+        )
+        full_msg = ('{}\n    diff:\n{}'
+                    .format(msg, '\n'.join(diff)))
+        raise AssertionError(full_msg)
+
+
+# for i in range(100):
 while True:
     gaudi.run(1)
-    raw = TES['DAQ/RawEvent']
-    if not raw:  # no more events
+    raw2 = TES['DAQ/RawEvent']
+    if not raw2:  # no more events
         break
 
-    inp = TES[str(stripper.Input)]
-    out = TES[str(stripper.Output)]
+    raw = TES['DAQ/RawEventOriginal']
+    inp = TES[str(stripper.InputHltSelReportsLocation)]
+    out = TES[str(stripper.OutputHltSelReportsLocation)]
+    out2 = TES[decoder2.listOutputs()[0]]
+    inpc = TES[str(stripper.InputHltSelReportsLocation) + '/Candidates']
+    outc = TES[str(stripper.OutputHltSelReportsLocation) + '/Candidates']
+    out2c = TES[decoder2.listOutputs()[0] + '/Candidates']
     if not inp:  # we didn't have SelReports to process
         continue
 
+    # Some stats
+    print('N selections (input, stripped, persisted):      ',
+          inp.size(), out.size(), out2.size())
+    print('N HltObjectSummary (input, stripped, persisted):',
+          inpc.size(), outc.size(), out2c.size())
+    print('Hlt2 SelReports bank size (input, stripped):    ',
+          bank_size(raw), bank_size(raw2))
+
+    # Check the selection logic (we keep only the requested reports)
     result = set(out.selectionNames())
-    expected = set(inp.selectionNames()) & set(stripper.Lines)
-    assert result == expected, (
-        'The filtered SelReports {} do not match the expectation {}'
+    expected = set(inp.selectionNames()) & set(stripper.SelectionNames)
+    assert_equal(
+        expected, result,
+        'The stripped SelReports do not match the expectation'
         .format(result, expected))
 
+    # Check the deep copying of HltSummaryObjects (i.e. that the cloned
+    # reports are the same as the originals)
     for name, report in out.selReports().items():
         original = inp.selReport(name)
-        assert str(report) == str(original), (
+        assert_equal(
+            hos_to_pod(original), hos_to_pod(report),
             'The copied SelReport is not the same')
+
+    # Check that the persistence works (the SelReports which are written
+    # and decoding are the same as the originals)
+    for name, report in out2.selReports().items():
+        original = inp.selReport(name)
+        assert_equal(
+            hos_to_pod(original), hos_to_pod(report),
+            'The persisted SelReport is not the same')
