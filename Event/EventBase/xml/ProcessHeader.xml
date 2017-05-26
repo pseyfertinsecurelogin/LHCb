@@ -9,7 +9,7 @@
 <!-- ****************************************************************
      * ProcessHeader                                                *
      ****************************************************************-->
-     <class 
+     <class
       author="P. Koppenburg"
       desc="Common base class for all process headers: GenHeader, MCHeader..."
       name="ProcessHeader"
@@ -23,6 +23,7 @@
        <location name = "MC"   place = "MC/Header" />
        <location name = "Rec"  place = "Rec/Header" />
        <import name="Kernel/CondDBNameTagPair.h" />
+       <import name="Kernel/PlatformInfo.h"/>
        <attribute
         desc="Application or Program Name (e.g. Gauss, Boole or Pythia)"
         name="applicationName"
@@ -46,9 +47,21 @@
         name="condDBTags"
         type="std::vector&lt;LHCb::CondDBNameTagPair&gt;"
        />
-       <constructor 
-	 desc     = "Copy constructor. Creates a new ProcessHeader with the same information." 
-	 initList = "DataObject(), m_applicationName(head.applicationName()), m_applicationVersion(head.applicationVersion()), m_runNumber(head.runNumber()), m_condDBTags(head.condDBTags())">
+       <attribute
+        desc="Details of binary and host during processing"
+        name="platformInfo"
+        type="LHCb::PlatformInfo"
+       />
+       <constructor
+         desc="Constructor"
+         initList = "m_applicationName(&quot;Unknown&quot;), m_applicationVersion(&quot;Unknown&quot;), m_runNumber(0), m_condDBTags(), m_platformInfo()" >
+         <code>
+           setVersion( 2 );
+         </code>
+       </constructor>
+       <constructor
+         desc     = "Copy constructor. Creates a new ProcessHeader with the same information."
+         initList = "DataObject(), m_applicationName(head.applicationName()), m_applicationVersion(head.applicationVersion()), m_runNumber(head.runNumber()), m_condDBTags(head.condDBTags()), m_platformInfo(head.platformInfo())">
          <arg const="TRUE" name="head" type="LHCb::ProcessHeader"/>
          <code/>
        </constructor>

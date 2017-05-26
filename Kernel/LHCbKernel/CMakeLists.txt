@@ -20,8 +20,9 @@ god_build_headers(xml/*.xml
 gaudi_add_library(LHCbKernel
                   src/*.cpp
                   PUBLIC_HEADERS Kernel
-		  INCLUDE_DIRS ROOT Boost VDT
-		  LINK_LIBRARIES ROOT Boost VDT GaudiKernel GaudiObjDescLib LHCbMathLib GaudiAlgLib)
+                  INCLUDE_DIRS ROOT Boost VDT
+                  LINK_LIBRARIES ROOT Boost VDT GaudiKernel GaudiObjDescLib LHCbMathLib GaudiAlgLib)
+set_property(SOURCE src/PlatformInfo.cpp APPEND PROPERTY COMPILE_DEFINITIONS BINARY_TAG=${BINARY_TAG})
 
 god_build_dictionary(xml/*.xml
                      HEADERS_DESTINATION Kernel
