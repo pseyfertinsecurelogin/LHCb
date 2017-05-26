@@ -10,8 +10,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RichTrackSegment_H
-#define RICHUTILS_RichTrackSegment_H 1
+#pragma once
 
 // std include
 #include <iostream>
@@ -170,66 +169,22 @@ namespace LHCb
 
     };
 
-    /// Enum to flag to determine how to create the RichTrackSegment
-    enum SegmentType : int8_t
-      {
-        UnDefined         = 0, ///< Undefined segment type
-        UseChordBetweenStates, ///< Uses full state information to define the segment direction
-        UseAllStateVectors     ///< Uses chord between the entry and exit points. NB : Under development - Do not use yet
-      };
-
-  public:
-
-    /// The segment type
-    inline LHCb::RichTrackSegment::SegmentType type() const noexcept
-    {
-      return m_type;
-    }
-
     // ------------------------------------------------------------------------------------------------------
 
   private:
 
-    /// Helper method to initialise the based chord constructor without a middle point
-    void chordConstructorInit2();
-
-    /// Helper method to initialise the based chord constructor with a middle point
-    void chordConstructorInit3();
-
     /// Helper method for two point constructor
-    inline void initTwoPoints()
+    inline void initTwoPoints() noexcept
     {
-      if      ( RichTrackSegment::UseAllStateVectors    == type() )
-      {
-        setMiddleState ( add_points(entryPoint(),exitPoint())/2, (entryMomentum()+exitMomentum())/2 );
-      }
-      else if ( RichTrackSegment::UseChordBetweenStates == type() )
-      {
-        chordConstructorInit2();
-      }
-      else
-      {
-        throw Rich::Exception( "Unknown RichTrackSegment::SegmentType" );
-      }
-      // fill the cached information.
-      updateCachedInfo();
+      // create middle state
+      setMiddleState ( add_points(entryPoint(),exitPoint())*0.5, 
+                       (entryMomentum()+exitMomentum())*0.5 );
+      // Note the above calls updateCachedInfo() so no need to do it here.
     }
-
+    
     /// Helper method for three point constructor
-    inline void initThreePoints()
+    inline void initThreePoints() noexcept
     {
-      if      ( RichTrackSegment::UseAllStateVectors    == type() )
-      {
-        // nothing to do yet
-      }
-      else if ( RichTrackSegment::UseChordBetweenStates == type() )
-      {
-        chordConstructorInit3();
-      }
-      else
-      {
-        throw Rich::Exception( "Unknown RichTrackSegment::SegmentType" );
-      }
       // fill the cached information.
       updateCachedInfo();
     }
@@ -237,32 +192,6 @@ namespace LHCb
     // ------------------------------------------------------------------------------------------------------
 
   public:
-
-    /** Constructor that uses the supplied radiator intersections for the entry and exit points.
-     *
-     *  The middle point and the momentum at the middle point are derived from the average
-     *  of the entry and exit states.
-     *
-     *  Information is copied in this implementation.
-     */
-    RichTrackSegment( const SegmentType t,           ///< The segment type
-                      const Rich::RadIntersection::Vector & intersects, ///< The radiator intersections
-                      const Rich::RadiatorType rad,  ///< The radiator type
-                      const Rich::DetectorType rich, ///< The detector type
-                      const StateErrors& entryErrors = StateErrors{}, ///< The segment errors at the entry point
-                      const StateErrors& exitErrors  = StateErrors{}  ///< The segment errors at the exit point
-                      )
-      : m_type             ( t             ),
-        m_radIntersections ( intersects    ),
-        m_radiator         ( rad           ),
-        m_rich             ( rich          ),
-        m_errorsEntry      ( entryErrors   ),
-        m_errorsMiddle     ( Rich::Rich1Gas == rad ? exitErrors : entryErrors ), // CRJ : Is this best ?
-        m_errorsExit       ( exitErrors    ),
-        m_avPhotonEnergy   ( avPhotEn(rad) )
-    {
-      initTwoPoints();
-    }
 
     /** Constructor that uses the supplied radiator intersections for the entry and exit points.
      *
@@ -271,53 +200,22 @@ namespace LHCb
      *
      *  Information is moved in this implementation.
      */
-    RichTrackSegment( const SegmentType t,           ///< The segment type
-                      Rich::RadIntersection::Vector && intersects, ///< The radiator intersections
+    template < class INTERS >
+    RichTrackSegment( INTERS && inters,              ///< The radiator intersections
                       const Rich::RadiatorType rad,  ///< The radiator type
                       const Rich::DetectorType rich, ///< The detector type
                       const StateErrors& entryErrs = StateErrors{}, ///< The segment errors at the entry point
                       const StateErrors& exitErrs  = StateErrors{}  ///< The segment errors at the exit point
                       )
-      : m_type             ( t                     ),
-        m_radIntersections ( std::move(intersects) ),
-        m_radiator         ( rad                   ),
-        m_rich             ( rich                  ),
-        m_errorsEntry      ( entryErrs             ),
-        m_errorsExit       ( exitErrs              ),
-        m_avPhotonEnergy   ( avPhotEn(rad)         )
+      : m_radIntersections ( std::forward<INTERS>(inters) ),
+        m_radiator         ( rad                      ),
+        m_rich             ( rich                     ),
+        m_errorsEntry      ( entryErrs                ),
+        m_errorsMiddle     ( Rich::Rich1Gas == rad ? exitErrs : entryErrs ), // CRJ : Is this best ?
+        m_errorsExit       ( exitErrs                 ),
+        m_avPhotonEnergy   ( avPhotEn(rad)            )
     {
-      m_errorsMiddle = ( Rich::Rich1Gas == rad ? exitErrors() : entryErrors() ); // CRJ : Is this best ?
       initTwoPoints();
-    }
-
-    /** Constructor that uses the supplied radiator intersections for the entry and exit points.
-     *
-     *  In addition the middle point and the momentum vector at that point are given explicitly.
-     *
-     *  Information is copied in this implementation.
-     */
-    RichTrackSegment( const SegmentType t,           ///< The segment type
-                      const Rich::RadIntersection::Vector & intersects, ///< The radiator intersections
-                      const Gaudi::XYZPoint& middP,  ///< The mid point in the radiator
-                      const Gaudi::XYZVector& middV, ///< The momentum vector at the radiator mid point
-                      const Rich::RadiatorType rad,  ///< The radiator type
-                      const Rich::DetectorType rich, ///< The detector type
-                      const StateErrors& entryErrors  = StateErrors{}, ///< The segment errors at the entry point
-                      const StateErrors& middleErrors = StateErrors{}, ///< The segment errors at the mid point
-                      const StateErrors& exitErrors   = StateErrors{}  ///< The segment errors at the exit point
-                      )
-      : m_type             ( t             ),
-        m_radIntersections ( intersects    ),
-        m_middlePoint      ( middP         ),
-        m_middleMomentum   ( middV         ),
-        m_radiator         ( rad           ),
-        m_rich             ( rich          ),
-        m_errorsEntry      ( entryErrors   ),
-        m_errorsMiddle     ( middleErrors  ),
-        m_errorsExit       ( exitErrors    ),
-        m_avPhotonEnergy   ( avPhotEn(rad) )
-    {
-      initThreePoints();
     }
 
     /** Constructor that uses the supplied radiator intersections for the entry and exit points.
@@ -326,8 +224,8 @@ namespace LHCb
      *
      *  Information is moved in this implementation.
      */
-    RichTrackSegment( const SegmentType t,           ///< The segment type
-                      Rich::RadIntersection::Vector && intersects, ///< The radiator intersections
+    template < class INTERS >
+    RichTrackSegment( INTERS && inters,               ///< The radiator intersections
                       const Gaudi::XYZPoint & middP,  ///< The mid point in the radiator
                       const Gaudi::XYZVector & middV, ///< The momentum vector at the radiator mid point
                       const Rich::RadiatorType rad,   ///< The radiator type
@@ -336,16 +234,15 @@ namespace LHCb
                       const StateErrors& middleErrors = StateErrors{}, ///< The segment errors at the mid point
                       const StateErrors& exitErrors   = StateErrors{}  ///< The segment errors at the exit point
                       )
-      : m_type             ( t                       ),
-        m_radIntersections ( std::move(intersects)   ),
-        m_middlePoint      ( middP                   ),
-        m_middleMomentum   ( middV                   ),
-        m_radiator         ( rad                     ),
-        m_rich             ( rich                    ),
-        m_errorsEntry      ( entryErrors             ),
-        m_errorsMiddle     ( middleErrors            ),
-        m_errorsExit       ( exitErrors              ),
-        m_avPhotonEnergy   ( avPhotEn(rad)           )
+      : m_radIntersections ( std::forward<INTERS>(inters) ),
+        m_middlePoint      ( middP                    ),
+        m_middleMomentum   ( middV                    ),
+        m_radiator         ( rad                      ),
+        m_rich             ( rich                     ),
+        m_errorsEntry      ( entryErrors              ),
+        m_errorsMiddle     ( middleErrors             ),
+        m_errorsExit       ( exitErrors               ),
+        m_avPhotonEnergy   ( avPhotEn(rad)            )
     {
       initThreePoints();
     }
@@ -673,9 +570,6 @@ namespace LHCb
 
   private:  // private data
 
-    /// The segment type
-    SegmentType m_type = RichTrackSegment::UnDefined;
-
     /// The raw intersections with the radiator volumes
     Rich::RadIntersection::Vector m_radIntersections{1};
 
@@ -726,5 +620,3 @@ namespace LHCb
   }
   
 } // end LHCb namespace
-
-#endif // RICHUTILS_RichTrackSegment_H
