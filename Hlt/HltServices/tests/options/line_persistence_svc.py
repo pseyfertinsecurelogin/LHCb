@@ -30,6 +30,7 @@ svc.Locations = {
         '/Event/AnotherExternalLocation',
     ],
 }
+svc.TurboPPLines = ['Hlt2ThirdLineDecision']
 svc.RawBankTypes = {
     # Lumi-like line
     'Hlt2FirstLineDecision': ['ODIN', 'HltLumiSummary', 'HltRoutingBits', 'DAQ'],
@@ -108,6 +109,14 @@ for subset in all_subsets:
         assert result == expected, ("hdr={} lines={} result={} expected={}"
                                     .format(decisions, subset, result, expected))
         # print 'Locations check {} == {}'.format(len(result), len(expected))
+
+        expected = set(chain.from_iterable(
+            svc.Locations[line] for line in subset
+            if decisions[line] and line in svc.TurboPPLines))
+        result = set(hltsvc.turboPPLocationsToPersist(hdr, lines))
+        assert result == expected, ("hdr={} lines={} result={} expected={}"
+                                    .format(decisions, subset, result, expected))
+        # print 'TurboPPLocations check {} == {}'.format(len(result), len(expected))
 
         expected = set(chain.from_iterable(
             svc.RawBankTypes[line] for line in subset if decisions[line]))
