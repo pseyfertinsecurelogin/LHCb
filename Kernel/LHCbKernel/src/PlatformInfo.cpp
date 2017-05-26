@@ -62,11 +62,12 @@ namespace
       "x86_64-ubuntu1704-gcc63-opt",
   };
 
-  const std::string invalid_platform = "'invalid platform id'";
+  const std::string invalid_platform = "invalid";
 
   const std::vector<std::string> known_instruction_sets = {
       "80386", "SSE", "SSE2", "SSE3", "Supplementary SSE3 (SSSE3)", "SSE4.1", "SSE4.2", "AVX", "AVX2", "AVX512F",
   };
+  const std::string unknown_instructions_set = "unknown";
 
 // special trick to add quotes around a macro value
 // see https://stackoverflow.com/a/20632065
@@ -78,7 +79,7 @@ namespace
 
   const std::uint16_t binary_tag_id =
       ( find( begin( known_platforms ), end( known_platforms ), binary_tag_name ) == end( known_platforms ) )
-          ? 0
+          ? 0 // unknown
           : static_cast<std::uint16_t>( find( begin( known_platforms ), end( known_platforms ), binary_tag_name ) -
                                         begin( known_platforms ) );
 }
@@ -96,6 +97,6 @@ namespace LHCb
   const std::string& PlatformInfo::hostInstrSet() const
   {
     return ( m_hostInstrSetLevel < known_instruction_sets.size() ) ? known_instruction_sets[m_hostInstrSetLevel]
-                                                                   : known_instruction_sets[0];
+                                                                   : unknown_instructions_set;
   }
 }

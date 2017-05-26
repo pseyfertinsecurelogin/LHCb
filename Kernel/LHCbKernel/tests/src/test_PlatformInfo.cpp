@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE( string_conversion )
     {
       std::stringstream o;
       o << info;
-      BOOST_CHECK( o.str() == "'invalid platform id':80386" );
+      BOOST_CHECK( o.str() == "invalid:unknown" );
     }
   }
 }
