@@ -1,0 +1,83 @@
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE test_PlatformInfo
+#include <boost/test/unit_test.hpp>
+
+#include "Kernel/PlatformInfo.h"
+
+#include "VectorClass/instrset.h"
+
+// special trick to add quotes around a macro value
+// see https://stackoverflow.com/a/20632065
+#define STR_( X ) #X
+#define STR( X ) STR_( X )
+
+struct Shadow {
+  std::uint16_t id;
+  std::uint16_t instr;
+};
+
+using namespace LHCb;
+
+BOOST_AUTO_TEST_CASE( constructor )
+{
+  {
+    PlatformInfo info;
+
+    BOOST_CHECK( info.binaryTag() == STR( BINARY_TAG ) );
+    BOOST_CHECK( info.hostInstrSetLevel() == instrset_detect() );
+  }
+}
+
+BOOST_AUTO_TEST_CASE( string_conversion )
+{
+  {
+    PlatformInfo info;
+    Shadow* s = reinterpret_cast<Shadow*>( &info );
+
+    s->instr = 0;
+    BOOST_CHECK( info.hostInstrSet() == "80386" );
+
+    {
+      std::stringstream o;
+      o << info;
+      BOOST_CHECK( o.str() == ( STR( BINARY_TAG ) ":80386" ) );
+    }
+
+    s->id    = 0;
+    s->instr = 8;
+    {
+      std::stringstream o;
+      o << info;
+      BOOST_CHECK( o.str() == "unknown:AVX2" );
+    }
+
+    s->id    = 1234;
+    s->instr = 1234;
+    {
+      std::stringstream o;
+      o << info;
+      BOOST_CHECK( o.str() == "'invalid platform id':80386" );
+    }
+  }
+}
+
+BOOST_AUTO_TEST_CASE( copy )
+{
+  {
+    PlatformInfo info;
+    Shadow* s = reinterpret_cast<Shadow*>( &info );
+
+    BOOST_CHECK( info.binaryTag() == STR( BINARY_TAG ) );
+    BOOST_CHECK( info.hostInstrSetLevel() == instrset_detect() );
+
+    s->id = ( s->id != 10 ) ? 10 : 11;
+    s->instr++;
+
+    PlatformInfo copy = info;
+
+    BOOST_CHECK( copy.binaryId() == info.binaryId() );
+    BOOST_CHECK( copy.hostInstrSetLevel() == info.hostInstrSetLevel() );
+    BOOST_CHECK( copy.binaryTag() != STR( BINARY_TAG ) );
+    BOOST_CHECK( copy.hostInstrSetLevel() != instrset_detect() );
+  }
+}
