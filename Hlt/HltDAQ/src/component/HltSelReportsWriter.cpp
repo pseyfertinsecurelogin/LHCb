@@ -197,7 +197,9 @@ StatusCode HltSelReportsWriter::execute() {
     // Make sure the LHCbIDs are sorted or else the binary_search called
     // later does not work! (when connecting substructures with ids)
     if (!std::is_sorted(std::begin(thisIDset), std::end(thisIDset))) {
-      Error("LHCbIDs in HltObjectSummary are not sorted!").ignore();
+      Warning("LHCbIDs in HltObjectSummary are not sorted!",
+              StatusCode::SUCCESS, 1).ignore();
+      std::sort(std::begin(thisIDset), std::end(thisIDset));
     }
     addToSequences( std::move(thisIDset), lhcbidSequences );
   }
