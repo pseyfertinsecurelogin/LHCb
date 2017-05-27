@@ -8,6 +8,7 @@
 /** DetDesc */
 #include "DetDesc/ISolid.h"
 #include "DetDesc/SolidBoolean.h"
+#include "DetDesc/SolidBox.h"
 
 /** forward declarations from GaudiKernel and DetDesc  */
 class StatusCode;
@@ -100,9 +101,7 @@ public:
 
   void createCoverTop(); /// create/reset the cover pointer
 
-private:
-
-  std::unique_ptr<ISolid> m_coverTop;
+  std::unique_ptr<SolidBox> m_coverTop;
   template <class aPoint>
   bool isInsideImpl(const aPoint& point) const;
 
@@ -111,5 +110,3 @@ private:
 // ===========================================================================
 #endif  ///<  DETDESC_SOLIDUNION_H
 // ===========================================================================
-
-
