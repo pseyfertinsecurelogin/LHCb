@@ -21,11 +21,6 @@
  *  @author Marco Clemencic
  */
 // ============================================================================
-/** initialize the static counter (number of existing volumes)
- */
-// ============================================================================
-std::atomic<unsigned long> LogVolBase::s_volumeCounter = {0} ;
-// ============================================================================
 /*  constructor
  *  @exception LVolumeException wrong paramaters value
  *  @param name name of logical volume
@@ -40,16 +35,12 @@ LogVolBase::LogVolBase( const std::string& /*name*/    ,
   , m_mfName     ( magnetic    )
 {
   // get services
-  /// add volume counter
-  ++s_volumeCounter ;
 }
 // ============================================================================
 // destructor
 // ============================================================================
 LogVolBase::~LogVolBase()
 {
-  /// decrease  volume counter
-  --s_volumeCounter ;
   // release physical volumes
   for (auto& ipv : m_pvolumes) delete ipv;
 }
@@ -136,7 +127,7 @@ std::ostream& LogVolBase::printOut( std::ostream & os ) const
 {
   os << " "
      << System::typeinfoName( typeid(*this) )
-     << " ("        << s_volumeCounter << ") "
+     << " ("        << count() << ") "
      << " name = '" << name()          << "' " ;
   if ( !sdName   ().empty() ) { os << " sensDet='"  << sdName() << "'"   ; }
   if ( !mfName   ().empty() ) { os << " magField='" << mfName() << "'"   ; }
@@ -160,7 +151,7 @@ MsgStream& LogVolBase::printOut( MsgStream & os ) const
 {
   os << " "
      << System::typeinfoName( typeid(*this) )
-     << " ("        << s_volumeCounter << ") "
+     << " ("        << count() << ") "
      << " name = '" << name()          << "' " ;
   if ( !sdName   ().empty() ) { os << " sensDet='"  << sdName() << "'"   ; }
   if ( !mfName   ().empty() ) { os << " magField='" << mfName() << "'"   ; }

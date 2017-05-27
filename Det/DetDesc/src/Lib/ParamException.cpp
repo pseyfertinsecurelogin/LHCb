@@ -13,7 +13,7 @@ ParamException::ParamException( const std::string& name, ExceptionType t ):
   m_type(t)
 {
   std::ostringstream msg;
-  
+
   switch (m_type) {
   case BAD_KEY:
     msg << "Param `" << name << "' not found";
@@ -38,11 +38,6 @@ ParamException::ParamException( const std::string& name,
       << req.name() << ", actual = " << actual.name() << ")";
   m_message = msg.str();
 }
-
-//----------------------------------------------------------------------------
-
-/// Destructor
-ParamException::~ParamException() throw() {}
 
 //----------------------------------------------------------------------------
 

@@ -29,18 +29,17 @@ class LAssembly : public virtual IBoxCover,
 
 public:
 
-  /// constructor
-  LAssembly(const std::string& name,
-            const std::string& sensitivity ,
-            const std::string& magnetic) :
-  LogVolBase(name, sensitivity, magnetic) {
-    m_xMin = 1000000.;
-    m_xMax = -1000000.;
-    m_yMin = 1000000.;
-    m_yMax = -1000000.;
-    m_zMin = 1000000.;
-    m_zMax = -1000000.;
-  }
+  /** constructor
+   *  @exception LVolumeException wrong paramaters value
+   *  @param name name of logical volume
+   *  @param sensitivity  name of sensitive detector object (for simulation)
+   *  @param magnetic  name of magnetic field object (for simulation)
+   */
+  LAssembly( const std::string& name        = "" ,
+             const std::string& sensitivity = "" ,
+             const std::string& magnetic    = "" )
+  : LogVolBase(name,sensitivity,magnetic)
+  {}
 
 public:
 

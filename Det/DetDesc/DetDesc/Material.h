@@ -128,10 +128,10 @@ protected:
             const double       al    = 0 ,
             const double       temp  = Gaudi::Units::STP_Temperature,
             const double       press = Gaudi::Units::STP_Pressure,
-            const eState       s     = stateUndefined );
+            const eState       s     = eState::stateUndefined );
 
   /// Destructor
-  virtual ~Material();
+  virtual ~Material() = default;
 
 public:
 
@@ -144,13 +144,13 @@ private:
   std::string m_name;
 
   /// Material density
-  double      m_density;
+  double      m_density = 0;
 
   /// Material radiation length
-  double      m_radiationLength;
+  double      m_radiationLength = 0;
 
   /// Material absorption length
-  double      m_absorptionLength;
+  double      m_absorptionLength = 0;
 
   /// Material temperature, by default is STP [K]
   double      m_temperature;
@@ -159,7 +159,7 @@ private:
   double      m_pressure;
 
   /// Material state, by default is stateUndefined
-  eState      m_state;
+  eState      m_state = eState::stateUndefined;
 
   /// Tabulated properties of material
   Tables      m_props;

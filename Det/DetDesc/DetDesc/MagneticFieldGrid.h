@@ -37,9 +37,6 @@ namespace LHCb
     /// declare the field reader as friend so that we don't have to make a constructor
     friend class ::MagneticFieldGridReader;
 
-    /// Standard constructor
-    MagneticFieldGrid() ;
-
     /// Return the field vector fvec at the point xyz by interpolation
     /// on the grid.
     FieldVector fieldVector( const Gaudi::XYZPoint& xyz ) const;
@@ -64,14 +61,14 @@ namespace LHCb
 
   private:
 
-    double m_scaleFactor ; ///< The scale factor
+    double m_scaleFactor = 1; ///< The scale factor
 
-    Vec4f m_scaleFactor_V;       ///< Vector version of the scale factor
-    std::vector<Vec4f> m_Q_V;    ///< Vectorised Field map
-    Vec4f   m_min_FL_V;          ///< Offset in x, y and z
-    Vec4f   m_Dxyz_V;            ///< Steps in x, y and z
-    Vec4f   m_invDxyz_V;         ///< Inverse of steps in x, y and z (cached for speed)
-    std::array<unsigned,3> m_Nxyz_V; ///< Number of steps in x, y and z
+    Vec4f m_scaleFactor_V = { 1,1,1,0 };       ///< Vector version of the scale factor
+    std::vector<Vec4f> m_Q_V;                  ///< Vectorised Field map
+    Vec4f   m_min_FL_V = { 0.,0.,0.,0. };      ///< Offset in x, y and z
+    Vec4f   m_Dxyz_V = { 0.,0.,0.,0. };        ///< Steps in x, y and z
+    Vec4f   m_invDxyz_V = { 0.,0.,0.,0. };     ///< Inverse of steps in x, y and z (cached for speed)
+    std::array<unsigned,3> m_Nxyz_V = {0,0,0}; ///< Number of steps in x, y and z
 
   };
 

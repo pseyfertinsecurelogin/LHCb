@@ -22,7 +22,6 @@
  */
 // ============================================================================
 
-std::atomic<unsigned long> PVolume::s_volumeCounter{0};
 
 // ============================================================================
 /** constructor
@@ -46,7 +45,6 @@ PVolume::PVolume
   m_matrix  = m_nominal ;
   m_imatrix = m_nominal.Inverse();
   m_services = DetDesc::services();
-  ++s_volumeCounter ;
   findLogical();
 }
 
@@ -68,17 +66,9 @@ PVolume::PVolume
 {
   m_services = DetDesc::services();
   m_imatrix = m_matrix.Inverse();
-  ++s_volumeCounter ;
   findLogical();
 }
 
-// ============================================================================
-// destructor
-// ============================================================================
-PVolume::~PVolume()
-{
-  --s_volumeCounter;
-}
 
 // ============================================================================
 /** find logical volume by name
@@ -165,7 +155,7 @@ unsigned long PVolume::release () { return 1;}
 std::ostream& PVolume::printOut( std::ostream& os ) const
 {
   return
-    os << " class PVolume (" << s_volumeCounter << ")"
+    os << " class PVolume (" << count() << ")"
        << " ["
        << " name='"          << name()          << "'"
        << " logvol='"        << lvolumeName()   << "'" << "]";
@@ -180,7 +170,7 @@ std::ostream& PVolume::printOut( std::ostream& os ) const
 MsgStream& PVolume::printOut( MsgStream& os ) const
 {
   return
-    os << " class PVolume (" << s_volumeCounter << ")"
+    os << " class PVolume (" << count() << ")"
        << " ["
        << " name='"          << name()          << "'"
        << " logvol='"        << lvolumeName()   << "'" << "]";

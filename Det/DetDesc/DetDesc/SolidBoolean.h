@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include "range/v3/view/indirect.hpp"
+#include "range/v3/view/const.hpp"
+
 /// DetDesc
 #include "DetDesc/SolidChild.h"
 
@@ -26,7 +29,7 @@ class SolidBoolean: public virtual SolidBase
 {
  public:
   //
-  typedef std::vector<SolidChild*>         SolidChildrens;
+  typedef std::vector<std::unique_ptr<SolidChild>> SolidChildrens;
   //
 
   /** retrieve the specific type of the solid
@@ -116,27 +119,31 @@ class SolidBoolean: public virtual SolidBase
    */
   const  ISolid* first () const { return m_sb_first.get(); }
 
-  /** number of childrens
-   *  @return number of childrens
+  /** acess to range of const children
+   *  @return "range"
    */
-  unsigned int  noChildrens () const { return m_sb_childrens.size(); }
+  auto children() const { return m_sb_childrens | ranges::view::indirect | ranges::view::const_; }
 
   /** access to the childrens by index
    *  @param index index of child solid
    *  @return pointer to child solid
    */
   const ISolid* operator[]  ( unsigned int index ) const
-  {  return  ( ( index < noChildrens() )  ? *(childBegin()+index) : 0 ) ; }
+  {   auto c = children();
+      return  index < c.size() ? &c[index] : nullptr ;
+  }
 
   /** acess to constant iterator
    *  @return "begin" iterator
    */
+  [[deprecated("please use begin(children()) instead")]]
   SolidChildrens::const_iterator
   childBegin () const { return m_sb_childrens.begin(); }
 
   /** acess to constant iterator
    *  @return "end" iterator
    */
+  [[deprecated("please use end(children()) instead")]]
   SolidChildrens::const_iterator
   childEnd   () const { return m_sb_childrens.end  (); }
 
@@ -150,13 +157,6 @@ protected:
    */
   SolidBoolean( const std::string& name  ,
                 std::unique_ptr<ISolid> solid );
-  [[deprecated("please call with std::unique_ptr<ISolid> as 2nd argument")]]
-  SolidBoolean( const std::string& name  ,
-                ISolid*            solid ) : SolidBoolean(name,std::unique_ptr<ISolid>(solid)) {}
-
-public:
-  /// destructor
-  ~SolidBoolean() override;
 
 protected:
 
@@ -173,11 +173,6 @@ protected:
   StatusCode addChild
   ( std::unique_ptr<ISolid>   child ,
     const Gaudi::Transform3D* mtrx  );
-  [[deprecated("please call with std::unique_ptr<ISolid> as 1st argument")]]
-  StatusCode addChild
-  ( ISolid*               child ,
-    const Gaudi::Transform3D* mtrx  ) 
-  { return addChild( std::unique_ptr<ISolid>(child), mtrx) ; }
 
   /** add child to daughter container
    *  @param child    pointer to solid
@@ -188,24 +183,11 @@ protected:
   ( std::unique_ptr<ISolid>   child    ,
     const Gaudi::XYZPoint&     position ,
     const Gaudi::Rotation3D&    rotation );
-  [[deprecated("please call with std::unique_ptr<ISolid> as 1st argument")]]
-  StatusCode addChild
-  ( ISolid*               child    ,
-    const Gaudi::XYZPoint&     position ,
-    const Gaudi::Rotation3D&    rotation )
-  { return addChild( std::unique_ptr<ISolid>(child),position,rotation); }
 
-  /** acess to iterator
-   *  @return "begin" iterator
+  /** acess to range of children
+   *  @return "range"
    */
-  SolidChildrens::iterator
-  childBegin () { return m_sb_childrens.begin(); }
-
-  /** acess to iterator
-   *  @return "begin" iterator
-   */
-  SolidChildrens::iterator
-  childEnd   () { return m_sb_childrens.end  (); }
+  auto children() { return m_sb_childrens | ranges::view::indirect; }
 
   /** Calculate the maximum number of ticks that a straight line could
       make with this solid

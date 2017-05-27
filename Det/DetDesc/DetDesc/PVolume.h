@@ -7,6 +7,7 @@
 /// DetDesc includes
 #include "DetDesc/Services.h"
 #include "DetDesc/IPVolume.h"
+#include "DetDesc/InstanceCounter.h"
 
 #include "boost/optional/optional.hpp"
 
@@ -26,7 +27,8 @@ class PVolumeException;
  *  @author Sebastien Ponce
  */
 
-class PVolume: public IPVolume
+
+class PVolume: public IPVolume, private Details::InstanceCounter<PVolume>
 {
 public:
 
@@ -53,16 +55,6 @@ public:
     const std::string&     LogVol_name  ,
     //    const size_t           copynumber   ,
     const Gaudi::Transform3D&  Transform    );
-
-  /// no copy constructor
-  PVolume           ( const PVolume& ) = delete;
-  /// no assignment
-  PVolume& operator=( const PVolume& ) = delete;
-
-  /// destructor
-  ~PVolume() override;
-
-
 
   /** retrieve name of the physical volume
    *  (unique within mother logical volume)
@@ -266,8 +258,6 @@ private:
   boost::optional<Gaudi::Transform3D> m_imatrix;
   // pointer to logical volume
   ILVolume* m_lvolume = nullptr;
-  // reference/object counter
-  static std::atomic<unsigned long> s_volumeCounter ;
   // reference to dataSvc
   DetDesc::ServicesPtr    m_services;
 };
