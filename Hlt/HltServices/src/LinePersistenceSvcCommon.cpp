@@ -21,6 +21,28 @@ LinePersistenceSvcCommon::locationsToPersistImpl(
 }
 
 
+ILinePersistenceSvc::Locations
+LinePersistenceSvcCommon::turboPPLocationsToPersistImpl(
+  const LHCb::HltDecReports& hdr, const std::set<std::string>& lines,
+  const std::set<std::string>& turboPPLines,
+  const NameListPerLine& locationsMap) const
+{
+  ILinePersistenceSvc::Locations locations;
+  for (const auto& pair : hdr) {
+    if (pair.second.decision() && lines.count(pair.first) &&
+        turboPPLines.count(pair.first)) {
+      auto lineLocations = locationsMap.find(pair.first);
+      if (lineLocations == std::end(locationsMap)) {
+        throw GaudiException("Decision name not in Locations map.",
+                             this->name(), StatusCode::FAILURE);
+      }
+      locations.insert(std::begin(lineLocations->second),
+                       std::end(lineLocations->second));
+    }
+  }
+  return locations;
+}
+
 ILinePersistenceSvc::RawBanks
 LinePersistenceSvcCommon::rawBanksToPersistImpl(
   const LHCb::HltDecReports& hdr, const std::set<std::string>& lines,

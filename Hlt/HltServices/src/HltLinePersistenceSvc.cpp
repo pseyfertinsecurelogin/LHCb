@@ -12,16 +12,21 @@ public:
   HltLinePersistenceSvc(const std::string& name, ISvcLocator* svcLocator);
 
   Locations locationsToPersist(const LHCb::HltDecReports& hdr,
-    const std::set<std::string>& lines) const override;
+    const LineDecNames& lines) const override;
   RawBanks rawBanksToPersist(const LHCb::HltDecReports& hdr,
-    const std::set<std::string>& lines) const override;
+    const LineDecNames& lines) const override;
+  Locations turboPPLocationsToPersist(const LHCb::HltDecReports& hdr,
+    const LineDecNames& lines) const override;
 
 private:
   Gaudi::Property<NameListPerLine> m_locations{this, "Locations", {},
     "Map of line decisison name to list of output locations."};
+  Gaudi::Property<std::vector<std::string>> m_turboPPLines{this, "TurboPPLines", {},
+    "List of Turbo++ line decision names."};
   Gaudi::PropertyWithReadHandler<NameListPerLine> m_rawBankTypes{
     this, "RawBankTypes", {},
     "Map of line decisison name to list of rawbank type names."};
+  LineDecNames m_turboPPLinesSet;
   RawBanksPerLine m_rawBanks;
 };
 
@@ -31,6 +36,10 @@ DECLARE_COMPONENT(HltLinePersistenceSvc)
 HltLinePersistenceSvc::HltLinePersistenceSvc(const std::string& name, ISvcLocator* svcLocator)
   : base_class(name, svcLocator)
 {
+  m_turboPPLines.declareUpdateHandler([this](Property&) {
+      this->m_turboPPLinesSet = ILinePersistenceSvc::LineDecNames{
+        this->m_turboPPLines.begin(), this->m_turboPPLines.end()};
+  });
   m_rawBankTypes.declareUpdateHandler([=](Property&) {
     this->m_rawBanks = typeNamesToBitset(this->m_rawBankTypes);
   });
@@ -39,15 +48,25 @@ HltLinePersistenceSvc::HltLinePersistenceSvc(const std::string& name, ISvcLocato
 
 ILinePersistenceSvc::Locations
 HltLinePersistenceSvc::locationsToPersist(
-  const LHCb::HltDecReports& hdr, const std::set<std::string>& lines) const
+  const LHCb::HltDecReports& hdr,
+  const ILinePersistenceSvc::LineDecNames& lines) const
 {
   return locationsToPersistImpl(hdr, lines, m_locations);
 }
 
 
+ILinePersistenceSvc::Locations
+HltLinePersistenceSvc::turboPPLocationsToPersist(
+  const LHCb::HltDecReports& hdr,
+  const ILinePersistenceSvc::LineDecNames& lines) const
+{
+  return turboPPLocationsToPersistImpl(hdr, lines, m_turboPPLinesSet, m_locations);
+}
+
 ILinePersistenceSvc::RawBanks
 HltLinePersistenceSvc::rawBanksToPersist(
-  const LHCb::HltDecReports& hdr, const std::set<std::string>& lines) const
+  const LHCb::HltDecReports& hdr,
+  const ILinePersistenceSvc::LineDecNames& lines) const
 {
   return rawBanksToPersistImpl(hdr, lines, m_rawBanks);
 }

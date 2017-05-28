@@ -18,6 +18,8 @@
  *  There are two methods:
  *  - locationsToPersist() returns the union of locations that were requested
  *    by all lines from `lines` that fired in the HltDecReports object `hdr`.
+ *  - turboPPLocationsToPersist() returns the union of locations that were requested
+ *    by all Turbo++ lines from `lines` that fired in the HltDecReports object `hdr`.
  *  - rawBanksToPersist() returns the union of the requested raw banks for 
  *    all lines from `lines` that fired in the HltDecReports object `hdr`.
  *
@@ -28,14 +30,17 @@
 
 struct ILinePersistenceSvc : extend_interfaces<INamedInterface> {
   /// Return the interface ID
-  DeclareInterfaceID(ILinePersistenceSvc, 1, 0);
+  DeclareInterfaceID(ILinePersistenceSvc, 1, 1);
 
+  using LineDecNames = std::set<std::string>;
   using Locations = std::set<std::string>;
   using RawBanks = std::bitset<LHCb::RawBank::LastType>;
 
   virtual Locations locationsToPersist(
-    const LHCb::HltDecReports& hdr, const std::set<std::string>& lines) const = 0;
+    const LHCb::HltDecReports& hdr, const LineDecNames& lines) const = 0;
+  virtual Locations turboPPLocationsToPersist(
+    const LHCb::HltDecReports& hdr, const LineDecNames& lines) const = 0;
   virtual RawBanks rawBanksToPersist(
-    const LHCb::HltDecReports& hdr, const std::set<std::string>& lines) const = 0;
+    const LHCb::HltDecReports& hdr, const LineDecNames& lines) const = 0;
 };
 #endif // ILinePersistenceSvc_H
