@@ -11,7 +11,7 @@
 #include "GaudiKernel/Transform3DTypes.h"
 
 // Eigen
-#include <Eigen/Geometry>
+#include <Eigen/Geometry> // IWYU pragma: export
 
 // VDT
 #include "vdt/sqrt.h"
