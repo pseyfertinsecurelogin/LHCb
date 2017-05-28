@@ -1,7 +1,7 @@
-// $Id: SolidTubs.cpp,v 1.21 2009-04-17 08:54:24 cattanem Exp $
 // ============================================================================
 // Units
 #include "GaudiKernel/SystemOfUnits.h"
+#include "boost/container/static_vector.hpp"
 // DetDesc includes
 #include "DetDesc/DetDesc.h"
 #include "DetDesc/SolidTubs.h"
@@ -88,16 +88,13 @@ void SolidTubs::setBP()
   setRhoMax (  outerRadius() );
   setRMax   ( sqrt( zMax() * zMax() + rhoMax() * rhoMax () ) );
 
-  typedef std::vector<double> Values ;
-
-
   const double phi1   = startPhiAngle   ()                      ;
   const double phi2   = startPhiAngle   () + deltaPhiAngle   () ;
 
   const double rhoMin = innerRadius     () ;
 
   { // evaluate xmin & xmax
-    Values values ;
+    boost::container::static_vector<double,12> values;
 
     // regular cases
     values.push_back( rhoMax () * cos ( phi1 ) );
@@ -129,13 +126,14 @@ void SolidTubs::setBP()
         values.push_back ( - rhoMin    ) ;
       }
 
-    setXMax ( *std::max_element ( values.begin () , values.end () ) ) ;
-    setXMin ( *std::min_element ( values.begin () , values.end () ) ) ;
+    auto minmax = std::minmax_element( values.begin(), values.end() );
+    setXMax ( *minmax.second );
+    setXMin ( *minmax.first );
 
   }
 
   { // evaluate ymin & ymax
-    Values values ;
+    boost::container::static_vector<double,10> values ;
 
     // regular cases
     values.push_back( rhoMax () * sin ( phi1 ) );
@@ -162,8 +160,9 @@ void SolidTubs::setBP()
         values.push_back ( - rhoMin    ) ;
       }
 
-    setYMax ( *std::max_element ( values.begin () , values.end () ) ) ;
-    setYMin ( *std::min_element ( values.begin () , values.end () ) ) ;
+    auto minmax = std::minmax_element( values.begin(), values.end() );
+    setYMax ( *minmax.second );
+    setYMin ( *minmax.first );
 
   }
 
