@@ -12,12 +12,12 @@ if(iwyu_tool)
     COMMENT "run iwyu"
     )
   add_custom_target(iwyu-check
-    COMMAND ${fix_includes} -n < ${IWYU_WORK_DIR}/iwyu.log
+    COMMAND ${fix_includes} -n < ${IWYU_WORK_DIR}/iwyu.log || true
     WORKING_DIR=${IWYU_WORK_DIR}
     COMMENT "check if iwyu wants changes"
     )
   add_custom_target(iwyu-apply
-    COMMAND ${fix_includes} < ${IWYU_WORK_DIR}/iwyu.log
+    COMMAND ${fix_includes} < ${IWYU_WORK_DIR}/iwyu.log || true
     WORKING_DIR=${IWYU_WORK_DIR}
     COMMENT "apply iwyu changes"
     )
@@ -61,7 +61,7 @@ else()
     ${CMAKE_COMMAND} -E env
     PATH=${iwyu_path}
     LD_LIBRARY_PATH=${iwyu_ld_path}
-    ${fix_includes} -n < ${IWYU_WORK_DIR}/iwyu.log
+    ${fix_includes} -n < ${IWYU_WORK_DIR}/iwyu.log || true
     WORKING_DIR=${IWYU_WORK_DIR}
     COMMENT "check if iwyu wants changes"
     )
@@ -69,7 +69,7 @@ else()
     ${CMAKE_COMMAND} -E env
     PATH=${iwyu_path}
     LD_LIBRARY_PATH=${iwyu_ld_path}
-    ${fix_includes} < ${IWYU_WORK_DIR}/iwyu.log
+    ${fix_includes} < ${IWYU_WORK_DIR}/iwyu.log || true
     WORKING_DIR=${IWYU_WORK_DIR}
     COMMENT "apply iwyu changes"
     )
@@ -108,4 +108,3 @@ add_custom_target(manipulate_compilation_database
 add_dependencies(run-iwyu manipulate_compilation_database)
 add_dependencies(run-iwyu GODHeaders)
 add_dependencies(iwyu-apply run-iwyu)
-add_dependencies(all iwyu-apply)
