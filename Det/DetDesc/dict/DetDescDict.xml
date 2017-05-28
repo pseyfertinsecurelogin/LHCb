@@ -68,9 +68,6 @@
     <class name="SolidPolycone::Triplet"  />
     <class name="SolidPolycone::Triplets" />
     <class name="SolidBoolean::SolidChildrens" />
-    <class name="SolidTrap::VERTICES" />
-    <class name="SolidPolyHedronHelper::VERTICES" />
-    <class name="SolidPolyHedronHelper::PLANES" />
     <function name="DetDesc::print" />
     <function name="DetDesc::services" />
   </exclusion>

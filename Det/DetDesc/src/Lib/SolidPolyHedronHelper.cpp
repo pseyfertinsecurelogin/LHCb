@@ -91,7 +91,7 @@ bool SolidPolyHedronHelper::isInsideImpl( const aPoint& point ) const
   if( isOutBBox( point ) ) { return false ; }
   /// loop over faces
   return std::all_of( planes().begin(), planes().end(),
-                      [&](PLANES::const_reference plane) { return inside(point, plane) ; } );
+                      [&](const auto& plane) { return this->inside(point, plane) ; } );
 }
 
 // ============================================================================
@@ -187,13 +187,14 @@ ISolid::Ticks::size_type SolidPolyHedronHelper::maxNumberOfTicks() const
  *  @return "false" if 3 points belongs to one line
  */
 // ============================================================================
-bool SolidPolyHedronHelper::addFace
-( const Gaudi::XYZPoint& Point1 ,
-  const Gaudi::XYZPoint& Point2 ,
-  const Gaudi::XYZPoint& Point3 )
+bool SolidPolyHedronHelper::addFace ( const Gaudi::XYZPoint& Point1 ,
+                                      const Gaudi::XYZPoint& Point2 ,
+                                      const Gaudi::XYZPoint& Point3 )
 {
   /// check for 3 points on the same line
-  Gaudi::XYZVector v1( Point1 ) , v2( Point2 - Point1 ) , v3( Point3 - Point1);
+  Gaudi::XYZVector v1( Point1 ),
+                   v2( Point2 - Point1 ),
+                   v3( Point3 - Point1 );
   if( 0 == v1.Cross( v2 ).mag2() ||
       0 == v1.Cross( v3 ).mag2() ||
       0 == v2.Cross( v3 ).mag2()   ) { return false; }
@@ -224,11 +225,10 @@ bool SolidPolyHedronHelper::addFace
  *  @return "false" if 3 points belongs to one line
  */
 // ============================================================================
-bool SolidPolyHedronHelper::addFace
-( const Gaudi::XYZPoint& Point1 ,
-  const Gaudi::XYZPoint& Point2 ,
-  const Gaudi::XYZPoint& Point3 ,
-  const Gaudi::XYZPoint& Point4 )
+bool SolidPolyHedronHelper::addFace( const Gaudi::XYZPoint& Point1 ,
+                                     const Gaudi::XYZPoint& Point2 ,
+                                     const Gaudi::XYZPoint& Point3 ,
+                                     const Gaudi::XYZPoint& Point4 )
 {
   ///
   const Gaudi::XYZPoint cPoint( 0.25*(Point1.x()+Point2.x()+Point3.x()+Point4.x()),
@@ -241,14 +241,14 @@ bool SolidPolyHedronHelper::addFace
   const Gaudi::XYZVector v3( Point3 - cPoint ) ;
   const Gaudi::XYZVector v4( Point4 - cPoint ) ;
   ///
-  const double t1   = v2.Cross(  v3 ).Dot( v4 )     ;
-  const double v234 = std::sqrt(v2.mag2() * v3.mag2() * v4.mag2() );
-  const double t2   = v3.Cross(  v4 ).Dot( v1 )     ;
-  const double v341 = std::sqrt(v3.mag2() * v4.mag2() * v1.mag2() );
-  const double t3   = v4.Cross(  v1 ).Dot( v2 )     ;
-  const double v412 = std::sqrt(v4.mag2() * v1.mag2() * v2.mag2() );
-  const double t4   = v1.Cross(  v2 ).Dot( v3 )     ;
-  const double v123 = std::sqrt(v1.mag2() * v2.mag2() * v3.mag2() );
+  const auto t1   = v2.Cross(  v3 ).Dot( v4 )     ;
+  const auto v234 = std::sqrt(v2.mag2() * v3.mag2() * v4.mag2() );
+  const auto t2   = v3.Cross(  v4 ).Dot( v1 )     ;
+  const auto v341 = std::sqrt(v3.mag2() * v4.mag2() * v1.mag2() );
+  const auto t3   = v4.Cross(  v1 ).Dot( v2 )     ;
+  const auto v412 = std::sqrt(v4.mag2() * v1.mag2() * v2.mag2() );
+  const auto t4   = v1.Cross(  v2 ).Dot( v3 )     ;
+  const auto v123 = std::sqrt(v1.mag2() * v2.mag2() * v3.mag2() );
 
   if      ( 0 != v234 && 1.e-6 < fabs( t1 / v234 ) )
     { throw SolidException("SolidPolyHedronHelper 'plane' is not planar 1 ") ; }
@@ -277,5 +277,3 @@ bool SolidPolyHedronHelper::addFace
 // ============================================================================
 // The END
 // ============================================================================
-
-
