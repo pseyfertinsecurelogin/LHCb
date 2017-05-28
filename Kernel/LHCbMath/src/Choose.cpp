@@ -7,13 +7,15 @@
 #include <algorithm>
 #include <cmath>
 #include <limits>
-
+// ============================================================================
+// local
+// ============================================================================
+#include "LHCbMath/Choose.h"
 #include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/Power.h"
-
 // ============================================================================
 /** @file 
- *  Cacualte binbomial coefficients and related quantities 
+ *  Cacualte binomial coefficients and related quantities 
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2015-03-08
  */
