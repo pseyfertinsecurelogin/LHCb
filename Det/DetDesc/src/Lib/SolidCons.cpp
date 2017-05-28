@@ -100,7 +100,6 @@ void SolidCons::setBP()
                outerRadiusAtMinusZ() : outerRadiusAtPlusZ() );
   setRMax   ( sqrt( zMax() * zMax() + rhoMax() * rhoMax () ) );
 
-  typedef std::vector<double> Values ;
 
   const double phi1   = startPhiAngle   ()                      ;
   const double phi2   = startPhiAngle   () + deltaPhiAngle   () ;
@@ -110,7 +109,7 @@ void SolidCons::setBP()
     innerRadiusAtMinusZ() : innerRadiusAtPlusZ()  ;
 
   { // evaluate xmin & xmax
-    Values values ; values.reserve(12);
+    boost::container::static_vector<double,12> values;
 
     // regular cases
     values.push_back( rhoMax () * cos ( phi1 ) );
@@ -142,13 +141,14 @@ void SolidCons::setBP()
         values.push_back ( - rhoMin    ) ;
       }
 
-    setXMax ( *std::max_element ( values.begin () , values.end () ) ) ;
-    setXMin ( *std::min_element ( values.begin () , values.end () ) ) ;
+    auto minmax = std::minmax_element( values.begin(), values.end() );
+    setXMax ( *minmax.second );
+    setXMin ( *minmax.first );
 
   }
 
   { // evaluate ymin & ymax
-    Values values ; values.reserve(10);
+    boost::container::static_vector<double,10> values;
 
     // regular cases
     values.push_back( rhoMax () * sin ( phi1 ) );
@@ -175,8 +175,9 @@ void SolidCons::setBP()
         values.push_back ( - rhoMin    ) ;
       }
 
-    setYMax ( *std::max_element ( values.begin () , values.end () ) ) ;
-    setYMin ( *std::min_element ( values.begin () , values.end () ) ) ;
+    auto minmax = std::minmax_element( values.begin(), values.end() );
+    setYMax ( *minmax.second );
+    setYMin ( *minmax.first );
 
   }
 

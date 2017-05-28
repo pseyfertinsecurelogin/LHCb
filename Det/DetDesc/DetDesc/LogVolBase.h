@@ -93,7 +93,7 @@ public:
   inline const IPVolume* operator[]
   ( const ILVolume::ReplicaType& index ) const override
   {
-    return index < m_pvolumes.size() ?  *(m_pvolumes.begin()+index) : nullptr ;
+    return index < m_pvolumes.size() ? m_pvolumes[index] : nullptr ;
   };
 
   /** daughter (Physical Volume) by name
@@ -115,8 +115,7 @@ public:
    */
   const IPVolume* pvolume( const ILVolume::ReplicaType& index ) const override
   {
-    return index < m_pvolumes.size() ?
-      *(m_pvolumes.begin()+index) : nullptr ;
+    return index < m_pvolumes.size() ? m_pvolumes[index] : nullptr ;
   }
 
   /** get daughter (Physical Volume) by name
@@ -220,7 +219,7 @@ public:
    *  @param os Gaudi MsgStream  stream
    *  @return reference to the stream
    */
-  MsgStream&    printOut( MsgStream    & os             ) const override;
+  MsgStream& printOut( MsgStream& os ) const override;
 
   /** reset to initial state, clear chaches, etc...
    *  @see ILVolume
