@@ -14,6 +14,9 @@
 #include "Event/ODIN.h"
 #include "Event/HltDecReports.h"
 
+#include "Kernel/PlatformInfo.h"
+#include "VectorClass/instrset.h"
+
 // Detector
 #include <DetDesc/Condition.h>
 
@@ -96,30 +99,19 @@ StatusCode HltConfigSvc::initialize()
 //=============================================================================
 StatusCode HltConfigSvc::start()
 {
-   //TODO: verify whether this works in case of checkpointing,
-   m_id = ~0u;
-   // see if we're running online... LHCb[A2]?_HLTA0110_Moore[12]_#
-   std::string taskName{System::argv()[0]};
-   boost::regex expr{m_taskNameRegex.value()};
-   boost::smatch what;
-   bool match = boost::regex_match(taskName, what, expr);
-   size_t n = what.size();
-   if (match && n >= 3) {
-      // We combine the thousands derived from Moore1 or Moore2 with the task number.
-      // The task number contains the parent number and the forked child number.
-      unsigned int taskNum = 1000 * std::stoul(what[n - 2]) + std::stoul(what[n - 1]);
-      m_id = taskNum << 16;
-   }
+  StatusCode sc = PropertyConfigSvc::start();
+  if ( !sc.isSuccess() ) return sc;
 
-   char name[_POSIX_HOST_NAME_MAX];
-   if (!gethostname(name, sizeof(name))) {
-      auto* x = gethostbyname(name);
-      if (x) {
-         unsigned char *addr = (unsigned char*)(x->h_addr+x->h_length-2);
-         m_id |=  ( addr[0] << 8 ) | addr[1];
-      }
-   }
-   return StatusCode::SUCCESS;
+  // make sure PlatformInfo instances report the right instructions set level
+  // (it may not be the same as during application start if we use checkpointing)
+  LHCb::PlatformInfo::s_hostInstrSetLevel = static_cast<std::uint16_t>( instrset_detect() );
+
+  LHCb::PlatformInfo platform;
+  info() << "binaryId=" << platform.binaryId() << " binaryTag=" << platform.binaryTag() << endmsg;
+  info() << "hostInstrSetLevel=" << platform.hostInstrSetLevel() << " hostInstrSet=" << platform.hostInstrSet() << endmsg;
+  m_id = (platform.binaryId() & 0xffff) | (platform.hostInstrSetLevel() << 16);
+
+  return sc;
 }
 
 //=============================================================================
