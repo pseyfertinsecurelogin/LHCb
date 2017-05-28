@@ -10,23 +10,22 @@
 #include <cstdlib>
 #include <limits>
 #include <vector>
-
-#include "Faddeeva.hh"
 // ============================================================================
 // Local
 // ============================================================================
+#include "Faddeeva.hh"
 #include "GSL_sentry.h"
+#include "LHCbMath/MoreFunctions.h"  // IWYU pragma: keep
 #include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/Power.h"
-#include "gsl/gsl_errno.h"
-#include "gsl/gsl_sf_gamma.h"
 // ============================================================================
 // GSL 
 // ============================================================================
+#include "gsl/gsl_errno.h"
+#include "gsl/gsl_sf_gamma.h"
 #include "gsl/gsl_sf_hyperg.h"
 #include "gsl/gsl_sf_psi.h"
 #include "gsl/gsl_sf_result.h"
-
 // ============================================================================
 /** @file
  *  implementation file for function from file LHCbMath/MoreFunctions.h
