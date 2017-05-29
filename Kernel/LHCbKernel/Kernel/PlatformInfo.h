@@ -46,6 +46,8 @@ namespace LHCb
     const std::string& hostInstrSet() const;
 
   private:
+    PlatformInfo( std::uint16_t binaryId, std::uint16_t hostInstrSetLevel );
+
     std::uint16_t m_binaryId;
     std::uint16_t m_hostInstrSetLevel;
 

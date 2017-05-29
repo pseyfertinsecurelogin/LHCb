@@ -37,3 +37,11 @@ print ('binaryId = {}, hostInstrSetLevel = {}'
        .format(taskID & 0xffff, taskID >> 16))
 
 assert taskID != 0xffffffff
+
+# TODO this should be replaced with a PlatformInfo "decoder" whenever
+#      one is available. The following does not work as the
+#      PlatformInfo() constructor is private.
+#
+# from GaudiPython import gbl
+# pi = gbl.LHCb.PlatformInfo(taskID & 0xffff, taskID >> 16)
+# print pi.binaryTag(), pi.hostInstrSet()
