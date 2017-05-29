@@ -147,7 +147,11 @@ StatusCode GeometryInfoPlus::initialize()
           << endmsg;
   }
 
-  return registerCondition() && registerSupportGI() && ums->update(this);
+  bool rc = registerCondition() && registerSupportGI() && ums->update(this);
+  // FIXME : temporary measure to improve thread safety of this class
+  // the ondemand loading is not thread safe and needs to be dropped
+  if (!rc) return rc;
+  return loadChildren();
 }
 //=============================================================================
 bool GeometryInfoPlus::hasLVolume() const
