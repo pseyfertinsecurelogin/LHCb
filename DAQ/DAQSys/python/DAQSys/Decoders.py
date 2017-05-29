@@ -9,6 +9,8 @@ DecoderDB={}
 
 #===========ODIN===========
 Decoder("createODIN",active=True,banks=["ODIN"],
+        inputs={"RawEvent":None},
+        outputs={"ODIN":None},
         publicTools=["OdinTimeDecoder/ToolSvc.OdinTimeDecoder"],
         conf=DecoderDB)
 
