@@ -11,18 +11,21 @@
 
 #pragma once
 
+#include <string>
+
+#include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
 // Gaudi
 #include "GaudiKernel/Transform3DTypes.h"
-#include "GaudiKernel/Plane3DTypes.h"
-
-// RichDet
-#include "RichDet/DeRichBase.h"
-#include "RichDet/DeRichPD.h"
-
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSide.h"
 // LHCbKernel
 #include "Kernel/RichSmartID.h"
 #include "Kernel/RichTraceMode.h"
-
+// RichDet
+#include "RichDet/DeRichBase.h"
+#include "RichDet/DeRichPD.h"
 // RichUtils
 #include "RichUtils/RichDAQDefinitions.h"
 

@@ -5,10 +5,12 @@
 // from STL
 #include <string>
 
+#include "Event/MCParticle.h"
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
-
+class ISvcLocator;
 // forward declaration
 struct IPrintMCDecayTreeTool;
 

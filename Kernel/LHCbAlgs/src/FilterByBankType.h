@@ -2,8 +2,15 @@
 #ifndef FILTERBYRUNEVENT_H
 #define FILTERBYRUNEVENT_H 1
 
+#include <string>
+#include <vector>
+
+#include "Event/RawBank.h"
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class FilterByBankType FilterByBankType.h
  *

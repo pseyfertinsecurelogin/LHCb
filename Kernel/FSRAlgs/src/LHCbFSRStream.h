@@ -1,10 +1,17 @@
 #ifndef LHCB_LHCBFSRSTREAM_H
 #define LHCB_LHCBFSRSTREAM_H
 
+#include <string>
+
+#include "Event/IOFSR.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "IIOFSRSvc.h"
 // Required for inheritance
 #include "LHCbRecordStream.h"
-#include "IIOFSRSvc.h"
-#include "Event/IOFSR.h"
+
+class DataObject;
+class ISvcLocator;
 
 /** @class LHCbFSRStream LHCbFSRStream.h
   * Extension of RecordStream to add IOFsr and automatically clean up the TES

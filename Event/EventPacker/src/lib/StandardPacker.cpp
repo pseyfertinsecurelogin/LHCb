@@ -2,12 +2,12 @@
 // local
 #include "Event/StandardPacker.h"
 
-// STL
-#include <sstream>
+#include <iostream>
 
+#include "GaudiAlg/GaudiAlgorithm.h"
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : StandardPacker

@@ -1,8 +1,20 @@
 // Include files 
 // from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <functional>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/HltDecReport.h"
 #include "Event/HltDecReports.h"
-#include <iterator>
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 class HltDiffHltDecReports : public GaudiAlgorithm {
 public: 

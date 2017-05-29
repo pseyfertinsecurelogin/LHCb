@@ -12,6 +12,27 @@
 // local
 #include "RichRawBufferToSmartIDsTool.h"
 
+#include <functional>
+#include <map>
+#include <utility>
+#include <vector>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/Map.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "RichDet/DeRichLocations.h"
+#include "RichDet/DeRichSystem.h"
+#include "RichKernel/RichCommonBase.h"
+#include "RichUtils/RichDAQDefinitions.h"
+#include "RichUtils/RichMap.h"
+
 // RICH DAQ
 using namespace Rich::DAQ;
 

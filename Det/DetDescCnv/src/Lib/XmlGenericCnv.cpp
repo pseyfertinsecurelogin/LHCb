@@ -1,24 +1,31 @@
 // Include files
 #include "DetDescCnv/XmlGenericCnv.h"
-#include "DetDescCnv/XmlCnvException.h"
 
+#include <stddef.h>
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMNode.hpp>
 #include <xercesc/dom/DOMNodeList.hpp>
-#include <xercesc/util/XMLUni.hpp>
+#include <xercesc/dom/DOMText.hpp>
 #include <xercesc/util/XMLString.hpp>
-
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/GenericAddress.h"
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/IAddressCreator.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IConversionSvc.h"
-#include "GaudiKernel/MsgStream.h"
-
-#include "DetDesc/ValidDataObject.h"
-
-#include "XmlTools/IXmlSvc.h"
+#include <istream>
+#include <typeinfo>
 
 #include "AddressTools.h"
+#include "DetDesc/ValidDataObject.h"
+#include "DetDescCnv/XmlCnvException.h"
+#include "DetDescCnv/XmlCnvException.icpp"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/GenericAddress.h"
+#include "GaudiKernel/IAddressCreator.h"
+#include "GaudiKernel/IConversionSvc.h"
+#include "GaudiKernel/IConverter.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/IValidity.h"
+#include "GaudiKernel/MsgStream.h"
+#include "XmlTools/IOVDOMDocument.h"
+#include "XmlTools/IXmlSvc.h"
 
 // -----------------------------------------------------------------------
 // Standard Constructor

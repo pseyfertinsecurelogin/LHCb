@@ -1,7 +1,9 @@
 #include "SubstituteEnvVarInPath.h"
+
+#include <boost/iterator/iterator_facade.hpp>
+
 #include "GaudiKernel/System.h"
 #include "boost/filesystem/path.hpp"
-#include "boost/filesystem.hpp"
 
 namespace L0MuonUtils {
 

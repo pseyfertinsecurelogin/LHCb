@@ -1,11 +1,26 @@
 // Include files 
 
+#include <stddef.h>
+#include <cmath>
+#include <functional>
+#include <ostream>
+#include <utility>
+
+#include "CaloDet/DeCalorimeter.h"
+#include "DetDesc/Condition.h"
+#include "Event/L0DUBase.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatEntity.h"
 // from Gaudi
 #include "GaudiKernel/SystemOfUnits.h"
-
 // local
 #include "L0CondDBProvider.h"
-#include "Event/L0DUBase.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0CondDBProvider

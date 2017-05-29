@@ -1,4 +1,7 @@
 #include "STDet/StatusMap.h"
+
+#include <ostream>
+#include <utility>
 #if !(defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L)
 #include <boost/assign/list_of.hpp>
 #endif

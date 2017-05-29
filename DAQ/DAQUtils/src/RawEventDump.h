@@ -2,10 +2,17 @@
 #ifndef TESTS_RAWEVENTDUMP_H
 #define TESTS_RAWEVENTDUMP_H 1
 
+#include <string>
+#include <vector>
+
+#include "DAQKernel/DecoderAlgBase.h"
+#include "Event/RawBank.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "DAQKernel/DecoderAlgBase.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 
 /** @class RawEventDump RawEventDump.h tests/RawEventDump.h

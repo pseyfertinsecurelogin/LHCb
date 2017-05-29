@@ -1,12 +1,24 @@
 // from Gaudi
-#include "GaudiKernel/IRegistry.h" 
+#include <stddef.h>
+#include <functional>
 
+#include "Event/L0DUReport.h"
 // LHCb
 #include "Event/MCHeader.h"
-#include "Event/L0DUReport.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiTuples.h"
+#include "GaudiAlg/Tuple.h"
+#include "GaudiAlg/TupleObj.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IRegistry.h" 
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "L0ETC.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0ETC

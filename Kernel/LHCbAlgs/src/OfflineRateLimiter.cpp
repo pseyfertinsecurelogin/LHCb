@@ -1,8 +1,22 @@
 // Include files
+#include <functional>
 #include <iomanip>
 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "Kernel/IRateFromTCK.h"
 // local
 #include "OfflineRateLimiter.h"
+#include "RateFromCondDB.h"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : OfflineRateLimiter
 //

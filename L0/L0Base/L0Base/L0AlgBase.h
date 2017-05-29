@@ -2,9 +2,13 @@
 #ifndef L0ALGBASE_H 
 #define L0ALGBASE_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiHistoAlg.h"
+
+class ISvcLocator;
 
 
 /** @class L0AlgBase L0AlgBase.h

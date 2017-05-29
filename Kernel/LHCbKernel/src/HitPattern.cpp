@@ -1,5 +1,13 @@
 #include "Kernel/HitPattern.h"
 
+#include "Kernel/FTChannelID.h"
+#include "Kernel/LHCbID.h"
+#include "Kernel/MuonTileID.h"
+#include "Kernel/OTChannelID.h"
+#include "Kernel/STChannelID.h"
+#include "Kernel/VPChannelID.h"
+#include "Kernel/VeloChannelID.h"
+
 namespace LHCb
 {
     

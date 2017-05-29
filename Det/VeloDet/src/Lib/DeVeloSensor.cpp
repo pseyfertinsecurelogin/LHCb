@@ -1,18 +1,35 @@
 //==============================================================================
 #define VELODET_DEVELOSENSOR_CPP 1
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <algorithm>
 //==============================================================================
 // Include files
 #include <cmath>
-
-// From Gaudi
-#include "GaudiKernel/IUpdateManagerSvc.h"
+#include <memory>
+#include <string>
+#include <typeinfo>
+#include <utility>
+#include <vector>
 
 #include "DetDesc/Condition.h"
-
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+// From Gaudi
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/VeloChannelID.h"
 // From Velo
 #include "VeloDet/DeVeloSensor.h"
-#include "Kernel/VeloChannelID.h"
-
 #include "getOutputLevel.h"
 
 /** @file DeVeloSensor.cpp

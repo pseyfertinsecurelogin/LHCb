@@ -4,6 +4,9 @@
 // LoKi
 // ============================================================================
 #include "LoKi/IHltFactory.h"
+
+#include "GaudiKernel/IInterface.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::Hybrid::IHltFactory

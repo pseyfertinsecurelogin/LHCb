@@ -1,10 +1,25 @@
 #ifndef PACKEDDATADECODER_H
 #define PACKEDDATADECODER_H 1
 
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <stddef.h>
+#include <functional>
+#include <map>
+#include <string>
+#include <utility>
 
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
 #include "HltRawBankDecoderBase.h"
+#include "PackedDataBuffer.h"
 #include "PackedDataChecksum.h"
+
+class DataObject;
+class ISvcLocator;
+namespace PackedDataPersistence {
+class PackedDataChecksum;
+}  // namespace PackedDataPersistence
 
 /** @class HltPackedDataDecoder HltPackedDataDecoder.h
  *  Algorithm that reads packed objects from raw banks.

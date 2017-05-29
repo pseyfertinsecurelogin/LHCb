@@ -1,15 +1,23 @@
 #ifndef SRC_CONDDBDQSCANNER_H
 #define SRC_CONDDBDQSCANNER_H 1
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/SmartIF.h"
-
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/IDQFilter.h"
 // Implemented interfaces
 #include "Kernel/IDQScanner.h" // IDQScanner
 
 class ICondDBReader;
 class IConverter;
+class IInterface;
+struct IDQScanner;
 
 /** Basic implementation of an IDQScanner based on the Conditions Database.
  *

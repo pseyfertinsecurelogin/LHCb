@@ -1,9 +1,13 @@
 #ifndef DETDESC_READOUTINFO_H
 #define DETDESC_READOUTINFO_H 1
 
+#include <string>
+
 // Base classes
 #include "ConditionInfo.h"
 #include "DetDesc/IReadOut.h"
+
+struct IDetectorElement;
 
 ///---------------------------------------------------------------------------
 /** @class ReadOutInfo ReadOutInfo.h Det/DetDesc/ReadOutInfo.h

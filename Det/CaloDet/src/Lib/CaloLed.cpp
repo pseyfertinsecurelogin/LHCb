@@ -1,9 +1,10 @@
 #define  CALODET_CALOLED_CPP 1 
-// ============================================================================
-// Include files
-// CaloDet 
-#include "CaloDet/DeCalorimeter.h"
+#include <iosfwd>
+#include <string>
+#include <vector>
+
 #include "CaloDet/CaloLed.h"
+#include "Kernel/CaloCellID.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloLed 

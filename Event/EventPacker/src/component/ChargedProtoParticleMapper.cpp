@@ -1,8 +1,20 @@
 
-// Include files
-#include <iterator>
+#include <functional>
+#include <ostream>
+#include <utility>
+
 // local
 #include "ChargedProtoParticleMapper.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IJobOptionsSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+
+class IInterface;
 
 // ----------------------------------------------------------------------------
 // Implementation file for class: ParticlesAndVerticesMapper

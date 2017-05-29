@@ -4,11 +4,17 @@
 // Include files
 // from STL
 #include <string>
+#include <vector>
 
-#include "Kernel/MuonTileID.h"
-#include "MuonDet/DeMuonDetector.h"
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/MuonTileID.h"
+#include "MuonDet/DeMuonDetector.h"
+#include "MuonDet/MuonDAQHelper.h"
+
+class DeMuonDetector;
+class ISvcLocator;
 
 /** @class MuonDigitToRawBuffer MuonDigitToRawBuffer.h
  *

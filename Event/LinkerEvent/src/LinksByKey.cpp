@@ -1,11 +1,21 @@
 // Include files 
 
+#include <ext/alloc_traits.h>
+#include <stddef.h>
+#include <memory>
+#include <utility>
+#include <vector>
+
+#include "Event/LinkReference.h"
+// local
+#include "Event/LinksByKey.h"
+#include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/LinkManager.h"
 #include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
 
-// local
-#include "Event/LinksByKey.h"
+class IDataProviderSvc;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : LinksByKey

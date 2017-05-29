@@ -1,13 +1,21 @@
 // Include files
-#include <algorithm>
+#include <stddef.h>
+#include <functional>
+#include <vector>
 
+#include "Event/HltLumiSummary.h"
 // Event
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "HltLumiSummaryDecoder.h"
-#include "Event/HltLumiSummary.h"
+
+class ISvcLocator;
 
 using namespace LHCb;
 

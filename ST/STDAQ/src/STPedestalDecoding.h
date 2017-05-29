@@ -1,10 +1,15 @@
 #ifndef STPEDESTALDECODING_H
 #define STPEDESTALDECODING_H 1
 
+#include <string>
+
+#include "Event/RawBank.h"
+#include "GaudiKernel/StatusCode.h"
 // Include files
 // from Gaudi
 #include "Kernel/STAlgBase.h"
-#include "Event/RawBank.h"
+
+class ISvcLocator;
 
 /** @class STPedestalDecoding STPedestalDecoding.h
  *

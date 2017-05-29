@@ -1,20 +1,26 @@
 // ============================================================================
 #ifndef DETDESC_SOLIDPOLYCONE_H
 #define DETDESC_SOLIDPOLYCONE_H 1
+#include <algorithm>
 // Include files
 // STD and STL
 #include <cmath>
-#include <iostream>
 #include <functional>
-#include <algorithm>
+#include <iostream>
+#include <string>
+#include <utility>
 #include <vector>
-// Units
-#include "GaudiKernel/SystemOfUnits.h"
-// Geometry Definitions
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
+
+#include "DetDesc/ISolid.h"
 // DetDesc
 #include "DetDesc/SolidBase.h"
+// Geometry Definitions
+#include "GaudiKernel/Point3DTypes.h"
+// Units
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
+
+class MsgStream;
 // forward declarations
 template <class TYPE>
 class SolidFactory;

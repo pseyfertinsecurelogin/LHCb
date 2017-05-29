@@ -2,11 +2,15 @@
 #ifndef TESTS_DUMMYRAWEVENTCREATOR_H
 #define TESTS_DUMMYRAWEVENTCREATOR_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
 class IEventTimeDecoder;
+class ISvcLocator;
 
 namespace DAQEventTests {
 /** @class DummyRawEventCreator DummyRawEventCreator.h

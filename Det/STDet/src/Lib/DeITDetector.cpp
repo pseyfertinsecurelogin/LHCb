@@ -1,10 +1,21 @@
 #include "STDet/DeITDetector.h"
-#include "DetDesc/IGeometryInfo.h"
 
-#include "STDet/DeITStation.h"
-#include "STDet/DeITLayer.h"
-#include "STDet/DeITBox.h"
+#include <algorithm>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 #include "Kernel/ITNames.h"
+#include "Kernel/STChannelID.h"
+#include "STDet/DeITBox.h"
+#include "STDet/DeITLadder.h"
+#include "STDet/DeITLayer.h"
+#include "STDet/DeITStation.h"
+#include "STDet/DeSTLayer.h"
+#include "STDet/DeSTSector.h"
+#include "STDet/DeSTStation.h"
+
+class DeSTBaseElement;
 
 /** @file DeITDetector.cpp
 *

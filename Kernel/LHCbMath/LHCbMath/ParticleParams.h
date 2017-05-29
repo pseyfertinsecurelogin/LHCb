@@ -2,21 +2,28 @@
 // ============================================================================
 #ifndef LHCBMATH_PARTICLEPARAMS_H 
 #define LHCBMATH_PARTICLEPARAMS_H 1
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
+
+#include "GaudiKernel/GenericMatrixTypes.h"
+#include "GaudiKernel/GenericVectorTypes.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/Point3DTypes.h"
 // ============================================================================
 // Include files
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/SymmetricMatrixTypes.h"
-#include "GaudiKernel/GenericMatrixTypes.h"
-#include "GaudiKernel/GenericVectorTypes.h"
+#include "GaudiKernel/Vector4DTypes.h"
+#include "LHCbMath/LorentzVectorWithError.h"
+#include "LHCbMath/Point3DWithError.h"
+#include "LHCbMath/SVectorWithError.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/ValueWithError.h"
-#include "LHCbMath/Point3DWithError.h"
-#include "LHCbMath/LorentzVectorWithError.h"
-#include "LHCbMath/SVectorWithError.h"
+
 // ============================================================================
 namespace Gaudi
 {

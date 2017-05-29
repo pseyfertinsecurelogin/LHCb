@@ -1,11 +1,18 @@
 #ifndef _UTREADOUTTOOL_H
 #define _UTREADOUTTOOL_H
 
+#include <map>
 #include <string>
 
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STChannelID.h"
 // STDAQ
 #include "STReadoutTool.h"
-#include "Kernel/STChannelID.h"
+
+class IInterface;
+namespace LHCb {
+class STChannelID;
+}  // namespace LHCb
 
 /** @class UTReadoutTool UTReadoutTool.h
  *

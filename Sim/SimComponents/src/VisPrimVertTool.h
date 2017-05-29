@@ -7,9 +7,14 @@
 
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/StatusCode.h"
 // from LHCb
 #include "MCInterfaces/IVisPrimVertTool.h"
+
+class IInterface;
+namespace LHCb {
+class MCVertex;
+}  // namespace LHCb
 
 /** @class VisPrimVertTool VisPrimVertTool.h VisPrimVertTool.h
  *

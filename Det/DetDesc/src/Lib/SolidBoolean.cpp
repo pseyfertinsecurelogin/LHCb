@@ -1,18 +1,30 @@
 // ===========================================================================
 // STD & STL
-#include <functional>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <boost/container/static_vector.hpp>
+#include <boost/container/vector.hpp>
 #include <algorithm>
+#include <iterator>
+#include <memory>
 #include <numeric>
+#include <ostream>
+#include <string>
+#include <vector>
 
-/** GaudiKernel package */
-#include   "GaudiKernel/StatusCode.h"
-
+#include "DetDesc/ISolid.h"
+#include "DetDesc/SolidBase.h"
 /** DetDesc package */
 #include   "DetDesc/SolidBoolean.h"
 #include   "DetDesc/SolidChild.h"
 #include   "DetDesc/SolidException.h"
 #include   "DetDesc/SolidTicks.h"
-#include   "DetDesc/Solid.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+/** GaudiKernel package */
+#include   "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 // ============================================================================
 /** @file SolidBoolean.cpp

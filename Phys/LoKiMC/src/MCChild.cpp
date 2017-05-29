@@ -4,18 +4,20 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
+#include <ext/alloc_traits.h>
 #include <algorithm>
-#include <functional>
+#include <memory>
+#include <vector>
+
 // ============================================================================
 // Event 
 // ============================================================================
 #include "Event/MCParticle.h"
 #include "Event/MCVertex.h"
-// ============================================================================
-// LoKi
-// ============================================================================
-#include "LoKi/MCChild.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
 #include "LoKi/MCDecayVertex.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for functions form namespace LoKi::MCChild 

@@ -1,8 +1,34 @@
 // Include files 
 
-#include "Event/TwoProngVertex.h"
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
+#include <ext/alloc_traits.h>
+#include <math.h>
+#include <functional>
+#include <memory>
+#include <utility>
+#include <vector>
+
 // local
 #include "CompareTwoProngVertex.h"
+#include "Event/TwoProngVertex.h"
+#include "Event/VertexBase.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "GaudiKernel/VectorMap.h"
+
+class ISvcLocator;
+namespace LHCb {
+class ParticleID;
+class Track;
+}  // namespace LHCb
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CompareTwoProngVertex

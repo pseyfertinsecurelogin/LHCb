@@ -1,5 +1,7 @@
 // Include files
 #include <map>
+#include <ostream>
+#include <string>
 
 // Kernel
 #include "Kernel/STBoardMapping.h"

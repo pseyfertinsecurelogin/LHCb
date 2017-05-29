@@ -13,9 +13,14 @@
  *  given as an input where 3 (12) bins displays per Beetle (Port)
  */
 
-#include "Kernel/STHisto2DProperties.h"
-#include "Kernel/STChannelID.h"
 #include <string>
+
+#include "Kernel/STChannelID.h"
+#include "Kernel/STHisto2DProperties.h"
+
+namespace LHCb {
+class STChannelID;
+}  // namespace LHCb
 
 
 namespace ST

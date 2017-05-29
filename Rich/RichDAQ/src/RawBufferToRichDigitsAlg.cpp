@@ -11,6 +11,25 @@
 // local
 #include "RawBufferToRichDigitsAlg.h"
 
+#include <functional>
+#include <utility>
+
+#include "Event/RichDigit.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/RichSmartID.h"
+#include "RichInterfaces/IRichRawBufferToSmartIDsTool.h"
+#include "RichKernel/RichCommonBase.h"
+#include "RichUtils/RichDAQDefinitions.h"
+#include "RichUtils/RichDecodedData.h"
+
+class ISvcLocator;
+
 // RICH DAQ
 using namespace Rich::DAQ;
 

@@ -1,15 +1,24 @@
 // Include files
 
-// from Event
-#include "Event/HepMCEvent.h"
-#include "Event/GenCollision.h"
-#include "Event/GenHeader.h"
+#include <stddef.h>
+#include <functional>
 
+#include "Event/GenHeader.h"
+// local
+#include "EvtTypeChecker.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/IEvtTypeSvc.h"
 // from LHCb
 #include "MCInterfaces/IMCDecayFinder.h"
 
-// local
-#include "EvtTypeChecker.h"
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : EvtTypeChecker

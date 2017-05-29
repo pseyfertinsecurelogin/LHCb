@@ -1,6 +1,9 @@
 #include "Kernel/ITDetectorPlot.h"
-#include "Kernel/STDAQDefinitions.h"
+
 #include <string>
+
+#include "Kernel/STChannelID.h"
+#include "Kernel/STDAQDefinitions.h"
 
 using namespace ST;
 

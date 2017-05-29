@@ -1,7 +1,10 @@
 #ifndef LHCB_MATH_SIMILARITY_HH
 #define LHCB_MATH_SIMILARITY_HH
-#include "GaudiKernel/GenericVectorTypes.h"
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
+
 #include "GaudiKernel/GenericMatrixTypes.h"
+#include "GaudiKernel/GenericVectorTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 
 namespace LHCb { namespace Math {

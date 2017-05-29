@@ -3,17 +3,26 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
-#include <typeinfo>
+#include <memory>
 #include <sstream>
+#include <string>
+#include <typeinfo>
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/StatusCode.h"
+#include "Kernel/Nodes.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "Kernel/iNode.h"
-#include "Kernel/Nodes.h"
+
+namespace LHCb {
+class IParticlePropertySvc;
+class ParticleID;
+}  // namespace LHCb
+
 // ============================================================================
 /** @file 
  *  Implementation file for class Decays::iNode 

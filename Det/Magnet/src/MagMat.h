@@ -2,8 +2,8 @@
 #define MAGNET_MAGMAT_H
 
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 
 

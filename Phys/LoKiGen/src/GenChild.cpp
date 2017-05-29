@@ -4,14 +4,25 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
-#include <algorithm>
-#include <functional>
+#include <cstddef>
+#include <iterator>
+#include <map>
+#include <vector>
+
+#include "Event/HepMCEvent.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "HepMC/GenEvent.h"
+#include "HepMC/GenParticle.h"
+#include "HepMC/GenVertex.h"
+#include "HepMC/IteratorRange.h"
+#include "LoKi/BuildGenTrees.h"
+#include "LoKi/CmpBarCode.h"
+#include "LoKi/GenChild.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/GenTypes.h"
-#include "LoKi/GenChild.h"
-#include "LoKi/BuildGenTrees.h"
+
 // ============================================================================
 /** @file
  *

@@ -1,9 +1,14 @@
 #ifndef UNPACKRECVERTEX_H
 #define UNPACKRECVERTEX_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 
 /** @class UnpackRecVertex UnpackRecVertex.h

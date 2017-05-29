@@ -1,6 +1,7 @@
 // ============================================================================
 #ifndef LOKI_ILOKISVC_H 
 #define LOKI_ILOKISVC_H 1
+#include "GaudiKernel/IIncidentListener.h"
 // ============================================================================
 // Include files
 // ============================================================================
@@ -8,18 +9,23 @@
 // ============================================================================
 #include "GaudiKernel/IInterface.h"
 #include "GaudiKernel/IService.h"
-#include "GaudiKernel/IIncidentListener.h"
 // ============================================================================
 // LoKiCore 
 // ============================================================================
 #include "LoKi/IReporter.h"
+
+class IAlgContextSvc       ;
+class IIncidentSvc         ;
 // ============================================================================
 // forward declarations 
 // ============================================================================
 class ISvcLocator          ;
 class IToolSvc             ;
-class IAlgContextSvc       ;
-class IIncidentSvc         ;
+class InterfaceID;
+namespace LoKi {
+class IReporter;
+}  // namespace LoKi
+
 // ============================================================================
 /** @file
  *

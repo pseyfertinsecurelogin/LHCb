@@ -1,9 +1,18 @@
 #include "OfflineDeterministicPrescaler.h"
 
-#include <math.h>
+#include <boost/integer/integer_mask.hpp>
+#include <boost/integer_traits.hpp>
+#include <stddef.h>
+#include <functional>
 
 // from LHCb core
 #include "Event/RecHeader.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+
+class ISvcLocator;
 
 inline uint32_t mix(uint32_t state)
 {

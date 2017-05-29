@@ -4,6 +4,18 @@
 // local
 #include "DataObjectVersionFilter.h"
 
+#include <functional>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : DataObjectVersionFilter
 //

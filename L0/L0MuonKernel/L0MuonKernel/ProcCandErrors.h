@@ -2,6 +2,9 @@
 #ifndef PROCCANDERRORS_H 
 #define PROCCANDERRORS_H 1
 
+#include <iosfwd>
+#include <string>
+
 #include "L0MuonKernel/ErrorHandler.h"
 
 namespace L0Muon {

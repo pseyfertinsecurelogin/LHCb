@@ -2,7 +2,8 @@
 
 // local
 #include "MuonDet/MuonStationCabling.h"
-#include <iostream>
+
+#include "DetDesc/ValidDataObject.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : MuonStationCabling

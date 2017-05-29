@@ -2,6 +2,23 @@
 // local
 #include "SmartVeloErrorBankDecoder.h"
 
+#include <stddef.h>
+#include <algorithm>
+#include <functional>
+#include <iterator>
+
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Tell1Kernel/VeloDecodeCore.h"
+#include "VeloEvent/EvtInfo.h"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : SmartVeloErrorBankDecoder
 //

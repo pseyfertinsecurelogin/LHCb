@@ -1,7 +1,10 @@
 // $Id: RawDataConnection.cpp,v 1.5 2008-03-03 20:05:04 frankb Exp $
 #include "MDF/RawDataConnection.h"
+
 #include "MDF/StreamDescriptor.h"
-#include <iostream>
+
+class IInterface;
+
 using namespace LHCb;
 using namespace Gaudi;
 

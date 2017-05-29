@@ -2,7 +2,14 @@
 
 // local
 #include "Kernel/LineTraj.h"
+
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <Math/Vector3Dfwd.h>
+
 #include "GaudiKernel/SystemOfUnits.h"
+
 using namespace LHCb;
 using namespace ROOT::Math;
 

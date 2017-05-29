@@ -3,18 +3,40 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
+#include <stddef.h>
 #include <cmath>
 #include <limits>
+#include <ostream>
+#include <string>
+#include <tuple>
+#include <vector>
+
+#include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IInterface.h"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/Incident.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extend_interfaces.h"
+#include "GaudiKernel/implements.h"
+#include "Kernel/IReferenceRate.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/Functor.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/ILoKiSvc.h"
+#include "LoKi/Interface.h"
+#include "LoKi/Listener.h"
+#include "LoKi/Random.h"
 #include "LoKi/Scalers.h"
+#include "LoKi/ToCpp.h"
+
+class IRndmGenSvc;
+
 // ============================================================================
 namespace
 {

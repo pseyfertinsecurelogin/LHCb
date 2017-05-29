@@ -2,8 +2,11 @@
 #ifndef L0MUONKERNEL_ERRORHANDLER_H 
 #define L0MUONKERNEL_ERRORHANDLER_H 1
 
+#include <boost/format.hpp>
 // Include files
 #include <iostream>
+#include <string>
+
 #include "boost/format.hpp"
 
 

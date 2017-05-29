@@ -1,4 +1,5 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
+#include "GaudiKernel/Converter.h"
 #include "VPDet/DeVP.h"
 
 /// =======================================================================

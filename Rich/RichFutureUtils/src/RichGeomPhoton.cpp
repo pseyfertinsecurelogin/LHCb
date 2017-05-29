@@ -12,6 +12,8 @@
 // local
 #include "RichFutureUtils/RichGeomPhoton.h"
 
+#include <Math/GenVector/PositionVector3D.h>
+
 std::ostream & Rich::Future::GeomPhoton::fillStream ( std::ostream& s ) const
 {
   s << "{ "

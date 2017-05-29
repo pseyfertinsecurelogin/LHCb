@@ -2,12 +2,14 @@
 #ifndef MUONDET_MUONTSMAP_H
 #define MUONDET_MUONTSMAP_H 1
 #include <vector>
-#include "GaudiKernel/DataObject.h"
+
 #include "DetDesc/Condition.h"
-
-
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/StatusCode.h"
 // Include files
 #include "MuonDet/CLID_MuonTSMap.h"
+
 /** @class MuonTSMap MuonTSMap.h MuonDet/MuonTSMap.h
  *
  *

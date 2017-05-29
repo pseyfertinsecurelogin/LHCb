@@ -3,8 +3,14 @@
 
 
 
+#include <string>
 #include <vector>
+
 #include "L0MuonKernel/L0MUnit.h"
+
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 namespace L0Muon {
 

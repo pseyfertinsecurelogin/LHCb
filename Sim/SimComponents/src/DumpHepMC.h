@@ -1,9 +1,21 @@
 #ifndef SIM_DUMPHEPMC_H
 #define SIM_DUMPHEPMC_H 1
+#include <iosfwd>
+#include <string>
+#include <vector>
+
 // ============================================================================
 // include files
 // ============================================================================
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+namespace HepMC {
+class GenEvent;
+class GenVertex;
+}  // namespace HepMC
+template <class T> class AlgFactory;
 // ============================================================================
 
 class DumpHepMC : public GaudiAlgorithm

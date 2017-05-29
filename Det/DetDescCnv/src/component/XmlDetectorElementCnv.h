@@ -5,6 +5,15 @@
 
 /// Include files
 #include "DetDescCnv/XmlBaseDetElemCnv.h"
+#include "GaudiKernel/StatusCode.h"
+
+class DetectorElement;
+class IOpaqueAddress;
+class ISvcLocator;
+namespace xercesc_3_1 {
+class DOMElement;
+}  // namespace xercesc_3_1
+template <class TYPE> class final CnvFactory;
 
 
 /** @class XmlDetectorElementCnv

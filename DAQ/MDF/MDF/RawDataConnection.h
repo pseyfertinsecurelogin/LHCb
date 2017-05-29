@@ -2,9 +2,15 @@
 #ifndef MDF_RAWDATACONNECTION_H
 #define MDF_RAWDATACONNECTION_H
 
+#include <stddef.h>
+#include <string>
+
+#include "GaudiKernel/StatusCode.h"
 // Framework include files
 #include "GaudiUtils/IIODataManager.h" // for IDataConnection class definition
 #include "MDF/StreamDescriptor.h"
+
+class IInterface;
 
 /*
  *  LHCb namespace declaration

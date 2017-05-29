@@ -1,15 +1,21 @@
 #ifndef RateFromCondDB_H 
 #define RateFromCondDB_H 1
 
+#include <string>
+
 // CondDB
 #include "DetDesc/Condition.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/IRateFromTCK.h"
 //#include "Kernel/IPropertyConfigSvc.h"
 #include "Kernel/TCK.h"
-#include "Kernel/IRateFromTCK.h"
+
+class Condition;
+
 static const InterfaceID IID_RateFromCondDB ( "RateFromCondDB", 1, 0 ); // needed as there's no interface
 
 /** @class RateFromCondDB RateFromCondDB.h

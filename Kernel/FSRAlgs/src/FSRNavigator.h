@@ -1,14 +1,23 @@
 #ifndef FSRNAVIGATOR_H
 #define FSRNAVIGATOR_H 1
 
+#include <string>
+#include <vector>
+
+#include "FSRAlgs/IFSRNavigator.h"            // Interface
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
-#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
 
-#include "FSRAlgs/IFSRNavigator.h"            // Interface
+class IFSRNavigator;
+class IInterface;
+class IRegistry;
 
 /** @class FSRNavigator FSRNavigator.h
  *

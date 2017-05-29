@@ -1,18 +1,27 @@
 #ifndef GENFSRLOG_H
 #define GENFSRLOG_H 1
 
-// Include files
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/IDataManagerSvc.h"
+#include <iosfwd>
+#include <string>
 
 // from Event
 #include "Event/GenFSR.h"
-
 // from local
 #include "FSRAlgs/IFSRNavigator.h"
+// Include files
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+
+class IFSRNavigator;
+class ISvcLocator;
+namespace LHCb {
+class GenFSR;
+}  // namespace LHCb
 
 /** @class GenFSRLog GenFSRLog.h
  *

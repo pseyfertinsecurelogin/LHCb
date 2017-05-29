@@ -2,8 +2,14 @@
 #define L0MUONKERNEL_SELECTIONUNIT_H     1
 
 #include <map>
-#include "L0MuonKernel/L0MUnit.h"
+
+#include "Kernel/MuonTileID.h"
 #include "L0MuonKernel/CandRegisterHandler.h"
+#include "L0MuonKernel/L0MUnit.h"
+
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 
 namespace L0Muon {

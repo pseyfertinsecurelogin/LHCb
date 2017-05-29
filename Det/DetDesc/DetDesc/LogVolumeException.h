@@ -1,7 +1,13 @@
 #ifndef DETDESC_LOGVOLUMEEXCEPTION_H
 #define DETDESC_LOGVOLUMEEXCEPTION_H 1
+#include <iostream>
+#include <string>
+
 // Include files
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
+
+class MsgStream;
 // forward declarations
 struct ILVolume ; ///< detdesc package
 

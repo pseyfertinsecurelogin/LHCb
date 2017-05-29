@@ -2,16 +2,25 @@
 #ifndef ODINTIMEDECODER_H
 #define ODINTIMEDECODER_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiAlg/IGenericTool.h"
-#include "GaudiKernel/ToolHandle.h"
 #include "GaudiKernel/IEventTimeDecoder.h"            // Interface
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/ToolHandle.h"
+#include "GaudiKernel/extends.h"
 
 // forward declarations
 class IDataProviderSvc;
+class IEventTimeDecoder;
 class IIncidentSvc;
+
 namespace LHCb
 {
   class ODIN;

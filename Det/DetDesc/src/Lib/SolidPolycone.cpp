@@ -2,14 +2,21 @@
 // ============================================================================
 #include "DetDesc/SolidPolycone.h"
 
+#include <Math/GenVector/PositionVector3D.h>
+#include <assert.h>
+#include <boost/container/static_vector.hpp>
+#include <boost/container/vector.hpp>
+#include <algorithm>
+#include <iterator>
+#include <memory>
+
+#include "DetDesc/SolidException.h"
+#include "DetDesc/SolidMath.h"
+#include "DetDesc/SolidTicks.h" 
+#include "DetDesc/SolidTubs.h"
+#include "GaudiKernel/MsgStream.h"
 // GaudiKernel
 #include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/MsgStream.h"
-// DetDesc
-#include "DetDesc/SolidCons.h"
-#include "DetDesc/SolidTubs.h"
-#include "DetDesc/SolidTicks.h" 
-#include "DetDesc/SolidException.h"
 
 
 //=============================================================================

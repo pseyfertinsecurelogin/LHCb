@@ -2,7 +2,10 @@
 // Include files
 
 #include <sstream>
+#include <string>
+#include <vector>
 
+#include "Kernel/MuonTileID.h"
 // local
 #include "L0MuonKernel/MonUtilities.h"
 

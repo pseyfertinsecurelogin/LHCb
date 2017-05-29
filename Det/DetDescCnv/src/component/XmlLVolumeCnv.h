@@ -1,20 +1,38 @@
 #ifndef DETDESCCNV_XMLCNVSVC_XMLLVOLUMECNV_H
 #define DETDESCCNV_XMLCNVSVC_XMLLVOLUMECNV_H
 
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <deque>
+#include <memory>
 // Include files
 #include <string>
-#include <deque>
 #include <vector>
 
+#include "DetDesc/CLIDLVolume.h"
+#include "DetDesc/ISolid.h"
+#include "DetDesc/Solids.h"
+#include "DetDescCnv/XmlGenericCnv.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/Transform3DTypes.h"
 
-#include "DetDescCnv/XmlGenericCnv.h"
-#include "DetDesc/CLIDLVolume.h"
-#include "DetDesc/Solids.h"
-
+class DataObject;
+class IOpaqueAddress;
+class ISvcLocator;
+class LVolume;
+class SolidBoolean;
+class SolidBox;
+class SolidCons;
+class SolidPolycone;
+class SolidSphere;
+class SolidTrap;
+class SolidTrd;
+class SolidTubs;
+namespace xercesc_3_1 {
+class DOMElement;
+}  // namespace xercesc_3_1
 // Forward and extern declarations
 struct ISolid;
-class LVolume;
 template <class TYPE> class CnvFactory;
 
 

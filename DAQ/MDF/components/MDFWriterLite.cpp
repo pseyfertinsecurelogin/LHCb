@@ -6,13 +6,24 @@
 //  Author    : Sai Suman & Niko Neufeld 
 //
 //  ====================================================================
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiUtils/IIODataManager.h"
-#include "MDF/RawDataConnection.h"
-#include "MDF/MDFWriterLite.h"
-
-#include <ctime>
 #include <clocale>
+#include <ctime>
+#include <functional>
+#include <string>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiUtils/IIODataManager.h"
+#include "MDF/MDFWriter.h"
+#include "MDF/MDFWriterLite.h"
+#include "MDF/RawDataConnection.h"
+
+class ISvcLocator;
 
 DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCb,MDFWriterLite)
 

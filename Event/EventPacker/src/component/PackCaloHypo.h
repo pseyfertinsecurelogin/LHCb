@@ -1,10 +1,14 @@
 #ifndef PACKCALOHYPO_H
 #define PACKCALOHYPO_H 1
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <string>
 
 #include "Event/PackedCaloHypo.h"
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class PackCaloHypo PackCaloHypo.h
  *

@@ -1,9 +1,11 @@
 #include "Kernel/STTell1Board.h"
-#include "Kernel/STDAQDefinitions.h"
-#include "Kernel/LHCbConstants.h"
+
+#include <ext/alloc_traits.h>
 
 #include "Event/STCluster.h"
 #include "Kernel/ITNames.h"
+#include "Kernel/STDAQDefinitions.h"
+#include "Kernel/StripRepresentation.h"
 #include "Kernel/TTNames.h"
 #include "Kernel/UTNames.h"
 

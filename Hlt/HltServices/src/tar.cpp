@@ -1,12 +1,20 @@
 #include "tar.h"
-#include <sstream>
+
+#include <assert.h>
+#include <boost/iostreams/filter/zlib.hpp>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/traits.hpp>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <iostream>
 #include <set>
+#include <sstream>
+
+#include "boost/algorithm/string/trim.hpp"
 #include "boost/iostreams/copy.hpp"
 #include "boost/iostreams/filter/gzip.hpp"
 #include "boost/iostreams/slice.hpp"
-#include "boost/iostreams/operations.hpp"
-#include "boost/iostreams/seek.hpp"
-#include "boost/algorithm/string/trim.hpp"
 
 namespace
 {

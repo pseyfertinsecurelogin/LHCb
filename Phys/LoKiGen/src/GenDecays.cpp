@@ -4,13 +4,41 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include <ext/alloc_traits.h>
+#include <stddef.h>
+#include <algorithm>
+#include <functional>
+#include <iterator>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/StatusCode.h"
+#include "HepMC/GenParticle.h"
+#include "HepMC/GenVertex.h"
+#include "HepMC/IteratorRange.h"
+#include "Kernel/Decay.h"
+#include "Kernel/Nodes.h"
+#include "Kernel/NodesPIDs.h"
+#include "Kernel/ParticleID.h"
+#include "Kernel/iNode.h"
 #include "LoKi/Algs.h"
-#include "LoKi/GenDecays.h"
-#include "LoKi/GenSections.h"
-#include "LoKi/GenChild.h"
+#include "LoKi/DecayDescriptor.h"
 #include "LoKi/GenAlgs.h"
-#include "LoKi/Trees.h"
+#include "LoKi/GenChild.h"
+#include "LoKi/GenDecays.h"
 #include "LoKi/GenOscillated.h"
+#include "LoKi/GenSections.h"
+#include "LoKi/Trees.h"
+#include "LoKi/Trees.icpp"
+#include "LoKi/iTree.h"
+
+namespace LHCb {
+class IParticlePropertySvc;
+class ParticleProperty;
+}  // namespace LHCb
+
 // ============================================================================
 /** @file
  *  Implementation file for LoKi HepMC-tree-functors 

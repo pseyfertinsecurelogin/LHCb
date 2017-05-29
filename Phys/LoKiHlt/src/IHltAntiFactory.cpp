@@ -4,6 +4,9 @@
 // LoKi
 // ============================================================================
 #include "LoKi/IHltAntiFactory.h"
+
+#include "GaudiKernel/IInterface.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::Hybrid::IHltAntiFactory

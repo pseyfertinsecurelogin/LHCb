@@ -11,6 +11,7 @@
 
 // C++ include files
 #include <string>
+
 #include "GaudiKernel/Kernel.h"
 
 namespace Networking {

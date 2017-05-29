@@ -1,11 +1,27 @@
 // $Id: $
 // Include files
 // from Gaudi
+#include <fstream>
+#include <functional>
+#include <vector>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/IDataStoreLeaves.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SerializeSTL.h"
+#include "GaudiKernel/SmartIF.h"
 // local
 #include "TESFingerPrint.h"
-#include <fstream>
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : TESFingerPrint

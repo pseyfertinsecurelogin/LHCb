@@ -12,14 +12,19 @@
 #ifndef RICHKERNEL_RICHTUPLETOOLBASE_H
 #define RICHKERNEL_RICHTUPLETOOLBASE_H 1
 
+#include <functional>
+#include <string>
+
+#include "GaudiAlg/GaudiCommonImp.h"
 // GaudiAlg
 #include "GaudiAlg/GaudiTupleTool.h"
-
+#include "GaudiKernel/Property.h"
 // local
 #include "RichKernel/RichHistoBase.h"
-
 // Rich Utils
 #include "RichUtils/RichHistoID.h"
+
+class IInterface;
 
 namespace Rich
 {

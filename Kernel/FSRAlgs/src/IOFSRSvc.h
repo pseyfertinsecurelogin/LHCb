@@ -1,26 +1,35 @@
 #ifndef GAUDISVC_IOFSRSVC_H
 #define GAUDISVC_IOFSRSVC_H
 
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/StatusCode.h"
-#include "GaudiKernel/Service.h"
-#include "GaudiKernel/StatEntity.h"
-#include "GaudiKernel/Stat.h"
-#include "GaudiKernel/IIncidentListener.h"
-#include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/AppReturnCode.h"
-#include "GaudiUtils/IFileCatalog.h"
-#include "IIOFSRSvc.h"
-
-#include "FSRNavigator.h"
-
-#include "Event/IOFSR.h"
-#include <string>
-#include <vector>
+#include <algorithm>
 #include <list>
 #include <map>
-#include <algorithm>
+#include <string>
 #include <utility>
+#include <vector>
+
+#include "Event/IOFSR.h"
+#include "FSRNavigator.h"
+#include "GaudiKernel/AppReturnCode.h"
+#include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/Stat.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+#include "GaudiUtils/IFileCatalog.h"
+#include "GaudiUtils/IIODataManager.h"
+#include "IIOFSRSvc.h"
+
+class IDataProviderSvc;
+class IFSRNavigator;
+class IIncidentListener;
+class ISvcLocator;
+class Incident;
+struct IIOFSRSvc;
 
 namespace Gaudi
 {

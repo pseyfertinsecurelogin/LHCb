@@ -1,28 +1,32 @@
+#include <stddef.h>
 #include <algorithm>
 #include <vector>
 
-// local
-#include "RawBankToSTLiteClusterAlg.h"
-#include "Kernel/ISTReadoutTool.h"
-
-#include "LHCbMath/LHCbMath.h"
-
+#include "Event/RawBank.h"
 // Event
 #include "Event/RawEvent.h"
 #include "Event/STLiteCluster.h"
-
-
-#include "Kernel/STTell1Board.h"
-#include "Kernel/STTell1ID.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "Kernel/ISTReadoutTool.h"
 #include "Kernel/STDAQDefinitions.h"
 #include "Kernel/STDecoder.h"
-#include "Kernel/STDetSwitch.h"
-#include "Kernel/STDataFunctor.h"
-#include "Kernel/StripRepresentation.h"
-
-#include "Kernel/FastClusterContainer.h"
-
+#include "Kernel/STTell1ID.h"
+#include "LHCbMath/LHCbMath.h"
+// local
+#include "RawBankToSTLiteClusterAlg.h"
+#include "SiDAQ/SiHeaderWord.h"
+#include "SiDAQ/SiRawBankDecoder.h"
 #include "boost/lexical_cast.hpp"
+
+class ISvcLocator;
+namespace LHCb {
+class STTELL1BoardErrorBank;
+}  // namespace LHCb
 
 using namespace LHCb;
 

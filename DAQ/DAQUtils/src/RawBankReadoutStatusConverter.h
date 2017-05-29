@@ -2,9 +2,15 @@
 #ifndef RAWBANKREADOUTSTATUSCONVERTER_H
 #define RAWBANKREADOUTSTATUSCONVERTER_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 
 /** @class RawBankReadoutStatusConverter RawBankReadoutStatusConverter.h

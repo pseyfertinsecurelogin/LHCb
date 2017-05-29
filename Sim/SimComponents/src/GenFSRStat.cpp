@@ -3,19 +3,33 @@
 // local
 #include "GenFSRStat.h"
 
-// from Event
-#include "Event/GenFSR.h"
-#include "Event/GenCountersFSR.h"
-#include "Event/CrossSectionsFSR.h"
-
-// other libraries
-#include <string>
-#include <iostream>
-#include <fstream>
+#include <TString.h>
+#include <stdio.h>
 #include <cmath>
 #include <ctime>
-#include <stdio.h>
+#include <fstream>
+#include <functional>
+#include <map>
+// other libraries
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/CrossSectionsFSR.h"
+// from Event
+#include "Event/GenFSR.h"
+#include "FSRAlgs/IFSRNavigator.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 #include "TSystem.h"
+
+class ISvcLocator;
 
 #define script_version "20151008"
 

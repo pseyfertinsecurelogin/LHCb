@@ -1,9 +1,13 @@
 //$Id: ParamException.cpp,v 1.2 2006-01-19 08:51:54 marcocle Exp $
 
-// Include files
-#include "GaudiKernel/StatusCode.h"
+#include <ostream>
+#include <string>
+#include <typeinfo>
 
 #include "DetDesc/ParamException.h"
+#include "GaudiKernel/GaudiException.h"
+// Include files
+#include "GaudiKernel/StatusCode.h"
 
 //----------------------------------------------------------------------------
 

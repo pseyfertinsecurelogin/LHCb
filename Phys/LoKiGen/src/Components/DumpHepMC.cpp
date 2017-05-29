@@ -3,20 +3,36 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/IService.h"
-// ============================================================================
-// GaudiAlg
-// ============================================================================
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <functional>
+#include <ostream>
+#include <string>
+#include <vector>
+
 // ============================================================================
 // GenEvent
 // ============================================================================
 #include "Event/HepMCEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+// ============================================================================
+// GaudiAlg
+// ============================================================================
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+#include "LoKi/DecayChainBase.h"
+#include "LoKi/GenDecayChain.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Objects.h"
-#include "LoKi/GenDecayChain.h"
+
+class ISvcLocator;
+
 // ============================================================================
 namespace LoKi
 {

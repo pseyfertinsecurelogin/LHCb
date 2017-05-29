@@ -4,8 +4,19 @@
 // =============================================================================
 // PartProp
 // =============================================================================
-#include "Kernel/Symbols.h"
+#include <functional>
+#include <iosfwd>
+#include <string>
+
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/IParticlePropertySvc.h"
 #include "Kernel/Nodes.h"
+#include "Kernel/Symbols.h"
+#include "Kernel/iNode.h"
 // =============================================================================
 // LoKi
 // =============================================================================
@@ -16,6 +27,14 @@
 // Boost 
 // =============================================================================
 #include "boost/algorithm/string/trim.hpp"
+
+class IInterface;
+namespace Decays {
+namespace Parsers {
+class Tree;
+}  // namespace Parsers
+}  // namespace Decays
+
 // =============================================================================
 /** @file 
  *  Implementation file for class LoKi::DecayBase

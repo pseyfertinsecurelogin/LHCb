@@ -1,12 +1,26 @@
 #ifndef MUONTAEREC_H
 #define MUONTAEREC_H 1
 
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/MuonCoord.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "MuonDet/MuonBasicGeometry.h"
-#include "MuonDet/DeMuonDetector.h"
+#include "GaudiKernel/StatusCode.h"
 #include "MuonDAQ/IMuonRawBuffer.h"
+#include "MuonDet/DeMuonDetector.h"
+#include "MuonDet/MuonBasicGeometry.h"
+
+class DeMuonDetector;
+class IMuonRawBuffer;
+class ISvcLocator;
+class MuonLayout;
+namespace LHCb {
+class MuonTileID;
+}  // namespace LHCb
 
 
 

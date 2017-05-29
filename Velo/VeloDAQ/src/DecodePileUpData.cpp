@@ -1,13 +1,23 @@
 // Include files 
 // data model
+#include <stddef.h>
+#include <functional>
+#include <utility>
+
+// local
+#include "DecodePileUpData.h"
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h" 
 #include "Event/VeloCluster.h" 
 #include "Event/VeloLiteCluster.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 #include "Kernel/VeloChannelID.h"
 
-// local
-#include "DecodePileUpData.h"
+class ISvcLocator;
 
 using namespace LHCb;
 using namespace VeloTELL1;

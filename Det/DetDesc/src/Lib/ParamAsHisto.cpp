@@ -1,5 +1,10 @@
 #include "DetDesc/ParamAsHisto.h"
 
+#include <stddef.h>
+#include <typeinfo>
+
+#include "DetDesc/Condition.h"
+
 //----------------------------------------------------------------------------
 namespace DetDesc {
   namespace Params {

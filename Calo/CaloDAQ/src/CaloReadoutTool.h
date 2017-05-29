@@ -1,15 +1,32 @@
 #ifndef CALODAQ_CALOREADOUTTOOL_H
 #define CALODAQ_CALOREADOUTTOOL_H 1
 
+#include <string>
+#include <vector>
+
+// from LHCb
+#include "CaloDAQ/ICaloReadoutTool.h"
+#include "DAQKernel/DecoderToolBase.h"
+#include "Event/RawBank.h"
+#include "Event/RawBankReadoutStatus.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/Incident.h"
-// from LHCb
-#include "CaloDAQ/ICaloReadoutTool.h"
-#include "DAQKernel/DecoderToolBase.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+
+class DeCalorimeter;
+class IIncidentListener;
+class IInterface;
+class Incident;
+struct ICaloReadoutTool;
 
 
 

@@ -1,17 +1,21 @@
 #ifndef VELOCLUSTERSTORAW_H
 #define VELOCLUSTERSTORAW_H 1
 
-#include <vector>
 #include <algorithm>
 #include <string>
+#include <vector>
 
 #include "Event/VeloCluster.h"
-
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+#include "SiDAQ/SiRawBufferWord.h"
 
 class DeVelo;
+class ISvcLocator;
+
 namespace LHCb {
   class RawEvent;
+class VeloCluster;
 }
 
 /** @class VeloClustersToRaw VeloClustersToRaw.h

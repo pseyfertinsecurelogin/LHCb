@@ -3,15 +3,27 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/IAlgContextSvc.h"
+#include <ostream>
+#include <string>
+#include <tuple>
+
 #include "GaudiKernel/IToolSvc.h"
 #include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/ToStream.h"
+#include "Kernel/IAccept.h"
+#include "Kernel/ICheckTool.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/Functor.h"
+#include "LoKi/ILoKiSvc.h"
+#include "LoKi/Interface.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Status.h"
-#include "LoKi/ILoKiSvc.h"
+
+class IInterface;
+
 // ============================================================================
 /** @file 
  *  Implementation of functors deaing with generic tools

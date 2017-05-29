@@ -4,10 +4,20 @@
 #define     DETDESCCNV_XMLSurfaceCNV_H 1
 
 
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+
+#include "DetDesc/Surface.h"
 // Include files
 #include "DetDescCnv/XmlGenericCnv.h"
-#include "DetDesc/Surface.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
 
+class DataObject;
+class IOpaqueAddress;
+class ISvcLocator;
+namespace xercesc_3_1 {
+class DOMElement;
+}  // namespace xercesc_3_1
 // Forward declarations
 template <class TYPE> class CnvFactory;
 

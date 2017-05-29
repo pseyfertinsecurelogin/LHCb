@@ -17,10 +17,12 @@
 #ifndef LHCbROOT_Math_GenVector_BoostZ
 #define LHCbROOT_Math_GenVector_BoostZ 1
 
+#include <iosfwd>
+
+#include "TemplatedGenVector/Cartesian3D.h"
+#include "TemplatedGenVector/DisplacementVector3D.h"
 #include "TemplatedGenVector/LorentzVector.h"
 #include "TemplatedGenVector/PxPyPzE4D.h"
-#include "TemplatedGenVector/DisplacementVector3D.h"
-#include "TemplatedGenVector/Cartesian3D.h"
 
 namespace LHCbROOT {
 
@@ -33,6 +35,8 @@ namespace LHCbROOT {
 
       @ingroup GenVector
    */
+
+class DefaultCoordinateSystemTag;
 
 class BoostZ {
 

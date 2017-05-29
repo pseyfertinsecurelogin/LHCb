@@ -1,19 +1,24 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/Incident.h"
-#include "GaudiKernel/IIncidentSvc.h"
-
-// data model
-#include "Event/RawEvent.h"
-#include "Event/RawBank.h"
-#include "Event/ODIN.h"
+#include <functional>
 
 // detector description
 #include "DetDesc/RunChangeIncident.h"
-
+#include "Event/ODIN.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/GaudiHandle.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Time.icpp"
 // local
 #include "OdinTimeDecoder.h"
+
+class DataObject;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : OdinTimeDecoder

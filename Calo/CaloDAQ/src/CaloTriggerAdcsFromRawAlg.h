@@ -1,11 +1,17 @@
 #ifndef CALOTRIGGERADCSFROMRAWALG_H 
 #define CALOTRIGGERADCSFROMRAWALG_H 1
 
+#include <string>
+
+// CaloDAQ
+#include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-// CaloDAQ
-#include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+struct ICaloTriggerAdcsFromRaw;
 
 /** @class CaloTriggerAdcsFromRawAlg CaloTriggerAdcsFromRawAlg.h
  *  

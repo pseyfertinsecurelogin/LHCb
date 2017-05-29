@@ -5,6 +5,9 @@
 // LoKi
 // ============================================================================
 #include "LoKi/ICoreAntiFactory.h"
+
+#include "GaudiKernel/IInterface.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::Hybrid::ICoreAntiFactory

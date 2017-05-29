@@ -3,13 +3,17 @@
 #ifndef MUONDET_MUONREADOUTCOND_H
 #define MUONDET_MUONREADOUTCOND_H 1
 
-// Include files
-#include <vector>
-#include "GaudiKernel/DataObject.h"
-#include "DetDesc/Condition.h"
 //#include "Kernel/FPEGuard.h"
 #include <cmath>
+#include <memory>
+#include <string>
+// Include files
+#include <vector>
 
+#include "DetDesc/Condition.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/StatusCode.h"
 #include "MuonDet/CLID_MuonReadoutCond.h"
 
 /** @class MuonReadoutCond MuonReadoutCond.h MuonDet/MuonReadoutCond.h

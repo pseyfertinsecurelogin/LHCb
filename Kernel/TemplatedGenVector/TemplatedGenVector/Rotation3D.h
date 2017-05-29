@@ -18,26 +18,25 @@
 #define LHCbROOT_Math_GenVector_Rotation3D  1
 
 
-#include "TemplatedGenVector/Cartesian3D.h"
-#include "TemplatedGenVector/DisplacementVector3D.h"
-#include "TemplatedGenVector/PositionVector3D.h"
-#include "TemplatedGenVector/PxPyPzE4D.h"
-#include "TemplatedGenVector/LorentzVector.h"
-#include "TemplatedGenVector/3DConversions.h"
-#include "TemplatedGenVector/3DDistances.h"
-
-#include "TemplatedGenVector/Rotation3Dfwd.h"
-#include "TemplatedGenVector/AxisAnglefwd.h"
-#include "TemplatedGenVector/EulerAnglesfwd.h"
-#include "TemplatedGenVector/Quaternionfwd.h"
-#include "TemplatedGenVector/RotationXfwd.h"
-#include "TemplatedGenVector/RotationYfwd.h"
-#include "TemplatedGenVector/RotationZfwd.h"
-
-
 #include <algorithm>
 #include <cassert>
 #include <iostream>
+
+#include "DisplacementVector3Dfwd.h"
+#include "TemplatedGenVector/3DConversions.h"
+#include "TemplatedGenVector/3DDistances.h"
+#include "TemplatedGenVector/AxisAnglefwd.h"
+#include "TemplatedGenVector/Cartesian3D.h"
+#include "TemplatedGenVector/DisplacementVector3D.h"
+#include "TemplatedGenVector/EulerAnglesfwd.h"
+#include "TemplatedGenVector/LorentzVector.h"
+#include "TemplatedGenVector/PositionVector3D.h"
+#include "TemplatedGenVector/PxPyPzE4D.h"
+#include "TemplatedGenVector/Quaternionfwd.h"
+#include "TemplatedGenVector/Rotation3Dfwd.h"
+#include "TemplatedGenVector/RotationXfwd.h"
+#include "TemplatedGenVector/RotationYfwd.h"
+#include "TemplatedGenVector/RotationZfwd.h"
 
 
 namespace LHCbROOT {
@@ -61,6 +60,14 @@ namespace Math {
 
      @ingroup GenVector
   */
+
+class AxisAngle;
+class EulerAngles;
+class Quaternion;
+class RotationX;
+class RotationY;
+class RotationZ;
+class RotationZYX;
 
 class Rotation3D {
 

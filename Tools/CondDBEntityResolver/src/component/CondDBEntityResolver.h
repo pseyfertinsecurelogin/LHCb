@@ -1,16 +1,37 @@
 #ifndef CONDDBENTITYRESOLVERTOOL_H_
 #define CONDDBENTITYRESOLVERTOOL_H_
 
+#include <boost/optional.hpp>
+#include <boost/optional/optional.hpp>
+#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_ref_fwd.hpp>
+#include <xercesc/sax/EntityResolver.hpp>
+#include <xercesc/sax/InputSource.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <string>
 // Include files
 #include <type_traits>
-#include <boost/optional.hpp>
-#include <boost/utility/string_ref.hpp>
+#include <vector>
+
+#include "DetCond/ICondDBReader.h"
 #include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/IFileAccess.h"
-#include "XmlTools/IXmlEntityResolver.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/CondDBNameTagPair.h"
 #include "Kernel/ICondDBInfo.h"
+#include "XmlTools/IXmlEntityResolver.h"
 
 class ICondDBReader;
+class IInterface;
+namespace Gaudi {
+class Time;
+}  // namespace Gaudi
+struct ICondDBInfo;
+struct IXmlEntityResolver;
 
 /** @class CondDBEntityResolver CondDBEntityResolver.h
  *

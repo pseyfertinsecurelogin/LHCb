@@ -4,22 +4,26 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
+#include <Math/Expression.h>
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <TMathBase.h>
+#include <TRandom.h>
+#include <ext/alloc_traits.h>
+#include <math.h>
+#include <chrono>
+#include <functional>
 #include <iostream>
 #include <map>
-#include <functional>
 #include <memory>
-#include <chrono>
-#include <array>
+#include <utility>
+#include <vector>
 
 using std::chrono::high_resolution_clock;
 using std::chrono::microseconds;
 using std::chrono::nanoseconds;
 using std::chrono::time_point;
 
-// ============================================================================
-// VectorClass 
-// ============================================================================
-#include "VectorClass/instrset.h"
 // ============================================================================
 // Gaudi and ROOT types
 // ============================================================================
@@ -28,11 +32,9 @@ using std::chrono::time_point;
 #include "Math/SMatrix.h"
 #include "TRandom3.h"
 // ============================================================================
-// LHCbMath
+// VectorClass 
 // ============================================================================
-#include "LHCbMath/Similarity.h"
-
-#include <TH1D.h>
+#include "VectorClass/instrset.h"
 
 // ============================================================================
 // Advance declaration for similarity methods

@@ -1,24 +1,33 @@
 #ifndef DETDESCCNV_XMLGENERICCNV_H
 #define DETDESCCNV_XMLGENERICCNV_H
 
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMText.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <memory>
+#include <string>
+
+#include "GaudiKernel/ClassID.h"
 // Include files
 #include "GaudiKernel/Converter.h"
 #include "GaudiKernel/IConversionSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/SmartIF.h"
-
+#include "GaudiKernel/StatusCode.h"
 #include "XmlTools/IXmlSvc.h"
 
-#include <string>
-
-#include <xercesc/dom/DOMElement.hpp>
-#include <xercesc/dom/DOMText.hpp>
-
-
+class DataObject;
+class GenericAddress;
+class IOpaqueAddress;
 // Forward and external declarations
 class ISvcLocator;
+namespace xercesc_3_1 {
+class DOMElement;
+class DOMText;
+}  // namespace xercesc_3_1
 struct IXmlSvc;
-class GenericAddress;
 template <class TYPE> class CnvFactory;
 
 

@@ -5,9 +5,12 @@
 
 // CaloDet
 #include "CaloDet/DeSubSubCalorimeter.h"
-#include "CaloKernel/CaloException.h"
 
 #include <algorithm> // for std::find
+#include <iomanip>
+#include <ostream>
+#include <typeinfo>
+#include <vector>
 
 /** @file DeSubSubCalorimeter.cpp
  *

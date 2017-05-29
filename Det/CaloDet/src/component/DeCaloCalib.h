@@ -1,11 +1,22 @@
 #ifndef COMPONENT_DECALOCALIB_H
 #define COMPONENT_DECALOCALIB_H 1
 
+#include <map>
+#include <ostream>
+#include <string>
+#include <vector>
+
+#include "CaloDet/DeCalorimeter.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
 #include "GaudiKernel/IRndmGenSvc.h"
-#include "CaloDet/DeCalorimeter.h"
+#include "GaudiKernel/RndmGenerators.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+
+class DeCalorimeter;
+class ISvcLocator;
 
 
 

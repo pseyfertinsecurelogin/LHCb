@@ -1,20 +1,25 @@
-#include <algorithm>
+#include <ext/alloc_traits.h>
+#include <functional>
+#include <vector>
 
+#include "Event/STDigit.h"
+// Event
+#include "Event/STTELL1Data.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/ISTReadoutTool.h"
+#include "Kernel/LHCbConstants.h"
+#include "Kernel/STDAQDefinitions.h"
+#include "Kernel/STTell1Board.h"
+#include "Kernel/STTell1ID.h"
+#include "STDet/DeSTDetector.h"
 // local
 #include "STDigitsToSTTELL1Data.h"
 
-// Event
-#include "Event/STTELL1Data.h"
-#include "Event/STDigit.h"
-
-
-#include "Kernel/LHCbConstants.h"
-#include "Kernel/STTell1Board.h"
-#include "Kernel/ISTReadoutTool.h"
-#include "Kernel/STDAQDefinitions.h"
-
-
-#include "STDet/DeSTDetector.h"
+class ISvcLocator;
 
 
 using namespace LHCb;

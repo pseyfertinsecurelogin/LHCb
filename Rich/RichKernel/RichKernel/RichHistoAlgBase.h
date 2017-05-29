@@ -12,14 +12,20 @@
 #ifndef RICHKERNEL_RICHHISTOALGBASE_H
 #define RICHKERNEL_RICHHISTOALGBASE_H 1
 
+#include <functional>
+#include <string>
+
+#include "GaudiAlg/GaudiCommonImp.h"
 // GaudiAlg
 #include "GaudiAlg/GaudiHistoAlg.h"
-
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "RichKernel/RichHistoBase.h"
-
 // RichUtils
 #include "RichUtils/RichHistoID.h"
+
+class ISvcLocator;
 
 namespace Rich
 {

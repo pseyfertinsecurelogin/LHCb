@@ -2,8 +2,14 @@
 #ifndef PROCESSPHASE_H
 #define PROCESSPHASE_H
 
+#include <string>
+#include <vector>
+
 // Include files
 #include "GaudiAlg/GaudiSequencer.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 // Typedefs
 typedef std::vector<std::string> VectorName;

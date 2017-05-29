@@ -1,7 +1,11 @@
-#include "VeloDet/DeVeloSensor.h"
+#include <utility>
 
-#include "VeloRawBankDecoder.h"
 #include "DecodeRawBankToLiteClusters.h"
+#include "Kernel/VeloChannelID.h"
+#include "SiDAQ/SiClusterWord.h"
+#include "SiDAQ/SiRawBankDecoder.h"
+#include "VeloDet/DeVeloSensor.h"
+#include "VeloRawBankDecoder.h"
 
 int VeloDAQ::decodeRawBankToLiteClusters (
     const SiDAQ::buffer_word* bank, 

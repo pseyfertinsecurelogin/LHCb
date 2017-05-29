@@ -13,6 +13,8 @@
 // local
 #include "RichUtils/RichSmartIDCnv.h"
 
+#include "GaudiKernel/MsgStream.h"
+
 MsgStream&
 Rich::SmartIDGlobalOrdering::fillStream( MsgStream& os ) const
 {

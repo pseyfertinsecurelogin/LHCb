@@ -2,7 +2,9 @@
 
 // local
 #include "MuonDAQ/MuonHLTDigitFormat.h"
+
 #include "Event/MuonBankVersion.h"
+#include "MuonDAQ/MuonHLTBase.h"
 //-----------------------------------------------------------------------------
 // Implementation file for class : MuonHLTDigitFormat
 //

@@ -5,12 +5,19 @@
 // STD & STL 
 // ============================================================================
 #include <cstdarg>
+#include <vector>
+
+#include "GaudiAlg/Tuple.h"
+#include "GaudiAlg/TupleObj.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // local
 // ============================================================================
 #include "LoKi/Record.h"
 #include "LoKi/Separators.h"
 #include "LoKi/Tokens.h"
+#include "stdarg.h"
+
 // ============================================================================
 /** @file
  *

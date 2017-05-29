@@ -1,6 +1,42 @@
 // local
 #include "HltDAQ/ReportConvertTool.h"
 
+#include <assert.h>
+#include <math.h>
+#include <stdio.h>
+#include <algorithm>
+#include <array>
+#include <iterator>
+#include <ostream>
+
+#include "Event/CaloCluster.h"
+#include "Event/CaloHypo.h"
+#include "Event/MuonPID.h"
+#include "Event/Particle.h"
+#include "Event/ProtoParticle.h"
+#include "Event/RecSummary.h"
+#include "Event/RecVertex.h"
+#include "Event/RichPID.h"
+#include "Event/State.h"
+#include "Event/Track.h"
+#include "Event/TrackTypes.h"
+#include "Event/Vertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/GenericMatrixTypes.h"
+#include "GaudiKernel/GenericVectorTypes.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "GaudiKernel/Vector4DTypes.h"
+#include "IReportConvert.h"
+#include "Kernel/ParticleID.h"
+#include "Kernel/RichParticleIDType.h"
+
+class IInterface;
+
 using LHCb::HltObjectSummary;
 using LHCb::HltSelRepRBStdInfo;
 

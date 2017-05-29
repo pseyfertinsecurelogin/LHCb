@@ -2,11 +2,19 @@
 // Include files 
 
 #include <string>
-#include "DetDesc/Condition.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
+#include <typeinfo>
 
+#include "DetDesc/Condition.h"
+#include "DetDesc/DetectorElementException.h"
 // local
 #include "DummyDetectorElement.h"
+#include "GaudiKernel/Converter.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DummyDetectorElement

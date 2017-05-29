@@ -4,9 +4,14 @@
 
 // #include "GaudiAlg/GaudiAlgorithm.h"
 
+#include <string>
+
 // #include "GaudiKernel/IDataManagerSvc.h"
 // #include "GaudiKernel/SmartIF.h"
 #include "EmptyEventNodeCleaner.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class FSRCleaner FSRCleaner.h
  *

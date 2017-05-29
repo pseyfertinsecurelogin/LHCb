@@ -3,17 +3,27 @@
 
 // Include files
 
+#include <GaudiKernel/AlgTool.h>
+#include <GaudiKernel/DataStreamTool.h>
+#include <GaudiKernel/IEvtSelector.h>
+// Gaudi
+#include <GaudiKernel/Service.h>
+// boost
+#include <boost/regex.hpp>
+#include <boost/regex/v4/basic_regex.hpp>
+#include <boost/regex/v4/regex_fwd.hpp>
+#include <string>
 // STL
 #include <vector>
 
-// boost
-#include <boost/regex.hpp>
+#include "FileStager/IFileStagerSvc.h"
+#include "GaudiKernel/IDataStreamTool.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiUtils/IFileCatalog.h"
 
-// Gaudi
-#include <GaudiKernel/Service.h>
-#include <GaudiKernel/IEvtSelector.h>
-#include <GaudiKernel/DataStreamTool.h>
-#include <GaudiKernel/AlgTool.h>
+class IInterface;
 
 namespace Gaudi {
    class IFileCatalog;

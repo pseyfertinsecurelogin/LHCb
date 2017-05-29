@@ -1,18 +1,21 @@
 #ifndef LHCBMATH_INTERPOLATION_H 
 #define LHCBMATH_INTERPOLATION_H 1
+#include <algorithm>
+#include <array>
+#include <iterator>
+#include <utility>
 // ============================================================================
 // Include files
 // ============================================================================
 // STD & STL
 // ============================================================================
 #include <vector>
-#include <array>
-#include <utility>
-#include <algorithm>
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
+
 // ============================================================================
 namespace Gaudi
 {

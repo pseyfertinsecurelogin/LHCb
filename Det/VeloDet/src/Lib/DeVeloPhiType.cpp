@@ -1,25 +1,47 @@
 //==============================================================================
 #define VELODET_DEVELOPHITYPE_CPP 1
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <vdt/asin.h>
+#include <algorithm>
+#include <array>
 //==============================================================================
 // Include files
 #include <cmath>
+#include <map>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <typeinfo>
+#include <utility>
+#include <vector>
+
+#include "DetDesc/IGeometryInfo.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+// From Gaudi
+#include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/LineTraj.h"
+#include "Kernel/Trajectory.h"
+#include "Kernel/VeloChannelID.h"
+// From LHCb
+#include "LHCbMath/LHCbMath.h"
+// From Velo
+#include "VeloDet/DeVeloPhiType.h"
+#include "VeloDet/DeVeloSensor.h"
+#include "getOutputLevel.h"
 #include "vdt/atan2.h"
 #include "vdt/sin.h"
 #include "vdt/sincos.h"
-
-// From Gaudi
-#include "GaudiKernel/PhysicalConstants.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-
-// From LHCb
-#include "LHCbMath/LHCbMath.h"
-#include "Kernel/LineTraj.h"
-
-// From Velo
-#include "VeloDet/DeVeloPhiType.h"
-#include "Kernel/VeloChannelID.h"
-
-#include "getOutputLevel.h"
 
 namespace VeloDet {
   /** This function simply provides access to a local static

@@ -1,10 +1,17 @@
 
 // local
 #include "Event/PackedRecVertex.h"
-#include "Event/PackerUtils.h"
 
-// Checks
-#include "Event/PackedEventChecks.h"
+#include <Math/SMatrix.h>
+
+#include "Event/PackerUtils.h"
+#include "Event/Track.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
 
 using namespace LHCb;
 

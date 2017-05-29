@@ -4,27 +4,43 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/StatusCode.h"
+#include <algorithm>
+#include <ostream>
+#include <string>
+#include <tuple>
+#include <vector>
+
+#include "Event/MCParticle.h"
 #include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/Nodes.h"
 // ============================================================================
 // PartProp
 // ============================================================================
 #include "Kernel/iNode.h"
-#include "Kernel/IParticlePropertySvc.h"
-#include "Kernel/Nodes.h"
-// ============================================================================
-// LoKi 
-// ============================================================================
-#include "LoKi/iTree.h"
-#include "LoKi/Trees.h"
-#include "LoKi/MCTypes.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/BasicFunctors.h"
+#include "LoKi/Functor.h"
+#include "LoKi/IDecayNode.h"
 // ============================================================================
 // local
 // ============================================================================
 #include "LoKi/ILoKiSvc.h"
-#include "LoKi/Services.h"
-#include "LoKi/MCParticles1.h"
 #include "LoKi/IMCDecay.h"
+#include "LoKi/Interface.h"
+#include "LoKi/MCParticles1.h"
+#include "LoKi/Services.h"
+#include "LoKi/Trees.h"
+// ============================================================================
+// LoKi 
+// ============================================================================
+#include "LoKi/iTree.h"
+
+namespace LHCb {
+class IParticlePropertySvc;
+}  // namespace LHCb
+
 // ============================================================================
 namespace 
 { 

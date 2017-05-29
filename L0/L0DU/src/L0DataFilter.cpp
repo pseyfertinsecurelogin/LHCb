@@ -1,10 +1,22 @@
 // Include files 
 
+#include <stddef.h>
+#include <functional>
+#include <istream>
+#include <utility>
+
 // from Event
 #include "Event/L0DUReport.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
 // local
 #include "L0DataFilter.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0DataFilter

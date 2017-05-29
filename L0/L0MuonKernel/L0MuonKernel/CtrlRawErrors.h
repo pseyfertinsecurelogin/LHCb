@@ -2,6 +2,9 @@
 #ifndef INCLUDE_CTRLRAWERROR_H 
 #define INCLUDE_CTRLRAWERROR_H 1
 
+#include <iosfwd>
+#include <string>
+
 #include "L0MuonKernel/ErrorHandler.h"
 
 namespace L0Muon {

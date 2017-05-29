@@ -5,26 +5,50 @@
 //  Author    : Markus Frank
 //
 //  ====================================================================
-#include "MDF/RawDataConnection.h"
-#include "MDF/RawEventHelpers.h"
+#include <stdio.h>
+#include <string.h>
+#include <exception>
+#include <functional>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/ConversionSvc.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IAddressCreator.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/IPersistencySvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/StreamBuffer.h"
+#include "GaudiUtils/IIODataManager.h"
+#include "MDF/MDFIO.h"
 #include "MDF/RawDataAddress.h"
 #include "MDF/RawDataCnvSvc.h"
-#include "MDF/MDFHeader.h"
+#include "MDF/RawDataConnection.h"
+#include "MDF/RawEventHelpers.h"
+#include "MDF/StreamDescriptor.h"
 
-#include "GaudiUtils/IIODataManager.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiKernel/IPersistencySvc.h"
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/strcasecmp.h"
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/MsgStream.h"
-#include "Event/RawEvent.h"
-
-#include <memory>
-#include <vector>
-#include <map>
+class ISvcLocator;
+namespace LHCb {
+class MEPEvent;
+}  // namespace LHCb
 
 using namespace std;
 using namespace LHCb;

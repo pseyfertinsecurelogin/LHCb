@@ -6,11 +6,27 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/iTree.h"
-#include "LoKi/Trees.h"
+#include <ostream>
+#include <vector>
+
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/iNode.h"
+#include "LoKi/DecayDescriptor.h"
 #include "LoKi/GenDecays.h"
-#include "LoKi/GenTreesFactory.h"
 #include "LoKi/ParserFactory.h"
+#include "LoKi/Trees.h"
+#include "LoKi/Trees.icpp"
+#include "LoKi/iTree.h"
+
+namespace Decays {
+namespace Parsers {
+class Tree;
+}  // namespace Parsers
+}  // namespace Decays
+namespace HepMC {
+class GenParticle;
+}  // namespace HepMC
+
 // ============================================================================
 /** @file 
  *  Implementation file for function from the file LoKi/GenTreeFactory.h

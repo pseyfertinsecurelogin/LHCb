@@ -1,14 +1,16 @@
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
+#include <ext/type_traits.h>
 #include <cmath>
+#include <ostream>
 
-// from GaudiKernel
-#include "GaudiKernel/GenericMatrixTypes.h"
-#include "GaudiKernel/GenericVectorTypes.h"
-#include "GaudiKernel/SymmetricMatrixTypes.h"
-
-// local
-#include "Event/TrackTypes.h"
 #include "Event/State.h"
 #include "Event/TrackParameters.h"
+// local
+#include "Event/TrackTypes.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
 
 using namespace LHCb;
 using namespace Gaudi;

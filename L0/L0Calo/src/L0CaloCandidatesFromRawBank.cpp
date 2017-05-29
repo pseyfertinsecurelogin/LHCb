@@ -2,12 +2,26 @@
 // local
 #include "L0CaloCandidatesFromRawBank.h"
 
-// from Event
-#include "Event/L0DUBase.h"
-#include "Event/RawBankReadoutStatus.h"
+#include <functional>
+#include <iostream>
+#include <map>
+#include <set>
+#include <utility>
 
 // From Calo
 #include "CaloDet/DeCalorimeter.h"
+#include "DetDesc/Condition.h"
+// from Event
+#include "Event/L0DUBase.h"
+#include "Event/RawBankReadoutStatus.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartRef.h"
+#include "Kernel/CaloCellID.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0CaloCandidatesFromRawBank

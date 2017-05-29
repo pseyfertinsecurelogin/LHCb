@@ -2,11 +2,15 @@
 #ifndef L0CALONTPMONITOR_H
 #define L0CALONTPNOMITOR_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
+#include "GaudiKernel/StatusCode.h"
 
 class DeCalorimeter ;
+class ISvcLocator;
 
 /** @class L0CaloNtpMonitor L0CaloNtpMonitor.h
  *

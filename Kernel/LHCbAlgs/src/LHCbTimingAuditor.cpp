@@ -1,15 +1,34 @@
-#include "GaudiKernel/Auditor.h"
-#include "GaudiKernel/IToolSvc.h"
-#include "GaudiKernel/IIncidentListener.h"
-#include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/IToolSvc.h"
-#include "GaudiKernel/VectorMap.h"
-#include "GaudiKernel/HashMap.h"
-#include "GaudiKernel/MsgStream.h"
+#include <functional>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "Gaudi/PluginService.h"
 // ============================================================================
 // GaudiAlg
 // ============================================================================
 #include "GaudiAlg/ISequencerTimerTool.h"
+#include "GaudiKernel/Auditor.h"
+#include "GaudiKernel/HashMap.h"
+#include "GaudiKernel/IAuditor.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/INamedInterface.h"
+#include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/Map.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/System.h"
+#include "GaudiKernel/VectorMap.h"
+#include "GaudiKernel/extends.h"
+
+class IIncidentListener;
+class ISvcLocator;
 // ============================================================================
 #ifdef __ICC
 // disable icc warning #654: overloaded virtual function "B::Y" is only partially overridden in class "C"

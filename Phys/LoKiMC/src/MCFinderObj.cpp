@@ -3,22 +3,38 @@
 // ============================================================================
 // GaudiAlg
 // ============================================================================
-#include "GaudiAlg/GaudiTool.h"
+#include <boost/functional/hash/hash.hpp>
+#include <functional>
+#include <map>
+#include <string>
+#include <vector>
+
+#include "Event/MCParticle.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
-// ============================================================================
-// MCInterfaces
-// ============================================================================
-#include "MCInterfaces/IMCDecayFinder.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "LoKi/Base.h"
 // ============================================================================
 // LoKiCore 
 // ============================================================================
 #include "LoKi/Interface.h"
-#include "LoKi/Base.h"
+#include "LoKi/Keeper.h"
+#include "LoKi/MCFinderObj.h"
 // ============================================================================
 // LoKiMC 
 // ============================================================================
 #include "LoKi/MCTypes.h"
-#include "LoKi/MCFinderObj.h"
+#include "LoKi/UniqueKeeper.h"
+// ============================================================================
+// MCInterfaces
+// ============================================================================
+#include "MCInterfaces/IMCDecayFinder.h"
+
+namespace LoKi {
+class IReporter;
+}  // namespace LoKi
+
 // ============================================================================
 /** @file
  *

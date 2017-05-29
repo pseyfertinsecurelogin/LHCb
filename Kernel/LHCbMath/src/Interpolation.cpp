@@ -5,6 +5,9 @@
 // LHCbMath
 // ===========================================================================
 #include "LHCbMath/Interpolation.h"
+
+#include <memory>
+
 // ===========================================================================
 /** @file 
  *  Implementation file for interpolation functions 

@@ -1,17 +1,40 @@
 // $Id: CondDBTestAlgorithm.cpp,v 1.21 2007-09-13 09:22:19 jpalac Exp $
 // Include files 
 
-// from Gaudi
-#include "GaudiKernel/IDetDataSvc.h"
-
-#include "DetDesc/Condition.h"
-#include "DetDesc/TabulatedProperty.h"
-#include "DetDesc/DetectorElement.h"
-#include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/LVolume.h"
+#include <Math/GenVector/Transform3D.h>
+#include <functional>
+#include <iostream>
+#include <typeinfo>
+#include <vector>
 
 // local
 #include "CondDBTestAlgorithm.h"
+#include "DetDesc/AlignmentCondition.h"
+#include "DetDesc/Condition.h"
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/LVolume.h"
+#include "DetDesc/ParamValidDataObject.h"
+#include "DetDesc/TabulatedProperty.h"
+#include "DetDesc/ValidDataObject.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+// from Gaudi
+#include "GaudiKernel/IDetDataSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CondDBTestAlgorithm

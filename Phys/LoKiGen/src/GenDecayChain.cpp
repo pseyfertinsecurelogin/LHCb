@@ -3,11 +3,25 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
+#include <stddef.h>
 #include <sstream>
+#include <string>
+#include <vector>
+
+#include "Event/HepMCEvent.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "LoKi/DecayChainBase.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/GenDecayChain.h"
+#include "LoKi/GenTypes.h"
+
+namespace HepMC {
+class GenEvent;
+class GenParticle;
+}  // namespace HepMC
+
 // ============================================================================
 /** @file
  *

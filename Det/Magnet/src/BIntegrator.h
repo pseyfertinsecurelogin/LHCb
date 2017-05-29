@@ -2,18 +2,20 @@
 #ifndef MAGNET_BINTEGRATOR_H
 #define MAGNET_BINTEGRATOR_H 1
 
+#include <string>
+
 // Include files
 // -------------
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
+// Math Definitions
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
 // from LHCbKernel
 #include "Kernel/IBIntegrator.h"            // Interface
 
-// Math Definitions
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
-
+class IInterface;
 // Forward declarations
 class IMagneticFieldSvc;
 

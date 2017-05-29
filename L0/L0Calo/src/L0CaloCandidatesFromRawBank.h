@@ -1,13 +1,17 @@
 #ifndef L0CALO_L0CALOCANDIDATESFROMRAWBANK_H
 #define L0CALO_L0CALOCANDIDATESFROMRAWBANK_H 1
 
+#include <string>
+#include <vector>
+
+#include "Event/L0CaloCandidate.h"
+// From Event
+#include "Event/RawEvent.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
-// From Event
-#include "Event/RawEvent.h"
-#include "Event/L0CaloCandidate.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/StatusCode.h"
 
 // forward declaration
 namespace LHCb {

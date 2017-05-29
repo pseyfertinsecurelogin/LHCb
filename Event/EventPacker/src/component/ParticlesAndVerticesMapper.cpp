@@ -1,8 +1,32 @@
 
-// Include files
-#include <iterator>
+#include <functional>
+#include <ostream>
+#include <utility>
+
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedMuonPID.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
+#include "Event/PackedParticle.h"
+#include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedRichPID.h"
+#include "Event/PackedTrack.h"
+#include "Event/PackedVertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IJobOptionsSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
 // local
 #include "ParticlesAndVerticesMapper.h"
+
+class IInterface;
 
 // ----------------------------------------------------------------------------
 

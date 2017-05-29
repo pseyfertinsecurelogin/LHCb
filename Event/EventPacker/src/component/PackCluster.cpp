@@ -1,9 +1,25 @@
 
+#include <algorithm>
+#include <functional>
+#include <sstream>
+#include <vector>
+
+#include "Event/PackedCluster.h"
+#include "Event/STCluster.h"
 // from Gaudi
 #include "Event/Track.h"
-
+#include "Event/VeloCluster.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/LHCbID.h"
 // local
 #include "PackCluster.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PackCluster

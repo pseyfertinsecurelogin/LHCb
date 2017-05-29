@@ -1,14 +1,17 @@
 #ifndef STDIGITSTOSTTELL1DATA_H
 #define STDIGITSTOSTTELL1DATA_H 1
 
-#include "Kernel/STAlgBase.h"
+#include <string>
+#include <vector>
+
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h"
-#include "Event/STTELL1Data.h"
 #include "Event/STDigit.h"
+#include "Event/STTELL1Data.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STAlgBase.h"
 
-#include <vector>
-#include <string>
+class ISvcLocator;
 
 /** @class RawBankToSTProcFull RawBankToSTProcFull.h
  *
@@ -18,8 +21,8 @@
  *  @date   2007-10-10
  */
 
-struct ISTReadoutTool;
 class DeSTDetector;
+struct ISTReadoutTool;
 
 class STDigitsToSTTELL1Data: public ST::AlgBase {
 

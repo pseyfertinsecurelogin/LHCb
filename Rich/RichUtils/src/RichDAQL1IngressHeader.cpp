@@ -11,6 +11,8 @@
 
 #include "RichUtils/RichDAQL1IngressHeader.h"
 
+#include <ostream>
+
 using namespace Rich::DAQ;
 
 void L1IngressHeader::setHPDsActive( const L1IngressInputs & inputs )

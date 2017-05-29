@@ -1,9 +1,14 @@
 #ifndef COMPARERECVERTEX_H
 #define COMPARERECVERTEX_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 
 /** @class CompareRecVertex CompareRecVertex.h

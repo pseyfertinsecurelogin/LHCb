@@ -1,15 +1,28 @@
 #ifndef L0DUFROMRAWHLT1TOOL_H
 #define L0DUFROMRAWHLT1TOOL_H 1
 
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/L0DUReport.h"
+#include "Event/L0ProcessorData.h"
+#include "Event/RawBankReadoutStatus.h"
+// from Event
+#include "Event/RawEvent.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "L0Interfaces/IL0DUFromRawTool.h"
+#include "GaudiKernel/StatusCode.h"
 #include "L0Interfaces/IL0DUConfigProvider.h"
+#include "L0Interfaces/IL0DUFromRawTool.h"
 
-// from Event
-#include "Event/RawEvent.h"
-#include "Event/RawBankReadoutStatus.h"
+class IInterface;
+namespace LHCb {
+class L0DUConfig;
+}  // namespace LHCb
+struct IL0DUConfigProvider;
 
 /** @class L0DUFromRawHlt1Tool L0DUFromRawHlt1Tool.h
  *

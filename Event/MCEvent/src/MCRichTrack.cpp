@@ -11,6 +11,9 @@
 
 // local
 #include "Event/MCRichTrack.h"
+
+#include <iostream>
+
 #include "Event/MCRichSegment.h"
 
 const LHCb::MCRichSegment * 

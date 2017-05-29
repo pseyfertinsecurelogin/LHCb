@@ -4,11 +4,14 @@
 //  Description: Main Program for Gaudi applications
 //
 //------------------------------------------------------------------------------
-#include "GaudiKernel/SmartIF.h"
+#include <iostream>
+#include <string>
+
 #include "GaudiKernel/Bootstrap.h"
 #include "GaudiKernel/IAppMgrUI.h"
+#include "GaudiKernel/IInterface.h"
 #include "GaudiKernel/IProperty.h"
-#include <iostream>
+#include "GaudiKernel/SmartIF.h"
 
 extern "C" int MDFTest(int argc,char **argv) {
   IInterface* iface = Gaudi::createApplicationMgr();

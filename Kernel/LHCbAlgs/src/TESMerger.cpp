@@ -6,13 +6,24 @@
  *  @date   24/02/2014
  */
 
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "GaudiKernel/SharedObjectsContainer.h"
+#include <functional>
 #include <string>
 #include <vector>
-#include "Event/Track.h"
-#include "Event/ProtoParticle.h"
+
 #include "Event/Particle.h"
+#include "Event/ProtoParticle.h"
+#include "Event/Track.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/KeyedObjectManager.h"
+#include "GaudiKernel/KeyedTraits.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 
 template <class T> class TESMerger final : public GaudiAlgorithm

@@ -6,26 +6,33 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <functional>
 #include <algorithm>
-#include <climits>
-// ============================================================================
-// GauidKernel
-// ============================================================================
-#include "GaudiKernel/SmartIF.h"
+#include <limits>
+#include <ostream>
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/Lomont.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/SystemOfUnits.h"
-// ============================================================================
-// LHCbMath
-// ============================================================================
-#include "LHCbMath/Lomont.h"
+#include "Kernel/Decay.h"
 // ============================================================================
 // PartProp
 // ============================================================================
 #include "Kernel/IParticlePropertySvc.h"
-#include "Kernel/ParticleProperty.h"
-#include "Kernel/ParticleID.h"
+#include "Kernel/Nodes.h"
 #include "Kernel/NodesPIDs.h"
+#include "Kernel/ParticleID.h"
+#include "Kernel/ParticleProperty.h"
 #include "Kernel/Symbols.h"
+#include "Kernel/iNode.h"
+// ============================================================================
+// LHCbMath
+// ============================================================================
+#include "LHCbMath/Lomont.h"
+
+class IInterface;
+
 // ============================================================================
 /** @file
  *  The implementation file for various decay nodes

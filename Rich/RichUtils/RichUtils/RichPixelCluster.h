@@ -12,24 +12,29 @@
 #ifndef RICHUTILS_RichPixelCluster_H
 #define RICHUTILS_RichPixelCluster_H 1
 
+#include <string.h>
+#include <algorithm>
+#include <list>
+#include <memory>
+#include <ostream>
+#include <string>
 // STL
 #include <vector>
-#include <list>
-#include <ostream>
-#include <memory>
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/SerializeSTL.h"
-
-// Kernel
-#include "Kernel/RichSmartID.h"
-#include "Kernel/MemPoolAlloc.h"
 #include "Kernel/FastAllocList.h"
 #include "Kernel/FastAllocVector.h"
-
+#include "Kernel/MemPoolAlloc.h"
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSide.h"
+// Kernel
+#include "Kernel/RichSmartID.h"
 // RichUtils
 #include "RichUtils/RichDAQDefinitions.h"
+
+class MsgStream;
 
 namespace Rich
 {

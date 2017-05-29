@@ -1,18 +1,23 @@
 // Include files 
-#include <stdexcept>
-#include <exception>
-
-// from Gaudi
-#include "GaudiAlg/Tuples.h"
-
-// local
-#include "PrepareVeloFullRawBuffer.h"
+#include <stddef.h>
+// stl
+#include <algorithm>
+#include <functional>
+#include <ostream>
+#include <vector>
 
 // data model
 #include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+// local
+#include "PrepareVeloFullRawBuffer.h"
 
-// stl
-#include <algorithm>
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 

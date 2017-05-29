@@ -1,8 +1,13 @@
 // GaudiKernel
-#include "GaudiKernel/MsgStream.h"
+#include <ostream>
+#include <string>
 
+#include "DetDesc/IPVolume.h"
 #include "DetDesc/PVolume.h"
 #include "DetDesc/PVolumeException.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
 
 
 

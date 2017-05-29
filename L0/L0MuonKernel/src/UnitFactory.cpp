@@ -1,13 +1,20 @@
 #include "L0MuonKernel/UnitFactory.h"
-#include "L0MuonKernel/MuonTriggerUnit.h"
-#include "L0MuonKernel/CtrlUnit.h"
-#include "L0MuonKernel/CrateUnit.h"
-#include "L0MuonKernel/BoardUnit.h"
+
+#include <xercesc/dom/DOMNamedNodeMap.hpp>
+#include <xercesc/dom/DOMNode.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <iostream>
+
 #include "L0MuonKernel/BCSUnit.h"
-#include "L0MuonKernel/ProcUnit.h"
+#include "L0MuonKernel/BoardUnit.h"
 #include "L0MuonKernel/CoreUnit.h"
-#include "L0MuonKernel/FormattingUnit.h"
+#include "L0MuonKernel/CrateUnit.h"
+#include "L0MuonKernel/CtrlUnit.h"
 #include "L0MuonKernel/FormattingOutUnit.h"
+#include "L0MuonKernel/FormattingUnit.h"
+#include "L0MuonKernel/MuonTriggerUnit.h"
+#include "L0MuonKernel/ProcUnit.h"
 
 L0Muon::UnitFactory* L0Muon::UnitFactory::m_instance=0;
 

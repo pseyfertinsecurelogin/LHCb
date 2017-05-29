@@ -1,8 +1,10 @@
 // fillstream method
 
 #include "Event/STTELL1Data.h"
-#include "Event/STTELL1EventInfo.h"
+
+#include <ext/alloc_traits.h>
 #include <iostream>
+#include <memory>
 
 std::ostream& LHCb::STTELL1Data::fillStream(std::ostream& s) const{
 

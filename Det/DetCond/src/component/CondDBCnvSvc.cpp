@@ -1,11 +1,19 @@
+#include <functional>
 #include <string>
 
 #include "CondDBCnvSvc.h"
 #include "DetCond/ICondDBReader.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiKernel/GenericAddress.h"
-#include "GaudiKernel/IDetDataSvc.h"
-#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Service.h"
+
+class IConverter;
+class ISvcLocator;
 
 /// Instantiation of a static factory to create instances of this service
 DECLARE_SERVICE_FACTORY(CondDBCnvSvc)

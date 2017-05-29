@@ -4,27 +4,29 @@
 // ============================================================================
 // STD&STL
 // ============================================================================
+#include <algorithm>
 #include <cmath>
-#include <climits>
 #include <complex>
-#include <cassert>
-// ============================================================================
-// LHCbMath
-// ============================================================================
-#include "LHCbMath/MoreFunctions.h"
-#include "LHCbMath/LHCbMath.h"
-#include "LHCbMath/Power.h"
-// ============================================================================
-// GSL 
-// ============================================================================
-#include "gsl/gsl_sf_hyperg.h"
-#include "gsl/gsl_sf_gamma.h"
-#include "gsl/gsl_sf_psi.h"
+#include <cstdlib>
+#include <limits>
+#include <vector>
+
+#include "Faddeeva.hh"
 // ============================================================================
 // Local
 // ============================================================================
 #include "GSL_sentry.h"
-#include "Faddeeva.hh"
+#include "LHCbMath/LHCbMath.h"
+#include "LHCbMath/Power.h"
+#include "gsl/gsl_errno.h"
+#include "gsl/gsl_sf_gamma.h"
+// ============================================================================
+// GSL 
+// ============================================================================
+#include "gsl/gsl_sf_hyperg.h"
+#include "gsl/gsl_sf_psi.h"
+#include "gsl/gsl_sf_result.h"
+
 // ============================================================================
 /** @file
  *  implementation file for function from file LHCbMath/MoreFunctions.h

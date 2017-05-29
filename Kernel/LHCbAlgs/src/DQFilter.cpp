@@ -1,9 +1,19 @@
 #include "DQFilter.h"
 
+#include <functional>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
 #include "GaudiKernel/Incident.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-#include "DetDesc/Condition.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/IAccept.h"
+
+class ISvcLocator;
 
 DQFilter::DQFilter(const std::string & name, ISvcLocator *pSvcLocator)
   : base_class(name, pSvcLocator)

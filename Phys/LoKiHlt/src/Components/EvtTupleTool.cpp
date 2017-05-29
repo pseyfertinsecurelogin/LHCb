@@ -3,24 +3,45 @@
 // ============================================================================
 // GaudiAlg
 // ============================================================================
+#include <functional>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/HltDecReports.h"
+#include "Event/L0DUReport.h"
+// ============================================================================
+// Event
+// ============================================================================
+#include "Event/ODIN.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
 #include "GaudiAlg/GaudiTool.h"
-#include "GaudiAlg/TupleObj.h"
 #include "GaudiAlg/Tuple.h"
+#include "GaudiAlg/TupleObj.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/StateMachine.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // DaVinciInterfaces
 // ============================================================================
 #include "Kernel/IEventTupleTool.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/BasicFunctors.h"
+#include "LoKi/Functor.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/ICoreFactory.h"   // void & numbers
 #include "LoKi/IHltFactory.h"    // ODIN, HDR & L0
-// ============================================================================
-// Event
-// ============================================================================
-#include "Event/ODIN.h"
-#include "Event/L0DUReport.h"
-#include "Event/HltDecReports.h"
+#include "LoKi/ILoKiSvc.h"
+
 // ============================================================================
 namespace LoKi
 {

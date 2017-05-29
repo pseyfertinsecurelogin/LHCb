@@ -1,16 +1,24 @@
 #ifndef SRC_DQACCEPTTOOL_H
 #define SRC_DQACCEPTTOOL_H 1
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/ToolHandle.h"
+#include "GaudiKernel/extends.h"
+// Implemented interfaces
+#include "Kernel/IAccept.h" // IAccept
 #include "Kernel/IDQFilter.h"
 #include "Kernel/IDQScanner.h"
 
-// Implemented interfaces
-#include "Kernel/IAccept.h" // IAccept
-
 class Condition;
+class IInterface;
+struct IAccept;
+struct IDQFilter;
+struct IDQScanner;
 
 /** @class DQAcceptTool DQAcceptTool.h src/DQAcceptTool.h
   *

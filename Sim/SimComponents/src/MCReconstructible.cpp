@@ -11,11 +11,31 @@
 // local
 #include "MCReconstructible.h"
 
+#include <boost/optional/optional.hpp>
+#include <stddef.h>
+#include <algorithm>
+#include <cmath>
+#include <functional>
+
+#include "CaloDet/DeCalorimeter.h"
 // the data
 #include "Event/MCParticle.h"
 #include "Event/MCTrackGeomCriteria.h"
-#include "CaloDet/DeCalorimeter.h"
+#include "Event/MCVertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Vector4DTypes.h"
+#include "Kernel/CaloCellID.h"
+#include "Kernel/ParticleID.h"
 #include "LHCbMath/LHCbMath.h"
+#include "MCInterfaces/IMCParticleSelector.h"
 
 //-----------------------------------------------------------------------------
 

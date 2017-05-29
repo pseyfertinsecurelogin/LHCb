@@ -3,12 +3,19 @@
 // ============================================================================
 // LHCbMath
 // ============================================================================
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <cmath>
+#include <iostream>
+
 #include "LHCbMath/LHCbMath.h"
+#include "LoKi/KinTypes.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Kinematics.h"
 #include "LoKi/MissingParticle.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::Kinematics::MissingParticle

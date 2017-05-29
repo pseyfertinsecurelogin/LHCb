@@ -5,12 +5,16 @@
   #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
 #endif
 
-#include "LHCbMath/FastRoots.h"
-#include "Kernel/CircleTraj.h"
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <cmath>
+#include <memory>
 
+#include "Kernel/CircleTraj.h"
+#include "Kernel/Trajectory.h"
+#include "LHCbMath/FastRoots.h"
 #include "Math/GenVector/AxisAngle.h"
-#include "vdt/exp.h"
-#include "vdt/log.h"
 #include "vdt/atan2.h"
 
 using namespace LHCb;

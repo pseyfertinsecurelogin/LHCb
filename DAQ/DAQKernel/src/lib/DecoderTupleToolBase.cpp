@@ -15,8 +15,5 @@
 // local
 #include "DAQKernel/DecoderTupleToolBase.h"
 
-// ============================================================================
-// Force creation of templated class
-#include "DecoderCommonBase.icpp"
 template class Decoder::CommonBase < GaudiTupleTool > ;
 // ============================================================================

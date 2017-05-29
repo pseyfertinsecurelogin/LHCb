@@ -9,25 +9,64 @@
  */
 //=============================================================================
 
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <Math/GenVector/Transform3D.h>
+#include <boost/container/vector.hpp>
+#include <ext/alloc_traits.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <map>
+#include <memory>
 // STL
 #include <sstream>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
-// Gaudi
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-#include "GaudiKernel/PhysicalConstants.h"
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/Bootstrap.h"
-
+#include "DetDesc/AlignmentCondition.h"
 // DetDesc
 #include "DetDesc/Condition.h"
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
+#include "DetDesc/ISolid.h"
 #include "DetDesc/SolidBox.h"
-
+#include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/Bootstrap.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/Point3DTypes.h"
+// Gaudi
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/ILHCbMagnetSvc.h"
+#include "Kernel/RichSmartID.h"
+#include "RichDet/DeRich.h"
+#include "RichDet/DeRichBase.h"
 // local
 #include "RichDet/DeRichHPD.h"
-#include "RichDet/DeRich.h"
+#include "RichDet/DeRichLocations.h"
 #include "RichDet/DeRichSystem.h"
-
+#include "RichDet/Rich1DTabFunc.h"
+#include "RichDet/Rich1DTabProperty.h"
+#include "RichUtils/RichDAQDefinitions.h"
 // VDT
 #include "vdt/atan2.h"
 #include "vdt/sincos.h"

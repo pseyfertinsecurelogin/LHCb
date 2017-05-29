@@ -1,24 +1,33 @@
 // Include files
 
-#include "GaudiKernel/IDetDataSvc.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/Time.h"
-#include "GaudiKernel/GaudiException.h"
-
-#include "DetCond/ICondDBReader.h"
-
+#include <CoolKernel/ChannelId.h>
+#include <CoolKernel/IField.h>
+#include <boost/none.hpp>
+#include <boost/utility/string_ref.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/XMLException.hpp>
 #include <xercesc/util/XMLString.hpp>
-
-#include "XmlTools/ValidInputSource.h"
-
-#include "CoolKernel/IObject.h"
-#include "CoolKernel/IRecord.h"
-#include "CoolKernel/RecordException.h"
+#include <algorithm>
+#include <istream>
+#include <memory>
 
 #include "CondDBCompression.h"
-
 // local
 #include "CondDBEntityResolver.h"
+#include "CoolKernel/RecordException.h"
+#include "DetCond/ICondDBReader.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IDetDataSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+#include "XmlTools/ValidInputSource.h"
+
+class IInterface;
 
 namespace {
 

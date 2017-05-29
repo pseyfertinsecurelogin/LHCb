@@ -1,19 +1,28 @@
 #ifndef _DeSTSector_H_
 #define _DeSTSector_H_
 
-#include <string>
-#include <vector>
+#include <iosfwd>
 #include <map>
-#include <utility>
 #include <memory>
+#include <string>
+#include <typeinfo>
+#include <utility>
+#include <vector>
 
-#include "Kernel/STChannelID.h"
+#include "DetDesc/Condition.h"
+#include "DetDesc/ParamValidDataObject.h"
+#include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
 #include "Kernel/LHCbConstants.h"
+#include "Kernel/STChannelID.h"
+#include "LHCbMath/LineTypes.h"
 #include "STDet/DeSTBaseElement.h"
 #include "STDet/DeSTSensor.h"
 
-#include "GaudiKernel/Plane3DTypes.h"
-#include "LHCbMath/LineTypes.h"
+class MsgStream;
 
 
 
@@ -30,8 +39,8 @@
 
 
 namespace LHCb{
-  class Trajectory;
   class PiecewiseTrajectory;
+  class Trajectory;
 }
 
 class DeSTSensor;

@@ -1,16 +1,25 @@
 // Include files
 // -------------
 
-// from Gaudi
-#include "GaudiKernel/IMagneticFieldSvc.h"
-#include "GaudiKernel/SystemOfUnits.h"
-
-// Math Definitions
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
+#include <Math/GenVector/PositionVector3D.h>
+#include <math.h>
+#include <functional>
 
 // local
 #include "BIntegrator.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+// from Gaudi
+#include "GaudiKernel/IMagneticFieldSvc.h"
+#include "GaudiKernel/MsgStream.h"
+// Math Definitions
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : BIntegrator

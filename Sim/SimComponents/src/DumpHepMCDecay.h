@@ -1,13 +1,18 @@
 // ============================================================================
 #ifndef SIM_DUMPHEPMCDECAY_H
 #define SIM_DUMPHEPMCDECAY_H 1
+#include <iostream>
+// ============================================================================
+#include <string>
+#include <vector>
+
 // ============================================================================
 // GaudiAlg
 // ============================================================================
 #include "GaudiAlg/GaudiAlgorithm.h"
-// ============================================================================
-#include <string>
-#include <vector>
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 namespace LHCb {
   class IParticlePropertySvc;

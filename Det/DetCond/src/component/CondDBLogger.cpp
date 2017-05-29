@@ -1,12 +1,19 @@
 // Include files
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/ClassID.h"
-#include "GaudiKernel/Time.h"
-
 #include <fstream>
+#include <functional>
 
 // local
 #include "CondDBLogger.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+
+class ISvcLocator;
 
 // Factory implementation
 DECLARE_SERVICE_FACTORY(CondDBLogger)

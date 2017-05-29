@@ -3,13 +3,23 @@
 #ifndef DETDESCCNV_XMLMIXTURECNV_H
 #define DETDESCCNV_XMLMIXTURECNV_H
 
-// Include files
-#include "DetDescCnv/XmlGenericCnv.h"
-#include "DetDesc/Mixture.h"
+#include <xercesc/util/Xerces_autoconf_config.hpp>
 #include <string>
 
+#include "DetDesc/CLIDMixture.h"
+#include "DetDesc/Mixture.h"
+// Include files
+#include "DetDescCnv/XmlGenericCnv.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
+
+class DataObject;
+class IOpaqueAddress;
 // Forward declarations
 class     ISvcLocator;
+namespace xercesc_3_1 {
+class DOMElement;
+}  // namespace xercesc_3_1
 template <class TYPE> class CnvFactory;
 
 

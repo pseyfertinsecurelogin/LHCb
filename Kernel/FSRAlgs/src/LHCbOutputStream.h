@@ -1,24 +1,32 @@
 #ifndef LHCB_OUTPUTSTREAM_H
 #define LHCB_OUTPUTSTREAM_H
 
+#include <functional>
+#include <map>
+// STL include files
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IConversionSvc.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 // Required for inheritance
 #include "GaudiKernel/IDataSelector.h"
 #include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/Property.h"
-
-// STL include files
-#include <memory>
-#include <vector>
-#include <string>
-
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 #include "LHCbOutputStreamAgent.h"
 
-// forward declarations
-class IRegistry;
+class DataStoreItem;
 class IConversionSvc;
 class IDataManagerSvc;
-class DataStoreItem;
+// forward declarations
+class IRegistry;
+class ISvcLocator;
 
 /** A small to stream Data I/O.
     Author:  M.Frank

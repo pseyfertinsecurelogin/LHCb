@@ -1,18 +1,25 @@
 #ifndef CALOEVENT_CALODIGITSFROMRAW_H 
 #define CALOEVENT_CALODIGITSFROMRAW_H 1
 
+#include <string>
+
+#include "CaloDAQ/ICaloEnergyFromRaw.h"
+#include "CaloDAQ/ICaloTriggerBitsFromRaw.h"
+#include "CaloDet/DeCalorimeter.h"
+// from LHCb
+#include "Event/CaloDigit.h"
+#include "Event/RawBankReadoutStatus.h"
+#include "Event/RawEvent.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-
-// from LHCb
-#include "Event/CaloDigit.h"
-#include "CaloDAQ/ICaloTriggerBitsFromRaw.h"
-#include "CaloDAQ/ICaloEnergyFromRaw.h"
 #include "GaudiAlg/ISequencerTimerTool.h"
-#include "CaloDet/DeCalorimeter.h"
-#include "Event/RawEvent.h"
-#include "Event/RawBankReadoutStatus.h"
+#include "GaudiKernel/StatusCode.h"
+
+class DeCalorimeter;
+class ISvcLocator;
+struct ICaloEnergyFromRaw;
+struct ICaloTriggerBitsFromRaw;
 
 /** @class CaloDigitsFromRaw CaloDigitsFromRaw.h component/CaloDigitsFromRaw.h
  *  Create the CaloDIgits containers from the Raw buffer

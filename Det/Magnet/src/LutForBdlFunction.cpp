@@ -1,5 +1,7 @@
 //$ Id: $
+#include <stddef.h>
 #include <iostream>
+
 #include "LutForBdlFunction.h"
 
 LutForBdlFunction::LutForBdlFunction(int nVar, int* nBinVar, double* minVar, double* maxVar) {

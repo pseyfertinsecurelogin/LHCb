@@ -1,8 +1,14 @@
 // $Id: GeometryInfoException.cpp,v 1.7 2009-04-17 08:54:24 cattanem Exp $
 /// GaudiKernel
-#include "GaudiKernel/MsgStream.h"
-#include "DetDesc/IGeometryInfo.h"
+#include <iomanip>
+#include <ostream>
+#include <string>
+
 #include "DetDesc/GeometryInfoException.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
 ///
 
 

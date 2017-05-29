@@ -1,10 +1,19 @@
-#include "Event/MCParticle.h"
+#include <stddef.h>
+#include <functional>
 
+#include "Event/MCFun.h"
+#include "Event/MCParticle.h"
+#include "Event/MCVertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/ParticleID.h"
 // Gaudi
 #include "MCParticleSelector.h"
-#include "Event/MCFun.h"
-
-#include "boost/limits.hpp"
 #include "boost/numeric/conversion/bounds.hpp"
 
 DECLARE_TOOL_FACTORY ( MCParticleSelector )

@@ -1,8 +1,29 @@
 // Include files 
 
-#include "Event/MCParticle.h"
+#include <ext/alloc_traits.h>
+#include <math.h>
+#include <functional>
+#include <memory>
+#include <vector>
+
 // local
 #include "CompareMCParticle.h"
+#include "Event/MCParticle.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/Vector4DTypes.h"
+#include "Kernel/ParticleID.h"
+
+class ISvcLocator;
+namespace LHCb {
+class MCVertex;
+}  // namespace LHCb
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CompareMCParticle

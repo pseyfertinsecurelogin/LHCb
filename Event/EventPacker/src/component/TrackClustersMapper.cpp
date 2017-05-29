@@ -1,8 +1,22 @@
 
-// Include files
-#include <iterator>
+#include <functional>
+#include <ostream>
+#include <utility>
+
+#include "Event/STCluster.h"
+#include "Event/VeloCluster.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IJobOptionsSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 // local
 #include "TrackClustersMapper.h"
+
+class IInterface;
 
 // ----------------------------------------------------------------------------
 // Implementation file for class: ParticlesAndVerticesMapper

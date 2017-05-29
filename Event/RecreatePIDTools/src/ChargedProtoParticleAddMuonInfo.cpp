@@ -12,6 +12,23 @@
 // local
 #include "ChargedProtoParticleAddMuonInfo.h"
 
+#include <stddef.h>
+#include <functional>
+#include <sstream>
+#include <utility>
+
+#include "Event/MuonPID.h"
+#include "Event/ProtoParticle.h"
+#include "Event/Track.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory

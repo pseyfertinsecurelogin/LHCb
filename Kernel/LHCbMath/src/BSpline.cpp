@@ -3,18 +3,28 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <functional>
+#include <iterator>
 #include <numeric>
+#include <string>
 #include <vector>
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/ToStream.h"
+#include "GaudiKernel/Lomont.h"
+#include "GaudiKernel/StatusCode.h"
+#include "LHCbMath/BSpline.h"
 // ============================================================================
 // LHCbMath 
 // ============================================================================
 #include "LHCbMath/LHCbMath.h"
-#include "LHCbMath/BSpline.h"
+#include "LHCbMath/NSphere.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class Gaudi::Math::BSpline 

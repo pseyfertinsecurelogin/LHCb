@@ -4,9 +4,19 @@
 // ============================================================================
 // LoKi 
 // ============================================================================
+#include <cstddef>
+#include <functional>
+#include <vector>
+
+#include "Event/MCParticle.h"
 #include "LoKi/Algs.h"
 #include "LoKi/MCAlgs.h"
-#include "LoKi/MCAlgsDicts.h"
+#include "LoKi/MCTypes.h"
+
+namespace LHCb {
+class MCVertex;
+}  // namespace LHCb
+
 // ============================================================================
 /** @file 
  *  Implementation file for namespace LoKi::Dicst::Algs

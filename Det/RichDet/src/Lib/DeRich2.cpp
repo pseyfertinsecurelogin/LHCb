@@ -8,17 +8,38 @@
 
 // Include files
 #include "RichDet/DeRich2.h"
-#include "RichDet/DeRichHPDPanel.h"
-#include "RichDet/DeRichRadiator.h"
-#include "RichDet/DeRichSphMirror.h"
 
-// Gaudi
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/Plane3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <array>
+#include <memory>
+#include <typeinfo>
+#include <vector>
 
+#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
 // DetDesc
 #include "DetDesc/Material.h"
-#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+// Gaudi
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/RichDetectorType.h"
+#include "RichDet/DeRichBase.h"
+#include "RichDet/DeRichLocations.h"
+#include "RichDet/DeRichSphMirror.h"
+#include "RichDet/Rich1DTabProperty.h"
+#include "RichDet/RichDetConfigType.h"
 
 //-----------------------------------------------------------------------------
 

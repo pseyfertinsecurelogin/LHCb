@@ -1,24 +1,37 @@
 #ifndef L0MUONTRIGGER_L0MUONALG_H
 #define L0MUONTRIGGER_L0MUONALG_H     1
 
-#include "L0Base/L0AlgBase.h"
-
-#include "MuonKernel/MuonSystemLayout.h"
-#include "ProcessorKernel/Property.h"
-//#include "ProcessorKernel/Unit.h"
-#include "L0MuonKernel/L0MUnit.h"
-#include "L0MuonKernel/L0MPtLUT.h"
-
-// Interface
-#include "L0Interfaces/IL0DUConfigProvider.h"
-#include "MuonDAQ/IMuonRawBuffer.h"
-#include "L0Interfaces/IL0MuonModifyInputTool.h"
-
-#include "L0MuonOutputs.h"
-
-#include "L0MuonKernel/MuonCandidate.h"
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "DetDesc/Condition.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/MuonTileID.h"
+#include "L0Base/L0AlgBase.h"
+// Interface
+#include "L0Interfaces/IL0DUConfigProvider.h"
+#include "L0Interfaces/IL0MuonModifyInputTool.h"
+#include "L0MuonKernel/L0MPtLUT.h"
+//#include "ProcessorKernel/Unit.h"
+#include "L0MuonKernel/L0MUnit.h"
+#include "L0MuonKernel/MuonCandidate.h"
+#include "L0MuonOutputs.h"
+#include "MuonDAQ/IMuonRawBuffer.h"
+#include "MuonKernel/MuonSystemLayout.h"
+#include "ProcessorKernel/Property.h"
+
+class Condition;
+class IMuonRawBuffer;
+class ISvcLocator;
+class L0MuonOutputs;
+namespace L0Muon {
+class L0MUnit;
+class Property;
+}  // namespace L0Muon
+struct IL0DUConfigProvider;
+struct IL0MuonModifyInputTool;
 
 /** @class L0MuonAlg L0MuonAlg.h component/L0MuonAlg.h
 

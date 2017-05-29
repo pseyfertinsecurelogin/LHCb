@@ -148,6 +148,7 @@
    (with various "HAVE_*" #defines to indicate features)
    if HAVE_CONFIG_H is #defined (in GNU autotools style). */
 
+#include "float.h"
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif
@@ -157,11 +158,11 @@
 
 #ifdef __cplusplus
 
-#  include "Faddeeva.hh"
-
-#  include <cfloat>
 #  include <cmath>
 #  include <limits>
+
+#  include "Faddeeva.hh"
+
 using namespace std;
 
 // use std::numeric_limits, since 1./0. and 0./0. fail with some compilers (MS)

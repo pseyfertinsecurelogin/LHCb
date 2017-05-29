@@ -3,17 +3,31 @@
 // ===========================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/ISvcLocator.h"
+#include <stddef.h>
+#include <string>
+
+#include "GaudiKernel/IAlgContextSvc.h"
+#include "GaudiKernel/IChronoSvc.h"
+#include "GaudiKernel/ICounterSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IHistogramSvc.h"
+#include "GaudiKernel/IRndmGenSvc.h"
+#include "GaudiKernel/IStatSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // PartProp
 // ============================================================================
 #include "Kernel/IParticlePropertySvc.h"
+#include "LoKi/ILoKiSvc.h"
+#include "LoKi/Report.h"
 // ============================================================================
 // LoKi
 // ===========================================================================
 #include "LoKi/Services.h"
 #include "LoKi/Welcome.h"
-#include "LoKi/Report.h"
+
 // ============================================================================
 /** @file
  *

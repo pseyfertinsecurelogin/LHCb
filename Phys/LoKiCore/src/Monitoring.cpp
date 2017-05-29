@@ -4,24 +4,27 @@
 // ============================================================================
 // GaudioKernel
 // ============================================================================
-#include "GaudiKernel/IAlgContextSvc.h"
-#include "GaudiKernel/IStatSvc.h"
-#include "GaudiKernel/ICounterSvc.h"
-#include "GaudiKernel/StatEntity.h"
-#include "GaudiKernel/Stat.h"
+#include <string>
+
 // ============================================================================
 // GaudiAlg 
 // ============================================================================
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiAlg/GetAlgs.h"
-// ============================================================================
-// LoKi
-// ============================================================================
-#include "LoKi/Monitoring.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Stat.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/ToStream.h"
+#include "LoKi/Monitor.h"
 #include "LoKi/Report.h"
 #include "LoKi/Services.h"
-#include "LoKi/Monitor.h"
+
+class IAlgContextSvc;
+class ICounterSvc;
+class IStatSvc;
+class StatEntity;
+
 // ============================================================================
 /*  get the (global) counter by name using IStatSvc 
  *  @param IStatSvc 

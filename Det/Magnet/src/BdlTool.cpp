@@ -1,15 +1,23 @@
 // Include files
-#include "GaudiKernel/IMagneticFieldSvc.h"
-
-// Units
-#include "GaudiKernel/SystemOfUnits.h"
-
-// Mathlib
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
+#include <math.h>
+#include <functional>
 
 // local
 #include "BdlTool.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IMagneticFieldSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+// Mathlib
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+// Units
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
 #include "LutForBdlFunction.h"
 
 // Instantiation of a static factory class used by clients to create

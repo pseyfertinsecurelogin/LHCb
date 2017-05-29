@@ -3,6 +3,26 @@
 // local
 #include "CaloMergeTAE.h"
 
+#include <stddef.h>
+#include <functional>
+#include <map>
+#include <utility>
+
+#include "CaloDet/CellParam.h"
+#include "CaloDet/DeCalorimeter.h"
+#include "CaloKernel/CaloVector.h"
+#include "Event/CaloAdc.h"
+#include "Event/CaloDigit.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/ToStream.h"
+#include "Kernel/CaloCellID.h"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloMergeTAE
 //

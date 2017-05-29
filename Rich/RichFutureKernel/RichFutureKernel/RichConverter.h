@@ -2,9 +2,13 @@
 #ifndef RICHFUTUREKERNEL_RICHCONVERTER_H
 #define RICHFUTUREKERNEL_RICHCONVERTER_H 1
 
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/MsgStream.h"
+#include "RichFutureKernel/RichCommonBase.h"
 // local
 #include "RichFutureKernel/RichConverter_Imp.h"
-#include "RichFutureKernel/RichCommonBase.h"
+
+class ISvcLocator;
 
 namespace Rich
 {

@@ -1,22 +1,34 @@
 // ROOT
-#include "TH2D.h"
-#include "TAxis.h"
+#include <TH2.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <functional>
 
-// Gaudi
-#include "GaudiUtils/Aida2ROOT.h"
-#include "GaudiUtils/HistoLabels.h"
-
+#include "AIDA/IHistogram1D.h"
+#include "AIDA/IHistogram2D.h"
+// Event/DigiEvent
+#include "Event/HCDigit.h"
 // LHCb
 // Event/DAQEvent
 #include "Event/ODIN.h"
+#include "Event/RawBank.h"
 #include "Event/RawEvent.h"
-// Event/DigiEvent
-#include "Event/HCDigit.h"
-// Kernel/LHCbKernel
-#include "Kernel/HCCellID.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+// Gaudi
+#include "GaudiUtils/Aida2ROOT.h"
+#include "GaudiUtils/HistoLabels.h"
 // Local
 #include "HCRawBankDecoder.h"
+// Kernel/LHCbKernel
+#include "Kernel/HCCellID.h"
+#include "TAxis.h"
+
+class ISvcLocator;
 
 using namespace Gaudi::Utils::Histos;
 

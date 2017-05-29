@@ -2,15 +2,12 @@
 
 #include <math.h>
 
-// from GaudiKernel
-#include "GaudiKernel/GenericMatrixTypes.h"
-#include "GaudiKernel/GenericVectorTypes.h"
-#include "GaudiKernel/SymmetricMatrixTypes.h"
-
-// local
-#include "Event/TrackTypes.h"
 #include "Event/StateVector.h"
 #include "Event/TrackParameters.h"
+// local
+#include "Event/TrackTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 using namespace LHCb;
 using namespace Gaudi;

@@ -2,9 +2,16 @@
 #define L0MUONKERNEL_BOARDUNIT_H     1
 
 #include <boost/dynamic_bitset.hpp>
+#include <string>
 #include <vector>
-#include "L0MuonKernel/ProcUnit.h"
+
+#include "Kernel/MuonTileID.h"
 #include "L0MuonKernel/L0MUnit.h"
+#include "L0MuonKernel/ProcUnit.h"
+
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 
 namespace L0Muon {

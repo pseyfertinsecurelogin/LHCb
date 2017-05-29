@@ -1,17 +1,22 @@
 #ifndef DECODEVELOFULLRAWBUFFER_H
 #define DECODEVELOFULLRAWBUFFER_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-
+#include "GaudiKernel/StatusCode.h"
+#include "Tell1Kernel/VeloDecodeConf.h"
+#include "Tell1Kernel/VeloDecodeCore.h"
+#include "VeloEvent/EvtInfo.h"
 // local
 #include "VeloEvent/VeloFullBank.h"
 #include "VeloEvent/VeloTELL1Data.h"
-#include "VeloEvent/EvtInfo.h"
-#include "Tell1Kernel/VeloDecodeCore.h"
-#include "Tell1Kernel/VeloDecodeConf.h"
 #include "VeloFullDecoder.h"
+
+class ISvcLocator;
 
 /** @class DecodeVeloFullRawBuffer DecodeVeloFullRawBuffer.h
  *

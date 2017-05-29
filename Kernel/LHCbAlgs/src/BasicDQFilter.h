@@ -1,16 +1,19 @@
 #ifndef SRC_BASICDQFILTER_H
 #define SRC_BASICDQFILTER_H 1
+#include <set>
 // Include files
 // from STL
 #include <string>
 #include <vector>
-#include <set>
 
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/extends.h"
 // Implemented interfaces
 #include "Kernel/IDQFilter.h" // IDQFilter
+
+class IInterface;
 
 /** Basic implementation of a IDQFilter.
  *

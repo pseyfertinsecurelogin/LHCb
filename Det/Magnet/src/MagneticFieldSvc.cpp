@@ -1,19 +1,25 @@
 // Include files
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/SystemOfUnits.h"
-
-#include "MagneticFieldSvc.h"
-#include "MagnetCondLocations.h"
-
-#include "GaudiKernel/Vector3DTypes.h"
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-
 #include <cstdlib>
 #include <fstream>
-#include <sstream>
+#include <functional>
 #include <map>
+#include <typeinfo>
+
+#include "DetDesc/Condition.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "MagnetCondLocations.h"
+#include "MagneticFieldSvc.h"
+
+class ISvcLocator;
 
 /** @file MagneticFieldSvc.cpp
  *  Implementation of MagneticFieldSvc class

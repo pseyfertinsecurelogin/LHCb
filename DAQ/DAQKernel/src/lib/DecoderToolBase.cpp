@@ -15,8 +15,5 @@
 // local
 #include "DAQKernel/DecoderToolBase.h"
 
-// ============================================================================
-// Force creation of templated class
-#include "DecoderCommonBase.icpp"
 template class Decoder::CommonBase<GaudiTool> ;
 // ============================================================================

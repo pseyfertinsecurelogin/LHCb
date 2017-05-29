@@ -1,9 +1,14 @@
-#include "Kernel/STChannelID.h"
-#include "Kernel/ITNames.h"
-
-
+#include <algorithm>
 #include <iostream>
+#include <iterator>
+#include <stdexcept>
 #include <string>
+#include <utility>
+#include <vector>
+
+#include "GaudiKernel/VectorMap.h"
+#include "Kernel/ITNames.h"
+#include "Kernel/STChannelID.h"
 
 std::string LHCb::ITNames::UniqueSectorToString(const LHCb::STChannelID& chan) {
   return UniqueLayerToString(chan) + SectorToString(chan);

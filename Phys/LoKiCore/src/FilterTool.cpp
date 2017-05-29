@@ -1,11 +1,25 @@
 // ============================================================================
 // Include files
 // ============================================================================
-#include "boost/algorithm/string/join.hpp"
+#include <functional>
+#include <string>
+#include <vector>
+
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/StateMachine.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/FilterTool.h"
+#include "boost/algorithm/string/join.hpp"
+
+class IInterface;
+
 // ============================================================================
 /** @file
  *  Implementation file for class LoKi::FilterTool

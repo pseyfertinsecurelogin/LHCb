@@ -3,27 +3,35 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/IHistogramSvc.h"
-#include "GaudiKernel/ToStream.h"
-#include "GaudiKernel/IAlgContextSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
+#include <string>
+
+#include "GaudiAlg/Fill.h"
+#include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiAlg/GaudiHistoID.h"
+#include "GaudiAlg/GaudiHistoTool.h"
+#include "GaudiAlg/GetAlgs.h"
 // ============================================================================
 // GaudiAlg
 // ============================================================================
 #include "GaudiAlg/IHistoTool.h"
-#include "GaudiAlg/GaudiHistos.h"
-#include "GaudiAlg/GaudiHistos.icpp"
-#include "GaudiAlg/GaudiHistoAlg.h"
-#include "GaudiAlg/GaudiHistoTool.h"
-#include "GaudiAlg/GetAlgs.h"
-#include "GaudiAlg/Fill.h"
+#include "GaudiKernel/HistoDef.h"
+#include "GaudiKernel/IHistogramSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/ToStream.h"
+#include "GaudiUtils/HistoTableFormat.h"
+#include "LoKi/Monitor.h"
+#include "LoKi/Report.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Services.h"
-#include "LoKi/HistoBook.h"
-#include "LoKi/Report.h"
-#include "LoKi/Monitor.h"
+
+class IAlgContextSvc;
+namespace AIDA {
+class IHistogram1D;
+}  // namespace AIDA
+
 // ============================================================================
 /** @file
  *  Implementation file for namespace LoKi::HistoBook

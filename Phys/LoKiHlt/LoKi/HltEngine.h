@@ -1,12 +1,19 @@
 // ============================================================================
 #ifndef LOKI_HltENGINE_H 
 #define LOKI_HltENGINE_H 1
+#include <string>
+
+#include "GaudiKernel/StatusCode.h"
+#include "LoKi/HLTTypes.h"
 // ============================================================================
 // Include files
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/IHltAntiFactory.h"
+#include "LoKi/L0Types.h"
+#include "LoKi/OdinTypes.h"
+
 // ============================================================================
 namespace LoKi 
 {

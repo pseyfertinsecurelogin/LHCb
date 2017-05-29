@@ -1,9 +1,28 @@
 // Include files 
 
+#include <stddef.h>
+#include <functional>
+
+#include "Event/L0DUChannel.h"
+#include "Event/L0DUConfig.h"
+#include "Event/L0DUDecision.h"
+#include "Event/L0DUElementaryCondition.h"
 // from LHCb
 #include "Event/ODIN.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IEventTimeDecoder.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/ToStream.h"
 // local
 #include "L0DUEmulatorTool.h"
+#include "L0Interfaces/IL0CondDBProvider.h"
+#include "L0Interfaces/IL0ProcessorDataDecoder.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0DUEmulatorTool

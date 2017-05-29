@@ -9,11 +9,19 @@
  */
 //-----------------------------------------------------------------------------
 
-// Gaudi
-#include "GaudiKernel/GaudiException.h"
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <string>
+#include <vector>
 
 // local
 #include "Event/MCRichSegment.h"
+// Gaudi
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 Gaudi::XYZPoint
 LHCb::MCRichSegment::bestPoint( const double fraction ) const

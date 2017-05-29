@@ -3,6 +3,18 @@
 // local
 #include "CompareCaloHypo.h"
 
+#include <functional>
+
+#include "Event/CaloHypo.h"
+#include "Event/PackedCaloHypo.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : CompareCaloHypo
 //

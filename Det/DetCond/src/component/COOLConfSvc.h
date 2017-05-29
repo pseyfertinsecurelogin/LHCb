@@ -1,11 +1,23 @@
 #ifndef COMPONENT_COOLCONFSVC_H
 #define COMPONENT_COOLCONFSVC_H 1
 
+#include <CoolApplication/Application.h>
+#include <CoolKernel/IDatabaseSvc.h>
+#include <RelationalAccess/IConnectionService.h>
+#include <RelationalAccess/IReplicaSortingAlgorithm.h>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "DetCond/ICOOLConfSvc.h"
+#include "GaudiKernel/GaudiException.h"
 // Include files
 #include "GaudiKernel/Service.h"
-#include "GaudiKernel/GaudiException.h"
-#include "DetCond/ICOOLConfSvc.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
 
+class ICOOLConfSvc;
+class ISvcLocator;
 // Forward declarations
 template <class TYPE> class SvcFactory;
 

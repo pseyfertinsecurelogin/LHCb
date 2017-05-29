@@ -1,6 +1,11 @@
 
 #include "STDet/DeITSensor.h"
-#include "STDet/DeITSector.h"
+
+#include <typeinfo>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 
 /** @file DeITSensor.cpp
 *

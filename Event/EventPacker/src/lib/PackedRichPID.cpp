@@ -4,9 +4,14 @@
 
 // Checks
 #include "Event/PackedEventChecks.h"
-
+#include "Event/Track.h"
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/SmartRef.h"
+#include "Kernel/RichParticleIDType.h"
 
 using namespace LHCb;
 

@@ -1,14 +1,21 @@
 #ifndef L0DUFROMRAWALG_H
 #define L0DUFROMRAWALG_H 1
 
+#include <string>
+
+#include "Event/L0DUReport.h"
+#include "Event/L0ProcessorData.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 //Base
 #include "L0Base/L0FromRawBase.h"
-
 // Interfaces
 #include "L0Interfaces/IL0DUFromRawTool.h"
+
+class ISvcLocator;
+struct IL0DUFromRawTool;
 
 
 /** @class L0DUFromRawAlg L0DUFromRawAlg.h

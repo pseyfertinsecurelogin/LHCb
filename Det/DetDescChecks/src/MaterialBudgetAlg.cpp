@@ -4,20 +4,23 @@
 // ============================================================================
 // STL & STD 
 // ============================================================================
-#include <functional>
+#include <math.h>
 #include <algorithm>
-// ============================================================================
-// from Gaudi
-// ============================================================================
-#include "GaudiKernel/IRndmGenSvc.h"
-#include "GaudiKernel/RndmGenerators.h"
-#include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/VectorsAsProperty.h"
+#include <functional>
+
 // ============================================================================
 // DetDesc 
 // ============================================================================
 #include "DetDesc/ITransportSvc.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/RndmGenerators.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/VectorsAsProperty.h"
 // ============================================================================
 // local
 // ============================================================================
@@ -26,6 +29,9 @@
 // Boost 
 // ============================================================================
 #include "boost/progress.hpp"
+
+class ISvcLocator;
+
 // ============================================================================
 /** @file MaterialBudgetAlg.cpp
  *  

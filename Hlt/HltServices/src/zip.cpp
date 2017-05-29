@@ -1,15 +1,32 @@
 #include "zip.h"
+
 #include <boost/crc.hpp>                             // for boost::crc_32_type
-#include "boost/regex.hpp"
+#include <boost/date_time/date.hpp>
+#include <boost/date_time/gregorian/greg_date.hpp>
+#include <boost/date_time/gregorian_calendar.hpp>
+#include <boost/date_time/gregorian_calendar.ipp>
+#include <boost/date_time/posix_time/posix_time_config.hpp>
+#include <boost/date_time/posix_time/posix_time_duration.hpp>
+#include <boost/date_time/posix_time/posix_time_io.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/time_duration.hpp>
+#include <boost/iostreams/categories.hpp>
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/traits.hpp>
+#include <boost/iterator/iterator_traits.hpp>
+#include <boost/range/iterator_range_core.hpp>
+#include <algorithm>
+#include <fstream>
+#include <sstream>
 #ifndef _WIN32
 #include "boost/iostreams/filter/bzip2.hpp"
 #endif
+#include "boost/iostreams/copy.hpp"
+#include "boost/iostreams/device/back_inserter.hpp"
 #include "boost/iostreams/filter/zlib.hpp"
 #include "boost/iostreams/slice.hpp"
-#include "boost/filesystem/path.hpp"
-#include "boost/iostreams/device/back_inserter.hpp"
-#include "boost/iostreams/copy.hpp"
-#include "boost/date_time/posix_time/posix_time.hpp" // ZIP date/time
+
 using namespace std;
 
 namespace

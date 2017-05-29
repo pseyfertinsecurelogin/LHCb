@@ -1,5 +1,12 @@
 #include "HltRawBankDecoderBase.h"
+
+#include <assert.h>
+#include <algorithm>
+
 #include "Event/RawEvent.h"
+#include "GaudiKernel/MsgStream.h"
+
+class ISvcLocator;
 
 namespace {
 const Gaudi::StringKey Hlt1SelectionID{"Hlt1SelectionID"};

@@ -3,12 +3,18 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
-#include <fstream>
+#include <string>
+
+#include "GaudiKernel/StatusCode.h"
+#include "LoKi/IMCHybridTool.h"
+#include "LoKi/Interface.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/MCHybridEngineActor.h"
+#include "LoKi/MCTypes.h"
 #include "LoKi/Report.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::HybridEngineActor

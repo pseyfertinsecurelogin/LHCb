@@ -2,6 +2,16 @@
 // local
 #include "RichFutureMCUtils/TrackToMCParticle.h"
 
+#include <stdlib.h>
+
+#include "Kernel/ParticleID.h"
+#include "Relations/Range.h"
+#include "Relations/WEntry.h"
+
+namespace LHCb {
+class Track;
+}  // namespace LHCb
+
 using namespace Rich::Future::MC::Relations;
 
 const LHCb::MCParticle *

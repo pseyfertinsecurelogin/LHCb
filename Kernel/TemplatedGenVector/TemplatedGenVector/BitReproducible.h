@@ -17,11 +17,10 @@
 #ifndef LHCbROOT_Math_GenVector_BitReproducible
 #define LHCbROOT_Math_GenVector_BitReproducible  1
 
+#include <exception>
+#include <iomanip>
 #include <iostream>
 #include <string>
-#include <exception>
-
-#include <iomanip>
 
 namespace LHCbROOT {
  namespace Math {

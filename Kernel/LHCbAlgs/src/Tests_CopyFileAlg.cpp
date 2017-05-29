@@ -1,8 +1,21 @@
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <functional>
+#include <string>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "Gaudi/PluginService.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
-#include <boost/filesystem.hpp>
 using namespace boost::filesystem;
 
 namespace LHCbAlgsTests

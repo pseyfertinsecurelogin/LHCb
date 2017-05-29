@@ -1,10 +1,20 @@
 // Include files 
 
-#include "DetDesc/Condition.h"
-#include "DetDesc/AlignmentCondition.h"
+#include <stddef.h>
+#include <functional>
+#include <typeinfo>
 
+#include "DetDesc/AlignmentCondition.h"
+#include "DetDesc/Condition.h"
 // local
 #include "ExampleAlg.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : ExampleAlg

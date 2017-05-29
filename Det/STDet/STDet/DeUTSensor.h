@@ -3,8 +3,12 @@
 
 #include <string>
 
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/STChannelID.h"
 #include "STDet/DeSTSensor.h"
+#include "STDet/DeUTSector.h"
+#include "STDet/STDetTraits.h"
 
 /** @class DeUTSensor DeUTSensor.h STDet/DeUTSensor.h
  *

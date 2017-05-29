@@ -1,11 +1,22 @@
 // Include files
 
+#include <algorithm>
+#include <iterator>
+
+#include "Event/RawBank.h"
 // from Gaudi
 #include "Event/RawEvent.h"
-
 // local
 #include "FTRawBankDecoder.h"
 #include "FTRawBankParams.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "Kernel/FTChannelID.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FTRawBankDecoder

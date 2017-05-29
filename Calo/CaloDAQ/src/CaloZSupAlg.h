@@ -1,19 +1,24 @@
 #ifndef   CALODIGIT_CALOZSUPALG_H
 #define   CALODIGIT_CALOZSUPALG_H 1
 
-// from Gaudi 
-#include "GaudiKernel/IRndmGenSvc.h" 
-#include "GaudiAlg/GaudiAlgorithm.h"
-
-// from CaloKernel
-#include "Kernel/CaloCellID.h"
-#include "CaloKernel/CaloVector.h"
-
-// CaloDet
-#include "CaloDet/DeCalorimeter.h"
+#include <string>
 
 // CaloDAQ
 #include "CaloDAQ/ICaloEnergyFromRaw.h"
+// CaloDet
+#include "CaloDet/DeCalorimeter.h"
+#include "CaloKernel/CaloVector.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+// from Gaudi 
+#include "GaudiKernel/IRndmGenSvc.h" 
+#include "GaudiKernel/StatusCode.h"
+// from CaloKernel
+#include "Kernel/CaloCellID.h"
+
+class DeCalorimeter;
+class ISvcLocator;
+struct ICaloEnergyFromRaw;
+template <class T> class AlgFactory;
 
 /** @class CaloZSupAlg CaloZSupAlg.h   
  *

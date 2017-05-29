@@ -8,6 +8,11 @@
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/IAlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/extend_interfaces.h"
+
+class IAlgTool;
+
 // ============================================================================
 // forward declarations
 // ============================================================================

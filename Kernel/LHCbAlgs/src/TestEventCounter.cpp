@@ -3,6 +3,18 @@
 // local
 #include "TestEventCounter.h"
 
+#include <functional>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/IEventCounter.h"
+
+class ISvcLocator;
+
 using namespace LHCbAlgsTests;
 
 // ----------------------------------------------------------------------------

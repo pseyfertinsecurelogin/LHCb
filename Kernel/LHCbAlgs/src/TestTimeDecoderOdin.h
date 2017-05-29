@@ -2,14 +2,19 @@
 #ifndef TESTTIMEDECODERODIN_H
 #define TESTTIMEDECODERODIN_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/IEventTimeDecoder.h"            // Interface
+#include "GaudiKernel/Time.h"
 
 // forward declarations
 class IDataProviderSvc;
 class IIncidentSvc;
+class IInterface;
+
 namespace LHCb
 {
   class ODIN;

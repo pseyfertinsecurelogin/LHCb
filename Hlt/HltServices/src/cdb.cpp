@@ -4,7 +4,6 @@
  * Public domain.
  */
 
-#include <sys/types.h>
 #ifdef _WIN32
 # include <windows.h>
 #else
@@ -21,9 +20,10 @@
  * Public domain.
  */
 
-#include "cdb.h"
 #include <errno.h>
 #include <string.h>
+
+#include "cdb.h"
 
 #ifndef EPROTO
 # define EPROTO EINVAL
@@ -435,8 +435,6 @@ cdb_seek(int fd, const void *key, unsigned klen, unsigned *dlenp)
  * Public domain.
  */
 
-#include "cdb.h"
-
 unsigned
 cdb_unpack(const unsigned char buf[4])
 {
@@ -500,8 +498,6 @@ cdb_make_add(struct cdb_make *cdbmp,
  * Public domain.
  */
 
-#include <stdlib.h>
-#include <unistd.h>
 #include <assert.h>
 
 static void
@@ -702,10 +698,6 @@ cdb_make_put(struct cdb_make *cdbmp,
  * Public domain.
  */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-
 void
 cdb_pack(unsigned num, unsigned char buf[4])
 {
@@ -883,8 +875,6 @@ cdb_make_finish(struct cdb_make *cdbmp)
  * This file is a part of tinycdb package by Michael Tokarev, mjt@corpit.ru.
  * Public domain.
  */
-
-#include "cdb.h"
 
 unsigned
 cdb_hash(const void *buf, unsigned len)

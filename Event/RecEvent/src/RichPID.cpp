@@ -9,16 +9,17 @@
  */
 //-----------------------------------------------------------------------------
 
+#include <boost/format.hpp>
 // STL
 #include <sstream>
-#include <algorithm>
 #include <string>
 
 // RichEvent includes
 #include "Event/RichPID.h"
-
-// Boost
-#include "boost/format.hpp"
+#include "Event/Track.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/RichParticleIDType.h"
+#include "Kernel/RichRadiatorType.h"
 
 std::string LHCb::RichPID::pidType() const
 {

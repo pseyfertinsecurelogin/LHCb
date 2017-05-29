@@ -7,10 +7,12 @@
 
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-
+#include "GaudiKernel/StatusCode.h"
 // from LHCb
 #include "Kernel/IEvtTypeSvc.h"
 
+class ISvcLocator;
+struct IEvtTypeSvc;
 struct IMCDecayFinder;
 
 

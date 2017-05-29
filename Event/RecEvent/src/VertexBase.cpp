@@ -1,5 +1,8 @@
 #include "Event/VertexBase.h"
 
+#include <Math/GenVector/PositionVector3D.h>
+#include <Math/SMatrix.h>
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : VertexBase
 //

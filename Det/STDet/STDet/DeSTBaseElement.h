@@ -1,16 +1,23 @@
 #ifndef _DeSTBaseElement_H_
 #define _DeSTBaseElement_H_
 
+#include <algorithm>
 #include <string>
 #include <vector>
-#include <algorithm>
 
-#include "STDet/STDetTraits.h"
-#include "Kernel/STChannelID.h"
 #include "DetDesc/DetectorElement.h"
+#include "DetDesc/DetectorElementException.h"
+#include "DetDesc/IDetectorElement.h"
 #include "GaudiKernel/GaudiException.h"
-
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STChannelID.h"
+#include "STDet/STDetTraits.h"
 
 class DeSTBaseElement : public DetectorElement  {
 

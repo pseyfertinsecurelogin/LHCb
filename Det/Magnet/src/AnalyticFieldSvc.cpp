@@ -5,24 +5,26 @@
  *  @date   03/07
  */
 // Include files
-#include "Riostream.h"
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/SystemOfUnits.h"
+#include <math.h>
+#include <cstdlib>
+#include <cstring> // for strtok with gcc 4.3
+#include <functional>
+#include <iostream>
 
 #include "AnalyticFieldSvc.h"
-
-
-#include "GaudiKernel/Vector3DTypes.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Point3DTypes.h"
-
-#include "MagVec.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
 #include "MagMat.h"
+#include "MagVec.h"
 
-
-#include <cstdlib>
-#include <fstream>
-#include <cstring> // for strtok with gcc 4.3
+class ISvcLocator;
 
 // number of regions for the parametrization
 #define NREG 15

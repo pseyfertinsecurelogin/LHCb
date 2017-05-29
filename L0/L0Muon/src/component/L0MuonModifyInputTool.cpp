@@ -1,9 +1,17 @@
 // Include files 
 
-// from Gaudi
-#include "GaudiKernel/IRndmGen.h"
-#include "GaudiKernel/IRndmGenSvc.h"
+#include <stddef.h>
+#include <functional>
 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IRndmGenSvc.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/RndmGenerators.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/MuonTileID.h"
 // local
 #include "L0MuonModifyInputTool.h"
 

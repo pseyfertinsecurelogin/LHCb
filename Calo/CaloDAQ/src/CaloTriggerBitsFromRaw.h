@@ -1,11 +1,19 @@
 #ifndef CALOTRIGGERBITSFROMRAW_H 
 #define CALOTRIGGERBITSFROMRAW_H 1
 
+#include <string>
+
+#include "CaloDAQ/ICaloTriggerBitsFromRaw.h"            // Interface
+#include "CaloReadoutTool.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "CaloDAQ/ICaloTriggerBitsFromRaw.h"            // Interface
-#include "CaloReadoutTool.h"
+#include "GaudiKernel/StatusCode.h"
+
+class IInterface;
+namespace LHCb {
+class RawBank;
+}  // namespace LHCb
 
 
 /** @class CaloTriggerBitsFromRaw CaloTriggerBitsFromRaw.h

@@ -1,22 +1,21 @@
 // Include files
-#include <cstdlib>
-#include <iostream>
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/util/XMLString.hpp>
 #include <string>
-#include <vector>
-#include <algorithm>
-
-#include "GaudiKernel/GenericAddress.h"
-#include "GaudiKernel/IConversionSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/LinkManager.h"
-#include "GaudiKernel/MsgStream.h"
 
 #include "DetDesc/TabulatedProperty.h"
-#include "XmlTools/IXmlSvc.h"
-#include "DetDescCnv/XmlCnvException.h"
-
+#include "GaudiKernel/Converter.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
 #include "XmlSurfaceCnv.h"
+#include "XmlTools/IXmlSvc.h"
+
+class DataObject;
+class IOpaqueAddress;
+class ISvcLocator;
 
 // -----------------------------------------------------------------------
 // Instantiation of a static factory class used by clients to create

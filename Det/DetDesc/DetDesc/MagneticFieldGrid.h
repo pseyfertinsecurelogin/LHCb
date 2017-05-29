@@ -1,16 +1,15 @@
 #ifndef MAGFIELDGRID_H
 #define MAGFIELDGRID_H
 
-// STD
-#include <vector>
 #include <array>
 #include <cmath>
+// STD
+#include <vector>
 
+#include "GaudiKernel/GenericMatrixTypes.h"
 // Gaudi
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
-#include "GaudiKernel/GenericMatrixTypes.h"
-
 // VectorClass
 #include "VectorClass/vectorclass.h"
 

@@ -1,12 +1,26 @@
 // Include files
-#include "Event/RawEvent.h"
+#include <ext/alloc_traits.h>
+#include <stddef.h>
+#include <functional>
+#include <memory>
 
+#include "CaloDet/DeCalorimeter.h"
+// local
+#include "CaloFillPrsSpdRawBuffer.h"
 // from Gaudi
 #include "Event/CaloAdc.h"
 #include "Event/L0PrsSpdHit.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/CaloCellID.h"
 
-// local
-#include "CaloFillPrsSpdRawBuffer.h"
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloFillPrsSpdRawBuffer

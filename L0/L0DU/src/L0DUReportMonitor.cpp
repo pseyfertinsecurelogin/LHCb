@@ -1,13 +1,42 @@
 // Include files 
+#include <TAxis.h>
+#include <TH1.h>
+#include <TH2.h>
+#include <limits.h>
+#include <stddef.h>
+#include <bitset>
 #include <cmath>
+#include <functional>
+#include <ostream>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
+#include "AIDA/IHistogram1D.h"
 // from Gaudi
 #include "AIDA/IHistogram2D.h"
-#include "AIDA/IHistogram1D.h"
+#include "Event/L0DUChannel.h"
+#include "Event/L0DUConfig.h"
+#include "Event/L0DUDecision.h"
+#include "Event/L0DUElementaryCondition.h"
+#include "Event/L0DUElementaryData.h"
+#include "Event/L0DUReport.h"
+#include "Event/L0DUTrigger.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiAlg/GaudiHistos.h"
+#include "GaudiAlg/Maps.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Map.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/ToStream.h"
 #include "GaudiUtils/Aida2ROOT.h"
 // local
 #include "L0DUReportMonitor.h"
-#include <bitset>
-#include <limits.h>
+
+class ISvcLocator;
 // local
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0DUReportMonitor

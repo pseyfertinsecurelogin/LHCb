@@ -1,13 +1,23 @@
 // Include files 
 
+#include <functional>
+
 // from Event
 #include "Event/MCParticle.h"
-
+#include "Event/MCVertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // from MCInterfaces
 #include "MCInterfaces/IPrintMCDecayTreeTool.h"
-
 // local
 #include "PrintMCDecayTreeAlg.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PrintMCDecayTreeAlg

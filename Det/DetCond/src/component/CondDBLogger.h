@@ -1,10 +1,21 @@
 #ifndef COMPONENT_CONDDBLOGGER_H
 #define COMPONENT_CONDDBLOGGER_H 1
 
+#include <CoolKernel/ChannelId.h>
+#include <iosfwd>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "DetCond/ICondDBReader.h"
 // Include files
 #include "GaudiKernel/Service.h"
-#include "DetCond/ICondDBReader.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/CondDBNameTagPair.h"
 
+class ISvcLocator;
 template <class TYPE> class SvcFactory;
 
 /** @class CondDBLogger CondDBLogger.h component/CondDBLogger.h

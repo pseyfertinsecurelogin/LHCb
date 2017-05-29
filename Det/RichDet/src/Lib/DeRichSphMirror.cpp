@@ -7,26 +7,48 @@
  *  @date   2004-06-18
  */
 
-// Include files
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/RegistryEntry.h"
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-#include "GaudiKernel/SystemOfUnits.h"
-
-#include "GaudiKernel/Vector3DTypes.h"
-#include "GaudiKernel/Transform3DTypes.h"
-
-#include "Kernel/RichDetectorType.h"
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/Plane3D.h>
+#include <Math/GenVector/Polar3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <boost/container/vector.hpp>
+#include <math.h>
+#include <stdlib.h>
+#include <memory>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
 /// Detector description classes
 #include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/SolidSphere.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/ISolid.h"
 #include "DetDesc/SolidBoolean.h"
+#include "DetDesc/SolidChild.h"
+#include "DetDesc/SolidSphere.h"
 #include "DetDesc/Surface.h"
-
+#include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+// Include files
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/RegistryEntry.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/RichDetectorType.h"
+#include "RichDet/DeRichBase.h"
 #include "RichDet/DeRichSphMirror.h"
-#include "RichDet/DeRich.h"
+#include "RichDet/Rich1DTabProperty.h"
 
 //======================================================================
 

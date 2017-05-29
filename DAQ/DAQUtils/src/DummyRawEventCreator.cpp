@@ -1,13 +1,21 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/IEventTimeDecoder.h"
-
-// local
-#include "Event/RawEvent.h"
-#include "Event/ODIN.h"
+#include <stddef.h>
+#include <functional>
 
 #include "DummyRawEventCreator.h"
+#include "Event/RawBank.h"
+// local
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+// from Gaudi
+#include "GaudiKernel/IEventTimeDecoder.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DummyRawEventCreator

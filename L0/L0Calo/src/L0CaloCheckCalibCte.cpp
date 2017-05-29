@@ -3,10 +3,25 @@
 // local
 #include "L0CaloCheckCalibCte.h"
 
-// From CaloDet
-#include "CaloDet/DeCalorimeter.h"
+#include <functional>
+#include <map>
+#include <utility>
+
 #include "CaloDAQ/ICaloDataProvider.h"
 #include "CaloDAQ/ICaloL0DataProvider.h"
+#include "CaloDet/CellParam.h"
+// From CaloDet
+#include "CaloDet/DeCalorimeter.h"
+#include "Event/CaloAdc.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/CaloCellID.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0CaloCheckCalibCte

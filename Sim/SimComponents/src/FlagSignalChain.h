@@ -1,11 +1,21 @@
 #ifndef FLAGSIGNALCHAIN_H
 #define FLAGSIGNALCHAIN_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/extends.h"
 // Interface
 #include "MCInterfaces/IFlagSignalChain.h"
+
+class IInterface;
+namespace LHCb {
+class MCParticle;
+}  // namespace LHCb
+struct IFlagSignalChain;
 
 
 /** @class FlagSignalChain FlagSignalChain.h

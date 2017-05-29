@@ -1,22 +1,34 @@
 // Framework include files
-#include "GaudiKernel/IRegistry.h"
+#include <ctype.h>
+#include <string.h>
+#include <algorithm>
+#include <cstdlib>
+#include <exception>
+#include <utility>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "Gaudi/PluginService.h"
+#include "GaudiKernel/AttribStringParser.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/DataStoreItem.h"
+#include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/IAlgManager.h"
-#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/IAlgorithm.h"
 #include "GaudiKernel/IConversionSvc.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IPersistencySvc.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/Incident.h"
 #include "GaudiKernel/IIncidentSvc.h"
-
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IPersistencySvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/Incident.h"
 #include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/strcasecmp.h"
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/DataStoreItem.h"
-#include "GaudiKernel/AttribStringParser.h"
-
+#include "GaudiKernel/System.h"
 #include "LHCbOutputStream.h"
+
+class IOpaqueAddress;
 
 namespace {
 // Remove all items from the output streamer list;

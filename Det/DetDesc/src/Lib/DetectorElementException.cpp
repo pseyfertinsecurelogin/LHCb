@@ -1,8 +1,13 @@
 // GaudiKernel
-#include "GaudiKernel/MsgStream.h"
+#include <ostream>
+#include <string>
+
+#include "DetDesc/DetectorElement.h"
 // DetDesc 
 #include "DetDesc/DetectorElementException.h"
-#include "DetDesc/DetectorElement.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
 
 //////////////////////////////////////////////////////////////////////////////
 DetectorElementException::DetectorElementException

@@ -1,14 +1,28 @@
 // Include files 
 
-// from Event
-#include "Event/MCParticle.h"
-#include "Event/MCCaloDigit.h"
+#include <functional>
+#include <vector>
+
 #include "Event/L0CaloCandidate.h"
 #include "Event/L0DUBase.h"
-
-#include "Linker/LinkerWithKey.h"
+#include "Event/MCCaloDigit.h"
+#include "Event/MCCaloHit.h"
+// from Event
+#include "Event/MCParticle.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectVector.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "Kernel/CaloCellID.h"
 // local
 #include "L0CaloToMCParticleAsct.h"
+#include "Linker/LinkerWithKey.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0CaloToMCParticleAsct

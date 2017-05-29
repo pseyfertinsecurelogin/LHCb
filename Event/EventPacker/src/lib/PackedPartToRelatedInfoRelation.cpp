@@ -1,11 +1,21 @@
 
 #include "Event/PackedPartToRelatedInfoRelation.h"
 
+#include <functional>
+
 // Checks
 #include "Event/PackedEventChecks.h"
-
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/VectorMap.h"
+#include "Relations/Entry.h"
+#include "Relations/IRelation.h"
 
 using namespace LHCb;
 

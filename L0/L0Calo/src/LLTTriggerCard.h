@@ -4,6 +4,7 @@
 
 #include "CaloDet/CaloCardParams.h"
 #include "CaloDet/DeCalorimeter.h"
+#include "Kernel/CaloCellID.h"
 
 /** @class LLTTriggerCard LLTTriggerCard.h
  * 

@@ -4,13 +4,29 @@
 // ============================================================================
 // DAQEvent
 // ============================================================================
+#include <functional>
+#include <string>
+
 #include "Event/ODIN.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/BasicFunctors.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/FilterAlg.h"
-#include "LoKi/OdinTypes.h"
+#include "LoKi/Functor.h"
 #include "LoKi/IHltFactory.h"
+#include "LoKi/OdinTypes.h"
+
+class ISvcLocator;
+
 // ============================================================================
 namespace LoKi
 {

@@ -1,16 +1,29 @@
 // Include files
-#include "boost/format.hpp"
+#include <assert.h>
 #include <algorithm>
+#include <functional>
+#include <iterator>
+#include <memory>
 #include <numeric>
+#include <utility>
+#include <vector>
 
+#include "Event/RawBank.h"
 #include "Event/RawEvent.h"
-
+#include "Event/Track.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatEntity.h"
 // local
 #include "HltTrackReportsDecoder.h"
 #include "HltTrackReportsWriter.h"
 #include "HltTrackingCoder.h"
+#include "Kernel/LHCbID.h"
 
-#include "Event/Track.h"
+class ISvcLocator;
 
 using namespace LHCb;
 

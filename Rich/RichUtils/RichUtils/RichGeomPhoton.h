@@ -18,13 +18,12 @@
 // geometry
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
-
-// RichUtils
-#include "RichUtils/RichPixelCluster.h"
-
+#include "Kernel/FastAllocVector.h"
 // Kernel
 #include "Kernel/MemPoolAlloc.h"
-#include "Kernel/FastAllocVector.h"
+#include "Kernel/RichSmartID.h"
+// RichUtils
+#include "RichUtils/RichPixelCluster.h"
 
 // Forward declarations
 class DeRichSphMirror;

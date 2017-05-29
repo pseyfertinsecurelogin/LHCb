@@ -1,5 +1,14 @@
 #include "L0MuonKernel/SelectionUnit.h"
-#include "L0MuonKernel/CrateUnit.h"
+
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <utility>
+
+#include "L0MuonKernel/MuonCandidate.h"
+#include "ProcessorKernel/Unit.h"
+
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 L0Muon::SelectionUnit::SelectionUnit(){}
 

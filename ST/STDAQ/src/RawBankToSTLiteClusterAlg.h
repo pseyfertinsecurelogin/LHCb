@@ -1,15 +1,18 @@
 #ifndef RAWBANKTOSTLITECLUSTERALG_H
 #define RAWBANKTOSTLITECLUSTERALG_H 1
 
-#include "STDecodingBaseAlg.h"
-#include "Event/RawBank.h"
-#include "Kernel/STDAQDefinitions.h"
-
-#include "Event/STLiteCluster.h"
-
-#include <vector>
+#include <functional>
 #include <string>
 #include <utility>
+#include <vector>
+
+#include "Event/RawBank.h"
+#include "Event/STLiteCluster.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STChannelID.h"
+#include "Kernel/STDAQDefinitions.h"
+#include "Kernel/StripRepresentation.h"
+#include "STDecodingBaseAlg.h"
 
 /** @class RawBankToSTLiteClusterAlg RawBankToSTLiteClusterAlg.h
  *
@@ -22,12 +25,13 @@
 
 #include "Kernel/STClusterWord.h"
 
-class SiADCWord;
 class STTell1Board;
+class SiADCWord;
 
 namespace LHCb{
  class STChannelID;
  class STLiteCluster;
+class RawEvent;
 }
 
 class RawBankToSTLiteClusterAlg : public STDecodingBaseAlg {
@@ -91,8 +95,10 @@ private:
 
 };
 
-#include "Kernel/STTell1Board.h"
 #include "Kernel/ISTReadoutTool.h"
+#include "Kernel/STTell1Board.h"
+
+class ISvcLocator;
 
 inline void RawBankToSTLiteClusterAlg::createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion,
                                                      const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters* fCont,

@@ -1,13 +1,14 @@
 // DetDesc
 #include "DetDesc/TabulatedProperty.h"
 
-// GaudiKernel
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/GaudiException.h"
-
+#include <iomanip>
 // STL
 #include <string>
 #include <vector>
+
+#include "GaudiKernel/GaudiException.h"
+// GaudiKernel
+#include "GaudiKernel/IRegistry.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 TabulatedProperty::TabulatedProperty( const std::string& /*Name*/ )

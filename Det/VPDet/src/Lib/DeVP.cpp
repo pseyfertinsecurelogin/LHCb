@@ -1,14 +1,22 @@
+#include <math.h>
 #include <algorithm>
+#include <iomanip>
+#include <iosfwd>
+#include <string>
+#include <vector>
 
-// Gaudi
-#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/SystemOfUnits.h"
-
-// Det/DetDesc
-#include "DetDesc/Condition.h"
-
 // Local
 #include "VPDet/DeVP.h"
+#include "VPDet/DeVPSensor.h"
 #include "getOutputLevel.h"
 
 //============================================================================

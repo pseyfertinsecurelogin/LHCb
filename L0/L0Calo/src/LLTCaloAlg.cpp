@@ -1,15 +1,30 @@
 /// local
 #include "LLTCaloAlg.h"
 
-// From Event
-#include "Event/L0CaloCandidate.h"
-#include "Event/L0CaloAdc.h"
+#include <functional>
+#include <memory>
 
 // From Calo
 #include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"
-
+#include "CaloDet/CaloCardParams.h"
+#include "CaloDet/DeCalorimeter.h"
+#include "DetDesc/Condition.h"
+#include "Event/L0CaloAdc.h"
+// From Event
+#include "Event/L0CaloCandidate.h"
+#include "Event/L0DUBase.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartRef.h"
 // From Kernel
 #include "Kernel/CaloCellID.h"
+
+class ISvcLocator;
 
 //
 //  LLT calorimeter trigger simulation algorithm

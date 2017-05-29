@@ -11,9 +11,10 @@
 //
 // ============================================================================
 // DetDesc 
-#include  "DetDescCnv/XmlUserDetElemCnv.h"
 // CaloDet 
 #include  "CaloDet/DeSubCalorimeter.h"
+#include  "DetDescCnv/XmlUserDetElemCnv.h"
+#include "GaudiKernel/Converter.h"
 
 // ============================================================================
 /** @file XmlDeSubCalorimeterCnv.cpp

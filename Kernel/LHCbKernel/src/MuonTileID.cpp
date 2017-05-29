@@ -1,7 +1,9 @@
 // Include files
 
 #include "Kernel/MuonTileID.h"
-#include <numeric>
+
+#include <stdio.h>
+#include <algorithm>
 
 LHCb::MuonTileID::MuonTileID(const MuonTileID& id,
                              const IMuonLayout& lay,

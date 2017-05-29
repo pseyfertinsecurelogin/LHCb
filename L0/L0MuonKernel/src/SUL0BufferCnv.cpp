@@ -1,7 +1,14 @@
 #include "L0MuonKernel/SUL0BufferCnv.h"
-#include "ProcessorKernel/RegisterFactory.h"
-#include "ProcessorKernel/Register.h"
+
+#include <stdio.h>
+#include <iomanip>
 #include <iostream>
+
+#include "ProcessorKernel/RegisterFactory.h"
+
+namespace L0Muon {
+class Register;
+}  // namespace L0Muon
 
 /**
    Constructor.

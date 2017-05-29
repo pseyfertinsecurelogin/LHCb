@@ -1,9 +1,29 @@
 // Include files
 
+#include <functional>
+#include <ostream>
+
+#include "Event/L0DUChannel.h"
+#include "Event/L0DUConfig.h"
+#include "Event/L0DUDecision.h"
 // from Gaudi
 #include "Event/L0DUReport.h"
+#include "Event/L0DUTemplateConfig.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/ToStream.h"
 // local
 #include "L0DUFromRawTool.h"
+#include "L0Interfaces/IL0CondDBProvider.h"
+#include "L0Interfaces/IL0DUConfigProvider.h"
+#include "L0Interfaces/IL0DUEmulatorTool.h"
+#include "L0Interfaces/IL0DUFromRawTool.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0DUFromRawTool

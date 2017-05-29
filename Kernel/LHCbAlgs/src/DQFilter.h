@@ -8,14 +8,25 @@
 #ifndef DQFILTER_H_
 #define DQFILTER_H_
 
+#include <string>
+#include <vector>
+
 // Include files
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/ToolHandle.h"
+#include "GaudiKernel/extends.h"
 #include "Kernel/IAccept.h"
 
 class Condition;
+class IIncidentListener;
 class IIncidentSvc;
+class ISvcLocator;
+class Incident;
+struct IAccept;
 
 /** @class DQFilter
  *  Small algorithm to filter events according to the Data Quality flags stored

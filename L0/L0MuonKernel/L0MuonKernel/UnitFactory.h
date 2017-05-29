@@ -3,12 +3,17 @@
 #ifndef L0MUONKERNEL_UNITFACTORY_H
 #define L0MUONKERNEL_UNITFACTORY_H     1
 
-#include <string>
-
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/parsers/AbstractDOMParser.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/XercesDefs.hpp>
+#include <string>
+
+namespace xercesc_3_1 {
+class DOMNamedNodeMap;
+class DOMNode;
+}  // namespace xercesc_3_1
 
 XERCES_CPP_NAMESPACE_USE
 

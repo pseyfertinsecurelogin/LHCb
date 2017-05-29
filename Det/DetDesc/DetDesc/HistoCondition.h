@@ -2,13 +2,21 @@
 // ============================================================================
 #ifndef DETDESC_HISTOCONDITION_H
 #define DETDESC_HISTOCONDITION_H 1
+#include <TH1.h>
+#include <TH2.h>
+
+#include "DetDesc/Condition.h"
 // ============================================================================
 // Include files
 // ============================================================================
 // DetDesc
 // ============================================================================
 #include "DetDesc/HistoParam.h"
-#include "DetDesc/Condition.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ValidDataObject;
+
 // ============================================================================
 namespace DetDesc
 {

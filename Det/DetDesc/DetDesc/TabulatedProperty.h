@@ -1,13 +1,18 @@
 #ifndef     DETDESC_TABULATEDPROPERTY_H
 #define     DETDESC_TABULATEDPROPERTY_H 1
+#include <iostream>
+#include <string>
+#include <utility>
 /// STL
 #include <vector>
-#include <iostream>
-/// GaudiKernel
-#include "GaudiKernel/MsgStream.h"
+
+#include "DetDesc/CLIDTabulatedProperty.h"
 /// DetDesc
 #include "DetDesc/ValidDataObject.h"
-#include "DetDesc/CLIDTabulatedProperty.h"
+#include "GaudiKernel/ClassID.h"
+/// GaudiKernel
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
 ///
 
 /** @class TabulatedProperty TabulatedProperty.h DetDesc/TabulatedProperty.h

@@ -84,6 +84,8 @@
 
 #include "ranvec1.h"
 
+#include <x86intrin.h>
+
 #ifdef VCL_NAMESPACE
 namespace VCL_NAMESPACE {
 #endif

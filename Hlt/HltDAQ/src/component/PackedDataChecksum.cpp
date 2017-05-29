@@ -1,5 +1,18 @@
 #include "PackedDataChecksum.h"
 
+#include "Event/PackedCaloCluster.h"
+#include "Event/PackedCaloHypo.h"
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedMuonPID.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
+#include "Event/PackedParticle.h"
+#include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedRichPID.h"
+#include "Event/PackedTrack.h"
+#include "Event/PackedVertex.h"
+
 namespace PackedDataPersistence {
 
 template<>

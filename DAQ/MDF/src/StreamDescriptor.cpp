@@ -10,23 +10,25 @@
 
 // Include files
 #include "MDF/StreamDescriptor.h"
+
 #include <fcntl.h>
-#include <cstdio>
-#include <iostream>
-#include <cstdlib>
-#include <exception>
-#include <map>
-#include <cstring> // For memcpy, memset with gcc 4.3
+#include <sys/socket.h>
 #include <sys/stat.h>
+#include <cstdio>
+#include <cstring> // For memcpy, memset with gcc 4.3
+#include <map>
+#include <utility>
 
 #ifdef _WIN32
   #include <io.h>
+
   static const int S_IRWXU = (S_IREAD|S_IWRITE);
   static const int S_IRWXG = 0;
   #define lseek64 _lseeki64
 #else
   #include <ctype.h>
   #include <unistd.h>
+
   static const int O_BINARY = 0;
   #ifdef __APPLE__
     inline long long lseek64(int fd, long long offset, int where)  {
@@ -38,6 +40,7 @@
 namespace Networking {
 #ifdef _WIN32
   #include "Winsock2.h"
+
   typedef char SockOpt_t;
   typedef int  AddrLen_t;
   struct __init__ {
@@ -56,9 +59,10 @@ namespace Networking {
   static __init__ g_init;
 
 #else
-  #include <netinet/in.h>
   #include <arpa/inet.h>
   #include <netdb.h>
+  #include <netinet/in.h>
+
   int (*closesocket)(int) = ::close;
   typedef int SockOpt_t;
   typedef socklen_t AddrLen_t;
@@ -66,8 +70,9 @@ namespace Networking {
   static const int _SOCK_STREAM = SOCK_STREAM;
   static const int _IPPROTO_IP  = IPPROTO_IP;
 }
-#include "MDF/PosixIO.h"
 #include "GaudiKernel/System.h"
+#include "MDF/PosixIO.h"
+
 namespace FileIO {
   using ::close;
   using ::read;

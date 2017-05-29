@@ -1,11 +1,29 @@
 #ifndef CALODATAPROVIDER_H
 #define CALODATAPROVIDER_H 1
 
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "CaloDAQ/ICaloDataProvider.h"            // Interface
+#include "CaloKernel/CaloVector.h"
+#include "CaloReadoutTool.h"
+#include "Event/CaloAdc.h"
+#include "Event/CaloDigit.h"
+#include "Event/RawBankReadoutStatus.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "CaloDAQ/ICaloDataProvider.h"            // Interface
-#include "CaloReadoutTool.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/CaloCellCode.h"
+#include "Kernel/CaloCellID.h"
+
+class IInterface;
+namespace LHCb {
+class RawBank;
+}  // namespace LHCb
 
 /** @class CaloDataProvider CaloDataProvider.h
  *  Fast access to calorimeter data from raw

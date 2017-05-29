@@ -1,10 +1,17 @@
 
 #include "STDet/DeSTLayer.h"
-#include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/SolidBox.h"
 
+#include <math.h>
+#include <ostream>
+#include <typeinfo>
+
+#include "DetDesc/DetectorElementException.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
 
 /** @file DeSTLayer.cpp
 *

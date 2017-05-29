@@ -2,11 +2,27 @@
 // local
 #include "Event/PackedParticle.h"
 
+#include <Math/SMatrix.h>
+#include <boost/array.hpp>
+#include <ostream>
+
 // Checks
 #include "Event/PackedEventChecks.h"
-
+#include "Event/ProtoParticle.h"
+#include "Event/Vertex.h"
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/GenericMatrixTypes.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "GaudiKernel/Vector4DTypes.h"
+#include "Kernel/ParticleID.h"
 
 using namespace LHCb;
 

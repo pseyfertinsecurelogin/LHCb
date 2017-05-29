@@ -2,17 +2,27 @@
   #pragma warning(disable:2259)
 #endif
 
-// Include files
-#include "RelationalAccess/ConnectionService.h"
-#include "RelationalAccess/IConnectionServiceConfiguration.h"
-#include "RelationalAccess/IReplicaSortingAlgorithm.h"
-#include "RelationalAccess/IDatabaseServiceDescription.h"
-
-#include "CoolKernel/IDatabaseSvc.h"
-#include "CoolApplication/Application.h"
-#include "CoolApplication/DatabaseSvcFactory.h"
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/time_system_counted.hpp>
+#include <boost/random/additive_combine.hpp>
+#include <algorithm>
+#include <functional>
+#include <map>
+#include <utility>
 
 #include "COOLConfSvc.h"
+#include "CoolApplication/Application.h"
+#include "CoolKernel/IDatabaseSvc.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/System.h"
+#include "RelationalAccess/IConnectionServiceConfiguration.h"
+#include "RelationalAccess/IDatabaseServiceDescription.h"
+#include "RelationalAccess/IReplicaSortingAlgorithm.h"
 
 #ifdef WIN32
 #define NOMSG
@@ -21,10 +31,12 @@
 
 // For the case insensitive string comparison (boost::algorithm::icontains).
 #include "boost/algorithm/string/predicate.hpp"
-// For random numbers not affecting simulation.
-#include "boost/random/linear_congruential.hpp"
 //#include "boost/random/uniform_smallint.hpp"
 #include "boost/date_time/posix_time/posix_time_types.hpp"
+// For random numbers not affecting simulation.
+#include "boost/random/linear_congruential.hpp"
+
+class ISvcLocator;
 
 namespace
 {

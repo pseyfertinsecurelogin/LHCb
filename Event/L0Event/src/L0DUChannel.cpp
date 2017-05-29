@@ -1,10 +1,12 @@
 // Include files 
-#include <utility>
-#include <string>
-#include <map>
 #include <sstream>
+#include <string>
+#include <utility>
 
 #include "Event/L0DUChannel.h"
+#include "Event/L0DUCounter.h"
+#include "Event/L0DUDecision.h"
+#include "Event/L0DUElementaryCondition.h"
 
 //-----------------------------------------------------------------------------
 // Auxilliary Implementation file for L0DUChannel Event classes

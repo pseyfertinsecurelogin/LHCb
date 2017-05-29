@@ -1,9 +1,19 @@
 // $Id: TimingTool.cpp,v 1.3 2006-11-30 15:57:28 cattanem Exp $
 // Include files 
 
+#include <functional>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IChronoStatSvc.h"
+#include "GaudiKernel/IChronoSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IRndmGenSvc.h"
+#include "GaudiKernel/Property.h"
 // from Gaudi
 #include "GaudiKernel/RndmGenerators.h" 
-
+#include "GaudiKernel/SmartIF.h"
 // local
 #include "TimingTool.h"
 

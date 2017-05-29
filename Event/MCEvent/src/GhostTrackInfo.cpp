@@ -2,6 +2,10 @@
 // local
 #include "Event/GhostTrackInfo.h"
 
+namespace LHCb {
+class MCParticle;
+}  // namespace LHCb
+
 // fillstream method
 std::ostream& LHCb::GhostTrackInfo::fillStream(std::ostream& s) const
 {

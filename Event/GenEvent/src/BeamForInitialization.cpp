@@ -1,9 +1,6 @@
 // local
 #include "GenEvent/BeamForInitialization.h"
 
-// Include files
-#include "Event/BeamParameters.h"
-
 //-----------------------------------------------------------------------------
 // Implementation file for class : BeamForInitialization
 //

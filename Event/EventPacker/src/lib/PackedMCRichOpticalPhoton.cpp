@@ -1,11 +1,16 @@
 // local
 #include "Event/PackedMCRichOpticalPhoton.h"
 
+#include "Event/MCRichHit.h"
 // Checks
 #include "Event/PackedEventChecks.h"
-
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 using namespace LHCb;
 

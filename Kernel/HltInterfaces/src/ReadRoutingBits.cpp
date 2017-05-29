@@ -1,5 +1,12 @@
 #include "Kernel/ReadRoutingBits.h"
 
+#include <string>
+
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : ReadRoutingBits
 //

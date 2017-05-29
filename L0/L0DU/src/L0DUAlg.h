@@ -1,16 +1,29 @@
 #ifndef L0DUAlg_H
 #define L0DUAlg_H 1
 
+#include <map>
+#include <string>
+#include <vector>
+
+#include "Event/RawBank.h"
+//Event
+#include "Event/RawEvent.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-//Event
-#include "Event/RawEvent.h"
+#include "GaudiKernel/StatusCode.h"
 //Base
 #include "L0Base/L0AlgBase.h"
 // Interface
 #include "L0Interfaces/IL0DUConfigProvider.h"
 #include "L0Interfaces/IL0DUEmulatorTool.h"
+
+class ISvcLocator;
+namespace LHCb {
+class L0DUConfig;
+}  // namespace LHCb
+struct IL0DUConfigProvider;
+struct IL0DUEmulatorTool;
 
 /** @class L0DUAlg L0DUAlg.h
  *  L0DUAlg report

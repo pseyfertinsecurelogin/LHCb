@@ -1,11 +1,11 @@
 #ifndef OTDET_RTRELATION
 #define OTDET_RTRELATION
 
-#include <vector>
 #include <algorithm>
+#include <iterator>
+#include <vector>
 
 #include "GaudiKernel/Kernel.h"
-
 #include "LHCbMath/ChebyshevApprox.h"
 #include "LHCbMath/PolyEval.h"
 

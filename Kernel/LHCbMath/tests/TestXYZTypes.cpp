@@ -1,20 +1,25 @@
 
+#include <Eigen/src/Core/Assign.h>
+#include <Eigen/src/Core/Matrix.h>
+#include <Eigen/src/Core/Redux.h>
+#include <Eigen/src/Core/util/Macros.h>
+#include <Eigen/src/Geometry/Hyperplane.h>
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <iostream>
 // STL
 #include <random>
-#include <vector>
 
+#include "GaudiKernel/Plane3DTypes.h"
 // Gaudi
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
-
 // Eigen
 #include "LHCbMath/EigenTypes.h"
+#include "src/Core/MatrixBase.h"
 
 // VectorClass
 //#include "LHCbMath/VectorClassTypes.h"
-
-// VDT
-#include "vdt/sqrt.h"
 
 int main ( int /*argc*/, char** /*argv*/ )
 {

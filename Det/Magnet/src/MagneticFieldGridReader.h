@@ -1,9 +1,11 @@
 #ifndef MAGNET_MagneticFieldGridReader
 #define MAGNET_MagneticFieldGridReader
 
-#include <vector>
 #include <string>
+#include <vector>
+
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/Vector3DTypes.h"
 
 class IMessageSvc ;

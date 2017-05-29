@@ -5,14 +5,20 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <functional>
+#include <stddef.h>
 #include <algorithm>
+#include <ostream>
+#include <vector>
+
 #include "GaudiKernel/SerializeSTL.h"
-// ============================================================================
-// PartProp
-// ============================================================================
-#include "Kernel/ParticleID.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/Nodes.h"
+#include "Kernel/iNode.h"
+
+namespace LHCb {
+class IParticlePropertySvc;
+class ParticleID;
+}  // namespace LHCb
 // ============================================================================
 /** @file 
  *  The implementation file for various decay nodes 

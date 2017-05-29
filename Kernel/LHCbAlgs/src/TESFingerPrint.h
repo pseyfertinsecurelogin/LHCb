@@ -3,13 +3,16 @@
 #define TESFINGERPRINT_H 1
 
 #include <map>
+#include <string>
 
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/IDataSelector.h"
+#include "GaudiKernel/StatusCode.h"
 
 class IDataStoreLeaves;
+class ISvcLocator;
 
 /** @class TESFingerPrint TESFingerPrint.h
  *

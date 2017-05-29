@@ -1,10 +1,35 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/SystemOfUnits.h"
+#include <ctype.h>
+#include <algorithm>
+#include <functional>
+#include <memory>
+#include <ostream>
+#include <vector>
 
+#include "CaloDAQ/ICaloEnergyFromRaw.h"
+#include "CaloDAQ/ICaloTriggerBitsFromRaw.h"
+#include "CaloDet/DeCalorimeter.h"
 // local
 #include "CaloDigitsFromRaw.h"
+#include "Event/CaloAdc.h"
+#include "Event/CaloDigit.h"
+#include "Event/RawBankReadoutStatus.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+// from Gaudi
+#include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/CaloCellCode.h"
+#include "Kernel/CaloCellID.h"
+
+class ISvcLocator;
 
 namespace {
 

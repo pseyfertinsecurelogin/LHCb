@@ -4,8 +4,16 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include <iterator>
+
+#include "Event/MCParticle.h"
 #include "LoKi/MCExtract.h"
-#include "LoKi/MCExtractDicts.h"
+#include "LoKi/MCTypes.h"
+
+namespace LHCb {
+class MCVertex;
+}  // namespace LHCb
+
 // ============================================================================
 /** @file 
  *  Implementation file for class for functions LoKi::Dicts::Exract::MCExtractDicts

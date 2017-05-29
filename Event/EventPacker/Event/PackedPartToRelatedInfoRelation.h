@@ -1,23 +1,30 @@
 #ifndef EVENT_PackedPartToRelatedInfoRelation_H
 #define EVENT_PackedPartToRelatedInfoRelation_H 1
 
+#include <stdint.h>
+#include <ostream>
+#include <stdexcept>
 // STL
 #include <string>
+#include <utility>
 #include <vector>
 
-// Kernel
-#include "Event/StandardPacker.h"
-#include "Relations/Relation1D.h"
-
+#include "Event/Particle.h"
 // Event
 #include "Event/RelatedInfoMap.h"
-#include "Event/Particle.h"
-
+// Kernel
+#include "Event/StandardPacker.h"
+#include "GaudiKernel/ClassID.h"
 // Gaudi
 #include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/StatusCode.h"
-#include "GaudiKernel/LinkManager.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Relations/Relation.h"
+#include "Relations/Relation1D.h"
+
+class GaudiAlgorithm;
 
 namespace LHCb
 {

@@ -3,32 +3,27 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <string>
+#include <boost/functional/hash/hash.hpp>
 #include <sstream>
+#include <string>
+
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/System.h"
-#include "GaudiKernel/StatusCode.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/Hash.h"
-// ============================================================================
-// Kernel
-// ============================================================================
-#include "Kernel/InstanceCounter.h"
 // ============================================================================
 // local
 // ============================================================================
 #include "LoKi/AuxFunBase.h"
+#include "LoKi/Exception.h"
+#include "LoKi/ILoKiSvc.h"
+#include "LoKi/Interface.h"
 #include "LoKi/Report.h"
 #include "LoKi/Welcome.h"
-#include "LoKi/Exception.h"
 #include "LoKi/shifts.h"
-#include "LoKi/Services.h"
-// ============================================================================
-// Boost
-// ============================================================================
-#include "boost/functional/hash.hpp"
+
 // ============================================================================
 /** @file
  *

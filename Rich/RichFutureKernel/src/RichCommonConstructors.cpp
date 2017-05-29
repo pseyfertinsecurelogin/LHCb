@@ -9,16 +9,27 @@
  */
 //-----------------------------------------------------------------------------
 
+#include <functional>
+#include <string>
+
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiAlg/GaudiHistoTool.h"
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiAlg/GaudiTupleAlg.h"
 #include "GaudiAlg/GaudiTupleTool.h"
-
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+#include "RichFutureKernel/RichCommonBase.h"
 // local
 #include "RichFutureKernel/RichConverter_Imp.h"
-#include "RichFutureKernel/RichCommonBase.h"
 #include "RichFutureKernel/RichHistoBase.h"
+
+class IInterface;
+class ISvcLocator;
 
 namespace Rich
 {

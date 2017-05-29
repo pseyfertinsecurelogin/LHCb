@@ -1,15 +1,21 @@
 // Include files
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/GaudiException.h"
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <ext/alloc_traits.h>
+#include <algorithm>
+#include <functional>
+#include <numeric>
 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Vector3DTypes.h"
 #include "MultipleMagneticFieldSvc.h"
 
-#include "GaudiKernel/Vector3DTypes.h"
-#include "GaudiKernel/Point3DTypes.h"
-
-#include <cstdlib>
-#include <numeric>
+class ISvcLocator;
 
 /** @file MultipleMagneticFieldSvc.cpp
  *  Implementation of MultipleMagneticFieldSvc class

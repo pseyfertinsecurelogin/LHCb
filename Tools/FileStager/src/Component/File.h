@@ -1,12 +1,18 @@
 #ifndef FILE_H
 #define FILE_H 1
 
+#include <boost/cstdint.hpp>
 // boost
 #include <boost/optional.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
+#include <boost/optional/optional.hpp>
 #include <boost/thread/condition_variable.hpp>
-#include <boost/cstdint.hpp>
+#include <boost/thread/lock_guard.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/pthread/condition_variable_fwd.hpp>
+#include <boost/thread/pthread/mutex.hpp>
+#include <boost/thread/thread.hpp>
+#include <stdint.h>
+#include <string>
 
 /** @class File File.h
  *

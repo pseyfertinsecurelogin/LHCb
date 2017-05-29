@@ -8,16 +8,29 @@
 //  Author     : M.Frank
 //====================================================================
 
-// Framework include files
-#include "MDF/MDFIO.h"
-#include "MDF/MDFHeader.h"
-#include "MDF/RawEventHelpers.h"
-#include "MDF/RawDataSelector.h"
-#include "Event/RawBank.h"
-#include "GaudiUtils/IIODataManager.h"
-
+#include <stdio.h>
 // C++ include files
 #include <cctype>
+#include <functional>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/RawBank.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IEvtSelector.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/StreamBuffer.h"
+#include "GaudiUtils/IIODataManager.h"
+#include "MDF/MDFHeader.h"
+// Framework include files
+#include "MDF/MDFIO.h"
+#include "MDF/RawDataSelector.h"
+
+class IMessageSvc;
+class ISvcLocator;
 
 /*
  *  LHCb namespace declaration

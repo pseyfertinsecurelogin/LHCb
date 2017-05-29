@@ -1,14 +1,23 @@
 #ifndef _DEUTMODULE_H_
 #define _DEUTMODULE_H_
 
-#include <vector>
+#include <iosfwd>
 #include <string>
+#include <typeinfo>
+#include <vector>
 
+#include "DetDesc/ParamValidDataObject.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/STChannelID.h"
 #include "STDet/DeSTBaseElement.h"
+#include "STDet/STDetTraits.h"
 
-class DeUTSensor;
 class DeUTLayer;
+class DeUTSector;
+class DeUTSensor;
+class MsgStream;
 
 /** @class DeUTModule DeUTModule.h STDet/DeUTModule.h
  *

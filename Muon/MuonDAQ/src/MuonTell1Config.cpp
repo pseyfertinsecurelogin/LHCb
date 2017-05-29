@@ -3,6 +3,26 @@
 // local
 #include "MuonTell1Config.h"
 
+#include <functional>
+#include <map>
+#include <utility>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "MuonDAQ/IMuonTell1Config.h"
+#include "MuonDet/DeMuonDetector.h"
+#include "MuonDet/MuonDAQHelper.h"
+#include "MuonDet/MuonL1Board.h"
+#include "MuonDet/MuonNamespace.h"
+#include "MuonDet/MuonODEBoard.h"
+#include "MuonDet/MuonTSMap.h"
+#include "MuonTell1ConfigData.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : MuonTell1Config
 //

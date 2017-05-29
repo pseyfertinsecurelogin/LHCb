@@ -1,8 +1,15 @@
 
-#include "STDet/DeITStation.h"
-#include "STDet/DeITLayer.h"
-#include "STDet/DeITBox.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/ITNames.h"
+#include "Kernel/STChannelID.h"
+#include "STDet/DeITBox.h"
+#include "STDet/DeITLayer.h"
+#include "STDet/DeSTBaseElement.h"
 
 /** @file DeITBox.cpp
 *
@@ -14,6 +21,10 @@
 //STL
 #include <algorithm>
 #include <numeric>
+#include <ostream>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
 using namespace LHCb;
 

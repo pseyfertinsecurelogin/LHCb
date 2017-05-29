@@ -1,15 +1,17 @@
 #ifndef DETDESC_PARAM_H
 #define DETDESC_PARAM_H 1
 
-// Include files
-#include <string>
-#include <vector>
 #include <map>
 #include <memory>
 #include <sstream>
+// Include files
+#include <string>
+#include <typeinfo>
+#include <vector>
 
 #include "DetDesc/BasicParam.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
 
 /** @class Param Param.h DetDesc/Param.h
  *
@@ -67,6 +69,7 @@ private:
 };
 
 #include "GaudiKernel/SerializeSTL.h"
+
 /// String representation for printout
 template<class T>
 inline std::string Param<T>::toStr() const {

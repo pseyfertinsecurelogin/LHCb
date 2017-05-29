@@ -1,11 +1,23 @@
 /// STL and STD
+#include <algorithm>
 #include <cmath>
+#include <iomanip>
 #include <iostream>
+#include <memory>
 #include <numeric>
-/// DetDesc
-#include "DetDesc/MaterialException.h"
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "DetDesc/Element.h"
 #include "DetDesc/Isotope.h"
+#include "DetDesc/Material.h"
+/// DetDesc
+#include "DetDesc/MaterialException.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SystemOfUnits.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////////////

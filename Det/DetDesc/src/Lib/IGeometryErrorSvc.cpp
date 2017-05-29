@@ -4,6 +4,9 @@
 // DetDesc 
 // ============================================================================
 #include "DetDesc/IGeometryErrorSvc.h"
+
+#include "GaudiKernel/IInterface.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class DetDesc::IGeometryErrorSvc

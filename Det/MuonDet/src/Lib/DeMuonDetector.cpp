@@ -1,16 +1,46 @@
 // Include files
-#include "MuonChamberLayout.h"
-#include "MuonDet/DeMuonDetector.h"
-#include "MuonDet/MuonChamberGrid.h"
-#include "MuonDet/DeMuonRegion.h"
+#include <Math/GenVector/PositionVector3D.h>
+#include <math.h>
+#include <stdio.h>
+#include <algorithm>
+#include <array>
+#include <iostream>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "DetDesc/Condition.h"
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
 //Detector description
 #include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
+#include "DetDesc/ISolid.h"
 #include "DetDesc/SolidBox.h"
-
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
 // Gaudi
 #include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/MuonLayout.h"
+#include "Kernel/MuonTileID.h"
+#include "MuonChamberLayout.h"
+#include "MuonDet/DeMuonChamber.h"
+#include "MuonDet/DeMuonDetector.h"
+#include "MuonDet/MuonChamberGrid.h"
+#include "MuonDet/MuonDAQHelper.h"
+#include "MuonDet/MuonFrontEndID.h"
+#include "MuonDet/MuonNamespace.h"
+#include "MuonDet/PackMCMuonHit.h"
 
 /** @file DeMuonDetector.cpp
  *

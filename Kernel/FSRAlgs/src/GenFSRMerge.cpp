@@ -1,18 +1,24 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/AlgFactory.h"
-#include "GaudiKernel/GaudiException.h"
-#include "GaudiAlg/IGenericTool.h"
+#include <stddef.h>
+#include <functional>
+#include <vector>
 
 // event model
 #include "Event/GenFSR.h"
-#include "Event/GenCountersFSR.h"
-#include "Event/CrossSectionsFSR.h"
-
+#include "FSRAlgs/IFSRNavigator.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 //local
 #include "GenFSRMerge.h"
-#include "FSRNavigator.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : GenFSRMerge

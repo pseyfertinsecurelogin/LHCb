@@ -2,8 +2,10 @@
 // ============================================================================
 // local
 // ============================================================================
+#include "GaudiKernel/IInterface.h"
 #include "Relations/IRelationBase.h"
 #include "Relations/IRelationWeightedBase.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class IRelationBase and class IRelationWeighedBase

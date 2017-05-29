@@ -4,10 +4,16 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/MCTypes.h"
-#include "LoKi/MCFinderObj.h"
+#include <string>
+
+#include "Event/MCParticle.h"
+#include "LoKi/Interface.h"
+#include "LoKi/Keeper.h"
 #include "LoKi/MCFinder.h"
-#include "LoKi/MCFinderDicts.h"
+#include "LoKi/MCFinderObj.h"
+#include "LoKi/MCTypes.h"
+#include "LoKi/UniqueKeeper.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::Dicts::MCFinder

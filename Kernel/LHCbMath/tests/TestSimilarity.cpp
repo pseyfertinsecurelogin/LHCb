@@ -4,14 +4,19 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
+#include <TMathBase.h>
+#include <TRandom.h>
+#include <math.h>
+#include <functional>
 #include <iostream>
 #include <map>
-#include <functional>
-// ============================================================================
-// VectorClass 
-// ============================================================================
-#include "VectorClass/instrset.h"
-#include "VectorClass/vectorclass.h"
+#include <string>
+#include <utility>
+#include <vector>
+
 // ============================================================================
 // Gaudi and ROOT types
 // ============================================================================
@@ -19,9 +24,10 @@
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 #include "TRandom3.h"
 // ============================================================================
-// LHCbMath
+// VectorClass 
 // ============================================================================
-#include "LHCbMath/Similarity.h"
+#include "VectorClass/instrset.h"
+
 // ============================================================================
 // Advance declaration for similarity methods
 // ============================================================================

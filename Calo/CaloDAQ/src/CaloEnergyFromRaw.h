@@ -1,11 +1,24 @@
 #ifndef CALOENERGYFROMRAW_H
 #define CALOENERGYFROMRAW_H 1
 
+#include <string>
+#include <vector>
+
+#include "CaloDAQ/ICaloEnergyFromRaw.h"            // Interface
+#include "CaloReadoutTool.h"
+#include "Event/CaloAdc.h"
+#include "Event/CaloDigit.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "CaloDAQ/ICaloEnergyFromRaw.h"            // Interface
-#include "CaloReadoutTool.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+
+class IInterface;
+namespace LHCb {
+class RawBank;
+}  // namespace LHCb
+struct ICaloEnergyFromRaw;
 
 /** @class CaloEnergyFromRaw CaloEnergyFromRaw.h
  *  Decode the calorimeter energies, accodrding to version

@@ -1,26 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <algorithm>
-#include <math.h>
-#include <set>
+#include <functional>
+#include <iostream>
+#include <iterator>
+#include <utility>
 
-#include "L0MuonAlg.h"
-#include "SubstituteEnvVarInPath.h"
-
-// Gaudi interfaces
-#include "GaudiKernel/IChronoStatSvc.h"
-
+#include "DetDesc/Condition.h"
+#include "Event/L0DUConfig.h"
+#include "Event/L0MuonData.h"
+#include "Event/MuonDigit.h"
 // from Event
 #include "Event/ODIN.h"
-#include "Event/MuonDigit.h"
-#include "Event/L0MuonData.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IProperty.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/MuonLayout.h"
+#include "L0Interfaces/IL0DUConfigProvider.h"
+#include "L0Interfaces/IL0MuonModifyInputTool.h"
+#include "L0MuonAlg.h"
+#include "L0MuonKernel/L0MUnit.h"
+#include "L0MuonKernel/L0MuonKernelFromXML.h"
+// Emulator
+#include "L0MuonKernel/UnitFactory.h"
+#include "L0MuonOutputs.h"
+#include "MuonDAQ/IMuonRawBuffer.h"
+#include "MuonKernel/MuonStationLayout.h"
+#include "MuonKernel/MuonSystemLayout.h"
+#include "ProcessorKernel/Property.h"
 // Registers (to fill optical links)
 #include "ProcessorKernel/RegisterFactory.h"
 #include "ProcessorKernel/TileRegister.h"
+#include "ProcessorKernel/Unit.h"
+#include "SubstituteEnvVarInPath.h"
 
-// Emulator
-#include "L0MuonKernel/UnitFactory.h"
-#include "L0MuonKernel/L0MuonKernelFromXML.h"
-#include "L0MuonKernel/MuonTriggerUnit.h"
+class ISvcLocator;
+
 namespace {
   ///< Set the layouts to be used in fillOLsfromCoords
   static const auto  m_layout =  ///< pad layout for the whole MuonSystem

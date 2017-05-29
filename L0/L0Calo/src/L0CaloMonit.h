@@ -1,17 +1,26 @@
 #ifndef L0CALOMONIT_H
 #define L0CALOMONIT_H 1
 
+#include <ostream>
+#include <string>
+#include <vector>
+
+// AIDA
+#include "AIDA/IHistogram1D.h"
 // Include files
 // from Gaudi
 #include "CaloUtils/Calo2Dview.h"
 // from Event
 #include "Event/L0DUBase.h"
-
-// AIDA
-#include "AIDA/IHistogram1D.h"
+#include "GaudiKernel/StatusCode.h"
 
 // Forward declarations
 class DeCalorimeter ;
+class ISvcLocator;
+namespace AIDA {
+class IHistogram1D;
+}  // namespace AIDA
+
 namespace LHCb {
   class L0CaloCandidate ;
 }

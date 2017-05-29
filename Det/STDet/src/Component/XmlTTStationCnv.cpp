@@ -2,7 +2,7 @@
 
 // DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
-
+#include "GaudiKernel/Converter.h"
 // TTDet
 #include "STDet/DeTTStation.h"
 

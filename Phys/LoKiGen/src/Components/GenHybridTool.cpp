@@ -3,14 +3,29 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/System.h"
+#include <functional>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/GenHybridLock.h"
+#include "LoKi/GenTypes.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/HybridBase.h"
-#include "LoKi/GenHybridLock.h"
-#include "LoKi/IGenHybridTool.h"
 #include "LoKi/IGenHybridFactory.h"
+#include "LoKi/IGenHybridTool.h"
+
+class IInterface;
+
 // ============================================================================
 // Local
 // ============================================================================

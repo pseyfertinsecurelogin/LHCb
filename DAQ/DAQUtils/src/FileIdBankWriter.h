@@ -1,12 +1,17 @@
 #ifndef FILEIDBANKWRITER_H
 #define FILEIDBANKWRITER_H 1
 
+#include <string>
+#include <vector>
+
+#include "Event/FileId.h"
+#include "Event/RawEvent.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
-#include "Event/RawEvent.h"
-#include "Event/FileId.h"
+class ISvcLocator;
 
 /** @class FileIdBankWriter FileIdBankWriter.h
  *

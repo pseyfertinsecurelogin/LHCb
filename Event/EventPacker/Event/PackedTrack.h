@@ -1,21 +1,29 @@
 #ifndef EVENT_PACKEDTRACK_H
 #define EVENT_PACKEDTRACK_H 1
 
+#include <cmath>
+#include <cstdint>
+#include <limits>
+#include <ostream>
+#include <stdexcept>
 // STL
 #include <string>
+#include <utility>
 #include <vector>
-#include <limits>
-#include <cstdint>
 
 // Kernel
 #include "Event/StandardPacker.h"
-
+#include "Event/State.h"
 // Event
 #include "Event/Track.h"
-
+#include "GaudiKernel/ClassID.h"
 // Gaudi
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/StatusCode.h"
+
+class GaudiAlgorithm;
 
 namespace LHCb
 {

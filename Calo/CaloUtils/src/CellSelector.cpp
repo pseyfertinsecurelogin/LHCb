@@ -1,5 +1,14 @@
-#include "CaloDet/DeCalorimeter.h"
+#include <string>
+
+#include "CaloUtils/CellMatrix.h"
+#include "CaloUtils/CellMatrix2x2.h"
+#include "CaloUtils/CellMatrix3x3.h"
+#include "CaloUtils/CellNeighbour.h"
 #include "CaloUtils/CellSelector.h"
+#include "CaloUtils/CellSwissCross.h"
+
+class DeCalorimeter;
+
 // constructor
 CellSelector::CellSelector( const DeCalorimeter* det , std::string selector )
   : CellMatrix( det ), m_selector( selector ){

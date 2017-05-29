@@ -3,27 +3,32 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <ostream>
+#include <boost/format.hpp>
+#include <stddef.h>
 #include <sstream>
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/Bootstrap.h"
+#include "GaudiKernel/IAlgManager.h"
+#include "GaudiKernel/IAlgorithm.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/INamedInterface.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/System.h"
-#include "GaudiKernel/Property.h"
-#include "GaudiKernel/INamedInterface.h"
-#include "GaudiKernel/IAlgorithm.h"
 #include "GaudiKernel/TypeNameString.h"
-#include "GaudiKernel/IAlgManager.h"
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/Bootstrap.h"
 // ============================================================================
 // LHcbKernel
 // ============================================================================
 #include "Kernel/Inspectors.h"
-// ============================================================================
-// Boost
-// ============================================================================
-#include "boost/format.hpp"
+
 // ============================================================================
 /** @file
  *  The implementation file fior variour inspectors

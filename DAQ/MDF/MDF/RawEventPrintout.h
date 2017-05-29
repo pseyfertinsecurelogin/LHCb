@@ -8,6 +8,7 @@
 #define MDF_RAWEVENTPRINTOUT_H 1
 
 #include <string>
+
 /*
  *    LHCb namespace declaration
  */

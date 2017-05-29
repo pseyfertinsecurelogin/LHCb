@@ -1,6 +1,13 @@
 // Include files
 #include <algorithm>
+#include <iterator>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "DetDesc/BasicParam.h"
 // local
 #include "DetDesc/ParamList.h"
 

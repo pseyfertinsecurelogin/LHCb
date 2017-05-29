@@ -12,6 +12,8 @@
 // local
 #include "Event/MCRichHit.h"
 
+#include <Math/GenVector/PositionVector3D.h>
+
 LHCb::MCRichDigitHistoryCode LHCb::MCRichHit::mcRichDigitHistoryCode() const
 {
   // make a default history code object

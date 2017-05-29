@@ -3,7 +3,17 @@
 // =============================================================================
 // GauidKernel
 // =============================================================================
+#include <stddef.h>
+#include <stdint.h>
+#include <ostream>
+#include <string>
+#include <tuple>
+
+#include "Event/ODIN.h"
 #include "GaudiKernel/ToStream.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/BasicFunctors.h"
+#include "LoKi/Functor.h"
 // =============================================================================
 // LoKiHlt 
 // =============================================================================
@@ -13,6 +23,7 @@
 // =============================================================================
 #include "boost/integer/integer_mask.hpp"
 #include "boost/integer_traits.hpp"
+
 // =============================================================================
 /** @file 
  *  Implementation file for class LoKi::Odin::Prescale

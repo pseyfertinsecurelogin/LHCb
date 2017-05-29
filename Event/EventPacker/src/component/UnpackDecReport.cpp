@@ -1,14 +1,22 @@
 // Include files 
 
-// from Gaudi
-#include "GaudiKernel/LinkManager.h"
+#include <functional>
 
-#include "Event/StandardPacker.h"
+#include "Event/HltDecReport.h"
 #include "Event/HltDecReports.h"
 #include "Event/PackedDecReport.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+// from Gaudi
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
 // local
 #include "UnpackDecReport.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackDecReport

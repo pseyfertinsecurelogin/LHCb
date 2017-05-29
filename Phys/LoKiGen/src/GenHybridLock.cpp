@@ -4,9 +4,13 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Report.h"
-#include "LoKi/GenHybridLock.h"
+#include "GaudiKernel/StatusCode.h"
 #include "LoKi/GenHybridEngineActor.h"
+#include "LoKi/GenHybridLock.h"
+#include "LoKi/IGenHybridTool.h"
+#include "LoKi/Interface.h"
+#include "LoKi/Report.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::Hybrid::GenLock

@@ -1,17 +1,23 @@
-#include <string>
-#include <iostream>
-
-// boost
-#include <boost/range.hpp>
-#include <boost/regex.hpp>
-#include <boost/format.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/program_options.hpp>
-#include <boost/filesystem.hpp>
-
 // local
 #include <FileStager/FileStagerFunctions.h>
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/algorithm/string/find.hpp>
+#include <boost/algorithm/string/yes_no_type.hpp>
+#include <boost/any.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/path_traits.hpp>
+#include <boost/format.hpp>
+#include <boost/functional/hash/hash.hpp>
+#include <boost/program_options/errors.hpp>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/parsers.hpp>
+#include <boost/program_options/positional_options.hpp>
+#include <boost/program_options/value_semantic.hpp>
+#include <boost/program_options/variables_map.hpp>
+#include <boost/range/iterator_range_core.hpp>
+#include <stdlib.h>
+#include <iostream>
+#include <string>
 
 namespace {
    using std::string;

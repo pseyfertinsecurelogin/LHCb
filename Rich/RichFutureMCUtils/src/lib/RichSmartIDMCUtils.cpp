@@ -4,6 +4,11 @@
 
 // STL
 #include <algorithm>
+#include <map>
+#include <utility>
+
+#include "Kernel/RichSmartID.h"
+#include "RichUtils/RichPixelCluster.h"
 
 using namespace Rich::Future::MC::Relations;
 

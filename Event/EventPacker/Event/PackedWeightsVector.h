@@ -1,19 +1,23 @@
 #ifndef EVENT_PackedWeightsVector_H
 #define EVENT_PackedWeightsVector_H 1
 
+#include <ostream>
 // STL
 #include <string>
+#include <vector>
 
 // Kernel
 #include "Event/StandardPacker.h"
-
 // Event
 #include "Event/WeightsVector.h"
-
+#include "GaudiKernel/ClassID.h"
 // Gaudi
 #include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/StatusCode.h"
+
+class GaudiAlgorithm;
 
 namespace LHCb
 {

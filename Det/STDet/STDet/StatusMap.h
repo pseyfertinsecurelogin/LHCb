@@ -2,6 +2,7 @@
 #define _Status_H 1
 
 #include<map>
+#include <iosfwd>
 #include <string>
 #include <vector>
 

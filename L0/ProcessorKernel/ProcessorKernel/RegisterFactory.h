@@ -4,15 +4,30 @@
 #define PROCESSORKERNEL_REGISTERFACTORY_H     1
 
 
-#include <string>
-#include <map>
-#include "ProcessorKernel/Register.h"
-#include "ProcessorKernel/TileRegister.h"
-
+#include <boost/dynamic_bitset/dynamic_bitset.hpp>
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/parsers/AbstractDOMParser.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/XercesDefs.hpp>
+#include <map>
+#include <string>
+#include <vector>
+
+#include "ProcessorKernel/Register.h"
+#include "ProcessorKernel/TileRegister.h"
+
+namespace L0Muon {
+class Register;
+class TileRegister;
+}  // namespace L0Muon
+namespace LHCb {
+class MuonTileID;
+}  // namespace LHCb
+namespace xercesc_3_1 {
+class DOMNamedNodeMap;
+class DOMNode;
+}  // namespace xercesc_3_1
 
 XERCES_CPP_NAMESPACE_USE
 

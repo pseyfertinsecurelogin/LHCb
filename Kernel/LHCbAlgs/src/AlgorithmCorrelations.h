@@ -2,10 +2,16 @@
 #ifndef ALGORITHMCORRELATIONS_H
 #define ALGORITHMCORRELATIONS_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/IAlgorithmCorrelations.h"            // Interface
+
+class IInterface;
 
 /** @class AlgorithmCorrelations AlgorithmCorrelations.h
  *
@@ -30,6 +36,7 @@
 class AlgorithmCorrelations : public GaudiTool, virtual public IAlgorithmCorrelations {
   class AlgoMatrix ;
   class AlgoResult ;
+
 public:
   typedef std::vector<std::string> strings;
 public:

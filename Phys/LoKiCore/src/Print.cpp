@@ -5,18 +5,22 @@
 // STD & STL 
 // ============================================================================
 #include <sstream>
+#include <string>
+
+#include "GaudiKernel/ContainedObject.h"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/ContainedObject.h"
-#include "GaudiKernel/ObjectContainerBase.h"
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
 #include "GaudiKernel/ToStream.h"
 // ============================================================================
 // LoKiCore
 // ============================================================================
 #include "LoKi/Print.h"
+
 // ============================================================================
 /** @file
  *

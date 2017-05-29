@@ -1,15 +1,12 @@
 // Include files
 
-#include <iostream>
-
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-
-#include "DetDesc/IDetectorElement.h"
-
 // local
 #include "DetDesc/DataStoreLoadAgent.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/StatusCode.h"
+
+class DataObject;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DataStoreLoadAgent

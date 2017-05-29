@@ -1,20 +1,27 @@
 // Include files
-#include "GaudiKernel/Time.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/IValidity.h"
-#include "GaudiKernel/DataObject.h"
-
-#include "DetDesc/IDetectorElement.h"
-#include "DetDesc/ValidDataObject.h"
-
-#include "CoolKernel/ValidityKey.h"
-#include "CoolKernel/IFolder.h"
-#include "CoolKernel/IObject.h"
-#include "CoolKernel/IDatabase.h"
-#include "CoolKernel/Exception.h"
+#include <CoolKernel/ChannelId.h>
+#include <stddef.h>
+#include <string>
+#include <vector>
 
 // local
 #include "DetCond/CondDBGenericCnv.h"
+#include "DetCond/ICondDBReader.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Converter.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IConversionSvc.h"
+#include "GaudiKernel/IDetDataSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/IValidity.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CondDBGenericCnv

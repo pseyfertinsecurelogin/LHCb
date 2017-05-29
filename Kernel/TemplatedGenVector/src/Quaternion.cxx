@@ -17,20 +17,18 @@
 #include "TemplatedGenVector/Quaternion.h"
 
 #include <cmath>
-
-#include "TemplatedGenVector/Cartesian3D.h"
-#include "TemplatedGenVector/DisplacementVector3D.h"
-#include "TemplatedGenVector/Quaternion.h"
-
-#include "TemplatedGenVector/Rotation3Dfwd.h"
-#include "TemplatedGenVector/AxisAnglefwd.h"
-#include "TemplatedGenVector/EulerAnglesfwd.h"
+#include <ostream>
 
 namespace LHCbROOT {
 
 namespace Math {
 
 // ========== Constructors and Assignment =====================
+
+class AxisAngle;
+class EulerAngles;
+class Rotation3D;
+class RotationZYX;
 
 void Quaternion::Rectify()
 {

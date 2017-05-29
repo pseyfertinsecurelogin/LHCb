@@ -3,21 +3,45 @@
 // ============================================================================
 #include <algorithm>
 #include <functional>
+#include <iterator>
+#include <ostream>
+#include <string>
+#include <tuple>
+#include <vector>
+
+#include "Event/MCParticle.h"
+#include "Event/MCVertex.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IToolSvc.h"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "LoKi/Algs.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/BasicFunctors.h"
+#include "LoKi/DecayFinder.h"
+#include "LoKi/Functor.h"
+#include "LoKi/ILoKiSvc.h"
+#include "LoKi/IMCDecay.h"
+#include "LoKi/Interface.h"
+#include "LoKi/MCParticles1.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/MCSources.h"
-#include "LoKi/MCAlgs.h"
-#include "LoKi/MCExtract.h"
+#include "LoKi/MCTypes.h"
 #include "LoKi/Services.h"
-#include "LoKi/MCParticles1.h"
 #include "LoKi/Trees.h"
-#include "LoKi/Algs.h"
+#include "LoKi/iTree.h"
+
+namespace Decays {
+class iNode;
+}  // namespace Decays
+
 // ============================================================================
 /** @file
  *  Implementation file for various sources

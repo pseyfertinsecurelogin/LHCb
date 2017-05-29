@@ -1,11 +1,18 @@
 #ifndef SIMCOMPONENTS_MCPARTICLESELECTOR_H
 #define SIMCOMPONENTS_MCPARTICLESELECTOR_H
 
+#include <string>
+
 // base class
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/StatusCode.h"
 // interface
 #include "MCInterfaces/IMCParticleSelector.h"
+
+class IInterface;
+namespace LHCb {
+class MCParticle;
+}  // namespace LHCb
 
 /** @class MCParticleSelector MCParticleSelector.h
  *

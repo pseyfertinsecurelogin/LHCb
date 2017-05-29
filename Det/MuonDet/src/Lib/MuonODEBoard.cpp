@@ -1,7 +1,10 @@
 // Include files 
 
-#include <iostream>
+#include <string>
+#include <vector>
 
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/MuonTileID.h"
 // local
 #include "MuonDet/MuonODEBoard.h"
 

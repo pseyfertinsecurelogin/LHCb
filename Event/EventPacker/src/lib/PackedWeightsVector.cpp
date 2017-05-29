@@ -2,11 +2,13 @@
 // local
 #include "Event/PackedWeightsVector.h"
 
+#include <utility>
+
 // Checks
 #include "Event/PackedEventChecks.h"
-
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/MsgStream.h"
 
 using namespace LHCb;
 

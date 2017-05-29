@@ -1,11 +1,23 @@
 #ifndef CALOTRIGGERADCSFROMRAW_H 
 #define CALOTRIGGERADCSFROMRAW_H 1
 
+#include <string>
+#include <vector>
+
+#include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"            // Interface
+#include "CaloReadoutTool.h"
+#include "Event/L0CaloAdc.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"            // Interface
-#include "CaloReadoutTool.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+
+class IInterface;
+namespace LHCb {
+class RawBank;
+}  // namespace LHCb
+struct ICaloTriggerAdcsFromRaw;
 
 /** @class CaloTriggerAdcsFromRaw CaloTriggerAdcsFromRaw.h
  *  

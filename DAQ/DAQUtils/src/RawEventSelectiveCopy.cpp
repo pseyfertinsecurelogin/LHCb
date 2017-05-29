@@ -1,8 +1,18 @@
 // Include files
 
+#include <ext/alloc_traits.h>
+#include <stddef.h>
+#include <functional>
+
 // local
 #include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
 #include "RawEventSelectiveCopy.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RawEventSelectiveCopy

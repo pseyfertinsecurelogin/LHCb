@@ -4,13 +4,23 @@
 // ============================================================================
 // Event
 // ============================================================================
+#include <cstddef>
+#include <functional>
+
 #include "Event/HepMCEvent.h"
+#include "HepMC/IteratorRange.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/GenAlgs.h"
 #include "LoKi/GenTypes.h"
-#include "LoKi/GenAlgsDicts.h"
+
+namespace HepMC {
+class GenEvent;
+class GenParticle;
+class GenVertex;
+}  // namespace HepMC
+
 // ============================================================================
 /** @file 
  *  Implementation file for namespace LoKi::Dicts::GenAlgs 

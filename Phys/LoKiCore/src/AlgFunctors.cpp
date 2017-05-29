@@ -4,30 +4,42 @@
 // STD & STL
 // ============================================================================
 #include <algorithm>
-// ============================================================================
-// GaudiKernel
-// ============================================================================
-#include  "GaudiKernel/Bootstrap.h"
-#include  "GaudiKernel/ISvcLocator.h"
-#include  "GaudiKernel/IAlgorithm.h"
-#include  "GaudiKernel/IAlgManager.h"
-#include  "GaudiKernel/SmartIF.h"
-#include  "GaudiKernel/ToStream.h"
-#include  "GaudiKernel/TypeNameString.h"
-#include  "GaudiKernel/IJobOptionsSvc.h"
+#include <functional>
+#include <iterator>
+#include <ostream>
+#include <string>
+#include <tuple>
+#include <vector>
+
 // ============================================================================
 // GaudiALg
 // ============================================================================
 #include  "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiCommonImp.h"
 #include  "GaudiAlg/GetAlgs.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IAlgContextSvc.h"
+#include  "GaudiKernel/IAlgManager.h"
+#include  "GaudiKernel/IAlgorithm.h"
+#include  "GaudiKernel/IJobOptionsSvc.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include  "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StateMachine.h"
+#include "GaudiKernel/StatusCode.h"
+#include  "GaudiKernel/ToStream.h"
+#include  "GaudiKernel/TypeNameString.h"
+#include "LoKi/AlgFunctors.h"
+#include "LoKi/Assert.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/Functor.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/ILoKiSvc.h"
-#include "LoKi/AlgFunctors.h"
+#include "LoKi/Interface.h"
 #include "LoKi/Report.h"
 #include "LoKi/Services.h"
-#include "LoKi/Assert.h"
 // ============================================================================
 #ifdef __INTEL_COMPILER       // Disable ICC remark
 #pragma warning(disable:2259) // non-pointer conversion may lose significant bits
@@ -36,6 +48,7 @@
 #ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
 /// \fixme backward compatibility with Gaudi <= v28r1
 #include "GaudiKernel/ThreadLocalContext.h"
+
 #define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
 #else
 #define SYSEX_ARGUMENT

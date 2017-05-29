@@ -3,16 +3,29 @@
 // local
 #include "GenFSRLog.h"
 
-// from Event
-#include "Event/GenFSR.h"
-#include "Event/GenCountersFSR.h"
-#include "Event/CrossSectionsFSR.h"
-
+#include <fstream>
+#include <functional>
+#include <map>
 // to write a file
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
+#include <utility>
+#include <vector>
+
+#include "Event/CrossSectionsFSR.h"
+#include "Event/GenCountersFSR.h"
+// from Event
+#include "Event/GenFSR.h"
+#include "FSRAlgs/IFSRNavigator.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : GenFSRLog

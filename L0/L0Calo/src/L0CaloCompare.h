@@ -1,11 +1,20 @@
 #ifndef L0CALOCOMPARE_H
 #define L0CALOCOMPARE_H 1
 
-// Include files
-#include "CaloUtils/Calo2Dview.h"
+#include <set>
+#include <string>
+#include <vector>
 
 // AIDA
 #include "AIDA/IHistogram1D.h"
+// Include files
+#include "CaloUtils/Calo2Dview.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+namespace AIDA {
+class IHistogram1D;
+}  // namespace AIDA
 
 /** @class L0CaloCompare L0CaloCompare.h
  *

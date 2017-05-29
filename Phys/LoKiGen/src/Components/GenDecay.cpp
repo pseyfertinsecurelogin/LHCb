@@ -7,18 +7,33 @@
   #pragma warning (disable:1572) // floating-point equality and inequality comparisons are unreliable
   #pragma warning(push)
 #endif
-#include "HepMC/GenParticle.h"
 #ifdef __INTEL_COMPILER
   #pragma warning(pop)
 #endif
+#include <iosfwd>
+#include <string>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/iNode.h"
+#include "LoKi/DecayBase.h"
+#include "LoKi/GenTreesFactory.h"
+#include "LoKi/IDecayNode.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/IGenDecay.h"
-#include "LoKi/DecayBase.h"
-#include "LoKi/Trees.h"
 #include "LoKi/TreeHelpers.h"
-#include "LoKi/GenTreesFactory.h"
+#include "LoKi/Trees.h"
+#include "LoKi/iTree.h"
+
+class IInterface;
+namespace HepMC {
+class GenParticle;
+}  // namespace HepMC
+
 // ============================================================================
 namespace LoKi
 {

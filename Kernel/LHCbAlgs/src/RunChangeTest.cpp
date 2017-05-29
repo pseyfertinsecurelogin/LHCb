@@ -1,14 +1,26 @@
 // $Id: RunChangeTest.cpp,v 1.1 2009-02-03 18:31:03 marcocle Exp $
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/IEventTimeDecoder.h"
+#include <algorithm>
+#include <functional>
+#include <vector>
 
 #include "Event/ODIN.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IEventTimeDecoder.h"
+// from Gaudi
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
 // local
 #include "RunChangeTest.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RunChangeTest

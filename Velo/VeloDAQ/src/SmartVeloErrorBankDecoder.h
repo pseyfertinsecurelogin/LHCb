@@ -1,23 +1,30 @@
 #ifndef SMARTVELOERRORBANKDECODER_H
 #define SMARTVELOERRORBANKDECODER_H 1
 
+#include <algorithm>
+#include <iterator>
+#include <map>
+#include <string>
+#include <utility>
+// stl
+#include <vector>
+
+#include "Event/RawBank.h"
+// data model
+#include "Event/RawEvent.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-
-// data model
-#include "Event/RawEvent.h"
-#include "Event/RawBank.h"
-
-#include "Tell1Kernel/VeloDecodeCore.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Tell1Kernel/VeloDecodeConf.h"
+#include "Tell1Kernel/VeloDecodeCore.h"
 #include "Tell1Kernel/VeloTell1Core.h"
 #include "VeloEvent/VeloErrorBank.h"
 
-// stl
-#include <vector>
-#include <algorithm>
-#include <iterator>
+class ISvcLocator;
+namespace LHCb {
+class RawEvent;
+}  // namespace LHCb
 
 /** @class SmartVeloErrorBankDecoder SmartVeloErrorBankDecoder.h
  *

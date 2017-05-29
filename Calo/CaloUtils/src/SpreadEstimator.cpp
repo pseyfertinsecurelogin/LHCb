@@ -1,31 +1,36 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include <algorithm>
 #include <cmath>
-// ============================================================================
-// GaudiKernel
-// ============================================================================
-#include "GaudiKernel/GenericVectorTypes.h"
-#include "GaudiKernel/GenericMatrixTypes.h"
-#include "GaudiKernel/SymmetricMatrixTypes.h"
-#include "GaudiKernel/SystemOfUnits.h"
+#include <vector>
+
 // ============================================================================
 // CaloDet 
 // ============================================================================
 #include "CaloDet/DeCalorimeter.h"
 // ============================================================================
+// local
+// ============================================================================
+#include "CaloUtils/SpreadEstimator.h"
+// ============================================================================
 // Event 
 // ============================================================================
 #include "Event/CaloCluster.h"
+#include "Event/CaloClusterEntry.h"
+#include "Event/CaloDigit.h"
+#include "Event/CaloDigitStatus.h"
+#include "Event/CaloPosition.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
 // ============================================================================
 // LHCbMath 
 // ============================================================================
 //#include "LHCbMath/Lomont.h"
 #include "LHCbMath/LHCbMath.h"
-// ============================================================================
-// local
-// ============================================================================
-#include "CaloUtils/SpreadEstimator.h"
+
 // ============================================================================
 /** @file 
  * 

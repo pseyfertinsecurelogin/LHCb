@@ -1,13 +1,26 @@
 // Include files
 
+#include <functional>
+
+#include "Event/MCParticle.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
 // from PartProp
 #include "Kernel/IParticlePropertySvc.h"
+#include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
 // from LHCb
 #include "MCInterfaces/IPrintMCDecayTreeTool.h"
-
 // local
 #include "PrintMCTree.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PrintMCTree

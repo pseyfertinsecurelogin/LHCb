@@ -3,12 +3,17 @@
 // ============================================================================
 // Event
 // ============================================================================
-#include "Event/Particle.h"
-#include "Event/Vertex.h"
+#include "CaloUtils/CaloMomentum.h"
 // ============================================================================
 // CaloUtils
 // ============================================================================
 #include "CaloUtils/CaloParticle.h"
+#include "Event/Particle.h"
+#include "Event/ProtoParticle.h"
+#include "Event/Vertex.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for class LHCb::CaloParticle

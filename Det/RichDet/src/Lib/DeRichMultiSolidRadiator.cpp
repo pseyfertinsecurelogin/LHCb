@@ -9,17 +9,29 @@
 // Include files
 #include "RichDet/DeRichMultiSolidRadiator.h"
 
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <Math/GenVector/Transform3D.h>
+#include <boost/container/vector.hpp>
+#include <ext/alloc_traits.h>
+
+#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
+#include "DetDesc/ISolid.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
 // Gaudi
 #include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
 #include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-
 // MathCore files
 #include "GaudiKernel/Vector3DTypes.h"
-
-/// Detector description classes
-#include "DetDesc/SolidBoolean.h"
-#include "DetDesc/IPVolume.h"
+#include "RichDet/DeRichBase.h"
+#include "RichDet/DeRichLocations.h"
+#include "RichDet/Rich1DTabFunc.h"
+#include "RichDet/Rich1DTabProperty.h"
 
 //----------------------------------------------------------------------------
 

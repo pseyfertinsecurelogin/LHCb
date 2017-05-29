@@ -4,6 +4,8 @@
 
 // Gaudi
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/SerializeSTL.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : Vertex

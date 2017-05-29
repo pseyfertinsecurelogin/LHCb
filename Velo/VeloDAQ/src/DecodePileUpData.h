@@ -1,14 +1,20 @@
 #ifndef DECODEPILEUPDATA_H
 #define DECODEPILEUPDATA_H 1
 
+#include <string>
+#include <vector>
+
+#include "DAQKernel/DecoderAlgBase.h"
+#include "Event/VeloCluster.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "DAQKernel/DecoderAlgBase.h"
-
+#include "GaudiKernel/StatusCode.h"
+#include "Tell1Kernel/PUTell1Core.h"
 // from TELL1 Kernel:
 #include "Tell1Kernel/VeloDecodeConf.h"
-#include "Tell1Kernel/PUTell1Core.h"
+
+class ISvcLocator;
 
 /** @class DecodePileUpData DecodePileUpData.h
  *
@@ -20,8 +26,8 @@
 // -----------------------------------
 namespace LHCb
 {
-  class RawEvent;
   class RawBank;
+  class RawEvent;
 }
 using namespace LHCb;
 // -----------------------------------

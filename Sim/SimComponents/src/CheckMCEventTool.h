@@ -3,11 +3,18 @@
 
 // Include files
 
+#include <string>
+#include <vector>
+
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
 // interface
 #include "Kernel/ICheckTool.h"
+
+class IInterface;
+struct ICheckTool;
 
 
 /** @class CheckMCEventTool CheckMCEventTool.h

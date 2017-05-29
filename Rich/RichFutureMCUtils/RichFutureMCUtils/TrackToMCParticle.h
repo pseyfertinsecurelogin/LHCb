@@ -1,15 +1,17 @@
 
 #pragma once
 
+#include "Event/MCParticle.h"
+// Event model
+#include "Event/Track.h"
+// Kernel
+#include "Kernel/RichParticleIDType.h"
 // local
 #include "RichFutureMCUtils/RichMCRelations.h"
 
-// Kernel
-#include "Kernel/RichParticleIDType.h"
-
-// Event model
-#include "Event/Track.h"
-#include "Event/MCParticle.h"
+namespace LHCb {
+class Track;
+}  // namespace LHCb
 
 namespace Rich
 {

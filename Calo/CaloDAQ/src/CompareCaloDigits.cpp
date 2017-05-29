@@ -2,13 +2,23 @@
 
 // STL
 #include <math.h> // for fabs() on Windows
-
-// from Gaudi
-#include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/IRegistry.h"
+#include <functional>
+#include <vector>
 
 // local
 #include "CompareCaloDigits.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+// from Gaudi
+#include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/CaloCellID.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CompareCaloDigits

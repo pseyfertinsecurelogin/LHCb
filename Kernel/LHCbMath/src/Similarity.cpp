@@ -1,7 +1,10 @@
 
 #include "LHCbMath/Similarity.h"
+
+#include <initializer_list>
+#include <utility>
+
 #include "LHCbMath/CPUDispatch.h"
-#include <type_traits>
 
 namespace {
   template <typename Vtbl, typename Trampoline, typename... Args>

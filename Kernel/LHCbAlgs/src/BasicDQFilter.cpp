@@ -4,6 +4,18 @@
 #include "BasicDQFilter.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
+#include <functional>
+#include <utility>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class IInterface;
+
 using boost::algorithm::to_lower_copy;
 
 // ----------------------------------------------------------------------------

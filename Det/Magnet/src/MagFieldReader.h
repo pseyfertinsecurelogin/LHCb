@@ -8,9 +8,11 @@
 
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
+#include "GaudiKernel/StatusCode.h"
 
 // Forward references
 class IMagneticFieldSvc;
+class ISvcLocator;
 
 
 /** @class MagFieldReader MagFieldReader.h

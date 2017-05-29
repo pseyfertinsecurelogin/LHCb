@@ -1,25 +1,26 @@
 // $Id: XmlTabulatedPropertyCnv.cpp,v 1.7 2009-04-17 12:25:18 cattanem Exp $
 
-// Include files
-#include "GaudiKernel/GenericAddress.h"
-#include "GaudiKernel/IConversionSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/RegistryEntry.h"
-
-#include "DetDesc/TabulatedProperty.h"
-#include "XmlTools/IXmlSvc.h"
-#include "DetDescCnv/XmlCnvException.h"
-
-#include <cstdlib>
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMText.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <algorithm>
 #include <iostream>
-#include <sstream>
 #include <string>
 #include <vector>
-#include <algorithm>
 
+#include "DetDesc/TabulatedProperty.h"
+#include "DetDescCnv/XmlCnvException.h"
+#include "DetDescCnv/XmlCnvException.icpp"
+#include "GaudiKernel/Converter.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 #include "XmlTabulatedPropertyCnv.h"
+#include "XmlTools/IXmlSvc.h"
+
+class IOpaqueAddress;
+class ISvcLocator;
 
 
 // -----------------------------------------------------------------------

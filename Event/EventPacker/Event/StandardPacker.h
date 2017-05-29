@@ -3,11 +3,12 @@
 
 // STL
 #include <cmath>
+#include <string>
 
 // Gaudi
 #include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/LinkManager.h"
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/LinkManager.h"
 
 class GaudiAlgorithm;
 

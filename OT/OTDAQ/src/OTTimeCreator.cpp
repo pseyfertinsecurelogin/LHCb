@@ -1,16 +1,28 @@
 // Include files
 // from STD
+#include <algorithm>
+#include <functional>
 #include <sstream>
+#include <vector>
 
+#include "Event/OTLiteTime.h"
+// Event
+#include "Event/OTTime.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiHandle.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Range.h"
+#include "Kernel/OTChannelID.h"
 // from Detector
 #include "OTDet/DeOTDetector.h"
 #include "OTDet/DeOTModule.h"
-
-// Event
-#include "Event/OTTime.h"
-
 // local
 #include "OTTimeCreator.h"
+
+class ISvcLocator;
 
 
 //-----------------------------------------------------------------------------

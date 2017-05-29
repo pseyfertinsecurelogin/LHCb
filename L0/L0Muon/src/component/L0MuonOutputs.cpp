@@ -1,22 +1,37 @@
 // Include Files 
 
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <math.h>
+#include <stdlib.h>
+#include <functional>
+#include <utility>
+
+#include "Event/L0DUBase.h"
+#include "Event/L0MuonCandidate.h"
+#include "Event/L0MuonData.h"
+#include "Event/L0MuonError.h"
+#include "Event/L0MuonInfo.h"
+#include "Event/L0ProcessorData.h"
+#include "Event/RawBank.h"
+#include "Event/RawBankReadoutStatus.h"
+#include "Event/RawEvent.h"
 // from Event
 #include "Event/RecHeader.h"
-#include "Event/RawEvent.h"
-#include "Event/RawBankReadoutStatus.h"
-#include "Event/L0ProcessorData.h"
-#include "Event/L0MuonData.h"
-#include "Event/L0MuonInfo.h"
-#include "Event/L0MuonError.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
 // from Kernel
 #include "Kernel/MuonTileID.h"
-
-#include "L0MuonKernel/ProcUtilities.h"
+#include "L0MuonKernel/CtrlCandCnv.h"
 #include "L0MuonKernel/CtrlCandErrors.h"
+#include "L0MuonKernel/ErrorHandler.h"
 #include "L0MuonKernel/ProcCandErrors.h"
+#include "L0MuonKernel/ProcDataCnv.h"
 #include "L0MuonKernel/ProcDataErrors.h"
-
+#include "L0MuonKernel/ProcUtilities.h"
 // local
 #include "L0MuonOutputs.h"
 

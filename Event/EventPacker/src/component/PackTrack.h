@@ -1,10 +1,14 @@
 #ifndef PACKTRACK_H
 #define PACKTRACK_H 1
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <string>
 
 #include "Event/PackedTrack.h"
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class PackTrack PackTrack.h
  *

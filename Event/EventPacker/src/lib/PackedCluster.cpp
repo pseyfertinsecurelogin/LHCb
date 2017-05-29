@@ -1,5 +1,12 @@
 #include "Event/PackedCluster.h"
 
+#include "Event/STCluster.h"
+#include "Event/STLiteCluster.h"
+#include "Event/VeloCluster.h"
+#include "Event/VeloLiteCluster.h"
+#include "Kernel/STChannelID.h"
+#include "Kernel/VeloChannelID.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : PackedCluster
 //

@@ -5,6 +5,9 @@
 // Local
 // ============================================================================
 #include "LoKi/IDecayNode.h"
+
+#include "GaudiKernel/IInterface.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class  Decays::IDecayNode

@@ -1,12 +1,15 @@
 // ===========================================================================
 #define CALOUTILS_CLUSTERFUNCTORS_CPP 1
+#include <string>
+#include <vector>
+
+#include "CaloDet/DeCalorimeter.h"
 // ===========================================================================
 // Include files
 #include "CaloKernel/CaloException.h"
-#include "CaloDet/DeCalorimeter.h"
-#include "Event/CaloCluster.h"
-#include "Event/CaloDigit.h"
 #include "CaloUtils/ClusterFunctors.h"
+#include "Event/CaloCluster.h"
+#include "GaudiKernel/StatusCode.h"
 
 // ============================================================================
 /** @file ClusterFunctors.cpp

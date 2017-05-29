@@ -4,9 +4,13 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Report.h"
-#include "LoKi/MCHybridLock.h"
+#include "GaudiKernel/StatusCode.h"
+#include "LoKi/IMCHybridTool.h"
+#include "LoKi/Interface.h"
 #include "LoKi/MCHybridEngineActor.h"
+#include "LoKi/MCHybridLock.h"
+#include "LoKi/Report.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::MCHybridLock

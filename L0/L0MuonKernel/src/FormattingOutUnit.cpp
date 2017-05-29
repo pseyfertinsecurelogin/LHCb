@@ -1,5 +1,16 @@
 #include "L0MuonKernel/FormattingOutUnit.h"
-#include "ProcessorKernel/RegisterFactory.h"
+
+#include <iostream>
+#include <map>
+#include <utility>
+#include <vector>
+
+#include "ProcessorKernel/Register.h"
+#include "ProcessorKernel/TileRegister.h"
+
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 
 /**

@@ -2,8 +2,20 @@
 #ifndef _DeITDetector_H_
 #define _DeITDetector_H_
 
-#include "STDet/DeSTDetector.h"
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/VectorMap.h"
+#include "STDet/DeSTDetector.h"
+
+class DeITBox;
+class DeSTBaseElement;
+namespace LHCb {
+class STChannelID;
+}  // namespace LHCb
 
 static const CLID CLID_DeITDetector = 9201;
 

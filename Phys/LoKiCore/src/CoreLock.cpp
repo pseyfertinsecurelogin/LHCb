@@ -2,9 +2,13 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Report.h"
-#include "LoKi/CoreLock.h"
+#include "GaudiKernel/StatusCode.h"
 #include "LoKi/CoreEngineActor.h"
+#include "LoKi/CoreLock.h"
+#include "LoKi/ICoreAntiFactory.h"
+#include "LoKi/Interface.h"
+#include "LoKi/Report.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::Hybrid::CoreLock

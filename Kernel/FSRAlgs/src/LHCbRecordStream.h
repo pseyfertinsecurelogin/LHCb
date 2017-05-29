@@ -2,8 +2,13 @@
 #ifndef LHCB_RECORDSTREAM_H
 #define LHCB_RECORDSTREAM_H
 
+#include <string>
+
+#include "GaudiKernel/StatusCode.h"
 // Required for inheritance
 #include "LHCbOutputStream.h"
+
+class ISvcLocator;
 
 /** @class LHCbRecordStream LHCbRecordStream.h
   * Extension of OutputStream to write run records after last event

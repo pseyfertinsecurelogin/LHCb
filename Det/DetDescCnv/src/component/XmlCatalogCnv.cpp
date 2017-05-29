@@ -1,37 +1,31 @@
 // include files
-#include <stdlib.h>
-#include <iostream>
-#include <string>
-#include <vector>
-
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/SmartIF.h"
-
-#include <xercesc/util/XMLString.hpp>
-#include <xercesc/dom/DOMNode.hpp>
 #include <xercesc/dom/DOMElement.hpp>
-#include <xercesc/dom/DOMNodeList.hpp>
-#include <xercesc/dom/DOMNamedNodeMap.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <string>
 
 #include "DetDesc/CLIDCondition.h"
 #include "DetDesc/CLIDDetectorElement.h"
-#include "DetDesc/CLIDLVolume.h"
-#include "DetDesc/CLIDSurface.h"
-#include "DetDesc/CLIDIsotope.h"
 #include "DetDesc/CLIDElement.h"
+#include "DetDesc/CLIDIsotope.h"
+#include "DetDesc/CLIDLVolume.h"
 #include "DetDesc/CLIDMixture.h"
+#include "DetDesc/CLIDSurface.h"
 #include "DetDesc/CLIDTabulatedProperty.h"
-
-#include "XmlTools/IXmlSvc.h"
 #include "DetDescCnv/XmlCnvException.h"
-
+#include "DetDescCnv/XmlCnvException.icpp"
+#include "GaudiKernel/Converter.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IConversionSvc.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 #include "XmlCatalogCnv.h"
+
+class IRegistry;
+class ISvcLocator;
 
 
 // -----------------------------------------------------------------------

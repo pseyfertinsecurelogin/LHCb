@@ -1,14 +1,17 @@
 
 #include "STDet/DeTTStation.h"
-#include "STDet/DeTTDetector.h"
-#include "STDet/DeTTLayer.h"
-#include "Kernel/TTNames.h"
 
+#include <stddef.h>
 //STL
 #include <algorithm>
 #include <numeric>
 
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 #include "Kernel/STChannelID.h"
+#include "Kernel/TTNames.h"
+#include "STDet/DeTTLayer.h"
 
 using namespace LHCb;
 

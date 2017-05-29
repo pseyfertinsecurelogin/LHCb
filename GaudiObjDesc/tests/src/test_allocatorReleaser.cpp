@@ -5,11 +5,30 @@
  *      Author: Marco Clemencic
  */
 #define BOOST_TEST_MODULE BoostAllocatorReleaser test
+#include <boost/preprocessor/arithmetic/dec.hpp>
+#include <boost/preprocessor/comparison/not_equal.hpp>
+#include <boost/preprocessor/control/expr_iif.hpp>
+#include <boost/preprocessor/control/iif.hpp>
+#include <boost/preprocessor/logical/bool.hpp>
+#include <boost/preprocessor/logical/compl.hpp>
+#include <boost/preprocessor/repetition/for.hpp>
+#include <boost/preprocessor/seq/elem.hpp>
+#include <boost/preprocessor/seq/size.hpp>
+#include <boost/preprocessor/tuple/elem.hpp>
+#include <boost/preprocessor/variadic/elem.hpp>
 // header-only Boost test framework
 #include <boost/test/included/unit_test.hpp>
+#include <boost/test/tools/old/impl.hpp>
+#include <boost/test/tools/old/interface.hpp>
+#include <boost/test/tree/decorator.hpp>
+#include <boost/test/unit_test_suite.hpp>
+#include <boost/test/utils/wrap_stringstream.hpp>
+#include <sstream>
+#include <string>
 // requires library "unit_test_framework"
 // #include <boost/test/unit_test.hpp>
 
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/MsgStream.h"
 
 // enable debug output in BoostAllocatorReleaser

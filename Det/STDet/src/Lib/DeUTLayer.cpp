@@ -1,13 +1,17 @@
 #include "STDet/DeUTLayer.h"
-#include "STDet/DeUTModule.h"
-#include "STDet/DeUTStation.h"
 
-#include "DetDesc/IGeometryInfo.h"
-
-#include "Kernel/UTNames.h"
-
+#include <stddef.h>
 #include <algorithm>
 #include <numeric>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/UTNames.h"
+#include "STDet/DeUTModule.h"
+#include "STDet/DeUTSector.h"
+
+class DeSTSector;
 
 using namespace LHCb;
 

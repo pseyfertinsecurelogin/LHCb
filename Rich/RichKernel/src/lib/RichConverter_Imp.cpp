@@ -9,11 +9,25 @@
  */
 //-----------------------------------------------------------------------------
 
+#include <algorithm>
+#include <iterator>
+#include <string>
+#include <unordered_map>
+#include <utility>
+#include <vector>
+
+#include "GaudiKernel/Converter.h"
+#include "GaudiKernel/IAlgTool.h"
+#include "GaudiKernel/IChronoStatSvc.h"
 // gaudi
 #include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IChronoStatSvc.h"
-#include "GaudiKernel/IAlgTool.h"
-
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 // local
 #include "RichKernel/RichConverter_Imp.h"
 

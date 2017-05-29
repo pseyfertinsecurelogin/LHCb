@@ -12,6 +12,22 @@
 // local
 #include "MuonPIDsFromProtoParticlesAlg.h"
 
+#include <stddef.h>
+#include <functional>
+#include <vector>
+
+#include "Event/MuonPID.h"
+#include "Event/ProtoParticle.h"
+#include "Event/Track.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
+
 // namespaces
 using namespace LHCb;
 

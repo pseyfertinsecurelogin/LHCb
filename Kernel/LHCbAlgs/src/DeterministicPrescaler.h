@@ -1,20 +1,29 @@
 
-// Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-
+#include <math.h>
+#include <stdint.h>
 // STL
 #include <string>
-#include <math.h>
 
+// Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/StatusCode.h"
 // from Boost
 #include "boost/cstdint.hpp"
 #include "boost/integer/integer_mask.hpp"
 #include "boost/integer_traits.hpp"
+
 using boost::uint32_t;
 using boost::uint64_t;
 
 // from LHCb core
 #include "Event/ODIN.h"
+
+class ISvcLocator;
+class StatEntity;
+namespace LHCb {
+class ODIN;
+}  // namespace LHCb
 
 class DeterministicPrescaler final : public GaudiAlgorithm
 {

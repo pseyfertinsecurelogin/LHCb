@@ -1,13 +1,28 @@
 // Include files 
 
-// from Gaudi
-#include "GaudiKernel/SystemOfUnits.h"
+#include <stddef.h>
+#include <functional>
+#include <istream>
+
+#include "Event/L0DUReport.h"
+#include "Event/L0ProcessorData.h"
 //DAQEvent
 #include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
 // local
 #include "L0DUAlg.h"
+#include "L0Interfaces/IL0DUConfigProvider.h"
+#include "L0Interfaces/IL0DUEmulatorTool.h"
 
-#include "Event/L0DUBase.h"
+class ISvcLocator;
+
 using namespace Gaudi::Units;
 
 //-----------------------------------------------------------------------------

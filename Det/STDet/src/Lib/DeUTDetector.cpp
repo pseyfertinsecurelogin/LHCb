@@ -1,12 +1,21 @@
 #include "STDet/DeUTDetector.h"
-#include "DetDesc/IGeometryInfo.h"
 
-#include "STDet/DeUTStation.h"
+#include <vector>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/STChannelID.h"
+#include "Kernel/UTNames.h"
+#include "STDet/DeSTLayer.h"
+#include "STDet/DeSTSector.h"
+#include "STDet/DeSTStation.h"
 #include "STDet/DeUTLayer.h"
 #include "STDet/DeUTModule.h"
 #include "STDet/DeUTSector.h"
+#include "STDet/DeUTStation.h"
 
-#include "Kernel/UTNames.h"
+class DeSTBaseElement;
 
 using namespace LHCb;
 

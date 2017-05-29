@@ -17,23 +17,21 @@
 #include "TemplatedGenVector/EulerAngles.h"
 
 #include <cmath>
+#include <ostream>
 
-#include "TemplatedGenVector/Cartesian3D.h"
-#include "TemplatedGenVector/DisplacementVector3D.h"
-#include "TemplatedGenVector/EulerAngles.h"
-#include "TemplatedGenVector/Rotation3D.h"
 #include "TemplatedGenVector/Quaternion.h"
-#include "TemplatedGenVector/RotationX.h"
-#include "TemplatedGenVector/RotationY.h"
+#include "TemplatedGenVector/Rotation3D.h"
 #include "TemplatedGenVector/RotationZ.h"
-
-#include "TemplatedGenVector/AxisAnglefwd.h"
 
 namespace LHCbROOT {
 
 namespace Math {
 
 // ========== Constructors and Assignment =====================
+
+class AxisAngle;
+class RotationX;
+class RotationY;
 
 void EulerAngles::Rectify()
 {

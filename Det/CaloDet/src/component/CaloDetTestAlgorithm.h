@@ -4,10 +4,15 @@
 // Include files
 // from STL
 #include <string>
-// from CaloKernel
-#include "GaudiAlg/GaudiAlgorithm.h"
+
 // CaloDet
 #include "CaloDet/DeCalorimeter.h"
+// from CaloKernel
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+template <class T> class AlgFactory;
 
 /** @class CaloDetTestAlgorithm CaloDetTestAlgorithm.h
  *

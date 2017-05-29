@@ -1,6 +1,8 @@
+#include <math.h>
+
+#include "GaudiKernel/PhysicalConstants.h"
 #include "Kernel/LHCbConstants.h"
 #include "Kernel/SiLandauFun.h"
-#include <math.h>
 
 double SiLandauFun::MPV(const double beta,
                         const double gamma,

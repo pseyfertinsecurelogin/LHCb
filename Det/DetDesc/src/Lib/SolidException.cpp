@@ -1,10 +1,15 @@
 // $Id: SolidException.cpp,v 1.7 2009-04-17 08:54:24 cattanem Exp $
 
+#include <ostream>
+#include <string>
+
 // GaudiKernel
 #include "DetDesc/ISolid.h"
-#include "GaudiKernel/MsgStream.h"
 // DetDesc
 #include "DetDesc/SolidException.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
 
 //////////////////////////////////////////////////////////////////////////////////////
 SolidException::SolidException( const std::string& message  , 

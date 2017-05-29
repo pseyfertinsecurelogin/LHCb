@@ -1,16 +1,24 @@
 #ifndef BANKKILLER_H
 #define BANKKILLER_H 1
 
+#include <map>
 // STL
 #include <string>
 #include <vector>
-#include <map>
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
+#include "Event/RawBank.h"
 // from Event
 #include "Event/RawEvent.h"
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+namespace LHCb {
+class RawEvent;
+}  // namespace LHCb
+template <class T> class AlgFactory;
 
 /** @class bankKiller bankKiller.h
  *

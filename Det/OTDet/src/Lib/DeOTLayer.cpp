@@ -1,11 +1,26 @@
 /// GaudiKernel
-#include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
+#include <algorithm>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/DetectorElementException.h"
+#include "DetDesc/IDetectorElement.h"
 /// DetDesc
 #include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/SolidBox.h"
-
+#include "DetDesc/ParamValidDataObject.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/OTChannelID.h"
 /// OTDet
 #include "OTDet/DeOTLayer.h"
 #include "OTDet/DeOTQuarter.h"

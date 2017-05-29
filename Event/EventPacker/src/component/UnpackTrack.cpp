@@ -1,10 +1,23 @@
 // Include files
 
-// from Gaudi
-#include "Event/StandardPacker.h"
+#include <functional>
+#include <vector>
 
+#include "Event/PackedTrack.h"
+#include "Event/Track.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/StatEntity.h"
 // local
 #include "UnpackTrack.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackTrack

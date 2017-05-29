@@ -1,16 +1,26 @@
 #ifndef HLTRAWBANKDECODERBASE_H 
 #define HLTRAWBANKDECODERBASE_H 1
 
+#include <functional>
+#include <iterator>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "DAQKernel/DecoderAlgBase.h"
 // Include files
 // from Gaudi
 #include "DAQKernel/DecoderAlgBase.h"
-
+#include "Event/RawBank.h"
+#include "GaudiKernel/Property.h"
 #include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/StringKey.h"
 #include "GaudiKernel/VectorMap.h"
 #include "Kernel/IANNSvc.h"
 #include "Kernel/IIndexedANNSvc.h"
-#include "DAQKernel/DecoderAlgBase.h"
-#include "Event/RawBank.h"
+
+class ISvcLocator;
 
 class HltRawBankDecoderBase : public Decoder::AlgBase {
 public:

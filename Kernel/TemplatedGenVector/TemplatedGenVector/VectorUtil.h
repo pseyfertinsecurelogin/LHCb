@@ -18,10 +18,20 @@
 #ifndef LHCbROOT_Math_GenVector_VectorUtil
 #define LHCbROOT_Math_GenVector_VectorUtil  1
 
+#include <cmath>
+
+#include "DisplacementVector3D.h"
+#include "GenVector_exception.h"
+#include "LorentzVector.h"
 #include "Math/Math.h"
-
-
+#include "PositionVector3Dfwd.h"
 #include "TemplatedGenVector/Boost.h"
+
+namespace LHCbROOT {
+namespace Math {
+template <class CoordSystem, class Tag> class PositionVector3D;
+}  // namespace Math
+}  // namespace LHCbROOT
 
 namespace LHCbROOT {
 

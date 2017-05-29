@@ -1,13 +1,25 @@
 // $Id: TrajPoca.cpp,v 1.11 2009-12-28 21:27:49 wouter Exp $
 // Include files
 
-#include "Math/CholeskyDecomp.h"
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <array>
+#include <cmath>
+#include <functional>
 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
 // Math Definitions
 #include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
+#include "GaudiKernel/Property.h"
 #include "GaudiKernel/SystemOfUnits.h"
-
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/ITrajPoca.h"
+#include "Math/CholeskyDecomp.h"
 // local
 #include "TrajPoca.h"
 

@@ -1,19 +1,26 @@
 #include "ConfigArchiveAccessSvc.h"
-#include "IArchive.h"
-#include <sstream>
-#include <string>
-#include <cerrno>
+
+#include <boost/core/explicit_operator_bool.hpp>
+#include <boost/filesystem/path_traits.hpp>
+#include <boost/none.hpp>
+#include <sys/sysmacros.h>
 #include <iostream>
-#include <sstream>
+#include <memory>
+#include <string>
 #include <vector>
-#include <algorithm>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "IArchive.h"
+#include "LHCbMath/MD5.h"
+
 using namespace std;
 
 #include "boost/filesystem/path.hpp"
+
+class ISvcLocator;
+
 namespace fs = boost::filesystem;
-
-
-#include "GaudiKernel/System.h"
 
 
 //=============================================================================

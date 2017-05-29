@@ -1,10 +1,20 @@
 #ifndef TIMEDECODERLIST_H
 #define TIMEDECODERLIST_H 1
 
+#include <list>
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/IEventTimeDecoder.h"            // Interface
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/extends.h"
+
+class IEventTimeDecoder;
+class IInterface;
 
 /** Simple implementation of IEventTimeDecoder forwarding the calls to a list of
  *  other implementations.

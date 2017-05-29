@@ -2,17 +2,38 @@
 #ifndef L0DUEMULATORTOOL_H
 #define L0DUEMULATORTOOL_H 1
 
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/L0DUBase.h"
+#include "Event/L0DUElementaryData.h"
+#include "Event/L0DUReport.h"
+#include "Event/L0ProcessorData.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-// Interfaces
-#include "L0Interfaces/IL0DUEmulatorTool.h"
-#include "L0Interfaces/IL0ProcessorDataDecoder.h"
-#include "L0Interfaces/IL0CondDBProvider.h"
 #include "GaudiKernel/IEventTimeDecoder.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/Incident.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
+#include "L0Interfaces/IL0CondDBProvider.h"
+// Interfaces
+#include "L0Interfaces/IL0DUEmulatorTool.h"
+#include "L0Interfaces/IL0ProcessorDataDecoder.h"
+
+class IEventTimeDecoder;
+class IInterface;
+class Incident;
+namespace LHCb {
+class L0DUConfig;
+}  // namespace LHCb
+struct IL0CondDBProvider;
+struct IL0ProcessorDataDecoder;
 
 
 /** @class L0DUEmulatorTool L0DUEmulatorTool.h

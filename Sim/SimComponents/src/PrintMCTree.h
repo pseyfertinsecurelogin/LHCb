@@ -1,10 +1,17 @@
 #ifndef PRINTMCTREE_H
 #define PRINTMCTREE_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
 class IDebugTool;
+class ISvcLocator;
+struct IPrintMCDecayTreeTool;
 
 
 /** @class PrintMCTree PrintMCTree.h

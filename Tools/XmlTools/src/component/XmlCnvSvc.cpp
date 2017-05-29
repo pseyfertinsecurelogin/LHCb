@@ -1,13 +1,18 @@
 // Include Files
-#include <xercesc/util/PlatformUtils.hpp>
-#include <xercesc/util/XMLString.hpp>
+#include <ctype.h>
+#include <algorithm>
 
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/MsgStream.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiKernel/GenericAddress.h"
-
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Service.h"
 #include "XmlCnvSvc.h"
+
+class IOVDOMDocument;
 
 
 // -----------------------------------------------------------------------

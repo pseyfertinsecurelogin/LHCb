@@ -1,9 +1,30 @@
 // Include files 
 
-// from Gaudi
-#include "GaudiKernel/RndmGenerators.h"
+#include <algorithm>
+#include <functional>
+
+#include "CaloDet/CellParam.h"
+#include "CaloDet/DeCalorimeter.h"
+#include "CaloKernel/CaloVector.h"
 // local
 #include "DeCaloCalib.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiTuples.h"
+#include "GaudiAlg/Tuple.h"
+#include "GaudiAlg/TupleObj.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+// from Gaudi
+#include "GaudiKernel/RndmGenerators.h"
+#include "Kernel/CaloCellCode.h"
+#include "Kernel/CaloCellID.h"
+
+class ISvcLocator;
 //-----------------------------------------------------------------------------
 // Implementation file for class : DeCaloCalib
 //

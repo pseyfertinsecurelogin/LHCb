@@ -3,37 +3,51 @@
 // ============================================================================
 // STL & STD
 // ============================================================================
-#include <set>
-#include <functional>
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <boost/format.hpp>
 #include <algorithm>
-// ============================================================================
-/// from Gaudi
-// ============================================================================
-#include "GaudiKernel/IRndmGenSvc.h"
-#include "GaudiKernel/RndmGenerators.h"
-#include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/Vector3DTypes.h"
-#include "GaudiKernel/VectorsAsProperty.h"
-// ============================================================================
-// GaudiAlg
-// ============================================================================
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <functional>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
+
 // ============================================================================
 // DetDesc
 // ============================================================================
 #include "DetDesc/ILVolume.h"
 #include "DetDesc/IPVolume.h"
 #include "DetDesc/ISolid.h"
-#include "DetDesc/Material.h"
+#include "DetDesc/ITransportSvc.h"
+#include "DetDesc/IntersectionErrors.h"
 #include "DetDesc/SolidBox.h"
 #include "DetDesc/VolumeIntersectionIntervals.h"
-#include "DetDesc/IntersectionErrors.h"
-#include "DetDesc/ITransportSvc.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+// ============================================================================
+// GaudiAlg
+// ============================================================================
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/RndmGenerators.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "GaudiKernel/VectorsAsProperty.h"
 // ============================================================================
 // Boost
 // ============================================================================
 #include "boost/progress.hpp"
-#include "boost/format.hpp"
+
+class ISvcLocator;
+
 // ============================================================================
 /** @file
  *  Implementation file for class  DetDesc::CheckOverlap

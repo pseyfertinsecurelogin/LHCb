@@ -1,13 +1,33 @@
 // Include files 
 
-// DAQEvent
-#include "Event/RawEvent.h"
+#include <stddef.h>
+#include <functional>
+#include <map>
+#include <utility>
+#include <vector>
+
+#include "Event/L0DUChannel.h"
+#include "Event/L0DUConfig.h"
+#include "Event/L0DUDecision.h"
+#include "Event/L0DUElementaryCondition.h"
 // L0Event
 #include "Event/L0DUReport.h"
 #include "Event/L0ProcessorData.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommon.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/ToStream.h"
 // local
 #include "L0DUFromRawAlg.h"
+#include "L0Interfaces/IL0DUFromRawTool.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0DUFromRawAlg

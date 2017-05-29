@@ -1,12 +1,21 @@
 #ifndef COMPONENT_CONDDBDISPATCHERSVC_H
 #define COMPONENT_CONDDBDISPATCHERSVC_H 1
 
+#include <CoolKernel/ChannelId.h>
+#include <map>
+#include <string>
+#include <vector>
+
+#include "DetCond/ICondDBReader.h"
 // Include files
 #include "GaudiKernel/Service.h"
-#include "DetCond/ICondDBReader.h"
-#include <vector>
-#include <map>
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/CondDBNameTagPair.h"
 
+class ISvcLocator;
 template <class TYPE> class SvcFactory;
 
 /** @class CondDBDispatcherSvc CondDBDispatcherSvc.h component/CondDBDispatcherSvc.h

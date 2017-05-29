@@ -1,13 +1,31 @@
 // Include files
 
+#include <functional>
+#include <vector>
+
+#include "Event/MCParticle.h"
+#include "Event/MCVertex.h"
+#include "Event/PackedMCVertex.h"
+#include "Event/StandardPacker.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+// local
+#include "PackMCVertex.h"
 // from Boost
 #include "boost/numeric/conversion/bounds.hpp"
 
-#include "Event/MCVertex.h"
-#include "Event/StandardPacker.h"
-#include "Event/PackedMCVertex.h"
-// local
-#include "PackMCVertex.h"
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PackMCVertex

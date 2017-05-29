@@ -1,11 +1,19 @@
 #ifndef _DeSTLayer_H_
 #define _DeSTLayer_H_
 
+#include <iosfwd>
 #include <string>
+#include <vector>
 
+#include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/STChannelID.h"
 #include "STDet/DeSTBaseElement.h"
-#include "GaudiKernel/Plane3DTypes.h"
+
+class MsgStream;
+namespace LHCb {
+class STChannelID;
+}  // namespace LHCb
 
 /** @class DeSTLayer DeSTLayer.h "STDet/DeSTLayer.h"
  *

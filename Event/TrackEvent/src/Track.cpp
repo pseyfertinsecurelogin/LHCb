@@ -1,20 +1,33 @@
 // $: Track.cpp,v 1.39 2007/05/15 06:57:34 wouter Exp $ 
 // Include files
 
-#include <functional>
-#include <string>
-#include <map>
-#include <array>
+#include <stddef.h>
 #include <algorithm>
+#include <array>
+#include <iterator>
+#include <ostream>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "Event/Node.h"
+#include "Event/State.h"
+// local
+#include "Event/Track.h"
+#include "Event/TrackFitResult.h"
+#include "Event/TrackFunctor.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/LHCbID.h"
 // from gsl
 #include "gsl/gsl_cdf.h"
 
-// local
-#include "Event/Track.h"
-#include "Event/TrackFunctor.h"
-#include "Event/TrackFitResult.h"
-#include "Event/Node.h"
+namespace LHCb {
+class Measurement;
+}  // namespace LHCb
 
 using namespace Gaudi;
 using namespace LHCb;

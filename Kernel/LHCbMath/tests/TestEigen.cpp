@@ -4,17 +4,24 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
 #include <iostream>
+
+#include "GaudiKernel/GenericMatrixTypes.h"
+#include "GaudiKernel/GenericVectorTypes.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/SymmetricMatrixTypes.h"
-#include "GaudiKernel/GenericMatrixTypes.h"
-#include "GaudiKernel/GenericVectorTypes.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/EigenSystem.h"
+#include "LHCbMath/EigenSystem.icpp"
+
 // ============================================================================
 /** @file
  *  Test some Win32 compilation problme with matrix eigenvalues

@@ -1,21 +1,33 @@
 // Include files
 // Event data
-#include "Event/RawEvent.h"
-#include "Event/STTELL1Data.h"
-
-// From Kernel packages
-#include "Kernel/STRawBankMap.h"
-#include "Kernel/STDAQDefinitions.h"
-#include "Kernel/STTell1ID.h"
-#include "Kernel/STTell1Board.h"
-#include "Kernel/ISTReadoutTool.h"
-
+#include <ext/alloc_traits.h>
 // standard packages
 #include <bitset>
-#include "boost/lexical_cast.hpp"
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <vector>
 
+#include "Event/RawEvent.h"
+#include "Event/STTELL1Data.h"
+#include "Event/STTELL1EventInfo.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "Kernel/ISTReadoutTool.h"
+#include "Kernel/STDAQDefinitions.h"
+// From Kernel packages
+#include "Kernel/STRawBankMap.h"
+#include "Kernel/STTell1ID.h"
 // local
 #include "STFullDecoding.h"
+#include "boost/lexical_cast.hpp"
+
+class ISvcLocator;
+class STTell1Board;
 
 using namespace LHCb;
 using namespace STDAQ;

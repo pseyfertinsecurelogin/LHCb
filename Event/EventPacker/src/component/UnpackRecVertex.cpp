@@ -1,12 +1,27 @@
 // Include files 
 
+#include <functional>
+#include <map>
+#include <utility>
+#include <vector>
+
+#include "Event/PackedRecVertex.h"
 // from Gaudi
 #include "Event/RecVertex.h"
-#include "Event/PackedRecVertex.h"
+#include "Event/Track.h"
 #include "Event/WeightsVector.h"
-#include "Event/StandardPacker.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartRef.h"
 // local
 #include "UnpackRecVertex.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackRecVertex

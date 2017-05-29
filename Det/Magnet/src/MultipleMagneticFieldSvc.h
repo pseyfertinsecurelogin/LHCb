@@ -1,10 +1,22 @@
 #ifndef MULTIPLEMAGNETICFIELDSVC_H
 #define MULTIPLEMAGNETICFIELDSVC_H 1
 
+#include <Math/Vector3Dfwd.h>
+#include <string>
 // Include files
 #include <vector>
+
+#include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Service.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
 #include "Kernel/ILHCbMagnetSvc.h"
+
+class ISvcLocator;
+namespace LHCb {
+class MagneticFieldGrid;
+}  // namespace LHCb
 
 /** @class MultipleMagneticFieldSvc MultipleMagneticFieldSvc.h
  *  A service for wrapping multiple MagneticFieldSvc

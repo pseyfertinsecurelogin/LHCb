@@ -1,6 +1,5 @@
 #include "ProcessorKernel/Register.h"
 
-#include <cmath>
 #include <stdio.h>
 
 L0Muon::Register::Register() {}

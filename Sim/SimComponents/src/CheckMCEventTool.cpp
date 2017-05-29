@@ -1,12 +1,21 @@
 // Include files
 
+#include <functional>
+
+// local
+#include "CheckMCEventTool.h"
 // Event model
 #include "Event/MCHeader.h"
 #include "Event/MCParticle.h"
 #include "Event/MCVertex.h"
-
-// local
-#include "CheckMCEventTool.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartRef.h"
+#include "Kernel/ICheckTool.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CheckMCEventTool

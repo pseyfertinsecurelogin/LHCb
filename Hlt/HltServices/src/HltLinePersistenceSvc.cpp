@@ -1,9 +1,22 @@
+#include <functional>
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
-#include "GaudiKernel/Service.h"
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "Gaudi/PluginService.h"
 #include "GaudiKernel/Property.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/extends.h"
 #include "Kernel/ILinePersistenceSvc.h"
 #include "LinePersistenceSvcCommon.h"
+
+class ISvcLocator;
+namespace LHCb {
+class HltDecReports;
+}  // namespace LHCb
 
 
 class HltLinePersistenceSvc : public extends<Service, ILinePersistenceSvc>,

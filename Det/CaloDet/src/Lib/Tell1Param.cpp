@@ -2,10 +2,8 @@
 // $Id: $ 
 // ============================================================================
 #define  CALODET_TELL1PARAM_CPP 1 
-// ============================================================================
-/// Include files
-/// local
-#include "CaloDet/DeCalorimeter.h"
+#include <vector>
+
 #include "CaloDet/Tell1Param.h"
 
 

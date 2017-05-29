@@ -2,8 +2,14 @@
 #ifndef DDEXAMPLE_SIMPLEALGORITHM_H
 #define DDEXAMPLE_SIMPLEALGORITHM_H 1
 
+#include <string>
+
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+struct ILVolume;
 
 /** @class SimpleAlgorithm SimpleAlgorithm.h
  *  Example of an algorithm using the detector data service

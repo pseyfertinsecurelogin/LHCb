@@ -1,17 +1,23 @@
 #ifndef STLAYERSELECTOR_H
 #define STLAYERSELECTOR_H 1
 
+#include <map>
 // Include files
 // from STL
 #include <string>
 #include <vector>
-#include <map>
 
 // from GaudiAlg
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/StatusCode.h"
 // from Kernel
 #include "Kernel/ISTChannelIDSelector.h"
+
+class IInterface;
+namespace LHCb {
+class STChannelID;
+}  // namespace LHCb
+template <class T> struct ToolFactory;
 
 
 /** @class STLayerSelector STLayerSelector.h

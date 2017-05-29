@@ -1,7 +1,22 @@
 // $Id: SolidPolyHedronHelper.cpp,v 1.14 2009-04-17 08:54:24 cattanem Exp $
 // ===========================================================================
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <boost/container/static_vector.hpp>
 #include <algorithm>
+#include <cmath>
+#include <string>
+#include <vector>
+
+#include "DetDesc/ISolid.h"
+#include "DetDesc/SolidBase.h"
+#include "DetDesc/SolidException.h"
 #include "DetDesc/SolidPolyHedronHelper.h"
+#include "DetDesc/SolidTicks.h"
+#include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 // ============================================================================
 /** @file

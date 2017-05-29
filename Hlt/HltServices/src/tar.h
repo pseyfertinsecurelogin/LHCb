@@ -1,30 +1,38 @@
 #ifndef TAR_IMPL_H
 #define TAR_IMPL_H
+#include <boost/core/noncopyable.hpp>
+#include <boost/iostreams/close.hpp>
+#include <algorithm>
+#include <utility>
+#include <vector>
+
+#include "GaudiKernel/StatusCode.h"
 #include "IArchive.h"
 #ifndef _WIN32
+#include <fcntl.h>
+#include <grp.h>
+#include <pwd.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
 #include <unistd.h>
+#include <fstream>
+#include <iostream>
 #include <map>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <time.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <pwd.h>
-#include <grp.h>
 #else
 typedef int uid_t;
 typedef int gid_t;
 #endif
 
-#include "boost/optional.hpp"
 #include "boost/iostreams/filtering_stream.hpp"
+#include "boost/optional.hpp"
+
 namespace io = boost::iostreams;
 
-#include "GaudiKernel/StringKey.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StringKey.h"
 
 
 namespace ConfigTarFileAccessSvc_details

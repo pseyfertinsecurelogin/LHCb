@@ -1,21 +1,26 @@
 #ifndef OTRAWBANKENCODER_H
 #define OTRAWBANKENCODER_H 1
 
+#include <stddef.h>
 // Include files
 // from std
 #include <string>
+#include <vector>
 
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
 // Event
 #include "Kernel/OTChannelID.h"
-
+// Channel map tool
+#include "OTDAQ/IOTChannelMapTool.h"
 // Interface
 #include "OTDAQ/IOTRawBankEncoder.h"
 
-// Channel map tool
-#include "OTDAQ/IOTChannelMapTool.h"
+class IInterface;
+struct IOTChannelMapTool;
+struct IOTRawBankEncoder;
 
 namespace OTDAQ {
   class OTBank;

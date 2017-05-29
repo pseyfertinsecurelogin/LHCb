@@ -1,9 +1,15 @@
 
-// from Gaudi
-#include "GaudiKernel/IIncidentSvc.h"
+#include <functional>
 
 // local
 #include "EvtCounter.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+// from Gaudi
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/Property.h"
+
+class IInterface;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : EvtCounter

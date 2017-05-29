@@ -1,14 +1,21 @@
 
+#include <assert.h>
+#include <algorithm>
 // STD
 #include <iostream>
-#include <algorithm>
-#include <assert.h>
+#include <string>
+#include <utility>
+#include <vector>
 
 // Event model
 #include "Event/RecVertex.h"
-
+#include "Event/Track.h"
+#include "Event/VertexBase.h"
 // Gaudi
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RecVertex

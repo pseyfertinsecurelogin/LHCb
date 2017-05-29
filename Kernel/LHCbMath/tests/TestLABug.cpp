@@ -4,12 +4,18 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
 #include <iostream>
+
+#include "GaudiKernel/GenericVectorTypes.h"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/SymmetricMatrixTypes.h"
-#include "GaudiKernel/GenericVectorTypes.h"
+
 // ============================================================================
 /** @file
  *  Test SMatrix/SVector problem, see #bug 104111

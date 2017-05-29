@@ -15,11 +15,19 @@
 #ifndef STKERNEL_STTUPLEALGBASE_H
 #define STKERNEL_STTUPLEALGBASE_H 1
 
+#include <functional>
+#include <string>
+
+#include "/tmp/foobarpath/LHCb/ST/STKernel/src/STCommonBase.icpp"
+#include "GaudiAlg/GaudiCommonImp.h"
 // GaudiAlg
 #include "GaudiAlg/GaudiTupleAlg.h"
-
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "Kernel/STCommonBase.h"
+
+class ISvcLocator;
 
 namespace ST
 {

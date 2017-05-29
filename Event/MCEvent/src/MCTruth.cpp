@@ -1,7 +1,11 @@
 #include "GaudiKernel/ContainedObject.h"
-#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/ObjectContainerBase.h"
 #include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/StreamBuffer.h"
 
 StatusCode makeMCTruthLink(const DataObject* from, const DataObject* to);
 void* accessMCTruth( void* (*cast)(DataObject*), const DataObject* from);

@@ -1,8 +1,16 @@
 // STL
 #include <cmath>
-#include <sstream>
+#include <string>
 
 #include "Event/PackedEventChecks.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/GenericVectorTypes.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "GaudiKernel/Vector4DTypes.h"
 
 using namespace DataPacking;
 

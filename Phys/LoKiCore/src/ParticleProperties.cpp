@@ -4,30 +4,29 @@
 // STD&STL
 // ============================================================================
 #include <algorithm>
-// ============================================================================
-// GaudiKernel
-// ============================================================================
-#include "GaudiKernel/PhysicalConstants.h"
+#include <functional>
+#include <iostream>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/VectorMap.h"
 #include "GaudiKernel/ToStream.h"
+#include "GaudiKernel/VectorMap.h"
+#include "Kernel/IParticlePropertySvc.h"
 // ============================================================================
 // Kernel
 // ============================================================================
 #include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
-#include "Kernel/IParticlePropertySvc.h"
-// ============================================================================
-// LoKi
-// ============================================================================
-#include "LoKi/ParticleProperties.h"
+#include "LoKi/Constants.h"
 #include "LoKi/Report.h"
 #include "LoKi/Services.h"
-#include "LoKi/Constants.h"
 // ============================================================================
 // Boost 
 // ============================================================================
 #include "boost/lexical_cast.hpp"
+
 // ============================================================================
 /** @file
  *

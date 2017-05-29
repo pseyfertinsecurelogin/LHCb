@@ -4,7 +4,13 @@
 // ============================================================================
 //  STD & STL 
 // ============================================================================
+#include <Math/BinaryOperators.h>
+#include <Math/Expression.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
 #include <iostream>
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -14,6 +20,7 @@
 // Local 
 // ============================================================================
 #include "LHCbMath/SVectorWithError.h"
+
 // ============================================================================
 /** @file 
  *  Simple file to test class Gaudi::Math::SVectorWithError 

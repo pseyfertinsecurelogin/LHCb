@@ -1,17 +1,22 @@
 #ifndef ODIN_CODEC_BASE_TOOL_H
 #define ODIN_CODEC_BASE_TOOL_H
+#include <string>
+#include <vector>
+
+#include "DAQKernel/DecoderToolBase.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "DAQKernel/DecoderToolBase.h"
 #include "GaudiAlg/IGenericTool.h"            // Interface
-#include <vector>
-#include <string>
+#include "GaudiKernel/extends.h"
+
+class IGenericTool;
+class IInterface;
 
 // Forward declarations
 namespace LHCb {
-  class RawBank;
   class ODIN;
+  class RawBank;
 }
 
 /** @class ODINCodecBaseTool ODINCodecBaseTool.h

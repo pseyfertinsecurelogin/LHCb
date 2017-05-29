@@ -5,10 +5,18 @@
 #include <string>
 #include <vector>
 
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "STDet/DeITDetector.h"
 #include "STDet/DeSTStation.h"
+#include "STDet/STDetTraits.h"
 
 class DeITBox;
 class DeITDetector;
+namespace LHCb {
+class STChannelID;
+}  // namespace LHCb
 
 /** @class DeITStation DeITStation.h "STDet/DeITStation.h"
  *

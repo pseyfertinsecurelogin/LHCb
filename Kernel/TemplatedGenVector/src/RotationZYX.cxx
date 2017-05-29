@@ -18,16 +18,9 @@
 
 #include <cmath>
 
-#include "TemplatedGenVector/Cartesian3D.h"
-#include "TemplatedGenVector/DisplacementVector3D.h"
-#include "TemplatedGenVector/RotationZYX.h"
-#include "TemplatedGenVector/Rotation3D.h"
 #include "TemplatedGenVector/Quaternion.h"
-#include "TemplatedGenVector/RotationX.h"
-#include "TemplatedGenVector/RotationY.h"
+#include "TemplatedGenVector/Rotation3D.h"
 #include "TemplatedGenVector/RotationZ.h"
-
-#include "TemplatedGenVector/AxisAnglefwd.h"
 
 namespace LHCbROOT {
 
@@ -46,6 +39,11 @@ namespace Math {
 //   return Rotation3D(*this)(v);
 // }
 
+
+class AxisAngle;
+class EulerAngles;
+class RotationX;
+class RotationY;
 
 RotationZYX RotationZYX::operator * (const Rotation3D  & r) const {
    // combine with a Rotation3D

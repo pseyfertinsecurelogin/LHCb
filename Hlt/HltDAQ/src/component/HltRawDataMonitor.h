@@ -1,14 +1,28 @@
 #ifndef HLTRAWDATAMONITOR_H 
 #define HLTRAWDATAMONITOR_H 1
 
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "AIDA/IAxis.h"
+#include "AIDA/IHistogram1D.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "Kernel/IANNSvc.h"
 #include "GaudiAlg/GaudiHistoAlg.h"
 #include "GaudiAlg/GaudiTupleAlg.h"
-#include "AIDA/IHistogram1D.h"
-#include "AIDA/IAxis.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/IANNSvc.h"
+
+class ISvcLocator;
+namespace AIDA {
+class IHistogram1D;
+}  // namespace AIDA
+namespace LHCb {
+class HltObjectSummary;
+}  // namespace LHCb
 
 /** @class HltRawDataMonitor HltRawDataMonitor.h
  *  

@@ -1,23 +1,44 @@
 #ifndef GITENTITYRESOLVER_H
 #define GITENTITYRESOLVER_H
 
+#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_ref_fwd.hpp>
+#include <xercesc/sax/EntityResolver.hpp>
+#include <xercesc/sax/InputSource.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <algorithm>
+#include <functional>
+#include <iosfwd>
+#include <regex>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
 // Include files
 #include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/IFileAccess.h"
-#include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+#include "GaudiKernel/extends.h"
 #include "GitEntityResolver/helpers.h"
+#include "Kernel/CondDBNameTagPair.h"
 #include "Kernel/ICondDBInfo.h"
 #include "XmlTools/IXmlEntityResolver.h"
 
-#include <algorithm>
-#include <iosfwd>
-#include <regex>
-#include <type_traits>
-
-#include <boost/utility/string_ref.hpp>
+class IDetDataSvc;
+class IIncidentListener;
+class IIncidentSvc;
+class IInterface;
+class Incident;
+struct ICondDBInfo;
+struct IXmlEntityResolver;
 
 // this should be defined in GaudiKernel/Time.h, but the version there is not
 // found by ADL

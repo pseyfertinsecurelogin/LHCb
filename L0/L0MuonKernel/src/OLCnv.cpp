@@ -1,7 +1,11 @@
 #include "L0MuonKernel/OLCnv.h"
-#include "ProcessorKernel/RegisterFactory.h"
-#include "ProcessorKernel/Register.h"
+
+#include <stdio.h>
+#include <iomanip>
 #include <iostream>
+
+#include "ProcessorKernel/RegisterFactory.h"
+#include "ProcessorKernel/TileRegister.h"
 
 /**
    Constructor.

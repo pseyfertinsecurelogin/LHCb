@@ -1,20 +1,31 @@
 // Include files
 
-// From Gaudi
-#include "GaudiKernel/IConverter.h"
-#include "GaudiKernel/IAddressCreator.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-
-#include "CoolKernel/IRecord.h"
-#include "CoolKernel/RecordException.h"
-
-// From LHCb
-#include "DetCond/ICondDBReader.h"
-#include "DetDesc/Condition.h"
+#include <CoolKernel/IField.h>
+#include <functional>
+#include <map>
+#include <memory>
+#include <typeinfo>
 
 // local
 #include "CondDBDQScanner.h"
+#include "CoolKernel/RecordException.h"
+// From LHCb
+#include "DetCond/ICondDBReader.h"
+#include "DetDesc/Condition.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/DataObject.h"
+// From Gaudi
+#include "GaudiKernel/IConverter.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Time.icpp"
 #include "RelyConverter.h"
+
+class IInterface;
 
 // ----------------------------------------------------------------------------
 // Implementation file for class: CondDBDQScanner

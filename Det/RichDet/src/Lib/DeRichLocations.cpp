@@ -11,10 +11,13 @@
 
 // STL
 #include <map>
+#include <string>
+#include <utility>
 
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichRadiatorType.h"
 // Local
 #include "RichDet/DeRichLocations.h"
-
 // RichUtils
 #include "RichUtils/RichException.h"
 

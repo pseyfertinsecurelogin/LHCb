@@ -1,11 +1,10 @@
 // $Id: L0DUElementaryCondition.cpp,v 1.6 2010-01-20 15:59:06 odescham Exp $
 // Include files 
-#include <utility>
-#include <string>
-#include <map>
 #include <sstream>
+#include <string>
 
 #include "Event/L0DUElementaryCondition.h"
+#include "Event/L0DUElementaryData.h"
 
 //-----------------------------------------------------------------------------
 // Auxilliary Implementation file for L0DUElementaryCondition Event classes

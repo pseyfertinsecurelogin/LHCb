@@ -4,7 +4,13 @@
 #include <string>
 #include <vector>
 
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STChannelID.h"
 #include "STDet/DeSTLayer.h"
+#include "STDet/DeUTStation.h"
+#include "STDet/STDetTraits.h"
 
 class DeUTModule;
 class DeUTStation;

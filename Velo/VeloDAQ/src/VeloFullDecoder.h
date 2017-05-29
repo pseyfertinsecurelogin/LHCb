@@ -1,10 +1,12 @@
 #ifndef VELOTELL1ALGORITHM_VELOFULLDECODER_H
 #define VELOTELL1ALGORITHM_VELOFULLDECODER_H 1
 
-// Include files
-#include "VeloEvent/VeloFullBank.h"
 #include "Tell1Kernel/VeloDecodeConf.h"
 #include "Tell1Kernel/VeloDecodeCore.h"
+// Include files
+#include "VeloEvent/VeloFullBank.h"
+
+class VeloFullBank;
 
 /** @class VeloFullDecoder VeloFullDecoder.h VeloFullDecoder.h
  *

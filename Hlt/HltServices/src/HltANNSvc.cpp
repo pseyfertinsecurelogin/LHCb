@@ -1,6 +1,19 @@
-#include "ANNSvc.h"
+#include <boost/functional/hash/hash.hpp>
+#include <boost/none.hpp>
+#include <boost/optional/optional.hpp>
+#include <functional>
 #include <string>
-#include <boost/functional/hash.hpp>
+
+#include "ANNSvc.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "Gaudi/PluginService.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/StringKey.h"
+#include "Kernel/IANNSvc.h"
+
+class ISvcLocator;
 
 
 class HltANNSvc : public ANNSvc {

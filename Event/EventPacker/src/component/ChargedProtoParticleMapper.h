@@ -1,15 +1,18 @@
 #ifndef SRC_ChargedProtoParticleMapper_H
 #define SRC_ChargedProtoParticleMapper_H 1
 
-#include <string>
 #include <map>
-
-// base class
-#include "MapperToolBase.h"
+#include <string>
+#include <vector>
 
 // Event model
 #include "Event/PackedProtoParticle.h"
+#include "Event/ProtoParticle.h"
+#include "GaudiKernel/TypeNameString.h"
+// base class
+#include "MapperToolBase.h"
 
+class IInterface;
 class IJobOptionsSvc;
 
 /** @class ChargedProtoParticleMapper ChargedProtoParticleMapper.h

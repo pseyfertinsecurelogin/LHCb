@@ -1,6 +1,17 @@
+#include <functional>
+#include <string>
+
 #include "Event/PrimaryVertex.h"
 #include "Event/RecVertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 class RecToPVConverter : public GaudiAlgorithm
 {

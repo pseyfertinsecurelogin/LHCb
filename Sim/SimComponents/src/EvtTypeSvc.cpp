@@ -1,17 +1,21 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/MsgStream.h"
-
+#include <algorithm>
+#include <cstdlib>
+#include <functional>
+#include <iostream>
+#include <iterator>
+#include <set>
 
 // local
 #include "EvtTypeSvc.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
 
-#include <cstdlib>
-#include <iostream>
-#include <fstream>
-#include <algorithm>
+class ISvcLocator;
 
 namespace {
   // Function to compare evtcode of an evttype

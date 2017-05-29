@@ -3,6 +3,12 @@
 // local
 #include "Event/HltVertexReports.h"
 
+#include <Math/SMatrix.h>
+
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : HltVertexReports
 //-----------------------------------------------------------------------------

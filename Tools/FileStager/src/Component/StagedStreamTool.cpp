@@ -1,25 +1,35 @@
 // $Id:
 // Include files
-#include <iostream>
-
+// FileStager
+#include <FileStager/IFileStagerSvc.h>
+#include <GaudiKernel/DataStreamTool.h>
+#include <GaudiKernel/ISvcLocator.h>
+// from Gaudi
+#include <GaudiKernel/SmartIF.h>
+#include <GaudiUtils/IFileCatalog.h>
+#include <boost/regex/config.hpp>
+#include <boost/regex/v4/match_flags.hpp>
+#include <boost/regex/v4/perl_matcher_common.hpp>
+#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
+#include <boost/regex/v4/regex.hpp>
+#include <boost/regex/v4/regex_search.hpp>
+#include <boost/regex/v4/regex_traits.hpp>
+#include <algorithm>
+#include <exception>
+#include <functional>
+#include <memory>
 // STL
 #include <vector>
 
-// boost
-#include <boost/regex.hpp>
-
-// from Gaudi
-#include <GaudiKernel/SmartIF.h>
-#include <GaudiKernel/ISvcLocator.h>
-#include <GaudiKernel/DataStreamTool.h>
-#include <GaudiKernel/EventSelectorDataStream.h>
-#include <GaudiUtils/IFileCatalog.h>
-
-// FileStager
-#include <FileStager/IFileStagerSvc.h>
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "StagedStreamTool.h"
+
+class IInterface;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : StagedStreamTool

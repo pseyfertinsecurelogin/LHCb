@@ -1,15 +1,17 @@
 // $Id: RecordStream.cpp,v 1.1 2008/12/10 18:37:36 marcocle Exp $
 #define LHCB_RECORDSTREAM_CPP
 
-// Framework include files
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/DataStoreItem.h"
-#include "GaudiKernel/DataObject.h"
+#include <functional>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
 #include "LHCbRecordStream.h"
+
+class ISvcLocator;
 
 // Define the algorithm factory for the standard output data writer
 DECLARE_ALGORITHM_FACTORY(LHCbRecordStream)

@@ -1,15 +1,28 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/DataStoreItem.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/GaudiException.h"
+#include <exception>
+#include <functional>
+#include <utility>
+#include <vector>
 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/System.h"
+#include "Kernel/CondDBNameTagPair.h"
 // from LHCb
 #include "Kernel/ICondDBInfo.h"
-
 // local
 #include "LoadDDDB.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : LoadDDDB

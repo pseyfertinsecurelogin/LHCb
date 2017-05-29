@@ -12,14 +12,20 @@
 #ifndef RICHFUTUREKERNEL_RICHHISTOTOOLBASE_H
 #define RICHFUTUREKERNEL_RICHHISTOTOOLBASE_H 1
 
+#include <functional>
+#include <string>
+
+#include "GaudiAlg/GaudiCommonImp.h"
 // GaudiAlg
 #include "GaudiAlg/GaudiHistoTool.h"
-
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "RichFutureKernel/RichHistoBase.h"
-
 // RichUtils
 #include "RichUtils/RichHistoID.h"
+
+class IInterface;
 
 namespace Rich
 {

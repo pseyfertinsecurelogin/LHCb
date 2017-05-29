@@ -1,14 +1,20 @@
 #ifndef _STTell1Board_H
 #define _STTell1Board_H 1
 
-#include "Kernel/STTell1ID.h"
-#include "Kernel/STChannelID.h"
-#include "Kernel/STDAQDefinitions.h"
-#include "Kernel/StripRepresentation.h"
-#include <vector>
 #include <iostream>
+#include <memory>
+#include <utility>
+#include <vector>
 
 #include "Event/STCluster.h"
+#include "Kernel/STChannelID.h"
+#include "Kernel/STDAQDefinitions.h"
+#include "Kernel/STTell1ID.h"
+#include "Kernel/StripRepresentation.h"
+
+namespace STDAQ {
+class StripRepresentation;
+}  // namespace STDAQ
 
 /** @class STTell1Board STTell1Board.h "STDAQ/STTell1Board.h"
  *

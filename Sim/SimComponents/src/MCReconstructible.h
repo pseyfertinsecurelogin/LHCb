@@ -11,27 +11,42 @@
 #ifndef SIMCOMPONENTS_MCReconstructible_H
 #define SIMCOMPONENTS_MCReconstructible_H 1
 
+#include <array>
+#include <memory>
 // from STL
 #include <string>
+#include <utility>
 #include <vector>
-#include <array>
-#include "boost/optional.hpp"
 
+#include "Event/MCTrackGeomCriteria.h"
+// Event
+#include "Event/MCTrackInfo.h"
+// base class
+#include "GaudiAlg/GaudiTool.h"
 // Gaudi
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/VectorMap.h"
-
-// base class
-#include "GaudiAlg/GaudiTool.h"
-
-// Event
-#include "Event/MCTrackInfo.h"
-#include "Event/MCTrackGeomCriteria.h"
-
+#include "MCInterfaces/IMCParticleSelector.h"
 // Interface
 #include "MCInterfaces/IMCReconstructible.h"
-#include "MCInterfaces/IMCParticleSelector.h"
+#include "boost/optional.hpp"
+
+class IInterface;
+class Incident;
+namespace LHCb {
+class MCParticle;
+namespace MC {
+class MCTrackGeomCriteria;
+}  // namespace MC
+}  // namespace LHCb
+namespace boost {
+template <class T> class optional;
+}  // namespace boost
+struct IMCParticleSelector;
 
 //-----------------------------------------------------------------------------
 /** @class MCReconstructible MCReconstructible.h

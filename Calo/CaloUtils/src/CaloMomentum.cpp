@@ -3,20 +3,34 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
+#include <Math/BinaryOperators.h>
+#include <Math/Expression.h>
+#include <Math/GenVector/LorentzVector.h>
+#include <Math/GenVector/PxPyPzE4D.h>
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
+#include <algorithm>
 #include <vector>
-// ============================================================================
-// Event 
-// ============================================================================
-#include "Event/CaloCluster.h"
-#include "Event/CaloHypo.h"
-#include "Event/ProtoParticle.h"
-#include "Event/VertexBase.h"
-#include  "LHCbMath/Kinematics.h"
+
 // ============================================================================
 // Local
 // ============================================================================
 #include "CaloUtils/CaloMomentum.h"
 #include "CaloUtils/Kinematics.h"
+// ============================================================================
+// Event 
+// ============================================================================
+#include "Event/CaloCluster.h"
+#include "Event/CaloHypo.h"
+#include "Event/CaloPosition.h"
+#include "Event/ProtoParticle.h"
+#include "Event/VertexBase.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/Vector4DTypes.h"
+#include  "LHCbMath/Kinematics.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LHCb::CaloMomentum

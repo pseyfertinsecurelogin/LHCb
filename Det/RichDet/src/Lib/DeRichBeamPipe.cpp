@@ -12,6 +12,14 @@
 // local
 #include "RichDet/DeRichBeamPipe.h"
 
+#include <Math/GenVector/Cartesian3D.h>
+#include <boost/container/vector.hpp>
+
+#include "DetDesc/ILVolume.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SystemOfUnits.h"
+
 //=============================================================================
 
 const CLID CLID_DERichBeamPipe = 12050;  // User defined

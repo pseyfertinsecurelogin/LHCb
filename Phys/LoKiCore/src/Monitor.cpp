@@ -6,18 +6,22 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/Kernel.h"
-#include "GaudiKernel/HistoDef.h"
+#include <string>
+
 // ============================================================================
 // GaudiAlg
 // ============================================================================
 #include "GaudiAlg/GaudiHistoID.h"
+#include "GaudiKernel/HistoDef.h"
 // ============================================================================
 // local
 // ============================================================================
 #include "LoKi/Monitor.h"
-#include "LoKi/HistoBook.h"
 #include "LoKi/ToCpp.h"
+
+class IAlgContextSvc;
+class IHistogramSvc;
+
 // ============================================================================
 /** @file
  *  implementation of helper classes for monitoring

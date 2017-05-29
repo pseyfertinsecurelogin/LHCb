@@ -1,10 +1,16 @@
 // $Id: XmlDummyDECnv.cpp,v 1.3 2007-01-23 07:54:54 cattanem Exp $
 // Include files 
 
-#include <iostream>
-
+#include "GaudiKernel/Converter.h"
 // local
 #include "XmlDummyDECnv.h"
+
+class DetectorElement;
+class IOpaqueAddress;
+class ISvcLocator;
+namespace xercesc_3_1 {
+class DOMElement;
+}  // namespace xercesc_3_1
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : XmlDummyDECnv

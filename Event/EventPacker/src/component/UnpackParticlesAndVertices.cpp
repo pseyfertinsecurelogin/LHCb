@@ -1,7 +1,26 @@
 // Include files
+#include <memory>
+
+#include "Event/FlavourTag.h"
+#include "Event/MCParticle.h"
+#include "Event/MuonPID.h"
+#include "Event/Particle.h"
+#include "Event/ProtoParticle.h"
 #include "Event/RecVertex.h"
+#include "Event/RelatedInfoMap.h"
+#include "Event/RichPID.h"
+#include "Event/Track.h"
+#include "Event/Vertex.h"
+#include "Event/VertexBase.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/StatEntity.h"
+#include "Relations/Relation.h"
+#include "Relations/RelationWeighted.h"
 // local
 #include "UnpackParticlesAndVertices.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackParticlesAndVertices

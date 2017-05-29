@@ -3,18 +3,27 @@
 // =============================================================================
 // LHCbMath
 // =============================================================================
+#include <cmath>
+#include <ostream>
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/SystemOfUnits.h"
+#include "HepMC/GenParticle.h"
+#include "HepMC/SimpleVector.h"
+#include "HepMC/SimpleVector.icc"
 #include "LHCbMath/LHCbMath.h"
+#include "LoKi/AuxFunBase.h"
 // =============================================================================
 // Local
 // =============================================================================
 #include "LoKi/Constants.h"
-#include "LoKi/Kinematics.h"
-#include "LoKi/GenParticles4.h"
+#include "LoKi/Functor.h"
 #include "LoKi/GenChildSelector.h"
-// =============================================================================
-// GaudiKernel
-// =============================================================================
-#include "GaudiKernel/ToStream.h"
+#include "LoKi/GenParticles4.h"
+#include "LoKi/GenTypes.h"
+#include "LoKi/KinTypes.h"
+
 // =============================================================================
 /** @file
  *

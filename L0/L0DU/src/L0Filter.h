@@ -2,8 +2,15 @@
 #ifndef L0FILTER_H
 #define L0FILTER_H 1
 
+#include <map>
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/StatusCode.h"
 // Include files
 #include "L0Base/L0AlgBase.h"
+
+class ISvcLocator;
 
 
 /** @class L0Filter L0Filter.h

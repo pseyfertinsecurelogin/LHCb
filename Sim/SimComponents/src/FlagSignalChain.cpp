@@ -3,9 +3,14 @@
 // from LHCb
 #include "Event/MCParticle.h"
 #include "Event/MCVertex.h"
-
 // local
 #include "FlagSignalChain.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "MCInterfaces/IFlagSignalChain.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FlagSignalChain

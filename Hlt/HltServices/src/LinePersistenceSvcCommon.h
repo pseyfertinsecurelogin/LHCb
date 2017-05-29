@@ -1,11 +1,18 @@
 #ifndef LinePersistenceSvcCommon_H
 #define LinePersistenceSvcCommon_H 1
 
+#include <map>
+#include <set>
 #include <string>
 #include <vector>
-#include "GaudiKernel/Service.h"
+
 #include "GaudiKernel/INamedInterface.h"
+#include "GaudiKernel/Service.h"
 #include "Kernel/ILinePersistenceSvc.h"
+
+namespace LHCb {
+class HltDecReports;
+}  // namespace LHCb
 
 
 class LinePersistenceSvcCommon : public virtual INamedInterface {

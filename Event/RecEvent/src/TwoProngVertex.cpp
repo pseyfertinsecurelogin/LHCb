@@ -1,10 +1,16 @@
 
 // local
 #include "Event/TwoProngVertex.h"
-#include "Event/TrackParameters.h"
 
+#include <Math/BinaryOperators.h>
+#include <Math/Expression.h>
+#include <Math/HelperOps.h>
+#include <Math/MatrixFunctions.h>
 // STL
 #include <cmath>
+
+#include "Event/VertexBase.h"
+#include "GaudiKernel/GenericMatrixTypes.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : TwoProngVertex

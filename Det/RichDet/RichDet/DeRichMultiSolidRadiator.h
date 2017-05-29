@@ -9,9 +9,21 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/RichRadIntersection.h"
 // Include files
 #include "RichDet/DeRichRadiator.h"
-#include "GaudiKernel/Transform3DTypes.h"
+
+struct ILVolume;
+struct IPVolume;
+struct ISolid;
 
 // External declarations
 extern const CLID CLID_DeRichMultiSolidRadiator;

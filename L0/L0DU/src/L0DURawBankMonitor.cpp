@@ -1,11 +1,50 @@
 // Include files
 
-// from Gaudi
-#include "GaudiUtils/Aida2ROOT.h"
+#include <TAxis.h>
+#include <TH1.h>
+#include <stddef.h>
+#include <functional>
+#include <map>
+#include <ostream>
+#include <utility>
+
+#include "CaloDAQ/ICaloDataProvider.h"
+#include "CaloKernel/CaloVector.h"
+#include "Event/L0DUChannel.h"
+#include "Event/L0DUConfig.h"
+#include "Event/L0DUDecision.h"
+#include "Event/L0DUElementaryCondition.h"
+#include "Event/L0DUElementaryData.h"
+#include "Event/L0DUReport.h"
+#include "Event/L0DUTrigger.h"
+#include "Event/L0ProcessorData.h"
 // from lhcb
 #include "Event/ODIN.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiAlg/GaudiHistos.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IEventTimeDecoder.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/ToStream.h"
+// from Gaudi
+#include "GaudiUtils/Aida2ROOT.h"
+#include "Kernel/CaloCellID.h"
 // local
 #include "L0DURawBankMonitor.h"
+#include "L0Interfaces/IL0CondDBProvider.h"
+#include "L0Interfaces/IL0DUEmulatorTool.h"
+#include "L0Interfaces/IL0DUFromRawTool.h"
+
+class ISvcLocator;
+namespace AIDA {
+class IHistogram1D;
+}  // namespace AIDA
 
 
 //-----------------------------------------------------------------------------

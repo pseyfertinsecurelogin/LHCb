@@ -1,25 +1,27 @@
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <map>
+#include <string>
+
+#include "DetDesc/CLIDIsotope.h"
+#include "DetDesc/Element.h"
+#include "DetDesc/Isotope.h"
+#include "DetDesc/Material.h"
+#include "DetDesc/TabulatedProperty.h"
+#include "DetDescCnv/XmlCnvException.h"
+#include "DetDescCnv/XmlCnvException.icpp"
+#include "GaudiKernel/Converter.h"
 #include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/IConversionSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/LinkManager.h"
 #include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/RegistryEntry.h"
-
-#include "DetDesc/Isotope.h"
-#include "DetDesc/Element.h"
-#include "DetDesc/Mixture.h"
-#include "DetDesc/TabulatedProperty.h"
-
-#include "XmlTools/IXmlSvc.h"
-#include "DetDescCnv/XmlCnvException.h"
-
-#include <cstdlib>
-#include <string>
-#include <vector>
-#include <map>
-
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
 #include "XmlElementCnv.h"
+#include "XmlTools/IXmlSvc.h"
+
+class IOpaqueAddress;
 
 
 // -----------------------------------------------------------------------

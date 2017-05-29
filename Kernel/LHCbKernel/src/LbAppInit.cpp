@@ -1,16 +1,32 @@
 
-// Boost
-#include "boost/format.hpp"
+#include <boost/format.hpp>
+#include <boost/format/group.hpp>
+#include <cstdlib>
+#include <functional>
+#include <iomanip>
+#include <string>
+#include <vector>
 
-// from Gaudi
-#include "GaudiKernel/SmartIF.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiAlg/IGenericTool.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/IProperty.h"
 #include "GaudiKernel/IRndmEngine.h"
 #include "GaudiKernel/IRndmGenSvc.h"
-#include "GaudiKernel/RndmGenerators.h"
-#include "GaudiAlg/IGenericTool.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/Memory.h"
-
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/RndmGenerators.h"
+// from Gaudi
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "Kernel/CondDBNameTagPair.h"
+#include "Kernel/ICondDBInfo.h"
+#include "Kernel/IEventCounter.h"
 // local
 #include "Kernel/LbAppInit.h"
 

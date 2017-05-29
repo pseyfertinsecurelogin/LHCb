@@ -1,13 +1,20 @@
 // Include files 
 
-// from Gaudi
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiKernel/StatEntity.h"
-
+#include "FSRAlgs/IFSRNavigator.h"
 // local
 #include "FSRNavigator.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+// from Gaudi
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FSRNavigator

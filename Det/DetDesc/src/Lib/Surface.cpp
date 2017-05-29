@@ -1,8 +1,13 @@
 // GaudiKernel
-#include "GaudiKernel/System.h"
+#include <iomanip>
+#include <ostream>
+#include <string>
+
 // DetDecs 
 #include "DetDesc/Surface.h"
 #include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartRef.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 std::ostream&     Surface::fillStream ( std::ostream& s ) const 

@@ -2,17 +2,27 @@
 // ============================================================================
 #ifndef MEMORYTOOL_H
 #define MEMORYTOOL_H 1
+#include <string>
+
+// ============================================================================
+// GaudiAlg
+// ============================================================================
+#include "GaudiAlg/GaudiHistoTool.h"
+#include "GaudiAlg/IGenericTool.h"            // Interface
 // ============================================================================
 // Include files
 // ============================================================================
 //  GaudiKernel
 // ============================================================================
 #include "GaudiKernel/HistoDef.h"
-// ============================================================================
-// GaudiAlg
-// ============================================================================
-#include "GaudiAlg/GaudiHistoTool.h"
-#include "GaudiAlg/IGenericTool.h"            // Interface
+#include "GaudiKernel/StatusCode.h"
+
+class IInterface;
+class StatEntity;
+namespace AIDA {
+class IHistogram1D;
+}  // namespace AIDA
+
 // ============================================================================
 /** @class MemoryTool MemoryTool.h
  *  Tool to plot memory usage of the application at each call

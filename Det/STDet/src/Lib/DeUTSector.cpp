@@ -1,15 +1,24 @@
 #include "STDet/DeUTSector.h"
-#include "STDet/DeUTModule.h"
-#include "STDet/DeUTSensor.h"
+
+#include <stddef.h>
+#include <algorithm>
+#include <typeinfo>
+#include <vector>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/STChannelID.h"
+#include "Kernel/UTNames.h"
 #include "STDet/DeSTSensor.h"
 #include "STDet/STDetFun.h"
-
-#include "Kernel/UTNames.h"
 
 #ifdef __INTEL_COMPILER         // Disable ICC remark from Boost
   #pragma warning(disable:2259) // non-pointer conversion may lose significant bits
 #endif
 #include "boost/lexical_cast.hpp"
+
+class DeUTSensor;
 
 using namespace LHCb;
 

@@ -6,13 +6,22 @@
 
 #include "STRawBankMonitor.h"
 
+#include <stddef.h>
+#include <algorithm>
+#include <functional>
+
+#include "Event/RawBank.h"
 //Event
 #include "Event/RawEvent.h"
-#include "Event/RawBank.h"
-
-#include "Kernel/STTell1ID.h"
-#include "Kernel/STRawBankMap.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 #include "Kernel/ISTReadoutTool.h"
+#include "Kernel/STRawBankMap.h"
+#include "Kernel/STTell1ID.h"
+
+class ISvcLocator;
 
 DECLARE_ALGORITHM_FACTORY( STRawBankMonitor )
 

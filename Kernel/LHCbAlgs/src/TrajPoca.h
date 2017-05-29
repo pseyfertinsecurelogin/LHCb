@@ -3,15 +3,22 @@
 
 // Include files
 #include <algorithm>
+#include <string>
+#include <vector>
 
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "GaudiKernel/extends.h"
 // from Tr/TrackInterfaces
 #include "Kernel/ITrajPoca.h"
-
 // from Kernel/LHCbKernel
 #include "Kernel/Trajectory.h"
+
+class IInterface;
+struct ITrajPoca;
 
 /** @class TrajPoca TrajPoca.h
  *

@@ -1,6 +1,14 @@
-#include <cmath>
-#include <vector>
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <stddef.h>
+#include <iostream>
+#include <string>
+
 #include "L0MuonKernel/CandRegisterHandler.h"
+#include "L0MuonKernel/MuonCandidate.h"
+
+namespace L0Muon {
+class Register;
+}  // namespace L0Muon
 
 L0Muon::CandRegisterHandler::CandRegisterHandler() : m_candRegister(NULL) {
 }

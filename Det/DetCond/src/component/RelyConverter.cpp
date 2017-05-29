@@ -1,23 +1,29 @@
 // Include files
 #include "RelyConverter.h"
 
+#include <CoolKernel/IField.h>
+#include <stddef.h>
+#include <sstream>
+#include <string>
+#include <vector>
+
+#include "CoolKernel/RecordException.h"
+#include "DetCond/ICondDBReader.h"
+#include "DetDesc/ValidDataObject.h"
+#include "GaudiKernel/Converter.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IAddressCreator.h"
 #include "GaudiKernel/IConversionSvc.h"
-#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/IOpaqueAddress.h"
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/Time.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-
-#include "DetDesc/ValidDataObject.h"
-
-#include "CoolKernel/IObject.h"
-#include "CoolKernel/IRecord.h"
-#include "CoolKernel/RecordException.h"
-
-#include <string>
-#include <sstream>
+#include "GaudiKernel/Time.icpp"
 
 // local
 

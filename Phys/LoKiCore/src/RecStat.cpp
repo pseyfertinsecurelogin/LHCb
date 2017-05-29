@@ -3,11 +3,24 @@
 // ============================================================================
 // Event 
 // ============================================================================
+#include <stddef.h>
+#include <functional>
+#include <ostream>
+#include <string>
+#include <tuple>
+
 #include "Event/RecSummary.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/Functor.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/RecStat.h"
+#include "LoKi/TES.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for 

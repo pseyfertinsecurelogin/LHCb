@@ -1,5 +1,10 @@
 #include "STDet/DeUTSensor.h"
-#include "STDet/DeUTSector.h"
+
+#include <typeinfo>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 
 using namespace LHCb;
 

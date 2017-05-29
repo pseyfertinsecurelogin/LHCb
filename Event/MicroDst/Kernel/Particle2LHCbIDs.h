@@ -2,14 +2,21 @@
 #ifndef PARTICLE2LHCBIDS_H
 #define PARTICLE2LHCBIDS_H 1
 
+#include <vector>
+
+#include "Event/Particle.h"
+#include "GaudiKernel/ClassID.h"
 // Include files
 #include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/VectorMap.h"
 #include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/VectorMap.h"
 #include "Kernel/DataObject2ObjectMap.h"
 #include "Kernel/LHCbID.h"
 
-#include "Event/Particle.h"
+namespace LHCb {
+class LHCbID;
+class Particle;
+}  // namespace LHCb
 
 namespace DaVinci{
 

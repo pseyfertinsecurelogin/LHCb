@@ -1,14 +1,21 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/IOpaqueAddress.h"
+#include <functional>
+#include <map>
 
 // event model
 #include "Event/EventCountFSR.h"
-
 // local
 #include "EventAccounting.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : EventAccounting

@@ -1,10 +1,19 @@
 #ifndef COMPONENT_DECALOTIMING_H 
 #define COMPONENT_DECALOTIMING_H 1
 
+#include <array>
+#include <map>
+#include <string>
+#include <utility>
+
+#include "CaloDet/DeCalorimeter.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
-#include "CaloDet/DeCalorimeter.h"
+#include "GaudiKernel/StatusCode.h"
+
+class DeCalorimeter;
+class ISvcLocator;
 
 /** @class DeCaloTiming DeCaloTiming.h component/DeCaloTiming.h
  *  

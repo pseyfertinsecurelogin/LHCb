@@ -2,7 +2,17 @@
 
 // local
 #include "RateFromCondDB.h"
-#include "GaudiKernel/SystemOfUnits.h"
+
+#include <functional>
+#include <typeinfo>
+
+#include "DetDesc/Condition.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RateFromCondDB

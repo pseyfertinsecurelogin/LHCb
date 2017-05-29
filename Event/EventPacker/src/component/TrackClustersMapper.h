@@ -1,15 +1,16 @@
 #ifndef SRC_TrackClustersMapper_H
 #define SRC_TrackClustersMapper_H 1
 
-#include <string>
 #include <map>
-
-// base class
-#include "MapperToolBase.h"
+#include <string>
 
 // Event model
 #include "Event/PackedCluster.h"
+#include "GaudiKernel/TypeNameString.h"
+// base class
+#include "MapperToolBase.h"
 
+class IInterface;
 class IJobOptionsSvc;
 
 /** @class TrackClustersMapper TrackClustersMapper.h

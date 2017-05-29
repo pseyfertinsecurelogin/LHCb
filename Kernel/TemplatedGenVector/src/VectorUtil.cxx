@@ -14,6 +14,8 @@
 //
 #include "TemplatedGenVector/VectorUtil.h"
 
+#include <math.h>
+
 namespace LHCbROOT {
 
 namespace Math {

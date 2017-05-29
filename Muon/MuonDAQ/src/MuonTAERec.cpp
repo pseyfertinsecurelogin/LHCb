@@ -1,8 +1,29 @@
 // Include files
 
+#include <stddef.h>
+#include <functional>
+
 #include "Event/MuonCoord.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/MuonLayout.h"
+#include "Kernel/MuonTileID.h"
+#include "MuonDAQ/IMuonRawBuffer.h"
+#include "MuonDet/DeMuonDetector.h"
+#include "MuonDet/MuonBasicGeometry.h"
+#include "MuonDet/MuonNamespace.h"
 // local
 #include "MuonTAERec.h"
+
+class ISvcLocator;
+
 using namespace LHCb;
 
 //-----------------------------------------------------------------------------

@@ -1,25 +1,59 @@
 // Include files
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/LinkManager.h"
-#include "GaudiKernel/MsgStream.h"
-
-#include "DetDesc/LogVolBase.h"
-#include "DetDesc/LVolume.h"
-#include "DetDesc/LAssembly.h"
-#include "DetDesc/Surface.h"
-
-#include "DetDescCnv/XmlCnvException.h"
-
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/Cylindrical3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/Polar3D.h>
+#include <Math/GenVector/Rotation3D.h>
+#include <Math/GenVector/RotationX.h>
+#include <Math/GenVector/Transform3D.h>
+#include <boost/optional/optional.hpp>
+#include <ext/alloc_traits.h>
+#include <float.h>
+#include <math.h>
+#include <string.h>
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMNode.hpp>
+#include <xercesc/dom/DOMNodeList.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <algorithm>
+#include <functional>
+#include <initializer_list>
 #include <numeric>
 #include <sstream>
-#include <cstdlib>
-#include <float.h>
-#include <map>
-#include "boost/optional.hpp"
+#include <utility>
 
-#include <xercesc/dom/DOMNodeList.hpp>
-
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/LAssembly.h"
+#include "DetDesc/LVolume.h"
+#include "DetDesc/LogVolBase.h"
+#include "DetDesc/SolidBoolean.h"
+#include "DetDesc/SolidBox.h"
+#include "DetDesc/SolidCons.h"
+#include "DetDesc/SolidIntersection.h"
+#include "DetDesc/SolidPolycone.h"
+#include "DetDesc/SolidSphere.h"
+#include "DetDesc/SolidSubtraction.h"
+#include "DetDesc/SolidTrap.h"
+#include "DetDesc/SolidTrd.h"
+#include "DetDesc/SolidTubs.h"
+#include "DetDesc/SolidUnion.h"
+#include "DetDescCnv/XmlCnvException.h"
+#include "DetDescCnv/XmlCnvException.icpp"
+#include "GaudiKernel/Converter.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
 #include "XmlLVolumeCnv.h"
+#include "XmlTools/IXmlSvc.h"
+
+class DataObject;
+class IOpaqueAddress;
+class ISvcLocator;
 
 namespace {
     template <typename Type>

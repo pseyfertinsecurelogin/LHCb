@@ -1,6 +1,7 @@
-#include "RZip.h"
+#include <Compression.h>
 
 #include "PackedDataBuffer.h"
+#include "RZip.h"
 
 namespace PackedDataPersistence {
 

@@ -2,8 +2,13 @@
 #ifndef EVENTCOUNTHISTO_H
 #define EVENTCOUNTHISTO_H 1
 
+#include <string>
+
 // Include files
 #include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 
 /** @class EventCountHisto EventCountHisto.h

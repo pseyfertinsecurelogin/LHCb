@@ -5,29 +5,44 @@
 // from STL
 #include <string>
 #include <unordered_map>
+#include <utility>
+#include <vector>
 
-// from Gaudi
-#include "GaudiAlg/GaudiTool.h"
-
+#include "Event/CaloCluster.h"
+#include "Event/HltDecReports.h"
+#include "Event/HltDecReports.h"
+#include "Event/HltObjectSummary.h"
+#include "Event/HltSelReports.h"
+#include "Event/HltVertexReports.h"
+#include "Event/MuonPID.h"
 // From PhysEvent
 #include "Event/Particle.h"
 #include "Event/ProtoParticle.h"
-#include "Event/Track.h"
-#include "Event/RichPID.h"
-#include "Event/MuonPID.h"
-#include "Event/CaloCluster.h"
 #include "Event/RecVertex.h"
-#include "Event/Vertex.h"
+#include "Event/RichPID.h"
 #include "Event/State.h"
-
-#include "Event/HltDecReports.h"
-#include "Event/HltSelReports.h"
-#include "Event/HltVertexReports.h"
-#include "Event/HltDecReports.h"
-
+#include "Event/Track.h"
+#include "Event/Vertex.h"
+// from Gaudi
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/VectorMap.h"
+#include "GaudiKernel/extends.h"
 #include "HltDAQ/HltSelRepRBStdInfo.h"
 #include "HltDAQ/IReportConvert.h"
-#include "Event/HltObjectSummary.h"
+
+class IInterface;
+namespace LHCb {
+class CaloCluster;
+class CaloHypo;
+class MuonPID;
+class Particle;
+class ProtoParticle;
+class RecSummary;
+class RecVertex;
+class RichPID;
+class Track;
+class Vertex;
+}  // namespace LHCb
 
 using std::unordered_map;
 using std::string;

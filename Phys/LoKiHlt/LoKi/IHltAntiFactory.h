@@ -7,12 +7,15 @@
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/IAlgTool.h"
+#include "LoKi/HLTTypes.h"
+#include "LoKi/L0Types.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/OdinTypes.h"
-#include "LoKi/L0Types.h"
-#include "LoKi/HLTTypes.h"
+
+class InterfaceID;
+
 // ============================================================================
 namespace LoKi 
 {

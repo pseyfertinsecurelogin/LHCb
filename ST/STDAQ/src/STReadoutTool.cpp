@@ -1,19 +1,29 @@
 // STDAQ
 #include "STReadoutTool.h"
 
-#include "Kernel/STTell1Board.h"
-#include "Kernel/STTell1ID.h"
-#include "Kernel/STDAQDefinitions.h"
-#include "Event/STCluster.h"
+#include <ext/alloc_traits.h>
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include <iterator>
+#include <map>
+#include <utility>
 
+#include "DetDesc/Condition.h"
+#include "Event/STCluster.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // IT
 #include "Kernel/STChannelID.h"
-#include "STDet/DeSTDetector.h"
-
-#include <algorithm>
-
+#include "Kernel/STDAQDefinitions.h"
+#include "Kernel/STTell1Board.h"
+#include "Kernel/STTell1ID.h"
 // STKernel
 #include "Kernel/STXMLUtils.h"
+#include "STDet/DeSTDetector.h"
+#include "STDet/DeSTSector.h"
+
+class IInterface;
 
 /** @file DeSTSector.cpp
 *

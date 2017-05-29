@@ -1,12 +1,19 @@
 // $Id: DeOTStation.cpp,v 1.8 2007-06-09 13:56:49 janos Exp $
 
-/// DetDesc
-#include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/SolidBox.h"
+#include <algorithm>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/OTChannelID.h"
+#include "OTDet/DeOTLayer.h"
 /// OTDet
 #include "OTDet/DeOTStation.h"
-#include "OTDet/DeOTLayer.h"
 
 /** @file DeOTStation.cpp
  *

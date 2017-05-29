@@ -1,20 +1,28 @@
-#include "PackerBaseAlg.icpp"
+#include <functional>
+#include <string>
 
+#include "Event/PackedCaloCluster.h"
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedMCCaloHit.h"
+#include "Event/PackedMCHit.h"
+#include "Event/PackedMCRichDigitSummary.h"
 #include "Event/PackedMCRichHit.h"
 #include "Event/PackedMCRichOpticalPhoton.h"
 #include "Event/PackedMCRichSegment.h"
 #include "Event/PackedMCRichTrack.h"
-#include "Event/PackedMCCaloHit.h"
-#include "Event/PackedMCHit.h"
-#include "Event/PackedMCRichDigitSummary.h"
 #include "Event/PackedMuonPID.h"
-#include "Event/PackedRichPID.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
 #include "Event/PackedParticle.h"
+#include "Event/PackedRichPID.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedWeightsVector.h"
-#include "Event/PackedCaloCluster.h"
-#include "Event/PackedFlavourTag.h"
-#include "Event/PackedPartToRelatedInfoRelation.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/KeyedTraits.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "PackerBaseAlg.h"
+#include "PackerBaseAlg.icpp"
 
 template class DataPacking::Pack<LHCb::MCRichHitPacker>;
 typedef DataPacking::Pack<LHCb::MCRichHitPacker> A;

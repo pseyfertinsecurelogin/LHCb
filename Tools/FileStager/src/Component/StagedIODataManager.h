@@ -1,15 +1,26 @@
 #ifndef STAGEDIODATAMANAGER_H
 #define STAGEDIODATAMANAGER_H
 
-// C++ include files
-#include <map>
-
 // Framework include files
 #include <GaudiKernel/Service.h>
 #include <GaudiUtils/IIODataManager.h>
+#include <stddef.h>
+// C++ include files
+#include <map>
+#include <string>
+#include <vector>
 
-class IIncidentSvc;
+#include "FileStager/IFileStagerSvc.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+#include "GaudiUtils/IFileCatalog.h"
+
 class IFileStagerSvc;
+class IIncidentSvc;
+class IInterface;
+class ISvcLocator;
 
 namespace Gaudi  {
 

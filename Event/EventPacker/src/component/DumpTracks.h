@@ -1,9 +1,13 @@
 #ifndef DUMPTRACKS_H
 #define DUMPTRACKS_H 1
 
+#include <string>
+
 // Include files
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include <string>
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class DumpTracks DumpTracks.h
  *  Dump all tracks in an event.

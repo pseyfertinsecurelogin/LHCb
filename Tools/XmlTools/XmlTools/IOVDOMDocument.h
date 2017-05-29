@@ -1,10 +1,11 @@
 #ifndef IOVDOMDOCUMENT_
 #define IOVDOMDOCUMENT_
-#include <memory>
-#include "GaudiKernel/Time.h"
-#include "GaudiKernel/IValidity.h"
-
 #include <xercesc/dom/DOMDocument.hpp>
+#include <memory>
+
+#include "GaudiKernel/IValidity.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
 
 
 /** @class IOVDOMDocument XmlTools/IOVDOMDocument.h

@@ -1,16 +1,27 @@
 #ifndef PROPAGATEFSRS_H
 #define PROPAGATEFSRS_H 1
 
-// Include files
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "GaudiKernel/IIncidentListener.h"
-#include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiUtils/IIODataManager.h"
+#include <map>
+#include <string>
 
 // event model
 #include "Event/HltLumiSummary.h"
 #include "Event/LumiFSR.h"
+// Include files
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiUtils/IIODataManager.h"
+
+class ISvcLocator;
+class Incident;
+namespace Gaudi {
+class IIODataManager;
+}  // namespace Gaudi
 
 
 /** @class PropagateFSRs PropagateFSRs.h

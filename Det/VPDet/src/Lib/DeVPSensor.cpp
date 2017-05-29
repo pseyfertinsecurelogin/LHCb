@@ -1,10 +1,19 @@
 // Gaudi
+#include <string>
+#include <typeinfo>
+#include <utility>
+
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
-
-// LHCb
-// Det/DetDesc
-#include "DetDesc/Condition.h"
-
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/VPChannelID.h"
+#include "Kernel/VPConstants.h"
 // Local
 #include "VPDet/DeVPSensor.h"
 #include "getOutputLevel.h"

@@ -1,11 +1,21 @@
 #ifndef EVTCOUNTER_H
 #define EVTCOUNTER_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
 #include "Kernel/IEventCounter.h"
+
+class IIncidentListener;
+class IInterface;
+class Incident;
+struct IEventCounter;
 
 /** @class EvtCounter EvtCounter.h
  *

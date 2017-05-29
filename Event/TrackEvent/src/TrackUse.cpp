@@ -4,12 +4,19 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/Algorithm.h"
-#include "GaudiKernel/Service.h"
-#include "GaudiKernel/AlgTool.h"
+#include <stddef.h>
+#include <functional>
+#include <vector>
+
 // ============================================================================
 #include "Event/Track.h"
 #include "Event/TrackUse.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 
 // ============================================================================

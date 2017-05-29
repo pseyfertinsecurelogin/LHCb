@@ -1,13 +1,23 @@
 #ifndef DETDESCCNV_XMLCNVSVC_XMLELEMENTCNV_H
 #define DETDESCCNV_XMLCNVSVC_XMLELEMENTCNV_H
 
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+
+#include "DetDesc/CLIDElement.h"
+#include "DetDesc/Element.h"
 // Include files
 #include "DetDescCnv/XmlGenericCnv.h"
-#include "DetDesc/Element.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
 
+class DataObject;
+class IOpaqueAddress;
+class ISvcLocator;
 // Forward declarations
 class Isotope;
-class ISvcLocator;
+namespace xercesc_3_1 {
+class DOMElement;
+}  // namespace xercesc_3_1
 template <class TYPE> class CnvFactory;
 
 

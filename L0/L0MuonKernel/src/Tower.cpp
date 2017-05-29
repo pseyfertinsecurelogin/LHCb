@@ -1,11 +1,19 @@
-#include <cmath>
-#include <set>
+#include <boost/dynamic_bitset/dynamic_bitset.hpp>
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <ext/alloc_traits.h>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
 #include <vector>
-#include <algorithm>
 
-#include "L0MuonKernel/Tower.h"
-
+#include "Kernel/MuonLayout.h"
+#include "Kernel/MuonTileID.h"
+#include "L0MuonKernel/L0MPtLUT.h"
+#include "L0MuonKernel/MuonCandidate.h"
 #include "L0MuonKernel/ProcUtilities.h"
+#include "L0MuonKernel/Tower.h"
 
 L0Muon::Tower::Tower() {
 

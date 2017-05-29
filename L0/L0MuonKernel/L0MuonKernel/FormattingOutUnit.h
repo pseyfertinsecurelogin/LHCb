@@ -1,9 +1,16 @@
 #ifndef L0MUONKERNEL_FORMATTINGOUTUNIT_H
 #define L0MUONKERNEL_FORMATTINGOUTUNIT_H
 
-#include <stdio.h>
 #include <boost/dynamic_bitset.hpp>
+#include <stdio.h>
+#include <string>
+
+#include "Kernel/MuonTileID.h"
 #include "L0MuonKernel/L0MUnit.h"
+
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 namespace L0Muon {
 

@@ -14,16 +14,13 @@
 // Created by: Mark Fischler Mon Aug 8  2005
 //
 
-#include "TemplatedGenVector/GenVectorIO.h"
+#include <cmath>
+#include <ostream>
 
+#include "TemplatedGenVector/GenVector_exception.h"
 #include "TemplatedGenVector/LorentzRotation.h"
 #include "TemplatedGenVector/LorentzVector.h"
 #include "TemplatedGenVector/PxPyPzE4D.h"
-#include "TemplatedGenVector/GenVector_exception.h"
-
-#include <cmath>
-#include <algorithm>
-
 #include "TemplatedGenVector/Rotation3D.h"
 #include "TemplatedGenVector/RotationX.h"
 #include "TemplatedGenVector/RotationY.h"
@@ -32,6 +29,10 @@
 namespace LHCbROOT {
 
 namespace Math {
+
+class AxisAngle;
+class EulerAngles;
+class Quaternion;
 
 LorentzRotation::LorentzRotation() {
    // constructor of an identity LR

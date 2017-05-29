@@ -2,8 +2,11 @@
 // Event
 #include "Event/MCParticle.h"
 
+#include <Math/GenVector/LorentzVector.h>
 // STL
 #include <algorithm>
+
+#include "Event/MCVertex.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : MCParticle

@@ -1,7 +1,10 @@
 #pragma once
 
+#include <string>
+
 #include "GaudiKernel/Incident.h"
 #include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
 
 namespace IncidentType
 {

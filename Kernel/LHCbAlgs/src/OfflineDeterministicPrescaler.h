@@ -1,15 +1,27 @@
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "boost/cstdint.hpp"
+#include <stdint.h>
+#include <iostream>
 #include <string>
 
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/StatusCode.h"
+#include "boost/cstdint.hpp"
 // from Boost
 #include "boost/integer/integer_mask.hpp"
 #include "boost/integer_traits.hpp"
+
+class ISvcLocator;
+
 using boost::uint32_t;
 using boost::uint64_t;
 
-namespace LHCb { class RecHeader; }
 class StatEntity;
+namespace LHCb {
+class RecHeader;
+}  // namespace LHCb
 
 class OfflineDeterministicPrescaler : public GaudiAlgorithm
 {

@@ -3,6 +3,21 @@
 // local
 #include "RawBankReadoutStatusFilter.h"
 
+#include <stddef.h>
+#include <functional>
+
+#include "Event/RawBank.h"
+#include "Event/RawBankReadoutStatus.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/ToStream.h"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : RawBankReadoutStatusFilter
 //

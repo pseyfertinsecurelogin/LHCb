@@ -1,16 +1,32 @@
 // Include files 
 
+#include <Math/GenVector/PositionVector3D.h>
+#include <boost/lexical_cast.hpp>
+#include <stddef.h>
+#include <functional>
+#include <memory>
+#include <utility>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiTuples.h"
+#include "GaudiAlg/Tuple.h"
+#include "GaudiAlg/TupleObj.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
 // from Gaudi
 #include "GaudiKernel/SystemOfUnits.h"
-
+#include "Kernel/Trajectory.h"
 // from Detector
 #include "VeloDet/DeVelo.h" 
-
-#include "Kernel/LHCbID.h"
-#include <boost/lexical_cast.hpp>
-
+#include "VeloDet/DeVeloPhiType.h"
+#include "VeloDet/DeVeloRType.h"
+#include "VeloDet/DeVeloSensor.h"
 // local
 #include "VeloDetChecker.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : VeloDetChecker

@@ -2,6 +2,25 @@
 // local
 #include "CaloEnergyFromRaw.h"
 
+#include <algorithm>
+#include <functional>
+#include <iterator>
+
+#include "CaloDAQ/ICaloEnergyFromRaw.h"
+#include "CaloDet/CellParam.h"
+#include "CaloDet/DeCalorimeter.h"
+#include "Event/RawBank.h"
+#include "Event/RawBankReadoutStatus.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/ToStream.h"
+#include "Kernel/CaloCellID.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloEnergyFromRaw
 //

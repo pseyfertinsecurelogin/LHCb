@@ -1,15 +1,22 @@
 // $Id: SolidTrd.cpp,v 1.19 2009-04-17 08:54:24 cattanem Exp $ 
 // ===========================================================================
 
-// Units
-#include "GaudiKernel/SystemOfUnits.h" 
+#include <ostream>
+#include <string>
 
 // DetDesc
 #include "DetDesc/DetDesc.h" 
-#include "DetDesc/SolidTrd.h" 
+#include "DetDesc/SolidBase.h"
 #include "DetDesc/SolidBox.h" 
-#include "DetDesc/SolidTicks.h" 
 #include "DetDesc/SolidException.h" 
+#include "DetDesc/SolidPolyHedronHelper.h"
+#include "DetDesc/SolidTrd.h" 
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+// Units
+#include "GaudiKernel/SystemOfUnits.h" 
+
+struct ISolid;
 
 // ============================================================================
 /** @file SolidTrd.cpp 

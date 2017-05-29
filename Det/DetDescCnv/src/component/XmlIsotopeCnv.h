@@ -1,10 +1,21 @@
 #ifndef DETDESCCNV_XMLCNVSVC_XMLISOTOPECNV_H
 #define DETDESCCNV_XMLCNVSVC_XMLISOTOPECNV_H
 
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+
+#include "DetDesc/CLIDIsotope.h"
+#include "DetDesc/Isotope.h"
 // generic experiment headers
 #include "DetDescCnv/XmlGenericCnv.h"
-#include "DetDesc/Isotope.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
 
+class DataObject;
+class IOpaqueAddress;
+class ISvcLocator;
+namespace xercesc_3_1 {
+class DOMElement;
+}  // namespace xercesc_3_1
 // Forward declarations
 template <class TYPE> class CnvFactory;
 

@@ -1,21 +1,34 @@
 #ifndef CALODIGITFILTERTOOL_H
 #define CALODIGITFILTERTOOL_H 1
 
-class StatusCode;
-#include "Kernel/CaloCellID.h"
+#include <map>
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
+#include "CaloDAQ/ICaloDigitFilterTool.h"            // Interface
+#include "CaloDet/DeCalorimeter.h"
+#include "CaloUtils/CaloAlgUtils.h"
 #include "CaloUtils/CaloCellIDAsProperty.h"
+#include "Event/CaloDigit.h"
+#include "Event/RecVertex.h"
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/Incident.h"
-#include "CaloDet/DeCalorimeter.h"
-#include "Event/CaloDigit.h"
-#include "CaloDAQ/ICaloDigitFilterTool.h"            // Interface
-#include "CaloUtils/CaloAlgUtils.h"
-#include "Event/RecVertex.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/CaloCellID.h"
 
-#include <memory>
-#include <unordered_map>
+class DeCalorimeter;
+class IIncidentListener;
+class IInterface;
+class Incident;
+class StatusCode;
+struct ICaloDigitFilterTool;
 
 /** @class CaloDigitFilterTool CaloDigitFilterTool.h
  *

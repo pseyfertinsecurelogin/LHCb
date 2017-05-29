@@ -2,9 +2,15 @@
 #ifndef _DeTTDetector_H_
 #define _DeTTDetector_H_
 
-#include "STDet/DeSTDetector.h"
-#include "Kernel/STChannelID.h"
+#include <string>
 
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STChannelID.h"
+#include "STDet/DeSTDetector.h"
+
+class DeSTBaseElement;
 class DeSTSector;
 
 /** @class DeTTDetector DeTTDetector.h "STDet/DeTTDetector.h"

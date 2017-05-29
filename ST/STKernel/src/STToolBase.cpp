@@ -23,8 +23,5 @@
 // local
 #include "Kernel/STToolBase.h"
 
-// ============================================================================
-// Force creation of templated class
-#include "STCommonBase.icpp"
 template class ST::CommonBase<GaudiTool> ;
 // ============================================================================

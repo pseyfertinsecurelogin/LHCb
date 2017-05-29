@@ -1,16 +1,26 @@
 // STDAQ
 #include "UTReadoutTool.h"
-#include "Kernel/STTell1Board.h"
-#include "Kernel/STTell1ID.h"
-#include "Kernel/STBoardMapping.h"
 
-// IT
-#include "Kernel/STChannelID.h"
-
+#include <ext/alloc_traits.h>
 #include <algorithm>
+#include <functional>
+#include <typeinfo>
+#include <vector>
 
 // Det Desc
 #include "DetDesc/Condition.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/ISTReadoutTool.h"
+#include "Kernel/STBoardMapping.h"
+// IT
+#include "Kernel/STChannelID.h"
+#include "Kernel/STDAQDefinitions.h"
+#include "Kernel/STTell1Board.h"
+#include "Kernel/STTell1ID.h"
 
 using namespace LHCb;
 

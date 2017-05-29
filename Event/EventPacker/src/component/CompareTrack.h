@@ -1,11 +1,15 @@
 #ifndef COMPARETRACK_H
 #define COMPARETRACK_H 1
 
+#include <string>
+
+#include "Event/PackedTrack.h"
+#include "Event/Track.h"
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
-#include "Event/Track.h"
-#include "Event/PackedTrack.h"
+class ISvcLocator;
 
 /** @class CompareTrack CompareTrack.h
  *  Compare two containers of Tracks

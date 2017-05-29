@@ -11,14 +11,32 @@
 //  Author     : M.Frank
 //====================================================================
 
+#include <stddef.h>
+#include <functional>
+#include <iomanip>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IEvtSelector.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+#include "GaudiUtils/IIODataManager.h"
 // Include files
 #include "MDF/RawDataAddress.h"
-#include "MDF/RawEventHelpers.h"
-#include "MDF/RawDataSelector.h"
 #include "MDF/RawDataConnection.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiUtils/IIODataManager.h"
+#include "MDF/RawDataSelector.h"
+
+class IOpaqueAddress;
 
 enum { S_OK = StatusCode::SUCCESS, S_ERROR=StatusCode::FAILURE };
 

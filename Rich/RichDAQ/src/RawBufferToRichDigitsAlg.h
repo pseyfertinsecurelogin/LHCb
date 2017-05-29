@@ -11,14 +11,22 @@
 #ifndef RICHDAQ_RAWBUFFERTORICHDIGITSALG_H
 #define RICHDAQ_RAWBUFFERTORICHDIGITSALG_H 1
 
-// base class
-#include "RichKernel/RichAlgBase.h"
+#include <string>
 
 // Event
 #include "Event/RichDigit.h"
-
+#include "GaudiKernel/StatusCode.h"
 // Interfaces
 #include "RichInterfaces/IRichRawBufferToSmartIDsTool.h"
+// base class
+#include "RichKernel/RichAlgBase.h"
+
+class ISvcLocator;
+namespace Rich {
+namespace DAQ {
+class IRawBufferToSmartIDsTool;
+}  // namespace DAQ
+}  // namespace Rich
 
 namespace Rich
 {

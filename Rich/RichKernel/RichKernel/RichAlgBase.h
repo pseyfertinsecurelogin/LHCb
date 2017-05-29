@@ -12,11 +12,18 @@
 #ifndef RICHKERNEL_RICHALGBASE_H
 #define RICHKERNEL_RICHALGBASE_H 1
 
+#include <functional>
+#include <string>
+
 // GaudiAlg
 #include "GaudiAlg/GaudiAlgorithm.h"
-
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "RichKernel/RichCommonBase.h"
+
+class ISvcLocator;
 
 namespace Rich
 {

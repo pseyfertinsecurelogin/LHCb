@@ -1,9 +1,28 @@
 // Include files 
 
-#include "Event/L0CaloAdc.h" 
+#include <functional>
+#include <memory>
+#include <ostream>
+#include <vector>
 
+#include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"
+#include "CaloDet/DeCalorimeter.h"
 // local
 #include "CaloTriggerAdcsFromRawAlg.h"
+#include "Event/L0CaloAdc.h" 
+#include "Event/RawBankReadoutStatus.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "Kernel/CaloCellID.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloTriggerAdcsFromRawAlg

@@ -2,6 +2,8 @@
 // Event
 #include "Event/MCVertex.h"
 
+#include <Math/GenVector/PositionVector3D.h>
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : MCVertex
 //

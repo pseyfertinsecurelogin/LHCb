@@ -8,11 +8,6 @@
  
 #include "Event/HepMCEvent.h"
 
-#include <iostream>
-#include <map>
-#include <vector>
-#include <algorithm>
-
 // -------------------------------------------------------------------------
 LHCb::HepMCEvent::HepMCEvent(const LHCb::HepMCEvent& evt) : KeyedObject<int>()
 // -------------------------------------------------------------------------

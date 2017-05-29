@@ -2,10 +2,16 @@
 #ifndef EMPTYEVENTNODECLEANER_H 
 #define EMPTYEVENTNODECLEANER_H 1
 
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <string>
 
+#include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+
+class DataObject;
+class IDataProviderSvc;
+class ISvcLocator;
 
 /** @class EmptyEventNodeCleaner EmptyEventNodeCleaner.h
  *  

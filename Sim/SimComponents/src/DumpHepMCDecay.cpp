@@ -1,18 +1,29 @@
 // Include files
 // HepMC
+#include <stdio.h>
+#include <algorithm>
+#include <functional>
+#include <ostream>
+
+// local
+#include "DumpHepMCDecay.h"
+// GenEvent
+#include "Event/HepMCEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "HepMC/GenEvent.h"
 #include "HepMC/GenParticle.h"
 #include "HepMC/GenVertex.h"
-
 // PartProp
 #include "Kernel/IParticlePropertySvc.h"
 #include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
 
-// GenEvent
-#include "Event/HepMCEvent.h"
-
-// local
-#include "DumpHepMCDecay.h"
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DumpHepMCDecay

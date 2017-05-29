@@ -1,18 +1,43 @@
+#include <stddef.h>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/L0DUBase.h"
+#include "Event/L0DUReport.h"
+#include "Event/L0ProcessorData.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/KeyedTraits.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+
+class IInterface;
+namespace LHCb {
+class RawBank;
+}  // namespace LHCb
+struct IL0CondDBProvider;
+struct IL0DUConfigProvider;
+struct IL0DUEmulatorTool;
+struct IL0DUFromRawTool;
 #ifndef L0DUFROMRAWTOOL_H
 #define L0DUFROMRAWTOOL_H 1
 
+#include "DAQKernel/DecoderToolBase.h"
+#include "Event/RawBankReadoutStatus.h"
+// from Event
+#include "Event/RawEvent.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-// Interface
-#include "L0Interfaces/IL0DUFromRawTool.h"
+#include "L0Interfaces/IL0CondDBProvider.h"
 #include "L0Interfaces/IL0DUConfigProvider.h"
 #include "L0Interfaces/IL0DUEmulatorTool.h"
-#include "L0Interfaces/IL0CondDBProvider.h"
-// from Event
-#include "Event/RawEvent.h"
-#include "Event/RawBankReadoutStatus.h"
-#include "DAQKernel/DecoderToolBase.h"
+// Interface
+#include "L0Interfaces/IL0DUFromRawTool.h"
 
 
 /** @class L0DUFromRawTool L0DUFromRawTool.h

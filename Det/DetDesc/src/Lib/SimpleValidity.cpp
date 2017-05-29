@@ -1,10 +1,10 @@
 // ============================================================================
 // Include files
 // GaudiKernel
-#include "GaudiKernel/Time.h"
-#include "GaudiKernel/StatusCode.h"
-
 #include "DetDesc/SimpleValidity.h"
+#include "GaudiKernel/IValidity.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
 
 // ============================================================================
 /** @file SimpleValidity.cpp

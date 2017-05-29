@@ -1,10 +1,26 @@
 // Units
-#include "GaudiKernel/SystemOfUnits.h"
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <boost/container/vector.hpp>
+#include <math.h>
+#include <memory>
+#include <ostream>
+#include <string>
+
 /// DetDesc 
 #include "DetDesc/DetDesc.h"
+#include "DetDesc/ISolid.h"
+#include "DetDesc/Services.h"
 #include "DetDesc/SolidBase.h"
-#include "DetDesc/SolidTicks.h"
 #include "DetDesc/SolidException.h"
+#include "DetDesc/SolidTicks.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 /** @file SolidBase.cpp  
  * 

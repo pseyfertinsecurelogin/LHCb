@@ -2,12 +2,18 @@
 // ============================================================================
 #ifndef DETDESC_PARAMASHISTO_H 
 #define DETDESC_PARAMASHISTO_H 1
+#include <string>
+
+#include "DetDesc/Condition.h"
 // Incldue files 
 // ============================================================================
 // DetDesc
 // ============================================================================
 #include "DetDesc/HistoParam.h"
-#include "DetDesc/Condition.h"
+#include "GaudiKernel/Kernel.h"
+
+class Condition;
+
 // ============================================================================
 /** @file 
  *  set of helper function for easy extraction of histograms 

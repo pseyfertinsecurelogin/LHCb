@@ -1,6 +1,20 @@
 // local
 #include "CheckCaloBank.h"
 
+#include <stddef.h>
+#include <algorithm>
+#include <functional>
+
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
+
 // ============================================================================
 /** @file CheckCaloBank.cpp
  *

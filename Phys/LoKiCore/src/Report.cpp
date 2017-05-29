@@ -2,13 +2,20 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/MsgStream.h"
+#include <stddef.h>
+#include <exception>
+#include <string>
+
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/StatusCode.h"
+#include "LoKi/ErrorReport.h"
 // ============================================================================
 // local
 // ============================================================================
 #include "LoKi/Report.h"
-#include "LoKi/ErrorReport.h"
+
+class GaudiException;
+
 // ============================================================================
 /** @file
  *

@@ -1,6 +1,15 @@
 #include "RecEventTime.h"
 
+#include <functional>
+
 #include "Event/RecHeader.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Time.icpp"
+
+class IInterface;
 
 RecEventTime::RecEventTime( const std::string & type,
                             const std::string & name,

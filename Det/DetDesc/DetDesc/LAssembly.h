@@ -1,11 +1,22 @@
 #ifndef DETDESC_LASSEMBLY_H
 #define DETDESC_LASSEMBLY_H 1
+#include <iostream>
+#include <string>
+
+#include "DetDesc/CLIDLAssembly.h"
+#include "DetDesc/DetDesc.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/ISolid.h"
 // Include files
 // from DetDesc
 #include "DetDesc/LogVolBase.h"
-#include "DetDesc/CLIDLAssembly.h"
-#include "DetDesc/DetDesc.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
+class Material;
+class MsgStream;
 template <class TYPE>
 class DataObjectFactory;
 

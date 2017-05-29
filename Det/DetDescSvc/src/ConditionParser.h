@@ -1,7 +1,11 @@
 #ifndef CONDITIONPARSER_H_
 #define CONDITIONPARSER_H_
 
+#include <string>
+
 #include "DetDesc/ParamValidDataObject.h"
+
+class ParamValidDataObject;
 
 /** Wrapper around the parser to convert strings to condition objects.
  *  (written with boost::spirit, http://boost.org/libs/spirit/index.html).

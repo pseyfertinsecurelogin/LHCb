@@ -2,12 +2,19 @@
 #ifndef CALOFILLRAWBUFFER_H 
 #define CALOFILLRAWBUFFER_H 1
 
+#include <string>
+#include <vector>
+
+#include "CaloDet/DeCalorimeter.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
-#include "Event/RawEvent.h"
-#include "CaloDet/DeCalorimeter.h"
+class DeCalorimeter;
+class ISvcLocator;
 
 /** @class CaloFillRawBuffer CaloFillRawBuffer.h
  *  Fills the Raw Buffer banks for the calorimeter

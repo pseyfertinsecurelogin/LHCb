@@ -2,13 +2,15 @@
 #define L0MUONKERNEL_PROCDATACNV_H
 
 
-#include "Kernel/MuonTileID.h"
-#include "ProcessorKernel/TileRegister.h"
 #include <boost/dynamic_bitset.hpp>
-#include <string>
+#include <boost/dynamic_bitset/dynamic_bitset.hpp>
 #include <map>
+#include <string>
 #include <vector>
+
+#include "Kernel/MuonTileID.h"
 #include "L0MuonKernel/ProcDataErrors.h"
+#include "ProcessorKernel/TileRegister.h"
 
 namespace L0Muon {
 
@@ -51,6 +53,8 @@ namespace L0Muon {
       @date 2007-09-03
 
   */
+class TileRegister;
+
   class ProcDataCnv {
 
   private:

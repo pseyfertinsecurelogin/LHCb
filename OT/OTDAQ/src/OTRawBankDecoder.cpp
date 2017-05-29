@@ -1,39 +1,50 @@
 // Include files
 #include <algorithm>
+#include <cmath>
+#include <limits>
 #include <numeric>
 #include <sstream>
-#include <limits>
-
-// from Gaudi
-#include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/SystemOfUnits.h"
-
-// from Detector
-#include "OTDet/DeOTDetector.h"
-#include "OTDet/DeOTModule.h"
+#include <stdexcept>
+#include <type_traits>
 
 // Event
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h"
-
-// OTDAQ
-#include "OTDAQ/RawEvent.h"
-#include "OTDAQ/IndexedModuleDataHolder.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+// from Gaudi
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Range.h"
 // local
 #include "GolHeaderDC06.h"
+#include "OTDAQ/GolHeader.h"
+#include "OTDAQ/IndexedModuleDataHolder.h"
+#include "OTDAQ/OTChannelMap.h"
+#include "OTDAQ/OTSpecificHeader.h"
+#include "OTDAQ/RawBank.h"
+// OTDAQ
+#include "OTDAQ/RawEvent.h"
+#include "OTDAQ/RawHit.h"
+// from Detector
+#include "OTDet/DeOTDetector.h"
+#include "OTDet/DeOTModule.h"
 
 //#include "Event/DataWord.h"
 
 // local
 #include "Event/OTBankVersion.h"
-
+#include "OTDAQ/IOTChannelMapTool.h"
 // Tool interface
 #include "OTDAQ/IOTReadOutWindow.h"
-#include "OTDAQ/IOTChannelMapTool.h"
-
 // local
 #include "OTRawBankDecoder.h"
+
+class IInterface;
 
 
 namespace OTRawBankDecoderHelpers {

@@ -1,12 +1,21 @@
 #include "STDet/DeTTDetector.h"
-#include "DetDesc/IGeometryInfo.h"
 
-#include "STDet/DeTTStation.h"
-#include "STDet/DeTTLayer.h"
-#include "STDet/DeTTHalfModule.h"
-#include "STDet/DeTTSector.h"
+#include <vector>
 
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/STChannelID.h"
 #include "Kernel/TTNames.h"
+#include "STDet/DeSTLayer.h"
+#include "STDet/DeSTSector.h"
+#include "STDet/DeSTStation.h"
+#include "STDet/DeTTHalfModule.h"
+#include "STDet/DeTTLayer.h"
+#include "STDet/DeTTSector.h"
+#include "STDet/DeTTStation.h"
+
+class DeSTBaseElement;
 
 /** @file DeTTDetector.cpp
 *

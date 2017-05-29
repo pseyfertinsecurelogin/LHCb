@@ -12,6 +12,22 @@
 // local
 #include "RichPIDsFromProtoParticlesAlg.h"
 
+#include <math.h>
+#include <functional>
+
+#include "Event/ProtoParticle.h"
+#include "Event/RichPID.h"
+#include "Event/Track.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/RichParticleIDType.h"
+
+class ISvcLocator;
+
 // namespaces
 using namespace LHCb;
 

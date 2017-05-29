@@ -1,13 +1,28 @@
 // Include files
 
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IRegistry.h"
+#include <stddef.h>
+#include <algorithm>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
-#include "DetDesc/ValidDataObject.h"
 #include "DetDesc/Condition.h"
-
+#include "DetDesc/ValidDataObject.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
 // local
 #include "UpdateManagerSvc.h"
+#include "UpdateManagerSvc_Item.icpp"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UpdateManagerSvc::Item

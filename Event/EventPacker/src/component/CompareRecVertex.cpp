@@ -1,10 +1,32 @@
 // Include files
 
-// from Gaudi
-#include "Event/RecVertex.h"
+#include <ext/alloc_traits.h>
+#include <math.h>
+#include <functional>
+#include <memory>
+#include <utility>
+#include <vector>
 
 // local
 #include "CompareRecVertex.h"
+// from Gaudi
+#include "Event/RecVertex.h"
+#include "Event/VertexBase.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "GaudiKernel/VectorMap.h"
+
+class ISvcLocator;
+namespace LHCb {
+class Track;
+}  // namespace LHCb
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CompareRecVertex

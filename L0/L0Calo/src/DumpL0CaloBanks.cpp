@@ -1,11 +1,21 @@
+#include <stddef.h>
 #include <fstream>
-
-// Event/L0Event
-#include "Event/RawEvent.h"
-#include "Event/ODIN.h"
+#include <functional>
+#include <vector>
 
 // local
 #include "DumpL0CaloBanks.h"
+#include "Event/ODIN.h"
+#include "Event/RawBank.h"
+// Event/L0Event
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
 
 DECLARE_ALGORITHM_FACTORY( DumpL0CaloBanks )
 

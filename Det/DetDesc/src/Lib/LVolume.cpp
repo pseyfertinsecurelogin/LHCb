@@ -1,28 +1,42 @@
 // ============================================================================
 /// STD & STL includes
 // ============================================================================
-#include <stdio.h>
-#include <functional>
+#include <boost/container/vector.hpp>
 #include <algorithm>
-// ============================================================================
-/// Gaudi Kernel includes
-// ============================================================================
-#include "GaudiKernel/StatusCode.h"
-#include "GaudiKernel/SmartDataPtr.h"
+#include <cmath>
+#include <iterator>
+#include <memory>
+#include <numeric>
+#include <ostream>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "DetDesc/CLIDLVolume.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
 // ============================================================================
 /// DetDesc includes
 // ============================================================================
 #include "DetDesc/ISolid.h"
-#include "DetDesc/ILVolume.h"
-#include "DetDesc/IPVolume.h"
-#include "DetDesc/LVolume.h"
-#include "DetDesc/SolidTicks.h"
-#include "DetDesc/Material.h"
-#include "DetDesc/Solid.h"
-#include "DetDesc/Surface.h"
-#include "DetDesc/DetDesc.h"
 #include "DetDesc/IntersectionErrors.h"
+#include "DetDesc/LVolume.h"
+#include "DetDesc/LogVolBase.h"
+#include "DetDesc/LogVolumeException.h"
+#include "DetDesc/Material.h"
 #include "DetDesc/VolumeIntersectionIntervals.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+// ============================================================================
+/// Gaudi Kernel includes
+// ============================================================================
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+
 // ===========================================================================
 /** @file LVolume.cpp
  *

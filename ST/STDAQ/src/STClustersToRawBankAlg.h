@@ -1,21 +1,21 @@
 #ifndef STClustersToRawBankAlg_H
 #define STClustersToRawBankAlg_H 1
 
+#include <map>
 // from STL
 #include <string>
 #include <vector>
-#include <map>
 
-// gaudi
-#include "Kernel/STAlgBase.h"
-
+#include "Event/BankWriter.h"
+#include "Event/RawBank.h"
 // event
 #include "Event/STCluster.h"
-#include "STClustersOnBoard.h"
-
+#include "GaudiKernel/StatusCode.h"
+// gaudi
+#include "Kernel/STAlgBase.h"
 #include "Kernel/STDAQDefinitions.h"
-#include "Event/RawBank.h"
-#include "Event/BankWriter.h"
+#include "Kernel/STTell1ID.h"
+#include "STClustersOnBoard.h"
 
 /** @class STClustersToRawBankAlg STClustersToRawBankAlg.h
  *
@@ -25,12 +25,15 @@
  *  @date   2004-08-01
  */
 
-class STTell1ID;
-class ISTDAQDataSvc;
-
 #include "STBoardToBankMap.h"
-namespace LHCb {class RawBank;}
 
+class ISTDAQDataSvc;
+class ISvcLocator;
+class STTell1ID;
+namespace LHCb {
+class BankWriter;
+}  // namespace LHCb
+namespace LHCb {class RawBank;}
 struct ISTReadoutTool;
 
 

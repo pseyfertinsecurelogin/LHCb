@@ -1,19 +1,47 @@
 // Include files
 
+#include <cstdlib>
+#include <exception>
+#include <functional>
+#include <iostream>
+#include <typeinfo>
+#include <utility>
+
+#include "DetDesc/Condition.h"
+#include "Event/HltDecReport.h"
+#include "Event/HltDecReports.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
 // from Gaudi
 #include "GaudiKernel/IAlgManager.h"
-#include "GaudiAlg/GaudiSequencer.h"
-#include "GaudiAlg/ISequencerTimerTool.h"
+#include "GaudiKernel/IAlgorithm.h"
+#include "GaudiKernel/IInterface.h"
 #include "GaudiKernel/IJobOptionsSvc.h"
-#include "Kernel/IANNSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StateMachine.h"
+#include "GaudiKernel/System.h"
+#include "GaudiKernel/TypeNameString.h"
+#include "Kernel/ConfigTreeNode.h"
+#include "Kernel/ConfigTreeNodeAlias.h"
+#include "Kernel/IPropertyConfigSvc.h"
+#include "Kernel/PropertyConfig.h"
+#include "Kernel/TCK.h"
 #include "OfflineDeterministicPrescaler.h"
 // local
 #include "TCKPrescaleEmulator.h"
+
+class ISvcLocator;
 
 
 #ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
 /// \fixme backward compatibility with Gaudi <= v28r1
 #include "GaudiKernel/ThreadLocalContext.h"
+
 #define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
 #else
 #define SYSEX_ARGUMENT

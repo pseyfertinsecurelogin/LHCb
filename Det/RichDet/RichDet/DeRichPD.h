@@ -12,14 +12,22 @@
 
 // STL
 #include <memory>
+#include <string>
 
+#include "GaudiKernel/Point3DTypes.h"
 // LHCbKernel
 #include "Kernel/RichSmartID.h"
-
 // RichDet
 #include "RichDet/DeRichBase.h"
 #include "RichDet/Rich1DTabFunc.h"
 #include "RichDet/Rich1DTabProperty.h"
+
+namespace LHCb {
+class RichSmartID;
+}  // namespace LHCb
+namespace Rich {
+class TabulatedProperty1D;
+}  // namespace Rich
 
 //=============================================================================
 /** @class DeRichPD DeRichPD.h RichDet/DeRichPD.h

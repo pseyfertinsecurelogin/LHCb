@@ -2,6 +2,7 @@
 
 /// DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
+#include "GaudiKernel/Converter.h"
 /// VeloDet 
 #include "VeloDet/DeVeloRType.h"
 

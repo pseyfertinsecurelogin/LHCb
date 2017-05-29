@@ -4,20 +4,23 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
-#include <iostream>
-#include <iomanip>
-#include <string>
+#include <boost/numeric/conversion/converter.hpp>
 #include <cmath>
+#include <iostream>
+#include <string>
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/Chrono.h"
 #include "GaudiKernel/ChronoEntity.h"
+#include "GaudiKernel/Lomont.h"
+#include "LHCbMath/LHCbMath.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/Lomont.h"
-#include "LHCbMath/LHCbMath.h"
+
 // ============================================================================
 // Boost 
 // ============================================================================
@@ -26,6 +29,14 @@ using namespace std;
   #pragma warning(disable:1572) // floating-point equality and inequality comparisons are unreliable
 #endif
 #include "boost/progress.hpp"
+
+namespace boost {
+namespace numeric {
+struct silent_overflow_handler;
+template <class S> struct RoundEven;
+}  // namespace numeric
+}  // namespace boost
+
 // ============================================================================
 /** @file 
  *  The test file for comparison of roundings 

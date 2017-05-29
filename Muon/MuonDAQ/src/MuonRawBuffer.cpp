@@ -1,15 +1,29 @@
 // Include files
 
-// local
-#include "MuonDet/MuonBasicGeometry.h"
-#include "MuonDet/MuonL1Board.h"
-#include "MuonDet/MuonStationCabling.h"
-#include "MuonDet/MuonODEBoard.h"
-#include "MuonDet/MuonTSMap.h"
-#include "Event/RawBank.h"
+#include <algorithm>
+#include <array>
+#include <functional>
+#include <iterator>
+#include <memory>
+#include <ostream>
+
 #include "Event/MuonBankVersion.h"
-#include "MuonRawBuffer.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "MuonDAQ/IMuonRawBuffer.h"
+#include "MuonDet/DeMuonDetector.h"
+#include "MuonDet/MuonNamespace.h"
+#include "MuonRawBuffer.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : MuonRawBuffer

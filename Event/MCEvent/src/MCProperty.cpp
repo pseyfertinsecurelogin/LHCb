@@ -4,6 +4,11 @@
 // local
 #include "Event/MCProperty.h"
 
+#include <ext/alloc_traits.h>
+#include <memory>
+
+#include "Event/MCParticle.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : MCProperty
 //

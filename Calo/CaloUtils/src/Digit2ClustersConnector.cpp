@@ -1,11 +1,20 @@
 // ===========================================================================
 #define CALOUTILS_DIGIT2CLUSTERSCONNECTOR_CPP 1 
+#include <map>
+#include <utility>
+#include <vector>
+
 // ===========================================================================
 #include "CaloKernel/CaloException.h"
-#include "Event/CaloDigit.h"
-#include "Event/CaloCluster.h"
 // local 
 #include "CaloUtils/Digit2ClustersConnector.h"
+#include "Event/CaloCluster.h"
+#include "Event/CaloClusterEntry.h"
+#include "GaudiKernel/StatusCode.h"
+
+namespace LHCb {
+class CaloDigit;
+}  // namespace LHCb
 
 // ============================================================================
 /** @file Digit2ClustersConnector.cpp 

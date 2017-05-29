@@ -1,11 +1,16 @@
 // local
 #include "Event/PackedMCRichTrack.h"
 
+#include "Event/MCParticle.h"
+#include "Event/MCRichSegment.h"
 // Checks
 #include "Event/PackedEventChecks.h"
-
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
 
 using namespace LHCb;
 

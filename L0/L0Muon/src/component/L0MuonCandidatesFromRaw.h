@@ -1,8 +1,15 @@
 #ifndef L0MUONTRIGGER_L0MUONCANDIDATESFROMRAW_H
 #define L0MUONTRIGGER_L0MUONCANDIDATESFROMRAW_H     1
 
+#include <map>
+#include <string>
+
+#include "GaudiKernel/StatusCode.h"
 #include "L0Base/L0FromRawBase.h"
 #include "L0MuonOutputs.h"
+
+class ISvcLocator;
+class L0MuonOutputs;
 
 /** @class L0MuonCandidatesFromRaw L0MuonCandidatesFromRaw.h component/L0MuonCandidatesFromRaw.h
  *

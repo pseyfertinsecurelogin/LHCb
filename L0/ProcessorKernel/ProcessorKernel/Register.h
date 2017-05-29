@@ -5,6 +5,10 @@
 
 
 #include <boost/dynamic_bitset.hpp>
+#include <boost/dynamic_bitset/dynamic_bitset.hpp>
+#include <stdio.h>
+#include <iosfwd>
+#include <string>
 
 
 namespace L0Muon {

@@ -1,8 +1,14 @@
 #ifndef LHCbKernel_LineTraj_H
 #define LHCbKernel_LineTraj_H 1
 
+#include <boost/pool/singleton_pool.hpp>
+#include <stddef.h>
+#include <memory>
+#include <new>
+
 // Include files
 #include "Kernel/DifTraj.h"
+#include "Kernel/Trajectory.h"
 #ifdef _WIN32
 // Avoid conflict of Windows macro with std::max
   #ifndef NOMINMAX

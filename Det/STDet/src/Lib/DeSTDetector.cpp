@@ -1,16 +1,21 @@
 #include "STDet/DeSTDetector.h"
-#include "STDet/DeSTStation.h"
-#include "DetDesc/IGeometryInfo.h"
-#include "STDet/DeTTStation.h"
-#include "STDet/STDetFun.h"
 
+#include <Math/GenVector/PositionVector3D.h>
 //STL
 #include <algorithm>
+#include <iterator>
 #include <numeric>
 
+#include "DetDesc/IDetectorElement.h"
 #include "GaudiKernel/GaudiException.h"
-
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/LHCbConstants.h"
 #include "Kernel/Trajectory.h"
+#include "STDet/DeSTLayer.h"
+#include "STDet/DeSTStation.h"
+#include "STDet/STDetFun.h"
 
 using namespace LHCb;
 

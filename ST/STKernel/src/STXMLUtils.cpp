@@ -1,9 +1,13 @@
 #include "Kernel/STXMLUtils.h"
 
-// Date and time from boost
-#include "boost/date_time/gregorian/gregorian.hpp"
-#include "boost/date_time/posix_time/posix_time.hpp"
-
+#include <boost/date_time/gregorian/greg_date.hpp>
+#include <boost/date_time/gregorian/gregorian_io.hpp>
+#include <boost/date_time/gregorian/gregorian_types.hpp>
+#include <boost/date_time/posix_time/posix_time_config.hpp>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/iterator/iterator_traits.hpp>
+#include <iomanip>
 #include <iostream>
 
 namespace {

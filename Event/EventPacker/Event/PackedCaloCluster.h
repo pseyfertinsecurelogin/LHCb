@@ -1,19 +1,26 @@
 #ifndef EVENT_PackedCaloCluster_H
 #define EVENT_PackedCaloCluster_H 1
 
+#include <stdint.h>
+#include <cmath>
+#include <ostream>
+#include <stdexcept>
 // STL
 #include <string>
-
-// Kernel
-#include "Event/StandardPacker.h"
+#include <vector>
 
 // Event
 #include "Event/CaloCluster.h"
-
+// Kernel
+#include "Event/StandardPacker.h"
+#include "GaudiKernel/ClassID.h"
 // Gaudi
 #include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/StatusCode.h"
+
+class GaudiAlgorithm;
 
 namespace LHCb
 {

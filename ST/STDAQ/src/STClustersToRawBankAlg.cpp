@@ -1,28 +1,35 @@
 // STDAQ
 #include "STClustersToRawBankAlg.h"
-#include "Kernel/STRawBankMap.h"
-#include "Kernel/STTell1ID.h"
 
-#include "Kernel/STTell1Board.h"
-#include "Kernel/STDAQDefinitions.h"
-#include "Kernel/STClusterWord.h"
-#include "SiDAQ/SiHeaderWord.h"
-#include "SiDAQ/SiADCWord.h"
-#include "STDAQFunctor.h"
+#include <math.h>
+#include <algorithm>
+#include <functional>
+#include <memory>
+#include <numeric>
+#include <utility>
 
-#include "Kernel/ISTReadoutTool.h"
-
+#include "Event/BankWriter.h"
+#include "Event/RawEvent.h"
 // Event
 #include "Event/STCluster.h"
-#include "Event/RawEvent.h"
-#include "Event/BankWriter.h"
 #include "Event/STSummary.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/ISTReadoutTool.h"
 // Kernel
 #include "Kernel/STChannelID.h"
+#include "Kernel/STClusterWord.h"
+#include "Kernel/STDAQDefinitions.h"
+#include "Kernel/STRawBankMap.h"
+#include "Kernel/STTell1Board.h"
+#include "Kernel/STTell1ID.h"
+#include "SiDAQ/SiADCWord.h"
+#include "SiDAQ/SiClusterWord.h"
+#include "SiDAQ/SiHeaderWord.h"
 
-
-#include <algorithm>
+class ISvcLocator;
 
 using namespace LHCb;
 

@@ -2,18 +2,23 @@
 #ifndef EVENT_PACKEDCALOHYPO_H
 #define EVENT_PACKEDCALOHYPO_H 1
 
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/StatusCode.h"
-#include "GaudiKernel/GaudiException.h"
-
-// Kernel
-#include "Event/StandardPacker.h"
+#include <stdint.h>
+#include <cmath>
+#include <ostream>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 // Event
 #include "Event/CaloHypo.h"
+// Kernel
+#include "Event/StandardPacker.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
 
-#include <string>
-#include <vector>
+class GaudiAlgorithm;
 
 namespace LHCb
 {

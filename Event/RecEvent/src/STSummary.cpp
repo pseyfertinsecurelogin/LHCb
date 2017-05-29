@@ -1,6 +1,8 @@
 
 #include "Event/STSummary.h"
 
+#include <utility>
+
 // fillstream method
 std::ostream& LHCb::STSummary::fillStream(std::ostream& s) const
 {

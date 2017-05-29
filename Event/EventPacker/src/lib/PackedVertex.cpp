@@ -1,15 +1,28 @@
 
+#include <Math/SMatrix.h>
+#include <boost/array.hpp>
 // STL
 #include <algorithm>
-
-// local
-#include "Event/PackedVertex.h"
+#include <string>
+#include <utility>
+#include <vector>
 
 // Checks
 #include "Event/PackedEventChecks.h"
-
+// local
+#include "Event/PackedVertex.h"
+#include "Event/Particle.h"
+#include "Event/StandardPacker.h"
+#include "Event/Vertex.h"
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
 
 using namespace LHCb;
 

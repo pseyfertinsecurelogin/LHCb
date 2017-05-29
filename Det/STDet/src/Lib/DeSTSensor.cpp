@@ -1,20 +1,21 @@
 #include "STDet/DeSTSensor.h"
 
-#include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/SolidBox.h"
-
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/PositionVector3D.h>
 #include <algorithm>
+#include <ostream>
 
-#include "STDet/DeSTSector.h"
-
+#include "DetDesc/DetectorElementException.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/ISolid.h"
+#include "DetDesc/SolidBox.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 // Kernel
 #include "Kernel/LineTraj.h"
-#include "Kernel/LHCbID.h"
-
-#include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/GaudiException.h"
-
-#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "STDet/DeSTSector.h"
 
 /** @file DeSTSensor.cpp
 *

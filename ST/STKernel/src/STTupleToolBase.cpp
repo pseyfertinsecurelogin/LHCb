@@ -23,8 +23,5 @@
 // local
 #include "Kernel/STTupleToolBase.h"
 
-// ============================================================================
-// Force creation of templated class
-#include "STCommonBase.icpp"
 template class ST::CommonBase<GaudiTupleTool> ;
 // ============================================================================

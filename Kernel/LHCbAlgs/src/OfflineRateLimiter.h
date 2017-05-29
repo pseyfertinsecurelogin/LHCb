@@ -1,11 +1,19 @@
 #ifndef OFFLINERATELIMITER_H
 #define OFFLINERATELIMITER_H 1
 
+#include <string>
+
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/IRateFromTCK.h"
 // Include files
 // from Gaudi
 #include "OfflineDeterministicPrescaler.h"
-#include "Kernel/IRateFromTCK.h"
 #include "RateFromCondDB.h"
+
+class ISvcLocator;
+class RateFromCondDB;
+struct IRateFromTCK;
+
 /** @class OfflineRateLimiter OfflineRateLimiter.h
  *
  *  Algorithm to ``rate limit'' a line in the stripping.

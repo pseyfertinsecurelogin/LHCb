@@ -1,10 +1,31 @@
 // Include files 
 
-// L0Event
-#include "Event/L0DUReport.h"
-#include <algorithm>
+#include <functional>
+#include <istream>
+#include <map>
+#include <numeric>
+#include <utility>
+
+#include "Event/L0DUChannel.h"
+#include "Event/L0DUConfig.h"
+#include "Event/L0DUDecision.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiAlg/GaudiTuples.h"
+#include "GaudiAlg/Tuple.h"
+#include "GaudiAlg/TupleObj.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "L0Interfaces/IL0DUConfigProvider.h"
+#include "L0Interfaces/IL0DUEmulatorTool.h"
+#include "L0Interfaces/IL0DUFromRawTool.h"
 // local
 #include "L0Pattern.h"
+
+class ISvcLocator;
 
 
 //-----------------------------------------------------------------------------

@@ -1,6 +1,23 @@
 // local
 #include "TrackToMCParticleRelations.h"
 
+#include <iomanip>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/FunctionalDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Linker/LinkedTo.h"
+#include "Relations/IRelationWeighted.h"
+#include "Relations/WEntry.h"
+#include "RichFutureKernel/RichCommonBase.h"
+
+class ISvcLocator;
+
 using namespace Rich::Future::MC;
 
 //-----------------------------------------------------------------------------

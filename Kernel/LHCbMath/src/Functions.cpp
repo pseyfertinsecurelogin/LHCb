@@ -4,48 +4,55 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <cmath>
-#include <map>
-#include <limits>
-#include <iostream>
-#include <complex>
+#include <boost/math/policies/policy.hpp>
 #include <algorithm>
-#include <numeric>
 #include <array>
+#include <cmath>
+#include <complex>
+#include <functional>
+#include <iostream>
+#include <iterator>
+#include <limits>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
+// ============================================================================
+// Local
+// ============================================================================
+#include "GSL_sentry.h"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
+#include "LHCbMath/Bernstein.h"
+#include "LHCbMath/Clenshaw.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/Functions.h"
 #include "LHCbMath/LHCbMath.h"
-#include "LHCbMath/Power.h"
-#include "LHCbMath/Polynomials.h"
-#include "LHCbMath/Bernstein.h"
-#include "LHCbMath/Clenshaw.h"
 #include "LHCbMath/MoreFunctions.h"
+#include "LHCbMath/Polynomials.h"
+#include "LHCbMath/Power.h"
+#include "gsl/gsl_cdf.h"
 // ============================================================================
 // GSL
 // ============================================================================
 #include "gsl/gsl_errno.h"
-#include "gsl/gsl_sf_exp.h"
-#include "gsl/gsl_sf_log.h"
-#include "gsl/gsl_sf_erf.h"
-#include "gsl/gsl_sf_gamma.h"
-#include "gsl/gsl_sf_psi.h"
 #include "gsl/gsl_integration.h"
+#include "gsl/gsl_machine.h"
+#include "gsl/gsl_math.h"
 #include "gsl/gsl_randist.h"
-#include "gsl/gsl_cdf.h"
-// ============================================================================
-// ROOT
-// ============================================================================
-#include "TMath.h"
-// ============================================================================
-// Local
-// ============================================================================
-#include "GSL_sentry.h"
+#include "gsl/gsl_sf_erf.h"
+#include "gsl/gsl_sf_exp.h"
+#include "gsl/gsl_sf_gamma.h"
+#include "gsl/gsl_sf_log.h"
+#include "gsl/gsl_sf_psi.h"
+#include "gsl/gsl_sf_result.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for functions from the file LHCbMath/Functions.h
@@ -1603,6 +1610,7 @@ double Gaudi::Math::GenGaussV2::kurtosis () const
 }
 // ============================================================================
 #include "boost/math/distributions/skew_normal.hpp"
+
 // ============================================================================
 /*  constructor from all agruments 
  *  @param xi     location/peak posiiton 

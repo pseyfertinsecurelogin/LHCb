@@ -2,9 +2,14 @@
 #ifndef DETCONDEXAMPLE_XMLTESTALGORITHM_H
 #define DETCONDEXAMPLE_XMLTESTALGORITHM_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 ///---------------------------------------------------------------------------
 /** @class XmlTestAlgorithm XmlTestAlgorithm.h DetCondExample/XmlTestAlgorithm.h

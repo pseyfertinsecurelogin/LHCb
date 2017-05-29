@@ -1,8 +1,28 @@
+#include <boost/dynamic_bitset/dynamic_bitset.hpp>
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "Kernel/MuonLayout.h"
+#include "Kernel/MuonTileID.h"
+#include "L0MuonKernel/CandRegisterHandler.h"
 #include "L0MuonKernel/CoreUnit.h"
-#include "L0MuonKernel/MuonTriggerUnit.h"
-#include "L0MuonKernel/L0MPtLUT.h"
+#include "L0MuonKernel/L0MUnit.h"
+#include "L0MuonKernel/MuonCandidate.h"
+#include "L0MuonKernel/Tower.h"
+#include "ProcessorKernel/Property.h"
+#include "ProcessorKernel/Register.h"
+#include "ProcessorKernel/TileRegister.h"
+#include "ProcessorKernel/Unit.h"
+
+class L0MPtLUT;
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 L0Muon::CoreUnit::CoreUnit():
   m_ignoreM1(false)

@@ -1,15 +1,25 @@
 // stdlib
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/algorithm/string/find.hpp>
+#include <boost/algorithm/string/replace.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/yes_no_type.hpp>
+#include <boost/range/iterator_range_core.hpp>
+#include <boost/regex/config.hpp>
+#include <boost/regex/v4/basic_regex.hpp>
+#include <boost/regex/v4/match_flags.hpp>
+#include <boost/regex/v4/match_results.hpp>
+#include <boost/regex/v4/perl_matcher_common.hpp>
+#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
+#include <boost/regex/v4/regex_fwd.hpp>
+#include <boost/regex/v4/regex_search.hpp>
+#include <boost/regex/v4/regex_traits.hpp>
+#include <boost/regex/v4/sub_match.hpp>
+#include <boost/throw_exception.hpp>
+#include <algorithm>
 #include <string>
-
-// boost
-#include <boost/range.hpp>
-#include <boost/regex.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string.hpp>
-
-// local
-#include <FileStager/FileStagerFunctions.h>
+#include <vector>
 
 #ifndef WIN32
 namespace ba = boost::algorithm;

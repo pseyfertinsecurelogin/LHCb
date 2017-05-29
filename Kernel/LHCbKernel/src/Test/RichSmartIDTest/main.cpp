@@ -1,7 +1,10 @@
 
 #include <iostream>
-#include "Kernel/RichSmartID.h"
+
 #include "Kernel/LHCbID.h"
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSide.h"
+#include "Kernel/RichSmartID.h"
 
 using namespace std;
 

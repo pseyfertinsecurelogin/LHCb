@@ -1,6 +1,21 @@
 // Include files
 #include "CondDBCache.h"
 
+#include <CoolKernel/IFolder.h>
+#include <CoolKernel/IObject.h>
+#include <CoolKernel/IRecord.h>
+#include <CoolKernel/ValidityKey.h>
+#include <CoolKernel/pointers.h>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+
+namespace cool {
+class IRecordSpecification;
+}  // namespace cool
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : CondDBCache
 //

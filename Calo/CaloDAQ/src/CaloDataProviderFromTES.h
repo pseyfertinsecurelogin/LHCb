@@ -1,14 +1,36 @@
 #ifndef CALODATAPROVIDERFROMTES_H
 #define CALODATAPROVIDERFROMTES_H 1
 
+#include <ctype.h>
+#include <algorithm>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "CaloDAQ/ICaloDataProvider.h"            // Interface
+#include "CaloDet/DeCalorimeter.h"
+#include "CaloKernel/CaloVector.h"
+#include "Event/CaloAdc.h"
+#include "Event/CaloDigit.h"
+#include "Event/RawBankReadoutStatus.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "CaloDAQ/ICaloDataProvider.h"            // Interface
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Incident.h"
-#include "CaloDet/DeCalorimeter.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/CaloCellID.h"
+
+class DeCalorimeter;
+class IIncidentListener;
+class IInterface;
+class Incident;
+namespace LHCb {
+class RawBank;
+}  // namespace LHCb
+
 /** @class CaloDataProviderFromTES CaloDataProviderFromTES.h
  *
  *

@@ -3,8 +3,13 @@
 
 // STL
 #include <fstream>
-#include <sstream>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "Kernel/MuonLayout.h"
+#include "Kernel/MuonTileID.h"
 // local
 #include "L0MuonKernel/L0MPtLUT.h"
 

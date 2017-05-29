@@ -12,25 +12,30 @@
 #ifndef RICHDAQ_RICHRAWBUFFERTOSMARTIDSTOOL_H
 #define RICHDAQ_RICHRAWBUFFERTOSMARTIDSTOOL_H 1
 
+#include <string>
+
 // from Gaudi
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h" // due to forward declaration in GaudiTool
-
-// base class
-#include "RichKernel/RichToolBase.h"
-
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSmartID.h"
 // Rich::DAQ utility classes
 #include "RichDAQKernel/RichHPDDataBank.h"
-
-// Utils
-#include "RichUtils/RichHashMap.h"
-
+// RichDet
+#include "RichDet/DeRichSystem.h"
 // Interfaces
 #include "RichInterfaces/IRichRawBufferToSmartIDsTool.h"
 #include "RichInterfaces/IRichRawDataFormatTool.h"
+// base class
+#include "RichKernel/RichToolBase.h"
+#include "RichUtils/RichDecodedData.h"
+// Utils
+#include "RichUtils/RichHashMap.h"
 
-// RichDet
-#include "RichDet/DeRichSystem.h"
+class DeRichSystem;
+class IInterface;
+class Incident;
 
 namespace Rich
 {

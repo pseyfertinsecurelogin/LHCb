@@ -1,20 +1,24 @@
 #ifndef MAGNETICFIELDSVC_H
 #define MAGNETICFIELDSVC_H 1
 
-// Include files
-#include "Kernel/ILHCbMagnetSvc.h"
+#include <cmath>
+#include <string>
+#include <vector>
+
 #include "DetDesc/Condition.h"
 #include "DetDesc/MagneticFieldGrid.h"
-
-#include "MagneticFieldGridReader.h"
-
-#include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Service.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "GaudiKernel/extends.h"
+// Include files
+#include "Kernel/ILHCbMagnetSvc.h"
+#include "MagneticFieldGridReader.h"
 
-#include <vector>
-#include <string>
-
+class Condition;
+class ISvcLocator;
 // Forward declarations
 class IUpdateManagerSvc;
 

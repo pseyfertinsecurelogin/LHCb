@@ -2,7 +2,17 @@
 
 // Include files
 #include "ProcessPhase.h"
+
+#include <functional>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/IJobOptionsSvc.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+
+class ISvcLocator;
 
 //------------------------------------------------------------------------------
 //

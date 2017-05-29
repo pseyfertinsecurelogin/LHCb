@@ -1,7 +1,13 @@
 #include "L0MuonKernel/ProcDataCnv.h"
-#include "ProcessorKernel/RegisterFactory.h"
+
+#include <stdio.h>
+#include <string>
+#include <utility>
+
 #include "Kernel/MuonLayout.h"
-#include <math.h>
+#include "L0MuonKernel/ErrorHandler.h"
+#include "ProcessorKernel/RegisterFactory.h"
+#include "ProcessorKernel/TileRegister.h"
 
 #define _DET_SPEC_HEADER_ 1
 #define _DEBUG_PROCDATA_  0

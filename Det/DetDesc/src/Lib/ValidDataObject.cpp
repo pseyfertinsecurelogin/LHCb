@@ -1,11 +1,12 @@
-#include <string>
+#include <ostream>
 
 #include "DetDesc/ValidDataObject.h"
-
-#include "GaudiKernel/Time.h"
-#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
 
 //---------------------------------------------------------------------------
 

@@ -11,14 +11,29 @@
 
 // Include files
 
-#include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/SmartDataPtr.h"
+#include <stdlib.h>
+#include <cmath>
+#include <string>
+#include <typeinfo>
+#include <vector>
+
+#include "DetDesc/Condition.h"
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
-
-#include "RichDet/DeRich.h"
-
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
 // local
 #include "RichDet/DeRichAerogelRadiator.h"
+#include "RichDet/DeRichBase.h"
+#include "RichDet/DeRichLocations.h"
+#include "RichDet/DeRichSingleSolidRadiator.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DeRichAerogelRadiator

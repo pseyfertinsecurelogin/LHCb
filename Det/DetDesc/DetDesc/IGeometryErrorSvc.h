@@ -1,16 +1,24 @@
 // ============================================================================
 #ifndef DETDESC_IGEOMETRYERRORSVC_H
 #define DETDESC_IGEOMETRYERRORSVC_H 1
+#include "DetDesc/ILVolume.h"
+// ============================================================================
+// DetDesc
+// ============================================================================
+#include "DetDesc/ITransportSvc.h"
 // ============================================================================
 // Include files
 // ============================================================================
 // Gaudi Kernel
 // ============================================================================
 #include "GaudiKernel/IService.h"
-// ============================================================================
-// DetDesc
-// ============================================================================
-#include "DetDesc/ITransportSvc.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
+
+class InterfaceID;
+class Material;
+
 // ============================================================================
 namespace DetDesc
 {
