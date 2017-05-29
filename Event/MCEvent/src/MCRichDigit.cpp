@@ -11,6 +11,8 @@
 
 #include "Event/MCRichDigit.h"
 
+#include "Event/MCRichHit.h"
+
 std::ostream& LHCb::MCRichDigit::fillStream(std::ostream& s) const
 {
   s << "{ " << "hits :";

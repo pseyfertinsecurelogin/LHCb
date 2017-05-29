@@ -4,25 +4,36 @@
 // STD & STL 
 // ============================================================================
 #include <algorithm>
-// ============================================================================
-// GaudiKernel
-// ============================================================================
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/SmartIF.h"
+#include <iterator>
+#include <ostream>
+#include <tuple>
+#include <vector>
+
 // ============================================================================
 // DAQEvent
 // ============================================================================
 #include "Event/RawEvent.h"
 // ============================================================================
+// GaudiKernel
+// ============================================================================
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/ToStream.h"
+// ============================================================================
 // HltInterfaces
 // ============================================================================
 #include "Kernel/ReadRoutingBits.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/Functor.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/ILoKiSvc.h"
+#include "LoKi/Interface.h"
 #include "LoKi/RoutingBits.h"
+
 // ============================================================================
 /** @file
  *  set of helper function to deal with "hlt-routing-bits"

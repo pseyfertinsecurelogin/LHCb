@@ -1,13 +1,17 @@
 #include "STDet/DeTTSensor.h"
 
+#include <typeinfo>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+
 /** @file DeTTSensor.cpp
 *
 *  Implementation of class :  DeTTSensor
 *
 *    @author Matthew Needham
 */
-
-#include "STDet/DeTTSector.h"
 
 using namespace LHCb;
 

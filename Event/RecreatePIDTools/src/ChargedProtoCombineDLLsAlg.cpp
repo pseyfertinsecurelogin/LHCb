@@ -11,6 +11,19 @@
 // local
 #include "ChargedProtoCombineDLLsAlg.h"
 
+#include <math.h>
+#include <functional>
+
+#include "Event/ProtoParticle.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory

@@ -2,11 +2,20 @@
 // local
 #include "Event/PackedCaloCluster.h"
 
+#include <Math/SMatrix.h>
+#include <math.h>
+
+#include "Event/CaloClusterEntry.h"
+#include "Event/CaloDigit.h"
+#include "Event/CaloPosition.h"
 // Checks
 #include "Event/PackedEventChecks.h"
-
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "Kernel/CaloCellID.h"
 
 using namespace LHCb;
 

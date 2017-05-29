@@ -2,15 +2,22 @@
 #define DETDESC_SERVICES_H 1
 
 #include <memory>
+
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
 #include "GaudiKernel/SmartIF.h"
-// Forward declarations
-class ISvcLocator;
+
 class IDataProviderSvc;
 class IMessageSvc;
+// Forward declarations
+class ISvcLocator;
 class IUpdateManagerSvc;
 
 namespace DetDesc {
   class Services;
+
   using ServicesPtr = std::shared_ptr<Services>;
 
   /** @class Services Services.h DetDesc/Services.h

@@ -1,6 +1,13 @@
 // Include files
-#include "ODINCodecBaseTool.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 #include "GaudiKernel/SerializeSTL.h"
+#include "GaudiKernel/StatusCode.h"
+#include "ODINCodecBaseTool.h"
 
 /** @class ODINDecodeTool ODINDecodeTool.h
  *
@@ -41,11 +48,17 @@ class ODINDecodeTool final : public ODINCodecBaseTool
 // IMPLEMENTATION
 //=============================================================================
 
+#include <functional>
 #include <sstream>
+#include <string>
+#include <vector>
+
 // from LHCb
 #include "Event/ODIN.h"
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h"
+
+class IInterface;
 
 // Declaration of the Tool Factory
 DECLARE_TOOL_FACTORY( ODINDecodeTool )

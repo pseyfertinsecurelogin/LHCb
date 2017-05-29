@@ -11,19 +11,49 @@
 
 #pragma once
 
+#include <boost/format.hpp>
+#include <ostream>
+#include <vector>
+
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichFlatFormatSmartIDData.icpp"
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichHPDDataBank.icpp"
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichNonZeroSuppALICEData_V1.icpp"
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichNonZeroSuppALICEData_V2.icpp"
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichNonZeroSuppData_V1.icpp"
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichNonZeroSuppData_V2.icpp"
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichNonZeroSuppData_V3.icpp"
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichZeroSuppALICEData_V1.icpp"
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichZeroSuppData_V1.icpp"
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichZeroSuppData_V2.icpp"
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichZeroSuppData_V3.icpp"
+#include "/tmp/foobarpath/LHCb/Rich/RichDAQKernel/src/RichZeroSuppData_V4.icpp"
+#include "GaudiKernel/MsgStream.h"
+#include "RichDAQKernel/RichFlatFormatSmartIDData.h"
+#include "RichDAQKernel/RichNonZeroSuppALICEData.h"
+#include "RichDAQKernel/RichNonZeroSuppALICEData_V1.h"
+#include "RichDAQKernel/RichNonZeroSuppALICEData_V2.h"
+// data blocks
+#include "RichDAQKernel/RichNonZeroSuppData.h"
+#include "RichDAQKernel/RichNonZeroSuppData_V1.h"
+#include "RichDAQKernel/RichNonZeroSuppData_V2.h"
+#include "RichDAQKernel/RichNonZeroSuppData_V3.h"
+#include "RichDAQKernel/RichZeroSuppALICEData.h"
+#include "RichDAQKernel/RichZeroSuppALICEData_V1.h"
+#include "RichDAQKernel/RichZeroSuppData.h"
+#include "RichDAQKernel/RichZeroSuppData_V1.h"
+#include "RichDAQKernel/RichZeroSuppData_V2.h"
+#include "RichDAQKernel/RichZeroSuppData_V3.h"
+#include "RichDAQKernel/RichZeroSuppData_V4.h"
 // From RichUtils
 #include "RichUtils/RichDAQHeaderPD.h"
+#include "RichUtils/RichDAQHeaderPD_V1.h"
+#include "RichUtils/RichDAQHeaderPD_V2.h"
+#include "RichUtils/RichDAQHeaderPD_V3.h"
+#include "RichUtils/RichDAQHeaderPD_V4.h"
+#include "RichUtils/RichDAQL1IngressHeader.h"
 #include "RichUtils/RichDAQNullFooter.h"
 #include "RichUtils/RichDAQParityFooter.h"
 #include "RichUtils/RichDAQParityFooterTB2006.h"
-#include "RichUtils/RichDAQL1IngressHeader.h"
-
-// data blocks
-#include "RichDAQKernel/RichNonZeroSuppData.h"
-#include "RichDAQKernel/RichNonZeroSuppALICEData.h"
-#include "RichDAQKernel/RichZeroSuppData.h"
-#include "RichDAQKernel/RichZeroSuppALICEData.h"
-#include "RichDAQKernel/RichFlatFormatSmartIDData.h"
 
 namespace Rich
 {

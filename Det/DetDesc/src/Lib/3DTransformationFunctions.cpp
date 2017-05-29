@@ -5,6 +5,13 @@
 // local
 #include "DetDesc/3DTransformationFunctions.h"
 
+#include <Math/GenVector/Transform3D.h>
+#include <Math/GenVector/Translation3D.h>
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
+
 namespace DetDesc {
 
 const Gaudi::Transform3D localToGlobalTransformation(const std::vector<double>& translationParams,

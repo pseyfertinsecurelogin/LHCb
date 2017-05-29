@@ -1,30 +1,48 @@
 //==============================================================================
 #define VELODET_DEVELORTYPE_CPP 1
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <vdt/atan2.h>
+#include <vdt/exp.h>
+#include <vdt/log.h>
+#include <algorithm>
+#include <array>
 //==============================================================================
 // Include files
 #include <cmath>
+#include <map>
+#include <memory>
+#include <string>
+#include <typeinfo>
+#include <utility>
+#include <vector>
 
-#include "vdt/asin.h"
-#include "vdt/cos.h"
-#include "vdt/sin.h"
-#include "vdt/sincos.h"
-
+#include "DetDesc/IGeometryInfo.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
 // From Gaudi
 #include "GaudiKernel/PhysicalConstants.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-
-// From LHCb
-#include "LHCbMath/LHCbMath.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
 #include "Kernel/CircleTraj.h"
-
-// From Velo
-#include "VeloDet/DeVeloRType.h"
-#include "Kernel/VeloChannelID.h"
-
 // for make_array
 #include "Kernel/STLExtensions.h"
-
+#include "Kernel/Trajectory.h"
+#include "Kernel/VeloChannelID.h"
+// From LHCb
+#include "LHCbMath/LHCbMath.h"
+// From Velo
+#include "VeloDet/DeVeloRType.h"
+#include "VeloDet/DeVeloSensor.h"
 #include "getOutputLevel.h"
+#include "vdt/asin.h"
+#include "vdt/sin.h"
+#include "vdt/sincos.h"
 
 namespace VeloDet {
   /** This function simply provides access to a local static

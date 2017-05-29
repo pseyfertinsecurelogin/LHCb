@@ -4,11 +4,30 @@
 // ============================================================================
 // GaudiAlg
 // ============================================================================
+#include <functional>
+#include <string>
+#include <vector>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/Algorithm.h"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IHistogramSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/System.h"
+
+class ISvcLocator;
 // ============================================================================
 
 // ============================================================================

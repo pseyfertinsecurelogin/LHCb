@@ -3,12 +3,30 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+#include <boost/regex/v4/match_flags.hpp>
+#include <boost/regex/v4/perl_matcher_common.hpp>
+#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
+#include <boost/regex/v4/regex_match.hpp>
+#include <algorithm>
+#include <iterator>
+#include <map>
+#include <ostream>
+#include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
+
+#include "Event/L0DUChannel.h"
+#include "Event/L0DUConfig.h"
+#include "Event/L0DUDecision.h"
+#include "Event/L0DUElementaryCondition.h"
+#include "Event/L0DUReport.h"
+#include "Event/L0DUTrigger.h"
 #include "GaudiKernel/ToStream.h"
-// ============================================================================
-// LoKi
-// ============================================================================
-#include "LoKi/Constants.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/Functor.h"
 #include "LoKi/L0.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for namespace LoKi::L0

@@ -4,24 +4,32 @@
 // =============================================================================
 // STD & STL
 // =============================================================================
+#include <ext/alloc_traits.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_vector.h>
+#include <algorithm>
 #include <limits>
 #include <sstream>
-// =============================================================================
-// LHCbMath
-// =============================================================================
-#include "LHCbMath/Chi2Fit.h"
-#include "LHCbMath/Hesse.h"
-#include "LHCbMath/GSL_utils.h"
-// =============================================================================
-// GSL
-// =============================================================================
-#include "gsl/gsl_errno.h"
-#include "gsl/gsl_vector.h"
-#include "gsl/gsl_multimin.h"
+#include <string>
+#include <vector>
+
 // =============================================================================
 // Local
 // =============================================================================
 #include "GSL_sentry.h"
+#include "GaudiKernel/StatusCode.h"
+// =============================================================================
+// LHCbMath
+// =============================================================================
+#include "LHCbMath/Chi2Fit.h"
+#include "LHCbMath/GSL_utils.h"
+#include "LHCbMath/Hesse.h"
+#include "LHCbMath/ValueWithError.h"
+// =============================================================================
+// GSL
+// =============================================================================
+#include "gsl/gsl_errno.h"
+#include "gsl/gsl_multimin.h"
 // =============================================================================
 /** @file  
  *  Implementation file for class Gaudi::Math::Chi2Fit

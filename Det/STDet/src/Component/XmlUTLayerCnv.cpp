@@ -1,6 +1,6 @@
 // DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
-
+#include "GaudiKernel/Converter.h"
 // UTDet
 #include "STDet/DeUTLayer.h"
 

@@ -2,11 +2,24 @@
 #ifndef FTRAWBANKDECODER_H 
 #define FTRAWBANKDECODER_H 1
 
+#include <functional>
+#include <memory>
+#include <string>
+#include <vector>
+
+#include "DAQKernel/DecoderAlgBase.h"
 // Include files
 // from Gaudi
 #include "Event/FTLiteCluster.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "DAQKernel/DecoderAlgBase.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/FastClusterContainer.h"
+
+class ISvcLocator;
+namespace LHCb {
+class RawBank;
+}  // namespace LHCb
 
 /** @class FTRawBankDecoder FTRawBankDecoder.h
  *  Decode the FT raw bank into FTLiteClusters

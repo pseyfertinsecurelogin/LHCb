@@ -1,10 +1,15 @@
 
-// from Gaudi
-#include "GaudiKernel/IDataManagerSvc.h"
-
 // from DetDesc
 #include "DetDesc/DataStoreLoadAgent.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/IGenericTool.h"
+#include "GaudiKernel/AlgTool.h"
+// from Gaudi
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 // local
 #include "PreloadGeometryTool.h"
 

@@ -1,17 +1,29 @@
 // Include files 
-#include <sstream>
 #include <math.h>
+#include <stdlib.h>
+#include <functional>
+#include <set>
+#include <sstream>
 
-// from Gaudi
-#include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/SystemOfUnits.h"
-
+#include "Event/MCVertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
 // from PartProp
 #include "Kernel/IEvtTypeSvc.h"
-#include "MCInterfaces/IMCDecayFinder.h"
-
+#include "Kernel/ParticleID.h"
 // local
 #include "MCEventTypeFinder.h"
+#include "MCInterfaces/IMCDecayFinder.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : MCEventTypeFinder

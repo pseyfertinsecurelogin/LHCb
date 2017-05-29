@@ -1,24 +1,32 @@
 #ifndef DUMPFSR_H
 #define DUMPFSR_H 1
 
+#include <string>
+#include <vector>
+
+#include "Event/EventCountFSR.h"
+// event model
+#include "Event/LumiFSR.h"
+#include "Event/TimeSpanFSR.h"
+// local
+#include "FSRNavigator.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-
-#include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/IDataManagerSvc.h"
-
+#include "GaudiKernel/IDataProviderSvc.h"
 // for incidents listener
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
 
-// event model
-#include "Event/LumiFSR.h"
-#include "Event/EventCountFSR.h"
-#include "Event/TimeSpanFSR.h"
-
-// local
-#include "FSRNavigator.h"
+class IFSRNavigator;
+class IIncidentListener;
+class ISvcLocator;
+class Incident;
 
 /** @class DumpFSR DumpFSR.h
  *

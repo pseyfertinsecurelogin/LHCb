@@ -3,18 +3,32 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <vector>
+#include <algorithm>
+#include <atomic>
+#include <memory>
 #include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
+
+#include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentSvc.h"
 // ============================================================================
 // GaudiKernrel
 // ============================================================================
 #include "GaudiKernel/IInterface.h"
 #include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extend_interfaces.h"
+#include "GaudiKernel/implements.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/ILoKiSvc.h"
+#include "LoKi/Interface.h"
 // ============================================================================
 // local
 // ============================================================================
 #include "LoKi/Listener.h"
-#include "LoKi/ILoKiSvc.h"
+
 // ============================================================================
 /** @file Listener.cpp
  *  Implementation file for class : Listener

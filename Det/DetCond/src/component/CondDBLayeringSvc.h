@@ -1,11 +1,20 @@
 #ifndef COMPONENT_CONDDBLAYERINGSVC_H
 #define COMPONENT_CONDDBLAYERINGSVC_H 1
 
-// Include files
-#include "GaudiKernel/Service.h"
-#include "DetCond/ICondDBReader.h"
+#include <CoolKernel/ChannelId.h>
+#include <string>
 #include <vector>
 
+#include "DetCond/ICondDBReader.h"
+// Include files
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/CondDBNameTagPair.h"
+
+class ISvcLocator;
 template <class TYPE> class SvcFactory;
 
 /** @class CondDBLayeringSvc CondDBLayeringSvc.h component/CondDBLayeringSvc.h

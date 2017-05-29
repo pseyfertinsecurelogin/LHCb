@@ -3,13 +3,19 @@
 // ============================================================================
 // PartProp
 // ============================================================================
-#include "Kernel/IParticlePropertySvc.h"
-#include "Kernel/Nodes.h"
+#include <string>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "Kernel/iNode.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/DecayBase.h"
 #include "LoKi/IDecayNode.h"
+
+class IInterface;
+
 // ============================================================================
 namespace LoKi
 {

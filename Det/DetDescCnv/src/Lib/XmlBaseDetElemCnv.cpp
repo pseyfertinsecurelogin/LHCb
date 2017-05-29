@@ -1,25 +1,36 @@
 // include files
 
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/SmartIF.h"
-
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMNode.hpp>
 #include <xercesc/dom/DOMNodeList.hpp>
-
-#include "DetDesc/DetectorElement.h"
-#include "DetDescCnv/XmlCnvException.h"
-#include "DetDescCnv/XmlBaseDetElemCnv.h"
-#include "XmlTools/IXmlSvc.h"
-
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <cctype>
 #include <cstdlib>
 #include <iostream>
-#include <sstream>
+#include <memory>
 #include <string>
 #include <vector>
-#include <cctype>
+
+#include "DetDesc/CLIDDetectorElement.h"
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDescCnv/XmlBaseDetElemCnv.h"
+#include "DetDescCnv/XmlCnvException.h"
+#include "DetDescCnv/XmlCnvException.icpp"
+#include "DetDescCnv/XmlGenericCnv.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "XmlTools/IXmlSvc.h"
 
 class ISvcLocator;
 

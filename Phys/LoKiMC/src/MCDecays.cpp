@@ -4,11 +4,29 @@
 // LoKi
 // ============================================================================
 #include "LoKi/MCDecays.h"
-#include "LoKi/MCSections.h"
-#include "LoKi/MCChild.h"
-#include "LoKi/MCAlgs.h"
+
+#include <ext/alloc_traits.h>
+#include <iterator>
+#include <memory>
+#include <ostream>
+
+#include "Event/MCVertex.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "Kernel/Nodes.h"
+#include "Kernel/ParticleID.h"
 #include "LoKi/Algs.h"
 #include "LoKi/GetN.h"
+#include "LoKi/MCAlgs.h"
+#include "LoKi/MCChild.h"
+#include "LoKi/MCSections.h"
+#include "LoKi/Trees.icpp"
+
+namespace LHCb {
+class IParticlePropertySvc;
+class ParticleProperty;
+}  // namespace LHCb
+
 // ============================================================================
 /** @file
  *  Implementation file for LoKi MC-tree-functors 

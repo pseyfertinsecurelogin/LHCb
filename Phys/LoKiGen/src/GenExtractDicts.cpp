@@ -8,21 +8,30 @@
   #pragma warning (disable:1572) // floating-point equality and inequality comparisons are unreliable
   #pragma warning(push)
 #endif
-#include "HepMC/GenParticle.h"
-#include "HepMC/GenVertex.h"
-#include "HepMC/GenEvent.h"
 #ifdef __INTEL_COMPILER
   #pragma warning(pop)
 #endif
+#include <iterator>
+#include <vector>
+
 // ============================================================================
 // Event 
 // ============================================================================
 #include "Event/HepMCEvent.h"
+#include "HepMC/IteratorRange.h"
+#include "LoKi/GenExtract.h"
+#include "LoKi/GenTypes.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Objects.h"
-#include "LoKi/GenExtractDicts.h"
+
+namespace HepMC {
+class GenEvent;
+class GenParticle;
+class GenVertex;
+}  // namespace HepMC
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::Dicts::GenExtract

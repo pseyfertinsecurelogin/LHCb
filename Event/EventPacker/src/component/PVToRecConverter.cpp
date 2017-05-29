@@ -1,6 +1,25 @@
+#include <Math/SMatrix.h>
+#include <functional>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "Event/PrimaryVertex.h"
+#include "Event/PrimaryVertexTrack.h"
 #include "Event/RecVertex.h"
+#include "Event/State.h"
+#include "Event/Track.h"
+#include "Event/VertexBase.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 class PVToRecConverter : public GaudiAlgorithm
 {

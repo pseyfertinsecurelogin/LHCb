@@ -18,16 +18,19 @@
 
 #include "TemplatedGenVector/3DDistances.h"
 
-#include "TemplatedGenVector/Rotation3D.h"
-#include "TemplatedGenVector/AxisAngle.h"
-#include "TemplatedGenVector/EulerAngles.h"
 #include "TemplatedGenVector/Quaternion.h"
-#include "TemplatedGenVector/RotationZYX.h"
-#include "TemplatedGenVector/RotationX.h"
-#include "TemplatedGenVector/RotationY.h"
-#include "TemplatedGenVector/RotationZ.h"
 
-#include <cmath>
+namespace LHCbROOT {
+namespace Math {
+class AxisAngle;
+class EulerAngles;
+class Rotation3D;
+class RotationX;
+class RotationY;
+class RotationZ;
+class RotationZYX;
+}  // namespace Math
+}  // namespace LHCbROOT
 
 
 namespace LHCbROOT {

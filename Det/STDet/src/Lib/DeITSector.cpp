@@ -1,10 +1,22 @@
 #include "STDet/DeITSector.h"
-#include "STDet/DeITSensor.h"
+
+#include <stddef.h>
+#include <algorithm>
+#include <typeinfo>
+#include <vector>
+
+#include "DetDesc/Condition.h"
+#include "DetDesc/DetectorElementException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "Kernel/ITNames.h"
+#include "Kernel/STChannelID.h"
 #include "STDet/DeSTSensor.h"
-#include "STDet/DeITLadder.h"
 #include "STDet/STDetFun.h"
 
-#include "Kernel/ITNames.h"
+class DeITSensor;
 
 /** @file DeITSector.cpp
 *

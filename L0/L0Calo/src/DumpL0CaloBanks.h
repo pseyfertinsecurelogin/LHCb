@@ -3,8 +3,14 @@
 #define DUMPL0CALOBANKS_H 1
 // Include files
 
+#include <iosfwd>
+#include <string>
+
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class DumpL0CaloBanks DumpL0CaloBanks.h
  *  Algorithm to dump the content of the L0Calo banks

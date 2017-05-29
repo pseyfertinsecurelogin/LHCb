@@ -2,6 +2,9 @@
 // local
 #include "LHCbTimerForSequencer.h"
 
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : LHCbTimerForSequencer
 //

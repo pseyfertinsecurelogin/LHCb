@@ -3,14 +3,21 @@
 // ============================================================================
 // Event
 // ============================================================================
-#include "Event/ODIN.h"
-#include "Event/L0DUReport.h"
+#include <functional>
+#include <ostream>
+#include <string>
+
 #include "Event/HltDecReports.h"
-// ============================================================================
-// LoKi
-// ============================================================================
-#include "LoKi/Constants.h"
+#include "Event/L0DUReport.h"
+#include "Event/ODIN.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/Functor.h"
+#include "LoKi/TES.h"
 #include "LoKi/TESGet.h"
+
 // ============================================================================
 namespace
 {

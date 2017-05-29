@@ -1,9 +1,16 @@
 // ============================================================================
 // Include files
 // CaloDet 
+#include <algorithm>
+
 #include "CaloDet/DeCalorimeter.h"
 // local
 #include "CaloUtils/CellSwissCross.h"
+#include "GaudiKernel/Point3DTypes.h"
+
+namespace LHCb {
+class CaloCellID;
+}  // namespace LHCb
 
 // ============================================================================
 /** @file CellSwissCross.cpp  

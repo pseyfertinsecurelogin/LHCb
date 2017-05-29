@@ -1,32 +1,37 @@
 // Include files 
 
+#include <boost/format.hpp>
+#include <math.h>
+#include <algorithm>
+#include <functional>
+#include <ostream>
+
+#include "AIDA/IAxis.h"
+#include "AIDA/IHistogram1D.h"
+#include "Event/HltObjectSummary.h"
+#include "Event/HltSelReports.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
 // from Gaudi
 #include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/MsgStream.h"
-#include "Event/HltSelReports.h"
-#include "Event/HltDecReports.h"
-#include "Event/RawEvent.h"
-#include "Event/HltObjectSummary.h"
-
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "HltDAQ/HltSelRepRBEnums.h"
+#include "HltDAQ/HltSelRepRBExtraInfo.h"
+#include "HltDAQ/HltSelRepRBHits.h"
+#include "HltDAQ/HltSelRepRBObjTyp.h"
+#include "HltDAQ/HltSelRepRBStdInfo.h"
+#include "HltDAQ/HltSelRepRBSubstr.h"
 // bank structure
 #include "HltDAQ/HltSelRepRawBank.h"
-#include "HltDAQ/HltSelRepRBHits.h"
-#include "HltDAQ/HltSelRepRBSubstr.h"
-#include "HltDAQ/HltSelRepRBObjTyp.h"
-#include "HltDAQ/HltSelRepRBExtraInfo.h"
-#include "HltDAQ/HltSelRepRBStdInfo.h"
-
-// boost
-#include "boost/format.hpp"
-
 // local
 #include "HltRawDataMonitor.h"
 #include "HltSelReportsWriter.h"
 
-#include "Event/Track.h"
-#include "Event/Particle.h"
-#include "Event/RecVertex.h"
-#include "Event/CaloCluster.h"
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : HltRawDataMonitor

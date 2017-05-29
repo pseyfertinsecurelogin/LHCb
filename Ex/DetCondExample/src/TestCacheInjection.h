@@ -1,12 +1,18 @@
 #ifndef TESTCACHEINJECTION_H
 #define TESTCACHEINJECTION_H 1
 
+#include <stddef.h>
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
+class Condition;
 // Forward declarations
 class ICondDBAccessSvc;
+class ISvcLocator;
 
 /** @class TestCacheInjection TestCacheInjection.h
  *

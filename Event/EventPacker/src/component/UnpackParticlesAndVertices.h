@@ -1,37 +1,44 @@
 #ifndef UNPACKPARTICLESANDVERTICES_H
 #define UNPACKPARTICLESANDVERTICES_H 1
 
+#include <functional>
 #include <memory>
+#include <string>
+#include <vector>
 
+#include "Event/FlavourTag.h"
+#include "Event/MCParticle.h"
+#include "Event/MuonPID.h"
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedMuonPID.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
+#include "Event/PackedParticle.h"
+#include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedRichPID.h"
+#include "Event/PackedTrack.h"
+#include "Event/PackedVertex.h"
+#include "Event/Particle.h"
+#include "Event/ProtoParticle.h"
+#include "Event/RecVertex.h"
+#include "Event/RelatedInfoMap.h"
+#include "Event/RichPID.h"
+#include "Event/StandardPacker.h"
+#include "Event/Track.h"
+#include "Event/Vertex.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
-
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/Particle2LHCbIDs.h"
-
 #include "Relations/Relation1D.h"
 #include "Relations/RelationWeighted1D.h"
 
-#include "Event/StandardPacker.h"
-#include "Event/PackedTrack.h"
-#include "Event/PackedProtoParticle.h"
-#include "Event/PackedMuonPID.h"
-#include "Event/PackedRichPID.h"
-#include "Event/PackedParticle.h"
-#include "Event/PackedVertex.h"
-#include "Event/PackedRelations.h"
-#include "Event/PackedRecVertex.h"
-#include "Event/PackedFlavourTag.h"
-#include "Event/PackedPartToRelatedInfoRelation.h"
-
-#include "Event/Track.h"
-#include "Event/ProtoParticle.h"
-#include "Event/MuonPID.h"
-#include "Event/RichPID.h"
-#include "Event/Particle.h"
-#include "Event/Vertex.h"
-#include "Event/FlavourTag.h"
-#include "Event/RecVertex.h"
-#include "Event/MCParticle.h"
-#include "Event/RelatedInfoMap.h"
+class ISvcLocator;
 
 /** @class UnpackParticlesAndVertices UnpackParticlesAndVertices.h
  *

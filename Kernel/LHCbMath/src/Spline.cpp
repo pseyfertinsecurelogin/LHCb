@@ -4,32 +4,36 @@
 // ===========================================================================
 // STD & STL 
 // ===========================================================================
+#include <ext/alloc_traits.h>
 #include <algorithm>
+#include <functional>
+#include <memory>
+#include <utility>
+#include <vector>
+
+#include "GaudiMath/Interpolation.h"
 // ===========================================================================
 // GaudiGSL 
 // ===========================================================================
 #include "GaudiMath/Splines.h"
+#include "LHCbMath/Interpolation.h"
 // ===========================================================================
 // local
 // ===========================================================================
 #include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/Spline.h"
-#include "LHCbMath/Interpolation.h"
-// ===========================================================================
-// Boost 
-// ===========================================================================
-#include "boost/tuple/tuple.hpp"
-#include "boost/multi_array.hpp"
-#include "boost/type_traits/is_same.hpp"
-#include "boost/static_assert.hpp"
+#include "LHCbMath/ValueWithError.h"
 // ===========================================================================
 // ROOT 
 // ===========================================================================
 #include "TAxis.h"
-#include "TH1.h"
-#include "TH2.h"
 #include "TGraph.h"
 #include "TGraphErrors.h"
+#include "TH1.h"
+#include "TH2.h"
+#include "boost/static_assert.hpp"
+#include "boost/type_traits/is_same.hpp"
+
 // ===========================================================================
 /** @file 
  *  Implementation file for class Gaudi::Math::Spline

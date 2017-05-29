@@ -2,8 +2,11 @@
 #define L0MUONKERNEL_CUL0BUFFERCNV_H
 
 
-#include "L0MuonKernel/L0BufferCnv.h"
 #include <string>
+
+#include "Kernel/MuonTileID.h"
+#include "L0MuonKernel/CandRegisterHandler.h"
+#include "L0MuonKernel/L0BufferCnv.h"
 
 namespace L0Muon {
 

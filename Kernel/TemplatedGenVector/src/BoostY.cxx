@@ -14,14 +14,15 @@
 // Created by: Mark Fischler Mon Nov 1  2005
 //
 #include "TemplatedGenVector/BoostY.h"
-#include "TemplatedGenVector/LorentzVector.h"
-#include "TemplatedGenVector/PxPyPzE4D.h"
-#include "TemplatedGenVector/DisplacementVector3D.h"
-#include "TemplatedGenVector/Cartesian3D.h"
-#include "TemplatedGenVector/GenVector_exception.h"
 
 #include <cmath>
-#include <algorithm>
+#include <ostream>
+
+#include "TemplatedGenVector/Cartesian3D.h"
+#include "TemplatedGenVector/DisplacementVector3D.h"
+#include "TemplatedGenVector/GenVector_exception.h"
+#include "TemplatedGenVector/LorentzVector.h"
+#include "TemplatedGenVector/PxPyPzE4D.h"
 
 namespace LHCbROOT {
 

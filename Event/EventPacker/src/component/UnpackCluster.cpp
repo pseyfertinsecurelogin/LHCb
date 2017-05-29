@@ -1,8 +1,29 @@
 // Include files
-#include "Event/VeloCluster.h"
+#include <algorithm>
+#include <functional>
+#include <utility>
+#include <vector>
+
+#include "Event/PackedCluster.h"
 #include "Event/STCluster.h"
+#include "Event/STLiteCluster.h"
+#include "Event/VeloCluster.h"
+#include "Event/VeloLiteCluster.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "Kernel/STChannelID.h"
+#include "Kernel/VeloChannelID.h"
 // local
 #include "UnpackCluster.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackCluster

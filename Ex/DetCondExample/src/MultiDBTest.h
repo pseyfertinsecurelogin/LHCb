@@ -1,12 +1,16 @@
 #ifndef MULTIDBTEST_H
 #define MULTIDBTEST_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
-class Condition;
 class AlignmentCondition;
+class Condition;
+class ISvcLocator;
 
 /** @class MultiDBTest MultiDBTest.h
  *

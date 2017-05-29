@@ -4,20 +4,32 @@
 // STD & STL
 // ============================================================================
 #include <stdlib.h>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <tuple>
+
+#include "GaudiKernel/IRndmGen.h"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/IRndmGenSvc.h"
 #include "GaudiKernel/RndmGenerators.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/ToStream.h"
 // ============================================================================
 // LHcbMath
 // ============================================================================
 #include "LHCbMath/Blind.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/BasicFunctors.h"
+#include "LoKi/Functor.h"
+#include "LoKi/Interface.h"
+#include "LoKi/Random.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Services.h"
-#include "LoKi/Random.h"
 // ============================================================================
 #ifdef __INTEL_COMPILER       // Disable ICC remark
 #pragma warning(disable:1572) // floating-point equality and inequality comparisons are unreliable

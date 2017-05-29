@@ -4,15 +4,13 @@
 // ============================================================================
 // STD/STL 
 // ============================================================================
-#include <cmath>
-#include <climits>
 #include <algorithm>
-// ============================================================================
-// local
-// ============================================================================
-#include "LHCbMath/Choose.h"
+#include <cmath>
+#include <limits>
+
 #include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/Power.h"
+
 // ============================================================================
 /** @file 
  *  Cacualte binbomial coefficients and related quantities 

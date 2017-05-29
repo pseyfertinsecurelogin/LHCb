@@ -1,10 +1,14 @@
 //  $ID: $
 
-// include files
-#include "GaudiKernel/ISvcLocator.h"
-#include "DetDesc/TabulatedProperty.h"
-
+#include "GaudiKernel/Converter.h"
 #include "XmlDetectorElementCnv.h"
+
+class DetectorElement;
+class IOpaqueAddress;
+class ISvcLocator;
+namespace xercesc_3_1 {
+class DOMElement;
+}  // namespace xercesc_3_1
 
 
 // -----------------------------------------------------------------------

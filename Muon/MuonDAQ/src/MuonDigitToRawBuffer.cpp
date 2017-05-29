@@ -1,19 +1,36 @@
 // Include files
 // local
-#include "MuonDAQ/SortDigitInODE.h"
-#include "MuonDAQ/SortDigitInL1.h"
-#include "MuonDigitToRawBuffer.h"
-#include "MuonDAQ/MuonHLTDigitFormat.h"
-#include "MuonDet/MuonTSMap.h"
-#include "MuonDet/MuonL1Board.h"
-#include "MuonDet/MuonODEBoard.h"
-#include "MuonDet/MuonStationCabling.h"
-#include "MuonDet/MuonBasicGeometry.h"
-#include "Event/RawEvent.h"
-#include "Event/RawBank.h"
+#include <algorithm>
+#include <functional>
+
 #include "Event/BankWriter.h"
-#include "Event/MuonDigit.h"
 #include "Event/MuonBankVersion.h"
+#include "Event/MuonDigit.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/MuonTileID.h"
+#include "MuonDAQ/MuonHLTDigitFormat.h"
+#include "MuonDAQ/SortDigitInL1.h"
+#include "MuonDAQ/SortDigitInODE.h"
+#include "MuonDet/DeMuonDetector.h"
+#include "MuonDet/MuonBasicGeometry.h"
+#include "MuonDet/MuonL1Board.h"
+#include "MuonDet/MuonNamespace.h"
+#include "MuonDet/MuonODEBoard.h"
+#include "MuonDet/MuonTSMap.h"
+#include "MuonDigitToRawBuffer.h"
+
+class ISvcLocator;
 //-----------------------------------------------------------------------------
 // Implementation file for class : MuonDigitToRawBuffer
 //

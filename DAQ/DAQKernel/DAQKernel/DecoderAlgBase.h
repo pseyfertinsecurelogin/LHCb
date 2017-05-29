@@ -12,11 +12,19 @@
 #ifndef DAQKERNEL_DECODERALGBASE_H
 #define DAQKERNEL_DECODERALGBASE_H 1
 
-// GaudiAlg
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <functional>
+#include <string>
 
+#include "/tmp/foobarpath/LHCb/DAQ/DAQKernel/src/lib/DecoderCommonBase.icpp"
 // local
 #include "DAQKernel/DecoderCommonBase.h"
+#include "Event/RawEvent.h"
+// GaudiAlg
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
 
 namespace Decoder
 {

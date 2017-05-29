@@ -3,10 +3,16 @@
 
 // Include files
 #include "MuonDet/DeMuonChamber.h"
-#include "DetDesc/IGeometryInfo.h"
-//Detector descriptions
-#include "DetDesc/Condition.h"
 
+#include <stdio.h>
+#include <typeinfo>
+#include <vector>
+
+#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "MuonDet/MuonNamespace.h"
 #include "boost/algorithm/string/predicate.hpp"
 
 /** @file DeMuonChamber.cpp

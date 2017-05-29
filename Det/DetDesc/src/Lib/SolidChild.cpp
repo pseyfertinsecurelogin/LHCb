@@ -2,12 +2,27 @@
 #ifdef __INTEL_COMPILER         // Disable ICC remark
   #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
 #endif
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <Math/GenVector/Rotation3D.h>
+#include <Math/GenVector/Transform3D.h>
+#include <boost/core/explicit_operator_bool.hpp>
+#include <boost/optional/optional.hpp>
+#include <algorithm>
+#include <cmath>
+#include <iosfwd>
+#include <memory>
+#include <string>
+
+#include "DetDesc/ISolid.h"
+#include "DetDesc/SolidBase.h"
+#include "DetDesc/SolidChild.h"
+#include "DetDesc/SolidException.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
 /// Geometry definitions
 #include "GaudiKernel/Transform3DTypes.h"
-#include "GaudiKernel/Point3DTypes.h"
-/// DetDesc
-#include "DetDesc/Solid.h"
-#include "DetDesc/SolidChild.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 // ============================================================================
 /** @file

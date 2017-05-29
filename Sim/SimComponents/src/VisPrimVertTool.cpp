@@ -3,11 +3,26 @@
 // local
 #include "VisPrimVertTool.h"
 
+#include <functional>
+#include <vector>
+
+#include "Event/MCHeader.h"
 // from Event
 #include "Event/MCParticle.h"
-#include "Event/MCVertex.h"
 #include "Event/MCTrackInfo.h"
-#include "Event/MCHeader.h"
+#include "Event/MCVertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "Kernel/ParticleID.h"
 
 
 //-----------------------------------------------------------------------------

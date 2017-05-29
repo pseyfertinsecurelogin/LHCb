@@ -5,11 +5,18 @@
 #include <string>
 #include <vector>
 
+#include "Event/MCParticle.h"
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/IParticlePropertySvc.h"
 // from LHCb
 #include "MCInterfaces/IPrintMCDecayTreeTool.h"
+
+class IInterface;
+struct IPrintMCDecayTreeTool;
 
 // Forward declarations
 namespace LHCb {

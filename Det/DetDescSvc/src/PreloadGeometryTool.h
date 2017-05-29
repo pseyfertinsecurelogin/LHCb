@@ -3,10 +3,16 @@
 
 // STL
 #include <memory>
+#include <string>
+#include <vector>
 
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiAlg/IGenericTool.h"            // Interface
+#include "GaudiKernel/extends.h"
+
+class IGenericTool;
+class IInterface;
 
 /** @class PreloadGeometryTool PreloadGeometryTool.h
  *  Tool to traverse the full geometry tree and load it

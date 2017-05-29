@@ -1,8 +1,20 @@
-#include <string>
 #include <cstring> // for strlen with gcc 4.3
+#include <map>
+#include <ostream>
+#include <string>
+#include <typeinfo>
+#include <utility>
+#include <vector>
 
-#include "GaudiKernel/System.h"
+#include "DetDesc/BasicParam.h"
+#include "DetDesc/ParamException.h"
+#include "DetDesc/ParamList.h"
 #include "DetDesc/ParamValidDataObject.h"
+#include "DetDesc/ValidDataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IValidity.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/System.h"
 
 //---------------------------------------------------------------------------
 

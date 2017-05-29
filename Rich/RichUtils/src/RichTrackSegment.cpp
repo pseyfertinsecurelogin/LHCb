@@ -17,6 +17,8 @@
 // local
 #include "RichUtils/RichTrackSegment.h"
 
+#include <vdt/sqrt.h>
+
 void LHCb::RichTrackSegment::updateState( const Gaudi::XYZPoint & rotPnt,
                                           const Gaudi::Transform3D & trans )
 {

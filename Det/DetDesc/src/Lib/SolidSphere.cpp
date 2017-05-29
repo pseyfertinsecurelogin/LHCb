@@ -1,18 +1,29 @@
 // $Id: SolidSphere.cpp,v 1.21 2009-04-17 08:54:24 cattanem Exp $ 
 // ===========================================================================
 // STD & STL 
+#include <Math/GenVector/PositionVector3D.h>
+#include <math.h>
 #include <algorithm>
-// Units
-#include "GaudiKernel/SystemOfUnits.h" 
-// Geometry Definitions 
-#include "GaudiKernel/Point3DTypes.h" 
-#include "GaudiKernel/Vector3DTypes.h" 
+#include <iterator>
+#include <ostream>
+#include <string>
+#include <vector>
+
 /// DetDesc 
 #include "DetDesc/DetDesc.h" 
-#include "DetDesc/SolidSphere.h" 
+#include "DetDesc/ISolid.h"
+#include "DetDesc/SolidBase.h"
 #include "DetDesc/SolidBox.h" 
-#include "DetDesc/SolidTicks.h" 
 #include "DetDesc/SolidException.h" 
+#include "DetDesc/SolidMath.h"
+#include "DetDesc/SolidSphere.h" 
+#include "DetDesc/SolidTicks.h" 
+#include "GaudiKernel/MsgStream.h"
+// Geometry Definitions 
+#include "GaudiKernel/Point3DTypes.h" 
+// Units
+#include "GaudiKernel/SystemOfUnits.h" 
+#include "GaudiKernel/Vector3DTypes.h" 
 
 // ============================================================================
 /** @file SolidSphere.cpp 

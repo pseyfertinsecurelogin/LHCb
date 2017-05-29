@@ -2,22 +2,32 @@
 // from std
 #include <algorithm>
 #include <cstring> // for memcpy with gcc 4.3
+#include <functional>
+#include <iostream>
+#include <memory>
 
 // from LHCbMath
 // #include "LHCbMath/Bit.h"
 
+#include "Event/OTBankVersion.h"
+#include "Event/RawBank.h"
 // from Event
 #include "Event/RawEvent.h"
-#include "Event/RawBank.h"
-#include "Event/OTBankVersion.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "OTDAQ/GolHeader.h"
+#include "OTDAQ/IOTChannelMapTool.h"
 // from OTDAQ
 #include "OTDAQ/OTSpecificHeader.h"
-#include "OTDAQ/GolHeader.h"
 #include "OTDAQ/RawHit.h"
-
 // local
 #include "OTRawBankEncoder.h"
+
+class IInterface;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : OTRawBankEncoder

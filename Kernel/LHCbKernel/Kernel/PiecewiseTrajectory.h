@@ -1,11 +1,13 @@
 #ifndef LHCbKernel_PiecewiseTrajectory_H
 #define LHCbKernel_PiecewiseTrajectory_H 1
 
+#include <deque>
+#include <iosfwd>
+#include <memory>
+#include <type_traits>
 // Includes
 #include <utility>
-#include <memory>
-#include <deque>
-#include <type_traits>
+
 #include "Kernel/Trajectory.h"
 
 // from Gaudi

@@ -5,16 +5,21 @@
 
 // Include files
 #include <memory>
-#include <vector>
-#include <string>
 #include <sstream>
-
-#include "GaudiKernel/MsgStream.h"
-
+#include <string>
+#include <vector>
 
 #include "DetDesc/DetectorElement.h"
-#include "MuonDet/MuonNamespace.h"
 #include "DetDesc/PVolume.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "MuonDet/MuonNamespace.h"
+
+struct IPVolume;
 
 /** @class DeMuonChamber DeMuonChamber.h MuonDet/DeMuonChamber.h
  *

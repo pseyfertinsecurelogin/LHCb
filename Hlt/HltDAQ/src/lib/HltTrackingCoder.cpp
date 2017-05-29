@@ -1,13 +1,19 @@
 // Include files
-#include <functional>
+#include <assert.h>
 #include <algorithm>
+#include <array>
+#include <cmath>
 #include <iostream>
+#include <iterator>
+#include <memory>
 #include <numeric>
+#include <vector>
 
-// local
-#include "HltTrackingCoder.h"
-#include "Event/State.h"
 #include "Event/StandardPacker.h"
+#include "Event/State.h"
+#include "Event/Track.h"
+#include "Event/TrackTypes.h"
+#include "Kernel/LHCbID.h"
 
 using namespace LHCb;
 

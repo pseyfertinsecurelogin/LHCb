@@ -2,9 +2,13 @@
 #ifndef MAGNET_BDLTOOL_H
 #define MAGNET_BDLTOOL_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/StatusCode.h"
 // From LHCbKernel
 #include "Kernel/IBdlTool.h"
 

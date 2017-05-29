@@ -6,13 +6,28 @@
 //  Author    : Markus Frank
 //
 //  ====================================================================
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiUtils/IIODataManager.h"
-#include "MDF/RawEventHelpers.h"
-#include "MDF/MEPWriter.h"
-#include "MDF/MEPEvent.h"
+#include <stddef.h>
+#include <functional>
+#include <map>
+#include <string>
+#include <utility>
+
 #include "Event/RawEvent.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/StreamBuffer.h"
+#include "GaudiUtils/IIODataManager.h"
+#include "MDF/MDFWriter.h"
+#include "MDF/MEPEvent.h"
+#include "MDF/MEPWriter.h"
+#include "MDF/RawEventHelpers.h"
+
+class ISvcLocator;
 
 using namespace LHCb;
 

@@ -3,13 +3,20 @@
 // ============================================================================
 // LoKiCore
 // ============================================================================
+#include <ostream>
+
+#include "HepMC/GenParticle.h"
+#include "HepMC/GenVertex.h"
+#include "HepMC/IteratorRange.h"
 #include "LoKi/Algs.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/Functor.h"
 // ============================================================================
 // LoKiGen
 // ============================================================================
 #include "LoKi/GenParticles3.h"
-#include "LoKi/GenAlgs.h"
-#include "LoKi/GenExtract.h"
+#include "LoKi/GenTypes.h"
+
 // ============================================================================
 /** @file
  *

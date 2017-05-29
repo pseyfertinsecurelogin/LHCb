@@ -1,12 +1,18 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include <boost/array.hpp>
+#include <algorithm>
+#include <limits>
+#include <string>
 #include <type_traits>
+
 // ============================================================================
 // LHCbKernel
 // ============================================================================
 #include "Kernel/CaloCellCode.h"
 #include "Kernel/CaloCellID.h"
+
 // ============================================================================
 /** @file
  *  trivial assertion for CaloCellCode::ContentType size

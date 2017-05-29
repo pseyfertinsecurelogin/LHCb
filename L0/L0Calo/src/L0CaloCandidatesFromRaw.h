@@ -5,13 +5,15 @@
 // from STL
 #include <string>
 
-// from Gaudi
-#include "L0Base/L0FromRawBase.h"
-
 // from Event
 #include "Event/L0DUBase.h"
-
+#include "GaudiKernel/StatusCode.h"
+// from Gaudi
+#include "L0Base/L0FromRawBase.h"
 #include "L0CaloCandidatesFromRawBank.h"
+
+class ISvcLocator;
+class L0CaloCandidatesFromRawBank;
 
 /** @class L0CaloCandidatesFromRaw L0CaloCandidatesFromRaw.h
  *

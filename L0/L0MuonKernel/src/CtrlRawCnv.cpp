@@ -1,11 +1,17 @@
 #include "L0MuonKernel/CtrlRawCnv.h"
 
-#include "ProcessorKernel/RegisterFactory.h"
-#include "ProcessorKernel/Register.h"
+#include <boost/format.hpp>
+#include <stdio.h>
+#include <iomanip>
 
-#include "L0MuonKernel/BankUtilities.h"
-
+#include "Kernel/MuonLayout.h"
 #include "L0MuonKernel/CtrlRawErrors.h"
+#include "L0MuonKernel/ErrorHandler.h"
+#include "ProcessorKernel/RegisterFactory.h"
+
+namespace L0Muon {
+class Register;
+}  // namespace L0Muon
 
 #define _DEBUG_RAWDATA_  0
 /**

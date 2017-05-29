@@ -1,9 +1,18 @@
 // Include files 
 
-// from Gaudi
-#include "CaloDet/DeCalorimeter.h"
+#include <functional>
+
+#include "CaloDAQ/ICaloDigitFilterTool.h"
 // local
 #include "CaloDigitFilterAlg.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloDigitFilterAlg

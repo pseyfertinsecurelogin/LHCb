@@ -1,10 +1,29 @@
 #ifndef HLTPACKEDDATAWRITER_H
 #define HLTPACKEDDATAWRITER_H 1
 
+#include <Compression.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <functional>
+#include <map>
+#include <string>
+#include <vector>
+
+#include "Event/RawEvent.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/IANNSvc.h"
 #include "PackedDataBuffer.h"
 #include "PackedDataChecksum.h"
+
+class DataObject;
+class ISvcLocator;
+namespace PackedDataPersistence {
+class PackedDataChecksum;
+}  // namespace PackedDataPersistence
 
 /** @class HltPackedDataWriter HltPackedDataWriter.h
  *  Algorithm that writes packed objects to raw banks.

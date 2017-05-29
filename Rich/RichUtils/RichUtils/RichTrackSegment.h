@@ -13,32 +13,33 @@
 #ifndef RICHUTILS_RichTrackSegment_H
 #define RICHUTILS_RichTrackSegment_H 1
 
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <algorithm>
+#include <cmath>
 // std include
 #include <iostream>
 #include <memory>
-#include <cmath>
-
-// LHCbKernel
-#include "Kernel/RichRadiatorType.h"
-#include "Kernel/RichDetectorType.h"
-#include "Kernel/RichRadIntersection.h"
-#include "Kernel/FastAllocVector.h"
+#include <string>
 
 // geometry
 #include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Transform3DTypes.h"
-
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/FastAllocVector.h"
 // Kernel
 #include "Kernel/MemPoolAlloc.h"
-
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichRadIntersection.h"
+// LHCbKernel
+#include "Kernel/RichRadiatorType.h"
 // local
 #include "RichUtils/RichException.h"
-
+#include "vdt/atan2.h"
 // VDT
 #include "vdt/sincos.h"
 #include "vdt/sqrt.h"
-#include "vdt/atan2.h"
 
 // General LHCb namespace
 namespace LHCb

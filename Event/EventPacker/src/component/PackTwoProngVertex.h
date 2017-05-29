@@ -1,9 +1,14 @@
 #ifndef PACKTWOPRONGVERTEX_H
 #define PACKTWOPRONGVERTEX_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 
 /** @class PackTwoProngVertex PackTwoProngVertex.h

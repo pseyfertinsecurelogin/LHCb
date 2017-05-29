@@ -1,42 +1,76 @@
 #ifndef WIN32
-// system headers
-#include <sys/statvfs.h>
-#include <sys/wait.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #endif
 
-// stdlib
-#include <iostream>
+// local
+#include <FileStager/FileStagerFunctions.h>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/algorithm/string/find.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/yes_no_type.hpp>
+#include <boost/bind/bind.hpp>
+#include <boost/date_time/posix_time/posix_time_config.hpp>
+#include <boost/date_time/posix_time/posix_time_duration.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path_traits.hpp>
+#include <boost/format.hpp>
+#include <boost/functional/hash/hash.hpp>
+#include <boost/iostreams/categories.hpp>
+#include <boost/iostreams/device/file_descriptor.hpp>
+#include <boost/iostreams/stream_buffer.hpp>
+#include <boost/iostreams/traits.hpp>
+#include <boost/iterator/iterator_facade.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/multi_index/detail/hash_index_node.hpp>
+#include <boost/operators.hpp>
+#include <boost/range/iterator_range_core.hpp>
+#include <boost/regex/v4/basic_regex.hpp>
+#include <boost/regex/v4/match_flags.hpp>
+#include <boost/regex/v4/perl_matcher_common.hpp>
+#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
+#include <boost/regex/v4/regex.hpp>
+#include <boost/regex/v4/regex_fwd.hpp>
+#include <boost/regex/v4/regex_match.hpp>
+#include <boost/regex/v4/regex_traits.hpp>
+#include <boost/thread/exceptions.hpp>
+#include <boost/thread/lock_guard.hpp>
+#include <boost/thread/lock_types.hpp>
+#include <boost/thread/pthread/condition_variable.hpp>
+#include <boost/thread/pthread/condition_variable_fwd.hpp>
+#include <boost/thread/pthread/mutex.hpp>
+#include <boost/thread/pthread/thread_data.hpp>
+#include <signal.h>
+#include <string.h>
+#include <algorithm>
+#include <array>
 #include <cstdio>
 #include <cstdlib>
+// stdlib
+#include <iostream>
+#include <iterator>
 #include <limits>
-#include <sstream>
+#include <map>
 #include <string>
-
-// Gaudi
-#include <GaudiUtils/IIODataManager.h>
-
+#include <type_traits>
 // STL
 #include <vector>
 
-// boost
-#include <boost/range.hpp>
-#include <boost/regex.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/numeric/conversion/cast.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/iostreams/device/file_descriptor.hpp>
-#include <boost/iostreams/stream.hpp>
-#include <boost/unordered_map.hpp>
-
-// local
-#include <FileStager/FileStagerFunctions.h>
 #include "File.h"
 #include "FileStagerSvc.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Service.h"
+
+class ISvcLocator;
+namespace Gaudi {
+class IIODataManager;
+}  // namespace Gaudi
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FileStagerSvc

@@ -1,12 +1,26 @@
 
 // STL
 #include <algorithm>
+#include <functional>
+#include <vector>
 
+#include "Event/MCParticle.h"
 #include "Event/MCVertex.h"
-#include "Event/StandardPacker.h"
 #include "Event/PackedMCVertex.h"
+#include "Event/StandardPacker.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartRef.h"
 // local
 #include "UnpackMCVertex.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackMCVertex

@@ -1,17 +1,23 @@
 #ifndef _DeSTDetector_H_
 #define _DeSTDetector_H_
 
-#include <string>
-#include <vector>
+#include <algorithm>
 #include <memory>
-
-#include "Kernel/STChannelID.h"
-#include "Kernel/LHCbID.h"
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "DetDesc/DetectorElement.h"
+#include "DetDesc/ValidDataObject.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/VectorMap.h"
+#include "Kernel/LHCbID.h"
+#include "Kernel/STChannelID.h"
 #include "STDet/DeSTBaseElement.h"
 
-#include "GaudiKernel/VectorMap.h"
+class DeSTBaseElement;
 
 /** @class DeSTDetector DeSTDetector.h "STDet/DeSTDetector.h"
  *
@@ -25,9 +31,9 @@
 */
 
 
-class DeSTStation;
-class DeSTSector;
 class DeSTLayer;
+class DeSTSector;
+class DeSTStation;
 
 namespace LHCb{
   class Trajectory;
@@ -259,9 +265,9 @@ inline unsigned int DeSTDetLocation::detType(const std::string& type){
                           LHCb::STChannelID::typeUT );
 }
 
+#include "STDet/DeSTLayer.h"
 #include "STDet/DeSTSector.h"
 #include "STDet/DeSTStation.h"
-#include "STDet/DeSTLayer.h"
 
 inline unsigned int DeSTDetector::firstStation() const{
   return m_firstStation;

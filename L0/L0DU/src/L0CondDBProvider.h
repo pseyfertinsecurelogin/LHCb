@@ -1,12 +1,22 @@
 #ifndef L0CONDDBPROVIDER_H
 #define L0CONDDBPROVIDER_H 1
 
+#include <map>
+#include <string>
+#include <vector>
+
+// from LHCb
+#include "CaloDet/DeCalorimeter.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-// from LHCb
-#include "CaloDet/DeCalorimeter.h"
+#include "GaudiKernel/StatusCode.h"
 #include "L0Interfaces/IL0CondDBProvider.h"
+
+class Condition;
+class DeCalorimeter;
+class IInterface;
+
 /** @class L0CondDBProvider L0CondDBProvider.h
  *
  *

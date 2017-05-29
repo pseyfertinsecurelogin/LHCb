@@ -15,24 +15,28 @@
  *        Directories should have specific attributes on creation, so not supported.
  */
 
-#include "IArchive.h"
-
-#include <map>
-#include <iostream>
-#include <iomanip>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <stdint.h>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <map>
 #include <sstream>
 #include <string>
+#include <utility>
+#include <vector>
 
+#include "IArchive.h"
 #include "boost/integer_traits.hpp"
+
 using boost::uint8_t;
 using boost::uint16_t;
 using boost::uint32_t;
 using boost::uint64_t;
 
 
-#include "GaudiKernel/System.h"
 #include "GaudiKernel/StringKey.h"
+#include "GaudiKernel/System.h"
 
 namespace io = boost::iostreams;
 

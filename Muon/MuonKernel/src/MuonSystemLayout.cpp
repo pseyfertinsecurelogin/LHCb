@@ -1,7 +1,10 @@
 // Include files
-#include <iostream>
-#include "MuonKernel/MuonSystemLayout.h"
+#include <array>
+#include <vector>
+
 #include "Kernel/MuonTileID.h"
+#include "MuonKernel/MuonStationLayout.h"
+#include "MuonKernel/MuonSystemLayout.h"
 
 namespace {
     // note: this properly deals with both references (in which case C is-a reference)

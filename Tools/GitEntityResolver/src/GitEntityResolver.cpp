@@ -1,26 +1,55 @@
 #include "GitEntityResolver.h"
 
-#include <fstream>
-#include <sstream>
-
-#include <xercesc/framework/MemBufInputSource.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/iterator/iterator_facade.hpp>
+#include <boost/utility/string_ref.hpp>
+#include <stdint.h>
 #include <xercesc/framework/MemoryManager.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/XMLException.hpp>
 #include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/XercesDefs.hpp>
+#include <memory>
+#include <sstream>
 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "Gaudi/PluginService.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IDetDataSvc.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/StateMachine.h"
 #include "XmlTools/ValidInputSource.h"
+#include "git2/blob.h"
+#include "git2/commit.h"
+#include "git2/errors.h"
+#include "git2/global.h"
+#include "git2/object.h"
+#include "git2/oid.h"
+#include "git2/repository.h"
+#include "git2/revparse.h"
+#include "git2/tree.h"
+#include "git2/types.h"
+
+class IInterface;
 
 DECLARE_COMPONENT( GitEntityResolver )
 
 #include <boost/version.hpp>
 #if BOOST_VERSION >= 106100
 #include <boost/filesystem/path.hpp>
+
 namespace
 {
   std::string normalize( boost::filesystem::path path ) { return path.lexically_normal().generic_string(); }
 }
 #else
 #include <regex>
+
 namespace
 {
   /// helper to normalize relative paths

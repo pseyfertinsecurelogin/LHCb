@@ -1,5 +1,14 @@
 #include "XmlTools/ValidInputSource.h"
 
+#include <algorithm>
+
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+
+namespace xercesc_3_1 {
+class MemoryManager;
+}  // namespace xercesc_3_1
+
 /// Constructor
 ValidInputSource::ValidInputSource ( const XMLByte *const           srcDocBytes,
                                      const XMLSize_t                byteCount,

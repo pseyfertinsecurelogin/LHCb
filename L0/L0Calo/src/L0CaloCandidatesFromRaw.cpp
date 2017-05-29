@@ -2,13 +2,30 @@
 // local
 #include "L0CaloCandidatesFromRaw.h"
 
-// From Event
-#include "Event/RawBankReadoutStatus.h"
+#include <stddef.h>
+#include <functional>
+#include <utility>
+#include <vector>
+
 #include "Event/L0CaloCandidate.h"
 #include "Event/L0ProcessorData.h"
-
+#include "Event/RawBank.h"
+// From Event
+#include "Event/RawBankReadoutStatus.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommon.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "L0CaloCandidatesFromRawBank.h"
 // Local 
 #include "L0Candidate.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0CaloCandidatesFromRaw

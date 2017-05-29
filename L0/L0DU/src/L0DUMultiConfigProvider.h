@@ -2,12 +2,21 @@
 #ifndef L0DUMULTICONFIGPROVIDER_H
 #define L0DUMULTICONFIGPROVIDER_H 1
 
+#include <map>
+#include <string>
+#include <vector>
+
+#include "Event/L0DUConfig.h"
+#include "Event/L0DUTemplateConfig.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/StatusCode.h"
+#include "L0DUConfigProvider.h" // single Config provider tool
 // from LHCb
 #include "L0Interfaces/IL0DUConfigProvider.h"            // Interface
-#include "L0DUConfigProvider.h" // single Config provider tool
+
+class IInterface;
 
 
 /** @class L0DUMultiConfigProvider L0DUMultiConfigProvider.h

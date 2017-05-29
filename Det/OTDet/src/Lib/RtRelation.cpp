@@ -1,6 +1,6 @@
 #include "OTDet/RtRelation.h"
+
 #include <cmath>
-#include <iostream>
 
 /// little helper routines
 namespace {

@@ -1,10 +1,20 @@
 
 #include "MagneticFieldGridReader.h"
+
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <assert.h>
+#include <ext/alloc_traits.h>
+#include <stdlib.h>
+#include <string.h>
+#include <array>
+#include <fstream>
+#include <string>
+
 #include "DetDesc/MagneticFieldGrid.h"
 #include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/SystemOfUnits.h"
-#include <string>
-#include <fstream>
+#include "VectorClass/vectorclass.h"
 
 //=============================================================================
 // Read the field map files and scale by scaleFactor

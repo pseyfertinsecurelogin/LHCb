@@ -1,25 +1,34 @@
 // $Id: SimpleAlgorithm.cpp,v 1.23 2008-10-28 09:55:58 cattanem Exp $
 
+#include <functional>
+#include <utility>
 /// Include files
 #include <vector>
 
-/// Gaudi interfaces
-#include "GaudiKernel/IDataManagerSvc.h"
-
+/// Sub-detector detector elements
+#include "CaloDet/DeCalorimeter.h"
+#include "DetDataAgent.h"
+#include "DetDesc/IDetectorElement.h"
 /// Detector description classes
 #include "DetDesc/IGeometryInfo.h"
 #include "DetDesc/ILVolume.h"
 #include "DetDesc/IPVolume.h"
 #include "DetDesc/Material.h"
-#include "DetDesc/DetectorElement.h"
+#include "DetDesc/ParamValidDataObject.h"
 #include "DetDesc/TabulatedProperty.h"
-
-/// Sub-detector detector elements
-#include "CaloDet/DeCalorimeter.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+/// Gaudi interfaces
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SystemOfUnits.h"
 /// Private classes to the example
 #include "SimpleAlgorithm.h"
-#include "DetDataAgent.h"
+
+class ISvcLocator;
 
 using namespace Gaudi::Units;
 

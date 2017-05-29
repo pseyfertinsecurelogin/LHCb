@@ -1,13 +1,29 @@
 // local
 #include "L0CaloCompare.h"
 
-#include "GaudiKernel/SystemOfUnits.h"
+#include <ext/alloc_traits.h>
+#include <stddef.h>
+#include <algorithm>
+#include <functional>
+#include <map>
+#include <memory>
+#include <utility>
 
+#include "AIDA/IHistogram1D.h"
 // Event
 #include "Event/L0CaloCandidate.h"
-#include "Event/RawEvent.h"
 #include "Event/L0DUBase.h"
 #include "Event/ODIN.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectVector.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/CaloCellID.h"
+
+class ISvcLocator;
 
 DECLARE_ALGORITHM_FACTORY( L0CaloCompare )
 

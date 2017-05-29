@@ -1,12 +1,16 @@
 #ifndef HLTLUMISUMMARYDECODER_H
 #define HLTLUMISUMMARYDECODER_H 1
 
+// std
+#include <string>
+
+#include "DAQKernel/DecoderAlgBase.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "DAQKernel/DecoderAlgBase.h"
-// std
-#include <string>
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class HltLumiSummaryDecoder HltLumiSummaryDecoder.h
  *

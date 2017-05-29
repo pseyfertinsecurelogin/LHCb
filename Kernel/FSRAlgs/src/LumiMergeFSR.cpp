@@ -1,13 +1,26 @@
 // Include files
 
+#include <stddef.h>
+#include <algorithm>
+#include <functional>
+
+#include "Event/EventCountFSR.h"
 // event model
 #include "Event/LumiFSR.h"
 #include "Event/TimeSpanFSR.h"
-#include "Event/EventCountFSR.h"
-
+#include "FSRAlgs/IFSRNavigator.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "LumiMergeFSR.h"
-#include "FSRNavigator.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : LumiMergeFSR

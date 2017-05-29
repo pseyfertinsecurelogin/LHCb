@@ -1,10 +1,24 @@
+#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_ref_fwd.hpp>
+#include <ext/alloc_traits.h>
 #include <algorithm>
-#include "Event/ProtoParticle.h"
+#include <initializer_list>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "CaloDet/DeCalorimeter.h"
-#include "Event/CaloDigit.h"
 #include "CaloUtils/Calo2Track.h"
 #include "CaloUtils/CaloAlgUtils.h"
+#include "Event/CaloCluster.h"
+#include "Event/CaloDigit.h"
+#include "Event/CaloHypo.h"
+#include "Event/Track.h"
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
 
 
 using LHCb::CaloAlgUtils::details::contains_ci;

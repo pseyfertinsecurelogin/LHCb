@@ -1,13 +1,30 @@
 // $Id: SolidTubs.cpp,v 1.21 2009-04-17 08:54:24 cattanem Exp $ 
 // ============================================================================
 // Units
-#include "GaudiKernel/SystemOfUnits.h"
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <boost/container/static_vector.hpp>
+#include <boost/container/vector.hpp>
+#include <math.h>
+#include <algorithm>
+#include <iterator>
+#include <ostream>
+#include <string>
+#include <vector>
+
 // DetDesc includes 
 #include "DetDesc/DetDesc.h"
-#include "DetDesc/SolidTubs.h"
+#include "DetDesc/ISolid.h"
+#include "DetDesc/SolidBase.h"
 #include "DetDesc/SolidBox.h"
-#include "DetDesc/SolidTicks.h"
 #include "DetDesc/SolidException.h"
+#include "DetDesc/SolidMath.h"
+#include "DetDesc/SolidTicks.h"
+#include "DetDesc/SolidTubs.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
 //
 
 // ============================================================================

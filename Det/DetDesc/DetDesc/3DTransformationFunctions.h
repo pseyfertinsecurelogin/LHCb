@@ -6,11 +6,13 @@
 #ifdef __INTEL_COMPILER         // Disable ICC remark from Math headers
   #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
 #endif
+#include <Math/GenVector/RotationZYX.h>
+#include <vector>
+
 #include "GaudiKernel/Transform3DTypes.h"
-#include "Math/Translation3D.h"
 #include "Math/RotationZYX.h"
 #include "Math/SMatrix.h"
-#include <vector>
+#include "Math/Translation3D.h"
 
 namespace DetDesc {
 

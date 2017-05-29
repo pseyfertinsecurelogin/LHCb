@@ -2,9 +2,16 @@
 #ifndef HLTTRACKREPORTSWRITER_H 
 #define HLTTRACKREPORTSWRITER_H 1
 
+#include <map>
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 namespace LHCb {
 class RawEvent;

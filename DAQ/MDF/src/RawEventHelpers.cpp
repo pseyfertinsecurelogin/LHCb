@@ -6,17 +6,27 @@
 //
 //  ====================================================================
 #include "MDF/RawEventHelpers.h"
-#include "MDF/RawEventPrintout.h"
-#include "MDF/RawEventDescriptor.h"
-#include "MDF/OnlineRunInfo.h"
+
+#include <endian.h>
+#include <stdio.h>
+#include <algorithm>
+#include <cstring> // For memcpy with gcc 4.3
+#include <exception>
+#include <iostream>
+#include <memory>  // For memcpy with gcc 4.3
+#include <new>
+#include <numeric> // For std::accumulate
+#include <stdexcept>
+
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
 #include "MDF/MDFHeader.h"
 #include "MDF/MEPEvent.h"
-#include "Event/RawEvent.h"
-#include <stdexcept>
-#include <iostream>
-#include <cstring> // For memcpy with gcc 4.3
-#include <memory>  // For memcpy with gcc 4.3
-#include <numeric> // For std::accumulate
+#include "MDF/MEPFragment.h"
+#include "MDF/MEPMultiFragment.h"
+#include "MDF/OnlineRunInfo.h"
+#include "MDF/RawEventDescriptor.h"
+#include "MDF/RawEventPrintout.h"
 
 #ifdef _WIN32
 #define NOATOM
@@ -37,6 +47,7 @@
 #define NOCRYPT
 #define NOMCX
 #include <winsock.h>
+
 #define LITTLE_ENDIAN
 #else
 #include <netinet/in.h>

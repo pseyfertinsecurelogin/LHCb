@@ -3,6 +3,21 @@
 // local
 #include "UnpackProtoParticle.h"
 
+#include <functional>
+#include <vector>
+
+#include "Event/PackedProtoParticle.h"
+#include "Event/ProtoParticle.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackProtoParticle
 //

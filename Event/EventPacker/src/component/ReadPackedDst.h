@@ -1,15 +1,26 @@
 #ifndef READPACKEDDST_H
 #define READPACKEDDST_H 1
 
+#include <string>
+#include <vector>
+
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/IGenericTool.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IAddressCreator.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/LinkManager.h"
 // Include files
 // from Gaudi
 #include "GaudiKernel/SmartIF.h"
-#include "GaudiKernel/IAddressCreator.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "GaudiAlg/IGenericTool.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/ToolHandle.h"
-#include "GaudiKernel/LinkManager.h"
+
+class ISvcLocator;
+namespace LHCb {
+class RawBank;
+}  // namespace LHCb
 
 /** @class ReadPackedDst ReadPackedDst.h
  *  This is the unpacker of DAQEVent containing the DST data

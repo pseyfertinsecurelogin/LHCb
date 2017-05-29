@@ -15,12 +15,14 @@
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
-
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSide.h"
 // Kernel
 #include "Kernel/RichSmartID.h"
-
 // RichUtils
 #include "RichUtils/RichDAQDefinitions.h"
+
+class MsgStream;
 
 namespace Rich
 {

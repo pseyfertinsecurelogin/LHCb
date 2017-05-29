@@ -1,5 +1,20 @@
 #include "L0MuonKernel/CtrlUnit.h"
-#include "L0MuonKernel/CrateUnit.h"
+
+#include <stdio.h>
+#include <iostream>
+#include <map>
+#include <utility>
+
+#include "L0MuonKernel/CandRegisterHandler.h"
+#include "L0MuonKernel/L0MUnit.h"
+#include "ProcessorKernel/Unit.h"
+
+namespace L0Muon {
+class Register;
+}  // namespace L0Muon
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 L0Muon::CtrlUnit::CtrlUnit(){
 

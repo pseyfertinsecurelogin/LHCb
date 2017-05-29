@@ -2,14 +2,25 @@
 #ifndef COMPONENT_L0MUONFROMRAWTRANS_H
 #define COMPONENT_L0MUONFROMRAWTRANS_H 1
 
+#include <string>
+
+#include "Event/L0MuonCandidate.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "Event/L0MuonCandidate.h"
-
-#include "L0MuonKernel/ProcRawCnv.h"
+#include "GaudiKernel/StatusCode.h"
 #include "L0MuonKernel/CtrlRawCnv.h"
 #include "L0MuonKernel/MuonCandidate.h"
+#include "L0MuonKernel/ProcRawCnv.h"
+
+class ISvcLocator;
+namespace L0Muon {
+class CtrlRawCnv;
+class ProcRawCnv;
+}  // namespace L0Muon
+namespace LHCb {
+class L0MuonCandidate;
+}  // namespace LHCb
 
 
 /** @class L0MuonFromRawTrans L0MuonFromRawTrans.h component/L0MuonFromRawTrans.h

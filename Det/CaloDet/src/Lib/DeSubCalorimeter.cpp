@@ -4,8 +4,17 @@
 
 // CaloDet
 #include "CaloDet/DeSubCalorimeter.h"
+
+#include <algorithm>
+#include <ostream>
+#include <typeinfo>
+
 #include "CaloDet/DeSubSubCalorimeter.h"
-#include "CaloKernel/CaloException.h"
+#include "DetDesc/IDetectorElement.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/CaloCellCode.h"
 
 /** @file DeSubCalorimeter.cpp
  *

@@ -1,9 +1,27 @@
 // Include files
 
+#include <functional>
+#include <vector>
+
 // local
 #include "Event/MuonCoord.h"
-#include "MuonPadTest.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/MuonLayout.h"
+#include "Kernel/MuonTileID.h"
 #include "MuonDAQ/IMuonRawBuffer.h"
+#include "MuonPadTest.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : MuonPadTest

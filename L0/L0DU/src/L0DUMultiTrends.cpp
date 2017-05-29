@@ -1,15 +1,43 @@
 // Include files 
 
+#include <TAxis.h>
+#include <TH1.h>
+#include <math.h>
+#include <stddef.h>
+#include <functional>
+#include <istream>
+#include <utility>
+
 // from Gaudi
 #include "AIDA/IHistogram1D.h"
-#include "GaudiUtils/Aida2ROOT.h"
-#include "GaudiKernel/IEventTimeDecoder.h"
-#include "GaudiKernel/SystemOfUnits.h"
+#include "Event/L0DUChannel.h"
+#include "Event/L0DUConfig.h"
+#include "Event/L0DUDecision.h"
 // from LHCb
 #include "Event/L0DUReport.h"
+#include "Event/L0DUTrigger.h"
 #include "Event/ODIN.h" 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiAlg/GaudiTuples.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IEventTimeDecoder.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+#include "GaudiKernel/ToStream.h"
+#include "GaudiUtils/Aida2ROOT.h"
 // local
 #include "L0DUMultiTrends.h"
+#include "L0Interfaces/IL0DUConfigProvider.h"
+#include "L0Interfaces/IL0DUEmulatorTool.h"
+#include "L0Interfaces/IL0DUFromRawTool.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0DUMultiTrends

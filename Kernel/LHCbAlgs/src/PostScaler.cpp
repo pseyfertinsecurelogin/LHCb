@@ -1,10 +1,18 @@
 // Include files 
 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
 // from Gaudi
 #include "GaudiKernel/RndmGenerators.h"
-
+#include "Kernel/IEventCounter.h"
 // local
 #include "PostScaler.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PostScaler

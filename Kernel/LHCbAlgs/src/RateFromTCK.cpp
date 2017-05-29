@@ -1,7 +1,25 @@
 // Include files 
 
+#include <cstdlib>
+#include <exception>
+#include <functional>
 #include <iomanip>
+#include <typeinfo>
+#include <utility>
 
+#include "DetDesc/Condition.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/ConfigTreeNode.h"
+#include "Kernel/ConfigTreeNodeAlias.h"
+#include "Kernel/IPropertyConfigSvc.h"
+#include "Kernel/PropertyConfig.h"
+#include "Kernel/TCK.h"
 // local
 #include "RateFromTCK.h"
 

@@ -4,11 +4,15 @@
 
 // Include files
 
+#include <string>
+
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
-class MCParticle;
+class ISvcLocator;
 class L0CaloCandidate;
+class MCParticle;
 
 /** @class L0CaloToMCParticleAsct L0CaloToMCParticleAsct.h
  *

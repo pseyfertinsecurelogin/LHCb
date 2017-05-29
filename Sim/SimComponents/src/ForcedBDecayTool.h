@@ -1,15 +1,23 @@
 #ifndef FORCEDBDECAYTOOL_H
 #define FORCEDBDECAYTOOL_H 1
+#include <string>
+
+#include "Event/GenHeader.h"
+//from Event
+#include "Event/MCParticle.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
-//from Event
-#include "Event/MCParticle.h"
-#include "Event/GenHeader.h"
-
 // Interface
 #include "MCInterfaces/IForcedBDecayTool.h"
+
+class IInterface;
+namespace HepMC {
+class GenParticle;
+}  // namespace HepMC
+namespace LHCb {
+class MCParticle;
+}  // namespace LHCb
 
 /** @class ForcedBDecayTool ForcedBDecayTool.h
  *

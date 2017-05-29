@@ -1,9 +1,19 @@
 // $Id: RawEventSimpleCombiner.cpp,v 1.1 2009/06/22 15:12:04 tskwarni Exp $
 // Include files
 
+#include <stddef.h>
+#include <functional>
+
 // local
 #include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 #include "RawEventSimpleCombiner.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RawEventSimpleCombiner

@@ -1,15 +1,17 @@
 #ifndef L0MUONKERNEL_PROCRAWCNV_H
 #define L0MUONKERNEL_PROCRAWCNV_H
 
+#include <boost/dynamic_bitset.hpp>
+#include <iostream>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "Kernel/MuonTileID.h"
 #include "L0MuonKernel/CandRegisterHandler.h"
-#include "L0MuonKernel/ProcRawErrors.h"
 #include "L0MuonKernel/MuonCandidate.h"
+#include "L0MuonKernel/ProcRawErrors.h"
 #include "ProcessorKernel/TileRegister.h"
-#include <boost/dynamic_bitset.hpp>
-#include <string>
-#include <map>
-#include <vector>
 
 namespace L0Muon {
 
@@ -22,6 +24,8 @@ namespace L0Muon {
       @date 2007-09-03
 
   */
+class TileRegister;
+
   class ProcRawCnv  {
 
   private:

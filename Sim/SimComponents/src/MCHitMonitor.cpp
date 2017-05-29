@@ -5,26 +5,36 @@
 //   Created: 18-05-1999
 
 
+#include <math.h>
+#include <algorithm>
+#include <functional>
 // Standard C++ Library
 #include <string>
 
 // Histogramming
 #include "AIDA/IHistogram1D.h"
 #include "AIDA/IHistogram2D.h"
-
+#include "Event/MCHit.h"
 // LHCb Event
 #include "Event/MCParticle.h"
-#include "Event/MCHit.h"
-
+#include "Event/MCVertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IHistogramSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatEntity.h"
 // Units
 #include "GaudiKernel/SystemOfUnits.h"
-
+#include "LHCbMath/ModeFunctions.h"
+#include "MCHitMonitor.h"
 // Tools
 #include "MCInterfaces/IMCParticleSelector.h"
 
-#include "MCHitMonitor.h"
-
-#include "LHCbMath/ModeFunctions.h"
+class ISvcLocator;
 
 // Needed for the creation of MCHitMonitor objects.
 DECLARE_ALGORITHM_FACTORY( MCHitMonitor )

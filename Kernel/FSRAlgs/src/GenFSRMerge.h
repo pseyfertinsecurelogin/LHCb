@@ -1,16 +1,22 @@
 #ifndef GENFSRMERGE_H
 #define GENFSRMERGE_H 1
 
+#include <string>
+
+// event model
+#include "Event/GenFSR.h"
+// local
+#include "FSRNavigator.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiAlg/IGenericTool.h"            // Interface
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 
-// event model
-#include "Event/GenFSR.h"
-
-// local
-#include "FSRNavigator.h"
+class IFSRNavigator;
+class ISvcLocator;
 
 /** @class GenMergeFSR GenMergeFSR.h
  *

@@ -1,9 +1,15 @@
 // Include files
+#include <Math/GenVector/Transform3D.h>
+#include <algorithm>
+#include <string>
+#include <vector>
+
+#include "DetDesc/3DTransformationFunctions.h"
+#include "DetDesc/AlignmentCondition.h"
 #include "DetDesc/IDetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
-// local
-#include "DetDesc/GlobalToLocalDelta.h"
-#include "DetDesc/3DTransformationFunctions.h"
+#include "GaudiKernel/Transform3DTypes.h"
+
 namespace DetDesc {
 
 const Gaudi::Transform3D localDeltaMatrix(const IDetectorElement* DE,

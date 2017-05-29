@@ -10,6 +10,7 @@
 // Include files
 #include "DetDesc/AlignmentCondition.h"
 #include "DetDescCnv/XmlUserConditionCnv.h"
+#include "GaudiKernel/Converter.h"
 
 typedef  XmlUserConditionCnv<AlignmentCondition>  XmlAlignmentConditionCnv;
 DECLARE_CONVERTER_FACTORY(XmlAlignmentConditionCnv)

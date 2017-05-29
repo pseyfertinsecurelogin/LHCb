@@ -1,16 +1,22 @@
 // $Id: SolidTrap.cpp,v 1.21 2009-04-17 08:54:24 cattanem Exp $
 // ===========================================================================
 
+#include <math.h>
+#include <ostream>
+#include <string>
+
+#include "DetDesc/SolidBase.h"
+#include "DetDesc/SolidException.h" 
+#include "DetDesc/SolidPolyHedronHelper.h"
+#include "DetDesc/SolidTrap.h" 
+/**  DetDesc package */ 
+#include "DetDesc/SolidTrd.h" 
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
 // Units
 #include "GaudiKernel/SystemOfUnits.h" 
 
-/**  DetDesc package */ 
-#include "DetDesc/SolidTrd.h" 
-#include "DetDesc/SolidBox.h" 
-#include "DetDesc/SolidTicks.h" 
-#include "DetDesc/SolidException.h" 
-#include "DetDesc/SolidTrap.h" 
-#include "DetDesc/SolidBase.h"
+struct ISolid;
 
 // ============================================================================
 /** @file SolidTrap.cpp 

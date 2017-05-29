@@ -1,31 +1,35 @@
 #ifndef SRC_ParticlesAndVerticesMapper_H
 #define SRC_ParticlesAndVerticesMapper_H 1
 
-#include <string>
 #include <map>
+#include <string>
+#include <vector>
 
-// base class
-#include "MapperToolBase.h"
-
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedMuonPID.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
+#include "Event/PackedParticle.h"
+#include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedRichPID.h"
+// Event model
+#include "Event/PackedTrack.h"
+#include "Event/PackedVertex.h"
+#include "Event/StandardPacker.h"
 // Implemented interfaces
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/TypeNameString.h"
+#include "GaudiKernel/extends.h"
+// base class
+#include "MapperToolBase.h"
 
-// Event model
-#include "Event/PackedTrack.h"
-#include "Event/PackedProtoParticle.h"
-#include "Event/PackedMuonPID.h"
-#include "Event/PackedRichPID.h"
-#include "Event/PackedParticle.h"
-#include "Event/PackedRecVertex.h"
-#include "Event/PackedVertex.h"
-#include "Event/PackedRelations.h"
-#include "Event/PackedFlavourTag.h"
-#include "Event/PackedPartToRelatedInfoRelation.h"
-
-#include "Event/StandardPacker.h"
-
+class IIncidentListener;
+class IInterface;
 class IJobOptionsSvc;
+class Incident;
 
 /** @class ParticlesAndVerticesMapper ParticlesAndVerticesMapper.h
  *

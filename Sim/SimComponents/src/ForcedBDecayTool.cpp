@@ -1,5 +1,20 @@
 #include "ForcedBDecayTool.h"
 
+#include <algorithm>
+#include <functional>
+#include <vector>
+
+#include "Event/HepMCEvent.h"
+#include "Event/MCParticle.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "HepMC/GenEvent.h"
+#include "HepMC/GenParticle.h"
+#include "Kernel/ParticleID.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : ForcedBDecayTool v1.0
 //

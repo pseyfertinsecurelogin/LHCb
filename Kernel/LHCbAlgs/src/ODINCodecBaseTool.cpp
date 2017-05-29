@@ -1,17 +1,25 @@
 #include "ODINCodecBaseTool.h"
 
+#include <stddef.h>
+
 //=============================================================================
 // IMPLEMENTATION of ODINCodecBaseTool
 //=============================================================================
 
-#include <sstream>
+#include <functional>
 #include <memory>
-#include <algorithm>
+#include <sstream>
+
+#include "DAQKernel/DecoderToolBase.h"
 // from LHCb
 #include "Event/ODIN.h"
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h"
-#include "DAQKernel/DecoderToolBase.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+
+class IInterface;
 
 //=============================================================================
 // Standard constructor, initializes variables

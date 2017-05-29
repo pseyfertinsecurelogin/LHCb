@@ -1,8 +1,15 @@
 #ifndef SRC_PRINTEVENTTIME_H
 #define SRC_PRINTEVENTTIME_H 1
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IDetDataSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 namespace LHCbAlgsTest {
 

@@ -5,15 +5,20 @@
 // STD& STL 
 // ============================================================================
 #include <algorithm>
+#include <vector>
+
+#include "Event/MCParticle.h"
 // ============================================================================
 // Evevt 
 // ============================================================================
 #include "Event/MCVertex.h"
-#include "Event/MCParticle.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/MCDecayVertex.h"
+
 // ============================================================================
 /*  simple function to get the decay vertex for the given 
  *  Monte Carlo particle 

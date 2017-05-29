@@ -4,13 +4,22 @@
 // Include files
 // from STL
 #include <string>
+#include <vector>
 
+#include "Event/L0DUBase.h"
+#include "Event/L0ProcessorData.h"
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
+#include "GaudiKernel/StatusCode.h"
 // Interface
 #include "L0Interfaces/IL0DUConfigProvider.h"
 #include "L0Interfaces/IL0DUEmulatorTool.h"
 #include "L0Interfaces/IL0DUFromRawTool.h"
+
+class ISvcLocator;
+struct IL0DUConfigProvider;
+struct IL0DUEmulatorTool;
+struct IL0DUFromRawTool;
 
 /** @class L0Pattern L0Pattern.h
  *  L0 Processors (L0Calo/L0Muon/PUVETO) -> L0DU

@@ -1,15 +1,21 @@
 // Include files
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/SmartDataPtr.h"
-
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 // Detector description classes
 #include "DetDesc/DetectorElement.h"
-
+#include "DetDesc/IDetectorElement.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
 // local
 #include "MuonDet/MuonBasicGeometry.h"
 #include "MuonDet/MuonNamespace.h"
+
+class IDataProviderSvc;
 
 namespace {
 std::string  findName(const std::string& allname,

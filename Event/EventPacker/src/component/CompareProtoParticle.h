@@ -1,12 +1,16 @@
 #ifndef COMPAREPROTOPARTICLE_H
 #define COMPAREPROTOPARTICLE_H 1
 
+#include <string>
+
+#include "Event/PackedProtoParticle.h"
+#include "Event/ProtoParticle.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
-#include "Event/ProtoParticle.h"
-#include "Event/PackedProtoParticle.h"
+class ISvcLocator;
 
 /** @class CompareProtoParticle CompareProtoParticle.h
  *  Compare two containers of ProtoParticles

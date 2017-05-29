@@ -1,9 +1,18 @@
 
+#include <string>
+#include <typeinfo>
+#include <vector>
+
+#include "DetDesc/DetectorElement.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Kernel.h"
 // Gaudi
 #include "GaudiKernel/SmartDataPtr.h"
-
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/StatusCode.h"
 // local
 #include "RichDet/DeRichBase.h"
+#include "RichDet/DeRichLocations.h"
 #include "RichDet/DeRichSystem.h"
 
 // Access DeRichSystem on demand

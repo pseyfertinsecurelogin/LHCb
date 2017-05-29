@@ -2,18 +2,19 @@
 #ifndef _DeSTStation_H_
 #define _DeSTStation_H_
 
+#include <iosfwd>
 // STL
 #include <string>
 #include <vector>
 
-#include "Kernel/STChannelID.h"
-
-#include "STDet/DeSTBaseElement.h"
-
 /// GaudiKernel
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STChannelID.h"
+#include "STDet/DeSTBaseElement.h"
 
 class DeSTLayer;
+class MsgStream;
 
 /** @class DeSTStation DeSTStation.h "STDet/DeSTStation.h"
  *

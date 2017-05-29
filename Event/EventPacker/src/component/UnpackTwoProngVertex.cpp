@@ -1,8 +1,30 @@
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
+#include <math.h>
+#include <functional>
+#include <utility>
+#include <vector>
+
 #include "Event/PackedTwoProngVertex.h"
-#include "Event/TwoProngVertex.h"
+#include "Event/RecVertex.h"
 #include "Event/StandardPacker.h"
+#include "Event/Track.h"
+#include "Event/TwoProngVertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "Kernel/ParticleID.h"
 // local
 #include "UnpackTwoProngVertex.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackTwoProngVertex

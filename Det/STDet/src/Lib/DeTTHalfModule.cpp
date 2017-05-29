@@ -1,9 +1,19 @@
 
-#include "STDet/DeTTSector.h"
-#include "STDet/DeTTLayer.h"
+#include "DetDesc/Condition.h"
+#include "DetDesc/DetectorElementException.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STChannelID.h"
+#include "STDet/DeSTBaseElement.h"
+#include "STDet/DeSTSector.h"
 #include "STDet/DeTTHalfModule.h"
 
-#include "DetDesc/IGeometryInfo.h"
+class DeTTSector;
 
 
 /** @file DeTTHalfModule.cpp
@@ -14,10 +24,14 @@
 */
 
 
+#include <stddef.h>
 //STL
 #include <algorithm>
-
 #include <numeric>
+#include <ostream>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
 using namespace LHCb;
 

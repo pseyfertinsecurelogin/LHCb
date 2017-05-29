@@ -7,6 +7,8 @@
 #include "ConditionInfo.h"
 #include "DetDesc/ISlowControl.h"
 
+struct IDetectorElement;
+
 ///---------------------------------------------------------------------------
 /** @class SlowControlInfo SlowControlInfo.h Det/DetDesc/SlowControlInfo.h
 

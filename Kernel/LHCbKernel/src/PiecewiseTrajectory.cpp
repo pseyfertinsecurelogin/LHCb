@@ -1,5 +1,12 @@
 #include "Kernel/PiecewiseTrajectory.h"
+
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <algorithm>
 #include <cassert>
+#include <cmath>
+#include <iterator>
+#include <ostream>
 
 namespace {
   class dist2point {

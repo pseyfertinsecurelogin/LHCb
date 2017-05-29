@@ -3,13 +3,29 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+#include <iterator>
+#include <ostream>
+#include <string>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
 // ============================================================================
 // Kenrel/PartProp
 // ============================================================================
 #include "Kernel/IParticlePropertySvc.h"
-#include "Kernel/ParticleProperty.h"
 #include "Kernel/ParticleID.h"
+#include "Kernel/ParticleProperty.h"
+
+class ISvcLocator;
+
 // ============================================================================
 namespace LHCb
 {

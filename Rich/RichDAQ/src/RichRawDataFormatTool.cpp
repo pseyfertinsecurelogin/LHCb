@@ -12,6 +12,35 @@
 // local
 #include "RichRawDataFormatTool.h"
 
+#include <boost/format.hpp>
+#include <array>
+#include <map>
+#include <memory>
+#include <unordered_map>
+#include <utility>
+
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/Kernel.h"
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSide.h"
+#include "Kernel/RichSmartID32.h"
+#include "RichDAQKernel/RichDAQVersions.h"
+#include "RichDAQKernel/RichHPDDataBank.h"
+#include "RichDet/DeRichLocations.h"
+#include "RichDet/DeRichSystem.h"
+#include "RichKernel/RichCommonBase.h"
+#include "RichUtils/RichDAQHeaderPD_V1.h"
+#include "RichUtils/RichDAQL1IngressHeader.h"
+#include "RichUtils/RichDecodedData.h"
+#include "RichUtils/RichStatDivFunctor.h"
+
 // Rich DAQ software
 using namespace Rich::DAQ;
 

@@ -1,6 +1,20 @@
 // ============================================================================
 #ifndef LOKI_MCDECAYS_H
 #define LOKI_MCDECAYS_H 1
+#include <stddef.h>
+#include <algorithm>
+#include <functional>
+#include <iosfwd>
+#include <string>
+#include <vector>
+
+// ============================================================================
+// Event
+// ============================================================================
+#include "Event/MCParticle.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/Decay.h"
 // ============================================================================
 // Include files
 // ============================================================================
@@ -8,15 +22,21 @@
 // ============================================================================
 #include "Kernel/Nodes.h"
 #include "Kernel/NodesPIDs.h"
-// ============================================================================
-// Event
-// ============================================================================
-#include "Event/MCParticle.h"
+#include "Kernel/iNode.h"
+#include "LoKi/DecayDescriptor.h"
+#include "LoKi/MCSections.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Trees.h"
-#include "LoKi/MCSections.h"
+#include "LoKi/iTree.h"
+
+namespace LHCb {
+class IParticlePropertySvc;
+class ParticleID;
+class ParticleProperty;
+}  // namespace LHCb
+
 // ============================================================================
 /** @file
  *  Implementation file for LoKi MC-specific decay/tree-functors

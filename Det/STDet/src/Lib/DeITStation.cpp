@@ -1,9 +1,13 @@
 
 #include "STDet/DeITStation.h"
-#include "STDet/DeITDetector.h"
-#include "STDet/DeITBox.h"
 
+#include <stddef.h>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 #include "Kernel/ITNames.h"
+#include "STDet/DeITBox.h"
 
 /** @file DeITStation.cpp
 *
@@ -12,11 +16,11 @@
 *    @author Matthew Needham
 */
 
-#include "Kernel/STChannelID.h"
-
 //STL
 #include <algorithm>
 #include <numeric>
+
+#include "Kernel/STChannelID.h"
 
 
 using namespace LHCb;

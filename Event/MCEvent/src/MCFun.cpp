@@ -1,6 +1,11 @@
 
 #include "Event/MCFun.h"
 
+#include "Event/MCParticle.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SystemOfUnits.h"
+
 double LHCb::MC::zInteraction(const LHCb::MCParticle* aParticle) 
 {
   double z = 9999.*Gaudi::Units::m;

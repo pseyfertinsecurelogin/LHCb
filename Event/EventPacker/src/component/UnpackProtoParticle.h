@@ -1,11 +1,15 @@
 #ifndef UNPACKPROTOPARTICLE_H
 #define UNPACKPROTOPARTICLE_H 1
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <string>
 
 #include "Event/PackedProtoParticle.h"
 #include "Event/ProtoParticle.h"
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class UnpackProtoParticle UnpackProtoParticle.h
  *  Unpack a ProtoParticle

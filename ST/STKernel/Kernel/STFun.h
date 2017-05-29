@@ -1,14 +1,20 @@
 #ifndef _STKernel_STFun_H
 #define _STKernel_STFun_H
 
-#include "STBitsPolicy.h"
-#include "GaudiKernel/SmartRefVector.h"
-#include "Event/STDigit.h"
-#include "Event/STCluster.h"
-#include "Kernel/StripRepresentation.h"
-#include "Kernel/PPRepresentation.h"
-
 #include <utility>
+
+#include "Event/STCluster.h"
+#include "Event/STDigit.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "Kernel/PPRepresentation.h"
+#include "Kernel/StripRepresentation.h"
+#include "LHCbMath/LHCbMath.h"
+#include "STBitsPolicy.h"
+
+namespace LHCb {
+class STDigit;
+}  // namespace LHCb
+template <class TYPE> class SmartRefVector;
 
 namespace STFun{
 

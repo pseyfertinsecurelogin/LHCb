@@ -1,24 +1,48 @@
-#include "GaudiKernel/Kernel.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IMessageSvc.h"
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/LinkManager.h"
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/SmartIF.h"
+#include <algorithm>
+#include <iterator>
+#include <map>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <utility>
+#include <vector>
 
-///
-#include "DetDesc/DetectorElement.h"
-#include "DetDesc/DetDesc.h"
-
-#include "DetDesc/Condition.h"
-
-#include "DetDesc/GeoInfo.h"
 #include "DetDesc/AlignmentInfo.h"
 #include "DetDesc/CalibrationInfo.h"
-#include "DetDesc/ReadOutInfo.h"
-#include "DetDesc/SlowControlInfo.h"
+#include "DetDesc/Condition.h"
+#include "DetDesc/DetDesc.h"
+///
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/DetectorElementException.h"
 #include "DetDesc/FastControlInfo.h"
+#include "DetDesc/GeoInfo.h"
+#include "DetDesc/IAlignment.h"
+#include "DetDesc/ICalibration.h"
+#include "DetDesc/IDetectorElement.h"
+#include "DetDesc/IFastControl.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IReadOut.h"
+#include "DetDesc/ISlowControl.h"
+#include "DetDesc/ParamValidDataObject.h"
+#include "DetDesc/ReadOutInfo.h"
+#include "DetDesc/Services.h"
+#include "DetDesc/SlowControlInfo.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+
+class IUpdateManagerSvc;
 
 /** @file DetectorElement.cpp
  *

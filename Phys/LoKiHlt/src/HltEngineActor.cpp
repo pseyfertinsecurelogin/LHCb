@@ -2,12 +2,20 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
-#include <fstream>
+#include <string>
+
+#include "GaudiKernel/StatusCode.h"
+#include "LoKi/HLTTypes.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/HltEngineActor.h"
+#include "LoKi/IHltAntiFactory.h"
+#include "LoKi/Interface.h"
+#include "LoKi/L0Types.h"
+#include "LoKi/OdinTypes.h"
 #include "LoKi/Report.h"
+
 // ============================================================================
 /** @file 
  *

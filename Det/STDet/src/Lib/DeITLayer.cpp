@@ -1,6 +1,13 @@
 #include "STDet/DeITLayer.h"
+
+#include <stddef.h>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "Kernel/STChannelID.h"
 #include "STDet/DeITLadder.h"
-#include "STDet/DeITBox.h"
+#include "STDet/DeITSector.h"
 
 /** @file DeITLayer.cpp
 *
@@ -10,9 +17,10 @@
 */
 
 
+#include <algorithm>
+#include <iterator>
 //STL
 #include <numeric>
-#include <algorithm>
 
 #include "Kernel/ITNames.h"
 

@@ -1,11 +1,18 @@
 #ifndef CALOFILLPRSSPDRAWBUFFER_H 
 #define CALOFILLPRSSPDRAWBUFFER_H 1
 
+#include <string>
+#include <vector>
+
+#include "CaloDet/DeCalorimeter.h"
+#include "Event/RawBank.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
-#include "CaloDet/DeCalorimeter.h"
+class DeCalorimeter;
+class ISvcLocator;
 
 /** @class CaloFillPrsSpdRawBuffer CaloFillPrsSpdRawBuffer.h
  *  

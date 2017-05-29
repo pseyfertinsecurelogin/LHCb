@@ -1,24 +1,36 @@
+#include <math.h>
 #include <algorithm>
+#include <functional>
+#include <memory>
+#include <utility>
 
-// local
-#include "RawBankToSTClusterAlg.h"
-
-
+#include "Event/RawBank.h"
 // Event
 #include "Event/RawEvent.h"
 #include "Event/STCluster.h"
 #include "Event/STSummary.h"
-
-#include "LHCbMath/LHCbMath.h"
-#include "Event/STLiteCluster.h"
-#include "Kernel/STDataFunctor.h"
+#include "Event/STTELL1BoardErrorBank.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
 #include "Kernel/ISTReadoutTool.h"
+#include "Kernel/STDataFunctor.h"
+#include "Kernel/STDecoder.h"
 #include "Kernel/STTell1Board.h"
 #include "Kernel/STTell1ID.h"
-#include "Kernel/STFun.h"
-#include "SiDAQ/SiADCWord.h"
-#include "Kernel/STDecoder.h"
 #include "Kernel/StripRepresentation.h"
+#include "LHCbMath/LHCbMath.h"
+// local
+#include "RawBankToSTClusterAlg.h"
+#include "SiDAQ/SiADCWord.h"
+#include "SiDAQ/SiHeaderWord.h"
+#include "SiDAQ/SiRawBankDecoder.h"
+
+class ISvcLocator;
 
 using namespace LHCb;
 

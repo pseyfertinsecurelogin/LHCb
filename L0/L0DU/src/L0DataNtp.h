@@ -1,12 +1,21 @@
 #ifndef L0DATANTP_H
 #define L0DATANTP_H 1
 
+#include <string>
+#include <vector>
+
+#include "CaloUtils/CaloAlgUtils.h"
 // Include files
 #include "GaudiAlg/GaudiTupleAlg.h"
-#include "CaloUtils/CaloAlgUtils.h"
-#include "L0Interfaces/IL0DUFromRawTool.h"
+#include "GaudiKernel/StatusCode.h"
 #include "L0Interfaces/IL0DUConfigProvider.h"
 #include "L0Interfaces/IL0DUEmulatorTool.h"
+#include "L0Interfaces/IL0DUFromRawTool.h"
+
+class ISvcLocator;
+struct IL0DUConfigProvider;
+struct IL0DUEmulatorTool;
+struct IL0DUFromRawTool;
 
 
 /** @class L0DataNtp L0DataNtp.h

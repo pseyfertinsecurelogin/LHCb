@@ -4,10 +4,15 @@
 // ============================================================================
 // DetDesk
 // ============================================================================
+#include "DetDesc/IGeometryErrorSvc.h"
 #include "DetDesc/ILVolume.h"
 #include "DetDesc/IntersectionErrors.h"
-#include "DetDesc/VolumeIntersectionIntervals.h"
-#include "DetDesc/IGeometryErrorSvc.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
+
+class Material;
+
 // ============================================================================
 /** @file 
  *  Implementation file for class DetDesc::IntersectionErrors

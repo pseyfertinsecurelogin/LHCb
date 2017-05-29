@@ -1,18 +1,21 @@
 #ifndef EVTTYPESVC_H
 #define EVTTYPESVC_H 1
 
-// Include files
-#include "GaudiKernel/Service.h"
-// from Gaudi
-#include "Kernel/IEvtTypeSvc.h"
-#include "EvtTypeInfo.h"
-
-#include <string>
 #include <cstdlib>
 #include <iostream>
-
 #include <set>
+#include <string>
 #include <vector>
+
+#include "EvtTypeInfo.h"
+// Include files
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+// from Gaudi
+#include "Kernel/IEvtTypeSvc.h"
+
+class ISvcLocator;
 
 
 /** @class EvtTypeSvc EvtTypeSvc.h

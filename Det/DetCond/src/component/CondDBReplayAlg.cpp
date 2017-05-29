@@ -1,14 +1,26 @@
 // Include files
 
-// from Gaudi
-// needed to sleep between two operations
-#include "GaudiKernel/Sleep.h"
-
-#include "DetCond/ICondDBReader.h"
+#include <stddef.h>
 #include <fstream>
+#include <functional>
+#include <memory>
 
 // local
 #include "CondDBReplayAlg.h"
+#include "DetCond/ICondDBReader.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+// from Gaudi
+// needed to sleep between two operations
+#include "GaudiKernel/Sleep.h"
+#include "GaudiKernel/SmartIF.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CondDBReplayAlg

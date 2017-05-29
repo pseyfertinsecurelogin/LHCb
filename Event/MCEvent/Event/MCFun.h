@@ -1,8 +1,12 @@
 #ifndef MCEVENT_MCFUN_H
 #define MCEVENT_MCFUN_H 1
  
-#include "Event/MCVertex.h"
 #include "Event/MCParticle.h"
+#include "Event/MCVertex.h"
+
+namespace LHCb {
+class MCParticle;
+}  // namespace LHCb
 
 namespace LHCb
 {

@@ -1,17 +1,29 @@
 // Event
 //#include "Event/RawBank.h"
+#include <ext/alloc_traits.h>
+#include <functional>
+#include <vector>
+
 #include "Event/RawEvent.h"
 #include "Event/STTELL1Data.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "Kernel/ISTReadoutTool.h"
+#include "Kernel/STDAQDefinitions.h"
 // Kernel
 #include "Kernel/STRawBankMap.h"
-#include "Kernel/ISTReadoutTool.h"
-
+#include "Kernel/STTell1ID.h"
+// local
+#include "STPedestalDecoding.h"
 // standard
 #include "boost/lexical_cast.hpp"
 
-// local
-#include "STPedestalDecoding.h"
+class ISvcLocator;
+class STTell1Board;
 
 using namespace LHCb;
 using namespace STDAQ;

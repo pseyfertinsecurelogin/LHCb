@@ -1,12 +1,18 @@
 // Include files
 #include "DetDesc/Services.h"
+
 #include <mutex>
+#include <string>
+
+#include "GaudiKernel/Bootstrap.h"
 #include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/IMessageSvc.h"
-#include "GaudiKernel/Bootstrap.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/StatusCode.h"
 
 
 namespace {

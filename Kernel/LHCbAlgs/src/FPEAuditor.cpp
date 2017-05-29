@@ -1,12 +1,26 @@
-#include "Kernel/FPEGuard.h"
-#include <vector>
-#include <string>
-#include <utility>
+#include <algorithm>
+#include <functional>
+#include <iosfwd>
 #include <memory>
+#include <string>
+#include <type_traits>
+#include <utility>
+#include <vector>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiKernel/Auditor.h"
-#include "GaudiKernel/IAuditorSvc.h"
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IAuditor.h"
+#include "GaudiKernel/IAuditorSvc.h"
+#include "GaudiKernel/INamedInterface.h"
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/FPEGuard.h"
+
+class ISvcLocator;
 
 /** @class FPEMaskProperty FPEAuditor.cpp
  *

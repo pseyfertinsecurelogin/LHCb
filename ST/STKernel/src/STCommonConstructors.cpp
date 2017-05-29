@@ -12,16 +12,23 @@
  */
 //-----------------------------------------------------------------------------
 
+#include <stddef.h>
+#include <string>
+
 // GaudiAlg
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiAlg/GaudiHistoTool.h"
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiAlg/GaudiTupleAlg.h"
 #include "GaudiAlg/GaudiTupleTool.h"
-#include "GaudiAlg/GaudiHistoAlg.h"
-#include "GaudiAlg/GaudiHistoTool.h"
-
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
 // local
 #include "Kernel/STCommonBase.h"
+
+class IInterface;
+class ISvcLocator;
 
 //=============================================================================
 // Implementation of STCommonBase for GaudiAlgorithm

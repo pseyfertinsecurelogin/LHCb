@@ -1,10 +1,15 @@
 #ifndef STERRORDECODING_H
 #define STERRORDECODING_H 1
 
+#include <string>
+
+#include "GaudiKernel/StatusCode.h"
 //===========================================
 // Include files
 // from Gaudi
 #include "STDecodingBaseAlg.h"
+
+class ISvcLocator;
 
 
 /** @class STErrorDecoding STErrorDecoding.h public/STErrorDecoding.h

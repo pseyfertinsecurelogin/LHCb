@@ -2,11 +2,17 @@
 #ifndef ODINTIMEFILTER_H
 #define ODINTIMEFILTER_H 1
 
+#include <string>
+#include <utility>
+
+//from LHCb
+#include "Event/ODIN.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-//from LHCb
-#include "Event/ODIN.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class ODINTimeFilter ODINTimeFilter.h
  *

@@ -2,11 +2,22 @@
 #define VELODET_VELOALIGNCOND_H 1
 
 
+#include <memory>
 // Include files
 #include <mutex>
-#include "GaudiKernel/MsgStream.h"
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "DetDesc/AlignmentCondition.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
 #include "VeloDet/CLIDVeloAlignCond.h"
+
+class Condition;
+class ValidDataObject;
 /** @class VeloAlignCond VeloAlignCond.h VeloDet/VeloAlignCond.h
  *
  *

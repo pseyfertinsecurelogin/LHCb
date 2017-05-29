@@ -1,6 +1,16 @@
 // Include files
 // local
 #include "STLayerSelector.h"
+
+#include <functional>
+#include <utility>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // kernel
 #include "Kernel/STChannelID.h"
 

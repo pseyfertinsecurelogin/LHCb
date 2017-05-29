@@ -1,10 +1,19 @@
 // Include files
 
-// Event Model
-#include "Event/Track.h"
+#include <functional>
 
 // local
 #include "DumpTracks.h"
+// Event Model
+#include "Event/Track.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DumpTracks

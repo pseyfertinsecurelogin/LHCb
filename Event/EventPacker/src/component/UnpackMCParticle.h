@@ -1,9 +1,14 @@
 #ifndef UNPACKMCPARTICLE_H
 #define UNPACKMCPARTICLE_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 
 /** @class UnpackMCParticle UnpackMCParticle.h

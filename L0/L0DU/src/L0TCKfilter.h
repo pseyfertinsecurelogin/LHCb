@@ -1,9 +1,15 @@
 #ifndef L0TCKFILTER_H
 #define L0TCKFILTER_H 1
 
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/StatusCode.h"
 // Include files
 // from Gaudi
 #include "L0Base/L0AlgBase.h"
+
+class ISvcLocator;
 
 
 /** @class L0TCKfilter L0TCKfilter.h

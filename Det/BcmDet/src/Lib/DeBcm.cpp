@@ -1,5 +1,12 @@
 #include "BcmDet/DeBcm.h"
 
+#include <typeinfo>
+
+#include "DetDesc/IDetectorElement.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+
 DeBcm::DeBcm() :
   DetectorElement(),
   m_StationNumber(0)

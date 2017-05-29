@@ -1,10 +1,24 @@
 // Include files 
 
-#include "Event/RawBankReadoutStatus.h"
-#include "Event/RawBankReadoutStatus.h"
+#include <stddef.h>
+#include <functional>
+#include <ostream>
+
 #include "Event/ProcStatus.h"
+#include "Event/RawBank.h"
+#include "Event/RawBankReadoutStatus.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/StatEntity.h"
 // local
 #include "RawBankReadoutStatusConverter.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RawBankReadoutStatusConverter

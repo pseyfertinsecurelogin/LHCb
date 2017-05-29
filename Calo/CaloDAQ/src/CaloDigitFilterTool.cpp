@@ -2,6 +2,29 @@
 // local
 #include "CaloDigitFilterTool.h"
 
+#include <cmath>
+#include <functional>
+#include <utility>
+
+#include "CaloDAQ/ICaloDigitFilterTool.h"
+#include "CaloDet/CellParam.h"
+#include "CaloDet/DeCalorimeter.h"
+#include "CaloUtils/CaloAlgUtils.h"
+#include "Event/RecVertex.h"
+#include "Event/VertexBase.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/ToStream.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloDigitFilterTool
 //

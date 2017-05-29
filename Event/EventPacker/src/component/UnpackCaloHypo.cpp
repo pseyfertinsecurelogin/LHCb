@@ -1,10 +1,20 @@
 // Include files 
-#include "Event/StandardPacker.h"
-#include "Event/PackedCaloHypo.h"
-#include "Event/CaloHypo.h"
+#include <functional>
+#include <vector>
 
+#include "Event/CaloHypo.h"
+#include "Event/PackedCaloHypo.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
 // local
 #include "UnpackCaloHypo.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackCaloHypo

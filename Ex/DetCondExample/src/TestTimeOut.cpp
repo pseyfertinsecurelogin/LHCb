@@ -1,12 +1,19 @@
 // Include files 
 
+#include <functional>
+
 #include "DetDesc/Condition.h"
 #include "DetDesc/DetectorElement.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 #include "GaudiKernel/Sleep.h"
-
+#include "GaudiKernel/SmartRef.h"
 // local
 #include "TestTimeOut.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : TestTimeOut

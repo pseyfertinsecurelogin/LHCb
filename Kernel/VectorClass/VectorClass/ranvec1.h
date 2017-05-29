@@ -82,6 +82,10 @@
 #ifndef RANVEC1_H
 #define RANVEC1_H  122
 
+#include <stdint.h>
+#include <sys/types.h>
+
+#include "instrset.h"
 #include "vectorclass.h"
 
 #ifdef VCL_NAMESPACE

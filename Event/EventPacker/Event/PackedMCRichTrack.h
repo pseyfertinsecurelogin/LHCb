@@ -1,21 +1,24 @@
 #ifndef EVENT_PackedMCRichTrack_H
 #define EVENT_PackedMCRichTrack_H 1
 
+#include <ostream>
 // STL
 #include <string>
 #include <vector>
 
-// Kernel
-#include "Event/StandardPacker.h"
-
 // Event
 #include "Event/MCRichTrack.h"
-
+// Kernel
+#include "Event/StandardPacker.h"
+#include "GaudiKernel/ClassID.h"
 // Gaudi
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/StatusCode.h"
-#include "GaudiKernel/GaudiException.h"
+
+class GaudiAlgorithm;
 
 namespace LHCb
 {

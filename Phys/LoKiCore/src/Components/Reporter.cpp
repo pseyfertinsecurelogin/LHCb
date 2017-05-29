@@ -3,17 +3,34 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/IAlgorithm.h"
+#include <algorithm>
+#include <cstddef>
+#include <exception>
+#include <functional>
+#include <string>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
 // ============================================================================
 // GaudiAlg
 // ============================================================================
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiAlg/IErrorTool.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IAlgContextSvc.h"
+#include "GaudiKernel/IAlgorithm.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+#include "LoKi/ErrorReport.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/IReporter.h"
-#include "LoKi/Welcome.h"
-#include "LoKi/ErrorReport.h"
+
+class GaudiException;
+
 // ============================================================================
 /** @file
  *

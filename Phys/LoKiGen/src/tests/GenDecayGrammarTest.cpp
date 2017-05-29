@@ -8,22 +8,27 @@
 // ============================================================================
 #include <iostream>
 #include <string>
+#include <vector>
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/StatusCode.h"
-// ============================================================================
-// PartProp
-// ============================================================================
-#include "Kernel/Nodes.h"
 #include "Kernel/Symbols.h"
+#include "LoKi/GenTreesFactory.h"
 // ============================================================================
 // Decays
 // ============================================================================
 #include "LoKi/TreeHelpers.h"
 #include "LoKi/TreeParser.h"
 #include "LoKi/Trees.h"
-#include "LoKi/GenTreesFactory.h"
+#include "LoKi/Trees.icpp"
+#include "LoKi/iTree.h"
+
+namespace HepMC {
+class GenParticle;
+}  // namespace HepMC
+
 // ============================================================================
 /** @file
  *  Simple application to test Decay Tree parsers 

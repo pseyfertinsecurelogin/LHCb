@@ -1,13 +1,17 @@
 //$Id: DumpDetectorStore.cpp,v 1.7 2009-01-27 16:09:16 cattanem Exp $
-#include <stdio.h>
+#include <functional>
 
-#include "DumpDetectorStore.h"
 #include "DetDataAgent.h"
-
+#include "DumpDetectorStore.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
 #include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 #include "GaudiKernel/SmartIF.h"
+
+class ISvcLocator;
 
 /// Instantiation of a static factory to create instances of this algorithm
 DECLARE_ALGORITHM_FACTORY( DumpDetectorStore )

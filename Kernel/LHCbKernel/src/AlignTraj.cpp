@@ -1,8 +1,9 @@
 #include "Kernel/AlignTraj.h"
-#include "GaudiKernel/GenericMatrixTypes.h"
 
-#include "Math/Rotation3D.h"
-
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <Math/SMatrix.h>
 #include <math.h>
 
 using LHCb::AlignTraj;

@@ -26,6 +26,10 @@ namespace Math {
 // we know that two of the four quaternion components will be zero,
 // and we exploit that knowledge:
 
+class RotationX;
+class RotationY;
+class RotationZ;
+
 Quaternion Quaternion::operator * (const RotationX  & rx) const {
    // combination with a RotationX
    Quaternion q(rx);

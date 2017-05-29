@@ -1,10 +1,13 @@
 #ifndef _MCHitMonitor_H
 #define _MCHitMonitor_H
 
-#include "GaudiAlg/GaudiHistoAlg.h"
-
 #include <string>
 #include <vector>
+
+#include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 namespace LHCb {
   class MCHit;

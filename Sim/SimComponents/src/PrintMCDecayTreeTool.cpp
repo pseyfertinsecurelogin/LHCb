@@ -1,17 +1,32 @@
 // Include files 
 
-// from Gaudi
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/PhysicalConstants.h"
-
-// From PartProp
-#include "Kernel/IParticlePropertySvc.h"
-#include "Kernel/ParticleProperty.h"
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <ext/alloc_traits.h>
+#include <algorithm>
+#include <functional>
+#include <iomanip>
+#include <ostream>
 
 // from Event
 #include "Event/MCParticle.h"
 #include "Event/MCVertex.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IService.h"
+// from Gaudi
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector4DTypes.h"
+// From PartProp
+#include "Kernel/IParticlePropertySvc.h"
+#include "Kernel/ParticleID.h"
+#include "Kernel/ParticleProperty.h"
+#include "MCInterfaces/IPrintMCDecayTreeTool.h"
 // local
 #include "PrintMCDecayTreeTool.h"
 

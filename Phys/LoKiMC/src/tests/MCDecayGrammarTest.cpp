@@ -6,22 +6,27 @@
 // ============================================================================
 #include <iostream>
 #include <string>
+#include <vector>
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/StatusCode.h"
-// ============================================================================
-// PartProp
-// ============================================================================
-#include "Kernel/Nodes.h"
 #include "Kernel/Symbols.h"
+#include "LoKi/MCTreeFactory.h"
 // ============================================================================
 // Decays
 // ============================================================================
 #include "LoKi/TreeHelpers.h"
 #include "LoKi/TreeParser.h"
 #include "LoKi/Trees.h"
-#include "LoKi/MCTreeFactory.h"
+#include "LoKi/Trees.icpp"
+#include "LoKi/iTree.h"
+
+namespace LHCb {
+class MCParticle;
+}  // namespace LHCb
+
 // ============================================================================
 /** @file
  *  Simple application to test Decay Tree parsers 

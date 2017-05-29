@@ -1,9 +1,22 @@
 //$Id: XmlTestAlgorithm.cpp,v 1.9 2007-02-02 18:17:36 marcocle Exp $
 
 #include "XmlTestAlgorithm.h"
+
+#include <functional>
+#include <memory>
+#include <ostream>
+#include <vector>
+
 #include "DetDesc/Condition.h"
-#include "DetDesc/TabulatedProperty.h"
 #include "DetDesc/DetectorElement.h"
+#include "DetDesc/TabulatedProperty.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartRef.h"
+
+class ISvcLocator;
 
 /// Instantiation of a static factory to create instances of this algorithm
 DECLARE_ALGORITHM_FACTORY( XmlTestAlgorithm )

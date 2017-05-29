@@ -3,6 +3,22 @@
 // local
 #include "CaloDataProvider.h"
 
+#include <algorithm>
+#include <functional>
+#include <iterator>
+
+#include "CaloDet/CellParam.h"
+#include "CaloDet/DeCalorimeter.h"
+#include "Event/RawBank.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/ToStream.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloDataProvider
 //

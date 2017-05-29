@@ -2,9 +2,20 @@
 #ifndef VELODETCHECKER_H
 #define VELODETCHECKER_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/VeloChannelID.h"
+
+class DeVelo;
+class DeVeloPhiType;
+class DeVeloRType;
+class DeVeloSensor;
+class ISvcLocator;
 
 /** @class VeloDetChecker VeloDetChecker.h
  *

@@ -12,15 +12,24 @@
 #ifndef GLOBALRECO_ChargedProtoParticleAddRichInfo_H
 #define GLOBALRECO_ChargedProtoParticleAddRichInfo_H 1
 
+#include <map>
 // STL
 #include <sstream>
+#include <string>
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-
+#include "Event/ProtoParticle.h"
 // Event
 #include "Event/RichPID.h"
-#include "Event/ProtoParticle.h"
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+namespace LHCb {
+class ProtoParticle;
+class RichPID;
+class Track;
+}  // namespace LHCb
 
 /** @class ChargedProtoParticleAddRichInfo ChargedProtoParticleAddRichInfo.h
  *

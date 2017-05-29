@@ -2,15 +2,21 @@
 #define DECODEVELORAWBUFFER_H 1
 
 #include <string>
+#include <vector>
 
-#include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
+#include "Event/VeloCluster.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+#include "SiDAQ/SiRawBufferWord.h"
 #include "VeloEvent/VeloDecodeStatus.h"
 
-#include "SiDAQ/SiRawBufferWord.h"
+class ISvcLocator;
 
 namespace LHCb {
   class RawBank;
+class VeloDecodeStatus;
+class VeloLiteCluster;
 }
 
 class DeVelo;

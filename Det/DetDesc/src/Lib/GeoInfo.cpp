@@ -1,8 +1,12 @@
 /// ===========================================================================
 /// DetDesc
-#include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/GeoInfo.h"
+#include <string>
+
 #include "DetDesc/GeometryInfoPlus.h"
+#include "DetDesc/ILVolume.h"
+
+struct IDetectorElement;
+struct IGeometryInfo;
 
 // ============================================================================
 /** @file GeoInfo.cpp

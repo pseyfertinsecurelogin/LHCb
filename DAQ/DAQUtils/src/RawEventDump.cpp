@@ -1,8 +1,17 @@
 // Include files 
 
+#include <functional>
+#include <iostream>
+
 // local
 #include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 #include "RawEventDump.h"
+
+class ISvcLocator;
 
 using namespace LHCb;
 

@@ -6,19 +6,31 @@
  *  @date   2004-06-18
  */
 
+#include <array>
+#include <memory>
 #include <sstream>
+#include <string>
+#include <typeinfo>
 
+#include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
 // Gaudi
 #include "GaudiKernel/SmartDataPtr.h"
-
-// DetDesc
-#include "DetDesc/AlignmentCondition.h"
-
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/RichSide.h"
 // local
 #include "RichDet/DeRich.h"
+#include "RichDet/DeRichBase.h"
 #include "RichDet/DeRichHPDPanel.h"
-#include "RichDet/DeRichPMTPanel.h"
 #include "RichDet/DeRichPDPanel.h"
+#include "RichDet/DeRichPMTPanel.h"
+#include "RichDet/Rich1DTabProperty.h"
+#include "RichDet/RichDetConfigType.h"
+#include "RichDet/RichMirrorSegPosition.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DeRich

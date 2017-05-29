@@ -1,11 +1,15 @@
 #ifndef DETCONDEXAMPLE_DAQCONDDBALGORITHM_H
 #define DETCONDEXAMPLE_DAQCONDDBALGORITHM_H 1
 
+#include <string>
+
 // Base class
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
 // Forward declarations
 class ICondDBEditor;
+class ISvcLocator;
 
 ///---------------------------------------------------------------------------
 /** @class DAQCondDBAlgorithm DAQCondDBAlgorithm.h DetCondExample/DAQCondDBAlgorithm.h

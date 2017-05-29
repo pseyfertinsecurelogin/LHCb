@@ -2,11 +2,19 @@
 #ifndef COMPONENT_L0MUONOVERFLOWTOOL_H
 #define COMPONENT_L0MUONOVERFLOWTOOL_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/StatusCode.h"
 #include "L0Interfaces/IL0MuonOverflowTool.h"            // Interface
+
+class IInterface;
+namespace LHCb {
+class MuonTileID;
+}  // namespace LHCb
 
 
 /** @class L0MuonOverflowTool L0MuonOverflowTool.h component/L0MuonOverflowTool.h

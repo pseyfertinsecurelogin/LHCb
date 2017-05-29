@@ -1,9 +1,12 @@
 // ============================================================================
 // Include files
 #include <algorithm>
-#include "CaloKernel/CaloException.h"
+#include <vector>
+
+#include "CaloDet/CellParam.h"
 #include "CaloDet/DeCalorimeter.h"
 #include "CaloUtils/CellNeighbour.h"
+#include "Kernel/CaloCellID.h"
 
 // ============================================================================
 /** @file CellNeighbour.cpp

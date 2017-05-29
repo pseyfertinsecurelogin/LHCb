@@ -1,20 +1,24 @@
 #ifndef EVENT_PACKEDMCCALOHIT_H
 #define EVENT_PACKEDMCCALOHIT_H 1
 
+#include <ostream>
 // STL
 #include <string>
-
-// Kernel
-#include "Event/StandardPacker.h"
+#include <vector>
 
 // Event
 #include "Event/MCCaloHit.h"
-
+// Kernel
+#include "Event/StandardPacker.h"
+#include "GaudiKernel/ClassID.h"
 // Gaudi
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/StatusCode.h"
-#include "GaudiKernel/GaudiException.h"
+
+class GaudiAlgorithm;
 
 namespace LHCb
 {

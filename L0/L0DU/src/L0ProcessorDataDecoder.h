@@ -2,11 +2,20 @@
 #ifndef L0DU_L0PROCESSORDATADECODER_H
 #define L0DU_L0PROCESSORDATADECODER_H
 
+#include <string>
+#include <vector>
+
+#include "Event/L0DUBase.h"
+#include "Event/L0ProcessorData.h"
 // from GaudiKernel
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/StatusCode.h"
+#include  "L0Interfaces/IL0CondDBProvider.h"
 // Interfaces
 #include  "L0Interfaces/IL0ProcessorDataDecoder.h"
-#include  "L0Interfaces/IL0CondDBProvider.h"
+
+class IInterface;
+struct IL0CondDBProvider;
 
 class L0ProcessorDataDecoder : public GaudiTool, virtual public IL0ProcessorDataDecoder{
  public:

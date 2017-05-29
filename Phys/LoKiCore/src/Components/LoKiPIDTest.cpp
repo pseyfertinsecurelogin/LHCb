@@ -3,16 +3,31 @@
 // ============================================================================
 // GaudiAlg
 // ============================================================================
+#include <functional>
+#include <string>
+#include <vector>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // PartProp
 // ============================================================================
 #include "Kernel/IParticlePropertySvc.h"
+#include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
 // LoKiCore
 // ============================================================================
 #include "LoKi/ILoKiSvc.h"
 #include "LoKi/ParticleProperties.h"
+
+class ISvcLocator;
+
 // ============================================================================
 namespace LoKi
 {

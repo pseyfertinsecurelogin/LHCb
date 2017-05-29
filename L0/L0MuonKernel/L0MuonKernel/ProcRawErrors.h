@@ -2,6 +2,9 @@
 #ifndef PROCRAWERROR_H 
 #define PROCRAWERROR_H 1
 
+#include <iosfwd>
+#include <string>
+
 #include "L0MuonKernel/ErrorHandler.h"
 
 namespace L0Muon {

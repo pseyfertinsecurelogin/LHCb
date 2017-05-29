@@ -1,13 +1,21 @@
 #ifndef TURBOPRESCALER_H
 #define TURBOPRESCALER_H 1
 
+#include <map>
+#include <string>
+
 // Include files
 #include "DetDesc/Condition.h"
+#include "Event/HltDecReports.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/IDetDataSvc.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/IPropertyConfigSvc.h"
 #include "Kernel/TCK.h"
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "Event/HltDecReports.h"
+
+class Algorithm;
+class ISvcLocator;
+struct IPropertyConfigSvc;
 
 /** @class TurboPrescaler TurboPrescaler.h
  *

@@ -1,11 +1,16 @@
 // $Id: MaterialException.cpp,v 1.8 2009-04-17 08:54:24 cattanem Exp $
 ///
 /// GaudiKernbel
-#include "GaudiKernel/MsgStream.h"
+#include <iomanip>
+#include <iostream>
+#include <string>
+
 /// DetDesc
 #include "DetDesc/Material.h"
 #include "DetDesc/MaterialException.h"
-#include <iostream>
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////////////

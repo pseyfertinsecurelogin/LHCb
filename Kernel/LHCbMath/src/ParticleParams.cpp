@@ -7,7 +7,14 @@
 // LHCbMath 
 // ============================================================================
 #include "LHCbMath/ParticleParams.h"
+
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <stddef.h>
+#include <cmath>
+
 #include "LHCbMath/MatrixUtils.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for class Gaudi::Math::ParticleParams

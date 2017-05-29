@@ -2,7 +2,11 @@
 
 // local
 #include "VeloFullDecoder.h"
-#include <iostream>
+
+#include <vector>
+
+#include "Tell1Kernel/VeloDecodeConf.h"
+#include "VeloEvent/VeloFullBank.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : VeloFullDecoder

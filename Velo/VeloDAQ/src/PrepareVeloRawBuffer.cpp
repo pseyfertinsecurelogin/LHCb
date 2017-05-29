@@ -1,17 +1,29 @@
+#include <stddef.h>
+#include <algorithm>
+#include <functional>
+#include <memory>
+#include <utility>
+
+#include "Event/RawBank.h"
 #include "Event/RawEvent.h"
-#include "VeloEvent/InternalVeloCluster.h"
-
-#include "VeloDet/DeVelo.h"
-
-#include "SiDAQ/SiHeaderWord.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "PrepareVeloRawBuffer.h"
 #include "SiDAQ/SiADCWord.h"
+#include "SiDAQ/SiHeaderWord.h"
 #include "SiDAQ/SiRawBufferWord.h"
-
+#include "VeloClusterPtrLessThan.h"
 #include "VeloClusterWord.h"
+#include "VeloDet/DeVelo.h"
+#include "VeloDet/DeVeloSensor.h"
+#include "VeloEvent/InternalVeloCluster.h"
 #include "VeloRawBankVersions.h"
 #include "VeloRawWordSizes.h"
-#include "VeloClusterPtrLessThan.h"
-#include "PrepareVeloRawBuffer.h"
+
+class ISvcLocator;
 
 
 //-----------------------------------------------------------------------------

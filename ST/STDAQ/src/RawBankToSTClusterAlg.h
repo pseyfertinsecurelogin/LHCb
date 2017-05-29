@@ -1,14 +1,14 @@
 #ifndef RAWBANKTOSTCLUSTERALG_H 
 #define RAWBANKTOSTCLUSTERALG_H 1
 
-#include "STDecodingBaseAlg.h"
-#include "Event/RawBank.h"
-#include "Kernel/STDAQDefinitions.h"
-
-#include "Event/STCluster.h"
-
-#include <vector>
 #include <string>
+#include <vector>
+
+#include "Event/RawBank.h"
+#include "Event/STCluster.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STDAQDefinitions.h"
+#include "STDecodingBaseAlg.h"
 
 /** @class RawBankToSTClusterAlg RawBankToSTClusterAlg.h
  *  
@@ -21,12 +21,13 @@
 
 #include "Kernel/STClusterWord.h"
 
-class SiADCWord;
 class STTell1Board;
+class SiADCWord;
 
 namespace LHCb{
  class STChannelID;
  class STLiteCluster;
+class RawEvent;
 }
 
 class RawBankToSTClusterAlg : public STDecodingBaseAlg {
@@ -71,6 +72,8 @@ private:
 
 #include "Event/STLiteCluster.h"
 #include "Kernel/STChannelID.h"
+
+class ISvcLocator;
 
 inline LHCb::STLiteCluster RawBankToSTClusterAlg::word2LiteCluster(const STClusterWord aWord,
                                                              const LHCb::STChannelID chan,

@@ -1,15 +1,48 @@
 // Include files 
 
+#include <TAxis.h>
+#include <TH2.h>
+#include <TProfile2D.h>
+#include <array>
+#include <functional>
+#include <map>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "AIDA/IHistogram1D.h"
 // from Gaudi
 #include "AIDA/IHistogram2D.h"
-#include "AIDA/IHistogram1D.h"
-#include "AIDA/IProfile2D.h"
 #include "AIDA/IProfile1D.h"
+#include "AIDA/IProfile2D.h"
+#include "CaloDet/CaloCardParams.h"
+#include "CaloDet/DeCalorimeter.h"
+// local
+#include "CaloUtils/Calo2Dview.h"
+#include "Event/CaloAdc.h"
+#include "Event/CaloCluster.h"
+#include "Event/CaloDigit.h"
+#include "Event/L0CaloAdc.h"
+#include "Event/L0CaloCandidate.h"
+#include "Event/L0PrsSpdHit.h"
+#include "Event/MCCaloDigit.h"
+#include "Event/MCCaloHit.h"
+#include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiAlg/GaudiHistoID.h"
+#include "GaudiAlg/GaudiHistos.h"
+#include "GaudiAlg/HistoID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiUtils/Aida2ROOT.h"
 // from LHCb
 #include "Kernel/CaloCellCode.h"
-// local
-#include "CaloUtils/Calo2Dview.h"
+#include "Kernel/CaloCellID.h"
+
+class ISvcLocator;
 
 //------------------------------------------------------------------------------
 // Implementation file for class : Calo2Dview

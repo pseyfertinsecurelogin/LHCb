@@ -1,12 +1,14 @@
 #include "STDet/DeUTStation.h"
-#include "STDet/DeUTDetector.h"
-#include "STDet/DeUTLayer.h"
-#include "Kernel/UTNames.h"
 
 #include <algorithm>
 #include <numeric>
 
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 #include "Kernel/STChannelID.h"
+#include "Kernel/UTNames.h"
+#include "STDet/DeUTLayer.h"
 
 using namespace LHCb;
 

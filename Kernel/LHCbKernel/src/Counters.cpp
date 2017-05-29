@@ -3,12 +3,18 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/ToStream.h"
-#include "GaudiKernel/StatEntity.h"
+#include <iosfwd>
+#include <string>
+
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
 // ============================================================================
 // local
 // ============================================================================
 #include "Kernel/Counters.h"
+
+class StatEntity;
+
 // ============================================================================
 /** @file
  *  Implementaton for simpel TES-counters

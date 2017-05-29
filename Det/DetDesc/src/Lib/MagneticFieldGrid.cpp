@@ -4,6 +4,8 @@
 // local
 #include "DetDesc/MagneticFieldGrid.h"
 
+#include <ext/alloc_traits.h>
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : MagneticFieldGrid
 //

@@ -2,9 +2,16 @@
 #ifndef CMT_DUMMYDETECTORELEMENT_H
 #define CMT_DUMMYDETECTORELEMENT_H 1
 
+#include <string>
+#include <vector>
+
+#include "CLID_DummyDetectorElement.h"
 // Include files
 #include "DetDesc/DetectorElement.h"
-#include "CLID_DummyDetectorElement.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
+
+template <class T> class DataObjectFactory;
 
 /** @class DummyDetectorElement DummyDetectorElement.h src/DummyDetectorElement.h
  *

@@ -3,9 +3,7 @@
 
 #include "TemplatedGenVector/BitReproducible.h"
 
-#include <sstream>
 #include <iomanip>
-#include <exception>
 
 namespace LHCbROOT {
 namespace Math {

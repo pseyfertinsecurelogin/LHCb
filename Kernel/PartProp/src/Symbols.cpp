@@ -3,25 +3,30 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
+#include <boost/algorithm/string/trim.hpp>
+#include <stddef.h>
+#include <algorithm>
 #include <map>
-#include <iostream>
+#include <string>
+#include <utility>
+#include <vector>
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/StatusCode.h"
+#include "Kernel/CC.h"
 // ============================================================================
 // PartProp 
 // ============================================================================
 #include "Kernel/IParticlePropertySvc.h"
+#include "Kernel/Nodes.h"
+#include "Kernel/NodesPIDs.h"
+#include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
 #include "Kernel/Symbols.h"
-#include "Kernel/CC.h"
-#include "Kernel/NodesPIDs.h"
-// ============================================================================
-// Boost 
-// ============================================================================
-#include "boost/algorithm/string.hpp"
-#include "boost/regex.hpp"
+#include "Kernel/iNode.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for functions form the file Kernel/Symbols.h

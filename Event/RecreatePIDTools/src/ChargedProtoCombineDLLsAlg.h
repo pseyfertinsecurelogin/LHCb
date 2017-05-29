@@ -12,11 +12,23 @@
 #ifndef GLOBALRECO_ChargedProtoCombineDLLsAlg_H
 #define GLOBALRECO_ChargedProtoCombineDLLsAlg_H 1
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <ctype.h>
+#include <algorithm>
+#include <map>
+#include <ostream>
+#include <string>
+#include <vector>
 
 // Event
 #include "Event/ProtoParticle.h"
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+namespace LHCb {
+class ProtoParticle;
+}  // namespace LHCb
 
 //-----------------------------------------------------------------------------
 /** @class ChargedProtoCombineDLLsAlg ChargedProtoCombineDLLsAlg.h

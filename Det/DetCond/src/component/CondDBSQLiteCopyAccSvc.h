@@ -1,8 +1,14 @@
 #ifndef COMPONENT_CONDDBSQLITECOPYACCSVC_H
 #define COMPONENT_CONDDBSQLITECOPYACCSVC_H 1
 
+#include <string>
+
 // Include files
 #include "CondDBAccessSvc.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+template <class TYPE> class SvcFactory;
 
 /** @class CondDBSQLiteCopyAccSvc CondDBSQLiteCopyAccSvc.h component/CondDBSQLiteCopyAccSvc.h
  *

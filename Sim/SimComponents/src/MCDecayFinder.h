@@ -7,13 +7,19 @@
 #include <stdlib.h>
 #endif
 
+#include <stddef.h>
+#include <list>
 // Include files
 // from STL
 #include <string>
+#include <utility>
+#include <vector>
 
-#include "GaudiAlg/GaudiTool.h"
-#include "MCInterfaces/IMCDecayFinder.h"
 #include "Event/MCParticle.h"
+#include "Event/MCVertex.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/StatusCode.h"
+#include "MCInterfaces/IMCDecayFinder.h"
 
 namespace LHCb {
   class IParticlePropertySvc;
@@ -353,6 +359,8 @@ private:
   bool compile( std::string &decay );
 
 #include "mcparser.h"
+
+class IInterface;
 
   int yparse( void );
   void yerror( std::string msg ) { throw DescriptorError(msg); }

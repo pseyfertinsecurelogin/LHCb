@@ -1,13 +1,19 @@
 #ifndef CONDDBREPLAYALG_H_
 #define CONDDBREPLAYALG_H_
 
+#include <CoolKernel/ChannelId.h>
+#include <list>
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/Time.h"
-#include <list>
+#include "GaudiKernel/Time.icpp"
 
 class ICondDBReader;
+class ISvcLocator;
 
 /** @class CondDBReplayAlg CondDBReplayAlg.h
  *

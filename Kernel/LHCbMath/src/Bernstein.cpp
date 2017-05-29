@@ -3,24 +3,30 @@
 // ============================================================================
 // STD& STL
 // ============================================================================
+#include <ext/alloc_traits.h>
+#include <algorithm>
 #include <array>
-#include <climits>
-#include <cassert>
+#include <cmath>
+#include <cstddef>
+#include <functional>
+#include <iterator>
+#include <limits>
+#include <memory>
 #include <numeric>
-// ============================================================================
-// GaudiKernel
-// ============================================================================
-#include "GaudiKernel/GaudiException.h"
+#include <utility>
+#include <vector>
+
+#include "LHCbMath/Bernstein.h"
+#include "LHCbMath/Choose.h"
 // ============================================================================
 // LHCbMath 
 // ============================================================================
 #include "LHCbMath/LHCbMath.h"
-#include "LHCbMath/NSphere.h"
-#include "LHCbMath/Power.h"
-#include "LHCbMath/Choose.h"
-#include "LHCbMath/Bernstein.h"
-#include "LHCbMath/Polynomials.h"
 #include "LHCbMath/MoreFunctions.h"
+#include "LHCbMath/NSphere.h"
+#include "LHCbMath/Polynomials.h"
+#include "LHCbMath/Power.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for functions, related to Bernstein's polynomnials 

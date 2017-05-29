@@ -1,11 +1,26 @@
 // LHCb
-#include "DetDesc/Condition.h"
-#include "Event/RawEvent.h"
-#include "Event/HCDigit.h"
-#include "Kernel/HCCellID.h"
+#include <ext/alloc_traits.h>
+#include <stdint.h>
+#include <functional>
+#include <typeinfo>
 
+#include "DetDesc/Condition.h"
+#include "Event/HCDigit.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // Local
 #include "HCRawBankDecoderHlt.h"
+#include "Kernel/HCCellID.h"
+
+class ISvcLocator;
 
 DECLARE_ALGORITHM_FACTORY(HCRawBankDecoderHlt)
 

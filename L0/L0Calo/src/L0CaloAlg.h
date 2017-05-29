@@ -1,20 +1,26 @@
 #ifndef   L0CALO_L0CALOALG_H
 #define   L0CALO_L0CALOALG_H  1
 
-// from Gaudi
-#include "L0Base/L0AlgBase.h"
-
-// Local classes
-#include "TriggerCard.h"
-#include "L0Candidate.h"
+#include <string>
+#include <vector>
 
 // From Calo
 #include "CaloDAQ/ICaloTriggerBitsFromRaw.h"
+#include "CaloDet/DeCalorimeter.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/CaloCellID.h"
+// from Gaudi
+#include "L0Base/L0AlgBase.h"
+#include "L0Candidate.h"
+// Local classes
+#include "TriggerCard.h"
 
+class Condition;
 // forward declarations
 class DeCalorimeter ;
-struct ICaloTriggerAdcsFromRaw ;
+class ISvcLocator;
 class L0CaloCandidatesFromRawBank ;
+struct ICaloTriggerAdcsFromRaw ;
 
 /** @class L0CaloAlg L0CaloAlg.h
  *

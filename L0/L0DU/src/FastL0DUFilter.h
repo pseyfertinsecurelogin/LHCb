@@ -2,10 +2,15 @@
 #ifndef FASTL0DUFILTER_H
 #define FASTL0DUFILTER_H 1
 
+#include <string>
+
+#include "Event/RawEvent.h"
+#include "GaudiKernel/StatusCode.h"
 // Include files
 // from Gaudi
 #include "L0Base/L0FromRawBase.h"
-#include "Event/RawEvent.h"
+
+class ISvcLocator;
 
 
 /** @class FastL0DUFilter FastL0DUFilter.h

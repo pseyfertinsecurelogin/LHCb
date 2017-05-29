@@ -1,5 +1,8 @@
 #include "L0MuonKernel/BoardUnit.h"
-#include "L0MuonKernel/CrateUnit.h"
+
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 L0Muon::BoardUnit::BoardUnit(){
 

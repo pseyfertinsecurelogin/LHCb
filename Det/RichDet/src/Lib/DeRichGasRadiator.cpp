@@ -9,15 +9,31 @@
  */
 //----------------------------------------------------------------------------
 
+#include <cmath>
+#include <memory>
+#include <string>
+#include <typeinfo>
+#include <vector>
+
+#include "DetDesc/Condition.h"
+#include "DetDesc/Material.h"
+#include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
 // Gaudi
 #include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/PhysicalConstants.h"
-
-// local
-#include "RichDet/DeRichGasRadiator.h"
-
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
 // LHCb Kernel
 #include "Kernel/FPEGuard.h"
+#include "RichDet/DeRichBase.h"
+// local
+#include "RichDet/DeRichGasRadiator.h"
+#include "RichDet/DeRichSingleSolidRadiator.h"
+#include "RichDet/Rich1DTabProperty.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DeRichGasRadiator

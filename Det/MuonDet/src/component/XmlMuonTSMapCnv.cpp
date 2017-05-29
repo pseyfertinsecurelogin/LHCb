@@ -1,21 +1,22 @@
 // $Id: XmlMuonTSMapCnv.cpp,v 1.8 2008-07-12 06:15:40 asatta Exp $
 // Include files
 
+#include <stdlib.h>
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <string>
 #include <vector>
 
 #include "DetDescCnv/XmlUserConditionCnv.h"
-//#include "MuonDet/MuonReadoutCond.h"
-#include "MuonDet/MuonL1Board.h"
-#include "MuonDet/MuonStationCabling.h"
-#include "MuonDet/MuonODEBoard.h"
+#include "GaudiKernel/Converter.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 #include "MuonDet/MuonTSMap.h"
-#include "GaudiKernel/RegistryEntry.h"
 
-#include <xercesc/dom/DOMNamedNodeMap.hpp>
-#include <xercesc/dom/DOMNodeList.hpp>
-#include <xercesc/dom/DOMNode.hpp>
-
-#include "GaudiKernel/IOpaqueAddress.h"
+class IOpaqueAddress;
+class ISvcLocator;
 
 // local
 

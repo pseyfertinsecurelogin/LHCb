@@ -4,6 +4,12 @@
 // local
 #include "L0Base/L0AlgBase.h"
 
+#include <functional>
+
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0AlgBase
 //

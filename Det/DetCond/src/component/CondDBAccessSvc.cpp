@@ -1,41 +1,56 @@
 // Include files
+#include <CoolKernel/FolderVersioning.h>
+#include <CoolKernel/IDatabase.h>
+#include <CoolKernel/IField.h>
+#include <CoolKernel/IHvsNode.h>
+#include <CoolKernel/types.h>
+#include <boost/date_time/posix_time/posix_time_duration.hpp>
+#include <boost/date_time/special_defs.hpp>
+#include <algorithm>
+#include <exception>
+#include <functional>
 #include <sstream>
+#include <utility>
 //#include <cstdlib>
 //#include <ctime>
 
 
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/ClassID.h"
-#include "GaudiKernel/Time.h"
-
-#include "GaudiKernel/IRndmGenSvc.h"
-#include "GaudiKernel/IRndmEngine.h"
-
-#include "CoolKernel/DatabaseId.h"
+// local
+#include "CondDBAccessSvc.h"
+#include "CondDBCache.h"
+#include "CondDBCommon.h"
+#include "CoolKernel/Exception.h"
+#include "CoolKernel/FolderSpecification.h"
 #include "CoolKernel/IDatabaseSvc.h"
 #include "CoolKernel/IFolder.h"
 #include "CoolKernel/IFolderSet.h"
 #include "CoolKernel/IObject.h"
 #include "CoolKernel/IObjectIterator.h"
-#include "CoolKernel/Exception.h"
-#include "CoolKernel/RecordSpecification.h"
-#include "CoolKernel/FolderSpecification.h"
-#include "CoolKernel/StorageType.h"
 #include "CoolKernel/Record.h"
-
-#include "CoralBase/AttributeList.h"
-#include "CoralBase/Exception.h"
+#include "CoolKernel/RecordSpecification.h"
+#include "CoolKernel/StorageType.h"
 // FIXME: Needed because of COOL bug #38422
 #include "CoralBase/AttributeException.h"
-
+#include "CoralBase/Exception.h"
 #include "DetCond/ICOOLConfSvc.h"
-
-// local
-#include "CondDBAccessSvc.h"
-#include "CondDBCache.h"
-
-#include "CondDBCommon.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IRndmEngine.h"
+#include "GaudiKernel/IRndmGenSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StateMachine.h"
+#include "GaudiKernel/System.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
 #include "IOVListHelpers.h"
+
+class ISvcLocator;
+namespace cool {
+class IRecord;
+class IRecordSpecification;
+}  // namespace cool
 
 // Factory implementation
 DECLARE_SERVICE_FACTORY(CondDBAccessSvc)

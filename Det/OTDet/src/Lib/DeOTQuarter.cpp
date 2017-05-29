@@ -1,13 +1,23 @@
 /// DetDesc
-#include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/SolidBox.h"
 
 /// GaudiKernel
 //#include "GaudiKernel/SystemOfUnits.h"
 
+#include <algorithm>
+#include <string>
+#include <typeinfo>
+#include <vector>
+
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
+#include "DetDesc/ParamValidDataObject.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/OTChannelID.h"
+#include "OTDet/DeOTModule.h"
 /// OTDet
 #include "OTDet/DeOTQuarter.h"
-#include "OTDet/DeOTModule.h"
 
 /** @file DeOTQuarter.cpp
  *

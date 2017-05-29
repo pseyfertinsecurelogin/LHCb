@@ -1,16 +1,25 @@
 // $Id: RawEventCopy.cpp,v 1.2 2009-05-25 08:56:21 cattanem Exp $
 // Include files from Gaudi
-#include "GaudiKernel/Algorithm.h"
-#include "GaudiKernel/SmartDataPtr.h"
-#include "MDF/RawEventHelpers.h"
+#include <functional>
+#include <string>
+
 #include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "MDF/RawEventHelpers.h"
+
+class ISvcLocator;
 
 /*
  *    LHCb namespace declaration
  */
 namespace LHCb  {
-
-  class RawEvent;
 
   /** @class RawEventCopy RawEventCopy.cpp
     *

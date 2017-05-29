@@ -1,15 +1,18 @@
 #ifndef VALIDINPUTSOURCE_H_
 #define VALIDINPUTSOURCE_H_
 
-#include <GaudiKernel/Time.h>
 #include <GaudiKernel/IValidity.h>
-
-#include <xercesc/util/XercesDefs.hpp>
-#include <xercesc/util/PlatformUtils.hpp>
-
-#include <xercesc/framework/MemoryManager.hpp>
-
+#include <GaudiKernel/Time.h>
 #include <xercesc/framework/MemBufInputSource.hpp>
+#include <xercesc/framework/MemoryManager.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/XercesDefs.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <string>
+
+namespace xercesc_3_1 {
+class MemoryManager;
+}  // namespace xercesc_3_1
 
 
 /** @class ValidInputSource XmlTools/ValidInputSource.h

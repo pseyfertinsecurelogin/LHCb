@@ -2,13 +2,19 @@
 #ifndef LHCBSEQUENCERTIMERTOOL_H
 #define LHCBSEQUENCERTIMERTOOL_H 1
 
+#include <memory>
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiHistoTool.h"
 #include "GaudiAlg/ISequencerTimerTool.h"
-
+#include "GaudiKernel/StatusCode.h"
 // local
 #include "LHCbTimerForSequencer.h"
+
+class IInterface;
 
 
 /** @class LHCbSequencerTimerTool LHCbSequencerTimerTool.h

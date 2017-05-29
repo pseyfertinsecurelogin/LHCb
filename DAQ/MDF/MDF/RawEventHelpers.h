@@ -9,28 +9,33 @@
 #ifndef MDF_RAWEVENTHELPERS_H
 #define MDF_RAWEVENTHELPERS_H
 
+#include <stddef.h>
+#include <map>
+#include <map>
+#include <string>
+#include <utility>
+// C++ includes
+#include <vector>
+
 // Framework include files
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/StatusCode.h"
-#include <map>
 #include "MDF/StreamDescriptor.h"
-// C++ includes
-#include <vector>
-#include <map>
 
 /*
  *    LHCb namespace
  */
 namespace LHCb  {
 
+  class MDFHeader;
+  class MEPEvent;
+  class MEPFragment;
+  class MEPMultiFragment;
   // Forward declarations
   class RawBank;
   class RawEvent;
   class RawEventDescriptor;
-  class MEPMultiFragment;
-  class MEPFragment;
-  class MDFHeader;
-  class MEPEvent;
+
   typedef std::pair<char*,int> MDFDescriptor;
 
   unsigned int hash32Checksum(const void* ptr, size_t len); 

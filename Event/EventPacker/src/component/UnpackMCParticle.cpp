@@ -1,14 +1,28 @@
 
 // STL
 #include <algorithm>
+#include <cmath>
+#include <functional>
+#include <vector>
 
 // Event model
 #include "Event/MCParticle.h"
-#include "Event/StandardPacker.h"
+#include "Event/MCVertex.h"
 #include "Event/PackedMCParticle.h"
-
+#include "Event/StandardPacker.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/Vector4DTypes.h"
+#include "Kernel/ParticleID.h"
 // local
 #include "UnpackMCParticle.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : UnpackMCParticle

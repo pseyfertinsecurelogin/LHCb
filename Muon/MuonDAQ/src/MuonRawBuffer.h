@@ -1,18 +1,36 @@
 #ifndef MUONRAWBUFFER_H
 #define MUONRAWBUFFER_H 1
 
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "DAQKernel/DecoderToolBase.h"
+#include "Event/MuonODEData.h"
+#include "Event/MuonPPEventInfo.h"
+#include "Event/MuonTell1Header.h"
+#include "Event/RawBankReadoutStatus.h"
+#include "Event/RawEvent.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "MuonDAQ/IMuonRawBuffer.h"            // Interface
-#include "Event/RawEvent.h"
-#include "MuonDet/DeMuonDetector.h"
 #include "GaudiKernel/IIncidentListener.h"
-#include "Event/MuonODEData.h"
-#include "Event/MuonPPEventInfo.h"
-#include "DAQKernel/DecoderToolBase.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/MuonTileID.h"
+#include "MuonDAQ/IMuonRawBuffer.h"            // Interface
+#include "MuonDet/DeMuonDetector.h"
+#include "MuonDet/MuonDAQHelper.h"
 
-#include <string>
+class DeMuonDetector;
+class IIncidentListener;
+class IInterface;
+class IMuonRawBuffer;
+class Incident;
+namespace LHCb {
+class RawBank;
+class RawEvent;
+}  // namespace LHCb
 
 /** @class MuonRawBuffer MuonRawBuffer.h
  *

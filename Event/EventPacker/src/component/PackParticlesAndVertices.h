@@ -1,39 +1,62 @@
 #ifndef PACKPARTICLESANDVERTICES_H
 #define PACKPARTICLESANDVERTICES_H 1
 
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiKernel/SmartIF.h"
+#include <algorithm>
+#include <map>
+#include <string>
+#include <vector>
 
+#include "Event/FlavourTag.h"
+#include "Event/MCParticle.h"
+#include "Event/MuonPID.h"
+#include "Event/PackedFlavourTag.h"
+#include "Event/PackedMuonPID.h"
+#include "Event/PackedPartToRelatedInfoRelation.h"
+#include "Event/PackedParticle.h"
+#include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedRichPID.h"
+#include "Event/PackedTrack.h"
+#include "Event/PackedVertex.h"
+#include "Event/Particle.h"
+#include "Event/ProtoParticle.h"
+#include "Event/RecVertex.h"
+#include "Event/RelatedInfoMap.h"
+#include "Event/RichPID.h"
 #include "Event/StandardPacker.h"
+#include "Event/Track.h"
+#include "Event/Vertex.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/LHCbID.h"
 #include "Kernel/Particle2LHCbIDs.h"
-
+#include "Relations/Relation.h"
 #include "Relations/Relation1D.h"
+#include "Relations/RelationWeighted.h"
 #include "Relations/RelationWeighted1D.h"
 
-#include "Kernel/LHCbID.h"
-
-#include "Event/PackedTrack.h"
-#include "Event/PackedProtoParticle.h"
-#include "Event/PackedMuonPID.h"
-#include "Event/PackedRichPID.h"
-#include "Event/PackedParticle.h"
-#include "Event/PackedVertex.h"
-#include "Event/PackedRelations.h"
-#include "Event/PackedRecVertex.h"
-#include "Event/PackedFlavourTag.h"
-#include "Event/PackedPartToRelatedInfoRelation.h"
-
-#include "Event/Track.h"
-#include "Event/ProtoParticle.h"
-#include "Event/MuonPID.h"
-#include "Event/RichPID.h"
-#include "Event/Particle.h"
-#include "Event/Vertex.h"
-#include "Event/FlavourTag.h"
-#include "Event/RecVertex.h"
-#include "Event/MCParticle.h"
-#include "Event/RelatedInfoMap.h"
+class DataObject;
+class IRegistry;
+class ISvcLocator;
+namespace LHCb {
+class MCParticle;
+class PackedFlavourTags;
+class PackedMuonPIDs;
+class PackedParticles;
+class PackedProtoParticles;
+class PackedRecVertices;
+class PackedRelatedInfoRelations;
+class PackedRichPIDs;
+class PackedTracks;
+class PackedVertices;
+class VertexBase;
+}  // namespace LHCb
 
 /** @class PackParticlesAndVertices PackParticlesAndVertices.h
  *

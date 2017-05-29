@@ -1,15 +1,21 @@
 // ===========================================================================
 /** STD & STL */
-#include <iostream>
-#include <string>
 #include <algorithm>
+#include <memory>
+#include <string>
 /** DetDesc */
 #ifdef __INTEL_COMPILER         // Disable ICC remark
   #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
 #endif
+#include "DetDesc/ISolid.h"
 #include "DetDesc/Solid.h"
-#include "DetDesc/SolidSubtraction.h"
+#include "DetDesc/SolidBase.h"
+#include "DetDesc/SolidBoolean.h"
 #include "DetDesc/SolidException.h"
+#include "DetDesc/SolidSubtraction.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
 
 // ============================================================================
 /** @file

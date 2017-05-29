@@ -1,32 +1,45 @@
 #ifndef FILESTAGER_H
 #define FILESTAGER_H 1
 
-#include <vector>
-#include <string>
-#include <memory>
-
-// boost
-#include <boost/filesystem.hpp>
-#include <boost/multi_index_container.hpp>
-#include <boost/multi_index/hashed_index.hpp>
-#include <boost/multi_index/ordered_index.hpp>
-#include <boost/multi_index/sequenced_index.hpp>
-#include <boost/multi_index/mem_fun.hpp>
-#include <boost/thread/condition_variable.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/cstdint.hpp>
-
+// FileStager
+#include <FileStager/IFileStagerSvc.h>
 // Gaudi
 #include <GaudiKernel/Service.h>
 #include <GaudiUtils/IIODataManager.h>
-
-// FileStager
-#include <FileStager/IFileStagerSvc.h>
+#include <boost/cstdint.hpp>
+// boost
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/multi_index/hashed_index.hpp>
+#include <boost/multi_index/indexed_by.hpp>
+#include <boost/multi_index/mem_fun.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+#include <boost/multi_index/sequenced_index.hpp>
+#include <boost/multi_index/tag.hpp>
+#include <boost/multi_index_container.hpp>
+#include <boost/serialization/split_member.hpp>
+#include <boost/thread/condition_variable.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/pthread/recursive_mutex.hpp>
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/thread/thread_only.hpp>
+#include <stddef.h>
+#include <stdint.h>
+#include <functional>
+#include <memory>
+#include <string>
+#include <vector>
 
 // local
 #include "File.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+
+class ISvcLocator;
+struct IFileStagerSvc;
 
 /** @class FileStagerSvc FileStagerSvc.h
  *

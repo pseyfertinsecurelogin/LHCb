@@ -1,15 +1,24 @@
 #define LHCB_FSRSTREAM_CPP
 
-// Framework include files
-#include "GaudiKernel/IRegistry.h"
+#include <stddef.h>
+#include <functional>
+#include <vector>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/DataStoreItem.h"
-#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IMessageSvc.h"
+// Framework include files
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/Property.h"
 #include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
 #include "LHCbFSRStream.h"
 
 // Define the algorithm factory for the standard output data writer

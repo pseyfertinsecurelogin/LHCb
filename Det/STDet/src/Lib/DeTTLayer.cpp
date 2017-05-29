@@ -1,16 +1,25 @@
 
-#include "STDet/DeTTSector.h"
-#include "STDet/DeTTLayer.h"
-#include "STDet/DeTTHalfModule.h"
-#include "STDet/DeTTStation.h"
-
-#include "DetDesc/IGeometryInfo.h"
-
-#include "Kernel/TTNames.h"
-
+#include <stddef.h>
 //STL
 #include <algorithm>
 #include <numeric>
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STChannelID.h"
+#include "Kernel/TTNames.h"
+#include "STDet/DeSTLayer.h"
+#include "STDet/DeTTHalfModule.h"
+#include "STDet/DeTTLayer.h"
+#include "STDet/DeTTSector.h"
+
+class DeSTSector;
 
 using namespace LHCb;
 

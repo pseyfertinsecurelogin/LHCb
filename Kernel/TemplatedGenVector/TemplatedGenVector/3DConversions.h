@@ -17,14 +17,27 @@
 #ifndef LHCbROOT_Math_GenVector_3DConversions
 #define LHCbROOT_Math_GenVector_3DConversions  1
 
-#include "TemplatedGenVector/Rotation3Dfwd.h"
 #include "TemplatedGenVector/AxisAnglefwd.h"
 #include "TemplatedGenVector/EulerAnglesfwd.h"
 #include "TemplatedGenVector/Quaternionfwd.h"
+#include "TemplatedGenVector/Rotation3Dfwd.h"
 #include "TemplatedGenVector/RotationXfwd.h"
 #include "TemplatedGenVector/RotationYfwd.h"
-#include "TemplatedGenVector/RotationZfwd.h"
 #include "TemplatedGenVector/RotationZYXfwd.h"
+#include "TemplatedGenVector/RotationZfwd.h"
+
+namespace LHCbROOT {
+namespace Math {
+class AxisAngle;
+class EulerAngles;
+class Quaternion;
+class Rotation3D;
+class RotationX;
+class RotationY;
+class RotationZ;
+class RotationZYX;
+}  // namespace Math
+}  // namespace LHCbROOT
 
 
 namespace LHCbROOT {

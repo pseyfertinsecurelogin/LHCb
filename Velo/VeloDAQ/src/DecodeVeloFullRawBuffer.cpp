@@ -2,11 +2,23 @@
 // local
 #include "DecodeVeloFullRawBuffer.h"
 
-// Kernel
-#include "Kernel/VeloEventFunctor.h"
-
+#include <stddef.h>
+#include <algorithm>
+#include <functional>
 // STL
 #include <vector>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+// Kernel
+#include "Kernel/VeloEventFunctor.h"
+#include "Tell1Kernel/VeloDecodeConf.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DecodeVeloFullRawBuffer

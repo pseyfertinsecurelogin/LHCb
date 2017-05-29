@@ -1,7 +1,10 @@
 // Include files
-#include <iostream>
 #include <algorithm>
-#include <numeric>
+#include <memory>
+#include <utility>
+#include <vector>
+
+#include "Kernel/MuonBase.h"
 #include "Kernel/MuonLayout.h"
 #include "Kernel/MuonTileID.h"
 

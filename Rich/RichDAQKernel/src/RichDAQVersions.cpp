@@ -11,29 +11,17 @@
 
 #include "RichDAQKernel/RichDAQVersions.h"
 
-#include "RichHPDDataBank.icpp"
+#include "RichDAQKernel/RichHPDDataBank.h"
 
 // ALICE Mode formats
 
-#include "RichNonZeroSuppALICEData_V1.icpp"
-#include "RichNonZeroSuppALICEData_V2.icpp"
 
-#include "RichZeroSuppALICEData_V1.icpp"
 
 // LHCb mode format
 
-#include "RichNonZeroSuppData_V1.icpp"
-#include "RichNonZeroSuppData_V2.icpp"
-#include "RichNonZeroSuppData_V3.icpp"
 
-#include "RichZeroSuppData_V1.icpp"
-#include "RichZeroSuppData_V2.icpp"
-#include "RichZeroSuppData_V3.icpp"
-#include "RichZeroSuppData_V4.icpp"
 
 // Flat List format
-
-#include "RichFlatFormatSmartIDData.icpp"
 
 namespace Rich
 {

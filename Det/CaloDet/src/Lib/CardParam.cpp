@@ -2,11 +2,10 @@
 // $Id: $ 
 // ============================================================================
 #define  CALODET_CARDPARAM_CPP 1 
-// ============================================================================
-/// Include files
-/// local
-#include "CaloDet/DeCalorimeter.h"
+#include <vector>
+
 #include "CaloDet/CardParam.h"
+#include "Kernel/CaloCellID.h"
 
 
 //-----------------------------------------------------------------------------

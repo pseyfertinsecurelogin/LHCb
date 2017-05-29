@@ -1,17 +1,37 @@
 // ============================================================================
 #define  VELODET_DEVELO_CPP 1
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/PositionVector3D.h>
 // ============================================================================
 // from STL (for std::sort)
 #include <algorithm>
-
-// From Gaudi
-#include "GaudiKernel/IUpdateManagerSvc.h"
-#include "GaudiKernel/SystemOfUnits.h"
+#include <cmath>
+#include <iomanip>
+#include <iosfwd>
+#include <map>
+#include <string>
+#include <typeinfo>
+#include <utility>
+#include <vector>
 
 #include "DetDesc/Condition.h"
-
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+// From Gaudi
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
 // Local
 #include "VeloDet/DeVelo.h"
+#include "VeloDet/DeVeloPhiType.h"
+#include "VeloDet/DeVeloRType.h"
+#include "VeloDet/DeVeloSensor.h"
 #include "getOutputLevel.h"
 
 /** @file DeVelo.cpp

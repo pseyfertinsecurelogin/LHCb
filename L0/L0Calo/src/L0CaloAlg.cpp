@@ -1,22 +1,46 @@
 /// local
 #include "L0CaloAlg.h"
 
+#include <stdlib.h>
+#include <algorithm>
 /// STL
 #include <fstream>
+#include <functional>
+#include <map>
+#include <memory>
 #include <numeric>
-
-// From Event
-#include "Event/L0CaloCandidate.h"
-#include "Event/L0CaloAdc.h"
-
-// From Kernel
-#include "Kernel/CaloCellID.h"
+#include <typeinfo>
+#include <utility>
 
 // From Calo
 #include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"
-
+#include "CaloDet/CaloCardParams.h"
+#include "DetDesc/Condition.h"
+#include "Event/L0CaloAdc.h"
+// From Event
+#include "Event/L0CaloCandidate.h"
+#include "Event/L0DUBase.h"
+#include "Event/L0ProcessorData.h"
+#include "Event/RawBank.h"
+#include "Event/RawBankReadoutStatus.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommon.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+// From Kernel
+#include "Kernel/CaloCellID.h"
 // local
 #include "L0CaloCandidatesFromRawBank.h"
+
+class ISvcLocator;
 
 //
 //  Level-0 calorimeter trigger simulation algorithm

@@ -1,15 +1,21 @@
 
+#include <Math/GenVector/LorentzVector.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <Math/MatrixFunctions.h>
+#include <Math/SMatrix.h>
 // STD
 #include <iostream>
+#include <string>
+#include <utility>
 
 // local
 #include "Event/Particle.h"
-
-// Kernel
-#include "LHCbMath/MatrixManip.h"
-
+#include "GaudiKernel/GenericMatrixTypes.h"
 // Gaudi
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "Kernel/ParticleID.h"
 
 //=============================================================================
 

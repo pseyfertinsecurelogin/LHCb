@@ -1,20 +1,38 @@
 // Include files
 
-// Gaudi
-#include "GaudiKernel/SmartDataPtr.h"
-//Muon
-#include "MuonChamberLayout.h"
-#include "MuonDet/MuonChamberGrid.h"
-#include "MuonDet/DeMuonDetector.h"
+#include <Math/GenVector/PositionVector3D.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+#include <vector>
 
+#include "DetDesc/Condition.h"
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
 //Detector description
 #include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/DetectorElement.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
+#include "DetDesc/ISolid.h"
 #include "DetDesc/SolidBox.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+// Gaudi
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+//Muon
+#include "MuonChamberLayout.h"
+#include "MuonDet/DeMuonChamber.h"
+#include "MuonDet/DeMuonDetector.h"
+#include "MuonDet/MuonChamberGrid.h"
+#include "MuonDet/MuonNamespace.h"
 
-//standard
-#include <iostream>
-#include <vector>
+class IDataProviderSvc;
 
 #ifdef __INTEL_COMPILER       // Disable ICC remark from ROOT
   #pragma warning(disable:68) // Integer conversion resulted in a change of sign

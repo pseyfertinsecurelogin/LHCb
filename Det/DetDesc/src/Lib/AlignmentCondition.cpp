@@ -1,18 +1,25 @@
 // Include files
-#include <algorithm>
+#include <Math/GenVector/Transform3D.h>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <vector>
 
 #include "DetDesc/AlignmentCondition.h"
-
-#include "GaudiKernel/MsgStream.h"
+#include "DetDesc/DetDesc.h"
+#include "DetDesc/ParamValidDataObject.h"
+#include "DetDesc/Services.h"
 #include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/StatusCode.h"
-#include "GaudiKernel/Vector3DTypes.h"
+#include "GaudiKernel/Transform3DTypes.h"
 ///@todo put RotationXYZ.h in GaudiKernel when it is released in MathCore.
 #ifdef __INTEL_COMPILER         // Disable ICC remark from Math headers
   #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
 #endif
-#include "Math/RotationZYX.h"
 #include "DetDesc/3DTransformationFunctions.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : AlignmentCondition
 //

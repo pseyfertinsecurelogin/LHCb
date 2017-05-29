@@ -1,7 +1,11 @@
 #include "STDet/DeSTStation.h"
 
-// DetDesc
-#include "DetDesc/IGeometryInfo.h"
+#include <ostream>
+#include <typeinfo>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 
 /** @file DeSTStation.cpp
 *

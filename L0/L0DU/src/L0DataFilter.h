@@ -1,8 +1,15 @@
 #ifndef L0DATAFILTER_H
 #define L0DATAFILTER_H 1
 
+#include <map>
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/StatusCode.h"
 // Include files
 #include "L0Base/L0AlgBase.h"
+
+class ISvcLocator;
 
 
 /** @class L0DataFilter L0DataFilter.h

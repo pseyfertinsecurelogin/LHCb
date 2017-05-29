@@ -5,6 +5,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 // FTDet
 #include "FTDet/DeFTMat.h"
+#include "GaudiKernel/Converter.h"
 
 typedef XmlUserDetElemCnv<DeFTMat>       XmlDeFTMatCnv;
 DECLARE_CONVERTER_FACTORY( XmlDeFTMatCnv )

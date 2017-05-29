@@ -1,8 +1,21 @@
+#include <stdio.h>
+#include <xercesc/dom/DOMNamedNodeMap.hpp>
+#include <xercesc/dom/DOMNode.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <map>
+#include <string>
 #include <utility>  // For std::pair
-#include <algorithm> 
+#include <vector>
+
+#include "Kernel/MuonTileID.h"
 #include "L0MuonKernel/L0MUnit.h"
 #include "L0MuonKernel/UnitFactory.h"
+#include "ProcessorKernel/Register.h"
 #include "ProcessorKernel/RegisterFactory.h"
+#include "ProcessorKernel/Unit.h"
+
+class L0MPtLUT;
 
 L0Muon::L0MUnit::L0MUnit():Unit(){
   m_plut = 0;

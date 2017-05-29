@@ -1,14 +1,16 @@
 #pragma once
-#include <vector>
-#include <array>
 #include <algorithm>
+#include <array>
 #include <string>
-
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <vector>
 
 #include "Event/RawEvent.h"
 #include "Event/VPDigit.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/VPConstants.h"
+
+class ISvcLocator;
 
 /** @class VPSuperPixelBankEncoder VPSuperPixelBankEncoder.h
  * Algorithm to create Super Pixel Raw Bank from VP digits.

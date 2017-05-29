@@ -3,16 +3,40 @@
 // ============================================================================
 // GaudiAlg
 // ============================================================================
+#include <functional>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StateMachine.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // LHCbKernel
 // ============================================================================
 #include "Kernel/Counters.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/BasicFunctors.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Functor.h"
 #include "LoKi/ICoreFactory.h"
+#include "LoKi/ILoKiSvc.h"
+
+class ISvcLocator;
+
 // ============================================================================
 /** @file
  *

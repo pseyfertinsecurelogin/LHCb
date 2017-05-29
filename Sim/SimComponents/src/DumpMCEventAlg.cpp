@@ -1,14 +1,24 @@
 // Include files
 // Tools
-#include "Kernel/ICheckTool.h"
+#include <functional>
+#include <ostream>
+#include <vector>
 
+// local
+#include "DumpMCEventAlg.h"
 // Event Model
 #include "Event/MCHeader.h"
 #include "Event/MCParticle.h"
 #include "Event/MCVertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/ICheckTool.h"
 
-// local
-#include "DumpMCEventAlg.h"
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DumpMCEventAlg

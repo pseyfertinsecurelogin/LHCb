@@ -11,6 +11,17 @@
 // local
 #include "RichToolRegistry.h"
 
+#include <functional>
+#include <sstream>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Map.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
 DECLARE_NAMESPACE_TOOL_FACTORY( Rich, ToolRegistry )
 
 // Standard constructor

@@ -1,9 +1,15 @@
 
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "GaudiKernel/VectorMap.h"
 #include "Kernel/STChannelID.h"
 #include "Kernel/TTNames.h"
-
-#include <iostream>
-#include <string>
 
 std::string LHCb::TTNames::UniqueSectorToString(const LHCb::STChannelID& chan)
 {

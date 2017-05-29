@@ -9,19 +9,24 @@
  */
 //============================================================================
 
-// STL
-#include <sstream>
+#include <algorithm>
 #include <cmath>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
 // GaudiKernel
 #include "GaudiKernel/GaudiException.h"
-
+#include "GaudiKernel/StatusCode.h"
 // local
 #include "RichDet/Rich1DTabFunc.h"
-
 // boost
 #include "boost/numeric/conversion/bounds.hpp"
-#include "boost/limits.hpp"
+#include "gsl/gsl_interp.h"
+#include "gsl/gsl_spline.h"
 
 using namespace Rich;
 

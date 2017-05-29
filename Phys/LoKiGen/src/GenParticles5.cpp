@@ -3,13 +3,20 @@
 // ============================================================================
 // LHCbMath
 // ============================================================================
-#include "LHCbMath/LHCbMath.h"
-// ============================================================================
-// LoKi
-// ============================================================================
-#include "LoKi/Constants.h"
-#include "LoKi/Geometry.h"
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <ostream>
+
+#include "GaudiKernel/SystemOfUnits.h"
+#include "HepMC/GenEvent.h"
+#include "HepMC/GenParticle.h"
+#include "HepMC/GenVertex.h"
+#include "HepMC/SimpleVector.h"
+#include "LoKi/Functor.h"
 #include "LoKi/GenParticles5.h"
+#include "LoKi/GenTypes.h"
+#include "LoKi/KinTypes.h"
+
 // ============================================================================
 /** @file
  *

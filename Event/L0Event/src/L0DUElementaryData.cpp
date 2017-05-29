@@ -1,10 +1,13 @@
 // Include files 
-#include <utility>
-#include <string>
+#include <stddef.h>
 #include <map>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "Event/L0DUElementaryData.h"
+#include "GaudiKernel/SerializeSTL.h"
 
 //-----------------------------------------------------------------------------
 // Auxilliary Implementation file for L0DUElementaryData Event classes

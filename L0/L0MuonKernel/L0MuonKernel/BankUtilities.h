@@ -5,6 +5,7 @@
 
 
 #include <iostream>
+
 #include "L0MuonKernel/CandRegisterHandler.h"
 
 namespace L0Muon {
@@ -18,6 +19,8 @@ namespace L0Muon {
   */
 
   /// Used to read a candidate from a L0Muon bank and fill a register (CtrFinal::decodeBank* )
+class CandRegisterHandler;
+
   void writeCandInRegister(CandRegisterHandler * handler,unsigned int data, int icand, int bankVersion);
 
   /// Used to read a candidate from a register and fill a L0Muon bank (CtrFinal::rawBank* )

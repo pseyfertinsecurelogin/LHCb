@@ -1,5 +1,11 @@
 #include "BcmDet/DeBcmSens.h"
 
+#include <typeinfo>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+
 DeBcmSens::DeBcmSens() :
   DetectorElement(),
   m_SensorNumber(0)

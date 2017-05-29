@@ -1,8 +1,12 @@
 // $Id: LHCbTimerForSequencer.h,v 1.5 2004/11/25 13:26:26 mato Exp $
 #ifndef LHCBTIMERFORSEQUENCER_H
 
+#include <string>
+
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Timing.h"
+
+class MsgStream;
 
 /** Auxilliary class. Measure the time between start and stop, and compute
  *  average, min and max. In fact, measure the cpu time, and the elapsed time

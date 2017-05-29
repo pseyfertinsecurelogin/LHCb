@@ -15,11 +15,19 @@
 #ifndef STKERNEL_STALGBASE_H
 #define STKERNEL_STALGBASE_H 1
 
+#include <functional>
+#include <string>
+
+#include "/tmp/foobarpath/LHCb/ST/STKernel/src/STCommonBase.icpp"
 // GaudiAlg
 #include "GaudiAlg/GaudiAlgorithm.h"
-
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "Kernel/STCommonBase.h"
+
+class ISvcLocator;
 
 namespace ST
 {

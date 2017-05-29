@@ -1,15 +1,22 @@
 #ifndef POPULATEDB_H 
 #define POPULATEDB_H 1
 
+#include <string>
+
+#include "DetCond/ICondDBAccessSvc.h"
+#include "DetCond/ICondDBEditor.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 
+class Condition;
+class ICondDBAccessSvc;
 // Forward declarations
 class ICondDBEditor;
-class ICondDBAccessSvc;
 class ICondDBObject;
-class Condition;
+class ISvcLocator;
 
 /** @class PopulateDB PopulateDB.h
  *  

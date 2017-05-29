@@ -1,18 +1,22 @@
 #include "DAQCondDBAlgorithm.h"
 
-#include "DetCond/ICondDBEditor.h"
-
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/Timing.h"
-#include "GaudiKernel/Time.h"
+#include <functional>
 
 #include "CoolKernel/Exception.h"
-#include "CoolKernel/IDatabase.h"
-#include "CoolKernel/IFolder.h"
-#include "CoolKernel/IObject.h"
-#include "CoolKernel/IObjectIterator.h"
-#include "CoolKernel/types.h"
 #include "CoolKernel/ValidityKey.h"
+#include "DetCond/ICondDBEditor.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+#include "GaudiKernel/Timing.h"
+
+class ISvcLocator;
 
 /// Instantiation of a static factory to create instances of this algorithm
 DECLARE_ALGORITHM_FACTORY( DAQCondDBAlgorithm )

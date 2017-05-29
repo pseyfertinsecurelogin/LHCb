@@ -9,26 +9,47 @@
  */
 //=============================================================================
 
-// Gaudi
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-
-// RichUtils
-#include "RichUtils/RichHPDIdentifier.h"
-
-// LHCbKernel
-#include "Kernel/RichSmartID32.h"
+#include <boost/format.hpp>
+#include <algorithm>
+#include <array>
+#include <map>
+#include <ostream>
+#include <string>
+#include <typeinfo>
+#include <unordered_map>
+#include <utility>
+#include <vector>
 
 // DetDesc
 #include "DetDesc/Condition.h"
-
+#include "DetDesc/DetectorElement.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/HashMap.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/Map.h"
+#include "GaudiKernel/MsgStream.h"
+// Gaudi
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/System.h"
+#include "GaudiKernel/Time.h"
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSide.h"
+#include "Kernel/RichSmartID.h"
+#include "RichDet/DeRich.h"
+#include "RichDet/DeRichBase.h"
+#include "RichDet/DeRichLocations.h"
 // local
 #include "RichDet/DeRichSystem.h"
-#include "RichDet/DeRich.h"
-
-// boost
-#include "boost/format.hpp"
+#include "RichDet/RichDetConfigType.h"
+#include "RichUtils/RichDAQDefinitions.h"
+// RichUtils
+#include "RichUtils/RichHPDIdentifier.h"
 #include "boost/lexical_cast.hpp"
 
 //=============================================================================

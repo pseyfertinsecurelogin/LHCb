@@ -1,13 +1,24 @@
 // Include files
 
-// From Gaudi
-#include "GaudiKernel/IEventTimeDecoder.h"
+#include <functional>
 
 // From LHCb
 #include "Event/ODIN.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+// From Gaudi
+#include "GaudiKernel/IEventTimeDecoder.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
 // local
 #include "ODINBadTimeTest.h"
+
+class ISvcLocator;
 
 // ----------------------------------------------------------------------------
 // Implementation file for class: ODINBadTimeTest

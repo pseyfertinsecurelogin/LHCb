@@ -1,18 +1,24 @@
 #ifndef EVENT_PACKEDPARTICLE_H
 #define EVENT_PACKEDPARTICLE_H 1
 
+#include <stdint.h>
+#include <cmath>
+#include <stdexcept>
 // STL
 #include <string>
-
-// Kernel
-#include "Event/StandardPacker.h"
+#include <utility>
+#include <vector>
 
 // Event
 #include "Event/Particle.h"
-
+// Kernel
+#include "Event/StandardPacker.h"
+#include "GaudiKernel/ClassID.h"
 // Gaudi
 #include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/StatusCode.h"
+
+class GaudiAlgorithm;
 
 namespace LHCb
 {

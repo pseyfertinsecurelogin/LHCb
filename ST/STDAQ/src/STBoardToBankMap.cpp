@@ -1,5 +1,7 @@
 #include "STBoardToBankMap.h"
+
 #include <algorithm>
+#include <utility>
 
 void STBoardToBankMap::addEntry(STTell1ID aBoard, unsigned int aBank){
   // add entry to map

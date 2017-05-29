@@ -1,35 +1,44 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/IOpaqueAddress.h"
+#include <string.h>
+#include <functional>
+#include <memory>
+#include <utility>
 
-// Kernel
-#include "Event/StandardPacker.h"
-
-// Event model
-#include "Event/RawEvent.h"
-#include "Event/PackedTrack.h"
+#include "Event/ODIN.h"
+#include "Event/PackedCaloCluster.h"
 #include "Event/PackedCaloHypo.h"
-#include "Event/PackedProtoParticle.h"
-#include "Event/PackedRecVertex.h"
-#include "Event/PackedTwoProngVertex.h"
-#include "Event/PackedRichPID.h"
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedParticle.h"
+#include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
+#include "Event/PackedRichPID.h"
+#include "Event/PackedTrack.h"
+#include "Event/PackedTwoProngVertex.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedWeightsVector.h"
-#include "Event/PackedCaloCluster.h"
-#include "Event/RecHeader.h"
 #include "Event/ProcStatus.h"
-#include "Event/ODIN.h"
+#include "Event/RawBank.h"
+// Event model
+#include "Event/RawEvent.h"
+#include "Event/RecHeader.h"
 #include "Event/RecSummary.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IMessageSvc.h"
+// from Gaudi
+#include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/VectorMap.h"
 #include "MDF/MDFHeader.h"
-#include "MDF/RawEventHelpers.h"
-
+#include "PackedBank.h"
 // local
 #include "WritePackedDst.h"
-#include "PackedBank.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : WritePackedDst

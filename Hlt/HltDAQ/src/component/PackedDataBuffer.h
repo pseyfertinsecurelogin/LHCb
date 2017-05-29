@@ -1,10 +1,13 @@
 #ifndef PACKEDDATABUFFER_H
 #define PACKEDDATABUFFER_H 1
 
-#include <vector>
+#include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <stdexcept>
-#include <algorithm>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 #include "Compression.h"
 

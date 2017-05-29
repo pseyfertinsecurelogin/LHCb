@@ -1,21 +1,39 @@
 
 #pragma once
 
-// Rich (Future) Kernel
-#include "RichFutureKernel/RichAlgBase.h"
+#include <functional>
+#include <string>
+#include <tuple>
 
-// Gaudi Functional
-#include "GaudiAlg/Transformer.h"
-
+#include "Event/MCParticle.h"
 // Event
 #include "Event/Track.h"
-#include "Event/MCParticle.h"
-
+// Gaudi Functional
+#include "GaudiAlg/Transformer.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/System.h"
 // Linkers
 #include "Linker/LinkedTo.h"
-
+// Rich (Future) Kernel
+#include "RichFutureKernel/RichAlgBase.h"
 // Relations
 #include "RichFutureMCUtils/RichMCRelations.h"
+
+class ISvcLocator;
+namespace Gaudi {
+namespace Functional {
+namespace Traits {
+template <typename Base> struct BaseClass_t;
+}  // namespace Traits
+}  // namespace Functional
+}  // namespace Gaudi
+namespace Rich {
+namespace Future {
+class AlgBase;
+}  // namespace Future
+}  // namespace Rich
 
 namespace Rich
 {

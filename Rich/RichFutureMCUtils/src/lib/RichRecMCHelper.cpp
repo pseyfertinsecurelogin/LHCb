@@ -1,9 +1,20 @@
 
 // STL
 #include <algorithm>
+#include <vector>
 
+#include "Event/MCParticle.h"
+#include "Kernel/RichRadiatorType.h"
+#include "Kernel/RichSmartID.h"
+#include "Relations/Range.h"
+#include "Relations/WEntry.h"
 // local
 #include "RichFutureMCUtils/RichRecMCHelper.h"
+#include "RichUtils/RichPixelCluster.h"
+
+namespace LHCb {
+class Track;
+}  // namespace LHCb
 
 using namespace Rich::Future::Rec::MC;
 

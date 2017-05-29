@@ -1,10 +1,27 @@
-#include "boost/assign/list_of.hpp"
+#include <ctype.h>
+#include <stddef.h>
+#include <algorithm>
+#include <functional>
+#include <istream>
+#include <memory>
+#include <utility>
+
+#include "Event/L0DUBase.h"
+#include "Event/L0DUCounter.h"
+#include "Event/L0DUDecision.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/Property.h"
 // from Gaudi
 #include "GaudiKernel/StateMachine.h"
-#include "GaudiKernel/SystemOfUnits.h"
-
+#include "GaudiKernel/ToStream.h"
 // local
 #include "L0DUConfigProvider.h"
+#include "L0Interfaces/IL0CondDBProvider.h"
+#include "boost/assign/list_of.hpp"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0DUConfigProvider

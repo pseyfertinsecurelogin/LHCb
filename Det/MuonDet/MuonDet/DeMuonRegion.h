@@ -2,10 +2,13 @@
 #ifndef MUONDET_DEMUONREGION_H
 #define MUONDET_DEMUONREGION_H 1
 #include <memory>
-#include "GaudiKernel/MsgStream.h"
 
 // Include files
 #include "DetDesc/DetectorElement.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
 
 /** @class DeMuonRegion DeMuonRegion.h MuonDet/DeMuonRegion.h
  *

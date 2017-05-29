@@ -1,12 +1,15 @@
 #ifndef BCMDET_DEBCMSENS_H
 #define BCMDET_DEBCMSENS_H 1
 
+#include <string>
 // Include files
 #include <vector>
-#include <string>
 
 #include "DetDesc/DetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
 
 
 static const CLID& CLID_DEBcmSens = 14000;

@@ -1,23 +1,21 @@
-#include <algorithm>
-#include <math.h>
-#include <set>
+#include <stddef.h>
+#include <functional>
 
+#include "Event/ODIN.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommon.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 #include "L0MuonCandidatesFromRaw.h"
 #include "L0MuonKernel/L0MuonKernelFromXML.h"
+#include "L0MuonOutputs.h"
 #include "ProcessorKernel/RegisterFactory.h"
 #include "SubstituteEnvVarInPath.h"
 
-/// Gaudi interfaces
-#include "GaudiKernel/IChronoStatSvc.h"
-
-
-#include "Event/RawEvent.h"
-#include "Event/ODIN.h"
-#include "Kernel/MuonTileID.h"
-
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/DataObject.h"
+class ISvcLocator;
 
 DECLARE_ALGORITHM_FACTORY( L0MuonCandidatesFromRaw )
 

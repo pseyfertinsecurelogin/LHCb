@@ -5,6 +5,13 @@
 // Include files
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 #include "DummyDetectorElement.h"
+#include "GaudiKernel/StatusCode.h"
+
+class IOpaqueAddress;
+class ISvcLocator;
+namespace xercesc_3_1 {
+class DOMElement;
+}  // namespace xercesc_3_1
 
 /** @class XmlDummyDECnv XmlDummyDECnv.h
  *

@@ -2,15 +2,26 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/MsgStream.h"
+#include <stddef.h>
+#include <algorithm>
+#include <exception>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+#include <utility>
+
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Map.h"
 #include "GaudiKernel/StatusCode.h"
+#include "LoKi/ErrorReport.h"
+#include "LoKi/Exception.h"
 // ============================================================================
 // local
 // ============================================================================
 #include "LoKi/IReporter.h"
-#include "LoKi/Exception.h"
 #include "LoKi/Welcome.h"
-#include "LoKi/ErrorReport.h"
+
 // ============================================================================
 /** @file
  *

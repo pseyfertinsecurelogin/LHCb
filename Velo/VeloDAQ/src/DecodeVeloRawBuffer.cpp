@@ -1,21 +1,34 @@
-#include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/Incident.h"
+#include <stddef.h>
+#include <algorithm>
+#include <functional>
+#include <memory>
+#include <utility>
 
-#include "Event/RawEvent.h"
-#include "Event/RawBank.h"
-#include "Event/VeloLiteCluster.h"
-#include "Event/VeloCluster.h"
+#include "DecodeRawBankToClusters.h"
+#include "DecodeRawBankToLiteClusters.h"
+#include "DecodeVeloRawBuffer.h"
 #include "Event/ProcStatus.h"
-
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Event/VeloCluster.h"
+#include "Event/VeloLiteCluster.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/KeyedTraits.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "Kernel/SiDataFunctor.h"
+#include "Kernel/VeloChannelID.h"
+#include "SiDAQ/SiRawBufferWord.h"
 #include "VeloDet/DeVelo.h"
 #include "VeloDet/DeVeloSensor.h"
-
-#include "DecodeRawBankToLiteClusters.h"
-#include "DecodeRawBankToClusters.h"
-
-#include "DecodeVeloRawBuffer.h"
-#include "VeloRawBankDecoder.h"
+#include "VeloEvent/VeloDecodeStatus.h"
 #include "VeloRawBankVersions.h"
+
+class ISvcLocator;
 
 
 //-----------------------------------------------------------------------------

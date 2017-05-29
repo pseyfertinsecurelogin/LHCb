@@ -1,30 +1,39 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/SmartIF.h"
-#include "GaudiKernel/IOpaqueAddress.h"
+#include <string.h>
+#include <functional>
+#include <iostream>
+#include <utility>
 
-// Kernel
-#include "Event/StandardPacker.h"
-
-// Event
-#include "Event/RawEvent.h"
-#include "Event/PackedTrack.h"
+#include "Event/ODIN.h"
+#include "Event/PackedCaloCluster.h"
 #include "Event/PackedCaloHypo.h"
-#include "Event/PackedProtoParticle.h"
-#include "Event/PackedRecVertex.h"
-#include "Event/PackedTwoProngVertex.h"
-#include "Event/PackedRichPID.h"
 #include "Event/PackedMuonPID.h"
 #include "Event/PackedParticle.h"
+#include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
+#include "Event/PackedRichPID.h"
+#include "Event/PackedTrack.h"
+#include "Event/PackedTwoProngVertex.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedWeightsVector.h"
-#include "Event/PackedCaloCluster.h"
-#include "Event/RecHeader.h"
 #include "Event/ProcStatus.h"
-#include "Event/ODIN.h"
+#include "Event/RawBank.h"
+// Event
+#include "Event/RawEvent.h"
+#include "Event/RecHeader.h"
 #include "Event/RecSummary.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiHandle.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+// from Gaudi
+#include "GaudiKernel/SmartIF.h"
 // local
 #include "ReadPackedDst.h"
 

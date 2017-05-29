@@ -2,9 +2,16 @@
 #ifndef LHCB_RAWEVENTSIMPLECOMBINER_H
 #define LHCB_RAWEVENTSIMPLECOMBINER_H 1
 
+#include <string>
+#include <vector>
+
+#include "Event/RawBank.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class RawEventSimpleCombiner RawEventSimpleCombiner.h
  *  Combines disparate raw events into one new location

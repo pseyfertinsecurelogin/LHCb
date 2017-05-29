@@ -1,16 +1,27 @@
 // Include files
-#include <list>
-#include <functional>
+#include <stdlib.h>
 #include <algorithm>
+#include <functional>
+#include <iostream>
+#include <iterator>
+#include <list>
 
-// from Gaudi
-#include "GaudiKernel/GaudiException.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
 #include "GaudiKernel/SystemOfUnits.h"
-
 // from PartProp
 #include "Kernel/IParticlePropertySvc.h"
+#include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
-
 // local
 #include "MCDecayFinder.h"
 

@@ -8,12 +8,15 @@
 //
 //------------------------------------------------------------------------------
 // Include files
-#include "GaudiKernel/SmartIF.h"
+#include <iostream>
+#include <string>
+
 #include "GaudiKernel/Bootstrap.h"
 #include "GaudiKernel/IAppMgrUI.h"
+#include "GaudiKernel/IInterface.h"
 #include "GaudiKernel/IProperty.h"
+#include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/StatusCode.h"
-#include <iostream>
 
 //--- Example main program
 int main ( int argc, char** argv ) {

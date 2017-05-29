@@ -1,18 +1,32 @@
 // Include files
 // from Gaudi
+#include <math.h>
+#include <functional>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiAlg/GaudiTuples.h"
+#include "GaudiAlg/Tuple.h"
+#include "GaudiAlg/TupleObj.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/IMagneticFieldSvc.h"
-#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
 #include "GaudiKernel/RndmGenerators.h"
-
-// from LHCbKernel
-#include "Kernel/IBIntegrator.h"
-
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SystemOfUnits.h"
 // Math Definitions
 #include "GaudiKernel/Vector3DTypes.h"
-#include "GaudiKernel/Point3DTypes.h"
-
+// from LHCbKernel
+#include "Kernel/IBIntegrator.h"
 // local
 #include "MagFieldReader.h"
+
+class ISvcLocator;
 
 
 //-----------------------------------------------------------------------------

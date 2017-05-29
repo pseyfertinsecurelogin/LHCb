@@ -3,25 +3,46 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/ToStream.h"
-#include "GaudiKernel/SmartIF.h"
+#include <iterator>
+#include <ostream>
+#include <string>
+#include <vector>
+
 #include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/ToStream.h"
 // ============================================================================
 // PartProp
 // ============================================================================
 #include "Kernel/IParticlePropertySvc.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/BasicFunctors.h"
+#include "LoKi/DecayFinder.h"
+#include "LoKi/Functor.h"
+#include "LoKi/GenAlgs.h"
+#include "LoKi/GenChild.h"
+#include "LoKi/GenChildSelector.h"
+#include "LoKi/GenExtract.h"
+#include "LoKi/GenParticles.h"
+#include "LoKi/GenTypes.h"
+#include "LoKi/IGenDecay.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/ILoKiSvc.h"
-#include "LoKi/BasicFunctors.h"
-#include "LoKi/GenChildSelector.h"
-#include "LoKi/Trees.h"
+#include "LoKi/Interface.h"
 #include "LoKi/Services.h"
-#include "LoKi/GenChild.h"
-#include "LoKi/GenExtract.h"
-#include "LoKi/GenAlgs.h"
-#include "LoKi/GenParticles.h"
+#include "LoKi/Trees.h"
+#include "LoKi/iTree.h"
+
+namespace Decays {
+class iNode;
+}  // namespace Decays
+namespace HepMC {
+class GenParticle;
+}  // namespace HepMC
+
 // ============================================================================
 /** @file
  *

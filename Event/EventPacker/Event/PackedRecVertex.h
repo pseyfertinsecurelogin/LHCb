@@ -1,19 +1,27 @@
 #ifndef EVENT_PACKEDRECVERTEX_H
 #define EVENT_PACKEDRECVERTEX_H 1
 
+#include <stdint.h>
+#include <cmath>
+#include <ostream>
+#include <stdexcept>
 // STL
 #include <string>
+#include <utility>
 #include <vector>
-
-// Gaudi
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/GaudiException.h"
-
-// Kernel
-#include "Event/StandardPacker.h"
 
 // Event
 #include "Event/RecVertex.h"
+// Kernel
+#include "Event/StandardPacker.h"
+#include "GaudiKernel/ClassID.h"
+// Gaudi
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/StatusCode.h"
+
+class GaudiAlgorithm;
 
 namespace LHCb
 {

@@ -1,13 +1,31 @@
 #ifndef L0DUCONFIGPROVIDER_H
 #define L0DUCONFIGPROVIDER_H 1
 
+#include <map>
+#include <string>
+#include <vector>
+
+#include "Event/L0DUBase.h"
+#include "Event/L0DUChannel.h"
+#include "Event/L0DUConfig.h"
+#include "Event/L0DUElementaryCondition.h"
+#include "Event/L0DUElementaryData.h"
+#include "Event/L0DUTemplateConfig.h"
+#include "Event/L0DUTrigger.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/StatusCode.h"
+#include "L0Interfaces/IL0CondDBProvider.h"
 // Interfaces
 #include "L0Interfaces/IL0DUConfigProvider.h"
-#include "L0Interfaces/IL0CondDBProvider.h"
-#include "Event/L0DUBase.h"
+
+class IInterface;
+struct IL0CondDBProvider;
 
 /** @class L0DUConfigProvider L0DUConfigProvider.h
  *

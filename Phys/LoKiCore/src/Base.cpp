@@ -3,17 +3,27 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+#include <stddef.h>
+#include <exception>
+#include <string>
+
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/System.h"
 // ============================================================================
 // LHCbKernel
 // ============================================================================
 #include "Kernel/InstanceCounter.h"
+#include "LoKi/Base.h"
 // ============================================================================
 // LoKiCore 
 // ============================================================================
 #include "LoKi/IReporter.h"
-#include "LoKi/Base.h"
+#include "LoKi/Interface.h"
 #include "LoKi/Report.h"
+
+class GaudiException;
+
 // ============================================================================
 /** @file
  *

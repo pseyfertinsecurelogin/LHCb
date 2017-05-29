@@ -1,6 +1,28 @@
 #include "L0MuonKernel/L0MuonKernelFromXML.h"
-#include "ProcessorKernel/RegisterFactory.h"
+
+#include <stdlib.h>
+#include <xercesc/dom/DOMConfiguration.hpp>
+#include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMImplementation.hpp>
+#include <xercesc/dom/DOMImplementationLS.hpp>
+#include <xercesc/dom/DOMImplementationRegistry.hpp>
+#include <xercesc/dom/DOMLSParser.hpp>
+#include <xercesc/dom/DOMNodeList.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/XMLUni.hpp>
+#include <xercesc/util/XMLUniDefs.hpp>
+#include <xercesc/util/XercesVersion.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <iostream>
+
 #include "L0MuonKernel/UnitFactory.h"
+#include "ProcessorKernel/RegisterFactory.h"
+
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 
 static const std::string XMLL0MuonTrigger =  "L0MuonTrigger";

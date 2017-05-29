@@ -2,11 +2,17 @@
 #ifndef EVENTCOUNTALG_H
 #define EVENTCOUNTALG_H 1
 
+#include <string>
+
 // Include files
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include <string>
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+class Incident;
 
 
 /** @class EventCountAlg EventCountAlg.h

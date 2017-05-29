@@ -1,10 +1,16 @@
 #ifndef MUONPADTEST_H
 #define MUONPADTEST_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 #include "MuonDAQ/IMuonRawBuffer.h"
+
+class IMuonRawBuffer;
+class ISvcLocator;
 
 
 /** @class MuonPadTest MuonPadTest.h

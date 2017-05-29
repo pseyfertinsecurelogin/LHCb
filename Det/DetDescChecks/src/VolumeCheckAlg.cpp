@@ -3,16 +3,11 @@
 // ============================================================================
 // STL & STD 
 // ============================================================================
+#include <math.h>
 #include <functional>
-#include <algorithm>
-// ============================================================================
-/// from Gaudi
-// ============================================================================
-#include "GaudiKernel/IRndmGenSvc.h"
-#include "GaudiKernel/RndmGenerators.h"
-#include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/Vector3DTypes.h"
-#include "GaudiKernel/VectorsAsProperty.h"
+#include <numeric>
+#include <vector>
+
 // ============================================================================
 // DetDesc 
 // ============================================================================
@@ -22,6 +17,16 @@
 #include "DetDesc/Material.h"
 #include "DetDesc/SolidBox.h"
 #include "DetDesc/VolumeIntersectionIntervals.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/RndmGenerators.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "GaudiKernel/VectorsAsProperty.h"
 // ============================================================================
 // local
 // ============================================================================
@@ -30,6 +35,9 @@
 // Boost
 // ============================================================================
 #include "boost/progress.hpp"
+
+class ISvcLocator;
+
 // ============================================================================
 /** @file 
  *  Implementation file for class DetDesc::VolumeCheck

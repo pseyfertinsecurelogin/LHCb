@@ -9,31 +9,56 @@
  */
 //----------------------------------------------------------------------------
 
-// STL
-#include <time.h>
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/Plane3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <Math/GenVector/Transform3D.h>
+#include <Math/GenVector/Translation3D.h>
+#include <boost/container/vector.hpp>
 #include <algorithm>
+#include <array>
+#include <cmath>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
-// Gaudi
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/PhysicalConstants.h"
-#include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-
-// local
-#include "RichDet/DeRichHPDPanel.h"
-#include "RichDet/DeRichSystem.h"
-
-// MathCore files
-#include "GaudiKernel/Transform3DTypes.h"
-
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
+#include "DetDesc/ISolid.h"
 // DetDesc
 #include "DetDesc/SolidBox.h"
-#include "DetDesc/SolidTubs.h"
-#include "DetDesc/SolidSphere.h"
-#include "DetDesc/TabulatedProperty.h"
-
-// GSL
-#include "gsl/gsl_math.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+// Gaudi
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
+// MathCore files
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSide.h"
+#include "Kernel/RichSmartID.h"
+#include "Kernel/RichTraceMode.h"
+#include "RichDet/DeRichHPD.h"
+// local
+#include "RichDet/DeRichHPDPanel.h"
+#include "RichDet/DeRichLocations.h"
+#include "RichDet/DeRichPD.h"
+#include "RichDet/DeRichPDPanel.h"
+#include "RichDet/DeRichSystem.h"
+#include "RichUtils/RichDAQDefinitions.h"
 
 //----------------------------------------------------------------------------
 

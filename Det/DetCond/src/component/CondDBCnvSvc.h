@@ -1,15 +1,26 @@
 #ifndef DETCOND_CONDDBCNVSVC_H
 #define DETCOND_CONDDBCNVSVC_H 1
 
-/// Include files
-#include "GaudiKernel/ConversionSvc.h"
+#include <CoolKernel/ChannelId.h>
+#include <string>
+#include <vector>
 
 #include "DetCond/ICondDBReader.h"
+#include "GaudiKernel/ClassID.h"
+/// Include files
+#include "GaudiKernel/ConversionSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/CondDBNameTagPair.h"
 
-/// Forward and external declarations
-template <class TYPE> class SvcFactory;
+class IConverter;
 class IDetDataSvc;
 class IOpaqueAddress;
+class ISvcLocator;
+/// Forward and external declarations
+template <class TYPE> class SvcFactory;
 
 ///---------------------------------------------------------------------------
 /** @class CondDBCnvSvc CondDBCnvSvc.h

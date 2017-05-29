@@ -3,8 +3,12 @@
 // ============================================================================
 // LoKi
 // ============================================================================
+#include <stddef.h>
+#include <type_traits>
+
 #include "LoKi/KinTypes.h"
 #include "LoKi/Tensors.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for classes from namespace LoKi::Tensors

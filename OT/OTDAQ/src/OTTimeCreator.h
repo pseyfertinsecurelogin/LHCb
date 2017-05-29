@@ -1,16 +1,20 @@
 #ifndef OTDAQ_OTTIMECREATOR_H
 #define OTDAQ_OTTIMECREATOR_H 1
 
+#include <string>
+
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/StatusCode.h"
 // Kernel
 #include "GaudiKernel/ToolHandle.h"
 #include "OTDAQ/IOTRawBankDecoder.h"
 
+class DeOTDetector;
+class ISvcLocator;
 // forward declarations
 struct IOTRawBankDecoder;
-class DeOTDetector;
 
 /** @class OTTimeCreator OTTimeCreator.h
  *

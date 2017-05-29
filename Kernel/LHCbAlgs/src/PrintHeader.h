@@ -8,6 +8,9 @@
 
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 
 /** @class PrintHeader PrintHeader.h cmt/PrintHeader.h

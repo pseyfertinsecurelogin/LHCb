@@ -1,26 +1,31 @@
 // Include files
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/IConversionSvc.h"
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/LinkManager.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/RegistryEntry.h"
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <functional>
+#include <map>
+#include <string>
+#include <utility>
 
-#include "DetDesc/Isotope.h"
+#include "DetDesc/CLIDElement.h"
 #include "DetDesc/Element.h"
+#include "DetDesc/Material.h"
 #include "DetDesc/Mixture.h"
 #include "DetDesc/TabulatedProperty.h"
 #include "DetDescCnv/XmlCnvException.h"
-#include "XmlTools/IXmlSvc.h"
-
-#include <cstdlib>
-#include <string>
-#include <vector>
-#include <map>
-
+#include "DetDescCnv/XmlCnvException.icpp"
+#include "GaudiKernel/Converter.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
 #include "XmlMixtureCnv.h"
+#include "XmlTools/IXmlSvc.h"
 
 
 // -----------------------------------------------------------------------

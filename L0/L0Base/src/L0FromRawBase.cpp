@@ -1,10 +1,19 @@
 // Include files 
 
+#include <functional>
+#include <string>
+#include <vector>
+
+#include "DAQKernel/DecoderAlgBase.h"
 // from Gaudi
 #include "Event/RawEvent.h"
-
+#include "GaudiAlg/GaudiCommon.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
 // local
 #include "L0Base/L0FromRawBase.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0FromRawBase

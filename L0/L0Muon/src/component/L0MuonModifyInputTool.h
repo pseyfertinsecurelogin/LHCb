@@ -2,11 +2,21 @@
 #ifndef COMPONENT_L0MUONMODIFYINPUTTOOL_H
 #define COMPONENT_L0MUONMODIFYINPUTTOOL_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "L0Interfaces/IL0MuonModifyInputTool.h"            // Interface
 #include "GaudiKernel/RndmGenerators.h"
+#include "GaudiKernel/StatusCode.h"
+#include "L0Interfaces/IL0MuonModifyInputTool.h"            // Interface
+
+class IInterface;
+class IRndmGenSvc;
+namespace LHCb {
+class MuonTileID;
+}  // namespace LHCb
 
 /** @class L0MuonModifyInputTool L0MuonModifyInputTool.h component/L0MuonModifyInputTool.h
  *

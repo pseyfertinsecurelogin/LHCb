@@ -1,11 +1,18 @@
 // Include files
 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 // From Gaudi
 #include "GaudiKernel/IDetDataSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Time.h"
-
+#include "GaudiKernel/Time.icpp"
 // local
 #include "PrintEventTime.h"
+
+class ISvcLocator;
 
 // ----------------------------------------------------------------------------
 // Implementation file for class: PrintEventTime

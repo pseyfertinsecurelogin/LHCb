@@ -1,6 +1,20 @@
 #include "Event/PrimaryVertex.h"
-#include "Event/Track.h"
+
+#include <Math/BinaryOperators.h>
+#include <Math/Expression.h>
+#include <Math/Functions.h>
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
+#include <ext/alloc_traits.h>
+#include <cmath>
+#include <memory>
+
 #include "Event/RecVertex.h"
+#include "Event/Track.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "Kernel/LHCbID.h"
 #include "LHCbMath/BloomFilter.h"
 
 namespace LHCb

@@ -1,5 +1,7 @@
 #include "Event/RawEvent.h"
+
 #include <cstring> // for memcpy with gcc 4.3
+#include <utility>
 
 namespace {
   inline LHCb::RawBank* allocateBank(size_t len)  {

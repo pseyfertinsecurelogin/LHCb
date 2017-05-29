@@ -1,10 +1,17 @@
 // Include files 
 
+#include <functional>
+
 // from EventSys
 #include "Event/ODIN.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "PrintHeader.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PrintHeader

@@ -1,15 +1,21 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/Incident.h"
-#include "GaudiKernel/IIncidentSvc.h"
+#include <functional>
 
 // detector description
 #include "DetDesc/RunChangeIncident.h"
-
 // data model
 #include "Event/ODIN.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StateMachine.h"
+#include "GaudiKernel/Time.icpp"
 // local
 #include "TestTimeDecoderOdin.h"
 

@@ -1,11 +1,29 @@
 // Include files 
 
+#include <ext/alloc_traits.h>
+#include <math.h>
+#include <functional>
+#include <memory>
+#include <vector>
+
+// local
+#include "CompareMCVertex.h"
+#include "Event/MCVertex.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartRefVector.h"
 // from Boost
 #include "boost/numeric/conversion/bounds.hpp"
 
-#include "Event/MCVertex.h"
-// local
-#include "CompareMCVertex.h"
+class ISvcLocator;
+namespace LHCb {
+class MCParticle;
+}  // namespace LHCb
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CompareMCVertex

@@ -14,17 +14,19 @@
 //
 #include "TemplatedGenVector/Rotation3D.h"
 
-#include <cmath>
 #include <algorithm>
-
-#include "TemplatedGenVector/Cartesian3D.h"
-#include "TemplatedGenVector/DisplacementVector3D.h"
+#include <cmath>
 
 namespace LHCbROOT {
 
 namespace Math {
 
 // ========== Constructors and Assignment =====================
+
+class AxisAngle;
+class EulerAngles;
+class Quaternion;
+class RotationZYX;
 
 Rotation3D::Rotation3D()
 {

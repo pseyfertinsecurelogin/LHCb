@@ -5,18 +5,31 @@
 //  Author    : Markus Frank
 //
 //  ====================================================================
-#include "GaudiKernel/SmartDataPtr.h"
+#include <cstring> // For memcpy, memmove with gcc 4.3
+#include <exception>
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/MsgStream.h"
-#include "MDF/RawEventPrintout.h"
-#include "MDF/RawEventHelpers.h"
-#include "MDF/RawDataAddress.h"
-#include "MDF/OnlineRunInfo.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/StreamBuffer.h"
 #include "MDF/MDFHeader.h"
 #include "MDF/MDFIO.h"
-#include "Event/RawEvent.h"
-
-#include <cstring> // For memcpy, memmove with gcc 4.3
+#include "MDF/OnlineRunInfo.h"
+#include "MDF/RawDataAddress.h"
+#include "MDF/RawEventHelpers.h"
 
 using namespace LHCb;
 

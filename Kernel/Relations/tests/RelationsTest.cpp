@@ -5,12 +5,19 @@
 // STD&STL 
 // ============================================================================
 #include <iostream>
-// ============================================================================
-// Relations
-// ============================================================================
-#include "Relations/RelationsDict.h"
+#include <string>
+
+#include "Relations/IRelation.h"
+#include "Relations/IRelationWeighted.h"
+#include "Relations/Relation.h"
 #include "Relations/Relation1D.h"
+#include "Relations/Relation2.h"
+#include "Relations/Relation2D.h"
+#include "Relations/Relation2Weighted.h"
+#include "Relations/RelationWeighted.h"
 #include "Relations/RelationWeighted1D.h"
+#include "Relations/RelationWeighted2D.h"
+
 // ============================================================================
 /** @file 
  *

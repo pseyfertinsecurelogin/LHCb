@@ -1,21 +1,17 @@
 // Include files
-#include <iostream>
+#include <CoolKernel/FolderVersioning.h>
+#include <CoolKernel/IRecord.h>
+#include <CoolKernel/ValidityKey.h>
+#include <CoolKernel/pointers.h>
 #include <fstream>
+#include <functional>
+#include <map>
+#include <memory>
+#include <set>
 #include <string>
+#include <typeinfo>
+#include <utility>
 #include <vector>
-#include <sstream>
-
-// from Gaudi
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/Time.h"
-
-#include "GaudiKernel/SystemOfUnits.h"
-
-#include "DetDesc/Condition.h"
-#include "DetDesc/AlignmentCondition.h"
-#include "DetDesc/TabulatedProperty.h"
-#include "DetCond/ICondDBEditor.h"
-#include "DetCond/ICondDBAccessSvc.h"
 
 // from COOL
 #include "CoolKernel/Exception.h"
@@ -23,11 +19,25 @@
 #include "CoolKernel/IFolder.h"
 #include "CoolKernel/IObject.h"
 #include "CoolKernel/IObjectIterator.h"
-#include "CoolKernel/types.h"
-#include "CoolKernel/Record.h"
-
+#include "DetCond/ICondDBAccessSvc.h"
+#include "DetCond/ICondDBEditor.h"
+#include "DetDesc/AlignmentCondition.h"
+#include "DetDesc/Condition.h"
+#include "DetDesc/TabulatedProperty.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiException.h"
+// from Gaudi
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
 // local
 #include "PopulateDB.h"
+
+class ISvcLocator;
 
 using namespace Gaudi::Units;
 

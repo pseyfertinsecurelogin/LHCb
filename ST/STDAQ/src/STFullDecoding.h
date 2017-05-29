@@ -1,9 +1,14 @@
 #ifndef STFULLDECODING_H
 #define STFULLDECODING_H 1
 
+#include <string>
+
+#include "Event/RawBank.h"
+#include "GaudiKernel/StatusCode.h"
 // Include files
 #include "Kernel/STAlgBase.h"
-#include "Event/RawBank.h"
+
+class ISvcLocator;
 
 /** @class STFullDecoding STFullDecoding.h
  *

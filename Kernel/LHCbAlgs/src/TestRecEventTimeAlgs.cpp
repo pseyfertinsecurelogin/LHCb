@@ -1,12 +1,26 @@
-#include "GaudiKernel/Service.h"
-#include "GaudiKernel/IEventTimeDecoder.h"
-#include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/IIncidentListener.h"
-#include "GaudiKernel/IToolSvc.h"
-#include "GaudiKernel/Incident.h"
-#include "GaudiKernel/IDataProviderSvc.h"
+#include <functional>
+#include <string>
+#include <vector>
 
 #include "Event/RecHeader.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IEventTimeDecoder.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+#include "GaudiKernel/extends.h"
+
+class IIncidentListener;
 
 namespace LHCbAlgsTest
 {

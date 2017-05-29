@@ -1,7 +1,14 @@
 // ============================================================================
 // Include files
+#include <algorithm>
+
 #include "CaloDet/DeCalorimeter.h"
 #include "CaloUtils/CellMatrix2x2.h"
+#include "GaudiKernel/Point3DTypes.h"
+
+namespace LHCb {
+class CaloCellID;
+}  // namespace LHCb
 
 // ============================================================================
 /** @file CellMatrix2x2.cpp

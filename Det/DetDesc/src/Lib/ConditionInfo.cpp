@@ -2,11 +2,14 @@
 
 #include "DetDesc/ConditionInfo.h"
 
+#include <memory>
+
 #include "DetDesc/Condition.h"
 #include "DetDesc/DetDesc.h"
-
 #include "GaudiKernel/SmartDataPtr.h" 
-#include "GaudiKernel/IDataProviderSvc.h" 
+#include "GaudiKernel/SmartDataStorePtr.h"
+
+struct IDetectorElement;
 
 //---------------------------------------------------------------------------
 

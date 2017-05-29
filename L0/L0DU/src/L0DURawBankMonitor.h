@@ -1,19 +1,34 @@
 #ifndef L0DURAWBANKMONITOR_H
 #define L0DURAWBANKMONITOR_H 1
 
+#include <TAxis.h>
+#include <TH1D.h>
+#include <TH2D.h>
+#include <string>
+#include <vector>
+
+#include "CaloDAQ/ICaloDataProvider.h"
+// Base class
+#include "CaloUtils/Calo2Dview.h"
+#include "Event/RawBankReadoutStatus.h"
+#include "GaudiAlg/HistoID.h"
+#include "GaudiKernel/IEventTimeDecoder.h"
+#include "GaudiKernel/StatusCode.h"
+#include "L0Interfaces/IL0CondDBProvider.h"
+#include "L0Interfaces/IL0DUEmulatorTool.h"
 // Include files
 // Interfaces
 #include "L0Interfaces/IL0DUFromRawTool.h"
-#include "L0Interfaces/IL0CondDBProvider.h"
-#include "L0Interfaces/IL0DUEmulatorTool.h"
-#include "GaudiKernel/IEventTimeDecoder.h"
-#include "Event/RawBankReadoutStatus.h"
-#include "CaloDAQ/ICaloDataProvider.h"
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TAxis.h>
-// Base class
-#include "CaloUtils/Calo2Dview.h"
+
+class IEventTimeDecoder;
+class ISvcLocator;
+namespace LHCb {
+class L0DUConfig;
+}  // namespace LHCb
+struct ICaloDataProvider;
+struct IL0CondDBProvider;
+struct IL0DUEmulatorTool;
+struct IL0DUFromRawTool;
 
 /** @class L0DURawBankMonitor L0DURawBankMonitor.h
  *

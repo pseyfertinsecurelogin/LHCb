@@ -1,15 +1,26 @@
 // $Id: MEPDump.cpp,v 1.1 2009-02-06 09:37:57 frankb Exp $
 // Include files
 
+#include <stddef.h>
+#include <exception>
+#include <functional>
+#include <map>
+#include <string>
+#include <utility>
+
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
 // from Gaudi
 #include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-
-#include "Event/RawBank.h"
-#include "Event/RawEvent.h"
-#include "MDF/MEPEvent.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 #include "MDF/RawEventHelpers.h"
+#include "MDF/StreamDescriptor.h"
+
+class ISvcLocator;
 
 namespace LHCb  {
 
@@ -19,6 +30,8 @@ namespace LHCb  {
     *  @author Markus Frank
     *  @date   2005-10-13
     */
+class MEPEvent;
+
   class MEPDump : public Algorithm {
   public:
     int m_evt;

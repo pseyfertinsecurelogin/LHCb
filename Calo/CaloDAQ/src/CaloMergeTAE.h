@@ -1,12 +1,21 @@
 #ifndef CALOMERGETAE_H
 #define CALOMERGETAE_H 1
 
+#include <ctype.h>
+#include <algorithm>
+#include <string>
+#include <vector>
+
+#include "CaloDet/DeCalorimeter.h"
+#include "Event/CaloAdc.h"
+#include "Event/CaloDigit.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "CaloDet/DeCalorimeter.h"
-#include "Event/CaloDigit.h"
-#include "Event/CaloAdc.h"
+#include "GaudiKernel/StatusCode.h"
+
+class DeCalorimeter;
+class ISvcLocator;
 
 
 /** @class CaloMergeTAE CaloMergeTAE.h

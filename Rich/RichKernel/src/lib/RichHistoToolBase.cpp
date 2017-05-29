@@ -15,9 +15,8 @@
 // local
 #include "RichKernel/RichHistoToolBase.h"
 
-// ============================================================================
-// Force creation of templated class
-#include "RichHistoBase.icpp"
+#include "RichKernel/RichCommonBase.h"
+
 template class Rich::CommonBase < GaudiHistoTool > ;
 template class Rich::HistoBase  < GaudiHistoTool > ;
 // ============================================================================

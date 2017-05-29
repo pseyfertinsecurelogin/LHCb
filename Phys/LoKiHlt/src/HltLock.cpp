@@ -3,9 +3,13 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Report.h"
-#include "LoKi/HltLock.h"
+#include "GaudiKernel/StatusCode.h"
 #include "LoKi/HltEngineActor.h"
+#include "LoKi/HltLock.h"
+#include "LoKi/IHltAntiFactory.h"
+#include "LoKi/Interface.h"
+#include "LoKi/Report.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for class LoKi::Hybrid::HltLock

@@ -1,6 +1,12 @@
 // $Id: STFun.cpp,v 1.1 2008-01-08 10:22:58 mneedham Exp $
 #include "Kernel/STFun.h"
 
+#include <vector>
+
+#include "Event/STDigit.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "Kernel/STChannelID.h"
+
 
 std::pair<double, unsigned int > STFun::position(const SmartRefVector<LHCb::STDigit>& digits, double trim)
 {

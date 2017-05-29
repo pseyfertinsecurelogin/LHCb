@@ -1,12 +1,34 @@
 // Include files
 
-#include "GaudiKernel/SmartDataPtr.h"
+#include <ext/alloc_traits.h>
+#include <stdio.h>
+#include <algorithm>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/MuonLayout.h"
+#include "Kernel/MuonTileID.h"
+#include "MuonDet/MuonBasicGeometry.h"
 // local
 #include "MuonDet/MuonDAQHelper.h"
-#include "SortTileInTU.h"
+#include "MuonDet/MuonL1Board.h"
+#include "MuonDet/MuonODEBoard.h"
+#include "MuonDet/MuonStationCabling.h"
+#include "MuonDet/MuonTSMap.h"
 #include "SortPairTileInTU.h"
-#include "sstream"
+#include "SortTileInTU.h"
+
+class IDataProviderSvc;
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : MuonDAQHelper
 //

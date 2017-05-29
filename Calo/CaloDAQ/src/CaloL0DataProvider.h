@@ -2,11 +2,25 @@
 #define CALOL0DATAPROVIDER_H 1
 
 
+#include <string>
+#include <vector>
+
+#include "CaloDAQ/ICaloL0DataProvider.h"            // Interface
+#include "CaloKernel/CaloVector.h"
+#include "CaloReadoutTool.h"
+#include "Event/L0CaloAdc.h"
+#include "Event/RawBankReadoutStatus.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "CaloDAQ/ICaloL0DataProvider.h"            // Interface
-#include "CaloReadoutTool.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/CaloCellID.h"
+
+class IInterface;
+namespace LHCb {
+class RawBank;
+}  // namespace LHCb
 
 /** @class CaloL0DataProvider CaloL0DataProvider.h
  *  Fast access to calorimeter L0 data from raw

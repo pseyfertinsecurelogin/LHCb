@@ -1,12 +1,24 @@
 // local
 #include "L0CaloPRSResetMonitor.h"
 
+#include <stddef.h>
+#include <functional>
+#include <utility>
+#include <vector>
+
 // Calo
 #include "CaloDet/DeCalorimeter.h"
-
 // Event
 #include "Event/L0CaloCandidate.h"
 #include "Event/L0DUBase.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectVector.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
 
 // Declare Algorithm
 DECLARE_ALGORITHM_FACTORY( L0CaloPRSResetMonitor )

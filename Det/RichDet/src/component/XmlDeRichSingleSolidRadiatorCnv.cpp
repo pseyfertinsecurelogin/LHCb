@@ -1,9 +1,10 @@
 #ifndef XMLDERICHSINGLESOLIDRADIATORCNV_CPP
 #define XMLDERICHSINGLESOLIDRADIATORCNV_CPP 1
 
+#include "DetDescCnv/XmlUserDetElemCnv.h"
+#include "GaudiKernel/Converter.h"
 // Include files
 #include "RichDet/DeRichSingleSolidRadiator.h"
-#include "DetDescCnv/XmlUserDetElemCnv.h"
 
 typedef  XmlUserDetElemCnv<DeRichSingleSolidRadiator>  
 XmlDeRichSingleSolidRadiatorCnv;

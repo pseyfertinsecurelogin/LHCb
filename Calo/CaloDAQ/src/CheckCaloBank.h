@@ -1,10 +1,18 @@
 #ifndef   CHECKCALOBANK_H
 #define   CHECKCALOBANK_H 1
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <string>
+#include <vector>
+
+#include "Event/RawBank.h"
 // from Event
 #include "Event/RawEvent.h"
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+template <class T> class AlgFactory;
 
 /** @class CheckCaloBank CheckCaloBank.h
  *

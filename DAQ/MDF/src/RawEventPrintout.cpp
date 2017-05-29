@@ -7,11 +7,11 @@
 //
 //  ====================================================================
 #include "MDF/RawEventPrintout.h"
-#include "Event/RawBank.h"
-#include "Event/RawEvent.h"
 
-#include <sstream>
 #include <iomanip>
+#include <sstream>
+
+#include "Event/RawBank.h"
 
 using namespace LHCb;
 

@@ -1,23 +1,35 @@
 // Include files 
 
-#include "boost/format.hpp"
+#include <boost/format.hpp>
+#include <boost/smart_ptr/shared_ptr.hpp>
+#include <stddef.h>
+#include <functional>
+#include <iostream>
+#include <vector>
 
-// from Event
-#include "Event/RecHeader.h"
-#include "Event/RawEvent.h"
+#include "Event/L0MuonCandidate.h"
+#include "Event/L0MuonCtrlError.h"
 #include "Event/L0MuonData.h"
 #include "Event/L0MuonInfo.h"
 #include "Event/L0MuonProcError.h"
-#include "Event/L0MuonCtrlError.h"
-
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/MuonTileID.h"
 // local
 #include "L0MuonFromRawTrans.h"
-
-#include "L0MuonKernel/ProcUtilities.h"
+#include "L0MuonKernel/CtrlRawCnv.h"
 #include "L0MuonKernel/L0MuonKernelFromXML.h"
+#include "L0MuonKernel/ProcRawCnv.h"
+#include "L0MuonKernel/ProcUtilities.h"
 #include "ProcessorKernel/RegisterFactory.h"
-
 #include "SubstituteEnvVarInPath.h"
+
+class ISvcLocator;
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0MuonFromRawTrans
 //

@@ -1,9 +1,12 @@
 // Include files
-#include <vector>
-#include "GaudiKernel/SystemOfUnits.h"
+#include <string>
 
 #include "Event/L0CaloCandidate.h"
 #include "Event/L0DUBase.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/CaloCellID.h"
 
 //-----------------------------------------------------------------------------
 // Auxilliary Implementation file for L0CaloCandidate Event classes

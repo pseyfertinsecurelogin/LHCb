@@ -5,8 +5,20 @@
 // DetDesc
 // ============================================================================
 #include "DetDesc/LAssembly.h"
+
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <iosfwd>
+#include <vector>
+
+#include "DetDesc/CLIDLAssembly.h"
+#include "DetDesc/IPVolume.h"
 #include "DetDesc/SolidBase.h"
-#include "DetDesc/VolumeIntersectionIntervals.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Transform3DTypes.h"
+
 // ============================================================================
 /** @file LAssembly.cpp
  *

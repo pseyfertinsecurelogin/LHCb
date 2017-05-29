@@ -1,33 +1,61 @@
 #ifndef COMPONENT_CONDDBACCESSSVC_H
 #define COMPONENT_CONDDBACCESSSVC_H 1
 
-// Include files
-#include "GaudiKernel/Service.h"
-#include "GaudiKernel/GaudiException.h"
-#include "Kernel/ICondDBInfo.h"
-#include "DetCond/ICondDBAccessSvc.h"
-#include "DetCond/ICondDBReader.h"
-#include "DetCond/ICondDBEditor.h"
-#include <set>
-
+#include <CoolKernel/ChannelId.h>
+#include <CoolKernel/ValidityKey.h>
+#include <CoolKernel/pointers.h>
+#include <boost/date_time/gregorian/greg_date.hpp>
+#include <boost/date_time/gregorian_calendar.ipp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
+#include <boost/date_time/posix_time/posix_time_config.hpp>
+#include <boost/date_time/posix_time/posix_time_io.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/time.hpp>
 #include <boost/thread/condition.hpp>
+#include <boost/thread/exceptions.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/pthread/mutex.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/thread/thread_only.hpp>
 #include <boost/thread/thread_time.hpp>
+#include <stddef.h>
+#include <map>
+#include <memory>
+#include <set>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #include "CoolKernel/IDatabase.h"
-
-// Forward declarations
-template <class TYPE> class SvcFactory;
+#include "DetCond/ICondDBAccessSvc.h"
+#include "DetCond/ICondDBEditor.h"
+#include "DetCond/ICondDBReader.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+// Include files
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/CondDBNameTagPair.h"
+#include "Kernel/ICondDBInfo.h"
 
 class CondDBCache;
-class IRndmGenSvc;
 class ICOOLConfSvc;
+class ICondDBAccessSvc;
+class IRndmGenSvc;
+class ISvcLocator;
+// Forward declarations
+template <class TYPE> class SvcFactory;
 
 namespace cool {
   class Application;
   class RecordSpecification;
+class IRecord;
+class IRecordSpecification;
 }
 
 /** @class CondDBAccessSvc CondDBAccessSvc.h

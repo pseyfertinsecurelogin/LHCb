@@ -21,19 +21,19 @@
 
 #include "TemplatedGenVector/3DConversions.h"
 
-#include "Math/Math.h"
+#include <cmath>
+#include <limits>
 
-#include "TemplatedGenVector/Rotation3D.h"
+#include "Cartesian3D.h"
+#include "DisplacementVector3D.h"
 #include "TemplatedGenVector/AxisAngle.h"
 #include "TemplatedGenVector/EulerAngles.h"
 #include "TemplatedGenVector/Quaternion.h"
-#include "TemplatedGenVector/RotationZYX.h"
+#include "TemplatedGenVector/Rotation3D.h"
 #include "TemplatedGenVector/RotationX.h"
 #include "TemplatedGenVector/RotationY.h"
 #include "TemplatedGenVector/RotationZ.h"
-
-#include <cmath>
-#include <limits>
+#include "TemplatedGenVector/RotationZYX.h"
 
 namespace LHCbROOT {
 namespace Math {

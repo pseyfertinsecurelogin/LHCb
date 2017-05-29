@@ -1,5 +1,8 @@
 #include "DetDesc/Param.h"
 
+#include <iterator>
+#include <utility>
+
 namespace {
   namespace detail {
 
@@ -29,6 +32,7 @@ namespace {
   }
 
   template <typename T> struct my_traits;
+
   template<> struct my_traits<int> { static constexpr const char *tag = "param"; static constexpr const char* type="int" ;};
   template<> struct my_traits<double> { static constexpr const char* tag = "param"; static constexpr const char* type = "double";};
   template<> struct my_traits<std::string> { static constexpr const char* tag = "param"; static constexpr const char* type ="other";};
@@ -36,6 +40,7 @@ namespace {
   template<> struct my_traits<std::vector<double>> { static constexpr const char* tag= "paramVector"; static constexpr const char* type="double";};
   template<> struct my_traits<std::vector<std::string>> { static constexpr const char* tag = "paramVector"; static constexpr const char* type="std::string";};
   template <typename T> struct my_map_traits;
+
   template <> struct my_map_traits<double>      { static constexpr const char* str="double";};
   template <> struct my_map_traits<int>         { static constexpr const char* str="int";};
   template <> struct my_map_traits<std::string> { static constexpr const char* str="string";};

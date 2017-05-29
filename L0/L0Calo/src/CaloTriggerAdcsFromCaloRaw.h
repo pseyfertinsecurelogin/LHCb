@@ -1,12 +1,23 @@
 #ifndef CALOTRIGGERADCSFROMCALORAW_H
 #define CALOTRIGGERADCSFROMCALORAW_H 1
 
+#include <string>
+#include <vector>
+
+#include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"            // Interface
+#include "Event/L0CaloAdc.h"
+#include "Event/RawBank.h"
+#include "Event/RawBankReadoutStatus.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"            // Interface
+#include "GaudiKernel/StatusCode.h"
 
 class DeCalorimeter ;
+class IInterface;
+namespace LHCb {
+class CaloCellID;
+}  // namespace LHCb
 struct ICaloDataProvider ;
 
 /** @class CaloTriggerAdcsFromCaloRaw CaloTriggerAdcsFromCaloRaw.h

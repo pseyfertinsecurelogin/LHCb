@@ -1,10 +1,24 @@
 // Include files 
 
+#include <algorithm>
+#include <functional>
+#include <iterator>
+
 // From Calo
 #include "CaloDAQ/ICaloDataProvider.h"
-
+#include "CaloDet/CellParam.h"
+#include "CaloDet/DeCalorimeter.h"
+#include "CaloKernel/CaloVector.h"
 // local
 #include "CaloTriggerAdcsFromCaloRaw.h"
+#include "Event/CaloAdc.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/CaloCellID.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloTriggerAdcsFromCaloRaw

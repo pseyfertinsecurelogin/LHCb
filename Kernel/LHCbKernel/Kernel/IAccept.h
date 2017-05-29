@@ -1,13 +1,18 @@
 // ============================================================================
 #ifndef KERNEL_IACCEPT_H
 #define KERNEL_IACCEPT_H 1
+#include "GaudiKernel/IAlgTool.h"
+#include "GaudiKernel/IInterface.h"
 // ============================================================================
 // Include files
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
-#include "GaudiKernel/IAlgTool.h"
+#include "GaudiKernel/extend_interfaces.h"
+
+class IAlgTool;
+
 // ============================================================================
 /** @class IAccept Kernel/IAccept.h
  *

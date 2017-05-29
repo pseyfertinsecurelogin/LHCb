@@ -6,10 +6,14 @@
  * some very dumb and stupid unit test follows - compile it NDEBUG undefined!
  */
 
-#include "LHCbMath/BloomFilter.h"
-
-#include <iostream>
+#include <stdint.h>
+#include <sys/types.h>
+#include <cmath>
 #include <cstdlib>
+#include <iostream>
+#include <string>
+
+#include "LHCbMath/BloomFilter.h"
 
 // forward decl.
 static void _domyassert(const char* cond, const char* fnname,

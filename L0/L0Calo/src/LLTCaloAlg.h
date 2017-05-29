@@ -1,15 +1,19 @@
 #ifndef   LLTCALO_L0CALOALG_H
 #define   LLTCALO_L0CALOALG_H  1
 
+#include <string>
+#include <vector>
+
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-
+#include "GaudiKernel/StatusCode.h"
+#include "L0Candidate.h"
 // Local classes
 #include "LLTTriggerCard.h"
-#include "L0Candidate.h"
 
 // forward declarations
 class DeCalorimeter ;
+class ISvcLocator;
 struct ICaloTriggerAdcsFromRaw ;
 
 /** @class LLTCaloAlg LLTCaloAlg.h

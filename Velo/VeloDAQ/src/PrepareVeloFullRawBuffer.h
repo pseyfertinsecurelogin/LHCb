@@ -1,23 +1,26 @@
+#include <string>
+
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 #ifndef PREPAREVELOFULLRAWBUFFER_H
 #define PREPAREVELOFULLRAWBUFFER_H 1
 
+#include <map>
+#include <utility>
+// STL
+#include <vector>
+
+#include "Event/RawBank.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
-
-// STL
-#include <vector>
-#include <map>
-#include <utility>
-
 // data model
 #include "Kernel/VeloChannelID.h"
-#include "Tell1Kernel/VeloDecodeCore.h"
 #include "Tell1Kernel/VeloDecodeConf.h"
+#include "Tell1Kernel/VeloDecodeCore.h"
 #include "Tell1Kernel/VeloTell1Core.h"
 #include "VeloEvent/VeloFullBank.h"
-
-#include "Event/RawBank.h"
 
 /** @class PrepareVeloFullRawBuffer PrepareVeloFullRawBuffer.h
  *

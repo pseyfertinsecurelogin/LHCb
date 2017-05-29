@@ -1,15 +1,15 @@
 #ifndef STDECODINGBASEALG_H 
 #define STDECODINGBASEALG_H 1
 
-#include "Kernel/STAlgBase.h"
-#include "Event/RawBank.h"
-#include "Kernel/STDAQDefinitions.h"
-
-#include "Event/STSummary.h"
-#include "Event/STCluster.h"
-
-#include <vector>
 #include <string>
+#include <vector>
+
+#include "Event/RawBank.h"
+#include "Event/STCluster.h"
+#include "Event/STSummary.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/STAlgBase.h"
+#include "Kernel/STDAQDefinitions.h"
 
 /** @class STDecodingBaseAlg STDecodingBaseAlg.h
  *  
@@ -19,14 +19,12 @@
  *  @date   2004-01-07
  */
 
-#include "Event/RawEvent.h"
-
-#include "Kernel/STClusterWord.h"
-#include "Kernel/STDecoder.h"
-#include "Event/STTELL1BoardErrorBank.h"
-
 #include <string>
 
+#include "Event/RawEvent.h"
+#include "Event/STTELL1BoardErrorBank.h"
+#include "Kernel/STClusterWord.h"
+#include "Kernel/STDecoder.h"
 
 class STTell1Board;
 
@@ -143,12 +141,17 @@ inline LHCb::STTELL1BoardErrorBank* STDecodingBaseAlg::findErrorBank(const unsig
   return(errorBanks->object(source));
 }
 
-#include "Kernel/STClusterWord.h"
-#include "Kernel/PPRepresentation.h"
-#include "Kernel/StripRepresentation.h"
-#include "Kernel/STDAQDefinitions.h"
-#include "Kernel/LHCbConstants.h"
 #include "Event/STTELL1Error.h"
+#include "Kernel/LHCbConstants.h"
+#include "Kernel/PPRepresentation.h"
+#include "Kernel/STClusterWord.h"
+#include "Kernel/STDAQDefinitions.h"
+#include "Kernel/StripRepresentation.h"
+
+class ISvcLocator;
+namespace LHCb {
+class RawEvent;
+}  // namespace LHCb
 
 inline bool STDecodingBaseAlg::canBeRecovered(const LHCb::STTELL1BoardErrorBank* bank, 
                                               const STClusterWord& word,

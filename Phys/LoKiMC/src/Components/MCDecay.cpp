@@ -3,15 +3,30 @@
 // ============================================================================
 // Event
 // ============================================================================
-#include "Event/MCParticle.h"
+#include <iosfwd>
+#include <string>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/iNode.h"
+#include "LoKi/DecayBase.h"
+#include "LoKi/IDecayNode.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/IMCDecay.h"
-#include "LoKi/DecayBase.h"
-#include "LoKi/Trees.h"
-#include "LoKi/TreeHelpers.h"
 #include "LoKi/MCTreeFactory.h"
+#include "LoKi/TreeHelpers.h"
+#include "LoKi/Trees.h"
+#include "LoKi/iTree.h"
+
+class IInterface;
+namespace LHCb {
+class MCParticle;
+}  // namespace LHCb
+
 // ============================================================================
 namespace LoKi
 {

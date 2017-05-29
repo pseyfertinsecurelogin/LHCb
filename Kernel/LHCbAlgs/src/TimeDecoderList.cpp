@@ -1,5 +1,16 @@
 #include "TimeDecoderList.h"
 
+#include <functional>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IEventTimeDecoder.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Time.icpp"
+
+class IInterface;
+
 // Constructor
 TimeDecoderList::TimeDecoderList( const std::string & type,
                                   const std::string & name, 

@@ -2,6 +2,8 @@
 
 #include "L0MuonKernel/BankUtilities.h"
 
+#include "L0MuonKernel/CandRegisterHandler.h"
+
 void L0Muon::writeCandInRegister(CandRegisterHandler * handler,unsigned int data, int icand, int bankVersion) {
   switch (bankVersion) {
   case 0:

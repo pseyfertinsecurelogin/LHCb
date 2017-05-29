@@ -1,16 +1,19 @@
 #ifndef MCEVENT_MCTRACKGEOMCRITERIA_H
 #define MCEVENT_MCTRACKGEOMCRITERIA_H 1
 
+// boost
+#include <boost/function.hpp>
+#include <boost/function/function_template.hpp>
+#include <map>
+// stl
+#include <string>
+#include <utility>
+#include <vector>
+
 // Event
 #include "Event/MCTrackInfo.h"
 
-// boost
-#include <boost/function.hpp>
-
-// stl
-#include <string>
-#include <map>
-#include <vector>
+class MCTrackInfo;
 
 namespace LHCb
 {

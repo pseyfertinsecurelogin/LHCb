@@ -1,10 +1,17 @@
 // $Id: AlgorithmCorrelations.cpp,v 1.6 2009-04-15 09:48:14 pkoppenb Exp $
 // Include files 
 #include <boost/format.hpp>
-#include <math.h>
+#include <cmath>
+#include <functional>
 
 // local
 #include "AlgorithmCorrelations.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : AlgorithmCorrelations

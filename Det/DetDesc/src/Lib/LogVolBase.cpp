@@ -3,14 +3,39 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/System.h"
-#include "GaudiKernel/IDataProviderSvc.h"
+#include <algorithm>
+#include <iterator>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <vector>
+
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
+#include "DetDesc/IPVolume_predicates.h"
+#include "DetDesc/ISolid.h"
 // =============================================================================
 // DetDesc
 // ============================================================================
 #include "DetDesc/LogVolBase.h"
+#include "DetDesc/LogVolumeException.h"
 #include "DetDesc/PVolume.h"
+#include "DetDesc/Services.h"
 #include "DetDesc/VolumeIntersectionIntervals.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/System.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+
+class IDataProviderSvc;
+class IMessageSvc;
+
 // ============================================================================
 /** @file LogVolBase.cpp
  *

@@ -5,13 +5,18 @@
  #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
 #endif
 
+#include <Math/GenVector/RotationX.h>
+#include <Math/GenVector/RotationY.h>
+#include <Math/GenVector/RotationZ.h>
+#include <memory>
+
+// local
+#include "Kernel/DifTraj.h"
+#include "Kernel/Trajectory.h"
 // Include files
 #include "Math/RotationX.h"
 #include "Math/RotationY.h"
 #include "Math/RotationZ.h"
-
-// local
-#include "Kernel/DifTraj.h"
 
 /** @class AlignTraj AlignTraj.h Kernel/AlignTraj.h
  *

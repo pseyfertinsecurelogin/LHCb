@@ -2,11 +2,24 @@
 // local
 #include "Event/PackedCaloHypo.h"
 
-// Checks
-#include "Event/PackedEventChecks.h"
+#include <Math/SMatrix.h>
+#include <ext/alloc_traits.h>
+#include <math.h>
+#include <memory>
 
+#include "Event/CaloCluster.h"
+#include "Event/CaloDigit.h"
+#include "Event/CaloPosition.h"
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "Kernel/CaloCellID.h"
 
 using namespace LHCb;
 

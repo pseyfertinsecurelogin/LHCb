@@ -3,8 +3,9 @@
 
 // Include files
 
-#include "RichDet/DeRichHPD.h"
 #include "DetDescCnv/XmlUserDetElemCnv.h"
+#include "GaudiKernel/Converter.h"
+#include "RichDet/DeRichHPD.h"
 
 typedef  XmlUserDetElemCnv<DeRichHPD>  XmlDeRichHPDCnv;
 DECLARE_CONVERTER_FACTORY( XmlDeRichHPDCnv )

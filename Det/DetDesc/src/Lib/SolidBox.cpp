@@ -1,12 +1,23 @@
 // $Id: SolidBox.cpp,v 1.20 2009-04-17 08:54:24 cattanem Exp $ 
 // ===========================================================================
 // DetDesc 
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <boost/container/vector.hpp>
+#include <math.h>
+#include <ostream>
+#include <string>
+
 #include "DetDesc/DetDesc.h" 
+#include "DetDesc/ISolid.h"
+#include "DetDesc/SolidBase.h"
 #include "DetDesc/SolidBox.h" 
-#include "DetDesc/SolidTicks.h" 
 #include "DetDesc/SolidException.h" 
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
 // Units
 #include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 // ============================================================================
 /** @file SolidBox.cpp

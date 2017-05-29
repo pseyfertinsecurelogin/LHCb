@@ -1,11 +1,16 @@
 // Include files 
-#include <iostream>
+#include <vector>
 
 // local
 #include "ByteStreamTests.h"
-#include "Event/SmartBank.h"
-#include "Event/ByteStream.h"
 #include "Event/BankWriter.h"
+#include "Event/ByteStream.h"
+#include "Event/SmartBank.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+
+class ISvcLocator;
 
 using namespace LHCb;
 using namespace DAQEventTests;

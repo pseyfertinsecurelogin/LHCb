@@ -2,16 +2,29 @@
 #ifndef COMPONENT_L0MUONOUTPUTS_H 
 #define COMPONENT_L0MUONOUTPUTS_H 1
 
+#include <string>
+#include <vector>
+
+#include "Event/L0MuonCandidate.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
-#include "Event/L0MuonCandidate.h"
-
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/StatusCode.h"
 #include "L0MuonKernel/CtrlCandCnv.h"
+#include "L0MuonKernel/MuonCandidate.h"
 #include "L0MuonKernel/ProcCandCnv.h"
 #include "L0MuonKernel/ProcDataCnv.h"
-#include "L0MuonKernel/MuonCandidate.h"
+
+class MsgStream;
+namespace L0Muon {
+class CtrlCandCnv;
+class ProcDataCnv;
+}  // namespace L0Muon
+namespace LHCb {
+class L0MuonCandidate;
+class RawEvent;
+}  // namespace LHCb
 
 static const InterfaceID IID_L0MuonOutputs ( "L0MuonOutputs", 1, 0 );
 

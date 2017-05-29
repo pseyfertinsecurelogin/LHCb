@@ -2,6 +2,7 @@
 #ifndef POSTSCALER_H
 #define POSTSCALER_H 1
 
+#include <functional>
 // Include files
 // from STL
 #include <string>
@@ -9,7 +10,12 @@
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/Property.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/IEventCounter.h"
+
+class ISvcLocator;
+struct IEventCounter;
 
 /** @class PostScaler PostScaler.h
  *  Allows to prescale events at a given rate suing a random number (as Prescaler.cpp)

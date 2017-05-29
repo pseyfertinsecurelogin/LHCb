@@ -1,23 +1,32 @@
 // STL
-#include <set>
-
-// boost
-#include <boost/optional.hpp>
-
-// Framework include files
-#include "GaudiKernel/Debugger.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/strcasecmp.h"
-#include "GaudiUtils/IFileCatalog.h"
-#include "GaudiKernel/SmartIF.h"
-#include "GaudiKernel/Incident.h"
-#include "GaudiKernel/IIncidentSvc.h"
-
 // FileStager
 #include <FileStager/IFileStagerSvc.h>
+#include <string.h>
+#include <algorithm>
+#include <exception>
+#include <functional>
+#include <memory>
+#include <set>
+#include <utility>
 
+#include "Gaudi/Details/PluginServiceDetails.h"
+// Framework include files
+#include "GaudiKernel/Debugger.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiUtils/IFileCatalog.h"
+#include "GaudiUtils/IIODataManager.h"
 // local
 #include "StagedIODataManager.h"
+
+class IInterface;
 
 
 DECLARE_NAMESPACE_SERVICE_FACTORY(Gaudi,StagedIODataManager)

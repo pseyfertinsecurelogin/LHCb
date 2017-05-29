@@ -1,10 +1,13 @@
 #ifndef L0MUONKERNEL_PROCCANDCNV_H
 #define L0MUONKERNEL_PROCCANDCNV_H
 
-#include "L0MuonKernel/CandRegisterHandler.h"
-#include <string>
 #include <map>
+#include <string>
 #include <vector>
+
+#include "Kernel/MuonTileID.h"
+#include "L0MuonKernel/CandRegisterHandler.h"
+#include "L0MuonKernel/MuonCandidate.h"
 #include "L0MuonKernel/ProcCandErrors.h"
 
 namespace L0Muon {

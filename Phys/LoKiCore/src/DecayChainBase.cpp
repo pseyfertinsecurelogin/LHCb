@@ -3,21 +3,31 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/SystemOfUnits.h"
+#include <boost/format.hpp>
+#include <stddef.h>
+#include <algorithm>
+#include <cmath>
+#include <string>
+
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/SystemOfUnits.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/LHCbMath.h"
+#include "LoKi/AuxFunBase.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/DecayChainBase.h"
+#include "LoKi/KinTypes.h"
 #include "LoKi/ParticleProperties.h"
-// ============================================================================
-// Boost
-// ============================================================================
-#include "boost/format.hpp"
+
+namespace LHCb {
+class ParticleID;
+}  // namespace LHCb
+
 // ============================================================================
 /** @file
  *

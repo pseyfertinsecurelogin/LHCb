@@ -1,11 +1,15 @@
 #ifndef CONFIGTREE_H
 #define CONFIGTREE_H 1
 
-#include "LHCbMath/MD5.h"
+#include <boost/core/explicit_operator_bool.hpp>
+#include <boost/optional/optional.hpp>
 #include <iostream>
+#include <string>
 #include <vector>
-#include "boost/optional.hpp"
+
+#include "LHCbMath/MD5.h"
 #include "boost/operators.hpp"
+#include "boost/optional.hpp"
 
 class ConfigTreeNode final : public boost::equality_comparable<ConfigTreeNode> {
 public:

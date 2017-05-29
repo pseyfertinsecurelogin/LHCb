@@ -3,6 +3,8 @@
 
 #include <algorithm>
 
+#include "Event/MCTrackInfo.h"
+
 LHCb::MC::MCTrackGeomCriteria::MCTrackGeomCriteria(const std::vector<std::string>& criteria)
 {
   for ( const auto & S : criteria )

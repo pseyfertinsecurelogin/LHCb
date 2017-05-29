@@ -1,33 +1,49 @@
 // Include files
 
+#include <stdlib.h>
+#include <algorithm>
 #include <cmath>
-#include <sstream>
+#include <functional>
+#include <memory>
 #include <numeric>
+#include <sstream>
+#include <string>
+#include <type_traits>
+#include <vector>
 
-// from Gaudi
-#include "GaudiAlg/GaudiTool.h"
-#include "GaudiKernel/IIncidentListener.h"
-#include "GaudiKernel/ToolHandle.h"
-
-// from Gaudi
-#include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/SystemOfUnits.h"
-
+#include "Event/OTLiteTime.h"
 // Event
 #include "Event/RawEvent.h"
-#include "Event/OTLiteTime.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+// from Gaudi
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/GaudiHandle.h"
+// from Gaudi
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/ToolHandle.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/OTChannelID.h"
 // OTDAQ
 #include "OTDAQ/IOTRawBankDecoder.h"
-
 // local
 #include "OTDAQ/IndexedModuleDataHolder.h"
+
+class IIncidentListener;
+namespace OTDAQ {
+class RawEvent;
+}  // namespace OTDAQ
 
 
 // forward declarations
 namespace LHCb
 {
-  class RawBank ;
 }
 
 namespace LocalHelpers

@@ -1,16 +1,23 @@
 #ifndef LUMIMERGEFSR_H
 #define LUMIMERGEFSR_H 1
 
-// Include files
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <string>
+#include <vector>
 
 // event model
 #include "Event/LumiFSR.h"
 #include "Event/TimeSpanFSR.h"
-
 // local
 #include "FSRNavigator.h"
+// Include files
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+
+class IFSRNavigator;
+class ISvcLocator;
 
 /** @class LumiMergeFSR LumiMergeFSR.h
  *

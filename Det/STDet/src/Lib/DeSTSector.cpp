@@ -1,22 +1,24 @@
 #include "STDet/DeSTSector.h"
-#include "STDet/StatusMap.h"
 
-#include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/SolidBox.h"
-
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <math.h>
 #include <algorithm>
+#include <ostream>
 
-// Kernel
-#include "Kernel/LineTraj.h"
-#include "Kernel/LHCbID.h"
-#include "Kernel/PiecewiseTrajectory.h"
-#include "GaudiKernel/SystemOfUnits.h"
+#include "DetDesc/DetectorElementException.h"
 #include "GaudiKernel/GaudiException.h"
-
-#include "GaudiKernel/IUpdateManagerSvc.h"
-#include "STDet/DeSTSensor.h"
-
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SystemOfUnits.h"
 #include "Kernel/LHCbConstants.h"
+#include "Kernel/PiecewiseTrajectory.h"
+#include "Kernel/Trajectory.h"
+#include "STDet/DeSTSensor.h"
+#include "STDet/StatusMap.h"
 
 /** @file DeSTSector.cpp
  *

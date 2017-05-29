@@ -1,6 +1,10 @@
 //#include <time.h>
 #include "L0MuonKernel/ProcUnit.h"
 
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
+
 /**
    Empty Constructor
 */

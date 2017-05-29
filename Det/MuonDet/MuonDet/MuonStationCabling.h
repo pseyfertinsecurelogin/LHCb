@@ -1,12 +1,18 @@
 #ifndef MUONDET_MUONSTATIONCABLING_H
 #define MUONDET_MUONSTATIONCABLING_H 1
 
+#include <string>
 #include <vector>
-#include "GaudiKernel/DataObject.h"
-#include "DetDesc/Condition.h"
 
+#include "DetDesc/Condition.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/StatusCode.h"
 // Include files
 #include "MuonDet/CLID_MuonStationCabling.h"
+
+class ValidDataObject;
+
 /** @class MuonStationCabling MuonStationCabling.h MuonDet/MuonStationCabling.h
  *
  *

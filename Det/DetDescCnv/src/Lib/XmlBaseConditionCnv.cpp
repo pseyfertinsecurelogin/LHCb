@@ -1,22 +1,33 @@
 // include files
-#include "GaudiKernel/MsgStream.h"
-
-#include "DetDesc/Condition.h"
-#include "DetDescCnv/XmlBaseConditionCnv.h"
-#include "XmlTools/IXmlSvc.h"
-
-#include "GaudiUtils/HistoParsers.h"
-#include "DetDesc/HistoParam.h"
-
+#include <Rtypes.h>
+#include <ctype.h>
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMNode.hpp>
+#include <xercesc/dom/DOMNodeList.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
 
-class ISvcLocator;
+#include "DetDesc/CLIDCondition.h"
+#include "DetDesc/Condition.h"
+#include "DetDesc/HistoParam.h"
+#include "DetDescCnv/XmlBaseConditionCnv.h"
+#include "DetDescCnv/XmlGenericCnv.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiUtils/HistoParsers.h"
+#include "XmlTools/IXmlSvc.h"
 
-#include "TH1D.h"
-#include "TH2D.h"
-#include "TDirectory.h"
+class DataObject;
+class IOpaqueAddress;
+class ISvcLocator;
 
 // -----------------------------------------------------------------------
 namespace {
@@ -346,6 +357,7 @@ const CLID& XmlBaseConditionCnv::classID() {
 
 
 #include "boost/algorithm/string/trim.hpp"
+
 namespace {
   /** helper function to convert 1d or 2d histogram from the string
    *  representation (custom or root xml) and add it to the Condition

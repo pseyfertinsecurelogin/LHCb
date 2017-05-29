@@ -1,9 +1,13 @@
 #include "CondDBCommon.h"
 
+#include <CoolKernel/IField.h>
+#include <CoolKernel/types.h>
+#include <stddef.h>
+#include <memory>
 #include <sstream>
 
-#include "CoolKernel/RecordSpecification.h"
 #include "CoolKernel/Record.h"
+#include "CoolKernel/RecordSpecification.h"
 #include "CoolKernel/StorageType.h"
 
 static std::unique_ptr<cool::RecordSpecification> s_XMLStorageSpec{};

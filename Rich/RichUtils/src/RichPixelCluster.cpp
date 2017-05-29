@@ -11,10 +11,13 @@
 
 // local
 #include "RichUtils/RichPixelCluster.h"
-#include "RichUtils/RichException.h"
 
-// boost
-#include "boost/format.hpp"
+#include <boost/format.hpp>
+#include <list>
+
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "RichUtils/RichException.h"
 
 //#include <cstring> // for memset with gcc 4.3
 

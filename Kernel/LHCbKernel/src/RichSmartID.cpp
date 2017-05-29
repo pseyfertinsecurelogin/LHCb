@@ -9,15 +9,17 @@
  */
 //-----------------------------------------------------------------------------
 
-// STL
-#include <sstream>
 #include <iostream>
-
-// local
-#include "Kernel/RichSmartID.h"
+#include <string>
 
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSide.h"
+// local
+#include "Kernel/RichSmartID.h"
 
 std::ostream& LHCb::RichSmartID::dumpBits(std::ostream& s) const
 {

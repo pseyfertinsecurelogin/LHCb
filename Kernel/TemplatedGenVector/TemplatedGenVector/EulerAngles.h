@@ -17,13 +17,20 @@
 #ifndef LHCbROOT_Math_GenVector_EulerAngles
 #define LHCbROOT_Math_GenVector_EulerAngles  1
 
-#include "TemplatedGenVector/Rotation3D.h"
-#include "TemplatedGenVector/DisplacementVector3D.h"
-#include "TemplatedGenVector/PositionVector3D.h"
-#include "TemplatedGenVector/LorentzVector.h"
-#include "TemplatedGenVector/3DConversions.h"
+#include <math.h>
 #include <algorithm>
 #include <cassert>
+#include <iosfwd>
+
+#include "3DDistances.h"
+#include "Cartesian3D.h"
+#include "DisplacementVector3Dfwd.h"
+#include "PxPyPzE4D.h"
+#include "TemplatedGenVector/3DConversions.h"
+#include "TemplatedGenVector/DisplacementVector3D.h"
+#include "TemplatedGenVector/LorentzVector.h"
+#include "TemplatedGenVector/PositionVector3D.h"
+#include "TemplatedGenVector/Rotation3D.h"
 
 namespace LHCbROOT {
 namespace Math {
@@ -40,6 +47,12 @@ namespace Math {
 
       @ingroup GenVector
    */
+class AxisAngle;
+class Quaternion;
+class RotationX;
+class RotationY;
+class RotationZ;
+
 class EulerAngles {
 
 public:

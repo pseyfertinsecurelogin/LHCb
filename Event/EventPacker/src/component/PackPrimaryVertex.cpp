@@ -1,7 +1,26 @@
 // Include files
-#include "Event/PrimaryVertex.h"
+#include <ext/alloc_traits.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <algorithm>
+#include <functional>
+#include <string>
+#include <vector>
+
 #include "Event/GenericBuffer.h"
+#include "Event/PrimaryVertex.h"
+#include "Event/PrimaryVertexTrack.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+
+class ISvcLocator;
 
 class PackPrimaryVertices : public GaudiAlgorithm
 {

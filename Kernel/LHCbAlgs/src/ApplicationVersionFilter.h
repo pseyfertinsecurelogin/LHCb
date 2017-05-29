@@ -2,14 +2,17 @@
 #ifndef ApplicationVersionFilter_H
 #define ApplicationVersionFilter_H 1
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+// boost
+#include <boost/regex.hpp>
+#include <string>
 
 // Event
 #include "Event/ProcessHeader.h"
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
-// boost
-#include <boost/regex.hpp>
+class ISvcLocator;
 
 /** @class ApplicationVersionFilter ApplicationVersionFilter.h
  *

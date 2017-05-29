@@ -1,10 +1,14 @@
 #ifndef DUMPMCEVENTALG_H
 #define DUMPMCEVENTALG_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
+class ISvcLocator;
 struct ICheckTool;
 
 /** @class DumpMCEventAlg DumpMCEventAlg.h

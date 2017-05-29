@@ -1,10 +1,25 @@
 // Include files
 
-#include "DetDesc/Condition.h"
-#include "DetCond/ICondDBAccessSvc.h"
+#include <functional>
+#include <memory>
+#include <typeinfo>
 
+#include "DetCond/ICondDBAccessSvc.h"
+#include "DetDesc/Condition.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
 // local
 #include "TestCacheInjection.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : TestCacheInjection

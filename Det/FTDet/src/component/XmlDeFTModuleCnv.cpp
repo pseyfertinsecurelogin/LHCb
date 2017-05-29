@@ -5,6 +5,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 // FTDet
 #include "FTDet/DeFTModule.h"
+#include "GaudiKernel/Converter.h"
 
 typedef XmlUserDetElemCnv<DeFTModule>       XmlDeFTModuleCnv;
 DECLARE_CONVERTER_FACTORY( XmlDeFTModuleCnv )

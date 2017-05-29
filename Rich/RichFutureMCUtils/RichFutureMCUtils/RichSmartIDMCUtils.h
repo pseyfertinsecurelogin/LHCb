@@ -1,18 +1,25 @@
 
 #pragma once
 
-// Kernel
-#include "Kernel/RichSmartID.h"
+#include <vector>
 
+#include "Event/MCParticle.h"
 // Event model
 #include "Event/MCRichDigitSummary.h"
-
 // Kernel
 #include "Kernel/RichRadiatorType.h"
-
+// Kernel
+#include "Kernel/RichSmartID.h"
 // Rich Utils
 #include "RichUtils/RichMap.h"
 #include "RichUtils/RichPixelCluster.h"
+
+namespace LHCb {
+class RichSmartID;
+}  // namespace LHCb
+namespace Rich {
+class PDPixelCluster;
+}  // namespace Rich
 
 namespace Rich
 {

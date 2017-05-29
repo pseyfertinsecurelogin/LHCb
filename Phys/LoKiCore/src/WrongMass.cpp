@@ -3,9 +3,16 @@
 // ============================================================================
 // LoKiCore
 // ============================================================================
-#include "LoKi/Kinematics.h"
-#include "LoKi/WrongMass.h"
+#include <string>
+
+#include "LoKi/KinTypes.h"
 #include "LoKi/ParticleProperties.h"
+#include "LoKi/WrongMass.h"
+
+namespace LHCb {
+class ParticleID;
+}  // namespace LHCb
+
 // ============================================================================
 /** @file
  *

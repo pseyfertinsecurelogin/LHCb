@@ -1,10 +1,21 @@
 // $Id: Material.cpp,v 1.8 2009-04-17 08:54:24 cattanem Exp $ 
 // ============================================================================
 /// GaudiKernel
-#include "GaudiKernel/System.h"
+#include <iomanip>
+#include <ostream>
+#include <string>
+#include <vector>
+
 /// DetDesc
 #include "DetDesc/Material.h"
 #include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/System.h"
+#include "GaudiKernel/SystemOfUnits.h"
 
 using namespace Gaudi::Units;
 

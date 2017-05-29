@@ -1,6 +1,5 @@
 // local
 #include "Kernel/STChannelID.h"
-#include <sstream>
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : STChannelID

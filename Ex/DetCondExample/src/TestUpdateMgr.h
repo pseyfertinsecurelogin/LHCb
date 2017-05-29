@@ -2,12 +2,19 @@
 #ifndef TESTUPDATEMGR_H
 #define TESTUPDATEMGR_H 1
 
+#include <stddef.h>
+#include <iostream>
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
 
-class IUpdateManagerSvc;
 class DataObject;
+class ISvcLocator;
+class IUpdateManagerSvc;
 
 /** @class TestUpdateMgr TestUpdateMgr.h
  *

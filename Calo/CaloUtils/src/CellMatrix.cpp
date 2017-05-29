@@ -1,6 +1,8 @@
 // ============================================================================
 // Include files
 // CaloKernel
+#include <string>
+
 #include "CaloKernel/CaloException.h"
 // local
 #include "CaloUtils/CellMatrix.h"

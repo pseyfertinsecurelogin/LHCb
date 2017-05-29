@@ -2,6 +2,26 @@
 // local
 #include "CaloReadoutTool.h"
 
+#include <algorithm>
+#include <functional>
+#include <iterator>
+#include <utility>
+
+#include "CaloDAQ/ICaloReadoutTool.h"
+#include "CaloDet/CardParam.h"
+#include "CaloDet/DeCalorimeter.h"
+#include "CaloDet/Tell1Param.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/ToStream.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : CaloReadoutTool
 //

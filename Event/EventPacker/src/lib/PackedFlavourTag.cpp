@@ -4,9 +4,15 @@
 
 // Checks
 #include "Event/PackedEventChecks.h"
-
+#include "Event/Particle.h"
+#include "Event/Tagger.h"
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
 
 using namespace LHCb;
 

@@ -4,6 +4,11 @@
 // local
 // ============================================================================
 #include "CaloUtils/CaloUtils.h"
+
+#include <iterator>
+#include <map>
+#include <vector>
+
 // ============================================================================
 /** @file 
  *  The Implementation file for namespace LHCb::CaloHelpers

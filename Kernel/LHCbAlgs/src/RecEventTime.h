@@ -1,10 +1,18 @@
 #ifndef RECEVENTTIME_H
 #define RECEVENTTIME_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/IEventTimeDecoder.h"            // Interface
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/extends.h"
+
+class IEventTimeDecoder;
+class IInterface;
 
 /** Simple implementation of IEventTimeDecoder that takes the event
  *  time from LHCb::RecHeader.

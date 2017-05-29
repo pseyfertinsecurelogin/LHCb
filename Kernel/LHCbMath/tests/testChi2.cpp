@@ -4,19 +4,18 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
+#include <stdlib.h>
 #include <iostream>
-#include <iomanip>
-#include <string>
-#include <cmath>
-// ============================================================================
-// GaudiKernel
-// ============================================================================
-#include "GaudiKernel/SymmetricMatrixTypes.h"
-#include "GaudiKernel/GenericVectorTypes.h"
+
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/Chi2Solution.h"
+
 // ============================================================================
 int main() 
 {

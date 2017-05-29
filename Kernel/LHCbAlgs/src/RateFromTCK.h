@@ -2,17 +2,23 @@
 #ifndef RATEFROMTCK_H
 #define RATEFROMTCK_H 1
 
+#include <string>
+
 // CondDB
 #include "DetDesc/Condition.h"
-#include "GaudiKernel/IDetDataSvc.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "Kernel/IRateFromTCK.h"            // Interface
-
-#include "Kernel/IPropertyConfigSvc.h"
-#include "Kernel/TCK.h"
+#include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/IPropertyConfigSvc.h"
+#include "Kernel/IRateFromTCK.h"            // Interface
+#include "Kernel/TCK.h"
+
+class Condition;
+class IInterface;
+struct IPropertyConfigSvc;
 /** @class RateFromTCK RateFromTCK.h
  *
  *  Get rate of a given rate limiter for the present TCK

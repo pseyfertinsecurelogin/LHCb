@@ -1,12 +1,18 @@
 // ===========================================================================
-#include <iostream> 
+#include <algorithm>
+#include <memory>
 #include <string> 
 #ifdef __INTEL_COMPILER         // Disable ICC remark
   #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
 #endif
+#include "DetDesc/ISolid.h"
 #include "DetDesc/Solid.h"
+#include "DetDesc/SolidBase.h"
+#include "DetDesc/SolidBoolean.h"
 #include "DetDesc/SolidIntersection.h"
-#include "DetDesc/SolidException.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
 
 // ============================================================================
 /** @file

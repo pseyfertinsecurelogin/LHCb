@@ -1,7 +1,15 @@
 #include "L0MuonKernel/ProcCandCnv.h"
-#include "ProcessorKernel/RegisterFactory.h"
-#include "ProcessorKernel/Register.h"
+
+#include <stdio.h>
+
+#include "Kernel/MuonLayout.h"
 #include "L0MuonKernel/BankUtilities.h"
+#include "L0MuonKernel/ErrorHandler.h"
+#include "ProcessorKernel/RegisterFactory.h"
+
+namespace L0Muon {
+class Register;
+}  // namespace L0Muon
 
 #define _DEBUG_PROCCAND_  0
 /**

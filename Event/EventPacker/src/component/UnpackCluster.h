@@ -1,9 +1,16 @@
 #ifndef UNPACKCLUSTER_H
 #define UNPACKCLUSTER_H 1
 
+#include <string>
+
+#include "Event/PackedCluster.h"
+#include "Event/STCluster.h"
+#include "Event/VeloCluster.h"
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "Event/PackedCluster.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class UnpackCluster UnpackCluster.h
  *  UNpack the clusters for Velo and ST

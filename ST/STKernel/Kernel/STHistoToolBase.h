@@ -15,11 +15,19 @@
 #ifndef STKERNEL_STHISTOTOOLBASE_H
 #define STKERNEL_STHISTOTOOLBASE_H 1
 
+#include <functional>
+#include <string>
+
+#include "/tmp/foobarpath/LHCb/ST/STKernel/src/STCommonBase.icpp"
+#include "GaudiAlg/GaudiCommonImp.h"
 // GaudiAlg
 #include "GaudiAlg/GaudiHistoTool.h"
-
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "Kernel/STCommonBase.h"
+
+class IInterface;
 
 namespace ST
 {

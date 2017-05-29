@@ -1,9 +1,14 @@
+#include <ostream>
 #include <string> 
+#include <vector>
 
 #include "DetDesc/Condition.h"
-
-#include "GaudiKernel/StatusCode.h"
+#include "DetDesc/ParamValidDataObject.h"
 #include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IValidity.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ValidDataObject;
 
 //---------------------------------------------------------------------------
 

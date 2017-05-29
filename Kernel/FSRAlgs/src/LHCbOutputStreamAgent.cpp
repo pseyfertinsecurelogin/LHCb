@@ -13,8 +13,6 @@
 //====================================================================
 #define PERSISTENCYSVC_OUTPUTSTREAMAGENT_CPP
 
-// Framework includes
-#include "GaudiKernel/IDataManagerSvc.h"
 #include "LHCbOutputStream.h"
 #include "LHCbOutputStreamAgent.h"
 

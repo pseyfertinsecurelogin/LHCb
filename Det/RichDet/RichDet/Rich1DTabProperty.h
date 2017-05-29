@@ -9,14 +9,17 @@
 
 #pragma once
 
-// Base class
-#include "RichDet/Rich1DTabFunc.h"
-
 // Gaudi
 #include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/StatusCode.h"
+// Base class
+#include "RichDet/Rich1DTabFunc.h"
+#include "gsl/gsl_interp.h"
 
+class IMessageSvc;
 class ISvcLocator;
 class IUpdateManagerSvc;
+class TabulatedProperty;
 
 namespace Rich
 {

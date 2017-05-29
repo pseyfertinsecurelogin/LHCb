@@ -1,6 +1,9 @@
 // Event
 #include "Event/CaloPosition.h"
 
+#include <Math/SMatrix.h>
+#include <Math/SVector.h>
+
 //-----------------------------------------------------------------------------
 
 std::ostream& LHCb::CaloPosition::fillStream(std::ostream& s) const

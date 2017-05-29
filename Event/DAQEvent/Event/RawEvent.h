@@ -1,12 +1,15 @@
 #ifndef DAQEVENT_RAWEVENT_H
 #define DAQEVENT_RAWEVENT_H 1
 
-// Include files
-#include "GaudiKernel/DataObject.h"
-#include "Event/RawBank.h"
+#include <stddef.h>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
+
+#include "Event/RawBank.h"
+#include "GaudiKernel/ClassID.h"
+// Include files
+#include "GaudiKernel/DataObject.h"
 
 namespace LHCb
 {

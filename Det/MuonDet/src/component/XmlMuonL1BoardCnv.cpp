@@ -1,16 +1,26 @@
 // Include files
 
+#include <stdlib.h>
+#include <xercesc/dom/DOMElement.hpp>
+#include <xercesc/dom/DOMNamedNodeMap.hpp>
+#include <xercesc/dom/DOMNode.hpp>
+#include <xercesc/dom/DOMNodeList.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
 #include <string>
 #include <vector>
 
 #include "DetDescCnv/XmlUserConditionCnv.h"
+#include "GaudiKernel/Converter.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 #include "MuonDet/MuonL1Board.h"
 
-#include <xercesc/dom/DOMNamedNodeMap.hpp>
-#include <xercesc/dom/DOMNodeList.hpp>
-#include <xercesc/dom/DOMNode.hpp>
-
-#include "GaudiKernel/IOpaqueAddress.h"
+class IOpaqueAddress;
+class ISvcLocator;
 
 // local
 

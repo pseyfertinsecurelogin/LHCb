@@ -2,11 +2,23 @@
 // local
 #include "Event/PackedTrack.h"
 
-// Checks
-#include "Event/PackedEventChecks.h"
+#include <Math/SMatrix.h>
+#include <math.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <iterator>
+#include <limits>
+#include <memory>
 
+#include "Event/StateVector.h"
+#include "Event/TrackTypes.h"
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/VectorMap.h"
+#include "Kernel/LHCbID.h"
 
 using namespace LHCb;
 

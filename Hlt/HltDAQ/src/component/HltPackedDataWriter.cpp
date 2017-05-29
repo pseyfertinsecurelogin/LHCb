@@ -1,22 +1,39 @@
-#include "RZip.h"
+#include <boost/optional/optional.hpp>
+#include <algorithm>
+#include <iterator>
+#include <utility>
 
-#include "Event/RawEvent.h"
-#include "Event/PackedTrack.h"
 #include "Event/PackedCaloCluster.h"
-#include "Event/PackedRichPID.h"
-#include "Event/PackedMuonPID.h"
 #include "Event/PackedCaloHypo.h"
-#include "Event/PackedProtoParticle.h"
-#include "Event/PackedParticle.h"
-#include "Event/PackedVertex.h"
-#include "Event/PackedRecVertex.h"
 #include "Event/PackedFlavourTag.h"
-#include "Event/PackedRelations.h"
+#include "Event/PackedMuonPID.h"
 #include "Event/PackedPartToRelatedInfoRelation.h"
-
-#include "PackedDataChecksum.h"
-#include "PackedDataBuffer.h"
+#include "Event/PackedParticle.h"
+#include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedRichPID.h"
+#include "Event/PackedTrack.h"
+#include "Event/PackedVertex.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StringKey.h"
 #include "HltPackedDataWriter.h"
+#include "PackedDataBuffer.h"
+#include "PackedDataChecksum.h"
+
+class ISvcLocator;
 
 static const Gaudi::StringKey PackedObjectLocations{"PackedObjectLocations"};
 

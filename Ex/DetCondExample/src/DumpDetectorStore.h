@@ -2,8 +2,13 @@
 #ifndef DETCONDEXAMPLE_DUMPDETECTORSTORE_H
 #define DETCONDEXAMPLE_DUMPDETECTORSTORE_H 1
 
+#include <string>
+
 // Base class
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 ///---------------------------------------------------------------------------
 /** @class DumpDetectorStore DumpDetectorStore.h DetCondExample/DumpDetectorStore.h

@@ -1,12 +1,24 @@
 // ===========================================================================
 /** STD & STL  */
-#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <memory>
 #include <string>
+#include <vector>
+
+#include "DetDesc/ISolid.h"
 /** DetDesc */
 #include "DetDesc/Solid.h"
-#include "DetDesc/SolidUnion.h"
-#include "DetDesc/SolidException.h"
+#include "DetDesc/SolidBase.h"
+#include "DetDesc/SolidBoolean.h"
 #include "DetDesc/SolidBox.h"
+#include "DetDesc/SolidChild.h"
+#include "DetDesc/SolidException.h"
+#include "DetDesc/SolidUnion.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
 
 // ============================================================================
 /** @file

@@ -1,12 +1,17 @@
 #ifndef TESTUMSERROR_H
 #define TESTUMSERROR_H 1
 
+#include <stddef.h>
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
 // Forward declarations
 class ICondDBAccessSvc;
+class ISvcLocator;
 
 /** @class TestUMSError TestUMSError.h
  *

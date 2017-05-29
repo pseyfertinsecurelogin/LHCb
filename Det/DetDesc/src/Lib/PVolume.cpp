@@ -1,16 +1,33 @@
 // GaudiKernel includes
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/Transform3DTypes.h"
-// STD & STL includes
-#include <cassert>
-#include <vector>
-#include <algorithm>
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/Transform3D.h>
+#include <boost/none.hpp>
+#include <boost/optional/optional.hpp>
+#include <math.h>
+#include <exception>
+#include <memory>
+#include <ostream>
+#include <string>
+
 // DetDesc
 #include "DetDesc/DetDesc.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
+#include "DetDesc/ISolid.h"
 #include "DetDesc/PVolume.h"
 #include "DetDesc/PVolumeException.h"
+#include "DetDesc/Services.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+
+class IDataProviderSvc;
 
 // ============================================================================
 /** @file PVolume.cpp

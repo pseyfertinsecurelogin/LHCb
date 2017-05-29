@@ -1,10 +1,26 @@
 // Include files
 
-// from Gaudi
-#include "L0Interfaces/IL0CondDBProvider.h"
+#include <array>
+#include <functional>
 
+#include "Event/L0DUBase.h"
+#include "Event/L0DUConfig.h"
+#include "Event/L0DUDecision.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/ToStream.h"
 // local
 #include "L0DUFromRawHlt1Tool.h"
+// from Gaudi
+#include "L0Interfaces/IL0CondDBProvider.h"
+#include "L0Interfaces/IL0DUConfigProvider.h"
 
 namespace {
 

@@ -2,10 +2,17 @@
 #ifndef HLTTRACKREPORTSDECODER_H 
 #define HLTTRACKREPORTSDECODER_H 1
 
+#include <map>
+#include <string>
+
+#include "DAQKernel/DecoderAlgBase.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "DAQKernel/DecoderAlgBase.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class HltTrackReportsDecoder HltTrackReportsDecoder.h
  *  

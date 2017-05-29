@@ -9,6 +9,11 @@
 
 #pragma once
 
+#include <string>
+
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/RichSide.h"
 // local
 #include "RichDet/DeRich.h"
 

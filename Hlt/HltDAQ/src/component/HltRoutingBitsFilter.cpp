@@ -1,12 +1,18 @@
 // Include files
+#include <functional>
+#include <string>
 #include <vector>
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "Event/RawEvent.h"
-#include "Event/RawBank.h"
-
 #include "DAQKernel/DecoderAlgBase.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 
 class HltRoutingBitsFilter : public Decoder::AlgBase {

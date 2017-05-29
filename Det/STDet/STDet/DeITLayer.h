@@ -2,7 +2,13 @@
 #define _DeITLayer_H_
 
 #include <string>
+#include <vector>
+
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
 #include "STDet/DeSTLayer.h"
+#include "STDet/STDetTraits.h"
 
 
 /** @class DeITLayer DeITLayer.h "STDet/DeITLayer.h"
@@ -19,9 +25,9 @@
 
 static const CLID CLID_DeITLayer = 9204; // needs fixing !
 
+class DeITLadder;
 class DeITSector;
 class DeSTSector;
-class DeITLadder;
 
 class DeITLayer : public DeSTLayer  {
 
@@ -102,6 +108,10 @@ private:
 
 
 #include "STDet/DeITLadder.h"
+
+namespace LHCb {
+class STChannelID;
+}  // namespace LHCb
 
 
 inline const DeITLayer::Children& DeITLayer::ladders() const{

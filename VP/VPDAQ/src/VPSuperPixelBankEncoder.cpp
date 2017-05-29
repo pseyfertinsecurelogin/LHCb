@@ -1,7 +1,20 @@
 
-#include "Kernel/VPChannelID.h"
+#include <string.h>
+#include <algorithm>
+#include <functional>
 
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Event/VPDigit.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/VPChannelID.h"
 #include "VPSuperPixelBankEncoder.h"
+
+class ISvcLocator;
 
 using namespace LHCb;
 

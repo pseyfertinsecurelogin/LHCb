@@ -1,10 +1,25 @@
 #include "IOFSRSvc.h"
+
+#include <ext/alloc_traits.h>
+#include <stddef.h>
 #include <algorithm>
-#include "GaudiKernel/SmartIF.h"
-#include "GaudiKernel/IAppMgrUI.h"
-#include "GaudiKernel/IIncidentListener.h"
+#include <functional>
+#include <utility>
+
+#include "FSRAlgs/IFSRNavigator.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiUtils/RegEx.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
 #include "GaudiUtils/IIODataManager.h"
 //#include "GaudiUtils/IODataManager.h"
 //With regex libraries

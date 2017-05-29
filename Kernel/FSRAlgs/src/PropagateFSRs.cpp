@@ -1,18 +1,26 @@
 // Include files 
 
-// from Gaudi
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/IOpaqueAddress.h"
+#include <stddef.h>
+#include <functional>
+#include <utility>
 
 // event model
 #include "Event/RawEvent.h"
-#include "Event/ODIN.h"
-#include "Event/HltLumiSummary.h"
-#include "Event/LumiFSR.h"
-#include "Event/LumiCounters.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+// from Gaudi
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiUtils/IIODataManager.h"
 // local
 #include "PropagateFSRs.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : PropagateFSRs

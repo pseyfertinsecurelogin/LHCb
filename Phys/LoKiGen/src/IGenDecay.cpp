@@ -7,14 +7,15 @@
   #pragma warning (disable:1572) // floating-point equality and inequality comparisons are unreliable
   #pragma warning(push)
 #endif
-#include "HepMC/GenParticle.h" // To satisfy forward declaration in IGenDecay.h
 #ifdef __INTEL_COMPILER
   #pragma warning(pop)
 #endif
+#include "GaudiKernel/IInterface.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/IGenDecay.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for class Decays::IGenDecay

@@ -2,6 +2,13 @@
 
 #include "L0MuonKernel/ProcUtilities.h"
 
+#include <math.h>
+#include <stdlib.h>
+#include <iostream>
+#include <string>
+
+#include "Kernel/MuonLayout.h"
+
 
 int L0Muon::pendulumM1(int icol, int procVersion){
   if (procVersion==0)  return (icol==0) ? 0 : int(pow(-1.,icol+1)*int((icol+1)/2));  

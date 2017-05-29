@@ -3,23 +3,32 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
+#include <Math/BinaryOperators.h>
+#include <Math/Expression.h>
+#include <Math/GenVector/Boost.h>
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/LorentzVector.h>
+#include <Math/GenVector/PxPyPzE4D.h>
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
 #include <cmath>
-#include <climits>
-#include <limits.h>
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/GenericVectorTypes.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "LHCbMath/MatrixTransforms.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/MatrixUtils.h"
-#include "LHCbMath/MatrixTransforms.h"
-// ============================================================================
-// LoKi
-// ============================================================================
-#include "LoKi/Kinematics.h"
 #include "LoKi/Constants.h"
+#include "LoKi/KinTypes.h"
 #include "LoKi/Report.h"
 #include "LoKi/Tensors.h"
 // ============================================================================
@@ -29,7 +38,6 @@
   #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
   #pragma warning(push)
 #endif
-#include "Math/Boost.h"
 #ifdef __INTEL_COMPILER         // Re-enable ICC remark 1572
   #pragma warning(pop)
 #endif

@@ -3,15 +3,22 @@
 #ifndef DETDESCCNV_XMLCATALOGCNV_H
 #define DETDESCCNV_XMLCATALOGCNV_H
 
-// Include files
-#include "GaudiKernel/ClassID.h"
-
 #include <xercesc/dom/DOMNode.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
 
 #include "DetDescCnv/XmlGenericCnv.h"
+// Include files
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
 
+class DataObject;
+class IOpaqueAddress;
+class ISvcLocator;
 // Forward and external declarations
 class RegistryEntry;
+namespace xercesc_3_1 {
+class DOMElement;
+}  // namespace xercesc_3_1
 template <class TYPE> class CnvFactory;
 
 

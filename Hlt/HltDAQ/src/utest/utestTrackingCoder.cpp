@@ -1,15 +1,32 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE utestTrackingCoder
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SVector.h>
+#include <boost/preprocessor/comparison/not_equal.hpp>
+#include <boost/preprocessor/control/iif.hpp>
+#include <boost/preprocessor/logical/bool.hpp>
+#include <boost/preprocessor/logical/compl.hpp>
+#include <boost/test/tools/old/interface.hpp>
+#include <boost/test/tree/decorator.hpp>
 #include <boost/test/unit_test.hpp>
-
-#include "HltDAQ/HltTrackingCoder.h"
-#include <vector>
+#include <boost/test/unit_test_log.hpp>
+#include <boost/test/unit_test_suite.hpp>
+#include <boost/test/utils/basic_cstring/basic_cstring.hpp>
+#include <boost/test/utils/basic_cstring/basic_cstring_fwd.hpp>
+#include <boost/test/utils/wrap_stringstream.hpp>
+#include <math.h>
 #include <algorithm>
-#include "Event/Track.h"
+#include <iostream>
+#include <iterator>
+#include <sstream>
+#include <vector>
+
 #include "Event/State.h"
+#include "Event/Track.h"
+#include "Event/TrackTypes.h"
+#include "HltDAQ/HltTrackingCoder.h"
 #include "Kernel/LHCbID.h"
 #include "Math/SMatrix.h"
-#include <iostream>
 
 // Helper function to compare two track containers element wise
 template <typename Container, typename Cmp>

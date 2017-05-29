@@ -12,9 +12,8 @@
 // local
 #include "RichFutureKernel/RichTupleAlgBase.h"
 
-// ============================================================================
-// Force creation of templated class
-#include "RichHistoBase.icpp"
+#include "RichFutureKernel/RichCommonBase.h"
+
 template class Rich::Future::CommonBase < GaudiTupleAlg > ;
 template class Rich::Future::HistoBase  < GaudiTupleAlg > ;
 // ============================================================================

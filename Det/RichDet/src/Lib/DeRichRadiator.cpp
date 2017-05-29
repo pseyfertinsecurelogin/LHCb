@@ -14,12 +14,10 @@
 // Include files
 #include "RichDet/DeRichRadiator.h"
 
+#include <typeinfo>
+
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/Bootstrap.h"
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/IToolSvc.h"
-#include "GaudiKernel/IAlgTool.h"
 
 //----------------------------------------------------------------------------
 

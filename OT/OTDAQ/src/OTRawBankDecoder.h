@@ -1,22 +1,43 @@
 #ifndef OTRAWBANKDECODER_H
 #define OTRAWBANKDECODER_H 1
 
+#include <stddef.h>
+#include <functional>
+#include <memory>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "DAQKernel/DecoderToolBase.h"
+#include "Event/OTBankVersion.h"
+#include "Event/OTLiteTime.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
-#include "OTDAQ/IOTRawBankDecoder.h"            // Interface
 #include "GaudiKernel/IIncidentListener.h"
-#include "DAQKernel/DecoderToolBase.h"
-
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/OTChannelID.h"
+#include "OTDAQ/IOTRawBankDecoder.h"            // Interface
 // Kernel
 #include "OTDet/DeOTModule.h"
-#include "Event/OTLiteTime.h"
 
 // forward declarations
 class DeOTDetector;
+class IIncidentListener;
+class IInterface;
+class Incident;
+namespace OTDAQ {
+class RawEvent;
+}  // namespace OTDAQ
 struct IOTChannelMapTool ;
+struct IOTRawBankDecoder;
+
 namespace LHCb {
   class RawBank ;
+class RawEvent;
 }
 
 namespace OTRawBankDecoderHelpers

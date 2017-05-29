@@ -1,30 +1,34 @@
+#include <stdlib.h>
 #include <algorithm>
+#include <functional>
+#include <map>
+#include <numeric>
+#include <utility>
 
-// local
-#include "STDecodingBaseAlg.h"
-
+#include "Event/ODIN.h"
 // Event
 #include "Event/RawEvent.h"
-#include "Event/ByteStream.h"
 #include "Event/STCluster.h"
 #include "Event/STSummary.h"
-#include "Event/ODIN.h"
-
-#include "Kernel/STDataFunctor.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
 #include "Kernel/ISTReadoutTool.h"
-#include "Kernel/STTell1Board.h"
-#include "Kernel/STTell1ID.h"
-#include "Kernel/STRawBankMap.h"
+#include "Kernel/STChannelID.h"
 #include "Kernel/STDecoder.h"
 #include "Kernel/STLexicalCaster.h"
-
-
+#include "Kernel/STRawBankMap.h"
+#include "Kernel/STTell1Board.h"
+#include "Kernel/STTell1ID.h"
+// local
+#include "STDecodingBaseAlg.h"
 #include "SiDAQ/SiHeaderWord.h"
-#include "SiDAQ/SiADCWord.h"
+#include "SiDAQ/SiRawBankDecoder.h"
 #include "boost/lexical_cast.hpp"
 
-
-#include "STDet/DeSTDetector.h"
+class ISvcLocator;
 
 
 using namespace LHCb;

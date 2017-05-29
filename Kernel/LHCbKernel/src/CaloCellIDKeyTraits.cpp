@@ -1,8 +1,9 @@
 // ============================================================================
 // Include files
+#include <string>
+
 #include "GaudiKernel/GaudiException.h"
-// local
-#include "Kernel/CaloCellIDKeyTraits.h"
+#include "GaudiKernel/StatusCode.h"
 
 
 // ============================================================================

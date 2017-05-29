@@ -2,11 +2,14 @@
 #define _STRawBankMonitor_H
 
 #include <string>
+#include <vector>
 
 #include "Event/RawBank.h"
-
+#include "GaudiKernel/StatusCode.h"
 // base class
 #include "Kernel/STHistoAlgBase.h"
+
+class ISvcLocator;
 
 /** @class STRawBankMonitor STRawBankMonitor.h
  * ITCheckers/STRawBankMonitor.h

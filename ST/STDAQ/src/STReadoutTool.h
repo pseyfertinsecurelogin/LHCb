@@ -1,21 +1,29 @@
 #ifndef _STReadoutTool_H
 #define _STReadoutTool_H
 
-// STL
-#include <vector>
 #include <fstream>
 #include <string>
+// STL
+#include <vector>
 
+#include "Event/STCluster.h"
 // Gaudi
 #include "GaudiAlg/GaudiTool.h"
-
+#include "GaudiKernel/StatusCode.h"
 // STDAQ
 #include "Kernel/ISTReadoutTool.h"
-#include "Kernel/STTell1ID.h"
-#include "Kernel/STDAQDefinitions.h"
-
 // ST
 #include "Kernel/STChannelID.h"
+#include "Kernel/STDAQDefinitions.h"
+#include "Kernel/STTell1ID.h"
+
+class DeSTSector;
+class IInterface;
+class STTell1Board;
+class STTell1ID;
+namespace LHCb {
+class STChannelID;
+}  // namespace LHCb
 
 
 /** @class STReadoutTool STReadoutTool.h  STDAQ/STReadoutTool

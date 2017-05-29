@@ -13,24 +13,24 @@
 // Created by: Mark Fischler Tues July 5  2005
 //
 
-#include "TemplatedGenVector/AxisAngle.h"
-
 #include <cmath>
 
+#include "DisplacementVector3D.h"
 #include "TemplatedGenVector/AxisAngle.h"
-#include "TemplatedGenVector/Quaternion.h"
 #include "TemplatedGenVector/Cartesian3D.h"
+#include "TemplatedGenVector/Quaternion.h"
 #include "TemplatedGenVector/RotationX.h"
 #include "TemplatedGenVector/RotationY.h"
 #include "TemplatedGenVector/RotationZ.h"
-
-#include "TemplatedGenVector/Rotation3Dfwd.h"
-#include "TemplatedGenVector/EulerAnglesfwd.h"
 
 namespace LHCbROOT {
 
 namespace Math {
 
+
+class EulerAngles;
+class Rotation3D;
+class RotationZYX;
 
 AxisAngle AxisAngle::operator * (const Rotation3D & r) const {
    // combination with a Rotation3D

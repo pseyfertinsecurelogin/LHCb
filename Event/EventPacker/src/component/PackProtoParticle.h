@@ -1,11 +1,15 @@
 #ifndef PACKPROTOPARTICLE_H
 #define PACKPROTOPARTICLE_H 1
 
+#include <string>
+
+#include "Event/PackedProtoParticle.h"
+#include "Event/ProtoParticle.h"
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
-#include "Event/ProtoParticle.h"
-#include "Event/PackedProtoParticle.h"
+class ISvcLocator;
 
 /** @class PackProtoParticle PackProtoParticle.h
  *  Pack a protoparticle container

@@ -1,11 +1,13 @@
 #ifndef MD5_H
 #define MD5_H 1
-#include <array>
 #include <algorithm>
+#include <array>
 #include <cstdint>
 #include <cstring>
 #include <iostream>
+#include <iterator>
 #include <sstream>
+#include <string>
 // ============================================================================
 /** @file MD5.h
  *
@@ -23,6 +25,7 @@ namespace Gaudi
     class MD5 {
         private:
            class md5_engine;
+
         public:
            using value_type = std::array<uint8_t,16>;
 

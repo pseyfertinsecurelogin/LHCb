@@ -1,11 +1,16 @@
 #ifndef LOKI_COREENGINE_H
 #define LOKI_COREENGINE_H 1
+#include <string>
+
+#include "GaudiKernel/StatusCode.h"
+#include "LoKi/CoreTypes.h"
 // ============================================================================
 // Include files
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/ICoreAntiFactory.h"
+
 // ============================================================================
 /** @file LoKi/CoreEngine.h
  *

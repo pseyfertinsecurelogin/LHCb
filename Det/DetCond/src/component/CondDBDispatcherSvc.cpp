@@ -1,10 +1,22 @@
 // Include files
-#include "GaudiKernel/ClassID.h"
-#include "GaudiKernel/Time.h"
+#include <algorithm>
+#include <functional>
+#include <iterator>
+#include <utility>
 
+#include "CondDBCommon.h"
 // local
 #include "CondDBDispatcherSvc.h"
-#include "CondDBCommon.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+
+class ISvcLocator;
 
 // Factory implementation
 DECLARE_SERVICE_FACTORY(CondDBDispatcherSvc)

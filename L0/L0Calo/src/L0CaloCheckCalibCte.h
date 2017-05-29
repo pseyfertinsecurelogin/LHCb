@@ -1,11 +1,18 @@
 #ifndef L0CALO_L0CALOCHECKCALIBCTE_H
 #define L0CALO_L0CALOCHECKCALIBCTE_H 1
 
+#include <string>
+
 // Include files
 // from Calo
 #include "CaloUtils/Calo2Dview.h"
+#include "GaudiKernel/StatusCode.h"
 
 class DeCalorimeter ;
+class ISvcLocator;
+namespace LHCb {
+class CaloCellID;
+}  // namespace LHCb
 struct ICaloDataProvider ;
 struct ICaloL0DataProvider ;
 

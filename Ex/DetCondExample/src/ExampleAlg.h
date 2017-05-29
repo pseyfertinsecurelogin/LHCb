@@ -1,9 +1,17 @@
 #ifndef EXAMPLEALG_H
 #define EXAMPLEALG_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class AlignmentCondition;
+class Condition;
+class ISvcLocator;
 
 
 /** @class ExampleAlg ExampleAlg.h

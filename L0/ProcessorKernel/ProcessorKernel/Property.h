@@ -1,6 +1,7 @@
 #ifndef PROPERTY_H
 #define PROPERTY_H 1
 
+#include <stdlib.h>
 #include <iostream>
 #include <string>
 #include <vector>

@@ -5,14 +5,29 @@
 // Author    : Markus Frank
 //
 // ====================================================================
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/SmartDataPtr.h"
+#include <functional>
+#include <string>
+#include <vector>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "Gaudi/PluginService.h"
 #include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IDataManagerSvc.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
 #include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
 #include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /**@class AddressKillerAlg
  *

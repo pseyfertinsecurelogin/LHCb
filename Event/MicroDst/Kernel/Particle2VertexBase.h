@@ -2,13 +2,16 @@
 #ifndef PARTICLE2VERTEXBASE_H
 #define PARTICLE2VERTEXBASE_H 1
 
-// Include files
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/VectorMap.h"
-#include "GaudiKernel/SmartRef.h"
-#include "Event/VertexBase.h"
+#include <stddef.h>
+#include <vector>
 
 #include "Event/Particle.h"
+#include "Event/VertexBase.h"
+#include "GaudiKernel/ClassID.h"
+// Include files
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/VectorMap.h"
 
 namespace DaVinci{
 

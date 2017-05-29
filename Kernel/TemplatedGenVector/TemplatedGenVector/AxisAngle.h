@@ -17,13 +17,19 @@
 #ifndef LHCbROOT_Math_GenVector_AxisAngle
 #define LHCbROOT_Math_GenVector_AxisAngle  1
 
-#include "TemplatedGenVector/Rotation3D.h"
-#include "TemplatedGenVector/DisplacementVector3D.h"
-#include "TemplatedGenVector/PositionVector3D.h"
-#include "TemplatedGenVector/LorentzVector.h"
-#include "TemplatedGenVector/3DConversions.h"
 #include <algorithm>
 #include <cassert>
+#include <iosfwd>
+
+#include "3DDistances.h"
+#include "Cartesian3D.h"
+#include "DisplacementVector3Dfwd.h"
+#include "PxPyPzE4D.h"
+#include "TemplatedGenVector/3DConversions.h"
+#include "TemplatedGenVector/DisplacementVector3D.h"
+#include "TemplatedGenVector/LorentzVector.h"
+#include "TemplatedGenVector/PositionVector3D.h"
+#include "TemplatedGenVector/Rotation3D.h"
 
 
 namespace LHCbROOT {
@@ -38,6 +44,15 @@ namespace Math {
       @ingroup GenVector
 
    */
+class DefaultCoordinateSystemTag;
+class EulerAngles;
+class Quaternion;
+class Rotation3D;
+class RotationX;
+class RotationY;
+class RotationZ;
+class RotationZYX;
+
 class AxisAngle {
 
 public:

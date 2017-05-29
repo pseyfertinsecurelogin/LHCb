@@ -3,12 +3,16 @@
 
 #include <string>
 
+#include "DetDesc/IConditionInfo.h"
 // Base class
 #include "DetDesc/Services.h"
-#include "DetDesc/IConditionInfo.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/StatusCode.h"
 
+class Condition;
 // Forward declarations
 class IDataProviderSvc;
+struct IDetectorElement;
 
 /**
  *  @class ConditionInfo ConditionInfo.h Det/DetDesc/ConditionInfo.h

@@ -12,15 +12,24 @@
 #ifndef GLOBALRECO_ChargedProtoParticleAddMuonInfo_H
 #define GLOBALRECO_ChargedProtoParticleAddMuonInfo_H 1
 
+#include <map>
 // STL
 #include <sstream>
-
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <string>
 
 // Muon
 #include "Event/MuonPID.h"
 #include "Event/ProtoParticle.h"
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+namespace LHCb {
+class MuonPID;
+class ProtoParticle;
+class Track;
+}  // namespace LHCb
 
 /** @class ChargedProtoParticleAddMuonInfo ChargedProtoParticleAddMuonInfo.h
  *

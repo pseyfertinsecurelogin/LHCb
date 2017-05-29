@@ -1,5 +1,17 @@
 #include "LinePersistenceSvcCommon.h"
 
+#include <iterator>
+#include <utility>
+
+#include "Event/HltDecReport.h"
+#include "Event/RawBank.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
+
+namespace LHCb {
+class HltDecReports;
+}  // namespace LHCb
+
 ILinePersistenceSvc::Locations
 LinePersistenceSvcCommon::locationsToPersistImpl(
   const LHCb::HltDecReports& hdr, const std::set<std::string>& lines,

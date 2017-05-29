@@ -1,19 +1,34 @@
 /// Kernel
+#include <boost/optional/optional.hpp>
+#include <algorithm>
+#include <memory>
+#include <string>
+#include <typeinfo>
+#include <vector>
+
+#include "DetDesc/Condition.h"
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
+#include "GaudiKernel/ClassID.h"
+// GaudiKernel
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/LHCbID.h"
 #include "Kernel/OTChannelID.h"
 #include "Kernel/Trajectory.h"
-
-// GaudiKernel
-#include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-
 /// OTDet
 #include "OTDet/DeOTDetector.h"
-#include "OTDet/DeOTStation.h"
 #include "OTDet/DeOTLayer.h"
-#include "OTDet/DeOTQuarter.h"
 #include "OTDet/DeOTModule.h"
+#include "OTDet/DeOTQuarter.h"
+#include "OTDet/DeOTStation.h"
 
 // Kernel/LHCbKernel
 

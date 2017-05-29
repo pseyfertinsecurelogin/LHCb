@@ -1,12 +1,24 @@
 // Include files 
 
+#include <stddef.h>
+#include <functional>
+
+#include "Event/L0MuonError.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // from Gaudi
 #include "Kernel/MuonLayout.h"
-#include "MuonKernel/MuonStationLayout.h"
-#include "Event/L0MuonError.h"
-
+#include "Kernel/MuonTileID.h"
+#include "L0Interfaces/IL0MuonOLErrorTool.h"
 // local
 #include "L0MuonOLErrorTool.h"
+#include "MuonKernel/MuonStationLayout.h"
+#include "MuonKernel/MuonSystemLayout.h"
 
 namespace {
   // Misc

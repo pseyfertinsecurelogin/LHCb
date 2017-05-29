@@ -1,5 +1,8 @@
 #include "GaudiObjDesc/MemoryPoolAllocatorReleaser.h"
 
+#include <utility>
+
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/MsgStream.h"
 
 

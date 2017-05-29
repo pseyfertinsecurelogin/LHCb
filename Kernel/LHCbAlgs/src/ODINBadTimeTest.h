@@ -1,10 +1,14 @@
 #ifndef SRC_ODINBADTIMETEST_H
 #define SRC_ODINBADTIMETEST_H 1
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
 class IEventTimeDecoder;
+class ISvcLocator;
 
 namespace LHCbAlgsTests {
 

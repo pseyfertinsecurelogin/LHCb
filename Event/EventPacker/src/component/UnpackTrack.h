@@ -1,11 +1,16 @@
 #ifndef UNPACKTRACK_H
 #define UNPACKTRACK_H 1
 
+#include <string>
+
+#include "Event/PackedTrack.h"
+#include "Event/Track.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "Event/Track.h"
-#include "Event/PackedTrack.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class UnpackTrack UnpackTrack.h
  *

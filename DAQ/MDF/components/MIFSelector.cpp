@@ -8,15 +8,29 @@
 //  Author     : M.Frank
 //====================================================================
 
-// Include files
-#include "GaudiKernel/MsgStream.h"
-#include "MDF/MIFHeader.h"
-#include "MDF/MDFIO.h"
-#include "MDF/RawEventHelpers.h"
-#include "MDF/RawDataConnection.h"
-#include "MDF/RawDataSelector.h"
+#include <stdio.h>
+#include <iomanip>
 #include <map>
 #include <memory>
+#include <string>
+#include <utility>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IMessageSvc.h"
+// Include files
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/StreamBuffer.h"
+#include "GaudiUtils/IIODataManager.h"
+#include "MDF/MDFIO.h"
+#include "MDF/MIFHeader.h"
+#include "MDF/RawDataConnection.h"
+#include "MDF/RawDataSelector.h"
+#include "MDF/RawEventHelpers.h"
+
+class ISvcLocator;
 
 /*
  *  LHCb namespace declaration

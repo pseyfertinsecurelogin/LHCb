@@ -1,6 +1,13 @@
 #include "Event/PrimaryVertexTrack.h"
+
+#include <Math/Expression.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SMatrix.h>
+
 #include "Event/PrimaryVertex.h"
+#include "Event/State.h"
 #include "Event/Track.h"
+#include "Event/TrackTypes.h"
 
 namespace LHCb
 {

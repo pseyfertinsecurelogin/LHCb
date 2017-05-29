@@ -1,19 +1,30 @@
-#include "Event/RawEvent.h"
+#include <algorithm>
+#include <functional>
+#include <iterator>
+#include <memory>
+#include <utility>
 
-#include "VeloDet/DeVelo.h"
-
-#include "SiDAQ/SiHeaderWord.h"
-#include "SiDAQ/SiADCWord.h"
-#include "SiDAQ/SiRawBufferWord.h"
-
-#include "VeloClusterWord.h"
-#include "VeloRawBankVersions.h"
-#include "VeloRawBankDecoder.h"
-#include "VeloRawWordSizes.h"
-#include "VeloClusterPtrLessThan.h"
 #include "DecodeRawBankToClusters.h"
-
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Event/VeloCluster.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/VeloChannelID.h"
+#include "SiDAQ/SiADCWord.h"
+#include "SiDAQ/SiHeaderWord.h"
+#include "SiDAQ/SiRawBufferWord.h"
+#include "VeloClusterPtrLessThan.h"
+#include "VeloClusterWord.h"
 #include "VeloClustersToRaw.h"
+#include "VeloDet/DeVelo.h"
+#include "VeloRawBankVersions.h"
+#include "VeloRawWordSizes.h"
+
+class DeVeloSensor;
+class ISvcLocator;
 
 
 //-----------------------------------------------------------------------------

@@ -8,18 +8,22 @@
   #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable 
   #pragma warning(push)
 #endif
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/Vector3DTypes.h"
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+
 #include "GaudiKernel/GenericVectorTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "LoKi/KinTypes.h"
 #ifdef __INTEL_COMPILER         // Re-enable ICC remark 1572
   #pragma warning(pop)
 #endif
-// ============================================================================
-// LoKiCore 
-// ============================================================================
-#include "LoKi/Geometry.h"
 #include "LoKi/Constants.h"
 #include "LoKi/Report.h"
+
 // ============================================================================
 /** @file
  *

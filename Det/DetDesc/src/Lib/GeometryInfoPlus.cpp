@@ -1,23 +1,49 @@
 // Include files
 
-// GaudiKernel
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-
-#include "GaudiKernel/Kernel.h"
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/DataObject.h"
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/MsgStream.h"
-// DetDesc
-#include "DetDesc/IPVolume_predicates.h"
-#include "DetDesc/DetDesc.h"
-#include "DetDesc/AlignmentCondition.h"
+#include <Math/GenVector/PositionVector3D.h>
+#include <Math/GenVector/Transform3D.h>
+#include <boost/core/explicit_operator_bool.hpp>
+#include <boost/none.hpp>
+#include <boost/optional/optional.hpp>
+#include <boost/utility/string_ref.hpp>
+#include <boost/utility/string_ref_fwd.hpp>
+#include <ext/alloc_traits.h>
+#include <algorithm>
+#include <cmath>
+#include <functional>
+#include <iterator>
+#include <memory>
 // STD and STL
 #include <numeric>
-#include <iterator>
+#include <ostream>
+#include <string>
+#include <vector>
 
+#include "DetDesc/AlignmentCondition.h"
+#include "DetDesc/DetDesc.h"
+#include "DetDesc/GeometryInfoException.h"
 #include "DetDesc/GeometryInfoPlus.h"
+#include "DetDesc/IDetectorElement.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/IPVolume.h"
+// DetDesc
+#include "DetDesc/IPVolume_predicates.h"
+#include "DetDesc/Services.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 
 //-----------------------------------------------------------------------------

@@ -1,11 +1,15 @@
 #ifndef COMPONENT_COMPARECALODIGITS_H 
 #define COMPONENT_COMPARECALODIGITS_H 1
 
+#include <string>
+
+#include "Event/CaloDigit.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
-#include "Event/CaloDigit.h"
+class ISvcLocator;
 
 /** @class CompareCaloDigits CompareCaloDigits.h component/CompareCaloDigits.h
  *  Compare the containers of CaloDigits

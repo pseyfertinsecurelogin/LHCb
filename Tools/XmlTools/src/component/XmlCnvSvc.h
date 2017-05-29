@@ -1,12 +1,27 @@
 #ifndef DETDESCCNV_XMLCNVSVC_H
 #define DETDESCCNV_XMLCNVSVC_H
 
+#include <functional>
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/ConversionSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/System.h"
+#include "GaudiKernel/extends.h"
+#include "XmlTools/Evaluator.h"
+#include "XmlTools/IXmlParserSvc.h"
 // Include files
 #include "XmlTools/IXmlSvc.h"
-#include "XmlTools/Evaluator.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/ConversionSvc.h"
-#include "GaudiKernel/System.h"
+
+class IOVDOMDocument;
+class IOpaqueAddress;
+class ISvcLocator;
+struct IXmlSvc;
 
 
 /** @class XmlCnvSvc XmlCnvSvc.h DetDescCnv/XmlCnvSvc.h

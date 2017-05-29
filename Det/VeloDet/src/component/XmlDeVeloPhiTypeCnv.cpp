@@ -1,6 +1,7 @@
 // $Id: XmlDeVeloPhiTypeCnv.cpp,v 1.2 2006-11-30 07:57:41 cattanem Exp $
 /// DetDesc
 #include "DetDescCnv/XmlUserDetElemCnv.h"
+#include "GaudiKernel/Converter.h"
 /// VeloDet 
 #include "VeloDet/DeVeloPhiType.h"
 

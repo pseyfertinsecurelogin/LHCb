@@ -1,17 +1,26 @@
 #ifndef HCRAWBANKDECODER_H
 #define HCRAWBANKDECODER_H 1
 
+#include <string>
+#include <vector>
+
 // AIDA
 #include "AIDA/IHistogram1D.h"
 #include "AIDA/IHistogram2D.h"
-
 // LHCb
 #include "DAQKernel/DecoderHistoAlgBase.h"
-
 #include "Event/HCDigit.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+namespace AIDA {
+class IHistogram1D;
+class IHistogram2D;
+}  // namespace AIDA
 
 namespace LHCb {
 class RawEvent;
+class RawBank;
 }
 
 /** @class HCRawBankDecoder.h

@@ -1,14 +1,27 @@
 // $Id$
 // Include files
 
+#include <ext/alloc_traits.h>
+#include <algorithm>
+#include <functional>
+#include <iterator>
+#include <utility>
+#include <vector>
+
+#include "Event/RawBank.h"
 #include "Event/RawEvent.h"
 #include "Event/Track.h"
-#include "HltTrackingCoder.h"
-#include <functional>
-#include <algorithm>
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
 // local
 #include "HltTrackReportsWriter.h"
+#include "HltTrackingCoder.h"
+#include "Kernel/LHCbID.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : HltTrackReportsWriter

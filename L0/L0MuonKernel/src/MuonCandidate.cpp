@@ -1,11 +1,10 @@
 // $Id: MuonCandidate.cpp,v 1.6 2008-07-11 15:30:02 jucogan Exp $
 
-#include <cmath>
-#include <vector>
-#include "L0MuonKernel/MuonCandidate.h"
-#include "L0MuonKernel/ProcUtilities.h"
-
+#include <stdio.h>
 #include <iostream>
+#include <string>
+
+#include "L0MuonKernel/MuonCandidate.h"
 
 L0Muon::MuonCandidate::MuonCandidate() {
   m_colM3  =0;

@@ -1,9 +1,15 @@
 #include "L0MuonKernel/CtrlCandCnv.h"
 
-#include "ProcessorKernel/RegisterFactory.h"
-#include "ProcessorKernel/Register.h"
+#include <stdio.h>
 
+#include "Kernel/MuonLayout.h"
 #include "L0MuonKernel/BankUtilities.h"
+#include "L0MuonKernel/ErrorHandler.h"
+#include "ProcessorKernel/RegisterFactory.h"
+
+namespace L0Muon {
+class Register;
+}  // namespace L0Muon
 
 #define _DET_SPEC_HEADER_ 1
 

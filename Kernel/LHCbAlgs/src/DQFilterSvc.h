@@ -1,11 +1,22 @@
 #ifndef DQFILTERSVC_H
 #define DQFILTERSVC_H
 
-#include "GaudiKernel/Service.h"
+#include <string>
+#include <vector>
+
 #include "GaudiKernel/IIncidentListener.h"
-#include "GaudiKernel/IToolSvc.h"
 #include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/IToolSvc.h"
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
 #include "Kernel/IAccept.h"
+
+class IIncidentListener;
+class ISvcLocator;
+class Incident;
+struct IAccept;
 
 /** Simple service installing itself in the IncidentSvc to filter events on
  * DQ Flags via an IAccept tool (by default DQAcceptTool).

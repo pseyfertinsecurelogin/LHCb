@@ -9,15 +9,24 @@
 
 #pragma once
 
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <array>
+#include <cmath>
+#include <iosfwd>
 // STL
 #include <memory>
-#include <array>
+#include <string>
 
 // DetDesc
 #include "DetDesc/IGeometryInfo.h"
 #include "DetDesc/ISolid.h"
 #include "DetDesc/SolidCons.h"
-
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "Kernel/RichDetectorType.h"
 // Local
 #include "RichDet/DeRichBase.h"
 

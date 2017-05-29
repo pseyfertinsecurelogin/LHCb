@@ -1,4 +1,11 @@
 
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <iterator>
 // STL
 #include <random>
 #include <vector>
@@ -6,7 +13,6 @@
 // Gaudi
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
-
 // Eigen
 //#include <Eigen/Geometry>
 #include "LHCbMath/EigenTypes.h"
@@ -14,9 +20,6 @@
 // VectorClass
 //#include "VectorClass/vectorclass.h"
 //#include "LHCbMath/VectorClassTypes.h"
-
-// VDT
-#include "vdt/sqrt.h"
 
 // Eigen type to use for 3D Vector
 typedef LHCb::Math::Eigen::XYZVector<double> EigenXYZVector;

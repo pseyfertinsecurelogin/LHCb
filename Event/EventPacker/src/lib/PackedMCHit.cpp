@@ -1,15 +1,22 @@
 // STL
-#include <sstream>
+#include <vector>
 
-// local
-#include "Event/PackedMCHit.h"
-
+#include "Event/MCHit.h"
+#include "Event/MCParticle.h"
 // Checks
 #include "Event/PackedEventChecks.h"
-
+// local
+#include "Event/PackedMCHit.h"
+#include "Event/StandardPacker.h"
 // Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
 
 using namespace LHCb;
 

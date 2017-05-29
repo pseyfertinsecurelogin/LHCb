@@ -1,7 +1,17 @@
 #include "DQFilterSvc.h"
 
+#include <functional>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/IStateful.h"
+#include "GaudiKernel/ISvcLocator.h"
 #include "GaudiKernel/Incident.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StateMachine.h"
+#include "Kernel/IAccept.h"
 
 
 DECLARE_SERVICE_FACTORY(DQFilterSvc)

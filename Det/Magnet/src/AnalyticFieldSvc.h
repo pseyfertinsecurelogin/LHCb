@@ -1,15 +1,23 @@
 #ifndef ANALYTICFIELDSVC_H
 #define ANALYTICFIELDSVC_H 1
 
-// Include files
-#include "GaudiKernel/Service.h"
+#include <string>
+#include <vector>
 
 #include "GaudiKernel/IMagneticFieldSvc.h"
-#include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Point3DTypes.h"
-#include "MagVec.h"
+// Include files
+#include "GaudiKernel/Service.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "GaudiKernel/extends.h"
 #include "MagMat.h"
+#include "MagVec.h"
 
+class IMagneticFieldSvc;
+class ISvcLocator;
+class MagMat;
+class MagVec;
 // Forward declarations
 template <class TYPE> class SvcFactory;
 

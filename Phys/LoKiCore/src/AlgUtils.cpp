@@ -3,20 +3,19 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/IAlgContextSvc.h"
-#include "GaudiKernel/IAlgorithm.h"
-// ============================================================================
-#include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiAlg/GetAlgs.h"
+#include "GaudiKernel/IAlgContextSvc.h"
+#include "GaudiKernel/SmartIF.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/AuxFunBase.h"
 #include "LoKi/ILoKiSvc.h"
-// ============================================================================
-// local
-// ============================================================================
-#include "LoKi/AlgUtils.h"
+#include "LoKi/Interface.h"
+
+class GaudiAlgorithm;
+class IAlgorithm;
+
 // ============================================================================
 /** @file  
  *

@@ -2,9 +2,13 @@
 #define PACKCLUSTER_H 1
 
 #include <sstream>
+#include <string>
 
-#include "GaudiAlg/GaudiAlgorithm.h"
 #include "Event/PackedCluster.h"
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class PackCluster PackCluster.h
  *

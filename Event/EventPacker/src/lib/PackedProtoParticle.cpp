@@ -1,17 +1,32 @@
 // STL
-#include <sstream>
-
-// local
-#include "Event/PackedProtoParticle.h"
-
-// Checks
-#include "Event/PackedEventChecks.h"
-
-// Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-
 // Boost
 #include <boost/numeric/conversion/bounds.hpp>
+#include <math.h>
+#include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/CaloHypo.h"
+#include "Event/MuonPID.h"
+// Checks
+#include "Event/PackedEventChecks.h"
+// local
+#include "Event/PackedProtoParticle.h"
+#include "Event/ProtoParticle.h"
+#include "Event/RichPID.h"
+#include "Event/StandardPacker.h"
+#include "Event/Track.h"
+// Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/StatusCode.h"
 
 using namespace LHCb;
 

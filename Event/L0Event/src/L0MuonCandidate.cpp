@@ -1,6 +1,9 @@
-#include <cmath>
+#include <memory>
 #include <vector>
+
 #include "Event/L0MuonCandidate.h"
+#include "Kernel/MuonLayout.h"
+#include "Kernel/MuonTileID.h"
 
 LHCb::L0MuonCandidate::L0MuonCandidate() : 
                  m_pt(0.0),

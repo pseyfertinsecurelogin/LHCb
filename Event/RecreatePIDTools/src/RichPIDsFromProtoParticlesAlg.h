@@ -12,12 +12,16 @@
 #ifndef GLOBALRECO_RICHPIDSFROMPROTOPARTICLESALG_H
 #define GLOBALRECO_RICHPIDSFROMPROTOPARTICLESALG_H 1
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <string>
 
 // Event
 #include "Event/ProtoParticle.h"
 #include "Event/RichPID.h"
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 /** @class RichPIDsFromProtoParticlesAlg RichPIDsFromProtoParticlesAlg.h

@@ -1,11 +1,27 @@
 // ============================================================================
 // DetDesc
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
+#include <memory>
+#include <numeric>
+#include <ostream>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "DetDesc/Element.h"
+#include "DetDesc/Material.h"
 #include "DetDesc/MaterialException.h"
 #include "DetDesc/Mixture.h"
-#include <cmath>
-#include <numeric>
 // Gaudi Math (for floating point comparison)
 #include "GaudiKernel/Lomont.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
+
 //
 Mixture::Mixture( const std::string&  name    ,
                   const double        a       ,

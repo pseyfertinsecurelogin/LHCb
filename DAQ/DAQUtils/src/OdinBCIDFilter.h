@@ -2,9 +2,14 @@
 #ifndef COMPONENT_ODINBCIDFILTER_H
 #define COMPONENT_ODINBCIDFILTER_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 
 /** @class OdinBCIDFilter OdinBCIDFilter.h component/OdinBCIDFilter.h

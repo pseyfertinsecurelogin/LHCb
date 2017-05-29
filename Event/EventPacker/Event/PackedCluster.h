@@ -1,10 +1,17 @@
 #ifndef EVENT_PACKEDCLUSTER_H
 #define EVENT_PACKEDCLUSTER_H 1
-#include "GaudiKernel/DataObject.h"
-#include "Event/VeloCluster.h"
-#include "Event/STCluster.h"
 #include <string>
 #include <vector>
+
+#include "Event/STCluster.h"
+#include "Event/VeloCluster.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
+
+namespace LHCb {
+class STCluster;
+class VeloCluster;
+}  // namespace LHCb
 
 namespace LHCb
 {

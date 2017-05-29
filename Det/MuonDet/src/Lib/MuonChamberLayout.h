@@ -1,16 +1,26 @@
 #ifndef PUBLIC_MUONCHAMBERLAYOUT_H
 #define PUBLIC_MUONCHAMBERLAYOUT_H 1
 
-#include "GaudiKernel/MsgStream.h"
+#include <memory>
+#include <vector>
 
+#include "DetDesc/DetectorElement.h"
+//Gaudi
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/MuonLayout.h"
+#include "Kernel/MuonTileID.h"
 //From Muon
 #include "MuonDet/DeMuonChamber.h"
 #include "MuonDet/MuonBasicGeometry.h"
 #include "MuonKernel/MuonSystemLayout.h"
 
-//Gaudi
-#include "GaudiKernel/IDataProviderSvc.h"
+class DeMuonChamber;
+class IDataProviderSvc;
 class IMessageSvc;
+struct IGeometryInfo;
 
 /** @class MuonChamberLayout MuonChamberLayout.h MuonDet/MuonChamberLayout.h
  *

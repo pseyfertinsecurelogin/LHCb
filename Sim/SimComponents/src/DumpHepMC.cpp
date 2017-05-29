@@ -3,18 +3,34 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/MsgStream.h"
+#include <stdio.h>
+#include <algorithm>
+#include <functional>
+#include <ostream>
+
+#include "DumpHepMC.h"
 // ============================================================================
 // Event
 // ============================================================================
 #include "Event/HepMCEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GenEvent/HepMCUtils.h"
 // ============================================================================
 // HepMC
 // ============================================================================
 #include "HepMC/GenEvent.h"
-#include "GenEvent/HepMCUtils.h"
+#include "HepMC/GenParticle.h"
+#include "HepMC/GenVertex.h"
+#include "HepMC/SimpleVector.h"
+#include "HepMC/SimpleVector.icc"
+#include "HepMC/WeightContainer.h"
 
-#include "DumpHepMC.h"
+class ISvcLocator;
 
 /** @file
  *  implementation file for the class DumpHepMC.

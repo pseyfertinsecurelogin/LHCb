@@ -1,7 +1,14 @@
 #ifndef L0MUONKERNEL_BCSUNIT_H
 #define L0MUONKERNEL_BCSUNIT_H     1
 
+#include <string>
+
+#include "Kernel/MuonTileID.h"
 #include "L0MuonKernel/SelectionUnit.h"
+
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 namespace L0Muon {
 

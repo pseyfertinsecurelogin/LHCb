@@ -9,14 +9,24 @@
  */
 //-----------------------------------------------------------------------------
 
-// Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "GaudiAlg/GaudiTool.h"
-#include "GaudiAlg/GaudiTupleAlg.h"
-#include "GaudiAlg/GaudiTupleTool.h"
+#include <stddef.h>
+#include <string>
 
 // local
 #include "DAQKernel/DecoderCommonBase.h"
+// Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiAlg/GaudiHistoTool.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiAlg/GaudiTupleAlg.h"
+#include "GaudiAlg/GaudiTupleTool.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
+
+class IInterface;
+class ISvcLocator;
 
 namespace Decoder
 {

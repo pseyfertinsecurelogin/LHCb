@@ -14,13 +14,14 @@
 
 // STD
 #include <bitset>
-
-// Gaudi
-#include "GaudiKernel/GaudiException.h"
+#include <iosfwd>
+#include <string>
 
 // Event Model
 #include "Event/ODIN.h"
-
+// Gaudi
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
 // RichUtils
 #include "RichUtils/RichDAQDefinitions.h"
 

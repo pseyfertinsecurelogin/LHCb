@@ -4,11 +4,16 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+#include <cmath>
+
 #include "GaudiKernel/GenericVectorTypes.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
 // ============================================================================
 // LHCbmath
 // ============================================================================
 #include "LHCbMath/Combine.h"
+#include "LHCbMath/ValueWithError.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for utilitied fromm LHCbMath/Comiiner.h file  

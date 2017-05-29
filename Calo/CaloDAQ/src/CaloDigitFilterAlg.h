@@ -1,10 +1,16 @@
 #ifndef CALODIGITFILTERALG_H 
 #define CALODIGITFILTERALG_H 1
 
+#include <string>
+
+#include "CaloDAQ/ICaloDigitFilterTool.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "CaloDAQ/ICaloDigitFilterTool.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+struct ICaloDigitFilterTool;
 
 
 /** @class CaloDigitFilterAlg CaloDigitFilterAlg.h

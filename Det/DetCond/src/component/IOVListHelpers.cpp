@@ -1,5 +1,8 @@
 #include "IOVListHelpers.h"
 
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+
 namespace IOVListHelpers {
   ICondDBReader::IOVList find_holes(const ICondDBReader::IOVList& data, const ICondDBReader::IOV& iov) {
 

@@ -4,24 +4,25 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
-#include <iostream>
-#include <iomanip>
-#include <string>
 #include <cmath>
+#include <iostream>
+#include <string>
+
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/Chrono.h"
 #include "GaudiKernel/ChronoEntity.h"
+#include "GaudiKernel/Lomont.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/Lomont.h"
-#include "LHCbMath/LHCbMath.h"
 // ============================================================================
 // GSL
 // =========================================================================
 #include "gsl/gsl_sys.h"
+
 // =========================================================================
 // Boost 
 // ============================================================================
@@ -30,6 +31,7 @@ using namespace std;
   #pragma warning(disable:1572) // floating-point equality and inequality comparisons are unreliable
 #endif
 #include "boost/progress.hpp"
+
 // ============================================================================
 /** @file 
  *  Test for CPU-performance of "Lomont" versus "Knuth" copare of doubles 

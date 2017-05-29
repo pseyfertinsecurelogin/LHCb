@@ -1,16 +1,28 @@
 // Include files
 
-// From ROOT
-#include "TH1D.h"
+#include <TH1.h>
+#include <stddef.h>
+#include <fstream>
+#include <functional>
 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "Gaudi/PluginService.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IRndmGenSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 // from Gaudi
 #include "GaudiKernel/RndmGenerators.h"
-#include "GaudiKernel/IRndmGenSvc.h"
+#include "GaudiKernel/SmartIF.h"
 #include "GaudiUtils/Aida2ROOT.h"
-
 // local
 #include "LHCbSequencerTimerTool.h"
-#include <fstream>
+
+namespace AIDA {
+class IHistogram1D;
+}  // namespace AIDA
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : LHCbSequencerTimerTool

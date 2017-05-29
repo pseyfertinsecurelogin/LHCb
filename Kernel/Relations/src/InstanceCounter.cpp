@@ -5,8 +5,13 @@
 // ST D& STL 
 // ======================================================================
 #include <iostream>
+#include <map>
+#include <string>
+#include <utility>
+
 // ======================================================================
 #include "Relations/RelationUtils.h"
+
 // ======================================================================
 /** @file
  *  implementation file forthe class Relations::InstanceCounter

@@ -1,18 +1,16 @@
 // Include files
+#include <boost/none.hpp>
+#include <boost/optional/optional.hpp>
 #include <string.h>
 
-#include <iostream>
-#include <memory>
-#include <algorithm>
-
-#include "boost/optional.hpp"
 extern "C"{
 #include <ZipLZMA.h>
+#include <vector>
 }
-#include "GaudiKernel/GaudiException.h"
-
 // local
 #include "CondDBCompression.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
 #include "base64.h"
 
 constexpr auto MAXBUFFSIZE = 33554432; // 32 MB maximum xml buffer size

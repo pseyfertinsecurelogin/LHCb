@@ -12,12 +12,18 @@
 // local
 #include "RichDet/Rich1DTabProperty.h"
 
+#include <iostream>
+#include <string>
+#include <utility>
+
+#include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/Bootstrap.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/Bootstrap.h"
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
 
 using namespace Rich;
 

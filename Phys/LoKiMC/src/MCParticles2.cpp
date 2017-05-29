@@ -3,22 +3,31 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/IToolSvc.h"
-#include "GaudiKernel/SmartIF.h"
+#include <ostream>
+#include <string>
+#include <tuple>
+
+#include "Event/MCParticle.h"
+#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/ToStream.h"
-// ============================================================================
-// PartProp
-// ============================================================================
-#include "Kernel/IParticlePropertySvc.h"
+#include "GaudiKernel/Vector4DTypes.h"
+#include "LoKi/AuxFunBase.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Constants.h"
-#include "LoKi/Kinematics.h"
-#include "LoKi/MCParticles2.h"
-#include "LoKi/MCChild.h"
-#include "LoKi/Trees.h"
+#include "LoKi/Functor.h"
 #include "LoKi/IMCDecay.h"
+#include "LoKi/Kinematics.h"
+#include "LoKi/MCChildSelector.h"
+#include "LoKi/MCParticles2.h"
+#include "LoKi/MCTypes.h"
+#include "LoKi/iTree.h"
+
+namespace Decays {
+class iNode;
+}  // namespace Decays
+
 // ============================================================================
 /** @file 
  *  Implementation file for functirons from file  LoKi/MCParticles2.h

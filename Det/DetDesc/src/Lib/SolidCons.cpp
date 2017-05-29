@@ -1,16 +1,28 @@
 // ===========================================================================
 // Units
-#include "GaudiKernel/SystemOfUnits.h"
-// GaudiKernel
-#include "GaudiKernel/MsgStream.h"
+#include <Math/GenVector/PositionVector3D.h>
+#include <boost/container/vector.hpp>
+#include <math.h>
+#include <algorithm>
+#include <iterator>
+#include <ostream>
+#include <string>
+#include <vector>
+
 // DetDesc
 #include "DetDesc/DetDesc.h"
+#include "DetDesc/ISolid.h"
+#include "DetDesc/SolidBase.h"
 #include "DetDesc/SolidCons.h"
-#include "DetDesc/SolidTubs.h"
-#include "DetDesc/SolidTrd.h"
-#include "DetDesc/SolidTicks.h"
 #include "DetDesc/SolidException.h"
-
+#include "DetDesc/SolidMath.h"
+#include "DetDesc/SolidTicks.h"
+#include "DetDesc/SolidTrd.h"
+// GaudiKernel
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
 #include "boost/container/static_vector.hpp"
 // ============================================================================
 /** @file SolidCons.cpp

@@ -1,25 +1,34 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/IOpaqueAddress.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-
-// event model
-#include "Event/RawEvent.h"
-#include "Event/ODIN.h"
-#include "Event/LumiFSR.h"
-#include "Event/EventCountFSR.h"
-#include "Event/TimeSpanFSR.h"
+#include <fstream>
+#include <functional>
+// to write a file
+#include <string>
 
 // local
 #include "DumpFSR.h"
+#include "Event/EventCountFSR.h"
+#include "Event/LumiFSR.h"
+#include "Event/ODIN.h"
+// event model
+#include "Event/RawEvent.h"
+#include "Event/TimeSpanFSR.h"
+#include "FSRAlgs/IFSRNavigator.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+// from Gaudi
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Incident.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
 
-// to write a file
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DumpFSR

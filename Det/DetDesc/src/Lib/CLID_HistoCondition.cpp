@@ -4,6 +4,8 @@
 // DetDesc 
 // ============================================================================
 #include "DetDesc/HistoCondition.h"
+#include "GaudiKernel/ClassID.h"
+
 // ============================================================================
 /** @file 
  *  Set the unique Class IDs for the Histogram conditions 

@@ -11,29 +11,29 @@
 
 #pragma once
 
+#include <memory>
+#include <string>
 // STL
 #include <vector>
-#include <memory>
 
-// Math typedefs
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/GaudiException.h"
-
+#include "DetDesc/IGeometryInfo.h"
 // DetDesc
 #include "DetDesc/ISolid.h"
-#include "DetDesc/TabulatedProperty.h"
 #include "DetDesc/Material.h"
-#include "DetDesc/IGeometryInfo.h"
-
-// Kernel
-#include "Kernel/RichRadiatorType.h"
+#include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/GaudiException.h"
+// Math typedefs
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Vector3DTypes.h"
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichRadIntersection.h"
-
+// Kernel
+#include "Kernel/RichRadiatorType.h"
 // RichDet
 #include "RichDet/DeRichBase.h"
-#include "RichDet/Rich1DTabProperty.h"
 #include "RichDet/DeRichLocations.h"
+#include "RichDet/Rich1DTabProperty.h"
 
 //----------------------------------------------------------------------------
 /** @class DeRichRadiator RichDet/DeRichRadiator.h

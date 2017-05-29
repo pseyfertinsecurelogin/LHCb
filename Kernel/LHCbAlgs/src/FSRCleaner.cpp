@@ -3,6 +3,11 @@
 // local
 #include "FSRCleaner.h"
 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : FSRCleaner
 //

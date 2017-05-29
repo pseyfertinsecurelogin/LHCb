@@ -1,10 +1,20 @@
 #ifndef HCRAWBANKDECODER_HLT_H
 #define HCRAWBANKDECODER_HLT_H 1
 
+#include <array>
+#include <bitset>
+#include <string>
+#include <vector>
+
 // LHCb
 #include "DAQKernel/DecoderHistoAlgBase.h"
+#include "GaudiKernel/StatusCode.h"
 
 class Condition;
+class ISvcLocator;
+namespace LHCb {
+class RawBank;
+}  // namespace LHCb
 
 /** @class HCRawBankDecoderHlt.h
  *

@@ -1,7 +1,11 @@
 // Include files
 // local
 #include "DetDesc/LogVolumeException.h"
+
+#include <ostream>
+
 #include "DetDesc/ILVolume.h"
+#include "GaudiKernel/MsgStream.h"
 
 // ============================================================================
 /** @file LogVolumeException.cpp

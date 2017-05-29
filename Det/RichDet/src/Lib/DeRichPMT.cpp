@@ -1,26 +1,38 @@
 
-// STL
-#include <sstream>
+#include <Math/GenVector/PositionVector3D.h>
+#include <stdlib.h>
+#include <cmath>
+#include <memory>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
 // Gaudi
 #include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-#include "GaudiKernel/PhysicalConstants.h"
-#include "GaudiKernel/ISvcLocator.h"
-#include "GaudiKernel/Bootstrap.h"
-
-// DetDesc
-#include "DetDesc/Condition.h"
-#include "DetDesc/SolidBox.h"
-
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/Transform3DTypes.h"
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSmartID.h"
+#include "RichDet/DeRichLocations.h"
+#include "RichDet/DeRichPD.h"
 // local
 #include "RichDet/DeRichPMT.h"
-#include "RichDet/DeRich.h"
 #include "RichDet/DeRichSystem.h"
-
+#include "RichDet/Rich1DTabProperty.h"
+#include "vdt/atan2.h"
 // VDT
 #include "vdt/sincos.h"
-#include "vdt/atan2.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DeRichPMT

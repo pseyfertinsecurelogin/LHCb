@@ -15,11 +15,14 @@
 // STL
 #include <string>
 
-// local
-#include "RichUtils/RichPackedPIDInfo.h"
-
 // Gaudi
 #include "GaudiAlg/HistoID.h"
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichParticleIDType.h"
+#include "Kernel/RichRadiatorType.h"
+#include "Kernel/RichSide.h"
+// local
+#include "RichUtils/RichPackedPIDInfo.h"
 
 namespace Rich
 {

@@ -14,15 +14,18 @@
 
 // STL
 #include <map>
-#include <string>
 #include <sstream>
+#include <string>
+#include <vector>
 
 // base class and interface
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/StatusCode.h"
 #include "RichInterfaces/IRichToolRegistry.h"
-
 // Utils
 #include "RichUtils/RichHashMap.h"
+
+class IInterface;
 
 namespace Rich
 {

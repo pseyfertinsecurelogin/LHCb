@@ -5,17 +5,30 @@
 //  Author    : Markus Frank
 //
 //  ====================================================================
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiUtils/IIODataManager.h"
-#include "MDF/RawDataConnection.h"
-#include "MDF/RawEventHelpers.h"
-#include "MDF/MDFWriter.h"
-#include "MDF/MDFHeader.h"
-#include "Event/RawEvent.h"
-#include "TMD5.h"
-#include <iomanip>
 #include <cstring> // For memcpy with gcc 4.3
+#include <functional>
+#include <iomanip>
+#include <string>
+#include <utility>
+
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/StreamBuffer.h"
+#include "GaudiUtils/IIODataManager.h"
+#include "MDF/MDFHeader.h"
+#include "MDF/MDFIO.h"
+#include "MDF/MDFWriter.h"
+#include "MDF/RawDataConnection.h"
+#include "TMD5.h"
+
+class ISvcLocator;
 
 using namespace LHCb;
 using namespace Gaudi;

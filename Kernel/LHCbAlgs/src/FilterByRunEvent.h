@@ -1,13 +1,17 @@
 #ifndef FILTERBYRUNEVENT_H
 #define FILTERBYRUNEVENT_H 1
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-
+#include <algorithm>
+#include <string>
+#include <utility>
 // STL
 #include <vector>
-#include <utility>
-#include <algorithm>
+
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class FilterByRunEvent FilterByRunEvent.h
  *

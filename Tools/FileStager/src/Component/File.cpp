@@ -1,28 +1,39 @@
 // stdlib
-#include <string>
-#include <vector>
-#include <sstream>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/yes_no_type.hpp>
 // boost
 #include <boost/cstdint.hpp>
-#include <boost/regex.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/file_descriptor.hpp>
-
-// boost
-#include <boost/algorithm/string.hpp>
-
-// Gaudi
-#include "GaudiKernel/GaudiException.h"
+#include <boost/iostreams/stream_buffer.hpp>
+#include <boost/iostreams/traits.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/lexical_cast/bad_lexical_cast.hpp>
+#include <boost/regex/config.hpp>
+#include <boost/regex/v4/basic_regex.hpp>
+#include <boost/regex/v4/match_flags.hpp>
+#include <boost/regex/v4/match_results.hpp>
+#include <boost/regex/v4/perl_matcher_common.hpp>
+#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
+#include <boost/regex/v4/regex.hpp>
+#include <boost/regex/v4/regex_fwd.hpp>
+#include <boost/regex/v4/regex_search.hpp>
+#include <boost/regex/v4/regex_traits.hpp>
+#include <boost/regex/v4/sub_match.hpp>
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
 
 // local
 #include "File.h"
+// Gaudi
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : File

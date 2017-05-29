@@ -1,10 +1,20 @@
 #ifndef WRITEPACKEDDST_H
 #define WRITEPACKEDDST_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 #include "PackedBank.h"
+
+class ISvcLocator;
+class PackedBank;
+namespace LHCb {
+class RawEvent;
+}  // namespace LHCb
 
 /** @class WritePackedDst WritePackedDst.h
  *  Write the packed DST as a MDF file

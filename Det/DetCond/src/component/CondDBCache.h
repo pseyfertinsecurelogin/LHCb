@@ -1,29 +1,37 @@
 #ifndef COMPONENT_CONDDBCACHE_H
 #define COMPONENT_CONDDBCACHE_H 1
 
+#include <CoolKernel/ChannelId.h>
+#include <stddef.h>
+#include <algorithm>
+#include <list>
+#include <map>
+#include <memory>
+#include <numeric>
 // Include files
 #include <string>
+#include <unordered_map>
+#include <utility>
 #include <vector>
-#include <list>
-#include <numeric>
 
+#include "CoolKernel/IFolder.h"
+#include "CoolKernel/IObject.h"
+#include "CoolKernel/IRecord.h"
+#include "CoolKernel/IRecordSpecification.h"
+#include "CoolKernel/Record.h"
+#include "CoolKernel/RecordSpecification.h"
+#include "CoolKernel/ValidityKey.h"
+#include "CoolKernel/pointers.h"
+#include "CoolKernel/types.h"
+#include "DetCond/ICondDBReader.h"
+#include "GaudiKernel/HashMap.h"
+#include "GaudiKernel/Map.h"
 #include "GaudiKernel/MsgStream.h"
 
-#include "GaudiKernel/HashMap.h"
-
-#include "CoolKernel/types.h"
-#include "CoolKernel/pointers.h"
-#include "CoolKernel/ValidityKey.h"
-#include "CoolKernel/IObject.h"
-#include "CoolKernel/IFolder.h"
-#include "CoolKernel/IRecord.h"
-#include "CoolKernel/Record.h"
-#include "CoolKernel/IRecordSpecification.h"
-#include "CoolKernel/RecordSpecification.h"
-
-#include "DetCond/ICondDBReader.h"
-
-#include <memory>
+namespace cool {
+class IRecord;
+class IRecordSpecification;
+}  // namespace cool
 
 /** @class CondDBCache CondDBCache.h component/CondDBCache.h
  *

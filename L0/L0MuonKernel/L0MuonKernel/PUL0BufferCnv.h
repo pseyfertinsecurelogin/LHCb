@@ -2,8 +2,11 @@
 #define L0MUONKERNEL_PUL0BUFFERCNV_H
 
 
-#include "L0MuonKernel/L0BufferCnv.h"
 #include <string>
+
+#include "Kernel/MuonTileID.h"
+#include "L0MuonKernel/CandRegisterHandler.h"
+#include "L0MuonKernel/L0BufferCnv.h"
 
 namespace L0Muon {
 
@@ -24,6 +27,8 @@ namespace L0Muon {
   @date 2008-08-22
 
   */
+class TileRegister;
+
   class PUL0BufferCnv : public L0BufferCnv {
 
   public:

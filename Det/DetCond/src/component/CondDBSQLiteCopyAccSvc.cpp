@@ -1,14 +1,17 @@
 // Include files
-#include "GaudiKernel/Property.h"
-#include "GaudiKernel/IJobOptionsSvc.h"
-#include "GaudiKernel/ThreadGaudi.h"
-
-#include "boost/filesystem/path.hpp"
-#include "boost/filesystem/operations.hpp"
-#include "boost/filesystem/exception.hpp"
+#include <functional>
 
 // local
 #include "CondDBSQLiteCopyAccSvc.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/Service.h"
+#include "boost/filesystem/operations.hpp"
+
+class ISvcLocator;
 
 // Factory implementation
 DECLARE_SERVICE_FACTORY(CondDBSQLiteCopyAccSvc)

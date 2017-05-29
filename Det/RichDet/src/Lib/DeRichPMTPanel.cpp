@@ -1,29 +1,54 @@
 
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/Plane3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <Math/GenVector/Transform3D.h>
+#include <Math/GenVector/Translation3D.h>
+#include <ext/alloc_traits.h>
+#include <math.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <array>
+#include <memory>
 // STL
 #include <sstream>
+#include <string>
+#include <typeinfo>
 #include <vector>
 
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/IDetectorElement.h"
+#include "DetDesc/IGeometryInfo.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Plane3DTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
 // Gaudi
 #include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/PhysicalConstants.h"
-#include "GaudiKernel/GaudiException.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+// MathCore files
+#include "GaudiKernel/Transform3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSide.h"
+#include "Kernel/RichSmartID.h"
+#include "Kernel/RichTraceMode.h"
+#include "RichDet/DeRichLocations.h"
+#include "RichDet/DeRichPDPanel.h"
+#include "RichDet/DeRichPMT.h"
 // local
 #include "RichDet/DeRichPMTPanel.h"
 #include "RichDet/DeRichSystem.h"
+#include "RichUtils/RichDAQDefinitions.h"
 
-// MathCore files
-#include "GaudiKernel/Transform3DTypes.h"
-
-// DetDesc
-#include "DetDesc/SolidBox.h"
-#include "DetDesc/SolidTubs.h"
-#include "DetDesc/SolidSphere.h"
-#include "DetDesc/TabulatedProperty.h"
-
-// GSL
-#include "gsl/gsl_math.h"
+class DeRichPD;
 
 //-----------------------------------------------------------------------------
 

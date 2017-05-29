@@ -1,9 +1,21 @@
 // Include files 
 
+#include <stddef.h>
+#include <functional>
+#include <iosfwd>
+
 // from LHCb
 #include "Event/ODIN.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
 // local
 #include "OdinTypesFilter.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : OdinTypesFilter

@@ -1,13 +1,19 @@
 // ============================================================================
 #ifndef   CALODET_DESUBCALORIMETER_H
 #define   CALODET_DESUBCALORIMETER_H   1
-#include "GaudiKernel/MsgStream.h"
-#include "DetDesc/DetectorElement.h"
+#include <iostream>
+#include <string>
+#include <vector>
+
 #include "CaloDet/CLIDDeSubCalorimeter.h"
+#include "DetDesc/DetectorElement.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/CaloCellID.h"
 
-class MsgStream;
 class DeSubSubCalorimeter ;
+class MsgStream;
 
 /** @class DeSubCalorimeter DeSubCalorimeter.h "CaloDet/DeSubCalorimeter.h" 
  *

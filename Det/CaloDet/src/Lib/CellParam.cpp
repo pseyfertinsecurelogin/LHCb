@@ -3,11 +3,11 @@
 // CVS tag $Name: not supported by cvs2svn $ 
 // ============================================================================
 #define  CALODET_CELLPARAM_CPP 1 
-// ============================================================================
-// Include files
-// CaloDet 
-#include "CaloDet/DeCalorimeter.h"
+#include <vector>
+
 #include "CaloDet/CellParam.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/CaloCellID.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CellParam

@@ -1,6 +1,16 @@
 #include "Event/TrackFitResult.h"
-#include "Event/TrackFunctor.h"
+
+#include <algorithm>
+#include <map>
+#include <string>
+#include <utility>
+
+#include "Event/Measurement.h"
 #include "Event/Node.h"
+#include "Event/TrackFunctor.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/LHCbID.h"
 
 using namespace LHCb ;
 

@@ -1,8 +1,7 @@
-#include "GaudiKernel/GenericVectorTypes.h"
-#include "GaudiKernel/GenericMatrixTypes.h"
+#include <immintrin.h>
+
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 #include "VectorClass/vectorclass.h"
-#include <x86intrin.h>
 
 namespace {
 

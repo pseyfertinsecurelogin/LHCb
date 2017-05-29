@@ -1,8 +1,16 @@
 // Include files 
 
+#include <functional>
+
 // from Gaudi
 #include "Event/L0MuonError.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "Kernel/MuonTileID.h"
 // local
 #include "L0MuonOverflowTool.h"
 

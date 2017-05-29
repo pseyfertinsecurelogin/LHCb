@@ -3,11 +3,6 @@
 // ============================================================================
 // LHCbMath
 // ============================================================================
-#include "LHCbMath/MatrixUtils.h"
-// ============================================================================
-// Local
-// ============================================================================
-#include "CaloUtils/Kinematics.h"
 // ============================================================================
 /** @file 
  *  Implementation file for functions form namespace Calo::Kinematics 
@@ -16,6 +11,18 @@
  *
  */
 // ============================================================================
+#include <Math/GenVector/LorentzVector.h>
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <math.h>
+
+#include "Event/CaloPosition.h"
+#include "GaudiKernel/GenericMatrixTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "GaudiKernel/Vector4DTypes.h"
+#include "LHCbMath/LorentzVectorWithError.h"
+
 namespace{
   // ==========================================================================
   /** evaluate the jacobians

@@ -12,45 +12,62 @@
 #ifndef RICHDAQ_RICHRAWDATAFORMATTOOL_H
 #define RICHDAQ_RICHRAWDATAFORMATTOOL_H 1
 
-// STD
-#include <sstream>
+#include <boost/pool/pool_alloc.hpp>
+#include <functional>
 #include <memory>
 #include <set>
+// STD
+#include <sstream>
+#include <string>
+#include <vector>
 
-// Boost
-#include "boost/lexical_cast.hpp"
-#include "boost/format.hpp"
-
+#include "Event/ODIN.h"
+#include "Event/RawBank.h"
+// Event model
+#include "Event/RawEvent.h"
+#include "GaudiAlg/GaudiCommonImp.h"
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/IEventTimeDecoder.h"
 #include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/IEventTimeDecoder.h"
-
+#include "GaudiKernel/Map.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/RichSmartID.h"
+// Old 32 bit SmartID
+#include "Kernel/RichSmartID32.h"
+// RICH DAQ Kernel
+#include "RichDAQKernel/RichDAQVersions.h"
+// RichDet
+#include "RichDet/DeRichSystem.h"
+// Interfaces
+#include "RichInterfaces/IRichRawDataFormatTool.h"
 // Base class
 #include "RichKernel/RichToolBase.h"
-
-// Utils
-#include "RichUtils/RichStatDivFunctor.h"
+#include "RichUtils/RichDAQDefinitions.h"
 #include "RichUtils/RichHashMap.h"
 #include "RichUtils/RichMap.h"
 #include "RichUtils/RichPoolMap.h"
+// Utils
+#include "RichUtils/RichStatDivFunctor.h"
+#include "boost/format.hpp"
+// Boost
+#include "boost/lexical_cast.hpp"
 
-// Interfaces
-#include "RichInterfaces/IRichRawDataFormatTool.h"
-
-// RICH DAQ Kernel
-#include "RichDAQKernel/RichDAQVersions.h"
-
-// RichDet
-#include "RichDet/DeRichSystem.h"
-
-// Event model
-#include "Event/RawEvent.h"
-#include "Event/ODIN.h"
-
-// Old 32 bit SmartID
-#include "Kernel/RichSmartID32.h"
+class DeRichSystem;
+class IInterface;
+class Incident;
+namespace LHCb {
+class RawEvent;
+}  // namespace LHCb
+namespace Rich {
+namespace DAQ {
+class HPDDataBank;
+class L1Map;
+}  // namespace DAQ
+}  // namespace Rich
 
 namespace Rich
 {

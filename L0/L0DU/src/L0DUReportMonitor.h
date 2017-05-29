@@ -2,14 +2,27 @@
 #ifndef L0DUREPORTMONITOR_H
 #define L0DUREPORTMONITOR_H 1
 
+#include <TAxis.h>
+#include <TH1D.h>
+#include <TH2D.h>
+#include <map>
+#include <string>
+
+// from Event
+#include "Event/L0DUReport.h"
+#include "GaudiKernel/StatusCode.h"
 // Include files
 // from Gaudi
 #include "L0Base/L0AlgBase.h"
-// from Event
-#include "Event/L0DUReport.h"
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TAxis.h>
+
+class ISvcLocator;
+namespace AIDA {
+class IHistogram1D;
+class IHistogram2D;
+}  // namespace AIDA
+namespace LHCb {
+class L0DUConfig;
+}  // namespace LHCb
 
 /** @class L0DUReportMonitor L0DUReportMonitor.h
  *

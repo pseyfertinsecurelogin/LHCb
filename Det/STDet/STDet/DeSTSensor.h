@@ -1,15 +1,23 @@
 #ifndef _DeSTSensor_H_
 #define _DeSTSensor_H_
 
-#include <string>
+#include <math.h>
+#include <iosfwd>
 #include <memory>
+#include <string>
+#include <utility>
 
-#include "Kernel/STChannelID.h"
-#include "GaudiKernel/SystemOfUnits.h"
-#include "STDet/DeSTBaseElement.h"
 #include "GaudiKernel/Plane3DTypes.h"
-#include "LHCbMath/LineTypes.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/STChannelID.h"
 #include "Kernel/Trajectory.h"
+#include "LHCbMath/LineTypes.h"
+#include "STDet/DeSTBaseElement.h"
+
+class MsgStream;
 
 
 /** @class DeSTSensor DeSTSensor.h "STDet/DeSTSensor.h"

@@ -1,11 +1,21 @@
 #ifndef COMPONENT_RELYCONVERTER_H
 #define COMPONENT_RELYCONVERTER_H 1
 
+#include <string>
+
 // Include files
 #include "DetCond/CondDBGenericCnv.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
 
+class DataObject;
+class IAddressCreator;
+class IConversionSvc;
+class IOpaqueAddress;
 // Forward and external declarations
 class ISvcLocator;
+class MsgStream;
+template <class T> class SmartIF;
 template <class TYPE> class CnvFactory;
 
 /** @class RelyConverter RelyConverter.h component/RelyConverter.cpp

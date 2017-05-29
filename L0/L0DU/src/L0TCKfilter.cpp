@@ -1,6 +1,18 @@
 // local
+#include <stddef.h>
+#include <functional>
+#include <ostream>
+
 #include "Event/L0DUReport.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
 #include "L0TCKfilter.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0TCKfilter

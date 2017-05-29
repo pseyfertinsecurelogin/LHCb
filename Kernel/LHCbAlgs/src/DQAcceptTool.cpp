@@ -1,11 +1,29 @@
 // Include files
 
-// From Gaudi
-#include "GaudiKernel/IUpdateManagerSvc.h"
-#include "DetDesc/Condition.h"
+#include <functional>
+#include <map>
+#include <typeinfo>
 
 // local
 #include "DQAcceptTool.h"
+#include "DetDesc/Condition.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IStateful.h"
+#include "GaudiKernel/ISvcLocator.h"
+// From Gaudi
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StateMachine.h"
+#include "Kernel/IDQFilter.h"
+#include "Kernel/IDQScanner.h"
+
+class IInterface;
 
 // ----------------------------------------------------------------------------
 // Implementation file for class: DQAcceptTool

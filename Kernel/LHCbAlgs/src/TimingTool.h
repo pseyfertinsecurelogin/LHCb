@@ -4,13 +4,19 @@
 
 // Include files
 
+#include <string>
+
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
 #include "GaudiKernel/Chrono.h"
 #include "GaudiKernel/IRndmGenSvc.h"
-
+#include "GaudiKernel/StatusCode.h"
 // from LHCbKernel
 #include "Kernel/INormalizeTool.h"
+
+class IChronoStatSvc;
+class IInterface;
+class IRndmGenSvc;
 
 
 /** @class TimingTool TimingTool.h

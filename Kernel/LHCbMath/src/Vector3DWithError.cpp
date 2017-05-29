@@ -3,14 +3,24 @@
 // ============================================================================
 // STD& STL 
 // ============================================================================
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <cmath>
 #include <sstream>
+#include <string>
+
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "LHCbMath/MatrixTransforms.h"
+#include "LHCbMath/Point3DWithError.h"
+#include "LHCbMath/SVectorWithError.h"
 // ============================================================================
 // local
 // ============================================================================
 #include "LHCbMath/Vector3DWithError.h"
-#include "LHCbMath/Point3DWithError.h"
-#include "LHCbMath/MatrixTransforms.h"
-#include "LHCbMath/SymPosDefMatrixInverter.h"
+
 // ============================================================================
 /** @file 
  *  Implementation file for class Gaudi::Math::PointWithError

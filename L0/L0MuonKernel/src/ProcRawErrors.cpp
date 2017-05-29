@@ -1,5 +1,8 @@
 #include "L0MuonKernel/ProcRawErrors.h"
 
+#include <boost/format.hpp>
+#include <ostream>
+
 L0Muon::ProcRawErrors::ProcRawErrors()
 {
 

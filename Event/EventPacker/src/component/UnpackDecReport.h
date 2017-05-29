@@ -1,9 +1,14 @@
 #ifndef UNPACKDECREPORT_H
 #define UNPACKDECREPORT_H 1
 
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class UnpackDecReport UnpackDecReport.h
  *

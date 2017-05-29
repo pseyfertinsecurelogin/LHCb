@@ -1,12 +1,20 @@
 
 // STL
 #include <algorithm>
+#include <ostream>
+#include <string>
+#include <utility>
+#include <vector>
 
-// Gaudi
-#include "GaudiKernel/GaudiException.h"
-
+#include "Event/CaloHypo.h"
 // local
 #include "Event/ProtoParticle.h"
+// Gaudi
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/SerializeSTL.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/SmartRefVector.h"
+#include "GaudiKernel/StatusCode.h"
 
 
 //-----------------------------------------------------------------------------

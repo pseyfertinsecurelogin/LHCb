@@ -1,18 +1,22 @@
 #ifndef TOOLS_MCEVENTTYPEFINDER_H
 #define TOOLS_MCEVENTTYPEFINDER_H 1
 
+#include <set>
 // Include files
 // from STL
 #include <string>
-#include <set>
 #include <vector>
 
-#include "GaudiAlg/GaudiTool.h"
-#include "MCInterfaces/IMCEventTypeFinder.h"
 #include "Event/MCParticle.h"
+#include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/IEvtTypeSvc.h"
+#include "MCInterfaces/IMCEventTypeFinder.h"
 
-struct IMCDecayFinder;
+class IInterface;
 struct IEvtTypeSvc;
+struct IMCDecayFinder;
 
 
 /** @class MCEventTypeFinder MCEventTypeFinder.h

@@ -3,11 +3,26 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+#include <functional>
+#include <string>
+#include <vector>
+
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiCommonImp.h"
 #include "GaudiKernel/IAlgContextSvc.h"
+#include "GaudiKernel/IService.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/PropertyFwd.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StateMachine.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/FilterAlg.h"
+
+class ISvcLocator;
+
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::FilterAlg

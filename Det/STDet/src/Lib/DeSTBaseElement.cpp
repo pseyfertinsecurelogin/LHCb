@@ -1,6 +1,6 @@
 
 #include "STDet/DeSTBaseElement.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
+
 #include "DetDesc/IGeometryInfo.h"
 
 

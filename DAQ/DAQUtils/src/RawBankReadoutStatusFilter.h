@@ -2,11 +2,16 @@
 #ifndef COMPONENT_RAWBANKREADOUTSTATUSFILTER_H
 #define COMPONENT_RAWBANKREADOUTSTATUSFILTER_H 1
 
+#include <string>
+
+#include "Event/RawBank.h"
+#include "Event/RawBankReadoutStatus.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
-#include "Event/RawBank.h"
-#include "Event/RawBankReadoutStatus.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 /** @class RawBankReadoutStatusFilter RawBankReadoutStatusFilter.h component/RawBankReadoutStatusFilter.h
  *

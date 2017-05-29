@@ -4,26 +4,27 @@
 // ============================================================================
 // STD&STL
 // ============================================================================
-#include <climits>
-#include <cassert>
-#include <cmath>
-#include <vector>
 #include <algorithm>
-// ============================================================================
-// GaudiKernel
-// ============================================================================
-#include "GaudiKernel/Kernel.h"
+#include <cmath>
+#include <functional>
+#include <limits>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/StatusCode.h"
+#include "LHCbMath/Bernstein.h"
+#include "LHCbMath/Choose.h"
+#include "LHCbMath/Clenshaw.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/LHCbMath.h"
+#include "LHCbMath/MoreFunctions.h"
 #include "LHCbMath/Polynomials.h"
 #include "LHCbMath/Power.h"
-#include "LHCbMath/Choose.h"
-#include "LHCbMath/Bernstein.h"
-#include "LHCbMath/MoreFunctions.h"
-#include "LHCbMath/Clenshaw.h"
+
 // ============================================================================
 /** @file Implementation file for classes from file LHcbMath/Polynomials.h
  *  @see LHCbMath/Polynomials.h

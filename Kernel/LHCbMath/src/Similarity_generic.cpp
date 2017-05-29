@@ -1,5 +1,3 @@
-#include "GaudiKernel/GenericVectorTypes.h"
-#include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 
 namespace LHCb {

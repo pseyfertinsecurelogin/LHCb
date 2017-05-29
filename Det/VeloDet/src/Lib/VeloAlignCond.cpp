@@ -1,11 +1,27 @@
 #include "VeloDet/VeloAlignCond.h"
 
+#include <Math/GenVector/Transform3D.h>
+#include <boost/regex/v4/basic_regex.hpp>
+#include <boost/regex/v4/match_flags.hpp>
+#include <boost/regex/v4/match_results.hpp>
+#include <boost/regex/v4/perl_matcher_common.hpp>
+#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
+#include <boost/regex/v4/regex.hpp>
+#include <boost/regex/v4/regex_fwd.hpp>
+#include <boost/regex/v4/regex_match.hpp>
+#include <boost/regex/v4/regex_traits.hpp>
+#include <boost/regex/v4/sub_match.hpp>
+#include <ext/alloc_traits.h>
+
 #include "DetDesc/3DTransformationFunctions.h"
-
-#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "DetDesc/Condition.h"
+#include "DetDesc/ParamValidDataObject.h"
+#include "DetDesc/Services.h"
+#include "DetDesc/ValidDataObject.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/IRegistry.h"
-
-#include <boost/regex.hpp>
+#include "GaudiKernel/IUpdateManagerSvc.h"
 
 //-----------------------------------------------------------------------------
 // Costructor of VeloAlignCond::PositionPaths
@@ -121,7 +137,11 @@ StatusCode VeloAlignCond::initialize() {
   return m_services->updMgrSvc()->update(this);
 }
 
+#include <algorithm>
+#include <iterator>
 #include <numeric>
+#include <typeinfo>
+
 namespace {
   /// Correct the offset using a polinomial function that has the element of the
   /// vector coeffs as coefficients.

@@ -1,18 +1,22 @@
 // $Id: TestUpdateMgr.cpp,v 1.7 2007-07-31 17:39:10 marcocle Exp $
 // Include files 
 
-// from Gaudi
-#include "GaudiKernel/DataObject.h" 
+#include <functional>
 
-#include "GaudiKernel/SmartIF.h"
-#include "GaudiKernel/IDataManagerSvc.h"
-
-#include "DetDesc/ValidDataObject.h"
 //#include "DetDesc/IUMSPurge.h"
 #include "DetDesc/Condition.h"
-
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+// from Gaudi
+#include "GaudiKernel/DataObject.h" 
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/Property.h"
 // local
 #include "TestUpdateMgr.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : TestUpdateMgr

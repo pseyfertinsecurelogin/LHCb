@@ -5,6 +5,7 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 // FTDet
 #include "FTDet/DeFTLayer.h"
+#include "GaudiKernel/Converter.h"
 
 typedef XmlUserDetElemCnv<DeFTLayer>       XmlDeFTLayerCnv;
 DECLARE_CONVERTER_FACTORY( XmlDeFTLayerCnv )

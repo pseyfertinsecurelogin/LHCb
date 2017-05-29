@@ -1,11 +1,18 @@
 #ifndef KERNEL_READROUTINGBITS_H 
 #define KERNEL_READROUTINGBITS_H 1
 
+#include <boost/dynamic_bitset.hpp>
+#include <boost/dynamic_bitset/dynamic_bitset.hpp>
+#include <vector>
+
+#include "Event/RawBank.h" 
 // Include files
 #include "Event/RawEvent.h" 
-#include "Event/RawBank.h" 
-#include <boost/dynamic_bitset.hpp>
 #include "GaudiKernel/GaudiException.h"
+
+namespace LHCb {
+class RawEvent;
+}  // namespace LHCb
 
 /** @function ReadRoutingBits Kernel/ReadRoutingBits.h
  *  

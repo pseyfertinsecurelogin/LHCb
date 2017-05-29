@@ -1,8 +1,10 @@
 #include "Kernel/TTDetectorPlot.h"
-#include "STDet/DeTTSector.h"
-#include "Kernel/STChannelID.h"
 
 #include <string>
+
+#include "Kernel/STChannelID.h"
+#include "STDet/DeSTSector.h"
+#include "STDet/DeTTSector.h"
 
 using namespace ST;
 

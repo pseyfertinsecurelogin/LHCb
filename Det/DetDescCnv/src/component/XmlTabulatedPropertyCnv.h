@@ -3,10 +3,21 @@
 #ifndef     DETDESCCNV_XMLTABULATEDPROPERTYCNV_H
 #define     DETDESCCNV_XMLTABULATEDPROPERTYCNV_H 1
 
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+
+#include "DetDesc/TabulatedProperty.h"
 // Include files
 #include "DetDescCnv/XmlGenericCnv.h"
-#include "DetDesc/TabulatedProperty.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/StatusCode.h"
 
+class DataObject;
+class IOpaqueAddress;
+class ISvcLocator;
+namespace xercesc_3_1 {
+class DOMElement;
+class DOMText;
+}  // namespace xercesc_3_1
 // Forward declarations
 template <class TYPE> class CnvFactory;
 

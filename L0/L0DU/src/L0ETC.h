@@ -2,9 +2,16 @@
 #ifndef L0ETC_H
 #define L0ETC_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+
 /** @class L0ETC L0ETC.h
  *
  *  Writes out ETC for L0 stripping

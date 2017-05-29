@@ -2,13 +2,19 @@
 #ifndef COMPONENT_RUNCHANGETEST_H
 #define COMPONENT_RUNCHANGETEST_H 1
 
+#include <stddef.h>
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/StatusCode.h"
 
 class IEventTimeDecoder;
 class IIncidentSvc;
+class ISvcLocator;
+class Incident;
 
 namespace LHCbAlgsTests {
 

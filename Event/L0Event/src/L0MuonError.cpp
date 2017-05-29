@@ -1,6 +1,8 @@
 // local
 #include "Event/L0MuonError.h"
 
+#include "Kernel/MuonLayout.h"
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0MuonError
 //

@@ -1,28 +1,54 @@
+#include <Math/GenVector/Cartesian3D.h>
+#include <Math/GenVector/DisplacementVector3D.h>
+#include <Math/GenVector/PositionVector3D.h>
+#include <stddef.h>
 #include <algorithm>
-// GaudiKernel
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/IUpdateManagerSvc.h"
-#include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/PhysicalConstants.h"
+#include <array>
+#include <cmath>
+#include <iterator>
+#include <memory>
+#include <string>
+#include <tuple>
+#include <typeinfo>
+#include <utility>
+#include <vector>
 
 #include "DetDesc/Condition.h"
-
-// LHCbKernel
-#include "Kernel/LineTraj.h"
-
+#include "DetDesc/DetectorElement.h"
+#include "DetDesc/DetectorElementException.h"
+#include "DetDesc/IDetectorElement.h"
+// DetDesc
+#include "DetDesc/IGeometryInfo.h"
+#include "DetDesc/ILVolume.h"
+#include "DetDesc/ISolid.h"
+#include "DetDesc/ParamValidDataObject.h"
+#include "DetDesc/SolidBox.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/GaudiException.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IUpdateManagerSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/Plane3DTypes.h"
+// GaudiKernel
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/SystemOfUnits.h"
+#include "GaudiKernel/Vector3DTypes.h"
+#include "Kernel/OTChannelID.h"
+#include "Kernel/Trajectory.h"
+#include "LHCbMath/GeomFun.icpp"
 // LHCbMath
 #include "LHCbMath/Line.h"
 #include "LHCbMath/LineTypes.h"
-#include "LHCbMath/GeomFun.h"
-
-// DetDesc
-#include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/SolidBox.h"
-
+#include "OTDet/DeOTDetector.h"
 // local
 #include "OTDet/DeOTModule.h"
 #include "OTDet/OTWireTraj.h"
-#include "OTDet/DeOTDetector.h"
+#include "OTDet/RtRelation.h"
+#include "OTDet/WalkRelation.h"
 
 /** @file DeOTModule.cpp
  *

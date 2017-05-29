@@ -3,13 +3,32 @@
 // ============================================================================
 // GenEvent
 // ============================================================================
+#include <functional>
+#include <string>
+#include <vector>
+
 #include "Event/HepMCEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/StatusCode.h"
+#include "HepMC/GenEvent.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/BasicFunctors.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/FilterAlg.h"
+#include "LoKi/Functor.h"
 #include "LoKi/GenTypes.h"
 #include "LoKi/IGenHybridFactory.h"
+
+class ISvcLocator;
+
 // ============================================================================
 /** @file
  *

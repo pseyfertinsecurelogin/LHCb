@@ -1,9 +1,14 @@
 #ifndef CONFIGTREENODEALIAS_H
 #define CONFIGTREENODEALIAS_H 1
 
-#include "Kernel/ConfigTreeNode.h"
-#include <string>
+#include <boost/format.hpp>
+#include <sys/sysmacros.h>
+#include <algorithm>
 #include <iostream>
+#include <string>
+
+#include "Kernel/ConfigTreeNode.h"
+#include "LHCbMath/MD5.h"
 #include "boost/format.hpp"
 
 class ConfigTreeNodeAlias final {

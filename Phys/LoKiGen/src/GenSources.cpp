@@ -3,14 +3,30 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+#include <iterator>
+#include <ostream>
+#include <string>
+#include <vector>
+
+#include "Event/HepMCEvent.h"
+#include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/Functor.h"
+#include "LoKi/GenExtract.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/GenSources.h"
-#include "LoKi/GenAlgs.h"
-#include "LoKi/GenExtract.h"
+#include "LoKi/GenTypes.h"
+#include "LoKi/Interface.h"
 #include "LoKi/Services.h"
+
+namespace HepMC {
+class GenParticle;
+}  // namespace HepMC
+
 // ============================================================================
 /** @file
  *  Implementation file for various sources

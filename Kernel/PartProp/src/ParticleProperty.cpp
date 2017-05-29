@@ -3,23 +3,25 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
+#include <boost/format.hpp>
+#include <stddef.h>
 #include <ostream>
+#include <string>
+#include <vector>
+
+#include "GaudiKernel/MsgStream.h"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/SystemOfUnits.h"
-#include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/ToStream.h"
+#include "Kernel/IParticlePropertySvc.h"
 // ============================================================================
 // LHCbKernel
 // ============================================================================
 #include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
-#include "Kernel/IParticlePropertySvc.h"
-// ============================================================================
-// Boost
-// ============================================================================
-#include "boost/format.hpp"
+
 // ============================================================================
 /** @file
  *  Implementation file for class LHCb:::ParticleProperty

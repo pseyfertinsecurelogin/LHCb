@@ -1,10 +1,14 @@
 #ifndef DETDESC_ISOTOPE_H
 #define DETDESC_ISOTOPE_H
 
-// Include files
-#include "DetDesc/Material.h"
+#include <string>
 
 #include "DetDesc/CLIDIsotope.h"
+// Include files
+#include "DetDesc/Material.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/PhysicalConstants.h"
+#include "GaudiKernel/SystemOfUnits.h"
 
 /** @class Isotope Isotope.h DetDesc/Isotope.h
 

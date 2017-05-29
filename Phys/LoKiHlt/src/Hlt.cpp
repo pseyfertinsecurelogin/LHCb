@@ -3,13 +3,30 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/StatusCode.h"
+#include <boost/regex/v4/match_flags.hpp>
+#include <boost/regex/v4/perl_matcher_common.hpp>
+#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
+#include <boost/regex/v4/regex_match.hpp>
+#include <ext/alloc_traits.h>
+#include <stddef.h>
+#include <algorithm>
+#include <iterator>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
+
+#include "Event/HltDecReport.h"
+#include "Event/HltDecReports.h"
+#include "GaudiKernel/StringKey.h"
 #include "GaudiKernel/ToStream.h"
-// ============================================================================
-// LoKi
-// ============================================================================
-#include "LoKi/Constants.h"
+#include "LoKi/AuxFunBase.h"
+#include "LoKi/Functor.h"
 #include "LoKi/HLT.h"
+#include "LoKi/RoutingBits.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for namespace LoKi::HLT

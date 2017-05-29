@@ -1,15 +1,24 @@
 // Include files 
 
-// from Gaudi
-#include "GaudiKernel/IRegistry.h"
-#include "GaudiKernel/IOpaqueAddress.h"
+#include <stddef.h>
+#include <functional>
 
+#include "Event/FileId.h"
+#include "Event/RawBank.h"
 // event model
 #include "Event/RawEvent.h"
-#include "Event/FileId.h"
-
 // local
 #include "FileIdBankWriter.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IOpaqueAddress.h"
+// from Gaudi
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : FileIdBankWriter

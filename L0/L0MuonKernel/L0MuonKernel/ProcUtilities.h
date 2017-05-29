@@ -4,6 +4,8 @@
 #define L0MUONKERNEL_PROCUTILITIES_H     1
 
 #include <iostream>
+#include <vector>
+
 #include "Kernel/MuonTileID.h"
 #include "L0MuonKernel/MuonCandidate.h"
 

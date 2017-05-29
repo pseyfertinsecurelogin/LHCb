@@ -2,15 +2,19 @@
 #ifndef L0CALOPRSRESETMONITOR_H
 #define L0CALOPRSRESETMONITOR_H 1
 
-// Include files
-// from Gaudi
-#include "GaudiAlg/GaudiHistoAlg.h"
+#include <map>
+#include <string>
 
 // from Event
 #include "Event/L0DUBase.h"
+// Include files
+// from Gaudi
+#include "GaudiAlg/GaudiHistoAlg.h"
+#include "GaudiKernel/StatusCode.h"
 
 // Forward declarations
 class DeCalorimeter ;
+class ISvcLocator;
 
 /** @class L0CaloPRSResetMonitor L0CaloPRSResetMonitor.h
  *  Finds empty boards in L0Ele and send an alarm to reset the

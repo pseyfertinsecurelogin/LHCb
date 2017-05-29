@@ -12,12 +12,16 @@
 #ifndef GLOBALRECO_MuonPIDsFromProtoParticlesAlg_H
 #define GLOBALRECO_MuonPIDsFromProtoParticlesAlg_H 1
 
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <string>
 
+#include "Event/MuonPID.h"
 // Event
 #include "Event/ProtoParticle.h"
-#include "Event/MuonPID.h"
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
 
 //-----------------------------------------------------------------------------
 /** @class MuonPIDsFromProtoParticlesAlg MuonPIDsFromProtoParticlesAlg.h

@@ -1,14 +1,22 @@
 #ifndef EVENTACCOUNTING_H
 #define EVENTACCOUNTING_H 1
 
-// Include files
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "GaudiKernel/IIncidentListener.h"
-#include "GaudiKernel/IIncidentSvc.h"
+#include <string>
 
 // event model
 #include "Event/EventCountFSR.h"
+// Include files
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/GaudiCommon.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentSvc.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
+
+class ISvcLocator;
+class Incident;
 
 
 /** @class EventAccounting EventAccounting.h

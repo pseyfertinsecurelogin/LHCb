@@ -1,15 +1,23 @@
 #ifndef CALOADCFROMRAW_H
 #define CALOADCFROMRAW_H 1
 
-// Include files
-// from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include <string>
+
+#include "CaloDAQ/ICaloDataProvider.h"
+#include "CaloDAQ/ICaloL0DataProvider.h"
 #include "CaloDet/DeCalorimeter.h"
 #include "Event/CaloAdc.h"
 #include "Event/L0CaloAdc.h"
 #include "Event/L0PrsSpdHit.h"
-#include "CaloDAQ/ICaloDataProvider.h"
-#include "CaloDAQ/ICaloL0DataProvider.h"
+// Include files
+// from Gaudi
+#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+
+class DeCalorimeter;
+class ISvcLocator;
+struct ICaloDataProvider;
+struct ICaloL0DataProvider;
 
 /** @class CaloAdcFromRaw CaloAdcFromRaw.h
  *  

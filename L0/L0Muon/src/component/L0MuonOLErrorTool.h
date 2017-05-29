@@ -1,12 +1,22 @@
 #ifndef COMPONENT_L0MUONOLERRORTOOL_H
 #define COMPONENT_L0MUONOLERRORTOOL_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
 #include "L0Interfaces/IL0MuonOLErrorTool.h"            // Interface
-
 #include "MuonKernel/MuonSystemLayout.h"
+
+class IInterface;
+namespace LHCb {
+class MuonTileID;
+}  // namespace LHCb
+struct IL0MuonOLErrorTool;
 
 
 /** @class L0MuonOLErrorTool L0MuonOLErrorTool.h component/L0MuonOLErrorTool.h

@@ -1,18 +1,28 @@
-#include "Python.h"
 #ifdef _WIN32
 #ifndef WIN32
 #define WIN32
 #endif
 #endif
-#include "CoolKernel/IFolder.h"
-#include "CoolKernel/IFolderSet.h"
-#include "CoolKernel/Exception.h"
-#include "CoralBase/Attribute.h"
-#include "RelationalAccess/ConnectionServiceException.h"
-#include <iostream>
-#include <stdexcept>
+#include <CoolKernel/ChannelId.h>
+#include <CoolKernel/DatabaseId.h>
+#include <CoolKernel/IDatabaseSvc.h>
+#include <CoolKernel/pointers.h>
+#include <CoralBase/AttributeException.h>
+#include <stddef.h>
+#include <map>
+#include <memory>
+#include <string>
+#include <utility>
 
 #include "CondDBUIHelper/Helpers.h"
+#include "CoolKernel/Exception.h"
+#include "CoolKernel/IFolder.h"
+#include "CoolKernel/IFolderSet.h"
+#include "RelationalAccess/ConnectionServiceException.h"
+#include "dictobject.h"
+#include "intobject.h"
+#include "object.h"
+#include "stringobject.h"
 
 namespace CondDBUI {
   /// Class to hold helper functions to simplify the access to the conditions

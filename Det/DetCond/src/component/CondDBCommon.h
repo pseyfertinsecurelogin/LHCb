@@ -3,7 +3,9 @@
 
 #include <string>
 #include <vector>
+
 #include "DetCond/ICondDBReader.h"
+#include "GaudiKernel/StatusCode.h"
 
 // forward declaration
 namespace cool{

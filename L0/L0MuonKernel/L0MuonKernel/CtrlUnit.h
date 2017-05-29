@@ -3,7 +3,14 @@
 
 
 
+#include <string>
+
+#include "Kernel/MuonTileID.h"
 #include "L0MuonKernel/SelectionUnit.h"
+
+namespace xercesc_3_1 {
+class DOMNode;
+}  // namespace xercesc_3_1
 
 
 namespace L0Muon {

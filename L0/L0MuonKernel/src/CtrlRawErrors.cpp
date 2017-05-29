@@ -6,6 +6,9 @@
 // local
 #include "L0MuonKernel/CtrlRawErrors.h"
 
+#include <boost/format.hpp>
+#include <ostream>
+
 L0Muon::CtrlRawErrors::CtrlRawErrors()
 {
 

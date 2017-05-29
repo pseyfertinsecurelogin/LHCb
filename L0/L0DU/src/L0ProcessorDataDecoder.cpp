@@ -4,6 +4,20 @@
 // local
 #include "L0ProcessorDataDecoder.h"
 
+#include <stddef.h>
+#include <functional>
+
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiCommonImp.h"
+#include "GaudiKernel/AlgTool.h"
+#include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/KeyedContainer.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/ToStream.h"
+#include "L0Interfaces/IL0CondDBProvider.h"
+
 /** @file 
  *  Implementation file for class : L0ProcessorDataDecoder
  *  

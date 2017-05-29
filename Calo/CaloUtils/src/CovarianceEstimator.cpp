@@ -1,12 +1,24 @@
 // ============================================================================
 /// Include files
-#include "GaudiKernel/ToStream.h"
-#include "GaudiKernel/Point3DTypes.h"
-#include "GaudiKernel/MsgStream.h"
+#include <math.h>
+#include <ostream>
+#include <string>
+#include <vector>
+
 #include "CaloDet/DeCalorimeter.h"
-#include "Event/CaloCluster.h"
 /// local
 #include "CaloUtils/CovarianceEstimator.h"
+#include "Event/CaloCluster.h"
+#include "Event/CaloClusterEntry.h"
+#include "Event/CaloDigit.h"
+#include "Event/CaloDigitStatus.h"
+#include "Event/CaloPosition.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/SmartRef.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/ToStream.h"
+#include "Kernel/CaloCellID.h"
 
 // ============================================================================
 /** @file CovarianceEstimator.cpp

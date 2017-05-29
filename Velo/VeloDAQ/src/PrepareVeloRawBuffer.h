@@ -1,17 +1,21 @@
 #ifndef PREPAREVELORAWBUFFER_H
 #define PREPAREVELORAWBUFFER_H 1
 
-#include <vector>
 #include <algorithm>
 #include <string>
-
-#include "VeloEvent/InternalVeloCluster.h"
+#include <vector>
 
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
+#include "SiDAQ/SiRawBufferWord.h"
+#include "VeloEvent/InternalVeloCluster.h"
 
 class DeVelo;
+class ISvcLocator;
+
 namespace LHCb {
   class RawEvent;
+class InternalVeloCluster;
 }
 
 /** @class PrepareVeloRawBuffer PrepareVeloRawBuffer.h

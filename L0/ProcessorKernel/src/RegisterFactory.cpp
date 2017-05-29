@@ -1,5 +1,18 @@
 #include "ProcessorKernel/RegisterFactory.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <xercesc/dom/DOMNamedNodeMap.hpp>
+#include <xercesc/dom/DOMNode.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/util/Xerces_autoconf_config.hpp>
+#include <iostream>
+#include <utility>
+
+#include "Kernel/MuonTileID.h"
+#include "ProcessorKernel/Register.h"
+#include "ProcessorKernel/TileRegister.h"
+
 static L0Muon::RegisterFactory* s_instance_0=0;
 static L0Muon::RegisterFactory* s_instance_1=0;
 static L0Muon::RegisterFactory* s_instance_2=0;

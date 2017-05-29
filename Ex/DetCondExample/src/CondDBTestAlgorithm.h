@@ -1,15 +1,21 @@
 #ifndef CONDDBTESTALGORITHM_H
 #define CONDDBTESTALGORITHM_H 1
 
+#include <stddef.h>
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 
+class AlignmentCondition;
+class Condition;
 // Forward declarations
 class DataObject;
-class Condition;
 class IDetDataSvc;
-class AlignmentCondition;
+class ISvcLocator;
+class TabulatedProperty;
 
 /** @class CondDBTestAlgorithm CondDBTestAlgorithm.h
  *

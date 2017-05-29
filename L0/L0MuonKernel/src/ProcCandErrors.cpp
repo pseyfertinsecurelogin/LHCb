@@ -1,5 +1,8 @@
 #include "L0MuonKernel/ProcCandErrors.h"
 
+#include <boost/format.hpp>
+#include <ostream>
+
 L0Muon::ProcCandErrors::ProcCandErrors()
 {
   present = L0Muon::ErrorHandler(" %01X",0x1,"nb of banks seen");

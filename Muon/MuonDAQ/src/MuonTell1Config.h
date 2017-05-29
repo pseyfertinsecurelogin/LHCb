@@ -1,12 +1,21 @@
 #ifndef MUONTELL1CONFIG_H  
 #define MUONTELL1CONFIG_H 1
 
+#include <string>
+#include <vector>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTool.h"
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
 #include "MuonDAQ/IMuonTell1Config.h"            // Interface
-#include "MuonTell1ConfigData.h"
 #include "MuonDet/DeMuonDetector.h"
+#include "MuonTell1ConfigData.h"
+
+class DeMuonDetector;
+class IInterface;
+struct IMuonTell1Config;
 
 
 /** @class MuonTell1Config MuonTell1Config.h

@@ -2,6 +2,8 @@
 // Include files 
 
 #include <iostream>
+#include <string>
+#include <vector>
 
 // local
 #include "MuonDet/MuonL1Board.h"

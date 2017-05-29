@@ -3,13 +3,19 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
+#include <stddef.h>
 #include <algorithm>
+#include <iterator>
+#include <string>
+#include <vector>
+
+#include "Kernel/IParticlePropertySvc.h"
 // ============================================================================
 // LHCbKernel
 // ============================================================================
 #include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
-#include "Kernel/IParticlePropertySvc.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for class LHCb::IParticlePropertySvc

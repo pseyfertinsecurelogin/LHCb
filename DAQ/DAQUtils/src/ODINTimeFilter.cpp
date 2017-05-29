@@ -3,6 +3,21 @@
 // local
 #include "ODINTimeFilter.h"
 
+#include <stddef.h>
+#include <functional>
+
+#include "Event/ODIN.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/StatEntity.h"
+#include "GaudiKernel/Time.h"
+#include "GaudiKernel/Time.icpp"
+
+class ISvcLocator;
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : ODINTimeFilter
 //

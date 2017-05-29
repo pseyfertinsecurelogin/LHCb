@@ -4,15 +4,25 @@
 // ============================================================================
 // STD & STL 
 // ============================================================================
+#include <Math/GenVector/PxPyPzE4D.h>
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixRepresentationsStatic.h>
+#include <Math/SVector.h>
+#include <cmath>
 #include <sstream>
+#include <string>
+
+#include "GaudiKernel/SymmetricMatrixTypes.h"
+#include "GaudiKernel/Vector4DTypes.h"
+#include "LHCbMath/Kinematics.h"
+#include "LHCbMath/LHCbMath.h"
 // ============================================================================
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/LorentzVectorWithError.h"
 #include "LHCbMath/MatrixTransforms.h"
-#include "LHCbMath/SymPosDefMatrixInverter.h"
-#include "LHCbMath/Kinematics.h"
-#include "LHCbMath/LHCbMath.h"
+#include "LHCbMath/ValueWithError.h"
+
 // ============================================================================
 /** @file
  *  Implementation file for class Gaudi::Math::LorentVectorWithError

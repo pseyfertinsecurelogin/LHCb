@@ -1,16 +1,30 @@
 // $Id: MEPTester.cpp,v 1.1 2009-02-06 09:37:57 frankb Exp $
 // Include files from Gaudi
-#include "GaudiKernel/SmartIF.h"
+#include <functional>
+#include <iomanip>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiKernel/Algorithm.h"
-#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/DataObject.h"
 #include "GaudiKernel/IDataManagerSvc.h"
 #include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/MsgStream.h"
-#include "Event/RawEvent.h"
-#include "MDF/RawEventPrintout.h"
+#include "GaudiKernel/Property.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartDataStorePtr.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/StatusCode.h"
 #include "MDF/OnlineRunInfo.h"
-#include "MDF/MDFHeader.h"
+#include "MDF/RawEventPrintout.h"
+
+class ISvcLocator;
 
 
 /*

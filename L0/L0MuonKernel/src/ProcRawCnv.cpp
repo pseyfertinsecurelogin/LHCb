@@ -1,13 +1,20 @@
 #include "L0MuonKernel/ProcRawCnv.h"
 
+#include <boost/dynamic_bitset/dynamic_bitset.hpp>
+#include <boost/format.hpp>
+#include <stdio.h>
+#include <iomanip>
+#include <utility>
+
 #include "Kernel/MuonLayout.h"
-
-#include "ProcessorKernel/RegisterFactory.h"
-#include "ProcessorKernel/Register.h"
-
-#include "L0MuonKernel/BankUtilities.h"
-
+#include "L0MuonKernel/ErrorHandler.h"
 #include "L0MuonKernel/ProcRawErrors.h"
+#include "ProcessorKernel/RegisterFactory.h"
+#include "ProcessorKernel/TileRegister.h"
+
+namespace L0Muon {
+class Register;
+}  // namespace L0Muon
 
 #define _DEBUG_RAWDATA_    0
 #define _DEBUG_RAWDATA_2_  0

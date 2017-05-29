@@ -1,21 +1,36 @@
-#include "RZip.h"
+#include <algorithm>
+#include <cstdint>
+#include <iterator>
+#include <vector>
 
-#include "Event/RawEvent.h"
-#include "Event/PackedTrack.h"
 #include "Event/PackedCaloCluster.h"
-#include "Event/PackedRichPID.h"
-#include "Event/PackedMuonPID.h"
 #include "Event/PackedCaloHypo.h"
-#include "Event/PackedProtoParticle.h"
-#include "Event/PackedParticle.h"
-#include "Event/PackedVertex.h"
-#include "Event/PackedRecVertex.h"
 #include "Event/PackedFlavourTag.h"
-#include "Event/PackedRelations.h"
+#include "Event/PackedMuonPID.h"
 #include "Event/PackedPartToRelatedInfoRelation.h"
-
-#include "HltPackedDataWriter.h"
+#include "Event/PackedParticle.h"
+#include "Event/PackedProtoParticle.h"
+#include "Event/PackedRecVertex.h"
+#include "Event/PackedRelations.h"
+#include "Event/PackedRichPID.h"
+#include "Event/PackedTrack.h"
+#include "Event/PackedVertex.h"
+#include "Event/RawBank.h"
+#include "Event/RawEvent.h"
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/Kernel.h"
+#include "GaudiKernel/LinkManager.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/StringKey.h"
+#include "GaudiKernel/VectorMap.h"
 #include "HltPackedDataDecoder.h"
+#include "HltPackedDataWriter.h"
+#include "PackedDataChecksum.h"
+
+class ISvcLocator;
 
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY(HltPackedDataDecoder)

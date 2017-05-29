@@ -1,15 +1,25 @@
 #ifndef CONFIGARCHIVEACCESSSVC_H 
 #define CONFIGARCHIVEACCESSSVC_H 
 
+#include <boost/optional/optional.hpp>
+#include <memory>
 // Include files
 #include <string>
-#include <memory>
-#include "boost/optional.hpp"
+#include <vector>
+
+#include "GaudiKernel/MsgStream.h"
 // from Gaudi
 #include "GaudiKernel/Service.h"
-#include "GaudiKernel/MsgStream.h"
-
+#include "GaudiKernel/StatusCode.h"
+#include "GaudiKernel/extends.h"
+#include "Kernel/ConfigTreeNode.h"
+#include "Kernel/ConfigTreeNodeAlias.h"
 #include "Kernel/IConfigAccessSvc.h"
+#include "Kernel/PropertyConfig.h"
+#include "boost/optional.hpp"
+
+class ISvcLocator;
+struct IConfigAccessSvc;
 
 /** @class ConfigFileAccessSvc ConfigFileAccessSvc.h
  *  

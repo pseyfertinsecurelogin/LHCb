@@ -2,18 +2,35 @@
 #ifndef L0DUMULTITRENDS_H
 #define L0DUMULTITRENDS_H 1
 
+#include <TAxis.h>
+// from Root
+#include <TH1D.h>
+#include <map>
 // Include files
 // from STL
 #include <string>
-// from Root
-#include <TH1D.h>
-#include <TAxis.h>
+#include <vector>
+
+#include "Event/L0ProcessorData.h"
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
+#include "GaudiKernel/StatusCode.h"
 // Interface
 #include "L0Interfaces/IL0DUConfigProvider.h"
 #include "L0Interfaces/IL0DUEmulatorTool.h"
 #include "L0Interfaces/IL0DUFromRawTool.h"
+
+class IEventTimeDecoder;
+class ISvcLocator;
+namespace AIDA {
+class IHistogram1D;
+}  // namespace AIDA
+namespace LHCb {
+class L0DUConfig;
+}  // namespace LHCb
+struct IL0DUConfigProvider;
+struct IL0DUEmulatorTool;
+struct IL0DUFromRawTool;
 
 /** @class L0DUMultiTrends L0DUMultiTrends.h
  *  L0 Processors (L0Calo/L0Muon/PUVETO) -> L0DU

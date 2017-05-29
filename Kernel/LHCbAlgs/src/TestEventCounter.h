@@ -1,9 +1,15 @@
 #ifndef SRC_TESTEVENTCOUNTER_H
 #define SRC_TESTEVENTCOUNTER_H 1
+#include <string>
+
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiKernel/StatusCode.h"
 #include "Kernel/IEventCounter.h"
+
+class ISvcLocator;
+struct IEventCounter;
 
 namespace LHCbAlgsTests {
 

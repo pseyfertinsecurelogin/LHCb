@@ -1,20 +1,33 @@
 // Include files
 
-// from Gaudi
-#include "GaudiKernel/SystemOfUnits.h"
-
-// from Event
-#include "Event/L0CaloCandidate.h"
-#include "Event/L0DUBase.h"
-
-//From LHCb
-#include "Event/ODIN.h" 
+#include <stddef.h>
+#include <functional>
+#include <vector>
 
 // From CaloDet 
 #include "CaloDet/DeCalorimeter.h"
-
+// from Event
+#include "Event/L0CaloCandidate.h"
+#include "Event/L0DUBase.h"
+//From LHCb
+#include "Event/ODIN.h" 
+#include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiAlg/GaudiTuples.h"
+#include "GaudiAlg/Tuple.h"
+#include "GaudiAlg/TupleObj.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/IMessageSvc.h"
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/ObjectVector.h"
+#include "GaudiKernel/Property.h"
+// from Gaudi
+#include "GaudiKernel/SystemOfUnits.h"
+#include "Kernel/CaloCellID.h"
 // local
 #include "L0CaloNtpMonitor.h"
+
+class ISvcLocator;
 
 
 //-----------------------------------------------------------------------------

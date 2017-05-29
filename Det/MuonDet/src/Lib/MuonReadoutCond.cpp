@@ -6,8 +6,8 @@
 
 // Include files
 #include "MuonDet/MuonReadoutCond.h"
-#include <cmath>
-#include <iostream>
+
+#include "GaudiKernel/IValidity.h"
 
 /** @file MuonReadoutCond.cpp
  *

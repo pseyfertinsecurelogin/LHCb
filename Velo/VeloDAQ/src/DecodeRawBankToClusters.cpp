@@ -1,13 +1,19 @@
 // $Id: DecodeRawBankToClusters.cpp,v 1.17 2010-03-17 18:33:19 krinnert Exp $
 
-#include <vector>
-#include <algorithm>
+#include <memory>
 #include <sstream>
+#include <utility>
+#include <vector>
 
-#include "VeloDet/DeVeloSensor.h"
-
-#include "VeloRawBankDecoder.h"
 #include "DecodeRawBankToClusters.h"
+#include "Event/VeloLiteCluster.h"
+#include "Kernel/VeloChannelID.h"
+#include "SiDAQ/SiClusterWord.h"
+#include "SiDAQ/SiRawBankDecoder.h"
+#include "VeloDet/DeVeloSensor.h"
+#include "VeloRawBankDecoder.h"
+
+class SiADCWord;
 
 int VeloDAQ::decodeRawBankToClustersV2(
     const SiDAQ::buffer_word* bank, 
