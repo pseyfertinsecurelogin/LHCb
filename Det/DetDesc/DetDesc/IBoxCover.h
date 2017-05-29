@@ -38,7 +38,7 @@ public:
   /// accessor to "maximal z" value
   inline void setZMax(double zMax) { m_zMax = zMax; }
 
-protected:
+private:
 
   double m_xMin = 1000000.;
   double m_xMax = -1000000.;

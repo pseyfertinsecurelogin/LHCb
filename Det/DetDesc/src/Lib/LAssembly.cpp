@@ -167,12 +167,12 @@ unsigned int LAssembly::intersectLine( const Gaudi::XYZPoint&     Point        ,
 
   Gaudi::XYZPoint p1 = Point + tickMin * Vector;
   Gaudi::XYZPoint p2 = Point + tickMax * Vector;
-  if ( (m_zMin > p1.z()) && (m_zMin > p2.z()) ) return 0 ;
-  if ( (m_zMax < p1.z()) && (m_zMax < p2.z()) ) return 0 ;
-  if ( (m_xMin > p1.x()) && (m_xMin > p2.x()) ) return 0 ;
-  if ( (m_xMax < p1.x()) && (m_xMax < p2.x()) ) return 0 ;
-  if ( (m_yMin > p1.y()) && (m_yMin > p2.y()) ) return 0 ;
-  if ( (m_yMax < p1.y()) && (m_yMax < p2.y()) ) return 0 ;
+  if ( zMin() > p1.z() && zMin() > p2.z() ) return 0 ;
+  if ( zMax() < p1.z() && zMax() < p2.z() ) return 0 ;
+  if ( xMin() > p1.x() && xMin() > p2.x() ) return 0 ;
+  if ( xMax() < p1.x() && xMax() < p2.x() ) return 0 ;
+  if ( yMin() > p1.y() && yMin() > p2.y() ) return 0 ;
+  if ( yMax() < p1.y() && yMax() < p2.y() ) return 0 ;
 
   /*  look for the intersections of the given
    *  line with daughter elements construct the
