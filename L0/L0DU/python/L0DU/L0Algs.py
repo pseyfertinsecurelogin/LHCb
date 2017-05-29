@@ -16,6 +16,7 @@ they are used in L0Conf
 L0CaloAlgName        = "L0Calo"
 L0MuonAlgName        = "L0Muon"
 L0PileUpAlgName      = "L0PuVeto"
+L0HCAlgName          = "L0HC"
 L0DUAlgName          = "L0DU"
 
 ## L0Calo algorithm
@@ -51,12 +52,18 @@ def emulateL0PileUpSeq(suffix=''):
     """ Returns a list with the algorithm to emulate the L0PileUp."""
     return [ emulateL0PileUp(suffix) ]
 
+## L0HC algorithm
+def emulateL0HC(suffix=''):
+    """ Returns the algorithm to emulate the L0HC."""
+    from Configurables import L0HCAlg 
+    return L0HCAlg(L0HCAlgName+"_emulate_"+suffix)
+    
 ## L0DU algorithm
 def emulateL0DU(suffix=''):
     """ Returns the algorithm to emulate the L0DU."""
     from Configurables import L0DUAlg
     return L0DUAlg(L0DUAlgName+suffix)
-
+    
 ## L0DU sequence
 def emulateL0DUSeq(suffix=''):
     """ Returns a list with the algorithm to emulate the L0DU."""
@@ -91,7 +98,7 @@ def decodeL0Muon(suffix=''):
 def decodeL0MuonSeq(suffix=''):
     """ Returns a list with the algorithm to decode the L0Muon data."""
     return [ decodeL0Muon(suffix) ] 
-     
+
 ## L0DU algorithm
 def decodeL0DU(suffix=''):
     """ Returns the algorithm to decode the L0DU data."""

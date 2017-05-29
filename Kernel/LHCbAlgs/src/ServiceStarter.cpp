@@ -13,28 +13,10 @@ using namespace LHCbAlgsTest;
 // ----------------------------------------------------------------------------
 DECLARE_ALGORITHM_FACTORY(ServiceStarter)
 
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || __cplusplus >= 201103L
 namespace {
   const std::vector<std::string> phases = {"initialize", "start", "execute"};
 }
-#else
-#include "boost/assign/list_of.hpp"
-namespace {
-  const std::vector<std::string> phases = boost::assign::list_of("initialize")("start")("execute");
-}
-#endif
 
-// ============================================================================
-// Standard constructor, initializes variables
-// ============================================================================
-ServiceStarter::ServiceStarter(const std::string& name, ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm(name, pSvcLocator)
-{
-  declareProperty("Service", m_serviceName,
-      "Service to retrieve.");
-  declareProperty("Phase", m_phase,
-      "When to retrieve the service (initialize, start, execute).");
-}
 
 StatusCode ServiceStarter::i_retrieveService(const std::string &currentPhase) {
   if (!m_service && currentPhase == m_phase) {
@@ -72,7 +54,7 @@ StatusCode ServiceStarter::initialize()
       error() << *i;
     }
     error() << endmsg;
-    error() << "  current value: " << (m_phase.empty() ? std::string("(empty)") : m_phase) << endmsg;
+    error() << "  current value: " << (m_phase.empty() ? std::string("(empty)") : m_phase.value()) << endmsg;
     return StatusCode::FAILURE;
   }
 
@@ -82,7 +64,7 @@ StatusCode ServiceStarter::initialize()
 // ============================================================================
 // Main execution
 // ============================================================================
-StatusCode ServiceStarter::start() 
+StatusCode ServiceStarter::start()
 {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Start" << endmsg;
   return i_retrieveService("start");
@@ -91,7 +73,7 @@ StatusCode ServiceStarter::start()
 // ============================================================================
 // Main execution
 // ============================================================================
-StatusCode ServiceStarter::execute() 
+StatusCode ServiceStarter::execute()
 {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
   return i_retrieveService("execute");
@@ -100,7 +82,7 @@ StatusCode ServiceStarter::execute()
 // ============================================================================
 // Finalize
 // ============================================================================
-StatusCode ServiceStarter::finalize() 
+StatusCode ServiceStarter::finalize()
 {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
   m_service.reset();

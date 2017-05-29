@@ -62,7 +62,13 @@ void FlavourTagPacker::pack( const Data & ft,
       }
       ptagger.lastTagP = pfts.taggeringPs().size();
 
+      // for packing versions 1 and above add mva and charge to PackedTagger
+      if (ver > 0) {
+        ptagger.mvaValue = m_pack.mva(T.mvaValue());
+        ptagger.charge = m_pack.fraction(T.charge());
+      }
     }
+
     pft.lastTagger = pfts.taggers().size();
 
   }
@@ -155,10 +161,14 @@ void FlavourTagPacker::unpack( const PackedData       & pft,
         }
         else { parent().Error("Corrupt FlavourTag Tagging Particle SmartRef found").ignore(); }
       }
+
+      // for packing versions 1 and above retrieve mva and charge to PackedTagger
+      if (ver > 0){
+        tagger.setMvaValue( m_pack.mva(ptagger.mvaValue)    );
+        tagger.setCharge  ( m_pack.fraction(ptagger.charge) );
+      }
     }
-
   }
-
 }
 
 void FlavourTagPacker::unpack( const PackedDataVector & pfts,
@@ -236,9 +246,12 @@ StatusCode FlavourTagPacker::check( const Data & dataA,
     auto iA(dataA.taggers().begin()), iB(dataB.taggers().begin());
     for ( ; iA != dataA.taggers().end() && iB != dataB.taggers().end(); ++iA, ++iB )
     {
-      ok &= ch.compareInts( "TaggerType",     iA->type(),     iB->type()     );
-      ok &= ch.compareInts( "TaggerDecision", iA->decision(), iB->decision() );
-      ok &= ch.compareFloats( "TaggerOmega",  iA->omega(),    iB->omega()    );
+      ok &= ch.compareInts(   "TaggerType",     iA->type(),     iB->type()     );
+      ok &= ch.compareInts(   "TaggerDecision", iA->decision(), iB->decision() );
+      ok &= ch.compareFloats( "TaggerOmega",    iA->omega(),    iB->omega()    );
+      ok &= ch.compareFloats( "TaggerMVAValue", iA->mvaValue(), iB->mvaValue() );
+      ok &= ch.compareFloats( "TaggerCharge",   iA->charge(),   iB->charge()   );
+
       const bool pSizeOK = ch.compareInts( "TaggerPSize",
                                            iA->taggerParts().size(),
                                            iB->taggerParts().size() );

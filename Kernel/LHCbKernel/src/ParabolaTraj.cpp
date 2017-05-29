@@ -8,7 +8,7 @@ using namespace ROOT::Math;
 
 std::unique_ptr<Trajectory> ParabolaTraj::clone() const
 {
-        return std::unique_ptr<Trajectory>(new ParabolaTraj(*this));
+        return std::make_unique<ParabolaTraj>(*this);
 }
 
 #ifdef __INTEL_COMPILER         // Disable ICC remark from ROOT

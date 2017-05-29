@@ -94,14 +94,21 @@ private:
   DeOTDetector* m_otdet = nullptr;                  ///< Pointer to OT geometry
   IOTChannelMapTool* m_channelmaptool = nullptr ;     ///< Pointer to IOTChannelMapTool
   std::vector<double> m_startReadOutGate;   ///< Start of readout gate
-
-  std::pair<double,double> m_timewindow = { 999*Gaudi::Units::ns,-999*Gaudi::Units::ns};    ///< ignore hits outside of this window, only if first < second; if not, use all
-  double m_timePerBX = 25*Gaudi::Units::ns;                       ///< Time Per BX
   double m_nsPerTdcCount = -1. ;                  ///< Conversion from tdc to ns (initialization uses m_countPerBx and m_timePerBx)
-  int  m_countsPerBX = 64;                       ///< Counts per BX
-  int  m_numberOfBX = 3;                        ///< Number of BX
-  int  m_forcebankversion = OTBankVersion::UNDEFINED;                  ///< Overwrite bank version in bank header
-  bool m_vetoOutOfTimeHitPairs = true;		    ///< veto out of time hit pairs?
+
+  Gaudi::Property<std::pair<double,double>> m_timewindow
+  { this, "TimeWindow", { 999*Gaudi::Units::ns,-999*Gaudi::Units::ns} };    ///< ignore hits outside of this window, only if first < second; if not, use all
+  Gaudi::Property<double> m_timePerBX
+  { this, "timePerBX",  25*Gaudi::Units::ns };                       ///< Time Per BX
+  Gaudi::Property<int>  m_countsPerBX
+  { this, "countsPerBX", 64 };                       ///< Counts per BX
+  Gaudi::Property<int>  m_numberOfBX
+  { this, "numberOfBX", 3 };                        ///< Number of BX
+  Gaudi::Property<int>  m_forcebankversion
+  { this, "ForceBankVersion", OTBankVersion::UNDEFINED };                  ///< Overwrite bank version in bank header
+  Gaudi::Property<bool> m_vetoOutOfTimeHitPairs
+  { this, "VetoOutOfTimeHitPairs", true };		    ///< veto out of time hit pairs?
+
   friend class OTRawBankDecoderHelpers::Detector;
   friend class OTRawBankDecoderHelpers::Module;
 };

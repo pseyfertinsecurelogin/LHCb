@@ -70,7 +70,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
   /**
    * This encapsulates the parameters needed to build a PVolume
    */
-  typedef struct _PVolumeItem final {
+  struct PVolumeItem final {
     /// the name of the physical volume
     std::string physvolName;
     /**
@@ -85,7 +85,7 @@ class XmlLVolumeCnv : public XmlGenericCnv {
     std::string logvolName;
     /// the transformation to place the volume
     std::unique_ptr<Gaudi::Transform3D> transformation;
-  } PVolumeItem;
+  };
 
   /**
    * This type defines a vector of PVolumeItem*. This is used from the
@@ -97,10 +97,10 @@ class XmlLVolumeCnv : public XmlGenericCnv {
    * This is the encapsulation of a solid and a transformation to be
    * applied ot it
    */
-  typedef struct _placedSolid final {
+  struct PlacedSolid final {
     std::unique_ptr<ISolid> solid;
     std::unique_ptr<Gaudi::Transform3D> transformation;
-  } PlacedSolid;
+  };
 
   /**
    * this defines a vector of PlacedSolids

@@ -19,9 +19,8 @@
 
 #include <boost/utility/string_ref.hpp>
 
-// Temporary hack to be backward compatible with a change in Gaudi
-// introducing an operator< on Time. To be dropped once we only compile
-// against Gaudi versions where the operator is defined
+// this should be defined in GaudiKernel/Time.h, but the version there is not
+// found by ADL
 namespace Gaudi { using ::operator<; }
 
 /** Allow use of a Git repository as a source of XML files for XercesC.

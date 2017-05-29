@@ -29,7 +29,7 @@ class LbAppInit : public GaudiAlgorithm {
 
 public:
 
-  /// inherit constructor
+  /// Standard constructor
   using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;     ///< Algorithm initialization
@@ -102,17 +102,13 @@ protected:
 
 private:
 
-  void releaseMemoryPools() const; ///< Release memory pools
-
-private:
-
   Gaudi::Property<int> m_skipFactor{this, "SkipFactor", 0, "skip some random numbers"};
   Gaudi::Property<bool> m_singleSeed{this, "SingleSeed", false, "use only one seed"};
   Gaudi::Property<bool> m_preload{this, "PreloadGeometry", false, "preload the geometry"};
   Gaudi::Property<int> m_printFreq{this, "PrintFreq", 1, "event print frequency. > 0 indicate the rate at which event messages should be printed, < 0 suppress event messages entirely"};
   Gaudi::Property<bool> m_printTime{this, "PrintEventTime", false, "print also the event time"};
   Gaudi::Property< unsigned long long> m_increment{this, "Increment", 100, "Number of events to measure memory"};
-  Gaudi::Property<unsigned long long> m_memPurgeLimit{this, "MemoryPurgeLimit", 3400 * 1000, "The memory threshold at which to trigger a purge of the boost pools"}; // default to 3.4GB
+  Gaudi::Property<long long> m_memPurgeLimit{this, "MemoryPurgeLimit", -1, "OBSOLETE"};
   Gaudi::Property<long long> m_minMemDelta{this, "MinMemoryDelta", 16, "The minimum change in memory usage (KB) to trigger a message"}; // defaults to 16KB
   
   mutable SmartIF<IRndmGenSvc> m_randSvc;  ///< Pointer to random number service
@@ -127,5 +123,4 @@ private:
   std::string m_appVersion{""};      ///< Application Version
 
 };
-
 #endif // LBAPPINIT_H

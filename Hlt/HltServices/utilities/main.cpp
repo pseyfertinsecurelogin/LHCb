@@ -123,8 +123,8 @@ std::vector<unsigned char> make_cdb_record( std::string str, uid_t uid, std::tim
 
 
 struct manifest_entry {
-    template <typename TCKS > 
-    manifest_entry(const std::string& toplevel, const TCKS& tcks, std::string com) 
+    template <typename TCKS >
+    manifest_entry(const std::string& toplevel, const TCKS& tcks, std::string com)
     {
         std::vector<std::string> tokens;
         boost::algorithm::split(tokens,toplevel,boost::algorithm::is_any_of("/"));
@@ -138,15 +138,12 @@ struct manifest_entry {
     }
     std::string release,type,tck,id,comment;
 
-    bool operator<(const manifest_entry& rhs) const {
+    friend bool operator<(const manifest_entry& lhs, const manifest_entry& rhs) {
         // can we get MOORE_v9r1 prior to MOORE_v10r1 ???
         // if the string contains a digit at the point where they are different,
         // do a numerical <
-        return release < rhs.release || 
-              ( release == rhs.release && ( type < rhs.type || 
-              ( type == rhs.type && ( tck < rhs.tck || 
-              ( tck == rhs.tck && ( id < rhs.id || 
-              ( comment < rhs.comment )))))));
+        auto order = [](const manifest_entry& m) { return std::tie( m.release, m.type, m.tck, m.id, m.comment ); };
+        return order(lhs) < order(rhs);
     }
 };
 
@@ -183,7 +180,7 @@ public:
         uid_t uid() const { return m_info.uid; }
         std::time_t time() const { return m_info.mtime; }
         const std::string& key() const { return m_info.name; }
-        std::string value() const { 
+        std::string value() const {
             m_file->seekg( 0, std::ios_base::beg );
             io::filtering_istream s;
             if ( m_info.compressed ) s.push( io::gzip_decompressor() );
@@ -217,7 +214,7 @@ public:
             if ( !interpretHeader(*m_file, header, info ) ) {
                 // check whether we're at the end of the file: (at least) two all-zero
                 // headers)
-                if ( !isZero( header ) ) { 
+                if ( !isZero( header ) ) {
                     std::cerr << "failed to interpret header" << std::endl;
                 } else {
                     m_file->read( (char*)&header, sizeof( header ) );
@@ -248,16 +245,16 @@ public:
         }
     public:
         iterator( ) : m_file{ nullptr }, m_pos{0}  { }
-        iterator( std::fstream* file, std::streamoff pos = 0 ) : m_file{file}, m_pos{pos} { 
+        iterator( std::fstream* file, std::streamoff pos = 0 ) : m_file{file}, m_pos{pos} {
             skip_invalid();
         }
 
         record operator*() { // Not quite canonical -- ideally should be record&... and const
             return { m_file, read_info() };
         }
-        iterator& operator++() { 
+        iterator& operator++() {
             next(); skip_invalid();
-            return *this; 
+            return *this;
         }
 
         friend bool operator==( const iterator& lhs, const iterator& rhs) {
@@ -271,7 +268,7 @@ public:
     iterator begin() { return { &m_file }; }
     iterator end() const { return { }; }
 
-    iterator find(const std::string& key) { 
+    iterator find(const std::string& key) {
          if (m_index.empty()) index();
          auto i = m_index.find(key);
          if (i==std::end(m_index)) return {};
@@ -307,8 +304,8 @@ public:
         const void *m_kpos,*m_vpos;
         unsigned m_klen, m_vlen;
     public:
-        record( const void *kpos, const void *vpos, unsigned klen, unsigned vlen) 
-          : m_kpos{kpos}, m_vpos{vpos}, m_klen{klen}, m_vlen{vlen} { 
+        record( const void *kpos, const void *vpos, unsigned klen, unsigned vlen)
+          : m_kpos{kpos}, m_vpos{vpos}, m_klen{klen}, m_vlen{vlen} {
             assert(vlen>=12);
         }
         unsigned int valuePersistentSize() const { return m_vlen;}
@@ -336,7 +333,7 @@ public:
                 case 2 : s.push(io::bzip2_decompressor()); break;
                 case 3 : { io::zlib_params params; params.noheader = true;
                            s.push(io::zlib_decompressor(params)); } break;
-                default : 
+                default :
                          std::cerr << "unknown compression flag" << std::endl;
                          return 0;
             }
@@ -360,9 +357,9 @@ public:
             if ( m_db && !m_cpos ) cdb_seqinit(&m_cpos, m_db);
             ++*this;
         }
-        iterator& operator++() { 
+        iterator& operator++() {
             if (m_db && !( cdb_seqnext(&m_cpos, m_db) > 0 ) ) m_db = nullptr ;
-            return *this; 
+            return *this;
         }
         bool operator==(const iterator& rhs) const {
             return atEnd() ? rhs.atEnd() : m_cpos == rhs.m_cpos;
@@ -374,13 +371,13 @@ public:
             return { cdb_getkey(m_db), cdb_getdata(m_db), cdb_keylen(m_db), cdb_datalen(m_db) };
         }
     };
-    
+
     iterator begin() const { return { &m_db  }; }
     iterator end()   const { return {        }; }
 
-    iterator find(const std::string& key) const { 
+    iterator find(const std::string& key) const {
         if ( cdb_find(&m_db, key.c_str(), key.size())>0 ) {
-            // Hrmpf. Use inside knowledge of the layout of the cdb structure... 
+            // Hrmpf. Use inside knowledge of the layout of the cdb structure...
             //        ... so that 'next' will do the right thing...
             unsigned int offset = std::distance(m_db.cdb_mem,static_cast<const unsigned char*>(cdb_getkey(&m_db)));
             return { &m_db, offset-8 };
@@ -405,11 +402,11 @@ std::multiset< manifest_entry > create_manifest(DB& db) {
     std::map< std::string , std::string > tck;     // id -> TCK
     for ( auto record : db ) { // TODO: allow loop with predicate on key...
         if (!record.isTCK() ) continue;
-        auto key = record.key() ; 
+        auto key = record.key() ;
         tck.emplace( record.value() , record.TCK());
     }
     // next: create manifest
-    for ( auto record : db ) { // TODO: allow loop with predicate on key... 
+    for ( auto record : db ) { // TODO: allow loop with predicate on key...
         if (!record.isTopLevel()) continue;
         auto key = record.key();
         // the 'comment' is in the 'label' member of the treenode this alias "points" at
@@ -420,7 +417,7 @@ std::multiset< manifest_entry > create_manifest(DB& db) {
             ConfigTreeNode ctn; in >> ctn;
             comment = ctn.label();
             if (comment.empty()) {
-                std::cerr << "could not locate Label part of " << std::endl;  
+                std::cerr << "could not locate Label part of " << std::endl;
                 std::cerr << (*i).value() << std::endl;
             }
         } else {
@@ -456,9 +453,9 @@ void dump_manifest_as_json( const std::multiset< manifest_entry > & manifest) {
 template <typename DB>
 void dump_keys(DB& db) {
     for ( auto record : db ) {
-        std::cout << std::setw(5) << record.uid() 
-                  << "   " << std::setw(6) <<  record.valuePersistentSize()  
-                  << "   " << std::setw(34) << format_time( record.time() ) 
+        std::cout << std::setw(5) << record.uid()
+                  << "   " << std::setw(6) <<  record.valuePersistentSize()
+                  << "   " << std::setw(34) << format_time( record.time() )
                   << "   " << record.key() << "\n";
     }
     std::cout << std::flush;
@@ -467,9 +464,9 @@ void dump_keys(DB& db) {
 template <typename DB>
 void dump_records(DB& db) {
     for ( auto record : db ) {
-        std::cout << std::setw(5) << record.uid() 
-                  << "   " << std::setw(6) << record.valuePersistentSize()  
-                  << "   " << std::setw(34) << format_time( record.time() ) 
+        std::cout << std::setw(5) << record.uid()
+                  << "   " << std::setw(6) << record.valuePersistentSize()
+                  << "   " << std::setw(34) << format_time( record.time() )
                   << "   " << record.key() << "\n";
         std::cout << record.value() <<"\n";
     }
@@ -511,9 +508,9 @@ void extract_records(TAR& db) {
     }
 }
 
-// TODO: add option to 'repack' the content of ConfigTreeNode and PropertyConfig... 
+// TODO: add option to 'repack' the content of ConfigTreeNode and PropertyConfig...
 void convert_records( TAR& in, const std::string& oname ) {
-    int ofd = open( oname.c_str(), 
+    int ofd = open( oname.c_str(),
                     O_RDWR  | O_CREAT | O_EXCL,
                     S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
     bool error = ofd < 0;
@@ -573,7 +570,7 @@ int main(int argc, char* argv[]) {
 
     std::string fname = vm["input-file"].as<std::string>();
     std::cerr << "opening " << fname << std::endl;
-    
+
     if (boost::algorithm::ends_with(fname,".cdb")) {
         CDB db(fname) ;
         if (!db.ok()) return 1;

@@ -22,7 +22,7 @@ class OTChannelMapTool : public extends<GaudiTool, IOTChannelMapTool>
 
 public:
   /// Standard constructor
-  OTChannelMapTool( const std::string& type, const std::string& name, const IInterface* parent);
+  using base_class::base_class;
 
   /// initialization
   StatusCode initialize() override;
@@ -52,18 +52,6 @@ private:
 // Declaration in the Tool Factory
 //=============================================================================
 DECLARE_TOOL_FACTORY( OTChannelMapTool )
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-OTChannelMapTool::OTChannelMapTool( const std::string& type,
-                                    const std::string& name,
-                                    const IInterface* parent )
-: base_class ( type, name , parent )
-{
-  declareInterface<IOTChannelMapTool>(this);
-}
-//=============================================================================
 
 //=============================================================================
 // Initialisation. Check parameters

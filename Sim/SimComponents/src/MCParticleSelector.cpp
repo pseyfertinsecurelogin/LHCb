@@ -4,48 +4,22 @@
 #include "MCParticleSelector.h"
 #include "Event/MCFun.h"
 
-#include "boost/limits.hpp"
-#include "boost/numeric/conversion/bounds.hpp"
 
 DECLARE_TOOL_FACTORY ( MCParticleSelector )
-
-MCParticleSelector::MCParticleSelector( const std::string& type,
-                                        const std::string& name,
-                                        const IInterface* parent ) :
-  GaudiTool( type, name, parent )
-{
-  // JOs
-  declareProperty("zOrigin",      m_zOrigin      = boost::numeric::bounds<double>::highest() );
-  declareProperty("pMin",         m_pMin         = 0.0*Gaudi::Units::GeV );
-  declareProperty("pMax",         m_pMax         = boost::numeric::bounds<double>::highest() );
-  declareProperty("betaGammaMin", m_betaGammaMin = 0.0 );
-  declareProperty("etaMin",       m_etaMin       = -boost::numeric::bounds<double>::highest() );
-  declareProperty("etaMax",       m_etaMax       =  boost::numeric::bounds<double>::highest() );
-  declareProperty("rejectElectrons", m_rejectElectrons  = false );
-  declareProperty("SelectChargedParticles", m_selCharged = true );
-  declareProperty("SelectNeutralParticles", m_selNeutral = true );
-  declareProperty("rejectInteractions", m_rejectInteractions = false );
-  declareProperty("zInteraction", m_zInteraction = -boost::numeric::bounds<double>::highest() );
-  declareProperty("SelectOnlyBDecayProducts", m_selBprods = false );
-
-  // interface
-  declareInterface<IMCParticleSelector>(this);
-}
-
 
 StatusCode MCParticleSelector::initialize()
 {
   // Initialize base class
-  const StatusCode sc = GaudiTool::initialize();
+  const StatusCode sc = base_class::initialize();
   if ( sc.isFailure() ) { return sc; }
 
   // printout selection criteria
-  info() << "MCParticle Momentum cut     : " << m_pMin/Gaudi::Units::GeV << " GeV/c < P < " << m_pMax << " GeV/c" << endmsg;
-  info() << "           Beta * gamma cut : " << m_betaGammaMin << " < beta*gamma" << endmsg;
-  info() << "           Eta cut          : " << m_etaMin << " < P < " << m_etaMax << endmsg;
+  info() << "MCParticle Momentum cut     : " << m_pMin.value()/Gaudi::Units::GeV << " GeV/c < P < " << m_pMax.value()/Gaudi::Units::GeV << " GeV/c" << endmsg;
+  info() << "           Beta * gamma cut : " << m_betaGammaMin.value() << " < beta*gamma" << endmsg;
+  info() << "           Eta cut          : " << m_etaMin.value() << " < P < " << m_etaMax.value() << endmsg;
   if ( m_rejectElectrons ) info() << "           Will reject electrons" << endmsg;
   if ( m_selBprods       ) info() << "           Will only select B decay products" << endmsg;
-  if ( m_rejectInteractions ) info() << "           Will reject particles from interations before z=" << m_zInteraction << endmsg;
+  if ( m_rejectInteractions ) info() << "           Will reject particles from interations before z=" << m_zInteraction.value() << endmsg;
   if ( !m_selCharged ) info() << "           Will reject charged particles" << endmsg;
   if ( !m_selNeutral ) info() << "           Will reject neutral particles" << endmsg;
 

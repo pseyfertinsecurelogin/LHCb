@@ -107,7 +107,7 @@ class RichConfigurableUser(LHCbConfigurableUser):
     ## Printout Configuration
     def printInfo(self,conf):
         import GaudiKernel.ProcessJobOptions
-        GaudiKernel.ProcessJobOptions.PrintOn()
+        GaudiKernel.ProcessJobOptions.PrintOn(force=True)
         log.debug(conf)
         GaudiKernel.ProcessJobOptions.PrintOff()
 

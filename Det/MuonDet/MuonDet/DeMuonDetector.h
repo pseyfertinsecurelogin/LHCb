@@ -122,7 +122,7 @@ public:
   bool isM1defined() const;
 
   //Returns the list of physical channels for a given chamber
-  std::vector< std::pair<MuonFrontEndID, std::vector<float> > >
+  std::vector< std::pair<MuonFrontEndID, std::array<float,4> > >
   listOfPhysChannels(Gaudi::XYZPoint my_entry, Gaudi::XYZPoint my_exit,
                      int region, int chamber);
   StatusCode getPCCenter(MuonFrontEndID fe,int chamber,int station,

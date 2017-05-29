@@ -10,6 +10,7 @@ from L0Algs import L0CaloFromRawAlgName , emulateL0Calo   , decodeL0Calo , monit
 from L0Algs import L0MuonFromRawAlgName , emulateL0Muon   , decodeL0Muon , monitorL0Muon
 from L0Algs import L0DUFromRawAlgName   , emulateL0DU     , decodeL0DU   , monitorL0DU
 from L0Algs import                        emulateL0PileUp
+from L0Algs import L0HCAlgName          , emulateL0HC
 
 ## @class L0Conf
 #  Configurable for the L0 trigger (simulation, emulation, decoding, monitoring and filtering)
@@ -53,6 +54,15 @@ class L0Conf(LHCbConfigurableUser) :
         # Output file
         ,"ETCOutput"      : "L0ETC.root"
         ,"DataType"       : ""
+        # Herschel-specific options
+        ,"EmulateHC"             : False
+        ,"HCTriggerBitsFromADCs" : False
+        ,"L0HCAlgThresholdsB0"   : [0,0,0,0]
+        ,"L0HCAlgThresholdsB1"   : [0,0,0,0]
+        ,"L0HCAlgThresholdsB2"   : [0,0,0,0]
+        ,"L0HCAlgThresholdsF1"   : [0,0,0,0]
+        ,"L0HCAlgThresholdsF2"   : [0,0,0,0]
+        ,"FakeHCL0Digits"        : False
         }
 
     _propertyDocDct = {
@@ -90,6 +100,15 @@ class L0Conf(LHCbConfigurableUser) :
         ,"ETCSequencer"   : """ Sequencer filled with the algorithm and stream to write out a L0-ETC."""
         ,"ETCOutput"      : """ Name of ETC output file."""
         ,"DataType"       : """ Data type, used to set up default TCK """
+        # Herschel-specific options
+        ,"EmulateHC"          : """ Flag whether or not to emulate Herschel. False by default for backward compatibility """
+        ,"HCTriggerBitsFromADCs" : """ If True, compute the Herschel L0 trigger bit sum based on the values of the raw ADCs in each counter with respect to a threshold. """
+        ,"L0HCAlgThresholdsB0" : """ Herschel B0 thresholds if computing L0 HC trigger bits """
+        ,"L0HCAlgThresholdsB1" : """ Herschel B1 thresholds if computing L0 HC trigger bits """
+        ,"L0HCAlgThresholdsB2" : """ Herschel B2 thresholds if computing L0 HC trigger bits """
+        ,"L0HCAlgThresholdsF1" : """ Herschel F1 thresholds if computing L0 HC trigger bits """
+        ,"L0HCAlgThresholdsF2" : """ Herschel F2 thresholds if computing L0 HC trigger bits """
+        ,"FakeHCL0Digits"     : """ If True, set all Herschel trigger bits to 1 ie all counters over-threshold. """
          }
 
 
@@ -122,7 +141,9 @@ class L0Conf(LHCbConfigurableUser) :
                 rootintes += '/'
                 rootintes = rootintes.replace('//','/')
             rootInTESOnDemand_checked.append(rootintes)
-        self.setProp("RootInTESOnDemand",rootInTESOnDemand_checked)    
+        self.setProp("RootInTESOnDemand",rootInTESOnDemand_checked)  
+        if self.getProp("HCTriggerBitsFromADCs") and self.getProp("FakeHCL0Digits"):
+            raise L0ConfError("HCTriggerBitsFromADCs","FakeHCL0Digits","Does not make sense to request computed and faked Herschel L0 trigger bits simultaneously")  
 
     def l0decodingSeq(self, name="L0FromRawSeq" , writeOnTes=None ):
         """ Return a Gaudi Sequencer with the algorithms to decode the L0Calo, L0Muon and L0DU data. """
@@ -145,7 +166,7 @@ class L0Conf(LHCbConfigurableUser) :
         return l0decodingSeq
 
     def l0emulatorSeq(self, name="L0EmulatorSeq", writeBanks=None, writeOnTes=None ):
-        """ Return a Gaudi Sequencer with the algorithms to run the L0Calo, L0Muon, L0PileUp and L0DU emulators. """
+        """ Return a Gaudi Sequencer with the algorithms to run the L0Calo, L0Muon, L0PileUp, L0HC, and L0DU emulators. """
         l0emulatorSeq = GaudiSequencer( name )
 
         # L0Calo, L0Muon, L0PileUp and L0DU emulating algorithms
@@ -153,6 +174,21 @@ class L0Conf(LHCbConfigurableUser) :
         l0muon   = emulateL0Muon()
         l0pileup = emulateL0PileUp()
         l0du     = emulateL0DU()
+        
+        # L0HC emulation algorithm 
+        l0hc     = emulateL0HC()
+        if self.getProp("HCTriggerBitsFromADCs"):
+            l0hc.TriggerBitsFromADCs = True
+            l0hc.ThresholdsB0 = self.getProp("L0HCAlgThresholdsB0")
+            l0hc.ThresholdsB1 = self.getProp("L0HCAlgThresholdsB1")
+            l0hc.ThresholdsB2 = self.getProp("L0HCAlgThresholdsB2")
+            l0hc.ThresholdsF1 = self.getProp("L0HCAlgThresholdsF1")
+            l0hc.ThresholdsF2 = self.getProp("L0HCAlgThresholdsF2")
+        if self.getProp("FakeHCL0Digits"):
+            l0hc.FakeHCL0Digits = True
+        # Now construct a list since the HCRawBankDecoder must be run first before Herschel emulation
+        from Configurables import HCRawBankDecoder
+        l0hc_seq = [ HCRawBankDecoder(L0HCAlgName+"_decoder"), l0hc ]
 
         # Raw banks
         if writeBanks is not None:
@@ -169,9 +205,12 @@ class L0Conf(LHCbConfigurableUser) :
             l0du.WriteOnTES   = writeOnTes
 
         # Build the sequence in two steps :
-        # First :  run L0Calo + L0Muon + PUVeto emulators
+        # First :  run L0Calo + L0Muon + PUVeto (+ L0HC, if requested) emulators
         l0processorSeq = GaudiSequencer( "sub"+name )
         l0processorSeq.Members+=[ l0calo, l0muon, l0pileup ]
+        if self.getProp("EmulateHC") :
+            l0processorSeq.Members += l0hc_seq
+            l0du.AddHerschel = True
         l0emulatorSeq.Members+=[ l0processorSeq ]
         # Second : run L0DU emulator
         l0emulatorSeq.Members+=[l0du]
@@ -454,7 +493,14 @@ class L0Conf(LHCbConfigurableUser) :
                     emulateL0Muon().LUTVersion = "V3"
                 elif datatype == "2015" or datatype == "2016":
                     emulateL0Muon().LUTVersion = "V8"
-
+        
+        # Set Herschel emulation off by default if datatype not declared to be 2017 or 2018
+        if not self.isPropertySet("EmulateHC") :
+            if self.getProp("DataType") in [ "2017", "2018" ] :
+                self.setProp("EmulateHC", True)
+            else :
+                self.setProp("EmulateHC", False)
+      
     def _dataOnDemand(self,rootintes):
         """Configure the DataOnDemand service for L0."""
         from Configurables import DataOnDemandSvc

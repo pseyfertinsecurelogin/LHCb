@@ -42,12 +42,12 @@ IArchive* ConfigZipFileAccessSvc::file() const
             m_name = def;
         }
         info() << " opening " << m_name << " in mode " << m_mode << endmsg;
-        m_file.reset( new ZipFile( m_name, mode ) );
+        m_file = std::make_unique<ZipFile>( m_name, mode );
         if ( !*m_file ) {
             error() << " Failed to open " << m_name << " in mode " << m_mode
                     << endmsg;
             error() << string( strerror( errno ) ) << endmsg;
-            m_file.reset( nullptr );
+            m_file.reset( );
         }
     }
     return m_file.get();
@@ -58,7 +58,7 @@ IArchive* ConfigZipFileAccessSvc::file() const
 //=============================================================================
 StatusCode ConfigZipFileAccessSvc::finalize()
 {
-    m_file.reset( nullptr ); // close file if still open
+    m_file.reset( ); // close file if still open
     return ConfigArchiveAccessSvc::finalize();
 }
 

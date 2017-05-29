@@ -16,31 +16,16 @@
 // Declaration of the Tool Factory
 DECLARE_TOOL_FACTORY( FlagSignalChain )
 
-
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-FlagSignalChain::FlagSignalChain( const std::string& type,
-                                  const std::string& name,
-                                  const IInterface* parent )
-: base_class ( type, name , parent )
-{
-  declareInterface<IFlagSignalChain>(this);
-}
-
 //==============================================================================
 // Set from signal flag
 //==============================================================================
 void FlagSignalChain::setFromSignalFlag( const LHCb::MCParticle* mother ) {
 
-  for ( auto iv = mother->endVertices().begin();
-        iv != mother->endVertices().end(); iv++ ) {
-    for ( auto idau = (*iv)->products().begin();
-          idau != (*iv)->products().end(); idau++ ) {
-      const LHCb::MCParticle* mcpc = *idau;
-      LHCb::MCParticle* mcp = const_cast< LHCb::MCParticle* >( mcpc ) ;
+  for ( auto& v : mother->endVertices() ) {
+    for ( const auto& mcpc : v->products() ) {
+      LHCb::MCParticle* mcp = const_cast< LHCb::MCParticle* >( mcpc.target() ) ;
       mcp->setFromSignal(true);
-      setFromSignalFlag( *idau );
+      setFromSignalFlag( mcpc );
     }
   }
 }

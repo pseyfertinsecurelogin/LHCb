@@ -318,7 +318,7 @@ public:
   int sensitiveVolumeID( const Gaudi::XYZPoint& globalPoint ) const override;
 
   /// Access PD Panels
-  inline DeRichPDPanel * pdPanel( const Rich::Side panel ) const noexcept 
+  inline const DeRichPDPanel * pdPanel( const Rich::Side panel ) const noexcept 
   {
     return m_PDPanels[panel];
   }
@@ -398,7 +398,7 @@ protected:
 private: // data
 
   /// Pointers to the PD panels of this Rich detector
-  Rich::DetectorArray<DeRichPDPanel*> m_PDPanels{{nullptr,nullptr}};
+  Rich::DetectorArray<const DeRichPDPanel*> m_PDPanels{{nullptr,nullptr}};
 
   /// flag to test if the xml supports mirror position info
   bool m_positionInfo{false};

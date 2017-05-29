@@ -29,7 +29,7 @@ class DecodeRawEvent(ConfigurableUser):
     property 'OverrideInputs' is required
     
     """
-    __queried_configurables__ = [RawEventFormatConf]
+    __queried_configurables__ = [lambda *a, **b: RawEventFormatConf()]
     
     __slots__ = {
         "DataOnDemand" : False #Add decoding into DoD?

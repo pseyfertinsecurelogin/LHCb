@@ -22,9 +22,7 @@ class OTReadOutWindow : public extends<GaudiTool, IOTReadOutWindow> {
 public:
 
   ///  Constructor
-  OTReadOutWindow(const std::string& type, 
-                  const std::string& name, 
-                  const IInterface* parent);
+  using base_class::base_class;
 
   StatusCode initialize() override;
 
@@ -36,8 +34,11 @@ public:
 
 private:
 
-  std::vector<double> m_startReadOutGate;  ///< start of readout gate
-  double m_sizeOfReadOutGate;              ///< end of readout gate
+  Gaudi::Property<std::vector<double>> m_startReadOutGate {   ///< start of readout gate
+      this, "startReadoutGate", { 28.0*Gaudi::Units::ns,
+                                  30.0*Gaudi::Units::ns,
+                                  32.0*Gaudi::Units::ns } };
+  Gaudi::Property<double> m_sizeOfReadOutGate{ this, "sizeOfReadoutGate", 75.0*Gaudi::Units::ns};              ///< end of readout gate
 
   Condition* condReadOutGate = nullptr;
 

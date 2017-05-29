@@ -55,7 +55,7 @@ namespace Rich
     RadIntersection( ) { }
 
     /// Default destructor
-    ~RadIntersection( ) = default; 
+    ~RadIntersection( ) = default;
 
     /// Default Copy Constructor
     RadIntersection( const RadIntersection& ) = default;
@@ -105,12 +105,6 @@ namespace Rich
       m_entryPoint = entryPoint;
     }
 
-    /// Set the entry point to the radiator
-    inline void setEntryPoint ( Gaudi::XYZPoint && entryPoint ) noexcept
-    {
-      m_entryPoint = std::move(entryPoint);
-    }
-
     /// Get the entry point to the radiator
     inline const Gaudi::XYZPoint & entryPoint () const noexcept
     {
@@ -121,12 +115,6 @@ namespace Rich
     inline void setEntryMomentum ( const Gaudi::XYZVector & entryV ) noexcept
     {
       m_entryVect = entryV;
-    }
-
-    /// Set the entry momentum vector to the radiator
-    inline void setEntryMomentum ( Gaudi::XYZVector && entryV ) noexcept
-    {
-      m_entryVect = std::move(entryV);
     }
 
     /// Get the entry point to the radiator
@@ -141,12 +129,6 @@ namespace Rich
       m_exitPoint = exitPoint;
     }
 
-    /// Set the exit point of the radiator
-    inline void setExitPoint ( Gaudi::XYZPoint && exitPoint ) noexcept
-    {
-      m_exitPoint = std::move(exitPoint);
-    }
-
     /// Get the exit point to the radiator
     inline const Gaudi::XYZPoint & exitPoint () const noexcept
     {
@@ -157,12 +139,6 @@ namespace Rich
     inline void setExitMomentum ( const Gaudi::XYZVector & exitV ) noexcept
     {
       m_exitVect = exitV;
-    }
-
-    /// Set the exit momentum vector to the radiator
-    inline void setExitMomentum ( Gaudi::XYZVector && exitV ) noexcept
-    {
-      m_exitVect = std::move(exitV);
     }
 
     /// Get the entry point to the radiator
@@ -240,11 +216,8 @@ namespace Rich
     private: // utility classes
 
       /// Functor to sort RichSmartIDs by Rich then panel numbers
-      class SortByZ
-        : std::binary_function< const Rich::RadIntersection&, const Rich::RadIntersection&, bool >
+      struct SortByZ
       {
-
-      public:
 
         /** Sort operator for the RadIntersection
          *
@@ -255,7 +228,7 @@ namespace Rich
          *
          *  @return bool indicating if i1 should be listed before i2
          */
-        inline bool operator() ( const Rich::RadIntersection& i1, 
+        inline bool operator() ( const Rich::RadIntersection& i1,
                                  const Rich::RadIntersection& i2 ) const
         {
           return ( i1.entryPoint().z() < i2.entryPoint().z() );
@@ -274,8 +247,8 @@ namespace Rich
       /// Sort the vector of intersections into order increasing Z position
       inline static void sortByZ( Rich::RadIntersection::Vector & intersections )
       {
-        std::stable_sort( intersections.begin(), 
-                          intersections.end(), 
+        std::stable_sort( intersections.begin(),
+                          intersections.end(),
                           Rich::RadIntersection::Sorter::SortByZ() );
       }
 
