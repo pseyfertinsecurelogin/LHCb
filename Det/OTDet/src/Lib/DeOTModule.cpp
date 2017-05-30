@@ -39,7 +39,8 @@
 #include "GaudiKernel/Vector3DTypes.h"
 #include "Kernel/OTChannelID.h"
 #include "Kernel/Trajectory.h"
-#include "LHCbMath/GeomFun.icpp"
+// #include "LHCbMath/GeomFun.icpp" /// FIXME ensure exclusion
+#include "LHCbMath/GeomFun.h" /// FIXME ensure exclusion
 // LHCbMath
 #include "LHCbMath/Line.h"
 #include "LHCbMath/LineTypes.h"

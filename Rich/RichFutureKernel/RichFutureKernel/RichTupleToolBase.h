@@ -15,7 +15,7 @@
 #include <functional>
 #include <string>
 
-#include "GaudiAlg/GaudiCommonImp.h"
+//#include "GaudiAlg/GaudiCommonImp.h"
 // GaudiAlg
 #include "GaudiAlg/GaudiTupleTool.h"
 #include "GaudiKernel/MsgStream.h"

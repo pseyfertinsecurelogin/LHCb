@@ -13,7 +13,8 @@ class ISvcLocator;
 namespace xercesc_3_1 {
 class DOMElement;
 }  // namespace xercesc_3_1
-template <class TYPE> class final CnvFactory;
+// FIXME: ensure this forward declaration stays out
+//template <class TYPE> class final CnvFactory;
 
 
 /** @class XmlConditionCnv

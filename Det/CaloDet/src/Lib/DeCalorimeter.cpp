@@ -29,7 +29,6 @@
 // CaloDet
 // ============================================================================
 #include "CaloDet/DeCalorimeter.h"
-#include "CaloDet/DeCalorimeter.icpp"
 #include "CaloDet/DeSubCalorimeter.h"
 #include "CaloDet/DeSubSubCalorimeter.h"
 #include "CaloDet/Tell1Param.h"

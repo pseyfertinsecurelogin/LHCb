@@ -20,6 +20,8 @@
 #include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/GaudiHandle.h"
 // from Gaudi
+// FIXME: IWYU wants to remove this, though due to templating I claim it must not!
+#include "GaudiKernel/IIncidentListener.h" // IWYU pragma: keep
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IInterface.h"
 #include "GaudiKernel/Incident.h"

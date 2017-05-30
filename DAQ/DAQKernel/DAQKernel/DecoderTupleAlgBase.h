@@ -18,7 +18,6 @@
 #include <functional>
 #include <string>
 
-#include "/tmp/foobarpath/LHCb/DAQ/DAQKernel/src/lib/DecoderCommonBase.icpp"
 // local
 #include "DAQKernel/DecoderCommonBase.h"
 #include "Event/RawEvent.h"
