@@ -12,7 +12,10 @@
 // ============================================================================
 // local
 // ============================================================================
-#include "CaloUtils/CaloNeighbours.h"
+#include "Kernel/CaloCellID.h"
+
+// IWYU issue 441
+#include "CaloUtils/CaloNeighbours.h" // IWYU pragma: keep
 // ============================================================================
 namespace 
 {

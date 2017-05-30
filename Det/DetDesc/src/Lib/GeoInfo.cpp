@@ -1,9 +1,8 @@
 /// ===========================================================================
 /// DetDesc
 #include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/GeoInfo.h"
+#include "DetDesc/GeoInfo.h" // IWYU pragma: keep
 #include "DetDesc/GeometryInfoPlus.h"
-
 // ============================================================================
 /** @file GeoInfo.cpp
  *

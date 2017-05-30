@@ -7,7 +7,8 @@
 // ============================================================================
 // Local
 // ============================================================================
-#include "CaloUtils/Kinematics.h"
+// FIXME iwyu issue 441
+#include "CaloUtils/Kinematics.h" // IWYU pragma: keep
 // ============================================================================
 /** @file 
  *  Implementation file for functions form namespace Calo::Kinematics 

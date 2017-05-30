@@ -2,8 +2,9 @@
 #include "DetDesc/IDetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
 // local
-#include "DetDesc/GlobalToLocalDelta.h"
-#include "DetDesc/3DTransformationFunctions.h"
+// FIXME iwyu issue 441
+#include "DetDesc/GlobalToLocalDelta.h" // IWYU pragma: keep
+#include "GaudiKernel/Transform3DTypes.h"
 namespace DetDesc {
 
 const Gaudi::Transform3D localDeltaMatrix(const IDetectorElement* DE,

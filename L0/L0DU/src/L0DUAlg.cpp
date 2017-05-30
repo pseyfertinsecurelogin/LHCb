@@ -6,6 +6,7 @@
 #include "Event/RawEvent.h"
 // local
 #include "L0DUAlg.h"
+#include "GaudiKernel/SystemOfUnits.h" // IWYU pragma: keep
 
 #include "Event/L0DUBase.h"
 using namespace Gaudi::Units;
