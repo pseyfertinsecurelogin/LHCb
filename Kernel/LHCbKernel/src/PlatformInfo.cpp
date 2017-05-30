@@ -89,6 +89,9 @@ namespace LHCb
 
   PlatformInfo::PlatformInfo() : m_binaryId( binary_tag_id ), m_hostInstrSetLevel( s_hostInstrSetLevel ) {}
 
+  PlatformInfo::PlatformInfo( std::uint16_t binaryId, std::uint16_t hostInstrSetLevel )
+    : m_binaryId( binaryId ), m_hostInstrSetLevel( hostInstrSetLevel ) {}
+
   const std::string& PlatformInfo::binaryTag() const
   {
     return ( m_binaryId < known_platforms.size() ) ? known_platforms[m_binaryId] : invalid_platform;

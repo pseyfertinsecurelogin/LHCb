@@ -6,6 +6,7 @@
 
 // forward declaration to allow use as friend
 class LbAppInit;
+class HltConfigSvc;
 
 namespace LHCb
 {
@@ -45,6 +46,8 @@ namespace LHCb
     const std::string& hostInstrSet() const;
 
   private:
+    PlatformInfo( std::uint16_t binaryId, std::uint16_t hostInstrSetLevel );
+
     std::uint16_t m_binaryId;
     std::uint16_t m_hostInstrSetLevel;
 
@@ -60,5 +63,6 @@ namespace LHCb
     // This is needed to allow LbAppInit to override the cached s_hostInstrSetLevel
     // after the library was loaded (needed to correctly support checkpointing)
     friend LbAppInit;
+    friend HltConfigSvc;
   };
 }
