@@ -130,13 +130,16 @@ class TurboConf(LHCbConfigurableUser):
 
             # Setup decoder for all but 2015 (no serialization)
             if self.getProp("DataType") in ["2016", "2017", "2018"]:
-                Decoder("HltPackedDataDecoder/Hlt2PackedDataDecoder",
-                        active=True, banks=["DstData"],
-                        inputs={"RawEventLocations": None},
-                        outputs=packing.packedLocations(),
-                        properties={"ContainerMap":
-                                    packing.packedToOutputLocationMap()},
-                        conf=DecoderDB)
+                decoder = Decoder(
+                    "HltPackedDataDecoder/Hlt2PackedDataDecoder",
+                    active=True, banks=["DstData"],
+                    inputs={"RawEventLocations": None},
+                    outputs=packing.packedLocations(),
+                    properties={"ContainerMap":
+                                packing.packedToOutputLocationMap()},
+                    conf=DecoderDB
+                )
+                decoder.setup()
 
             self._register_pr_unpackers(packing)
             self._register_pr_links(packing)
