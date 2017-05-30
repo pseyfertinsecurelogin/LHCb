@@ -25,7 +25,7 @@ using namespace LHCb;
 //-----------------------------------------------------------------------------
 // Implementation file for class : RawBufferToSTClusterAlg
 //
-// 2004-01-07 : Matthew Needham   
+// 2004-01-07 : Matthew Needham
 //-----------------------------------------------------------------------------
 
 DECLARE_ALGORITHM_FACTORY( RawBankToSTClusterAlg )
@@ -33,7 +33,7 @@ DECLARE_ALGORITHM_FACTORY( RawBankToSTClusterAlg )
 RawBankToSTClusterAlg::RawBankToSTClusterAlg( const std::string& name,
                                            ISvcLocator* pSvcLocator ):
 STDecodingBaseAlg (name , pSvcLocator){
- 
+
  // Standard constructor, initializes variables
   declareSTConfigProperty("clusterLocation", m_clusterLocation , STClusterLocation::TTClusters);
   declareSTConfigProperty("BankType", m_bankTypeString , "TT");
@@ -46,7 +46,7 @@ StatusCode RawBankToSTClusterAlg::initialize() {
   return sc.isFailure() ? Error("Failed to initialize", sc)
                         : StatusCode::SUCCESS;
 }
-    
+
 StatusCode RawBankToSTClusterAlg::execute() {
 
   // make a new digits container
@@ -84,7 +84,7 @@ StatusCode RawBankToSTClusterAlg::execute() {
 StatusCode RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
                                               STClusters* clusCont ) const{
 
-  // create Clusters from this type 
+  // create Clusters from this type
   bool pcnSync = true;
   std::vector<unsigned int> bankList;
   STSummary::RecoveredInfo recoveredBanks;
@@ -108,17 +108,17 @@ StatusCode RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
   if (pcn == STDAQ::inValidPcn && !m_skipErrors) {
     counter("skipped Banks") += tBanks.size();
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug() << "PCN vote failed with " << tBanks.size() << endmsg; 
+      debug() << "PCN vote failed with " << tBanks.size() << endmsg;
     return Warning("PCN vote failed", StatusCode::SUCCESS ,2 );
   }
-    
+
   // loop over the banks of this type..
   for (const auto& bank : tBanks ) {
 
     ++counter("# banks found");
     // get the board and data
     STTell1ID tell1ID = STTell1ID((unsigned int)bank->sourceID(), detType()=="UT");
-    const STTell1Board* aBoard =  readoutTool()->findByBoardID(tell1ID); 
+    const STTell1Board* aBoard =  readoutTool()->findByBoardID(tell1ID);
 
     if (!aBoard && !m_skipErrors){
       // not a valid IT
@@ -147,7 +147,7 @@ StatusCode RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
 
     bool recover = false;
     if (decoder.hasError() == true && !m_skipErrors){
-   
+
       if (!recoverMode()){
         bankList.push_back(bank->sourceID());
         Warning( "bank has errors, skip sourceID " + std::to_string(bank->sourceID()),
@@ -168,7 +168,7 @@ StatusCode RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
       errorBank = findErrorBank(bank->sourceID());
       // check what fraction we can recover
       if (errorBank !=0) recoveredBanks[bank->sourceID()] += errorBank->fractionOK(pcn);
-    } 
+    }
 
     if (errorBank == 0){
       const unsigned bankpcn = decoder.header().pcn();
@@ -179,7 +179,7 @@ StatusCode RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
         Warning("PCNs out of sync, sourceID " + std::to_string(bank->sourceID()),
                 StatusCode::SUCCESS, 2).ignore();
         ++counter("skipped Banks");
-        continue; 
+        continue;
       }
     }
 
@@ -199,14 +199,14 @@ StatusCode RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
 	// check that this cluster is ok to be recovered
         if (errorBank != 0 && canBeRecovered(errorBank,iterDecoder->first, pcn) == true){
          createCluster(iterDecoder->first,aBoard,
-                        iterDecoder->second,bankVersion, clusCont); 
-	} 
+                        iterDecoder->second,bankVersion, clusCont);
+	}
       }
     } // iterDecoder
-    
+
 
   } // bank
-   
+
   const unsigned int bsize = byteSize(tBanks);
   createSummaryBlock(rawEvt, clusCont->size(), pcn, pcnSync, bsize, bankList, missing, recoveredBanks);
 
@@ -216,36 +216,36 @@ StatusCode RawBankToSTClusterAlg::decodeBanks(const RawEvent& rawEvt,
 
 void RawBankToSTClusterAlg::createCluster( const STClusterWord& aWord,
                                            const STTell1Board* aBoard,
-                                           const std::vector<SiADCWord>& 
+                                           const std::vector<SiADCWord>&
                                            adcValues,
                                            const STDAQ::version& bankVersion,
                                            STClusters* clusCont) const{
   // stream the neighbour sum
   std::vector<SiADCWord>::const_iterator iterADC = adcValues.begin();
-  char neighbour = *iterADC;  
+  char neighbour = *iterADC;
   ++iterADC;
 
   unsigned int fracStrip = aWord.fracStripBits();
-    
+
   // make a temporary vector to contain the ADC
   std::vector<SiADCWord> tWords;
   // std::vector<SiADCWord>::iterator start = adcValues.begin()+1;
   tWords.insert(tWords.begin(), adcValues.begin()+1, adcValues.end());
 
   // estimate the offset
-  double stripNum = mean(tWords); 
+  double stripNum = mean(tWords);
   double interStripPos = stripNum - floor(stripNum);
 
   // If fracStrip equals zero and the interStripPos equals one, the stripNum
   // must be incremented. Note that since the rounding can be different from
   // rounding on the Tell1, the interStripPos can be 0.75. Trust me, this is
   // correct.-- JvT
-  if( fracStrip == 0u && interStripPos > 0.5 ) stripNum +=1; 
-  unsigned int offset = (unsigned int)stripNum; 
+  if( fracStrip == 0u && interStripPos > 0.5 ) stripNum +=1;
+  unsigned int offset = (unsigned int)stripNum;
 
-  STCluster::ADCVector adcs ; 
+  STCluster::ADCVector adcs ; adcs.reserve(tWords.size());
   for (unsigned int i = 0; i < tWords.size() ; ++i){
-    adcs.push_back(std::make_pair(i-offset,(int)tWords[i].adc()));
+    adcs.emplace_back(i-offset,(int)tWords[i].adc());
   } // iDigit
 
   STTell1Board::chanPair nearestChan = aBoard->DAQToOffline(fracStrip,bankVersion,STDAQ::StripRepresentation(aWord.channelID()));
@@ -253,36 +253,33 @@ void RawBankToSTClusterAlg::createCluster( const STClusterWord& aWord,
   aBoard->ADCToOffline(aWord.channelID(),adcs,bankVersion,offset,fracStrip);
 
   // make cluster +set things
-  STCluster* newCluster = new STCluster(this->word2LiteCluster(aWord, 
-                                                               nearestChan.first,
-                                                               nearestChan.second),
-                                                               adcs,neighbour, aBoard->boardID().id(), 
-                                                               aWord.channelID(), spill());
+  auto newCluster = std::make_unique<STCluster>(this->word2LiteCluster(aWord,
+                                                         nearestChan.first,
+                                                         nearestChan.second),
+                                                adcs,neighbour, aBoard->boardID().id(),
+                                                aWord.channelID(), spill());
 
   if (!clusCont->object(nearestChan.first)) {
-    clusCont->insert(newCluster,nearestChan.first);
-  }   
-  else {
+    clusCont->insert(newCluster.release(),nearestChan.first);
+  } else {
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug() << "Cluster already exists not inserted: " << aBoard->boardID()<< " " <<  aWord.channelID() << endmsg;  
-    Warning("Failed to insert cluster --> exists in container", StatusCode::SUCCESS , 100);
-    delete newCluster; 
+      debug() << "Cluster already exists not inserted: " << aBoard->boardID()<< " " <<  aWord.channelID() << endmsg;
+    Warning("Failed to insert cluster --> exists in container", StatusCode::SUCCESS , 100).ignore();
   }
-  
-  return;
+
 }
 
 
 double RawBankToSTClusterAlg::mean(const std::vector<SiADCWord>& adcValues) const
 {
- 
+
   double sum = 0;
   double totCharge = 0;
   // note the first is the neighbour sum..
   for (unsigned int i = 0; i < adcValues.size() ; ++i){
      sum += adcValues[i].adc()*i;
      totCharge += adcValues[i].adc();
-  } // i                                                                                        
+  } // i
   return (sum/totCharge);
 }
 
@@ -293,12 +290,12 @@ StatusCode RawBankToSTClusterAlg::finalize() {
   const double failed = counter("skipped Banks").flag();
   const double processed = counter("# valid banks").flag();
 
-  double eff = 0.0; 
-  if (!LHCb::Math::Equal_To<double>()(processed, 0.0)){ 
-    eff = 1.0 - (failed/processed); 
+  double eff = 0.0;
+  if (!LHCb::Math::Equal_To<double>()(processed, 0.0)){
+    eff = 1.0 - (failed/processed);
   }
   info() << "Successfully processed " << 100* eff << " %"  << endmsg;
-    
+
   return STDecodingBaseAlg::finalize();
 }
 

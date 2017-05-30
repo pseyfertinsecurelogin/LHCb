@@ -19,20 +19,12 @@ DECLARE_TOOL_FACTORY( UTReadoutTool )
 UTReadoutTool::UTReadoutTool(const std::string& type,
                             const std::string& name,
                             const IInterface* parent)
-  : STReadoutTool( type, name, parent)
-  , m_nRegionA(512)
-  , m_firstStation(512)
+: STReadoutTool( type, name, parent)
 {
   // constructor
-
-  declareProperty( "conditionLocation", 
+  declareProperty( "conditionLocation",
                     m_conditionLocation  = "/dd/Conditions/ReadoutConf/UT/ReadoutMap");
-
-  // need a line here to get the interface correct !!!!
-  declareInterface<ISTReadoutTool>(this);
-
   m_detType = "UT";
-
 }
 
 StatusCode UTReadoutTool::initialize() {
@@ -51,17 +43,15 @@ StatusCode UTReadoutTool::initialize() {
 
   sc = runUpdate(); // force update
   if (sc.isFailure()) return Error ( "Failed first UMS update for readout tool", sc );
-  
-  if (m_printMapping == true){
-    printMapping();
-  }
- 
+
+  if (m_printMapping) printMapping();
+
   return StatusCode::SUCCESS;
 }
 
 unsigned int UTReadoutTool::region(const STChannelID aChan) const{
   // convert channel to region
-  return (aChan.station() == 1 ?  aChan.layer() - 1 : m_nRegionA + aChan.layer() - 1 );
+  return aChan.station() == 1 ?  aChan.layer() - 1 : m_nRegionA + aChan.layer() - 1;
 }
 
 // Add the mapping of source ID to TELL1 board number
@@ -74,19 +64,19 @@ const  std::map<unsigned int, unsigned int>& UTReadoutTool::TELLNumberToSourceID
   return STBoardMapping::UTNumberToSourceIDMap();
 }
 
-StatusCode UTReadoutTool::createTell1Map() 
+StatusCode UTReadoutTool::createTell1Map()
 {
   Condition* rInfo = getDet<Condition>(m_conditionLocation);
   const std::vector<std::string> layers =  rInfo->param<std::vector<std::string> >("layers");
 
   STBoardMapping::ClearUTMap();
-  
+
   unsigned int sourceIDBase = 0;
   for (unsigned int iReg = 0; iReg < layers.size(); ++iReg){
     std::string tell1Loc = layers[iReg]+"TELL1";
     if ( rInfo->exists(tell1Loc) ) {
       //      printf("Extracting TELL1 map from %s\n", tell1Loc.c_str());
-      
+
       const std::vector<int>& tell1 = rInfo->param<std::vector<int> >(tell1Loc);
       for ( unsigned int i=0; i<tell1.size(); i++ ) {
         STBoardMapping::AddUTMapEntry(sourceIDBase+i, tell1.at(i));
@@ -95,8 +85,6 @@ StatusCode UTReadoutTool::createTell1Map()
     sourceIDBase += 64;
   }
 
-  //  printf("%s\n", STBoardMapping::printUTMap().c_str());
-  
   return StatusCode::SUCCESS;
 }
 
@@ -122,7 +110,7 @@ StatusCode UTReadoutTool::createBoards() {
   for (unsigned int iReg = 0; iReg < layers.size(); ++iReg){
 
    m_firstBoardInRegion.push_back(m_boards.size());
-   m_nBoard += nBoards[iReg];   
+   m_nBoard += nBoards[iReg];
 
    const std::vector<int>& tMap = rInfo->param<std::vector<int> >(layers[iReg]);
    std::string orLoc = layers[iReg]+"HybridOrientation";
@@ -137,17 +125,17 @@ StatusCode UTReadoutTool::createBoards() {
    }
 
    for (unsigned int iBoard = 0; iBoard < (unsigned int)nBoards[iReg]; ++iBoard){
-   
+
      // make new board
      STTell1ID anID = STTell1ID(iReg,iBoard, isUT);
-     STTell1Board* aBoard = new STTell1Board(anID, nStripsPerHybrid, m_detType);
+     auto aBoard = std::make_unique<STTell1Board>(anID, nStripsPerHybrid, m_detType);
 
      for (unsigned iH = 0 ; iH < m_hybridsPerBoard; ++iH, ++vecLoc){
        STChannelID sectorID((unsigned int)tMap[vecLoc]);
        aBoard->addSector(sectorID, (unsigned int)orientation[vecLoc], serviceBoxes[vecLoc]);
 
        // add to the list of service boxs if not already there
-       if (std::find(m_serviceBoxes.begin(), m_serviceBoxes.end(), 
+       if (std::find(m_serviceBoxes.begin(), m_serviceBoxes.end(),
                      serviceBoxes[vecLoc]) ==  m_serviceBoxes.end()) {
 	 m_serviceBoxes.push_back(serviceBoxes[vecLoc]);
        }
@@ -155,7 +143,7 @@ StatusCode UTReadoutTool::createBoards() {
 
      } // iH
 
-     m_boards.push_back(aBoard);
+     m_boards.push_back(std::move(aBoard));
 
    } // boards per region
   } // iterS

@@ -20,16 +20,6 @@ using namespace LHCb;
 DECLARE_ALGORITHM_FACTORY( STErrorDecoding )
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-STErrorDecoding::STErrorDecoding( const std::string& name,
-                          ISvcLocator* pSvcLocator)
-  : STDecodingBaseAlg ( name , pSvcLocator ){
-
-  declareProperty("PrintErrorInfo", m_PrintErrorInfo = false);
-}
-
-//=============================================================================
 // Main execution
 //=============================================================================
 StatusCode STErrorDecoding::execute() {
@@ -40,10 +30,8 @@ StatusCode STErrorDecoding::execute() {
 
   STTELL1BoardErrorBanks* errorBanks = getErrorBanks();
 
-  if (!errorBanks) {
-    // was not possible to decode the banks
-    return StatusCode::FAILURE;
-  }
+  // was it not possible to decode the banks?
+  if (!errorBanks) return StatusCode::FAILURE;
 
   // print out the error banks
   if ( m_PrintErrorInfo ){

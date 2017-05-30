@@ -27,48 +27,23 @@ using namespace LHCb;
 
 STReadoutTool::STReadoutTool(const std::string& type,
                             const std::string& name,
-                            const IInterface* parent):
-  GaudiTool( type, name, parent )
+                            const IInterface* parent)
+: base_class( type, name, parent )
 {
-  // constructor
-  declareProperty("printMapping", m_printMapping = false );
-  declareProperty("writeMappingToXML", m_writeXML = false );
-  declareProperty("footer", m_footer = "</DDDB>");
-  declareProperty("startTag", m_startTag = "<condition");
-  declareProperty("outputFile",m_outputFileName = "ReadoutMap.xml");
-  declareProperty("depths", m_depth = 3u );
-  declareProperty("precision", m_precision = 16u);
-  declareProperty("removeCondb", m_removeCondb = false);
-  declareProperty("author", m_author = "Joe Bloggs");
-  declareProperty("tag", m_tag = "None");
-  declareProperty("description", m_desc = "BlahBlahBlah");
-
   m_boards.reserve(100); // about correct
 }
 
-STReadoutTool::~STReadoutTool() {
-  /// destructor
-  clear();
-}
 
 void STReadoutTool::clear() {
-
   // clear the boards
-  if (!m_boards.empty()) {
-     auto iterBoard = m_boards.begin();
-     while (iterBoard != m_boards.end()) {
-       delete  *iterBoard;
-       m_boards.erase(iterBoard);
-     } // while
-  } // if
-
+  m_boards.clear();
   m_nBoard = 0;
 }
 
 StatusCode STReadoutTool::initialize() {
 
   // initialization phase...
-  StatusCode sc = GaudiTool::initialize();
+  StatusCode sc = base_class::initialize();
   if (sc.isFailure()){
     return Error("Failed to initialize", sc);
   }
@@ -81,11 +56,8 @@ StatusCode STReadoutTool::initialize() {
 
 StatusCode STReadoutTool::finalize()  {
 
-  if (m_writeXML){
-    writeMappingToXML();
-  }
-
-  return GaudiTool::finalize();
+  if (m_writeXML) writeMappingToXML();
+  return base_class::finalize();
 }
 
 StatusCode STReadoutTool::writeMappingToXML() const {
@@ -93,24 +65,24 @@ StatusCode STReadoutTool::writeMappingToXML() const {
   // load conditions
   Condition* rInfo = getDet<Condition>(m_conditionLocation);
 
-  std::ofstream outputFile(m_outputFileName.c_str());
+  std::ofstream outputFile(m_outputFileName.value());
   if (outputFile.fail() ){
     return Warning("Failed to open output file",StatusCode::FAILURE);
   }
 
   // write the xml headers
-  outputFile << header(rInfo->toXml("", true, m_precision))<< std::endl;
+  outputFile << header(rInfo->toXml("", true, m_precision))<< '\n';
 
   // add comments
   std::ostringstream comment;
   ST::XMLUtils::fullComment(comment, m_author, m_tag, m_desc);
-  outputFile << comment.str() << std::endl;
+  outputFile << comment.str() << '\n';
 
   std::string temp = strip(rInfo->toXml("", false, m_precision));
-  outputFile << temp << "\n"  << std::endl;
+  outputFile << temp << "\n\n";
 
   // footer
-  outputFile << footer() << std::endl;
+  outputFile << footer() << '\n';
 
   return StatusCode::SUCCESS;
 }
@@ -135,8 +107,7 @@ std::string STReadoutTool::serviceBox(const LHCb::STChannelID& aChan) const{
   while ((iBoard != m_nBoard)&&(isFound == false)){
      if (m_boards[iBoard]->isInside(aChan,waferIndex)) {
       isFound = true;
-    }
-    else {
+    } else {
       ++iBoard;
     }
   } // iBoard
@@ -147,7 +118,7 @@ std::vector<STTell1ID> STReadoutTool::boardIDs() const{
   std::vector<STTell1ID> ids; ids.reserve(m_boards.size());
   std::transform( m_boards.begin(), m_boards.end(),
                   std::back_inserter(ids),
-                  [](const STTell1Board* b) { return b->boardID(); } );
+                  [](const auto& b) { return b->boardID(); } );
   return ids;
 }
 
@@ -220,21 +191,21 @@ bool STReadoutTool::ADCOfflineToDAQ(const STChannelID aOfflineChan,
 STTell1Board* STReadoutTool::findByBoardID(const STTell1ID aBoardID) const{
   // find by board id
   auto iter = std::find_if( m_boards.begin(), m_boards.end(),
-                            [&](const STTell1Board* b) { return b->sameID(aBoardID); } );
-  return iter != m_boards.end() ? *iter: nullptr;
+                            [&](const auto& b) { return b->sameID(aBoardID); } );
+  return iter != m_boards.end() ? iter->get() : nullptr;
 }
 
 STTell1Board* STReadoutTool::findByOrder(const unsigned int aValue) const{
   // find by order
-  return aValue< m_nBoard ? m_boards[aValue] : nullptr;
+  return aValue< m_nBoard ? m_boards[aValue].get() : nullptr;
 }
 
 void STReadoutTool::printMapping() const{
 
   // dump out the readout mapping
-  std::cout << "print mapping for: " << name() << " tool" << std::endl;
-  std::cout << " Number of boards " << m_nBoard << std::endl;
-  for (const auto& b : m_boards ) std::cout << *b << std::endl;
+  std::cout << "print mapping for: " << name() << " tool\n";
+  std::cout << " Number of boards " << m_nBoard << '\n';
+  for (const auto& b : m_boards ) std::cout << *b << '\n';
 }
 
 /// Add the mapping of source ID to TELL1 board number
