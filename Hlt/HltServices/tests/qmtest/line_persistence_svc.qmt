@@ -1,7 +1,7 @@
 <?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
 <!--
 #######################################################
-# Check that HltLinePersistenceSvc behaves as expected.
+# Check that HltLinePersistenceSvc and TCKLinePersistenceSvc behave as expected.
 #
 # Author: Rosen Matev
 #######################################################
@@ -11,4 +11,10 @@
   <argument name="args"><set>
     <text>$HLTSERVICESROOT/tests/options/line_persistence_svc.py</text>
   </set></argument>
+  <argument name="use_temp_dir">
+    <enumeral>true</enumeral>
+  </argument>
+  <argument name="validator"><text>
+countErrorLines({"FATAL": 0, "ERROR": 0, "WARNING": 0})
+  </text></argument>
 </extension>
