@@ -11,6 +11,10 @@
  *  @date   17/11/2001
  */
 
+namespace Gaudi {
+  class Time;
+}
+
 class SimpleValidity : public  virtual  IValidity
 {
 public:

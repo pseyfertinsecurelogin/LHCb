@@ -15,5 +15,8 @@
 // local
 #include "DAQKernel/DecoderTupleAlgBase.h"
 
+// ============================================================================
+// Force creation of templated class
+#include "DecoderCommonBase.icpp"  // IWYU pragma: keep
 template class Decoder::CommonBase < GaudiTupleAlg > ;
 // ============================================================================

@@ -1,5 +1,6 @@
 // local
 #include "Kernel/STChannelID.h"
+#include <sstream> // IWYU pragma: keep
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : STChannelID

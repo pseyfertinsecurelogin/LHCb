@@ -3,6 +3,7 @@
 
 // Include files
 class DeCalorimeter;
+#include <sstream>
 #include "Kernel/CaloCellCode.h"
 #include "Kernel/CaloCellID.h"
 

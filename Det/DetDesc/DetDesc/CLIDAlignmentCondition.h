@@ -1,6 +1,7 @@
 // $Id: CLIDAlignmentCondition.h,v 1.1 2005-06-03 10:19:44 jpalac Exp $
 #ifndef DETDESC_CLIDALIGNMENTCONDITION_H 
 #define DETDESC_CLIDALIGNMENTCONDITION_H 1
+#include "GaudiKernel/ClassID.h"
 
 // Include files
 

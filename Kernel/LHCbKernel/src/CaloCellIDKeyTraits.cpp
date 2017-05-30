@@ -4,6 +4,7 @@
 
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/StatusCode.h"
+#include "Kernel/CaloCellIDKeyTraits.h"
 
 
 // ============================================================================
