@@ -11,6 +11,8 @@
 #include "CaloDet/DeCalorimeter.h"
 #include "Kernel/CaloCellID.h"
 
+// IWYU issue 441
+#include "CaloUtils/CaloNeighbours.h" // IWYU pragma: keep
 // ============================================================================
 namespace 
 {

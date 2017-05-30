@@ -8,6 +8,8 @@
 #include "DetDesc/AlignmentCondition.h"
 #include "DetDesc/IDetectorElement.h"
 #include "DetDesc/IGeometryInfo.h"
+// FIXME iwyu issue 441
+#include "DetDesc/GlobalToLocalDelta.h" // IWYU pragma: keep
 #include "GaudiKernel/Transform3DTypes.h"
 
 namespace DetDesc {

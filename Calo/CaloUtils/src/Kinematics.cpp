@@ -22,6 +22,8 @@
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 #include "GaudiKernel/Vector4DTypes.h"
 #include "LHCbMath/LorentzVectorWithError.h"
+// FIXME iwyu issue 441
+#include "CaloUtils/Kinematics.h" // IWYU pragma: keep
 
 namespace{
   // ==========================================================================

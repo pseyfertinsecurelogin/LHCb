@@ -16,6 +16,8 @@
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Property.h"
 #include "GaudiKernel/SmartDataStorePtr.h"
+//FIXME: looks like IWYU issue 441
+#include "GaudiKernel/SystemOfUnits.h" // IWYU pragma: keep
 // local
 #include "L0DUAlg.h"
 #include "L0Interfaces/IL0DUConfigProvider.h"

@@ -4,6 +4,9 @@
 
 #include "DetDesc/Services.h"
 
+// FIXME iwyu issue 441
+#include "DetDesc/DetDesc.h" // IWYU pragma: keep
+
 
 /** print double value using format
  *  @param value   value to be printed 

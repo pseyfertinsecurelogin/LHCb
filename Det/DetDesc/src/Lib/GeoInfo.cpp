@@ -3,6 +3,8 @@
 #include <string>
 
 #include "DetDesc/GeometryInfoPlus.h"
+// FIXME: understand that one
+#include "DetDesc/GeoInfo.h" // IWYU pragma: keep
 #include "DetDesc/ILVolume.h"
 
 struct IDetectorElement;
