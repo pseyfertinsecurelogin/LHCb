@@ -25,6 +25,8 @@
 #include "Kernel/RichSmartID.h"
 #include "Kernel/HCCellID.h"
 
+#include "Kernel/PlatformInfo.h"
+
 #include "Kernel/IAlgorithmCorrelations.h"
 #include "Kernel/IBdlTool.h"
 #include "Kernel/IBIntegrator.h"

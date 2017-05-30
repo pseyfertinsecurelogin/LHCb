@@ -13,6 +13,9 @@
 
 // local
 #include "Kernel/LbAppInit.h"
+#include "Kernel/PlatformInfo.h"
+
+#include "VectorClass/instrset.h"
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : LbAppInit
@@ -73,10 +76,21 @@ StatusCode LbAppInit::initialize() {
   // Retrieve event counter tool
   m_evtCounter = tool<IEventCounter>(m_evtCounterName);
 
-  if( m_memPurgeLimit != -1 ) 
+  if( m_memPurgeLimit != -1 )
     warning() << "MemPurgeLimit property is obsolete, please remove it" << endmsg;
 
   return StatusCode::SUCCESS;
+}
+
+StatusCode LbAppInit::start() {
+  StatusCode sc = GaudiAlgorithm::start(); // must be executed first
+  if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
+
+  // make sure PlatformInfo instances report the right instructions set level
+  // (it may not be the same as during application start if we use checkpointing)
+  LHCb::PlatformInfo::s_hostInstrSetLevel = static_cast<std::uint16_t>( instrset_detect() );
+
+  return sc;
 }
 
 //=============================================================================
