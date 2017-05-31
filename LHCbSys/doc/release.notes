@@ -105,6 +105,9 @@ This version is released on 2017-patches branch.
 
 <dt>[MR !660] RichDet - Improved interpolator range checking
 <dd> Addresses a rare corner case where the range checking failed and an out-of-bounds array access would occur.
+
+<dt>[MR !707] Fix xml summary bug
+<dd> The XmlSummarySvc was not producing an XmlSummary if the OutputLevel was greater than MSG::INFO
 </dl>
 
 
@@ -116,6 +119,8 @@ This version is released on 2017-patches branch.
 
 <dt>[MR !666, !603] Add test applications and QM tests to LHCbMath to exercise the various VDT math functions
 <dd> The tests check the stability of the various VDT math functions under various SIMD compilation options. They show that SSE4, AVX and AVX2 are all stable, but AVX2+FMA starts to bring in small differences.
+
+<dt>[MR !707] Add a test to check that XmlSummary is saved if LHCbApp().XMLSummary is set
 
 </dl>
 
