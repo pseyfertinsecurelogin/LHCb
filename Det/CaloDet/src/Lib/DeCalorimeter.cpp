@@ -1,46 +1,21 @@
 // ============================================================================
 #define  CALODET_DECALORIMETER_CPP 1
-#include <Math/GenVector/Cartesian3D.h>
-#include <Math/GenVector/PositionVector3D.h>
-#include <ext/alloc_traits.h>
-#include <algorithm>
 // ============================================================================
 // STL
 // ============================================================================
 #include <cmath>
-#include <functional>
-#include <iomanip>
-#include <iterator>
-#include <map>
-#include <memory>
 #include <ostream>
 #include <string>
-#include <tuple>
-#include <typeinfo>
-#include <utility>
-#include <vector>
 
-#include "CaloDet/CaloCardParams.h"
-#include "CaloDet/CaloLed.h"
-#include "CaloDet/CaloPin.h"
-#include "CaloDet/CardParam.h"
 #include "CaloDet/CellParam.h"
 // ============================================================================
 // CaloDet
 // ============================================================================
 #include "CaloDet/DeCalorimeter.h"
-#include "CaloDet/DeSubCalorimeter.h"
-#include "CaloDet/DeSubSubCalorimeter.h"
-#include "CaloDet/Tell1Param.h"
-#include "CaloKernel/CaloVector.h"
-#include "DetDesc/Condition.h"
 #include "DetDesc/DetectorElement.h"
+#include "DetDesc/DetectorElementException.h"
 #include "DetDesc/IDetectorElement.h"
-// ============================================================================
-// DetDesc
-// ============================================================================
-#include "DetDesc/IGeometryInfo.h"
-#include "DetDesc/ILVolume.h"
+#include "DetDesc/ValidDataObject.h"
 #include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/IMessageSvc.h"
 #include "GaudiKernel/IUpdateManagerSvc.h"
@@ -51,12 +26,12 @@
 #include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/SmartRef.h"
 #include "GaudiKernel/StatusCode.h"
-#include "Kernel/CaloCellCode.h"
 #include "Kernel/CaloCellID.h"
-// ============================================================================
-// Kernel
-// ============================================================================
-#include "Kernel/OSiterator.h"
+#include "Kernel/OSiterator.h"  // IWYU pragma: keep
+
+
+class MsgStream;
+struct IGeometryInfo;
 
 // ============================================================================
 /** @file DeCalorimeter.cpp
