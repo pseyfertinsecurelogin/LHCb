@@ -33,6 +33,8 @@ private:
   Gaudi::Property<std::string> m_propertyConfigSvcName{
     this, "IPropertyConfigSvcInstance", "PropertyConfigSvc"};
   Gaudi::Property<std::string> m_instanceName{this, "InstanceName", "HltLinePersistenceSvc"};
+  /// Property giving the mapping between packed containers and containers
+  Gaudi::Property<std::map<std::string, std::string>> m_containerMap {this, "ContainerMap"};
   mutable SmartIF<IPropertyConfigSvc> m_propertyConfigSvc;
   mutable std::map<TCK, LineRequests> m_cache;  // TODO: flush cache if m_instanceName changes
 };
@@ -145,6 +147,7 @@ const TCKLinePersistenceSvc::LineRequests& TCKLinePersistenceSvc::lineRequests(u
   _tck.normalize();
   auto entry = m_cache.find(_tck);
   if (entry == std::end(m_cache)) {
+    // Fetch and parse/convert the properties from the TCK
     auto config = hltSvcPropertyConfig(_tck);
     auto locationsMap = parseProperty<NameListPerLine>(config, "Locations");
     auto turboPPLines = parseProperty<std::vector<std::string>>(config, "TurboPPLines");
@@ -152,6 +155,17 @@ const TCKLinePersistenceSvc::LineRequests& TCKLinePersistenceSvc::lineRequests(u
       turboPPLines.begin(), turboPPLines.end()};
     auto rawBankTypesMap = parseProperty<NameListPerLine>(config, "RawBankTypes");
     auto rawBanksMap = typeNamesToBitset(rawBankTypesMap);
+
+    // Apply the ContainerMap
+    for (auto& pair : locationsMap) {
+      for (auto& location : pair.second) {
+        auto mappedLocation = m_containerMap.find(location);
+        if (mappedLocation != std::end(m_containerMap)) {
+          location = mappedLocation->second;
+        }
+      }
+    }
+
     auto status = m_cache.emplace(_tck, LineRequests{locationsMap, turboPPLinesMap, rawBanksMap});
     if (!status.second) {
       error() << "Error updating cache for TCK " << _tck <<  " Returning an empty map... " << endmsg;

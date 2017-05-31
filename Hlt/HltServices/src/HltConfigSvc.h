@@ -71,7 +71,6 @@ private:
   Gaudi::Property<bool>        m_maskL0TCK { this, "maskL0TCK", false};
   unsigned int                 m_id = ~0u;
   Gaudi::Property<bool>        m_hlt2Mode{ this, "Hlt2Mode", false};
-  Gaudi::Property<std::string> m_taskNameRegex{ this, "TaskNameRegex", "^(?:LHCb[A2]?|FEST)_HLT([^_]*)_Moore([12])_([0-9]+)"};
   Gaudi::Property<std::string> m_tckConditionPath{ this, "Hlt2TCKCondition",  "/dd/Conditions/Online/LHCb/RunInfo/HLT2"};
 
   Condition*                   m_tckCondition;

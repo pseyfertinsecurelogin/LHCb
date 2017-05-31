@@ -1,0 +1,22 @@
+<?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<!--
+#######################################################
+# SUMMARY OF THIS TEST
+# ...................
+# Author: M. Cattaneo
+# Purpose: Check the XmlSummary is produced when LHCbApp().XMLSummary is defined
+# Prerequisites: None
+#######################################################
+-->
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+  <argument name="program"><text>gaudirun.py</text></argument>
+  <argument name="args"><set><text>../options/fsr-only-file.py</text>
+	<text>--option</text>
+	<text>from Configurables import LHCbApp; LHCbApp().XMLSummary="testSummary.xml"; LHCbApp().OutputLevel=5</text></set></argument>
+  <argument name="use_temp_dir"><enumeral>true</enumeral></argument>
+  <argument name="validator"><text>
+import os.path
+if not os.path.isfile("testSummary.xml"):
+  causes.append('XML Summary was not created')
+</text></argument>
+</extension>
