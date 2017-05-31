@@ -23,7 +23,6 @@
 #define NOMINMAX
 #endif
 #endif
-#include "GaudiKernel/boost_allocator.h"
 
 namespace {
    GaudiUtils::Hash<std::vector<unsigned int> > _hash;
@@ -352,39 +351,6 @@ public:
          throw GaudiException(msg.str(), "TurningPoint", StatusCode::FAILURE);
       }
    }
-
-#ifndef GOD_NOALLOC
-   /// operator new
-   static void* operator new ( size_t size )
-   {
-      return ( sizeof(TurningPoint) == size ?
-               boost::singleton_pool<TurningPoint, sizeof(TurningPoint)>::malloc() :
-               ::operator new(size) );
-   }
-
-   /// placement operator new
-   /// it is needed by libstdc++ 3.2.3 (e.g. in std::vector)
-   /// it is not needed in libstdc++ >= 3.4
-   static void* operator new ( size_t size, void* pObj )
-   {
-      return ::operator new (size,pObj);
-   }
-
-   /// operator delete
-   static void operator delete ( void* p )
-   {
-      boost::singleton_pool<TurningPoint, sizeof(TurningPoint)>::is_from(p) ?
-         boost::singleton_pool<TurningPoint, sizeof(TurningPoint)>::free(p) :
-         ::operator delete(p);
-   }
-
-   /// placement operator delete
-   /// not sure if really needed, but it does not harm
-   static void operator delete ( void* p, void* pObj )
-   {
-      ::operator delete (p, pObj);
-   }
-#endif
 
 private:
 
