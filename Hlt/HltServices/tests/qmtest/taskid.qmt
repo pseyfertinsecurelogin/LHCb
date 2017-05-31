@@ -1,19 +1,15 @@
 <?xml version="1.0" ?><!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
-<!--
-#######################################################
-# Check that HltLinePersistenceSvc and TCKLinePersistenceSvc behave as expected.
-#
-# Author: Rosen Matev
-#######################################################
--->
 <extension class="GaudiTest.GaudiExeTest" kind="test">
   <argument name="program"><text>python</text></argument>
   <argument name="args"><set>
-    <text>$HLTSERVICESROOT/tests/options/line_persistence_svc.py</text>
+    <text>$HLTSERVICESROOT/tests/options/test_taskid.py</text>
   </set></argument>
   <argument name="use_temp_dir">
     <enumeral>true</enumeral>
   </argument>
+  <argument name="prerequisites"><set>
+    <tuple><text>hltservices.assign_first_tck</text><enumeral>PASS</enumeral></tuple>
+  </set></argument>
   <argument name="validator"><text>
 countErrorLines({"FATAL": 0, "ERROR": 0, "WARNING": 0})
   </text></argument>

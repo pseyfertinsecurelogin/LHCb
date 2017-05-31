@@ -20,8 +20,9 @@ god_build_headers(xml/*.xml
 gaudi_add_library(LHCbKernel
                   src/*.cpp
                   PUBLIC_HEADERS Kernel
-		  INCLUDE_DIRS ROOT Boost VDT
-		  LINK_LIBRARIES ROOT Boost VDT GaudiKernel GaudiObjDescLib LHCbMathLib GaudiAlgLib)
+                  INCLUDE_DIRS ROOT Boost VDT
+                  LINK_LIBRARIES ROOT Boost VDT GaudiKernel GaudiObjDescLib LHCbMathLib GaudiAlgLib)
+set_property(SOURCE src/PlatformInfo.cpp APPEND PROPERTY COMPILE_DEFINITIONS BINARY_TAG=${BINARY_TAG})
 
 god_build_dictionary(xml/*.xml
                      HEADERS_DESTINATION Kernel
@@ -39,3 +40,7 @@ endif()
 gaudi_install_python_modules()
 
 gaudi_add_test(QMTest QMTEST)
+
+gaudi_add_unit_test(test_PlatformInfo tests/src/test_PlatformInfo.cpp
+                    LINK_LIBRARIES LHCbKernel TYPE Boost)
+set_property(SOURCE tests/src/test_PlatformInfo.cpp APPEND PROPERTY COMPILE_DEFINITIONS BINARY_TAG=${BINARY_TAG})

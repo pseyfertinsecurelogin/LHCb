@@ -7,6 +7,7 @@ from Configurables import ConfigCDBAccessSvc
 from Configurables import ApplicationMgr
 from Configurables import LHCbApp
 from Configurables import CondDB
+from Configurables import HltLinePersistenceSvc
 
 
 parser = argparse.ArgumentParser(usage='usage: %(prog)s prescale')
@@ -38,9 +39,15 @@ prescaler = DeterministicPrescaler("TestScaler",
                                    AcceptFraction=scale)
 seq.Members = [prescaler]
 
+# The HltLinePersistenceSvc (for the TCKLinePersistenceSvc test)
+execfile(os.path.expandvars('$HLTSERVICESROOT/tests/options/'
+                            'line_persistence_svc_cfg.py'))
+persistence_svc = configure_hlt_svc()
+ApplicationMgr().ExtSvc += [persistence_svc]
+
 # Algorithm to generate the TCK
 gen = HltGenConfig(ConfigTop=[seq.getName()],
-                   ConfigSvc=['ToolSvc'],
+                   ConfigSvc=['ToolSvc', persistence_svc.getFullName()],
                    ConfigAccessSvc=accessSvc.getName(),
                    HltType="LHCb_Test",
                    MooreRelease="v1r0",
