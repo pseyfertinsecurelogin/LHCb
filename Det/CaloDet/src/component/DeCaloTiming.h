@@ -2,11 +2,8 @@
 #define COMPONENT_DECALOTIMING_H 1
 
 #include <array>
-#include <map>
 #include <string>
-#include <utility>
 
-#include "CaloDet/DeCalorimeter.h"
 // Include files
 // from Gaudi
 #include "GaudiAlg/GaudiTupleAlg.h"
