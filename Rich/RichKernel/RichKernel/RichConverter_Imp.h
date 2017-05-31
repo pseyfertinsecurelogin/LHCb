@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_RICHCONVERTERIMP_H
-#define RICHKERNEL_RICHCONVERTERIMP_H 1
+#pragma once
 
 // STL
 #include <memory>
@@ -299,5 +298,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHKERNEL_RICHCONVERTERIMP_H

@@ -9,8 +9,7 @@
  */
 //------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHHYPODATA_H
-#define RICHUTILS_RICHHYPODATA_H 1
+#pragma once
 
 // STL
 #include <ostream>
@@ -210,5 +209,3 @@ namespace Rich
 
 
 } // Rich namespace
-
-#endif // RICHUTILS_RICHHYPODATA_H

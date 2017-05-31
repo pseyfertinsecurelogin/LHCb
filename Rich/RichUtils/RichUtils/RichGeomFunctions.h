@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHGEOMFUNCTIONS_H
-#define RICHUTILS_RICHGEOMFUNCTIONS_H 1
+#pragma once
 
 // STL
 #include <cmath>
@@ -55,5 +54,3 @@ namespace Rich
   }
 
 }
-
-#endif // RICHUTILS_RICHGEOMFUNCTIONS_H

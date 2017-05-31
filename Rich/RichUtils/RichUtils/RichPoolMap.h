@@ -9,8 +9,7 @@
  */
 //--------------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHPOOLMAP_H
-#define RICHUTILS_RICHPOOLMAP_H 1
+#pragma once
 
 // STL
 #include <map>
@@ -71,5 +70,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHUTILS_RICHPOOLMAP_H

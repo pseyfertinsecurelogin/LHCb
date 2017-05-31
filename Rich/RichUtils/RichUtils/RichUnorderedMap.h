@@ -9,8 +9,7 @@
  */
 //--------------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHUNORDEREDMAP_H
-#define RICHUTILS_RICHUNORDEREDMAP_H 1
+#pragma once
 
 // STL
 #include <unordered_map>
@@ -50,4 +49,3 @@ namespace Rich
 
 }
 
-#endif // RICHUTILS_RICHUNORDEREDMAP_H

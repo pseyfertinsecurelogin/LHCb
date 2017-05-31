@@ -9,8 +9,7 @@
  */
 //=============================================================================================
 
-#ifndef RICHUTILS_RichDAQL0Header_H
-#define RICHUTILS_RichDAQL0Header_H 1
+#pragma once
 
 // Gaudi
 #include "GaudiKernel/GaudiException.h"
@@ -325,5 +324,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_RichDAQL0Header_H

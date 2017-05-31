@@ -9,8 +9,7 @@
  */
 //================================================================
 
-#ifndef RICHUTILS_BOOSTARRAY_H 
-#define RICHUTILS_BOOSTARRAY_H 1
+#pragma once
 
 // STL
 #include <iostream>
@@ -31,5 +30,3 @@ inline std::ostream& operator << ( std::ostream& s,
   return Gaudi::Utils::toStream ( data.begin() , data.end () , 
                                   s , "[ " , " ]" , " , " ) ;
 }
-
-#endif // RICHUTILS_BOOSTARRAY_H
