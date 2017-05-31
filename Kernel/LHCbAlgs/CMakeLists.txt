@@ -20,6 +20,9 @@ find_package(Boost COMPONENTS filesystem)
 
 find_package(CASTOR) # runtime, only for the tests
 
+find_package(ROOT)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
+
 gaudi_add_module(LHCbAlgs
                  src/*.cpp
                  INCLUDE_DIRS Boost
