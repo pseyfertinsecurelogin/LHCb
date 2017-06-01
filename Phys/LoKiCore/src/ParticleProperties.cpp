@@ -19,6 +19,11 @@
 // ============================================================================
 #include "Kernel/ParticleID.h"
 #include "Kernel/ParticleProperty.h"
+// ============================================================================
+// LoKi
+// ============================================================================
+// IWYU issue 441
+#include "LoKi/ParticleProperties.h" // IWYU pragma: keep
 #include "LoKi/Constants.h"
 #include "LoKi/Report.h"
 #include "LoKi/Services.h"

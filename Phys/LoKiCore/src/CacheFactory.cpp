@@ -6,7 +6,11 @@
 #include <boost/format.hpp>
 #include <sstream>
 #include <string>
-
+// ============================================================================
+// LoKi
+// ============================================================================
+// IWYU issue 441
+#include "LoKi/CacheFactory.h" // IWYU pragma: keep
 // ============================================================================
 /* helper function to create the code for CacheFactory
  *  @param  type    the functor type

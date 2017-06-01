@@ -21,6 +21,8 @@
 #include "GaudiKernel/ToStream.h"
 #include "GaudiUtils/HistoTableFormat.h"
 #include "LoKi/Monitor.h"
+// IWYU issue 441
+#include "LoKi/HistoBook.h" // IWYU pragma: keep
 #include "LoKi/Report.h"
 // ============================================================================
 // LoKi

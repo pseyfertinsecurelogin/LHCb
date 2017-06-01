@@ -21,6 +21,11 @@
 #ifdef __INTEL_COMPILER         // Re-enable ICC remark 1572
   #pragma warning(pop)
 #endif
+// ============================================================================
+// LoKiCore 
+// ============================================================================
+// IWYU issue 441
+#include "LoKi/Geometry.h" // IWYU pragma: keep
 #include "LoKi/Constants.h"
 #include "LoKi/Report.h"
 

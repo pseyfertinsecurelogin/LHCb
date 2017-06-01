@@ -12,6 +12,11 @@
 #include "LoKi/AuxFunBase.h"
 #include "LoKi/ILoKiSvc.h"
 #include "LoKi/Interface.h"
+// ============================================================================
+// local
+// ============================================================================
+// IWYU issue 441
+#include "LoKi/AlgUtils.h" // IWYU pragma: keep
 
 class GaudiAlgorithm;
 class IAlgorithm;
