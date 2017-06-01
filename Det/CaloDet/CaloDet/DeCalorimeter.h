@@ -9,6 +9,7 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
+//#include "GaudiKernel/StdArrayAsProperty.h"
 #include "GaudiKernel/Transform3DTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
 #include "GaudiKernel/Point3DTypes.h"

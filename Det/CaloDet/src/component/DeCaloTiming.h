@@ -2,6 +2,7 @@
 #define COMPONENT_DECALOTIMING_H 1
 
 #include <array>
+#include "GaudiKernel/StdArrayAsProperty.h"
 #include <string>
 
 // Include files
