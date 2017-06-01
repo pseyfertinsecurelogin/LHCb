@@ -1,7 +1,7 @@
 #include "GaudiKernel/Service.h"
 #include "GaudiKernel/IEventTimeDecoder.h"
 #include "GaudiKernel/IIncidentSvc.h"
-#include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentListener.h" // IWYU pragma: keep
 #include "GaudiKernel/IToolSvc.h"
 #include "GaudiKernel/Incident.h"
 #include "GaudiKernel/IDataProviderSvc.h"

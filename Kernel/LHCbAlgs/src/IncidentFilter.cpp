@@ -7,7 +7,7 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentListener.h" // IWYU pragma: keep
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Incident.h"
 // ============================================================================

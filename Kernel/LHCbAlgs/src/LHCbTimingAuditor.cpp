@@ -1,6 +1,6 @@
 #include "GaudiKernel/Auditor.h"
 #include "GaudiKernel/IToolSvc.h"
-#include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentListener.h" // IWYU pragma: keep
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IToolSvc.h"
 #include "GaudiKernel/VectorMap.h"
