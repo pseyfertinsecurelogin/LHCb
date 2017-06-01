@@ -4,7 +4,7 @@
 // local
 // FIXME iwyu issue 441
 #include "DetDesc/GlobalToLocalDelta.h" // IWYU pragma: keep
-#include "GaudiKernel/Transform3DTypes.h"
+#include "DetDesc/3DTransformationFunctions.h"
 namespace DetDesc {
 
 const Gaudi::Transform3D localDeltaMatrix(const IDetectorElement* DE,

@@ -8,6 +8,7 @@
 #include "LoKi/GenDecays.h"
 // IWYU issue 441
 #include "LoKi/GenTreesFactory.h" // IWYU pragma: keep
+#include "LoKi/ParserFactory.h"
 // ============================================================================
 /** @file
  *  Implementation file for function from the file LoKi/GenTreeFactory.h

@@ -15,6 +15,5 @@
 // ============================================================================
 // Force creation of templated class
 #include "RichCommonBase.icpp" // IWYU pragma: keep
->>>>>>> 1c313b3... IWYU pragmas for Rich
 template class Rich::CommonBase<GaudiTool> ;
 // ============================================================================

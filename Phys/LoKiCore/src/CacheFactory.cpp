@@ -11,6 +11,10 @@
 // IWYU issue 441
 #include "LoKi/CacheFactory.h" // IWYU pragma: keep
 // ============================================================================
+// Boost
+// ============================================================================
+#include "boost/format.hpp"
+// ============================================================================
 /* helper function to create the code for CacheFactory
  *  @param  type    the functor type
  *  @param  cppcode the actual C++ code
