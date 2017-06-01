@@ -1,4 +1,5 @@
 #include "Kernel/ConfigTreeNode.h"
+#include "boost/regex.hpp"
 
 #include "GaudiKernel/GaudiException.h"
 #include "GaudiKernel/StatusCode.h"
@@ -32,16 +33,6 @@ void ConfigTreeNode::updateCache() const {
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ptree_fwd.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/regex/v4/basic_regex.hpp>
-#include <boost/regex/v4/match_flags.hpp>
-#include <boost/regex/v4/match_results.hpp>
-#include <boost/regex/v4/perl_matcher_common.hpp>
-#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
-#include <boost/regex/v4/regex.hpp>
-#include <boost/regex/v4/regex_fwd.hpp>
-#include <boost/regex/v4/regex_match.hpp>
-#include <boost/regex/v4/regex_traits.hpp>
-#include <boost/regex/v4/sub_match.hpp>
 #include <algorithm>
 #include <iterator>
 #include <utility>

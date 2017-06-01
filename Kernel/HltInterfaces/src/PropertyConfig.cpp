@@ -3,16 +3,7 @@
 #include <boost/multi_index/sequenced_index.hpp>
 #include <boost/property_tree/detail/rapidxml.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/ptree_fwd.hpp>
-#include <boost/regex/v4/basic_regex.hpp>
-#include <boost/regex/v4/match_flags.hpp>
-#include <boost/regex/v4/match_results.hpp>
-#include <boost/regex/v4/perl_matcher_common.hpp>
-#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
-#include <boost/regex/v4/regex.hpp>
-#include <boost/regex/v4/regex_fwd.hpp>
-#include <boost/regex/v4/regex_match.hpp>
-#include <boost/regex/v4/sub_match.hpp>
+#include <boost/regex.hpp>
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
@@ -26,7 +17,6 @@
 
 #include "GaudiKernel/IProperty.h"
 #include "GaudiKernel/Property.h"
-#include "GaudiKernel/PropertyFwd.h"
 #include "GaudiKernel/StatusCode.h"
 #include "Kernel/PropertyConfig.h"
 
