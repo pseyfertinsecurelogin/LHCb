@@ -10,9 +10,6 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "GaudiKernel/Kernel.h" // for GAUDI_API  // IWYU pragma: keep
-#include "GaudiKernel/StatusCode.h"  // IWYU pragma: keep
-#include "Kernel/CaloCellID.h"  // IWYU pragma: keep
 // ============================================================================
 // GaudiKernel
 // ============================================================================
