@@ -1,15 +1,7 @@
 #include "zip.h"
 
 #include <boost/crc.hpp>                             // for boost::crc_32_type
-#include <boost/date_time/date.hpp>
-#include <boost/date_time/gregorian/greg_date.hpp>
-#include <boost/date_time/gregorian_calendar.hpp>
-#include <boost/date_time/gregorian_calendar.ipp>
-#include <boost/date_time/posix_time/posix_time_config.hpp>
-#include <boost/date_time/posix_time/posix_time_duration.hpp>
-#include <boost/date_time/posix_time/posix_time_io.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
-#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/time_duration.hpp>
 #include <boost/iostreams/categories.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
