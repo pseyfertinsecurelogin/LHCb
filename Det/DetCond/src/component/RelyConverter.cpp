@@ -13,7 +13,7 @@
 #include "DetDesc/ValidDataObject.h"
 
 #include "CoolKernel/IObject.h"
-#include "CoolKernel/IRecord.h"
+#include "CoolKernel/IRecord.h" // IWYU pragma: keep
 #include "CoolKernel/RecordException.h"
 
 #include <string>

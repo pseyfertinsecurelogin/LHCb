@@ -5,7 +5,7 @@
 #include "GaudiKernel/IAddressCreator.h"
 #include "GaudiKernel/IOpaqueAddress.h"
 
-#include "CoolKernel/IRecord.h"
+#include "CoolKernel/IRecord.h" // IWYU pragma: keep
 #include "CoolKernel/RecordException.h"
 
 // From LHCb
