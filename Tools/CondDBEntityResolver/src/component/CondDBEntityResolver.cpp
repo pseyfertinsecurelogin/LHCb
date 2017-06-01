@@ -15,6 +15,7 @@
 // local
 #include "CondDBEntityResolver.h"
 #include "CoolKernel/RecordException.h"
+#include "CoolKernel/IRecord.h" // IWYU pragma: keep
 #include "DetCond/ICondDBReader.h"
 #include "Gaudi/Details/PluginServiceDetails.h"
 #include "GaudiKernel/GaudiException.h"
