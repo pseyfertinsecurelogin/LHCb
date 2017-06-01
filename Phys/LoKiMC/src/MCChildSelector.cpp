@@ -4,45 +4,28 @@
 // ============================================================================
 // GaudiKernel 
 // ============================================================================
-#include <iterator>
-#include <ostream>
-#include <string>
-#include <tuple>
-#include <vector>
-
-#include "Event/MCParticle.h"
-#include "GaudiKernel/IToolSvc.h"
-#include "GaudiKernel/SmartIF.h"
-#include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/ToStream.h"
+#include "GaudiKernel/SmartIF.h"
+#include "GaudiKernel/IToolSvc.h"
 // ============================================================================
 // PartProp
 // ============================================================================
 #include "Kernel/IParticlePropertySvc.h"
-#include "LoKi/AuxFunBase.h"
-#include "LoKi/BasicFunctors.h"
-#include "LoKi/DecayFinder.h"
-#include "LoKi/Functor.h"
-#include "LoKi/ILoKiSvc.h"
-#include "LoKi/IMCDecay.h"
-#include "LoKi/Interface.h"
-#include "LoKi/MCAlgs.h"
-#include "LoKi/MCChild.h"
-#include "LoKi/MCChildSelector.h"
-#include "LoKi/MCExtract.h"
-#include "LoKi/MCParticles1.h"
-#include "LoKi/MCTypes.h"
-#include "LoKi/Services.h"
-#include "LoKi/Trees.h"
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/iTree.h"
-
-namespace Decays {
-class iNode;
-}  // namespace Decays
-
+#include "LoKi/DecayFinder.h"
+#include "LoKi/ILoKiSvc.h"
+#include "LoKi/BasicFunctors.h"
+#include "LoKi/MCChildSelector.h"
+#include "LoKi/Trees.h"
+#include "LoKi/Services.h"
+#include "LoKi/MCChild.h"
+#include "LoKi/MCExtract.h"
+#include "LoKi/MCAlgs.h"
+#include "LoKi/MCParticles1.h"
+#include "LoKi/MCChild.h"
 // ============================================================================
 /** @file 
  *  implementation file for class LoKi::MCChild::Selector 

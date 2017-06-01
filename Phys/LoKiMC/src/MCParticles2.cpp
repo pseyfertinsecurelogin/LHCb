@@ -11,18 +11,20 @@
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/ToStream.h"
 #include "GaudiKernel/Vector4DTypes.h"
-#include "LoKi/AuxFunBase.h"
+//#include "LoKi/AuxFunBase.h" // TODO: keep excluded and understand its problem
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Constants.h"
-#include "LoKi/Functor.h"
-#include "LoKi/IMCDecay.h"
+//#include "LoKi/Functor.h"
 #include "LoKi/Kinematics.h"
-#include "LoKi/MCChildSelector.h"
 #include "LoKi/MCParticles2.h"
+#include "LoKi/MCChild.h"
 #include "LoKi/MCTypes.h"
+#include "LoKi/Trees.h"
 #include "LoKi/iTree.h"
+#include "LoKi/IMCDecay.h"
+#include "LoKi/MCChildSelector.h"
 
 namespace Decays {
 class iNode;

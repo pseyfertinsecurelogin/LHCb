@@ -14,11 +14,16 @@
 #include "GaudiKernel/IToolSvc.h"
 #include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/StatusCode.h"
-#include "Kernel/Nodes.h"
 // ============================================================================
 // PartProp
 // ============================================================================
 #include "Kernel/iNode.h"
+// TODO: understand
+#include "Kernel/IParticlePropertySvc.h" // IWYU pragma: keep
+#include "Kernel/Nodes.h"
+// FIXME: order matters!
+#include "LoKi/iTree.h"
+#include "LoKi/Trees.h"
 #include "LoKi/AuxFunBase.h"
 #include "LoKi/BasicFunctors.h"
 #include "LoKi/Functor.h"
@@ -31,15 +36,9 @@
 #include "LoKi/Interface.h"
 #include "LoKi/MCParticles1.h"
 #include "LoKi/Services.h"
-#include "LoKi/Trees.h"
 // ============================================================================
 // LoKi 
 // ============================================================================
-#include "LoKi/iTree.h"
-
-namespace LHCb {
-class IParticlePropertySvc;
-}  // namespace LHCb
 
 // ============================================================================
 namespace 
