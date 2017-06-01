@@ -59,4 +59,10 @@
 { include: ["\"mwaitxintrin.h\"",   private, "<x86intrin.h>", public ]},
 { include: ["\"clzerointrin.h\"",   private, "<x86intrin.h>", public ]},
 { include: ["\"pkuintrin.h\"",   private, "<x86intrin.h>", public ]},
+{ include: ["<Math/GenVector/Boost.h>", private, "<Math/Boost.h>", public ]},
+{ include: ["<Math/GenVector/Cartesian3D.h>", private, "<Math/Boost.h>", public ]},
+{ include: ["<Math/GenVector/DisplacementVector3D.h>", private, "<Math/Boost.h>", public ]},
+{ include: ["<Math/GenVector/LorentzVector.h>", private, "<Math/Boost.h>", public ]},
+{ include: ["<Math/GenVector/PxPyPzE4D.h>", private, "<Math/Boost.h>", public ]},
+
 ]
