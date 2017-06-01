@@ -1,18 +1,5 @@
 #include "ConditionParser.h"
 
-#include <boost/spirit/home/classic/core/composite/actions.hpp>
-#include <boost/spirit/home/classic/core/composite/alternative.hpp>
-#include <boost/spirit/home/classic/core/composite/kleene_star.hpp>
-#include <boost/spirit/home/classic/core/composite/list.hpp>
-#include <boost/spirit/home/classic/core/composite/optional.hpp>
-#include <boost/spirit/home/classic/core/composite/positive.hpp>
-#include <boost/spirit/home/classic/core/composite/sequence.hpp>
-#include <boost/spirit/home/classic/core/non_terminal/grammar.hpp>
-#include <boost/spirit/home/classic/core/non_terminal/rule.hpp>
-#include <boost/spirit/home/classic/core/parser.hpp>
-#include <boost/spirit/home/classic/core/primitives/numerics.hpp>
-#include <boost/spirit/home/classic/core/primitives/primitives.hpp>
-#include <boost/spirit/home/classic/core/scanner/scanner.hpp>
 #include <boost/version.hpp>
 #include <memory>
 #include <vector>
@@ -23,6 +10,7 @@
 template <class T> class Param;
 #if BOOST_VERSION >= 103800
 #define BOOST_SPIRIT_USE_OLD_NAMESPACE
+#include <boost/spirit/include/classic_core.hpp>
 #else
 #include <boost/spirit/core.hpp>
 #endif
