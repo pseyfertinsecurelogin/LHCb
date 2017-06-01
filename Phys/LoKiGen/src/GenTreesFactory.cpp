@@ -13,9 +13,12 @@
 #include "Kernel/iNode.h"
 #include "LoKi/DecayDescriptor.h"
 #include "LoKi/GenDecays.h"
+// IWYU issue 441
+#include "LoKi/GenTreesFactory.h" // IWYU pragma: keep
 #include "LoKi/ParserFactory.h"
 #include "LoKi/Trees.h"
-#include "LoKi/Trees.icpp"
+// TODO: keep excluded
+//#include "LoKi/Trees.icpp"
 #include "LoKi/iTree.h"
 
 namespace Decays {

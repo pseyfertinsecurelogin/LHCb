@@ -25,6 +25,8 @@
 // LoKi
 // ============================================================================
 #include "LoKi/Objects.h"
+// IWYU issue 441
+#include "LoKi/GenExtractDicts.h" // IWYU pragma: keep
 
 namespace HepMC {
 class GenEvent;

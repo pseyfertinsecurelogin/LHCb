@@ -11,7 +11,8 @@
 #include "GaudiKernel/SystemOfUnits.h"
 #include "HepMC/GenParticle.h"
 #include "HepMC/SimpleVector.h"
-#include "HepMC/SimpleVector.icc"
+// TODO: keep excluded
+//#include "HepMC/SimpleVector.icc"
 #include "LHCbMath/LHCbMath.h"
 #include "LoKi/AuxFunBase.h"
 // =============================================================================

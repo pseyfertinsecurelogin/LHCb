@@ -14,6 +14,7 @@
 // ============================================================================
 #include "LoKi/GenAlgs.h"
 #include "LoKi/GenTypes.h"
+#include "LoKi/GenAlgsDicts.h"
 
 namespace HepMC {
 class GenEvent;
