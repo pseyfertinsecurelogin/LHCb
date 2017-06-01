@@ -1,7 +1,6 @@
 // Include files
 #include "RelyConverter.h"
 
-#include <CoolKernel/IField.h>
 #include <stddef.h>
 #include <sstream>
 #include <string>
@@ -23,7 +22,9 @@
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/Time.h"
-#include "GaudiKernel/Time.icpp"
+// TODO prevent inclusion
+//#include "GaudiKernel/Time.icpp"
+#include "CoolKernel/IRecord.h"
 
 // local
 

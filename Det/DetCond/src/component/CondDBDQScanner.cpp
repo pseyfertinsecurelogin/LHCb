@@ -5,6 +5,7 @@
 #include <map>
 #include <memory>
 #include <typeinfo>
+#include "CoolKernel/IRecord.h" // IWYU pragma: keep
 
 // local
 #include "CondDBDQScanner.h"
@@ -22,7 +23,7 @@
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/Property.h"
-#include "GaudiKernel/Time.icpp"
+//#include "GaudiKernel/Time.icpp" // FIXME!
 #include "RelyConverter.h"
 
 class IInterface;
