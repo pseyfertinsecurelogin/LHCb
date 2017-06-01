@@ -13,6 +13,7 @@ namespace LHCb {
   class LumiFSR;
   class LumiIntegral;
 }
+class IRegistry;
 
 
 /** @class IFSRNavigator IFSRNavigator.h
