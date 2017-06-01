@@ -27,7 +27,8 @@
 #include "HepMC/GenParticle.h"
 #include "HepMC/GenVertex.h"
 #include "HepMC/SimpleVector.h"
-#include "HepMC/SimpleVector.icc"
+// TODO: ensure it stays out
+//#include "HepMC/SimpleVector.icc"
 #include "HepMC/WeightContainer.h"
 
 class ISvcLocator;

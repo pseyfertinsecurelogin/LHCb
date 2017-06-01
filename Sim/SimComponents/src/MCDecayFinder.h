@@ -21,6 +21,8 @@
 #include "GaudiKernel/StatusCode.h"
 #include "MCInterfaces/IMCDecayFinder.h"
 
+class IInterface;
+
 namespace LHCb {
   class IParticlePropertySvc;
 }
@@ -359,8 +361,6 @@ private:
   bool compile( std::string &decay );
 
 #include "mcparser.h"
-
-class IInterface;
 
   int yparse( void );
   void yerror( std::string msg ) { throw DescriptorError(msg); }

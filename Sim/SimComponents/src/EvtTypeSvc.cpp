@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <functional>
 #include <iostream>
+// TODO: understand why this gets kicked out
+#include <fstream> // IWYU pragma: keep
 #include <iterator>
 #include <set>
 
