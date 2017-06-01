@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Gaudi/Details/PluginServiceDetails.h"
+#include "GaudiKernel/IIncidentListener.h" // IWYU pragma: keep
 // ============================================================================
 // GaudiAlg
 // ============================================================================
@@ -24,7 +25,6 @@
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/extends.h"
 
-class IIncidentListener;
 class ISvcLocator;
 
 // ============================================================================

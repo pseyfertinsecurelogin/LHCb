@@ -9,6 +9,7 @@
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IService.h"
 #include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/IIncidentListener.h"
 #include "GaudiKernel/IToolSvc.h"
 #include "GaudiKernel/Incident.h"
 #include "GaudiKernel/MsgStream.h"
@@ -17,10 +18,6 @@
 #include "GaudiKernel/SmartIF.h"
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/Time.h"
-#include "GaudiKernel/Time.icpp"
-#include "GaudiKernel/extends.h"
-
-class IIncidentListener;
 
 namespace LHCbAlgsTest
 {

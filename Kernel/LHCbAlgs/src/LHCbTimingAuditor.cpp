@@ -27,7 +27,7 @@
 #include "GaudiKernel/VectorMap.h"
 #include "GaudiKernel/extends.h"
 
-class IIncidentListener;
+#include "GaudiKernel/IIncidentListener.h" // IWYU pragma: keep
 class ISvcLocator;
 // ============================================================================
 #ifdef __ICC
