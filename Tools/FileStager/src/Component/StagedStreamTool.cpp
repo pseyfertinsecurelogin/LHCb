@@ -7,13 +7,7 @@
 // from Gaudi
 #include <GaudiKernel/SmartIF.h>
 #include <GaudiUtils/IFileCatalog.h>
-#include <boost/regex/config.hpp>
-#include <boost/regex/v4/match_flags.hpp>
-#include <boost/regex/v4/perl_matcher_common.hpp>
-#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
-#include <boost/regex/v4/regex.hpp>
-#include <boost/regex/v4/regex_search.hpp>
-#include <boost/regex/v4/regex_traits.hpp>
+#include <boost/regex.hpp>
 #include <algorithm>
 #include <exception>
 #include <functional>
