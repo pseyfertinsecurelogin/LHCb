@@ -12,7 +12,8 @@
 #include "MDF/StreamDescriptor.h"
 
 #include <fcntl.h>
-#include <sys/socket.h>
+// FIXME: avoid inclusion of sys/socket.h
+//#include <sys/socket.h>
 #include <sys/stat.h>
 #include <cstdio>
 #include <cstring> // For memcpy, memset with gcc 4.3
