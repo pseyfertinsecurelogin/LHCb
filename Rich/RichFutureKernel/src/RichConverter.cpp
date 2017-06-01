@@ -14,6 +14,6 @@
 
 // ============================================================================
 // Force creation of templated classes
-#include "RichCommonBase.icpp"
+#include "RichCommonBase.icpp" // IWYU pragma: keep
 template class Rich::Future::CommonBase< Rich::Future::Converter_Imp > ;
 // ============================================================================
