@@ -8,7 +8,8 @@
 #include "LoKi/MCDecays.h"
 // ============================================================================
 #include "LoKi/TreeHelpers.h"
-#include "LoKi/MCTreeFactory.h"
+// IWYU issue 441
+#include "LoKi/MCTreeFactory.h" // IWYU pragma: keep
 #include "LoKi/ParserFactory.h"
 // ============================================================================
 /** @file

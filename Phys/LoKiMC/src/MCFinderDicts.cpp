@@ -7,7 +7,8 @@
 #include "LoKi/MCTypes.h"
 #include "LoKi/MCFinderObj.h"
 #include "LoKi/MCFinder.h"
-#include "LoKi/MCFinderDicts.h"
+// IWYU issue 441
+#include "LoKi/MCFinderDicts.h" // IWYU pragma: keep
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::Dicts::MCFinder

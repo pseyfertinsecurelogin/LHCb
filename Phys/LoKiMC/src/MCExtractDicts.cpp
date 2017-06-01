@@ -5,7 +5,8 @@
 // LoKi
 // ============================================================================
 #include "LoKi/MCExtract.h"
-#include "LoKi/MCExtractDicts.h"
+// IWYU issue 441
+#include "LoKi/MCExtractDicts.h" // IWYU pragma: keep
 // ============================================================================
 /** @file 
  *  Implementation file for class for functions LoKi::Dicts::Exract::MCExtractDicts

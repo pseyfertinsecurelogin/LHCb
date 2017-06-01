@@ -6,7 +6,8 @@
 // ============================================================================
 #include "LoKi/Algs.h"
 #include "LoKi/MCAlgs.h"
-#include "LoKi/MCAlgsDicts.h"
+// IWYU issue 441
+#include "LoKi/MCAlgsDicts.h" // IWYU pragma: keep
 // ============================================================================
 /** @file 
  *  Implementation file for namespace LoKi::Dicst::Algs
