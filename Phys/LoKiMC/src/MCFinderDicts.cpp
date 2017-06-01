@@ -13,6 +13,8 @@
 #include "LoKi/MCFinderObj.h"
 #include "LoKi/MCTypes.h"
 #include "LoKi/UniqueKeeper.h"
+// IWYU issue 441
+#include "LoKi/MCFinderDicts.h" // IWYU pragma: keep
 
 // ============================================================================
 /** @file 

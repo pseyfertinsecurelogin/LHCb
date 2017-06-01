@@ -12,6 +12,8 @@
 #include "LoKi/Algs.h"
 #include "LoKi/MCAlgs.h"
 #include "LoKi/MCTypes.h"
+// IWYU issue 441
+#include "LoKi/MCAlgsDicts.h" // IWYU pragma: keep
 
 namespace LHCb {
 class MCVertex;

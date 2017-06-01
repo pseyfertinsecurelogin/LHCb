@@ -16,6 +16,11 @@
 #include "Event/MCVertex.h"
 #include "GaudiKernel/SmartRef.h"
 #include "GaudiKernel/SmartRefVector.h"
+// ============================================================================
+// LoKi
+// ============================================================================
+// IWYU issue 441
+#include "LoKi/MCChild.h" // IWYU pragma: keep
 #include "LoKi/MCDecayVertex.h"
 
 // ============================================================================

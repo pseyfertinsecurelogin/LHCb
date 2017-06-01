@@ -9,6 +9,8 @@
 #include "Event/MCParticle.h"
 #include "LoKi/MCExtract.h"
 #include "LoKi/MCTypes.h"
+// IWYU issue 441
+#include "LoKi/MCExtractDicts.h" // IWYU pragma: keep
 
 namespace LHCb {
 class MCVertex;
