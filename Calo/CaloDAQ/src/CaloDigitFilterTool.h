@@ -7,10 +7,11 @@
 #include <unordered_map>
 #include <vector>
 
+// TODO: order matters, CaloCellIDAsProperty early!
+#include "CaloUtils/CaloCellIDAsProperty.h"
 #include "CaloDAQ/ICaloDigitFilterTool.h"            // Interface
 #include "CaloDet/DeCalorimeter.h"
 #include "CaloUtils/CaloAlgUtils.h"
-#include "CaloUtils/CaloCellIDAsProperty.h"
 #include "Event/CaloDigit.h"
 #include "Event/RecVertex.h"
 #include "GaudiAlg/GaudiTool.h"
