@@ -5,13 +5,10 @@
 // ============================================================================
 #include <Math/BinaryOperators.h>
 #include <Math/Expression.h>
-#include <Math/GenVector/Boost.h>
-#include <Math/GenVector/Cartesian3D.h>
-#include <Math/GenVector/DisplacementVector3D.h>
-#include <Math/GenVector/LorentzVector.h>
-#include <Math/GenVector/PxPyPzE4D.h>
+#include <Math/Boost.h>
 #include <Math/MatrixFunctions.h>
 #include <Math/MatrixRepresentationsStatic.h>
+// FIXME: why does this get included?
 #include <Math/SMatrix.h>
 #include <cmath>
 
