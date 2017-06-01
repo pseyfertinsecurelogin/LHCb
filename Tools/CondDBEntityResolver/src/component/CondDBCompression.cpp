@@ -1,11 +1,11 @@
 // Include files
 #include <boost/none.hpp>
-#include <boost/optional/optional.hpp>
+#include <boost/optional.hpp>
 #include <string.h>
+#include <vector>
 
 extern "C"{
 #include <ZipLZMA.h>
-#include <vector>
 }
 // local
 #include "CondDBCompression.h"
