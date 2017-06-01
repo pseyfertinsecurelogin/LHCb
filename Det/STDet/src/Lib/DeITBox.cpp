@@ -7,6 +7,8 @@
 #include "GaudiKernel/StatusCode.h"
 #include "Kernel/ITNames.h"
 #include "Kernel/STChannelID.h"
+//// returned from DeITBox::partent_type
+//#include "STDet/DeITStation.h" // IWYU pragma: keep
 #include "STDet/DeITBox.h"
 #include "STDet/DeITLayer.h"
 #include "STDet/DeSTBaseElement.h"

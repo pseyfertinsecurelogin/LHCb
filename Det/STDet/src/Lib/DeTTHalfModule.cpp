@@ -10,8 +10,9 @@
 #include "GaudiKernel/StatusCode.h"
 #include "Kernel/STChannelID.h"
 #include "STDet/DeSTBaseElement.h"
-#include "STDet/DeSTSector.h"
+#include "STDet/DeTTSector.h"
 #include "STDet/DeTTHalfModule.h"
+#include "STDet/DeTTLayer.h"
 
 class DeTTSector;
 

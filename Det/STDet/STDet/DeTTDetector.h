@@ -8,6 +8,7 @@
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/StatusCode.h"
 #include "Kernel/STChannelID.h"
+//#include "STDet/DeTTHalfModule.h"
 #include "STDet/DeSTDetector.h"
 
 class DeSTBaseElement;

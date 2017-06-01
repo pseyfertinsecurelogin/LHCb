@@ -8,6 +8,7 @@
 #include "Kernel/STChannelID.h"
 #include "STDet/DeSTSector.h"
 #include "STDet/STDetTraits.h"
+#include "STDet/DeITLadder.h"
 
 class DeITLayer;
 

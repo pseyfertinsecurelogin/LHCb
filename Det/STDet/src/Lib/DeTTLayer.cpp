@@ -15,11 +15,10 @@
 #include "Kernel/STChannelID.h"
 #include "Kernel/TTNames.h"
 #include "STDet/DeSTLayer.h"
-#include "STDet/DeTTHalfModule.h"
-#include "STDet/DeTTLayer.h"
 #include "STDet/DeTTSector.h"
-
-class DeSTSector;
+#include "STDet/DeTTLayer.h"
+#include "STDet/DeTTHalfModule.h"
+#include "STDet/DeTTStation.h"
 
 using namespace LHCb;
 

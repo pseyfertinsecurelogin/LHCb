@@ -13,6 +13,7 @@
 #include "Kernel/STChannelID.h"
 #include "STDet/DeITLadder.h"
 #include "STDet/DeSTBaseElement.h"
+#include "STDet/DeITLayer.h" //IWYU pragma: keep
 
 /** @file DeITLadder.cpp
 *

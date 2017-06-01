@@ -10,10 +10,11 @@
 #include "STDet/DeSTLayer.h"
 #include "STDet/DeSTSector.h"
 #include "STDet/DeSTStation.h"
-#include "STDet/DeTTHalfModule.h"
-#include "STDet/DeTTLayer.h"
-#include "STDet/DeTTSector.h"
+// TODO: order matters here!
 #include "STDet/DeTTStation.h"
+#include "STDet/DeTTLayer.h"
+#include "STDet/DeTTHalfModule.h"
+#include "STDet/DeTTSector.h"
 
 class DeSTBaseElement;
 

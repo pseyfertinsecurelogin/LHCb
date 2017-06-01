@@ -8,6 +8,8 @@
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/StatusCode.h"
 #include "STDet/DeSTLayer.h"
+// ensure parent_type is fully declared
+#include "STDet/DeITBox.h" // IWYU pragma: keep
 #include "STDet/STDetTraits.h"
 
 

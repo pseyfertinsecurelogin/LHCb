@@ -1,4 +1,7 @@
 #include "STDet/DeUTSector.h"
+// TODO: understand these two
+#include "STDet/DeUTModule.h" // IWYU pragma: keep
+#include "STDet/DeUTSensor.h" // IWYU pragma: keep
 
 #include <stddef.h>
 #include <algorithm>

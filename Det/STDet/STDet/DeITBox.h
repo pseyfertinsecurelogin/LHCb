@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include "STDet/DeSTBaseElement.h"
+#include "STDet/STDetTraits.h"
+#include "STDet/DeITStation.h"
 #include "STDet/DeITLayer.h"
 
 class DeITLayer;

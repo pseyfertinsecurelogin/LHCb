@@ -19,8 +19,8 @@
 #include "Kernel/LHCbConstants.h"
 #include "Kernel/STChannelID.h"
 #include "LHCbMath/LineTypes.h"
-#include "STDet/DeSTBaseElement.h"
 #include "STDet/DeSTSensor.h"
+#include "STDet/DeSTBaseElement.h"
 
 class MsgStream;
 

@@ -6,6 +6,7 @@
 #include "GaudiKernel/ClassID.h"
 #include "GaudiKernel/StatusCode.h"
 #include "Kernel/STChannelID.h"
+#include "STDet/DeTTSensor.h"
 #include "STDet/DeSTSector.h"
 #include "STDet/STDetTraits.h"
 
