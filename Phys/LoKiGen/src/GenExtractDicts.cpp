@@ -22,7 +22,8 @@
 // LoKi
 // ============================================================================
 #include "LoKi/Objects.h"
-#include "LoKi/GenExtractDicts.h"
+// IWYU issue 441
+#include "LoKi/GenExtractDicts.h" // IWYU pragma: keep
 // ============================================================================
 /** @file 
  *  Implementation file for class LoKi::Dicts::GenExtract

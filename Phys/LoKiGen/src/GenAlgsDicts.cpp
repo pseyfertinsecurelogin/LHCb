@@ -10,7 +10,8 @@
 // ============================================================================
 #include "LoKi/GenAlgs.h"
 #include "LoKi/GenTypes.h"
-#include "LoKi/GenAlgsDicts.h"
+// IWYU issue 441
+#include "LoKi/GenAlgsDicts.h" // IWYU pragma: keep
 // ============================================================================
 /** @file 
  *  Implementation file for namespace LoKi::Dicts::GenAlgs 
