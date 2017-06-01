@@ -9,8 +9,7 @@
  */
 //--------------------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHSTATDIVFUNCTOR_H
-#define RICHUTILS_RICHSTATDIVFUNCTOR_H 1
+#pragma once
 
 // STL
 #include <functional>
@@ -111,8 +110,8 @@ namespace Rich
       inline StatDivFunctorResult operator() ( const double top,
                                                const double bot ) const
       {
-        return StatDivFunctorResult( ( bot>0 ? top/bot       : 0 ),
-                                     ( bot>0 ? sqrt(top)/bot : 0 ),
+        return StatDivFunctorResult( ( bot>0 ? top/bot            : 0 ),
+                                     ( bot>0 ? std::sqrt(top)/bot : 0 ),
                                      this );
       }
 
@@ -137,5 +136,3 @@ namespace Rich
   }
   
 }
-
-#endif // RICHUTILS_RICHSTATDIVFUNCTOR_H

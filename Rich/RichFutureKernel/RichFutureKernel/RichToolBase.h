@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHFUTUREKERNEL_RICHTOOLBASE_H
-#define RICHFUTUREKERNEL_RICHTOOLBASE_H 1
+#pragma once
 
 // GaudiAlg
 #include "GaudiAlg/GaudiTool.h"
@@ -49,5 +48,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHFUTUREKERNEL_RICHTOOLBASE_H

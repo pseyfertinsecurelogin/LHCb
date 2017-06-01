@@ -10,8 +10,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RichSmartIDCnv_H
-#define RICHUTILS_RichSmartIDCnv_H 1
+#pragma once
 
 // Gaudi
 #include "GaudiKernel/MsgStream.h"
@@ -473,5 +472,3 @@ namespace Rich
   }
 
 }
-
-#endif // RICHUTILS_RichSmartIDCnv_H

@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_RICHCOMMONBASE_H
-#define RICHKERNEL_RICHCOMMONBASE_H 1
+#pragma once
 
 // Interfaces
 #include "RichInterfaces/IRichToolRegistry.h"
@@ -318,5 +317,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHKERNEL_RICHCOMMONBASE_H

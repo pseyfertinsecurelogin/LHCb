@@ -9,8 +9,7 @@
  */
 //--------------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHPOISSONEFFFUNCTOR_H
-#define RICHUTILS_RICHPOISSONEFFFUNCTOR_H 1
+#pragma once
 
 // STL
 #include <functional>
@@ -136,5 +135,3 @@ namespace Rich
   }
 
 }
-
-#endif // RICHUTILS_RICHPOISSONEFFFUNCTOR_H

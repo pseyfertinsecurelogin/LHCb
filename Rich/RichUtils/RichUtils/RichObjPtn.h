@@ -9,8 +9,7 @@
  */
 //--------------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHOBJPTN_H
-#define RICHUTILS_RICHOBJPTN_H 1
+#pragma once
 
 // STL
 #include <ostream>
@@ -114,5 +113,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHUTILS_RICHOBJPTN_H

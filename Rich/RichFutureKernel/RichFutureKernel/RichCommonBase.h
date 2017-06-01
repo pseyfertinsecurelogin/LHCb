@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHFUTUREKERNEL_RICHCOMMONBASE_H
-#define RICHFUTUREKERNEL_RICHCOMMONBASE_H 1
+#pragma once
 
 // Gaudi
 #include "GaudiKernel/ISvcLocator.h"
@@ -158,5 +157,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHFUTUREKERNEL_RICHCOMMONBASE_H

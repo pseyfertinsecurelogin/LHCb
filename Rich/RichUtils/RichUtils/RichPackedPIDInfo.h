@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHPACKEDPIDINFO_H
-#define RICHUTILS_RICHPACKEDPIDINFO_H 1
+#pragma once
 
 // Kernel
 #include "Kernel/RichRadiatorType.h"
@@ -143,5 +142,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHUTILS_RICHPACKEDPIDINFO_H
