@@ -12,5 +12,8 @@
 // local
 #include "RichKernel/RichAlgBase.h"
 
+// ============================================================================
+// Force creation of templated classes
+#include "RichCommonBase.icpp" // IWYU pragma: keep
 template class Rich::CommonBase<GaudiAlgorithm> ;
 // ============================================================================

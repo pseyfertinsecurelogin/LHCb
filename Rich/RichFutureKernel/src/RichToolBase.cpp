@@ -12,5 +12,8 @@
 // local
 #include "RichFutureKernel/RichToolBase.h"
 
+// ============================================================================
+// Force creation of templated class
+#include "RichCommonBase.icpp" // IWYU pragma: keep
 template class Rich::Future::CommonBase<GaudiTool> ;
 // ============================================================================

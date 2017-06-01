@@ -14,6 +14,9 @@
 
 #include "RichKernel/RichCommonBase.h"
 
+// ============================================================================
+// Force creation of templated class
+#include "RichHistoBase.icpp" // IWYU pragma: keep
 template class Rich::CommonBase < GaudiTupleTool > ;
 template class Rich::HistoBase  < GaudiTupleTool > ;
 // ============================================================================
