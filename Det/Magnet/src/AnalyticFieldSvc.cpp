@@ -10,6 +10,7 @@
 #include <cstring> // for strtok with gcc 4.3
 #include <functional>
 #include <iostream>
+#include <fstream>
 
 #include "AnalyticFieldSvc.h"
 #include "Gaudi/Details/PluginServiceDetails.h"
