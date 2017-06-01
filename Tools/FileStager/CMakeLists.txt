@@ -1,7 +1,7 @@
 ################################################################################
 # Package: FileStager
 ################################################################################
-gaudi_subdir(FileStager v1r14p1)
+gaudi_subdir(FileStager)
 
 gaudi_depends_on_subdirs(GaudiKernel)
 
@@ -24,6 +24,10 @@ gaudi_add_dictionary(FileStager
                      INCLUDE_DIRS Boost
                      LINK_LIBRARIES Boost GaudiKernel FileStagerFunctions
                      OPTIONS "-U__MINGW32__")
+
+# suppress compilation warnings from external package header files
+find_package(ROOT)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 # only for the applications
 find_package(Boost COMPONENTS program_options)
