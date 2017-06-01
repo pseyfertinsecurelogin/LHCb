@@ -7032,6 +7032,20 @@
     { include: ["<boost/functional/hash/hash.hpp>", private, "<boost/functional/hash.hpp>", public ] },
     { include: ["<boost/lexical_cast/bad_lexical_cast.hpp>", private, "<boost/lexical_cast.hpp>", public ] },
     { include: ["<boost/bind/bind.hpp>", private, "<boost/bind.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/composite/actions.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/composite/alternative.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/composite/kleene_star.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/composite/list.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/composite/optional.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/composite/positive.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/composite/sequence.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/non_terminal/grammar.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/non_terminal/rule.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/parser.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/primitives/numerics.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/primitives/primitives.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+    { include: ["<boost/spirit/home/classic/core/scanner/scanner.hpp>", private, "<boost/spirit/include/classic_core.hpp>", public ] },
+
 
 
 ]
