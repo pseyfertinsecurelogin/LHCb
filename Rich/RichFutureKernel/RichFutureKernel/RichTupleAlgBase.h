@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHFUTUREKERNEL_RICHTUPLEALGBASE_H
-#define RICHFUTUREKERNEL_RICHTUPLEALGBASE_H 1
+#pragma once
 
 // GaudiAlg
 #include "GaudiAlg/GaudiTupleAlg.h"
@@ -54,5 +53,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHFUTUREKERNEL_RICHTUPLEALGBASE_H

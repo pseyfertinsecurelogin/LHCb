@@ -10,8 +10,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef      RICHUTILS_RICHEXCEPTION_H
-#define      RICHUTILS_RICHEXCEPTION_H 1
+#pragma once
 
 // GaudiKernel
 #include "GaudiKernel/Kernel.h"
@@ -41,9 +40,9 @@ namespace Rich
      *  @param ex  exception message
      *  @param sc  status code associated with the exception
      */
-    Exception( const std::string& ex   = "unspecified exception",
-               const StatusCode&  sc   =  StatusCode::FAILURE )
-      : GaudiException( ex , "*RichException*" , sc )  {}
+    Exception( const std::string & ex = "unspecified exception",
+               const StatusCode&  sc  = StatusCode::FAILURE )
+      : GaudiException( ex, "*RichException*" , sc )  {}
 
     /** Constructor from another GaudiException
      *
@@ -51,7 +50,7 @@ namespace Rich
      *  @param Ex          previous exception
      *  @param sc          status code associated with the exception
      */
-    Exception( const std::string    & ex                        ,
+    Exception( const std::string & ex                           ,
                const GaudiException & Ex                        ,
                const StatusCode&      sc =  StatusCode::FAILURE )
       : GaudiException( ex, "*RichException*" , sc , Ex ) {}
@@ -67,7 +66,3 @@ namespace Rich
   };
 
 }
-
-#endif  ///<   RICHUTILS_RICHEXCEPTION_H
-
-

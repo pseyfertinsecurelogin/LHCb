@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef LHCBKERNEL_RICHSIDE_H
-#define LHCBKERNEL_RICHSIDE_H 1
+#pragma once
 
 // STL files
 #include <string>
@@ -82,5 +81,3 @@ namespace Rich
   using PanelArray = std::array< TYPE, NPDPanelsPerRICH >;
 
 }
-
-#endif // LHCBKERNEL_RICHSIDE_H

@@ -9,13 +9,10 @@
  */
 //================================================================
 
-#ifndef RICHUTILS_STLARRAY_H 
-#define RICHUTILS_STLARRAY_H 1
+#pragma once
 
 // STL
 #include <array>
 
 // Gaudi
 #include "GaudiKernel/ToStream.h"
-
-#endif // RICHUTILS_STLARRAY_H

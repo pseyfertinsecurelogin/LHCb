@@ -182,4 +182,3 @@ namespace Rich
 
 // Now also include the vector versions...
 #include "RichUtils/RichVectorRayTracingUtils.h"
-

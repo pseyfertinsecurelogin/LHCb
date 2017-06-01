@@ -9,8 +9,7 @@
  */
 //=============================================================================================
 
-#ifndef RICHUTILS_RICHDAQHEADERPD_H
-#define RICHUTILS_RICHDAQHEADERPD_H 1
+#pragma once
 
 #include "RichUtils/RichDAQHeaderPD_V1.h"
 #include "RichUtils/RichDAQHeaderPD_V2.h"
@@ -18,5 +17,3 @@
 #include "RichUtils/RichDAQHeaderPD_V4.h"
 
 //============================================================================================
-
-#endif // RICHUTILS_RICHDAQHEADERPD_H

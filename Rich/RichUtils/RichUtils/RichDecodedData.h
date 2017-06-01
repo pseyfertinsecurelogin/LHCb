@@ -9,8 +9,7 @@
  */
 //---------------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHDECODEDDATA_H
-#define RICHUTILS_RICHDECODEDDATA_H 1
+#pragma once
 
 // local
 #include "RichUtils/RichDAQDefinitions.h"
@@ -206,5 +205,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_RICHDECODEDDATA_H

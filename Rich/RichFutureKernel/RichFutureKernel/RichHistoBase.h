@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHFUTUREKERNEL_RICHHISTOBASE_H
-#define RICHFUTUREKERNEL_RICHHISTOBASE_H 1
+#pragma once
 
 #include <vector>
 #include <string>
@@ -373,5 +372,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHFUTUREKERNEL_RICHHISTOBASE_H

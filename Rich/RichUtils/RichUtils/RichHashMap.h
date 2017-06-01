@@ -9,8 +9,7 @@
  */
 //--------------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHHASHMAP_H
-#define RICHUTILS_RICHHASHMAP_H 1
+#pragma once
 
 // GaudiKernel
 #include "GaudiKernel/HashMap.h"
@@ -51,5 +50,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHUTILS_RICHHASHMAP_H

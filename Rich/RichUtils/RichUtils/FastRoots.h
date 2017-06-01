@@ -1,6 +1,5 @@
 
-#ifndef RICHUTILS_FASTROOTS_H 
-#define RICHUTILS_FASTROOTS_H  1
+#pragma once
 
 namespace Rich
 { 
@@ -97,5 +96,3 @@ namespace Rich
     
   }
 }
-
-#endif // RICHUTILS_FASTROOTS_H 

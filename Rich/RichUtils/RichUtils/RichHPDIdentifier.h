@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHHPDIDENTIFIER_H
-#define RICHUTILS_RICHHPDIDENTIFIER_H 1
+#pragma once
 
 // Kernel
 #include "Kernel/RichSmartID.h"
@@ -100,5 +99,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_RICHHPDIDENTIFIER_H
