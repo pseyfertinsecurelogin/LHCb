@@ -18,7 +18,8 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/Kinematics.h"
+// IWYU issue 441
+#include "LoKi/Kinematics.h" // IWYU pragma: keep
 #include "LoKi/Constants.h"
 #include "LoKi/Report.h"
 #include "LoKi/Tensors.h"
