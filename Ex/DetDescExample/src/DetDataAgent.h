@@ -3,6 +3,7 @@
 
 #include "GaudiKernel/IDataStoreAgent.h"
 #include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/IRegistry.h"
 
 class IMessageSvc;
 
