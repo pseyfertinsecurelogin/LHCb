@@ -27,6 +27,11 @@
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/MatrixUtils.h"
+// ============================================================================
+// LoKi
+// ============================================================================
+// IWYU issue 441
+#include "LoKi/Kinematics.h" // IWYU pragma: keep
 #include "LoKi/Constants.h"
 #include "LoKi/KinTypes.h"
 #include "LoKi/Report.h"
