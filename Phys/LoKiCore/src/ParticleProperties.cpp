@@ -20,7 +20,8 @@
 // ============================================================================
 // LoKi
 // ============================================================================
-#include "LoKi/ParticleProperties.h"
+// IWYU issue 441
+#include "LoKi/ParticleProperties.h" // IWYU pragma: keep
 #include "LoKi/Report.h"
 #include "LoKi/Services.h"
 #include "LoKi/Constants.h"

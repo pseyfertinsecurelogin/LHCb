@@ -21,7 +21,7 @@
 // LoKi
 // ============================================================================
 #include "LoKi/Services.h"
-#include "LoKi/HistoBook.h"
+#include "LoKi/HistoBook.h" // IWYU pragma: keep
 #include "LoKi/Report.h"
 #include "LoKi/Monitor.h"
 // ============================================================================
