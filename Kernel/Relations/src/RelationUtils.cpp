@@ -14,6 +14,11 @@
 #include "GaudiKernel/IInterface.h"   
 
 // ============================================================================
+// Relations
+// ============================================================================
+// IWYU issue 441
+#include "Relations/RelationUtils.h" // IWYU pragma: keep
+// ============================================================================
 /** @file
  *  
  *  Implementation file for method from namespace Relation
