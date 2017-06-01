@@ -10,6 +10,9 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "GaudiKernel/Kernel.h" // for GAUDI_API
+#include "GaudiKernel/StatusCode.h"
+#include "Kernel/CaloCellID.h"
 // ============================================================================
 // LHCbKernel
 // ============================================================================
