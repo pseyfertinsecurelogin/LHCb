@@ -3,10 +3,11 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include <boost/regex/v4/match_flags.hpp>
-#include <boost/regex/v4/perl_matcher_common.hpp>
-#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
-#include <boost/regex/v4/regex_match.hpp>
+//FIXME: keep these excluded
+//#include <boost/regex/v4/match_flags.hpp>
+//#include <boost/regex/v4/perl_matcher_common.hpp>
+//#include <boost/regex/v4/perl_matcher_non_recursive.hpp>
+//#include <boost/regex/v4/regex_match.hpp>
 #include <ext/alloc_traits.h>
 #include <stddef.h>
 #include <algorithm>
