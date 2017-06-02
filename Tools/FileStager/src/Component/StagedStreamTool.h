@@ -18,7 +18,7 @@
 namespace Gaudi {
    class IFileCatalog;
 }
-class IFileStagerSvc;
+struct IFileStagerSvc;
 
 /** @class StagedStreamTool StagedStreamTool.h
  *
