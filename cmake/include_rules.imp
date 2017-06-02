@@ -4,7 +4,7 @@
 { ref: "Eigen.imp" },
 { include: ["<Math/SMatrix.icc>",private,"<Math/SMatrix.h>",public] },
 { include: ["<Math/SVector.icc>",private,"<Math/SVector.h>",public] },
-{ include: [\""GaudiKernel/Time.icpp\"",private,"\"GaudiKernel/Time.h\"",public]},
+{ include: ["\"GaudiKernel/Time.icpp\"",private,"\"GaudiKernel/Time.h\"",public]},
 { include: ["\"vectori128.h\"",  private, "\"vectorclass.h\"", public ] },
 { include: ["\"vectorf128.h\"",  private, "\"vectorclass.h\"", public ] },
 { include: ["\"vectori256.h\"",  private, "\"vectorclass.h\"", public ] },
