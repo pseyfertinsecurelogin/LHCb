@@ -17,6 +17,6 @@
 
 // ============================================================================
 // Force creation of templated class
-#include "DecoderCommonBase.icpp"
+#include "DecoderCommonBase.icpp" // IWYU pragma: keep
 template class Decoder::CommonBase < GaudiTupleTool > ;
 // ============================================================================

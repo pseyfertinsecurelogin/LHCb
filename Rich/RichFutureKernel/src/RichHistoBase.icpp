@@ -28,7 +28,7 @@
 using namespace Gaudi::Utils::Histos;
 
 // Base class methods
-#include "RichCommonBase.icpp"
+#include "RichCommonBase.icpp" // IWYU pragma: keep
 
 //=============================================================================
 // Histogram Constructor initisalisations

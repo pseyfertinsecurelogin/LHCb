@@ -14,6 +14,6 @@
 
 // ============================================================================
 // Force creation of templated classes
-#include "DecoderCommonBase.icpp"
+#include "DecoderCommonBase.icpp" // IWYU pragma: keep
 template class Decoder::CommonBase<GaudiAlgorithm> ;
 // ============================================================================
