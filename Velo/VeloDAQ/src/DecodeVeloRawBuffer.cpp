@@ -133,7 +133,6 @@ StatusCode DecodeVeloRawBuffer::execute() {
     if( msgLevel( MSG::DEBUG ) )
       debug() << "Raw Event not found in " << m_rawEventLocations << endmsg;
     createEmptyBanks();
-    put(decStatus,m_veloLiteClusterLocation+"DecStatus");
     return StatusCode::SUCCESS;
   }
 
