@@ -43,7 +43,7 @@ class OptionsTestBase(CmdLineTestBase):
                  'gClassDicts': True,
                  'gNamespaces': True,
                  'gAssocDicts': True,
-                 'allocatorType': 'FROMXML',
+                 'allocatorType': 'NO',
                  'default_namespace': 'LHCb',
                  'dtdPath': lambda self, value: value == os.environ.get("GODDTDPATH")
                 }
