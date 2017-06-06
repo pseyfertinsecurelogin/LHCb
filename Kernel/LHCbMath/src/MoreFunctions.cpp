@@ -11,7 +11,7 @@
 // ============================================================================
 // LHCbMath
 // ============================================================================
-#include "LHCbMath/MoreFunctions.h"
+#include "LHCbMath/MoreFunctions.h" // IWYU pragma: keep
 #include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/Power.h"
 // ============================================================================
