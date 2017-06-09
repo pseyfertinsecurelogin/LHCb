@@ -451,20 +451,19 @@ protected:
   virtual ~SolidBase();
 
 private:
-  /// default constructor is disabled
-  //  SolidBase();
 
   // assignement operator is disabled
-  SolidBase& operator=( const SolidBase& ) ;
+  SolidBase& operator=( const SolidBase& ) = delete;
+  SolidBase(const SolidBase&) = delete;
 
-template<class aPoint, class aVector>
-unsigned int intersectionTicksImpl( const aPoint  & Point,
-                                    const aVector & Vector,
-                                    const ISolid::Tick& tickMin,
-                                    const ISolid::Tick& tickMax,
-                                    ISolid::Ticks&  ticks) const;
+  template<class aPoint, class aVector>
+  unsigned int intersectionTicksImpl( const aPoint  & Point,
+                                      const aVector & Vector,
+                                      const ISolid::Tick& tickMin,
+                                      const ISolid::Tick& tickMax,
+                                      ISolid::Ticks&  ticks) const;
 
-unsigned int intersectionTicksImpl( ISolid::Ticks& ticks ) const;
+  unsigned int intersectionTicksImpl( ISolid::Ticks& ticks ) const;
 
 protected:
 
