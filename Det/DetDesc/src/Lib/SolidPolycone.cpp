@@ -78,24 +78,23 @@ void SolidPolycone::setBP()
 
   double rhoMin =  1.e+23 ;
 
-  for( Triplets::const_iterator triplet = m_triplets.begin() ;
-       m_triplets.end() != triplet ; ++triplet )
+  for( const auto& triplet : m_triplets )
     {
-      const double z      = triplet->first                   ;
+      const double z      = triplet.first                   ;
       setZMin   (  z < zMin () ? z : zMin () )  ;
       setZMax   (  z > zMax () ? z : zMax () )  ;
 
-      if( rhoMin > triplet->second.first  )
-        { rhoMin = triplet->second.first  ; }
+      if( rhoMin > triplet.second.first  )
+        { rhoMin = triplet.second.first  ; }
 
-      if( rhoMin > triplet->second.second )
-        { rhoMin = triplet->second.second ; }
+      if( rhoMin > triplet.second.second )
+        { rhoMin = triplet.second.second ; }
 
-      if( rhoMax() < triplet->second.first   )
-        { setRhoMax( triplet->second.first  ) ; }
+      if( rhoMax() < triplet.second.first   )
+        { setRhoMax( triplet.second.first  ) ; }
 
-      if( rhoMax() < triplet->second.second  )
-        { setRhoMax( triplet->second.second ) ; }
+      if( rhoMax() < triplet.second.second  )
+        { setRhoMax( triplet.second.second ) ; }
 
       const double rmax   = sqrt( rhoMax() * rhoMax() + z * z )  ;
       setRMax   ( rmax   > rMax   () ? rmax   : rMax   () )  ;
@@ -184,20 +183,6 @@ void SolidPolycone::setBP()
   checkBP();
 }
 // ============================================================================
-
-
-// ============================================================================
-/** default protected  coinstructor
- *  @param Name name of conical tube segment
- */
-// ============================================================================
-SolidPolycone::SolidPolycone( const std::string& Name )
-  ///
-  : SolidBase       ( Name         )
-  , m_triplets      ()
-  , m_startPhiAngle ( 0            )
-  , m_deltaPhiAngle ( 360 * Gaudi::Units::degree )
-{}
 
 // ============================================================================
 /** check for the given point (local frame)

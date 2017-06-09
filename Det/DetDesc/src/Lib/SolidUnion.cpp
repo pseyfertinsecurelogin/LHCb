@@ -6,7 +6,6 @@
 #include "DetDesc/Solid.h"
 #include "DetDesc/SolidUnion.h"
 #include "DetDesc/SolidException.h"
-#include "DetDesc/SolidBox.h"
 
 // ============================================================================
 /** @file
@@ -161,4 +160,3 @@ StatusCode SolidUnion::updateBP()
 // ============================================================================
 // The END
 // ============================================================================
-

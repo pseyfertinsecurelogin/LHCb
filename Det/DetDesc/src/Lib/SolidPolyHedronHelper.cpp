@@ -151,15 +151,13 @@ SolidPolyHedronHelper::intersectionTicksImpl(const aPoint&  Point,
   // line touches the bounding sphere?
   if( !crossBSphere( Point , Vector ) ) { return 0 ; }
   // loop over all faces
-  for( auto iPlane = planes().begin();
-       planes().end() != iPlane ; ++iPlane )
-    {
-      const Gaudi::Plane3D& Plane = *iPlane ;
-      double vn =  Vector.Dot( Plane.Normal() ) ;
+  ticks.reserve( planes().size() );
+  for( const auto& plane : planes() ) {
+      double vn =  Vector.Dot( plane.Normal() ) ;
       if(  0 == vn ) { continue ; }
-      ISolid::Tick tick = -1. * ( Plane.Distance( Point ) / vn ) ;
+      ISolid::Tick tick = -1. * ( plane.Distance( Point ) / vn ) ;
       ticks.push_back( tick );
-    };
+  };
   ///
   return SolidTicks::RemoveAdjancentTicks( ticks  ,
                                            Point  ,
@@ -241,14 +239,20 @@ bool SolidPolyHedronHelper::addFace( const Gaudi::XYZPoint& Point1 ,
   const Gaudi::XYZVector v3( Point3 - cPoint ) ;
   const Gaudi::XYZVector v4( Point4 - cPoint ) ;
   ///
+  const auto v1_2 = v1.mag2();
+  const auto v2_2 = v2.mag2();
+  const auto v3_2 = v3.mag2();
+  const auto v4_2 = v4.mag2();
+  const auto v123 = std::sqrt( v1_2 * v2_2 * v3_2 );
+  const auto v234 = std::sqrt( v2_2 * v3_2 * v4_2 );
+  const auto v341 = std::sqrt( v3_2 * v4_2 * v1_2 );
+  const auto v412 = std::sqrt( v4_2 * v1_2 * v2_2 );
+  ///
   const auto t1   = v2.Cross(  v3 ).Dot( v4 )     ;
-  const auto v234 = std::sqrt(v2.mag2() * v3.mag2() * v4.mag2() );
   const auto t2   = v3.Cross(  v4 ).Dot( v1 )     ;
-  const auto v341 = std::sqrt(v3.mag2() * v4.mag2() * v1.mag2() );
   const auto t3   = v4.Cross(  v1 ).Dot( v2 )     ;
-  const auto v412 = std::sqrt(v4.mag2() * v1.mag2() * v2.mag2() );
   const auto t4   = v1.Cross(  v2 ).Dot( v3 )     ;
-  const auto v123 = std::sqrt(v1.mag2() * v2.mag2() * v3.mag2() );
+
 
   if      ( 0 != v234 && 1.e-6 < fabs( t1 / v234 ) )
     { throw SolidException("SolidPolyHedronHelper 'plane' is not planar 1 ") ; }
