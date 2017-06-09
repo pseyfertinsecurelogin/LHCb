@@ -4,6 +4,13 @@
 ! Purpose     : Pack and unpack events classes for smaller events
 !-----------------------------------------------------------------------------
 
+! 2017-06-09 - Olivier Deschamps
+  - new packers for CaloDigit and CaloAdc objects
+        - Event   :  PackedCaloDigit.h & PackedCaloAdc.h
+        - src/lib :  PackedCaloDigit.cpp & PackedCaloAdc.cpp
+        - src/component : add instances in Packers.cpp / UnPackers.cpp / Checkers.cpp
+        - dict/         : PackedEventDict.{h,xml}
+
 ! 2017-03-28 - Ricardo Vazquez Gomez
  - increase the packing version to 3 for MuonPID.
  - reorder the struct not to break backwards compatibility

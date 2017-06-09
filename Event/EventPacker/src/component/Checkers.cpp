@@ -12,6 +12,8 @@
 #include "Event/PackedParticle.h"
 #include "Event/PackedVertex.h"
 #include "Event/PackedWeightsVector.h"
+#include "Event/PackedCaloAdc.h"
+#include "Event/PackedCaloDigit.h"
 #include "Event/PackedCaloCluster.h"
 #include "Event/PackedFlavourTag.h"
 #include "Event/PackedPartToRelatedInfoRelation.h"
@@ -107,6 +109,14 @@ DECLARE_ALGORITHM_FACTORY( Q )
 template class DataPacking::Check<LHCb::CaloClusterPacker>;
 typedef DataPacking::Check<LHCb::CaloClusterPacker> R;
 DECLARE_ALGORITHM_FACTORY( R )
+
+template class DataPacking::Check<LHCb::CaloDigitPacker>;
+typedef DataPacking::Check<LHCb::CaloDigitPacker> Ra;
+DECLARE_ALGORITHM_FACTORY( Ra )
+
+template class DataPacking::Check<LHCb::CaloAdcPacker>;
+typedef DataPacking::Check<LHCb::CaloAdcPacker> Rb;
+DECLARE_ALGORITHM_FACTORY( Rb )
 
 template class DataPacking::Check<LHCb::MCFTHitPacker>;
 typedef DataPacking::Check<LHCb::MCFTHitPacker> S_;
