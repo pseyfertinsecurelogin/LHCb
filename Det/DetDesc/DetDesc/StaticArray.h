@@ -24,7 +24,9 @@
  */
 
 template<typename T, std::size_t N>
-class StaticArray final
+class
+[[ deprecated("please use boost::container::static_vector instead") ]]
+StaticArray final
 {
 public:
   ///@{
