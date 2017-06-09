@@ -1145,7 +1145,7 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      static typename Map::result_type __call__
+      static auto __call__
       ( const Map& fun , typename Map::argument a ) { return fun ( a )  ; }
       // ======================================================================
     public:
@@ -1302,7 +1302,7 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      static typename Pipe::result_type __call__
+      static auto __call__
       ( const Pipe& fun , typename Pipe::argument a ) { return fun ( a )  ; }
       // ======================================================================
     public:
@@ -1498,7 +1498,7 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      static typename FunVal::result_type __call__
+      static auto __call__
       ( const FunVal& fun , typename FunVal::argument a ) { return fun ( a )  ; }
       // ======================================================================
     public:
@@ -1604,13 +1604,13 @@ namespace LoKi
     public:
       // ======================================================================
       // __call__
-      static typename Source::result_type __call__
+      static auto __call__
       ( const Source& fun ) { return fun() ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rshift__
-      static typename Source::result_type& __rshift__
+      static decltype(auto)  __rshift__
       ( const Source& fun , std::vector<TYPE>& res )
       { res = fun() ; return res ; }
       // __rshift__
@@ -1748,7 +1748,7 @@ namespace LoKi
     public:
       // ======================================================================
       // __call__
-      static typename CutVal::result_type __call__
+      static auto __call__
       ( const CutVal& fun , typename CutVal::argument a ) { return fun ( a ) ; }
       // ======================================================================
     public:

@@ -122,7 +122,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Timer_ * clone() const override { return new Timer_ ( *this ) ; }
       /// MANDATORY: the only one essenital method
-      typename LoKi::Functor<TYPE1,TYPE2>::result_type operator()
+      TYPE2 operator()
       ( typename LoKi::Functor<TYPE1,TYPE2>::argument a ) const override
       {
         //
@@ -225,7 +225,7 @@ namespace LoKi
       Timer_ * clone() const override { return new Timer_ ( *this ) ; }
       // ======================================================================
       /// MANDATORY: the only one essenital method
-      typename LoKi::Functor<void,TYPE2>::result_type operator() () const override
+      TYPE2 operator() () const override
       {
         //
         if ( !m_timer && m_first && !m_svc )

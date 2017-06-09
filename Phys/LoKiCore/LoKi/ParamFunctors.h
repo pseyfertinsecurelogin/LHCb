@@ -88,7 +88,7 @@ namespace LoKi
       /// clone-method: "virtual constructor"
       Parameter* clone() const override;
       /// the major method
-      result_type operator()( /* argument */ ) const override;
+      double operator()( ) const override;
       /// optional: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================

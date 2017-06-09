@@ -80,14 +80,11 @@ public:
     if ( m_reporter ) { return m_reporter ; }    // RETURN
 
     IToolSvc* svc = toolSvc()   ;
-    if ( 0 == svc        ) { return 0 ; }             // RETURN
-    StatusCode sc = svc -> retrieveTool ( m_reporterName ,
-                                          m_reporter     ,
-                                          this           ) ;
-    if ( sc.isFailure()  ) { return 0 ; }             // RETURN
-    if ( 0 == m_reporter ) { return 0 ; }             // RETURN
-    //
-    return m_reporter ;
+    if ( !svc        ) { return nullptr ; }             // RETURN
+    StatusCode sc = svc -> retrieveTool( m_reporterName ,
+                                         m_reporter     ,
+                                         this           ) ;
+    return sc ? m_reporter : nullptr;
   }
   // ==========================================================================
   /** The the sequential event number
@@ -118,10 +115,10 @@ public:
     StatusCode sc = service ( "LHCb::ParticlePropertySvc" , m_ppSvc , true ) ;
     if       ( sc.isFailure() )
     {
-      m_ppSvc = 0 ;
+      m_ppSvc = nullptr ;
       LOKI_EXCEPTION ( "LoKiSvc: 'PPSvc' could not be located" , sc ) ;
     }
-    if  ( 0 == m_ppSvc )
+    if  ( !m_ppSvc )
     {
       LOKI_EXCEPTION ( "LoKiSvc: IPPSvc* points to NULL"       , sc ) ;
     }
@@ -141,10 +138,10 @@ public:
     StatusCode sc = service ( "ToolSvc" , m_toolSvc , true ) ;
     if ( sc.isFailure() )
     {
-      m_toolSvc = 0 ;
-      LOKI_EXCEPTION( "LoKiSvc: 'ToolSvc' could nto be located" , sc ) ;
+      m_toolSvc = nullptr ;
+      LOKI_EXCEPTION( "LoKiSvc: 'ToolSvc' could not be located" , sc ) ;
     }
-    if ( 0 == m_toolSvc )
+    if ( !m_toolSvc )
     {
       LOKI_EXCEPTION( "LoKiSvc: IToolSvc* points to NULL"       , sc ) ;
     }
@@ -172,10 +169,10 @@ public:
     StatusCode sc = service ( "AlgContextSvc" , m_contextSvc , true ) ;
     if ( sc.isFailure() )
     {
-      m_contextSvc = 0 ;
+      m_contextSvc = nullptr ;
       LOKI_EXCEPTION( "LoKiSvc: 'AlgContextSvc' could not be located" , sc ) ;
     }
-    if ( 0 == m_contextSvc )
+    if ( !m_contextSvc )
     {
       LOKI_EXCEPTION( "LoKiSvc: IAlgContextSvc* points to NULL"       , sc ) ;
     }
@@ -384,9 +381,8 @@ public:
     if ( sc.isFailure() ) { return sc ; }
     //
     //
-    if (m_welcome) { // welcome message
-      MsgStream log ( msgSvc() , name() ) ;
-      log << MSG::ALWAYS << std::endl ;
+    if (m_welcome.value()) { // welcome message
+      auto& log = always() << '\n';
       LoKi::Welcome::instance ().welcome( log.stream() ) ;
       log << endmsg ;
     }
@@ -465,9 +461,8 @@ public:
     LoKi::ErrorReport& rep = LoKi::ErrorReport::instance() ;
     if ( rep.reporter() ) { rep.setReporter( 0 ).ignore() ; }
     //
-    if (m_welcome) { // goodbye message
-      MsgStream log ( msgSvc() , name() ) ;
-      log << MSG::ALWAYS << std::endl ;
+    if (m_welcome.value()) { // goodbye message
+      auto& log = always() << '\n';
       LoKi::Welcome::instance ().goodbye( log.stream() ) ;
       log << endmsg ;
     }
@@ -524,9 +519,8 @@ public:
     if ( !LoKi::AuxFunBase::lokiSvc() )
     { LoKi::AuxFunBase::setLoKiSvc ( this ) ; }
     //
-    if (m_welcome) { // welcome message
-      MsgStream log ( msgSvc() , name() ) ;
-      log << MSG::ALWAYS << std::endl ;
+    if (m_welcome.value()) { // welcome message
+      auto& log = always() << '\n';
       LoKi::Welcome::instance ().welcome ( log.stream() ) ;
       log << endmsg ;
     }
@@ -614,14 +608,7 @@ protected:
    *  @param name service instance name
    *  @param pSvc pointer to the service locator
    */
-  LoKiSvc( const std::string& name , ISvcLocator*       pSvc )
-    : Service ( name , pSvc )
-  {
-    declareProperty
-      ( "Reporter" , m_reporterName , "The type/name of default Reporter tool") ;
-    declareProperty
-      ( "Welcome" , m_welcome , "Show Welcome message") ;
-  }
+  using Service::Service;
   // ==========================================================================
   /// virtual and protected destructor
   virtual ~LoKiSvc ()
@@ -674,11 +661,13 @@ private:
   /// the default reporter
   mutable LoKi::IReporter*      m_reporter = nullptr    ;        // the default reporter
   /// the name of the default reporter
-  std::string                   m_reporterName = "LoKi::Reporter/REPORT";        // the name of reporter
+  Gaudi::Property<std::string> m_reporterName
+  {this,"Reporter", "LoKi::Reporter/REPORT", "The type/name of default Reporter tool"};
   /// the event marker
   unsigned long long            m_event = 0    ;            // the event marker
   /// print welcome message
-  bool                          m_welcome = true   ;       // print welcome message
+  Gaudi::Property<bool>         m_welcome
+  { this, "Welcome" , true , "Show Welcome message" };       // print welcome message
   // ==========================================================================
 };
 // ============================================================================

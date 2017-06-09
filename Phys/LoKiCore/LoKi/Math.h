@@ -840,8 +840,7 @@ namespace LoKi
     // ========================================================================
     constexpr struct Abs_t {
       template <class TYPE>
-      inline auto operator() ( TYPE i ) const
-      -> decltype(std::abs(i)) { return std::abs ( i ) ; }
+      inline auto operator() ( TYPE i ) const { return std::abs( i ) ; }
     } _Abs_{} ;
     // ========================================================================
     template <class TYPE = void, class TYPE1,

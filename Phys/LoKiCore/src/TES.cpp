@@ -137,8 +137,7 @@ LoKi::TES::Exists* LoKi::TES::Exists::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::TES::Exists::result_type
-LoKi::TES::Exists::operator() ( /* LoKi::TES::Exists::argument */ ) const
+bool LoKi::TES::Exists::operator() ( ) const
 { return LoKi::TES::exists_<DataObject> ( *this ) ; }
 // ============================================================================
 // OPTIONAL: nice printout
@@ -171,15 +170,12 @@ LoKi::TES::Contains* LoKi::TES::Contains::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::TES::Contains::result_type
-LoKi::TES::Contains::operator() ( /* LoKi::TES::Contains::argument */ ) const
+double LoKi::TES::Contains::operator() ( /* LoKi::TES::Contains::argument */ ) const
 {
   //
   const ObjectContainerBase *obj = LoKi::TES::get_<ObjectContainerBase> ( *this ) ;
   //
-  if ( NULL == obj ) { return -1 ; } // REUTRN
-  //
-  return obj -> numberOfObjects () ;
+  return obj ? obj -> numberOfObjects () : -1;
 }
 // ============================================================================
 // OPTIONAL: nice printout
@@ -215,13 +211,12 @@ LoKi::TES::HrcSumAdc* LoKi::TES::HrcSumAdc::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::TES::HrcSumAdc::result_type
-LoKi::TES::HrcSumAdc::operator() ( /* LoKi::TES::HrcSumAdc::argument */ ) const
+double LoKi::TES::HrcSumAdc::operator() (  ) const
 {
   //
   const LHCb::HCDigits *digits = LoKi::TES::get_<LHCb::HCDigits> ( *this ) ;
   //
-  if ( NULL == digits ) { return 99999 ; } // RETURN
+  if ( !digits ) { return 99999 ; } // RETURN
   // Determine the station ID (internal index)
   int stationId = -1 ;
   if      ( stationName().compare("B0")==0 ) stationId = 0 ;
@@ -282,19 +277,18 @@ LoKi::TES::Counter* LoKi::TES::Counter::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::TES::Counter::result_type
-LoKi::TES::Counter::operator() ( /* LoKi::TES::Contains::argument */ ) const
+double LoKi::TES::Counter::operator() (  ) const
 {
   //
   const Gaudi::Numbers* data = LoKi::TES::get_<Gaudi::Numbers> ( *this );
-  if( NULL == data )
+  if( !data )
   {
     Error ("No valid object is found for TES location, return 'bad'") ;
     return m_bad ;
   }
   //
   const Gaudi::Numbers::Map& m = data->counters() ;
-  Gaudi::Numbers::Map::const_iterator ifind = m.find ( counter() ) ;
+  auto ifind = m.find ( counter() ) ;
   if ( m.end() == ifind )
   {
     Error ( "No counter is found, return 'bad'") ;
@@ -541,28 +535,27 @@ LoKi::TES::Stat* LoKi::TES::Stat::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::TES::Stat::result_type
-LoKi::TES::Stat::operator() ( /* LoKi::TES::Contains::argument */ ) const
+double LoKi::TES::Stat::operator() (  ) const
 {
   //
   if ( counter().empty() )
   {
     const Gaudi::Counter* cnt = LoKi::TES::get_<Gaudi::Counter>  (*this ) ;
-    if( NULL != cnt )
+    if( cnt )
     {
       return (*m_getter)(cnt->counter());
     }
   }
   //
   const Gaudi::Counters* data = LoKi::TES::get_<Gaudi::Counters> ( *this) ;
-  if ( NULL == data )
+  if ( !data )
   {
     Error ("No valid object is found for TES location, return 'bad'") ;
     return bad ()  ;
   }
   //
   const Gaudi::Counters::Map& m = data->counters() ;
-  Gaudi::Counters::Map::const_iterator ifind = m.find ( counter() ) ;
+  auto ifind = m.find ( counter() ) ;
   if ( m.end() == ifind )
   {
     Error ( "No counter is found, return 'bad'") ;

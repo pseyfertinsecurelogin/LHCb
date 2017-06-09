@@ -6,7 +6,6 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <functional>
 #include <memory>
 // ============================================================================
 // GaudiKernel
@@ -73,12 +72,12 @@ namespace LoKi
   public:
     // ========================================================================
     /// the only one essential method ("function")
-    virtual result_type operator () ( argument    ) const = 0 ;
+    virtual TYPE2 operator () ( argument    ) const = 0 ;
     /// the only one essential method ("function")
-    virtual result_type evaluate    ( argument  a ) const
+    virtual TYPE2 evaluate    ( argument  a ) const
     { return (*this)( a ) ; }
     /// the only one essential method ("function")
-    virtual result_type eval        ( argument  a ) const
+    virtual TYPE2 eval        ( argument  a ) const
     { return (*this)( a ) ; }
     /// clone method
     virtual  Functor* clone    ()                   const = 0 ;
@@ -158,7 +157,7 @@ namespace LoKi
     FunctorFromFunctor* clone() const override
     { return new FunctorFromFunctor ( *this ) ; }
     /// MANDATORY: the only one essential method
-    typename functor::result_type
+    TYPE2
     operator()( typename functor::argument a ) const override
     { return fun ( a ) ; }
     /// OPTIONAL: the basic printout method, delegate to the underlying object
@@ -172,15 +171,14 @@ namespace LoKi
     std::string   toCpp   () const override { return m_fun -> toCpp  () ; }
     // ========================================================================
     /// evaluate the function
-    inline typename functor::result_type fun
-    ( typename functor::argument a ) const { return (*m_fun) ( a ) ; }
+    auto fun( typename functor::argument a ) const { return (*m_fun) ( a ) ; }
     // accessor to the function
     inline const functor& func () const { return *m_fun ; }
     // ========================================================================
   private:
     // ========================================================================
-    /// the actual underlaying function // TODO: consider std::shared_ptr... or small object optimization, or both...
-    std::unique_ptr<const functor> m_fun ;           // the underlaying functor
+    /// the actual underlying function // TODO: consider std::shared_ptr... or small object optimization, or both...
+    std::unique_ptr<const functor> m_fun ;           // the underlying functor
     // ========================================================================
   };
   // ==========================================================================
@@ -215,7 +213,7 @@ namespace LoKi
     /// clone method (mandatory)
     Constant* clone   () const override { return new Constant( *this ) ; }
     /// the only one essential method ("function")
-    typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+    TYPE2 operator()
       ( typename LoKi::Functor<TYPE,TYPE2>::argument ) const override { return m_value ; }
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override ;
@@ -238,17 +236,10 @@ namespace LoKi
     /// parameters: return value
     typedef TYPE2 Type2 ;                           // parameters: return value
     /// =======================================================================
-  private:
-    // ========================================================================
-    /// STD signature (fake base)
-    typedef typename std::unary_function<void,TYPE2>                   Base_1 ;
-    // ========================================================================
-  public:
-    // ========================================================================
     /// the type of the argument
     typedef void                                                Type          ;
     /// the result value
-    typedef typename Base_1::result_type                        result_type   ;
+    typedef TYPE2                                               result_type   ;
     /// the basic argument type
     typedef void                                                argument_type ;
     /// type for the argument
@@ -257,12 +248,12 @@ namespace LoKi
   public:
     // ========================================================================
     /// the only one essential method ("function")
-    virtual result_type operator () ( /* argument */ ) const = 0 ;
+    virtual TYPE2  operator () ( /* argument */ ) const = 0 ;
     /// the only one essential method ("function")
-    virtual result_type evaluate    ( /* argument */ ) const
+    virtual TYPE2  evaluate    ( /* argument */ ) const
     { return (*this) ( /* */ ) ; }
     /// the only one essential method ("function")
-    virtual result_type eval        ( /* argument */ ) const
+    virtual TYPE2  eval        ( /* argument */ ) const
     { return (*this) ( /* */ ) ; }
     /// clone method
     virtual  Functor* clone    ()                   const = 0 ;
@@ -338,7 +329,7 @@ namespace LoKi
     FunctorFromFunctor* clone() const override
     { return new FunctorFromFunctor ( *this ) ; }
     /// MANDATORY: the only one essential method
-    typename functor::result_type operator()() const override
+    TYPE2 operator()() const override
     { return fun ( ) ; }
     /// OPTIONAL: the basic printout method, delegate to the underlying object
     std::ostream& fillStream( std::ostream& s ) const override
@@ -353,14 +344,14 @@ namespace LoKi
   public:
     // ========================================================================
     /// evaluate the function
-    inline typename functor::result_type fun( ) const { return (*m_fun)( ) ; }
+    decltype(auto) fun( ) const { return (*m_fun)( ) ; }
     // accessor to the function
-    inline const functor& func () const { return *m_fun ; }
+    const functor& func () const { return *m_fun ; }
     // ========================================================================
   private:
     // ========================================================================
     /// the underlaying function
-    std::unique_ptr<const functor> m_fun ;           // the underlaying functor
+    std::unique_ptr<const functor> m_fun ;           // the underlying functor
     // ========================================================================
   } ;
   // ==========================================================================
@@ -391,7 +382,7 @@ namespace LoKi
     /// clone method (mandatory)
     Constant* clone   () const override { return new Constant( *this ) ; }
     /// the only one essential method ("function")
-    typename LoKi::Functor<void,TYPE2>::result_type operator()() const override
+    TYPE2 operator()() const override
     { return m_value ; }
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override;

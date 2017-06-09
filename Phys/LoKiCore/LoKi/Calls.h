@@ -60,27 +60,25 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      static typename Fun::result_type __call__
-      ( const Fun& fun  , const Type*           o ) { return fun ( o ) ; }
-      static typename Fun::result_type __call__
-      ( const Fun& fun  , const SmartRef<Type>& o ) { return fun ( o ) ; }
+      static auto __call__ ( const Fun& fun  , const Type*           o )
+      { return fun ( o ) ; }
+      static auto __call__ ( const Fun& fun  , const SmartRef<Type>& o )
+      { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static std::vector<typename Fun::result_type> __rrshift__
-      ( const Fun& fun  , const typename Type::ConstVector& o )
+      static auto __rrshift__( const Fun& fun, const typename Type::ConstVector& o )
       { return o >> fun  ; }
       // __rrshift__
-      static std::vector<typename Fun::result_type> __rrshift__
-      ( const Fun& fun  , const typename Type::Vector&      o )
+      static auto __rrshift__( const Fun& fun, const typename Type::Vector& o )
       { return o >> fun  ; }
       // __rrshift__
-      static typename Fun::result_type              __rrshift__
-      ( const Fun& fun  , const Type*           o ) { return fun ( o ) ; }
+      static auto __rrshift__ ( const Fun& fun  , const Type*           o )
+      { return fun ( o ) ; }
       // __rrshift__
-      static typename Fun::result_type              __rrshift__
-      ( const Fun& fun  , const SmartRef<Type>& o ) { return fun ( o ) ; }
+      static auto __rrshift__ ( const Fun& fun  , const SmartRef<Type>& o )
+      { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -114,18 +112,18 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      static typename Fun::result_type __call__
+      static auto                      __call__
       ( const Fun& fun  , const Type*                       o ) { return fun ( o ) ; }
-      static typename Fun::result_type __call__
+      static auto                      __call__
       ( const Fun& fun  , const SmartRef<Type>&             o ) { return fun ( o ) ; }
       // ======================================================================
       static typename Type::ConstVector __rrshift__
       ( const Fun& fun  , const typename Type::ConstVector& o ) { return o >> fun  ; }
       static typename Type::Vector      __rrshift__
       ( const Fun& fun  , const typename Type::Vector&      o ) { return o >> fun  ; }
-      static typename Fun::result_type  __rrshift__
+      static auto                       __rrshift__
       ( const Fun& fun  , const Type*                       o ) { return fun ( o ) ; }
-      static typename Fun::result_type  __rrshift__
+      static auto                       __rrshift__
       ( const Fun& fun  , const SmartRef<Type>&             o ) { return fun ( o ) ; }
       // ======================================================================
       static LoKi::FunctorFromFunctor<const Type*,bool> __rshift__

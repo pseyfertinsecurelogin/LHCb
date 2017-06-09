@@ -40,7 +40,7 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <typename TYPE,typename TYPE2, typename ... Args>
-  inline typename LoKi::Functor<TYPE,TYPE2>::result_type
+  inline TYPE2
   apply  ( const LoKi::Functor<TYPE,TYPE2>& f, Args&&... a )
   { return f ( std::forward<Args>(a)... ) ; }
   // ==========================================================================
@@ -61,7 +61,7 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline typename LoKi::Functor<TYPE,TYPE2>::result_type
+  inline TYPE2
   apply  ( const LoKi::FunctorFromFunctor<TYPE,TYPE2>&  f ,
            typename LoKi::Functor<TYPE,TYPE2>::argument a )
   { return apply ( f.fun() , a ) ; }
@@ -82,7 +82,7 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline typename LoKi::Functor<TYPE,TYPE2>::result_type
+  inline TYPE2
   apply  ( const LoKi::Functor<TYPE,TYPE2>&              f ,
            typename LoKi::Functor<TYPE*,TYPE2>::argument a )
   { return apply ( f , *a ) ; }
@@ -103,7 +103,7 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline typename LoKi::Functor<TYPE,TYPE2>::result_type
+  inline TYPE2
   apply  ( const LoKi::Functor<TYPE,TYPE2>&                    f ,
            typename LoKi::Functor<const TYPE*,TYPE2>::argument a )
   { return apply ( f , *a ) ; }
@@ -124,7 +124,7 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline typename LoKi::Functor<TYPE*,TYPE2>::result_type
+  inline TYPE2
   apply  ( const LoKi::Functor<TYPE*,TYPE2>&            f ,
            typename LoKi::Functor<TYPE,TYPE2>::argument a )
   { return apply ( f , &a ) ; }
@@ -145,7 +145,7 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline typename LoKi::Functor<const TYPE*,TYPE2>::result_type
+  inline TYPE2
   apply  ( const LoKi::Functor<const TYPE*,TYPE2>&      f ,
            typename LoKi::Functor<TYPE,TYPE2>::argument a )
   { return apply ( f , &a ) ; }
@@ -166,7 +166,7 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline typename LoKi::Functor<std::vector<TYPE>,TYPE2>::result_type
+  inline TYPE2
   apply  ( const LoKi::Functor<std::vector<TYPE>,TYPE2>& f ,
            typename LoKi::Functor<TYPE,TYPE2>::argument  a )
   { return apply ( f , std::vector<TYPE> ( 1 , a ) ) ; }
@@ -294,8 +294,7 @@ namespace LoKi
   }
   // ==============================================================================
   template <class CONTAINER, class TYPEI, class TYPE2>
-  inline
-  typename LoKi::Functor<std::vector<TYPEI>,TYPE2>::result_type
+  inline TYPE2
   apply ( const LoKi::Functor<std::vector<TYPEI>,TYPE2>& o ,
           const Gaudi::Range_<CONTAINER>&                a )
   {
@@ -303,8 +302,7 @@ namespace LoKi
   }
   // ==========================================================================
   template <class CONTAINER, class TYPEI, class TYPE2>
-  inline
-  typename LoKi::Functor<std::vector<TYPEI>,TYPE2>::result_type
+  inline TYPE2
   apply ( const LoKi::Functor<std::vector<TYPEI>,TYPE2>& o ,
           const Gaudi::NamedRange_<CONTAINER>&           a )
   {
@@ -330,7 +328,7 @@ namespace LoKi
   }
   template <typename F, typename = typename details::is_functor<F>>
   details::Apply<F> Apply(F&& fun) { return {std::forward<F>(fun)}; }
-  // C++14 (gcc>=5): 
+  // C++14 (gcc>=5):
   // auto Apply = [](auto&& f) { return [f=decltype(f)(f)](auto&& ... arg) { return LoKi::apply(f,std::forward<decltype(arg)>(arg)...); } }
 
   // ==========================================================================

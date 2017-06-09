@@ -93,13 +93,13 @@ LoKi::Random::Numbers::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Random::Numbers::result_type
-LoKi::Random::Numbers::operator()
-  ( LoKi::Random::Numbers::argument /* a */ ) const { return shoot() ; }
+double
+LoKi::Random::Numbers::operator() ( LoKi::Random::Numbers::argument  ) const
+{ return shoot() ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Random::Numbers::result_type
+double
 LoKi::Random::Numbers::shoot() const
 {
   // everything is ok ? SHOOT!
@@ -125,9 +125,8 @@ LoKi::Random::Numbers::shoot() const
 // ============================================================================
 // constructor  from the descriptor and the service
 // ============================================================================
-LoKi::Random::Uniform::Uniform
-( const Rndm::Flat& flat    ,
-  IRndmGenSvc*      service )
+LoKi::Random::Uniform::Uniform ( const Rndm::Flat& flat    ,
+                                 IRndmGenSvc*      service )
   : LoKi::AuxFunBase  ( std::make_tuple ( flat.minimum() , flat.maximum()  ) )
   , LoKi::Random::Numbers ( flat , service )
   , m_flat ( flat )
@@ -135,9 +134,8 @@ LoKi::Random::Uniform::Uniform
 // ============================================================================
 // constructor  from the descriptor and the service
 // ============================================================================
-LoKi::Random::Uniform::Uniform
-( IRndmGenSvc*      service ,
-  const Rndm::Flat& flat    )
+LoKi::Random::Uniform::Uniform ( IRndmGenSvc*      service ,
+                                 const Rndm::Flat& flat    )
   : LoKi::AuxFunBase  ( std::make_tuple ( flat.minimum() , flat.maximum()  ) )
   , LoKi::Random::Numbers ( flat , service )
   , m_flat ( flat )
@@ -145,10 +143,9 @@ LoKi::Random::Uniform::Uniform
 // ============================================================================
 // constructor from low, high and service
 // ============================================================================
-LoKi::Random::Uniform::Uniform
-( const double      low     ,
-  const double      high    ,
-  IRndmGenSvc*      service )
+LoKi::Random::Uniform::Uniform ( const double      low     ,
+                                 const double      high    ,
+                                 IRndmGenSvc*      service )
   : LoKi::AuxFunBase  ( std::tie ( low , high  ) )
   , LoKi::Random::Numbers ( Rndm::Flat ( low , high ) , service )
   , m_flat ( low , high )
@@ -156,10 +153,9 @@ LoKi::Random::Uniform::Uniform
 // ============================================================================
 // constructor from service , low and high
 // ============================================================================
-LoKi::Random::Uniform::Uniform
-( IRndmGenSvc*      service ,
-  const double      low     ,
-  const double      high    )
+LoKi::Random::Uniform::Uniform ( IRndmGenSvc*      service ,
+                                 const double      low     ,
+                                 const double      high    )
   : LoKi::AuxFunBase  ( std::tie ( low , high  ) )
   , LoKi::Random::Numbers ( Rndm::Flat ( low , high ) , service )
   , m_flat ( low , high )
@@ -259,9 +255,8 @@ LoKi::Random::Rand::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Random::Rand::result_type
-LoKi::Random::Rand::operator()
-  ( LoKi::Random::Rand::argument /* a */ ) const
+double
+LoKi::Random::Rand::operator()( LoKi::Random::Rand::argument /* a */ ) const
 {
   double res = rand()  ;
   res /= RAND_MAX ;
@@ -309,8 +304,8 @@ LoKi::Random::Blind::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Random::Blind::result_type
-LoKi::Random::Blind::operator() ( /* LoKi::Random::Blind::argument a */ ) const
+double
+LoKi::Random::Blind::operator() (  ) const
 { return m_result ; }
 // ============================================================================
 // OPTIONAL: just a nice printout
@@ -353,7 +348,7 @@ LoKi::Random::XBlind::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Random::XBlind::result_type
+double
 LoKi::Random::XBlind::operator() ( LoKi::Random::XBlind::argument a ) const
 { return a + m_blind () ; }
 // ============================================================================

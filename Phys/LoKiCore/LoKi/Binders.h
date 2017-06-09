@@ -79,13 +79,13 @@ namespace LoKi
         , m_fun   ( right.m_fun   )
       {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Binder1st* clone() const { return new Binder1st(*this) ; }
+      Binder1st* clone() const override { return new Binder1st(*this) ; }
       /// MANDATORY: the only one essential method
-      virtual typename LoKi::Functor<TYPE2,TYPE3>::result_type
-      operator() ( typename LoKi::Functor<TYPE2,TYPE3>::argument a ) const
+      TYPE3
+      operator() ( typename LoKi::Functor<TYPE2,TYPE3>::argument a ) const override
       { return m_fun.fun ( Holder_ ( m_first , a ) ) ; }
       /// OPTIONAL :: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << "Bind1st(" << m_fun << ")" ; }
     private:
       // ======================================================================
@@ -133,21 +133,14 @@ namespace LoKi
         , m_second ( value )
         , m_fun    ( fun   )
       {}
-      /// copy constructor
-      Binder2nd ( const Binder2nd& right )
-        : LoKi::AuxFunBase      ( right )
-        , LoKi::Functor<TYPE1,TYPE3> ( right )
-        , m_second ( right.m_second )
-        , m_fun    ( right.m_fun    )
-      {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Binder2nd* clone() const { return new Binder2nd(*this) ; }
+      Binder2nd* clone() const override { return new Binder2nd(*this) ; }
       /// MANDATORY: the only one essential method
-      virtual typename LoKi::Functor<TYPE1,TYPE3>::result_type
-      operator() ( typename LoKi::Functor<TYPE1,TYPE3>::argument a ) const
+      TYPE3
+      operator() ( typename LoKi::Functor<TYPE1,TYPE3>::argument a ) const override
       { return m_fun.fun ( Holder_ ( a , m_second ) ) ; }
       /// OPTIONAL :: nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << "Bind2nd(" << m_fun << ")" ; }
       // ======================================================================
     private:

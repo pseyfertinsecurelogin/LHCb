@@ -47,7 +47,6 @@ namespace LoKi
       // ======================================================================
       typedef LoKi::Functor<TYPE1,TYPE2>                               Fun_ ;
       typedef typename Fun_::argument                              argument ;
-      typedef typename Fun_::result_type                        result_type ;
       // ======================================================================
     public:
       // ======================================================================
@@ -86,7 +85,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Dump1_* clone() const override { return new Dump1_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override;
+      TYPE2 operator() ( argument a ) const override;
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -104,7 +103,7 @@ namespace LoKi
     } ;
     // ========================================================================
     template <class TYPE1,class TYPE2>
-    typename LoKi::Functor<TYPE1,TYPE2>::result_type
+    TYPE2
     LoKi::Functors::Dump1_<TYPE1,TYPE2>::operator()
       ( typename LoKi::Functor<TYPE1,TYPE2>::argument a ) const
     {
@@ -136,14 +135,10 @@ namespace LoKi
     }
     // ========================================================================
     template <>
-    Dump1_<double,bool>::result_type
-    Dump1_<double,bool>::operator()
-      ( Dump1_<double,bool>::argument a ) const ;
+    bool Dump1_<double,bool>::operator() ( double a ) const ;
     // ========================================================================
     template <>
-    Dump1_<double,double>::result_type
-    Dump1_<double,double>::operator()
-      ( Dump1_<double,double>::argument a ) const ;
+    double Dump1_<double,double>::operator() ( double a ) const ;
     // ========================================================================
   } //                                          end of namesapce LoKi::Functors
   // ==========================================================================

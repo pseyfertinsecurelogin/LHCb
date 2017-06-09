@@ -1,6 +1,8 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include <numeric>
+// ============================================================================
 // GaudiAlg
 // ============================================================================
 #include "GaudiAlg/GaudiAlgorithm.h"
@@ -23,10 +25,6 @@
  *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
  *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
- *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 namespace LoKi
@@ -81,31 +79,22 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2010-02-16
      */
-    class Item
+    class Item final
     {
     public:
       // ====================================================================
       // the default constructor
-      Item ()
-        : m_fun  ( LoKi::BasicFunctors<void>::Constant ( -1.e+10 ) )
-        , m_cnt  ( 0 )
-      {}
-      // ====================================================================
-    public:
+      Item () = default;
       // ====================================================================
       /// the variable name
       std::string                                                 m_name ;
       /// the functor itself
-      LoKi::Assignable<LoKi::BasicFunctors<void>::Function>::Type m_fun  ;
+      LoKi::Assignable<LoKi::BasicFunctors<void>::Function>::Type m_fun  = LoKi::BasicFunctors<void>::Constant ( -1.e+10 );
       /// helper counter
-      StatEntity*                                                 m_cnt  ;
+      StatEntity*                                                 m_cnt  = nullptr;
       // ====================================================================
     } ;
     // ======================================================================
-    /// the actual type of {"name":"functor"} map
-    typedef std::map<std::string,std::string>  Map   ;
-    /// the actual type of containter of items
-    typedef std::vector<Item>                  Items ;
     // ========================================================================
   protected:
     // ========================================================================
@@ -169,21 +158,17 @@ namespace LoKi
     /// the preambulo
     std::string preambulo() const
     {
-      const std::vector<std::string>& lines  = m_preambulo ;
-      //
-      std::string result ;
-      for ( auto iline = lines.begin() ; lines.end() != iline ; ++iline )
-      {
-        if ( lines.begin() != iline ) { result += "\n" ; }
-        result += (*iline) ;
-      }
-      return result ;
+      const std::vector<std::string>& lines = m_preambulo ;
+      return std::accumulate( lines.begin(), lines.end(),
+                              std::string{},
+                              [](std::string r, const std::string& line)
+                              { return r.empty() ? line : r + '\n' + line; } );
     }
     // ========================================================================
   private:
     // ========================================================================
     /// map pf variables
-    Map                      m_map       ; // map pf variables
+    std::map<std::string,std::string> m_map       ; // map pf variables
     /// the preambulo
     std::vector<std::string> m_preambulo ; // the preambulo
     ///  factory for functor decoding
@@ -191,7 +176,7 @@ namespace LoKi
     ///  TES-location of counters
     std::string              m_location  ; //  TES-location of counters
     /// decoded vector of functors/items
-    Items                    m_items     ;
+    std::vector<Item>        m_items     ;
     // ========================================================================
   };
   // ==========================================================================
@@ -289,7 +274,6 @@ StatusCode LoKi::CounterAlg::initialize ()
 StatusCode LoKi::CounterAlg::finalize   ()
 {
   m_items . clear() ;
-  //
   return GaudiAlgorithm::finalize () ;
 }
 // ============================================================================

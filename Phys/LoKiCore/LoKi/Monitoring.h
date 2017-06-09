@@ -92,7 +92,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Counter* clone() const override { return new Counter(*this); }
       /// MANDATORY: the only one essential method:
-      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+      TYPE2 operator()
         ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       {
         const auto result = m_cut.fun ( a ) ;
@@ -141,10 +141,9 @@ namespace LoKi
         { m_stat = LoKi::Monitoring::getCounter ( m_cntdef ) ; }
       }
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Counter* clone() const { return new Counter(*this); }
+      Counter* clone() const override { return new Counter(*this); }
       /// MANDATORY: the only one essential method:
-      virtual typename LoKi::Functor<void,TYPE2>::result_type operator()
-        ( /* argument a */ ) const
+      TYPE2 operator()(  ) const override
       {
         const auto result = m_cut.fun ( /* a */ ) ;
         /// get counter if needed
@@ -237,7 +236,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Plot* clone() const override { return new Plot(*this); }
       /// MANDATORY: the only one essential method:
-      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+      TYPE2 operator()
         ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       {
         // evaluate the functor
@@ -296,12 +295,11 @@ namespace LoKi
         , m_histo   ( histo )
       {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Plot* clone() const { return new Plot(*this); }
+      Plot* clone() const override { return new Plot(*this); }
       /// MANDATORY: the only one essential method:
-      virtual typename LoKi::Functor<void,TYPE2>::result_type operator()
-        ( /* argument a */ ) const
+      TYPE2 operator() (  ) const override
       {
-        const auto result = m_fun.fun ( /* a */ ) ;
+        const auto result = m_fun.fun ( ) ;
         // try to load the histo
         if ( !m_histo () && m_hdef.valid() )
         { m_histo = LoKi::HistoBook::book ( m_hdef ) ; }
@@ -387,7 +385,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Printer* clone() const override { return new Printer ( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+      TYPE2 operator()
         ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       {
         // evaluat ethe underlying functor:
@@ -457,10 +455,9 @@ namespace LoKi
         , m_prefix ( prefix ) {}
       // ======================================================================
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Printer* clone() const { return new Printer ( *this ) ; }
+      Printer* clone() const override { return new Printer ( *this ) ; }
       /// MANDATORY: the only one essential method
-      virtual typename LoKi::Functor<void,TYPE2>::result_type operator()
-        ( /* argument a */ ) const
+      TYPE2 operator() ( ) const override
       {
         // evaluate the underlying functor:
         const auto result = m_fun.fun ( /* a */ )        ;
@@ -471,10 +468,10 @@ namespace LoKi
         return result ;
       }
       /// OPTIONAL: just a nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return m_fun.fillStream ( s ) ; }
       /// OPTIONAL: delegate ID:
-      virtual std::size_t id() const { return m_fun.id() ; }
+      std::size_t id() const override { return m_fun.id() ; }
       // ======================================================================
     private:
       // ======================================================================

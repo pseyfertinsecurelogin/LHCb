@@ -52,6 +52,8 @@
 // ============================================================================
 namespace
 {
+  struct DecRef { void operator()(PyObject* p) { Py_XDECREF(p); } };
+  using PyObjPtr = std::unique_ptr<PyObject,DecRef>;
   // ==========================================================================
   /// replace all new lines with "newline+comments"
   std::string addComment ( std::string str )
@@ -208,15 +210,11 @@ StatusCode LoKi::Hybrid::Base::finalize  ()
 namespace
 {
   // ==========================================================================
-  std::string toString ( PyObject* o )
+  std::string toString ( PyObject& o )
   {
-    if ( !o ) { return "NULL"; }
     PyGILGuard guard{};
-    PyObject* str = PyObject_Str ( o ) ;
-    std::string tmp ;
-    if ( str ) { tmp = PyString_AS_STRING (str ) ; }
-    Py_XDECREF ( str ) ;
-    return tmp ;
+    PyObjPtr str{ PyObject_Str ( &o ) };
+    return str ? std::string{PyString_AS_STRING(str.get())} : std::string{};
   }
   // ==========================================================================
 }
@@ -276,9 +274,9 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
     PyErr_Fetch              ( &o1 , &o2 , &o3 ) ;
     PyErr_NormalizeException ( &o1 , &o2 , &o3 ) ;
 
-    if ( o1 ) { error () << " PyError Type      : " << toString(o1) << endmsg; }
-    if ( o2 ) { error () << " PyError Value     : " << toString(o2) << endmsg; }
-    if ( o3 ) { error () << " PyError Traceback : " << toString(o3) << endmsg; }
+    if ( o1 ) { error () << " PyError Type      : " << toString(*o1) << endmsg; }
+    if ( o2 ) { error () << " PyError Value     : " << toString(*o2) << endmsg; }
+    if ( o3 ) { error () << " PyError Traceback : " << toString(*o3) << endmsg; }
 
     PyObject* pyErr = o2 ;
 
@@ -291,13 +289,13 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
          PyErr_GivenExceptionMatches ( o2 , PyExc_AttributeError )  )
     {
       //
-      PyObject* filename = PyObject_GetAttrString  ( pyErr , "filename"            ) ;
-      PyObject* lineno   = PyObject_GetAttrString  ( pyErr , "lineno"              ) ;
-      PyObject* offset   = PyObject_GetAttrString  ( pyErr , "offset"              ) ;
-      PyObject* text     = PyObject_GetAttrString  ( pyErr , "text"                ) ;
-      PyObject* prntfal  = PyObject_GetAttrString  ( pyErr , "print_file_and_line" ) ;
-      PyObject* msg      = PyObject_GetAttrString  ( pyErr , "msg"                 ) ;
-      PyObject* message  = PyObject_GetAttrString  ( pyErr , "message"             ) ;
+      PyObjPtr filename { PyObject_GetAttrString  ( pyErr , "filename"            ) };
+      PyObjPtr lineno   { PyObject_GetAttrString  ( pyErr , "lineno"              ) };
+      PyObjPtr offset   { PyObject_GetAttrString  ( pyErr , "offset"              ) };
+      PyObjPtr text     { PyObject_GetAttrString  ( pyErr , "text"                ) };
+      PyObjPtr prntfal  { PyObject_GetAttrString  ( pyErr , "print_file_and_line" ) };
+      PyObjPtr msg      { PyObject_GetAttrString  ( pyErr , "msg"                 ) };
+      PyObjPtr message  { PyObject_GetAttrString  ( pyErr , "message"             ) };
       //
       long        _offset = -1 ;
       long        _lineno = -1 ;
@@ -305,38 +303,38 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
       std::string _msg         ;
       std::string _message     ;
 
-      if ( 0 != filename )
-      { info () << "Filename: " << toString ( filename ) << endmsg ; }
-      if ( 0 != lineno   ) {
-        info () << "Lineno  : " << toString ( lineno   ) << endmsg ;
-        if ( PyInt_Check ( lineno ) ) { _lineno = PyInt_AsLong ( lineno ) ;  }
+      if ( filename )
+      { info () << "Filename: " << toString ( *filename ) << endmsg ; }
+      if ( lineno   ) {
+        info () << "Lineno  : " << toString ( *lineno ) << endmsg ;
+        if ( PyInt_Check ( lineno.get() ) ) { _lineno = PyInt_AsLong ( lineno.get() ) ;  }
       }
-      if ( 0 != offset   ) {
-        info () << "offset  : " << toString ( offset   ) << endmsg ;
-        if ( PyInt_Check ( offset ) ) { _offset = PyInt_AsLong ( offset ) ;  }
+      if ( offset   ) {
+        info () << "offset  : " << toString ( *offset ) << endmsg ;
+        if ( PyInt_Check ( offset.get() ) ) { _offset = PyInt_AsLong ( offset.get() ) ;  }
       }
-      if ( 0 != text     ) {
-        _text = toString ( text ) ;
+      if ( text     ) {
+        _text = toString ( *text ) ;
         info () << "text    : " << _text << endmsg ;
       }
-      if ( 0 != msg      ) {
-        _msg  = toString ( msg ) ;
+      if ( msg      ) {
+        _msg  = toString ( *msg ) ;
         info () << "msg     : " << _msg  << endmsg ;
       }
-      if ( 0 != message  ) {
-        _message = toString ( message ) ;
+      if ( message  ) {
+        _message = toString ( *message ) ;
         info () << "message : " << _message << endmsg ;
       }
-      if ( 0 != prntfal  ) {
-        info () << "prntfal : " << toString( prntfal )  << endmsg ;
+      if ( prntfal  ) {
+        info () << "prntfal : " << toString( *prntfal )  << endmsg ;
       }
 
       {
         MsgStream& stream = error ()  ;
         stream
           << " Python error in Code\n" ;
-        if ( 0 != pyErr  )
-        { stream << "Python error  : " << toString ( pyErr ) << '\n' ; }
+        if ( pyErr  )
+        { stream << "Python error  : " << toString ( *pyErr ) << '\n' ; }
         if ( !_msg.empty()     )
         { stream << "PyErr msg     : " << _msg               << '\n' ; }
         if ( !_message.empty() )
@@ -347,14 +345,6 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
         { stream  << "      " << std::string(_offset,' ') << '^'      ; }
         stream<< endmsg ;
       }
-
-      Py_XDECREF ( message  ) ;
-      Py_XDECREF ( msg      ) ;
-      Py_XDECREF ( prntfal  ) ;
-      Py_XDECREF ( text     ) ;
-      Py_XDECREF ( offset   ) ;
-      Py_XDECREF ( lineno   ) ;
-      Py_XDECREF ( filename ) ;
 
       // restore for printout
       PyErr_Restore ( o1 , o2 , o3 ) ;
@@ -368,9 +358,9 @@ StatusCode LoKi::Hybrid::Base::executeCode ( const std::string& pycode ) const
     error ()  << "End of native Python printout to stderr" << endmsg ;
   }
 
-  if ( 0 != globals && globnew ) { Py_XDECREF( globals ) ; }
+  if ( globals && globnew )      { Py_XDECREF( globals ) ; }
 
-  if ( 0 != result             ) { Py_XDECREF ( result )      ; }
+  if ( result )                  { Py_XDECREF ( result )      ; }
   else if ( PyErr_Occurred()   ) { PyErr_Print() ; ok = false ; }
   else                           {                 ok = false ; }
 
