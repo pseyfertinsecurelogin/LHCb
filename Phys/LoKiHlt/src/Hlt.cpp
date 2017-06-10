@@ -35,9 +35,7 @@ LoKi::HLT::HasDecision::HasDecision
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::HLT::HasDecision::result_type
-LoKi::HLT::HasDecision::operator()
-  ( LoKi::HLT::HasDecision::argument a ) const
+bool LoKi::HLT::HasDecision::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   return
@@ -99,9 +97,7 @@ LoKi::HLT::PassDecision::PassDecision
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::HLT::PassDecision::result_type
-LoKi::HLT::PassDecision::operator()
-  ( LoKi::HLT::PassDecision::argument a ) const
+bool LoKi::HLT::PassDecision::operator()( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   //
@@ -115,9 +111,7 @@ LoKi::HLT::PassDecision::operator()
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::HLT::Size::result_type
-LoKi::HLT::Size::operator()
-  ( LoKi::HLT::Size::argument a ) const
+double LoKi::HLT::Size::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   return a -> size() ;
@@ -125,9 +119,7 @@ LoKi::HLT::Size::operator()
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::HLT::NPass::result_type
-LoKi::HLT::NPass::operator()
-  ( LoKi::HLT::NPass::argument a ) const
+double LoKi::HLT::NPass::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   return std::count_if( std::begin(*a), std::end(*a),
@@ -138,9 +130,7 @@ LoKi::HLT::NPass::operator()
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::HLT::Decision::result_type
-LoKi::HLT::Decision::operator()
-  ( LoKi::HLT::Decision::argument a ) const
+bool LoKi::HLT::Decision::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   return std::any_of( std::begin(*a), std::end(*a),
@@ -161,9 +151,7 @@ LoKi::HLT::DecisionBut::DecisionBut
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::HLT::DecisionBut::result_type
-LoKi::HLT::DecisionBut::operator()
-  ( LoKi::HLT::DecisionBut::argument a ) const
+bool LoKi::HLT::DecisionBut::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   //
@@ -232,9 +220,8 @@ LoKi::HLT::HasDecisionSubString::clone() const
 // ============================================================================
 // the actual evaluation
 // ============================================================================
-LoKi::HLT::HasDecisionSubString::result_type
-LoKi::HLT::HasDecisionSubString::operator()
-  ( LoKi::HLT::HasDecisionSubString::argument a ) const
+bool
+LoKi::HLT::HasDecisionSubString::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // loop over all selecttions and match the names
@@ -269,9 +256,8 @@ LoKi::HLT::PassDecisionSubString::clone() const
 // ============================================================================
 // the actual evaluation
 // ============================================================================
-LoKi::HLT::PassDecisionSubString::result_type
-LoKi::HLT::PassDecisionSubString::operator()
-  ( LoKi::HLT::PassDecisionSubString::argument a ) const
+bool
+LoKi::HLT::PassDecisionSubString::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // loop over all selecttions and match the names
@@ -308,9 +294,8 @@ LoKi::HLT::DecisionButSubString::clone() const
 // ============================================================================
 // the actual evaluation
 // ============================================================================
-LoKi::HLT::DecisionButSubString::result_type
-LoKi::HLT::DecisionButSubString::operator()
-  ( LoKi::HLT::DecisionButSubString::argument a ) const
+bool
+LoKi::HLT::DecisionButSubString::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // loop over all selections and match the names
@@ -345,9 +330,8 @@ LoKi::HLT::HasDecisionRegex::clone() const
 // ============================================================================
 // the actual evaluation
 // ============================================================================
-LoKi::HLT::HasDecisionRegex::result_type
-LoKi::HLT::HasDecisionRegex::operator()
-  ( LoKi::HLT::HasDecisionRegex::argument a ) const
+bool
+LoKi::HLT::HasDecisionRegex::operator()( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // loop over all selections and match the names
@@ -380,9 +364,8 @@ LoKi::HLT::PassDecisionRegex::clone() const
 // ============================================================================
 // the actual evaluation
 // ============================================================================
-LoKi::HLT::PassDecisionRegex::result_type
-LoKi::HLT::PassDecisionRegex::operator()
-  ( LoKi::HLT::PassDecisionRegex::argument a ) const
+bool
+LoKi::HLT::PassDecisionRegex::operator()( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // loop over all selections and match the names
@@ -418,9 +401,8 @@ LoKi::HLT::DecisionButRegex::clone() const
 // ============================================================================
 // the actual evaluation
 // ============================================================================
-LoKi::HLT::DecisionButRegex::result_type
-LoKi::HLT::DecisionButRegex::operator()
-  ( LoKi::HLT::DecisionButRegex::argument a ) const
+bool
+LoKi::HLT::DecisionButRegex::operator()( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // loop over all selections and match the names
@@ -453,8 +435,8 @@ LoKi::HLT::ErrorBits* LoKi::HLT::ErrorBits::clone () const
 // ============================================================================
 // MANDATORY: the only one essential methor
 // ============================================================================
-LoKi::HLT::ErrorBits::result_type
-LoKi::HLT::ErrorBits::operator() ( LoKi::HLT::ErrorBits::argument a ) const
+double
+LoKi::HLT::ErrorBits::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // find the selection by name
@@ -488,9 +470,8 @@ LoKi::HLT::NonTurboPass* LoKi::HLT::NonTurboPass::clone () const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::HLT::NonTurboPass::result_type
-LoKi::HLT::NonTurboPass::operator()
-  ( LoKi::HLT::NonTurboPass::argument a ) const
+bool
+LoKi::HLT::NonTurboPass::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // loop over all selections and match the names
@@ -517,9 +498,7 @@ LoKi::HLT::TurboPass* LoKi::HLT::TurboPass::clone () const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::HLT::TurboPass::result_type
-LoKi::HLT::TurboPass::operator()
-  ( LoKi::HLT::TurboPass::argument a ) const
+bool LoKi::HLT::TurboPass::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // loop over all selections and match the names
@@ -546,9 +525,8 @@ LoKi::HLT::ExecutionStage* LoKi::HLT::ExecutionStage::clone () const
 // ============================================================================
 // MANDATORY: the only one essential methor
 // ============================================================================
-LoKi::HLT::ExecutionStage::result_type
-LoKi::HLT::ExecutionStage::operator()
-  ( LoKi::HLT::ExecutionStage::argument a ) const
+double
+LoKi::HLT::ExecutionStage::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // find the selection by name
@@ -582,8 +560,8 @@ LoKi::HLT::NumberOfCandidates* LoKi::HLT::NumberOfCandidates::clone () const
 // ============================================================================
 // MANDATORY: the only one essential methor
 // ============================================================================
-LoKi::HLT::NumberOfCandidates::result_type
-LoKi::HLT::NumberOfCandidates::operator() ( LoKi::HLT::NumberOfCandidates::argument a ) const
+double
+LoKi::HLT::NumberOfCandidates::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // find the selection by name
@@ -617,9 +595,7 @@ LoKi::HLT::Saturated::clone() const { return new Saturated(*this) ; }
 // ============================================================================
 // MANDATORY: the only one essential methor
 // ============================================================================
-LoKi::HLT::Saturated::result_type
-LoKi::HLT::Saturated::operator()
-  ( LoKi::HLT::Saturated::argument a ) const
+bool LoKi::HLT::Saturated::operator()( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // find the selection by name
@@ -670,13 +646,12 @@ LoKi::HLT::CountErrorBits::clone() const
 // ============================================================================
 // MANDATORY: the only one essential methor
 // ============================================================================
-LoKi::HLT::CountErrorBits::result_type
-LoKi::HLT::CountErrorBits::operator()
-  ( LoKi::HLT::CountErrorBits::argument a ) const
+double
+LoKi::HLT::CountErrorBits::operator() ( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   // loop over the lines
-  result_type result = 0 ;
+  double result = 0 ;
   for ( const auto& line : m_lines )
   {
     // find the selection by name
@@ -745,9 +720,8 @@ LoKi::HLT::CountErrorBitsRegex::clone() const
 // ============================================================================
 // MANDATORY: the only one essential methor
 // ============================================================================
-LoKi::HLT::CountErrorBitsRegex::result_type
-LoKi::HLT::CountErrorBitsRegex::operator()
-  ( LoKi::HLT::CountErrorBitsRegex::argument a ) const
+double
+LoKi::HLT::CountErrorBitsRegex::operator()( const LHCb::HltDecReports* a ) const
 {
   Assert ( a , "const LHCb::HltDecReports* points to NULL!" ) ;
   //
@@ -783,9 +757,7 @@ LoKi::HLT::HltRoutingBits::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::HLT::HltRoutingBits::result_type
-LoKi::HLT::HltRoutingBits::operator()
-  ( LoKi::HLT::HltRoutingBits::argument /* a */ ) const
+bool LoKi::HLT::HltRoutingBits::operator() ( const LHCb::HltDecReports* ) const
 {
   return m_bits() ;
 }

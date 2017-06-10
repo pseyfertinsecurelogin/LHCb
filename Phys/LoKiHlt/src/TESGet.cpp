@@ -22,8 +22,7 @@ namespace
     // ========================================================================
     _C ( const LoKi::TES::Get&                  obj ,
          const LoKi::Functor<const TYPE*,bool>& cut )
-      : LoKi::Functor<void,bool> ()
-      , m_get ( obj )
+      : m_get ( obj )
       , m_cut ( cut )
     {}
     // ========================================================================
@@ -40,7 +39,7 @@ namespace
         Gaudi::Utils::toCpp ( m_cut ) + ") " ;
     }
     // ========================================================================
-    result_type operator() ( /* argument */ ) const override
+    bool operator() (  ) const override
     {
       //
       if ( !m_t || !sameEvent() )
@@ -73,8 +72,7 @@ namespace
     // ========================================================================
     _F ( const LoKi::TES::Get&                    obj ,
          const LoKi::Functor<const TYPE*,double>& fun )
-      : LoKi::Functor<void,double> ()
-      , m_get ( obj )
+      : m_get ( obj )
       , m_fun ( fun )
     {}
     // ========================================================================
@@ -85,13 +83,12 @@ namespace
     // ========================================================================
     std::string toCpp() const override
     {
-      return
-        "LoKi::TES::TESGet::get( "    +
-        Gaudi::Utils::toCpp ( m_get ) + ", " +
-        Gaudi::Utils::toCpp ( m_fun ) + ") " ;
+      return "LoKi::TES::TESGet::get( "    +
+             Gaudi::Utils::toCpp ( m_get ) + ", " +
+             Gaudi::Utils::toCpp ( m_fun ) + ") " ;
     }
     // ========================================================================
-    result_type operator() ( /* argument */ ) const override
+    double operator() (  ) const override
     {
       //
       if ( !m_t || !sameEvent() )
@@ -120,40 +117,34 @@ namespace
 } // end of anonymous namespace
 // ============================================================================
 LoKi::FunctorFromFunctor<void,bool>
-LoKi::TES::TESGet::get
-( const LoKi::TES::Get&                          obj ,
-  const LoKi::Functor<const LHCb::ODIN*,bool>&   cut )
-{ return _C<LHCb::ODIN>          ( obj , cut ) ; }
+LoKi::TES::TESGet::get( const LoKi::TES::Get&                          obj ,
+                        const LoKi::Functor<const LHCb::ODIN*,bool>&   cut )
+{ return _C<LHCb::ODIN>( obj , cut ) ; }
 // ============================================================================
 LoKi::FunctorFromFunctor<void,double>
-LoKi::TES::TESGet::get
-( const LoKi::TES::Get&                            obj ,
-  const LoKi::Functor<const LHCb::ODIN*,double>&   fun )
-{ return _F<LHCb::ODIN>          ( obj , fun ) ; }
+LoKi::TES::TESGet::get( const LoKi::TES::Get&                            obj ,
+                        const LoKi::Functor<const LHCb::ODIN*,double>&   fun )
+{ return _F<LHCb::ODIN>( obj , fun ) ; }
 // ============================================================================
 LoKi::FunctorFromFunctor<void,bool>
-LoKi::TES::TESGet::get
-( const LoKi::TES::Get&                                obj ,
-  const LoKi::Functor<const LHCb::L0DUReport*,bool>&   cut )
-{ return _C<LHCb::L0DUReport>    ( obj , cut ) ; }
+LoKi::TES::TESGet::get ( const LoKi::TES::Get&                                obj ,
+                         const LoKi::Functor<const LHCb::L0DUReport*,bool>&   cut )
+{ return _C<LHCb::L0DUReport>( obj , cut ) ; }
 // ============================================================================
 LoKi::FunctorFromFunctor<void,double>
-LoKi::TES::TESGet::get
-( const LoKi::TES::Get&                                  obj ,
-  const LoKi::Functor<const LHCb::L0DUReport*,double>&   fun )
-{ return _F<LHCb::L0DUReport>    ( obj , fun ) ; }
+LoKi::TES::TESGet::get ( const LoKi::TES::Get&                                  obj ,
+                         const LoKi::Functor<const LHCb::L0DUReport*,double>&   fun )
+{ return _F<LHCb::L0DUReport>( obj , fun ) ; }
 // ============================================================================
 LoKi::FunctorFromFunctor<void,bool>
-LoKi::TES::TESGet::get
-( const LoKi::TES::Get&                                   obj ,
-  const LoKi::Functor<const LHCb::HltDecReports*,bool>&   cut )
-{ return _C<LHCb::HltDecReports> ( obj , cut ) ; }
+LoKi::TES::TESGet::get ( const LoKi::TES::Get&                                   obj ,
+                         const LoKi::Functor<const LHCb::HltDecReports*,bool>&   cut )
+{ return _C<LHCb::HltDecReports>( obj , cut ) ; }
 // ============================================================================
 LoKi::FunctorFromFunctor<void,double>
-LoKi::TES::TESGet::get
-( const LoKi::TES::Get&                                     obj ,
-  const LoKi::Functor<const LHCb::HltDecReports*,double>&   fun )
-{ return _F<LHCb::HltDecReports> ( obj , fun ) ; }
+LoKi::TES::TESGet::get ( const LoKi::TES::Get&                                     obj ,
+                         const LoKi::Functor<const LHCb::HltDecReports*,double>&   fun )
+{ return _F<LHCb::HltDecReports>( obj , fun ) ; }
 // ============================================================================
 
 // ============================================================================
