@@ -37,9 +37,9 @@ namespace LoKi
      *  @date   2011-06-03
      */
     template <>
-    Dump_<const HepMC::GenParticle*>::result_type
+    std::vector<const HepMC::GenParticle*>
     Dump_<const HepMC::GenParticle*>::operator()
-      ( Dump_<const HepMC::GenParticle*>::argument a ) const ;
+      ( const std::vector<const HepMC::GenParticle*>& a ) const ;
     // ========================================================================
     /** template specialization of ``dumpers''
      *  @see LoKi::Functors::Dump1_

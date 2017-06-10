@@ -39,6 +39,18 @@ namespace
    */
   const LHCb::Math::Equal_To<double> s_equal ;
   // ==========================================================================
+  // adjust delta phi into the range of [-180:180]degrees
+  // ============================================================================
+  double  adjust ( double angle )
+  {
+    static constexpr double s_180 = 180 * Gaudi::Units::degree ;
+    static constexpr double s_360 = 360 * Gaudi::Units::degree ;
+    //
+    while ( angle >       s_180 ) { angle -= s_360 ; }
+    while ( angle <  -1 * s_180 ) { angle += s_360 ; }
+    //
+    return angle ;
+  }
 }
 // ============================================================================
 // constructor from one selector
@@ -54,12 +66,8 @@ LoKi::GenParticles::FourMomentum::FourMomentum
 LoKi::GenParticles::FourMomentum::FourMomentum
 ( const LoKi::GenChild::Selector& c1 ,
   const LoKi::GenChild::Selector& c2 )
-  : LoKi::GenTypes::GFunc  ()
-  , m_children ()
-{
-  m_children . push_back ( c1 ) ;
-  m_children . push_back ( c2 ) ;
-}
+: m_children { c1, c2 }
+{ }
 // ============================================================================
 // constructor from three selectors
 // ============================================================================
@@ -67,13 +75,8 @@ LoKi::GenParticles::FourMomentum::FourMomentum
 ( const LoKi::GenChild::Selector& c1 ,
   const LoKi::GenChild::Selector& c2 ,
   const LoKi::GenChild::Selector& c3 )
-  : LoKi::GenTypes::GFunc  ()
-  , m_children ()
-{
-  m_children . push_back ( c1 ) ;
-  m_children . push_back ( c2 ) ;
-  m_children . push_back ( c3 ) ;
-}
+: m_children{ c1, c2, c3 }
+{ }
 // ============================================================================
 // constructor from four selectors
 // ============================================================================
@@ -82,12 +85,8 @@ LoKi::GenParticles::FourMomentum::FourMomentum
   const LoKi::GenChild::Selector& c2 ,
   const LoKi::GenChild::Selector& c3 ,
   const LoKi::GenChild::Selector& c4 )
-{
-  m_children . push_back ( c1 ) ;
-  m_children . push_back ( c2 ) ;
-  m_children . push_back ( c3 ) ;
-  m_children . push_back ( c4 ) ;
-}
+: m_children{ c1, c2, c3, c4 }
+{ }
 // ============================================================================
 // constructor from list of  selectors
 // ============================================================================
@@ -108,10 +107,8 @@ LoKi::GenParticles::FourMomentum::FourMomentum
 LoKi::GenParticles::FourMomentum::FourMomentum
 ( const LoKi::GenTypes::GCuts& c1 ,
   const LoKi::GenTypes::GCuts& c2 )
-{
-  m_children . push_back ( c1 ) ;
-  m_children . push_back ( c2 ) ;
-}
+: m_children{ c1, c2 }
+{ }
 // ============================================================================
 // constructor from three selectors
 // ============================================================================
@@ -119,11 +116,8 @@ LoKi::GenParticles::FourMomentum::FourMomentum
 ( const LoKi::GenTypes::GCuts& c1 ,
   const LoKi::GenTypes::GCuts& c2 ,
   const LoKi::GenTypes::GCuts& c3 )
-{
-  m_children . push_back ( c1 ) ;
-  m_children . push_back ( c2 ) ;
-  m_children . push_back ( c3 ) ;
-}
+: m_children{ c1, c2, c3 }
+{ }
 // ============================================================================
 // constructor from four selectors
 // ============================================================================
@@ -132,12 +126,8 @@ LoKi::GenParticles::FourMomentum::FourMomentum
   const LoKi::GenTypes::GCuts& c2 ,
   const LoKi::GenTypes::GCuts& c3 ,
   const LoKi::GenTypes::GCuts& c4 )
-{
-  m_children . push_back ( c1 ) ;
-  m_children . push_back ( c2 ) ;
-  m_children . push_back ( c3 ) ;
-  m_children . push_back ( c4 ) ;
-}
+: m_children{ c1, c2, c3, c4 }
+{ }
 // ============================================================================
 // base class printput
 // ============================================================================
@@ -180,7 +170,7 @@ LoKi::LorentzVector
 LoKi::GenParticles::FourMomentum::momentum
 ( const HepMC::GenParticle* p ) const
 {
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return empty 4-momentum") ;
     return LoKi::LorentzVector () ;
@@ -190,11 +180,10 @@ LoKi::GenParticles::FourMomentum::momentum
   //
   LoKi::LorentzVector result = LoKi::LorentzVector() ;
   //
-  for (  LoKi::GenChild::Selector::Vector::const_iterator ii = m_children.begin() ;
-         m_children.end() != ii ; ++ii )
+  for ( auto ii = m_children.begin() ; m_children.end() != ii ; ++ii )
   {
     const HepMC::GenParticle* c = ii->child ( p ) ;
-    if ( 0 == c )
+    if ( !c )
     {
       Error ( "daughter HepMC::GenParticle* points to NULL, skip it" ) ;
       continue ;
@@ -249,8 +238,7 @@ double LoKi::GenParticles::FourMomentum::gamma
 // ==========================================================================
 // get the beta*gamma
 // ============================================================================
-double LoKi::GenParticles::FourMomentum::bgamma
-( const LoKi::LorentzVector& lv ) const
+double LoKi::GenParticles::FourMomentum::bgamma( const LoKi::LorentzVector& lv ) const
 {
   //
   const double m = lv.M () ;
@@ -263,19 +251,6 @@ double LoKi::GenParticles::FourMomentum::bgamma
 
 
 // ============================================================================
-// adjust delta phi into the range of [-180:180]degrees
-// ============================================================================
-double  LoKi::GenParticles::FourMomentum::adjust ( double angle ) const
-{
-  static const double s_180 = 180 * Gaudi::Units::degree ;
-  static const double s_360 = 360 * Gaudi::Units::degree ;
-  //
-  while ( angle >       s_180 ) { angle -= s_360 ; }
-  while ( angle <  -1 * s_180 ) { angle += s_360 ; }
-  //
-  return angle ;
-}
-// ============================================================================
 // MANDATORY: clone method ("virtual destructor")
 // ============================================================================
 LoKi::GenParticles::Mass*
@@ -284,12 +259,10 @@ LoKi::GenParticles::Mass::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Mass::result_type
-LoKi::GenParticles::Mass::operator()
-  ( LoKi::GenParticles::Mass::argument p ) const
+double LoKi::GenParticles::Mass::operator()( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return Invalid Mass") ;
     return LoKi::Constants::InvalidMass ;
@@ -316,12 +289,11 @@ LoKi::GenParticles::Energy::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Energy::result_type
-LoKi::GenParticles::Energy::operator()
-  ( LoKi::GenParticles::Energy::argument p ) const
+double LoKi::GenParticles::Energy::operator()
+  ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return Invalid Energy") ;
     return LoKi::Constants::InvalidEnergy ;
@@ -347,12 +319,11 @@ LoKi::GenParticles::Momentum::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Momentum::result_type
-LoKi::GenParticles::Momentum::operator()
-  ( LoKi::GenParticles::Momentum::argument p ) const
+double LoKi::GenParticles::Momentum::operator()
+  ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return Invalid Momentum") ;
     return LoKi::Constants::InvalidMomentum ;
@@ -377,12 +348,11 @@ LoKi::GenParticles::MomentumX::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::MomentumX::result_type
-LoKi::GenParticles::MomentumX::operator()
-  ( LoKi::GenParticles::MomentumX::argument p ) const
+double LoKi::GenParticles::MomentumX::operator()
+  ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return Invalid Momentum") ;
     return LoKi::Constants::InvalidMomentum ;
@@ -406,12 +376,11 @@ LoKi::GenParticles::MomentumY::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::MomentumY::result_type
-LoKi::GenParticles::MomentumY::operator()
-  ( LoKi::GenParticles::MomentumY::argument p ) const
+double LoKi::GenParticles::MomentumY::operator()
+  ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return Invalid Momentum") ;
     return LoKi::Constants::InvalidMomentum ;
@@ -436,12 +405,11 @@ LoKi::GenParticles::MomentumZ::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::MomentumZ::result_type
-LoKi::GenParticles::MomentumZ::operator()
-  ( LoKi::GenParticles::MomentumZ::argument p ) const
+double LoKi::GenParticles::MomentumZ::operator()
+  ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return Invalid Momentum") ;
     return LoKi::Constants::InvalidMomentum ;
@@ -467,12 +435,11 @@ LoKi::GenParticles::TransverseMomentum::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::TransverseMomentum::result_type
-LoKi::GenParticles::TransverseMomentum::operator()
-  ( LoKi::GenParticles::TransverseMomentum::argument p ) const
+double LoKi::GenParticles::TransverseMomentum::operator()
+  ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return Invalid Momentum") ;
     return LoKi::Constants::InvalidMomentum ;
@@ -498,12 +465,11 @@ LoKi::GenParticles::PseudoRapidity::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::PseudoRapidity::result_type
-LoKi::GenParticles::PseudoRapidity::operator()
-  ( LoKi::GenParticles::PseudoRapidity::argument p ) const
+double LoKi::GenParticles::PseudoRapidity::operator()
+  ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return NegativeInfinity") ;
     return LoKi::Constants::NegativeInfinity;
@@ -528,12 +494,11 @@ LoKi::GenParticles::Rapidity::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Rapidity::result_type
-LoKi::GenParticles::Rapidity::operator()
-  ( LoKi::GenParticles::Rapidity::argument p ) const
+double LoKi::GenParticles::Rapidity::operator()
+  ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return NegativeInfinity") ;
     return LoKi::Constants::NegativeInfinity;
@@ -559,12 +524,11 @@ LoKi::GenParticles::Rapidity0::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Rapidity0::result_type
-LoKi::GenParticles::Rapidity0::operator()
-  ( LoKi::GenParticles::Rapidity0::argument p ) const
+double LoKi::GenParticles::Rapidity0::operator()
+  ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return NegativeInfinity") ;
     return LoKi::Constants::NegativeInfinity;
@@ -590,12 +554,10 @@ LoKi::GenParticles::Phi::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Phi::result_type
-LoKi::GenParticles::Phi::operator()
-  ( LoKi::GenParticles::Phi::argument p ) const
+double LoKi::GenParticles::Phi::operator()( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ( "HepMC::GenParticle* points to NULL, return -100 ") ;
     return -100 ;
@@ -621,9 +583,7 @@ LoKi::GenParticles::Theta::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Theta::result_type
-LoKi::GenParticles::Theta::operator()
-  ( LoKi::GenParticles::Theta::argument p ) const
+double LoKi::GenParticles::Theta::operator()( const HepMC::GenParticle* p ) const
 {
   //
   if ( 0 == p )
@@ -644,13 +604,6 @@ LoKi::GenParticles::Theta::fillStream ( std::ostream& s ) const
 
 
 
-
-// ============================================================================
-// default constructor
-// ============================================================================
-LoKi::GenParticles::Beta::Beta()
-  : LoKi::GenTypes::GFunc ()
-{}
 // ============================================================================
 // MANDATORY: clone method ("virtual destructor")
 // ============================================================================
@@ -660,7 +613,7 @@ LoKi::GenParticles::Beta::clone() const
 // ============================================================================
 // get beta-factor
 // ============================================================================
-double LoKi::GenParticles::Beta::beta   ( const HepMC::GenParticle* p ) const
+double LoKi::GenParticles::Beta::beta( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -674,7 +627,7 @@ double LoKi::GenParticles::Beta::beta   ( const HepMC::GenParticle* p ) const
 // ============================================================================
 // get gamma-factor
 // ============================================================================
-double LoKi::GenParticles::Beta::gamma   ( const HepMC::GenParticle* p ) const
+double LoKi::GenParticles::Beta::gamma( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -684,12 +637,12 @@ double LoKi::GenParticles::Beta::gamma   ( const HepMC::GenParticle* p ) const
   //
   const LoKi::LorentzVector lv ( p->momentum() ) ;
   //
-  const double m = lv.M () ;
-  const double E = lv.E () ;
+  const auto m = lv.M () ;
+  const auto E = lv.E () ;
   //
   if ( s_equal ( E , m ) ) { return 1 ; }
   //
-  if ( s_equal ( m , 0 ) )
+  if ( UNLIKELY(s_equal ( m , 0 )) )
   {
     //
     //
@@ -703,9 +656,9 @@ double LoKi::GenParticles::Beta::gamma   ( const HepMC::GenParticle* p ) const
 // ============================================================================
 // get gamma-factor
 // ============================================================================
-double LoKi::GenParticles::Beta::betagamma   ( const HepMC::GenParticle* p ) const
+double LoKi::GenParticles::Beta::betagamma( const HepMC::GenParticle* p ) const
 {
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ( "HepMC::GenParticle* points to NULL, return -1 ") ;
     return -1 ;
@@ -729,9 +682,8 @@ double LoKi::GenParticles::Beta::betagamma   ( const HepMC::GenParticle* p ) con
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Beta::result_type
-LoKi::GenParticles::Beta::operator()
-  ( LoKi::GenParticles::Beta::argument p ) const { return beta ( p ) ; }
+double LoKi::GenParticles::Beta::operator()
+  ( const HepMC::GenParticle* p ) const { return beta ( p ) ; }
 // ============================================================================
 // OPTIONAL: nice printout
 // ============================================================================
@@ -742,12 +694,6 @@ LoKi::GenParticles::Beta::fillStream ( std::ostream& s ) const
 
 
 // ============================================================================
-// default constructor
-// ============================================================================
-LoKi::GenParticles::Gamma::Gamma()
-  : LoKi::GenParticles::Beta ()
-{}
-// ============================================================================
 // MANDATORY: clone method ("virtual destructor")
 // ============================================================================
 LoKi::GenParticles::Gamma*
@@ -756,9 +702,8 @@ LoKi::GenParticles::Gamma::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Gamma::result_type
-LoKi::GenParticles::Gamma::operator()
-  ( LoKi::GenParticles::Gamma::argument p ) const { return gamma ( p ) ; }
+double LoKi::GenParticles::Gamma::operator()
+  ( const HepMC::GenParticle* p ) const { return gamma ( p ) ; }
 // ============================================================================
 // OPTIONAL: nice printout
 // ============================================================================
@@ -768,12 +713,6 @@ LoKi::GenParticles::Gamma::fillStream ( std::ostream& s ) const
 
 
 // ============================================================================
-// default constructor
-// ============================================================================
-LoKi::GenParticles::BetaGamma::BetaGamma()
-  : LoKi::GenParticles::Beta ()
-{}
-// ============================================================================
 // MANDATORY: clone method ("virtual destructor")
 // ============================================================================
 LoKi::GenParticles::BetaGamma*
@@ -782,9 +721,8 @@ LoKi::GenParticles::BetaGamma::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::BetaGamma::result_type
-LoKi::GenParticles::BetaGamma::operator()
-  ( LoKi::GenParticles::BetaGamma::argument p ) const { return betagamma ( p ) ; }
+double LoKi::GenParticles::BetaGamma::operator()
+  ( const HepMC::GenParticle* p ) const { return betagamma ( p ) ; }
 // ============================================================================
 // OPTIONAL: nice printout
 // ============================================================================
@@ -842,9 +780,8 @@ LoKi::GenParticles::DeltaPhi::clone() const
 // ============================================================================
 //  MANDATORY: the only essential method
 // ============================================================================
-LoKi::GenParticles::DeltaPhi::result_type
-LoKi::GenParticles::DeltaPhi::operator()
-  ( LoKi::GenParticles::DeltaPhi::argument p ) const
+double LoKi::GenParticles::DeltaPhi::operator()
+  ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -873,24 +810,21 @@ LoKi::GenParticles::DeltaEta::DeltaEta ( const double eta )
 //  constructor from the vector
 // ============================================================================
 LoKi::GenParticles::DeltaEta::DeltaEta ( const LoKi::ThreeVector& v )
-  : LoKi::GenParticles::PseudoRapidity ()
-  , m_eta  ( v.Eta() )
+  : m_eta  ( v.Eta() )
 {}
 // ============================================================================
 //  constructor from the vector
 // ============================================================================
 LoKi::GenParticles::DeltaEta::DeltaEta ( const LoKi::LorentzVector& v )
-  : LoKi::GenParticles::PseudoRapidity ()
-  , m_eta  ( v.Eta() )
+  : m_eta  ( v.Eta() )
 {}
 // ============================================================================
 //  constructor from the particle
 // ============================================================================
 LoKi::GenParticles::DeltaEta::DeltaEta ( const HepMC::GenParticle* p )
-  : LoKi::GenParticles::PseudoRapidity ()
-  , m_eta  ( )
+  : m_eta  ( )
 {
-  if ( 0 == p ) { Exception("Invalid HepMC::GenParticle*") ;}
+  if ( !p ) { Exception("Invalid HepMC::GenParticle*") ;}
   m_eta = p->momentum().pseudoRapidity() ;
 }
 // ============================================================================
@@ -902,11 +836,10 @@ LoKi::GenParticles::DeltaEta::clone() const
 // ============================================================================
 //  MANDATORY: the only essential method
 // ============================================================================
-LoKi::GenParticles::DeltaEta::result_type
-LoKi::GenParticles::DeltaEta::operator()
-  ( LoKi::GenParticles::DeltaEta::argument p ) const
+double LoKi::GenParticles::DeltaEta::operator()
+  ( const HepMC::GenParticle* p ) const
 {
-  if ( 0 == p )
+  if ( UNLIKELY(!p) )
   {
     Error ("HepMC::GenParticle* points to NULL, return 'InvalidAngle'") ;
     return LoKi::Constants::InvalidAngle ;
@@ -959,9 +892,8 @@ LoKi::GenParticles::DeltaR2::clone() const
 // ============================================================================
 //  MANDATORY: the only essential method
 // ============================================================================
-LoKi::GenParticles::DeltaR2::result_type
-LoKi::GenParticles::DeltaR2::operator()
-  ( LoKi::GenParticles::DeltaR2::argument p ) const
+double LoKi::GenParticles::DeltaR2::operator()
+  ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {

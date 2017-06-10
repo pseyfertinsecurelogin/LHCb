@@ -25,35 +25,30 @@
  *  @date 2013-04-14
  *
  */
+namespace LoKi { namespace GenParticles {
 // ============================================================================
 /** constructor from one
  *  @param primary use primary vertex, otherwise use own vertex
  */
 // ============================================================================
-LoKi::GenParticles::Flight::Flight ( const bool primary )
-  : LoKi::GenTypes::GFunc ()
-  , m_primary ( primary )
+Flight::Flight ( const bool primary ) : m_primary ( primary )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual destructor")
 // ============================================================================
-LoKi::GenParticles::Flight*
-LoKi::GenParticles::Flight::clone() const { return new Flight(*this) ; }
+Flight* Flight::clone() const { return new Flight(*this) ; }
 // ============================================================================
 // OPTIONAL: nice printout
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::Flight::fillStream ( std::ostream& s ) const
+std::ostream& Flight::fillStream ( std::ostream& s ) const
 { return s << ( m_primary ? "GPVFLIGHT" : "GFLIGHT" ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Flight::result_type
-LoKi::GenParticles::Flight::operator()
-  ( LoKi::GenParticles::Flight::argument p ) const
+double Flight::operator() ( Flight::argument p ) const
 {
   //
-  if ( 0 == p )
+  if ( !p )
   {
     Error ( "HepMC::GenParticle* points to NULL, return -1*km ") ;
     return -1 * Gaudi::Units::km ;
@@ -61,25 +56,25 @@ LoKi::GenParticles::Flight::operator()
   // end vertex
   const HepMC::GenVertex* ev = p->end_vertex  () ;
   //
-  if ( 0 == ev )
+  if ( !ev )
   {
     Error ( "HepMC::GenParticle::end_vertex points to NULL, return +1*km " ) ;
     return  Gaudi::Units::km ;
   }
   //
-  const HepMC::GenVertex* v0 = 0 ;
+  const HepMC::GenVertex* v0 = nullptr ;
   if ( primary() )
   {
     //
     const HepMC::GenEvent* evt = p->parent_event() ;
-    if ( 0 == evt )
+    if ( !evt )
     {
       Error ( "HepMC::GenParticle::parent_event points to NULL, return -1*km " ) ;
       return -1 * Gaudi::Units::km ;
     }
     //
     v0 = evt->signal_process_vertex() ;
-    if ( 0 == v0 )
+    if ( !v0 )
     {
       Error ( "HepMC::GenEvent::signal_process_vertex points to NULL, return -1*km " ) ;
       return -1 * Gaudi::Units::km ;
@@ -90,7 +85,7 @@ LoKi::GenParticles::Flight::operator()
   {
     //
     v0 = p->production_vertex() ;
-    if ( 0 == v0 )
+    if ( !v0 )
     {
       Error ( "HepMC::GenParticle::production_vertex points to NULL, return -1*km " ) ;
       return -1 * Gaudi::Units::km ;
@@ -106,6 +101,8 @@ LoKi::GenParticles::Flight::operator()
   //
   return ( ed - eo ).R () ;
 }
+
+} }
 // ============================================================================
 // The END
 // ============================================================================

@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -24,9 +23,6 @@
  *
  *  @date 2004-06-29
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 // helper method to descrease number of lines
@@ -68,12 +64,12 @@ StatusCode LoKi::Hybrid::GenEngineActor::releaseTool
 {
   if ( m_tool.getObject() != tool )
   {
-    m_tool = 0 ;
+    m_tool = nullptr ;
     return LoKi::Report::Error
       ("LoKi::Hybrid::GenEngineActor::releaseTool(): mismatch in tools " ) ;
   }
   // nullify the pointer
-  m_tool = 0 ;
+  m_tool = nullptr ;
   //
   return StatusCode::SUCCESS ;
 }

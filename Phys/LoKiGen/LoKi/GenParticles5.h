@@ -53,7 +53,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual destructor")
       Flight* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( argument p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -112,4 +112,3 @@ namespace LoKi
 // ============================================================================
 #endif // LOKI_GENPARTICLES5_H
 // ============================================================================
-
