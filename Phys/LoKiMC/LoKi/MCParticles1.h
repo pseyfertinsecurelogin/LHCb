@@ -38,7 +38,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       DecNode* clone() const override { return new DecNode ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      bool operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -92,7 +92,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       DecTree* clone() const override { return new DecTree ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      bool operator() ( argument p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
