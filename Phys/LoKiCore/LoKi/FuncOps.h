@@ -1142,10 +1142,11 @@ namespace LoKi
     private:
       // ======================================================================
       typedef typename LoKi::BasicFunctors<TYPE>::Map                    Map;
+      typedef typename LoKi::details::LF<Map>::type2               result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static auto __call__
+      static result_type __call__
       ( const Map& fun , typename Map::argument a ) { return fun ( a )  ; }
       // ======================================================================
     public:
@@ -1299,10 +1300,11 @@ namespace LoKi
       typedef typename LoKi::BasicFunctors<TYPE>::CutVal        CutVal  ;
       typedef typename LoKi::BasicFunctors<TYPE2>::Function     Func    ;
       typedef typename LoKi::BasicFunctors<TYPE2>::Predicate    Cuts    ;
+      typedef typename LoKi::details::LF<Pipe>::type2   result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static auto __call__
+      static result_type __call__
       ( const Pipe& fun , typename Pipe::argument a ) { return fun ( a )  ; }
       // ======================================================================
     public:
@@ -1495,10 +1497,11 @@ namespace LoKi
       typedef typename LoKi::BasicFunctors<TYPE>::FunVal         FunVal  ;
       typedef typename LoKi::BasicFunctors<double>::Function     Func    ;
       typedef typename LoKi::BasicFunctors<double>::Predicate    Cuts    ;
+      typedef typename LoKi::details::LF<FunVal>::type2 result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static auto __call__
+      static result_type __call__
       ( const FunVal& fun , typename FunVal::argument a ) { return fun ( a )  ; }
       // ======================================================================
     public:
@@ -1600,17 +1603,18 @@ namespace LoKi
       typedef typename LoKi::BasicFunctors<TYPE>::CutVal        CutVal  ;
       typedef typename LoKi::BasicFunctors<TYPE2>::Function     Func    ;
       typedef typename LoKi::BasicFunctors<TYPE2>::Predicate    Cuts    ;
+      typedef typename LoKi::details::LF<Source>::type2         result_type;
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static auto __call__
+      static result_type __call__
       ( const Source& fun ) { return fun() ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rshift__
-      static decltype(auto)  __rshift__
+      static result_type  __rshift__
       ( const Source& fun , std::vector<TYPE>& res )
       { res = fun() ; return res ; }
       // __rshift__
@@ -1744,11 +1748,12 @@ namespace LoKi
     public:
       // ======================================================================
       typedef typename LoKi::BasicFunctors<TYPE>::CutVal        CutVal ;
+      typedef typename LoKi::details::LF<CutVal>::type2  result_type;
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static auto __call__
+      static result_type __call__
       ( const CutVal& fun , typename CutVal::argument a ) { return fun ( a ) ; }
       // ======================================================================
     public:

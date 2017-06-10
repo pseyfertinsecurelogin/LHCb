@@ -82,12 +82,12 @@ Count* Count::clone() const { return new Count ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-double Count::operator() ( Count::argument p ) const
+double Count::operator() ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( !p )
   {
-    Error ( "HepMC::Particle* points to NULL, return -1000 " ) ;
+    Error ( "HepMC::GenParticle* points to NULL, return -1000 " ) ;
     return -1000 ;
   }
   //
@@ -162,12 +162,12 @@ Has* Has::clone() const { return new Has ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-bool Has::operator() ( Has::argument p ) const
+bool Has::operator() ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( !p )
   {
-    Error ( "HepMC::Particle* points to NULL, return false" ) ;
+    Error ( "HepMC::GenParticle* points to NULL, return false" ) ;
     return false ;
   }
   //

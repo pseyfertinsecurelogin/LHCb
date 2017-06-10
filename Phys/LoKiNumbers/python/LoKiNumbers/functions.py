@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$
-# =============================================================================
 ## @file LoKiNumbers/functions.py
 #  The full set of useful objects from LoKiNumbers library
 #
@@ -15,9 +13,6 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-# $Revision$
-# Last modification $Date$
-#                by $Author$
 # =============================================================================
 """
 Few useful objects from LoKiNumbers library
@@ -29,10 +24,6 @@ The package has been designed with the kind help from
 Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
 contributions and advices from G.Raven, J.van Tilburg,
 A.Golutvin, P.Koppenburg have been used in the design.
-
- $Revision$
- Last modification $Date$
-                by $Author$
 
 """
 # =============================================================================

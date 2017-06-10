@@ -45,7 +45,7 @@ std::ostream& Flight::fillStream ( std::ostream& s ) const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-double Flight::operator() ( Flight::argument p ) const
+double Flight::operator() ( const HepMC::GenParticle* p ) const
 {
   //
   if ( !p )

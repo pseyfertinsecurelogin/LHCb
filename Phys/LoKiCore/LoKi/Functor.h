@@ -248,12 +248,12 @@ namespace LoKi
   public:
     // ========================================================================
     /// the only one essential method ("function")
-    virtual TYPE2  operator () ( /* argument */ ) const = 0 ;
+    virtual TYPE2  operator () (  ) const = 0 ;
     /// the only one essential method ("function")
-    virtual TYPE2  evaluate    ( /* argument */ ) const
+    virtual TYPE2  evaluate    (  ) const
     { return (*this) ( /* */ ) ; }
     /// the only one essential method ("function")
-    virtual TYPE2  eval        ( /* argument */ ) const
+    virtual TYPE2  eval        (  ) const
     { return (*this) ( /* */ ) ; }
     /// clone method
     virtual  Functor* clone    ()                   const = 0 ;

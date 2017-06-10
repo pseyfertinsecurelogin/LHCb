@@ -68,7 +68,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual contructor")
       Count * clone() const  override;
       /// MANDATORY: the only one essential method
-      double operator() ( argument v ) const  override;
+      double operator() ( const HepMC::GenParticle* v ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -114,7 +114,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual contructor")
       Has* clone() const  override;
       /// MANDATORY: the only one essential method
-      bool operator() ( argument v ) const  override;
+      bool operator() ( const HepMC::GenParticle* v ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================

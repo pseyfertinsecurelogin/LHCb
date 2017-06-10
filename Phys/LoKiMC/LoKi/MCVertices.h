@@ -59,7 +59,7 @@ namespace LoKi
       /// clone method (mandatory)
       TypeOfMCVertex* clone() const  override;
       /// the only one essential method
-      double operator() ( argument v ) const override;
+      double operator() ( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -76,7 +76,7 @@ namespace LoKi
       /// clone method (mandatory)
       TimeOfFlight* clone() const  override;
       /// the only one essential method
-      double operator() ( argument v ) const override;
+      double operator() ( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -93,7 +93,7 @@ namespace LoKi
       /// clone method (mandatory)
       VertexPositionX* clone() const  override;
       /// the only one essential method
-      double operator() ( argument v ) const override;
+      double operator() ( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -110,7 +110,7 @@ namespace LoKi
       /// clone method (mandatory)
       VertexPositionY* clone() const  override;
       /// the only one essential method
-      double operator() ( argument v ) const override;
+      double operator() ( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -128,7 +128,7 @@ namespace LoKi
       /// clone method (mandatory)
       VertexPositionZ* clone() const  override;
       /// the only one essential method
-      double operator() ( argument v ) const override;
+      double operator() ( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -145,7 +145,7 @@ namespace LoKi
       /// clone method (mandatory)
       VertexTime* clone() const  override;
       /// the only one essential method
-      double operator() ( argument v ) const override;
+      double operator() ( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -162,7 +162,7 @@ namespace LoKi
       /// clone method (mandatory)
       Primary* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument v ) const override;
+      bool operator() ( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -179,7 +179,7 @@ namespace LoKi
       /// clone method (mandatory)
       Decay* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument v ) const override;
+      bool operator() ( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -206,7 +206,7 @@ namespace LoKi
       /// clone method (mandatory!)
       MCVertexDistance* clone() const  override;
       /// the only one essential method
-      double operator() ( argument v ) const  override;
+      double operator() ( const LHCb::MCVertex* v ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -236,7 +236,7 @@ namespace LoKi
       /// clone method (mandatory!)
       MCVFunAsMCFun* clone() const  override;
       /// the only one essential method
-      double    operator() ( argument p ) const  override;
+      double    operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -291,7 +291,7 @@ namespace LoKi
       /// clone method (mandatory!)
       MCVFunction* clone() const  override;
       /// the only one essential method
-      double    operator() ( argument p ) const  override;
+      double    operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -311,12 +311,10 @@ namespace LoKi
     struct GAUDI_API Key : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function
     {
       // ======================================================================
-      /// default constructor
-      Key() {}
       /// clone method (mandatory)
       Key* clone() const  override;
       /// the only one essential method
-      double operator() ( argument v ) const override;
+      double operator() ( const LHCb::MCVertex* v ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -339,7 +337,7 @@ namespace LoKi
       /// clone method (mandatory!)
       MCVPFunAsMCFun* clone() const  override;
       /// the only one essential method
-      double    operator() ( argument p ) const  override;
+      double    operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================

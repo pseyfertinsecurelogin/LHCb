@@ -23,14 +23,17 @@
  *  @author Vanya BELYAEV ibelyav@physics.syr.edu
  *  @date 2006-12-07
  */
+namespace LoKi {
+
+namespace MCParticles {
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCParticles::SourceTES::SourceTES
+SourceTES::SourceTES
 ( const std::string&           path ,
   IDataProviderSvc*            svc  )
   : LoKi::AuxFunBase ( std::tie ( path ) )
-  , LoKi::MCParticles::SourceTES::_Source ()
+  , SourceTES::_Source ()
   , m_path       ( path      )
   , m_dataSvc    ( svc       )
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( true ) )
@@ -41,12 +44,12 @@ LoKi::MCParticles::SourceTES::SourceTES
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCParticles::SourceTES::SourceTES
+SourceTES::SourceTES
 ( const std::string&           path ,
   const LoKi::MCTypes::MCCuts& cuts ,
   IDataProviderSvc*            svc  )
   : LoKi::AuxFunBase ( std::tie ( path , cuts ) )
-  , LoKi::MCParticles::SourceTES::_Source ()
+  , SourceTES::_Source ()
   , m_path       ( path      )
   , m_dataSvc    ( svc       )
   , m_cut        ( cuts      )
@@ -57,14 +60,14 @@ LoKi::MCParticles::SourceTES::SourceTES
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCParticles::SourceTES::SourceTES
+SourceTES::SourceTES
 ( const std::string&           path ,
   const Decays::iNode&         node ,
   IDataProviderSvc*            svc  )
-  : LoKi::MCParticles::SourceTES::_Source ()
+  : SourceTES::_Source ()
   , m_path       ( path      )
   , m_dataSvc    ( svc       )
-  , m_cut        ( LoKi::MCParticles::DecNode ( node ) )
+  , m_cut        ( DecNode ( node ) )
   , m_use_finder ( false     )
   , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
   , m_decay      ()
@@ -72,11 +75,11 @@ LoKi::MCParticles::SourceTES::SourceTES
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCParticles::SourceTES::SourceTES
+SourceTES::SourceTES
 ( const std::string&              path   ,
   const Decays::IMCDecay::Finder& finder ,
   IDataProviderSvc*               svc  )
-  : LoKi::MCParticles::SourceTES::_Source ()
+  : SourceTES::_Source ()
   , m_path       ( path      )
   , m_dataSvc    ( svc       )
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
@@ -87,11 +90,11 @@ LoKi::MCParticles::SourceTES::SourceTES
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCParticles::SourceTES::SourceTES
+SourceTES::SourceTES
 ( const std::string&              path  ,
   const Decays::IMCDecay::iTree&  tree  ,
   IDataProviderSvc*               svc   )
-  : LoKi::MCParticles::SourceTES::_Source ()
+  : SourceTES::_Source ()
   , m_path       ( path      )
   , m_dataSvc    ( svc       )
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
@@ -102,12 +105,12 @@ LoKi::MCParticles::SourceTES::SourceTES
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCParticles::SourceTES::SourceTES
+SourceTES::SourceTES
 ( const std::string&  path       ,
   const std::string&  descriptor ,
   IDataProviderSvc*   svc        )
   : LoKi::AuxFunBase ( std::tie ( path , descriptor ) )
-  , LoKi::MCParticles::SourceTES::_Source ()
+  , SourceTES::_Source ()
   , m_path       ( path       )
   , m_dataSvc    ( svc        )
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
@@ -119,7 +122,7 @@ LoKi::MCParticles::SourceTES::SourceTES
   if ( gaudi() ) { buildFinder () ; }
 }
 // ============================================================================
-void LoKi::MCParticles::SourceTES::buildFinder () const
+void SourceTES::buildFinder () const
 {
   //
   if ( !use_finder() || m_finder.valid() ) { return ; }
@@ -144,15 +147,11 @@ void LoKi::MCParticles::SourceTES::buildFinder () const
 // ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::MCParticles::SourceTES*
-LoKi::MCParticles::SourceTES::clone() const
-{ return new LoKi::MCParticles::SourceTES ( *this ) ; }
+SourceTES* SourceTES::clone() const { return new SourceTES ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only essential method:
 // ============================================================================
-LoKi::MCParticles::SourceTES::result_type
-LoKi::MCParticles::SourceTES::operator() () const
-{
+LHCb::MCParticle::ConstVector SourceTES::operator() () const {
   //
   LHCb::MCParticle::ConstVector result ;
   //
@@ -163,9 +162,8 @@ LoKi::MCParticles::SourceTES::operator() () const
 // ============================================================================
 // get the data from TES
 // ============================================================================
-std::size_t LoKi::MCParticles::SourceTES::get
-( const std::string&             location ,
-  LHCb::MCParticle::ConstVector& output   ) const
+std::size_t SourceTES::get ( const std::string&             location ,
+                             LHCb::MCParticle::ConstVector& output   ) const
 {
   //
   if ( !m_dataSvc )
@@ -210,8 +208,7 @@ std::size_t LoKi::MCParticles::SourceTES::get
 // ============================================================================
 // get the data from TES
 // ============================================================================
-std::size_t LoKi::MCParticles::SourceTES::count
-( const std::string&             location  ) const
+std::size_t SourceTES::count ( const std::string&             location  ) const
 {
   //
   if ( !m_dataSvc )
@@ -256,8 +253,7 @@ std::size_t LoKi::MCParticles::SourceTES::count
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream&
-LoKi::MCParticles::SourceTES::fillStream ( std::ostream& o ) const
+std::ostream& SourceTES::fillStream ( std::ostream& o ) const
 {
   o << " MCSOURCE( '" << m_path << "' , " ;
   if  ( m_use_finder ) { o << m_finder ; }
@@ -271,7 +267,7 @@ LoKi::MCParticles::SourceTES::fillStream ( std::ostream& o ) const
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCParticles::TESCounter::TESCounter
+TESCounter::TESCounter
 ( const std::string&           path ,
   const LoKi::MCTypes::MCCuts& cuts )
   : LoKi::AuxFunBase ( std::tie ( path , cuts ) )
@@ -281,7 +277,7 @@ LoKi::MCParticles::TESCounter::TESCounter
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCParticles::TESCounter::TESCounter
+TESCounter::TESCounter
 ( const std::string&           path ,
   const Decays::iNode&         node )
   : LoKi::Functor<void,double> ()
@@ -290,7 +286,7 @@ LoKi::MCParticles::TESCounter::TESCounter
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCParticles::TESCounter::TESCounter
+TESCounter::TESCounter
 ( const std::string&              path ,
   const Decays::IMCDecay::Finder& finder )
   : LoKi::Functor<void,double> ()
@@ -299,7 +295,7 @@ LoKi::MCParticles::TESCounter::TESCounter
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCParticles::TESCounter::TESCounter
+TESCounter::TESCounter
 ( const std::string&              path ,
   const Decays::IMCDecay::iTree&  finder )
   : LoKi::Functor<void,double> ()
@@ -308,7 +304,7 @@ LoKi::MCParticles::TESCounter::TESCounter
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCParticles::TESCounter::TESCounter
+TESCounter::TESCounter
 ( const std::string&              path ,
   const std::string&              finder )
   : LoKi::AuxFunBase ( std::tie ( path , finder ) )
@@ -318,20 +314,16 @@ LoKi::MCParticles::TESCounter::TESCounter
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::MCParticles::TESCounter*
-LoKi::MCParticles::TESCounter::clone() const
-{ return new LoKi::MCParticles::TESCounter ( *this ) ; }
+TESCounter* TESCounter::clone() const { return new TESCounter ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only essential method:
 // ============================================================================
-LoKi::MCParticles::TESCounter::result_type
-LoKi::MCParticles::TESCounter::operator() ( /* argument */ ) const
+TESCounter::result_type TESCounter::operator() (  ) const
 { return m_source.count ( m_source.path() ) ; }
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream&
-LoKi::MCParticles::TESCounter::fillStream ( std::ostream& o ) const
+std::ostream& TESCounter::fillStream ( std::ostream& o ) const
 {
   o << " MCNUM( '" << m_source.path() << "' , " ;
   if  ( m_source.use_finder() ) { o << m_source.finder() ; }
@@ -340,15 +332,17 @@ LoKi::MCParticles::TESCounter::fillStream ( std::ostream& o ) const
   return o << " ) " ;
 }
 
+}
 
+namespace MCVertices {
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCVertices::SourceTES::SourceTES
+SourceTES::SourceTES
 ( const std::string&           path ,
   IDataProviderSvc*            svc  )
   : LoKi::AuxFunBase ( std::tie ( path ) )
-  , LoKi::MCVertices::SourceTES::_Source ()
+  , SourceTES::_Source ()
   , m_path       ( path      )
   , m_dataSvc    ( svc       )
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCVertex*>::BooleanConstant ( true ) )
@@ -356,12 +350,12 @@ LoKi::MCVertices::SourceTES::SourceTES
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-LoKi::MCVertices::SourceTES::SourceTES
+SourceTES::SourceTES
 ( const std::string&            path ,
   const LoKi::MCTypes::MCVCuts& cuts ,
   IDataProviderSvc*             svc  )
   : LoKi::AuxFunBase ( std::tie ( path , cuts ) )
-  , LoKi::MCVertices::SourceTES::_Source ()
+  , SourceTES::_Source ()
   , m_path       ( path )
   , m_dataSvc    ( svc  )
   , m_cut        ( cuts )
@@ -369,14 +363,11 @@ LoKi::MCVertices::SourceTES::SourceTES
 // ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::MCVertices::SourceTES*
-LoKi::MCVertices::SourceTES::clone() const
-{ return new LoKi::MCVertices::SourceTES ( *this ) ; }
+SourceTES* SourceTES::clone() const { return new SourceTES ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only essential method:
 // ============================================================================
-LoKi::MCVertices::SourceTES::result_type
-LoKi::MCVertices::SourceTES::operator() () const
+LHCb::MCVertex::ConstVector SourceTES::operator() () const
 {
   if ( !m_dataSvc )
   {
@@ -393,19 +384,20 @@ LoKi::MCVertices::SourceTES::operator() () const
   //
   LHCb::MCVertex::ConstVector result ;
   // use cuts!
-  std::copy_if      ( parts->begin ()  ,
-                      parts->end   ()  ,
-                      std::back_inserter ( result ) , std::cref(m_cut) ) ;
+  std::copy_if( parts->begin ()  ,
+                parts->end   ()  ,
+                std::back_inserter ( result ) , std::cref(m_cut) ) ;
   //
   return result ;
 }
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream&
-LoKi::MCVertices::SourceTES::fillStream ( std::ostream& o ) const
+std::ostream& SourceTES::fillStream ( std::ostream& o ) const
 { return o << " MCVSOURCE( '" << m_path << "', " << m_cut << " ) " ; }
 
+}
+}
 // ============================================================================
 // The END
 // ============================================================================

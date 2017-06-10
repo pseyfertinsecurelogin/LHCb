@@ -108,59 +108,70 @@ namespace LoKi
       // ======================================================================
       typedef LHCb::MCParticle                           Type ;
       typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
+      typedef typename LoKi::details::LF<Fun>::type2              result_type;
+
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static auto __call__    ( const Fun& fun  , const Type*           o )
+      static result_type __call__( const Fun& fun  , const Type*           o )
       { return fun ( o ) ; }
       // __call__
-      static auto __call__    ( const Fun& fun  , const SmartRef<Type>& o )
+      static result_type __call__( const Fun& fun  , const SmartRef<Type>& o )
       { return fun ( o ) ; }
       //
       // __call__ as filter
       //
       // __call__
-      static auto __call__ ( const Fun& fun  , const LoKi::MCTypes::MCContainer&  e )
+      static LoKi::MCTypes::MCContainer
+      __call__ ( const Fun& fun, const LoKi::MCTypes::MCContainer&  e )
       { return e >> fun ; }
       // __call__
-      static auto __call__ ( const Fun& fun  , const LHCb::MCParticle::Container* e )
+      static LoKi::MCTypes::MCContainer
+      __call__ ( const Fun& fun  , const LHCb::MCParticle::Container* e )
       { return e >> fun ; }
       // __call__
-      static auto __call__ ( const Fun& fun  , const LoKi::MCTypes::MCRange& e )
+      static LoKi::MCTypes::MCContainer
+      __call__ ( const Fun& fun  , const LoKi::MCTypes::MCRange& e )
       { return e >> fun ; }
       // __call__
-      static auto __call__ ( const Fun& fun  , const SmartRefVector<Type>& e )
+      static LoKi::MCTypes::MCContainer
+      __call__ ( const Fun& fun  , const SmartRefVector<Type>& e )
       { return e >> fun ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static auto __rrshift__ ( const Fun& fun  , const Type*           o )
+      static result_type __rrshift__ ( const Fun& fun  , const Type*           o )
       { return o >> fun  ; }
       // __rrshift__
-      static auto __rrshift__ ( const Fun& fun  , const SmartRef<Type>&  o )
+      static result_type __rrshift__ ( const Fun& fun  , const SmartRef<Type>&  o )
       { return o >> fun  ; }
       // ======================================================================
       // rrshift as "filter"
       // ======================================================================
       // __rrshift__
-      static auto __rrshift__ ( const Fun& fun  , const LoKi::MCTypes::MCContainer&  e )
+      static LoKi::MCTypes::MCContainer
+      __rrshift__ ( const Fun& fun  , const LoKi::MCTypes::MCContainer&  e )
       { return e >> fun ; }
       // __rrshift__
-      static auto __rrshift__ ( const Fun& fun  , const LHCb::MCParticle::Container* e )
+      static LoKi::MCTypes::MCContainer
+      __rrshift__ ( const Fun& fun  , const LHCb::MCParticle::Container* e )
       { return e >> fun ; }
       // __rrshift__
-      static auto __rrshift__ ( const Fun& fun  , const LoKi::MCTypes::MCRange& e )
+      static LoKi::MCTypes::MCContainer
+      __rrshift__ ( const Fun& fun  , const LoKi::MCTypes::MCRange& e )
       { return e >> fun ; }
       // __rrshift__
-      static auto __rrshift__ ( const Fun& fun  , const SmartRefVector<Type>& e )
+      static LoKi::MCTypes::MCContainer
+      __rrshift__ ( const Fun& fun  , const SmartRefVector<Type>& e )
       { return e >> fun ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rshift__
-      static auto __rshift__ ( const Fun& fun  , const Fun& o )
+      static LoKi::FunctorFromFunctor<const Type*,bool>
+      __rshift__ ( const Fun& fun  , const Fun& o )
       { return fun >> o   ; }
       // ======================================================================
     } ;

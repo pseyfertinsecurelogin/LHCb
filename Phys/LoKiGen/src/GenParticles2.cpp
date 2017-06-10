@@ -145,7 +145,7 @@ PolarizationAngle::getComponents12 ( const HepMC::GenParticle*             p   ,
 // ==========================================================================
 // MANDATORY: the only one essential method
 // ==========================================================================
-double PolarizationAngle::operator() ( PolarizationAngle::argument p ) const
+double PolarizationAngle::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -351,7 +351,7 @@ SinChi* SinChi::clone() const { return new SinChi ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-double SinChi::operator() ( SinChi:: argument p ) const
+double SinChi::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -467,7 +467,7 @@ CosChi* CosChi::clone() const { return new CosChi ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-double CosChi::operator() ( CosChi:: argument p ) const
+double CosChi::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -579,12 +579,11 @@ AngleChi::AngleChi ( const std::string& particle1    ,
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-AngleChi* AngleChi::clone() const
-{ return new AngleChi ( *this ) ; }
+AngleChi* AngleChi::clone() const { return new AngleChi ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-double AngleChi::operator() ( AngleChi:: argument p ) const
+double AngleChi::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -700,7 +699,7 @@ CosThetaTr* CosThetaTr::clone() const { return new CosThetaTr ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-double CosThetaTr::operator() ( CosThetaTr:: argument p ) const
+double CosThetaTr::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -812,12 +811,11 @@ SinPhiTr::SinPhiTr ( const std::string&                 particle1    ,
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-SinPhiTr* SinPhiTr::clone() const
-{ return new SinPhiTr ( *this ) ; }
+SinPhiTr* SinPhiTr::clone() const { return new SinPhiTr ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-double SinPhiTr::operator() ( SinPhiTr:: argument p ) const
+double SinPhiTr::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -928,12 +926,11 @@ CosPhiTr::CosPhiTr ( const std::string&               particle1    ,
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-CosPhiTr* CosPhiTr::clone() const
-{ return new CosPhiTr ( *this ) ; }
+CosPhiTr* CosPhiTr::clone() const { return new CosPhiTr ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-double CosPhiTr::operator() ( CosPhiTr:: argument p ) const
+double CosPhiTr::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -1045,12 +1042,11 @@ AnglePhiTr::AnglePhiTr ( const std::string&               particle1    ,
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-AnglePhiTr* AnglePhiTr::clone() const
-{ return new AnglePhiTr ( *this ) ; }
+AnglePhiTr* AnglePhiTr::clone() const { return new AnglePhiTr ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-double AnglePhiTr::operator() ( AnglePhiTr:: argument p ) const
+double AnglePhiTr::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {

@@ -48,27 +48,30 @@ namespace LoKi
       // ======================================================================
       typedef LHCb::ODIN                                Type ;
       typedef LoKi::BasicFunctors<const Type*>::Function Fun  ;
+      typedef LoKi::details::LF<Fun>::type2 result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static auto __call__ ( const Fun& fun, const Type* o )
+      static result_type __call__ ( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static auto __rrshift__( const Fun& fun, const Type* o )
+      static result_type __rrshift__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rshift__
-      static auto __rshift__ ( const Fun&                          fun  ,
-                               const LoKi::Functor<double,double>& o    )
+      static LoKi::FunctorFromFunctor<const Type*,double>
+      __rshift__ ( const Fun&                          fun  ,
+                   const LoKi::Functor<double,double>& o    )
       { return fun >> o  ; }
       // __rshift__
-      static auto __rshift__( const Fun&                          fun  ,
-                              const LoKi::Functor<double,bool>&   o    )
+      static LoKi::FunctorFromFunctor<const Type*,bool>
+      __rshift__( const Fun&                          fun  ,
+                  const LoKi::Functor<double,bool>&   o    )
       { return fun >> o  ; }
       // ======================================================================
     } ;
@@ -80,16 +83,18 @@ namespace LoKi
       // ======================================================================
       typedef LHCb::ODIN                                 Type ;
       typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
+      typedef LoKi::details::LF<Fun>::type2 result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static auto __call__( const Fun& fun, const Type* o )
+      static result_type __call__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       //
-      static auto  __rrshift__( const Fun& fun, const Type* o )
+      static result_type  __rrshift__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       //
-      static auto __rshift__( const Fun& fun, const Fun& o )
+      static LoKi::FunctorFromFunctor<const Type*,bool>
+      __rshift__( const Fun& fun, const Fun& o )
       { return fun >> o  ; }
       // ======================================================================
    } ;
@@ -102,22 +107,25 @@ namespace LoKi
     private:
       typedef LHCb::L0DUReport                           Type ;
       typedef LoKi::BasicFunctors<const Type*>::Function Fun  ;
+      typedef LoKi::details::LF<Fun>::type2 result_type;
     public:
       //
-      static auto __call__( const Fun& fun, const Type* o )
+      static result_type __call__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       // ======================================================================
       // __rrshift__
-      static auto __rrshift__ ( const Fun& fun, const Type* o )
+      static result_type __rrshift__ ( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       // ======================================================================
       // __rshift__
-      static auto __rshift__( const Fun& fun,
-                              const LoKi::Functor<double,double>& o )
+      static LoKi::FunctorFromFunctor<const Type*,double>
+      __rshift__( const Fun& fun,
+                  const LoKi::Functor<double,double>& o )
       { return fun >> o  ; }
       // __rshift__
-      static auto  __rshift__( const Fun& fun,
-                               const LoKi::Functor<double,bool>& o )
+      static LoKi::FunctorFromFunctor<const Type*,bool>
+      __rshift__( const Fun& fun,
+                  const LoKi::Functor<double,bool>& o )
       { return fun >> o  ; }
       // ======================================================================
     } ;
@@ -129,16 +137,18 @@ namespace LoKi
       // ======================================================================
       typedef LHCb::L0DUReport                            Type ;
       typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
+      typedef LoKi::details::LF<Fun>::type2 result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static auto __call__( const Fun& fun, const Type* o )
+      static result_type __call__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       // ======================================================================
-      static auto __rrshift__( const Fun& fun, const Type* o )
+      static result_type __rrshift__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       // ======================================================================
-      static auto __rshift__( const Fun& fun, const Fun& o )
+      static LoKi::FunctorFromFunctor<const Type*,bool>
+      __rshift__( const Fun& fun, const Fun& o )
       { return fun >> o  ; }
       // ======================================================================
    } ;
@@ -151,26 +161,29 @@ namespace LoKi
     private:
       typedef LHCb::HltDecReports                        Type ;
       typedef LoKi::BasicFunctors<const Type*>::Function Fun  ;
+      typedef LoKi::details::LF<Fun>::type2 result_type;
     public:
       //
-      static auto __call__( const Fun& fun, const Type* o )
+      static result_type __call__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static auto __rrshift__( const Fun& fun, const Type* o )
+      static result_type __rrshift__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rshift__
-      static auto __rshift__( const Fun& fun  ,
-                              const LoKi::Functor<double,double>& o )
+      static LoKi::FunctorFromFunctor<const Type*,double>
+      __rshift__( const Fun& fun  ,
+                  const LoKi::Functor<double,double>& o )
       { return fun >> o  ; }
       // __rshift__
-      static auto __rshift__( const Fun& fun  ,
-                              const LoKi::Functor<double,bool>& o )
+      static LoKi::FunctorFromFunctor<const Type*,bool>
+      __rshift__( const Fun& fun  ,
+                  const LoKi::Functor<double,bool>& o )
       { return fun >> o  ; }
       // ======================================================================
     } ;
@@ -182,16 +195,18 @@ namespace LoKi
       // ======================================================================
       typedef LHCb::HltDecReports                         Type ;
       typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
+      typedef LoKi::details::LF<Fun>::type2 result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static auto __call__( const Fun& fun, const Type* o )
+      static result_type __call__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       //
-      static auto  __rrshift__( const Fun& fun, const Type* o )
+      static result_type  __rrshift__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       //
-      static auto __rshift__( const Fun& fun, const Fun& o )
+      static LoKi::FunctorFromFunctor<const Type*,bool>
+      __rshift__( const Fun& fun, const Fun& o )
       { return fun >> o  ; }
       //
       // ======================================================================

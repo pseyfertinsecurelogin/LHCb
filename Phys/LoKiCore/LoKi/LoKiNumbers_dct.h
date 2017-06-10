@@ -75,19 +75,20 @@ namespace LoKi
     private:
       typedef double                                Type ;
       typedef LoKi::BasicFunctors<double>::Function Fun  ;
+      typedef LoKi::details::LF<Fun>::type2 result_type;
     public:
       // ======================================================================
       // __call__
-      static auto __call__( const Fun& fun, double o )
+      static result_type __call__( const Fun& fun, double o )
       { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static auto __rrshift__( const Fun& fun, const std::vector<double>& o )
+      static std::vector<result_type> __rrshift__( const Fun& fun, const std::vector<double>& o )
       { return o >> fun  ; }
       // __rrshift__
-      static auto __rrshift__( const Fun& fun, double o )
+      static result_type __rrshift__( const Fun& fun, double o )
       { return fun ( o ) ; }
       // ======================================================================
     public:
@@ -115,16 +116,17 @@ namespace LoKi
     private:
       typedef double                                 Type ;
       typedef LoKi::BasicFunctors<double>::Predicate Fun  ;
+      typedef LoKi::details::LF<Fun>::type2 result_type;
     public:
       //
-      static auto             __call__
-      ( const Fun& fun  , const double               o ) { return fun ( o ) ; }
+      static result_type __call__ ( const Fun& fun, const double o )
+      { return fun ( o ) ; }
       // ======================================================================
-      static std::vector<double> __rrshift__
+      static std::vector<double> __rrshift__ // ??? why vector<double> ???
       ( const Fun& fun  , const std::vector<double>& o )
       { return o >> fun  ; }
-      static auto              __rrshift__
-      ( const Fun& fun  , const double               o ) { return fun ( o ) ; }
+      static result_type __rrshift__ ( const Fun& fun, const double o )
+      { return fun ( o ) ; }
       // ======================================================================
       static LoKi::FunctorFromFunctor<double,bool> __rshift__
       ( const Fun& fun  , const Fun&                 o ) { return fun >> o  ; }
@@ -403,18 +405,17 @@ namespace LoKi
       typedef LoKi::BasicFunctors<TYPE>::CutVal        CutVal  ;
       typedef LoKi::BasicFunctors<TYPE2>::Function     Func    ;
       typedef LoKi::BasicFunctors<TYPE2>::Predicate    Cuts    ;
+      typedef LoKi::details::LF<Source>::type2  result_type;
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static auto                __call__
-      ( const Source& fun ) { return fun() ; }
+      static result_type __call__ ( const Source& fun ) { return fun() ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rshift__
-      static auto                __rshift__
-      ( const Source& fun , std::vector<TYPE>& res )
+      static result_type __rshift__( const Source& fun , std::vector<TYPE>& res )
       { res = fun() ; return res ; }
       // __rshift__
       static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
@@ -507,10 +508,11 @@ namespace LoKi
     {
     private:
       typedef LoKi::BasicFunctors<void>::Function Fun  ;
+      typedef LoKi::details::LF<Fun>::type2 result_type;
     public:
       // ======================================================================
       // __call__
-      static auto             __call__ ( const Fun& fun  ) { return fun () ; }
+      static result_type __call__ ( const Fun& fun  ) { return fun () ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -565,11 +567,12 @@ namespace LoKi
     private:
       // ======================================================================
       typedef LoKi::BasicFunctors<void>::Predicate Fun  ;
+      typedef LoKi::details::LF<Fun>::type2 result_type;
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static auto             __call__ ( const Fun& fun  ) { return fun () ; }
+      static result_type __call__ ( const Fun& fun  ) { return fun () ; }
       // ======================================================================
     public:
       // ======================================================================

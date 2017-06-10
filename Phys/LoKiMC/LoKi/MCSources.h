@@ -168,7 +168,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       TESCounter* clone() const  override;
       /// MANDATORY: the only essential method:
-      result_type operator() ( /* argument */ ) const  override;
+      result_type operator() (  ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& o ) const  override;
       // ======================================================================

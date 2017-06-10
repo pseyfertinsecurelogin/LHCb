@@ -57,27 +57,28 @@ namespace LoKi
       // ======================================================================
       typedef TYPE                                                Type ;
       typedef typename LoKi::BasicFunctors<const Type*>::Function Fun  ;
+      typedef typename LoKi::details::LF<Fun>::type2              result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static auto __call__ ( const Fun& fun  , const Type*           o )
+      static result_type __call__ ( const Fun& fun  , const Type*           o )
       { return fun ( o ) ; }
-      static auto __call__ ( const Fun& fun  , const SmartRef<Type>& o )
+      static result_type __call__ ( const Fun& fun  , const SmartRef<Type>& o )
       { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static auto __rrshift__( const Fun& fun, const typename Type::ConstVector& o )
+      static std::vector<result_type> __rrshift__( const Fun& fun, const typename Type::ConstVector& o )
       { return o >> fun  ; }
       // __rrshift__
-      static auto __rrshift__( const Fun& fun, const typename Type::Vector& o )
+      static std::vector<result_type> __rrshift__( const Fun& fun, const typename Type::Vector& o )
       { return o >> fun  ; }
       // __rrshift__
-      static auto __rrshift__ ( const Fun& fun  , const Type*           o )
+      static result_type __rrshift__ ( const Fun& fun  , const Type*           o )
       { return fun ( o ) ; }
       // __rrshift__
-      static auto __rrshift__ ( const Fun& fun  , const SmartRef<Type>& o )
+      static result_type __rrshift__ ( const Fun& fun  , const SmartRef<Type>& o )
       { return fun ( o ) ; }
       // ======================================================================
     public:
@@ -109,22 +110,23 @@ namespace LoKi
       // ======================================================================
       typedef TYPE                                                 Type ;
       typedef typename LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
+      typedef typename LoKi::details::LF<Fun>::type2               result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static auto                      __call__
-      ( const Fun& fun  , const Type*                       o ) { return fun ( o ) ; }
-      static auto                      __call__
-      ( const Fun& fun  , const SmartRef<Type>&             o ) { return fun ( o ) ; }
+      static result_type __call__ ( const Fun& fun  , const Type*  o )
+      { return fun ( o ) ; }
+      static result_type __call__ ( const Fun& fun  , const SmartRef<Type>& o )
+      { return fun ( o ) ; }
       // ======================================================================
       static typename Type::ConstVector __rrshift__
       ( const Fun& fun  , const typename Type::ConstVector& o ) { return o >> fun  ; }
-      static typename Type::Vector      __rrshift__
+      static typename Type::Vector __rrshift__
       ( const Fun& fun  , const typename Type::Vector&      o ) { return o >> fun  ; }
-      static auto                       __rrshift__
-      ( const Fun& fun  , const Type*                       o ) { return fun ( o ) ; }
-      static auto                       __rrshift__
-      ( const Fun& fun  , const SmartRef<Type>&             o ) { return fun ( o ) ; }
+      static result_type  __rrshift__( const Fun& fun  , const Type* o )
+      { return fun ( o ) ; }
+      static result_type  __rrshift__( const Fun& fun  , const SmartRef<Type>& o )
+      { return fun ( o ) ; }
       // ======================================================================
       static LoKi::FunctorFromFunctor<const Type*,bool> __rshift__
       ( const Fun& fun  , const Fun&                        o ) { return fun >> o  ; }

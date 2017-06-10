@@ -40,8 +40,7 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <typename TYPE,typename TYPE2, typename ... Args>
-  inline TYPE2
-  apply  ( const LoKi::Functor<TYPE,TYPE2>& f, Args&&... a )
+  auto apply  ( const LoKi::Functor<TYPE,TYPE2>& f, Args&&... a ) -> decltype(auto)
   { return f ( std::forward<Args>(a)... ) ; }
   // ==========================================================================
   /** the direct use the function (save one virtual call)
@@ -61,10 +60,8 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline TYPE2
-  apply  ( const LoKi::FunctorFromFunctor<TYPE,TYPE2>&  f ,
-           typename LoKi::Functor<TYPE,TYPE2>::argument a )
-  { return apply ( f.fun() , a ) ; }
+  auto apply( const LoKi::FunctorFromFunctor<TYPE,TYPE2>&  f , TYPE a ) -> decltype(auto)
+  { return apply( f.fun() , a ) ; }
   // ==========================================================================
   /** Adapter: use the functor through the dereferencing of the argument
    *
@@ -82,9 +79,8 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline TYPE2
-  apply  ( const LoKi::Functor<TYPE,TYPE2>&              f ,
-           typename LoKi::Functor<TYPE*,TYPE2>::argument a )
+  auto apply  ( const LoKi::Functor<TYPE,TYPE2>&              f ,
+                TYPE* a ) -> decltype(auto)
   { return apply ( f , *a ) ; }
   // ==========================================================================
   /** Adapter: use the functor through dereferencing of the argument
@@ -103,9 +99,8 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline TYPE2
-  apply  ( const LoKi::Functor<TYPE,TYPE2>&                    f ,
-           typename LoKi::Functor<const TYPE*,TYPE2>::argument a )
+  auto apply  ( const LoKi::Functor<TYPE,TYPE2>&                    f ,
+                const TYPE* a ) -> decltype(auto)
   { return apply ( f , *a ) ; }
   // ==========================================================================
   /** Adapter: use the functor through adressing of the argument
@@ -124,9 +119,8 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline TYPE2
-  apply  ( const LoKi::Functor<TYPE*,TYPE2>&            f ,
-           typename LoKi::Functor<TYPE,TYPE2>::argument a )
+  auto apply  ( const LoKi::Functor<TYPE*,TYPE2>&            f ,
+                const TYPE& a ) -> decltype(auto)
   { return apply ( f , &a ) ; }
   // ==========================================================================
   /** Adapter: use the functor through adressing of the argument
@@ -145,9 +139,8 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline TYPE2
-  apply  ( const LoKi::Functor<const TYPE*,TYPE2>&      f ,
-           typename LoKi::Functor<TYPE,TYPE2>::argument a )
+  auto apply( const LoKi::Functor<const TYPE*,TYPE2>&      f ,
+              const TYPE& a ) -> decltype(auto)
   { return apply ( f , &a ) ; }
   // ==========================================================================
   /** Adapter: use the vector-functor for scalar argument
@@ -166,9 +159,8 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class TYPE,class TYPE2>
-  inline TYPE2
-  apply  ( const LoKi::Functor<std::vector<TYPE>,TYPE2>& f ,
-           typename LoKi::Functor<TYPE,TYPE2>::argument  a )
+  auto apply( const LoKi::Functor<std::vector<TYPE>,TYPE2>& f ,
+              const TYPE& a ) -> decltype(auto)
   { return apply ( f , std::vector<TYPE> ( 1 , a ) ) ; }
   // ==========================================================================
   /** Adapter: "vector-use" of the scalar function
@@ -193,11 +185,10 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class INPUT, class TYPE, class TYPE2, class OUTPUT>
-  inline OUTPUT
-  apply ( INPUT                            first ,
-          INPUT                            last  ,
-          const LoKi::Functor<TYPE,TYPE2>& fun   ,
-          OUTPUT                           out   )
+  auto apply ( INPUT                            first ,
+               INPUT                            last  ,
+               const LoKi::Functor<TYPE,TYPE2>& fun   ,
+               OUTPUT                           out   )
   {
     using arg_t = decltype(*first);
     std::transform(first,last,out,[&](arg_t arg) { return apply(fun,arg); } );
@@ -223,10 +214,9 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class INPUT, class TYPE, class TYPE2>
-  inline void
-  apply ( INPUT                            first ,
-          INPUT                            last  ,
-          const LoKi::Functor<TYPE,TYPE2>& fun   )
+  void apply ( INPUT                            first ,
+               INPUT                            last  ,
+               const LoKi::Functor<TYPE,TYPE2>& fun   )
   {
     using arg_t = decltype(*first);
     std::for_each(first,last,[&](arg_t arg) { apply(fun,arg); } );
@@ -253,11 +243,10 @@ namespace LoKi
    *  @date 2001-01-23
    */
   template <class INPUT, class TYPE, class OUTPUT>
-  inline OUTPUT
-  apply_filter ( INPUT                            first ,
-                 INPUT                            last  ,
-                 const LoKi::Functor<TYPE,bool>&  fun   ,
-                 OUTPUT                           out   )
+  auto apply_filter ( INPUT                            first ,
+                      INPUT                            last  ,
+                      const LoKi::Functor<TYPE,bool>&  fun   ,
+                      OUTPUT                           out   )
   {
     using arg_t = decltype(*first);
     std::copy_if( first, last, out,
@@ -266,10 +255,9 @@ namespace LoKi
   }
   // ==========================================================================
   template <class INPUT, class CONTAINER, class OUTPUT>
-  inline OUTPUT
-  apply ( const LoKi::Functor<CONTAINER,OUTPUT>& o     ,
-          INPUT                                  first ,
-          INPUT                                  last  )
+  auto apply ( const LoKi::Functor<CONTAINER,OUTPUT>& o     ,
+               INPUT                                  first ,
+               INPUT                                  last  )
   {
     return LoKi::apply ( o , CONTAINER{ first, last } ) ;
   }
@@ -294,17 +282,15 @@ namespace LoKi
   }
   // ==============================================================================
   template <class CONTAINER, class TYPEI, class TYPE2>
-  inline TYPE2
-  apply ( const LoKi::Functor<std::vector<TYPEI>,TYPE2>& o ,
-          const Gaudi::Range_<CONTAINER>&                a )
+  auto apply ( const LoKi::Functor<std::vector<TYPEI>,TYPE2>& o ,
+               const Gaudi::Range_<CONTAINER>&                a )
   {
     return LoKi::apply ( o , a.begin() , a.end() ) ;
   }
   // ==========================================================================
   template <class CONTAINER, class TYPEI, class TYPE2>
-  inline TYPE2
-  apply ( const LoKi::Functor<std::vector<TYPEI>,TYPE2>& o ,
-          const Gaudi::NamedRange_<CONTAINER>&           a )
+  auto apply ( const LoKi::Functor<std::vector<TYPEI>,TYPE2>& o ,
+               const Gaudi::NamedRange_<CONTAINER>&           a )
   {
     return LoKi::apply ( o , a.begin() , a.end() ) ;
   }
@@ -322,14 +308,11 @@ namespace LoKi
           F f;
           template <typename ... Args>
           auto operator()(Args&& ... args) const
-          -> decltype( LoKi::apply(f, std::forward<Args>(args)...) )
           { return LoKi::apply(f, std::forward<Args>(args)...); }
       };
   }
   template <typename F, typename = typename details::is_functor<F>>
   details::Apply<F> Apply(F&& fun) { return {std::forward<F>(fun)}; }
-  // C++14 (gcc>=5):
-  // auto Apply = [](auto&& f) { return [f=decltype(f)(f)](auto&& ... arg) { return LoKi::apply(f,std::forward<decltype(arg)>(arg)...); } }
 
   // ==========================================================================
 } //                                                      end of namespace LoKi

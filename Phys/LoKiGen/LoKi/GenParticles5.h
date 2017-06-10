@@ -53,7 +53,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual destructor")
       Flight* clone() const  override;
       /// MANDATORY: the only one essential method
-      double operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -79,7 +79,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-04-14
      */
-    const LoKi::GenParticles::Flight                      GFLIGHTPV ( true  ) ;
+    const auto GFLIGHTPV = LoKi::GenParticles::Flight{ true  } ;
     // ========================================================================
     /** @var GPVFLIGHT
      *  evaluator of flight distance from PV
@@ -90,7 +90,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-04-14
      */
-    const LoKi::GenParticles::Flight                      GPVFLIGHT ( true ) ;
+    const auto GPVFLIGHT = LoKi::GenParticles::Flight{ true } ;
     // ========================================================================
     /** @var GFLIGHT
      *  evaluator of flight distance
@@ -102,7 +102,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-04-14
      */
-    const LoKi::GenParticles::Flight                        GFLIGHT ( false ) ;
+    const auto GFLIGHT  = LoKi::GenParticles::Flight{ false } ;
     // ========================================================================
   } //                                              end of namespace LoKi::Cuts
   // ==========================================================================
