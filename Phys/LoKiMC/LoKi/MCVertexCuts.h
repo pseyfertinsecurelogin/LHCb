@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_MCVERTEXCUTS_H
 #define LOKI_MCVERTEXCUTS_H 1

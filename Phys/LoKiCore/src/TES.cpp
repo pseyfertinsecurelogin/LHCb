@@ -126,7 +126,6 @@ LoKi::TES::Exists::Exists
 ( const std::string& location  ,
   const bool         rootInTes )
   : LoKi::AuxFunBase ( std::tie ( location , rootInTes ) )
-  , LoKi::Functor<void,bool> ()
   , LoKi::TES::Get ( location , rootInTes )
 {}
 // ============================================================================
@@ -159,7 +158,6 @@ LoKi::TES::Contains::Contains
 ( const std::string& location     ,
   const bool         useRootInTes )
   : LoKi::AuxFunBase ( std::tie ( location , useRootInTes ) )
-  , LoKi::Functor<void,double> ()
   , LoKi::TES::Get ( location , useRootInTes )
 {}
 // ============================================================================
@@ -199,7 +197,6 @@ LoKi::TES::HrcSumAdc::HrcSumAdc
   const std::string& stationName       ,
   const bool         useRootInTes )
   : LoKi::AuxFunBase ( std::tie ( location , stationName, useRootInTes ) )
-  , LoKi::Functor<void,double> ()
   , LoKi::TES::Get ( location , useRootInTes )
   , m_stationName    ( stationName )
 {}

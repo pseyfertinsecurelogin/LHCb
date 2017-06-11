@@ -753,15 +753,14 @@ namespace LoKi
    */
 
    namespace Traits {
-       template <typename TYPE2>
        struct Multiply {
-            using BinaryOp = std::multiplies<TYPE2>;
+            using BinaryOp = std::multiplies<>;
             static constexpr const char* name() { return "*"; }
        };
    }
 
   template<class TYPE, class TYPE2=double>
-  using Multiply =  details::Combination<TYPE,TYPE2,Traits::Multiply<TYPE2>>;
+  using Multiply =  details::Combination<TYPE,TYPE2,Traits::Multiply>;
 
 #endif
   // ==========================================================================
@@ -858,7 +857,7 @@ namespace LoKi
     TYPE2 operator() ( argument_a_unless_void ) const override
     {
       return  std::min ( this->fun1 ( a_unless_void ) ,
-                         this->fun2 ( a_unless_void ) , std::less<TYPE2>() ) ;
+                         this->fun2 ( a_unless_void ) , std::less<>() ) ;
     }
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override
@@ -979,7 +978,7 @@ namespace LoKi
     TYPE2 operator() ( argument_a_unless_void ) const override
     {
       return std::max ( this -> fun1 ( a_unless_void ) ,
-                        this -> fun2 ( a_unless_void ) , std::less<TYPE2>() ) ;
+                        this -> fun2 ( a_unless_void ) , std::less<>() ) ;
     }
     /// OPTIONAL: the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override
@@ -2398,7 +2397,6 @@ namespace LoKi
       const LoKi::Functor<TYPE,double>& fun  ,
       const LoKi::Functor<TYPE,double>& high )
       : LoKi::AuxFunBase ( std::tie ( low , fun , high ) )
-      , LoKi::Functor<TYPE,bool> ()
       , m_low  ( low  )
       , m_fun  ( fun  )
       , m_high ( high )
@@ -2826,7 +2824,6 @@ namespace LoKi
     JBit ( const LoKi::Functor<TYPE,double>&    fun ,
            const unsigned short                 j   )
       : LoKi::AuxFunBase ( std::tie ( fun , j ) )
-      , LoKi::Functor<TYPE,bool>()
       , m_fun  ( fun )
       , m_j    ( j   )
     {
@@ -2894,7 +2891,6 @@ namespace LoKi
             const unsigned short                  j1  ,
             const unsigned short                  j2  )
       : LoKi::AuxFunBase ( std::tie ( fun , j1 , j2 ) )
-      , LoKi::Functor<TYPE,double>()
       , m_fun  ( fun )
       , m_j1  ( j1  )
       , m_j2  ( j2  )
@@ -2970,7 +2966,6 @@ namespace LoKi
     JDigit ( const LoKi::Functor<TYPE,double>&    fun ,
              const unsigned short                 j   )
       : LoKi::AuxFunBase ( std::tie ( fun , j ) )
-      , LoKi::Functor<TYPE,double>()
       , m_fun  ( fun )
       , m_j    ( j   )
     {
@@ -3038,7 +3033,6 @@ namespace LoKi
               const unsigned short                 j1  ,
               const unsigned short                 j2  )
       : LoKi::AuxFunBase ( std::tie ( fun , j1 , j2 ) )
-      , LoKi::Functor<TYPE,double>()
       , m_fun  ( fun )
       , m_j1  ( j1  )
       , m_j2  ( j2  )

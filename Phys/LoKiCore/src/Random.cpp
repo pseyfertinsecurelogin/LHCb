@@ -278,7 +278,6 @@ LoKi::Random::Blind::Blind
   const double       minv ,
   const double       maxv )
   : LoKi::AuxFunBase ( std::tie ( seed , minv , maxv ) )
-  , LoKi::Functor<void,double> ()
   , m_result ( Gaudi::Math::blind ( "LoKi::Random::Blind_" + seed , minv , maxv ) )
   , m_seed   ( seed )
   , m_min    ( minv )
@@ -289,7 +288,6 @@ LoKi::Random::Blind::Blind
 // =============================================================================
 LoKi::Random::Blind::Blind ( const std::string& seed )
   : LoKi::AuxFunBase ( std::tie ( seed ) )
-  , LoKi::Functor<void,double> ()
   , m_result ( Gaudi::Math::blind ( "LoKi::Random::Blind_" + seed , -1 , 1 ) )
   , m_seed   ( seed )
   , m_min    ( -1   )

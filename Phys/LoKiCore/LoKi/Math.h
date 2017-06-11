@@ -40,8 +40,8 @@ namespace LoKi
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
   inline LoKi::ComposeFunction<TYPE,TYPE2>
   exp ( F&& fun ) { return { std::exp , std::forward<F>(fun) , "exp" }; }
   // ==========================================================================
@@ -50,160 +50,159 @@ namespace LoKi
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  sin ( F&& fun ) { return { std::sin , std::forward<F>(fun) , "sin" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> sin ( F&& fun )
+  { return { std::sin , std::forward<F>(fun) , "sin" } ; }
   // ==========================================================================
   /*  hyperbolic sine for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  sinh ( F&& fun ) { return { std::sinh, std::forward<F>(fun) , "sinh" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> sinh ( F&& fun )
+  { return { std::sinh, std::forward<F>(fun) , "sinh" } ; }
   // ==========================================================================
   /*  cosine for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  cos ( F&& fun ) { return { std::cos , std::forward<F>(fun) , "cos" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> cos ( F&& fun )
+  { return { std::cos , std::forward<F>(fun) , "cos" } ; }
   // ==========================================================================
   /*  hyperbolic cosine for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  cosh ( F&& fun ) { return { std::cosh , std::forward<F>(fun) , "cosh" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> cosh ( F&& fun )
+  { return { std::cosh , std::forward<F>(fun) , "cosh" } ; }
   // ==========================================================================
   /*  tan for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  tan ( F&& fun ) { return { std::tan , std::forward<F>(fun) , "tan" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> tan ( F&& fun )
+  { return { std::tan , std::forward<F>(fun) , "tan" } ; }
   // ==========================================================================
   /*  hyperbolic tangent for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  tanh ( F&& fun ) { return { std::tanh , std::forward<F>(fun) , "tanh" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> tanh ( F&& fun )
+  { return { std::tanh , std::forward<F>(fun) , "tanh" } ; }
   // ==========================================================================
   /*  sqrt for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  sqrt ( F&& fun ) { return { std::sqrt , std::forward<F>(fun) , "sqrt" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> sqrt ( F&& fun )
+  { return { std::sqrt , std::forward<F>(fun) , "sqrt" } ; }
   // ==========================================================================
   /*  cbrt for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  cbrt ( F&& fun ) { return { std::cbrt , std::forward<F>(fun) , "cbrt" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> cbrt ( F&& fun )
+  { return { std::cbrt , std::forward<F>(fun) , "cbrt" } ; }
   // ==========================================================================
   /*  asine for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  asin ( F&& fun ) { return { std::asin , std::forward<F>(fun) , "asin" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> asin ( F&& fun )
+  { return { std::asin , std::forward<F>(fun) , "asin" } ; }
   // ==========================================================================
   /*  acos for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  acos ( F&& fun ) { return { std::acos , std::forward<F>(fun) , "acos" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> acos ( F&& fun )
+  { return { std::acos , std::forward<F>(fun) , "acos" } ; }
   // ==========================================================================
   /*  atan for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  atan ( F&& fun ) { return { std::atan , std::forward<F>(fun) , "atan" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> atan ( F&& fun )
+  { return { std::atan , std::forward<F>(fun) , "atan" } ; }
   // ==========================================================================
   /*  log for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  log ( F&& fun ) { return { std::log , std::forward<F>(fun) , "log" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> log ( F&& fun )
+  { return { std::log , std::forward<F>(fun) , "log" } ; }
   // ==========================================================================
   /*  log10 for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  log10 ( F&& fun ) { return { std::log10 , std::forward<F>(fun) , "log10" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> log10 ( F&& fun )
+  { return { std::log10 , std::forward<F>(fun) , "log10" } ; }
   // ==========================================================================
   /*  abs for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  abs ( F&& fun ) { return { std::fabs , std::forward<F>(fun) , "abs" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> abs ( F&& fun )
+  { return { std::fabs , std::forward<F>(fun) , "abs" } ; }
   // ==========================================================================
   /*  abs for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction<TYPE,TYPE2>
-  fabs ( F&& fun ) { return { std::fabs , std::forward<F>(fun) , "abs" } ; }
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction<TYPE,TYPE2> fabs ( F&& fun )
+  { return { std::fabs , std::forward<F>(fun) , "abs" } ; }
   // ==========================================================================
   /*  atan2 for LoKi function
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
   template <typename F1, typename F2,
-            typename TYPE  = typename details::LF2<F1,F2>::type1,
-            typename TYPE2 = typename details::LF2<F1,F2>::type2>
-  inline LoKi::ComposeFunction2<TYPE,TYPE2>
-  atan2 ( F1&& fun1 , F2&& fun2 )
+            typename TYPE  = details::type1_t<F1,F2>,
+            typename TYPE2 = details::type2_t<F1,F2>>
+  LoKi::ComposeFunction2<TYPE,TYPE2> atan2 ( F1&& fun1 , F2&& fun2 )
   { return { std::atan2 , std::forward<F1>(fun1) , std::forward<F2>(fun2) , "atan2" }; }
   // ==========================================================================
   /*  atan2 for LoKi function
@@ -211,11 +210,10 @@ namespace LoKi
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction2<TYPE,TYPE2>
-  atan2 ( F&&      fun1 ,
-          typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction2<TYPE,TYPE2> atan2 ( F&&      fun1 ,
+                                             typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
   { return { std::atan2 , std::forward<F>(fun1) , std::move(val2) , "atan2" } ; }
   // ==========================================================================
   /*  atan2 for LoKi function
@@ -223,11 +221,10 @@ namespace LoKi
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction2<TYPE,TYPE2>
-  atan2 ( typename LoKi::Constant<TYPE,TYPE2>::T2 val1 ,
-          F&&        fun2 )
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction2<TYPE,TYPE2> atan2( typename LoKi::Constant<TYPE,TYPE2>::T2 val1 ,
+                                            F&&        fun2 )
   { return { std::atan2 , std::move(val1) , std::forward<F>(fun2)  , "atan2" } ; }
   // ==========================================================================
   /*  atan  for LoKi function
@@ -235,10 +232,9 @@ namespace LoKi
    *  @date   2002-07-24
    */
   template <typename F1, typename F2,
-            typename TYPE  = typename details::LF2<F1,F2>::type1,
-            typename TYPE2 = typename details::LF2<F1,F2>::type2>
-  inline LoKi::ComposeFunction2<TYPE,TYPE2>
-  atan  ( F1&& fun1 , F2&& fun2 )
+            typename TYPE  = details::type1_t<F1,F2>,
+            typename TYPE2 = details::type2_t<F1,F2>>
+  LoKi::ComposeFunction2<TYPE,TYPE2> atan  ( F1&& fun1 , F2&& fun2 )
   { return atan2( std::forward<F1>(fun1) , std::forward<F2>(fun2) ); }
   // ==========================================================================
   /*  atan  for LoKi function
@@ -246,10 +242,10 @@ namespace LoKi
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction2<TYPE,TYPE2>
-  atan  ( F&& fun1 , typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction2<TYPE,TYPE2> atan( F&& fun1 ,
+                                           typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
   { return atan2( std::forward<F>(fun1), std::move(val2)) ; }
   // ==========================================================================
   /*  atan  for LoKi function
@@ -257,10 +253,10 @@ namespace LoKi
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction2<TYPE,TYPE2>
-  atan  ( typename LoKi::Constant<TYPE,TYPE2>::T2 val1 , F&& fun2 )
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction2<TYPE,TYPE2> atan( typename LoKi::Constant<TYPE,TYPE2>::T2 val1 ,
+                                           F&& fun2 )
   { return atan2( std::move(val1), std::forward<F>(fun2) ); }
   // ==========================================================================
   /*  pow for LoKi function
@@ -268,10 +264,9 @@ namespace LoKi
    *  @date   2002-07-24
    */
   template <typename F1, typename F2,
-            typename TYPE  = typename details::LF2<F1,F2>::type1,
-            typename TYPE2 = typename details::LF2<F1,F2>::type2>
-  inline LoKi::ComposeFunction2<TYPE,TYPE2>
-  pow ( F1&& fun1 , F2&& fun2 )
+            typename TYPE  = details::type1_t<F1,F2>,
+            typename TYPE2 = details::type2_t<F1,F2>>
+  LoKi::ComposeFunction2<TYPE,TYPE2> pow ( F1&& fun1 , F2&& fun2 )
   { return { std::pow , std::forward<F1>(fun1) , std::forward<F2>(fun2)  , "pow" } ; }
   // ==========================================================================
   /*  pow for LoKi function
@@ -279,10 +274,10 @@ namespace LoKi
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction2<TYPE,TYPE2>
-  pow ( F&& fun1, typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction2<TYPE,TYPE2> pow ( F&& fun1,
+                                           typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
   { return { std::pow , std::forward<F>(fun1) , std::move(val2) , "pow" } ; }
   // ==========================================================================
   /*  pow for LoKi function
@@ -290,10 +285,10 @@ namespace LoKi
    *  @date   2002-07-24
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
-  inline LoKi::ComposeFunction2<TYPE,TYPE2>
-  pow ( typename LoKi::Constant<TYPE,TYPE2>::T2 val1, F&& fun2 )
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::ComposeFunction2<TYPE,TYPE2> pow ( typename LoKi::Constant<TYPE,TYPE2>::T2 val1,
+                                           F&& fun2 )
   { return { std::pow , std::move(val1) , std::forward<F>(fun2) , "pow" } ; }
   // ==========================================================================
   /*  minimum for LoKi functions
@@ -301,106 +296,106 @@ namespace LoKi
    *  @date 2004-08-10
    */
   template <typename F1, typename F2,
-            typename TYPE  = typename details::LF2<F1,F2>::type1,
-            typename TYPE2 = typename details::LF2<F1,F2>::type2>
-  inline LoKi::Min<TYPE,TYPE2>
-  min ( F1&& fun1 , F2&& fun2 ) { return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
+            typename TYPE  = details::type1_t<F1,F2>,
+            typename TYPE2 = details::type2_t<F1,F2>>
+  LoKi::Min<TYPE,TYPE2> min ( F1&& fun1 , F2&& fun2 )
+  { return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
   // ==========================================================================
   /*  minimum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <class TYPE,class TYPE2>
-  inline LoKi::Min<TYPE,TYPE2>
-  min ( const LoKi::Functor<TYPE,TYPE2>& fun1 ,
-        const LoKi::Functor<TYPE,TYPE2>& fun2 ,
-        const LoKi::Functor<TYPE,TYPE2>& fun3 )
+  template <typename F1, typename F2, typename F3,
+            typename TYPE  = details::type1_t<F1,F2,F3>,
+            typename TYPE2 = details::type2_t<F1,F2,F3>>
+  LoKi::Min<TYPE,TYPE2> min ( const F1& fun1 , const F2& fun2 , const F3& fun3 )
   { return { fun1 , fun2 , fun3 } ; }
   // ==========================================================================
   /*  minimum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <class TYPE, class TYPE2>
-  inline LoKi::Min<TYPE,TYPE2>
-  min ( const LoKi::Functor<TYPE,TYPE2>& fun1 ,
-        const LoKi::Functor<TYPE,TYPE2>& fun2 ,
-        const LoKi::Functor<TYPE,TYPE2>& fun3 ,
-        const LoKi::Functor<TYPE,TYPE2>& fun4 )
+  template <typename F1, typename F2, typename F3, typename F4,
+            typename TYPE  = LoKi::details::type1_t<F1,F2,F3,F4>,
+            typename TYPE2 = LoKi::details::type2_t<F1,F2,F3,F4>>
+  LoKi::Min<TYPE,TYPE2> min ( const F1& fun1 , const F2& fun2 ,
+                              const F3& fun3 , const F4& fun4 )
   { return { fun1 , fun2 , fun3 , fun4 } ; }
   // ==========================================================================
   /*  minimum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <class TYPE, class TYPE2>
-  inline LoKi::Min<TYPE,TYPE2>
-  min ( const LoKi::Functor<TYPE,TYPE2>&        fun1 ,
-        typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
+  template <typename F,
+            typename TYPE  = LoKi::details::type1_t<F>,
+            typename TYPE2 = LoKi::details::type2_t<F>>
+  LoKi::Min<TYPE,TYPE2> min ( const F&                                fun1 ,
+                              typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
   { return { fun1 , val2 } ; }
   // ==========================================================================
   /*  minimum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <class TYPE, class TYPE2>
-  inline LoKi::Min<TYPE,TYPE2>
-  min ( typename LoKi::Constant<TYPE,TYPE2>::T2 val1 ,
-        const LoKi::Functor<TYPE,TYPE2>&        fun2 )
+  template <typename F,
+            typename TYPE = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Min<TYPE,TYPE2> min ( typename LoKi::Constant<TYPE,TYPE2>::T2 val1 ,
+                              const F&                                fun2 )
   { return { val1 , fun2 } ; }
   // ==========================================================================
   /*  maximum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <class TYPE, class TYPE2>
-  inline LoKi::Max<TYPE,TYPE2>
-  max ( const LoKi::Functor<TYPE,TYPE2>& fun1 ,
-        const LoKi::Functor<TYPE,TYPE2>& fun2 )
+  template <typename F1, typename F2,
+            typename TYPE   = details::type1_t<F1,F2>,
+            typename TYPE2  = details::type2_t<F1,F2>>
+  LoKi::Max<TYPE,TYPE2> max ( const F1& fun1 , const F2& fun2 )
   { return { fun1 , fun2 } ; }
   // ==========================================================================
   /*  maximum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <class TYPE,class TYPE2>
-  inline LoKi::Max<TYPE,TYPE2>
-  max ( const LoKi::Functor<TYPE,TYPE2>& fun1 ,
-        const LoKi::Functor<TYPE,TYPE2>& fun2 ,
-        const LoKi::Functor<TYPE,TYPE2>& fun3 )
+  template <typename F1, typename F2, typename F3,
+            typename TYPE  = details::type1_t<F1,F2,F3>,
+            typename TYPE2 = details::type2_t<F1,F2,F3>>
+  LoKi::Max<TYPE,TYPE2> max ( const F1& fun1 , const F2& fun2 , const F3& fun3 )
   { return { fun1 , fun2 , fun3 } ; }
   // ==========================================================================
   /*  maximum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <class TYPE,class TYPE2>
-  inline LoKi::Max<TYPE,TYPE2>
-  max ( const LoKi::Functor<TYPE,TYPE2>& fun1 ,
-        const LoKi::Functor<TYPE,TYPE2>& fun2 ,
-        const LoKi::Functor<TYPE,TYPE2>& fun3 ,
-        const LoKi::Functor<TYPE,TYPE2>& fun4 )
+  template <typename F1, typename F2, typename F3, typename F4,
+            typename TYPE  = details::type1_t<F1,F2,F3,F4>,
+            typename TYPE2 = details::type2_t<F1,F2,F3,F4>>
+  LoKi::Max<TYPE,TYPE2> max ( const F1& fun1 , const F2& fun2 ,
+                              const F3& fun3 , const F4& fun4 )
   { return { fun1 , fun2 , fun3 , fun4 } ; }
   // ==========================================================================
   /*  maximum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <class TYPE, class TYPE2>
-  inline LoKi::Max<TYPE,TYPE2>
-  max ( const LoKi::Functor<TYPE,TYPE2>&        fun1 ,
-        typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
-  { return { fun1 , val2 } ; }
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Max<TYPE,TYPE2> max ( F&&                                     fun1 ,
+                              typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
+  { return { std::forward<F>(fun1) , val2 } ; }
   // ==========================================================================
   /*  maximum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <class TYPE, class TYPE2>
-  inline LoKi::Max<TYPE,TYPE2>
-  max ( typename LoKi::Constant<TYPE,TYPE2>::T2 val1 ,
-        const LoKi::Functor<TYPE,TYPE2>&        fun2 )
-  { return { val1 , fun2 } ; }
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Max<TYPE,TYPE2> max ( typename LoKi::Constant<TYPE,TYPE2>::T2 val1 ,
+                              F&&                                     fun2 )
+  { return { val1 , std::forward<F>(fun2) } ; }
   // ==========================================================================
   /** helpful function for creation of comparison object
    *  @param fun1 function to be applied to the first object to be compared
@@ -409,11 +404,11 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
-  template <class TYPE,class TYPE2,class CMP>
-  inline LoKi::Compare<TYPE,CMP,TYPE2> compare
-  ( const LoKi::Functor<TYPE,TYPE2>& fun1  ,
-    const LoKi::Functor<TYPE,TYPE2>& fun2  ,
-    const CMP&                  cmp = std::less<TYPE2>() )
+  template <typename F1, typename F2, typename CMP,
+            typename TYPE   = details::type1_t<F1,F2>,
+            typename TYPE2  = details::type2_t<F1,F2>>
+  LoKi::Compare<TYPE,CMP,TYPE2> compare ( const F1& fun1  , const F2& fun2  ,
+                                          const CMP& cmp = std::less<>() )
   { return { fun1 , fun2 , cmp } ; }
   // ==========================================================================
   /** select element form the sequence with minimal value of
@@ -438,14 +433,14 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-09-05
    */
-  template<class IT,class TYPE, class TYPE2>
-  inline IT select_min
-  ( IT                               first ,
-    IT                               last  ,
-    const LoKi::Functor<TYPE,TYPE2>& fun   )
+  template<typename Iterator, typename F,
+           typename = std::enable_if_t< std::is_convertible<
+                                            typename std::iterator_traits<Iterator>::reference,
+                                            LoKi::details::argument_t<F>>::value > >
+  Iterator select_min ( Iterator first , Iterator last  , const F& fun   )
   {
     return std::min_element( first, last,
-                             LoKi::compare( fun , fun , std::less<TYPE2>() ) ) ;
+                             LoKi::compare( fun , fun , std::less<>() ) ) ;
   }
   // ==========================================================================
   /** select element form the sequence with maximal value of function
@@ -469,14 +464,14 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-09-05
    */
-  template<class IT,class TYPE, class TYPE2>
-  inline IT select_max
-  ( IT first                             ,
-    IT last                              ,
-    const LoKi::Functor<TYPE,TYPE2>& fun )
+  template<typename Iterator, typename F,
+           typename = std::enable_if_t< std::is_convertible<
+                                            typename std::iterator_traits<Iterator>::reference,
+                                            LoKi::details::argument_t<F>>::value > >
+  Iterator select_max ( Iterator first , Iterator last  , const F& fun   )
   {
     return std::max_element( first , last  ,
-                             LoKi::compare( fun, fun, std::less<TYPE2>() ) );
+                             LoKi::compare( fun, fun, std::less<>() ) );
   }
   // ==========================================================================
   /** select element form the sequence with minimal value of function
@@ -500,12 +495,14 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-09-05
    */
-  template<class SEQUENCE , class TYPE, class TYPE2>
-  inline typename SEQUENCE::value_type select_min
-  ( SEQUENCE& sequence  , const LoKi::Functor<TYPE,TYPE2>& fun )
+  template<typename Sequence, typename F,
+           typename = std::enable_if_t< std::is_convertible<
+                                            typename Sequence::value_type,
+                                            LoKi::details::argument_t<F>>::value > >
+  typename Sequence::value_type select_min ( Sequence& sequence  , F&& fun )
   {
     if ( sequence.begin() == sequence.end() ) { return {};  }
-    return *select_min( sequence.begin() , sequence.end() , fun );
+    return *select_min( sequence.begin() , sequence.end() , std::forward<F>(fun) );
   }
   // ==========================================================================
   /** select element form the sequence with maximal value of function
@@ -529,12 +526,14 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-09-05
    */
-  template<class SEQUENCE , class TYPE, class TYPE2>
-  inline typename SEQUENCE::value_type select_max
-  ( SEQUENCE& sequence  , const LoKi::Functor<TYPE,TYPE2>& fun )
+  template<typename Sequence, typename F,
+           typename = std::enable_if_t< std::is_convertible<
+                                            typename Sequence::value_type,
+                                            LoKi::details::argument_t<F>>::value > >
+  typename Sequence::value_type select_max( Sequence& sequence  , F&& fun )
   {
     if ( sequence.begin() == sequence.end() ) { return {} ; }
-    return *select_max( sequence.begin() , sequence.end() , fun );
+    return *select_max( sequence.begin() , sequence.end() , std::forward<F>(fun) );
   }
   // ==========================================================================
   /** select element form the sequence with minimal value of
@@ -565,19 +564,22 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-03-09
    */
-  template<class IT,class TYPE, class TYPE2>
-  inline IT select_min
-  ( IT first                         ,
-    IT last                          ,
-    const LoKi::Functor<TYPE,TYPE2>& fun ,
-    const LoKi::Functor<TYPE,bool>&  cut )
+  template<typename Iterator, typename Fun, typename Cut,
+           typename = std::enable_if_t< std::is_convertible<
+                                            typename std::iterator_traits<Iterator>::reference,
+                                            LoKi::details::argument_t<Fun>>::value >,
+           typename = std::enable_if_t< std::is_convertible<
+                                            typename std::iterator_traits<Iterator>::reference,
+                                            LoKi::details::argument_t<Cut>>::value >
+          >
+  Iterator select_min( Iterator first, Iterator last, const Fun& fun , const Cut& cut )
   {
     // empty sequence (or sequence without selected items)
     first = std::find_if( first, last, std::cref(cut) );
     if ( first == last ) { return last ; }
     auto result = first++;
     //
-    const auto cmp = LoKi::compare ( fun , fun , std::less<TYPE2>{} )  ;
+    const auto cmp = LoKi::compare( fun , fun , std::less<>{} )  ;
     //
     for ( ; first != last ; ++first )
     {
@@ -618,19 +620,22 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2005-03-09
    */
-  template<class IT,class TYPE, class TYPE2>
-  inline IT select_max
-  ( IT first                             ,
-    IT last                              ,
-    const LoKi::Functor<TYPE,TYPE2>& fun ,
-    const LoKi::Functor<TYPE,bool>&  cut )
+  template<typename Iterator, typename Fun, typename Cut,
+           typename = std::enable_if_t< std::is_convertible<
+                                            typename std::iterator_traits<Iterator>::reference,
+                                            LoKi::details::argument_t<Fun>>::value >,
+           typename = std::enable_if_t< std::is_convertible<
+                                            typename std::iterator_traits<Iterator>::reference,
+                                            LoKi::details::argument_t<Cut>>::value >
+          >
+  Iterator select_max( Iterator first, Iterator last, const Fun& fun, const Cut& cut)
   {
     // empty sequence
     first = std::find_if(first,last,std::cref(cut));
     if ( first == last ) { return last ; }
     auto result = first++;
 
-    const auto cmp = LoKi::compare( fun , fun , std::less<TYPE2>() )  ;
+    const auto cmp = LoKi::compare( fun , fun , std::less<>() )  ;
     //
     for (  ; first != last ; ++first ) {
       if ( cut( *first ) &&  cmp( *result , *first ) ) { result = first ; }
@@ -643,11 +648,10 @@ namespace LoKi
    *   @date 2009-11-21
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>,
             typename = details::require_signature<F,TYPE,double>>
-  inline LoKi::InRange<TYPE>
-  inRange ( double low, F&& fun, double high )
+  LoKi::InRange<TYPE> inRange ( double low, F&& fun, double high )
   { return { low , std::forward<F>(fun) , high } ; }
   // ==========================================================================
   /** "in-range" function
@@ -655,12 +659,11 @@ namespace LoKi
    *   @date 2009-11-21
    */
   template <typename F1, typename F2, typename F3,
-            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE  = details::type1_t<F1,F2,F3>,
             typename = details::require_signature<F1,TYPE,double>,
             typename = details::require_signature<F2,TYPE,double>,
             typename = details::require_signature<F3,TYPE,double>>
-  inline LoKi::InRange2<TYPE>
-  inRange ( F1&& low  , F2&& fun  , F3&& high )
+  LoKi::InRange2<TYPE> inRange ( F1&& low  , F2&& fun  , F3&& high )
   {
     return { std::forward<F1>(low) , std::forward<F2>(fun) , std::forward<F3>(high) } ;
   }
@@ -670,11 +673,10 @@ namespace LoKi
    *   @date 2009-11-21
    */
   template <typename F1, typename F2,
-            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE  = details::type1_t<F1,F2>,
             typename = details::require_signature<F1,TYPE,double>,
             typename = details::require_signature<F2,TYPE,double>>
-  inline LoKi::InRange2<TYPE>
-  inRange ( double low, F1&& fun, F2&& high )
+  LoKi::InRange2<TYPE> inRange ( double low, F1&& fun, F2&& high )
   {
     return { low , std::forward<F1>(fun) , std::forward<F2>(high) } ;
   }
@@ -684,11 +686,10 @@ namespace LoKi
    *   @date 2009-11-21
    */
   template <typename F1, typename F2,
-            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE  = details::type1_t<F1,F2>,
             typename = details::require_signature<F1,TYPE,double>,
             typename = details::require_signature<F2,TYPE,double>>
-  inline LoKi::InRange2<TYPE>
-  inRange ( F1&& low, F2&& fun, double high )
+  LoKi::InRange2<TYPE> inRange ( F1&& low, F2&& fun, double high )
   {
     return { std::forward<F1>(low) , std::forward<F2>(fun) , high } ;
   }
@@ -698,12 +699,11 @@ namespace LoKi
    *   @date 2009-11-21
    */
   template <typename F1, typename F2, typename F3,
-            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE  = details::type1_t<F1,F2,F3>,
             typename = details::require_signature<F1,TYPE,double>,
             typename = details::require_signature<F2,TYPE,double>,
             typename = details::require_signature<F3,TYPE,double>>
-  inline LoKi::InRange2<TYPE>
-  in_range ( F1&& low  , F2&& fun  , F3&& high )
+  LoKi::InRange2<TYPE> in_range ( F1&& low  , F2&& fun  , F3&& high )
   {
     return { std::forward<F1>(low) , std::forward<F2>(fun) , std::forward<F3>(high) } ;
   }
@@ -713,11 +713,10 @@ namespace LoKi
    *   @date 2009-11-21
    */
   template <typename F1, typename F2,
-            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE  = details::type1_t<F1,F2>,
             typename = details::require_signature<F1,TYPE,double>,
             typename = details::require_signature<F2,TYPE,double>>
-  inline LoKi::InRange2<TYPE>
-  in_range ( double low, F1&& fun, F2&& high )
+  LoKi::InRange2<TYPE> in_range ( double low, F1&& fun, F2&& high )
   {
     return inRange ( low , std::forward<F1>(fun) , std::forward<F2>(high) ) ;
   }
@@ -727,35 +726,31 @@ namespace LoKi
    *   @date 2009-11-21
    */
   template <typename F1, typename F2,
-            typename TYPE  = typename details::LF2<F1,F2>::type1,
+            typename TYPE  = details::type1_t<F1,F2>,
             typename = details::require_signature<F1,TYPE,double>,
             typename = details::require_signature<F2,TYPE,double>>
-  inline LoKi::InRange2<TYPE>
-  in_range ( F1&& low, F2&& fun, double high )
-  {
-    return inRange ( std::forward<F1>(low) , std::forward<F2>(fun) , high ) ;
-  }
+  LoKi::InRange2<TYPE> in_range ( F1&& low, F2&& fun, double high )
+  { return inRange ( std::forward<F1>(low) , std::forward<F2>(fun) , high ) ; }
   // ==========================================================================
   /** "scale" predicate function
    *   @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *   @date 2009-12-06
    */
   template <typename F1, typename F2,
-            typename TYPE  = typename details::LF<F1>::type1,
+            typename TYPE  = details::type1_t<F1>,
             typename = details::require_signature<F1,TYPE,bool>,
             typename = details::require_signature<F2,void,bool>>
-  inline LoKi::XScaler<TYPE>
-  scale ( F1&& cut , F2&&  sf  ) { return { std::forward<F1>(cut) , std::forward<F2>(sf) } ;  }
+  LoKi::XScaler<TYPE> scale ( F1&& cut , F2&&  sf  )
+  { return { std::forward<F1>(cut) , std::forward<F2>(sf) } ;  }
   // ==========================================================================
   /** "round" the floating result to integer value
    *   @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *   @date 2011-04-02
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE  = details::type1_t<F>,
             typename = details::require_signature<F,TYPE,double>>
-  inline LoKi::Round<TYPE>
-  round ( F&& fun ) { return { std::forward<F>(fun) , 1 } ;  }
+  LoKi::Round<TYPE> round ( F&& fun ) { return { std::forward<F>(fun) , 1 } ; }
   // ==========================================================================
   /** "jbit" the floating result to integer value
    *  get the jth bit of value.
@@ -769,10 +764,9 @@ namespace LoKi
    *  @date 2011-04-02
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE  = details::type1_t<F>,
             typename = details::require_signature<F,TYPE,double>>
-  inline LoKi::JBit<TYPE>
-  jbit  ( F&& fun , const unsigned short j   )
+  LoKi::JBit<TYPE> jbit  ( F&& fun , const unsigned short j   )
   { return { std::forward<F>(fun) , j } ;  }
   // ==========================================================================
   /** "jbits" the floating result to integer value
@@ -787,10 +781,9 @@ namespace LoKi
    *  @date 2011-04-02
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE  = details::type1_t<F>,
             typename = details::require_signature<F,TYPE,double>>
-  inline LoKi::JBits<TYPE>
-  jbits ( F&& fun , const unsigned short j1, const unsigned short j2  )
+  LoKi::JBits<TYPE> jbits ( F&& fun , unsigned short j1, unsigned short j2  )
   { return { std::forward<F>(fun) , j1 , j2 } ;  }
 
   // ==========================================================================
@@ -806,10 +799,9 @@ namespace LoKi
    *  @date 2017-02-16
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE  = details::type1_t<F>,
             typename = details::require_signature<F,TYPE,double>>
-  inline LoKi::JDigit<TYPE>
-  jdigit  ( F&& fun , const unsigned short j   )
+  LoKi::JDigit<TYPE> jdigit  ( F&& fun , unsigned short j   )
   { return { std::forward<F>(fun) , j } ;  }
   // ==========================================================================
   /** "jdigits" the floating result to integer value
@@ -824,10 +816,9 @@ namespace LoKi
    *  @date 2017-02-16
    */
   template <typename F,
-            typename TYPE  = typename details::LF<F>::type1,
+            typename TYPE  = details::type1_t<F>,
             typename = details::require_signature<F,TYPE,double>>
-  inline LoKi::JDigits<TYPE>
-  jdigits ( F&& fun , const unsigned short j1, const unsigned short j2  )
+  LoKi::JDigits<TYPE> jdigits ( F&& fun , unsigned short j1, unsigned short j2 )
   { return { std::forward<F>(fun) , j1 , j2 } ;  }
   // ==========================================================================
 } //                                          end of namespace LoKi
@@ -840,7 +831,7 @@ namespace LoKi
     // ========================================================================
     constexpr struct Abs_t {
       template <class TYPE>
-      inline auto operator() ( TYPE i ) const { return std::abs( i ) ; }
+      auto operator() ( TYPE i ) const { return std::abs( i ) ; }
     } _Abs_{} ;
     // ========================================================================
     template <class TYPE = void, class TYPE1,
@@ -871,33 +862,28 @@ namespace std
 {
   //
   //
-  inline
-  std::vector<unsigned int>   abs ( const std::vector<int>&   vct )
+  inline std::vector<unsigned int>   abs ( const std::vector<int>&   vct )
   { return LoKi::Math::_abs_<unsigned int>( vct ) ; }
-  inline
-  std::vector<unsigned long>  abs ( const std::vector<long>&  vct )
+  inline std::vector<unsigned long>  abs ( const std::vector<long>&  vct )
   { return LoKi::Math::_abs_<unsigned long>( vct ) ; }
-  inline
-  std::vector<unsigned short> abs ( const std::vector<short>& vct )
+  inline std::vector<unsigned short> abs ( const std::vector<short>& vct )
   { return LoKi::Math::_abs_<unsigned short>( vct ) ; }
-  inline
-  std::vector<float>          abs ( const std::vector<float>&  vct )
+  inline std::vector<float>          abs ( const std::vector<float>&  vct )
   { return LoKi::Math::_abs_       ( vct ) ; }
-  inline
-  std::vector<double>         abs ( const std::vector<double>& vct )
+  inline std::vector<double>         abs ( const std::vector<double>& vct )
   { return LoKi::Math::_abs_     ( vct ) ; }
   //
   // just for completenes
   //
   inline
-  const std::vector<unsigned int>&
-  abs ( const std::vector<unsigned int>&   vct ) { return vct ; }
+  const std::vector<unsigned int>& abs ( const std::vector<unsigned int>&   vct )
+  { return vct ; }
   inline
-  const std::vector<unsigned short>&
-  abs ( const std::vector<unsigned short>& vct ) { return vct ; }
+  const std::vector<unsigned short>& abs ( const std::vector<unsigned short>& vct )
+  { return vct ; }
   inline
-  const std::vector<unsigned long>&
-  abs ( const std::vector<unsigned long>&  vct ) { return vct ; }
+  const std::vector<unsigned long>& abs ( const std::vector<unsigned long>&  vct )
+  { return vct ; }
   // ==========================================================================
 }
 // ============================================================================

@@ -1,4 +1,3 @@
-// $Id: HLTCuts.h,v 1.6 2010-05-17 16:01:38 ibelyaev Exp $
 // ============================================================================
 #ifndef LOKI_HLTCUTS_H
 #define LOKI_HLTCUTS_H 1

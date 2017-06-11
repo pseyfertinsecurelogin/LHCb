@@ -74,16 +74,18 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate and the generic counter
-      Counter ( const LoKi::Functor<TYPE,TYPE2>& cut  ,
-                StatEntity*                      stat )
-        : m_cut    ( cut  )
+      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+      Counter ( F&&         cut  ,
+                StatEntity* stat )
+        : m_cut    ( std::forward<F>(cut) )
         , m_stat   ( stat )
       {}
       /// constructor from the predicate and the generic counter
-      Counter ( const LoKi::Functor<TYPE,TYPE2>& cut  ,
-                const LoKi::CounterDef&          cnt )
+      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+      Counter ( F&&                     cut  ,
+                const LoKi::CounterDef& cnt )
         : LoKi::AuxFunBase ( std::tie ( cut , cnt ) )
-        , m_cut    ( cut  )
+        , m_cut    ( std::forward<F>(cut)  )
         , m_cntdef ( cnt  )
       {
         if ( this->gaudi() && m_cntdef.valid() )

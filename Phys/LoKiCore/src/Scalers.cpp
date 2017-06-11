@@ -265,7 +265,7 @@ void LoKi::Scalers::RateLimitV::initialize_ ( const std::string& svc )
 }
 // ============================================================================
 /* copy constructor
- *  take care abotu rundomization of initial phase
+ *  take care about randomization of initial phase
  */
 // ============================================================================
 LoKi::Scalers::RateLimitV::RateLimitV

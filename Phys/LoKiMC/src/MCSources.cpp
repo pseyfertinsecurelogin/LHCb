@@ -39,7 +39,6 @@ SourceTES::SourceTES
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( true ) )
   , m_use_finder ( false     )
   , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
-  , m_decay      ()
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
@@ -55,7 +54,6 @@ SourceTES::SourceTES
   , m_cut        ( cuts      )
   , m_use_finder ( false     )
   , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
-  , m_decay      ()
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
@@ -70,7 +68,6 @@ SourceTES::SourceTES
   , m_cut        ( DecNode ( node ) )
   , m_use_finder ( false     )
   , m_finder     ( Decays::Trees::Invalid_<const LHCb::MCParticle*>() )
-  , m_decay      ()
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
@@ -85,7 +82,6 @@ SourceTES::SourceTES
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
   , m_use_finder ( true      )
   , m_finder     ( finder    )
-  , m_decay      ()
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
@@ -100,7 +96,6 @@ SourceTES::SourceTES
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
   , m_use_finder ( true      )
   , m_finder     ( tree      )
-  , m_decay      ()
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
@@ -110,7 +105,6 @@ SourceTES::SourceTES
   const std::string&  descriptor ,
   IDataProviderSvc*   svc        )
   : LoKi::AuxFunBase ( std::tie ( path , descriptor ) )
-  , SourceTES::_Source ()
   , m_path       ( path       )
   , m_dataSvc    ( svc        )
   , m_cut        ( LoKi::BasicFunctors<const LHCb::MCParticle*>::BooleanConstant ( false ) )
@@ -198,8 +192,7 @@ std::size_t SourceTES::get ( const std::string&             location ,
   else
   {
     // use cuts!
-    std::copy_if( parts->begin ()  ,
-                  parts->end   ()  ,
+    std::copy_if( parts->begin ()  , parts->end   ()  ,
                   std::back_inserter ( output ) , std::cref(m_cut) ) ;
   }
   //
@@ -267,48 +260,38 @@ std::ostream& SourceTES::fillStream ( std::ostream& o ) const
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-TESCounter::TESCounter
-( const std::string&           path ,
-  const LoKi::MCTypes::MCCuts& cuts )
+TESCounter::TESCounter ( const std::string&           path ,
+                         const LoKi::MCTypes::MCCuts& cuts )
   : LoKi::AuxFunBase ( std::tie ( path , cuts ) )
-  , LoKi::Functor<void,double> ()
   , m_source ( path , cuts )
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-TESCounter::TESCounter
-( const std::string&           path ,
-  const Decays::iNode&         node )
-  : LoKi::Functor<void,double> ()
-  , m_source ( path , node )
+TESCounter::TESCounter ( const std::string&           path ,
+                         const Decays::iNode&         node )
+  : m_source ( path , node )
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-TESCounter::TESCounter
-( const std::string&              path ,
-  const Decays::IMCDecay::Finder& finder )
-  : LoKi::Functor<void,double> ()
-  , m_source ( path , finder )
+TESCounter::TESCounter ( const std::string&              path ,
+                         const Decays::IMCDecay::Finder& finder )
+  : m_source ( path , finder )
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-TESCounter::TESCounter
-( const std::string&              path ,
-  const Decays::IMCDecay::iTree&  finder )
-  : LoKi::Functor<void,double> ()
-  , m_source ( path , finder )
+TESCounter::TESCounter ( const std::string&              path ,
+                         const Decays::IMCDecay::iTree&  finder )
+  : m_source ( path , finder )
 {}
 // ============================================================================
 // constructor from the service, TES location and cuts
 // ============================================================================
-TESCounter::TESCounter
-( const std::string&              path ,
-  const std::string&              finder )
+TESCounter::TESCounter ( const std::string&              path ,
+                         const std::string&              finder )
   : LoKi::AuxFunBase ( std::tie ( path , finder ) )
-  , LoKi::Functor<void,double> ()
   , m_source ( path , finder )
 {}
 // ============================================================================
@@ -318,7 +301,7 @@ TESCounter* TESCounter::clone() const { return new TESCounter ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only essential method:
 // ============================================================================
-TESCounter::result_type TESCounter::operator() (  ) const
+double TESCounter::operator() (  ) const
 { return m_source.count ( m_source.path() ) ; }
 // ============================================================================
 // OPTIONAL: the nice printout

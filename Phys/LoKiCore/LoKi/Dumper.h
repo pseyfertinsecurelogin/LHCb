@@ -92,7 +92,7 @@ namespace LoKi
     private :
       // ======================================================================
       /// the functor
-      typename LoKi::Assignable<Fun_>::Type  m_fun    ;
+      typename LoKi::Assignable_t<Fun_>      m_fun    ;
       /// right-action ?
       bool                                   m_right  ; // right action?
       /// the stream

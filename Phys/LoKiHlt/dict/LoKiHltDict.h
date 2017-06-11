@@ -46,9 +46,9 @@ namespace LoKi
     {
     private:
       // ======================================================================
-      typedef LHCb::ODIN                                Type ;
+      typedef LHCb::ODIN                                 Type ;
       typedef LoKi::BasicFunctors<const Type*>::Function Fun  ;
-      typedef LoKi::details::LF<Fun>::type2 result_type;
+      typedef LoKi::details::result_t<Fun>               result_type;
       // ======================================================================
     public:
       // ======================================================================
@@ -81,9 +81,9 @@ namespace LoKi
     {
     private:
       // ======================================================================
-      typedef LHCb::ODIN                                 Type ;
+      typedef LHCb::ODIN                                  Type ;
       typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
-      typedef LoKi::details::LF<Fun>::type2 result_type;
+      typedef LoKi::details::result_t<Fun>                result_type;
       // ======================================================================
     public:
       // ======================================================================
@@ -107,7 +107,7 @@ namespace LoKi
     private:
       typedef LHCb::L0DUReport                           Type ;
       typedef LoKi::BasicFunctors<const Type*>::Function Fun  ;
-      typedef LoKi::details::LF<Fun>::type2 result_type;
+      typedef LoKi::details::result_t<Fun>               result_type;
     public:
       //
       static result_type __call__( const Fun& fun, const Type* o )
@@ -137,7 +137,7 @@ namespace LoKi
       // ======================================================================
       typedef LHCb::L0DUReport                            Type ;
       typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
-      typedef LoKi::details::LF<Fun>::type2 result_type;
+      typedef LoKi::details::result_t<Fun>                result_type;
       // ======================================================================
     public:
       // ======================================================================
@@ -161,7 +161,7 @@ namespace LoKi
     private:
       typedef LHCb::HltDecReports                        Type ;
       typedef LoKi::BasicFunctors<const Type*>::Function Fun  ;
-      typedef LoKi::details::LF<Fun>::type2 result_type;
+      typedef LoKi::details::result_t<Fun>               result_type;
     public:
       //
       static result_type __call__( const Fun& fun, const Type* o )
@@ -195,7 +195,7 @@ namespace LoKi
       // ======================================================================
       typedef LHCb::HltDecReports                         Type ;
       typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
-      typedef LoKi::details::LF<Fun>::type2 result_type;
+      typedef LoKi::details::result_t<Fun>                result_type;
       // ======================================================================
     public:
       // ======================================================================

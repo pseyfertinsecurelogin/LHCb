@@ -1,47 +1,46 @@
-// $Id$
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/DecayDescriptor.h"
 // ============================================================================
-/** @file 
+/** @file
  *  Implementation file for functions from the file LoKi/DecayDescriptor.h
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date   2009-05-06 
+ *  @date   2009-05-06
  */
 // ============================================================================
-/*  simple function to extract "decay-only" flag from the arrow 
+/*  simple function to extract "decay-only" flag from the arrow
  *  @param   arrow the arrow
- *  @return  "decay-only" flag 
+ *  @return  "decay-only" flag
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date   2009-05-06 
- */     
+ *  @date   2009-05-06
+ */
 // ============================================================================
-bool Decays::Trees::decayOnly ( const Decays::Trees::Arrow& arrow ) 
+bool Decays::Trees::decayOnly ( const Decays::Trees::Arrow& arrow )
 {
-  switch ( arrow ) 
+  switch ( arrow )
   {
-  case Decays::Trees::SingleX     : return false ;  // X 
-  case Decays::Trees::LongSingleX : return false ;  // X 
-  case Decays::Trees::DoubleX     : return false ;  // X 
-  case Decays::Trees::LongDoubleX : return false ;  // X 
+  case Decays::Trees::SingleX     : return false ;  // X
+  case Decays::Trees::LongSingleX : return false ;  // X
+  case Decays::Trees::DoubleX     : return false ;  // X
+  case Decays::Trees::LongDoubleX : return false ;  // X
   default                         : return true  ;
   }
 }
 // ============================================================================
-/*  simple function to extract "algorithm" flag from the arrow 
+/*  simple function to extract "algorithm" flag from the arrow
  *  @param   arrow the arrow
- *  @return  "algorithm" flag 
+ *  @return  "algorithm" flag
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date   2009-05-06 
- */     
+ *  @date   2009-05-06
+ */
 // ============================================================================
-Decays::Trees::Alg  Decays::Trees::algorithm 
+Decays::Trees::Alg  Decays::Trees::algorithm
 ( const Decays::Trees::Arrow& arrow )
 {
-  switch ( arrow ) 
+  switch ( arrow )
   {
   case Decays::Trees::LongSingle      : return Decays::Trees::Sections  ;
   case Decays::Trees::LongDouble      : return Decays::Trees::Sections  ;
@@ -51,16 +50,16 @@ Decays::Trees::Alg  Decays::Trees::algorithm
   }
 }
 // ============================================================================
-/*  simple function to extract "photos" flag from the arrow 
+/*  simple function to extract "photos" flag from the arrow
  *  @param   arrow the arrow
- *  @return  "photos" flag 
+ *  @return  "photos" flag
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date   2009-05-06 
- */     
+ *  @date   2009-05-06
+ */
 // ============================================================================
-bool Decays::Trees::photos    ( const Decays::Trees::Arrow& arrow ) 
+bool Decays::Trees::photos    ( const Decays::Trees::Arrow& arrow )
 {
-  switch ( arrow ) 
+  switch ( arrow )
   {
   case Decays::Trees::Double          : return true  ;
   case Decays::Trees::LongDouble      : return true  ;
@@ -70,17 +69,17 @@ bool Decays::Trees::photos    ( const Decays::Trees::Arrow& arrow )
   }
 }
 // ============================================================================
-/*  get the string representation of the arrow 
+/*  get the string representation of the arrow
  *  @param    arr the arrow
  *  @return  strnig representation of the arrow
- *  @see Decays::Trees:Arrow 
+ *  @see Decays::Trees:Arrow
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date   2009-05-06 
- */     
+ *  @date   2009-05-06
+ */
 // ============================================================================
-std::string Decays::Trees::arrow ( const Decays::Trees::Arrow& arr ) 
+std::string Decays::Trees::arrow ( const Decays::Trees::Arrow& arr )
 {
-  switch ( arr ) 
+  switch ( arr )
   {
   case Decays::Trees::Single              : return   "->"  ;
   case Decays::Trees::LongSingle          : return  "-->"  ;
@@ -94,17 +93,17 @@ std::string Decays::Trees::arrow ( const Decays::Trees::Arrow& arr )
   }
 }
 // ============================================================================
-/*  valid arrow? 
+/*  valid arrow?
  *  @param   arrow the arrow
- *  @return  true for valid arrow 
- *  @see Decays::Trees:Arrow 
+ *  @return  true for valid arrow
+ *  @see Decays::Trees:Arrow
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date   2009-05-06 
- */     
+ *  @date   2009-05-06
+ */
 // ============================================================================
-bool Decays::Trees::valid ( const Decays::Trees::Arrow& arrow ) 
+bool Decays::Trees::valid ( const Decays::Trees::Arrow& arrow )
 {
-  switch ( arrow ) 
+  switch ( arrow )
   {
   case Decays::Trees::Single              : return true  ;
   case Decays::Trees::LongSingle          : return true  ;
@@ -118,28 +117,28 @@ bool Decays::Trees::valid ( const Decays::Trees::Arrow& arrow )
   }
 }
 // ============================================================================
-/*  valid arrow? 
+/*  valid arrow?
  *  @param   arrow the arrow
- *  @return  true for valid arrow 
- *  @see Decays::Trees:Arrow 
+ *  @return  true for valid arrow
+ *  @see Decays::Trees:Arrow
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
- *  @date   2009-05-06 
- */     
+ *  @date   2009-05-06
+ */
 // ============================================================================
-bool Decays::Trees::valid ( const std::string& arrow ) 
+bool Decays::Trees::valid ( const std::string& arrow )
 {
-  return 
-    "->"   == arrow || 
-    "-->"  == arrow || 
-    "=>"   == arrow || 
-    "==>"  == arrow || 
-    "-x>"  == arrow || 
-    "--x>" == arrow || 
-    "=x>"  == arrow || 
-    "==x>" == arrow ;  
+  return
+    "->"   == arrow ||
+    "-->"  == arrow ||
+    "=>"   == arrow ||
+    "==>"  == arrow ||
+    "-x>"  == arrow ||
+    "--x>" == arrow ||
+    "=x>"  == arrow ||
+    "==x>" == arrow ;
 }
 // ============================================================================
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

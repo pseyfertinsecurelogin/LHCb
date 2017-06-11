@@ -72,15 +72,13 @@ namespace LoKi
   public:
     // ========================================================================
     /// the only one essential method ("function")
-    virtual TYPE2 operator () ( argument    ) const = 0 ;
+    virtual TYPE2 operator() ( argument    ) const = 0 ;
     /// the only one essential method ("function")
-    virtual TYPE2 evaluate    ( argument  a ) const
-    { return (*this)( a ) ; }
+    virtual TYPE2 evaluate( argument  a ) const { return (*this)( a ) ; }
     /// the only one essential method ("function")
-    virtual TYPE2 eval        ( argument  a ) const
-    { return (*this)( a ) ; }
+    virtual TYPE2 eval( argument  a ) const { return (*this)( a ) ; }
     /// clone method
-    virtual  Functor* clone    ()                   const = 0 ;
+    virtual  Functor* clone() const = 0 ;
     /// virtual destructor
     virtual ~Functor() = default;
     // ========================================================================
@@ -432,37 +430,26 @@ namespace LoKi
       // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE?
       // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE2?
       template <typename T,
-                typename = typename std::enable_if<is_functor<T>::value>::type>
+                typename = std::enable_if_t<is_functor<T>::value>>
       struct LF {
-          using U = typename std::decay<T>::type;
+          using U = std::decay_t<T>;
           template <typename T1, typename T2> static T1 test1( LoKi::Functor<T1,T2>* );
           template <typename T1, typename T2> static T2 test2( LoKi::Functor<T1,T2>* );
           using type1 = decltype( test1(std::declval<U*>()) );
           using type2 = decltype( test2(std::declval<U*>()) );
       };
+      template <typename... Fs> using type1_t = std::common_type_t<typename LF<Fs>::type1...>;
+      template <typename... Fs> using type2_t = std::common_type_t<typename LF<Fs>::type2...>;
 
-      // ( F1 = LoKi::Functor<TYPE,TYPE2> , F2 = LoKi::Functor<TYPE,TYPE2> ) -> TYPE
-      // ( F1 = LoKi::Functor<TYPE,TYPE2> , F2 = LoKi::Functor<TYPE,TYPE2> ) -> TYPE2
-      template <typename F1, typename F2,
-                typename = typename std::enable_if<is_functor<F1>::value
-                                               &&  is_functor<F2>::value
-                                               // the following is not strictly neccessary anymore...
-                                               &&  std::is_same< typename LF<F1>::type1, typename LF<F2>::type1 >::value
-                                               &&  std::is_same< typename LF<F1>::type2, typename LF<F2>::type2 >::value
-                                               >::type>
-      struct LF2 {
-          using type1 = typename std::common_type< typename LF<F1>::type1,
-                                                   typename LF<F2>::type1 >::type;
-          using type2 = typename std::common_type< typename LF<F1>::type2,
-                                                   typename LF<F2>::type2 >::type;
-      };
+      template <typename F> using result_t   = type2_t<F>;
+      template <typename F> using argument_t = typename boost::call_traits<std::add_const_t<type1_t<F>>>::param_type;
 
       template <typename F, typename TYPE1, typename TYPE2>
-      using require_signature = typename
-          std::enable_if<   decays_to<typename LF<F>::type1, TYPE1>::value
-                         && decays_to<typename LF<F>::type2, TYPE2>::value >::type;
-  }
+      using require_signature =
+          std::enable_if_t<   decays_to<type1_t<F>, TYPE1>::value
+                           && decays_to<type2_t<F>, TYPE2>::value >;
 
+  }
 
   // ==========================================================================
 } //                                                      end of namespace LoKi

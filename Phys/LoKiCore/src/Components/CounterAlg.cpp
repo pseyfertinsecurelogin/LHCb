@@ -87,11 +87,11 @@ namespace LoKi
       Item () = default;
       // ====================================================================
       /// the variable name
-      std::string                                                 m_name ;
+      std::string                                             m_name ;
       /// the functor itself
-      LoKi::Assignable<LoKi::BasicFunctors<void>::Function>::Type m_fun  = LoKi::BasicFunctors<void>::Constant ( -1.e+10 );
+      LoKi::Assignable_t<LoKi::BasicFunctors<void>::Function> m_fun  = LoKi::BasicFunctors<void>::Constant ( -1.e+10 );
       /// helper counter
-      StatEntity*                                                 m_cnt  = nullptr;
+      StatEntity*                                             m_cnt  = nullptr;
       // ====================================================================
     } ;
     // ======================================================================

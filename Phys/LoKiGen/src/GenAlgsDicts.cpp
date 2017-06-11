@@ -92,7 +92,7 @@ double LoKi::Dicts::GenAlgs::accumulate ( const HepMC::GenEvent*       event ,
                                           double                       res   )
 {
   return LoKi::GenAlgs::accumulate
-    ( event , fun , cut , res , std::plus<double>() ) ;
+    ( event , fun , cut , res , std::plus<>() ) ;
 }
 // ============================================================================
 // accumulate through the addition
@@ -103,7 +103,7 @@ double LoKi::Dicts::GenAlgs::accumulate ( const LHCb::HepMCEvent*      event ,
                                           double                       res   )
 {
   return LoKi::GenAlgs::accumulate
-    ( event , fun , cut , res , std::plus<double>() ) ;
+    ( event , fun , cut , res , std::plus<>() ) ;
 }
 // ============================================================================
 // accumulate through the addition
@@ -114,7 +114,7 @@ double LoKi::Dicts::GenAlgs::accumulate ( const LHCb::HepMCEvent::Container* eve
                                           double                             res   )
 {
   return LoKi::GenAlgs::accumulate
-    ( event , fun , cut , res , std::plus<double>() ) ;
+    ( event , fun , cut , res , std::plus<>() ) ;
 }
 // ============================================================================
 // accumulate through the addition
@@ -126,7 +126,7 @@ double LoKi::Dicts::GenAlgs::accumulate ( const HepMC::GenVertex*      vertex ,
                                           double                       res    )
 {
   return LoKi::GenAlgs::accumulate
-    ( vertex , fun , cut , res , range , std::plus<double>() ) ;
+    ( vertex , fun , cut , res , range , std::plus<>() ) ;
 }
 // ============================================================================
 // accumulate through the addition
@@ -137,7 +137,7 @@ double LoKi::Dicts::GenAlgs::accumulate ( const HepMC::GenParticle*    particle 
                                           const double                 res      )
 {
   return LoKi::GenAlgs::accumulate
-    ( particle , fun , cut , res , std::plus<double>() ) ;
+    ( particle , fun , cut , res , std::plus<>() ) ;
 }
 // ============================================================================
 // find minimal value over the event

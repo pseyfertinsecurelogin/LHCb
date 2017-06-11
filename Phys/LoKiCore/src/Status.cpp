@@ -93,7 +93,6 @@ LoKi::Status::Check::fillStream ( std::ostream& s ) const
 LoKi::Status::Accept::Accept
 ( const std::string& nickname )
   : LoKi::AuxFunBase ( std::tie ( nickname ) )
-  , LoKi::Functor<void,bool>()
   , m_nickname ( nickname )
   , m_tool     ()
 {

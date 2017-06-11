@@ -57,7 +57,7 @@ namespace LoKi
       // ======================================================================
       typedef TYPE                                                Type ;
       typedef typename LoKi::BasicFunctors<const Type*>::Function Fun  ;
-      typedef typename LoKi::details::LF<Fun>::type2              result_type;
+      typedef LoKi::details::result_t<Fun>                        result_type;
       // ======================================================================
     public:
       // ======================================================================
@@ -108,9 +108,9 @@ namespace LoKi
     {
     private:
       // ======================================================================
-      typedef TYPE                                                 Type ;
-      typedef typename LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
-      typedef typename LoKi::details::LF<Fun>::type2               result_type;
+      typedef TYPE                                      Type ;
+      typedef typename LoKi::Predicate_t<const Type*>   Fun  ;
+      typedef LoKi::details::result_t<Fun>              result_type;
       // ======================================================================
     public:
       // ======================================================================
@@ -128,8 +128,8 @@ namespace LoKi
       static result_type  __rrshift__( const Fun& fun  , const SmartRef<Type>& o )
       { return fun ( o ) ; }
       // ======================================================================
-      static LoKi::FunctorFromFunctor<const Type*,bool> __rshift__
-      ( const Fun& fun  , const Fun&                        o ) { return fun >> o  ; }
+      static LoKi::Assignable_t<Fun>
+      __rshift__ ( const Fun& fun, const Fun& o ) { return fun >> o  ; }
       // ======================================================================
     } ;
     // ========================================================================

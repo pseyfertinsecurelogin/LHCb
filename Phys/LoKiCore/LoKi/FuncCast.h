@@ -32,7 +32,7 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date   2006-03-07
      */
-    template <class TYPE1,class TYPE2,class TYPE3=double>
+    template <typename TYPE1,typename TYPE2,typename TYPE3=double>
     class FuncCast : public LoKi::Functor<TYPE1,TYPE3>
     {
     public:
@@ -48,8 +48,7 @@ namespace LoKi
       TYPE3
       operator() ( typename LoKi::Functor<TYPE1,TYPE3>::argument a ) const override
       {
-        typedef typename LoKi::Functor<TYPE2,TYPE3>::argument_type _arg2 ;
-        return m_fun( dynamic_cast<_arg2>( a )  ) ;
+        return m_fun( dynamic_cast<TYPE2>( a )  ) ;
       }
       /// OPTIONAL: the specific printout
       std::ostream& fillStream ( std::ostream& stream ) const override
@@ -86,8 +85,7 @@ namespace LoKi
       TYPE3
       operator() ( typename LoKi::Functor<TYPE1,TYPE3>::argument a ) const override
       {
-        typedef typename LoKi::Functor<TYPE2,TYPE3>::argument_type _arg2 ;
-        return m_fun.fun ( static_cast<_arg2>( a ) ) ;
+        return m_fun.fun ( static_cast<TYPE2>( a ) ) ;
       } ;
       /// OPTIONAL: the specific printout
       virtual std::ostream& fillStream ( std::ostream& stream ) const

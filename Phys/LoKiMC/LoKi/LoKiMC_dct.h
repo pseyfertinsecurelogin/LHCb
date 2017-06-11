@@ -106,9 +106,9 @@ namespace LoKi
     {
     private:
       // ======================================================================
-      typedef LHCb::MCParticle                           Type ;
+      typedef LHCb::MCParticle                            Type ;
       typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
-      typedef typename LoKi::details::LF<Fun>::type2              result_type;
+      typedef LoKi::details::result_t<Fun>                result_type;
 
       // ======================================================================
     public:

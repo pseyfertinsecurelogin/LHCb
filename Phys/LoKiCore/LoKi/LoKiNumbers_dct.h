@@ -75,7 +75,7 @@ namespace LoKi
     private:
       typedef double                                Type ;
       typedef LoKi::BasicFunctors<double>::Function Fun  ;
-      typedef LoKi::details::LF<Fun>::type2 result_type;
+      typedef LoKi::details::result_t<Fun>          result_type;
     public:
       // ======================================================================
       // __call__
@@ -116,7 +116,7 @@ namespace LoKi
     private:
       typedef double                                 Type ;
       typedef LoKi::BasicFunctors<double>::Predicate Fun  ;
-      typedef LoKi::details::LF<Fun>::type2 result_type;
+      typedef LoKi::details::result_t<Fun>           result_type;
     public:
       //
       static result_type __call__ ( const Fun& fun, const double o )
@@ -185,21 +185,18 @@ namespace LoKi
       typedef LoKi::BasicFunctors<Type>::Predicate Fun  ;
     public:
       //
-      static bool __call__
-      ( const Fun& fun  , const Type&  o ) { return fun ( o ) ; }
-      static bool __call__
-      ( const Fun& fun  , const double o )
-      { return fun ( std::vector<double> ( 1 , o ) ) ; }
-      // ======================================================================
-      static bool __rrshift__
-      ( const Fun& fun  , const std::vector<double>& o )
+      static bool __call__ ( const Fun& fun, const Type&  o )
       { return fun ( o ) ; }
-      static bool __rrshift__
-      ( const Fun& fun  , const double           o )
+      static bool __call__ ( const Fun& fun, const double o )
       { return fun ( std::vector<double> ( 1 , o ) ) ; }
       // ======================================================================
-      static LoKi::FunctorFromFunctor<std::vector<double>,bool> __rshift__
-      ( const Fun& fun  , const Fun&             o ) { return fun >> o  ; }
+      static bool __rrshift__( const Fun& fun, const std::vector<double>& o )
+      { return fun ( o ) ; }
+      static bool __rrshift__( const Fun& fun, const double o )
+      { return fun ( std::vector<double> ( 1 , o ) ) ; }
+      // ======================================================================
+      static LoKi::FunctorFromFunctor<std::vector<double>,bool>
+      __rshift__ ( const Fun& fun, const Fun& o ) { return fun >> o  ; }
     } ;
     // ========================================================================
     /** the explicit full template specialization of  LoKi::Dicts::PipeOps
@@ -224,23 +221,19 @@ namespace LoKi
       // ======================================================================
       // __rshift__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      __rshift__
-      ( const Pipe& fun , const Pipe&      fun2 )
+      __rshift__ ( const Pipe& fun , const Pipe&      fun2 )
       { return fun >>                      fun2 ; }
       // __rshift__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,bool>
-      __rshift__
-      ( const Pipe& fun , const CutVal&    fun2 )
+      __rshift__ ( const Pipe& fun , const CutVal&    fun2 )
       { return fun >>                      fun2 ; }
       // __rshift__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      __rshift__
-      ( const Pipe& fun , const Cuts&      fun2 )
+      __rshift__ ( const Pipe& fun , const Cuts&      fun2 )
       { return fun >> LoKi::filter<TYPE> ( fun2 ) ; }
       // __rshift__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<double> >
-      __rshift__
-      ( const Pipe& fun , const Func&      fun2 )
+      __rshift__ ( const Pipe& fun , const Func&      fun2 )
       { return fun >> LoKi::yields<TYPE> ( fun2 ) ; }
       // ======================================================================
     public:
@@ -250,40 +243,35 @@ namespace LoKi
       __rrshift__ ( const Pipe& fun , const std::vector<TYPE>& val )
       { return fun ( val ) ; }
       // __rrshift__
-      static std::vector<TYPE>
-      __rrshift__ ( const Pipe& fun , const double val )
+      static std::vector<TYPE> __rrshift__( const Pipe& fun, const double val )
       { return fun ( std::vector<double>( 1 , val ) ) ; }
       // ======================================================================
     public : // add the dumps
       // ======================================================================
       // __rshift__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      __rshift__
-      ( const  Pipe& fun , const LoKi::Dump& dump  )
+      __rshift__( const  Pipe& fun , const LoKi::Dump& dump  )
       { return fun >> LoKi::Functors::Dump_<TYPE> ( dump ) ; }
       // ======================================================================
     public : // get the first N
       // ======================================================================
       // __rshift__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      __rshift__
-      ( const  Pipe& fun , const LoKi::FirstN& fn  )
+      __rshift__( const  Pipe& fun , const LoKi::FirstN& fn  )
       { return fun >> LoKi::Functors::FirstN_<TYPE> ( fn ) ; }
       // ======================================================================
     public : // reverse
       // ======================================================================
       // __rshift__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      __rshift__
-      ( const  Pipe& fun , const LoKi::Reverse& /* fn */ )
+      __rshift__( const  Pipe& fun , const LoKi::Reverse& /* fn */ )
       { return fun >> LoKi::Functors::Reverse_<TYPE> () ; }
       // ======================================================================
     public:
       // ======================================================================
       // __tee__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      __tee__     ( const Pipe& fun )
-      { return LoKi::tee( fun ) ; }
+      __tee__     ( const Pipe& fun ) { return LoKi::tee( fun ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -355,33 +343,27 @@ namespace LoKi
       // ======================================================================
       // __rshift__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,double>
-      __rshift__
-      ( const FunVal& fun , const Func&    fun2 )
+      __rshift__ ( const FunVal& fun , const Func&    fun2 )
       { return fun >>                      fun2 ; }
       // __rshift__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,bool>
-      __rshift__
-      ( const FunVal& fun , const Cuts&    fun2 )
+      __rshift__ ( const FunVal& fun , const Cuts&    fun2 )
       { return fun >>                      fun2 ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static double
-      __rrshift__ ( const FunVal& fun , const std::vector<TYPE>& val )
+      static double __rrshift__( const FunVal& fun, const std::vector<TYPE>& val )
       { return fun ( val  )  ; }
       // __rrshift__
-      static double
-      __rrshift__ ( const FunVal& fun ,
-                    const double val )
+      static double __rrshift__ ( const FunVal& fun , const double val )
       { return fun ( std::vector<double>( 1 , val ) ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __tee__
       static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
-      __tee__     ( const FunVal& fun )
-      { return LoKi::tee( fun ) ; }
+      __tee__     ( const FunVal& fun ) { return LoKi::tee( fun ) ; }
       // ======================================================================
     };
     // ========================================================================
@@ -405,7 +387,7 @@ namespace LoKi
       typedef LoKi::BasicFunctors<TYPE>::CutVal        CutVal  ;
       typedef LoKi::BasicFunctors<TYPE2>::Function     Func    ;
       typedef LoKi::BasicFunctors<TYPE2>::Predicate    Cuts    ;
-      typedef LoKi::details::LF<Source>::type2  result_type;
+      typedef LoKi::details::result_t<Source>          result_type;
       // ======================================================================
     public:
       // ======================================================================
@@ -429,47 +411,40 @@ namespace LoKi
       //{ return fun >>                      fun2 ; }
       // __rshift__
       static LoKi::FunctorFromFunctor<void,double>
-      __rshift__
-      ( const Source& fun , const FunVal&  fun2 )
+      __rshift__ ( const Source& fun , const FunVal&  fun2 )
       { return fun >>                      fun2 ; }
       // __rshift__
       static LoKi::FunctorFromFunctor<void,bool>
-      __rshift__
-      ( const Source& fun , const CutVal&  fun2 )
+      __rshift__ ( const Source& fun , const CutVal&  fun2 )
       { return fun >>                      fun2 ; }
       // __rshift__
       static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
-      __rshift__
-      ( const Source& fun , const Cuts&    fun2 )
+      __rshift__ ( const Source& fun , const Cuts&    fun2 )
       { return fun >> LoKi::filter<TYPE> ( fun2 ) ; }
       // __rshift__
       static LoKi::FunctorFromFunctor<void,std::vector<double> >
-      __rshift__
-      ( const Source& fun , const Func&    fun2 )
+      __rshift__ ( const Source& fun , const Func&    fun2 )
       { return fun >> LoKi::yields<TYPE> ( fun2 ) ; }
       // ======================================================================
     public : // add the dumps
       // ======================================================================
       // __rshift__
       static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
-      __rshift__
-      ( const  Source& fun , const LoKi::Dump& dump  )
+      __rshift__ ( const  Source& fun , const LoKi::Dump& dump  )
       { return fun >> LoKi::Functors::Dump_<TYPE> ( dump ) ; }
       // ======================================================================
     public : // get the first N
       // ======================================================================
       // __rshift__
       static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
-      __rshift__
-      ( const  Source& fun , const LoKi::FirstN& fn  )
+      __rshift__ ( const  Source& fun , const LoKi::FirstN& fn  )
       { return fun >> LoKi::Functors::FirstN_<TYPE> ( fn ) ; }
       // ======================================================================
     public : // reverse
       // ======================================================================
       // __rshift__
       static LoKi::FunctorFromFunctor<void,std::vector<TYPE> >
-      __rshift__
-      ( const  Source& fun , const LoKi::Reverse& /* fn  */ )
+      __rshift__ ( const  Source& fun , const LoKi::Reverse& /* fn  */ )
       { return fun >> LoKi::Functors::Reverse_<TYPE> () ; }
       // ======================================================================
     public:
@@ -508,7 +483,7 @@ namespace LoKi
     {
     private:
       typedef LoKi::BasicFunctors<void>::Function Fun  ;
-      typedef LoKi::details::LF<Fun>::type2 result_type;
+      typedef LoKi::details::result_t<Fun>        result_type;
     public:
       // ======================================================================
       // __call__
@@ -517,39 +492,33 @@ namespace LoKi
     public:
       // ======================================================================
       // __rshift__
-      static LoKi::FunctorFromFunctor<void,double> __rshift__
-      ( const Fun&                          fun  ,
-        const LoKi::Functor<double,double>& o    ) { return fun >> o  ; }
+      static LoKi::Assignable_t<Fun>
+      __rshift__ ( const Fun&                          fun  ,
+                   const LoKi::Functor<double,double>& o    )
+      { return fun >> o  ; }
       // ======================================================================
       // __rshift__
-      static LoKi::FunctorFromFunctor<void,bool> __rshift__
-      ( const Fun&                          fun  ,
-        const LoKi::Functor<double,bool>&   o    ) { return fun >> o  ; }
+      static LoKi::FunctorFromFunctor<void,bool>
+      __rshift__ ( const Fun&                          fun  ,
+                   const LoKi::Functor<double,bool>&   o    )
+      { return fun >> o  ; }
       // ======================================================================
       // __rshift__
-      static std::vector<double>& __rshift__
-      ( const Fun&           fun    ,
-        std::vector<double>& result )
+      static std::vector<double>&
+      __rshift__ ( const Fun& fun, std::vector<double>& result )
       {
-        std::generate
-          ( result.begin () ,
-            result.end   () ,
-            LoKi::Apply(fun) );
+        std::generate ( result.begin () , result.end   () , LoKi::Apply(fun) );
         return result ;
       }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static std::vector<double> __rrshift__
-      ( const Fun&         fun ,
-        const unsigned int num )
+      static std::vector<double>
+      __rrshift__ ( const Fun& fun , const unsigned int num )
       {
-        std::vector<double> result ( num ) ;
-        std::generate
-          ( result.begin () ,
-            result.end   () ,
-            LoKi::Apply(fun) );
+        std::vector<double> result; result.reserve ( num ) ;
+        std::generate_n ( std::back_inserter(result) , num , LoKi::Apply(fun) );
         return result ;
       }
       // ======================================================================
@@ -567,7 +536,7 @@ namespace LoKi
     private:
       // ======================================================================
       typedef LoKi::BasicFunctors<void>::Predicate Fun  ;
-      typedef LoKi::details::LF<Fun>::type2 result_type;
+      typedef LoKi::details::result_t<Fun>         result_type;
       // ======================================================================
     public:
       // ======================================================================
@@ -577,43 +546,34 @@ namespace LoKi
     public:
       // ======================================================================
       // __rshift__
-      static LoKi::FunctorFromFunctor<void,bool> __rshift__
-      ( const Fun&                          fun  ,
-        const LoKi::Functor<void,bool>&     o    ) { return fun >> o  ; }
+      static LoKi::Assignable_t<Fun>
+      __rshift__ ( const Fun&                          fun  ,
+                   const LoKi::Functor<void,bool>&     o    )
+      { return fun >> o  ; }
       // __rshift__
-      static std::vector<bool>& __rshift__
-      ( const Fun&         fun    ,
-        std::vector<bool>& result )
+      static std::vector<bool>& __rshift__ ( const Fun&         fun    ,
+                                             std::vector<bool>& result )
       {
-        std::generate
-          ( result.begin () ,
-            result.end   () ,
-            LoKi::Apply(fun) );
+        std::generate( result.begin() , result.end() , LoKi::Apply(fun) );
         return result ;
       }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static std::vector<bool> __rrshift__
-      ( const Fun&         fun ,
-        const unsigned int num )
+      static std::vector<bool> __rrshift__ ( const Fun&         fun ,
+                                             const unsigned int num )
       {
-        std::vector<bool> result ( num ) ;
-        std::generate
-          ( result.begin () ,
-            result.end   () ,
-            LoKi::Apply( fun ) );
+        std::vector<bool> result; result.reserve ( num ) ;
+        std::generate_n( std::back_inserter(result), num, LoKi::Apply( fun ) );
         return result ;
       }
       // ======================================================================
     } ;
     // ========================================================================
-    template <>
-    class FuncOps<void,void>: public FuncOps_<void> {} ;
+    template <> class FuncOps<void,void>: public FuncOps_<void> {} ;
     // ========================================================================
-    template <>
-    class CutsOps<void,void>: public CutsOps_<void> {} ;
+    template <> class CutsOps<void,void>: public CutsOps_<void> {} ;
     // ========================================================================
   } // end of namespace LoKi::Dicts
   // ==========================================================================

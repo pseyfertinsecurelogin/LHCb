@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -21,9 +20,6 @@
  *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
  *  @date   2011-06-03
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $Author$
  */
 // ============================================================================
 /*  template specialization of ``dumper''
@@ -33,9 +29,9 @@
  */
 // ============================================================================
 template <>
-LoKi::Functors::Dump_<const LHCb::MCParticle*>::result_type
+std::vector<const LHCb::MCParticle*>
 LoKi::Functors::Dump_<const LHCb::MCParticle*>::operator()
-  ( LoKi::Functors::Dump_<const LHCb::MCParticle*>::argument a ) const
+  ( const std::vector<const LHCb::MCParticle*>& a ) const
 {
   //
   const unsigned int mx = std::min ( m_dump.nMax() , a.size() ) ;
@@ -43,15 +39,14 @@ LoKi::Functors::Dump_<const LHCb::MCParticle*>::operator()
   m_stream << m_dump.open  () ;
   //
   LoKi::MCDecayChain printer ;
-  printer.print
-    ( a.begin ()                          ,
-      a.begin () + mx                     ,
-      m_stream                            ,
-      '\n'                                ,
-      LoKi::Objects::_VALID_              ,
-      LoKi::Objects::_NONE_               ,
-      " "                                 ,
-      0                                   ) ;
+  printer.print ( a.begin ()                          ,
+                  a.begin () + mx                     ,
+                  m_stream                            ,
+                  '\n'                                ,
+                  LoKi::Objects::_VALID_              ,
+                  LoKi::Objects::_NONE_               ,
+                  " "                                 ,
+                  0                                   ) ;
   //
   m_stream << m_dump.close () ;
   //
@@ -59,9 +54,9 @@ LoKi::Functors::Dump_<const LHCb::MCParticle*>::operator()
 }
 // ============================================================================
 template <>
-LoKi::Functors::Dump1_<const LHCb::MCParticle*,bool>::result_type
+bool
 LoKi::Functors::Dump1_<const LHCb::MCParticle*,bool>::operator()
-  ( LoKi::Functors::Dump1_<const LHCb::MCParticle*,bool>::argument a ) const
+  ( const LHCb::MCParticle* a ) const
 {
   //
   if ( m_right )
@@ -103,9 +98,9 @@ LoKi::Functors::Dump1_<const LHCb::MCParticle*,bool>::operator()
 }
 // ============================================================================
 template <>
-LoKi::Functors::Dump1_<const LHCb::MCParticle*,double>::result_type
+double
 LoKi::Functors::Dump1_<const LHCb::MCParticle*,double>::operator()
-  ( LoKi::Functors::Dump1_<const LHCb::MCParticle*,double>::argument a ) const
+  ( const LHCb::MCParticle* a ) const
 {
   //
   if ( m_right )

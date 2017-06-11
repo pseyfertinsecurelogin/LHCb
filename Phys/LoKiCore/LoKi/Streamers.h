@@ -58,9 +58,9 @@
  *  @date 2001-01-23
  */
 template <typename F1, typename F2,
-          typename TYPE  = typename LoKi::details::LF<F1>::type1,
-          typename TYPE1 = typename LoKi::details::LF<F1>::type2,
-          typename TYPE2 = typename LoKi::details::LF<F2>::type2,
+          typename TYPE  = LoKi::details::type1_t<F1>,
+          typename TYPE1 = LoKi::details::type2_t<F1>,
+          typename TYPE2 = LoKi::details::type2_t<F2>,
           typename = LoKi::details::require_signature<F1,TYPE,TYPE1>,
           typename = LoKi::details::require_signature<F2,TYPE1,TYPE2>>
 inline LoKi::Compose<TYPE,TYPE1,TYPE2>
@@ -87,7 +87,7 @@ operator >> ( F1&&  fun1 , F2&& fun2 )
  *  @date 2001-01-23
  */
 template <typename F1, typename F2,
-          typename TYPE = typename LoKi::details::LF2<F1,F2>::type1,
+          typename TYPE = LoKi::details::type1_t<F1,F2>,
           typename = LoKi::details::require_signature<F1,TYPE,bool>,
           typename = LoKi::details::require_signature<F2,TYPE,bool>>
 inline LoKi::And<TYPE,bool>
@@ -424,7 +424,7 @@ operator>>
 // pipe with the gate
 // ============================================================================
 template <typename F1, typename F2,
-          typename TYPE = typename LoKi::details::LF<F1>::type1::value_type,
+          typename TYPE = typename LoKi::details::type1_t<F1>::value_type,
           typename = LoKi::details::require_signature<F1,std::vector<TYPE>,std::vector<TYPE>>,
           typename = LoKi::details::require_signature<F2,void,bool>>
 inline  LoKi::FunctorFromFunctor< std::vector<TYPE> , std::vector<TYPE> >
@@ -436,7 +436,7 @@ operator>> ( F1&& pipe , F2&& gate )
 // source with the gate
 // ============================================================================
 template <typename F1, typename F2,
-          typename TYPE = typename LoKi::details::LF<F1>::type2::value_type,
+          typename TYPE = typename LoKi::details::type2_t<F1>::value_type,
           typename = LoKi::details::require_signature<F1,void,std::vector<TYPE>>,
           typename = LoKi::details::require_signature<F2,void,bool>>
 inline  LoKi::FunctorFromFunctor< void , std::vector<TYPE> >
@@ -450,7 +450,7 @@ operator>> ( F1&& source , F2&& gate   )
 // dumping to the stream
 // ============================================================================
 template <typename F1,
-          typename TYPE = typename LoKi::details::LF<F1>::type2::value_type,
+          typename TYPE = typename LoKi::details::type2_t<F1>::value_type,
           typename = LoKi::details::require_signature<F1,std::vector<TYPE>,std::vector<TYPE>>>
 inline  LoKi::FunctorFromFunctor< std::vector<TYPE> , std::vector<TYPE> >
 operator>> ( F1&& pipe , std::ostream& stream )
@@ -461,7 +461,7 @@ operator>> ( F1&& pipe , std::ostream& stream )
 // dumping to the stream
 // ============================================================================
 template <typename F,
-          typename TYPE = typename LoKi::details::LF<F>::type2::value_type,
+          typename TYPE = typename LoKi::details::type2_t<F>::value_type,
           typename = LoKi::details::require_signature<F,void,std::vector<TYPE>>>
 inline  LoKi::FunctorFromFunctor< void, std::vector<TYPE> >
 operator>> ( F&& pipe, std::ostream& stream )
@@ -472,7 +472,7 @@ operator>> ( F&& pipe, std::ostream& stream )
 // dumping to the stream
 // ============================================================================
 template <typename F,
-          typename TYPE = typename LoKi::details::LF<F>::type2::value_type,
+          typename TYPE = typename LoKi::details::type2_t<F>::value_type,
           typename = LoKi::details::require_signature<F,std::vector<TYPE>,std::vector<TYPE>>>
 inline  LoKi::FunctorFromFunctor< std::vector<TYPE> , std::vector<TYPE> >
 operator>> ( F&& pipe , const LoKi::Dump& dump  )
@@ -483,7 +483,7 @@ operator>> ( F&& pipe , const LoKi::Dump& dump  )
 // dumping to the stream
 // ============================================================================
 template <typename F,
-          typename TYPE = typename LoKi::details::LF<F>::type2::value_type,
+          typename TYPE = typename LoKi::details::type2_t<F>::value_type,
           typename = LoKi::details::require_signature<F,void,std::vector<TYPE>>>
 inline  LoKi::FunctorFromFunctor< void, std::vector<TYPE> >
 operator>> ( F&& pipe, const LoKi::Dump& dump )
