@@ -128,15 +128,17 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate and the generic counter
-      Counter ( const LoKi::Functor<void,TYPE2>& cut  ,
-                StatEntity*                      stat )
-        : m_cut     ( cut  )
+      template <typename F, typename = details::require_signature<F,void,TYPE2>>
+      Counter ( F&&         cut  ,
+                StatEntity* stat )
+        : m_cut     ( std::forward<F>(cut) )
         , m_stat    ( stat )
       {}
-      Counter ( const LoKi::Functor<void,TYPE2>& cut  ,
-                const LoKi::CounterDef&          cnt  )
+      template <typename F, typename = details::require_signature<F,void,TYPE2>>
+      Counter ( F&&                      cut  ,
+                const LoKi::CounterDef&  cnt  )
         : LoKi::AuxFunBase ( std::tie ( cut , cnt ) )
-        , m_cut     ( cut  )
+        , m_cut     ( std::forward<F>(cut) )
         , m_cntdef  ( cnt  )
       {
         if ( this->gaudi() && m_cntdef.valid() )
@@ -202,16 +204,18 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the function and the histogram
-      Plot ( const LoKi::Functor<TYPE,TYPE2>& fun   ,
-             AIDA::IHistogram1D*              histo )
-        : m_fun     ( fun   )
+      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+      Plot ( F&&                 fun   ,
+             AIDA::IHistogram1D* histo )
+        : m_fun     ( std::forward<F>(fun)   )
         , m_histo   ( histo )
       {}
       /// constructor from the function and the histogram  description
-      Plot ( const LoKi::Functor<TYPE,TYPE2>& fun   ,
-             const LoKi::Histo&               hdef  )
+      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+      Plot ( F&&                fun   ,
+             const LoKi::Histo& hdef  )
         : LoKi::AuxFunBase ( std::tie ( fun , hdef ) )
-        , m_fun     ( fun   )
+        , m_fun     ( std::forward<F>(fun)   )
         , m_hdef    ( hdef  )
       {
         // try to load the histo
@@ -219,10 +223,11 @@ namespace LoKi
         { m_histo = LoKi::HistoBook::book ( m_hdef ) ; }
       }
       /// constructor from the function and the histogram  description
-      Plot ( const LoKi::Histo&               hdef  ,
-             const LoKi::Functor<TYPE,TYPE2>& fun   )
+      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+      Plot ( const LoKi::Histo& hdef  ,
+             F&&                fun   )
         : LoKi::AuxFunBase ( std::tie ( hdef , fun ) )
-        , m_fun     ( fun   )
+        , m_fun     ( std::forward<F>(fun)   )
         , m_hdef    ( hdef  )
       {
         // try to load the histo
@@ -230,9 +235,10 @@ namespace LoKi
         { m_histo = LoKi::HistoBook::book ( m_hdef ) ; }
       }
       /// constructor from the function and the histogram
-      Plot ( AIDA::IHistogram1D*              histo ,
-             const LoKi::Functor<TYPE,TYPE2>& fun   )
-        : m_fun     ( fun   )
+      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+      Plot ( AIDA::IHistogram1D* histo ,
+             F&&                 fun   )
+        : m_fun     ( std::forward<F>(fun) )
         , m_histo   ( histo )
       {}
       /// MANDATORY: clone method ("virtual constructor")
@@ -274,16 +280,18 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the function and the histogram
-      Plot ( const LoKi::Functor<void,TYPE2>& fun   ,
-             AIDA::IHistogram1D*              histo )
-        : m_fun     ( fun   )
+      template <typename F, typename = details::require_signature<F,void,TYPE2>>
+      Plot ( F&&                 fun   ,
+             AIDA::IHistogram1D* histo )
+        : m_fun     ( std::forward<F>(fun) )
         , m_histo   ( histo )
       {}
       /// constructor from the function and the histogram
-      Plot ( const LoKi::Functor<void,TYPE2>& fun   ,
-             const LoKi::Histo&               hdef  )
+      template <typename F, typename = details::require_signature<F,void,TYPE2>>
+      Plot ( F&&                 fun   ,
+             const LoKi::Histo&  hdef  )
         : LoKi::AuxFunBase ( std::tie ( fun , hdef ) )
-        , m_fun     ( fun   )
+        , m_fun     ( std::forward<F>(fun) )
         , m_hdef    ( hdef  )
       {
         // try to load the histo
@@ -291,9 +299,10 @@ namespace LoKi
         { m_histo = LoKi::HistoBook::book ( m_hdef ) ; }
       }
       /// constructor from the function and the histogram
-      Plot ( AIDA::IHistogram1D*              histo ,
-             const LoKi::Functor<void,TYPE2>& fun   )
-        : m_fun     ( fun   )
+      template <typename F, typename = details::require_signature<F,void,TYPE2>>
+      Plot ( AIDA::IHistogram1D* histo ,
+             F&&                 fun   )
+        : m_fun     ( std::forward<F>(fun) )
         , m_histo   ( histo )
       {}
       /// MANDATORY: clone method ("virtual constructor")
@@ -356,13 +365,13 @@ namespace LoKi
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
-      Printer
-      ( const LoKi::Functor<TYPE,TYPE2>& fun                ,
-        std::ostream&                    stream = std::cout ,
-        const std::string&               suffix = "\n"      ,
-        const std::string&               prefix = ""        )
+      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
+      Printer ( F&&                  fun                ,
+                std::ostream&        stream = std::cout ,
+                const std::string&   suffix = "\n"      ,
+                const std::string&   prefix = ""        )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_fun    ( fun    )
+        , m_fun    ( std::forward<F>(fun) )
         , m_stream ( stream )
         , m_suffix ( suffix )
         , m_prefix ( prefix ) {}
@@ -373,13 +382,14 @@ namespace LoKi
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
+      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
       Printer
-      ( std::ostream&                    stream        ,
-        const LoKi::Functor<TYPE,TYPE2>& fun           ,
-        const std::string&               suffix = "\n" ,
-        const std::string&               prefix = ""   )
+      ( std::ostream&      stream        ,
+        F&&                fun           ,
+        const std::string& suffix = "\n" ,
+        const std::string& prefix = ""   )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_fun    ( fun    )
+        , m_fun    ( std::forward<F>(fun) )
         , m_stream ( stream )
         , m_suffix ( suffix )
         , m_prefix ( prefix ) {}
@@ -428,13 +438,13 @@ namespace LoKi
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
-      Printer
-      ( const LoKi::Functor<void,TYPE2>& fun                ,
-        std::ostream&                    stream = std::cout ,
-        const std::string&               suffix = "\n"      ,
-        const std::string&               prefix = ""        )
+      template <typename F, typename = details::require_signature<F,void,TYPE2>>
+      Printer ( F&&                fun                ,
+                std::ostream&      stream = std::cout ,
+                const std::string& suffix = "\n"      ,
+                const std::string& prefix = ""        )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_fun    ( fun    )
+        , m_fun    ( std::forward<F>(fun) )
         , m_stream ( stream )
         , m_suffix ( suffix )
         , m_prefix ( prefix ) {}
@@ -445,13 +455,13 @@ namespace LoKi
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
-      Printer
-      ( std::ostream&                    stream        ,
-        const LoKi::Functor<void,TYPE2>& fun           ,
-        const std::string&               suffix = "\n" ,
-        const std::string&               prefix = ""   )
+      template <typename F, typename = details::require_signature<F,void,TYPE2>>
+      Printer ( std::ostream&      stream        ,
+                F&&                fun           ,
+                const std::string& suffix = "\n" ,
+                const std::string& prefix = ""   )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_fun    ( fun    )
+        , m_fun    ( std::forward<F>(fun) )
         , m_stream ( stream )
         , m_suffix ( suffix )
         , m_prefix ( prefix ) {}
@@ -508,11 +518,11 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <class TYPE, class TYPE2>
-  inline
-  LoKi::Monitoring::Counter<TYPE,TYPE2>
-  monitor ( const LoKi::Functor<TYPE,TYPE2>& cut , StatEntity* entity )
-  { return LoKi::Monitoring::Counter<TYPE,TYPE2>( cut , entity ) ; }
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Monitoring::Counter<TYPE,TYPE2> monitor( F&& cut , StatEntity* entity )
+  { return { std::forward<F>(cut) , entity } ; }
   // ==========================================================================
   /** helper function for creation of monitored predicate
    *
@@ -532,18 +542,18 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <class TYPE, class TYPE2>
-  inline
-  LoKi::Monitoring::Counter<TYPE,TYPE2>
-  monitor ( const LoKi::Functor<TYPE,TYPE2>& cut , StatEntity& entity )
-  { return LoKi::Monitoring::Counter<TYPE,TYPE2>( cut , &entity ) ; }
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Monitoring::Counter<TYPE,TYPE2> monitor( F&& cut, StatEntity& entity )
+  { return { std::forward<F>(cut) , &entity } ; }
   // ==========================================================================
-  template <class TYPE, class TYPE2>
-  inline
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
   LoKi::Monitoring::Counter<TYPE,TYPE2>
-  monitor ( const LoKi::Functor<TYPE,TYPE2>& cut ,
-            const LoKi::CounterDef&          cnt )
-  { return LoKi::Monitoring::Counter<TYPE,TYPE2>( cut , cnt ) ; }
+  monitor ( F&& cut, const LoKi::CounterDef& cnt )
+  { return { std::forward<F>(cut) , cnt } ; }
   // ==========================================================================
   /** helper function for creation of monitored function
    *
@@ -565,12 +575,11 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <class TYPE, class TYPE2>
-  inline
-  LoKi::Monitoring::Plot<TYPE,TYPE2>
-  monitor ( const LoKi::Functor<TYPE,TYPE2>& cut    ,
-            AIDA::IHistogram1D*              histo  )
-  { return { cut , histo } ; }
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Monitoring::Plot<TYPE,TYPE2> monitor(F&& cut, AIDA::IHistogram1D* histo)
+  { return { std::forward<F>(cut) , histo } ; }
   // ==========================================================================
   /** helper function for creation of monitored function
    *
@@ -592,12 +601,11 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <class TYPE, class TYPE2>
-  inline
-  LoKi::Monitoring::Plot<TYPE,TYPE2>
-  monitor ( const LoKi::Functor<TYPE,TYPE2>& cut   ,
-            const LoKi::Histo&               histo )
-  { return { cut , histo } ; }
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Monitoring::Plot<TYPE,TYPE2> monitor(F&& cut, const LoKi::Histo& histo)
+  { return { std::forward<F>(cut) , histo } ; }
   // ==========================================================================
   /** helper function for creation of monitored function
    *
@@ -619,12 +627,11 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <class TYPE, class TYPE2>
-  inline
-  LoKi::Monitoring::Plot<TYPE,TYPE2>
-  plot ( const LoKi::Functor<TYPE,TYPE2>& cut    ,
-         AIDA::IHistogram1D*              histo  )
-  { return { cut , histo } ; }
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Monitoring::Plot<TYPE,TYPE2> plot ( F&& cut, AIDA::IHistogram1D* histo)
+  { return { std::forward<F>(cut) , histo } ; }
   // ==========================================================================
   /** helper function for creation of monitored function
    *
@@ -652,16 +659,15 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <class TYPE, class TYPE2>
-  inline
-  LoKi::Monitoring::Plot<TYPE,TYPE2>
-  plot
-  ( const LoKi::Functor<TYPE,TYPE2>& cut   ,
-    const std::string&               path  ,
-    const Gaudi::Histo1DDef&         histo ,
-    IHistogramSvc*                   hsvc  )
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Monitoring::Plot<TYPE,TYPE2> plot ( F&&                      cut   ,
+                                            const std::string&       path  ,
+                                            const Gaudi::Histo1DDef& histo ,
+                                            IHistogramSvc*           hsvc  )
   {
-    return plot ( cut , LoKi::HistoBook::book ( path , histo , hsvc ) ) ;
+    return plot( std::forward<F>(cut), LoKi::HistoBook::book( path, histo, hsvc ) ) ;
   }
   // ==========================================================================
   /** helper function for creation of monitored function
@@ -691,16 +697,17 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <class TYPE, class TYPE2>
-  inline
-  LoKi::Monitoring::Plot<TYPE,TYPE2>
-  plot ( const LoKi::Functor<TYPE,TYPE2>& cut       ,
-         const std::string&               dir       ,
-         const GaudiAlg::ID&              id        ,
-         const Gaudi::Histo1DDef&         histo     ,
-         IHistogramSvc*                   hsvc  = 0 )
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Monitoring::Plot<TYPE,TYPE2> plot ( F&&                      cut   ,
+                                            const std::string&       dir   ,
+                                            const GaudiAlg::ID&      id    ,
+                                            const Gaudi::Histo1DDef& histo ,
+                                            IHistogramSvc*           hsvc  = nullptr )
   {
-    return plot ( cut , LoKi::HistoBook::book ( dir , id , histo , hsvc ) ) ;
+    return plot( std::forward<F>(cut) ,
+                 LoKi::HistoBook::book ( dir , id , histo , hsvc ) ) ;
   }
   // ==========================================================================
   /** helper function for creation of monitored function
@@ -730,23 +737,23 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-06-14
    */
-  template <class TYPE, class TYPE2>
-  inline
-  LoKi::Monitoring::Plot<TYPE,TYPE2>
-  plot ( const LoKi::Functor<TYPE,TYPE2>& cut       ,
-         const Gaudi::Histo1DDef&         histo     ,
-         const GaudiAlg::ID&              id        ,
-         const IAlgContextSvc*            csvc  = 0 )
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Monitoring::Plot<TYPE,TYPE2> plot ( F&&                      cut   ,
+                                            const Gaudi::Histo1DDef& histo ,
+                                            const GaudiAlg::ID&      id    ,
+                                            const IAlgContextSvc*    csvc  = nullptr )
   {
-    return plot ( cut , LoKi::HistoBook::book ( histo , id , csvc ) ) ;
+    return plot ( std::forward<F>(cut),
+                  LoKi::HistoBook::book ( histo , id , csvc ) ) ;
   }
   // ==========================================================================
-  template <class TYPE, class TYPE2>
-  inline
-  LoKi::Monitoring::Plot<TYPE,TYPE2>
-  plot ( const LoKi::Functor<TYPE,TYPE2>& cut ,
-         const LoKi::Histo&               hid )
-  { return { cut , hid } ; }
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Monitoring::Plot<TYPE,TYPE2> plot ( F&& cut , const LoKi::Histo& hid )
+  { return { std::forward<F>(cut) , hid } ; }
   // ==========================================================================
   /** helper function to instantiate the monitored functor
    *
@@ -765,15 +772,15 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2008-02-29
    */
-  template <class TYPE,class TYPE2>
-  inline
-  LoKi::Monitoring::Printer<TYPE,TYPE2>
-  print ( const LoKi::Functor<TYPE,TYPE2>& fun                ,
-          std::ostream&                    stream = std::cout ,
-          const std::string&               suffix = "\n"      ,
-          const std::string&               prefix = ""        )
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Monitoring::Printer<TYPE,TYPE2> print( F&&                fun                ,
+                                               std::ostream&      stream = std::cout ,
+                                               const std::string& suffix = "\n"      ,
+                                               const std::string& prefix = ""        )
   {
-    return { fun , stream , suffix , prefix } ;
+    return { std::forward<F>(fun) , stream , suffix , prefix } ;
   }
   // ==========================================================================
   /** helper function to instantiate the monitored functor
@@ -794,15 +801,15 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2008-02-29
    */
-  template <class TYPE,class TYPE2>
-  inline
-  LoKi::Monitoring::Printer<TYPE,TYPE2>
-  monitor ( const LoKi::Functor<TYPE,TYPE2>& fun                ,
-            std::ostream&                    stream = std::cout ,
-            const std::string&               suffix = "\n"      ,
-            const std::string&               prefix = ""        )
+  template <typename F,
+            typename TYPE  = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
+  LoKi::Monitoring::Printer<TYPE,TYPE2> monitor( F&&                fun                ,
+                                                 std::ostream&      stream = std::cout ,
+                                                 const std::string& suffix = "\n"      ,
+                                                 const std::string& prefix = ""        )
   {
-    return print ( fun , stream , suffix , prefix ) ;
+    return print ( std::forward<F>(fun) , stream , suffix , prefix ) ;
   }
   // ==========================================================================
 } // end of namespace LoKi

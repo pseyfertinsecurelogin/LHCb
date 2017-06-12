@@ -4,6 +4,8 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include <numeric>
+// ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/StatEntity.h"
@@ -43,17 +45,16 @@ namespace LoKi
      *  @date   2011-03-04
      */
     template <class OBJECT,class FUNCTOR>
-    inline
-    StatEntity stat
-    ( OBJECT         first     ,
-      OBJECT         last      ,
-      const FUNCTOR& functor   )
+    StatEntity stat ( OBJECT         first     ,
+                      OBJECT         last      ,
+                      const FUNCTOR& functor   )
     {
-      StatEntity _stat ;
-      //
-      for ( ; first != last ; ++first ) { _stat += functor( *first ) ; }
-      //
-      return _stat ;
+      using arg_t = decltype(*first);
+      return std::accumulate(first,last,StatEntity{},
+                             [&](StatEntity se, arg_t arg) {
+                                se += functor(arg);
+                                return se;
+                             } );
     }
     // ========================================================================
     /** The trivial algorithm which accumulate the statistics

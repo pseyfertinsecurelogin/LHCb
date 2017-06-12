@@ -64,7 +64,7 @@ namespace LoKi
     public:
       // ======================================================================
       // __rshift__
-      static LoKi::FunctorFromFunctor<const Type*,double>
+      static LoKi::Assignable_t<Fun>
       __rshift__ ( const Fun&                          fun  ,
                    const LoKi::Functor<double,double>& o    )
       { return fun >> o  ; }
@@ -93,8 +93,7 @@ namespace LoKi
       static result_type  __rrshift__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       //
-      static LoKi::FunctorFromFunctor<const Type*,bool>
-      __rshift__( const Fun& fun, const Fun& o )
+      static LoKi::Assignable_t<Fun> __rshift__( const Fun& fun, const Fun& o )
       { return fun >> o  ; }
       // ======================================================================
    } ;
@@ -118,7 +117,7 @@ namespace LoKi
       { return fun ( o ) ; }
       // ======================================================================
       // __rshift__
-      static LoKi::FunctorFromFunctor<const Type*,double>
+      static LoKi::Assignable_t<Fun>
       __rshift__( const Fun& fun,
                   const LoKi::Functor<double,double>& o )
       { return fun >> o  ; }
@@ -147,7 +146,7 @@ namespace LoKi
       static result_type __rrshift__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       // ======================================================================
-      static LoKi::FunctorFromFunctor<const Type*,bool>
+      static LoKi::Assignable_t<Fun>
       __rshift__( const Fun& fun, const Fun& o )
       { return fun >> o  ; }
       // ======================================================================
@@ -176,7 +175,7 @@ namespace LoKi
     public:
       // ======================================================================
       // __rshift__
-      static LoKi::FunctorFromFunctor<const Type*,double>
+      static LoKi::Assignable_t<Fun>
       __rshift__( const Fun& fun  ,
                   const LoKi::Functor<double,double>& o )
       { return fun >> o  ; }
@@ -205,8 +204,7 @@ namespace LoKi
       static result_type  __rrshift__( const Fun& fun, const Type* o )
       { return fun ( o ) ; }
       //
-      static LoKi::FunctorFromFunctor<const Type*,bool>
-      __rshift__( const Fun& fun, const Fun& o )
+      static LoKi::Assignable_t<Fun> __rshift__( const Fun& fun, const Fun& o )
       { return fun >> o  ; }
       //
       // ======================================================================

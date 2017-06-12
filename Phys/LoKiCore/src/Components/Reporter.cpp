@@ -137,15 +137,11 @@ namespace LoKi
      *  @param name   tool name
      *  @param parent tool parent
      */
-    Reporter
-    ( const std::string& type   ,
-      const std::string& name   ,
-      const IInterface*  parent )
+    Reporter ( const std::string& type   ,
+               const std::string& name   ,
+               const IInterface*  parent )
       : base_class ( type, name , parent )
     {
-      // declare the interface
-      declareInterface<LoKi::IReporter> ( this ) ;
-      declareInterface<IErrorTool>      ( this ) ;
       //
       declareProperty( "PrintMyAlg", m_printMyAlg = true );
       //

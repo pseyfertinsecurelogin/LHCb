@@ -139,8 +139,6 @@ namespace LoKi
           "TES-location of counters" ) ;
     }
     // ========================================================================
-  private:
-    // ========================================================================
     /// the copy constructor is disabled
     CounterAlg ( const CounterAlg& ) = delete ;      // the copy constructor is disabled
     /// the assignement operator is disabled
