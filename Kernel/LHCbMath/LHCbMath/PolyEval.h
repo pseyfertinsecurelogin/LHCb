@@ -10,6 +10,7 @@
 #define POLYEVAL_H
 
 #include <cstddef>
+#include <iterator>
 #include <type_traits>
 
 namespace PolyEval { ///< routines to evaluate polynomials

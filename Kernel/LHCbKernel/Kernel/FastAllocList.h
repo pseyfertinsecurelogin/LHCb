@@ -14,6 +14,7 @@
 
 // STL
 #include <list>
+#include <ostream>
 
 #ifndef GOD_NOALLOC
 // Memory pool allocator from boost

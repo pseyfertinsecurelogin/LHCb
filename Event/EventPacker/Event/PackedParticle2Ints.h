@@ -2,6 +2,11 @@
 #define EVENT_PACKEDPARTICLE2INTS_H 1
 
 // Include files
+#include<vector>
+#include<string>
+#include "GaudiKernel/ClassID.h"
+#include "GaudiKernel/DataObject.h"
+
 namespace LHCb
 {
 

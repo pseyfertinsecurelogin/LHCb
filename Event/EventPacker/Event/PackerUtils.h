@@ -1,5 +1,9 @@
 #ifndef EVENT_PACKERUTILS_H 
 #define EVENT_PACKERUTILS_H 1
+#include <string>
+#include "GaudiKernel/IRegistry.h"
+#include "GaudiKernel/DataObject.h"
+
 
 namespace LHCb
 {

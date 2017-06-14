@@ -15,6 +15,7 @@
 // STL
 #include <functional>
 #include <cmath>
+#include <vector>
 #include <algorithm>
 
 // Include files

@@ -4,6 +4,8 @@
 #ifndef CALODET_CARDPARAM_H 
 #define CALODET_CARDPARAM_H 1
 /// ===========================================================================
+#include <vector>
+#include "Kernel/CaloCellID.h"
 
 // Include files
 class DeCalorimeter;

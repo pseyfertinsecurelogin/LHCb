@@ -4,7 +4,9 @@
 
 // Include files
 
+#include <ostream>
 #include "MuonDet/MuonFrontEndIDPack.h"
+#include "GaudiKernel/MsgStream.h"
 
 
 //using namespace MuonFrontEndIDPack ;

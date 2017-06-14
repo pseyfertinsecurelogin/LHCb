@@ -3,6 +3,7 @@
 
 // Gaudi
 #include "GaudiKernel/IAlgTool.h"
+#include "GaudiKernel/Point3DTypes.h"
 // Kernel/LHCbKernel
 #include "Kernel/PixelPositionInfo.h"
 
