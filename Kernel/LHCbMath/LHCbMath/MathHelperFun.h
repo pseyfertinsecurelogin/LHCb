@@ -48,10 +48,10 @@ namespace Gaudi {
       *out++ = 0.5 * ( -b + d ) / a  ; 
       // return number of solutions;
       return 0 == d ? 1 : 2 ;           // RETURN !!! 
-    };
+    }
 
 
-  }; // Math namespace
+  } // Math namespace
    
-}; // Gaudi namespace
+} // Gaudi namespace
 #endif // KERNEL_MATHHELPERFUN_H
