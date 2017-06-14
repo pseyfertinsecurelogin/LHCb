@@ -14,6 +14,8 @@
 #include <vector>
 #include <string>
 #include <map>
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/StatusCode.h"
 
 struct ISTReadoutTool;
 class DeSTDetector;

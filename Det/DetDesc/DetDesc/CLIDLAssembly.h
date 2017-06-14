@@ -6,6 +6,7 @@
 // ============================================================================
 #ifndef DETDESC_CLIDLASSEMBLY_H 
 #define DETDESC_CLIDLASSEMBLY_H 1
+#include "GaudiKernel/ClassID.h"
 
 /** @file CLIDLAssembly.h
  *  

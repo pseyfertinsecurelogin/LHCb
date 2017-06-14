@@ -7,6 +7,7 @@
 
 // boost
 #include <boost/variant.hpp>
+#include <boost/format.hpp>
 
 // from Gaudi
 #include "GaudiAlg/GaudiHistoAlg.h"
@@ -16,6 +17,10 @@
 #include "DetDesc/Condition.h"
 
 #include "Kernel/IHltMonitorSvc.h"
+
+#include "Event/HltDecReports.h"
+#include "Event/L0DUReport.h"
+#include "Event/ODIN.h"
 
 #include "LoKi/OdinTypes.h"
 #include "LoKi/L0Types.h"

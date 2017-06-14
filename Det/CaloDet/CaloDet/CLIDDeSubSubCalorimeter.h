@@ -7,6 +7,7 @@
 // 
 #ifndef     CALO_CLID_DESUBSUBCALORIMETER_H
 #define     CALO_CLID_DESUBSUBCALORIMETER_H 1 
+#include "GaudiKernel/ClassID.h"
 
 // External declarations
 static const CLID CLID_DeSubSubCalorimeter = 8902; 

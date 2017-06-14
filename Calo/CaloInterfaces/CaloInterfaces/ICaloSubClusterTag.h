@@ -5,6 +5,7 @@
 #include "GaudiKernel/IAlgTool.h"
 // CaloInterafces 
 #include "CaloInterfaces/ICaloClusterTool.h"
+#include "Event/CaloDigitStatus.h"
 
 /** @class ICaloSubClusterTag ICaloSubClusterTag.h
  *  

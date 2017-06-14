@@ -16,6 +16,9 @@
 //#pragma GCC diagnostic push
 //#pragma GCC diagnostic "-Wunused-variable"
 #include "Event/RawEvent.h"
+#include "GaudiKernel/ISvcLocator.h"
+#include "GaudiKernel/IInterface.h"
+
 //#pragma GCC diagnostic pop
 
 namespace Decoder

@@ -1,5 +1,6 @@
 #ifndef OTDAQ_GOLHEADER_H 
 #define OTDAQ_GOLHEADER_H 1
+#include <ostream>
 
 namespace OTDAQ {
 

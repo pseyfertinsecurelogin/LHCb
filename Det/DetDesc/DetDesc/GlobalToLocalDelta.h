@@ -3,6 +3,7 @@
 
 // Include files
 #include "GaudiKernel/Transform3DTypes.h"
+#include <vector>
 
 // forward declarations
 struct IDetectorElement;

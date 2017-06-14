@@ -13,7 +13,11 @@
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/Point3DTypes.h"
+#include "GaudiKernel/StatusCode.h"
 // ============================================================================
+#include "Event/CaloCluster.h"
+#include "CaloUtils/ClusterFunctors.h"
+
 /** @namespace SharedCells SharedCells.h CaloUtils/SharedCells.h
  *
  *  set of inline functions used for CaloSharedCellAlg 
