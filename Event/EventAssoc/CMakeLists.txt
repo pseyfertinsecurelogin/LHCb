@@ -23,4 +23,3 @@ gaudi_add_dictionary(EventAssocMC
                      LINK_LIBRARIES GenEvent L0Event MCEvent PhysEvent TrackEvent RelationsLib
                      OPTIONS "-U__MINGW32__")
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

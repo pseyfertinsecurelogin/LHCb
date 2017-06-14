@@ -26,4 +26,3 @@ gaudi_add_dictionary(MuonDAQ
 
 gaudi_install_headers(Event MuonDAQ)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

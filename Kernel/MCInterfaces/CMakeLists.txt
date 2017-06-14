@@ -16,4 +16,3 @@ gaudi_add_dictionary(MCInterfaces
 
 gaudi_install_headers(MCInterfaces)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

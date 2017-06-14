@@ -10,4 +10,3 @@ gaudi_add_library(L0MuonKernel
                   PUBLIC_HEADERS L0MuonKernel
                   LINK_LIBRARIES ProcessorKernel)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

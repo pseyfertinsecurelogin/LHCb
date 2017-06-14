@@ -19,4 +19,3 @@ gaudi_add_module(MDF
                  INCLUDE_DIRS ROOT
                  LINK_LIBRARIES ROOT GaudiKernel DAQEventLib MDFLib)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

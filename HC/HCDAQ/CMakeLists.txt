@@ -18,4 +18,3 @@ gaudi_add_module(HCDAQ
                  INCLUDE_DIRS AIDA Event/DigiEvent
                  LINK_LIBRARIES DAQEventLib DAQKernelLib DetDescLib GaudiAlgLib LHCbKernel)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

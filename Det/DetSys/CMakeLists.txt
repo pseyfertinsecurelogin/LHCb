@@ -19,4 +19,3 @@ gaudi_depends_on_subdirs(Det/BcmDet
                          Det/VeloDet
                          Tools/XmlTools)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

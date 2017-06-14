@@ -44,4 +44,3 @@ gaudi_add_test(scripts COMMAND nosetests --with-doctest -v
                                ${CMAKE_CURRENT_SOURCE_DIR}/scripts
                                ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_scripts
                        ENVIRONMENT PYTHONPATH+=${CMAKE_CURRENT_SOURCE_DIR}/scripts)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

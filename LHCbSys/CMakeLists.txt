@@ -116,4 +116,3 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
 
 
 gaudi_add_test(QMTest QMTEST)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

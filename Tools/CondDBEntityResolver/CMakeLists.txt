@@ -25,4 +25,3 @@ gaudi_add_python_module(CondDBCompression
                         INCLUDE_DIRS Boost ROOT PythonLibs)
 
 gaudi_add_test(QMTest QMTEST)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

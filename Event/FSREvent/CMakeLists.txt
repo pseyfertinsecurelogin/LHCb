@@ -18,4 +18,3 @@ god_build_dictionary(xml/*.xml
                      INCLUDE_DIRS Boost
                      LINK_LIBRARIES Boost GaudiKernel LHCbKernel)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

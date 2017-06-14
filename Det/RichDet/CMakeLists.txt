@@ -27,4 +27,3 @@ gaudi_add_dictionary(RichDet
                      LINK_LIBRARIES GSL Boost DetDescCnvLib RichUtils RichDetLib
                      OPTIONS "-U__MINGW32__")
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

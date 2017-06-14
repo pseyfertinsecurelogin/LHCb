@@ -14,4 +14,3 @@ gaudi_add_module(RichDAQ
                  src/*.cpp
                  INCLUDE_DIRS Event/DAQEvent Event/DAQEvent RichUtils RichDAQKernel
                  LINK_LIBRARIES RichDetLib DAQEventLib RichKernelLib RichDAQKernel)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

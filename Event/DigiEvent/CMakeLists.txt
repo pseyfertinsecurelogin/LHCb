@@ -18,4 +18,3 @@ god_build_dictionary(xml/*.xml
                      INCLUDE_DIRS Boost
                      LINK_LIBRARIES Boost LHCbKernel LHCbMathLib)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

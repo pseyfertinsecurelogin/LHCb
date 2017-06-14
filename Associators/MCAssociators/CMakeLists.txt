@@ -17,4 +17,3 @@ gaudi_add_dictionary(MCAssociators
 
 gaudi_install_headers(Kernel)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

@@ -14,4 +14,3 @@ gaudi_add_module(Magnet
                  src/*.cpp
                  LINK_LIBRARIES DetDescLib GaudiKernel LHCbKernel GaudiAlgLib)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

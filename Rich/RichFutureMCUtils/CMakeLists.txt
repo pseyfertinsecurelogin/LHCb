@@ -28,4 +28,3 @@ gaudi_add_module(RichFutureMCUtils
                  src/component/*.cpp
                  INCLUDE_DIRS Kernel/LHCbKernel Rich/RichFutureKernel Rich/RichUtils Event/MCEvent Event/RecEvent Event/TrackEvent 
                  LINK_LIBRARIES LinkerEvent RelationsLib RichFutureKernel RichFutureMCUtilsLib GaudiUtilsLib LHCbKernel RichUtils RecEvent MCEvent TrackEvent )
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

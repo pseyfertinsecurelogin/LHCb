@@ -24,4 +24,3 @@ gaudi_add_dictionary(OTDAQ
 
 gaudi_install_headers(Event OTDAQ)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

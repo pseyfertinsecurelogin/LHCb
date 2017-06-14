@@ -28,4 +28,3 @@ gaudi_add_dictionary(HltInterfaces
                      LINK_LIBRARIES Boost DAQEventLib HltEvent GaudiKernel LHCbMathLib HltInterfaces
                      OPTIONS "-U__MINGW32__")
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

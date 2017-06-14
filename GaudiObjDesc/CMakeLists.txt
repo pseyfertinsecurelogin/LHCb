@@ -36,4 +36,3 @@ gaudi_add_test(nosetests
 
 # No need to call QMTest, because all the tests are already described here
 # gaudi_add_test(QMTest QMTEST)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

@@ -28,4 +28,3 @@ gaudi_add_executable(hlttck_cdb_listkeys  utilities/main.cpp src/cdb.cpp src/tar
                      LINK_LIBRARIES GaudiKernel Boost HltInterfaces)
 
 gaudi_add_test(QMTest QMTEST)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

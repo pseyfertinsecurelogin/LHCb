@@ -30,4 +30,3 @@ add_custom_target(RelaxRootmap ALL DEPENDS ${rootmapfile})
 # Install the merged file
 install(FILES ${rootmapfile} DESTINATION lib)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

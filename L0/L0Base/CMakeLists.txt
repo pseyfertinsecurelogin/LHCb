@@ -12,4 +12,3 @@ gaudi_add_library(L0Base
                   PUBLIC_HEADERS L0Base
                   LINK_LIBRARIES DAQEventLib DAQKernelLib GaudiAlgLib)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

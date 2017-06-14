@@ -10,4 +10,3 @@ gaudi_add_module(RecreatePIDTools
                  src/*.cpp
                  LINK_LIBRARIES RecEvent GaudiAlgLib)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

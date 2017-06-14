@@ -15,4 +15,3 @@ gaudi_depends_on_subdirs(Calo/CaloKernel
                          Rich/RichKernel
                          ST/STKernel)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

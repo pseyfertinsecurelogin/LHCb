@@ -29,4 +29,3 @@ gaudi_add_dictionary(OTDet
                      LINK_LIBRARIES Boost DetDescCnvLib LHCbKernel LHCbMathLib OTDetLib
                      OPTIONS "-U__MINGW32__")
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

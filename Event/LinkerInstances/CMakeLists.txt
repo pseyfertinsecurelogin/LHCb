@@ -19,4 +19,3 @@ gaudi_add_dictionary(LinkerInstances
 
 gaudi_install_python_modules()
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

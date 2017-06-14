@@ -5,4 +5,3 @@ gaudi_subdir(Tell1Kernel v1r13p1)
 
 gaudi_install_headers(Tell1Kernel)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

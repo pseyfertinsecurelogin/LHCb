@@ -14,4 +14,3 @@ gaudi_add_dictionary(RichFutureInterfaces
                      OPTIONS "-U__MINGW32__")
 
 gaudi_install_headers(RichFutureInterfaces)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

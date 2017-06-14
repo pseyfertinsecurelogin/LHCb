@@ -14,4 +14,3 @@ god_build_headers(xml/*.xml)
 god_build_dictionary(xml/*.xml
                      LINK_LIBRARIES GaudiKernel LHCbKernel)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

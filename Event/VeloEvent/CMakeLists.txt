@@ -19,4 +19,3 @@ god_build_dictionary(xml/*.xml
 
 gaudi_install_headers(VeloEvent)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

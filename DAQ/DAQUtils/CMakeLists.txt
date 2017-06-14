@@ -21,4 +21,3 @@ gaudi_install_headers(Event)
 
 
 gaudi_add_test(QMTest QMTEST)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

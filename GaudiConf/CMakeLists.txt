@@ -18,4 +18,3 @@ gaudi_env(SET STDOPTS \${GAUDICONFROOT}/options)
 
 
 gaudi_add_test(QMTest QMTEST)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

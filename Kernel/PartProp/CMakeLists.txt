@@ -27,4 +27,3 @@ gaudi_alias (dump_particle_properties
              dump_ParticleProperties) 
 
 gaudi_add_test(QMTest QMTEST)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

@@ -20,4 +20,3 @@ god_build_dictionary(xml/*.xml
                      EXTEND dict/lcgDict.h
                      LINK_LIBRARIES PhysEvent GaudiKernel HltEvent)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

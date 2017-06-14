@@ -21,4 +21,3 @@ gaudi_add_library(RichFutureKernel
                   LINK_LIBRARIES Boost VDT GaudiAlgLib GaudiUtilsLib RichUtils LHCbKernel)
 
 gaudi_install_python_modules()
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

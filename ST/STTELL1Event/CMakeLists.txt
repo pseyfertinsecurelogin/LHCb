@@ -19,4 +19,3 @@ gaudi_add_library(STTELL1Event
 god_build_dictionary(xml/*.xml
                      LINK_LIBRARIES LHCbKernel STKernelLib STTELL1Event)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

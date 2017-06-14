@@ -29,4 +29,3 @@ gaudi_add_dictionary(VPDet
                      LINK_LIBRARIES Boost DetDescLib DetDescCnvLib GaudiAlgLib LHCbKernel LHCbMathLib VPDetLib
                      OPTIONS "-U__MINGW32__")
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

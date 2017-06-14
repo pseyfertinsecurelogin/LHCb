@@ -21,4 +21,3 @@ gaudi_add_module(SimComponents
                  INCLUDE_DIRS Boost AIDA Kernel/MCInterfaces
                  LINK_LIBRARIES Boost CaloDetLib GenEvent MCEvent GaudiAlgLib)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

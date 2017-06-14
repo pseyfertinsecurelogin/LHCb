@@ -20,4 +20,3 @@ gaudi_add_dictionary(MicroDst
 
 gaudi_install_python_modules()
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

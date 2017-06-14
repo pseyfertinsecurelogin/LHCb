@@ -10,4 +10,3 @@ gaudi_add_module(CaloDetXmlCnv
                  src/*.cpp
                  LINK_LIBRARIES CaloDetLib DetDescCnvLib)
 
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

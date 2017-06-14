@@ -57,4 +57,3 @@ add_dependencies(CondDBBrowser CondDBUI.Browser.Resources
                                CondDBUI.Browser.UI
                                CondDBCompression
                                CondDBUIHelperLib)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )

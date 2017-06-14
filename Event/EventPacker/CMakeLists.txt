@@ -31,4 +31,3 @@ gaudi_add_dictionary(EventPacker
                      dict/PackedEventDict.h
                      dict/PackedEventDict.xml
                      LINK_LIBRARIES MCEvent PhysEvent RecEvent GaudiAlgLib GaudiKernel LHCbKernel EventPackerLib)
-SET( CMAKE_EXPORT_COMPILE_COMMANDS ON )
