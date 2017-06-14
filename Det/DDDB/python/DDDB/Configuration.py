@@ -137,13 +137,12 @@ class DDDBConf(ConfigurableUser):
             for r in resolvers:
                 r.PathToRepository = (r.PathToRepository if r.isPropertySet('PathToRepository')
                                       else GIT_CONDDBS.get(r.name()[11:], ''))
-
-            # keep only Git resolvers that can be acutally used
+            # keep only Git resolvers that can be actually used
             resolvers = [ r for r in resolvers if r.PathToRepository ]
 
             # Leave the outputLevel at INFO even if global level is different
             for r in resolvers:
-                if not r.isPropertySet('OuputLevel') : r.setProp( 'OutputLevel', INFO )
+                if not r.isPropertySet('OutputLevel') : r.setProp( 'OutputLevel', INFO )
                 
             # add failover to COOL CondDB
             resolvers.append(EntityResolverDispatcher('FallbackResolver',
