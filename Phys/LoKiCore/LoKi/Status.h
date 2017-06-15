@@ -54,7 +54,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Check* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( /* argument v */ ) const  override;
+      bool operator() (  ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -93,7 +93,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Accept* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( /* argument v */ ) const  override;
+      bool operator() (  ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================

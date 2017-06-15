@@ -35,15 +35,14 @@
  *  @date 2012-01-20
  *
  */
+namespace LoKi { namespace GenParticles {
 // ============================================================================
 // constructor from child-selectors
 // ============================================================================
-LoKi::GenParticles::PolarizationAngle::PolarizationAngle
-( const LoKi::GenChild::Selector& daughter     ,
-  const LoKi::GenChild::Selector& parent       ,
-  const bool                     mother       )
-  : LoKi::GenTypes::GFunc  ()
-  , m_first        ( daughter )
+PolarizationAngle::PolarizationAngle ( const LoKi::GenChild::Selector& daughter     ,
+                                       const LoKi::GenChild::Selector& parent       ,
+                                       const bool                     mother       )
+  : m_first        ( daughter )
   , m_second       ( parent   )
   , m_mother       ( mother   )
 {
@@ -53,12 +52,10 @@ LoKi::GenParticles::PolarizationAngle::PolarizationAngle
 // ============================================================================
 // constructor from two trees
 // ============================================================================
-LoKi::GenParticles::PolarizationAngle::PolarizationAngle
-( const Decays::IGenDecay::iTree& daughter ,
-  const Decays::IGenDecay::iTree& parent   ,
-  const bool                   mother   )
-  : LoKi::GenTypes::GFunc  ()
-  , m_first        ( daughter )
+PolarizationAngle::PolarizationAngle ( const Decays::IGenDecay::iTree& daughter ,
+                                       const Decays::IGenDecay::iTree& parent   ,
+                                       const bool                   mother   )
+  : m_first        ( daughter )
   , m_second       ( parent   )
   , m_mother       ( mother   )
 {
@@ -68,12 +65,10 @@ LoKi::GenParticles::PolarizationAngle::PolarizationAngle
 // ============================================================================
 // constructor from two nodes
 // ============================================================================
-LoKi::GenParticles::PolarizationAngle::PolarizationAngle
-( const Decays::iNode&         daughter  ,
-  const Decays::iNode&         parent    ,
-  const bool                   mother    )
-  : LoKi::GenTypes::GFunc  ()
-  , m_first        ( daughter )
+PolarizationAngle::PolarizationAngle ( const Decays::iNode&         daughter  ,
+                                       const Decays::iNode&         parent    ,
+                                       const bool                   mother    )
+  : m_first        ( daughter )
   , m_second       ( parent   )
   , m_mother       ( mother   )
 {
@@ -83,12 +78,10 @@ LoKi::GenParticles::PolarizationAngle::PolarizationAngle
 // ============================================================================
 // constructor from two cuts
 // ============================================================================
-LoKi::GenParticles::PolarizationAngle::PolarizationAngle
-( const LoKi::GenTypes::GCuts& daughter  ,
-  const LoKi::GenTypes::GCuts& parent    ,
-  const bool                   mother    )
-  : LoKi::GenTypes::GFunc  ()
-  , m_first        ( daughter )
+PolarizationAngle::PolarizationAngle ( const LoKi::GenTypes::GCuts& daughter  ,
+                                       const LoKi::GenTypes::GCuts& parent    ,
+                                       const bool                   mother    )
+  : m_first        ( daughter )
   , m_second       ( parent   )
   , m_mother       ( mother   )
 {
@@ -98,13 +91,11 @@ LoKi::GenParticles::PolarizationAngle::PolarizationAngle
 // ============================================================================
 // constructor from two trees
 // ============================================================================
-LoKi::GenParticles::PolarizationAngle::PolarizationAngle
-( const std::string&           daughter     ,
-  const std::string&           parent       ,
-  const bool                   mother       ,
-  const std::string&           factory      )
-  : LoKi::GenTypes::GFunc  ()
-  , m_first        ( daughter , factory )
+PolarizationAngle::PolarizationAngle ( const std::string&           daughter  ,
+                                       const std::string&           parent    ,
+                                       const bool                   mother    ,
+                                       const std::string&           factory   )
+  : m_first        ( daughter , factory )
   , m_second       ( parent   , factory )
   , m_mother       ( mother       )
 {
@@ -114,16 +105,14 @@ LoKi::GenParticles::PolarizationAngle::PolarizationAngle
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::PolarizationAngle*
-LoKi::GenParticles::PolarizationAngle::clone() const
-{ return new LoKi::GenParticles::PolarizationAngle ( *this ) ; }
+PolarizationAngle* PolarizationAngle::clone() const
+{ return new PolarizationAngle ( *this ) ; }
 // ============================================================================
 // get the proper decay components
 // ==========================================================================
 StatusCode
-LoKi::GenParticles::PolarizationAngle::getComponents12
-( const HepMC::GenParticle*             p   ,
-  Decays::IGenDecay::iTree::Collection& vct ) const
+PolarizationAngle::getComponents12 ( const HepMC::GenParticle*             p   ,
+                                     Decays::IGenDecay::iTree::Collection& vct ) const
 {
   //
   if ( 0 == p )
@@ -156,9 +145,7 @@ LoKi::GenParticles::PolarizationAngle::getComponents12
 // ==========================================================================
 // MANDATORY: the only one essential method
 // ==========================================================================
-LoKi::GenParticles::PolarizationAngle::result_type
-LoKi::GenParticles::PolarizationAngle::operator()
-  ( LoKi::GenParticles::PolarizationAngle::argument p ) const
+double PolarizationAngle::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -195,8 +182,7 @@ LoKi::GenParticles::PolarizationAngle::operator()
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream& LoKi::GenParticles::PolarizationAngle::fillStream
-( std::ostream& s ) const
+std::ostream& PolarizationAngle::fillStream ( std::ostream& s ) const
 {
   s << " GCOSPOL( " << m_first << " , " << m_second ;
   //
@@ -211,14 +197,13 @@ std::ostream& LoKi::GenParticles::PolarizationAngle::fillStream
 // ============================================================================
 // constructor from child-selector
 // ============================================================================
-LoKi::GenParticles::SinChi::SinChi
-( const LoKi::GenChild::Selector& particle1 ,
-  const LoKi::GenChild::Selector& particle2 ,
-  const LoKi::GenChild::Selector& particle3 ,
-  const LoKi::GenChild::Selector& particle4 )
-  : LoKi::GenParticles::PolarizationAngle ( particle1    ,
-                                            particle2    ,
-                                            false        )
+SinChi::SinChi ( const LoKi::GenChild::Selector& particle1 ,
+                 const LoKi::GenChild::Selector& particle2 ,
+                 const LoKi::GenChild::Selector& particle3 ,
+                 const LoKi::GenChild::Selector& particle4 )
+  : PolarizationAngle ( particle1    ,
+                        particle2    ,
+                        false        )
   , m_tree3   ( particle3 )
   , m_tree4   ( particle4 )
 {
@@ -230,14 +215,13 @@ LoKi::GenParticles::SinChi::SinChi
 // ============================================================================
 // constructor from the trees
 // ============================================================================
-LoKi::GenParticles::SinChi::SinChi
-( const Decays::IGenDecay::iTree& particle1    ,
-  const Decays::IGenDecay::iTree& particle2    ,
-  const Decays::IGenDecay::iTree& particle3    ,
-  const Decays::IGenDecay::iTree& particle4    )
-  : LoKi::GenParticles::PolarizationAngle ( particle1    ,
-                                            particle2    ,
-                                            false        )
+SinChi::SinChi ( const Decays::IGenDecay::iTree& particle1    ,
+                 const Decays::IGenDecay::iTree& particle2    ,
+                 const Decays::IGenDecay::iTree& particle3    ,
+                 const Decays::IGenDecay::iTree& particle4    )
+  : PolarizationAngle ( particle1    ,
+                        particle2    ,
+                        false        )
   , m_tree3   ( particle3 )
   , m_tree4   ( particle4 )
 {
@@ -249,14 +233,13 @@ LoKi::GenParticles::SinChi::SinChi
 // ============================================================================
 // constructor from the nodes
 // ============================================================================
-LoKi::GenParticles::SinChi::SinChi
-( const Decays::iNode& particle1    ,
-  const Decays::iNode& particle2    ,
-  const Decays::iNode& particle3    ,
-  const Decays::iNode& particle4    )
-  : LoKi::GenParticles::PolarizationAngle ( particle1    ,
-                                            particle2    ,
-                                            false        )
+SinChi::SinChi ( const Decays::iNode& particle1    ,
+                 const Decays::iNode& particle2    ,
+                 const Decays::iNode& particle3    ,
+                 const Decays::iNode& particle4    )
+  : PolarizationAngle ( particle1    ,
+                        particle2    ,
+                        false        )
   , m_tree3   ( particle3 )
   , m_tree4   ( particle4 )
 {
@@ -268,14 +251,13 @@ LoKi::GenParticles::SinChi::SinChi
 // ============================================================================
 // constructor from the cuts
 // ============================================================================
-LoKi::GenParticles::SinChi::SinChi
-( const LoKi::GenTypes::GCuts& particle1 ,
-  const LoKi::GenTypes::GCuts& particle2 ,
-  const LoKi::GenTypes::GCuts& particle3 ,
-  const LoKi::GenTypes::GCuts& particle4 )
-  : LoKi::GenParticles::PolarizationAngle ( particle1    ,
-                                            particle2    ,
-                                            false        )
+SinChi::SinChi ( const LoKi::GenTypes::GCuts& particle1 ,
+                 const LoKi::GenTypes::GCuts& particle2 ,
+                 const LoKi::GenTypes::GCuts& particle3 ,
+                 const LoKi::GenTypes::GCuts& particle4 )
+  : PolarizationAngle ( particle1    ,
+                        particle2    ,
+                        false        )
   , m_tree3   ( particle3 )
   , m_tree4   ( particle4 )
 {
@@ -287,16 +269,15 @@ LoKi::GenParticles::SinChi::SinChi
 // ============================================================================
 // constructor from the trees
 // ============================================================================
-LoKi::GenParticles::SinChi::SinChi
-( const std::string& particle1    ,
-  const std::string& particle2    ,
-  const std::string& particle3    ,
-  const std::string& particle4    ,
-  const std::string& factory      )
-  : LoKi::GenParticles::PolarizationAngle ( particle1    ,
-                                            particle2    ,
-                                            false        ,
-                                            factory      )
+SinChi::SinChi ( const std::string& particle1    ,
+                 const std::string& particle2    ,
+                 const std::string& particle3    ,
+                 const std::string& particle4    ,
+                 const std::string& factory      )
+  : PolarizationAngle ( particle1    ,
+                        particle2    ,
+                        false        ,
+                        factory      )
   , m_tree3   ( particle3 , factory )
   , m_tree4   ( particle4 , factory )
 {
@@ -308,9 +289,9 @@ LoKi::GenParticles::SinChi::SinChi
 // ============================================================================
 // get the proper decay components
 // ==========================================================================
-StatusCode LoKi::GenParticles::SinChi::getComponents34
-( const HepMC::GenParticle*              p   ,
-  Decays::IGenDecay::iTree::Collection& vct ) const
+StatusCode
+SinChi::getComponents34 ( const HepMC::GenParticle*              p   ,
+                          Decays::IGenDecay::iTree::Collection& vct ) const
 {
   //
   if ( 0 == p )
@@ -343,9 +324,9 @@ StatusCode LoKi::GenParticles::SinChi::getComponents34
 // ============================================================================
 // get the proper decay components
 // ==========================================================================
-StatusCode LoKi::GenParticles::SinChi::getComponents
-( const HepMC::GenParticle*              p   ,
-  Decays::IGenDecay::iTree::Collection& vct ) const
+StatusCode
+SinChi::getComponents ( const HepMC::GenParticle*              p   ,
+                        Decays::IGenDecay::iTree::Collection& vct ) const
 {
   vct.clear() ;
   StatusCode sc1 = getComponents12  ( p , vct ) ;
@@ -366,15 +347,11 @@ StatusCode LoKi::GenParticles::SinChi::getComponents
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::SinChi*
-LoKi::GenParticles::SinChi::clone() const
-{ return new LoKi::GenParticles::SinChi ( *this ) ; }
+SinChi* SinChi::clone() const { return new SinChi ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::SinChi::result_type
-LoKi::GenParticles::SinChi::operator()
-  ( LoKi::GenParticles::SinChi:: argument p ) const
+double SinChi::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -407,8 +384,7 @@ LoKi::GenParticles::SinChi::operator()
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::SinChi::fillStream  ( std::ostream& s ) const
+std::ostream& SinChi::fillStream  ( std::ostream& s ) const
 {
   s << " GSINCHI( "
     <<   "'" << child1 ()
@@ -425,82 +401,73 @@ LoKi::GenParticles::SinChi::fillStream  ( std::ostream& s ) const
 // ============================================================================
 // constructor from selectors
 // ============================================================================
-LoKi::GenParticles::CosChi::CosChi
-( const LoKi::GenChild::Selector& particle1 ,
-  const LoKi::GenChild::Selector& particle2 ,
-  const LoKi::GenChild::Selector& particle3 ,
-  const LoKi::GenChild::Selector& particle4 )
-  : LoKi::GenParticles::SinChi (  particle1 ,
-                                  particle2 ,
-                                  particle3 ,
-                                  particle4 )
+CosChi::CosChi ( const LoKi::GenChild::Selector& particle1 ,
+                 const LoKi::GenChild::Selector& particle2 ,
+                 const LoKi::GenChild::Selector& particle3 ,
+                 const LoKi::GenChild::Selector& particle4 )
+  : SinChi (  particle1 ,
+              particle2 ,
+              particle3 ,
+              particle4 )
 {}
 // ============================================================================
 // constructor form the trees
 // ============================================================================
-LoKi::GenParticles::CosChi::CosChi
-( const Decays::IGenDecay::iTree& particle1 ,
-  const Decays::IGenDecay::iTree& particle2 ,
-  const Decays::IGenDecay::iTree& particle3 ,
-  const Decays::IGenDecay::iTree& particle4 )
-  : LoKi::GenParticles::SinChi (  particle1 ,
-                                  particle2 ,
-                                  particle3 ,
-                                  particle4 )
+CosChi::CosChi ( const Decays::IGenDecay::iTree& particle1 ,
+                 const Decays::IGenDecay::iTree& particle2 ,
+                 const Decays::IGenDecay::iTree& particle3 ,
+                 const Decays::IGenDecay::iTree& particle4 )
+  : SinChi (  particle1 ,
+              particle2 ,
+              particle3 ,
+              particle4 )
 {}
 // ============================================================================
 // constructor from the nodes
 // ============================================================================
-LoKi::GenParticles::CosChi::CosChi
-( const Decays::iNode& particle1 ,
-  const Decays::iNode& particle2 ,
-  const Decays::iNode& particle3 ,
-  const Decays::iNode& particle4 )
-  : LoKi::GenParticles::SinChi (  particle1 ,
-                                  particle2 ,
-                                  particle3 ,
-                                  particle4 )
+CosChi::CosChi ( const Decays::iNode& particle1 ,
+                 const Decays::iNode& particle2 ,
+                 const Decays::iNode& particle3 ,
+                 const Decays::iNode& particle4 )
+  : SinChi (  particle1 ,
+              particle2 ,
+              particle3 ,
+              particle4 )
 {}
 // ============================================================================
 // constructor form the cuts
 // ============================================================================
-LoKi::GenParticles::CosChi::CosChi
-( const LoKi::GenTypes::GCuts&   particle1 ,
-  const LoKi::GenTypes::GCuts&   particle2 ,
-  const LoKi::GenTypes::GCuts&   particle3 ,
-  const LoKi::GenTypes::GCuts&   particle4 )
-  : LoKi::GenParticles::SinChi ( particle1 ,
-                                 particle2 ,
-                                 particle3 ,
-                                 particle4 )
+CosChi::CosChi ( const LoKi::GenTypes::GCuts&   particle1 ,
+                 const LoKi::GenTypes::GCuts&   particle2 ,
+                 const LoKi::GenTypes::GCuts&   particle3 ,
+                 const LoKi::GenTypes::GCuts&   particle4 )
+  : SinChi ( particle1 ,
+             particle2 ,
+             particle3 ,
+             particle4 )
 {}
 // ============================================================================
 // constructor from the decay descriptors
 // ============================================================================
-LoKi::GenParticles::CosChi::CosChi
-( const std::string& particle1    ,
-  const std::string& particle2    ,
-  const std::string& particle3    ,
-  const std::string& particle4    ,
-  const std::string& factory      )
-  : LoKi::GenParticles::SinChi ( particle1    ,
-                                 particle2    ,
-                                 particle3    ,
-                                 particle4    ,
-                                 factory      )
+CosChi::CosChi ( const std::string& particle1    ,
+                 const std::string& particle2    ,
+                 const std::string& particle3    ,
+                 const std::string& particle4    ,
+                 const std::string& factory      )
+  : SinChi ( particle1    ,
+             particle2    ,
+             particle3    ,
+             particle4    ,
+             factory      )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::CosChi*
-LoKi::GenParticles::CosChi::clone() const
-{ return new LoKi::GenParticles::CosChi ( *this ) ; }
+CosChi* CosChi::clone() const { return new CosChi ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::CosChi::result_type
-LoKi::GenParticles::CosChi::operator()
-  ( LoKi::GenParticles::CosChi:: argument p ) const
+double CosChi::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -533,8 +500,7 @@ LoKi::GenParticles::CosChi::operator()
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::CosChi::fillStream  ( std::ostream& s ) const
+std::ostream& CosChi::fillStream  ( std::ostream& s ) const
 {
   s << " GCOSCHI( "
     <<   "'" << child1 ()
@@ -551,82 +517,73 @@ LoKi::GenParticles::CosChi::fillStream  ( std::ostream& s ) const
 // ============================================================================
 // constructor from child-selector
 // ============================================================================
-LoKi::GenParticles::AngleChi::AngleChi
-( const LoKi::GenChild::Selector& particle1 ,
-  const LoKi::GenChild::Selector& particle2 ,
-  const LoKi::GenChild::Selector& particle3 ,
-  const LoKi::GenChild::Selector& particle4 )
-  : LoKi::GenParticles::CosChi (  particle1 ,
-                                  particle2 ,
-                                  particle3 ,
-                                  particle4 )
+AngleChi::AngleChi ( const LoKi::GenChild::Selector& particle1 ,
+                     const LoKi::GenChild::Selector& particle2 ,
+                     const LoKi::GenChild::Selector& particle3 ,
+                     const LoKi::GenChild::Selector& particle4 )
+  : CosChi (  particle1 ,
+              particle2 ,
+              particle3 ,
+              particle4 )
 {}
 // ============================================================================
 // constructor from the trees
 // ============================================================================
-LoKi::GenParticles::AngleChi::AngleChi
-( const Decays::IGenDecay::iTree& particle1 ,
-  const Decays::IGenDecay::iTree& particle2 ,
-  const Decays::IGenDecay::iTree& particle3 ,
-  const Decays::IGenDecay::iTree& particle4 )
-  : LoKi::GenParticles::CosChi (  particle1 ,
-                                  particle2 ,
-                                  particle3 ,
-                                  particle4 )
+AngleChi::AngleChi ( const Decays::IGenDecay::iTree& particle1 ,
+                     const Decays::IGenDecay::iTree& particle2 ,
+                     const Decays::IGenDecay::iTree& particle3 ,
+                     const Decays::IGenDecay::iTree& particle4 )
+  : CosChi (  particle1 ,
+              particle2 ,
+              particle3 ,
+              particle4 )
 {}
 // ============================================================================
 // constructor from the nodes
 // ============================================================================
-LoKi::GenParticles::AngleChi::AngleChi
-( const Decays::iNode& particle1 ,
-  const Decays::iNode& particle2 ,
-  const Decays::iNode& particle3 ,
-  const Decays::iNode& particle4 )
-  : LoKi::GenParticles::CosChi (  particle1 ,
-                                  particle2 ,
-                                  particle3 ,
-                                  particle4 )
+AngleChi::AngleChi ( const Decays::iNode& particle1 ,
+                     const Decays::iNode& particle2 ,
+                     const Decays::iNode& particle3 ,
+                     const Decays::iNode& particle4 )
+  : CosChi (  particle1 ,
+              particle2 ,
+              particle3 ,
+              particle4 )
 {}
 // ============================================================================
 // constructor form the cuts
 // ============================================================================
-LoKi::GenParticles::AngleChi::AngleChi
-( const LoKi::GenTypes::GCuts&   particle1 ,
-  const LoKi::GenTypes::GCuts&   particle2 ,
-  const LoKi::GenTypes::GCuts&   particle3 ,
-  const LoKi::GenTypes::GCuts&   particle4 )
-  : LoKi::GenParticles::CosChi ( particle1 ,
-                                 particle2 ,
-                                 particle3 ,
-                                 particle4 )
+AngleChi::AngleChi ( const LoKi::GenTypes::GCuts&   particle1 ,
+                     const LoKi::GenTypes::GCuts&   particle2 ,
+                     const LoKi::GenTypes::GCuts&   particle3 ,
+                     const LoKi::GenTypes::GCuts&   particle4 )
+  : CosChi ( particle1 ,
+             particle2 ,
+             particle3 ,
+             particle4 )
 {}
 // ============================================================================
 // constructor from the decay descriptors
 // ============================================================================
-LoKi::GenParticles::AngleChi::AngleChi
-( const std::string& particle1    ,
-  const std::string& particle2    ,
-  const std::string& particle3    ,
-  const std::string& particle4    ,
-  const std::string& factory      )
-  : LoKi::GenParticles::CosChi ( particle1    ,
-                                 particle2    ,
-                                 particle3    ,
-                                 particle4    ,
-                                 factory      )
+AngleChi::AngleChi ( const std::string& particle1    ,
+                     const std::string& particle2    ,
+                     const std::string& particle3    ,
+                     const std::string& particle4    ,
+                     const std::string& factory      )
+  : CosChi ( particle1    ,
+             particle2    ,
+             particle3    ,
+             particle4    ,
+             factory      )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::AngleChi*
-LoKi::GenParticles::AngleChi::clone() const
-{ return new LoKi::GenParticles::AngleChi ( *this ) ; }
+AngleChi* AngleChi::clone() const { return new AngleChi ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::AngleChi::result_type
-LoKi::GenParticles::AngleChi::operator()
-  ( LoKi::GenParticles::AngleChi:: argument p ) const
+double AngleChi::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -659,8 +616,7 @@ LoKi::GenParticles::AngleChi::operator()
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::AngleChi::fillStream  ( std::ostream& s ) const
+std::ostream& AngleChi::fillStream  ( std::ostream& s ) const
 {
   s << " GANGLECHI( "
     <<   "'" << child1 ()
@@ -677,82 +633,73 @@ LoKi::GenParticles::AngleChi::fillStream  ( std::ostream& s ) const
 // ============================================================================
 // constructor from child-selector
 // ============================================================================
-LoKi::GenParticles::CosThetaTr::CosThetaTr
-( const LoKi::GenChild::Selector&  particle1 ,
-  const LoKi::GenChild::Selector&  particle2 ,
-  const LoKi::GenChild::Selector&  particle3 ,
-  const LoKi::GenChild::Selector&  particle4 )
-  : LoKi::GenParticles::AngleChi ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+CosThetaTr::CosThetaTr ( const LoKi::GenChild::Selector&  particle1 ,
+                         const LoKi::GenChild::Selector&  particle2 ,
+                         const LoKi::GenChild::Selector&  particle3 ,
+                         const LoKi::GenChild::Selector&  particle4 )
+  : AngleChi ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor from the trees
 // ============================================================================
-LoKi::GenParticles::CosThetaTr::CosThetaTr
-( const Decays::IGenDecay::iTree&  particle1 ,
-  const Decays::IGenDecay::iTree&  particle2 ,
-  const Decays::IGenDecay::iTree&  particle3 ,
-  const Decays::IGenDecay::iTree&  particle4 )
-  : LoKi::GenParticles::AngleChi ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+CosThetaTr::CosThetaTr ( const Decays::IGenDecay::iTree&  particle1 ,
+                         const Decays::IGenDecay::iTree&  particle2 ,
+                         const Decays::IGenDecay::iTree&  particle3 ,
+                         const Decays::IGenDecay::iTree&  particle4 )
+  : AngleChi ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor from the nodes
 // ============================================================================
-LoKi::GenParticles::CosThetaTr::CosThetaTr
-( const Decays::iNode& particle1 ,
-  const Decays::iNode& particle2 ,
-  const Decays::iNode& particle3 ,
-  const Decays::iNode& particle4 )
-  : LoKi::GenParticles::AngleChi ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+CosThetaTr::CosThetaTr ( const Decays::iNode& particle1 ,
+                         const Decays::iNode& particle2 ,
+                         const Decays::iNode& particle3 ,
+                         const Decays::iNode& particle4 )
+  : AngleChi ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor form the cuts
 // ============================================================================
-LoKi::GenParticles::CosThetaTr::CosThetaTr
-( const LoKi::GenTypes::GCuts&     particle1 ,
-  const LoKi::GenTypes::GCuts&     particle2 ,
-  const LoKi::GenTypes::GCuts&     particle3 ,
-  const LoKi::GenTypes::GCuts&     particle4 )
-  : LoKi::GenParticles::AngleChi ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+CosThetaTr::CosThetaTr ( const LoKi::GenTypes::GCuts&     particle1 ,
+                         const LoKi::GenTypes::GCuts&     particle2 ,
+                         const LoKi::GenTypes::GCuts&     particle3 ,
+                         const LoKi::GenTypes::GCuts&     particle4 )
+  : AngleChi ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor from the decay descriptors
 // ============================================================================
-LoKi::GenParticles::CosThetaTr::CosThetaTr
-( const std::string& particle1    ,
-  const std::string& particle2    ,
-  const std::string& particle3    ,
-  const std::string& particle4    ,
-  const std::string& factory      )
-  : LoKi::GenParticles::AngleChi ( particle1    ,
-                                   particle2    ,
-                                   particle3    ,
-                                   particle4    ,
-                                   factory      )
+CosThetaTr::CosThetaTr ( const std::string& particle1    ,
+                         const std::string& particle2    ,
+                         const std::string& particle3    ,
+                         const std::string& particle4    ,
+                         const std::string& factory      )
+  : AngleChi ( particle1    ,
+               particle2    ,
+               particle3    ,
+               particle4    ,
+               factory      )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::CosThetaTr*
-LoKi::GenParticles::CosThetaTr::clone() const
-{ return new LoKi::GenParticles::CosThetaTr ( *this ) ; }
+CosThetaTr* CosThetaTr::clone() const { return new CosThetaTr ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::CosThetaTr::result_type
-LoKi::GenParticles::CosThetaTr::operator()
-  ( LoKi::GenParticles::CosThetaTr:: argument p ) const
+double CosThetaTr::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -786,7 +733,7 @@ LoKi::GenParticles::CosThetaTr::operator()
 // OPTIONAL: the nice printout
 // ============================================================================
 std::ostream&
-LoKi::GenParticles::CosThetaTr::fillStream  ( std::ostream& s ) const
+CosThetaTr::fillStream  ( std::ostream& s ) const
 {
   s << " GCOSTHETATR( "
     <<   "'" << child1 ()
@@ -802,82 +749,73 @@ LoKi::GenParticles::CosThetaTr::fillStream  ( std::ostream& s ) const
 // ============================================================================
 // constructor from child-selector
 // ============================================================================
-LoKi::GenParticles::SinPhiTr::SinPhiTr
-( const LoKi::GenChild::Selector&    particle1 ,
-  const LoKi::GenChild::Selector&    particle2 ,
-  const LoKi::GenChild::Selector&    particle3 ,
-  const LoKi::GenChild::Selector&    particle4 )
-  : LoKi::GenParticles::CosThetaTr ( particle1 ,
-                                     particle2 ,
-                                     particle3 ,
-                                     particle4 )
+SinPhiTr::SinPhiTr ( const LoKi::GenChild::Selector&    particle1 ,
+                     const LoKi::GenChild::Selector&    particle2 ,
+                     const LoKi::GenChild::Selector&    particle3 ,
+                     const LoKi::GenChild::Selector&    particle4 )
+  : CosThetaTr ( particle1 ,
+                 particle2 ,
+                 particle3 ,
+                 particle4 )
 {}
 // ============================================================================
 // constructor from the trees
 // ============================================================================
-LoKi::GenParticles::SinPhiTr::SinPhiTr
-( const Decays::IGenDecay::iTree&    particle1 ,
-  const Decays::IGenDecay::iTree&    particle2 ,
-  const Decays::IGenDecay::iTree&    particle3 ,
-  const Decays::IGenDecay::iTree&    particle4 )
-  : LoKi::GenParticles::CosThetaTr ( particle1 ,
-                                     particle2 ,
-                                     particle3 ,
-                                     particle4 )
+SinPhiTr::SinPhiTr ( const Decays::IGenDecay::iTree&    particle1 ,
+                     const Decays::IGenDecay::iTree&    particle2 ,
+                     const Decays::IGenDecay::iTree&    particle3 ,
+                     const Decays::IGenDecay::iTree&    particle4 )
+  : CosThetaTr ( particle1 ,
+                 particle2 ,
+                 particle3 ,
+                 particle4 )
 {}
 // ============================================================================
 // constructor from the nodes
 // ============================================================================
-LoKi::GenParticles::SinPhiTr::SinPhiTr
-( const Decays::iNode& particle1 ,
-  const Decays::iNode& particle2 ,
-  const Decays::iNode& particle3 ,
-  const Decays::iNode& particle4 )
-  : LoKi::GenParticles::CosThetaTr ( particle1 ,
-                                     particle2 ,
-                                     particle3 ,
-                                     particle4 )
+SinPhiTr::SinPhiTr ( const Decays::iNode& particle1 ,
+                     const Decays::iNode& particle2 ,
+                     const Decays::iNode& particle3 ,
+                     const Decays::iNode& particle4 )
+  : CosThetaTr ( particle1 ,
+                 particle2 ,
+                 particle3 ,
+                 particle4 )
 {}
 // ============================================================================
 // constructor form the cuts
 // ============================================================================
-LoKi::GenParticles::SinPhiTr::SinPhiTr
-( const LoKi::GenTypes::GCuts&       particle1 ,
-  const LoKi::GenTypes::GCuts&       particle2 ,
-  const LoKi::GenTypes::GCuts&       particle3 ,
-  const LoKi::GenTypes::GCuts&       particle4 )
-  : LoKi::GenParticles::CosThetaTr ( particle1 ,
-                                     particle2 ,
-                                     particle3 ,
-                                     particle4 )
+SinPhiTr::SinPhiTr ( const LoKi::GenTypes::GCuts&       particle1 ,
+                     const LoKi::GenTypes::GCuts&       particle2 ,
+                     const LoKi::GenTypes::GCuts&       particle3 ,
+                     const LoKi::GenTypes::GCuts&       particle4 )
+  : CosThetaTr ( particle1 ,
+                 particle2 ,
+                 particle3 ,
+                 particle4 )
 {}
 // ============================================================================
 // constructor from the decay descriptors
 // ============================================================================
-LoKi::GenParticles::SinPhiTr::SinPhiTr
-( const std::string&                 particle1    ,
-  const std::string&                 particle2    ,
-  const std::string&                 particle3    ,
-  const std::string&                 particle4    ,
-  const std::string&                 factory      )
-  : LoKi::GenParticles::CosThetaTr ( particle1    ,
-                                     particle2    ,
-                                     particle3    ,
-                                     particle4    ,
-                                     factory      )
+SinPhiTr::SinPhiTr ( const std::string&                 particle1    ,
+                     const std::string&                 particle2    ,
+                     const std::string&                 particle3    ,
+                     const std::string&                 particle4    ,
+                     const std::string&                 factory      )
+  : CosThetaTr ( particle1    ,
+                 particle2    ,
+                 particle3    ,
+                 particle4    ,
+                 factory      )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::SinPhiTr*
-LoKi::GenParticles::SinPhiTr::clone() const
-{ return new LoKi::GenParticles::SinPhiTr ( *this ) ; }
+SinPhiTr* SinPhiTr::clone() const { return new SinPhiTr ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::SinPhiTr::result_type
-LoKi::GenParticles::SinPhiTr::operator()
-  ( LoKi::GenParticles::SinPhiTr:: argument p ) const
+double SinPhiTr::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -910,8 +848,7 @@ LoKi::GenParticles::SinPhiTr::operator()
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::SinPhiTr::fillStream  ( std::ostream& s ) const
+std::ostream& SinPhiTr::fillStream  ( std::ostream& s ) const
 {
   s << " GSINPHITR( "
     <<   "'" << child1 ()
@@ -927,82 +864,73 @@ LoKi::GenParticles::SinPhiTr::fillStream  ( std::ostream& s ) const
 // ============================================================================
 // constructor from child-selector
 // ============================================================================
-LoKi::GenParticles::CosPhiTr::CosPhiTr
-( const LoKi::GenChild::Selector&  particle1 ,
-  const LoKi::GenChild::Selector&  particle2 ,
-  const LoKi::GenChild::Selector&  particle3 ,
-  const LoKi::GenChild::Selector&  particle4 )
-  : LoKi::GenParticles::SinPhiTr ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+CosPhiTr::CosPhiTr ( const LoKi::GenChild::Selector&  particle1 ,
+                     const LoKi::GenChild::Selector&  particle2 ,
+                     const LoKi::GenChild::Selector&  particle3 ,
+                     const LoKi::GenChild::Selector&  particle4 )
+  : SinPhiTr ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor from the trees
 // ============================================================================
-LoKi::GenParticles::CosPhiTr::CosPhiTr
-( const Decays::IGenDecay::iTree&  particle1 ,
-  const Decays::IGenDecay::iTree&  particle2 ,
-  const Decays::IGenDecay::iTree&  particle3 ,
-  const Decays::IGenDecay::iTree&  particle4 )
-  : LoKi::GenParticles::SinPhiTr ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+CosPhiTr::CosPhiTr ( const Decays::IGenDecay::iTree&  particle1 ,
+                     const Decays::IGenDecay::iTree&  particle2 ,
+                     const Decays::IGenDecay::iTree&  particle3 ,
+                     const Decays::IGenDecay::iTree&  particle4 )
+  : SinPhiTr ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor from the nodes
 // ============================================================================
-LoKi::GenParticles::CosPhiTr::CosPhiTr
-( const Decays::iNode&             particle1 ,
-  const Decays::iNode&             particle2 ,
-  const Decays::iNode&             particle3 ,
-  const Decays::iNode&             particle4 )
-  : LoKi::GenParticles::SinPhiTr ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+CosPhiTr::CosPhiTr ( const Decays::iNode&             particle1 ,
+                     const Decays::iNode&             particle2 ,
+                     const Decays::iNode&             particle3 ,
+                     const Decays::iNode&             particle4 )
+  : SinPhiTr ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor form the cuts
 // ============================================================================
-LoKi::GenParticles::CosPhiTr::CosPhiTr
-( const LoKi::GenTypes::GCuts&     particle1 ,
-  const LoKi::GenTypes::GCuts&     particle2 ,
-  const LoKi::GenTypes::GCuts&     particle3 ,
-  const LoKi::GenTypes::GCuts&     particle4 )
-  : LoKi::GenParticles::SinPhiTr ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+CosPhiTr::CosPhiTr ( const LoKi::GenTypes::GCuts&     particle1 ,
+                     const LoKi::GenTypes::GCuts&     particle2 ,
+                     const LoKi::GenTypes::GCuts&     particle3 ,
+                     const LoKi::GenTypes::GCuts&     particle4 )
+  : SinPhiTr ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor from the decay descriptors
 // ============================================================================
-LoKi::GenParticles::CosPhiTr::CosPhiTr
-( const std::string&               particle1    ,
-  const std::string&               particle2    ,
-  const std::string&               particle3    ,
-  const std::string&               particle4    ,
-  const std::string&               factory      )
-  : LoKi::GenParticles::SinPhiTr ( particle1    ,
-                                   particle2    ,
-                                   particle3    ,
-                                   particle4    ,
-                                   factory      )
+CosPhiTr::CosPhiTr ( const std::string&               particle1    ,
+                     const std::string&               particle2    ,
+                     const std::string&               particle3    ,
+                     const std::string&               particle4    ,
+                     const std::string&               factory      )
+  : SinPhiTr ( particle1    ,
+               particle2    ,
+               particle3    ,
+               particle4    ,
+               factory      )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::CosPhiTr*
-LoKi::GenParticles::CosPhiTr::clone() const
-{ return new LoKi::GenParticles::CosPhiTr ( *this ) ; }
+CosPhiTr* CosPhiTr::clone() const { return new CosPhiTr ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::CosPhiTr::result_type
-LoKi::GenParticles::CosPhiTr::operator()
-  ( LoKi::GenParticles::CosPhiTr:: argument p ) const
+double CosPhiTr::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -1035,8 +963,7 @@ LoKi::GenParticles::CosPhiTr::operator()
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::CosPhiTr::fillStream  ( std::ostream& s ) const
+std::ostream& CosPhiTr::fillStream  ( std::ostream& s ) const
 {
   s << " GCOSPHITR( "
     <<   "'" << child1 ()
@@ -1053,82 +980,73 @@ LoKi::GenParticles::CosPhiTr::fillStream  ( std::ostream& s ) const
 // ============================================================================
 // constructor from child-selector
 // ============================================================================
-LoKi::GenParticles::AnglePhiTr::AnglePhiTr
-( const LoKi::GenChild::Selector&  particle1 ,
-  const LoKi::GenChild::Selector&  particle2 ,
-  const LoKi::GenChild::Selector&  particle3 ,
-  const LoKi::GenChild::Selector&  particle4 )
-  : LoKi::GenParticles::CosPhiTr ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+AnglePhiTr::AnglePhiTr ( const LoKi::GenChild::Selector&  particle1 ,
+                         const LoKi::GenChild::Selector&  particle2 ,
+                         const LoKi::GenChild::Selector&  particle3 ,
+                         const LoKi::GenChild::Selector&  particle4 )
+  : CosPhiTr ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor from the trees
 // ============================================================================
-LoKi::GenParticles::AnglePhiTr::AnglePhiTr
-( const Decays::IGenDecay::iTree&  particle1 ,
-  const Decays::IGenDecay::iTree&  particle2 ,
-  const Decays::IGenDecay::iTree&  particle3 ,
-  const Decays::IGenDecay::iTree&  particle4 )
-  : LoKi::GenParticles::CosPhiTr ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+AnglePhiTr::AnglePhiTr ( const Decays::IGenDecay::iTree&  particle1 ,
+                         const Decays::IGenDecay::iTree&  particle2 ,
+                         const Decays::IGenDecay::iTree&  particle3 ,
+                         const Decays::IGenDecay::iTree&  particle4 )
+  : CosPhiTr ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor from the nodes
 // ============================================================================
-LoKi::GenParticles::AnglePhiTr::AnglePhiTr
-( const Decays::iNode&             particle1 ,
-  const Decays::iNode&             particle2 ,
-  const Decays::iNode&             particle3 ,
-  const Decays::iNode&             particle4 )
-  : LoKi::GenParticles::CosPhiTr ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+AnglePhiTr::AnglePhiTr ( const Decays::iNode&             particle1 ,
+                         const Decays::iNode&             particle2 ,
+                         const Decays::iNode&             particle3 ,
+                         const Decays::iNode&             particle4 )
+  : CosPhiTr ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor form the cuts
 // ============================================================================
-LoKi::GenParticles::AnglePhiTr::AnglePhiTr
-( const LoKi::GenTypes::GCuts&     particle1 ,
-  const LoKi::GenTypes::GCuts&     particle2 ,
-  const LoKi::GenTypes::GCuts&     particle3 ,
-  const LoKi::GenTypes::GCuts&     particle4 )
-  : LoKi::GenParticles::CosPhiTr ( particle1 ,
-                                   particle2 ,
-                                   particle3 ,
-                                   particle4 )
+AnglePhiTr::AnglePhiTr ( const LoKi::GenTypes::GCuts&     particle1 ,
+                         const LoKi::GenTypes::GCuts&     particle2 ,
+                         const LoKi::GenTypes::GCuts&     particle3 ,
+                         const LoKi::GenTypes::GCuts&     particle4 )
+  : CosPhiTr ( particle1 ,
+               particle2 ,
+               particle3 ,
+               particle4 )
 {}
 // ============================================================================
 // constructor from the decay descriptors
 // ============================================================================
-LoKi::GenParticles::AnglePhiTr::AnglePhiTr
-( const std::string&               particle1    ,
-  const std::string&               particle2    ,
-  const std::string&               particle3    ,
-  const std::string&               particle4    ,
-  const std::string&               factory      )
-  : LoKi::GenParticles::CosPhiTr ( particle1    ,
-                                   particle2    ,
-                                   particle3    ,
-                                   particle4    ,
-                                  factory      )
+AnglePhiTr::AnglePhiTr ( const std::string&               particle1    ,
+                         const std::string&               particle2    ,
+                         const std::string&               particle3    ,
+                         const std::string&               particle4    ,
+                         const std::string&               factory      )
+  : CosPhiTr ( particle1    ,
+               particle2    ,
+               particle3    ,
+               particle4    ,
+               factory      )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::AnglePhiTr*
-LoKi::GenParticles::AnglePhiTr::clone() const
-{ return new LoKi::GenParticles::AnglePhiTr ( *this ) ; }
+AnglePhiTr* AnglePhiTr::clone() const { return new AnglePhiTr ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::AnglePhiTr::result_type
-LoKi::GenParticles::AnglePhiTr::operator()
-  ( LoKi::GenParticles::AnglePhiTr:: argument p ) const
+double AnglePhiTr::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -1161,8 +1079,7 @@ LoKi::GenParticles::AnglePhiTr::operator()
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::AnglePhiTr::fillStream  ( std::ostream& s ) const
+std::ostream& AnglePhiTr::fillStream  ( std::ostream& s ) const
 {
   s << " GANGLEPHITR( "
     <<   "'" << child1 ()
@@ -1175,7 +1092,7 @@ LoKi::GenParticles::AnglePhiTr::fillStream  ( std::ostream& s ) const
 }
 // ============================================================================
 
-
+} }
 
 // ============================================================================
 // The END

@@ -61,7 +61,7 @@ namespace LoKi
       /// MANDATORY: clones method ("virtual contructor")
       RoutingBits* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( /* argument */ ) const  override;
+      bool operator() (  ) const  override;
       /// OPTIONAL : the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================

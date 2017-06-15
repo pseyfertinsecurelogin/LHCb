@@ -414,11 +414,6 @@ namespace Decays
       // ======================================================================
     private:
       // ======================================================================
-      /// the default constructor is disabled
-      GenExclusive () ;                  // the default constructor is disabled
-      // ======================================================================
-    private:
-      // ======================================================================
       /// The mother
       Decays::Node               m_mother      ;               //    the mother
       /// The children

@@ -142,8 +142,8 @@ namespace LoKi
    *  @date   2005-04-09
    */
   template <typename F,
-            typename TYPE = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
+            typename TYPE = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
   inline LoKi::Power<TYPE,TYPE2>
   pow ( F&& fun , int val ) { return { std::forward<F>(fun) , val } ; }
   // ==========================================================================
@@ -154,8 +154,8 @@ namespace LoKi
    *  @date   2016-09-10
    */
   template <int N, typename F,
-            typename TYPE = typename details::LF<F>::type1,
-            typename TYPE2 = typename details::LF<F>::type2>
+            typename TYPE = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
   inline LoKi::Power<TYPE,TYPE2>
   pow( F&& fun ) { return { std::forward<F>(fun) , N } ; }
 

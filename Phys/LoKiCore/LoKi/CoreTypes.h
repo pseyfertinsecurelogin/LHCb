@@ -35,38 +35,38 @@ namespace LoKi
   {
     // ====================================================================
     /// type of 'cuts' for  'void' (interface)
-    typedef LoKi::BasicFunctors<void>::Predicate               FCuts  ;
+    typedef LoKi::Predicate_t<void>                            FCuts  ;
     /// type of 'functions' 'void' (interface)
-    typedef LoKi::BasicFunctors<void>::Function                FFunc  ;
+    typedef LoKi::Function_t<void>                             FFunc  ;
     /// type of 'cuts' for  'void' (assignable)
-    typedef LoKi::BasicFunctors<void>::PredicateFromPredicate  FCut   ;
+    typedef LoKi::Assignable_t<FCuts>                          FCut   ;
     /// type of 'functions' for LHCb::Particle  (assignable)
-    typedef LoKi::BasicFunctors<void>::FunctionFromFunction    FFun   ;
+    typedef LoKi::Assignable_t<FFunc>                          FFun   ;
     // ========================================================================
     /// type of 'cuts' for  'double' (interface)
-    typedef LoKi::BasicFunctors<double>::Predicate             XCuts  ;
+    typedef LoKi::Predicate_t<double>                          XCuts  ;
     /// type of 'functions' 'double' (interface)
-    typedef LoKi::BasicFunctors<double>::Function              XFunc  ;
+    typedef LoKi::Function_t<double>                           XFunc  ;
     /// type of 'cuts' for  'double' (assignable)
-    typedef LoKi::BasicFunctors<double>::PredicateFromPredicate XCut  ;
+    typedef LoKi::Assignable_t<XCuts>                          XCut  ;
     /// type of 'functions' for LHCb::Particle  (assignable)
-    typedef LoKi::BasicFunctors<double>::FunctionFromFunction  XFun   ;
+    typedef LoKi::Assignable_t<XFunc>                          XFun   ;
     // ========================================================================
     /// maping or filtering : std::vector<double> -> std::vector<double>
-    typedef LoKi::BasicFunctors<double>::Map                   XMaps     ;
-    typedef LoKi::Assignable<XMaps>::Type                      XMap      ;
+    typedef LoKi::Map_t<double>                                XMaps     ;
+    typedef LoKi::Assignable_t<XMaps>                          XMap      ;
     ///the same
-    typedef LoKi::BasicFunctors<double>::Pipe                  XPipes    ;
-    typedef LoKi::Assignable<XPipes>::Type                     XPipe     ;
+    typedef LoKi::Pipe_t<double>                               XPipes    ;
+    typedef LoKi::Assignable_t<XPipes>                         XPipe     ;
     /// function or element selection: std::vector<double> -> double
-    typedef LoKi::BasicFunctors<double>::FunVal                XFunVals  ;
-    typedef LoKi::Assignable<XFunVals>::Type                   XFunVal   ;
+    typedef LoKi::FunVal_t<double>                             XFunVals  ;
+    typedef LoKi::Assignable_t<XFunVals>                       XFunVal   ;
     /// source : void -> std::vector<double>
-    typedef LoKi::BasicFunctors<double>::Source                XSources  ;
-    typedef LoKi::Assignable<XSources>::Type                   XSource   ;
+    typedef LoKi::Source_t<double>                             XSources  ;
+    typedef LoKi::Assignable_t<XSources>                       XSource   ;
     /// source : void -> std::vector<double>
-    typedef LoKi::BasicFunctors<double>::Source                FSources  ;
-    typedef LoKi::Assignable<FSources>::Type                   FSource   ;
+    typedef LoKi::Source_t<double>                             FSources  ;
+    typedef LoKi::Assignable_t<FSources>                       FSource   ;
     // ========================================================================
   }  // end of namespace LoKi::CoreTypes
   // ==========================================================================
@@ -78,46 +78,7 @@ namespace LoKi
    */
   namespace Types
   {
-    // ====================================================================
-    /// type of 'cuts' for  'void' (interface)
-    typedef LoKi::CoreTypes::FCuts               FCuts  ;
-    /// type of 'functions' 'void' (interface)
-    typedef LoKi::CoreTypes::FFunc               FFunc  ;
-    /// type of 'cuts' for  'void' (assignable)
-    typedef LoKi::CoreTypes::FCut                FCut   ;
-    /// type of 'functions' 'void' (assignable)
-    typedef LoKi::CoreTypes::FFun                FFun   ;
-    // ========================================================================
-    /// type of 'cuts' for  'double' (interface)
-    typedef LoKi::CoreTypes::XCuts               XCuts  ;
-    /// type of 'functions' 'double' (interface)
-    typedef LoKi::CoreTypes::XFunc               XFunc  ;
-    /// type of 'cuts' for  'double' (assignable)
-    typedef LoKi::CoreTypes::XCut                XCut   ;
-    /// type of 'functions' double   (assignable)
-    typedef LoKi::CoreTypes::XFun                XFun   ;
-    // ========================================================================
-    /// maping or filtering : std::vector<double> -> std::vector<double>
-    typedef LoKi::CoreTypes::XMaps               XMaps     ;
-    // ditto, but assignable
-    typedef LoKi::CoreTypes::XMap                XMap      ;
-    ///the same
-    typedef LoKi::CoreTypes::XPipes              XPipes    ;
-    // ditto, but assignable
-    typedef LoKi::CoreTypes::XPipe               XPipe     ;
-    /// function or element selection: std::vector<double> -> double
-    typedef LoKi::CoreTypes::XFunVals            XFunVals  ;
-    // ditto, but assignable
-    typedef LoKi::CoreTypes::XFunVal             XFunVal   ;
-    /// source : void -> std::vector<double>
-    typedef LoKi::CoreTypes::XSources            XSources  ;
-    // ditto, but assignable
-    typedef LoKi::CoreTypes::XSource             XSource   ;
-    /// source : void -> std::vector<double>
-    typedef LoKi::CoreTypes::FSources            FSources  ;
-    // ditto, but assignable
-    typedef LoKi::CoreTypes::FSource             FSource   ;
-    // ========================================================================
+    using namespace CoreTypes;
   } //                                             end of namespace LoKi::Types
   // ==========================================================================
 } //                                                      end of namespace LoKi
@@ -128,13 +89,11 @@ namespace LoKi
   // the specialized printout
   // ==========================================================================
   template <>
-  inline std::ostream&
-  Constant<void,bool>::fillStream ( std::ostream& s ) const
+  inline std::ostream& BooleanConstant_t<void>::fillStream ( std::ostream& s ) const
   { return s << ( this->m_value ? "FALL" : "FNONE" ) ; }
   // ==========================================================================
   template <>
-  inline std::ostream&
-  Constant<double,bool>::fillStream ( std::ostream& s ) const
+  inline std::ostream& Constant_t<double>::fillStream ( std::ostream& s ) const
   { return s << ( this->m_value ? "XALL" : "XNONE" ) ; }
   // ==========================================================================
 } //                                                      end of namespace LoKi

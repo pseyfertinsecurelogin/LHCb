@@ -23,9 +23,8 @@ LoKi::L0::Valid* LoKi::L0::Valid::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::Valid::result_type
-LoKi::L0::Valid::operator()
-  ( LoKi::L0::Valid::argument a ) const { return a && a->valid() ; }
+bool LoKi::L0::Valid::operator()( const LHCb::L0DUReport* a ) const
+{ return a && a->valid() ; }
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
@@ -51,8 +50,7 @@ std::ostream& LoKi::L0::SumEt::fillStream ( std::ostream& s ) const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::SumEt::result_type
-LoKi::L0::SumEt::operator()( LoKi::L0::SumEt::argument a ) const
+double LoKi::L0::SumEt::operator()( const LHCb::L0DUReport* a ) const
 {
   Assert ( a , "L0DUReport* point to NULL!" ) ;
   return a->sumEt ( m_bx ) ;
@@ -73,9 +71,7 @@ std::ostream& LoKi::L0::DataValue::fillStream ( std::ostream& s ) const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::DataValue::result_type
-LoKi::L0::DataValue::operator()
-  ( LoKi::L0::DataValue::argument a ) const
+double LoKi::L0::DataValue::operator() ( const LHCb::L0DUReport* a ) const
 {
   Assert ( a , "L0DUReport* point to NULL!" ) ;
   return a -> dataValue ( name () ) ;
@@ -96,8 +92,7 @@ std::ostream& LoKi::L0::DataDigit::fillStream ( std::ostream& s ) const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::DataDigit::result_type
-LoKi::L0::DataDigit::operator() ( LoKi::L0::DataDigit::argument a ) const
+double LoKi::L0::DataDigit::operator() ( const LHCb::L0DUReport* a ) const
 {
   Assert ( a , "L0DUReport* point to NULL!" ) ;
   return a -> dataDigit ( name () ) ;
@@ -121,8 +116,7 @@ LoKi::L0::Decision::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::Decision::result_type
-LoKi::L0::Decision::operator() ( LoKi::L0::Decision::argument a ) const
+bool LoKi::L0::Decision::operator() ( const LHCb::L0DUReport* a ) const
 {
   Assert ( a , "L0DUReport* point to NULL!" ) ;
   return a -> decision ( m_mask ) ;
@@ -163,8 +157,7 @@ LoKi::L0::SumDecision::SumDecision ( const int mask ,
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::SumDecision::result_type
-LoKi::L0::SumDecision::operator() ( LoKi::L0::SumDecision::argument a ) const
+bool LoKi::L0::SumDecision::operator() ( const LHCb::L0DUReport* a ) const
 {
   Assert ( a , "L0DUReport* point to NULL!" ) ;
   return a -> decisionFromSummary ( m_mask , m_bx ) ;
@@ -188,8 +181,7 @@ std::ostream& LoKi::L0::SumDecision::fillStream ( std::ostream& s ) const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::ForceBit::result_type
-LoKi::L0::ForceBit::operator() ( LoKi::L0::ForceBit::argument a ) const
+bool LoKi::L0::ForceBit::operator() ( const LHCb::L0DUReport* a ) const
 {
   Assert ( a , "L0DUReport* point to NULL!" ) ;
   return a -> forceBit () ;
@@ -197,8 +189,7 @@ LoKi::L0::ForceBit::operator() ( LoKi::L0::ForceBit::argument a ) const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::Tck::result_type
-LoKi::L0::Tck::operator() ( LoKi::L0::Tck::argument a ) const
+double LoKi::L0::Tck::operator() ( const LHCb::L0DUReport* a ) const
 {
   Assert ( a , "L0DUReport* point to NULL!" ) ;
   return a -> tck () ;
@@ -206,8 +197,7 @@ LoKi::L0::Tck::operator() ( LoKi::L0::Tck::argument a ) const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::TimingBit::result_type
-LoKi::L0::TimingBit::operator() ( LoKi::L0::TimingBit::argument a ) const
+bool LoKi::L0::TimingBit::operator() ( const LHCb::L0DUReport* a ) const
 {
   Assert ( a , "L0DUReport* point to NULL!" ) ;
   return a -> timingTriggerBit  () ;
@@ -235,8 +225,7 @@ LoKi::L0::ConditionValue::ConditionValue
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::ConditionValue::result_type
-LoKi::L0::ConditionValue::operator() ( LoKi::L0::ConditionValue::argument a ) const
+bool LoKi::L0::ConditionValue::operator() ( const LHCb::L0DUReport* a ) const
 {
   //
   Assert ( a , "LHCb::L0DUReport* points to null" ) ;
@@ -326,9 +315,7 @@ LoKi::L0::ChannelDecision::ChannelDecision
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::ChannelDecision::result_type
-LoKi::L0::ChannelDecision::operator()
-  ( LoKi::L0::ChannelDecision::argument a ) const
+bool LoKi::L0::ChannelDecision::operator() ( const LHCb::L0DUReport* a ) const
 {
   //
   Assert ( 0 != a , "LHCb::L0DUReport* points to null" ) ;
@@ -399,9 +386,7 @@ LoKi::L0::ChannelPreDecision::ChannelPreDecision
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::ChannelPreDecision::result_type
-LoKi::L0::ChannelPreDecision::operator()
-  ( LoKi::L0::ChannelPreDecision::argument a ) const
+bool LoKi::L0::ChannelPreDecision::operator() ( const LHCb::L0DUReport* a ) const
 {
   //
   Assert ( 0 != a , "LHCb::L0DUReport* points to null" ) ;
@@ -474,9 +459,7 @@ LoKi::L0::TriggerDecision::TriggerDecision
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::TriggerDecision::result_type
-LoKi::L0::TriggerDecision::operator()
-  ( LoKi::L0::TriggerDecision::argument a ) const
+bool LoKi::L0::TriggerDecision::operator() ( const LHCb::L0DUReport* a ) const
 {
   //
   Assert ( a , "LHCb::L0DUReport* points to null" ) ;
@@ -540,9 +523,7 @@ LoKi::L0::ChannelDecisionSubString::ChannelDecisionSubString
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::ChannelDecisionSubString::result_type
-LoKi::L0::ChannelDecisionSubString::operator()
-  ( LoKi::L0::ChannelDecisionSubString::argument a ) const
+bool LoKi::L0::ChannelDecisionSubString::operator() ( const LHCb::L0DUReport* a ) const
 {
   //
   Assert ( a , "LHCb::L0DUReport* points to null" ) ;
@@ -596,9 +577,7 @@ LoKi::L0::ChannelDecisionRegex::ChannelDecisionRegex
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::ChannelDecisionRegex::result_type
-LoKi::L0::ChannelDecisionRegex::operator()
-  ( LoKi::L0::ChannelDecisionRegex::argument a ) const
+bool LoKi::L0::ChannelDecisionRegex::operator() ( const LHCb::L0DUReport* a ) const
 {
   //
   Assert ( 0 != a , "LHCb::L0DUReport* points to null" ) ;
@@ -652,9 +631,7 @@ LoKi::L0::ChannelPreDecisionSubString::ChannelPreDecisionSubString
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::ChannelPreDecisionSubString::result_type
-LoKi::L0::ChannelPreDecisionSubString::operator()
-  ( LoKi::L0::ChannelPreDecisionSubString::argument a ) const
+bool LoKi::L0::ChannelPreDecisionSubString::operator() ( const LHCb::L0DUReport* a ) const
 {
   //
   Assert ( 0 != a , "LHCb::L0DUReport* points to null" ) ;
@@ -707,9 +684,7 @@ LoKi::L0::ChannelPreDecisionRegex::ChannelPreDecisionRegex
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::ChannelPreDecisionRegex::result_type
-LoKi::L0::ChannelPreDecisionRegex::operator()
-  ( LoKi::L0::ChannelPreDecisionRegex::argument a ) const
+bool LoKi::L0::ChannelPreDecisionRegex::operator() ( const LHCb::L0DUReport* a ) const
 {
   //
   Assert ( a , "LHCb::L0DUReport* points to null" ) ;
@@ -761,9 +736,7 @@ LoKi::L0::TriggerDecisionSubString::TriggerDecisionSubString
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::TriggerDecisionSubString::result_type
-LoKi::L0::TriggerDecisionSubString::operator()
-  ( LoKi::L0::TriggerDecisionSubString::argument a ) const
+bool LoKi::L0::TriggerDecisionSubString::operator() ( const LHCb::L0DUReport* a ) const
 {
   //
   Assert ( a , "LHCb::L0DUReport* points to null" ) ;
@@ -815,9 +788,8 @@ LoKi::L0::TriggerDecisionRegex::TriggerDecisionRegex
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::L0::TriggerDecisionRegex::result_type
-LoKi::L0::TriggerDecisionRegex::operator()
-  ( LoKi::L0::TriggerDecisionRegex::argument a ) const
+bool
+LoKi::L0::TriggerDecisionRegex::operator() ( const LHCb::L0DUReport* a ) const
 {
   //
   Assert ( a , "LHCb::L0DUReport* points to null" ) ;

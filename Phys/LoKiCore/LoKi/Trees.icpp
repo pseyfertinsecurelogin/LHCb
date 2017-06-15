@@ -7,6 +7,7 @@
 // STD & STL
 // ============================================================================
 #include <limits>
+#include <numeric>
 // ============================================================================
 // PartProp
 // ============================================================================
@@ -269,10 +270,8 @@ Decays::Trees::Op_<PARTICLE>::validate
 template <class PARTICLE>
 inline void Decays::Trees::Op_<PARTICLE>::i_reset() const
 {
-  std::for_each
-    ( m_trees.begin () ,
-      m_trees.end   () ,
-      std::mem_fun_ref(&Decays::Trees::_Tree_<PARTICLE>::reset) );
+  std::for_each( m_trees.begin() , m_trees.end() ,
+                 [](const Decays::Trees::_Tree_<PARTICLE>& p) { p.reset(); } );
 }
 // ============================================================================
 // MANDATORY: collect all marked elements
@@ -281,10 +280,10 @@ template <class PARTICLE>
 inline size_t Decays::Trees::Op_<PARTICLE>::collect
 ( typename Decays::iTree_<PARTICLE>::Collection& o ) const
 {
-  size_t size = 0 ;
-  for ( const_iterator it = m_trees.begin() ;
-        m_trees.end() != it ; ++it ) { size += it->collect ( o ) ; }
-  return size ;
+  return std::accumulate(m_trees.begin(), m_trees.end(),
+                         size_t{0},
+                         [&](size_t s, typename TreeList::const_reference t) 
+                         { return s+t.collect(o); } );
 }
 // ============================================================================
 // has marked elements in the tree ?
@@ -292,12 +291,10 @@ inline size_t Decays::Trees::Op_<PARTICLE>::collect
 template <class PARTICLE>
 inline bool Decays::Trees::Op_<PARTICLE>::marked() const
 {
-  for ( const_iterator it = m_trees.begin() ;
-        m_trees.end() != it ; ++it ) { if ( it->marked() ) { return true ; } }
-  return false ;
+  return std::any_of( m_trees.begin(), m_trees.end(),
+                      [](typename TreeList::const_reference t) 
+                      { return t.marked(); } );
 }
-
-
 
 
 // ============================================================================

@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_CACHEFACTORY_H
 #define LOKI_CACHEFACTORY_H 1

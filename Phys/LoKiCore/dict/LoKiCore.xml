@@ -126,12 +126,6 @@
     <class pattern="LoKi::Hybrid::*">
       <method name="=" />
     </class>
-    <class pattern="std::unary_function&lt;*&gt;">
-      <method name="=" />
-    </class>
-    <class pattern="std::binary_function&lt;*&gt;">
-      <method name="=" />
-    </class>
 
     <class name="LoKi::Listener">
       <method name="release"  />

@@ -15,17 +15,19 @@ namespace LoKi
 {
   // ==========================================================================
   /** @class DecayNode
-   *  the simple implememnattion of Decays::IDEcayNode interface
+   *  the simple implementation of Decays::IDecayNode interface
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-05-27
    */
-  class DecayNode
-    : public             LoKi::DecayBase
-    , public virtual  Decays::IDecayNode
+  class DecayNode : public extends<LoKi::DecayBase,Decays::IDecayNode>
   {
     // ========================================================================
     /// the friend factory for instantiation
     friend struct ToolFactory<LoKi::DecayNode> ;                  // the factory
+    // ========================================================================
+    /** forward to baseclass constructor
+     */
+    using base_class::base_class;
     // ========================================================================
   public:
     // ========================================================================
@@ -45,23 +47,6 @@ namespace LoKi
      */
     Decays::Node node ( const std::string& descriptor ) const override
     { return LoKi::DecayBase::node ( descriptor ) ; }
-    // ========================================================================
-  protected:
-    // ========================================================================
-    /** constructor form the type, name and parent
-     *  @param type the tool type (?)
-     *  @param name the instance name
-     *  @param parent the parent
-     */
-    DecayNode ( const std::string& type   ,                //     the tool type
-                const std::string& name   ,                // the instance name
-                const IInterface*  parent )                //        the parent
-      : LoKi::DecayBase ( type , name , parent )
-    {
-      declareInterface<Decays::IDecayNode> ( this ) ;
-    }
-    // ========================================================================
-  private:
     // ========================================================================
     /// the copy constructor is disabled
     DecayNode ( const DecayNode& ) = delete;        // the copy constructor is disabled

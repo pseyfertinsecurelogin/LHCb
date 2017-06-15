@@ -4,6 +4,8 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include <numeric>
+// ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/StatEntity.h"
@@ -43,17 +45,16 @@ namespace LoKi
      *  @date   2011-03-04
      */
     template <class OBJECT,class FUNCTOR>
-    inline
-    StatEntity stat
-    ( OBJECT         first     ,
-      OBJECT         last      ,
-      const FUNCTOR& functor   )
+    StatEntity stat ( OBJECT         first     ,
+                      OBJECT         last      ,
+                      const FUNCTOR& functor   )
     {
-      StatEntity _stat ;
-      //
-      for ( ; first != last ; ++first ) { _stat += functor( *first ) ; }
-      //
-      return _stat ;
+      using arg_t = decltype(*first);
+      return std::accumulate(first,last,StatEntity{},
+                             [&](StatEntity se, arg_t arg) {
+                                se += functor(arg);
+                                return se;
+                             } );
     }
     // ========================================================================
     /** The trivial algorithm which accumulate the statistics
@@ -126,10 +127,9 @@ namespace LoKi
         , m_nam ( nam )
       {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Stat* clone() const { return new Stat ( *this ) ; }
+      Stat* clone() const override { return new Stat ( *this ) ; }
       /// MANDATORY: the only one essential method:
-      virtual typename uBase::result_type operator()
-        ( typename uBase::argument a ) const
+      double operator()( const std::vector<TYPE>& a ) const override
       {
         StatEntity _stat = ( this->m_cut ?
           LoKi::Algs::stat ( a.begin(), a.end(),
@@ -140,10 +140,10 @@ namespace LoKi
         return (_stat.*m_pmf)() ;
       }
       /// OPTIONAL: the basic printout method
-      virtual std::ostream& fillStream( std::ostream& s ) const
+      std::ostream& fillStream( std::ostream& s ) const override
       { return this -> _print_      ( s , this->m_nam , 0 ) ; }
       /// print as C++
-      virtual std::string   toCpp () const
+      std::string   toCpp () const override
       {
           std::string s = "LoKi::" + this->m_nam          + "( "
                                    + this->m_fun.toCpp () ;

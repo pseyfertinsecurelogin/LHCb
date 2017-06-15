@@ -818,8 +818,7 @@ namespace LoKi
       { return LoKi::sum ( fun , init ) ; }
       // sum over the stream
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __sum__ ( const Func&  fun ,
-                const Cuts&  cut , double init = 0 )
+      __sum__ ( const Func&  fun , const Cuts&  cut , double init = 0 )
       { return LoKi::sum ( fun , cut , init ) ; }
       // ======================================================================
     public: // product over the stream
@@ -831,32 +830,26 @@ namespace LoKi
     public : // sum over the stream
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __product__ ( const Func&  fun ,
-                    const Cuts&  cut , double init = 1 )
+      __product__ ( const Func&  fun, const Cuts&  cut, double init = 1 )
       { return LoKi::product ( fun , cut , init ) ; }
       // ======================================================================
     public : // fetch from the stream
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __fetch__ ( const Func&        fun   ,
-                  unsigned int index ,
-                  double       bad   )
+      __fetch__ ( const Func& fun, unsigned int index, double bad )
       { return LoKi::fetch ( fun , index , bad ) ; }
       // ======================================================================
     public: // sort the stream
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,std::vector<TYPE2> >
-      __sort__ ( const Func&        fun              ,
-                 int          N         = -1   ,
-                 const bool         ascending = true )
+      __sort__ ( const Func& fun, int N = -1, const bool ascending = true )
       {
         return ascending ? LoKi::Functors::Sort_<TYPE2,double,true>  ( fun , N )
                          : LoKi::Functors::Sort_<TYPE2,double,false> ( fun , N ) ;
       }
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,std::vector<TYPE2> >
-      __sort__ ( const Func&        fun ,
-                 const LoKi::Sort&  s   )
+      __sort__ ( const Func& fun, const LoKi::Sort& s )
       { return __sort__ ( fun , s.N() , s.ascending() ) ; }
       // ======================================================================
     public: // statistics
@@ -866,8 +859,7 @@ namespace LoKi
       { return LoKi::mean     ( fun )  ; }
       // statistics
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __mean__   ( const Func& fun  ,
-                   const Cuts& cut  )
+      __mean__   ( const Func& fun, const Cuts& cut  )
       { return LoKi::mean     ( fun , cut )  ; }
       // statistics
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
@@ -875,8 +867,7 @@ namespace LoKi
       { return LoKi::rms      ( fun )  ; }
       // statistics
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __rms__    ( const Func& fun  ,
-                   const Cuts& cut  )
+      __rms__    ( const Func& fun, const Cuts& cut  )
       { return LoKi::rms      ( fun , cut )  ; }
       // statistics
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
@@ -884,8 +875,7 @@ namespace LoKi
       { return LoKi::meanErr  ( fun )  ; }
       // statistics
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
-      __meanErr__   ( const Func& fun  ,
-                      const Cuts& cut  )
+      __meanErr__   ( const Func& fun, const Cuts& cut  )
       { return LoKi::meanErr  ( fun , cut )  ; }
       // ======================================================================
     } ;
@@ -907,10 +897,10 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      static Cut __or__       ( const Cuts&  cut1 ,
-                                const Cuts&  cut2 ) { return cut1 || cut2 ; }
-      static Cut __and__      ( const Cuts&  cut1 ,
-                                const Cuts&  cut2 ) { return cut1 && cut2 ; }
+      static Cut __or__       ( const Cuts&  cut1 , const Cuts&  cut2 )
+      { return cut1 || cut2 ; }
+      static Cut __and__      ( const Cuts&  cut1 , const Cuts&  cut2 )
+      { return cut1 && cut2 ; }
       static Cut __invert__   ( const Cuts&  cut  ) { return !cut ; }
       // ======================================================================
       // monitoring
@@ -1141,11 +1131,12 @@ namespace LoKi
     {
     private:
       // ======================================================================
-      typedef typename LoKi::BasicFunctors<TYPE>::Map                    Map;
+      typedef typename LoKi::BasicFunctors<TYPE>::Map              Map;
+      typedef LoKi::details::result_t<Map>                         result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static typename Map::result_type __call__
+      static result_type __call__
       ( const Map& fun , typename Map::argument a ) { return fun ( a )  ; }
       // ======================================================================
     public:
@@ -1299,10 +1290,11 @@ namespace LoKi
       typedef typename LoKi::BasicFunctors<TYPE>::CutVal        CutVal  ;
       typedef typename LoKi::BasicFunctors<TYPE2>::Function     Func    ;
       typedef typename LoKi::BasicFunctors<TYPE2>::Predicate    Cuts    ;
+      typedef LoKi::details::result_t<Pipe>                     result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static typename Pipe::result_type __call__
+      static result_type __call__
       ( const Pipe& fun , typename Pipe::argument a ) { return fun ( a )  ; }
       // ======================================================================
     public:
@@ -1435,38 +1427,38 @@ namespace LoKi
     public:
       // ======================================================================
       // __union__
-      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
+      static LoKi::Assignable_t<Pipe>
       __union__          ( const Pipe& fun  , const Pipe& fun2 )
       { return LoKi::Functors::Union         <std::vector<TYPE>,TYPE>( fun , fun2 ) ; }
       // __union__
-      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
+      static LoKi::Assignable_t<Pipe>
       __union__          ( const Pipe& fun  , const Cuts& fun2 )
       { return LoKi::Functors::Union         <std::vector<TYPE>,TYPE>
           ( fun , LoKi::filter<TYPE> ( fun2 ) ) ; }
       // __intersection__
-      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
+      static LoKi::Assignable_t<Pipe>
       __intersection__   ( const Pipe& fun  , const Pipe& fun2 )
       { return LoKi::Functors::Intersection  <std::vector<TYPE>,TYPE>( fun , fun2 ) ; }
       // __intersection__
-      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
+      static LoKi::Assignable_t<Pipe>
       __intersection__   ( const Pipe& fun  , const Cuts& fun2 )
       { return LoKi::Functors::Intersection  <std::vector<TYPE>,TYPE>
           ( fun , LoKi::filter<TYPE> ( fun2 ) ) ; }
       // __difference__
-      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
+      static LoKi::Assignable_t<Pipe>
       __difference__     ( const Pipe& fun  , const Pipe& fun2 )
       { return LoKi::Functors::Difference    <std::vector<TYPE>,TYPE>( fun , fun2 ) ; }
       // __difference__
-      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
+      static LoKi::Assignable_t<Pipe>
       __difference__     ( const Pipe& fun  , const Cuts& fun2 )
-      { return LoKi::Functors::Difference    <std::vector<TYPE>,TYPE>
+      { return LoKi::Functors::Difference<std::vector<TYPE>,TYPE>
           ( fun , LoKi::filter<TYPE> ( fun2 ) ) ; }
       // __sym_difference__
-      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
+      static LoKi::Assignable_t<Pipe>
       __sym_difference__ ( const Pipe& fun  , const Pipe& fun2 )
       { return LoKi::Functors::SymDifference <std::vector<TYPE>,TYPE>( fun , fun2 ) ; }
       // __sym_difference__
-      static LoKi::FunctorFromFunctor<std::vector<TYPE>,std::vector<TYPE> >
+      static LoKi::Assignable_t<Pipe>
       __sym_difference__ ( const Pipe& fun  , const Cuts& fun2 )
       { return LoKi::Functors::SymDifference <std::vector<TYPE>,TYPE>
           ( fun , LoKi::filter<TYPE> ( fun2 ) ) ; }
@@ -1495,23 +1487,22 @@ namespace LoKi
       typedef typename LoKi::BasicFunctors<TYPE>::FunVal         FunVal  ;
       typedef typename LoKi::BasicFunctors<double>::Function     Func    ;
       typedef typename LoKi::BasicFunctors<double>::Predicate    Cuts    ;
+      typedef LoKi::details::result_t<FunVal>                    result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static typename FunVal::result_type __call__
+      static result_type __call__
       ( const FunVal& fun , typename FunVal::argument a ) { return fun ( a )  ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rshift__
-      static LoKi::FunctorFromFunctor<std::vector<TYPE>,double>
-      __rshift__
-      ( const FunVal& fun , const Func&    fun2 )
+      static LoKi::Assignable_t<FunVal>
+      __rshift__ ( const FunVal& fun , const Func&    fun2 )
       { return fun >>                      fun2 ; }
       // __rshift__
-      static LoKi::FunctorFromFunctor<std::vector<TYPE>,bool>
-      __rshift__
-      ( const FunVal& fun , const Cuts&    fun2 )
+      static LoKi::Assignable_t<LoKi::CutVal_t<TYPE>>
+      __rshift__ ( const FunVal& fun , const Cuts&    fun2 )
       { return fun >>                      fun2 ; }
       // ======================================================================
     public:
@@ -1600,17 +1591,18 @@ namespace LoKi
       typedef typename LoKi::BasicFunctors<TYPE>::CutVal        CutVal  ;
       typedef typename LoKi::BasicFunctors<TYPE2>::Function     Func    ;
       typedef typename LoKi::BasicFunctors<TYPE2>::Predicate    Cuts    ;
+      typedef LoKi::details::result_t<Source>                   result_type;
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static typename Source::result_type __call__
+      static result_type __call__
       ( const Source& fun ) { return fun() ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rshift__
-      static typename Source::result_type& __rshift__
+      static result_type  __rshift__
       ( const Source& fun , std::vector<TYPE>& res )
       { res = fun() ; return res ; }
       // __rshift__
@@ -1744,11 +1736,12 @@ namespace LoKi
     public:
       // ======================================================================
       typedef typename LoKi::BasicFunctors<TYPE>::CutVal        CutVal ;
+      typedef LoKi::details::result_t<CutVal>                   result_type;
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static typename CutVal::result_type __call__
+      static result_type __call__
       ( const CutVal& fun , typename CutVal::argument a ) { return fun ( a ) ; }
       // ======================================================================
     public:

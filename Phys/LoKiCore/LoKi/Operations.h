@@ -4,7 +4,6 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <functional>
 #include <algorithm>
 // ============================================================================
 // Include files
@@ -36,7 +35,7 @@ namespace LoKi
      *  @date 2010-06-05
      */
     template <class TYPE>
-    struct Unique 
+    struct Unique
     {
       // ======================================================================
       typedef std::vector<TYPE> _Type ;
@@ -155,7 +154,7 @@ namespace LoKi
      *  @date 2010-06-05
      */
     template <class TYPE>
-    struct SymDifference 
+    struct SymDifference
     {
       // ======================================================================
       typedef std::vector<TYPE> _Type ;
@@ -196,7 +195,7 @@ namespace LoKi
      *  @date 2010-06-05
      */
     template <class TYPE>
-    struct Intersection 
+    struct Intersection
     {
       // ======================================================================
       typedef std::vector<TYPE> _Type ;
@@ -276,7 +275,7 @@ namespace LoKi
      *  @date 2010-06-05
      */
     template <class TYPE>
-    struct NoEmptyUnion 
+    struct NoEmptyUnion
     {
       // ======================================================================
       typedef std::vector<TYPE> _Type ;

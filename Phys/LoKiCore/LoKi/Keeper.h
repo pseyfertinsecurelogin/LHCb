@@ -1,44 +1,43 @@
-// $Id$
 // ============================================================================
-#ifndef LOKI_KEEPER_H 
+#ifndef LOKI_KEEPER_H
 #define LOKI_KEEPER_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 #include <vector>
 #include <algorithm>
 // ============================================================================
-// LoKiCore 
+// LoKiCore
 // ============================================================================
 #include "LoKi/Algs.h"
 #include "LoKi/KeeperBase.h"
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2006-02-20 
+ *  @date 2006-02-20
  */
 // ============================================================================
 namespace LoKi
 {
-  template <class OBJECT> class UniqueKeeper ;  
+  template <class OBJECT> class UniqueKeeper ;
   // ==========================================================================
   /** @class Keeper Keeper.h LoKi/Keeper.h
-   *  
-   *  Usefull class to keep valid pointers to the 
-   *  objects. It takes care about the const-access 
+   *
+   *  Usefull class to keep valid pointers to the
+   *  objects. It takes care about the const-access
    *  and the checked modifications.
-   *  By construction, the pointers are ALWAYS valid 
+   *  By construction, the pointers are ALWAYS valid
    *
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-02-20
@@ -55,40 +54,40 @@ namespace LoKi
     typedef reverse_iterator                           const_reverse_iterator ;
     typedef typename Objects::value_type                           value_type ;
     typedef typename Objects::reference                             reference ;
-    typedef typename Objects::const_reference                 const_reference ;    
+    typedef typename Objects::const_reference                 const_reference ;
     // ========================================================================
   public:
     // ========================================================================
-    /// default constructor 
+    /// default constructor
     Keeper() = default;
     /// constructor form one object
     Keeper ( const OBJECT* o )
       : m_objects () { addObject ( o ) ; }
-    /// constructor form the objects 
-    Keeper ( const Objects& objects ) 
+    /// constructor form the objects
+    Keeper ( const Objects& objects )
       : m_objects( objects ) { removeObject() ; }
     /// templated constructor from another keeper
     template <class OTHER>
-    Keeper( const Keeper<OTHER>& o ) 
+    Keeper( const Keeper<OTHER>& o )
       : m_objects ( o.begin() , o.end() ) {}
     /// templated constructor from another keeper
     template <class OTHER>
     Keeper( const UniqueKeeper<OTHER>& o ) ;
     /// templated constructor from sequence
-    template <class OTHER> 
-    Keeper ( OTHER first , 
-             OTHER last  ) 
+    template <class OTHER>
+    Keeper ( OTHER first ,
+             OTHER last  )
       : m_objects ( first , last ) { removeObject() ; }
     /// templated constructor from the sequence
-    template <class OTHER,class PREDICATE> 
-    Keeper ( OTHER     first , 
-             OTHER     last  , 
-             PREDICATE cut   ) 
+    template <class OTHER,class PREDICATE>
+    Keeper ( OTHER     first ,
+             OTHER     last  ,
+             PREDICATE cut   )
       : m_objects () { addObjects ( first , last , cut ) ; }
     // ========================================================================
   public:
     // ========================================================================
-    /// size of the container 
+    /// size of the container
     size_t           size   () const { return m_objects.size   () ; }
     /// empty container ?
     bool             empty  () const { return m_objects.empty  () ; }
@@ -108,107 +107,107 @@ namespace LoKi
     // ========================================================================
   public:
     // ========================================================================
-    /// clear the underlying container 
+    /// clear the underlying container
     void clear() { m_objects.clear() ; }
     // ========================================================================
   public:
     // ========================================================================
-    /// get the object by index 
-    const OBJECT*  object     ( const int index ) const 
+    /// get the object by index
+    const OBJECT*  object     ( const int index ) const
     { return  *(begin()+index) ; }
-    /// get the object by index 
-    const OBJECT*  operator() ( const int index ) const 
+    /// get the object by index
+    const OBJECT*  operator() ( const int index ) const
     { return object ( index ) ; }
-    /// get the object by index 
-    const OBJECT*  operator[] ( const int index ) const 
+    /// get the object by index
+    const OBJECT*  operator[] ( const int index ) const
     { return object ( index ) ; }
-    /// get the object by index 
-    const OBJECT*  at         ( const int index ) const 
+    /// get the object by index
+    const OBJECT*  at         ( const int index ) const
     { return object ( index ) ; }
     // ========================================================================
   public:
     // ========================================================================
-    /// get a "slice" of the keeper, in Python style   
-    inline Keeper slice( long index1 , long index2 ) const 
+    /// get a "slice" of the keeper, in Python style
+    inline Keeper slice( long index1 , long index2 ) const
     {
-      // trivial cases 
+      // trivial cases
       if ( empty() || index1 == index2 ) { return Keeper() ; } // RETURN
-      // adjust indices 
+      // adjust indices
       if ( index1 < 0      ) { index1 += size () ; }
       if ( index2 < 0      ) { index2 += size () ; }
-      // check 
-      if ( index1 < 0      ) { return  Keeper () ; }            // RETURN 
-      if ( index2 < index1 ) { return  Keeper () ; }            // RETURN 
+      // check
+      if ( index1 < 0      ) { return  Keeper () ; }            // RETURN
+      if ( index2 < index1 ) { return  Keeper () ; }            // RETURN
       // adjust
       if ( index1 > (long) size () ) { return  Keeper() ; }     // RETURN
       if ( index2 > (long) size () ) { index2  = size() ; }
-      // construct the final keeper 
-      return Keeper( begin() + index1 , begin() + index2 ) ;    // RETURN 
+      // construct the final keeper
+      return Keeper( begin() + index1 , begin() + index2 ) ;    // RETURN
     }
     // ========================================================================
   public:
     // ========================================================================
-    // append the valid objects to the end 
-    void push_back ( const OBJECT* o ) { addObject ( o ) ; } 
+    // append the valid objects to the end
+    void push_back ( const OBJECT* o ) { addObject ( o ) ; }
     /** insert object into the container
-     *  @param o object to be inserted 
+     *  @param o object to be inserted
      */
-    void insert    ( const OBJECT* o ) { addObject ( o ) ; } 
-    /** insert the object at the fake position 
-     *  (added to mimic STL behaviour) 
-     *  @param o object to be inserted 
+    void insert    ( const OBJECT* o ) { addObject ( o ) ; }
+    /** insert the object at the fake position
+     *  (added to mimic STL behaviour)
+     *  @param o object to be inserted
      */
     template <class POSITION>
     void insert
     ( POSITION      /* p */ ,
       const OBJECT*    o    ) { addObject ( o ) ; }
-    /** insert the sequence of objects at the fake position 
-     *  (added to mimic STL behaviour) 
-     *  @param first 'begin'-iterator to the sequence 
-     *  @param last   'end'-iterator to the sequence 
+    /** insert the sequence of objects at the fake position
+     *  (added to mimic STL behaviour)
+     *  @param first 'begin'-iterator to the sequence
+     *  @param last   'end'-iterator to the sequence
      */
     template <class POSITION, class OTHER>
     void insert
-    ( POSITION /* p */ , 
-      OTHER    first   , 
+    ( POSITION /* p */ ,
+      OTHER    first   ,
       OTHER    last    ) { addObjects ( first , last ) ; }
-    /** insert the sequence of objects at the fake position 
-     *  (added to mimic STL behaviour) 
-     *  @param first 'begin'-iterator to the sequence 
-     *  @param last   'end'-iterator to the sequence 
-     *  @param cut selection criteria 
+    /** insert the sequence of objects at the fake position
+     *  (added to mimic STL behaviour)
+     *  @param first 'begin'-iterator to the sequence
+     *  @param last   'end'-iterator to the sequence
+     *  @param cut selection criteria
      */
     template <class POSITION, class OTHER,class PREDICATE>
     void insert
-    ( POSITION /* p */ , 
-      OTHER     first  , 
-      OTHER     last   , 
+    ( POSITION /* p */ ,
+      OTHER     first  ,
+      OTHER     last   ,
       PREDICATE cut    ) { addObjects ( first , last , cut ) ; }
     // ========================================================================
   public:
     // ========================================================================
-    /// adding an object 
-    Keeper& operator+= ( const OBJECT* o ) 
+    /// adding an object
+    Keeper& operator+= ( const OBJECT* o )
     {
       addObject ( o ) ;
       return *this ;
-    } 
-    /// adding the another keeper 
+    }
+    /// adding the another keeper
     template <class OTHER>
-    Keeper& operator+= ( const Keeper<OTHER>& o ) 
+    Keeper& operator+= ( const Keeper<OTHER>& o )
     {
       addObjects( o.begin() , o.end() ) ;
       return *this ;
-    } 
-    /// adding the another keeper 
+    }
+    /// adding the another keeper
     template <class OTHER>
     Keeper& operator+= ( const UniqueKeeper<OTHER>& o ) ;
-    /// remove the objecr 
-    Keeper& operator-= ( const OBJECT* o ) 
+    /// remove the objecr
+    Keeper& operator-= ( const OBJECT* o )
     {
       removeObject ( o ) ;
       return *this ;
-    } 
+    }
     // ========================================================================
   public:
     // ========================================================================
@@ -217,59 +216,59 @@ namespace LoKi
     // ========================================================================
   public:
     // ========================================================================
-    /** add the object to the container 
-     *  @param o objects to be added 
-     *  @return the actual size of container 
+    /** add the object to the container
+     *  @param o objects to be added
+     *  @return the actual size of container
      */
-    size_t addObject ( const OBJECT* o ) 
+    size_t addObject ( const OBJECT* o )
     {
       if ( 0 != o ) { m_objects.push_back ( o ) ; }
       return size() ;
-    } 
-    /** add the objects from the sequence to the container 
-     *  @param first 'begin'-iterator of the sequence of objects 
-     *  @param last  'end'-iterator of the sequence of objects 
-     *  @return the actual size of container 
+    }
+    /** add the objects from the sequence to the container
+     *  @param first 'begin'-iterator of the sequence of objects
+     *  @param last  'end'-iterator of the sequence of objects
+     *  @return the actual size of container
      */
     template<class OTHER>
-    size_t addObjects 
-    ( OTHER first , 
-      OTHER last  ) 
+    size_t addObjects
+    ( OTHER first ,
+      OTHER last  )
     {
       m_objects.insert ( m_objects.end() , first , last ) ;
       return removeObject() ;
-    } 
-    /** add the objects from the sequence to the container 
-     *  @param first 'begin'-iterator of the sequence of objects 
-     *  @param last  'end'-iterator of the sequence of objects 
-     *  @param cut only objects which satisfy the criteri will be added 
-     *  @return the actual size of container 
+    }
+    /** add the objects from the sequence to the container
+     *  @param first 'begin'-iterator of the sequence of objects
+     *  @param last  'end'-iterator of the sequence of objects
+     *  @param cut only objects which satisfy the criteri will be added
+     *  @return the actual size of container
      */
     template<class OTHER, class PREDICATE>
-    size_t addObjects 
-    ( OTHER     first , 
-      OTHER     last  , 
-      PREDICATE cut ) 
+    size_t addObjects
+    ( OTHER     first ,
+      OTHER     last  ,
+      PREDICATE cut )
     {
       LoKi::Algs::copy_if
         ( first , last , std::back_inserter ( m_objects ) , cut ) ;
       return removeObject() ;
-    } 
-    /** remove the objects for the container 
-     *  @param cut   objects which satisfy the criteri will be removed  
-     *  @return the actual size of container 
+    }
+    /** remove the objects for the container
+     *  @param cut   objects which satisfy the criteri will be removed
+     *  @return the actual size of container
      */
     template <class PREDICATE>
-    size_t removeObjects ( PREDICATE cut ) 
+    size_t removeObjects ( PREDICATE cut )
     {
       m_objects.erase
-        ( std::remove_if ( m_objects.begin () , 
+        ( std::remove_if ( m_objects.begin () ,
                            m_objects.end   () , cut ) , m_objects.end() ) ;
       return size() ;
     }
-    /** remove the object for the container 
-     *  @param o object to be removed 
-     *  @return the actual size of container 
+    /** remove the object for the container
+     *  @param o object to be removed
+     *  @return the actual size of container
      */
     size_t removeObject ( const OBJECT* o = 0 )
     {
@@ -281,36 +280,36 @@ namespace LoKi
     // ========================================================================
   public:
     // ========================================================================
-    /** sort the container using the sorting criteria 
-     *  @param cmp operation used as corting criteria ("strickt less") 
+    /** sort the container using the sorting criteria
+     *  @param cmp operation used as corting criteria ("strickt less")
      */
     template <class COMPARISON>
-    void sort( COMPARISON cmp ) 
+    void sort( COMPARISON cmp )
     { std::sort ( m_objects.begin() , m_objects.end() , cmp ) ; }
-    /// sort the container using the default ordering of pointers 
-    void sort() 
+    /// sort the container using the default ordering of pointers
+    void sort()
     { std::sort ( m_objects.begin() , m_objects.end() ) ; }
-    /** remove the duplicates from the container 
-     *  @param cmp comparison criteria used for sorting 
+    /** remove the duplicates from the container
+     *  @param cmp comparison criteria used for sorting
      */
     template <class COMPARISON>
-    size_t unique ( COMPARISON cmp ) 
+    size_t unique ( COMPARISON cmp )
     {
       sort ( cmp ) ;
-      m_objects.erase 
-        ( std::unique ( m_objects.begin () , 
+      m_objects.erase
+        ( std::unique ( m_objects.begin () ,
                         m_objects.end  () , cmp ) , m_objects.end() ) ;
       return size() ;
-    } 
-    /// remove the duplicates from the container 
-    size_t unique () 
+    }
+    /// remove the duplicates from the container
+    size_t unique ()
     {
       sort () ;
-      m_objects.erase 
-        ( std::unique ( m_objects.begin () , 
+      m_objects.erase
+        ( std::unique ( m_objects.begin () ,
                         m_objects.end  () ) , m_objects.end() ) ;
       return size() ;
-    } 
+    }
     // ========================================================================
   private:
     // ========================================================================
@@ -321,36 +320,36 @@ namespace LoKi
   // ==========================================================================
 }  // end of namespace LoKi
 // ============================================================================
-// "POST"-include 
+// "POST"-include
 // ============================================================================
 #include "LoKi/UniqueKeeper.h"
 // ============================================================================
-/// templated constructor form other keeper 
+/// templated constructor form other keeper
 // ============================================================================
 template <class OBJECT>
 template <class OTHER>
 inline LoKi::Keeper<OBJECT>::Keeper
-( const LoKi::UniqueKeeper<OTHER>& o ) 
-  : m_objects ( o.begin() , o.end() ) 
+( const LoKi::UniqueKeeper<OTHER>& o )
+  : m_objects ( o.begin() , o.end() )
 {}
 // ============================================================================
-/// adding the another keeper 
+/// adding the another keeper
 // ============================================================================
 template <class OBJECT>
 template <class OTHER>
-inline 
-LoKi::Keeper<OBJECT>& 
-LoKi::Keeper<OBJECT>::operator+= 
-( const LoKi::UniqueKeeper<OTHER>& o ) 
+inline
+LoKi::Keeper<OBJECT>&
+LoKi::Keeper<OBJECT>::operator+=
+( const LoKi::UniqueKeeper<OTHER>& o )
 {
   addObjects ( o.begin() , o.end() ) ;
   return *this ;
 }
 // ============================================================================
 template <class OBJECT,class OTHER>
-inline 
-LoKi::Keeper<OBJECT> operator+ 
-(  const LoKi::Keeper<OBJECT>& first  , 
+inline
+LoKi::Keeper<OBJECT> operator+
+(  const LoKi::Keeper<OBJECT>& first  ,
    const LoKi::Keeper<OTHER>&  second )
 {
   LoKi::Keeper<OBJECT> result( first ) ;
@@ -358,17 +357,17 @@ LoKi::Keeper<OBJECT> operator+
 }
 // ============================================================================
 template <class OBJECT, class OTHER>
-inline 
-LoKi::Keeper<OBJECT> operator+ 
-(  const LoKi::Keeper<OBJECT>&       first  , 
+inline
+LoKi::Keeper<OBJECT> operator+
+(  const LoKi::Keeper<OBJECT>&       first  ,
    const LoKi::UniqueKeeper<OTHER>&  second )
 {
   LoKi::Keeper<OBJECT> result( first ) ;
-  result.addObjects ( second.begin() , second.end() ) ;  
+  result.addObjects ( second.begin() , second.end() ) ;
   return result ;
 }
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_KEEPER_H
 // ============================================================================

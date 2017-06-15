@@ -64,7 +64,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       GetInfo* clone() const override { return new GetInfo(*this); }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+      TYPE2 operator()
         ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       { return LoKi::ExtraInfo::info ( a , m_index , m_default ) ; }
       /** OPTIONAL: the nice printout
@@ -112,7 +112,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       CheckInfo* clone() const override { return new CheckInfo (*this); }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor<TYPE,bool>::result_type operator()
+      bool operator()
         ( typename LoKi::Functor<TYPE,bool>::argument a )  const override
       { return LoKi::ExtraInfo::hasInfo ( a , m_index ) ; }
       /** OPTIONAL: the nice printout
@@ -165,7 +165,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       GetSmartInfo* clone() const override { return new GetSmartInfo (*this); }
       /// MANDATORY: the only one essential method
-      typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+      TYPE2 operator()
       ( typename LoKi::Functor<TYPE,TYPE2>::argument a ) const override
       {
         // check extra info:
@@ -241,10 +241,10 @@ namespace LoKi
         , m_index   ( index )
       {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  LogInfo* clone() const { return new LogInfo (*this); }
+      LogInfo* clone() const override { return new LogInfo (*this); }
       /// MANDATORY: the only one essential method
-      virtual typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
-        ( typename LoKi::Functor<TYPE,TYPE2>::argument a )  const
+      TYPE2 operator()
+        ( typename LoKi::Functor<TYPE,TYPE2>::argument a )  const override
       {
         TYPE2 result = m_fun.fun ( a ) ;
         //
@@ -254,7 +254,7 @@ namespace LoKi
         //
       }
       /// OPTIONAL: the nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return s << "logging (" << m_fun << ","  << m_index << ")" ; }
       // ======================================================================
     private:

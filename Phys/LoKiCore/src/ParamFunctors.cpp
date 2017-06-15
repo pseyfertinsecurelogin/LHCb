@@ -251,34 +251,28 @@ namespace
   // ==========================================================================
 }
 // ============================================================================
-LoKi::Parameters::Parameter::result_type
-LoKi::Parameters::Parameter::operator ()( /* argument */ ) const
+double LoKi::Parameters::Parameter::operator ()(  ) const
 {
   //
   if      ( m_scalar_d ) { return  get<double> ( property () ) ; }
   else if ( m_scalar_f ) { return  get<float>  ( property () ) ; }
   else if ( m_scalar_i ) { return  get<int>    ( property () ) ; }
   //
-  if ( m_map_d )
-  {
+  if ( m_map_d ) {
     const PropertyWithValue<MAP_D>* p =
       static_cast<const PropertyWithValue<MAP_D>*>( property() ) ;
     const auto& m = p->value() ;
     auto it = m.find ( param().key() ) ;
     Assert ( m.end() != it , "No proper key is found" ) ;
     return it->second ;
-  }
-  else if ( m_map_f )
-  {
+  } else if ( m_map_f ) {
     const PropertyWithValue<MAP_F>* p =
       static_cast<const PropertyWithValue<MAP_F>*>( property() ) ;
     const auto& m = p->value() ;
     auto it = m.find ( param().key() ) ;
     Assert ( m.end() != it , "No proper key is found" ) ;
     return it->second ;
-  }
-  else if ( m_map_i )
-  {
+  } else if ( m_map_i ) {
     const PropertyWithValue<MAP_I>* p =
       static_cast<const PropertyWithValue<MAP_I>*>( property() ) ;
     const auto& m = p->value() ;

@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_IREPORTER_H 
+#ifndef LOKI_IREPORTER_H
 #define LOKI_IREPORTER_H 1
 // ============================================================================
 // Include files
@@ -8,79 +8,67 @@
 // ============================================================================
 #include "GaudiKernel/IAlgTool.h"
 // ============================================================================
-// GaudiAlg 
+// GaudiAlg
 // ============================================================================
 #include "GaudiAlg/IErrorTool.h"
 // ============================================================================
-// forward declarations 
+// forward declarations
 // ============================================================================
 class GaudiException ;
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2001-01-23 
+ *  @date 2001-01-23
  */
 // ============================================================================
 namespace LoKi
 {
   // ==========================================================================
   /** @class IReporter IReporter.h LoKi/IReporter.h
-   *  
+   *
    *  @author Vanya BELYAEV ivelyaev@physics.syr.edu
    *  @date   2003-01-16
    */
-  class IReporter : public virtual IErrorTool
+  class IReporter : public extend_interfaces<IErrorTool>
   {
-  public: 
-    // ========================================================================
-    /** Retrieve interface ID
-     *  mandatory method from IInterface 
-     *  @see IInterface 
-     *  @see InterfaceID 
-     *  @return unique interface identifier 
-     */
-    static const InterfaceID& interfaceID() ;
-    // ========================================================================
-  protected:
-    // ========================================================================
-    // destructor 
-    virtual ~IReporter() ; 
+  public:
+    DeclareInterfaceID( IReporter , 5 , 0 ) ;
     // ========================================================================
   public:
     // ========================================================================
-    /// define maximal number of prints 
-    static  void setMaxErrorPrint   ( const std::size_t ) ; // max prints 
-    /// define maximal number of warning prints 
+    /// define maximal number of prints
+    static  void setMaxErrorPrint   ( const std::size_t ) ; // max prints
+    /// define maximal number of warning prints
     static  void setMaxWarningPrint ( const std::size_t ) ; // max prints
     // ========================================================================
   public:
     // ========================================================================
-    /// maximal number of error   prints 
+    /// maximal number of error   prints
     static std::size_t maxErrorPrint   () ;
-    /// maximal number of warning prints 
+    /// maximal number of warning prints
     static std::size_t maxWarningPrint () ;
     // ========================================================================
   private:
     // ========================================================================
-    /// maximal number of error prints 
+    /// maximal number of error prints
     static std::size_t s_maxErrorPrint   ;
-    /// maximal number of warning prints 
+    /// maximal number of warning prints
     static std::size_t s_maxWarningPrint ;
     // ========================================================================
   } ;
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_IREPORTER_H
 // ============================================================================
