@@ -143,8 +143,10 @@ std::ostream& operator<<( std::ostream& s, const GitEntityResolver::IOVInfo& inf
 
 GitEntityResolver::GitEntityResolver( const std::string& type, const std::string& name, const IInterface* parent )
     : base_class( type, name, parent ), m_repository{[this]() -> git_repository_ptr::storage_t {
-      ( FSMState() < Gaudi::StateMachine::RUNNING ? info() : debug() ) << "opening Git repository '"
-                                                                       << m_pathToRepository.value() << "'" << endmsg;
+      auto log = FSMState() < Gaudi::StateMachine::RUNNING ? info() : debug();
+      if ( msgLevel( log.level() ) )
+        log << "opening Git repository '" << m_pathToRepository.value() << "'" << endmsg;
+
       auto res =
           git_call<git_repository_ptr::storage_t>( this->name(), "cannot open repository", m_pathToRepository.value(),
                                                    git_repository_open, m_pathToRepository.value().c_str() );
@@ -183,15 +185,17 @@ StatusCode GitEntityResolver::initialize()
 
   DEBUG_MSG << "Initializing..." << endmsg;
 
-  m_useFiles = m_commit.empty();
-  if ( m_useFiles ) {
+  // empty commit id means "<files>" in a non-bare repository or "HEAD" for a bare one
+  if ( m_commit.empty() ) {
     if ( git_repository_is_bare( m_repository.get() ) ) {
-      error() << "cannot use files in a Git bare repository" << endmsg;
-      sc = StatusCode::FAILURE;
-      return sc;
+      m_commit = "HEAD";
+    } else {
+      m_useFiles = true;
+      info() << "using checked out files in " << m_pathToRepository.value() << endmsg;
     }
-    info() << "using checked out files in " << m_pathToRepository.value() << endmsg;
-  } else {
+  }
+
+  if ( !m_useFiles ) {
     auto obj = git_call<git_object_ptr>( name(), "cannot resolve commit", m_commit.value(), git_revparse_single,
                                          m_repository.get(), m_commit.value().c_str() );
     if ( LIKELY( msgLevel( MSG::INFO ) ) ) {
