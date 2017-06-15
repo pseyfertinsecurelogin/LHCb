@@ -65,7 +65,7 @@ namespace std
   struct less<const SmartRef<TYPE> > 
     : public std::less<SmartRef<TYPE> > {};
   
-}; // end of namespace std 
+} // end of namespace std
 
 
 

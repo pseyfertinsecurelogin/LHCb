@@ -91,5 +91,5 @@ namespace DetDesc {
     return SU2LHCb()*point;
   }
 
-};
+}
 #endif // V16R7_SU2LHCB_H
