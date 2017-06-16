@@ -83,17 +83,15 @@ namespace LHCb
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-08-17
      */
-    template <class TYPE>
+    template <class TYPE = void>
     struct abs_less final
     {
-      inline TYPE operator()
-        ( typename boost::call_traits<const TYPE>::param_type v1 ,
-          typename boost::call_traits<const TYPE>::param_type v2 ) const
+      template <typename V1, typename V2>
+      bool operator() ( V1&& v1 , V2&& v2 ) const
       {
-        return m_eval ( std::fabs( v1 ) , std::fabs( v2 ) ) ;
+        return std::less<TYPE>{}( std::fabs( std::forward<V1>(v1) ),
+                                  std::fabs( std::forward<V2>(v2) ) ) ;
       }
-      /// evaluator:
-      std::less<TYPE> m_eval ;
     } ;
     // ========================================================================
     /** @struct abs_greater
@@ -101,17 +99,15 @@ namespace LHCb
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-08-17
      */
-    template <class TYPE>
+    template <class TYPE = void>
     struct abs_greater final
     {
-      inline TYPE operator()
-      ( typename boost::call_traits<const TYPE>::param_type v1 ,
-        typename boost::call_traits<const TYPE>::param_type v2 ) const
+      template <typename V1, typename V2>
+      bool operator() ( V1&& v1 , V2&& v2 ) const
       {
-        return m_eval ( std::fabs( v1 ) , std::fabs( v2 ) ) ;
+        return std::greater<TYPE>{}( std::fabs(std::forward<V1>( v1 ) ),
+                                     std::fabs(std::forward<V1>( v2 ) ) );
       }
-      /// evaluator:
-      std::greater<TYPE> m_eval ;
     } ;
     // ========================================================================
     /** return "min_by_abs"
