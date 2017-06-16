@@ -17,6 +17,8 @@ gaudi_depends_on_subdirs(Det/DetDesc
                          Kernel/LHCbKernel)
 
 find_package(Boost COMPONENTS iostreams)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+
 find_package(RELAX)
 
 gaudi_add_module(FSRAlgs
