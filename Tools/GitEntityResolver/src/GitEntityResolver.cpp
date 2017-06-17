@@ -143,9 +143,9 @@ std::ostream& operator<<( std::ostream& s, const GitEntityResolver::IOVInfo& inf
 
 GitEntityResolver::GitEntityResolver( const std::string& type, const std::string& name, const IInterface* parent )
     : base_class( type, name, parent ), m_repository{[this]() -> git_repository_ptr::storage_t {
-      auto log = FSMState() < Gaudi::StateMachine::RUNNING ? info() : debug();
-      if ( msgLevel( log.level() ) )
-        log << "opening Git repository '" << m_pathToRepository.value() << "'" << endmsg;
+      auto lvl = FSMState() < Gaudi::StateMachine::RUNNING ? MSG::INFO : MSG::DEBUG;
+      if ( msgLevel( lvl ) )
+        msgStream( lvl ) << "opening Git repository '" << m_pathToRepository.value() << "'" << endmsg;
 
       auto res =
           git_call<git_repository_ptr::storage_t>( this->name(), "cannot open repository", m_pathToRepository.value(),
