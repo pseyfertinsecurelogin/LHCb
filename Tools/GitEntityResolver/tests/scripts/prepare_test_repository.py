@@ -117,3 +117,11 @@ if exists(path + '-bare.git'):
     rmtree(path + '-bare.git')
 print check_output(['git', 'clone', '--mirror', path, path + '-bare.git'],
                    stderr=STDOUT)
+
+# prepare an overlay directory
+if exists(path + '-overlay'):
+    rmtree(path + '-overlay')
+os.makedirs(path + '-overlay')
+with open(join(src_data, 'values.xml')) as in_file:
+    with open(join(path + '-overlay', 'values.xml'), 'w') as out_file:
+        out_file.write(in_file.read().replace('42', '777'))

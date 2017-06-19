@@ -1,4 +1,4 @@
-def setup(tag, use_files=False, bare=False, conditions=['/dd/TestCondition']):
+def setup(tag, use_files=False, bare=False, conditions=['/dd/TestCondition'], overlay=False):
     import os
     from Gaudi.Configuration import appendPostConfigAction, VERBOSE
     from Configurables import ApplicationMgr
@@ -18,6 +18,8 @@ def setup(tag, use_files=False, bare=False, conditions=['/dd/TestCondition']):
              EnableRunStampCheck=False)
     CondDB(Tags={'DDDB': tag},
            LatestGlobalTagByDataTypes=[])
+    if overlay:
+        CondDB().addLayer(repo + '-overlay')
 
     ApplicationMgr().TopAlg.append(TestAlg(Conditions=conditions))
 
