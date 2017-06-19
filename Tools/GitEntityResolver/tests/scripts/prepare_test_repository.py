@@ -125,3 +125,5 @@ os.makedirs(path + '-overlay')
 with open(join(src_data, 'values.xml')) as in_file:
     with open(join(path + '-overlay', 'values.xml'), 'w') as out_file:
         out_file.write(in_file.read().replace('42', '777'))
+print check_output(['git', 'init'], cwd=path + '-overlay',
+                   stderr=STDOUT)
