@@ -4,6 +4,7 @@
 #ifdef __INTEL_COMPILER        // Disable ICC remark
   #pragma warning(disable:177) // variable was declared but never referenced
 #endif
+#include <string>
 namespace DeMuonLocation{
   static const std::string& Default="/dd/Structure/LHCb/DownstreamRegion/Muon";
   static const std::string& Cabling="/dd/Conditions/ReadoutConf/Muon/Cabling";

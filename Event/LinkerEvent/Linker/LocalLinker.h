@@ -3,9 +3,12 @@
 
 // Include files
 // Include files
+
+#include "GaudiKernel/IRegistry.h"
 #include "GaudiKernel/IDataProviderSvc.h"
 #include "GaudiKernel/LinkManager.h"
 #include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/SmartIF.h"
 #include "Event/LinksByKey.h"
 #include "GaudiKernel/ContainedObject.h"
 #include "GaudiKernel/IMessageSvc.h"

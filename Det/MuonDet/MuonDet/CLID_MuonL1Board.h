@@ -1,5 +1,6 @@
 #ifndef MUONDET_CLID_MUONL1BOARD_H 
 #define MUONDET_CLID_MUONL1BOARD_H 1
+#include "GaudiKernel/ClassID.h"
 
 /// Class ID of the Muon readout
 static const CLID CLID_MuonL1Board = 11091;  

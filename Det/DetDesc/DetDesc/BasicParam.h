@@ -3,6 +3,8 @@
 
 // Include files
 #include <typeinfo>
+#include <string>
+#include <memory>
 
 /** @class BasicParam BasicParam.h DetDesc/BasicParam.h
  *  

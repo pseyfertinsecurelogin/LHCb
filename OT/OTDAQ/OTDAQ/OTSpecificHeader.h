@@ -1,5 +1,6 @@
 #ifndef OTDAQ_OTSPECIFICHEADER_H 
 #define OTDAQ_OTSPECIFICHEADER_H 1
+#include <ostream>
 
 // Forward declarations
 

@@ -5,6 +5,7 @@
 class DeCalorimeter;
 #include "Kernel/CaloCellCode.h"
 #include "Kernel/CaloCellID.h"
+#include <sstream>
 
 
 

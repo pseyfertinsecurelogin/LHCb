@@ -2,6 +2,7 @@
 #define DETDESC_SIMPLEVALIDITY_H 1
 // Include files
 #include "GaudiKernel/IValidity.h"
+#include "GaudiKernel/Time.h"
 
 /** @class SimpleValidity SimpleValidity.h
  *

@@ -2,6 +2,7 @@
 #ifndef     DETDESC_CLIDSURFACE_H
 #define     DETDESC_CLIDSURFACE_H 1 
 
+#include "GaudiKernel/ClassID.h"
 
 ///
 /// unique CLID 
