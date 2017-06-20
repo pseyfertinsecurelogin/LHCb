@@ -299,12 +299,12 @@ class ChebyshevApprox
 		// cos(nx) = 2 * cos(x) * cos((n - 1) x) - cos((n - 2) x)
 		const IFLT c = 2 * std::cos(IFLT(M_PI) / NSAMPLES);
 		IFLT cc = c / 2, oc = 1;
-		costbl[0] = 1;
+		costbl.front() = 1;
 		std::generate(std::next(begin(costbl)), std::prev(end(costbl)), [c, &cc, &oc] ()
 			{ oc = c * cc - oc; // be FMA friendly!
 			  std::swap(cc, oc);
               return oc; });
-		costbl[NSAMPLES] = -1;
+		costbl.back() = -1;
 	    }
 	    // tabulate function in the corresponding points
 	    {
@@ -314,8 +314,8 @@ class ChebyshevApprox
 		const auto fnprime = [im, id, &fn] (IFLT x) {
 		    return fn(id * x + im); }; // be FMA friendly
 		std::transform(std::begin(costbl), std::end(costbl),
-			std::begin(ftbl), [&fnprime] (IFLT x) {
-			return fnprime(x); });
+			           std::begin(ftbl),
+                       [&fnprime] (IFLT x) { return fnprime(x); });
 	    }
 	    /// generate the first N coefficients, and place them into m_coeffs
 	    unsigned i = 0;
