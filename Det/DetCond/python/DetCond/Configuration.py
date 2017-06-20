@@ -632,7 +632,10 @@ class CondDB(ConfigurableUser):
             if ger:
                 if not ger.isPropertySet('Commit'):
                     ger.Commit = self.getProp("Tags").get(partition, 'HEAD')
-                    if self.getProp('Upgrade'):
+                    if (self.getProp('Upgrade') and
+                            not (ger.Commit.startswith('upgrade/') or
+                                 ger.Commit in ('', 'HEAD', 'upgrade') or
+                                 re.match(r'^[0-9a-f]{7,40}$', ger.Commit))):
                         ger.Commit = 'upgrade/' + ger.Commit
                 VFSSvc().FileAccessTools.append(ger)
                 if localTags.get(partition):
