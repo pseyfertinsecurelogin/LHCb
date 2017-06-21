@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -94,18 +93,11 @@ namespace LoKi
       declareProperty
         ( "Mode" , m_mode , "Printout mode, see LoKi::DecayChainBase::Mode" ) ;
     }
-    /// virtual and protected desctructor
-    virtual ~DumpMC() {}
     // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    // ========================================================================
-    DumpMC () ;                                       // no default constructor
     /// copy constructor is disabled
-    DumpMC ( const DumpMC& right ) ;                     // no copy constructor
+    DumpMC ( const DumpMC& right ) = delete;             // no copy constructor
     /// assignment operator is disabled
-    DumpMC& operator=( const DumpMC& right ) ;                // no assignement
+    DumpMC& operator=( const DumpMC& right ) = delete;        // no assignement
     // ========================================================================
   private:
     // ========================================================================

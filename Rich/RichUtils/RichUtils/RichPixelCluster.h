@@ -9,8 +9,7 @@
  */
 //--------------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RichPixelCluster_H
-#define RICHUTILS_RichPixelCluster_H 1
+#pragma once
 
 // STL
 #include <vector>
@@ -471,5 +470,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHUTILS_RichPixelCluster_H

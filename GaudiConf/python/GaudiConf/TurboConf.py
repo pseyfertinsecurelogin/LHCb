@@ -1,11 +1,10 @@
 """High level configuration for Turbo."""
+import logging as log
 from os.path import join
 
 from Configurables import LHCbConfigurableUser
 from Configurables import DataOnDemandSvc
-from PersistRecoConf import PersistRecoPacking
-from DAQSys.Decoders import DecoderDB
-from DAQSys.DecoderClass import Decoder
+import PersistRecoConf
 
 __author__ = "Sean Benson, Rosen Matev"
 
@@ -20,12 +19,16 @@ class TurboConf(LHCbConfigurableUser):
     __slots__ = {
         "DataType":    "",
         "PersistReco": False,
+        "RunPackedDataDecoder": False,
+        "RunPersistRecoUnpacking": False,
         "RootInTES": "/Event/Turbo"
      }
 
     _propertyDocDct = {
        "DataType":    "Flag for backward compatibility with old data",
        "PersistReco": "Setup PersistReco (overrides some Turbo defaults)",
+       "RunPackedDataDecoder": "If True, decode the raw data bank containing PersistReco data",
+       "RunPersistRecoUnpacking": "If True, unpack the PersistReco containers",
        "RootInTES": "Where to link the unpacked PersistReco objects under"
     }
 
@@ -70,21 +73,19 @@ class TurboConf(LHCbConfigurableUser):
         for alg in packing.unpackers():
             DataOnDemandSvc().AlgMap[alg.OutputName] = alg
 
-    def _register_pr_links(self, packing):
+    def _register_pr_links(self, packing, rootintes):
         """Set up DataOnDemandSvc to create links to standard rec locations."""
         from Configurables import TESMerger_LHCb__ProtoParticle_ as TESMergerProtoParticle
         from Configurables import TESMerger_LHCb__Track_ as TESMergerTrack
         from Configurables import GaudiSequencer
         from Configurables import Gaudi__DataLink as DataLink
 
-        rootintes = self.getProp("RootInTES")
-
         mergeProtos = TESMergerProtoParticle("MergeProtos")
         mergeProtos.inputLocations = [
             packing.outputs["Hlt2LongProtos"],
             packing.outputs["Hlt2DownstreamProtos"],
         ]
-        mergeProtos.outputLocation = '/Event/Hlt2/Protos/Charged'
+        mergeProtos.outputLocation = join(rootintes, 'Hlt2/Protos/Charged')
         DataOnDemandSvc().AlgMap[mergeProtos.outputLocation] = mergeProtos
 
         mergeTracks = TESMergerTrack("MergeTracks")
@@ -92,7 +93,7 @@ class TurboConf(LHCbConfigurableUser):
             packing.outputs["Hlt2LongTracks"],
             packing.outputs["Hlt2DownstreamTracks"],
         ]
-        mergeTracks.outputLocation = '/Event/Hlt2/TrackFitted/Charged'
+        mergeTracks.outputLocation = join(rootintes, 'Hlt2/TrackFitted/Charged')
         DataOnDemandSvc().AlgMap[mergeTracks.outputLocation] = mergeTracks
 
         linkChargedProtos = DataLink('HltRecProtos',
@@ -117,26 +118,120 @@ class TurboConf(LHCbConfigurableUser):
                            Target=join(rootintes, 'Rec/Vertex/Primary'))
         DataOnDemandSvc().AlgMap[linkPVs.Target] = linkPVs
 
+    def _persistrecopacking(self, datatype, rootintes):
+        """Return configured PersistRecoPacking object.
+
+        The PersistRecoPacking configuration always assumes that the packed
+        containers are immediately under /Event, and will be unpacked to
+        locations immediately under /Event/Turbo.
+        Since 2017, the Turbo streaming implementation changed such that
+        packed containers are now under stream-specific locations (i.e.
+        /Event/<stream>/Turbo) after Tesla.
+        The unpacked containers should go under the same root.
+
+        This means:
+            * For 2016, the same unpackers are used in Tesla and DaVinci; and
+            * For >= 2017, Tesla and DaVinci have dedicated unpackers.
+        Tesla configures its own (un)packers for >= 2017.
+        """
+        tes_root = '/Event'
+        turbo_root = join(tes_root, 'Turbo')
+        # TODO add 2018 here once it's supported by PersistRecoConf
+        unified_datatypes = [2017]
+        if datatype in unified_datatypes:
+            packed_root = unpacked_root = rootintes
+        else:
+            packed_root = tes_root
+            unpacked_root = turbo_root
+
+        packing_descriptors = PersistRecoConf.standardDescriptors
+        packing_outputs = PersistRecoConf.standardOutputs
+        for dt in unified_datatypes:
+            dt = str(dt)
+            packing_descriptors[dt] = {
+                k: d.copy(location=d.location.replace(tes_root, packed_root))
+                for k, d in packing_descriptors[dt].items()
+            }
+            packing_outputs[dt] = {
+                k: v.replace(turbo_root, unpacked_root)
+                for k, v in packing_outputs[dt].items()
+            }
+        return PersistRecoConf.PersistRecoPacking(
+            str(datatype),
+            descriptors=packing_descriptors,
+            outputs=packing_outputs
+        )
+
+
+    def _check_configuration(self):
+        """Try to catch mis-configurations and warn the user."""
+        datatype = self.getProp('DataType')
+        persistreco = self.getProp('PersistReco')
+        decode = self.getProp('RunPackedDataDecoder')
+        unpack = self.getProp('RunPersistRecoUnpacking')
+
+        try:
+            datatype = int(datatype)
+        except ValueError:
+            log.error('TurboConf is not compatible with non-integer DataTypes')
+
+        if datatype < 2015:
+            log.warning('Turbo is not available for Run 1 data')
+
+        if datatype == 2015 and (persistreco or decode or unpack):
+            log.warning('PersistReco is not available for 2015 data')
+
+        if datatype >= 2017 and persistreco:
+            log.warning((
+                'TurboConf().PersistReco should not be set for >= 2017 data\n'
+                'DaVinci jobs should set DaVinci().Turbo instead, otherwise '
+                'use RunPackedDataDecoder and/or RunPersistRecoUnpacking'
+            ))
+
+        if persistreco and (decode or unpack):
+            log.warning((
+                'TurboConf().PersistReco should not be True together with '
+                'RunPackedDataDecoder and/or RunPersistRecoUnpacking'
+            ))
+
     def __apply_configuration__(self):
-        self._register_unpackers()
+        self._check_configuration()
 
-        # Remove standard decoder
-        decoder = DecoderDB.pop("HltPackedDataDecoder/Hlt2PackedDataDecoder")
-        assert not decoder.wasUsed(), ('Hlt2PackedDataDecoder was '
-                                       'aready setup, cannot remove!')
+        datatype = int(self.getProp('DataType'))
+        rootintes = self.getProp('RootInTES')
+        persistreco = self.getProp('PersistReco')
+        decode = self.getProp('RunPackedDataDecoder')
+        unpack = self.getProp('RunPersistRecoUnpacking')
 
-        if self.getProp('PersistReco'):
-            packing = PersistRecoPacking(self.getProp('DataType'))
+        if decode or persistreco:
+            from DAQSys.Decoders import DecoderDB
+            from DAQSys.DecoderClass import Decoder
 
-            # Setup decoder for all but 2015 (no serialization)
-            if self.getProp("DataType") in ["2016", "2017", "2018"]:
-                Decoder("HltPackedDataDecoder/Hlt2PackedDataDecoder",
-                        active=True, banks=["DstData"],
-                        inputs={"RawEventLocations": None},
-                        outputs=packing.packedLocations(),
-                        properties={"ContainerMap":
-                                    packing.packedToOutputLocationMap()},
-                        conf=DecoderDB)
+            # Remove standard decoder
+            decoder = DecoderDB.pop("HltPackedDataDecoder/Hlt2PackedDataDecoder")
+            assert not decoder.wasUsed(), ('Hlt2PackedDataDecoder was '
+                                           'aready setup, cannot remove!')
+            # In 2017 the decoder is only used in Tesla (not DaVinci), where we
+            # don't need the special RootInTES gymnastics implemented in
+            # _persistrecopacking
+            # For 2016 it's used in Tesla *and* DaVinci, but we also don't need
+            # the special configuration there, so can always use the default
+            packing = PersistRecoConf.PersistRecoPacking(str(datatype))
+            decoder = Decoder(
+                "HltPackedDataDecoder/Hlt2PackedDataDecoder",
+                active=True, banks=["DstData"],
+                inputs={"RawEventLocations": None},
+                outputs=packing.packedLocations(),
+                properties={"ContainerMap":
+                            packing.packedToOutputLocationMap()},
+                conf=DecoderDB
+            )
+            decoder.setup()
 
+        packing = self._persistrecopacking(datatype, rootintes)
+        # CALO objects are treated specially in 2015 and 2016
+        if datatype <= 2017:
+            self._register_unpackers()
+        if unpack or persistreco:
             self._register_pr_unpackers(packing)
-            self._register_pr_links(packing)
+            self._register_pr_links(packing, rootintes)

@@ -10,9 +10,9 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifdef __INTEL_COMPILER       // Disable ICC remark from ROOT
-#pragma warning(disable:1572) // Floating-point comparisons are unreliable
-#endif
+//#ifdef __INTEL_COMPILER       // Disable ICC remark from ROOT
+//#pragma warning(disable:1572) // Floating-point comparisons are unreliable
+//#endif
 
 // local
 #include "RichUtils/RichTrackSegment.h"
@@ -76,42 +76,6 @@ Gaudi::XYZVector LHCb::RichTrackSegment::bestMomentum( const double fractDist ) 
   {
     const auto midFrac = ( fractDist / m_midFrac2 ) - 1.0;
     return (middleMomentum()*(1-midFrac)) + (exitMomentum()*midFrac);
-  }
-}
-
-void LHCb::RichTrackSegment::chordConstructorInit2()
-{
-  // the direction to use
-  auto v = exitPoint()-entryPoint();
-  if ( v.Mag2() > 0 )
-  {
-    // Update direction of entry state to chord direction
-    v *= std::sqrt( entryMomentum().Mag2() / v.Mag2() );
-    setEntryState( entryPoint(), v );
-    // Update direction of middle state to chord direction
-    v *= std::sqrt( ( (entryMomentum()+exitMomentum())*0.5 ).Mag2() / v.Mag2() );
-    setMiddleState( add_points(entryPoint(),exitPoint())*0.5, v );
-    // Update direction of exit state to chord direction
-    v *= std::sqrt( exitMomentum().Mag2() / v.Mag2() );
-    setExitState( exitPoint(), v );
-  }
-}
-
-void LHCb::RichTrackSegment::chordConstructorInit3()
-{
-  // the direction to use
-  auto v = exitPoint() - entryPoint();
-  if ( v.Mag2() > 0 )
-  {
-    // Update direction of entry state to chord direction
-    v *= std::sqrt( entryMomentum().Mag2() / v.Mag2() );
-    setEntryState( entryPoint(), v );
-    // Update direction of middle state to chord direction
-    v *= std::sqrt( middleMomentum().Mag2() / v.Mag2() );
-    setMiddleState( middlePoint(), v );
-    // Update direction of exit state to chord direction
-    v *= std::sqrt( exitMomentum().Mag2() / v.Mag2() );
-    setExitState( exitPoint(), v );
   }
 }
 

@@ -36,7 +36,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Prescale* clone() const  override;
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override;
+      bool operator() ( const LHCb::ODIN* o ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================

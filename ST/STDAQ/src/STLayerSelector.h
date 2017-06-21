@@ -5,7 +5,6 @@
 // from STL
 #include <string>
 #include <vector>
-#include <map>
 
 // from GaudiAlg
 #include "GaudiAlg/GaudiTool.h"
@@ -22,41 +21,22 @@
  *  @date   2012-05-02
  */
 
-
-class STLayerSelector :
-  public virtual ISTChannelIDSelector,
-  public GaudiTool
+class STLayerSelector : public extends<GaudiTool, ISTChannelIDSelector>
 {
-  friend struct ToolFactory<STLayerSelector>;
 
 public:
+  using base_class::base_class;
+  STLayerSelector ( const STLayerSelector & ) = delete;
+  STLayerSelector& operator= ( const STLayerSelector& ) = delete;
 
   bool select (const LHCb::STChannelID& id ) const override;
   bool operator() ( const LHCb::STChannelID& id ) const override;
-  StatusCode initialize() override;    ///< Algorithm initialization
-
-protected:
-
-  STLayerSelector ( const std::string& type,
-                    const std::string& name,
-                    const IInterface* parent);
 
 private:
 
-  STLayerSelector ();
-  STLayerSelector ( const STLayerSelector & );
-  STLayerSelector& operator= ( const STLayerSelector& );
-
-  std::string m_detType;
-  std::vector<std::string> m_ignoredLayers;
-
-  std::map<std::string, unsigned int> m_layerMap;
-
+  Gaudi::Property<std::string> m_detType { this,  "DetType", "TT" };
+  Gaudi::Property<std::vector<std::string>> m_ignoredLayers { this, "IgnoredLayers" };
 
 };
-
-
-
-
 
 #endif // STLAYERSELECTOR_H

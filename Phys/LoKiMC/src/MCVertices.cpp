@@ -28,16 +28,13 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
+namespace LoKi { namespace MCVertices {
 // ============================================================================
-LoKi::MCVertices::TypeOfMCVertex*
-LoKi::MCVertices::TypeOfMCVertex::clone() const
-{ return new TypeOfMCVertex() ; }
+TypeOfMCVertex* TypeOfMCVertex::clone() const { return new TypeOfMCVertex() ; }
 // ============================================================================
-LoKi::MCVertices::TypeOfMCVertex::result_type
-LoKi::MCVertices::TypeOfMCVertex::operator()
-  ( LoKi::MCVertices::TypeOfMCVertex::argument v ) const
+double TypeOfMCVertex::operator() ( const LHCb::MCVertex* v ) const
 {
-  if ( 0 == v )
+  if ( !v )
   {
     Error (  " MCVertex* points to NULL, return -1000000." ) ;
     return -1000000.0 ;
@@ -45,21 +42,16 @@ LoKi::MCVertices::TypeOfMCVertex::operator()
   return v->type() ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::TypeOfMCVertex::fillStream
-( std::ostream& s ) const
+std::ostream& TypeOfMCVertex::fillStream ( std::ostream& s ) const
 { return s << "MCVTYPE" ; }
 // ============================================================================
 
 // ============================================================================
-LoKi::MCVertices::TimeOfFlight*
-LoKi::MCVertices::TimeOfFlight::clone() const
-{ return new TimeOfFlight( *this ) ; }
+TimeOfFlight* TimeOfFlight::clone() const { return new TimeOfFlight( *this ) ; }
 // ============================================================================
-LoKi::MCVertices::TimeOfFlight::result_type
-LoKi::MCVertices::TimeOfFlight::operator()
-  ( LoKi::MCVertices::TimeOfFlight::argument v ) const
+double TimeOfFlight::operator() ( const LHCb::MCVertex* v ) const
 {
-  if ( 0 == v )
+  if ( !v )
   {
     Error (  " MCVertex* points to NULL, return -1000 * ms " ) ;
     return -1000. * Gaudi::Units::ms ;
@@ -67,21 +59,17 @@ LoKi::MCVertices::TimeOfFlight::operator()
   return v->time() ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::TimeOfFlight::fillStream
-( std::ostream& s ) const
+std::ostream& TimeOfFlight::fillStream ( std::ostream& s ) const
 { return s << "MCVTOF" ; }
 // ============================================================================
 
 // ============================================================================
-LoKi::MCVertices::VertexPositionX*
-LoKi::MCVertices::VertexPositionX::clone() const
+VertexPositionX* VertexPositionX::clone() const
 { return new VertexPositionX(*this) ; }
 // ============================================================================
-LoKi::MCVertices::VertexPositionX::result_type
-LoKi::MCVertices::VertexPositionX::operator()
-  ( LoKi::MCVertices::VertexPositionX::argument v ) const
+double VertexPositionX::operator() ( const LHCb::MCVertex* v ) const
 {
-  if ( 0 == v )
+  if ( !v )
   {
     Error (  " MCVertex* points to NULL, return 'InvalidDistance'" ) ;
     return LoKi::Constants::InvalidDistance ;
@@ -89,22 +77,18 @@ LoKi::MCVertices::VertexPositionX::operator()
   return v->position().x() ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::VertexPositionX::fillStream
-( std::ostream& s ) const
+std::ostream& VertexPositionX::fillStream ( std::ostream& s ) const
 { return s << "MCVX" ; }
 // ============================================================================
 
 
 // ============================================================================
-LoKi::MCVertices::VertexPositionY*
-LoKi::MCVertices::VertexPositionY::clone() const
+VertexPositionY* VertexPositionY::clone() const
 { return new VertexPositionY( *this ) ; }
 // ============================================================================
-LoKi::MCVertices::VertexPositionY::result_type
-LoKi::MCVertices::VertexPositionY::operator()
-  ( LoKi::MCVertices::VertexPositionY::argument v ) const
+double VertexPositionY::operator() ( const LHCb::MCVertex* v ) const
 {
-  if ( 0 == v )
+  if ( !v )
   {
     Error (  " MCVertex* points to NULL, return 'InvalidDistance'" ) ;
     return LoKi::Constants::InvalidDistance ;
@@ -112,21 +96,17 @@ LoKi::MCVertices::VertexPositionY::operator()
   return v->position().y() ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::VertexPositionY::fillStream
-( std::ostream& s ) const
+std::ostream& VertexPositionY::fillStream ( std::ostream& s ) const
 { return s << "MCVY" ; }
 // ============================================================================
 
 // ============================================================================
-LoKi::MCVertices::VertexPositionZ*
-LoKi::MCVertices::VertexPositionZ::clone() const
+VertexPositionZ* VertexPositionZ::clone() const
 { return new VertexPositionZ(*this) ; }
 // ============================================================================
-LoKi::MCVertices::VertexPositionZ::result_type
-LoKi::MCVertices::VertexPositionZ::operator()
-  ( LoKi::MCVertices::VertexPositionZ::argument v ) const
+double VertexPositionZ::operator() ( const LHCb::MCVertex* v ) const
 {
-  if ( 0 == v )
+  if ( !v )
   {
     Error (  " MCVertex* points to NULL, return 'InvalidDistance'" ) ;
     return LoKi::Constants::InvalidDistance ;
@@ -134,21 +114,16 @@ LoKi::MCVertices::VertexPositionZ::operator()
   return v->position().z() ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::VertexPositionZ::fillStream
-( std::ostream& s ) const
+std::ostream& VertexPositionZ::fillStream ( std::ostream& s ) const
 { return s << "MCVZ" ; }
 // ============================================================================
 
 // ============================================================================
-LoKi::MCVertices::VertexTime*
-LoKi::MCVertices::VertexTime::clone() const
-{ return new VertexTime(*this) ; }
+VertexTime* VertexTime::clone() const { return new VertexTime(*this) ; }
 // ============================================================================
-LoKi::MCVertices::VertexTime::result_type
-LoKi::MCVertices::VertexTime::operator()
-  ( LoKi::MCVertices::VertexTime::argument v ) const
+double VertexTime::operator() ( const LHCb::MCVertex* v ) const
 {
-  if ( 0 == v )
+  if ( !v )
   {
     Error (  " MCVertex* points to NULL, return 'InvalidTime'" ) ;
     return LoKi::Constants::InvalidTime ;
@@ -156,21 +131,16 @@ LoKi::MCVertices::VertexTime::operator()
   return v->time() ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::VertexTime::fillStream
-( std::ostream& s ) const
+std::ostream& VertexTime::fillStream ( std::ostream& s ) const
 { return s << "MCVTIME" ; }
 // ============================================================================
 
 // ============================================================================
-LoKi::MCVertices::Primary*
-LoKi::MCVertices::Primary::clone() const
-{ return new Primary(*this) ; }
+Primary* Primary::clone() const { return new Primary(*this) ; }
 // ============================================================================
-LoKi::MCVertices::Primary::result_type
-LoKi::MCVertices::Primary::operator()
-  ( LoKi::MCVertices::Primary::argument v ) const
+bool Primary::operator() ( const LHCb::MCVertex* v ) const
 {
-  if ( 0 == v )
+  if ( !v )
   {
     Error (  " MCVertex* points to NULL, return 'false' " ) ;
     return false ;
@@ -178,21 +148,16 @@ LoKi::MCVertices::Primary::operator()
   return v->isPrimary() ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::Primary::fillStream
-( std::ostream& s ) const
+std::ostream& Primary::fillStream ( std::ostream& s ) const
 { return s << "MCISPRIMARY" ; }
 // ============================================================================
 
 // ============================================================================
-LoKi::MCVertices::Decay*
-LoKi::MCVertices::Decay::clone() const
-{ return new Decay(*this) ; }
+Decay* Decay::clone() const { return new Decay(*this) ; }
 // ============================================================================
-LoKi::MCVertices::Decay::result_type
-LoKi::MCVertices::Decay::operator()
-  ( LoKi::MCVertices::Primary::argument v ) const
+bool Decay::operator() ( const LHCb::MCVertex* v ) const
 {
-  if ( 0 == v )
+  if ( !v )
   {
     Error (  " MCVertex* points to NULL, return 'false' " ) ;
     return false ;
@@ -200,25 +165,19 @@ LoKi::MCVertices::Decay::operator()
   return v->isDecay() ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::Decay::fillStream
-( std::ostream& s ) const
+std::ostream& Decay::fillStream ( std::ostream& s ) const
 { return s << "MCISDECAY" ; }
 // ============================================================================
 
 // ============================================================================
-LoKi::MCVertices::MCVertexDistance::MCVertexDistance
-( const LoKi::Point3D& point )
-  : LoKi::AuxFunBase ( std::tie ( point ) ) 
-  , LoKi::BasicFunctors<const LHCb::MCVertex*>::Function()
+MCVertexDistance::MCVertexDistance ( const LoKi::Point3D& point )
+  : LoKi::AuxFunBase ( std::tie ( point ) )
   , m_point ( point )
 {}
 // ============================================================================
-LoKi::MCVertices::MCVertexDistance::MCVertexDistance
-( const LHCb::MCVertex* point )
-  : LoKi::BasicFunctors<const LHCb::MCVertex*>::Function()
-  , m_point ()
+MCVertexDistance::MCVertexDistance ( const LHCb::MCVertex* point )
 {
-  if ( 0 == point )
+  if ( !point )
   {
     Error ( "MCVertex* points to NULL!") ;
     m_point = LoKi::Point3D( -1.0 * Gaudi::Units::km ,
@@ -228,15 +187,12 @@ LoKi::MCVertices::MCVertexDistance::MCVertexDistance
   else { m_point = point->position(); }
 }
 // ============================================================================
-LoKi::MCVertices::MCVertexDistance*
-LoKi::MCVertices::MCVertexDistance::clone() const
+MCVertexDistance* MCVertexDistance::clone() const
 { return new MCVertexDistance ( *this ) ; }
 // ============================================================================
-LoKi::MCVertices::MCVertexDistance::result_type
-LoKi::MCVertices::MCVertexDistance::operator()
-  ( LoKi::MCVertices::MCVertexDistance::argument v ) const
+double MCVertexDistance::operator() ( const LHCb::MCVertex* v ) const
 {
-  if ( 0 == v )
+  if ( !v )
   {
     Error("MCVertex* points to NULL, return -1.0 * km " );
     return -1.0 * Gaudi::Units::km ;
@@ -244,54 +200,43 @@ LoKi::MCVertices::MCVertexDistance::operator()
   return  ( v->position() - m_point ).R() ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::MCVertexDistance::fillStream
-( std::ostream& s ) const
+std::ostream& MCVertexDistance::fillStream ( std::ostream& s ) const
 { return s << "MCVDIST" ; }
 // ============================================================================
 
 // ============================================================================
-LoKi::MCVertices::MCVFunAsMCFun::MCVFunAsMCFun
-( const LoKi::MCTypes::MCVFunc& fun )
-  : LoKi::AuxFunBase ( std::tie ( fun ) ) 
-  , LoKi::BasicFunctors<const LHCb::MCParticle*>::Function ()
+MCVFunAsMCFun::MCVFunAsMCFun ( const LoKi::MCTypes::MCVFunc& fun )
+  : LoKi::AuxFunBase ( std::tie ( fun ) )
   , m_fun ( fun )
 {}
 // ============================================================================
-LoKi::MCVertices::MCVFunAsMCFun*
-LoKi::MCVertices::MCVFunAsMCFun::clone() const
+MCVFunAsMCFun* MCVFunAsMCFun::clone() const
 { return new MCVFunAsMCFun ( *this ) ; }
 // ============================================================================
-LoKi::MCVertices::MCVFunAsMCFun::result_type
-LoKi::MCVertices::MCVFunAsMCFun::operator()
-  ( LoKi::MCVertices::MCVFunAsMCFun::argument p ) const
+double MCVFunAsMCFun::operator() ( const LHCb::MCParticle* p ) const
 {
-  if ( 0 == p )
+  if ( !p )
   {
     Error ( "MCParticle* points to NULL, return -1000000.");
     return -1000000 ;
   };
   const LHCb::MCVertex* vertex = p->originVertex() ;
-  if ( 0 == vertex ) { Warning ( "'origin' MCVertex* points to NULL") ;}
+  if ( !vertex ) { Warning ( "'origin' MCVertex* points to NULL") ;}
   //
   return m_fun( vertex ) ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::MCVFunAsMCFun::fillStream
-( std::ostream& s ) const
+std::ostream& MCVFunAsMCFun::fillStream ( std::ostream& s ) const
 { return s << "MCVXFUN(" << m_fun << ")" ; }
 // ============================================================================
 
 
 // ============================================================================
-LoKi::MCVertices::Key*
-LoKi::MCVertices::Key::clone() const
-{ return new Key(*this) ; }
+Key* Key::clone() const { return new Key(*this) ; }
 // ============================================================================
-LoKi::MCVertices::Key::result_type
-LoKi::MCVertices::Key::operator()
-  ( LoKi::MCVertices::Key::argument v ) const
+double Key::operator() ( const LHCb::MCVertex* v ) const
 {
-  if ( 0 == v )
+  if ( !v )
   {
     Error (  " MCVertex* points to NULL, return -1000 " ) ;
     return -1000 ;
@@ -299,42 +244,36 @@ LoKi::MCVertices::Key::operator()
   return v -> key () ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::Key::fillStream
-( std::ostream& s ) const
+std::ostream& Key::fillStream ( std::ostream& s ) const
 { return s << "MCVKEY" ; }
 // ============================================================================
 
 
 // ============================================================================
-LoKi::MCVertices::MCVPFunAsMCFun::MCVPFunAsMCFun
-( const LoKi::MCTypes::MCVFunc& fun )
-  : LoKi::AuxFunBase ( std::tie ( fun ) ) 
+MCVPFunAsMCFun::MCVPFunAsMCFun ( const LoKi::MCTypes::MCVFunc& fun )
+  : LoKi::AuxFunBase ( std::tie ( fun ) )
   , LoKi::MCVertices::MCVFunAsMCFun ( fun )
 {}
 // ============================================================================
-LoKi::MCVertices::MCVPFunAsMCFun*
-LoKi::MCVertices::MCVPFunAsMCFun::clone() const
+MCVPFunAsMCFun* MCVPFunAsMCFun::clone() const
 { return new MCVPFunAsMCFun ( *this ) ; }
 // ============================================================================
-LoKi::MCVertices::MCVPFunAsMCFun::result_type
-LoKi::MCVertices::MCVPFunAsMCFun::operator()
-  ( LoKi::MCVertices::MCVPFunAsMCFun::argument p ) const
+double MCVPFunAsMCFun::operator() ( const LHCb::MCParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( !p )
   {
     Error ( "MCParticle* points to NULL, return -1000000.");
     return -1000000 ;
   }
   //
   const LHCb::MCVertex* vertex = p->primaryVertex() ;
-  if ( 0 == vertex ) { Warning ( "'primary' MCVertex* points to NULL") ;}
+  if ( !vertex ) { Warning ( "'primary' MCVertex* points to NULL") ;}
   //
   return func()( vertex ) ;
 }
 // ============================================================================
-std::ostream& LoKi::MCVertices::MCVPFunAsMCFun::fillStream
-( std::ostream& s ) const
+std::ostream& MCVPFunAsMCFun::fillStream ( std::ostream& s ) const
 { return s << "MCVPXFUN("<< func() << ")" ; }
 // ============================================================================
 
@@ -349,10 +288,9 @@ std::ostream& LoKi::MCVertices::MCVPFunAsMCFun::fillStream
  *         -4   - the primary vertex
  */
 // ============================================================================
-LoKi::MCVertices::MCVFunction::MCVFunction
-( const LoKi::MCTypes::MCVFunc& func  ,
-  const int                     index )
-  : LoKi::AuxFunBase ( std::tie ( func , index ) ) 
+MCVFunction::MCVFunction ( const LoKi::MCTypes::MCVFunc& func  ,
+                           const int                     index )
+  : LoKi::AuxFunBase ( std::tie ( func , index ) )
   , LoKi::MCVertices::MCVFunAsMCFun ( func )
   , m_case  ( true  )
   , m_index ( index )
@@ -361,10 +299,9 @@ LoKi::MCVertices::MCVFunction::MCVFunction
 // ============================================================================
 // constructor from MC Vertex fuction and vertex selection
 // ============================================================================
-LoKi::MCVertices::MCVFunction::MCVFunction
-( const LoKi::MCTypes::MCVFunc& func ,
-  const LoKi::MCTypes::MCVCuts& cuts )
-  : LoKi::AuxFunBase ( std::tie ( func , cuts ) ) 
+MCVFunction::MCVFunction ( const LoKi::MCTypes::MCVFunc& func ,
+                           const LoKi::MCTypes::MCVCuts& cuts )
+  : LoKi::AuxFunBase ( std::tie ( func , cuts ) )
   , LoKi::MCVertices::MCVFunAsMCFun ( func )
   , m_case  ( false  )
   , m_index ( 0      )
@@ -373,10 +310,9 @@ LoKi::MCVertices::MCVFunction::MCVFunction
 // ============================================================================
 // constructor from MC Vertex fuction and vertex selection
 // ============================================================================
-LoKi::MCVertices::MCVFunction::MCVFunction
-( const LoKi::MCTypes::MCVCuts& cuts ,
-  const LoKi::MCTypes::MCVFunc& func )
-  : LoKi::AuxFunBase ( std::tie ( cuts , func ) ) 
+MCVFunction::MCVFunction ( const LoKi::MCTypes::MCVCuts& cuts ,
+                           const LoKi::MCTypes::MCVFunc& func )
+  : LoKi::AuxFunBase ( std::tie ( cuts , func ) )
   , LoKi::MCVertices::MCVFunAsMCFun ( func )
   , m_case  ( false  )
   , m_index ( 0      )
@@ -385,12 +321,9 @@ LoKi::MCVertices::MCVFunction::MCVFunction
 // ============================================================================
 // clone method (mandatory!)
 // ============================================================================
-LoKi::MCVertices::MCVFunction*
-LoKi::MCVertices::MCVFunction::clone() const
-{ return new LoKi::MCVertices::MCVFunction ( *this ) ; }
+MCVFunction* MCVFunction::clone() const { return new MCVFunction ( *this ) ; }
 // ============================================================================
-std::ostream& LoKi::MCVertices::MCVFunction::fillStream
-( std::ostream& s ) const
+std::ostream& MCVFunction::fillStream( std::ostream& s ) const
 {
   if ( m_case )
   { return s << "MCVFUN("<< func() << "," << m_index << ")" ; }
@@ -400,24 +333,22 @@ std::ostream& LoKi::MCVertices::MCVFunction::fillStream
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::MCVertices::MCVFunction::result_type
-LoKi::MCVertices::MCVFunction::operator()
-  ( LoKi::MCVertices::MCVFunction::argument p ) const
+double MCVFunction::operator() ( const LHCb::MCParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( !p )
   {
     Warning ( "MCParticle* points to NULL, return -1e+9 ");
     return -1.e+9 ;
   }
   //
-  const LHCb::MCVertex* v = 0 ;
+  const LHCb::MCVertex* v = nullptr ;
   //
   if      ( m_case && Origin   == m_index  )
   {
     //
     v = p -> originVertex() ;
-    if ( 0 == v ) { Warning ( " Origin     MCVertex* points to NULL" ) ; }
+    if ( !v ) { Warning ( " Origin     MCVertex* points to NULL" ) ; }
     //
     return func() ( v ) ;
   }
@@ -425,13 +356,12 @@ LoKi::MCVertices::MCVFunction::operator()
   {
     //
     v = p -> primaryVertex() ;
-    if ( 0 == v ) { Warning ( " Primary    MCVertex* points to NULL" ) ; }
+    if ( !v ) { Warning ( " Primary    MCVertex* points to NULL" ) ; }
     //
     return func() ( v ) ;
   }
   //
-  typedef SmartRefVector<LHCb::MCVertex> EV ;
-  const EV& evs = p->endVertices() ;
+  const auto& evs = p->endVertices() ;
   //
   if (  evs.empty() ) { Warning ( " Empty EndVertices list " ) ; }
   //
@@ -451,7 +381,7 @@ LoKi::MCVertices::MCVFunction::operator()
     return func() ( v ) ;
   }
   // now we deal with cuts:
-  EV::const_iterator igood = std::find_if ( evs.begin() , evs.end() , m_cut  ) ;
+  auto igood = std::find_if ( evs.begin() , evs.end() , m_cut  ) ;
   //
   if ( evs.end() != igood ){ v = *igood ; }
   else { Error ( " No proper vertex is found " ) ; }
@@ -460,6 +390,7 @@ LoKi::MCVertices::MCVFunction::operator()
   //
 }
 
+} }
 // ============================================================================
 // The END
 // ============================================================================

@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHUTILS_FASTMATHS_H
-#define RICHUTILS_FASTMATHS_H 1
+#pragma once
 
 #include <cmath>
 
@@ -76,5 +75,3 @@ namespace Rich
   return fpdiv(numerator, denominator);
   }
 */
-
-#endif // RICHUTILS_FASTMATHS_H

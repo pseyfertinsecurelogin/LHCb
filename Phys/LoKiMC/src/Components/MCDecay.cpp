@@ -63,17 +63,11 @@ namespace LoKi
       declareInterface<Decays::IMCDecay>   ( this ) ;
       declareInterface<Decays::IDecayNode> ( this ) ;
     }
-    /// virtual & protected destructor
-    virtual ~MCDecay() {}                     // virtual & protected destructor
     // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    MCDecay ( ) ;                        // the default constructor is disabled
     /// the copy constructor is disabled
-    MCDecay ( const MCDecay& ) ;            // the copy constructor is disabled
+    MCDecay ( const MCDecay& ) = delete;    // the copy constructor is disabled
     /// the assignement operator is disabled
-    MCDecay& operator=( const MCDecay& ) ;           // no assignement operator
+    MCDecay& operator=( const MCDecay& ) = delete;   // no assignement operator
     // ========================================================================
   private:
     // ========================================================================

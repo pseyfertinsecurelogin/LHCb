@@ -42,7 +42,6 @@
   <class name = "std::vector<Decays::Decay>"       />
   <class name = "std::vector<Decays::Decay::Item>" />
   
-  <class name    = "std::unary_function<LHCb::ParticleID,bool>"  />
   <class name    = "Decays::iNode"    />
   <class name    = "Decays::Node"     />
   <class pattern = "Decays::Nodes::*" />

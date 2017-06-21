@@ -76,7 +76,7 @@ namespace LoKi
       HasDecision* clone() const override
       { return new HasDecision ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override;
+      bool operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( s , "HLT_HAS" ) ; }
@@ -109,9 +109,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API PassDecision : public HasDecision
+    struct GAUDI_API PassDecision : HasDecision
     {
-    public:
       // ======================================================================
       /// constructor from the decision name
       PassDecision ( const std::string& name  )
@@ -137,7 +136,7 @@ namespace LoKi
       PassDecision* clone() const override
       { return new PassDecision ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override;
+      bool operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( s , "HLT_PASS" ) ; }
@@ -152,17 +151,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API Size
-      : public LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function
+    struct GAUDI_API Size
+      : LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function
     {
-    public:
       // ======================================================================
       /// MANDATORY: default constructor
       Size() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
       Size* clone() const override { return new Size ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator () ( argument a ) const override;
+      double operator () ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return s << "HLT_SIZE" ; }
@@ -179,17 +177,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API NPass
-      : public LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function
+    struct GAUDI_API NPass
+      : LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function
     {
-    public:
       // ======================================================================
       /// MANDATORY: default constructor
       NPass() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
       NPass* clone() const override { return new NPass ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator () ( argument a ) const override;
+      double operator () ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return s << "HLT_NPASS" ; }
@@ -207,17 +204,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-19
      */
-    class GAUDI_API Decision
-      : public LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate
+    struct GAUDI_API Decision
+      : LoKi::BasicFunctors<const LHCb::HltDecReports*>::Predicate
     {
-    public:
       // ======================================================================
       /// MANDATORY: default constructor
       Decision() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
       Decision* clone() const override { return new Decision ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator () ( argument a ) const override;
+      bool operator () ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return s << "HLT_DECISION" ; }
@@ -267,7 +263,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       DecisionBut* clone () const override { return new DecisionBut ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator () ( argument a ) const override;
+      bool operator () ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -296,7 +292,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       HasDecisionSubString* clone () const override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override;
+      bool operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
@@ -318,16 +314,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-06-16
      */
-    class GAUDI_API PassDecisionSubString : public HasDecisionSubString
+    struct GAUDI_API PassDecisionSubString : HasDecisionSubString
     {
-    public:
       // ======================================================================
       /// constructor from substring
       PassDecisionSubString ( const std::string& substr ) ;
       /// MANDATORY: clone method ("virtual constructor")
       PassDecisionSubString* clone () const override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override;
+      bool operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
@@ -341,16 +336,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-06-16
      */
-    class GAUDI_API DecisionButSubString : public PassDecisionSubString
+    struct GAUDI_API DecisionButSubString : PassDecisionSubString
     {
-    public:
       // ======================================================================
       /// constructor from substring
       DecisionButSubString ( const std::string& substr ) ;
       /// MANDATORY: clone method ("virtual constructor")
       DecisionButSubString* clone () const override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override;
+      bool operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
@@ -373,7 +367,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       HasDecisionRegex* clone () const override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override;
+      bool operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
@@ -395,16 +389,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-06-16
      */
-    class GAUDI_API PassDecisionRegex : public HasDecisionRegex
+    struct GAUDI_API PassDecisionRegex : HasDecisionRegex
     {
-    public:
       // ======================================================================
       /// constructor from substring
       PassDecisionRegex ( const std::string& substr ) ;
       /// MANDATORY: clone method ("virtual constructor")
       PassDecisionRegex* clone () const override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override;
+      bool operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
@@ -418,16 +411,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2009-06-16
      */
-    class GAUDI_API DecisionButRegex : public PassDecisionRegex
+    struct GAUDI_API DecisionButRegex : PassDecisionRegex
     {
-    public:
       // ======================================================================
       /// constructor from substring
       DecisionButRegex ( const std::string& substr ) ;
       /// MANDATORY: clone method ("virtual constructor")
       DecisionButRegex* clone () const override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override;
+      bool  operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const override;
     };
@@ -449,7 +441,7 @@ namespace LoKi
       /// MANDATORY: clone method ( "virtual constructor")
       ErrorBits* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const override;
+      double operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
@@ -468,16 +460,15 @@ namespace LoKi
      *  @author Sean Benson sean.benson@cern.ch
      *  @date 2015-01-12
      */
-    class GAUDI_API NonTurboPass : public HasDecisionRegex
+    struct GAUDI_API NonTurboPass final : HasDecisionRegex
     {
-    public:
       // ======================================================================
       /// constructor from the channel name
       NonTurboPass ( const std::string&      name ) ;
       /// MANDATORY: clone method ( "virtual constructor")
       NonTurboPass* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const override;
+      bool operator() ( const LHCb::HltDecReports* a ) const override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -487,16 +478,15 @@ namespace LoKi
      *  @author Sean Benson sean.benson@cern.ch
      *  @date 2015-01-12
      */
-    class GAUDI_API TurboPass final : public HasDecisionRegex
+    struct GAUDI_API TurboPass final : HasDecisionRegex
     {
-    public:
       // ======================================================================
       /// constructor from the channel name
       TurboPass ( const std::string&      name ) ;
       /// MANDATORY: clone method ( "virtual constructor")
       TurboPass* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const override;
+      bool operator() ( const LHCb::HltDecReports* a ) const override;
       // ======================================================================
     } ;
     // ========================================================================
@@ -507,16 +497,15 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.Belyaev@cern.ch
      *  @date 2010-05-17
      */
-    class GAUDI_API ExecutionStage final : public ErrorBits
+    struct GAUDI_API ExecutionStage final : ErrorBits
     {
-    public:
       // ======================================================================
       /// constructor from the channel name
       ExecutionStage ( const std::string&      name ) ;
       /// MANDATORY: clone method ( "virtual constructor")
       ExecutionStage* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const override;
+      double operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
@@ -529,16 +518,15 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.Belyaev@cern.ch
      *  @date 2010-05-17
      */
-    class GAUDI_API NumberOfCandidates final : public ErrorBits
+    struct GAUDI_API NumberOfCandidates final : ErrorBits
     {
-    public:
       // ======================================================================
       /// constructor from the channel name
       NumberOfCandidates ( const std::string&      name ) ;
       /// MANDATORY: clone method ( "virtual constructor")
       NumberOfCandidates* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const override;
+      double operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
@@ -562,7 +550,7 @@ namespace LoKi
       /// MANDATORY: clone method ( "virtual constructor")
       Saturated* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const override;
+      bool operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
@@ -615,7 +603,7 @@ namespace LoKi
       /// MANDATORY: clone method ( "virtual constructor")
       CountErrorBits* clone () const override;
       /// MANDATORY: the only one essential methor
-      result_type operator() ( argument a ) const override;
+      double operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const override;
       // ======================================================================
@@ -646,7 +634,7 @@ namespace LoKi
       /// MANDATORY: clone method ( "virtual constructor")
       CountErrorBitsRegex* clone () const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override;
+      double operator() ( const LHCb::HltDecReports* a ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const  override;
       // ======================================================================
@@ -680,7 +668,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       HltRoutingBits* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument /* a */ ) const  override;
+      bool operator() ( const LHCb::HltDecReports* ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const  override;
       // ======================================================================
@@ -703,17 +691,16 @@ namespace LoKi
      *  @author Pieter David <pieter.david@nikhef.nl>
      *  @date 2014-08-28
      */
-    class GAUDI_API TrgConfKey final
-      : public LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function
+    struct GAUDI_API TrgConfKey final
+      : LoKi::BasicFunctors<const LHCb::HltDecReports*>::Function
     {
-    public:
       // ======================================================================
       /// MANDATORY: default constructor
       TrgConfKey() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual consructor")
       TrgConfKey* clone() const override { return new TrgConfKey ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator () ( argument a ) const override
+      double operator () ( const LHCb::HltDecReports* a ) const override
       { return a -> configuredTCK () ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override

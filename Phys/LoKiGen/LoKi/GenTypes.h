@@ -84,46 +84,46 @@ namespace LoKi
     // type of "map" for HepMC::GenParticle   (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenParticle*>::Map     GMaps      ;
     // type of "map" for HepMC::GenParticle   (assignable)
-    typedef LoKi::Assignable<GMaps>::Type                           GMap       ;
+    typedef LoKi::Assignable_t<GMaps>                               GMap       ;
     // type of "pipe" for HepMC::GenParticle   (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenParticle*>::Pipe    GPipes     ;
     // type of "pipe" for HepMC::GenParticle   (assignable)
-    typedef LoKi::Assignable<GPipes>::Type                          GPipe      ;
+    typedef LoKi::Assignable_t<GPipes>                              GPipe      ;
     // type of "fun-val" for HepMC::GenParticle   (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenParticle*>::FunVal  GFunVals   ;
     // type of "fun-val" for HepMC::GenParticle   (assignable)
-    typedef LoKi::Assignable<GFunVals>::Type                        GFunVal    ;
+    typedef LoKi::Assignable_t<GFunVals>                            GFunVal    ;
     // type of "cut-val" for HepMC::GenParticle   (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenParticle*>::CutVal  GCutVals   ;
     // type of "cut-val" for HepMC::GenParticle   (assignable)
-    typedef LoKi::Assignable<GCutVals>::Type                        GCutVal    ;
+    typedef LoKi::Assignable_t<GCutVals>                            GCutVal    ;
     // type of "source" for HepMC::GenParticle   (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenParticle*>::Source  GSources   ;
     // type of "source" for HepMC::GenParticle   (assignable)
-    typedef LoKi::Assignable<GSources>::Type                        GSource    ;
+    typedef LoKi::Assignable_t<GSources>                            GSource    ;
     //
     // functional types for HepMC::GenVertex
     //
     // type of "map" for HepMCGenVertex   (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenVertex*>::Map       GVMaps     ;
     // type of "map" for HepMCGenVertex   (assignable)
-    typedef LoKi::Assignable<GVMaps>::Type                          GVMap      ;
+    typedef LoKi::Assignable_t<GVMaps>                              GVMap      ;
     // type of "pipe" for HepMCGenVertex   (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenVertex*>::Pipe      GVPipes    ;
     // type of "pipe" for HepMCGenVertex   (assignable)
-    typedef LoKi::Assignable<GVPipes>::Type                         GVPipe     ;
+    typedef LoKi::Assignable_t<GVPipes>                             GVPipe     ;
     // type of "fun-val" for HepMCGenVertex   (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenVertex*>::FunVal    GVFunVals  ;
     // type of "fun-val" for HepMCGenVertex   (assignable)
-    typedef LoKi::Assignable<GVFunVals>::Type                       GVFunVal   ;
+    typedef LoKi::Assignable_t<GVFunVals>                           GVFunVal   ;
     // type of "cut-val" for HepMCGenVertex   (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenVertex*>::CutVal    GVCutVals  ;
     // type of "cut-val" for HepMCGenVertex   (assignable)
-    typedef LoKi::Assignable<GVCutVals>::Type                       GVCutVal   ;
+    typedef LoKi::Assignable_t<GVCutVals>                           GVCutVal   ;
     // type of "source" for HepMCGenVertex   (interface)
     typedef LoKi::BasicFunctors<const HepMC::GenVertex*>::Source    GVSources  ;
     // type of "source" for HepMCGenVertex   (assignable)
-    typedef LoKi::Assignable<GVSources>::Type                       GVSource   ;
+    typedef LoKi::Assignable_t<GVSources>                           GVSource   ;
     //
     // ========================================================================
   } // end of namespace GenTypes

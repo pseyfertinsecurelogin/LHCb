@@ -8,8 +8,6 @@
 #include "GaudiUtils/RegEx.h"
 #include "GaudiUtils/IIODataManager.h"
 #include "GaudiKernel/Memory.h"
-//#include "GaudiUtils/IODataManager.h"
-//With regex libraries
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -448,8 +446,6 @@ StatusCode XMLSummarySvc::fillcounter(const NameStatTypePair & count)
 
 StatusCode XMLSummarySvc::writeXML(const MSG::Level lev)
 {
-  if (!msgLevel(lev)) return StatusCode::SUCCESS;
-
   if (m_xmlfile=="")
   {
     msgStream(lev) << "no xml file to be written " << m_xmlfile << endmsg;
@@ -460,7 +456,6 @@ StatusCode XMLSummarySvc::writeXML(const MSG::Level lev)
     DEBUG_MSG << "the summary object is no longer available" << endmsg;
     msgStream(lev) << "xml file not written as PyObject was lost" << endmsg;
     return StatusCode::FAILURE;
-
   }
 
   VERBOSE_MSG << "ready to write xml file " << m_xmlfile.value() << " " << m_summary << endmsg;

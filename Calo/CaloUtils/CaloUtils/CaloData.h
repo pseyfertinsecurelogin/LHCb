@@ -57,8 +57,8 @@ namespace CaloData
     std::remove_copy( smart->begin() , smart->end() , 
                       OUTPUTTYPE::CONTAINER , (OUTPUTTYPE *) 0 ); 
     return StatusCode::SUCCESS;                           /* RETURN! */  
-    };
+    }
   ///
-}; // end of namespace CaloData
+} // end of namespace CaloData
 
 #endif  //  CALOUTILS_CALODATA_H

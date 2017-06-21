@@ -53,58 +53,23 @@ private:
 
   // add a single cluster to the output container
   void createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion,
-                     const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters* fCont, const bool isUT) const;
-
-
-  struct Less_by_Channel {
-
-    /** compare the channel of one object with the
-     *  channel of another object
-     *  @param obj1   first  object
-     *  @param obj2   second object
-     *  @return  result of the comparision
-     */
-    //
-    bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
-    {
-      return obj1.channelID() < obj2.channelID() ;
-    }
-  };
-
-
-  struct Equal_Channel {
-
-    /** compare the channel of one object with the
-     *  channel of another object
-     *  @param obj1   first  object
-     *  @param obj2   second object
-     *  @return  result of the comparision
-     */
-    //
-    bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
-    {
-      return obj1.channelID() == obj2.channelID() ;
-    }
-  };
-
-
+                     const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters& fCont, const bool isUT) const;
 };
 
 #include "Kernel/STTell1Board.h"
 #include "Kernel/ISTReadoutTool.h"
 
 inline void RawBankToSTLiteClusterAlg::createCluster(const STTell1Board* aBoard,  const STDAQ::version& bankVersion,
-                                                     const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters* fCont,
+                                                     const STClusterWord& aWord, LHCb::STLiteCluster::STLiteClusters& fCont,
                                                      const bool isUT) const{
 
   const unsigned int fracStrip = aWord.fracStripBits();
   const STTell1Board::chanPair chan = aBoard->DAQToOffline(fracStrip, bankVersion, STDAQ::StripRepresentation(aWord.channelID()));
-  LHCb::STLiteCluster liteCluster(chan.second,
-                            aWord.pseudoSizeBits(),
-                            aWord.hasHighThreshold(),
-                            chan.first,
-                            isUT);
-  fCont->push_back(std::move(liteCluster));
+  fCont.emplace_back( chan.second,
+                      aWord.pseudoSizeBits(),
+                      aWord.hasHighThreshold(),
+                      chan.first,
+                      isUT);
 }
 
 #endif //  RAWBANKTOSTLITECLUSTERALG_H

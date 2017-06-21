@@ -24,6 +24,38 @@
 
 using namespace LHCb;
 
+namespace {
+  struct Less_by_Channel  {
+
+    /** compare the channel of one object with the
+     *  channel of another object
+     *  @param obj1   first  object
+     *  @param obj2   second object
+     *  @return  result of the comparision
+     */
+    //
+    inline bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
+    {
+      return obj1.channelID() < obj2.channelID() ;
+    }
+  };
+  struct Equal_Channel {
+
+    /** compare the channel of one object with the
+     *  channel of another object
+     *  @param obj1   first  object
+     *  @param obj2   second object
+     *  @return  result of the comparision
+     */
+    //
+    inline bool operator() ( LHCb::STLiteCluster obj1 , LHCb::STLiteCluster obj2 ) const
+    {
+      return obj1.channelID() == obj2.channelID() ;
+    }
+  };
+
+}
+
 //-----------------------------------------------------------------------------
 // Implementation file for class : RawBufferToSTLiteClusterAlg
 //
@@ -81,7 +113,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
   std::vector<unsigned int> missing = missingInAction(tBanks);
   if ( !missing.empty() ){
     counter("lost Banks") += missing.size() ;
-    if (tBanks.size() == 0){
+    if (tBanks.empty()){
       ++counter("no banks found");
       return StatusCode::SUCCESS;
     }
@@ -106,7 +138,7 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
     STTell1Board* aBoard = readoutTool()->findByBoardID(STTell1ID((*iterBank)->sourceID()));
     if (!aBoard && !m_skipErrors){
       Warning( "Invalid source ID --> skip bank"+ std::to_string((*iterBank)->sourceID()),
-              StatusCode::SUCCESS,2);
+               StatusCode::SUCCESS,2).ignore();
       ++counter("skipped Banks");
       continue;
     }
@@ -124,11 +156,11 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
     STDecoder decoder((*iterBank)->data());
 
     bool recover = false;
-    if (decoder.hasError() == true && !m_skipErrors){
+    if (decoder.hasError() && !m_skipErrors){
 
       if (!recoverMode()){
         Warning( "bank has errors, skip sourceID " + std::to_string((*iterBank)->sourceID()),
-                StatusCode::SUCCESS, 2).ignore();
+                 StatusCode::SUCCESS, 2).ignore();
         ++counter("skipped Banks");
         continue;
       }else{
@@ -166,23 +198,20 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
       }
     } // errorbank == 0
 
-    const STDAQ::version bankVersion = forceVersion() ? STDAQ::version(m_forcedVersion): STDAQ::version((*iterBank)->version());
+    const STDAQ::version bankVersion = STDAQ::version(forceVersion() ? m_forcedVersion
+                                                                     : (*iterBank)->version() );
 
     // check the integrity of the bank --> always skip if not ok
-    if (!m_skipErrors && checkDataIntegrity(decoder, aBoard , (*iterBank)->size() , bankVersion) == false) continue;
-
-
-
+    if (!m_skipErrors && !checkDataIntegrity(decoder, aBoard , (*iterBank)->size() , bankVersion)) continue;
 
     // read in the first half of the bank
-
     for (auto iterDecoder = decoder.posBegin();iterDecoder != decoder.posEnd(); ++iterDecoder){
 
       if (!recover){
-        createCluster(aBoard,bankVersion ,*iterDecoder, &fCont, isUT);
+        createCluster(aBoard,bankVersion ,*iterDecoder, fCont, isUT);
       }else{
         if (errorBank && canBeRecovered(errorBank,*iterDecoder, pcn)){
-          createCluster(aBoard, bankVersion, *iterDecoder, &fCont, isUT);
+          createCluster(aBoard, bankVersion, *iterDecoder, fCont, isUT);
         } // errorbank
       } // recover == false
 
@@ -192,15 +221,12 @@ StatusCode RawBankToSTLiteClusterAlg::decodeBanks(const RawEvent& rawEvt,
 
   // sort and remove any duplicates
   std::stable_sort(fCont.begin(),fCont.end(), Less_by_Channel());
-  STLiteCluster::STLiteClusters::iterator iter =  std::unique(fCont.begin(), fCont.end(), Equal_Channel());
+  auto iter =  std::unique(fCont.begin(), fCont.end(), Equal_Channel());
   if (iter != fCont.end()){
-    const unsigned int nvalid = iter - fCont.begin();
-    fCont.resize(nvalid);
+    fCont.resize(iter - fCont.begin());
     return Warning("Removed duplicate clusters in the decoding", StatusCode::SUCCESS, 100);
   }
-
   return StatusCode::SUCCESS;
-
 }
 
 
@@ -208,12 +234,9 @@ StatusCode RawBankToSTLiteClusterAlg::finalize() {
 
   const double failed = counter("skipped Banks").flag();
   const double processed = counter("# valid banks").flag();
-  double eff = 0.0;
-  if (!LHCb::Math::Equal_To<double>()(processed, 0.0)){
-    eff = 1.0 - (failed/processed);
-  }
+  double eff = ( !LHCb::Math::Equal_To<double>()(processed, 0.0) ?
+                            1.0 - (failed/processed) : 0.0 );
   info() << "Successfully processed " << 100* eff << " %"  << endmsg;
 
   return Transformer::finalize();
 }
-

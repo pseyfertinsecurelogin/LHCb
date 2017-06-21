@@ -36,6 +36,20 @@
 
 namespace {
 
+#if  __cplusplus > 201402L
+
+// C++17 version: https://godbolt.org/g/2vAZQt
+template <typename... lambda_ts>
+struct composer_t : lambda_ts...
+{
+  template <typename... T>
+  composer_t(T&&... t) : lambda_ts(std::forward<T>(t))...  {}
+
+  using lambda_ts::operator()...;
+};
+
+#else
+
 template <typename... lambda_ts>
 struct composer_t;
 
@@ -59,7 +73,7 @@ struct composer_t<lambda_t, more_lambda_ts...> : lambda_t, composer_t<more_lambd
   using lambda_t::operator();
   using super_t::operator();
 };
-
+#endif
 
 template <typename... lambda_ts>
 composer_t<std::decay_t<lambda_ts>...>
@@ -95,8 +109,7 @@ LoKi::Odin::InTime::InTime( const Gaudi::Time& start, const Gaudi::TimeSpan& spa
 // ============================================================================
 // MANDATORY: The only one essential method:
 // ============================================================================
-LoKi::Odin::InTime::result_type
-LoKi::Odin::InTime::operator()( LoKi::Odin::InTime::argument o ) const
+bool LoKi::Odin::InTime::operator()( const LHCb::ODIN* o ) const
 {
   const Gaudi::Time time = o -> eventTime () ;
   return m_start <= time && time < m_stop ;
@@ -146,8 +159,7 @@ LoKi::Odin::RunNumber* LoKi::Odin::RunNumber::clone() const
 // ============================================================================
 // MANDATORY: The only one essential method:
 // ============================================================================
-LoKi::Odin::RunNumber::result_type
-LoKi::Odin::RunNumber::operator()( LoKi::Odin::RunNumber::argument o ) const
+bool LoKi::Odin::RunNumber::operator()( const LHCb::ODIN* o ) const
 {
   //
   auto r = o->runNumber();
@@ -200,9 +212,7 @@ LoKi::Odin::BXId::BXId( std::vector<unsigned int> bxs )
 // ============================================================================
 // MANDATORY: The only one essential method:
 // ============================================================================
-LoKi::Odin::BXId::result_type
-LoKi::Odin::BXId::operator()
-  ( LoKi::Odin::BXId::argument o ) const
+bool LoKi::Odin::BXId::operator() ( const LHCb::ODIN* o ) const
 {
   //
   auto bx = o->bunchId();
@@ -239,8 +249,7 @@ LoKi::Odin::Tck::Tck( std::vector<unsigned int> tcks )
 // ============================================================================
 // MANDATORY: The only one essential method:
 // ============================================================================
-LoKi::Odin::Tck::result_type
-LoKi::Odin::Tck::operator()( LoKi::Odin::Tck::argument o ) const
+bool LoKi::Odin::Tck::operator()( const LHCb::ODIN* o ) const
 {
   return std::binary_search
       ( m_tcks.begin() , m_tcks.end() , o->triggerConfigurationKey() );
@@ -286,8 +295,7 @@ LoKi::Odin::EvtNumber::clone() const
 // ============================================================================
 // MANDATORY: The only one essential method:
 // ============================================================================
-LoKi::Odin::EvtNumber::result_type
-LoKi::Odin::EvtNumber::operator()( LoKi::Odin::EvtNumber::argument o ) const
+bool LoKi::Odin::EvtNumber::operator()( const LHCb::ODIN* o ) const
 {
   event_type evt ( o->eventNumber() ) ;
   return dispatch_variant( m_evts,
@@ -352,8 +360,7 @@ LoKi::Odin::RunEvtNumber* LoKi::Odin::RunEvtNumber::clone() const
 // ============================================================================
 // MANDATORY: The only one essential method:
 // ============================================================================
-LoKi::Odin::RunEvtNumber::result_type
-LoKi::Odin::RunEvtNumber::operator()( argument o ) const
+bool LoKi::Odin::RunEvtNumber::operator()( const LHCb::ODIN* o ) const
 {
   runevt_type runevt ( o->runNumber() , o->eventNumber() );
   //
@@ -370,9 +377,9 @@ std::ostream& LoKi::Odin::RunEvtNumber::fillStream ( std::ostream& s ) const
   //
   return dispatch_variant( m_runevts,
                            [&](const runevt_range& rng) -> std::ostream&
-                           { if (rng.first.run()==rng.second.run() && rng.first.evt()+1==rng.second.evt() ) 
+                           { if (rng.first.run()==rng.second.run() && rng.first.evt()+1==rng.second.evt() )
                              {
-                               return s << rng.first.run()   << " , " 
+                               return s << rng.first.run()   << " , "
                                         << rng.first.event() << " ) " ;
                              }
                              return s << Gaudi::Utils::toString ( rng.first   ) << " , "
@@ -399,8 +406,7 @@ LoKi::Odin::RoutingBits* LoKi::Odin::RoutingBits::clone() const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Odin::RoutingBits::result_type
-LoKi::Odin::RoutingBits::operator() ( argument /* a */ ) const
+bool LoKi::Odin::RoutingBits::operator() ( const LHCb::ODIN* ) const
 {
   return m_bits() ;
 }
@@ -427,7 +433,7 @@ LoKi::Odin::Evt1* LoKi::Odin::Evt1::clone() const
 // ============================================================================
 // MANDATORY: the only essential method
 // ============================================================================
-LoKi::Odin::Evt1::result_type LoKi::Odin::Evt1::operator()( argument a ) const
+double LoKi::Odin::Evt1::operator()( const LHCb::ODIN* a ) const
 { return a -> eventNumber() % modulo() ; }
 // ============================================================================
 // OPTIONAL: the nice printout
@@ -452,7 +458,7 @@ LoKi::Odin::Evt2* LoKi::Odin::Evt2::clone() const
 // ============================================================================
 // MANDATORY: the only essential method
 // ============================================================================
-LoKi::Odin::Evt2::result_type LoKi::Odin::Evt2::operator() ( argument a ) const
+double LoKi::Odin::Evt2::operator() ( const LHCb::ODIN* a ) const
 {
   //
   return a -> eventNumber() / modulo() ;

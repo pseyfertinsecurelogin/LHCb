@@ -1,13 +1,11 @@
-// $Id$
 // ============================================================================
-#ifndef LHCBMATH_POLYNOMIALS_H 
+#ifndef LHCBMATH_POLYNOMIALS_H
 #define LHCBMATH_POLYNOMIALS_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// STD& STL 
+// STD& STL
 // ============================================================================
-#include <functional>
 #include <vector>
 #include <cmath>
 // ============================================================================
@@ -17,7 +15,7 @@
 // ============================================================================
 /** @file LHCbMath/Polynomials.h
  *
- *  various polinomials 
+ *  various polinomials
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
@@ -33,7 +31,7 @@ namespace Gaudi
   namespace Math
   {
     // ========================================================================
-    //  Chebyshev 1st kind 
+    //  Chebyshev 1st kind
     // ========================================================================
     template <unsigned int N> class  Chebyshev_  ;
     // ========================================================================
@@ -43,14 +41,14 @@ namespace Gaudi
      *  @date 2011-04-19
      */
     template <unsigned int N>
-    class  Chebyshev_ : public std::unary_function<double,double>
+    class  Chebyshev_
     {
     public:
       // ======================================================================
       /// the only one important method
       inline double operator() ( const double    x    ) const
       { return 2 * x * m_N1 ( x ) - m_N2 ( x ) ; }
-      // ======================================================================      
+      // ======================================================================
     private:
       // ======================================================================
       /// T (N-1)
@@ -62,7 +60,7 @@ namespace Gaudi
     // ========================================================================
     /// specialization for 0
     template <>
-    class  Chebyshev_<0> : public std::unary_function<double,double>
+    class  Chebyshev_<0>
     {
     public:
       // ======================================================================
@@ -72,7 +70,7 @@ namespace Gaudi
     // ========================================================================
     /// specialization for N=1
     template <>
-    class  Chebyshev_<1> : public std::unary_function<double,double>
+    class  Chebyshev_<1>
     {
     public:
       // ======================================================================
@@ -81,17 +79,17 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    //  Chebyshev 2nd kind 
+    //  Chebyshev 2nd kind
     // ========================================================================
     template <unsigned int N> class  ChebyshevU_ ;
     // ========================================================================
     /** @class ChebychevU_
-     *  Efficient evaluator of Chebyshev polynomial of the secon kind 
+     *  Efficient evaluator of Chebyshev polynomial of the secon kind
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
     template <unsigned int N>
-    class  ChebyshevU_ : public std::unary_function<double,double>
+    class  ChebyshevU_
     {
     public:
       // ======================================================================
@@ -107,10 +105,10 @@ namespace Gaudi
       Chebyshev_<N>     m_TN ;                                        // T (N)
       // ======================================================================
     } ;
-    // ========================================================================    
+    // ========================================================================
     /// specialization for N=0
     template <>
-    class  ChebyshevU_<0> : public std::unary_function<double,double>
+    class  ChebyshevU_<0>
     {
     public:
       // ======================================================================
@@ -121,7 +119,7 @@ namespace Gaudi
     // ========================================================================
     /// specialization for N=1
     template <>
-    class  ChebyshevU_<1> : public std::unary_function<double,double>
+    class  ChebyshevU_<1>
     {
     public:
       // ======================================================================
@@ -130,7 +128,7 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    //  Legendre 
+    //  Legendre
     // ========================================================================
     template <unsigned int N> class  Legendre_   ;
     // ========================================================================
@@ -140,7 +138,7 @@ namespace Gaudi
      *  @date 2011-04-19
      */
     template <unsigned int N>
-    class  Legendre_ : public std::unary_function<double,double>
+    class  Legendre_
     {
     public:
       // ======================================================================
@@ -159,7 +157,7 @@ namespace Gaudi
     // ========================================================================
     /// specialization for 0
     template <>
-    class  Legendre_<0> : public std::unary_function<double,double>
+    class  Legendre_<0>
     {
     public:
       // ======================================================================
@@ -170,7 +168,7 @@ namespace Gaudi
     // ========================================================================
     /// specialization for N=1
     template <>
-    class  Legendre_<1> : public std::unary_function<double,double>
+    class  Legendre_<1>
     {
     public:
       // ======================================================================
@@ -186,13 +184,13 @@ namespace Gaudi
     /** @class Hermite_
      *  Efficienct evaluator of Hermite polynomial
      *  These are "probabilistic" polinomials,
-     *  \f$He(x)\f$ 
-     *  such as coefficienst at maximar degree is always equal to 1 
+     *  \f$He(x)\f$
+     *  such as coefficienst at maximar degree is always equal to 1
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
     template <unsigned int N>
-    class  Hermite_ : public std::unary_function<double,double>
+    class  Hermite_
     {
     public:
       // ======================================================================
@@ -211,7 +209,7 @@ namespace Gaudi
     // ========================================================================
     /// specialization for 0
     template <>
-    class  Hermite_<0> : public std::unary_function<double,double>
+    class  Hermite_<0>
     {
     public:
       // ======================================================================
@@ -221,7 +219,7 @@ namespace Gaudi
     // ========================================================================
     /// specialization for N=1
     template <>
-    class  Hermite_<1> : public std::unary_function<double,double>
+    class  Hermite_<1>
     {
     public:
       // ======================================================================
@@ -230,14 +228,14 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
-    // Non-templated 
+    // Non-templated
     // ========================================================================
     /** @class Chebyshev
      *  evaluate the chebyshev polynomials
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
-    class GAUDI_API Chebyshev : public std::unary_function<double,double>
+    class GAUDI_API Chebyshev
     {
     public :
       // ======================================================================
@@ -255,11 +253,11 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// derivative 
+      /// derivative
       double derivative ( const double x    ) const ;
       // ======================================================================
-      /// get integral between low and high 
-      double integral   ( const double low  , 
+      /// get integral between low and high
+      double integral   ( const double low  ,
                           const double high ) const ;
       // ======================================================================
     private:
@@ -269,11 +267,11 @@ namespace Gaudi
     } ;
     // ========================================================================
     /** @class ChebyshevU
-     *  evaluate the chebyshev polynomials of the second kind 
+     *  evaluate the chebyshev polynomials of the second kind
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
-    class GAUDI_API ChebyshevU : public std::unary_function<double,double>
+    class GAUDI_API ChebyshevU
     {
     public :
       // ======================================================================
@@ -291,11 +289,11 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// derivative 
+      /// derivative
       double derivative ( const double x ) const ;
       // ======================================================================
-      /// get integral between low and high 
-      double integral   ( const double low  , 
+      /// get integral between low and high
+      double integral   ( const double low  ,
                           const double high ) const ;
       // ======================================================================
     private:
@@ -309,7 +307,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
-    class GAUDI_API Legendre : public std::unary_function<double,double>
+    class GAUDI_API Legendre
     {
     public :
       // ======================================================================
@@ -327,11 +325,11 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// derivative 
+      /// derivative
       double derivative  ( const double x ) const ;
       // ======================================================================
-      /// get integral between low and high 
-      double integral    ( const double low  , 
+      /// get integral between low and high
+      double integral    ( const double low  ,
                            const double high ) const ;
       // ======================================================================
     private:
@@ -345,7 +343,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
-    class GAUDI_API Hermite : public std::unary_function<double,double>
+    class GAUDI_API Hermite
     {
     public :
       // ======================================================================
@@ -369,69 +367,68 @@ namespace Gaudi
     // ========================================================================
     /** affine transformation of polynomial
      *  \f$ x ^{\prime} = \alpha x + \beta \f$
-     *  @param input  (INPUT)  input polynomial coefficients 
-     *  @param output (UPDATE) coefficients of transformed polynomial 
+     *  @param input  (INPUT)  input polynomial coefficients
+     *  @param output (UPDATE) coefficients of transformed polynomial
      *  @param alpha  (INPUT)  alpha
      *  @param beta   (INPUT)  beta
      *  @return true for valid transformations
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-03-09
      */
-    GAUDI_API 
+    GAUDI_API
     bool affine_transform
-    ( const std::vector<double>& input      , 
-      std::vector<double>&       result     ,  
-      const double               alpha  = 1 , 
-      const double               beta   = 0 ) ;              
+    ( const std::vector<double>& input      ,
+      std::vector<double>&       result     ,
+      const double               alpha  = 1 ,
+      const double               beta   = 0 ) ;
     // ========================================================================
-    /// forward declarations 
-    class Bernstein ; // forward declarations 
+    /// forward declarations
+    class Bernstein ; // forward declarations
     // ========================================================================
     /** @class PolySum
-     *  Base class for polynomial sums 
+     *  Base class for polynomial sums
      *  \f$ f(x) = \sum_i \alpha_i P_i(x) \f$
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-10
      */
-    class GAUDI_API PolySum : public std::unary_function<double,double>
+    class GAUDI_API PolySum
     {
     public:
       // ======================================================================
-      /// constructor from polynomial degree 
+      /// constructor from polynomial degree
       PolySum ( const unsigned short degree = 0 ) ;
-      /// constructor from vector of parameters 
+      /// constructor from vector of parameters
       PolySum ( const std::vector<double>&  pars ) ;
-      /// constructor from sequence of parameters 
+      /// constructor from sequence of parameters
       template <class ITERATOR>
-        PolySum ( ITERATOR begin , 
+        PolySum ( ITERATOR begin ,
                   ITERATOR end   )
-        : std::unary_function<double,double>() 
-        , m_pars ( begin , end )
+        : m_pars ( begin , end )
       { if ( m_pars.empty() ) { m_pars.push_back ( 0 ) ; } }
       // ======================================================================
       /// copy contructor
       PolySum ( const PolySum&  right ) ;
-      /// move constructor 
+      /// move constructor
       PolySum (       PolySum&& right ) ;
       // ======================================================================
     public:
       // ======================================================================
-      /// degree  of polynomial 
+      /// degree  of polynomial
       unsigned short degree () const { return m_pars.size() - 1 ; }
-      /// number of parameters 
+      /// number of parameters
       unsigned short npars  () const { return m_pars.size()     ; }
       /// all zero ?
       bool           zero   () const ;
       /** set k-parameter
        *  @param k index
-       *  @param value new value 
-       *  @return true if parameter is actually changed 
+       *  @param value new value
+       *  @return true if parameter is actually changed
        */
       bool setPar          ( const unsigned short k , const double value ) ;
       /** set k-parameter
        *  @param k index
-       *  @param value new value 
-       *  @return true iof parameter is actually changed 
+       *  @param value new value
+       *  @return true iof parameter is actually changed
        */
       bool setParameter    ( const unsigned short k , const double value )
       { return setPar      ( k , value ) ; }
@@ -443,33 +440,33 @@ namespace Gaudi
       /// get all parameters:
       const std::vector<double>& pars () const { return m_pars ; }
       // ======================================================================
-    public: // simple  manipulations with polynoms 
+    public: // simple  manipulations with polynoms
       // ======================================================================
-      /// simple  manipulations with polynoms: scale it! 
-      PolySum& operator *= ( const double a ) ;     // scale it! 
-      /// simple  manipulations with polynoms: scale it! 
-      PolySum& operator /= ( const double a ) ;     // scale it! 
+      /// simple  manipulations with polynoms: scale it!
+      PolySum& operator *= ( const double a ) ;     // scale it!
+      /// simple  manipulations with polynoms: scale it!
+      PolySum& operator /= ( const double a ) ;     // scale it!
       // ======================================================================
     protected:
       // ======================================================================
-      /// copy assignement  
+      /// copy assignement
       PolySum& operator=( const PolySum&  right ) ;
-      /// move assignement 
+      /// move assignement
       PolySum& operator=(       PolySum&& right ) ;
       // ======================================================================
     protected :
       // ======================================================================
-      /// parameters 
-      std::vector<double>  m_pars ; // parameters 
+      /// parameters
+      std::vector<double>  m_pars ; // parameters
       // ======================================================================
-    } ;  
+    } ;
     // ========================================================================
-    /// forward declarations 
-    class Bernstein    ; // forward declarations 
-    class Polynomial   ; // forward declarations 
-    class LegendreSum  ; // forward declarations 
-    class ChebyshevSum ; // forward declarations 
-    class HermiteSum   ; // forward declarations 
+    /// forward declarations
+    class Bernstein    ; // forward declarations
+    class Polynomial   ; // forward declarations
+    class LegendreSum  ; // forward declarations
+    class ChebyshevSum ; // forward declarations
+    class HermiteSum   ; // forward declarations
     // ========================================================================
     // Polynomial sums
     // ========================================================================
@@ -479,40 +476,40 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-22
      */
-    class GAUDI_API Polynomial : public PolySum 
+    class GAUDI_API Polynomial : public PolySum
     {
     public:
       // =====================================================================
-      /// constructor from the degree  
-      Polynomial ( const unsigned short       degree =   0  , 
-                   const double               xmin   =  -1  , 
+      /// constructor from the degree
+      Polynomial ( const unsigned short       degree =   0  ,
+                   const double               xmin   =  -1  ,
                    const double               xmax   =   1  ) ;
       // ======================================================================
-      /// constructor from the parameter list 
-      Polynomial ( const std::vector<double>& pars          , 
-                   const double               low    =  -1  , 
+      /// constructor from the parameter list
+      Polynomial ( const std::vector<double>& pars          ,
+                   const double               low    =  -1  ,
                    const double               high   =   1  ) ;
-      /// template constructor from sequence of parameters 
+      /// template constructor from sequence of parameters
       template <class ITERATOR>
-        Polynomial ( ITERATOR                 first , 
-                     ITERATOR                 last  , 
-                     const double             xmin  , 
-                     const double             xmax  ) 
-        : Gaudi::Math::PolySum ( first , last ) 
+        Polynomial ( ITERATOR                 first ,
+                     ITERATOR                 last  ,
+                     const double             xmin  ,
+                     const double             xmax  )
+        : Gaudi::Math::PolySum ( first , last )
         , m_xmin ( std::min ( xmin, xmax ) )
         , m_xmax ( std::max ( xmin, xmax ) )
       {}
       // ======================================================================
-      /// copy 
+      /// copy
       Polynomial ( const Polynomial&  ) = default ;
-      /// move 
+      /// move
       Polynomial (       Polynomial&& ) = default ;
       // ======================================================================
-      ///  constructor from Bernstein polinomial (efficient) 
+      ///  constructor from Bernstein polinomial (efficient)
       explicit Polynomial ( const Bernstein&     poly ) ;
       ///  constructor from Legendre polinomial  (efficient)
       explicit Polynomial ( const LegendreSum&   poly ) ;
-      ///  constructor from Chebyshev polinomial (delegation) 
+      ///  constructor from Chebyshev polinomial (delegation)
       explicit Polynomial ( const ChebyshevSum&  poly ) ;
       // ======================================================================
     public:
@@ -521,7 +518,7 @@ namespace Gaudi
       double evaluate    ( const double x ) const ;
       // ======================================================================
       /// get the value
-      double operator () ( const double x ) const 
+      double operator () ( const double x ) const
       { return x < m_xmin ? 0 : x > m_xmax ? 0 : evaluate ( x ) ; }
       // ======================================================================
     public:
@@ -542,30 +539,30 @@ namespace Gaudi
       // ======================================================================
       /// get the integral between xmin and xmax
       double integral   () const ;
-      /// get the integral between low and high 
+      /// get the integral between low and high
       double integral   ( const double low , const double high ) const ;
-      /// get the derivative at point "x" 
+      /// get the derivative at point "x"
       double derivative ( const double x     ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get indefinte integral 
+      /// get indefinte integral
       Polynomial indefinite_integral ( const double C = 0 ) const ;
       /// get the derivative
       Polynomial derivative          () const ;
       // ======================================================================
      public:
       // ======================================================================
-      /// simple  manipulations with polynoms: shift it! 
-      Polynomial& operator += ( const double a ) ; 
-      /// simple  manipulations with polynoms: shift it! 
+      /// simple  manipulations with polynoms: shift it!
+      Polynomial& operator += ( const double a ) ;
+      /// simple  manipulations with polynoms: shift it!
       Polynomial& operator -= ( const double a ) ;
-      /// simple  manipulations with polynoms: scale it 
-      Polynomial& operator *= ( const double a ) ; 
-      /// simple  manipulations with polynoms: scale it  
+      /// simple  manipulations with polynoms: scale it
+      Polynomial& operator *= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it
       Polynomial& operator /= ( const double a ) ;
-      /// negate it! 
-      Polynomial  operator-() const ; // negate it! 
+      /// negate it!
+      Polynomial  operator-() const ; // negate it!
       // ======================================================================
     public:
       // ======================================================================
@@ -573,16 +570,16 @@ namespace Gaudi
       Polynomial sum      ( const Polynomial& other ) const ;
       /// Subtract  polynomials (with the same domain!)
       Polynomial subtract ( const Polynomial& other ) const ;
-      // ======================================================================      
+      // ======================================================================
     public:
-      // ======================================================================      
+      // ======================================================================
       /// Add       polynomials (with the same domain!)
       Polynomial __add__   ( const Polynomial& other ) const ;
       /// Subtract  polynomials (with the same domain!)
       Polynomial __sub__   ( const Polynomial& other ) const ;
-      // ======================================================================      
+      // ======================================================================
     public:
-      // ======================================================================      
+      // ======================================================================
       Polynomial& __iadd__  ( const double a )       ;
       Polynomial& __isub__  ( const double a )       ;
       Polynomial& __imul__  ( const double a )       ;
@@ -603,79 +600,79 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      /// Negate it! 
-      Polynomial  __neg__   () const ; // Negate it! 
-      // ======================================================================      
+      /// Negate it!
+      Polynomial  __neg__   () const ; // Negate it!
+      // ======================================================================
     private:
       // ======================================================================
-      /// x-min 
+      /// x-min
       double              m_xmin ; // x-min
-      /// x-max 
+      /// x-max
       double              m_xmax ; // x-max
-      // ======================================================================      
-    } ;    
+      // ======================================================================
+    } ;
     // ========================================================================
-    inline Polynomial operator+( const Polynomial& a , const Polynomial& b ) 
-    { return a.sum       ( b ) ; }    
-    inline Polynomial operator-( const Polynomial& a , const Polynomial& b ) 
+    inline Polynomial operator+( const Polynomial& a , const Polynomial& b )
+    { return a.sum       ( b ) ; }
+    inline Polynomial operator-( const Polynomial& a , const Polynomial& b )
     { return a.subtract  ( b ) ; }
-    inline Polynomial operator+( const Polynomial& a , const double      b ) 
-    { return a.__add__   ( b ) ; }    
+    inline Polynomial operator+( const Polynomial& a , const double      b )
+    { return a.__add__   ( b ) ; }
     inline Polynomial operator+( const double      b , const Polynomial& a )
     { return a.__add__   ( b ) ; }
-    inline Polynomial operator-( const Polynomial& a , const double      b ) 
-    { return a.__sub__   ( b ) ; }    
+    inline Polynomial operator-( const Polynomial& a , const double      b )
+    { return a.__sub__   ( b ) ; }
     inline Polynomial operator-( const double      b , const Polynomial& a )
     { return a.__rsub__  ( b ) ; }
-    inline Polynomial operator*( const Polynomial& a , const double      b ) 
-    { return a.__mul__   ( b ) ; }    
+    inline Polynomial operator*( const Polynomial& a , const double      b )
+    { return a.__mul__   ( b ) ; }
     inline Polynomial operator*( const double      b , const Polynomial& a )
     { return a.__mul__   ( b ) ; }
-    inline Polynomial operator/( const Polynomial& a , const double      b ) 
-    { return a.__div__   ( b ) ; }    
+    inline Polynomial operator/( const Polynomial& a , const double      b )
+    { return a.__div__   ( b ) ; }
     // ========================================================================
-    /** @class ChebyshevSum 
-     *  Sum of chebychev polinomials 
+    /** @class ChebyshevSum
+     *  Sum of chebychev polinomials
      *  \f$ f(x) = \sum_i \p_i T_i(x)\f$
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-22
      */
-    class GAUDI_API ChebyshevSum : public PolySum 
+    class GAUDI_API ChebyshevSum : public PolySum
     {
     public:
       // =====================================================================
-      /// constructor from the degree  
-      ChebyshevSum ( const unsigned short       degree =  0 , 
-                     const double               xmin   = -1 , 
+      /// constructor from the degree
+      ChebyshevSum ( const unsigned short       degree =  0 ,
+                     const double               xmin   = -1 ,
                      const double               xmax   =  1 )  ;
       // ======================================================================
-      /// constructor from the parameter list 
-      ChebyshevSum ( const std::vector<double>& pars       , 
-                     const double               xmin  = -1 , 
+      /// constructor from the parameter list
+      ChebyshevSum ( const std::vector<double>& pars       ,
+                     const double               xmin  = -1 ,
                      const double               xmax  =  1 )  ;
-      /// template constructor from sequence of parameters 
+      /// template constructor from sequence of parameters
       template <class ITERATOR>
-        ChebyshevSum ( ITERATOR                 first , 
-                       ITERATOR                 last  , 
-                       const double             xmin  , 
-                       const double             xmax  ) 
-        : Gaudi::Math::PolySum ( first , last ) 
+        ChebyshevSum ( ITERATOR                 first ,
+                       ITERATOR                 last  ,
+                       const double             xmin  ,
+                       const double             xmax  )
+        : Gaudi::Math::PolySum ( first , last )
         , m_xmin ( std::min ( xmin, xmax ) )
         , m_xmax ( std::max ( xmin, xmax ) )
       {}
       // ======================================================================
-      /// copy 
+      /// copy
       ChebyshevSum ( const ChebyshevSum&  ) = default ;
-      /// copy 
+      /// copy
       ChebyshevSum (       ChebyshevSum&& ) = default ;
       // ======================================================================
-    public:  // constriuctors with conversions 
+    public:  // constriuctors with conversions
       // ======================================================================
       ///  constructor from Polinomial           (efficient)
       explicit ChebyshevSum ( const Polynomial&  poly ) ;
-      ///  constructor from Bernstein            (delegation) 
+      ///  constructor from Bernstein            (delegation)
       explicit ChebyshevSum ( const Bernstein&   poly ) ;
-      ///  constructor from Legendre             (delegation) 
+      ///  constructor from Legendre             (delegation)
       explicit ChebyshevSum ( const LegendreSum& poly ) ;
       // ======================================================================
     public:
@@ -683,7 +680,7 @@ namespace Gaudi
       /// get the value
       double evaluate    ( const double x ) const ;
       /// get the value
-      double operator () ( const double x ) const 
+      double operator () ( const double x ) const
       { return x < m_xmin ? 0 : x > m_xmax ? 0 : evaluate ( x ) ; }
       // ======================================================================
     public:
@@ -704,33 +701,33 @@ namespace Gaudi
       // ======================================================================
       /// get the integral between xmin and xmax
       double integral   () const ;
-      /// get the integral between low and high 
+      /// get the integral between low and high
       double integral   ( const double low , const double high ) const ;
-      /// get the derivative at point "x" 
+      /// get the derivative at point "x"
       double derivative ( const double x     ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get indefinte integral 
+      /// get indefinte integral
       ChebyshevSum indefinite_integral ( const double C = 0 ) const ;
-      /// get the derivative 
+      /// get the derivative
       ChebyshevSum derivative          () const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// simple  manipulations with polynoms: shift it! 
-      ChebyshevSum& operator += ( const double a ) ; 
-      /// simple  manipulations with polynoms: shift it! 
-      ChebyshevSum& operator -= ( const double a ) ; 
+      /// simple  manipulations with polynoms: shift it!
+      ChebyshevSum& operator += ( const double a ) ;
+      /// simple  manipulations with polynoms: shift it!
+      ChebyshevSum& operator -= ( const double a ) ;
       /// simple  manipulations with polynoms: scale it!
-      ChebyshevSum& operator *= ( const double a ) ; 
-      /// simple  manipulations with polynoms: scale it! 
-      ChebyshevSum& operator /= ( const double a ) ; 
+      ChebyshevSum& operator *= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      ChebyshevSum& operator /= ( const double a ) ;
       // ======================================================================
     public:
       // ======================================================================
-      /// negate it! 
-      ChebyshevSum  operator-() const ; // negate it! 
+      /// negate it!
+      ChebyshevSum  operator-() const ; // negate it!
       // ======================================================================
     public:
       // ======================================================================
@@ -766,39 +763,39 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      // negate it! 
+      // negate it!
       ChebyshevSum __neg__ () const ; // negate it!
       // ======================================================================
     private:
       // ======================================================================
-      /// x-min 
+      /// x-min
       double              m_xmin ; // x-min
-      /// x-max 
+      /// x-max
       double              m_xmax ; // x-max
-      // ======================================================================      
+      // ======================================================================
     } ;
     // ========================================================================
-    inline ChebyshevSum operator+( const ChebyshevSum& a , const ChebyshevSum& b ) 
-    { return a.sum       ( b ) ; }    
-    inline ChebyshevSum operator-( const ChebyshevSum& a , const ChebyshevSum& b ) 
+    inline ChebyshevSum operator+( const ChebyshevSum& a , const ChebyshevSum& b )
+    { return a.sum       ( b ) ; }
+    inline ChebyshevSum operator-( const ChebyshevSum& a , const ChebyshevSum& b )
     { return a.subtract  ( b ) ; }
-    inline ChebyshevSum operator+( const ChebyshevSum& a , const double        b ) 
-    { return a.__add__   ( b ) ; }    
+    inline ChebyshevSum operator+( const ChebyshevSum& a , const double        b )
+    { return a.__add__   ( b ) ; }
     inline ChebyshevSum operator+( const double        b , const ChebyshevSum& a )
     { return a.__add__   ( b ) ; }
-    inline ChebyshevSum operator-( const ChebyshevSum& a , const double        b ) 
-    { return a.__sub__   ( b ) ; }    
+    inline ChebyshevSum operator-( const ChebyshevSum& a , const double        b )
+    { return a.__sub__   ( b ) ; }
     inline ChebyshevSum operator-( const double        b , const ChebyshevSum& a )
     { return a.__rsub__  ( b ) ; }
-    inline ChebyshevSum operator*( const ChebyshevSum& a , const double        b ) 
-    { return a.__mul__   ( b ) ; }    
+    inline ChebyshevSum operator*( const ChebyshevSum& a , const double        b )
+    { return a.__mul__   ( b ) ; }
     inline ChebyshevSum operator*( const double        b , const ChebyshevSum& a )
     { return a.__mul__   ( b ) ; }
-    inline ChebyshevSum operator/( const ChebyshevSum& a , const double        b ) 
-    { return a.__div__   ( b ) ; }    
+    inline ChebyshevSum operator/( const ChebyshevSum& a , const double        b )
+    { return a.__div__   ( b ) ; }
     // ========================================================================
-    /** @class LegendreSum 
-     *  Sum of Legendre polinomials 
+    /** @class LegendreSum
+     *  Sum of Legendre polinomials
      *  \f$ f(x) = \sum_i \p_i P_i(x)\f$
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-02-22
@@ -807,27 +804,27 @@ namespace Gaudi
     {
     public:
       // =====================================================================
-      /// constructor from the degree 
-      LegendreSum ( const unsigned short        degree =  0 , 
-                    const double                xmin   = -1 , 
+      /// constructor from the degree
+      LegendreSum ( const unsigned short        degree =  0 ,
+                    const double                xmin   = -1 ,
                     const double                xmax   =  1 )  ;
       // ======================================================================
-      /// constructor from the parameter list 
-      LegendreSum ( const std::vector<double>&  pars       , 
-                    const double                xmin   = -1 , 
+      /// constructor from the parameter list
+      LegendreSum ( const std::vector<double>&  pars       ,
+                    const double                xmin   = -1 ,
                     const double                xmax   =  1 )  ;
-      /// template constructor from sequence of parameters 
+      /// template constructor from sequence of parameters
       template <class ITERATOR>
-        LegendreSum ( ITERATOR                  first , 
-                      ITERATOR                  last  , 
-                      const double              xmin  , 
-                      const double              xmax  ) 
-        : Gaudi::Math::PolySum ( first , last ) 
+        LegendreSum ( ITERATOR                  first ,
+                      ITERATOR                  last  ,
+                      const double              xmin  ,
+                      const double              xmax  )
+        : Gaudi::Math::PolySum ( first , last )
         , m_xmin ( std::min ( xmin, xmax ) )
         , m_xmax ( std::max ( xmin, xmax ) )
       {}
       // ======================================================================
-      /// copy 
+      /// copy
       LegendreSum  ( const LegendreSum&  ) = default ;
       /// move
       LegendreSum  (       LegendreSum&& ) = default ;
@@ -846,7 +843,7 @@ namespace Gaudi
       /// get the value
       double evaluate    ( const double x ) const ;
       /// get the value
-      double operator () ( const double x ) const 
+      double operator () ( const double x ) const
       { return x < m_xmin ? 0 : x > m_xmax ? 0 : evaluate ( x ) ; }
       // ======================================================================
     public:
@@ -867,33 +864,33 @@ namespace Gaudi
       // ======================================================================
       /// get the integral between xmin and xmax
       double integral   () const ;
-      /// get the integral between low and high 
+      /// get the integral between low and high
       double integral   ( const double low , const double high ) const ;
-      /// get the derivative at point "x" 
+      /// get the derivative at point "x"
       double derivative ( const double x     ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get indefinte integral 
+      /// get indefinte integral
       LegendreSum indefinite_integral ( const double C = 0 ) const ;
-      /// get the derivative 
+      /// get the derivative
       LegendreSum derivative          () const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// simple  manipulations with polynoms: shift it! 
+      /// simple  manipulations with polynoms: shift it!
       LegendreSum& operator += ( const double a ) ;
-      /// simple  manipulations with polynoms: shift it! 
+      /// simple  manipulations with polynoms: shift it!
       LegendreSum& operator -= ( const double a ) ;
-      /// simple  manipulations with polynoms: scale it  
+      /// simple  manipulations with polynoms: scale it
       LegendreSum& operator *= ( const double a ) ;
-      /// simple  manipulations with polynoms: scale it 
+      /// simple  manipulations with polynoms: scale it
       LegendreSum& operator /= ( const double a ) ;
       // ======================================================================
     public:
       // ======================================================================
-      /// negate it! 
-      LegendreSum  operator-() const ; // negate it! 
+      /// negate it!
+      LegendreSum  operator-() const ; // negate it!
       // ======================================================================
     public:
       // ======================================================================
@@ -929,39 +926,39 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      // negate it! 
+      // negate it!
       LegendreSum __neg__ () const ; // negate it!
       // ======================================================================
      private:
       // ======================================================================
-      /// x-min 
+      /// x-min
       double              m_xmin ; // x-min
-      /// x-max 
+      /// x-max
       double              m_xmax ; // x-max
-      // ======================================================================      
+      // ======================================================================
     } ;
     // ========================================================================
-    inline LegendreSum operator+( const LegendreSum& a , const LegendreSum& b ) 
-    { return a.sum       ( b ) ; }    
-    inline LegendreSum operator-( const LegendreSum& a , const LegendreSum& b ) 
+    inline LegendreSum operator+( const LegendreSum& a , const LegendreSum& b )
+    { return a.sum       ( b ) ; }
+    inline LegendreSum operator-( const LegendreSum& a , const LegendreSum& b )
     { return a.subtract  ( b ) ; }
-    inline LegendreSum operator+( const LegendreSum& a , const double       b ) 
-    { return a.__add__   ( b ) ; }    
+    inline LegendreSum operator+( const LegendreSum& a , const double       b )
+    { return a.__add__   ( b ) ; }
     inline LegendreSum operator+( const double       b , const LegendreSum& a )
     { return a.__add__   ( b ) ; }
-    inline LegendreSum operator-( const LegendreSum& a , const double       b ) 
-    { return a.__sub__   ( b ) ; }    
+    inline LegendreSum operator-( const LegendreSum& a , const double       b )
+    { return a.__sub__   ( b ) ; }
     inline LegendreSum operator-( const double       b , const LegendreSum& a )
     { return a.__rsub__  ( b ) ; }
-    inline LegendreSum operator*( const LegendreSum& a , const double       b ) 
-    { return a.__mul__   ( b ) ; }    
+    inline LegendreSum operator*( const LegendreSum& a , const double       b )
+    { return a.__mul__   ( b ) ; }
     inline LegendreSum operator*( const double       b , const LegendreSum& a )
     { return a.__mul__   ( b ) ; }
-    inline LegendreSum operator/( const LegendreSum& a , const double       b ) 
-    { return a.__div__   ( b ) ; }    
+    inline LegendreSum operator/( const LegendreSum& a , const double       b )
+    { return a.__div__   ( b ) ; }
     // ========================================================================
-    /** @class HermiteSum 
-     *  Sum of Hermitepolinomials 
+    /** @class HermiteSum
+     *  Sum of Hermitepolinomials
      *  \f$ f(x) = \sum_i \p_i He_i(x)\f$
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-08-08
@@ -970,9 +967,9 @@ namespace Gaudi
     {
     public:
       // =====================================================================
-      /// constructor from the degree 
+      /// constructor from the degree
       HermiteSum ( const unsigned short       degree =   0  ,
-                   const double               xmin   =  -1  , 
+                   const double               xmin   =  -1  ,
                    const double               xmax   =   1  ) ;
       // ======================================================================
     public:
@@ -991,40 +988,40 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      double x ( const double t ) const 
+      double x ( const double t ) const
       { return 0.5 * ( t / m_scale + m_xmin + m_xmax ) ; }
-      double t ( const double x ) const 
+      double t ( const double x ) const
       { return m_scale * ( 2 * x   - m_xmin - m_xmax ) ; }
       // ======================================================================
     public:
       // ======================================================================
-      /// get the integral between low and high 
+      /// get the integral between low and high
       double integral   ( const double low , const double high ) const ;
-      /// get the derivative at point "x" 
+      /// get the derivative at point "x"
       double derivative ( const double x     ) const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// get indefinte integral 
+      /// get indefinte integral
       HermiteSum indefinite_integral ( const double C = 0 ) const ;
-      /// get the derivative 
+      /// get the derivative
       HermiteSum derivative          () const ;
       // ======================================================================
     public:
       // ======================================================================
-      /// simple  manipulations with polynoms: shift it! 
+      /// simple  manipulations with polynoms: shift it!
       HermiteSum& operator += ( const double a ) ;
-      /// simple  manipulations with polynoms: shift it! 
+      /// simple  manipulations with polynoms: shift it!
       HermiteSum& operator -= ( const double a ) ;
       /// simple  manipulations with polynoms: scale it!
       HermiteSum& operator *= ( const double a ) ;
-      /// simple  manipulations with polynoms: scale it! 
+      /// simple  manipulations with polynoms: scale it!
       HermiteSum& operator /= ( const double a ) ;
       // ======================================================================
     public:
       // ======================================================================
-      /// negate it! 
-      HermiteSum  operator-() const ; // negate it! 
+      /// negate it!
+      HermiteSum  operator-() const ; // negate it!
       // ======================================================================
     public:
       // ======================================================================
@@ -1042,7 +1039,7 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      HermiteSum  __add__   ( const double a ) const ; 
+      HermiteSum  __add__   ( const double a ) const ;
       HermiteSum  __sub__   ( const double a ) const ;
       HermiteSum  __mul__   ( const double a ) const ;
       HermiteSum  __div__   ( const double a ) const ;
@@ -1060,38 +1057,38 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
-      // negate it! 
+      // negate it!
       HermiteSum __neg__    () const ; // negate it!
       // ======================================================================
     private:
       // ======================================================================
-      /// low  edge 
-      double m_xmin  ; // low  edge 
-      /// high edge 
-      double m_xmax  ; // high edge 
-      /// scale 
-      double m_scale ; // scale 
-      // ======================================================================      
+      /// low  edge
+      double m_xmin  ; // low  edge
+      /// high edge
+      double m_xmax  ; // high edge
+      /// scale
+      double m_scale ; // scale
+      // ======================================================================
     } ;
     // ========================================================================
-    inline HermiteSum operator+( const HermiteSum& a , const HermiteSum& b ) 
-    { return a.sum       ( b ) ; }    
-    inline HermiteSum operator-( const HermiteSum& a , const HermiteSum& b ) 
+    inline HermiteSum operator+( const HermiteSum& a , const HermiteSum& b )
+    { return a.sum       ( b ) ; }
+    inline HermiteSum operator-( const HermiteSum& a , const HermiteSum& b )
     { return a.subtract  ( b ) ; }
-    inline HermiteSum operator+( const HermiteSum& a , const double      b ) 
-    { return a.__add__   ( b ) ; }    
+    inline HermiteSum operator+( const HermiteSum& a , const double      b )
+    { return a.__add__   ( b ) ; }
     inline HermiteSum operator+( const double      b , const HermiteSum& a )
     { return a.__add__   ( b ) ; }
-    inline HermiteSum operator-( const HermiteSum& a , const double      b ) 
-    { return a.__sub__   ( b ) ; }    
+    inline HermiteSum operator-( const HermiteSum& a , const double      b )
+    { return a.__sub__   ( b ) ; }
     inline HermiteSum operator-( const double      b , const HermiteSum& a )
     { return a.__rsub__  ( b ) ; }
-    inline HermiteSum operator*( const HermiteSum& a , const double      b ) 
-    { return a.__mul__   ( b ) ; }    
+    inline HermiteSum operator*( const HermiteSum& a , const double      b )
+    { return a.__mul__   ( b ) ; }
     inline HermiteSum operator*( const double      b , const HermiteSum& a )
     { return a.__mul__   ( b ) ; }
-    inline HermiteSum operator/( const HermiteSum& a , const double      b ) 
-    { return a.__div__   ( b ) ; }    
+    inline HermiteSum operator/( const HermiteSum& a , const double      b )
+    { return a.__div__   ( b ) ; }
     // ========================================================================
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================
@@ -1100,130 +1097,130 @@ namespace Gaudi
 namespace Gaudi
 {
   // ==========================================================================
-  namespace Math 
+  namespace Math
   {
     // ========================================================================
     // helper utilities for integration of product of polynomial and an exponent
     // ========================================================================
     /** get the integral between low and high for a product of Bernstein
      *  polynom and the exponential function with the exponent tau
-     *  \f[  \int_{a}^{b} \mathcal{B} e^{\tau x } \mathrm{d}x \f] 
+     *  \f[  \int_{a}^{b} \mathcal{B} e^{\tau x } \mathrm{d}x \f]
      *  @param poly  bernstein polynomial
-     *  @param tau   slope parameter for exponential 
-     *  @param a     low  integration range 
-     *  @param b     high integration range 
+     *  @param tau   slope parameter for exponential
+     *  @param a     low  integration range
+     *  @param b     high integration range
      */
-    GAUDI_API 
-    double integrate 
+    GAUDI_API
+    double integrate
     ( const Gaudi::Math::Bernstein& poly ,
       const double                  tau  ,
-      const double                  a    , 
+      const double                  a    ,
       const double                  b    ) ;
-    // ========================================================================    
+    // ========================================================================
     /** get the integral between low and high for a product of
      *  polynom and the exponential function with the exponent tau
-     *  \f[  \int_{a}^{b} \mathcal{P} e^{\tau x } \mathrm{d}x \f] 
+     *  \f[  \int_{a}^{b} \mathcal{P} e^{\tau x } \mathrm{d}x \f]
      *  @param poly  polynomial
-     *  @param tau   slope parameter for exponential 
-     *  @param a     low  integration range 
-     *  @param b     high integration range 
+     *  @param tau   slope parameter for exponential
+     *  @param a     low  integration range
+     *  @param b     high integration range
      */
-    GAUDI_API 
-    double integrate 
+    GAUDI_API
+    double integrate
     ( const Gaudi::Math::Polynomial& poly ,
       const double                   tau  ,
-      const double                   a    , 
+      const double                   a    ,
       const double                   b    ) ;
-    // ========================================================================    
+    // ========================================================================
     /** get the integral between low and high for a product of
      *  Chebyshev polynom and the exponential function with the exponent tau
-     *  \f[  \int_{a}^{b} \mathcal{T} e^{\tau x } \mathrm{d}x \f] 
+     *  \f[  \int_{a}^{b} \mathcal{T} e^{\tau x } \mathrm{d}x \f]
      *  @param poly  chebyshev polynomial
-     *  @param tau   slope parameter for exponential 
-     *  @param a     low  integration range 
-     *  @param b     high integration range 
+     *  @param tau   slope parameter for exponential
+     *  @param a     low  integration range
+     *  @param b     high integration range
      */
-    GAUDI_API 
-    double integrate 
+    GAUDI_API
+    double integrate
     ( const Gaudi::Math::ChebyshevSum& poly ,
       const double                     tau  ,
-      const double                     a    , 
+      const double                     a    ,
       const double                     b    ) ;
-    // ========================================================================    
+    // ========================================================================
     /** get the integral between low and high for a product of
      *  Legendre polynom and the exponential function with the exponent tau
-     *  \f[  \int_{a}^{b} \mathcal{L} e^{\tau x } \mathrm{d}x \f] 
+     *  \f[  \int_{a}^{b} \mathcal{L} e^{\tau x } \mathrm{d}x \f]
      *  @param poly  Legendre polynomial
-     *  @param tau   slope parameter for exponential 
-     *  @param a     low  integration range 
-     *  @param b     high integration range 
+     *  @param tau   slope parameter for exponential
+     *  @param a     low  integration range
+     *  @param b     high integration range
      */
-    GAUDI_API 
-    double integrate 
+    GAUDI_API
+    double integrate
     ( const Gaudi::Math::LegendreSum& poly ,
       const double                    tau  ,
-      const double                    a    , 
+      const double                    a    ,
       const double                    b    ) ;
-    // ========================================================================    
+    // ========================================================================
 
-    // ========================================================================    
+    // ========================================================================
     // special cases:
-    // ========================================================================    
-    
-    // ========================================================================    
+    // ========================================================================
+
+    // ========================================================================
     /** get the integral between low and high for a product of
      *  polynom and the exponential function with the exponent tau
-     *  \f[  \int_{a}^{b} \mathcal{P} e^{\tau x } \mathrm{d}x \f] 
+     *  \f[  \int_{a}^{b} \mathcal{P} e^{\tau x } \mathrm{d}x \f]
      *  @param poly  polynomial
-     *  @param tau   slope parameter for exponential 
+     *  @param tau   slope parameter for exponential
      */
-    GAUDI_API 
-    double integrate 
+    GAUDI_API
+    double integrate
     ( const Gaudi::Math::Polynomial& poly ,
       const double                   tau  ) ;
-    // ========================================================================    
-    
     // ========================================================================
-    /** construct chebyshev approximation for arbitrary function 
+
+    // ========================================================================
+    /** construct chebyshev approximation for arbitrary function
      *  @param func the function
      *  @param x_min low edge
-     *  @param x_max high edge 
-     *  @return Chebyshev approximation 
-     *  @see ChebyshevSum 
-     *  @code 
+     *  @param x_max high edge
+     *  @return Chebyshev approximation
+     *  @see ChebyshevSum
+     *  @code
      *  FUNC func = ...
      *  ChebyshevSum a = chebyshev_sum<6> ( func , x_min , x_max ) ;
-     *  @endcode 
-     *  
+     *  @endcode
+     *
      */
     template <unsigned short N, class FUNCTION>
-    inline ChebyshevSum 
-    chebyshev_sum ( FUNCTION     func        , 
-                    const double x_min  = -1 , 
-                    const double x_max  =  1 ) 
-    { 
-      // array of precomputed function values 
+    inline ChebyshevSum
+    chebyshev_sum ( FUNCTION     func        ,
+                    const double x_min  = -1 ,
+                    const double x_max  =  1 )
+    {
+      // array of precomputed function values
       std::array<double,N>   fv ;
-      // 
+      //
       const double xmin = std::min ( x_min , x_max ) ;
       const double xmax = std::max ( x_min , x_max ) ;
       //
       const double xhs = 0.5 * ( xmin + xmax ) ;
       const double xhd = 0.5 * ( xmax - xmin ) ;
       const long double pi_N = M_PIl / N ;
-      auto _xi_ = [xhs,xhd,pi_N] ( const unsigned short k ) 
+      auto _xi_ = [xhs,xhd,pi_N] ( const unsigned short k )
         { return std::cos ( pi_N * ( k + 0.5 ) ) * xhd + xhs ; } ;
       for ( unsigned short i = 0 ; i < N ; ++i ) { fv[i] = func ( _xi_ ( i ) ) ; }
       //
       ChebyshevSum cs ( N , xmin , xmax ) ;
-      for ( unsigned short i = 0 ; i < N + 1 ; ++i ) 
+      for ( unsigned short i = 0 ; i < N + 1 ; ++i )
       {
         double c_i = 0 ;
-        if ( 0 == i ) 
+        if ( 0 == i )
         { for ( unsigned short k = 0 ; k < N ; ++k ) { c_i += fv[k] ; } }
-        else 
+        else
         {
-          for ( unsigned short k = 0 ; k < N ; ++k ) 
+          for ( unsigned short k = 0 ; k < N ; ++k )
           { c_i += fv[k] * std::cos ( pi_N * i * ( k + 0.5 ) ) ; }
         }
         c_i *= 2.0 / N ;
@@ -1231,33 +1228,33 @@ namespace Gaudi
         cs.setPar ( i, c_i ) ;
       }
       return cs ;
-    }              
+    }
     // ========================================================================
-    /** construct chebyshev approximation for arbitrary function 
+    /** construct chebyshev approximation for arbitrary function
      *  @param func the function
      *  @param N    the order/degree
      *  @param x_min low edge
-     *  @param x_max high edge 
-     *  @return Chebyshev approximation 
-     *  @see ChebyshevSum 
-     *  @code 
+     *  @param x_max high edge
+     *  @return Chebyshev approximation
+     *  @see ChebyshevSum
+     *  @code
      *  FUNC func = ...
      *  ChebyshevSum a = chebyshev_sum<6> ( func , x_min , x_max ) ;
-     *  @endcode 
-     *  
+     *  @endcode
+     *
      */
     GAUDI_API
-    ChebyshevSum 
+    ChebyshevSum
     chebyshev_sum ( std::function<double(double)> func        ,
-                    const unsigned short          N           , 
-                    const double                  x_min  = -1 , 
+                    const unsigned short          N           ,
+                    const double                  x_min  = -1 ,
                     const double                  x_max  =  1 ) ;
     // ========================================================================
-  } //                                             end of namespace Gaudi::Math 
+  } //                                             end of namespace Gaudi::Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LHCBMATH_POLYNOMIALS_H
 // ============================================================================

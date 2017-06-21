@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_RICHALGBASE_H
-#define RICHKERNEL_RICHALGBASE_H 1
+#pragma once
 
 // GaudiAlg
 #include "GaudiAlg/GaudiAlgorithm.h"
@@ -45,5 +44,3 @@ namespace Rich
   };
   
 }
-
-#endif // RICHKERNEL_RICHALGBASE_H

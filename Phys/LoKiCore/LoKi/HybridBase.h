@@ -79,10 +79,9 @@ namespace LoKi
       ( std::unique_ptr<TYPE>& local , const TYPE& right ) ;
       // ======================================================================
       template <class TYPE1,class TYPE2>
-      StatusCode _get_
-      ( const std::string&                                            code    ,
-        std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&                  local   ,
-        typename LoKi::Assignable<LoKi::Functor<TYPE1,TYPE2> >::Type& output  ) ;
+      StatusCode _get_ ( const std::string&                              code  ,
+                         std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&    local ,
+                         LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>& output) ;
       // ======================================================================
     public:
       // ======================================================================
@@ -179,7 +178,7 @@ inline
 StatusCode LoKi::Hybrid::Base::_get_
 ( const std::string&                                            code    ,
   std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&                  local   ,
-  typename LoKi::Assignable<LoKi::Functor<TYPE1,TYPE2> >::Type& output  )
+  LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&               output  )
 {
   // ==========================================================================
   //

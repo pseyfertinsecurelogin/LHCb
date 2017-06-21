@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHKERNEL_RICHHISTOBASE_H
-#define RICHKERNEL_RICHHISTOBASE_H 1
+#pragma once
 
 #include <vector>
 #include <string>
@@ -361,5 +360,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHKERNEL_RICHHISTOBASE_H

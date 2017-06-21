@@ -14,6 +14,117 @@
 </ul>
 </b>
 
+<H1><A NAME=v42r4>2017-05-31 LHCbSys v42r4</A></H1>
+This version uses Gaudi v28r2 and LCG_82 with ROOT 6.08.06.
+<p>
+This version is released on 2017-patches branch. 
+
+<h2>New or changed functionalities</h2>
+
+<dt>[MR !636] Update default LHCBCOND tag for 2017 and DDDB tag for 2013, 2011, 2010
+<dd> LHCBCOND 2017: "cond-20170510"
+<dd> DDDB     2013: "dddb-20150928"
+<dd> DDDB     2011: "dddb-20160318-1"
+<dd> DDDB     2010: "dddb-20160318"
+
+<h4>Add support for selective Turbo persistency</h4>
+<dl>
+
+<dt>[MR !694] Tweak TurboConf for 2017 Tesla and DaVinci
+<dd> No need to register CALO unpackers beyond 2016
+<dd> Ensure the decoder setup is executed
+
+<dt>[MR !702] Add ContainerMap property to TCKLinePersistenceSvc
+<dd> For Tesla, to remap the locations of packed reconstruction objects from the TCK to the unpacked locations.
+
+<dt>[MR !693] LBHLT-270: Algorithm to strip HltSelReports, keeping only the selected decisions.
+<dd> Only per-selection granularity is supported, i.e. we will either keep or not the report for each trigger line.
+
+<dt>[MR !692] Check LHCbID ordering in HltSelReportsWriter and sort IDs in Decoder
+<dd> HltSelReportsWriter implicitly relies on the LHCbIDs being sorted in HltSummaryObjects since std::binary_search is used. This adds an explicit check of the order, which emits an ERROR if the condition is not met.
+<dd> The SelReports data format causes HltSelReportsDecoder to put LHCbIDs in HltSummaryObject potentially unordered. These are now sorted explicitly.
+
+<dt>[MR !683] LBHLT-120 Add turboPPLinePersistence to ILinePersistenceSvc
+</dl>
+
+<h4>Add support for L0HC emulation</h4>
+<dl>
+<dt>[MR !681, !670] Connect L0HC emulator to L0DU
+<dd> L0HC is added to the L0Processors list for L0DU emulator when EmulateHC is set to True in the Configurable
+<dd> Name alias for the L0Data added ( HRC(B) = GlobalPi0(Et) & HRC(F) == LocalPi0(Et)
+
+<dt>[MR !675, !642] Updates to allow L0 Herschel emulation
+<dd> New algorithm to emulate L0Herschel. Minor changes to L0DU to accommodate this emulator. Minor changes to L0Conf to configure the emulator.
+<dd> See details in https://indico.cern.ch/event/573873/contributions/2590322/attachments/1458963/2253096/17-05May-12_DanJohnson.pdf
+
+</dl>
+
+<h2>Changes to persistency</h2>
+<dl>
+<dt>[MR !696] LHCBPS-1729: Record platform info in event header
+<dd> Added class LHCb::PlatformInfo to record build and run time platform and host information
+<dd> Added platformInfo data member to ProcessHeader (changed version class version)
+<dd> For now, the list of known platform (CMTCONFIG) ids is hardcoded in PlatformInfo implementation, but it should be moved to the conditions database.
+
+<dt>[MR !701] LBHLT-154: Record platform info in HltDecReports
+<dd> Instead of Moore task ID and hostname, record the platform info in HltDecReporst::taskID
+<dd> Followup of !696 for Moore
+
+<dt>[MR !628] Extend Tagger event class
+<dd> Extend the number of available TaggerType values (enum)
+<dd> The strTypConv functionality of the GOD enums has been enabled
+<dd> Two new members have been added to allow for recalculating the mistag probability and tagging decision without having to rerun the tagging
+
+</dl>
+
+<h2>Code improvements</h2>
+<dl>
+<dt>[MR !643] Use GSL linear interpolator instead of cspline during initialisation in RichDet
+
+<dt>[MR !630] Make PrintOn/PrintOff combination behave better and fix RawEventFormatConf application
+<dd> Use force=True when PrintOn/PrintOff combination is used
+<dd> Make sure RawEventFormatConf is not only a "query" dependency of DecodeRawEvent, but is also instantiated whenever DecodeRawEvent is instantiated.
+<dd> This fixes the problem that if RawEventFormatConf is not explicitly instantiated before DecodeRawEvent, its application will be skipped, even though it is instantiated in __apply_configuration__ of DecodeRawEvent.
+
+<dt>[MR !624] Remove LbAppInit::releaseMemoryPools
+<dd> Remove releaseMemoryPools method (called when reaching MemoryPurgeLimit), as it has never worked
+<dd> MemPurgeLimit property declared obsolete
+<dd> Modernise Property declarations
+
+</dl>
+
+<h2>Bug fixes</h2>
+<dl>
+
+<dt>[MR !685] Fix bugs in CaloDigitFilterTool
+<dd> Switched offset maps for SPD and noSPD. Harmless as both maps are so far identical
+<dd> Mixing maps between different calo when updating - most likely harmless as the tool is only used for Ecal
+<dd> Dereferencing the map pointers in case of update - that makes the online monitoring to crash randomly.
+
+<dt>[MR !682] Fix a bug in CaloUtils introduced during a code modernization pass
+
+<dt>[MR !660] RichDet - Improved interpolator range checking
+<dd> Addresses a rare corner case where the range checking failed and an out-of-bounds array access would occur.
+
+<dt>[MR !707] Fix xml summary bug
+<dd> The XmlSummarySvc was not producing an XmlSummary if the OutputLevel was greater than MSG::INFO
+</dl>
+
+
+<h2>Changes to tests</h2>
+<dl>
+<dt>[MR !702] Add a test of the TCKLinePersistenceSvc
+<dt>[MR !693] Add a test covering the full HltSelReports stripping dataflow, i.e. decode, strip, write, decode.
+<dt>[MR !671] Fix loadddddb2017 test, was loading 2016 geometry
+
+<dt>[MR !666, !603] Add test applications and QM tests to LHCbMath to exercise the various VDT math functions
+<dd> The tests check the stability of the various VDT math functions under various SIMD compilation options. They show that SSE4, AVX and AVX2 are all stable, but AVX2+FMA starts to bring in small differences.
+
+<dt>[MR !707] Add a test to check that XmlSummary is saved if LHCbApp().XMLSummary is set
+
+</dl>
+
+
 <H1><A NAME=v42r3>2017-04-24 LHCbSys v42r3</A></H1>
 This version uses Gaudi v28r2 and LCG_82 with ROOT 6.08.06.
 <p>

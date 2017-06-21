@@ -22,6 +22,7 @@
   <class name="LHCb::CircleTraj"/>
   <class name="LHCb::LineTraj"/>
   <class name="LHCb::ParabolaTraj"/>
+  <class name="LHCb::PlatformInfo"/>
   <class name="MuonLayout"/>
   <class pattern ="LHCb::SiPositionInfo<*>"/>
   <class pattern ="LHCb::PixelPositionInfo<*>"/>
@@ -99,4 +100,3 @@
   <class name="std::pair<Gaudi::XYZPoint,Gaudi::XYZPoint>" />
 
 </lcgdict>
-

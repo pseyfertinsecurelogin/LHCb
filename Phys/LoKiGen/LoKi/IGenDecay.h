@@ -37,10 +37,8 @@ namespace Decays
    *  @author Ivan BELYAEV
    *  @date   2009-05-22
    */
-  class GAUDI_API IGenDecay : public virtual IDecayNode
+  struct GAUDI_API IGenDecay : extend_interfaces<IDecayNode>
   {
-    // ========================================================================
-  public:
     // ========================================================================
     /// the actual type of the tree
     typedef Decays::Tree_<const HepMC::GenParticle*>                     Tree ;
@@ -49,18 +47,13 @@ namespace Decays
     /// the actual type of decay finder:
     typedef Decays::Finder_<const HepMC::GenParticle*>                 Finder ;
     // ========================================================================
-  public:
-    // ========================================================================
     /** create the decay tree from the descriptor
      *  @param descriptor (INPUT)  the decay descriptor
      *  @param tree       (OUTPUT) the decay tree
      */
     virtual Tree tree ( const std::string& decay = "" ) const = 0 ;
     // ========================================================================
-  public:
-    // ========================================================================
-    /// the unique interface ID
-    static const InterfaceID& interfaceID() ;        // the unique interface ID
+    DeclareInterfaceID(IGenDecay , 2 , 0 ) ;
     // ========================================================================
   } ;
   // ==========================================================================

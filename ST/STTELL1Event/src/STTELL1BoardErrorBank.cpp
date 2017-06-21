@@ -2,6 +2,7 @@
 #include "Event/STTELL1BoardErrorBank.h"
 #include <iostream>
 #include <string>
+#include <numeric>
 
 #include "GaudiKernel/IRegistry.h"
 
@@ -15,11 +16,9 @@
 
 double LHCb::STTELL1BoardErrorBank::fractionOK(const unsigned int pcn) const{
 
-  double frac = 0.0;
-  LHCb::STTELL1BoardErrorBank::ErrorVector::const_iterator iter = m_errorInfo.begin();
-  for(; iter != m_errorInfo.end(); ++iter){
-    frac += (*iter)->fractionOK(pcn);
-  }
+  auto  frac = std::accumulate( m_errorInfo.begin(), m_errorInfo.end(), 0.0,
+                                [&](double f, const auto* eI)
+                                { return f+eI->fractionOK(pcn); } );
   return frac/m_errorInfo.size();
 }
 
@@ -32,40 +31,36 @@ std::string LHCb::STTELL1BoardErrorBank::regName() const{
 }
 
 bool LHCb::STTELL1BoardErrorBank::isIT() const {
-  const std::string name = regName();
-  return (name.find("IT") != std::string::npos ? true : false);
+  return regName().find("IT") != std::string::npos;
 }
 
 
 bool LHCb::STTELL1BoardErrorBank::isTT() const {
-  const std::string name = regName();
-  return (name.find("TT") != std::string::npos ? true : false);
+  return regName().find("TT") != std::string::npos;
 }
 
 bool LHCb::STTELL1BoardErrorBank::isUT() const {
-  const std::string name = regName();
-  return (name.find("UT") != std::string::npos ? true : false);
+  return regName().find("UT") != std::string::npos;
 }
 
 std::ostream& LHCb::STTELL1BoardErrorBank::fillStream(std::ostream& s) const
 {
-  unsigned int pp = 0;
-  s << "Error bank for TELL1 board source "  << key() << std::endl;
-  if (isIT() == true) {
-    s << STBoardMapping::find(key(), STBoardMapping::ITSourceIDToNumberMap()) << std::endl;
-  } 
-  else if (isTT() == true){
-    s << STBoardMapping::find(key(), STBoardMapping::TTSourceIDToNumberMap()) << std::endl;
+  s << "Error bank for TELL1 board source "  << key() << '\n';
+  if (isIT() ) {
+    s << STBoardMapping::find(key(), STBoardMapping::ITSourceIDToNumberMap()) << '\n';
   }
-  else if (isUT() == true){
-    s << STBoardMapping::find(key(), STBoardMapping::UTSourceIDToNumberMap()) << std::endl;
+  else if (isTT() ){
+    s << STBoardMapping::find(key(), STBoardMapping::TTSourceIDToNumberMap()) << '\n';
+  }
+  else if (isUT() ){
+    s << STBoardMapping::find(key(), STBoardMapping::UTSourceIDToNumberMap()) << '\n';
   }
 
-  LHCb::STTELL1BoardErrorBank::ErrorVector::const_iterator iter = m_errorInfo.begin();
-  for(; iter != m_errorInfo.end(); ++iter, ++pp){
-    s << "pp "  << pp<< std::endl;
-    s << **iter << std::endl;
-  } // iter 
- 
+  unsigned int pp = 0;
+  for(const auto& eI : m_errorInfo ) {
+    s << "pp "  << pp++ << std::endl;
+    s << *eI << '\n';
+  }
+
   return s << std::endl;
 }

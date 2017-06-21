@@ -34,10 +34,9 @@ namespace
     HepMC::IteratorRange        r ,
     const LoKi::GenTypes::GCut& c )
   {
-    return
-      0 == v ? 0 :
-      LoKi::Algs::count_if ( v -> particles_begin ( r ) ,
-                             v -> particles_end   ( r ) , c.func() ) ;
+    return v ?  LoKi::Algs::count_if ( v -> particles_begin ( r ) ,
+                                       v -> particles_end   ( r ) , c.func() )
+             : 0;
   }
   // ==========================================================================
   inline bool has_parts
@@ -45,13 +44,13 @@ namespace
     HepMC::IteratorRange        r ,
     const LoKi::GenTypes::GCut& c )
   {
-    return
-      0 == v ? false :
-      LoKi::Algs::found ( v -> particles_begin ( r ) ,
-                          v -> particles_end   ( r ) , c.func() ) ;
+    return v && LoKi::Algs::found ( v -> particles_begin ( r ) ,
+                                    v -> particles_end   ( r ) , c.func() ) ;
   }
   // ==========================================================================
 }
+
+namespace LoKi { namespace GenParticles {
 // ============================================================================
 /*  constructor from the criteria and "range"
  *  @param cut the criteria
@@ -59,11 +58,9 @@ namespace
  *  @see HepMC::IteratorRange
  */
 // ============================================================================
-LoKi::GenParticles::Count::Count
-( const LoKi::Types::GCuts& cut   ,
-  HepMC::IteratorRange      range )
-  : LoKi::GenTypes::GFunc ()
-  , m_cut   ( cut   )
+Count::Count ( const LoKi::Types::GCuts& cut   ,
+               HepMC::IteratorRange      range )
+  : m_cut   ( cut   )
   , m_range ( range )
 {}
 // ============================================================================
@@ -73,30 +70,24 @@ LoKi::GenParticles::Count::Count
  *  @see HepMC::IteratorRange
  */
 // ============================================================================
-LoKi::GenParticles::Count::Count
-( HepMC::IteratorRange      range ,
-  const LoKi::Types::GCuts& cut   )
-  : LoKi::GenTypes::GFunc ()
-  , m_cut   ( cut   )
+Count::Count ( HepMC::IteratorRange      range ,
+               const LoKi::Types::GCuts& cut   )
+  : m_cut   ( cut   )
   , m_range ( range )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual contructor")
 // ============================================================================
-LoKi::GenParticles::Count*
-LoKi::GenParticles::Count::clone() const
-{ return new LoKi::GenParticles::Count ( *this ) ; }
+Count* Count::clone() const { return new Count ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Count::result_type
-LoKi::GenParticles::Count::operator()
-  ( LoKi::GenParticles::Count::argument p ) const
+double Count::operator() ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( !p )
   {
-    Error ( "HepMC::Particle* points to NULL, return -1000 " ) ;
+    Error ( "HepMC::GenParticle* points to NULL, return -1000 " ) ;
     return -1000 ;
   }
   //
@@ -118,33 +109,22 @@ LoKi::GenParticles::Count::operator()
     Error ( "Invalid HepMC::Ityerator range, return -900 ") ;
     return -900 ;
   }
-  //
-  return 0 ;
 }
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::Count::fillStream
-( std::ostream& stream ) const
+std::ostream& Count::fillStream ( std::ostream& stream ) const
 {
   stream << " GCOUNT(" << m_cut << ",";
   switch ( m_range )
   {
-  case HepMC::parents       :
-    stream << "HepMC.parents"     ; break ;
-  case HepMC::children      :
-    stream << "HepMC.children"    ; break ;
-  case HepMC::family        :
-    stream << "HepMC.family"      ; break ;
-  case HepMC::ancestors     :
-    stream << "HepMC.ancestors"   ; break ;
-  case HepMC::descendants   :
-    stream << "HepMC.descendants" ; break ;
-  case HepMC::relatives     :
-    stream << "HepMC.relatives"   ; break ;
-  default:
-    stream << m_range       ; break ;
+  case HepMC::parents       : stream << "HepMC.parents"     ; break ;
+  case HepMC::children      : stream << "HepMC.children"    ; break ;
+  case HepMC::family        : stream << "HepMC.family"      ; break ;
+  case HepMC::ancestors     : stream << "HepMC.ancestors"   ; break ;
+  case HepMC::descendants   : stream << "HepMC.descendants" ; break ;
+  case HepMC::relatives     : stream << "HepMC.relatives"   ; break ;
+  default: stream << m_range       ; break ;
   } ;
   return stream << ") " ;
 }
@@ -158,11 +138,9 @@ LoKi::GenParticles::Count::fillStream
  *  @see HepMC::IteratorRange
  */
 // ============================================================================
-LoKi::GenParticles::Has::Has
-( const LoKi::Types::GCuts& cut   ,
-  HepMC::IteratorRange      range )
-  : LoKi::GenTypes::GCuts ()
-  , m_cut   ( cut   )
+Has::Has ( const LoKi::Types::GCuts& cut   ,
+           HepMC::IteratorRange      range )
+  : m_cut   ( cut   )
   , m_range ( range )
 {}
 // ============================================================================
@@ -172,30 +150,24 @@ LoKi::GenParticles::Has::Has
  *  @see HepMC::IteratorRange
  */
 // ============================================================================
-LoKi::GenParticles::Has::Has
-( HepMC::IteratorRange      range ,
-  const LoKi::Types::GCuts& cut   )
-  : LoKi::GenTypes::GCuts ()
-  , m_cut   ( cut   )
+Has::Has ( HepMC::IteratorRange      range ,
+           const LoKi::Types::GCuts& cut   )
+  : m_cut   ( cut   )
   , m_range ( range )
 {}
 // ============================================================================
 // MANDATORY: clone method ("virtual contructor")
 // ============================================================================
-LoKi::GenParticles::Has*
-LoKi::GenParticles::Has::clone() const
-{ return new LoKi::GenParticles::Has ( *this ) ; }
+Has* Has::clone() const { return new Has ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Has::result_type
-LoKi::GenParticles::Has::operator()
-  ( LoKi::GenParticles::Has::argument p ) const
+bool Has::operator() ( const HepMC::GenParticle* p ) const
 {
   //
-  if ( 0 == p )
+  if ( !p )
   {
-    Error ( "HepMC::Particle* points to NULL, return false" ) ;
+    Error ( "HepMC::GenParticle* points to NULL, return false" ) ;
     return false ;
   }
   //
@@ -217,33 +189,22 @@ LoKi::GenParticles::Has::operator()
     Error ( "Invalid HepMC::Ityerator range, return false") ;
     return false ;
   }
-  //
-  return false;
 }
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::Has::fillStream
-( std::ostream& stream ) const
+std::ostream& Has::fillStream ( std::ostream& stream ) const
 {
   stream << " GHAS(" << m_cut << ",";
   switch ( m_range )
   {
-  case HepMC::parents       :
-    stream << "HepMC.parents"     ; break ;
-  case HepMC::children      :
-    stream << "HepMC.children"    ; break ;
-  case HepMC::family        :
-    stream << "HepMC.family"      ; break ;
-  case HepMC::ancestors     :
-    stream << "HepMC.ancestors"   ; break ;
-  case HepMC::descendants   :
-    stream << "HepMC.descendants" ; break ;
-  case HepMC::relatives     :
-    stream << "HepMC.relatives"   ; break ;
-  default:
-    stream << m_range       ; break ;
+  case HepMC::parents       : stream << "HepMC.parents"     ; break ;
+  case HepMC::children      : stream << "HepMC.children"    ; break ;
+  case HepMC::family        : stream << "HepMC.family"      ; break ;
+  case HepMC::ancestors     : stream << "HepMC.ancestors"   ; break ;
+  case HepMC::descendants   : stream << "HepMC.descendants" ; break ;
+  case HepMC::relatives     : stream << "HepMC.relatives"   ; break ;
+  default: stream << m_range       ; break ;
   } ;
   return stream << ") " ;
 }
@@ -252,7 +213,7 @@ LoKi::GenParticles::Has::fillStream
 
 
 
-
+} }
 
 // ============================================================================
 // The END

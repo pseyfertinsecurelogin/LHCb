@@ -70,7 +70,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Passed* clone() const override { return new Passed ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override ;
+      bool operator() () const override ;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override ;
       // ======================================================================
@@ -113,7 +113,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Enabled* clone() const override { return new Enabled ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      bool operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -135,7 +135,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Executed* clone() const override { return new Executed ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      bool operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -159,7 +159,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Run* clone() const override { return new Run ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      bool operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -196,7 +196,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       AnyPassed* clone() const override { return new AnyPassed ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      bool operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ANYPASSED" , s ) ; }
@@ -271,7 +271,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       AllPassed* clone() const override { return new AllPassed ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      bool operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ANYPASSED" , s ) ; }
@@ -309,7 +309,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       AnyEnabled* clone() const override { return new AnyEnabled ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const  override;
+      bool operator() () const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ANYENABLED" , s ) ; }
@@ -347,7 +347,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       AllEnabled* clone() const override { return new AllEnabled ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      bool operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ALLENABLED" , s ) ; }
@@ -385,7 +385,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       AnyExecuted* clone() const override { return new AnyExecuted ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      bool operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ANYEXECUTED" , s ) ; }
@@ -422,7 +422,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       AllExecuted* clone() const override { return new AllExecuted ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      bool operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_ALLEXECUTED" , s ) ; }
@@ -457,7 +457,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       RunAll* clone() const override { return new RunAll ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      bool operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_RUNALL" , s ) ; }
@@ -497,7 +497,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       NumPassed* clone() const override { return new NumPassed ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      double operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_NUMPASSED" , s ) ; }
@@ -563,7 +563,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       NumEnabled* clone() const override { return new NumEnabled ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      double operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_NUMENABLED" , s ) ; }
@@ -603,7 +603,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       NumExecuted* clone() const override { return new NumExecuted ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() () const override;
+      double operator() () const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
       { return print ( "ALG_NUMEXECUTED" , s ) ; }

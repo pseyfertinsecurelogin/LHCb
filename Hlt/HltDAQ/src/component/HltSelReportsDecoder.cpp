@@ -444,6 +444,9 @@ HltSelReportsDecoder::operator()(const LHCb::RawEvent& rawEvent) const {
           Error(  "Hit sequence index out of range", StatusCode::SUCCESS, 10 ).ignore();
         }
       }
+      // Sort hits to make sure decode(write(X)) keeps the IDs ordered
+      // (ordering is relied upon and enforced in HltSelReportsWriter)
+      std::sort(std::begin(hits), std::end(hits));
       hos->setLhcbIDs( hits );
 
     } else {

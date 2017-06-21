@@ -42,8 +42,8 @@ private:
   StatusCode createTell1Map();
 
 
-  unsigned int m_nRegionA;
-  unsigned int m_firstStation;
+  unsigned int m_nRegionA = 512;
+  unsigned int m_firstStation = 512;
 
 };
 

@@ -25,60 +25,60 @@
 namespace LoKi
 {
   // ==========================================================================
-  template <class TYPE>
-  struct Assignable ;
-  // ==========================================================================
   /** @struct Assignable
-   *  helper structire to defien the correspondig assignable functors
+   *  helper to define the corresponding assignable functors
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-10-31
    */
-  template <class TYPE1, class TYPE2>
-  struct Assignable<LoKi::Functor<TYPE1,TYPE2> >
-  {
-    typedef LoKi::FunctorFromFunctor<TYPE1,TYPE2>  Type ;
-  };
+  template <typename Fun>
+  using Assignable_t = LoKi::FunctorFromFunctor<LoKi::details::type1_t<Fun>,
+                                                LoKi::details::type2_t<Fun>>;
+  template <typename Fun> struct
+  // TODO: uncomment deprecation warning...
+  // [[deprecated("please use LoKi::Assignable_t<Fun> instead of typename LoKi::Assignable<Fun>::Type")]]
+  Assignable { using Type = Assignable_t<Fun>; };
+
   // ==========================================================================
   /** @struct BasicFunctors
    *
    *  The helper structure to propagate the actual types for the basic functors
    *
-   *  The idea comes from Gerhard "The Great" Raven
+   *  The idea comes from Gerhard Raven
    *
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-10-31
    */
-  template <class TYPE>
-  struct BasicFunctors
+
+  template <typename T> using BooleanConstant_t = LoKi::Constant<T,bool>;
+  template <typename T> using Constant_t        = LoKi::Constant<T,double>;
+  template <typename T> using Function_t        = LoKi::Functor<T,double>;
+  template <typename T> using Predicate_t       = LoKi::Functor<T,bool>;
+  template <typename T> using AssignablePredicate_t = Assignable_t<Predicate_t<T>>;
+  template <typename T> using Map_t             = LoKi::Functor<std::vector<T>, std::vector<double> >;
+  template <typename T> using Pipe_t            = LoKi::Functor<std::vector<T>, std::vector<T>>;
+  template <typename T> using FunVal_t          = Function_t<std::vector<T>>;
+  template <typename T> using Source_t          = LoKi::Functor<void,std::vector<T>>;
+  template <typename T> using CutVal_t          = Predicate_t<std::vector<T>>;
+
+  template <class TYPE> struct BasicFunctors
   {
-  public:
-    // the basic type for "function"  (interface)
-    typedef LoKi::Functor<TYPE,double>               Function               ;
-    // the basic type for "predicate" (interface)
-    typedef LoKi::Functor<TYPE,bool>                 Predicate              ;
-    // the basic type for "function"  (assignable)
-    typedef typename Assignable<Function>::Type      FunctionFromFunction   ;
-    // the basic type for "predicate" (assignable)
-    typedef typename Assignable<Predicate>::Type     PredicateFromPredicate ;
+    using Function = Function_t<TYPE>;        // the (interface) type for "function"
+    using Predicate = Predicate_t<TYPE>;      // the (interface) type for "predicate"
+    using FunctionFromFunction = Assignable_t<Function>;    // the (assignable) type for "function"
+    using PredicateFromPredicate = Assignable_t<Predicate>; // the (assignable) type for "predicate"
     //
-    typedef LoKi::Constant<TYPE,double>              Constant               ;
-    typedef LoKi::Constant<TYPE,bool>                BooleanConstant        ;
+    using Constant = Constant_t<TYPE>;
+    using BooleanConstant = BooleanConstant_t<TYPE>;
     //
     // ========================================================================
     // for functional programing:
     // ========================================================================
     //
-    // map/yield:
-    typedef LoKi::Functor<std::vector<TYPE>,std::vector<double> > Map        ;
-    // filter:
-    typedef LoKi::Functor<std::vector<TYPE>,std::vector<TYPE> >   Pipe       ;
-    // reduce
-    typedef LoKi::Functor<std::vector<TYPE>,double>               FunVal     ;
-    // Source
-    typedef LoKi::Functor<void,std::vector<TYPE> >                Source     ;
-    // reduce
-    typedef LoKi::Functor<std::vector<TYPE>,bool>                 CutVal     ;
-    //
+    using Map    = Map_t<TYPE>;      // map/yield:
+    using Pipe   = Pipe_t<TYPE>;     // filter:
+    using FunVal = FunVal_t<TYPE>;   // reduce
+    using Source = Source_t<TYPE>;   // Source
+    using CutVal = CutVal_t<TYPE>;   // reduce
   } ;
   // ==========================================================================
 } //                                                      end of namespace LoKi

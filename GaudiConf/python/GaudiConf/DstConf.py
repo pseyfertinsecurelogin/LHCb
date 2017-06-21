@@ -404,9 +404,6 @@ class DstConf(LHCbConfigurableUser):
             unpackFittedVeloTracks.OutputName = "Rec/Track/FittedHLT1VeloTracks"
             DataOnDemandSvc().AlgMap[ "/Event/Rec/Track/FittedHLT1VeloTracks" ] = unpackFittedVeloTracks
 
-        if self.getProp("Turbo"):
-            self.setOtherProps(TurboConf(), ["DataType"])
-
         if "Tracking" in self.getProp("EnableUnpack") : return # skip the rest
 
         # Calo

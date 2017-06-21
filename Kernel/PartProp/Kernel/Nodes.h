@@ -85,17 +85,12 @@ namespace Decays
      */
     class GAUDI_API _Node
     {
-    private:
-      // ======================================================================
-      /// STL interface : fake base
-      typedef std::unary_function<LHCb::ParticleID,bool>                _Base ;
-      // ======================================================================
     public:
       // ======================================================================
       /// STL interface : result_type
-      typedef _Base::result_type                                result_type   ;
-      /// STL interface : argument__type
-      typedef _Base::argument_type                              argument_type ;
+      //typedef bool                                              result_type   ;
+      /// STL interface : argument_type
+      //typedef LHCb::ParitcleID                                  argument_type ;
       // ======================================================================
     public:
       // ======================================================================

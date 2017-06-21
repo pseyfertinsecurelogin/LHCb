@@ -3,7 +3,7 @@
 
 /** @class STBoardToBankMap STBoardToBankMap.h
  *
- *  Helper class for mapping boards to banks 
+ *  Helper class for mapping boards to banks
  *  basically hides a a map - used in 2 places....
  *
  *  @author M Needham
@@ -17,8 +17,6 @@
 class STBoardToBankMap final {
 
 public:
-
- STBoardToBankMap() = default;
 
  void addEntry(STTell1ID aBoard, unsigned int aBank);
  STTell1ID findBoard(const unsigned int aBank) const;

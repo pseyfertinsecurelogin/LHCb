@@ -5,6 +5,9 @@
 
 
 ! 2017-04-14 - Olivier Deschamps
+ - Calo2DView : fix bug introduced during the modernization process
+
+! 2017-04-14 - Olivier Deschamps
  - Calo2DView : add protection against invalid CellID
 
 !========================= CaloUtils v10r6 2016-01-27 =========================

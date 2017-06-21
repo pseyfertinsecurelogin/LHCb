@@ -9,7 +9,7 @@
 #include <GaudiUtils/IIODataManager.h>
 
 class IIncidentSvc;
-class IFileStagerSvc;
+struct IFileStagerSvc;
 
 namespace Gaudi  {
 

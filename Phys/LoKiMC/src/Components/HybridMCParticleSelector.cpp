@@ -81,17 +81,11 @@ namespace LoKi
         declareProperty
           ( "Factory" , m_factory , "Type/Name for C++/Python Hybrid MC-Factory" ) ;
       } ;
-      /// destructor : virtual and protected
-      virtual ~MCParticleSelector( ){}
       // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      MCParticleSelector() ;
       /// the copy constructor is disabled
-      MCParticleSelector           ( const MCParticleSelector& ) ;
+      MCParticleSelector           ( const MCParticleSelector& ) = delete;
       /// the assignement operator is disabled
-      MCParticleSelector& operator=( const MCParticleSelector& ) ;
+      MCParticleSelector& operator=( const MCParticleSelector& ) = delete;
       // ======================================================================
     private:
       // ======================================================================

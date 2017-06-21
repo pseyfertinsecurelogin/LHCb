@@ -5,8 +5,6 @@ gaudi_subdir(VectorClass v1r26)
 
 gaudi_depends_on_subdirs(GaudiPolicy)
 
-gaudi_install_headers(VectorClass)
-
 gaudi_add_library(VectorClassLib
                   src/ranvec1.cpp
                   PUBLIC_HEADERS VectorClass

@@ -1,6 +1,5 @@
-// $Id$
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -9,88 +8,88 @@
 #include "LoKi/MCFinder.h"
 #include "LoKi/MCFinderDicts.h"
 // ============================================================================
-/** @file 
+/** @file
  *  Implementation file for class LoKi::Dicts::MCFinder
- *  @date 2007-06-06 
+ *  @date 2007-06-06
  *  @author Vanya BELYAEV
  */
 // ============================================================================
-namespace 
+namespace
 {
-  /// empty range 
+  /// empty range
   const LoKi::Types::MCRange s_EMPTY = LoKi::Types::MCRange() ;
-} 
+}
 // ===========================================================================
 // valid object?
 // ===========================================================================
-bool LoKi::Dicts::MCFinderDicts::valid 
-( const LoKi::MCFinder& m ) 
+bool LoKi::Dicts::MCFinderDicts::valid
+( const LoKi::MCFinder& m )
 { return m.validPointer() ; }
 // ===========================================================================
-// find MC-decays according to decay descriptor 
+// find MC-decays according to decay descriptor
 // ===========================================================================
-LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays 
-( const LoKi::MCFinder& f       , 
-  const std::string&    decay   ) 
+LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays
+( const LoKi::MCFinder& f       ,
+  const std::string&    decay   )
 { return f.validPointer() ? f->findDecays ( decay ) : s_EMPTY ;}
 // ===========================================================================
-// find MC-decays according to decay descriptor 
+// find MC-decays according to decay descriptor
 // ===========================================================================
-LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays 
-( const LoKi::MCFinder& f       , 
+LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays
+( const LoKi::MCFinder& f       ,
   const std::string&    decay   ,
-  const std::string&    address ) 
+  const std::string&    address )
 { return f.validPointer() ? f->findDecays ( decay , address ) : s_EMPTY ;}
 // ===========================================================================
-// find MC-decays according to decay descriptor 
+// find MC-decays according to decay descriptor
 // ===========================================================================
-LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays 
-( const LoKi::MCFinder& f       , 
+LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays
+( const LoKi::MCFinder& f       ,
   const std::string&    decay   ,
-  const LHCb::MCParticle::Container* mcps ) 
+  const LHCb::MCParticle::Container* mcps )
 { return f.validPointer() ? f->findDecays ( decay , mcps ) : s_EMPTY ;}
 // ===========================================================================
-// find MC-decays according to decay descriptor 
+// find MC-decays according to decay descriptor
 // ===========================================================================
-LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays 
-( const LoKi::MCFinder& f       , 
+LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays
+( const LoKi::MCFinder& f       ,
   const std::string&    decay   ,
-  const LHCb::MCParticle::Vector& mcps ) 
+  const LHCb::MCParticle::Vector& mcps )
 { return f.validPointer() ? f->findDecays ( decay , mcps ) : s_EMPTY ;}
 // ===========================================================================
-// find MC-decays according to decay descriptor 
+// find MC-decays according to decay descriptor
 // ===========================================================================
-LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays 
-( const LoKi::MCFinder& f       , 
+LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays
+( const LoKi::MCFinder& f       ,
   const std::string&    decay   ,
-  const LHCb::MCParticle::ConstVector& mcps ) 
+  const LHCb::MCParticle::ConstVector& mcps )
 { return f.validPointer() ? f->findDecays ( decay , mcps ) : s_EMPTY ;}
 // ===========================================================================
-// find MC-decays according to decay descriptor 
+// find MC-decays according to decay descriptor
 // ===========================================================================
-LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays 
-( const LoKi::MCFinder&       f     , 
+LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays
+( const LoKi::MCFinder&       f     ,
   const std::string&          decay ,
-  const LoKi::Types::MCRange& mcps  ) 
+  const LoKi::Types::MCRange& mcps  )
 { return f.validPointer() ? f->findDecays ( decay , mcps ) : s_EMPTY ;}
 // ===========================================================================
-// find MC-decays according to decay descriptor 
+// find MC-decays according to decay descriptor
 // ===========================================================================
-LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays 
-( const LoKi::MCFinder&       f     , 
+LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays
+( const LoKi::MCFinder&       f     ,
   const std::string&          decay ,
-  const LoKi::Keeper<LHCb::MCParticle>& mcps  ) 
+  const LoKi::Keeper<LHCb::MCParticle>& mcps  )
 { return f.validPointer() ? f->findDecays ( decay , mcps ) : s_EMPTY ;}
 // ===========================================================================
-// find MC-decays according to decay descriptor 
+// find MC-decays according to decay descriptor
 // ===========================================================================
-LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays 
-( const LoKi::MCFinder&       f     , 
+LoKi::Types::MCRange LoKi::Dicts::MCFinderDicts::findDecays
+( const LoKi::MCFinder&       f     ,
   const std::string&          decay ,
-  const LoKi::UniqueKeeper<LHCb::MCParticle>& mcps  ) 
+  const LoKi::UniqueKeeper<LHCb::MCParticle>& mcps  )
 { return f.validPointer() ? f->findDecays ( decay , mcps ) : s_EMPTY ;}
 // ===========================================================================
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

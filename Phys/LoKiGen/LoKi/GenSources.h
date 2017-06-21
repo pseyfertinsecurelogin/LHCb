@@ -74,7 +74,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       SourceTES* clone() const override { return new SourceTES(*this) ; }
       /// MANDATORY: the only essential method:
-      result_type operator() () const  override;
+      std::vector<const HepMC::GenParticle*> operator() () const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& o ) const  override;
       // ======================================================================

@@ -131,9 +131,8 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-02-13
      */
-    class GAUDI_API Contains
-      : public LoKi::Functor<void,double>
-      , public LoKi::TES::Get
+    class GAUDI_API Contains : public LoKi::Functor<void,double>
+                             , public LoKi::TES::Get
     {
     public:
       // ======================================================================
@@ -148,7 +147,7 @@ namespace LoKi
       /** MANDATORY: the only one essential method
        *  @return number of elements in container, -1 for non-existing container
        */
-      double operator() ( /* argument v */ ) const override;
+      double operator() ( ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -217,7 +216,7 @@ namespace LoKi
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      result_type operator() ( /* argument v */ ) const override;
+      double operator() ( ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -274,7 +273,7 @@ namespace LoKi
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      result_type operator() ( ) const override;
+      double operator() ( ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
