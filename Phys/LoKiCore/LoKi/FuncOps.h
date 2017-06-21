@@ -299,7 +299,7 @@ namespace LoKi
       static Cut __lt__     ( const Func&  fun1 ,
                               double fun2 ) { return fun1 <  fun2 ; }
       static Cut __lt__     ( const Func&  fun1 ,
-                              Para  fun2 ) { return fun1 <  PAR ( std::move(fun2) ) ; }
+                              const Para&  fun2 ) { return fun1 <  PAR ( fun2 ) ; }
       //
       static Cut __le__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 <= fun2 ; }
