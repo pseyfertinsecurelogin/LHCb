@@ -89,12 +89,10 @@ StatusCode LVolume::belongsTo
   if( !isInside( LocalPoint ) )
     { pVolumePath.clear() ; return StatusCode::FAILURE; }
   /// look for daughters
-  ILVolume::PVolumes::const_iterator ppi =
-    insideDaughter( LocalPoint );
-  if( pvEnd() == ppi ) { return StatusCode::SUCCESS; }
+  const IPVolume* pv = insideDaughter( LocalPoint ).first;
+  if( !pv ) { return StatusCode::SUCCESS; }
   /// check for the volume
-  const IPVolume* pv = *ppi;
-  if( 0 == pv || 0 == pv->lvolume() )
+  if( 0 == pv->lvolume() )
     { pVolumePath.clear() ; return StatusCode::FAILURE; }
   /// add volume to the path
   pVolumePath.push_back( pv ) ;
@@ -113,27 +111,25 @@ StatusCode LVolume::belongsTo
  *  @return status code
  */
 // ============================================================================
-StatusCode LVolume::belongsTo
-( const Gaudi::XYZPoint&        LocalPoint ,
-  const int                Level      ,
-  ILVolume::ReplicaPath&   replicaPath ) const
+StatusCode LVolume::belongsTo( const Gaudi::XYZPoint&   LocalPoint ,
+                               const int                Level      ,
+                               ILVolume::ReplicaPath&   replicaPath ) const
 {
   /// check for level
   if( 0 == Level ) { return StatusCode::SUCCESS; }
   /// check for points
   if( !isInside( LocalPoint ) )
     { replicaPath.clear() ; return StatusCode::FAILURE; }
-  /// look fopr daughters
-  ILVolume::PVolumes::const_iterator ppi =
-    insideDaughter( LocalPoint );
+  /// look for daughters
+  auto ppi = insideDaughter( LocalPoint );
   /// the last level?
-  if( pvEnd() == ppi ) { return StatusCode::SUCCESS; }
+  if( ppi.second == -1 ) { return StatusCode::SUCCESS; }
   /// check for the volume
-  const IPVolume* pv = *ppi;
-  if( 0 == pv || 0 == pv->lvolume() )
+  const IPVolume* pv = ppi.first;
+  if( !pv || !pv->lvolume() )
     { replicaPath.clear() ; return StatusCode::FAILURE; }
   /// get the replica number
-  ILVolume::ReplicaType replica = ppi - pvBegin();
+  ILVolume::ReplicaType replica = ppi.second;
   /// add replica to the path
   replicaPath.push_back( replica ) ;
   /// recursion
@@ -261,10 +257,9 @@ bool LVolume::intersectBody
   double minInterval =  Threshold * m_material->radiationLength() / TickLength;
 
   /// transform container of its own intervals into own intersection container
-  for ( Intervals::const_iterator it = intervals.begin() ;
-        intervals.end() != it ; ++it ) {
-    if ( minInterval < fabs( (*it).second - (*it).first ) ) {
-      intersections.push_back( ILVolume::Intersection( *it , m_material ) ) ;
+  for ( const auto& ival : intervals ) {
+    if ( minInterval < std::abs( ival.second - ival.first ) ) {
+      intersections.push_back( ILVolume::Intersection( ival , m_material ) ) ;
     }
   }
   ///

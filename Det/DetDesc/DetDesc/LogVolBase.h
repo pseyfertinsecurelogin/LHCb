@@ -15,6 +15,7 @@
 #include "DetDesc/LogVolumeException.h"
 #include "DetDesc/Surface.h"
 #include "DetDesc/ValidDataObject.h"
+#include "DetDesc/InstanceCounter.h"
 
 /// forward declarations
 class IDataProviderSvc;
@@ -32,7 +33,8 @@ class IMessageSvc;
  */
 
 class LogVolBase: public virtual ILVolume,
-                  public         ValidDataObject
+                  public         ValidDataObject,
+                  private Details::InstanceCounter<LogVolBase>
 {
 
 public:
@@ -59,7 +61,7 @@ public:
    */
   inline const std::string&  name () const override
   {
-    static const std::string s_empty = "";
+    static const std::string s_empty;
     IRegistry* pReg = registry();
     return pReg ? pReg->identifier() : s_empty;
   }
@@ -90,8 +92,7 @@ public:
    */
   const IPVolume* operator[]( const ILVolume::ReplicaType& index ) const override
   {
-    return index < m_pvolumes.size() ?
-      *(m_pvolumes.begin()+index) : nullptr ;
+    return index < m_pvolumes.size() ? m_pvolumes[index] : nullptr ;
   };
 
   /** daughter (Physical Volume) by name
@@ -113,7 +114,7 @@ public:
    */
   const IPVolume* pvolume( const ILVolume::ReplicaType& index ) const override
   {
-    return index < m_pvolumes.size() ?  *(m_pvolumes.begin()+index) : nullptr ;
+    return index < m_pvolumes.size() ? m_pvolumes[index] : nullptr ;
   }
 
   /** get daughter (Physical Volume) by name
@@ -217,7 +218,7 @@ public:
    *  @param os Gaudi MsgStream  stream
    *  @return reference to the stream
    */
-  MsgStream&    printOut( MsgStream    & os             ) const override;
+  MsgStream& printOut( MsgStream& os ) const override;
 
   /** reset to initial state, clear chaches, etc...
    *  @see ILVolume
@@ -349,21 +350,23 @@ protected:
    */
   bool isInsideDaughter( const Gaudi::XYZPoint& LocalPoint ) const
   {
-    return insideDaughter( LocalPoint ) != m_pvolumes.end();
+    return insideDaughter( LocalPoint ).first != nullptr;
   }
 
   /** check for the given 3D-point inside daughter volume
    *  Point coordinates are in the local reference
    *  frame of the solid.
    *  @param LocalPoint point (in local reference system of the solid)
-   *  @return iterator to the daughter volume
+   *  @return pointer to the daughter volume
    */
-  ILVolume::PVolumes::const_iterator
+  std::pair<const IPVolume*,int>
   insideDaughter( const Gaudi::XYZPoint& LocalPoint ) const
   {
-    return std::find_if( m_pvolumes.begin () ,
-                         m_pvolumes.end   () ,
-                         IPVolume_isInside( LocalPoint ) ) ;
+    auto itp =  std::find_if( m_pvolumes.begin () ,
+                              m_pvolumes.end   () ,
+                              IPVolume_isInside( LocalPoint ) ) ;
+    return itp != m_pvolumes.end() ? std::make_pair(*itp, std::distance( m_pvolumes.begin(), itp) )
+                                   : std::make_pair(nullptr,-1);
   }
 
 protected:
@@ -395,8 +398,6 @@ private:
   std::string           m_sdName        ;
   /// name of magnetic field source
   std::string           m_mfName        ;
-  /// static  volume counter
-  static  std::atomic<unsigned long> s_volumeCounter ;
   /// reference to services
   DetDesc::ServicesPtr m_services = DetDesc::services();
 };

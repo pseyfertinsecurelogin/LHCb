@@ -1,5 +1,5 @@
 #ifndef DETDESC_PARAMEXCEPTION_H
-#define DETDESC_PARAMEXCEPTION_H 1 
+#define DETDESC_PARAMEXCEPTION_H 1
 
 #include <typeinfo>
 
@@ -19,27 +19,24 @@
 class ParamException : public GaudiException {
 
 public:
-  
+
   /// Type of problem encountered in ParamValidDataObject.
   enum ExceptionType {
     BAD_KEY,
     BAD_TYPE
   };
-  
-  /// Constructor 
+
+  /// Constructor
   ParamException( const std::string& name , ExceptionType t=BAD_KEY );
 
   /// Constructor for a BAD_TYPE exception giving informations about the types.
   ParamException( const std::string& name , const std::type_info &req, const std::type_info &actual );
 
-  /// Destructor 
-  virtual ~ParamException() noexcept;
-
   /// Returns the type of ParamException.
   inline ExceptionType type() const { return m_type; }
 
 private:
-  
+
   /// store the type
   ExceptionType m_type;
 

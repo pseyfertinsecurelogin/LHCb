@@ -79,7 +79,8 @@ bool SolidUnion::isInsideImpl( const aPoint   & point ) const
   ///  is point inside the "main" volume?
   if ( first()->isInside( point ) ) { return true  ; }
   /// find the first daughter in which the given point is placed
-  return std::any_of( childBegin() , childEnd() , Solid::isInside( point ) ) ;
+  auto c = children();
+  return std::any_of( begin(c) , end(c) , Solid::isInside( point ) ) ;
 }
 
 // ============================================================================
@@ -131,22 +132,22 @@ void SolidUnion::createCoverTop() {
 // ============================================================================
 StatusCode SolidUnion::updateBP()
 {
-  if( childBegin() == childEnd() ) { return StatusCode::SUCCESS ; }
+  auto c = children();
+  if( !c ) { return StatusCode::SUCCESS ; }
   // get last child
-  SolidChild* base =
-    *( childBegin() + ( childEnd() - childBegin() - 1 ) );
+  const auto& base = c.back();
   //
-  setXMin   ( std::min( base->xMin(), xMin() ) );
-  setXMax   ( std::max( base->xMax(), xMax() ) );
+  setXMin   ( std::min( base.xMin(), xMin() ) );
+  setXMax   ( std::max( base.xMax(), xMax() ) );
 
-  setYMin   ( std::min( base->yMin(), yMin() ) );
-  setYMax   ( std::max( base->yMax(), yMax() ) );
+  setYMin   ( std::min( base.yMin(), yMin() ) );
+  setYMax   ( std::max( base.yMax(), yMax() ) );
 
-  setZMin   ( std::min( base->zMin(), zMin() ) );
-  setZMax   ( std::max( base->zMax(), zMax() ) );
+  setZMin   ( std::min( base.zMin(), zMin() ) );
+  setZMax   ( std::max( base.zMax(), zMax() ) );
 
-  setRMax   ( std::max( base->rMax(), rMax() ) );
-  setRhoMax ( std::max( base->rhoMax(), rhoMax() ) );
+  setRMax   ( std::max( base.rMax(), rMax() ) );
+  setRhoMax ( std::max( base.rhoMax(), rhoMax() ) );
   //
   checkBP();
   createCoverTop();

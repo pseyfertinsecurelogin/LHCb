@@ -1,6 +1,5 @@
 // ===========================================================================
 // STD & STL
-#include <functional>
 #include <algorithm>
 #include <numeric>
 
@@ -50,14 +49,6 @@ SolidBoolean::SolidBoolean( const std::string& name  )
   : SolidBase     ( name  )
 {}
 
-// ============================================================================
-/// destructor
-// ============================================================================
-SolidBoolean::~SolidBoolean()
-{
-  /// delete all daughters
-  for(auto& c : m_sb_childrens) delete c;
-}
 
 // ============================================================================
 /// set bounding parameters
@@ -89,8 +80,7 @@ ISolid* SolidBoolean::reset()
 {
   SolidBase::reset();
   if( m_sb_first ) { m_sb_first->reset(); }
-  std::for_each( childBegin(), childEnd(),
-                 [](SolidChild* s) { s->reset(); } );
+  for (auto& c : children() ) { c.reset(); }
   return this;
 }
 
@@ -105,10 +95,9 @@ StatusCode SolidBoolean::addChild( std::unique_ptr<ISolid>      child ,
                                    const Gaudi::Transform3D*    mtrx  )
 {
   if( !child  ) { return StatusCode::FAILURE; }
-  SolidChild* pChild =
-    new  SolidChild( std::move(child) , mtrx , "Child For " + name () );
+  auto pChild = std::make_unique<SolidChild>( std::move(child) , mtrx , "Child For " + name () ) ;
   if( !pChild ) { return StatusCode::FAILURE; }
-  m_sb_childrens.push_back(pChild);
+  m_sb_childrens.push_back(std::move(pChild));
   checkTickContainerCapacity() ;
   return StatusCode::SUCCESS;
 }
@@ -125,10 +114,9 @@ StatusCode SolidBoolean::addChild   ( std::unique_ptr<ISolid>  child    ,
                                       const Gaudi::Rotation3D&    rotation )
 {
   if( !child  ) { return StatusCode::FAILURE; }
-  SolidChild* pChild =
-    new  SolidChild( std::move(child) , position , rotation , "Child For " + name () );
+  auto pChild = std::make_unique<SolidChild>( std::move(child) , position , rotation , "Child For " + name () ) ;
   if( !pChild ) { return StatusCode::FAILURE; }
-  m_sb_childrens.push_back(pChild);
+  m_sb_childrens.push_back(std::move(pChild));
   checkTickContainerCapacity() ;
   return StatusCode::SUCCESS;
 }
@@ -177,11 +165,9 @@ unsigned int SolidBoolean::intersectionTicksImpl( const aPoint & Point,
   first()->intersectionTicks( Point , Vector , ticks );
   /// find intersections with child solids:
   ISolid::Ticks childTicks;
-  for( auto ci = childBegin() ; childEnd() != ci ; ++ci )
+  for( const auto& child : children() )
     {
-      const ISolid* child = *ci;
-      if( child )
-        { child->intersectionTicks( Point , Vector, childTicks ); }
+      child.intersectionTicks( Point , Vector, childTicks );
       std::copy( childTicks.begin() , childTicks.end() ,
                  std::back_inserter( ticks ) );
       childTicks.clear();
@@ -195,10 +181,11 @@ unsigned int SolidBoolean::intersectionTicksImpl( const aPoint & Point,
   */
 ISolid::Ticks::size_type SolidBoolean::maxNumberOfTicks() const
 {
-  return std::accumulate( childBegin(), childEnd(),
+  auto c = children();
+  return std::accumulate( begin(c), end(c),
                           first()->maxNumberOfTicks(),
-                          [](ISolid::Ticks::size_type sum,const SolidChild* c) {
-              return c ? sum + c->maxNumberOfTicks() : sum ;
+                          [](ISolid::Ticks::size_type sum,const SolidChild& c) {
+              return sum + c.maxNumberOfTicks() ;
   });
 
 }
@@ -271,11 +258,10 @@ std::ostream& SolidBoolean::printOut( std::ostream& os ) const
   SolidBase::printOut( os );
   os     << " ** 'Main' solid is \n";
   first()->printOut( os )  ;
-  for( const auto& child : m_sb_childrens )
-    {
+  for( auto& child : children() ) {
       os << " ** 'Booled' with \n";
-      child->printOut( os );
-    }
+      child.printOut( os );
+  }
   return os << std::endl ;
 }
 // ============================================================================
@@ -292,10 +278,10 @@ MsgStream&    SolidBoolean::printOut( MsgStream&    os ) const
   SolidBase::printOut( os );
   os     << " ** 'Main' solid is " << endmsg;
   first()->printOut( os )  ;
-  for( const auto& child :m_sb_childrens)
+  for( auto& child : children() )
     {
       os << " ** 'Booled' with "   << endmsg ;
-      child->printOut( os );
+      child.printOut( os );
     }
   return os << endmsg ;
 }

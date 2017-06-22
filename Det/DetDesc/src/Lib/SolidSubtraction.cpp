@@ -82,7 +82,8 @@ bool SolidSubtraction::isInsideImpl( const aPoint& point ) const
   ///  is point inside the "main" volume?
   if ( !first()->isInside( point ) ) { return false; }
   /// find a daughter in which the given point is placed
-  return std::none_of( childBegin() , childEnd() , Solid::isInside( point ) );
+  auto c = children();
+  return std::none_of( begin(c) , end(c) , Solid::isInside( point ) );
 }
 
 // ============================================================================
