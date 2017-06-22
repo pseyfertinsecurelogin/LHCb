@@ -60,8 +60,6 @@ namespace LoKi
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
-    public:
-      // ======================================================================
       const LoKi::Interface<GaudiAlgorithm>&   algorithm () const
       { return m_algorithm ; }
       const LoKi::Interface<IDataProviderSvc>& service   () const
@@ -280,7 +278,7 @@ namespace LoKi
     private:
       // ======================================================================
       /// Helper object used to extract information from the StatEntity object.
-      std::shared_ptr<StatEntityGetter> m_getter;
+      std::shared_ptr<const StatEntityGetter> m_getter;
       // ======================================================================
     } ;
     // ========================================================================

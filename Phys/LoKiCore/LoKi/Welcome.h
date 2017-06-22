@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <atomic>
 // ============================================================================
 /** @file
  *
@@ -55,9 +56,6 @@ namespace LoKi
     /// Standard constructor
     Welcome ();
     // ========================================================================
-    /// copy constructor is disabled
-    Welcome ( const Welcome& ) = delete;  // copy constructor is disabled
-    // ========================================================================
   private:
     // ========================================================================
     size_t                   m_len1        ;
@@ -65,8 +63,7 @@ namespace LoKi
     std::string              m_fmt1        ;
     std::string              m_fmt2        ;
     std::string              m_fmt3        ;
-    mutable bool             m_wel_printed ;
-    mutable bool             m_bye_printed ;
+    mutable std::atomic<int> m_printed{ 0 };
     // ========================================================================
   };
   // ==========================================================================
@@ -106,18 +103,12 @@ namespace Bender
     // ========================================================================
   private:
     // ========================================================================
-    /// copy constructor is disabled
-    Welcome ( const Welcome& );                // copy constructor is disabled
-    // ========================================================================
-  private:
-    // ========================================================================
     size_t       m_len1        ;
     std::string  m_str1        ;
     std::string  m_fmt1        ;
     std::string  m_fmt2        ;
     std::string  m_fmt3        ;
-    mutable bool m_wel_printed ;
-    mutable bool m_bye_printed ;
+    mutable std::atomic<int> m_printed{ 0 };
     // ========================================================================
   } ;
   // ==========================================================================

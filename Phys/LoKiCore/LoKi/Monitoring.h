@@ -74,18 +74,17 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate and the generic counter
-      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
-      Counter ( F&&         cut  ,
+      Counter ( LoKi::FunctorFromFunctor<TYPE,TYPE2> cut  ,
                 StatEntity* stat )
-        : m_cut    ( std::forward<F>(cut) )
+        : m_cut    ( std::move(cut) )
         , m_stat   ( stat )
       {}
       /// constructor from the predicate and the generic counter
       template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
-      Counter ( F&&                     cut  ,
+      Counter ( LoKi::FunctorFromFunctor<TYPE,TYPE2> cut  ,
                 const LoKi::CounterDef& cnt )
         : LoKi::AuxFunBase ( std::tie ( cut , cnt ) )
-        , m_cut    ( std::forward<F>(cut)  )
+        , m_cut    ( std::move(cut)  )
         , m_cntdef ( cnt  )
       {
         if ( this->gaudi() && m_cntdef.valid() )
@@ -128,17 +127,15 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the predicate and the generic counter
-      template <typename F, typename = details::require_signature<F,void,TYPE2>>
-      Counter ( F&&         cut  ,
+      Counter ( LoKi::FunctorFromFunctor<void,TYPE2> cut  ,
                 StatEntity* stat )
-        : m_cut     ( std::forward<F>(cut) )
+        : m_cut     ( std::move(cut) )
         , m_stat    ( stat )
       {}
-      template <typename F, typename = details::require_signature<F,void,TYPE2>>
-      Counter ( F&&                      cut  ,
+      Counter ( LoKi::FunctorFromFunctor<void,TYPE2> cut  ,
                 const LoKi::CounterDef&  cnt  )
         : LoKi::AuxFunBase ( std::tie ( cut , cnt ) )
-        , m_cut     ( std::forward<F>(cut) )
+        , m_cut     ( std::move(cut) )
         , m_cntdef  ( cnt  )
       {
         if ( this->gaudi() && m_cntdef.valid() )
@@ -204,18 +201,16 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the function and the histogram
-      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
-      Plot ( F&&                 fun   ,
+      Plot ( LoKi::FunctorFromFunctor<TYPE,TYPE2> fun   ,
              AIDA::IHistogram1D* histo )
-        : m_fun     ( std::forward<F>(fun)   )
+        : m_fun     ( std::move(fun)   )
         , m_histo   ( histo )
       {}
       /// constructor from the function and the histogram  description
-      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
-      Plot ( F&&                fun   ,
+      Plot ( LoKi::FunctorFromFunctor<TYPE,TYPE2> fun   ,
              const LoKi::Histo& hdef  )
         : LoKi::AuxFunBase ( std::tie ( fun , hdef ) )
-        , m_fun     ( std::forward<F>(fun)   )
+        , m_fun     ( std::move(fun)   )
         , m_hdef    ( hdef  )
       {
         // try to load the histo
@@ -223,11 +218,10 @@ namespace LoKi
         { m_histo = LoKi::HistoBook::book ( m_hdef ) ; }
       }
       /// constructor from the function and the histogram  description
-      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
       Plot ( const LoKi::Histo& hdef  ,
-             F&&                fun   )
+             LoKi::FunctorFromFunctor<TYPE,TYPE2> fun   )
         : LoKi::AuxFunBase ( std::tie ( hdef , fun ) )
-        , m_fun     ( std::forward<F>(fun)   )
+        , m_fun     ( std::move(fun)   )
         , m_hdef    ( hdef  )
       {
         // try to load the histo
@@ -235,10 +229,9 @@ namespace LoKi
         { m_histo = LoKi::HistoBook::book ( m_hdef ) ; }
       }
       /// constructor from the function and the histogram
-      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
       Plot ( AIDA::IHistogram1D* histo ,
-             F&&                 fun   )
-        : m_fun     ( std::forward<F>(fun) )
+             LoKi::FunctorFromFunctor<TYPE,TYPE2> fun   )
+        : m_fun     ( std::move(fun) )
         , m_histo   ( histo )
       {}
       /// MANDATORY: clone method ("virtual constructor")
@@ -280,18 +273,16 @@ namespace LoKi
     public:
       // ======================================================================
       /// constructor from the function and the histogram
-      template <typename F, typename = details::require_signature<F,void,TYPE2>>
-      Plot ( F&&                 fun   ,
+      Plot ( LoKi::FunctorFromFunctor<void,TYPE2> fun,
              AIDA::IHistogram1D* histo )
-        : m_fun     ( std::forward<F>(fun) )
+        : m_fun     ( std::move(fun) )
         , m_histo   ( histo )
       {}
       /// constructor from the function and the histogram
-      template <typename F, typename = details::require_signature<F,void,TYPE2>>
-      Plot ( F&&                 fun   ,
+      Plot ( LoKi::FunctorFromFunctor<void,TYPE2> fun,
              const LoKi::Histo&  hdef  )
         : LoKi::AuxFunBase ( std::tie ( fun , hdef ) )
-        , m_fun     ( std::forward<F>(fun) )
+        , m_fun     ( std::move(fun) )
         , m_hdef    ( hdef  )
       {
         // try to load the histo
@@ -299,10 +290,9 @@ namespace LoKi
         { m_histo = LoKi::HistoBook::book ( m_hdef ) ; }
       }
       /// constructor from the function and the histogram
-      template <typename F, typename = details::require_signature<F,void,TYPE2>>
       Plot ( AIDA::IHistogram1D* histo ,
-             F&&                 fun   )
-        : m_fun     ( std::forward<F>(fun) )
+             LoKi::FunctorFromFunctor<void,TYPE2> fun   )
+        : m_fun     ( std::move(fun) )
         , m_histo   ( histo )
       {}
       /// MANDATORY: clone method ("virtual constructor")
@@ -365,13 +355,12 @@ namespace LoKi
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
-      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
-      Printer ( F&&                  fun                ,
+      Printer ( LoKi::FunctorFromFunctor<TYPE,TYPE2> fun,
                 std::ostream&        stream = std::cout ,
                 const std::string&   suffix = "\n"      ,
                 const std::string&   prefix = ""        )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_fun    ( std::forward<F>(fun) )
+        , m_fun    ( std::move(fun) )
         , m_stream ( stream )
         , m_suffix ( suffix )
         , m_prefix ( prefix ) {}
@@ -382,14 +371,12 @@ namespace LoKi
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
-      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
-      Printer
-      ( std::ostream&      stream        ,
-        F&&                fun           ,
-        const std::string& suffix = "\n" ,
-        const std::string& prefix = ""   )
+      Printer ( std::ostream&      stream        ,
+                LoKi::FunctorFromFunctor<TYPE,TYPE2> fun,
+                const std::string& suffix = "\n" ,
+                const std::string& prefix = ""   )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_fun    ( std::forward<F>(fun) )
+        , m_fun    ( std::move(fun) )
         , m_stream ( stream )
         , m_suffix ( suffix )
         , m_prefix ( prefix ) {}
@@ -438,13 +425,12 @@ namespace LoKi
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
-      template <typename F, typename = details::require_signature<F,void,TYPE2>>
-      Printer ( F&&                fun                ,
+      Printer ( LoKi::FunctorFromFunctor<void,TYPE2> fun,
                 std::ostream&      stream = std::cout ,
                 const std::string& suffix = "\n"      ,
                 const std::string& prefix = ""        )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_fun    ( std::forward<F>(fun) )
+        , m_fun    ( std::move(fun) )
         , m_stream ( stream )
         , m_suffix ( suffix )
         , m_prefix ( prefix ) {}
@@ -455,13 +441,12 @@ namespace LoKi
        *  @param suffix the suffix
        *  @param prefix the prefix
        */
-      template <typename F, typename = details::require_signature<F,void,TYPE2>>
       Printer ( std::ostream&      stream        ,
-                F&&                fun           ,
+                LoKi::FunctorFromFunctor<void,TYPE2> fun,
                 const std::string& suffix = "\n" ,
                 const std::string& prefix = ""   )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_fun    ( std::forward<F>(fun) )
+        , m_fun    ( std::move(fun) )
         , m_stream ( stream )
         , m_suffix ( suffix )
         , m_prefix ( prefix ) {}

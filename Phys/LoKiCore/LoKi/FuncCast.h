@@ -38,18 +38,16 @@ namespace LoKi
     public:
       // ======================================================================
       /// Standard constructor
-      explicit FuncCast ( const LoKi::Functor<TYPE2,TYPE3>& fun )
+      explicit FuncCast ( LoKi::FunctorFromFunctor<TYPE2,TYPE3> fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_fun ( fun )
+        , m_fun ( std::move(fun) )
       {}
       /// MANDATORY: clone method ("virtual constructor")
       FuncCast* clone() const override { return new FuncCast(*this); }
       /// MANDATORY: the only one essential method
       TYPE3
       operator() ( typename LoKi::Functor<TYPE1,TYPE3>::argument a ) const override
-      {
-        return m_fun( dynamic_cast<TYPE2>( a )  ) ;
-      }
+      { return m_fun( dynamic_cast<TYPE2>( a )  ) ; }
       /// OPTIONAL: the specific printout
       std::ostream& fillStream ( std::ostream& stream ) const override
       { return stream << m_fun ; }
@@ -74,9 +72,9 @@ namespace LoKi
     public:
       // ======================================================================
       /// Standard constructor
-      explicit FuncStaticCast ( const LoKi::Functor<TYPE2,TYPE3>& fun )
+      explicit FuncStaticCast ( LoKi::FunctorFromFunctor<TYPE2,TYPE3> fun )
         : LoKi::AuxFunBase ( std::tie ( fun ) )
-        , m_fun ( fun )
+        , m_fun ( std::move(fun) )
       {}
       /// MANDATORY: clone method ("virtual constructor")
       FuncStaticCast* clone() const override
@@ -84,9 +82,7 @@ namespace LoKi
       /// MANDATORY: the only one essential method
       TYPE3
       operator() ( typename LoKi::Functor<TYPE1,TYPE3>::argument a ) const override
-      {
-        return m_fun.fun ( static_cast<TYPE2>( a ) ) ;
-      } ;
+      { return m_fun.fun ( static_cast<TYPE2>( a ) ) ; } ;
       /// OPTIONAL: the specific printout
       virtual std::ostream& fillStream ( std::ostream& stream ) const
       { return stream << m_fun ; }

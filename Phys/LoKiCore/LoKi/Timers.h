@@ -6,6 +6,7 @@
 // STD & STL
 // ============================================================================
 #include <string>
+#include <mutex>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -46,19 +47,14 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor from the timer name
-    Timer ( const std::string& name ) ;
+    Timer ( const std::string& name ) : m_name(name) {}
     /// destructor
-    virtual ~Timer () ; // destructor
+    virtual ~Timer () = default ; // destructor
     // ========================================================================
   public:
     // ========================================================================
     /// get the timer name
     const std::string& name() const { return m_name ; }   // get the timer name
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the default constructor is disabled
-    Timer () ;                           // the default constructor is disabled
     // ========================================================================
   private:
     // ========================================================================
@@ -83,19 +79,16 @@ namespace LoKi
     public :
       // ======================================================================
       /// constructor from functor&timer
-      template <typename F, typename = details::require_signature<F,TYPE1,TYPE2>>
-      Timer_ ( F&&           fun    ,
+      Timer_ ( LoKi::FunctorFromFunctor<TYPE1,TYPE2> fun    ,
                ChronoEntity* timer  )
-        : m_fun   ( std::forward<F>(fun)   )
+        : m_fun   ( std::move(fun) )
         , m_timer ( timer )
-        , m_first ( false )
       {}
       /// constructor from functor&service&timer name
-      template <typename F, typename = details::require_signature<F,TYPE1,TYPE2>>
-      Timer_ ( F&&                fun    ,
+      Timer_ ( LoKi::FunctorFromFunctor<TYPE1,TYPE2> fun    ,
                IChronoSvc*        svc    ,
                const std::string& timer  )
-        : m_fun   ( std::forward<F>(fun)   )
+        : m_fun   ( std::move(fun)   )
         , m_svc   ( svc   )
         , m_tname ( timer )
       {
@@ -106,11 +99,10 @@ namespace LoKi
         }
       }
       /// constructor from functor&timer name
-      template <typename F, typename = details::require_signature<F,TYPE1,TYPE2>>
-      Timer_ ( F&&                fun    ,
+      Timer_ ( LoKi::FunctorFromFunctor<TYPE1,TYPE2> fun    ,
                const std::string& timer  )
         : LoKi::AuxFunBase ( std::tie ( fun , timer ) )
-        , m_fun   ( std::forward<F>(fun)   )
+        , m_fun   ( std::move(fun)   )
         , m_tname ( timer )
       {
         if ( this->gaudi() )
@@ -119,28 +111,38 @@ namespace LoKi
           m_svc = cs.get() ;
         }
       }
+
+      // copy constructor -- needed for clone...
+      Timer_(const Timer_& rhs)
+          : LoKi::AuxFunBase(rhs)
+          , LoKi::Functor<TYPE1,TYPE2>( rhs )
+          , m_fun( rhs.m_fun )
+          , m_svc( rhs.m_svc )
+          , m_tname( rhs.m_tname )
+          , m_timer( rhs.m_timer )
+      {}
+
       /// destructor
       virtual ~Timer_ ()
-      { if ( this->m_svc && !this->gaudi() ) { this->m_svc.reset() ; } }
+      { if ( m_svc && !this->gaudi() ) { m_svc.reset() ; } }
       /// MANDATORY: clone method ("virtual constructor")
       Timer_ * clone() const override { return new Timer_ ( *this ) ; }
-      /// MANDATORY: the only one essenital method
+      /// MANDATORY: the only one essential method
       TYPE2 operator()
       ( typename LoKi::Functor<TYPE1,TYPE2>::argument a ) const override
       {
         //
-        if ( !m_timer && m_first && !m_svc )
-        {
-          SmartIF<IChronoSvc> cs ( this->lokiSvc().getObject() ) ;
-          m_svc = cs.get() ;
+        if ( UNLIKELY(!m_timer) ) {
+            std::call_once( m_first, [&]() {
+              if ( !m_svc ) {
+                 SmartIF<IChronoSvc> cs ( this->lokiSvc().getObject() ) ;
+                 m_svc = cs.get() ;
+              }
+              if ( m_svc ) m_timer = m_svc->chronoStart ( m_tname ) ;
+            } );
         }
         //
-        if ( !m_timer && m_first && !(!m_svc ) )
-        { m_timer = m_svc->chronoStart ( m_tname ) ; }
-        //
         Chrono _timer ( m_timer ) ;
-        m_first = false ;
-        //
         return m_fun.fun ( a ) ;
       }
       // ======================================================================
@@ -152,11 +154,6 @@ namespace LoKi
         //
         return s << " timer(" << m_fun << ",'" << m_tname << "')" ;
       }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Timer_ () ;                        // the default constructor is disabled
       // ======================================================================
     public:
       // ======================================================================
@@ -174,7 +171,7 @@ namespace LoKi
       /// the actual timer
       mutable ChronoEntity*                 m_timer = nullptr ;   // the actual timer
       /// the first time?
-      mutable bool                          m_first = true;   // the first time?
+      mutable std::once_flag                m_first;   // the first time?
       // ======================================================================
     };
     // ========================================================================
@@ -185,19 +182,16 @@ namespace LoKi
     public :
       // ======================================================================
       /// constructor from functor&timer
-      template <typename F, typename = details::require_signature<F,void,TYPE2>>
-      Timer_( F&&           fun    ,
+      Timer_( LoKi::FunctorFromFunctor<void,TYPE2> fun    ,
               ChronoEntity* timer  )
-        : m_fun   ( std::forward<F>(fun)   )
+        : m_fun   ( std::move(fun)   )
         , m_timer ( timer )
-        , m_first ( false )
       {}
       /// constructor from functor&service&timer name
-      template <typename F, typename = details::require_signature<F,void,TYPE2>>
-      Timer_ ( F&&                fun    ,
-               IChronoSvc*        svc    ,
-               const std::string& timer  )
-        : m_fun   ( std::forward<F>(fun)   )
+      Timer_( LoKi::FunctorFromFunctor<void,TYPE2> fun    ,
+              IChronoSvc*        svc    ,
+              const std::string& timer  )
+        : m_fun   ( std::move(fun)   )
         , m_svc   ( svc   )
         , m_tname ( timer )
       {
@@ -208,11 +202,10 @@ namespace LoKi
         }
       }
       /// constructor from functor&timer name
-      template <typename F, typename = details::require_signature<F,void,TYPE2>>
-      Timer_ ( F&&                 fun    ,
+      Timer_( LoKi::FunctorFromFunctor<void,TYPE2> fun    ,
                const std::string&  timer  )
         : LoKi::AuxFunBase ( std::tie ( fun , timer ) )
-        , m_fun   ( std::forward<F>(fun)   )
+        , m_fun   ( std::move(fun)   )
         , m_tname ( timer )
       {
         if ( this->gaudi() )
@@ -221,6 +214,15 @@ namespace LoKi
           m_svc = cs.get() ;
         }
       }
+      // copy constructor -- needed for clone...
+      Timer_(const Timer_& rhs)
+          : LoKi::AuxFunBase(rhs)
+          , LoKi::Functor<void,TYPE2>( rhs )
+          , m_fun( rhs.m_fun )
+          , m_svc( rhs.m_svc )
+          , m_tname( rhs.m_tname )
+          , m_timer( rhs.m_timer )
+      {}
       /// MANDATORY: virtual destructor
       virtual ~Timer_ ()
       { if ( this->m_svc && !this->gaudi() ) { this->m_svc.reset() ; } }
@@ -231,18 +233,17 @@ namespace LoKi
       TYPE2 operator() () const override
       {
         //
-        if ( !m_timer && m_first && !m_svc )
-        {
-          SmartIF<IChronoSvc> cs ( this->lokiSvc().getObject() ) ;
-          m_svc = cs.get() ;
+        if (UNLIKELY(!m_timer)) {
+            std::call_once( m_first, [&]() {
+              if ( !m_svc ) {
+                SmartIF<IChronoSvc> cs ( this->lokiSvc().getObject() ) ;
+                m_svc = cs.get() ;
+              }
+              if ( m_svc ) { m_timer = m_svc->chronoStart ( m_tname ) ; }
+            } );
         }
         //
-        if ( !m_timer && m_first && !(!m_svc ) )
-        { m_timer = m_svc->chronoStart ( m_tname ) ; }
-        //
-        //
         Chrono _timer ( m_timer ) ;
-        m_first = false ;
         //
         return m_fun.fun () ;
       }
@@ -263,7 +264,7 @@ namespace LoKi
       /// the actual timer
       mutable ChronoEntity*                 m_timer = nullptr;   // the actual timer
       /// the first time?
-      mutable bool                          m_first = true;   // the first time?
+      mutable std::once_flag                m_first ;   // the first time?
       // ======================================================================
     };
     // ========================================================================

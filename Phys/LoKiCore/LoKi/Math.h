@@ -835,7 +835,7 @@ namespace LoKi
     } _Abs_{} ;
     // ========================================================================
     template <class TYPE = void, class TYPE1,
-              class TYPE2 = typename std::conditional< std::is_void<TYPE>::value, TYPE1, TYPE >::type >
+              class TYPE2 = std::conditional_t< std::is_void<TYPE>::value, TYPE1, TYPE >>
     std::vector<TYPE2> _abs_ ( const std::vector<TYPE1>& vct )
     {
       std::vector<TYPE2> res; res.reserve( vct.size() ) ;
