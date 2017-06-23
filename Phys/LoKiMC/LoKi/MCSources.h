@@ -76,7 +76,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       SourceTES* clone () const  override;
       /// MANDATORY: the only essential method:
-      result_type operator() () const  override;
+      LHCb::MCParticle::ConstVector operator() () const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& o ) const  override;
       // ======================================================================
@@ -168,7 +168,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       TESCounter* clone() const  override;
       /// MANDATORY: the only essential method:
-      result_type operator() ( /* argument */ ) const  override;
+      double operator() (  ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& o ) const  override;
       // ======================================================================
@@ -216,7 +216,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       SourceTES* clone () const  override;
       /// MANDATORY: the only essential method:
-      result_type operator() () const  override;
+      LHCb::MCVertex::ConstVector operator() () const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& o ) const  override;
       // ======================================================================

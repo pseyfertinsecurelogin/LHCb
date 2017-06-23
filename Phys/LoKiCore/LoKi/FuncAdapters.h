@@ -60,16 +60,10 @@ namespace LoKi
     class FunAdapter : public LoKi::Functor<TYPE,TYPE2>
     {
       // ======================================================================
-    protected:
-      // ======================================================================
-      // base type
-      typedef LoKi::Functor<TYPE,TYPE2> MyBase  ;
-      // ======================================================================
     public:
       // ======================================================================
       /// the actual type of the function
-      typedef typename MyBase::result_type (*function)
-        ( typename MyBase::argument_type ) ;
+      typedef TYPE2 (*function)( TYPE ) ;
       // ======================================================================
     public:
       // ======================================================================
@@ -80,10 +74,8 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       FunAdapter* clone() const override { return new FunAdapter( *this ) ; }
       /// MANDATORY: the only one essential method
-      typename MyBase::result_type operator()
-        ( typename MyBase::argument arg ) const override
-      { return m_fun ( arg ) ; }
-    private:
+      TYPE2 operator()( typename LoKi::Functor<TYPE,TYPE2>::argument arg ) const override
+      { return m_fun( arg ) ; }
       // assignement operator is disabled
       FunAdapter& operator=( const FunAdapter& right ) = delete;
       // ======================================================================

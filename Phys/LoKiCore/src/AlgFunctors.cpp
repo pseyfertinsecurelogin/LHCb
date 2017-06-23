@@ -290,8 +290,7 @@ LoKi::Algorithms::Passed::~Passed ()
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::Passed::result_type
-LoKi::Algorithms::Passed::operator() () const
+bool LoKi::Algorithms::Passed::operator() () const
 {
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
@@ -311,8 +310,7 @@ LoKi::Algorithms::Enabled::Enabled ( const std::string& name ) : Passed ( name )
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::Enabled::result_type
-LoKi::Algorithms::Enabled::operator() () const
+bool LoKi::Algorithms::Enabled::operator() () const
 {
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
@@ -336,8 +334,7 @@ LoKi::Algorithms::Executed::Executed
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::Executed::result_type
-LoKi::Algorithms::Executed::operator() () const
+bool LoKi::Algorithms::Executed::operator() () const
 {
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
@@ -361,8 +358,7 @@ LoKi::Algorithms::Run::Run ( const std::string& name )
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::Run::result_type
-LoKi::Algorithms::Run::operator() () const
+bool LoKi::Algorithms::Run::operator() () const
 {
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
@@ -445,8 +441,7 @@ LoKi::Algorithms::AnyPassed::~AnyPassed()
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::AnyPassed::result_type
-LoKi::Algorithms::AnyPassed::operator() () const
+bool LoKi::Algorithms::AnyPassed::operator() () const
 {
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
@@ -482,8 +477,7 @@ std::ostream& LoKi::Algorithms::AnyPassed::print
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::AllPassed::result_type
-LoKi::Algorithms::AllPassed::operator() () const
+bool LoKi::Algorithms::AllPassed::operator() () const
 {
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
@@ -493,8 +487,7 @@ LoKi::Algorithms::AllPassed::operator() () const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::AnyEnabled::result_type
-LoKi::Algorithms::AnyEnabled::operator() () const
+bool LoKi::Algorithms::AnyEnabled::operator() () const
 {
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
@@ -504,8 +497,7 @@ LoKi::Algorithms::AnyEnabled::operator() () const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::AllEnabled::result_type
-LoKi::Algorithms::AllEnabled::operator() () const
+bool LoKi::Algorithms::AllEnabled::operator() () const
 {
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
@@ -515,8 +507,7 @@ LoKi::Algorithms::AllEnabled::operator() () const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::AnyExecuted::result_type
-LoKi::Algorithms::AnyExecuted::operator() () const
+bool LoKi::Algorithms::AnyExecuted::operator() () const
 {
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
@@ -526,8 +517,7 @@ LoKi::Algorithms::AnyExecuted::operator() () const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::AllExecuted::result_type
-LoKi::Algorithms::AllExecuted::operator() () const
+bool LoKi::Algorithms::AllExecuted::operator() () const
 {
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
@@ -539,8 +529,7 @@ LoKi::Algorithms::AllExecuted::operator() () const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::NumPassed::result_type
-LoKi::Algorithms::NumPassed::operator() () const
+double LoKi::Algorithms::NumPassed::operator() () const
 {
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
@@ -550,8 +539,7 @@ LoKi::Algorithms::NumPassed::operator() () const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::NumEnabled::result_type
-LoKi::Algorithms::NumEnabled::operator() () const
+double LoKi::Algorithms::NumEnabled::operator() () const
 {
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
@@ -561,8 +549,7 @@ LoKi::Algorithms::NumEnabled::operator() () const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::NumExecuted::result_type
-LoKi::Algorithms::NumExecuted::operator() () const
+double LoKi::Algorithms::NumExecuted::operator() () const
 {
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
@@ -573,8 +560,7 @@ LoKi::Algorithms::NumExecuted::operator() () const
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::Algorithms::RunAll::result_type
-LoKi::Algorithms::RunAll::operator() () const
+bool LoKi::Algorithms::RunAll::operator() () const
 {
   //
   if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }

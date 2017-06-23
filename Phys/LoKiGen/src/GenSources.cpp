@@ -63,7 +63,7 @@ LoKi::GenParticles::SourceTES::SourceTES
 {}
 // ============================================================================
 // MANDATORY: the only essential method:
-LoKi::GenParticles::SourceTES::result_type
+std::vector<const HepMC::GenParticle*>
 LoKi::GenParticles::SourceTES::operator() () const
 {
   if ( !m_dataSvc )

@@ -26,7 +26,7 @@ public:
 
 private:
 
-  bool m_PrintErrorInfo;
+  Gaudi::Property<bool> m_PrintErrorInfo { this, "PrintErrorInfo", false };
 
 };
 #endif // STERRORDECODING_H

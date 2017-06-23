@@ -29,6 +29,19 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date 2008-09-18
  */
+namespace
+{
+  static const auto occurs_in_ci = [](const std::string& haystack) {
+      return [&](const std::string& needle) {
+          return std::search( begin(haystack), end(haystack),
+                              begin(needle), end(needle),
+                              [](char c1, char c2) {
+                                   return std::toupper(c1)==std::toupper(c2);
+                              } ) != end(haystack);
+      };
+  };
+
+}
 namespace LoKi
 {
   // ==========================================================================
@@ -50,10 +63,9 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-09-18
      */
-    class CoreFactory
-      : public         LoKi::Hybrid::Base
-      , public virtual LoKi::Hybrid::ICoreFactory
-      , public virtual LoKi::Hybrid::ICoreAntiFactory
+    class CoreFactory : public extends<LoKi::Hybrid::Base,
+                                       LoKi::Hybrid::ICoreFactory,
+                                       LoKi::Hybrid::ICoreAntiFactory>
     {
       // ======================================================================
       // friend factory forn instantiation
@@ -202,10 +214,10 @@ namespace LoKi
       /// helper method to save many lines:
       template <class TYPE1,class TYPE2>
       inline StatusCode _get
-      ( const std::string&                                            pycode  ,
-        std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&                  local   ,
-        typename LoKi::Assignable<LoKi::Functor<TYPE1,TYPE2> >::Type& output  ,
-        const std::string&                                            context ) ;
+      ( const std::string&                                        pycode  ,
+        std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&              local   ,
+        LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&           output  ,
+        const std::string&                                        context ) ;
       // ======================================================================
     private:
       // ======================================================================
@@ -220,11 +232,9 @@ namespace LoKi
       std::unique_ptr<LoKi::Types::XFunVals> m_xfunval ;              // funval/element
       std::unique_ptr<LoKi::Types::XSources> m_xsource ;                      // source
       // ======================================================================
-      typedef std::vector<std::string> Modules ;
-      Modules     m_modules ;
-      std::string m_actor   =  "LoKi.Hybrid.CoreEngine()" ;
-      typedef std::vector<std::string> Lines   ;
-      Lines       m_lines   ;
+      Gaudi::Property<std::vector<std::string>> m_modules { this, "Modules", {"LoKiNumbers.decorators"}, "Python modules to be imported" };
+      Gaudi::Property<std::string> m_actor { this, "Actor", "LoKi.Hybrid.CoreEngine()","The processing engine"  };
+      Gaudi::Property<std::vector<std::string>> m_lines   { this, "Lines", { },  "Additional Python lines to be executed" } ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -236,10 +246,10 @@ namespace LoKi
 // ============================================================================
 template <class TYPE1,class TYPE2>
 inline StatusCode LoKi::Hybrid::CoreFactory::_get
-( const std::string& pycode  ,
-  std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&                  local   ,
-  typename LoKi::Assignable<LoKi::Functor<TYPE1,TYPE2> >::Type& output  ,
-  const std::string& context )
+( const std::string&                                pycode  ,
+  std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&      local   ,
+  LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&   output  ,
+  const std::string&                                context )
 {
   // prepare the actual python code
   std::string code =
@@ -259,46 +269,26 @@ DECLARE_NAMESPACE_TOOL_FACTORY(LoKi::Hybrid,CoreFactory)
 // ============================================================================
 // Standard constructor
 // ============================================================================
-LoKi::Hybrid::CoreFactory::CoreFactory
-( const std::string& type   ,
-  const std::string& name   ,
-  const IInterface*  parent )
-  : LoKi::Hybrid::Base ( type , name , parent )
+LoKi::Hybrid::CoreFactory::CoreFactory( const std::string& type   ,
+                                        const std::string& name   ,
+                                        const IInterface*  parent )
+: base_class ( type , name , parent )
 {
-  //
-  declareInterface<LoKi::Hybrid::ICoreFactory>     ( this ) ;
-  declareInterface<LoKi::Hybrid::ICoreAntiFactory> ( this ) ;
-  //
-  m_modules.push_back ( "LoKiNumbers.decorators"   ) ;
-  //
-  declareProperty
-    ( "Modules" , m_modules ,
-      "Python modules to be imported"          ) ;
-  declareProperty
-    ( "Actor"   , m_actor   ,
-      "The processing engine"                  ) ;
-  declareProperty
-    ( "Lines"   , m_lines   ,
-      "Additional Python lines to be executed" ) ;
   // ==========================================================================
   // C++
   // ==========================================================================
-  m_cpplines.push_back ( "#include \"LoKi/LoKiCore.h\""            ) ;
-  m_cpplines.push_back ( "#include \"LoKi/LoKiNumbers.h\""         ) ;
+  m_cpplines.emplace_back ( "#include \"LoKi/LoKiCore.h\""            ) ;
+  m_cpplines.emplace_back ( "#include \"LoKi/LoKiNumbers.h\""         ) ;
   //
   // For Trigger
-  if ( std::string::npos != name.find ("Hlt" )  ||
-       std::string::npos != name.find ("Trg" )  ||
-       std::string::npos != name.find ("HLT" )  ||
-       std::string::npos != name.find ("TRG" )  ||
-       std::string::npos != name.find ("Trig")  ||
-       std::string::npos != name.find ("TRIG") )
+  static const std::array<std::string,3> hlt = { "HLT", "TRG", "TRIG" };
+  if ( std::any_of( hlt.begin(), hlt.end(), occurs_in_ci(name) ) )
   {
-    m_cpplines.push_back ( "#include \"LoKi/LoKiTrack.h\""         ) ;
-    m_cpplines.push_back ( "#include \"LoKi/LoKiProtoParticles.h\"" ) ;
-    m_cpplines.push_back ( "#include \"LoKi/LoKiPhys.h\""           ) ;
-    m_cpplines.push_back ( "#include \"LoKi/LoKiArrayFunctors.h\""  ) ;
-    m_cpplines.push_back ( "#include \"LoKi/LoKiTrigger.h\""        ) ;
+    m_cpplines.emplace_back ( "#include \"LoKi/LoKiTrack.h\""         ) ;
+    m_cpplines.emplace_back ( "#include \"LoKi/LoKiProtoParticles.h\"" ) ;
+    m_cpplines.emplace_back ( "#include \"LoKi/LoKiPhys.h\""           ) ;
+    m_cpplines.emplace_back ( "#include \"LoKi/LoKiArrayFunctors.h\""  ) ;
+    m_cpplines.emplace_back ( "#include \"LoKi/LoKiTrigger.h\""        ) ;
   }
   // ==========================================================================
 }

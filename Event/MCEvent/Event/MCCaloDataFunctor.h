@@ -308,7 +308,7 @@ namespace LHCb
       if ( ! object ) { return 0.0 ; }
       ActiveEnergyInTime<TYPE> evaluator ( time )  ;
       return evaluator ( object ) ;
-    } ;
+    }
 
 
   } // end of namespace CaloDataFuctor

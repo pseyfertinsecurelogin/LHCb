@@ -33,6 +33,7 @@ public:
   using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;     ///< Algorithm initialization
+  StatusCode start     () override;     ///< Algorithm preparation for execution
   StatusCode finalize  () override;     ///< Algorithm finalization
 
 protected:

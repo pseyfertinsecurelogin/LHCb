@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_EVTNUM_H 
+#ifndef LOKI_EVTNUM_H
 #define LOKI_EVTNUM_H 1
 // ============================================================================
 // Include files
@@ -9,23 +9,23 @@
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/StatusCode.h"
 // ============================================================================
-/** @file 
- *  This file is a part of LoKi project - 
+/** @file
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
  *  @date   2012-02-13
- * 
- */ 
- namespace LoKi 
+ *
+ */
+ namespace LoKi
 {
   // ============================================================================
-  namespace Numbers 
+  namespace Numbers
   {
     // ==========================================================================
     class EvtNum     ;
@@ -33,37 +33,39 @@
     // ==========================================================================
     /** @class EvtNum LoKi/EvtNum.h
      *
-     *  Simple wrapper over the numerical event type 
+     *  Simple wrapper over the numerical event type
      *
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date   2012-02-13
      */
-    class GAUDI_API EvtNum 
+    class GAUDI_API EvtNum
     {
     public:
       // =======================================================================
-      /// the actual event type 
+      /// the actual event type
       typedef unsigned long long                                      evt_type ;
       // =======================================================================
     public:
       // =======================================================================
       EvtNum ( evt_type e  = 0 ) ;
       // =======================================================================
-      bool operator<  ( const EvtNum& right ) const
-      { return m_evtnum <  right.m_evtnum ; }
-      bool operator<= ( const EvtNum& right ) const
-      { return m_evtnum <= right.m_evtnum ; }
-      bool operator>  ( const EvtNum& right ) const
-      { return m_evtnum >  right.m_evtnum ; }
-      bool operator>= ( const EvtNum& right ) const
-      { return m_evtnum >= right.m_evtnum ; }
-      bool operator== ( const EvtNum& right ) const
-      { return m_evtnum == right.m_evtnum ; }
-      bool operator!= ( const EvtNum& right ) const
-      { return m_evtnum != right.m_evtnum ; }
+      friend bool operator<  ( const EvtNum& lhs, const EvtNum& rhs )
+      { return lhs.m_evtnum <  rhs.m_evtnum ; }
+      friend bool operator<= ( const EvtNum& lhs, const EvtNum& rhs )
+      { return lhs.m_evtnum <= rhs.m_evtnum ; }
+      friend bool operator>  ( const EvtNum& lhs, const EvtNum& rhs )
+      { return lhs.m_evtnum >  rhs.m_evtnum ; }
+      friend bool operator>= ( const EvtNum& lhs, const EvtNum& rhs )
+      { return lhs.m_evtnum >= rhs.m_evtnum ; }
+      friend bool operator== ( const EvtNum& lhs, const EvtNum& rhs )
+      { return lhs.m_evtnum == rhs.m_evtnum ; }
+      friend bool operator!= ( const EvtNum& lhs, const EvtNum& rhs )
+      { return lhs.m_evtnum != rhs.m_evtnum ; }
       // =======================================================================
-      EvtNum& operator+= ( const unsigned long e )
+      EvtNum& operator+= ( unsigned long e )
       { m_evtnum += e  ; return *this ; }
+      friend EvtNum operator+(EvtNum e, int i)
+      { return e+=i; }
       // =======================================================================
       std::size_t   hash       () const ;
       // =======================================================================
@@ -79,21 +81,21 @@
       // =======================================================================
     private :
       // =======================================================================
-      // the actual storage 
+      // the actual storage
       evt_type m_evtnum ;
       // =======================================================================
     } ;
     // =========================================================================
-    /** @class EvtNumList 
-     *  simple wrapper for event list 
+    /** @class EvtNumList
+     *  simple wrapper for event list
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 2012-02-13
      */
-    class GAUDI_API EvtNumList 
+    class GAUDI_API EvtNumList
     {
     public:
       // =======================================================================
-      /// the actual type for event list 
+      /// the actual type for event list
       typedef std::vector<EvtNum>                                     evt_list ;
       // =======================================================================
     private:
@@ -121,7 +123,7 @@
       // =======================================================================
     public:
       // =======================================================================
-      // swap it! 
+      // swap it!
       void swap     ( EvtNumList&   o ) { std::swap ( m_list , o.m_list ) ; }
       // =======================================================================
     public:
@@ -131,17 +133,17 @@
       // =======================================================================
     private:
       // =======================================================================
-      /// the actual event list 
-      std::vector<EvtNum> m_list ;                      // the actual event list 
+      /// the actual event list
+      std::vector<EvtNum> m_list ;                      // the actual event list
       // =======================================================================
     } ;
     // =========================================================================
-    /** @class RunEvt 
+    /** @class RunEvt
      *  simple wrapper for run-event pair
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-02-13
      */
-    class GAUDI_API RunEvt 
+    class GAUDI_API RunEvt
     {
     public:
       // ======================================================================
@@ -155,21 +157,21 @@
       // ======================================================================
       RunEvt ( const run_type r = 0 , const evt_type         e = evt_type() ) ;
       RunEvt ( const run_type r     , const EvtNum::evt_type e              ) ;
-      // ======================================================================      
+      // ======================================================================
     public:
-      // ======================================================================      
-      bool operator<  ( const RunEvt& right ) const 
-      { return m_pair < right.m_pair ; }
-      bool operator>  ( const RunEvt& right ) const 
-      { return right  < *this ; }
-      bool operator== ( const RunEvt& right ) const
-      { return m_pair == right.m_pair ; }
-      bool operator!= ( const RunEvt& right ) const 
-      { return !( *this == right ) ; }
-      bool operator<= ( const RunEvt& right ) const 
-      { return !( *this >  right ) ; }
-      bool operator>= ( const RunEvt& right ) const 
-      { return !( *this <  right ) ; }
+      // ======================================================================
+      friend bool operator<  ( const RunEvt& lhs, const RunEvt& rhs )
+      { return lhs.m_pair < rhs.m_pair ; }
+      friend bool operator>  ( const RunEvt& lhs, const RunEvt& rhs )
+      { return rhs  < lhs ; }
+      friend bool operator== ( const RunEvt& lhs, const RunEvt& rhs )
+      { return lhs.m_pair == rhs.m_pair ; }
+      friend bool operator!= ( const RunEvt& lhs, const RunEvt& rhs )
+      { return !( lhs == rhs ) ; }
+      friend bool operator<= ( const RunEvt& lhs, const RunEvt& rhs )
+      { return !( lhs >  rhs ) ; }
+      friend bool operator>= ( const RunEvt& lhs, const RunEvt& rhs )
+      { return !( lhs <  rhs ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -190,16 +192,16 @@
       // ======================================================================
     } ;
     // =========================================================================
-    /** @class RunEvtList 
+    /** @class RunEvtList
      *  simple wrapper for run-event list
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-02-13
      */
-    class GAUDI_API RunEvtList 
+    class GAUDI_API RunEvtList
     {
     public:
       // =======================================================================
-      /// the actual type of the list 
+      /// the actual type of the list
       typedef  std::vector<RunEvt>                                runevt_list ;
       // =======================================================================
     private:
@@ -227,7 +229,7 @@
       // =======================================================================
     public:
       // =======================================================================
-      // swap it! 
+      // swap it!
       void swap     ( RunEvtList&   o ) { std::swap ( m_list , o.m_list ) ; }
       // =======================================================================
     public:
@@ -237,15 +239,15 @@
       // =======================================================================
     private:
       // =======================================================================
-      /// the actual run/event-list 
-      runevt_list m_list ; // the actual run/event-list 
+      /// the actual run/event-list
+      runevt_list m_list ; // the actual run/event-list
       // =======================================================================
     };
     // =========================================================================
-    // useful functions 
+    // useful functions
     // =========================================================================
     /** hash-function: heeded for boost::hash
-     *  @return the actual hash value 
+     *  @return the actual hash value
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-02-13
      */
@@ -253,7 +255,7 @@
     { return evt.hash () ; }
     // =========================================================================
     /** hash-function: heeded for boost::hash
-     *  @return the actual hash value 
+     *  @return the actual hash value
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-02-13
      */
@@ -261,7 +263,7 @@
     { return evt.hash () ; }
     // ========================================================================
     /** hash-function: heeded for boost::hash
-     *  @return the actual hash value 
+     *  @return the actual hash value
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-02-13
      */
@@ -269,107 +271,107 @@
     { return evt.hash () ; }
     // =========================================================================
     /** hash-function: heeded for boost::hash
-     *  @return the actual hash value 
+     *  @return the actual hash value
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-02-13
      */
     inline std::size_t hash_value ( const LoKi::Numbers::RunEvtList& evt )
     { return evt.hash () ; }
     // =========================================================================
-    inline std::ostream& 
-    operator<<( std::ostream& s , const LoKi::Numbers::EvtNum&     e ) 
+    inline std::ostream&
+    operator<<( std::ostream& s , const LoKi::Numbers::EvtNum&     e )
     { return e.fillStream ( s ) ; }
     // =========================================================================
-    inline std::ostream& 
-    operator<<( std::ostream& s , const LoKi::Numbers::EvtNumList& e ) 
+    inline std::ostream&
+    operator<<( std::ostream& s , const LoKi::Numbers::EvtNumList& e )
     { return e.fillStream ( s ) ; }
     // =========================================================================
-    inline std::ostream& 
-    operator<<( std::ostream& s , const LoKi::Numbers::RunEvt&     e ) 
+    inline std::ostream&
+    operator<<( std::ostream& s , const LoKi::Numbers::RunEvt&     e )
     { return e.fillStream ( s ) ; }
     // =========================================================================
-    inline std::ostream& 
-    operator<<( std::ostream& s , const LoKi::Numbers::RunEvtList&     e ) 
+    inline std::ostream&
+    operator<<( std::ostream& s , const LoKi::Numbers::RunEvtList&     e )
     { return e.fillStream ( s ) ; }
     // =========================================================================
-    inline 
+    inline
     EvtNumList operator+( const EvtNum&     e1 , const EvtNumList&  e2 )
     { return e2 + e1 ; }
-    inline 
+    inline
     RunEvtList operator+( const RunEvt&     e1 , const RunEvtList&  e2 )
     { return e2 + e1 ; }
     // =========================================================================
-    inline 
+    inline
     RunEvtList operator+( const RunEvt&     e1 , const RunEvt&      e2 )
     { return RunEvtList ( e1 ) + e2  ; }
     // =========================================================================
-    // for python 
+    // for python
     // =========================================================================
-    GAUDI_API 
+    GAUDI_API
     EvtNumList add1 ( const EvtNum&     e1 , const EvtNumList& e2 ) ;
-    GAUDI_API 
+    GAUDI_API
     EvtNumList add1 ( const EvtNum&     e1 , const EvtNum&     e2 ) ;
-    GAUDI_API 
+    GAUDI_API
     EvtNumList add1 ( const EvtNumList& e1 , const EvtNum&     e2 ) ;
-    GAUDI_API 
+    GAUDI_API
     EvtNumList add1 ( const EvtNumList& e1 , const EvtNumList& e2 ) ;
-    GAUDI_API 
+    GAUDI_API
     EvtNumList add1 ( const EvtNumList& e1 , EvtNum::evt_type  e2 ) ;
-    GAUDI_API 
+    GAUDI_API
     RunEvtList add2 ( const RunEvt&     e1 , const RunEvt&     e2 ) ;
-    GAUDI_API 
+    GAUDI_API
     RunEvtList add2 ( const RunEvt&     e1 , const RunEvtList& e2 ) ;
-    GAUDI_API 
+    GAUDI_API
     RunEvtList add2 ( const RunEvtList& e1 , const RunEvt&     e2 ) ;
-    GAUDI_API 
+    GAUDI_API
     RunEvtList add2 ( const RunEvtList& e1 , const RunEvtList& e2 ) ;
     // =========================================================================
-    // swap them! 
+    // swap them!
     // =========================================================================
     inline void swap ( EvtNumList& l1 , EvtNumList& l2 ) { l1.swap ( l2 ) ; }
     inline void swap ( RunEvtList& l1 , RunEvtList& l2 ) { l1.swap ( l2 ) ; }
     // =========================================================================
-  } //                                        the end of namespace LoKi::Numbers 
+  } //                                        the end of namespace LoKi::Numbers
   // ===========================================================================
- } //                                                  the end of namespace LoKi 
+ } //                                                  the end of namespace LoKi
 // =============================================================================
 namespace Gaudi
 {
   // ===========================================================================
-  namespace Utils 
+  namespace Utils
   {
     // =========================================================================
-    /// the streamer 
-    GAUDI_API 
-    std::ostream& 
-    toStream ( const LoKi::Numbers::EvtNum& evt , 
+    /// the streamer
+    GAUDI_API
+    std::ostream&
+    toStream ( const LoKi::Numbers::EvtNum& evt ,
                std::ostream&                s   ) ;
     // =========================================================================
-    /// the streamer 
-    GAUDI_API 
-    std::string 
+    /// the streamer
+    GAUDI_API
+    std::string
     toString ( const LoKi::Numbers::EvtNum& evt ) ;
     // =========================================================================
-    /// the streamer 
-    GAUDI_API 
-    std::ostream& 
-    toStream ( const LoKi::Numbers::EvtNumList& evt , 
+    /// the streamer
+    GAUDI_API
+    std::ostream&
+    toStream ( const LoKi::Numbers::EvtNumList& evt ,
                std::ostream&                s   ) ;
     // =========================================================================
-    /// the streamer 
-    GAUDI_API 
-    std::string 
+    /// the streamer
+    GAUDI_API
+    std::string
     toString ( const LoKi::Numbers::EvtNumList& evt ) ;
     // =========================================================================
-    /// the streamer 
-    GAUDI_API 
-    std::ostream& 
-    toStream ( const LoKi::Numbers::RunEvt& evt , 
+    /// the streamer
+    GAUDI_API
+    std::ostream&
+    toStream ( const LoKi::Numbers::RunEvt& evt ,
                std::ostream&                s   ) ;
     // =========================================================================
-    /// the streamer 
-    GAUDI_API 
-    std::string 
+    /// the streamer
+    GAUDI_API
+    std::string
     toString ( const LoKi::Numbers::RunEvt& evt ) ;
     // =========================================================================
     inline std::string toCpp ( const LoKi::Numbers::EvtNum&     e )
@@ -384,36 +386,36 @@ namespace Gaudi
     inline std::string toCpp ( const LoKi::Numbers::RunEvtList& e )
     { return e.toCpp() ; }
     // =========================================================================
-  } //                                                   end of namespace Utils 
+  } //                                                   end of namespace Utils
   // ===========================================================================
-  namespace Parsers 
+  namespace Parsers
   {
     // =========================================================================
-    /// parser 
-    GAUDI_API 
-    StatusCode 
+    /// parser
+    GAUDI_API
+    StatusCode
     parse( LoKi::Numbers::EvtNum& result, const std::string& input);
     // =========================================================================
-    /// parser 
-    GAUDI_API 
-    StatusCode 
+    /// parser
+    GAUDI_API
+    StatusCode
     parse( LoKi::Numbers::EvtNumList& result, const std::string& input);
     // =========================================================================
-    /// parser 
-    GAUDI_API 
-    StatusCode 
+    /// parser
+    GAUDI_API
+    StatusCode
     parse( LoKi::Numbers::RunEvt& result, const std::string& input);
     // =========================================================================
-    /// parser 
-    GAUDI_API 
-    StatusCode 
+    /// parser
+    GAUDI_API
+    StatusCode
     parse( LoKi::Numbers::RunEvtList& result, const std::string& input);
     // =========================================================================
-  } //                                           end of namespace Gaudi::Parsers 
+  } //                                           end of namespace Gaudi::Parsers
   // ===========================================================================
 } //                                                      end of namespace Gaudi
 // =============================================================================
-//                                                                       The END 
+//                                                                       The END
 // =============================================================================
 #endif // LOKI_EVTNUM_H
 // =============================================================================

@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LHCBMATH_FUNCTIONS_H
 #define LHCBMATH_FUNCTIONS_H 1
@@ -7,7 +6,6 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <functional>
 #include <vector>
 #include <complex>
 // ============================================================================
@@ -44,7 +42,7 @@ namespace Gaudi
      *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
-    class GAUDI_API BifurcatedGauss : public std::unary_function<double,double>
+    class GAUDI_API BifurcatedGauss final
     {
       // ======================================================================
     public:
@@ -59,8 +57,6 @@ namespace Gaudi
         const double sigmaL = 1 ,
         const double sigmaR = 1 ) ;
       // ======================================================================
-      /// destructor
-      ~BifurcatedGauss() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -111,7 +107,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-08-25
      */
-    class GAUDI_API GenGaussV1: public std::unary_function<double,double>
+    class GAUDI_API GenGaussV1 final
     {
     public:
       // ======================================================================
@@ -124,8 +120,6 @@ namespace Gaudi
       ( const double mu    = 0 ,
         const double alpha = 1 ,
         const double beta  = 2 ) ; // beta=2 correponds to gaussian
-      /// desctructor
-      ~GenGaussV1() ;
       // ======================================================================
     public: // primary getters
       // ======================================================================
@@ -192,7 +186,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-08-25
      */
-    class GAUDI_API GenGaussV2: public std::unary_function<double,double>
+    class GAUDI_API GenGaussV2 final
     {
     public:
       // ======================================================================
@@ -205,8 +199,6 @@ namespace Gaudi
       ( const double xi    = 0 ,
         const double alpha = 1 ,
         const double kappa = 0 ) ; // kappa=0 correponds to gaussian
-      /// desctructor
-      ~GenGaussV2() ;
       // ======================================================================
     public: // primary getters
       // ======================================================================
@@ -274,7 +266,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-08-25
      */
-    class GAUDI_API SkewGauss: public std::unary_function<double,double>
+    class GAUDI_API SkewGauss final
     {
     public:
       // ======================================================================
@@ -287,8 +279,6 @@ namespace Gaudi
       ( const double xi    = 0 ,
         const double omega = 1 ,
         const double alpha = 0 ) ; // alpha=0 correponds to gaussian
-      /// desctructor
-      ~SkewGauss () ;
       // ======================================================================
     public: // primary getters
       // ======================================================================
@@ -386,7 +376,7 @@ namespace Gaudi
      *  @see http://dx.doi.org/10.1007/JHEP06(2012)141
      *  @date 2011-04-19
      */
-    class GAUDI_API Bukin : public std::unary_function<double,double>
+    class GAUDI_API Bukin final
     {
     public :
       // ======================================================================
@@ -403,9 +393,6 @@ namespace Gaudi
         const double xi     = 0 ,
         const double rhoL   = 0 ,
         const double rhoR   = 0 ) ;
-      // ======================================================================
-      /// destructor
-      ~Bukin () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -484,7 +471,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-04-19
      */
-    class GAUDI_API Novosibirsk : public std::unary_function<double,double>
+    class GAUDI_API Novosibirsk final
     {
     public :
       // ======================================================================
@@ -497,8 +484,6 @@ namespace Gaudi
       ( const double m0    = 0 ,
         const double sigma = 1 ,
         const double tau   = 0 ) ;
-      /// destructor
-      ~Novosibirsk () ;                                           // destructor
       // ======================================================================
     public:
       // ======================================================================
@@ -584,7 +569,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-05-25
      */
-    class GAUDI_API CrystalBall : public std::unary_function<double,double>
+    class GAUDI_API CrystalBall final
     {
     public:
       // ======================================================================
@@ -599,8 +584,6 @@ namespace Gaudi
         const double sigma = 1 ,
         const double alpha = 2 ,
         const double n     = 1 ) ;
-      /// destructor
-      ~CrystalBall () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -673,7 +656,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-05-13
      */
-    class GAUDI_API Needham : public std::unary_function<double,double>
+    class GAUDI_API Needham final
     {
     public:
       // ======================================================================
@@ -690,8 +673,6 @@ namespace Gaudi
         const double a0    =    1.975   ,
         const double a1    =    0.0011  ,
         const double a2    =   -0.00018 ) ;
-      /// destructor
-      ~Needham() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -747,7 +728,7 @@ namespace Gaudi
      *  @see CrystalBall
      *  @date 2011-05-25
      */
-    class GAUDI_API CrystalBallRightSide : public std::unary_function<double,double>
+    class GAUDI_API CrystalBallRightSide final
     {
     public:
       // ======================================================================
@@ -762,8 +743,6 @@ namespace Gaudi
         const double sigma = 1 ,
         const double alpha = 2 ,
         const double n     = 1 ) ;
-      /// destructor
-      ~CrystalBallRightSide () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -810,8 +789,7 @@ namespace Gaudi
      *  @see CrystalBallRightSide
      *  @date 2011-05-25
      */
-    class GAUDI_API CrystalBallDoubleSided
-      : public std::unary_function<double,double>
+    class GAUDI_API CrystalBallDoubleSided final
     {
     public:
       // ======================================================================
@@ -830,8 +808,6 @@ namespace Gaudi
         const double n_L     = 1 ,
         const double alpha_R = 2 ,
         const double n_R     = 1 ) ;
-      /// destructor
-      ~CrystalBallDoubleSided() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -918,7 +894,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date  2013-12-01
      */
-    class GAUDI_API Apolonios : public std::unary_function<double,double>
+    class GAUDI_API Apolonios final
     {
     public:
       // ======================================================================
@@ -935,8 +911,6 @@ namespace Gaudi
         const double alpha = 2 ,
         const double n     = 1 ,
         const double b     = 1 ) ;
-      /// destructor
-      ~Apolonios () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -1020,7 +994,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date  2013-12-01
      */
-    class GAUDI_API Apolonios2 : public std::unary_function<double,double>
+    class GAUDI_API Apolonios2 final
     {
     public:
       // ======================================================================
@@ -1035,8 +1009,6 @@ namespace Gaudi
           const double sigmaL  = 1   ,
           const double alphaR  = 1   ,
           const double beta    = 100 ) ;  // large beta correponds to gaussian
-      /// destructor
-      ~Apolonios2 () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -1096,8 +1068,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-06-13
      */
-    class GAUDI_API GramCharlierA
-      : public std::unary_function<double,double>
+    class GAUDI_API GramCharlierA final
     {
     public:
       // ======================================================================
@@ -1111,8 +1082,6 @@ namespace Gaudi
                        const double sigma  = 1 ,
                        const double kappa3 = 1 ,
                        const double kappa4 = 1 ) ;
-      /// destructor
-      ~GramCharlierA () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -1172,8 +1141,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
-    class GAUDI_API PhaseSpace2
-      : public std::unary_function<double,double>
+    class GAUDI_API PhaseSpace2 final
     {
       // ======================================================================
     public:
@@ -1181,8 +1149,6 @@ namespace Gaudi
       /// constructor from two masses
       PhaseSpace2 ( const double m1 = 0 ,
                     const double m2 = 1 ) ;
-      /// deststructor
-      ~PhaseSpace2 () ;                                         // deststructor
       // ======================================================================
     public:
       // ======================================================================
@@ -1276,8 +1242,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
-    class GAUDI_API PhaseSpace3
-      : public std::unary_function<double,double>
+    class GAUDI_API PhaseSpace3 final
     {
       // ======================================================================
     public:
@@ -1294,8 +1259,6 @@ namespace Gaudi
                     const double         m3 = 2 ,
                     const unsigned short l1 = 0 ,
                     const unsigned short l2 = 0 ) ;
-      /// deststructor
-      ~PhaseSpace3 () ;                                         // deststructor
       // ======================================================================
     public:
       // ======================================================================
@@ -1346,8 +1309,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
-    class GAUDI_API PhaseSpaceLeft
-      : public std::unary_function<double,double>
+    class GAUDI_API PhaseSpaceLeft final
     {
       // ======================================================================
     public:
@@ -1357,8 +1319,6 @@ namespace Gaudi
                        const unsigned short num       = 2 ) ;
       /// constructor from list of masses
       PhaseSpaceLeft ( const std::vector<double>& masses ) ;
-      /// deststructor
-      ~PhaseSpaceLeft() ;                                       // deststructor
       // ======================================================================
     public:
       // ======================================================================
@@ -1387,8 +1347,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
-    class GAUDI_API PhaseSpaceRight
-      : public std::unary_function<double,double>
+    class GAUDI_API PhaseSpaceRight final
     {
       // ======================================================================
     public:
@@ -1397,8 +1356,6 @@ namespace Gaudi
       PhaseSpaceRight ( const double         threshold = 10 ,
                         const unsigned short l         = 2  ,
                         const unsigned short n         = 3  ) ;
-      /// deststructor
-      ~PhaseSpaceRight () ;                                     // deststructor
       // ======================================================================
     public:
       // ======================================================================
@@ -1431,8 +1388,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
-    class GAUDI_API PhaseSpaceNL
-      : public std::unary_function<double,double>
+    class GAUDI_API PhaseSpaceNL final
     {
       // ======================================================================
     public:
@@ -1447,8 +1403,6 @@ namespace Gaudi
                      const double         threshold_H = 10 ,
                      const unsigned short l           =  2 ,
                      const unsigned short n           =  3 ) ;
-      /// destructor
-      ~PhaseSpaceNL () ;                                     // deststructor
       // ======================================================================
     public:
       // ======================================================================
@@ -1503,8 +1457,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
-    class GAUDI_API PhaseSpacePol
-      : public std::unary_function<double,double>
+    class GAUDI_API PhaseSpacePol final
     {
       // ======================================================================
     public:
@@ -1537,8 +1490,6 @@ namespace Gaudi
                       const unsigned short N       ,
                       const double         xlow    ,
                       const double         xhigh   ) ;
-      /// destructor
-      ~PhaseSpacePol () ;                                     // deststructor
       // ======================================================================
     public:
       // ======================================================================
@@ -1601,8 +1552,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2012-04-01
      */
-    class GAUDI_API PhaseSpace23L
-      : public std::unary_function<double,double>
+    class GAUDI_API PhaseSpace23L final
     {
       // ======================================================================
     public:
@@ -1622,8 +1572,6 @@ namespace Gaudi
                       const double         m  = 5   ,
                       const unsigned short L  = 1   ,
                       const unsigned short l  = 0   ) ;
-      /// deststructor
-      ~PhaseSpace23L () ;                                     // deststructor
       // ======================================================================
     public:
       // ======================================================================
@@ -1728,7 +1676,6 @@ namespace Gaudi
      *  @date 2011-11-30
      */
     class GAUDI_API BreitWigner
-      : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
@@ -1754,14 +1701,8 @@ namespace Gaudi
                     const FormFactor&    f ) ;
       /// copy constructor
       BreitWigner ( const BreitWigner&  bw ) ;
-      ///
-      // ======================================================================
-      /// move constructor
-      BreitWigner (       BreitWigner&& bw ) ;
-      // ======================================================================
       /// destructor
-      virtual ~BreitWigner () ;
-      // ======================================================================
+      virtual ~BreitWigner() = default;
     public:
       // ======================================================================
       /** calculate the Breit-Wigner shape
@@ -1813,7 +1754,7 @@ namespace Gaudi
       double            formfactor ( const double m ) const ;
       /// get the formfactor itself
       const Gaudi::Math::FormFactor*
-        formfactor () const { return m_formfactor ; }
+        formfactor () const { return m_formfactor.get() ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -1839,7 +1780,7 @@ namespace Gaudi
       /// the orbital momentum
       unsigned int      m_L          ; // the orbital momentum
       /// the formfactor
-      const Gaudi::Math::FormFactor* m_formfactor ; // the formfactor
+      std::unique_ptr<Gaudi::Math::FormFactor> m_formfactor ; // the formfactor
       // ======================================================================
     private:
       // ======================================================================
@@ -1870,8 +1811,6 @@ namespace Gaudi
       Rho0  ( const double m0       = 770   ,     // MeV
               const double gam0     = 150   ,     // MeV
               const double pi_mass  = 139.6 ) ;   // MeV
-      /// destructor
-      virtual ~Rho0 () ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -1893,8 +1832,6 @@ namespace Gaudi
                 const double gam0     = 150   ,     // MeV
                 const double k_mass   = 493.7 ,     // MeV
                 const double pi_mass  = 139.6 ) ;   // MeV
-      /// destructor
-      virtual ~Kstar0 () ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -1915,8 +1852,6 @@ namespace Gaudi
       Phi0  ( const double m0       = 1019.5 ,     // MeV
               const double gam0     =    4.3 ,     // MeV
               const double k_mass   =  493.7 ) ;   // MeV
-      /// destructor
-      virtual ~Phi0 () ;
       // ======================================================================
     } ;
     // ========================================================================
@@ -1936,8 +1871,6 @@ namespace Gaudi
       /// constructor from all parameters
       Rho0FromEtaPrime  ( const Gaudi::Math::Rho0& rho   ,
                           const double eta_prime = 957.7 ) ;  // MeV
-      /// destructor
-      virtual ~Rho0FromEtaPrime () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -1964,7 +1897,6 @@ namespace Gaudi
      *  @date 2011-11-30
      */
     class GAUDI_API Flatte
-      : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
@@ -1985,8 +1917,7 @@ namespace Gaudi
                 const double mA2   = 139.6 ,
                 const double mB1   = 493.7 ,
                 const double mB2   = 493.7 ) ;
-      /// destructor
-      virtual ~Flatte () ;
+      virtual ~Flatte () = default;
       // ======================================================================
     public:
       // ======================================================================
@@ -2096,8 +2027,6 @@ namespace Gaudi
                 const double mB2   = 493.7 ) ;
       /// constructor  from Flatte
       Flatte2 ( const Flatte& flatte ) ;
-      /// destructor
-      virtual ~Flatte2 () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -2118,7 +2047,6 @@ namespace Gaudi
      *  @date 2011-11-30
      */
     class GAUDI_API Voigt
-      : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
@@ -2127,7 +2055,7 @@ namespace Gaudi
                const double gamma  = 0.004  ,
                const double sigma  = 0.001  ) ;
       /// destructor
-      virtual ~Voigt () ;
+      virtual ~Voigt () = default;
       // ======================================================================
     public:
       // ======================================================================
@@ -2188,7 +2116,6 @@ namespace Gaudi
      *  @date 2016-06-13
      */
     class GAUDI_API PseudoVoigt
-      : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
@@ -2197,7 +2124,7 @@ namespace Gaudi
                      const double gamma  = 0.004  ,
                      const double sigma  = 0.001  ) ;
       /// destructor
-      virtual ~PseudoVoigt () ;
+      virtual ~PseudoVoigt () = default;
       // ======================================================================
     public:
       // ======================================================================
@@ -2390,7 +2317,7 @@ namespace Gaudi
       ( const double m  , const double m0 ,
         const double m1 , const double m2 ) const  = 0 ;
       /// virtual destructor
-      virtual ~FormFactor () ;
+      virtual ~FormFactor () = default;
       /// clone method ("virtual constructor" )
       virtual  FormFactor* clone() const = 0 ;
       // ======================================================================
@@ -2415,8 +2342,6 @@ namespace Gaudi
         Jackson ( const Gaudi::Math::FormFactors::JacksonRho rho ) ;
         /// constructor from rho-function
         Jackson (       Gaudi::Math::FormFactors::rho_fun    rho ) ;
-        /// virtual destructor
-        virtual ~Jackson  () ;
         /// clone method ("virtual constructor")
         Jackson* clone() const   override;
         /// the only important method
@@ -2454,8 +2379,6 @@ namespace Gaudi
         BlattWeisskopf ( const Case   L , const double b ) ;
         /// default constructor (needed for  serialization)
         BlattWeisskopf () ;
-        /// virtual destructor
-        virtual ~BlattWeisskopf () ;
         /// clone method ("virtual constructor")
         BlattWeisskopf* clone() const   override;
         /// the only important method
@@ -2482,7 +2405,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2016-06-11
      */
-    class GAUDI_API Swanson : public std::unary_function<double,double>
+    class GAUDI_API Swanson
     {
     public:
       // ======================================================================
@@ -2517,7 +2440,7 @@ namespace Gaudi
       /// copy constructor
       Swanson ( const Swanson&  sw ) ;
       /// destructor
-      virtual ~Swanson() ;
+      virtual ~Swanson() = default;
       // ======================================================================
     public:
       // ======================================================================
@@ -2593,7 +2516,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-10-05
      */
-    class GAUDI_API LASS : public std::unary_function<double,double>
+    class GAUDI_API LASS
     {
       // ======================================================================
     public:
@@ -2613,7 +2536,7 @@ namespace Gaudi
              const double         r  = 1.76e-3 ,
              const double         e  = 1.0     ) ;
       /// destructor
-      virtual ~LASS () ;                                          // destructor
+      virtual ~LASS () = default;                                 // destructor
       // ======================================================================
     public:
       // ======================================================================
@@ -2684,7 +2607,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-04-01
      */
-    class GAUDI_API LASS23L : public std::unary_function<double,double>
+    class GAUDI_API LASS23L
     {
       // ======================================================================
     public:
@@ -2719,7 +2642,7 @@ namespace Gaudi
                 const double         m      , // mother particle, e.g. B
                 const unsigned short L  = 1 ) ;
       /// destructor
-      virtual ~LASS23L () ;                                     // destructor
+      virtual ~LASS23L () = default;                            // destructor
       // ======================================================================
     public:
       // ======================================================================
@@ -2786,7 +2709,6 @@ namespace Gaudi
      *  @date 2012-04-01
      */
     class GAUDI_API Bugg
-      : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
@@ -2812,7 +2734,7 @@ namespace Gaudi
                 const double         s2 = 3.5           ,
                 const double         m1 =  139.6 / 1000 ) ; // GeV
       /// destructor
-      ~Bugg () ;
+      ~Bugg () = default;
       // ======================================================================
     public:
       // ======================================================================
@@ -2935,8 +2857,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-04-01
      */
-    class GAUDI_API Bugg23L
-      : public std::unary_function<double,double>
+    class GAUDI_API Bugg23L final
     {
     public:
       // ======================================================================
@@ -2975,8 +2896,6 @@ namespace Gaudi
                 const unsigned short     L  =    1          ) ;
 
 
-      /// destructor
-      ~Bugg23L () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -3080,8 +2999,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2012-05-23
      */
-    class GAUDI_API BW23L
-      : public std::unary_function<double,double>
+    class GAUDI_API BW23L final
     {
     public:
       // ======================================================================
@@ -3109,8 +3027,6 @@ namespace Gaudi
               const double                    m3 ,
               const double                    m  ,
               const unsigned short            L2 ) ;
-      /// destructor
-      virtual ~BW23L () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -3173,8 +3089,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.BElyaev@itep.ru
      *  @date 2011-11-30
      */
-    class GAUDI_API Flatte23L
-      : public std::unary_function<double,double>
+    class GAUDI_API Flatte23L final
     {
     public:
       // ======================================================================
@@ -3206,8 +3121,6 @@ namespace Gaudi
                    const double         m3    = 3096.9   ,     // MeV
                    const double         m     = 5366.0   ,     // MeV
                    const unsigned short L     = 1        ) ;
-      /// destructor
-      virtual ~Flatte23L () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -3274,8 +3187,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-04-01
      */
-    class GAUDI_API Gounaris23L
-      : public std::unary_function<double,double>
+    class GAUDI_API Gounaris23L final
     {
     public:
       // ======================================================================
@@ -3293,8 +3205,6 @@ namespace Gaudi
                     const double         m3 = 3097.0 / 1000 ,  // MeV
                     const double         m  = 5278.0 / 1000 ,  // MeV
                     const unsigned short L  =    1          ) ;
-      /// destructor
-      ~Gounaris23L () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -3393,8 +3303,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-01-05
      */
-    class GAUDI_API StudentT
-      : public std::unary_function<double,double>
+    class GAUDI_API StudentT final
     {
     public:
       // ======================================================================
@@ -3406,8 +3315,6 @@ namespace Gaudi
       StudentT ( const double mass  = 0 ,
                  const double sigma = 1 ,
                  const double n     = 2 ) ;
-      /// destructor
-      ~StudentT() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -3477,8 +3384,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2013-01-05
      */
-    class GAUDI_API BifurcatedStudentT
-      : public std::unary_function<double,double>
+    class GAUDI_API BifurcatedStudentT final
     {
     public:
       // ======================================================================
@@ -3492,8 +3398,6 @@ namespace Gaudi
                            const double sigmaR = 1 ,
                            const double nL     = 2 ,
                            const double nR     = 2 ) ;
-      /// destructor
-      ~BifurcatedStudentT() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -3582,8 +3486,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-05-11
      */
-    class GAUDI_API GammaDist
-      : public std::unary_function<double,double>
+    class GAUDI_API GammaDist final
     {
     public:
       // ======================================================================
@@ -3593,8 +3496,6 @@ namespace Gaudi
        */
       GammaDist ( const double k     = 2 ,   // shape parameter
                   const double theta = 1 ) ; // scale parameter
-      /// desctructor
-      ~GammaDist() ;  // destructor
       // ======================================================================
     public:
       // ======================================================================
@@ -3665,7 +3566,6 @@ namespace Gaudi
      *  @date   2013-05-11
      */
     class GAUDI_API LogGammaDist
-      : public std::unary_function<double,double>
     {
     public:
       // ======================================================================
@@ -3676,7 +3576,7 @@ namespace Gaudi
       LogGammaDist ( const double k     = 2 ,   // shape parameter
                      const double theta = 1 ) ; // scale parameter
       /// destructor
-      virtual ~LogGammaDist() ;  // desctructor
+      virtual ~LogGammaDist() = default;  // desctructor
       // ======================================================================
     public:
       // ======================================================================
@@ -3752,8 +3652,6 @@ namespace Gaudi
        */
       Log10GammaDist ( const double k     = 2 ,   // shape parameter
                        const double theta = 1 ) ; // scale parameter
-      /// destructor
-      virtual ~Log10GammaDist() ;  // destructor
       // ======================================================================
     public:
       // ======================================================================
@@ -3786,8 +3684,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-05-11
      */
-    class GAUDI_API GenGammaDist
-      : public std::unary_function<double,double>
+    class GAUDI_API GenGammaDist final
     {
     public:
       // ======================================================================
@@ -3801,8 +3698,6 @@ namespace Gaudi
                      const double theta = 1 ,
                      const double p     = 1 , // 1 corresponds to gamma distribution
                      const double low   = 0 ) ;
-      /// desctructor
-      ~GenGammaDist() ;  // desctructor
       // ======================================================================
     public:
       // ======================================================================
@@ -3868,8 +3763,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-05-11
      */
-    class GAUDI_API Amoroso
-      : public std::unary_function<double,double>
+    class GAUDI_API Amoroso final
     {
     public:
       // ======================================================================
@@ -3884,8 +3778,6 @@ namespace Gaudi
                 const double alpha = 1 ,
                 const double beta  = 1 ,
                 const double a     = 0 ) ;
-      /// destructor
-      ~Amoroso () ;  // desctructor
       // ======================================================================
     public:
       // ======================================================================
@@ -3958,8 +3850,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-05-11
      */
-    class GAUDI_API LogGamma
-      : public std::unary_function<double,double>
+    class GAUDI_API LogGamma final
     {
     public:
       // ======================================================================
@@ -3971,8 +3862,6 @@ namespace Gaudi
       LogGamma ( const double nu     = 0 ,   // shape parameter
                  const double lambda = 1 ,   // scale parameter
                  const double alpha  = 1 ) ; // scale parameter
-      /// destructor
-      ~LogGamma () ;  // desctructor
       // ======================================================================
     public:
       // ======================================================================
@@ -4026,8 +3915,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-05-11
      */
-    class GAUDI_API BetaPrime
-      : public std::unary_function<double,double>
+    class GAUDI_API BetaPrime final
     {
     public:
       // ======================================================================
@@ -4041,8 +3929,6 @@ namespace Gaudi
                   const double beta  = 3 ,
                   const double scale = 1 ,
                   const double shift = 0 ) ;
-      /// destructor
-      ~BetaPrime () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4101,8 +3987,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-05-11
      */
-    class GAUDI_API Landau
-      : public std::unary_function<double,double>
+    class GAUDI_API Landau final
     {
     public:
       // ======================================================================
@@ -4114,8 +3999,6 @@ namespace Gaudi
        */
       Landau ( const double scale = 1 ,
                const double shift = 0 ) ;
-      /// destructor
-      ~Landau () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4167,8 +4050,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2014-08-02
      */
-    class GAUDI_API SinhAsinh
-      : public std::unary_function<double,double>
+    class GAUDI_API SinhAsinh final
     {
     public:
       // ======================================================================
@@ -4182,8 +4064,6 @@ namespace Gaudi
                    const double scale     = 1   ,
                    const double epsilon   = 0   ,
                    const double delta     = 1   ) ;
-      /// destructor
-      ~SinhAsinh() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4250,8 +4130,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2015-07-11
      */
-    class GAUDI_API JohnsonSU
-      : public std::unary_function<double,double>
+    class GAUDI_API JohnsonSU final
     {
     public:
       // ======================================================================
@@ -4265,8 +4144,6 @@ namespace Gaudi
                    const double lambda  = 1 ,   // related to variance
                    const double delta   = 1 ,   // shape
                    const double gamma   = 0 ) ; // shape
-      /// destructor
-      ~JohnsonSU () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4320,7 +4197,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-08-21
      */
-    class GAUDI_API Atlas : public std::unary_function<double,double>
+    class GAUDI_API Atlas final
     {
     public:
       // ======================================================================
@@ -4330,8 +4207,6 @@ namespace Gaudi
        */
       Atlas   ( const double mean   = 0  ,
                 const double sigma  = 1  ) ;
-      /// destructor
-      ~Atlas () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4399,7 +4274,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2016-04-25
      */
-    class GAUDI_API Sech : public std::unary_function<double,double>
+    class GAUDI_API Sech final
     {
     public:
       // ======================================================================
@@ -4409,8 +4284,6 @@ namespace Gaudi
        */
       Sech   ( const double mean   = 0  ,
                const double sigma  = 1  ) ;
-      /// destructor
-      ~Sech () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4476,7 +4349,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2016-06-14
      */
-    class GAUDI_API Logistic : public std::unary_function<double,double>
+    class GAUDI_API Logistic final
     {
     public:
       // ======================================================================
@@ -4486,8 +4359,6 @@ namespace Gaudi
        */
       Logistic  ( const double mean  = 0  ,
                   const double sigma = 1  ) ;
-      /// destructor
-      ~Logistic () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4553,8 +4424,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-05-11
      */
-    class GAUDI_API Argus
-      : public std::unary_function<double,double>
+    class GAUDI_API Argus final
     {
     public:
       // ======================================================================
@@ -4567,8 +4437,6 @@ namespace Gaudi
       Argus  ( const double shape  = 1   ,
                const double high   = 1   ,
                const double low    = 0   ) ;
-      /// destructor
-      ~Argus () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -4613,7 +4481,7 @@ namespace Gaudi
      *  product of the exponential and positive polinonmial
      *  @see Gaudi::Math::Positive
      */
-    class GAUDI_API ExpoPositive :  public std::unary_function<double,double>
+    class GAUDI_API ExpoPositive
     {
     public:
       // ======================================================================
@@ -4698,7 +4566,6 @@ namespace Gaudi
      * \f$P_{pos}\f$ denotes the positive polynomial
      */
     class GAUDI_API PS2DPol
-      : public std::binary_function<double,double,double>
     {
       // ======================================================================
     public:
@@ -4801,7 +4668,6 @@ namespace Gaudi
      * \f$P_{sym}\f$ denotes the symmetric positive polynomial
      */
     class GAUDI_API PS2DPolSym
-      : public std::binary_function<double,double,double>
     {
       // ======================================================================
     public:
@@ -4894,7 +4760,6 @@ namespace Gaudi
      * \f$P_{pos}\f$ denotes the positive polynomial
      */
     class GAUDI_API ExpoPS2DPol
-      : public std::binary_function<double,double,double>
     {
       // ======================================================================
     public:
@@ -5002,7 +4867,6 @@ namespace Gaudi
      * \f$P_{pos}\f$ denotes the positive polynomial
      */
     class GAUDI_API Expo2DPol
-      : public std::binary_function<double,double,double>
     {
       // ======================================================================
     public:
@@ -5097,7 +4961,6 @@ namespace Gaudi
      * \f$P_{pos}\f$ denotes the symmetric positive polynomial
      */
     class GAUDI_API Expo2DPolSym
-      : public std::binary_function<double,double,double>
     {
       // ======================================================================
     public:
@@ -5187,7 +5050,7 @@ namespace Gaudi
      *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
      *  @date 2015-02-07
      */
-    class GAUDI_API Sigmoid : public std::unary_function<double,double>
+    class GAUDI_API Sigmoid
     {
     public:
       // ============================================================
@@ -5285,7 +5148,7 @@ namespace Gaudi
      *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
      *  @date 2015-02-07
      */
-    class GAUDI_API TwoExpos : public std::unary_function<double,double>
+    class GAUDI_API TwoExpos
     {
     public:
       // ======================================================================
@@ -5375,7 +5238,7 @@ namespace Gaudi
      *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
      *  @date 2015-03-28
      */
-    class GAUDI_API TwoExpoPositive : public std::unary_function<double,double>
+    class GAUDI_API TwoExpoPositive
     {
     public:
       // ======================================================================
@@ -5513,7 +5376,7 @@ namespace Gaudi
      *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
      *  @date 2015-07-11
      */
-    class GAUDI_API Tsallis : public std::unary_function<double,double>
+    class GAUDI_API Tsallis final
     {
     public:
       // ======================================================================
@@ -5526,8 +5389,6 @@ namespace Gaudi
         ( const double mass         = 0   ,
           const double n            = 10  ,
           const double T            = 1.1 ) ;
-      /// destructor
-      ~Tsallis() ;
       // ======================================================================
     public:
       // ======================================================================
@@ -5616,7 +5477,7 @@ namespace Gaudi
      *  @author Vanya BElyaev Ivan.Belyaev@itep.ru
      *  @date 2015-07-11
      */
-    class GAUDI_API QGSM: public std::unary_function<double,double>
+    class GAUDI_API QGSM final
     {
     public:
       // ======================================================================
@@ -5627,8 +5488,6 @@ namespace Gaudi
       QGSM
         ( const double mass         = 0   ,    // partile mass
           const double b            = 1   ) ;  // slope
-      /// destructor
-      ~QGSM () ;
       // ======================================================================
     public:
       // ======================================================================
@@ -5707,7 +5566,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-07-26
      */
-    class GAUDI_API FourierSum : public std::unary_function<double,double>
+    class GAUDI_API FourierSum
     {
     public:
       // ======================================================================
@@ -5902,7 +5761,7 @@ namespace Gaudi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2015-07-26
      */
-    class GAUDI_API CosineSum : public std::unary_function<double,double>
+    class GAUDI_API CosineSum
     {
     public:
       // ======================================================================

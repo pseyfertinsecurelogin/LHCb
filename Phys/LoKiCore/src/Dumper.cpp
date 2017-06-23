@@ -1,7 +1,7 @@
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 #include <iostream>
 // ============================================================================
@@ -10,27 +10,25 @@
 #include "LoKi/BasicFunctors.h"
 #include "LoKi/Dumper.h"
 // ============================================================================
-/** @file 
- *  Implementation file for classes form namesapce LoKi::Functors 
+/** @file
+ *  Implementation file for classes form namesapce LoKi::Functors
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya Belyaev Ivan.BElyaev@itep.ru
- *  @date 2012-01-28 
+ *  @date 2012-01-28
  */
 // ============================================================================
 template <>
-LoKi::Functors::Dump1_<double,bool>::result_type 
-LoKi::Functors::Dump1_<double,bool>::operator() 
-  ( LoKi::Functors::Dump1_<double,bool>::argument a ) const 
+bool LoKi::Functors::Dump1_<double,bool>::operator() ( double a ) const
 {
-  if ( m_right ) 
+  if ( m_right )
   {
     m_stream << m_dump.open  () ;
     m_stream << a ;
@@ -48,11 +46,9 @@ LoKi::Functors::Dump1_<double,bool>::operator()
 }
 // ============================================================================
 template <>
-LoKi::Functors::Dump1_<double,double>::result_type 
-LoKi::Functors::Dump1_<double,double>::operator() 
-  ( LoKi::Functors::Dump1_<double,double>::argument a ) const 
+double LoKi::Functors::Dump1_<double,double>::operator()( double a ) const
 {
-  if ( m_right ) 
+  if ( m_right )
   {
     m_stream << m_dump.open  () ;
     m_stream << a ;
@@ -69,5 +65,5 @@ LoKi::Functors::Dump1_<double,double>::operator()
   return result ;
 }
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

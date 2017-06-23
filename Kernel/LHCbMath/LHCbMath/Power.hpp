@@ -84,7 +84,7 @@ namespace Gaudi
     static inline typename ReturnPolicy<TYPE, N, (N>=0) >::RETURN_TYPE pow ( TYPE __x ) 
     {
       return ImplementationSwitch< TYPE, N, (N>=0) >::powImpl::pow(__x);
-    };
+    }
     
 
   } // end of namespace Math

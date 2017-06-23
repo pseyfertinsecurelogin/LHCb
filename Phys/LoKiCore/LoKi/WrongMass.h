@@ -165,21 +165,18 @@ namespace LoKi
      *  @endcode
      */
     template <class PARTICLE,class WMASSVAL,class PREDICATE>
-    inline
-    LoKi::LorentzVector
-    wrongMass
-    ( PARTICLE            first  ,
-      PARTICLE            last   ,
-      WMASSVAL            begin  ,
-      PREDICATE           cut    ,
-      LoKi::LorentzVector result = LoKi::LorentzVector() )
+    LoKi::LorentzVector wrongMass( PARTICLE            first  ,
+                                   PARTICLE            last   ,
+                                   WMASSVAL            begin  ,
+                                   PREDICATE           cut    ,
+                                   LoKi::LorentzVector result = LoKi::LorentzVector() )
     {
-      for ( ; first != last ; ++first , ++begin )
-      {
-        if ( cut (*first) )
-        { result += wrongMass ( (*first)->momentum() , *begin ) ; }
-      }
-      return result ;
+      using arg_v = decltype(*first);
+      return std::accumulate(first,last,result,
+                             [&](LoKi::LorentzVector lv, arg_v part) {
+                                if (cut(part)) lv += wrongMass(part->momentum(),*begin);
+                                return lv;
+                             } );
     }
     // ========================================================================
   } // end of namespace LoKi::Kinematics

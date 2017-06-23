@@ -28,7 +28,7 @@
 
 class DeSTDetector;
 
-class STReadoutTool: public GaudiTool, virtual public ISTReadoutTool{
+class STReadoutTool: public extends<GaudiTool, ISTReadoutTool> {
 
 public:
 
@@ -36,9 +36,6 @@ public:
   STReadoutTool(const std::string& type,
                 const std::string& name,
                 const IInterface* parent);
-
-  /// destructer
-  virtual ~STReadoutTool();
 
   /// init
   StatusCode initialize() override;
@@ -118,28 +115,28 @@ protected:
   unsigned int m_hybridsPerBoard;
   unsigned int m_nBoard = 0;
   unsigned int m_nServiceBox;
-  std::vector<STTell1Board*> m_boards;
+  std::vector<std::unique_ptr<STTell1Board>> m_boards;
   std::vector<std::string> m_serviceBoxes;
   std::vector<unsigned int> m_firstBoardInRegion;
 
-  bool m_printMapping;
+  Gaudi::Property<bool> m_printMapping { this, "printMapping", false };
   DeSTDetector* m_tracker = nullptr;
   std::string m_detType;
   std::string m_conditionLocation;
 
 private:
 
-  bool m_writeXML;
-  std::string m_footer;
-  std::string m_startTag;
-  std::string m_outputFileName;
+  Gaudi::Property<bool> m_writeXML { this, "writeMappingToXML", false };
+  Gaudi::Property<std::string> m_footer { this, "footer", "</DDDB>"};
+  Gaudi::Property<std::string> m_startTag { this, "startTag", "<condition"};
+  Gaudi::Property<std::string> m_outputFileName { this, "outputFile","ReadoutMap.xml"};
   std::ofstream m_outputFile;
-  std::string m_author;
-  std::string m_tag;
-  std::string m_desc;
-  bool m_removeCondb;
-  unsigned int m_precision;
-  unsigned int m_depth;
+  Gaudi::Property<std::string> m_author { this, "author", "Joe Bloggs"};
+  Gaudi::Property<std::string> m_tag { this, "tag", "None"};
+  Gaudi::Property<std::string> m_desc { this, "description", "BlahBlahBlah"};
+  Gaudi::Property<bool> m_removeCondb { this, "removeCondb", false};
+  Gaudi::Property<unsigned int> m_precision { this, "precision", 16u};
+  Gaudi::Property<unsigned int> m_depth { this, "depths", 3u };
 
 };
 

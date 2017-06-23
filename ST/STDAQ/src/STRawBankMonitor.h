@@ -23,12 +23,8 @@ class STRawBankMonitor : public ST::HistoAlgBase{
 
 public:
 
-  /// constructer
-  STRawBankMonitor(const std::string& name,
-                   ISvcLocator *svcloc );
-
-  /// destructer
-  virtual ~STRawBankMonitor();
+  /// constructor
+  using ST::HistoAlgBase::HistoAlgBase;
 
   /// initialize
   StatusCode initialize() override;
@@ -40,10 +36,14 @@ private:
 
   StatusCode configureBankType();
 
-  LHCb::RawBank::BankType m_bankType;
+  LHCb::RawBank::BankType m_bankType = LHCb::RawBank::LastType;
 
   /// List of locations in the transient store to search the RawEvent object.
-  std::vector<std::string> m_rawEventLocations;
+  Gaudi::Property<std::vector<std::string>> m_rawEventLocations
+  { this, "RawEventLocations", { },
+                   "List of possible locations of the RawEvent object in the"
+                   " transient store. By default it is LHCb::RawEventLocation::Other,"
+                   " LHCb::RawEventLocation::Default." };
 
 };
 

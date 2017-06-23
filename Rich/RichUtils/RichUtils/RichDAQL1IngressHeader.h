@@ -9,8 +9,7 @@
  */
 //=============================================================================================
 
-#ifndef RICHUTILS_RichDAQL1IngressHeader_H
-#define RICHUTILS_RichDAQL1IngressHeader_H 1
+#pragma once
 
 // STD
 #include <bitset>
@@ -260,5 +259,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_RichDAQL1IngressHeader_H

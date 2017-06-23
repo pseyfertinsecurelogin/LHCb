@@ -42,9 +42,7 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2003-01-16
    */
-  class Reporter
-    : public               GaudiTool
-    , public virtual LoKi::IReporter
+  class Reporter : public extends< GaudiTool, LoKi::IReporter >
   {
     // ========================================================================
     /// friend factory for instantiation
@@ -108,7 +106,7 @@ namespace LoKi
      */
     StatusCode initialize   ()  override
     {
-      StatusCode sc = GaudiTool::initialize();
+      StatusCode sc = base_class::initialize();
       if ( sc.isFailure() ) { return sc ; }
       //
       LoKi::ErrorReport& rep = LoKi::ErrorReport::instance() ;
@@ -128,7 +126,7 @@ namespace LoKi
       if ( rep.reporter() == this )
       { rep.report().ignore() ; rep.setReporter( 0 ).ignore() ; }
       // finalize the base class
-      return GaudiTool::finalize();
+      return base_class::finalize();
     }
     // ========================================================================
   protected:
@@ -139,15 +137,11 @@ namespace LoKi
      *  @param name   tool name
      *  @param parent tool parent
      */
-    Reporter
-    ( const std::string& type   ,
-      const std::string& name   ,
-      const IInterface*  parent )
-      : GaudiTool ( type, name , parent )
+    Reporter ( const std::string& type   ,
+               const std::string& name   ,
+               const IInterface*  parent )
+      : base_class ( type, name , parent )
     {
-      // declare the interface
-      declareInterface<LoKi::IReporter> ( this ) ;
-      declareInterface<IErrorTool>      ( this ) ;
       //
       declareProperty( "PrintMyAlg", m_printMyAlg = true );
       //
@@ -159,8 +153,6 @@ namespace LoKi
                "Unable to set Property 'PropertiesPrint'", sc    ) ;
       //
     }
-    /// virtual destructor
-    virtual ~Reporter() { }
     // ========================================================================
     /// copy  constructor is disabled
     Reporter ( const Reporter& ) = delete;             // copy  constructor is disabled

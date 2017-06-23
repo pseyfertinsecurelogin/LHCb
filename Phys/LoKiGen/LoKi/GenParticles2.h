@@ -99,7 +99,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       PolarizationAngle* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -219,7 +219,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       SinChi* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -290,9 +290,8 @@ namespace LoKi
      *  @date 2011-01-28
      */
     // ========================================================================
-    class GAUDI_API CosChi : public SinChi
+    struct GAUDI_API CosChi : SinChi
     {
-    public:
       // ======================================================================
       /// constructor from child-selector
       CosChi ( const LoKi::GenChild::Selector& particle1        ,
@@ -323,7 +322,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       CosChi* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -348,9 +347,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2011-01-28
      */
-    class GAUDI_API AngleChi : public CosChi
+    struct GAUDI_API AngleChi : CosChi
     {
-    public:
       // ======================================================================
       /// constructor from child-selector
       AngleChi ( const LoKi::GenChild::Selector& particle1        ,
@@ -381,7 +379,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       AngleChi* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -422,9 +420,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-28
      */
-    class GAUDI_API CosThetaTr : public AngleChi
+    struct GAUDI_API CosThetaTr : AngleChi
     {
-    public:
       // ======================================================================
       /// constructor from child-selector
       CosThetaTr ( const LoKi::GenChild::Selector& particle1        ,
@@ -455,7 +452,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       CosThetaTr* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -502,9 +499,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-20
      */
-    class GAUDI_API SinPhiTr : public CosThetaTr
+    struct GAUDI_API SinPhiTr : CosThetaTr
     {
-    public:
       // ======================================================================
       /// constructor from child-selector
       SinPhiTr ( const LoKi::GenChild::Selector& particle1        ,
@@ -535,7 +531,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       SinPhiTr* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -558,9 +554,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-28
      */
-    class GAUDI_API CosPhiTr : public SinPhiTr
+    struct GAUDI_API CosPhiTr : SinPhiTr
     {
-    public:
       // ======================================================================
       /// constructor from child-selector
       CosPhiTr ( const LoKi::GenChild::Selector& particle1        ,
@@ -591,7 +586,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       CosPhiTr* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -614,9 +609,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date 2012-01-28
      */
-    class GAUDI_API AnglePhiTr : public CosPhiTr
+    struct GAUDI_API AnglePhiTr : CosPhiTr
     {
-    public:
       // ======================================================================
       /// constructor from child-selector
       AnglePhiTr ( const LoKi::GenChild::Selector& particle1        ,
@@ -647,7 +641,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       AnglePhiTr* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================

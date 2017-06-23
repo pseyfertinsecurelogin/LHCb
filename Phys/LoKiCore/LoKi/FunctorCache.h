@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_FUNCTOR_CACHE_H
 #define LOKI_FUNCTOR_CACHE_H

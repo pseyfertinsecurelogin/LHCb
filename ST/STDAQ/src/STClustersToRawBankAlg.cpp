@@ -90,13 +90,9 @@ StatusCode STClustersToRawBankAlg::initialize() {
 StatusCode STClustersToRawBankAlg::configureBankType(){
 
   // configure the type of bank to write (TT or IT)
-  StatusCode sc = StatusCode::SUCCESS;
-
   m_bankType = STRawBankMap::stringToType(detType());
-  if (m_bankType == RawBank::Velo){
-    sc = StatusCode::FAILURE;
-  }
-  return sc;
+  return m_bankType != RawBank::Velo ? StatusCode::SUCCESS
+                                     : StatusCode::FAILURE;
 }
 
 StatusCode STClustersToRawBankAlg::execute() {
@@ -192,10 +188,9 @@ unsigned int STClustersToRawBankAlg::bankSize(STClustersOnBoard::ClusterVector& 
                                            return n + p.first->size();
                                        });
 
-  unsigned int nByte = sizeof(short)
-    +(nClus*sizeof(short))
-    +(nClus*sizeof(char))
-    +(nADC* sizeof(char));
+  unsigned int nByte = sizeof(short) + nClus*sizeof(short)
+                                     + nClus*sizeof(char)
+                                     + nADC* sizeof(char);
 
  return (unsigned int)ceil(nByte/(double)sizeof(int));
 }
@@ -245,7 +240,7 @@ void STClustersToRawBankAlg::writeBank(const STClustersOnBoard::ClusterVector&
     for (unsigned int i = 0; i < nToWrite; ++i){
       bool last = ( i == nToWrite-1 );
       bWriter << SiADCWord(adcs[i].second, last);
-    } //iter   
+    } //iter
 
   } // clusCont
 }

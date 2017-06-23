@@ -83,6 +83,11 @@ _standardDescriptors = [
         name="Hlt2DownstreamPIDMuonSegments",
         location="/Event/Hlt2/pRec/Downstream/PID/MuonSegments",
         packer=PackTrack, unpacker=UnpackTrack),
+    # Vertices
+    PackingDescriptor(
+        name="Hlt2RecVertices",
+        location="/Event/Hlt2/pRec/Vertex/PV3D",
+        packer=PackRecVertex, unpacker=UnpackRecVertex),
     # Tracks
     PackingDescriptor(
         name="Hlt2LongTracks",
@@ -96,11 +101,6 @@ _standardDescriptors = [
         name="Hlt2VeloPVTracks",
         location="/Event/Hlt2/pRec/VeloPV/Tracks",
         packer=PackTrack, unpacker=UnpackTrack),
-    # Vertices
-    PackingDescriptor(
-        name="Hlt2RecVertices",
-        location="/Event/Hlt2/pRec/Vertex/PV3D",
-        packer=PackRecVertex, unpacker=UnpackRecVertex),
 
     # Neutral proto particles
     PackingDescriptor(
@@ -274,11 +274,11 @@ class PersistRecoPacking(object):
         m.update({x: x for x in self.external})
         return m
 
-    def packers(self):
+    def packers(self, identifier=''):
         """Return the list of packing algorithms."""
         algs = []
         for name, d in self._descriptors.items():
-            alg = d.packer('Pack' + name)
+            alg = d.packer('Pack' + name + identifier)
             alg.InputName = self.inputs[name]
             alg.OutputName = d.location
             algs.append(alg)

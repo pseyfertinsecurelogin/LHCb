@@ -1,6 +1,5 @@
 
-#ifndef RICHFUTUREKERNEL_RICHCONVERTER_H
-#define RICHFUTUREKERNEL_RICHCONVERTER_H 1
+#pragma once
 
 // local
 #include "RichFutureKernel/RichConverter_Imp.h"
@@ -34,5 +33,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHFUTUREKERNEL_RICHCONVERTER_H

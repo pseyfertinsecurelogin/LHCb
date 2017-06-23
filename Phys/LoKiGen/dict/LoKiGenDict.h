@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_LOKIGENDICT_H
 #define LOKI_LOKIGENDICT_H 1

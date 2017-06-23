@@ -35,14 +35,10 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2004-06-29
    */
-  class GAUDI_API IGenHybridTool : public virtual IAlgTool
+  struct GAUDI_API IGenHybridTool : extend_interfaces<IAlgTool>
   {
-  public:
     // ========================================================================
-    /// Return the unique interface ID
-    static const InterfaceID& interfaceID() ;
-    // ========================================================================
-  public:
+    DeclareInterfaceID( IGenHybridTool , 5 , 0 ) ;
     // ========================================================================
     // predicates:
     // ========================================================================
@@ -51,16 +47,12 @@ namespace LoKi
     /// set the C++ predicate for HepMC::GenVertex
     virtual void set ( const LoKi::Types::GVCuts&  cut ) = 0 ;
     // ========================================================================
-  public:
-    // ========================================================================
     // functions
     // ========================================================================
     /// set the C++ function for HepMC::GenParticle
     virtual void set ( const LoKi::Types::GFunc&   cut ) = 0 ;
     /// set the C++ function for HepMC::GenVertex
     virtual void set ( const LoKi::Types::GVFunc&  cut ) = 0 ;
-    // ========================================================================
-  public:
     // ========================================================================
     // maps
     // ========================================================================
@@ -69,16 +61,12 @@ namespace LoKi
     /// set the C++ function for HepMC::GenVertex
     virtual void set ( const LoKi::Types::GVMaps&  cut ) = 0 ;
     // ========================================================================
-  public:
-    // ========================================================================
     // pipes
     // ========================================================================
     /// set the C++ function for HepMC::GenParticle
     virtual void set ( const LoKi::Types::GPipes&   cut ) = 0 ;
     /// set the C++ function for HepMC::GenVertex
     virtual void set ( const LoKi::Types::GVPipes&  cut ) = 0 ;
-    // ========================================================================
-  public:
     // ========================================================================
     // fun-vals
     // ========================================================================
@@ -87,14 +75,10 @@ namespace LoKi
     /// set the C++ function for HepMC::GenVertex
     virtual void set ( const LoKi::Types::GVFunVals&  cut ) = 0 ;
     // ========================================================================
-  public:
-    // ========================================================================
     // cut-vals
     // ========================================================================
     /// set the C++ function for HepMC::GenParticle
     virtual void set ( const LoKi::Types::GCutVals&   cut ) = 0 ;
-    // ========================================================================
-  public:
     // ========================================================================
     // sources
     // ========================================================================

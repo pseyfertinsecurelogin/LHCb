@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHSMARTIDSORTER_H
-#define RICHUTILS_RICHSMARTIDSORTER_H 1
+#pragma once
 
 // STL
 #include <functional>
@@ -77,5 +76,3 @@ namespace Rich
   };
 
 }
-
-#endif // RICHUTILS_RICHSMARTIDSORTER_H

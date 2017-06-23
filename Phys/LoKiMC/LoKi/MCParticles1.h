@@ -38,7 +38,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       DecNode* clone() const override { return new DecNode ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -92,7 +92,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       DecTree* clone() const override { return new DecTree ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -153,7 +153,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivane.Belyaev@nikhef.nl
      *  @date 2008-12-17
      */
-    typedef LoKi::MCParticles::DecNode                              MCDECNODE ;
+    using MCDECNODE = LoKi::MCParticles::DecNode                              ;
     // ========================================================================
     /** @typedef MCDECTREE
      *  the trivial predicate which acts on decay structure
@@ -180,7 +180,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivane.Belyaev@nikhef.nl
      *  @date 2008-12-17
      */
-    typedef LoKi::MCParticles::DecTree                              MCDECTREE ;
+    using MCDECTREE = LoKi::MCParticles::DecTree                              ;
     // ========================================================================
   } // end of namespace LoKi::Cuts
   // ==========================================================================

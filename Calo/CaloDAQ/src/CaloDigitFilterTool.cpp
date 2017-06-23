@@ -68,6 +68,8 @@ StatusCode CaloDigitFilterTool::initialize(){
 StatusCode CaloDigitFilterTool::caloUpdate(){
   // loop over all current maps and recreate
   for ( auto & maps : m_offsetMap ) { createMaps(maps.first,false); }
+  const auto offsets = m_offsetMap.find(m_calo);
+  setMaps( offsets != m_offsetMap.end() ? *(offsets->second) : createMaps(m_calo) );
   return StatusCode::SUCCESS;
 }
 
@@ -83,9 +85,9 @@ CaloDigitFilterTool::createMaps( DeCalorimeter* calo, const bool regUpdate ){
   maps->offsetsSPD.clear();
   maps->offsetsSPDRMS.clear();
   // fill the maps from the Calo DetElem
-  for ( const auto & c : m_calo->cellParams() ){
+  for ( const auto & c : calo->cellParams() ){
     const auto id = c.cellID();
-    if ( !m_calo->valid( id ) || id.isPin() ) continue;
+    if ( !calo->valid( id ) || id.isPin() ) continue;
     maps->offsets[id]       = c.pileUpOffset();
     maps->offsetsRMS[id]    = c.pileUpOffsetRMS();
     maps->offsetsSPD[id]    = c.pileUpOffsetSPD();
@@ -93,7 +95,7 @@ CaloDigitFilterTool::createMaps( DeCalorimeter* calo, const bool regUpdate ){
   }
   // if first time, register callback for future updates
   if ( regUpdate )
-  { updMgrSvc()->registerCondition( this, calo, &CaloDigitFilterTool::caloUpdate ); }
+  {updMgrSvc()->registerCondition( this, calo, &CaloDigitFilterTool::caloUpdate );}
   // return the new maps
   return *maps;
 }
@@ -133,7 +135,7 @@ void CaloDigitFilterTool::getOffsetMap(const std::string& det){
 double CaloDigitFilterTool::getOffset(LHCb::CaloCellID id, int scale,bool spd){
   if ( 0 == scale ) return 0;
   if ( scale <= m_scalingMin ) return 0;
-  const auto & table = (spd) ? offsets() : offsetsSPD();
+  const auto & table = (spd) ? offsetsSPD() : offsets();
   const auto it = table.find( id );
   if ( it == table.end() ) return 0.;
   const auto& ref =  it->second;

@@ -16,12 +16,14 @@ public:
   StatusCode finalize() override;
 
   Locations locationsToPersist(const LHCb::HltDecReports& hdr,
-    const std::set<std::string>& lines) const override;
+    const LineDecNames& lines) const override;
+  Locations turboPPLocationsToPersist(const LHCb::HltDecReports& hdr,
+    const LineDecNames& lines) const override;
   RawBanks rawBanksToPersist(const LHCb::HltDecReports& hdr,
-    const std::set<std::string>& lines) const override;
+    const LineDecNames& lines) const override;
 
 private:
-  using LineRequests = std::tuple<NameListPerLine, RawBanksPerLine>;
+  using LineRequests = std::tuple<NameListPerLine, LineDecNames, RawBanksPerLine>;
 
   const PropertyConfig& hltSvcPropertyConfig(const TCK& tck) const;
   template<typename T>
@@ -31,6 +33,8 @@ private:
   Gaudi::Property<std::string> m_propertyConfigSvcName{
     this, "IPropertyConfigSvcInstance", "PropertyConfigSvc"};
   Gaudi::Property<std::string> m_instanceName{this, "InstanceName", "HltLinePersistenceSvc"};
+  /// Property giving the mapping between packed containers and containers
+  Gaudi::Property<std::map<std::string, std::string>> m_containerMap {this, "ContainerMap"};
   mutable SmartIF<IPropertyConfigSvc> m_propertyConfigSvc;
   mutable std::map<TCK, LineRequests> m_cache;  // TODO: flush cache if m_instanceName changes
 };
@@ -63,19 +67,29 @@ StatusCode TCKLinePersistenceSvc::finalize() {
 
 ILinePersistenceSvc::Locations
 TCKLinePersistenceSvc::locationsToPersist(
-  const LHCb::HltDecReports& hdr, const std::set<std::string>& lines) const
+  const LHCb::HltDecReports& hdr, const ILinePersistenceSvc::LineDecNames& lines) const
 {
   auto requests = lineRequests(hdr.configuredTCK());
   return locationsToPersistImpl(hdr, lines, std::get<0>(requests));
 }
 
 
-ILinePersistenceSvc::RawBanks
-TCKLinePersistenceSvc::rawBanksToPersist(
-  const LHCb::HltDecReports& hdr, const std::set<std::string>& lines) const
+ILinePersistenceSvc::Locations
+TCKLinePersistenceSvc::turboPPLocationsToPersist(
+  const LHCb::HltDecReports& hdr, const ILinePersistenceSvc::LineDecNames& lines) const
 {
   auto requests = lineRequests(hdr.configuredTCK());
-  return rawBanksToPersistImpl(hdr, lines, std::get<1>(requests));
+  return turboPPLocationsToPersistImpl(hdr, lines, std::get<1>(requests),
+                                       std::get<0>(requests));
+}
+
+
+ILinePersistenceSvc::RawBanks
+TCKLinePersistenceSvc::rawBanksToPersist(
+  const LHCb::HltDecReports& hdr, const ILinePersistenceSvc::LineDecNames& lines) const
+{
+  auto requests = lineRequests(hdr.configuredTCK());
+  return rawBanksToPersistImpl(hdr, lines, std::get<2>(requests));
 }
 
 
@@ -133,11 +147,26 @@ const TCKLinePersistenceSvc::LineRequests& TCKLinePersistenceSvc::lineRequests(u
   _tck.normalize();
   auto entry = m_cache.find(_tck);
   if (entry == std::end(m_cache)) {
+    // Fetch and parse/convert the properties from the TCK
     auto config = hltSvcPropertyConfig(_tck);
     auto locationsMap = parseProperty<NameListPerLine>(config, "Locations");
+    auto turboPPLines = parseProperty<std::vector<std::string>>(config, "TurboPPLines");
+    auto turboPPLinesMap = ILinePersistenceSvc::LineDecNames{
+      turboPPLines.begin(), turboPPLines.end()};
     auto rawBankTypesMap = parseProperty<NameListPerLine>(config, "RawBankTypes");
     auto rawBanksMap = typeNamesToBitset(rawBankTypesMap);
-    auto status = m_cache.emplace(_tck, LineRequests{locationsMap, rawBanksMap});
+
+    // Apply the ContainerMap
+    for (auto& pair : locationsMap) {
+      for (auto& location : pair.second) {
+        auto mappedLocation = m_containerMap.find(location);
+        if (mappedLocation != std::end(m_containerMap)) {
+          location = mappedLocation->second;
+        }
+      }
+    }
+
+    auto status = m_cache.emplace(_tck, LineRequests{locationsMap, turboPPLinesMap, rawBanksMap});
     if (!status.second) {
       error() << "Error updating cache for TCK " << _tck <<  " Returning an empty map... " << endmsg;
       throw GaudiException("FATAL error",

@@ -29,10 +29,7 @@ STErrorDecoding::STErrorDecoding( const std::string& name,
            KeyValue{"RawEventLocations",
                      Gaudi::Functional::concat_alternatives(LHCb::RawEventLocation::Tracker,
                                                             LHCb::RawEventLocation::Other,
-                                                            LHCb::RawEventLocation::Default)})
-{
-  declareProperty("PrintErrorInfo", m_PrintErrorInfo = false);
-}
+                                                            LHCb::RawEventLocation::Default)}) {}
 
 //=============================================================================
 // Main execution

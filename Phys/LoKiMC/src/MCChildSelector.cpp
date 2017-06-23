@@ -1,8 +1,7 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
-// GaudiKernel 
+// GaudiKernel
 // ============================================================================
 #include "GaudiKernel/ToStream.h"
 #include "GaudiKernel/SmartIF.h"
@@ -27,15 +26,15 @@
 #include "LoKi/MCParticles1.h"
 #include "LoKi/MCChild.h"
 // ============================================================================
-/** @file 
- *  implementation file for class LoKi::MCChild::Selector 
- *  @see LoKi::Child::Selector 
- *  @date 2010-05-31 
+/** @file
+ *  implementation file for class LoKi::MCChild::Selector
+ *  @see LoKi::Child::Selector
+ *  @date 2010-05-31
  *  @author Vanya Belyaev Ivan.Belyaev@nikhef.nl
  */
 // ============================================================================
-namespace 
-{ 
+namespace
+{
   // ==========================================================================
   /// invalid decay
   const Decays::Trees::Types_<const LHCb::MCParticle*>::Invalid       s_INVALID =
@@ -47,88 +46,88 @@ namespace
   // ==========================================================================
 }
 // ============================================================================
-/* accessor to certain children particles for the given particle 
- *  @param  particle (INPUT) pointer to mother particle 
- *  @param  selector (INPUT) the selector 
+/* accessor to certain children particles for the given particle
+ *  @param  particle (INPUT) pointer to mother particle
+ *  @param  selector (INPUT) the selector
  *  @param  result   (OUTPUT) the container of found particles
- *  @return number of found particles 
+ *  @return number of found particles
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date   2010-05-29
  */
 // ============================================================================
-unsigned int LoKi::MCChild::children 
-( const LHCb::MCParticle*        particle , 
-  const LoKi::MCChild::Selector& selector , 
-  LHCb::MCParticle::ConstVector& result   ) 
+unsigned int LoKi::MCChild::children
+( const LHCb::MCParticle*        particle ,
+  const LoKi::MCChild::Selector& selector ,
+  LHCb::MCParticle::ConstVector& result   )
 {
-  if ( 0 == particle ) { return 0 ; }                               // RETURN 
+  if ( 0 == particle ) { return 0 ; }                               // RETURN
   return selector.children ( particle , result ) ;
 }
 // ============================================================================
-/*  accessor to certain children particles for the givenm particle 
- *  @param  particle (INPUT) pointer to mother particle 
- *  @param  selector (INPUT) the selector 
+/*  accessor to certain children particles for the givenm particle
+ *  @param  particle (INPUT) pointer to mother particle
+ *  @param  selector (INPUT) the selector
  *  @return the container of found particles
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date   2010-05-29
  */
 // ============================================================================
 LHCb::MCParticle::ConstVector
-LoKi::MCChild::children 
-( const LHCb::MCParticle*        particle , 
-  const LoKi::MCChild::Selector& selector ) 
+LoKi::MCChild::children
+( const LHCb::MCParticle*        particle ,
+  const LoKi::MCChild::Selector& selector )
 {
   LHCb::MCParticle::ConstVector result ;
   if ( 0 == particle ) { return result ; }                           // RETURN
   //
   children ( particle , selector , result ) ;
-  return result ;                                                    
+  return result ;
 }
 // ============================================================================
 /* Trivial accessor to the daughter particles for the given particle.
- *  @param  particle (const) pointer to mother particle 
- *  @param  selector the selector 
+ *  @param  particle (const) pointer to mother particle
+ *  @param  selector the selector
  *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
  *  @date   2010-05-29
  */
 // ============================================================================
-const LHCb::MCParticle* 
-LoKi::MCChild::child 
-( const LHCb::MCParticle*        particle , 
-  const LoKi::MCChild::Selector& selector ) 
+const LHCb::MCParticle*
+LoKi::MCChild::child
+( const LHCb::MCParticle*        particle ,
+  const LoKi::MCChild::Selector& selector )
 {
-  if ( 0 == particle ) { return 0 ; }                                // RETURN 
-  return selector.child ( particle ) ; 
+  if ( 0 == particle ) { return 0 ; }                                // RETURN
+  return selector.child ( particle ) ;
 }
 // ============================================================================
 
 // ============================================================================
 // constructor from the index
 // ============================================================================
-LoKi::MCChild::Selector::Selector 
-( const unsigned int   i  ) 
-  : LoKi::AuxFunBase ( std::tie ( i ) ) 
-  , m_indices   ( 1 , i      ) 
+LoKi::MCChild::Selector::Selector
+( const unsigned int   i  )
+  : LoKi::AuxFunBase ( std::tie ( i ) )
+  , m_indices   ( 1 , i      )
   , m_finder    ( s_INVALID  )
-  , m_decay     (            ) 
-  , m_setCut    ( false      ) 
-  , m_cut       ( s_NONE     ) 
+  , m_decay     (            )
+  , m_setCut    ( false      )
+  , m_cut       ( s_NONE     )
   , m_decayOnly ( false      )
   , m_factory   ( s_FACTORY  )
 {}
 // ============================================================================
 // constructor from the index
 // ============================================================================
-LoKi::MCChild::Selector::Selector 
-( const unsigned int   i1 , 
-  const unsigned int   i2 ) 
-  : LoKi::AuxFunBase ( std::tie ( i1 , i2 ) ) 
-  , m_indices   (           ) 
+LoKi::MCChild::Selector::Selector
+( const unsigned int   i1 ,
+  const unsigned int   i2 )
+  : LoKi::AuxFunBase ( std::tie ( i1 , i2 ) )
+  , m_indices   (           )
   , m_finder    ( s_INVALID )
-  , m_decay     (           ) 
-  , m_setCut    ( false     ) 
-  , m_cut       ( s_NONE    ) 
-  , m_decayOnly ( false     ) 
+  , m_decay     (           )
+  , m_setCut    ( false     )
+  , m_cut       ( s_NONE    )
+  , m_decayOnly ( false     )
   , m_factory   ( s_FACTORY  )
 {
   m_indices.push_back ( i1 ) ;
@@ -137,17 +136,17 @@ LoKi::MCChild::Selector::Selector
 // ============================================================================
 // constructor from the index
 // ============================================================================
-LoKi::MCChild::Selector::Selector 
-( const unsigned int   i1 , 
+LoKi::MCChild::Selector::Selector
+( const unsigned int   i1 ,
   const unsigned int   i2 ,
-  const unsigned int   i3 ) 
-  : LoKi::AuxFunBase ( std::tie ( i1 , i2 , i3 ) )  
-  , m_indices   (            ) 
+  const unsigned int   i3 )
+  : LoKi::AuxFunBase ( std::tie ( i1 , i2 , i3 ) )
+  , m_indices   (            )
   , m_finder    ( s_INVALID  )
-  , m_decay     (            ) 
-  , m_setCut    ( false      ) 
-  , m_cut       ( s_NONE     ) 
-  , m_decayOnly ( false      ) 
+  , m_decay     (            )
+  , m_setCut    ( false      )
+  , m_cut       ( s_NONE     )
+  , m_decayOnly ( false      )
   , m_factory   ( s_FACTORY  )
 {
   m_indices.push_back ( i1 ) ;
@@ -157,18 +156,18 @@ LoKi::MCChild::Selector::Selector
 // ============================================================================
 // constructor from the index
 // ============================================================================
-LoKi::MCChild::Selector::Selector 
-( const unsigned int   i1 , 
+LoKi::MCChild::Selector::Selector
+( const unsigned int   i1 ,
   const unsigned int   i2 ,
-  const unsigned int   i3 , 
-  const unsigned int   i4 )  
-  : LoKi::AuxFunBase ( std::tie ( i1 ,i2 , i3 , i4 ) ) 
-  , m_indices   (           ) 
+  const unsigned int   i3 ,
+  const unsigned int   i4 )
+  : LoKi::AuxFunBase ( std::tie ( i1 ,i2 , i3 , i4 ) )
+  , m_indices   (           )
   , m_finder    ( s_INVALID )
-  , m_decay     (           ) 
-  , m_setCut    ( false     ) 
-  , m_cut       ( s_NONE    ) 
-  , m_decayOnly ( false      ) 
+  , m_decay     (           )
+  , m_setCut    ( false     )
+  , m_cut       ( s_NONE    )
+  , m_decayOnly ( false      )
   , m_factory   ( s_FACTORY  )
 {
   m_indices.push_back ( i1 ) ;
@@ -179,49 +178,49 @@ LoKi::MCChild::Selector::Selector
 // ============================================================================
 // constructor from the index
 // ============================================================================
-LoKi::MCChild::Selector::Selector 
-( const std::vector<unsigned int>& indices ) 
-  : LoKi::AuxFunBase ( std::tie ( indices ) )  
-  , m_indices   ( indices    ) 
+LoKi::MCChild::Selector::Selector
+( const std::vector<unsigned int>& indices )
+  : LoKi::AuxFunBase ( std::tie ( indices ) )
+  , m_indices   ( indices    )
   , m_finder    ( s_INVALID  )
-  , m_setCut    ( false      ) 
-  , m_cut       ( s_NONE     ) 
-  , m_decayOnly ( false      ) 
+  , m_setCut    ( false      )
+  , m_cut       ( s_NONE     )
+  , m_decayOnly ( false      )
   , m_factory   ( s_FACTORY  )
 {}
 // ============================================================================
-// constructor from decay tree 
+// constructor from decay tree
 // ============================================================================
 LoKi::MCChild::Selector::Selector
-( const Decays::IMCDecay::iTree& child ) 
-  : LoKi::AuxFunBase ( std::tie ( child ) ) 
-  , m_indices   (        ) 
+( const Decays::IMCDecay::iTree& child )
+  : LoKi::AuxFunBase ( std::tie ( child ) )
+  , m_indices   (        )
   , m_finder    ( child  )
-  , m_decay     (        ) 
-  , m_setCut    ( false  ) 
-  , m_cut       ( s_NONE ) 
-  , m_decayOnly ( false  ) 
+  , m_decay     (        )
+  , m_setCut    ( false  )
+  , m_cut       ( s_NONE )
+  , m_decayOnly ( false  )
   , m_factory   ( s_FACTORY  )
 {
-  if ( gaudi() ) 
+  if ( gaudi() )
   {
-    StatusCode sc = validate() ; 
+    StatusCode sc = validate() ;
     Assert ( sc.isSuccess() , "Unable to validate decay tree" ) ;
   }
 }
 // ============================================================================
-// constructor from decay onde  
+// constructor from decay onde
 // ============================================================================
-LoKi::MCChild::Selector::Selector 
-( const Decays::iNode& node      , 
-  const bool           decayOnly ) 
-  : LoKi::AuxFunBase ( std::tie ( node , decayOnly ) ) 
-  , m_indices   (           ) 
+LoKi::MCChild::Selector::Selector
+( const Decays::iNode& node      ,
+  const bool           decayOnly )
+  : LoKi::AuxFunBase ( std::tie ( node , decayOnly ) )
+  , m_indices   (           )
   , m_finder    ( s_INVALID )
-  , m_decay     (           ) 
-  , m_setCut    ( false     ) 
-  , m_cut       ( s_NONE    ) 
-  , m_decayOnly ( decayOnly ) 
+  , m_decay     (           )
+  , m_setCut    ( false     )
+  , m_cut       ( s_NONE    )
+  , m_decayOnly ( decayOnly )
   , m_factory   ( s_FACTORY )
 {
   //
@@ -229,246 +228,246 @@ LoKi::MCChild::Selector::Selector
   m_setCut = true ;
 }
 // ============================================================================
-// constructor from decay tree 
+// constructor from decay tree
 // ============================================================================
 LoKi::MCChild::Selector::Selector
-( const Decays::IMCDecay::Finder& child ) 
-  : LoKi::AuxFunBase ( std::tie ( child ) ) 
-  , m_indices   (           )   
+( const Decays::IMCDecay::Finder& child )
+  : LoKi::AuxFunBase ( std::tie ( child ) )
+  , m_indices   (           )
   , m_finder    ( child     )
-  , m_decay     (           ) 
-  , m_setCut    ( false     ) 
-  , m_cut       ( s_NONE    ) 
-  , m_decayOnly ( false     ) 
+  , m_decay     (           )
+  , m_setCut    ( false     )
+  , m_cut       ( s_NONE    )
+  , m_decayOnly ( false     )
   , m_factory   ( s_FACTORY )
 {
-  if ( gaudi() ) 
+  if ( gaudi() )
   {
-    StatusCode sc = validate() ; 
+    StatusCode sc = validate() ;
     Assert ( sc.isSuccess() , "Unable to validate decay finder" ) ;
   }
 }
 // ============================================================================
-// constructor from the cut 
+// constructor from the cut
 // ============================================================================
-LoKi::MCChild::Selector::Selector 
+LoKi::MCChild::Selector::Selector
 ( const LoKi::MCTypes::MCCuts& cut       ,
-  const bool                   decayOnly ) 
-  : LoKi::AuxFunBase ( std::tie ( cut , decayOnly ) ) 
-  , m_indices   (           ) 
+  const bool                   decayOnly )
+  : LoKi::AuxFunBase ( std::tie ( cut , decayOnly ) )
+  , m_indices   (           )
   , m_finder    ( s_INVALID )
-  , m_decay     (           ) 
-  , m_setCut    ( true      ) 
-  , m_cut       ( cut       ) 
-  , m_decayOnly ( decayOnly ) 
+  , m_decay     (           )
+  , m_setCut    ( true      )
+  , m_cut       ( cut       )
+  , m_decayOnly ( decayOnly )
   , m_factory   ( s_FACTORY )
 {}
 // ============================================================================
-// constructor from decay desctriptor 
+// constructor from decay desctriptor
 // ============================================================================
-LoKi::MCChild::Selector::Selector ( const std::string& child ) 
-  : LoKi::AuxFunBase ( std::tie ( child ) ) 
-  , m_indices   (           ) 
+LoKi::MCChild::Selector::Selector ( const std::string& child )
+  : LoKi::AuxFunBase ( std::tie ( child ) )
+  , m_indices   (           )
   , m_finder    ( s_INVALID )
-  , m_decay     ( child     ) 
-  , m_setCut    ( false     ) 
-  , m_cut       ( s_NONE    ) 
-  , m_decayOnly ( false     ) 
+  , m_decay     ( child     )
+  , m_setCut    ( false     )
+  , m_cut       ( s_NONE    )
+  , m_decayOnly ( false     )
   , m_factory   ( s_FACTORY )
 {
-  if ( gaudi() ) 
+  if ( gaudi() )
   {
-    StatusCode sc = validate() ; 
+    StatusCode sc = validate() ;
     Assert ( sc.isSuccess() , "Unable to decode '" + child + "'" ) ;
   }
 }
 // ============================================================================
-// constructor from decay desctriptor & factory 
+// constructor from decay desctriptor & factory
 // ============================================================================
-LoKi::MCChild::Selector::Selector 
-( const std::string& child   , 
-  const std::string& factory ) 
-  : LoKi::AuxFunBase ( std::tie ( child , factory ) ) 
-  , m_indices   (           ) 
+LoKi::MCChild::Selector::Selector
+( const std::string& child   ,
+  const std::string& factory )
+  : LoKi::AuxFunBase ( std::tie ( child , factory ) )
+  , m_indices   (           )
   , m_finder    ( s_INVALID )
-  , m_decay     ( child     ) 
-  , m_setCut    ( false     ) 
-  , m_cut       ( s_NONE    ) 
-  , m_decayOnly ( false     ) 
+  , m_decay     ( child     )
+  , m_setCut    ( false     )
+  , m_cut       ( s_NONE    )
+  , m_decayOnly ( false     )
   , m_factory   ( factory   )
 {
-  if ( gaudi() ) 
+  if ( gaudi() )
   {
-    StatusCode sc = validate() ; 
+    StatusCode sc = validate() ;
     Assert ( sc.isSuccess() , "Unable to decode '" + child + "'" ) ;
   }
 }
 // ============================================================================
-// build the decay tree form the descriptor 
+// build the decay tree form the descriptor
 // ============================================================================
 StatusCode LoKi::MCChild::Selector::buildTree
-( const std::string& descriptor , 
+( const std::string& descriptor ,
   const std::string& factory    ) const
 {
   LoKi::ILoKiSvc* ls = lokiSvc() ;
   SmartIF<IToolSvc> toolSvc ( ls ) ;
   if ( !toolSvc ) { return Error ( "getTree: unable to locate tool service" ) ; }
-  
+
   Decays::IMCDecay* tool = 0 ;
   StatusCode sc = toolSvc -> retrieveTool ( factory , tool ) ;
   if ( sc.isFailure() )
   { return Error ( "getTree: Unable to retrieve '" + factory + "'" , sc ) ; }
-  if ( 0 == tool      ) 
+  if ( 0 == tool      )
   { return Error ( "getTree: Decays::IMCDecay* points to NULL" ) ; }
   //
   m_finder = tool -> tree ( descriptor ) ;
   //
-  toolSvc -> releaseTool ( tool ) ; // do not need the tool anymore 
+  toolSvc -> releaseTool ( tool ) ; // do not need the tool anymore
   //
-  if ( !m_finder           ) 
-  { return Error   ( "getTree: the tree is invalid:  '" + descriptor + "'" ) ; }  
-  if ( !m_finder.marked () ) 
+  if ( !m_finder           )
+  { return Error   ( "getTree: the tree is invalid:  '" + descriptor + "'" ) ; }
+  if ( !m_finder.marked () )
   { Warning ( "getTree: the tree is unmarked: '" + descriptor + "'" ) ; }
   //
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-// check the validity the child-selector 
+// check the validity the child-selector
 // ============================================================================
-bool LoKi::MCChild::Selector::valid () const 
+bool LoKi::MCChild::Selector::valid () const
 { return !m_indices.empty() || m_finder.valid () || m_setCut ; }
 // ============================================================================
 // try to validate it!
 // ============================================================================
-StatusCode LoKi::MCChild::Selector::validate 
-( const LHCb::IParticlePropertySvc* svc ) const 
+StatusCode LoKi::MCChild::Selector::validate
+( const LHCb::IParticlePropertySvc* svc ) const
 {
   if ( !m_indices.empty() || m_setCut ) { return StatusCode::SUCCESS ; }
   //
-  if ( !valid() && m_indices.empty() && !m_setCut && !m_decay.empty() ) 
+  if ( !valid() && m_indices.empty() && !m_setCut && !m_decay.empty() )
   {
     StatusCode sc = buildTree ( m_decay , m_factory ) ;
-    Assert ( sc.isSuccess() , "Unable to decode '" + m_decay + "'" ) ;  
+    Assert ( sc.isSuccess() , "Unable to decode '" + m_decay + "'" ) ;
   }
   //
-  if ( 0 == svc ) 
+  if ( 0 == svc )
   {
     LoKi::ILoKiSvc*  ls  = lokiSvc () ;
     SmartIF<LHCb::IParticlePropertySvc> pp ( ls ) ;
     svc = pp ;
   }
   //
-  if ( 0 == svc ) 
+  if ( 0 == svc )
   {
     const LoKi::Services& services = LoKi::Services::instance() ;
     svc = services.ppSvc() ;
   }
   //
-  if ( 0 == svc ) 
-  { return Error ("Unable to access ParticlePropertySvc" ) ; } 
+  if ( 0 == svc )
+  { return Error ("Unable to access ParticlePropertySvc" ) ; }
   //
   StatusCode sc = m_finder.validate ( svc ) ;
-  if ( sc.isFailure() ) 
+  if ( sc.isFailure() )
   { return Error ("Unable to validate the tree/decay descriptor" , sc ) ; }
-  // 
+  //
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-// OPTIONAL: nice printout 
+// OPTIONAL: nice printout
 // ============================================================================
-std::ostream& LoKi::MCChild::Selector::fillStream ( std::ostream& s ) const 
+std::ostream& LoKi::MCChild::Selector::fillStream ( std::ostream& s ) const
 {
   //
-  if ( !m_indices.empty() ) 
+  if ( !m_indices.empty() )
   {
-    if      ( 1 == m_indices.size() ) 
+    if      ( 1 == m_indices.size() )
     { return s <<  " " << m_indices[0] << " " ; }
-    else if ( 2 == m_indices.size() ) 
-    { return s <<  " " << m_indices[0] 
+    else if ( 2 == m_indices.size() )
+    { return s <<  " " << m_indices[0]
                << ", " << m_indices[1] << " " ; }
-    else if ( 3 == m_indices.size() ) 
-    { return s <<  " " << m_indices[0] 
+    else if ( 3 == m_indices.size() )
+    { return s <<  " " << m_indices[0]
                << ", " << m_indices[1]
                << ", " << m_indices[2] << " " ; }
-    else if ( 4 == m_indices.size() ) 
-    { return s <<  " " << m_indices[0] 
+    else if ( 4 == m_indices.size() )
+    { return s <<  " " << m_indices[0]
                << ", " << m_indices[1]
                << ", " << m_indices[2]
                << ", " << m_indices[3] << " " ; }
-    return s << " " << Gaudi::Utils::toString ( m_indices ) << " " ; 
+    return s << " " << Gaudi::Utils::toString ( m_indices ) << " " ;
   }
   //
-  if ( m_setCut ) 
-  { 
-    s << " " << m_cut  ; 
+  if ( m_setCut )
+  {
+    s << " " << m_cut  ;
     if ( !m_decayOnly ) { s << " , False" ; }
-    return s << " " ;                                                // RETURN 
+    return s << " " ;                                                // RETURN
   }
   //
   return s << " " << m_finder.tree() << " " ;
 }
 // ============================================================================
-/*  get the child according to the selector 
- *  @param mother    (INPUT) the head fo the decay tree 
- *  @param daughetrs (UPDATE) 
- *  @return unmber of particles 
+/*  get the child according to the selector
+ *  @param mother    (INPUT) the head fo the decay tree
+ *  @param daughetrs (UPDATE)
+ *  @return unmber of particles
  */
 // ============================================================================
-unsigned int LoKi::MCChild::Selector::children 
-( const LHCb::MCParticle*        head      , 
-  LHCb::MCParticle::ConstVector& daughters ) const 
+unsigned int LoKi::MCChild::Selector::children
+( const LHCb::MCParticle*        head      ,
+  LHCb::MCParticle::ConstVector& daughters ) const
 {
-  if ( 0 == head ) 
+  if ( 0 == head )
   {
     Error ( "children: LHCb::MCParticle* points to NULL" ) ;
-    return 0 ;                                                   // RETURN 
+    return 0 ;                                                   // RETURN
   }
   //
-  if ( !valid() ) 
+  if ( !valid() )
   {
     StatusCode sc = validate() ;
     Assert ( sc.isSuccess() , "Unable to validate child selector" );
   }
   //
-  if      ( !m_indices.empty() ) 
-  { 
-    const LHCb::MCParticle* c = LoKi::MCChild::child ( head , m_indices ) ; 
-    if ( 0 == c ) { return 0 ; }                                // RETURN 
+  if      ( !m_indices.empty() )
+  {
+    const LHCb::MCParticle* c = LoKi::MCChild::child ( head , m_indices ) ;
+    if ( 0 == c ) { return 0 ; }                                // RETURN
     //
     daughters.push_back ( c ) ;
-    return daughters.size() ;                                   // RETURN 
+    return daughters.size() ;                                   // RETURN
   }
-  else if ( m_setCut           ) 
+  else if ( m_setCut           )
   {
-    LoKi::Extract::mcParticles 
-      ( head                            , 
+    LoKi::Extract::mcParticles
+      ( head                            ,
         std::back_inserter( daughters ) , m_cut , m_decayOnly ) ;
     return daughters.size() ;                                   // RETURN
   }
-  else 
+  else
   {
     LHCb::MCParticle::ConstVector input ( 1 , head ) ;
-    return m_finder.findDecay ( input , daughters ) ;            // RETURN 
+    return m_finder.findDecay ( input , daughters ) ;            // RETURN
   }
 }
 // ============================================================================
-/*  get the child according to the selector 
- *  @param  head (INPUT) the head fo the decay tree 
- *  @return child particle 
+/*  get the child according to the selector
+ *  @param  head (INPUT) the head fo the decay tree
+ *  @return child particle
  */
 // ============================================================================
 const LHCb::MCParticle*
-LoKi::MCChild::Selector::child 
-( const LHCb::MCParticle* head ) const 
+LoKi::MCChild::Selector::child
+( const LHCb::MCParticle* head ) const
 {
   //
-  if ( 0 == head ) 
+  if ( 0 == head )
   {
     Error ( "child: LHCb::MCParticle points to NULL" ) ;
     return 0 ;
   }
   //
-  if ( !valid() ) 
+  if ( !valid() )
   {
     StatusCode sc = validate() ;
     Assert ( sc.isSuccess() , "Unable to validate child selector" );
@@ -476,8 +475,8 @@ LoKi::MCChild::Selector::child
   //
   if ( !m_indices.empty() ) { return LoKi::MCChild::child ( head , m_indices ) ; }
   //
-  if ( m_setCut ) { return LoKi::MCAlgs::foundFirst ( head        , 
-                                                      m_cut       , 
+  if ( m_setCut ) { return LoKi::MCAlgs::foundFirst ( head        ,
+                                                      m_cut       ,
                                                       m_decayOnly ) ; }
   //
   LHCb::MCParticle::ConstVector daughters ;
@@ -485,9 +484,9 @@ LoKi::MCChild::Selector::child
   //
   m_finder.findDecay ( input , daughters ) ;
   //
-  if (     daughters.empty () ) { return 0 ; }             // REUTRN 
+  if (     daughters.empty () ) { return 0 ; }             // REUTRN
   //
-  if ( 1 < daughters.size  () ) 
+  if ( 1 < daughters.size  () )
   { Warning ("child: >1 daughter particles are found, return the first") ; }
   //
   return daughters[0] ;
@@ -496,99 +495,99 @@ LoKi::MCChild::Selector::child
 
 
 // ============================================================================
-/*  Trivial accessor to the daughter "decay" particles for the 
+/*  Trivial accessor to the daughter "decay" particles for the
  *  given MC-particle
- */    
+ */
 // ============================================================================
-const LHCb::MCParticle* LoKi::MCChild::child 
-( const LHCb::MCParticle*   mother    , 
+const LHCb::MCParticle* LoKi::MCChild::child
+( const LHCb::MCParticle*   mother    ,
   const Decays::iNode&      node      ,
-  const bool                decayOnly ) 
+  const bool                decayOnly )
 { return child ( mother , LoKi::MCChild::Selector ( node , decayOnly ) ) ; }
 // ========================================================================
-/*  Trivial accessor to the daughter "decay" particles for the 
+/*  Trivial accessor to the daughter "decay" particles for the
  *  given MC-particle
- */    
+ */
 // ============================================================================
-const LHCb::MCParticle* LoKi::MCChild::child 
-( const LHCb::MCParticle*        mother     , 
-  const Decays::IMCDecay::iTree& c          ) 
+const LHCb::MCParticle* LoKi::MCChild::child
+( const LHCb::MCParticle*        mother     ,
+  const Decays::IMCDecay::iTree& c          )
 { return child ( mother , LoKi::MCChild::Selector ( c ) ) ; }
 // ========================================================================
-/*  Trivial accessor to the daughter "decay" particles for the 
+/*  Trivial accessor to the daughter "decay" particles for the
  *  given MC-particle
- */    
+ */
 // ============================================================================
 const LHCb::MCParticle* LoKi::MCChild::child
 ( const LHCb::MCParticle*         mother    ,
-  const Decays::IMCDecay::Finder& c         ) 
+  const Decays::IMCDecay::Finder& c         )
 { return child ( mother , LoKi::MCChild::Selector ( c ) ) ; }
 // ========================================================================
-/*  Trivial accessor to the daughter "decay" particles for the 
+/*  Trivial accessor to the daughter "decay" particles for the
  *  given MC-particle
- */    
+ */
 // ============================================================================
 const LHCb::MCParticle* LoKi::MCChild::child
 ( const LHCb::MCParticle*         mother    ,
-  const std::string&              c         ) 
+  const std::string&              c         )
 { return child ( mother , LoKi::MCChild::Selector ( c ) ) ; }
 // ========================================================================
-/*  Trivial accessor to the daughter "decay" particles for the 
+/*  Trivial accessor to the daughter "decay" particles for the
  *  given MC-particle
- */    
+ */
 // ============================================================================
 const LHCb::MCParticle* LoKi::MCChild::child
 ( const LHCb::MCParticle*         mother    ,
   const LoKi::MCTypes::MCCuts&    cut       ,
-  const bool                      decayOnly ) 
+  const bool                      decayOnly )
 { return child ( mother , LoKi::MCChild::Selector ( cut , decayOnly ) ) ; }
 // ============================================================================
 
 
 // ===========================================================================
-// accessor to certain children particles for the given particle 
+// accessor to certain children particles for the given particle
 // ============================================================================
 LHCb::MCParticle::ConstVector
-LoKi::MCChild::children 
-( const LHCb::MCParticle*        particle  , 
+LoKi::MCChild::children
+( const LHCb::MCParticle*        particle  ,
   const Decays::iNode&           node      ,
-  const bool                     decayOnly ) 
+  const bool                     decayOnly )
 { return children ( particle , LoKi::MCChild::Selector ( node , decayOnly ) ) ; }
 // ===========================================================================
-// accessor to certain children particles for the given particle 
+// accessor to certain children particles for the given particle
 // ============================================================================
 LHCb::MCParticle::ConstVector
-LoKi::MCChild::children 
-( const LHCb::MCParticle*        particle , 
-  const Decays::IMCDecay::iTree& c        ) 
+LoKi::MCChild::children
+( const LHCb::MCParticle*        particle ,
+  const Decays::IMCDecay::iTree& c        )
 { return children ( particle , LoKi::MCChild::Selector ( c ) ) ; }
 // ===========================================================================
-// accessor to certain children particles for the given particle 
+// accessor to certain children particles for the given particle
 // ============================================================================
 LHCb::MCParticle::ConstVector
-LoKi::MCChild::children 
-( const LHCb::MCParticle*        particle , 
-  const Decays::IMCDecay::Finder& c       ) 
+LoKi::MCChild::children
+( const LHCb::MCParticle*        particle ,
+  const Decays::IMCDecay::Finder& c       )
 { return children ( particle , LoKi::MCChild::Selector ( c ) ) ; }
 // ===========================================================================
-// accessor to certain children particles for the given particle 
+// accessor to certain children particles for the given particle
 // ============================================================================
 LHCb::MCParticle::ConstVector
-LoKi::MCChild::children 
-( const LHCb::MCParticle*        particle , 
-  const std::string&             c        ) 
+LoKi::MCChild::children
+( const LHCb::MCParticle*        particle ,
+  const std::string&             c        )
 { return children ( particle , LoKi::MCChild::Selector ( c ) ) ; }
 // ===========================================================================
-// accessor to certain children particles for the given particle 
+// accessor to certain children particles for the given particle
 // ============================================================================
 LHCb::MCParticle::ConstVector
-LoKi::MCChild::children 
+LoKi::MCChild::children
 ( const LHCb::MCParticle*         particle  ,
   const LoKi::MCTypes::MCCuts&    cut       ,
-  const bool                      decayOnly ) 
+  const bool                      decayOnly )
 { return children ( particle , LoKi::MCChild::Selector ( cut , decayOnly ) ) ; }
-// ========================================================================    
+// ========================================================================
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

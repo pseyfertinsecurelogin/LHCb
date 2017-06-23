@@ -1,11 +1,10 @@
-// $Id$
 // ============================================================================
-#ifndef LOKI_MCTYPES_H 
+#ifndef LOKI_MCTYPES_H
 #define LOKI_MCTYPES_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 #include <vector>
 // ============================================================================
@@ -22,16 +21,16 @@
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
- *  @date 2006-03-10 
+ *  @date 2006-03-10
  *
  *                    $Revision$
  *  Last modification $Date$
@@ -42,31 +41,31 @@ namespace LoKi
 {
   // ==========================================================================
   /** @namespace  LoKi::MCTypes LoKi/MCTypes.h
-   *  
-   *  Helper namespace to collect some useful MC data types 
    *
-   *  
-   *  @todo use LHCb::MCVertex::ConstVertex instead of explicit type 
+   *  Helper namespace to collect some useful MC data types
+   *
+   *
+   *  @todo use LHCb::MCVertex::ConstVertex instead of explicit type
    *
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date   2003-05-11
    */
-  namespace MCTypes 
+  namespace MCTypes
   {
     // ========================================================================
-    /// the basic imported type for the sequence of MC-particles 
+    /// the basic imported type for the sequence of MC-particles
     typedef LHCb::MCParticle::ConstVector   MCContainer      ;
-    /// the basic imported type for the sequence of MC-vertices 
+    /// the basic imported type for the sequence of MC-vertices
     typedef LHCb::MCVertex::ConstVector     MCVContainer     ;
-    
+
     typedef LoKi::Selected_<MCContainer>    MCSelected       ;
     typedef LoKi::Selected_<MCVContainer>   MCVSelected      ;
-    
-    /// the actual type of the sequence of MC-particles 
+
+    /// the actual type of the sequence of MC-particles
     typedef MCSelected::Range               MCRange          ;
-    /// the actual type of the sequence of MC-vertices  
+    /// the actual type of the sequence of MC-vertices
     typedef MCVSelected::Range              MCVRange         ;
-    
+
     /// type of 'cuts' for MCParticles       (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Predicate MCCuts ;
     /// type of 'functions' for <MCParticles  (interface)
@@ -75,7 +74,7 @@ namespace LoKi
     typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::PredicateFromPredicate MCCut   ;
     /// type of 'functions' for MCParticles  (assignable)
     typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::FunctionFromFunction   MCFun   ;
-    
+
     /// type of 'cuts' for MCVertices      (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Predicate MCVCuts ;
     /// type of 'functions' for MCVertices (interface)
@@ -90,56 +89,56 @@ namespace LoKi
     /// type of "map" for LHCb::MCParticle   (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Map     MCMaps     ;
     /// type of "map" for LHCb::MCParticle   (assignable)
-    typedef LoKi::Assignable<MCMaps>::Type                        MCMap      ;
+    typedef LoKi::Assignable_t<MCMaps>                            MCMap      ;
     /// type of "pipe" for LHCb::MCParticle   (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Pipe    MCPipes    ;
     /// type of "pipe" for LHCb::MCParticle   (assignable)
-    typedef LoKi::Assignable<MCPipes>::Type                       MCPipe     ;
+    typedef LoKi::Assignable_t<MCPipes>                           MCPipe     ;
     /// type of "fun-val" for LHCb::MCParticle   (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::FunVal  MCFunVals  ;
     /// type of "fun-val" for LHCb::MCParticle   (assignable)
-    typedef LoKi::Assignable<MCFunVals>::Type                     MCFunVal   ;
+    typedef LoKi::Assignable_t<MCFunVals>                         MCFunVal   ;
     /// type of "cut-val" for LHCb::MCParticle   (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::CutVal  MCCutVals  ;
     /// type of "cut-val" for LHCb::MCParticle   (assignable)
-    typedef LoKi::Assignable<MCCutVals>::Type                     MCCutVal   ;
+    typedef LoKi::Assignable_t<MCCutVals>                         MCCutVal   ;
     /// type of "source" for LHCb::MCParticle   (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCParticle*>::Source  MCSources  ;
     /// type of "source" for LHCb::MCParticle   (assignable)
-    typedef LoKi::Assignable<MCSources>::Type                     MCSource   ;
+    typedef LoKi::Assignable_t<MCSources>                         MCSource   ;
     // ========================================================================
     // "functional" types for LHCb::MCVertex
     // ========================================================================
     /// type of "map" for LHCb::MCVertex   (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Map       MCVMaps     ;
     /// type of "map" for LHCb::MCVertex   (assignable)
-    typedef LoKi::Assignable<MCVMaps>::Type                       MCVMap      ;
+    typedef LoKi::Assignable_t<MCVMaps>                           MCVMap      ;
     /// type of "pipe" for LHCb::MCVertex   (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Pipe      MCVPipes    ;
     /// type of "pipe" for LHCb::MCVertex   (assignable)
-    typedef LoKi::Assignable<MCVPipes>::Type                      MCVPipe     ;
+    typedef LoKi::Assignable_t<MCVPipes>                          MCVPipe     ;
     /// type of "fun-val" for LHCb::MCVertex   (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::FunVal    MCVFunVals  ;
     /// type of "fun-val" for LHCb::MCVertex   (assignable)
-    typedef LoKi::Assignable<MCVFunVals>::Type                    MCVFunVal   ;
+    typedef LoKi::Assignable_t<MCVFunVals>                        MCVFunVal   ;
     /// type of "cut-val" for LHCb::MCVertex   (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::CutVal    MCVCutVals  ;
     /// type of "cut-val" for LHCb::MCVertex   (assignable)
-    typedef LoKi::Assignable<MCVCutVals>::Type                    MCVCutVal   ;
+    typedef LoKi::Assignable_t<MCVCutVals>                        MCVCutVal   ;
     /// type of "source" for LHCb::MCVertex   (interface)
     typedef LoKi::BasicFunctors<const LHCb::MCVertex*>::Source    MCVSources  ;
     /// type of "source" for LHCb::MCVertex   (assignable)
-    typedef LoKi::Assignable<MCVSources>::Type                    MCVSource   ;
+    typedef LoKi::Assignable_t<MCVSources>                        MCVSource   ;
     // ========================================================================
   } //                                           end of namespace LoKi::MCTypes
   // ==========================================================================
-  namespace Types 
-  { 
+  namespace Types
+  {
     // ========================================================================
-    /// the actual type of the sequence of MC-particles 
+    /// the actual type of the sequence of MC-particles
     typedef LoKi::MCTypes::MCRange  MCRange ;
-    /// the actual type of the sequence of MC-vertices  
-    typedef LoKi::MCTypes::MCVRange MCVRange ; 
+    /// the actual type of the sequence of MC-vertices
+    typedef LoKi::MCTypes::MCVRange MCVRange ;
     /// type of 'cuts' for MCParticles       (interface)
     typedef LoKi::MCTypes::MCCuts  MCCuts ;
     /// type of 'functions' for <MCParticles  (interface)
@@ -156,10 +155,10 @@ namespace LoKi
     typedef LoKi::MCTypes::MCVCut  MCVCut  ;
     /// type of 'functions' for Vertices     (assignable)
     typedef LoKi::MCTypes::MCVFun  MCVFun  ;
-    /// the actual type of the range list  
+    /// the actual type of the range list
     typedef LoKi::RangeList_<MCRange>  MCRangeL  ;
-    /// the actual type of the range list 
-    typedef LoKi::RangeList_<MCVRange> MCVRangeL ; 
+    /// the actual type of the range list
+    typedef LoKi::RangeList_<MCVRange> MCVRangeL ;
     // ========================================================================
     // "functional" types for LHCb::MCParticle
     // ========================================================================
@@ -211,52 +210,52 @@ namespace LoKi
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  // the specialized printout 
+  // the specialized printout
   // ==========================================================================
   template <>
-  inline std::ostream& 
-  Constant<const LHCb::MCParticle*,bool>::fillStream( std::ostream& s ) const 
+  inline std::ostream&
+  Constant<const LHCb::MCParticle*,bool>::fillStream( std::ostream& s ) const
   { return s << ( this->m_value ? "MCALL" : "MCNONE"  ) ; }
   // ==========================================================================
-  // the specialized printout 
-  // ==========================================================================  
+  // the specialized printout
+  // ==========================================================================
   template <>
-  inline std::ostream& 
-  Constant<const LHCb::MCVertex*,bool>::fillStream  ( std::ostream& s ) const 
+  inline std::ostream&
+  Constant<const LHCb::MCVertex*,bool>::fillStream  ( std::ostream& s ) const
   { return s << ( this->m_value ? "MCVALL" : "MCVNONE" ) ; }
-  // ==========================================================================  
+  // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================
-// a little bit of streamers 
+// a little bit of streamers
 // ============================================================================
-GAUDI_API 
-LHCb::MCParticle::ConstVector 
+GAUDI_API
+LHCb::MCParticle::ConstVector
 operator>>
-( const LHCb::MCParticle::ConstVector&    input , 
+( const LHCb::MCParticle::ConstVector&    input ,
   const LoKi::Types::MCCuts&              cuts  ) ;
 // ============================================================================
-GAUDI_API 
-LHCb::MCParticle::ConstVector 
-operator>> 
-( const LHCb::MCParticle::Container*      input , 
+GAUDI_API
+LHCb::MCParticle::ConstVector
+operator>>
+( const LHCb::MCParticle::Container*      input ,
   const LoKi::Types::MCCuts&              cuts  ) ;
 // ============================================================================
-GAUDI_API 
-LHCb::MCParticle::ConstVector 
-operator>> 
-( const LoKi::MCTypes::MCRange&           input , 
+GAUDI_API
+LHCb::MCParticle::ConstVector
+operator>>
+( const LoKi::MCTypes::MCRange&           input ,
   const LoKi::Types::MCCuts&              cuts  ) ;
 // ============================================================================
-GAUDI_API 
-LHCb::MCParticle::ConstVector 
-operator>> 
-( const SmartRefVector<LHCb::MCParticle>& input , 
+GAUDI_API
+LHCb::MCParticle::ConstVector
+operator>>
+( const SmartRefVector<LHCb::MCParticle>& input ,
   const LoKi::Types::MCCuts&              cuts  ) ;
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_MCTYPES_H
 // ============================================================================

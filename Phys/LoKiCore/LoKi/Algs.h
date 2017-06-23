@@ -6,11 +6,11 @@
 // STD & STL
 // ============================================================================
 #include <utility>
+#include <functional>
 #include <set>
 #include <vector>
 #include <algorithm>
 #include <numeric>
-#include <functional>
 // ============================================================================
 /** @file
  *

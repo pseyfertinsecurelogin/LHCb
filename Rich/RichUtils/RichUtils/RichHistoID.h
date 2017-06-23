@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHHISTOID_H
-#define RICHUTILS_RICHHISTOID_H 1
+#pragma once
 
 // STL
 #include <string>
@@ -254,5 +253,3 @@ namespace Rich
   };
 
 } // RICH
-
-#endif // RICHUTILS_RICHHISTOID_H

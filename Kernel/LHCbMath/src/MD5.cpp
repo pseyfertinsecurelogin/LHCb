@@ -44,7 +44,7 @@
 class Gaudi::Math::MD5::md5_engine final
 {
 public:
-    md5_engine();
+    md5_engine() = default;
 
     // Acquires the digest
     Gaudi::Math::MD5 digest(const std::string& a_data);
@@ -56,9 +56,9 @@ private:
     // Transforms the next message block and updates the state.
     void process_block(const uint8_t (*a_block)[64]);
 
-    uint32_t state[4];
-    uint32_t count[2];   // Number of bits mod 2^64.
-    uint8_t buffer[64];  // Input buffer.
+    uint32_t state[4] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
+    uint32_t count[2] = { 0 };   // Number of bits mod 2^64.
+    uint8_t buffer[64] = { 0 };  // Input buffer.
 };
 
 
@@ -269,23 +269,10 @@ void Gaudi::Math::MD5::md5_engine::update(const void* a_data, uint32_t a_data_si
         const uint8_t*>(a_data)+input_index, a_data_size-input_index);
 }
 
-Gaudi::Math::MD5::md5_engine::md5_engine() {
-    count[0] = 0;
-    count[1] = 0;
-
-    state[0] = 0x67452301;
-    state[1] = 0xefcdab89;
-    state[2] = 0x98badcfe;
-    state[3] = 0x10325476;
-
-    memset(buffer, 0u, sizeof(buffer));
-}
-
 Gaudi::Math::MD5 Gaudi::Math::MD5::md5_engine::digest(const std::string& a_data)
 {
 
     update(a_data.c_str(),a_data.size());
-
 
     static const uint8_t padding[64] =
     {

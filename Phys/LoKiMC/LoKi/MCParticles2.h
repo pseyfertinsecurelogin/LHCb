@@ -76,7 +76,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       PolarizationAngle* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle*  p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -196,7 +196,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       SinChi* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle*  p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -300,7 +300,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       CosChi* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle*  p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -357,7 +357,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       AngleChi* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle*  p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -431,7 +431,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       CosThetaTr* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle*  p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -510,7 +510,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       SinPhiTr* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle*  p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -565,7 +565,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       CosPhiTr* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle*  p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -620,7 +620,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       AnglePhiTr* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle*  p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================

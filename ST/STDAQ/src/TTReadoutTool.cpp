@@ -23,11 +23,8 @@ TTReadoutTool::TTReadoutTool(const std::string& type,
 {
   // constructor
 
-  declareProperty( "conditionLocation", 
+  declareProperty( "conditionLocation",
                     m_conditionLocation  = "/dd/Conditions/ReadoutConf/TT/ReadoutMap");
-
-  // need a line here to get the interface correct !!!!
-  declareInterface<ISTReadoutTool>(this);
 
   m_detType = "TT";
 
@@ -45,11 +42,11 @@ StatusCode TTReadoutTool::initialize() {
                     &TTReadoutTool::createBoards);
   sc = runUpdate(); // force update
   if (sc.isFailure()) return Error ( "Failed first UMS update for readout tool", sc );
-  
+
   if (m_printMapping == true){
     printMapping();
   }
- 
+
   return StatusCode::SUCCESS;
 }
 
@@ -87,7 +84,7 @@ StatusCode TTReadoutTool::createBoards() {
   for (unsigned int iReg = 0; iReg < layers.size(); ++iReg){
 
    m_firstBoardInRegion.push_back(m_boards.size());
-   m_nBoard += nBoards[iReg];   
+   m_nBoard += nBoards[iReg];
 
    const std::vector<int>& tMap = rInfo->param<std::vector<int> >(layers[iReg]);
    std::string orLoc = layers[iReg]+"HybridOrientation";
@@ -102,17 +99,17 @@ StatusCode TTReadoutTool::createBoards() {
    }
 
    for (unsigned int iBoard = 0; iBoard < (unsigned int)nBoards[iReg]; ++iBoard){
-   
+
      // make new board
      STTell1ID anID = STTell1ID(iReg,iBoard);
-     STTell1Board* aBoard = new STTell1Board(anID, nStripsPerHybrid, m_detType);
+     auto aBoard = std::make_unique<STTell1Board>(anID, nStripsPerHybrid, m_detType);
 
      for (unsigned iH = 0 ; iH < m_hybridsPerBoard; ++iH, ++vecLoc){
        STChannelID sectorID((unsigned int)tMap[vecLoc]);
        aBoard->addSector(sectorID, (unsigned int)orientation[vecLoc], serviceBoxes[vecLoc]);
 
        // add to the list of service boxs if not already there
-       if (std::find(m_serviceBoxes.begin(), m_serviceBoxes.end(), 
+       if (std::find(m_serviceBoxes.begin(), m_serviceBoxes.end(),
                      serviceBoxes[vecLoc]) ==  m_serviceBoxes.end()) {
 	 m_serviceBoxes.push_back(serviceBoxes[vecLoc]);
        }
@@ -120,7 +117,7 @@ StatusCode TTReadoutTool::createBoards() {
 
      } // iH
 
-     m_boards.push_back(aBoard);
+     m_boards.push_back(std::move(aBoard));
 
    } // boards per region
   } // iterS
