@@ -1,4 +1,4 @@
-def setup(tag, use_files=False, bare=False, conditions=['/dd/TestCondition']):
+def setup(tag, use_files=False, bare=False, conditions=['/dd/TestCondition'], overlay=False):
     import os
     from Gaudi.Configuration import appendPostConfigAction, VERBOSE
     from Configurables import ApplicationMgr
@@ -18,8 +18,15 @@ def setup(tag, use_files=False, bare=False, conditions=['/dd/TestCondition']):
              EnableRunStampCheck=False)
     CondDB(Tags={'DDDB': tag},
            LatestGlobalTagByDataTypes=[])
+    if overlay:
+        GitEntityResolver('GitOverlay_0', OutputLevel=VERBOSE)
+        CondDB().addLayer(repo + '-overlay')
 
     ApplicationMgr().TopAlg.append(TestAlg(Conditions=conditions))
 
     # override some settings from DDDBConf
-    appendPostConfigAction(lambda: XmlParserSvc(EntityResolver=ger))
+    def reduce_resolver():
+        resolvers = XmlParserSvc().EntityResolver.EntityResolvers
+        resolvers[:] = [r for r in resolvers
+                        if r.name()[8:15] in ('GitDDDB', 'GitOver')]
+    appendPostConfigAction(reduce_resolver)
