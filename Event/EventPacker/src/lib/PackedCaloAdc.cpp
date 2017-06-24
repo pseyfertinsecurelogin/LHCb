@@ -10,8 +10,10 @@
 
 using namespace LHCb;
 
-void CaloAdcPacker::pack( const DataVector & adcs, PackedDataVector & padcs ) const{
-  if ( isSupportedVer(padcs.packingVersion()) ){
+void CaloAdcPacker::pack( const DataVector & adcs, PackedDataVector & padcs ) const
+{
+  if ( isSupportedVer(padcs.packingVersion()) )
+  {
     padcs.data().reserve( adcs.size() );
     for ( const auto * adc : adcs ){
       // make a new packed object
@@ -24,10 +26,14 @@ void CaloAdcPacker::pack( const DataVector & adcs, PackedDataVector & padcs ) co
   }
 }
 
-void CaloAdcPacker::unpack( const PackedDataVector & padcs, DataVector       & adcs ) const{
-  if ( isSupportedVer(padcs.packingVersion()) ){
+void CaloAdcPacker::unpack( const PackedDataVector & padcs, 
+                            DataVector             & adcs ) const
+{
+  if ( isSupportedVer(padcs.packingVersion()) )
+  {
     adcs.reserve( padcs.data().size() );
-    for ( const auto & padc : padcs.data() ){
+    for ( const auto & padc : padcs.data() )
+    {
       // make and save new adc container, with original key
       auto * adc  = new Data();
       adcs.insert( adc, LHCb::CaloCellID(padc.key) );
@@ -37,19 +43,23 @@ void CaloAdcPacker::unpack( const PackedDataVector & padcs, DataVector       & a
   }
 }
 
-StatusCode CaloAdcPacker::check( const DataVector & dataA, const DataVector & dataB ) const{
+StatusCode CaloAdcPacker::check( const DataVector & dataA, 
+                                 const DataVector & dataB ) const
+{
   StatusCode sc = StatusCode::SUCCESS;
 
   // Loop over data containers together and compare
   auto iA(dataA.begin()), iB(dataB.begin());
-  for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB ){
+  for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB )
+  {
     sc = sc && check( **iA, **iB );
   }
   // Return final status
   return sc;
 }
 
-StatusCode CaloAdcPacker::check( const Data & dataA, const Data & dataB ) const{
+StatusCode CaloAdcPacker::check( const Data & dataA,
+                                 const Data & dataB ) const{
 
   // assume OK from the start
   bool ok = true;

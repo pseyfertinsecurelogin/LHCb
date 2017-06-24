@@ -10,24 +10,32 @@
 
 using namespace LHCb;
 
-void CaloDigitPacker::pack( const DataVector & digs, PackedDataVector & pdigs ) const{
-  if ( isSupportedVer(pdigs.packingVersion()) ){
+void CaloDigitPacker::pack( const DataVector & digs, 
+                            PackedDataVector & pdigs ) const
+{
+  if ( isSupportedVer(pdigs.packingVersion()) )
+  {
     pdigs.data().reserve( digs.size() );
-    for ( const auto * dig : digs ){
+    for ( const auto * dig : digs )
+    {
       // make a new packed object
-      pdigs.data().emplace_back( PackedData() );
+      pdigs.data().emplace_back( );
       auto & pdig = pdigs.data().back();
       // general
       pdig.key  = (dig->key()).all();
-      pdig.e    = m_pack.energy  ( dig->e() );
+      pdig.e    = m_pack.energy( dig->e() );
     }
   }
 }
 
-void CaloDigitPacker::unpack( const PackedDataVector & pdigs, DataVector       & digs ) const{
-  if ( isSupportedVer(pdigs.packingVersion()) ){
+void CaloDigitPacker::unpack( const PackedDataVector & pdigs, 
+                              DataVector             & digs ) const
+{
+  if ( isSupportedVer(pdigs.packingVersion()) )
+  {
     digs.reserve( pdigs.data().size() );
-    for ( const auto & pdig : pdigs.data() ){
+    for ( const auto & pdig : pdigs.data() )
+    {
       // make and save new digit container, with original key
       auto * dig  = new Data();
       digs.insert( dig, LHCb::CaloCellID(pdig.key) );
@@ -37,12 +45,15 @@ void CaloDigitPacker::unpack( const PackedDataVector & pdigs, DataVector       &
   }
 }
 
-StatusCode CaloDigitPacker::check( const DataVector & dataA, const DataVector & dataB ) const{
+StatusCode CaloDigitPacker::check( const DataVector & dataA, 
+                                   const DataVector & dataB ) const
+{
   StatusCode sc = StatusCode::SUCCESS;
 
   // Loop over data containers together and compare
   auto iA(dataA.begin()), iB(dataB.begin());
-  for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB ){
+  for ( ; iA != dataA.end() && iB != dataB.end(); ++iA, ++iB )
+  {
     sc = sc && check( **iA, **iB );
   }
   // Return final status
