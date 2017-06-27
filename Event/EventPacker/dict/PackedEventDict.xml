@@ -112,6 +112,14 @@
   <class name="std::vector<LHCb::PackedCaloClusterEntry>" />
   <class name="LHCb::PackedCaloClusters" id="00000605-0000-0000-0000-000000000000" />
 
+  <class name="LHCb::PackedCaloDigit" />
+  <class name="std::vector<LHCb::PackedCaloDigit>" />
+  <class name="LHCb::PackedCaloDigits" id="00000606-0000-0000-0000-000000000000" />
+
+  <class name="LHCb::PackedCaloAdc" />
+  <class name="std::vector<LHCb::PackedCaloAdc>" />
+  <class name="LHCb::PackedCaloAdcs" id="00000607-0000-0000-0000-000000000000" />
+
   <class name="LHCb::PackedRelatedInfoMap" />
   <!-- This is created already in PhysEvent -->
   <!--class name="LHCb::PackedRelatedInfoRelations::PackedRelatedInfo" /-->
