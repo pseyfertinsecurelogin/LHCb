@@ -33,11 +33,6 @@ CaloAdcFromRaw::CaloAdcFromRaw( const std::string& name,
                                 ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
 {
-  declareProperty("AdcLocation"        , m_location );
-  declareProperty("L0AdcLocation"      , m_l0Location );
-  declareProperty("L0BitLocation"      , m_l0BitLocation );
-  declareProperty("DeCalibration"      , m_calib ); // Expert usage
-
   // set default detectorName
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
   m_detectorName = ( name.compare(index, 3, "Prs") == 0 ? "Prs"

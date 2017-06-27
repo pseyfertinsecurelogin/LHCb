@@ -12,13 +12,13 @@
 #include "CaloDAQ/ICaloL0DataProvider.h"
 
 /** @class CaloAdcFromRaw CaloAdcFromRaw.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2009-04-07
  */
 class CaloAdcFromRaw final : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   CaloAdcFromRaw( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -28,11 +28,11 @@ public:
 private:
   std::string m_detectorName;
   std::string m_caloName;
-  std::string m_location;
-  std::string m_l0Location;
-  std::string m_l0BitLocation;
+  Gaudi::Property<std::string> m_location { this, "AdcLocation" };
+  Gaudi::Property<std::string> m_l0Location { this, "L0AdcLocation" };
+  Gaudi::Property<std::string> m_l0BitLocation { this, "L0BitLocation" };
+  Gaudi::Property<bool> m_calib { this, "DeCalibration"      , false }; // Expert usage
   int m_offset;
-  bool m_calib = false;
   DeCalorimeter* m_calo = nullptr;
   ICaloDataProvider*    m_data = nullptr;
   ICaloL0DataProvider*  m_l0data = nullptr;

@@ -20,12 +20,8 @@ public:
   /// Standard constructor
   CaloMergeTAE( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~CaloMergeTAE( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
-
-protected:
 
 private:
   bool fromAdc(){
