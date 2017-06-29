@@ -1,4 +1,4 @@
-#ifndef CALOTRIGGERADCSFROMRAWALG_H 
+#ifndef CALOTRIGGERADCSFROMRAWALG_H
 #define CALOTRIGGERADCSFROMRAWALG_H 1
 
 // Include files
@@ -8,13 +8,14 @@
 #include "CaloDAQ/ICaloTriggerAdcsFromRaw.h"
 
 /** @class CaloTriggerAdcsFromRawAlg CaloTriggerAdcsFromRawAlg.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2006-04-07
  */
+
 class CaloTriggerAdcsFromRawAlg : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
   CaloTriggerAdcsFromRawAlg( const std::string& name, ISvcLocator* pSvcLocator );
 
@@ -22,12 +23,11 @@ public:
   StatusCode execute   () override;    ///< Algorithm execution
 
 private:
-  std::string m_outputData;          // Output container
-  std::string m_pinContainer;        // Output container for pinData
-  std::string m_toolName;
-  std::string m_toolType;
-  ICaloTriggerAdcsFromRaw*    m_l0AdcTool;
-  std::string m_extension;
-  bool m_statusOnTES;
+  Gaudi::Property<std::string> m_outputData { this, "OutputData" };          // Output container
+  Gaudi::Property<std::string> m_pinContainer{ this, "PinContainer" } ;        // Output container for pinData
+  Gaudi::Property<std::string> m_extension { this,  "Extension" };
+  Gaudi::Property<bool> m_statusOnTES{ this,  "StatusOnTES"   , true };
+  ICaloTriggerAdcsFromRaw*    m_l0AdcTool = nullptr;
 };
+
 #endif // CALOTRIGGERADCSFROMRAWALG_H

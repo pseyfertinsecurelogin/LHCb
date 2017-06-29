@@ -17,6 +17,7 @@
  *  @author Olivier Deschamps
  *  @date   2009-04-07
  */
+
 class CaloAdcFromRaw final : public GaudiAlgorithm {
 public:
   /// Standard constructor
@@ -37,4 +38,5 @@ private:
   ICaloDataProvider*    m_data = nullptr;
   ICaloL0DataProvider*  m_l0data = nullptr;
 };
+
 #endif // CALOADCFROMRAW_H

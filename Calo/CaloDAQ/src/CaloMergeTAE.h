@@ -2,25 +2,14 @@
 #define CALOMERGETAE_H 1
 
 // Include files
+#include <iomanip>
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "CaloDet/DeCalorimeter.h"
 #include "Event/CaloDigit.h"
 #include "Event/CaloAdc.h"
 
-namespace Calo { namespace DAQ { namespace TAE {
-
-namespace details {
-
-    enum class source_t { from_adc, from_digit };
-    const char* toString(const source_t& source);
-
-    inline std::ostream& toStream(const source_t& source, std::ostream& os) {
-        return os << toString(source);
-    }
-    StatusCode parse(source_t& result, const std::string& input );
-
-}
+#include "details.h"
 
 /** @class CaloMergeTAE CaloMergeTAE.h
  *
@@ -28,10 +17,10 @@ namespace details {
  *  @author Olivier Deschamps
  *  @date   2008-10-24
  */
-class Merger : public GaudiAlgorithm {
+class CaloMergeTAE : public GaudiAlgorithm {
 public:
   /// Standard constructor
-  Merger( const std::string& name, ISvcLocator* pSvcLocator );
+  CaloMergeTAE( const std::string& name, ISvcLocator* pSvcLocator );
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
@@ -55,7 +44,5 @@ private:
   DeCalorimeter* m_calo = nullptr;
 
 };
-}}}
 
-using CaloMergeTAE = Calo::DAQ::TAE::Merger;
 #endif // CALOMERGETAE_H

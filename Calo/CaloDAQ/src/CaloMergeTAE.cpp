@@ -12,39 +12,10 @@
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( CaloMergeTAE )
 
-namespace Calo { namespace DAQ { namespace TAE{
-
-namespace details {
-    const char* toString(const source_t& source) {
-        switch (source) {
-            case source_t::from_adc   : return "ADC";
-            case source_t::from_digit : return "DIGIT";
-            default: throw "IMPOSSIBLE VALUE"; return nullptr;
-        }
-    }
-
-    StatusCode parse(source_t& result, const std::string& input ) {
-        std::string out( input );
-        std::transform( input.begin() ,input.end() , out.begin () , ::toupper ) ;
-
-        if( out == "ADC" || out == "CALOADC" || out == "ADCS" || out == "CALOADCS") {
-            result = source_t::from_adc;
-            return StatusCode::SUCCESS;
-        }
-        if( out == "DIGIT" || out == "CALODIGIT" || out == "DIGITS" || out == "CALODIGITS")  {
-            result = source_t::from_digit;
-            return StatusCode::SUCCESS;
-        }
-        return StatusCode::FAILURE;
-    }
-
-
-}
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
-Merger::Merger( const std::string& name,
+CaloMergeTAE::CaloMergeTAE( const std::string& name,
                       ISvcLocator* pSvcLocator)
 : GaudiAlgorithm ( name , pSvcLocator )
 {
@@ -59,7 +30,7 @@ Merger::Merger( const std::string& name,
 //=============================================================================
 // Initialization
 //=============================================================================
-StatusCode Merger::initialize() {
+StatusCode CaloMergeTAE::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
 
@@ -111,7 +82,7 @@ StatusCode Merger::initialize() {
 //=============================================================================
 // Main execution
 //=============================================================================
-StatusCode Merger::execute() {
+StatusCode CaloMergeTAE::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
@@ -124,7 +95,7 @@ StatusCode Merger::execute() {
 }
 
 //=============================================================================
-void Merger::mergeDigits(){
+void CaloMergeTAE::mergeDigits(){
 
   std::map<std::string,LHCb::CaloDigits*> digitsMap;
   for(const auto& islot : m_slots.value() ) {
@@ -163,7 +134,7 @@ void Merger::mergeDigits(){
 }
 
 
-void Merger::mergeAdcs(){
+void CaloMergeTAE::mergeAdcs(){
   std::map<std::string,LHCb::CaloAdcs*> adcsMap;
   for(const auto& islot : m_slots.value() ) {
     std::string slot = islot + "/";
@@ -201,4 +172,3 @@ void Merger::mergeAdcs(){
     }
   }
 }
-}}}

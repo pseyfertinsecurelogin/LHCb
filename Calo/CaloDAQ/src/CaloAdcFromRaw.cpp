@@ -16,6 +16,7 @@
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( CaloAdcFromRaw )
 
+
 namespace {
 
 // C++17:
@@ -26,12 +27,13 @@ constexpr const T& clamp( const T& v, const T& lo, const T& hi) noexcept
 }
 
 }
+
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 CaloAdcFromRaw::CaloAdcFromRaw( const std::string& name,
                                 ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
+: GaudiAlgorithm ( name , pSvcLocator )
 {
   // set default detectorName
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!

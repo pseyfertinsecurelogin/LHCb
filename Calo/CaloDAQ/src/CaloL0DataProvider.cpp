@@ -155,7 +155,7 @@ bool CaloL0DataProvider::decodeTell1 (int source) {
 
     if(checkSrc( sourceID ))continue;
 
-    decoded = ( ( "Spd" == m_detectorName || "Prs" == m_detectorName ) ? 
+    decoded = ( ( "Spd" == m_detectorName || "Prs" == m_detectorName ) ?
                 decodePrsTriggerBank( *bank) : decodeBank ( *bank ) );
     if( !decoded ){
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -180,7 +180,7 @@ bool CaloL0DataProvider::decodeBank( const LHCb::RawBank& bank ){
   const unsigned int* const end  = bank.end<unsigned int>();
   int version        = bank.version();
   int sourceID       = bank.sourceID();
-  int lastData = 0;
+  unsigned int lastData       = 0;
 
   if(data == end)m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Empty);
 
@@ -235,15 +235,13 @@ bool CaloL0DataProvider::decodeBank( const LHCb::RawBank& bank ){
     int nCards = feCards.size();
     if ( msgLevel( MSG::DEBUG) )debug() << nCards << " FE-Cards are expected to be readout : "
                                         << feCards << " in Tell1 bank " << sourceID << endmsg;
-    int lenAdc   = 0;
-    int lenTrig  = 0;
 
     int prevCard = -1;
 
     while ( data < end ) {
       int word = *data++;
-      lenTrig = word & 0x3F;
-      lenAdc  = (word >> 7 ) & 0x3F;
+      int lenTrig = word & 0x3F;
+      int lenAdc  = (word >> 7 ) & 0x3F;
       //lenAdc += 4; //PATCH FOR COMMISSIONING DATA WITH TELL1 F/W v2.3
 
       int code  = (word >> 14 ) & 0x1FF;
@@ -287,7 +285,6 @@ bool CaloL0DataProvider::decodeBank( const LHCb::RawBank& bank ){
             LHCb::CaloCellID id = LHCb::CaloCellID();
             if(bitNum < chanID.size())id= chanID[ bitNum ];
 
-
             int adc = ( lastData >> offset ) & 0xFF;
 
             // event dump
@@ -310,7 +307,7 @@ bool CaloL0DataProvider::decodeBank( const LHCb::RawBank& bank ){
       data     += (lenAdc+3)/4;  //== length in byte, skip words
     } // another card
     // Check All cards have been read
-    if(!checkCards(nCards,feCards))m_status.addStatus(sourceID, LHCb::RawBankReadoutStatus::Incomplete);   
+    if(!checkCards(nCards,feCards))m_status.addStatus(sourceID, LHCb::RawBankReadoutStatus::Incomplete);
   } // version
   return true;
 }
@@ -323,24 +320,23 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
   if( LHCb::RawBank::MagicPattern != bank.magic() )return false;// do not decode when MagicPattern is bad
 
 
-  const unsigned int* data = bank.data();
-  int size           = bank.size()/4;  // size in byte
+  const unsigned int* data       = bank.begin<unsigned int>();
+  const unsigned int* const end  = bank.end<unsigned int>();
   int version        = bank.version();
   int sourceID       = bank.sourceID();
-  int lastData       = 0;
+  unsigned int lastData       = 0;
 
   m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::OK);
 
   if ( msgLevel( MSG::DEBUG) )
     debug() << "Decode Prs bank " << &bank << " source " << sourceID
-            << " version " << version << " size " << size << endmsg;
+            << " version " << version << " size " << std::distance(data,end) << endmsg;
 
 
   // -----------------------------------------------
   // skip detector specific header line
   if(m_extraHeader){
     ++data ;
-    --size;
   }
   // -----------------------------------------------
 
@@ -348,12 +344,11 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
 
   //=== Offline coding: a CellID, 8 SPD bits, 8 Prs bits
   if ( 1 == version ) {
-    while ( 0 != size ) {
+    while ( data != end ) {
       int spdData = (*data >> 8 ) & 0xFF;
       int prsData = (*data) & 0xFF;
       int lastID  = (*data) >> 16;
         ++data;
-        --size;
         for ( unsigned int kk = 0; 8 > kk; ++kk ) {
 
           LHCb::CaloCellID id( lastID+kk );
@@ -381,7 +376,7 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
     }
     //=== Compact coding: a CellID, and its Prs/SPD bits
   } else if ( 2 == version ) {
-    while ( 0 != size ) {
+    while ( data != end ) {
       int word = *data;
       while ( 0 != word ) {
         int item = word & 0xFFFF;
@@ -414,7 +409,6 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
         }
       }
       ++data;
-      --size;
     }
     //==== Codage for 1 MHz
   } else if ( 3 == version ) {
@@ -430,14 +424,13 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
 
     int prevCard = -1;
 
-    while( 0 != size ) {
+    while( data != end ) {
       int word = *data++;
-      size--;
       lenTrig = word & 0x7F;
       lenAdc  = (word >> 7 ) & 0x7F;
       if ( msgLevel( MSG::DEBUG) ) {
         debug() << format( "  Header data %8x size %4d lenAdc%3d lenTrig%3d",
-                           word, size, lenAdc, lenTrig )
+                           word, std::distance(data,end), lenAdc, lenTrig )
                 << endmsg;
       }
       int code  = (word >>14 ) & 0x1FF;
@@ -468,7 +461,6 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
       while ( 0 < lenTrig ) {
         if ( 32 == offset ) {
           lastData = *data++;
-          size--;
           offset = 0;
         }
         unsigned int num   = ( lastData >> offset ) & 0x3F;
@@ -504,7 +496,6 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
       }
 
       int nSkip = (lenAdc+1 ) / 2;  // Length in number of words
-      size     -= nSkip;
       data     += nSkip;
     } //== DataSize
     // Check All cards have been read

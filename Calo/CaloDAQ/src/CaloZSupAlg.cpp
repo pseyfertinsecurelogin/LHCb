@@ -13,40 +13,45 @@
 
 DECLARE_ALGORITHM_FACTORY( CaloZSupAlg )
 
+
+namespace details {
+    const char* toString(const zsupMethod_t& out) {
+        switch(out) {
+            case zsupMethod_t::none : return "NO";
+            case zsupMethod_t::one_d: return "1D";
+            case zsupMethod_t::two_d: return "2D";
+            default: throw "IMPOSSIBLE!";
+        }
+    }
+    StatusCode parse(zsupMethod_t& result, const std::string& input ) {
+        if (input == "NO" ) result = zsupMethod_t::none;  return StatusCode::SUCCESS;
+        if (input == "1D" ) result = zsupMethod_t::one_d; return StatusCode::SUCCESS;
+        if (input == "2D" ) result = zsupMethod_t::two_d; return StatusCode::SUCCESS;
+        return StatusCode::FAILURE;
+    }
+
+
+}
+
 //=============================================================================
 // Standard creator, initializes variables
 //=============================================================================
 CaloZSupAlg::CaloZSupAlg( const std::string& name, ISvcLocator* pSvcLocator)
 : GaudiAlgorithm( name , pSvcLocator )
 {
-  //** Declare the algorithm's properties which can be set at run time and
-  //** their default values
-  declareProperty("DetectorName"    , m_detectorName       ) ;
-  declareProperty("OutputADCData"   , m_outputADCData      ) ;
-  declareProperty("OutputDigitData" , m_outputDigitData    ) ;
-  declareProperty("ZsupMethod"      , m_zsupMethod         ) ;
-  declareProperty("ZsupThreshold"   , m_zsupThreshold      ) ;
-  declareProperty("ZsupNeighbor"    , m_zsupNeighbor=-256  ) ;
-  declareProperty("OutputType"      , m_outputType = "Digits"  ) ;
-  declareProperty( "Extension"      ,  m_extension = "" );
-  declareProperty( "StatusOnTES"    , m_statusOnTES = true);
-
   //=== Default values according to the name of the algorithm !
-  m_inputToolType = "CaloEnergyFromRaw";
-  m_inputToolName = name + "Tool";
   if ( name.compare( 0 , 4, "Ecal" ) == 0 ) {
     m_detectorName     = DeCalorimeterLocation::Ecal;
     m_outputADCData    = LHCb::CaloAdcLocation::Ecal;
     m_outputDigitData  = LHCb::CaloDigitLocation::Ecal;
-    m_zsupMethod       = "2D";
-    m_zsup2D           = true;
+    m_zsupMethod       = details::zsupMethod_t::two_d;
     m_zsupThreshold    = 20;
     m_zsupNeighbor     = -5; // reject large negative noise
   } else if ( name.compare( 0 , 4, "Hcal" ) == 0 ) {
     m_detectorName     = DeCalorimeterLocation::Hcal;
     m_outputADCData    = LHCb::CaloAdcLocation::Hcal;
     m_outputDigitData  = LHCb::CaloDigitLocation::Hcal;
-    m_zsupMethod       = "1D";
+    m_zsupMethod       = details::zsupMethod_t::one_d;
     m_zsupThreshold    = 4;
   }
 }
@@ -61,44 +66,22 @@ StatusCode CaloZSupAlg::initialize() {
   if( sc.isFailure() ) return sc;
 
 
-  std::string out( m_outputType );
-  std::transform( m_outputType.begin() , m_outputType.end() , out.begin () , ::toupper ) ;
-  m_outputType = out;
-  if( m_outputType == "DIGITS" ||  m_outputType == "CALODIGITS" ||
-      m_outputType == "DIGIT"  ||  m_outputType == "CALODIGIT"  ||
-      m_outputType == "BOTH") m_digitOnTES = true;
-  if(m_outputType == "ADCS" ||  m_outputType == "CALOADCS" ||
-     m_outputType == "ADC"  ||  m_outputType == "CALOADC"  ||
-     m_outputType == "BOTH")m_adcOnTES = true;
-  if( !m_adcOnTES && !m_digitOnTES ){
-    error() << "CaloZSupAlg configured to produce ** NO ** output (outputType = '" << m_outputType <<"')" << endmsg;
-    return StatusCode::FAILURE;
-  }
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) {
-    if( m_digitOnTES )debug() <<  "CaloZSupAlg will produce CaloDigits on TES"
+    if( m_outputType.value().digitOnTES )
+        debug() <<  "CaloZSupAlg will produce CaloDigits on TES"
                               << rootInTES() + m_outputDigitData + m_extension
                               << endmsg;
-    if( m_adcOnTES )debug() <<  "CaloZSupAlg will produce CaloAdcs on TES"
+    if( m_outputType.value().adcOnTES )
+        debug() <<  "CaloZSupAlg will produce CaloAdcs on TES"
                             << rootInTES() + m_outputADCData + m_extension
                             << endmsg;
-     debug() << " get DeCalorimeter from " << m_detectorName << endmsg;
+     debug() << " get DeCalorimeter from " << m_detectorName.value() << endmsg;
   }
   // Retrieve the calorimeter we are working with.
-  m_calo = getDet<DeCalorimeter>( m_detectorName );
+  m_calo = getDet<DeCalorimeter>( m_detectorName.value() );
   m_numberOfCells = m_calo->numberOfCells();
 
-  //*** A few check of the parameters
-  if ( "NO" != m_zsupMethod &&
-       "1D" != m_zsupMethod &&
-       "2D" != m_zsupMethod) {
-    error() << "Unknown Z-sup mode" << m_zsupMethod
-            << " (must be NO,1D or 2D)" << endmsg;
-    return StatusCode::FAILURE;
-  }
-
-  m_zsup2D = ( "2D" == m_zsupMethod );
-
-  if ( "NO" == m_zsupMethod ) {
+  if ( m_zsupMethod == details::zsupMethod_t::none ) {
     if( -1000 != m_zsupThreshold ) {
       info() << " Threshold is reset from "<< m_zsupThreshold
              << " to " << -1000 << endmsg; }
@@ -109,8 +92,7 @@ StatusCode CaloZSupAlg::initialize() {
          << " cells. Zsup method "  << m_zsupMethod
          << " Threshold " << m_zsupThreshold << endmsg;
 
-  m_adcTool = tool<ICaloEnergyFromRaw>( m_inputToolType , m_inputToolName,this);
-
+  m_adcTool = tool<ICaloEnergyFromRaw>("CaloEnergyFromRaw" , name() + "Tool", this );
 
   return StatusCode::SUCCESS;
 }
@@ -120,15 +102,12 @@ StatusCode CaloZSupAlg::initialize() {
 //=============================================================================
 StatusCode CaloZSupAlg::execute() {
 
-  bool isDebug   = msgLevel() <= MSG::DEBUG;
-  bool isVerbose = msgLevel() <= MSG::VERBOSE;
-
   //*** some trivial printout
 
-  if ( isDebug ) {
-    if (m_adcOnTES) debug() << "Perform zero suppression - return CaloAdcs on TES at "
+  if ( msgLevel(MSG::DEBUG) ) {
+    if (m_outputType.value().adcOnTES) debug() << "Perform zero suppression - return CaloAdcs on TES at "
                             << rootInTES() + m_outputADCData + m_extension << endmsg;
-    if ( m_digitOnTES) debug() << "Perform zero suppression - return CaloDigits on TES at "
+    if ( m_outputType.value().digitOnTES) debug() << "Perform zero suppression - return CaloDigits on TES at "
                                << rootInTES() + m_outputDigitData  + m_extension << endmsg;
   }
 
@@ -140,16 +119,16 @@ StatusCode CaloZSupAlg::execute() {
   //***  prepare the output containers
   LHCb::CaloAdcs* newAdcs=nullptr;
   LHCb::CaloDigits* newDigits=nullptr;
-  if(m_adcOnTES){
+  if(m_outputType.value().adcOnTES){
     newAdcs = new LHCb::CaloAdcs();
     put( newAdcs, m_outputADCData + m_extension );
   }
-  if(m_digitOnTES) {
+  if(m_outputType.value().digitOnTES) {
     newDigits = new LHCb::CaloDigits();
     put( newDigits, m_outputDigitData + m_extension );
   }
 
-  if ( isDebug ) debug() << "Processing " << adcs.size()
+  if ( msgLevel(MSG::DEBUG) ) debug() << "Processing " << adcs.size()
                          << " Digits." << endmsg;
 
   enum {
@@ -169,7 +148,7 @@ StatusCode CaloZSupAlg::execute() {
     index         = m_calo->cellIndex( id );
     int    digAdc = anAdc.adc();
     if( m_zsupThreshold <= digAdc ) {
-      if( isVerbose ) {
+      if( msgLevel(MSG::VERBOSE) ) {
         verbose() << id
                 << format( " Energy adc %4d", digAdc );
         if (  m_zsupThreshold <= digAdc ) debug() << " seed";
@@ -177,7 +156,7 @@ StatusCode CaloZSupAlg::execute() {
       }
 
       caloFlags[index] = SeedFlag ;
-      if( m_zsup2D ) {
+      if( m_zsupMethod == details::zsupMethod_t::two_d ) {
         for ( const auto& neighbor :  m_calo->neighborCells( id ) ) {
           int& neighFlag = caloFlags[m_calo->cellIndex(neighbor)];
           if( neighFlag != SeedFlag ) neighFlag = NeighborFlag ;
@@ -195,7 +174,7 @@ StatusCode CaloZSupAlg::execute() {
     if( DefaultFlag == caloFlags[index] ) { continue; }
     if( NeighborFlag == caloFlags[index] && anAdc.adc() < m_zsupNeighbor)continue;
 
-    if(m_adcOnTES){
+    if(m_outputType.value().adcOnTES){
       try{
         auto adc = std::make_unique<LHCb::CaloAdc>( id, anAdc.adc() );
         newAdcs->insert( adc.get() ) ;
@@ -212,7 +191,7 @@ StatusCode CaloZSupAlg::execute() {
       }
     }
 
-    if(m_digitOnTES){
+    if(m_outputType.value().digitOnTES){
       double e = ( double( anAdc.adc() ) - pedShift ) * m_calo->cellGain( id );
       try{
         auto digit = std::make_unique<LHCb::CaloDigit>(id,e);
@@ -232,7 +211,7 @@ StatusCode CaloZSupAlg::execute() {
 
     }
 
-    if( isVerbose ) {
+    if( msgLevel(MSG::VERBOSE) ) {
       if ( NeighborFlag == caloFlags[index] ) {
         verbose() << id << " added as Neighbor." << endmsg;
       } else {
@@ -241,16 +220,15 @@ StatusCode CaloZSupAlg::execute() {
     }
   }
 
-  if(isDebug) {
-    if(m_adcOnTES)
+  if(msgLevel(MSG::DEBUG)) {
+    if(m_outputType.value().adcOnTES)
       debug() << format("Have stored %5d CaloAdcs.", newAdcs->size()) << endmsg;
-    if(m_digitOnTES)
+    if(m_outputType.value().digitOnTES)
       debug() << format("Have stored %5d CaloDigits.", newDigits->size()) << endmsg;
   }
 
-  if(m_statusOnTES)m_adcTool->putStatusOnTES();
+  if(m_statusOnTES.value())m_adcTool->putStatusOnTES();
 
   return StatusCode::SUCCESS;
 }
-
 //=============================================================================
