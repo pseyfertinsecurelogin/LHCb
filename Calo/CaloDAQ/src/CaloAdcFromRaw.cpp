@@ -190,7 +190,7 @@ StatusCode CaloAdcFromRaw::execute() {
         } catch(GaudiException &exc) {
           counter("Duplicate L0Bit") += 1;
           std::ostringstream os("");
-          os << "Duplicate L0Bit for channel " << id << std::endl;
+          os << "Duplicate L0Bit for channel " << id << '\n';
           Warning(os.str(),StatusCode::SUCCESS).ignore();
           int card =  m_data->deCalo()->cardNumber( id );
           int tell1=  m_data->deCalo()->cardToTell1( card);
