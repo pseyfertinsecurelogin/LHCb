@@ -33,9 +33,10 @@ bool isStdInfo(const std::string& s) {
     return i != std::begin(s) && i != std::end(s) && *i == '#' ;
 }
 
-int asUInt( float x ) {
+unsigned int asUInt( float x ) {
     union IntFloat { unsigned int mInt; float mFloat; };
-    IntFloat a; a.mFloat = x;
+    IntFloat a;
+    a.mFloat = x;
     return a.mInt;
 }
 

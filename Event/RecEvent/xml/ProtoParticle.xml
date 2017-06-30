@@ -38,6 +38,8 @@
        <enum
         desc="Additional information assigned to this ProtoParticle. A combination of the PID information from the RICH, CALO, MUON and VELO systems together with any additional user information"
         name="additionalInfo"
+        strTypConv="TRUE"
+        unknownValue="LastGlobal"
         access="PUBLIC" >
 
         <enumval name="NoPID"          value="0"    desc="Undefined PID Variable"/>
