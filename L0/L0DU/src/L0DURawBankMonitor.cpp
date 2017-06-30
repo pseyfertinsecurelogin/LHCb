@@ -260,8 +260,8 @@ StatusCode L0DURawBankMonitor::execute() {
         axMuon->SetBinLabel( 3 , "MuonCU1" );
         axMuon->SetBinLabel( 4 , "MuonCU2" );
         axMuon->SetBinLabel( 5 , "MuonCU3" );
-        k = k << 1;
       } 
+      k = k << 1;
     }
 
     AIDA::IHistogram1D* hCalo =  histo1D(toHistoID("Status/Calo/1" ) );
