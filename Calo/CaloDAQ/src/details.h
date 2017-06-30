@@ -4,6 +4,8 @@
 
 
 namespace details {
+
+    //-------------------------------------------------------------------------
     struct OutputType_t final {
         bool adcOnTES;
         bool digitOnTES;
@@ -13,7 +15,9 @@ namespace details {
     inline std::ostream& toStream(const OutputType_t& out, std::ostream& os)
     { return os << std::quoted(toString(out),'\''); }
     StatusCode parse(OutputType_t& result, const std::string& input );
+    //-------------------------------------------------------------------------
 
+    //-------------------------------------------------------------------------
     enum class source_t { from_adc, from_digit };
     const char* toString(const source_t& source);
 
@@ -21,6 +25,7 @@ namespace details {
         return os << std::quoted(toString(source),'\'');
     }
     StatusCode parse(source_t& result, const std::string& input );
+    //-------------------------------------------------------------------------
 
 }
 

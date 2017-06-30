@@ -20,17 +20,21 @@ namespace details {
             case zsupMethod_t::none : return "NO";
             case zsupMethod_t::one_d: return "1D";
             case zsupMethod_t::two_d: return "2D";
-            default: throw "IMPOSSIBLE!";
         }
+        throw "IMPOSSIBLE!";
     }
     StatusCode parse(zsupMethod_t& result, const std::string& input ) {
-        if (input == "NO" ) result = zsupMethod_t::none;  return StatusCode::SUCCESS;
-        if (input == "1D" ) result = zsupMethod_t::one_d; return StatusCode::SUCCESS;
-        if (input == "2D" ) result = zsupMethod_t::two_d; return StatusCode::SUCCESS;
+        if (input == toString(zsupMethod_t::none))  {
+            result = zsupMethod_t::none;  return StatusCode::SUCCESS;
+        }
+        if (input == toString(zsupMethod_t::one_d)) {
+            result = zsupMethod_t::one_d; return StatusCode::SUCCESS;
+        }
+        if (input == toString(zsupMethod_t::two_d)) {
+            result = zsupMethod_t::two_d; return StatusCode::SUCCESS;
+        }
         return StatusCode::FAILURE;
     }
-
-
 }
 
 //=============================================================================
