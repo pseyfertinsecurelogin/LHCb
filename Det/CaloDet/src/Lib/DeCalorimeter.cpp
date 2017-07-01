@@ -206,8 +206,9 @@ StatusCode DeCalorimeter::initialize()
         double ag  = 0;
         if(act > 0 )ag  = cellGain(id) *  m_cells[id].sine() / act * 1024;
         if( UNLIKELY( msg2.level() <= MSG::VERBOSE ) )
-          msg2 << MSG::VERBOSE << "Chan : " << id << " : nominal L0gain => "
-               << m_l0Et<< " MeV/ADC => expected L0Cte is : " << (int) ect
+          msg2 << MSG::VERBOSE << "Chan : " << id  
+               << " [ crate=" << cardCrate( cardNumber(id) ) << ", slot="<< cardSlot(cardNumber(id)) << "]"
+               << " => nominal L0gain : "<< m_l0Et << " MeV/ADC => expected L0Cte : " << (int) ect
                << "  | actual L0Cte : " << act << " => "  << ag << " MeV/ADC"
                << endmsg;
       }
