@@ -155,7 +155,7 @@ namespace LoKi
     bool sameEvent() const ;
     /// get constructor arguments
     const std::string& cargs() const {
-        static const std::string unknown{ ":::UNKNOWN:::" };
+        static const std::string unknown{ ":::UNKNOWN+PLEASE+FIX+CODE::CALL+AUXFUNBASE+CONSTRUCTOR:::" };
         return m_cargs ? *m_cargs : unknown ;
     }
     // ========================================================================

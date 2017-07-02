@@ -241,8 +241,7 @@ bool LoKi::AuxFunBase::sameEvent () const
 // ============================================================================
 std::string LoKi::AuxFunBase::toCpp() const
 {
-    return objType() +  ( m_cargs ? "( " + *m_cargs + " ) "
-                                  : "( :::UNKNOWN+PLEASE+FIX+CODE::: ) " );
+    return objType() + "( " + cargs() + " ) ";
 }
 // ============================================================================
 /*  output operator of function objects to std::ostream
