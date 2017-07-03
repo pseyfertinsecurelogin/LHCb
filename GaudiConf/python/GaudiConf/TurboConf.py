@@ -1,6 +1,6 @@
 """High level configuration for Turbo."""
 import logging as log
-from os.path import join
+from os.path import join, split
 
 from Configurables import LHCbConfigurableUser
 from Configurables import DataOnDemandSvc
@@ -117,6 +117,32 @@ class TurboConf(LHCbConfigurableUser):
                            What=packing.outputs['Hlt2RecVertices'],
                            Target=join(rootintes, 'Rec/Vertex/Primary'))
         DataOnDemandSvc().AlgMap[linkPVs.Target] = linkPVs
+
+    def _register_tes_root_links(self, rootintes):
+        """Link /Event/<stream>/Turbo/p{Phys,Rec} to under /Event/<stream>.
+
+        This works around a feature of the dynamic unpackers configured in
+        DstConf, which struggle with RootInTES settings that are two levels
+        deep (like /Event/<stream>/Turbo, rather than /Event/Turbo).
+        """
+        from Configurables import Gaudi__DataLink as DataLink
+        from GaudiKernel.Constants import ERROR
+
+        rootinstream, _ = split(rootintes)
+        if rootinstream in ['/Event', '/Event/Turbo']:
+            return
+
+        # OutputLevel=ERROR to suppress WARNINGs when the 'What' doesn't exist
+        link_pPhys = DataLink('LinkTurbopPhys',
+                              What=join(rootintes, 'pPhys'),
+                              Target=join(rootinstream, 'pPhys'),
+                              OutputLevel=ERROR)
+        link_pRec = DataLink('LinkTurbopRec',
+                              What=join(rootintes, 'pRec'),
+                              Target=join(rootinstream, 'pRec'),
+                              OutputLevel=ERROR)
+        DataOnDemandSvc().AlgMap[link_pPhys.Target] = link_pPhys
+        DataOnDemandSvc().AlgMap[link_pRec.Target] = link_pRec
 
     def _persistrecopacking(self, datatype, rootintes):
         """Return configured PersistRecoPacking object.
@@ -235,3 +261,4 @@ class TurboConf(LHCbConfigurableUser):
         if unpack or persistreco:
             self._register_pr_unpackers(packing)
             self._register_pr_links(packing, rootintes)
+            self._register_tes_root_links(rootintes)
