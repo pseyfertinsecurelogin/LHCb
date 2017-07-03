@@ -1,5 +1,6 @@
 #ifndef CALO2MC_H 
 #define CALO2MC_H 1
+#include "Event/CaloHypo.h"
 
 namespace LHCb {
   class MCParticle;

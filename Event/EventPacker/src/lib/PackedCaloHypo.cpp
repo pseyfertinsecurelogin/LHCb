@@ -26,7 +26,7 @@ void CaloHypoPacker::pack( const DataVector & hypos,
     for ( const auto* H : hypos )
     {
       // make new packed object
-      phypos.hypos().emplace_back( LHCb::PackedCaloHypo() );
+      phypos.hypos().emplace_back( );
       auto & pH = phypos.hypos().back();
 
       // Save the data

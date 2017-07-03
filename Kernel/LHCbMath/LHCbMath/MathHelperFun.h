@@ -1,6 +1,7 @@
 // $Id$
 #ifndef KERNEL_MATHHELPERFUN_H 
 #define KERNEL_MATHHELPERFUN_H 1
+#include <math.h>
 
 // Include files
 

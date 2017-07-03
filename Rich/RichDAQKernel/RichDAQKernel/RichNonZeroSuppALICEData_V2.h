@@ -15,6 +15,7 @@
 #include "RichDAQKernel/RichHPDDataBank.h"
 #include "RichDAQKernel/RichZSPacked_V2.h"
 
+#include "Event/ODIN.h"
 // Kernel
 #include "Kernel/MemPoolAlloc.h"
 

@@ -253,12 +253,14 @@ StatusCode L0DURawBankMonitor::execute() {
       if( m_fromRaw->data("MuonCU1(Status)") & k )fill( hMuon, 2., 1.);
       if( m_fromRaw->data("MuonCU2(Status)") & k )fill( hMuon, 3., 1.);
       if( m_fromRaw->data("MuonCU3(Status)") & k )fill( hMuon, 4., 1.);
-      TAxis* axMuon = thMuon->GetXaxis();
-      axMuon->SetBinLabel( 1 , "Counter" );
-      axMuon->SetBinLabel( 2 , "MuonCU0" );
-      axMuon->SetBinLabel( 3 , "MuonCU1" );
-      axMuon->SetBinLabel( 4 , "MuonCU2" );
-      axMuon->SetBinLabel( 5 , "MuonCU3" );
+      if(m_first){
+        TAxis* axMuon = thMuon->GetXaxis();
+        axMuon->SetBinLabel( 1 , "Counter" );
+        axMuon->SetBinLabel( 2 , "MuonCU0" );
+        axMuon->SetBinLabel( 3 , "MuonCU1" );
+        axMuon->SetBinLabel( 4 , "MuonCU2" );
+        axMuon->SetBinLabel( 5 , "MuonCU3" );
+      } 
       k = k << 1;
     }
 
@@ -272,27 +274,31 @@ StatusCode L0DURawBankMonitor::execute() {
     if( 1 == m_fromRaw->data("Hadron(Status)")   )fill( hCalo, 5. , 1. );
     if( 1 == m_fromRaw->data("Spd(Status)")      )fill( hCalo, 6. , 1. );
     if( 1 == m_fromRaw->data("Sum(Status)")      )fill( hCalo, 7. , 1. );
-    TAxis* axCalo = thCalo->GetXaxis();
-    axCalo->SetBinLabel( 1 , "Counter" );
-    axCalo->SetBinLabel( 2 , "Electron" );
-    axCalo->SetBinLabel( 3 , "Photon" );
-    axCalo->SetBinLabel( 4 , "LocalPi0" );
-    axCalo->SetBinLabel( 5 , "GlobalPi0" );
-    axCalo->SetBinLabel( 6 , "Hadron" );
-    axCalo->SetBinLabel( 7 , "SpdMult" );
-    axCalo->SetBinLabel( 8 , "SumEt" );
-
+    if(m_first){
+      TAxis* axCalo = thCalo->GetXaxis();
+      axCalo->SetBinLabel( 1 , "Counter" );
+      axCalo->SetBinLabel( 2 , "Electron" );
+      axCalo->SetBinLabel( 3 , "Photon" );
+      axCalo->SetBinLabel( 4 , "LocalPi0" );
+      axCalo->SetBinLabel( 5 , "GlobalPi0" );
+      axCalo->SetBinLabel( 6 , "Hadron" );
+      axCalo->SetBinLabel( 7 , "SpdMult" );
+      axCalo->SetBinLabel( 8 , "SumEt" );
+    }
+    
     //
     AIDA::IHistogram1D* hPus =  histo1D(toHistoID("Status/Pus/1" ) );
     TH1D* thPus = Gaudi::Utils::Aida2ROOT::aida2root( hPus );
     fill( hPus, 0.  , 1. );
     if( 1 == m_fromRaw->data("PU1(Status)") )fill( hPus, 1.  , 1. );
     if( 1 == m_fromRaw->data("PU2(Status)") )fill( hPus, 2.  , 1. );
-    TAxis* axPus = thPus->GetXaxis();
-    axPus->SetBinLabel( 1 , "Counter" );
-    axPus->SetBinLabel( 2 , "Pu1" );
-    axPus->SetBinLabel( 3 , "Pu2" );
-
+    if(m_first){
+      TAxis* axPus = thPus->GetXaxis();
+      axPus->SetBinLabel( 1 , "Counter" );
+      axPus->SetBinLabel( 2 , "Pu1" );
+      axPus->SetBinLabel( 3 , "Pu2" );
+    }
+    
     int inputStatus = 0;
     if( 0 < (m_fromRaw->data("MuonCU0(Status)") & 0xC) )inputStatus++;
     if( 0 < (m_fromRaw->data("MuonCU1(Status)") & 0xC) )inputStatus++;

@@ -244,7 +244,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Rand* clone() const override;
       /// MANDATORY: the only one essential method
-      double   operator() ( argument /* a */ ) const override;
+      double   operator() ( argument ) const override;
       /// OPTIONAL: just a nice printout
       std::ostream& fillStream ( std::ostream& s  ) const override;
       // ======================================================================

@@ -31,56 +31,11 @@
  *  @date 2010-05-17
  */
 // ============================================================================
-// constructor from the bit
-// ============================================================================
-LoKi::HLT::RoutingBits::RoutingBits
-( const unsigned short bit )
-  : LoKi::AuxFunBase ( std::tie ( bit ) )
-  , m_bits    ( bit )
-{}
-// ============================================================================
 // constructor from the bis
 // ============================================================================
-LoKi::HLT::RoutingBits::RoutingBits
-( const unsigned short bit1 ,
-  const unsigned short bit2 )
-  : LoKi::AuxFunBase ( std::tie ( bit1 , bit2 ) )
-  , m_bits    { bit1, bit2 }
-{
-  std::sort ( m_fired.begin() , m_fired.end() ) ;
-}
-// ============================================================================
-// constructor from the bis
-// ============================================================================
-LoKi::HLT::RoutingBits::RoutingBits
-( const unsigned short bit1 ,
-  const unsigned short bit2 ,
-  const unsigned short bit3 )
-  : LoKi::AuxFunBase ( std::tie ( bit1 , bit2 , bit3 ) )
-  , m_bits    { bit1, bit2, bit3 }
-{
-  std::sort ( m_fired.begin() , m_fired.end() ) ;
-}
-// ============================================================================
-// constructor from the bis
-// ============================================================================
-LoKi::HLT::RoutingBits::RoutingBits
-( const unsigned short bit1 ,
-  const unsigned short bit2 ,
-  const unsigned short bit3 ,
-  const unsigned short bit4 )
-  : LoKi::AuxFunBase ( std::tie ( bit1 , bit2 , bit3 , bit4 ) )
-  , m_bits    { bit1, bit2, bit3, bit4 }
-{
-  std::sort ( m_fired.begin() , m_fired.end() ) ;
-}
-// ============================================================================
-// constructor from the bis
-// ============================================================================
-LoKi::HLT::RoutingBits::RoutingBits
-( const std::vector<unsigned int>&  bits )
+LoKi::HLT::RoutingBits::RoutingBits( std::vector<unsigned int>  bits )
   : LoKi::AuxFunBase ( std::tie ( bits ) )
-  , m_bits    ( bits )
+  , m_bits    ( std::move(bits) )
 {
   std::sort ( m_fired.begin() , m_fired.end() ) ;
 }
@@ -97,7 +52,7 @@ bool LoKi::HLT::RoutingBits::operator()(  ) const
   if ( !sameEvent() || 0 >= event() || m_fired.empty() ) { getFired() ; }
   //
   return std::any_of( std::begin(m_bits), std::end(m_bits),
-                      [&](const unsigned int& bit) {
+                      [&](unsigned int bit) {
             return std::binary_search( m_fired.begin() , m_fired.end  () , bit );
   });
 }
@@ -126,25 +81,10 @@ std::ostream& LoKi::HLT::RoutingBits::fillStream ( std::ostream& s ) const
 {
   s << "routingBits ( " ;
   //
-  switch ( m_bits .size() )
-  {
-  case 1 :
-    return  s << m_bits[0] << " ) " ;
-  case 2 :
-    return  s << m_bits[0] << ","
-              << m_bits[1] << " ) " ;
-  case 3 :
-    return  s << m_bits[0] << ","
-              << m_bits[1] << ","
-              << m_bits[2] << " ) " ;
-  case 4 :
-    return  s << m_bits[0] << ","
-              << m_bits[1] << ","
-              << m_bits[2] << ","
-              << m_bits[3] << " ) " ;
-  default:
-    break ;
-  }
+  auto i = m_bits.begin();
+  if (i!=m_bits.end()) s << *i++;
+  while (i!=m_bits.end()) s << "," << *i++;
+  s << " ) ";
   Gaudi::Utils::toStream ( m_bits , s ) ;
   return s << " ) " ;
 }

@@ -4,10 +4,12 @@
 gaudi_subdir(DAQUtils v1r14)
 
 gaudi_depends_on_subdirs(Event/DAQEvent
+                         Event/HltEvent
                          Event/RecEvent
                          GaudiAlg
                          GaudiKernel
                          GaudiSvc
+                         Phys/LoKiHlt
 			 DAQ/DAQKernel)
 
 find_package(RELAX)
@@ -15,7 +17,7 @@ find_package(RELAX)
 gaudi_add_module(DAQUtils
                  src/*.cpp
                  INCLUDE_DIRS RELAX
-                 LINK_LIBRARIES RELAX DAQEventLib DAQKernelLib RecEvent GaudiAlgLib GaudiKernel)
+                 LINK_LIBRARIES RELAX DAQEventLib DAQKernelLib HltEvent RecEvent GaudiAlgLib GaudiKernel LoKiHltLib)
 
 gaudi_install_headers(Event)
 

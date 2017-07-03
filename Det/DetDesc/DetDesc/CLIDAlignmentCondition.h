@@ -3,6 +3,7 @@
 #define DETDESC_CLIDALIGNMENTCONDITION_H 1
 
 // Include files
+#include "GaudiKernel/ClassID.h"
 
 /** @class CLIDAlignmentCondition CLIDAlignmentCondition.h DetDesc/CLIDAlignmentCondition.h
  *  

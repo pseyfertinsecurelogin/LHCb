@@ -216,19 +216,23 @@ void LoKi::Parameters::Parameter::getParams() const
   const Property* p = property() ;
   if ( !p ) { getProp() ; }
   //
-  m_map_d     = dynamic_cast<const PropertyWithValue<MAP_D>*>   ( p ) ;
-  m_map_f     = dynamic_cast<const PropertyWithValue<MAP_F>*>   ( p ) ;
-  m_map_i     = dynamic_cast<const PropertyWithValue<MAP_I>*>   ( p ) ;
-  m_scalar_d  = dynamic_cast<const PropertyWithValue<double>*>  ( p ) ;
-  m_scalar_f  = dynamic_cast<const PropertyWithValue<float>*>   ( p ) ;
-  m_scalar_i  = dynamic_cast<const PropertyWithValue<int>*>     ( p ) ;
+  if ( dynamic_cast<const PropertyWithValue<double>*>  ( p ) ) {
+      m_prop = prop_t::scalar_d;
+  } else if ( dynamic_cast<const PropertyWithValue<float>*>   ( p ) ) {
+      m_prop = prop_t::scalar_f;
+  } else if ( dynamic_cast<const PropertyWithValue<int>*>     ( p ) ) {
+      m_prop = prop_t::scalar_i;
+  } else if ( dynamic_cast<const PropertyWithValue<MAP_D>*>   ( p ) ) {
+      m_prop = prop_t::map_d;
+  } else if ( dynamic_cast<const PropertyWithValue<MAP_F>*>   ( p ) ) {
+      m_prop = prop_t::map_f;
+  } else if ( dynamic_cast<const PropertyWithValue<MAP_I>*>   ( p ) ) {
+      m_prop = prop_t::map_i;
+  } else {
+      m_prop = prop_t::unknown;
+  }
   //
-  Assert ( m_map_d    ||
-           m_map_f    ||
-           m_map_i    ||
-           m_scalar_d ||
-           m_scalar_f ||
-           m_scalar_i  , "Invalid property type" ) ;
+  Assert ( m_prop != prop_t::unknown , "Invalid property type" ) ;
 }
 // ============================================================================
 // optional: nice printout
@@ -254,36 +258,40 @@ namespace
 double LoKi::Parameters::Parameter::operator ()(  ) const
 {
   //
-  if      ( m_scalar_d ) { return  get<double> ( property () ) ; }
-  else if ( m_scalar_f ) { return  get<float>  ( property () ) ; }
-  else if ( m_scalar_i ) { return  get<int>    ( property () ) ; }
-  //
-  if ( m_map_d ) {
-    const PropertyWithValue<MAP_D>* p =
-      static_cast<const PropertyWithValue<MAP_D>*>( property() ) ;
-    const auto& m = p->value() ;
-    auto it = m.find ( param().key() ) ;
-    Assert ( m.end() != it , "No proper key is found" ) ;
-    return it->second ;
-  } else if ( m_map_f ) {
-    const PropertyWithValue<MAP_F>* p =
-      static_cast<const PropertyWithValue<MAP_F>*>( property() ) ;
-    const auto& m = p->value() ;
-    auto it = m.find ( param().key() ) ;
-    Assert ( m.end() != it , "No proper key is found" ) ;
-    return it->second ;
-  } else if ( m_map_i ) {
-    const PropertyWithValue<MAP_I>* p =
-      static_cast<const PropertyWithValue<MAP_I>*>( property() ) ;
-    const auto& m = p->value() ;
-    auto it = m.find ( param().key() ) ;
-    Assert ( m.end() != it , "No proper key is found" ) ;
-    return it->second ;
+  switch (m_prop) {
+      case prop_t::scalar_d : return  get<double> ( property () ) ;
+      case prop_t::scalar_f : return  get<float>  ( property () ) ;
+      case prop_t::scalar_i : return  get<int>    ( property () ) ;
+      case prop_t::map_d : {
+        const PropertyWithValue<MAP_D>* p =
+          static_cast<const PropertyWithValue<MAP_D>*>( property() ) ;
+        const auto& m = p->value() ;
+        auto it = m.find ( param().key() ) ;
+        Assert ( m.end() != it , "No proper key is found" ) ;
+        return it->second ;
+      }
+      case prop_t::map_f : {
+        const PropertyWithValue<MAP_F>* p =
+          static_cast<const PropertyWithValue<MAP_F>*>( property() ) ;
+        const auto& m = p->value() ;
+        auto it = m.find ( param().key() ) ;
+        Assert ( m.end() != it , "No proper key is found" ) ;
+        return it->second ;
+      }
+      case prop_t::map_i : {
+        const PropertyWithValue<MAP_I>* p =
+          static_cast<const PropertyWithValue<MAP_I>*>( property() ) ;
+        const auto& m = p->value() ;
+        auto it = m.find ( param().key() ) ;
+        Assert ( m.end() != it , "No proper key is found" ) ;
+        return it->second ;
+      }
+      default : {
+        Assert ( false , "Invalid type of parameter" ) ;
+        return 0 ;
+      }
   }
   //
-  Assert ( 1 < 2 , "Invalid type of parameter" ) ;
-  //
-  return 0 ;
 }
 // ============================================================================
 // The END

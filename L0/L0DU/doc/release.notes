@@ -3,6 +3,9 @@
 ! Package Manager : Olivier Deschamps
 !--------------------------------------------------------------------------
 
+! 2017-06-30 - Olivier Deschamps
+  - L0DURawBankMonitor : prevent  some histo labels to be reset each event 
+
 ! 2017-05-19 - Olivier Deschamps
   - L0DUAlg : add flag for Herschel usage 
   - L0ProcessorDecoder : disable L0Calo Pi0 when Herschel data is in + implement data name aliases

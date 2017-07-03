@@ -11,9 +11,14 @@
 #include <vector>
 #include <map>
 // ============================================================================
+// GaudiKernel
+// ============================================================================
+#include "GaudiKernel/Kernel.h" // for GAUDI_API  // IWYU pragma: keep
+#include "GaudiKernel/StatusCode.h"  // IWYU pragma: keep
+// ============================================================================
 // LHCbKernel
 // ============================================================================
-namespace LHCb { class CaloCellID ; }
+#include "Kernel/CaloCellID.h"  // IWYU pragma: keep
 // ============================================================================
 /** @file 
  *  Streamer& Parsing function to allow CaloCellID & related classes to be 

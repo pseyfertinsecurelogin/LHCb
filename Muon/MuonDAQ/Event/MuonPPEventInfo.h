@@ -1,5 +1,6 @@
 #ifndef EVENT_MUONPPEVENTINFO_H
 #define EVENT_MUONPPEVENTINFO_H 1
+#include <array>
 
 // Include files
 

@@ -4,6 +4,7 @@
 
 // from STD
 #include <vector>
+#include <stddef.h>
 
 /** @class IndexToDetElementMap IndexToDetElementMap.h OTDet/IndexToDetElementMap.h
  *  

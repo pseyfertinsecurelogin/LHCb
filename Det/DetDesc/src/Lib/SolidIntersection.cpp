@@ -66,7 +66,7 @@ bool SolidIntersection::isInsideImpl( const aPoint   & point ) const
   /// return the 'and' of all children
   auto c = children();
   return std::all_of( begin(c) , end(c),
-                      Solid::IsInside<aPoint>( point ) );
+                      Solid::isInside( point ) );
 }
 
 // ============================================================================

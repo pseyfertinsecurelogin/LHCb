@@ -3,6 +3,7 @@
 
 // Include files
 #include "Linker/LinkerEntry.h"
+#include <vector>
 
 /** @class LinkerRange LinkerRange.h Linker/LinkerRange.h
  *  Holds a range, a collection of LinkerEntry  

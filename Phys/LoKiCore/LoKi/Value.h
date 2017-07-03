@@ -42,15 +42,15 @@ namespace LoKi
     /** Standard constructor from "void"-functor
      *  @param fun  void-functor
      */
-    explicit Value ( const LoKi::Functor<void,TYPE2>& fun )
+    explicit Value ( LoKi::FunctorFromFunctor<void,TYPE2>  fun )
       : LoKi::AuxFunBase         ( std::tie( fun ) )
-      , m_void ( fun )
+      , m_void ( std::move(fun) )
     {}
     /// clone method (mandatory)
     Value* clone   () const override { return new Value( *this ) ; }
     /// the only one essential method ("function")
     TYPE2 operator()
-      ( typename LoKi::Functor<TYPE,TYPE2>::argument /* a */ ) const override
+      ( typename LoKi::Functor<TYPE,TYPE2>::argument  ) const override
     { return m_void.fun() ; } // bypass one virtual call
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override
@@ -72,9 +72,9 @@ namespace LoKi
     /** Standard constructor from "void"-functor
      *  @param fun  void-functor
      */
-    Value ( const LoKi::Functor<void,TYPE2>& fun )
+    Value ( LoKi::FunctorFromFunctor<void,TYPE2> fun )
       : LoKi::AuxFunBase         ( std::tie ( fun ) )
-      , m_void ( fun )
+      , m_void ( std::move(fun) )
     {}
     /// clone method (mandatory)
     Value* clone   () const override { return new Value( *this ) ; }

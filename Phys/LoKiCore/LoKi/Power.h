@@ -52,11 +52,9 @@ namespace LoKi
      *  @param fun function to be used in "pow"
      *  @param val power itself
      */
-    template <typename F,
-              typename = typename details::require_signature<F,TYPE,TYPE2>>
-    Power ( F&& fun , int val )
+    Power ( LoKi::FunctorFromFunctor<TYPE,TYPE2> fun , int val )
       : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , m_fun ( std::forward<F>(fun) )
+      , m_fun ( std::move(fun) )
       , m_val ( val )
     {}
     /// MANDATORY: clone method ("virtual constructor")
@@ -101,11 +99,9 @@ namespace LoKi
      *  @param fun function to be used in "pow"
      *  @param val power itself
      */
-    template <typename F,
-              typename = typename details::require_signature<F,void,TYPE2>>
-    Power ( F&& fun , int val )
+    Power ( LoKi::FunctorFromFunctor<void,TYPE2> fun , int val )
       : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , m_fun ( std::forward<F>(fun) )
+      , m_fun ( std::move(fun) )
       , m_val ( val )
     {}
     /// MANDATORY: clone method ("virtual constructor")

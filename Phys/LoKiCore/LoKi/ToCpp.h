@@ -1,15 +1,20 @@
 // ============================================================================
-#ifndef LOKI_TOCPP_H 
+#ifndef LOKI_TOCPP_H
 #define LOKI_TOCPP_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 #include <string>
 #include <vector>
 #include <tuple>
 #include <map>
+#include <utility>
+// ============================================================================
+// boost
+// ============================================================================
+#include "boost/algorithm/string/join.hpp"
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -22,36 +27,36 @@
 #include "LoKi/KinTypes.h"
 // ============================================================================
 /** @file LoKi/ToCpp.h
- *  set of utilities used fro autogeneration of C++ code for LoKi-functors 
- *  @see LoKi::AuxFunBase 
+ *  set of utilities used fro autogeneration of C++ code for LoKi-functors
+ *  @see LoKi::AuxFunBase
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2015-03-30
- * 
+ *
  */
 // ============================================================================
-// Forward declarations 
+// Forward declarations
 // ============================================================================
-namespace LoKi 
-{ 
-  class AuxFunBase ; 
-  class Dump       ; 
-  class FirstN     ; 
-  class Sort       ; 
-  class Param      ; 
-  class Histo      ; 
-  class CounterDef ; 
+namespace LoKi
+{
+  class AuxFunBase ;
+  class Dump       ;
+  class FirstN     ;
+  class Sort       ;
+  class Param      ;
+  class Histo      ;
+  class CounterDef ;
   //
-  class GAUDI_API StrKeep 
+  class GAUDI_API StrKeep
   {
   public:
     StrKeep( const std::string& data ) ;
     const std::string& data() const { return m_data ; }
-  private: 
+  private:
     std::string m_data ;
-  } ;  
+  } ;
 }
 // ============================================================================
-namespace LHCb 
+namespace LHCb
 {
   class ParticleID ;
   class LHCbID     ;
@@ -70,7 +75,7 @@ namespace Decays
   class iNode ;
 }
 // ============================================================================
-namespace GaudiAlg 
+namespace GaudiAlg
 {
   class ID ;
 }
@@ -78,7 +83,7 @@ namespace GaudiAlg
 namespace Gaudi
 {
   // ==========================================================================
-  namespace Utils 
+  namespace Utils
   {
     // ========================================================================
     GAUDI_API std::string toCpp ( const LoKi::AuxFunBase&    o ) ;
@@ -112,19 +117,19 @@ namespace Gaudi
 namespace Gaudi
 {
   // ==========================================================================
-  namespace Utils 
+  namespace Utils
   {
     // ========================================================================
-    // strings and chars 
+    // strings and chars
     // ========================================================================
     inline std::string toCpp ( const char          s ) { return "'" + std::string ( 1 , s )  + "'"; }
     inline std::string toCpp ( const std::string&  s ) { return '"' + s + '"' ; }
     template <unsigned N>
-    inline std::string toCpp 
+    inline std::string toCpp
     ( const char (&s)[N]    ) { return toCpp ( std::string ( s , s + N ) ) ; }
     template <unsigned N>
-    inline std::string toCpp 
-    (       char (&s)[N]    ) { return toCpp ( std::string ( s , s + N ) ) ; }  
+    inline std::string toCpp
+    (       char (&s)[N]    ) { return toCpp ( std::string ( s , s + N ) ) ; }
     // ========================================================================
     inline std::string toCpp ( const short              o ) { return toString ( o ) ; }
     inline std::string toCpp ( const unsigned short     o ) { return toString ( o ) ; }
@@ -138,95 +143,79 @@ namespace Gaudi
     inline std::string toCpp ( const bool               o ) { return o ? "true" : "false" ; }
     // ========================================================================
     //
-    GAUDI_API 
+    GAUDI_API
     std::string toCpp ( const long double o , const unsigned short p = 16 ) ;
-    inline 
+    inline
     std::string toCpp ( const double  o ) { return toCpp ( o  , 16 ) ; }
-    inline 
+    inline
     std::string toCpp ( const float   o ) { return toCpp ( o  , 12 ) ; }
     // ========================================================================
-    GAUDI_API 
+    GAUDI_API
     std::string toCpp ( const LoKi::AuxFunBase& o  ) ;
     // ========================================================================
-    // declarations (1) 
+    // declarations (1)
     // ========================================================================
-    // std::vector 
+    // std::vector
     template <class TYPE>
     inline std::string toCpp ( const std::vector<TYPE>&     v ) ;
     // std::map
     template <class TYPE1, class TYPE2>
     inline std::string toCpp ( const std::map<TYPE1,TYPE2>& v ) ;
-    // std::tuple 
+    // std::tuple
     template<typename... Args>
     inline std::string toCpp ( const std::tuple<Args...>&   t ) ;
     // ========================================================================
-    // implementations 
+    // implementations
     // ========================================================================
     template <class TYPE>
     inline std::string toCpp ( const std::vector<TYPE>& v )
     {
       std::string o = "std::vector<" + System::typeinfoName ( typeid(TYPE) ) + ">{" ;
-      for ( typename std::vector<TYPE>::const_iterator it = v.begin() ; v.end() != it ; ++it ) 
+      for ( typename std::vector<TYPE>::const_iterator it = v.begin() ; v.end() != it ; ++it )
       { o.append ( toCpp ( *it ) + ", " ) ; }
       //
-      return o + '}' ;  
+      return o + '}' ;
     }
     // ========================================================================
     template <class TYPE1, class TYPE2>
-    inline std::string toCpp ( const std::map<TYPE1,TYPE2>& v ) 
+    inline std::string toCpp ( const std::map<TYPE1,TYPE2>& v )
     {
-      std::string o = "std::map<" 
+      std::string o = "std::map<"
         + System::typeinfoName ( typeid(TYPE1) ) + ","
         + System::typeinfoName ( typeid(TYPE2) ) + ">{" ;
-      for ( typename std::map<TYPE1,TYPE2>::const_iterator it = v.begin() ; v.end() != it ; ++it ) 
+      for ( typename std::map<TYPE1,TYPE2>::const_iterator it = v.begin() ; v.end() != it ; ++it )
       { o.append ( "{" + toCpp ( it->first ) + ", " + toCpp( it->second ) + "} ," ) ; }
       //
-      return o + '}' ;  
+      return o + '}' ;
     }
     // ========================================================================
-    namespace details 
+    namespace details
     {
       // ======================================================================
       /// recursive print of std::tuple
-      template<class Tuple, std::size_t N>
-      struct TupleCppPrinter 
-      {
-        static std::string toCpp ( const Tuple& t ) 
-        { return 
-            TupleCppPrinter<Tuple, N-1>::toCpp ( t ) 
-            + " , " 
-            + Gaudi::Utils::toCpp ( std::get<N-1>( t ) ) ; } 
-      } ;
-      /// stopping criteria for compile-time recursion
-      template<class Tuple>
-      struct TupleCppPrinter<Tuple,1> 
-      {
-        static std::string toCpp ( const Tuple& t ) 
-        { return Gaudi::Utils::toCpp ( std::get<0> ( t ) ) ; }
-      } ;
-      /// stopping criteria for compile-time recursion
-      template<class Tuple>
-      struct TupleCppPrinter<Tuple,0> 
-      {
-        static std::string toCpp ( const Tuple& ) { return {}; }
-      } ;
       // ======================================================================
+      template <typename Tuple, std::size_t... I>
+      std::string toCpp( const Tuple& t, std::index_sequence<I...>) {
+          std::array<std::string,sizeof...(I)> strs
+           { Gaudi::Utils::toCpp( std::get<I>(t) )... };
+          return boost::algorithm::join( strs, " , " );
+      }
     }
     // ========================================================================
-    /// std::tuple as comma-separated list - what we need for AuxFunBase 
+    /// std::tuple as comma-separated list - what we need for AuxFunBase
     template<typename... Args>
-    inline std::string toCpp_lst ( const std::tuple<Args...>& t ) 
-    { return details::TupleCppPrinter<decltype(t), sizeof...(Args)>::toCpp ( t ) ; }
-    /// std::tuple, just for completness 
+    inline std::string toCpp_lst ( const std::tuple<Args...>& t )
+    { return details::toCpp ( t, std::index_sequence_for<Args...>{} ) ; }
+    /// std::tuple, just for completness
     template<typename... Args>
-    inline std::string toCpp ( const std::tuple<Args...>& t ) 
+    inline std::string toCpp ( const std::tuple<Args...>& t )
     { return System::typeinfoName ( typeid(t) ) + "{" + toCpp_lst ( t ) + "}" ; }
     // ========================================================================
-  } //                                               The end of namespace Gaudi 
+  } //                                        The end of namespace Gaudi::Utils
   // ==========================================================================
-} //                                          The end of namespace Gaudi::Utils 
+} //                                                 The end of namespace Gaudi
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_TOCPP_H
 // ============================================================================
