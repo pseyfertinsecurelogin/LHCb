@@ -93,8 +93,8 @@ StatusCode CaloZSupAlg::initialize() {
   }
 
   info() << "Calorimeter has " <<  m_numberOfCells
-         << " cells. Zsup method "  << m_zsupMethod
-         << " Threshold " << m_zsupThreshold << endmsg;
+         << " cells. Zsup method "  << details::toString(m_zsupMethod.value())
+         << " Threshold " << m_zsupThreshold.value() << endmsg;
 
   m_adcTool = tool<ICaloEnergyFromRaw>("CaloEnergyFromRaw" , name() + "Tool", this );
 
