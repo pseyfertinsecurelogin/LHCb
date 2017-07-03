@@ -223,7 +223,7 @@ protected:
   /** default protected  constructor
    *  @param Name name of conical tube segment
    */
-  SolidPolycone( const std::string& Name = "Anonymous Polycone") ;
+  SolidPolycone( const std::string& Name = "Anonymous Polycone") : SolidBase(Name) {}
 
   /** set bounding parameters
    */
@@ -265,8 +265,8 @@ private:
 private:
 
   Triplets       m_triplets      ; ///< vector of parameters
-  double         m_startPhiAngle ; ///< start phi angle
-  double         m_deltaPhiAngle ; ///< delta phi angle
+  double         m_startPhiAngle = 0                          ; ///< start phi angle
+  double         m_deltaPhiAngle = 360 * Gaudi::Units::degree ; ///< delta phi angle
 
 };
 

@@ -22,16 +22,6 @@
  */
 // ============================================================================
 
-unsigned long PVolume::s_volumeCounter = 0;
-
-//namespace
-//{
-//  std::string ITOA( const int value )
-//  {
-//    char buffer[64];
-//    return std::string( buffer , buffer + sprintf( buffer , "%d" , value ) );
-//  };
-//};
 
 
 // ============================================================================
@@ -56,7 +46,6 @@ PVolume::PVolume
   m_matrix  = m_nominal ;
   ///
   m_services = DetDesc::services();
-  ++s_volumeCounter ;
 }
 
 // ============================================================================
@@ -76,16 +65,8 @@ PVolume::PVolume
   , m_matrix    ( Transform      )
 {
   m_services = DetDesc::services();
-  ++s_volumeCounter ;
 }
 
-// ============================================================================
-// destructor
-// ============================================================================
-PVolume::~PVolume()
-{
-  --s_volumeCounter;
-}
 
 // ============================================================================
 /** find logical volume by name
@@ -177,7 +158,7 @@ unsigned long PVolume::release () { return 1;}
 std::ostream& PVolume::printOut( std::ostream& os ) const
 {
   return
-    os << " class PVolume (" << s_volumeCounter << ")"
+    os << " class PVolume (" << count() << ")"
        << " ["
        << " name='"          << name()          << "'"
        << " logvol='"        << lvolumeName()   << "'" << "]";
@@ -192,7 +173,7 @@ std::ostream& PVolume::printOut( std::ostream& os ) const
 MsgStream& PVolume::printOut( MsgStream& os ) const
 {
   return
-    os << " class PVolume (" << s_volumeCounter << ")"
+    os << " class PVolume (" << count() << ")"
        << " ["
        << " name='"          << name()          << "'"
        << " logvol='"        << lvolumeName()   << "'" << "]";

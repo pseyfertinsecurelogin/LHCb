@@ -33,10 +33,6 @@ class SolidTrap final : public    virtual SolidBase            ,
   /// friend factory for instantiation
   friend class SolidFactory<SolidTrap>;
 
-public:
-
-  /// typedef for vertices
-  typedef std::vector<Gaudi::XYZPoint> VERTICES;
 
 public:
 
@@ -157,7 +153,7 @@ protected:
    *  @param indx  index of the vertex
    *  @return  vertex
    */
-  inline const Gaudi::XYZPoint& point( const VERTICES::size_type& indx ) const
+  inline const Gaudi::XYZPoint& point( const std::size_t indx ) const
   { return m_ph_vertices[indx]; }
 
 private:

@@ -28,11 +28,11 @@ namespace DetDesc {
    *  @date   2006-08-08
    *
    */
-  const Gaudi::Transform3D LHCb2SU()
+  Gaudi::Transform3D LHCb2SU()
   {
-    return Gaudi::Transform3D( Gaudi::RotationY( -0.5*Gaudi::Units::pi) *
-                               Gaudi::RotationZ( -0.5*Gaudi::Units::pi) *
-                               Gaudi::RotationX( -3.601*Gaudi::Units::mrad) );
+    return { Gaudi::RotationY( -0.5*Gaudi::Units::pi) *
+             Gaudi::RotationZ( -0.5*Gaudi::Units::pi) *
+             Gaudi::RotationX( -3.601*Gaudi::Units::mrad) };
 
 
   }
@@ -46,11 +46,11 @@ namespace DetDesc {
    *  @date   2006-08-08
    *
    */
-  const Gaudi::Transform3D SU2LHCb()
+  Gaudi::Transform3D SU2LHCb()
   {
-    return Gaudi::Transform3D( Gaudi::RotationX( 3.601*Gaudi::Units::mrad) *
-                               Gaudi::RotationZ( 0.5*Gaudi::Units::pi) *
-                               Gaudi::RotationY( 0.5*Gaudi::Units::pi) );
+    return { Gaudi::RotationX( 3.601*Gaudi::Units::mrad) *
+             Gaudi::RotationZ( 0.5*Gaudi::Units::pi) *
+             Gaudi::RotationY( 0.5*Gaudi::Units::pi) };
   }
 
   /** Helper to transform any type of MathCore point
@@ -66,11 +66,8 @@ namespace DetDesc {
    *  @date   2006-08-08
    *
    */
-  template <typename Point>
-  const Point LHCb2SU(const Point& point)
-  {
-    return LHCb2SU()*point;
-  }
+  template <typename Point> Point LHCb2SU(Point&& point)
+  { return LHCb2SU()*point; }
 
   /** Helper to transform any type of MathCore point
    *
@@ -85,11 +82,8 @@ namespace DetDesc {
    *  @date   2006-08-08
    *
    */
-  template <typename Point>
-  const Point SU2LHCb(const Point& point)
-  {
-    return SU2LHCb()*point;
-  }
+  template <typename Point> Point SU2LHCb(Point&& point)
+  { return SU2LHCb()*point; }
 
 }
 #endif // V16R7_SU2LHCB_H
