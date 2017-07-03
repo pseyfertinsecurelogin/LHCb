@@ -50,11 +50,12 @@ preprocessor = (
                  "VERBOSE ServiceLocatorHelper::service: found service AlgExecStateSvc",
                  "Run numbers generated from 0 every 0 events",
                  "############ CONFIGURING RawEventFormatConf!! ###############",
-                 "INFO  resolving alias TCK/0x"
+                 "INFO  resolving alias TCK/0x",
+                 "SUCCESS Number of counters : "
                 ],
       regexps = [r"DEBUG Property \['Name': Value\] =  '(Timeline|(Extra|Data)(In|Out)puts)'",
                 ]) +
-    SortGroupOfLines(r'.*SUCCESS (Number of counters : |Exceptions/Errors/Warnings/Infos Statistics :| #WARNINGS   =| #ERRORS   =|List of booked \dD histograms in directory).*')
+    SortGroupOfLines(r'.*SUCCESS (Exceptions/Errors/Warnings/Infos Statistics :| #WARNINGS   =| #ERRORS   =|List of booked \dD histograms in directory).*')
    )
 
 from DDDB.Configuration import GIT_CONDDBS
