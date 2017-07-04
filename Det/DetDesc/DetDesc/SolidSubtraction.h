@@ -34,11 +34,9 @@ public:
    *  @param first pointer to first/main solid
    */
   SolidSubtraction( const std::string& name , std::unique_ptr<ISolid> first );
-  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
-  SolidSubtraction( const std::string& name , ISolid* first )
-      : SolidSubtraction(name,std::unique_ptr<ISolid>(first)) {}
 
-public:
+  SolidSubtraction           ( const SolidSubtraction& ) = delete ; ///< no copy
+  SolidSubtraction& operator=( const SolidSubtraction& ) = delete ; ///<no =
 
   /** - retrieve the specific type of the solid
    *  - implementation of ISolid interface
@@ -68,11 +66,6 @@ public:
   StatusCode subtract
   ( std::unique_ptr<ISolid>  solid ,
     const Gaudi::Transform3D* mtrx  );
-  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
-  StatusCode subtract
-  ( ISolid*               solid ,
-    const Gaudi::Transform3D* mtrx  )
-  { return subtract( std::unique_ptr<ISolid>(solid), mtrx ); }
 
   /** subtract child solid from  the solid
    *  @param child    pointer to child solid
@@ -84,12 +77,6 @@ public:
   ( std::unique_ptr<ISolid>  child                    ,
     const Gaudi::XYZPoint&     position                 ,
     const Gaudi::Rotation3D&    rotation = Gaudi::Rotation3D() );
-  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
-  StatusCode subtract
-  ( ISolid*               child                    ,
-    const Gaudi::XYZPoint&     position                 ,
-    const Gaudi::Rotation3D&    rotation = Gaudi::Rotation3D() )
-  { return subtract( std::unique_ptr<ISolid>(child), position, rotation); }
 
 protected:
 
@@ -99,9 +86,6 @@ protected:
   SolidSubtraction( const std::string& Name = "Anonymous Subtraction");
 
 private:
-
-  SolidSubtraction           ( const SolidSubtraction& ) ; ///< no copy
-  SolidSubtraction& operator=( const SolidSubtraction& ) ; ///<no =
 
   /**
    * implementation of isInside

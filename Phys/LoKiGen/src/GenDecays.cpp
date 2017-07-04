@@ -1,6 +1,9 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include <numeric>
+#include <algorithm>
+// ============================================================================
 // LoKi
 // ============================================================================
 #include "LoKi/Algs.h"
@@ -30,7 +33,7 @@ namespace
 {
   // ==========================================================================
   /// the name of photon for PHOTOS
-  const std::string s_GAMMA = "gamma" ;
+  static const std::string s_GAMMA = "gamma" ;
   // ==========================================================================
   /** make the decay sections
    *  @author Vanya BELYAEV Ivan.BELYAEV@nikhef.nl
@@ -203,20 +206,18 @@ void Decays::Trees::GenExclusive::reset() const { i_reset () ; }
 size_t Decays::Trees::GenExclusive::collect
 ( Decays::iTree_<const HepMC::GenParticle*>::Collection& output ) const
 {
-  size_t size = 0 ;
-  for ( TreeList::const_iterator ichild = childBegin() ;
-        childEnd() != ichild ; ++ichild ) { size += ichild->collect ( output ) ; }
-  return size ;
+  return std::accumulate( childBegin(), childEnd(), size_t{0},
+                          [&](size_t s, const auto& child) {
+                              return s + child.collect(output);
+                          });
 }
 // ============================================================================
 // has marked elements in the tree ?
 // ============================================================================
 bool Decays::Trees::GenExclusive::marked () const
 {
-  for ( TreeList::const_iterator ichild = childBegin() ;
-        childEnd() != ichild ; ++ichild )
-  { if ( ichild->marked () ) { return true ; } }
-  return false ;
+  return std::any_of( childBegin(), childEnd(),
+                      [](const auto& child) { return child.marked(); } );
 }
 // ============================================================================
 // operator() implementation for GenExclusive and derived classes
@@ -250,8 +251,7 @@ bool Decays::Trees::GenExclusive::p_match
   makeSections ( good , alg () , sections ) ;
   //
   // (2) loop over all sections
-  for (  Decays::GenSections::iterator isect = sections.begin() ;
-         sections.end() != isect ; ++isect )
+  for (  auto isect = sections.begin() ; sections.end() != isect ; ++isect )
   {
     //
     // (3) try to match the section
@@ -299,8 +299,8 @@ Decays::Trees::GenExclusive::fillStream ( std::ostream& s ) const
   default       : s << " ->" ; break ;
   }
   //
-  for ( TreeList::const_iterator itree = childBegin() ;
-        childEnd() != itree ; ++itree ) { s << ( *itree ) ; }
+  for ( auto itree = childBegin() ; childEnd() != itree ; ++itree )
+  { s << ( *itree ) ; }
   //
   return s << ") " ;
 }
@@ -313,32 +313,27 @@ void Decays::Trees::GenExclusive::addDaughter
 // ============================================================================
 // add one more node to the tree
 // ============================================================================
-void Decays::Trees::GenExclusive::addDaughter
-( const std::string& node )
+void Decays::Trees::GenExclusive::addDaughter( const std::string& node )
 { addDaughter ( Decays::Nodes::Pid ( node ) ) ; }
 // ============================================================================
 // add one more node to the tree
 // ============================================================================
-void Decays::Trees::GenExclusive::addDaughter
-( const LHCb::ParticleID& node )
+void Decays::Trees::GenExclusive::addDaughter( const LHCb::ParticleID& node )
 { addDaughter ( Decays::Nodes::Pid ( node ) ) ; }
 // ============================================================================
 // add one more node to the tree
 // ============================================================================
-void Decays::Trees::GenExclusive::addDaughter
-( const Decays::Decay::Item& node )
+void Decays::Trees::GenExclusive::addDaughter( const Decays::Decay::Item& node )
 { addDaughter ( Decays::Nodes::Pid ( node ) ) ; }
 // ============================================================================
 // add one more node to the tree
 // ============================================================================
-void Decays::Trees::GenExclusive::addDaughter
-( const LHCb::ParticleProperty* node )
+void Decays::Trees::GenExclusive::addDaughter( const LHCb::ParticleProperty* node )
 { addDaughter ( Decays::Nodes::Pid ( node ) ) ; }
 // ============================================================================
 // add one more node to the tree
 // ============================================================================
-void Decays::Trees::GenExclusive::addDaughter
-( const Decays::iNode& node )
+void Decays::Trees::GenExclusive::addDaughter( const Decays::iNode& node )
 { addDaughter ( GenExclusive ( node ) ) ; }
 // ============================================================================
 // set children
@@ -347,8 +342,7 @@ void Decays::Trees::GenExclusive::setChildren
 ( const std::vector<std::string>& children )
 {
   m_children.clear() ;
-  for ( std::vector<std::string>::const_iterator ichild =
-          children.begin() ; children.end() != ichild ; ++ichild )
+  for ( auto ichild = children.begin() ; children.end() != ichild ; ++ichild )
   { addDaughter ( *ichild ) ; }
 }
 // ============================================================================
@@ -358,8 +352,7 @@ void Decays::Trees::GenExclusive::setChildren
 ( const std::vector<Decays::Decay::Item>& children )
 {
   m_children.clear() ;
-  for ( std::vector<Decays::Decay::Item>::const_iterator ichild =
-          children.begin() ; children.end() != ichild ; ++ichild )
+  for ( auto ichild = children.begin() ; children.end() != ichild ; ++ichild )
   { addDaughter ( *ichild ) ; }
 }
 // ============================================================================
@@ -369,8 +362,7 @@ void Decays::Trees::GenExclusive::setChildren
 ( const std::vector<LHCb::ParticleID>& children )
 {
   m_children.clear() ;
-  for ( std::vector<LHCb::ParticleID>::const_iterator ichild =
-          children.begin() ; children.end() != ichild ; ++ichild )
+  for ( auto ichild = children.begin() ; children.end() != ichild ; ++ichild )
   { addDaughter ( *ichild ) ; }
 }
 // ============================================================================
@@ -380,8 +372,7 @@ void Decays::Trees::GenExclusive::setChildren
 ( const std::vector<const LHCb::ParticleProperty*>& children )
 {
   m_children.clear() ;
-  for ( std::vector<const LHCb::ParticleProperty*>::const_iterator ichild =
-          children.begin() ; children.end() != ichild ; ++ichild )
+  for ( auto ichild = children.begin() ; children.end() != ichild ; ++ichild )
   { addDaughter ( *ichild ) ; }
 }
 // ============================================================================
@@ -1082,8 +1073,7 @@ bool Decays::Trees::GenPhotosOptional::p_match
   // create the local container for permutations
   TreeList opt ( optBegin() , optEnd() ) ;
   // (2) loop over all sections
-  for (  Decays::GenSections::iterator isect = sections.begin() ;
-         sections.end() != isect ; ++isect )
+  for (  auto isect = sections.begin() ; sections.end() != isect ; ++isect )
   {
     // (3) try to match the section
     // skip the combinations  which does not match at all
@@ -1102,7 +1092,7 @@ bool Decays::Trees::GenPhotosOptional::p_match
       if ( std::equal ( childBegin() , childEnd() , isect->begin() , Equal() ) )
       {
         // the temporary iterator
-        Decays::GenSection::iterator aux = isect->begin() + nChildren() ;
+        auto aux = isect->begin() + nChildren() ;
         // nothing to match?
         if ( aux == isect->end() ) { return true ; } // RETURN
         // create the local container for permutations
@@ -1113,7 +1103,7 @@ bool Decays::Trees::GenPhotosOptional::p_match
         // make the nesessary permutations
         do
         {
-          for ( TreeList::iterator it = opt.begin() ; opt.end() != it ; ++it )
+          for ( auto it = opt.begin() ; opt.end() != it ; ++it )
           {
             // select only the subsequence of the right length
             if ( it - opt.begin() <= isect->end() - aux )

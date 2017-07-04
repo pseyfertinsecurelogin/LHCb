@@ -47,53 +47,48 @@ namespace LoKi
       // ======================================================================
       typedef LoKi::Functor<TYPE1,TYPE2>                               Fun_ ;
       typedef typename Fun_::argument                              argument ;
-      typedef typename Fun_::result_type                        result_type ;
       // ======================================================================
     public:
       // ======================================================================
+      /** constructor from the dumper
+       *  @param fun   the functor
+       *  @param dump  the dumper
+       *  @param stream the stream
+       */
+      Dump1_ ( LoKi::Assignable_t<Fun_>          fun                ,
+               const LoKi::Dump&                 dump               ,
+               const bool                        right  = true      ,
+               std::ostream&                     stream = std::cout )
+        : LoKi::AuxFunBase ( std::tie ( fun , dump , right ) )
+        , m_fun    ( std::move(fun) )
+        , m_right  ( right  )
+        , m_stream ( stream )
+        , m_dump   ( dump   )
+      {}
       /** constructor
        *  @param fun   the functor
        *  @param open  the opening
        *  @param clone the closing
        *  @param stream the stream
        */
-      Dump1_ ( const LoKi::Functor<TYPE1,TYPE2>& fun                ,
+      Dump1_ ( LoKi::Assignable_t<Fun_>          fun                ,
                const std::string&                open   = ""        ,
                const std::string&                close  = "\n"      ,
                const bool                        right  = true      ,
                std::ostream&                     stream = std::cout )
-        : LoKi::AuxFunBase ( std::tie ( fun , open , close , right ) )
-        , m_fun    ( fun    )
-        , m_right  ( right  )
-        , m_stream ( stream )
-        , m_dump   ( open  , close )
-      {}
-      /** constructor from the dumper
-       *  @param fun   the functor
-       *  @param dump  the dumper
-       *  @param stream the stream
-       */
-      Dump1_ ( const LoKi::Functor<TYPE1,TYPE2>& fun                ,
-               const LoKi::Dump&                 dump               ,
-               const bool                        right  = true      ,
-               std::ostream&                     stream = std::cout )
-        : LoKi::AuxFunBase ( std::tie ( fun , dump , right ) )
-        , m_fun    ( fun    )
-        , m_right  ( right  )
-        , m_stream ( stream )
-        , m_dump   ( dump   )
+      : Dump1_( std::move(fun), { open, close }, right, stream )
       {}
       /// MANDATORY: clone method ("virtual constructor")
       Dump1_* clone() const override { return new Dump1_ ( *this ) ; }
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument a ) const override;
+      TYPE2 operator() ( argument a ) const override;
       /// OPTIONAL: the basic printout method
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private :
       // ======================================================================
       /// the functor
-      typename LoKi::Assignable<Fun_>::Type  m_fun    ;
+      LoKi::Assignable_t<Fun_>               m_fun    ;
       /// right-action ?
       bool                                   m_right  ; // right action?
       /// the stream
@@ -104,7 +99,7 @@ namespace LoKi
     } ;
     // ========================================================================
     template <class TYPE1,class TYPE2>
-    typename LoKi::Functor<TYPE1,TYPE2>::result_type
+    TYPE2
     LoKi::Functors::Dump1_<TYPE1,TYPE2>::operator()
       ( typename LoKi::Functor<TYPE1,TYPE2>::argument a ) const
     {
@@ -136,23 +131,21 @@ namespace LoKi
     }
     // ========================================================================
     template <>
-    Dump1_<double,bool>::result_type
-    Dump1_<double,bool>::operator()
-      ( Dump1_<double,bool>::argument a ) const ;
+    bool Dump1_<double,bool>::operator() ( double a ) const ;
     // ========================================================================
     template <>
-    Dump1_<double,double>::result_type
-    Dump1_<double,double>::operator()
-      ( Dump1_<double,double>::argument a ) const ;
+    double Dump1_<double,double>::operator() ( double a ) const ;
     // ========================================================================
   } //                                          end of namesapce LoKi::Functors
   // ==========================================================================
-  template <class TYPE1,class TYPE2>
+  template <typename F,
+            typename TYPE1 = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
   LoKi::Functors::Dump1_<TYPE1,TYPE2>
-  dump1 ( const LoKi::Functor<TYPE1,TYPE2>& fun                  ,
+  dump1 ( F&&                               fun                  ,
           const bool                        right = true         ,
           const LoKi::Dump&                 dump  = LoKi::Dump() )
-  { return LoKi::Functors::Dump1_<TYPE1,TYPE2>( fun , dump , right ) ; }
+  { return { std::forward<F>(fun) , dump , right } ; }
   // ==========================================================================
   template <class TYPE2>
   const LoKi::Functor<void,TYPE2>&

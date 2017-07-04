@@ -27,6 +27,8 @@
 #include "Event/PackedParticle2Ints.h"
 #include "Event/PackedCluster.h"
 #include "Event/PackedCaloCluster.h"
+#include "Event/PackedCaloDigit.h"
+#include "Event/PackedCaloAdc.h"
 #include "Event/PackedFlavourTag.h"
 #include "Event/PackedPartToRelatedInfoRelation.h"
 #include "Event/GenericBuffer.h"

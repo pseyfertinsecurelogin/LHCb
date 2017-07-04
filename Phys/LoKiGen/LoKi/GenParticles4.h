@@ -101,8 +101,6 @@ namespace LoKi
       double  gamma  ( const LoKi::LorentzVector& lv ) const ;
       // get beta*gamma-factor
       double  bgamma ( const LoKi::LorentzVector& lv ) const ;
-      /// adjust delta phi into the range of [-180:180]degrees
-      double adjust  ( double angle ) const ;
       // ======================================================================
     protected:
       // ======================================================================
@@ -128,55 +126,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API Mass : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API Mass : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
-      /// constructor from one selectors
-      Mass ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Mass ( const LoKi::GenChild::Selector& c1 ,
-             const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Mass ( const LoKi::GenChild::Selector& c1 ,
-             const LoKi::GenChild::Selector& c2 ,
-             const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Mass ( const LoKi::GenChild::Selector& c1 ,
-             const LoKi::GenChild::Selector& c2 ,
-             const LoKi::GenChild::Selector& c3 ,
-             const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      Mass ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      Mass ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Mass ( const LoKi::GenTypes::GCuts&    c1 ,
-             const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Mass ( const LoKi::GenTypes::GCuts&    c1 ,
-             const LoKi::GenTypes::GCuts&    c2 ,
-             const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Mass ( const LoKi::GenTypes::GCuts&    c1 ,
-             const LoKi::GenTypes::GCuts&    c2 ,
-             const LoKi::GenTypes::GCuts&    c3 ,
-             const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      Mass () : LoKi::GenParticles::FourMomentum () {} ;
+      /// forward to base-class constructors
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
       Mass* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -191,55 +149,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API Energy : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API Energy : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
-      /// constructor from one selectors
-      Energy ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Energy ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Energy ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Energy ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 ,
-               const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      Energy ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      Energy ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Energy ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Energy ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Energy ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 ,
-               const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      Energy () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: clone method ("virtual destructor")
+      /// forward to base-class constructor
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
+      /// MANDATORY: clone method ("virtual constructor")
       Energy* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -254,55 +172,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API Momentum : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API Momentum : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
-      /// constructor from one selectors
-      Momentum ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Momentum ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Momentum ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Momentum ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 ,
-               const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      Momentum ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      Momentum ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Momentum ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Momentum ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Momentum ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 ,
-               const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      Momentum () : LoKi::GenParticles::FourMomentum () {} ;
+      /// forward to base class constructor
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
       Momentum* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -317,55 +195,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API MomentumX : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API MomentumX : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
-      /// constructor from one selectors
-      MomentumX ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      MomentumX ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      MomentumX ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      MomentumX ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 ,
-               const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      MomentumX ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      MomentumX ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      MomentumX ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      MomentumX ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      MomentumX ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 ,
-               const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      MomentumX () : LoKi::GenParticles::FourMomentum () {} ;
+      /// forward to base class constructors
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
       MomentumX* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -380,55 +218,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API MomentumY : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API MomentumY : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
       /// constructor from one selectors
-      MomentumY ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      MomentumY ( const LoKi::GenChild::Selector& c1 ,
-                  const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      MomentumY ( const LoKi::GenChild::Selector& c1 ,
-                  const LoKi::GenChild::Selector& c2 ,
-                  const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      MomentumY ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 ,
-               const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      MomentumY ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      MomentumY ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      MomentumY ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      MomentumY ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      MomentumY ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 ,
-               const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      MomentumY () : LoKi::GenParticles::FourMomentum () {} ;
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
       MomentumY* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -443,55 +241,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API MomentumZ : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API MomentumZ : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
-      /// constructor from one selectors
-      MomentumZ ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      MomentumZ ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      MomentumZ ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      MomentumZ ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 ,
-               const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      MomentumZ ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      MomentumZ ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      MomentumZ ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      MomentumZ ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      MomentumZ ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 ,
-               const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      MomentumZ () : LoKi::GenParticles::FourMomentum () {} ;
+      /// forward to base-class constructors
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
       MomentumZ* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -506,55 +264,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API TransverseMomentum : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API TransverseMomentum : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
-      /// constructor from one selectors
-      TransverseMomentum ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      TransverseMomentum ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      TransverseMomentum ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      TransverseMomentum ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 ,
-               const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      TransverseMomentum ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      TransverseMomentum ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      TransverseMomentum ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      TransverseMomentum ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      TransverseMomentum ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 ,
-               const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      TransverseMomentum () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: clone method ("virtual destructor")
+      /// forward to base-class constructors
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
+      /// MANDATORY: clone method ("virtual constructor")
       TransverseMomentum* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -569,55 +287,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API PseudoRapidity : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API PseudoRapidity : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
-      /// constructor from one selectors
-      PseudoRapidity ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      PseudoRapidity ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      PseudoRapidity ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      PseudoRapidity ( const LoKi::GenChild::Selector& c1 ,
-               const LoKi::GenChild::Selector& c2 ,
-               const LoKi::GenChild::Selector& c3 ,
-               const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      PseudoRapidity ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      PseudoRapidity ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      PseudoRapidity ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      PseudoRapidity ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      PseudoRapidity ( const LoKi::GenTypes::GCuts&    c1 ,
-               const LoKi::GenTypes::GCuts&    c2 ,
-               const LoKi::GenTypes::GCuts&    c3 ,
-               const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      PseudoRapidity () : LoKi::GenParticles::FourMomentum () {} ;
-      /// MANDATORY: clone method ("virtual destructor")
+      /// forward to base-class constructors
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
+      /// MANDATORY: clone method ("virtual constructor")
       PseudoRapidity* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -634,55 +312,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API Rapidity : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API Rapidity : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
-      /// constructor from one selectors
-      Rapidity ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Rapidity ( const LoKi::GenChild::Selector& c1 ,
-                 const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Rapidity ( const LoKi::GenChild::Selector& c1 ,
-                 const LoKi::GenChild::Selector& c2 ,
-                 const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Rapidity ( const LoKi::GenChild::Selector& c1 ,
-                 const LoKi::GenChild::Selector& c2 ,
-                 const LoKi::GenChild::Selector& c3 ,
-                 const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      Rapidity ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      Rapidity ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Rapidity ( const LoKi::GenTypes::GCuts&    c1 ,
-                 const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Rapidity ( const LoKi::GenTypes::GCuts&    c1 ,
-                 const LoKi::GenTypes::GCuts&    c2 ,
-                 const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Rapidity ( const LoKi::GenTypes::GCuts&    c1 ,
-                 const LoKi::GenTypes::GCuts&    c2 ,
-                 const LoKi::GenTypes::GCuts&    c3 ,
-                 const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      Rapidity () : LoKi::GenParticles::FourMomentum () {} ;
+      /// forward to base-class constructors
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
       Rapidity* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -699,55 +337,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API Rapidity0 : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API Rapidity0 : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
-      /// constructor from one selectors
-      Rapidity0 ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Rapidity0 ( const LoKi::GenChild::Selector& c1 ,
-                 const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Rapidity0 ( const LoKi::GenChild::Selector& c1 ,
-                 const LoKi::GenChild::Selector& c2 ,
-                 const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Rapidity0 ( const LoKi::GenChild::Selector& c1 ,
-                 const LoKi::GenChild::Selector& c2 ,
-                 const LoKi::GenChild::Selector& c3 ,
-                 const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      Rapidity0 ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      Rapidity0 ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Rapidity0 ( const LoKi::GenTypes::GCuts&    c1 ,
-                 const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Rapidity0 ( const LoKi::GenTypes::GCuts&    c1 ,
-                 const LoKi::GenTypes::GCuts&    c2 ,
-                 const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Rapidity0 ( const LoKi::GenTypes::GCuts&    c1 ,
-                 const LoKi::GenTypes::GCuts&    c2 ,
-                 const LoKi::GenTypes::GCuts&    c3 ,
-                 const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      Rapidity0 () : LoKi::GenParticles::FourMomentum () {} ;
+      /// forward to base-class constructors
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
       Rapidity0* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -762,55 +360,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API Phi : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API Phi : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
-      /// constructor from one selectors
-      Phi ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Phi ( const LoKi::GenChild::Selector& c1 ,
-            const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Phi ( const LoKi::GenChild::Selector& c1 ,
-            const LoKi::GenChild::Selector& c2 ,
-            const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Phi ( const LoKi::GenChild::Selector& c1 ,
-            const LoKi::GenChild::Selector& c2 ,
-            const LoKi::GenChild::Selector& c3 ,
-            const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      Phi ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      Phi ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Phi ( const LoKi::GenTypes::GCuts&    c1 ,
-            const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Phi ( const LoKi::GenTypes::GCuts&    c1 ,
-            const LoKi::GenTypes::GCuts&    c2 ,
-            const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Phi ( const LoKi::GenTypes::GCuts&    c1 ,
-            const LoKi::GenTypes::GCuts&    c2 ,
-            const LoKi::GenTypes::GCuts&    c3 ,
-            const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      Phi () : LoKi::GenParticles::FourMomentum () {} ;
+      /// forward to base-class constructors
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
       Phi* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -825,55 +383,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2006-01-17
      */
-    class GAUDI_API Theta : public LoKi::GenParticles::FourMomentum
+    struct GAUDI_API Theta : LoKi::GenParticles::FourMomentum
     {
-    public:
       // ======================================================================
-      /// constructor from one selectors
-      Theta ( const LoKi::GenChild::Selector& c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Theta ( const LoKi::GenChild::Selector& c1 ,
-              const LoKi::GenChild::Selector& c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Theta ( const LoKi::GenChild::Selector& c1 ,
-              const LoKi::GenChild::Selector& c2 ,
-              const LoKi::GenChild::Selector& c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Theta ( const LoKi::GenChild::Selector& c1 ,
-              const LoKi::GenChild::Selector& c2 ,
-              const LoKi::GenChild::Selector& c3 ,
-              const LoKi::GenChild::Selector& c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// contructor from list of selectors
-      Theta ( const LoKi::GenChild::Selector::Vector& cs )
-        : LoKi::GenParticles::FourMomentum ( cs ) {} ;
-      /// constructor from two selectors
-      Theta ( const LoKi::GenTypes::GCuts&    c1 )
-        : LoKi::GenParticles::FourMomentum ( c1 ) {} ;
-      /// constructor from two selectors
-      Theta ( const LoKi::GenTypes::GCuts&    c1 ,
-              const LoKi::GenTypes::GCuts&    c2 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 ) {} ;
-      /// constructor from three selectors
-      Theta ( const LoKi::GenTypes::GCuts&    c1 ,
-              const LoKi::GenTypes::GCuts&    c2 ,
-              const LoKi::GenTypes::GCuts&    c3 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 ) {} ;
-      /// constructor from four selectors
-      Theta ( const LoKi::GenTypes::GCuts&    c1 ,
-              const LoKi::GenTypes::GCuts&    c2 ,
-              const LoKi::GenTypes::GCuts&    c3 ,
-              const LoKi::GenTypes::GCuts&    c4 )
-        : LoKi::GenParticles::FourMomentum ( c1 , c2 , c3 , c4 ) {} ;
-      /// default constructor
-      Theta () : LoKi::GenParticles::FourMomentum () {} ;
+      /// forward to base-class constructors
+      using LoKi::GenParticles::FourMomentum::FourMomentum;
       /// MANDATORY: clone method ("virtual destructor")
       Theta* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -887,20 +405,14 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-04-14
      */
-    class GAUDI_API Beta : public LoKi::GenTypes::GFunc
+    struct GAUDI_API Beta : LoKi::GenTypes::GFunc
     {
-    public:
-      // ======================================================================
-      /// default constructor
-      Beta () ;
       /// MANDATORY: clone method ("virtual destructor")
       Beta* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
-      // ======================================================================
-    public:
       // ======================================================================
       // get beta-factor
       double  beta      ( const HepMC::GenParticle* p ) const ;
@@ -919,16 +431,13 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-04-14
      */
-    class GAUDI_API Gamma : public LoKi::GenParticles::Beta
+    struct GAUDI_API Gamma : LoKi::GenParticles::Beta
     {
-    public:
       // ======================================================================
-      /// default constructor
-      Gamma () ;
       /// MANDATORY: clone method ("virtual destructor")
       Gamma* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -944,16 +453,13 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
      *  @date   2013-04-14
      */
-    class GAUDI_API BetaGamma : public LoKi::GenParticles::Beta
+    struct GAUDI_API BetaGamma : LoKi::GenParticles::Beta
     {
-    public:
       // ======================================================================
-      /// default constructor
-      BetaGamma () ;
       /// MANDATORY: clone method ("virtual destructor")
       BetaGamma* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s )const  override;
       // ======================================================================
@@ -982,7 +488,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       DeltaPhi* clone() const  override;
       /// MANDATORY: the only essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: "SHORT" representation
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -990,12 +496,7 @@ namespace LoKi
       // ======================================================================
       /// get the phi
       double phi0 () const { return m_phi ; }                  // get the phi
-      double dphi ( argument p ) const ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      DeltaPhi ();                       // the default constructor is disabled
+      double dphi ( const HepMC::GenParticle* p ) const ;
       // ======================================================================
     private:
       // ======================================================================
@@ -1027,13 +528,13 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       DeltaEta* clone() const  override;
       /// MANDATORY: the only essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: "SHORT" representation
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
       /// get the eta
       double eta0 () const { return m_eta ; }
-      double deta ( argument p ) const ;
+      double deta ( const HepMC::GenParticle* p ) const ;
       // ======================================================================
     private:
       // ======================================================================
@@ -1072,7 +573,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       DeltaR2* clone() const  override;
       /// MANDATORY: the only essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const HepMC::GenParticle* p ) const  override;
       /// OPTIONAL: "SHORT" representation
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -1080,7 +581,7 @@ namespace LoKi
       // ======================================================================
       /// get the eta
       double eta0 () const { return m_deta.eta0()  ; }
-      double deta ( argument p ) const { return m_deta.deta ( p )  ; }
+      double deta ( const HepMC::GenParticle* p ) const { return m_deta.deta ( p )  ; }
       // ======================================================================
     private:
       // ======================================================================

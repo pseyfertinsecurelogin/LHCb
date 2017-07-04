@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 // Include files
 // ============================================================================
@@ -27,13 +26,13 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  namespace MCParticles 
+  namespace MCParticles
   {
     // ========================================================================
-    // MCID == 
+    // MCID ==
     // ========================================================================
     LoKi::BasicFunctors<const LHCb::MCParticle*>::PredicateFromPredicate
     operator==( const LoKi::MCParticles::Identifier& /* id  */ ,
@@ -139,7 +138,7 @@ namespace LoKi
     // ========================================================================
 
     // ========================================================================
-    // MCID != 
+    // MCID !=
     // ========================================================================
     LoKi::BasicFunctors<const LHCb::MCParticle*>::PredicateFromPredicate
     operator!=( const LoKi::MCParticles::Identifier& /* id  */ ,

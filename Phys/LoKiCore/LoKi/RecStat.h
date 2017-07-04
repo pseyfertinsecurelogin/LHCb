@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_RECSTAT_H 
+#ifndef LOKI_RECSTAT_H
 #define LOKI_RECSTAT_H 1
 // ============================================================================
 // Include files
@@ -14,18 +14,18 @@
 // ============================================================================
 /** @file
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
   namespace TES
@@ -44,24 +44,24 @@ namespace LoKi
     public:
       // ======================================================================
       /** Standard constructor from the key, location and 'rootInTES'
-       *  @param key          the key to use 
+       *  @param key          the key to use
        *  @param location     TES location of LHCb::RecSummary obejct
-       *  @param useRootInTES flato to use/ignore root-in-tes 
+       *  @param useRootInTES flato to use/ignore root-in-tes
        */
-      HasRecSummary 
-      ( const int          key                 , 
-        const std::string& location     = ""   , 
+      HasRecSummary
+      ( const int          key                 ,
+        const std::string& location     = ""   ,
         const bool         useRootInTES = true ) ;
       /// MANDATORY: clone method ("virtual constructor")
       HasRecSummary* clone () const override;
-      /// MANDATORY: the only one essential method 
-      result_type operator() ( /* argument v */ ) const override;
-      /// OPTIONAL: nice printout 
+      /// MANDATORY: the only one essential method
+      bool operator() (  ) const override;
+      /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      /// the key to be used for LHCb::RecSummary::hasInfo method 
+      /// the key to be used for LHCb::RecSummary::hasInfo method
       int m_key ; // the key to be used for LHCb::RecSummary::hasInfo method
       // ======================================================================
     } ;
@@ -79,72 +79,72 @@ namespace LoKi
     public:
       // ======================================================================
       /** Standard constructor from the key, location and 'rootInTES'
-       *  @param key          the key to use 
-       *  @param bad          bad value  
+       *  @param key          the key to use
+       *  @param bad          bad value
        *  @param location     TES location of LHCb::RecSummary obejct
-       *  @param useRootInTES flato to use/ignore root-in-tes 
+       *  @param useRootInTES flato to use/ignore root-in-tes
        */
-      RecSummary 
-      ( const int          key                  , 
-        const int          bad                  ,  
-        const std::string& location     = ""    , 
+      RecSummary
+      ( const int          key                  ,
+        const int          bad                  ,
+        const std::string& location     = ""    ,
         const bool         useRootInTES = true  ) ;
       /// MANDATORY: clone method ("virtual constructor")
       RecSummary* clone () const override;
-      /// MANDATORY: the only one essential method 
-      result_type operator() ( /* argument v */ ) const override;
-      /// OPTIONAL: nice printout 
+      /// MANDATORY: the only one essential method
+      double operator() (  ) const override;
+      /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
-      /// the key to be used for LHCb::RecSummary::info method 
+      /// the key to be used for LHCb::RecSummary::info method
       int m_key ; // the key to be used for LHCb::RecSummary::info method
-      /// the value to be used for LHCb::RecSummary::info method 
+      /// the value to be used for LHCb::RecSummary::info method
       int m_bad ; // the value to be used for LHCb::RecSummary::info method
       // ======================================================================
     } ;
     // ========================================================================
-  } //                                               end of namespace LoKi::TES 
+  } //                                               end of namespace LoKi::TES
   // ==========================================================================
-  namespace Cuts 
+  namespace Cuts
   {
     // ========================================================================
-    /** @typedef HASRECSUMMARY 
+    /** @typedef HASRECSUMMARY
      *  Check the record in LHCb::RecSummary
      *  The functors is designed for Sophie Redford and Andy Powell
      *
      *  @code
-     * 
-     *     HASRECSUMMARY ( 10 ) 
      *
-     *  @endcode 
+     *     HASRECSUMMARY ( 10 )
+     *
+     *  @endcode
      *  @see LoKi::TES::HasRecSummary
      *  @author Vanya BELYAEV  Ivan.BElyaev@cern.ch
      *  @date 2011-03-24
      */
     typedef LoKi::TES::HasRecSummary                            HASRECSUMMARY ;
     // ========================================================================
-    /** @typedef RECSUMMARY 
+    /** @typedef RECSUMMARY
      *  Get the record from LHCb::RecSummary
      *  The functors is designed for Sophie Redford and Andy Powell
      *
      *  @code
-     * 
-     *     RECSUMMARY ( 10 , -1000 ) 
      *
-     *  @endcode 
+     *     RECSUMMARY ( 10 , -1000 )
+     *
+     *  @endcode
      *  @see LoKi::TES::RecSummary
      *  @author Vanya BELYAEV  Ivan.BElyaev@cern.ch
      *  @date 2011-03-24
      */
     typedef LoKi::TES::RecSummary                                  RECSUMMARY ;
     // ========================================================================
-  } //                                             end of namespace LoKi::Cuts 
+  } //                                             end of namespace LoKi::Cuts
   // ==========================================================================
-} //                                                      end of namespace LoKi 
+} //                                                      end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_RECSTAT_H
 // ============================================================================

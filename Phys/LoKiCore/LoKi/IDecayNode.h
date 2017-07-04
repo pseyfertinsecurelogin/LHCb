@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_IDECAYNODEFINDER_H 
+#ifndef LOKI_IDECAYNODEFINDER_H
 #define LOKI_IDECAYNODEFINDER_H 1
 // ============================================================================
 // Include files
@@ -24,53 +24,42 @@
  *
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  */
-namespace Decays 
+namespace Decays
 {
   // ==========================================================================
   /** @class IDecayNode LoKi/IDecayNode.h
-   *  Simple factory for creation of decay nodes 
+   *  Simple factory for creation of decay nodes
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date   2009-05-22
    */
-  class IDecayNode : public virtual IAlgTool
+  struct IDecayNode : extend_interfaces<IAlgTool>
   {
-    // ========================================================================
-  public:
+    DeclareInterfaceID( IDecayNode, 2, 0 );
     // ========================================================================
     /** build the node form the node descriptor
-     *  
+     *
      *  @code
      *
      *  const Decays::IDecayNode* finder = ... ;
-     * 
+     *
      *  Decays::Node node = finder -> node ( " Beauty & Charm & Baryon " ) ;
-     *  
-     *  if ( !node.valid() ){  .. error here ... } 
      *
-     *  @endcode 
-     * 
-     *  For the empty string the "default" node is returned  
+     *  if ( !node.valid() ){  .. error here ... }
      *
-     *  @param descriptor (INPUT)  node descriptor 
-     *  @param constructed node 
+     *  @endcode
+     *
+     *  For the empty string the "default" node is returned
+     *
+     *  @param descriptor (INPUT)  node descriptor
+     *  @param constructed node
      */
     virtual Node node ( const std::string& descriptor = "" ) const = 0 ;
     // ========================================================================
-  public:
-    // ========================================================================
-    /// the unique interface ID 
-    static const InterfaceID& interfaceID() ;        // the unique interface ID 
-    // ========================================================================
-  protected:
-    // ========================================================================
-    /// virtual & protected destructor 
-    virtual ~IDecayNode () ;                  // virtual & protected destructor 
-    // ========================================================================
-  }; //                                             end class IDecayNodeFactory  
+  }; //                                             end class IDecayNodeFactory
   // ==========================================================================
-} //                                                    end of namespace Decays 
+} //                                                    end of namespace Decays
 // ============================================================================
-// The  END 
+// The  END
 // ============================================================================
 #endif // LOKI_IDECAYNODEFINDER_H
 // ============================================================================

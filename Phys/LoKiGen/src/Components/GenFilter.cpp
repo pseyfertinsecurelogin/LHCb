@@ -92,7 +92,7 @@ namespace LoKi
 namespace
 {
   // ==========================================================================
-  LoKi::BasicFunctors<LoKi::GenTypes::GenContainer>::BooleanConstant s_NONE = { false };
+  LoKi::BasicFunctors<LoKi::GenTypes::GenContainer>::BooleanConstant s_NONE{ false };
   // ==========================================================================
 }
 // ============================================================================

@@ -145,10 +145,8 @@ namespace  VolumeIntersectionIntervals
    *  accumulation utility to accumulate the total length of intervals
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    */
-  class AccumulateIntervals:
-    public std::binary_function<double,const ILVolume::Interval,double>
+  struct AccumulateIntervals final
   {
-  public:
     inline double  operator()
       ( double& Length  , const ILVolume::Interval& interval ) const
     { return Length += (interval.second-interval.first); }
@@ -158,10 +156,8 @@ namespace  VolumeIntersectionIntervals
    *  accumulation utility to accumulate the total length of intersections
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    */
-  class AccumulateIntersections:
-    public std::binary_function<double,const ILVolume::Intersection,double>
+  struct AccumulateIntersections final
   {
-  public:
     inline double  operator()
       ( double& Length  , const ILVolume::Intersection& intersection ) const
     {
@@ -475,11 +471,8 @@ namespace  VolumeIntersectionIntervals
    * "very specific" comparison for intersections!!!
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    */
-  class CompareIntersections :
-    public std::binary_function<const ILVolume::Intersection&,
-    const ILVolume::Intersection&,bool>
+  struct CompareIntersections final
   {
-  public:
     inline bool operator()
       ( const ILVolume::Intersection& i1 ,
         const ILVolume::Intersection& i2 ) const

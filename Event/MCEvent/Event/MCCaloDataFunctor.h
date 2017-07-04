@@ -6,6 +6,7 @@
 // STD & STL
 // ============================================================================
 #include <algorithm>
+#include <numeric>
 // ============================================================================
 // (MC)Event
 // ============================================================================
@@ -217,7 +218,7 @@ namespace LHCb
       /// the only one essential method
       inline double operator() ( const LHCb::MCCaloHit::Container* hits ) const
       {
-        return ( !hits ? return 0 :
+        return ( !hits ? 0 :
                  std::accumulate ( hits->begin() , hits->end() , 0.0 , m_eval ) );
       } ;
     };
@@ -308,7 +309,7 @@ namespace LHCb
       if ( ! object ) { return 0.0 ; }
       ActiveEnergyInTime<TYPE> evaluator ( time )  ;
       return evaluator ( object ) ;
-    } ;
+    }
 
 
   } // end of namespace CaloDataFuctor

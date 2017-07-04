@@ -60,8 +60,6 @@ namespace LoKi
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
-    public:
-      // ======================================================================
       const LoKi::Interface<GaudiAlgorithm>&   algorithm () const
       { return m_algorithm ; }
       const LoKi::Interface<IDataProviderSvc>& service   () const
@@ -131,9 +129,8 @@ namespace LoKi
      *  @author Vanya BELYAEV  Ivan.BElyaev@nikhef.nl
      *  @date 2010-02-13
      */
-    class GAUDI_API Contains
-      : public LoKi::Functor<void,double>
-      , public LoKi::TES::Get
+    class GAUDI_API Contains : public LoKi::Functor<void,double>
+                             , public LoKi::TES::Get
     {
     public:
       // ======================================================================
@@ -148,7 +145,7 @@ namespace LoKi
       /** MANDATORY: the only one essential method
        *  @return number of elements in container, -1 for non-existing container
        */
-      double operator() ( /* argument v */ ) const override;
+      double operator() ( ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -217,7 +214,7 @@ namespace LoKi
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      result_type operator() ( /* argument v */ ) const override;
+      double operator() ( ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -274,14 +271,14 @@ namespace LoKi
       /** MANDATORY: the only one essential method
        *  @return numebr of element in continer, -1 for non-existing container
        */
-      result_type operator() ( ) const override;
+      double operator() ( ) const override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     private:
       // ======================================================================
       /// Helper object used to extract information from the StatEntity object.
-      std::shared_ptr<StatEntityGetter> m_getter;
+      std::shared_ptr<const StatEntityGetter> m_getter;
       // ======================================================================
     } ;
     // ========================================================================

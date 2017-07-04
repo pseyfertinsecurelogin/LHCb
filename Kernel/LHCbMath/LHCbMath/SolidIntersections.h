@@ -121,8 +121,8 @@ namespace Gaudi {
 
 
     
-  }; // Math namespace
+  } // Math namespace
 
-}; // Gaudi namespace
+} // Gaudi namespace
 
 #endif // KERNEL_SOLIDINTERSECTIONS_H

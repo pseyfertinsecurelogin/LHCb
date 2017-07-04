@@ -14,6 +14,7 @@
 // Kernel
 #include "Kernel/RichParticleIDType.h"
 #include "Kernel/RichRadiatorType.h"
+#include "GaudiKernel/IAlgTool.h"
 
 // Event Model
 namespace LHCb

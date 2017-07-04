@@ -3,6 +3,7 @@
 #define     DETDESC_SOLIDPOLYHEDRONHELPER_H 1
 /// STD & STL
 #include <vector>
+#include "boost/container/static_vector.hpp"
 /// Geometry definitions
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
@@ -27,8 +28,6 @@ class SolidPolyHedronHelper: virtual public SolidBase
 public:
 
   /// useful type for vector of planes
-  typedef std::vector<Gaudi::Plane3D>   PLANES   ;
-  typedef std::vector<Gaudi::XYZPoint>   VERTICES ;
 
 public:
 
@@ -119,7 +118,7 @@ protected:
   /**  return vector of faces/planes
    *  @return vector of faces/planes
    */
-  inline const  PLANES&   planes  () const { return m_ph_planes   ; }
+  inline const auto& planes() const { return m_ph_planes   ; }
 
   /** define "inside" method for the plane.
    *  Assume that normal direction is EXTERNAL!!!
@@ -152,8 +151,8 @@ private:
 protected:
 
   /// vector of faces/planes
-  PLANES   m_ph_planes   ;
-  VERTICES m_ph_vertices ;
+  boost::container::static_vector<Gaudi::Plane3D,6>  m_ph_planes   ;
+  boost::container::static_vector<Gaudi::XYZPoint,8> m_ph_vertices ;
 
 };
 

@@ -926,7 +926,7 @@ bool Decays::Trees::Photos::p_match
     // C. general case:
     //
     const std::size_t  nPhotons  = nChildren() - nPhys ;
-    LoKi::GetN_<Decays::MCSection,std::less<const LHCb::MCParticle*> >
+    LoKi::GetN_<Decays::MCSection,std::less<> >
       getN ( nPhotons        ,
              iphys           ,
              isect -> end () ) ;

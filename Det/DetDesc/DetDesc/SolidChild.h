@@ -48,11 +48,6 @@ protected:
   SolidChild( std::unique_ptr<ISolid>   solid      ,
               const Gaudi::Transform3D* mtrx  = 0  ,
               const std::string&    Name  = "" );
-  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
-  SolidChild( ISolid*               solid      ,
-              const Gaudi::Transform3D* mtrx  = 0  ,
-              const std::string&    Name  = "" )
-      : SolidChild( std::unique_ptr<ISolid>(solid), mtrx, Name ) {}
 
   /** constructor
    *  @param solid pointer ot ISolid object
@@ -64,12 +59,6 @@ protected:
               const Gaudi::XYZPoint&     pos                   ,
               const Gaudi::Rotation3D&    rot   = Gaudi::Rotation3D() ,
               const std::string&    Name  = ""            );
-  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
-  SolidChild( ISolid*               solid                 ,
-              const Gaudi::XYZPoint&     pos                   ,
-              const Gaudi::Rotation3D&    rot   = Gaudi::Rotation3D() ,
-              const std::string&    Name  = ""            )
-     : SolidChild( std::unique_ptr<ISolid>(solid), pos,rot,Name ) {}
 
 
 public:

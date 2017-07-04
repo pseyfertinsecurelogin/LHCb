@@ -5,8 +5,10 @@
 // Include files
 #include <functional>
 #include <iostream>
+#include <vector>
 #include "GaudiKernel/SystemOfUnits.h"
 #include "GaudiKernel/StatusCode.h"
+#include "Kernel/CaloCellID.h"
 
 // forward declarations
 namespace LHCb {

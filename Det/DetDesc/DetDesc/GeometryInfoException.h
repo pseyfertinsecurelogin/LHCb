@@ -32,8 +32,6 @@ public:
                          const GaudiException & ge        ,
                          const IGeometryInfo   * gi   =  nullptr ,
                          const StatusCode     & sc = StatusCode::FAILURE ) ;
-  /// destructor
-  virtual ~GeometryInfoException() noexcept;
   ///
   std::ostream& printOut( std::ostream& os = std::cerr ) const  override;
   MsgStream&    printOut( MsgStream&    os             ) const  override;

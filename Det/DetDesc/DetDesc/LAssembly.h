@@ -34,10 +34,11 @@ public:
    *  @param sensitivity  name of sensitive detector object (for simulation)
    *  @param magnetic  name of magnetic field object (for simulation)
    */
-  LAssembly
-  ( const std::string& name             ,
-    const std::string& sensitivity = "" ,
-    const std::string& magnetic    = "" );
+  LAssembly( const std::string& name        = "" ,
+             const std::string& sensitivity = "" ,
+             const std::string& magnetic    = "" )
+  : LogVolBase(name,sensitivity,magnetic)
+  {}
 
 public:
 
@@ -205,18 +206,14 @@ public:
 
   void   computeCover ();
 
-  /** default constructor
-   */
-  LAssembly();
-
 private:
-  double m_xMin;
-  double m_xMax;
-  double m_yMin;
-  double m_yMax;
-  double m_zMin;
-  double m_zMax;
-  bool   m_coverComputed;
+  double m_xMin =  1000000.;
+  double m_xMax = -1000000.;
+  double m_yMin =  1000000.;
+  double m_yMax = -1000000.;
+  double m_zMin =  1000000.;
+  double m_zMax = -1000000.;
+  bool   m_coverComputed =  false ;
 
 };
 

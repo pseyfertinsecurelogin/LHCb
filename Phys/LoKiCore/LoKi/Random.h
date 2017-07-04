@@ -1,4 +1,3 @@
-// $Id$
 // ============================================================================
 #ifndef LOKI_RANDOM_H
 #define LOKI_RANDOM_H 1
@@ -63,22 +62,20 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Numbers* clone() const override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument /* a */ ) const override;
+      double operator() ( argument /* a */ ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the params (if are known)
       virtual const IRndmGen::Param* params() const { return m_param.get() ; }
       // ======================================================================
-    private:
-      // ======================================================================
       /// no assignement operator
-      Numbers& operator=( const Numbers& right ) ;   // no assignement operator
+      Numbers& operator=( const Numbers& right ) = delete;
       // ======================================================================
     public:
       // ======================================================================
       /// shoot!
-      result_type shoot () const ;                                    // shoot!
+      double shoot () const ;                                    // shoot!
       // ======================================================================
     private:
       // ======================================================================
@@ -241,13 +238,13 @@ namespace LoKi
       // ======================================================================
       /** constructor. If seed is not equal to 0,
        *    the call for <c>srand</c> will be performed
-       *  @param seed thje seed (if not zero)
+       *  @param seed the seed (if not zero)
        */
       Rand ( const unsigned int seed = 0 ) ;
       /// MANDATORY: clone method ("virtual constructor")
       Rand* clone() const override;
       /// MANDATORY: the only one essential method
-      result_type   operator() ( argument /* a */ ) const override;
+      double   operator() ( argument ) const override;
       /// OPTIONAL: just a nice printout
       std::ostream& fillStream ( std::ostream& s  ) const override;
       // ======================================================================
@@ -271,7 +268,7 @@ namespace LoKi
       /// MANDATORY: clone method ( "virtual construtor")
       Blind* clone () const override;
       /// MANDATORY: the only one essential method
-      result_type   operator() ( /* argument a */ ) const override;
+      double operator()( ) const override;
       /// OPTIONAL: just a nice printout
       std::ostream& fillStream ( std::ostream& s  ) const override;
       // ======================================================================
@@ -315,7 +312,7 @@ namespace LoKi
       /// MANDATORY: clone method ( "virtual construtor")
       XBlind* clone () const  override;
       /// MANDATORY: the only one essential method
-      result_type   operator() ( argument      a ) const  override;
+      double  operator() ( argument      a ) const  override;
       /// OPTIONAL: just a nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================

@@ -57,41 +57,43 @@ namespace LoKi
       // ======================================================================
       typedef TYPE                                                Type ;
       typedef typename LoKi::BasicFunctors<const Type*>::Function Fun  ;
+      typedef LoKi::details::result_t<Fun>                        result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static typename Fun::result_type __call__
-      ( const Fun& fun  , const Type*           o ) { return fun ( o ) ; }
-      static typename Fun::result_type __call__
-      ( const Fun& fun  , const SmartRef<Type>& o ) { return fun ( o ) ; }
+      static result_type __call__ ( const Fun& fun  , const Type*           o )
+      { return fun ( o ) ; }
+      static result_type __call__ ( const Fun& fun  , const SmartRef<Type>& o )
+      { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static std::vector<typename Fun::result_type> __rrshift__
-      ( const Fun& fun  , const typename Type::ConstVector& o )
+      static std::vector<result_type> __rrshift__( const Fun& fun, const typename Type::ConstVector& o )
       { return o >> fun  ; }
       // __rrshift__
-      static std::vector<typename Fun::result_type> __rrshift__
-      ( const Fun& fun  , const typename Type::Vector&      o )
+      static std::vector<result_type> __rrshift__( const Fun& fun, const typename Type::Vector& o )
       { return o >> fun  ; }
       // __rrshift__
-      static typename Fun::result_type              __rrshift__
-      ( const Fun& fun  , const Type*           o ) { return fun ( o ) ; }
+      static result_type __rrshift__ ( const Fun& fun  , const Type*           o )
+      { return fun ( o ) ; }
       // __rrshift__
-      static typename Fun::result_type              __rrshift__
-      ( const Fun& fun  , const SmartRef<Type>& o ) { return fun ( o ) ; }
+      static result_type __rrshift__ ( const Fun& fun  , const SmartRef<Type>& o )
+      { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rshift__
-      static LoKi::FunctorFromFunctor<const Type*,double> __rshift__
-      ( const Fun&                          fun  ,
-        const LoKi::Functor<double,double>& o    ) { return fun >> o  ; }
-      // __rshift__
-      static LoKi::FunctorFromFunctor<const Type*,bool>   __rshift__
-      ( const Fun&                          fun  ,
-        const LoKi::Functor<double,bool>&   o    ) { return fun >> o  ; }
+      template <typename F,
+                typename TYPE2 = details::type2_t<F>,
+                typename TYPE3 = std::enable_if_t<std::is_convertible<TYPE2,double>::value
+                                                ||std::is_convertible<TYPE2,bool  >::value,
+                               std::conditional_t<std::is_convertible<TYPE2,double>::value,
+                                                   double, bool > >,
+                typename = std::enable_if_t<std::is_convertible<details::type1_t<F>,double>::value> >
+      static LoKi::FunctorFromFunctor<const Type*,TYPE3> __rshift__
+      ( const Fun& fun  , F&&  o    )
+      { return fun >> o  ; }
       // ======================================================================
     } ;
     // ========================================================================
@@ -109,27 +111,28 @@ namespace LoKi
     {
     private:
       // ======================================================================
-      typedef TYPE                                                 Type ;
-      typedef typename LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
+      typedef TYPE                                      Type ;
+      typedef typename LoKi::Predicate_t<const Type*>   Fun  ;
+      typedef LoKi::details::result_t<Fun>              result_type;
       // ======================================================================
     public:
       // ======================================================================
-      static typename Fun::result_type __call__
-      ( const Fun& fun  , const Type*                       o ) { return fun ( o ) ; }
-      static typename Fun::result_type __call__
-      ( const Fun& fun  , const SmartRef<Type>&             o ) { return fun ( o ) ; }
+      static result_type __call__ ( const Fun& fun  , const Type*  o )
+      { return fun ( o ) ; }
+      static result_type __call__ ( const Fun& fun  , const SmartRef<Type>& o )
+      { return fun ( o ) ; }
       // ======================================================================
       static typename Type::ConstVector __rrshift__
       ( const Fun& fun  , const typename Type::ConstVector& o ) { return o >> fun  ; }
-      static typename Type::Vector      __rrshift__
+      static typename Type::Vector __rrshift__
       ( const Fun& fun  , const typename Type::Vector&      o ) { return o >> fun  ; }
-      static typename Fun::result_type  __rrshift__
-      ( const Fun& fun  , const Type*                       o ) { return fun ( o ) ; }
-      static typename Fun::result_type  __rrshift__
-      ( const Fun& fun  , const SmartRef<Type>&             o ) { return fun ( o ) ; }
+      static result_type  __rrshift__( const Fun& fun  , const Type* o )
+      { return fun ( o ) ; }
+      static result_type  __rrshift__( const Fun& fun  , const SmartRef<Type>& o )
+      { return fun ( o ) ; }
       // ======================================================================
-      static LoKi::FunctorFromFunctor<const Type*,bool> __rshift__
-      ( const Fun& fun  , const Fun&                        o ) { return fun >> o  ; }
+      static LoKi::Assignable_t<Fun>
+      __rshift__ ( const Fun& fun, const Fun& o ) { return fun >> o  ; }
       // ======================================================================
     } ;
     // ========================================================================

@@ -59,7 +59,7 @@ StatusCode Decays::Trees::factory
   if ( !Decays::Trees::valid( arrow ) )
   {
     StatusCode code = StatusCode ( Decays::Trees::InvalidArrow ) ;
-    stream << "ERROR: Invalid arrow : " << arrow << " " << code << std::endl ;
+    stream << "ERROR: Invalid arrow : " << arrow << " " << code << '\n' ;
     return code ;
   }
 
@@ -72,21 +72,21 @@ StatusCode Decays::Trees::factory
   {
     StatusCode code = StatusCode ( Decays::Trees::InclusiveOptional ) ;
     stream << "ERROR: 'Inclusive' & 'optional' are mutually exclusive "
-           <<  code << std::endl ;
+           <<  code << '\n' ;
     return code ;                                                     // RETURN
   }
   if ( inclusive && photos            )
   {
     StatusCode code = StatusCode ( Decays::Trees::InclusivePhotos   ) ;
     stream << "ERROR: 'Inclusive' & 'photos' are mutually exclusive   "
-           << code << std::endl ;
+           << code << '\n' ;
     return code ;                                                      // RETURN
   }
   if ( !decayOnly )
   {
     StatusCode code = StatusCode ( Decays::Trees::InvalidDecayOnly ) ;
     stream << "ERROR: invalid 'Decay Only' flag                       "
-           << code << std::endl ;
+           << code << '\n' ;
     return code ;                                                      // RETURN
   }
 
@@ -100,7 +100,7 @@ StatusCode Decays::Trees::factory
   {
     StatusCode code = StatusCode ( Decays::Trees::InclusiveMarked ) ;
     stream << "ERROR: 'Inclusive' & 'marked' can't be properly defined "
-           <<  code << std::endl ;
+           <<  code << '\n' ;
     return code ;                                                     // RETURN
   }
 

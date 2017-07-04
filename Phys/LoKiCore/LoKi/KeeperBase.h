@@ -1,6 +1,5 @@
-// $Id$
 // ============================================================================
-#ifndef LOKI_KEEPERBASE_H 
+#ifndef LOKI_KEEPERBASE_H
 #define LOKI_KEEPERBASE_H 1
 // ============================================================================
 // Include files
@@ -12,15 +11,15 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-05-27
    */
-  struct KeeperBase 
+  struct KeeperBase
   {
-    
+
     // protected:
-    //  ~KeeperBase() {}    
+    //  ~KeeperBase() {}
   } ;
 } // end of namespace LoKi
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_KEEPERBASE_H
 // ============================================================================

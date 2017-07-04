@@ -34,10 +34,10 @@ void CaloClusterPacker::pack( const DataVector & clus,
       pclu.pos_y = m_pack.position( clu->position().y() );
       pclu.pos_z = m_pack.position( clu->position().z() );
       pclu.pos_e = m_pack.energy  ( clu->position().e() );
-      //
+      
       pclu.pos_c0 = m_pack.position( clu->position().center()[0] );
       pclu.pos_c1 = m_pack.position( clu->position().center()[1] );
-      //
+      
       const auto err0 = safe_sqrt( clu->position().covariance()(0,0) );
       const auto err1 = safe_sqrt( clu->position().covariance()(1,1) );
       const auto err2 = safe_sqrt( clu->position().covariance()(2,2) );
@@ -47,7 +47,7 @@ void CaloClusterPacker::pack( const DataVector & clus,
       pclu.pos_cov10 = m_pack.fraction( clu->position().covariance()(1,0), err1*err0 );
       pclu.pos_cov20 = m_pack.fraction( clu->position().covariance()(2,0), err2*err0 );
       pclu.pos_cov21 = m_pack.fraction( clu->position().covariance()(2,1), err2*err1 );
-      //
+      
       const auto serr0 = safe_sqrt( clu->position().spread()(0,0) );
       const auto serr1 = safe_sqrt( clu->position().spread()(1,1) );
       pclu.pos_spread00 = m_pack.position( serr0 );
@@ -56,9 +56,10 @@ void CaloClusterPacker::pack( const DataVector & clus,
 
       // entries
       pclu.firstEntry = pclus.entries().size();
+      pclus.entries().reserve( pclus.entries().size() + clu->entries().size() );
       for ( const auto & En : clu->entries() )
       {
-        pclus.entries().emplace_back( PackedCaloClusterEntry() );
+        pclus.entries().emplace_back( );
         auto & pEnt = pclus.entries().back();
         if ( En.digit().target() )
         {
@@ -96,15 +97,15 @@ void CaloClusterPacker::unpack( const PackedDataVector & pclus,
 
       // position
       typedef LHCb::CaloPosition CaloP;
-      //
+      
       clu->position().setZ( m_pack.position(pclu.pos_z) );
       clu->position().setParameters( CaloP::Parameters( m_pack.position(pclu.pos_x),
                                                         m_pack.position(pclu.pos_y),
                                                         m_pack.energy  (pclu.pos_e) ) );
-      //
+      
       clu->position().setCenter( CaloP::Center( m_pack.position(pclu.pos_c0),
                                                 m_pack.position(pclu.pos_c1) ) );
-      //
+      
       auto & cov = clu->position().covariance();
       const auto err0 = m_pack.position( pclu.pos_cov00 );
       const auto err1 = m_pack.position( pclu.pos_cov11 );
@@ -115,7 +116,7 @@ void CaloClusterPacker::unpack( const PackedDataVector & pclus,
       cov(2,0) = err2 * err0 * m_pack.fraction( pclu.pos_cov20 );
       cov(2,1) = err2 * err1 * m_pack.fraction( pclu.pos_cov21 );
       cov(2,2) = err2 * err2;
-      //
+      
       auto & spr = clu->position().spread();
       const auto serr0 = m_pack.position( pclu.pos_spread00 );
       const auto serr1 = m_pack.position( pclu.pos_spread11 );
@@ -124,12 +125,13 @@ void CaloClusterPacker::unpack( const PackedDataVector & pclus,
       spr(1,1) = serr1 * serr1;
 
       // entries
+      clu->entries().reserve( pclu.lastEntry - pclu.firstEntry ); 
       for ( auto iE = pclu.firstEntry; iE < pclu.lastEntry; ++iE )
       {
         // get the packed entry
         const auto & pEnt = pclus.entries()[iE];
         // make a new unpacked one
-        clu->entries().emplace_back( LHCb::CaloClusterEntry() );
+        clu->entries().emplace_back( );
         auto & ent = clu->entries().back();
         // Set data
         if ( -1 != pEnt.digit )

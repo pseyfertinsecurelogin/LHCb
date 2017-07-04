@@ -34,20 +34,18 @@ namespace LoKi
      *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
      *  @date 2007-06-09
      */
-    class GenLock
+    class GenLock final
     {
     public:
       // ======================================================================
       /// constructor : Lock
       GenLock  ( IGenHybridTool* tool ) ; // contructor : Lock
       /// destructor : UnLock
-      virtual ~GenLock () ;               // destrcutor : UnLock
-      // ======================================================================
-    private:
+      ~GenLock () ;               // destructor : UnLock
       // ======================================================================
       /// no copy constructor
       GenLock ( const GenLock& ) = delete;     // no copy constructor
-      /// no assignement opeartor
+      /// no assignement operator
       GenLock& operator = ( const GenLock& ) = delete; // no assignement operator
       // ======================================================================
     private:

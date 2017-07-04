@@ -19,8 +19,6 @@ find_package(pyanalysis)
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
                            ${Boost_INCLUDE_DIRS} ${CLHEP_INCLUDE_DIRS})
 
-gaudi_install_headers(LHCbMath)
-
 gaudi_add_library(LHCbMathLib
                   src/*.cpp
                   PUBLIC_HEADERS LHCbMath

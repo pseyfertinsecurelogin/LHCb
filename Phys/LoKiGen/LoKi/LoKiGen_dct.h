@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_LOKIGEN_DCT_H 
+#ifndef LOKI_LOKIGEN_DCT_H
 #define LOKI_LOKIGEN_DCT_H 1
 // ============================================================================
 // Include files
@@ -109,37 +109,34 @@ namespace LoKi
     {
     private:
       // ======================================================================
-      typedef HepMC::GenParticle          Type ;
+      typedef HepMC::GenParticle                         Type ;
       typedef LoKi::BasicFunctors<const Type*>::Function Fun  ;
+      typedef LoKi::details::result_t<Fun>               result_type;
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static Fun::result_type
-      __call__    ( const Fun& fun  , const Type*           o )
+      static result_type __call__( const Fun& fun  , const Type* o )
       { return fun ( o ) ; }
       // ======================================================================
-    public:
-      // ======================================================================
       // __rrshift__
-      static Fun::result_type
-      __rrshift__ ( const Fun& fun  , const Type*           o )
+      static result_type  __rrshift__( const Fun& fun, const Type* o )
       { return o >> fun  ; }
       // __rrshift__
-      static std::vector<Fun::result_type>
-      __rrshift__ ( const Fun& fun  , const LoKi::GenTypes::GenContainer& o )
+      static std::vector<result_type>
+      __rrshift__( const Fun& fun, const LoKi::GenTypes::GenContainer& o )
       { return o >> fun  ; }
       // ======================================================================
-    public:
-      // ======================================================================
       // _rshift_
-      static LoKi::FunctorFromFunctor<const Type*,double> __rshift__
-      ( const Fun&                          fun  ,
-        const LoKi::Functor<double,double>& o    ) { return fun >> o  ; }
+      static LoKi::FunctorFromFunctor<const Type*,double>
+      __rshift__ ( const Fun&                          fun  ,
+                   const LoKi::Functor<double,double>& o    )
+      { return fun >> o  ; }
       // _rshift_
-      static LoKi::FunctorFromFunctor<const Type*,bool>   __rshift__
-      ( const Fun&                          fun  ,
-        const LoKi::Functor<double,bool>&   o    ) { return fun >> o  ; }
+      static LoKi::FunctorFromFunctor<const Type*,bool>
+      __rshift__ ( const Fun&                          fun  ,
+                   const LoKi::Functor<double,bool>&   o    )
+      { return fun >> o  ; }
       // ======================================================================
     } ;
     // ========================================================================
@@ -148,14 +145,14 @@ namespace LoKi
     {
     private:
       // ======================================================================
-      typedef HepMC::GenParticle           Type ;
+      typedef HepMC::GenParticle                          Type ;
       typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
+      typedef LoKi::details::result_t<Fun>                result_type;
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static Fun::result_type
-      __call__    ( const Fun& fun  , const Type*           o )
+      static result_type __call__( const Fun& fun  , const Type*           o )
       { return fun ( o ) ; }
       //
       // __call__ as filter
@@ -184,8 +181,7 @@ namespace LoKi
     public:
       // ======================================================================
       // __rrshift__
-      static Fun::result_type
-      __rrshift__ ( const Fun& fun  , const Type*           o )
+      static result_type __rrshift__ ( const Fun& fun  , const Type*           o )
       { return o >> fun  ; }
       //
       // rrshift as "filter"
@@ -196,19 +192,19 @@ namespace LoKi
       { return o >> fun  ; }
       // __rrshift__
       static LoKi::GenTypes::GenContainer
-      __rrshift__ ( const Fun& fun  , const LoKi::GenTypes::GRange& o )
+      __rrshift__( const Fun& fun, const LoKi::GenTypes::GRange& o )
       { return o >> fun  ; }
       // __rrshift__
       static LoKi::GenTypes::GenContainer
-      __rrshift__ ( const Fun& fun  , const HepMC::GenEvent* e )
+      __rrshift__( const Fun& fun, const HepMC::GenEvent* e )
       { return e >> fun  ; }
       // __rrshift__
       static LoKi::GenTypes::GenContainer
-      __rrshift__ ( const Fun& fun  , const LHCb::HepMCEvent* e )
+      __rrshift__( const Fun& fun, const LHCb::HepMCEvent* e )
       { return e >> fun  ; }
       // __rrshift__
       static LoKi::GenTypes::GenContainer
-      __rrshift__ ( const Fun& fun  , const LHCb::HepMCEvent::Container* e )
+      __rrshift__( const Fun& fun, const LHCb::HepMCEvent::Container* e )
       { return e >> fun  ; }
       // ======================================================================
     public:
@@ -225,36 +221,38 @@ namespace LoKi
     {
     private:
       // ======================================================================
-      typedef HepMC::GenVertex            Type ;
+      typedef HepMC::GenVertex                           Type ;
       typedef LoKi::BasicFunctors<const Type*>::Function Fun  ;
+      typedef LoKi::details::result_t<Fun>               result_type;
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static Fun::result_type __call__
-      ( const Fun& fun  , const Type*           o ) { return fun ( o ) ; }
+      static result_type __call__ ( const Fun& fun  , const Type* o )
+      { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static Fun::result_type
-      __rrshift__ ( const Fun& fun  , const Type*           o )
+      static result_type __rrshift__ ( const Fun& fun  , const Type*           o )
       { return o >> fun  ; }
       // __rrshift__
-      static std::vector<Fun::result_type>
+      static std::vector<result_type>
       __rrshift__ ( const Fun& fun  , const LoKi::GenTypes::GenVContainer& o )
       { return o >> fun  ; }
       // ======================================================================
     public:
       // ======================================================================
       // _rshift_
-      static LoKi::FunctorFromFunctor<const Type*,double> __rshift__
-      ( const Fun&                          fun  ,
-        const LoKi::Functor<double,double>& o    ) { return fun >> o  ; }
+      static LoKi::FunctorFromFunctor<const Type*,double>
+       __rshift__ ( const Fun&                          fun  ,
+                    const LoKi::Functor<double,double>& o    )
+      { return fun >> o  ; }
       // _rshift_
-      static LoKi::FunctorFromFunctor<const Type*,bool>   __rshift__
-      ( const Fun&                          fun  ,
-        const LoKi::Functor<double,bool>&   o    ) { return fun >> o  ; }
+      static LoKi::FunctorFromFunctor<const Type*,bool>
+      __rshift__ ( const Fun&                          fun  ,
+                   const LoKi::Functor<double,bool>&   o    )
+      { return fun >> o  ; }
       // ======================================================================
     } ;
     // ========================================================================
@@ -263,21 +261,20 @@ namespace LoKi
     {
     private:
       // ======================================================================
-      typedef HepMC::GenVertex             Type ;
+      typedef HepMC::GenVertex                            Type ;
       typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
+      typedef LoKi::details::result_t<Fun>                result_type;
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static Fun::result_type
-      __call__    ( const Fun& fun  , const Type*           o )
+      static result_type __call__    ( const Fun& fun  , const Type*           o )
       { return fun ( o ) ; }
       // ======================================================================
     public:
       // ======================================================================
       // __rrshift__
-      static Fun::result_type
-      __rrshift__ ( const Fun& fun  , const Type*           o )
+      static result_type __rrshift__ ( const Fun& fun  , const Type*           o )
       { return o >> fun  ; }
       // __rrshift__
       static const LoKi::GenTypes::GenVContainer
@@ -314,51 +311,39 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      static bool __hasDecay__
-      ( const Decays::Finder_<TYPE>&      finder ,
-        const ConstVector&                input  )
+      static bool __hasDecay__ ( const Decays::Finder_<TYPE>&      finder ,
+                                 const ConstVector&                input  )
       {
         return finder.hasDecay  ( input.begin() , input.end() ) ;
       }
       // ======================================================================
-      static bool __hasDecay__
-      ( const Decays::Finder_<TYPE>&      finder ,
-        const HepMC::GenEvent*            event  )
+      static bool __hasDecay__ ( const Decays::Finder_<TYPE>&      finder ,
+                                 const HepMC::GenEvent*            event  )
       {
-        if ( 0 == event ) { return false ; }
-        return finder.hasDecay  ( event->particles_begin() ,
-                                  event->particles_end  () ) ;
+        return event && finder.hasDecay  ( event->particles_begin() ,
+                                           event->particles_end  () ) ;
       }
       // ======================================================================
-      static bool __hasDecay__
-      ( const Decays::Finder_<TYPE>&   finder ,
-        const LHCb::HepMCEvent*        event  )
+      static bool __hasDecay__ ( const Decays::Finder_<TYPE>&   finder ,
+                                 const LHCb::HepMCEvent*        event  )
       {
-        if ( 0 == event ) { return false ; }
-        return __hasDecay__ ( finder , event->pGenEvt() ) ;
+        return event && __hasDecay__ ( finder , event->pGenEvt() ) ;
       }
       // ======================================================================
-      static bool __hasDecay__
-      ( const Decays::Finder_<TYPE>&        finder ,
-        const LHCb::HepMCEvent::Container*  events )
+      static bool __hasDecay__ ( const Decays::Finder_<TYPE>&        finder ,
+                                 const LHCb::HepMCEvent::Container*  events )
       {
-        if ( 0 == events ) { return false ; }
-        for (  LHCb::HepMCEvent::Container::const_iterator ievent =
-                 events->begin() ; events->end() != ievent ; ++ievent )
-        {
-          const LHCb::HepMCEvent*  event = *ievent ;
-          if ( 0 == event ) { continue ; }
-          if ( __hasDecay__ ( finder , event ) ) { return true ; }    // RETURN
-        }
-        return false ;
+        return events && std::any_of( events->begin(), events->end(),
+                                      [&](const LHCb::HepMCEvent* e) {
+                                          return __hasDecay__( finder, e) ;
+                                      } );
       }
       // ======================================================================
-      static bool __hasDecay__
-      ( const Decays::Finder_<TYPE>&   finder ,
-        const HepMC::GenVertex*        vertex ,
-        HepMC::IteratorRange           range  )
+      static bool __hasDecay__ ( const Decays::Finder_<TYPE>&   finder ,
+                                 const HepMC::GenVertex*        vertex ,
+                                 HepMC::IteratorRange           range  )
       {
-        if ( 0 == vertex ) { return false ; }
+        if ( !vertex ) { return false ; }
         HepMC::GenVertex* _vx = const_cast<HepMC::GenVertex*>( vertex ) ;
         return finder.hasDecay ( _vx->particles_begin( range ) ,
                                  _vx->particles_end  ( range ) ) ;
@@ -366,55 +351,47 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      static size_t __findDecay__
-      ( const Decays::Finder_<TYPE>& finder ,
-        const ConstVector&           input  ,
-        ConstVector&                 output )
+      static size_t __findDecay__ ( const Decays::Finder_<TYPE>& finder ,
+                                    const ConstVector&           input  ,
+                                    ConstVector&                 output )
       { return finder.findDecay  ( input.begin() , input.end() , output ) ; }
       // ======================================================================
-      static size_t __findDecay__
-      ( const Decays::Finder_<TYPE>& finder ,
-        const HepMC::GenEvent*       event  ,
-        ConstVector&                 output )
+      static size_t __findDecay__ ( const Decays::Finder_<TYPE>& finder ,
+                                    const HepMC::GenEvent*       event  ,
+                                    ConstVector&                 output )
       {
-        if ( 0 == event ) { return 0 ; }
-        return finder.findDecay ( event->particles_begin () ,
-                                  event->particles_end   () , output ) ;
+        return event ? finder.findDecay ( event->particles_begin () ,
+                                          event->particles_end   () , output )
+                     : 0 ;
       }
       // ======================================================================
-      static size_t __findDecay__
-      ( const Decays::Finder_<TYPE>& finder ,
-        const LHCb::HepMCEvent*      event  ,
-        ConstVector&                 output )
+      static size_t __findDecay__ ( const Decays::Finder_<TYPE>& finder ,
+                                    const LHCb::HepMCEvent*      event  ,
+                                    ConstVector&                 output )
       {
-        if ( 0 == event ) { return 0 ; }
-        return __findDecay__ ( finder , event->pGenEvt() , output ) ;
+        return event ? __findDecay__ ( finder , event->pGenEvt() , output )
+                     : 0 ;
       }
       // ======================================================================
-      static size_t __findDecay__
-      ( const Decays::Finder_<TYPE>&       finder ,
-        const LHCb::HepMCEvent::Container* events ,
-        ConstVector&                       output )
+      static size_t __findDecay__ ( const Decays::Finder_<TYPE>&       finder ,
+                                    const LHCb::HepMCEvent::Container* events ,
+                                    ConstVector&                       output )
       {
-        if ( 0 == events ) { return 0 ; }
-        size_t found = 0 ;
-        for (  LHCb::HepMCEvent::Container::const_iterator ievent =
-                 events->begin() ; events->end() != ievent ; ++ievent )
-        {
-          const LHCb::HepMCEvent*  event = *ievent ;
-          if ( 0 == event ) { continue ; }
-          found += __findDecay__ ( finder , event , output ) ;
-        }
-        return found ;
+        if ( !events ) { return 0 ; }
+        return std::accumulate( events->begin(), events->end(),
+                                size_t{0},
+                                [&](size_t found,  const LHCb::HepMCEvent *e) {
+                                    if (e) found+=__findDecay__(finder,e,output);
+                                    return found;
+                                });
       }
       // ======================================================================
-      static size_t __findDecay__
-      ( const Decays::Finder_<TYPE>& finder ,
-        const HepMC::GenVertex*      vertex ,
-        HepMC::IteratorRange         range  ,
-        ConstVector&                 output )
+      static size_t __findDecay__ ( const Decays::Finder_<TYPE>& finder ,
+                                    const HepMC::GenVertex*      vertex ,
+                                    HepMC::IteratorRange         range  ,
+                                    ConstVector&                 output )
       {
-        if ( 0 == vertex ) { return false ; }
+        if ( !vertex ) { return false ; }
         HepMC::GenVertex* _vx = const_cast<HepMC::GenVertex*>( vertex ) ;
         return finder.findDecay ( _vx->particles_begin( range ) ,
                                   _vx->particles_end  ( range ) , output ) ;
@@ -422,46 +399,41 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
-      static ConstVector __findDecay__
-      ( const Decays::Finder_<TYPE>& finder ,
-        const ConstVector&           input  ) 
-      { 
+      static ConstVector __findDecay__ ( const Decays::Finder_<TYPE>& finder ,
+                                         const ConstVector&           input  )
+      {
         ConstVector                 output ;
-        __findDecay__  ( finder , input , output ) ; 
+        __findDecay__  ( finder , input , output ) ;
         return output ;
       }
       // ======================================================================
-      static ConstVector __findDecay__
-      ( const Decays::Finder_<TYPE>& finder ,
-        const HepMC::GenEvent*       event  )
+      static ConstVector __findDecay__ ( const Decays::Finder_<TYPE>& finder ,
+                                         const HepMC::GenEvent*       event  )
       {
         ConstVector output ;
         __findDecay__ ( finder , event , output ) ;
         return output ;
       }
       // ======================================================================
-      static ConstVector __findDecay__
-      ( const Decays::Finder_<TYPE>& finder ,
-        const LHCb::HepMCEvent*      event  )
+      static ConstVector __findDecay__ ( const Decays::Finder_<TYPE>& finder ,
+                                         const LHCb::HepMCEvent*      event  )
       {
         ConstVector output ;
         __findDecay__ ( finder , event , output ) ;
         return output ;
       }
       // ======================================================================
-      static ConstVector __findDecay__
-      ( const Decays::Finder_<TYPE>&       finder ,
-        const LHCb::HepMCEvent::Container* events )
+      static ConstVector __findDecay__ ( const Decays::Finder_<TYPE>&       finder ,
+                                         const LHCb::HepMCEvent::Container* events )
       {
         ConstVector output ;
         __findDecay__ ( finder , events , output ) ;
         return output ;
       }
       // ======================================================================
-      static ConstVector __findDecay__
-      ( const Decays::Finder_<TYPE>& finder ,
-        const HepMC::GenVertex*      vertex ,
-        HepMC::IteratorRange         range  ) 
+      static ConstVector __findDecay__ ( const Decays::Finder_<TYPE>& finder ,
+                                         const HepMC::GenVertex*      vertex ,
+                                         HepMC::IteratorRange         range  )
       {
         ConstVector output ;
         __findDecay__ ( finder , vertex , range , output ) ;
@@ -552,7 +524,7 @@ namespace
 
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // LOKI_LOKIGEN_DCT_H
 // ============================================================================

@@ -1,11 +1,10 @@
-// $Id$ 
 // ============================================================================
-#ifndef LOKI_MONITOR_H 
+#ifndef LOKI_MONITOR_H
 #define LOKI_MONITOR_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// STD & STL 
+// STD & STL
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -24,7 +23,7 @@ class GaudiTool      ;
 class GaudiAlgorithm ;
 class StatEntity     ;
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
   class Histo      ;
@@ -35,146 +34,146 @@ namespace LoKi
     // ========================================================================
     /** helper enumerator to indicate the mode for creation of counters:
      *
-     *   - ContextSvc : the counter is retrieved from the corresponding 
-     *                  GauidiAlgorithm using Context Service      
-     *   - StatSvc    : the counter is retrieved from Stat Service 
-     *   - CounterSvc : the counter is retrieved from Counter Service 
+     *   - ContextSvc : the counter is retrieved from the corresponding
+     *                  GauidiAlgorithm using Context Service
+     *   - StatSvc    : the counter is retrieved from Stat Service
+     *   - CounterSvc : the counter is retrieved from Counter Service
      *
      *  @see StatEntity
      *  @see Stat
-     *  @see IAlgContextSvc 
+     *  @see IAlgContextSvc
      *  @see GaudiAlgorithm
      *  @see GaudiCommon
-     *  @see IStatSvc 
-     *  @see ICounterSvc 
+     *  @see IStatSvc
+     *  @see ICounterSvc
      */
-    enum Flag 
+    enum Flag
       {
         ContextSvc = 0 , //  local counter through IAlgContext -> GaudiAlgorithm  ,
         StatSvc        , // global counter through IStatSvc  ,
-        CounterSvc       // global counter through ICounterSvc  
+        CounterSvc       // global counter through ICounterSvc
       };
     // ========================================================================
-    /** get the (global) counter by name using IStatSvc 
-     *  @param IStatSvc 
-     *  @param ssvc service of statistics 
-     *  @param name the counter name 
-     *  @return the counter 
+    /** get the (global) counter by name using IStatSvc
+     *  @param IStatSvc
+     *  @param ssvc service of statistics
+     *  @param name the counter name
+     *  @return the counter
      */
-    GAUDI_API 
-    StatEntity* getCounter 
-    ( IStatSvc*          csvc , 
+    GAUDI_API
+    StatEntity* getCounter
+    ( IStatSvc*          csvc ,
       const std::string& name ) ;
     /** get the (local) counter by name using GaudiAlgorithm
-     *  @param alg the algorithm 
-     *  @param name the counter name 
-     *  @return the counter 
+     *  @param alg the algorithm
+     *  @param name the counter name
+     *  @return the counter
      */
-    GAUDI_API 
-    StatEntity* getCounter 
-    ( GaudiAlgorithm*    alg  , 
-      const std::string& name ) ; 
+    GAUDI_API
+    StatEntity* getCounter
+    ( GaudiAlgorithm*    alg  ,
+      const std::string& name ) ;
     /** get the (local) counter by name using GaudiTool
-     *  @param tool the tool 
-     *  @param name the counter name 
-     *  @return the counter 
+     *  @param tool the tool
+     *  @param name the counter name
+     *  @return the counter
      */
-    GAUDI_API 
-    StatEntity* getCounter 
-    ( GaudiTool*         tool , 
-      const std::string& name ) ; 
-    /** get the counter by name using ICounterSvc 
-     *  @see ICounterSvc 
-     *  @param csvc the counter service 
+    GAUDI_API
+    StatEntity* getCounter
+    ( GaudiTool*         tool ,
+      const std::string& name ) ;
+    /** get the counter by name using ICounterSvc
+     *  @see ICounterSvc
+     *  @param csvc the counter service
      *  @param group the counter group
-     *  @param name the counter name 
-     *  @return the counter 
+     *  @param name the counter name
+     *  @return the counter
      */
-    GAUDI_API 
-    StatEntity* getCounter 
+    GAUDI_API
+    StatEntity* getCounter
     ( ICounterSvc*       csvc     ,
       const std::string& group    ,
       const std::string& name     ) ;
-    /** get the counter by name using IAlgContextSvc 
-     *  @param name the counter name 
-     *  @param csvc context service 
-     *  @return the counter 
+    /** get the counter by name using IAlgContextSvc
+     *  @param name the counter name
+     *  @param csvc context service
+     *  @return the counter
      */
-    GAUDI_API 
-    StatEntity* getCounter 
-    ( const IAlgContextSvc* csvc , 
+    GAUDI_API
+    StatEntity* getCounter
+    ( const IAlgContextSvc* csvc ,
       const std::string&    name ) ;
     /** get the counter by name using IStatSvc/ICounter or IAlgContextSvc
-     *  @param ICounterSvc      
-     *  @param IStatSvc      
-     *  @param IAlgContextSvc 
-     *  @param flag  local/global flag 
+     *  @param ICounterSvc
+     *  @param IStatSvc
+     *  @param IAlgContextSvc
+     *  @param flag  local/global flag
      *  @param group the counter grop
      *  @param name  the counter name
-     *  @return the counter 
+     *  @return the counter
      */
-    GAUDI_API 
-    StatEntity* getCounter 
-    ( const Flag         flag  , 
-      const std::string& group , 
+    GAUDI_API
+    StatEntity* getCounter
+    ( const Flag         flag  ,
+      const std::string& group ,
       const std::string& name  ) ;
     /** get the counter by name using IStatSvc/ICounter or IAlgContextSvc
-     *  @param ICounterSvc      
-     *  @param IStatSvc      
-     *  @param IAlgContextSvc 
-     *  @param flag  local/global flag 
+     *  @param ICounterSvc
+     *  @param IStatSvc
+     *  @param IAlgContextSvc
+     *  @param flag  local/global flag
      *  @param name  the counter name
-     *  @return the counter 
+     *  @return the counter
      */
-    GAUDI_API 
-    StatEntity* getCounter 
-    ( const Flag         flag  , 
+    GAUDI_API
+    StatEntity* getCounter
+    ( const Flag         flag  ,
       const std::string& name  ) ;
-    /** get the counter using helper class 
-     *  @return the counter 
+    /** get the counter using helper class
+     *  @return the counter
      */
-    GAUDI_API 
-    StatEntity* getCounter 
+    GAUDI_API
+    StatEntity* getCounter
     ( const LoKi::CounterDef& cnt ) ;
     // ========================================================================
   } //                                        end of namespace LoKi::Monitoring
   // ==========================================================================
   /** @class Histo LoKi/Monitor.h
-   *  Special holder to postpone  the histogram booking 
+   *  Special holder to postpone  the histogram booking
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date   2015-01-14
    */
   class GAUDI_API Histo
   {
-  public: 
+  public:
     // ========================================================================
-    /// constructors for Histogram service 
-    Histo ( const std::string&       dir     , 
-            const std::string&       id      , 
-            const Gaudi::Histo1DDef& hdef    , 
+    /// constructors for Histogram service
+    Histo ( const std::string&       dir     ,
+            const std::string&       id      ,
+            const Gaudi::Histo1DDef& hdef    ,
             IHistogramSvc*           svc = 0 ) ;
-    Histo ( const std::string&       dir     , 
-            const int                id      , 
-            const Gaudi::Histo1DDef& hdef    , 
+    Histo ( const std::string&       dir     ,
+            const int                id      ,
+            const Gaudi::Histo1DDef& hdef    ,
             IHistogramSvc*           svc = 0 ) ;
-    Histo ( const std::string&       dir     , 
-            const GaudiAlg::ID&      id      , 
-            const Gaudi::Histo1DDef& hdef    , 
+    Histo ( const std::string&       dir     ,
+            const GaudiAlg::ID&      id      ,
+            const Gaudi::Histo1DDef& hdef    ,
             IHistogramSvc*           svc = 0 ) ;
-    Histo ( const std::string&       path    , 
-            const Gaudi::Histo1DDef& hdef    , 
+    Histo ( const std::string&       path    ,
+            const Gaudi::Histo1DDef& hdef    ,
             IHistogramSvc*           svc = 0 ) ;
-    /// constructors for Context service  
-    Histo ( const Gaudi::Histo1DDef& hdef    , 
+    /// constructors for Context service
+    Histo ( const Gaudi::Histo1DDef& hdef    ,
             const std::string&       id      ,
             IAlgContextSvc*          svc = 0 ) ;
-    Histo ( const Gaudi::Histo1DDef& hdef    , 
+    Histo ( const Gaudi::Histo1DDef& hdef    ,
             const int                id      ,
             IAlgContextSvc*          svc = 0 ) ;
-    Histo ( const Gaudi::Histo1DDef& hdef    , 
-            const GaudiAlg::ID&      id      , 
+    Histo ( const Gaudi::Histo1DDef& hdef    ,
+            const GaudiAlg::ID&      id      ,
             IAlgContextSvc*          svc = 0 ) ;
-    /// default constructor 
+    /// default constructor
     Histo () ;
     // ========================================================================
   public:
@@ -189,7 +188,7 @@ namespace LoKi
     IAlgContextSvc* contextSvc () const { return m_cntx ; }
     // ========================================================================
   private:
-    // 
+    //
     std::string       m_path  ;
     GaudiAlg::ID      m_id    ;
     Gaudi::Histo1DDef m_hdef  ;
@@ -200,19 +199,19 @@ namespace LoKi
     // ========================================================================
   };
   // ==========================================================================
-  /** @class CounterDef 
-   *  helper class to keep defintino of counter 
+  /** @class CounterDef
+   *  helper class to keep defintino of counter
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date   2015-01-14
    */
-  class GAUDI_API CounterDef 
+  class GAUDI_API CounterDef
   {
   public:
     // ========================================================================
     CounterDef ( const std::string&           group ,
-                 const std::string&           name  , 
+                 const std::string&           name  ,
                  const LoKi::Monitoring::Flag flag  ) ;
-    CounterDef ( const std::string&           name = "" , 
+    CounterDef ( const std::string&           name = "" ,
                  const LoKi::Monitoring::Flag f    = LoKi::Monitoring::ContextSvc ) ;
     // ========================================================================
   public:
@@ -228,15 +227,15 @@ namespace LoKi
     std::string            m_group ;
     std::string            m_name  ;
     LoKi::Monitoring::Flag m_flag  ;
-    // ========================================================================    
+    // ========================================================================
   };
   // ==========================================================================
-} // end of namespace LoKi 
+} // end of namespace LoKi
 // ============================================================================
 namespace Gaudi
 {
   // ==========================================================================
-  namespace Utils 
+  namespace Utils
   {
     // ========================================================================
     GAUDI_API std::string toCpp ( const LoKi::Histo&       o ) ;
@@ -250,5 +249,5 @@ namespace Gaudi
 // ============================================================================
 #endif // LOKI_MONITOR_H
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

@@ -6,7 +6,9 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
+#include <functional>
 #include <vector>
+#include <memory>
 #include <complex>
 // ============================================================================
 // GaudiKernel
@@ -26,9 +28,6 @@
  *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
  *  @date 2010-04-19
  *
- *                    $Revision$
- *  Last modification $Date$
- *                 by $author$
  */
 // ============================================================================
 namespace Gaudi
@@ -1780,7 +1779,7 @@ namespace Gaudi
       /// the orbital momentum
       unsigned int      m_L          ; // the orbital momentum
       /// the formfactor
-      std::unique_ptr<const Gaudi::Math::FormFactor> m_formfactor ; // the formfactor
+      std::unique_ptr<Gaudi::Math::FormFactor> m_formfactor ; // the formfactor
       // ======================================================================
     private:
       // ======================================================================

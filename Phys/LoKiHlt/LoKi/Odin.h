@@ -63,7 +63,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Run* clone() const override { return new Run(*this); }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const override
+      double operator() ( const LHCb::ODIN* o ) const override
       { return o -> runNumber() ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const override
@@ -87,7 +87,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Evt1* clone() const  override;
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override;
+      double operator() ( const LHCb::ODIN* o ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -116,7 +116,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Evt2* clone() const  override;
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override;
+      double operator() ( const LHCb::ODIN* o ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -138,7 +138,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Orbit* clone() const override { return new Orbit(*this); }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override
+      double operator() ( const LHCb::ODIN* o ) const  override
       { return o -> orbitNumber() ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -162,7 +162,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       EventType* clone() const override { return new EventType(*this); }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override
+      double operator() ( const LHCb::ODIN* o ) const  override
       { return o -> eventType () ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -186,7 +186,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       BunchId* clone() const override { return new BunchId(*this); }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override
+      double operator() ( const LHCb::ODIN* o ) const  override
       { return o -> bunchId () ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -210,7 +210,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       ErrorBits* clone() const override { return new ErrorBits(*this); }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override
+      double operator() ( const LHCb::ODIN* o ) const  override
       { return o -> errorBits () ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -234,7 +234,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       TriggerType* clone() const override { return new TriggerType(*this); }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override
+      double operator() ( const LHCb::ODIN* o ) const  override
       { return o -> triggerType () ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -258,7 +258,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       ReadOutType* clone() const override { return new ReadOutType(*this); }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override
+      double operator() ( const LHCb::ODIN* o ) const  override
       { return o -> readoutType () ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -274,16 +274,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-06-16
      */
-    class ForceBit : public LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate
+    struct ForceBit : LoKi::BasicFunctors<const LHCb::ODIN*>::Predicate
     {
-    public:
       // ======================================================================
       /// Default Constructor
       ForceBit() : AuxFunBase{ std::tie() } { }
       // MANDATORY: clone method ("virtual constructor")
       ForceBit* clone() const override { return new ForceBit ( *this ) ; }
       // MANDATORY: the only one essential method
-      result_type operator() ( argument o ) const  override
+      bool operator() ( const LHCb::ODIN* o ) const  override
       { return o -> forceBit () ; }
       // OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -298,16 +297,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-06-16
      */
-    class BXType : public LoKi::BasicFunctors<const LHCb::ODIN*>::Function
+    struct BXType : LoKi::BasicFunctors<const LHCb::ODIN*>::Function
     {
-    public:
       // ======================================================================
       /// Default Constructor
       BXType() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       BXType* clone() const override { return new BXType(*this); }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override
+      double operator() ( const LHCb::ODIN* o ) const  override
       { return o -> bunchCrossingType () ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -322,7 +320,7 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-06-16
      */
-    class BunchCurrent : public LoKi::BasicFunctors<const LHCb::ODIN*>::Function
+    struct BunchCurrent : LoKi::BasicFunctors<const LHCb::ODIN*>::Function
     {
     public:
       // ======================================================================
@@ -331,7 +329,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       BunchCurrent* clone() const override { return new BunchCurrent(*this); }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override
+      double operator() ( const LHCb::ODIN* o ) const  override
       { return o -> bunchCurrent() ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -346,16 +344,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-06-16
      */
-    class CalibrationStep: public LoKi::BasicFunctors<const LHCb::ODIN*>::Function
+    struct CalibrationStep: LoKi::BasicFunctors<const LHCb::ODIN*>::Function
     {
-    public:
       // ======================================================================
       /// Default Constructor
       CalibrationStep() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       CalibrationStep* clone() const override { return new CalibrationStep(*this); }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override
+      double operator() ( const LHCb::ODIN* o ) const  override
       { return o -> calibrationStep () ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -370,16 +367,15 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-06-16
      */
-    class TrgConfKey: public LoKi::BasicFunctors<const LHCb::ODIN*>::Function
+    struct TrgConfKey: LoKi::BasicFunctors<const LHCb::ODIN*>::Function
     {
-    public:
       // ======================================================================
       /// Default Constructor
       TrgConfKey() : AuxFunBase{ std::tie() } { }
       /// MANDATORY: clone method ("virtual constructor")
       TrgConfKey* clone() const override { return new TrgConfKey(*this); }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument o ) const  override
+      double operator() ( const LHCb::ODIN* o ) const  override
       { return o -> triggerConfigurationKey () ; }
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override
@@ -409,7 +405,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       InTime* clone() const override { return new InTime(*this) ; }
       /// MANDATORY: The only one essential method:
-      result_type operator() ( argument o ) const override;
+      bool operator() ( const LHCb::ODIN* o ) const override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -452,7 +448,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       EvtNumber* clone() const  override;
       /// MANDATORY: The only one essential method:
-      result_type operator() ( argument o ) const  override;
+      bool operator() ( const LHCb::ODIN* o ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -490,7 +486,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       RunNumber* clone() const  override;
       /// MANDATORY: The only one essential method:
-      result_type operator() ( argument o ) const  override;
+      bool operator() ( const LHCb::ODIN* o ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -535,7 +531,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       RunEvtNumber* clone() const  override;
       /// MANDATORY: The only one essential method:
-      result_type operator() ( argument o ) const  override;
+      bool operator() ( const LHCb::ODIN* o ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -566,7 +562,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       BXId* clone() const override { return new BXId(*this) ; }
       /// MANDATORY: The only one essential method:
-      result_type operator() ( argument o ) const  override;
+      bool operator() ( const LHCb::ODIN* o ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -597,7 +593,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Tck* clone() const override { return new Tck(*this) ; }
       /// MANDATORY: The only one essential method:
-      result_type operator() ( argument o ) const  override;
+      bool operator() ( const LHCb::ODIN* o ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -623,7 +619,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       RoutingBits* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument /* a */ ) const  override;
+      bool operator() ( const LHCb::ODIN* ) const  override;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& ) const  override;
       // ======================================================================

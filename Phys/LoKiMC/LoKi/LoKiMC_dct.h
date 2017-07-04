@@ -1,4 +1,4 @@
-#ifndef LOKI_LOKIMC_DCT_H 
+#ifndef LOKI_LOKIMC_DCT_H
 #define LOKI_LOKIMC_DCT_H 1
 // ============================================================================
 // Include files
@@ -45,22 +45,22 @@
 /** @file
  *  The dictionaries for the package Phys/LoKiMC
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-12-01
  */
 // ============================================================================
-namespace LoKi 
+namespace LoKi
 {
   // ==========================================================================
-  namespace Functors 
+  namespace Functors
   {
     // ========================================================================
     // the specific printout
@@ -72,25 +72,25 @@ namespace LoKi
     // the specific printpout
     // ========================================================================
     template <>
-    std::ostream& 
+    std::ostream&
     Size<const LHCb::MCParticle*>::fillStream
     ( std::ostream& s ) const { return s << "MCSIZE" ; }
     // ========================================================================
     // the specific printout
     // ========================================================================
     template <>
-    std::ostream& 
+    std::ostream&
     Empty<const LHCb::MCVertex*>::fillStream
     ( std::ostream& s ) const { return s << "MCVEMPTY" ; }
     // ========================================================================
     // the specific printpout
     // ========================================================================
     template <>
-    std::ostream& 
+    std::ostream&
     Size<const LHCb::MCVertex*>::fillStream
     ( std::ostream& s ) const { return s << "MCVSIZE" ; }
     // ========================================================================
-  } // end of namespace LoKi::Functors 
+  } // end of namespace LoKi::Functors
   // ==========================================================================
 } // end of namespace LoKi
 // ============================================================================
@@ -102,93 +102,91 @@ namespace LoKi
   {
     // ========================================================================
     template <>
-    class CutCalls<LHCb::MCParticle> 
+    class CutCalls<LHCb::MCParticle>
     {
     private:
       // ======================================================================
-      typedef LHCb::MCParticle                           Type ;
+      typedef LHCb::MCParticle                            Type ;
       typedef LoKi::BasicFunctors<const Type*>::Predicate Fun  ;
+      typedef LoKi::details::result_t<Fun>                result_type;
+
       // ======================================================================
     public:
       // ======================================================================
       // __call__
-      static Fun::result_type 
-      __call__    ( const Fun& fun  , const Type*           o ) 
+      static result_type __call__( const Fun& fun  , const Type*           o )
       { return fun ( o ) ; }
       // __call__
-      static Fun::result_type 
-      __call__    ( const Fun& fun  , const SmartRef<Type>& o ) 
+      static result_type __call__( const Fun& fun  , const SmartRef<Type>& o )
       { return fun ( o ) ; }
       //
-      // __call__ as filter 
+      // __call__ as filter
       //
-      // __call__ 
-      static LoKi::MCTypes::MCContainer 
-      __call__ ( const Fun& fun  , const LoKi::MCTypes::MCContainer&  e ) 
-      { return e >> fun ; }
-      // __call__ 
+      // __call__
       static LoKi::MCTypes::MCContainer
-      __call__ ( const Fun& fun  , const LHCb::MCParticle::Container* e ) 
+      __call__ ( const Fun& fun, const LoKi::MCTypes::MCContainer&  e )
       { return e >> fun ; }
-      // __call__ 
+      // __call__
       static LoKi::MCTypes::MCContainer
-      __call__ ( const Fun& fun  , const LoKi::MCTypes::MCRange& e ) 
+      __call__ ( const Fun& fun  , const LHCb::MCParticle::Container* e )
       { return e >> fun ; }
-      // __call__ 
+      // __call__
       static LoKi::MCTypes::MCContainer
-      __call__ ( const Fun& fun  , const SmartRefVector<Type>& e ) 
+      __call__ ( const Fun& fun  , const LoKi::MCTypes::MCRange& e )
+      { return e >> fun ; }
+      // __call__
+      static LoKi::MCTypes::MCContainer
+      __call__ ( const Fun& fun  , const SmartRefVector<Type>& e )
       { return e >> fun ; }
       // ======================================================================
     public:
       // ======================================================================
-      // __rrshift__ 
-      static Fun::result_type              
-      __rrshift__ ( const Fun& fun  , const Type*           o ) 
+      // __rrshift__
+      static result_type __rrshift__ ( const Fun& fun  , const Type*           o )
       { return o >> fun  ; }
-      // __rrshift__ 
-      static Fun::result_type              
-      __rrshift__ ( const Fun& fun  , const SmartRef<Type>&  o ) 
+      // __rrshift__
+      static result_type __rrshift__ ( const Fun& fun  , const SmartRef<Type>&  o )
       { return o >> fun  ; }
       // ======================================================================
       // rrshift as "filter"
       // ======================================================================
-      // __rrshift__ 
-      static LoKi::MCTypes::MCContainer 
-      __rrshift__ ( const Fun& fun  , const LoKi::MCTypes::MCContainer&  e ) 
-      { return e >> fun ; }
-      // __rrshift__ 
+      // __rrshift__
       static LoKi::MCTypes::MCContainer
-      __rrshift__ ( const Fun& fun  , const LHCb::MCParticle::Container* e ) 
+      __rrshift__ ( const Fun& fun  , const LoKi::MCTypes::MCContainer&  e )
       { return e >> fun ; }
-      // __rrshift__ 
+      // __rrshift__
       static LoKi::MCTypes::MCContainer
-      __rrshift__ ( const Fun& fun  , const LoKi::MCTypes::MCRange& e ) 
+      __rrshift__ ( const Fun& fun  , const LHCb::MCParticle::Container* e )
       { return e >> fun ; }
-      // __rrshift__ 
+      // __rrshift__
       static LoKi::MCTypes::MCContainer
-      __rrshift__ ( const Fun& fun  , const SmartRefVector<Type>& e ) 
+      __rrshift__ ( const Fun& fun  , const LoKi::MCTypes::MCRange& e )
+      { return e >> fun ; }
+      // __rrshift__
+      static LoKi::MCTypes::MCContainer
+      __rrshift__ ( const Fun& fun  , const SmartRefVector<Type>& e )
       { return e >> fun ; }
       // ======================================================================
     public:
       // ======================================================================
-      // __rshift__ 
+      // __rshift__
       static LoKi::FunctorFromFunctor<const Type*,bool>
-      __rshift__ ( const Fun& fun  , const Fun& o ) 
-      { return fun >> o   ; }      
+      __rshift__ ( const Fun& fun  , const Fun& o )
+      { return fun >> o   ; }
       // ======================================================================
-    } ;    
+    } ;
     // ========================================================================
-  } 
+  }
   // ==========================================================================
 }
 // ============================================================================
 namespace
 {
   // ==========================================================================
-  struct _Instantiations 
+  struct _Instantiations
   {
     // ========================================================================
-    /// fictive constructor 
+    /// fictive constructor
     _Instantiations () ;
     // ========================================================================
     // the basic types
@@ -203,17 +201,17 @@ namespace
     // unique keepers
     LoKi::UniqueKeeper<LHCb::MCParticle>          m_u1 ;
     LoKi::UniqueKeeper<LHCb::MCVertex>            m_u2 ;
-    // the basic functions 
+    // the basic functions
     LoKi::Dicts::Funcs<const LHCb::MCParticle*>      m_f1 ;
     LoKi::Dicts::Funcs<const LHCb::MCVertex*>        m_f2 ;
     LoKi::Dicts::VFuncs<const LHCb::MCParticle*>     m_vf1 ;
     LoKi::Dicts::VFuncs<const LHCb::MCVertex*>       m_vf2 ;
-    // operators 
+    // operators
     LoKi::Dicts::FuncOps<const LHCb::MCParticle*>    m_o1 ;
     LoKi::Dicts::FuncOps<const LHCb::MCVertex*>      m_o2 ;
     LoKi::Dicts::CutsOps<const LHCb::MCParticle*>    m_o3 ;
     LoKi::Dicts::CutsOps<const LHCb::MCVertex*>      m_o4 ;
-    // 
+    //
     LoKi::Dicts::MapsOps<const LHCb::MCParticle*>    m_fo1  ;
     LoKi::Dicts::MapsOps<const LHCb::MCVertex*>      m_fo2  ;
     LoKi::Dicts::PipeOps<const LHCb::MCParticle*>    m_fo3  ;
@@ -224,7 +222,7 @@ namespace
     LoKi::Dicts::CutValOps<const LHCb::MCVertex*>    m_fo61 ;
     LoKi::Dicts::SourceOps<const LHCb::MCParticle*>  m_fo9  ;
     LoKi::Dicts::SourceOps<const LHCb::MCVertex*>    m_fo10 ;
-    // calls 
+    // calls
     LoKi::Dicts::FunCalls<LHCb::MCParticle>       m_c1 ;
     LoKi::Dicts::CutCalls<LHCb::MCParticle>       m_c2 ;
     LoKi::Dicts::FunCalls<LHCb::MCVertex>         m_c3 ;
@@ -234,27 +232,27 @@ namespace
     LoKi::Dicts::PIDOps<LoKi::MCParticles::AbsIdentifier> m_i2 ;
     // ========================================================================
     LoKi::Functors::Empty<const LHCb::MCParticle*>  m_e1 ;
-    LoKi::Functors::Empty<const LHCb::MCVertex*>    m_e2 ;    
+    LoKi::Functors::Empty<const LHCb::MCVertex*>    m_e2 ;
     LoKi::Functors::Size<const LHCb::MCParticle*>   m_s1 ;
-    LoKi::Functors::Size<const LHCb::MCVertex*>     m_s2 ;    
-    /// decay related stuff 
+    LoKi::Functors::Size<const LHCb::MCVertex*>     m_s2 ;
+    /// decay related stuff
     Decays::Tree_<const LHCb::MCParticle*>           m_tree1 ;
     Decays::Trees::Any_<const LHCb::MCParticle*>     m_tree2 ;
     Decays::Trees::None_<const LHCb::MCParticle*>    m_tree3 ;
     Decays::Trees::Stable_<const LHCb::MCParticle*>  m_tree4 ;
-    LoKi::Dicts::TreeOps<const LHCb::MCParticle*>    m_trops ;   
+    LoKi::Dicts::TreeOps<const LHCb::MCParticle*>    m_trops ;
     // ========================================================================
-    // Decay Finder 
+    // Decay Finder
     // ========================================================================
     Decays::IMCDecay::Finder m_finder ;
     Decays::IMCDecay::Tree   m_tree   ;
     LoKi::Dicts::FinderDicts_<const LHCb::MCParticle*> m_finderDicts ;
     // ========================================================================
-   } ;  
+   } ;
   //===========================================================================
-} //                                                 end of anonymout namespace 
+} //                                                 end of anonymout namespace
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_LOKIMC_DCT_H
 // ============================================================================

@@ -53,18 +53,18 @@
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
+namespace LoKi { namespace GenParticles {
 // ============================================================================
 //  clone method (mandatory!)
 // ============================================================================
-LoKi::GenParticles::BarCode*
-LoKi::GenParticles::BarCode::clone() const
+BarCode*
+BarCode::clone() const
 { return new LoKi::GenParticles::BarCode( *this ) ; }
 // ============================================================================
 //  the only one essential method
 // ============================================================================
-LoKi::GenParticles::BarCode::result_type
-LoKi::GenParticles::BarCode::operator()
-  ( LoKi::GenParticles::BarCode::argument p ) const
+double
+BarCode::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
     Error("Invalid HepMC::GenParticle, return 0 ");
@@ -76,20 +76,18 @@ LoKi::GenParticles::BarCode::operator()
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
 std::ostream&
-LoKi::GenParticles::BarCode::fillStream
+BarCode::fillStream
 ( std::ostream& s ) const { return s << "GBAR" ; }
 // ============================================================================
 //  MANDATORY: clone method ("virtual" constructor")
 // ============================================================================
-LoKi::GenParticles::Identifier*
-LoKi::GenParticles::Identifier::clone() const
-{ return new LoKi::GenParticles::Identifier ( *this ) ; }
+Identifier*
+Identifier::clone() const
+{ return new Identifier ( *this ) ; }
 // ============================================================================
 //  MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Identifier::result_type
-LoKi::GenParticles::Identifier::operator()
-  ( LoKi::GenParticles::Identifier:: argument p ) const
+double Identifier::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
     Error ( "HepMC::GenParticle* points to NULL, return InvalidID" ) ;
@@ -101,20 +99,15 @@ LoKi::GenParticles::Identifier::operator()
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
 std::ostream&
-LoKi::GenParticles::Identifier::fillStream
-( std::ostream& s ) const { return s << "GID" ; }
+Identifier::fillStream ( std::ostream& s ) const { return s << "GID" ; }
 // ============================================================================
 //  MANDATORY: clone method ("virtual" constructor")
 // ============================================================================
-LoKi::GenParticles::Status*
-LoKi::GenParticles::Status::clone() const
-{ return new Status ( *this ) ; }
+Status* Status::clone() const { return new Status ( *this ) ; }
 // ============================================================================
 //  MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Status::result_type
-LoKi::GenParticles::Status::operator()
-  ( LoKi::GenParticles::Status::argument p ) const
+double Status::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
     Error ( "HepMC::GenParticle* points to NULL, return -1000 " ) ;
@@ -125,9 +118,8 @@ LoKi::GenParticles::Status::operator()
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::Status::fillStream
-( std::ostream& s ) const { return s << "GSTATUS" ; }
+std::ostream& Status::fillStream ( std::ostream& s ) const
+{ return s << "GSTATUS" ; }
 // ============================================================================
 
 
@@ -135,15 +127,12 @@ LoKi::GenParticles::Status::fillStream
 // ============================================================================
 //  MANDATORY: clone method ("virtual" constructor")
 // ============================================================================
-LoKi::GenParticles::AbsIdentifier*
-LoKi::GenParticles::AbsIdentifier::clone() const
+AbsIdentifier* AbsIdentifier::clone() const
 { return new LoKi::GenParticles::AbsIdentifier ( *this ) ; }
 // ============================================================================
 //  MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::AbsIdentifier::result_type
-LoKi::GenParticles::AbsIdentifier::operator()
-  ( LoKi::GenParticles::Identifier:: argument p ) const
+double AbsIdentifier::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
     Error ( "HepMC::GenParticle* points to NULL, return InvalidID" ) ;
@@ -154,23 +143,19 @@ LoKi::GenParticles::AbsIdentifier::operator()
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::AbsIdentifier::fillStream
-( std::ostream& s ) const { return s << "GABSID" ; }
+std::ostream& AbsIdentifier::fillStream ( std::ostream& s ) const
+{ return s << "GABSID" ; }
 // ============================================================================
 
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::ValidEndVertex*
-LoKi::GenParticles::ValidEndVertex::clone() const
+ValidEndVertex* ValidEndVertex::clone() const
 { return new LoKi::GenParticles::ValidEndVertex(*this) ; }
 // ============================================================================
 //  MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::ValidEndVertex::result_type
-LoKi::GenParticles::ValidEndVertex::operator()
-  ( LoKi::GenParticles::ValidEndVertex::argument p ) const
+bool ValidEndVertex::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
     Error ( "HepMC::GenParticle* points to NULL, return 'false'" ) ;
@@ -181,13 +166,12 @@ LoKi::GenParticles::ValidEndVertex::operator()
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::ValidEndVertex::fillStream
-( std::ostream& s ) const { return s << "GVEV" ; }
+std::ostream& ValidEndVertex::fillStream ( std::ostream& s ) const
+{ return s << "GVEV" ; }
 // ============================================================================
 //  constructor
 // ============================================================================
-LoKi::GenParticles::MomentumDistance::MomentumDistance
+MomentumDistance::MomentumDistance
 ( const double px ,
   const double py ,
   const double pz ,
@@ -201,7 +185,7 @@ LoKi::GenParticles::MomentumDistance::MomentumDistance
  *  @param vct the reference 4-momentum
  */
 // ============================================================================
-LoKi::GenParticles::MomentumDistance::MomentumDistance
+MomentumDistance::MomentumDistance
 ( const LoKi::LorentzVector& vct )
   : LoKi::AuxFunBase ( std::tie ( vct ) )
   , m_vct ( vct )
@@ -209,15 +193,12 @@ LoKi::GenParticles::MomentumDistance::MomentumDistance
 // ============================================================================
 //  MANDATORY: clone function ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::MomentumDistance*
-LoKi::GenParticles::MomentumDistance::clone() const
+MomentumDistance* MomentumDistance::clone() const
 { return new LoKi::GenParticles::MomentumDistance(*this) ; }
 // ============================================================================
 //  MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::MomentumDistance::result_type
-LoKi::GenParticles::MomentumDistance::operator()
-  ( LoKi::GenParticles::MomentumDistance::argument p ) const
+double MomentumDistance::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY(!p) ) {
     Error("Invalid HepMC::GenParticle*, return (InvalidMomentum)^2") ;
@@ -233,9 +214,7 @@ LoKi::GenParticles::MomentumDistance::operator()
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::MomentumDistance::fillStream
-( std::ostream& s ) const
+std::ostream& MomentumDistance::fillStream ( std::ostream& s ) const
 {
   return s << "GMOMDIST("
            <<  m_vct.Px () << ","
@@ -249,8 +228,8 @@ LoKi::GenParticles::MomentumDistance::fillStream
  *  @param phi phi angle for the direction
  */
 // ============================================================================
-LoKi::GenParticles::TransverseMomentumRel::TransverseMomentumRel
-( const double theta , const double phi   )
+TransverseMomentumRel::TransverseMomentumRel ( const double theta ,
+                                               const double phi   )
   : LoKi::AuxFunBase ( std::tie ( theta , phi ) )
 {
   m_vct.SetXYZ
@@ -265,10 +244,9 @@ LoKi::GenParticles::TransverseMomentumRel::TransverseMomentumRel
  *  @param z z-component of the direction vector
  */
 // ============================================================================
-LoKi::GenParticles::TransverseMomentumRel::TransverseMomentumRel
-( const double x ,
-  const double y ,
-  const double z )
+TransverseMomentumRel::TransverseMomentumRel ( const double x ,
+                                               const double y ,
+                                               const double z )
   : LoKi::AuxFunBase ( std::tie ( x , y , z ) )
 {
   m_vct.SetXYZ (  x , y , z ) ;
@@ -279,8 +257,7 @@ LoKi::GenParticles::TransverseMomentumRel::TransverseMomentumRel
  *  @see LoKi::ThreeVector
  */
 // ============================================================================
-LoKi::GenParticles::TransverseMomentumRel::TransverseMomentumRel
-( const LoKi::ThreeVector& vct )
+TransverseMomentumRel::TransverseMomentumRel ( const LoKi::ThreeVector& vct )
   : LoKi::AuxFunBase ( std::tie ( vct ) )
   , m_vct ( vct )
 {}
@@ -290,23 +267,19 @@ LoKi::GenParticles::TransverseMomentumRel::TransverseMomentumRel
  *  @see LoKi::LorentzVector
  */
 // ============================================================================
-LoKi::GenParticles::TransverseMomentumRel::TransverseMomentumRel
-( const LoKi::LorentzVector& vct )
+TransverseMomentumRel::TransverseMomentumRel( const LoKi::LorentzVector& vct )
   : LoKi::AuxFunBase ( std::tie ( vct ) )
   , m_vct ( vct.Vect() )
 {}
 // ============================================================================
 //  MANDATORY: clone function ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::TransverseMomentumRel*
-LoKi::GenParticles::TransverseMomentumRel::clone() const
+TransverseMomentumRel* TransverseMomentumRel::clone() const
 { return new LoKi::GenParticles::TransverseMomentumRel(*this) ; }
 // ============================================================================
 //  MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::TransverseMomentumRel::result_type
-LoKi::GenParticles::TransverseMomentumRel::operator()
-  ( LoKi::GenParticles::TransverseMomentumRel::argument p ) const
+double TransverseMomentumRel::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( UNLIKELY( !p ) ) {
     Error ( "Invalid HepMC::GenParticle*, return 'InvalidMomentum'") ;
@@ -325,9 +298,7 @@ LoKi::GenParticles::TransverseMomentumRel::operator()
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::TransverseMomentumRel::fillStream
-( std::ostream& s ) const
+std::ostream& TransverseMomentumRel::fillStream ( std::ostream& s ) const
 {
   return s << "GPTDIR("
            <<  m_vct.Theta () << ","
@@ -338,54 +309,42 @@ LoKi::GenParticles::TransverseMomentumRel::fillStream
  *  @param p pointer to HepMC::GenParticle
  */
 // ============================================================================
-LoKi::GenParticles::FromHepMCTree::FromHepMCTree
-( const HepMC::GenParticle* p )
-  : m_vertices ()
+FromHepMCTree::FromHepMCTree ( const HepMC::GenParticle* p )
 { _add ( p ) ; }
 // ============================================================================
 //  constructor from range of particles
 // ============================================================================
-LoKi::GenParticles::FromHepMCTree::FromHepMCTree
-( const LoKi::Types::GRange& r  )
-  : m_vertices ()
+FromHepMCTree::FromHepMCTree ( const LoKi::Types::GRange& r  )
 { _add ( r.begin() , r.end() ) ; }
 // ============================================================================
 //  constructor from range of particles
 // ============================================================================
-LoKi::GenParticles::FromHepMCTree::FromHepMCTree
-( const LoKi::GenTypes::GenContainer& r  )
+FromHepMCTree::FromHepMCTree( const LoKi::GenTypes::GenContainer& r  )
 { _add ( r.begin() , r.end() ) ; }
 // ============================================================================
 /*  constructor from vertex  ("head")
  *  @param v pointer to HepMC::GenParticle
  */
 // ============================================================================
-LoKi::GenParticles::FromHepMCTree::FromHepMCTree
-( const HepMC::GenVertex* v )
+FromHepMCTree::FromHepMCTree ( const HepMC::GenVertex* v )
 { _add ( v ) ; }
 // ============================================================================
-void LoKi::GenParticles::FromHepMCTree::_add
-( const HepMC::GenParticle* p )
+void FromHepMCTree::_add ( const HepMC::GenParticle* p )
 { if ( 0 != p ) { _add ( p->end_vertex() ) ; } }
-void LoKi::GenParticles::FromHepMCTree::_add
-( const HepMC::GenVertex*   v )
+void FromHepMCTree::_add ( const HepMC::GenVertex*   v )
 {
   if ( v )
   { m_vertices.push_back( const_cast<HepMC::GenVertex*> ( v ) ) ; }
 }
 // ============================================================================
-LoKi::GenParticles::FromHepMCTree&
-LoKi::GenParticles::FromHepMCTree::remove
-( const HepMC::GenVertex* vertex )
+FromHepMCTree& FromHepMCTree::remove ( const HepMC::GenVertex* vertex )
 {
   auto ifind = std::remove( m_vertices.begin() , m_vertices.end() , vertex ) ;
   m_vertices.erase ( ifind , m_vertices.end() ) ;
   return *this ;
 }
 // ============================================================================
-LoKi::GenParticles::FromHepMCTree&
-LoKi::GenParticles::FromHepMCTree::remove
-( const HepMC::GenParticle* particle )
+FromHepMCTree& FromHepMCTree::remove ( const HepMC::GenParticle* particle )
 {
   if ( 0 == particle ) { return *this ; }
   return remove ( particle->end_vertex() ) ;
@@ -393,15 +352,12 @@ LoKi::GenParticles::FromHepMCTree::remove
 // ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::FromHepMCTree*
-LoKi::GenParticles::FromHepMCTree::clone() const
+FromHepMCTree* FromHepMCTree::clone() const
 { return new LoKi::GenParticles::FromHepMCTree(*this) ; }
 // ============================================================================
 //  MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::FromHepMCTree::result_type
-LoKi::GenParticles::FromHepMCTree::operator()
-  ( LoKi::GenParticles::FromHepMCTree::argument p ) const
+bool FromHepMCTree::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -414,16 +370,12 @@ LoKi::GenParticles::FromHepMCTree::operator()
     return false ;                                                  // RETURN
   }
   // loop over vertices
-  for ( VERTICES::const_iterator iv = m_vertices.begin() ;
-        m_vertices.end() != iv ; ++iv )
+  for ( auto* vertex : m_vertices )
   {
-    HepMC::GenVertex* vertex = *iv ;
     if ( 0 == vertex ) { Warning("NULL vertex is detected, skip") ; continue ; }
     // explict loop over all descendants
-    HepMC::GenVertex::particle_iterator begin =
-      vertex->particles_begin ( HepMC::descendants ) ;
-    HepMC::GenVertex::particle_iterator end   =
-      vertex->particles_end   ( HepMC::descendants ) ;
+    auto begin = vertex->particles_begin ( HepMC::descendants ) ;
+    auto end   = vertex->particles_end   ( HepMC::descendants ) ;
     if ( std::find ( begin , end , p ) != end ) { return true ; }    // RETURN
     //
   }
@@ -432,30 +384,25 @@ LoKi::GenParticles::FromHepMCTree::operator()
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::FromHepMCTree::fillStream
-( std::ostream& s ) const { return s << "GFROMTREE" ; }
+std::ostream& FromHepMCTree::fillStream ( std::ostream& s ) const
+{ return s << "GFROMTREE" ; }
 // ============================================================================
 /*  constructor from particle ("head")
  *  @param p pointer to HepMC::GenParticle
  */
 // ============================================================================
-LoKi::GenParticles::IsAnAncestor::IsAnAncestor
-( const HepMC::GenParticle* p )
+IsAnAncestor::IsAnAncestor ( const HepMC::GenParticle* p )
   : m_particle ( p )
 {}
 // ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::IsAnAncestor*
-LoKi::GenParticles::IsAnAncestor::clone() const
+IsAnAncestor* IsAnAncestor::clone() const
 { return new LoKi::GenParticles::IsAnAncestor(*this) ; }
 // ============================================================================
 //  MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsAnAncestor::result_type
-LoKi::GenParticles::IsAnAncestor::operator()
-  ( LoKi::GenParticles::IsAnAncestor::argument p ) const
+bool IsAnAncestor::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p || 0 == m_particle )
   {
@@ -465,8 +412,7 @@ LoKi::GenParticles::IsAnAncestor::operator()
   HepMC::GenVertex* vertex = p->end_vertex() ;
   if ( 0 == vertex ) { return false ; }                             // RETURN
   // explict loop over all descendants
-  for ( HepMC::GenVertex::particle_iterator ip =
-          vertex->particles_begin( HepMC::descendants ) ;
+  for ( auto ip = vertex->particles_begin( HepMC::descendants ) ;
         vertex->particles_end( HepMC::descendants ) != ip ; ++ip )
   { if ( m_particle == (*ip) ) { return true ; } }                 // RETURN
 
@@ -475,22 +421,19 @@ LoKi::GenParticles::IsAnAncestor::operator()
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::IsAnAncestor::fillStream
-( std::ostream& s ) const { return s << "GANCESTOR" ; }
+std::ostream& IsAnAncestor::fillStream ( std::ostream& s ) const
+{ return s << "GANCESTOR" ; }
 // ============================================================================
 //  constructor from Quark
 // ============================================================================
-LoKi::GenParticles::HasQuark::HasQuark ( const LHCb::ParticleID::Quark quark )
+HasQuark::HasQuark ( const LHCb::ParticleID::Quark quark )
   : LoKi::AuxFunBase ( std::tie ( quark ) )
   , m_quark ( quark  )
 {}
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::HasQuark::result_type
-LoKi::GenParticles::HasQuark::operator()
-  ( const LoKi::GenParticles::HasQuark::argument p ) const
+bool HasQuark::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -500,13 +443,10 @@ LoKi::GenParticles::HasQuark::operator()
   return LHCb::ParticleID( p -> pdg_id() ).hasQuark( quark() ) ;
 }
 // ============================================================================
-LoKi::GenParticles::HasQuark*
-LoKi::GenParticles::HasQuark::clone() const
+HasQuark* HasQuark::clone() const
 { return new LoKi::GenParticles::HasQuark(*this) ; }
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::HasQuark::fillStream
-( std::ostream& s ) const
+std::ostream& HasQuark::fillStream ( std::ostream& s ) const
 {
   switch ( quark() )
   {
@@ -530,9 +470,7 @@ LoKi::GenParticles::HasQuark::fillStream
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsCharged::result_type
-LoKi::GenParticles::IsCharged::operator()
-  ( const LoKi::GenParticles::IsCharged::argument p ) const
+bool IsCharged::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -542,20 +480,15 @@ LoKi::GenParticles::IsCharged::operator()
   return 0 != LHCb::ParticleID( p->pdg_id() ) .threeCharge() ;
 }
 // ============================================================================
-LoKi::GenParticles::IsCharged*
-LoKi::GenParticles::IsCharged::clone() const
+IsCharged* IsCharged::clone() const
 { return new LoKi::GenParticles::IsCharged(*this) ; }
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::IsCharged::fillStream
-( std::ostream& s ) const
+std::ostream& IsCharged::fillStream ( std::ostream& s ) const
 { return s << "GCHARGED" ; }
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsNeutral::result_type
-LoKi::GenParticles::IsNeutral::operator()
-  ( const LoKi::GenParticles::IsNeutral::argument p ) const
+bool IsNeutral::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -565,20 +498,15 @@ LoKi::GenParticles::IsNeutral::operator()
   return 0 == LHCb::ParticleID( p->pdg_id() ) .threeCharge() ;
 }
 // ============================================================================
-LoKi::GenParticles::IsNeutral*
-LoKi::GenParticles::IsNeutral::clone() const
+IsNeutral* IsNeutral::clone() const
 { return new LoKi::GenParticles::IsNeutral(*this) ; }
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::IsNeutral::fillStream
-( std::ostream& s ) const
+std::ostream& IsNeutral::fillStream ( std::ostream& s ) const
 { return s << "GNEUTRAL" ; }
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsLepton::result_type
-LoKi::GenParticles::IsLepton::operator()
-  ( const LoKi::GenParticles::IsLepton::argument p ) const
+bool IsLepton::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -588,20 +516,15 @@ LoKi::GenParticles::IsLepton::operator()
   return LHCb::ParticleID( p->pdg_id() ) .isLepton() ;
 }
 // ============================================================================
-LoKi::GenParticles::IsLepton*
-LoKi::GenParticles::IsLepton::clone() const
+IsLepton* IsLepton::clone() const
 { return new LoKi::GenParticles::IsLepton(*this) ; }
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::IsLepton::fillStream
-( std::ostream& s ) const
+std::ostream& IsLepton::fillStream ( std::ostream& s ) const
 { return s << "GLEPTON" ; }
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsMeson::result_type
-LoKi::GenParticles::IsMeson::operator()
-  ( const LoKi::GenParticles::IsMeson::argument p ) const
+bool IsMeson::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -611,20 +534,15 @@ LoKi::GenParticles::IsMeson::operator()
   return LHCb::ParticleID( p->pdg_id() ) .isMeson() ;
 }
 // ============================================================================
-LoKi::GenParticles::IsMeson*
-LoKi::GenParticles::IsMeson::clone() const
+IsMeson* IsMeson::clone() const
 { return new LoKi::GenParticles::IsMeson(*this) ; }
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::IsMeson::fillStream
-( std::ostream& s ) const
+std::ostream& IsMeson::fillStream ( std::ostream& s ) const
 { return s << "GMESON" ; }
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsBaryon::result_type
-LoKi::GenParticles::IsBaryon::operator()
-  ( const LoKi::GenParticles::IsBaryon::argument p ) const
+bool IsBaryon::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -634,20 +552,15 @@ LoKi::GenParticles::IsBaryon::operator()
   return LHCb::ParticleID( p->pdg_id() ) .isBaryon() ;
 }
 // ============================================================================
-LoKi::GenParticles::IsBaryon*
-LoKi::GenParticles::IsBaryon::clone() const
+IsBaryon* IsBaryon::clone() const
 { return new LoKi::GenParticles::IsBaryon(*this) ; }
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::IsBaryon::fillStream
-( std::ostream& s ) const
+std::ostream& IsBaryon::fillStream ( std::ostream& s ) const
 { return s << "GBARYON" ; }
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsHadron::result_type
-LoKi::GenParticles::IsHadron::operator()
-  ( const LoKi::GenParticles::IsHadron::argument p ) const
+bool IsHadron::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -657,20 +570,15 @@ LoKi::GenParticles::IsHadron::operator()
   return LHCb::ParticleID( p->pdg_id() ) .isHadron() ;
 }
 // ============================================================================
-LoKi::GenParticles::IsHadron*
-LoKi::GenParticles::IsHadron::clone() const
+IsHadron* IsHadron::clone() const
 { return new LoKi::GenParticles::IsHadron(*this) ; }
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::IsHadron::fillStream
-( std::ostream& s ) const
+std::ostream& IsHadron::fillStream ( std::ostream& s ) const
 { return s << "GHADRON" ; }
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsNucleus::result_type
-LoKi::GenParticles::IsNucleus::operator()
-  ( const LoKi::GenParticles::IsNucleus::argument p ) const
+bool IsNucleus::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -680,33 +588,24 @@ LoKi::GenParticles::IsNucleus::operator()
   return LHCb::ParticleID( p->pdg_id() ) .isNucleus() ;
 }
 // ============================================================================
-LoKi::GenParticles::IsNucleus*
-LoKi::GenParticles::IsNucleus::clone() const
+IsNucleus* IsNucleus::clone() const
 { return new LoKi::GenParticles::IsNucleus(*this) ; }
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::IsNucleus::fillStream
-( std::ostream& s ) const
+std::ostream& IsNucleus::fillStream ( std::ostream& s ) const
 { return s << "GNUCLEUS" ; }
 // ============================================================================
-LoKi::GenParticles::ProperLifeTime::ProperLifeTime
-( const double bad )
+ProperLifeTime::ProperLifeTime ( const double bad )
   : LoKi::AuxFunBase ( std::tie ( bad ) )
   , m_bad ( bad )
 {}
 // ============================================================================
-LoKi::GenParticles::ProperLifeTime*
-LoKi::GenParticles::ProperLifeTime::clone() const
+ProperLifeTime* ProperLifeTime::clone() const
 { return new LoKi::GenParticles::ProperLifeTime(*this) ; }
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::ProperLifeTime::fillStream
-( std::ostream& s ) const
+std::ostream& ProperLifeTime::fillStream ( std::ostream& s ) const
 { return s << "GTIME" ; }
 // ============================================================================
-LoKi::GenParticles::ProperLifeTime::result_type
-LoKi::GenParticles::ProperLifeTime::operator()
-  ( LoKi::GenParticles::ProperLifeTime::argument p ) const
+double ProperLifeTime::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -751,13 +650,10 @@ LoKi::GenParticles::ProperLifeTime::operator()
   return dist/betagamma ;
 }
 // ============================================================================
-LoKi::GenParticles::NominalLifeTime*
-LoKi::GenParticles::NominalLifeTime::clone() const
+NominalLifeTime* NominalLifeTime::clone() const
 { return new LoKi::GenParticles::NominalLifeTime ( *this ) ; }
 // ============================================================================
-LoKi::GenParticles::NominalLifeTime::result_type
-LoKi::GenParticles::NominalLifeTime::operator()
-  ( LoKi::GenParticles::NominalLifeTime::argument p ) const
+double NominalLifeTime::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -767,9 +663,7 @@ LoKi::GenParticles::NominalLifeTime::operator()
   return LoKi::Particles::lifeTime ( LHCb::ParticleID ( p->pdg_id() ) ) ;
 }
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::NominalLifeTime::fillStream
-( std::ostream& s ) const
+std::ostream& NominalLifeTime::fillStream ( std::ostream& s ) const
 { return s << "GNLT" ; }
 // ============================================================================
 /*  constructor from vertex function and "bad" value
@@ -777,7 +671,7 @@ LoKi::GenParticles::NominalLifeTime::fillStream
  *  @param bad the value to be returnedd for invalid vertex
  */
 // ============================================================================
-LoKi::GenParticles::AdapterToProductionVertex::AdapterToProductionVertex
+AdapterToProductionVertex::AdapterToProductionVertex
 ( const LoKi::Types::GVFunc& fun ,
   const double               bad )
   : LoKi::AuxFunBase ( std::tie ( fun , bad  ) )
@@ -787,22 +681,17 @@ LoKi::GenParticles::AdapterToProductionVertex::AdapterToProductionVertex
 // ============================================================================
 //  clone method (mandatory!)
 // ============================================================================
-LoKi::GenParticles::AdapterToProductionVertex*
-LoKi::GenParticles::AdapterToProductionVertex::clone() const
+AdapterToProductionVertex* AdapterToProductionVertex::clone() const
 { return new AdapterToProductionVertex(*this); }
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::AdapterToProductionVertex::fillStream
-( std::ostream& stream ) const
+std::ostream& AdapterToProductionVertex::fillStream ( std::ostream& stream ) const
 { return stream << "GFAPVX(" << m_fun << ")" ; }
 // ============================================================================
 //  the only one essential method
 // ============================================================================
-LoKi::GenParticles::AdapterToProductionVertex::result_type
-LoKi::GenParticles::AdapterToProductionVertex::operator()
-  ( LoKi::GenParticles::AdapterToProductionVertex::argument p ) const
+double AdapterToProductionVertex::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p ) { return m_bad ; }
   HepMC::GenVertex* v = p->production_vertex() ;
@@ -815,33 +704,26 @@ LoKi::GenParticles::AdapterToProductionVertex::operator()
  *  @param bad the value to be returnedd for invalid vertex
  */
 // ============================================================================
-LoKi::GenParticles::AdapterToEndVertex::AdapterToEndVertex
-( const LoKi::Types::GVFunc& fun ,
-  const double               bad )
+AdapterToEndVertex::AdapterToEndVertex ( const LoKi::Types::GVFunc& fun ,
+                                         const double               bad )
   : LoKi::AuxFunBase ( std::tie ( fun , bad  ) )
-  , LoKi::GenTypes::GFunc()
   , m_fun ( fun )
   , m_bad ( bad )
 {}
 // ============================================================================
 //  clone method (mandatory!)
 // ============================================================================
-LoKi::GenParticles::AdapterToEndVertex*
-LoKi::GenParticles::AdapterToEndVertex::clone() const
+AdapterToEndVertex* AdapterToEndVertex::clone() const
 { return new AdapterToEndVertex(*this); }
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::AdapterToEndVertex::fillStream
-( std::ostream& stream ) const
+std::ostream& AdapterToEndVertex::fillStream ( std::ostream& stream ) const
 { return stream << "GFAEVX(" << m_fun << ")" ; }
 // ============================================================================
 //  the only one essential method
 // ============================================================================
-LoKi::GenParticles::AdapterToEndVertex::result_type
-LoKi::GenParticles::AdapterToEndVertex::operator()
-  ( LoKi::GenParticles::AdapterToEndVertex::argument p ) const
+double AdapterToEndVertex::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p ) { return m_bad ; }
   HepMC::GenVertex* v = p->end_vertex() ;
@@ -851,9 +733,7 @@ LoKi::GenParticles::AdapterToEndVertex::operator()
 // ============================================================================
 //  MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::ThreeCharge::result_type
-LoKi::GenParticles::ThreeCharge::operator()
-  ( LoKi::GenParticles::ThreeCharge::argument p ) const
+double ThreeCharge::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -865,9 +745,7 @@ LoKi::GenParticles::ThreeCharge::operator()
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::ThreeCharge::fillStream
-( std::ostream& stream ) const
+std::ostream& ThreeCharge::fillStream ( std::ostream& stream ) const
 { return stream << "G3Q" ; }
 
 // ============================================================================
@@ -877,19 +755,16 @@ LoKi::GenParticles::ThreeCharge::fillStream
  *  @see HepMC::IteratorRange
  */
 // ============================================================================
-LoKi::GenParticles::NInTree::NInTree
-( const LoKi::GenTypes::GCuts&  cut   ,
-  HepMC::IteratorRange          range )
+NInTree::NInTree ( const LoKi::GenTypes::GCuts&  cut   ,
+                   HepMC::IteratorRange          range )
   : LoKi::AuxFunBase ( std::tie ( cut , range  ) )
-  , LoKi::GenTypes::GFunc()
   , m_cut( cut )
   , m_range ( range )
 {}
 // ============================================================================
 //  MANDATORY: clone function ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::NInTree*
-LoKi::GenParticles::NInTree::clone() const
+NInTree* NInTree::clone() const
 { return new LoKi::GenParticles::NInTree( *this ) ; }
 // ============================================================================
 /*  count the particles in the tree according
@@ -899,8 +774,7 @@ LoKi::GenParticles::NInTree::clone() const
  *  @return number of particles
  */
 // ============================================================================
-size_t LoKi::GenParticles::NInTree::count
-( HepMC::GenVertex* vertex ) const
+size_t NInTree::count ( HepMC::GenVertex* vertex ) const
 {
   if ( 0 == vertex ) { return 0 ; }
   return std::count_if ( vertex->particles_begin( m_range ) ,
@@ -909,9 +783,7 @@ size_t LoKi::GenParticles::NInTree::count
 // ============================================================================
 //  MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::NInTree::result_type
-LoKi::GenParticles::NInTree::operator()
-  ( LoKi::GenParticles::NInTree::argument p ) const
+double NInTree::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -930,8 +802,7 @@ LoKi::GenParticles::NInTree::operator()
 // ============================================================================
 //  "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::NInTree::fillStream( std::ostream& s ) const
+std::ostream& NInTree::fillStream( std::ostream& s ) const
 {
   return s << "GNINTREE("
            << m_cut   << ","
@@ -942,8 +813,7 @@ LoKi::GenParticles::NInTree::fillStream( std::ostream& s ) const
  *  @param cut cut to be checked
  */
 // ============================================================================
-LoKi::GenParticles::InTree::InTree
-( const LoKi::GenTypes::GCuts& cut )
+InTree::InTree ( const LoKi::GenTypes::GCuts& cut )
   : LoKi::AuxFunBase ( std::tie ( cut ) )
   , LoKi::GenTypes::GCuts ()
   , m_cut ( cut )
@@ -951,15 +821,12 @@ LoKi::GenParticles::InTree::InTree
 // ============================================================================
 // MANDATORY: clone function ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::InTree*
-LoKi::GenParticles::InTree::clone() const
+InTree* InTree::clone() const
 { return new LoKi::GenParticles::InTree(*this) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::InTree::result_type
-LoKi::GenParticles::InTree::operator()
-  ( LoKi::GenParticles::InTree::argument p ) const
+bool InTree::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p ) { Warning ( "HepMC::GenParticle* points to NULL" ) ; }
   return LoKi::GenAlgs::found (  p , m_cut ) ;
@@ -967,8 +834,7 @@ LoKi::GenParticles::InTree::operator()
 // ============================================================================
 //  OPTIONAL: "SHORT" representation, @see LoKi::AuxFunBase
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::InTree::fillStream( std::ostream& s ) const
+std::ostream& InTree::fillStream( std::ostream& s ) const
 { return s << "GINTREE(" << m_cut << ")" ; }
 // ============================================================================
 
@@ -976,15 +842,12 @@ LoKi::GenParticles::InTree::fillStream( std::ostream& s ) const
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::Oscillated*
-LoKi::GenParticles::Oscillated::clone() const
+Oscillated* Oscillated::clone() const
 { return new LoKi::GenParticles::Oscillated(*this); }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Oscillated::result_type
-LoKi::GenParticles::Oscillated::operator()
-  ( LoKi::GenParticles::Oscillated::argument p ) const
+bool Oscillated::operator() ( const HepMC::GenParticle* p ) const
 {
   return
     0 != LoKi::GenParticles::oscillated1 ( p ) ||
@@ -993,46 +856,38 @@ LoKi::GenParticles::Oscillated::operator()
 // ============================================================================
 // OPTIONAL: the specific printout
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::Oscillated::fillStream ( std::ostream& o ) const
+std::ostream& Oscillated::fillStream ( std::ostream& o ) const
 { return o << "GOSCILLATED" ; }
 // ============================================================================
 
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::Oscillated1*
-LoKi::GenParticles::Oscillated1::clone() const
+Oscillated1* Oscillated1::clone() const
 { return new LoKi::GenParticles::Oscillated1(*this); }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Oscillated1::result_type
-LoKi::GenParticles::Oscillated1::operator()
-  ( LoKi::GenParticles::Oscillated::argument p ) const
+bool Oscillated1::operator() ( const HepMC::GenParticle* p ) const
 {
   return 0 != LoKi::GenParticles::oscillated1 ( p );
 }
 // ============================================================================
 // OPTIONAL: the specific printout
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::Oscillated1::fillStream ( std::ostream& o ) const
+std::ostream& Oscillated1::fillStream ( std::ostream& o ) const
 { return o << "GOSCILLATED1" ; }
 // ============================================================================
 
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::Oscillated2*
-LoKi::GenParticles::Oscillated2::clone() const
-{ return new LoKi::GenParticles::Oscillated2(*this); }
+Oscillated2* Oscillated2::clone() const
+{ return new Oscillated2(*this); }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::Oscillated2::result_type
-LoKi::GenParticles::Oscillated2::operator()
-  ( LoKi::GenParticles::Oscillated2::argument p ) const
+bool Oscillated2::operator() ( const HepMC::GenParticle* p ) const
 {
   return 0 != LoKi::GenParticles::oscillated2 ( p );
 }
@@ -1040,7 +895,7 @@ LoKi::GenParticles::Oscillated2::operator()
 // OPTIONAL: the specific printout
 // ============================================================================
 std::ostream&
-LoKi::GenParticles::Oscillated2::fillStream ( std::ostream& o ) const
+Oscillated2::fillStream ( std::ostream& o ) const
 { return o << "GOSCILLATED2" ; }
 // ============================================================================
 
@@ -1049,8 +904,7 @@ LoKi::GenParticles::Oscillated2::fillStream ( std::ostream& o ) const
 // ============================================================================
 // constructor from the actual node
 // ============================================================================
-LoKi::GenParticles::DecNode::DecNode
-( const Decays::iNode& node )
+DecNode::DecNode ( const Decays::iNode& node )
   : LoKi::AuxFunBase ( std::tie ( node ) )
   , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , m_node ( node )
@@ -1058,9 +912,7 @@ LoKi::GenParticles::DecNode::DecNode
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::DecNode::result_type
-LoKi::GenParticles::DecNode::operator()
-  ( LoKi::GenParticles::DecNode::argument p ) const
+bool DecNode::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -1081,7 +933,7 @@ LoKi::GenParticles::DecNode::operator()
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream& LoKi::GenParticles::DecNode::fillStream( std::ostream& s ) const
+std::ostream& DecNode::fillStream( std::ostream& s ) const
 {
   if ( !valid() ) { return s << "GDECNODE(invalid)" ; }
   return s << "GDECNODE( " << m_node << ")";
@@ -1091,13 +943,12 @@ std::ostream& LoKi::GenParticles::DecNode::fillStream( std::ostream& s ) const
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::GenParticles::LongLived*
-LoKi::GenParticles::LongLived::clone() const
-{ return new LoKi::GenParticles::LongLived(*this) ;}
+LongLived* LongLived::clone() const
+{ return new LongLived(*this) ;}
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream& LoKi::GenParticles::LongLived::fillStream( std::ostream& s ) const
+std::ostream& LongLived::fillStream( std::ostream& s ) const
 { return s << "GLONGLIVED" ; }
 // ============================================================================
 
@@ -1105,30 +956,25 @@ namespace
 {
   // ==========================================================================
   /// invalid Node
-  const Decays::Nodes::Invalid                                      s_NODE{} ;
+  static const Decays::Nodes::Invalid                                      s_NODE{} ;
   /// invalid decay
-  const Decays::Trees::Types_<const HepMC::GenParticle*>::Invalid   s_TREE{} ;
+  static const Decays::Trees::Types_<const HepMC::GenParticle*>::Invalid   s_TREE{} ;
   /// "Factory"
-  const std::string  s_FACTORY = "LoKi::GenDecay" ;
+  static const std::string  s_FACTORY = "LoKi::GenDecay" ;
   // ==========================================================================
 }
 // ============================================================================
 // constructor from the actual tree
 // ============================================================================
-LoKi::GenParticles::DecTree::DecTree
-( const LoKi::GenParticles::DecTree::iTree& tree         ,
-  const bool                                autovalidate )
-  : LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
-  , m_tree         ( tree         )
+DecTree::DecTree ( const iTree& tree , const bool autovalidate )
+  : m_tree         ( tree         )
   , m_autovalidate ( autovalidate )
 {}
 // ============================================================================
 // constructor from the decay descriptor
 // ============================================================================
-LoKi::GenParticles::DecTree::DecTree
-( const std::string& descriptor )
+DecTree::DecTree ( const std::string& descriptor )
   : LoKi::AuxFunBase ( std::tie ( descriptor ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , m_tree         ( s_TREE )
   , m_autovalidate ( true   )
 {
@@ -1151,9 +997,7 @@ LoKi::GenParticles::DecTree::DecTree
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::DecTree::result_type
-LoKi::GenParticles::DecTree::operator()
-  ( LoKi::GenParticles::DecTree::argument p ) const
+bool DecTree::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -1180,7 +1024,7 @@ LoKi::GenParticles::DecTree::operator()
 // ============================================================================
 // OPTIONAL: the nice printout
 // ============================================================================
-std::ostream& LoKi::GenParticles::DecTree::fillStream( std::ostream& s ) const
+std::ostream& DecTree::fillStream( std::ostream& s ) const
 {
   if ( !valid() ) { return s << "GDECTREE(invalid)" ; }
   return s << "GDECTREE( " << m_tree << ")";
@@ -1194,11 +1038,9 @@ std::ostream& LoKi::GenParticles::DecTree::fillStream( std::ostream& s ) const
  *  @param index  the index of daughter particle
  */
 // ============================================================================
-LoKi::GenParticles::ChildFun::ChildFun
-( const LoKi::GenTypes::GFunc& fun   ,
-  const unsigned int           index )
+ChildFun::ChildFun ( const LoKi::GenTypes::GFunc& fun   ,
+                     const unsigned int           index )
   : LoKi::AuxFunBase ( std::tie ( fun , index ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Function ()
   , m_fun   ( fun   )
   , m_child ( index )
 {}
@@ -1208,12 +1050,10 @@ LoKi::GenParticles::ChildFun::ChildFun
  *  @param index  the index of daughter particle
  */
 // ============================================================================
-LoKi::GenParticles::ChildFun::ChildFun
-( const LoKi::GenTypes::GFunc& fun   ,
-  const unsigned int           index1 ,
-  const unsigned int           index2 )
+ChildFun::ChildFun( const LoKi::GenTypes::GFunc& fun   ,
+                    const unsigned int           index1 ,
+                    const unsigned int           index2 )
   : LoKi::AuxFunBase ( std::tie ( fun , index1 , index2  ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Function ()
   , m_fun   ( fun             )
   , m_child ( index1 , index2 )
 {}
@@ -1223,11 +1063,9 @@ LoKi::GenParticles::ChildFun::ChildFun
  *  @param index  the index of daughter particle
  */
 // ============================================================================
-LoKi::GenParticles::ChildFun::ChildFun
-( const LoKi::GenTypes::GFunc& fun   ,
-  const std::vector<unsigned int>& indices )
+ChildFun::ChildFun ( const LoKi::GenTypes::GFunc& fun   ,
+                     const std::vector<unsigned int>& indices )
   : LoKi::AuxFunBase ( std::tie ( fun , indices ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Function ()
   , m_fun   ( fun   )
   , m_child ( indices )
 {
@@ -1239,11 +1077,9 @@ LoKi::GenParticles::ChildFun::ChildFun
  *  @param selector the child selector
  */
 // ============================================================================
-LoKi::GenParticles::ChildFun::ChildFun
-( const LoKi::GenTypes::GFunc&    fun      ,
-  const LoKi::GenChild::Selector& selector )
+ChildFun::ChildFun ( const LoKi::GenTypes::GFunc&    fun      ,
+                     const LoKi::GenChild::Selector& selector )
   : LoKi::AuxFunBase ( std::tie ( fun , selector ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Function ()
   , m_fun   ( fun      )
   , m_child ( selector )
 {
@@ -1255,11 +1091,9 @@ LoKi::GenParticles::ChildFun::ChildFun
  *  @param selector the child selector
  */
 // ============================================================================
-LoKi::GenParticles::ChildFun::ChildFun
-( const LoKi::GenTypes::GFunc& fun   ,
-  const std::string&           selector  )
+ChildFun::ChildFun ( const LoKi::GenTypes::GFunc& fun   ,
+                     const std::string&           selector  )
   : LoKi::AuxFunBase ( std::tie ( fun , selector ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Function ()
   , m_fun   ( fun      )
   , m_child ( selector )
 {
@@ -1271,11 +1105,9 @@ LoKi::GenParticles::ChildFun::ChildFun
  *  @param selector the child selector
  */
 // ============================================================================
-LoKi::GenParticles::ChildFun::ChildFun
-( const LoKi::GenTypes::GFunc&    fun       ,
-  const Decays::IGenDecay::iTree& selector  )
+ChildFun::ChildFun ( const LoKi::GenTypes::GFunc&    fun       ,
+                     const Decays::IGenDecay::iTree& selector  )
   : LoKi::AuxFunBase ( std::tie ( fun , selector ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Function ()
   , m_fun   ( fun      )
   , m_child ( selector )
 {
@@ -1287,11 +1119,9 @@ LoKi::GenParticles::ChildFun::ChildFun
  *  @param selector the child selector
  */
 // ============================================================================
-LoKi::GenParticles::ChildFun::ChildFun
-( const LoKi::GenTypes::GFunc& fun   ,
-  const Decays::iNode&         selector  )
+ChildFun::ChildFun ( const LoKi::GenTypes::GFunc& fun   ,
+                     const Decays::iNode&         selector  )
   : LoKi::AuxFunBase ( std::tie ( fun , selector ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Function ()
   , m_fun   ( fun      )
   , m_child ( selector )
 {
@@ -1303,11 +1133,9 @@ LoKi::GenParticles::ChildFun::ChildFun
  *  @param selector the child selector
  */
 // ============================================================================
-LoKi::GenParticles::ChildFun::ChildFun
-( const LoKi::GenTypes::GFunc& fun   ,
-  const LoKi::GenTypes::GCuts& selector  )
+ChildFun::ChildFun ( const LoKi::GenTypes::GFunc& fun   ,
+                     const LoKi::GenTypes::GCuts& selector  )
   : LoKi::AuxFunBase ( std::tie ( fun , selector ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Function ()
   , m_fun   ( fun      )
   , m_child ( selector )
 {
@@ -1316,15 +1144,12 @@ LoKi::GenParticles::ChildFun::ChildFun
 // ============================================================================
 // clone method  ("virtual destructor" )
 // ============================================================================
-LoKi::GenParticles::ChildFun*
-LoKi::GenParticles::ChildFun::clone() const
+ChildFun* ChildFun::clone() const
 { return new LoKi::GenParticles::ChildFun (*this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::ChildFun::result_type
-LoKi::GenParticles::ChildFun::operator()
-  ( LoKi::GenParticles::ChildFun::argument p ) const
+double ChildFun::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -1343,14 +1168,9 @@ LoKi::GenParticles::ChildFun::operator()
 // ============================================================================
 //  OPTIONAL:  specific printout
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::ChildFun::fillStream( std::ostream& s ) const
+std::ostream& ChildFun::fillStream( std::ostream& s ) const
 { return s << " GCHILD(" << m_fun << "," << m_child << " ) " ; }
 // ============================================================================
-
-
-
-
 
 
 // ============================================================================
@@ -1359,11 +1179,9 @@ LoKi::GenParticles::ChildFun::fillStream( std::ostream& s ) const
  *  @param index  the index of daughter particle
  */
 // ============================================================================
-LoKi::GenParticles::ChildCut::ChildCut
-( const LoKi::GenTypes::GCuts& fun   ,
-  const unsigned int           index )
+ChildCut::ChildCut ( const LoKi::GenTypes::GCuts& fun   ,
+                     const unsigned int           index )
   : LoKi::AuxFunBase ( std::tie ( fun , index ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate ()
   , m_fun   ( fun   )
   , m_child ( index )
 {}
@@ -1373,12 +1191,10 @@ LoKi::GenParticles::ChildCut::ChildCut
  *  @param index  the index of daughter particle
  */
 // ============================================================================
-LoKi::GenParticles::ChildCut::ChildCut
-( const LoKi::GenTypes::GCuts& fun   ,
-  const unsigned int           index1 ,
-  const unsigned int           index2 )
+ChildCut::ChildCut ( const LoKi::GenTypes::GCuts& fun   ,
+                     const unsigned int           index1 ,
+                     const unsigned int           index2 )
   : LoKi::AuxFunBase ( std::tie ( fun , index1 , index2 ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate ()
   , m_fun   ( fun             )
   , m_child ( index1 , index2 )
 {}
@@ -1388,11 +1204,9 @@ LoKi::GenParticles::ChildCut::ChildCut
  *  @param index  the index of daughter particle
  */
 // ============================================================================
-LoKi::GenParticles::ChildCut::ChildCut
-( const LoKi::GenTypes::GCuts& fun   ,
-  const std::vector<unsigned int>& indices )
+ChildCut::ChildCut ( const LoKi::GenTypes::GCuts& fun   ,
+                     const std::vector<unsigned int>& indices )
   : LoKi::AuxFunBase ( std::tie ( fun , indices ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate ()
   , m_fun   ( fun   )
   , m_child ( indices )
 {
@@ -1404,11 +1218,9 @@ LoKi::GenParticles::ChildCut::ChildCut
  *  @param selector the child selector
  */
 // ============================================================================
-LoKi::GenParticles::ChildCut::ChildCut
-( const LoKi::GenTypes::GCuts& fun   ,
-  const LoKi::GenChild::Selector& selector )
+ChildCut::ChildCut ( const LoKi::GenTypes::GCuts& fun   ,
+                     const LoKi::GenChild::Selector& selector )
   : LoKi::AuxFunBase ( std::tie ( fun , selector ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate ()
   , m_fun   ( fun      )
   , m_child ( selector )
 {
@@ -1420,11 +1232,9 @@ LoKi::GenParticles::ChildCut::ChildCut
  *  @param selector the child selector
  */
 // ============================================================================
-LoKi::GenParticles::ChildCut::ChildCut
-( const LoKi::GenTypes::GCuts& fun   ,
-  const std::string&           selector  )
+ChildCut::ChildCut ( const LoKi::GenTypes::GCuts& fun   ,
+                     const std::string&           selector  )
   : LoKi::AuxFunBase ( std::tie ( fun , selector ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate ()
   , m_fun   ( fun      )
   , m_child ( selector )
 {
@@ -1436,11 +1246,9 @@ LoKi::GenParticles::ChildCut::ChildCut
  *  @param selector the child selector
  */
 // ============================================================================
-LoKi::GenParticles::ChildCut::ChildCut
-( const LoKi::GenTypes::GCuts&    fun       ,
-  const Decays::IGenDecay::iTree& selector  )
+ChildCut::ChildCut ( const LoKi::GenTypes::GCuts&    fun       ,
+                     const Decays::IGenDecay::iTree& selector  )
   : LoKi::AuxFunBase ( std::tie ( fun , selector ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate ()
   , m_fun   ( fun      )
   , m_child ( selector )
 {
@@ -1452,11 +1260,9 @@ LoKi::GenParticles::ChildCut::ChildCut
  *  @param selector the child selector
  */
 // ============================================================================
-LoKi::GenParticles::ChildCut::ChildCut
-( const LoKi::GenTypes::GCuts& fun   ,
-  const Decays::iNode&         selector  )
+ChildCut::ChildCut ( const LoKi::GenTypes::GCuts& fun   ,
+                     const Decays::iNode&         selector  )
   : LoKi::AuxFunBase ( std::tie ( fun , selector ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate ()
   , m_fun   ( fun      )
   , m_child ( selector )
 {
@@ -1468,11 +1274,9 @@ LoKi::GenParticles::ChildCut::ChildCut
  *  @param selector the child selector
  */
 // ============================================================================
-LoKi::GenParticles::ChildCut::ChildCut
-( const LoKi::GenTypes::GCuts& fun   ,
-  const LoKi::GenTypes::GCuts& selector  )
+ChildCut::ChildCut ( const LoKi::GenTypes::GCuts& fun   ,
+                     const LoKi::GenTypes::GCuts& selector  )
   : LoKi::AuxFunBase ( std::tie ( fun , selector ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate ()
   , m_fun   ( fun      )
   , m_child ( selector )
 {
@@ -1481,15 +1285,12 @@ LoKi::GenParticles::ChildCut::ChildCut
 // ============================================================================
 // clone method  ("virtual destructor" )
 // ============================================================================
-LoKi::GenParticles::ChildCut*
-LoKi::GenParticles::ChildCut::clone() const
+ChildCut* ChildCut::clone() const
 { return new LoKi::GenParticles::ChildCut (*this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
 // ============================================================================
-LoKi::GenParticles::ChildCut::result_type
-LoKi::GenParticles::ChildCut::operator()
-  ( LoKi::GenParticles::ChildCut::argument p ) const
+bool ChildCut::operator() ( const HepMC::GenParticle* p ) const
 {
   if ( 0 == p )
   {
@@ -1508,85 +1309,72 @@ LoKi::GenParticles::ChildCut::operator()
 // ============================================================================
 //  OPTIONAL:  specific printout
 // ============================================================================
-std::ostream&
-LoKi::GenParticles::ChildCut::fillStream( std::ostream& s ) const
+std::ostream& ChildCut::fillStream( std::ostream& s ) const
 { return s << " GCHILDCUT(" << m_fun << "," << m_child << " ) " ; }
 // ============================================================================
 
 // ============================================================================
 // IsID
 // ============================================================================
-LoKi::GenParticles::IsID::IsID ( const long                      id  )
+IsID::IsID ( const long                      id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const unsigned long  id  )
+IsID::IsID( const unsigned long  id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const LHCb::ParticleID&         id  )
+IsID::IsID( const LHCb::ParticleID&         id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::string& id  )
+IsID::IsID( const std::string& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<int>& id  )
+IsID::IsID( const std::vector<int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<unsigned int>& id  )
+IsID::IsID( const std::vector<unsigned int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<long>& id  )
+IsID::IsID( const std::vector<long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<unsigned long>& id  )
+IsID::IsID( const std::vector<unsigned long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<LHCb::ParticleID>& id  )
+IsID::IsID( const std::vector<LHCb::ParticleID>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const std::vector<std::string>& id  )
+IsID::IsID( const std::vector<std::string>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID::IsID( const LoKi::Pids::GetPids& id  )
+IsID::IsID( const LoKi::Pids::GetPids& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
-  , LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate()
   , LoKi::Pids::GetPids ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsID*
-LoKi::GenParticles::IsID::clone() const
+IsID* IsID::clone() const
 { return new LoKi::GenParticles::IsID(*this) ; }
 // ============================================================================
-std::ostream& LoKi::GenParticles::IsID::fillStream( std::ostream& s ) const
+std::ostream& IsID::fillStream( std::ostream& s ) const
 {
   //
   s << "(GID== " ;
@@ -1601,9 +1389,7 @@ std::ostream& LoKi::GenParticles::IsID::fillStream( std::ostream& s ) const
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsID::result_type
-LoKi::GenParticles::IsID::operator()
-  ( LoKi::GenParticles::IsID::argument p ) const
+bool IsID::operator() ( const HepMC::GenParticle* p ) const
 {
   //
   if ( 0 == p )
@@ -1618,61 +1404,60 @@ LoKi::GenParticles::IsID::operator()
 // ============================================================================
 // IsNotID
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID ( const long                id  )
+IsNotID::IsNotID ( const long                id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const unsigned long  id  )
+IsNotID::IsNotID( const unsigned long  id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const LHCb::ParticleID&         id  )
+IsNotID::IsNotID( const LHCb::ParticleID&         id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::string& id  )
+IsNotID::IsNotID( const std::string& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<int>& id  )
+IsNotID::IsNotID( const std::vector<int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<unsigned int>& id  )
+IsNotID::IsNotID( const std::vector<unsigned int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<long>& id  )
+IsNotID::IsNotID( const std::vector<long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<unsigned long>& id  )
+IsNotID::IsNotID( const std::vector<unsigned long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<LHCb::ParticleID>& id  )
+IsNotID::IsNotID( const std::vector<LHCb::ParticleID>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID::IsNotID( const std::vector<std::string>& id  )
+IsNotID::IsNotID( const std::vector<std::string>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotID*
-LoKi::GenParticles::IsNotID::clone() const
-{ return new LoKi::GenParticles::IsNotID(*this) ; }
+IsNotID* IsNotID::clone() const
+{ return new IsNotID(*this) ; }
 // ============================================================================
-std::ostream& LoKi::GenParticles::IsNotID::fillStream( std::ostream& s ) const
+std::ostream& IsNotID::fillStream( std::ostream& s ) const
 {
   //
   s << "(GID!= " ;
@@ -1687,9 +1472,7 @@ std::ostream& LoKi::GenParticles::IsNotID::fillStream( std::ostream& s ) const
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsNotID::result_type
-LoKi::GenParticles::IsNotID::operator()
-  ( LoKi::GenParticles::IsNotID::argument p ) const
+bool IsNotID::operator() ( const HepMC::GenParticle* p ) const
 {
   //
   if ( 0 == p )
@@ -1703,66 +1486,66 @@ LoKi::GenParticles::IsNotID::operator()
 // ============================================================================
 // IsAbsID
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const long id  )
+IsAbsID::IsAbsID ( const long id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const unsigned long  id  )
+IsAbsID::IsAbsID ( const unsigned long  id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const LHCb::ParticleID&         id  )
+IsAbsID::IsAbsID ( const LHCb::ParticleID&         id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::string& id  )
+IsAbsID::IsAbsID ( const std::string& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<int>& id  )
+IsAbsID::IsAbsID ( const std::vector<int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<unsigned int>& id  )
+IsAbsID::IsAbsID ( const std::vector<unsigned int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<long>& id  )
+IsAbsID::IsAbsID ( const std::vector<long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<unsigned long>& id  )
+IsAbsID::IsAbsID ( const std::vector<unsigned long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<LHCb::ParticleID>& id  )
+IsAbsID::IsAbsID ( const std::vector<LHCb::ParticleID>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const std::vector<std::string>& id  )
+IsAbsID::IsAbsID ( const std::vector<std::string>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID::IsAbsID ( const LoKi::Pids::GetPids& id  )
+IsAbsID::IsAbsID ( const LoKi::Pids::GetPids& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsAbsID*
+IsAbsID*
 LoKi::GenParticles::IsAbsID::clone() const
 { return new LoKi::GenParticles::IsAbsID(*this) ; }
 // ============================================================================
-std::ostream& LoKi::GenParticles::IsAbsID::fillStream( std::ostream& s ) const
+std::ostream& IsAbsID::fillStream( std::ostream& s ) const
 {
   //
   s << "(GABSID== " ;
@@ -1777,9 +1560,7 @@ std::ostream& LoKi::GenParticles::IsAbsID::fillStream( std::ostream& s ) const
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsAbsID::result_type
-LoKi::GenParticles::IsAbsID::operator()
-  ( LoKi::GenParticles::IsAbsID::argument p ) const
+bool IsAbsID::operator() ( const HepMC::GenParticle* p ) const
 {
   //
   if ( 0 == p )
@@ -1794,67 +1575,66 @@ LoKi::GenParticles::IsAbsID::operator()
 // ============================================================================
 // IsNotAbsID
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const long         id  )
+IsNotAbsID::IsNotAbsID ( const long         id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const unsigned long id  )
+IsNotAbsID::IsNotAbsID ( const unsigned long id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const LHCb::ParticleID&         id  )
+IsNotAbsID::IsNotAbsID ( const LHCb::ParticleID&         id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::string& id  )
+IsNotAbsID::IsNotAbsID ( const std::string& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<int>& id  )
+IsNotAbsID::IsNotAbsID ( const std::vector<int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<unsigned int>& id  )
+IsNotAbsID::IsNotAbsID ( const std::vector<unsigned int>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<long>& id  )
+IsNotAbsID::IsNotAbsID ( const std::vector<long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<unsigned long>& id  )
+IsNotAbsID::IsNotAbsID ( const std::vector<unsigned long>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<LHCb::ParticleID>& id  )
+IsNotAbsID::IsNotAbsID ( const std::vector<LHCb::ParticleID>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const std::vector<std::string>& id  )
+IsNotAbsID::IsNotAbsID ( const std::vector<std::string>& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::IsNotAbsID ( const LoKi::Pids::GetPids& id  )
+IsNotAbsID::IsNotAbsID ( const LoKi::Pids::GetPids& id  )
   : LoKi::AuxFunBase ( std::tie ( id ) )
   , LoKi::GenParticles::IsAbsID ( id )
 {}
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID*
-LoKi::GenParticles::IsNotAbsID::clone() const
-{ return new LoKi::GenParticles::IsNotAbsID(*this) ; }
+IsNotAbsID* IsNotAbsID::clone() const
+{ return new IsNotAbsID(*this) ; }
 // ============================================================================
 
-std::ostream& LoKi::GenParticles::IsNotAbsID::fillStream( std::ostream& s ) const
+std::ostream& IsNotAbsID::fillStream( std::ostream& s ) const
 {
   //
   s << "(GABSID!= " ;
@@ -1869,9 +1649,7 @@ std::ostream& LoKi::GenParticles::IsNotAbsID::fillStream( std::ostream& s ) cons
 // ============================================================================
 // the only one essential method
 // ============================================================================
-LoKi::GenParticles::IsNotAbsID::result_type
-LoKi::GenParticles::IsNotAbsID::operator()
-  ( LoKi::GenParticles::IsNotAbsID::argument p ) const
+bool IsNotAbsID::operator() ( const HepMC::GenParticle* p ) const
 {
   //
   if ( 0 == p )
@@ -1888,7 +1666,7 @@ LoKi::GenParticles::IsNotAbsID::operator()
 // ============================================================================
 // get unique string for HepMC::Particle
 // ============================================================================
-std::string LoKi::GenParticles::hex_id ( const HepMC::GenParticle* particle )
+std::string hex_id ( const HepMC::GenParticle* particle )
 {
   if ( 0 == particle ) { return "NULL" ; }
   boost::format fmt ( "%p" ) ;
@@ -1908,16 +1686,17 @@ namespace
 // ============================================================================
 // get hash function for HepMC::GenParticle
 // ============================================================================
-std::size_t LoKi::GenParticles::hash ( const HepMC::GenParticle* particle )
+std::size_t hash ( const HepMC::GenParticle* particle )
 { return 0 == particle ? 0 : s_hash ( particle ) ; }
 // ============================================================================
 // get hash function for HepMC::GenVertex
 // ============================================================================
-std::size_t LoKi::GenParticles::hash ( const HepMC::GenVertex*   vertex )
+std::size_t hash ( const HepMC::GenVertex*   vertex )
 { return 0 == vertex ? 0 : s_hash( vertex ) ; }
 
 
-
+}
+}
 // ============================================================================
 // The END
 // ============================================================================

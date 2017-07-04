@@ -5,6 +5,7 @@
 #include <numeric>
 #include <vector>
 #include <utility>
+#include <math.h>
 
 
 /** @namespace ModeFunctions ModeFunctions.h "ModeFunctions.h

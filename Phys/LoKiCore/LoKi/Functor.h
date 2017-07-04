@@ -6,7 +6,6 @@
 // ============================================================================
 // STD & STL
 // ============================================================================
-#include <functional>
 #include <memory>
 // ============================================================================
 // GaudiKernel
@@ -30,7 +29,7 @@ namespace LoKi
   // ==========================================================================
   /** @class Functor Functor.h LoKi/Functor.h
    *  The most generic LoKi-functor, needed for implementation
-   *  of numerious brilliant ideas by Gerhard "The Great".
+   *  of numerious brilliant ideas by Gerhard.
    *
    *  This file is a part of LoKi project -
    *  ``C++ ToolKit  for Smart and Friendly Physics Analysis''
@@ -46,18 +45,6 @@ namespace LoKi
   template <class TYPE,class TYPE2>
   class Functor : public virtual LoKi::AuxFunBase
   {
-  public:
-    /// =======================================================================
-    /// parameters: argument
-    typedef TYPE  Type1 ;                               // parameters: argument
-    /// parameters: return value
-    typedef TYPE2 Type2 ;                           // parameters: return value
-    /// =======================================================================
-  public:
-    // ========================================================================
-    /// the type of the argument
-    typedef TYPE                                                Type          ;
-    // ========================================================================
   public:  // STD (fake) signature
     // ========================================================================
     /// STL: the result value
@@ -73,15 +60,13 @@ namespace LoKi
   public:
     // ========================================================================
     /// the only one essential method ("function")
-    virtual result_type operator () ( argument    ) const = 0 ;
+    virtual TYPE2 operator() ( argument    ) const = 0 ;
     /// the only one essential method ("function")
-    virtual result_type evaluate    ( argument  a ) const
-    { return (*this)( a ) ; }
+    virtual TYPE2 evaluate( argument  a ) const { return (*this)( a ) ; }
     /// the only one essential method ("function")
-    virtual result_type eval        ( argument  a ) const
-    { return (*this)( a ) ; }
+    virtual TYPE2 eval( argument  a ) const { return (*this)( a ) ; }
     /// clone method
-    virtual  Functor* clone    ()                   const = 0 ;
+    virtual  Functor* clone() const = 0 ;
     /// virtual destructor
     virtual ~Functor() = default;
     // ========================================================================
@@ -112,11 +97,6 @@ namespace LoKi
     // ========================================================================
     /// the underlying type of functor
     typedef LoKi::Functor<TYPE,TYPE2>   functor ;               // functor type
-    // ========================================================================
-  protected:
-    // ========================================================================
-    /// own type
-    typedef FunctorFromFunctor<TYPE,TYPE2> Self ;               // the own type
     // ========================================================================
   public:
     // ========================================================================
@@ -158,7 +138,7 @@ namespace LoKi
     FunctorFromFunctor* clone() const override
     { return new FunctorFromFunctor ( *this ) ; }
     /// MANDATORY: the only one essential method
-    typename functor::result_type
+    TYPE2
     operator()( typename functor::argument a ) const override
     { return fun ( a ) ; }
     /// OPTIONAL: the basic printout method, delegate to the underlying object
@@ -172,15 +152,14 @@ namespace LoKi
     std::string   toCpp   () const override { return m_fun -> toCpp  () ; }
     // ========================================================================
     /// evaluate the function
-    inline typename functor::result_type fun
-    ( typename functor::argument a ) const { return (*m_fun) ( a ) ; }
+    auto fun( typename functor::argument a ) const { return (*m_fun) ( a ) ; }
     // accessor to the function
     inline const functor& func () const { return *m_fun ; }
     // ========================================================================
   private:
     // ========================================================================
-    /// the actual underlaying function // TODO: consider std::shared_ptr... or small object optimization, or both...
-    std::unique_ptr<const functor> m_fun ;           // the underlaying functor
+    /// the actual underlying function // TODO: consider std::shared_ptr... or small object optimization, or both...
+    std::unique_ptr<const functor> m_fun ;           // the underlying functor
     // ========================================================================
   };
   // ==========================================================================
@@ -203,19 +182,23 @@ namespace LoKi
     // ========================================================================
     /// constructor
     Constant ( T2 value )
-      : LoKi::AuxFunBase ( std::tie( value ) )
+      : LoKi::AuxFunBase ( std::tie(value) )
       , m_value ( std::move(value) )
     {}
     // ========================================================================
   public:
     // ========================================================================
-    /// assignement
-    Constant& operator=( T2 right )
-    { m_value = right         ; return *this ; }
+    /// assignment
+    template <typename Arg,
+              typename = std::enable_if_t<std::is_assignable<TYPE2,Arg>::value>>
+    Constant& operator=( const Arg& arg )
+    { m_value = arg; return *this ; }
+    Constant& operator=( TYPE2&& arg )
+    { m_value = std::move(arg); return *this ; }
     /// clone method (mandatory)
-    Constant* clone   () const override { return new Constant( *this ) ; }
+    Constant* clone() const override { return new Constant( *this ) ; }
     /// the only one essential method ("function")
-    typename LoKi::Functor<TYPE,TYPE2>::result_type operator()
+    TYPE2 operator()
       ( typename LoKi::Functor<TYPE,TYPE2>::argument ) const override { return m_value ; }
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override ;
@@ -233,22 +216,8 @@ namespace LoKi
   {
   public:
     /// =======================================================================
-    /// parameters: argument
-    typedef void  Type1 ;                               // parameters: argument
-    /// parameters: return value
-    typedef TYPE2 Type2 ;                           // parameters: return value
-    /// =======================================================================
-  private:
-    // ========================================================================
-    /// STD signature (fake base)
-    typedef typename std::unary_function<void,TYPE2>                   Base_1 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// the type of the argument
-    typedef void                                                Type          ;
     /// the result value
-    typedef typename Base_1::result_type                        result_type   ;
+    typedef TYPE2                                               result_type   ;
     /// the basic argument type
     typedef void                                                argument_type ;
     /// type for the argument
@@ -257,13 +226,13 @@ namespace LoKi
   public:
     // ========================================================================
     /// the only one essential method ("function")
-    virtual result_type operator () ( /* argument */ ) const = 0 ;
+    virtual TYPE2  operator () (  ) const = 0 ;
     /// the only one essential method ("function")
-    virtual result_type evaluate    ( /* argument */ ) const
-    { return (*this) ( /* */ ) ; }
+    virtual TYPE2  evaluate    (  ) const
+    { return (*this) (  ) ; }
     /// the only one essential method ("function")
-    virtual result_type eval        ( /* argument */ ) const
-    { return (*this) ( /* */ ) ; }
+    virtual TYPE2  eval        (  ) const
+    { return (*this) ( ) ; }
     /// clone method
     virtual  Functor* clone    ()                   const = 0 ;
     /// virtual destructor
@@ -292,11 +261,6 @@ namespace LoKi
     // ========================================================================
     /// the underlying type of functor
     typedef LoKi::Functor<void,TYPE2>   functor ;     // the underlying functor
-    // ========================================================================
-  protected:
-    // ========================================================================
-    /// own type
-    typedef FunctorFromFunctor<void,TYPE2> Self ;               // the own type
     // ========================================================================
   public:
     // ========================================================================
@@ -338,7 +302,7 @@ namespace LoKi
     FunctorFromFunctor* clone() const override
     { return new FunctorFromFunctor ( *this ) ; }
     /// MANDATORY: the only one essential method
-    typename functor::result_type operator()() const override
+    TYPE2 operator()() const override
     { return fun ( ) ; }
     /// OPTIONAL: the basic printout method, delegate to the underlying object
     std::ostream& fillStream( std::ostream& s ) const override
@@ -353,14 +317,14 @@ namespace LoKi
   public:
     // ========================================================================
     /// evaluate the function
-    inline typename functor::result_type fun( ) const { return (*m_fun)( ) ; }
+    decltype(auto) fun( ) const { return (*m_fun)( ) ; }
     // accessor to the function
-    inline const functor& func () const { return *m_fun ; }
+    const functor& func () const { return *m_fun ; }
     // ========================================================================
   private:
     // ========================================================================
     /// the underlaying function
-    std::unique_ptr<const functor> m_fun ;           // the underlaying functor
+    std::unique_ptr<const functor> m_fun ;           // the underlying functor
     // ========================================================================
   } ;
   // ==========================================================================
@@ -378,20 +342,22 @@ namespace LoKi
     /// constructor
     Constant ( T2 value )
       : LoKi::AuxFunBase ( std::tie( value ) )
-      , m_value ( value )
+      , m_value ( std::move(value) )
     {}
     // ========================================================================
   public:
     // ========================================================================
     /// assignement
-    Constant& operator=( const Constant& right ) = default;
-    /// assignement
-    Constant& operator=( T2 right )
-    { m_value = right         ; return *this ; }
+    template <typename Arg,
+              typename = std::enable_if_t<std::is_assignable<TYPE2,Arg>::value>>
+    Constant& operator=( const Arg& arg )
+    { m_value = arg; return *this ; }
+    Constant& operator=( TYPE2&& arg )
+    { m_value = std::move(arg); return *this ; }
     /// clone method (mandatory)
-    Constant* clone   () const override { return new Constant( *this ) ; }
+    Constant* clone() const override { return new Constant( *this ) ; }
     /// the only one essential method ("function")
-    typename LoKi::Functor<void,TYPE2>::result_type operator()() const override
+    TYPE2 operator()() const override
     { return m_value ; }
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override;
@@ -421,9 +387,9 @@ namespace LoKi
   namespace details {
 
       template <typename T, typename U>
-      using decays_to = typename std::conditional< std::is_void<U>::value,
-                                          typename std::is_void<T>::type,
-                                          typename std::is_convertible<typename std::decay<T>::type*, U*>::type >::type;
+      using decays_to = std::conditional_t<std::is_void<U>::value,
+                                           typename std::is_void<T>::type,
+                                           typename std::is_convertible<std::decay_t<T>*, U*>::type >;
 
       // is Derived derived from Base<Args...>?
       template <template <typename ...> class Base, typename Derived>
@@ -432,7 +398,7 @@ namespace LoKi
           static std::true_type  test(Base<Args...>*);
           static std::false_type test(void*);
 
-          using type = decltype(test(std::declval<typename std::decay<Derived>::type*>()));
+          using type = decltype(test(std::declval<std::decay_t<Derived>*>()));
       };
 
       template <typename T>
@@ -441,37 +407,26 @@ namespace LoKi
       // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE?
       // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE2?
       template <typename T,
-                typename = typename std::enable_if<is_functor<T>::value>::type>
-      struct LF {
-          using U = typename std::decay<T>::type;
+                typename = std::enable_if_t<is_functor<T>::value>>
+      struct LF_ {
+          using U = std::decay_t<T>;
           template <typename T1, typename T2> static T1 test1( LoKi::Functor<T1,T2>* );
           template <typename T1, typename T2> static T2 test2( LoKi::Functor<T1,T2>* );
           using type1 = decltype( test1(std::declval<U*>()) );
           using type2 = decltype( test2(std::declval<U*>()) );
       };
+      template <typename... Fs> using type1_t = std::common_type_t<typename LF_<Fs>::type1...>;
+      template <typename... Fs> using type2_t = std::common_type_t<typename LF_<Fs>::type2...>;
 
-      // ( F1 = LoKi::Functor<TYPE,TYPE2> , F2 = LoKi::Functor<TYPE,TYPE2> ) -> TYPE
-      // ( F1 = LoKi::Functor<TYPE,TYPE2> , F2 = LoKi::Functor<TYPE,TYPE2> ) -> TYPE2
-      template <typename F1, typename F2,
-                typename = typename std::enable_if<is_functor<F1>::value
-                                               &&  is_functor<F2>::value
-                                               // the following is not strictly neccessary anymore...
-                                               &&  std::is_same< typename LF<F1>::type1, typename LF<F2>::type1 >::value
-                                               &&  std::is_same< typename LF<F1>::type2, typename LF<F2>::type2 >::value
-                                               >::type>
-      struct LF2 {
-          using type1 = typename std::common_type< typename LF<F1>::type1,
-                                                   typename LF<F2>::type1 >::type;
-          using type2 = typename std::common_type< typename LF<F1>::type2,
-                                                   typename LF<F2>::type2 >::type;
-      };
+      template <typename F> using result_t   = type2_t<F>;
+      template <typename F> using argument_t = typename boost::call_traits<std::add_const_t<type1_t<F>>>::param_type;
 
       template <typename F, typename TYPE1, typename TYPE2>
-      using require_signature = typename
-          std::enable_if<   decays_to<typename LF<F>::type1, TYPE1>::value
-                         && decays_to<typename LF<F>::type2, TYPE2>::value >::type;
-  }
+      using require_signature =
+          std::enable_if_t<   decays_to<type1_t<F>, TYPE1>::value
+                           && decays_to<type2_t<F>, TYPE2>::value >;
 
+  }
 
   // ==========================================================================
 } //                                                      end of namespace LoKi

@@ -39,6 +39,9 @@ public:
             const double       yHalf ,
             const double       zHalf);
 
+  SolidBox           ( const SolidBox & ) = delete;  ///< no copy-constructor
+  SolidBox& operator=( const SolidBox & ) = delete;  ///< no assignment
+
   /** destructor
    */
   ~SolidBox() override;
@@ -219,11 +222,8 @@ protected:
    */
   void setBP() ;
 
+
 private:
-
-  SolidBox           ( const SolidBox & );  ///< no copy-constructor
-  SolidBox& operator=( const SolidBox & );  ///< no assignment
-
   /**
    * implementation of isInside
    * @param  point reference to any kind of point with x(), y(), z()

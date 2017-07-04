@@ -3,6 +3,7 @@
 
 #include "Kernel/Trajectory.h"
 #include "GaudiKernel/SystemOfUnits.h"
+#include <boost/pool/poolfwd.hpp>
 
 /*****************************/
 /* class representing a piecewise trajectory, with pieces of fixed length, parameterized along y */

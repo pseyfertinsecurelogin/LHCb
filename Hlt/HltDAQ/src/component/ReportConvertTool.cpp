@@ -204,17 +204,9 @@ namespace {
       , { 6
         , {{"0#Particle.particleID.pid",                {0, 0}}
           , {"1#Particle.measuredMass",                 {1, 1}}
-          , {"2#Particle.referencePoint.z",            {12, 2}}
-          , {"3#Particle.referencePoint.x",            {23, 3}}
-          , {"4#Particle.referencePoint.y",            {34, 4}}
-          , {"5#Particle.slopes.x",                    {37, 5}}
-          , {"6#Particle.slopes.y",                    {38, 6}}
-          , {"7#Particle.1/p",                         {39, 7}}
-          , {"8#Particle.conflevel",                   {40, 8}}
-          , {"9#Particle.massErr",                     {41, 9}}
-          , {"10#Particle.momCov00",                   {2, 10}}
-          , {"11#Particle.momCov11",                   {3, 11}}
-          , {"12#Particle.momCov22",                   {4, 12}}
+          , {"10#Particle.momCov00",                    {2,10}}
+          , {"11#Particle.momCov11",                    {3,11}}
+          , {"12#Particle.momCov22",                    {4,12}}
           , {"13#Particle.momCov33",                    {5,13}}
           , {"14#Particle.momCov10",                    {6,14}}
           , {"15#Particle.momCov20",                    {7,15}}
@@ -222,6 +214,7 @@ namespace {
           , {"17#Particle.momCov30",                    {9,17}}
           , {"18#Particle.momCov31",                   {10,18}}
           , {"19#Particle.momCov32",                   {11,19}}
+          , {"2#Particle.referencePoint.z",            {12, 2}}
           , {"20#Particle.posmomCov00",                {13,20}}
           , {"21#Particle.posmomCov11",                {14,21}}
           , {"22#Particle.posmomCov22",                {15,22}}
@@ -232,6 +225,7 @@ namespace {
           , {"27#Particle.posmomCov21",                {20,27}}
           , {"28#Particle.posmomCov12",                {21,28}}
           , {"29#Particle.posmomCov30",                {22,29}}
+          , {"3#Particle.referencePoint.x",            {23, 3}}
           , {"30#Particle.posmomCov31",                {24,30}}
           , {"31#Particle.posmomCov32",                {25,31}}
           , {"32#Particle.posCov00",                   {26,32}}
@@ -242,8 +236,14 @@ namespace {
           , {"37#Particle.posCov21",                   {31,37}}
           , {"38#Particle.raw.m",                      {32,38}}
           , {"39#Particle.raw.p1",                     {33,39}}
+          , {"4#Particle.referencePoint.y",            {34, 4}}
           , {"40#Particle.raw.p2",                     {35,40}}
-          , {"41#Particle.raw.p3",                     {36,41}}}
+          , {"41#Particle.raw.p3",                     {36,41}}
+          , {"5#Particle.slopes.x",                    {37, 5}}
+          , {"6#Particle.slopes.y",                    {38, 6}}
+          , {"7#Particle.1/p",                         {39, 7}}
+          , {"8#Particle.conflevel",                   {40, 8}}
+          , {"9#Particle.massErr",                     {41, 9}}}
       }
     };
     //===========================================================================
@@ -546,14 +546,6 @@ namespace {
       , { 11
         , {{"0#Proto.extraInfo.IsPhoton",               { 0, 0}}
         ,  {"1#Proto.extraInfo.IsNotE",                 { 1, 1}}
-        ,  {"2#Proto.extraInfo.IsNotH",                 {12, 2}}
-        ,  {"3#Proto.extraInfo.EcalPIDe",               {23, 3}}
-        ,  {"4#Proto.extraInfo.PrsPIDe",                {34, 4}}
-        ,  {"5#Proto.extraInfo.BremPIDe",               {45, 5}}
-        ,  {"6#Proto.extraInfo.HcalPIDe",               {55, 6}}
-        ,  {"7#Proto.extraInfo.HcalPIDmu",              {63, 7}}
-        ,  {"8#Proto.extraInfo.EcalPIDmu",              {64, 8}}
-        ,  {"9#Proto.extraInfo.CaloTrMatch",            {65, 9}}
         ,  {"10#Proto.extraInfo.CaloElectronMatch",     { 2,10}}
         ,  {"11#Proto.extraInfo.CaloBremMatch",         { 3,11}}
         ,  {"12#Proto.extraInfo.CaloNeutralSpd",        { 4,12}}
@@ -564,6 +556,7 @@ namespace {
         ,  {"17#Proto.extraInfo.CaloNeutralID",         { 9,17}}
         ,  {"18#Proto.extraInfo.CaloDepositID",         {10,18}}
         ,  {"19#Proto.extraInfo.ShowerShape",           {11,19}}
+        ,  {"2#Proto.extraInfo.IsNotH",                 {12, 2}}
         ,  {"20#Proto.extraInfo.ClusterMass",           {13,20}}
         ,  {"21#Proto.extraInfo.CaloSpdE",              {14,21}}
         ,  {"22#Proto.extraInfo.CaloPrsE",              {15,22}}
@@ -574,6 +567,7 @@ namespace {
         ,  {"27#Proto.extraInfo.CaloClusChi2",          {20,27}}
         ,  {"28#Proto.extraInfo.CaloNeutralPrsM",       {21,28}}
         ,  {"29#Proto.extraInfo.CaloShapeFr2r4",        {22,29}}
+        ,  {"3#Proto.extraInfo.EcalPIDe",               {23, 3}}
         ,  {"30#Proto.extraInfo.CaloShapeKappa",        {24,30}}
         ,  {"31#Proto.extraInfo.CaloShapeAsym",         {25,31}}
         ,  {"32#Proto.extraInfo.CaloShapeE1",           {26,32}}
@@ -584,6 +578,7 @@ namespace {
         ,  {"37#Proto.extraInfo.CaloPrsShapeAsym",      {31,37}}
         ,  {"38#Proto.extraInfo.CaloPrsM",              {32,38}}
         ,  {"39#Proto.extraInfo.CaloPrsM15",            {33,39}}
+        ,  {"4#Proto.extraInfo.PrsPIDe",                {34, 4}}
         ,  {"40#Proto.extraInfo.CaloPrsM30",            {35,40}}
         ,  {"41#Proto.extraInfo.CaloPrsM45",            {36,41}}
         ,  {"42#Proto.extraInfo.CaloClusterCode",       {37,42}}
@@ -594,6 +589,7 @@ namespace {
         ,  {"47#Proto.extraInfo.CombDLLk",              {42,47}}
         ,  {"48#Proto.extraInfo.CombDLLp",              {43,48}}
         ,  {"49#Proto.extraInfo.InAccBrem",             {44,49}}
+        ,  {"5#Proto.extraInfo.BremPIDe",               {45, 5}}
         ,  {"50#Proto.extraInfo.InAccSpd",              {46,50}}
         ,  {"51#Proto.extraInfo.InAccPrs",              {47,51}}
         ,  {"52#Proto.extraInfo.InAccEcal",             {48,52}}
@@ -603,6 +599,7 @@ namespace {
         ,  {"57#Proto.extraInfo.CaloChargedEcal",       {52,57}}
         ,  {"58#Proto.extraInfo.CaloChargedPrs",        {53,58}}
         ,  {"59#Proto.extraInfo.CaloChargedSpd",        {54,59}}
+        ,  {"6#Proto.extraInfo.HcalPIDe",               {55, 6}}
         ,  {"60#Proto.extraInfo.ProbNNe",               {56,60}}
         ,  {"61#Proto.extraInfo.ProbNNmu",              {57,61}}
         ,  {"62#Proto.extraInfo.ProbNNpi",              {58,62}}
@@ -610,11 +607,14 @@ namespace {
         ,  {"64#Proto.extraInfo.ProbNNp",               {60,64}}
         ,  {"65#Proto.extraInfo.ProbNNghost",           {61,65}}
         ,  {"66#Proto.extraInfo.CombDLLd",              {62,66}}
-        ,  {"67#Proto.extraInfo.MuonChi2Corr",          {66,67}}
-        ,  {"68#Proto.extraInfo.MuonMVA1",              {67,68}}
-        ,  {"69#Proto.extraInfo.MuonMVA2",              {68,69}}
-        ,  {"70#Proto.extraInfo.MuonMVA3",              {69,70}}
-        ,  {"71#Proto.extraInfo.MuonMVA4",              {70,71}}}
+        ,  {"67#Proto.extraInfo.MuonChi2Corr",          {63,67}}
+        ,  {"68#Proto.extraInfo.MuonMVA1",              {64,68}}
+        ,  {"69#Proto.extraInfo.MuonMVA2",              {65,69}}
+        ,  {"7#Proto.extraInfo.HcalPIDmu",              {66, 7}}
+        ,  {"70#Proto.extraInfo.MuonMVA3",              {67,70}}
+        ,  {"71#Proto.extraInfo.MuonMVA4",              {68,71}}
+        ,  {"8#Proto.extraInfo.EcalPIDmu",              {69, 8}}
+        ,  {"9#Proto.extraInfo.CaloTrMatch",            {70, 9}}}
       }
     };
     //===========================================================================
@@ -677,14 +677,6 @@ namespace {
 
       { 5 , {{"0#Track.firstState.z",           { 0, 0}},
              {"1#Track.firstState.x",           { 1, 1}},
-             {"2#Track.firstState.y",           {12, 2}},
-             {"3#Track.firstState.tx",          {23, 3}},
-             {"4#Track.firstState.ty",          {34, 4}},
-             {"5#Track.firstState.qOverP",      {35, 5}},
-             {"6#Track.chi2PerDoF",             {36, 6}},
-             {"7#Track.nDoF",                   {37, 7}},
-             {"8#Track.Likelihood",             {38, 8}},
-             {"9#Track.GhostProb",              {39, 9}},
              {"10#Track.flags",                 { 2,10}},
              {"11#Track.lastState.z",           { 3,11}},
              {"12#Track.lastState.x",           { 4,12}},
@@ -695,6 +687,7 @@ namespace {
              {"17#Track.CloneDist",             { 9,17}},
              {"18#Track.FitMatchChi2",          {10,18}},
              {"19#Track.FitVeloChi2",           {11,19}},
+             {"2#Track.firstState.y",           {12, 2}},
              {"20#Track.FitTChi2",              {13,20}},
              {"21#Track.FitVeloNDoF",           {14,21}},
              {"22#Track.FitTNDoF",              {15,22}},
@@ -705,6 +698,7 @@ namespace {
              {"27#Track.firstStateCov22",       {20,27}},
              {"28#Track.firstStateCov33",       {21,28}},
              {"29#Track.firstStateCov44",       {22,29}},
+             {"3#Track.firstState.tx",          {23, 3}},
              {"30#Track.firstStateCov01",       {24,30}},
              {"31#Track.firstStateCov02",       {25,31}},
              {"32#Track.firstStateCov03",       {26,32}},
@@ -714,7 +708,13 @@ namespace {
              {"36#Track.firstStateCov14",       {30,36}},
              {"37#Track.firstStateCov23",       {31,37}},
              {"38#Track.firstStateCov24",       {32,38}},
-             {"39#Track.firstStateCov34",       {33,39}}}
+             {"39#Track.firstStateCov34",       {33,39}},
+             {"4#Track.firstState.ty",          {34, 4}},
+             {"5#Track.firstState.qOverP",      {35, 5}},
+             {"6#Track.chi2PerDoF",             {36, 6}},
+             {"7#Track.nDoF",                   {37, 7}},
+             {"8#Track.Likelihood",             {38, 8}},
+             {"9#Track.GhostProb",              {39, 9}}}
       }
     };
     //===========================================================================
@@ -790,7 +790,7 @@ namespace {
 
     //===========================================================================
     /// Version unordered_map for LHCb::MuonPID in the Turbo stream
-    unordered_map<int, unordered_map<string,pair<int,int> > > const s_mpid_unordered_map2_Turbo {
+    static const unordered_map<int, unordered_map<string,pair<int,int> > > s_mpid_unordered_map2_Turbo {
       { 3
         , {{"0#Muon.MuonLLMu",                  {0,0}}
           , {"1#Muon.MuonLLBg",                 {1,1}}
@@ -810,18 +810,18 @@ namespace {
           , {"6#Muon.IsMuonTight",              {6,6}}}
       }
       , { 11
-        , {{"0#Muon.MuonLLMu",                  {0,0}}
-          , {"1#Muon.MuonLLBg",                 {1,1}}
-          , {"2#Muon.NShared",                  {2,2}}
-          , {"3#Muon.Status",                   {3,3}}
-          , {"4#Muon.IsMuon",                   {4,4}}
-          , {"5#Muon.IsMuonLoose",              {5,5}}
-          , {"6#Muon.IsMuonTight",              {6,6}}
-          , {"7#Muon.chi2Corr",                 {7,7}}
-          , {"8#Muon.muonMVA1",                 {8,8}}
-          , {"9#Muon.muonMVA2",                 {9,9}}
-          , {"10#Muon.muonMVA3",                {10,10}}
-          , {"11#Muon.muonMVA4",                {11,11}}}
+        , {{"0#Muon.MuonLLMu",                  { 0, 0}}
+          , {"1#Muon.MuonLLBg",                 { 1, 1}}
+          , {"10#Muon.muonMVA3",                { 2,10}}
+          , {"11#Muon.muonMVA4",                { 3,11}}
+          , {"2#Muon.NShared",                  { 4, 2}}
+          , {"3#Muon.Status",                   { 5, 3}}
+          , {"4#Muon.IsMuon",                   { 6, 4}}
+          , {"5#Muon.IsMuonLoose",              { 7, 5}}
+          , {"6#Muon.IsMuonTight",              { 8, 6}}
+          , {"7#Muon.chi2Corr",                 { 9, 7}}
+          , {"8#Muon.muonMVA1",                 {10, 8}}
+          , {"9#Muon.muonMVA2",                 {11, 9}}}
       }
     };
     //===========================================================================
@@ -964,18 +964,18 @@ namespace {
           , {"11#Vertex.cov21",             {3,11}}}
       }
       , { 4
-        , {{"0#Vertex.chi2",                {0,0}}
-          , {"1#Vertex.ndf",                {1,1}}
-          , {"2#Vertex.position.x",         {4,2}}
-          , {"3#Vertex.position.y",         {5,3}}
-          , {"4#Vertex.position.z",         {6,4}}
-          , {"5#Vertex.technique",          {7,5}}
-          , {"6#Vertex.cov00",              {8,6}}
-          , {"7#Vertex.cov11",              {9,7}}
-          , {"8#Vertex.cov22",             {10,8}}
-          , {"9#Vertex.cov10",             {11,9}}
-          , {"10#Vertex.cov20",             {2,10}}
-          , {"11#Vertex.cov21",             {3,11}}}
+        , {{"0#Vertex.chi2",               { 0, 0}}
+          , {"1#Vertex.ndf",               { 1, 1}}
+          , {"10#Vertex.cov20",            { 2,10}}
+          , {"11#Vertex.cov21",            { 3,11}}
+          , {"2#Vertex.position.x",        { 4, 2}}
+          , {"3#Vertex.position.y",        { 5, 3}}
+          , {"4#Vertex.position.z",        { 6, 4}}
+          , {"5#Vertex.technique",         { 7, 5}}
+          , {"6#Vertex.cov00",             { 8, 6}}
+          , {"7#Vertex.cov11",             { 9, 7}}
+          , {"8#Vertex.cov22",             {10, 8}}
+          , {"9#Vertex.cov10",             {11, 9}}}
       }
     };
     //===========================================================================
@@ -1011,29 +1011,29 @@ namespace {
           , {"21#RecSummary.nMuonTracks",              {14,21}}}
       }
       , { 6
-        , {{"0#RecSummary.nLongTracks",                {0,0}}
-          , {"1#RecSummary.nDownstreamTracks",         {1,1}}
-          , {"2#RecSummary.nUpstreamTracks",           {12,2}}
-          , {"3#RecSummary.nVeloTracks",               {16,3}}
-          , {"4#RecSummary.nTTracks",                  {17,4}}
-          , {"5#RecSummary.nBackTracks",               {18,5}}
-          , {"6#RecSummary.nTracks",                   {19,6}}
-          , {"7#RecSummary.nRich1Hits",                {20,7}}
-          , {"8#RecSummary.nRich2Hits",                {21,8}}
-          , {"9#RecSummary.nVeloClusters",             {22,9}}
-          , {"10#RecSummary.nITClusters",              {2,10}}
-          , {"11#RecSummary.nTTClusters",              {3,11}}
-          , {"12#RecSummary.nUTClusters",              {4,12}}
-          , {"13#RecSummary.nOTClusters",              {5,13}}
-          , {"14#RecSummary.nFTClusters",              {6,14}}
-          , {"15#RecSummary.nSPDhits",                 {7,15}}
-          , {"16#RecSummary.nMuonCoordsS0",            {8,16}}
-          , {"17#RecSummary.nMuonCoordsS1",            {9,17}}
+        , {{"0#RecSummary.nLongTracks",                { 0, 0}}
+          , {"1#RecSummary.nDownstreamTracks",         { 1, 1}}
+          , {"10#RecSummary.nITClusters",              { 2,10}}
+          , {"11#RecSummary.nTTClusters",              { 3,11}}
+          , {"12#RecSummary.nUTClusters",              { 4,12}}
+          , {"13#RecSummary.nOTClusters",              { 5,13}}
+          , {"14#RecSummary.nFTClusters",              { 6,14}}
+          , {"15#RecSummary.nSPDhits",                 { 7,15}}
+          , {"16#RecSummary.nMuonCoordsS0",            { 8,16}}
+          , {"17#RecSummary.nMuonCoordsS1",            { 9,17}}
           , {"18#RecSummary.nMuonCoordsS2",            {10,18}}
           , {"19#RecSummary.nMuonCoordsS3",            {11,19}}
+          , {"2#RecSummary.nUpstreamTracks",           {12, 2}}
           , {"20#RecSummary.nMuonCoordsS4",            {13,20}}
           , {"21#RecSummary.nMuonTracks",              {14,21}}
-          , {"22#RecSummary.nPVs",                     {15,22}}}
+          , {"22#RecSummary.nPVs",                     {15,22}}
+          , {"3#RecSummary.nVeloTracks",               {16, 3}}
+          , {"4#RecSummary.nTTracks",                  {17, 4}}
+          , {"5#RecSummary.nBackTracks",               {18, 5}}
+          , {"6#RecSummary.nTracks",                   {19, 6}}
+          , {"7#RecSummary.nRich1Hits",                {20, 7}}
+          , {"8#RecSummary.nRich2Hits",                {21, 8}}
+          , {"9#RecSummary.nVeloClusters",             {22, 9}}}
       }
     };
 }
@@ -1063,10 +1063,90 @@ ReportConvertTool::ReportConvertTool( const std::string& type,
                 s_recvertex_unordered_map2_Turbo,
                 s_vertex_unordered_map2_Turbo,
                 s_recsummary_unordered_map2,
-                s_calohypo_unordered_map2_Turbo };
+                s_calohypo_unordered_map2_Turbo,
+                s_particle_unordered_map2,
+                s_proto_unordered_map2,
+                s_track_unordered_map2,
+                s_rpid_unordered_map2,
+                s_mpid_unordered_map2,
+                s_calo_unordered_map2_Turbo,
+                s_calo_unordered_map2,
+                s_calohypo_unordered_map2,
+                s_recvertex_unordered_map2,
+                s_vertex_unordered_map2
+  };
+
   for (const auto& map : maps ) {
     for(const auto & elem : map) {
         if(elem.first > m_LatestVersion) m_LatestVersion = elem.first;
+    }
+  }
+
+  // Do some sanity checking on the maps.
+  for(const auto& map : maps ) {
+    for(const auto& elem : map ) {
+      // elem.first is the version number
+      // elem.second is { "int2#..." : (int1, int2) }
+      // and int1 should be in ascending order when the keys are sorted
+      // lexigraphically
+      std::vector<std::pair<std::string, unsigned int> > check_int1;
+      for(const auto& elem2 : elem.second) {
+        auto hash_index = elem2.first.find_first_of('#');
+        auto dot_index = elem2.first.find_first_of('.');
+        auto last_dot_index = elem2.first.find_last_of('.');
+        auto extrainfo_name = elem2.first.substr(last_dot_index+1);
+        auto name_stem = elem2.first.substr(hash_index + 1,
+            dot_index - hash_index - 1);
+        auto int_string = elem2.first.substr(0, hash_index);
+        auto int_from_string = std::stoi(int_string);
+        if(name_stem == "Proto") {
+          // key is e.g. 59#Proto.extraInfo.CaloChargedSpd
+          auto extrainfo_enum = LHCb::ProtoParticle::convertExtraInfo(extrainfo_name);
+          if(extrainfo_enum != s_proto_map[elem2.second.second]) {
+            throw GaudiException("Incorrect entry in lookup map version "
+                + std::to_string(elem.first) + ". Key " + elem2.first
+                + " maps to (" + std::to_string(elem2.second.first) + ", "
+                + std::to_string(elem2.second.second) + ") but the enum"
+                + " value for " + extrainfo_name + " is "
+                + std::to_string(extrainfo_enum) + ".",
+                this->name(), StatusCode::FAILURE);
+          }
+        } else if(name_stem == "RecSummary") {
+          auto recsummary_enum = LHCb::RecSummary::DataTypesToType(extrainfo_name);
+          if(recsummary_enum != s_rsum_map[elem2.second.second]) {
+            throw GaudiException("Incorrect entry in lookup map version "
+                + std::to_string(elem.first) + ". Key " + elem2.first
+                + " maps to (" + std::to_string(elem2.second.first) + ", "
+                + std::to_string(elem2.second.second) + " = "
+                + LHCb::RecSummary::DataTypesToString(elem2.second.second)
+                + ") but the enum value for " + extrainfo_name + " is "
+                + std::to_string(recsummary_enum) + ".",
+                this->name(), StatusCode::FAILURE);
+          }
+        } else if(int_from_string != elem2.second.second) {
+          throw GaudiException("Incorrect entry in lookup map version "
+              + std::to_string(elem.first) + ". Key " + elem2.first
+              + " maps to (" + std::to_string(elem2.second.first) + ", "
+              + std::to_string(elem2.second.second)
+              + ") but the integer part of the key is "
+              + std::to_string(int_from_string) + ".",
+              this->name(), StatusCode::FAILURE);
+        }
+        check_int1.emplace_back(elem2.first, elem2.second.first);
+      }
+      std::sort(check_int1.begin(), check_int1.end());
+      for(auto i = 0u; i < check_int1.size(); i++) {
+        if(i != check_int1[i].second) {
+          throw GaudiException("Incorrect entry in lookup map version "
+              + std::to_string(elem.first) + ". Key "
+              + check_int1[i].first + " maps to ("
+              + std::to_string(check_int1[i].second) + ", "
+              + std::to_string(elem.second.at(check_int1[i].first).second)
+              + ") but has index "
+              + std::to_string(i) + " when sorted lexigraphically.",
+              this->name(), StatusCode::FAILURE);
+        }
+      }
     }
   }
 }
@@ -1102,21 +1182,24 @@ int ReportConvertTool::findBestPrevious(const unordered_map<int, unordered_map<s
   return out;
 }
 
-void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info, HltSelRepRBStdInfo::StdInfo* subbank, int classID) {
-
+void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info,
+    HltSelRepRBStdInfo::StdInfo* subbank, int classID)
+{
   // Version number that we use to ensure backwards compatibility with Run 1
   // (has nothing to do with header ID).
   int run1version=-999;
 
-  debug() << "SummaryFromRaw call for ID:" << classID << endmsg;
+  if(UNLIKELY(msgLevel(MSG::DEBUG)))
+    debug() << "SummaryFromRaw call for ID:" << classID << endmsg;
 
   // Make sure the tool is given a version to use
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
-  debug() << "Assigning used_map with version:" << m_version << endmsg;
+  if(UNLIKELY(msgLevel(MSG::DEBUG)))
+    debug() << "Assigning used_map with version:" << m_version << endmsg;
 
   // Which one of the member maps do we need to use?
   /*
@@ -1131,7 +1214,7 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info, HltSelRepRB
    */
 
   if((m_version<3 && m_version>0) && ( (classID!=LHCb::CLID_Track) && (classID!=LHCb::CLID_Particle) && (classID!=LHCb::CLID_RecVertex) && (classID!=LHCb::CLID_CaloCluster) ) )
-      Error( std::string{ "Asked to decode Run 1 style reports with Turbo object (" } + std::to_string(classID) + std::string{ "). Please update your software" }, StatusCode::FAILURE, 100 );
+      Error( std::string{ "Asked to decode Run 1 style reports with Turbo object (" } + std::to_string(classID) + std::string{ "). Please update your software" }, StatusCode::FAILURE, 100 ).ignore();
 
   auto pick_map = [&](const auto& map1, const auto& map2 ) {
         return  subbank->size()< map1.at( findBestPrevious( map1, m_version ) ).size() ?
@@ -1150,7 +1233,7 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info, HltSelRepRB
           used_map = &s_track_unordered_map2;
           m_version=run1version;
         } else {
-          used_map = pick_map( s_track_unordered_map2_Turbo, s_track_unordered_map2_Turbo );
+          used_map = pick_map( s_track_unordered_map2_Turbo, s_track_unordered_map2 );
         }
       }
       break;
@@ -1247,7 +1330,7 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info, HltSelRepRB
       {
 
         Warning( std::string{ " StdInfo on unsupported class type "}+ std::to_string(classID),
-                  StatusCode::SUCCESS, 20 );
+                  StatusCode::SUCCESS, 20 ).ignore();
         int e = 0;
         for (const auto& i : (*subbank)) {
            info->insert( std::string { "z#Unknown.unknown" } + std::to_string( e++ ),
@@ -1259,16 +1342,25 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info, HltSelRepRB
 
   // If version<3 => for Track, Particle, RecVertex, and CaloCluster, need to assign version based on size
 
-  debug() << "Inserting from bank" << endmsg;
-  for(const auto& object : used_map->at( findBestPrevious( *used_map, m_version ) ))  {
-    info->insert( object.first, floatFromInt( (*subbank)[ object.second.first ]) );
+  if(UNLIKELY(msgLevel(MSG::DEBUG)))
+    debug() << "Inserting from bank" << endmsg;
+  auto version_to_use = findBestPrevious( *used_map, m_version );
+  const auto& table_to_use = used_map->at( version_to_use );
+  for(const auto& object : table_to_use) {
+    if( object.second.first >= static_cast<int>(subbank->size()) ) {
+      Error(std::string{"Requested out-of-range index "}
+          + std::to_string(object.second.first) + " in subbank of size "
+          + std::to_string(subbank->size())).ignore();
+    }
+    auto float_value = floatFromInt( (*subbank)[ object.second.first ] );
+    info->insert( object.first, float_value );
   }
 }
 
 // Put the information in to the HltObjectSummary
 void ReportConvertTool::ParticleObject2Summary( HltObjectSummary::Info* info, const LHCb::Particle* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1327,7 +1419,7 @@ void ReportConvertTool::ParticleObject2Summary( HltObjectSummary::Info* info, co
 
 void ReportConvertTool::ProtoParticleObject2Summary( HltObjectSummary::Info* info, const LHCb::ProtoParticle* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1342,7 +1434,7 @@ void ReportConvertTool::ProtoParticleObject2Summary( HltObjectSummary::Info* inf
 
 void ReportConvertTool::TrackObject2Summary( HltObjectSummary::Info* info, const LHCb::Track* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1418,7 +1510,7 @@ void ReportConvertTool::TrackObject2Summary( HltObjectSummary::Info* info, const
 
 void ReportConvertTool::RichPIDObject2Summary( HltObjectSummary::Info* info, const LHCb::RichPID* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1443,7 +1535,7 @@ void ReportConvertTool::RichPIDObject2Summary( HltObjectSummary::Info* info, con
 
 void ReportConvertTool::MuonPIDObject2Summary( HltObjectSummary::Info* info , const LHCb::MuonPID* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1471,7 +1563,7 @@ void ReportConvertTool::MuonPIDObject2Summary( HltObjectSummary::Info* info , co
 
 void ReportConvertTool::CaloClusterObject2Summary( HltObjectSummary::Info* info, const LHCb::CaloCluster* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1490,7 +1582,7 @@ void ReportConvertTool::CaloClusterObject2Summary( HltObjectSummary::Info* info,
 
 void ReportConvertTool::CaloHypoObject2Summary( HltObjectSummary::Info* info, const LHCb::CaloHypo* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1511,7 +1603,7 @@ void ReportConvertTool::CaloHypoObject2Summary( HltObjectSummary::Info* info, co
 
 void ReportConvertTool::RecVertexObject2Summary( HltObjectSummary::Info* info, const LHCb::RecVertex* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1539,7 +1631,7 @@ void ReportConvertTool::RecVertexObject2Summary( HltObjectSummary::Info* info, c
 
 void ReportConvertTool::VertexObject2Summary( HltObjectSummary::Info* info, const LHCb::Vertex* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1567,7 +1659,7 @@ void ReportConvertTool::VertexObject2Summary( HltObjectSummary::Info* info, cons
 
 void ReportConvertTool::RecSummaryObject2Summary( HltObjectSummary::Info* info, const LHCb::RecSummary* object ) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1606,7 +1698,7 @@ void ReportConvertTool::GenericMapObject2Summary( HltObjectSummary::Info* info ,
 // Put the information in the summary back in the object
 void ReportConvertTool::ParticleObjectFromSummary( const HltObjectSummary::Info* info, LHCb::Particle* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1619,7 +1711,7 @@ void ReportConvertTool::ParticleObjectFromSummary( const HltObjectSummary::Info*
     // Looking at Run 1 data, need to know which map to use
     if( Isize == (s_particle_unordered_map2.at(1)).size() ) run1version = 1;
     else if( Isize == (s_particle_unordered_map2.at(2)).size() ) run1version = 2;
-    else Error( "Particle requested in Run 1 reports, but reports are unknown" , StatusCode::FAILURE, 100 );
+    else Error( "Particle requested in Run 1 reports, but reports are unknown" , StatusCode::FAILURE, 100 ).ignore();
     m_version=run1version;
   }
 
@@ -1706,7 +1798,7 @@ void ReportConvertTool::ParticleObjectFromSummary( const HltObjectSummary::Info*
 
 void ReportConvertTool::ProtoParticleObjectFromSummary( const HltObjectSummary::Info* info, LHCb::ProtoParticle* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1722,7 +1814,7 @@ void ReportConvertTool::ProtoParticleObjectFromSummary( const HltObjectSummary::
 
 void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* info, LHCb::Track* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1735,7 +1827,7 @@ void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* in
     // Looking at Run 1 data, need to know which map to use
     if( Isize == (s_track_unordered_map2.at(1)).size() ) run1version = 1;
     else if( Isize == (s_track_unordered_map2.at(2)).size() ) run1version = 2;
-    else Error( "Track requested in Run 1 reports, but reports are unknown" , StatusCode::FAILURE, 100 );
+    else Error( "Track requested in Run 1 reports, but reports are unknown" , StatusCode::FAILURE, 100 ).ignore();
     m_version=run1version;
   }
 
@@ -1811,7 +1903,7 @@ void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* in
 
 void ReportConvertTool::RichPIDObjectFromSummary( const HltObjectSummary::Info*info, LHCb::RichPID* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1837,7 +1929,7 @@ void ReportConvertTool::RichPIDObjectFromSummary( const HltObjectSummary::Info*i
 
 void ReportConvertTool::MuonPIDObjectFromSummary( const HltObjectSummary::Info* info, LHCb::MuonPID* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1855,11 +1947,11 @@ void ReportConvertTool::MuonPIDObjectFromSummary( const HltObjectSummary::Info* 
       case 4: object->setIsMuon( int( x ) ); break;
       case 5: object->setIsMuonLoose( int( x ) ); break;
       case 6: object->setIsMuonTight( int( x ) ); break;
-      case 7: object->setChi2Corr( int( x ) ); break;
-      case 8: object->setMuonMVA1( int( x ) ); break;
-      case 9: object->setMuonMVA2( int( x ) ); break;
-      case 10: object->setMuonMVA3( int( x ) ); break;
-      case 11: object->setMuonMVA4( int( x ) ); break;
+      case 7: object->setChi2Corr( x ); break;
+      case 8: object->setMuonMVA1( x ); break;
+      case 9: object->setMuonMVA2( x ); break;
+      case 10: object->setMuonMVA3( x ); break;
+      case 11: object->setMuonMVA4( x ); break;
     }
   }
 
@@ -1867,7 +1959,7 @@ void ReportConvertTool::MuonPIDObjectFromSummary( const HltObjectSummary::Info* 
 
 void ReportConvertTool::CaloClusterObjectFromSummary( const HltObjectSummary::Info* info, LHCb::CaloCluster* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1895,7 +1987,7 @@ void ReportConvertTool::CaloClusterObjectFromSummary( const HltObjectSummary::In
 
 void ReportConvertTool::CaloHypoObjectFromSummary( const HltObjectSummary::Info* info, LHCb::CaloHypo* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1932,7 +2024,7 @@ void ReportConvertTool::CaloHypoObjectFromSummary( const HltObjectSummary::Info*
 
 void ReportConvertTool::RecVertexObjectFromSummary( const HltObjectSummary::Info* info, LHCb::RecVertex* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -1945,7 +2037,7 @@ void ReportConvertTool::RecVertexObjectFromSummary( const HltObjectSummary::Info
     // Looking at Run 1 data, need to know which map to use
     if( Isize == (s_recvertex_unordered_map2.at(1)).size() ) run1version = 1;
     else if( Isize == (s_recvertex_unordered_map2.at(2)).size() ) run1version = 2;
-    else Error( "Track requested in Run 1 reports, but reports are unknown" , StatusCode::FAILURE, 100 );
+    else Error( "Track requested in Run 1 reports, but reports are unknown" , StatusCode::FAILURE, 100 ).ignore();
     m_version=run1version;
   }
 
@@ -1975,7 +2067,7 @@ void ReportConvertTool::RecVertexObjectFromSummary( const HltObjectSummary::Info
 
 void ReportConvertTool::VertexObjectFromSummary( const HltObjectSummary::Info* info, LHCb::Vertex* object, bool turbo) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 
@@ -2007,7 +2099,7 @@ void ReportConvertTool::VertexObjectFromSummary( const HltObjectSummary::Info* i
 
 void ReportConvertTool::RecSummaryObjectFromSummary( const HltObjectSummary::Info* info, LHCb::RecSummary* object) {
   if( m_version == -999 ){
-    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 );
+    Warning( "I have not been told a version number to use, assuming the latest", StatusCode::SUCCESS, 20 ).ignore();
     m_version = m_LatestVersion;
   }
 

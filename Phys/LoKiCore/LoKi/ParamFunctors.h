@@ -88,7 +88,7 @@ namespace LoKi
       /// clone-method: "virtual constructor"
       Parameter* clone() const override;
       /// the major method
-      result_type operator()( /* argument */ ) const override;
+      double operator()( ) const override;
       /// optional: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
@@ -99,13 +99,8 @@ namespace LoKi
     private:
       // ======================================================================
       /// map-like property ?
-      mutable bool            m_map_d = false   ;  // map-like property?
-      mutable bool            m_map_f = false   ;  // map-like property?
-      mutable bool            m_map_i = false   ;  // map-like property?
-      /// scalar   property ?
-      mutable bool            m_scalar_d = false ;  // scalar   property?
-      mutable bool            m_scalar_f = false ;  // scalar   property?
-      mutable bool            m_scalar_i = false ;  // scalar   property?
+      enum class prop_t { unknown, map_d, map_f, map_i, scalar_d, scalar_f, scalar_i };
+      mutable prop_t          m_prop = prop_t::unknown;
       // ======================================================================
     };
     // ========================================================================

@@ -14,6 +14,7 @@
   <class name = "LoKi::Hybrid::IHltFactory"               />
   <class name = "LoKi::Hybrid::IHltAntiFactory"           />
   <class name = "LoKi::Hybrid::HltEngine"                 />
+  <class name = "LoKi::IHDRFilterTool"                    />
 
   
   <class name = "LoKi::Functor<const LHCb::ODIN*,double>" />

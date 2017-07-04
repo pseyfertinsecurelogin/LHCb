@@ -357,7 +357,7 @@ namespace LoKi
       inline StatusCode _get
       ( const std::string&                                            pycode  ,
         std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&                  local   ,
-        typename LoKi::Assignable<LoKi::Functor<TYPE1,TYPE2> >::Type& output  ,
+        LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&               output  ,
         const std::string&                                            context ) ;
       // ======================================================================
     protected:
@@ -404,7 +404,7 @@ inline StatusCode
 LoKi::Hybrid::MCTool::_get
 ( const std::string&                                            pycode  ,
   std::unique_ptr<LoKi::Functor<TYPE1,TYPE2>>&                  local   ,
-  typename LoKi::Assignable<LoKi::Functor<TYPE1,TYPE2> >::Type& output  ,
+  LoKi::Assignable_t<LoKi::Functor<TYPE1,TYPE2>>&               output  ,
   const std::string&                                            context )
 {
   // prepare the actual python code

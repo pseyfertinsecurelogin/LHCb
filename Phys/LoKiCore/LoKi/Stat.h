@@ -4,6 +4,8 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include <numeric>
+// ============================================================================
 // GaudiKernel
 // ============================================================================
 #include "GaudiKernel/StatEntity.h"
@@ -43,17 +45,16 @@ namespace LoKi
      *  @date   2011-03-04
      */
     template <class OBJECT,class FUNCTOR>
-    inline
-    StatEntity stat
-    ( OBJECT         first     ,
-      OBJECT         last      ,
-      const FUNCTOR& functor   )
+    StatEntity stat ( OBJECT         first     ,
+                      OBJECT         last      ,
+                      const FUNCTOR& functor   )
     {
-      StatEntity _stat ;
-      //
-      for ( ; first != last ; ++first ) { _stat += functor( *first ) ; }
-      //
-      return _stat ;
+      using arg_t = decltype(*first);
+      return std::accumulate(first,last,StatEntity{},
+                             [&](StatEntity se, arg_t arg) {
+                                se += functor(arg);
+                                return se;
+                             } );
     }
     // ========================================================================
     /** The trivial algorithm which accumulate the statistics
@@ -68,12 +69,10 @@ namespace LoKi
      *  @date   2011-03-04
      */
     template <class OBJECT,class FUNCTOR,class PREDICATE>
-    inline
-    StatEntity stat
-    ( OBJECT           first     ,
-      OBJECT           last      ,
-      const FUNCTOR&   functor   ,
-      const PREDICATE& predicate )
+    StatEntity stat ( OBJECT           first     ,
+                      OBJECT           last      ,
+                      const FUNCTOR&   functor   ,
+                      const PREDICATE& predicate )
     {
       using arg_t = decltype(*first);
       return std::accumulate( first, last, StatEntity{},
@@ -101,35 +100,30 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// the base
-      typedef LoKi::Functor<std::vector<TYPE>,double>  uBase    ; // the base
       /// pointer to member function
       typedef double (StatEntity::*PMF)() const ;
       // ======================================================================
     public:
       // ======================================================================
       /// constructor from the function
-      Stat ( PMF                               pmf ,
-             const LoKi::Functor<TYPE,double>& fun ,
-             const std::string&                nam )
-        : LoKi::Functors::Sum <TYPE> ( fun )
+      Stat ( PMF pmf , LoKi::FunctorFromFunctor<TYPE,double> fun , const std::string& nam )
+        : LoKi::Functors::Sum <TYPE> ( std::move(fun) )
         , m_pmf ( pmf )
         , m_nam ( nam )
       {}
       /// constructor from the function and  predicate
-      Stat ( PMF                               pmf ,
-             const LoKi::Functor<TYPE,double>& fun ,
-             const LoKi::Functor<TYPE,bool>&   cut ,
-             const std::string&                nam )
-        : LoKi::Functors::Sum <TYPE> ( fun , cut )
+      Stat ( PMF  pmf ,
+             LoKi::FunctorFromFunctor<TYPE,double> fun ,
+             LoKi::FunctorFromFunctor<TYPE,bool> cut ,
+             const std::string& nam )
+        : LoKi::Functors::Sum <TYPE> ( std::move(fun) , std::move(cut) )
         , m_pmf ( pmf )
         , m_nam ( nam )
       {}
       /// MANDATORY: clone method ("virtual constructor")
-      virtual  Stat* clone() const { return new Stat ( *this ) ; }
+      Stat* clone() const override { return new Stat ( *this ) ; }
       /// MANDATORY: the only one essential method:
-      virtual typename uBase::result_type operator()
-        ( typename uBase::argument a ) const
+      double operator()( const std::vector<TYPE>& a ) const override
       {
         StatEntity _stat = ( this->m_cut ?
           LoKi::Algs::stat ( a.begin(), a.end(),
@@ -140,10 +134,10 @@ namespace LoKi
         return (_stat.*m_pmf)() ;
       }
       /// OPTIONAL: the basic printout method
-      virtual std::ostream& fillStream( std::ostream& s ) const
+      std::ostream& fillStream( std::ostream& s ) const override
       { return this -> _print_      ( s , this->m_nam , 0 ) ; }
       /// print as C++
-      virtual std::string   toCpp () const
+      std::string   toCpp () const override
       {
           std::string s = "LoKi::" + this->m_nam          + "( "
                                    + this->m_fun.toCpp () ;
@@ -169,12 +163,11 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-03-04
    */
-  template <class TYPE>
-  inline LoKi::Functors::Stat<TYPE>
-  mean ( const LoKi::Functor<TYPE,double>& fun )
-  { return LoKi::Functors::Stat<TYPE>( &StatEntity::mean ,
-                                       fun               ,
-                                       "mean"            ) ; }
+  template <typename F,
+            typename TYPE = LoKi::details::type1_t<F>,
+            typename = LoKi::details::require_signature<F,TYPE,double>>
+  LoKi::Functors::Stat<TYPE> mean ( F&& fun )
+  { return { &StatEntity::mean , std::forward<F>(fun) , "mean" } ; }
   // ==========================================================================
   /** get the mean value for some functor
    *  @see LoKi::Functors::Stat
@@ -183,14 +176,13 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-03-04
    */
-  template <class TYPE>
-  inline LoKi::Functors::Stat<TYPE>
-  mean ( const LoKi::Functor<TYPE,double>& fun ,
-         const LoKi::Functor<TYPE,bool>&   cut )
-  { return LoKi::Functors::Stat<TYPE>( &StatEntity::mean ,
-                                       fun               ,
-                                       cut               ,
-                                       "mean"            ) ; }
+  template <typename F1, typename F2,
+            typename TYPE = LoKi::details::type1_t<F1,F2>,
+            typename = LoKi::details::require_signature<F1,TYPE,double>,
+            typename = LoKi::details::require_signature<F2,TYPE,bool>>
+  LoKi::Functors::Stat<TYPE> mean ( F1&& fun , F2&&   cut )
+  { return { &StatEntity::mean , std::forward<F1>(fun), std::forward<F2>(cut),
+             "mean"            } ; }
   // ==========================================================================
   /** get the rms value for some functor
    *  @see LoKi::Functors::Stat
@@ -199,12 +191,11 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-03-04
    */
-  template <class TYPE>
-  inline LoKi::Functors::Stat<TYPE>
-  rms ( const LoKi::Functor<TYPE,double>& fun )
-  { return LoKi::Functors::Stat<TYPE>( &StatEntity::rms  ,
-                                       fun               ,
-                                       "rms"             ) ; }
+  template <typename F,
+            typename TYPE = LoKi::details::type1_t<F>,
+            typename = LoKi::details::require_signature<F,TYPE,double>>
+  LoKi::Functors::Stat<TYPE> rms ( F&& fun )
+  { return { &StatEntity::rms  , std::forward<F>(fun) , "rms" } ; }
   // ==========================================================================
   /** get the rms value for some functor
    *  @see LoKi::Functors::Stat
@@ -213,14 +204,13 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-03-04
    */
-  template <class TYPE>
-  inline LoKi::Functors::Stat<TYPE>
-  rms ( const LoKi::Functor<TYPE,double>& fun ,
-        const LoKi::Functor<TYPE,bool>&   cut )
-  { return LoKi::Functors::Stat<TYPE>( &StatEntity::rms  ,
-                                       fun               ,
-                                       cut               ,
-                                       "rms"             ) ; }
+  template <typename F1, typename F2,
+            typename TYPE = LoKi::details::type1_t<F1,F2>,
+            typename = LoKi::details::require_signature<F1,TYPE,double>,
+            typename = LoKi::details::require_signature<F2,TYPE,bool>>
+  LoKi::Functors::Stat<TYPE> rms ( F1&& fun , F2&& cut )
+  { return { &StatEntity::rms, std::forward<F1>(fun), std::forward<F2>(cut),
+             "rms" } ; }
   // ==========================================================================
   /** get the meanErr value for some functor
    *  @see LoKi::Functors::Stat
@@ -229,12 +219,11 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-03-04
    */
-  template <class TYPE>
-  inline LoKi::Functors::Stat<TYPE>
-  meanErr ( const LoKi::Functor<TYPE,double>& fun )
-  { return LoKi::Functors::Stat<TYPE>( &StatEntity::meanErr ,
-                                       fun                  ,
-                                       "meanErr"            ) ; }
+  template <typename F,
+            typename TYPE = LoKi::details::type1_t<F>,
+            typename = LoKi::details::require_signature<F,TYPE,double>>
+  LoKi::Functors::Stat<TYPE> meanErr ( F&& fun )
+  { return { &StatEntity::meanErr, std::forward<F>(fun), "meanErr" } ; }
   // ==========================================================================
   /** get the mean value for some functor
    *  @see LoKi::Functors::Stat
@@ -243,14 +232,13 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-03-04
    */
-  template <class TYPE>
-  inline LoKi::Functors::Stat<TYPE>
-  meanErr ( const LoKi::Functor<TYPE,double>& fun ,
-            const LoKi::Functor<TYPE,bool>&   cut )
-  { return LoKi::Functors::Stat<TYPE>( &StatEntity::meanErr ,
-                                       fun                  ,
-                                       cut                  ,
-                                       "meanErr"            ) ; }
+  template <typename F1, typename F2,
+            typename TYPE = LoKi::details::type1_t<F1,F2>,
+            typename = LoKi::details::require_signature<F1,TYPE,double>,
+            typename = LoKi::details::require_signature<F2,TYPE,bool>>
+  LoKi::Functors::Stat<TYPE> meanErr ( F1&& fun , F2&& cut )
+  { return { &StatEntity::meanErr , std::forward<F1>(fun), std::forward<F2>(cut)                  ,
+             "meanErr"            } ; }
   // ==========================================================================
   /** get the 'efficiency' value for some functor
    *  @see LoKi::Functors::Stat
@@ -259,12 +247,13 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-03-04
    */
-  template <class TYPE>
-  inline LoKi::Functors::Stat<TYPE>
-  eff ( const LoKi::Functor<TYPE,bool>& fun )
-  { return LoKi::Functors::Stat<TYPE>( &StatEntity::eff ,
-                                       LoKi::SimpleSwitch<TYPE> ( fun , 1 , 0 ) ,
-                                       "eff"            ) ; }
+  template <typename F,
+            typename TYPE = LoKi::details::type1_t<F>,
+            typename = LoKi::details::require_signature<F,TYPE,bool>>
+  LoKi::Functors::Stat<TYPE> eff ( F&& fun )
+  { return { &StatEntity::eff ,
+             LoKi::SimpleSwitch<TYPE> ( std::forward<F>(fun) , 1 , 0 ) ,
+             "eff"            } ; }
   // ==========================================================================
   /** get the mean value for some functor
    *  @see LoKi::Functors::Stat
@@ -273,14 +262,15 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-03-04
    */
-  template <class TYPE>
-  inline LoKi::Functors::Stat<TYPE>
-  eff ( const LoKi::Functor<TYPE,bool>& fun ,
-        const LoKi::Functor<TYPE,bool>& cut )
-  { return LoKi::Functors::Stat<TYPE>( &StatEntity::eff     ,
-                                       LoKi::SimpleSwitch<TYPE> ( fun , 1 , 0 ) ,
-                                       cut                  ,
-                                       "eff"                ) ; }
+  template <typename F1, typename F2,
+            typename TYPE = LoKi::details::type1_t<F1,F2>,
+            typename = LoKi::details::require_signature<F1,TYPE,bool>,
+            typename = LoKi::details::require_signature<F2,TYPE,bool>>
+  LoKi::Functors::Stat<TYPE> eff ( F1&& fun , F2&& cut )
+  { return { &StatEntity::eff     ,
+             LoKi::SimpleSwitch<TYPE> ( std::forward<F1>(fun) , 1 , 0 ) ,
+             std::forward<F2>(cut),
+             "eff"                } ; }
   // ==========================================================================
   /** get the 'efficiency' value for some functor
    *  @see LoKi::Functors::Stat
@@ -289,12 +279,13 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-03-04
    */
-  template <class TYPE>
-  inline LoKi::Functors::Stat<TYPE>
-  effErr ( const LoKi::Functor<TYPE,bool>& fun )
-  { return LoKi::Functors::Stat<TYPE>( &StatEntity::effErr ,
-                                       LoKi::SimpleSwitch<TYPE> ( fun , 1 , 0 ) ,
-                                       "effErr"            ) ; }
+  template <typename F,
+            typename TYPE = LoKi::details::type1_t<F>,
+            typename = LoKi::details::require_signature<F,TYPE,bool>>
+  LoKi::Functors::Stat<TYPE> effErr ( F&& fun )
+  { return { &StatEntity::effErr ,
+             LoKi::SimpleSwitch<TYPE> ( std::forward<F>(fun) , 1 , 0 ) ,
+             "effErr"            } ; }
   // ==========================================================================
   /** get the mean value for some functor
    *  @see LoKi::Functors::Stat
@@ -303,14 +294,16 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-03-04
    */
-  template <class TYPE>
-  inline LoKi::Functors::Stat<TYPE>
-  effErr( const LoKi::Functor<TYPE,bool>& fun ,
-          const LoKi::Functor<TYPE,bool>& cut )
-  { return LoKi::Functors::Stat<TYPE>( &StatEntity::effErr ,
-                                       LoKi::SimpleSwitch<TYPE> ( fun , 1 , 0 ) ,
-                                       cut                  ,
-                                       "effErr"             ) ; }
+  template <typename F1, typename F2,
+            typename TYPE = LoKi::details::type1_t<F1,F2>,
+            typename = LoKi::details::require_signature<F1,TYPE,bool>,
+            typename = LoKi::details::require_signature<F2,TYPE,bool>>
+  LoKi::Functors::Stat<TYPE> effErr( F1&& fun ,
+                                     F2&& cut )
+  { return { &StatEntity::effErr ,
+             LoKi::SimpleSwitch<TYPE>( std::forward<F1>(fun) , 1 , 0 ) ,
+             std::forward<F2>(cut),
+             "effErr"             } ; }
   // ==========================================================================
 } //                                                      end of namesapce LoKi
 // ============================================================================

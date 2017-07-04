@@ -221,7 +221,7 @@ void HltPackedDataWriter::addBanks(LHCb::RawEvent& rawEvent, const std::vector<u
 
   uint16_t sourceIDCommon = (compression << CompressionBits) & CompressionMask;
 
-  const size_t nbanks = data.size() / MAX_PAYLOAD_SIZE + 1;
+  const size_t nbanks = (data.size() + MAX_PAYLOAD_SIZE - 1) / MAX_PAYLOAD_SIZE;
   if (nbanks > (PartIDMask >> PartIDBits)) {
     Error("Packed objects too long to save", StatusCode::SUCCESS, 50);
     return;

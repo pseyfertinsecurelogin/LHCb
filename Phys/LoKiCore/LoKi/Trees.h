@@ -382,8 +382,8 @@ namespace Decays
     public:
       // ======================================================================
       /// ordering (nesessary for the proper permutations)
-      bool operator< ( const _Tree_& right ) const
-      { return m_id < right.m_id ; }
+      friend bool operator< ( const _Tree_& lhs, const _Tree_& rhs )
+      { return lhs.m_id < rhs.m_id ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -471,9 +471,9 @@ namespace Decays
     // ========================================================================
     // constructor from iterators
     template <typename  ITERATOR,
-              typename = typename std::enable_if< std::is_base_of< std::input_iterator_tag,
-                                                                   typename std::iterator_traits<ITERATOR>::iterator_category
-                                                                 >::value >::type >
+              typename = std::enable_if_t< std::is_base_of< std::input_iterator_tag,
+                                                            typename std::iterator_traits<ITERATOR>::iterator_category
+                                                          >::value > >
     TreeList_ ( ITERATOR first ,
                 ITERATOR last  )
       : m_trees ( first, last ) {}
@@ -1047,7 +1047,7 @@ namespace Decays
       ChildrenForStable        , // Children   for Stable
       OptionalForStable        , // Optional   for Stable
       InclusiveForStable       , // Inclusive  for Stable
-      InclusiveMarked          , // Inclusive & Marked in conflict 
+      InclusiveMarked          , // Inclusive & Marked in conflict
       InvalidBranch              // Invalid combination of flags
     };
     // ========================================================================

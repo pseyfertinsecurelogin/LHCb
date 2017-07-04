@@ -246,14 +246,14 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       RandomScale*  clone() const override;
       /// MANDATORY: the only one essential method
-      bool operator () ( argument v  ) const override ;
+      bool operator () ( double v  ) const override ;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     public:
       // ======================================================================
       /// get the result ;
-      bool eval ( argument v = 0 ) const override;          // get the result ;
+      bool eval ( double v = 0 ) const override;          // get the result ;
       // ======================================================================
     private:
       // ======================================================================

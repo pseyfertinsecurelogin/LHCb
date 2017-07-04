@@ -14,7 +14,8 @@ from Configurables import ( CondDBAccessSvc,
                             COOLConfSvc,
                             ApplicationMgr )
 
-import os, re
+import os
+import re
 from os.path import exists, join
 
 
@@ -93,6 +94,7 @@ class CondDB(ConfigurableUser):
                        }
     LAYER = 0
     ALTERNATIVE = 1
+    OVERLAY = 2
     # List of known implementations of ICondDBReader (str is used for backward compatibility)
     __CondDBReaders__ = [ CondDBAccessSvc,
                           CondDBDispatcherSvc,
@@ -137,13 +139,24 @@ class CondDB(ConfigurableUser):
             raise TypeError("'%s' not supported as CondDBReader"%accessSvc.__class__.__name__)
         return accessSvc
 
-    def addLayer(self, accessSvc = None, connStr = None, dbFile = None, dbName = None):
+    def addLayer(self, accessSvc=None, connStr=None, dbFile=None, dbName=None):
         """
         Add the given CondDBReader as a layer on top of the existing configuration.
 
         Example:
         CondDB().addLayer(myDB)
         """
+        # check if we can use Git
+        from DDDB.Configuration import GIT_CONDDBS
+        if GIT_CONDDBS:
+            if isinstance(accessSvc, basestring):
+                if not os.path.isdir(accessSvc):
+                    ValueError('invalid argument: %r must be a directory' % accessSvc)
+                self.Overrides.append((self.OVERLAY, accessSvc))
+                return
+            else:
+                log.warning('COOL CondDB layers and alternatives not supported '
+                            'when using Git CondDB, addLayer call ignored')
         # Check the arguments and/or prepare a valid access svc
         accessSvc = self._checkOverrideArgs(accessSvc, connStr, dbFile, dbName)
         self.Overrides.append((self.LAYER, accessSvc))
@@ -174,6 +187,16 @@ class CondDB(ConfigurableUser):
         Example:
         CondDB().addAlternative(myDB,"/Conditions/MyDetector/Alignment")
         """
+        from DDDB.Configuration import GIT_CONDDBS
+        if GIT_CONDDBS:
+            if isinstance(accessSvc, basestring):
+                if not os.path.isdir(accessSvc):
+                    ValueError('invalid argument: %r must be a directory' % accessSvc)
+                self.Overrides.append((self.OVERLAY, accessSvc))
+                return
+            else:
+                log.warning('COOL CondDB layers and alternatives not supported '
+                            'when using Git CondDB, addLayer call ignored')
         if path is None:
             raise ValueError("'path' must be specified")
         # Check the arguments and/or prepare a valid access svc
@@ -199,6 +222,34 @@ class CondDB(ConfigurableUser):
                                                       MainAccessSvc = originalReader,
                                                       Alternatives = { path: accessSvc }
                                                       )
+
+    def _addOverlay(self, path):
+        from Configurables import GitEntityResolver, XmlParserSvc
+        name = "GitOverlay_0"
+        i = 0
+        while name in allConfigurables:
+            i += 1
+            name = "GitOverlay_{}".format(i)
+        # look for entries in path
+        entries = []
+        path = os.path.abspath(path)
+        for root, dirs, files in os.walk(path):
+            if '.git' in dirs:
+                dirs.remove('.git')
+            if 'IOVs' in files:
+                entries.append(os.path.relpath(root, path))
+                dirs[:] = []
+            else:
+                entries.extend(os.path.relpath(os.path.join(root, f), path)
+                               for f in files)
+        resolver = GitEntityResolver(name,
+                                     Ignore='^(?!({})$).*'
+                                     .format('|'.join(re.escape(entry)
+                                                      for entry in entries)),
+                                     PathToRepository=path,
+                                     Commit=''
+                                    )
+        XmlParserSvc().EntityResolver.EntityResolvers.insert(0, resolver)
 
     def useLatestTags(self, DataType, OnlyGlobalTags = False):
         self.UseLatestTags = [DataType, OnlyGlobalTags]
@@ -608,7 +659,8 @@ class CondDB(ConfigurableUser):
 
         # Add layers and alternatives
         call = { self.LAYER : self._addLayer,
-                 self.ALTERNATIVE : self._addAlternative }
+                 self.ALTERNATIVE : self._addAlternative,
+                 self.OVERLAY : self._addOverlay }
         for override in self.getProp("Overrides"):
             apply(call[override[0]], override[1:])
 
@@ -632,7 +684,10 @@ class CondDB(ConfigurableUser):
             if ger:
                 if not ger.isPropertySet('Commit'):
                     ger.Commit = self.getProp("Tags").get(partition, 'HEAD')
-                    if self.getProp('Upgrade'):
+                    if (self.getProp('Upgrade') and
+                            not (ger.Commit.startswith('upgrade/') or
+                                 ger.Commit in ('', 'HEAD', 'upgrade') or
+                                 re.match(r'^[0-9a-f]{7,40}$', ger.Commit))):
                         ger.Commit = 'upgrade/' + ger.Commit
                 VFSSvc().FileAccessTools.append(ger)
                 if localTags.get(partition):

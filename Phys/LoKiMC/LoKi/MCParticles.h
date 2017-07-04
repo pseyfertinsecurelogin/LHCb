@@ -68,7 +68,7 @@ namespace LoKi
       /// clone method (mandatory!)
       Momentum* clone() const   override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -88,7 +88,7 @@ namespace LoKi
       /// clone method (mandatory!)
       Energy* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -108,7 +108,7 @@ namespace LoKi
       /// clone method (mandatory!)
       TransverseMomentum* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -128,7 +128,7 @@ namespace LoKi
       /// clone method (mandatory!)
       MomentumX* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -148,7 +148,7 @@ namespace LoKi
       /// clone method (mandatory!)
       MomentumY* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -168,7 +168,7 @@ namespace LoKi
       /// clone method (mandatory!)
       MomentumZ* clone() const   override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -188,7 +188,7 @@ namespace LoKi
       /// clone method (mandatory!)
       Theta* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -209,23 +209,23 @@ namespace LoKi
       /// clone method (mandatory!)
       PseudoRapidity* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
       /// get eta
-      double eta ( argument                    p ) const
+      double eta ( const LHCb::MCParticle*                    p ) const
       { return eta ( p -> momentum() ) ; }
       /// get eta
       double eta ( const Gaudi::LorentzVector& v ) const
       { return v . Eta () ; }
       /// get rapidity
-      double y  ( argument                    p  ) const
+      double y  ( const LHCb::MCParticle*                    p  ) const
       { return y ( p->momentum() ) ; }
       /// get rapidity
       double y  ( const Gaudi::LorentzVector& v  ) const ;
       /// get rapidity0
-      double y0 ( argument                    p  ) const
+      double y0 ( const LHCb::MCParticle*                    p  ) const
       { return y ( p->momentum() ) ; }
       /// get rapidity0
       double y0 ( const Gaudi::LorentzVector& v  ) const ;
@@ -251,7 +251,7 @@ namespace LoKi
       /// clone method (mandatory!)
       Rapidity* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -276,7 +276,7 @@ namespace LoKi
       /// clone method (mandatory!)
       Rapidity0* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -296,11 +296,11 @@ namespace LoKi
       /// clone method (mandatory!)
       Phi* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       /// get phi
-      double phi ( argument p ) const
+      double phi ( const LHCb::MCParticle* p ) const
       { return p->momentum(). Phi () ; }
       // ======================================================================
       /// adjust phi into the range of [-180:180]degrees
@@ -331,7 +331,7 @@ namespace LoKi
       /// clone method (mandatory!)
       Mass* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -351,7 +351,7 @@ namespace LoKi
       /// clone method (mandatory!)
       Identifier* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -381,7 +381,7 @@ namespace LoKi
       // ======================================================================
       IsID* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -409,7 +409,7 @@ namespace LoKi
       // ======================================================================
       IsNotID* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -433,7 +433,7 @@ namespace LoKi
       // ======================================================================
       IsAbsID* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -457,7 +457,7 @@ namespace LoKi
       // ======================================================================
       IsNotAbsID* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -477,7 +477,7 @@ namespace LoKi
       /// clone method (mandatory!)
       AbsIdentifier* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -498,7 +498,7 @@ namespace LoKi
       /// clone method (mandatory!)
       Oscillated* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -518,7 +518,7 @@ namespace LoKi
       /// clone method (mandatory!)
       ThreeCharge* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -542,7 +542,7 @@ namespace LoKi
       /// clone method (mandatory!)
       ProperLifeTime* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const override;
+      double operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -563,7 +563,7 @@ namespace LoKi
       /// clone method (mandatory!)
       HasQuark* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       //
@@ -588,7 +588,7 @@ namespace LoKi
       /// clone method (mandatory!)
       IsCharged* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -607,7 +607,7 @@ namespace LoKi
       /// clone method (mandatory!)
       IsNeutral* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -626,7 +626,7 @@ namespace LoKi
       /// clone method (mandatory!)
       IsLepton* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -645,7 +645,7 @@ namespace LoKi
       /// clone method (mandatory!)
       IsMeson* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -664,7 +664,7 @@ namespace LoKi
       /// clone method (mandatory!)
       IsBaryon* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -683,7 +683,7 @@ namespace LoKi
       /// clone method (mandatory!)
       IsHadron* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -702,7 +702,7 @@ namespace LoKi
       /// clone method (mandatory!)
       IsNucleus* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -752,7 +752,7 @@ namespace LoKi
       /// clone method (mandatory!)
       FromMCDecayTree* clone() const  override;
       /// the only one essential method
-      result_type operator() ( argument p ) const override;
+      bool operator() ( const LHCb::MCParticle* p ) const override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -838,7 +838,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       InAncestors* clone() const  override;
       /// MANDATORY: the only one important method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: "SHORT" representation
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -872,7 +872,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       NinAncestors* clone() const  override;
       /// MANDATORY: the only one important method
-      double operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: "SHORT" representation
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -908,7 +908,7 @@ namespace LoKi
       /// clone method/"virtual constructor" (mandatory!)
       NinMCdownTree* clone() const  override;
       /// the main method
-      double operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -940,7 +940,7 @@ namespace LoKi
       /// clone method (virtual constructor) (mandatory!)
       MCMotherFunction* clone() const  override;
       /// the only one essential method
-      double operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -973,7 +973,7 @@ namespace LoKi
       /// clone method (virtual constructor) (mandatory!)
       MCMotherPredicate* clone() const  override;
       /// the only one essential method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -1018,7 +1018,7 @@ namespace LoKi
       /// MANDATORY: clone method ('virtual constructor')
       IsParticle* clone() const  override;
       /// MANDATORY: the only one essential method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -1064,7 +1064,7 @@ namespace LoKi
       /// MANDATORY: clone method ('virtual constructor')
       IsContainedObject* clone() const  override;
       /// MANDATORY: the only one essential method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -1116,7 +1116,7 @@ namespace LoKi
       /// MANDATORY: clone function ("virtual constructor")
       MomentumDistance* clone() const  override;
       /// MANDATORY: the only one essential method
-      double operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
     private:
@@ -1159,7 +1159,7 @@ namespace LoKi
       /// MANDATORY: clone function ("virtual constructor")
       TransverseMomentumRel* clone() const  override;
       /// MANDATORY: the only one essential method
-      double operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // =====================================================================
@@ -1211,16 +1211,16 @@ namespace LoKi
       DeltaPhi* clone() const override
       { return new DeltaPhi(*this) ; }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: "SHORT" representation
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
       /// accessor to phi0
-      result_type phi0 () const { return m_phi ; }
+      double phi0 () const { return m_phi ; }
       /// get delta phi
-      result_type dphi ( argument p ) const
+      double dphi ( const LHCb::MCParticle* p ) const
       { return adjust ( phi ( p ) - phi0 () ) ; }
       // ======================================================================
     private:
@@ -1269,15 +1269,15 @@ namespace LoKi
        DeltaEta* clone() const override
       { return new DeltaEta( *this ) ; }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: "SHORT" representation
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     public:
       // ======================================================================
       // accessor to eta0
-      result_type eta0 () const { return m_eta ; }
-      result_type deta ( argument p ) const { return eta ( p ) - eta0() ; }
+      double eta0 () const { return m_eta ; }
+      double deta ( const LHCb::MCParticle* p ) const { return eta ( p ) - eta0() ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -1329,19 +1329,19 @@ namespace LoKi
       DeltaR2* clone() const override
       { return new DeltaR2(*this) ; }
       /// MANDATORY: the only essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: "SHORT" representation
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
     private:
       // ======================================================================
       /// accessor to eta0
-      result_type eta0 () const { return m_deta.eta0()  ; }
+      double eta0 () const { return m_deta.eta0()  ; }
       /// evaluate delta eta
-      result_type deta ( argument p )  const
+      double deta ( const LHCb::MCParticle* p )  const
       { return eta ( p ) - eta0 ()  ; }
       /// get the eta
-      result_type eta  ( argument p ) const { return m_deta.eta( p ) ; }
+      double eta  ( const LHCb::MCParticle* p ) const { return m_deta.eta( p ) ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -1364,7 +1364,7 @@ namespace LoKi
       /// MANDATORY : clone method ("virtual constructor")
       ValidOrigin* clone() const  override;
       /// MANDATORY: the only one essential method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -1391,7 +1391,7 @@ namespace LoKi
       /// MANDATORY : clone method ("virtual constructor")
       MCVertexFunAdapter* clone() const  override;
       /// MANDATORY: the only one essential method
-      double operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -1452,7 +1452,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       MCDecayPattern* clone() const  override;
       /// MANDATORY: the only one essential method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -1482,7 +1482,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       MCFilter* clone() const  override;
       /// MANDATORY: the only one essential method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// "SHORT" representation, @see LoKi::AuxFunBase
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -1512,7 +1512,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       MCReconstructible* clone() const  override;
       /// MANDATORY: the only one essential method
-      double operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: "short representation"
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -1561,7 +1561,7 @@ namespace LoKi
       /// MAND ATORY: clone method ("virtual constructor")
       MCReconstructibleAs* clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: "short representation"
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -1625,7 +1625,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       ChildFunction*  clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL:  specific printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -1686,7 +1686,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       ChildPredicate*  clone() const  override;
       /// MANDATORY: the only one essential method
-      result_type operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL:  specific printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -1730,7 +1730,7 @@ namespace LoKi
       /// MANDATORY: clone function ("virtual constructor")
       InTree*       clone() const  override;
       /// MANDATORY: the only one essential method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the specific printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -1768,7 +1768,7 @@ namespace LoKi
       /// MANDATORY: clone function (virtual destructor)
       NinTree* clone() const  override;
       /// MANDATORY: the only one essential method
-      double operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the specific printout
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -1826,7 +1826,7 @@ namespace LoKi
       /// MANDATORY: clone function (virtual destructor)
       SumTree* clone() const  override;
       /// MANDATORY: the only one essential method
-      double operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the specific printout
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -1886,7 +1886,7 @@ namespace LoKi
       /// MANDATORY: clone function (virtual destructor)
       MultTree* clone() const  override;
       /// MANDATORY: the only one essential method
-      double operator() ( argument p ) const  override;
+      double operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the specific printout
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -1947,7 +1947,7 @@ namespace LoKi
       /// MANDATORY: clone function (virtual destructor)
       MinTree* clone() const   override;
       /// MANDATORY: the only one essential method
-      result_type   operator() ( argument p ) const  override;
+      double   operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the specific printout
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -2008,7 +2008,7 @@ namespace LoKi
       /// MANDATORY: clone function (virtual destructor)
       MaxTree* clone() const   override;
       /// MANDATORY: the only one essential method
-      result_type   operator() ( argument p ) const  override;
+      double   operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the specific printout
       std::ostream& fillStream( std::ostream& s ) const  override;
       // ======================================================================
@@ -2045,7 +2045,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       FromDecays* clone() const  override;
       /// MANDATORY: the only one essential method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -2066,7 +2066,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       Signal* clone() const  override;
       /// MANDATORY: the only one essential method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -2092,7 +2092,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       FromSignal* clone() const  override;
       /// MANDATORY: the only one essential method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
@@ -2129,7 +2129,7 @@ namespace LoKi
       /// MANDATORY: clone method ("virtual constructor")
       FromInteractions* clone() const  override;
       /// MANDATORY: the only one essential method
-      bool operator() ( argument p ) const  override;
+      bool operator() ( const LHCb::MCParticle* p ) const  override;
       /// OPTIONAL: the nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================

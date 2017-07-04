@@ -1,6 +1,5 @@
-// $Id$
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 // STD &STL
 // ============================================================================
@@ -12,15 +11,15 @@
 #include "LoKi/Assert.h"
 // ============================================================================
 /** @file
- *  Implementation file for function LoKi::throwException 
+ *  Implementation file for function LoKi::throwException
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-08-11
  */
 // ============================================================================
-void LoKi::throwException ( const std::string& message ) 
+void LoKi::throwException ( const std::string& message )
 { throw LoKi::Exception ( message ) ; }
 // ============================================================================
 
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
