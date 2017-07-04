@@ -866,7 +866,33 @@ namespace LoKi
      *  @param fun1 the first  function
      *  @param fun2 the second function
      */
-    using Min<TYPE,TYPE2>::Min;
+    Max ( LoKi::FunctorFromFunctor<TYPE,TYPE2> fun1 ,
+          LoKi::FunctorFromFunctor<TYPE,TYPE2> fun2 )
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
+      , LoKi::Min<TYPE,TYPE2> ( std::move(fun1) , std::move(fun2) )
+    {}
+    /// constructor from the function and constant
+    Max ( LoKi::FunctorFromFunctor<TYPE,TYPE2> fun1 , T2 fun2 )
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
+      , LoKi::Min<TYPE,TYPE2> ( std::move(fun1) , std::move(fun2)  )
+    {}
+    /// constructor from the function and constant
+    Max ( T2 fun1 , LoKi::FunctorFromFunctor<TYPE,TYPE2> fun2 )
+      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
+      , LoKi::Min<TYPE,TYPE2> ( std::move(fun1) , std::move(fun2) )
+    {}
+    /** constructor from >=3 functions
+     *  @param fun1 the first  function
+     *  @param fun2 the second function
+     *  @param funs the remaining functions
+     */
+    template <typename... Fs>
+    Max ( LoKi::FunctorFromFunctor<TYPE,TYPE2> fun1 ,
+          LoKi::FunctorFromFunctor<TYPE,TYPE2> fun2 ,
+          Fs&&... funs )
+      : Max( Max{ std::move(fun1) , std::move(fun2) },
+             std::forward<Fs>(funs)... )
+    {}
 
     /// MANDATORY: clone method ("virtual constructor")
     Max* clone() const override { return new Max ( *this ) ; }

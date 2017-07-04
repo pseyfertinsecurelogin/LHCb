@@ -8,6 +8,7 @@
 /** DetDesc */
 #include "DetDesc/ISolid.h"
 #include "DetDesc/SolidBoolean.h"
+#include "DetDesc/SolidBox.h"
 
 /** forward declarations from GaudiKernel and DetDesc  */
 class StatusCode;
@@ -36,12 +37,9 @@ public:
    *  @param first pointer to first/main solid
    */
   SolidUnion( const std::string& name , std::unique_ptr<ISolid> first );
-  [[deprecated("please call with an std::unique_ptr<ISolid> as second argument")]]
-  SolidUnion( const std::string& name , ISolid* first )
-      : SolidUnion(name, std::unique_ptr<ISolid>(first) ){}
 
-
-public:
+  SolidUnion           ( const SolidUnion& ) = delete ; ///< no copy
+  SolidUnion& operator=( const SolidUnion& ) = delete ; ///< no =
 
   /** - retrieve the specific type of the solid
    *  - implementation of ISolid interface
@@ -76,10 +74,6 @@ public:
    */
   StatusCode unite ( std::unique_ptr<ISolid>  solid ,
                      const Gaudi::Transform3D* mtrx  );
-  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
-  StatusCode unite ( ISolid*               solid ,
-                     const Gaudi::Transform3D* mtrx  )
-  { return unite( std::unique_ptr<ISolid>(solid), mtrx ); }
 
   /** add child solid to the solid union
    *  @param child    pointer to child solid
@@ -90,11 +84,6 @@ public:
   StatusCode unite ( std::unique_ptr<ISolid>    child                    ,
                      const Gaudi::XYZPoint&     position                 ,
                      const Gaudi::Rotation3D&    rotation = Gaudi::Rotation3D() );
-  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
-  StatusCode unite ( ISolid*               child                    ,
-                     const Gaudi::XYZPoint&     position                 ,
-                     const Gaudi::Rotation3D&    rotation = Gaudi::Rotation3D() )
-  { return unite( std::unique_ptr<ISolid>(child), position, rotation); }
 
  protected:
 
@@ -108,14 +97,10 @@ public:
    */
   StatusCode updateBP();
 
- private:
-
-  SolidUnion           ( const SolidUnion& ) ; ///< no copy
-  SolidUnion& operator=( const SolidUnion& ) ; ///< no =
 
 private:
 
-  mutable std::unique_ptr<ISolid> m_coverTop ;
+  mutable std::unique_ptr<SolidBox> m_coverTop ;
 
   template <class aPoint>
   bool isInsideImpl(const aPoint& point) const;
@@ -125,5 +110,3 @@ private:
 // ===========================================================================
 #endif  ///<  DETDESC_SOLIDUNION_H
 // ===========================================================================
-
-

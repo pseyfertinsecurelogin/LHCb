@@ -34,10 +34,9 @@ public:
    *  @exception SolidException wrong parameters
    */
   SolidIntersection( const std::string& name , std::unique_ptr<ISolid> first );
-  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
-  SolidIntersection( const std::string& name , ISolid* first ) : SolidIntersection(name,std::unique_ptr<ISolid>(first) ) {}
 
-public:
+  SolidIntersection ( const SolidIntersection& ) = delete ; ///< no copy
+  SolidIntersection& operator=( const SolidIntersection& ) = delete ; ///< no =
 
   /** retrieve the specific type of the solid
    *  @return specific type of the solid
@@ -62,10 +61,6 @@ public:
    */
   StatusCode    intersect( std::unique_ptr<ISolid>   solid                    ,
                            const Gaudi::Transform3D* mtrx                     );
-  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
-  StatusCode    intersect( ISolid*               solid                    ,
-                           const Gaudi::Transform3D* mtrx                     )
-  { return intersect( std::unique_ptr<ISolid>(solid),mtrx); }
 
   /** add intersections
    *  @param child    pointer to new solid
@@ -76,11 +71,6 @@ public:
   StatusCode intersect( std::unique_ptr<ISolid>  child                    ,
                         const Gaudi::XYZPoint&   position                 ,
                         const Gaudi::Rotation3D& rotation = Gaudi::Rotation3D() );
-  [[deprecated("please call with an std::unique_ptr<ISolid> as first argument")]]
-  StatusCode intersect( ISolid*                  child                    ,
-                        const Gaudi::XYZPoint&   position                 ,
-                        const Gaudi::Rotation3D& rotation = Gaudi::Rotation3D() )
-  { return intersect( std::unique_ptr<ISolid>(child), position, rotation); }
 protected:
 
   /** constructor
@@ -89,9 +79,6 @@ protected:
   SolidIntersection( const std::string& name = "Anonymous Intersection" );
 
 private:
-
-  SolidIntersection ( const SolidIntersection& ); ///< no copy
-  SolidIntersection& operator=( const SolidIntersection& ); ///< no =
 
   /**
    * implementation of isInside

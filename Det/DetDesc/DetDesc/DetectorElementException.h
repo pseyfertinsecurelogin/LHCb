@@ -28,8 +28,6 @@ public:
                             const GaudiException  & Exception                               ,
                             const DetectorElement * DetectorElement   = nullptr             ,
                             const StatusCode      & sc                = StatusCode::FAILURE  );
-  /// virtual destructor
-  virtual ~DetectorElementException() noexcept;
   ///
   std::ostream&    printOut ( std::ostream& os = std::cerr ) const  override;
   ///

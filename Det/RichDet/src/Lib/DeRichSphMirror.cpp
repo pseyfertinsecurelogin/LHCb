@@ -34,7 +34,7 @@ const CLID CLID_DeRichSphMirror = 12030;  // User defined
 
 // Standard Constructor
 DeRichSphMirror::DeRichSphMirror( const std::string & name )
-  : DeRichBase( name ) 
+  : DeRichBase( name )
 {
   setMyName("DeRichSphMirror");
 }
@@ -192,12 +192,10 @@ StatusCode DeRichSphMirror::updateGeometry()
       }
       else
       {
-        SolidBoolean::SolidChildrens components;
-        for ( SolidBoolean::SolidChildrens::const_iterator iter = compSolid->childBegin();
-              iter != compSolid->childEnd(); ++iter )
+        for ( const auto& c : compSolid->children() )
         {
-          if ( (*iter)->solid()->typeName() == "SolidSphere")
-            sphereSolid = dynamic_cast<const SolidSphere*>((*iter)->solid());
+          if ( c.solid()->typeName() == "SolidSphere")
+            sphereSolid = dynamic_cast<const SolidSphere*>(c.solid());
         }
       }
       if ( !sphereSolid )

@@ -31,7 +31,7 @@ DECLARE_CONVERTER_FACTORY(XmlElementCnv)
 // -----------------------------------------------------------------------
 // Material state string to state enumeration map
 // -----------------------------------------------------------------------
-static const std::map< std::string, eState > s_sMap = { 
+static const std::map< std::string, eState > s_sMap = {
                                      { "undefined", stateUndefined },
                                      { "solid",     stateSolid },
                                      { "liquid",    stateLiquid },
@@ -39,7 +39,7 @@ static const std::map< std::string, eState > s_sMap = {
 // -----------------------------------------------------------------------
 // Constructor
 // -----------------------------------------------------------------------
-XmlElementCnv::XmlElementCnv (ISvcLocator* svc) : 
+XmlElementCnv::XmlElementCnv (ISvcLocator* svc) :
   XmlGenericCnv (svc, CLID_Element) {
   nameString = xercesc::XMLString::transcode("name");
   temperatureString = xercesc::XMLString::transcode("temperature");
@@ -50,7 +50,7 @@ XmlElementCnv::XmlElementCnv (ISvcLocator* svc) :
   lambdaString = xercesc::XMLString::transcode("lambda");
   symbolString = xercesc::XMLString::transcode("symbol");
   AString = xercesc::XMLString::transcode("A");
-  ZeffString = xercesc::XMLString::transcode("Zeff"); 
+  ZeffString = xercesc::XMLString::transcode("Zeff");
   IString = xercesc::XMLString::transcode("I");
   hrefString = xercesc::XMLString::transcode("href");
   fractionmassString = xercesc::XMLString::transcode("fractionmass");
@@ -58,7 +58,7 @@ XmlElementCnv::XmlElementCnv (ISvcLocator* svc) :
   addressString = xercesc::XMLString::transcode("address");
   isotoperefString = xercesc::XMLString::transcode("isotoperef");
   atomString = xercesc::XMLString::transcode("atom");
-  
+
 }
 
 
@@ -75,7 +75,7 @@ XmlElementCnv::~XmlElementCnv () {
   xercesc::XMLString::release((XMLCh**)&lambdaString);
   xercesc::XMLString::release((XMLCh**)&symbolString);
   xercesc::XMLString::release((XMLCh**)&AString);
-  xercesc::XMLString::release((XMLCh**)&ZeffString);  
+  xercesc::XMLString::release((XMLCh**)&ZeffString);
   xercesc::XMLString::release((XMLCh**)&IString);
   xercesc::XMLString::release((XMLCh**)&hrefString);
   xercesc::XMLString::release((XMLCh**)&fractionmassString);
@@ -83,7 +83,7 @@ XmlElementCnv::~XmlElementCnv () {
   xercesc::XMLString::release((XMLCh**)&addressString);
   xercesc::XMLString::release((XMLCh**)&isotoperefString);
   xercesc::XMLString::release((XMLCh**)&atomString);
-  
+
 }
 
 
@@ -94,55 +94,48 @@ StatusCode XmlElementCnv::i_createObj (xercesc::DOMElement* element,
                                        DataObject*& refpObject) {
   // creates an object for the node found
   std::string elementName = dom2Std (element->getAttribute (nameString));
- 
+
   Element* dataObj = new Element(elementName);
   refpObject = dataObj;
-  // Now we have to process more material attributes if any      
+  // Now we have to process more material attributes if any
   std::string temperatureAttribute =
     dom2Std (element->getAttribute (temperatureString));
   if (!temperatureAttribute.empty()) {
-    dataObj->setTemperature
-      (xmlSvc()->eval(temperatureAttribute));
+    dataObj->setTemperature(xmlSvc()->eval(temperatureAttribute));
   }
   std::string pressureAttribute =
     dom2Std (element->getAttribute (pressureString));
   if (!pressureAttribute.empty()) {
-    dataObj->setPressure
-      (xmlSvc()->eval(pressureAttribute));
+    dataObj->setPressure(xmlSvc()->eval(pressureAttribute));
   }
   std::string stateAttribute = dom2Std (element->getAttribute (stateString));
   if (!stateAttribute.empty()) {
     dataObj->setState (s_sMap.at(stateAttribute));
   }
-  std::string densityAttribute =
-    dom2Std (element->getAttribute (densityString));
-  if (!densityAttribute.empty()) 
-    dataObj->setDensity
-      (xmlSvc()->eval(densityAttribute));
-  
-  
-  std::string iAttribute =
-      dom2Std (element->getAttribute (IString));
-  if (!iAttribute.empty()) 
+  std::string densityAttribute = dom2Std(element->getAttribute (densityString));
+  if (!densityAttribute.empty())
+    dataObj->setDensity(xmlSvc()->eval(densityAttribute));
+
+
+  std::string iAttribute = dom2Std (element->getAttribute (IString));
+  if (!iAttribute.empty())
       dataObj->setI (xmlSvc()->eval(iAttribute));
-  
+
 
 
   std::string radlenAttribute = dom2Std (element->getAttribute (radlenString));
   if (!radlenAttribute.empty()) {
-    dataObj->setRadiationLength
-      (xmlSvc()->eval(radlenAttribute));
+    dataObj->setRadiationLength(xmlSvc()->eval(radlenAttribute));
   }
   std::string lambdaAttribute = dom2Std (element->getAttribute (lambdaString));
   if (!lambdaAttribute.empty()) {
-    dataObj->setAbsorptionLength
-      (xmlSvc()->eval(lambdaAttribute));
+    dataObj->setAbsorptionLength(xmlSvc()->eval(lambdaAttribute));
   }
   std::string symbolAttribute = dom2Std (element->getAttribute (symbolString));
   if (!symbolAttribute.empty()) {
     dataObj->setSymbol (symbolAttribute);
   }
-  
+
   // returns
   return StatusCode::SUCCESS;
 } // end i_createObj
@@ -152,16 +145,16 @@ StatusCode XmlElementCnv::i_createObj (xercesc::DOMElement* element,
 // Fill an object with a new child element
 // -----------------------------------------------------------------------
 StatusCode XmlElementCnv::i_fillObj (xercesc::DOMElement*        childElement ,
-                                     DataObject*        refpObject   , 
-                                     IOpaqueAddress* /* address  */  ) 
+                                     DataObject*        refpObject   ,
+                                     IOpaqueAddress* /* address  */  )
 {
   MsgStream log(msgSvc(), "XmlElementCnv" );
-  
+
   // gets the object
   Element* dataObj = dynamic_cast<Element*> (refpObject);
   // gets the element's name
   const XMLCh* tagName = childElement->getNodeName();
-  
+
   // dispatches, based on the name
   if (0 == xercesc::XMLString::compareString(tabpropsString, tagName)) {
     if( log.level() <= MSG::VERBOSE )
@@ -171,21 +164,21 @@ StatusCode XmlElementCnv::i_fillObj (xercesc::DOMElement*        childElement ,
       dom2Std (childElement->getAttribute (addressString));
     long linkID = dataObj->linkMgr()->addLink(address, nullptr);
     SmartRef<TabulatedProperty> ref(dataObj, linkID);
-    dataObj->tabulatedProperties().push_back(ref); 
+    dataObj->tabulatedProperties().push_back(ref);
   } else if (0 == xercesc::XMLString::compareString(atomString, tagName)) {
-    
+
     if( log.level() <= MSG::VERBOSE )
       log << MSG::VERBOSE << "looking at an atom" << endmsg;
     // Now we have to process atom attributes
     std::string aAttribute = dom2Std (childElement->getAttribute (AString));
-    if (!aAttribute.empty()) 
+    if (!aAttribute.empty())
       dataObj->setA (xmlSvc()->eval(aAttribute));
-     
+
     std::string zeffAttribute =
       dom2Std (childElement->getAttribute (ZeffString));
-    if (!zeffAttribute.empty()) 
+    if (!zeffAttribute.empty())
       dataObj->setZ (xmlSvc()->eval(zeffAttribute, false));
-      
+
   } else if (0 == xercesc::XMLString::compareString
              (isotoperefString, tagName)) {
 
@@ -227,7 +220,7 @@ StatusCode XmlElementCnv::i_fillObj (xercesc::DOMElement*        childElement ,
       m_itemFraction = xmlSvc()->eval (fractionMassAttribute, false);
     }
     // At this point we should have loaded referred material so we need
-    // to find out its form either element or mixture and add it    
+    // to find out its form either element or mixture and add it
     if (CLID_Isotope == itemObj->clID()) {
       Isotope* is = dynamic_cast<Isotope*>(itemObj);
       dataObj->addIsotope(is, m_itemFraction, false);
@@ -256,25 +249,25 @@ StatusCode XmlElementCnv::i_fillObj (xercesc::DOMElement*        childElement ,
 // Process an object
 // -----------------------------------------------------------------------
 StatusCode XmlElementCnv::i_processObj (DataObject*        refpObject ,
-                                        IOpaqueAddress* /* address */ ) 
+                                        IOpaqueAddress* /* address */ )
 {
   // gets the object
   Element* dataObj = dynamic_cast<Element*> (refpObject);
   // computes some values for this object
-  
+
   if (0 != dataObj->nOfIsotopes()) {
     dataObj->compute();
   } else {
     // We created the element from scratch so now we need to compute
     // the derived quantities
     dataObj->ComputeCoulombFactor();
-    dataObj->ComputeLradTsaiFactor();   
-    dataObj->ComputeInteractionLength(); 
+    dataObj->ComputeLradTsaiFactor();
+    dataObj->ComputeInteractionLength();
     dataObj->ComputeRadiationLength();
     dataObj->ComputeMeanExcitationEnergy();
     dataObj->ComputeDensityEffect();
 
-  
+
   }
 
   // returns
@@ -282,6 +275,6 @@ StatusCode XmlElementCnv::i_processObj (DataObject*        refpObject ,
 } // end i_processObj
 
 // ============================================================================
-// End 
+// End
 // ============================================================================
 

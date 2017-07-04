@@ -74,7 +74,10 @@ copyRaw.Destination = "DAQ/RawEventOriginal"
 killer = bankKiller("Hlt2SelRepKiller")
 killer.BankTypes = ["HltSelReports"]
 killer.DefaultIsKill = False
+# HltSelReportsWriter::kSourceID_Hlt2 << HltSelReportsWriter::kSourceID_BitShift
 killer.KillSourceID = 2 << 13
+# HltSelReportsWriter::kSourceID_MajorMask
+killer.KillSourceIDMask = 0xE000
 
 writer = HltSelReportsWriter('Hlt2SelReportsWriter')
 writer.SourceID = 2

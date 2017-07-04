@@ -51,9 +51,8 @@ struct Item final {
   struct MembFunc final {
     /// Simple constructor.
     MembFunc(BaseObjectMemberFunction *mf_p): mf(mf_p) { }
-    /// Simple destructor. The pointers are not deleted because \e owned by the item.
-    ~MembFunc() = default;
     /// Pointer to the registered member function.
+    /// note:  pointers are not deleted because \e owned by the item.
     BaseObjectMemberFunction *mf;
     /// List of the items used by this member function
     ItemList  items;

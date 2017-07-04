@@ -1,5 +1,3 @@
-// $Id: Material.cpp,v 1.8 2009-04-17 08:54:24 cattanem Exp $ 
-// ============================================================================
 /// GaudiKernel
 #include "GaudiKernel/System.h"
 /// DetDesc
@@ -16,15 +14,13 @@ Material::Material( const std::string& name        ,
                     const double       temp        ,
                     const double       press       ,
                     const eState       s           )
-  : DataObject          (            )
-  , m_name              ( name       )
+  : m_name              ( name       )
   , m_density           ( dens       )
   , m_radiationLength   ( rl         )
   , m_absorptionLength  ( al         )
   , m_temperature       ( temp       )
   , m_pressure          ( press      )
   , m_state             ( s          )
-  , m_props             (            )
 { }
 
 //////////////////////
@@ -39,8 +35,6 @@ void Material::reset()
   setState            ( stateUndefined );
 }
 
-//////////////////////
-Material::~Material() { m_props.clear() ;}
 
 //////////////////////
 MsgStream&        Material::fillStream ( MsgStream&   s ) const
@@ -63,17 +57,20 @@ MsgStream&        Material::fillStream ( MsgStream&   s ) const
     << " Pressure[atm]="   << std::setw(12)   << m_pressure         /atmosphere
     << " State="    ;
   ///
-  if      ( stateSolid  == m_state ) { s << " Solid   " ; }
-  else if ( stateLiquid == m_state ) { s << " Liquid  " ; }
-  else if ( stateGas    == m_state ) { s << " Gas     " ; }
-  else                               { s << "undefined" ; }
+  switch (m_state) {
+  case stateSolid:   s << " Solid   " ; break;
+  case stateLiquid:  s << " Liquid  " ; break;
+  case stateGas:     s << " Gas     " ; break;
+  default:           s << "undefined" ;
+  }
   ///
   s <<  " #properties="       << std::setw(2)   << m_props.size()
     << endmsg ;
-  for( SmartRefVector<TabulatedProperty>::const_iterator it =
-         m_props.begin() ; m_props.end() != it ; ++it )
-  { s << "\t property#" << std::setw(2)
-      << it-m_props.begin() << "   " << *it; }
+
+  unsigned i = 0;
+  for( const auto& prop : m_props ) {
+      s << "\t property#" << std::setw(2) << i++ << "   " << prop;
+  }
   return s;
 }
 //////////////////////
@@ -97,20 +94,20 @@ std::ostream&     Material::fillStream ( std::ostream& s ) const
     << " Pressure[atm]="   << std::setw(12)   << m_pressure         /atmosphere
     << " State="    ;
   ///
-  if      ( stateSolid  == m_state ) { s << " Solid   " ; }
-  else if ( stateLiquid == m_state ) { s << " Liquid  " ; }
-  else if ( stateGas    == m_state ) { s << " Gas     " ; }
-  else                               { s << "undefined" ; }
+  switch (m_state) {
+  case stateSolid:  s << " Solid   " ; break;
+  case stateLiquid: s << " Liquid  " ; break;
+  case stateGas:    s << " Gas     " ; break;
+  default:          s << "undefined" ; break;
+  }
   ///
-  s << " #properties="    << std::setw(2)   << m_props.size()
-    << std::endl;
-  for( SmartRefVector<TabulatedProperty>::const_iterator it =
-         m_props.begin() ; m_props.end() != it ; ++it )
-  { s << "\t property#" << std::setw(2)
-      << it-m_props.begin() << "   " << *it; }
+  s << " #properties="    << std::setw(2)   << m_props.size() << '\n';
+  unsigned i = 0;
+  for( const auto& prop : m_props ) {
+      s << "\t property#" << std::setw(2) << i++ << "   " << prop;
+  }
   return s;
 }
-
 
 // ============================================================================
 // End
