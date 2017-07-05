@@ -118,7 +118,7 @@ void CaloDigitsFromRaw::convertSpd ( double energyScale ) {
 
   if(m_outputType.value().digitOnTES){
     LHCb::CaloDigits* digits = new LHCb::CaloDigits();
-    put( digits, m_outputDigits + m_extension );
+    put( digits, m_outputDigits.value() + m_extension.value() );
     for ( const auto& cells : spdCells ) {
       try{
         auto dig = std::make_unique<LHCb::CaloDigit>( cells, energyScale );
@@ -137,12 +137,12 @@ void CaloDigitsFromRaw::convertSpd ( double energyScale ) {
     std::stable_sort ( digits->begin(), digits->end(),
                        IncreasingByCellID );
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug() << m_outputDigits + m_extension << " CaloDigit container size " << digits->size() << endmsg;
+      debug() << m_outputDigits.value() + m_extension.value() << " CaloDigit container size " << digits->size() << endmsg;
   }
 
   if(m_outputType.value().adcOnTES){
     LHCb::CaloAdcs* adcs = new LHCb::CaloAdcs();
-    put( adcs ,  m_outputADCs + m_extension );
+    put( adcs ,  m_outputADCs.value() + m_extension.value() );
     for ( const auto& cells : spdCells ) {
       try{
         auto adc = std::make_unique<LHCb::CaloAdc>( cells, 1 );
@@ -160,7 +160,7 @@ void CaloDigitsFromRaw::convertSpd ( double energyScale ) {
 
     }
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug() <<  m_outputADCs + m_extension << " CaloAdc container size " << adcs->size() << endmsg;
+      debug() <<  m_outputADCs.value() + m_extension.value() << " CaloAdc container size " << adcs->size() << endmsg;
   }
 
   if(m_statusOnTES.value())m_spdTool->putStatusOnTES();
@@ -175,7 +175,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
 
   if(m_outputType.value().digitOnTES){
     LHCb::CaloDigits* digits = new LHCb::CaloDigits();
-    put( digits, m_outputDigits+ m_extension );
+    put( digits, m_outputDigits.value() + m_extension.value() );
     for ( const auto& itD : m_energyTool->digits( ) ) {
       try {
         std::unique_ptr<LHCb::CaloDigit> dig{ itD.clone() };
@@ -198,7 +198,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
     std::stable_sort ( digits->begin(), digits->end(),
                        IncreasingByCellID );
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug() << m_outputDigits+ m_extension << " CaloDigit container size " << digits->size() << endmsg;
+      debug() << m_outputDigits.value()+ m_extension.value() << " CaloDigit container size " << digits->size() << endmsg;
     if(m_statusOnTES.value())m_energyTool->putStatusOnTES();
 
   }
@@ -206,7 +206,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
   if(m_outputType.value().adcOnTES){
     // Channel ADC
     LHCb::CaloAdcs* adcs = new LHCb::CaloAdcs();
-    put( adcs ,  m_outputADCs+ m_extension );
+    put( adcs ,  m_outputADCs.value()+ m_extension.value() );
     const std::vector<LHCb::CaloAdc>& allAdcs = m_energyTool->adcs( );
     if(m_statusOnTES.value())m_energyTool->putStatusOnTES();
     for ( const auto& itA : allAdcs ) {
@@ -227,19 +227,19 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
         verbose() << "ID " << itA.cellID() << " ADC value " << itA.adc() << endmsg;
     }
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-      debug() << " CaloAdc container '"  << m_outputADCs+ m_extension  << "' -> size = " << adcs->size() << endmsg;
+      debug() << " CaloAdc container '"  << m_outputADCs.value()+ m_extension.value()  << "' -> size = " << adcs->size() << endmsg;
 
 
     // PinDiode ADC (possibly in a different container)
     // MUST BE AFTER STANDARD ADCs decoding
     const std::vector<LHCb::CaloAdc>& allPinAdcs = m_energyTool->pinAdcs( );
-    if( "None" != m_pinContainerName && 0 !=allPinAdcs.size() ){
+    if( "None" != m_pinContainerName && !allPinAdcs.empty() ){
       LHCb::CaloAdcs*  pinAdcs;
-      if(m_pinContainerName == m_outputDigits || m_pinContainerName == "SAME"|| m_pinContainerName == "Same"){
+      if(m_pinContainerName.value() == m_outputDigits.value() || m_pinContainerName == "SAME"|| m_pinContainerName == "Same"){
         pinAdcs = adcs ;
       }else{
         pinAdcs = new LHCb::CaloAdcs();
-        put(pinAdcs , m_pinContainerName + m_extension );
+        put(pinAdcs , m_pinContainerName.value() + m_extension.value() );
       }
       for ( const auto& itA : allPinAdcs ) {
         try{
@@ -261,7 +261,7 @@ void CaloDigitsFromRaw::convertCaloEnergies ( ) {
           verbose() << "Pin-diode : ID " << itA.cellID() << " ADC value " << itA.adc() << endmsg;
       }
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
-        debug() << " Adding PIN-Diode CaloAdc to container '" << m_pinContainerName + m_extension
+        debug() << " Adding PIN-Diode CaloAdc to container '" << m_pinContainerName.value() + m_extension.value()
                 << "' -> size = " << pinAdcs->size() << endmsg;
     }
     if(m_statusOnTES.value())m_energyTool->putStatusOnTES();

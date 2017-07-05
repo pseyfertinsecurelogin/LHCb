@@ -125,11 +125,11 @@ StatusCode CaloZSupAlg::execute() {
   LHCb::CaloDigits* newDigits=nullptr;
   if(m_outputType.value().adcOnTES){
     newAdcs = new LHCb::CaloAdcs();
-    put( newAdcs, m_outputADCData + m_extension );
+    put( newAdcs, m_outputADCData.value() + m_extension.value() );
   }
   if(m_outputType.value().digitOnTES) {
     newDigits = new LHCb::CaloDigits();
-    put( newDigits, m_outputDigitData + m_extension );
+    put( newDigits, m_outputDigitData.value() + m_extension.value() );
   }
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "Processing " << adcs.size()
