@@ -8,6 +8,7 @@
 <P>
 <b>BEWARE: 
 <ul>
+<li>As from version v42r5 this file is no longer maintained. The release notes for each individual release can be found in the ReleaseNotes subdirectory of the project
 <li>As from version v40r1, this project is maintained only in Git
 <li>The package release notes are no longer maintained, look at the Git Merge Request (MR) comments
 <li>The package versions are no longer maintained, use the Git commit IDs
