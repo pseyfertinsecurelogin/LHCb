@@ -80,7 +80,6 @@ namespace LoKi
         , m_stat   ( stat )
       {}
       /// constructor from the predicate and the generic counter
-      template <typename F, typename = details::require_signature<F,TYPE,TYPE2>>
       Counter ( LoKi::FunctorFromFunctor<TYPE,TYPE2> cut  ,
                 const LoKi::CounterDef& cnt )
         : LoKi::AuxFunBase ( std::tie ( cut , cnt ) )
