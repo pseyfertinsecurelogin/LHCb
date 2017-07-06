@@ -15,22 +15,26 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
     '''Extension of the original QMTTest of Gaudi adding checking of the counters'''
 
     def validateWithReference(self, stdout=None, stderr=None, result=None,
-                              causes=None, preproc=None):
+                              causes=None, preproc=None, counter_preproc=None):
         '''Overwrite of the base class method by adding extra checks for counters'''
         # call upper class method
         super(LHCbTest, self).validateWithReference(stdout, stderr, result, causes, preproc)
         # check the counters
-        self._compareCounters(stdout, causes, result)
+        self._compareCounters(stdout, causes, result, counter_preproc)
         
-    def _extractCounters(self, s):
+    def _extractCounters(self, s, counter_preproc=None):
         """
         Extract all counter lines from a string containing log lines.
-        Parses the lines and returns a dictionnary where key is the algorithm name and value a list of counters.
+        In case a counter preprocessor is given, it is applied to the counter lines.
+        Then the lines are parsed and a dictionnary is returned where key is the algorithm name and value a list of counters.
         Each counter itself is a list with first element being the counter name and the others counter's values, all as string
         """
         counters = {}
         counterStartRE = re.compile('^([^. ]*)[. ]+SUCCESS Number of counters : (\d+)$')
-        lines = s.split(os.linesep)
+        if counter_preproc:
+            lines = counter_preproc(s)
+        else:
+            lines = s.split(os.linesep)
         n = 0
         while n < len(lines):
             # find counter block's header
@@ -78,7 +82,7 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         if _floatDiffer(refMax, valMax, sensibility): return False
         return True
 
-    def _compareCounters(self, stdout, causes, result):
+    def _compareCounters(self, stdout, causes, result, counter_preproc):
         """
         Compares values of counters to the reference file
         stdout: the test output
@@ -90,8 +94,8 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
         if not (lreference and os.path.isfile(lreference)):
             return
         # extract counters from reference and stdout
-        refCounters = self._extractCounters(open(lreference).read())
-        newCounters = self._extractCounters(stdout)
+        refCounters = self._extractCounters(open(lreference).read(), counter_preproc)
+        newCounters = self._extractCounters(stdout, counter_preproc)
         # diff counters
         refAlgoNames = set(refCounters)
         newAlgoNames = set(newCounters)
@@ -112,6 +116,8 @@ class LHCbTest(GaudiTesting.QMTTest.QMTTest):
             if len(refCounters[algoName]) != len(newCounters[algoName]):
                 msg += '    Different number of counters for algo %s\n' % algoName
                 msg += '      Expected to check %d, found %d of them\n' % (len(refCounters[algoName]), len(newCounters[algoName]))
+                msg += '      Reference list : %s\n' % str([a[0] for a in refCounters[algoName]])
+                msg += '      New list : %s\n' % str([a[0] for a in newCounters[algoName]])
                 continue
             for n in range(len(refCounters[algoName])):
                 if not self._compareCounterLine(refCounters[algoName][n], newCounters[algoName][n]):
