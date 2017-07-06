@@ -1,8 +1,9 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <author>Marco Clemencic</author>
  <class>AddConditionDialog</class>
- <widget class="QDialog" name="AddConditionDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="AddConditionDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -10,79 +11,79 @@
     <height>511</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Add Condition</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="condDetails" >
-     <property name="title" >
+    <widget class="QGroupBox" name="condDetails">
+     <property name="title">
       <string>Condition Object Details</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout" >
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QGroupBox" name="location" >
-        <property name="title" >
+       <widget class="QGroupBox" name="location">
+        <property name="title">
          <string>Location</string>
         </property>
-        <layout class="QFormLayout" name="formLayout" >
-         <item row="0" column="0" >
-          <widget class="QLabel" name="folderLabel" >
-           <property name="text" >
+        <layout class="QFormLayout" name="formLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="folderLabel">
+           <property name="text">
             <string>Folder</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1" >
-          <widget class="QComboBox" name="folder" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+         <item row="0" column="1">
+          <widget class="QComboBox" name="folder">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
           </widget>
          </item>
-         <item row="1" column="1" >
-          <widget class="QLineEdit" name="channel" />
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="channel"/>
          </item>
-         <item row="1" column="0" >
-          <widget class="QLabel" name="channelLabel" >
-           <property name="text" >
+         <item row="1" column="0">
+          <widget class="QLabel" name="channelLabel">
+           <property name="text">
             <string>Channel</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1" >
-          <widget class="TimePointEdit" native="1" name="since" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+         <item row="2" column="1">
+          <widget class="TimePointEdit" name="since" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
           </widget>
          </item>
-         <item row="3" column="1" >
-          <widget class="TimePointEdit" native="1" name="until" >
-           <property name="sizePolicy" >
-            <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+         <item row="3" column="1">
+          <widget class="TimePointEdit" name="until" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
           </widget>
          </item>
-         <item row="2" column="0" >
-          <widget class="QLabel" name="sinceLabel" >
-           <property name="text" >
+         <item row="2" column="0">
+          <widget class="QLabel" name="sinceLabel">
+           <property name="text">
             <string>Since</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="0" >
-          <widget class="QLabel" name="untilLabel" >
-           <property name="text" >
+         <item row="3" column="0">
+          <widget class="QLabel" name="untilLabel">
+           <property name="text">
             <string>Until</string>
            </property>
           </widget>
@@ -91,20 +92,20 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="payloadKeys" >
-        <property name="title" >
+       <widget class="QGroupBox" name="payloadKeys">
+        <property name="title">
          <string>Payload Keys</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2" >
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QListView" name="fields" />
+          <widget class="QListView" name="fields"/>
          </item>
          <item>
-          <widget class="QPushButton" name="editKey" >
-           <property name="toolTip" >
+          <widget class="QPushButton" name="editKey">
+           <property name="toolTip">
             <string>Edit the selected field</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>Edit</string>
            </property>
           </widget>
@@ -116,30 +117,39 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="stack" >
-     <property name="title" >
+    <widget class="QGroupBox" name="stack">
+     <property name="title">
       <string>Condition Objects Stack</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3" >
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QWidget" native="1" name="widget_3" >
-        <layout class="QHBoxLayout" name="horizontalLayout_2" >
-         <property name="margin" >
+       <widget class="QWidget" name="widget_3" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
-          <widget class="QCheckBox" name="utc" >
-           <property name="text" >
+          <widget class="QCheckBox" name="utc">
+           <property name="text">
             <string>UTC</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="horizontalSpacer" >
-           <property name="orientation" >
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
-           <property name="sizeHint" stdset="0" >
+           <property name="sizeHint" stdset="0">
             <size>
              <width>40</width>
              <height>20</height>
@@ -148,66 +158,66 @@
           </spacer>
          </item>
          <item>
-          <widget class="QToolButton" name="addButton" >
-           <property name="toolTip" >
+          <widget class="QToolButton" name="addButton">
+           <property name="toolTip">
             <string>Add condition to the stack</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>add</string>
            </property>
-           <property name="icon" >
-            <iconset resource="Resources.qrc" >
+           <property name="icon">
+            <iconset resource="Resources.qrc">
              <normaloff>:/icons/plus.png</normaloff>:/icons/plus.png</iconset>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="removeButton" >
-           <property name="enabled" >
+          <widget class="QToolButton" name="removeButton">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="toolTip" >
+           <property name="toolTip">
             <string>Remove condition from the stack</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>remove</string>
            </property>
-           <property name="icon" >
-            <iconset resource="Resources.qrc" >
+           <property name="icon">
+            <iconset resource="Resources.qrc">
              <normaloff>:/icons/minus.png</normaloff>:/icons/minus.png</iconset>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="upButton" >
-           <property name="enabled" >
+          <widget class="QToolButton" name="upButton">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="toolTip" >
+           <property name="toolTip">
             <string>Move condition up</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>up</string>
            </property>
-           <property name="icon" >
-            <iconset resource="Resources.qrc" >
+           <property name="icon">
+            <iconset resource="Resources.qrc">
              <normaloff>:/icons/up.png</normaloff>:/icons/up.png</iconset>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="downButton" >
-           <property name="enabled" >
+          <widget class="QToolButton" name="downButton">
+           <property name="enabled">
             <bool>false</bool>
            </property>
-           <property name="toolTip" >
+           <property name="toolTip">
             <string>Move condition down</string>
            </property>
-           <property name="text" >
+           <property name="text">
             <string>down</string>
            </property>
-           <property name="icon" >
-            <iconset resource="Resources.qrc" >
+           <property name="icon">
+            <iconset resource="Resources.qrc">
              <normaloff>:/icons/down.png</normaloff>:/icons/down.png</iconset>
            </property>
           </widget>
@@ -216,8 +226,8 @@
        </widget>
       </item>
       <item>
-       <widget class="QTableView" name="conditionsStackView" >
-        <property name="selectionBehavior" >
+       <widget class="QTableView" name="conditionsStackView">
+        <property name="selectionBehavior">
          <enum>QAbstractItemView::SelectRows</enum>
         </property>
        </widget>
@@ -226,11 +236,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="orientation" >
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons" >
+     <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
      </property>
     </widget>
@@ -244,10 +254,6 @@
    <header>CondDBUI/Browser/Widgets.h</header>
    <container>1</container>
    <slots>
-    <slot>setMinimumDateTime(QDateTime)</slot>
-    <slot>setMaximumDateTime(QDateTime)</slot>
-    <slot>resetMinimumDateTime()</slot>
-    <slot>resetMaximumDateTime()</slot>
     <signal>dateTimeChanged(QDateTime)</signal>
     <signal>dateChanged(QDate)</signal>
     <signal>timeChanged(QTime)</signal>
@@ -255,12 +261,15 @@
     <signal>maxChecked()</signal>
     <signal>maxUnchecked()</signal>
     <signal>validityKeyChanged(cool::ValidityKey)</signal>
+    <slot>setMinimumDateTime(QDateTime)</slot>
+    <slot>setMaximumDateTime(QDateTime)</slot>
+    <slot>resetMinimumDateTime()</slot>
+    <slot>resetMaximumDateTime()</slot>
    </slots>
   </customwidget>
  </customwidgets>
- <includes/>
  <resources>
-  <include location="Resources.qrc" />
+  <include location="Resources.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -269,11 +278,11 @@
    <receiver>AddConditionDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>227</x>
      <y>490</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -285,11 +294,11 @@
    <receiver>AddConditionDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>295</x>
      <y>496</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>
@@ -301,11 +310,11 @@
    <receiver>until</receiver>
    <slot>setMinimumDateTime(QDateTime)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>186</x>
      <y>123</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>186</x>
      <y>145</y>
     </hint>
@@ -317,11 +326,11 @@
    <receiver>since</receiver>
    <slot>setMaximumDateTime(QDateTime)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>186</x>
      <y>145</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>186</x>
      <y>123</y>
     </hint>
@@ -333,11 +342,11 @@
    <receiver>since</receiver>
    <slot>resetMaximumDateTime()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>186</x>
      <y>145</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>186</x>
      <y>123</y>
     </hint>
@@ -349,11 +358,11 @@
    <receiver>AddConditionDialog</receiver>
    <slot>showHelp()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>387</x>
      <y>479</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>362</x>
      <y>257</y>
     </hint>
@@ -365,11 +374,11 @@
    <receiver>AddConditionDialog</receiver>
    <slot>addCondition()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>486</x>
      <y>295</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>611</x>
      <y>327</y>
     </hint>
@@ -381,11 +390,11 @@
    <receiver>AddConditionDialog</receiver>
    <slot>removeCondition()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>516</x>
      <y>298</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>611</x>
      <y>351</y>
     </hint>
@@ -397,11 +406,11 @@
    <receiver>AddConditionDialog</receiver>
    <slot>moveUp()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>552</x>
      <y>300</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>611</x>
      <y>383</y>
     </hint>
@@ -413,11 +422,11 @@
    <receiver>AddConditionDialog</receiver>
    <slot>moveDown()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>582</x>
      <y>297</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>611</x>
      <y>416</y>
     </hint>
@@ -429,11 +438,11 @@
    <receiver>AddConditionDialog</receiver>
    <slot>editCondition()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>361</x>
      <y>210</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>609</x>
      <y>150</y>
     </hint>

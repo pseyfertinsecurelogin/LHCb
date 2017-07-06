@@ -269,7 +269,7 @@ def main():
                 continue
 
             if dbroot != "/": # it means it is not "/"
-                if not db.db.existsFolderSet(dbroot):
+                if not db.existsFolderSet(dbroot):
                     db.createNode(path = dbroot, storageType = 'NODE')
             #else:
             #    dbroot = "/"
@@ -309,7 +309,7 @@ def main():
                 print ("%" + str(num_len) + "d %" + str(num_len) + "d  %s") % (n, sum - n, folder_name)
                 folder_keys = folderDict[folder_name].keys()
                 folder_path = os.path.join(dbroot, folder_name)
-                if not db.db.existsFolder(folder_path):
+                if not db.existsFolder(folder_path):
                     db.createNode(path = folder_path, storageKeys = folder_keys)
 
                 payload = {}
