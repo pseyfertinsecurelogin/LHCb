@@ -11,8 +11,9 @@ pkg_check_modules(git2 libgit2)
 
 
 find_package(Boost COMPONENTS filesystem)
-# avoid warnings from Boost headers
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+find_package(XercesC)
+# avoid warnings from Boost and XercesC headers
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${XERCESC_INCLUDE_DIRS})
 
 if (git2_FOUND)
   include_directories(${git2_INCLUDE_DIRS})

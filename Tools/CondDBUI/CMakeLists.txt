@@ -14,6 +14,10 @@ find_package(Boost)
 find_package(COOL COMPONENTS CoolKernel CoolApplication)
 find_package(CORAL COMPONENTS CoralBase CoralKernel RelationalAccess)
 find_package(PythonLibs)
+
+# Force Qt5 whichever is the default
+set(DESIRED_QT_VERSION 5)
+
 if(DESIRED_QT_VERSION STREQUAL "5")
   find_package(Qt5 COMPONENTS Gui)
 else()

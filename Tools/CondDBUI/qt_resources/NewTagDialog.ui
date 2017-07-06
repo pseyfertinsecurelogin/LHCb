@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>NewTagDialog</class>
- <widget class="QDialog" name="NewTagDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="NewTagDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,69 +10,69 @@
     <height>340</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>New tag</string>
   </property>
-  <layout class="QFormLayout" name="formLayout" >
-   <property name="fieldGrowthPolicy" >
+  <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
     <enum>QFormLayout::ExpandingFieldsGrow</enum>
    </property>
-   <item row="0" column="0" >
-    <widget class="QLabel" name="nodeLabel" >
-     <property name="text" >
+   <item row="0" column="0">
+    <widget class="QLabel" name="nodeLabel">
+     <property name="text">
       <string>&amp;Node</string>
      </property>
-     <property name="buddy" >
+     <property name="buddy">
       <cstring>node</cstring>
      </property>
     </widget>
    </item>
-   <item row="0" column="1" >
-    <widget class="QLineEdit" name="node" >
-     <property name="readOnly" >
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="node">
+     <property name="readOnly">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QLabel" name="tagLabel" >
-     <property name="text" >
+   <item row="1" column="0">
+    <widget class="QLabel" name="tagLabel">
+     <property name="text">
       <string>New &amp;tag name</string>
      </property>
-     <property name="buddy" >
+     <property name="buddy">
       <cstring>tag</cstring>
      </property>
     </widget>
    </item>
-   <item row="1" column="1" >
-    <widget class="QLineEdit" name="tag" />
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="tag"/>
    </item>
-   <item row="2" column="0" >
-    <widget class="QLabel" name="childTagsLabel" >
-     <property name="text" >
+   <item row="2" column="0">
+    <widget class="QLabel" name="childTagsLabel">
+     <property name="text">
       <string>&amp;Child tags</string>
      </property>
-     <property name="buddy" >
+     <property name="buddy">
       <cstring>childTags</cstring>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" >
-    <widget class="QTableView" name="childTags" />
+   <item row="2" column="1">
+    <widget class="QTableView" name="childTags"/>
    </item>
-   <item row="3" column="1" >
-    <widget class="QPushButton" name="fillChildTagsBtn" >
-     <property name="text" >
+   <item row="3" column="1">
+    <widget class="QPushButton" name="fillChildTagsBtn">
+     <property name="text">
       <string>&amp;Fill from an existing tag</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1" >
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="orientation" >
+   <item row="4" column="1">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons" >
+     <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
@@ -86,11 +87,11 @@
    <receiver>NewTagDialog</receiver>
    <slot>checkValidData()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>155</x>
      <y>50</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>48</x>
      <y>135</y>
     </hint>
@@ -102,11 +103,11 @@
    <receiver>NewTagDialog</receiver>
    <slot>fillChildTags()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>173</x>
      <y>273</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>46</x>
      <y>227</y>
     </hint>
@@ -118,11 +119,11 @@
    <receiver>NewTagDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>324</x>
      <y>305</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -134,11 +135,11 @@
    <receiver>NewTagDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>390</x>
      <y>305</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>
@@ -146,8 +147,8 @@
   </connection>
  </connections>
  <slots>
+  <signal>dataValid(bool)</signal>
   <slot>checkValidData()</slot>
   <slot>fillChildTags()</slot>
-  <signal>dataValid(bool)</signal>
  </slots>
 </ui>

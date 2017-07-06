@@ -19,7 +19,7 @@ from .Qt import (Qt, QObject,
 
 from Ui_MainWindow import Ui_MainWindow
 
-from CondDBUI import CondDB
+from CondDBUI import CondDB, openDB
 import PyCoolCopy
 
 from Models import *
@@ -353,10 +353,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.dataView.clear()
             if connString:
                 try:
-                    self.db = CondDB(connString, readOnly = readOnly)
+                    self.db = openDB(connString, readOnly = readOnly)
                 except Exception as x:
-                    from functools import reduce
-                    msg = reduce(lambda x,y: x + y, list(x.args), '')
+                    msg = ''.join(x.args)
                     if msg.startswith("Database not found:"):
                         QMessageBox.critical(self, "Cannot open database", msg)
                         return
@@ -515,6 +514,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # it is better to check if the field exists in the payload.
             if field in payload:
                 data = payload[field]
+                if not isinstance(data, basestring):
+                    data = str(data)
         self.dataView.setPlainText(data)
 
     ## Show a critical dialog with the latest exception traceback.
@@ -554,7 +555,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         folders = set()
         foldersets = set()
         for n in self.models["nodes"].nodes:
-            if self.db.db.existsFolder(n):
+            if self.db.existsFolder(n):
                 folders.add(n)
             else:
                 foldersets.add(n)
@@ -694,7 +695,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             from Utils import BusyCursor
             _bc = BusyCursor()
             tag = str(d.tag.text())
-            if self.db.db.existsFolder(path):
+            if self.db.existsFolder(path):
                 self.db.recursiveTag(path, tag)
             else:
                 tags = {}
