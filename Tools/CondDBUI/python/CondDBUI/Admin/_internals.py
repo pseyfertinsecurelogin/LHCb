@@ -93,7 +93,7 @@ def MergeAndTag(source, target, tag, check_addition_db = True):
         db = CondDBUI.CondDB(source[0])
         target_db = CondDBUI.CondDB(target[0],readOnly=False)
 
-        addition = filter(db.db.existsFolder,db.getAllNodes())
+        addition = filter(db.existsFolder,db.getAllNodes())
         local_tags = {}
         for l in addition:
             local_tags[l] = "HEAD"
@@ -183,7 +183,7 @@ def MakeDBFromFiles(source, db, includes, excludes, basepath = "",
             if remove_extension:
                 folder_path = os.path.splitext(folder_path)[0]
 
-            if not db.db.existsFolder(folder_path):
+            if not db.existsFolder(folder_path):
                 db.createNode(path = folder_path, storageKeys = keys)
 
             collection = {}
@@ -245,7 +245,7 @@ def CompareDBToFiles(source, db, includes, excludes, basepath = "",
             if remove_extension:
                 folder_path = os.path.splitext(folder_path)[0]
 
-            if not db.db.existsFolder(folder_path):
+            if not db.existsFolder(folder_path):
                 errors[folder_path] = 'missing folder'
                 continue
 
@@ -443,14 +443,14 @@ def DumpToFiles(database, time=0, tag="HEAD", srcs=['/'],
     # Collect the list of folders we are going to use.
     nodes = []
     for s in srcs:
-        if db.db.existsFolder(s):
+        if db.existsFolder(s):
             nodes.append(s)
-        elif db.db.existsFolderSet(s):
+        elif db.existsFolderSet(s):
             nodes += db.getAllChildNodes(s)
         else:
             _log.warning("Node '%s' does not exist. Ignored",s)
 
-    nodes = [ n for n in set(nodes) if db.db.existsFolder(n) ]
+    nodes = [ n for n in set(nodes) if db.existsFolder(n) ]
     nodes.sort()
     monitor.setMaximum(len(nodes))
 
@@ -459,7 +459,7 @@ def DumpToFiles(database, time=0, tag="HEAD", srcs=['/'],
     # matching: href "conddb:blah"
     hrefRE = re.compile('href *= *("conddb:[^">]*"|'+"'conddb:[^'>]*')")
     value = 0
-    for node in ( n for n in nodes if db.db.existsFolder(n) ):
+    for node in ( n for n in nodes if db.existsFolder(n) ):
         if monitor.wasCanceled():
             break
         monitor.setValue(value)

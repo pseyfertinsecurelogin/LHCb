@@ -42,6 +42,16 @@ __all__ = ["NewDatabaseDialog", "OpenDatabaseDialog", "NewNodeDialog",
            "FindDialog", "CreateSliceDialog", "SelectTagDialog",
            "NewTagDialog"]
 
+# PyQt4-5 compatibility
+if hasattr(QFileDialog, 'getOpenFileNameAndFilter'):
+    # obsolete PyQt4 method
+    getOpenFileName = QFileDialog.getOpenFileNameAndFilter
+    getSaveFileName = QFileDialog.getSaveFileNameAndFilter
+else:
+    getOpenFileName = QFileDialog.getOpenFileName
+    getSaveFileName = QFileDialog.getSaveFileName
+
+
 ## Simple validator for COOL database name
 class DBNameValidator(QRegExpValidator):
     ## Set the regular expression for valid COOL database name
@@ -71,7 +81,7 @@ class NewDatabaseDialog(QDialog, Ui_NewDatabaseDialog):
         self.checkValid()
     ## Slot used to execute a dialog to select the filename
     def openFileDialog(self):
-        name = QFileDialog.getSaveFileName(self, "Database file", os.getcwd(), "*.db")
+        name, _ = getSaveFileName(self, "Database file", os.getcwd(), "*.db")
         if name:
             self.filenameEdit.setText(name)
     ## Check if the inputs are suitable for a connection string
@@ -106,7 +116,7 @@ class OpenDatabaseDialog(QDialog, Ui_OpenDatabaseDialog):
         self.checkValid()
     ## Slot used to execute a dialog to select the filename
     def openFileDialog(self):
-        name = QFileDialog.getOpenFileName(self, "Database file", os.getcwd(), "*.db")
+        name, _ = getOpenFileName(self, "Database file", os.getcwd(), "*.db")
         if name:
             self.filenameEdit.setText(name)
     ## Check if the inputs are suitable for a connection string
@@ -309,13 +319,13 @@ class EditConditionPayloadDialog(QDialog, Ui_EditConditionPayloadDialog):
         self.selectField(keys[0])
     ## Fill the editor text from a file
     def importFromFile(self):
-        filename = QFileDialog.getOpenFileName(self)
+        filename, _ = getOpenFileName(self)
         if filename:
             data = open(str(filename)).read()
             self.editor.setPlainText(data)
     ## Save the current content of the text box to a file
     def exportToFile(self):
-        filename = QFileDialog.getSaveFileName(self)
+        filename, _ = getSaveFileName(self)
         if filename:
             xmlFile = open(str(filename), 'w')
             xmlFile.write(str(self.editor.toPlainText()))
@@ -694,7 +704,7 @@ class CreateSliceDialog(QDialog, Ui_CreateSliceDialog):
         self.addButton.setEnabled(count != 0)
     ## Slot used to execute a dialog to select the filename
     def openFileDialog(self):
-        name = QFileDialog.getSaveFileName(self, "Database file", os.getcwd(), "*.db")
+        name, _ = getSaveFileName(self, "Database file", os.getcwd(), "*.db")
         if name:
             self.filename.setText(name)
     ## Add the data for a PyCoolCopy.Selection to the list of selections
@@ -745,7 +755,7 @@ class NewTagDialog(QDialog, Ui_NewTagDialog):
         super(NewTagDialog, self).__init__(parent, flags)
         self._path = path
         self._db = db
-        self._isFolderSet = self._db.db.existsFolderSet(self._path)
+        self._isFolderSet = self._db.existsFolderSet(self._path)
         # Prepare the GUI.
         self.setupUi(self)
         self.node.setText(self._path)

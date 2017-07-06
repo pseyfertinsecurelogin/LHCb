@@ -43,6 +43,8 @@ def getStandardConnectionStrings(optionFiles):
         for c in [ "CondDB/DDDB", "CondDB/LHCBCOND", "CondDB/SIMCOND", "CondDBOnline/ONLINE",
                    "CondDBPrivate/PRIVATE" ]:
             data[c] = c
+    from DDDB.Configuration import GIT_CONDDBS
+    data.update((k + ' (Git)', v) for k, v in GIT_CONDDBS.items())
     return data
 
 ## Initialize and start the application.
