@@ -492,7 +492,7 @@ StatusCode HltSelReportsWriter::execute() {
   return StatusCode::SUCCESS;
 }
 
-const HltSelReportsWriter::NameToNumberMap& HltSelReportsWriter::tckANNSvcMap(unsigned int tck, const Gaudi::StringKey& major) {
+const HltSelReportsWriter::NameToNumberMap& HltSelReportsWriter::tckANNSvcMap(unsigned int tck, const Gaudi::StringKey& major) const {
   const auto key = std::make_pair(tck, major);
 
   auto itbl = m_infoTable.find(key);

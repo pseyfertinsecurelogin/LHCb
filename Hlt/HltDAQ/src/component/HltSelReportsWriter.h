@@ -66,7 +66,7 @@ private:
   using NameToNumberMap = std::map<std::string, unsigned int>;
   mutable std::map<std::pair<unsigned int, Gaudi::StringKey>, NameToNumberMap> m_infoTable;
 
-  const NameToNumberMap& tckANNSvcMap(unsigned int tck, const Gaudi::StringKey& major);
+  const NameToNumberMap& tckANNSvcMap(unsigned int tck, const Gaudi::StringKey& major) const;
 
   inline boost::optional<int> optionalValue(const Gaudi::StringKey& major, const std::string& key) const {
     const auto p = m_hltANNSvc->value(major, key);
