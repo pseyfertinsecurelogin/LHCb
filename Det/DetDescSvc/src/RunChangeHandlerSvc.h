@@ -179,12 +179,12 @@ public:
 
     /// Check if the wrapped data object requires an update for
     /// the specified run.
-    bool needsUpdate(unsigned long run, const FileHasher& hasher) {
+    bool needsUpdate(unsigned long run, const FileHasher& hasher, bool force = false) {
       // assert that the object can be used
       if ( ! object || ! object->registry() || ! object->registry()->address() )
         throw std::runtime_error{"Cannot modify address for object at " + object.path()};
 
-      if (dataFile.changed(run, hasher)) {
+      if (dataFile.changed(run, hasher) || force) {
         auto addr = object->registry()->address();
         // This is a bit of a hack, but it is the only way of replacing the
         // URL to use for an object.
@@ -209,6 +209,10 @@ private:
   Gaudi::Property<CondDescMap> m_condDesc { this, "Conditions", {},
    "Map defining what to use to replace the location of the source XML files."};
 
+  Gaudi::Property<bool> m_forceUpdate{ this, "ForceUpdate", false,
+   "Always invalidate files."};
+
+   
   typedef std::vector<CondData> Conditions;
   /// List of objects to modify
   Conditions m_conditions;
