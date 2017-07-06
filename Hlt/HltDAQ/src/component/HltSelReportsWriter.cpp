@@ -145,8 +145,9 @@ StatusCode HltSelReportsWriter::initialize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
-  m_hltANNSvc = service("HltANNSvc");
-  if (m_useTCK) {
+  if (!m_useTCK) {
+    m_hltANNSvc = service("HltANNSvc");
+  } else {
     m_tckANNSvc = service("TCKANNSvc");
   }
 
@@ -389,7 +390,6 @@ StatusCode HltSelReportsWriter::execute() {
 
       std::vector<unsigned int> vect;
       for(auto n : SelNames){
-        // auto j = (!m_useTCK) ? m_hltANNSvc->value(HltID, n) : optionalFind(*hltIDMap, n);
         auto j = (!m_useTCK) ? optionalValue(HltID, n) : optionalFind(*hltIDMap, n);
         vect.push_back(*j);
         vect.push_back(reports->selReport(n)->substructure().size());
