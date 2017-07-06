@@ -146,6 +146,9 @@ StatusCode HltSelReportsWriter::initialize() {
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
   m_hltANNSvc = service("HltANNSvc");
+  if (m_useTCK) {
+    m_tckANNSvc = service("TCKANNSvc");
+  }
 
   if( m_sourceID > kSourceID_Max || m_sourceID<0 ){
     return Error("Illegal SourceID specified; maximal allowed value is 7" , StatusCode::FAILURE );
@@ -166,6 +169,14 @@ StatusCode HltSelReportsWriter::execute() {
   if ( !objectSummaries ) {
     return Warning( " No HltSelReports objects at " + objectsLocation, StatusCode::SUCCESS, 20 );
   }
+
+  // const HltSelReportsWriter::NameToNumberMap* infoIDMap = nullptr;
+  unsigned int tck = 0;
+  if (m_useTCK) {
+    const auto* decReports = get<HltDecReports>( m_inputHltDecReportsLocation );
+    tck = decReports->configuredTCK();
+  }
+  const auto infoIDMap = m_useTCK ? &tckANNSvcMap(tck, InfoID) : nullptr;
 
   // protection against too many objectSummaries to store
   if( objectSummaries->size() > 0xFFFFL ){
@@ -310,11 +321,10 @@ StatusCode HltSelReportsWriter::execute() {
         }
 
       } else if(saveExtraInfo) {
-
         // convert string-id to a short
-        auto j = m_hltANNSvc->value(InfoID, i.first ) ;
+        auto j = (!m_useTCK) ? optionalValue(InfoID, i.first) : optionalFind(*infoIDMap, i.first);
         if ( j ) {
-          extraInfo.emplace_back( j->second, i.second );
+          extraInfo.emplace_back( *j, i.second );
         } else {
           // this is very unexpected but shouldn't be fatal
           Error( "Int key for string info key=" + i.first + " not found ",
@@ -358,6 +368,8 @@ StatusCode HltSelReportsWriter::execute() {
     }
 
     if( !substrSubBank.push_back( { sHitType, std::move(svect) } ) ) {
+      // Exceeded maximal size of substructure-subbank, return debugging bank.
+
       hitsSubBank.deleteBank();
       objTypSubBank.deleteBank();
       substrSubBank.deleteBank();
@@ -369,14 +381,17 @@ StatusCode HltSelReportsWriter::execute() {
       if(m_sourceID==1) HltID = "Hlt1SelectionID";
       else HltID = "Hlt2SelectionID";
 
+      const auto hltIDMap = m_useTCK ? &tckANNSvcMap(tck, HltID) : nullptr;
+
       const auto* reports = getIfExists<LHCb::HltSelReports>( m_inputHltSelReportsLocation.value() );
 
       auto SelNames = reports->selectionNames();
 
       std::vector<unsigned int> vect;
       for(auto n : SelNames){
-        auto j = m_hltANNSvc->value(HltID, n ) ;
-        vect.push_back(j->second);
+        // auto j = (!m_useTCK) ? m_hltANNSvc->value(HltID, n) : optionalFind(*hltIDMap, n);
+        auto j = (!m_useTCK) ? optionalValue(HltID, n) : optionalFind(*hltIDMap, n);
+        vect.push_back(*j);
         vect.push_back(reports->selReport(n)->substructure().size());
       }
       HltSelRepRBHits hitsSubBank_99;
@@ -475,4 +490,19 @@ StatusCode HltSelReportsWriter::execute() {
   // delete the main bank
   hltSelReportsBank.deleteBank();
   return StatusCode::SUCCESS;
+}
+
+const HltSelReportsWriter::NameToNumberMap& HltSelReportsWriter::tckANNSvcMap(unsigned int tck, const Gaudi::StringKey& major) {
+  const auto key = std::make_pair(tck, major);
+
+  auto itbl = m_infoTable.find(key);
+  if (LIKELY(itbl != std::end(m_infoTable))) {
+    return itbl->second;
+  }
+
+  auto& map = m_infoTable[key];
+  for (auto p : m_tckANNSvc->i2s(tck, InfoID)) {
+    map.insert({p.second, p.first});
+  }
+  return map;
 }

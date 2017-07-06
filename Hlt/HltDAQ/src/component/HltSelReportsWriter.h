@@ -6,9 +6,10 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 #include "Event/HltObjectSummary.h"
-
+#include "Event/HltDecReports.h"
 
 #include "Kernel/IANNSvc.h"
+#include "Kernel/IIndexedANNSvc.h"
 
 
 /** @class HltSelReportsWriter HltSelReportsWriter.h
@@ -45,6 +46,12 @@ private:
   /// location of input H
   Gaudi::Property<std::string> m_inputHltSelReportsLocation { this, "InputHltSelReportsLocation",  LHCb::HltSelReportsLocation::Default };
 
+  /// location of input HltDecReports, used to get the TCK, see UseTCK
+  Gaudi::Property<std::string> m_inputHltDecReportsLocation { this, "InputHltDecReportsLocation",  LHCb::HltDecReportsLocation::Default };
+
+  /// whether to try to use the TCK and the TCKANNSvc
+  Gaudi::Property<bool> m_useTCK { this, "UseTCK",  false };
+
   /// location of output
   Gaudi::Property<std::string> m_outputRawEventLocation { this, "OutputRawEventLocation", LHCb::RawEventLocation::Default };
 
@@ -53,6 +60,31 @@ private:
 
   /// HltANNSvc for making selection names to int selection ID
   SmartIF<IANNSvc> m_hltANNSvc;
+  /// TCKANNSvc to be used in case the
+  SmartIF<IIndexedANNSvc> m_tckANNSvc;
+
+  using NameToNumberMap = std::map<std::string, unsigned int>;
+  mutable std::map<std::pair<unsigned int, Gaudi::StringKey>, NameToNumberMap> m_infoTable;
+
+  const NameToNumberMap& tckANNSvcMap(unsigned int tck, const Gaudi::StringKey& major);
+
+  inline boost::optional<int> optionalValue(const Gaudi::StringKey& major, const std::string& key) const {
+    const auto p = m_hltANNSvc->value(major, key);
+    if (p)
+      return p->second;
+    else
+      return boost::none;
+  }
+
+  inline boost::optional<int> optionalFind(const NameToNumberMap& map, const std::string& key) const {
+    auto i = map.find(key);
+    // return (i == std::end(map)) ? boost::none : *i;
+    if (i == std::end(map))
+      return boost::none;
+    else
+      return i->second;
+  }
+
 };
 
 
