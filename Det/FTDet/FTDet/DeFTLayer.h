@@ -83,7 +83,7 @@ public:
   /** flat vector of quarters
    * @return vector of quarters
    */
-  const std::array<DeFTQuarter*,4>& quarters() const;
+  const std::array<DeFTQuarter*,4>& quarters() const {return m_quarters;}
 
 private:
 
