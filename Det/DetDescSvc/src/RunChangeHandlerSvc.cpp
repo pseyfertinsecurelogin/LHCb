@@ -96,7 +96,8 @@ void RunChangeHandlerSvc::update(unsigned long run) {
   std::for_each(m_conditions.begin(), m_conditions.end(),
                 [this, run, &hasher](CondData &cond) {
     try {
-      if (cond.needsUpdate(run, hasher)) {
+      const bool update = cond.needsUpdate(run, hasher, m_forceUpdate);
+      if (update) {
         // notify the UMS and the object that they have to be updated.
         updMgrSvc()->invalidate(cond.object.ptr());
       }
