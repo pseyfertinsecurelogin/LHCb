@@ -1,5 +1,6 @@
 #ifndef LHCBMATH_SYMMATRIXINVERTER_H
 #define LHCBMATH_SYMMATRIXINVERTER_H
+#include <cmath>
 
 /** @file
  * header file containing the templated implementation of matrix inversion

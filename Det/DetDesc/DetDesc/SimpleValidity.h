@@ -2,6 +2,7 @@
 #define DETDESC_SIMPLEVALIDITY_H 1
 // Include files
 #include "GaudiKernel/IValidity.h"
+#include "GaudiKernel/Time.h"
 
 /** @class SimpleValidity SimpleValidity.h
  *
@@ -36,7 +37,7 @@ public:
   /** copy constructor  (deep copy)
    *  @param copy another IValidity object
    */
-  SimpleValidity( const SimpleValidity& copy );
+  SimpleValidity( const SimpleValidity& copy ) = default;
 
   /** assignement from any IValidity object
    *  @param copy another IValidity object
@@ -46,7 +47,7 @@ public:
   /** assignement (deep copy)
    *  @param copy another IValidity object
    */
-  SimpleValidity& operator=( const SimpleValidity& copy );
+  SimpleValidity& operator=( const SimpleValidity& copy ) = default;
 
 
   /** is the Object valid? (it can be always invalid)

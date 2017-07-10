@@ -42,22 +42,26 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
+      /// constructor from the bits
+      RoutingBits ( std::vector<unsigned int> bits ) ;
       /// constructor from the bit
-      RoutingBits ( const unsigned short bit  ) ;
+      explicit RoutingBits ( unsigned int bit  )
+          : RoutingBits( std::vector<unsigned int>{ bit } ) {}
       /// constructor from the bits
-      RoutingBits ( const unsigned short bit1 ,
-                    const unsigned short bit2 ) ;
+      RoutingBits ( unsigned int bit1 ,
+                    unsigned int bit2 )
+          : RoutingBits( std::vector<unsigned int>{ bit1, bit2 } ) {}
       /// constructor from the bits
-      RoutingBits ( const unsigned short bit1 ,
-                    const unsigned short bit2 ,
-                    const unsigned short bit3 ) ;
+      RoutingBits ( unsigned int bit1 ,
+                    unsigned int bit2 ,
+                    unsigned int bit3 )
+          : RoutingBits( std::vector<unsigned int>{ bit1, bit2, bit3 } ) {}
       /// constructor from the bits
-      RoutingBits ( const unsigned short bit1 ,
-                    const unsigned short bit2 ,
-                    const unsigned short bit3 ,
-                    const unsigned short bit4 ) ;
-      /// constructor from the bits
-      RoutingBits ( const std::vector<unsigned int>& bits ) ;
+      RoutingBits ( unsigned int bit1 ,
+                    unsigned int bit2 ,
+                    unsigned int bit3 ,
+                    unsigned int bit4 )
+          : RoutingBits( std::vector<unsigned int>{ bit1, bit2, bit3, bit4 } ) {}
       /// MANDATORY: clones method ("virtual contructor")
       RoutingBits* clone() const  override;
       /// MANDATORY: the only one essential method

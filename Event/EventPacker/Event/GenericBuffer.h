@@ -2,6 +2,8 @@
 #define __EVENTPACKER_EVENT_GENERICBUFFER_H__
 
 #include "GaudiKernel/DataObject.h"
+#include "GaudiKernel/ClassID.h"
+#include <vector>
 
 namespace LHCb
 {

@@ -4,6 +4,7 @@
 // 
 #ifndef    CALO_CLIDDECALORIMETER_H
 #define    CALO_CLIDDECALORIMETER_H 1
+#include "GaudiKernel/ClassID.h"
 
 static const CLID CLID_DeCalorimeter = 8900; 
 

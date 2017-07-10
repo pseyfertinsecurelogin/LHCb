@@ -6,6 +6,12 @@
 // from CaloEvent 
 #include "GaudiKernel/HashMap.h"
 #include "GaudiKernel/Hash.h"
+#include "Event/MCCaloDigit.h"
+#include "Event/MCCaloHit.h"
+#include "Event/MCTruth.h"
+#include "Event/CaloDigit.h"
+#include "Event/CaloCluster.h"
+#include "Event/MCParticle.h"
 
 /** @file CaloMCTools1.h
  *  few more utilities for extraction of MC information from 

@@ -264,8 +264,8 @@ private:
   void createCover();
 
   Triplets       m_triplets      ; ///< vector of parameters
-  double         m_startPhiAngle ; ///< start phi angle
-  double         m_deltaPhiAngle ; ///< delta phi angle
+  double         m_startPhiAngle = 0                          ; ///< start phi angle
+  double         m_deltaPhiAngle = 360 * Gaudi::Units::degree ; ///< delta phi angle
   std::unique_ptr<ISolid> m_cover;
 
 };

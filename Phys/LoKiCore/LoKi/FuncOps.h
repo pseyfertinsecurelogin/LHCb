@@ -299,7 +299,7 @@ namespace LoKi
       static Cut __lt__     ( const Func&  fun1 ,
                               double fun2 ) { return fun1 <  fun2 ; }
       static Cut __lt__     ( const Func&  fun1 ,
-                              Para  fun2 ) { return fun1 <  PAR ( std::move(fun2) ) ; }
+                              const Para&  fun2 ) { return fun1 <  PAR ( fun2 ) ; }
       //
       static Cut __le__     ( const Func&  fun1 ,
                               const Func&  fun2 ) { return fun1 <= fun2 ; }
@@ -821,25 +821,25 @@ namespace LoKi
       __sum__ ( const Func&  fun , const Cuts&  cut , double init = 0 )
       { return LoKi::sum ( fun , cut , init ) ; }
       // ======================================================================
-    public: // product over the stream
+      // product over the stream
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
       __product__ ( const Func&  fun , double init = 1 )
       { return LoKi::product ( fun , init ) ; }
       // ======================================================================
-    public : // sum over the stream
+      // sum over the stream
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
       __product__ ( const Func&  fun, const Cuts&  cut, double init = 1 )
       { return LoKi::product ( fun , cut , init ) ; }
       // ======================================================================
-    public : // fetch from the stream
+      // fetch from the stream
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,double>
       __fetch__ ( const Func& fun, unsigned int index, double bad )
       { return LoKi::fetch ( fun , index , bad ) ; }
       // ======================================================================
-    public: // sort the stream
+      // sort the stream
       // ======================================================================
       static LoKi::FunctorFromFunctor<std::vector<TYPE2>,std::vector<TYPE2> >
       __sort__ ( const Func& fun, int N = -1, const bool ascending = true )
@@ -1813,36 +1813,30 @@ namespace LoKi
     } ;
     // ========================================================================
     template <class TYPE>
-    class InfoOps
+    struct InfoOps
     {
       // ======================================================================
-    public: // info
+      // info
       // ======================================================================
       // __info__
-      static LoKi::FunctorFromFunctor<TYPE,double>
-      __info__ ( const LoKi::Functor<TYPE,double>& fun ,
-                 int  index                      ,
-                 const bool update                     )
-      { return LoKi::info ( index , fun , update ) ; }
+      template <typename F,
+                typename = details::require_signature<F,TYPE,double>>
+      static LoKi::Assignable_t<F>
+      __info__ ( F&& fun , int  index , const bool update )
+      { return LoKi::info ( index , std::forward<F>(fun) , update ) ; }
       // __info__
-      static LoKi::FunctorFromFunctor<TYPE,double>
-      __info__ ( const LoKi::Functor<TYPE,double>& fun ,
-                 int  index                      )
-      { return LoKi::info ( index , fun          ) ; }
+      template <typename F,
+                typename = details::require_signature<F,TYPE,double>>
+      static LoKi::Assignable_t<F> __info__ ( F&& fun , int  index )
+      { return LoKi::info ( index , std::forward<F>(fun) ) ; }
       // ======================================================================
-    public: // logging
-      // ======================================================================
-      // __info__
-      static LoKi::FunctorFromFunctor<TYPE,double>
-      __logging__ ( const LoKi::Functor<TYPE,double>& fun ,
-                    int  index                      )
-      { return LoKi::ExtraInfo2::LogInfo<TYPE,double> ( fun , index ) ; }
+      // logging
       // ======================================================================
       // __info__
-      static LoKi::FunctorFromFunctor<TYPE,bool>
-      __logging__ ( const LoKi::Functor<TYPE,bool>& fun ,
-                    int  index                      )
-      { return LoKi::ExtraInfo2::LogInfo<TYPE,bool>  ( fun , index ) ; }
+      template <typename F,
+                typename = details::require_signature<F,TYPE,double>>
+      static LoKi::Assignable_t<F> __logging__ ( F&& fun , int  index )
+      { return LoKi::ExtraInfo2::LogInfo<TYPE,double> ( std::forward<F>(fun) , index ) ; }
       // ======================================================================
     } ;
     // ========================================================================

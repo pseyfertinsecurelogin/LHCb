@@ -48,16 +48,6 @@ SimpleValidity::SimpleValidity( const IValidity& copy )
   , m_till  ( copy.validTill() )
 {}
 
-// ============================================================================
-/** copy constructor  (deep copy)
- *  @param copy another IValidity object
- */
-// ============================================================================
-SimpleValidity::SimpleValidity( const SimpleValidity& copy )
-  : IValidity()
-  , m_since ( copy.m_since )
-  , m_till  ( copy.m_till  )
-{}
 
 // ============================================================================
 /** assignement from any IValidity object
@@ -68,19 +58,6 @@ SimpleValidity& SimpleValidity::operator=( const IValidity&      copy )
 {
   m_since = copy.validSince();
   m_till  = copy.validTill();
-  return *this;
-}
-
-// ============================================================================
-/** assignement (deep copy)
- *  @param copy another IValidity object
- */
-// ============================================================================
-SimpleValidity& SimpleValidity::operator=( const SimpleValidity& copy )
-{
-  if( &copy == this ) { return *this ; }                       ///< RETURN
-  m_since = copy.m_since;
-  m_till  = copy.m_till;
   return *this;
 }
 

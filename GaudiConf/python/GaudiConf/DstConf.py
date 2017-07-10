@@ -539,6 +539,7 @@ class DstConf(LHCbConfigurableUser):
         mapper     = ConversionDODMapper("UnpackRecPhysMapper")
         # The input <-> output mappings
         mapper.Transformations = [ ( '(.*)/Rec(.*)',  '$1/pRec$2'  ),
+                                   ( '(.*)/Raw(.*)',  '$1/pRaw$2'  ),
                                    ( '(.*)/Phys(.*)', '$1/pPhys$2' ),
                                    ( '(.*)/MC(.*)',   '$1/pMC$2'   ) ]
         # algorithm types from source ClassIDs
@@ -546,6 +547,9 @@ class DstConf(LHCbConfigurableUser):
         mapper.Algorithms[1552] = "UnpackProtoParticle"
         if "Calo" in self.getProp("Detectors"):
             mapper.Algorithms[1551] = "UnpackCaloHypo"
+            mapper.Algorithms[1541] = "DataPacking::Unpack<LHCb::CaloClusterPacker>"
+            mapper.Algorithms[1542] = "DataPacking::Unpack<LHCb::CaloDigitPacker>"
+            mapper.Algorithms[1543] = "DataPacking::Unpack<LHCb::CaloAdcPacker>"
         if "Rich" in self.getProp("Detectors"):
             mapper.Algorithms[1561] = "DataPacking::Unpack<LHCb::RichPIDPacker>"
         if "Muon" in self.getProp("Detectors"):
@@ -553,9 +557,7 @@ class DstConf(LHCbConfigurableUser):
         mapper.Algorithms[1553] = "UnpackRecVertex"
         mapper.Algorithms[1555] = "DataPacking::Unpack<LHCb::WeightsVectorPacker>"
         mapper.Algorithms[1581] = "UnpackParticlesAndVertices"
-        mapper.Algorithms[1559] = "UnpackDecReport"
-        if "Calo" in self.getProp("Detectors"):
-            mapper.Algorithms[1541] = "DataPacking::Unpack<LHCb::CaloClusterPacker>"
+        mapper.Algorithms[1559] = "UnpackDecReport"      
         mapper.Algorithms[1510] = "UnpackMCParticle"
         mapper.Algorithms[1511] = "UnpackMCVertex"
 

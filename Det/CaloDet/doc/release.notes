@@ -4,6 +4,9 @@
 ! ====================================================================
 
 
+! 2017-06-30 - O. Deschamps
+  - DeCalorimeter.cpp : add crate/slot identifier in the L0cte verbose printout (to help the electronics configuration)
+
 ! 2016-09-05 - O. Deschamps
   - DeCalorimeter.h :  new method cellADC(energy,cellID) to convert energy to ADC [-256,3839] & isSaturated(energy,cellID)
 

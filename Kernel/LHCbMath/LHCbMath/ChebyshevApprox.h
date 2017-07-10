@@ -29,7 +29,7 @@ namespace ChebyshevApproxImpl
      * @param n	n-th Chebyshev polynomial
      * @param x	point in [-1, 1] in which to evaluate it
      *
-     * @returns 	value of @f$T_n(x)@f$
+     * @returns value of @f$T_n(x)@f$
      *
      * @note This routine is slow for large n, and some better
      * implementation should be found.
@@ -40,14 +40,14 @@ namespace ChebyshevApproxImpl
     template <class FLT>
     FLT T(unsigned n, FLT x) noexcept
     {
-	if (2 > n) return n ? x : 1;
-	x *= 2;
-	FLT u = 1, uu = 0;
-	while (--n) {
-	    uu = x * u - uu; // be FMA friendly!
-	    std::swap(u, uu);
-	}
-	return (x * u) / 2 - uu;
+    if (2 > n) return n ? x : 1;
+    x *= 2;
+    FLT u = 1, uu = 0;
+    while (--n) {
+        uu = x * u - uu; // be FMA friendly!
+        std::swap(u, uu);
+    }
+    return (x * u) / 2 - uu;
     }
 
     /** @brief get coefficient j of Chebyshev expansion of f.
@@ -82,8 +82,8 @@ namespace ChebyshevApproxImpl
 	constexpr size_t NMAX = NMAXPLUSONE - 1u;
 	assert(j <= NMAX);
 	// sum up
-	auto itf = std::begin(ftbl) + 1;
-	const FLT sum = std::accumulate(&costbl[1], &costbl[NMAX],
+	auto itf = std::next(begin(ftbl));
+	const FLT sum = std::accumulate(std::next(begin(costbl)), std::prev(end(costbl)),
 		// start and end point of interval, don't forget to halve
 		(ftbl[NMAX] * T(j, FLT(-1)) + ftbl[0] * T(j, FLT(+1))) / 2,
 		[&itf, j] (FLT psum, FLT x) // accumulate other terms
@@ -113,7 +113,7 @@ namespace ChebyshevApproxImpl
     constexpr static FLT bisect(FLT a, FLT b, FLT y, const FN& fn,
 	    FLT fmin = 0, FLT fmax = 0, unsigned nmax = 100) noexcept
     {
-	return 
+	return
 	    // remember largest and smallest function values
 	    (fmin == fmax) ? bisect(a, b, y, fn, fn(a), fn(b), nmax) :
 	    // give limits a and b such that f(b) > f(a)
@@ -299,11 +299,12 @@ class ChebyshevApprox
 		// cos(nx) = 2 * cos(x) * cos((n - 1) x) - cos((n - 2) x)
 		const IFLT c = 2 * std::cos(IFLT(M_PI) / NSAMPLES);
 		IFLT cc = c / 2, oc = 1;
-		costbl[0] = 1;
-		std::generate(&costbl[1], &costbl[NSAMPLES], [c, &cc, &oc] ()
+		costbl.front() = 1;
+		std::generate(std::next(begin(costbl)), std::prev(end(costbl)), [c, &cc, &oc] ()
 			{ oc = c * cc - oc; // be FMA friendly!
-			std::swap(cc, oc); return oc; });
-		costbl[NSAMPLES] = -1;
+			  std::swap(cc, oc);
+              return oc; });
+		costbl.back() = -1;
 	    }
 	    // tabulate function in the corresponding points
 	    {
@@ -313,8 +314,8 @@ class ChebyshevApprox
 		const auto fnprime = [im, id, &fn] (IFLT x) {
 		    return fn(id * x + im); }; // be FMA friendly
 		std::transform(std::begin(costbl), std::end(costbl),
-			std::begin(ftbl), [&fnprime] (IFLT x) {
-			return fnprime(x); });
+			           std::begin(ftbl),
+                       [&fnprime] (IFLT x) { return fnprime(x); });
 	    }
 	    /// generate the first N coefficients, and place them into m_coeffs
 	    unsigned i = 0;
@@ -411,7 +412,7 @@ class ChebyshevApprox
 			m_coeffs[NCOEFF - 1],
 			((NCOEFF > 1) ? -m_coeffs[NCOEFF - 2] : FLT(0)));
 	}
-	
+
 	/** @brief return an estimate of the truncation error.
 	 *
 	 * @returns estimate of the truncation error of the approximation

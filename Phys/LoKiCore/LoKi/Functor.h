@@ -29,7 +29,7 @@ namespace LoKi
   // ==========================================================================
   /** @class Functor Functor.h LoKi/Functor.h
    *  The most generic LoKi-functor, needed for implementation
-   *  of numerious brilliant ideas by Gerhard "The Great".
+   *  of numerious brilliant ideas by Gerhard.
    *
    *  This file is a part of LoKi project -
    *  ``C++ ToolKit  for Smart and Friendly Physics Analysis''
@@ -45,18 +45,6 @@ namespace LoKi
   template <class TYPE,class TYPE2>
   class Functor : public virtual LoKi::AuxFunBase
   {
-  public:
-    /// =======================================================================
-    /// parameters: argument
-    typedef TYPE  Type1 ;                               // parameters: argument
-    /// parameters: return value
-    typedef TYPE2 Type2 ;                           // parameters: return value
-    /// =======================================================================
-  public:
-    // ========================================================================
-    /// the type of the argument
-    typedef TYPE                                                Type          ;
-    // ========================================================================
   public:  // STD (fake) signature
     // ========================================================================
     /// STL: the result value
@@ -109,11 +97,6 @@ namespace LoKi
     // ========================================================================
     /// the underlying type of functor
     typedef LoKi::Functor<TYPE,TYPE2>   functor ;               // functor type
-    // ========================================================================
-  protected:
-    // ========================================================================
-    /// own type
-    typedef FunctorFromFunctor<TYPE,TYPE2> Self ;               // the own type
     // ========================================================================
   public:
     // ========================================================================
@@ -199,17 +182,21 @@ namespace LoKi
     // ========================================================================
     /// constructor
     Constant ( T2 value )
-      : LoKi::AuxFunBase ( std::tie( value ) )
+      : LoKi::AuxFunBase ( std::tie(value) )
       , m_value ( std::move(value) )
     {}
     // ========================================================================
   public:
     // ========================================================================
-    /// assignement
-    Constant& operator=( T2 right )
-    { m_value = right         ; return *this ; }
+    /// assignment
+    template <typename Arg,
+              typename = std::enable_if_t<std::is_assignable<TYPE2,Arg>::value>>
+    Constant& operator=( const Arg& arg )
+    { m_value = arg; return *this ; }
+    Constant& operator=( TYPE2&& arg )
+    { m_value = std::move(arg); return *this ; }
     /// clone method (mandatory)
-    Constant* clone   () const override { return new Constant( *this ) ; }
+    Constant* clone() const override { return new Constant( *this ) ; }
     /// the only one essential method ("function")
     TYPE2 operator()
       ( typename LoKi::Functor<TYPE,TYPE2>::argument ) const override { return m_value ; }
@@ -229,13 +216,6 @@ namespace LoKi
   {
   public:
     /// =======================================================================
-    /// parameters: argument
-    typedef void  Type1 ;                               // parameters: argument
-    /// parameters: return value
-    typedef TYPE2 Type2 ;                           // parameters: return value
-    /// =======================================================================
-    /// the type of the argument
-    typedef void                                                Type          ;
     /// the result value
     typedef TYPE2                                               result_type   ;
     /// the basic argument type
@@ -249,10 +229,10 @@ namespace LoKi
     virtual TYPE2  operator () (  ) const = 0 ;
     /// the only one essential method ("function")
     virtual TYPE2  evaluate    (  ) const
-    { return (*this) ( /* */ ) ; }
+    { return (*this) (  ) ; }
     /// the only one essential method ("function")
     virtual TYPE2  eval        (  ) const
-    { return (*this) ( /* */ ) ; }
+    { return (*this) ( ) ; }
     /// clone method
     virtual  Functor* clone    ()                   const = 0 ;
     /// virtual destructor
@@ -281,11 +261,6 @@ namespace LoKi
     // ========================================================================
     /// the underlying type of functor
     typedef LoKi::Functor<void,TYPE2>   functor ;     // the underlying functor
-    // ========================================================================
-  protected:
-    // ========================================================================
-    /// own type
-    typedef FunctorFromFunctor<void,TYPE2> Self ;               // the own type
     // ========================================================================
   public:
     // ========================================================================
@@ -367,18 +342,20 @@ namespace LoKi
     /// constructor
     Constant ( T2 value )
       : LoKi::AuxFunBase ( std::tie( value ) )
-      , m_value ( value )
+      , m_value ( std::move(value) )
     {}
     // ========================================================================
   public:
     // ========================================================================
     /// assignement
-    Constant& operator=( const Constant& right ) = default;
-    /// assignement
-    Constant& operator=( T2 right )
-    { m_value = right         ; return *this ; }
+    template <typename Arg,
+              typename = std::enable_if_t<std::is_assignable<TYPE2,Arg>::value>>
+    Constant& operator=( const Arg& arg )
+    { m_value = arg; return *this ; }
+    Constant& operator=( TYPE2&& arg )
+    { m_value = std::move(arg); return *this ; }
     /// clone method (mandatory)
-    Constant* clone   () const override { return new Constant( *this ) ; }
+    Constant* clone() const override { return new Constant( *this ) ; }
     /// the only one essential method ("function")
     TYPE2 operator()() const override
     { return m_value ; }
@@ -410,9 +387,9 @@ namespace LoKi
   namespace details {
 
       template <typename T, typename U>
-      using decays_to = typename std::conditional< std::is_void<U>::value,
-                                          typename std::is_void<T>::type,
-                                          typename std::is_convertible<typename std::decay<T>::type*, U*>::type >::type;
+      using decays_to = std::conditional_t<std::is_void<U>::value,
+                                           typename std::is_void<T>::type,
+                                           typename std::is_convertible<std::decay_t<T>*, U*>::type >;
 
       // is Derived derived from Base<Args...>?
       template <template <typename ...> class Base, typename Derived>
@@ -421,7 +398,7 @@ namespace LoKi
           static std::true_type  test(Base<Args...>*);
           static std::false_type test(void*);
 
-          using type = decltype(test(std::declval<typename std::decay<Derived>::type*>()));
+          using type = decltype(test(std::declval<std::decay_t<Derived>*>()));
       };
 
       template <typename T>
@@ -431,15 +408,15 @@ namespace LoKi
       // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE2?
       template <typename T,
                 typename = std::enable_if_t<is_functor<T>::value>>
-      struct LF {
+      struct LF_ {
           using U = std::decay_t<T>;
           template <typename T1, typename T2> static T1 test1( LoKi::Functor<T1,T2>* );
           template <typename T1, typename T2> static T2 test2( LoKi::Functor<T1,T2>* );
           using type1 = decltype( test1(std::declval<U*>()) );
           using type2 = decltype( test2(std::declval<U*>()) );
       };
-      template <typename... Fs> using type1_t = std::common_type_t<typename LF<Fs>::type1...>;
-      template <typename... Fs> using type2_t = std::common_type_t<typename LF<Fs>::type2...>;
+      template <typename... Fs> using type1_t = std::common_type_t<typename LF_<Fs>::type1...>;
+      template <typename... Fs> using type2_t = std::common_type_t<typename LF_<Fs>::type2...>;
 
       template <typename F> using result_t   = type2_t<F>;
       template <typename F> using argument_t = typename boost::call_traits<std::add_const_t<type1_t<F>>>::param_type;

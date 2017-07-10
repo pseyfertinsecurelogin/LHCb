@@ -84,13 +84,16 @@ namespace LoKi
     public:
       // ======================================================================
       // __rshift__
-      static LoKi::FunctorFromFunctor<const Type*,double> __rshift__
-      ( const Fun&                          fun  ,
-        const LoKi::Functor<double,double>& o    ) { return fun >> o  ; }
-      // __rshift__
-      static LoKi::FunctorFromFunctor<const Type*,bool>   __rshift__
-      ( const Fun&                          fun  ,
-        const LoKi::Functor<double,bool>&   o    ) { return fun >> o  ; }
+      template <typename F,
+                typename TYPE2 = details::type2_t<F>,
+                typename TYPE3 = std::enable_if_t<std::is_convertible<TYPE2,double>::value
+                                                ||std::is_convertible<TYPE2,bool  >::value,
+                               std::conditional_t<std::is_convertible<TYPE2,double>::value,
+                                                   double, bool > >,
+                typename = std::enable_if_t<std::is_convertible<details::type1_t<F>,double>::value> >
+      static LoKi::FunctorFromFunctor<const Type*,TYPE3> __rshift__
+      ( const Fun& fun  , F&&  o    )
+      { return fun >> o  ; }
       // ======================================================================
     } ;
     // ========================================================================

@@ -50,37 +50,33 @@ namespace LoKi
       // ======================================================================
     public:
       // ======================================================================
+      /** constructor from the dumper
+       *  @param fun   the functor
+       *  @param dump  the dumper
+       *  @param stream the stream
+       */
+      Dump1_ ( LoKi::Assignable_t<Fun_>          fun                ,
+               const LoKi::Dump&                 dump               ,
+               const bool                        right  = true      ,
+               std::ostream&                     stream = std::cout )
+        : LoKi::AuxFunBase ( std::tie ( fun , dump , right ) )
+        , m_fun    ( std::move(fun) )
+        , m_right  ( right  )
+        , m_stream ( stream )
+        , m_dump   ( dump   )
+      {}
       /** constructor
        *  @param fun   the functor
        *  @param open  the opening
        *  @param clone the closing
        *  @param stream the stream
        */
-      Dump1_ ( const LoKi::Functor<TYPE1,TYPE2>& fun                ,
+      Dump1_ ( LoKi::Assignable_t<Fun_>          fun                ,
                const std::string&                open   = ""        ,
                const std::string&                close  = "\n"      ,
                const bool                        right  = true      ,
                std::ostream&                     stream = std::cout )
-        : LoKi::AuxFunBase ( std::tie ( fun , open , close , right ) )
-        , m_fun    ( fun    )
-        , m_right  ( right  )
-        , m_stream ( stream )
-        , m_dump   ( open  , close )
-      {}
-      /** constructor from the dumper
-       *  @param fun   the functor
-       *  @param dump  the dumper
-       *  @param stream the stream
-       */
-      Dump1_ ( const LoKi::Functor<TYPE1,TYPE2>& fun                ,
-               const LoKi::Dump&                 dump               ,
-               const bool                        right  = true      ,
-               std::ostream&                     stream = std::cout )
-        : LoKi::AuxFunBase ( std::tie ( fun , dump , right ) )
-        , m_fun    ( fun    )
-        , m_right  ( right  )
-        , m_stream ( stream )
-        , m_dump   ( dump   )
+      : Dump1_( std::move(fun), { open, close }, right, stream )
       {}
       /// MANDATORY: clone method ("virtual constructor")
       Dump1_* clone() const override { return new Dump1_ ( *this ) ; }
@@ -92,7 +88,7 @@ namespace LoKi
     private :
       // ======================================================================
       /// the functor
-      typename LoKi::Assignable_t<Fun_>      m_fun    ;
+      LoKi::Assignable_t<Fun_>               m_fun    ;
       /// right-action ?
       bool                                   m_right  ; // right action?
       /// the stream
@@ -142,12 +138,14 @@ namespace LoKi
     // ========================================================================
   } //                                          end of namesapce LoKi::Functors
   // ==========================================================================
-  template <class TYPE1,class TYPE2>
+  template <typename F,
+            typename TYPE1 = details::type1_t<F>,
+            typename TYPE2 = details::type2_t<F>>
   LoKi::Functors::Dump1_<TYPE1,TYPE2>
-  dump1 ( const LoKi::Functor<TYPE1,TYPE2>& fun                  ,
+  dump1 ( F&&                               fun                  ,
           const bool                        right = true         ,
           const LoKi::Dump&                 dump  = LoKi::Dump() )
-  { return LoKi::Functors::Dump1_<TYPE1,TYPE2>( fun , dump , right ) ; }
+  { return { std::forward<F>(fun) , dump , right } ; }
   // ==========================================================================
   template <class TYPE2>
   const LoKi::Functor<void,TYPE2>&

@@ -200,7 +200,6 @@ double operator >> ( const std::vector<TYPEI>&                      input ,
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2001-01-23
  */
-//TODO: add a version where input is an rvalue...
 template <class TYPEI, class TYPE>
 std::vector<TYPEI> operator >> ( const std::vector<TYPEI>&       input ,
                                  const LoKi::Functor<TYPE,bool>& pred  )
@@ -281,7 +280,7 @@ OUTPUT operator>> ( const Gaudi::NamedRange_<CONTAINER>&   a ,
  *
  *   @endcode
  *
- *  The concept belongs to the Gerhard "The Great" Raven.
+ *  The concept belongs to Gerhard Raven.
  *
  *   @param  source the source
  *   @param  dest   the destination
@@ -311,7 +310,7 @@ operator >> ( const LoKi::Functor<void,std::vector<TYPE> >& source ,
  *
  *   @endcode
  *
- *  The concept belongs to the Gerhard "The Great" Raven.
+ *  The concept belongs to Gerhard Raven.
  *
  *   @param  source the source
  *   @param  dest   the destination
@@ -348,7 +347,7 @@ operator >> ( const LoKi::Functor<void,std::vector<TYPE*> >& source ,
  *
  *   @endcode
  *
- *  The concept belongs to the Gerhard "The Great" Raven.
+ *  The concept belongs to Gerhard Raven.
  *
  *   @param  source the source
  *   @param  dest   the destination
@@ -399,76 +398,43 @@ operator>> ( const std::vector<TYPE*>&                                          
 //}
 
 
-
-// ============================================================================
-// pipe with the gate
-// ============================================================================
-template <typename F1, typename F2,
-          typename TYPE = typename LoKi::details::type1_t<F1>::value_type,
-          typename = LoKi::details::require_signature<F1,std::vector<TYPE>,std::vector<TYPE>>,
-          typename = LoKi::details::require_signature<F2,void,bool>>
-LoKi::FunctorFromFunctor< std::vector<TYPE> , std::vector<TYPE> >
-operator>> ( F1&& pipe , F2&& gate )
-{
-  return std::forward<F1>(pipe) >> LoKi::gate<TYPE>( std::forward<F2>(gate) ) ;
-}
 // ============================================================================
 // source with the gate
 // ============================================================================
 template <typename F1, typename F2,
-          typename TYPE = typename LoKi::details::type2_t<F1>::value_type,
-          typename = LoKi::details::require_signature<F1,void,std::vector<TYPE>>,
+          typename TYPE  = typename LoKi::details::type1_t<F1>,
+          typename TYPE2 = typename LoKi::details::type2_t<F1>::value_type,
+          typename = LoKi::details::require_signature<F1,TYPE,std::vector<TYPE2>>,
           typename = LoKi::details::require_signature<F2,void,bool>>
-LoKi::FunctorFromFunctor< void , std::vector<TYPE> >
+LoKi::FunctorFromFunctor< TYPE , std::vector<TYPE2> >
 operator>> ( F1&& source , F2&& gate   )
 {
-  return std::forward<F1>(source) >> LoKi::gate<TYPE>( std::forward<F2>(gate) ) ;
+  return std::forward<F1>(source) >> LoKi::gate<TYPE2>( std::forward<F2>(gate) ) ;
 }
 
-
-// ============================================================================
-// dumping to the stream
-// ============================================================================
-template <typename F1,
-          typename TYPE = typename LoKi::details::type2_t<F1>::value_type,
-          typename = LoKi::details::require_signature<F1,std::vector<TYPE>,std::vector<TYPE>>>
-LoKi::FunctorFromFunctor< std::vector<TYPE> , std::vector<TYPE> >
-operator>> ( F1&& pipe , std::ostream& stream )
-{
-  return std::forward<F1>(pipe) >> LoKi::Functors::Dump_<TYPE>( stream ) ;
-}
 // ============================================================================
 // dumping to the stream
 // ============================================================================
 template <typename F,
-          typename TYPE = typename LoKi::details::type2_t<F>::value_type,
-          typename = LoKi::details::require_signature<F,void,std::vector<TYPE>>>
-LoKi::FunctorFromFunctor< void, std::vector<TYPE> >
+          typename TYPE = typename LoKi::details::type1_t<F>,
+          typename TYPE2 = typename LoKi::details::type2_t<F>::value_type,
+          typename = LoKi::details::require_signature<F,TYPE,std::vector<TYPE2>>>
+LoKi::FunctorFromFunctor< TYPE, std::vector<TYPE2> >
 operator>> ( F&& pipe, std::ostream& stream )
 {
-  return std::forward<F>(pipe) >> LoKi::Functors::Dump_<TYPE>( stream ) ;
+  return std::forward<F>(pipe) >> LoKi::Functors::Dump_<TYPE2>( stream ) ;
 }
 // ============================================================================
 // dumping to the stream
 // ============================================================================
 template <typename F,
-          typename TYPE = typename LoKi::details::type2_t<F>::value_type,
-          typename = LoKi::details::require_signature<F,std::vector<TYPE>,std::vector<TYPE>>>
-LoKi::FunctorFromFunctor< std::vector<TYPE> , std::vector<TYPE> >
+          typename TYPE = typename LoKi::details::type1_t<F>,
+          typename TYPE2 = typename LoKi::details::type2_t<F>::value_type,
+          typename = LoKi::details::require_signature<F,TYPE,std::vector<TYPE2>>>
+LoKi::FunctorFromFunctor< TYPE , std::vector<TYPE2> >
 operator>> ( F&& pipe , const LoKi::Dump& dump  )
 {
-  return std::forward<F>(pipe) >> LoKi::Functors::Dump_<TYPE>( dump ) ;
-}
-// ============================================================================
-// dumping to the stream
-// ============================================================================
-template <typename F,
-          typename TYPE = typename LoKi::details::type2_t<F>::value_type,
-          typename = LoKi::details::require_signature<F,void,std::vector<TYPE>>>
-LoKi::FunctorFromFunctor< void, std::vector<TYPE> >
-operator>> ( F&& pipe, const LoKi::Dump& dump )
-{
-  return std::forward<F>(pipe) >> LoKi::Functors::Dump_<TYPE>( dump ) ;
+  return std::forward<F>(pipe) >> LoKi::Functors::Dump_<TYPE2>( dump ) ;
 }
 
 // ============================================================================

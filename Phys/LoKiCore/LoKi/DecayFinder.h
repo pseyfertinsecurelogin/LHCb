@@ -83,9 +83,9 @@ namespace Decays
      *  @return true if the specified decay is in the sequnce
      */
     template <typename ITERATOR,
-              typename = typename std::enable_if< std::is_base_of< std::input_iterator_tag,
-                                                                   typename std::iterator_traits<ITERATOR>::iterator_category
-                                                                 >::value >::type >
+              typename = std::enable_if_t< std::is_base_of< std::input_iterator_tag,
+                                                            typename std::iterator_traits<ITERATOR>::iterator_category
+                                                          >::value>>
     bool hasDecay( ITERATOR first , ITERATOR last ) const
     {
       return std::any_of( first , last , m_tree ) ;
@@ -132,9 +132,9 @@ namespace Decays
      *  @return number of found particles
      */
     template <typename ITERATOR, typename OUTPUT,
-              typename = typename std::enable_if< std::is_base_of< std::input_iterator_tag,
-                                                                   typename std::iterator_traits<ITERATOR>::iterator_category
-                                                                 >::value >::type >
+              typename = std::enable_if_t< std::is_base_of< std::input_iterator_tag,
+                                                            typename std::iterator_traits<ITERATOR>::iterator_category
+                                                          >::value>>
     unsigned int  findDecay
     ( ITERATOR             first  ,
       ITERATOR             last   ,
@@ -193,9 +193,9 @@ namespace Decays
      *  @return advanced output operator
      */
     template <typename  ITERATOR,typename OUTPUT,
-              typename = typename std::enable_if< std::is_base_of< std::input_iterator_tag,
-                                                                   typename std::iterator_traits<ITERATOR>::iterator_category
-                                                                 >::value >::type >
+              typename = std::enable_if_t< std::is_base_of< std::input_iterator_tag,
+                                                            typename std::iterator_traits<ITERATOR>::iterator_category
+                                                           >::value>>
     OUTPUT operator()  ( ITERATOR first  ,
                          ITERATOR last   ,
                          OUTPUT   output ) const

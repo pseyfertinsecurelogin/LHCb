@@ -29,9 +29,11 @@
        />
 
        <enum
-         desc   = "List of summary data"
-         name   = "DataTypes"
-         access = "PUBLIC" >
+         desc         = "List of summary data"
+         name         = "DataTypes"
+         access       = "PUBLIC"
+         strTypConv   = "TRUE"
+         unknownValue = "TypeUnknown">
         <enumval name="nPVs"               value="0"    desc="Number of reconstructed Primary Vertices"/>
         <enumval name="nLongTracks"        value="10"   desc="Number of reconstructed Long Tracks"/>
         <enumval name="nDownstreamTracks"  value="11"   desc="Number of reconstructed Downstream Tracks"/>
@@ -56,6 +58,7 @@
         <enumval name="nMuonCoordsS3"      value="93"   desc="Number of Coords in Muon Station 3"/>
         <enumval name="nMuonCoordsS4"      value="94"   desc="Number of Coords in Muon Station 4"/>
         <enumval name="nMuonTracks"        value="95"   desc="Number of Muon Tracks"/>
+        <enumval name="TypeUnknown"        value="1000" desc="Unknown RecSummary entry"/>
        </enum>
 
        <attribute
@@ -119,7 +122,6 @@
            type = "std::ostream"
            name = "s"/>
        </method>
-
      </class>
   </package>
 </gdd>

@@ -6,6 +6,7 @@
 
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
+#include "GaudiKernel/Point3DTypes.h"
 #include "Kernel/SiPositionInfo.h"
 
 

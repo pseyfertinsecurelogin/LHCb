@@ -27,6 +27,8 @@
 #include "LoKi/EvtNum.h"
 #include "LoKi/TESGet.h"
 // ============================================================================
+#include "LoKi/IHDRFilterTool.h"
+// ============================================================================
 /** @file
  *  Simpe file to build the dictionaries for LoKi's functors, which
  *  deal only with DAQ&trigger  values

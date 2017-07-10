@@ -3,6 +3,9 @@
 
 // Include files
 #include "Linker/LinkerRange.h"
+#include "GaudiKernel/ObjectContainerBase.h"
+#include "GaudiKernel/LinkManager.h"
+#include "Event/LinksByKey.h"
 
 /** @class LinkerTable LinkerTable.h Linker/LinkerTable.h
  *  This is a table, the interface to build LinkerRange.

@@ -9,6 +9,7 @@
 
 // from Gaudi
 #include "GaudiKernel/IInterface.h"
+#include "GaudiKernel/Time.h"
 
 // from COOL
 #include "CoolKernel/types.h"
