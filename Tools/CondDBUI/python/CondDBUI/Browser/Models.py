@@ -13,9 +13,6 @@ from Utils import *
 
 from CondDBUI import CondDB
 
-# Import helper functions
-from ..Helpers import Helpers
-
 __all__ = ["setModelsIcons",
            "tagsGlobalCache",
            "CondDBNodesListModel",
@@ -49,11 +46,8 @@ class TagsCache(QObject):
         self.tagsCacheUpdated.emit()
     ## Tell if a path may have tags (i.e. it is a multi-version folder or a folderset)
     def mayHaveTags(self, path):
-        if self.db.db.existsFolder(path):
-            f = self.db.db.getFolder(path)
-            return f.versioningMode() == cool.FolderVersioning.MULTI_VERSION
-        else:
-            return self.db.db.existsFolderSet(path)
+        return (self.db.isMultiVersionFolder(path) or
+                self.db.existsFolderSet(path))
     ## Get the list of tags for a path
     def getTags(self, path):
         if self.db:
@@ -150,7 +144,7 @@ class CondDBStructureItem(object):
                 #        names because I cannot extract the list of keys from the map
                 #        (I do not know if it is a problem with PyROOT or a missing
                 #        dictionary in PyCool).
-                channels = Helpers.getChannelsWithNames(self.node)
+                channels = self.db.getChannelsWithNames(self.node.fullPath())
                 if (len(channels) == 1) and (0 in channels) and (not channels[0]):
                     # If we have only the default channel, no need to show it
                     return self._children
@@ -165,14 +159,14 @@ class CondDBStructureItem(object):
                 # The children are the sub-nodes
 
                 for f in self.node.listFolderSets():
-                    node = self.db.db.getFolderSet(f)
+                    node = self.db.getCOOLNode(f)
                     name = basename(f)
                     self._children.append(CondDBStructureItem(db = self.db,
                                                               parent = self,
                                                               name = name,
                                                               node = node))
                 for f in self.node.listFolders():
-                    node = self.db.db.getFolder(f)
+                    node = self.db.getCOOLNode(f)
                     name = basename(f)
                     self._children.append(CondDBStructureItem(db = self.db,
                                                               parent = self,
@@ -238,7 +232,7 @@ class CondDBStructureModel(QAbstractItemModel):
             self.root = CondDBStructureItem(db = db,
                                             parent = None,
                                             name = "",
-                                            node = db.db.getFolderSet("/"))
+                                            node = db.getCOOLNode("/"))
             self.root.index = QModelIndex()
         else:
             self.root = None
@@ -358,9 +352,9 @@ class CondDBNodesListModel(QAbstractListModel):
                 self._nodes.pop(0) # remove "/" (which is always the first one)
             # if a filtering criterion is defined, we filter the list
             if self.nodeType == self.FOLDER:
-                self._nodes = filter(self.db.db.existsFolder, self._nodes)
+                self._nodes = filter(self.db.existsFolder, self._nodes)
             elif self.nodeType == self.FOLDERSET:
-                self._nodes = filter(self.db.db.existsFolderSet, self._nodes)
+                self._nodes = filter(self.db.existsFolderSet, self._nodes)
         return self._nodes
 
     ## Returns the number of nodes in the database.
@@ -431,7 +425,7 @@ class CondDBTagsListModel(QAbstractListModel):
         self._tags = None # Invalidate the internal cache
         self.endResetModel()
         self.setViewEnabled.emit(bool(path and
-                                      tagsGlobalCache.db.db.existsFolder(path)))
+                                      tagsGlobalCache.db.existsFolder(path)))
 
     ## Slot to receive the notification of changes in the cache of tags
     def _refreshedCachePath(self, path):
@@ -641,6 +635,7 @@ class CondDBIoVModel(BaseIoVModel):
             # The actual logic for enable is (self.db and self._path)
             self.setViewEnabled.emit(False)
         self.db = db
+        self._tag = self.db.defaultTag if self.db else self.HEAD
 
     ## Reset internal data, cleaning the cache.
     def _reset(self):
@@ -682,10 +677,6 @@ class CondDBIoVModel(BaseIoVModel):
             self._channel = channel
             self.endResetModel()
 
-    ## Return the cool::ChannelSelection object corresponding to the set channel.
-    def channelSelection(self):
-        return cool.ChannelSelection(self._channel)
-
     ## Value of the property tag.
     def tag(self):
         return self._tag
@@ -694,7 +685,7 @@ class CondDBIoVModel(BaseIoVModel):
     @pyqtSlot(str)
     def setTag(self, tag):
         if not tag:
-            tag = self.HEAD
+            tag = self.db.defaultTag if self.db else self.HEAD
         else:
             tag = str(tag)
         if self._tag != tag:
@@ -710,13 +701,10 @@ class CondDBIoVModel(BaseIoVModel):
             tag = self.tag()
             if tag != self.HEAD:
                 tag = self.db.resolveTag(self._folder, tag)
-            objects = self._folder.browseObjects(self._actualUntil, newUntil,
-                                                 self.channelSelection(),
-                                                 tag)
-            for o in objects:
-                self._allIoVs.append((o.since(), o.until(),
-                                      dict(CondDB.payload(o)),
-                                      o.insertionTime()))
+            objects = self.db.getPayloadList(self._path,
+                                             self._actualUntil, newUntil,
+                                             self._channel, tag)
+            self._allIoVs.extend((s, u, p, i) for p, s, u, _, i in objects)
             # set actual limits of the content of the cache
             if self._allIoVs: # we may not have found anything
                 self._actualUntil = self._allIoVs[-1][self.UNTIL]
@@ -736,15 +724,10 @@ class CondDBIoVModel(BaseIoVModel):
             # Note: we use "self._actualSince - 1" and not "self._actualSince"
             # because COOL returns also the object that includes the upper limit,
             # but we already have it.
-            objects = self._folder.browseObjects(newSince, self._actualSince - 1,
-                                                 self.channelSelection(),
-                                                 tag)
-            tmp = []
-            for o in objects:
-                # FIXME: probably it could be quicker using a temporary list and append
-                tmp.append((o.since(), o.until(),
-                            dict(CondDB.payload(o)),
-                            o.insertionTime()))
+            objects = self.db.getPayloadList(self._path,
+                                             newSince, self._actualSince - 1,
+                                             self._channel, tag)
+            tmp = [(s, u, p, i) for p, s, u, _, i in objects]
             self._allIoVs = tmp + self._allIoVs
             # set actual limits of the content of the cache
             if self._allIoVs: # we may not have found anything
@@ -866,10 +849,10 @@ class CondDBIoVModel(BaseIoVModel):
         if path != self._path:
             self._cleanCache()
             self._path = self._folder = None
-            self._tag = self.HEAD # To avoid that we pick up an old tag (coming from another path)
-            if path and self.db.db.existsFolder(path):
+            self._tag = self.db.defaultTag # To avoid that we pick up an old tag (coming from another path)
+            if path and self.db.existsFolder(path):
                 self._path = path
-                self._folder = self.db.db.getFolder(path)
+                self._folder = self.db.getCOOLNode(path)
             # Notify the views
             self.beginResetModel()
             self.endResetModel()
@@ -976,7 +959,7 @@ class CondDBPayloadFieldModel(QAbstractListModel):
         if path is not None: # Needed to use this function as a slot accepting QString
             path = str(path)
         self._path = path
-        if path and self.db.db.existsFolder(path):
+        if path and self.db.existsFolder(path):
             self._fields = self.db.getFolderStorageKeys(path)
             self._fields.sort()
             viewEnabled = len(self._fields) != 1

@@ -16,6 +16,7 @@
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( CaloAdcFromRaw )
 
+
 namespace {
 
 // C++17:
@@ -26,18 +27,14 @@ constexpr const T& clamp( const T& v, const T& lo, const T& hi) noexcept
 }
 
 }
+
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 CaloAdcFromRaw::CaloAdcFromRaw( const std::string& name,
                                 ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
+: GaudiAlgorithm ( name , pSvcLocator )
 {
-  declareProperty("AdcLocation"        , m_location );
-  declareProperty("L0AdcLocation"      , m_l0Location );
-  declareProperty("L0BitLocation"      , m_l0BitLocation );
-  declareProperty("DeCalibration"      , m_calib ); // Expert usage
-
   // set default detectorName
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
   m_detectorName = ( name.compare(index, 3, "Prs") == 0 ? "Prs"
@@ -195,7 +192,7 @@ StatusCode CaloAdcFromRaw::execute() {
         } catch(GaudiException &exc) {
           counter("Duplicate L0Bit") += 1;
           std::ostringstream os("");
-          os << "Duplicate L0Bit for channel " << id << std::endl;
+          os << "Duplicate L0Bit for channel " << id << '\n';
           Warning(os.str(),StatusCode::SUCCESS).ignore();
           int card =  m_data->deCalo()->cardNumber( id );
           int tell1=  m_data->deCalo()->cardToTell1( card);

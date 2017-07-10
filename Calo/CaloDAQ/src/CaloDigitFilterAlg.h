@@ -1,4 +1,4 @@
-#ifndef CALODIGITFILTERALG_H 
+#ifndef CALODIGITFILTERALG_H
 #define CALODIGITFILTERALG_H 1
 
 // Include files
@@ -8,23 +8,26 @@
 
 
 /** @class CaloDigitFilterAlg CaloDigitFilterAlg.h
- *  
+ *
  *  @author Olivier Deschamps
  *  @date   2010-12-21
  */
+
+
 class CaloDigitFilterAlg : public GaudiAlgorithm {
-public: 
+public:
   /// Standard constructor
-  CaloDigitFilterAlg( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
 private:
-  int m_ecal;
-  int m_hcal;
-  int m_prs;
-  int m_spd;
+  Gaudi::Property<int> m_ecal { this, "EcalFilter" , 0x3 }; // 1 = Mask , 2=Offset , 3 = both, 0 = none
+  Gaudi::Property<int> m_hcal { this, "HcalFilter" , 0x3 }; // 1 = Mask , 2=Offset , 3 = both, 0 = none
+  Gaudi::Property<int> m_prs  { this, "PrsFilter"  , 0x3 }; // 1 = Mask , 2=Offset , 3 = both, 0 = none
+  Gaudi::Property<int> m_spd  { this, "SpdFilter"  , 0x1 }; // 1 = Mask , 2=Offset , 3 = both, 0 = none
   ICaloDigitFilterTool* m_filter = nullptr;
 };
+
 #endif // CALODIGITFILTERALG_H
