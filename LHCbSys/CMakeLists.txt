@@ -1,7 +1,7 @@
 ################################################################################
 # Package: LHCbSys
 ################################################################################
-gaudi_subdir(LHCbSys v42r5)
+gaudi_subdir(LHCbSys v43r0)
 
 gaudi_depends_on_subdirs(Associators/MCAssociators
                          Calo/CaloDAQ
