@@ -9,6 +9,9 @@
 #include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Incident.h"
 #include "CaloDet/DeCalorimeter.h"
+
+#include "details.h"
+
 /** @class CaloDataProviderFromTES CaloDataProviderFromTES.h
  *
  *
@@ -70,19 +73,9 @@ public:
 
 private:
   bool checkSrc(int source);
-  bool fromAdc(){
-    std::string out( m_data );
-    std::transform( m_data.begin() , m_data.end() , out.begin () , ::toupper ) ;
-    if( out == "ADC" || out == "CALOADC" || out == "ADCS" || out == "CALOADCS")return true;
-    return false;
-  }
-  bool fromDigit(){
-    std::string out( m_data );
-    std::transform( m_data.begin() , m_data.end() , out.begin () , ::toupper ) ;
-    if( out == "DIGIT" || out == "CALODIGIT" || out == "DIGITS" || out == "CALODIGITS")return true;
-    return false;
-  }
 
+  bool fromAdc() { return m_data == details::source_t::from_adc; }
+  bool fromDigit() { return m_data == details::source_t::from_digit; }
 
   CaloVector<LHCb::CaloAdc>    m_adcs;
   CaloVector<LHCb::CaloDigit> m_digits;
@@ -90,7 +83,7 @@ private:
   //
   std::string  m_detectorName;
   std::string m_raw;
-  std::string m_data;
+  Gaudi::Property<details::source_t> m_data { this, "InputDataType", details::source_t::from_digit };
   std::string m_adcLoc;
   std::string m_digLoc;
   std::string m_loc;

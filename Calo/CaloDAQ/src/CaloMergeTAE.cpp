@@ -12,41 +12,20 @@
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( CaloMergeTAE )
 
-
 //=============================================================================
 // Standard constructor, initializes variables
 //=============================================================================
 CaloMergeTAE::CaloMergeTAE( const std::string& name,
-                            ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ), m_calo(0)
+                      ISvcLocator* pSvcLocator)
+: GaudiAlgorithm ( name , pSvcLocator )
 {
-
-  declareProperty("MergeSlots"     , m_slots);
-  declareProperty("Detector"       , m_detectorName);
-  declareProperty("SumThreshold"   , m_threshold = -256);
-  declareProperty("SlotThreshold"  , m_slotcut   = -256);
-  declareProperty("OutputType"     , m_data = "Digits" );
-  declareProperty("OutputDataLocation", m_outputDataLoc=""      ) ;
-  declareProperty("inputExtension"     , m_inExt = "" );
-  //
-  m_slots.push_back("T0");
-  m_slots.push_back("Prev1");
-  m_slots.push_back("Next1");
-
   // set default detectorName
-  int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = name.substr( index, 4 );
-  if ( name.substr(index,3) == "Prs" ) m_detectorName = "Prs";
-  if ( name.substr(index,3) == "Spd" ) m_detectorName = "Spd";
-
-
-
-
+  auto index = name.find_last_of(".");
+  index = ( index == std::string::npos ? 0 : index+1 );
+  m_detectorName = ( name.compare( index, 3, "Prs" ) == 0 ? "Prs"
+                   : name.compare( index, 3, "Spd" ) == 0 ? "Spd"
+                   : name.substr( index, 4 ) );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-CaloMergeTAE::~CaloMergeTAE() {}
 
 //=============================================================================
 // Initialization
@@ -60,51 +39,43 @@ StatusCode CaloMergeTAE::initialize() {
   // get detectorElement
   if ( "Ecal" == m_detectorName ) {
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Ecal );
-    m_locDigit     = LHCb::CaloDigitLocation::Ecal + m_inExt;
-    m_locAdc     = LHCb::CaloAdcLocation::Ecal + m_inExt;
+    m_locDigit     = LHCb::CaloDigitLocation::Ecal + m_inExt.value();
+    m_locAdc     = LHCb::CaloAdcLocation::Ecal + m_inExt.value();
   } else if ( "Hcal" == m_detectorName ) {
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Hcal );
-    m_locDigit     = LHCb::CaloDigitLocation::Hcal + m_inExt;
-    m_locAdc     = LHCb::CaloAdcLocation::Hcal + m_inExt;
+    m_locDigit     = LHCb::CaloDigitLocation::Hcal + m_inExt.value();
+    m_locAdc     = LHCb::CaloAdcLocation::Hcal + m_inExt.value();
   } else if ( "Prs" == m_detectorName ) {
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Prs );
-    m_locDigit     = LHCb::CaloDigitLocation::Prs + m_inExt;
-    m_locAdc     = LHCb::CaloAdcLocation::Prs + m_inExt;
+    m_locDigit     = LHCb::CaloDigitLocation::Prs + m_inExt.value();
+    m_locAdc     = LHCb::CaloAdcLocation::Prs + m_inExt.value();
   } else if ( "Spd" == m_detectorName ) {
     m_calo     = getDet<DeCalorimeter>( DeCalorimeterLocation::Spd );
-    m_locDigit     = LHCb::CaloDigitLocation::Spd + m_inExt;
-    m_locAdc     = LHCb::CaloAdcLocation::Spd + m_inExt;
+    m_locDigit     = LHCb::CaloDigitLocation::Spd + m_inExt.value();
+    m_locAdc     = LHCb::CaloAdcLocation::Spd + m_inExt.value();
   } else {
     error() << "Unknown detector name " << m_detectorName << endmsg;
     return StatusCode::FAILURE;
   }
   //
-  if( "" != m_outputDataLoc ) {
-    m_outDigit = m_outputDataLoc;
-    m_outAdc   = m_outputDataLoc;
-  }else{
-    m_outDigit     = "TAE/" + m_locDigit;
-    m_outAdc       = "TAE/" + m_locAdc;
-  }
-
+  std::tie( m_outDigit, m_outAdc ) = ( m_outputDataLoc.value().empty()
+                                     ? std::make_pair( "TAE/"+m_locDigit, "TAE/"+m_locAdc)
+                                     : std::make_pair( m_outputDataLoc.value(), m_outputDataLoc.value() ) );
 
   //
-  if(m_slots.size() == 0){
+  if(m_slots.value().empty()){
     Error("No input slots defined").ignore();
     return StatusCode::FAILURE;
   }
   //
   //
-  std::string loc ;
-  if( fromDigit() ){
-    loc = m_outDigit;
-  }else if(fromAdc() ){
-    loc= m_outAdc ;
-  }  else {
-    Error("Unknown data type " + m_data).ignore();
-    return StatusCode::FAILURE;
-  }
-  info() << "Will merge " << m_data << " from " << m_slots << " into " << loc << endmsg;
+  auto loc = [&]() -> decltype(auto) {
+    switch ( m_data.value() ) {
+      case details::source_t::from_adc   : return m_outAdc;
+      case details::source_t::from_digit : return m_outDigit;
+      default : throw "IMPOSSIBLE";
+  } };
+  info() << "Will merge " << toString(m_data.value()) << " from " << m_slots.value() << " into " << loc() << endmsg;
   return StatusCode::SUCCESS;
 }
 
@@ -115,12 +86,10 @@ StatusCode CaloMergeTAE::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
-
-  if( fromDigit()    )mergeDigits();
-  else if( fromAdc() ) mergeAdcs();
-  else{
-    Warning("Unable to merged data type " + m_data).ignore();
-  }
+  switch ( m_data.value() ) {
+      case details::source_t::from_adc   : mergeAdcs();   break;
+      case details::source_t::from_digit : mergeDigits(); break;
+  };
 
   return StatusCode::SUCCESS;
 }
@@ -129,85 +98,77 @@ StatusCode CaloMergeTAE::execute() {
 void CaloMergeTAE::mergeDigits(){
 
   std::map<std::string,LHCb::CaloDigits*> digitsMap;
-  for(std::vector<std::string>::iterator islot = m_slots.begin(); islot != m_slots.end() ; islot++){
-    std::string slot = *islot + "/";
-    if(*islot == "T0") slot ="";
+  for(const auto& islot : m_slots.value() ) {
+    std::string slot = islot + "/";
+    if(islot == "T0") slot ="";
     if( exist<LHCb::CaloDigits>( slot + m_locDigit ))
-      digitsMap[*islot] =  get<LHCb::CaloDigits>( slot + m_locDigit , false );
+      digitsMap[islot] =  get<LHCb::CaloDigits>( slot + m_locDigit , false );
     else
       Warning("No CaloDigits found in " + slot + m_locDigit ).ignore();
-
   }
   //
   LHCb::CaloDigits* newDigits = new LHCb::CaloDigits();
   put( newDigits, m_outDigit );
   //
-  const CaloVector<CellParam>& cells = m_calo->cellParams();
-  for( CaloVector<CellParam>::const_iterator icell = cells.begin() ; icell != cells.end() ; icell++){
-    LHCb::CaloCellID id = (*icell).cellID();
+  for( const auto& icell : m_calo->cellParams() ) {
+    LHCb::CaloCellID id = icell.cellID();
 
     std::string txt  = "Digit :" ;
     double sum = 0;
-    for(  std::map<std::string,LHCb::CaloDigits*>::iterator imap = digitsMap.begin();imap!=digitsMap.end();imap++){
-      LHCb::CaloDigits* digs = (*imap).second;
-      if( NULL == digs) continue;
-      LHCb::CaloDigit* dig = digs->object( id );
-      if( NULL == dig ) continue;
+    for( const auto& map : digitsMap ) {
+      const LHCb::CaloDigits* digs = map.second;
+      if( !digs) continue;
+      const LHCb::CaloDigit* dig = digs->object( id );
+      if( !dig ) continue;
       double e = dig->e();
-      if( e < m_slotcut )continue;
+      if( e < m_slotcut.value() )continue;
       sum += e;
-      if ( msgLevel( MSG::DEBUG) )txt += (*imap).first + " : " + Gaudi::Utils::toString(e) + " | " ;
+      if ( msgLevel( MSG::DEBUG) )txt += map.first + " : " + Gaudi::Utils::toString(e) + " | " ;
     }
 
-    if(  sum > m_threshold ){
-      LHCb::CaloDigit* newDigit = new LHCb::CaloDigit(id, sum);
-      newDigits->insert( newDigit);
+    if(  sum > m_threshold.value() ){
+      newDigits->insert( new LHCb::CaloDigit(id, sum) );
       if ( msgLevel( MSG::DEBUG) )debug() << id << " : "  << txt << " =>  TAE = " << sum <<endmsg;
     }
   }
-
 }
 
 
 void CaloMergeTAE::mergeAdcs(){
   std::map<std::string,LHCb::CaloAdcs*> adcsMap;
-  for(std::vector<std::string>::iterator islot = m_slots.begin(); islot != m_slots.end() ; islot++){
-    std::string slot = *islot + "/";
-    if(*islot == "T0") slot ="";
+  for(const auto& islot : m_slots.value() ) {
+    std::string slot = islot + "/";
+    if(islot == "T0") slot ="";
     if( exist<LHCb::CaloAdcs>( slot + m_locAdc ))
-      adcsMap[*islot] =  get<LHCb::CaloAdcs>( slot + m_locAdc , false );
+      adcsMap[islot] =  get<LHCb::CaloAdcs>( slot + m_locAdc , false );
     else
       Warning("No CaloAdcs found in " + slot + m_locAdc ).ignore();
-
   }
   //
   LHCb::CaloAdcs* newAdcs = new LHCb::CaloAdcs();
   put( newAdcs, m_outAdc );
   //
   const CaloVector<CellParam>& cells = m_calo->cellParams();
-  for( CaloVector<CellParam>::const_iterator icell = cells.begin() ; icell != cells.end() ; icell++){
-    LHCb::CaloCellID id = (*icell).cellID();
+  for( const auto& icell : cells ) {
+    LHCb::CaloCellID id = icell.cellID();
 
     std::string txt =  "ADC :" ;
     int sum = 0;
-    for(  std::map<std::string,LHCb::CaloAdcs*>::iterator imap = adcsMap.begin();imap!=adcsMap.end();imap++){
-      LHCb::CaloAdcs* adcs = (*imap).second;
-      if( NULL == adcs) continue;
-      LHCb::CaloAdc* adc = adcs->object( id );
-      if( NULL == adc ) continue;
+    for( const auto& imap : adcsMap ) {
+      const LHCb::CaloAdcs* adcs = imap.second;
+      if( !adcs) continue;
+      const LHCb::CaloAdc* adc = adcs->object( id );
+      if( !adc ) continue;
       int val = adc->adc();
-      if( val < m_slotcut)continue;
+      if( val < m_slotcut.value()) continue;
       sum += val;
-      if ( msgLevel( MSG::DEBUG) )txt += (*imap).first + " : " + Gaudi::Utils::toString( val ) +  " | " ;
+      if ( msgLevel( MSG::DEBUG) ) txt += imap.first + " : " + Gaudi::Utils::toString( val ) +  " | " ;
     }
 
-    if(  (double) sum > m_threshold ){
+    if(  (double) sum > m_threshold.value() ){
       LHCb::CaloAdc* newAdc = new LHCb::CaloAdc(id, sum);
       newAdcs->insert( newAdc );
       if ( msgLevel( MSG::DEBUG) )debug() << id << " : "  << txt << " =>  TAE = " << sum <<endmsg;
     }
-
   }
-
 }
-

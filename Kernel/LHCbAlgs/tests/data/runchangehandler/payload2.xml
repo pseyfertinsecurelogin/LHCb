@@ -1,0 +1,3 @@
+<condition name="Condition">
+  <param name="data" type="string">payload2</param>
+</condition>
