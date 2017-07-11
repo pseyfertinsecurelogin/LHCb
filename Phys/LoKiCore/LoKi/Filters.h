@@ -765,6 +765,7 @@ namespace LoKi
     struct Size final : LoKi::Functor<std::vector<TYPE>,double>
     {
       // ======================================================================
+      Size() : AuxFunBase( std::tie() ) { }
       /// MANDATORY: clone method ("virtual constructor")
       Size* clone() const override { return new Size ( *this ) ; }
       /// MANDATORY: the only one essential method
