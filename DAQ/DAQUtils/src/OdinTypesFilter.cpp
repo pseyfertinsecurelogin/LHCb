@@ -1,5 +1,5 @@
-// Include files 
-
+// Include files
+#include <algorithm>
 // from LHCb
 #include "Event/ODIN.h"
 // local
@@ -11,36 +11,46 @@
 // 2008-02-05 : Olivier Deschamps
 //-----------------------------------------------------------------------------
 
+namespace {
+    using namespace OdinTypesFilter_details;
+    const std::string& odin_filter_name( Log_t l ) {
+        static const auto s_And = std::string{"ODIN Filter ("}+toString(Log_t::And)+")";
+        static const auto s_Or  = std::string{"ODIN Filter ("}+toString(Log_t::Or)+")";
+        switch (l) {
+            case Log_t::And: return s_And;
+            case Log_t::Or:  return s_Or;
+        }
+        throw "IMPOSSIBLE";
+    }
+
+    template <size_t N> constexpr bool all(const bool (&bs)[N]) {
+        for (bool b: bs) if (!b) return false;
+        return true;
+    }
+    template <size_t N> constexpr bool any(const bool (&bs)[N]) {
+        for (bool b: bs) if (b) return true;
+        return false;
+    }
+
+    template <typename... Args>
+    bool boolean_combine( Log_t op, Args&&... args ) {
+        switch (op) {
+#if  __cplusplus > 201402L
+           case Log_t::And : return ( ... && std::forward<Args>(args) );
+           case Log_t::Or  : return ( ... || std::forward<Args>(args) );
+#else
+           case Log_t::And : return all({std::forward<Args>(args)...});
+           case Log_t::Or  : return any({std::forward<Args>(args)...});
+#endif
+        }
+        throw "IMPOSSIBLE";
+    }
+
+}
+
 // Declaration of the Algorithm Factory
 DECLARE_ALGORITHM_FACTORY( OdinTypesFilter )
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-OdinTypesFilter::OdinTypesFilter( const std::string& name,
-                                  ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator )
-    ,m_all(0)
-    ,m_acc(0)
-{
-
-  declareProperty("BXTypes"      , m_bxs);
-  declareProperty("TriggerTypes" , m_trs);
-  declareProperty("ReadoutTypes" , m_ros);
-  declareProperty("TAEWindowLessThan" , m_winmax=99);
-  declareProperty("TAEWindowMoreThan" , m_winmin=-1);
-  declareProperty("CalibrationTypes", m_cls);
-  declareProperty("Logical"      , m_log="AND"); 
-
-  m_bxs.push_back("ALL");
-  m_trs.push_back("ALL");
-  m_ros.push_back("ALL");
-  m_cls.push_back("ALL");
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-OdinTypesFilter::~OdinTypesFilter() {} 
 
 //=============================================================================
 // Initialization
@@ -51,126 +61,32 @@ StatusCode OdinTypesFilter::initialize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
-  // check properties
-  if(m_log != "AND" && m_log != "OR"){
-    return Error( "The Logical operator should be 'AND' or 'OR' " );
-  }
-
-
-
-
-  for(std::vector<std::string>::iterator icl = m_cls.begin(); icl != m_cls.end() ; ++icl){ 
-    if(*icl == "ALL")continue;
-    int k = 0;
-    std::string  cl;
-    bool ok = false;
-    int max = LHCb::ODIN::CalibrationTypeMask >> LHCb::ODIN::CalibrationTypeBits;
-    while(k <= max && !ok){
-      std::stringstream s("");
-      s << (LHCb::ODIN::CalibrationTypes) k;
-      cl = s.str();
-      if( cl == *icl)ok=true;
-      k++;
-    }
-    if( !ok ){
-      error() << "The requested CalibrationType '" << *icl << "' is not a valid type" << endmsg;
-      return StatusCode::FAILURE;
-    }
-  }
-  
-
-  for(std::vector<std::string>::iterator ibx = m_bxs.begin(); ibx != m_bxs.end() ; ++ibx){ 
-    if(*ibx == "ALL")continue;
-    int k = 0;
-    std::string  bx;
-    bool ok = false;
-    int max = LHCb::ODIN::BXTypeMask >> LHCb::ODIN::BXTypeBits;
-    while(k <= max && !ok){
-      std::stringstream s("");
-      s << (LHCb::ODIN::BXTypes) k;
-      bx = s.str();
-      if( bx == *ibx)ok=true;
-      k++;
-    }
-    if( !ok ){
-      error() << "The requested BXType '" << *ibx << "' is not a valid type" << endmsg;
-      return StatusCode::FAILURE;
-    }
-  }
-  
-  for(std::vector<std::string>::iterator itr = m_trs.begin(); itr != m_trs.end() ; ++itr){
-    if(*itr == "ALL")continue;
-    int k = 0;
-    std::string  tr;
-    bool ok = false;
-    int max = LHCb::ODIN::TriggerTypeMask >> LHCb::ODIN::TriggerTypeBits;
-    while(k <= max && !ok){
-      std::stringstream s("");
-      s << (LHCb::ODIN::TriggerType) k;
-      tr = s.str();
-      if( tr == *itr)ok=true;
-      k++;
-    }
-    if( !ok ){
-      error() << "The requested TriggerType '" << *itr << "' is not a valid type" << endmsg;
-      return StatusCode::FAILURE;
-    }
-  }
-
-
-  for(std::vector<std::string>::iterator iro = m_ros.begin(); iro != m_ros.end() ; ++iro){
-    if(*iro == "ALL")continue;
-    int k = 0;
-    std::string  ro;
-    bool ok = false;
-    int max = LHCb::ODIN::ReadoutTypeMask >> LHCb::ODIN::ReadoutTypeBits;
-    while(k <= max && !ok){
-      std::stringstream s("");
-      s << (LHCb::ODIN::ReadoutTypes) k;
-      ro = s.str();
-      if( ro == *iro)ok=true;
-      k++;
-    }
-    if( !ok ){
-      error() << "The requested ReadoutType '" << *iro << "' is not a valid type" << endmsg;
-      return StatusCode::FAILURE;
-    }
-  }  
-
   // selection :
-  info() << "Accepted BXTypes : " << m_bxs << endmsg;
-  info() << m_log << endmsg;
-  info() << "Accepted TriggerTypes : " << m_trs << endmsg;
-  info() << m_log << endmsg;
-  info() << "Accepted ReadoutTypes : " << m_ros << endmsg;
-  info() << m_log << endmsg;
-  info() << "Accepted CalibrationTypes : " << m_cls << endmsg;
-  info() << m_log << endmsg;
+  info() << "Accepted BXTypes : " << m_bxs.value() << endmsg;
+  info() << toString(m_log.value()) << endmsg;
+  info() << "Accepted TriggerTypes : " << m_trs.value() << endmsg;
+  info() << toString(m_log.value()) << endmsg;
+  info() << "Accepted ReadoutTypes : " << m_ros.value() << endmsg;
+  info() << toString(m_log.value()) << endmsg;
+  info() << "Accepted CalibrationTypes : " << m_cls.value() << endmsg;
+  info() << toString(m_log.value()) << endmsg;
   info() << "TAE Window in [" << m_winmin+1 << "," << m_winmax-1 <<"]"<< endmsg;
 
-
-
-  // warns trivial requests 
-  if((m_bxs.empty() || m_trs.empty()  || m_ros.empty() || m_winmin>=m_winmax  || m_cls.empty()) && m_log == "AND")
+  // warn about trivial requests
+  if ( m_log == Log_t::And && boolean_combine( Log_t::Or, m_bxs.empty(),m_trs.empty(),m_ros.empty(),m_winmin>=m_winmax,m_cls.empty()))
     Warning("BXTypes, TriggerTypes, ReadoutTypes or TAEWindow is empty : ALL events will be rejected !!"
             ,StatusCode::SUCCESS).ignore();
-  if((m_bxs.empty() && m_trs.empty()) && m_ros.empty() && m_winmin>=m_winmax && m_cls.empty() && m_log == "OR")
+  if ( m_log == Log_t::Or && boolean_combine( Log_t::And, m_bxs.empty(),m_trs.empty(),m_ros.empty(),m_winmin>=m_winmax,m_cls.empty()))
     Warning("BXTypes, TriggerTypes, ReadoutTypes and TAEWindow are empties : ALL events will be rejected !!"
             ,StatusCode::SUCCESS).ignore();
-  if( *(m_bxs.begin()) == "ALL" 
-      && *(m_cls.begin()) == "ALL" 
-      && *(m_trs.begin()) == "ALL" 
-      && *(m_ros.begin()) == "ALL" 
-      && m_winmin<0 && m_winmax>7
-      && m_log == "AND")
-    Warning("OdinTypesFilter has no effect : ALL events will be accepted !!"
-            ,StatusCode::SUCCESS).ignore();
-  if(( *(m_bxs.begin()) == "ALL"       ||*(m_cls.begin()) == "ALL"       
-       || *(m_trs.begin()) == "ALL"  || *(m_ros.begin()) == "ALL" || (m_winmin<0&&m_winmax>7)) && m_log == "OR")
+  if ( boolean_combine( m_log, m_bxs.value().front() == odin_bx_type_t::All,
+                               m_cls.value().front() == odin_calibration_type_t::All,
+                               m_trs.value().front() == odin_trigger_type_t::All,
+                               m_ros.value().front() == odin_readout_type_t::All,
+                               m_winmin<0, m_winmax>7 ) )
     Warning("OdinTypesFilter has no effect : ALL events will be accepted !!"
             ,StatusCode::SUCCESS).ignore();
 
-  
   return StatusCode::SUCCESS;
 }
 
@@ -181,90 +97,44 @@ StatusCode OdinTypesFilter::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
-  m_all++;
-
-
+  ++m_all;
 
   // treat trivial requests
   setFilterPassed(true);
-  if( *(m_bxs.begin()) == "ALL" &&*(m_cls.begin()) == "ALL" && *(m_trs.begin()) == "ALL" && *(m_ros.begin()) == "ALL" 
-      &&  (m_winmin<0 && m_winmax>7) && m_log == "AND"){
+  if( boolean_combine( m_log,  m_bxs.value().front() == odin_bx_type_t::All,
+                       m_cls.value().front() == odin_calibration_type_t::All,
+                       m_trs.value().front() == odin_trigger_type_t::All,
+                       m_ros.value().front() == odin_readout_type_t::All,
+                       m_winmin<0 && m_winmax>7  ) ) {
     m_acc++;
     return StatusCode::SUCCESS;
   }
-  
-  if(( *(m_bxs.begin()) == "ALL" ||*(m_cls.begin()) == "ALL" || *(m_trs.begin()) == "ALL" || *(m_ros.begin()) == "ALL" 
-       || (m_winmin<0 && m_winmax>7)) && m_log == "OR"){
-    m_acc++;
-    return StatusCode::SUCCESS;
-  }
-  
-  setFilterPassed(false);
-  if( (m_bxs.empty() || m_cls.empty() || m_trs.empty() || m_ros.empty() || m_winmin>=m_winmax) && m_log =="AND")return StatusCode::SUCCESS;
-  if( (m_bxs.empty() && m_cls.empty() && m_trs.empty() && m_ros.empty() && m_winmin>=m_winmax) && m_log =="OR")return StatusCode::SUCCESS;
 
-  
+  setFilterPassed(false);
+  if ( boolean_combine( m_log, (m_bxs.empty(), m_cls.empty(), m_trs.empty(), m_ros.empty(), m_winmin>=m_winmax) ) ) {
+    return StatusCode::SUCCESS;
+  }
 
   // get ODIN
   LHCb::ODIN* odin = getIfExists<LHCb::ODIN>(LHCb::ODINLocation::Default);
-  if( odin == NULL )
+  if ( !odin )
     return Error("ODIN cannot be loaded - FilterPassed = false",StatusCode::SUCCESS);
-  
-  std::stringstream clType("");
-  std::stringstream bxType("");
-  std::stringstream trType("");
-  std::stringstream roType("");
-  clType << (LHCb::ODIN::CalibrationTypes) odin->calibrationType();
-  bxType << (LHCb::ODIN::BXTypes) odin->bunchCrossingType();
-  trType << (LHCb::ODIN::TriggerType) odin->triggerType();
-  roType << (LHCb::ODIN::ReadoutTypes) odin->readoutType();
 
+  if ( msgLevel(MSG::DEBUG) )
+    debug() << " Trigger Type : " << odin->triggerType() << " BXType : " << odin->bunchCrossingType()<< endmsg;
 
-  if ( msgLevel(MSG::DEBUG) ) 
-    debug() << " Trigger Type : " << trType.str() << " BXType : " << bxType.str() << endmsg;
+  auto equals_ = [](auto val) { return [=](const auto& i) { return val==i; }; };
+  bool clPass = std::any_of( m_cls.begin(), m_cls.end(), equals_( odin->calibrationType()   ) );
+  bool bxPass = std::any_of( m_bxs.begin(), m_bxs.end(), equals_( odin->bunchCrossingType() ) );
+  bool trPass = std::any_of( m_trs.begin(), m_trs.end(), equals_( odin->triggerType()       ) );
+  bool roPass = std::any_of( m_ros.begin(), m_ros.end(), equals_( odin->readoutType()       ) );
+  bool taePass = ((int) odin->timeAlignmentEventWindow()>m_winmin && (int) odin->timeAlignmentEventWindow()<m_winmax);
 
-  bool clPass =  false;
-  for(std::vector<std::string>::iterator icl = m_cls.begin(); icl != m_cls.end() ; ++icl){
-    if( clType.str() == *icl || "ALL" == *icl ){
-      clPass = true;
-      break;
-    }    
-  } 
+  setFilterPassed( boolean_combine( m_log,  trPass, bxPass, roPass, taePass, clPass)) ;
 
-  bool bxPass =  false;
-  for(std::vector<std::string>::iterator ibx = m_bxs.begin(); ibx != m_bxs.end() ; ++ibx){
-    if( bxType.str() == *ibx || "ALL" == *ibx ){
-      bxPass = true;
-      break;
-    }    
-  } 
-  
-  bool trPass = false;
-  for(std::vector<std::string>::iterator itr = m_trs.begin(); itr != m_trs.end() ; ++itr){
-    if( trType.str() == *itr || "ALL" == *itr ){
-      trPass = true;
-      break;
-    }    
-  }
+  if(filterPassed() ) ++m_acc;
 
-  bool roPass = false;
-  for(std::vector<std::string>::iterator iro = m_ros.begin(); iro != m_ros.end() ; ++iro){
-    if( roType.str() == *iro || "ALL" == *iro ){
-      roPass = true;
-      break;
-    }    
-  }
-
-  bool taePass = false;
-  if((int) odin->timeAlignmentEventWindow()>m_winmin && (int) odin->timeAlignmentEventWindow()<m_winmax)taePass=true;
-  
-  if(m_log == "AND")setFilterPassed( trPass && bxPass && roPass && taePass && clPass);
-  if(m_log == "OR")setFilterPassed( trPass || bxPass || roPass || taePass || clPass);
-
-  if(filterPassed() )m_acc++;
-
-  counter("ODIN Filter ("+m_log+")")+=int(filterPassed());
-  
+  counter(odin_filter_name( m_log.value()))+=int(filterPassed());
 
   return StatusCode::SUCCESS;
 }
@@ -276,15 +146,14 @@ StatusCode OdinTypesFilter::finalize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
 
-
   info() << "Accepted BXTypes : " << m_bxs << endmsg;
-  info() << m_log << endmsg;
+  info() << toString(m_log.value()) << endmsg;
   info() << "Accepted TriggerTypes : " << m_trs << endmsg;
-  info() << m_log << endmsg;
+  info() << toString(m_log.value()) << endmsg;
   info() << "Accepted CalibrationTypes : " << m_cls << endmsg;
-  info() << m_log << endmsg;
+  info() << toString(m_log.value()) << endmsg;
   info() << "Accepted ReadoutTypes : " << m_ros << endmsg;
-  info() << m_log << endmsg;
+  info() << toString(m_log.value()) << endmsg;
   info() << "TAE Window in [" << m_winmin << "," << m_winmax <<"]"<< endmsg;
   info() << "   ---> " << m_acc << " accepted events among " << m_all << endmsg;
 
