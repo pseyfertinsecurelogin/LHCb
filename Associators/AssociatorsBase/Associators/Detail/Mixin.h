@@ -5,7 +5,7 @@
 #include <GaudiKernel/ContainedObject.h>
 #include <Event/LinksByKey.h>
 
-#include "OutputLinks.h"
+#include <Associators/OutputLinks.h>
 #include <Associators/InputLinks.h>
 
 namespace {
@@ -18,15 +18,10 @@ template <typename Source>
 class LinkerMixin {
 public:
 
-   static std::string location(const std::string& location)
-   {
-      return "Link/" + (location.compare(0,7,"/Event/") == 0 ? location.substr(7)
-                                                             : location);
-   }
-
-   // Bit of a trick here with enable if: if Target is specified,
-   // so it's not DefaultType, we assume that the user wants
-   // to use the given types for Source and Target
+   // Bit of a trick here with enable if: if Target is specified, so
+   // it's not DefaultType, we assume that the user wants the Source
+   // and Target types of the returned InputLinks to be the specified
+   // types.
    template <typename Src, typename Target = DefaultType,
              typename std::enable_if<!std::is_same<DefaultType, Target>::value, Target>::type* = nullptr>
    InputLinks<Src, Target> inputLinks(const LHCb::LinksByKey& links) const
@@ -35,9 +30,9 @@ public:
    }
 
    // Bit of a trick here with enable if: if Target is not specified,
-   // so it's DefaultType, we assume that the user wants Source to be
-   // ContainedObject and Targe to be Target, the remaining parameter
-   // is therefore taken to be the target type.
+   // so it's DefaultType, we assume that the user wants the Source
+   // and Target types of the returned InputLinks to be
+   // ContainedObject and the specified type, respectively.
    template <typename Src, typename Target = DefaultType,
              typename std::enable_if<std::is_same<DefaultType, Target>::value, Target>::type* = nullptr>
    InputLinks<ContainedObject, Src> inputLinks(const LHCb::LinksByKey& links) const
@@ -46,24 +41,25 @@ public:
    }
 
    // Bit of a trick here with enable if: if Target is not specified,
-   // so it's DefaultType, we assume that the user wants Src to be
-   // ContainedObject and Target to be Target, the remaining template
-   // parameter (Src) is therefore taken to be the target type.
+   // so it's DefaultType, we assume that the user wants the Source
+   // and Target types of the returned OutputLinks to be
+   // ContainedObject and the specified type, respectively.
    template <typename Src, typename Target = DefaultType,
              typename std::enable_if<std::is_same<DefaultType, Target>::value, Target>::type* = nullptr>
-   Detail::OutputLinks<Source, Src> outputLinks() const
+   OutputLinks<Source, Src> outputLinks() const
    {
-      return Detail::OutputLinks<Source, Src>{};
+      return OutputLinks<Source, Src>{};
    }
 
    // Bit of a trick here with enable if: if Target is specified, so
-   // it's not DefaultType, we assume that the user wants to use the
-   // given types.
+   // it's not DefaultType, we assume that the user wants the Source
+   // and Target types of the returned OutputLinks to be the specified
+   // types.
    template <typename Src, typename Target = DefaultType,
              typename std::enable_if<!std::is_same<DefaultType, Target>::value, Target>::type* = nullptr>
-   Detail::OutputLinks<Src, Target> outputLinks() const
+   OutputLinks<Src, Target> outputLinks() const
    {
-      return Detail::OutputLinks<Src, Target>{};
+      return OutputLinks<Src, Target>{};
    }
 
 };
