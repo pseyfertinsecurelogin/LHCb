@@ -1,5 +1,5 @@
-#ifndef LINKERDETAILS_H
-#define LINKERDETAILS_H
+#ifndef ASSOCIATORS_INPUTLINKS_H
+#define ASSOCIATORS_INPUTLINKS_H
 
 #include <iostream>
 #include <type_traits>
