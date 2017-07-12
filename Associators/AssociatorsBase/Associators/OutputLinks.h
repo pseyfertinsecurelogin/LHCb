@@ -1,9 +1,7 @@
-#ifndef LINKERDETAILS_OUTPUTLINKS_H
-#define LINKERDETAILS_OUTPUTLINKS_H
+#ifndef ASSOCIATORS_OUTPUTLINKS_H
+#define ASSOCIATORS_OUTPUTLINKS_H
 
 #include <Event/LinksByKey.h>
-
-namespace Detail {
 
 template <typename Source, typename Target>
 class OutputLinks final {
@@ -15,7 +13,8 @@ public:
       m_links.setSourceClassID(Source::classID());
    }
 
-   operator LHCb::LinksByKey() {
+   operator LHCb::LinksByKey()
+   {
       // This is horrible, but needed because the copy constructor of
       // DataObject creates a new (and empty) LinkManager. The
       // existing move constructor moves the linkmanager, which would
@@ -58,7 +57,5 @@ private:
    LHCb::LinksByKey m_links;
 
 };
-
-}
 
 #endif
