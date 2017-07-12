@@ -104,8 +104,15 @@ LHCb::L0DUReport L0DUDecoder::operator()( const LHCb::RawEvent& rawEvent ) const
   //== Get the normal data bank. Check that it exists and is alone.
   const std::vector<LHCb::RawBank*> l0Banks = rawEvent.banks( LHCb::RawBank::L0DU );
   if( l0Banks.size() != 1 ){
+    // Note the StatusCode SUCCESS here despite the exception thrown. Details are given
+    // in https://gitlab.cern.ch/lhcb/Rec/merge_requests/557 on why we need to do this
+    // kind of trick here. To sketch the main lines : the fact that the raw bank is missing
+    // can be normal in case of simulated data, so the program should go on in this case.
+    // A better solution would be to introduce a filter. It would be clearer and thread
+    // safe, but as this code will never be used in multi-threaded environment and won't
+    // survive the Run 3 upgrade, it was not implemented or the moment
     throw GaudiException( l0Banks.empty() ? "Missing raw bank" : "More than one raw bank",
-                          name(), StatusCode::FAILURE );
+                          name(), StatusCode::SUCCESS );
   }
   const LHCb::RawBank* bank = l0Banks.front();
   // Check Magic pattern
