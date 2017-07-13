@@ -295,32 +295,11 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <typename F1, typename F2,
-            typename TYPE  = details::type1_t<F1,F2>,
-            typename TYPE2 = details::type2_t<F1,F2>>
-  LoKi::Min<TYPE,TYPE2> min ( F1&& fun1 , F2&& fun2 )
-  { return { std::forward<F1>(fun1) , std::forward<F2>(fun2) } ; }
-  // ==========================================================================
-  /*  minimum for LoKi functions
-   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-   *  @date 2004-08-10
-   */
-  template <typename F1, typename F2, typename F3,
-            typename TYPE  = details::type1_t<F1,F2,F3>,
-            typename TYPE2 = details::type2_t<F1,F2,F3>>
-  LoKi::Min<TYPE,TYPE2> min ( const F1& fun1 , const F2& fun2 , const F3& fun3 )
-  { return { fun1 , fun2 , fun3 } ; }
-  // ==========================================================================
-  /*  minimum for LoKi functions
-   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-   *  @date 2004-08-10
-   */
-  template <typename F1, typename F2, typename F3, typename F4,
-            typename TYPE  = LoKi::details::type1_t<F1,F2,F3,F4>,
-            typename TYPE2 = LoKi::details::type2_t<F1,F2,F3,F4>>
-  LoKi::Min<TYPE,TYPE2> min ( const F1& fun1 , const F2& fun2 ,
-                              const F3& fun3 , const F4& fun4 )
-  { return { fun1 , fun2 , fun3 , fun4 } ; }
+  template <typename F1, typename F2, typename... F3,
+            typename TYPE  = details::type1_t<F1,F2,F3...>,
+            typename TYPE2 = details::type2_t<F1,F2,F3...>>
+  LoKi::Min<TYPE,TYPE2> min ( F1&& fun1 , F2&& fun2 , F3&&... fun3 )
+  { return { std::forward<F1>(fun1) , std::forward<F2>(fun2), std::forward<F3>(fun3)... } ; }
   // ==========================================================================
   /*  minimum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
@@ -348,32 +327,11 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <typename F1, typename F2,
-            typename TYPE   = details::type1_t<F1,F2>,
-            typename TYPE2  = details::type2_t<F1,F2>>
-  LoKi::Max<TYPE,TYPE2> max ( const F1& fun1 , const F2& fun2 )
-  { return { fun1 , fun2 } ; }
-  // ==========================================================================
-  /*  maximum for LoKi functions
-   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-   *  @date 2004-08-10
-   */
-  template <typename F1, typename F2, typename F3,
-            typename TYPE  = details::type1_t<F1,F2,F3>,
-            typename TYPE2 = details::type2_t<F1,F2,F3>>
-  LoKi::Max<TYPE,TYPE2> max ( const F1& fun1 , const F2& fun2 , const F3& fun3 )
-  { return { fun1 , fun2 , fun3 } ; }
-  // ==========================================================================
-  /*  maximum for LoKi functions
-   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-   *  @date 2004-08-10
-   */
-  template <typename F1, typename F2, typename F3, typename F4,
-            typename TYPE  = details::type1_t<F1,F2,F3,F4>,
-            typename TYPE2 = details::type2_t<F1,F2,F3,F4>>
-  LoKi::Max<TYPE,TYPE2> max ( const F1& fun1 , const F2& fun2 ,
-                              const F3& fun3 , const F4& fun4 )
-  { return { fun1 , fun2 , fun3 , fun4 } ; }
+  template <typename F1, typename F2, typename... F3,
+            typename TYPE  = details::type1_t<F1,F2,F3...>,
+            typename TYPE2 = details::type2_t<F1,F2,F3...>>
+  LoKi::Max<TYPE,TYPE2> max ( F1&& fun1 , F2&& fun2 , F3&&... fun3 )
+  { return { std::forward<F1>(fun1) , std::forward<F2>(fun2), std::forward<F3>(fun3)... } ; }
   // ==========================================================================
   /*  maximum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
@@ -404,12 +362,12 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-24
    */
-  template <typename F1, typename F2, typename CMP,
+  template <typename F1, typename F2, typename CMP = std::less<>,
             typename TYPE   = details::type1_t<F1,F2>,
             typename TYPE2  = details::type2_t<F1,F2>>
   LoKi::Compare<TYPE,CMP,TYPE2> compare ( const F1& fun1  , const F2& fun2  ,
-                                          const CMP& cmp = std::less<>() )
-  { return { fun1 , fun2 , cmp } ; }
+                                          CMP cmp = {} )
+  { return { fun1 , fun2 , std::move(cmp) } ; }
   // ==========================================================================
   /** select element form the sequence with minimal value of
    *  given function.

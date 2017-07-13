@@ -68,13 +68,18 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2007-11-01
    */
+
   template <typename TYPE,typename TYPE2, size_t N>
   class FunctorArray final
   {
   public:
     // ========================================================================
-    template <typename... Fs>
-    FunctorArray( Fs&&... fs ) : m_funs{ std::forward<Fs>(fs)... }
+    // avoid matching the various special members
+    template <typename F, typename... Fs,
+              typename = std::enable_if_t< sizeof...(Fs)!=0 ||
+                                           !std::is_base_of<FunctorArray<TYPE,TYPE2,N>,
+                                                            std::remove_reference_t<F> >::value> >
+    FunctorArray( F&& f, Fs&&... fs ) : m_funs{ std::forward<F>(f), std::forward<Fs>(fs)... }
     {}
     // ========================================================================
     /// evaluate the i-th functor
@@ -141,12 +146,12 @@ namespace LoKi
         }
         /// the basic printout method
         std::ostream& fillStream( std::ostream& s ) const override
-        { return s << " (" <<  Traits_::name() << this->fun() << ") " ; }
+        { return Traits_::fillStream( s, this->fun() ); }
         // =====================================================================
       private:
         // =====================================================================
         /// the functor type
-        /// get the first functor
+        /// get the functor
         const auto& fun() const { return m_fun; }
         // =====================================================================
         /// the storage of the functor
@@ -155,12 +160,15 @@ namespace LoKi
       };
 
 #ifndef _GEN_LOKI_VOIDPRIMITIVES
-      template <typename Op>
+      template <typename Op, typename Prefix>
       struct SimpleUnary {
            template <typename F,typename... Args>
            static auto unaryOp(const F& f, const Args&... args)
            -> decltype(auto)
            { return Op{}( f(args...)); }
+           template <typename F>
+           static std::ostream& fillStream(std::ostream& os, const F& f)
+           { return os << " (" << Prefix::name() << f << ") "; }
       };
 #endif
   }
@@ -192,11 +200,11 @@ namespace LoKi
    *  @date   2002-07-15
    */
    namespace Traits {
-       struct Not : details::SimpleUnary<std::logical_not<>> {
+       struct Not : details::SimpleUnary<std::logical_not<>, Not> {
            static constexpr const char* name() { return "~"; }
        };
    }
-   template<class TYPE, class TYPE2=bool>
+   template<typename TYPE, typename TYPE2=bool>
    using Not = details::UnaryOp<TYPE,TYPE2,bool,Traits::Not>;
 
   // ==========================================================================
@@ -225,11 +233,11 @@ namespace LoKi
    *  @date   2002-07-15
    */
    namespace Traits {
-       struct Negate : details::SimpleUnary<std::negate<>> {
+       struct Negate : details::SimpleUnary<std::negate<>, Negate> {
            static constexpr const char* name() { return "-"; }
        };
    }
-   template<class TYPE, class TYPE2=double>
+   template<typename TYPE, typename TYPE2=double>
    using Negate = details::UnaryOp<TYPE,TYPE2,TYPE2,Traits::Negate>;
 #endif
 
@@ -249,8 +257,6 @@ namespace LoKi
       private:
         // =====================================================================
         typedef_void_TYPE
-        /// the constant type
-        typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
         /// argument type
         typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
         // =====================================================================
@@ -275,7 +281,7 @@ namespace LoKi
         }
         /// the basic printout method
         std::ostream& fillStream( std::ostream& s ) const override
-        { return s << " (" << m_two.func1() << Traits_::name() << m_two.func2() << ") " ; }
+        { return Traits_::fillStream( s, m_two.func1(), m_two.func2() ); }
         // =====================================================================
       private:
         // =====================================================================
@@ -285,12 +291,16 @@ namespace LoKi
       };
 
 #ifndef _GEN_LOKI_VOIDPRIMITIVES
-      template <typename Op>
+      template <typename Op, typename Infix>
       struct SimpleBinary {
            template <typename F1, typename F2, typename... Args>
            static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
            -> decltype(auto)
            { return Op{}( f1(args...) , f2(args...)); }
+
+           template <typename F1, typename F2>
+           static std::ostream& fillStream(std::ostream& os, const F1& f1, const F2& f2)
+           { return os << " (" << f1 << Infix::name() << f2 << ") "; }
       };
 #endif
    }
@@ -326,12 +336,12 @@ namespace LoKi
    */
 
    namespace Traits {
-       struct And : details::SimpleBinary< std::logical_and<> > {
+       struct And : details::SimpleBinary< std::logical_and<>, And > {
            static constexpr const char* name() { return "&&"; }
        };
    }
 
-   template<class TYPE, class TYPE2=bool>
+   template<typename TYPE, typename TYPE2=bool>
    using And = details::BinaryOp<TYPE,TYPE2,bool,Traits::And>;
 
   // ==========================================================================
@@ -364,11 +374,11 @@ namespace LoKi
   // ==========================================================================
 
    namespace Traits {
-       struct Or : details::SimpleBinary< std::logical_or<> > {
+       struct Or : details::SimpleBinary< std::logical_or<>, Or > {
            static constexpr const char* name() { return "||"; }
        };
    }
-   template<class TYPE, class TYPE2=double>
+   template<typename TYPE, typename TYPE2=double>
    using Or = details::BinaryOp<TYPE,TYPE2,bool,Traits::Or>;
 
   // ==========================================================================
@@ -399,11 +409,11 @@ namespace LoKi
    *  @date   2002-07-15
    */
    namespace Traits {
-       struct Less : details::SimpleBinary< std::less<> >{
+       struct Less : details::SimpleBinary< std::less<>, Less >{
            static constexpr const char* name() { return "<"; }
        };
    }
-   template<class TYPE, class TYPE2=double>
+   template<typename TYPE, typename TYPE2=double>
    using Less = details::BinaryOp<TYPE,TYPE2,bool,Traits::Less>;
 
   // ==========================================================================
@@ -435,11 +445,11 @@ namespace LoKi
    */
    namespace Traits {
        template <typename TYPE2>
-       struct Equal : details::SimpleBinary< LHCb::Math::Equal_To<TYPE2> > {
+       struct Equal : details::SimpleBinary< LHCb::Math::Equal_To<TYPE2>, Equal<TYPE2> > {
             static constexpr const char* name() { return "=="; }
        };
    }
-   template<class TYPE, class TYPE2=double>
+   template<typename TYPE, typename TYPE2=double>
    using Equal = details::BinaryOp<TYPE,TYPE2,bool,Traits::Equal<TYPE2>>;
 
   // ==========================================================================
@@ -471,11 +481,11 @@ namespace LoKi
    *  @date   2002-07-15
    */
    namespace Traits {
-       struct LessOrEqual : details::SimpleBinary< std::less_equal<> > {
+       struct LessOrEqual : details::SimpleBinary< std::less_equal<>, LessOrEqual > {
             static constexpr const char* name() { return "<="; }
        };
    }
-   template<class TYPE, class TYPE2=double>
+   template<typename TYPE, typename TYPE2=double>
    using LessOrEqual = details::BinaryOp<TYPE,TYPE2,bool,Traits::LessOrEqual>;
 
   // ==========================================================================
@@ -509,70 +519,20 @@ namespace LoKi
    namespace Traits {
        template <typename TYPE2>
        struct NotEqual {
-           static constexpr const char* name() { return "!="; }
            template <typename F1, typename F2, typename... Args>
            static bool binaryOp(const F1& f1, const F2& f2, const Args&... args)
            { LHCb::Math::Equal_To<TYPE2> op{}; return !op(f1(args...),f2(args...)); }
+           template <typename F1, typename F2>
+           static std::ostream& fillStream(std::ostream& os, const F1& f1, const F2& f2)
+           { return os << " (" << f1 << "!=" << f2 << ") "; }
        };
    }
 
-   template<class TYPE, class TYPE2=double>
+   template<typename TYPE, typename TYPE2=double>
    using NotEqual = details::BinaryOp<TYPE,TYPE2,bool,Traits::NotEqual<TYPE2>>;
 
 #endif
 
-
-   namespace details {
-      // ==========================================================================
-      /** @class Combination
-       *  The helper function to implement combination of 2 function
-       */
-#ifndef _GEN_LOKI_VOIDPRIMITIVES
-          template<class TYPE, class TYPE2, typename Traits_>
-          class Combination final : public LoKi::Functor<TYPE,TYPE2>
-#else
-          template<class TYPE2,typename Traits_>
-          class Combination<void,TYPE2,Traits_> final : public LoKi::Functor<void,TYPE2>
-#endif
-         {
-         private:
-            // ========================================================================
-            typedef_void_TYPE
-            /// argument type
-            typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-            // ========================================================================
-          public:
-            // ========================================================================
-            /// constructor from two functors
-            Combination ( LoKi::FunctorFromFunctor<TYPE,TYPE2> f1,
-                          LoKi::FunctorFromFunctor<TYPE,TYPE2> f2 )
-              : LoKi::AuxFunBase ( std::tie ( f1 , f2 ) )
-              , m_two ( std::move(f1) , std::move(f2) )
-            {}
-            /// clone method (mandatory)
-            Combination* clone() const override { return new Combination ( *this ) ; }
-            /// the only one essential method ("function")
-            TYPE2 operator() ( argument_a_unless_void ) const override
-            {
-              typename Traits_::BinaryOp binOp{} ;
-              return binOp( m_two.func1()( a_unless_void ) , m_two.func2()( a_unless_void ) ) ;
-            }
-            /// the basic printout method
-            std::ostream& fillStream( std::ostream& s ) const override
-            { return s << " (" << m_two.func1() << Traits_::name() << m_two.func2() << ") " ; }
-            // ========================================================================
-          private:
-            // ========================================================================
-            /// the functor type
-            typedef typename LoKi::Functor<TYPE,TYPE2>                        functor ;
-            // ========================================================================
-            /// the storage of two functors
-            LoKi::TwoFunctors<TYPE,TYPE2> m_two ;        // the storage of two functors
-            // ========================================================================
-
-        };
-
-   }
 
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   // ==========================================================================
@@ -604,14 +564,13 @@ namespace LoKi
    */
 
    namespace Traits {
-       struct Plus {
-            using BinaryOp = std::plus<>;
-            static constexpr const char* name() { return "+"; }
+       struct Plus : details::SimpleBinary< std::plus<>, Plus> {
+           static constexpr const char* name() { return "+"; }
        };
    }
 
-  template<class TYPE, class TYPE2=double>
-  using Plus =  details::Combination<TYPE,TYPE2,Traits::Plus>;
+  template<typename TYPE, typename TYPE2=double>
+  using Plus =  details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Plus>;
 
   // ==========================================================================
   /** @class Minus
@@ -642,14 +601,13 @@ namespace LoKi
    */
 
    namespace Traits {
-       struct Minus {
-            using BinaryOp = std::minus<>;
+       struct Minus : details::SimpleBinary< std::minus<>, Minus > {
             static constexpr const char* name() { return "-"; }
        };
    }
 
-  template<class TYPE, class TYPE2=double>
-  using Minus = details::Combination<TYPE,TYPE2,Traits::Minus>;
+  template<typename TYPE, typename TYPE2=double>
+  using Minus = details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Minus>;
 
   // ==========================================================================
   /** @class Divide
@@ -680,14 +638,13 @@ namespace LoKi
    */
 
    namespace Traits {
-       struct Divide {
-            using BinaryOp = std::divides<>;
+       struct Divide : details::SimpleBinary< std::divides<>, Divide > {
             static constexpr const char* name() { return "/"; }
        };
    }
 
-  template<class TYPE, class TYPE2=double>
-  using Divide =  details::Combination<TYPE,TYPE2,Traits::Divide>;
+  template<typename TYPE, typename TYPE2=double>
+  using Divide =  details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Divide>;
 
   // ==========================================================================
   /** @class Multiply
@@ -718,14 +675,13 @@ namespace LoKi
    */
 
    namespace Traits {
-       struct Multiply {
-            using BinaryOp = std::multiplies<>;
+       struct Multiply : details::SimpleBinary< std::multiplies<>, Multiply > {
             static constexpr const char* name() { return "*"; }
        };
    }
 
-  template<class TYPE, class TYPE2=double>
-  using Multiply =  details::Combination<TYPE,TYPE2,Traits::Multiply>;
+  template<typename TYPE, typename TYPE2=double>
+  using Multiply =  details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Multiply>;
 
 #endif
   // ==========================================================================
@@ -753,10 +709,10 @@ namespace LoKi
    *  @date 2007-11-01
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template<class TYPE2>
+  template<typename TYPE2>
   class Min<void,TYPE2> : public LoKi::Functor<void,TYPE2>
 #else
-  template<class TYPE, class TYPE2=double>
+  template<typename TYPE, typename TYPE2=double>
   class Min : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
@@ -781,13 +737,11 @@ namespace LoKi
     {}
     /// constructor from the function and constant
     Min ( LoKi::FunctorFromFunctor<TYPE,TYPE2> fun1 , T2 fun2 )
-      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-      , m_two ( std::move(fun1) , LoKi::Constant<TYPE,TYPE2> ( std::move(fun2) )  )
+      : Min( std::move(fun1), LoKi::Constant<TYPE,TYPE2>{ std::move(fun2) } )
     {}
     /// constructor from the function and constant
     Min ( T2 fun1 , LoKi::FunctorFromFunctor<TYPE,TYPE2> fun2 )
-      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
-      , m_two ( LoKi::Constant<TYPE,TYPE2> ( std::move(fun1) ) , std::move(fun2) )
+      : Min( LoKi::Constant<TYPE,TYPE2>{ std::move(fun1) }, std::move(fun2) )
     {}
     /** constructor from >=3 functions
      *  @param fun1 the first  function
@@ -807,7 +761,7 @@ namespace LoKi
     TYPE2 operator() ( argument_a_unless_void ) const override
     {
       return  std::min ( m_two.fun1 ( a_unless_void ) ,
-                         m_two.fun2 ( a_unless_void ) , std::less<>() ) ;
+                         m_two.fun2 ( a_unless_void ) ) ;
     }
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override
@@ -845,10 +799,10 @@ namespace LoKi
    *  @date 2007-11-01
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template<class TYPE2>
+  template<typename TYPE2>
   class Max<void,TYPE2> : public LoKi::Min<void,TYPE2>
 #else
-  template<class TYPE, class TYPE2=double>
+  template<typename TYPE, typename TYPE2=double>
   class Max : public LoKi::Min<TYPE,TYPE2>
 #endif
   {
@@ -900,7 +854,7 @@ namespace LoKi
     TYPE2 operator() ( argument_a_unless_void ) const override
     {
       return std::max ( this->m_two.fun1 ( a_unless_void ) ,
-                        this->m_two.fun2 ( a_unless_void ) , std::less<>() ) ;
+                        this->m_two.fun2 ( a_unless_void ) ) ;
     }
     /// OPTIONAL: the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override
@@ -920,10 +874,10 @@ namespace LoKi
    *  @date 2005-02-11
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class SimpleSwitch<void,TYPE2> : public LoKi::Functor<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class SimpleSwitch : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
@@ -991,10 +945,10 @@ namespace LoKi
    *  @date 2005-02-11
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template<class TYPE2>
+  template<typename TYPE2>
   class Switch<void,TYPE2> final : public LoKi::Functor<void,TYPE2>
 #else
-  template<class TYPE, class TYPE2=double>
+  template<typename TYPE, typename TYPE2=double>
   class Switch final : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
@@ -1137,10 +1091,10 @@ namespace LoKi
    *  @date   2002-07-15
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class ComposeFunction<void,TYPE2> : public LoKi::Functor<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class ComposeFunction : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
@@ -1214,10 +1168,10 @@ namespace LoKi
    *  @date   2002-07-15
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class ComposeFunction2<void,TYPE2> : public LoKi::Functor<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class ComposeFunction2 : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
@@ -1258,7 +1212,8 @@ namespace LoKi
     {}
     /// constructor
     ComposeFunction2( Func func, T2 val1, T2 val2, const std::string& desc  = "'fun'" )
-      : ComposeFunction2( func, LoKi::Constant<TYPE,TYPE2>{std::move(val1)},
+      : ComposeFunction2( func,
+                          LoKi::Constant<TYPE,TYPE2>{std::move(val1)},
                           LoKi::Constant<TYPE,TYPE2>{std::move(val2)}, desc )
     {}
     /// clone method (mandatory!)
@@ -1294,10 +1249,10 @@ namespace LoKi
    *  the general case of fun2(fun1) function:
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE1, class TYPE2, class TYPE3>
+  template <typename TYPE1, typename TYPE2, typename TYPE3>
   class Compose<void,TYPE1,TYPE2,TYPE3> : public LoKi::Functor<void,TYPE2>
 #else
-  template <class TYPE,class TYPE1, class TYPE2, class TYPE3=TYPE1>
+  template <typename TYPE,typename TYPE1, typename TYPE2, typename TYPE3=TYPE1>
   class Compose : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
@@ -1343,7 +1298,7 @@ namespace LoKi
    *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
    *  @date 2004-02-11
    */
-  template <class TYPE>
+  template <typename TYPE>
   class Valid : public LoKi::Functor<TYPE,bool>
   {
   private:
@@ -1374,7 +1329,7 @@ namespace LoKi
    *  @date 2004-02-11
    *  @warning this functor does not have a valid <c>toCpp</c> method
    */
-  template <class TYPE>
+  template <typename TYPE>
   class TheSame : public LoKi::Functor<TYPE,bool>
   {
   private:
@@ -1392,8 +1347,8 @@ namespace LoKi
     /// MANDATORY: clone method ("virtual constructor")
     TheSame* clone() const override { return new TheSame( *this ) ; }
     /// MANDATORY: the only one essential method
-    bool operator() ( argument object ) const override
-    { return LoKi::same ( m_value , object ) ; }
+    bool operator() ( argument arg ) const override
+    { return LoKi::same ( m_value , arg ) ; }
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override
     { return s << " (SAME?) "; }
@@ -1411,10 +1366,10 @@ namespace LoKi
    *  @date 2006-04-07
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class EqualToValue<void,TYPE2> : public LoKi::Functor<void,bool>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class EqualToValue : public LoKi::Functor<TYPE,bool>
 #endif
   {
@@ -1475,33 +1430,29 @@ namespace LoKi
     inline bool less    ( argument_a_unless_void ) const
     {
       // the comparator
-      std::less<> _cmp ;
-      return _cmp ( this->m_fun.fun ( a_unless_void ) , this->m_val ) ;
+      return this->m_fun.fun( a_unless_void ) < this->m_val ;
     }
     // ========================================================================
     inline bool greater ( argument_a_unless_void ) const
     {
       // the comparator
-      std::less<> _cmp ;
-      return _cmp ( this->m_val , this->m_fun.fun ( a_unless_void ) ) ;
+      return this->m_val < this->m_fun.fun ( a_unless_void )  ;
     }
     // ========================================================================
     inline bool less_or_equal ( argument_a_unless_void ) const
     {
       // the comparator
-      std::less<>            _cmp1 ;
       LHCb::Math::Equal_To<TYPE2> _cmp2 ;
       auto _r = this->m_fun.fun ( a_unless_void ) ;
-      return _cmp1 ( _r , this->m_val ) || _cmp2 ( _r , this->m_val ) ;
+      return ( _r < this->m_val ) || _cmp2 ( _r , this->m_val ) ;
     }
     // ========================================================================
     inline bool greater_or_equal ( argument_a_unless_void ) const
     {
       // the comparator
-      std::less<>            _cmp1 ;
       LHCb::Math::Equal_To<TYPE2> _cmp2 ;
       auto _r = this->m_fun.fun ( a_unless_void ) ;
-      return _cmp1 ( this->m_val , _r ) || _cmp2 ( _r , this->m_val ) ;
+      return ( this->m_val < _r ) || _cmp2 ( _r , this->m_val ) ;
     }
     // ========================================================================
   public:
@@ -1523,10 +1474,10 @@ namespace LoKi
    *  @date 2006-04-07
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class NotEqualToValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class NotEqualToValue : public LoKi::EqualToValue<TYPE,TYPE2>
 #endif
   {
@@ -1577,10 +1528,10 @@ namespace LoKi
    *  @date 2015-01-19
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class LessThanValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class LessThanValue             : public LoKi::EqualToValue<TYPE,TYPE2>
 #endif
   {
@@ -1623,10 +1574,10 @@ namespace LoKi
    *  @date 2015-01-19
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class LessOrEqualValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class LessOrEqualValue             : public LoKi::EqualToValue<TYPE,TYPE2>
 #endif
   {
@@ -1669,10 +1620,10 @@ namespace LoKi
    *  @date 2015-01-19
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class GreaterThanValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class GreaterThanValue             : public LoKi::EqualToValue<TYPE,TYPE2>
 #endif
   {
@@ -1715,10 +1666,10 @@ namespace LoKi
    *  @date 2015-01-19
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class GreaterOrEqualValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class GreaterOrEqualValue             : public LoKi::EqualToValue<TYPE,TYPE2>
 #endif
   {
@@ -1761,10 +1712,10 @@ namespace LoKi
    *  @date 2015-01-27
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class MultiplyByValue<void,TYPE2> : public LoKi::Functor<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class MultiplyByValue             : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
@@ -1853,10 +1804,10 @@ namespace LoKi
    *  @date 2015-01-27
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class SumByValue<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class SumByValue             : public LoKi::MultiplyByValue<TYPE,TYPE2>
 #endif
   {
@@ -1911,10 +1862,10 @@ namespace LoKi
    *  @date 2015-01-27
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class Minus1<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class Minus1             : public LoKi::MultiplyByValue<TYPE,TYPE2>
 #endif
   {
@@ -1957,10 +1908,10 @@ namespace LoKi
    *  @date 2015-01-27
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class Minus2<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class Minus2             : public LoKi::MultiplyByValue<TYPE,TYPE2>
 #endif
   {
@@ -2003,10 +1954,10 @@ namespace LoKi
    *  @date 2015-01-27
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class Divide1<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class Divide1             : public LoKi::MultiplyByValue<TYPE,TYPE2>
 #endif
   {
@@ -2049,10 +2000,10 @@ namespace LoKi
    *  @date 2015-01-27
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <class TYPE2>
+  template <typename TYPE2>
   class Divide2<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
 #else
-  template <class TYPE, class TYPE2=double>
+  template <typename TYPE, typename TYPE2=double>
   class Divide2             : public LoKi::MultiplyByValue<TYPE,TYPE2>
 #endif
   {
@@ -2097,7 +2048,7 @@ namespace LoKi
    *  @date   2002-07-24
    */
 #ifndef _GEN_LOKI_VOIDPRIMITIVES
-  template<class TYPE , class CMP=std::less<> , class TYPE2=double>
+  template<typename TYPE , typename CMP=std::less<> , typename TYPE2=double>
   class Compare
   {
   public:
@@ -2151,15 +2102,15 @@ namespace LoKi
     // ========================================================================
   };
   // ==========================================================================
-  template <class TYPE,class TYPE2,bool> struct Cmp ;
+  template <typename TYPE,typename TYPE2,bool> struct Cmp ;
   // ==========================================================================
-  template <class TYPE,class TYPE2>
+  template <typename TYPE,typename TYPE2>
   struct Cmp<TYPE,TYPE2,true>
   {
     typedef Compare<TYPE,std::less<>,TYPE2>     Type ;
   } ;
   // ==========================================================================
-  template <class TYPE,class TYPE2>
+  template <typename TYPE,typename TYPE2>
   struct Cmp<TYPE,TYPE2,false>
   {
     typedef Compare<TYPE,std::greater<>,TYPE2>  Type ;
@@ -2170,7 +2121,7 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-04-07
    */
-  template <class TYPE,class TYPE2=TYPE>
+  template <typename TYPE,typename TYPE2=TYPE>
   class Identity : public LoKi::Functor<TYPE,TYPE2>
   {
   private:
@@ -2194,7 +2145,7 @@ namespace LoKi
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-04-07
    */
-  template <class TYPE>
+  template <typename TYPE>
   class PrintOut final : public LoKi::Functor<TYPE,std::string>
   {
   private:
@@ -2223,7 +2174,7 @@ namespace LoKi
   template<>
   class InRange<void>: public LoKi::Functor<void,bool>
 #else
-  template<class TYPE>
+  template<typename TYPE>
   class InRange: public LoKi::Functor<TYPE,bool>
 #endif
   {
@@ -2287,7 +2238,7 @@ namespace LoKi
   template<>
   class InRange2<void> final : public LoKi::Functor<void,bool>
 #else
-  template<class TYPE>
+  template<typename TYPE>
   class InRange2 final : public LoKi::Functor<TYPE,bool>
 #endif
   {
@@ -2378,7 +2329,7 @@ namespace LoKi
   template <>
   class EqualToList<void> : public LoKi::Functor<void,bool>
 #else
-  template <class TYPE>
+  template <typename TYPE>
   class EqualToList       : public LoKi::Functor<TYPE,bool>
 #endif
   {
@@ -2488,7 +2439,7 @@ namespace LoKi
   template <>
   class NotEqualToList<void> final : public LoKi::EqualToList<void>
 #else
-  template <class TYPE>
+  template <typename TYPE>
   class NotEqualToList       final : public LoKi::EqualToList<TYPE>
 #endif
   {
@@ -2567,7 +2518,7 @@ namespace LoKi
   template <>
   class XScaler<void> final : public LoKi::Functor<void,bool>
 #else
-  template <class TYPE>
+  template <typename TYPE>
   class XScaler final : public LoKi::Functor<TYPE,bool>
 #endif
   {
@@ -2624,7 +2575,7 @@ namespace LoKi
   template<>
   class Modulo<void> final : public LoKi::Functor<void,double>
 #else
-  template<class TYPE>
+  template<typename TYPE>
   class Modulo final : public LoKi::Functor<TYPE,double>
 #endif
   {
@@ -2672,7 +2623,7 @@ namespace LoKi
   template <>
   class Round<void> final : public LoKi::Functor<void,double>
 #else
-  template <class TYPE>
+  template <typename TYPE>
   class Round final : public LoKi::Functor<TYPE,double>
 #endif
   {
@@ -2720,7 +2671,7 @@ namespace LoKi
   template <>
   class JBit<void> final : public LoKi::Functor<void,bool>
 #else
-  template <class TYPE>
+  template <typename TYPE>
   class JBit final : public LoKi::Functor<TYPE,bool>
 #endif
   {
@@ -2786,7 +2737,7 @@ namespace LoKi
   template <>
   class JBits<void> final : public LoKi::Functor<void,double>
 #else
-  template <class TYPE>
+  template <typename TYPE>
   class JBits final : public LoKi::Functor<TYPE,double>
 #endif
   {
@@ -2862,7 +2813,7 @@ namespace LoKi
   template <>
   class JDigit<void> final : public LoKi::Functor<void,double>
 #else
-  template <class TYPE>
+  template <typename TYPE>
   class JDigit       final : public LoKi::Functor<TYPE,double>
 #endif
   {
@@ -2928,7 +2879,7 @@ namespace LoKi
   template <>
   class JDigits<void> final : public LoKi::Functor<void,double>
 #else
-  template <class TYPE>
+  template <typename TYPE>
   class JDigits       final : public LoKi::Functor<TYPE,double>
 #endif
   {
@@ -2994,7 +2945,7 @@ namespace LoKi
   // ==========================================================================
   // OPTIONAL: the nice printout
   // ==========================================================================
-  template <class TYPE, class TYPE2>
+  template <typename TYPE, typename TYPE2>
   std::ostream& Identity<TYPE,TYPE2>::fillStream ( std::ostream& s ) const
   { return s << "I" ; }
 #endif

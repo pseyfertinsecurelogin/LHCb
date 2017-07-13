@@ -287,15 +287,13 @@ namespace LoKi
      *  @return sum of 4-momenta of all particles
      */
     template <class OBJECT, class PREDICATE>
-    inline LoKi::LorentzVector
-    addMomenta
-    ( OBJECT              first                          ,
-      OBJECT              last                           ,
-      PREDICATE           cut                            ,
-      LoKi::LorentzVector result = LoKi::LorentzVector() )
+    inline LoKi::LorentzVector addMomenta ( OBJECT              first       ,
+                                            OBJECT              last        ,
+                                            PREDICATE           cut         ,
+                                            LoKi::LorentzVector result = {} )
     {
       using ref = decltype(*first);
-      return std::accumulate( first, last, result,
+      return std::accumulate( first, last, std::move(result),
                               [&](LoKi::LorentzVector r, ref i)
                               { return ( i && cut(i) ) ? r + i->momentum()
                                                        : r ; } );
@@ -335,10 +333,9 @@ namespace LoKi
      *  @return sum of 4-momenta of all particles
      */
     template <class OBJECTS>
-    inline LoKi::LorentzVector addMomenta
-    ( const OBJECTS&             seq                            ,
-      const LoKi::LorentzVector& result = LoKi::LorentzVector() )
-    { return addMomenta ( seq.begin() , seq.end() , result ) ; }
+    inline LoKi::LorentzVector addMomenta ( const OBJECTS&      seq         ,
+                                            LoKi::LorentzVector result = {} )
+    { return addMomenta ( seq.begin() , seq.end() , std::move(result) ) ; }
     // ========================================================================
     /** This routine returns the cosine angle theta
      *  The decay angle calculated  is that between
@@ -431,9 +428,7 @@ namespace LoKi
      */
     inline double decayAngle( const LoKi::LorentzVector& D ,
                               const LoKi::LorentzVector& M )
-    {
-      return decayAngle ( LoKi::LorentzVector (0,0,0,2*M.E()) , M , D ) ;
-    }
+    { return decayAngle ( LoKi::LorentzVector (0,0,0,2*M.E()) , M , D ) ; }
     // ========================================================================
     /** This routine returns the cosine angle theta
      *  The decay angle calculated  is that between
@@ -494,9 +489,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-07-27
      */
-    GAUDI_API
-    double restMomentum ( const LoKi::LorentzVector& v ,
-                          const LoKi::LorentzVector& M ) ;
+    GAUDI_API double restMomentum ( const LoKi::LorentzVector& v ,
+                                    const LoKi::LorentzVector& M ) ;
     // ========================================================================
     /** simple function which evaluates the energy
      *  of particle "v" in the rest system of particle "M"
@@ -513,9 +507,8 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-07-27
      */
-    GAUDI_API
-    double restEnergy ( const LoKi::LorentzVector& v ,
-                        const LoKi::LorentzVector& M ) ;
+    GAUDI_API double restEnergy ( const LoKi::LorentzVector& v ,
+                                  const LoKi::LorentzVector& M ) ;
     // ========================================================================
     /** simple function to evaluate the cosine angle between
      *  two directions (v1 and v2) in the rest system of M
@@ -754,9 +747,7 @@ namespace LoKi
      */
     inline double armenterosPodolanskiX ( const LoKi::LorentzVector& d1 ,
                                           const LoKi::LorentzVector& d2 )
-    {
-      return armenterosPodolanskiX ( d1.Vect () , d2. Vect() ) ;
-    }
+    { return armenterosPodolanskiX ( d1.Vect () , d2. Vect() ) ; }
     // ========================================================================
     /** evaluate the chi2 of the mass  \f$\chi^2_{M}\f$.
      *

@@ -688,20 +688,17 @@ namespace LoKi
        *  @param l the last   index
        *  @return the value of Levi-Civita symbol
        */
-      inline int epsilon
-      ( const size_t i ,
-        const size_t j ,
-        const size_t k ,
-        const size_t l ) const
+      constexpr inline int epsilon ( const size_t i , const size_t j ,
+                                     const size_t k , const size_t l ) const
       {
         /// the regular cases
-        if      (  i <  j && j <  k && k <  l && l <  4 ) { return 1 ; } // RETURN
-        else if (  i == j || j == k || k == l || l == i ) { return 0 ; } // RETURN
-        else if (  i >  3 || j >  3 || k >  3 || l >  3 ) { return 0 ; } // RETURN
+        if (  i <  j && j <  k && k <  l && l <  4 ) { return 1 ; } // RETURN
+        if (  i == j || j == k || k == l || l == i ) { return 0 ; } // RETURN
+        if (  i >  3 || j >  3 || k >  3 || l >  3 ) { return 0 ; } // RETURN
         /// permutations are required:
-        if      ( i > j  ) { return -epsilon ( j , i , k , l ) ; } // RETURN
-        else if ( j > k  ) { return -epsilon ( i , k , j , l ) ; } // RETURN
-        else if ( k > l  ) { return -epsilon ( i , j , l , k ) ; } // RETURN
+        if ( i > j  ) { return -epsilon ( j , i , k , l ) ; } // RETURN
+        if ( j > k  ) { return -epsilon ( i , k , j , l ) ; } // RETURN
+        if ( k > l  ) { return -epsilon ( i , j , l , k ) ; } // RETURN
         /// here we can go only if some of number >=4, return 0..
         return 0 ;
       }
@@ -740,10 +737,10 @@ namespace LoKi
         if ( nu >  lambda ) { return -epsilon ( mu , lambda , nu     , v ) ; }
         //
         // take into account Minkowski metric:
-        const double x = -v.Px () ;
-        const double y = -v.Py () ;
-        const double z = -v.Pz () ;
-        const double e =  v.E  () ;
+        const auto x = -v.Px () ;
+        const auto y = -v.Py () ;
+        const auto z = -v.Pz () ;
+        const auto e =  v.E  () ;
         //
         return -x * epsilon ( 0  , mu , nu     , lambda )   //  3 permutations
           +     y * epsilon ( mu ,  1 , nu     , lambda )   //  2 permutations
@@ -989,19 +986,13 @@ namespace LoKi
        *  @return the product (component)
        */
       template <unsigned int I, unsigned int J, unsigned int K>
-      inline double e_3
-      ( const LoKi::LorentzVector& v ) const
+      inline double e_3 ( const LoKi::LorentzVector& v ) const
       {
         // take Minkowski metric into account
-        const double x = -v.Px () ;
-        const double y = -v.Py () ;
-        const double z = -v.Pz () ;
-        const double e =  v.E  () ;
-        //
-        return x * Epsilon_<I,J,K,X>::value
-          +    y * Epsilon_<I,J,K,Y>::value
-          +    z * Epsilon_<I,J,K,Z>::value
-          +    e * Epsilon_<I,J,K,E>::value ;
+        return  - v.Px () * Epsilon_<I,J,K,X>::value
+                - v.Py () * Epsilon_<I,J,K,Y>::value
+                - v.Pz () * Epsilon_<I,J,K,Z>::value
+                + v.E  () * Epsilon_<I,J,K,E>::value ;
       }
       // ======================================================================
       /** evaluate the tensor e*v1*v2 product
@@ -1030,15 +1021,15 @@ namespace LoKi
         const LoKi::LorentzVector& v2 ) const
       {
 
-        const double x1 = -v1.Px () ;
-        const double y1 = -v1.Py () ;
-        const double z1 = -v1.Pz () ;
-        const double e1 =  v1.E  () ;
+        const auto x1 = -v1.Px () ;
+        const auto y1 = -v1.Py () ;
+        const auto z1 = -v1.Pz () ;
+        const auto e1 =  v1.E  () ;
 
-        const double x2 = -v2.Px () ;
-        const double y2 = -v2.Py () ;
-        const double z2 = -v2.Pz () ;
-        const double e2 =  v2.E  () ;
+        const auto x2 = -v2.Px () ;
+        const auto y2 = -v2.Py () ;
+        const auto z2 = -v2.Pz () ;
+        const auto e2 =  v2.E  () ;
 
         return x1 * y2 * Epsilon_<I,J,X,Y>::value
           +    x1 * z2 * Epsilon_<I,J,X,Z>::value
@@ -1085,20 +1076,20 @@ namespace LoKi
         const LoKi::LorentzVector& v2 ,
         const LoKi::LorentzVector& v3 ) const
       {
-        const double x1 = -v1.Px () ;
-        const double y1 = -v1.Py () ;
-        const double z1 = -v1.Pz () ;
-        const double e1 =  v1.E  () ;
+        const auto x1 = -v1.Px () ;
+        const auto y1 = -v1.Py () ;
+        const auto z1 = -v1.Pz () ;
+        const auto e1 =  v1.E  () ;
 
-        const double x2 = -v2.Px () ;
-        const double y2 = -v2.Py () ;
-        const double z2 = -v2.Pz () ;
-        const double e2 =  v2.E  () ;
+        const auto x2 = -v2.Px () ;
+        const auto y2 = -v2.Py () ;
+        const auto z2 = -v2.Pz () ;
+        const auto e2 =  v2.E  () ;
 
-        const double x3 = -v3.Px () ;
-        const double y3 = -v3.Py () ;
-        const double z3 = -v3.Pz () ;
-        const double e3 =  v3.E  () ;
+        const auto x3 = -v3.Px () ;
+        const auto y3 = -v3.Py () ;
+        const auto z3 = -v3.Pz () ;
+        const auto e3 =  v3.E  () ;
 
         return x1 * y2 * z3 * Epsilon_<I,X,Y,Z>::value
           +    x1 * y2 * e3 * Epsilon_<I,X,Y,E>::value
