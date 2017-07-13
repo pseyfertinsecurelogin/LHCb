@@ -146,15 +146,15 @@ StatusCode OdinTypesFilter::finalize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
 
-  info() << "Accepted BXTypes : " << m_bxs << endmsg;
+  info() << "Accepted BXTypes : " << m_bxs.value() << endmsg;
   info() << toString(m_log.value()) << endmsg;
-  info() << "Accepted TriggerTypes : " << m_trs << endmsg;
+  info() << "Accepted TriggerTypes : " << m_trs.value() << endmsg;
   info() << toString(m_log.value()) << endmsg;
-  info() << "Accepted CalibrationTypes : " << m_cls << endmsg;
+  info() << "Accepted CalibrationTypes : " << m_cls.value() << endmsg;
   info() << toString(m_log.value()) << endmsg;
-  info() << "Accepted ReadoutTypes : " << m_ros << endmsg;
+  info() << "Accepted ReadoutTypes : " << m_ros.value() << endmsg;
   info() << toString(m_log.value()) << endmsg;
-  info() << "TAE Window in [" << m_winmin << "," << m_winmax <<"]"<< endmsg;
+  info() << "TAE Window in [" << m_winmin.value() << "," << m_winmax.value() <<"]"<< endmsg;
   info() << "   ---> " << m_acc << " accepted events among " << m_all << endmsg;
 
   return GaudiAlgorithm::finalize();  // must be called after all other actions
