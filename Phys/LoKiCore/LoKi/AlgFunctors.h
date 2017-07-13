@@ -202,7 +202,7 @@ namespace LoKi {
         // TODO: AlgsFunctorBase doesn't actually depend on Ret -- so should
         //       try to move the code to a non-template implemenation to reduce
         //       code size...
-        template <typename ReturnType=bool>
+        template <typename ReturnType>
         class GAUDI_API AlgsFunctorBase : public LoKi::Functor<void,ReturnType>
         {
         public:
@@ -246,7 +246,11 @@ namespace LoKi {
         } ;
 
         template <typename Compose>
-        struct GAUDI_API AlgsFunctor final : AlgsFunctorBase<typename Compose::ReturnType> {
+        using result_t = decltype(Compose::execute(std::declval<IAlgorithm*>(),
+                                                   std::declval<IAlgorithm*>()));
+
+        template <typename Compose>
+        struct GAUDI_API AlgsFunctor final : AlgsFunctorBase<result_t<Compose>> {
           /// constructor from the algorithm name
           AlgsFunctor ( std::string name1 ,
                         std::string name2 )
@@ -262,11 +266,11 @@ namespace LoKi {
               : AlgsFunctor( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) {}
           AlgsFunctor( std::vector<std::string> names )
               : AuxFunBase{ std::tie(names) }
-              , AlgsFunctorBase<typename Compose::ReturnType>( std::move(names) ) {};
+              , AlgsFunctorBase<result_t<Compose>>( std::move(names) ) {};
           /// MANDATORY: clone method ("virtual constructor")
           AlgsFunctor* clone() const override { return new AlgsFunctor ( *this ) ; }
           /// MANDATORY: the only one essential method
-          typename Compose::ReturnType operator() () const override {
+          result_t<Compose> operator() () const override {
             if ( this->algNames().size() != this->algorithms().size() ) this->getAlgorithms() ;
             return Compose::execute( this->begin(), this->end() );
           }
@@ -286,7 +290,6 @@ namespace LoKi {
     // =========================================================================
     namespace details {
         struct AnyPassed {
-            using ReturnType = bool;
             static const char* name() { return "ALG_ANYPASSED" ; }
             template <typename Iterator>
             static bool execute(Iterator begin, Iterator end) {
@@ -306,7 +309,6 @@ namespace LoKi {
 
     namespace details {
         struct AllPassed {
-            using ReturnType = bool;
             static const char* name() { return "ALG_ANYPASSED" ; }
             template <typename Iterator>
             static bool execute(Iterator begin, Iterator end) {
@@ -326,7 +328,6 @@ namespace LoKi {
     // =========================================================================
     namespace details {
         struct AnyEnabled {
-            using ReturnType = bool;
             static const char* name() { return "ALG_ANYENABLED"; }
             template <typename Iterator>
             static bool execute(Iterator begin, Iterator end)
@@ -345,7 +346,6 @@ namespace LoKi {
     // =========================================================================
     namespace details {
         struct AllEnabled {
-            using ReturnType = bool;
             static const char* name() { return "ALG_ALLENABLED"; }
             template <typename Iterator>
             static bool execute(Iterator begin, Iterator end)
@@ -364,7 +364,6 @@ namespace LoKi {
     // =========================================================================
     namespace details {
         struct AnyExecuted {
-            using ReturnType = bool;
             static const char* name() { return "ALG_ANYEXECUTED"; }
             template <typename Iterator>
             static bool execute(Iterator begin, Iterator end)
@@ -383,7 +382,6 @@ namespace LoKi {
     // =========================================================================
     namespace details {
         struct AllExecuted {
-            using ReturnType = bool;
             static const char* name() { return "ALG_ALLEXECUTED"; }
             template <typename Iterator>
             static bool execute(Iterator begin, Iterator end)
@@ -400,7 +398,6 @@ namespace LoKi {
     // =========================================================================
     namespace details {
         struct RunAll {
-            using ReturnType = bool;
             static const char* name() { return "ALG_RUNALL" ; }
             template <typename Iterator>
             static bool execute(Iterator begin, Iterator end) {
@@ -440,7 +437,6 @@ namespace LoKi {
      */
     namespace details {
         struct NumPassed {
-            using ReturnType = double;
             static const char* name() { return "ALG_NUMPASSED" ; }
             template <typename Iterator>
             static double execute(Iterator begin, Iterator end) {
@@ -458,7 +454,6 @@ namespace LoKi {
      */
     namespace details {
         struct NumEnabled {
-            using ReturnType = double;
             static const char* name() { return "ALG_NUMENABLED" ; }
             template <typename Iterator>
             static double execute(Iterator begin, Iterator end) {
@@ -476,7 +471,6 @@ namespace LoKi {
      */
     namespace details {
         struct NumExecuted {
-            using ReturnType = double;
             static const char* name() { return "ALG_NUMEXECUTED" ; }
             template <typename Iterator>
             static double execute(Iterator begin, Iterator end) {
