@@ -79,10 +79,10 @@ StatusCode OdinTypesFilter::initialize() {
   if ( m_log == Log_t::Or && boolean_combine( Log_t::And, m_bxs.empty(),m_trs.empty(),m_ros.empty(),m_winmin>=m_winmax,m_cls.empty()))
     Warning("BXTypes, TriggerTypes, ReadoutTypes and TAEWindow are empties : ALL events will be rejected !!"
             ,StatusCode::SUCCESS).ignore();
-  if ( boolean_combine( m_log, m_bxs.value().front() == odin_bx_type_t::All,
-                               m_cls.value().front() == odin_calibration_type_t::All,
-                               m_trs.value().front() == odin_trigger_type_t::All,
-                               m_ros.value().front() == odin_readout_type_t::All,
+  if ( boolean_combine( m_log, m_bxs.value().front() == odin_bx_type_all,
+                               m_cls.value().front() == odin_calibration_type_all,
+                               m_trs.value().front() == odin_trigger_type_all,
+                               m_ros.value().front() == odin_readout_type_all,
                                m_winmin<0, m_winmax>7 ) )
     Warning("OdinTypesFilter has no effect : ALL events will be accepted !!"
             ,StatusCode::SUCCESS).ignore();
@@ -101,10 +101,10 @@ StatusCode OdinTypesFilter::execute() {
 
   // treat trivial requests
   setFilterPassed(true);
-  if( boolean_combine( m_log,  m_bxs.value().front() == odin_bx_type_t::All,
-                       m_cls.value().front() == odin_calibration_type_t::All,
-                       m_trs.value().front() == odin_trigger_type_t::All,
-                       m_ros.value().front() == odin_readout_type_t::All,
+  if( boolean_combine( m_log,  m_bxs.value().front() == odin_bx_type_all,
+                       m_cls.value().front() == odin_calibration_type_all,
+                       m_trs.value().front() == odin_trigger_type_all,
+                       m_ros.value().front() == odin_readout_type_all,
                        m_winmin<0 && m_winmax>7  ) ) {
     m_acc++;
     return StatusCode::SUCCESS;

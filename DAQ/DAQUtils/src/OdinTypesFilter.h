@@ -21,8 +21,8 @@ namespace OdinTypesFilter_details {
     }
 
     StatusCode parse(Log_t& op, const std::string& in) {
-        if (in=="AND") { op = Log_t::And; return StatusCode::SUCCESS; }
-        if (in=="OR") { op = Log_t::Or; return StatusCode::SUCCESS; }
+        if (in=="AND"||in=="And"||in=="and") { op = Log_t::And; return StatusCode::SUCCESS; }
+        if (in=="OR"||in=="Or"||in=="or") { op = Log_t::Or; return StatusCode::SUCCESS; }
         return StatusCode::FAILURE;
     }
 
@@ -33,20 +33,22 @@ namespace OdinTypesFilter_details {
 
     template <typename Type, int Max>
     struct odin_type_t  {
-        static constexpr odin_type_t<Type,Max> All { -1 };
         int type;
+
         friend bool operator==( const odin_type_t<Type,Max>& lhs ,
                                 const odin_type_t<Type,Max>& rhs )
         { return lhs.type == rhs.type; }
+
         friend bool operator==( const Type& lhs, const odin_type_t<Type,Max>& rhs)
-        { return rhs == All || lhs == (Type)rhs.type; }
+        { return rhs.type == -1 || lhs == (Type)rhs.type; }
+
         friend bool operator==( const odin_type_t<Type,Max>& lhs, const Type& rhs)
         { return rhs == lhs; }
     };
 
     template <typename Type, int Max>
     StatusCode parse(odin_type_t<Type,Max>& t, const std::string& in) {
-        if (in=="ALL") { t = odin_type_t<Type,Max>::All; return StatusCode::SUCCESS; }
+        if (in=="ALL") { t.type = -1; return StatusCode::SUCCESS; }
         for (int k=0;  k <= Max; ++k ) {
             std::ostringstream s; s << (Type) k;
             if (s.str() == in) { t.type = k; return StatusCode::SUCCESS; }
@@ -75,14 +77,14 @@ namespace OdinTypesFilter_details {
 
     template <typename Type, int Max>
     std::string toString(odin_type_t<Type,Max>& t) {
-        if (t==odin_type_t<Type,Max>::All) return  "ALL";
+        if (t.type==-1) return  "ALL";
         std::ostringstream oss; oss << (Type)t.type ;
         return oss.str();
     }
 
     template <typename Type, int Max>
     std::ostream& toStream(const odin_type_t<Type,Max>& t, std::ostream& os) {
-        if (t==odin_type_t<Type,Max>::All) return os << "\'ALL\'";
+        if (t.type==-1) return os << "\'ALL\'";
         return os << '\'' << (Type)t.type << '\'';
     }
 
@@ -95,18 +97,22 @@ namespace OdinTypesFilter_details {
     using  odin_trigger_type_t =
          odin_type_t<LHCb::ODIN::TriggerType,
                      (LHCb::ODIN::TriggerTypeMask >> LHCb::ODIN::TriggerTypeBits)>;
+    static const auto odin_trigger_type_all = odin_trigger_type_t{-1};
 
     using  odin_readout_type_t =
         odin_type_t<LHCb::ODIN::ReadoutTypes,
                     (LHCb::ODIN::ReadoutTypeMask >> LHCb::ODIN::ReadoutTypeBits)>;
+    static const auto odin_readout_type_all = odin_readout_type_t{-1};
 
     using odin_bx_type_t =
         odin_type_t<LHCb::ODIN::BXTypes,
                     (LHCb::ODIN::BXTypeMask >> LHCb::ODIN::BXTypeBits)>;
+    static const auto odin_bx_type_all = odin_bx_type_t{-1};
 
     using odin_calibration_type_t =
         odin_type_t<LHCb::ODIN::CalibrationTypes,
                     (LHCb::ODIN::CalibrationTypeMask >> LHCb::ODIN::CalibrationTypeBits)>;
+    static const auto odin_calibration_type_all = odin_calibration_type_t{-1};
 
     //=======================================================
 }
@@ -126,10 +132,10 @@ public:
 
 private:
   Gaudi::Property<OdinTypesFilter_details::Log_t> m_log { this,  "Logical", OdinTypesFilter_details::Log_t::And };
-  Gaudi::Property<std::vector<OdinTypesFilter_details::odin_trigger_type_t>> m_trs { this, "TriggerTypes", { OdinTypesFilter_details::odin_trigger_type_t::All }    };
-  Gaudi::Property<std::vector<OdinTypesFilter_details::odin_bx_type_t>> m_bxs { this, "BXTypes"     , { OdinTypesFilter_details::odin_bx_type_t::All }    };
-  Gaudi::Property<std::vector<OdinTypesFilter_details::odin_readout_type_t>> m_ros { this, "ReadoutTypes", { OdinTypesFilter_details::odin_readout_type_t::All }    };
-  Gaudi::Property<std::vector<OdinTypesFilter_details::odin_calibration_type_t>> m_cls { this, "CalibrationTypes", { OdinTypesFilter_details::odin_calibration_type_t::All }};
+  Gaudi::Property<std::vector<OdinTypesFilter_details::odin_trigger_type_t>> m_trs { this, "TriggerTypes", { OdinTypesFilter_details::odin_trigger_type_all }    };
+  Gaudi::Property<std::vector<OdinTypesFilter_details::odin_bx_type_t>> m_bxs { this, "BXTypes"     , { OdinTypesFilter_details::odin_bx_type_all }    };
+  Gaudi::Property<std::vector<OdinTypesFilter_details::odin_readout_type_t>> m_ros { this, "ReadoutTypes", { OdinTypesFilter_details::odin_readout_type_all }    };
+  Gaudi::Property<std::vector<OdinTypesFilter_details::odin_calibration_type_t>> m_cls { this, "CalibrationTypes", { OdinTypesFilter_details::odin_calibration_type_all }};
   Gaudi::Property<int> m_winmin { this, "TAEWindowMoreThan" , -1 };
   Gaudi::Property<int> m_winmax { this, "TAEWindowLessThan" , 99 };
   std::atomic<long> m_all { 0 };
