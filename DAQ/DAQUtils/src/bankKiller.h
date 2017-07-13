@@ -57,7 +57,7 @@ namespace bankKiller_details {
                               } );
         } catch (const GaudiException& ge) { return ge.code(); }
         return StatusCode::SUCCESS;
-    }
+   }
 }
 
 /** @class bankKiller bankKiller.h

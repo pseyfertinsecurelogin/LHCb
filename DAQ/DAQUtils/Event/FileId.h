@@ -1,49 +1,29 @@
-// $Id: FileId.h,v 1.1 2009/10/09 15:52:33 panmanj Exp $
-#ifndef FILEID_H 
+#ifndef FILEID_H
 #define FILEID_H 1
 
 // Include files
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 /** @class FileId FileId.h
- *   
+ *
  *  Converts fileID to and from 4 unsigned ints
  *
  *  @author Jaap Panman
  *  @date   2009-10-09
  */
-namespace LHCb 
+namespace LHCb
 {
   class FileId {
-  public: 
-    /// Standard constructor
-    FileId( ); 
-
-    virtual ~FileId( ); ///< Destructor
-
+  public:
+    virtual ~FileId( ) = default; ///< Destructor
     virtual std::vector<unsigned int> fileIDstr2int(std::string& s);
     virtual std::string fileIDint2str(std::vector<unsigned int>& b);
-
-  protected:
-
-  private:
-
   };
 }
 
 
-namespace LHCb 
+namespace LHCb
 {
-  //=============================================================================
-  // Standard constructor, initializes variables
-  //=============================================================================
-  FileId::FileId(  ) {
-   
-  }
-  //=============================================================================
-  // Destructor
-  //=============================================================================
-  FileId::~FileId() {} 
 
   //=============================================================================
   //  fileIDstr2int
@@ -57,7 +37,7 @@ namespace LHCb
     // prepare integer representation
     std::vector<unsigned int> b;
     for ( int i = 0; i < 4; i++ ) {
-      unsigned long fileID = std::strtoul( (IDstr.substr(24-i*8,8)).c_str(), NULL, 16 );
+      unsigned long fileID = std::strtoul( (IDstr.substr(24-i*8,8)).c_str(), nullptr, 16 );
       b.push_back( fileID );
     }
     return b;
@@ -73,7 +53,7 @@ namespace LHCb
     st.setf(std::ios::uppercase);
     st << std::hex << b[3] << std::hex << b[2] << std::hex << b[1] << std::hex << b[0];
     std::string s;
-    s += st.str(); 
+    s += st.str();
     s.insert(8,"-");
     s.insert(13,"-");
     s.insert(18,"-");

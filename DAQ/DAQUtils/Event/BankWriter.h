@@ -1,5 +1,4 @@
-// $Id: BankWriter.h,v 1.5 2006/03/15 15:00:44 cattanem Exp $
-#ifndef EVENT_BANKWRITER_H 
+#ifndef EVENT_BANKWRITER_H
 #define EVENT_BANKWRITER_H 1
 
 // Include files
@@ -9,7 +8,7 @@
 #include <algorithm>
 
 /** @class LHCb::BankWriter BankWriter.h Event/BankWriter.h
- *  Helper class for writing banks. 
+ *  Helper class for writing banks.
  *  It holds a std::vector<unsigned int> and takes care of writing the
  *  data to the correct place, adding more elements if the initial space
  *  runs out and trimming if there is too much space
@@ -17,18 +16,16 @@
  *  @author Matt Needham
  *  @date   2005-10-13
  */
-namespace LHCb 
+namespace LHCb
 {
-  class BankWriter {
-  public: 
+  class BankWriter final {
+  public:
 
     /**
      *  Constructor
      * @param blockSize size in 32 bit words
      */
     BankWriter(size_t blockSize);
-
-    ~BankWriter(){} ///< Destructor
 
     /** get bank data
      *  @return data
@@ -44,7 +41,7 @@ namespace LHCb
 
   private:
 
-    /** check if full 
+    /** check if full
      *  @return bool
      */
     bool isFull() const;
@@ -61,7 +58,7 @@ namespace LHCb
   inline BankWriter::BankWriter(size_t blockSize):
     m_pos(0){
     // constructor
-    size_t startSize = std::max(size_t(1),blockSize); 
+    size_t startSize = std::max(size_t(1),blockSize);
     m_dataBank.resize(startSize);
     m_byteSize = sizeof(int)*startSize;
     m_cData = reinterpret_cast<unsigned char*>(&m_dataBank[0]);
@@ -89,7 +86,7 @@ namespace LHCb
     size_t startPos = m_pos;
     m_pos += sizeof(TYPE)/ sizeof(char);
 
-    // extend the bank if necessary 
+    // extend the bank if necessary
     if (isFull() == true) {
       extend();
     }
