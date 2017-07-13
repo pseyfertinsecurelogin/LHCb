@@ -737,10 +737,10 @@ namespace LoKi
         if ( nu >  lambda ) { return -epsilon ( mu , lambda , nu     , v ) ; }
         //
         // take into account Minkowski metric:
-        const auto x = -v.Px () ;
-        const auto y = -v.Py () ;
-        const auto z = -v.Pz () ;
-        const auto e =  v.E  () ;
+        const double x = -v.Px () ;
+        const double y = -v.Py () ;
+        const double z = -v.Pz () ;
+        const double e =  v.E  () ;
         //
         return -x * epsilon ( 0  , mu , nu     , lambda )   //  3 permutations
           +     y * epsilon ( mu ,  1 , nu     , lambda )   //  2 permutations
@@ -1021,15 +1021,15 @@ namespace LoKi
         const LoKi::LorentzVector& v2 ) const
       {
 
-        const auto x1 = -v1.Px () ;
-        const auto y1 = -v1.Py () ;
-        const auto z1 = -v1.Pz () ;
-        const auto e1 =  v1.E  () ;
+        const double x1 = -v1.Px () ;
+        const double y1 = -v1.Py () ;
+        const double z1 = -v1.Pz () ;
+        const double e1 =  v1.E  () ;
 
-        const auto x2 = -v2.Px () ;
-        const auto y2 = -v2.Py () ;
-        const auto z2 = -v2.Pz () ;
-        const auto e2 =  v2.E  () ;
+        const double x2 = -v2.Px () ;
+        const double y2 = -v2.Py () ;
+        const double z2 = -v2.Pz () ;
+        const double e2 =  v2.E  () ;
 
         return x1 * y2 * Epsilon_<I,J,X,Y>::value
           +    x1 * z2 * Epsilon_<I,J,X,Z>::value
@@ -1076,20 +1076,20 @@ namespace LoKi
         const LoKi::LorentzVector& v2 ,
         const LoKi::LorentzVector& v3 ) const
       {
-        const auto x1 = -v1.Px () ;
-        const auto y1 = -v1.Py () ;
-        const auto z1 = -v1.Pz () ;
-        const auto e1 =  v1.E  () ;
+        const double x1 = -v1.Px () ;
+        const double y1 = -v1.Py () ;
+        const double z1 = -v1.Pz () ;
+        const double e1 =  v1.E  () ;
 
-        const auto x2 = -v2.Px () ;
-        const auto y2 = -v2.Py () ;
-        const auto z2 = -v2.Pz () ;
-        const auto e2 =  v2.E  () ;
+        const double x2 = -v2.Px () ;
+        const double y2 = -v2.Py () ;
+        const double z2 = -v2.Pz () ;
+        const double e2 =  v2.E  () ;
 
-        const auto x3 = -v3.Px () ;
-        const auto y3 = -v3.Py () ;
-        const auto z3 = -v3.Pz () ;
-        const auto e3 =  v3.E  () ;
+        const double x3 = -v3.Px () ;
+        const double y3 = -v3.Py () ;
+        const double z3 = -v3.Pz () ;
+        const double e3 =  v3.E  () ;
 
         return x1 * y2 * z3 * Epsilon_<I,X,Y,Z>::value
           +    x1 * y2 * e3 * Epsilon_<I,X,Y,E>::value
