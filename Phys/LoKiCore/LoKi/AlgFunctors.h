@@ -461,7 +461,7 @@ namespace LoKi {
             }
         };
     }
-    using NumPassed = details::AlgsFunctor<details::NumPassed>;
+    using NumEnabled = details::AlgsFunctor<details::NumEnabled>;
     // ========================================================================
     /** @class NumExecuted
      *  Simple functor to count number of executed algorithms from the list
