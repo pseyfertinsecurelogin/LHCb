@@ -22,7 +22,7 @@ namespace OdinTypesFilter_details {
 
     StatusCode parse(Log_t& op, const std::string& in) {
         if (in=="AND"||in=="And"||in=="and") { op = Log_t::And; return StatusCode::SUCCESS; }
-        if (in=="OR"||in=="Or"||in=="or") { op = Log_t::Or; return StatusCode::SUCCESS; }
+        if (in=="OR" ||in=="Or" ||in=="or" ) { op = Log_t::Or;  return StatusCode::SUCCESS; }
         return StatusCode::FAILURE;
     }
 
@@ -35,16 +35,16 @@ namespace OdinTypesFilter_details {
     struct odin_type_t  {
         int type;
 
-        constexpr static odin_type_t All() { return {-1}; }
+        static constexpr odin_type_t All() { return {-1}; }
 
-        friend bool operator==( const odin_type_t<Type,Max>& lhs ,
-                                const odin_type_t<Type,Max>& rhs )
+        friend constexpr bool operator==( const odin_type_t<Type,Max>& lhs ,
+                                          const odin_type_t<Type,Max>& rhs )
         { return lhs.type == rhs.type; }
 
-        friend bool operator==( const Type& lhs, const odin_type_t<Type,Max>& rhs)
+        friend constexpr bool operator==( const Type& lhs, const odin_type_t<Type,Max>& rhs)
         { return rhs == All() || lhs == (Type)rhs.type; }
 
-        friend bool operator==( const odin_type_t<Type,Max>& lhs, const Type& rhs)
+        friend constexpr bool operator==( const odin_type_t<Type,Max>& lhs, const Type& rhs)
         { return rhs == lhs; }
     };
 
