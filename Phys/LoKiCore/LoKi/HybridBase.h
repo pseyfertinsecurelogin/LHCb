@@ -124,7 +124,7 @@ namespace LoKi
       // ======================================================================
     private:
       // ======================================================================
-      mutable bool             m_pyInit   ;
+      mutable bool             m_pyInit   = false;
       // flag to display the prepared code
       bool                     m_showCode ; ///< flag to display the prepared code
       // ======================================================================

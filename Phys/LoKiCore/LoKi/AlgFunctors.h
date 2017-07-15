@@ -60,24 +60,19 @@ namespace LoKi {
       namespace Predicates {
           // ==========================================================================
           // filter passed ?
-          constexpr struct FilterPassed_t
-          {
-            inline bool operator() ( const IAlgorithm* ia ) const
-            { return ia && ia -> filterPassed () ; }
-          } filterPassed{};
+          static const auto filterPassed = [](const IAlgorithm* ia) {
+            return ia && ia->filterPassed () ;
+          };
           // ========================================================================
           // is enabled ?
-          constexpr struct IsEnabled_t
-          {
-            inline bool operator() ( const IAlgorithm* ia ) const
-            { return ia && ia -> isEnabled () ; }
-          } isEnabled{};
+          static const auto isEnabled = [](const IAlgorithm* ia) {
+            return ia && ia->isEnabled () ;
+          };
           // ==========================================================================
           // is executed ?
-          constexpr struct IsExecuted_t {
-            bool operator() ( const IAlgorithm* ia ) const
-            { return ia && ia -> isExecuted () ; }
-          } isExecuted {};
+          static const auto isExecuted = []( const IAlgorithm* ia ) {
+            return ia && ia->isExecuted () ;
+          };
           // ==========================================================================
       }
     // =========================================================================
@@ -246,8 +241,8 @@ namespace LoKi {
         } ;
 
         template <typename Compose>
-        using result_t = decltype(Compose::execute(std::declval<IAlgorithm*>(),
-                                                   std::declval<IAlgorithm*>()));
+        using result_t = decltype(Compose::execute(std::declval<IAlgorithm**>(),
+                                                   std::declval<IAlgorithm**>()));
 
         template <typename Compose>
         struct GAUDI_API AlgsFunctor final : AlgsFunctorBase<result_t<Compose>> {
@@ -401,14 +396,13 @@ namespace LoKi {
             static const char* name() { return "ALG_RUNALL" ; }
             template <typename Iterator>
             static bool execute(Iterator begin, Iterator end) {
-                for (;begin!=end;++begin) {
-                    IAlgorithm* alg = *begin;
-                    if ( UNLIKELY(!alg) ) throw GaudiException( "Invalid algorithm!", "RunAll", StatusCode::FAILURE);
-                    //
-                    if ( UNLIKELY(!Predicates::isEnabled( alg )) ) {
-                      throw GaudiException("Algorithm '" + alg->name() + "' is disabled","RunAll",StatusCode::SUCCESS);
+                return std::all_of( begin, end, [](IAlgorithm* alg) {
+                    if ( UNLIKELY(!alg) ) {
+                      throw GaudiException( "Invalid algorithm!", "RunAll", StatusCode::FAILURE );
                     }
-                    //
+                    if ( UNLIKELY(!Predicates::isEnabled( alg )) ) {
+                      throw GaudiException( "Algorithm '" + alg->name() + "' is disabled", "RunAll", StatusCode::SUCCESS );
+                    }
                     if ( !Predicates::isExecuted ( alg ) ) {
                       StatusCode sc = alg->sysExecute(SYSEX_ARGUMENT) ;  // EXECUTE IT!!!
                       if ( sc.isFailure() ) {
@@ -416,10 +410,8 @@ namespace LoKi {
                       }
                     }
                     //
-                    if ( !Predicates::filterPassed ( alg ) ) { return false ; }                           // RETURN
-                }
-                //
-                return true ;
+                    return Predicates::filterPassed( alg );
+                } );
             }
         };
     }
