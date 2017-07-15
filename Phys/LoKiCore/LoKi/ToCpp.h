@@ -122,25 +122,21 @@ namespace Gaudi
     // ========================================================================
     // strings and chars
     // ========================================================================
-    inline std::string toCpp ( const char          s ) { return "'" + std::string ( 1 , s )  + "'"; }
-    inline std::string toCpp ( const std::string&  s ) { return '"' + s + '"' ; }
+    inline std::string toCpp( const char         s ) { return "'" + std::string ( 1 , s )  + "'"; }
+    inline std::string toCpp( const std::string& s ) { return '"' + s + '"' ; }
     template <unsigned N>
-    inline std::string toCpp
-    ( const char (&s)[N]    ) { return toCpp ( std::string ( s , s + N ) ) ; }
-    template <unsigned N>
-    inline std::string toCpp
-    (       char (&s)[N]    ) { return toCpp ( std::string ( s , s + N ) ) ; }
+    inline std::string toCpp( const char (&s)[N]   ) { return toCpp ( std::string ( s , s + N ) ) ; }
     // ========================================================================
-    inline std::string toCpp ( const short              o ) { return toString ( o ) ; }
-    inline std::string toCpp ( const unsigned short     o ) { return toString ( o ) ; }
-    inline std::string toCpp ( const int                o ) { return toString ( o ) ; }
-    inline std::string toCpp ( const unsigned int       o ) { return toString ( o ) ; }
-    inline std::string toCpp ( const long               o ) { return toString ( o ) ; }
-    inline std::string toCpp ( const unsigned long      o ) { return toString ( o ) ; }
+    inline std::string toCpp( const short              o ) { return toString ( o ) ; }
+    inline std::string toCpp( const unsigned short     o ) { return toString ( o ) ; }
+    inline std::string toCpp( const int                o ) { return toString ( o ) ; }
+    inline std::string toCpp( const unsigned int       o ) { return toString ( o ) ; }
+    inline std::string toCpp( const long               o ) { return toString ( o ) ; }
+    inline std::string toCpp( const unsigned long      o ) { return toString ( o ) ; }
     // ========================================================================
-    inline std::string toCpp ( const long long          o ) { return toString ( o ) ; }
-    inline std::string toCpp ( const unsigned long long o ) { return toString ( o ) ; }
-    inline std::string toCpp ( const bool               o ) { return o ? "true" : "false" ; }
+    inline std::string toCpp( const long long          o ) { return toString ( o ) ; }
+    inline std::string toCpp( const unsigned long long o ) { return toString ( o ) ; }
+    inline std::string toCpp( const bool               o ) { return o ? "true" : "false" ; }
     // ========================================================================
     //
     GAUDI_API
@@ -171,8 +167,7 @@ namespace Gaudi
     inline std::string toCpp ( const std::vector<TYPE>& v )
     {
       std::string o = "std::vector<" + System::typeinfoName ( typeid(TYPE) ) + ">{" ;
-      for ( typename std::vector<TYPE>::const_iterator it = v.begin() ; v.end() != it ; ++it )
-      { o.append ( toCpp ( *it ) + ", " ) ; }
+      for ( const auto& i : v ) { o.append ( toCpp ( i ) + ", " ) ; }
       //
       return o + '}' ;
     }
@@ -183,8 +178,8 @@ namespace Gaudi
       std::string o = "std::map<"
         + System::typeinfoName ( typeid(TYPE1) ) + ","
         + System::typeinfoName ( typeid(TYPE2) ) + ">{" ;
-      for ( typename std::map<TYPE1,TYPE2>::const_iterator it = v.begin() ; v.end() != it ; ++it )
-      { o.append ( "{" + toCpp ( it->first ) + ", " + toCpp( it->second ) + "} ," ) ; }
+      for ( const auto& i : v )
+      { o.append ( "{" + toCpp ( i.first ) + ", " + toCpp( i.second ) + "} ," ) ; }
       //
       return o + '}' ;
     }
