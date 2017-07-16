@@ -10,6 +10,7 @@
 #include <vector>
 #include <set>
 #include <algorithm>
+#include <array>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -20,7 +21,6 @@
 #ifdef __INTEL_COMPILER        // Disable ICC warning from Boost
   #pragma warning(disable:279) // controlling expression is constant
 #endif
-#include "boost/array.hpp"
 // ============================================================================
 /** @class CaloCellCode CaloCellCode.h Kernel/CaloCellCode.h
  *
@@ -139,7 +139,7 @@ namespace CaloCellCode
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  typedef boost::array<std::string,CaloNums>  CALONAMES ;
+  typedef std::array<std::string,CaloNums>  CALONAMES ;
   // ==========================================================================
   /** @var CaloNames
    *  The actual list of Calorimter names

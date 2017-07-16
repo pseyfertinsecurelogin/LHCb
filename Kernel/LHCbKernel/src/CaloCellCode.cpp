@@ -43,26 +43,18 @@ namespace CaloCellCode
 namespace
 {
   // ==========================================================================
-  /** @typedef AREANMES
-   *  the actual type for array of calorimeter areas
-   *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
-   *  @date 2009-09-28
-   */
-  typedef boost::array<std::string,CaloCellCode::CaloAreaNums>  AREANAMES ;
-  // ==========================================================================
   /** @var AreaName
    *  The array of calorimeter area names
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-09-28
    */
-  const AREANAMES s_AreaName = { {  "Outer" , "Middle" , "Inner" ,"PinArea" } } ;
+  static const std::array<std::string,CaloCellCode::CaloAreaNums> s_AreaName =
+  { {  "Outer" , "Middle" , "Inner" ,"PinArea" } } ;
   // ==========================================================================
   /// get the area index from name
   inline int _area  ( const std::string& area )
   {
-    AREANAMES::const_iterator it =
-      std::find ( s_AreaName.begin() ,
-                  s_AreaName.end  () , area ) ;
+    auto it = std::find ( s_AreaName.begin(), s_AreaName.end  () , area ) ;
     return s_AreaName.end() == it ? -1 : ( it - s_AreaName.begin() );
   }
   // ==========================================================================
