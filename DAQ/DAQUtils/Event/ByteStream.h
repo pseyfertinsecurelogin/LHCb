@@ -1,5 +1,5 @@
 // $Id: ByteStream.h,v 1.6 2006/06/27 06:13:03 cattanem Exp $
-#ifndef EVENT_BYTESTREAM_H 
+#ifndef EVENT_BYTESTREAM_H
 #define EVENT_BYTESTREAM_H 1
 
 // Include files
@@ -11,12 +11,12 @@
  *  @author Matt Needham
  *  @date   2005-10-13
  */
-namespace LHCb 
+namespace LHCb
 {
-  class ByteStream
+  class ByteStream final
   {
 
-  public: 
+  public:
     /**
      *  Constructor
      * @param bank pointer to data
@@ -37,8 +37,8 @@ namespace LHCb
     /** fast forward n bytes */
     void seek(const size_t nByte);
 
-    /** number of bytes read 
-     *  @return nBytes read 
+    /** number of bytes read
+     *  @return nBytes read
      */
     unsigned int nRead() const noexcept;
 
@@ -49,7 +49,7 @@ namespace LHCb
 
   };
 
-  inline ByteStream::ByteStream(unsigned int* bank, 
+  inline ByteStream::ByteStream(unsigned int* bank,
                                 size_t /* size */ )
   {
     m_start = reinterpret_cast<unsigned char*>(bank);
@@ -82,7 +82,7 @@ namespace LHCb
 
   inline unsigned int ByteStream::nRead() const noexcept
   {
-    return m_pos;    
+    return m_pos;
   }
 
 } // namespace LHCb

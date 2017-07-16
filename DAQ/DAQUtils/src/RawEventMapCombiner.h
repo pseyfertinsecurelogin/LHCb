@@ -1,4 +1,3 @@
-// $Id: RawEventCombiner.h,v 1.1 2009/06/22 15:12:04 tskwarni Exp $
 #ifndef LHCB_RAWEVENTMAPCOMBINER_H
 #define LHCB_RAWEVENTMAPCOMBINER_H 1
 
@@ -19,11 +18,9 @@ public:
   /// Standard constructor
   RawEventMapCombiner( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~RawEventMapCombiner( );     ///< Destructor
   StatusCode initialize() override;      ///< Algorithm initialization
   StatusCode execute() override;         ///< Algorithm execution
 
-protected:
 
 private:
 
