@@ -36,8 +36,8 @@ public:
   /// trajectories is at its minimum. The precision parameter is the desired
   /// numerical accuracy of mu1 and mu2. If the restrictrange flag is true, mu
   /// is restricted to the range of the trajectory.
-  StatusCode minimize( const LHCb::Trajectory& traj1, double& mu1, bool restrictRange1,
-                       const LHCb::Trajectory& traj2, double& mu2, bool restrictRange2,
+  StatusCode minimize( const LHCb::Trajectory& traj1, double& mu1, RestrictRange range1,
+                       const LHCb::Trajectory& traj2, double& mu2, RestrictRange range2,
                        Gaudi::XYZVector& distance,
                        double precision ) const override;
 
@@ -47,7 +47,7 @@ public:
   /// restricted to the range of the trajectory.
   StatusCode minimize( const LHCb::Trajectory& traj,
                        double& mu,
-                       bool restrictRange,
+                       RestrictRange restrictRange,
                        const Gaudi::XYZPoint& pt,
                        Gaudi::XYZVector& distance,
                        double precision ) const override;
@@ -59,8 +59,8 @@ private:
   };
 
 
-  bool stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, bool restrictRange1,
-                       const LHCb::Trajectory& traj2, double& mu2, bool restrictRange2,
+  bool stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, RestrictRange range1,
+                       const LHCb::Trajectory& traj2, double& mu2, RestrictRange range2,
                        double precision, cache_t& cache ) const;
 
   inline bool restrictToRange(double& l, const LHCb::Trajectory& t) const
