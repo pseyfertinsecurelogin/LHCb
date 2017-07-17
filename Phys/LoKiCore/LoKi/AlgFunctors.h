@@ -12,6 +12,13 @@
 // ============================================================================
 #include "GaudiKernel/Kernel.h"
 #include "GaudiKernel/IAlgorithm.h"
+#ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
+/// \fixme backward compatibility with Gaudi <= v28r1
+#include "GaudiKernel/ThreadLocalContext.h"
+#define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
+#else
+#define SYSEX_ARGUMENT
+#endif
 // ============================================================================
 // LoKi
 // ============================================================================
@@ -21,7 +28,7 @@
 /** @file
  *
  *  Collection of various functors which test the status of "algorithm".
- *  The idea comes form Gerhard "The Great" Raven
+ *  The idea comes from Gerhard Raven
  *
  *  This file is a part of LoKi project -
  *    "C++ ToolKit  for Smart and Friendly Physics Analysis"
@@ -39,8 +46,7 @@
  *  @date 2008-010-14
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
   /** @namespace LoKi::Algortithms
    *
@@ -50,8 +56,25 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2008-010-14
    */
-  namespace Algorithms
-  {
+  namespace Algorithms {
+      namespace Predicates {
+          // ==========================================================================
+          // filter passed ?
+          static const auto filterPassed = [](const IAlgorithm* ia) {
+            return ia && ia->filterPassed () ;
+          };
+          // ========================================================================
+          // is enabled ?
+          static const auto isEnabled = [](const IAlgorithm* ia) {
+            return ia && ia->isEnabled () ;
+          };
+          // ==========================================================================
+          // is executed ?
+          static const auto isExecuted = []( const IAlgorithm* ia ) {
+            return ia && ia->isExecuted () ;
+          };
+          // ==========================================================================
+      }
     // =========================================================================
     /** @class Passed
      *  simple check of the certain algorithm to pass the filter
@@ -164,6 +187,94 @@ namespace LoKi
       std::ostream& fillStream ( std::ostream& s ) const override;
       // ======================================================================
     } ;
+    namespace details {
+        // ========================================================================
+        /** @class AlgsFunctorBase
+         *  Base class for Algorithm predicates
+         */
+        // =========================================================================
+
+        // TODO: AlgsFunctorBase doesn't actually depend on Ret -- so should
+        //       try to move the code to a non-template implemenation to reduce
+        //       code size...
+        template <typename ReturnType>
+        class GAUDI_API AlgsFunctorBase : public LoKi::Functor<void,ReturnType>
+        {
+        public:
+          // ======================================================================
+          /// constructor from algorithm names
+          AlgsFunctorBase ( std::vector<std::string> name ) ;
+          AlgsFunctorBase ( AlgsFunctorBase&& ) = default;
+          AlgsFunctorBase ( const AlgsFunctorBase& ) = default;
+          ~AlgsFunctorBase() override;
+          // ======================================================================
+        protected:
+          // ======================================================================
+          /// the actual type of vector of algorithms
+          bool empty() const { return m_algorithms.empty () ; }
+          /// get the algorithm name
+          const std::string& algName ( const size_t i ) const { return m_names[i] ; }
+          /// get the algorithm
+          LoKi::Interface<IAlgorithm>
+          getAlgorithm ( const std::string& name ) const ; // get the algorithm
+        public:
+          // ======================================================================
+          std::ostream& print( const std::string& name, std::ostream& s) const ;
+          // ======================================================================
+          // ======================================================================
+          auto begin() const { return m_algorithms.begin() ; }
+          auto end()   const { return m_algorithms.end()   ; }
+          /// get the algorithms
+          const auto& algorithms () const { return m_algorithms ; }
+          /// get the algorithm name
+          const std::vector<std::string>& algNames () const { return m_names ; }
+          /// get the algorithms
+          void getAlgorithms () const ; // get the algorithms
+          // ======================================================================
+        private:
+          // ======================================================================
+          /// the algorithm names
+          std::vector<std::string> m_names ;               // the algorithm names
+          /// the algorithms themself
+          mutable std::vector< LoKi::Interface<IAlgorithm> > m_algorithms ;
+          // ======================================================================
+        } ;
+
+        template <typename Compose>
+        using result_t = decltype(Compose::execute(std::declval<IAlgorithm**>(),
+                                                   std::declval<IAlgorithm**>()));
+
+        template <typename Compose>
+        struct GAUDI_API AlgsFunctor final : AlgsFunctorBase<result_t<Compose>> {
+          /// constructor from the algorithm name
+          AlgsFunctor ( std::string name1 ,
+                        std::string name2 )
+              : AlgsFunctor( std::vector<std::string>{ std::move(name1), std::move(name2) } ) {}
+          AlgsFunctor ( std::string name1 ,
+                        std::string name2 ,
+                        std::string name3 )
+              : AlgsFunctor( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) {}
+          AlgsFunctor( std::string name1 ,
+                       std::string name2 ,
+                       std::string name3 ,
+                       std::string name4 )
+              : AlgsFunctor( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) {}
+          AlgsFunctor( std::vector<std::string> names )
+              : AuxFunBase{ std::tie(names) }
+              , AlgsFunctorBase<result_t<Compose>>( std::move(names) ) {};
+          /// MANDATORY: clone method ("virtual constructor")
+          AlgsFunctor* clone() const override { return new AlgsFunctor ( *this ) ; }
+          /// MANDATORY: the only one essential method
+          result_t<Compose> operator() () const override {
+            if ( this->algNames().size() != this->algorithms().size() ) this->getAlgorithms() ;
+            return Compose::execute( this->begin(), this->end() );
+          }
+          /// OPTIONAL: nice printout
+          std::ostream& fillStream ( std::ostream& s ) const override
+          { return this->print ( Compose::name() , s ) ; }
+
+        };
+    }
     // ========================================================================
     /** @class AnyPassed
      *  simple check of the certain algorithm to pass the filter
@@ -172,74 +283,17 @@ namespace LoKi
      *  @date 2008-10-14
      */
     // =========================================================================
-    class GAUDI_API AnyPassed : public LoKi::BasicFunctors<void>::Predicate
-    {
-    public:
-      // ======================================================================
-      /// constructor from the algorithm name
-      AnyPassed ( const std::string& name1 ,
-                  const std::string& name2 )
-          : AnyPassed( std::vector<std::string>{ name1, name2 } ) {}
-      AnyPassed ( const std::string& name1 ,
-                  const std::string& name2 ,
-                  const std::string& name3 )
-          : AnyPassed( std::vector<std::string>{ name1, name2, name3 } ) {}
-      AnyPassed ( const std::string& name1 ,
-                  const std::string& name2 ,
-                  const std::string& name3 ,
-                  const std::string& name4 )
-          : AnyPassed( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
-      AnyPassed ( std::vector<std::string> name ) ;
-      AnyPassed ( AnyPassed&& ) = default;
-      AnyPassed ( const AnyPassed& ) = default;
-      ~AnyPassed() override;
-      /// MANDATORY: clone method ("virtual constructor")
-      AnyPassed* clone() const override { return new AnyPassed ( *this ) ; }
-      /// MANDATORY: the only one essential method
-      bool operator() () const override;
-      /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return print ( "ALG_ANYPASSED" , s ) ; }
-      // ======================================================================
-    protected:
-      // ======================================================================
-      /// the actual type of vector of algorithms
-      bool empty() const { return m_algorithms.empty () ; }
-      /// get the algorithm name
-      const std::string& algName ( const size_t i ) const { return m_names[i] ; }
-      /// get the algorithm
-      LoKi::Interface<IAlgorithm>
-      getAlgorithm ( const std::string& name ) const ; // get the algorithm
-      // ======================================================================
-    public:
-      // ======================================================================
-      virtual std::ostream& print
-      ( const std::string&  name ,
-        std::ostream&       s    ) const ;
-      // ======================================================================
-    public:
-      // ======================================================================
-      typedef std::vector< LoKi::Interface<IAlgorithm> > Algorithms ;
-      // ======================================================================
-      Algorithms::const_iterator begin () const
-      { return m_algorithms.begin () ; }
-      Algorithms::const_iterator end   () const
-      { return m_algorithms.end   () ; }
-      /// get the algorithms
-      const Algorithms& algorithms () const { return m_algorithms ; }
-      /// get the algorithm name
-      const std::vector<std::string>& algNames () const { return m_names ; }
-      /// get the algorithms
-      void getAlgorithms () const ; // get the algorithms
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the algorithm names
-      std::vector<std::string> m_names ;               // the algorithm names
-      /// the algorithms themself
-      mutable Algorithms m_algorithms ;
-      // ======================================================================
-    } ;
+    namespace details {
+        struct AnyPassed {
+            static const char* name() { return "ALG_ANYPASSED" ; }
+            template <typename Iterator>
+            static bool execute(Iterator begin, Iterator end) {
+                return std::any_of( begin, end, Predicates::filterPassed );
+            }
+        };
+    }
+    using AnyPassed = details::AlgsFunctor<details::AnyPassed>;
+    // ======================================================================
     // ========================================================================
     /** @class AllPassed
      *  simple check of the certain algorithm to pass the filter
@@ -247,36 +301,18 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-14
      */
-    // =========================================================================
-    class GAUDI_API AllPassed final : public AnyPassed
-    {
-    public:
-      // ======================================================================
-      // constructor from the algorithm name
-      AllPassed ( const std::string& name1 ,
-                  const std::string& name2 )
-          : AllPassed( std::vector<std::string>{ name1, name2 } ) {}
-      AllPassed ( const std::string& name1 ,
-                  const std::string& name2 ,
-                  const std::string& name3 )
-          : AllPassed( std::vector<std::string>{ name1, name2, name3 } ) {}
-      AllPassed ( const std::string& name1 ,
-                  const std::string& name2 ,
-                  const std::string& name3 ,
-                  const std::string& name4 )
-          : AllPassed( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
-      AllPassed ( std::vector<std::string> names )
-          : AuxFunBase{ std::tie( names ) }
-          , AnyPassed( std::move(names) ) { }
-      /// MANDATORY: clone method ("virtual constructor")
-      AllPassed* clone() const override { return new AllPassed ( *this ) ; }
-      /// MANDATORY: the only one essential method
-      bool operator() () const override;
-      /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return print ( "ALG_ANYPASSED" , s ) ; }
-      // ======================================================================
-    } ;
+
+    namespace details {
+        struct AllPassed {
+            static const char* name() { return "ALG_ANYPASSED" ; }
+            template <typename Iterator>
+            static bool execute(Iterator begin, Iterator end) {
+                return begin!=end && std::all_of( begin, end, Predicates::filterPassed );
+            }
+        };
+    }
+    using AllPassed = details::AlgsFunctor<details::AllPassed>;
+
     // ========================================================================
     /** @class AnyEnabled
      *  simple check of the certain algorithm to pass the filter
@@ -285,36 +321,16 @@ namespace LoKi
      *  @date 2008-10-14
      */
     // =========================================================================
-    class GAUDI_API AnyEnabled final : public AnyPassed
-    {
-    public:
-      // ======================================================================
-      /// constructor from the algorithm name
-      AnyEnabled ( const std::string& name1 ,
-                   const std::string& name2 )
-          : AnyEnabled( std::vector<std::string>{ name1, name2 } ) {}
-      AnyEnabled ( const std::string& name1 ,
-                   const std::string& name2 ,
-                   const std::string& name3 )
-          : AnyEnabled( std::vector<std::string>{ name1, name2, name3 } ) {}
-      AnyEnabled ( const std::string& name1 ,
-                   const std::string& name2 ,
-                   const std::string& name3 ,
-                   const std::string& name4 )
-          : AnyEnabled( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
-      AnyEnabled ( std::vector<std::string> names )
-          : AuxFunBase{ std::tie(names) }
-          , AnyPassed( std::move(names) ) { }
-      // ======================================================================
-      /// MANDATORY: clone method ("virtual constructor")
-      AnyEnabled* clone() const override { return new AnyEnabled ( *this ) ; }
-      /// MANDATORY: the only one essential method
-      bool operator() () const  override;
-      /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return print ( "ALG_ANYENABLED" , s ) ; }
-      // ======================================================================
-    } ;
+    namespace details {
+        struct AnyEnabled {
+            static const char* name() { return "ALG_ANYENABLED"; }
+            template <typename Iterator>
+            static bool execute(Iterator begin, Iterator end)
+            { return std::any_of( begin , end, Predicates::isEnabled ) ; }
+        };
+    }
+    using AnyEnabled = details::AlgsFunctor<details::AnyEnabled>;
+
     // ========================================================================
     /** @class AllEnabled
      *  simple check of the certain algorithm to pass the filter
@@ -323,36 +339,16 @@ namespace LoKi
      *  @date 2008-10-14
      */
     // =========================================================================
-    class GAUDI_API AllEnabled final : public AnyPassed
-    {
-    public:
-      // ======================================================================
-      /// constructor from the algorithm name
-      AllEnabled ( const std::string& name1 ,
-                   const std::string& name2 )
-          : AllEnabled( std::vector<std::string>{ name1, name2 } ) {}
-      AllEnabled ( const std::string& name1 ,
-                   const std::string& name2 ,
-                   const std::string& name3 )
-          : AllEnabled( std::vector<std::string>{ name1, name2, name3 } ) {}
-      AllEnabled ( const std::string& name1 ,
-                   const std::string& name2 ,
-                   const std::string& name3 ,
-                   const std::string& name4 )
-          : AllEnabled( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
-      AllEnabled ( std::vector<std::string> names )
-          : AuxFunBase{ std::tie(names) }
-          , AnyPassed( std::move(names) ) { }
-      // ======================================================================
-      /// MANDATORY: clone method ("virtual constructor")
-      AllEnabled* clone() const override { return new AllEnabled ( *this ) ; }
-      /// MANDATORY: the only one essential method
-      bool operator() () const override;
-      /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return print ( "ALG_ALLENABLED" , s ) ; }
-      // ======================================================================
-    } ;
+    namespace details {
+        struct AllEnabled {
+            static const char* name() { return "ALG_ALLENABLED"; }
+            template <typename Iterator>
+            static bool execute(Iterator begin, Iterator end)
+            { return begin!=end  && std::all_of( begin, end, Predicates::isEnabled ) ; }
+        };
+    }
+    using AllEnabled = details::AlgsFunctor<details::AllEnabled>;
+
     // ========================================================================
     /** @class AnyExecuted
      *  simple check of the certain algorithm to pass the filter
@@ -361,36 +357,16 @@ namespace LoKi
      *  @date 2008-10-14
      */
     // =========================================================================
-    class GAUDI_API AnyExecuted : public AnyPassed
-    {
-    public:
-      // ======================================================================
-      /// constructor from the algorithm name
-      AnyExecuted ( const std::string& name1 ,
-                    const std::string& name2 )
-          : AnyExecuted( std::vector<std::string>{ name1, name2 } ) {}
-      AnyExecuted ( const std::string& name1 ,
-                    const std::string& name2 ,
-                    const std::string& name3 )
-          : AnyExecuted( std::vector<std::string>{ name1, name2, name3 } ) {}
-      AnyExecuted ( const std::string& name1 ,
-                    const std::string& name2 ,
-                    const std::string& name3 ,
-                    const std::string& name4 )
-          : AnyExecuted( std::vector<std::string>{ name1, name2, name3, name4 } ) {}
-      AnyExecuted ( std::vector<std::string> names )
-          : AuxFunBase{ std::tie(names) }
-          , AnyPassed( std::move(names) ) { }
-      // ======================================================================
-      /// MANDATORY: clone method ("virtual constructor")
-      AnyExecuted* clone() const override { return new AnyExecuted ( *this ) ; }
-      /// MANDATORY: the only one essential method
-      bool operator() () const override;
-      /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return print ( "ALG_ANYEXECUTED" , s ) ; }
-      // ======================================================================
-    } ;
+    namespace details {
+        struct AnyExecuted {
+            static const char* name() { return "ALG_ANYEXECUTED"; }
+            template <typename Iterator>
+            static bool execute(Iterator begin, Iterator end)
+            { return std::any_of( begin, end, Predicates::isExecuted ) ;}
+        };
+    }
+    using AnyExecuted = details::AlgsFunctor<details::AnyExecuted>;
+
     // ========================================================================
     /** @class AllExecuted
      *  simple check of the certain algorithm to pass the filter
@@ -399,35 +375,15 @@ namespace LoKi
      *  @date 2008-10-14
      */
     // =========================================================================
-    class GAUDI_API AllExecuted : public AnyPassed
-    {
-    public:
-      // ======================================================================
-      /// forward to base class constructor
-      AllExecuted ( std::string name1 ,
-                    std::string name2 )
-          : AllExecuted( std::vector<std::string>{ std::move(name1), std::move(name2) } ) {}
-      AllExecuted ( std::string name1 ,
-                    std::string name2 ,
-                    std::string name3 )
-          : AllExecuted( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) {}
-      AllExecuted ( std::string name1 ,
-                    std::string name2 ,
-                    std::string name3 ,
-                    std::string name4 )
-          : AllExecuted( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) {}
-      AllExecuted ( std::vector<std::string> names )
-          : AuxFunBase{ std::tie(names) }
-          , AnyPassed( std::move(names) ) { }
-      /// MANDATORY: clone method ("virtual constructor")
-      AllExecuted* clone() const override { return new AllExecuted ( *this ) ; }
-      /// MANDATORY: the only one essential method
-      bool operator() () const override;
-      /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return print ( "ALG_ALLEXECUTED" , s ) ; }
-      // ======================================================================
-    } ;
+    namespace details {
+        struct AllExecuted {
+            static const char* name() { return "ALG_ALLEXECUTED"; }
+            template <typename Iterator>
+            static bool execute(Iterator begin, Iterator end)
+            { return begin!=end  && std::all_of ( begin, end, Predicates::isExecuted ) ; }
+        };
+    }
+    using AllExecuted = details::AlgsFunctor<details::AllExecuted>;
     // ========================================================================
     /** @class RunAll
      *  @see LoKi::Cuts::ALG_RUNALL
@@ -435,34 +391,35 @@ namespace LoKi
      *  @date 2008-10-14
      */
     // =========================================================================
-    class GAUDI_API RunAll : public AllExecuted
-    {
-    public:
-      // ======================================================================
-      RunAll ( std::string name1 ,
-               std::string name2 )
-          : RunAll( std::vector<std::string>{ std::move(name1), std::move(name2) } ) {}
-      RunAll ( std::string name1 ,
-               std::string name2 ,
-               std::string name3 )
-          : RunAll( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) {}
-      RunAll ( std::string name1 ,
-               std::string name2 ,
-               std::string name3 ,
-               std::string name4 )
-          : RunAll( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) {}
-      RunAll ( std::vector<std::string> names )
-          : AuxFunBase{ std::tie(names) }
-          , AllExecuted( std::move(names) ) { }
-      /// MANDATORY: clone method ("virtual constructor")
-      RunAll* clone() const override { return new RunAll ( *this ) ; }
-      /// MANDATORY: the only one essential method
-      bool operator() () const override;
-      /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return print ( "ALG_RUNALL" , s ) ; }
-      // ======================================================================
-    } ;
+    namespace details {
+        struct RunAll {
+            static const char* name() { return "ALG_RUNALL" ; }
+            template <typename Iterator>
+            static bool execute(Iterator begin, Iterator end) {
+                return std::all_of( begin, end, [](IAlgorithm* alg) {
+                    if ( UNLIKELY(!alg) ) {
+                      throw GaudiException( "Invalid algorithm!", "RunAll", StatusCode::FAILURE );
+                    }
+                    if ( UNLIKELY(!Predicates::isEnabled( alg )) ) {
+                      throw GaudiException( "Algorithm '" + alg->name() + "' is disabled", "RunAll", StatusCode::SUCCESS );
+                    }
+                    if ( !Predicates::isExecuted ( alg ) ) {
+                      StatusCode sc = alg->sysExecute(SYSEX_ARGUMENT) ;  // EXECUTE IT!!!
+                      if ( sc.isFailure() ) {
+                        throw GaudiException("Error from algorithm '" + alg->name() + "' sysExecute", "RunAll", sc );
+                      }
+                    }
+                    //
+                    return Predicates::filterPassed( alg );
+                } );
+            }
+        };
+    }
+    using RunAll = details::AlgsFunctor<details::RunAll>;
+    // ======================================================================
+
+
+
     // =========================================================================
     /** @class NumPassed
      *  Simple functor to count number of passed algorithms from the list
@@ -470,65 +427,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    class GAUDI_API NumPassed : public LoKi::BasicFunctors<void>::Function
-    {
-    public:
-      // ======================================================================
-      /// constructor from the algorithm name
-      NumPassed ( std::string name1 ,
-                  std::string name2 )
-        : NumPassed( std::vector<std::string>{ std::move(name1), std::move(name2) } ) {}
-      /// constructor from the algorithm name
-      NumPassed ( std::string name1 ,
-                  std::string name2 ,
-                  std::string name3 )
-        : NumPassed( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) {}
-      /// constructor from the algorithm name
-      NumPassed ( std::string name1 ,
-                  std::string name2 ,
-                  std::string name3 ,
-                  std::string name4 )
-        : NumPassed( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) {}
-      /// constructor from the algorithm names
-      NumPassed ( std::vector<std::string> names )
-        : AuxFunBase{ std::tie(names) }
-        , m_fun{ std::move(names) } { }
-      // ======================================================================
-      /// MANDATORY: clone method ("virtual constructor")
-      NumPassed* clone() const override { return new NumPassed ( *this ) ; }
-      /// MANDATORY: the only one essential method
-      double operator() () const override;
-      /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return print ( "ALG_NUMPASSED" , s ) ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      virtual std::ostream& print
-      ( const std::string& name ,
-        std::ostream& s ) const { return m_fun.print ( name , s ) ; }
-      // ======================================================================
-    public:
-      // ======================================================================
-      AnyPassed::Algorithms::const_iterator begin () const
-      { return m_fun.begin () ; }
-      AnyPassed::Algorithms::const_iterator end   () const
-      { return m_fun.end   () ; }
-      /// get the algorithms
-      const AnyPassed::Algorithms& algorithms () const
-      { return m_fun.algorithms() ; }
-      /// get the algorithm name
-      const std::vector<std::string>& algNames () const
-      { return m_fun.algNames() ; }
-      /// get the algorithms
-      void getAlgorithms () const { m_fun.getAlgorithms () ; }
-      // =======================================================================
-    private:
-      // =======================================================================
-      /// the actual functor
-      LoKi::Algorithms::AnyPassed m_fun ;                  // the actual functor
-      // =======================================================================
-    } ;
+    namespace details {
+        struct NumPassed {
+            static const char* name() { return "ALG_NUMPASSED" ; }
+            template <typename Iterator>
+            static double execute(Iterator begin, Iterator end) {
+                return std::count_if( begin, end, Predicates::filterPassed ) ;
+            }
+        };
+    }
+    using NumPassed = details::AlgsFunctor<details::NumPassed>;
     // =========================================================================
     /** @class NumEnabled
      *  Simple functor to count number of enabled algorithms from the list
@@ -536,39 +444,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    class GAUDI_API NumEnabled  : public NumPassed
-    {
-    public:
-      // ======================================================================
-      /// constructor from the algorithm name
-      NumEnabled ( std::string name1 ,
-                   std::string name2 )
-          : NumEnabled( std::vector<std::string>{ std::move(name1), std::move(name2) } ) { }
-      /// constructor from the algorithm name
-      NumEnabled ( std::string name1 ,
-                   std::string name2 ,
-                   std::string name3 )
-          : NumEnabled( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) { }
-      /// constructor from the algorithm name
-      NumEnabled ( std::string name1 ,
-                   std::string name2 ,
-                   std::string name3 ,
-                   std::string name4 )
-          : NumEnabled( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) { }
-      /// constructor from the algorithm name
-      NumEnabled ( std::vector<std::string> names )
-          : AuxFunBase{ std::tie(names) }
-          , NumPassed( std::move(names) ) { }
-      // ======================================================================
-      /// MANDATORY: clone method ("virtual constructor")
-      NumEnabled* clone() const override { return new NumEnabled ( *this ) ; }
-      /// MANDATORY: the only one essential method
-      double operator() () const override;
-      /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return print ( "ALG_NUMENABLED" , s ) ; }
-      // ======================================================================
-    } ;
+    namespace details {
+        struct NumEnabled {
+            static const char* name() { return "ALG_NUMENABLED" ; }
+            template <typename Iterator>
+            static double execute(Iterator begin, Iterator end) {
+                return std::count_if( begin, end, Predicates::isEnabled ) ;
+            }
+        };
+    }
+    using NumEnabled = details::AlgsFunctor<details::NumEnabled>;
     // ========================================================================
     /** @class NumExecuted
      *  Simple functor to count number of executed algorithms from the list
@@ -576,39 +461,16 @@ namespace LoKi
      *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
      *  @date 2008-10-19
      */
-    class GAUDI_API NumExecuted  : public NumPassed
-    {
-    public:
-      // ======================================================================
-      /// constructor from the algorithm name
-      NumExecuted ( std::string name1 ,
-                    std::string name2 )
-          : NumExecuted( std::vector<std::string>{ std::move(name1), std::move(name2) } ) { }
-      /// constructor from the algorithm name
-      NumExecuted ( const std::string& name1 ,
-                   const std::string& name2 ,
-                   const std::string& name3 )
-          : NumExecuted( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3) } ) { }
-      /// constructor from the algorithm name
-      NumExecuted ( const std::string& name1 ,
-                   const std::string& name2 ,
-                   const std::string& name3 ,
-                   const std::string& name4 )
-          : NumExecuted( std::vector<std::string>{ std::move(name1), std::move(name2), std::move(name3), std::move(name4) } ) { }
-      /// constructor from the algorithm name
-      NumExecuted ( std::vector<std::string> names )
-          : AuxFunBase{ std::tie(names) }
-          , NumPassed( std::move(names) ) { }
-      // ======================================================================
-      /// MANDATORY: clone method ("virtual constructor")
-      NumExecuted* clone() const override { return new NumExecuted ( *this ) ; }
-      /// MANDATORY: the only one essential method
-      double operator() () const override;
-      /// OPTIONAL: nice printout
-      std::ostream& fillStream ( std::ostream& s ) const override
-      { return print ( "ALG_NUMEXECUTED" , s ) ; }
-      // ======================================================================
-    } ;
+    namespace details {
+        struct NumExecuted {
+            static const char* name() { return "ALG_NUMEXECUTED" ; }
+            template <typename Iterator>
+            static double execute(Iterator begin, Iterator end) {
+                return std::count_if( begin, end, Predicates::isExecuted ) ;
+            }
+        };
+    }
+    using NumExecuted = details::AlgsFunctor<details::NumExecuted>;
     // ========================================================================
   } //                                        end of namespace LoKi::Algorithms
   // ==========================================================================

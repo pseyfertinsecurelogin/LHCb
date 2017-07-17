@@ -38,33 +38,22 @@ namespace LoKi
       // ======================================================================
       /// ==
       // ======================================================================
-      static Result
-      __eq__ ( const Function&         self  ,
-               const long              other ) { return self == other ; }
-      static Result
-      __eq__ ( const Function&         self  ,
-               const LHCb::ParticleID& other ) { return self == other ; }
-      static Result
-      __eq__ ( const Function&         self  ,
-               const std::string&      other ) { return self == other ; }
-      static Result
-      __eq__ ( const Function&         self  ,
-               const Other&            other ) { return self == other ; }
+      static Result __eq__ ( const Function& self, const long other )
+      { return self == other ; }
+      static Result __eq__ ( const Function& self, const LHCb::ParticleID& other )
+      { return self == other ; }
+      static Result __eq__ ( const Function& self, const std::string&      other )
+      { return self == other ; }
+      static Result __eq__ ( const Function& self, const Other& other )
+      { return self == other ; }
       //
-      static Result
-      __eq__ ( const Function&         self  ,
-               const std::vector<int>& other ) { return self == other ; }
-      static Result
-      __eq__ ( const Function&         self  ,
-               const std::vector<unsigned int>&     other )
+      static Result __eq__ ( const Function& self, const std::vector<int>& other )
       { return self == other ; }
-      static Result
-      __eq__ ( const Function&         self  ,
-               const std::vector<std::string>&      other )
+      static Result __eq__ ( const Function& self, const std::vector<unsigned int>& other )
       { return self == other ; }
-      static Result
-      __eq__ ( const Function&         self  ,
-               const std::vector<LHCb::ParticleID>& other )
+      static Result __eq__ ( const Function& self, const std::vector<std::string>& other )
+      { return self == other ; }
+      static Result __eq__ ( const Function& self, const std::vector<LHCb::ParticleID>& other )
       { return self == other ; }
       // ======================================================================
       // !=

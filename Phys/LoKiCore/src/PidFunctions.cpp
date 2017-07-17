@@ -105,10 +105,11 @@ StatusCode LoKi::Pids::GetPids::getData()  const
   //
   std::vector<LHCb::ParticleID> pids ( LoKi::Particles::pidsFromNames ( m_names ) ) ;
   //
-  m_ints.resize  ( pids.size  () ) ;
+  decltype(m_ints) ints; ints.reserve(pids.size());
   std::transform ( pids.begin () , pids.end   () ,
-                   m_ints .begin () ,
+                   std::back_inserter(ints),
                    [](const LHCb::ParticleID& id) { return id.pid(); } );
+  m_ints = std::move(ints); // minimize datarace window...
   //
   return StatusCode::SUCCESS ;
 }
