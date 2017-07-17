@@ -13,7 +13,7 @@
  */
 namespace LHCb
 {
-  class ByteStream
+  class ByteStream final
   {
 
   public:

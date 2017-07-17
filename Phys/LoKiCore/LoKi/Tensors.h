@@ -688,20 +688,17 @@ namespace LoKi
        *  @param l the last   index
        *  @return the value of Levi-Civita symbol
        */
-      inline int epsilon
-      ( const size_t i ,
-        const size_t j ,
-        const size_t k ,
-        const size_t l ) const
+      constexpr inline int epsilon ( const size_t i , const size_t j ,
+                                     const size_t k , const size_t l ) const
       {
         /// the regular cases
-        if      (  i <  j && j <  k && k <  l && l <  4 ) { return 1 ; } // RETURN
-        else if (  i == j || j == k || k == l || l == i ) { return 0 ; } // RETURN
-        else if (  i >  3 || j >  3 || k >  3 || l >  3 ) { return 0 ; } // RETURN
+        if (  i <  j && j <  k && k <  l && l <  4 ) { return 1 ; } // RETURN
+        if (  i == j || j == k || k == l || l == i ) { return 0 ; } // RETURN
+        if (  i >  3 || j >  3 || k >  3 || l >  3 ) { return 0 ; } // RETURN
         /// permutations are required:
-        if      ( i > j  ) { return -epsilon ( j , i , k , l ) ; } // RETURN
-        else if ( j > k  ) { return -epsilon ( i , k , j , l ) ; } // RETURN
-        else if ( k > l  ) { return -epsilon ( i , j , l , k ) ; } // RETURN
+        if ( i > j  ) { return -epsilon ( j , i , k , l ) ; } // RETURN
+        if ( j > k  ) { return -epsilon ( i , k , j , l ) ; } // RETURN
+        if ( k > l  ) { return -epsilon ( i , j , l , k ) ; } // RETURN
         /// here we can go only if some of number >=4, return 0..
         return 0 ;
       }
@@ -989,19 +986,13 @@ namespace LoKi
        *  @return the product (component)
        */
       template <unsigned int I, unsigned int J, unsigned int K>
-      inline double e_3
-      ( const LoKi::LorentzVector& v ) const
+      inline double e_3 ( const LoKi::LorentzVector& v ) const
       {
         // take Minkowski metric into account
-        const double x = -v.Px () ;
-        const double y = -v.Py () ;
-        const double z = -v.Pz () ;
-        const double e =  v.E  () ;
-        //
-        return x * Epsilon_<I,J,K,X>::value
-          +    y * Epsilon_<I,J,K,Y>::value
-          +    z * Epsilon_<I,J,K,Z>::value
-          +    e * Epsilon_<I,J,K,E>::value ;
+        return  - v.Px () * Epsilon_<I,J,K,X>::value
+                - v.Py () * Epsilon_<I,J,K,Y>::value
+                - v.Pz () * Epsilon_<I,J,K,Z>::value
+                + v.E  () * Epsilon_<I,J,K,E>::value ;
       }
       // ======================================================================
       /** evaluate the tensor e*v1*v2 product

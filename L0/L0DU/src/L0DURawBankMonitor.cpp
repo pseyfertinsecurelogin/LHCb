@@ -253,14 +253,14 @@ StatusCode L0DURawBankMonitor::execute() {
       if( m_fromRaw->data("MuonCU1(Status)") & k )fill( hMuon, 2., 1.);
       if( m_fromRaw->data("MuonCU2(Status)") & k )fill( hMuon, 3., 1.);
       if( m_fromRaw->data("MuonCU3(Status)") & k )fill( hMuon, 4., 1.);
-      if(m_first){
+      if( m_first ){
         TAxis* axMuon = thMuon->GetXaxis();
         axMuon->SetBinLabel( 1 , "Counter" );
         axMuon->SetBinLabel( 2 , "MuonCU0" );
         axMuon->SetBinLabel( 3 , "MuonCU1" );
         axMuon->SetBinLabel( 4 , "MuonCU2" );
         axMuon->SetBinLabel( 5 , "MuonCU3" );
-      } 
+      }
       k = k << 1;
     }
 
@@ -274,7 +274,7 @@ StatusCode L0DURawBankMonitor::execute() {
     if( 1 == m_fromRaw->data("Hadron(Status)")   )fill( hCalo, 5. , 1. );
     if( 1 == m_fromRaw->data("Spd(Status)")      )fill( hCalo, 6. , 1. );
     if( 1 == m_fromRaw->data("Sum(Status)")      )fill( hCalo, 7. , 1. );
-    if(m_first){
+    if( m_first){
       TAxis* axCalo = thCalo->GetXaxis();
       axCalo->SetBinLabel( 1 , "Counter" );
       axCalo->SetBinLabel( 2 , "Electron" );
@@ -292,7 +292,7 @@ StatusCode L0DURawBankMonitor::execute() {
     fill( hPus, 0.  , 1. );
     if( 1 == m_fromRaw->data("PU1(Status)") )fill( hPus, 1.  , 1. );
     if( 1 == m_fromRaw->data("PU2(Status)") )fill( hPus, 2.  , 1. );
-    if(m_first){
+    if( m_first){
       TAxis* axPus = thPus->GetXaxis();
       axPus->SetBinLabel( 1 , "Counter" );
       axPus->SetBinLabel( 2 , "Pu1" );
@@ -315,6 +315,7 @@ StatusCode L0DURawBankMonitor::execute() {
     if( 0 < m_fromRaw->data("PU2(Status)"))inputStatus++;
 
     // BXID shift
+
     fill( histo1D(toHistoID("Status/L0DU/BCID/1")), odBX - m_fromRaw->bcid().first, 1 );
     if( odBX != 3561 && odBX != 3562 && odBX != 3563 && odBX != 0 && mOk)
       fill( histo1D(toHistoID("Status/L0DU/BCID/2")), (0x7F & m_fromRaw->bcid().first) - m_fromRaw->bcid().second , 1 );
@@ -492,22 +493,22 @@ void L0DURawBankMonitor::bookHistos() {
     book1D( toHistoID("Status/L0DU/BCID/2") ,  "BCID(PGA3)-BCID(PGA2)" , -15. , 15., 31);
     // Global summary
     AIDA::IHistogram1D* histo = book1D( toHistoID("Status/Summary/1")     ,  "L0DU error status summary"       , -1. , 12., 13);
-      TH1D* th1 = Gaudi::Utils::Aida2ROOT::aida2root( histo );
-      TAxis* xAxis = th1->GetXaxis();
-      xAxis->SetBinLabel( 1 , "Counter" );
-      xAxis->SetBinLabel( 2 , "Idle link" );
-      xAxis->SetBinLabel( 3 , "TLK Error" );
-      xAxis->SetBinLabel( 4 , "DeMultiplexer Error" );
-      xAxis->SetBinLabel( 5 , "PGA  BC MisAlign" );
-      xAxis->SetBinLabel( 6 , "ODIN BC MisAlign" );
-      xAxis->SetBinLabel( 7 , "Input Data Error" );
-      xAxis->SetBinLabel( 8 , "Emulator Check" );
-      xAxis->SetBinLabel( 9 , "Unknow TCK" );
-      xAxis->SetBinLabel( 10 , "SpdMult Error" );
-      xAxis->SetBinLabel( 11 , "No L0Muon"   );
-      xAxis->SetBinLabel( 12 , "No L0Calo"   );
-      xAxis->SetBinLabel( 13 , "No L0PU"     );
-      xAxis->LabelsOption( m_lab.c_str() );
+    TH1D* th1 = Gaudi::Utils::Aida2ROOT::aida2root( histo );
+    TAxis* xAxis = th1->GetXaxis();
+    xAxis->SetBinLabel( 1 , "Counter" );
+    xAxis->SetBinLabel( 2 , "Idle link" );
+    xAxis->SetBinLabel( 3 , "TLK Error" );
+    xAxis->SetBinLabel( 4 , "DeMultiplexer Error" );
+    xAxis->SetBinLabel( 5 , "PGA  BC MisAlign" );
+    xAxis->SetBinLabel( 6 , "ODIN BC MisAlign" );
+    xAxis->SetBinLabel( 7 , "Input Data Error" );
+    xAxis->SetBinLabel( 8 , "Emulator Check" );
+    xAxis->SetBinLabel( 9 , "Unknow TCK" );
+    xAxis->SetBinLabel( 10 , "SpdMult Error" );
+    xAxis->SetBinLabel( 11 , "No L0Muon"   );
+    xAxis->SetBinLabel( 12 , "No L0Calo"   );
+    xAxis->SetBinLabel( 13 , "No L0PU"     );
+    xAxis->LabelsOption( m_lab.c_str() );
     // BXID decision
     book1D( toHistoID("Status/BCID/1")        ,  "BCID for positive decisions"     , 0 , 3565, 3565);
   }
@@ -541,7 +542,6 @@ bool L0DURawBankMonitor::emulatorCheck(LHCb::L0DUConfig* config, int unit, std::
     return false;
   }
   bool check = true;
-
 
   LHCb::L0DUChannel::Map channels = config->channels();
   int cBin = channels.size();
@@ -604,6 +604,7 @@ bool L0DURawBankMonitor::emulatorCheck(LHCb::L0DUConfig* config, int unit, std::
       plot1D( (double) id ,"Status/L0DU/EmulatorCheck/Channels/" + Gaudi::Utils::toString(unit),
               "L0DU channels preDecision emulator check (" + txt + ")" ,-1. ,(double) cBin  , cBin+1);
       check = false;
+      //Warning("Channel "+it->first+" emulator error",StatusCode::SUCCESS,10).ignore();
     }
     std::string name = (*it).first;
     std::string type = LHCb::L0DUDecision::Name[((*it).second)->decisionType()];
@@ -616,15 +617,21 @@ bool L0DURawBankMonitor::emulatorCheck(LHCb::L0DUConfig* config, int unit, std::
     int id = it->second->id() ;
     int bx=it->second->bx();
     bool hasData =  it->second->data()->hasData(bx);
+    bool reported=it->second->reported();
     if(!hasData)
       Warning("Cannot monitor condition '"+ it->first + "' - data is not set for BX="
               +Gaudi::Utils::toString(bx),StatusCode::SUCCESS,10).ignore();
-    if( (report.conditionValue( id ) != it->second->emulatedValue()) || !hasData ){
+    if(!reported)
+      Warning("Cannot monitor condition '"+ it->first + "' - decision bit not reported=",StatusCode::SUCCESS,10).ignore();
+    if(!reported)counter("Condition "+it->first+ " is not reported")+=1;
+    if(!hasData)counter("Condition "+it->first+ " has no data")+=1;
+    if( (report.conditionValueByName( it->first ) != it->second->emulatedValue()) && hasData && reported){
       if ( msgLevel(MSG::DEBUG) )
         debug() << "Emulator check error for condition " << (*it).first << endmsg;
       plot1D( (double) id ,"Status/L0DU/EmulatorCheck/Conditions/" + Gaudi::Utils::toString(unit),
               "L0DU conditions value emulator check (" + txt + ")",-1. ,(double) ecBin  , ecBin+1);
       check = false;
+      //Warning("Condition "+it->first+" emulator error",StatusCode::SUCCESS,10).ignore();
     }
 
     std::string name = (*it).first;

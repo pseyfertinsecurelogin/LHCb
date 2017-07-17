@@ -62,7 +62,7 @@ namespace LoKi
     template <class IT>
     ConstView ( const std::pair<IT,IT>& base ) : _Base  ( base ) {}
     /// constructor form the container
-    ConstView ( const CONTAINER& c ) : _Base( c.begin() , c.end() ) {}
+    ConstView ( const CONTAINER& c ) : ConstView( c.begin() , c.end() ) {}
     /// compiler generated copy , assignment and destructor are OK
   public:
     /// begin-iterator for the sequence
@@ -88,7 +88,7 @@ namespace LoKi
     { return (*this)( index ) ; }
     /// get the slice : undefined for invalid indices
     ConstView slice ( size_type i1 , size_type i2 ) const
-    { return ConstView( begin() + i1 , begin() + i2 ) ; }
+    { return { begin() + i1 , begin() + i2 } ; }
   };
   // ==========================================================================
 } // end of namespace LoKi

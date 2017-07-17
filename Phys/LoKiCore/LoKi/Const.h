@@ -28,19 +28,15 @@ namespace LoKi
    */
   template <class TYPE>
   struct  Const
-  { typedef           const TYPE                       Value ; } ;
-  // ==========================================================================
-  template <class TYPE>
-  struct  Const<const TYPE>
-  { typedef typename  Const<TYPE>::Value const         Value ; } ;
+  { typedef           std::add_const_t<TYPE>           Value ; } ;
   // ==========================================================================
   template <class TYPE>
   struct  Const<TYPE*>
-  { typedef typename  Const<TYPE>::Value const * const Value ; } ;
+  { typedef std::add_const_t<TYPE> * const Value ; } ;
   // ==========================================================================
   template <class TYPE>
   struct  Const<TYPE&>
-  { typedef typename  Const<TYPE>::Value const &       Value ; } ;
+  { typedef std::add_const_t<TYPE> const &       Value ; } ;
   // ==========================================================================
   /** @struct NonConst LoKi/Const.h
    *  Auxillary structure to define "const-traits"
@@ -49,19 +45,15 @@ namespace LoKi
    */
   template <class TYPE>
   struct  NonConst
-  { typedef           TYPE                             Value ; } ;
-  // ==========================================================================
-  template <class TYPE>
-  struct  NonConst<const TYPE>
-  { typedef typename  NonConst<TYPE>::Value            Value ; } ;
+  { typedef        std::remove_const_t<TYPE>           Value ; } ;
   // ==========================================================================
   template <class TYPE>
   struct  NonConst<TYPE*>
-  { typedef typename  NonConst<TYPE>::Value*           Value ; } ;
+  { typedef std::remove_const_t<TYPE>*                 Value ; } ;
   // ==========================================================================
   template <class TYPE>
   struct  NonConst<TYPE&>
-  { typedef typename  NonConst<TYPE>::Value&           Value ; } ;
+  { typedef std::remove_const_t<TYPE>&                 Value ; } ;
   // ==========================================================================
 } //                                                      end of namespace LoKi
 // ============================================================================

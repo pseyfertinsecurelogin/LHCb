@@ -8,7 +8,7 @@
 //definition of how to store sets of events
 namespace LHCb
 {
-  typedef std::greater<long unsigned int> EventTypeComp;
+  typedef std::greater<> EventTypeComp;
   typedef std::set<long unsigned int, EventTypeComp > EventTypeSet;
 }
 

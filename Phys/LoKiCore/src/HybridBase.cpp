@@ -101,7 +101,6 @@ LoKi::Hybrid::Base::Base
   const IInterface*  parent )
   : GaudiTool ( type , name , parent )
     //
-  , m_pyInit     ( false )
   , m_cpplines   ( { "#include \"GaudiKernel/Kernel.h\""            ,
                      "#include \"GaudiKernel/System.h\""            ,
                      "#include \"GaudiKernel/SystemOfUnits.h\""     ,

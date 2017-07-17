@@ -33,13 +33,6 @@
 #pragma warning(disable:2259) // non-pointer conversion may lose significant bits
 #pragma warning(disable:1572) // floating-point equality and inequality comparisons are unreliable
 #endif
-#ifdef GAUDI_SYSEXECUTE_WITHCONTEXT
-/// \fixme backward compatibility with Gaudi <= v28r1
-#include "GaudiKernel/ThreadLocalContext.h"
-#define SYSEX_ARGUMENT Gaudi::Hive::currentContext()
-#else
-#define SYSEX_ARGUMENT
-#endif
 // ============================================================================
 /** @file
  *  Implementation file for functions from namespace LoKi::Algorithms
@@ -232,46 +225,22 @@ namespace
     SmartIF<IAlgManager> iam = getAlgManager  ( loki ) ;
     return iam ? getAlgorithm ( name , iam ) : nullptr;
   }
-  // ==========================================================================
-  // filter passed ?
-  constexpr struct FilterPassed_t
-  {
-    inline bool operator() ( const IAlgorithm* ia ) const
-    { return ia && ia -> filterPassed () ; }
-  } filterPassed{};
-  // ========================================================================
-  // is enabled ?
-  constexpr struct IsEnabled_t
-  {
-    inline bool operator() ( const IAlgorithm* ia ) const
-    { return ia && ia -> isEnabled () ; }
-  } isEnabled{};
-  // ==========================================================================
-  // is executed ?
-  constexpr struct IsExecuted_t
-  {
-    inline bool operator() ( const IAlgorithm* ia ) const
-    { return ia && ia -> isExecuted () ; }
-  } isExecuted{};
-  // ==========================================================================
 }
 // ============================================================================
 // get the algorithm
 // ============================================================================
 const LoKi::Interface<IAlgorithm>&
-LoKi::Algorithms::Passed::getAlgorithm
-( const std::string& name ) const  // get the algorithm
+LoKi::Algorithms::Passed::getAlgorithm ( const std::string& name ) const
 {
   const IAlgorithm* a = ::getAlgorithm ( name , lokiSvc () ) ;
-  Assert ( 0 != a , "Unable to locate algorithm '" + name + "'" ) ;
+  Assert ( nullptr != a , "Unable to locate algorithm '" + name + "'" ) ;
   m_algorithm = a ;
   return algorithm () ;
 }
 // ============================================================================
 // constructor from the algorithm name
 // ============================================================================
-LoKi::Algorithms::Passed::Passed
-( const std::string& name )
+LoKi::Algorithms::Passed::Passed( const std::string& name )
   : LoKi::AuxFunBase ( std::tie ( name ) )
   , m_name       ( name        )
   , m_algorithm  ( s_ALGORITHM )
@@ -295,7 +264,7 @@ bool LoKi::Algorithms::Passed::operator() () const
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
   //
-  return filterPassed ( algorithm() ) ;
+  return Predicates::filterPassed ( algorithm() ) ;
   //
 }
 // ============================================================================
@@ -315,7 +284,7 @@ bool LoKi::Algorithms::Enabled::operator() () const
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
   //
-  return isEnabled ( algorithm() ) ;
+  return Predicates::isEnabled ( algorithm() ) ;
   //
 }
 // ============================================================================
@@ -339,7 +308,7 @@ bool LoKi::Algorithms::Executed::operator() () const
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
   //
-  return isExecuted ( algorithm() ) ;
+  return Predicates::isExecuted ( algorithm() ) ;
   //
 }
 // ============================================================================
@@ -363,13 +332,13 @@ bool LoKi::Algorithms::Run::operator() () const
   //
   if ( !algorithm().validPointer() ) { this->getAlgorithm ( algName() ) ; }
   //
-  if ( !isEnabled ( algorithm() ) )
+  if ( !Predicates::isEnabled ( algorithm() ) )
   {
     Warning("Algorithm '" + algName() + "' is disabled, return false " );
     return false ;                                                  // RETURN
   }
   //
-  if ( !isExecuted ( algorithm() ) )
+  if ( !Predicates::isExecuted ( algorithm() ) )
   {
     StatusCode sc = algorithm()->sysExecute(SYSEX_ARGUMENT) ;  // EXECUTE IT!!!
     if ( sc.isFailure() )
@@ -380,7 +349,7 @@ bool LoKi::Algorithms::Run::operator() () const
   }
   //
   // finally:
-  return filterPassed ( algorithm() ) ;
+  return Predicates::filterPassed ( algorithm() ) ;
   //
 }
 // ============================================================================
@@ -393,18 +362,20 @@ std::ostream& LoKi::Algorithms::Run::fillStream( std::ostream& s ) const
 // ============================================================================
 // get the algorithm
 // ============================================================================
+template <typename ReturnType>
 LoKi::Interface<IAlgorithm>
-LoKi::Algorithms::AnyPassed::getAlgorithm
+LoKi::Algorithms::details::AlgsFunctorBase<ReturnType>::getAlgorithm
 ( const std::string& name ) const  // get the algorithm
 {
-  LoKi::Interface<IAlgorithm> a = ::getAlgorithm ( name , lokiSvc () ) ;
+  LoKi::Interface<IAlgorithm> a = ::getAlgorithm ( name , this->lokiSvc () ) ;
   Assert ( a.validPointer() , "Unable to locate algorithm '" + name + "'" ) ;
   return a ;
 }
 // ============================================================================
 // get the algorithms
 // ============================================================================
-void LoKi::Algorithms::AnyPassed::getAlgorithms () const  // get the algorithm
+template <typename ReturnType>
+void LoKi::Algorithms::details::AlgsFunctorBase<ReturnType>::getAlgorithms () const  // get the algorithm
 {
   // unsigned int i = 0 ;
   std::transform( m_names.begin(), m_names.end(),
@@ -419,39 +390,31 @@ void LoKi::Algorithms::AnyPassed::getAlgorithms () const  // get the algorithm
 // ============================================================================
 // constructor from the algorithm name
 // ============================================================================
-LoKi::Algorithms::AnyPassed::AnyPassed
+template <typename ReturnType>
+LoKi::Algorithms::details::AlgsFunctorBase<ReturnType>::AlgsFunctorBase
 ( std::vector<std::string> names )
-  : LoKi::AuxFunBase ( std::tie ( names ) )
-  , m_names     ( std::move(names) )
+: m_names     ( std::move(names) )
 {
-  if ( gaudi() ) { getAlgorithms() ; }
+  if ( this->gaudi() ) { this->getAlgorithms() ; }
 }
 // ============================================================================
 // MANDATORY: virtual destructor
 // ============================================================================
-LoKi::Algorithms::AnyPassed::~AnyPassed()
+template <typename ReturnType>
+LoKi::Algorithms::details::AlgsFunctorBase<ReturnType>::~AlgsFunctorBase()
 {
   for ( auto& ia : m_algorithms) {
-    if ( ia && !gaudi() ) {
+    if ( ia && !this->gaudi() ) {
       // Warning("IAlgorithm: manual reset!") ;
       ia.reset() ;
     }
   }
 }
 // ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-bool LoKi::Algorithms::AnyPassed::operator() () const
-{
-  //
-  if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
-  //
-  return std::any_of ( begin () , end   () , filterPassed ) ;
-}
-// ============================================================================
 // OPTIONAL: nice printout
 // ============================================================================
-std::ostream& LoKi::Algorithms::AnyPassed::print
+template <typename ReturnType>
+std::ostream& LoKi::Algorithms::details::AlgsFunctorBase<ReturnType>::print
 ( const std::string& name , std::ostream& s ) const
 {
   s << name << "(";
@@ -473,123 +436,9 @@ std::ostream& LoKi::Algorithms::AnyPassed::print
   return s << ")" ;
 }
 
+template class LoKi::Algorithms::details::AlgsFunctorBase<bool>;
+template class LoKi::Algorithms::details::AlgsFunctorBase<double>;
 
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-bool LoKi::Algorithms::AllPassed::operator() () const
-{
-  //
-  if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
-  //
-  return !empty()  && std::all_of( begin () , end () ,  filterPassed ) ;
-}
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-bool LoKi::Algorithms::AnyEnabled::operator() () const
-{
-  //
-  if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
-  //
-  return std::any_of( begin () , end () , isEnabled ) ;
-}
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-bool LoKi::Algorithms::AllEnabled::operator() () const
-{
-  //
-  if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
-  //
-  return !empty()  && std::all_of( begin () , end () , isEnabled ) ;
-}
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-bool LoKi::Algorithms::AnyExecuted::operator() () const
-{
-  //
-  if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
-  //
-  return std::any_of( begin () , end () , isExecuted ) ;
-}
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-bool LoKi::Algorithms::AllExecuted::operator() () const
-{
-  //
-  if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
-  //
-  return !empty()  && std::all_of ( begin () , end () , isExecuted ) ;
-}
-// ============================================================================
-
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-double LoKi::Algorithms::NumPassed::operator() () const
-{
-  //
-  if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
-  //
-  return std::count_if( begin () , end() , filterPassed ) ;
-}
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-double LoKi::Algorithms::NumEnabled::operator() () const
-{
-  //
-  if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
-  //
-  return std::count_if ( begin () , end() , isEnabled ) ;
-}
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-double LoKi::Algorithms::NumExecuted::operator() () const
-{
-  //
-  if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
-  //
-  return std::count_if ( begin () , end() , isExecuted ) ;
-}
-
-// ============================================================================
-// MANDATORY: the only one essential method
-// ============================================================================
-bool LoKi::Algorithms::RunAll::operator() () const
-{
-  //
-  if ( algNames().size() != algorithms().size() ) { getAlgorithms() ; }
-  //
-  //
-  for ( IAlgorithm* alg : algorithms() ){
-    if ( !alg ) {
-      Warning("Invalid algorithm!, return false " );
-      return false ;                                                  // RETURN
-    }
-    //
-    if ( !isEnabled( alg ) ) {
-      Warning("Algorithm '" + alg->name() + "' is disabled, return false " );
-      return false ;                                                  // RETURN
-    }
-    //
-    if ( !isExecuted ( alg ) ) {
-      StatusCode sc = alg->sysExecute(SYSEX_ARGUMENT) ;  // EXECUTE IT!!!
-      if ( sc.isFailure() ) {
-        Error("Error from algorithm '" + alg->name() + "' sysExecute", sc );
-        return false ;                                                // RETURN
-      }
-    }
-    //
-    if ( !filterPassed ( alg ) ) { return false ; }                           // RETURN
-  }
-  //
-  return true ;
-}
 // ============================================================================
 // The END
 // ============================================================================

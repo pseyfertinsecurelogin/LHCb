@@ -14,20 +14,17 @@
 class RawEventSelectiveCopy : public GaudiAlgorithm {
 public:
   /// Standard constructor
-  RawEventSelectiveCopy( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
 
-  virtual ~RawEventSelectiveCopy( );     ///< Destructor
   StatusCode initialize() override;      ///< Algorithm initialization
   StatusCode execute() override;         ///< Algorithm execution
 
-protected:
-
 private:
 
-  StringArrayProperty m_banksToCopy;
-  StringArrayProperty m_banksToRemove;
-  StringProperty      m_inputLocation;
-  StringProperty      m_outputLocation;
+  Gaudi::Property<std::vector<std::string>> m_banksToCopy { this, "RawBanksToCopy",   {}, "Create a new RawEvent copying only these banks"};
+  Gaudi::Property<std::vector<std::string>> m_banksToRemove{ this, "RawBanksToRemove", {}, "Create a RawEvent copy, with these banks removed"};
+  Gaudi::Property<std::string>      m_inputLocation{ this, "InputRawEventLocation", LHCb::RawEventLocation::Default };
+  Gaudi::Property<std::string>      m_outputLocation{ this, "OutputRawEventLocation", LHCb::RawEventLocation::Copied };
 
   std::vector<LHCb::RawBank::BankType> m_bankTypes;
 };

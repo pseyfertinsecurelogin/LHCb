@@ -237,10 +237,10 @@ bool LoKi::AuxFunBase::sameEvent () const
 // ============================================================================
 /* (virtual) printout in form of std::string
  *  @return string representation (must be valid C++)
- */ 
+ */
 // ============================================================================
-std::string LoKi::AuxFunBase::toCpp() const 
-{ return objType() +  ( m_cargs.empty() ? "() " : "( " + m_cargs + " ) " ) ; }
+std::string LoKi::AuxFunBase::toCpp() const
+{ return objType() + "( " + cargs() + " ) "; }
 // ============================================================================
 /*  output operator of function objects to std::ostream
  *  @param stream reference to the stream
@@ -248,9 +248,8 @@ std::string LoKi::AuxFunBase::toCpp() const
  *  @return reference to the stream
  */
 // ============================================================================
-std::ostream& LoKi::operator<<
-  ( std::ostream&      stream ,
-    const AuxFunBase&  obj    ) { return obj.fillStream ( stream ) ; }
+std::ostream& LoKi::operator<<( std::ostream& stream , const AuxFunBase&  obj )
+{ return obj.fillStream ( stream ) ; }
 // ============================================================================
 /*  output operator of function objects to std::ostream
  *  @param stream reference to the stream
@@ -258,9 +257,7 @@ std::ostream& LoKi::operator<<
  *  @return reference to the stream
  */
 // ============================================================================
-MsgStream& LoKi::operator<<
-  ( MsgStream&         stream ,
-    const AuxFunBase&  obj    )
+MsgStream& LoKi::operator<<( MsgStream& stream , const AuxFunBase&  obj )
 {
   if ( stream.isActive() ) { obj.fillStream( stream.stream() ) ; }
   return stream ;
