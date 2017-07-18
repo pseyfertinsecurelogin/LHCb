@@ -39,8 +39,7 @@ LoKi::Scalers::RandomScaleV::RandomScaleV
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::Scalers::RandomScaleV*
-LoKi::Scalers::RandomScaleV::clone() const
+LoKi::Scalers::RandomScaleV* LoKi::Scalers::RandomScaleV::clone() const
 { return new LoKi::Scalers::RandomScaleV( *this ) ;}
 // ============================================================================
 // MANDATORY: the only one essential method
@@ -72,8 +71,7 @@ LoKi::Scalers::RandomScale::RandomScale
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::Scalers::RandomScale*
-LoKi::Scalers::RandomScale::clone() const
+LoKi::Scalers::RandomScale* LoKi::Scalers::RandomScale::clone() const
 { return new LoKi::Scalers::RandomScale( *this ) ;}
 // ============================================================================
 // MANDATORY: the only one essential method
@@ -104,8 +102,7 @@ LoKi::Scalers::SkipperV::SkipperV ( const size_t skip )
 // ===========================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ===========================================================================
-LoKi::Scalers::SkipperV*
-LoKi::Scalers::SkipperV::clone() const
+LoKi::Scalers::SkipperV* LoKi::Scalers::SkipperV::clone() const
 { return new LoKi::Scalers::SkipperV ( *this ) ; }
 // ===========================================================================
 // MANDATORY: the only one essential method
@@ -136,8 +133,7 @@ LoKi::Scalers::Skipper::Skipper ( const size_t skip )
 // ===========================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ===========================================================================
-LoKi::Scalers::Skipper*
-LoKi::Scalers::Skipper::clone() const
+LoKi::Scalers::Skipper* LoKi::Scalers::Skipper::clone() const
 { return new LoKi::Scalers::Skipper ( *this ) ; }
 // ===========================================================================
 // MANDATORY: the only one essential method
@@ -311,8 +307,7 @@ LoKi::Scalers::RateLimitV::~RateLimitV()
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::Scalers::RateLimitV*
-LoKi::Scalers::RateLimitV::clone() const
+LoKi::Scalers::RateLimitV* LoKi::Scalers::RateLimitV::clone() const
 { return new LoKi::Scalers::RateLimitV ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method
@@ -456,8 +451,7 @@ LoKi::Scalers::RateLimit::RateLimit
 // ============================================================================
 // MANDATORY: clone method ("virtual constructor")
 // ============================================================================
-LoKi::Scalers::RateLimit*
-LoKi::Scalers::RateLimit::clone() const
+LoKi::Scalers::RateLimit* LoKi::Scalers::RateLimit::clone() const
 { return new LoKi::Scalers::RateLimit ( *this ) ; }
 // ============================================================================
 // MANDATORY: the only one essential method

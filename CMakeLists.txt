@@ -21,8 +21,8 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
 # For clang builds, use
 # USE Gaudi mr284
 # Otherwise
-# USE Gaudi v28r1
-gaudi_project(LHCb v42r5
+# USE Gaudi v28r2
+gaudi_project(LHCb v43r0
               USE Gaudi v28r2
               DATA Gen/DecFiles
                    Det/SQLDDDB VERSION v7r*

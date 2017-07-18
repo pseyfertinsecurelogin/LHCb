@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from Gaudi
 #include "GaudiKernel/IRegistry.h"
@@ -29,13 +29,8 @@ FileIdBankWriter::FileIdBankWriter( const std::string& name,
   , m_count_files(0)
 {
   declareProperty( "RawEventLocation"  ,  m_rawEventLocation = LHCb::RawEventLocation::Default );
- 
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-FileIdBankWriter::~FileIdBankWriter() {} 
 
+}
 //=============================================================================
 // Initialization
 //=============================================================================
@@ -45,7 +40,7 @@ StatusCode FileIdBankWriter::initialize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
-  // file counting 
+  // file counting
   m_current_fname = "";
   m_count_files = 0;
 
@@ -62,7 +57,7 @@ StatusCode FileIdBankWriter::execute() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Execute" << endmsg;
 
-  // registry from raw data - only correct if file catalogue used 
+  // registry from raw data - only correct if file catalogue used
   std::string event_fname;
   LHCb::RawEvent* event = getIfExists<LHCb::RawEvent>(m_rawEventLocation);
   if( event == NULL ){
@@ -86,8 +81,8 @@ StatusCode FileIdBankWriter::execute() {
     // calculate identifier
     m_bank = m_fileId.fileIDstr2int(event_fname);
   }
-  // add now to the raw data: set source, type, version 
-  event->addBank( 0, LHCb::RawBank::FileID, 0, m_bank );   
+  // add now to the raw data: set source, type, version
+  event->addBank( 0, LHCb::RawBank::FileID, 0, m_bank );
 
   return StatusCode::SUCCESS;
 }

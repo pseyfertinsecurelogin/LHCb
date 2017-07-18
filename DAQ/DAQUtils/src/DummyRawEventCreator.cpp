@@ -1,5 +1,5 @@
 // Include files
-
+#include <numeric>
 // from Gaudi
 #include "GaudiKernel/IEventTimeDecoder.h"
 
@@ -24,19 +24,6 @@ DECLARE_NAMESPACE_ALGORITHM_FACTORY(DAQEventTests,DummyRawEventCreator)
 
 using namespace LHCb;
 using namespace DAQEventTests;
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-DummyRawEventCreator::DummyRawEventCreator( const std::string& name,
-                                            ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ), m_eventTimeDecoder(NULL)
-{
-
-}
-//=============================================================================
-// Destructor
-//=============================================================================
-DummyRawEventCreator::~DummyRawEventCreator() {}
 
 StatusCode DummyRawEventCreator::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize();
@@ -56,22 +43,16 @@ StatusCode DummyRawEventCreator::execute() {
 
   RawEvent* raw = new RawEvent();
   for(int i=0; i<16; ++i)  {
-    int cnt = 0;
     int len  = (i+1)*64;
     RawBank* bank = raw->createBank(i, RawBank::DAQ, 1, len, 0);
-    for(int* p=bank->begin<int>(); p != bank->end<int>(); ++p)  {
-      *p = cnt++;
-    }
+    std::iota( bank->begin<int>(), bank->end<int>(), 0 );
     raw->adoptBank(bank, true);
   }
 
   for(int i=0; i<9; ++i)  {
-    int cnt = 0;
     int len  = (i+1)*32;
     RawBank* bank = raw->createBank(i, RawBank::PrsE, 1, len, 0);
-    for(int* p=bank->begin<int>(); p != bank->end<int>(); ++p)  {
-      *p = cnt++;
-    }
+    std::iota( bank->begin<int>(), bank->end<int>(), 0 );
     raw->adoptBank(bank, true);
   }
 

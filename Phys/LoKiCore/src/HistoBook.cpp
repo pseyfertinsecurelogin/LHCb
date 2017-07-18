@@ -39,10 +39,9 @@
  *  @return booked histogram
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const std::string&       path ,
-  const Gaudi::Histo1DDef& hist ,
-  IHistogramSvc*           svc  )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const std::string&       path ,
+                                            const Gaudi::Histo1DDef& hist ,
+                                            IHistogramSvc*           svc  )
 {
   // get the service from LoKi
   if ( !svc ) {
@@ -95,11 +94,10 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @return booked histogram
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const std::string&       dir  ,
-  const GaudiAlg::ID&      id   ,
-  const Gaudi::Histo1DDef& hist ,
-  IHistogramSvc*           svc  )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const std::string&       dir  ,
+                                            const GaudiAlg::ID&      id   ,
+                                            const Gaudi::Histo1DDef& hist ,
+                                            IHistogramSvc*           svc  )
 {
   // get the service form LoKi
   if ( !svc )
@@ -168,11 +166,10 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @return booked histogram
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const std::string&       dir  ,
-  const int                id   ,
-  const Gaudi::Histo1DDef& hist ,
-  IHistogramSvc*           svc  )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const std::string&       dir  ,
+                                            const int                id   ,
+                                            const Gaudi::Histo1DDef& hist ,
+                                            IHistogramSvc*           svc  )
 { return book ( dir , GaudiAlg::ID( id ) , hist , svc ) ; }
 // ============================================================================
 /*  helper function to book 1D-histogram
@@ -182,11 +179,10 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const std::string&       dir  ,
-  const std::string&       id   ,
-  const Gaudi::Histo1DDef& hist ,
-  IHistogramSvc*           svc  )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const std::string&       dir  ,
+                                            const std::string&       id   ,
+                                            const Gaudi::Histo1DDef& hist ,
+                                            IHistogramSvc*           svc  )
 { return book ( dir , GaudiAlg::ID ( id ) , hist , svc ) ; }
 // ============================================================================
 /*  helper function to book 1D-histogram
@@ -195,10 +191,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const GaudiHistoAlg*     alg  ,
-  const std::string&       id   ,
-  const Gaudi::Histo1DDef& hist )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const GaudiHistoAlg*     alg  ,
+                                            const std::string&       id   ,
+                                            const Gaudi::Histo1DDef& hist )
 { return book ( alg , GaudiAlg::ID ( id ) , hist ) ; }
 // ============================================================================
 /*  helper function to book 1D-histogram
@@ -208,10 +203,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const GaudiHistoTool*    tool ,
-  const std::string&       id   ,
-  const Gaudi::Histo1DDef& hist )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const GaudiHistoTool*    tool ,
+                                            const std::string&       id   ,
+                                            const Gaudi::Histo1DDef& hist )
 { return book ( tool , GaudiAlg::ID ( id ) , hist ) ; }
 // ============================================================================
 /*  helper function to book 1D-histogram
@@ -221,10 +215,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const IHistoTool*        tool ,
-  const std::string&       id   ,
-  const Gaudi::Histo1DDef& hist )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const IHistoTool*        tool ,
+                                            const std::string&       id   ,
+                                            const Gaudi::Histo1DDef& hist )
 { return book ( tool , GaudiAlg::ID ( id ) , hist ) ; }
 // ============================================================================
 /*  helper function to book 1D-histogram
@@ -233,10 +226,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const GaudiHistoAlg*     alg  ,
-  const GaudiAlg::ID&      id   ,
-  const Gaudi::Histo1DDef& hist )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const GaudiHistoAlg*     alg  ,
+                                            const GaudiAlg::ID&      id   ,
+                                            const Gaudi::Histo1DDef& hist )
 {
   if ( !alg )
   {
@@ -292,10 +284,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const GaudiHistoTool*    tool ,
-  const GaudiAlg::ID&      id   ,
-  const Gaudi::Histo1DDef& hist )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const GaudiHistoTool*    tool ,
+                                            const GaudiAlg::ID&      id   ,
+                                            const Gaudi::Histo1DDef& hist )
 {
   if ( !tool )
   {
@@ -351,10 +342,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const IHistoTool*        tool ,
-  const GaudiAlg::ID&      id   ,
-  const Gaudi::Histo1DDef& hist )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const IHistoTool*        tool ,
+                                            const GaudiAlg::ID&      id   ,
+                                            const Gaudi::Histo1DDef& hist )
 {
   if ( !tool  )
   {
@@ -399,10 +389,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const IAlgContextSvc*    svc ,
-  const GaudiAlg::ID&      id   ,
-  const Gaudi::Histo1DDef& hist )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const IAlgContextSvc*    svc ,
+                                            const GaudiAlg::ID&      id   ,
+                                            const Gaudi::Histo1DDef& hist )
 {
   if ( !svc )
   {
@@ -423,10 +412,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const Gaudi::Histo1DDef& hist ,
-  const GaudiAlg::ID&      id   ,
-  const IAlgContextSvc*    svc  )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const Gaudi::Histo1DDef& hist ,
+                                            const GaudiAlg::ID&      id   ,
+                                            const IAlgContextSvc*    svc  )
 {
   if ( !svc )
   {
@@ -452,10 +440,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const Gaudi::Histo1DDef& hist ,
-  const std::string&       id   ,
-  const IAlgContextSvc*    svc  )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const Gaudi::Histo1DDef& hist ,
+                                            const std::string&       id   ,
+                                            const IAlgContextSvc*    svc  )
 { return book ( hist , GaudiAlg::ID ( id ) , svc ) ; }
 // ============================================================================
 /*  helper function to book 1D-histogram
@@ -465,10 +452,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const Gaudi::Histo1DDef& hist ,
-  const int                id   ,
-  const IAlgContextSvc*    svc  )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const Gaudi::Histo1DDef& hist ,
+                                            const int                id   ,
+                                            const IAlgContextSvc*    svc  )
 { return book ( hist , GaudiAlg::ID ( id ) , svc ) ; }
 // ============================================================================
 /** helper function to book 1D-histogram
@@ -477,10 +463,9 @@ AIDA::IHistogram1D* LoKi::HistoBook::book
  *  @param hist histogram desctription
  */
 // ============================================================================
-AIDA::IHistogram1D* LoKi::HistoBook::book
-( const IAlgContextSvc*    svc  ,
-  const std::string&       id   ,
-  const Gaudi::Histo1DDef& hist )
+AIDA::IHistogram1D* LoKi::HistoBook::book ( const IAlgContextSvc*    svc  ,
+                                            const std::string&       id   ,
+                                            const Gaudi::Histo1DDef& hist )
 { return book ( svc , GaudiAlg::ID ( id ) , hist ) ; }
 // ============================================================================
 /*  helper function to book 1D-histogram
