@@ -23,7 +23,7 @@ public:
    // and Target types of the returned InputLinks to be the specified
    // types.
    template <typename Src, typename Target = DefaultType,
-             typename std::enable_if_t<!std::is_same<DefaultType, Target>::value, Target>* = nullptr>
+             typename std::enable_if_t<!std::is_same<DefaultType, Target>::value>* = nullptr>
    InputLinks<Src, Target> inputLinks(const LHCb::LinksByKey& links) const
    {
       return InputLinks<Src, Target>{links};
@@ -34,7 +34,7 @@ public:
    // and Target types of the returned InputLinks to be
    // ContainedObject and the specified type, respectively.
    template <typename Src, typename Target = DefaultType,
-             typename std::enable_if_t<std::is_same<DefaultType, Target>::value, Target>* = nullptr>
+             typename std::enable_if_t<std::is_same<DefaultType, Target>::value>* = nullptr>
    InputLinks<ContainedObject, Src> inputLinks(const LHCb::LinksByKey& links) const
    {
       return InputLinks<ContainedObject, Src>{links};
@@ -45,7 +45,7 @@ public:
    // and Target types of the returned OutputLinks to be
    // ContainedObject and the specified type, respectively.
    template <typename Src, typename Target = DefaultType,
-             typename std::enable_if_t<std::is_same<DefaultType, Target>::value, Target>* = nullptr>
+             typename std::enable_if_t<std::is_same<DefaultType, Target>::value>* = nullptr>
    OutputLinks<Source, Src> outputLinks() const
    {
       return OutputLinks<Source, Src>{};
@@ -56,7 +56,7 @@ public:
    // and Target types of the returned OutputLinks to be the specified
    // types.
    template <typename Src, typename Target = DefaultType,
-             typename std::enable_if_t<!std::is_same<DefaultType, Target>::value, Target>* = nullptr>
+             typename std::enable_if_t<!std::is_same<DefaultType, Target>::value>* = nullptr>
    OutputLinks<Src, Target> outputLinks() const
    {
       return OutputLinks<Src, Target>{};
