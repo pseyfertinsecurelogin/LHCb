@@ -30,6 +30,7 @@ public:
    }
 
    const LHCb::LinksByKey& links() const { return m_links; }
+   LHCb::LinksByKey& links() { return m_links; }
 
    void reset() { m_links.reset(); }
 
