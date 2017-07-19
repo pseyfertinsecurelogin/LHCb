@@ -94,6 +94,7 @@ def main():
     parser.add_option('-t', '--tag',
                       action='append', dest='tags',
                       help='tags to extract if notes-xml is not provided')
+    parser.add_option('-T', '--head-tag-name')
     parser.add_option('--name',
                       help='name of the COOL database in the SQLite file '
                       '(default: the file name without extension)')
@@ -104,7 +105,8 @@ def main():
                         always_iovs=False,
                         partition_payloads=False,
                         do_head=True,
-                        tags=[])
+                        tags=[],
+                        head_tag_name='HEAD')
 
     opts, args = parser.parse_args()
 
@@ -267,7 +269,8 @@ def main():
         if check_output(['git', 'status', '--porcelain'],
                         cwd=repo_dir).strip():
             os.environ['GIT_COMMITTER_DATE'] = date
-            check_output(['git', 'commit', '-m', tag,
+            check_output(['git', 'commit', '-m',
+                          opts.head_tag_name if tag == 'HEAD' else tag,
                           '--author', author, '--date', date],
                          cwd=repo_dir)
         else:
