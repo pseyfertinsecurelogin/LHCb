@@ -1743,7 +1743,7 @@ def _collect_tree_info(source_dir, includes = [], excludes = [],
 
     """
     # add to the exclude list CVS and back-up files
-    exclude_dirs += [ x for x in ['CVS'] if x not in exclude_dirs ]
+    exclude_dirs += [ x for x in ['CVS', '.svn', '.git'] if x not in exclude_dirs ]
     excludes += [ x for x in ['.*~', r'.*\.bak'] if x not in excludes ]
     # convert to regular expression objects
     includes = [ re.compile(x) for x in includes]
@@ -1753,7 +1753,20 @@ def _collect_tree_info(source_dir, includes = [], excludes = [],
 
     name_format = re.compile("(?:([a-zA-Z0-9_.-]*)@)?([a-zA-Z0-9_.-]*)(?::([0-9]+))?$")
     nodes = {}
-    for root, dirs, files in os.walk(source_dir):
+
+    def walk(path):
+        from os.path import join, isfile
+        for root, dirs, files in os.walk(source_dir):
+            # if a directory contains the file IOVs...
+            promoted_dirs = set(d for d in dirs
+                                if isfile(join(root, d, 'IOVs')))
+            # ... we consider it as a "Folder" for COOL...
+            files.extend(promoted_dirs)
+            # ... and stop recursion
+            dirs[:] = list(set(dirs) - promoted_dirs)
+            yield root, dirs, files
+
+    for root, dirs, files in walk(source_dir):
         base_path = root.replace(source_dir,"")
         if base_path == '': base_path = '/'
 
@@ -1836,7 +1849,9 @@ def _fix_xml(xml_data,folderset_path):
             pos = m.start()
             s = m.start(1)+1
             e = m.end(1)-1
-            if not data[s:e].startswith("conddb:"):
+            if data[s:e].startswith("git:"):
+                data = data[0:s] + 'conddb:' + data[s+4:]
+            elif not data[s:e].startswith("conddb:"):
                 # replace the system id only if needed
                 p = os.path.join(path,data[s:e])
                 p = os.path.normpath(p)
