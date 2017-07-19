@@ -122,7 +122,11 @@ def _useFiles(repository, tag):
     '''
     # empty tag and checked out repository means access files, but 'HEAD' on a
     # bare repository
-    return (not tag or tag == '<files>') and isdir(join(repository, '.git'))
+    def is_not_bare():
+        return (isdir(join(repository, '.git')) or
+                not (isdir(join(repository, 'object')) and
+                     isdir(join(repository, 'refs'))))
+    return (not tag or tag == '<files>') and is_not_bare()
 
 
 def listFiles(repository, tag='HEAD', path='.'):
