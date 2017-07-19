@@ -1,5 +1,5 @@
-#ifndef LINKERDETAILS_H
-#define LINKERDETAILS_H
+#ifndef ASSOCIATORS_INPUTLINKS_H
+#define ASSOCIATORS_INPUTLINKS_H
 
 #include <iostream>
 #include <type_traits>
@@ -71,17 +71,20 @@ public:
       const auto& refs = links.linkReference();
 
       int srcKey = 0;
-      int refIndex = 0;
-
-      for (const auto& entry : links.keyIndex()) {
-         std::tie(srcKey, refIndex) = entry;
-         const auto& ref = refs[refIndex];
-         const auto target = GetObject<Target>{}(links, ref.linkID(), ref.objectKey());
-         if (ref.srcLinkID() != -1) {
-            const Source* source = GetObject<Source>{}(links, ref.srcLinkID(), srcKey);
-            m_relations.i_push(source, target, ref.weight());
-         } else {
-            m_keyRelations.i_push(srcKey, target, ref.weight());
+      int refStart = 0;
+      auto last = links.keyIndex().cend() - 1;
+      for (auto it = links.keyIndex().cbegin(); it != links.keyIndex().cend(); ++it) {
+         std::tie(srcKey, refStart) = *it;
+         size_t refEnd = (it == last) ? refs.size() : std::next(it)->second;
+         for (size_t refIndex = refStart; refIndex != refEnd; ++refIndex) {
+            const auto& ref = refs[refIndex];
+            const auto target = GetObject<Target>{}(links, ref.linkID(), ref.objectKey());
+            if (ref.srcLinkID() != -1) {
+               const Source* source = GetObject<Source>{}(links, ref.srcLinkID(), srcKey);
+               m_relations.i_push(source, target, ref.weight());
+            } else {
+               m_keyRelations.i_push(srcKey, target, ref.weight());
+            }
          }
       }
       m_relations.i_sort();
@@ -113,12 +116,12 @@ public:
       return m_relations.inverse().relations(target);
    }
 
-   typename LHCb::RelationWeighted2D<Source, Target, double>::Range relations() const
+   const typename LHCb::RelationWeighted2D<Source, Target, double>& relations() const
    {
       return m_relations;
    }
 
-   typename LHCb::RelationWeighted2D<unsigned int, Target, double>::Range keyRelations() const
+   const typename LHCb::RelationWeighted2D<unsigned int, Target, double>& keyRelations() const
    {
       return m_keyRelations;
    }
