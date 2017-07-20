@@ -1,0 +1,105 @@
+#ifndef TRACKKERNEL_TRACKDEFAULTPARTICLES_H
+#define TRACKKERNEL_TRACKDEFAULTPARTICLES_H 1
+
+#include "GaudiKernel/StatusCode.h"
+#include <array>
+#include <stdexcept>
+#include <stdint.h>
+#include <iomanip>
+
+namespace LHCb
+{
+  namespace Tr
+  {
+    class PID
+    {
+      enum class validated_pid_t { Electron = 0, Muon, Pion, Kaon, Proton };
+      static constexpr std::array<double, 5> s_mass = {0.51099891, 105.65837, 139.57018, 493.677, 938.27203};
+
+      validated_pid_t m_value;
+
+      static constexpr validated_pid_t validate( int id )
+      {
+        switch ( id ) {
+        case 11:
+          return validated_pid_t::Electron;
+        case 13:
+          return validated_pid_t::Muon;
+        case 211:
+          return validated_pid_t::Pion;
+        case 321:
+          return validated_pid_t::Kaon;
+        case 2212:
+          return validated_pid_t::Proton;
+        default:
+          throw std::runtime_error( "invalid PID" );
+        }
+      }
+
+    public:
+      constexpr explicit PID( const int id ) : m_value( validate( id ) ) {}
+
+      constexpr explicit PID( validated_pid_t pid ) : m_value( pid ) {}
+
+      PID() = default;
+      // Make the creation of thes PID objects expressive in user code
+      // by calling LHCb::Tr::PID::Electron()
+      static constexpr PID Electron() { return PID{validated_pid_t::Electron}; }
+
+      static constexpr PID Muon() { return PID{validated_pid_t::Muon}; }
+
+      static constexpr PID Pion() { return PID{validated_pid_t::Pion}; }
+
+      static constexpr PID Kaon() { return PID{validated_pid_t::Kaon}; }
+
+      static constexpr PID Proton() { return PID{validated_pid_t::Proton}; }
+
+      // Framwork functions allowing the use of PID inside a property
+      friend const char* toString( PID pid )
+      {
+        switch ( pid.m_value ) {
+        case validated_pid_t::Electron:
+          return "Electron";
+        case validated_pid_t::Muon:
+          return "Muon";
+        case validated_pid_t::Pion:
+          return "Pion";
+        case validated_pid_t::Kaon:
+          return "Kaon";
+        case validated_pid_t::Proton:
+          return "Proton";
+        default:
+          throw std::runtime_error( "Calling toString on invalid PID" );
+        }
+      }
+
+      friend std::ostream& toStream( const PID& pid, std::ostream& os ) { return os << std::quoted( toString( pid ), '\'' ); }
+      friend std::ostream& operator<<(std::ostream& os, const PID& pid) { return toStream(pid, os); }
+
+      friend StatusCode parse( PID& pid, const std::string& in )
+      {
+        for ( PID ref : {Electron(), Muon(), Pion(), Kaon(), Proton()} ) {
+          if ( in != toString( ref ) ) continue;
+          pid = ref;
+          return StatusCode::SUCCESS;
+        }
+        return StatusCode::FAILURE;
+      }
+      //----------------------------------------------------------
+
+      constexpr double mass() const { return s_mass[static_cast<int>( m_value )]; }
+
+      constexpr bool isElectron() const { return validated_pid_t::Electron == m_value; }
+
+      constexpr bool isMuon() const { return validated_pid_t::Muon == m_value; }
+
+      constexpr bool isPion() const { return validated_pid_t::Pion == m_value; }
+
+      constexpr bool isKaon() const { return validated_pid_t::Kaon == m_value; }
+
+      constexpr bool isProton() const { return validated_pid_t::Proton == m_value; }
+    };
+  }
+}
+
+#endif
