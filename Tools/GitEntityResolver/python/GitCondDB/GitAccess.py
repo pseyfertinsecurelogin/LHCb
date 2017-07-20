@@ -108,12 +108,11 @@ def listTags(repository, sort=False):
     '''
     List the tags in a Git repository.
     '''
-    cmd = ['for-each-ref', '--format=%(refname)']
+    cmd = ['for-each-ref', '--python', '--format=%(refname:short),']
     if sort:
-        cmd.append('--sort=-authordate')
+        cmd.append('--sort=-creatordate')
     cmd.append('refs/tags/')
-    return [l[10:]  # strip the leading "ref/tags/"
-            for l in _git(repository, cmd).splitlines()]
+    return eval('[{}]'.format(_git(repository, cmd)))
 
 
 def _useFiles(repository, tag):
