@@ -34,11 +34,13 @@ public:
 
     ConfigTreeNode(const LeafRef& leaf)
       : m_leaf(leaf)
+      , m_digest{ digest_type::compute(str()) }
     { }
 
     ConfigTreeNode(const LeafRef& leaf, const NodeRefs& nodes)
       : m_nodes(nodes)
       , m_leaf(leaf)
+      , m_digest{ digest_type::compute(str()) }
     { }
 
     ConfigTreeNode(const LeafRef& leaf, const NodeRefs& nodes, std::string label);
@@ -61,7 +63,7 @@ public:
             && lhs.m_nodes == rhs.m_nodes;
     }
 
-    digest_type digest() const { if (!m_digest.valid()) updateCache(); return m_digest;}
+    digest_type digest() const { return m_digest;}
 
     std::ostream& print(std::ostream& os) const;
     std::istream& read(std::istream& is);
@@ -73,12 +75,11 @@ public:
 private:
     friend class ConfigArchiveAccessSvc; // provide access to 'str' to allow backwards compatible writes...
     std::string str() const;
-    void updateCache() const;
 
     NodeRefs    m_nodes;
     LeafRef     m_leaf = digest_type::createInvalid();
     std::string m_label;
-    mutable digest_type m_digest = digest_type::createInvalid();
+    digest_type m_digest = digest_type::createInvalid();
 };
 
 inline std::ostream& operator<<(std::ostream& os, const ConfigTreeNode& x) { return x.print(os); }

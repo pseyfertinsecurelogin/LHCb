@@ -233,11 +233,11 @@ PropertyConfigSvc::currentConfiguration(const INamedInterface& obj) const {
                                                              // wants non-const version of obj
 
   // figure out whether we have a Service, Tool, Algorithm or Auditor...
-  string kind = ( ini.as<IAlgorithm>() ? "IAlgorithm"
-                : ini.as<IService  >() ? "IService"
-                : ini.as<IAlgTool  >() ? "IAlgTool"
-                : ini.as<IAuditor  >() ? "IAuditor"
-                : "Unknown" );
+  auto kind = ( ini.as<IAlgorithm>() ? PropertyConfig::kind_t::IAlgorithm
+              : ini.as<IService  >() ? PropertyConfig::kind_t::IService
+              : ini.as<IAlgTool  >() ? PropertyConfig::kind_t::IAlgTool
+              : ini.as<IAuditor  >() ? PropertyConfig::kind_t::IAuditor
+              : PropertyConfig::kind_t::Invalid );
 
   return PropertyConfig( obj.name(), *ini.as<IProperty>(), kind);
 }

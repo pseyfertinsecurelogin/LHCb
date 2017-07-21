@@ -9,15 +9,12 @@ ConfigTreeNode::ConfigTreeNode(const LeafRef& leaf, const NodeRefs& nodes, std::
       : m_nodes(nodes)
       , m_leaf(leaf)
       , m_label( std::move(label))
-      , m_digest( digest_type::createInvalid() )
+      , m_digest( digest_type::compute(str()) )
 {
  if (this->label().find(':')!=std::string::npos)
     throw GaudiException("':' is not allowed in label",label,StatusCode::FAILURE);
 }
 
-void ConfigTreeNode::updateCache() const {
-    m_digest = digest_type::compute(str());
-}
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/stream_translator.hpp>
@@ -95,10 +92,11 @@ std::istream& ConfigTreeNode::read(std::istream& is) {
     auto nodes = top.get_child_optional("Nodes");
     if (nodes) {
         m_nodes.reserve( nodes->size() );
-        std::transform( std::begin(*nodes), std::end(*nodes),
+        std::transform( begin(*nodes), end(*nodes),
                         std::back_inserter(m_nodes),
                         []( const ptree::value_type& i ) { return i.second.get_value<ConfigTreeNode::digest_type>() ; } );
     }
+    m_digest = digest_type::compute(str());
     return is;
 }
 
@@ -107,7 +105,7 @@ std::string ConfigTreeNode::str() const {
     out +=  "Label: "; out += label();       out+= '\n';
     out +=  "Leaf: ";  out += leaf().str();  out+= '\n';
     out +=  "Nodes: [\n";
-    std::for_each( std::begin(nodes()), std::end(nodes()), [&out]( const NodeRef& i ) {
+    std::for_each( begin(nodes()), end(nodes()), [&out]( const NodeRef& i ) {
          out += ' '; out +=  i.str() ; out += '\n';
     } );
     out +=  "]\n";
@@ -121,7 +119,7 @@ std::ostream& ConfigTreeNode::print(std::ostream& os) const {
     if (!label().empty()) top.put("Label",label());
     if (leaf().valid())   top.put("Leaf",leaf().str());
     if (!nodes().empty()) {
-        std::transform( std::begin(nodes()), std::end(nodes()),
+        std::transform( begin(nodes()), end(nodes()),
                         std::back_inserter(top.put_child("Nodes",ptree{})),
                         []( const NodeRef& i ) { return std::make_pair(std::string(),ptree{ i.str() }); }  );
     }

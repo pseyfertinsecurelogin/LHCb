@@ -6,27 +6,55 @@
 #include "GaudiKernel/Property.h"
 #include "GaudiKernel/IProperty.h"
 
-void PropertyConfig::initProperties(const IProperty& obj) {
+namespace {
+const std::string& toString( PropertyConfig::kind_t kind)  {
+    static const std::string s_empty;
+    static const std::string s_IAlgorithm{"IAlgorithm"};
+    static const std::string s_IService{"IService"};
+    static const std::string s_IAlgTool{"IAlgTool"};
+    switch (kind) {
+        case PropertyConfig::kind_t::IAlgorithm: return s_IAlgorithm;
+        case PropertyConfig::kind_t::IService: return s_IService;
+        case PropertyConfig::kind_t::IAlgTool: return s_IAlgTool;
+        default : return s_empty; //for backwards compatibility -- for now...
+    }
+}
+PropertyConfig::kind_t fromString(const std::string& s) {
+    for (auto k : { PropertyConfig::kind_t::IAlgorithm,
+                    PropertyConfig::kind_t::IService,
+                    PropertyConfig::kind_t::IAlgTool } ) {
+        if (s == toString(k)) return k;
+    }
+    return PropertyConfig::kind_t::Invalid;
+}
+}
+
+const std::string& PropertyConfig::kind() const {
+    return toString(m_kind);
+}
+
+PropertyConfig::Properties PropertyConfig::initProperties(const IProperty& obj) {
     const auto& items = obj.getProperties();
-    std::for_each( std::begin(items), std::end(items), [&]( const Property *i ) {
+    Properties props; props.reserve(items.size());
+    std::for_each( begin(items), end(items), [&]( const Property *i ) {
         // FIXME: check for duplicates!!!
-        m_properties.emplace_back(i->name(),i->toString());
+        props.emplace_back(i->name(),i->toString());
         // verify that toString / fromString are each others inverse...
         // WARNING: this does not guarantee that we don't loose information -- toString may be lossy!!!!
         // WARNING: we remove the update handler (if any), which means that weird behaviour there (like
         //          changing the property that was just updated) will be missed.
         std::unique_ptr<Property> clone( i->clone() );
         clone->declareUpdateHandler(nullptr);
-        if ( clone->fromString(m_properties.back().second).isFailure() ) {
+        if ( clone->fromString(props.back().second).isFailure() ) {
             std::cerr << "Property::fromString fails to parse Property::toString" << std::endl;
-            std::cerr << "component: " << kind() << " / " << name() << ", property type: " << i->type()<< " : " << i->name() << " -> " << i->toString() << std::endl;
+            std::cerr << i->type()<< " : " << i->name() << " -> " << i->toString() << std::endl;
             ::abort(); // this is REALLY bad, and we should die, die, die!!!
                        // as we won't realize this until we read back later, so we
                        // really have to make sure this is never written in the first place
         }
-        if ( clone->toString() != m_properties.back().second ) {
+        if ( clone->toString() != props.back().second ) {
             std::cerr << " Property::fromString, followed by Property::toString does not give the same result:\n"
-                      << "\'" <<  clone->toString() << "\' vs. \n\'" << m_properties.back().second << "\'"
+                      << "\'" <<  clone->toString() << "\' vs. \n\'" << props.back().second << "\'"
                       << std::endl;
             // this is still no guarantee everything is OK, as it checks that checks that toString is a projection operator.
             // The initial toString may be lossy, and this 'just' checks that the subsequent toString doesn't loose anything
@@ -34,36 +62,7 @@ void PropertyConfig::initProperties(const IProperty& obj) {
             ::abort();
         }
     } );
-    m_digest = digest_type::createInvalid();
-}
-
-void
-PropertyConfig::updateCache() const
-{
-    // type, name and kind MUST be filled for a valid object...
-    if (!type().empty() && !name().empty() && !kind().empty() )  {
-        m_digest = digest_type::compute(str());
-    }
-}
-
-PropertyConfig PropertyConfig::copyAndModify(const std::string& key, const std::string& value ) const
-{
-    auto  update = properties();
-    auto i = std::find_if( std::begin(update), std::end(update),
-                           [&key](const Prop& p) { return p.first == key; } );
-    if (i==update.end()) {
-        throw std::invalid_argument( "PropertyConfig: trying to update non-existing property '"+key+"'");
-    }
-    i->second = value;
-    return PropertyConfig(*this, update);
-}
-
-PropertyConfig PropertyConfig::copyAndModify(const std::string& keyAndValue) const
-{
-    auto c = keyAndValue.find(':');
-    if (c == std::string::npos )
-        throw std::invalid_argument( "PropertyConfig: keyAndValue must contain ':'");
-    return copyAndModify(keyAndValue.substr(0,c),keyAndValue.substr(c+1,std::string::npos));
+    return props;
 }
 
 #include "boost/property_tree/ptree.hpp"
@@ -119,16 +118,22 @@ std::istream& PropertyConfig::read(std::istream& is) {
         default  : read_custom(is,top); break;
     }
     if (top.empty()) {
-        // flag as invalid 'forever' -- needs to interact with updateCache
+        // flag as invalid 'forever'
+        m_properties.clear();
+        m_name.clear();
+        m_kind = kind_t::Invalid;
+        m_type.clear();
     } else {
-        m_name = top.get<std::string>("Name");
-        m_kind = top.get<std::string>("Kind");
-        m_type = top.get<std::string>("Type");
         const ptree& props = top.get_child("Properties");
         m_properties.clear(); m_properties.reserve( props.size() );
-        std::transform( std::begin(props), std::end(props),
+        std::transform( begin(props), end(props),
                         std::back_inserter(m_properties),
-                        []( const ptree::value_type& i ) { return std::make_pair( i.first, i.second.data() ); } );
+                        []( const ptree::value_type& i )
+                        { return std::make_pair( i.first, i.second.data() ); } );
+        m_type = top.get<std::string>("Type");
+        m_name = top.get<std::string>("Name");
+        m_kind = fromString(top.get<std::string>("Kind"));
+        m_digest = getDigest();
     }
     return is;
 }
@@ -138,7 +143,7 @@ std::string PropertyConfig::str() const {
     // (unless we 'convert' & 're-index' the already written data to any new format)
     // as a result, do NOT change the result of this function!!!
     std::string out;
-    out.reserve(std::accumulate( std::begin(properties()), std::end(properties()),
+    out.reserve(std::accumulate( begin(properties()), end(properties()),
                                  name().size()+kind().size()+type().size()+37,
                                  [](int s, const Prop& i) {
                         return s+5+i.first.size()+i.second.size();
@@ -147,12 +152,12 @@ std::string PropertyConfig::str() const {
     out +=  "Kind: "; out += kind(); out += '\n';
     out +=  "Type: "; out += type(); out += '\n';
     out +=  "Properties: [\n";
-    std::for_each( std::begin(properties()), std::end(properties()), [&out]( const Prop& i ) {
+    std::for_each( begin(properties()), end(properties()), [&out]( const Prop& i ) {
         out +=  " '"; out+= i.first ; out += "':";
         // remove all newlines... as we use newline as a record seperator (and yes, this
         // should have been escaped instead... didn't think of that when I originally wrote
         // it...)
-        std::copy_if( std::begin(i.second), std::end(i.second),
+        std::copy_if( begin(i.second), end(i.second),
                       std::back_inserter(out),
                       [](const char x) { return x!='\n'; } );
         out += '\n';
@@ -170,7 +175,7 @@ std::ostream& PropertyConfig::print(std::ostream& os) const {
     top.put("Name",name());
     top.put("Kind",kind());
     top.put("Type",type());
-    std::transform( std::begin(properties()), std::end(properties()),
+    std::transform( begin(properties()), end(properties()),
                     std::back_inserter(top.put_child("Properties",ptree{})),
                     []( const Prop& i ) { return std::make_pair(i.first,ptree{i.second}); } );
     write_json(os,top,false);
