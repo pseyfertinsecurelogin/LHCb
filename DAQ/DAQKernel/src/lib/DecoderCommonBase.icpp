@@ -39,11 +39,6 @@ void Decoder::CommonBase<PBASE>::initRawEventSearch()
   m_tryFirstRawEventLocation="";
 }
 
-//=============================================================================
-// Destructor
-//=============================================================================
-template <class PBASE>
-Decoder::CommonBase<PBASE>::~CommonBase() {}
 
 //=============================================================================
 // Initialisation

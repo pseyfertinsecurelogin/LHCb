@@ -40,23 +40,11 @@ namespace Decoder
   {
 
   public:
+     using PBASE::PBASE;
 
-    /// Standard algorithm-like constructor
-    CommonBase( const std::string& name,
-                ISvcLocator* pSvcLocator );
-
-    /// Standard tool-like constructor
-    CommonBase( const std::string& type,
-                const std::string& name,
-                const IInterface* parent );
-
-    /// Standard Converter-like Constructor
-    CommonBase( long storage_type,
-                const CLID &class_type,
-                ISvcLocator *svc = NULL );
 
     /// Destructor
-    virtual ~CommonBase( );
+    ~CommonBase( ) override = default;
 
   public:
 
