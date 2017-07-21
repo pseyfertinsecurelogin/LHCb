@@ -202,6 +202,11 @@ StatusCode GitEntityResolver::initialize()
       auto& log = info();
       log << "using commit '" << m_commit.value() << "'";
 
+      while ( git_object_type( obj.get() ) == GIT_OBJ_TAG ) {
+        obj = git_call<git_object_ptr>( name(), "cannot resolve tag", m_commit.value(), git_tag_target,
+                                        (git_tag *)obj.get() );
+      }
+
       char oid[GIT_OID_HEXSZ + 1] = {0};
       git_oid_fmt( oid, git_object_id( obj.get() ) );
 
