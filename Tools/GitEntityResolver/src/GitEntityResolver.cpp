@@ -198,10 +198,8 @@ StatusCode GitEntityResolver::initialize()
   if ( !m_useFiles ) {
     auto obj = git_call<git_object_ptr>( name(), "cannot resolve commit", m_commit.value(), git_revparse_single,
                                          m_repository.get(), m_commit.value().c_str() );
-    if ( LIKELY( msgLevel( MSG::INFO ) ) ) {
-      auto& log = info();
-      log << "using commit '" << m_commit.value() << "'";
 
+    {
       while ( git_object_type( obj.get() ) == GIT_OBJ_TAG ) {
         obj = git_call<git_object_ptr>( name(), "cannot resolve tag", m_commit.value(), git_tag_target,
                                         (git_tag *)obj.get() );
@@ -210,10 +208,16 @@ StatusCode GitEntityResolver::initialize()
       char oid[GIT_OID_HEXSZ + 1] = {0};
       git_oid_fmt( oid, git_object_id( obj.get() ) );
 
-      if ( m_commit.value().compare( oid ) != 0 )
-        log << " corresponding to " << oid;
-
-      log << endmsg;
+      if ( LIKELY( msgLevel( MSG::INFO ) ) ) {
+        auto& log = info();
+        log << "using commit '" << m_commit.value() << "'";
+        if ( m_commit.value().compare( oid ) != 0 )
+          log << " corresponding to " << oid;
+        log << endmsg;
+      }
+      // truncate oid to 8 characters
+      oid[8] = 0;
+      m_defaultTag = m_commit.value() + '[' + oid + ']';
     }
     if ( UNLIKELY( m_limitToLastCommitTime ) ) {
       // get the time of the requested commit/tag
@@ -222,6 +226,8 @@ StatusCode GitEntityResolver::initialize()
                 << m_lastCommitTime.format(false, "%Y-%m-%d %H:%M:%S")
                 << "." << m_lastCommitTime.nanoformat() << " UTC" << endmsg;
     }
+  } else {
+    m_defaultTag = "<files>";
   }
 
   m_incSvc = service<IIncidentSvc>( "IncidentSvc" );
@@ -421,7 +427,7 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
 
 void GitEntityResolver::defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const
 {
-  tags.emplace_back( m_pathToRepository, m_useFiles ? std::string{"<files>"} : m_commit.value() );
+  tags.emplace_back( m_pathToRepository, m_defaultTag );
 }
 
 GitEntityResolver::dir_content GitEntityResolver::i_listdir( const std::string& path, const std::string& url ) const
