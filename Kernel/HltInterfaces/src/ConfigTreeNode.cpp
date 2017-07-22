@@ -9,7 +9,6 @@ ConfigTreeNode::ConfigTreeNode(const LeafRef& leaf, const NodeRefs& nodes, std::
       : m_nodes(nodes)
       , m_leaf(leaf)
       , m_label( std::move(label))
-      , m_digest( digest_type::compute(str()) )
 {
  if (this->label().find(':')!=std::string::npos)
     throw GaudiException("':' is not allowed in label",label,StatusCode::FAILURE);
