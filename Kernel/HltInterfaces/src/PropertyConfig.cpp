@@ -112,30 +112,28 @@ void read_custom(std::istream& is, ptree& top) {
 }
 
 std::istream& PropertyConfig::read(std::istream& is) {
-    m_digest = digest_type::createInvalid(); // reset our state;
     ptree top;
     switch (is.peek()) {
         case '{' : read_json(is,top);   break;
         case '<' : read_xml(is,top);    break;
         default  : read_custom(is,top); break;
     }
-    if (top.empty()) {
-        // flag as invalid 'forever'
-        m_properties.clear();
-        m_name.clear();
-        m_kind = kind_t::Invalid;
-        m_type.clear();
+    if (!top.empty()) {
+        auto toProperties = [](const ptree& tree) {
+            Properties p; p.reserve( tree.size() );
+            std::transform( begin(tree), end(tree),
+                            std::back_inserter(p),
+                            []( const ptree::value_type& i )
+                            { return std::make_pair( i.first, i.second.data() ); } );
+            return p;
+        };
+        *this = PropertyConfig{ top.get<std::string>("Name"),
+                                top.get<std::string>("Type"),
+                                fromString(top.get<std::string>("Kind")),
+                                toProperties(top.get_child("Properties")) };
+
     } else {
-        const ptree& props = top.get_child("Properties");
-        m_properties.clear(); m_properties.reserve( props.size() );
-        std::transform( begin(props), end(props),
-                        std::back_inserter(m_properties),
-                        []( const ptree::value_type& i )
-                        { return std::make_pair( i.first, i.second.data() ); } );
-        m_type = top.get<std::string>("Type");
-        m_name = top.get<std::string>("Name");
-        m_kind = fromString(top.get<std::string>("Kind"));
-        m_digest = getDigest();
+        *this = PropertyConfig{};
     }
     return is;
 }

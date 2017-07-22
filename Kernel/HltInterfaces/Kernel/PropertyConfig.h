@@ -62,7 +62,6 @@ public:
       , m_type(System::typeinfoName(typeid(obj)))
       , m_name(std::move(name))
       , m_kind(kind)
-      , m_digest{ getDigest() }
     {}
 
 
@@ -71,7 +70,6 @@ public:
       , m_type(std::move(type))
       , m_name(std::move(name))
       , m_kind(kind)
-      , m_digest{ getDigest() }
     { }
 
     PropertyConfig(const PropertyConfig& orig, Properties properties)
@@ -79,7 +77,6 @@ public:
       , m_type( orig.m_type )
       , m_name( orig.m_name )
       , m_kind( orig.m_kind )
-      , m_digest{ getDigest() }
     { }
 
     friend bool operator==(const PropertyConfig& lhs, const PropertyConfig& rhs) {
@@ -93,19 +90,9 @@ public:
     const std::string& kind() const;
     const Properties& properties() const { return m_properties;}
 
-    PropertyConfig copyAndModify(boost::string_ref key, boost::string_ref value ) const
-    { return { *this, LHCb::Kernel::details::modify(properties(),key, value)} ;}
-
-    PropertyConfig copyAndModify(boost::string_ref keyAndValue) const
-    { return { *this, LHCb::Kernel::details::modify(properties(),keyAndValue)} ;}
-
-    template <typename T>
-    PropertyConfig copyAndModify(const std::pair<T,T>& keyAndValue) const
-    { return { *this, LHCb::Kernel::details::modify(properties(),keyAndValue.first,keyAndValue.second)} ;}
-
-    template <typename T>
-    PropertyConfig copyAndModify(T begin, T end) const
-    { return { *this, LHCb::Kernel::details::modify(properties(),begin,end) }; }
+    template <typename... Args>
+    PropertyConfig copyAndModify(Args&&... args) const
+    { return { *this, LHCb::Kernel::details::modify(properties(),std::forward<Args>(args)...)} ;}
 
     std::ostream& print(std::ostream& os) const;
     std::istream& read(std::istream& is);
@@ -116,16 +103,14 @@ private:
 
     friend class ConfigArchiveAccessSvc; // provide access to 'str' to allow backwards compatible writes...
     std::string str() const;
-    digest_type getDigest() const {
-        return (m_type.empty()||m_name.empty()||m_kind == kind_t::Invalid)
-                                ? digest_type::createInvalid()
-                                : digest_type::compute(str());
-    }
 
     Properties   m_properties;
     std::string  m_type, m_name;
     kind_t       m_kind = kind_t::Invalid;
-    digest_type  m_digest = digest_type::createInvalid();
+    // digest must be last datamember, so it is initialized after everything else!
+    digest_type  m_digest = { (m_type.empty()||m_name.empty()||m_kind == kind_t::Invalid)
+                                ? digest_type::createInvalid()
+                                : digest_type::compute(str()) };
 
     static Properties initProperties(const IProperty&);
 };
