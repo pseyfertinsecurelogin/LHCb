@@ -77,26 +77,27 @@ namespace boost { namespace property_tree {
     };
 } }
 
-
 std::istream& ConfigTreeNode::read(std::istream& is) {
-    m_digest = digest_type::createInvalid();
     ptree top;
     switch( is.peek() ) {
         case '{' : read_json(is,top);   break;
         case '<' : read_xml(is,top);    break;
         default  : read_custom(is,top); break;
     }
-    m_label = top.get<std::string>("Label",std::string{}); // add default: empty string (most nodes have no label)
-    m_leaf  = top.get<digest_type>("Leaf",digest_type::createInvalid());  // add default: digest_type::createInvalid() (top level has no leaf)
-    m_nodes.clear();
-    auto nodes = top.get_child_optional("Nodes");
-    if (nodes) {
-        m_nodes.reserve( nodes->size() );
-        std::transform( begin(*nodes), end(*nodes),
-                        std::back_inserter(m_nodes),
-                        []( const ptree::value_type& i ) { return i.second.get_value<ConfigTreeNode::digest_type>() ; } );
-    }
-    m_digest = digest_type::compute(str());
+    auto toNodes = [](auto nodes) {
+        NodeRefs nr;
+        if (nodes) {
+            nr.reserve( nodes->size() );
+            std::transform( begin(*nodes), end(*nodes),
+                            std::back_inserter(nr),
+                            []( const ptree::value_type& i )
+                            { return i.second.get_value<ConfigTreeNode::digest_type>() ; } );
+        }
+        return nr;
+    };
+    *this = ConfigTreeNode{ top.get<digest_type>("Leaf",digest_type::createInvalid()),  // add default: digest_type::createInvalid() (top level has no leaf)
+                            toNodes( top.get_child_optional("Nodes") ),
+                            top.get<std::string>("Label",std::string{}) }; // add default: empty string (most nodes have no label)
     return is;
 }
 
