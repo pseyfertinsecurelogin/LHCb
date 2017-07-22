@@ -12,10 +12,12 @@ const std::string& toString( PropertyConfig::kind_t kind)  {
     static const std::string s_IAlgorithm{"IAlgorithm"};
     static const std::string s_IService{"IService"};
     static const std::string s_IAlgTool{"IAlgTool"};
+    static const std::string s_IAuditor{"IAuditor"};
     switch (kind) {
         case PropertyConfig::kind_t::IAlgorithm: return s_IAlgorithm;
         case PropertyConfig::kind_t::IService: return s_IService;
         case PropertyConfig::kind_t::IAlgTool: return s_IAlgTool;
+        case PropertyConfig::kind_t::IAuditor: return s_IAuditor;
         default : return s_empty; //for backwards compatibility -- for now...
     }
 }
