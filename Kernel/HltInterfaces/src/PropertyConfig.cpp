@@ -21,7 +21,7 @@ const std::string& toString( PropertyConfig::kind_t kind)  {
         default : return s_empty; //for backwards compatibility -- for now...
     }
 }
-PropertyConfig::kind_t fromString(const std::string& s) {
+PropertyConfig::kind_t toKind(const std::string& s) {
     for (auto k : { PropertyConfig::kind_t::IAlgorithm,
                     PropertyConfig::kind_t::IService,
                     PropertyConfig::kind_t::IAlgTool } ) {
@@ -129,7 +129,7 @@ std::istream& PropertyConfig::read(std::istream& is) {
         };
         *this = PropertyConfig{ top.get<std::string>("Name"),
                                 top.get<std::string>("Type"),
-                                fromString(top.get<std::string>("Kind")),
+                                toKind(top.get<std::string>("Kind")),
                                 toProperties(top.get_child("Properties")) };
 
     } else {
