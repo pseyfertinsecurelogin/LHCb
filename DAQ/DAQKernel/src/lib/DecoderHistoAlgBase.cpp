@@ -4,9 +4,6 @@
  *
  *  Implementation file for class : DecoderHistoAlgBase
  *
- *  CVS Log :-
- *  $Id: DecoderHistoAlgBase.cpp,v 1.1 2009-08-10 12:12:06 jonrob Exp $
- *
  *  @author Rob Lambert    Rob.Lambert@cern.ch
  *  @date   2014-02-10
  */
