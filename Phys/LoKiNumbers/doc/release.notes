@@ -12,6 +12,10 @@
 !   contributions and advices from G.Raven, J.van Tilburg,
 !   A.Golutvin, P.Koppenburg have been used in the design.
 ! -----------------------------------------------------------------------------
+
+! 2017-07-23 - Vanya Belyaev
+ - add a test for https://its.cern.ch/jira/browse/LHCBPS-1743
+
 ! 2016-05-22 - Dan Johnson
  - Add new functor for Herschel station-sum ADC count access 
 
