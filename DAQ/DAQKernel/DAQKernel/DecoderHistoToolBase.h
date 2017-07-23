@@ -1,11 +1,7 @@
-
 //-----------------------------------------------------------------------------
 /** @file DecoderHistoToolBase.h
  *
  *  Header file for tool base class : DecoderHistoToolBase
- *
- *  CVS Log :-
- *  $Id: DecoderHistoToolBase.h,v 1.6 2009-07-27 20:29:01 jonrob Exp $
  *
  *  @author Rob Lambert   Rob.Lambert@cern.ch
  *  @date   02/10/2014
@@ -23,7 +19,6 @@
 
 namespace Decoder
 {
-
   //-----------------------------------------------------------------------------
   /** @class HistoToolBase DecoderHistoToolBase.h DAQKernel/DecoderHistoToolBase.h
    *
@@ -37,24 +32,7 @@ namespace Decoder
    */
   //-----------------------------------------------------------------------------
 
-  class HistoToolBase : public Decoder::CommonBase<GaudiHistoTool>
-  {
-
-  public:
-
-    /// Standard constructor
-    HistoToolBase( const std::string& type,
-                   const std::string& name,
-                   const IInterface* parent )
-      : Decoder::CommonBase<GaudiHistoTool> ( type, name, parent )
-    { }
-  protected:
-      ///avoid getIfExists name resolution for now
-      inline LHCb::RawEvent* getIfExistsRaw(const std::string loc, bool rootOnTes) const override
-      {
-      	return GaudiHistoTool::getIfExists<LHCb::RawEvent>(loc,rootOnTes);
-      }
-  };
+  using  HistoToolBase =  Decoder::CommonBase<GaudiHistoTool>;
 
 }
 
