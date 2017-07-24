@@ -336,8 +336,15 @@ namespace LoKi
    */
 
    namespace Traits {
-       struct And : details::SimpleBinary< std::logical_and<>, And > {
-           static constexpr const char* name() { return "&&"; }
+       struct And {
+           template <typename F1, typename F2, typename... Args>
+           static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
+           -> decltype(auto)
+           { return f1(args...) && f2(args...); }
+
+           template <typename F1, typename F2>
+           static std::ostream& fillStream(std::ostream& os, const F1& f1, const F2& f2)
+           { return os << " (" << f1 << "&" << f2 << ") "; }
        };
    }
 
@@ -374,8 +381,15 @@ namespace LoKi
   // ==========================================================================
 
    namespace Traits {
-       struct Or : details::SimpleBinary< std::logical_or<>, Or > {
-           static constexpr const char* name() { return "||"; }
+       struct Or  {
+           template <typename F1, typename F2, typename... Args>
+           static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
+           -> decltype(auto)
+           { return f1(args...) || f2(args...); }
+
+           template <typename F1, typename F2>
+           static std::ostream& fillStream(std::ostream& os, const F1& f1, const F2& f2)
+           { return os << " (" << f1 << "|" << f2 << ") "; }
        };
    }
    template<typename TYPE, typename TYPE2=double>
