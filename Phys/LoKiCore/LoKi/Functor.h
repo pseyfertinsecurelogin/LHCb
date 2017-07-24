@@ -24,6 +24,8 @@
 // ============================================================================
 #include "RVersion.h"
 // ============================================================================
+#define LOKI_REQUIRES(...) std::enable_if_t<(__VA_ARGS__),bool> = true
+// ============================================================================
 namespace LoKi
 {
   // ==========================================================================
@@ -73,7 +75,7 @@ namespace LoKi
   protected:
     // ========================================================================
     /// protected default constructor
-    Functor() : AuxFunBase( std::tie() ) {}
+    Functor() = default;
     /// protected copy constructor
     Functor ( const Functor& ) = default;
     /// protected move constructor
@@ -189,8 +191,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// assignment
-    template <typename Arg,
-              typename = std::enable_if_t<std::is_assignable<TYPE2,Arg>::value>>
+    template <typename Arg, LOKI_REQUIRES(std::is_assignable<TYPE2,Arg>::value)>
     Constant& operator=( const Arg& arg )
     { m_value = arg; return *this ; }
     Constant& operator=( TYPE2&& arg )
@@ -241,7 +242,7 @@ namespace LoKi
   protected:
     // ========================================================================
     /// protected default constructor
-    Functor() : AuxFunBase( std::tie() ) {}    // protected default constructor
+    Functor() = default;                       // protected default constructor
     /// protected copy constructor
     Functor ( const Functor& fun ) = default;                 // protected copy
     /// protected move constructor
@@ -348,8 +349,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// assignement
-    template <typename Arg,
-              typename = std::enable_if_t<std::is_assignable<TYPE2,Arg>::value>>
+    template <typename Arg, LOKI_REQUIRES(std::is_assignable<TYPE2,Arg>::value)>
     Constant& operator=( const Arg& arg )
     { m_value = arg; return *this ; }
     Constant& operator=( TYPE2&& arg )
@@ -406,8 +406,7 @@ namespace LoKi
 
       // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE?
       // If T derives from LoKi::Functor<TYPE,TYPE2> what is TYPE2?
-      template <typename T,
-                typename = std::enable_if_t<is_functor<T>::value>>
+      template <typename T, LOKI_REQUIRES(is_functor<T>::value)>
       struct LF_ {
           using U = std::decay_t<T>;
           template <typename T1, typename T2> static T1 test1( LoKi::Functor<T1,T2>* );

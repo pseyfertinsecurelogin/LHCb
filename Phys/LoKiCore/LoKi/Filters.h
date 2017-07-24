@@ -1432,7 +1432,7 @@ namespace LoKi
    */
   template <typename TYPE, typename F,
             typename TYPE2 = details::type1_t<F>,
-            typename = typename details::require_signature<F,TYPE2,bool>>
+            typename = details::require_signature<F,TYPE2,bool>>
   LoKi::Functors::Select<TYPE,TYPE2> select ( F&& cut )
   { return { std::forward<F>(cut) } ; }
   // ==========================================================================
