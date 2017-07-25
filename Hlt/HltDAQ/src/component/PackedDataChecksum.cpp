@@ -89,6 +89,13 @@ void PackedDataChecksum::processObject(const LHCb::PackedFlavourTags& x, const s
 }
 
 template<>
+void PackedDataChecksum::processObject(const LHCb::PackedCaloDigits& x, const std::string& key) {
+  process(key, x.packingVersion());
+  process(key, x.version());
+  processVector(key, x.data());
+}
+
+template<>
 void PackedDataChecksum::processObject(const LHCb::PackedRelations& x, const std::string& key) {
   process(key, x.version());
   processVector(key, x.relations());
@@ -144,6 +151,7 @@ static_assert(sizeof(LHCb::PackedRelation) == 16, "PackedRelation has changed!")
 static_assert(sizeof(LHCb::PackedRelatedInfoMap) == 16, "PackedRelatedInfoMap has changed!");
 static_assert(sizeof(LHCb::PackedVertex) == 72, "PackedVertex has changed!");  // padded!
 static_assert(sizeof(LHCb::PackedParticle) == 176, "PackedParticle has changed!");  // padded!
+static_assert(sizeof(LHCb::PackedCaloDigit) == 8, "PackedCaloDigit has changed!");  // padded!
 #endif
 
 // We need to define custom functions for some structures. This is because
