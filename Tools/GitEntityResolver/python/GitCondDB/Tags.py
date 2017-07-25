@@ -43,4 +43,5 @@ def getTagsInfos(repository):
     return OrderedDict((tag, TagInfo(author, date_parse(date),
                                      _parse_metadata(content)))
                        for tag, author, date, content in
-                       eval('[{}]'.format(_git(repository, cmd))))
+                       eval('[{}]'.format(_git(repository, cmd)
+                                          .replace('\r', '\\r'))))
