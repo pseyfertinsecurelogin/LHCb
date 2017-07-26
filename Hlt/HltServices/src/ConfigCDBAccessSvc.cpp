@@ -314,7 +314,7 @@ class CDB
     }
 
     template <typename SELECTOR>
-    vector<string> files( const SELECTOR& selector ) const
+    vector<string> files( const SELECTOR& selector )
     {
         vector<string> _keys;
         if ( cdb_fileno( &m_icdb ) >= 0 ) {
@@ -337,7 +337,7 @@ class CDB
     uid_t getUid() const
     {
 #ifndef _WIN32
-        if ( UNLIKELY(m_myUid == 0) ) m_myUid = getuid();
+        if ( UNLIKELY(!m_myUid) ) m_myUid = getuid();
 #endif
         return m_myUid;
     }
@@ -391,13 +391,13 @@ class CDB
         return m_error || cdb_fileno(&m_icdb)<0 || !m_icdb.cdb_mem;
     }
   private:
-    mutable struct cdb m_icdb;
+    struct cdb m_icdb;
     struct cdb_make m_ocdb;
     fs::path m_fname;
     fs::path m_oname;
     map<Gaudi::StringKey, string> m_shadow; // write cache..
     mutable uid_t m_myUid = 0;
-    mutable bool m_error = false;
+    bool m_error = false;
 };
 }
 using namespace ConfigCDBAccessSvc_details;
