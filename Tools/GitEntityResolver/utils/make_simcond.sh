@@ -30,9 +30,9 @@ git remote add origin ssh://git@gitlab.cern.ch:7999/lhcb-conddb/${name}.git
 git branch -f master sim-20161124-2-vc-md100
 git branch -f vc-md100 sim-20161124-2-vc-md100
 git branch -f vc-mu100 sim-20161124-2-vc-mu100
-git branch -f upgrade upgrade/sim-20170210-vc-md100
-git branch -f upg-vc-mu100 upgrade/sim-20170210-vc-mu100
-git branch -f upg-vc-md100 upgrade/sim-20170210-vc-md100
+git branch -f upgrade/master upgrade/sim-20170210-vc-md100
+git branch -f upgrade/vc-mu100 upgrade/sim-20170210-vc-mu100
+git branch -f upgrade/vc-md100 upgrade/sim-20170210-vc-md100
 
 # fix a duplication
 git tag -f upgrade/sim-20161111-vc-mu100 upg-vc-mu100

@@ -5,6 +5,8 @@ Small script to convert a DDDB COOL/SQLite database to a Git repository.
 
 import os
 import logging
+import re
+import yaml
 from optparse import OptionParser
 from xml.etree import ElementTree as ET
 from subprocess import check_output
@@ -56,7 +58,8 @@ def extract_tags_infos(notes, partition):
                      committers.get(el.find('lhcb:contributor', ns).text),
                      el.find(("lhcb:partition/[lhcb:name='{0}']/"
                               "lhcb:base").format(partition), ns).text,
-                     datatype_branches(el)
+                     datatype_branches(el),
+                     [dt.text for dt in el.findall('lhcb:type', ns)]
                  ))
                 for el in notes.findall(tags_xpath, ns))
 
@@ -94,6 +97,7 @@ def main():
     parser.add_option('-t', '--tag',
                       action='append', dest='tags',
                       help='tags to extract if notes-xml is not provided')
+    parser.add_option('-T', '--head-tag-name')
     parser.add_option('--name',
                       help='name of the COOL database in the SQLite file '
                       '(default: the file name without extension)')
@@ -104,7 +108,8 @@ def main():
                         always_iovs=False,
                         partition_payloads=False,
                         do_head=True,
-                        tags=[])
+                        tags=[],
+                        head_tag_name='HEAD')
 
     opts, args = parser.parse_args()
 
@@ -135,6 +140,7 @@ def main():
         tags_infos = dict((opts.tags[i], ('1970-01-01T00:00:00',
                                           'nobody <nobody@no.where>',
                                           '' if not i else opts.tags[i - 1],
+                                          [],
                                           []))
                           for i in range(len(opts.tags)))
     else:
@@ -185,7 +191,7 @@ def main():
         print 'processing tag %s (%d/%d)' % (tag, count, len(tags_to_copy))
 
         if tag in tags_infos:
-            date, author, base, branches = tags_infos[tag]
+            date, author, base, branches, datatypes = tags_infos[tag]
             base = opts.tag_prefix + base
         else:
             # default author
@@ -193,6 +199,7 @@ def main():
             date = tag_time(tag)
             base = 'HEAD'
             branches = []
+            datatypes = []
 
         if base in existing_tags:
             print 'get base tag %s' % (base,)
@@ -267,13 +274,24 @@ def main():
         if check_output(['git', 'status', '--porcelain'],
                         cwd=repo_dir).strip():
             os.environ['GIT_COMMITTER_DATE'] = date
-            check_output(['git', 'commit', '-m', tag,
+            check_output(['git', 'commit', '-m',
+                          opts.head_tag_name if tag == 'HEAD' else tag,
                           '--author', author, '--date', date],
                          cwd=repo_dir)
         else:
             print 'no changes in %s' % tag
         if tag != 'HEAD':
-            check_output(['git', 'tag', opts.tag_prefix + tag], cwd=repo_dir)
+            env = dict(os.environ)
+            env['GIT_COMMITTER_DATE'] = date
+            env['GIT_COMMITTER_NAME'], env['GIT_COMMITTER_EMAIL'] = \
+                re.match(r'(.*) <(.*)>', author).groups()
+            check_output(['git', 'tag', '-m',
+                          '---\n{}---\n'
+                          .format(yaml.dump({
+                              'datatypes': [int(dt) if dt.isdigit() else str(dt)
+                                            for dt in datatypes]})),
+                          opts.tag_prefix + tag],
+                         cwd=repo_dir, env=env)
             existing_tags.add(opts.tag_prefix + tag)
             for branch in branches:
                 print 'creating branch', branch, '(from %s)' % (opts.tag_prefix + tag)

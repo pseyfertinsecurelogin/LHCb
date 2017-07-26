@@ -14,6 +14,10 @@ find_package(Boost)
 find_package(COOL COMPONENTS CoolKernel CoolApplication)
 find_package(CORAL COMPONENTS CoralBase CoralKernel RelationalAccess)
 find_package(PythonLibs)
+
+# Force Qt5 whichever is the default
+set(DESIRED_QT_VERSION 5)
+
 if(DESIRED_QT_VERSION STREQUAL "5")
   find_package(Qt5 COMPONENTS Gui)
 else()
@@ -55,5 +59,10 @@ install(FILES ${CMAKE_BINARY_DIR}/python/CondDBUI/Browser/__version__.py
 add_custom_target(CondDBBrowser)
 add_dependencies(CondDBBrowser CondDBUI.Browser.Resources
                                CondDBUI.Browser.UI
-                               CondDBCompression
                                CondDBUIHelperLib)
+if(TARGET CondDBCompression)
+  add_dependencies(CondDBBrowser CondDBCompression)
+endif()
+if(TARGET MergedCondDB)
+  add_dependencies(CondDBBrowser MergedCondDB)
+endif()
