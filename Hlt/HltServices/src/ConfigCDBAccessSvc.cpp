@@ -25,10 +25,8 @@
 #include "boost/filesystem/operations.hpp"
 
 #include "GaudiKernel/System.h"
-#include "GaudiKernel/StringKey.h"
 #include "GaudiKernel/IIncidentSvc.h"
 
-using namespace std;
 namespace io = boost::iostreams;
 namespace fs = boost::filesystem;
 
@@ -36,7 +34,7 @@ namespace
 {
 struct DefaultFilenameSelector
 {
-    bool operator()( const string& /*fname*/ ) const
+    bool operator()( boost::string_ref /*fname*/ ) const
     {
         return true;
     }
@@ -44,14 +42,14 @@ struct DefaultFilenameSelector
 
 struct PrefixFilenameSelector
 {
-    PrefixFilenameSelector( string  _prefix ) : prefix(std::move( _prefix ))
+    PrefixFilenameSelector( std::string  _prefix ) : prefix(std::move( _prefix ))
     {
     }
-    bool operator()( const string& fname ) const
+    bool operator()( const std::string& fname ) const
     {
         return fname.compare( 0, prefix.size(), prefix ) == 0;
     }
-    string prefix;
+    std::string prefix;
 };
 
 uint8_t read8( std::istream& s )
@@ -87,10 +85,10 @@ std::time_t read_time( std::istream& s )
     return read32( s );
 }
 
-int compress( string& str )
+int compress( std::string& str )
 {
     // compress and check if worthwhile...
-    string compressed;
+    std::string compressed;
     compressed.reserve( str.size() );
     io::filtering_streambuf<io::output> filter;
     io::zlib_params params;
@@ -153,9 +151,9 @@ namespace ConfigCDBAccessSvc_details
 class CDB
 {
   public:
-    CDB( const std::string& name, ios::openmode mode = ios::in ) : m_fname( name )
+    CDB( const std::string& name, std::ios::openmode mode = std::ios::in ) : m_fname( name )
     {
-        cdb_make_start( &m_ocdb, -1 );
+        cdb_fileno( &m_ocdb ) = -1;;
         // if open 'readwrite' we construct a fresh copy of the input
         // database, then extend it, and on 'close' replace the original one
         // with the new one.
@@ -167,14 +165,14 @@ class CDB
         int fd = open( m_fname.c_str(), O_RDONLY );
         if ( fd < 0 ) {
             m_error = true;
-            return;
+            throw std::runtime_error( "Error opening file " + m_fname.string() + ": " + strerror(errno) );
         }
 
         // if not exist, forget about copying...
 
         if ( cdb_init( &m_icdb, fd ) < 0 ) cdb_fileno( &m_icdb ) = -1;
 
-        if ( mode & ios::out ) {
+        if ( mode & std::ios::out ) {
             m_oname = fs::unique_path( m_fname.string() + "-%%%%-%%%%-%%%%-%%%%" );
         }
 
@@ -191,28 +189,21 @@ class CDB
             // is not set,
             // the effect is undefined.
 
-            int ofd = open( m_oname.c_str(), O_RDWR | O_CREAT | O_EXCL,
+            int ofd = open( m_oname.c_str(), O_WRONLY | O_CREAT | O_EXCL,
                             S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
             if ( ofd < 0 ) {
-                std::cerr << "Error opening file " << m_oname << ": " << strerror(errno) << std::endl;
                 m_error = true;
-                return;
+                throw std::runtime_error( "Error opening file " + m_oname.string() + ": " + strerror(errno) );
             }
-            std::cerr << " opened new database " << m_oname << ", fd = " << ofd << std::endl;
-            cdb_make_start( &m_ocdb, ofd );
+            if ( cdb_make_start( &m_ocdb, ofd )!= 0 ) {
+                m_error = true;
+                throw std::runtime_error( "Failed to initialize CDB for writing" );
+            }
 
             if ( fd >= 0 && ofd >= 0 ) {
-                std::cerr << "copying original database entries" << std::endl;
-                // copy everything into a 'shadow' database -- basically, a (k,v)
-                // vector
-                // which preserves insertion order, augmented with a map for fast
-                // searches
-                // so we can (quickly) avoid duplicate entries...
                 unsigned cpos;
                 cdb_seqinit( &cpos, &m_icdb );
-                unsigned long nrec = 0;
                 while ( cdb_seqnext( &cpos, &m_icdb ) > 0 ) {
-                    ++nrec;
                     if ( cdb_make_add( &m_ocdb, static_cast<const unsigned char*>(
                                                     cdb_getkey( &m_icdb ) ),
                                        cdb_keylen( &m_icdb ),
@@ -220,15 +211,13 @@ class CDB
                                            cdb_getdata( &m_icdb ) ),
                                        cdb_datalen( &m_icdb ) ) != 0 ) {
                         // handle error...
-                        cerr << " failure to put key "
-                             << string( static_cast<const char*>(
-                                            cdb_getkey( &m_icdb ) ),
-                                        cdb_keylen( &m_icdb ) ) << " : " << errno
-                             << " = " << strerror( errno ) << endl;
                         m_error = true;
+                        throw std::runtime_error(
+                        " failure to put key " + std::string( static_cast<const char*>(
+                                                    cdb_getkey( &m_icdb ) ), cdb_keylen( &m_icdb ) )
+                                               + " : " + strerror( errno ) );
                     }
                 }
-                std::cerr << "copied " << nrec << " records " << std::endl;
             }
         }
     }
@@ -237,19 +226,7 @@ class CDB
     {
         close( cdb_fileno( &m_icdb ) );
         cdb_free( &m_icdb );
-        if ( writing() ) {
-            auto fd = cdb_fileno( &m_ocdb );
-            cdb_make_finish( &m_ocdb );
-            close( fd );
-            if ( !m_error ) {
-                std::cerr << "renaming " << m_oname << ", to " << m_fname << endl;
-                fs::rename( m_oname, m_fname );
-            } else {
-                std::cerr << "encountered an error; leaving original " << m_fname
-                     << " untouchted, removing temporary " << m_oname << endl;
-                fs::remove( m_oname );
-            }
-        }
+        if ( writing() ) cleanup_ocdb(m_error);
     }
 
     bool writing() const
@@ -258,10 +235,10 @@ class CDB
     };
 
     template <typename T>
-    bool readObject( T& t, const std::string& key )
+    bool readObject( T& t, boost::string_ref key )
     {
         // first check input database...
-        if ( cdb_find( &m_icdb, key.c_str(), key.size() ) > 0 ) {
+        if ( cdb_find( &m_icdb, key.data(), key.size() ) > 0 ) {
             io::stream<io::array_source> value(
                 static_cast<const char*>( cdb_getdata( &m_icdb ) ),
                 cdb_datalen( &m_icdb ) );
@@ -301,10 +278,10 @@ class CDB
             assert( value.tellg() == cdb_datalen( &m_icdb ) );
             return true;
         }
-        // not in input, maybe it's in the write cache?
+        // not in input, check write cache?
         if ( writing() ) {
-            auto i = m_shadow.find( key );
-            if ( i != m_shadow.end() ) {
+            auto i = m_write_cache.find( key );
+            if ( i != m_write_cache.end() ) {
                 std::stringstream s( i->second );
                 s >> t;
                 return true;
@@ -314,20 +291,20 @@ class CDB
     }
 
     template <typename SELECTOR>
-    vector<string> files( const SELECTOR& selector )
+    std::vector<std::string> files( const SELECTOR& selector )
     {
-        vector<string> _keys;
+        std::vector<std::string> _keys;
         if ( cdb_fileno( &m_icdb ) >= 0 ) {
             unsigned cpos;
             cdb_seqinit( &cpos, &m_icdb );
             while ( cdb_seqnext( &cpos, &m_icdb ) > 0 ) {
-                string key( static_cast<const char*>( cdb_getkey( &m_icdb ) ),
+                std::string key( static_cast<const char*>( cdb_getkey( &m_icdb ) ),
                             cdb_keylen( &m_icdb ) );
                 if ( selector( key ) ) _keys.push_back( key );
             }
         }
         if ( writing() ) { // then also check write cache...
-            for ( auto& i : m_shadow ) {
+            for ( auto& i : m_write_cache ) {
                 if ( selector( i.first ) ) _keys.push_back( i.first );
             }
         }
@@ -344,9 +321,9 @@ class CDB
 
 
 
-    bool append( const string& key, std::stringstream& is )
+    bool append( boost::string_ref key, std::stringstream& is )
     {
-        if ( !writing() ) return false;
+        if ( !writing() || m_error ) return false;
 
         // first, look in input database
         std::string rd;
@@ -359,8 +336,8 @@ class CDB
             return ok;
         }
         // if not there, look in write cache
-        auto i = m_shadow.find( key );
-        if ( i != m_shadow.end() ) {
+        auto i = m_write_cache.find( key );
+        if ( i != m_write_cache.end() ) {
             bool ok = i->second == is.str();
             if ( !ok ) {
                 std::cerr << "append error: entry present in output , but not equal!"
@@ -370,32 +347,54 @@ class CDB
         }
 
         // aha, this is an as yet unknown key... insert it!
-        m_shadow.emplace( key, is.str() );
+        m_write_cache.emplace( std::string{ key.data(), key.size() }, is.str() );
 
         auto record = make_cdb_record( is.str(), getUid(), std::time(nullptr) );
         if ( cdb_make_add( &m_ocdb,
                            reinterpret_cast<const unsigned char*>( key.data() ),
                            key.size(), record.data(), record.size() ) != 0 ) {
             // handle error...
-            cerr << " failure to put key " << key << " : " << errno << " = "
-                 << strerror( errno ) << endl;
-            m_error = true;
+            std::cerr << " failure to put key " << key << " : " << errno << " = "
+                      << strerror( errno ) << std::endl;
+            m_error = cleanup_ocdb(true);
             return false;
         }
-        // cout << " appended key " << key << " onto shadow -- now " <<
-        // m_shadow.size() << " entries " << endl;
         return true;
     }
+#if 0
     bool operator!() const
     {
         return m_error || cdb_fileno(&m_icdb)<0 || !m_icdb.cdb_mem;
     }
+#endif
+
+    std::string name() const { return m_fname.string(); }
   private:
-    struct cdb m_icdb;
+    bool cleanup_ocdb(bool error) {
+        auto fd = cdb_fileno( &m_ocdb );
+        if (fd<0) return false;
+        if (!error) {
+            error = ( cdb_make_finish( &m_ocdb ) < 0 );
+         } else {
+            cdb_make_free(&m_ocdb);
+         }
+        close( fd );
+        if ( !error ) {
+            fs::rename( m_oname, m_fname );
+        } else {
+            std::cerr << "encountered an error; leaving original " << m_fname
+                 << " untouched, removing temporary " << m_oname << std::endl;
+            fs::remove( m_oname );
+        }
+        cdb_fileno( &m_ocdb ) = -1;
+        return error;
+    }
+
+    struct cdb      m_icdb;
     struct cdb_make m_ocdb;
-    fs::path m_fname;
-    fs::path m_oname;
-    map<Gaudi::StringKey, string> m_shadow; // write cache..
+    fs::path        m_fname;
+    fs::path        m_oname;
+    std::map<std::string, std::string,std::less<>> m_write_cache; // write cache..
     mutable uid_t m_myUid = 0;
     bool m_error = false;
 };
@@ -423,7 +422,6 @@ StatusCode ConfigCDBAccessSvc::initialize()
        auto incSvc = service<IIncidentSvc>("IncidentSvc");
        incSvc->addListener(m_initListener.get(), m_incident, std::numeric_limits<long>::max());
     }
-
     return status;
 }
 
@@ -438,25 +436,27 @@ ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
             return nullptr;
         }
   // todo: use Parse and toStream to make mode instead of m_mode a property...
-        ios::openmode mode = ( m_mode == "ReadWrite"
-                                 ? ( ios::in | ios::out | ios::ate )
+        std::ios::openmode mode = ( m_mode == "ReadWrite"
+                                 ? ( std::ios::in | std::ios::out | std::ios::ate )
                                  : ( m_mode == "Truncate" )
-                                       ? ( ios::in | ios::out | ios::trunc )
-                                       : ios::in );
-        if ( m_name.value().empty() ) {
+                                       ? ( std::ios::in | std::ios::out | std::ios::trunc )
+                                       : std::ios::in );
+        std::string name = m_name.value();
+        if ( name.empty() ) {
             std::string def( System::getEnv( "HLTTCKROOT" ) );
             if ( def.empty() ) {
                throw GaudiException("Environment variable HLTTCKROOT not specified and no explicit "
                                     "filename given; cannot obtain location of config.cdb.",
-                                    name(), StatusCode::FAILURE);
+                                    this->name(), StatusCode::FAILURE);
             }
-            m_name = def + "/config.cdb";
+            name = def + "/config.cdb";
         }
-        info() << " opening " << m_name.value() << " in mode " << m_mode.value() << endmsg;
-        m_file = std::make_unique<CDB>( m_name.value(), mode );
-        if ( !*m_file ) {
-            error() << " Failed to open " << m_name.value() << " in mode " << m_mode.value()
-                    << " : " << strerror( errno ) << endmsg;
+        info() << " opening " << name << " in mode " << m_mode.value() << endmsg;
+        try {
+            m_file = std::make_unique<CDB>( name, mode );
+        } catch (const std::runtime_error& err) {
+            error() << " Failed to open " << name << " in mode " << m_mode.value()
+                    << " : " << err.what() << endmsg;
             m_file.reset( );
         }
       }
@@ -482,36 +482,36 @@ StatusCode ConfigCDBAccessSvc::finalize()
     return Service::finalize();
 }
 
-string ConfigCDBAccessSvc::propertyConfigPath(
+std::string ConfigCDBAccessSvc::propertyConfigPath(
     const PropertyConfig::digest_type& digest ) const
 {
-    return string( "PC/" ) += digest.str();
+    return std::string( "PC/" ) += digest.str();
 }
 
-string ConfigCDBAccessSvc::configTreeNodePath(
+std::string ConfigCDBAccessSvc::configTreeNodePath(
     const ConfigTreeNode::digest_type& digest ) const
 {
-    return string( "TN/" ) += digest.str();
+    return std::string( "TN/" ) += digest.str();
 }
 
-string ConfigCDBAccessSvc::configTreeNodeAliasPath(
+std::string ConfigCDBAccessSvc::configTreeNodeAliasPath(
     const ConfigTreeNodeAlias::alias_type& alias ) const
 {
-    return string( "AL/" ) += alias.str();
+    return std::string( "AL/" ) += alias.str();
 }
 
 template <typename T>
-boost::optional<T> ConfigCDBAccessSvc::read( const string& path ) const
+boost::optional<T> ConfigCDBAccessSvc::read( const std::string& path ) const
 {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "trying to read " << path << endmsg;
-    if ( file() == nullptr ) {
-        debug() << "file " << m_name.value() << " not found" << endmsg;
+    if ( !file() ) {
+        debug() << "no open file!" << endmsg;
         return boost::none;
     }
     T c;
     if ( !file()->readObject( c, path ) ) {
         if ( msgLevel( MSG::DEBUG ) )
-            debug() << "file " << path << " not found in container " << m_name.value()
+            debug() << "file " << path << " not found in container " << file()->name()
                     << endmsg;
         return boost::none;
     }
@@ -519,7 +519,7 @@ boost::optional<T> ConfigCDBAccessSvc::read( const string& path ) const
 }
 
 template <typename T>
-bool ConfigCDBAccessSvc::write( const string& path, const T& object ) const
+bool ConfigCDBAccessSvc::write( const std::string& path, const T& object ) const
 {
     auto current = read<T>( path );
     if ( current ) {
@@ -532,7 +532,7 @@ bool ConfigCDBAccessSvc::write( const string& path, const T& object ) const
         error() << "attempted write, but file has been opened ReadOnly" << endmsg;
         return false;
     }
-    stringstream s;
+    std::stringstream s;
     s << object;
     return file() && file()->append( path, s );
 }
@@ -552,8 +552,8 @@ ConfigCDBAccessSvc::readConfigTreeNode( const ConfigTreeNode::digest_type& ref )
 boost::optional<ConfigTreeNode> ConfigCDBAccessSvc::readConfigTreeNodeAlias(
     const ConfigTreeNodeAlias::alias_type& alias )
 {
-    string fnam = configTreeNodeAliasPath( alias );
-    boost::optional<string> sref = this->read<string>( fnam );
+    std::string fnam = configTreeNodeAliasPath( alias );
+    boost::optional<std::string> sref = this->read<std::string>( fnam );
     if ( !sref ) return boost::none;
     ConfigTreeNode::digest_type ref =
         ConfigTreeNode::digest_type::createFromStringRep( *sref );
@@ -564,24 +564,22 @@ boost::optional<ConfigTreeNode> ConfigCDBAccessSvc::readConfigTreeNodeAlias(
     return readConfigTreeNode( ref );
 }
 
-vector<ConfigTreeNodeAlias> ConfigCDBAccessSvc::configTreeNodeAliases(
+std::vector<ConfigTreeNodeAlias> ConfigCDBAccessSvc::configTreeNodeAliases(
     const ConfigTreeNodeAlias::alias_type& alias )
 {
-    vector<ConfigTreeNodeAlias> x;
+    std::vector<ConfigTreeNodeAlias> x;
 
-    string basename( "AL" );
+    std::string basename( "AL" );
     if ( !file() ) return x;
-    vector<string> aliases =
-        file()->files( PrefixFilenameSelector( basename + "/" + alias.major() ) );
-    for ( const auto& i : aliases ) {
+    for ( const auto& i : file()->files( PrefixFilenameSelector( basename + "/" + alias.major() ) )) {
         // TODO: this can be more efficient...
         if ( msgLevel( MSG::DEBUG ) )
             debug() << " configTreeNodeAliases: adding file " << i << endmsg;
-        string ref;
+        std::string ref;
         file()->readObject( ref, i );
-        stringstream str;
+        std::stringstream str;
         str << "Ref: " << ref << '\n' << "Alias: " << i.substr( basename.size() + 1 )
-            << endl;
+            << '\n';
         ConfigTreeNodeAlias a;
         str >> a;
         if ( msgLevel( MSG::DEBUG ) )
@@ -620,9 +618,9 @@ ConfigCDBAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias )
     }
     // now write alias...
     fs::path fnam = configTreeNodeAliasPath( alias.alias() );
-    boost::optional<string> x = read<string>( fnam.string() );
+    boost::optional<std::string> x = read<std::string>( fnam.string() );
     if ( !x ) {
-        stringstream s;
+        std::stringstream s;
         s << alias.ref();
         if ( !file() ) {
             error() << " container file not found during attempted write of "

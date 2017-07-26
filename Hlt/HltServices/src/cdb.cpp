@@ -856,7 +856,7 @@ cdb_make_finish_internal(struct cdb_make *cdbmp)
   return 0;
 }
 
-static void
+void
 cdb_make_free(struct cdb_make *cdbmp)
 {
   unsigned t;
