@@ -32,6 +32,18 @@ namespace fs = boost::filesystem;
 
 namespace
 {
+
+std::string operator+(boost::string_ref lhs, boost::string_ref rhs)
+{
+    std::string s; s.reserve(lhs.size()+rhs.size());
+    return s.append(lhs.data(),lhs.size()).append(rhs.data(),rhs.size());
+}
+
+std::string toString( boost::string_ref sr )
+{
+    return { sr.data(), sr.size() };
+}
+
 struct DefaultFilenameSelector
 {
     bool operator()( boost::string_ref /*fname*/ ) const
@@ -193,7 +205,7 @@ class CDB
                             S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
             if ( ofd < 0 ) {
                 m_error = true;
-                throw std::runtime_error( "Error opening file " + m_oname.string() + ": " + strerror(errno) );
+                throw std::runtime_error( "Error opening " + m_oname.string() + " exclusive, write-only: " + strerror(errno) );
             }
             if ( cdb_make_start( &m_ocdb, ofd )!= 0 ) {
                 m_error = true;
@@ -347,17 +359,16 @@ class CDB
         }
 
         // aha, this is an as yet unknown key... insert it!
-        m_write_cache.emplace( std::string{ key.data(), key.size() }, is.str() );
+        m_write_cache.emplace( toString(key), is.str() );
 
         auto record = make_cdb_record( is.str(), getUid(), std::time(nullptr) );
         if ( cdb_make_add( &m_ocdb,
                            reinterpret_cast<const unsigned char*>( key.data() ),
                            key.size(), record.data(), record.size() ) != 0 ) {
             // handle error...
-            std::cerr << " failure to put key " << key << " : " << errno << " = "
-                      << strerror( errno ) << std::endl;
             m_error = cleanup_ocdb(true);
-            return false;
+            throw std::runtime_error( std::string{"failure to put key "} +
+                                      key + strerror(errno) );
         }
         return true;
     }
@@ -534,7 +545,12 @@ bool ConfigCDBAccessSvc::write( const std::string& path, const T& object ) const
     }
     std::stringstream s;
     s << object;
-    return file() && file()->append( path, s );
+    try {
+        return file() && file()->append( path, s );
+    } catch (std::runtime_error& err) {
+        error() << "failure during write: " << err.what() << endmsg;
+        return false;
+    }
 }
 
 boost::optional<PropertyConfig>
