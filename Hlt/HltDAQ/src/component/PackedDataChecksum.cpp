@@ -151,7 +151,7 @@ static_assert(sizeof(LHCb::PackedRelation) == 16, "PackedRelation has changed!")
 static_assert(sizeof(LHCb::PackedRelatedInfoMap) == 16, "PackedRelatedInfoMap has changed!");
 static_assert(sizeof(LHCb::PackedVertex) == 72, "PackedVertex has changed!");  // padded!
 static_assert(sizeof(LHCb::PackedParticle) == 176, "PackedParticle has changed!");  // padded!
-static_assert(sizeof(LHCb::PackedCaloDigit) == 8, "PackedCaloDigit has changed!");  // padded!
+static_assert(sizeof(LHCb::PackedCaloDigit) == 8, "PackedCaloDigit has changed!");
 #endif
 
 // We need to define custom functions for some structures. This is because
