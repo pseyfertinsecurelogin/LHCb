@@ -165,6 +165,10 @@ class CDB
         // to the newly written items...
 
         int fd = open( m_fname.c_str(), O_RDONLY );
+        if ( fd < 0 ) {
+            m_error = true;
+            return;
+        }
 
         // if not exist, forget about copying...
 
@@ -189,8 +193,12 @@ class CDB
 
             int ofd = open( m_oname.c_str(), O_RDWR | O_CREAT | O_EXCL,
                             S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
+            if ( ofd < 0 ) {
+                std::cerr << "Error opening file " << m_oname << ": " << strerror(errno) << std::endl;
+                m_error = true;
+                return;
+            }
             std::cerr << " opened new database " << m_oname << ", fd = " << ofd << std::endl;
-            if ( ofd < 0 ) m_error = true;
             cdb_make_start( &m_ocdb, ofd );
 
             if ( fd >= 0 && ofd >= 0 ) {
@@ -380,8 +388,8 @@ class CDB
     }
     bool operator!() const
     {
-        return false;
-    } // TODO: FIXME: properly implement error checking...
+        return m_error || cdb_fileno(&m_icdb)<0 || !m_icdb.cdb_mem;
+    }
   private:
     mutable struct cdb m_icdb;
     struct cdb_make m_ocdb;
@@ -448,8 +456,7 @@ ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
         m_file = std::make_unique<CDB>( m_name.value(), mode );
         if ( !*m_file ) {
             error() << " Failed to open " << m_name.value() << " in mode " << m_mode.value()
-                    << endmsg;
-            error() << string( strerror( errno ) ) << endmsg;
+                    << " : " << strerror( errno ) << endmsg;
             m_file.reset( );
         }
       }
