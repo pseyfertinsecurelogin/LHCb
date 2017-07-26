@@ -205,7 +205,7 @@ class CDB
                             S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
             if ( ofd < 0 ) {
                 m_error = true;
-                throw std::runtime_error( "Error opening " + m_oname.string() + " exclusive, write-only: " + strerror(errno) );
+                throw std::runtime_error( "Failed to create " + m_oname.string() + " exclusive, write-only: " + strerror(errno) );
             }
             if ( cdb_make_start( &m_ocdb, ofd )!= 0 ) {
                 m_error = true;
@@ -225,7 +225,7 @@ class CDB
                         // handle error...
                         m_error = true;
                         throw std::runtime_error(
-                        " failure to put key " + std::string( static_cast<const char*>(
+                        "Failed to put key " + std::string( static_cast<const char*>(
                                                     cdb_getkey( &m_icdb ) ), cdb_keylen( &m_icdb ) )
                                                + " : " + strerror( errno ) );
                     }

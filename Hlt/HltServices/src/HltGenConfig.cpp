@@ -83,8 +83,10 @@ HltGenConfig::gatherDependencies(const INamedInterface &obj) const {
                     [&](const Algorithm*  dep) {
       debug() << "adding sub-algorithm " << dep->name() << " as dependant to " << obj.name() << endmsg;
       auto digest = generateConfig(*dep);
-      if (digest.invalid()) error() << "problem creating dependant configuration for "
-                                    << dep->name() << endmsg;
+      if (digest.invalid())  {
+          throw std::runtime_error(
+                    "problem creating dependant configuration for " + dep->name() );
+      }
       return digest;
     } );
   }
@@ -98,8 +100,8 @@ HltGenConfig::gatherDependencies(const INamedInterface &obj) const {
     debug() << "adding tool " << i.second->name() << " as dependency of " << obj.name() << endmsg;
     auto digest = generateConfig(*i.second);
     if (digest.invalid()) {
-      error() << "problem creating dependant configuration for "
-              << i.second->name() << endmsg;
+      throw std::runtime_error(
+               "problem creating dependant configuration for " + i.second->name() );
     }
     return digest;
   });
@@ -116,6 +118,9 @@ HltGenConfig::generateConfig(const INamedInterface &obj) const {
 
   // create and write the leaf object
   auto currentConfig = m_configSvc->currentConfiguration(obj);
+  if (currentConfig.digest().invalid()) {
+      throw std::runtime_error( "got bad configuration for "  +  obj.name() );
+  }
 
   // check whether there is a modification request for this component...
   std::vector<std::string> overrule;
@@ -146,24 +151,21 @@ HltGenConfig::generateConfig(const INamedInterface &obj) const {
     }
     currentConfig = currentConfig.copyAndModify(begin(overrule), end(overrule));
     if (!currentConfig.digest().valid()) {
-      error() << " overruling of " << obj.name() << " : " << overrule
-              << " failed" << endmsg;
-      return ConfigTreeNode::digest_type::createInvalid();
+      throw std::runtime_error( " overruling of " + obj.name() + " failed " );
     }
   }
 
   // Write the actual config
   auto propRef = m_accessSvc->writePropertyConfig(currentConfig);
   if (propRef.invalid()) {
-    error() << "problem writing PropertyConfig" << endmsg;
-    return ConfigTreeNode::digest_type::createInvalid();
+    throw std::runtime_error( "problem writing PropertyConfig for " + obj.name() );
   }
 
   // create the tree node for this leaf object, and its dependencies, and write
   // it
   auto nodeRef = m_accessSvc->writeConfigTreeNode({ propRef, depRefs });
   if (nodeRef.invalid()) {
-    error() << "problem writing ConfigTreeNode" << endmsg;
+    throw std::runtime_error ( "problem writing ConfigTreeNode for " + obj.name() );
   }
   return nodeRef;
 }
@@ -172,7 +174,7 @@ template <typename I, typename INS, typename R>
 StatusCode HltGenConfig::getDependencies(I i, I end, INS inserter, R resolver) const
 {
   for (; i != end; ++i) {
-    info() << "Generating config for " << *i << endmsg;
+    debug() << "Generating config for " << *i << endmsg;
     auto comp = resolver(*i);
     if (!comp) {
       error() << "Unable to get " << System::typeinfoName(typeid(comp)) << " "
@@ -180,7 +182,7 @@ StatusCode HltGenConfig::getDependencies(I i, I end, INS inserter, R resolver) c
       return StatusCode::FAILURE;
     }
     auto digest = generateConfig(*comp);
-    info() << " id for this : " << digest << endmsg;
+    info() << " id for " << *i << " : " << digest << endmsg;
     if (!digest.valid()) {
       error() << "got invalid digest for " << *i << endmsg;
       return StatusCode::FAILURE;
@@ -242,7 +244,14 @@ StatusCode HltGenConfig::finalize() {
   static bool first(true);
   if (first) {
     first = false;
-    generateConfig();
+    try {
+        auto sc = generateConfig();
+        if (sc.isFailure()) return sc;
+    }
+    catch ( const std::runtime_error& err ) {
+        error() << err.what() << endmsg;
+        return StatusCode::FAILURE;
+    }
   }
   return GaudiAlgorithm::finalize();
 }
