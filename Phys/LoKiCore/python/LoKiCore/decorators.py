@@ -16,9 +16,6 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision$
-#  Last modification $Date$
-#                 by $Author$
 # =============================================================================
 """
 The set of basic decorators for objects from LoKiCore library

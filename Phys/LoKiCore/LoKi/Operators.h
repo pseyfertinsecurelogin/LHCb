@@ -9,6 +9,7 @@
 #include "LoKi/Primitives.h"
 #include "LoKi/apply.h"
 #include "LoKi/Streamers.h"
+#define LOKI_REQUIRES(...) std::enable_if_t<(__VA_ARGS__),bool> = true
 // ============================================================================
 /** @file
  *
@@ -909,63 +910,63 @@ LoKi::MultiplyByValue<TYPE,TYPE2>
 operator* ( typename LoKi::Constant<TYPE,TYPE2>::T2 val , F&&        fun )
 { return { std::move(val) , std::forward<F>(fun) } ; }
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::EqualToList<TYPE> operator == ( const LoKi::Functor<TYPE,double>& fun ,
                                       std::vector<double>        vct )
 { return { fun , std::move(vct) } ; }
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::EqualToList<TYPE> operator == ( const LoKi::Functor<TYPE,double>& fun ,
                                       std::vector<int>           vct )
 { return { fun , std::move(vct) } ; }
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::EqualToList<TYPE> operator == ( const LoKi::Functor<TYPE,double>& fun ,
                                       std::vector<unsigned int>  vct )
 { return { fun , std::move(vct) } ; }
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::NotEqualToList<TYPE> operator != ( const LoKi::Functor<TYPE,double>& fun ,
                                          std::vector<double>        vct )
 { return { fun , std::move(vct) } ; }
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::NotEqualToList<TYPE> operator != ( const LoKi::Functor<TYPE,double>& fun ,
                                          std::vector<int>           vct )
 { return { fun , std::move(vct) } ; }
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::NotEqualToList<TYPE> operator != ( const LoKi::Functor<TYPE,double>& fun ,
                                          std::vector<unsigned int>  vct )
 { return { fun , std::move(vct) } ; }
 
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::EqualToList<TYPE> operator == ( std::vector<double>        vct ,
                                       const LoKi::Functor<TYPE,double>& fun )
 { return { fun , std::move(vct) } ; }
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::EqualToList<TYPE> operator == ( std::vector<int>           vct ,
                                       const LoKi::Functor<TYPE,double>& fun )
 { return { fun , std::move(vct) } ; }
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::EqualToList<TYPE> operator == ( std::vector<unsigned int>  vct ,
                                       const LoKi::Functor<TYPE,double>& fun )
 { return { fun , std::move(vct) } ; }
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::NotEqualToList<TYPE> operator != ( std::vector<double>        vct ,
                                          const LoKi::Functor<TYPE,double>& fun )
 { return { fun , std::move(vct) } ; }
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::NotEqualToList<TYPE> operator != ( std::vector<int>&          vct ,
                                          const LoKi::Functor<TYPE,double>& fun )
 { return { fun , std::move(vct) } ; }
 // ============================================================================
-template <class TYPE>
+template <typename TYPE>
 LoKi::NotEqualToList<TYPE> operator != ( std::vector<unsigned int>  vct ,
                                          const LoKi::Functor<TYPE,double>& fun )
 { return { fun , std::move(vct) } ; }
@@ -979,7 +980,7 @@ LoKi::NotEqualToList<TYPE> operator != ( std::vector<unsigned int>  vct ,
  *  @author Vanya BELYAEV ibelyaev@cern.ch
  *  @date 2011-03-30
  */
-template <class TYPE>
+template <typename TYPE>
 LoKi::Modulo<TYPE> operator% ( const LoKi::Functor<TYPE,double>& divident ,
                                unsigned int                      divisor  )
 { return { divident , divisor } ; }
@@ -994,67 +995,67 @@ LoKi::Modulo<TYPE> operator% ( const LoKi::Functor<TYPE,double>& divident ,
 // ============================================================================
 namespace LoKi {
 // less
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::Less<TYPE,TYPE2> operator<  ( const  LoKi::Functor<TYPE,TYPE2>&  fun1 ,
                                     const  LoKi::Functor<void,TYPE2>&  fun2 )
 { return { fun1, LoKi::Value<TYPE,TYPE2> ( fun2 ) } ; }
 //
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::Less<TYPE,TYPE2> operator<  ( const  LoKi::Functor<void,TYPE2>&  fun1 ,
                                     const  LoKi::Functor<TYPE,TYPE2>&  fun2 )
 { return { Value<TYPE,TYPE2> ( fun1 ) , fun2 } ; }
 
 // less or equal
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::LessOrEqual<TYPE,TYPE2> operator<= ( const LoKi::Functor<TYPE,TYPE2>& fun1 ,
                                            const LoKi::Functor<void,TYPE2>& fun2 )
 { return { fun1, LoKi::Value<TYPE,TYPE2> ( fun2 ) } ; }
 //
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::LessOrEqual<TYPE,TYPE2> operator<= ( const LoKi::Functor<void,TYPE2>& fun1 ,
                                            const LoKi::Functor<TYPE,TYPE2>& fun2 )
 { return { Value<TYPE,TYPE2> ( fun1 ) , fun2 } ; }
 
 // greater
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::Less<TYPE,TYPE2> operator>  ( const  Functor<TYPE,TYPE2>&  fun1 ,
                                     const  Functor<void,TYPE2>&  fun2 )
 { return { Value<TYPE,TYPE2> ( fun2 ) , fun1 } ; }
 //
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::Less<TYPE,TYPE2> operator>  ( const  Functor<void,TYPE2>&  fun1 ,
                                     const  Functor<TYPE,TYPE2>&  fun2 )
 { return { fun2, Value<TYPE,TYPE2> ( fun1 ) } ; }
 
 // greater or equal
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::LessOrEqual<TYPE,TYPE2> operator>= ( const  Functor<TYPE,TYPE2>&  fun1 ,
                                            const  Functor<void,TYPE2>&  fun2 )
 { return { Value<TYPE,TYPE2> ( fun2 ) , fun1 } ; }
 //
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::LessOrEqual<TYPE,TYPE2> operator>= ( const  Functor<void,TYPE2>&  fun1 ,
                                            const  Functor<TYPE,TYPE2>&  fun2 )
 { return { fun2, Value<TYPE,TYPE2> ( fun1 ) } ; }
 
 // equality
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::Equal<TYPE,TYPE2> operator== ( const Functor<TYPE,TYPE2>&  fun1 ,
                                      const Functor<void,TYPE2>&  fun2 )
 { return { fun1, Value<TYPE,TYPE2> ( fun2 ) } ; }
 //
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::Equal<TYPE,TYPE2> operator== ( const Functor<void,TYPE2>&  fun1 ,
                                      const Functor<TYPE,TYPE2>&  fun2 )
 { return { Value<TYPE,TYPE2> ( fun1 ) , fun2 } ; }
 
 // non-equality
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::NotEqual<TYPE,TYPE2> operator!= ( const Functor<TYPE,TYPE2>&  fun1 ,
                                         const Functor<void,TYPE2>&  fun2 )
 { return { fun1 , Value<TYPE,TYPE2> ( fun2 ) } ; }
 //
-template <class TYPE, class TYPE2, typename = std::enable_if_t< !std::is_void<TYPE>::value>>
+template <typename TYPE, typename TYPE2, LOKI_REQUIRES( !std::is_void<TYPE>::value )>
 LoKi::NotEqual<TYPE,TYPE2> operator!= ( const Functor<void,TYPE2>&  fun1 ,
                                         const Functor<TYPE,TYPE2>&  fun2 )
 { return { Value<TYPE,TYPE2> ( fun1 ) , fun2 } ; }

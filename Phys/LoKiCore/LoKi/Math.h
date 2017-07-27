@@ -391,10 +391,11 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-09-05
    */
+#define LOKI_REQUIRES(...) std::enable_if_t<(__VA_ARGS__),bool> = true
+
   template<typename Iterator, typename F,
-           typename = std::enable_if_t< std::is_convertible<
-                                            typename std::iterator_traits<Iterator>::reference,
-                                            LoKi::details::argument_t<F>>::value > >
+           LOKI_REQUIRES( std::is_convertible< typename std::iterator_traits<Iterator>::reference,
+                                               LoKi::details::argument_t<F>>::value ) >
   Iterator select_min ( Iterator first , Iterator last  , const F& fun   )
   {
     return std::min_element( first, last,
@@ -423,9 +424,9 @@ namespace LoKi
    *  @date   2002-09-05
    */
   template<typename Iterator, typename F,
-           typename = std::enable_if_t< std::is_convertible<
-                                            typename std::iterator_traits<Iterator>::reference,
-                                            LoKi::details::argument_t<F>>::value > >
+           LOKI_REQUIRES(  std::is_convertible<
+                               typename std::iterator_traits<Iterator>::reference,
+                               LoKi::details::argument_t<F>>::value )  >
   Iterator select_max ( Iterator first , Iterator last  , const F& fun   )
   {
     return std::max_element( first , last  ,
@@ -454,9 +455,9 @@ namespace LoKi
    *  @date   2002-09-05
    */
   template<typename Sequence, typename F,
-           typename = std::enable_if_t< std::is_convertible<
-                                            typename Sequence::value_type,
-                                            LoKi::details::argument_t<F>>::value > >
+           LOKI_REQUIRES( std::is_convertible<
+                              typename Sequence::value_type,
+                              LoKi::details::argument_t<F>>::value ) >
   typename Sequence::value_type select_min ( Sequence& sequence  , F&& fun )
   {
     if ( sequence.begin() == sequence.end() ) { return {};  }
@@ -485,9 +486,9 @@ namespace LoKi
    *  @date   2002-09-05
    */
   template<typename Sequence, typename F,
-           typename = std::enable_if_t< std::is_convertible<
-                                            typename Sequence::value_type,
-                                            LoKi::details::argument_t<F>>::value > >
+           LOKI_REQUIRES( std::is_convertible<
+                              typename Sequence::value_type,
+                              LoKi::details::argument_t<F>>::value ) >
   typename Sequence::value_type select_max( Sequence& sequence  , F&& fun )
   {
     if ( sequence.begin() == sequence.end() ) { return {} ; }
@@ -523,12 +524,12 @@ namespace LoKi
    *  @date   2005-03-09
    */
   template<typename Iterator, typename Fun, typename Cut,
-           typename = std::enable_if_t< std::is_convertible<
-                                            typename std::iterator_traits<Iterator>::reference,
-                                            LoKi::details::argument_t<Fun>>::value >,
-           typename = std::enable_if_t< std::is_convertible<
-                                            typename std::iterator_traits<Iterator>::reference,
-                                            LoKi::details::argument_t<Cut>>::value >
+           LOKI_REQUIRES( std::is_convertible<
+                              typename std::iterator_traits<Iterator>::reference,
+                              LoKi::details::argument_t<Fun>>::value ),
+           LOKI_REQUIRES( std::is_convertible<
+                              typename std::iterator_traits<Iterator>::reference,
+                              LoKi::details::argument_t<Cut>>::value )
           >
   Iterator select_min( Iterator first, Iterator last, const Fun& fun , const Cut& cut )
   {
@@ -579,12 +580,12 @@ namespace LoKi
    *  @date   2005-03-09
    */
   template<typename Iterator, typename Fun, typename Cut,
-           typename = std::enable_if_t< std::is_convertible<
-                                            typename std::iterator_traits<Iterator>::reference,
-                                            LoKi::details::argument_t<Fun>>::value >,
-           typename = std::enable_if_t< std::is_convertible<
-                                            typename std::iterator_traits<Iterator>::reference,
-                                            LoKi::details::argument_t<Cut>>::value >
+           LOKI_REQUIRES( std::is_convertible<
+                              typename std::iterator_traits<Iterator>::reference,
+                              LoKi::details::argument_t<Fun>>::value ),
+           LOKI_REQUIRES( std::is_convertible<
+                              typename std::iterator_traits<Iterator>::reference,
+                              LoKi::details::argument_t<Cut>>::value )
           >
   Iterator select_max( Iterator first, Iterator last, const Fun& fun, const Cut& cut)
   {
@@ -708,7 +709,7 @@ namespace LoKi
   template <typename F,
             typename TYPE  = details::type1_t<F>,
             typename = details::require_signature<F,TYPE,double>>
-  LoKi::Round<TYPE> round ( F&& fun ) { return { std::forward<F>(fun) , 1 } ; }
+  LoKi::Round<TYPE> round ( F&& fun ) { return { std::forward<F>(fun) } ; }
   // ==========================================================================
   /** "jbit" the floating result to integer value
    *  get the jth bit of value.
@@ -844,6 +845,7 @@ namespace std
   { return vct ; }
   // ==========================================================================
 }
+#undef LOKI_REQUIRES
 // ============================================================================
 // The END
 // ============================================================================
