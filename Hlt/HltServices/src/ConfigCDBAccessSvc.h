@@ -60,8 +60,8 @@ private:
   mutable std::unique_ptr<ConfigCDBAccessSvc_details::CDB> m_file;
   std::unique_ptr<IIncidentListener> m_initListener;
 
-  template <typename T> boost::optional<T> read(const std::string& path) const;
-  template <typename T> bool write(const std::string& path,const T& object) const;
+  template <typename T> boost::optional<T> read(boost::string_ref path) const;
+  template <typename T> bool write(boost::string_ref path,const T& object) const;
   std::string propertyConfigPath( const PropertyConfig::digest_type& digest ) const;
   std::string configTreeNodePath( const ConfigTreeNode::digest_type& digest ) const;
   std::string configTreeNodeAliasPath( const ConfigTreeNodeAlias::alias_type& alias ) const;

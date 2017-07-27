@@ -513,7 +513,7 @@ std::string ConfigCDBAccessSvc::configTreeNodeAliasPath(
 }
 
 template <typename T>
-boost::optional<T> ConfigCDBAccessSvc::read( const std::string& path ) const
+boost::optional<T> ConfigCDBAccessSvc::read( boost::string_ref path ) const
 {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "trying to read " << path << endmsg;
     if ( !file() ) {
@@ -531,7 +531,7 @@ boost::optional<T> ConfigCDBAccessSvc::read( const std::string& path ) const
 }
 
 template <typename T>
-bool ConfigCDBAccessSvc::write( const std::string& path, const T& object ) const
+bool ConfigCDBAccessSvc::write( boost::string_ref path, const T& object ) const
 {
     if (!file()) {
         debug() << "no open file!" << endmsg;
