@@ -57,9 +57,9 @@ struct PrefixFilenameSelector
     PrefixFilenameSelector( std::string  _prefix ) : prefix(std::move( _prefix ))
     {
     }
-    bool operator()( const std::string& fname ) const
+    bool operator()( boost::string_ref fname ) const
     {
-        return fname.compare( 0, prefix.size(), prefix ) == 0;
+        return fname.starts_with(prefix);
     }
     std::string prefix;
 };
@@ -219,11 +219,10 @@ class CDB
                 unsigned cpos;
                 cdb_seqinit( &cpos, &m_icdb );
                 while ( cdb_seqnext( &cpos, &m_icdb ) > 0 ) {
-                    if ( cdb_make_add( &m_ocdb, static_cast<const unsigned char*>(
-                                                    cdb_getkey( &m_icdb ) ),
+                    if ( cdb_make_add( &m_ocdb,
+                                       static_cast<const unsigned char*>( cdb_getkey( &m_icdb ) ),
                                        cdb_keylen( &m_icdb ),
-                                       static_cast<const unsigned char*>(
-                                           cdb_getdata( &m_icdb ) ),
+                                       static_cast<const unsigned char*>( cdb_getdata( &m_icdb ) ),
                                        cdb_datalen( &m_icdb ) ) != 0 ) {
                         // handle error...
                         m_error = true;
@@ -310,22 +309,22 @@ class CDB
     template <typename SELECTOR>
     std::vector<std::string> files( const SELECTOR& selector )
     {
-        std::vector<std::string> _keys;
+        std::vector<std::string> keys;
         if ( cdb_fileno( &m_icdb ) >= 0 ) {
             unsigned cpos;
             cdb_seqinit( &cpos, &m_icdb );
             while ( cdb_seqnext( &cpos, &m_icdb ) > 0 ) {
-                std::string key( static_cast<const char*>( cdb_getkey( &m_icdb ) ),
-                            cdb_keylen( &m_icdb ) );
-                if ( selector( key ) ) _keys.push_back( key );
+                boost::string_ref key( static_cast<const char*>( cdb_getkey( &m_icdb ) ),
+                                       cdb_keylen( &m_icdb ) );
+                if ( selector( key ) ) keys.emplace_back( key.data(), key.size() );
             }
         }
         if ( writing() ) { // then also check write cache...
             for ( auto& i : m_write_cache ) {
-                if ( selector( i.first ) ) _keys.push_back( i.first );
+                if ( selector( i.first ) ) keys.push_back( i.first );
             }
         }
-        return _keys;
+        return keys;
     }
 
     uid_t getUid() const
