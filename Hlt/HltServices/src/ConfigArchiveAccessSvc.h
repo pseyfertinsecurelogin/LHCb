@@ -1,5 +1,5 @@
-#ifndef CONFIGARCHIVEACCESSSVC_H 
-#define CONFIGARCHIVEACCESSSVC_H 
+#ifndef CONFIGARCHIVEACCESSSVC_H
+#define CONFIGARCHIVEACCESSSVC_H
 
 // Include files
 #include <string>
@@ -12,7 +12,7 @@
 #include "Kernel/IConfigAccessSvc.h"
 
 /** @class ConfigFileAccessSvc ConfigFileAccessSvc.h
- *  
+ *
  *  functionality:
  *        read/write configure information to files
  *
@@ -23,10 +23,9 @@
 
 class IArchive;
 
-class ConfigArchiveAccessSvc : public extends1<Service,IConfigAccessSvc> {
+class ConfigArchiveAccessSvc : public extends<Service,IConfigAccessSvc> {
 public:
   ConfigArchiveAccessSvc(const std::string& name, ISvcLocator* pSvcLocator);
-  ~ConfigArchiveAccessSvc( ) override = default;     ///< Destructor
 
   StatusCode initialize() override;    ///< Service initialization
 

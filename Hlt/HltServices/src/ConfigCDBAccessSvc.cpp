@@ -165,27 +165,29 @@ class CDB
   public:
     CDB( const std::string& name, std::ios::openmode mode = std::ios::in ) : m_fname( name )
     {
+        if ( mode & std::ios::out ) {
+            m_oname = fs::unique_path( m_fname.string() + "-%%%%-%%%%-%%%%-%%%%" );
+        }
+
         cdb_fileno( &m_ocdb ) = -1;;
         // if open 'readwrite' we construct a fresh copy of the input
         // database, then extend it, and on 'close' replace the original one
         // with the new one.
 
         // Note that while appending, we need to keep a 'shadow' copy to satisfy
-        // reads
-        // to the newly written items...
+        // reads to the newly written items...
 
         int fd = open( m_fname.c_str(), O_RDONLY );
         if ( fd < 0 ) {
-            m_error = true;
-            throw std::runtime_error( "Error opening file " + m_fname.string() + ": " + strerror(errno) );
-        }
-
-        // if not exist, forget about copying...
-
-        if ( cdb_init( &m_icdb, fd ) < 0 ) cdb_fileno( &m_icdb ) = -1;
-
-        if ( mode & std::ios::out ) {
-            m_oname = fs::unique_path( m_fname.string() + "-%%%%-%%%%-%%%%-%%%%" );
+            if (!writing() ) {
+                m_error = true;
+                throw std::runtime_error( "Error opening file " + m_fname.string() + ": " + strerror(errno) );
+            }
+            cdb_fileno(&m_icdb)=-1;
+        } else {
+            if ( cdb_init( &m_icdb, fd ) < 0 ) {
+                throw std::runtime_error( "Could not inititalize CDB for " + m_fname.string() + ": " + strerror(errno) );
+            }
         }
 
         if ( writing() ) {
@@ -212,6 +214,7 @@ class CDB
                 throw std::runtime_error( "Failed to initialize CDB for writing" );
             }
 
+            // only copy if there is a valid input .cdb file!
             if ( fd >= 0 && ofd >= 0 ) {
                 unsigned cpos;
                 cdb_seqinit( &cpos, &m_icdb );
@@ -236,8 +239,10 @@ class CDB
 
     ~CDB()
     {
-        close( cdb_fileno( &m_icdb ) );
-        cdb_free( &m_icdb );
+        if (cdb_fileno(&m_icdb)>=0) {
+            close( cdb_fileno( &m_icdb ) );
+            cdb_free( &m_icdb );
+        }
         if ( writing() ) cleanup_ocdb(m_error);
     }
 
@@ -249,8 +254,8 @@ class CDB
     template <typename T>
     bool readObject( T& t, boost::string_ref key )
     {
-        // first check input database...
-        if ( cdb_find( &m_icdb, key.data(), key.size() ) > 0 ) {
+        // first check input database... (if it is available!)
+        if ( cdb_fileno(&m_icdb) != -1 && cdb_find( &m_icdb, key.data(), key.size() ) > 0 ) {
             io::stream<io::array_source> value(
                 static_cast<const char*>( cdb_getdata( &m_icdb ) ),
                 cdb_datalen( &m_icdb ) );
@@ -372,12 +377,10 @@ class CDB
         }
         return true;
     }
-#if 0
     bool operator!() const
     {
-        return m_error || cdb_fileno(&m_icdb)<0 || !m_icdb.cdb_mem;
+        return m_error;
     }
-#endif
 
     std::string name() const { return m_fname.string(); }
   private:
@@ -466,8 +469,7 @@ ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
         try {
             m_file = std::make_unique<CDB>( name, mode );
         } catch (const std::runtime_error& err) {
-            error() << " Failed to open " << name << " in mode " << m_mode.value()
-                    << " : " << err.what() << endmsg;
+            error() << err.what() << endmsg;
             m_file.reset( );
         }
       }
@@ -516,15 +518,15 @@ boost::optional<T> ConfigCDBAccessSvc::read( const std::string& path ) const
 {
     if ( msgLevel( MSG::DEBUG ) ) debug() << "trying to read " << path << endmsg;
     if ( !file() ) {
-        debug() << "no open file!" << endmsg;
-        return boost::none;
+        if (msgLevel(MSG::DEBUG)) debug() << "no open file!" << endmsg;
+        return {};
     }
     T c;
     if ( !file()->readObject( c, path ) ) {
         if ( msgLevel( MSG::DEBUG ) )
             debug() << "file " << path << " not found in container " << file()->name()
                     << endmsg;
-        return boost::none;
+        return {};
     }
     return c;
 }
@@ -532,6 +534,10 @@ boost::optional<T> ConfigCDBAccessSvc::read( const std::string& path ) const
 template <typename T>
 bool ConfigCDBAccessSvc::write( const std::string& path, const T& object ) const
 {
+    if (!file()) {
+        debug() << "no open file!" << endmsg;
+        return false;
+    }
     auto current = read<T>( path );
     if ( current ) {
         if ( object == current.get() ) return true;

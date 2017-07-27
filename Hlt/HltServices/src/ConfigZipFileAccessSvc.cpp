@@ -25,11 +25,11 @@ IArchive* ConfigZipFileAccessSvc::file() const
             error() << "invalid mode: " << m_mode << endmsg;
             return nullptr;
         }
-        ios::openmode mode = ( m_mode == "ReadWrite" )
-                                 ? ( ios::in | ios::out | ios::ate )
-                                 : ( m_mode == "Truncate" )
-                                       ? ( ios::in | ios::out | ios::trunc )
-                                       : ios::in;
+        ios::openmode mode = ( m_mode == "ReadWrite"
+                             ? ios::in | ios::out | ios::ate
+                             : ( m_mode == "Truncate"
+                               ? ios::in | ios::out | ios::trunc
+                               : ios::in ) );
         if ( m_name.empty() ) {
             std::string def( System::getEnv( "HLTTCKROOT" ) );
             if ( !def.empty() ) {

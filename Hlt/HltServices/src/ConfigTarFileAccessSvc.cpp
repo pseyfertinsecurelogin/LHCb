@@ -27,11 +27,11 @@ IArchive* ConfigTarFileAccessSvc::file() const
             error() << "invalid mode: " << m_mode << endmsg;
             return nullptr;
         }
-        std::ios::openmode mode = ( m_mode == "ReadWrite" )
-                                 ? ( std::ios::in | std::ios::out | std::ios::ate )
-                                 : ( m_mode == "Truncate" )
-                                       ? ( std::ios::in | std::ios::out | std::ios::trunc )
-                                       : std::ios::in;
+        std::ios::openmode mode = ( m_mode == "ReadWrite"
+                                  ? std::ios::in | std::ios::out | std::ios::ate
+                                  : ( m_mode == "Truncate"
+                                    ? std::ios::in | std::ios::out | std::ios::trunc
+                                    : std::ios::in ) );
         if ( m_name.empty() ) {
             std::string def( System::getEnv( "HLTTCKROOT" ) );
             if ( !def.empty() ) {
