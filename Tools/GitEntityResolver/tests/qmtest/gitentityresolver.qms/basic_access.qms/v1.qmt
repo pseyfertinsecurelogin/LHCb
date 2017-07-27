@@ -23,6 +23,9 @@ parameter = 2016
 
 countErrorLines()
 
+info = dict(repository=repository, tag=tag,
+            commit_id=commit_id, short_id=commit_id[:8])
+
 findReferenceBlock('''
 ToolSvc.GitDDDB     DEBUG Initializing...
 ToolSvc.GitDDDB      INFO opening Git repository '{repository}'
@@ -30,12 +33,12 @@ ToolSvc.GitDDDB      INFO using commit '{tag}' corresponding to {commit_id}
 ToolSvc.GitDDDB   VERBOSE ServiceLocatorHelper::service: found service IncidentSvc
 ToolSvc.GitDDDB     DEBUG registering to IncidentSvc
 ToolSvc.GitDDDB     DEBUG Successfully initialized.
-'''.format(repository=repository, commit_id=commit_id, tag=tag),
+'''.format(**info),
 id='GitEntityResolver.initialization')
 
 findReferenceBlock('''
-LoadDDDB             INFO Database {repository} tag {tag}
-'''.format(repository=repository, commit_id=commit_id, tag=tag),
+LoadDDDB             INFO Database {repository} tag {tag}[{short_id}]
+'''.format(**info),
 id='reported_tag')
 
 # grep
