@@ -174,7 +174,7 @@ template <typename I, typename INS, typename R>
 StatusCode HltGenConfig::getDependencies(I i, I end, INS inserter, R resolver) const
 {
   for (; i != end; ++i) {
-    debug() << "Generating config for " << *i << endmsg;
+    info() << "Generating config for " << *i << endmsg;
     auto comp = resolver(*i);
     if (!comp) {
       error() << "Unable to get " << System::typeinfoName(typeid(comp)) << " "
