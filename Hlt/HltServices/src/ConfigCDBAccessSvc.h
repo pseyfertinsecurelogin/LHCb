@@ -52,8 +52,8 @@ private:
 
   ConfigCDBAccessSvc_details::CDB*  file() const;
 
-  mutable Gaudi::Property<std::string> m_name{ this, "File" } ;   ///< filename of tar file from which to read configurations
-  // todo: use Parse and toStream directly
+  Gaudi::Property<std::string> m_name{ this, "File" } ;   ///< filename of tar file from which to read configurations
+  // todo: use custom type instead of std::string
   Gaudi::Property<std::string>         m_mode{ this, "Mode", "ReadOnly" };   ///< which flags to specify when opening the tar file
   Gaudi::Property<std::string>         m_incident { this, "CloseIncident" };   ///< the incident to
   mutable std::mutex                                       m_file_mtx;
@@ -62,9 +62,6 @@ private:
 
   template <typename T> boost::optional<T> read(boost::string_ref path) const;
   template <typename T> bool write(boost::string_ref path,const T& object) const;
-  std::string propertyConfigPath( const PropertyConfig::digest_type& digest ) const;
-  std::string configTreeNodePath( const ConfigTreeNode::digest_type& digest ) const;
-  std::string configTreeNodeAliasPath( const ConfigTreeNodeAlias::alias_type& alias ) const;
 
 };
 #endif // CONFIGTARFILEACCESSSVC_H

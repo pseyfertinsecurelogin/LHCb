@@ -30,39 +30,33 @@
 namespace io = boost::iostreams;
 namespace fs = boost::filesystem;
 
-namespace
-{
+namespace {
 
-std::string operator+(boost::string_ref lhs, boost::string_ref rhs)
+std::string propertyConfigPath( const PropertyConfig::digest_type& digest )
+{ return "PC/" + digest.str(); }
+
+std::string configTreeNodePath( const ConfigTreeNode::digest_type& digest )
+{ return "TN/" + digest.str(); }
+
+std::string configTreeNodeAliasPath( const ConfigTreeNodeAlias::alias_type& alias )
+{ return "AL/" + alias.str(); }
+
+struct DefaultFilenameSelector
 {
-    std::string s; s.reserve(lhs.size()+rhs.size());
-    return s.append(lhs.data(),lhs.size()).append(rhs.data(),rhs.size());
-}
+    bool operator()( boost::string_ref ) const { return true; }
+};
+
+struct PrefixFilenameSelector
+{
+    PrefixFilenameSelector( std::string  _prefix ) : prefix(std::move( _prefix )) { }
+    bool operator()( boost::string_ref fname ) const { return fname.starts_with(prefix); }
+    std::string prefix;
+};
 
 std::string toString( boost::string_ref sr )
 {
     return { sr.data(), sr.size() };
 }
-
-struct DefaultFilenameSelector
-{
-    bool operator()( boost::string_ref /*fname*/ ) const
-    {
-        return true;
-    }
-};
-
-struct PrefixFilenameSelector
-{
-    PrefixFilenameSelector( std::string  _prefix ) : prefix(std::move( _prefix ))
-    {
-    }
-    bool operator()( boost::string_ref fname ) const
-    {
-        return fname.starts_with(prefix);
-    }
-    std::string prefix;
-};
 
 uint8_t read8( std::istream& s )
 {
@@ -97,6 +91,173 @@ std::time_t read_time( std::istream& s )
     return read32( s );
 }
 
+struct cdb_record {
+    const void *key,*data;
+    size_t keylen, datalen;
+    boost::string_ref string_key() const { return { static_cast<const char*>(key), keylen }; }
+};
+
+class icdb {
+    struct cdb  m_db;
+    std::string m_name;
+public:
+    icdb( std::string fname ) : m_name(std::move(fname)) {
+        auto fd = open( m_name.c_str(), O_RDONLY );
+        if (fd < 0 || cdb_init( &m_db, fd ) < 0) cdb_fileno(&m_db)=-1;
+    }
+    icdb(const icdb&) = delete;
+    icdb& operator=( const icdb& ) = delete;
+    icdb(icdb&&) = delete;
+    icdb& operator=( icdb&& ) = delete;
+    ~icdb() {
+        auto fd = cdb_fileno(&m_db);
+        if (fd>=0) {
+            close(fd);
+            cdb_free(&m_db);
+        }
+    }
+
+    operator bool() const { return cdb_fileno(&m_db)>=0; }
+
+    const std::string& name() const { return m_name; }
+
+    class iterator {
+        struct cdb* m_db = nullptr;
+        unsigned m_cpos = 0;
+        bool atEnd() const { return !m_db; }
+    public:
+        iterator(struct cdb *parent = nullptr, unsigned cpos = 0) : m_db{parent}, m_cpos(cpos) {
+            if ( m_db && !m_cpos ) {
+                cdb_seqinit(&m_cpos, m_db);
+                ++*this;
+            }
+        }
+        iterator& operator++() {
+            if ( m_db &&  cdb_seqnext(&m_cpos, m_db) <= 0 ) m_db = nullptr ;
+            return *this;
+        }
+        friend bool operator==(const iterator& lhs, const iterator& rhs) {
+            return ( lhs.atEnd() && rhs.atEnd() ) ||
+                   ( !lhs.atEnd() && !rhs.atEnd() && lhs.m_cpos == rhs.m_cpos );
+        }
+        friend bool operator!=(const iterator& lhs, const iterator& rhs) {
+            return !(lhs==rhs);
+        }
+        cdb_record operator*() const { // Not quite canonical -- ideally should be value_type&...
+            return { cdb_getkey(m_db), cdb_getdata(m_db),
+                     cdb_keylen(m_db), cdb_datalen(m_db) } ;
+        }
+    };
+
+    iterator begin() { return { &m_db }; }
+    iterator end() const { return { }; }
+
+    iterator find(boost::string_ref key) {
+        if ( cdb_find(&m_db, key.data(), key.size())>0 ) {
+            // Hrmpf. Use inside knowledge of the layout of the cdb structure...
+            return { &m_db, cdb_datapos(&m_db) + cdb_datalen(&m_db) };
+        }
+        return end();
+    }
+};
+
+class ocdb {
+    struct cdb_make  m_db;
+    std::string m_name;
+    bool m_error = false;
+public:
+    ocdb( std::string fname ) : m_name(std::move(fname)) {
+        // From http://pubs.opengroup.org/onlinepubs/7908799/xsh/open.html:
+        //
+        // O_CREAT and O_EXCL are set, open() will fail if the file exists. The check for
+        // the existence of the file and the creation of the file if it does not exist will
+        // be atomic with respect to other processes executing open() naming the same
+        // filename in the same directory with O_EXCL and O_CREAT set. If O_CREAT
+        // is not set, the effect is undefined.
+        auto fd = open( m_name.c_str(), O_WRONLY | O_CREAT | O_EXCL,
+                                         S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
+        if (fd < 0 ) {
+            cdb_fileno(&m_db) = -1;
+            throw std::runtime_error( "Failed to create " + m_name + " exclusive, write-only: " + strerror(errno) );
+        }
+        if ( cdb_make_start( &m_db, fd ) != 0) {
+            close(fd);
+            cdb_fileno(&m_db)=-1;
+            fs::remove( m_name );
+            throw std::runtime_error( "Failed to initialize CDB file " + m_name + " for writing" );
+        }
+    }
+    ocdb( const ocdb& ) = delete;
+    ocdb& operator=( const ocdb& ) = delete;
+    ocdb( ocdb&& ) = delete;
+    ocdb& operator=( ocdb&& ) = delete;
+    ~ocdb() { if (*this) { cdb_make_free(&m_db); close(cdb_fileno(&m_db)); fs::remove(m_name); } }
+
+    const std::string& name() const { return m_name; }
+
+    void insert(boost::string_ref key, const std::vector<unsigned char>& data) {
+        insert( cdb_record{ key.data(), data.data(), key.size(), data.size() });
+    }
+    void insert(cdb_record record) {
+         if ( !*this || m_error
+                     || cdb_make_add( &m_db, static_cast<const unsigned char*>(record.key),  record.keylen,
+                                             static_cast<const unsigned char*>(record.data), record.datalen ) != 0 ) {
+            m_error = true;
+            throw std::runtime_error( "Failed to put key " + toString( record.string_key()) );
+         }
+    }
+
+    bool flush() {
+        if (!*this) return false;
+        bool ok =  (cdb_make_finish(&m_db) == 0) && !m_error;
+        close(cdb_fileno(&m_db));
+        cdb_fileno(&m_db)=-1;
+        if (!ok) fs::remove(m_name);
+        return ok;
+    }
+
+    operator bool() const { return cdb_fileno(&m_db)>=0; }
+};
+
+template <typename T>
+bool unpack(T& t, cdb_record data) {
+    io::stream<io::array_source> value( static_cast<const char*>(data.data), data.datalen );
+    // 12 bytes of header information...
+    {
+        unsigned int version [[gnu::unused]] = read8( value );  // C++17: replace by [[maybe_unused]]; note: both clang and gcc understand [[gnu::unused]]
+        assert( version == 0 );
+    }
+    unsigned int flags = read8( value );
+    assert( flags < 4 );
+    {
+        unsigned int reserved [[gnu::unused]] = read16( value );
+        assert( reserved == 0 );
+        auto uid [[gnu::unused]] = read_uid( value );
+        auto tm [[gnu::unused]] = read_time( value );
+    }
+
+    assert( value.tellg() == 12 );
+    io::filtering_istream s;
+    switch ( flags & 0x3 ) {
+    case 0:
+        break; // do nothing...
+    case 2:
+        s.push( io::bzip2_decompressor() );
+        break;
+    case 3: {
+        io::zlib_params params;
+        params.noheader = true;
+        s.push( io::zlib_decompressor( params ) );
+    } break;
+    default:
+        throw std::runtime_error( "unpack: unknown compression flag");
+    }
+    s.push( value );
+    s >> t;
+    assert( value.tellg() == data.datalen );
+    return true;
+}
+
 int compress( std::string& str )
 {
     // compress and check if worthwhile...
@@ -121,7 +282,7 @@ std::vector<unsigned char> make_cdb_record( std::string str, uid_t uid, std::tim
     buffer.emplace_back( flags ); // compression
     buffer.emplace_back( 0u );     // reserved;
     buffer.emplace_back( 0u );     // reserved;
-    assert( sizeof( uid_t ) == 4 );
+    static_assert( sizeof( uid_t ) == 4 , "sizeof(uid_t)!=4");
     buffer.emplace_back( uid & 0xff );
     buffer.emplace_back( ( uid >> 8 ) & 0xff );
     buffer.emplace_back( ( uid >> 16 ) & 0xff );
@@ -130,23 +291,19 @@ std::vector<unsigned char> make_cdb_record( std::string str, uid_t uid, std::tim
     buffer.emplace_back( ( t >> 8 ) & 0xff );
     buffer.emplace_back( ( t >> 16 ) & 0xff );
     buffer.emplace_back( ( t >> 24 ) & 0xff );
-    if ( buffer.size() != 12 ) std::cerr << "CDB: ERROR unexpected header size" << std::endl;
     std::copy_n( begin( str ), str.size(), back_inserter(buffer) );
-    if ( buffer.size() != 12 + str.size() ) std::cerr << "CDB: ERROR unexpected record size" << std::endl;
     return buffer;
 }
 
 class CloseListener : public implements<IIncidentListener> {
 public:
    CloseListener(std::string incident, std::unique_ptr<ConfigCDBAccessSvc_details::CDB> &file)
-      : m_incident{std::move(incident)}, m_file(file) {
-         addRef(); // Initial count set to 1
-      }
+      : m_incident{std::move(incident)}, m_file(file)
+   { addRef(); }// Initial count set to 1
 
    /// Inform that a new incident has occurred
-   void handle(const Incident& i) override {
-      if (i.type() == m_incident) m_file.reset();
-   }
+   void handle(const Incident& i) override
+   { if (i.type() == m_incident) m_file.reset(); }
 
 private:
    /// incident to handle
@@ -157,145 +314,46 @@ private:
 
 }
 
-namespace ConfigCDBAccessSvc_details
-{
+namespace ConfigCDBAccessSvc_details {
 
 class CDB
 {
   public:
-    CDB( const std::string& name, std::ios::openmode mode = std::ios::in ) : m_fname( name )
+    CDB( const std::string& name, std::ios::openmode mode = std::ios::in )
+       : m_icdb( name )
     {
         if ( mode & std::ios::out ) {
-            m_oname = fs::unique_path( m_fname.string() + "-%%%%-%%%%-%%%%-%%%%" );
+           m_ocdb.emplace( fs::unique_path( name + "-%%%%-%%%%-%%%%-%%%%" ).string() );
         }
-
-        cdb_fileno( &m_ocdb ) = -1;;
-        // if open 'readwrite' we construct a fresh copy of the input
-        // database, then extend it, and on 'close' replace the original one
-        // with the new one.
-
-        // Note that while appending, we need to keep a 'shadow' copy to satisfy
-        // reads to the newly written items...
-
-        int fd = open( m_fname.c_str(), O_RDONLY );
-        if ( fd < 0 ) {
-            if (!writing() ) {
-                m_error = true;
-                throw std::runtime_error( "Error opening file " + m_fname.string() + ": " + strerror(errno) );
-            }
-            cdb_fileno(&m_icdb)=-1;
-        } else {
-            if ( cdb_init( &m_icdb, fd ) < 0 ) {
-                throw std::runtime_error( "Could not inititalize CDB for " + m_fname.string() + ": " + strerror(errno) );
-            }
+        // if not writing, then inability to open is a fatal error!
+        if ( !m_icdb && !m_ocdb ) {
+           throw std::runtime_error( "Error opening file " + name + ": " + strerror(errno) );
         }
-
-        if ( writing() ) {
-            // From http://pubs.opengroup.org/onlinepubs/7908799/xsh/open.html:
-            //
-            // O_CREAT and O_EXCL are set, open() will fail if the file exists. The
-            // check for
-            // the existence of the file and the creation of the file if it does not
-            // exist will
-            // be atomic with respect to other processes executing open() naming the
-            // same
-            // filename in the same directory with O_EXCL and O_CREAT set. If O_CREAT
-            // is not set,
-            // the effect is undefined.
-
-            int ofd = open( m_oname.c_str(), O_WRONLY | O_CREAT | O_EXCL,
-                            S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
-            if ( ofd < 0 ) {
-                m_error = true;
-                throw std::runtime_error( "Failed to create " + m_oname.string() + " exclusive, write-only: " + strerror(errno) );
-            }
-            if ( cdb_make_start( &m_ocdb, ofd )!= 0 ) {
-                m_error = true;
-                throw std::runtime_error( "Failed to initialize CDB for writing" );
-            }
-
-            // only copy if there is a valid input .cdb file!
-            if ( fd >= 0 && ofd >= 0 ) {
-                unsigned cpos;
-                cdb_seqinit( &cpos, &m_icdb );
-                while ( cdb_seqnext( &cpos, &m_icdb ) > 0 ) {
-                    if ( cdb_make_add( &m_ocdb,
-                                       static_cast<const unsigned char*>( cdb_getkey( &m_icdb ) ),
-                                       cdb_keylen( &m_icdb ),
-                                       static_cast<const unsigned char*>( cdb_getdata( &m_icdb ) ),
-                                       cdb_datalen( &m_icdb ) ) != 0 ) {
-                        // handle error...
-                        m_error = true;
-                        throw std::runtime_error(
-                        "Failed to put key " + std::string( static_cast<const char*>(
-                                                    cdb_getkey( &m_icdb ) ), cdb_keylen( &m_icdb ) )
-                                               + " : " + strerror( errno ) );
-                    }
-                }
-            }
+        // when writing, copy the input if there is a valid input .cdb file
+        if ( m_ocdb && m_icdb ) {
+           for (auto key_value : m_icdb) m_ocdb->insert(key_value);
         }
     }
-
-    ~CDB()
-    {
-        if (cdb_fileno(&m_icdb)>=0) {
-            close( cdb_fileno( &m_icdb ) );
-            cdb_free( &m_icdb );
+    ~CDB() {
+        if ( m_ocdb && m_ocdb->flush() ) {
+           fs::rename( m_ocdb->name(), m_icdb.name() );
         }
-        if ( writing() ) cleanup_ocdb(m_error);
     }
-
-    bool writing() const
-    {
-        return !m_oname.empty();
-    };
 
     template <typename T>
     bool readObject( T& t, boost::string_ref key )
     {
-        // first check input database... (if it is available!)
-        if ( cdb_fileno(&m_icdb) != -1 && cdb_find( &m_icdb, key.data(), key.size() ) > 0 ) {
-            io::stream<io::array_source> value(
-                static_cast<const char*>( cdb_getdata( &m_icdb ) ),
-                cdb_datalen( &m_icdb ) );
-            // 12 bytes of header information...
-            {
-                unsigned int version [[gnu::unused]] = read8( value );  // C++17: replace by [[maybe_unused]]; note: both clang and gcc understand [[gnu::unused]]
-                assert( version == 0 );
+        // first check input database -- if it is available
+        if ( m_icdb ) {
+            auto i = m_icdb.find(key);
+            if ( i != m_icdb.end() ) {
+                auto data = *i;
+                if ( data.string_key() != key ) throw std::runtime_error( "Key Mismatch!" );
+                return unpack(t,data);
             }
-            unsigned int flags = read8( value );
-            assert( flags < 4 );
-            {
-                unsigned int reserved [[gnu::unused]] = read16( value );
-                assert( reserved == 0 );
-                auto uid [[gnu::unused]] = read_uid( value );
-                auto tm [[gnu::unused]] = read_time( value );
-            }
-
-            assert( value.tellg() == 12 );
-            io::filtering_istream s;
-            switch ( flags & 0x3 ) {
-            case 0:
-                break; // do nothing...
-            case 2:
-                s.push( io::bzip2_decompressor() );
-                break;
-            case 3: {
-                io::zlib_params params;
-                params.noheader = true;
-                s.push( io::zlib_decompressor( params ) );
-            } break;
-            default:
-                std::cerr << "CDB: unknown compression flag" << std::endl;
-                return 0;
-            }
-            s.push( value );
-            s >> t;
-            assert( value.tellg() == cdb_datalen( &m_icdb ) );
-            return true;
         }
-        // not in input, check write cache?
-        if ( writing() ) {
+        // not in input -- when writing, must check write cache!
+        if ( m_ocdb ) {
             auto i = m_write_cache.find( toString(key) );
             if ( i != m_write_cache.end() ) {
                 std::stringstream s( i->second );
@@ -310,16 +368,11 @@ class CDB
     std::vector<std::string> files( const SELECTOR& selector )
     {
         std::vector<std::string> keys;
-        if ( cdb_fileno( &m_icdb ) >= 0 ) {
-            unsigned cpos;
-            cdb_seqinit( &cpos, &m_icdb );
-            while ( cdb_seqnext( &cpos, &m_icdb ) > 0 ) {
-                boost::string_ref key( static_cast<const char*>( cdb_getkey( &m_icdb ) ),
-                                       cdb_keylen( &m_icdb ) );
-                if ( selector( key ) ) keys.emplace_back( key.data(), key.size() );
-            }
+        for (auto key_value : m_icdb ) {
+            if ( selector( key_value.string_key() ) )
+                keys.emplace_back( key_value.string_key() );
         }
-        if ( writing() ) { // then also check write cache...
+        if ( m_ocdb ) { // then also check write cache...
             for ( auto& i : m_write_cache ) {
                 if ( selector( i.first ) ) keys.push_back( i.first );
             }
@@ -335,78 +388,41 @@ class CDB
         return m_myUid;
     }
 
-
-
     bool append( boost::string_ref key, std::stringstream& is )
     {
-        if ( !writing() || m_error ) return false;
-
+        if ( !m_ocdb || m_error ) return false;
         // first, look in input database
         std::string rd;
         if ( readObject( rd, key ) ) {
-            bool ok = rd == is.str();
+            bool ok = (rd == is.str());
             if ( !ok ) {
-                std::cerr << "append error: entry present in input , but not equal!"
-                          << std::endl;
+                m_error = true;
+                throw std::runtime_error("CDB append error -- hash collision with file??");
             }
             return ok;
         }
         // if not there, look in write cache
         auto i = m_write_cache.find( toString(key) );
         if ( i != m_write_cache.end() ) {
-            bool ok = i->second == is.str();
+            bool ok = ( i->second == is.str() );
             if ( !ok ) {
-                std::cerr << "append error: entry present in output , but not equal!"
-                          << std::endl;
+                m_error = true;
+                throw std::runtime_error("CDB append error -- hash collision with cache??");
             }
             return ok;
         }
-
         // aha, this is an as yet unknown key... insert it!
         m_write_cache.emplace( toString(key), is.str() );
-
-        auto record = make_cdb_record( is.str(), getUid(), std::time(nullptr) );
-        if ( cdb_make_add( &m_ocdb,
-                           reinterpret_cast<const unsigned char*>( key.data() ),
-                           key.size(), record.data(), record.size() ) != 0 ) {
-            // handle error...
-            m_error = cleanup_ocdb(true);
-            throw std::runtime_error( std::string{"failure to put key "} +
-                                      key + strerror(errno) );
-        }
+        m_ocdb->insert( key, make_cdb_record( is.str(), getUid(), std::time(nullptr) ) );
         return true;
     }
-    bool operator!() const
-    {
-        return m_error;
-    }
+    bool operator!() const { return m_error; }
 
-    std::string name() const { return m_fname.string(); }
+    const std::string& name() const { return m_icdb.name(); }
+
   private:
-    bool cleanup_ocdb(bool error) {
-        auto fd = cdb_fileno( &m_ocdb );
-        if (fd<0) return error;
-        if (!error) {
-            error = ( cdb_make_finish( &m_ocdb ) < 0 );
-         } else {
-            cdb_make_free(&m_ocdb);
-         }
-        close( fd );
-        if ( !error ) {
-            fs::rename( m_oname, m_fname );
-        } else {
-            std::cerr << "encountered an error; leaving original " << m_fname
-                 << " untouched, removing temporary " << m_oname << std::endl;
-            fs::remove( m_oname );
-        }
-        cdb_fileno( &m_ocdb ) = -1;
-        return error;
-    }
-
-    struct cdb      m_icdb; //TODO: wrap into individual RAII object to simplify cleanup...
-    struct cdb_make m_ocdb; //TODO: wrap into individual RAII object to simplify cleanup...
-    fs::path        m_fname;
-    fs::path        m_oname;
+    icdb                  m_icdb;
+    boost::optional<ocdb> m_ocdb;
     std::unordered_map<std::string, std::string> m_write_cache; // write cache..
     mutable uid_t m_myUid = 0;
     bool m_error = false;
@@ -443,17 +459,6 @@ ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
     if ( UNLIKELY(!m_file) ) {
       std::unique_lock<std::mutex> lock(m_file_mtx);
       if (LIKELY(!m_file)){
-        if ( m_mode != "ReadOnly" && m_mode != "ReadWrite" &&
-             m_mode != "Truncate" ) {
-            error() << "invalid mode: " << m_mode.value() << endmsg;
-            return nullptr;
-        }
-  // todo: use Parse and toStream to make mode instead of m_mode a property...
-        std::ios::openmode mode = ( m_mode == "ReadWrite"
-                                 ? ( std::ios::in | std::ios::out | std::ios::ate )
-                                 : ( m_mode == "Truncate" )
-                                       ? ( std::ios::in | std::ios::out | std::ios::trunc )
-                                       : std::ios::in );
         std::string name = m_name.value();
         if ( name.empty() ) {
             std::string def( System::getEnv( "HLTTCKROOT" ) );
@@ -464,9 +469,16 @@ ConfigCDBAccessSvc_details::CDB* ConfigCDBAccessSvc::file() const
             }
             name = def + "/config.cdb";
         }
+        // todo: use Parse and toStream to make mode instead of m_mode a property...
+        if ( m_mode != "ReadOnly" && m_mode != "ReadWrite" ) {
+            error() << "invalid mode: " << m_mode.value() << endmsg;
+            return nullptr;
+        }
         info() << " opening " << name << " in mode " << m_mode.value() << endmsg;
         try {
-            m_file = std::make_unique<CDB>( name, mode );
+            m_file = std::make_unique<CDB>( name, ( m_mode == "ReadWrite"
+                                                  ? ( std::ios::in | std::ios::out )
+                                                  :   std::ios::in ) );
         } catch (const std::runtime_error& err) {
             error() << err.what() << endmsg;
             m_file.reset( );
@@ -492,24 +504,6 @@ StatusCode ConfigCDBAccessSvc::finalize()
 {
     m_file.reset( ); // close file if still open
     return Service::finalize();
-}
-
-std::string ConfigCDBAccessSvc::propertyConfigPath(
-    const PropertyConfig::digest_type& digest ) const
-{
-    return std::string( "PC/" ) += digest.str();
-}
-
-std::string ConfigCDBAccessSvc::configTreeNodePath(
-    const ConfigTreeNode::digest_type& digest ) const
-{
-    return std::string( "TN/" ) += digest.str();
-}
-
-std::string ConfigCDBAccessSvc::configTreeNodeAliasPath(
-    const ConfigTreeNodeAlias::alias_type& alias ) const
-{
-    return std::string( "AL/" ) += alias.str();
 }
 
 template <typename T>
@@ -574,10 +568,9 @@ boost::optional<ConfigTreeNode> ConfigCDBAccessSvc::readConfigTreeNodeAlias(
     const ConfigTreeNodeAlias::alias_type& alias )
 {
     std::string fnam = configTreeNodeAliasPath( alias );
-    boost::optional<std::string> sref = this->read<std::string>( fnam );
+    auto sref = this->read<std::string>( fnam );
     if ( !sref ) return boost::none;
-    ConfigTreeNode::digest_type ref =
-        ConfigTreeNode::digest_type::createFromStringRep( *sref );
+    auto ref = ConfigTreeNode::digest_type::createFromStringRep( *sref );
     if ( !ref.valid() ) {
         error() << "content of " << fnam << " not a valid ref" << endmsg;
         return boost::none;
@@ -590,8 +583,8 @@ std::vector<ConfigTreeNodeAlias> ConfigCDBAccessSvc::configTreeNodeAliases(
 {
     std::vector<ConfigTreeNodeAlias> x;
 
-    std::string basename( "AL" );
     if ( !file() ) return x;
+    static const std::string basename { "AL" };
     for ( const auto& i : file()->files( PrefixFilenameSelector( basename + "/" + alias.major() ) )) {
         // TODO: this can be more efficient...
         if ( msgLevel( MSG::DEBUG ) )
@@ -599,8 +592,8 @@ std::vector<ConfigTreeNodeAlias> ConfigCDBAccessSvc::configTreeNodeAliases(
         std::string ref;
         file()->readObject( ref, i );
         std::stringstream str;
-        str << "Ref: " << ref << '\n' << "Alias: " << i.substr( basename.size() + 1 )
-            << '\n';
+        str << "Ref: " << ref << '\n'
+            << "Alias: " << i.substr( basename.size() + 1 ) << '\n';
         ConfigTreeNodeAlias a;
         str >> a;
         if ( msgLevel( MSG::DEBUG ) )
@@ -639,7 +632,7 @@ ConfigCDBAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias )
     }
     // now write alias...
     fs::path fnam = configTreeNodeAliasPath( alias.alias() );
-    boost::optional<std::string> x = read<std::string>( fnam.string() );
+    auto x = read<std::string>( fnam.string() );
     if ( !x ) {
         std::stringstream s;
         s << alias.ref();
