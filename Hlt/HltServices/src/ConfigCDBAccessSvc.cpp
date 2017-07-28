@@ -1,7 +1,7 @@
 #include "ConfigCDBAccessSvc.h"
 #include "cdb.h"
 
-#include <map>
+#include <unordered_map>
 #include <ctime>
 #include <limits>
 #include <cstdint>
@@ -296,7 +296,7 @@ class CDB
         }
         // not in input, check write cache?
         if ( writing() ) {
-            auto i = m_write_cache.find( key );
+            auto i = m_write_cache.find( toString(key) );
             if ( i != m_write_cache.end() ) {
                 std::stringstream s( i->second );
                 s >> t;
@@ -352,7 +352,7 @@ class CDB
             return ok;
         }
         // if not there, look in write cache
-        auto i = m_write_cache.find( key );
+        auto i = m_write_cache.find( toString(key) );
         if ( i != m_write_cache.end() ) {
             bool ok = i->second == is.str();
             if ( !ok ) {
@@ -385,7 +385,7 @@ class CDB
   private:
     bool cleanup_ocdb(bool error) {
         auto fd = cdb_fileno( &m_ocdb );
-        if (fd<0) return false;
+        if (fd<0) return error;
         if (!error) {
             error = ( cdb_make_finish( &m_ocdb ) < 0 );
          } else {
@@ -403,11 +403,11 @@ class CDB
         return error;
     }
 
-    struct cdb      m_icdb;
-    struct cdb_make m_ocdb;
+    struct cdb      m_icdb; //TODO: wrap into individual RAII object to simplify cleanup...
+    struct cdb_make m_ocdb; //TODO: wrap into individual RAII object to simplify cleanup...
     fs::path        m_fname;
     fs::path        m_oname;
-    std::map<std::string, std::string,std::less<>> m_write_cache; // write cache..
+    std::unordered_map<std::string, std::string> m_write_cache; // write cache..
     mutable uid_t m_myUid = 0;
     bool m_error = false;
 };
