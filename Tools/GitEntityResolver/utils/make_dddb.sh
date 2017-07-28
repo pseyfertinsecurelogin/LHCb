@@ -20,8 +20,8 @@ make_git_conddb.py --no-head --no-force-branches --tag-prefix=upgrade/ ${SQLITEU
 (
   cd ${name}
   git checkout dt-Upgrade
-  git branch -f upgrade dt-Upgrade
-  git checkout upgrade
+  git branch -f upgrade/master dt-Upgrade
+  git checkout upgrade/master
   git branch -D dt-Upgrade
   git branch | grep branch- | xargs -r git branch -D
 )

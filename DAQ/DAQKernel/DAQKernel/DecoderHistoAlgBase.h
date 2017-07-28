@@ -1,4 +1,3 @@
-
 //-----------------------------------------------------------------------------
 /** @file DecoderHistoAlgBase.h
  *
@@ -20,7 +19,6 @@
 
 namespace Decoder
 {
-
   //-----------------------------------------------------------------------------
   /** @class HistoAlgBase DAQHistoAlgBase.h DAQKernel/DecoderHistoAlgBase.h
    *
@@ -34,24 +32,7 @@ namespace Decoder
    */
   //-----------------------------------------------------------------------------
 
-  class HistoAlgBase : public Decoder::CommonBase<GaudiHistoAlg>
-  {
-
-  public:
-
-    /// Standard constructor
-    HistoAlgBase( const std::string& name,
-                  ISvcLocator* pSvcLocator )
-      : Decoder::CommonBase<GaudiHistoAlg> ( name, pSvcLocator )
-    { }
-
-  protected:
-    ///avoid getIfExists name resolution for now
-    inline LHCb::RawEvent* getIfExistsRaw(const std::string loc, bool rootOnTes) const override
-    {
-    	return GaudiHistoAlg::getIfExists<LHCb::RawEvent>(loc,rootOnTes);
-    }
-  };
+  using HistoAlgBase = Decoder::CommonBase<GaudiHistoAlg>;
 
 }
 

@@ -1,4 +1,3 @@
-
 //-----------------------------------------------------------------------------
 /** @file DecoderCommonBase.h
  *
@@ -23,8 +22,6 @@
 
 namespace Decoder
 {
-  //using GaudiUtils::operator<<;
-
   //-----------------------------------------------------------------------------
   /** @class CommonBase DecoderCommonBase.h DAQKernel/DecoderCommonBase.h
    *
@@ -38,27 +35,8 @@ namespace Decoder
   template <class PBASE>
   class CommonBase : public PBASE
   {
-
   public:
-
-    /// Standard algorithm-like constructor
-    CommonBase( const std::string& name,
-                ISvcLocator* pSvcLocator );
-
-    /// Standard tool-like constructor
-    CommonBase( const std::string& type,
-                const std::string& name,
-                const IInterface* parent );
-
-    /// Standard Converter-like Constructor
-    CommonBase( long storage_type,
-                const CLID &class_type,
-                ISvcLocator *svc = NULL );
-
-    /// Destructor
-    virtual ~CommonBase( );
-
-  public:
+     using PBASE::PBASE;
 
     /** Initialization of the algorithm after creation
      *
@@ -67,14 +45,6 @@ namespace Decoder
      * @retval StatusCode::FAILURE Initialization failed
      */
     StatusCode initialize() override;
-
-    /** Finalization of the algorithm before deletion
-     *
-     * @return The status of the finalization
-     * @retval StatusCode::SUCCESS Finalization was successful
-     * @retval StatusCode::FAILURE Finalization failed
-     */
-    StatusCode finalize() override;
 
   protected:
 
@@ -87,17 +57,9 @@ namespace Decoder
     const std::vector< LHCb::RawBank * > & findFirstRawBank( const LHCb::RawBank::BankType ) const;
 
     //get for one location
-    LHCb::RawEvent* tryEventAt( const std::string ) const;
+    LHCb::RawEvent* tryEventAt( const std::string& ) const;
     /// Where to look for the raw event
     std::vector<std::string> m_rawEventLocations;
-
-    ///avoid getIfExists name resolution for now
-    virtual inline LHCb::RawEvent* getIfExistsRaw(const std::string, bool) const
-    {
-    	throw GaudiException( "Don't call this from the baseclass!",
-                "Decoder::CommonBase", StatusCode::FAILURE );
-    	return NULL;
-    }
 
     /// Initialize search paths
     void initRawEventSearch();
@@ -105,10 +67,10 @@ namespace Decoder
   private: // data
 
     /// Where to look first, saves the last place I was able to retrieve successfully
-    mutable std::string m_tryFirstRawEventLocation;
+    mutable std::string m_tryFirstRawEventLocation = "";
 
     /// whether to use the RootOnTes next time
-    mutable bool m_tryRootOnTes;
+    mutable bool m_tryRootOnTes = true;
 
   };
 

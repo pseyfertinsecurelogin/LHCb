@@ -33,6 +33,8 @@
 // ============================================================================
 #include "boost/integer_traits.hpp"
 // ============================================================================
+#define LOKI_REQUIRES(...) std::enable_if_t<(__VA_ARGS__),bool> = true
+// ============================================================================
 // Original Primitives first
 // ============================================================================
 #define _GEN_LOKI_PRIMITIVES 1
@@ -76,9 +78,9 @@ namespace LoKi
     // ========================================================================
     // avoid matching the various special members
     template <typename F, typename... Fs,
-              typename = std::enable_if_t< sizeof...(Fs)!=0 ||
-                                           !std::is_base_of<FunctorArray<TYPE,TYPE2,N>,
-                                                            std::remove_reference_t<F> >::value> >
+              LOKI_REQUIRES( sizeof...(Fs)!=0 ||
+                             !std::is_base_of<FunctorArray<TYPE,TYPE2,N>,
+                                              std::remove_reference_t<F> >::value ) >
     FunctorArray( F&& f, Fs&&... fs ) : m_funs{ std::forward<F>(f), std::forward<Fs>(fs)... }
     {}
     // ========================================================================
@@ -336,8 +338,15 @@ namespace LoKi
    */
 
    namespace Traits {
-       struct And : details::SimpleBinary< std::logical_and<>, And > {
-           static constexpr const char* name() { return "&&"; }
+       struct And {
+           template <typename F1, typename F2, typename... Args>
+           static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
+           -> decltype(auto)
+           { return f1(args...) && f2(args...); }
+
+           template <typename F1, typename F2>
+           static std::ostream& fillStream(std::ostream& os, const F1& f1, const F2& f2)
+           { return os << " (" << f1 << "&" << f2 << ") "; }
        };
    }
 
@@ -374,8 +383,15 @@ namespace LoKi
   // ==========================================================================
 
    namespace Traits {
-       struct Or : details::SimpleBinary< std::logical_or<>, Or > {
-           static constexpr const char* name() { return "||"; }
+       struct Or  {
+           template <typename F1, typename F2, typename... Args>
+           static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
+           -> decltype(auto)
+           { return f1(args...) || f2(args...); }
+
+           template <typename F1, typename F2>
+           static std::ostream& fillStream(std::ostream& os, const F1& f1, const F2& f2)
+           { return os << " (" << f1 << "|" << f2 << ") "; }
        };
    }
    template<typename TYPE, typename TYPE2=double>
@@ -531,10 +547,6 @@ namespace LoKi
    template<typename TYPE, typename TYPE2=double>
    using NotEqual = details::BinaryOp<TYPE,TYPE2,bool,Traits::NotEqual<TYPE2>>;
 
-#endif
-
-
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
   // ==========================================================================
   /** @class Plus
    *  The helper function to implement addition of 2 function
@@ -681,7 +693,7 @@ namespace LoKi
    }
 
   template<typename TYPE, typename TYPE2=double>
-  using Multiply =  details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Multiply>;
+  using Multiply = details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Multiply>;
 
 #endif
   // ==========================================================================
@@ -875,10 +887,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template <typename TYPE2>
-  class SimpleSwitch<void,TYPE2> : public LoKi::Functor<void,TYPE2>
+  class SimpleSwitch<void,TYPE2> final : public LoKi::Functor<void,TYPE2>
 #else
   template <typename TYPE, typename TYPE2=double>
-  class SimpleSwitch : public LoKi::Functor<TYPE,TYPE2>
+  class SimpleSwitch final : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
   private:
@@ -1092,10 +1104,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template <typename TYPE2>
-  class ComposeFunction<void,TYPE2> : public LoKi::Functor<void,TYPE2>
+  class ComposeFunction<void,TYPE2> final : public LoKi::Functor<void,TYPE2>
 #else
   template <typename TYPE, typename TYPE2=double>
-  class ComposeFunction : public LoKi::Functor<TYPE,TYPE2>
+  class ComposeFunction final : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
   private:
@@ -1169,10 +1181,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template <typename TYPE2>
-  class ComposeFunction2<void,TYPE2> : public LoKi::Functor<void,TYPE2>
+  class ComposeFunction2<void,TYPE2> final : public LoKi::Functor<void,TYPE2>
 #else
   template <typename TYPE, typename TYPE2=double>
-  class ComposeFunction2 : public LoKi::Functor<TYPE,TYPE2>
+  class ComposeFunction2 final : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
   private:
@@ -1250,10 +1262,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template <typename TYPE1, typename TYPE2, typename TYPE3>
-  class Compose<void,TYPE1,TYPE2,TYPE3> : public LoKi::Functor<void,TYPE2>
+  class Compose<void,TYPE1,TYPE2,TYPE3> final : public LoKi::Functor<void,TYPE2>
 #else
   template <typename TYPE,typename TYPE1, typename TYPE2, typename TYPE3=TYPE1>
-  class Compose : public LoKi::Functor<TYPE,TYPE2>
+  class Compose final : public LoKi::Functor<TYPE,TYPE2>
 #endif
   {
   private:
@@ -1360,686 +1372,285 @@ namespace LoKi
     // ========================================================================
   };
 #endif
+
+  namespace details {
+#ifndef _GEN_LOKI_VOIDPRIMITIVES
+      namespace Bind {
+        struct Second_t {}; // fun is first, bound value is second
+        struct First_t {};  // value is first, fun is second
+        struct FirstOrSecond_t : First_t, Second_t {}; // order doesn't matter...
+
+        template <typename T> using Second = std::is_base_of<Second_t,typename T::Bind_t>;
+        template <typename T> using First  = std::is_base_of<First_t,typename T::Bind_t>;
+      }
+
+      template <typename TYPE,typename TYPE2, typename Result, typename Traits_ >
+      class BindBinary final : public LoKi::Functor<TYPE,Result>
+#else
+      template <typename TYPE2, typename Result, typename Traits_>
+      class BindBinary<void,TYPE2,Result,Traits_> final: public LoKi::Functor<void,Result>
+#endif
+      {
+      private:
+        // ========================================================================
+        typedef_void_TYPE
+        /// argument type
+        typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
+        // constant type
+        typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
+        // ========================================================================
+      public:
+        // ========================================================================
+        /** constructor from the function and the value
+         *  @param fun the function
+         *  @param val the reference value
+         */
+        template <typename T, LOKI_REQUIRES(std::is_constructible<T2,T>::value && Bind::Second<Traits_>::value)>
+        BindBinary( LoKi::FunctorFromFunctor<TYPE,TYPE2> fun, T&& val )
+          : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+          , m_fun ( std::move(fun) )
+          , m_val ( std::forward<T>(val) )
+        {}
+        template <typename T, LOKI_REQUIRES(std::is_constructible<T2,T>::value && Bind::First<Traits_>::value)>
+        BindBinary( T&& val, LoKi::FunctorFromFunctor<TYPE,TYPE2> fun )
+          : LoKi::AuxFunBase ( std::tie ( val , fun ) )
+          , m_fun ( std::move(fun) )
+          , m_val ( std::forward<T>(val) )
+        {}
+        // ========================================================================
+        /// MANDATORY: clone method ("virtual construcor")
+        BindBinary* clone() const override { return new BindBinary(*this); }
+        /// MANDATORY: the only one essential method :
+        Result operator() ( argument_a_unless_void ) const override
+        { return Bind::Second<Traits_>::value ?
+            Traits_::binaryOp( this->m_fun.fun( a_unless_void ), this->m_val ) :
+            Traits_::binaryOp( this->m_val, this->m_fun.fun( a_unless_void ) ) ;
+        }
+        /// OPTIONAL: the specific printout
+        std::ostream& fillStream ( std::ostream& s ) const override
+        {  return Bind::Second<Traits_>::value ?
+               ( s << " (" << this->m_fun << Traits_::infix() << this->m_val << ") " ) :
+               ( s << " (" << this->m_val << Traits_::infix() << this->m_fun << ") " ) ;
+        }
+        // ========================================================================
+      private:
+        // ========================================================================
+        /// the functor
+        LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ;                 // the functor
+        /// the value
+        TYPE2  m_val ;                                                 // the value
+        // ========================================================================
+      };
+  }
+
+// 2nd pass only
+#ifdef _GEN_LOKI_VOIDPRIMITIVES
   // ==========================================================================
   /** @class EqualToValue
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-04-07
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class EqualToValue<void,TYPE2> : public LoKi::Functor<void,bool>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class EqualToValue : public LoKi::Functor<TYPE,bool>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    // constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    EqualToValue( LoKi::FunctorFromFunctor<TYPE,TYPE2> fun, T2 val )
-      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , m_fun ( std::move(fun) )
-      , m_val ( std::move(val) )
-    {}
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    EqualToValue( T2 val , LoKi::FunctorFromFunctor<TYPE,TYPE2> fun )
-      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , m_fun ( std::move(fun) )
-      , m_val ( val )
-    {}
-    // ========================================================================
-    /// MANDATORY: clone method ("virtual construcor")
-    EqualToValue* clone() const override { return new EqualToValue(*this); }
-    /// MANDATORY: the only one essential method :
-    bool operator() ( argument_a_unless_void ) const override
-    { return equal_to ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " (" << this->func ()
-               << "==" << this->val  () << ") " ; }
-    // ========================================================================
-  public:
-    // ========================================================================
-    inline bool equal_to ( argument_a_unless_void ) const
-    {
-      // the comparator
-      LHCb::Math::Equal_To<TYPE2> _cmp ;
-      return _cmp ( this->m_fun.fun ( a_unless_void ) , this->m_val ) ;
-    }
-    // ========================================================================
-    inline bool not_equal_to ( argument_a_unless_void ) const
-    { return ! this->equal_to ( a_unless_void ) ; }
-    // ========================================================================
-    inline bool less    ( argument_a_unless_void ) const
-    {
-      // the comparator
-      return this->m_fun.fun( a_unless_void ) < this->m_val ;
-    }
-    // ========================================================================
-    inline bool greater ( argument_a_unless_void ) const
-    {
-      // the comparator
-      return this->m_val < this->m_fun.fun ( a_unless_void )  ;
-    }
-    // ========================================================================
-    inline bool less_or_equal ( argument_a_unless_void ) const
-    {
-      // the comparator
-      LHCb::Math::Equal_To<TYPE2> _cmp2 ;
-      auto _r = this->m_fun.fun ( a_unless_void ) ;
-      return ( _r < this->m_val ) || _cmp2 ( _r , this->m_val ) ;
-    }
-    // ========================================================================
-    inline bool greater_or_equal ( argument_a_unless_void ) const
-    {
-      // the comparator
-      LHCb::Math::Equal_To<TYPE2> _cmp2 ;
-      auto _r = this->m_fun.fun ( a_unless_void ) ;
-      return ( this->m_val < _r ) || _cmp2 ( _r , this->m_val ) ;
-    }
-    // ========================================================================
-  public:
-    // ========================================================================
-    const auto& func () const { return m_fun.func() ; }
-    const auto& val  () const { return m_val        ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the functor
-    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ;                 // the functor
-    /// the value
-    TYPE2  m_val ;                                                 // the value
-    // ========================================================================
-  };
+   namespace Traits {
+       template <typename TYPE2>
+       struct EqualToValue {
+           using Bind_t = details::Bind::FirstOrSecond_t;
+           static constexpr const char* infix() { return "=="; }
+           template <typename V1, typename V2>
+           static bool binaryOp(const V1& v1, const V2& v2) {
+               LHCb::Math::Equal_To<TYPE2> _cmp;
+               return _cmp(v1,v2);
+           }
+       };
+   }
+   template<typename TYPE,typename TYPE2 = double>
+   using EqualToValue = details::BindBinary<TYPE,TYPE2,bool,Traits::EqualToValue<TYPE2>>;
+
   // ==========================================================================
   /** @class NotEqualToValue
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-04-07
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class NotEqualToValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class NotEqualToValue : public LoKi::EqualToValue<TYPE,TYPE2>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    /// the constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor for the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    NotEqualToValue
-    ( LoKi::FunctorFromFunctor<TYPE,TYPE2>  fun , T2 val )
-      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , LoKi::EqualToValue<TYPE,TYPE2>( std::move(fun) , val )
-    {}
-    /** constructor from the function and the value
-     *  @param val the reference value
-     *  @param fun the function
-     *  @param eps the relative precision
-     */
-    NotEqualToValue
-    ( T2 val , LoKi::FunctorFromFunctor<TYPE,TYPE2>  fun )
-      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , LoKi::EqualToValue<TYPE,TYPE2>( val , std::move(fun) )
-    {}
-    /// MANDATORY: clone method ("virtual constructor")
-    NotEqualToValue* clone() const override { return new NotEqualToValue(*this); }
-    /// MANDATORY: the only one essential method :
-    bool operator() ( argument_a_unless_void ) const override
-    { return this->not_equal_to ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " (" << this -> func ()
-               << "!=" << this -> val  () << ") " ; }
-    // ========================================================================
-  };
+
+   namespace Traits {
+       template <typename TYPE2>
+       struct NotEqualToValue {
+           using Bind_t = typename EqualToValue<TYPE2>::Bind_t;
+           static constexpr const char* infix() { return "!="; }
+           template <typename V1, typename V2>
+           static bool binaryOp(const V1& v1, const V2& v2) {
+               return !EqualToValue<TYPE2>::binaryOp(v1,v2);
+           }
+       };
+   }
+   template<typename TYPE,typename TYPE2 = double>
+   using NotEqualToValue = details::BindBinary<TYPE,TYPE2,bool,Traits::NotEqualToValue<TYPE2>>;
+
   // ==========================================================================
   /** @class LessThanValue
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-19
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class LessThanValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class LessThanValue             : public LoKi::EqualToValue<TYPE,TYPE2>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    // constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    LessThanValue
-    ( LoKi::FunctorFromFunctor<TYPE,TYPE2>  fun ,
-      T2                                val )
-      : LoKi::AuxFunBase   ( std::tie ( fun , val ) )
-      , LoKi::EqualToValue<TYPE,TYPE2>( std::move(fun) , val )
-    {}
-    // ========================================================================
-    /// MANDATORY: clone method ("virtual construcor")
-    LessThanValue* clone() const override { return new LessThanValue(*this); }
-    /// MANDATORY: the only one essential method :
-    bool operator() ( argument_a_unless_void ) const override
-    { return this->less ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " (" << this->func ()
-               << "<"  << this->val  () << ") " ; }
-    // ========================================================================
-  };
+
+   namespace Traits {
+       struct LessThanValue {
+           using Bind_t = details::Bind::Second_t;
+           static constexpr const char* infix() { return "<"; }
+           template <typename V1, typename V2>
+           static constexpr bool binaryOp(const V1& v1, const V2& v2) {
+               return v1 < v2;
+           }
+       };
+   }
+   template<typename TYPE,typename TYPE2 = double>
+   using LessThanValue = details::BindBinary<TYPE,TYPE2,bool,Traits::LessThanValue>;
+
   // ==========================================================================
   /** @class LessOrEqualValue
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-19
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class LessOrEqualValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class LessOrEqualValue             : public LoKi::EqualToValue<TYPE,TYPE2>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    // constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    LessOrEqualValue
-    ( LoKi::FunctorFromFunctor<TYPE,TYPE2>  fun ,
-      T2                                val )
-      : LoKi::AuxFunBase    ( std::tie ( fun , val ) )
-      , LoKi::EqualToValue<TYPE,TYPE2> ( std::move(fun) , val )
-    {}
-    // ========================================================================
-    /// MANDATORY: clone method ("virtual construcor")
-    LessOrEqualValue* clone() const override { return new LessOrEqualValue(*this); }
-    /// MANDATORY: the only one essential method :
-    bool operator() ( argument_a_unless_void ) const override
-    { return this->less_or_equal ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " ("  << this->func ()
-               << "<="  << this->val  () << ") " ; }
-    // ========================================================================
-  };
+   namespace Traits {
+       template <typename TYPE2>
+       struct LessOrEqualValue {
+           using Bind_t = details::Bind::Second_t;
+           static constexpr const char* infix() { return "<=" ; }
+           template <typename V1, typename V2>
+           static bool binaryOp(const V1& v1, const V2& v2) {
+               return LessThanValue::binaryOp( v1, v2 ) ||
+                      EqualToValue<TYPE2>::binaryOp( v1, v2 ) ;
+           }
+       };
+   }
+   template<typename TYPE,typename TYPE2 = double>
+   using LessOrEqualValue = details::BindBinary<TYPE,TYPE2,bool,Traits::LessOrEqualValue<TYPE2>>;
+
   // ==========================================================================
   /** @class GreaterThanValue
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-19
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class GreaterThanValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class GreaterThanValue             : public LoKi::EqualToValue<TYPE,TYPE2>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    // constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    GreaterThanValue
-    ( LoKi::FunctorFromFunctor<TYPE,TYPE2>  fun ,
-      T2                                val )
-      : LoKi::AuxFunBase   ( std::tie ( fun , val ) )
-      , LoKi::EqualToValue<TYPE,TYPE2>( std::move(fun) , val )
-    {}
-    // ========================================================================
-    /// MANDATORY: clone method ("virtual construcor")
-    GreaterThanValue* clone() const override { return new GreaterThanValue(*this); }
-    /// MANDATORY: the only one essential method :
-    bool operator() ( argument_a_unless_void ) const override
-    { return this->greater ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " (" << this->func ()
-               << ">"  << this->val  () << ") " ; }
-    // ========================================================================
-  };
+
+   namespace Traits {
+       struct GreaterThanValue {
+           using Bind_t = details::Bind::Second_t;
+           static constexpr const char* infix() { return ">"; }
+           template <typename V1, typename V2>
+           static constexpr bool binaryOp(const V1& v1, const V2& v2)
+           { return v2 < v1; }
+        };
+   }
+   template<typename TYPE,typename TYPE2 = double>
+   using GreaterThanValue = details::BindBinary<TYPE,TYPE2,bool,Traits::GreaterThanValue>;
+
   // ==========================================================================
   /** @class GreaterOrEqualValue
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-19
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class GreaterOrEqualValue<void,TYPE2> : public LoKi::EqualToValue<void,TYPE2>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class GreaterOrEqualValue             : public LoKi::EqualToValue<TYPE,TYPE2>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,bool>::argument argument  ;
-    // constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    GreaterOrEqualValue
-    ( LoKi::FunctorFromFunctor<TYPE,TYPE2>  fun ,
-      T2                                val )
-      : LoKi::AuxFunBase   ( std::tie ( fun , val ) )
-      , LoKi::EqualToValue<TYPE,TYPE2>( std::move(fun) , val )
-    {}
-    // ========================================================================
-    /// MANDATORY: clone method ("virtual construcor")
-    GreaterOrEqualValue* clone() const override { return new GreaterOrEqualValue(*this); }
-    /// MANDATORY: the only one essential method :
-    bool operator() ( argument_a_unless_void ) const override
-    { return this->greater_or_equal ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " ("  << this->func ()
-               << ">="  << this->val  () << ") " ; }
-    // ========================================================================
-  };
+
+  namespace Traits {
+      template <typename TYPE2>
+      struct GreaterOrEqualValue {
+           using Bind_t = details::Bind::Second_t;
+           static constexpr const char* infix() { return ">="; }
+           template <typename V1, typename V2>
+           static bool binaryOp(const V1& v1, const V2& v2) {
+              return GreaterThanValue::binaryOp( v1, v2 ) ||
+                     EqualToValue<TYPE2>::binaryOp( v1, v2 ) ;
+           }
+      };
+  }
+  template<typename TYPE,typename TYPE2>
+  using GreaterOrEqualValue = details::BindBinary<TYPE,TYPE2,bool,Traits::GreaterOrEqualValue<TYPE2>>;
+
   // ==========================================================================
   /** @class MultiplyByValue
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-27
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class MultiplyByValue<void,TYPE2> : public LoKi::Functor<void,TYPE2>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class MultiplyByValue             : public LoKi::Functor<TYPE,TYPE2>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    // constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    MultiplyByValue
-    ( LoKi::FunctorFromFunctor<TYPE,TYPE2>  fun ,
-      T2                                val )
-      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , m_fun ( std::move(fun) )
-      , m_val ( val )
-    {}
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    MultiplyByValue
-    ( T2                                val ,
-      LoKi::FunctorFromFunctor<TYPE,TYPE2>  fun )
-      : LoKi::AuxFunBase ( std::tie ( val , fun ) )
-      , m_fun ( std::move(fun) )
-      , m_val ( val )
-    {}
-    // ========================================================================
-    /// MANDATORY: clone method ("virtual construcor")
-    MultiplyByValue* clone() const override { return new MultiplyByValue(*this); }
-    /// MANDATORY: the only one essential method :
-    TYPE2 operator() ( argument_a_unless_void ) const override
-    { return this->mult ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " ("   << this->func ()
-               << "*"    << this->val  () << ") " ; }
-    // ========================================================================
-  public:
-    // ========================================================================
-    const LoKi::Functor<TYPE,TYPE2>& func () const { return m_fun.func() ; }
-    const TYPE2&                     val  () const { return m_val        ; }
-    // ========================================================================
-  protected :
-    // ========================================================================
-    inline TYPE2 mult    ( argument_a_unless_void ) const
-    { return ( this->m_fun.fun ( a_unless_void ) ) * ( this->m_val ) ; }
-    // ========================================================================
-    inline TYPE2 sum     ( argument_a_unless_void ) const
-    { return ( this->m_fun.fun ( a_unless_void ) ) + ( this->m_val ) ; }
-    // ========================================================================
-    inline TYPE2 divide1 ( argument_a_unless_void ) const
-    { return ( this->m_fun.fun ( a_unless_void ) ) / ( this->m_val ) ; }
-    // ========================================================================
-    inline TYPE2 divide2 ( argument_a_unless_void ) const
-    { return ( this->m_val ) / ( this->m_fun.fun ( a_unless_void ) ) ; }
-    // ========================================================================
-    inline TYPE2 minus1  ( argument_a_unless_void ) const
-    { return ( this->m_fun.fun ( a_unless_void ) ) - ( this->m_val ) ; }
-    // ========================================================================
-    inline TYPE2 minus2  ( argument_a_unless_void ) const
-    { return ( this->m_val ) - ( this->m_fun.fun ( a_unless_void ) ) ; }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the functor
-    LoKi::FunctorFromFunctor<TYPE,TYPE2> m_fun ;                 // the functor
-    /// the value
-    TYPE2  m_val ;                                                 // the value
-    // ========================================================================
-  };
+  namespace Traits {
+      template <typename TYPE2>
+      struct MultiplyByValue {
+           using Bind_t = details::Bind::FirstOrSecond_t;
+           static constexpr const char* infix() { return "*"; }
+           template <typename V1, typename V2>
+           static constexpr TYPE2 binaryOp(const V1& v1, const V2& v2)
+           { return v1*v2; }
+      };
+  }
+  template<typename TYPE,typename TYPE2>
+  using MultiplyByValue = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::MultiplyByValue<TYPE2>>;
+
   // ==========================================================================
   /** @class SumByValue
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-27
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class SumByValue<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class SumByValue             : public LoKi::MultiplyByValue<TYPE,TYPE2>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    // constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    SumByValue
-    ( const LoKi::Functor<TYPE,TYPE2>&  fun ,
-      T2                                val )
-      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , LoKi::MultiplyByValue<TYPE,TYPE2>( fun , val )
-    {}
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    SumByValue
-    ( T2                                val ,
-      const LoKi::Functor<TYPE,TYPE2>&  fun )
-      : LoKi::AuxFunBase ( std::tie ( val , fun ) )
-      , LoKi::MultiplyByValue<TYPE,TYPE2>( val , fun )
-    {}
-    // ========================================================================
-    /// MANDATORY: clone method ("virtual construcor")
-    SumByValue* clone() const override { return new SumByValue(*this); }
-    /// MANDATORY: the only one essential method :
-    TYPE2 operator() ( argument_a_unless_void ) const override
-    { return this->sum ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " ("   << this->func ()
-               << "+"    << this->val  () << ") " ; }
-    // ========================================================================
-  };
+   namespace Traits {
+       template <typename TYPE2>
+       struct SumByValue {
+           using Bind_t = details::Bind::FirstOrSecond_t;
+           static constexpr const char* infix() { return "+"; }
+           template <typename V1, typename V2>
+           static TYPE2 binaryOp(const V1& v1, const V2& v2)
+           { return v1 + v2 ; }
+       };
+   }
+  template<typename TYPE,typename TYPE2>
+  using SumByValue = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::SumByValue<TYPE2>>;
+
   // ==========================================================================
   /** @class Minus1
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-27
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class Minus1<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class Minus1             : public LoKi::MultiplyByValue<TYPE,TYPE2>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    // constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    Minus1
-    ( const LoKi::Functor<TYPE,TYPE2>&  fun ,
-      T2                                val )
-      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , LoKi::MultiplyByValue<TYPE,TYPE2>( fun , val )
-    {}
-    // ========================================================================
-    /// MANDATORY: clone method ("virtual construcor")
-    Minus1* clone() const override { return new Minus1(*this); }
-    /// MANDATORY: the only one essential method :
-    TYPE2 operator() ( argument_a_unless_void ) const override
-    { return this->minus1 ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " ("   << this->func ()
-               << "-"    << this->val  () << ") " ; }
-    // ========================================================================
-  };
+   namespace Traits {
+       template <typename TYPE2, typename FirstOrSecond>
+       struct BindMinus {
+           using Bind_t = FirstOrSecond;
+           static constexpr const char* infix() { return "-"; }
+           template <typename V1, typename V2>
+           static TYPE2 binaryOp(const V1& v1, const V2& v2)
+           { return v1 - v2 ; }
+       };
+   }
+  template<typename TYPE,typename TYPE2>
+  using Minus1 = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::BindMinus<TYPE2,details::Bind::Second_t>>;
   // ==========================================================================
   /** @class Minus2
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-27
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class Minus2<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class Minus2             : public LoKi::MultiplyByValue<TYPE,TYPE2>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    // constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    Minus2
-    ( T2                                val ,
-      LoKi::FunctorFromFunctor<TYPE,TYPE2>  fun )
-      : LoKi::AuxFunBase ( std::tie ( val , fun ) )
-      , LoKi::MultiplyByValue<TYPE,TYPE2>( val , std::move(fun) )
-    {}
-    // ========================================================================
-    /// MANDATORY: clone method ("virtual construcor")
-    Minus2* clone() const override { return new Minus2(*this); }
-    /// MANDATORY: the only one essential method :
-    TYPE2 operator() ( argument_a_unless_void ) const override
-    { return this->minus2 ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " ("   << this->val  ()
-               << "-"    << this->func () << ") " ; }
-    // ========================================================================
-  };
+  template<typename TYPE,typename TYPE2>
+  using Minus2 = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::BindMinus<TYPE2,details::Bind::First_t>>;
+
   // ==========================================================================
   /** @class Divide1
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-27
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class Divide1<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class Divide1             : public LoKi::MultiplyByValue<TYPE,TYPE2>
-#endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    // constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    Divide1
-    ( LoKi::FunctorFromFunctor<TYPE,TYPE2>  fun ,
-      T2                                val )
-      : LoKi::AuxFunBase ( std::tie ( fun , val ) )
-      , LoKi::MultiplyByValue<TYPE,TYPE2>( std::move(fun) , val )
-    {}
-    // ========================================================================
-    /// MANDATORY: clone method ("virtual construcor")
-    Divide1* clone() const override { return new Divide1(*this); }
-    /// MANDATORY: the only one essential method :
-    TYPE2 operator() ( argument_a_unless_void ) const override
-    { return this->divide1 ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " ("   << this->func ()
-               << "/"    << this->val  () << ") " ; }
-    // ========================================================================
-  };
+   namespace Traits {
+       template <typename TYPE2, typename FirstOrSecond>
+       struct BindDivide {
+           using Bind_t = FirstOrSecond;
+           static constexpr const char* infix() { return "/"; }
+           template <typename V1, typename V2>
+           static TYPE2 binaryOp(const V1& v1, const V2& v2)
+           { return v1 / v2 ; }
+       };
+   }
+  template<typename TYPE,typename TYPE2>
+  using Divide1 = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::BindDivide<TYPE2,details::Bind::Second_t>>;
+
   // ==========================================================================
   /** @class Divide2
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-27
    */
-#ifdef _GEN_LOKI_VOIDPRIMITIVES
-  template <typename TYPE2>
-  class Divide2<void,TYPE2> : public LoKi::MultiplyByValue<void,TYPE2>
-#else
-  template <typename TYPE, typename TYPE2=double>
-  class Divide2             : public LoKi::MultiplyByValue<TYPE,TYPE2>
+  template<typename TYPE,typename TYPE2>
+  using Divide2 = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::BindDivide<TYPE2,details::Bind::First_t>>;
+
 #endif
-  {
-  private:
-    // ========================================================================
-    typedef_void_TYPE
-    /// argument type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::argument    argument    ;
-    // constant type
-    typedef typename LoKi::Constant<TYPE,TYPE2>::T2 T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /** constructor from the function and the value
-     *  @param fun the function
-     *  @param val the reference value
-     *  @param eps the relative precision
-     */
-    Divide2
-    ( T2                                val ,
-      LoKi::FunctorFromFunctor<TYPE,TYPE2>  fun )
-      : LoKi::AuxFunBase ( std::tie ( val , fun ) )
-      , LoKi::MultiplyByValue<TYPE,TYPE2>( val , std::move(fun) )
-    {}
-    // ========================================================================
-    /// MANDATORY: clone method ("virtual construcor")
-    Divide2* clone() const override { return new Divide2(*this); }
-    /// MANDATORY: the only one essential method :
-    TYPE2 operator() ( argument_a_unless_void ) const override
-    { return this->divide2 ( a_unless_void ) ; }
-    /// OPTIONAL: the specific printout
-    std::ostream& fillStream ( std::ostream& s ) const override
-    { return s << " ("   << this->val  ()
-               << "/"    << this->func () << ") " ; }
-    // ========================================================================
-  };
   // ==========================================================================
   /** compare 2 objects using the comparison criteria CMP ,
    *  applied to functions:
@@ -2122,7 +1733,7 @@ namespace LoKi
    *  @date 2006-04-07
    */
   template <typename TYPE,typename TYPE2=TYPE>
-  class Identity : public LoKi::Functor<TYPE,TYPE2>
+  class Identity final : public LoKi::Functor<TYPE,TYPE2>
   {
   private:
     // ========================================================================
@@ -2172,10 +1783,10 @@ namespace LoKi
    */
 #ifdef _GEN_LOKI_VOIDPRIMITIVES
   template<>
-  class InRange<void>: public LoKi::Functor<void,bool>
+  class InRange<void> final : public LoKi::Functor<void,bool>
 #else
   template<typename TYPE>
-  class InRange: public LoKi::Functor<TYPE,bool>
+  class InRange final: public LoKi::Functor<TYPE,bool>
 #endif
   {
   private:
@@ -2205,7 +1816,7 @@ namespace LoKi
     /// MANDATORY: the only one essential method
     bool operator() ( argument_a_unless_void ) const override
     {
-      const double r = m_fun.fun ( a_unless_void ) ;
+      const auto r = m_fun.fun ( a_unless_void ) ;
       return m_low <= r && r <= m_high ;
     }
     /// OPTIONAL: the nice printout
@@ -2330,7 +1941,7 @@ namespace LoKi
   class EqualToList<void> : public LoKi::Functor<void,bool>
 #else
   template <typename TYPE>
-  class EqualToList       : public LoKi::Functor<TYPE,bool>
+  class EqualToList : public LoKi::Functor<TYPE,bool>
 #endif
   {
   private:
@@ -2380,13 +1991,12 @@ namespace LoKi
      *  @param last end of range
      */
     template <typename ITERATOR,
-              typename = std::enable_if_t< std::is_base_of< std::input_iterator_tag,
-                                                            typename std::iterator_traits<ITERATOR>::iterator_category
-                                                                 >::value>>
-    EqualToList
-    ( const LoKi::Functor<TYPE,double>&  fun    ,
-      ITERATOR                           first  ,
-      ITERATOR                           last   )
+              LOKI_REQUIRES( std::is_base_of< std::input_iterator_tag,
+                                              typename std::iterator_traits<ITERATOR>::iterator_category
+                                            >::value ) >
+    EqualToList ( const LoKi::Functor<TYPE,double>&  fun    ,
+                  ITERATOR                           first  ,
+                  ITERATOR                           last   )
       : EqualToList( fun, std::vector<double>{ first, last } )
     {}
     // ========================================================================
@@ -2487,13 +2097,12 @@ namespace LoKi
      *  @param last end of range
      */
     template <typename ITERATOR,
-              typename = std::enable_if_t< std::is_base_of< std::input_iterator_tag,
-                                                            typename std::iterator_traits<ITERATOR>::iterator_category
-                                                          >::value>>
-    NotEqualToList
-    ( const LoKi::Functor<TYPE,double>&  fun    ,
-      ITERATOR                           first  ,
-      ITERATOR                           last   )
+              LOKI_REQUIRES( std::is_base_of< std::input_iterator_tag,
+                                              typename std::iterator_traits<ITERATOR>::iterator_category
+                                            >::value )>
+    NotEqualToList ( const LoKi::Functor<TYPE,double>&  fun    ,
+                     ITERATOR                           first  ,
+                     ITERATOR                           last   )
       : LoKi::EqualToList<TYPE>( fun , first , last  )
     {}
     // ========================================================================
@@ -2588,25 +2197,25 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor from the functor
-    Modulo ( const LoKi::Functor<TYPE,double>& divident  ,
+    Modulo ( const LoKi::Functor<TYPE,double>& fun  ,
              const unsigned int                divisor   )
-      : LoKi::AuxFunBase ( std::tie ( divident , divisor ) )
-      , m_divident ( divident  )
+      : LoKi::AuxFunBase ( std::tie ( fun , divisor ) )
+      , m_fun ( fun  )
       , m_divisor  ( divisor   )
     {}
     /// clone method (mandatory)
     Modulo* clone() const override { return new Modulo ( *this ) ; }
     /// the only one essential method ("function")
     double operator() ( argument_a_unless_void ) const override
-    { return LHCb::Math::round ( m_divident.fun ( a_unless_void ) ) % m_divisor ; }
+    { return LHCb::Math::round ( m_fun.fun ( a_unless_void ) ) % m_divisor ; }
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override
-    { return s << " ("  << m_divident << " % "  << m_divisor << ") "; }
+    { return s << " ("  << m_fun << " % "  << m_divisor << ") "; }
     // ========================================================================
   private:
     // ========================================================================
     /// the divident
-    LoKi::FunctorFromFunctor<TYPE,double> m_divident ; // the divident
+    LoKi::FunctorFromFunctor<TYPE,double> m_fun ; // the divident
     /// the divisor
     const unsigned int                    m_divisor  ; // the divisor
     // ========================================================================
@@ -2636,9 +2245,8 @@ namespace LoKi
   public:
     // ========================================================================
     /// constructor from the functor and the fake argument
-    Round ( const LoKi::Functor<TYPE,double>&    fun      ,
-            const unsigned int                   fake     )
-      : LoKi::AuxFunBase ( std::tie ( fun , fake ) )
+    Round ( const LoKi::Functor<TYPE,double>&    fun      )
+      : LoKi::AuxFunBase ( std::tie ( fun ) )
       , m_fun  ( fun )
     {}
     /// clone method (mandatory)

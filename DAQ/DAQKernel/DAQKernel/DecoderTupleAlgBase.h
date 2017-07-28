@@ -1,11 +1,7 @@
-
 //-----------------------------------------------------------------------------
 /** @file DecoderTupleAlgBase.h
  *
  *  Header file for algorithm base class : DecoderTupleAlgBase
- *
- *  CVS Log :-
- *  $Id: DecoderTupleAlgBase.h,v 1.7 2009-07-27 20:29:01 jonrob Exp $
  *
  *  @author Rob Lambert   Rob.Lambert@cern.ch
  *  @date   02/10/2014
@@ -23,7 +19,6 @@
 
 namespace Decoder
 {
-
   //-----------------------------------------------------------------------------
   /** @class TupleAlgBase DecoderTupleAlgBase.h DAQKernel/DecoderTupleAlgBase.h
    *
@@ -37,24 +32,7 @@ namespace Decoder
    */
   //-----------------------------------------------------------------------------
 
-  class TupleAlgBase : public Decoder::CommonBase<GaudiTupleAlg>
-  {
-
-  public:
-
-    /// Standard constructor
-    TupleAlgBase( const std::string& name,
-                  ISvcLocator* pSvcLocator )
-      : Decoder::CommonBase<GaudiTupleAlg> ( name, pSvcLocator )
-    { }
-
-  protected:
-      ///avoid getIfExists name resolution for now
-      inline LHCb::RawEvent* getIfExistsRaw(const std::string loc, bool rootOnTes) const override
-      {
-      	return GaudiTupleAlg::getIfExists<LHCb::RawEvent>(loc,rootOnTes);
-      }
-  };
+  using TupleAlgBase = Decoder::CommonBase<GaudiTupleAlg>;
 
 }
 
