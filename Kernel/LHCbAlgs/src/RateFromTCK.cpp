@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 #include <iomanip>
 
@@ -41,7 +41,7 @@ StatusCode RateFromTCK::initialize()
   if (this->existDet<Condition>("Conditions/Online/LHCb/RunInfo/Trigger")) {
     registerCondition("Conditions/Online/LHCb/RunInfo/Trigger",
                       m_condTrigger, &RateFromTCK::i_cacheTriggerData);
-    if (UNLIKELY( msgLevel(MSG::DEBUG))) 
+    if (UNLIKELY( msgLevel(MSG::DEBUG)))
       debug() << "Conditions/Online/LHCb/RunInfo/Trigger found" << endmsg;
   } else {
     warning() << "Conditions/Online/LHCb/RunInfo/Trigger not found." << endmsg;
@@ -68,7 +68,7 @@ double RateFromTCK::parameterFromTCK( const std::string& instanceName,
   // Decode the raw event to get the TCK from the raw Hlt DecReports
   if ( !tck ) {
     // if there is no TCK, do nothing
-    if (UNLIKELY( msgLevel(MSG::VERBOSE))) 
+    if (UNLIKELY( msgLevel(MSG::VERBOSE)))
       verbose() << "No TCK was found, we will get the rate from the CondDB" << endmsg;
     return rate;
   }
@@ -80,18 +80,22 @@ double RateFromTCK::parameterFromTCK( const std::string& instanceName,
     const ConfigTreeNode* tree = m_propertyConfigSvc->resolveConfigTreeNode(alias);
     if (!tree) {
       // if we could not resolve the (non-zero) TCK we have a problem
-      if (UNLIKELY( msgLevel(MSG::VERBOSE))) 
+      if (UNLIKELY( msgLevel(MSG::VERBOSE)))
         verbose() << "Obtained TCK " << std::hex
                   << _tck << " from the database which could not be resolved" << endmsg;
       return rate;
     } else {
       auto child = m_propertyConfigSvc->findInTree(tree->digest(), instanceName);
-      const PropertyConfig *config = m_propertyConfigSvc->resolvePropertyConfig(child);
-      if ( !config ) {
-        warning() << "could not find property " << instanceName << endmsg;
+      if (child.invalid()) {
+        warning() << "could not find configuration for " << instanceName << endmsg;
         return rate;
       }
-      if (UNLIKELY( msgLevel(MSG::VERBOSE))) 
+      const PropertyConfig *config = m_propertyConfigSvc->resolvePropertyConfig(child);
+      if ( !config ) {
+        error() << "could not obtain PropertyConfig " << instanceName << endmsg;
+        return rate;
+      }
+      if (UNLIKELY( msgLevel(MSG::VERBOSE)))
         verbose() << "TCK data found: " << tck << " for instance " << instanceName
                   << " " << config->properties().size() << " properties " << endmsg;
       // list properties
