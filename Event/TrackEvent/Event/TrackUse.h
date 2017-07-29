@@ -28,8 +28,7 @@ class AlgTool   ;
  *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
  *  @date   2004-10-27
  */
-class TrackUse
-  : public std::unary_function<const LHCb::Tracks,bool>
+class TrackUse final
 {
 public:
   typedef std::vector<int> Types ;
@@ -134,28 +133,26 @@ protected:
    */
   template <class TYPE>
   inline StatusCode i_declareProperties( TYPE* object ) ;
-public:
-  /// Standard constructor
-  TrackUse( );
-  /// destructor
-  virtual ~TrackUse() ;
 private:
   // check the track
-  bool               m_check        ;
+  bool               m_check        = true;
   // reject clones
-  bool               m_skipClones   ;
+  bool               m_skipClones   = true;
   // reject invalid
-  bool               m_skipInvalid  ;
+  bool               m_skipInvalid  = true;
   // reject backward
-  bool               m_skipBackward ;
+  bool               m_skipBackward = true;
   //
-  typedef std::vector<int> Shorts ;
+
   /// accepted fit status
-  Shorts m_fitstatus  ;
+  std::vector<int> m_fitstatus  = { LHCb::Track::FitStatus::Fitted };
   /// accepted type
-  Shorts m_type    ;
+  std::vector<int> m_type    = {  LHCb::Track::Types::Long       ,
+                        LHCb::Track::Types::Upstream   ,
+                        LHCb::Track::Types::Downstream ,
+                        LHCb::Track::Types::Ttrack     };
   /// rejected history
-  Shorts m_history ;
+  std::vector<int> m_history ;
 };
 // ============================================================================
 /// status to be accepted
@@ -190,8 +187,8 @@ inline bool TrackUse::rejectedHistory ( const LHCb::Track::History v ) const
 inline bool
 TrackUse::use  ( const LHCb::Track* track ) const
 {
-  if ( 0 == track ) { return false ; }                              // RETURN
-  if ( !check()   ) { return true  ; }                              // RETURN
+  if ( !track )   { return false ; }                              // RETURN
+  if ( !check() ) { return true  ; }                              // RETURN
   /// check for flags
   if ( skipClones  ()  &&
        track->checkFlag ( LHCb::Track::Flags::Clone    ) )   { return false ; }
