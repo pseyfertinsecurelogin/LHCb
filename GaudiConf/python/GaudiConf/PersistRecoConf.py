@@ -11,6 +11,8 @@ from Configurables import DataPacking__Unpack_LHCb__MuonPIDPacker_ as UnpackMuon
 from Configurables import PackRecVertex, UnpackRecVertex
 from Configurables import DataPacking__Pack_LHCb__CaloClusterPacker_ as PackCaloClusters
 from Configurables import DataPacking__Unpack_LHCb__CaloClusterPacker_ as UnpackCaloClusters
+from Configurables import DataPacking__Pack_LHCb__CaloDigitPacker_ as PackCaloDigits
+from Configurables import DataPacking__Unpack_LHCb__CaloDigitPacker_ as UnpackCaloDigits
 from Configurables import PackCaloHypo, UnpackCaloHypo
 
 __all__ = [
@@ -149,6 +151,31 @@ standardDescriptors['2015'] = OrderedDict(
 )
 
 standardDescriptors['2017'] = standardDescriptors['2016'].copy()
+# CaloDigits
+standardDescriptors['2017'].update([
+    (i.name, i) for i in [
+        PackingDescriptor(
+            name="Hlt2CaloEcalDigits",
+            location="/Event/Hlt2/pRec/Neutral/EcalDigits",
+            packer=PackCaloDigits, unpacker=UnpackCaloDigits
+        ),
+        PackingDescriptor(
+            name="Hlt2CaloHcalDigits",
+            location="/Event/Hlt2/pRec/Neutral/HcalDigits",
+            packer=PackCaloDigits, unpacker=UnpackCaloDigits
+        ),
+        PackingDescriptor(
+            name="Hlt2CaloPrsDigits",
+            location="/Event/Hlt2/pRec/Neutral/PrsDigits",
+            packer=PackCaloDigits, unpacker=UnpackCaloDigits
+        ),
+        PackingDescriptor(
+            name="Hlt2CaloSpdDigits",
+            location="/Event/Hlt2/pRec/Neutral/SpdDigits",
+            packer=PackCaloDigits, unpacker=UnpackCaloDigits
+        )
+    ]
+])
 standardDescriptors['2017'] = _od_rename(
     standardDescriptors['2017'],
     {'Hlt2DownstreamPIDMuonSegments': 'Hlt2MuonPIDSegments',
@@ -210,16 +237,25 @@ standardOutputs["2017"] = {
     "Hlt2CaloPhotonHypos":      "/Event/Turbo/PID/Calo/Photons",
     "Hlt2CaloMergedPi0Hypos":   "/Event/Turbo/PID/Calo/MergedPi0s",
     "Hlt2CaloSplitPhotonHypos": "/Event/Turbo/PID/Calo/SplitPhotons",
+    "Hlt2CaloEcalDigits":       "/Event/Turbo/PID/Calo/EcalDigits",
+    "Hlt2CaloHcalDigits":       "/Event/Turbo/PID/Calo/HcalDigits",
+    "Hlt2CaloPrsDigits":        "/Event/Turbo/PID/Calo/PrsDigits",
+    "Hlt2CaloSpdDigits":        "/Event/Turbo/PID/Calo/SpdDigits"
 }
 
 
 # We need to register the locations of (non-reconstructed) data
 # that is referenced by the some of the packed objects.
-externalLocations = [
+_externalLocations = [
     '/Event/Raw/Ecal/Digits',
     '/Event/Raw/Prs/Digits',
     '/Event/Raw/Spd/Digits',
 ]
+externalLocations = {}
+externalLocations['2015'] = list(_externalLocations)
+externalLocations['2016'] = list(externalLocations['2015'])
+# Digits are handled explicitly in 2017
+externalLocations['2017'] = []
 
 
 class PersistRecoPacking(object):
@@ -247,7 +283,7 @@ class PersistRecoPacking(object):
         self._descriptors = descriptors[datatype]
         self.inputs = inputs
         self.outputs = outputs[datatype]
-        self.external = externalLocations
+        self.external = externalLocations[datatype]
 
     def packedLocations(self):
         """Return a list with the packed object locations."""
