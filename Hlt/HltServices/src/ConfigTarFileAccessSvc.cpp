@@ -27,11 +27,11 @@ IArchive* ConfigTarFileAccessSvc::file() const
             error() << "invalid mode: " << m_mode << endmsg;
             return nullptr;
         }
-        std::ios::openmode mode = ( m_mode == "ReadWrite" )
-                                 ? ( std::ios::in | std::ios::out | std::ios::ate )
-                                 : ( m_mode == "Truncate" )
-                                       ? ( std::ios::in | std::ios::out | std::ios::trunc )
-                                       : std::ios::in;
+        std::ios::openmode mode = ( m_mode == "ReadWrite"
+                                  ? std::ios::in | std::ios::out | std::ios::ate
+                                  : ( m_mode == "Truncate"
+                                    ? std::ios::in | std::ios::out | std::ios::trunc
+                                    : std::ios::in ) );
         if ( m_name.empty() ) {
             std::string def( System::getEnv( "HLTTCKROOT" ) );
             if ( !def.empty() ) {
@@ -43,12 +43,11 @@ IArchive* ConfigTarFileAccessSvc::file() const
             }
             m_name = def;
         }
-        info() << " opening " << m_name << " in mode " << m_mode << endmsg;
-        m_file = std::make_unique<TarFile>( m_name, mode, m_compress );
+        info() << " opening " << m_name.value() << " in mode " << m_mode.value() << endmsg;
+        m_file = std::make_unique<TarFile>( m_name.value(), mode, m_compress );
         if ( !*m_file ) {
-            error() << " Failed to open " << m_name << " in mode " << m_mode
-                    << endmsg;
-            error() << std::string( strerror( errno ) ) << endmsg;
+            error() << " Failed to open " << m_name.value() << " in mode " << m_mode.value()
+                    << ": " << strerror( errno ) << endmsg;
             m_file.reset( );
         }
     }

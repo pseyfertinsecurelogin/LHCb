@@ -21,7 +21,6 @@
 #include "Kernel/PropertyConfig.h"
 
 namespace {
-   using namespace std;
    namespace ba = boost::algorithm;
 }
 
@@ -61,7 +60,7 @@ StatusCode HltGenConfig::initialize() {
   for (const auto& var : m_envVars) {
      auto val = System::getEnv(var.c_str());
      if (val.empty()) {
-        throw GaudiException(string{"Failed to obtain environment variable "} + var,
+        throw GaudiException(std::string{"Failed to obtain environment variable "} + var,
                              name(), StatusCode::FAILURE);
      }
      m_envVarValues[val] = var;
@@ -69,9 +68,9 @@ StatusCode HltGenConfig::initialize() {
   return sc;
 }
 
-vector<PropertyConfig::digest_type>
+std::vector<PropertyConfig::digest_type>
 HltGenConfig::gatherDependencies(const INamedInterface &obj) const {
-  vector<PropertyConfig::digest_type> depRefs;
+  std::vector<PropertyConfig::digest_type> depRefs;
   INamedInterface *ini = const_cast<INamedInterface *>(&obj); // we do treat obj logically const,
                                                               // even if we call code which seems
                                                               // wants non-const version of obj
@@ -79,13 +78,15 @@ HltGenConfig::gatherDependencies(const INamedInterface &obj) const {
   SmartIF<IAlgorithm> ia(ini);
   if (ia.isValid()) {
     auto subs = dynamic_cast<const Algorithm &>(*ia).subAlgorithms();
-    std::transform( std::begin(*subs), std::end(*subs),
+    std::transform( begin(*subs), end(*subs),
                     std::back_inserter(depRefs),
                     [&](const Algorithm*  dep) {
       debug() << "adding sub-algorithm " << dep->name() << " as dependant to " << obj.name() << endmsg;
       auto digest = generateConfig(*dep);
-      if (digest.invalid()) error() << "problem creating dependant configuration for "
-                                    << dep->name() << endmsg;
+      if (digest.invalid())  {
+          throw std::runtime_error(
+                    "problem creating dependant configuration for " + dep->name() );
+      }
       return digest;
     } );
   }
@@ -99,8 +100,8 @@ HltGenConfig::gatherDependencies(const INamedInterface &obj) const {
     debug() << "adding tool " << i.second->name() << " as dependency of " << obj.name() << endmsg;
     auto digest = generateConfig(*i.second);
     if (digest.invalid()) {
-      error() << "problem creating dependant configuration for "
-              << i.second->name() << endmsg;
+      throw std::runtime_error(
+               "problem creating dependant configuration for " + i.second->name() );
     }
     return digest;
   });
@@ -117,17 +118,20 @@ HltGenConfig::generateConfig(const INamedInterface &obj) const {
 
   // create and write the leaf object
   auto currentConfig = m_configSvc->currentConfiguration(obj);
+  if (currentConfig.digest().invalid()) {
+      throw std::runtime_error( "got bad configuration for "  +  obj.name() );
+  }
 
   // check whether there is a modification request for this component...
-  vector<string> overrule;
+  std::vector<std::string> overrule;
 
   // Find known environment variables in options and replace them with the environment variable again.
-  using iter_t = ba::find_iterator<string::const_iterator>;
+  using iter_t = ba::find_iterator<std::string::const_iterator>;
   for (const auto& valVar : m_envVarValues) {
     for (const auto& prop : currentConfig.properties()) {
       auto it = ba::make_find_iterator(prop.second, ba::first_finder(valVar.first, ba::is_iequal()));
       for(;it != iter_t(); ++it) {
-        overrule.push_back(prop.first + ":" + ba::replace_range_copy(prop.second, *it, string{"$"} + valVar.second));
+        overrule.push_back(prop.first + ":" + ba::replace_range_copy(prop.second, *it, std::string{"$"} + valVar.second));
       }
     }
   }
@@ -145,26 +149,23 @@ HltGenConfig::generateConfig(const INamedInterface &obj) const {
                 << endmsg;
       m_overruled.emplace(obj.name());
     }
-    currentConfig = currentConfig.copyAndModify(std::begin(overrule), std::end(overrule));
+    currentConfig = currentConfig.copyAndModify(begin(overrule), end(overrule));
     if (!currentConfig.digest().valid()) {
-      error() << " overruling of " << obj.name() << " : " << overrule
-              << " failed" << endmsg;
-      return ConfigTreeNode::digest_type::createInvalid();
+      throw std::runtime_error( " overruling of " + obj.name() + " failed " );
     }
   }
 
   // Write the actual config
   auto propRef = m_accessSvc->writePropertyConfig(currentConfig);
   if (propRef.invalid()) {
-    error() << "problem writing PropertyConfig" << endmsg;
-    return ConfigTreeNode::digest_type::createInvalid();
+    throw std::runtime_error( "problem writing PropertyConfig for " + obj.name() );
   }
 
   // create the tree node for this leaf object, and its dependencies, and write
   // it
   auto nodeRef = m_accessSvc->writeConfigTreeNode({ propRef, depRefs });
   if (nodeRef.invalid()) {
-    error() << "problem writing ConfigTreeNode" << endmsg;
+    throw std::runtime_error ( "problem writing ConfigTreeNode for " + obj.name() );
   }
   return nodeRef;
 }
@@ -181,7 +182,7 @@ StatusCode HltGenConfig::getDependencies(I i, I end, INS inserter, R resolver) c
       return StatusCode::FAILURE;
     }
     auto digest = generateConfig(*comp);
-    info() << " id for this : " << digest << endmsg;
+    info() << " id for " << *i << " : " << digest << endmsg;
     if (!digest.valid()) {
       error() << "got invalid digest for " << *i << endmsg;
       return StatusCode::FAILURE;
@@ -192,17 +193,17 @@ StatusCode HltGenConfig::getDependencies(I i, I end, INS inserter, R resolver) c
 }
 
 StatusCode HltGenConfig::generateConfig() const {
-  vector<ConfigTreeNode::digest_type> depRefs;
+  std::vector<ConfigTreeNode::digest_type> depRefs;
 
   auto sl = serviceLocator().get();
-  StatusCode sc = getDependencies( std::begin(m_svcConfig), std::end(m_svcConfig),
+  StatusCode sc = getDependencies( begin(m_svcConfig), end(m_svcConfig),
                                    std::back_inserter(depRefs),
                                    [&](const std::string &name) {
         IService *svc { nullptr };
         return sl->getService(Gaudi::Utils::TypeNameString(name), svc, false).isSuccess() ? svc : nullptr;
   } );
   if (sc.isFailure()) return sc;
-  sc = getDependencies( std::begin(m_topConfig), std::end(m_topConfig),
+  sc = getDependencies( begin(m_topConfig), end(m_topConfig),
                         std::back_inserter(depRefs),
                         [&](const std::string &name) {
           IAlgorithm *alg { nullptr };
@@ -243,7 +244,14 @@ StatusCode HltGenConfig::finalize() {
   static bool first(true);
   if (first) {
     first = false;
-    generateConfig();
+    try {
+        auto sc = generateConfig();
+        if (sc.isFailure()) return sc;
+    }
+    catch ( const std::runtime_error& err ) {
+        error() << err.what() << endmsg;
+        return StatusCode::FAILURE;
+    }
   }
   return GaudiAlgorithm::finalize();
 }

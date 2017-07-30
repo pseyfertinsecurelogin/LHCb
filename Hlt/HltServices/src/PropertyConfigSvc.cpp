@@ -667,7 +667,7 @@ PropertyConfigSvc::resolvePropertyConfig(const PropertyConfig::digest_type& ref)
    if (pc) return pc;
    auto config = m_accessSvc->readPropertyConfig(ref);
    if (!config) {
-        error() << " could not obtain ref " << ref << endmsg;
+        error() << " could not obtain PropertyConfig ref " << ref << endmsg;
         return nullptr;
    }
    if (config->digest()!=ref) {
@@ -702,7 +702,7 @@ PropertyConfigSvc::resolveConfigTreeNode(const ConfigTreeNode::digest_type& ref)
    assert(m_accessSvc);
    auto node = m_accessSvc->readConfigTreeNode(ref);
    if (!node) {
-       error() << " could not obtain ref " << ref << endmsg;
+       error() << " could not obtain ConfigTreeNode ref " << ref << endmsg;
        return nullptr;
    }
    if (node->digest()!=ref) {
