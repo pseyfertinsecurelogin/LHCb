@@ -22,9 +22,8 @@ public:
        std::string major() const; // the part upto (not including) the first '/'
        bool valid() const;
        bool invalid() const { return !valid(); }
-       bool operator==(const alias_type& rhs) const { return m_alias == rhs.m_alias; }
-       //@TODO: add hashing to speed up <...
-       bool operator<(const alias_type& rhs) const { return m_alias < rhs.m_alias; }
+       friend bool operator==(const alias_type& lhs, const alias_type& rhs) { return lhs.m_alias == rhs.m_alias; }
+       friend bool operator<(const alias_type& lhs, const alias_type& rhs) { return lhs.m_alias < rhs.m_alias; }
        std::ostream& print(std::ostream& os) const;
        std::istream& read(std::istream& is);
     private:

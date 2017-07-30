@@ -5,7 +5,7 @@
 //
 // 2009-11-06 : Patrick Koppenburg
 //-----------------------------------------------------------------------------
-namespace Hlt 
+namespace Hlt
 {
   //=========================================================================
   //  return bits if they are in a range
@@ -13,13 +13,11 @@ namespace Hlt
   std::vector<unsigned int> firedRoutingBits(const LHCb::RawEvent* rawEvent,
                                              const std::vector<unsigned int>& relevantBits)
   {
-    std::vector<unsigned int> yes ;
-    boost::dynamic_bitset<unsigned int> x = readRoutingBits(rawEvent);
-    for ( std::vector<unsigned int>::const_iterator j = relevantBits.begin();
-          j != relevantBits.end() ; ++j ) 
-    {
-      if ( x[*j] ) yes.push_back(*j); // accepted
-    }
+    std::vector<unsigned int> yes ; yes.reserve(relevantBits.size());
+    std::copy_if(  relevantBits.begin(), relevantBits.end(),
+                   std::back_inserter(yes),
+                   [bits = readRoutingBits(rawEvent)](unsigned int j)
+                   { return bits[j]; } );
     return yes ;
   }
   //=========================================================================
@@ -29,19 +27,12 @@ namespace Hlt
                                              const unsigned int relevantMin,
                                              const unsigned int relevantMax)
   {
-    std::vector<unsigned int> yes ;
-    boost::dynamic_bitset<unsigned int> x = readRoutingBits(rawEvent);
-    //    std::cout << "Fired routing bits from " << relevantMin
-    //             << " to " << relevantMax << " are : " ;
-    for ( unsigned int j = relevantMin ; j <= relevantMax ; ++j ) 
-    {
-      if ( x[j] )
-      {
-        yes.push_back(j); // accepted
-        //        std::cout << j << " (" << x[j] << ") "  ;
-      }
+    assert(relevantMax>=relevantMin);
+    std::vector<unsigned int> yes ; yes.reserve(relevantMax-relevantMin);
+    auto bits = readRoutingBits(rawEvent);
+    for ( unsigned int j = relevantMin ; j <= relevantMax ; ++j ) {
+      if ( bits[j] ) yes.push_back(j); // accepted
     }
-    //    std::cout << std::endl ;
     return yes ;
   }
   //=========================================================================
@@ -54,26 +45,25 @@ namespace Hlt
       throw GaudiException("Cannot find RawEvent","Hlt::readRoutingBits",StatusCode::FAILURE);
     }
     const unsigned int size = 3 ;
-    
+
     const std::vector<LHCb::RawBank*>& banks =
       const_cast<LHCb::RawEvent*>(rawEvent)->banks(LHCb::RawBank::HltRoutingBits);
-    //    std::cout << banks.size() << std::endl ;
-    if ( banks.empty() ) 
+    if ( banks.empty() )
     {
       throw GaudiException("There is no routing bits banks. Please make sure you run the trigger",
                            "Hlt::readRoutingBits", StatusCode::FAILURE);
     }
-    if ( banks.size()>1 ) 
+    if ( banks.size()>1 )
     {
       throw GaudiException("There are >1 routing bits banks. Please remove the original before re-running the trigger",
                            "Hlt::readRoutingBits", StatusCode::FAILURE);
     }
-    if ( LHCb::RawBank::MagicPattern != banks.front()->magic() ) 
+    if ( LHCb::RawBank::MagicPattern != banks.front()->magic() )
     {
       throw GaudiException("Wrong magic in HltRoutingBits","Hlt::readRoutingBits",StatusCode::FAILURE);
     }
     //    std::cout << banks.front()->size() << std::endl ;
-    if ( banks.front()->size() != size*sizeof(unsigned int) ) 
+    if ( banks.front()->size() != size*sizeof(unsigned int) )
     {
       throw GaudiException("RawBank wrong size","Hlt::readRoutingBits",StatusCode::FAILURE);
     }
