@@ -25,6 +25,20 @@ namespace LHCb
     unsigned int sourceID{0};
     unsigned int tell1Channel{0};
     int spill{0};
+
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.io(
+        id, begin, end, sum, sourceID,
+        tell1Channel, spill
+      );
+    }
+
+    template<typename T>
+    inline void load(T& buf, unsigned int /*version*/) {
+      save(buf); // identical operation until version is incremented
+    }
+
   };
 
   static const CLID CLID_PackedClusters = 1540;
@@ -54,6 +68,13 @@ namespace LHCb
       m_strips.reserve   ( 1000 );
       m_adcs.reserve     ( 1000 );
     }
+
+  public:
+
+    /// Default Packing Version
+    static char defaultPackingVersion() { return 1; }
+
+  public:
 
     const CLID& clID()  const override { return PackedClusters::classID(); }
     static  const CLID& classID()     { return CLID_PackedClusters;       }
@@ -86,11 +107,49 @@ namespace LHCb
     const std::vector<int>& strips()             const { return m_strips; }
     const std::vector<unsigned int>& adcs()      const { return m_adcs; }
 
+  public:
+
+    /// Set the packing version
+    void setPackingVersion( const char ver ) { m_packingVersion = ver; }
+
+    /// Access the packing version
+    char packingVersion() const { return m_packingVersion; }
+
+    /// Describe serialization of object
+    template<typename T>
+    inline void save(T& buf) const {
+      buf.template save<uint8_t>(m_packingVersion);
+      buf.template save<uint8_t>(version());
+      buf.save(m_clusters);
+      buf.save(m_strips);
+      buf.save(m_adcs);
+    }
+
+    /// Describe de-serialization of object
+    template<typename T>
+    inline void load(T& buf) {
+      setPackingVersion(buf.template load<uint8_t>());
+      setVersion(buf.template load<uint8_t>());
+      if (m_packingVersion < 1 || m_packingVersion > defaultPackingVersion()) {
+        throw std::runtime_error("PackedClusters packing version is not supported: "
+                                 + std::to_string(m_packingVersion));
+      }
+      buf.load(m_clusters, m_packingVersion);
+      buf.load(m_strips);
+      buf.load(m_adcs);
+    }
+
   private:
 
     std::vector<PackedCluster> m_clusters;
     std::vector<int>           m_strips;
     std::vector<unsigned int>  m_adcs;
+
+    /** Data packing version
+     *  Note the default packing version here must stay as zero, for compatibility
+     *  with data written before the packing version was added, to implicitly
+     *  define the version as 0 for this data  */
+    char m_packingVersion{0};
 
   };
 

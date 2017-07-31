@@ -14,6 +14,7 @@
 #include "Event/PackedRelations.h"
 #include "Event/PackedPartToRelatedInfoRelation.h"
 #include "Event/PackedCaloDigit.h"
+#include "Event/PackedCluster.h"
 
 #include "PackedDataChecksum.h"
 #include "PackedDataBuffer.h"
@@ -65,6 +66,7 @@ StatusCode HltPackedDataWriter::initialize() {
   register_object<LHCb::PackedRelations>();
   register_object<LHCb::PackedRelatedInfoRelations>();
   register_object<LHCb::PackedCaloDigits>();
+  register_object<LHCb::PackedClusters>();
 
   info() << "Configured to persist containers ";
   for (const auto& path: m_packedContainers) {

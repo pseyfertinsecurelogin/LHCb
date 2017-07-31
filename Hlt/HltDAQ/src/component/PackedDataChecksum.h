@@ -17,6 +17,7 @@
 #include "Event/PackedRelations.h"
 #include "Event/PackedPartToRelatedInfoRelation.h"
 #include "Event/PackedCaloDigit.h"
+#include "Event/PackedCluster.h"
 
 namespace PackedDataPersistence {
 
