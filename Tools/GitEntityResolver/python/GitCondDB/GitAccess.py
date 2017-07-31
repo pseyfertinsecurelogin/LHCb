@@ -108,12 +108,11 @@ def listTags(repository, sort=False):
     '''
     List the tags in a Git repository.
     '''
-    cmd = ['for-each-ref', '--format=%(refname)']
+    cmd = ['for-each-ref', '--python', '--format=%(refname:short),']
     if sort:
-        cmd.append('--sort=-authordate')
+        cmd.append('--sort=-creatordate')
     cmd.append('refs/tags/')
-    return [l[10:]  # strip the leading "ref/tags/"
-            for l in _git(repository, cmd).splitlines()]
+    return eval('[{}]'.format(_git(repository, cmd)))
 
 
 def _useFiles(repository, tag):
@@ -122,7 +121,11 @@ def _useFiles(repository, tag):
     '''
     # empty tag and checked out repository means access files, but 'HEAD' on a
     # bare repository
-    return (not tag or tag == '<files>') and isdir(join(repository, '.git'))
+    def is_not_bare():
+        return (isdir(join(repository, '.git')) or
+                not (isdir(join(repository, 'object')) and
+                     isdir(join(repository, 'refs'))))
+    return (not tag or tag == '<files>') and is_not_bare()
 
 
 def listFiles(repository, tag='HEAD', path='.'):

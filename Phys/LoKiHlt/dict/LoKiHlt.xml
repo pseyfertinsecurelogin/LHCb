@@ -64,7 +64,20 @@
   <class pattern   = "LoKi::Dicts::*Calls<*LHCb::HltDecReports*>"   />
 
   <class pattern   = "LoKi::HLT::*"        />
-  <class pattern   = "LoKi::Algorithms::*" />
+  <class name   = "LoKi::Algorithms::Passed" />
+  <class name   = "LoKi::Algorithms::AnyPassed" />
+  <class name   = "LoKi::Algorithms::AllPassed" />
+  <class name   = "LoKi::Algorithms::NumPassed" />
+  <class name   = "LoKi::Algorithms::Enabled" />
+  <class name   = "LoKi::Algorithms::AnyEnabled" />
+  <class name   = "LoKi::Algorithms::AllEnabled" />
+  <class name   = "LoKi::Algorithms::NumEnabled" />
+  <class name   = "LoKi::Algorithms::Executed" />
+  <class name   = "LoKi::Algorithms::AnyExecuted" />
+  <class name   = "LoKi::Algorithms::AllExecuted" />
+  <class name   = "LoKi::Algorithms::NumExecuted" />
+  <class name   = "LoKi::Algorithms::Run" />
+  <class name   = "LoKi::Algorithms::RunAll" />
 
   <class name=            "LoKi::Interface<IAlgorithm>"   />
   <class name="std::vector<LoKi::Interface<IAlgorithm> >" />
@@ -89,7 +102,7 @@
     <class name="LoKi::HLT::DecisionBut::Names"    />
     <class name="LoKi::L0::ChannelDecision::Names" />
     <class name="LoKi::L0::ChannelDecision::Channels" />
-    <class name="LoKi::Algorithms::AnyPassed::Algorithms" /> 
+    <class name="LoKi::Algorithms::details" /> 
     <class name="LoKi::Odin::RunNumber::run_list" />
 
     <class pattern="LoKi::HLT::*">

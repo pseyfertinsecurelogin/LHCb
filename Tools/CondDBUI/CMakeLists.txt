@@ -59,5 +59,10 @@ install(FILES ${CMAKE_BINARY_DIR}/python/CondDBUI/Browser/__version__.py
 add_custom_target(CondDBBrowser)
 add_dependencies(CondDBBrowser CondDBUI.Browser.Resources
                                CondDBUI.Browser.UI
-                               CondDBCompression
                                CondDBUIHelperLib)
+if(TARGET CondDBCompression)
+  add_dependencies(CondDBBrowser CondDBCompression)
+endif()
+if(TARGET MergedCondDB)
+  add_dependencies(CondDBBrowser MergedCondDB)
+endif()

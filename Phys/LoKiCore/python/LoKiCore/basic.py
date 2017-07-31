@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id$
-# =============================================================================
-# $URL$
-# =============================================================================
 ## @file decorators.py LoKiCore/basic.py
 #
 #  The set of basic decorator for objects from LoKiCore library
@@ -18,9 +14,6 @@
 #
 #  @author Vanya BELYAEV ibelyaev@physics.syr.edu
 #
-#  $Revision$
-#  Last modification $Date$
-#                 by $Author$
 # =============================================================================
 """
 The set of basic decorators for objects from LoKiCore library

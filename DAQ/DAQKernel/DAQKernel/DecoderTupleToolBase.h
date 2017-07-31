@@ -1,11 +1,7 @@
-
 //-----------------------------------------------------------------------------
 /** @file DecoderTupleToolBase.h
  *
  *  Header file for tool base class : DecoderTupleToolBase
- *
- *  CVS Log :-
- *  $Id: DecoderTupleToolBase.h,v 1.7 2009-07-27 20:29:01 jonrob Exp $
  *
  *  @author Rob Lambert   Rob.Lambert@cern.ch
  *  @date  10/02/2014
@@ -23,7 +19,6 @@
 
 namespace Decoder
 {
-
   //-----------------------------------------------------------------------------
   /** @class TupleToolBase DecoderTupleToolBase.h DAQKernel/DecoderTupleToolBase.h
    *
@@ -37,25 +32,7 @@ namespace Decoder
    */
   //-----------------------------------------------------------------------------
 
-  class TupleToolBase : public Decoder::CommonBase<GaudiTupleTool>
-  {
-
-  public:
-
-    /// Standard constructor
-    TupleToolBase( const std::string& type,
-                   const std::string& name,
-                   const IInterface* parent )
-      : Decoder::CommonBase<GaudiTupleTool> ( type, name, parent )
-    { }
-
-  protected:
-      ///avoid getIfExists name resolution for now
-      inline LHCb::RawEvent* getIfExistsRaw(const std::string loc, bool rootOnTes) const override
-      {
-      	return GaudiTupleTool::getIfExists<LHCb::RawEvent>(loc,rootOnTes);
-      }
-  };
+  using TupleToolBase = Decoder::CommonBase<GaudiTupleTool>;
 
 }
 
