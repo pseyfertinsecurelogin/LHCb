@@ -242,7 +242,12 @@ class Decoder(object):
                 if op is None:
                     #determine default type, first get my configurable
                     thedecoder=configurableInstanceFromString(self.FullName)
-                    ensuretype=type(self.__getprop__(thedecoder,k))
+                    prop = self.__getprop__(thedecoder,k)
+                    if isinstance(prop, DataObjectHandleBase):
+                        # special case for datahandles
+                        ensuretype=str
+                    else:
+                        ensuretype=type(prop)
                 else:
                     ensuretype=type(op)
                 #set this type
