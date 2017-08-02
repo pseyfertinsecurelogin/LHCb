@@ -20,13 +20,12 @@ for r in rich+required:
 r0=rich[0]
 r0.overrideOutputs("Dev/Null")
 
-expectname="Rich::DAQ::RawBufferToRichDigitsAlg/DecodeRawRichOffline"
-prop="DecodeBufferOnly"
+expectname="Rich::Future::RawBankDecoder/DecodeRawRichOffline"
+prop="DumpRawBanks"
 
 rclone=r0.clone(expectname)
 rclone.Properties[prop]=True
 r0.Properties[prop]=False
-
 
 rcloneset=rclone.setup()
 
