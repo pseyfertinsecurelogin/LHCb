@@ -132,7 +132,7 @@ namespace LoKi
     private:
       // ========================================================================
       /// the functors
-      std::array< LoKi::V2::FunctorFromFunctor<Signature>, N > m_funs ; // the functors
+      std::array< FunctorFromFunctor<Signature>, N > m_funs ; // the functors
       // ========================================================================
     } ;
     template <typename Signature>
@@ -801,9 +801,9 @@ namespace LoKi
   template <typename SigIn> class SimpleSwitch;
 
   template <typename... TYPE, typename TYPE2>
-  class SimpleSwitch<TYPE2(TYPE...)> final : public LoKi::V2::Functor<TYPE2(TYPE...)>
+  class SimpleSwitch<TYPE2(TYPE...)> final : public Functor<TYPE2(TYPE...)>
   {
-    using T2 = typename LoKi::V2::Constant<TYPE2(TYPE...)>::T2;
+    using T2 = typename Constant<TYPE2(TYPE...)>::T2;
 
   public:
     // ========================================================================
@@ -820,7 +820,7 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    SimpleSwitch( LoKi::V2::FunctorFromFunctor<bool(TYPE...)> cut,
+    SimpleSwitch( FunctorFromFunctor<bool(TYPE...)> cut,
                   T2 val1 , T2 val2 )
       : LoKi::AuxFunBase ( std::tie ( cut , val1 , val2 ) )
       , m_cut  ( std::move(cut)  )
@@ -842,7 +842,7 @@ namespace LoKi
   private:
     // ========================================================================
     /// the condition
-    LoKi::V2::FunctorFromFunctor<bool(TYPE...)> m_cut  ; // the condiftion
+    FunctorFromFunctor<bool(TYPE...)> m_cut  ; // the condiftion
     /// the first value
     TYPE2                                m_val1 ; // the first value
     /// the second value
@@ -869,9 +869,9 @@ namespace LoKi
   template <typename Signature> class Switch;
 
   template <typename... TYPE, typename TYPE2> // def TYPE2=double
-  class Switch<TYPE2(TYPE...)> final : public LoKi::V2::Functor<TYPE2(TYPE...)>
+  class Switch<TYPE2(TYPE...)> final : public Functor<TYPE2(TYPE...)>
   {
-    using T2 = typename LoKi::V2::Constant<TYPE2(TYPE...)>::T2;
+    using T2 = typename Constant<TYPE2(TYPE...)>::T2;
     // ========================================================================
   public:
     // ========================================================================
@@ -888,9 +888,9 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    Switch( LoKi::V2::FunctorFromFunctor<bool(TYPE...)> cut,
-            LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> fun1 ,
-            LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> fun2 )
+    Switch( FunctorFromFunctor<bool(TYPE...)> cut,
+            FunctorFromFunctor<TYPE2(TYPE...)> fun1 ,
+            FunctorFromFunctor<TYPE2(TYPE...)> fun2 )
       : LoKi::AuxFunBase ( std::tie ( cut , fun1 , fun2 ) )
       , m_cut  ( std::move(cut)  )
       , m_two  ( std::move(fun1) , std::move(fun2) )
@@ -908,9 +908,9 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    Switch( LoKi::V2::FunctorFromFunctor<bool(TYPE...)> cut  ,
-            LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> fun1 , T2 fun2 )
-      : Switch{ std::move(cut), std::move(fun1), LoKi::V2::Constant<TYPE2(TYPE...)>{std::move(fun2)} }
+    Switch( FunctorFromFunctor<bool(TYPE...)> cut  ,
+            FunctorFromFunctor<TYPE2(TYPE...)> fun1 , T2 fun2 )
+      : Switch{ std::move(cut), std::move(fun1), Constant<TYPE2(TYPE...)>{std::move(fun2)} }
     {}
     /** constructor from predicate ,function and constant
      *
@@ -925,9 +925,9 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    Switch( LoKi::V2::FunctorFromFunctor<bool(TYPE...)> cut, T2 fun1,
-            LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> fun2)
-      : Switch{ std::move(cut), LoKi::V2::Constant<TYPE2(TYPE...)>{std::move(fun1)}, std::move(fun2) }
+    Switch( FunctorFromFunctor<bool(TYPE...)> cut, T2 fun1,
+            FunctorFromFunctor<TYPE2(TYPE...)> fun2)
+      : Switch{ std::move(cut), Constant<TYPE2(TYPE...)>{std::move(fun1)}, std::move(fun2) }
     {}
     /** constructor from predicate and 2 constants
      *
@@ -948,8 +948,8 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    Switch( LoKi::V2::FunctorFromFunctor<bool(TYPE...)> cut, T2 fun1, T2 fun2 )
-      : Switch{ std::move(cut), LoKi::V2::Constant<TYPE2(TYPE...)>{ std::move(fun1) }, LoKi::V2::Constant<TYPE2(TYPE...)>{ std::move(fun2) } }
+    Switch( FunctorFromFunctor<bool(TYPE...)> cut, T2 fun1, T2 fun2 )
+      : Switch{ std::move(cut), Constant<TYPE2(TYPE...)>{ std::move(fun1) }, Constant<TYPE2(TYPE...)>{ std::move(fun2) } }
     {}
     /// MANDATORY: clone method ("virtual constructor")
     Switch* clone() const override { return new Switch ( *this ) ; }
@@ -967,9 +967,9 @@ namespace LoKi
   private:
     // ========================================================================
     /// the condition
-    LoKi::V2::FunctorFromFunctor<bool(TYPE...)> m_cut  ;               // the condition
+    FunctorFromFunctor<bool(TYPE...)> m_cut  ;               // the condition
     /// the actual storage of two functors
-    LoKi::V2::TwoFunctors<TYPE2(TYPE...)>       m_two ;      // the storage of functors
+    TwoFunctors<TYPE2(TYPE...)>       m_two ;      // the storage of functors
     // ========================================================================
   };
   }
@@ -1004,7 +1004,7 @@ namespace LoKi
   template <typename Signature> class ComposeFunction;
 
   template <typename... TYPE, typename TYPE2>
-  class ComposeFunction<TYPE2(TYPE...)> final : public LoKi::V2::Functor<TYPE2(TYPE...)>
+  class ComposeFunction<TYPE2(TYPE...)> final : public Functor<TYPE2(TYPE...)>
   {
     // ========================================================================
     /// the actual type for the function
@@ -1014,7 +1014,7 @@ namespace LoKi
     // ========================================================================
     /// constructor
     ComposeFunction ( Func                  func           ,
-                      LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> fun,
+                      FunctorFromFunctor<TYPE2(TYPE...)> fun,
                       const std::string&    desc = "'fun'" )
       : m_fun  ( std::move(fun) )
       , m_func ( func )
@@ -1036,7 +1036,7 @@ namespace LoKi
   private:
     // ========================================================================
     /// the functor
-    LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> m_fun  ; // the functor
+    FunctorFromFunctor<TYPE2(TYPE...)> m_fun  ; // the functor
     /// the function:
     Func                                 m_func ; // the function:
     /// the function description:
@@ -1077,19 +1077,19 @@ namespace LoKi
   template <typename Signature> class ComposeFunction2;
 
   template <typename... TYPE, typename TYPE2>
-  class ComposeFunction2<TYPE2(TYPE...)> final : public LoKi::V2::Functor<TYPE2(TYPE...)>
+  class ComposeFunction2<TYPE2(TYPE...)> final : public Functor<TYPE2(TYPE...)>
   {
     /// the actual type of the function
     typedef double (*Func) ( double , double )      ;
     /// constant type
-    using T2 = typename LoKi::V2::Constant<TYPE2(TYPE...)>::T2;
+    using T2 = typename Constant<TYPE2(TYPE...)>::T2;
     // ========================================================================
   public:
     // ========================================================================
     /// constructor
     ComposeFunction2( Func func,
-                      LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> fun1,
-                      LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> fun2,
+                      FunctorFromFunctor<TYPE2(TYPE...)> fun1,
+                      FunctorFromFunctor<TYPE2(TYPE...)> fun2,
                       const std::string& desc = "'fun'" )
       : m_func ( func )
       , m_two  ( std::move(fun1) ,std::move(fun2) )
@@ -1097,23 +1097,23 @@ namespace LoKi
     {}
     /// constructor
     ComposeFunction2( Func func,
-                      LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> fun1,
+                      FunctorFromFunctor<TYPE2(TYPE...)> fun1,
                       T2 val2, const std::string& desc  = "'fun'" )
       : ComposeFunction2( func, std::move(fun1),
-                          LoKi::V2::Constant<TYPE2(TYPE...)>{std::move(val2)}, desc )
+                          Constant<TYPE2(TYPE...)>{std::move(val2)}, desc )
     {}
     /// constructor
     ComposeFunction2( Func func, T2 val1,
-                      LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> fun2,
+                      FunctorFromFunctor<TYPE2(TYPE...)> fun2,
                       const std::string& desc  = "'fun'" )
-      : ComposeFunction2( func, LoKi::V2::Constant<TYPE2(TYPE...)>{std::move(val1)},
+      : ComposeFunction2( func, Constant<TYPE2(TYPE...)>{std::move(val1)},
                           std::move(fun2), desc )
     {}
     /// constructor
     ComposeFunction2( Func func, T2 val1, T2 val2, const std::string& desc  = "'fun'" )
       : ComposeFunction2( func,
-                          LoKi::V2::Constant<TYPE2(TYPE...)>{std::move(val1)},
-                          LoKi::V2::Constant<TYPE2(TYPE...)>{std::move(val2)}, desc )
+                          Constant<TYPE2(TYPE...)>{std::move(val1)},
+                          Constant<TYPE2(TYPE...)>{std::move(val2)}, desc )
     {}
     /// clone method (mandatory!)
     ComposeFunction2*  clone() const override
@@ -1138,7 +1138,7 @@ namespace LoKi
     /// the function itself
     Func m_func        ; // the function itself
     /// the storage of functors
-    LoKi::V2::TwoFunctors<TYPE2(TYPE...)> m_two ; // the storage of functors
+    TwoFunctors<TYPE2(TYPE...)> m_two ; // the storage of functors
     /// the funtion descrition
     std::string m_desc ; // the funtion descrition
     // ========================================================================
@@ -1155,13 +1155,13 @@ namespace LoKi
   template <typename Sig1, typename Sig2> class Compose;
 
   template <typename... TYPE, typename TYPE1, typename TYPE2, typename TYPE3>
-  class Compose<TYPE1(TYPE...),TYPE2(TYPE3)> final : public LoKi::V2::Functor<TYPE2(TYPE...)>
+  class Compose<TYPE1(TYPE...),TYPE2(TYPE3)> final : public Functor<TYPE2(TYPE...)>
   {
   public:
     // ========================================================================
     /// contructor
-    Compose ( LoKi::V2::FunctorFromFunctor<TYPE1(TYPE...)> fun1,
-              LoKi::V2::FunctorFromFunctor<TYPE2(TYPE3)> fun2 )
+    Compose ( FunctorFromFunctor<TYPE1(TYPE...)> fun1,
+              FunctorFromFunctor<TYPE2(TYPE3)> fun2 )
       : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
       , m_fun1 ( std::move(fun1) )
       , m_fun2 ( std::move(fun2) )
@@ -1178,9 +1178,9 @@ namespace LoKi
   private:
     // ========================================================================
     /// the first functor
-    LoKi::V2::FunctorFromFunctor<TYPE1(TYPE...)>  m_fun1; // the  first functor
+    FunctorFromFunctor<TYPE1(TYPE...)>  m_fun1; // the  first functor
     /// the second functor
-    LoKi::V2::FunctorFromFunctor<TYPE2(TYPE3)>    m_fun2; // the second functor
+    FunctorFromFunctor<TYPE2(TYPE3)>    m_fun2; // the second functor
     // ========================================================================
   };
   }
@@ -1258,12 +1258,12 @@ namespace LoKi
 
       template <typename... TYPE, typename TYPE2, typename Result, typename Traits_>
       class BindBinary< TYPE2(TYPE...), Result(TYPE...), Traits_ > final
-      : public LoKi::V2::Functor<Result(TYPE...)>
+      : public Functor<Result(TYPE...)>
       {
       private:
         // ========================================================================
         // constant type
-        typedef typename LoKi::V2::Constant<TYPE2(TYPE...)>::T2 T2 ;
+        typedef typename Constant<TYPE2(TYPE...)>::T2 T2 ;
         // ========================================================================
       public:
         // ========================================================================
@@ -1272,13 +1272,13 @@ namespace LoKi
          *  @param val the reference value
          */
         template <typename T, LOKI_REQUIRES(std::is_constructible<TYPE2,T>::value && Bind::Second<Traits_>::value)>
-        BindBinary( LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> fun, T&& val )
+        BindBinary( FunctorFromFunctor<TYPE2(TYPE...)> fun, T&& val )
           : LoKi::AuxFunBase ( std::tie ( fun , val ) )
           , m_fun ( std::move(fun) )
           , m_val ( std::forward<T>(val) )
         {}
         template <typename T, LOKI_REQUIRES(std::is_constructible<TYPE2,T>::value && Bind::First<Traits_>::value)>
-        BindBinary( T&& val, LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> fun )
+        BindBinary( T&& val, FunctorFromFunctor<TYPE2(TYPE...)> fun )
           : LoKi::AuxFunBase ( std::tie ( val , fun ) )
           , m_fun ( std::move(fun) )
           , m_val ( std::forward<T>(val) )
@@ -1302,7 +1302,7 @@ namespace LoKi
       private:
         // ========================================================================
         /// the functor
-        LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> m_fun ;                 // the functor
+        FunctorFromFunctor<TYPE2(TYPE...)> m_fun ;                 // the functor
         /// the value
         TYPE2  m_val ;                                                 // the value
         // ========================================================================
@@ -1642,7 +1642,7 @@ namespace LoKi
 
   template <typename... TYPE>
   class InRange< double(TYPE...) > final
-  : public LoKi::V2::Functor<bool(TYPE...)>
+  : public Functor<bool(TYPE...)>
   {
     // ========================================================================
   public:
@@ -1653,7 +1653,7 @@ namespace LoKi
      *  @param high the high edge
      */
     InRange( const double                         low  ,
-             LoKi::V2::FunctorFromFunctor<double(TYPE...)> fun  ,
+             FunctorFromFunctor<double(TYPE...)> fun  ,
              const double                         high )
       : LoKi::AuxFunBase ( std::tie ( low , fun , high ) )
       , m_low  ( low  )
@@ -1682,7 +1682,7 @@ namespace LoKi
     /// the low edge
     double                                m_low  ;        //       the low edge
     /// the functor itself
-    LoKi::V2::FunctorFromFunctor<double(TYPE...)> m_fun  ;        // the functor itself
+    FunctorFromFunctor<double(TYPE...)> m_fun  ;        // the functor itself
     /// the high edge
     double                                m_high ;        //       the low edge
     // ========================================================================
@@ -1704,7 +1704,7 @@ namespace LoKi
 
   template <typename... TYPE>
   class InRange2< double(TYPE...) > final
-  : public LoKi::V2::Functor<bool(TYPE...)>
+  : public Functor<bool(TYPE...)>
   {
     // ========================================================================
   public:
@@ -1714,9 +1714,9 @@ namespace LoKi
      *  @param fun the functor
      *  @param high the high edge
      */
-    InRange2 ( LoKi::V2::FunctorFromFunctor<double(TYPE...)> low  ,
-               LoKi::V2::FunctorFromFunctor<double(TYPE...)> fun  ,
-               LoKi::V2::FunctorFromFunctor<double(TYPE...)> high )
+    InRange2 ( FunctorFromFunctor<double(TYPE...)> low  ,
+               FunctorFromFunctor<double(TYPE...)> fun  ,
+               FunctorFromFunctor<double(TYPE...)> high )
       : LoKi::AuxFunBase ( std::tie ( low , fun , high ) )
       , m_low  ( std::move(low)  )
       , m_fun  ( std::move(fun)  )
@@ -1728,19 +1728,19 @@ namespace LoKi
      *  @param high the high edge
      */
     InRange2 ( const double                      low  ,
-               LoKi::V2::FunctorFromFunctor<double(TYPE...)> fun  ,
-               LoKi::V2::FunctorFromFunctor<double(TYPE...)> high )
-      : InRange2{LoKi::V2::Constant<double(TYPE...)>{ low }, std::move(fun), std::move(high) }
+               FunctorFromFunctor<double(TYPE...)> fun  ,
+               FunctorFromFunctor<double(TYPE...)> high )
+      : InRange2{Constant<double(TYPE...)>{ low }, std::move(fun), std::move(high) }
     {}
     /** constructor from the functor and edges
      *  @param low the low edge
      *  @param fun the functor
      *  @param high the high edge
      */
-    InRange2 ( LoKi::V2::FunctorFromFunctor<double(TYPE...)> low  ,
-               LoKi::V2::FunctorFromFunctor<double(TYPE...)> fun  ,
+    InRange2 ( FunctorFromFunctor<double(TYPE...)> low  ,
+               FunctorFromFunctor<double(TYPE...)> fun  ,
                const double                      high )
-      : InRange2{ std::move(low), std::move(fun), LoKi::V2::Constant<double(TYPE...)>{ high } }
+      : InRange2{ std::move(low), std::move(fun), Constant<double(TYPE...)>{ high } }
     {}
     /// MANDATORY: clone method ("virtual constructor")
     InRange2* clone() const override { return new InRange2 ( *this ) ; }
@@ -1763,11 +1763,11 @@ namespace LoKi
   private:
     // ========================================================================
     /// the low edge
-    LoKi::V2::FunctorFromFunctor<double(TYPE...)> m_low  ; //       the low edge
+    FunctorFromFunctor<double(TYPE...)> m_low  ; //       the low edge
     /// the functor itself
-    LoKi::V2::FunctorFromFunctor<double(TYPE...)> m_fun  ; // the functor itself
+    FunctorFromFunctor<double(TYPE...)> m_fun  ; // the functor itself
     /// the high edge
-    LoKi::V2::FunctorFromFunctor<double(TYPE...)> m_high ; //      the high edge
+    FunctorFromFunctor<double(TYPE...)> m_high ; //      the high edge
     // ========================================================================
   } ;
   }
@@ -1784,7 +1784,7 @@ namespace LoKi
   template <typename Signature> class EqualToList;
 
   template <typename... TYPE>
-  class EqualToList<double(TYPE...)> : public LoKi::V2::Functor<bool(TYPE...)>
+  class EqualToList<double(TYPE...)> : public Functor<bool(TYPE...)>
   {
   public:
     // ========================================================================
@@ -1793,7 +1793,7 @@ namespace LoKi
      *  @param vct the vector of values
      */
     EqualToList
-    ( LoKi::V2::FunctorFromFunctor<double(TYPE...)> fun ,
+    ( FunctorFromFunctor<double(TYPE...)> fun ,
       std::vector<double>                vct )
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) )
       , m_fun ( std::move(fun) )
@@ -1808,7 +1808,7 @@ namespace LoKi
      *  @param vct the vector of values
      */
     EqualToList
-    ( LoKi::V2::FunctorFromFunctor<double(TYPE...)>  fun ,
+    ( FunctorFromFunctor<double(TYPE...)>  fun ,
       const std::vector<int>&            vct )
       : EqualToList( std::move(fun),  vct.begin(), vct.end() )
     {}
@@ -1817,7 +1817,7 @@ namespace LoKi
      *  @param vct the vector of values
      */
     EqualToList
-    ( LoKi::V2::FunctorFromFunctor<double(TYPE...)>  fun ,
+    ( FunctorFromFunctor<double(TYPE...)>  fun ,
       const std::vector<unsigned int>&   vct )
       : EqualToList( std::move(fun), vct.begin(), vct.end() )
     {}
@@ -1830,7 +1830,7 @@ namespace LoKi
               LOKI_REQUIRES( std::is_base_of< std::input_iterator_tag,
                                               typename std::iterator_traits<ITERATOR>::iterator_category
                                             >::value ) >
-    EqualToList ( LoKi::V2::FunctorFromFunctor<double(TYPE...)>  fun    ,
+    EqualToList ( FunctorFromFunctor<double(TYPE...)>  fun    ,
                   ITERATOR                           first  ,
                   ITERATOR                           last   )
       : EqualToList( std::move(fun), std::vector<double>{ first, last } )
@@ -1871,7 +1871,7 @@ namespace LoKi
   private:
     // ========================================================================
     /// the functor
-    LoKi::V2::FunctorFromFunctor<double(TYPE...)> m_fun ;        // the functor
+    FunctorFromFunctor<double(TYPE...)> m_fun ;        // the functor
     /// the list
     std::vector<double>  m_vct ;                                 //    the list
     // ========================================================================
@@ -1889,7 +1889,7 @@ namespace LoKi
   namespace V2 {
   template <typename Signature> class NotEqualToList;
   template <typename... TYPE>
-  class NotEqualToList<double(TYPE...)> final : public LoKi::V2::EqualToList<double(TYPE...)>
+  class NotEqualToList<double(TYPE...)> final : public EqualToList<double(TYPE...)>
   {
   public:
     // ========================================================================
@@ -1898,30 +1898,30 @@ namespace LoKi
      *  @param vct the vector of values
      */
     NotEqualToList
-    ( LoKi::V2::FunctorFromFunctor<double(TYPE...)>  fun ,
+    ( FunctorFromFunctor<double(TYPE...)>  fun ,
       std::vector<double>                            vct )
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) )
-      , LoKi::V2::EqualToList<double(TYPE...)>( std::move(fun) , std::move(vct) )
+      , EqualToList<double(TYPE...)>( std::move(fun) , std::move(vct) )
     {}
     /** constructor from the function and the value
      *  @param fun the function
      *  @param vct the vector of values
      */
     NotEqualToList
-    ( LoKi::V2::FunctorFromFunctor<double(TYPE...)>  fun ,
+    ( FunctorFromFunctor<double(TYPE...)>  fun ,
       const std::vector<int>&            vct )
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) )
-      , LoKi::V2::EqualToList<double(TYPE...)>( std::move(fun) , vct )
+      , EqualToList<double(TYPE...)>( std::move(fun) , vct )
     {}
     /** constructor from the function and the value
      *  @param fun the function
      *  @param vct the vector of values
      */
     NotEqualToList
-    ( LoKi::V2::FunctorFromFunctor<double(TYPE...)>  fun ,
+    ( FunctorFromFunctor<double(TYPE...)>  fun ,
       const std::vector<unsigned int>&   vct )
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) )
-      , LoKi::V2::EqualToList<double(TYPE...)>( std::move(fun), vct )
+      , EqualToList<double(TYPE...)>( std::move(fun), vct )
     {}
     /** constructor from the function and the value
      *  @param fun the function
@@ -1932,10 +1932,10 @@ namespace LoKi
               LOKI_REQUIRES( std::is_base_of< std::input_iterator_tag,
                                               typename std::iterator_traits<ITERATOR>::iterator_category
                                             >::value )>
-    NotEqualToList ( LoKi::V2::FunctorFromFunctor<double(TYPE...)>  fun    ,
+    NotEqualToList ( FunctorFromFunctor<double(TYPE...)>  fun    ,
                      ITERATOR                           first  ,
                      ITERATOR                           last   )
-      : LoKi::V2::EqualToList<double(TYPE...)>( std::move(fun) , first , last  )
+      : EqualToList<double(TYPE...)>( std::move(fun) , first , last  )
     {}
     // ========================================================================
     /// MANDATORY: clone method ("virtual construcor")
@@ -1961,7 +1961,7 @@ namespace LoKi
   namespace V2 {
   template <typename Signature> class XScaler;
   template <typename ... TYPE >
-  class XScaler<bool(TYPE...)> final : public LoKi::V2::Functor<bool(TYPE...)>
+  class XScaler<bool(TYPE...)> final : public Functor<bool(TYPE...)>
   {
   public:
     // ========================================================================
@@ -1970,8 +1970,8 @@ namespace LoKi
      *  @param scale the scaler
      */
     XScaler
-    ( LoKi::V2::FunctorFromFunctor<bool(TYPE...)> cut,
-      LoKi::V2::FunctorFromFunctor<bool()> scale )
+    ( FunctorFromFunctor<bool(TYPE...)> cut,
+      FunctorFromFunctor<bool()> scale )
       : LoKi::AuxFunBase ( std::tie ( cut , scale ) )
       , m_cut    ( std::move(cut)   )
       , m_scaler ( std::move(scale) )
@@ -1990,9 +1990,9 @@ namespace LoKi
   private:
     // ========================================================================
     /// the predicate
-    LoKi::V2::FunctorFromFunctor<bool(TYPE...)>  m_cut    ;            // the predicate
+    FunctorFromFunctor<bool(TYPE...)>  m_cut    ;            // the predicate
     /// the scaler
-    LoKi::V2::FunctorFromFunctor<bool()>  m_scaler ;            // the scaler
+    FunctorFromFunctor<bool()>  m_scaler ;            // the scaler
     // ========================================================================
   };
   }
@@ -2029,12 +2029,12 @@ namespace LoKi
   namespace V2{
   template <typename Signature> class Modulo;
   template <typename ... TYPE>
-  class Modulo<double(TYPE...)> final : public LoKi::V2::Functor<double(TYPE...)>
+  class Modulo<double(TYPE...)> final : public Functor<double(TYPE...)>
   {
   public:
     // ========================================================================
     /// constructor from the functor
-    Modulo ( LoKi::V2::FunctorFromFunctor<double(TYPE...)> fun  ,
+    Modulo ( FunctorFromFunctor<double(TYPE...)> fun  ,
              const unsigned int                divisor   )
       : LoKi::AuxFunBase ( std::tie ( fun , divisor ) )
       , m_fun ( std::move(fun)  )
@@ -2052,7 +2052,7 @@ namespace LoKi
   private:
     // ========================================================================
     /// the divident
-    LoKi::V2::FunctorFromFunctor<double(TYPE...)> m_fun ; // the divident
+    FunctorFromFunctor<double(TYPE...)> m_fun ; // the divident
     /// the divisor
     const unsigned int                    m_divisor  ; // the divisor
     // ========================================================================
@@ -2096,12 +2096,12 @@ namespace LoKi
   namespace V2 {
   template <typename Signature> class JBit;
   template <typename ... TYPE>
-  class JBit<bool(TYPE...)> final : public LoKi::V2::Functor<bool(TYPE...)>
+  class JBit<bool(TYPE...)> final : public Functor<bool(TYPE...)>
   {
   public:
     // ========================================================================
     /// constructor from the functor
-    JBit ( LoKi::V2::FunctorFromFunctor<double(TYPE...)>    fun ,
+    JBit ( FunctorFromFunctor<double(TYPE...)>    fun ,
            const unsigned short                 j   )
       : LoKi::AuxFunBase ( std::tie ( fun , j ) )
       , m_fun  ( std::move(fun) )
@@ -2134,7 +2134,7 @@ namespace LoKi
   private:
     // ========================================================================
     /// the functor itself
-    LoKi::V2::FunctorFromFunctor<double(TYPE...)> m_fun ;                // the functor
+    FunctorFromFunctor<double(TYPE...)> m_fun ;                // the functor
     /// the index
     unsigned short                        m_j   ;                  // the index
     // ========================================================================
@@ -2158,12 +2158,12 @@ namespace LoKi
   namespace V2 {
   template <typename Signature> class JBits;
   template <typename... TYPE>
-  class JBits<double(TYPE...)> final : public LoKi::V2::Functor<double(TYPE...)>
+  class JBits<double(TYPE...)> final : public Functor<double(TYPE...)>
   {
   public:
     // ========================================================================
     /// constructor from the functor
-    JBits ( LoKi::V2::FunctorFromFunctor<double(TYPE...)>     fun ,
+    JBits ( FunctorFromFunctor<double(TYPE...)>     fun ,
             const unsigned short                  j1  ,
             const unsigned short                  j2  )
       : LoKi::AuxFunBase ( std::tie ( fun , j1 , j2 ) )
@@ -2204,7 +2204,7 @@ namespace LoKi
   private:
     // ========================================================================
     /// the functor itself
-    LoKi::V2::FunctorFromFunctor<double(TYPE...)> m_fun ;                // the functor
+    FunctorFromFunctor<double(TYPE...)> m_fun ;                // the functor
     /// the index1
     unsigned short                       m_j1  ;                  // the index
     /// the index2
@@ -2229,12 +2229,12 @@ namespace LoKi
   namespace V2 {
   template <typename Signature> class JDigit;
   template <typename ... TYPE >
-  class JDigit<double(TYPE...)> final : public LoKi::V2::Functor<double(TYPE...)>
+  class JDigit<double(TYPE...)> final : public Functor<double(TYPE...)>
   {
   public:
     // ========================================================================
     /// constructor from the functor
-    JDigit ( LoKi::V2::FunctorFromFunctor<double(TYPE...)> fun ,
+    JDigit ( FunctorFromFunctor<double(TYPE...)> fun ,
              const unsigned short                  j   )
       : LoKi::AuxFunBase ( std::tie ( fun , j ) )
       , m_fun  ( std::move(fun) )
@@ -2267,7 +2267,7 @@ namespace LoKi
   private:
     // ========================================================================
     /// the functor itself
-    LoKi::V2::FunctorFromFunctor<double(TYPE...)> m_fun ;                // the functor
+    FunctorFromFunctor<double(TYPE...)> m_fun ;                // the functor
     /// the index
     unsigned short                        m_j   ;                  // the index
     // ========================================================================
@@ -2290,12 +2290,12 @@ namespace LoKi
   namespace V2 {
   template <typename Signature> class JDigits;
   template <typename ... TYPE>
-  class JDigits<double(TYPE...)> final : public LoKi::V2::Functor<double(TYPE...)>
+  class JDigits<double(TYPE...)> final : public Functor<double(TYPE...)>
   {
   public:
     // ========================================================================
     /// constructor from the functor
-    JDigits ( LoKi::V2::FunctorFromFunctor<double(TYPE...)> fun ,
+    JDigits ( FunctorFromFunctor<double(TYPE...)> fun ,
               const unsigned short                 j1  ,
               const unsigned short                 j2  )
       : LoKi::AuxFunBase ( std::tie ( fun , j1 , j2 ) )
@@ -2336,7 +2336,7 @@ namespace LoKi
   private:
     // ========================================================================
     /// the functor itself
-    LoKi::V2::FunctorFromFunctor<double(TYPE...)> m_fun ;                // the functor
+    FunctorFromFunctor<double(TYPE...)> m_fun ;                // the functor
     /// the index1
     unsigned short                        m_j1  ;                  // the index
     /// the index2
