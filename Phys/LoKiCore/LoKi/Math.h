@@ -295,65 +295,61 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
-  template <typename F1, typename F2, typename... F3,
-            typename TYPE  = details::type1_t<F1,F2,F3...>,
-            typename TYPE2 = details::type2_t<F1,F2,F3...>>
-  LoKi::Min<TYPE,TYPE2> min ( F1&& fun1 , F2&& fun2 , F3&&... fun3 )
-  { return { std::forward<F1>(fun1) , std::forward<F2>(fun2), std::forward<F3>(fun3)... } ; }
+  template <typename F1, typename F2,
+            typename TYPE  = details::type1_t<F1,F2>,
+            typename TYPE2 = details::type2_t<F1,F2>>
+  LoKi::Min<TYPE,TYPE2> min ( F1&& fun1 , F2&& fun2 )
+  { return { std::forward<F1>(fun1) , std::forward<F2>(fun2) }; }
   // ==========================================================================
-  /*  minimum for LoKi functions
-   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-   *  @date 2004-08-10
-   */
   template <typename F,
             typename TYPE  = LoKi::details::type1_t<F>,
             typename TYPE2 = LoKi::details::type2_t<F>>
   LoKi::Min<TYPE,TYPE2> min ( const F&                                fun1 ,
                               typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
-  { return { fun1 , val2 } ; }
+  { return { fun1 , LoKi::Constant<TYPE,TYPE2>{ std::move(val2) } } ; }
   // ==========================================================================
-  /*  minimum for LoKi functions
-   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-   *  @date 2004-08-10
-   */
   template <typename F,
             typename TYPE = details::type1_t<F>,
             typename TYPE2 = details::type2_t<F>>
   LoKi::Min<TYPE,TYPE2> min ( typename LoKi::Constant<TYPE,TYPE2>::T2 val1 ,
                               const F&                                fun2 )
-  { return { val1 , fun2 } ; }
+  { return { LoKi::Constant<TYPE,TYPE2>{val1} , fun2 } ; }
   // ==========================================================================
-  /*  maximum for LoKi functions
-   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-   *  @date 2004-08-10
-   */
   template <typename F1, typename F2, typename... F3,
             typename TYPE  = details::type1_t<F1,F2,F3...>,
             typename TYPE2 = details::type2_t<F1,F2,F3...>>
-  LoKi::Max<TYPE,TYPE2> max ( F1&& fun1 , F2&& fun2 , F3&&... fun3 )
-  { return { std::forward<F1>(fun1) , std::forward<F2>(fun2), std::forward<F3>(fun3)... } ; }
+  LoKi::Min<TYPE,TYPE2> min ( F1&& fun1 , F2&& fun2 , F3&&... fun3 )
+  { return min( min( std::forward<F1>(fun1) , std::forward<F2>(fun2) ), std::forward<F3>(fun3)... ) ; }
   // ==========================================================================
   /*  maximum for LoKi functions
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2004-08-10
    */
+  template <typename F1, typename F2,
+            typename TYPE  = details::type1_t<F1,F2>,
+            typename TYPE2 = details::type2_t<F1,F2>>
+  LoKi::Max<TYPE,TYPE2> max ( F1&& fun1 , F2&& fun2 )
+  { return { std::forward<F1>(fun1) , std::forward<F2>(fun2) }; }
+  // ==========================================================================
   template <typename F,
             typename TYPE  = details::type1_t<F>,
             typename TYPE2 = details::type2_t<F>>
   LoKi::Max<TYPE,TYPE2> max ( F&&                                     fun1 ,
                               typename LoKi::Constant<TYPE,TYPE2>::T2 val2 )
-  { return { std::forward<F>(fun1) , val2 } ; }
+  { return { std::forward<F>(fun1) , LoKi::Constant<TYPE,TYPE2>{std::move(val2)} } ; }
   // ==========================================================================
-  /*  maximum for LoKi functions
-   *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
-   *  @date 2004-08-10
-   */
   template <typename F,
             typename TYPE  = details::type1_t<F>,
             typename TYPE2 = details::type2_t<F>>
   LoKi::Max<TYPE,TYPE2> max ( typename LoKi::Constant<TYPE,TYPE2>::T2 val1 ,
                               F&&                                     fun2 )
-  { return { val1 , std::forward<F>(fun2) } ; }
+  { return { LoKi::Constant<TYPE,TYPE2>{std::move(val1)} , std::forward<F>(fun2) } ; }
+  // ==========================================================================
+  template <typename F1, typename F2, typename... F3,
+            typename TYPE  = details::type1_t<F1,F2,F3...>,
+            typename TYPE2 = details::type2_t<F1,F2,F3...>>
+  LoKi::Max<TYPE,TYPE2> max ( F1&& fun1 , F2&& fun2 , F3&&... fun3 )
+  { return max( max( std::forward<F1>(fun1) , std::forward<F2>(fun2) ), std::forward<F3>(fun3)... ) ; }
   // ==========================================================================
   /** helpful function for creation of comparison object
    *  @param fun1 function to be applied to the first object to be compared
