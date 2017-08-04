@@ -153,7 +153,7 @@ namespace LoKi
       template <typename SigIn, typename SigOut, typename Traits_> class UnaryOp;
 
       template <typename... TYPE, typename TYPE2, typename Result, typename Traits_>
-      class UnaryOp< TYPE2(TYPE...), Result(TYPE...),Traits_>
+      class UnaryOp< TYPE2(TYPE...), Result(TYPE...),Traits_> final
       : public LoKi::V2::Functor<Result(TYPE...)>
       {
         // ========================================================================
@@ -1155,7 +1155,7 @@ namespace LoKi
   template <typename Sig1, typename Sig2> class Compose;
 
   template <typename... TYPE, typename TYPE1, typename TYPE2, typename TYPE3>
-  class Compose<TYPE1(TYPE...),TYPE2(TYPE3)> : public LoKi::V2::Functor<TYPE2(TYPE...)>
+  class Compose<TYPE1(TYPE...),TYPE2(TYPE3)> final : public LoKi::V2::Functor<TYPE2(TYPE...)>
   {
   public:
     // ========================================================================
@@ -1257,7 +1257,7 @@ namespace LoKi
       template <typename SigIn, typename SigOut, typename Traits_> class BindBinary;
 
       template <typename... TYPE, typename TYPE2, typename Result, typename Traits_>
-      class BindBinary< TYPE2(TYPE...), Result(TYPE...), Traits_ >
+      class BindBinary< TYPE2(TYPE...), Result(TYPE...), Traits_ > final
       : public LoKi::V2::Functor<Result(TYPE...)>
       {
       private:
@@ -1530,7 +1530,7 @@ namespace LoKi
    *  @date   2002-07-24
    */
   template<typename TYPE , typename CMP=std::less<> , typename TYPE2=double>
-  class Compare
+  class Compare final
   {
   public:
     // ========================================================================
@@ -1889,7 +1889,7 @@ namespace LoKi
   namespace V2 {
   template <typename Signature> class NotEqualToList;
   template <typename... TYPE>
-  class NotEqualToList<double(TYPE...)> : public LoKi::V2::EqualToList<double(TYPE...)>
+  class NotEqualToList<double(TYPE...)> final : public LoKi::V2::EqualToList<double(TYPE...)>
   {
   public:
     // ========================================================================
@@ -2029,7 +2029,7 @@ namespace LoKi
   namespace V2{
   template <typename Signature> class Modulo;
   template <typename ... TYPE>
-  class Modulo<double(TYPE...)> : public LoKi::V2::Functor<double(TYPE...)>
+  class Modulo<double(TYPE...)> final : public LoKi::V2::Functor<double(TYPE...)>
   {
   public:
     // ========================================================================
