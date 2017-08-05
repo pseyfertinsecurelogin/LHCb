@@ -68,80 +68,84 @@ namespace LoKi
   }
 
   namespace V2 {
-      namespace details {
-          using LoKi::details::Param_t;
+  namespace details {
+    using LoKi::details::Param_t;
 
-          template <typename Signature>  struct functor_helper;
+    template <typename Signature>  struct functor_helper;
 
-          template <typename Result, typename Arg> struct functor_helper<Result(Arg)> {
-              using Functor = LoKi::Functor<Arg,Result>;
-              using FunctorFromFunctor = LoKi::FunctorFromFunctor<Arg,Result>;
-              using Constant = LoKi::Constant<Arg,Result>;
-          };
-          template <typename Result> struct functor_helper<Result()> {
-              using Functor = LoKi::Functor<void,Result>;
-              using FunctorFromFunctor = LoKi::FunctorFromFunctor<void,Result>;
-              using Constant = LoKi::Constant<void,Result>;
-          };
-      }
+    template <typename Result, typename Arg> struct functor_helper<Result(Arg)> {
+        using Functor = LoKi::Functor<Arg,Result>;
+        using FunctorFromFunctor = LoKi::FunctorFromFunctor<Arg,Result>;
+        using Constant = LoKi::Constant<Arg,Result>;
+    };
+    template <typename Result> struct functor_helper<Result()> {
+        using Functor = LoKi::Functor<void,Result>;
+        using FunctorFromFunctor = LoKi::FunctorFromFunctor<void,Result>;
+        using Constant = LoKi::Constant<void,Result>;
+    };
 
-      template <typename Signature>
-      using Functor = typename details::functor_helper<Signature>::Functor;
+    template <typename Signature> struct sig_helper;
+    template <typename Result, typename... Args> struct sig_helper<Result(Args...)> {
+        using result_of_t = Result;
+    };
 
-      template <typename Signature>
-      using FunctorFromFunctor = typename details::functor_helper<Signature>::FunctorFromFunctor;
-
-      template <typename Signature>
-      using Constant = typename details::functor_helper<Signature>::Constant;
-
-      // ==========================================================================
-      /** @class Functors
-       *  helper class to keep N functors of the same signature
-       *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-       *  @date 2007-11-01
-       */
-
-    template <typename Signature, size_t N>
-    class FunctorArray final {
-    public:
-      // ========================================================================
-      // avoid matching the various special members
-      template <typename F, typename... Fs,
-                LOKI_REQUIRES( sizeof...(Fs)!=0 ||
-                               !std::is_base_of<FunctorArray<Signature,N>,
-                                                std::remove_reference_t<F> >::value ) >
-      FunctorArray( F&& f, Fs&&... fs ) : m_funs{ std::forward<F>(f), std::forward<Fs>(fs)... }
-      {}
-      // ========================================================================
-      /// evaluate the i-th functor
-      template <size_t i, typename... Args> auto fun( Args&&... args ) const
-      { return std::get<i>(m_funs).fun( std::forward<Args>(args)... ) ; }
-
-      template <typename... Args> auto fun1( Args&&... args ) const
-      { return fun<0>( std::forward<Args>(args)... ) ; }
-      template <typename... Args> auto fun2( Args&&... args ) const
-      { return fun<1>( std::forward<Args>(args)... ) ; }
-      // ========================================================================
-      /// get the i-th functor
-      template <size_t i> const auto& func () const { return std::get<i>(m_funs).func () ; }
-      /// get the first functor
-      const auto& func1 ()           const { return func<0>(); }
-      /// get the second functor
-      const auto& func2 ()           const { return func<1>(); }
-      // ========================================================================
-    private:
-      // ========================================================================
-      /// the functors
-      std::array< FunctorFromFunctor<Signature>, N > m_funs ; // the functors
-      // ========================================================================
-    } ;
     template <typename Signature>
-    using TwoFunctors = FunctorArray<Signature,2>;
+    using result_of_t = typename sig_helper<Signature>::result_of_t;
+
   }
 
-  template <typename TYPE, typename TYPE2>
-  using TwoFunctors = V2::FunctorArray<details::sig_t<TYPE,TYPE2>,2>;
+  template <typename Signature>
+  using Functor = typename details::functor_helper<Signature>::Functor;
 
+  template <typename Signature>
+  using FunctorFromFunctor = typename details::functor_helper<Signature>::FunctorFromFunctor;
+
+  template <typename Signature>
+  using Constant = typename details::functor_helper<Signature>::Constant;
+
+    // ==========================================================================
+    /** @class Functors
+     *  helper class to keep N functors of the same signature
+     *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
+     *  @date 2007-11-01
+     */
+
+  template <typename Signature, size_t N>
+  class FunctorArray final {
+  public:
+    // ========================================================================
+    // avoid matching the various special members
+    template <typename F, typename... Fs,
+              LOKI_REQUIRES( sizeof...(Fs)!=0 ||
+                             !std::is_base_of<FunctorArray<Signature,N>,
+                                              std::remove_reference_t<F> >::value ) >
+    FunctorArray( F&& f, Fs&&... fs ) : m_funs{ std::forward<F>(f), std::forward<Fs>(fs)... }
+    {}
+    // ========================================================================
+    /// evaluate the i-th functor
+    template <size_t i, typename... Args> auto fun( Args&&... args ) const
+    { return std::get<i>(m_funs).fun( std::forward<Args>(args)... ) ; }
+
+    template <typename... Args> auto fun1( Args&&... args ) const
+    { return fun<0>( std::forward<Args>(args)... ) ; }
+    template <typename... Args> auto fun2( Args&&... args ) const
+    { return fun<1>( std::forward<Args>(args)... ) ; }
+    // ========================================================================
+    /// get the i-th functor
+    template <size_t i> const auto& func () const { return std::get<i>(m_funs).func () ; }
+    /// get the first functor
+    const auto& func1 ()           const { return func<0>(); }
+    /// get the second functor
+    const auto& func2 ()           const { return func<1>(); }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// the functors
+    std::array< FunctorFromFunctor<Signature>, N > m_funs ; // the functors
+    // ========================================================================
+  } ;
+  template <typename Signature>
+  using TwoFunctors = FunctorArray<Signature,2>;
 
   namespace details {
 
@@ -150,17 +154,19 @@ namespace LoKi
        *  The helper function to implement Unary operation of one function
        */
 
-      template <typename SigIn, typename SigOut, typename Traits_> class UnaryOp;
+      template <typename Traits,
+                typename Signature,
+                typename Result = details::result_of_t<Signature>> class UnaryOp;
 
       template <typename... TYPE, typename TYPE2, typename Result, typename Traits_>
-      class UnaryOp< TYPE2(TYPE...), Result(TYPE...),Traits_> final
-      : public LoKi::V2::Functor<Result(TYPE...)>
+      class UnaryOp< Traits_, TYPE2(TYPE...), Result > final
+      : public Functor<Result(TYPE...)>
       {
         // ========================================================================
       public:
         // =====================================================================
         /// constructor
-        UnaryOp( LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)> f )
+        UnaryOp( FunctorFromFunctor<TYPE2(TYPE...)> f )
           : LoKi::AuxFunBase{ std::tie ( f  ) }
           , m_fun{ std::move(f) }
         {}
@@ -178,7 +184,7 @@ namespace LoKi
       private:
         // =====================================================================
         /// the storage of the functor
-        LoKi::V2::FunctorFromFunctor<TYPE2(TYPE...)>  m_fun ; // the storage of the functor
+        FunctorFromFunctor<TYPE2(TYPE...)>  m_fun ; // the storage of the functor
         // =====================================================================
       };
 
@@ -224,8 +230,8 @@ namespace LoKi
            static constexpr const char* name() { return "~"; }
        };
    }
-   template<typename TYPE, typename TYPE2=bool>
-   using Not = details::UnaryOp<details::sig_t<TYPE,TYPE2>,details::sig_t<TYPE,bool>,Traits::Not>;
+   template<typename Signature>
+   using Not = details::UnaryOp<Traits::Not,Signature,bool>;
 
   // ==========================================================================
   /** @class Negate
@@ -257,67 +263,62 @@ namespace LoKi
            static constexpr const char* name() { return "-"; }
        };
    }
-   template<typename TYPE, typename TYPE2=double>
-   using Negate = details::UnaryOp<details::sig_t<TYPE,TYPE2>,details::sig_t<TYPE,TYPE2>,Traits::Negate>;
+   template<typename Signature>
+   using Negate = details::UnaryOp<Traits::Negate,Signature>;
 
-   namespace V2 {
-     namespace details {
-
-      // =======================================================================
-      /** @class BinaryOp
-       *  The helper function to implement Binary operation of two functions
-       */
-
-      template <typename SigIn, typename SigOut, typename Traits_> class BinaryOp;
-
-      template <typename... TYPE, typename TYPE2, typename Result, typename Traits_>
-      class BinaryOp< TYPE2(TYPE...), Result(TYPE...), Traits_ >
-      : public Functor<Result(TYPE...)>
-      {
-        // =====================================================================
-      public:
-        // =====================================================================
-        /// constructor from two functors
-        BinaryOp ( FunctorFromFunctor<TYPE2(TYPE...)> f1 ,
-                   FunctorFromFunctor<TYPE2(TYPE...)> f2 )
-          : LoKi::AuxFunBase{ std::tie ( f1 , f2 ) }
-          , m_two { std::move(f1) , std::move(f2) }
-        { }
-        /// clone method (mandatory)
-        BinaryOp* clone() const override { return new BinaryOp( *this ); }
-
-        /// the only one essential method ("function")
-        Result operator()( LoKi::details::Param_t<TYPE>... a ) const override
-        { return Traits_::binaryOp( m_two.func1(), m_two.func2(), a... ); }
-
-        /// the basic printout method
-        std::ostream& fillStream( std::ostream& s ) const override
-        { return Traits_::fillStream( s, m_two.func1(), m_two.func2() ); }
-        // =====================================================================
-      private:
-        // =====================================================================
-        /// the storage of two functors
-        TwoFunctors<TYPE2(TYPE...)> m_two ;    // the storage of two functors
-        // =====================================================================
-      };
-     }
-   }
    namespace details {
 
-      template <typename TYPE, typename TYPE2, typename Result, typename Traits_>
-      using BinaryOp = LoKi::V2::details::BinaryOp<sig_t<TYPE,TYPE2>, sig_t<TYPE,Result>, Traits_>;
+    // =======================================================================
+    /** @class BinaryOp
+     *  The helper function to implement Binary operation of two functions
+     */
 
-      template <typename Op, typename Infix>
-      struct SimpleBinary {
-           template <typename F1, typename F2, typename... Args>
-           static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
-           -> decltype(auto)
-           { return Op{}( f1(args...) , f2(args...)); }
+    template <typename Traits_,
+              typename Signature,
+              typename Result = details::result_of_t<Signature>> class BinaryOp;
 
-           template <typename F1, typename F2>
-           static std::ostream& fillStream(std::ostream& os, const F1& f1, const F2& f2)
-           { return os << " (" << f1 << Infix::name() << f2 << ") "; }
-      };
+    template <typename Traits_, typename TYPE2, typename... TYPE, typename Result>
+    class BinaryOp< Traits_, TYPE2(TYPE...), Result > final
+    : public Functor<Result(TYPE...)>
+    {
+      // =====================================================================
+    public:
+      // =====================================================================
+      /// constructor from two functors
+      BinaryOp ( FunctorFromFunctor<TYPE2(TYPE...)> f1 ,
+                 FunctorFromFunctor<TYPE2(TYPE...)> f2 )
+        : LoKi::AuxFunBase{ std::tie ( f1 , f2 ) }
+        , m_two { std::move(f1) , std::move(f2) }
+      { }
+      /// clone method (mandatory)
+      BinaryOp* clone() const override { return new BinaryOp( *this ); }
+
+      /// the only one essential method ("function")
+      Result operator()( details::Param_t<TYPE>... a ) const override
+      { return Traits_::binaryOp( m_two.func1(), m_two.func2(), a... ); }
+
+      /// the basic printout method
+      std::ostream& fillStream( std::ostream& s ) const override
+      { return Traits_::fillStream( s, m_two.func1(), m_two.func2() ); }
+      // =====================================================================
+    private:
+      // =====================================================================
+      /// the storage of two functors
+      TwoFunctors<TYPE2(TYPE...)> m_two ;    // the storage of two functors
+      // =====================================================================
+    };
+
+    template <typename Op, typename Infix>
+    struct SimpleBinary {
+         template <typename F1, typename F2, typename... Args>
+         static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
+         -> decltype(auto)
+         { return Op{}( f1(args...) , f2(args...)); }
+
+         template <typename F1, typename F2>
+         static std::ostream& fillStream(std::ostream& os, const F1& f1, const F2& f2)
+         { return os << " (" << f1 << Infix::name() << f2 << ") "; }
+    };
    }
 
   // ==========================================================================
@@ -351,8 +352,7 @@ namespace LoKi
    namespace Traits {
        struct And {
            template <typename F1, typename F2, typename... Args>
-           static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
-           -> decltype(auto)
+           static bool binaryOp(const F1& f1, const F2& f2, const Args&... args)
            { return f1(args...) && f2(args...); }
 
            template <typename F1, typename F2>
@@ -360,9 +360,8 @@ namespace LoKi
            { return os << " (" << f1 << "&" << f2 << ") "; }
        };
    }
-
-   template<typename TYPE, typename TYPE2=bool>
-   using And = details::BinaryOp<TYPE,TYPE2,bool,Traits::And>;
+   template<typename Signature>
+   using And = details::BinaryOp<Traits::And,Signature,bool>;
 
   // ==========================================================================
   /** @struct Or
@@ -396,8 +395,7 @@ namespace LoKi
    namespace Traits {
        struct Or  {
            template <typename F1, typename F2, typename... Args>
-           static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
-           -> decltype(auto)
+           static bool binaryOp(const F1& f1, const F2& f2, const Args&... args)
            { return f1(args...) || f2(args...); }
 
            template <typename F1, typename F2>
@@ -405,8 +403,8 @@ namespace LoKi
            { return os << " (" << f1 << "|" << f2 << ") "; }
        };
    }
-   template<typename TYPE, typename TYPE2>
-   using Or = details::BinaryOp<TYPE,TYPE2,bool,Traits::Or>;
+   template<typename Signature>
+   using Or = details::BinaryOp<Traits::Or, Signature, bool>;
 
   // ==========================================================================
   /** @class Less
@@ -440,8 +438,8 @@ namespace LoKi
            static constexpr const char* name() { return "<"; }
        };
    }
-   template<typename TYPE, typename TYPE2>
-   using Less = details::BinaryOp<TYPE,TYPE2,bool,Traits::Less>;
+   template<typename Signature>
+   using Less = details::BinaryOp<Traits::Less,Signature,bool>;
 
   // ==========================================================================
   /** @class Equal
@@ -476,8 +474,8 @@ namespace LoKi
             static constexpr const char* name() { return "=="; }
        };
    }
-   template<typename TYPE, typename TYPE2=double>
-   using Equal = details::BinaryOp<TYPE,TYPE2,bool,Traits::Equal<TYPE2>>;
+   template<typename Signature>
+   using Equal = details::BinaryOp<Traits::Equal<details::result_of_t<Signature>>,Signature,bool>;
 
   // ==========================================================================
   /** @struct LessOrEqual
@@ -511,8 +509,8 @@ namespace LoKi
             static constexpr const char* name() { return "<="; }
        };
    }
-   template<typename TYPE, typename TYPE2=double>
-   using LessOrEqual = details::BinaryOp<TYPE,TYPE2,bool,Traits::LessOrEqual>;
+   template<typename Signature>
+   using LessOrEqual = details::BinaryOp<Traits::LessOrEqual,Signature,bool>;
 
   // ==========================================================================
   /** @class NotEqual
@@ -553,9 +551,9 @@ namespace LoKi
            { return os << " (" << f1 << "!=" << f2 << ") "; }
        };
    }
-
-   template<typename TYPE, typename TYPE2=double>
-   using NotEqual = details::BinaryOp<TYPE,TYPE2,bool,Traits::NotEqual<TYPE2>>;
+   template<typename Signature>
+   using NotEqual = details::BinaryOp<Traits::NotEqual<details::result_of_t<Signature>>,
+                                      Signature,bool>;
 
   // ==========================================================================
   /** @class Plus
@@ -591,9 +589,8 @@ namespace LoKi
        };
    }
 
-  template<typename TYPE, typename TYPE2=double>
-  using Plus =  details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Plus>;
-
+   template<typename Signature>
+   using Plus = details::BinaryOp<Traits::Plus,Signature>;
   // ==========================================================================
   /** @class Minus
    *  The helper function to implement subtraction of 2 function
@@ -628,8 +625,8 @@ namespace LoKi
        };
    }
 
-  template<typename TYPE, typename TYPE2=double>
-  using Minus = details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Minus>;
+  template<typename Signature>
+  using Minus = details::BinaryOp<Traits::Minus,Signature>;
 
   // ==========================================================================
   /** @class Divide
@@ -665,9 +662,8 @@ namespace LoKi
        };
    }
 
-  template<typename TYPE, typename TYPE2=double>
-  using Divide =  details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Divide>;
-
+  template<typename Signature>
+  using Divide = details::BinaryOp<Traits::Divide,Signature>;
   // ==========================================================================
   /** @class Multiply
    *  The helper function to implement multiplication of 2 functions
@@ -702,9 +698,8 @@ namespace LoKi
        };
    }
 
-  template<typename TYPE, typename TYPE2=double>
-  using Multiply = details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Multiply>;
-
+  template<typename Signature>
+  using Multiply = details::BinaryOp<Traits::Multiply,Signature>;
   // ==========================================================================
   /** @class Min
    *
@@ -733,7 +728,6 @@ namespace LoKi
       struct Min {
            template <typename F1, typename F2, typename... Args>
            static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
-           -> decltype(auto)
            { return std::min( f1(args...) , f2(args...)); }
 
            template <typename F1, typename F2>
@@ -741,8 +735,8 @@ namespace LoKi
            { return os << " min(" << f1 << "," << f2 << ") "; }
       };
   }
-  template<typename TYPE, typename TYPE2=double>
-  using Min = details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Min>;
+  template<typename Signature>
+  using Min = details::BinaryOp<Traits::Min,Signature>;
   // ==========================================================================
   /** @class Max
    *  Return  the maximum from functions
@@ -772,7 +766,6 @@ namespace LoKi
       struct Max {
            template <typename F1, typename F2, typename... Args>
            static auto binaryOp(const F1& f1, const F2& f2, const Args&... args)
-           -> decltype(auto)
            { return std::max( f1(args...) , f2(args...)); }
 
            template <typename F1, typename F2>
@@ -780,8 +773,8 @@ namespace LoKi
            { return os << " max(" << f1 << "," << f2 << ") "; }
       };
   }
-  template<typename TYPE, typename TYPE2=double>
-  using Max = details::BinaryOp<TYPE,TYPE2,TYPE2,Traits::Max>;
+  template<typename Signature>
+  using Max = details::BinaryOp<Traits::Max,Signature>;
 
   // ==========================================================================
   /** @class SimpleSwitch
@@ -796,15 +789,11 @@ namespace LoKi
    *  @date 2005-02-11
    */
 
-  namespace V2 {
-
   template <typename SigIn> class SimpleSwitch;
 
   template <typename... TYPE, typename TYPE2>
   class SimpleSwitch<TYPE2(TYPE...)> final : public Functor<TYPE2(TYPE...)>
   {
-    using T2 = typename Constant<TYPE2(TYPE...)>::T2;
-
   public:
     // ========================================================================
     /** constructor from the predicate and 2 constants
@@ -820,12 +809,11 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    SimpleSwitch( FunctorFromFunctor<bool(TYPE...)> cut,
-                  T2 val1 , T2 val2 )
+    SimpleSwitch( FunctorFromFunctor<bool(TYPE...)> cut, TYPE2 val1 , TYPE2 val2 )
       : LoKi::AuxFunBase ( std::tie ( cut , val1 , val2 ) )
       , m_cut  ( std::move(cut)  )
-      , m_val1 ( val1 )
-      , m_val2 ( val2 )
+      , m_val1 ( std::move(val1) )
+      , m_val2 ( std::move(val2) )
     {}
     /// MANDATORY: clone method ("virtual constructor")
     SimpleSwitch* clone() const override { return new SimpleSwitch ( *this ) ; }
@@ -842,17 +830,13 @@ namespace LoKi
   private:
     // ========================================================================
     /// the condition
-    FunctorFromFunctor<bool(TYPE...)> m_cut  ; // the condiftion
+    FunctorFromFunctor<bool(TYPE...)>    m_cut  ; // the condiftion
     /// the first value
     TYPE2                                m_val1 ; // the first value
     /// the second value
     TYPE2                                m_val2 ; // the second value
     // ========================================================================
   };
-  }
-
-  template <typename TYPE, typename TYPE2=double>
-  using SimpleSwitch = V2::SimpleSwitch<details::sig_t<TYPE,TYPE2>>;
 
   // ==========================================================================
   /** @class Switch
@@ -865,7 +849,6 @@ namespace LoKi
    *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
    *  @date 2005-02-11
    */
-  namespace V2 {
   template <typename Signature> class Switch;
 
   template <typename... TYPE, typename TYPE2> // def TYPE2=double
@@ -882,7 +865,7 @@ namespace LoKi
      *  value of second function is returned
      *
      *  @param cut predicate for branch
-     *  @param fun1 the first  fuction
+     *  @param fun1 the first  function
      *  @param fun2 the second function
      *
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
@@ -910,7 +893,8 @@ namespace LoKi
      */
     Switch( FunctorFromFunctor<bool(TYPE...)> cut  ,
             FunctorFromFunctor<TYPE2(TYPE...)> fun1 , T2 fun2 )
-      : Switch{ std::move(cut), std::move(fun1), Constant<TYPE2(TYPE...)>{std::move(fun2)} }
+      : Switch{ std::move(cut), std::move(fun1),
+                                Constant<TYPE2(TYPE...)>{std::move(fun2)} }
     {}
     /** constructor from predicate ,function and constant
      *
@@ -925,9 +909,10 @@ namespace LoKi
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    Switch( FunctorFromFunctor<bool(TYPE...)> cut, T2 fun1,
+    Switch( FunctorFromFunctor<bool(TYPE...)> cut, T2 val1,
             FunctorFromFunctor<TYPE2(TYPE...)> fun2)
-      : Switch{ std::move(cut), Constant<TYPE2(TYPE...)>{std::move(fun1)}, std::move(fun2) }
+      : Switch{ std::move(cut), Constant<TYPE2(TYPE...)>{std::move(val1)},
+                                std::move(fun2) }
     {}
     /** constructor from predicate and 2 constants
      *
@@ -941,15 +926,17 @@ namespace LoKi
      *  @see SimpleSwitch
      *
      *  @param cut predicate for branch
-     *  @param fun1 the first constant
-     *  @param fun2 the second constant
+     *  @param val1 the first constant
+     *  @param val2 the second constant
      *
      *
      *  @author Vanya BELYAEV belyaev@lapp.in2p3.fr
      *  @date 2005-02-11
      */
-    Switch( FunctorFromFunctor<bool(TYPE...)> cut, T2 fun1, T2 fun2 )
-      : Switch{ std::move(cut), Constant<TYPE2(TYPE...)>{ std::move(fun1) }, Constant<TYPE2(TYPE...)>{ std::move(fun2) } }
+    Switch( FunctorFromFunctor<bool(TYPE...)> cut, T2 val1, T2 val2 )
+      : Switch{ std::move(cut),
+                Constant<TYPE2(TYPE...)>{ std::move(val1) },
+                Constant<TYPE2(TYPE...)>{ std::move(val2) } }
     {}
     /// MANDATORY: clone method ("virtual constructor")
     Switch* clone() const override { return new Switch ( *this ) ; }
@@ -972,10 +959,6 @@ namespace LoKi
     TwoFunctors<TYPE2(TYPE...)>       m_two ;      // the storage of functors
     // ========================================================================
   };
-  }
-
-  template <typename TYPE, typename TYPE2=double>
-  using Switch = V2::Switch<details::sig_t<TYPE,TYPE2>>;
   // ==========================================================================
   /** @class ComposeFunction
    *  The helper class to implement function of function
@@ -1000,7 +983,6 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-15
    */
-  namespace V2 {
   template <typename Signature> class ComposeFunction;
 
   template <typename... TYPE, typename TYPE2>
@@ -1036,18 +1018,13 @@ namespace LoKi
   private:
     // ========================================================================
     /// the functor
-    FunctorFromFunctor<TYPE2(TYPE...)> m_fun  ; // the functor
+    FunctorFromFunctor<TYPE2(TYPE...)>   m_fun  ; // the functor
     /// the function:
     Func                                 m_func ; // the function:
     /// the function description:
     std::string                          m_desc ; // description
     // ========================================================================
   };
-  }
-
-  template <typename TYPE, typename TYPE2=double>
-  using ComposeFunction = V2::ComposeFunction<details::sig_t<TYPE,TYPE2>>;
-
   // ==========================================================================
   /** @class ComposeFunction2
    *
@@ -1073,7 +1050,6 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
    *  @date   2002-07-15
    */
-  namespace V2 {
   template <typename Signature> class ComposeFunction2;
 
   template <typename... TYPE, typename TYPE2>
@@ -1144,14 +1120,10 @@ namespace LoKi
     // ========================================================================
   };
 
-  }
-  template <typename TYPE, typename TYPE2=double>
-  using ComposeFunction2 = V2::ComposeFunction2<details::sig_t<TYPE,TYPE2>>;
   // ==========================================================================
   /** @class Compose
    *  the general case of fun2(fun1) function:
    */
-  namespace V2 {
   template <typename Sig1, typename Sig2> class Compose;
 
   template <typename... TYPE, typename TYPE1, typename TYPE2, typename TYPE3>
@@ -1162,7 +1134,7 @@ namespace LoKi
     /// contructor
     Compose ( FunctorFromFunctor<TYPE1(TYPE...)> fun1,
               FunctorFromFunctor<TYPE2(TYPE3)> fun2 )
-      : LoKi::AuxFunBase ( std::tie ( fun1 , fun2 ) )
+      : AuxFunBase ( std::tie ( fun1 , fun2 ) )
       , m_fun1 ( std::move(fun1) )
       , m_fun2 ( std::move(fun2) )
     {}
@@ -1197,7 +1169,7 @@ namespace LoKi
    *  @date 2004-02-11
    */
   template <typename TYPE>
-  struct Valid final : LoKi::Functor<TYPE,bool>
+  struct Valid final : Functor<TYPE,bool>
   {
     // ========================================================================
     /// MANDATORY: clone method ("virtual constructor")
@@ -1219,7 +1191,7 @@ namespace LoKi
    *  @warning this functor does not have a valid <c>toCpp</c> method
    */
   template <typename TYPE>
-  class TheSame final : public LoKi::Functor<TYPE,bool>
+  class TheSame final : public Functor<TYPE,bool>
   {
   public:
     // ========================================================================
@@ -1254,17 +1226,14 @@ namespace LoKi
         template <typename T> using First  = std::is_base_of<First_t,typename T::Bind_t>;
       }
 
-      template <typename SigIn, typename SigOut, typename Traits_> class BindBinary;
+      template <typename Traits_,
+                typename Signature,
+                typename Result = details::result_of_t<Signature>> class BindBinary;
 
-      template <typename... TYPE, typename TYPE2, typename Result, typename Traits_>
-      class BindBinary< TYPE2(TYPE...), Result(TYPE...), Traits_ > final
+      template <typename Traits_, typename... TYPE, typename TYPE2, typename Result>
+      class BindBinary<Traits_, TYPE2(TYPE...), Result > final
       : public Functor<Result(TYPE...)>
       {
-      private:
-        // ========================================================================
-        // constant type
-        typedef typename Constant<TYPE2(TYPE...)>::T2 T2 ;
-        // ========================================================================
       public:
         // ========================================================================
         /** constructor from the function and the value
@@ -1273,13 +1242,13 @@ namespace LoKi
          */
         template <typename T, LOKI_REQUIRES(std::is_constructible<TYPE2,T>::value && Bind::Second<Traits_>::value)>
         BindBinary( FunctorFromFunctor<TYPE2(TYPE...)> fun, T&& val )
-          : LoKi::AuxFunBase ( std::tie ( fun , val ) )
+          : AuxFunBase ( std::tie ( fun , val ) )
           , m_fun ( std::move(fun) )
           , m_val ( std::forward<T>(val) )
         {}
         template <typename T, LOKI_REQUIRES(std::is_constructible<TYPE2,T>::value && Bind::First<Traits_>::value)>
         BindBinary( T&& val, FunctorFromFunctor<TYPE2(TYPE...)> fun )
-          : LoKi::AuxFunBase ( std::tie ( val , fun ) )
+          : AuxFunBase ( std::tie ( val , fun ) )
           , m_fun ( std::move(fun) )
           , m_val ( std::forward<T>(val) )
         {}
@@ -1287,7 +1256,7 @@ namespace LoKi
         /// MANDATORY: clone method ("virtual construcor")
         BindBinary* clone() const override { return new BindBinary(*this); }
         /// MANDATORY: the only one essential method :
-        Result operator()( LoKi::details::Param_t<TYPE>... a ) const override
+        Result operator()( details::Param_t<TYPE>... a ) const override
         { return Bind::Second<Traits_>::value ?
             Traits_::binaryOp( this->m_fun.fun( a... ), this->m_val ) :
             Traits_::binaryOp( this->m_val, this->m_fun.fun( a... ) ) ;
@@ -1309,14 +1278,7 @@ namespace LoKi
       };
 
   }
-  }
-  namespace details {
-      template <typename TYPE, typename TYPE2, typename Result, typename Traits_>
-      using BindBinary = LoKi::V2::details::BindBinary<sig_t<TYPE,TYPE2>, sig_t<TYPE,Result>, Traits_>;
-      namespace Bind {
-          using namespace LoKi::V2::details::Bind;
-      }
-  }
+
   // ==========================================================================
   /** @class EqualToValue
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
@@ -1334,15 +1296,14 @@ namespace LoKi
            }
        };
    }
-   template<typename TYPE,typename TYPE2 = double>
-   using EqualToValue = details::BindBinary<TYPE,TYPE2,bool,Traits::EqualToValue<TYPE2>>;
+   template<typename Signature>
+   using EqualToValue = details::BindBinary<Traits::EqualToValue<details::result_of_t<Signature>>,Signature,bool>;
 
   // ==========================================================================
   /** @class NotEqualToValue
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date 2006-04-07
    */
-
    namespace Traits {
        template <typename TYPE2>
        struct NotEqualToValue {
@@ -1354,15 +1315,14 @@ namespace LoKi
            }
        };
    }
-   template<typename TYPE,typename TYPE2 = double>
-   using NotEqualToValue = details::BindBinary<TYPE,TYPE2,bool,Traits::NotEqualToValue<TYPE2>>;
+   template<typename Signature>
+   using NotEqualToValue = details::BindBinary<Traits::NotEqualToValue<details::result_of_t<Signature>>,Signature,bool>;
 
   // ==========================================================================
   /** @class LessThanValue
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-19
    */
-
    namespace Traits {
        struct LessThanValue {
            using Bind_t = details::Bind::Second_t;
@@ -1373,8 +1333,8 @@ namespace LoKi
            }
        };
    }
-   template<typename TYPE,typename TYPE2 = double>
-   using LessThanValue = details::BindBinary<TYPE,TYPE2,bool,Traits::LessThanValue>;
+   template<typename Signature>
+   using LessThanValue = details::BindBinary<Traits::LessThanValue,Signature,bool>;
 
   // ==========================================================================
   /** @class LessOrEqualValue
@@ -1393,15 +1353,14 @@ namespace LoKi
            }
        };
    }
-   template<typename TYPE,typename TYPE2 = double>
-   using LessOrEqualValue = details::BindBinary<TYPE,TYPE2,bool,Traits::LessOrEqualValue<TYPE2>>;
+   template<typename Signature>
+   using LessOrEqualValue = details::BindBinary<Traits::LessOrEqualValue<details::result_of_t<Signature>>,Signature,bool>;
 
   // ==========================================================================
   /** @class GreaterThanValue
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-19
    */
-
    namespace Traits {
        struct GreaterThanValue {
            using Bind_t = details::Bind::Second_t;
@@ -1411,15 +1370,14 @@ namespace LoKi
            { return v2 < v1; }
         };
    }
-   template<typename TYPE,typename TYPE2 = double>
-   using GreaterThanValue = details::BindBinary<TYPE,TYPE2,bool,Traits::GreaterThanValue>;
+   template<typename Signature>
+   using GreaterThanValue = details::BindBinary<Traits::GreaterThanValue,Signature,bool>;
 
   // ==========================================================================
   /** @class GreaterOrEqualValue
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-19
    */
-
   namespace Traits {
       template <typename TYPE2>
       struct GreaterOrEqualValue {
@@ -1432,8 +1390,8 @@ namespace LoKi
            }
       };
   }
-  template<typename TYPE,typename TYPE2>
-  using GreaterOrEqualValue = details::BindBinary<TYPE,TYPE2,bool,Traits::GreaterOrEqualValue<TYPE2>>;
+  template<typename Signature>
+  using GreaterOrEqualValue = details::BindBinary<Traits::GreaterOrEqualValue<details::result_of_t<Signature>>,Signature,bool>;
 
   // ==========================================================================
   /** @class MultiplyByValue
@@ -1441,17 +1399,16 @@ namespace LoKi
    *  @date 2015-01-27
    */
   namespace Traits {
-      template <typename TYPE2>
       struct MultiplyByValue {
            using Bind_t = details::Bind::FirstOrSecond_t;
            static constexpr const char* infix() { return "*"; }
            template <typename V1, typename V2>
-           static constexpr TYPE2 binaryOp(const V1& v1, const V2& v2)
+           static constexpr auto binaryOp(const V1& v1, const V2& v2)
            { return v1*v2; }
       };
   }
-  template<typename TYPE,typename TYPE2>
-  using MultiplyByValue = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::MultiplyByValue<TYPE2>>;
+  template<typename Signature>
+  using MultiplyByValue = details::BindBinary<Traits::MultiplyByValue,Signature>;
 
   // ==========================================================================
   /** @class SumByValue
@@ -1459,17 +1416,16 @@ namespace LoKi
    *  @date 2015-01-27
    */
    namespace Traits {
-       template <typename TYPE2>
        struct SumByValue {
            using Bind_t = details::Bind::FirstOrSecond_t;
            static constexpr const char* infix() { return "+"; }
            template <typename V1, typename V2>
-           static TYPE2 binaryOp(const V1& v1, const V2& v2)
+           static constexpr auto binaryOp(const V1& v1, const V2& v2)
            { return v1 + v2 ; }
        };
    }
-  template<typename TYPE,typename TYPE2>
-  using SumByValue = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::SumByValue<TYPE2>>;
+  template<typename Signature>
+  using SumByValue = details::BindBinary<Traits::SumByValue,Signature>;
 
   // ==========================================================================
   /** @class Minus1
@@ -1477,24 +1433,25 @@ namespace LoKi
    *  @date 2015-01-27
    */
    namespace Traits {
-       template <typename TYPE2, typename FirstOrSecond>
+       template <typename FirstOrSecond>
        struct BindMinus {
            using Bind_t = FirstOrSecond;
            static constexpr const char* infix() { return "-"; }
            template <typename V1, typename V2>
-           static TYPE2 binaryOp(const V1& v1, const V2& v2)
+           static constexpr auto binaryOp(const V1& v1, const V2& v2)
            { return v1 - v2 ; }
        };
    }
-  template<typename TYPE,typename TYPE2>
-  using Minus1 = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::BindMinus<TYPE2,details::Bind::Second_t>>;
+  template<typename Signature>
+  using Minus1 = details::BindBinary<Traits::BindMinus<details::Bind::Second_t>,Signature>;
+
   // ==========================================================================
   /** @class Minus2
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-27
    */
-  template<typename TYPE,typename TYPE2>
-  using Minus2 = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::BindMinus<TYPE2,details::Bind::First_t>>;
+  template<typename Signature>
+  using Minus2 = details::BindBinary<Traits::BindMinus<details::Bind::First_t>,Signature>;
 
   // ==========================================================================
   /** @class Divide1
@@ -1502,25 +1459,30 @@ namespace LoKi
    *  @date 2015-01-27
    */
    namespace Traits {
-       template <typename TYPE2, typename FirstOrSecond>
+       template <typename FirstOrSecond>
        struct BindDivide {
            using Bind_t = FirstOrSecond;
            static constexpr const char* infix() { return "/"; }
            template <typename V1, typename V2>
-           static TYPE2 binaryOp(const V1& v1, const V2& v2)
+           static constexpr auto binaryOp(const V1& v1, const V2& v2)
            { return v1 / v2 ; }
        };
    }
-  template<typename TYPE,typename TYPE2>
-  using Divide1 = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::BindDivide<TYPE2,details::Bind::Second_t>>;
+  template<typename Signature>
+  using Divide1 = details::BindBinary<Traits::BindDivide<details::Bind::Second_t>,Signature>;
 
   // ==========================================================================
   /** @class Divide2
    *  @author Vanya BELYAEV Ivan.Belyaev@itep.ru
    *  @date 2015-01-27
    */
-  template<typename TYPE,typename TYPE2>
-  using Divide2 = details::BindBinary<TYPE,TYPE2,TYPE2,Traits::BindDivide<TYPE2,details::Bind::First_t>>;
+  template<typename Signature>
+  using Divide2 = details::BindBinary<Traits::BindDivide<details::Bind::First_t>,Signature>;
+
+  } // namespace V2
+
+  template <typename TYPE, typename TYPE2>
+  using TwoFunctors = V2::TwoFunctors<details::sig_t<TYPE,TYPE2>>;
 
   // ==========================================================================
   /** compare 2 objects using the comparison criteria CMP ,
@@ -1534,12 +1496,8 @@ namespace LoKi
   {
   public:
     // ========================================================================
-    /// typedef for actual function
-    typedef LoKi::Functor<TYPE,TYPE2>   function ;
     /// argument type
-    typedef typename LoKi::Functor<TYPE,TYPE2>::argument argument  ;
-    // typedef for comparison criteria
-    typedef const CMP            compare  ;
+    typedef typename Functor<TYPE,TYPE2>::argument argument  ;
     // ========================================================================
   public:
     // ========================================================================
@@ -1548,8 +1506,8 @@ namespace LoKi
      *  @param fun2 the second functor
      *  @param cmp the comparison criteria
      */
-    Compare ( LoKi::FunctorFromFunctor<TYPE,TYPE2> fun1,
-              LoKi::FunctorFromFunctor<TYPE,TYPE2> fun2, CMP  cmp = {}  )
+    Compare ( FunctorFromFunctor<TYPE,TYPE2> fun1,
+              FunctorFromFunctor<TYPE,TYPE2> fun2, CMP  cmp = {}  )
       : m_two ( std::move(fun1) , std::move(fun2) )
       , m_cmp ( std::move(cmp) )
     {}
@@ -1559,10 +1517,9 @@ namespace LoKi
      *  @param fun2 the second functor
      *  @param cmp the comparison criteria
      */
-    Compare ( const LoKi::Functor<TYPE,TYPE2>& fun1 ,
-              const compare&  cmp  = {} )
+    Compare ( const Functor<TYPE,TYPE2>& fun1 , CMP cmp  = {} )
       : m_two ( fun1 , fun1 )
-      , m_cmp ( cmp )
+      , m_cmp ( std::move(cmp) )
     {}
     /// the only one essential method
     bool operator() ( argument a1 , argument a2 ) const
@@ -1571,14 +1528,14 @@ namespace LoKi
   public:
     // ========================================================================
     /// get the first functor
-    const function& func1 () const { return m_two.func1 () ; }
+    const auto& func1 () const { return m_two.func1 () ; }
     /// get the second functor
-    const function& func2 () const { return m_two.func2 () ; }
+    const auto& func2 () const { return m_two.func2 () ; }
     // ========================================================================
   private:
     // ========================================================================
-    LoKi::TwoFunctors<TYPE,TYPE2> m_two ;
-    compare   m_cmp  ;
+    TwoFunctors<TYPE,TYPE2> m_two ;
+    CMP   m_cmp  ;
     // ========================================================================
   };
   // ==========================================================================
@@ -1641,8 +1598,7 @@ namespace LoKi
   template <typename SigIn> class InRange;
 
   template <typename... TYPE>
-  class InRange< double(TYPE...) > final
-  : public Functor<bool(TYPE...)>
+  class InRange< double(TYPE...) > final : public Functor<bool(TYPE...)>
   {
     // ========================================================================
   public:
@@ -1687,10 +1643,7 @@ namespace LoKi
     double                                m_high ;        //       the low edge
     // ========================================================================
   };
-  }
 
-  template <typename Arg>
-  using InRange = V2::InRange<details::sig_t<Arg,double>>;
   // ==========================================================================
   /** @class InRange2
    *  Helper predicate to represent that the result of functor
@@ -1699,12 +1652,10 @@ namespace LoKi
    *  @date 2009-11-21
    */
 
-  namespace V2 {
   template <typename SigIn> class InRange2;
 
   template <typename... TYPE>
-  class InRange2< double(TYPE...) > final
-  : public Functor<bool(TYPE...)>
+  class InRange2< double(TYPE...) > final : public Functor<bool(TYPE...)>
   {
     // ========================================================================
   public:
@@ -1770,17 +1721,12 @@ namespace LoKi
     FunctorFromFunctor<double(TYPE...)> m_high ; //      the high edge
     // ========================================================================
   } ;
-  }
 
-  template <typename Arg>
-  using InRange2 = V2::InRange2<details::sig_t<Arg,double>>;
   // ==========================================================================
   /** @class EqualToList
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-12-06
    */
-  namespace V2 {
-
   template <typename Signature> class EqualToList;
 
   template <typename... TYPE>
@@ -1792,9 +1738,8 @@ namespace LoKi
      *  @param fun the function
      *  @param vct the vector of values
      */
-    EqualToList
-    ( FunctorFromFunctor<double(TYPE...)> fun ,
-      std::vector<double>                vct )
+    EqualToList ( FunctorFromFunctor<double(TYPE...)> fun ,
+                  std::vector<double>                vct )
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) )
       , m_fun ( std::move(fun) )
       , m_vct ( std::move(vct) )
@@ -1807,18 +1752,16 @@ namespace LoKi
      *  @param fun the function
      *  @param vct the vector of values
      */
-    EqualToList
-    ( FunctorFromFunctor<double(TYPE...)>  fun ,
-      const std::vector<int>&            vct )
+    EqualToList ( FunctorFromFunctor<double(TYPE...)>  fun ,
+                  const std::vector<int>&            vct )
       : EqualToList( std::move(fun),  vct.begin(), vct.end() )
     {}
     /** constructor from the function and the value
      *  @param fun the function
      *  @param vct the vector of values
      */
-    EqualToList
-    ( FunctorFromFunctor<double(TYPE...)>  fun ,
-      const std::vector<unsigned int>&   vct )
+    EqualToList ( FunctorFromFunctor<double(TYPE...)>  fun ,
+                  const std::vector<unsigned int>&   vct )
       : EqualToList( std::move(fun), vct.begin(), vct.end() )
     {}
     /** constructor from the function and range of values
@@ -1826,13 +1769,13 @@ namespace LoKi
      *  @param first start of range
      *  @param last end of range
      */
-    template <typename ITERATOR,
+    template <typename Iterator,
               LOKI_REQUIRES( std::is_base_of< std::input_iterator_tag,
-                                              typename std::iterator_traits<ITERATOR>::iterator_category
+                                              typename std::iterator_traits<Iterator>::iterator_category
                                             >::value ) >
     EqualToList ( FunctorFromFunctor<double(TYPE...)>  fun    ,
-                  ITERATOR                           first  ,
-                  ITERATOR                           last   )
+                  Iterator                           first  ,
+                  Iterator                           last   )
       : EqualToList( std::move(fun), std::vector<double>{ first, last } )
     {}
     // ========================================================================
@@ -1876,17 +1819,12 @@ namespace LoKi
     std::vector<double>  m_vct ;                                 //    the list
     // ========================================================================
   };
-  }
-
-  template <typename TYPE>
-  using EqualToList = V2::EqualToList<details::sig_t<TYPE,double>>;
 
   // ==========================================================================
   /** @class NotEqualToList
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-12-06
    */
-  namespace V2 {
   template <typename Signature> class NotEqualToList;
   template <typename... TYPE>
   class NotEqualToList<double(TYPE...)> final : public EqualToList<double(TYPE...)>
@@ -1897,9 +1835,8 @@ namespace LoKi
      *  @param fun the function
      *  @param vct the vector of values
      */
-    NotEqualToList
-    ( FunctorFromFunctor<double(TYPE...)>  fun ,
-      std::vector<double>                            vct )
+    NotEqualToList ( FunctorFromFunctor<double(TYPE...)>  fun ,
+                     std::vector<double>                  vct )
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) )
       , EqualToList<double(TYPE...)>( std::move(fun) , std::move(vct) )
     {}
@@ -1907,9 +1844,8 @@ namespace LoKi
      *  @param fun the function
      *  @param vct the vector of values
      */
-    NotEqualToList
-    ( FunctorFromFunctor<double(TYPE...)>  fun ,
-      const std::vector<int>&            vct )
+    NotEqualToList ( FunctorFromFunctor<double(TYPE...)>  fun ,
+                     const std::vector<int>&            vct )
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) )
       , EqualToList<double(TYPE...)>( std::move(fun) , vct )
     {}
@@ -1917,9 +1853,8 @@ namespace LoKi
      *  @param fun the function
      *  @param vct the vector of values
      */
-    NotEqualToList
-    ( FunctorFromFunctor<double(TYPE...)>  fun ,
-      const std::vector<unsigned int>&   vct )
+    NotEqualToList ( FunctorFromFunctor<double(TYPE...)>  fun ,
+                     const std::vector<unsigned int>&   vct )
       : LoKi::AuxFunBase ( std::tie ( fun , vct ) )
       , EqualToList<double(TYPE...)>( std::move(fun), vct )
     {}
@@ -1928,13 +1863,13 @@ namespace LoKi
      *  @param first start of range
      *  @param last end of range
      */
-    template <typename ITERATOR,
+    template <typename Iterator,
               LOKI_REQUIRES( std::is_base_of< std::input_iterator_tag,
-                                              typename std::iterator_traits<ITERATOR>::iterator_category
+                                              typename std::iterator_traits<Iterator>::iterator_category
                                             >::value )>
     NotEqualToList ( FunctorFromFunctor<double(TYPE...)>  fun    ,
-                     ITERATOR                           first  ,
-                     ITERATOR                           last   )
+                     Iterator                           first  ,
+                     Iterator                           last   )
       : EqualToList<double(TYPE...)>( std::move(fun) , first , last  )
     {}
     // ========================================================================
@@ -1949,16 +1884,12 @@ namespace LoKi
                << Gaudi::Utils::toString ( this->vect() ) << ") " ; }
     // ========================================================================
   };
-  }
-  template <typename TYPE>
-  using NotEqualToList = V2::NotEqualToList<details::sig_t<TYPE,double>>;
   // ==========================================================================
   /** @class XScaler
    *  Simple scaler for predicates
    *  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
    *  @date 2009-12-06
    */
-  namespace V2 {
   template <typename Signature> class XScaler;
   template <typename ... TYPE >
   class XScaler<bool(TYPE...)> final : public Functor<bool(TYPE...)>
@@ -1995,10 +1926,7 @@ namespace LoKi
     FunctorFromFunctor<bool()>  m_scaler ;            // the scaler
     // ========================================================================
   };
-  }
 
-  template <typename TYPE>
-  using XScaler = V2::XScaler<details::sig_t<TYPE,bool>>;
   // ==========================================================================
   /** @class Modulo
    *
@@ -2010,23 +1938,7 @@ namespace LoKi
    *  @author Vanya Belyaev Ivan.Belyaev@cern.ch
    *  @date   2011-03-30
    */
-#if 0
-   namespace Traits {
-       struct Modulo {
-           using Bind_t = details::Bind::Second_t;
-           static constexpr const char* infix() { return " % "; }
-           template <typename V1, typename V2>
-           static constexpr bool binaryOp(const V1& v1, const V2& v2) {
-               return LHCb::Math::round ( v1 ) % v2 ; }
-           }
-       };
-   }
-   // Modulo : fun = double(TYPE), val = unsigned int, result = double
-   template<typename TYPE>
-   using Modulo = details::BindBinary<TYPE,double/unsigned int,double,Traits::Modulo>;
-#endif
 
-  namespace V2{
   template <typename Signature> class Modulo;
   template <typename ... TYPE>
   class Modulo<double(TYPE...)> final : public Functor<double(TYPE...)>
@@ -2057,10 +1969,7 @@ namespace LoKi
     const unsigned int                    m_divisor  ; // the divisor
     // ========================================================================
   };
-  }
 
-   template <typename TYPE>
-   using Modulo = V2::Modulo<details::sig_t<TYPE,double>>;
   // ==========================================================================
   /** @class Round
    *  get the proper rounding for the floating value
@@ -2081,7 +1990,7 @@ namespace LoKi
       };
   }
   template <typename TYPE>
-  using Round = details::UnaryOp<details::sig_t<TYPE,double>,details::sig_t<TYPE,double>,Traits::Round>;
+  using Round = details::UnaryOp<Traits::Round,LoKi::details::sig_t<TYPE,double>>;
   // ==========================================================================
   /** @class JBit
    *  get the jth bit of value.
@@ -2093,7 +2002,6 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-04-02
    */
-  namespace V2 {
   template <typename Signature> class JBit;
   template <typename ... TYPE>
   class JBit<bool(TYPE...)> final : public Functor<bool(TYPE...)>
@@ -2140,10 +2048,6 @@ namespace LoKi
     // ========================================================================
   };
 
-  }
-  template <typename TYPE>
-  using JBit = V2::JBit<details::sig_t<TYPE,bool>>;
-
   // ==========================================================================
   /** @class JBits
    *  get the content between j1 and j2  bit of value.
@@ -2155,7 +2059,6 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-04-02
    */
-  namespace V2 {
   template <typename Signature> class JBits;
   template <typename... TYPE>
   class JBits<double(TYPE...)> final : public Functor<double(TYPE...)>
@@ -2211,10 +2114,7 @@ namespace LoKi
     unsigned short                       m_j2  ;                  // the index
     // ========================================================================
   };
-  }
 
-  template <typename TYPE>
-  using JBits = V2::JBits<details::sig_t<TYPE,double>>;
   // ==========================================================================
   /** @class JDigit
    *  get the jth decimal digit of value.
@@ -2226,7 +2126,6 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2017-02-16
    */
-  namespace V2 {
   template <typename Signature> class JDigit;
   template <typename ... TYPE >
   class JDigit<double(TYPE...)> final : public Functor<double(TYPE...)>
@@ -2272,9 +2171,6 @@ namespace LoKi
     unsigned short                        m_j   ;                  // the index
     // ========================================================================
   };
-  }
-  template <typename TYPE>
-  using JDigit = V2::JDigit<details::sig_t<TYPE,double>>;
 
   // ==========================================================================
   /** @class JDigits
@@ -2287,7 +2183,6 @@ namespace LoKi
    *  @author Vanya BELYAEV Ivan.Belyaev@cern.ch
    *  @date 2011-04-02
    */
-  namespace V2 {
   template <typename Signature> class JDigits;
   template <typename ... TYPE>
   class JDigits<double(TYPE...)> final : public Functor<double(TYPE...)>
@@ -2344,9 +2239,54 @@ namespace LoKi
     // ========================================================================
   };
   }
-  template <typename TYPE>
-  using JDigits = V2::JDigits<details::sig_t<TYPE,double>>;
+
   // ==========================================================================
+  // Temporarily for backwards compatibility / adiabatic transition ...
+  // ==========================================================================
+  template <typename T, typename T2=double> using SimpleSwitch = V2::SimpleSwitch<details::sig_t<T,T2>>;
+  template <typename T, typename T2=double> using Switch = V2::Switch<details::sig_t<T,T2>>;
+  template <typename T, typename T2=double> using ComposeFunction = V2::ComposeFunction<details::sig_t<T,T2>>;
+  template <typename T, typename T2=double> using ComposeFunction2 = V2::ComposeFunction2<details::sig_t<T,T2>>;
+
+  template<typename T, typename T2=bool>   using Not = V2::Not<details::sig_t<T,T2>>;
+  template<typename T, typename T2=double> using Negate = V2::Negate<details::sig_t<T,T2>>;
+  template<typename T, typename T2=bool>   using And = V2::And<details::sig_t<T,T2>>;
+  template<typename T, typename T2=bool>   using Or = V2::Or<details::sig_t<T,T2>>;
+  template<typename T, typename T2=double> using Less = V2::Less<details::sig_t<T,T2>>;
+  template<typename T, typename T2=double> using Equal = V2::Equal<details::sig_t<T,T2>>;
+  template<typename T, typename T2=double> using LessOrEqual = V2::LessOrEqual<details::sig_t<T,T2>>;
+  template<typename T, typename T2=double> using NotEqual = V2::NotEqual<details::sig_t<T,T2>>;
+  template<typename T, typename T2=double> using Plus =  V2::Plus<details::sig_t<T,T2>>;
+  template<typename T, typename T2=double> using Minus =  V2::Minus<details::sig_t<T,T2>>;
+  template<typename T, typename T2=double> using Divide =  V2::Divide<details::sig_t<T,T2>>;
+  template<typename T, typename T2=double> using Multiply =  V2::Multiply<details::sig_t<T,T2>>;
+  template<typename T, typename T2=double> using Min =  V2::Min<details::sig_t<T,T2>>;
+  template<typename T, typename T2=double> using Max =  V2::Max<details::sig_t<T,T2>>;
+
+  template<typename T,typename T2 = double> using EqualToValue = V2::EqualToValue<details::sig_t<T,T2>>;
+  template<typename T,typename T2 = double> using NotEqualToValue = V2::NotEqualToValue<details::sig_t<T,T2>>;
+  template<typename T,typename T2 = double> using LessThanValue = V2::LessThanValue<details::sig_t<T,T2>>;
+  template<typename T,typename T2 = double> using LessOrEqualValue = V2::LessOrEqualValue<details::sig_t<T,T2>>;
+  template<typename T,typename T2 = double> using GreaterThanValue = V2::GreaterThanValue<details::sig_t<T,T2>>;
+  template<typename T,typename T2> using GreaterOrEqualValue = V2::GreaterOrEqualValue<details::sig_t<T,T2>>;
+  template<typename T,typename T2> using MultiplyByValue = V2::MultiplyByValue<details::sig_t<T,T2>>;
+  template<typename T,typename T2> using SumByValue = V2::SumByValue<details::sig_t<T,T2>>;
+  template<typename T,typename T2> using Minus1 = V2::Minus1<details::sig_t<T,T2>>;
+  template<typename T,typename T2> using Minus2 = V2::Minus2<details::sig_t<T,T2>>;
+  template<typename T,typename T2> using Divide1 = V2::Divide1<details::sig_t<T,T2>>;
+  template<typename T,typename T2> using Divide2 = V2::Divide2<details::sig_t<T,T2>>;
+
+  template <typename T> using InRange = V2::InRange<details::sig_t<T,double>>;
+  template <typename T> using InRange2 = V2::InRange2<details::sig_t<T,double>>;
+  template <typename T> using EqualToList = V2::EqualToList<details::sig_t<T,double>>;
+  template <typename T> using NotEqualToList = V2::NotEqualToList<details::sig_t<T,double>>;
+  template <typename T> using XScaler = V2::XScaler<details::sig_t<T,bool>>;
+  template <typename T> using Modulo = V2::Modulo<details::sig_t<T,double>>;
+  template <typename T> using Round = V2::Round<T>;
+  template <typename T> using JBit = V2::JBit<details::sig_t<T,bool>>;
+  template <typename T> using JBits = V2::JBits<details::sig_t<T,double>>;
+  template <typename T> using JDigit = V2::JDigit<details::sig_t<T,double>>;
+  template <typename T> using JDigits = V2::JDigits<details::sig_t<T,double>>;
   // ==========================================================================
   // OPTIONAL: the nice printout
   // ==========================================================================
