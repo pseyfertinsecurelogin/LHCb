@@ -668,8 +668,7 @@ namespace LoKi
       // EqualTo
       // ======================================================================
       static Cut __equal_to__ ( const Func&   fun  ,
-                                double  val  )
-      { return LoKi::EqualToValue<TYPE> ( fun , val ) ; }
+                                double  val  )       { return  fun == val ; }
       static Cut __equal_to__ ( const Func&   fun  ,
                                 const Func&   fun1 ) { return fun == fun1 ; }
       //

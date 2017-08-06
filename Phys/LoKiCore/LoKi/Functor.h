@@ -165,51 +165,6 @@ namespace LoKi
     // ========================================================================
   };
   // ==========================================================================
-  /** @class Constant
-   *  The helper concrete implementation of the simplest
-   *  function ("constant")
-   *  @see LoKi::Functor
-   *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
-   *  @date   2002-07-15
-   */
-  template <class TYPE,class TYPE2>
-  class Constant final : public LoKi::Functor<TYPE,TYPE2>
-  {
-  public:
-    // ========================================================================
-    /// argument type
-    typedef typename boost::call_traits<TYPE2>::param_type T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// constructor
-    Constant ( T2 value )
-      : LoKi::AuxFunBase ( std::tie(value) )
-      , m_value ( std::move(value) )
-    {}
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// assignment
-    template <typename Arg, LOKI_REQUIRES(std::is_assignable<TYPE2,Arg>::value)>
-    Constant& operator=( const Arg& arg )
-    { m_value = arg; return *this ; }
-    Constant& operator=( TYPE2&& arg )
-    { m_value = std::move(arg); return *this ; }
-    /// clone method (mandatory)
-    Constant* clone() const override { return new Constant( *this ) ; }
-    /// the only one essential method ("function")
-    TYPE2 operator()
-      ( typename LoKi::Functor<TYPE,TYPE2>::argument ) const override { return m_value ; }
-    /// the basic printout method
-    std::ostream& fillStream( std::ostream& s ) const override ;
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the constant itself
-    TYPE2 m_value ;                                      // the constant itself
-    // ========================================================================
-  } ;
   // ==========================================================================
   /// specialiation for void-argument
   template <class TYPE2>
@@ -328,61 +283,8 @@ namespace LoKi
     std::unique_ptr<const functor> m_fun ;           // the underlying functor
     // ========================================================================
   } ;
-  // ==========================================================================
-  /// specialization for "void"
-  template <class TYPE2>
-  class Constant<void,TYPE2> final : public LoKi::Functor<void,TYPE2>
-  {
-  public:
-    // ========================================================================
-    /// argument type
-    typedef typename boost::call_traits<TYPE2>::param_type T2 ;
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// constructor
-    Constant ( T2 value )
-      : LoKi::AuxFunBase ( std::tie( value ) )
-      , m_value ( std::move(value) )
-    {}
-    // ========================================================================
-  public:
-    // ========================================================================
-    /// assignement
-    template <typename Arg, LOKI_REQUIRES(std::is_assignable<TYPE2,Arg>::value)>
-    Constant& operator=( const Arg& arg )
-    { m_value = arg; return *this ; }
-    Constant& operator=( TYPE2&& arg )
-    { m_value = std::move(arg); return *this ; }
-    /// clone method (mandatory)
-    Constant* clone() const override { return new Constant( *this ) ; }
-    /// the only one essential method ("function")
-    TYPE2 operator()() const override
-    { return m_value ; }
-    /// the basic printout method
-    std::ostream& fillStream( std::ostream& s ) const override;
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the constant itself
-    TYPE2 m_value ;                                      // the constant itself
-    // ========================================================================
-  } ;
-  // ==========================================================================
-  // the generic printout method
-  // ==========================================================================
-  template <class TYPE,class TYPE2>
-  inline std::ostream&
-  Constant<TYPE,TYPE2>::fillStream( std::ostream& s ) const
-  { return Gaudi::Utils::toStream ( this->m_value , s ) ; }
-  // ==========================================================================
-  // the basic printout method
-  // ==========================================================================
-  template <class TYPE2>
-  inline std::ostream&
-  Constant<void,TYPE2>::fillStream( std::ostream& s ) const
-  { return  Gaudi::Utils::toStream ( this->m_value , s ) ; }
-  // ==========================================================================
+
+  // ========================================================================
 
   namespace details {
 
@@ -425,6 +327,151 @@ namespace LoKi
           std::enable_if_t<   decays_to<type1_t<F>, TYPE1>::value
                            && decays_to<type2_t<F>, TYPE2>::value >;
 
+
+      template <typename Arg, typename Res> struct sig_helper {
+          using type = Res(Arg);
+      };
+      template <typename Res> struct sig_helper<void,Res> {
+          using type = Res();
+      };
+      template <typename Arg, typename Res>
+      using sig_t = typename sig_helper<Arg,Res>::type;
+
+      template <typename ... Fs>
+      using signature_of_t = sig_t< type1_t<Fs...>, type2_t<Fs...> >;
+  }
+
+  namespace V2 {
+  namespace details {
+
+    template <typename Arg>
+    using Param_t = typename boost::call_traits<std::add_const_t<Arg>>::param_type;
+
+
+    template <typename Signature> struct sig_helper;
+    template <typename Result, typename... Args> struct sig_helper<Result(Args...)> {
+        using result_of_t = Result;
+    };
+
+    template <typename Signature>
+    using result_of_t = typename sig_helper<Signature>::result_of_t;
+
+  }
+  }
+
+  // ========================================================================
+
+  /** @class Constant
+   *  The helper concrete implementation of the simplest
+   *  function ("constant")
+   *  @see LoKi::Functor
+   *  @author Vanya Belyaev Ivan.Belyaev@itep.ru
+   *  @date   2002-07-15
+   */
+  template <class TYPE,class TYPE2>
+  class Constant final : public LoKi::Functor<TYPE,TYPE2>
+  {
+  public:
+    // ========================================================================
+    /// argument type
+    typedef typename boost::call_traits<TYPE2>::param_type T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /// constructor
+    Constant ( T2 value )
+      : LoKi::AuxFunBase ( std::tie(value) )
+      , m_value ( std::move(value) )
+    {}
+    // ========================================================================
+  public:
+    // ========================================================================
+    /// assignment
+    template <typename Arg, LOKI_REQUIRES(std::is_assignable<TYPE2,Arg>::value)>
+    Constant& operator=( const Arg& arg )
+    { m_value = arg; return *this ; }
+    Constant& operator=( TYPE2&& arg )
+    { m_value = std::move(arg); return *this ; }
+    /// clone method (mandatory)
+    Constant* clone() const override { return new Constant( *this ) ; }
+    /// the only one essential method ("function")
+    TYPE2 operator()
+      ( typename LoKi::Functor<TYPE,TYPE2>::argument ) const override { return m_value ; }
+    /// the basic printout method
+    std::ostream& fillStream( std::ostream& s ) const override
+    { return  Gaudi::Utils::toStream ( this->m_value , s ) ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// the constant itself
+    TYPE2 m_value ;                                      // the constant itself
+    // ========================================================================
+  } ;
+  // ==========================================================================
+  /// specialization for "void"
+  template <class TYPE2>
+  class Constant<void,TYPE2> final : public LoKi::Functor<void,TYPE2>
+  {
+  public:
+    // ========================================================================
+    /// argument type
+    typedef typename boost::call_traits<TYPE2>::param_type T2 ;
+    // ========================================================================
+  public:
+    // ========================================================================
+    /// constructor
+    Constant ( T2 value )
+      : LoKi::AuxFunBase ( std::tie( value ) )
+      , m_value ( std::move(value) )
+    {}
+    // ========================================================================
+  public:
+    // ========================================================================
+    /// assignement
+    template <typename Arg, LOKI_REQUIRES(std::is_assignable<TYPE2,Arg>::value)>
+    Constant& operator=( const Arg& arg )
+    { m_value = arg; return *this ; }
+    Constant& operator=( TYPE2&& arg )
+    { m_value = std::move(arg); return *this ; }
+    /// clone method (mandatory)
+    Constant* clone() const override { return new Constant( *this ) ; }
+    /// the only one essential method ("function")
+    TYPE2 operator()() const override
+    { return m_value ; }
+    /// the basic printout method
+    std::ostream& fillStream( std::ostream& s ) const override
+    { return Gaudi::Utils::toStream ( this->m_value , s ) ; }
+    // ========================================================================
+  private:
+    // ========================================================================
+    /// the constant itself
+    TYPE2 m_value ;                                      // the constant itself
+    // ========================================================================
+  } ;
+
+  namespace V2 {
+  namespace details {
+    template <typename Signature>  struct functor_helper;
+
+    template <typename Result, typename Arg> struct functor_helper<Result(Arg)> {
+        using Functor = LoKi::Functor<Arg,Result>;
+        using FunctorFromFunctor = LoKi::FunctorFromFunctor<Arg,Result>;
+        using Constant = LoKi::Constant<Arg,Result>;
+    };
+    template <typename Result> struct functor_helper<Result()> {
+        using Functor = LoKi::Functor<void,Result>;
+        using FunctorFromFunctor = LoKi::FunctorFromFunctor<void,Result>;
+        using Constant = LoKi::Constant<void,Result>;
+    };
+  }
+  template <typename Signature>
+  using Functor = typename details::functor_helper<Signature>::Functor;
+
+  template <typename Signature>
+  using FunctorFromFunctor = typename details::functor_helper<Signature>::FunctorFromFunctor;
+
+  template <typename Signature>
+  using Constant = typename details::functor_helper<Signature>::Constant;
   }
 
   // ==========================================================================

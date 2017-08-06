@@ -50,58 +50,8 @@
  *
  */
 // ============================================================================
-namespace LoKi
-{
-  namespace details {
-
-      template <typename Arg>
-      using Param_t = typename boost::call_traits<std::add_const_t<Arg>>::param_type;
-
-      template <typename Arg, typename Res> struct sig_helper {
-          using type = Res(Arg);
-      };
-      template <typename Res> struct sig_helper<void,Res> {
-          using type = Res();
-      };
-      template <typename Arg, typename Res>
-      using sig_t = typename sig_helper<Arg,Res>::type;
-  }
-
+namespace LoKi {
   namespace V2 {
-  namespace details {
-    using LoKi::details::Param_t;
-
-    template <typename Signature>  struct functor_helper;
-
-    template <typename Result, typename Arg> struct functor_helper<Result(Arg)> {
-        using Functor = LoKi::Functor<Arg,Result>;
-        using FunctorFromFunctor = LoKi::FunctorFromFunctor<Arg,Result>;
-        using Constant = LoKi::Constant<Arg,Result>;
-    };
-    template <typename Result> struct functor_helper<Result()> {
-        using Functor = LoKi::Functor<void,Result>;
-        using FunctorFromFunctor = LoKi::FunctorFromFunctor<void,Result>;
-        using Constant = LoKi::Constant<void,Result>;
-    };
-
-    template <typename Signature> struct sig_helper;
-    template <typename Result, typename... Args> struct sig_helper<Result(Args...)> {
-        using result_of_t = Result;
-    };
-
-    template <typename Signature>
-    using result_of_t = typename sig_helper<Signature>::result_of_t;
-
-  }
-
-  template <typename Signature>
-  using Functor = typename details::functor_helper<Signature>::Functor;
-
-  template <typename Signature>
-  using FunctorFromFunctor = typename details::functor_helper<Signature>::FunctorFromFunctor;
-
-  template <typename Signature>
-  using Constant = typename details::functor_helper<Signature>::Constant;
 
     // ==========================================================================
     /** @class Functors
@@ -789,7 +739,7 @@ namespace LoKi
    *  @date 2005-02-11
    */
 
-  template <typename SigIn> class SimpleSwitch;
+  template <typename Signature> class SimpleSwitch;
 
   template <typename... TYPE, typename TYPE2>
   class SimpleSwitch<TYPE2(TYPE...)> final : public Functor<TYPE2(TYPE...)>
@@ -1175,7 +1125,7 @@ namespace LoKi
     /// MANDATORY: clone method ("virtual constructor")
     Valid* clone() const override { return new Valid( *this ) ; }
     /// MANDATORY: the only one essential method
-    bool operator() ( details::Param_t<TYPE> a ) const override
+    bool operator() ( V2::details::Param_t<TYPE> a ) const override
     { return LoKi::valid ( a ); }
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override
@@ -1202,7 +1152,7 @@ namespace LoKi
     /// MANDATORY: clone method ("virtual constructor")
     TheSame* clone() const override { return new TheSame( *this ) ; }
     /// MANDATORY: the only one essential method
-    bool operator() ( details::Param_t<TYPE> arg ) const override
+    bool operator() ( V2::details::Param_t<TYPE> arg ) const override
     { return LoKi::same ( m_value , arg ) ; }
     /// the basic printout method
     std::ostream& fillStream( std::ostream& s ) const override
@@ -1559,13 +1509,13 @@ namespace LoKi
    *  @date 2006-04-07
    */
   template <typename TYPE,typename TYPE2=TYPE>
-  struct Identity final : LoKi::V2::Functor<TYPE2(TYPE)>
+  struct Identity final : V2::Functor<TYPE2(TYPE)>
   {
     // ========================================================================
     /// MANDATORY: clone method ("virtual constructor")
     Identity* clone () const override { return new Identity(*this) ; }
     /// MANDATORY": the only one essential method
-    TYPE2 operator () ( details::Param_t<TYPE> a ) const override { return a; }
+    TYPE2 operator () ( V2::details::Param_t<TYPE> a ) const override { return a; }
     /// OPTIONAL: the nice printout
     std::ostream& fillStream ( std::ostream& s ) const override;
     // ========================================================================
@@ -1577,13 +1527,13 @@ namespace LoKi
    *  @date 2006-04-07
    */
   template <typename TYPE>
-  struct PrintOut final : LoKi::Functor<TYPE,std::string>
+  struct PrintOut final : V2::Functor<std::string(TYPE)>
   {
     // ========================================================================
     /// MANDATORY: clone method ("virtual constructor")
     PrintOut* clone () const override { return new PrintOut ( *this ) ; }
     /// MANDATORY": the only one essential method
-    std::string operator () ( details::Param_t<TYPE> a ) const override
+    std::string operator () ( V2::details::Param_t<TYPE> a ) const override
     { return Gaudi::Utils::toString ( a ) ; }
     // ========================================================================
   };
@@ -1595,7 +1545,7 @@ namespace LoKi
    *  @date 2009-11-21
    */
   namespace V2 {
-  template <typename SigIn> class InRange;
+  template <typename Signature> class InRange;
 
   template <typename... TYPE>
   class InRange< double(TYPE...) > final : public Functor<bool(TYPE...)>
@@ -1652,7 +1602,7 @@ namespace LoKi
    *  @date 2009-11-21
    */
 
-  template <typename SigIn> class InRange2;
+  template <typename Signature> class InRange2;
 
   template <typename... TYPE>
   class InRange2< double(TYPE...) > final : public Functor<bool(TYPE...)>
@@ -2243,38 +2193,52 @@ namespace LoKi
   // ==========================================================================
   // Temporarily for backwards compatibility / adiabatic transition ...
   // ==========================================================================
+  namespace details {
+  template <template <typename> class F, typename... Ts> struct import_helper;
+  template <template <typename> class F, typename... Arg, typename Res > struct import_helper<F,Res(Arg...)>  { using type = F<Res(Arg...)>; };
+  template <template <typename> class F, typename... Arg, typename Res, typename Default> struct import_helper<F,Res(Arg...),Default>  { using type = F<Res(Arg...)>; };
+  template <template <typename> class F, typename T1, typename T2, typename Default> struct import_helper<F,T1,T2,Default> { using type = F<sig_t<T1,T2>>; };
+  template <template <typename> class F, typename T1, typename T2> struct import_helper<F,T1,T2> { using type = F<sig_t<T1,T2>>; };
+
+
+  template <template <typename> class F, typename... Ts>
+  using import_t = typename import_helper<F,Ts...>::type;
+  }
+
+
   template <typename T, typename T2=double> using SimpleSwitch = V2::SimpleSwitch<details::sig_t<T,T2>>;
   template <typename T, typename T2=double> using Switch = V2::Switch<details::sig_t<T,T2>>;
-  template <typename T, typename T2=double> using ComposeFunction = V2::ComposeFunction<details::sig_t<T,T2>>;
-  template <typename T, typename T2=double> using ComposeFunction2 = V2::ComposeFunction2<details::sig_t<T,T2>>;
+  using V2::ComposeFunction;
+  using V2::ComposeFunction2;
 
-  template<typename T, typename T2=bool>   using Not = V2::Not<details::sig_t<T,T2>>;
-  template<typename T, typename T2=double> using Negate = V2::Negate<details::sig_t<T,T2>>;
-  template<typename T, typename T2=bool>   using And = V2::And<details::sig_t<T,T2>>;
-  template<typename T, typename T2=bool>   using Or = V2::Or<details::sig_t<T,T2>>;
-  template<typename T, typename T2=double> using Less = V2::Less<details::sig_t<T,T2>>;
-  template<typename T, typename T2=double> using Equal = V2::Equal<details::sig_t<T,T2>>;
-  template<typename T, typename T2=double> using LessOrEqual = V2::LessOrEqual<details::sig_t<T,T2>>;
-  template<typename T, typename T2=double> using NotEqual = V2::NotEqual<details::sig_t<T,T2>>;
-  template<typename T, typename T2=double> using Plus =  V2::Plus<details::sig_t<T,T2>>;
-  template<typename T, typename T2=double> using Minus =  V2::Minus<details::sig_t<T,T2>>;
-  template<typename T, typename T2=double> using Divide =  V2::Divide<details::sig_t<T,T2>>;
-  template<typename T, typename T2=double> using Multiply =  V2::Multiply<details::sig_t<T,T2>>;
-  template<typename T, typename T2=double> using Min =  V2::Min<details::sig_t<T,T2>>;
-  template<typename T, typename T2=double> using Max =  V2::Max<details::sig_t<T,T2>>;
+  using V2::Not;
+  using V2::Negate;
+  using V2::And;
+  using V2::Or;
+  template <typename ... Ts> using Less = details::import_t<V2::Less,Ts...>;
+  using V2::Equal;
+  using V2::LessOrEqual;
+  using V2::NotEqual;
+  using V2::Plus;
+  using V2::Minus;
+  using V2::Divide;
+  using V2::Multiply;
+  template <typename ... Ts> using Min =  details::import_t<V2::Min,Ts..., double>;
+  template <typename ... Ts> using Max =  details::import_t<V2::Max,Ts..., double>;
 
-  template<typename T,typename T2 = double> using EqualToValue = V2::EqualToValue<details::sig_t<T,T2>>;
-  template<typename T,typename T2 = double> using NotEqualToValue = V2::NotEqualToValue<details::sig_t<T,T2>>;
-  template<typename T,typename T2 = double> using LessThanValue = V2::LessThanValue<details::sig_t<T,T2>>;
-  template<typename T,typename T2 = double> using LessOrEqualValue = V2::LessOrEqualValue<details::sig_t<T,T2>>;
-  template<typename T,typename T2 = double> using GreaterThanValue = V2::GreaterThanValue<details::sig_t<T,T2>>;
-  template<typename T,typename T2> using GreaterOrEqualValue = V2::GreaterOrEqualValue<details::sig_t<T,T2>>;
-  template<typename T,typename T2> using MultiplyByValue = V2::MultiplyByValue<details::sig_t<T,T2>>;
-  template<typename T,typename T2> using SumByValue = V2::SumByValue<details::sig_t<T,T2>>;
-  template<typename T,typename T2> using Minus1 = V2::Minus1<details::sig_t<T,T2>>;
-  template<typename T,typename T2> using Minus2 = V2::Minus2<details::sig_t<T,T2>>;
-  template<typename T,typename T2> using Divide1 = V2::Divide1<details::sig_t<T,T2>>;
-  template<typename T,typename T2> using Divide2 = V2::Divide2<details::sig_t<T,T2>>;
+  template <typename ... Ts> using EqualToValue = details::import_t<V2::EqualToValue,Ts...,double>;
+  template <typename ... Ts> using NotEqualToValue = details::import_t<V2::NotEqualToValue,Ts...>;
+
+  template <typename ... Ts> using LessThanValue = details::import_t<V2::LessThanValue,Ts...>;
+  template <typename ... Ts> using LessOrEqualValue = details::import_t<V2::LessOrEqualValue,Ts...>;
+  template <typename ... Ts> using GreaterThanValue = details::import_t<V2::GreaterThanValue,Ts...>;
+  using V2::GreaterOrEqualValue;
+  using V2::MultiplyByValue;
+  using V2::SumByValue;
+  using V2::Minus1;
+  using V2::Minus2;
+  using V2::Divide1;
+  using V2::Divide2;
 
   template <typename T> using InRange = V2::InRange<details::sig_t<T,double>>;
   template <typename T> using InRange2 = V2::InRange2<details::sig_t<T,double>>;
@@ -2282,7 +2246,7 @@ namespace LoKi
   template <typename T> using NotEqualToList = V2::NotEqualToList<details::sig_t<T,double>>;
   template <typename T> using XScaler = V2::XScaler<details::sig_t<T,bool>>;
   template <typename T> using Modulo = V2::Modulo<details::sig_t<T,double>>;
-  template <typename T> using Round = V2::Round<T>;
+  using V2::Round;
   template <typename T> using JBit = V2::JBit<details::sig_t<T,bool>>;
   template <typename T> using JBits = V2::JBits<details::sig_t<T,double>>;
   template <typename T> using JDigit = V2::JDigit<details::sig_t<T,double>>;
