@@ -13,14 +13,14 @@ browser.
 import os, random, sys, re, time, datetime
 from multiprocessing.managers import BaseManager
 from multiprocessing import Process, cpu_count
+from PyCool import cool
 
 LOG_FORMAT = "%(levelname)s: (%(name)s) %(message)s"
-
 _coolApp = None
+
 def coolApp():
     global _coolApp
     if _coolApp is None:
-        from PyCool import cool
         # Initialize COOL Application
         _coolApp = cool.Application()
 
@@ -358,7 +358,7 @@ class CondDB(object):
            (i.e. if the node is a multi version folder OR if it is a folderset or does not
            exist).
         '''
-        from PyCool import cool
+
         assert self.db != None, "Database not connected !"
         if self.existsFolder(path):
             folder = self.db.getFolder(path)
@@ -376,7 +376,7 @@ class CondDB(object):
            (i.e. if the node is a single version folder OR if it is a folderset or does not
            exist).
         '''
-        from PyCool import cool
+
         assert self.db != None, "Database not connected !"
         if self.existsFolder(path):
             folder = self.db.getFolder(path)
@@ -422,7 +422,7 @@ class CondDB(object):
     @staticmethod
     def payload(o):
         import CondDBCompression
-        from PyCool import cool
+
         _payl = o.payload()
 #        if (payl and 'data' in payl.keys()):
         if (_payl):
@@ -455,7 +455,7 @@ class CondDB(object):
         _log = logging.getLogger( "CondDBUI.CondDB.payloadToHash" )
         _log.setLevel( logging.INFO )
 
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
         if self.existsFolder(path):
             folder = self.db.getFolder(path)
@@ -523,7 +523,7 @@ class CondDB(object):
             The first two integers are the since and until values of the interval of validity. The
             third integer is the channel ID, and the last integer is the insertion time.
         '''
-        from PyCool import cool
+
         from .Helpers import Helpers
 
         assert self.db != None, "No database connected !"
@@ -706,7 +706,7 @@ class CondDB(object):
         _log = logging.getLogger( "CondDBUI.CondDB.payloadToHash" )
         _log.setLevel( logging.INFO )
 
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
 
         if tag == 'ALL':
@@ -891,7 +891,6 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
         from .Helpers import Helpers
 
         assert self.db != None, "No database connected !"
@@ -973,7 +972,7 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         if self.existsFolder(path):
@@ -1004,7 +1003,7 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         if reserved != None:
@@ -1067,7 +1066,7 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         # Check if the ancestor tag really exists.
@@ -1467,7 +1466,7 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         if storageType == 'NODE':
@@ -1539,7 +1538,7 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         if self.existsFolder(path):
@@ -1669,7 +1668,7 @@ class ValidityKeyWrapper:
         return self.__long__()
 
     def __long__(self):
-        from PyCool import cool
+
         try:
             ns = int(time.mktime(self.value.timetuple())*1e9) + self.ns
             if ns < cool.ValidityKeyMin:
@@ -1684,7 +1683,7 @@ class ValidityKeyWrapper:
                 raise
 
     def __str__(self):
-        from PyCool import cool
+
         if self.toValidityKey() == cool.ValidityKeyMax:
             return '+inf'
         s = str(self.value)
@@ -1910,7 +1909,6 @@ def copy( sourceDb, targetDb,
     Was needed because PyCoolCopy did not support LFCReplicaSvc.
     """
     # set defaults
-    from PyCool import cool
     if since is None:
         since = cool.ValidityKeyMin
     if until is None:
@@ -1956,7 +1954,6 @@ def merge( sourceDB, targetDB,
     _log.setLevel( logging.INFO )
 
     # set defaults
-    from PyCool import cool
     if since is None:
         since = cool.ValidityKeyMin
     if until is None:
