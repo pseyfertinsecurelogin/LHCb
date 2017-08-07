@@ -680,7 +680,7 @@ class CondDB(object):
         '''
 
         import hashlib
-        return payloadToHash(hashlib.md5(), path, tag)
+        return self.payloadToHash(hashlib.md5(), path, tag)
 
     def payloadToHash(self, initialHashSum = None, path = '/', tag = ''):
         '''
