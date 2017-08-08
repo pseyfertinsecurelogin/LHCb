@@ -254,7 +254,7 @@ bool unpack(T& t, cdb_record data) {
     }
     s.push( value );
     s >> t;
-    assert( value.tellg() == data.datalen );
+    assert( value.tellg() == static_cast<unsigned>(data.datalen) );
     return true;
 }
 
