@@ -102,7 +102,7 @@ class icdb {
     std::string m_name;
 public:
     icdb( std::string fname ) : m_name(std::move(fname)) {
-        auto fd = open( m_name.c_str(), O_RDONLY );
+        auto fd = ::open( m_name.c_str(), O_RDONLY );
         if (fd < 0 || cdb_init( &m_db, fd ) < 0) cdb_fileno(&m_db)=-1;
     }
     icdb(const icdb&) = delete;
@@ -117,7 +117,7 @@ public:
         }
     }
 
-    operator bool() const { return cdb_fileno(&m_db)>=0; }
+    explicit operator bool() const { return cdb_fileno(&m_db)>=0; }
 
     const std::string& name() const { return m_name; }
 
@@ -126,26 +126,22 @@ public:
         unsigned m_cpos = 0;
         bool atEnd() const { return !m_db; }
     public:
-        iterator(struct cdb *parent = nullptr, unsigned cpos = 0) : m_db{parent}, m_cpos(cpos) {
-            if ( m_db && !m_cpos ) {
-                cdb_seqinit(&m_cpos, m_db);
-                ++*this;
-            }
+        iterator(struct cdb *parent, unsigned cpos ) : m_db{parent}, m_cpos(cpos) {}
+        iterator(struct cdb *parent = nullptr) : m_db{parent} {
+            if ( m_db ) cdb_seqinit(&m_cpos, m_db);
+            ++*this;
         }
         iterator& operator++() {
-            if ( m_db &&  cdb_seqnext(&m_cpos, m_db) <= 0 ) m_db = nullptr ;
+            if ( m_db && cdb_seqnext(&m_cpos, m_db) <= 0 ) m_db = nullptr ;
             return *this;
         }
-        friend bool operator==(const iterator& lhs, const iterator& rhs) {
-            return ( lhs.atEnd() && rhs.atEnd() ) ||
-                   ( !lhs.atEnd() && !rhs.atEnd() && lhs.m_cpos == rhs.m_cpos );
-        }
         friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs==rhs);
+            return   lhs.atEnd() != rhs.atEnd()
+                || ( lhs.m_cpos != rhs.m_cpos && ( !lhs.atEnd() || !rhs.atEnd() ) );
         }
         cdb_record operator*() const { // Not quite canonical -- ideally should be value_type&...
             return { cdb_getkey(m_db), cdb_getdata(m_db),
-                     cdb_keylen(m_db), cdb_datalen(m_db) } ;
+                     cdb_keylen(m_db), cdb_datalen(m_db) };
         }
     };
 
@@ -180,8 +176,8 @@ public:
             cdb_fileno(&m_db) = -1;
             throw std::runtime_error( "Failed to create " + m_name + " exclusive, write-only: " + strerror(errno) );
         }
-        if ( cdb_make_start( &m_db, fd ) != 0) {
-            close(fd);
+        if ( cdb_make_start( &m_db, fd ) != 0 ) {
+            ::close(fd);
             cdb_fileno(&m_db)=-1;
             fs::remove( m_name );
             throw std::runtime_error( "Failed to initialize CDB file " + m_name + " for writing" );
@@ -191,7 +187,7 @@ public:
     ocdb& operator=( const ocdb& ) = delete;
     ocdb( ocdb&& ) = delete;
     ocdb& operator=( ocdb&& ) = delete;
-    ~ocdb() { if (*this) { cdb_make_free(&m_db); close(cdb_fileno(&m_db)); fs::remove(m_name); } }
+    ~ocdb() { if (*this) { cdb_make_free(&m_db); ::close(cdb_fileno(&m_db)); fs::remove(m_name); } }
 
     const std::string& name() const { return m_name; }
 
@@ -207,16 +203,16 @@ public:
          }
     }
 
-    bool flush() {
+    bool close() {
         if (!*this) return false;
         bool ok =  (cdb_make_finish(&m_db) == 0) && !m_error;
-        close(cdb_fileno(&m_db));
+        ::close(cdb_fileno(&m_db));
         cdb_fileno(&m_db)=-1;
         if (!ok) fs::remove(m_name);
         return ok;
     }
 
-    operator bool() const { return cdb_fileno(&m_db)>=0; }
+    explicit operator bool() const { return cdb_fileno(&m_db)>=0; }
 };
 
 template <typename T>
@@ -295,22 +291,27 @@ std::vector<unsigned char> make_cdb_record( std::string str, uid_t uid, std::tim
     return buffer;
 }
 
-class CloseListener : public implements<IIncidentListener> {
+template <typename Action>
+class Listener : public implements<IIncidentListener> {
 public:
-   CloseListener(std::string incident, std::unique_ptr<ConfigCDBAccessSvc_details::CDB> &file)
-      : m_incident{std::move(incident)}, m_file(file)
+   template <typename F>
+   Listener(std::string incident, F&& f)
+      : m_incident{std::move(incident)}, m_f{std::forward<F>(f)}
    { addRef(); }// Initial count set to 1
 
-   /// Inform that a new incident has occurred
    void handle(const Incident& i) override
-   { if (i.type() == m_incident) m_file.reset(); }
+   { if (i.type() == m_incident) m_f(); }
 
 private:
    /// incident to handle
    const std::string m_incident;
-   /// file to reset (close)
-   std::unique_ptr<ConfigCDBAccessSvc_details::CDB> &m_file;
+   /// action to perform on incident
+   Action m_f;
 };
+
+template <typename Fun>
+auto make_unique_listener(std::string incident, Fun&& fun)
+{ return std::make_unique<Listener<Fun>>(std::move(incident), std::forward<Fun>(fun)); }
 
 }
 
@@ -335,7 +336,7 @@ class CDB
         }
     }
     ~CDB() {
-        if ( m_ocdb && m_ocdb->flush() ) {
+        if ( m_ocdb && m_ocdb->close() ) {
            fs::rename( m_ocdb->name(), m_icdb.name() );
         }
     }
@@ -447,7 +448,7 @@ StatusCode ConfigCDBAccessSvc::initialize()
     // closed when it it fired. In that case, we should be handled first/always,
     // so give maximum priority.
     if (status.isSuccess() && !m_incident.empty()) {
-       m_initListener= std::make_unique<CloseListener>(m_incident, m_file);
+       m_initListener = make_unique_listener( m_incident, [=](){ this->m_file.reset(); } );
        auto incSvc = service<IIncidentSvc>("IncidentSvc");
        incSvc->addListener(m_initListener.get(), m_incident, std::numeric_limits<long>::max());
     }
@@ -502,6 +503,12 @@ StatusCode ConfigCDBAccessSvc::stop()
 //=============================================================================
 StatusCode ConfigCDBAccessSvc::finalize()
 {
+    if (m_initListener) {
+       auto incSvc = service<IIncidentSvc>("IncidentSvc");
+       if (incSvc) {
+          incSvc->removeListener(m_initListener.get(), m_incident);
+       }
+    }
     m_file.reset( ); // close file if still open
     return Service::finalize();
 }
