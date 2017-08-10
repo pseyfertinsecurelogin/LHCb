@@ -158,8 +158,6 @@ class CondDB(object):
         outputs:
             none
         '''
-        if not os.path.isdir(connectionString):
-            os.makedirs(connectionString)
         check_output(['git', 'init', connectionString])
         self.connectionString = connectionString
         self._path = self.connectionString
