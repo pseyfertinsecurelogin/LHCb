@@ -266,9 +266,9 @@ public:
   const std::vector<Tell1Param>& tell1Params(){return m_tell1Boards;}
   // PIN flag
   bool isParasiticCard (const int card) { return (card < nCards()) ? m_feCards[card].isParasitic() : false; };
-  bool isPmtCard (const int card) { return (card < nCards()) ? m_feCards[card].isPmtCard() : -1; };
-  bool isPinCard (const int card) { return (card < nCards()) ? m_feCards[card].isPinCard() : -1; };
-  bool isPinTell1(const int tell1) { return (tell1<nTell1s())? m_tell1Boards[tell1].readPin():-1; };
+  bool isPmtCard (const int card) { return (card < nCards()) ? m_feCards[card].isPmtCard() : false; };
+  bool isPinCard (const int card) { return (card < nCards()) ? m_feCards[card].isPinCard() : false; };
+  bool isPinTell1(const int tell1) { return (tell1<nTell1s())? m_tell1Boards[tell1].readPin():false; };
   bool isPinId(LHCb::CaloCellID id){ return ((unsigned)m_pinArea == id.area()) ? true : false; }
   // pileUp subtraction parameters
   int pileUpSubstractionMethod(){return m_puMeth;}

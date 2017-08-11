@@ -5,7 +5,7 @@
 
 
 ! 2017-08-11 - O. Deschamps
-  - DeCalorimeter.h : fix boolean return for isParasitic() method
+  - DeCalorimeter.h : fix boolean return for isParasitic() method (and others)
 
 
 ! 2016-09-05 - O. Deschamps
