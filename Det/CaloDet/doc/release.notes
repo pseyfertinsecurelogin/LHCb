@@ -4,6 +4,10 @@
 ! ====================================================================
 
 
+! 2017-08-11 - O. Deschamps
+  - DeCalorimeter.h : fix boolean return for isParasitic() method (and others)
+
+
 ! 2016-09-05 - O. Deschamps
   - DeCalorimeter.h :  new method cellADC(energy,cellID) to convert energy to ADC [-256,3839] & isSaturated(energy,cellID)
 
