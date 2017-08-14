@@ -13,14 +13,14 @@ browser.
 import os, random, sys, re, time, datetime
 from multiprocessing.managers import BaseManager
 from multiprocessing import Process, cpu_count
+from PyCool import cool
 
 LOG_FORMAT = "%(levelname)s: (%(name)s) %(message)s"
-
 _coolApp = None
+
 def coolApp():
     global _coolApp
     if _coolApp is None:
-        from PyCool import cool
         # Initialize COOL Application
         _coolApp = cool.Application()
 
@@ -29,6 +29,16 @@ def coolApp():
         _coolApp.connectionSvc().configuration().setConnectionTimeOut(0)
     return _coolApp
 
+
+def openDB(connectionString, **kwargs):
+    '''
+    Factory to create transparently a COOL or Git CondDB accessor.
+    '''
+    if os.path.isdir(connectionString):
+        from CondDBUI import GitBridge
+        return GitBridge.CondDB(connectionString, **kwargs)
+    else:
+        return CondDB(connectionString, **kwargs)
 
 #########################################################################################
 #                                    Tag Class                                          #
@@ -348,9 +358,9 @@ class CondDB(object):
            (i.e. if the node is a multi version folder OR if it is a folderset or does not
            exist).
         '''
-        from PyCool import cool
+
         assert self.db != None, "Database not connected !"
-        if self.db.existsFolder(path):
+        if self.existsFolder(path):
             folder = self.db.getFolder(path)
             return folder.versioningMode() == cool.FolderVersioning.SINGLE_VERSION
         else:
@@ -366,9 +376,9 @@ class CondDB(object):
            (i.e. if the node is a single version folder OR if it is a folderset or does not
            exist).
         '''
-        from PyCool import cool
+
         assert self.db != None, "Database not connected !"
-        if self.db.existsFolder(path):
+        if self.existsFolder(path):
             folder = self.db.getFolder(path)
             return folder.versioningMode() == cool.FolderVersioning.MULTI_VERSION
         else:
@@ -393,7 +403,7 @@ class CondDB(object):
             list of strings; the list of storage keys.
         '''
         assert self.db != None, "No database connected !"
-        assert self.db.existsFolder(path), "Folder %s not found"%path
+        assert self.existsFolder(path), "Folder %s not found"%path
         folder = self.db.getFolder(path)
         return folder.payloadSpecification().keys()
 
@@ -412,7 +422,7 @@ class CondDB(object):
     @staticmethod
     def payload(o):
         import CondDBCompression
-        from PyCool import cool
+
         _payl = o.payload()
 #        if (payl and 'data' in payl.keys()):
         if (_payl):
@@ -445,9 +455,9 @@ class CondDB(object):
         _log = logging.getLogger( "CondDBUI.CondDB.payloadToHash" )
         _log.setLevel( logging.INFO )
 
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
-        if self.db.existsFolder(path):
+        if self.existsFolder(path):
             folder = self.db.getFolder(path)
             try:
                 if folder.versioningMode() == cool.FolderVersioning.MULTI_VERSION:
@@ -513,7 +523,7 @@ class CondDB(object):
             The first two integers are the since and until values of the interval of validity. The
             third integer is the channel ID, and the last integer is the insertion time.
         '''
-        from PyCool import cool
+
         from .Helpers import Helpers
 
         assert self.db != None, "No database connected !"
@@ -523,7 +533,7 @@ class CondDB(object):
             channelSelection = cool.ChannelSelection()
 
         objList = []
-        if self.db.existsFolder(path):
+        if self.existsFolder(path):
             folder = self.db.getFolder(path)
             try:
                 if folder.versioningMode() == cool.FolderVersioning.MULTI_VERSION:
@@ -592,7 +602,7 @@ class CondDB(object):
             list of strings; the paths of the child nodes.
         '''
         assert self.db != None, "No database connected !"
-        if self.db.existsFolderSet(path):
+        if self.existsFolderSet(path):
             folderSet = self.db.getFolderSet(path)
             nodeList = list(folderSet.listFolders()) + list(folderSet.listFolderSets())
             nodeList.sort()
@@ -611,7 +621,7 @@ class CondDB(object):
             given node.
         '''
         assert self.db != None, "No database connected !"
-        if self.db.existsFolderSet(path):
+        if self.existsFolderSet(path):
             folderSet = self.db.getFolderSet(path)
             # Get the lists of folders and foldersets
             folderList    = list(folderSet.listFolders())
@@ -645,9 +655,9 @@ class CondDB(object):
         This functions checks if the node is a folderset or a folder
         before getting it.
         """
-        if self.db.existsFolderSet(node):
+        if self.existsFolderSet(node):
             return self.db.getFolderSet(node)
-        elif self.db.existsFolder(node):
+        elif self.existsFolder(node):
             return self.db.getFolder(node)
         else:
             return None
@@ -670,7 +680,7 @@ class CondDB(object):
         '''
 
         import hashlib
-        return payloadToHash(hashlib.md5(), path, tag)
+        return self.payloadToHash(hashlib.md5(), path, tag)
 
     def payloadToHash(self, initialHashSum = None, path = '/', tag = ''):
         '''
@@ -696,7 +706,7 @@ class CondDB(object):
         _log = logging.getLogger( "CondDBUI.CondDB.payloadToHash" )
         _log.setLevel( logging.INFO )
 
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
 
         if tag == 'ALL':
@@ -706,7 +716,7 @@ class CondDB(object):
 
         # retrieve the list of nodes to check
         _log.info("Building nodes list to hash ...")
-        if self.db.existsFolderSet(path):
+        if self.existsFolderSet(path):
             nodes = self.getAllChildNodes(path)
             nodesToCheck = [n for n in nodes if self.resolveTag(n,tag)]
         else:
@@ -722,7 +732,7 @@ class CondDB(object):
         for nodeName in nodesToCheck:
             # The check is done only on payload, i.e. we use only the folders,
             # not the foldersets.
-            if self.db.existsFolder(nodeName):
+            if self.existsFolder(nodeName):
                 _log.debug("\t" + nodeName)
                 folder = self.db.getFolder(nodeName)
                 payload = cool.Record(folder.payloadSpecification())
@@ -767,7 +777,7 @@ class CondDB(object):
                      They contains links to their parent Tag objects.
         '''
         assert self.db != None, "No database connected !"
-        if not self.db.existsFolderSet(path) and not self.db.existsFolder(path):
+        if not self.existsFolderSet(path) and not self.existsFolder(path):
             raise Exception, "Node %s was not found"%path
         else:
             tagList = []
@@ -881,17 +891,16 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
         from .Helpers import Helpers
 
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         if type(path) is str:
-            if self.db.existsFolder(path):
+            if self.existsFolder(path):
                 node = self.db.getFolder(path)
                 if node.versioningMode() == cool.FolderVersioning.SINGLE_VERSION:
                     raise Exception, "Folder %s is Single Version"%path
-            elif self.db.existsFolderSet(path):
+            elif self.existsFolderSet(path):
                 node = self.db.getFolderSet(path)
             else:
                 raise Exception, "Node %s was not found"%path
@@ -915,9 +924,9 @@ class CondDB(object):
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         if type(path) is str:
-            if self.db.existsFolder(path):
+            if self.existsFolder(path):
                 node = self.db.getFolder(path)
-            elif self.db.existsFolderSet(path):
+            elif self.existsFolderSet(path):
                 node = self.db.getFolderSet(path)
             else:
                 raise Exception, "Node %s was not found"%path
@@ -963,10 +972,10 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
-        if self.db.existsFolder(path):
+        if self.existsFolder(path):
             folder = self.db.getFolder(path)
         else:
             raise cool.FolderNotFound
@@ -994,7 +1003,7 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         if reserved != None:
@@ -1004,7 +1013,7 @@ class CondDB(object):
         # store the requested tag in the reserved list.
         if tagName not in reservedTags:
             reservedTags.append(tagName)
-        if self.db.existsFolderSet(path):
+        if self.existsFolderSet(path):
             childNodes = self.getChildNodes(path)
             for nodeName in childNodes:
                 # generate a random tag
@@ -1013,7 +1022,7 @@ class CondDB(object):
                 else:
                     baseName = tagName
                 auto_tag = self.generateUniqueTagName(baseName, reservedTags)
-                if self.db.existsFolder(nodeName):
+                if self.existsFolder(nodeName):
                     # Apply the tag to the HEAD revision of the folder and link it
                     # to the parent tag.
                     folder = self.db.getFolder(nodeName)
@@ -1032,7 +1041,7 @@ class CondDB(object):
                         self.createTagRelation(folderSet,tagName, auto_tag)
                     except Exception, details:
                         raise Exception, details
-        elif self.db.existsFolder(path):
+        elif self.existsFolder(path):
             node = self.db.getFolder(path)
             if node.versioningMode() == cool.FolderVersioning.MULTI_VERSION:
                 node.tagCurrentHead(tagName, description)
@@ -1057,7 +1066,7 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         # Check if the ancestor tag really exists.
@@ -1099,7 +1108,7 @@ class CondDB(object):
             # it means that we have to delete the old relation and create a new one.
             # If the node is a folderset, it means that at least one of its child node
             # is related to the ancestor tag as well.
-            if self.db.existsFolder(path):
+            if self.existsFolder(path):
                 # get the parent tag related to the ancestor tag:
                 try:
                     sep = os.path.sep
@@ -1142,9 +1151,9 @@ class CondDB(object):
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         # Retrieve the node
-        if self.db.existsFolder(path):
+        if self.existsFolder(path):
             node = self.db.getFolder(path)
-        elif self.db.existsFolderSet(path):
+        elif self.existsFolderSet(path):
             node = self.db.getFolderSet(path)
         else:
             raise Exception, "Node %s was not found"%path
@@ -1162,7 +1171,7 @@ class CondDB(object):
         # its relations with parents and children. If it is a folder, deleting relations
         # with the parents is optional, but advisable (and the default behaviour of the
         # function).
-        if self.db.existsFolderSet(path):
+        if self.existsFolderSet(path):
             for childPath in self.getChildNodes(path):
                 if not self.isSingleVersionFolder(childPath):
                     self.deleteTagRelation(childPath, tagName)
@@ -1186,7 +1195,7 @@ class CondDB(object):
         """
         if tagName.upper() in ['','HEAD']:
             return True # HEAD tags are always valid
-        if self.db.existsFolderSet(path):
+        if self.existsFolderSet(path):
             # the path points to a folderset, I check the tag in all its subnodes
             nodes = self.getChildNodes(path)
             try:
@@ -1212,7 +1221,7 @@ class CondDB(object):
         """
         if self.readOnly:
             raise "Cannot write on a database opened in read-only mode"
-        if self.db.existsFolderSet(path):
+        if self.existsFolderSet(path):
             for n in [ self.getCOOLNode(p) for p in self.getChildNodes(path) if p not in exclude ]:
                 try:
                     local_tag = self.resolveTag(n,src_tag)
@@ -1221,7 +1230,7 @@ class CondDB(object):
                 except RuntimeError, x:
                     print "Warning: %s"%x
         else:
-            if self.db.existsFolder(path):
+            if self.existsFolder(path):
                 print "Warning: cloneTag not supported for folders"
             else:
                 raise "Node '%s' does not exist"%path
@@ -1403,7 +1412,7 @@ class CondDB(object):
                     # here we define the other constraints:
                     #   - it can be a folder (probably overkilling as a check)
                     #   - otherwise the tag must be defined in all the children
-                    if ( self.db.existsFolder(candidate) ) \
+                    if ( self.existsFolder(candidate) ) \
                        or ( self.isTagReady(tag,candidate) ):
                         l.remove(elem)
                         curr_split = curr_split[:i]
@@ -1457,7 +1466,7 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         if storageType == 'NODE':
@@ -1529,10 +1538,10 @@ class CondDB(object):
         outputs:
             none
         '''
-        from PyCool import cool
+
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
-        if self.db.existsFolder(path):
+        if self.existsFolder(path):
             folder = self.db.getFolder(path)
             # Create a payload object with the correct specifications
             payload = cool.Record(folder.payloadSpecification())
@@ -1589,7 +1598,7 @@ class CondDB(object):
         assert self.db != None, "No database connected !"
         assert not self.readOnly , "The database is in Read Only mode."
         # Deal first with the full tree deletion
-        if delete_subnodes and self.db.existsFolderSet(path):
+        if delete_subnodes and self.existsFolderSet(path):
             subnodeList = self.getAllChildNodes(path)
             # Reverse the tree order to start from the subelements
             subnodeList.reverse()
@@ -1603,6 +1612,16 @@ class CondDB(object):
             self.db.dropNode(path)
         except Exception, details:
             raise Exception, "Impossible to delete node %s: %s"%(path, details)
+
+    def existsFolder(self, path):
+        return self.db.existsFolder(path)
+
+    def existsFolderSet(self, path):
+        return self.db.existsFolderSet(path)
+
+    def getChannelsWithNames(self, path):
+        from .Helpers import Helpers
+        return Helpers.getChannelsWithNames(self.getCOOLNode(path))
 
 class ValidityKeyWrapper:
     format_re = '(?P<year>(?:19|2[01])[0-9]{2})-(?P<month>(?:0[0-9]|1[0-2]))-(?P<day>[0-3][0-9])[ T]'+ \
@@ -1649,7 +1668,7 @@ class ValidityKeyWrapper:
         return self.__long__()
 
     def __long__(self):
-        from PyCool import cool
+
         try:
             ns = int(time.mktime(self.value.timetuple())*1e9) + self.ns
             if ns < cool.ValidityKeyMin:
@@ -1664,7 +1683,7 @@ class ValidityKeyWrapper:
                 raise
 
     def __str__(self):
-        from PyCool import cool
+
         if self.toValidityKey() == cool.ValidityKeyMax:
             return '+inf'
         s = str(self.value)
@@ -1723,7 +1742,7 @@ def _collect_tree_info(source_dir, includes = [], excludes = [],
 
     """
     # add to the exclude list CVS and back-up files
-    exclude_dirs += [ x for x in ['CVS'] if x not in exclude_dirs ]
+    exclude_dirs += [ x for x in ['CVS', '.svn', '.git'] if x not in exclude_dirs ]
     excludes += [ x for x in ['.*~', r'.*\.bak'] if x not in excludes ]
     # convert to regular expression objects
     includes = [ re.compile(x) for x in includes]
@@ -1733,7 +1752,20 @@ def _collect_tree_info(source_dir, includes = [], excludes = [],
 
     name_format = re.compile("(?:([a-zA-Z0-9_.-]*)@)?([a-zA-Z0-9_.-]*)(?::([0-9]+))?$")
     nodes = {}
-    for root, dirs, files in os.walk(source_dir):
+
+    def walk(path):
+        from os.path import join, isfile
+        for root, dirs, files in os.walk(source_dir):
+            # if a directory contains the file IOVs...
+            promoted_dirs = set(d for d in dirs
+                                if isfile(join(root, d, 'IOVs')))
+            # ... we consider it as a "Folder" for COOL...
+            files.extend(promoted_dirs)
+            # ... and stop recursion
+            dirs[:] = list(set(dirs) - promoted_dirs)
+            yield root, dirs, files
+
+    for root, dirs, files in walk(source_dir):
         base_path = root.replace(source_dir,"")
         if base_path == '': base_path = '/'
 
@@ -1816,7 +1848,9 @@ def _fix_xml(xml_data,folderset_path):
             pos = m.start()
             s = m.start(1)+1
             e = m.end(1)-1
-            if not data[s:e].startswith("conddb:"):
+            if data[s:e].startswith("git:"):
+                data = data[0:s] + 'conddb:' + data[s+4:]
+            elif not data[s:e].startswith("conddb:"):
                 # replace the system id only if needed
                 p = os.path.join(path,data[s:e])
                 p = os.path.normpath(p)
@@ -1875,7 +1909,6 @@ def copy( sourceDb, targetDb,
     Was needed because PyCoolCopy did not support LFCReplicaSvc.
     """
     # set defaults
-    from PyCool import cool
     if since is None:
         since = cool.ValidityKeyMin
     if until is None:
@@ -1921,7 +1954,6 @@ def merge( sourceDB, targetDB,
     _log.setLevel( logging.INFO )
 
     # set defaults
-    from PyCool import cool
     if since is None:
         since = cool.ValidityKeyMin
     if until is None:
@@ -1988,4 +2020,3 @@ def merge( sourceDB, targetDB,
                 CondDB.storeObject(tgt_folder, obj.since(), obj.until(),
                                        obj.payload(), obj.channelId())
             tgt_folder.flushStorageBuffer()
-

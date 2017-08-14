@@ -21,18 +21,11 @@ using namespace LHCb;
 RawEventMapCombiner::RawEventMapCombiner( const std::string& name,
                                             ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
-  ,m_banksToCopy()
 {
-
   declareProperty("RawBanksToCopy",m_banksToCopy);
   declareProperty("OutputRawEventLocation",
     m_outputLocation = RawEventLocation::Default );
-
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-RawEventMapCombiner::~RawEventMapCombiner() {}
 
 StatusCode RawEventMapCombiner::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize();
@@ -61,11 +54,9 @@ StatusCode RawEventMapCombiner::initialize() {
     if( !found) warning() << "Requested bank '" << aBank->first << "' is not a valid name" << endmsg;
   }
   if( msgLevel(MSG::VERBOSE) ){
-      verbose() << " RawBank types to be copied= ";
-    for( std::map<LHCb::RawBank::BankType, std::string>::const_iterator ib = m_bankTypes.begin();
-         ib!=m_bankTypes.end();++ib)
-    {
-      verbose() << RawBank::typeName( ib->first ) << " from " << ib->second << " , ";
+    verbose() << " RawBank types to be copied= ";
+    for( const auto& ib : m_bankTypes ) {
+      verbose() << RawBank::typeName( ib.first ) << " from " << ib.second << " , ";
     }
     verbose() << endmsg;
   }
@@ -82,22 +73,17 @@ StatusCode RawEventMapCombiner::execute() {
 
   std::map<LHCb::RawBank::BankType, RawEvent*> foundRawEvents; //translation of m_banksToCopy
 
-  //std::vector<RawEvent*> foundRawEvents(0);
-  //const std::vector<std::string> & lookFor=m_inputLocations.value();
-
   //find all the raw events
   for( std::map<LHCb::RawBank::BankType, std::string>::const_iterator ib = m_bankTypes.begin();
          ib!=m_bankTypes.end();++ib)
   {
     RawEvent* rawEvent =getIfExists<RawEvent>(ib->second);//try with RootInTes
 
-    if( rawEvent==NULL )  //try without RootInTes
-    {
+    if( !rawEvent ) {  //try without RootInTes
       rawEvent = getIfExists<RawEvent>(ib->second, false);
     }
 
-    if (rawEvent==NULL) //if still not found it's a problem
-    {
+    if (!rawEvent) {  //if still not found it's a problem
       return Error(" No RawEvent at " + (ib->second),StatusCode::SUCCESS, 20 );
     }
     foundRawEvents[ib->first]=rawEvent;

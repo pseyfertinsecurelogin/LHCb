@@ -217,7 +217,7 @@ ask for the contributor name.""")
     nodes_tags = {}
     found_tags = set()
     nodes = db.getAllNodes()
-    for n in filter(db.db.existsFolder,nodes):
+    for n in filter(db.existsFolder,nodes):
         f = db.getCOOLNode(n)
         nodes_tags[n] = None
         for r in localTags + [base_globalTag]:

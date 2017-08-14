@@ -245,8 +245,7 @@ std::ostream& LoKi::Parameters::Parameter::fillStream ( std::ostream& s ) const
 namespace
 {
   // ==========================================================================
-  template <class TYPE>
-  double get ( const Property* prop )
+  template <class TYPE> TYPE get( const Property* prop )
   {
     const PropertyWithValue<TYPE>* p =
       static_cast<const PropertyWithValue<TYPE>*> ( prop ) ;

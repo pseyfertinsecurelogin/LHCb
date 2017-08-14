@@ -2,12 +2,14 @@
 #define CALOMERGETAE_H 1
 
 // Include files
+#include <iomanip>
 // from Gaudi
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "CaloDet/DeCalorimeter.h"
 #include "Event/CaloDigit.h"
 #include "Event/CaloAdc.h"
 
+#include "details.h"
 
 /** @class CaloMergeTAE CaloMergeTAE.h
  *
@@ -20,42 +22,27 @@ public:
   /// Standard constructor
   CaloMergeTAE( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~CaloMergeTAE( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
-protected:
-
 private:
-  bool fromAdc(){
-    std::string out( m_data );
-    std::transform( m_data.begin() , m_data.end() , out.begin () , ::toupper ) ;
-    if( out == "ADC" || out == "CALOADC" || out == "ADCS" || out == "CALOADCS")return true;
-    return false;
-  }
-  bool fromDigit(){
-    std::string out( m_data );
-    std::transform( m_data.begin() , m_data.end() , out.begin () , ::toupper ) ;
-    if( out == "DIGIT" || out == "CALODIGIT" || out == "DIGITS" || out == "CALODIGITS")return true;
-    return false;
-  }
   void mergeDigits();
   void mergeAdcs();
-  std::vector<std::string> m_slots;
-  std::string m_detectorName;
-  double m_threshold;
-  double m_slotcut;
+  Gaudi::Property<std::vector<std::string>> m_slots = { this, "MergeSlots", { "T0", "Prev1", "Next1" } };
+  Gaudi::Property<std::string> m_detectorName{ this, "Detector" };
+  Gaudi::Property<double> m_threshold { this, "SumThreshold",  -256 };
+  Gaudi::Property<double> m_slotcut{ this, "SlotThreshold"  , -256 };
   std::string m_locDigit;
   std::string m_outDigit;
   std::string m_locAdc;
   std::string m_outAdc;
-  std::string m_data;
+  Gaudi::Property<details::source_t> m_data { this ,"OutputType", details::source_t::from_digit };
 
-  std::string m_outputDataLoc;
-  std::string m_inExt;
+  Gaudi::Property<std::string> m_outputDataLoc { this, "OutputDataLocation", "" };
+  Gaudi::Property<std::string> m_inExt { this, "inputExtension", "" };
 
-  DeCalorimeter* m_calo;
+  DeCalorimeter* m_calo = nullptr;
 
 };
+
 #endif // CALOMERGETAE_H

@@ -1,4 +1,3 @@
-
 //-----------------------------------------------------------------------------
 /** @file DecoderToolBase.h
  *
@@ -20,7 +19,6 @@
 
 namespace Decoder
 {
-
   //-----------------------------------------------------------------------------
   /** @class ToolBase DAQToolBase.h DAQKernel/DecoderToolBase.h
    *
@@ -32,24 +30,7 @@ namespace Decoder
    */
   //-----------------------------------------------------------------------------
 
-  class ToolBase : public Decoder::CommonBase<GaudiTool>
-  {
-
-  public:
-
-    /// Standard constructor
-    ToolBase( const std::string& type,
-              const std::string& name,
-              const IInterface* parent )
-      : Decoder::CommonBase<GaudiTool> ( type, name, parent ) { }
-
-  protected:
-      ///avoid getIfExists name resolution for now
-      inline LHCb::RawEvent* getIfExistsRaw(const std::string loc, bool rootOnTes) const override
-      {
-      	return GaudiTool::getIfExists<LHCb::RawEvent>(loc,rootOnTes);
-      }
-  };
+  using  ToolBase = Decoder::CommonBase<GaudiTool>;
 
 }
 

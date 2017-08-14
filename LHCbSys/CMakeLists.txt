@@ -1,14 +1,15 @@
 ################################################################################
 # Package: LHCbSys
 ################################################################################
-gaudi_subdir(LHCbSys v42r4)
+gaudi_subdir(LHCbSys v43r0)
 
-gaudi_depends_on_subdirs(Associators/MCAssociators
+gaudi_depends_on_subdirs(Associators/AssociatorsBase
+                         Associators/MCAssociators
                          Calo/CaloDAQ
                          Calo/CaloInterfaces
                          Calo/CaloKernel
                          Calo/CaloUtils
-			 DAQ/DAQKernel
+                         DAQ/DAQKernel
                          DAQ/DAQSys
                          DAQ/DAQUtils
                          DAQ/MDF
@@ -79,10 +80,10 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Kernel/VectorClass
                          Kernel/TemplatedGenVector
                          L0/L0Base
-			 L0/L0Calo
-			 L0/L0DU
+                         L0/L0Calo
+                         L0/L0DU
                          L0/L0Interfaces
-			 L0/L0Muon
+                         L0/L0Muon
                          L0/L0MuonKernel
                          L0/ProcessorKernel
                          Muon/MuonDAQ
@@ -93,7 +94,7 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Phys/LoKiHlt
                          Phys/LoKiMC
                          Phys/LoKiNumbers
-			 Rich/RichDAQ
+                         Rich/RichDAQ
                          Rich/RichKernel
                          Rich/RichUtils
                          Rich/RichInterfaces
@@ -102,7 +103,7 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Rich/RichFutureUtils
                          Rich/RichFutureMCUtils
                          Rich/RichFutureInterfaces
-			 ST/STDAQ
+                         ST/STDAQ
                          ST/STKernel
                          ST/STTELL1Event
                          Si/SiDAQ
@@ -111,8 +112,8 @@ gaudi_depends_on_subdirs(Associators/MCAssociators
                          Tools/CondDBUI
                          Tools/FileStager
                          Tools/XmlTools
-			 Velo/VeloDAQ
-			 VP/VPDAQ)
+                         Velo/VeloDAQ
+                         VP/VPDAQ)
 
 
 gaudi_add_test(QMTest QMTEST)

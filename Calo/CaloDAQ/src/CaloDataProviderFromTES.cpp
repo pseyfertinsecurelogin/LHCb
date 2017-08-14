@@ -23,11 +23,10 @@ CaloDataProviderFromTES::CaloDataProviderFromTES( const std::string& type,
 {
   declareInterface<ICaloDataProvider>(this);
 
-  declareProperty("InputDataType"     , m_data = "CaloDigits" );
   declareProperty("InputDataLocation" , m_loc = "" );
   // set default detectorName
   int index = name.find_last_of(".") +1 ; // return 0 if '.' not found --> OK !!
-  m_detectorName = ( name.compare(index,3, "Prs") == 0 ? "Prs" 
+  m_detectorName = ( name.compare(index,3, "Prs") == 0 ? "Prs"
                  : ( name.compare(index,3, "Spd") == 0 ? "Spd"
                  :   name.substr( index, 4 ) ) );
   //
@@ -79,13 +78,9 @@ StatusCode CaloDataProviderFromTES::initialize ( ) {
 
   //
   if( m_loc.empty() ){
-    if( fromAdc() ){
-      m_loc = m_adcLoc;
-    }else if( fromDigit() ){
-      m_loc = m_digLoc;
-    }else{
-      Error("Unknown Data type " + m_data).ignore();
-      return StatusCode::FAILURE;
+    switch (m_data.value()) {
+      case details::source_t::from_adc   : m_loc = m_adcLoc; break;
+      case details::source_t::from_digit : m_loc = m_digLoc; break;
     }
   }
 

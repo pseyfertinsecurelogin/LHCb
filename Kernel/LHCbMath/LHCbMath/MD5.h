@@ -50,6 +50,8 @@ namespace Gaudi
            }
            bool valid() const { return !invalid(); }
 
+           explicit operator bool() const { return valid(); }
+
            /// binary comparisons
            friend bool operator<(const MD5& lhs, const MD5& rhs)
            { return lhs.m_value < rhs.m_value; }

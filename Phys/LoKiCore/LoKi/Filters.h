@@ -765,6 +765,7 @@ namespace LoKi
     struct Size final : LoKi::Functor<std::vector<TYPE>,double>
     {
       // ======================================================================
+      Size() : AuxFunBase( std::tie() ) { }
       /// MANDATORY: clone method ("virtual constructor")
       Size* clone() const override { return new Size ( *this ) ; }
       /// MANDATORY: the only one essential method
@@ -797,11 +798,10 @@ namespace LoKi
           ComposeFunctions* clone() const override { return new ComposeFunctions ( *this ); }
           /// MANDATORY: the only one essential method
           std::vector<TYPE2> operator()( const TYPE& a ) const override
-          { return COMPOSE::invoke( m_two.func1(), m_two.func2(), a ); }
+          { return COMPOSE::binaryOp( m_two.func1(), m_two.func2(), a ); }
           /// OPTIONAL: nice printout
           std::ostream& fillStream ( std::ostream& s ) const override
-          { return s << " " << COMPOSE::name() << "( " << m_two.func1()
-                     << ","        << m_two.func2() << ") " ; }
+          { return COMPOSE::fillStream( s, m_two.func1(), m_two.func2() ) ; }
           // ======================================================================
         private:
           // ======================================================================
@@ -825,7 +825,7 @@ namespace LoKi
           ComposeFunctions* clone() const override { return new ComposeFunctions ( *this ) ; }
           /// MANDATORY: the only one essential method
           std::vector<TYPE2> operator() () const override
-          { return COMPOSE::invoke( m_two.func1(), m_two.func2() ); }
+          { return COMPOSE::binaryOp( m_two.func1(), m_two.func2() ); }
           /// OPTIONAL: nice printout
           std::ostream& fillStream ( std::ostream& s ) const override
           { return s << " " << COMPOSE::name() << "(" << m_two.func1()
@@ -837,6 +837,13 @@ namespace LoKi
           LoKi::TwoFunctors<void,std::vector<TYPE2>> m_two ;      // two functors
           // ======================================================================
         } ;
+
+        template <typename Prefix>
+        struct BinaryCompose {
+            template <typename F1, typename F2>
+            static std::ostream& fillStream( std::ostream& s, const F1& f1, const F2& f2)
+            { return s << " " << Prefix::name() << "(" << f1 << "," << f2 << ") "; }
+        };
     }
 
     // ========================================================================
@@ -848,9 +855,9 @@ namespace LoKi
      */
     namespace Traits {
         template < typename TYPE2 >
-        struct Union {
+        struct Union : details::BinaryCompose< Union<TYPE2> >  {
             template <typename F1, typename F2, typename... Args>
-            static auto invoke(const F1& f1, const F2& f2, Args&&... args)
+            static auto binaryOp(const F1& f1, const F2& f2, Args&&... args)
             {
                   LoKi::Operations::Union<TYPE2> _union ;
                   return _union( f1( args... ), f2( args... ) );
@@ -872,15 +879,15 @@ namespace LoKi
      */
     namespace Traits {
         template <typename TYPE2>
-        struct NoEmptyUnion {
+        struct NoEmptyUnion : details::BinaryCompose<NoEmptyUnion<TYPE2>>{
             template <typename F1, typename F2, typename... Args>
-            static auto invoke( const F1& f1, const F2& f2, Args&&... args )
+            static auto binaryOp( const F1& f1, const F2& f2, Args&&... args )
             {
-                LoKi::Operations::NoEmptyUnion<TYPE2> _union ;
                 auto r1 = f1( args... ) ;
                 if ( r1.empty() ) { return r1 ; }  // RETURN EMPTY
                 auto r2 = f2( args... ) ;
                 if ( r2.empty() ) { return r2 ; }  // RETURN EMPTY
+                LoKi::Operations::NoEmptyUnion<TYPE2> _union ;
                 return _union ( r1 , r2 ) ;
              }
              static constexpr const char* name() { return "no_empty_union"; }
@@ -899,9 +906,9 @@ namespace LoKi
 
     namespace Traits {
         template <typename TYPE2>
-        struct Difference {
+        struct Difference : details::BinaryCompose<Difference<TYPE2>>{
             template <typename F1, typename F2, typename ... Args>
-            static auto invoke( const F1& f1, const F2& f2, Args&&... args )
+            static auto binaryOp( const F1& f1, const F2& f2, Args&&... args )
             {
                 auto r1 = f1( args... ) ;
                 if ( r1.empty() ) { return r1 ; } // RETURN
@@ -924,9 +931,9 @@ namespace LoKi
 
     namespace Traits {
         template <typename TYPE2>
-        struct Intersection{
+        struct Intersection : details::BinaryCompose<Intersection<TYPE2>>{
             template <typename F1, typename F2, typename... Args>
-            static auto invoke( const F1& f1, const F2& f2, Args&&... args )
+            static auto binaryOp( const F1& f1, const F2& f2, Args&&... args )
             {
               LoKi::Operations::Intersection<TYPE2> _intersection ;
               return _intersection ( f1 ( args... ) , f2 ( args... ) ) ;
@@ -947,9 +954,9 @@ namespace LoKi
      */
     namespace Traits {
         template <typename TYPE2>
-        struct SymDifference {
+        struct SymDifference : details::BinaryCompose<SymDifference<TYPE2>>{
             template <typename F1, typename F2, typename... Args>
-            static auto invoke( const F1&f1, const F2& f2, Args&&... args )
+            static auto binaryOp( const F1&f1, const F2& f2, Args&&... args )
             {
                 LoKi::Operations::SymDifference<TYPE2> _symdiff ;
                 return _symdiff ( f1 ( args... ) , f2 ( args... ) ) ;
@@ -1425,7 +1432,7 @@ namespace LoKi
    */
   template <typename TYPE, typename F,
             typename TYPE2 = details::type1_t<F>,
-            typename = typename details::require_signature<F,TYPE2,bool>>
+            typename = details::require_signature<F,TYPE2,bool>>
   LoKi::Functors::Select<TYPE,TYPE2> select ( F&& cut )
   { return { std::forward<F>(cut) } ; }
   // ==========================================================================

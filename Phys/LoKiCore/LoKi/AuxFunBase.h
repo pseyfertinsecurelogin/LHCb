@@ -53,7 +53,7 @@ namespace LoKi
   protected:
     // ========================================================================
     /// default constructor
-    AuxFunBase  () ;
+    AuxFunBase  ();
     /// constructor with arguments :
     template <typename ... ARGS>
     AuxFunBase ( const std::tuple<ARGS...>& tup )
@@ -181,7 +181,8 @@ namespace LoKi
     /// the event ID
     mutable unsigned long long m_event = 0;                     // the event ID
     /// constructor arguments
-    std::string                m_cargs ;   // constructor arguments
+    std::string                m_cargs  =
+                 ":::UNKNOWN+PLEASE+FIX+CODE::CALL+AUXFUNBASE+CONSTRUCTOR:::" ;
     /// =======================================================================
   };
   // ==========================================================================

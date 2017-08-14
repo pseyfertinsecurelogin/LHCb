@@ -2,7 +2,7 @@
 
 import unittest
 
-import sys    
+import sys
 
 #import string
 #import random
@@ -11,7 +11,7 @@ class DetCondReadingTest(unittest.TestCase):
 
 #    def assertEqualsConfig(self, lhs, rhs):
 #        self.assertEquals(lhs.getFullName(), rhs.getFullName())
-    
+
     def setUp(self):
         unittest.TestCase.setUp(self)
         self.testDB = 'sqlite_file:../data/TESTDB3.db/TESTDB3'
@@ -23,11 +23,11 @@ class DetCondReadingTest(unittest.TestCase):
         from CondDBUI import CondDB
         db = CondDB(self.testDB)
         s = self.testFolder
-        if not db.db.existsFolder(s): return ""
+        if not db.existsFolder(s): return ""
         data = db.getPayload(s,0,0)
         if 'data' not in data: return ""
         return data['data']
-    
+
 #    def tearDown(self):
 #        unittest.TestCase.tearDown(self)
 

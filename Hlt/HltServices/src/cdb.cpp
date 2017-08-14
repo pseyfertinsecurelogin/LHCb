@@ -508,7 +508,7 @@ static void
 fixup_rpos(struct cdb_make *cdbmp, unsigned rpos, unsigned rlen) {
   unsigned i;
   struct cdb_rl *rl;
-  register struct cdb_rec *rp, *rs;
+  struct cdb_rec *rp, *rs;
   for (i = 0; i < 256; ++i) {
     for (rl = cdbmp->cdb_rec[i]; rl; rl = rl->next)
       for (rs = rl->rec, rp = rs + rl->cnt; --rp >= rs;)
@@ -856,7 +856,7 @@ cdb_make_finish_internal(struct cdb_make *cdbmp)
   return 0;
 }
 
-static void
+void
 cdb_make_free(struct cdb_make *cdbmp)
 {
   unsigned t;
@@ -889,9 +889,9 @@ cdb_make_finish(struct cdb_make *cdbmp)
 unsigned
 cdb_hash(const void *buf, unsigned len)
 {
-  register const unsigned char *p = (const unsigned char *)buf;
-  register const unsigned char *end = p + len;
-  register unsigned hash = 5381;	/* start value */
+  const unsigned char *p = (const unsigned char *)buf;
+  const unsigned char *end = p + len;
+  unsigned hash = 5381;	/* start value */
   while (p < end) hash = (hash + (hash << 5)) ^ *p++;
   return hash;
 }

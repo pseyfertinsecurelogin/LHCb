@@ -4,6 +4,8 @@
 // ============================================================================
 // Include files
 // ============================================================================
+#include <utility>
+// ============================================================================
 // LoKiCore
 // ============================================================================
 #include "LoKi/AddRef.h"
@@ -47,6 +49,9 @@ namespace LoKi
     /// copy constructor
     Interface ( const Interface<TYPE>& right )
       : m_object( right.m_object )             { LoKi::addRef ( m_object ) ; }
+    /// move constructor
+    Interface ( Interface<TYPE>&& right ) noexcept
+      : m_object( std::exchange( right.m_object, nullptr ) )   { }
     /// templated "copy" constructor
     template <class OTHER>
     Interface ( const Interface<OTHER>& right )
@@ -101,8 +106,8 @@ namespace LoKi
     bool operator== ( const TYPE* other ) const
     { return m_object == other ; }
     /// comparison with same type pointer
-    bool operator== ( const Interface<TYPE>& other ) const
-    { return m_object == other.m_object ; }
+    friend bool operator== ( const Interface<TYPE>& lhs, const Interface<TYPE>& rhs )
+    { return lhs.m_object == rhs.m_object ; }
     /// comparison with other type of pointer
     template <class OTHER>
     bool operator== ( const Interface<OTHER>& other ) const
@@ -115,7 +120,7 @@ namespace LoKi
   public:
     // ========================================================================
     /// valid pointer?
-    bool validPointer         () const { return 0 != m_object   ; }
+    bool validPointer         () const { return nullptr != m_object   ; }
     /// invalid ?
     bool operator!            () const { return !validPointer() ; }
     /// valid?

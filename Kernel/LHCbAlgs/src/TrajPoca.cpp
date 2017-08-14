@@ -36,10 +36,10 @@ TrajPoca::TrajPoca( const std::string& type,
 //=============================================================================
 StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
                                double& mu1,
-                               bool restrictRange1,
+                               RestrictRange restrictRange1,
                                const LHCb::Trajectory& traj2,
                                double& mu2,
-                               bool restrictRange2,
+                               RestrictRange restrictRange2,
                                Gaudi::XYZVector& distance,
                                double precision ) const
 {
@@ -148,7 +148,7 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
 //=============================================================================
 StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj,
                                double& mu,
-                               bool restrictRange,
+                               RestrictRange restrictRange,
                                const Gaudi::XYZPoint& pt,
                                Gaudi::XYZVector& distance,
                                double /*precision*/ ) const
@@ -163,8 +163,8 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj,
 //=============================================================================
 //
 //=============================================================================
-bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, bool restrictRange1,
-                               const LHCb::Trajectory& traj2, double& mu2, bool restrictRange2,
+bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, RestrictRange restrictRange1,
+                               const LHCb::Trajectory& traj2, double& mu2, RestrictRange restrictRange2,
                                double tolerance, cache_t& cache ) const
 {
   // a bunch of ugly, unitialized member variables
@@ -246,8 +246,8 @@ bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, bool 
 
   // these do not make any sense here. either we need to merge them with the lines above that restrict to the validity of the
   // expansion, or we need to move them out of here entirely.
-  if (UNLIKELY(restrictRange1)) restrictToRange(mu1, traj1);
-  if (UNLIKELY(restrictRange2)) restrictToRange(mu2, traj2);
+  if (UNLIKELY(bool(restrictRange1))) restrictToRange(mu1, traj1);
+  if (UNLIKELY(bool(restrictRange2))) restrictToRange(mu2, traj2);
 
   // another check for parallel trajectories
   if (UNLIKELY(std::min(std::abs(mu1), std::abs(mu2)) > m_maxDist)) {

@@ -19,13 +19,11 @@ public:
   /// Standard constructor
   FileIdBankWriter( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~FileIdBankWriter( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
   StatusCode finalize  () override;    ///< Algorithm finalization
 
-protected:
+private:
   std::string m_rawEventLocation;     // Location where we get the RawEvent
   std::string m_current_fname;        // current file ID string
   int         m_count_files;          // number of files read
@@ -34,7 +32,6 @@ protected:
 
   LHCb::FileId m_fileId;
 
-private:
 
 };
 #endif // FILEIDBANKWRITER_H

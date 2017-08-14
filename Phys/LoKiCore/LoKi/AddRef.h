@@ -22,50 +22,18 @@
  *  @date 2006-01-23
  */
 // ============================================================================
-namespace LoKi
-{
+namespace LoKi {
   // ==========================================================================
-  /** @struct AddRef AddRef.h LoKi/AddRef.h
-   *
-   *  Helper utility to resolve the templated
-   *  ambiguity for GCC compiler
-   *
-   *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
-   *  @date   2006-03-11
-   */
-  template <class TYPE,bool>
-  struct AddRef
-  {
-    bool operator() ( TYPE*       o )
-    {
-      if ( o ) { o->addRef() ; }
-      return o != nullptr;
-    }
-  } ;
-  // ==========================================================================
-  template <class TYPE>
-  struct AddRef<TYPE,true>
-  {
-    bool operator() ( IInterface* o )
-    {
-      if ( o ) { o->addRef() ; }
-      return o != nullptr ;
-    }
-  } ;
-  // ==========================================================================
-  /** Helper function to invoke properly TYPE::addRef method
-   *  avoiding the template ambiguity for GCC compiler
+  /** Helper function to invoke TYPE::addRef method
    *
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2006-03-11
    */
   template <class TYPE>
-  inline bool  addRef( TYPE* obj )
+  inline bool addRef( TYPE* obj )
   {
-    // create the proper actor
-    AddRef<TYPE,std::is_convertible<TYPE*,IInterface*>::value> actor ;
-    // and perform the proper action!
-    return actor ( obj ) ;
+    if ( obj ) { obj->addRef() ; }
+    return obj != nullptr ;
   }
   // ==========================================================================
 } // end of namespace LoKi

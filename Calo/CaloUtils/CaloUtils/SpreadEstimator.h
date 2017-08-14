@@ -1,13 +1,9 @@
-#ifndef CALOUTILS_SPREADESTIMATOR_H 
+#ifndef CALOUTILS_SPREADESTIMATOR_H
 #define CALOUTILS_SPREADESTIMATOR_H 1
 // ============================================================================
 // Include files
 // ============================================================================
-// ST D& STL 
-// ============================================================================
-#include <functional> 
-// ============================================================================
-// GaudiKernel 
+// GaudiKernel
 // ============================================================================
 #include "GaudiKernel/StatusCode.h"
 #include "GaudiKernel/StatEntity.h"
@@ -16,13 +12,13 @@
 // ============================================================================
 #include "Event/CaloDataFunctor.h"
 // ============================================================================
-/// forward declarations 
+/// forward declarations
 // ============================================================================
-class DeCalorimeter;    // from CaloDet package 
+class DeCalorimeter;    // from CaloDet package
 // ============================================================================
 /** @class SpreadEstimator SpreadEstimator.h CaloUtils/SpreadEstimator.h
- *  
- *  simple helper class for estimation of spread of 
+ *
+ *  simple helper class for estimation of spread of
  *  CaloCluster object.
  *
  *
@@ -33,18 +29,18 @@ class SpreadEstimator
 {
   // ==========================================================================
  public:
-  // ==========================================================================  
-  /** standard/default constructor 
+  // ==========================================================================
+  /** standard/default constructor
    *  @param Det pointer to calorimeter detector
-   */ 
+   */
   SpreadEstimator( const DeCalorimeter* Det = nullptr );
-  // ==========================================================================  
-  /** calculation of cluster spread  
+  // ==========================================================================
+  /** calculation of cluster spread
    *
    *  Error codes:
-   *   - 221 - invalid source of detector information  
+   *   - 221 - invalid source of detector information
    *
-   *  @param  cluster  pointer to cluster object 
+   *  @param  cluster  pointer to cluster object
    *  @return status code
    */
   StatusCode operator() ( LHCb::CaloCluster* cluster ) const ;
@@ -53,49 +49,49 @@ class SpreadEstimator
    *  @param  cluster  pointer to cluster
    *  @return status code
    */
-  inline StatusCode calculateSpread 
+  inline StatusCode calculateSpread
   ( LHCb::CaloCluster* cluster ) const
   { return (*this)( cluster ); }
-  // ==========================================================================  
+  // ==========================================================================
 public:
-  // ==========================================================================  
-  /** set new value for calorimeter 
-   *  @param Det pointer to calorimeter detector 
+  // ==========================================================================
+  /** set new value for calorimeter
+   *  @param Det pointer to calorimeter detector
    */
   void setDetector ( const DeCalorimeter* Det ) ;
   // ==========================================================================
   /** simple accessor to DeCalorimeter object
-   *  @return pointer to detector 
+   *  @return pointer to detector
    */
   inline const DeCalorimeter* detector    () const
     { return m_detector    ; }
-  // ==========================================================================  
-  /// get the counter for problematic cases 
+  // ==========================================================================
+  /// get the counter for problematic cases
   const StatEntity& invalidRatio  () const { return m_ratio  ; }
-  /// get the counter for problematic cases 
+  /// get the counter for problematic cases
   const StatEntity& invalidCells  () const { return m_cells  ; }
-  /// get the counter for problematic cases 
+  /// get the counter for problematic cases
   const StatEntity& invalidEnergy () const { return m_energy ; }
-  // ==========================================================================  
+  // ==========================================================================
 private:
   // ==========================================================================
-  /// the detector elemenet 
-  const DeCalorimeter*  m_detector ;                   // the detector elemenet 
+  /// the detector elemenet
+  const DeCalorimeter*  m_detector ;                   // the detector elemenet
   // ==========================================================================
-  /// counter of invalid cells 
-  mutable StatEntity m_cells  ;                    // counter for invaild cells 
-  /// counter of invalid size ratio  
+  /// counter of invalid cells
+  mutable StatEntity m_cells  ;                    // counter for invaild cells
+  /// counter of invalid size ratio
   mutable StatEntity m_ratio  ;               // counter for invaild size ratio
-  /// counter of invalid energy 
-  mutable StatEntity m_energy ;                   // counter for invaild energy 
-  // ==========================================================================  
+  /// counter of invalid energy
+  mutable StatEntity m_energy ;                   // counter for invaild energy
+  // ==========================================================================
   typedef LHCb::CaloDataFunctor::EnergyTransverse<const DeCalorimeter*> ET ;
-  /// transverse energy estimator 
+  /// transverse energy estimator
   ET m_et ; // transverse energy estimator
-  // ==========================================================================  
+  // ==========================================================================
 };
 // ============================================================================
-// The END 
+// The END
 // ============================================================================
 #endif // CALOUTILS_SPREADESTIMATOR_H
 // ============================================================================

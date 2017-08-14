@@ -255,6 +255,13 @@ class CondDB(ConfigurableUser):
         self.UseLatestTags = [DataType, OnlyGlobalTags]
 
     def _getLatestTags(self, partition, datatype):
+        ger = allConfigurables.get('ToolSvc.Git{}'.format(partition))
+        if ger:
+            from GitCondDB.Tags import getTagsInfos
+            dt = int(datatype) if datatype.isdigit() else datatype
+            for tag, data in getTagsInfos(ger.PathToRepository).iteritems():
+                if dt in data.info.get('datatypes', []):
+                    return tag, []
         from CondDBUI.Admin.TagsFilter import last_gt_lts
         rel_notes = None
         if self.getProp('Upgrade'):

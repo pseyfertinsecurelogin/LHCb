@@ -14,7 +14,10 @@ set_property(DIRECTORY PROPERTY CONFIGURABLE_USER_MODULES
              GaudiConf.DstConf GaudiConf.TurboConf)
 gaudi_install_python_modules()
 
-gaudi_env(SET STDOPTS \${GAUDICONFROOT}/options)
-
+# GAUDI_QMTEST_CLASS overwrites the default python class used for LHCb tests
+# Default is QMTTest, we use here an LHCb extension : LHCbTest
+gaudi_env(SET STDOPTS \${GAUDICONFROOT}/options
+          SET GAUDI_QMTEST_MODULE GaudiConf.QMTest.LHCbTest
+          SET GAUDI_QMTEST_CLASS LHCbTest)
 
 gaudi_add_test(QMTest QMTEST)

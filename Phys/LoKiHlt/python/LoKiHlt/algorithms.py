@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # =============================================================================
-# $Id: algorithms.py,v 1.1 2008-10-19 16:28:37 ibelyaev Exp $ 
-# =============================================================================
 ## @file LoKiHlt/algorithms.py
 #  The full set of useful objects from LoKiHlt library 
 #
@@ -16,12 +14,8 @@
 #  @author Vanya BELYAEV Ivan.Belyaev@nikhef.nl
 #  @date 2008-10-19
 #
-#                    $Revision$
-#  Last Modification $Date$
-#                 by $Author$
 # =============================================================================
 """
-
 Few useful objects from LoKiHlt library
 
   This file is a part of LoKi project - 
@@ -31,11 +25,6 @@ Few useful objects from LoKiHlt library
   Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
   contributions and advices from G.Raven, J.van Tilburg, 
   A.Golutvin, P.Koppenburg have been used in the design.
- 
-
-                    $Revision$
-  Last Modification $Date$
-                 by $Author$
 
 """
 # =============================================================================
@@ -46,32 +35,31 @@ __version__ = "Version $Revision: 1.1 $ "
 
 from LoKiNumbers.sources    import *
 
-
 ALG_ALLENABLED  = LoKi.Algorithms.AllEnabled
-ALG_ALLEXECUTED = LoKi.Algorithms.AllExecuted 
+ALG_ALLEXECUTED = LoKi.Algorithms.AllExecuted
 ALG_ALLPASSED   = LoKi.Algorithms.AllPassed
 
 ALG_ANYENABLED  = LoKi.Algorithms.AnyEnabled
-ALG_ANYEXECUTED = LoKi.Algorithms.AnyExecuted 
+ALG_ANYEXECUTED = LoKi.Algorithms.AnyExecuted
 ALG_ANYPASSED   = LoKi.Algorithms.AnyPassed
 
 ALG_ENABLED     = LoKi.Algorithms.Enabled
-ALG_EXECUTED    = LoKi.Algorithms.Executed 
+ALG_EXECUTED    = LoKi.Algorithms.Executed
 ALG_PASSED      = LoKi.Algorithms.Passed
 
-ALG_RUN         = LoKi.Algorithms.Run  
+ALG_RUN         = LoKi.Algorithms.Run
 ALG_RUNALL      = LoKi.Algorithms.RunAll
 
 ALG_NUMENABLED  = LoKi.Algorithms.NumEnabled
-ALG_NUMEXECUTED = LoKi.Algorithms.NumExecuted 
+ALG_NUMEXECUTED = LoKi.Algorithms.NumExecuted
 ALG_NUMPASSED   = LoKi.Algorithms.NumPassed
 
 
-from LoKiNumbers.decorators import decorateVoids as _decorateVoids 
+from LoKiNumbers.decorators import decorateVoids as _decorateVoids
 
 _decorated = _decorateVoids ( __name__ )
 
-from LoKiCore.functions import strings as _strings 
+from LoKiCore.functions import strings as _strings
 
 # =============================================================================
 ## construct the 'ALG_ALLENABLED' functor in a nice way 

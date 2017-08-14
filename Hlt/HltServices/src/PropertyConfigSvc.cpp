@@ -233,11 +233,11 @@ PropertyConfigSvc::currentConfiguration(const INamedInterface& obj) const {
                                                              // wants non-const version of obj
 
   // figure out whether we have a Service, Tool, Algorithm or Auditor...
-  string kind = ( ini.as<IAlgorithm>() ? "IAlgorithm"
-                : ini.as<IService  >() ? "IService"
-                : ini.as<IAlgTool  >() ? "IAlgTool"
-                : ini.as<IAuditor  >() ? "IAuditor"
-                : "Unknown" );
+  auto kind = ( ini.as<IAlgorithm>() ? PropertyConfig::kind_t::IAlgorithm
+              : ini.as<IService  >() ? PropertyConfig::kind_t::IService
+              : ini.as<IAlgTool  >() ? PropertyConfig::kind_t::IAlgTool
+              : ini.as<IAuditor  >() ? PropertyConfig::kind_t::IAuditor
+              : PropertyConfig::kind_t::Invalid );
 
   return PropertyConfig( obj.name(), *ini.as<IProperty>(), kind);
 }
@@ -667,7 +667,7 @@ PropertyConfigSvc::resolvePropertyConfig(const PropertyConfig::digest_type& ref)
    if (pc) return pc;
    auto config = m_accessSvc->readPropertyConfig(ref);
    if (!config) {
-        error() << " could not obtain ref " << ref << endmsg;
+        error() << " could not obtain PropertyConfig ref " << ref << endmsg;
         return nullptr;
    }
    if (config->digest()!=ref) {
@@ -702,7 +702,7 @@ PropertyConfigSvc::resolveConfigTreeNode(const ConfigTreeNode::digest_type& ref)
    assert(m_accessSvc);
    auto node = m_accessSvc->readConfigTreeNode(ref);
    if (!node) {
-       error() << " could not obtain ref " << ref << endmsg;
+       error() << " could not obtain ConfigTreeNode ref " << ref << endmsg;
        return nullptr;
    }
    if (node->digest()!=ref) {

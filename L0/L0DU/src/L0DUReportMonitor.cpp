@@ -159,6 +159,7 @@ StatusCode L0DUReportMonitor::execute() {
     }
     if(m_prevTCK != -1){
       if( !m_split){
+        m_swap=true;
         Warning("New configuration tck found : reset all histos",StatusCode::SUCCESS).ignore();
         if ( msgLevel(MSG::DEBUG) ) {
           debug() << "New configuration : " << tck << " (previous was : " << m_prevTCK << ")" <<endmsg;
@@ -181,7 +182,9 @@ StatusCode L0DUReportMonitor::execute() {
         }
       } 
     } 
-  }
+  }else
+    m_swap=false;
+
   LHCb::L0DUChannel::Map channels = config->channels();
   LHCb::L0DUElementaryCondition::Map conditions = config->conditions();
   LHCb::L0DUTrigger::Map triggers = config->triggers();

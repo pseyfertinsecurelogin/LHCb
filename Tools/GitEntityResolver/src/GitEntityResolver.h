@@ -165,6 +165,9 @@ private:
   std::regex m_ignore;
 
   Gaudi::Time m_lastCommitTime = Gaudi::Time::max();
+
+  /// cache for the string to be reported by the defaultTags() method.
+  std::string m_defaultTag;
 };
 
 #endif // GITENTITYRESOLVER_H
