@@ -303,7 +303,7 @@ namespace LoKi
       {
         const auto result = m_fun.fun ( /* a */ ) ;
         // try to load the histo
-        if ( !m_histo () && m_hdef.valid() )
+        if ( !m_histo && m_hdef.valid() )
         { m_histo = LoKi::HistoBook::book ( m_hdef ) ; }
         // perform monitoring
         if ( m_histo ) { m_histo -> fill ( result ) ;  } ///< perform monitoring
