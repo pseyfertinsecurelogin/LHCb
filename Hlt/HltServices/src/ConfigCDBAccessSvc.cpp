@@ -101,7 +101,7 @@ class icdb {
     struct cdb  m_db;
     std::string m_name;
 public:
-    icdb( std::string fname ) : m_name(std::move(fname)) {
+    explicit icdb( std::string fname ) : m_name(std::move(fname)) {
         auto fd = ::open( m_name.c_str(), O_RDONLY );
         if (fd < 0 || cdb_init( &m_db, fd ) < 0) cdb_fileno(&m_db)=-1;
     }
@@ -127,7 +127,7 @@ public:
         bool atEnd() const { return !m_db; }
     public:
         iterator(struct cdb *parent, unsigned cpos ) : m_db{parent}, m_cpos(cpos) {}
-        iterator(struct cdb *parent = nullptr) : m_db{parent} {
+        explicit iterator(struct cdb *parent = nullptr) : m_db{parent} {
             if ( m_db ) cdb_seqinit(&m_cpos, m_db);
             ++*this;
         }
@@ -145,15 +145,14 @@ public:
         }
     };
 
-    iterator begin() { return { &m_db }; }
-    iterator end() const { return { }; }
+    auto begin() { return iterator{ &m_db }; }
+    auto end() const { return iterator{ }; }
 
-    iterator find(boost::string_ref key) {
-        if ( cdb_find(&m_db, key.data(), key.size())>0 ) {
-            // Hrmpf. Use inside knowledge of the layout of the cdb structure...
-            return { &m_db, cdb_datapos(&m_db) + cdb_datalen(&m_db) };
-        }
-        return end();
+    auto find(boost::string_ref key) {
+        // Hrmpf: use inside knowledge of the (very stable) layout of the cdb structure...
+        return cdb_find(&m_db, key.data(), key.size())>0 ?
+                    iterator{ &m_db, cdb_datapos(&m_db) + cdb_datalen(&m_db) } :
+                    end() ;
     }
 };
 
@@ -320,7 +319,7 @@ namespace ConfigCDBAccessSvc_details {
 class CDB
 {
   public:
-    CDB( const std::string& name, std::ios::openmode mode = std::ios::in )
+    explicit CDB( const std::string& name, std::ios::openmode mode = std::ios::in )
        : m_icdb( name )
     {
         if ( mode & std::ios::out ) {
@@ -370,8 +369,9 @@ class CDB
     {
         std::vector<std::string> keys;
         for (auto key_value : m_icdb ) {
-            if ( selector( key_value.string_key() ) )
+            if ( selector( key_value.string_key() ) ) {
                 keys.emplace_back( key_value.string_key() );
+            }
         }
         if ( m_ocdb ) { // then also check write cache...
             for ( auto& i : m_write_cache ) {
@@ -640,22 +640,7 @@ ConfigCDBAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias )
     // now write alias...
     fs::path fnam = configTreeNodeAliasPath( alias.alias() );
     auto x = read<std::string>( fnam.string() );
-    if ( !x ) {
-        std::stringstream s;
-        s << alias.ref();
-        if ( !file() ) {
-            error() << " container file not found during attempted write of "
-                    << fnam.string() << endmsg;
-            return ConfigTreeNodeAlias::alias_type();
-        }
-        if ( file()->append( fnam.string(), s ) ) {
-            info() << " created " << fnam.string() << endmsg;
-            return alias.alias();
-        } else {
-            error() << " failed to write " << fnam.string() << endmsg;
-            return ConfigTreeNodeAlias::alias_type();
-        }
-    } else {
+    if (x) {
         //@TODO: decide policy: in which cases do we allow overwrites of existing
         //labels?
         // (eg. TCK aliases: no!, tags: maybe... , toplevel: impossible by
@@ -670,4 +655,17 @@ ConfigCDBAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias )
                 << endmsg;
         return ConfigTreeNodeAlias::alias_type();
     }
+    std::stringstream s;
+    s << alias.ref();
+    if ( !file() ) {
+        error() << " container file not found during attempted write of "
+                << fnam.string() << endmsg;
+        return ConfigTreeNodeAlias::alias_type();
+    }
+    if ( !file()->append( fnam.string(), s ) ) {
+        error() << " failed to write " << fnam.string() << endmsg;
+        return ConfigTreeNodeAlias::alias_type();
+    }
+    info() << " created " << fnam.string() << endmsg;
+    return alias.alias();
 }
