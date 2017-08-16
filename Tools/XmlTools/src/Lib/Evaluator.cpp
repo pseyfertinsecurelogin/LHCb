@@ -121,7 +121,7 @@ static int variable(const std::string & name, double & result,
     if (engine(exp_begin, exp_end, result, exp_end, dictionary) == EVAL::OK)
       return EVAL::OK;
   }
-  /* no break */
+  /* falls through */
   default:
     return EVAL::ERROR_CALCULATION_ERROR;
   }
@@ -328,7 +328,7 @@ static int maker(int op, std::stack<double> & val)
     errno = 0;
     val.top() = pow(val1,val2);
     if (errno == 0) return EVAL::OK;
-    // no break
+    // falls through
   default:
     return EVAL::ERROR_CALCULATION_ERROR;
   }

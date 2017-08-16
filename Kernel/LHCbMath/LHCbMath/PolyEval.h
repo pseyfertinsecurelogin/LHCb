@@ -71,14 +71,30 @@ namespace PolyEval { ///< routines to evaluate polynomials
 	    const size_t rem = std::distance(begin, it) & 7;
 	    it -= rem;
 	    switch (rem) {
-		case 7: sum = sum * x + *(it + 7); // fallthrough intended
-		case 6: sum = sum * x + *(it + 6); // fallthrough intended
-		case 5: sum = sum * x + *(it + 5); // fallthrough intended
-		case 4: sum = sum * x + *(it + 4); // fallthrough intended
-		case 3: sum = sum * x + *(it + 3); // fallthrough intended
-		case 2: sum = sum * x + *(it + 2); // fallthrough intended
-		case 1: sum = sum * x + *(it + 1); // fallthrough intended
-		case 0: sum = sum * x + *(it + 0); break;
+      case 7:
+        sum = sum * x + *(it + 7);
+        // falls through
+      case 6:
+        sum = sum * x + *(it + 6);
+        // falls through
+      case 5:
+        sum = sum * x + *(it + 5);
+        // falls through
+      case 4:
+        sum = sum * x + *(it + 4);
+        // falls through
+      case 3:
+        sum = sum * x + *(it + 3);
+        // falls through
+      case 2:
+        sum = sum * x + *(it + 2);
+        // falls through
+      case 1:
+        sum = sum * x + *(it + 1);
+        // falls through
+      case 0:
+        sum = sum * x + *(it + 0);
+        break;
 	    }
 	};
 	return sum;
@@ -125,14 +141,30 @@ namespace PolyEval { ///< routines to evaluate polynomials
 		const SZ rem = n & 7;
 		n -= rem;
 		switch (rem) {
-		    case 7: sum = sum * x + c[n + 7]; // fallthrough intended
-		    case 6: sum = sum * x + c[n + 6]; // fallthrough intended
-		    case 5: sum = sum * x + c[n + 5]; // fallthrough intended
-		    case 4: sum = sum * x + c[n + 4]; // fallthrough intended
-		    case 3: sum = sum * x + c[n + 3]; // fallthrough intended
-		    case 2: sum = sum * x + c[n + 2]; // fallthrough intended
-		    case 1: sum = sum * x + c[n + 1]; // fallthrough intended
-		    case 0: sum = sum * x + c[n + 0]; break;
+    case 7:
+      sum = sum * x + c[n + 7];
+      // falls through
+    case 6:
+      sum = sum * x + c[n + 6];
+      // falls through
+    case 5:
+      sum = sum * x + c[n + 5];
+      // falls through
+    case 4:
+      sum = sum * x + c[n + 4];
+      // falls through
+    case 3:
+      sum = sum * x + c[n + 3];
+      // falls through
+    case 2:
+      sum = sum * x + c[n + 2];
+      // falls through
+    case 1:
+      sum = sum * x + c[n + 1];
+      // falls through
+    case 0:
+      sum = sum * x + c[n + 0];
+      break;
 		}
 	    };
 	    return sum;
