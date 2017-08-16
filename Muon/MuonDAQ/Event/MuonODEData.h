@@ -14,11 +14,11 @@
 
 class MuonODEData final {
 
-  std::array<unsigned int,35> m_data;
+  std::array<unsigned int,35> m_data = { { 0 } };
 
 public:
 
-  void resetODEData(){ m_data.fill(0); };
+  void resetODEData(){ *this = {}; };
 
   void setData(unsigned int words[35]){ std::copy_n( words, 35, m_data.begin()); };
 
