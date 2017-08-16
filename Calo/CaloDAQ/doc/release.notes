@@ -5,6 +5,10 @@
 !-----------------------------------------------------------------------------
 
 
+! 2017-08-16 - O. Deschamps
+  - fix bitwise operator in status
+
+
 ! 2017-05-24 - O. Deschamps
   - Fix bugs :  - switched  noSPD and SPD offset maps
                 - mixing offset maps between caloDet when offset maps are updates
