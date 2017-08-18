@@ -1,4 +1,3 @@
-// $Id: MuonRec.h,v 1.2 2008-04-02 11:52:05 asatta Exp $
 #ifndef MUONREC_MUONREC_H
 #define MUONREC_MUONREC_H 1
 
@@ -58,7 +57,8 @@ private:
   IMuonRawBuffer* m_muonBuffer = nullptr;
   bool m_forceResetDAQ = false;
   mutable int  m_Exccounter = 0;
-  std::string m_coordOutputLocation;
+  Gaudi::Property<std::string> m_coordOutputLocation
+  { this, "OutputLocation",LHCb::MuonCoordLocation::MuonCoords ,"Where to store the output co-ordinates, defaults to LHCb::MuonCoordLocation::MuonCoords"};
 
 };
 #endif // MUONREC_MUONREC_H

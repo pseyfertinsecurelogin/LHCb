@@ -22,8 +22,7 @@ MuonRec::MuonRec( const std::string& name,
                   ISvcLocator* pSvcLocator)
   : GaudiAlgorithm ( name , pSvcLocator )
 {
-  m_forceResetDAQ=(context()=="TAE");//@TODO: is 'context()' actually (always) properly set at construction time???
-  declareProperty("OutputLocation",m_coordOutputLocation=LHCb::MuonCoordLocation::MuonCoords ,"Where to store the output co-ordinates, defaults to LHCb::MuonCoordLocation::MuonCoords");
+  m_forceResetDAQ=(context()=="TAE");
 }
 
 //=============================================================================
@@ -86,6 +85,7 @@ StatusCode MuonRec::execute() {
     debug()<<decoding.size()<<" digits in input "<<endmsg;
 
   MuonCoords *coords = new MuonCoords;
+  put( coords, m_coordOutputLocation.value() );
   for( int station = 0 ; station < m_NStation ; station++ ){
     for( int region = 0 ; region < m_NRegion ; region++ ){
 
@@ -99,27 +99,22 @@ StatusCode MuonRec::execute() {
         // straight copy of the input + making SmartRefs to the MuonDigits
         StatusCode sc = addCoordsNoMap(*coords,decoding,station,region);
         if(!sc.isSuccess()){
-          error()
-              << "Failed to map digits to coords in a one to one manner"
-              << endmsg;
-          put( coords, m_coordOutputLocation );
+          error() << "Failed to map digits to coords in a one to one manner"
+                  << endmsg;
           return StatusCode::SUCCESS;
         }
       }else{
         // need to cross the input strips to get output strips
         StatusCode sc =
           addCoordsCrossingMap(*coords,decoding,station,region);
-        if(!sc.isSuccess()){error()
-              << "Failed to map digits to coords by crossing strips"
-              << endmsg;
-         put( coords, m_coordOutputLocation );
+        if(!sc.isSuccess()){
+            error() << "Failed to map digits to coords by crossing strips"
+                    << endmsg;
          return StatusCode::SUCCESS;
         }
       }
     }
   }
-
-  put( coords, m_coordOutputLocation );
   return StatusCode::SUCCESS;
 }
 
@@ -130,7 +125,7 @@ StatusCode MuonRec::finalize() {
 
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Finalize" << endmsg;
 
-  if(   m_Exccounter>0){
+  if (m_Exccounter>0) {
     info()<<" during the reconstruction there were problem with duplicated coords "<<endmsg;
     info()<<"The error occured " <<  m_Exccounter<<endmsg;
   }
@@ -152,7 +147,7 @@ StatusCode MuonRec::addCoordsNoMap(MuonCoords& coords,
       if( UNLIKELY( msgLevel(MSG::VERBOSE) ) )
         verbose()<<" digit tile "<<iD->first<<endmsg;
 
-      auto current = std::unique_ptr<MuonCoord>(new MuonCoord());
+      auto current = std::make_unique<MuonCoord>();
 
       current->setUncrossed(true);
       current->setDigitTDC1(iD->second);
@@ -224,7 +219,7 @@ StatusCode MuonRec::addCoordsCrossingMap(MuonCoords& coords,
       if(pad.isValid()){
         // have a pad to write out
         // make the coordinate to be added to coords
-        auto current = std::unique_ptr<MuonCoord>(new MuonCoord());
+        auto current = std::make_unique<MuonCoord>();
         current->setUncrossed(false);
         current->setDigitTile({ iOne->first.first, iTwo->first.first });
         current->setDigitTDC1(iOne->first.second);
@@ -260,7 +255,7 @@ StatusCode MuonRec::addCoordsCrossingMap(MuonCoords& coords,
       MuonTileID pad = (iOne->first).first;
 
       // make the coordinate to be added to coords
-      auto current = std::unique_ptr<MuonCoord>(new MuonCoord());
+      auto current = std::make_unique<MuonCoord>();
       current->setUncrossed(true);
       current->setDigitTile( { iOne->first.first } ) ;
       current->setDigitTDC1((iOne->first).second);
@@ -289,7 +284,7 @@ StatusCode MuonRec::addCoordsCrossingMap(MuonCoords& coords,
       MuonTileID pad = iTwo->first.first;
 
       // make the coordinate to be added to coords
-      auto current = std::unique_ptr<MuonCoord>(new MuonCoord());
+      auto current = std::make_unique<MuonCoord>();
       current->setUncrossed(true);
       current->setDigitTDC1((iTwo->first).second);
       current->setDigitTile( { iTwo->first.first } );

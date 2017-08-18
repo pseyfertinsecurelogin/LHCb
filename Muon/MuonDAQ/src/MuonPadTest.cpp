@@ -13,15 +13,6 @@
 
 DECLARE_ALGORITHM_FACTORY( MuonPadTest )
 
-//=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-MuonPadTest::MuonPadTest( const std::string& name,
-                          ISvcLocator* pSvcLocator)
-  : GaudiAlgorithm ( name , pSvcLocator ), m_MuonBuffer(0)
-{
-
-}
 
 //=============================================================================
 // Initialization
@@ -44,16 +35,14 @@ StatusCode MuonPadTest::execute() {
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) debug() << "==> Execute" << endmsg;
 
   std::vector<LHCb::MuonTileID> decodingTile;
-	m_MuonBuffer->getPads(decodingTile);
-  std::vector<LHCb::MuonTileID>::iterator ipad;
+  m_MuonBuffer->getPads(decodingTile).ignore();
   SmartDataPtr<LHCb::MuonCoords> coord(eventSvc(),
                                  LHCb::MuonCoordLocation::MuonCoords);
-  LHCb::MuonCoords::iterator icoord;
   if( UNLIKELY( msgLevel(MSG::DEBUG) ) ) {
     debug()<<" coord "<<coord->size()<<endmsg;
     debug()<<" pad "<<decodingTile.size()<<endmsg;
   }
-  for(icoord=coord->begin();icoord<coord->end();icoord++){
+  for(auto icoord=coord->begin();icoord<coord->end();icoord++){
     LHCb::MuonTileID tileCoord=(*icoord)->key();
     if(tileCoord.station()>0){
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
@@ -65,7 +54,7 @@ StatusCode MuonPadTest::execute() {
                <<  tileCoord.nY() << "]"<<endmsg;
 
       bool found=false;
-      for(ipad=decodingTile.begin();ipad<decodingTile.end();ipad++){
+      for(auto ipad=decodingTile.begin();ipad<decodingTile.end();ipad++){
         if(*ipad==tileCoord){
           if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
             debug()<<" found the matching coord "<<

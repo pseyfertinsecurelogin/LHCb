@@ -13,6 +13,7 @@
 #include "DAQKernel/DecoderToolBase.h"
 
 #include <string>
+#include <bitset>
 
 /** @class MuonRawBuffer MuonRawBuffer.h
  *
@@ -30,45 +31,32 @@ public:
   StatusCode initialize() override;
   StatusCode finalize() override;
 
+  StatusCode getTile(const LHCb::RawEvent* raw,std::vector<LHCb::MuonTileID>& tile,const std::string& offset) override;
   StatusCode getTile(std::vector<LHCb::MuonTileID>& tile) override;
+  StatusCode getTileAndTDC(const LHCb::RawEvent* raw,std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC,const std::string& offset) override;
   StatusCode getTileAndTDC(std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC) override;
   StatusCode getPads(std::vector<LHCb::MuonTileID>& pads) override;
-
+  StatusCode getNZSupp( const LHCb::RawEvent* raw,std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC,const std::string& offset) override;
   StatusCode getNZSupp(std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC) override;
 
-
   // to get muon data belonging to one particular raw bank
-private:
-  StatusCode getTile(const LHCb::RawBank* r,std::vector<LHCb::MuonTileID>& tile) override;
-  StatusCode getTileAndTDC(const LHCb::RawBank* r,std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC) override;
-  StatusCode getPads(const LHCb::RawBank* r,std::vector<LHCb::MuonTileID>& pads) override;
-public:
-  StatusCode getTile( LHCb::RawEvent* raw,std::vector<LHCb::MuonTileID>& tile,const std::string& offset) override;
-  StatusCode getTileAndTDC( LHCb::RawEvent* raw,std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC,const std::string& offset) override;
-  StatusCode getPads( LHCb::RawEvent* raw,std::vector<LHCb::MuonTileID>& pads,const std::string& offset) override;
-  StatusCode getNZSupp( LHCb::RawEvent* raw,std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC,const std::string& offset) override;
+  StatusCode getPads(const LHCb::RawEvent* raw,std::vector<LHCb::MuonTileID>& pads,const std::string& offset) override;
   StatusCode getNZSupp(const LHCb::RawBank* r,std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC) override;
   StatusCode dumpNZSupp(const LHCb::RawBank* r,unsigned int ode_num) override;
   MuonPPEventInfo getPPInfo(const LHCb::RawBank* r,unsigned int pp_num) override;
   MuonPPEventInfo getPPInfo(unsigned int tell1Number,unsigned int pp_num) override;
-  //StatusCode getTDCInODE();
 
   StatusCode getPads( int tell1,std::vector<LHCb::MuonTileID>& pads) override;
   StatusCode getPads( int tell1) override;
   StatusCode getPadsInStation( int station,std::vector<std::vector<LHCb::MuonTileID>* > & pads) override;
 
 
-  void forceReset() override
-  {
-    clearData();
-  };
+  void forceReset() override { clearData(); };
   MuonODEData getODEData(const LHCb::RawBank* r,unsigned int link) override;
   unsigned int BXCounter(unsigned int tell1Number) override;
   bool PPReachedHitLimit(unsigned int Tell1Number,int pp_num) override;
   bool LinkReachedHitLimit(unsigned int Tell1Number,int link_num) override;
-private:
-  MuonTell1Header getHeader(const LHCb::RawBank* r) override;
-public:
+
   LHCb::RawBankReadoutStatus status() override {return m_status;}
   void putStatusOnTES() override;
 
@@ -76,6 +64,10 @@ public:
   std::vector<std::pair<MuonTell1Header, unsigned int> > getHeaders() override;
 
 private:
+  StatusCode getTile(const LHCb::RawBank* r,std::vector<LHCb::MuonTileID>& tile) ;
+  StatusCode getTileAndTDC(const LHCb::RawBank* r,std::vector<std::pair<LHCb::MuonTileID,unsigned int> > & tileAndTDC) ;
+  StatusCode getPads(const LHCb::RawBank* r,std::vector<LHCb::MuonTileID>& pads) ;
+  MuonTell1Header getHeader(const LHCb::RawBank* r) ;
 
   StatusCode  decodeTileAndTDCDC06(const LHCb::RawBank* r);
   StatusCode  decodeTileAndTDCV1(const LHCb::RawBank* r);
@@ -89,47 +81,40 @@ private:
 
   StatusCode DecodeData(const LHCb::RawBank* r);
   StatusCode checkBankSize(const LHCb::RawBank* rawdata);
-  StatusCode checkAllHeaders(LHCb::RawEvent* raw);
+  StatusCode checkAllHeaders(const LHCb::RawEvent* raw);
   void fillTell1Header(unsigned int tell1,unsigned int data);
-  void setTESOffset(const std::string& offset="");
-  void restoreTESOffset();
-  void initStatus();	
-  void initStatusNZS();	
+  void initStatus();
+  void initStatusNZS();
 
-  unsigned int m_NLink = 24;
-  unsigned int m_ODEWord = 35;
   unsigned int m_M1Tell1 = 0;
   DeMuonDetector* m_muonDet = nullptr;
   mutable std::vector<std::pair<LHCb::MuonTileID, unsigned int> > m_storage[MuonDAQHelper_maxTell1Number];
-  bool m_alreadyDecoded[MuonDAQHelper_maxTell1Number];
+  std::bitset<MuonDAQHelper_maxTell1Number> m_alreadyDecoded;
   mutable std::vector<LHCb::MuonTileID> m_padStorage[MuonDAQHelper_maxTell1Number];
-  bool m_padAlreadyDecoded[MuonDAQHelper_maxTell1Number];
-  bool m_ODEAlreadyDecoded[MuonDAQHelper_maxTell1Number];
-  bool m_already_decoded_headerTell1[MuonDAQHelper_maxTell1Number];
+  std::bitset<MuonDAQHelper_maxTell1Number> m_padAlreadyDecoded;
+  std::bitset<MuonDAQHelper_maxTell1Number> m_ODEAlreadyDecoded;
+  std::bitset<MuonDAQHelper_maxTell1Number> m_already_decoded_headerTell1;
   bool m_checkTell1HeaderPerformed = false;
   bool m_checkTell1HeaderResult = false;
 
-  //mutable MuonTell1Header m_Tell1Header[[MuonDAQHelper_maxTell1Number];
   mutable MuonODEData m_ODEData[MuonDAQHelper_maxTell1Number*24];
   mutable MuonPPEventInfo m_PPEventInfo[MuonDAQHelper_maxTell1Number*4];
 
-  mutable short m_eventHeader[MuonDAQHelper_maxTell1Number];
-  unsigned int m_counter_invalid_hit[MuonDAQHelper_maxTell1Number];
-  unsigned int m_processed_bank[MuonDAQHelper_maxTell1Number];
-  unsigned int m_NZScounter_invalid_hit[MuonDAQHelper_maxTell1Number];
-  unsigned int m_NZSprocessed_bank[MuonDAQHelper_maxTell1Number];
-  unsigned int m_hitNumInLink[MuonDAQHelper_maxTell1Number*24];
+  mutable std::array<short,MuonDAQHelper_maxTell1Number> m_eventHeader;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number> m_counter_invalid_hit;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number> m_processed_bank;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number> m_NZScounter_invalid_hit;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number> m_NZSprocessed_bank;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number*24> m_hitNumInLink;
   unsigned int m_hitNumInPP[MuonDAQHelper_maxTell1Number*4];
-  unsigned int m_hit_checkSize[  MuonDAQHelper_maxTell1Number];
-  unsigned int m_pad_checkSize[  MuonDAQHelper_maxTell1Number];
-  unsigned int m_tell1_header_error[  MuonDAQHelper_maxTell1Number];
-  unsigned int m_tell1_header_ORODE_error[  MuonDAQHelper_maxTell1Number];
-  unsigned int m_tell1_header_SYNCH_data_error[  MuonDAQHelper_maxTell1Number];
-  unsigned int m_tell1_header_SYNCH_BC_error[  MuonDAQHelper_maxTell1Number];
-  unsigned int m_tell1_header_SYNCH_Evt_error[  MuonDAQHelper_maxTell1Number];
-  std::string m_offsetForTES;
-  bool m_TESChanged = false;
-  std::string m_storeOriginalValue;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number> m_hit_checkSize;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number> m_pad_checkSize;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number> m_tell1_header_error;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number> m_tell1_header_ORODE_error;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number> m_tell1_header_SYNCH_data_error;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number> m_tell1_header_SYNCH_BC_error;
+  std::array<unsigned int, MuonDAQHelper_maxTell1Number> m_tell1_header_SYNCH_Evt_error;
+  int m_TESChanged = 0;
 
   LHCb::RawBankReadoutStatus m_status;
   LHCb::RawBankReadoutStatus m_statusFull;
