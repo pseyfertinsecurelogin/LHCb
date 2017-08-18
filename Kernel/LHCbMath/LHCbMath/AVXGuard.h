@@ -1,10 +1,14 @@
 
 #pragma once
 
+#if defined(__AVX__) || defined(__AVX2__)
+#include <x86intrin.h>
+#endif
+
 namespace LHCb
 {
   
-  /** @namespace FPE
+  /** @namespace AVX
    *
    *  Namespace for AVX handling utilities
    *
@@ -30,9 +34,9 @@ namespace LHCb
     struct Guard
     {
 #if defined(__AVX__) || defined(__AVX2__)
-      ~avx_guard() { _mm256_zeroupper(); }
+      ~Guard() { _mm256_zeroupper(); }
 #else
-      ~avx_guard() { }
+      ~Guard() { }
 #endif
     };
 
