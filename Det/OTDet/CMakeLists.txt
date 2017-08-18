@@ -9,7 +9,11 @@ gaudi_depends_on_subdirs(Det/DetDescCnv
                          Kernel/VectorClass)
 
 find_package(Boost)
+find_package(ROOT)
+find_package(XercesC)
 find_package(VDT)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
+                                                 ${XERCESC_INCLUDE_DIRS})
 
 gaudi_add_library(OTDetLib
                   src/Lib/*.cpp

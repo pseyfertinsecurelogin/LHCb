@@ -8,7 +8,6 @@
 // ============================================================================
 #include "LoKi/Primitives.h"
 #include "LoKi/apply.h"
-#include "LoKi/Streamers.h"
 #define LOKI_REQUIRES(...) std::enable_if_t<(__VA_ARGS__),bool> = true
 // ============================================================================
 /** @file
