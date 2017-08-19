@@ -165,20 +165,15 @@ namespace avx {
         LHCb::AVX::Guard guard{};
         // compute the inverse of the covariance (i.e. weight) of the difference: R=(C1+C2)
         Gaudi::SymMatrix5x5 invRM;
-        const auto y0 = to_Vec4d(C1.subspan< 0,4>())
-                      + to_Vec4d(C2.subspan< 0,4>());
-        const auto y1 = to_Vec4d(C1.subspan< 4,4>())
-                      + to_Vec4d(C2.subspan< 4,4>());
-        const auto y2 = to_Vec4d(C1.subspan< 8,4>())
-                      + to_Vec4d(C2.subspan< 8,4>());
-        const auto y3 = to_Vec4d(C1.subspan<12,4>())
-                      + to_Vec4d(C2.subspan<12,4>());
-        auto invR = invRM.Array();
-        y0.store(invR);
-        y1.store(invR+4);
-        y2.store(invR+8);
-        y3.store(invR+12);
-        invR[14] = C1[14]+C2[14];
+        auto invR = to_span(invRM);
+        const auto y0 = to_Vec4d(C1.subspan< 0,4>()) + to_Vec4d(C2.subspan< 0,4>());
+        const auto y1 = to_Vec4d(C1.subspan< 4,4>()) + to_Vec4d(C2.subspan< 4,4>());
+        const auto y2 = to_Vec4d(C1.subspan< 8,4>()) + to_Vec4d(C2.subspan< 8,4>());
+        const auto y3 = to_Vec4d(C1.subspan<12,3>()) + to_Vec4d(C2.subspan<12,3>());
+        assign(invR.subspan< 0,4>(), y0 );
+        assign(invR.subspan< 4,4>(), y1 );
+        assign(invR.subspan< 8,4>(), y2 );
+        assign(invR.subspan<12,3>(), y3 );
 
         bool success = invRM.InvertChol() ;
         // compute the gain matrix
