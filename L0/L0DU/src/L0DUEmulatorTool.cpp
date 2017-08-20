@@ -1,5 +1,6 @@
 // Include files
 #include "Kernel/STLExtensions.h"
+
 // from LHCb
 #include "Event/ODIN.h"
 // local

@@ -37,7 +37,7 @@ public:
   void handle(const Incident& /* inc */ ) override {
     if ( msgLevel(MSG::DEBUG) ) debug() << "IIncident Svc reset" << endmsg;
     m_begEvent = true ;
-    for (auto& i: m_procMap) i.second = true;
+    for (auto& i : m_procMap) i.second=true;
   }
 
 private:
