@@ -160,8 +160,7 @@ void CaloHypoPacker::unpack( const PackedDataVector & phypos,
       hypo->setLh( m_pack.fltPacked( src.lh ) );
       if ( 0 != src.z )
       {
-        auto* pos = new LHCb::CaloPosition();
-        hypo->setPosition( pos );
+        auto pos = std::make_unique<LHCb::CaloPosition>();
         pos->setZ( m_pack.position( src.z ) );
         pos->setParameters( LHCb::CaloPosition::Parameters( m_pack.position(src.posX),
                                                             m_pack.position(src.posY),
@@ -187,6 +186,8 @@ void CaloHypoPacker::unpack( const PackedDataVector & phypos,
         spr(0,0) = serr0 * serr0;
         spr(1,0) = serr1 * serr0 * m_pack.fraction( src.cerr10 );
         spr(1,1) = serr1 * serr1;
+
+        hypo->setPosition( std::move(pos) );
       }
 
       int hintID(0), key(0);
