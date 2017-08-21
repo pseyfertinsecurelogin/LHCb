@@ -119,6 +119,14 @@
  initList = "Base() , m_hypothesis( right.hypothesis() ) , m_lh( right.lh() ) , m_position( right.position() ? new CaloPosition( *right.position() ): nullptr ) , m_digits( right.digits() ) , m_clusters( right.clusters() ) , m_hypos( right.hypos() )">
 </constructor>
 
+<destructor
+ desc    = "Destructor">
+<code>
+   delete m_position;
+</code>
+</destructor>
+
+
 <attribute
  name = "hypothesis"
  desc = "The hypothesis's ID"
@@ -140,10 +148,10 @@
 <attribute
  name = "position"
  desc = "The hypothesis's CaloPosition object "
- type = "std::unique_ptr&lt;LHCb::CaloHypo::Position&gt;"
- init = "nullptr"
- nonconstaccessor = "FALSE"
- getMeth = "FALSE"
+ type = "LHCb::CaloHypo::Position*"
+ init = "0"
+ dictalias = "CaloPosition*"
+ nonconstaccessor = "TRUE"
  setMeth = "FALSE"
 />
 
@@ -170,32 +178,13 @@
 />
 
 <method
- desc   = "Get the hypothesis's CaloPosition object."
- name   = "position"
- type   = "LHCb::CaloHypo::Position*"
- access = "PUBLIC" >
- <code>
- return m_position.get();
-</code>
-</method>
-<method
- desc   = "Get the hypothesis's CaloPosition object."
- name   = "position"
- type   = "const LHCb::CaloHypo::Position*"
- const  = "TRUE"
- access = "PUBLIC" >
- <code>
- return m_position.get();
-</code>
-</method>
-<method
  desc   = "Update the hypothesis's CaloPosition object."
  name   = "setPosition"
  type   = "void"
  access = "PUBLIC" >
  <arg name="position" inout = "BYVALUE" type="std::unique_ptr&lt;LHCb::CaloHypo::Position&gt;"/>
  <code>
- m_position = std::move( position );
+ m_position = position.release();
 </code>
 </method>
 
