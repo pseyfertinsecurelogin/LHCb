@@ -23,13 +23,13 @@ gaudi_add_library(LHCbMathLib
                   src/*.cpp
                   PUBLIC_HEADERS LHCbMath
                   INCLUDE_DIRS Boost GSL ROOT
-                  LINK_LIBRARIES Boost GSL ROOT GaudiGSLLib GaudiKernel)
+                  LINK_LIBRARIES Boost GSL ROOT VectorClassLib GaudiGSLLib GaudiKernel)
 
 gaudi_add_dictionary(LHCbMath
                      dict/LHCbMathDict.h
                      dict/LHCbMathDict.xml
                      INCLUDE_DIRS Boost GSL ROOT
-                     LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib
+                     LINK_LIBRARIES Boost GSL ROOT VectorClassLib GaudiKernel LHCbMathLib
                      OPTIONS "-U__MINGW32__")
 
 

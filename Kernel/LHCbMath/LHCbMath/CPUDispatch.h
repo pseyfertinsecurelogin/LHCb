@@ -21,8 +21,8 @@ namespace LHCb
   {
     
     /// Enum for CPU capabilities
-    enum ID { GENERIC = 0, SSE3 = 3, SSE4 = 6, AVX = 7, AVX2 = 8, UNKNOWN = 999999 };
-    
+    enum ID { GENERIC = 0, SSE3 = 3, SSE4 = 6, AVX = 7, AVX2 = 8, AVX512 = 9, UNKNOWN = 999999 };
+
     /** @brief Method to set a dispatch function from a list of options based on CPU ID.
      *
      *  Expects to be passed an initializer list of the form of list of std::pairs where the
@@ -62,10 +62,11 @@ namespace LHCb
       const auto impl = 
         std::find_if( std::begin(vtbl), std::end(vtbl),
                       [&level]( const auto j )
-                      { return ( ( AVX2 == j.first && getenv("LHCBMATH_DISABLE_AVX2") ) ||
-                                 ( AVX  == j.first && getenv("LHCBMATH_DISABLE_AVX")  ) ||
-                                 ( SSE4 == j.first && getenv("LHCBMATH_DISABLE_SSE4") ) ||
-                                 ( SSE3 == j.first && getenv("LHCBMATH_DISABLE_SSE3") ) ? false :
+                      { return ( ( AVX512 == j.first && getenv("LHCBMATH_DISABLE_AVX512") ) ||
+                                 ( AVX2   == j.first && getenv("LHCBMATH_DISABLE_AVX2")   ) ||
+                                 ( AVX    == j.first && getenv("LHCBMATH_DISABLE_AVX")    ) ||
+                                 ( SSE4   == j.first && getenv("LHCBMATH_DISABLE_SSE4")   ) ||
+                                 ( SSE3   == j.first && getenv("LHCBMATH_DISABLE_SSE3")   ) ? false :
                                  level >= j.first ); } );
       if ( impl == std::end(vtbl) )
       {
