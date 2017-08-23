@@ -468,8 +468,9 @@ StatusCode HltSelReportsDecoder::execute() {
           for(const auto & elem : sub)
           {
             if( !(elem.target()) )continue;
+            auto id = elem.target()->summarizedObjectCLID();
             // add only if not calo cluster
-            if( elem.target()->summarizedObjectCLID() == LHCb::CLID_CaloCluster )continue;
+            if( id == LHCb::CLID_CaloCluster || id == LHCb::CLID_CaloHypo ) continue;
             hos->addToSubstructure( elem.target() );
           }
         } else {
