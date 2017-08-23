@@ -1,10 +1,19 @@
 #include "GaudiKernel/GenericVectorTypes.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
+#ifdef NDEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#define GSL_UNENFORCED_ON_CONTRACT_VIOLATION
+#endif
 #include "gsl/span"
+#ifdef NDEBUG
+#pragma GCC diagnostic pop
+#endif
 
 namespace LHCb {
 namespace Math {
+namespace detail {
 namespace generic {
 
 using gsl::span;
@@ -264,4 +273,4 @@ double filter( span<double,5> X, span<double,15> C,
       return res*res/errorRes2;
 }
 
-}}}
+}}}}

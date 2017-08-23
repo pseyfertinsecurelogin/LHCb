@@ -31,7 +31,7 @@ using std::chrono::time_point;
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/Similarity.h"
-using LHCb::Math::to_span;
+using LHCb::Math::detail::to_span;
 
 #include <TH1D.h>
 
@@ -40,6 +40,7 @@ using LHCb::Math::to_span;
 // ============================================================================
 namespace LHCb {
 namespace Math {
+namespace detail {
 namespace avx2 {
     extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
     extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
@@ -62,6 +63,7 @@ namespace generic {
 }
 }
 }
+}
 
 
 enum ISet : std::int8_t { CLASSIC = -1, GENERIC = 0, SSE3 = 3, AVX = 7, AVX2 = 8 };
@@ -70,18 +72,18 @@ using similarity_t = std::function<void(gsl::span<const double,N*(N+1)/2>,
                                         gsl::span<const double,N*M>,
                                         gsl::span<double,M*(M+1)/2>)>;
 
-std::map<ISet, similarity_t<5,1>>  vtbl_5_1 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_1 },
-                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_1 },
-                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_1 },
-                                           { ISet::GENERIC, LHCb::Math::generic::similarity_5_1 } };
-std::map<ISet, similarity_t<5,5>>  vtbl_5_5 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_5 },
-                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_5 },
-                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_5 },
-                                           { ISet::GENERIC, LHCb::Math::generic::similarity_5_5 } };
-std::map<ISet, similarity_t<5,7>>  vtbl_5_7 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_7 },
-                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_7 },
-                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_7 },
-                                           { ISet::GENERIC, LHCb::Math::generic::similarity_5_7 } };
+std::map<ISet, similarity_t<5,1>>  vtbl_5_1 = { { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_1 },
+                                                { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_1 },
+                                                { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_1 },
+                                                { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_1 } };
+std::map<ISet, similarity_t<5,5>>  vtbl_5_5 = { { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_5 },
+                                                { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_5 },
+                                                { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_5 },
+                                                { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_5 } };
+std::map<ISet, similarity_t<5,7>>  vtbl_5_7 = { { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_7 },
+                                                { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_7 },
+                                                { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_7 },
+                                                { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_7 } };
 
 // Util class for test results
 struct TestResults {

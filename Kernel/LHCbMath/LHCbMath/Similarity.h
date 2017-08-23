@@ -3,12 +3,21 @@
 #include "GaudiKernel/GenericVectorTypes.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
+#ifdef NDEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#define GSL_UNENFORCED_ON_CONTRACT_VIOLATION
+#endif
 #include "gsl/span"
+#ifdef NDEBUG
+#pragma GCC diagnostic pop
+#endif
 
 namespace LHCb { namespace Math {
 
 using gsl::span;
 
+namespace detail {
 template <typename T, unsigned int N>
 inline span<const T,N> to_span( const ROOT::Math::SVector<T,N>& x )
 { return { x.Array(), N } ; }
@@ -44,6 +53,7 @@ extern similarity_t<5,1> similarity_5_1;
 extern similarity_t<5,5> similarity_5_5;
 extern similarity_t<5,7> similarity_5_7;
 
+}
 
 // trampoline functions --- these do a 'vtbl'-like function dispatch
 // to the correct implementation, and adapt the arguments so that only
@@ -54,7 +64,7 @@ inline double Similarity( const Gaudi::Vector5& F,
                           const Gaudi::SymMatrix5x5& origin )
 {
     double target;
-    (*similarity_5_1)( to_span(origin), to_span(F), { &target, 1} );
+    (*detail::similarity_5_1)( detail::to_span(origin), detail::to_span(F), { &target, 1} );
     return target;
 }
 
@@ -62,7 +72,7 @@ inline double Similarity( const Gaudi::Matrix1x5& F,
                           const Gaudi::SymMatrix5x5& origin )
 {
     double target;
-    (*similarity_5_1)( to_span(origin) , to_span(F), { &target, 1 } );
+    (*detail::similarity_5_1)( detail::to_span(origin) , detail::to_span(F), { &target, 1 } );
     return target;
 }
 
@@ -73,7 +83,7 @@ inline void Similarity( const Gaudi::Matrix5x5& F,
                         const Gaudi::SymMatrix5x5& origin,
                         Gaudi::SymMatrix5x5& target )
 {
-    (*similarity_5_5)( to_span(origin) , to_span(F), to_span(target) );
+    (*detail::similarity_5_5)( detail::to_span(origin) , detail::to_span(F), detail::to_span(target) );
 }
 
 inline Gaudi::SymMatrix5x5 Similarity( const Gaudi::Matrix5x5& F,
@@ -91,7 +101,7 @@ inline void Similarity( const ROOT::Math::SMatrix<double,7,5>& F,
                         const Gaudi::SymMatrix5x5& origin,
                         Gaudi::SymMatrix7x7& target )
 {
-    (*similarity_5_7)( to_span(origin), to_span(F), to_span(target) );
+    (*detail::similarity_5_7)( detail::to_span(origin), detail::to_span(F), detail::to_span(target) );
 }
 
 inline Gaudi::SymMatrix7x7 Similarity( const ROOT::Math::SMatrix<double,7,5>& F,
@@ -103,7 +113,7 @@ inline Gaudi::SymMatrix7x7 Similarity( const ROOT::Math::SMatrix<double,7,5>& F,
 }
 
 
-
+namespace detail {
 
 // Forward declare pointer-to-worker-function type
 using average_t = bool (*)(span<const double,5> X1, span<const double,15> C1,
@@ -114,6 +124,7 @@ using average_t = bool (*)(span<const double,5> X1, span<const double,15> C1,
 // a version which matches the supported instruction set we're running on...
 
 extern  average_t average;
+}
 
 inline bool Average( const Gaudi::Vector5& X1, const Gaudi::SymMatrix5x5& C1,
                      const Gaudi::Vector5& X2, const Gaudi::SymMatrix5x5& C2,
@@ -138,11 +149,12 @@ inline bool Average( const Gaudi::Vector5& X1, const Gaudi::SymMatrix5x5& C1,
 //    //ROOT::Math::AssignSym::Evaluate(C, -2 * K * C1) ;
 //    //C += C1 + ROOT::Math::Similarity(K,R) ;
 //
-    return (*average)( to_span(X1), to_span(C1),
-                       to_span(X2), to_span(C2),
-                       to_span(X),  to_span(C) );
+    return (*detail::average)( detail::to_span(X1), detail::to_span(C1),
+                               detail::to_span(X2), detail::to_span(C2),
+                               detail::to_span(X),  detail::to_span(C) );
 }
 
+namespace detail {
 // Forward declare pointer-to-worker-function type
 using filter_t = double (*)( span<double,5> X, span<double,15> C,
                              span<const double,5> Xref, span<const double,5> H,
@@ -150,6 +162,7 @@ using filter_t = double (*)( span<double,5> X, span<double,15> C,
 
 
 extern filter_t filter;
+}
 
 // compute a filter step in a Kalman filter
 // updates X and C in situ, and returns the chisquared
@@ -176,9 +189,9 @@ inline double Filter( Gaudi::Vector5& X, Gaudi::SymMatrix5x5& C,
 //      C -= tmp ;
 //      return res*res / errorRes2;
 
-    return (*filter)( to_span(X), to_span(C),
-                      to_span(Xref), to_span(H),
-                      refResidual ,errorMeas2);
+    return (*detail::filter)( detail::to_span(X), detail::to_span(C),
+                              detail::to_span(Xref), detail::to_span(H),
+                              refResidual ,errorMeas2);
 }
 
 

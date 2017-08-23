@@ -3,7 +3,15 @@
 #include "GaudiKernel/SymmetricMatrixTypes.h"
 #include "VectorClass/vectorclass.h"
 #include <x86intrin.h>
+#ifdef NDEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#define GSL_UNENFORCED_ON_CONTRACT_VIOLATION
+#endif
 #include "gsl/span"
+#ifdef NDEBUG
+#pragma GCC diagnostic pop
+#endif
 
 // Local
 #include "LHCbMath/Similarity.h"
@@ -82,6 +90,7 @@ namespace {
 
 namespace LHCb {
 namespace Math {
+namespace detail {
 namespace avx {
 
       void similarity_5_1(span<const double,15> Ci, span<const double, 5> Fi, span<double, 1> Ti) {
@@ -178,7 +187,7 @@ namespace avx {
         bool success = invRM.InvertChol() ;
         // compute the gain matrix
 
-        auto invRMs = LHCb::Math::to_span( as_const(invRM) );
+        auto invRMs = to_span( as_const(invRM) );
         // K <- C1*inverse(C1+C2) = C1*invR
         const avx_5_t _invR( invRMs );
 
@@ -284,4 +293,4 @@ namespace avx {
         return w*res*res;
       }
 
-} } }
+} } } }

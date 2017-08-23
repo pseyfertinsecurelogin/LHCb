@@ -13,6 +13,7 @@ namespace {
 
 namespace LHCb {
   namespace Math {
+     namespace detail {
 
     // TODO: replace by (static?) functor (instance)s...
     //       (maybe templated, with multiple explicit specializations & tag dispatch???)
@@ -31,8 +32,8 @@ namespace LHCb {
                           gsl::span<const double,5> X2, gsl::span<const double,15> C2,
                           gsl::span<double,5> X, gsl::span<double,15> C );
       extern double filter( span<double,5> X, span<double,15> C,
-                             span<const double,5> Xref, span<const double,5> H,
-                             double refResidual, double errorMeas2 );
+                            span<const double,5> Xref, span<const double,5> H,
+                            double refResidual, double errorMeas2 );
     }
     namespace avx {
       extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
@@ -42,8 +43,8 @@ namespace LHCb {
                           gsl::span<const double,5> X2, gsl::span<const double,15> C2,
                           gsl::span<double,5> X, gsl::span<double,15> C );
       extern double filter( span<double,5> X, span<double,15> C,
-                             span<const double,5> Xref, span<const double,5> H,
-                             double refResidual, double errorMeas2 );
+                            span<const double,5> Xref, span<const double,5> H,
+                            double refResidual, double errorMeas2 );
     }
     namespace sse3 {
       extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
@@ -58,8 +59,8 @@ namespace LHCb {
                           gsl::span<const double,5> X2, gsl::span<const double,15> C2,
                           gsl::span<double,5> X, gsl::span<double,15> C );
       extern double filter( span<double,5> X, span<double,15> C,
-                             span<const double,5> Xref, span<const double,5> H,
-                             double refResidual, double errorMeas2 );
+                            span<const double,5> Xref, span<const double,5> H,
+                            double refResidual, double errorMeas2 );
     }
 
 
@@ -71,7 +72,7 @@ namespace LHCb {
                       std::make_pair( CPU::AVX, avx::similarity_5_1 ),
                       std::make_pair( CPU::SSE3, sse3::similarity_5_1 ),
                       std::make_pair( CPU::GENERIC, generic::similarity_5_1 ) };
-        dispatch_fn( vtbl, LHCb::Math::similarity_5_1, Ci, Fi, ti );
+        dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_1, Ci, Fi, ti );
       }
 
       void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> ti)
@@ -80,7 +81,7 @@ namespace LHCb {
                       std::make_pair( CPU::AVX, avx::similarity_5_5 ),
                       std::make_pair( CPU::SSE3, sse3::similarity_5_5  ),
                       std::make_pair( CPU::GENERIC, generic::similarity_5_5 ) };
-        dispatch_fn( vtbl, LHCb::Math::similarity_5_5, Ci, Fi, ti );
+        dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_5, Ci, Fi, ti );
       }
 
       void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> ti)
@@ -89,7 +90,7 @@ namespace LHCb {
                       std::make_pair( CPU::AVX, avx::similarity_5_7 ),
                       std::make_pair( CPU::SSE3, sse3::similarity_5_7 ),
                       std::make_pair( CPU::GENERIC, generic::similarity_5_7 ) };
-        dispatch_fn( vtbl, LHCb::Math::similarity_5_7, Ci, Fi, ti );
+        dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_7, Ci, Fi, ti );
       }
 
       bool average(gsl::span<const double,5> X1, gsl::span<const double,15> C1,
@@ -99,7 +100,7 @@ namespace LHCb {
         auto vtbl = { std::make_pair( CPU::AVX2, avx2::average ),
                       std::make_pair( CPU::AVX, avx::average ),
                       std::make_pair( CPU::GENERIC, generic::average ) };
-        return dispatch_fn( vtbl, LHCb::Math::average, X1, C1, X2, C2, X, C );
+        return dispatch_fn( vtbl, LHCb::Math::detail::average, X1, C1, X2, C2, X, C );
       }
 
       double filter( span<double,5> X, span<double,15> C,
@@ -108,7 +109,7 @@ namespace LHCb {
         auto vtbl = { std::make_pair( CPU::AVX2, avx2::filter ),
                       std::make_pair( CPU::AVX, avx::filter ),
                       std::make_pair( CPU::GENERIC, generic::filter ) };
-        return dispatch_fn( vtbl, LHCb::Math::filter, X, C, Xref, H, refResidual, errorMeas2 );
+        return dispatch_fn( vtbl, LHCb::Math::detail::filter, X, C, Xref, H, refResidual, errorMeas2 );
       }
 
     }
@@ -120,5 +121,6 @@ namespace LHCb {
     average_t average = &dispatch::average;
     filter_t filter = &dispatch::filter;
 
+    }
   }
 }

@@ -1,10 +1,19 @@
 #include "VectorClass/vectorclass.h"
 #include <x86intrin.h>
+#ifdef NDEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#define GSL_UNENFORCED_ON_CONTRACT_VIOLATION
+#endif
 #include "gsl/span"
+#ifdef NDEBUG
+#pragma GCC diagnostic pop
+#endif
 
-using gsl::span;
 
 namespace {
+
+using gsl::span;
 
 auto to_Vec2d( span<const double,2> s ) { return Vec2d{}.load( s.data() ); }
 
@@ -46,6 +55,7 @@ struct alignas(16) sse_t {
 
 namespace LHCb {
 namespace Math {
+namespace detail {
 namespace sse3 {
 
 // origin: 5x5 input symmetric matrix, in row-major version,i.e.
@@ -160,4 +170,4 @@ namespace sse3 {
       _4 = m.g4(Fi.subspan<30,5>());
       Ti[27] = dot5_sse3(Fi.subspan<30,5>(),_0,_2,_4);
     }
-} } }
+} } } }
