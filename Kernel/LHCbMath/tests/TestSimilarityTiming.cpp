@@ -6,7 +6,6 @@
 // ============================================================================
 #include <iostream>
 #include <map>
-#include <functional>
 #include <memory>
 #include <chrono>
 #include <array>
@@ -67,20 +66,19 @@ namespace generic {
 
 
 enum ISet : std::int8_t { CLASSIC = -1, GENERIC = 0, SSE3 = 3, AVX = 7, AVX2 = 8 };
-template <std::ptrdiff_t N, std::ptrdiff_t M>
-using similarity_t = std::function<void(gsl::span<const double,N*(N+1)/2>,
-                                        gsl::span<const double,N*M>,
-                                        gsl::span<double,M*(M+1)/2>)>;
 
-std::map<ISet, similarity_t<5,1>>  vtbl_5_1 = { { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_1 },
+std::map<ISet, LHCb::Math::detail::similarity_t<5,1>>  vtbl_5_1 = {
+                                                { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_1 },
                                                 { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_1 },
                                                 { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_1 },
                                                 { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_1 } };
-std::map<ISet, similarity_t<5,5>>  vtbl_5_5 = { { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_5 },
+std::map<ISet, LHCb::Math::detail::similarity_t<5,5>>  vtbl_5_5 = {
+                                                { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_5 },
                                                 { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_5 },
                                                 { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_5 },
                                                 { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_5 } };
-std::map<ISet, similarity_t<5,7>>  vtbl_5_7 = { { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_7 },
+std::map<ISet, LHCb::Math::detail::similarity_t<5,7>>  vtbl_5_7 = {
+                                                { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_7 },
                                                 { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_7 },
                                                 { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_7 },
                                                 { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_7 } };
@@ -307,44 +305,27 @@ TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
         //            << "############################" << std::endl;
     }
 
-    // Now running the various methods
-    {
+    auto runit = [&](ISet iset, std::vector<SymMat>& res) {
+        auto f = simFuncs.at(iset);
         auto t0 = high_resolution_clock::now();
         for(int i=0; i<nbentries; i++) {
-            simFuncs.at(ISet::GENERIC)(to_span(O[i]),to_span(F[i]), to_span(resGeneric[i]));
+            (*f)(to_span(O[i]),to_span(F[i]), to_span(res[i]));
         }
-        results.timing[ISet::GENERIC] =  getTime(t0);
+        results.timing[iset] =  getTime(t0);
+    };
+    // Now running the various methods
+    {
+        runit( ISet::GENERIC, resGeneric );
     }
 
     // Checking SSE3
-    if (hasSSE3)
-    {
-        auto t0 = high_resolution_clock::now();
-        for(int i=0; i<nbentries; i++) {
-            simFuncs.at(ISet::SSE3)(to_span(O[i]), to_span(F[i]), to_span(resSSE3[i]));
-        }
-        results.timing[ISet::SSE3] =  getTime(t0);
-    }
+    if (hasSSE3) runit( ISet::SSE3, resSSE3 );
 
     // Checking AVX
-    if (hasAVX)
-    {
-        auto t0 = high_resolution_clock::now();
-        for(int i=0; i<nbentries; i++) {
-            simFuncs.at(ISet::AVX)(to_span(O[i]), to_span(F[i]), to_span(resAVX[i]));
-        }
-        results.timing[ISet::AVX] =  getTime(t0);
-    }
+    if (hasAVX) runit( ISet::AVX, resAVX );
 
     // Checking AVX2
-    if (hasAVX2)
-    {
-        auto t0 = high_resolution_clock::now();
-        for(int i=0; i<nbentries; i++) {
-            simFuncs.at(ISet::AVX2)(to_span(O[i]), to_span(F[i]), to_span(resAVX2[i]));
-        }
-        results.timing[ISet::AVX2] =  getTime(t0);
-    }
+    if (hasAVX2) runit( ISet::AVX2, resAVX2 );
 
     // Checking the classic SMatrix method
     {
@@ -456,7 +437,7 @@ int main()
 
     std::cout << std::endl << "Checking timing" << std::endl;
     std::cout << "=========================================" << std::endl;
-    std::cout << "Classic\tGeneric\tSSE3\tAVX\tAVX2" << std::endl;
+    std::cout << "Classic\t\tGeneric\tSSE3\tAVX\tAVX2" << std::endl;
     for (int i=0; i<testcount; i++) {
 
         std::cout << tresults[i].timing[ISet::CLASSIC]

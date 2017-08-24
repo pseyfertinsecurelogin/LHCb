@@ -6,7 +6,6 @@
 // ============================================================================
 #include <iostream>
 #include <map>
-#include <functional>
 // ============================================================================
 // VectorClass
 // ============================================================================
@@ -57,21 +56,18 @@ namespace generic {
 
 enum ISet : std::int8_t { GENERIC = 0, SSE3 = 3, AVX = 7, AVX2 = 8 };
 
-// Forward declare pointer-to-worker-function type
-template <std::ptrdiff_t N, std::ptrdiff_t M>
-using similarity_t = std::function<void(gsl::span<const double,N*(N+1)/2>,
-                                        gsl::span<const double,N*M>,
-                                        gsl::span<double,M*(M+1)/2>)>;
-
-std::map<ISet, similarity_t<5,1>>  vtbl_5_1 = { { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_1 },
+std::map<ISet, LHCb::Math::detail::similarity_t<5,1>>  vtbl_5_1 = {
+                                                { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_1 },
                                                 { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_1 },
                                                 { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_1 },
                                                 { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_1 } };
-std::map<ISet, similarity_t<5,5>>  vtbl_5_5 = { { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_5 },
+std::map<ISet, LHCb::Math::detail::similarity_t<5,5>>  vtbl_5_5 = {
+                                                { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_5 },
                                                 { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_5 },
                                                 { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_5 },
                                                 { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_5 } };
-std::map<ISet, similarity_t<5,7>>  vtbl_5_7 = { { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_7 },
+std::map<ISet, LHCb::Math::detail::similarity_t<5,7>>  vtbl_5_7 = {
+                                                { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_7 },
                                                 { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_7 },
                                                 { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_7 },
                                                 { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_7 } };
