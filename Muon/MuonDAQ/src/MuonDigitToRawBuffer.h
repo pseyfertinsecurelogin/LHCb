@@ -19,10 +19,12 @@
 class MuonDigitToRawBuffer : public GaudiAlgorithm {
 public:
   /// Standard constructor
-  MuonDigitToRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
+
+private:
 
   StatusCode ProcessDC06();
   StatusCode ProcessV1();
@@ -30,7 +32,6 @@ public:
   StatusCode ProcessDigitV1();
   StatusCode ProcessPads();
 
-private:
   DeMuonDetector* m_muonDet = nullptr;
 
   std::vector<unsigned int> m_digitsInODE[MuonDAQHelper_maxODENumber];
@@ -43,7 +44,7 @@ private:
   long m_TotL1Board = 0;
   unsigned int m_M1Tell1 = 0;
 
-  unsigned int m_vtype;
+  Gaudi::Property<unsigned int> m_vtype { this, "VType", 2 } ;
 
 };
 #endif // MUONDIGITTORAWBUFFER_H

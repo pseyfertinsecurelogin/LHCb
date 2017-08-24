@@ -20,7 +20,7 @@ public:
 
   void resetODEData(){ *this = {}; };
 
-  void setData(unsigned int words[35]){ std::copy_n( words, 35, m_data.begin()); };
+  void setData(const std::array<unsigned int,35>& d){ m_data = d; }
 
   unsigned int getWord(int index) const { return m_data[index]; };
 
