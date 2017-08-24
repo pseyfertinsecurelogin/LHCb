@@ -46,6 +46,9 @@ namespace LHCb
   namespace PackedClusterLocation
   {
     static const std::string& Default = "pRec/Track/Clusters";
+    static const std::string& Velo = "pRec/Velo/Clusters";
+    static const std::string& IT = "pRec/IT/Clusters";
+    static const std::string& TT = "pRec/TT/Clusters";
   }
 
   /** @class PackedClusters PackedCluster.h Event/PackedCluster.h
