@@ -101,8 +101,8 @@ class icdb {
     struct cdb  m_db;
     std::string m_name;
 public:
-    icdb( std::string fname ) : m_name(std::move(fname)) {
-        auto fd = open( m_name.c_str(), O_RDONLY );
+    explicit icdb( std::string fname ) : m_name(std::move(fname)) {
+        auto fd = ::open( m_name.c_str(), O_RDONLY );
         if (fd < 0 || cdb_init( &m_db, fd ) < 0) cdb_fileno(&m_db)=-1;
     }
     icdb(const icdb&) = delete;
@@ -117,7 +117,7 @@ public:
         }
     }
 
-    operator bool() const { return cdb_fileno(&m_db)>=0; }
+    explicit operator bool() const { return cdb_fileno(&m_db)>=0; }
 
     const std::string& name() const { return m_name; }
 
@@ -126,38 +126,33 @@ public:
         unsigned m_cpos = 0;
         bool atEnd() const { return !m_db; }
     public:
-        iterator(struct cdb *parent = nullptr, unsigned cpos = 0) : m_db{parent}, m_cpos(cpos) {
-            if ( m_db && !m_cpos ) {
-                cdb_seqinit(&m_cpos, m_db);
-                ++*this;
-            }
+        iterator(struct cdb *parent, unsigned cpos ) : m_db{parent}, m_cpos(cpos) {}
+        explicit iterator(struct cdb *parent = nullptr) : m_db{parent} {
+            if ( m_db ) cdb_seqinit(&m_cpos, m_db);
+            ++*this;
         }
         iterator& operator++() {
-            if ( m_db &&  cdb_seqnext(&m_cpos, m_db) <= 0 ) m_db = nullptr ;
+            if ( m_db && cdb_seqnext(&m_cpos, m_db) <= 0 ) m_db = nullptr ;
             return *this;
         }
-        friend bool operator==(const iterator& lhs, const iterator& rhs) {
-            return ( lhs.atEnd() && rhs.atEnd() ) ||
-                   ( !lhs.atEnd() && !rhs.atEnd() && lhs.m_cpos == rhs.m_cpos );
-        }
         friend bool operator!=(const iterator& lhs, const iterator& rhs) {
-            return !(lhs==rhs);
+            return   lhs.atEnd() != rhs.atEnd()
+                || ( lhs.m_cpos != rhs.m_cpos && ( !lhs.atEnd() || !rhs.atEnd() ) );
         }
         cdb_record operator*() const { // Not quite canonical -- ideally should be value_type&...
             return { cdb_getkey(m_db), cdb_getdata(m_db),
-                     cdb_keylen(m_db), cdb_datalen(m_db) } ;
+                     cdb_keylen(m_db), cdb_datalen(m_db) };
         }
     };
 
-    iterator begin() { return { &m_db }; }
-    iterator end() const { return { }; }
+    auto begin() { return iterator{ &m_db }; }
+    auto end() const { return iterator{ }; }
 
-    iterator find(boost::string_ref key) {
-        if ( cdb_find(&m_db, key.data(), key.size())>0 ) {
-            // Hrmpf. Use inside knowledge of the layout of the cdb structure...
-            return { &m_db, cdb_datapos(&m_db) + cdb_datalen(&m_db) };
-        }
-        return end();
+    auto find(boost::string_ref key) {
+        // Hrmpf: use inside knowledge of the (very stable) layout of the cdb structure...
+        return cdb_find(&m_db, key.data(), key.size())>0 ?
+                    iterator{ &m_db, cdb_datapos(&m_db) + cdb_datalen(&m_db) } :
+                    end() ;
     }
 };
 
@@ -180,8 +175,8 @@ public:
             cdb_fileno(&m_db) = -1;
             throw std::runtime_error( "Failed to create " + m_name + " exclusive, write-only: " + strerror(errno) );
         }
-        if ( cdb_make_start( &m_db, fd ) != 0) {
-            close(fd);
+        if ( cdb_make_start( &m_db, fd ) != 0 ) {
+            ::close(fd);
             cdb_fileno(&m_db)=-1;
             fs::remove( m_name );
             throw std::runtime_error( "Failed to initialize CDB file " + m_name + " for writing" );
@@ -191,7 +186,7 @@ public:
     ocdb& operator=( const ocdb& ) = delete;
     ocdb( ocdb&& ) = delete;
     ocdb& operator=( ocdb&& ) = delete;
-    ~ocdb() { if (*this) { cdb_make_free(&m_db); close(cdb_fileno(&m_db)); fs::remove(m_name); } }
+    ~ocdb() { if (*this) { cdb_make_free(&m_db); ::close(cdb_fileno(&m_db)); fs::remove(m_name); } }
 
     const std::string& name() const { return m_name; }
 
@@ -207,16 +202,16 @@ public:
          }
     }
 
-    bool flush() {
+    bool close() {
         if (!*this) return false;
         bool ok =  (cdb_make_finish(&m_db) == 0) && !m_error;
-        close(cdb_fileno(&m_db));
+        ::close(cdb_fileno(&m_db));
         cdb_fileno(&m_db)=-1;
         if (!ok) fs::remove(m_name);
         return ok;
     }
 
-    operator bool() const { return cdb_fileno(&m_db)>=0; }
+    explicit operator bool() const { return cdb_fileno(&m_db)>=0; }
 };
 
 template <typename T>
@@ -295,22 +290,27 @@ std::vector<unsigned char> make_cdb_record( std::string str, uid_t uid, std::tim
     return buffer;
 }
 
-class CloseListener : public implements<IIncidentListener> {
+template <typename Action>
+class Listener : public implements<IIncidentListener> {
 public:
-   CloseListener(std::string incident, std::unique_ptr<ConfigCDBAccessSvc_details::CDB> &file)
-      : m_incident{std::move(incident)}, m_file(file)
+   template <typename F>
+   Listener(std::string incident, F&& f)
+      : m_incident{std::move(incident)}, m_f{std::forward<F>(f)}
    { addRef(); }// Initial count set to 1
 
-   /// Inform that a new incident has occurred
    void handle(const Incident& i) override
-   { if (i.type() == m_incident) m_file.reset(); }
+   { if (i.type() == m_incident) m_f(); }
 
 private:
    /// incident to handle
    const std::string m_incident;
-   /// file to reset (close)
-   std::unique_ptr<ConfigCDBAccessSvc_details::CDB> &m_file;
+   /// action to perform on incident
+   Action m_f;
 };
+
+template <typename Fun>
+auto make_unique_listener(std::string incident, Fun&& fun)
+{ return std::make_unique<Listener<Fun>>(std::move(incident), std::forward<Fun>(fun)); }
 
 }
 
@@ -319,7 +319,7 @@ namespace ConfigCDBAccessSvc_details {
 class CDB
 {
   public:
-    CDB( const std::string& name, std::ios::openmode mode = std::ios::in )
+    explicit CDB( const std::string& name, std::ios::openmode mode = std::ios::in )
        : m_icdb( name )
     {
         if ( mode & std::ios::out ) {
@@ -335,7 +335,7 @@ class CDB
         }
     }
     ~CDB() {
-        if ( m_ocdb && m_ocdb->flush() ) {
+        if ( m_ocdb && m_ocdb->close() ) {
            fs::rename( m_ocdb->name(), m_icdb.name() );
         }
     }
@@ -369,8 +369,9 @@ class CDB
     {
         std::vector<std::string> keys;
         for (auto key_value : m_icdb ) {
-            if ( selector( key_value.string_key() ) )
+            if ( selector( key_value.string_key() ) ) {
                 keys.emplace_back( key_value.string_key() );
+            }
         }
         if ( m_ocdb ) { // then also check write cache...
             for ( auto& i : m_write_cache ) {
@@ -447,7 +448,7 @@ StatusCode ConfigCDBAccessSvc::initialize()
     // closed when it it fired. In that case, we should be handled first/always,
     // so give maximum priority.
     if (status.isSuccess() && !m_incident.empty()) {
-       m_initListener= std::make_unique<CloseListener>(m_incident, m_file);
+       m_initListener = make_unique_listener( m_incident, [=](){ this->m_file.reset(); } );
        auto incSvc = service<IIncidentSvc>("IncidentSvc");
        incSvc->addListener(m_initListener.get(), m_incident, std::numeric_limits<long>::max());
     }
@@ -502,6 +503,12 @@ StatusCode ConfigCDBAccessSvc::stop()
 //=============================================================================
 StatusCode ConfigCDBAccessSvc::finalize()
 {
+    if (m_initListener) {
+       auto incSvc = service<IIncidentSvc>("IncidentSvc");
+       if (incSvc) {
+          incSvc->removeListener(m_initListener.get(), m_incident);
+       }
+    }
     m_file.reset( ); // close file if still open
     return Service::finalize();
 }
@@ -633,22 +640,7 @@ ConfigCDBAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias )
     // now write alias...
     fs::path fnam = configTreeNodeAliasPath( alias.alias() );
     auto x = read<std::string>( fnam.string() );
-    if ( !x ) {
-        std::stringstream s;
-        s << alias.ref();
-        if ( !file() ) {
-            error() << " container file not found during attempted write of "
-                    << fnam.string() << endmsg;
-            return ConfigTreeNodeAlias::alias_type();
-        }
-        if ( file()->append( fnam.string(), s ) ) {
-            info() << " created " << fnam.string() << endmsg;
-            return alias.alias();
-        } else {
-            error() << " failed to write " << fnam.string() << endmsg;
-            return ConfigTreeNodeAlias::alias_type();
-        }
-    } else {
+    if (x) {
         //@TODO: decide policy: in which cases do we allow overwrites of existing
         //labels?
         // (eg. TCK aliases: no!, tags: maybe... , toplevel: impossible by
@@ -663,4 +655,17 @@ ConfigCDBAccessSvc::writeConfigTreeNodeAlias( const ConfigTreeNodeAlias& alias )
                 << endmsg;
         return ConfigTreeNodeAlias::alias_type();
     }
+    std::stringstream s;
+    s << alias.ref();
+    if ( !file() ) {
+        error() << " container file not found during attempted write of "
+                << fnam.string() << endmsg;
+        return ConfigTreeNodeAlias::alias_type();
+    }
+    if ( !file()->append( fnam.string(), s ) ) {
+        error() << " failed to write " << fnam.string() << endmsg;
+        return ConfigTreeNodeAlias::alias_type();
+    }
+    info() << " created " << fnam.string() << endmsg;
+    return alias.alias();
 }
