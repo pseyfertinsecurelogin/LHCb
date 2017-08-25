@@ -1,7 +1,5 @@
-// $: Track.cpp,v 1.39 2007/05/15 06:57:34 wouter Exp $ 
 // Include files
 
-#include <functional>
 #include <string>
 #include <map>
 #include <array>
@@ -32,7 +30,6 @@ using namespace LHCb;
 //=============================================================================
 const TrackFitResult* Track::fitResult() const
 {
-  //if( m_fitResult == 0 ) const_cast<Track*>(this)->m_fitResult = new TrackFitResult() ;
   return m_fitResult ;
 }
 
@@ -41,7 +38,6 @@ const TrackFitResult* Track::fitResult() const
 //=============================================================================
 TrackFitResult* Track::fitResult()
 {
-  //if( m_fitResult == 0 ) m_fitResult = new TrackFitResult() ;
   return m_fitResult ;
 }
 
@@ -85,8 +81,8 @@ Track::ConstNodeRange Track::nodes() const
     static_assert( sizeof(Iterator1) == sizeof(Iterator2), "iterator sizes must be equal" ) ;
   } ;
   // somehow, volatile didn't work here in gcc46
-  static _IteratorCast _begin ;
-  static _IteratorCast _end   ;
+  _IteratorCast _begin ;
+  _IteratorCast _end   ;
   //
   _begin . input = &begin ;
   _end   . input = &end   ;
@@ -101,26 +97,25 @@ Track::ConstNodeRange Track::nodes() const
 //=============================================================================
 Track::MeasurementContainer Track::measurements() const
 {
-  MeasurementContainer meas ;
-  if( m_fitResult )
-    meas.insert(meas.end(),m_fitResult->measurements().begin(),m_fitResult->measurements().end()) ;
-  return meas ;
+  return m_fitResult ? MeasurementContainer{ m_fitResult->measurements().begin(),
+                                             m_fitResult->measurements().end() }
+                     : MeasurementContainer{} ;
 }
 
 namespace {
-    
+
   template <size_t N>
   std::array<double,N+1>  generate_chi2max(double limit) {
     std::array<double,N+1> c = { 0 };
-    size_t i = 1;
-    std::generate( std::next(std::begin(c)), std::end(c), 
-                   [=]() mutable { return gsl_cdf_chisq_Qinv(limit, i++ ); } );
+    std::generate( std::next(std::begin(c)), std::end(c),
+                   [limit, i = 1u]() mutable
+                   { return gsl_cdf_chisq_Qinv(limit, i++ ); } );
     return c;
   }
 
   // could put this into probChi2, but then the table is generated at
-  // first use of probChi2, i.e. during the event loop. 
-  // This way, it tends to be generated when libTrackEvent.so is 
+  // first use of probChi2, i.e. during the event loop.
+  // This way, it tends to be generated when libTrackEvent.so is
   // dynamically linked into the executable, i.e. very early.
   static const auto chi2max = generate_chi2max<256>(1e-15);
 }
@@ -133,8 +128,8 @@ double Track::probChi2() const
   double val(0) ;
   if ( nDoF() > 0 )
   {
-    // what to do if nDoF is bigger than the lookup table? 
-    // let's just do a range-checked acess, and have it throw 
+    // what to do if nDoF is bigger than the lookup table?
+    // let's just do a range-checked acess, and have it throw
     // an exception... maybe not the most elegant solution...
     // alternative: chi2max[  std::min( nDoF(), int(chi2max.size() ) ]
     // in which case for unreasonable nDoF we don't go until 1e-15...
@@ -149,7 +144,7 @@ double Track::probChi2() const
 State & Track::closestState( double z )
 {
   auto iter = std::min_element( m_states.begin(),m_states.end(),
-                                TrackFunctor::distanceAlongZ<State>(z) );
+                                TrackFunctor::distanceAlongZ(z) );
   if ( iter == m_states.end() )
     throw GaudiException( "No state closest to z","Track.cpp",
                           StatusCode::FAILURE );
@@ -163,14 +158,14 @@ const State & Track::closestState( double z ) const
 {
   if ( m_fitResult && !m_fitResult->nodes().empty() ) {
     auto iter = std::min_element( m_fitResult->nodes().begin(),m_fitResult->nodes().end(),
-                                  TrackFunctor::distanceAlongZ<Node>(z) );
+                                  TrackFunctor::distanceAlongZ(z) );
     if ( iter == m_fitResult->nodes().end() )
       throw GaudiException( "No state closest to z","Track.cpp",
                             StatusCode::FAILURE );
     return (*iter)->state();
   } else {
     auto iter = std::min_element( m_states.begin(),m_states.end(),
-                                  TrackFunctor::distanceAlongZ<State>(z) );
+                                  TrackFunctor::distanceAlongZ(z) );
     if ( iter == m_states.end() )
       throw GaudiException( "No state closest to z","Track.cpp",
                             StatusCode::FAILURE );
@@ -185,14 +180,14 @@ const State & Track::closestState( const Gaudi::Plane3D& plane ) const
 {
   if ( m_fitResult && !m_fitResult->nodes().empty() ) {
     auto iter = std::min_element( m_fitResult->nodes().begin(),m_fitResult->nodes().end(),
-                                  TrackFunctor::distanceToPlane<Node>(plane) );
+                                  TrackFunctor::distanceToPlane(plane) );
     if ( iter == m_fitResult->nodes().end() )
       throw GaudiException( "No state closest to z","Track.cpp",
                             StatusCode::FAILURE );
     return (*iter)->state();
   } else {
     auto iter = std::min_element( m_states.begin(),m_states.end(),
-                                  TrackFunctor::distanceToPlane<State>(plane) );
+                                  TrackFunctor::distanceToPlane(plane) );
     if ( iter == m_states.end() )
       throw GaudiException( "No state closest to plane","Track.cpp",
                             StatusCode::FAILURE );
@@ -214,8 +209,8 @@ bool Track::hasStateAt( const LHCb::State::Location& location ) const
 State* Track::stateAt( const LHCb::State::Location& location )
 {
   auto iter = std::find_if( m_states.begin(),m_states.end(),
-                            TrackFunctor::HasKey<State,const LHCb::State::Location&>
-                            (&State::checkLocation,location) );
+                            [&](const LHCb::State* s)
+                            { return s->checkLocation(location); } );
   return iter != m_states.end() ? *iter : nullptr;
 }
 
@@ -225,8 +220,8 @@ State* Track::stateAt( const LHCb::State::Location& location )
 const State* Track::stateAt( const LHCb::State::Location& location ) const
 {
   auto iter = std::find_if( m_states.begin(),m_states.end(),
-                            TrackFunctor::HasKey<State,const LHCb::State::Location&>
-                            (&State::checkLocation,location) );
+                            [&](const LHCb::State* s)
+                            { return s->checkLocation(location); } );
   return iter != m_states.end() ? *iter : nullptr;
 }
 
@@ -236,12 +231,11 @@ const State* Track::stateAt( const LHCb::State::Location& location ) const
 void Track::addToStates( const State& state )
 {
   State* local = state.clone();
-  const int order = ( checkFlag(Track::Backward) ? -1 : 1 );
-  auto ipos =
-    std::upper_bound(m_states.begin(),
-                     m_states.end(),
-                     local,
-                     TrackFunctor::orderByZ<State>(order));
+  const int order = ( checkFlag(Track::Flags::Backward) ? -1 : 1 );
+  auto ipos = std::upper_bound(m_states.begin(),
+                               m_states.end(),
+                               local,
+                               TrackFunctor::orderByZ(order));
   m_states.insert(ipos,local);
 }
 
@@ -251,15 +245,13 @@ void Track::addToStates( const State& state )
 void Track::addToStates( StateContainer& states )
 {
   // Make sure that the incoming states are properly sorted. The 'if' is ugly, but more efficient than using 'orderByZ'.
-  bool backward = checkFlag(Track::Backward) ;
-  if(backward) std::sort(states.begin(),states.end(),TrackFunctor::decreasingByZ<State>());
-  else         std::sort(states.begin(),states.end(),TrackFunctor::increasingByZ<State>());
-  // Now append and use std::inplace_merge. Make sure there is enough capacity such that iterators stay valid.
-  m_states.reserve( states.size() + m_states.size()) ;
-  auto middle = m_states.end() ;
-  m_states.insert(middle, states.begin(), states.end()) ;
-  if(backward) std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::decreasingByZ<State>());
-  else         std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::increasingByZ<State>());
+  bool backward = checkFlag(Track::Flags::Backward) ;
+  if(backward) std::sort(states.begin(),states.end(),TrackFunctor::decreasingByZ());
+  else         std::sort(states.begin(),states.end(),TrackFunctor::increasingByZ());
+  // Now append and use std::inplace_merge.
+  auto middle = m_states.insert(m_states.end(), states.begin(), states.end()) ;
+  if(backward) std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::decreasingByZ());
+  else         std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::increasingByZ());
 }
 
 //=============================================================================
@@ -276,7 +268,7 @@ void Track::removeFromLhcbIDs( const LHCbID& value )
 //=============================================================================
 void Track::removeFromStates( State* state )
 {
-  TrackFunctor::deleteFromList<State>(m_states,state);
+  TrackFunctor::deleteFromList(m_states,state);
 }
 
 //=============================================================================
@@ -285,7 +277,7 @@ void Track::removeFromStates( State* state )
 bool Track::addToLhcbIDs( const LHCb::LHCbID& value )
 {
   auto pos = std::lower_bound( m_lhcbIDs.begin(),m_lhcbIDs.end(),value ) ;
-  const bool rc = (pos == m_lhcbIDs.end()) || !( (*pos) == value ) ;
+  const bool rc = (pos == m_lhcbIDs.end()) || !( *pos == value ) ;
   if ( rc ) m_lhcbIDs.insert( pos, value ) ;
   return rc ;
 }
@@ -472,7 +464,7 @@ bool LHCb::Track::hasInfo ( const int key ) const
  */
 //=============================================================================
 bool  LHCb::Track::addInfo ( const int key, const double info )
-{ 
+{
   return m_extraInfo.insert( key , info ).second;
 }
 

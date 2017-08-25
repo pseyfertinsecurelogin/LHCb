@@ -111,11 +111,11 @@ public:
   inline bool skipInvalid  () const  { return m_skipInvalid  ; }
   inline bool skipBackward () const  { return m_skipBackward ; }
   /// get the list of accepted fit status
-  size_t acceptedFitStatus ( std::vector<LHCb::Track::FitStatus>&  s ) const ;
+  size_t acceptedFitStatus ( std::vector<LHCb::Track::FitStatus>& s ) const ;
   /// get the list of accepted types
-  size_t acceptedType      ( std::vector<LHCb::Track::Types>&      t ) const ;
+  size_t acceptedType      ( std::vector<LHCb::Track::Types>&     t ) const ;
   /// get the list of rejected history
-  size_t rejectedHistory   ( std::vector<LHCb::Track::History>&    h ) const ;
+  size_t rejectedHistory   ( std::vector<LHCb::Track::History>&   h ) const ;
 public:
   inline bool acceptedFitStatus ( const LHCb::Track::FitStatus v ) const ;
   inline bool acceptedType      ( const LHCb::Track::Types     v ) const ;
@@ -147,10 +147,10 @@ private:
   /// accepted fit status
   std::vector<int> m_fitstatus  = { LHCb::Track::FitStatus::Fitted };
   /// accepted type
-  std::vector<int> m_type    = {  LHCb::Track::Types::Long       ,
-                        LHCb::Track::Types::Upstream   ,
-                        LHCb::Track::Types::Downstream ,
-                        LHCb::Track::Types::Ttrack     };
+  std::vector<int> m_type = {  LHCb::Track::Types::Long       ,
+                               LHCb::Track::Types::Upstream   ,
+                               LHCb::Track::Types::Downstream ,
+                               LHCb::Track::Types::Ttrack     };
   /// rejected history
   std::vector<int> m_history ;
 };
