@@ -6,6 +6,7 @@
 // STD & STL
 // ============================================================================
 #include <string>
+#include <type_traits>
 #include "GaudiKernel/MsgStream.h"
 // ============================================================================
 // Event model
@@ -32,8 +33,9 @@ class TrackUse final
 {
 public:
   typedef std::vector<int> Types ;
-public:
+
   /** declare 'own' properties for the algorithm
+   *  or service:
    *
    *  @code
    *
@@ -41,19 +43,14 @@ public:
    *  MyAlg::MyAlg  ( const std::string& name ,
    *                  ISvcLocator*       svc  )
    *   : Algorithm  ( name , svc )
-   *   , m_trackUse ()
+   *   , m_trackUse (*this)
    *   {
-   *      m_trackUse.declareProperties( this )
    *   };
    *
    *  @endcode
    *
    *  @param alg algorithm
    *  @return status code
-   */
-   StatusCode declareProperties ( Algorithm* alg ) ;
-  /** declare 'own' properties for the service
-   *
    *
    *  @code
    *
@@ -61,20 +58,14 @@ public:
    *  MySvc::MySvc  ( const std::string& name  ,
    *                  ISvcLocator*       isvc  )
    *   : Service    ( name , isvc )
-   *   , m_trackUse ()
+   *   , m_trackUse (*this)
    *   {
-   *      m_trackUse.declareProperties( this )
    *   };
    *
    *  @endcode
    *
    *  @param svc service
    *  @return status code
-   */
-  StatusCode declareProperties ( Service*  svc ) ;
-  /** declare 'own' properties for the tool
-   *
-   *
    *  @code
    *
    *  // tool contructor
@@ -82,9 +73,8 @@ public:
    *                    const std::string& name ,
    *                    const IInterface*  parent  )
    *   : AlgTool      ( type , name , parent )
-   *   , m_trackUse ()
+   *   , m_trackUse (*this)
    *   {
-   *      m_trackUse.declareProperties( this )
    *   };
    *
    *  @endcode
@@ -92,7 +82,14 @@ public:
    *  @param tool tool
    *  @return status code
    */
-  StatusCode declareProperties ( AlgTool*  tool ) ;
+
+private:
+  struct tag {};
+  template <typename T> TrackUse( T& parent, tag  );
+public:
+  explicit TrackUse( Algorithm& parent ) : TrackUse(parent, tag{}) {}
+  explicit TrackUse( AlgTool& parent ) : TrackUse(parent, tag{}) {}
+
   /** the basic method which defines if track selected for further processing
    *  @param track pointer to Track object
    *  @return decsion
@@ -104,7 +101,7 @@ public:
    */
   inline bool operator() ( const LHCb::Track* track ) const
   { return use ( track ) ; }
-public:
+
   //
   inline bool check        () const  { return m_check ; }
   inline bool skipClones   () const  { return m_skipClones   ; }
@@ -126,13 +123,6 @@ public:
   /// printout of the track into the staream
   MsgStream&    print      ( MsgStream&         stream ,
                              const LHCb::Track* track  ) const ;
-protected:
-  /** the basic method for delegation of properties
-   *  @param object property manager
-   *  @return statsu code
-   */
-  template <class TYPE>
-  inline StatusCode i_declareProperties( TYPE* object ) ;
 private:
   // check the track
   bool               m_check        = true;
