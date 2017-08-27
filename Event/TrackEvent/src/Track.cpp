@@ -242,16 +242,18 @@ void Track::addToStates( const State& state )
 //=============================================================================
 // Add a list of states to the list associated to the Track. This takes ownership.
 //=============================================================================
-void Track::addToStates( StateContainer& states )
+void Track::addToStates( const StateContainer& states )
 {
-  // Make sure that the incoming states are properly sorted. The 'if' is ugly, but more efficient than using 'orderByZ'.
-  bool backward = checkFlag(Track::Flags::Backward) ;
-  if(backward) std::sort(states.begin(),states.end(),TrackFunctor::decreasingByZ());
-  else         std::sort(states.begin(),states.end(),TrackFunctor::increasingByZ());
-  // Now append and use std::inplace_merge.
   auto middle = m_states.insert(m_states.end(), states.begin(), states.end()) ;
-  if(backward) std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::decreasingByZ());
-  else         std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::increasingByZ());
+  // do not assumme that the incoming states are properly sorted.
+  // The 'if' is ugly, but more efficient than using 'orderByZ'.
+  if (checkFlag(Track::Flags::Backward)) {
+    std::sort(middle,m_states.end(),TrackFunctor::decreasingByZ());
+    std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::decreasingByZ()) ;
+  } else {
+    std::sort(middle,m_states.end(),TrackFunctor::increasingByZ());
+    std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::increasingByZ());
+  }
 }
 
 //=============================================================================
@@ -383,31 +385,30 @@ Track* Track::clone() const
 //=============================================================================
 void Track::copy( const Track& track )
 {
-  reset();
-
   setChi2PerDoF( track.chi2PerDoF() );
   setNDoF( track.nDoF() );
-  setFlags( track.flags() );
-  setLhcbIDs( track.lhcbIDs() );
-  setExtraInfo( track.extraInfo() );
-  setGhostProbability( track.ghostProbability() );
   setLikelihood( track.likelihood() );
+  setGhostProbability( track.ghostProbability() );
+  setFlags( track.flags() );
+  m_lhcbIDs = track.lhcbIDs();
 
   // copy the states
+  clearStates();
   m_states.reserve( track.states().size() ) ;
   std::transform( track.states().begin(), track.states().end(),
                   std::back_inserter(m_states),
                   [](const LHCb::State* s) { return s->clone(); });
 
   // copy the track fit info
-  if ( track.m_fitResult ) { m_fitResult = track.m_fitResult->clone(); }
-
-  // copy the ancestors
-  const SmartRefVector<Track>& ancestors = track.ancestors();
-  for ( const auto a : ancestors ) {
-    addToAncestors(*a);
+  if ( track.m_fitResult ) {
+    delete m_fitResult;
+    m_fitResult = track.m_fitResult->clone();
   }
 
+  setExtraInfo( track.extraInfo() );
+
+  // copy the ancestors
+  m_ancestors = track.m_ancestors;
 }
 
 //=============================================================================

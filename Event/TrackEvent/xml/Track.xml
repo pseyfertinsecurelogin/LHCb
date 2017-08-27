@@ -312,34 +312,34 @@
         type   = 'double'
         name   = 'chi2PerDoF'
         desc   = 'Chi^2 per degree of freedom of the track'
-        access = 'PROTECTED' />
+        access = 'PRIVATE' />
 
       <attribute
         type   = 'int'
         name   = 'nDoF'
         desc   = 'Number of degrees of freedom of the track'
-        access = 'PROTECTED' />
+        access = 'PRIVATE' />
 
       <attribute
         type   = 'double'
         name   = 'likelihood'
         desc   = 'Likelihood variable'
         init   = '999'
-        access = 'PROTECTED' />
+        access = 'PRIVATE' />
 
        <attribute
         type   = 'double'
         name   = 'ghostProbability'
         desc   = 'ghost probability variable'
         init   = '999'
-        access = 'PROTECTED' />
+        access = 'PRIVATE' />
 
      <attribute
        type    = 'bitfield'
        name    = 'flags'
        desc    = 'The variety of track flags'
        init    = '0'
-       access  = 'PROTECTED'>
+       access  = 'PRIVATE'>
        <bitfield
          type      = 'LHCb::Track::Types'
          name      = 'type'
@@ -401,21 +401,21 @@
         type      = 'std::vector&lt;LHCb::LHCbID&gt;'
         name      = 'lhcbIDs'
         desc      = 'Container of (sorted) LHCbIDs'
-        access    = 'PROTECTED'
+        access    = 'PRIVATE'
         setMeth   = 'FALSE' />
 
       <attribute
         type      = 'std::vector&lt;LHCb::State*&gt;'
         name      = 'states'
         desc      = 'Container with pointers to all the states'
-        access    = 'PROTECTED'
+        access    = 'PRIVATE'
         setMeth   = 'FALSE' />
 
       <attribute
 	type      = 'LHCb::TrackFitResult*'
         name      = 'fitResult'
         desc      = 'Transient data related to track fit (nodes, material, etc)'
-        access    = 'PROTECTED'
+        access    = 'PRIVATE'
         setMeth   = 'FALSE'
 	getMeth   = 'FALSE'
         transient = 'TRUE' />
@@ -425,13 +425,13 @@
         desc    = "Additional pattern recognition information. Do not access directly, use *Info() methods instead."
         type    = "ExtraInfo"
         getMeth = "TRUE"
-        access  = "PROTECTED" />
+        access  = "PRIVATE" />
 
       <relation
         type         = 'LHCb::Track'
         name         = 'ancestors'
         desc         = 'Ancestor tracks that created this one'
-        access       = 'PROTECTED'
+        access       = 'PRIVATE'
         setMeth      = 'FALSE'
         multiplicity = 'N'
 	nonconstaccessor = 'TRUE' />
@@ -683,7 +683,7 @@
      <method
         name    = 'addToStates'
         desc    = 'Add a set of states to the track. Track takes ownership.'>
-        <arg type = 'StateContainer' name='states' />
+        <arg type = 'const StateContainer' name='states' />
       </method>
 
       <method
