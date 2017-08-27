@@ -16,7 +16,6 @@
 // forward declarations
 // ============================================================================
 class Algorithm ;
-class Service   ;
 class AlgTool   ;
 // ============================================================================
 
@@ -34,8 +33,7 @@ class TrackUse final
 public:
   typedef std::vector<int> Types ;
 
-  /** declare 'own' properties for the algorithm
-   *  or service:
+  /** declare 'own' properties for the Algorithm or AlgTool:
    *
    *  @code
    *
@@ -51,22 +49,6 @@ public:
    *
    *  @param alg algorithm
    *  @return status code
-   *
-   *  @code
-   *
-   *  // service contructor
-   *  MySvc::MySvc  ( const std::string& name  ,
-   *                  ISvcLocator*       isvc  )
-   *   : Service    ( name , isvc )
-   *   , m_trackUse (*this)
-   *   {
-   *   };
-   *
-   *  @endcode
-   *
-   *  @param svc service
-   *  @return status code
-   *  @code
    *
    *  // tool contructor
    *  MyTool::MyTool  ( const std::string& type ,
