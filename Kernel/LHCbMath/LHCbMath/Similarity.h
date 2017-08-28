@@ -3,30 +3,68 @@
 #include "GaudiKernel/GenericVectorTypes.h"
 #include "GaudiKernel/GenericMatrixTypes.h"
 #include "GaudiKernel/SymmetricMatrixTypes.h"
+#ifdef NDEBUG
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#define GSL_UNENFORCED_ON_CONTRACT_VIOLATION
+#endif
+#include "gsl/span"
+#ifdef NDEBUG
+#pragma GCC diagnostic pop
+#endif
 
 namespace LHCb { namespace Math {
 
-// Forward declare pointer-to-worker-function type
-using similarity_t = void (*)(const double* Ci, const double* Fi, double* ti);
+using gsl::span;
 
-// the actual function to call -- will be adjusted on first invocation to 
+namespace detail {
+template <typename T, unsigned int N>
+inline span<const T,N> to_span( const ROOT::Math::SVector<T,N>& x )
+{ return { x.Array(), N } ; }
+template <typename T, unsigned int N>
+inline span<T,N> to_span( ROOT::Math::SVector<T,N>& x )
+{ return { x.Array(), N } ; }
+
+template <typename T,unsigned int N >
+inline span<double,N*(N+1)/2> to_span( ROOT::Math::SMatrix<T,N,N,ROOT::Math::MatRepSym<T,N>>& x )
+{ return { x.Array(), N*(N+1)/2 } ; }
+template <typename T,unsigned int N >
+inline span<const double,N*(N+1)/2> to_span( const ROOT::Math::SMatrix<T,N,N,ROOT::Math::MatRepSym<T,N>>& x )
+{ return { x.Array(), N*(N+1)/2 } ; }
+
+template <typename T,unsigned int N, unsigned int M >
+inline span<double,N*M> to_span( ROOT::Math::SMatrix<T,N,M,ROOT::Math::MatRepStd<T,N,M>>& x )
+{ return { x.Array(), N*M } ; }
+template <typename T,unsigned int N, unsigned int M >
+inline span<const double,N*M> to_span( const ROOT::Math::SMatrix<T,N,M,ROOT::Math::MatRepStd<T,N,M>>& x )
+{ return { x.Array(), N*M } ; }
+
+
+// Forward declare pointer-to-worker-function type
+template <std::ptrdiff_t N, std::ptrdiff_t M>
+using similarity_t = void (*)(span<const double,N*(N+1)/2> Ci,
+                              span<const double,N*M> Fi,
+                              span<double,M*(M+1)/2> ti);
+
+// the actual function to call -- will be adjusted on first invocation to
 // a version which matches the supported instruction set we're running on...
 
-extern  similarity_t similarity_5_1;
-extern  similarity_t similarity_5_5;
-extern  similarity_t similarity_5_7;
+extern similarity_t<5,1> similarity_5_1;
+extern similarity_t<5,5> similarity_5_5;
+extern similarity_t<5,7> similarity_5_7;
 
+}
 
 // trampoline functions --- these do a 'vtbl'-like function dispatch
 // to the correct implementation, and adapt the arguments so that only
 // 'POD types' are used...
 
-// perform similarity transform -- 
+// perform similarity transform --
 inline double Similarity( const Gaudi::Vector5& F,
                           const Gaudi::SymMatrix5x5& origin )
 {
     double target;
-    (*similarity_5_1)( origin.Array(), F.Array(), &target );
+    (*detail::similarity_5_1)( detail::to_span(origin), detail::to_span(F), { &target, 1} );
     return target;
 }
 
@@ -34,7 +72,7 @@ inline double Similarity( const Gaudi::Matrix1x5& F,
                           const Gaudi::SymMatrix5x5& origin )
 {
     double target;
-    (*similarity_5_1)( origin.Array(), F.Array(), &target );
+    (*detail::similarity_5_1)( detail::to_span(origin) , detail::to_span(F), { &target, 1 } );
     return target;
 }
 
@@ -43,9 +81,9 @@ inline double Similarity( const Gaudi::Matrix1x5& F,
 // the generic version -- hence this could be a very confusing bug)
 inline void Similarity( const Gaudi::Matrix5x5& F,
                         const Gaudi::SymMatrix5x5& origin,
-                        Gaudi::SymMatrix5x5& target ) 
+                        Gaudi::SymMatrix5x5& target )
 {
-    (*similarity_5_5)( origin.Array(), F.Array(), target.Array() );
+    (*detail::similarity_5_5)( detail::to_span(origin) , detail::to_span(F), detail::to_span(target) );
 }
 
 inline Gaudi::SymMatrix5x5 Similarity( const Gaudi::Matrix5x5& F,
@@ -61,9 +99,9 @@ inline Gaudi::SymMatrix5x5 Similarity( const Gaudi::Matrix5x5& F,
 // the generic version -- hence this could be a very confusing bug)
 inline void Similarity( const ROOT::Math::SMatrix<double,7,5>& F,
                         const Gaudi::SymMatrix5x5& origin,
-                        Gaudi::SymMatrix7x7& target ) 
+                        Gaudi::SymMatrix7x7& target )
 {
-    (*similarity_5_7)( origin.Array(), F.Array(), target.Array() );
+    (*detail::similarity_5_7)( detail::to_span(origin), detail::to_span(F), detail::to_span(target) );
 }
 
 inline Gaudi::SymMatrix7x7 Similarity( const ROOT::Math::SMatrix<double,7,5>& F,
@@ -75,23 +113,24 @@ inline Gaudi::SymMatrix7x7 Similarity( const ROOT::Math::SMatrix<double,7,5>& F,
 }
 
 
-
+namespace detail {
 
 // Forward declare pointer-to-worker-function type
-using average_t = bool (*)(const double* X1, const double* C1,
-                           const double* X2, const double* C2,
-                           double *X, double *C );
+using average_t = bool (*)(span<const double,5> X1, span<const double,15> C1,
+                           span<const double,5> X2, span<const double,15> C2,
+                           span<double,5> X, span<double,15> C );
 
-// the actual function to call -- will be adjusted on first invocation to 
+// the actual function to call -- will be adjusted on first invocation to
 // a version which matches the supported instruction set we're running on...
 
 extern  average_t average;
+}
 
 inline bool Average( const Gaudi::Vector5& X1, const Gaudi::SymMatrix5x5& C1,
                      const Gaudi::Vector5& X2, const Gaudi::SymMatrix5x5& C2,
-                     Gaudi::Vector5& X, Gaudi::SymMatrix5x5& C ) 
+                     Gaudi::Vector5& X, Gaudi::SymMatrix5x5& C )
 {
-// 
+//
 //  template<class Vector, class SymMatrix>
 //  bool weightedAverage( const Vector& X1, const SymMatrix& C1,
 //                        const Vector& X2, const SymMatrix& C2,
@@ -103,30 +142,32 @@ inline bool Average( const Gaudi::Vector5& X1, const Gaudi::SymMatrix5x5& C1,
 //    bool success = invR.InvertChol() ;
 //    K = C1 * invR ;
 //    X = X1 + K*(X2 - X1) ;
-//    ROOT::Math::AssignSym::Evaluate(C, K*C2 ) ; 
+//    ROOT::Math::AssignSym::Evaluate(C, K*C2 ) ;
 //    return success ;
 //  }
 //    // the following used to be more stable, but isn't any longer, it seems:
 //    //ROOT::Math::AssignSym::Evaluate(C, -2 * K * C1) ;
 //    //C += C1 + ROOT::Math::Similarity(K,R) ;
 //
-    return (*average)( X1.Array(), C1.Array(), 
-                       X2.Array(), C2.Array(), 
-                       X.Array(),  C.Array() );
+    return (*detail::average)( detail::to_span(X1), detail::to_span(C1),
+                               detail::to_span(X2), detail::to_span(C2),
+                               detail::to_span(X),  detail::to_span(C) );
 }
 
+namespace detail {
 // Forward declare pointer-to-worker-function type
-using filter_t = double (*)( double* X, double* C,
-                             const double* Xref, const double* H,
+using filter_t = double (*)( span<double,5> X, span<double,15> C,
+                             span<const double,5> Xref, span<const double,5> H,
                              double refResidual, double errorMeas2 );
 
 
 extern filter_t filter;
+}
 
 // compute a filter step in a Kalman filter
 // updates X and C in situ, and returns the chisquared
 inline double Filter( Gaudi::Vector5& X, Gaudi::SymMatrix5x5& C,
-                      const Gaudi::Vector5& Xref, 
+                      const Gaudi::Vector5& Xref,
                       const Gaudi::Matrix1x5& H,
                       double refResidual, double errorMeas2 )
 {
@@ -135,22 +176,22 @@ inline double Filter( Gaudi::Vector5& X, Gaudi::SymMatrix5x5& C,
 //
 //      static SMatrix<double,5,1> CHT, K ;
 //      CHT = C * Transpose(H) ;
-//      double errorRes2  = errorMeas2 + (H*CHT)(0,0) ;  
+//      double errorRes2  = errorMeas2 + (H*CHT)(0,0) ;
 //      // calculate gain matrix K
 //      K = CHT / errorRes2;
-//      
+//
 //      // update the state vector
 //      X += K.Col(0) * res ;
-//      
+//
 //      // update the covariance matrix
 //      static TrackSymMatrix tmp ;
 //      ROOT::Math::AssignSym::Evaluate(tmp, K * Transpose(CHT) ) ;
 //      C -= tmp ;
 //      return res*res / errorRes2;
 
-    return (*filter)(X.Array(),C.Array(),
-                     Xref.Array(),H.Array(),
-                     refResidual,errorMeas2);
+    return (*detail::filter)( detail::to_span(X), detail::to_span(C),
+                              detail::to_span(Xref), detail::to_span(H),
+                              refResidual ,errorMeas2);
 }
 
 
