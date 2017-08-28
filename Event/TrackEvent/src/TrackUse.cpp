@@ -24,41 +24,22 @@ namespace {
   constexpr auto to_()
   { return [](const auto& i) { return static_cast<T>(i); }; }
 }
-// ============================================================================
-/// the basic method for delegation of properties
-// ============================================================================
-template <class TYPE>
-inline StatusCode TrackUse::i_declareProperties ( TYPE* object )
-{
-  if ( !object ) { return StatusCode::FAILURE ; }
-  //
-  object -> declareProperty ( "CheckTracks"      , m_check       ) ;
-  //
-  object -> declareProperty ( "SkipClones"       , m_skipClones  ) ;
-  object -> declareProperty ( "SkipInvalid"      , m_skipInvalid ) ;
-  object -> declareProperty ( "SkipBackward"     , m_skipBackward) ;
-  //
-  object -> declareProperty ( "AcceptedType"     , m_type        ) ;
-  object -> declareProperty ( "AcceptedFitStatus", m_fitstatus   ) ;
-  object -> declareProperty ( "RejectedHistory"  , m_history     ) ;
-  //
-  return StatusCode::SUCCESS ;
+
+template <typename T>
+TrackUse::TrackUse( T& parent, tag  ) {
+      parent.declareProperty ( "CheckTracks"      , m_check       ) ;
+      //
+      parent.declareProperty ( "SkipClones"       , m_skipClones  ) ;
+      parent.declareProperty ( "SkipInvalid"      , m_skipInvalid ) ;
+      parent.declareProperty ( "SkipBackward"     , m_skipBackward) ;
+      //
+      parent.declareProperty ( "AcceptedType"     , m_type        ) ;
+      parent.declareProperty ( "AcceptedFitStatus", m_fitstatus   ) ;
+      parent.declareProperty ( "RejectedHistory"  , m_history     ) ;
 }
-// ============================================================================
-/// declare 'own' properties for the algorithm
-// ============================================================================
-StatusCode TrackUse::declareProperties ( Algorithm* alg )
-{ return i_declareProperties ( alg ) ; }
-// ============================================================================
-/// declare 'own' properties for the service
-// ============================================================================
-StatusCode TrackUse::declareProperties ( Service*  svc )
-{ return i_declareProperties ( svc ) ; }
-// ============================================================================
-/// declare 'own' properties for the tool
-// ============================================================================
-StatusCode TrackUse::declareProperties ( AlgTool*  tool )
-{ return i_declareProperties ( tool ) ; }
+
+template TrackUse::TrackUse(Algorithm&,tag);
+template TrackUse::TrackUse(AlgTool&,tag);
 // ============================================================================
 /// get the list of accepted status
 // ============================================================================

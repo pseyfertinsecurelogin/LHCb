@@ -6,6 +6,7 @@
 // STD & STL
 // ============================================================================
 #include <string>
+#include <type_traits>
 #include "GaudiKernel/MsgStream.h"
 // ============================================================================
 // Event model
@@ -15,7 +16,6 @@
 // forward declarations
 // ============================================================================
 class Algorithm ;
-class Service   ;
 class AlgTool   ;
 // ============================================================================
 
@@ -32,8 +32,8 @@ class TrackUse final
 {
 public:
   typedef std::vector<int> Types ;
-public:
-  /** declare 'own' properties for the algorithm
+
+  /** declare 'own' properties for the Algorithm or AlgTool:
    *
    *  @code
    *
@@ -41,50 +41,22 @@ public:
    *  MyAlg::MyAlg  ( const std::string& name ,
    *                  ISvcLocator*       svc  )
    *   : Algorithm  ( name , svc )
-   *   , m_trackUse ()
+   *   , m_trackUse (*this)
    *   {
-   *      m_trackUse.declareProperties( this )
    *   };
    *
    *  @endcode
    *
    *  @param alg algorithm
    *  @return status code
-   */
-   StatusCode declareProperties ( Algorithm* alg ) ;
-  /** declare 'own' properties for the service
-   *
-   *
-   *  @code
-   *
-   *  // service contructor
-   *  MySvc::MySvc  ( const std::string& name  ,
-   *                  ISvcLocator*       isvc  )
-   *   : Service    ( name , isvc )
-   *   , m_trackUse ()
-   *   {
-   *      m_trackUse.declareProperties( this )
-   *   };
-   *
-   *  @endcode
-   *
-   *  @param svc service
-   *  @return status code
-   */
-  StatusCode declareProperties ( Service*  svc ) ;
-  /** declare 'own' properties for the tool
-   *
-   *
-   *  @code
    *
    *  // tool contructor
    *  MyTool::MyTool  ( const std::string& type ,
    *                    const std::string& name ,
    *                    const IInterface*  parent  )
    *   : AlgTool      ( type , name , parent )
-   *   , m_trackUse ()
+   *   , m_trackUse (*this)
    *   {
-   *      m_trackUse.declareProperties( this )
    *   };
    *
    *  @endcode
@@ -92,7 +64,14 @@ public:
    *  @param tool tool
    *  @return status code
    */
-  StatusCode declareProperties ( AlgTool*  tool ) ;
+
+private:
+  struct tag {};
+  template <typename T> TrackUse( T& parent, tag  );
+public:
+  explicit TrackUse( Algorithm& parent ) : TrackUse(parent, tag{}) {}
+  explicit TrackUse( AlgTool& parent ) : TrackUse(parent, tag{}) {}
+
   /** the basic method which defines if track selected for further processing
    *  @param track pointer to Track object
    *  @return decsion
@@ -104,18 +83,18 @@ public:
    */
   inline bool operator() ( const LHCb::Track* track ) const
   { return use ( track ) ; }
-public:
+
   //
   inline bool check        () const  { return m_check ; }
   inline bool skipClones   () const  { return m_skipClones   ; }
   inline bool skipInvalid  () const  { return m_skipInvalid  ; }
   inline bool skipBackward () const  { return m_skipBackward ; }
   /// get the list of accepted fit status
-  size_t acceptedFitStatus ( std::vector<LHCb::Track::FitStatus>&  s ) const ;
+  size_t acceptedFitStatus ( std::vector<LHCb::Track::FitStatus>& s ) const ;
   /// get the list of accepted types
-  size_t acceptedType      ( std::vector<LHCb::Track::Types>&      t ) const ;
+  size_t acceptedType      ( std::vector<LHCb::Track::Types>&     t ) const ;
   /// get the list of rejected history
-  size_t rejectedHistory   ( std::vector<LHCb::Track::History>&    h ) const ;
+  size_t rejectedHistory   ( std::vector<LHCb::Track::History>&   h ) const ;
 public:
   inline bool acceptedFitStatus ( const LHCb::Track::FitStatus v ) const ;
   inline bool acceptedType      ( const LHCb::Track::Types     v ) const ;
@@ -126,13 +105,6 @@ public:
   /// printout of the track into the staream
   MsgStream&    print      ( MsgStream&         stream ,
                              const LHCb::Track* track  ) const ;
-protected:
-  /** the basic method for delegation of properties
-   *  @param object property manager
-   *  @return statsu code
-   */
-  template <class TYPE>
-  inline StatusCode i_declareProperties( TYPE* object ) ;
 private:
   // check the track
   bool               m_check        = true;
@@ -147,10 +119,10 @@ private:
   /// accepted fit status
   std::vector<int> m_fitstatus  = { LHCb::Track::FitStatus::Fitted };
   /// accepted type
-  std::vector<int> m_type    = {  LHCb::Track::Types::Long       ,
-                        LHCb::Track::Types::Upstream   ,
-                        LHCb::Track::Types::Downstream ,
-                        LHCb::Track::Types::Ttrack     };
+  std::vector<int> m_type = {  LHCb::Track::Types::Long       ,
+                               LHCb::Track::Types::Upstream   ,
+                               LHCb::Track::Types::Downstream ,
+                               LHCb::Track::Types::Ttrack     };
   /// rejected history
   std::vector<int> m_history ;
 };
