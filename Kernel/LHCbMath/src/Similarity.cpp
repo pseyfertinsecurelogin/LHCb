@@ -1,4 +1,3 @@
-
 #include "LHCbMath/Similarity.h"
 #include "LHCbMath/CPUDispatch.h"
 #include <type_traits>
@@ -14,6 +13,7 @@ namespace {
 
 namespace LHCb {
   namespace Math {
+     namespace detail {
 
     // TODO: replace by (static?) functor (instance)s...
     //       (maybe templated, with multiple explicit specializations & tag dispatch???)
@@ -25,101 +25,102 @@ namespace LHCb {
     //       of any individual one...
     //
     namespace avx2 {
-      extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
-      extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
-      extern void similarity_5_7(const double* Ci, const double* Fi, double* Ti);
-      extern bool average(const double* X1, const double* C1,
-                          const double* X2, const double* C2,
-                          double *X, double *C );
-      extern double filter( double* X, double* C,
-                            const double* Xref, const double* H,
+      extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
+      extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
+      extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
+      extern bool average(gsl::span<const double,5> X1, gsl::span<const double,15> C1,
+                          gsl::span<const double,5> X2, gsl::span<const double,15> C2,
+                          gsl::span<double,5> X, gsl::span<double,15> C );
+      extern double filter( span<double,5> X, span<double,15> C,
+                            span<const double,5> Xref, span<const double,5> H,
                             double refResidual, double errorMeas2 );
     }
     namespace avx {
-      extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
-      extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
-      extern void similarity_5_7(const double* Ci, const double* Fi, double* Ti);
-      extern bool average(const double* X1, const double* C1,
-                          const double* X2, const double* C2,
-                          double *X, double *C );
-      extern double filter( double* X, double* C,
-                            const double* Xref, const double* H,
+      extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
+      extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
+      extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
+      extern bool average(gsl::span<const double,5> X1, gsl::span<const double,15> C1,
+                          gsl::span<const double,5> X2, gsl::span<const double,15> C2,
+                          gsl::span<double,5> X, gsl::span<double,15> C );
+      extern double filter( span<double,5> X, span<double,15> C,
+                            span<const double,5> Xref, span<const double,5> H,
                             double refResidual, double errorMeas2 );
     }
     namespace sse3 {
-      extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
-      extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
-      extern void similarity_5_7(const double* Ci, const double* Fi, double* Ti);
+      extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
+      extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
+      extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
     }
     namespace generic {
-      extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
-      extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
-      extern void similarity_5_7(const double* Ci, const double* Fi, double* Ti);
-      extern bool average(const double* X1, const double* C1,
-                          const double* X2, const double* C2,
-                          double *X, double *C );
-      extern double filter( double* X, double* C,
-                            const double* Xref, const double* H,
+      extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
+      extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
+      extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
+      extern bool average(gsl::span<const double,5> X1, gsl::span<const double,15> C1,
+                          gsl::span<const double,5> X2, gsl::span<const double,15> C2,
+                          gsl::span<double,5> X, gsl::span<double,15> C );
+      extern double filter( span<double,5> X, span<double,15> C,
+                            span<const double,5> Xref, span<const double,5> H,
                             double refResidual, double errorMeas2 );
     }
 
 
     namespace dispatch {
 
-      void similarity_5_1(const double* Ci, const double* Fi, double* ti)
+      void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double,1> ti)
       {
         auto vtbl = { std::make_pair( CPU::AVX2, avx2::similarity_5_1 ),
                       std::make_pair( CPU::AVX, avx::similarity_5_1 ),
                       std::make_pair( CPU::SSE3, sse3::similarity_5_1 ),
                       std::make_pair( CPU::GENERIC, generic::similarity_5_1 ) };
-        dispatch_fn( vtbl, LHCb::Math::similarity_5_1, Ci, Fi, ti );
+        dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_1, Ci, Fi, ti );
       }
 
-      void similarity_5_5(const double* Ci, const double* Fi, double* ti)
+      void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> ti)
       {
         auto vtbl = { std::make_pair( CPU::AVX2, avx2::similarity_5_5 ),
                       std::make_pair( CPU::AVX, avx::similarity_5_5 ),
                       std::make_pair( CPU::SSE3, sse3::similarity_5_5  ),
                       std::make_pair( CPU::GENERIC, generic::similarity_5_5 ) };
-        dispatch_fn( vtbl, LHCb::Math::similarity_5_5, Ci, Fi, ti );
+        dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_5, Ci, Fi, ti );
       }
 
-      void similarity_5_7(const double* Ci, const double* Fi, double* ti)
+      void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> ti)
       {
         auto vtbl = { std::make_pair( CPU::AVX2, avx2::similarity_5_7 ),
                       std::make_pair( CPU::AVX, avx::similarity_5_7 ),
                       std::make_pair( CPU::SSE3, sse3::similarity_5_7 ),
                       std::make_pair( CPU::GENERIC, generic::similarity_5_7 ) };
-        dispatch_fn( vtbl, LHCb::Math::similarity_5_7, Ci, Fi, ti );
+        dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_7, Ci, Fi, ti );
       }
 
-      bool average(const double* X1, const double* C1,
-                   const double* X2, const double* C2,
-                   double *X, double *C )
+      bool average(gsl::span<const double,5> X1, gsl::span<const double,15> C1,
+                   gsl::span<const double,5> X2, gsl::span<const double,15> C2,
+                   gsl::span<double,5> X, gsl::span<double,15> C )
       {
         auto vtbl = { std::make_pair( CPU::AVX2, avx2::average ),
                       std::make_pair( CPU::AVX, avx::average ),
                       std::make_pair( CPU::GENERIC, generic::average ) };
-        return dispatch_fn( vtbl, LHCb::Math::average, X1, C1, X2, C2, X, C );
+        return dispatch_fn( vtbl, LHCb::Math::detail::average, X1, C1, X2, C2, X, C );
       }
 
-      double filter(double* X, double* C,
-                    const double* Xref, const double* H,
-                    double refResidual, double errorMeas2 ) {
+      double filter( span<double,5> X, span<double,15> C,
+                     span<const double,5> Xref, span<const double,5> H,
+                     double refResidual, double errorMeas2 ) {
         auto vtbl = { std::make_pair( CPU::AVX2, avx2::filter ),
                       std::make_pair( CPU::AVX, avx::filter ),
                       std::make_pair( CPU::GENERIC, generic::filter ) };
-        return dispatch_fn( vtbl, LHCb::Math::filter, X, C, Xref, H, refResidual, errorMeas2 );
+        return dispatch_fn( vtbl, LHCb::Math::detail::filter, X, C, Xref, H, refResidual, errorMeas2 );
       }
 
     }
 
-    similarity_t similarity_5_1 = &dispatch::similarity_5_1;
-    similarity_t similarity_5_5 = &dispatch::similarity_5_5;
-    similarity_t similarity_5_7 = &dispatch::similarity_5_7;
+    similarity_t<5,1> similarity_5_1 = &dispatch::similarity_5_1;
+    similarity_t<5,5> similarity_5_5 = &dispatch::similarity_5_5;
+    similarity_t<5,7> similarity_5_7 = &dispatch::similarity_5_7;
 
     average_t average = &dispatch::average;
     filter_t filter = &dispatch::filter;
 
-  } 
+    }
+  }
 }

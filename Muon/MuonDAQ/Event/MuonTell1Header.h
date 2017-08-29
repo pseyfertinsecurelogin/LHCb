@@ -10,6 +10,7 @@
  *  @date   2008-01-07
  */
 class MuonTell1Header final {
+  unsigned int m_data = 0;
 public:
   /// Standard constructor
   MuonTell1Header(unsigned int data =0 ) : m_data(data) {}
@@ -19,50 +20,42 @@ public:
   {
     //first 8 bits
     return m_data&0x00FF;
-
   };
 
   unsigned int getError() const
   {
-    //secodn 8 bits
+    //second 8 bits
     return (m_data&0xFF00)>>8;
-
   }
 
   unsigned int getEventError() const
   {
     //PP_ODE_err bit 0 provided by synch link
-
     return ((m_data>>8)&(unsigned int)1);
-
   }
 
   unsigned int getSYNCHDataErrorInODE() const
   {
     //PP_ODE_err bit 5
     return (m_data>>13)&((unsigned int)1);
-
   }
 
   unsigned int getSYNCHEventCntErrorInODE() const
   {
     //PP_ODE_err bit 7
     return (m_data>>15)&((unsigned int)1);
-
   }
 
   unsigned int getSYNCHBCNCntErrorInODE() const
   {
     //PP_ODE_err bit 6
     return (m_data>>14)&((unsigned int)1);
-
   }
 
   unsigned int getOROfODEErrors() const
   {
     //PP_ODE_err bits 1-4
     return ((m_data>>9)&0x000F);
-
   }
 
   std::ostream& fillStream(std::ostream& s) const
@@ -80,16 +73,11 @@ public:
     return s << " }";
   }
 
-private:
-  unsigned int m_data = 0;
+  inline friend std::ostream& operator<< (std::ostream& str,
+                                          const MuonTell1Header& obj)
+  { return obj.fillStream(str); }
 
 };
-
-inline std::ostream& operator<< (std::ostream& str,
-                                 const MuonTell1Header& obj)
-{
-  return obj.fillStream(str);
-}
 
 
 

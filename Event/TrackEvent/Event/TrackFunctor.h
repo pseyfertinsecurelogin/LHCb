@@ -3,8 +3,6 @@
 
 // Include files
 // -------------
-#include <stdio.h>
-#include <functional>
 
 // from GaudiKernel
 #include "GaudiKernel/Plane3DTypes.h"
@@ -35,28 +33,26 @@ namespace TrackFunctor
 //=============================================================================
 // Class to test if the z of a class T is < than a certain value
 //=============================================================================
-  template <class T>
-  class less_z: public std::unary_function<T*, bool> {
-  private:
+  class less_z final {
     double m_z;
   public:
     explicit less_z( double z ):m_z(z) {}
-    bool operator()( const T* t ) const 
+    template <class T>
+    bool operator()( const T* t ) const
     {
       return t -> z() < m_z;
     }
   };
-  
+
 //=============================================================================
 // Class to test if the z of a class T is > than a certain value
 //=============================================================================
-  template <class T>
-  class greater_z: public std::unary_function<T*, bool> {
-  private:
+  class greater_z final {
     double m_z;
   public:
     explicit greater_z( double z ):m_z(z) {}
-    bool operator()( const T* t ) const 
+    template <class T>
+    bool operator()( const T* t ) const
     {
       return t -> z() > m_z;
     }
@@ -65,33 +61,31 @@ namespace TrackFunctor
 //=============================================================================
 // Compare the distance along z of 2 objects
 //=============================================================================
-  template <class T>
-  class distanceAlongZ {
-  private:
+  class distanceAlongZ final {
     double m_z0;
   public:
     explicit distanceAlongZ( double z0 = 0.):m_z0(z0) {}
+    template <class T>
     bool operator()( const T* t1,
                      const T* t2 ) const
     {
-      return ( (fabs(t1->z()-m_z0) < fabs(t2->z()-m_z0)) );
+      return ( (std::abs(t1->z()-m_z0) < std::abs(t2->z()-m_z0)) );
     }
   };
 
 //=============================================================================
 // Compare the distance of 2 objects to a plane
 //=============================================================================
-  template <class T>
-  class distanceToPlane {
-  private:
+  class distanceToPlane final {
     Gaudi::Plane3D m_plane;
   public:
     explicit distanceToPlane(const Gaudi::Plane3D& plane):m_plane(plane) {}
+    template <class T>
     bool operator()( const T* t1,
                      const T* t2 ) const
     {
-      double d1 = fabs(m_plane.Distance(t1->position()));
-      double d2 = fabs(m_plane.Distance(t2->position()));
+      auto d1 = std::abs(m_plane.Distance(t1->position()));
+      auto d2 = std::abs(m_plane.Distance(t2->position()));
       return (d1 < d2);
     }
   };
@@ -99,12 +93,11 @@ namespace TrackFunctor
 //=============================================================================
 // Class for sorting class T by z in order (+1/-1)
 //=============================================================================
-  template <class T>
-  class orderByZ {
-  private:
+  class orderByZ final {
     int m_order;
   public:
     explicit orderByZ( int order = +1):m_order(order) {}
+    template <class T>
     bool operator()( const T* t1,
                      const T* t2 ) const
     {
@@ -116,9 +109,8 @@ namespace TrackFunctor
 //=============================================================================
 // Class for sorting class T by increasing z
 //=============================================================================
-  template <class T>
-  class increasingByZ {
-  public:
+  struct increasingByZ final {
+    template <class T>
     bool operator()( const T* t1,
                      const T* t2 ) const
     {
@@ -129,9 +121,8 @@ namespace TrackFunctor
 //=============================================================================
 // Class for sorting class T by decreasing z
 //=============================================================================
-  template <class T>
-  class decreasingByZ {
-  public:
+  struct decreasingByZ final {
+    template <class T>
     bool operator()( const T* t1,
                      const T* t2 ) const
     {
@@ -143,7 +134,7 @@ namespace TrackFunctor
 // Helper class for checking the existence of a value of a member function
 //=============================================================================
   template <class T, typename E>
-  class HasKey: public std::unary_function<T*, bool> {
+  class HasKey  {
   public:
     // A predicate (unary bool function):
     // example:
@@ -154,13 +145,13 @@ namespace TrackFunctor
     ptr_memfun m_pmf;
     E m_key;
   public:
-    explicit HasKey(ptr_memfun check, E key ):
+    HasKey(ptr_memfun check, E key ):
       m_pmf(check),m_key(key) {}
-    bool operator()( const T* t ) const 
+    bool operator()( const T* t ) const
     {
       return (t ->* m_pmf) (m_key);
     }
-  };  
+  };
 
 //=============================================================================
 // Class to delete an element from a vector
@@ -176,9 +167,9 @@ namespace TrackFunctor
 // Functor to delete an object
 //=============================================================================
   struct deleteObject
-  { 
+  {
     template <typename T>
-    void operator()(T *ptr){ delete ptr; ptr=nullptr ; }
+    void operator()(T*& ptr){ delete ptr; ptr=nullptr ; }
   };
 
 //=============================================================================

@@ -25,8 +25,6 @@
 #include "GaudiKernel/IAlgTool.h"
 
 
-using namespace std;
-
 //-----------------------------------------------------------------------------
 // Implementation file for class : PropertyConfigSvc
 //
@@ -49,7 +47,7 @@ namespace {
          public:
             property2jos& operator++()   { return *this; }
             property2jos& operator*()    { return *this; }
-            property2jos(IJobOptionsSvc* jos,const string& name, ostream* os=nullptr) :
+            property2jos(IJobOptionsSvc* jos,const std::string& name, std::ostream* os=nullptr) :
                 m_jos(jos),m_name(name),m_properties(jos->getProperties(name)),m_out(os) { assert(m_jos); }
             property2jos& operator=(const PropertyConfig::Prop& prop) {
                 if (m_out) {
@@ -73,11 +71,11 @@ namespace {
                             throw GaudiException(prop.second,"badly formatted reference property ", StatusCode::FAILURE);
                        }
                        std::string value;
-                       const Property * refProp = Gaudi::Utils::getProperty( m_jos->getProperties(string(what[1])),string(what[2]));
-                       if (refProp!=nullptr) {
-                            value = refProp->toString();
+                       const Property * refProp = Gaudi::Utils::getProperty( m_jos->getProperties(std::string(what[1])),std::string(what[2]));
+                       if (refProp) {
+                           value = refProp->toString();
                        } else if (what[3].first!=what[3].second) {
-                           value = string(what[3]).substr(1);
+                           value = std::string(what[3]).substr(1);
                        } else {
                            throw GaudiException(prop.second,"failed to find reference property ", StatusCode::FAILURE);
                        }
@@ -92,16 +90,16 @@ namespace {
                 return *this;
             }
          private:
-            const Property* find(const string& name) {
+            const Property* find(boost::string_ref name) {
                auto i = find_if(begin(*m_properties),
                                 end(*m_properties),
                                 [&](const Property* p) { return p->name()==name; } );
                return i!=end(*m_properties) ? *i : nullptr;
             }
-            IJobOptionsSvc*                m_jos;
-            string                         m_name;
-            const vector<const Property*> *m_properties;
-            ostream                       *m_out;
+            IJobOptionsSvc*                     m_jos;
+            std::string                         m_name;
+            const std::vector<const Property*> *m_properties;
+            std::ostream                       *m_out;
     };
 }
 
@@ -143,7 +141,7 @@ StatusCode PropertyConfigSvc::initialize() {
 
 void PropertyConfigSvc::onCreate(const IAlgTool* tool) {
     assert(tool!=nullptr);
-    string name = tool->name();
+    auto name = tool->name();
     if(msgLevel(MSG::DEBUG)) debug() << "adding " << name << " to toolmap " << endmsg;
     m_toolmap.emplace( name, const_cast<IAlgTool*>(tool) );
 }
@@ -162,14 +160,14 @@ StatusCode PropertyConfigSvc::finalize() {
 
 template <>
 IService*
-PropertyConfigSvc::resolve(const string& name) const
+PropertyConfigSvc::resolve(const std::string& name) const
 {
     IService *i{nullptr};
     return serviceLocator()->getService(name,i).isSuccess() ? i : nullptr;
 }
 template <>
 IAlgorithm*
-PropertyConfigSvc::resolve(const string& name) const
+PropertyConfigSvc::resolve(const std::string& name) const
 {
     IAlgorithm *i{nullptr};
     return m_algMgr->getAlgorithm(name,i).isSuccess() ? i : nullptr;
@@ -177,7 +175,7 @@ PropertyConfigSvc::resolve(const string& name) const
 
 template <>
 IAlgTool*
-PropertyConfigSvc::resolve(const string& name) const
+PropertyConfigSvc::resolve(const std::string& name) const
 {
     auto i = m_toolmap.find(name);
     return i!=m_toolmap.end()? i->second : nullptr;
@@ -185,19 +183,19 @@ PropertyConfigSvc::resolve(const string& name) const
 
 template <>
 Algorithm*
-PropertyConfigSvc::resolve(const string& name) const
+PropertyConfigSvc::resolve(const std::string& name) const
 {
     return dynamic_cast<Algorithm*>(resolve<IAlgorithm>(name));
 }
 template <>
 Service*
-PropertyConfigSvc::resolve(const string& name) const
+PropertyConfigSvc::resolve(const std::string& name) const
 {
     return dynamic_cast<Service*>(resolve<IService>(name));
 }
 template <>
 AlgTool*
-PropertyConfigSvc::resolve(const string& name) const
+PropertyConfigSvc::resolve(const std::string& name) const
 {
     return dynamic_cast<AlgTool*>(resolve<IAlgTool>(name));
 }
@@ -233,17 +231,17 @@ PropertyConfigSvc::currentConfiguration(const INamedInterface& obj) const {
                                                              // wants non-const version of obj
 
   // figure out whether we have a Service, Tool, Algorithm or Auditor...
-  string kind = ( ini.as<IAlgorithm>() ? "IAlgorithm"
-                : ini.as<IService  >() ? "IService"
-                : ini.as<IAlgTool  >() ? "IAlgTool"
-                : ini.as<IAuditor  >() ? "IAuditor"
-                : "Unknown" );
+  auto kind = ( ini.as<IAlgorithm>() ? PropertyConfig::kind_t::IAlgorithm
+              : ini.as<IService  >() ? PropertyConfig::kind_t::IService
+              : ini.as<IAlgTool  >() ? PropertyConfig::kind_t::IAlgTool
+              : ini.as<IAuditor  >() ? PropertyConfig::kind_t::IAuditor
+              : PropertyConfig::kind_t::Invalid );
 
   return PropertyConfig( obj.name(), *ini.as<IProperty>(), kind);
 }
 
 PropertyConfig::digest_type
-PropertyConfigSvc::findInTree(const ConfigTreeNode::digest_type& configTree, const string& name) const {
+PropertyConfigSvc::findInTree(const ConfigTreeNode::digest_type& configTree, const std::string& name) const {
    for( const auto& i : collectLeafRefs(configTree) ) {
         const PropertyConfig* pc = resolvePropertyConfig(i);
         assert(pc!=nullptr);
@@ -284,7 +282,7 @@ PropertyConfigSvc::resolveAlias(const ConfigTreeNodeAlias::alias_type& alias) co
     return ref;
 }
 
-const list<ConfigTreeNode::digest_type>&
+const std::list<ConfigTreeNode::digest_type>&
 PropertyConfigSvc::collectNodeRefs(const ConfigTreeNodeAlias::alias_type& alias) const
 {
     return collectNodeRefs(resolveAlias(alias));
@@ -331,13 +329,13 @@ PropertyConfigSvc::collectNodeRefs(const ConfigTreeNode::digest_type& nodeRef) c
     } );
 }
 
-const vector<PropertyConfig::digest_type>&
+const std::vector<PropertyConfig::digest_type>&
 PropertyConfigSvc::collectLeafRefs(const ConfigTreeNodeAlias::alias_type& alias) const
 {
     return collectLeafRefs(resolveAlias(alias));
 }
 
-const vector<PropertyConfig::digest_type>&
+const std::vector<PropertyConfig::digest_type>&
 PropertyConfigSvc::collectLeafRefs(const ConfigTreeNode::digest_type& nodeRef) const
 {
      auto ptr = m_leavesInTree.with_rlock( [&](const auto& leavesInTree) {
@@ -345,7 +343,7 @@ PropertyConfigSvc::collectLeafRefs(const ConfigTreeNode::digest_type& nodeRef) c
         return i != leavesInTree.end() ? &i->second : nullptr;
      } );
      if (ptr) return *ptr;
-     vector<PropertyConfig::digest_type> leafRefs;
+     std::vector<PropertyConfig::digest_type> leafRefs;
      for (auto& i : collectNodeRefs(nodeRef) ) {
         const ConfigTreeNode *node = resolveConfigTreeNode(i);
         PropertyConfig::digest_type leafRef = node->leaf();
@@ -386,7 +384,7 @@ PropertyConfigSvc::configure(const ConfigTreeNodeAlias::alias_type& alias,
 
 StatusCode
 PropertyConfigSvc::outOfSyncConfigs(const ConfigTreeNode::digest_type& configID,
-                                    back_insert_iterator<vector<const PropertyConfig*> > newConfigs) const
+                                    std::back_insert_iterator<std::vector<const PropertyConfig*> > newConfigs) const
 {
     assert(configID.valid()); // caller already verified this!
     for (const auto& i : collectLeafRefs(configID) ) {
@@ -444,8 +442,8 @@ PropertyConfigSvc::configure(const ConfigTreeNode::digest_type& configID, bool c
     if(msgLevel(MSG::DEBUG)) debug() << " configuring using " << configID << endmsg;
     if (!configID.valid()) return StatusCode::FAILURE;
     setTopAlgs(configID); // do this last instead of first?
-    vector<const PropertyConfig*> configs;
-    StatusCode sc = outOfSyncConfigs(configID,back_inserter(configs));
+    std::vector<const PropertyConfig*> configs;
+    StatusCode sc = outOfSyncConfigs(configID,std::back_inserter(configs));
     if (sc.isFailure()) return sc;
     for (const auto& i : configs ) {
         if(msgLevel(MSG::DEBUG)) debug() << " configuring " << i->name() << " using " << i->digest() << endmsg;
@@ -488,8 +486,8 @@ PropertyConfigSvc::configure(const ConfigTreeNode::digest_type& configID, bool c
 //=============================================================================
 StatusCode
 PropertyConfigSvc::findTopKind(const ConfigTreeNode::digest_type& configID,
-                               const string& kind,
-                               back_insert_iterator<vector<const PropertyConfig*> > configs) const
+                               boost::string_ref kind,
+                               std::back_insert_iterator<std::vector<const PropertyConfig*> > configs) const
 {
     const ConfigTreeNode *node = resolveConfigTreeNode(configID);
     PropertyConfig::digest_type id = node->leaf();
@@ -518,23 +516,21 @@ PropertyConfigSvc::setTopAlgs(const ConfigTreeNode::digest_type& id) const {
 
     // Obtain the IProperty of the ApplicationMgr
     SmartIF<IProperty> appProps(serviceLocator());
-    StringArrayProperty topAlgs("TopAlg",vector<string>());
+    StringArrayProperty topAlgs("TopAlg",std::vector<std::string>());
     if ( appProps->getProperty(&topAlgs).isFailure() ) {
         error() << " problem getting StringArrayProperty \"TopAlg\"" << endmsg;
     }
     if(msgLevel(MSG::DEBUG)) debug() << " current TopAlgs: " << topAlgs.toString() << endmsg;
 
-    if (!m_initialTopAlgs) {
-        m_initialTopAlgs = topAlgs.value();
-    }
+    if (!m_initialTopAlgs) m_initialTopAlgs = topAlgs.value();
 
-    vector<const PropertyConfig*> ids;
-    StatusCode sc = findTopKind(id, "IAlgorithm", back_inserter(ids));
+    std::vector<const PropertyConfig*> ids;
+    StatusCode sc = findTopKind(id, "IAlgorithm", std::back_inserter(ids));
     if (sc.isFailure()) return sc;
-    list<string> request;
-    std::transform(
-        begin(ids), end(ids), std::back_inserter(request),
-        [](const PropertyConfig *i) { return i->fullyQualifiedName(); });
+    std::list<std::string> request;
+    std::transform( begin(ids), end(ids), std::back_inserter(request),
+                    [](const PropertyConfig *i)
+                    { return i->fullyQualifiedName(); });
 
     // merge the current TopAlg, and requested TopAlg list, conserving
     // the order of BOTH lists.
@@ -547,7 +543,7 @@ PropertyConfigSvc::setTopAlgs(const ConfigTreeNode::digest_type& id) const {
     //@TODO: find topAlgs before we touched them -- and use those to merge with...
 
 
-    list<string> merge( begin(*m_initialTopAlgs),end(*m_initialTopAlgs));
+    std::list<std::string> merge( begin(*m_initialTopAlgs),end(*m_initialTopAlgs));
 
     auto ireq = request.begin();
     while (ireq != request.end()) {
@@ -572,7 +568,7 @@ PropertyConfigSvc::setTopAlgs(const ConfigTreeNode::digest_type& id) const {
     }
 
     if (hasChanged) {
-        topAlgs.setValue( vector<string>(merge.begin(),merge.end()) );
+        topAlgs.setValue( std::vector<std::string>(merge.begin(),merge.end()) );
         if ( appProps->setProperty(topAlgs).isFailure() ) {
             error() << " failed to set property" << endmsg;
             return StatusCode::FAILURE;
@@ -603,12 +599,12 @@ PropertyConfigSvc::validateConfig(const ConfigTreeNode::digest_type& ref) const 
    // check that there are no overlaps, i.e. that a given named
    // object doesn't appear in this configuration tree
    // with more than one id...
-   map<string,PropertyConfig::digest_type> inv;
+   std::map<std::string,PropertyConfig::digest_type> inv;
 
    for (const auto& i : collectLeafRefs(ref)) {
        const PropertyConfig *config = resolvePropertyConfig(i);
        if ( !config ) {
-            error() << "validateConfig:: could not resolve " << i << endl;
+            error() << "validateConfig:: could not resolve " << i << endmsg;
             return StatusCode::FAILURE;
        }
        auto f = inv.find( config->name() );
@@ -617,7 +613,7 @@ PropertyConfigSvc::validateConfig(const ConfigTreeNode::digest_type& ref) const 
        } else if ( f->first != config->name() )  { // collision detected: present, and inconsistent
            error() << "mutually exclusive configs detected for "
                 << config->name() << " : "
-                << i << " and " << f->second << endl ;
+                << i << " and " << f->second << endmsg ;
            return StatusCode::FAILURE;
        } else {  // already present, and consistent
            // DO NOTHING
@@ -626,14 +622,14 @@ PropertyConfigSvc::validateConfig(const ConfigTreeNode::digest_type& ref) const 
 
    if(msgLevel(MSG::DEBUG)) {
      for (const auto& j : inv ) {
-       debug() << j.first << " -> " << j.second << endl;
+       debug() << j.first << " -> " << j.second << endmsg;
      }
    }
    return StatusCode::SUCCESS;
 }
 
 void
-PropertyConfigSvc::createGraphVizFile(const ConfigTreeNode::digest_type& ref, const string& fname) const
+PropertyConfigSvc::createGraphVizFile(const ConfigTreeNode::digest_type& ref, const std::string& fname) const
 {
    boost::filesystem::ofstream df( fname );
    df << "digraph pvn {\n ordering=out;\n rankdir=LR;\n";
@@ -649,7 +645,7 @@ PropertyConfigSvc::createGraphVizFile(const ConfigTreeNode::digest_type& ref, co
            df << "\"" << i << "\" -> \"" << j << "\";\n";
        }
    }
-   df <<"}"<<endl;
+   df <<"}"<<std::endl;
 }
 
 //=============================================================================
@@ -661,13 +657,13 @@ PropertyConfigSvc::resolvePropertyConfig(const PropertyConfig::digest_type& ref)
    auto pc = m_configs.with_rlock( [&](const auto& configs) -> const PropertyConfig* {
        auto i = configs.find(ref);
        if ( i == configs.end() ) return nullptr;
-       if(this->msgLevel(MSG::DEBUG)) this->debug() << "already have an entry for id " << ref << endl;
+       if(this->msgLevel(MSG::DEBUG)) this->debug() << "already have an entry for id " << ref << endmsg;
        return &(i->second);
    } );
    if (pc) return pc;
    auto config = m_accessSvc->readPropertyConfig(ref);
    if (!config) {
-        error() << " could not obtain ref " << ref << endmsg;
+        error() << " could not obtain PropertyConfig ref " << ref << endmsg;
         return nullptr;
    }
    if (config->digest()!=ref) {
@@ -695,14 +691,14 @@ PropertyConfigSvc::resolveConfigTreeNode(const ConfigTreeNode::digest_type& ref)
    auto cfn = m_nodes.with_rlock( [&](const auto& nodes) -> const ConfigTreeNode* {
        auto i = nodes.find(ref);
        if (i==nodes.end()) return nullptr;
-       if (this->msgLevel(MSG::DEBUG)) this->debug() << "already have an entry for id " << ref << endl;
+       if (this->msgLevel(MSG::DEBUG)) this->debug() << "already have an entry for id " << ref << endmsg;
        return &(i->second);
    } );
    if (cfn) return cfn;
    assert(m_accessSvc);
    auto node = m_accessSvc->readConfigTreeNode(ref);
    if (!node) {
-       error() << " could not obtain ref " << ref << endmsg;
+       error() << " could not obtain ConfigTreeNode ref " << ref << endmsg;
        return nullptr;
    }
    if (node->digest()!=ref) {
@@ -725,7 +721,7 @@ PropertyConfigSvc::Transformer::operator()(const PropertyConfig::Prop& in) {
        if (in.first != j.first) continue;
        for (const auto& k : j.second ) {
          boost::regex pattern(k.first);
-         out = boost::regex_replace(out, pattern, k.second);
+         out = boost::regex_replace(std::move(out), pattern, k.second);
        }
      }
    }

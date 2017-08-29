@@ -9,7 +9,6 @@
     #define NOMINMAX
   #endif
 #endif
-#include "GaudiKernel/boost_allocator.h"
 
 namespace LHCb
 {
@@ -73,40 +72,6 @@ namespace LHCb
     /// arclength.
     using Trajectory::arclength;
     double arclength(double mu1, double mu2) const override { return mu2 - mu1 ; }
-
-
-#ifndef GOD_NOALLOC
-    /// operator new
-    static void* operator new ( size_t size )
-    {
-      return ( sizeof(ParabolaTraj) == size ?
-               boost::singleton_pool<ParabolaTraj, sizeof(ParabolaTraj)>::malloc() :
-               ::operator new(size) );
-    }
-
-    /// placement operator new
-    /// it is needed by libstdc++ 3.2.3 (e.g. in std::vector)
-    /// it is not needed in libstdc++ >= 3.4
-    static void* operator new ( size_t size, void* pObj )
-    {
-      return ::operator new (size,pObj);
-    }
-
-    /// operator delete
-    static void operator delete ( void* p )
-    {
-      boost::singleton_pool<ParabolaTraj, sizeof(ParabolaTraj)>::is_from(p) ?
-        boost::singleton_pool<ParabolaTraj, sizeof(ParabolaTraj)>::free(p) :
-        ::operator delete(p);
-    }
-
-    /// placement operator delete
-    /// not sure if really needed, but it does not harm
-    static void operator delete ( void* p, void* pObj )
-    {
-      ::operator delete (p, pObj);
-    }
-#endif
 
   private:
 

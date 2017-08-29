@@ -7,6 +7,7 @@
 // LoKi
 // ============================================================================
 #include "LoKi/Primitives.h"
+#include "LoKi/Operators.h"
 #include "LoKi/Cast.h"
 #include "LoKi/apply.h"
 #include "LoKi/compose.h"
@@ -89,8 +90,8 @@ template <typename F1, typename F2,
           typename TYPE = LoKi::details::type1_t<F1,F2>,
           typename = LoKi::details::require_signature<F1,TYPE,bool>,
           typename = LoKi::details::require_signature<F2,TYPE,bool>>
-LoKi::And<TYPE,bool> operator >> ( F1&& cut1 , F2&& cut2 )
-{ return { std::forward<F1>(cut1) , std::forward<F2>(cut2) } ; }
+auto operator >> ( F1&& cut1 , F2&& cut2 )
+{ return std::forward<F1>(cut1) && std::forward<F2>(cut2); }
 // ============================================================================
 /** evaluate the function through stremer operation:
  *
@@ -218,7 +219,7 @@ std::vector<TYPEI> operator >> ( std::vector<TYPEI>&&       input ,
                                  const LoKi::Functor<TYPE,bool>& pred  )
 {
   input.erase(std::remove_if( input.begin(), input.end(),
-                              [&](const TYPEI& i) { return !LoKi::apply(pred,i); } ),
+                              [&](const auto& i) { return !LoKi::apply(pred,i); } ),
               input.end());
   return input;
 }

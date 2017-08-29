@@ -6,7 +6,6 @@
 // ============================================================================
 #include <iostream>
 #include <map>
-#include <functional>
 #include <memory>
 #include <chrono>
 #include <array>
@@ -17,7 +16,7 @@ using std::chrono::nanoseconds;
 using std::chrono::time_point;
 
 // ============================================================================
-// VectorClass 
+// VectorClass
 // ============================================================================
 #include "VectorClass/instrset.h"
 // ============================================================================
@@ -31,6 +30,7 @@ using std::chrono::time_point;
 // LHCbMath
 // ============================================================================
 #include "LHCbMath/Similarity.h"
+using LHCb::Math::detail::to_span;
 
 #include <TH1D.h>
 
@@ -39,45 +39,49 @@ using std::chrono::time_point;
 // ============================================================================
 namespace LHCb {
 namespace Math {
+namespace detail {
 namespace avx2 {
-extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
-extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
-extern void similarity_5_7(const double* Ci, const double* Fi, double* Ti);
+    extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
+    extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
+    extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
 }
 namespace avx {
-extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
-extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
-extern void similarity_5_7(const double* Ci, const double* Fi, double* Ti);
+    extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
+    extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
+    extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
 }
 namespace sse3 {
-extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
-extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
-extern void similarity_5_7(const double* Ci, const double* Fi, double* Ti);
+    extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
+    extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
+    extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
 }
 namespace generic {
-extern void similarity_5_1(const double* Ci, const double* Fi, double* Ti);
-extern void similarity_5_5(const double* Ci, const double* Fi, double* Ti);
-extern void similarity_5_7(const double* Ci, const double* Fi, double* Ti);
+    extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
+    extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
+    extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
+}
 }
 }
 }
 
 
 enum ISet : std::int8_t { CLASSIC = -1, GENERIC = 0, SSE3 = 3, AVX = 7, AVX2 = 8 };
-typedef std::function<void(const double* Ci, const double* Fi, double* Ti)> similarity_t;
 
-std::map<ISet, similarity_t>  vtbl_5_1 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_1 },
-                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_1 },
-                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_1 },
-                                           { ISet::GENERIC, LHCb::Math::generic::similarity_5_1 } };
-std::map<ISet, similarity_t>  vtbl_5_5 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_5 },
-                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_5 },
-                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_5 },
-                                           { ISet::GENERIC, LHCb::Math::generic::similarity_5_5 } };
-std::map<ISet, similarity_t>  vtbl_5_7 = { { ISet::AVX2,    LHCb::Math::avx2::similarity_5_7 },
-                                           { ISet::AVX,     LHCb::Math::avx::similarity_5_7 },
-                                           { ISet::SSE3,    LHCb::Math::sse3::similarity_5_7 },
-                                           { ISet::GENERIC, LHCb::Math::generic::similarity_5_7 } };
+std::map<ISet, LHCb::Math::detail::similarity_t<5,1>>  vtbl_5_1 = {
+                                                { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_1 },
+                                                { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_1 },
+                                                { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_1 },
+                                                { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_1 } };
+std::map<ISet, LHCb::Math::detail::similarity_t<5,5>>  vtbl_5_5 = {
+                                                { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_5 },
+                                                { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_5 },
+                                                { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_5 },
+                                                { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_5 } };
+std::map<ISet, LHCb::Math::detail::similarity_t<5,7>>  vtbl_5_7 = {
+                                                { ISet::AVX2,    LHCb::Math::detail::avx2::similarity_5_7 },
+                                                { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_7 },
+                                                { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_7 },
+                                                { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_7 } };
 
 // Util class for test results
 struct TestResults {
@@ -253,9 +257,9 @@ double matrixMaxDiff(M1& A, M2& B)
 
 
 
-template <typename Mat, typename SymMat>
+template <typename Mat, typename SymMat, typename VTable>
 TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
-                                   std::map<ISet, similarity_t>&  simFuncs,
+                                   VTable&  simFuncs,
                                    TRandom &r,
                                    const int nbentries,
                                    const double maxConditionNumber)
@@ -268,19 +272,19 @@ TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
     (void)Ftype; (void)Otype;
 
     // Declaring our arrays
-    auto F = new Mat[nbentries];
-    auto O = new SymMat[nbentries];
-    auto resGeneric = new SymMat[nbentries];
-    auto resClassic = new Mat[nbentries];
-    auto resSSE3 = new SymMat[nbentries];
-    auto resAVX  = new SymMat[nbentries];
-    auto resAVX2 = new SymMat[nbentries];
+    auto F = std::vector<Mat>(nbentries);
+    auto O = std::vector<SymMat>(nbentries);
+    auto resGeneric = std::vector<SymMat>(nbentries);
+    auto resClassic = std::vector<Mat>(nbentries);
+    auto resSSE3 = std::vector<SymMat>(nbentries);
+    auto resAVX  = std::vector<SymMat>(nbentries);
+    auto resAVX2 = std::vector<SymMat>(nbentries);
 
     // Just a timing helper
     auto getTime = [] (time_point<high_resolution_clock> t0) {
         auto diff = high_resolution_clock::now() - t0;
         auto total_ms = std::chrono::duration_cast<nanoseconds>(diff);
-        return (total_ms.count());
+        return total_ms.count();
     };
 
     TestResults results;
@@ -301,44 +305,27 @@ TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
         //            << "############################" << std::endl;
     }
 
-    // Now running the various methods
-    {
+    auto runit = [&](ISet iset, std::vector<SymMat>& res) {
+        auto f = simFuncs.at(iset);
         auto t0 = high_resolution_clock::now();
         for(int i=0; i<nbentries; i++) {
-            (simFuncs[ISet::GENERIC])(O[i].Array(),F[i].Array(), resGeneric[i].Array());
+            (*f)(to_span(O[i]),to_span(F[i]), to_span(res[i]));
         }
-        results.timing[ISet::GENERIC] =  getTime(t0);
+        results.timing[iset] =  getTime(t0);
+    };
+    // Now running the various methods
+    {
+        runit( ISet::GENERIC, resGeneric );
     }
 
     // Checking SSE3
-    if (hasSSE3)
-    {
-        auto t0 = high_resolution_clock::now();
-        for(int i=0; i<nbentries; i++) {
-            (simFuncs[ISet::SSE3])(O[i].Array(), F[i].Array(), resSSE3[i].Array());
-        }
-        results.timing[ISet::SSE3] =  getTime(t0);
-    }
+    if (hasSSE3) runit( ISet::SSE3, resSSE3 );
 
     // Checking AVX
-    if (hasAVX)
-    {
-        auto t0 = high_resolution_clock::now();
-        for(int i=0; i<nbentries; i++) {
-            (simFuncs[ISet::AVX])(O[i].Array(), F[i].Array(), resAVX[i].Array());
-        }
-        results.timing[ISet::AVX] =  getTime(t0);
-    }
+    if (hasAVX) runit( ISet::AVX, resAVX );
 
     // Checking AVX2
-    if (hasAVX2)
-    {
-        auto t0 = high_resolution_clock::now();
-        for(int i=0; i<nbentries; i++) {
-            (simFuncs[ISet::AVX2])(O[i].Array(), F[i].Array(), resAVX2[i].Array());
-        }
-        results.timing[ISet::AVX2] =  getTime(t0);
-    }
+    if (hasAVX2) runit( ISet::AVX2, resAVX2 );
 
     // Checking the classic SMatrix method
     {
@@ -375,7 +362,7 @@ TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
             {
                 double tmpres = matrixMaxDiff(resClassic[i], resSSE3[i]);
                 if (tmpres > results.maxDiff[SSE3])
-                  results.maxDiff[SSE3] = tmpres; 
+                  results.maxDiff[SSE3] = tmpres;
             }
             {
                 double tmpres = matrixMaxDiff(resClassic[i], resAVX[i]);
@@ -397,14 +384,6 @@ TestResults compareInstructionSets(Mat &Ftype, SymMat &Otype,
         //std::cout << "SSE3    maxdiff: " << results.maxDiff[ISet::SSE3]  << std::endl;
         //std::cout << "AVX     maxdiff: " << results.maxDiff[ISet::AVX]  << std::endl;
     }
-
-    delete[] F;
-    delete[] O;
-    delete[] resGeneric;
-    delete[] resClassic;
-    delete[] resSSE3;
-    delete[] resAVX;
-    delete[] resAVX2;
 
     return results;
 }
@@ -458,7 +437,7 @@ int main()
 
     std::cout << std::endl << "Checking timing" << std::endl;
     std::cout << "=========================================" << std::endl;
-    std::cout << "Classic\tGeneric\tSSE3\tAVX\tAVX2" << std::endl;
+    std::cout << "Classic\t\tGeneric\tSSE3\tAVX\tAVX2" << std::endl;
     for (int i=0; i<testcount; i++) {
 
         std::cout << tresults[i].timing[ISet::CLASSIC]

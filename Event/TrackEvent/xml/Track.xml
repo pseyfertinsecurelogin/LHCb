@@ -42,13 +42,13 @@
       <import name='Event/Measurement' />
       <import name='Event/TrackParameters' />
       <import name='Node' soft='FORWARDONLY' />
-      <import name='TrackFitResult' soft='FORWARDONLY'/>
       <import name='Kernel/LHCbID' />
       <import name='GaudiKernel/Plane3DTypes' />
       <import name='GaudiKernel/GenericMatrixTypes' />
       <import name="GaudiKernel/VectorMap"/>
       <import name="GaudiKernel/Range"/>
       <import name="GaudiKernel/SharedObjectsContainer"/>
+      <import name="Event/TrackFitResult"/>
 
       <enum
         name   = 'History'
@@ -248,7 +248,7 @@
    />
 
    <typedef
-     type   = "Gaudi::Range_&lt;std::vector&lt;const LHCb::Node*&gt; &gt;"
+     type   = "Gaudi::Range_&lt;std::vector&lt;const LHCb::Node*&gt;&gt;"
      def    = "ConstNodeRange"
      desc   = "Range of pointers to nodes on track. For non-const access, use fitresult."
      access = "PUBLIC"
@@ -270,10 +270,6 @@
 	explicit = "TRUE"
 	initList = "KeyedObject&lt;int&gt;(), m_chi2PerDoF(0.0), m_nDoF(0), m_likelihood(999), m_ghostProbability(999), m_flags(0), m_lhcbIDs(ids), m_states(), m_fitResult(0), m_ancestors()">
       <code>
-  #ifdef __INTEL_COMPILER         // Disable ICC remark
-    #pragma warning(disable:1572) // Floating-point equality and inequality comparisons are unreliable
-    #pragma warning(push)
-  #endif
       addToStates(aState);
       setHistory(history);
       setType(trackType);
@@ -307,7 +303,8 @@
       <destructor
         desc = 'Track destructor'>
         <code>
-  reset();
+         std::for_each( m_states.begin(), m_states.end(), [](auto&amp; i) { delete i; } );
+         delete m_fitResult ;
         </code>
       </destructor>
 
@@ -315,34 +312,34 @@
         type   = 'double'
         name   = 'chi2PerDoF'
         desc   = 'Chi^2 per degree of freedom of the track'
-        access = 'PROTECTED' />
+        access = 'PRIVATE' />
 
       <attribute
         type   = 'int'
         name   = 'nDoF'
         desc   = 'Number of degrees of freedom of the track'
-        access = 'PROTECTED' />
+        access = 'PRIVATE' />
 
       <attribute
         type   = 'double'
         name   = 'likelihood'
         desc   = 'Likelihood variable'
         init   = '999'
-        access = 'PROTECTED' />
+        access = 'PRIVATE' />
 
        <attribute
         type   = 'double'
         name   = 'ghostProbability'
         desc   = 'ghost probability variable'
         init   = '999'
-        access = 'PROTECTED' />
+        access = 'PRIVATE' />
 
      <attribute
        type    = 'bitfield'
        name    = 'flags'
        desc    = 'The variety of track flags'
        init    = '0'
-       access  = 'PROTECTED'>
+       access  = 'PRIVATE'>
        <bitfield
          type      = 'LHCb::Track::Types'
          name      = 'type'
@@ -404,21 +401,21 @@
         type      = 'std::vector&lt;LHCb::LHCbID&gt;'
         name      = 'lhcbIDs'
         desc      = 'Container of (sorted) LHCbIDs'
-        access    = 'PROTECTED'
+        access    = 'PRIVATE'
         setMeth   = 'FALSE' />
 
       <attribute
         type      = 'std::vector&lt;LHCb::State*&gt;'
         name      = 'states'
         desc      = 'Container with pointers to all the states'
-        access    = 'PROTECTED'
+        access    = 'PRIVATE'
         setMeth   = 'FALSE' />
 
       <attribute
 	type      = 'LHCb::TrackFitResult*'
         name      = 'fitResult'
         desc      = 'Transient data related to track fit (nodes, material, etc)'
-        access    = 'PROTECTED'
+        access    = 'PRIVATE'
         setMeth   = 'FALSE'
 	getMeth   = 'FALSE'
         transient = 'TRUE' />
@@ -428,13 +425,13 @@
         desc    = "Additional pattern recognition information. Do not access directly, use *Info() methods instead."
         type    = "ExtraInfo"
         getMeth = "TRUE"
-        access  = "PROTECTED" />
+        access  = "PRIVATE" />
 
       <relation
         type         = 'LHCb::Track'
         name         = 'ancestors'
         desc         = 'Ancestor tracks that created this one'
-        access       = 'PROTECTED'
+        access       = 'PRIVATE'
         setMeth      = 'FALSE'
         multiplicity = 'N'
 	nonconstaccessor = 'TRUE' />
@@ -591,7 +588,7 @@
         const   = 'FALSE'>
         <code>
   // check at least the &quot;first state&quot; exists
-  if ( m_states.empty() )
+  if ( UNLIKELY(m_states.empty()) )
     throw GaudiException( &quot;first state not defined!&quot;,
                           &quot;Track.h&quot;,
                           StatusCode::FAILURE );
@@ -605,7 +602,7 @@
         const   = 'TRUE'>
         <code>
   // check at least the &quot;first state&quot; exists
-  if ( m_states.empty() )
+  if ( UNLIKELY(m_states.empty()) )
     throw GaudiException( &quot;first state not defined!&quot;,
                           &quot;Track.h&quot;,
                           StatusCode::FAILURE );
@@ -620,7 +617,7 @@
         const   = 'TRUE'>
         <code>
   double qP = firstState().qOverP();
-  return ( fabs(qP)  &gt; TrackParameters::lowTolerance  ? int(fabs(qP)/qP) : 0 );
+  return UNLIKELY(std::abs(qP) &lt; TrackParameters::lowTolerance) ? 0 : qP &lt;0 ? -1 : +1 ;
         </code>
       </method>
 
@@ -686,7 +683,7 @@
      <method
         name    = 'addToStates'
         desc    = 'Add a set of states to the track. Track takes ownership.'>
-        <arg type = 'StateContainer' name='states' />
+        <arg type = 'const StateContainer' name='states' />
       </method>
 
       <method
@@ -845,7 +842,7 @@
         desc    = 'Add a track to the list of ancestors of this track'>
         <arg type = 'const LHCb::Track ' name='ancestor' />
         <code>
-  m_ancestors.push_back( (LHCb::Track*) &amp;ancestor );
+  m_ancestors.push_back( const_cast&lt;LHCb::Track*&gt;(&amp;ancestor) );
         </code>
       </method>
 
@@ -872,30 +869,26 @@
       <method
         type    = 'void'
         name    = 'reset'
-        desc    = 'Clear the track before re-use'
-	virtual = 'TRUE'>
+        desc    = 'Clear the track before re-use' >
       </method>
 
       <method
         type    = 'LHCb::Track*'
         name    = 'cloneWithKey'
         desc    = 'Clone the track keeping the key (you take ownership of the pointer)'
-	const   = 'TRUE'
-        virtual = 'TRUE' />
+	const   = 'TRUE' />
 
       <method
         type    = 'LHCb::Track*'
         name    = 'clone'
         desc    = 'Clone the track (you take ownership of the pointer)'
-	const   = 'TRUE'
-        virtual = 'TRUE' />
+	const   = 'TRUE' />
 
       <method
         type    = 'void'
         name    = 'copy'
         argList = 'const LHCb::Track&amp; track'
-        desc    = 'Copy the info from the argument track into this track'
-	virtual = 'TRUE' />
+        desc    = 'Copy the info from the argument track into this track' />
 
       <method
         type    = 'bool'
@@ -971,8 +964,7 @@
         const   = 'TRUE'>
         <code>
   unsigned int val = ((unsigned int) flag &lt;&lt; flagBits);
-  bool ok = (0 != ( m_flags &amp; flagMask &amp; val ));
-  return ok;
+  return (0 != ( m_flags &amp; flagMask &amp; val ));
         </code>
       </method>
 
@@ -982,11 +974,9 @@
         desc    = 'Check if track is of a type that goes thro T stations'
         const   = 'TRUE'>
         <code>
-          bool hasTPart = false;
-          if (type() == Track::Types::Ttrack
-          || type() == Track::Types::Downstream
-          || type() == Track::Types::Long) hasTPart = true;
-          return hasTPart;
+          const auto t = type();
+          return t == Track::Types::Ttrack || t == Track::Types::Downstream ||
+                 t == Track::Types::Long;
         </code>
       </method>
 
@@ -996,12 +986,9 @@
         desc    = 'Check if track is of a type that goes thro Velo'
         const   = 'TRUE'>
         <code>
-          bool hasVPart = false;
-          if (type() == Track::Types::Velo
-          || type() == Track::Types::VeloR
-          || type() == Track::Types::Upstream
-          || type() == Track::Types::Long) hasVPart = true;
-          return hasVPart;
+          const auto t = type();
+          return t == Track::Types::Velo     || t == Track::Types::VeloR || 
+                 t == Track::Types::Upstream || t == Track::Types::Long;
         </code>
       </method>
 
@@ -1011,14 +998,9 @@
         desc    = 'Check if track is of a type that goes thro TT'
         const   = 'TRUE'>
         <code>
-          bool hasTTPart = false;
-          if (type() == Track::Types::Downstream
-          || type() == Track::Types::Upstream
-          || type() == Track::Types::Long) hasTTPart = true;
-          return hasTTPart;
-  #ifdef __INTEL_COMPILER // End disable ICC remark
-    #pragma warning(pop)
-  #endif
+          const auto t = type();
+          return t == Track::Types::Downstream || t == Track::Types::Upstream ||
+                 t == Track::Types::Long;
         </code>
       </method>
 
@@ -1028,11 +1010,9 @@
         desc    = 'Check if track is of a type that goes thro UT'
         const   = 'TRUE'>
         <code>
-          bool hasUTPart = false;
-          if (type() == Track::Types::Downstream
-          || type() == Track::Types::Upstream
-          || type() == Track::Types::Long) hasUTPart = true;
-          return hasUTPart;
+          const auto t = type();
+          return t == Track::Types::Downstream || t == Track::Types::Upstream ||
+                 t == Track::Types::Long;
         </code>
       </method>
 

@@ -4,6 +4,8 @@ from collections import OrderedDict
 from Gaudi.Configuration import *
 from Configurables import PackProtoParticle, UnpackProtoParticle
 from Configurables import PackTrack, UnpackTrack
+from Configurables import PackVeloCluster, UnpackVeloCluster
+from Configurables import PackSTCluster, UnpackSTCluster
 from Configurables import DataPacking__Pack_LHCb__RichPIDPacker_ as PackRichPIDs
 from Configurables import DataPacking__Unpack_LHCb__RichPIDPacker_ as UnpackRichPIDs
 from Configurables import DataPacking__Pack_LHCb__MuonPIDPacker_ as PackMuonPIDs
@@ -11,6 +13,10 @@ from Configurables import DataPacking__Unpack_LHCb__MuonPIDPacker_ as UnpackMuon
 from Configurables import PackRecVertex, UnpackRecVertex
 from Configurables import DataPacking__Pack_LHCb__CaloClusterPacker_ as PackCaloClusters
 from Configurables import DataPacking__Unpack_LHCb__CaloClusterPacker_ as UnpackCaloClusters
+from Configurables import DataPacking__Pack_LHCb__CaloDigitPacker_ as PackCaloDigits
+from Configurables import DataPacking__Unpack_LHCb__CaloDigitPacker_ as UnpackCaloDigits
+from Configurables import DataPacking__Pack_LHCb__CaloAdcPacker_ as PackCaloAdcs
+from Configurables import DataPacking__Unpack_LHCb__CaloAdcPacker_ as UnpackCaloAdcs
 from Configurables import PackCaloHypo, UnpackCaloHypo
 
 __all__ = [
@@ -149,6 +155,77 @@ standardDescriptors['2015'] = OrderedDict(
 )
 
 standardDescriptors['2017'] = standardDescriptors['2016'].copy()
+standardDescriptors['2017'].update([
+    (i.name, i) for i in [
+        # Track clusters
+        PackingDescriptor(
+            name="Hlt2VeloClusters",
+            location="/Event/Hlt2/pRec/Velo/Clusters",
+            packer=PackVeloCluster, unpacker=UnpackVeloCluster),
+        PackingDescriptor(
+            name="Hlt2TTClusters",
+            location="/Event/Hlt2/pRec/TT/Clusters",
+            packer=PackSTCluster, unpacker=UnpackSTCluster),
+        PackingDescriptor(
+            name="Hlt2ITClusters",
+            location="/Event/Hlt2/pRec/IT/Clusters",
+            packer=PackSTCluster, unpacker=UnpackSTCluster),
+        # CaloDigits
+        PackingDescriptor(
+            name="Hlt2VeloClusters",
+            location="/Event/Hlt2/pRec/Velo/Clusters",
+            packer=PackVeloCluster, unpacker=UnpackVeloCluster),
+        PackingDescriptor(
+            name="Hlt2TTClusters",
+            location="/Event/Hlt2/pRec/TT/Clusters",
+            packer=PackSTCluster, unpacker=UnpackSTCluster),
+        PackingDescriptor(
+            name="Hlt2ITClusters",
+            location="/Event/Hlt2/pRec/IT/Clusters",
+            packer=PackSTCluster, unpacker=UnpackSTCluster),
+        PackingDescriptor(
+            name="Hlt2CaloEcalDigits",
+            location="/Event/Hlt2/pRec/Neutral/EcalDigits",
+            packer=PackCaloDigits, unpacker=UnpackCaloDigits
+        ),
+        PackingDescriptor(
+            name="Hlt2CaloHcalDigits",
+            location="/Event/Hlt2/pRec/Neutral/HcalDigits",
+            packer=PackCaloDigits, unpacker=UnpackCaloDigits
+        ),
+        PackingDescriptor(
+            name="Hlt2CaloPrsDigits",
+            location="/Event/Hlt2/pRec/Neutral/PrsDigits",
+            packer=PackCaloDigits, unpacker=UnpackCaloDigits
+        ),
+        PackingDescriptor(
+            name="Hlt2CaloSpdDigits",
+            location="/Event/Hlt2/pRec/Neutral/SpdDigits",
+            packer=PackCaloDigits, unpacker=UnpackCaloDigits
+        ),
+        # CaloAdcs
+        PackingDescriptor(
+            name="Hlt2CaloEcalAdcs",
+            location="/Event/Hlt2/pRec/Neutral/EcalAdcs",
+            packer=PackCaloAdcs, unpacker=UnpackCaloAdcs
+        ),
+        PackingDescriptor(
+            name="Hlt2CaloHcalAdcs",
+            location="/Event/Hlt2/pRec/Neutral/HcalAdcs",
+            packer=PackCaloAdcs, unpacker=UnpackCaloAdcs
+        ),
+        PackingDescriptor(
+            name="Hlt2CaloPrsAdcs",
+            location="/Event/Hlt2/pRec/Neutral/PrsAdcs",
+            packer=PackCaloAdcs, unpacker=UnpackCaloAdcs
+        ),
+        PackingDescriptor(
+            name="Hlt2CaloSpdAdcs",
+            location="/Event/Hlt2/pRec/Neutral/SpdAdcs",
+            packer=PackCaloAdcs, unpacker=UnpackCaloAdcs
+        )
+    ]
+])
 standardDescriptors['2017'] = _od_rename(
     standardDescriptors['2017'],
     {'Hlt2DownstreamPIDMuonSegments': 'Hlt2MuonPIDSegments',
@@ -202,6 +279,9 @@ standardOutputs["2017"] = {
     "Hlt2LongTracks":           "/Event/Turbo/Track/Best/Long",
     "Hlt2DownstreamTracks":     "/Event/Turbo/Track/Best/Downstream",
     "Hlt2VeloPVTracks":         "/Event/Turbo/Track/FittedVeloInPV",
+    "Hlt2VeloClusters":         "/Event/Turbo/Raw/Velo/Clusters",
+    "Hlt2TTClusters":           "/Event/Turbo/Raw/TT/Clusters",
+    "Hlt2ITClusters":           "/Event/Turbo/Raw/IT/Clusters",
     "Hlt2RecVertices":          "/Event/Turbo/Vertex/PV3D",
     "Hlt2NeutralProtos":        "/Event/Turbo/Neutral/Protos",
     "Hlt2CaloClusters":         "/Event/Turbo/PID/Calo/EcalClusters",
@@ -210,16 +290,29 @@ standardOutputs["2017"] = {
     "Hlt2CaloPhotonHypos":      "/Event/Turbo/PID/Calo/Photons",
     "Hlt2CaloMergedPi0Hypos":   "/Event/Turbo/PID/Calo/MergedPi0s",
     "Hlt2CaloSplitPhotonHypos": "/Event/Turbo/PID/Calo/SplitPhotons",
+    "Hlt2CaloEcalDigits":       "/Event/Turbo/Raw/Ecal/Digits",
+    "Hlt2CaloHcalDigits":       "/Event/Turbo/Raw/Hcal/Digits",
+    "Hlt2CaloPrsDigits":        "/Event/Turbo/Raw/Prs/Digits",
+    "Hlt2CaloSpdDigits":        "/Event/Turbo/Raw/Spd/Digits",
+    "Hlt2CaloEcalAdcs":         "/Event/Turbo/Raw/Ecal/Adcs",
+    "Hlt2CaloHcalAdcs":         "/Event/Turbo/Raw/Hcal/Adcs",
+    "Hlt2CaloPrsAdcs":          "/Event/Turbo/Raw/Prs/Adcs",
+    "Hlt2CaloSpdAdcs":          "/Event/Turbo/Raw/Spd/Adcs"
 }
 
 
 # We need to register the locations of (non-reconstructed) data
 # that is referenced by the some of the packed objects.
-externalLocations = [
+_externalLocations = [
     '/Event/Raw/Ecal/Digits',
     '/Event/Raw/Prs/Digits',
     '/Event/Raw/Spd/Digits',
 ]
+externalLocations = {}
+externalLocations['2015'] = list(_externalLocations)
+externalLocations['2016'] = list(externalLocations['2015'])
+# Digits are handled explicitly in 2017
+externalLocations['2017'] = []
 
 
 class PersistRecoPacking(object):
@@ -247,7 +340,7 @@ class PersistRecoPacking(object):
         self._descriptors = descriptors[datatype]
         self.inputs = inputs
         self.outputs = outputs[datatype]
-        self.external = externalLocations
+        self.external = externalLocations[datatype]
 
     def packedLocations(self):
         """Return a list with the packed object locations."""

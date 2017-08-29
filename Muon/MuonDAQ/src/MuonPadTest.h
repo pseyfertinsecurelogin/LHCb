@@ -16,13 +16,13 @@
 class MuonPadTest : public GaudiAlgorithm {
 public:
   /// Standard constructor
-  MuonPadTest( const std::string& name, ISvcLocator* pSvcLocator );
+  using GaudiAlgorithm::GaudiAlgorithm;
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
 private:
-  IMuonRawBuffer* m_MuonBuffer;
+  IMuonRawBuffer* m_MuonBuffer = nullptr;
 
 };
 #endif // MUONPADTEST_H
