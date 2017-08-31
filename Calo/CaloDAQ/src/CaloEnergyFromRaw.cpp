@@ -385,7 +385,7 @@ bool CaloEnergyFromRaw::getData ( const LHCb::RawBank& bank ){
               + " in condDB :  Cannot read that bank").ignore();
         Error("Warning : previous data may be corrupted").ignore();
         if(m_cleanCorrupted) cleanData(prevCard);
-        m_status.addStatus( sourceID,   LHCb::RawBankReadoutStatus::Corrupted || LHCb::RawBankReadoutStatus::Incomplete);
+        m_status.addStatus( sourceID,   LHCb::RawBankReadoutStatus::Corrupted | LHCb::RawBankReadoutStatus::Incomplete);
         return false;
       }
       std::vector<LHCb::CaloCellID> chanID = m_calo->cardChannels( feCards[card] );

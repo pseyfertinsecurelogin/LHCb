@@ -18,7 +18,6 @@
 // Include files
 #include "Event/RawBank.h"
 #include "Event/RawEvent.h"
-#include "GaudiKernel/boost_allocator.h"
 #include <ostream>
 
 // Forward declarations
@@ -94,39 +93,6 @@ namespace LHCb
     /// Retrieve Word
     bool word() const;
   
-  
-  #ifndef _WIN32
-    /// operator new
-    static void* operator new ( size_t size )
-    {
-      return ( sizeof(DataWord) == size ? 
-               boost::singleton_pool<DataWord, sizeof(DataWord)>::malloc() :
-               ::operator new(size) );
-    }
-  
-    /// placement operator new
-    /// it is needed by libstdc++ 3.2.3 (e.g. in std::vector)
-    /// it is not needed in libstdc++ >= 3.4
-    static void* operator new ( size_t size, void* pObj )
-    {
-      return ::operator new (size,pObj);
-    }
-  
-    /// operator delete
-    static void operator delete ( void* p )
-    {
-      boost::singleton_pool<DataWord, sizeof(DataWord)>::is_from(p) ?
-      boost::singleton_pool<DataWord, sizeof(DataWord)>::free(p) :
-      ::operator delete(p);
-    }
-  
-    /// placement operator delete
-    /// not sure if really needed, but it does not harm
-    static void operator delete ( void* p, void* pObj )
-    {
-      ::operator delete (p, pObj);
-    }
-  #endif
   protected:
 
   private:

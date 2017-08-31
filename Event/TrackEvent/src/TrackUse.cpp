@@ -1,4 +1,3 @@
-// $Id: TrackUse.cpp,v 1.4 2007-09-17 06:41:45 cattanem Exp $
 // ============================================================================
 // Include files
 // ============================================================================
@@ -20,105 +19,59 @@
  *  @date   2004-10-27
  */
 // ============================================================================
+namespace {
+  template <typename T>
+  constexpr auto to_()
+  { return [](const auto& i) { return static_cast<T>(i); }; }
+}
 
-// ============================================================================
-/// constructor
-// ============================================================================
-TrackUse::TrackUse()
-  : m_check        ( true  ) // perform check ?
-  , m_skipClones   ( true  )
-  , m_skipInvalid  ( true  )
-  , m_skipBackward ( true  )
-  // accepted fit status
-  , m_fitstatus ()
-  // accepted type
-  , m_type   ()
-  // rejected history
-  , m_history ()
-{
-  m_fitstatus.push_back (  LHCb::Track::FitStatus::Fitted     ) ;
-  //
-  m_type.push_back   (  LHCb::Track::Types::Long       ) ;
-  m_type.push_back   (  LHCb::Track::Types::Upstream   ) ;
-  m_type.push_back   (  LHCb::Track::Types::Downstream ) ;
-  m_type.push_back   (  LHCb::Track::Types::Ttrack     ) ;
-  //
+template <typename T>
+TrackUse::TrackUse( T& parent, tag  ) {
+      parent.declareProperty ( "CheckTracks"      , m_check       ) ;
+      //
+      parent.declareProperty ( "SkipClones"       , m_skipClones  ) ;
+      parent.declareProperty ( "SkipInvalid"      , m_skipInvalid ) ;
+      parent.declareProperty ( "SkipBackward"     , m_skipBackward) ;
+      //
+      parent.declareProperty ( "AcceptedType"     , m_type        ) ;
+      parent.declareProperty ( "AcceptedFitStatus", m_fitstatus   ) ;
+      parent.declareProperty ( "RejectedHistory"  , m_history     ) ;
 }
-// ============================================================================
-/// destructor
-// ============================================================================
-TrackUse::~TrackUse() {}
-// ============================================================================
-/// the basic method fofr delegation of properties
-// ============================================================================
-template <class TYPE>
-inline StatusCode
-TrackUse::i_declareProperties ( TYPE* object )
-{
-  if ( 0 == object ) { return StatusCode::FAILURE ; }
-  //
-  object -> declareProperty ( "CheckTracks"      , m_check       ) ;
-  //
-  object -> declareProperty ( "SkipClones"       , m_skipClones  ) ;
-  object -> declareProperty ( "SkipInvalid"      , m_skipInvalid ) ;
-  object -> declareProperty ( "SkipBackward"     , m_skipBackward) ;
-  //
-  object -> declareProperty ( "AcceptedType"     , m_type        ) ;
-  object -> declareProperty ( "AcceptedFitStatus", m_fitstatus   ) ;
-  object -> declareProperty ( "RejectedHistory"  , m_history     ) ;
-  //
-  return StatusCode::SUCCESS ;
-}
-// ============================================================================
-/// declare 'own' properties for the algorithm
-// ============================================================================
-StatusCode TrackUse::declareProperties ( Algorithm* alg )
-{ return i_declareProperties ( alg ) ; }
-// ============================================================================
-/// declare 'own' properties for the service
-// ============================================================================
-StatusCode TrackUse::declareProperties ( Service*  svc )
-{ return i_declareProperties ( svc ) ; }
-// ============================================================================
-/// declare 'own' properties for the tool
-// ============================================================================
-StatusCode TrackUse::declareProperties ( AlgTool*  tool )
-{ return i_declareProperties ( tool ) ; }
+
+template TrackUse::TrackUse(Algorithm&,tag);
+template TrackUse::TrackUse(AlgTool&,tag);
 // ============================================================================
 /// get the list of accepted status
 // ============================================================================
-size_t TrackUse::acceptedFitStatus  ( std::vector<LHCb::Track::FitStatus>& s ) const
+size_t TrackUse::acceptedFitStatus( std::vector<LHCb::Track::FitStatus>& s ) const
 {
-  for ( Shorts::const_iterator iv = m_fitstatus.begin() ;
-        m_fitstatus.end() != iv ; ++iv )
-  { s.push_back( (LHCb::Track::FitStatus) (*iv) ) ; }
+  std::transform( m_fitstatus.begin(), m_fitstatus.end(),
+                  std::back_inserter(s), to_<LHCb::Track::FitStatus>() );
   return m_fitstatus.size() ;
 }
 // ============================================================================
 /// get the list of accepted types
 // ============================================================================
-size_t TrackUse::acceptedType    ( std::vector<LHCb::Track::Types>&   t ) const
+size_t TrackUse::acceptedType( std::vector<LHCb::Track::Types>&   t ) const
 {
-  for ( Shorts::const_iterator iv = m_type.begin() ;
-        m_type.end() != iv ; ++iv )
-  { t.push_back( (LHCb::Track::Types) (*iv) ) ; }
+  std::transform( m_type.begin(), m_type.end(),
+                  std::back_inserter(t), to_<LHCb::Track::Types>() );
   return m_type.size() ;
 }
 // ============================================================================
 /// get the list of rejected history
 // ============================================================================
-size_t TrackUse::rejectedHistory ( std::vector<LHCb::Track::History>& h ) const
+size_t TrackUse::rejectedHistory( std::vector<LHCb::Track::History>& h ) const
 {
-  for ( Shorts::const_iterator iv = m_history.begin() ;
-        m_history.end() != iv ; ++iv )
-  { h.push_back( (LHCb::Track::History) (*iv) ) ; }
+  std::transform( m_history.begin(), m_history.end(),
+                  std::back_inserter(h), to_<LHCb::Track::History>() );
   return m_history.size() ;
 }
 // ============================================================================
 /// printout of the track into the stream
 // ============================================================================
-MsgStream& TrackUse::print
-( MsgStream& stream , const LHCb::Track* track ) const
+MsgStream&
+TrackUse::print ( MsgStream& stream , const LHCb::Track* track ) const
 {
   if ( !stream.isActive() ) { return stream                ; }   // RETURN
   if ( 0 == track         ) { return stream << "<INVALID>" ; }   // RETURN
@@ -166,23 +119,22 @@ MsgStream& TrackUse::fillStream ( MsgStream& s ) const
   if ( m_skipBackward ) { s << " '" << LHCb::Track::Flags::Backward << "' " ;}
   s << "]" ;
 
-  typedef Shorts::const_iterator iterator ;
   {
     s << " Accepted FitStatus: [" ;
-    for ( iterator i = m_fitstatus.begin() ; m_fitstatus.end() != i ; ++i )
-    { s << " '" << (LHCb::Track::FitStatus)(*i) << "' " ; }
+    for ( const auto& i : m_fitstatus )
+    { s << " '" << static_cast<LHCb::Track::FitStatus>(i) << "' " ; }
     s << "];" ;
   }
   {
     s << " Accepted Types: [" ;
-    for ( iterator i = m_type.begin() ; m_type.end() != i ; ++i )
-    { s << " '" << (LHCb::Track::Types)(*i) << "' " ; }
+    for ( const auto& i : m_type )
+    { s << " '" << static_cast<LHCb::Track::Types>(i) << "' " ; }
     s << "];" ;
   }
   {
     s << " Rejected History: [" ;
-    for ( iterator i = m_history.begin() ; m_history.end() != i ; ++i )
-    { s << " '" << (LHCb::Track::History)(*i) << "' " ; }
+    for ( const auto& i : m_history )
+    { s << " '" << static_cast<LHCb::Track::History>(i) << "' " ; }
     s << "];" ;
   }
   return s ;
@@ -190,4 +142,3 @@ MsgStream& TrackUse::fillStream ( MsgStream& s ) const
 // ============================================================================
 /// The END
 // ============================================================================
-

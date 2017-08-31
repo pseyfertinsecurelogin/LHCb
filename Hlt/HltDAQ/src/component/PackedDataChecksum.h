@@ -16,6 +16,9 @@
 #include "Event/PackedFlavourTag.h"
 #include "Event/PackedRelations.h"
 #include "Event/PackedPartToRelatedInfoRelation.h"
+#include "Event/PackedCaloDigit.h"
+#include "Event/PackedCluster.h"
+#include "Event/PackedCaloAdc.h"
 
 namespace PackedDataPersistence {
 

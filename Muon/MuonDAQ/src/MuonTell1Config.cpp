@@ -37,16 +37,6 @@ namespace {
 }
 
 //=============================================================================
-// Standard constructor, initializes variables
-//=============================================================================
-MuonTell1Config::MuonTell1Config( const std::string& type,
-                                  const std::string& name,
-                                  const IInterface* parent )
-  : base_class ( type, name , parent )
-{
-  declareInterface<IMuonTell1Config>(this);
-}
-//=============================================================================
 StatusCode MuonTell1Config::initialize()
 {
   StatusCode sc = GaudiTool::initialize();
@@ -54,9 +44,6 @@ StatusCode MuonTell1Config::initialize()
 
   m_muonDet=getDet<DeMuonDetector>(DeMuonLocation::Default);
   if(!m_muonDet) return Error("Could not locate Muon detector element");
-
-
-
 
   return StatusCode::SUCCESS ;
 }

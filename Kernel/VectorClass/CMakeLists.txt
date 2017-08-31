@@ -1,12 +1,12 @@
 ################################################################################
 # Package: VectorClass
 ################################################################################
-gaudi_subdir(VectorClass v1r26)
+gaudi_subdir(VectorClass v1r30)
 
 gaudi_depends_on_subdirs(GaudiPolicy)
 
 gaudi_add_library(VectorClassLib
-                  src/ranvec1.cpp
+                  src/*.cpp
                   PUBLIC_HEADERS VectorClass
                   INCLUDE_DIRS VectorClass)
 

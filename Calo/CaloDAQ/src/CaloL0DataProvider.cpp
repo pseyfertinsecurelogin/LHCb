@@ -451,7 +451,7 @@ bool CaloL0DataProvider::decodePrsTriggerBank( const LHCb::RawBank& bank ) {
               + " in condDB :  Cannot read that bank").ignore();
         Error("Warning : previous data may be corrupted").ignore();
         if(m_cleanCorrupted)cleanData(prevCard);
-        m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Corrupted || LHCb::RawBankReadoutStatus::Incomplete);
+        m_status.addStatus( sourceID, LHCb::RawBankReadoutStatus::Corrupted | LHCb::RawBankReadoutStatus::Incomplete);
         return false;
       }
       prevCard = card;

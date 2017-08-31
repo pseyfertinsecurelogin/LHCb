@@ -72,7 +72,6 @@ private:
   typedef std::map<ConfigTreeNode::digest_type,  std::vector<PropertyConfig::digest_type> > Tree2LeafMap_t;
   typedef std::map<ConfigTreeNode::digest_type,  std::list<ConfigTreeNode::digest_type> > Tree2NodeMap_t;
 
-  typedef std::map<std::string, PropertyConfig::digest_type> ConfigPushed_t;
 public:
   using extends::extends;
 
@@ -113,7 +112,7 @@ protected:
 //
   class Transformer {
    public:
-       Transformer(const std::string& component,MsgStream& os): m_os(os), m_c(component) {}
+       Transformer(std::string component,MsgStream& os): m_os(os), m_c(std::move(component)) {}
        void push_back( const std::map<std::string, std::map<std::string,std::string> >* pmap ) { m_list.push_back(pmap); }
        bool empty() const { return m_list.empty(); }
        PropertyConfig::Prop operator()(const PropertyConfig::Prop& in);
@@ -148,7 +147,7 @@ private:
   mutable Synced<Tree2LeafMap_t>         m_leavesInTree; // top level node ref -> config refs (leaves)
   mutable Synced<Tree2NodeMap_t>         m_nodesInTree; // top level node ref -> node refs
 
-  mutable ConfigPushed_t               m_configPushed;
+  mutable std::map<std::string, PropertyConfig::digest_type> m_configPushed;
   std::map<std::string,IAlgTool*>      m_toolmap;
   Gaudi::Property<std::vector<std::string>> m_prefetch{ this, "prefetchConfig"};    ///< configurations to load at initialization
   Gaudi::Property<std::set<std::string>> m_skip{this, "SkipComponent"};        ///< items NOT to configure with this service NOR THEIR DEPENDENTS!
@@ -165,7 +164,7 @@ private:
 
   StatusCode setTopAlgs(const ConfigTreeNode::digest_type& id) const;
   StatusCode findTopKind(const ConfigTreeNode::digest_type& configID,
-                         const std::string& kind,
+                         boost::string_ref kind,
                          std::back_insert_iterator<std::vector<const PropertyConfig*> > components) const;
   void createGraphVizFile(const PropertyConfig::digest_type& ref, const std::string& fname) const;
   ConfigTreeNode::digest_type resolveAlias(const ConfigTreeNodeAlias::alias_type& alias) const;

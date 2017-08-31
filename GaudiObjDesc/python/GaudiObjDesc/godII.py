@@ -189,7 +189,7 @@ class godII(object):
                        classdb=None,
                        root=os.environ.get('GAUDIOBJDESCROOT'),
                        namespace='LHCb',
-                       allocator='FROMXML',
+                       allocator='NO',
                        dtd=os.environ.get("GODDTDPATH")
                        )
         self._parser = p

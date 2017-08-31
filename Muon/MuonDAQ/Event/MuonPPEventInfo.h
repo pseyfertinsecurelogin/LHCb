@@ -11,22 +11,16 @@
  *  @date   2008-01-07
  */
 class MuonPPEventInfo final {
+
+   std::array<unsigned int,8> m_data = { { 0 } };
+
 public:
 
-  /// Standard constructor
-  MuonPPEventInfo( ){ m_data.fill(0); };
-
-  void setWord(unsigned int i, unsigned int word)
-  {
-    m_data[i]=word;
-  };
+  void setWord(unsigned int i, unsigned int word) { m_data[i]=word; };
 
   unsigned int getBCN() const { return m_data[0]&0x0FFF; };
   unsigned int getDetID() const { return m_data[0]&0xF000; }
   unsigned int getL0EvtID() const { return m_data[1]; };
-
-private:
-   std::array<unsigned int,8> m_data;
 
 };
 #endif // EVENT_MUONPPEVENTINFO_H

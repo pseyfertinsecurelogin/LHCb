@@ -19,17 +19,22 @@ find_package(pyanalysis)
 include_directories(SYSTEM ${EIGEN_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
                            ${Boost_INCLUDE_DIRS} ${CLHEP_INCLUDE_DIRS})
 
+find_path(CPP_GSL_INCLUDE_DIR NAMES gsl/span)
+if(NOT CPP_GSL_INCLUDE_DIR)
+   message(FATAL "required headers from C++ GSL missing")
+endif()
+
 gaudi_add_library(LHCbMathLib
                   src/*.cpp
                   PUBLIC_HEADERS LHCbMath
-                  INCLUDE_DIRS Boost GSL ROOT
-                  LINK_LIBRARIES Boost GSL ROOT GaudiGSLLib GaudiKernel)
+                  INCLUDE_DIRS Boost GSL ROOT ${CPP_GSL_INCLUDE_DIR}
+                  LINK_LIBRARIES Boost GSL ROOT VectorClassLib GaudiGSLLib GaudiKernel)
 
 gaudi_add_dictionary(LHCbMath
                      dict/LHCbMathDict.h
                      dict/LHCbMathDict.xml
                      INCLUDE_DIRS Boost GSL ROOT
-                     LINK_LIBRARIES Boost GSL ROOT GaudiKernel LHCbMathLib
+                     LINK_LIBRARIES Boost GSL ROOT VectorClassLib GaudiKernel LHCbMathLib
                      OPTIONS "-U__MINGW32__")
 
 

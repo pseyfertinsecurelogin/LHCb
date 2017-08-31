@@ -13,6 +13,9 @@
 #include "Event/PackedFlavourTag.h"
 #include "Event/PackedRelations.h"
 #include "Event/PackedPartToRelatedInfoRelation.h"
+#include "Event/PackedCaloDigit.h"
+#include "Event/PackedCluster.h"
+#include "Event/PackedCaloAdc.h"
 
 #include "HltPackedDataWriter.h"
 #include "HltPackedDataDecoder.h"
@@ -60,6 +63,9 @@ StatusCode HltPackedDataDecoder::initialize() {
   register_object<LHCb::PackedFlavourTags>();
   register_object<LHCb::PackedRelations>();
   register_object<LHCb::PackedRelatedInfoRelations>();
+  register_object<LHCb::PackedCaloDigits>();
+  register_object<LHCb::PackedClusters>();
+  register_object<LHCb::PackedCaloAdcs>();
 
   if (UNLIKELY(m_enableChecksum)) {
     m_checksum.reset( new PackedDataPersistence::PackedDataChecksum());

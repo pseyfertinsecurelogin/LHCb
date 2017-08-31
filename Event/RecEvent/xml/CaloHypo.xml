@@ -116,10 +116,7 @@
 <constructor
  desc     = "Copy Constructor"
  argList  = "LHCb::CaloHypo right"
- initList = "Base() , m_hypothesis( right.hypothesis() ) , m_lh( right.lh() ) , m_position( 0 ) , m_digits( right.digits() ) , m_clusters( right.clusters() ) , m_hypos( right.hypos() )">
-<code>
-      m_position = ( right.position() ? new CaloPosition( *right.position() ): nullptr );
-</code>
+ initList = "Base() , m_hypothesis( right.hypothesis() ) , m_lh( right.lh() ) , m_position( right.position() ? new CaloPosition( *right.position() ): nullptr ) , m_digits( right.digits() ) , m_clusters( right.clusters() ) , m_hypos( right.hypos() )">
 </constructor>
 
 <destructor
@@ -185,10 +182,9 @@
  name   = "setPosition"
  type   = "void"
  access = "PUBLIC" >
- <arg name="position" type="LHCb::CaloHypo::Position*"/>
+ <arg name="position" inout = "BYVALUE" type="std::unique_ptr&lt;LHCb::CaloHypo::Position&gt;"/>
  <code>
- delete m_position;
- m_position = position;
+ m_position = position.release();
 </code>
 </method>
 
@@ -199,7 +195,7 @@
  const  = "TRUE"
  access = "PUBLIC" >
  <code>
- return ( 0 != m_position ? m_position->e() : 0 );
+ return m_position ? m_position->e() : 0 ;
 </code>
 </method>
 

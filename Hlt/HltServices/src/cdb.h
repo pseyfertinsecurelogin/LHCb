@@ -117,6 +117,7 @@ int cdb_make_put(struct cdb_make *cdbmp,
                  const unsigned char *val, unsigned vlen,
                  enum cdb_put_mode mode);
 int cdb_make_finish(struct cdb_make *cdbmp);
+void cdb_make_free(struct cdb_make *cdbmp);
 
 #ifdef __cplusplus
 } /* extern "C" */

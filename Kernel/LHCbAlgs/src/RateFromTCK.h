@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef RATEFROMTCK_H
 #define RATEFROMTCK_H 1
 
@@ -21,17 +20,13 @@
  *  @date   2011-08-10
  */
 
-class RateFromTCK final : public GaudiTool, virtual public IRateFromTCK
+class RateFromTCK final : public extends<GaudiTool, IRateFromTCK>
 {
 
 public:
 
   /// Standard constructor
-  RateFromTCK( const std::string& type,
-               const std::string& name,
-               const IInterface* parent);
-
-  virtual ~RateFromTCK( ) = default; ///< Destructor
+  using extends<GaudiTool, IRateFromTCK>::extends;
 
   StatusCode initialize() override;
 
@@ -63,10 +58,10 @@ private:
 
   StatusCode i_cacheTriggerData();              ///< Function extracting data from Condition
 
- private:
 
   mutable IPropertyConfigSvc * m_propertyConfigSvc = nullptr;
-  std::string m_propertyConfigSvcName;          ///< Name of PropertyConfigSvc
+  Gaudi::Property<std::string> m_propertyConfigSvcName
+  { this, "IPropertyConfigSvcInstance", "PropertyConfigSvc", "Name of PropertyConfigSvc" };
   Condition *m_condTrigger = nullptr;           ///< Condition for sampling coefficients
   unsigned int m_triggerTCK{0};                 ///< tck for these data
 

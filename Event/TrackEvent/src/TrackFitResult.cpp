@@ -62,7 +62,7 @@ void TrackFitResult::addToMeasurements( MeasurementContainer& measurements )
 //=============================================================================
 void TrackFitResult::removeFromMeasurements( const Measurement* meas )
 {
-  TrackFunctor::deleteFromList<Measurement>( m_measurements, meas );
+  TrackFunctor::deleteFromList( m_measurements, meas );
 }
 
 //=============================================================================
@@ -74,10 +74,10 @@ void TrackFitResult::removeFromNodes( Node* node )
   // to the deleted Node, if present!
   if ( node -> hasMeasurement() ) {
     Measurement& meas = node -> measurement();
-    TrackFunctor::deleteFromList<Node>(m_nodes,node);
+    TrackFunctor::deleteFromList(m_nodes,node);
     removeFromMeasurements( &meas );
   } else {
-    TrackFunctor::deleteFromList<Node>(m_nodes,node);
+    TrackFunctor::deleteFromList(m_nodes,node);
   }
 }
 
@@ -119,8 +119,8 @@ void TrackFitResult::reset()
 {
   m_nIter = 0 ;
   std::for_each(m_measurements.begin(), m_measurements.end(),TrackFunctor::deleteObject()) ;
-  std::for_each(m_nodes.begin(), m_nodes.end(),TrackFunctor::deleteObject()) ;
   m_measurements.clear();
+  std::for_each(m_nodes.begin(), m_nodes.end(),TrackFunctor::deleteObject()) ;
   m_nodes.clear();
 }
 

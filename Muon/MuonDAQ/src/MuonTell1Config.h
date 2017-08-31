@@ -1,4 +1,4 @@
-#ifndef MUONTELL1CONFIG_H  
+#ifndef MUONTELL1CONFIG_H
 #define MUONTELL1CONFIG_H 1
 
 // Include files
@@ -10,17 +10,15 @@
 
 
 /** @class MuonTell1Config MuonTell1Config.h
- *  
  *
- *  @author 
+ *
+ *  @author
  *  @date   2008-02-29
  */
 class MuonTell1Config : public extends<GaudiTool, IMuonTell1Config> {
-public: 
+public:
   /// Standard constructor
-  MuonTell1Config( const std::string& type, 
-                   const std::string& name,
-                   const IInterface* parent);
+  using base_class::base_class;
 
   StatusCode initialize() override;
 

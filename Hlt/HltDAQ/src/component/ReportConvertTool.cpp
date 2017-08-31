@@ -1993,8 +1993,7 @@ void ReportConvertTool::CaloHypoObjectFromSummary( const HltObjectSummary::Info*
 
   const auto& used_map = (turbo ? s_calohypo_unordered_map2_Turbo
                                 : s_calohypo_unordered_map2 );
-  LHCb::CaloHypo::Position* pos = new LHCb::CaloHypo::Position();
-  object->setPosition(pos);
+  object->setPosition(std::make_unique<LHCb::CaloHypo::Position>());
 
   Gaudi::Vector3 & xye = *(const_cast<Gaudi::Vector3*>(&object->position()->parameters()));
   //

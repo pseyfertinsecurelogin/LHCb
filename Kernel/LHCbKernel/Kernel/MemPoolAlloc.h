@@ -55,51 +55,54 @@ namespace LHCb
 
   public:
 
-    /// If GOD_NOALLOC flag set, do nothing
-#ifndef GOD_NOALLOC
+    // Eventually should retire completely this class. For quick tests though commenting
+    // out the below is the easiest way to turn the allocators off.
 
-#ifdef __INTEL_COMPILER         // Disable ICC remark
-#pragma warning(disable:1720) // Operator new has no corresponding member operator delete (to be called if an exception is thrown during initialization of an allocated object)
-#pragma warning(push)
-#endif
+//     /// If GOD_NOALLOC flag set, do nothing
+// #ifndef GOD_NOALLOC
 
-    /// operator new
-    inline static void* operator new ( size_t size )
-    {
-      using pool = boost::singleton_pool< T, sizeof(T),
-                                          Allocator,
-                                          typename std::conditional<Mutex,boost::details::pool::default_mutex,boost::details::pool::null_mutex>::type,
-                                          NextSize >;
-      return ( sizeof(T) == size ?  pool::malloc() : ::operator new ( size ) );
-    }
+// #ifdef __INTEL_COMPILER         // Disable ICC remark
+// #pragma warning(disable:1720) // Operator new has no corresponding member operator delete (to be called if an exception is thrown during initialization of an allocated object)
+// #pragma warning(push)
+// #endif
 
-    /// Operator delete
-    inline static void operator delete ( void* pObj )
-    {
-      using pool = boost::singleton_pool<T, sizeof(T),
-                                         Allocator,
-                                         typename std::conditional<Mutex,boost::details::pool::default_mutex,boost::details::pool::null_mutex>::type,
-                                         NextSize >;
-      pool::is_from(pObj) ? pool::free(pObj) : ::operator delete ( pObj );
-    }
+//     /// operator new
+//     inline static void* operator new ( size_t size )
+//     {
+//       using pool = boost::singleton_pool< T, sizeof(T),
+//                                           Allocator,
+//                                           typename std::conditional<Mutex,boost::details::pool::default_mutex,boost::details::pool::null_mutex>::type,
+//                                           NextSize >;
+//       return ( sizeof(T) == size ?  pool::malloc() : ::operator new ( size ) );
+//     }
 
-    /// placement operator new
-    static void* operator new ( size_t size, void* pObj )
-    {
-      return ::operator new ( size, pObj );
-    }
+//     /// Operator delete
+//     inline static void operator delete ( void* pObj )
+//     {
+//       using pool = boost::singleton_pool<T, sizeof(T),
+//                                          Allocator,
+//                                          typename std::conditional<Mutex,boost::details::pool::default_mutex,boost::details::pool::null_mutex>::type,
+//                                          NextSize >;
+//       pool::is_from(pObj) ? pool::free(pObj) : ::operator delete ( pObj );
+//     }
 
-    /// placement operator delete
-    static void operator delete ( void* p, void* pObj )
-    {
-      ::operator delete ( p, pObj );
-    }
+//     /// placement operator new
+//     static void* operator new ( size_t size, void* pObj )
+//     {
+//       return ::operator new ( size, pObj );
+//     }
 
-#ifdef __INTEL_COMPILER // Re-enable ICC remark
-#pragma warning(pop)
-#endif
+//     /// placement operator delete
+//     static void operator delete ( void* p, void* pObj )
+//     {
+//       ::operator delete ( p, pObj );
+//     }
 
-#endif
+// #ifdef __INTEL_COMPILER // Re-enable ICC remark
+// #pragma warning(pop)
+// #endif
+
+// #endif
 
   };
 
