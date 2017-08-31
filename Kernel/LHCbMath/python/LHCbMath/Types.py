@@ -1764,8 +1764,6 @@ for t in ( 'int'                ,
 # =============================================================================
 LHCb  = cpp.LHCb
 # =============================================================================
-cpp.LHCb.Math.lomont_compare_double  = cpp.Gaudi.Math.lomont_compare_double
-cpp.LHCb.Math.lomont_compare_float   = cpp.Gaudi.Math.lomont_compare_float 
 cpp.Gaudi.Math.round                 = cpp.LHCb.Math.round
 cpp.Gaudi.Math.equal_to_int          = cpp.LHCb.Math.equal_to_int
 cpp.Gaudi.Math.equal_to_uint         = cpp.LHCb.Math.equal_to_uint
@@ -1774,6 +1772,11 @@ cpp.Gaudi.Math.islong                = cpp.LHCb.Math.islong
 cpp.Gaudi.Math.knuth_equal_to_double = cpp.LHCb.Math.knuth_equal_to_double
 cpp.Gaudi.Math.round_N               = cpp.LHCb.Math.round_N
 cpp.Gaudi.Math.frexp10               = cpp.LHCb.Math.frexp10
+
+cpp.Gaudi.Math.next_double           = cpp.LHCb.Math.next_double 
+cpp.Gaudi.Math.next_float            = cpp.LHCb.Math.next_float
+cpp.Gaudi.Math.lomont_compare_float  = cpp.LHCb.Math.lomont_compare_float
+cpp.Gaudi.Math.lomont_compare_double = cpp.LHCb.Math.lomont_compare_double
 
 
 if not hasattr ( cpp.Gaudi.Math.Splines , 'DATA'    ) or \

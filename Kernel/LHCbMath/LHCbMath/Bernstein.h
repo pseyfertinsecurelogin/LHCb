@@ -197,6 +197,41 @@ namespace Gaudi
         for ( unsigned short i = 0 ; i < N ; ++i ) { setPar ( i , c[i] ) ; }
       }
       // ======================================================================
+      /** construct Bernstein polynomial from its roots
+       *
+       *  Polinomial has a form
+       *  \f$ B(x) = \prod_i (x-r_i) \prod_j (x-c_i)(x-c_i^*) \f$
+       *
+       *  @param xmin low  edge for Bernstein polynomial
+       *  @param xmax high edge for Bernstein polynomial
+       *  @param r  the list of real  roots of the polinomial
+       *  @param c  the list of complex roots (only one root from cc-pair is needed)
+       */
+      Bernstein 
+      ( const double xmin , 
+        const double xmax , 
+        const std::vector<double>&                 r = 
+        std::vector<double> () , 
+        const std::vector<std::complex<double> > & c = 
+        std::vector<std::complex<double> > ()  );
+      // ======================================================================
+      /** construct Bernstein polynomial from its roots
+       *
+       *  Polinomial has a form
+       *  \f$ B(x) = \prod_i (x-r_i) \prod_j (x-c_i)(x-c_i^*) \f$
+       *
+       *  @param xmin low  edge for Bernstein polynomial
+       *  @param xmax high edge for Bernstein polynomial
+       *  @param c  the list of complex roots (only one root from cc-pair is needed)
+       *  @param r  the list of real  roots of the polinomial
+       */
+      Bernstein 
+      ( const double xmin , 
+        const double xmax , 
+        const std::vector<std::complex<double> > & c ,
+        const std::vector<double>&                 r = 
+        std::vector<double> () ) ;
+      // ======================================================================
       /// copy
       Bernstein ( const Bernstein&  ) = default ;
       /// move
@@ -231,6 +266,8 @@ namespace Gaudi
       // ======================================================================
     public:
       // ======================================================================
+      /// all coefficients are so small that  P(x) + c == c ? 
+      bool   small         ( const double c = 1.0 ) const ;
       /// is it a decreasing function?
       bool   decreasing    () const ;
       /// is it a increasing function?
@@ -320,13 +357,19 @@ namespace Gaudi
        *  the term is considered to be very small if
        *   - it is numerically zero
        *   - or if epsilon > 0,
-       *          abs ( c(k) * C(n,k) * k^k(n-k)^(n-k)/n^n ) < epsilon
+       *          abs ( c(k) ) < epsilon
+       *   - or if scale   > 0  , 
+       *           scale + par ==  scale 
+       *   - or if scale   <= 0 ,
+       *           norm  + pars == norm    
        *  Since the maximum value for each term of
-       *  \f$ c_k C^n_k \frac{ k^k (n-k)^{n-k}{ n^n}}\f$
-       *  @param epsilon  parameter to define "smalness" of terms
-       *  @returm number of nullified terms
+       *  \f$ c_k C^n_k \frac{ k^k (n-k)^{n-k}}{ n^n}\f$
+       *  @param  epsilon  parameter to define "smalness" of terms
+       *  @param  scale    parameter to define "smalness" of terms
+       *  @return number of nullified terms
        */
-      unsigned short remove_noise ( const double epsilon = 0 ) ;
+      unsigned short remove_noise ( const double epsilon = 0 , 
+                                    const double scale   = 0 ) ;
       // ======================================================================
       /** how close are two polynomials in q-norm?
        *  where q-norm is defined as:
@@ -357,10 +400,6 @@ namespace Gaudi
        *  @return the reminder r(x)
        */
       Bernstein                      reminder ( const Bernstein& g ) const ;
-      // ======================================================================
-      /** get Greatest Common Divisor
-       */
-      Bernstein  gcd ( const Bernstein& b ) const ;
       // ======================================================================
     public:
       // ======================================================================
@@ -436,6 +475,8 @@ namespace Gaudi
                             const unsigned short j ) const ;
       /// power function
       Bernstein  pow      ( const unsigned short i ) const ;
+      /// scale  all coefficients with 2**i 
+      Bernstein  ldexp    ( const short i )  const ;
       // ======================================================================
     public:  // various assignements
       // ======================================================================
@@ -1881,6 +1922,124 @@ namespace Gaudi
   } //                                             end of namespace Gaudi::Math
   // ==========================================================================
 } //                                                     end of namespace Gaudi
+// ============================================================================
+#include "LHCbMath/LHCbMath.h"
+// ============================================================================
+namespace LHCb
+{
+  // ==========================================================================
+  namespace Math
+  {
+    // ========================================================================
+    /// specialization: is Bernstein polynomial close to zero?
+    template <>
+    struct Zero<Gaudi::Math::Bernstein> 
+    {
+    public:
+      // ======================================================================
+      // is Bernstein polynomial almost to zero ?
+      inline bool operator () ( const Gaudi::Math::Bernstein& b ) const
+      { return m_zero ( b.pars() ) ; }
+    private:
+      // ======================================================================
+      /// the actual comparator 
+      Zero< std::vector<double> > m_zero ;
+      // ======================================================================      
+    };
+    // ========================================================================
+    /// specialization: is Bernstein polynomial small enough ?
+    template <>
+    struct Tiny<Gaudi::Math::Bernstein> 
+    {
+    public:
+      // ======================================================================
+      Tiny ( const double n ) : m_tiny ( std::abs ( n ) ) {}
+      Tiny () = delete ;
+      // is Bernstein polynomial sufficiently small 
+      inline bool operator () ( const Gaudi::Math::Bernstein& b ) const
+      { return m_tiny ( b.norm() ) ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      Tiny<double> m_tiny ;
+      // ======================================================================      
+    };
+    // ========================================================================
+    /** scale all coefficients with 2**i
+     *  @param  b (INPUT) Berstein polynomial
+     *  @param  i (INPUT) the scaling binary exponent
+     *  @return the scaled polynomial
+     */
+    inline 
+    Gaudi::Math::Bernstein 
+    ldexp ( const Gaudi::Math::Bernstein& b , 
+            const short                   i ) { return b.ldexp ( i ) ; }
+    // ========================================================================
+  } 
+  // ==========================================================================
+}
+// ============================================================================
+namespace Gaudi
+{
+  // ==========================================================================
+  namespace Math
+  {  
+    // ======================================================================== 
+    /** deflate Bernstein polynomial at  <code>x=xmin</code>
+     *  \f$ b(x)-b(x_{min})=(x-x_{min})*d(x)\f$      
+     *  @param  b  berntein polynomial to be deflated 
+     *  @return deflated polinomial "d"
+     */ 
+    Gaudi::Math::Bernstein
+    deflate_left ( const Gaudi::Math::Bernstein& b ) ;    
+    // ========================================================================
+    /** deflate Bernstein polynomial at  <code>x=xmax</code>
+     *  \f$ b(x)-b(x_{max})=(x-x_{max})*d(x)\f$      
+     *  @param  b  berntein polynomial to be deflated 
+     *  @return deflated polinomial "d"
+     */ 
+    Gaudi::Math::Bernstein
+    deflate_right ( const Gaudi::Math::Bernstein& b ) ;
+    // ========================================================================
+    /** deflate Bernstein polynomial at  <code>x=x0</code>
+     *  \f$ b(x)-b(x_{0})=(x-x_{0})*d(x)\f$      
+     *  @param  b  berntein polynomial to be deflated 
+     *  @param  x0 the point 
+     *  @return deflated polinomial "d"
+     */ 
+    Gaudi::Math::Bernstein
+    deflate       ( const Gaudi::Math::Bernstein& b , const double x0 ) ;
+    // ========================================================================
+    /** get abscissas of crosssing point of the control polygon 
+     *  for Bernstein polynomial
+     *  @param  b bernstein polynomial
+     *  @reutrn abscissas of crossing points of the control  polygon
+     */
+    std::vector<double> 
+    crossing_points  ( const Gaudi::Math::Bernstein& b ) ;
+    // ========================================================================    
+    /** get number of (strickt) sign changes in trhe sequnce of coefficients
+     *  for Bernstein polynomial 
+     *  if  N is number of sign changes, then the number of real roots R is 
+     *  \f$ R = N - 2K\f$, where K is non-negative integer
+     */
+    unsigned short 
+    sign_changes ( const Gaudi::Math::Bernstein& b ) ;
+    // ========================================================================
+    /** get the most left crossing  point of convex hull with  x-axis 
+     *  (it is a step  towards finding the most left root, if any 
+     *  if convex hull does not cross the x-axis, xmax is returned      
+     */
+    double left_line_hull ( const Gaudi::Math::Bernstein& b  ) ;
+    // ========================================================================
+    /** get the most right rossing  point of convex hull with  x-axis 
+     *  (it is a step  towards finding the most right root, if any 
+     *  if convex hull does not cross the x-axis, xmin is returned      
+     */
+    double right_line_hull ( const Gaudi::Math::Bernstein& b ) ;
+  } 
+  // ==========================================================================
+}
 // ============================================================================
 // add couple of functions into Gaudi::Math::Interpolation namespace
 // ============================================================================
