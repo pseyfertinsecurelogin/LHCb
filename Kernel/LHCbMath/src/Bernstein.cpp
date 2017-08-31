@@ -204,51 +204,95 @@ Gaudi::Math::Bernstein::Bernstein
                 y.begin() , y.end () ,
                 xmin      , xmax     )
 {}
-//   : Gaudi::Math::PolySum ( x.empty() ? 0 : x.size() - 1 )
-//   , m_xmin ( std::min ( xmin , xmax ) )
-//   , m_xmax ( std::max ( xmin , xmax ) )
-//     //
-// {
-//   //
-//   std::vector<double> _x ( x.empty() ? 1 : x.size()  ) ;
-//   const long unsigned int N = _x.size() ;
-//   //
-//   std::transform ( x.begin() , x.end() , _x.begin() , [this]( const double v ) { return this->t(v) ; } ) ;
-//   std::vector<double> _f ( N ) ;
-//   std::copy      ( y.begin() , y.begin() + std::min ( y.size() , N ) , _f.begin() ) ;
-//   //
-//   std::vector<double>  w ( N , 0.0 ) ;
-//   std::vector<double>  c ( N , 0.0 ) ;
-//   //
-//   w[0] =  1.0  ;
-//   c[0] = _f[0] ;
-//   //
-//   for ( unsigned int s = 1 ; s < N ; ++s )
-//   {
-//     /// calculate the divided differences
-//     for ( unsigned int k = N - 1 ; s <= k ; --k )
-//     {
-//       const double fk  = _f[k  ] ;
-//       const double fk1 = _f[k-1] ;
-//       const double xk  = _x[k  ] ;
-//       const double xks = _x[k-s] ;
-//       _f[k] = ( fk - fk1 ) / ( xk - xks ) ;
-//     }
-//     //
-//     const double xs1 = _x[s-1] ;
-//     for ( unsigned int j = s ; 1 <= j ; --j )
-//     {
-//       w[j] =  j * w[j-1] * ( 1 - xs1 ) / s  - ( s - j ) * xs1 * w[j] / s ;
-//       c[j] =  j * c[j-1]               / s  + ( s - j )       * c[j] / s  + w[j] * _f[s] ;
-//     }
-//     w[0]  = -w[0] *   xs1 ;
-//     c[0] +=  w[0] * _f[s] ;
-//   }
-//   ///  finally set parameters
-//   for ( unsigned short i = 0 ; i < N ; ++i ) { setPar ( i , c[i] ) ; }
-// }
-// // ============================================================================
-
+// ============================================================================
+// ============================================================================
+/* construct Bernstein polynomial from its roots
+ *  Polinomial has a form
+ *  \f$ B(x) = \prod_i (x-r_i) \prod_j (x-c_i)(x-c_i^*) \f$
+ *  @param xmin low  edge for Bernstein polynomial
+ *  @param xmax high edge for Bernstein polynomial
+ *  @param r  the list of real  roots of the polinomial
+ *  @param c  the list of complex roots (only one root from cc-pair is needed)
+ */
+// ============================================================================
+Gaudi::Math::Bernstein::Bernstein 
+( const double xmin                            , 
+  const double xmax                            , 
+  const std::vector<double>& r                 ,
+  const std::vector<std::complex<double> > & c )
+  : Gaudi::Math::PolySum ( r.size() + 2*c.size() ) 
+  , m_xmin ( std::min ( xmin , xmax ) )
+  , m_xmax ( std::max ( xmin , xmax ) )
+{
+  //
+  Bernstein result ( std::vector<double> ( 1 , 1.0 ) , xmin , xmax ) ;
+  Bernstein b1     ( std::vector<double> ( 2 , 1.0 ) , xmin , xmax ) ;
+  Bernstein b2     ( std::vector<double> ( 3 , 1.0 ) , xmin , xmax ) ;
+  for ( double rr : r )
+  { 
+    const double dmn = m_xmin - rr  ;
+    const double dmx = m_xmax - rr  ;
+    if      ( s_zero ( dmn ) ) 
+    {
+      b1.setPar ( 0 , 0 ) ;
+      b1.setPar ( 1 , 1 ) ; 
+    }
+    else if ( s_zero ( dmx ) ) 
+    {
+      b1.setPar ( 0 , 1 ) ;
+      b1.setPar ( 1 , 0 ) ; 
+    }
+    else 
+    {
+      b1.setPar ( 0 , dmn ) ;
+      b1.setPar ( 1 , dmx ) ;
+    }
+    result = result * b1 ;
+  }
+  const double xmid = 0.5 * ( m_xmin + m_xmax );
+  for ( std::complex<double> cr : c )
+  {
+    //  a * x * x + bx + c 
+    const double a =  1               ;
+    const double b = -2*cr.real()     ;
+    const double c = std::norm ( cr ) ;    
+    //
+    const double a0 = c + m_xmin * ( b + m_xmin * a ) ;
+    const double a1 = c +   xmid * ( b +   xmid * a ) ;
+    const double a2 = c + m_xmax * ( b + m_xmax * a ) ;
+    //    
+    b2.setPar ( 0 ,     a0                      ) ;
+    b2.setPar ( 1 ,  2 * a1 - 0.5 * ( a0 + a2 ) ) ;
+    b2.setPar ( 2 ,     a2                      ) ;
+    //
+    result = result * b2 ;
+  }
+  //
+  this->m_pars = std::move( result.m_pars ) ;
+  //
+  // scale it 
+  const short sf = LHCb::Math::frexp2 (  norm() ).second ;
+  LHCb::Math::scale_exp2 (  m_pars , -sf + 1 ) ;
+} 
+// ============================================================================
+/*  construct Bernstein polynomial from its roots
+ *
+ *  Polinomial has a form
+ *  \f$ B(x) = \prod_i (x-r_i) \prod_j (x-c_i)(x-c_i^*) \f$
+ *
+ *  @param xmin low  edge for Bernstein polynomial
+ *  @param xmax high edge for Bernstein polynomial
+ *  @param c  the list of complex roots (only one root from cc-pair is needed)
+ *  @param r  the list of real  roots of the polinomial
+ */
+// ============================================================================
+Gaudi::Math::Bernstein::Bernstein 
+( const double xmin , 
+  const double xmax , 
+  const std::vector<std::complex<double> > & c ,
+  const std::vector<double>&                 r )
+  : Gaudi::Math::Bernstein::Bernstein ( xmin , xmax , r   , c ) 
+{}
 // ============================================================================
 // copy assignement
 // ============================================================================
@@ -281,6 +325,14 @@ Gaudi::Math::Bernstein::operator=( const double right )
 {
   std::fill ( m_pars.begin() , m_pars.end() , s_zero ( right ) ? 0.0 : right )  ;
   return *this ;
+}
+// ============================================================================
+// all coefficients are so small that  c+p == c ? 
+// ============================================================================
+bool Gaudi::Math::Bernstein::small ( const double c ) const 
+{ 
+  const static LHCb::Math::MuchSmaller<double> s_much_smaller{} ;
+  return s_much_smaller ( norm() , c ) ;
 }
 // ============================================================================
 // is it a increasing function?
@@ -327,29 +379,37 @@ double Gaudi::Math::Bernstein::integral () const
     std::accumulate ( m_pars.begin() , m_pars.end() , 0.0 ) / npars() ;
 }
 // ============================================================================
-/*  filter out very small terms
+/** filter out very small terms
  *  the term is considered to be very small if
  *   - it is numerically zero
- *   - or for 0 < epsilon
- *          abs ( c(k) * C(n,k) * k^k(n-k)^(n-k)/n^n ) < epsilon
+ *   - or if epsilon > 0,
+ *          abs ( c(k) ) < epsilon
+ *   - or if scale   > 0  , 
+ *           scale + par ==  scale 
+ *   - or if scale   <= 0 ,
+ *           norm  + pars == norm    
+ *  Since the maximum value for each term of
+ *  \f$ c_k C^n_k \frac{ k^k (n-k)^{n-k}}{ n^n}\f$
+ *  @param  epsilon  parameter to define "smalness" of terms
+ *  @param  scale    parameter to define "smalness" of terms
+ *  @return number of nullified terms
  */
 // ============================================================================
 unsigned short
-Gaudi::Math::Bernstein::remove_noise ( const double epsilon  )
+Gaudi::Math::Bernstein::remove_noise ( const double epsilon , 
+                                       const double scale   )
 {
   unsigned short       num = 0           ;
   const unsigned short N   = degree()    ;
   const bool           eps = 0 < epsilon ;
-  const double        leps = eps ? std::log ( epsilon ) + N * std::log ( N ) : 0.0 ;
-  for ( unsigned short k = 0 ; k <= N ; ++k )
+  const double        n    = norm () ;
+  for ( unsigned short k = 0 ; k <= N ; ++k ) 
   {
     if      (                        s_zero ( m_pars[k] )           ) { m_pars[k] = 0 ; ++num ; }
     else if ( eps && ( 0 == k ) && std::abs ( m_pars[k] ) < epsilon ) { m_pars[k] = 0 ; ++num ; }
     else if ( eps && ( N == k ) && std::abs ( m_pars[k] ) < epsilon ) { m_pars[k] = 0 ; ++num ; }
-    else if ( eps && std::log ( std::abs ( m_pars[k] ) )
-              + Gaudi::Math::log_choose ( N , k   )
-              +       k   * std::log ( (double) (     k ) )
-              + ( N - k ) * std::log ( (double) ( N - k ) ) < leps  ) { m_pars[k] = 0 ; ++num ; }
+    else if ( 0 <  scale && s_equal ( scale + m_pars[k]   , scale ) ) { m_pars[k] = 0 ; ++num ; }
+    else if ( 0 >= scale && s_equal ( n     + m_pars[k]   , n )     ) { m_pars[k] = 0 ; ++num ; }
   }
   return num ;
 }
@@ -736,52 +796,7 @@ namespace
       1 == ip ? r               :
       p_half  ? std::sqrt ( r ) : std::pow ( r , ip ) ;
   }
-  /// get the p-norm of the certain vector
-  template <class ITERATOR>
-  double _p_norm_
-  ( ITERATOR     begin ,
-    ITERATOR     end   ,
-    const double pinv  ) // 1/p
-  {
-    /// check i/p
-    const double ip = pinv < 0 ? 0 : pinv > 1 ? 1  : pinv ;
-    ///
-    long  double r  = 0 ;
-    /// few "easy" cases:  treat explicitely
-    if      ( 1 == ip )
-    {
-      for ( ; begin != end ; ++begin ) { r += std::abs ( *begin ) ; }
-      return r ;                                                     // RETURN
-    }
-    else if ( 0 == ip )    // p = infinity
-    {
-      for ( ; begin != end ; ++begin )
-      { r = std::max ( r , (long double) std::abs(*begin) ) ; }
-      return r ;                                                      // RETURN
-    }
-    else if ( 0.5 == ip )  // p = 2 : frequent case
-    {
-      for ( ; begin != end ; ++begin )
-      { const long double c  = *begin ; r +=  c * c ; }
-      return std::sqrt ( r ) ;                                        // RETURN
-    }
-    /// not very large integer
-    else if (  ( 0.05 < ip ) && LHCb::Math::isint ( 1/ip ) )
-    {
-      const unsigned short p = LHCb::Math::round ( 1/ip ) ;
-      for ( ; begin != end ; ++begin )
-      { r += Gaudi::Math::pow ( (long double) std::abs( *begin) , p ) ; }
-      return std::pow ( r , ip ) ;                                    // RETURN
-    }
-    //
-    // generic case
-    //
-    const double p = 1/ip ;
-    for ( ; begin != end ; ++begin )
-    { r += std::pow ( (long double) std::abs ( *begin )  , p ) ; }
-    return std::pow ( r , ip ) ;
-  }
-  //
+  // ==========================================================================
   template <class ITERATOR>
   inline double _head_ ( ITERATOR first , ITERATOR last  )
   {
@@ -806,6 +821,13 @@ namespace
     }
     return h * ( 0 == N%2 ? -1 : 1 ) ;
   }
+  // ==========================================================================
+  inline long double _head_ ( const std::vector<double>& pars  )
+  { return _head_ ( pars.begin() , pars.end() ) ; }
+  // ==========================================================================
+  inline long double _head_ ( const Gaudi::Math::Bernstein& b ) 
+  { return _head_ ( b.pars() ) ; }
+  // ==========================================================================
 }
 // ============================================================================
 /*  calculate ``nearest'' polynomial (in the sense of q-norm) of lower degree,
@@ -839,7 +861,6 @@ Gaudi::Math::Bernstein::nearest ( const double qinv ) const
   for ( unsigned short i = 1 ; i < N ; i+=2 )
   { lc_phi[i] *= -1 ;  }
   //
-  // const double i_norm = 1/_p_norm_ ( lc_phi.begin() , lc_phi.end() , ip ) ;
   const double    i_norm = 1/_p_norm_phi_ ( degree() , ip ) ;
   //
   const long double lc_f   = _head_ ( m_pars.begin() , m_pars.end() ) ;
@@ -875,7 +896,7 @@ Gaudi::Math::Bernstein::nearest ( const double qinv ) const
  */
 // ============================================================================
 double Gaudi::Math::Bernstein::norm   ( const double q_inv ) const
-{ return _p_norm_ ( m_pars.begin() , m_pars.end() , q_inv ) ; }
+{ return LHCb::Math::p_norm ( m_pars.begin() , m_pars.end() , q_inv ) ; }
 // ============================================================================
 /*  how close are two polynomials in q-norm?
  *  where q-norm is defined as:
@@ -909,7 +930,18 @@ double Gaudi::Math::Bernstein::distance
   const unsigned short N = degree() ;
   for ( unsigned short k = 0 ; k <= N ; ++k ) { v[k] -= other.m_pars[k] ; }
   //
-  return _p_norm_ ( v.begin() , v.end() , q_inv ) ;
+  return LHCb::Math::p_norm ( v.begin() , v.end() , q_inv ) ;
+}
+// ============================================================================
+// scale all coefficients with 2**i
+// ============================================================================
+Gaudi::Math::Bernstein  
+Gaudi::Math::Bernstein::ldexp ( const short i )  const 
+{
+  if ( 0 == i ) { return *this ; }
+  Gaudi::Math::Bernstein result (*this) ;
+  LHCb::Math::scale_exp2 ( result.m_pars , i ) ;
+  return result ;
 }
 // ============================================================================
 // multiply two Bernstein polynomials
@@ -1170,45 +1202,6 @@ namespace
 // ==============================================================================
 double Gaudi::Math::Bernstein::head   () const
 { return _head_ ( m_pars.begin() , m_pars.end() ) ; }
-// // ==============================================================================
-// Gaudi::Math::Bernstein
-// Gaudi::Math::Bernstein::tail  () const
-// {
-//   if ( 0 == degree() ) { return Bernstein ( 0 , xmin() , xmax() ) ; }
-//   Bernstein result ( degree() - 1 , xmin() , xmax() ) ;
-//   _tail_ ( m_pars.begin () ,
-//            m_pars.end   () ,
-//            result.m_pars.begin() ) ;
-//   return result ;
-// }
-// // ============================================================================
-// Gaudi::Math::Bernstein
-// Gaudi::Math::Bernstein::match ( const unsigned short m ) const
-// {
-//   if ( m < degree() ) { return Bernstein ( 0 , xmin() , xmax() ) ; }
-//   Bernstein result ( m , xmin() , xmax() ) ;
-//   _match_m_ ( m               ,
-//               m_pars.begin () ,
-//               m_pars.end   () ,
-//               result.m_pars.begin() ) ;
-//   return result ;
-// }
-// // ============================================================================
-// Gaudi::Math::Bernstein
-// Gaudi::Math::Bernstein::quot  ( const unsigned short k ,
-//                                 const unsigned short m ) const
-// {
-//   if ( m <     degree() ) { return Bernstein ( 0 , xmin() , xmax() ) ; }
-//   if ( k < m - degree() ) { return Bernstein ( 0 , xmin() , xmax() ) ; }
-//   Bernstein result ( k , xmin() , xmax() ) ;
-//   _quot_k_ ( k               ,
-//              m               ,
-//              m_pars.begin () ,
-//              m_pars.end   () ,
-//              result.m_pars.begin() ) ;
-//   return result ;
-// }
-//
 // ==============================================================================
 /* polynomial division
  * \f$  f(x) = q(z)*g(x) + r(x) \f$
@@ -1217,63 +1210,87 @@ double Gaudi::Math::Bernstein::head   () const
 // ==============================================================================
 namespace
 {
+  inline 
   std::pair<Gaudi::Math::Bernstein,Gaudi::Math::Bernstein>
-  _divmod_ (  const Gaudi::Math::Bernstein& f ,
-              const Gaudi::Math::Bernstein& g )
+  _divmod_ ( Gaudi::Math::Bernstein f , 
+             Gaudi::Math::Bernstein g )
   {
     using namespace Gaudi::Math ;
-    ///  trivial case
-    if ( f.zero () ) { return std::make_pair ( Bernstein ( 0 , f.xmin() , f.xmax () ) ,
-                                               Bernstein ( 0 , f.xmin() , f.xmax () ) ) ; }
-    if ( g.zero () ) { return std::make_pair ( Bernstein ( 0 , f.xmin() , f.xmax () ) ,
-                                               Bernstein ( 0 , f.xmin() , f.xmax () ) ) ; }
+    ///  trivial case 
+    /// 1) f==0  or |f| << |g| 
+    if ( f.zero () || f.small ( g.norm() ) )
+    { return std::make_pair ( Bernstein ( 0 , g.xmin() , g.xmax () ) ,
+                              Bernstein ( 0 , g.xmin() , g.xmax () ) ) ; }
+    /// 2) g==0  or |g| << |f| 
+    if ( g.zero () || g.small ( f.norm() ) ) 
+    { return std::make_pair ( Bernstein ( 0 , f.xmin() , f.xmax () ) ,
+                              Bernstein ( 0 , f.xmin() , f.xmax () ) ) ; }
+    //
+    if ( !s_equal( f.xmin() , g.xmin() ) || !s_equal( f.xmin() , g.xmin() ) ) 
+    {
+      const double xmin = std::min ( f.xmin () , g.xmin () ) ;
+      const double xmax = std::max ( f.xmax () , g.xmax () ) ;
+      return _divmod_ ( Bernstein ( f , xmin , xmax ) , Bernstein ( g , xmin , xmax ) ) ;
+    }
     //
     // get the leading coefficient of "f"
     //
-    const std::vector<double>& pf  =   f.pars() ;
-    const double lc_f = _head_ ( pf.begin () , pf.end () ) ;
-    if  ( s_zero ( lc_f ) && 1 < pf.size() ) { return _divmod_ ( f.reduce(1) , g ) ; }
+    double fn = f.norm()  ;
+    while ( 0 < f.degree() && s_equal (  fn + _head_ ( f ) , fn ) ) 
+    {
+      f  = f.reduce  ( 1 ) ;
+      f.remove_noise (   ) ;
+      fn = f.norm    (   ) ;
+    }
     //
     // get the leading coefficient of "g"
     //
-    const std::vector<double>& pg  = g.pars() ;
-    const double lc_g = _head_ ( pg.begin () , pg.end () ) ;
-    if  ( s_zero ( lc_g ) && 1 < pg.size() ) { return _divmod_ ( f , g.reduce ( 1 ) ) ; }
+    double gn = g.norm()  ;
+    while ( 0 < g.degree() && s_equal (  gn + _head_ ( g ) , gn ) ) 
+    {
+      g  = g.reduce  ( 1 ) ;
+      g.remove_noise (   ) ;
+      gn = g.norm    (   ) ;
+    }
     //
-    // now both leading coefficients are non-zero and we can use true degrees
+    const std::vector<double>& pf  = f.pars() ;
+    const std::vector<double>& pg  = g.pars() ;
     //
     const unsigned short m = f.degree () ;
     const unsigned short n = g.degree () ;
     //
     if ( m < n  ) { return std::make_pair ( Bernstein ( 0 , f.xmin() , f.xmax () ) , f ) ; }
-    //
+    //  
     std::vector<long double> _f ( pf.begin() , pf.end() ) ;
-    if ( n == 0 )
+    if ( n == 0 ) 
     {
       LHCb::Math::scale ( _f , 1/g.par(0) ) ;
-      return std::make_pair ( Bernstein ( _f.begin() , _f.end  () , f.xmin() , f.xmax() ) ,
+      return std::make_pair ( Bernstein ( _f.begin() , _f.end  () , f.xmin() , f.xmax() ) , 
                               Bernstein ( 0                       , f.xmin() , f.xmax() ) ) ;
     }
-    //
     std::vector<long double> _q =
-      _divmod_ ( _f.begin() , _f.end() ,
-                 pg.begin() , pg.end() ) ;
+      _divmod_ ( _f.begin() , _f.end() , 
+                 pg.begin() , pg.end() ) ;           
     //
-    return std::make_pair ( Bernstein ( _q.begin() , _q.end  ()     , f.xmin() , f.xmax() ) ,
-                            Bernstein ( _f.begin() , _f.begin() + n , f.xmin() , f.xmax() ) ) ;
-
+    Bernstein q ( _q.begin() , _q.end  ()     , f.xmin() , f.xmax() ) ;
+    Bernstein r ( _f.begin() , _f.begin() + n , f.xmin() , f.xmax() ) ;
+    //
+    const double qn = q.norm() ;
+    const double rn = r.norm() ;
+    //
+    if ( r.small ( fn + qn * gn ) ) 
+    { r = Bernstein( 0 , r.xmin() , r.xmax() ) ; }
+    else         
+    { r.remove_noise ( 0 , fn + qn * gn )      ; }
+    //
+    if ( s_equal ( qn * gn + fn + rn , fn + rn ) ) 
+    { q = Bernstein( 0 , q.xmin() , q.xmax() ) ; }
+    else   
+    { q.remove_noise ( 0 , ( fn + rn ) / gn )  ; }
+    //
+    return std::make_pair ( q , r ) ;
   }
-  inline Gaudi::Math::Bernstein
-  _gcd_ ( const Gaudi::Math::Bernstein& f ,
-          const Gaudi::Math::Bernstein& g )
-  {
-    if      ( 0 == g.degree() || g.zero() ) { return f ; }
-    else if ( 0 == f.degree() || f.zero() ) { return g ; }
-    return
-      f.degree() > g.degree() ?
-      _gcd_  ( g , _divmod_ ( f , g ).second ) :
-      _gcd_  ( f , _divmod_ ( g , f ).second ) ;
-  }
+  // ==========================================================================
 }
 // ============================================================================
 /*  polynomial division
@@ -1302,18 +1319,6 @@ Gaudi::Math::Bernstein::quotient ( const Gaudi::Math::Bernstein& g ) const
 Gaudi::Math::Bernstein
 Gaudi::Math::Bernstein::reminder ( const Gaudi::Math::Bernstein& g ) const
 { return _divmod_ ( *this , g ) . second ; }
-Gaudi::Math::Bernstein
-Gaudi::Math::Bernstein::gcd ( const Gaudi::Math::Bernstein& g ) const
-{
-  if ( !s_equal ( xmin () , g.xmin () ) || !s_equal ( xmax () , g.xmax () ) )
-  {
-    const double _xmin = std::min ( xmin() , g.xmin() ) ;
-    const double _xmax = std::max ( xmax() , g.xmax() ) ;
-    return _gcd_ ( Bernstein ( *this , _xmin , _xmax ) ,
-                   Bernstein (  g    , _xmin , _xmax ) ) ;
-  }
-  return _gcd_ ( *this , g ) ;
-}
 // ============================================================================
 /* de Casteljau algorithm for summation of Bernstein polynomials
  *  \f$ f(x) = \sum_i p_i B_ik(x) \f$
@@ -1731,6 +1736,287 @@ double Gaudi::Math::integrate
 // ============================================================================
 
 
+// ============================================================================
+//  Deflate polynomial 
+// ============================================================================
+/*  deflate Bernstein polynomial at  <code>x=xmin</code>
+ *  \f$ b(x)-b(x_{min})=(x-x_{min})*d(x)\f$      
+ *  @param  b  berntein polynomial to be deflated 
+ *  @return deflated polinomial "d"
+ */ 
+// ============================================================================
+Gaudi::Math::Bernstein 
+Gaudi::Math::deflate_left  ( const Gaudi::Math::Bernstein& b ) 
+{
+  // trivial case 
+  if      ( 1 >  b.degree () ) 
+  { return Gaudi::Math::Bernstein ( 0 , b.xmin() , b.xmax() ) ; }
+  // simple  case
+  const std::vector<double>& bpars = b.pars() ;
+  std::vector<long double>   dpars ( bpars.size() - 1 ) ;
+  //
+  const double pz = bpars.front() ;
+  dpars.front() =  0 ;
+  const unsigned short Nd =  dpars.size() ;
+  for ( unsigned short  i = 0 ; i < Nd ; ++i ) 
+  {
+    const long double p_i = bpars[i+1] - pz  ;
+    dpars[i]              = Nd * p_i  / ( i + 1) ;
+  }
+  // result 
+  return Gaudi::Math::Bernstein ( dpars.begin () , 
+                                  dpars.end   () ,
+                                  b.xmin      () ,
+                                  b.xmax      () ) ;
+}
+// ============================================================================
+/*  deflate Bernstein polynomial at  <code>x=xmax</code>
+ *  \f$ b(x)-b(x_{max})=(x-x_{max})*d(x)\f$      
+ *  @param  b  berntein polynomial to be deflated 
+ *  @return deflated polinomial "d"
+ */ 
+// ============================================================================
+Gaudi::Math::Bernstein 
+Gaudi::Math::deflate_right ( const Gaudi::Math::Bernstein& b ) 
+{
+  // trivial case 
+  if      ( 1 >  b.degree () ) 
+  { return Gaudi::Math::Bernstein ( 0 , b.xmin() , b.xmax() ) ; }
+  //
+  // simple  case
+  const std::vector<double>& bpars = b.pars() ;
+  std::vector<long double>   dpars ( bpars.size() - 1 ) ;
+  //
+  const double pz = bpars.back () ;
+  //
+  dpars.back() = 0  ;
+  const unsigned short Nd = dpars.size() ;
+  for ( unsigned short  i = 0 ; i < Nd ; ++i ) 
+  { 
+    const long double p_i = bpars[i]  - pz       ;
+    dpars[i]              = Nd * p_i / ( Nd - i) ; 
+  }
+  // result 
+  return Gaudi::Math::Bernstein ( dpars.begin () , 
+                                  dpars.end   () ,
+                                  b.xmin      () ,
+                                  b.xmax      () ) ;
+}
+// ============================================================================
+/*  deflate Bernstein polynomial at  <code>x=x0</code>
+ *  \f$ b(x)-b(x_{0})=(x-x_{0})*d(x)\f$      
+ *  @param  b  berntein polynomial to be deflated 
+ *  @param  x0 the delfation point 
+ *  @return deflated polinomial "d"
+ */ 
+// ============================================================================
+Gaudi::Math::Bernstein 
+Gaudi::Math::deflate ( const Gaudi::Math::Bernstein& b , 
+                       const double                  x )
+{
+  //
+  // trivial case 
+  if      ( 1 >  b.degree () ) 
+  { return Gaudi::Math::Bernstein ( 0 , b.xmin() , b.xmax() ) ; }
+  //
+  if      ( s_equal ( x , b.xmin() ) ) { return deflate_left  ( b ) ; }
+  else if ( s_equal ( x , b.xmax() ) ) { return deflate_right ( b ) ; } 
+  // 
+  const long double v   = b.evaluate ( x ) ; 
+  const long double tt  =        b.t ( x ) ;
+  //
+  const bool   reversed = tt <= 0.5 ;
+  const double tau      = reversed  ? 1 - tt : tt ;
+  //
+  const long double pz  = v ;
+  //
+  const  std::vector<double>& bpars = b.pars()        ;
+  const unsigned short        Nd    = bpars.size() -1 ;
+  std::vector<long double>    dpars = reversed   ? 
+    std::vector<long double> ( bpars.rbegin() , bpars.rbegin() + Nd  ) :
+    std::vector<long double> ( bpars. begin() , bpars. begin() + Nd  ) ;
+  //
+  LHCb::Math::shift ( dpars.begin() , dpars.end() , -pz ) ;
+  const long double     u = ( 1 - tau ) / tau  ;
+  for ( unsigned short  i = 1 ; i < Nd ; ++i ) 
+  {
+    const long double p_i = dpars[i] ;
+    dpars[i] = ( Nd * p_i + i * u * dpars[i-1] ) / ( Nd - i ) ;
+  }
+  //
+  if ( reversed ) { std::reverse ( dpars.begin() , dpars.end() ) ; }
+  //
+  return Gaudi::Math::Bernstein ( dpars.begin () , 
+                                  dpars.end   () , 
+                                  b.xmin      () , 
+                                  b.xmax      () ) ;
+}
+
+
+// ============================================================================
+/*  get abscissas of crosssing points of the control polygon 
+ *  for Bernstein polynomial
+ *  @param  b bernstein polynomial
+ *  @reutrn abscissas of crossing points of the control  polygon
+ */
+// ============================================================================
+std::vector<double> 
+Gaudi::Math::crossing_points ( const Gaudi::Math::Bernstein& b ) 
+{
+  // trivial case 
+  if (  1 > b.degree() ) 
+  {
+    if ( !s_zero ( b.pars().front() ) ) { return std::vector<double> (              ) ; }
+    else                                { return std::vector<double> ( 1 , b.xmin() ) ; }
+  }
+  //
+  const double               norm  = b.norm  () ;
+  const std::vector<double>& bpars = b.pars  () ;
+  const unsigned  short      N     = b.npars () ;
+  //
+  std::vector<double> cps ; cps.reserve ( b.degree() + 1 ) ;
+  //
+  const double p0 = bpars[0] ;
+  if ( s_zero( p0 ) || s_equal ( p0 + norm , norm ) ) { cps.push_back ( b.xmin() ) ; }
+  //
+  for ( unsigned short j = 1 ; j < N ; ++j ) 
+  {
+    const double pj = bpars[j  ] ;
+    const double pi = bpars[j-1] ;
+    //
+    const double xj =  b.x( float(j) / ( N - 1 ) ) ;
+    if ( s_zero ( pj )|| s_equal ( pj + norm , norm ) ) 
+    { cps.push_back ( xj ) ; continue ; }
+    //
+    if ( s_zero ( pi ) || s_equal ( pi + norm , norm ) ) { continue ; }
+    //
+    const signed char sj = LHCb::Math::signum ( pj ) ;
+    const signed char si = LHCb::Math::signum ( pi ) ;
+    //
+    if ( 0 > si * sj )  // there is root here! 
+    {
+      const double xi =  b.x( float(j-1) / ( N - 1 ) ) ;
+      const double cp = ( xj * pi - xi * pj ) / ( pi - pj ) ;
+      cps.push_back ( cp ) ;
+    }
+    //
+  }
+  //
+  return cps ;
+}
+
+// ============================================================================
+/*  get number of (strickt) sign changes in trhe sequnce of coefficients
+ *  for Bernstein polynomial 
+ *  if  N is number of sign changes, then the number of real roots R is 
+ *  \f$ R = N - 2K\f$, where K is non-negative integer
+ */
+// ============================================================================
+unsigned short 
+Gaudi::Math::sign_changes ( const Gaudi::Math::Bernstein& b ) 
+{
+  const std::vector<double>&      bpars = b.pars();
+  const LHCb::Math::Tiny<double> s_tiny { b.norm () } ;
+  return LHCb::Math::sign_changes ( bpars.begin() , bpars.end() , s_tiny ) ;
+}// ============================================================================
+/*  get the most left crossing  point of convex hull with  x-axis 
+ *  (it is a step  towards finding the most left root, if any 
+ *  if convex hull does not cross the x-axis, xmax is returned      
+ */
+// ============================================================================
+double Gaudi::Math::left_line_hull ( const Gaudi::Math::Bernstein& b  ) 
+{
+  const double        bn = b.norm  () ;
+  //
+  const std::vector<double>& bpars = b.pars()      ;
+  const double               p0    = bpars.front() ;
+  //
+  // left point is already zero 
+  if ( s_zero ( p0 ) || s_equal ( p0 + bn , bn ) ) { return b.xmin() ; }
+  //
+  const signed  char s0 = LHCb::Math::signum ( p0 ) ;
+  const bool         up = 0 > p0 ;
+  //
+  const unsigned short N  = b.npars () ;
+  //
+  // find the first element with the opposite sign
+  unsigned short i = 1 ;
+  for ( ;  i < N ; ++i ) 
+  { 
+    const double pi = bpars[i] ;
+    if ( s_zero  ( pi ) || s_equal ( pi +  bn , bn ) ||  
+         0 >= s0 * LHCb::Math::signum ( bpars [i] ) ) { break ; }
+  }
+  //
+  // no  good points are found, 
+  if ( i == N ) { return b.xmax() + 10 * ( b.xmax() - b.xmin() ) ; } // RETURN
+  //
+  double         si =  ( bpars[i] - p0 ) / i ;
+  for (  unsigned short j = i + 1 ;  j < N ;  ++j ) 
+  {
+    const double sj = ( bpars[j] - p0 ) / j ;
+    if ( ( up && sj >= si ) || ( !up && sj <= si ) )
+    {
+      i  = j ;
+      si = sj ;  
+    }
+  }
+  //
+  const double xi = double(i) /  ( N - 1 );
+  const double yi = bpars[i] ;
+  //
+  return b.x ( - xi * p0 / ( yi - p0 ) ) ;
+}
+// ============================================================================
+/*  get the most right rossing  point of convex hull with  x-axis 
+ *  (it is a step  towards finding the most right root, if any 
+ *  if convex hull does not cross the x-axis, xmin is returned      
+ */
+// ============================================================================
+double Gaudi::Math::right_line_hull ( const Gaudi::Math::Bernstein& b ) 
+{  
+  const double        bn = b.norm  () ;
+  //
+  const std::vector<double>& bpars = b.pars()      ;
+  const double               p0    = bpars.back()  ; //  ATTENTION!
+  //
+  // right point is already zero 
+  if ( s_zero ( p0 ) || s_equal ( p0 + bn , bn ) ) { return b.xmax () ; }
+  //
+  const signed  char s0 = LHCb::Math::signum ( p0 ) ;
+  const bool         up = 0 > p0 ;
+  //
+  const unsigned short N  = b.npars () ;
+  //
+  // find the first element with the opposite sign
+  unsigned short i = 0 ;
+  for ( ;  i < N - 1  ; ++i ) 
+  {
+    const double pi = bpars[i] ;
+    if ( s_zero  ( pi ) || s_equal ( pi +  bn , bn ) ||  
+         0 >= s0 * LHCb::Math::signum ( bpars [i] ) ) { break ; }
+  }
+  //
+  // no  good points are found, 
+  if ( i == N - 1 ) 
+  { return b.xmin() - 10 * ( b.xmax() - b.xmin() ) ; } // RETURN
+  //
+  double         si =  ( bpars[i] - p0 ) / ( N - i ) ;
+  for (  unsigned short j = i + 1 ;  j < N ;  ++j ) 
+  {
+    const double sj = ( bpars[j] - p0 ) /  ( N - j  )  ;
+    if ( ( up && sj >= si ) || ( !up && sj <= si ) )
+    {
+      i  = j ;
+      si = sj ;  
+    }
+  }
+  //
+  const double xi = double(i) /  ( N - 1 );
+  const double yi = bpars[i] ;
+  //
+  return b.x ( ( yi - xi * p0 ) / ( yi - p0 ) ) ;
+}
 // ============================================================================
 //  DUAL BASIC
 // ============================================================================

@@ -91,7 +91,7 @@ if not 0.75 < _eps_ * 2**52 < 1.25 :
 from LHCbMath.Types import cpp 
 VE = cpp.Gaudi.Math.ValueWithError
 _mULPs_       = 1000 
-_next_double_ = cpp.Gaudi.Math.next_double
+_next_double_ = cpp.LHCb.Math.next_double
 def _delta_ ( x , ulps = _mULPs_ ) :
     n1 = _next_double_ ( x ,  ulps )
     n2 = _next_double_ ( x , -ulps )
