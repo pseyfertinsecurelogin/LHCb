@@ -1562,35 +1562,94 @@ bool MCReconstructibleAs::operator() ( const LHCb::MCParticle* p ) const
 std::ostream& MCReconstructibleAs::fillStream( std::ostream& s ) const
 { return s << "MCRECAS[\"" << IMCReconstructible::text ( m_cat ) << "\"]" ; }
 // ============================================================================
-/*  constructor from the function and daughter index
+/*  constructor from the function and child selector 
  *  @param fun    the function to be used
  *  @param index  the index of daughter particle
+ */
+// ============================================================================
+ChildFunction::ChildFunction
+( const LoKi::MCTypes::MCFunc&   fun   ,
+  const LoKi::MCChild::Selector& child , 
+  const double                   bad   )
+  : LoKi::AuxFunBase ( std::tie ( fun , child , bad ) )
+  , m_fun   ( fun   )
+  , m_child ( child )
+  , m_bad   ( bad   )
+{ 
+  Assert ( m_child.valid() , "Child selector is invalid!" ) ;
+}
+// ============================================================================
+/* constructor from the function and child selector 
+ *  @param fun    the function to be used
+ *  @param child  the selector of the proper   child 
+ *  @param bad    the value to be returned for invalid particle
  */
 // ============================================================================
 ChildFunction::ChildFunction
 ( const LoKi::MCTypes::MCFunc& fun   ,
-  const size_t                 index ,
+  const LoKi::MCTypes::MCCuts& child , 
   const double                 bad   )
-  : LoKi::AuxFunBase ( std::tie ( fun , index , bad ) )
+  : LoKi::AuxFunBase ( std::tie ( fun , child , bad ) )
   , m_fun   ( fun   )
-  , m_index ( index )
+  , m_child ( child )
   , m_bad   ( bad   )
-{}
+{ 
+  Assert ( m_child.valid() , "Child selector is invalid!" ) ;
+}
 // ============================================================================
-/*  constructor from the function and daughter index
+/* constructor from the function and child selector 
  *  @param fun    the function to be used
- *  @param index  the index of daughter particle
+ *  @param child  the selector of the proper   child 
+ *  @param bad    the value to be returned for invalid particle
  */
 // ============================================================================
 ChildFunction::ChildFunction
-( const size_t                 index ,
-  const LoKi::MCTypes::MCFunc& fun   ,
+( const LoKi::MCTypes::MCFunc& fun   ,
+  const std::string&           child , 
   const double                 bad   )
-  : LoKi::AuxFunBase ( std::tie ( index , fun , bad ) )
+  : LoKi::AuxFunBase ( std::tie ( fun , child , bad ) )
   , m_fun   ( fun   )
-  , m_index ( index )
+  , m_child ( child )
   , m_bad   ( bad   )
-{}
+{ 
+  Assert ( m_child.valid() , "Child selector is invalid!" ) ;
+}
+// ============================================================================
+/* constructor from the function and child selector 
+ *  @param fun    the function to be used
+ *  @param child  the selector of the proper   child 
+ *  @param bad    the value to be returned for invalid particle
+ */
+// ============================================================================
+ChildFunction::ChildFunction
+( const LoKi::MCTypes::MCFunc&   fun   ,
+  const Decays::IMCDecay::iTree& child , 
+  const double                   bad   )
+  : LoKi::AuxFunBase () // can't be reconstructed in C++
+  , m_fun   ( fun   )
+  , m_child ( child )
+  , m_bad   ( bad   )
+{ 
+  Assert ( m_child.valid() , "Child selector is invalid!" ) ;
+}
+// ============================================================================
+/* constructor from the function and child selector 
+ *  @param fun    the function to be used
+ *  @param child  the selector of the proper   child 
+ *  @param bad    the value to be returned for invalid particle
+ */
+// ============================================================================
+ChildFunction::ChildFunction
+( const LoKi::MCTypes::MCFunc& fun   ,
+  const Decays::iNode&         child , 
+  const double                 bad   )
+  : LoKi::AuxFunBase ( std::tie ( fun , child , bad ) ) 
+  , m_fun   ( fun   )
+  , m_child ( child )
+  , m_bad   ( bad   )
+{ 
+  Assert ( m_child.valid() , "Child selector is invalid!" ) ;
+}
 // ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -1601,15 +1660,14 @@ ChildFunction* ChildFunction::clone() const
 // ============================================================================
 double ChildFunction::operator() ( const LHCb::MCParticle* p ) const
 {
-  if ( !p && 0 != m_index )
+  if ( !p )
   {
-    Error ( "LHCb::MCParticle* points to NULL, return " +
-            LoKi::Print::toString( m_bad ) ) ;
+    Error ( "LHCb::MCParticle* points to NULL, return " + LoKi::Print::toString( m_bad ) ) ;
     return m_bad ;
   }
   // extract the daughter
-  const LHCb::MCParticle* daughter = LoKi::Child::child ( p , m_index ) ;
-  if ( !daughter ) { Warning ( "Daughter particle points to NULL" ) ; }
+  const LHCb::MCParticle* daughter = m_child.child ( p ) ;
+  if ( !daughter ) { Warning ( "Daughter particle points to NULL!" ) ; }
   return m_fun ( daughter ) ;
 }
 // ============================================================================
@@ -1619,42 +1677,103 @@ std::ostream& ChildFunction::fillStream ( std::ostream& s ) const
 {
   s << "MCCHILD("
     << m_fun
-    << "," << m_index ;
+    << "," << m_child ;
   if ( LoKi::Constants::NegativeInfinity != m_bad ) { s << "," << m_bad ; }
   return s << ")" ;
 }
 // ============================================================================
-/*  constructor from the function and daughter index
+/*  constructor from the function and child selector
  *  @param fun    the function to be used
- *  @param index  the index of daughter particle
+ *  @param child  the child selector
  *  @param bad    the return valeu for invalid particle
  */
 // ============================================================================
 ChildPredicate::ChildPredicate
-( const LoKi::MCTypes::MCCuts& cut   ,
-  const size_t                 index ,
-  const bool                   bad   )
-  : LoKi::AuxFunBase ( std::tie ( cut , index , bad ) )
+( const LoKi::MCTypes::MCCuts&   cut   ,
+  const LoKi::MCChild::Selector& child ,
+  const bool                     bad   )
+  : LoKi::AuxFunBase ( std::tie ( cut , child , bad ) )
   , m_cut   ( cut   )
-  , m_index ( index )
+  , m_child ( child )
   , m_bad   ( bad   )
-{}
+{
+  Assert ( m_child.valid() , "Child selector is invalid!" ) ;
+}
 // ============================================================================
-/*  constructor from the function and daughter index
- *  @param index  the index of daughter particle
+/*  constructor from the function and child selector
  *  @param fun    the function to be used
+ *  @param child  the child selector
  *  @param bad    the return valeu for invalid particle
  */
 // ============================================================================
 ChildPredicate::ChildPredicate
-( const size_t                 index ,
-  const LoKi::MCTypes::MCCuts& cut   ,
-  const bool                   bad   )
-  : LoKi::AuxFunBase ( std::tie ( index , cut , index ) )
+( const LoKi::MCTypes::MCCuts&   cut   ,
+  const LoKi::MCTypes::MCCuts& child   ,
+  const bool                     bad   )
+  : LoKi::AuxFunBase ( std::tie ( cut , child , bad ) )
   , m_cut   ( cut   )
-  , m_index ( index )
+  , m_child ( child )
   , m_bad   ( bad   )
-{}
+{
+  Assert ( m_child.valid() , "Child selector is invalid!" ) ;
+}
+// ============================================================================
+/*  constructor from the function and child selector
+ *  @param fun    the function to be used
+ *  @param child  the child selector
+ *  @param bad    the return valeu for invalid particle
+ */
+// ============================================================================
+ChildPredicate::ChildPredicate
+( const LoKi::MCTypes::MCCuts&   cut   ,
+  const std::string&             child ,
+  const bool                     bad   )
+  : LoKi::AuxFunBase ( std::tie ( cut , child , bad ) )
+  , m_cut   ( cut   )
+  , m_child ( child )
+  , m_bad   ( bad   )
+{
+  Assert ( m_child.valid() , "Child selector is invalid!" ) ;
+}
+// ============================================================================
+/*  constructor from the function and child selector
+ *  @param fun    the function to be used
+ *  @param child  the child selector
+ *  @param bad    the return valeu for invalid particle
+ */
+// ============================================================================
+ChildPredicate::ChildPredicate
+( const LoKi::MCTypes::MCCuts&   cut   ,
+  const Decays::IMCDecay::iTree& child ,
+  const bool                     bad   )
+  : LoKi::AuxFunBase () // can't be reconstructed from C++
+  , m_cut   ( cut   )
+  , m_child ( child )
+  , m_bad   ( bad   )
+{
+  Assert ( m_child.valid() , "Child selector is invalid!" ) ;
+}
+// ============================================================================
+/*  constructor from the function and child selector
+ *  @param fun    the function to be used
+ *  @param child  the child selector
+ *  @param bad    the return valeu for invalid particle
+ */
+// ============================================================================
+ChildPredicate::ChildPredicate
+( const LoKi::MCTypes::MCCuts&   cut   ,
+  const Decays::iNode&           child ,
+  const bool                     bad   )
+  : LoKi::AuxFunBase () // can't be reconstructed from C++
+  , m_cut   ( cut   )
+  , m_child ( child )
+  , m_bad   ( bad   )
+{
+  Assert ( m_child.valid() , "Child selector is invalid!" ) ;
+}
+
+
+
 // ============================================================================
 //  MANDATORY: clone method ("virtual constructor")
 // ============================================================================
@@ -1665,14 +1784,14 @@ ChildPredicate* ChildPredicate::clone() const
 // ============================================================================
 bool ChildPredicate::operator() ( const LHCb::MCParticle* p ) const
 {
-  if ( !p && 0 != m_index )
+  if ( !p )
   {
     Error ( "LHCb::MCParticle* points to NULL, return " +
             LoKi::Print::toString( m_bad ) ) ;
     return m_bad ;
   }
   // extract the daughter
-  const LHCb::MCParticle* daughter = LoKi::Child::child ( p , m_index ) ;
+  const LHCb::MCParticle* daughter = m_child.child ( p ) ;
   if ( !daughter ) { Warning ( "Daughter particle points to NULL" ) ; }
   return m_cut ( daughter ) ;
 }
@@ -1683,7 +1802,7 @@ std::ostream& ChildPredicate::fillStream ( std::ostream& s ) const
 {
   s << "MCCHILDCUT("
     << m_cut
-    << "," << m_index ;
+    << "," << m_child ;
   if ( false != m_bad ) { s << "," << LoKi::Print::toString ( m_bad )  ; }
   return s << ")" ;
 }

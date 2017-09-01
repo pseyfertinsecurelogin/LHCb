@@ -34,27 +34,14 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /// constructor from the index
-      Selector ( const unsigned int   i  ) ;
-      /// constructor from the indices
-      Selector ( const unsigned int   i1 ,
-                 const unsigned int   i2 ) ;
-      /// constructor from the indices
-      Selector ( const unsigned int   i1 ,
-                 const unsigned int   i2 ,
-                 const unsigned int   i3 ) ;
-      /// constructor from the indices
-      Selector ( const unsigned int   i1 ,
-                 const unsigned int   i2 ,
-                 const unsigned int   i3 ,
-                 const unsigned int   i4 ) ;
-      /// constructor from the indices
-      Selector ( const std::vector<unsigned int>& indices          ) ;
-      /// constructor from decay node
-      Selector ( const Decays::iNode&             node             ,
+      /// constructor from the cut
+      Selector ( const LoKi::MCTypes::MCCuts&     cut              ,
                  const bool                       decayOnly = true ) ;
       /// constructor from decay tree
       Selector ( const Decays::IMCDecay::iTree&   child            ) ;
+      /// constructor from decay node
+      Selector ( const Decays::iNode&             node             ,
+                 const bool                       decayOnly = true ) ;
       /// constructor from decay tree
       Selector ( const Decays::IMCDecay::Finder&  child            ) ;
       /// constructor from decay desctriptor
@@ -62,9 +49,8 @@ namespace LoKi
       /// constructor from decay desctriptor & factory
       Selector ( const std::string&               child              ,
                  const std::string&               factory          ) ;
-      /// constructor from the cut
-      Selector ( const LoKi::MCTypes::MCCuts&     cut              ,
-                 const bool                       decayOnly = true ) ;
+      /// constructor from the indices
+      Selector ( const std::vector<unsigned int>& indices          ) ;
       /// OPTIONAL: nice printout
       std::ostream& fillStream ( std::ostream& s ) const  override;
       // ======================================================================
