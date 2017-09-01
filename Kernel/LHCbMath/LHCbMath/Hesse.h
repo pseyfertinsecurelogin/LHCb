@@ -57,12 +57,10 @@ namespace Gaudi
         // ====================================================================
       private:
         // ====================================================================
-        /// the default constructor is disabled
-        Hesse () ;                         // default constrictor is disabled
         /// the copy constructor is disabled
-        Hesse ( const Hesse& ) ;           // the copy constructor is disabled
+        Hesse ( const Hesse& ) = delete;   // the copy constructor is disabled
         /// the assignement operator is disabled
-        Hesse& operator=( const Hesse& ) ; // no assignement
+        Hesse& operator=( const Hesse& ) = delete; // no assignement
         // ====================================================================
       public:
         // ====================================================================
