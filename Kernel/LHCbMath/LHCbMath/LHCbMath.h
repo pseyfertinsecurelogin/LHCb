@@ -577,50 +577,50 @@ using namespace std;
       // ======================================================================
     } ;
     // ========================================================================
-    /** @struct MuchSmaller 
-     *  Is a value of "a" tiny with respect to b ? 
-     *  -  if b is numerical zero, a is numerical zero also 
-     *  - otherwise (a+b) is numerically equal to b 
+    /** @struct MuchSmaller
+     *  Is a value of "a" tiny with respect to b ?
+     *  -  if b is numerical zero, a is numerical zero also
+     *  - otherwise (a+b) is numerically equal to b
      */
     template <class TYPE>
-    struct MuchSmaller 
+    struct MuchSmaller
     {
     public:
-      // ======================================================================      
-      /** Is a value of "a" tiny with respect to b ? 
-       *  - if b is numerically zero, a is also zero  
-       *  - otherwise (a+b) is numerically equal to b 
+      // ======================================================================
+      /** Is a value of "a" tiny with respect to b ?
+       *  - if b is numerically zero, a is also zero
+       *  - otherwise (a+b) is numerically equal to b
        */
-      bool operator () ( const TYPE a ,  const TYPE b )  const 
+      bool operator () ( const TYPE a ,  const TYPE b )  const
       { return m_zero ( b ) ? m_zero ( a ) : m_equal ( a + b , b ) ; }
-      // ======================================================================      
+      // ======================================================================
     private :
       // ======================================================================
       /// zero ?
       Zero    <TYPE> m_zero  {} ; // zero ?
-      Equal_To<TYPE> m_equal {} ; // equality ? 
+      Equal_To<TYPE> m_equal {} ; // equality ?
       // ======================================================================
     } ;
     // ========================================================================
-    /** @struct Tiny 
-     *  Is a value of "a" tiny with respect to b ? 
-     *  -  if b is numerical zero, a is numerical zero also 
-     *  - otherwise (a+b) is numerically equal to b 
+    /** @struct Tiny
+     *  Is a value of "a" tiny with respect to b ?
+     *  -  if b is numerical zero, a is numerical zero also
+     *  - otherwise (a+b) is numerically equal to b
      */
     template <class TYPE>
-    struct Tiny 
+    struct Tiny
     {
     public:
       // ======================================================================
-      // constructor 
+      // constructor
       Tiny ( TYPE  b ) : m_b (  b ) {} ;
-      Tiny () = delete ; //  no   default constructor 
+      Tiny () = delete ; //  no   default constructor
       // ======================================================================
     public:
-      // ======================================================================      
-      /// Is a value of "a" tiny with respect to b ? 
+      // ======================================================================
+      /// Is a value of "a" tiny with respect to b ?
       bool operator () ( const TYPE a )  const { return m_smaller ( a , m_b ) ; }
-      // ======================================================================      
+      // ======================================================================
     private :
       // ======================================================================
       // the reference value
@@ -697,11 +697,11 @@ using namespace std;
     std::pair<double,int>
     frexp10 ( const double x ) ;
     // ========================================================================
-    /** get mantissa and binary exponent 
+    /** get mantissa and binary exponent
      *  similar to std::frexp
-     *  @param x  INPUT  value 
-     *  @return   pair of mantissa (0.5<=m<1) and (binary) exponent 
-     *  @author Vanya BELYAEV Ivan.Belyaev       
+     *  @param x  INPUT  value
+     *  @return   pair of mantissa (0.5<=m<1) and (binary) exponent
+     *  @author Vanya BELYAEV Ivan.Belyaev
      *  @date 2015-07-21
      */
     GAUDI_API
@@ -859,47 +859,47 @@ using namespace std;
         0 < value ? std::sqrt ( value ) : -std::sqrt( std::abs ( value ) ) ;
     }
     // ========================================================================
-    /// simple scaling of exponents for all elements of non-constant sequence        
+    /// simple scaling of exponents for all elements of non-constant sequence
     template <class ITERATOR>
     void scale_exp2 ( ITERATOR    first ,
-                      ITERATOR    last  , 
+                      ITERATOR    last  ,
                       const int   iexp  )
-    { 
-      if ( 0 != iexp ) 
+    {
+      if ( 0 != iexp )
       { for ( ; first != last ; ++first ) { (*first) = std::ldexp ( *first , iexp ) ; } }
     }
     // ========================================================================
-    /// scale all elements of vector 
-    template <class TYPE>    
-    inline void scale_exp2 ( std::vector<TYPE>& vct , const int iexp  ) 
+    /// scale all elements of vector
+    template <class TYPE>
+    inline void scale_exp2 ( std::vector<TYPE>& vct , const int iexp  )
     { scale_exp2 ( vct.begin() , vct.end () , iexp ) ; }
     // ========================================================================
     /** scale all elements of vector  by 2**s
      *  @attention new vectro is returned!
      */
-    template <class TYPE>    
+    template <class TYPE>
     inline
-    std::vector<TYPE> 
+    std::vector<TYPE>
     ldexp ( std::vector<TYPE> vct , const short iexp )
     {
       if ( 0 != iexp ) { scale_exp2 ( vct , iexp ) ; }
       return vct ;
     }
     // ========================================================================
-    /** Calculate p-norm for the vector 
-     *  \f$ |v|_{p} \equiv = \left( \sum_i  \left| v_i\right|^{p} \right)^{1/p}\f$ 
+    /** Calculate p-norm for the vector
+     *  \f$ |v|_{p} \equiv = \left( \sum_i  \left| v_i\right|^{p} \right)^{1/p}\f$
      *  Few special cases:
-     *  - p==1        : sum of absolute values 
-     *  - p==infinity : the maximal absolute value 
-     *  @param begin begin-itetator for the sequnce of coefficients 
-     *  @param end   end-iterator for the sequnce of coefficients 
+     *  - p==1        : sum of absolute values
+     *  - p==infinity : the maximal absolute value
+     *  @param begin begin-itetator for the sequnce of coefficients
+     *  @param end   end-iterator for the sequnce of coefficients
      *  @param pinv  (1/p)
      *  @return p-norm of the vector
      */
     template <class ITERATOR>
-    long double p_norm 
-    ( ITERATOR      begin , 
-      ITERATOR      end   , 
+    long double p_norm
+    ( ITERATOR      begin ,
+      ITERATOR      end   ,
       const double  pinv  )  //  1/p
     {
       /// check i/p
@@ -907,85 +907,85 @@ using namespace std;
       ///
       long  double r  = 0 ;
       /// few "easy" cases:  treat explicitely
-      /// 1) (p==1)        : sum of absolute values 
-      if      ( 1 == ip ) 
+      /// 1) (p==1)        : sum of absolute values
+      if      ( 1 == ip )
       {
-        for ( ; begin != end ; ++begin ) 
+        for ( ; begin != end ; ++begin )
         { const long double c = *begin ; r += std::abs ( c ) ; }
-        return r ;                                                     // RETURN 
+        return r ;                                                     // RETURN
       }
-      /// 2) (p==infinity) : maximal  absolute value 
+      /// 2) (p==infinity) : maximal  absolute value
       else if ( 0 == ip )    // p = infinity
       {
-        for ( ; begin != end ; ++begin ) 
+        for ( ; begin != end ; ++begin )
         {
           const long double c = *begin ;
-          r = std::max ( r , std::abs(c) ) ; 
+          r = std::max ( r , std::abs(c) ) ;
         }
-        return r ;                                                      // RETURN 
+        return r ;                                                      // RETURN
       }
-      /// 3) (p==2) : frequent case 
-      else if ( 0.5 == ip )  // p = 2 : frequent case 
+      /// 3) (p==2) : frequent case
+      else if ( 0.5 == ip )  // p = 2 : frequent case
       {
-        for ( ; begin != end ; ++begin ) 
+        for ( ; begin != end ; ++begin )
         { const long double c  = *begin ; r += c * c ; }
-        return std::sqrt ( r ) ;                                        // RETURN 
+        return std::sqrt ( r ) ;                                        // RETURN
       }
-      /// 4) not very large integer 
-      else if (  ( 0.05 < ip ) && LHCb::Math::isint ( 1/ip ) ) 
+      /// 4) not very large integer
+      else if (  ( 0.05 < ip ) && LHCb::Math::isint ( 1/ip ) )
       {
         const unsigned short p = LHCb::Math::round ( 1/ip ) ;
-        for ( ; begin != end ; ++begin ) 
+        for ( ; begin != end ; ++begin )
         {
           const long double c = *begin ;
-          r += std::pow ( std::abs ( c ) , p ) ; 
+          r += std::pow ( std::abs ( c ) , p ) ;
         }
-        return std::pow ( r , ip ) ;                                    // RETURN 
+        return std::pow ( r , ip ) ;                                    // RETURN
       }
-      /// 5) generic case 
+      /// 5) generic case
       const double p = 1/ip ;
-      for ( ; begin != end ; ++begin ) 
-      { 
+      for ( ; begin != end ; ++begin )
+      {
         const long  double c = *begin ;
         r += std::pow ( std::abs ( c )  , p ) ;
       }
       return std::pow ( r , ip ) ;
     }
     // ========================================================================
-    /** Calculate p-norm for the vector 
-     *  \f$ |v|_{p} \equiv = \left( \sum_i  \left| v_i\right|^{p} \right)^{1/p}\f$ 
-     *  @param vct  the vector 
+    /** Calculate p-norm for the vector
+     *  \f$ |v|_{p} \equiv = \left( \sum_i  \left| v_i\right|^{p} \right)^{1/p}\f$
+     *  @param vct  the vector
      *  @param pinv  (1/p)
      *  @return p-norm of the vector
      */
     template <class TYPE>
-    long double p_norm 
-    ( const std::vector<TYPE>& vct  , 
+    long double p_norm
+    ( const std::vector<TYPE>& vct  ,
       const double             pinv )  //  1/p
     { return p_norm (  vct.begin() , vct.end() , pinv ) ; }
     // ========================================================================
-    /** sign of the number 
+    /** sign of the number
      *  @see https://stackoverflow.com/a/4609795
      */
-    template <typename T> 
-    inline constexpr signed char signum ( T x , std::false_type /* is_signed */ ) 
-    { return T(0)< x; }    
-    template <typename T> 
-    inline constexpr signed char signum ( T x , std::true_type  /* is_signed */ ) 
+    template <typename T>
+    inline constexpr signed char signum ( T x , std::false_type /* is_signed */ )
+    { return T(0)< x; }
+    template <typename T>
+    inline constexpr signed char signum ( T x , std::true_type  /* is_signed */ )
     { return ( T(0) < x ) - ( x < T(0) ); }
     template <typename T>
-    inline constexpr signed char signum ( T x ) 
+    inline constexpr signed char signum ( T x )
     { return signum ( x , std::is_signed<T>() ) ; }
     // ========================================================================
     /** number of (strickt) sign-variations in the sequence
-     *  @param first begin-iterator for the input sequence 
-     *  @param last  end-iterator for the  input sequence 
-     *  @return number if strickt sign varination 
+     *  @param first begin-iterator for the input sequence
+     *  @param last  end-iterator for the  input sequence
+     *  @return number if strickt sign varination
      */
     template <class ITERATOR, class ZERO>
     unsigned int sign_changes
-    ( ITERATOR first , 
-      ITERATOR last  , 
+    ( ITERATOR first ,
+      ITERATOR last  ,
       ZERO     zero  )
     {
       while ( first != last && zero ( *first ) ) { ++first ; }
@@ -998,7 +998,7 @@ using namespace std;
       {
         if ( zero ( *j ) )  { continue ;  }         // CONTINUE
         const signed char sj  = signum ( *j ) ;
-        if ( 0 <= si * sj ) { continue ;  }         // CONTINUE 
+        if ( 0 <= si * sj ) { continue ;  }         // CONTINUE
         nc +=1  ;
         si = sj ;
       }
@@ -1076,39 +1076,39 @@ namespace Gaudi
       const std::array<TYPE2,N>& y )
     { return dot_fma ( x.begin() , x.end() , y.begin() ) ; }
     // ========================================================================
-    /** Kahan summation 
+    /** Kahan summation
      *  @see https://en.wikipedia.org/wiki/Kahan_summation_algorithm
-     *  \f$ r = \sum_i x_i \f$ 
+     *  \f$ r = \sum_i x_i \f$
      *  @code
-     *  // pseudocode 
+     *  // pseudocode
      *  function KahanSum(input)
      *    var sum = 0.0
-     *    var c = 0.0                 
+     *    var c = 0.0
      *    // A running compensation for lost low-order bits.
      *    for i = 1 to input.length do
-     *       var y = input[i] - c     
+     *       var y = input[i] - c
      *    // So far, so good: c is zero.
-     *       var t = sum + y          
+     *       var t = sum + y
      *    // Alas, sum is big, y small, so low-order digits of y are lost.
-     *       c = (t - sum) - y        
+     *       c = (t - sum) - y
      *    // (t - sum) cancels the high-order part of y; subtracting y recovers negative (low part of y)
-     *       sum = t                  
+     *       sum = t
      *    // Algebraically, c should always be zero. Beware overly-aggressive optimizing compilers!
-     *    next i                      
+     *    next i
      *    // Next time around, the lost low part will be added to y in a fresh attempt.
      *  return sum
-     *  @endcode 
-     *  @param begin (INPUT) begin-iterator for the input data 
-     *  @param end   (INPUT) end-iterator for the input data 
+     *  @endcode
+     *  @param begin (INPUT) begin-iterator for the input data
+     *  @param end   (INPUT) end-iterator for the input data
      */
     template <class ITERATOR>
     inline double sum_kahan
-    ( ITERATOR begin , 
+    ( ITERATOR begin ,
       ITERATOR end   )
     {
       long double sum = 0 ;
       long double c   = 0 ;
-      for ( ; begin != end ; ++begin ) 
+      for ( ; begin != end ; ++begin )
       {
         volatile const long double y = (*begin) - c ;
         volatile const long double t = sum      + y ;
@@ -1118,21 +1118,21 @@ namespace Gaudi
       return sum ;
     }
     // ========================================================================
-    /** make dot-multiplication of two sequences based on Kahan summation 
+    /** make dot-multiplication of two sequences based on Kahan summation
      *  \f$ r = \sum_i  x_i y_i \f$
-     *  @param xbegin (INPUT) begin-iterator for the first sequence  
-     *  @param xend   (INPUT) end-iterator for the first sequence 
-     *  @param ybegin (INPUT) begin-iterator for the second sequence  
+     *  @param xbegin (INPUT) begin-iterator for the first sequence
+     *  @param xend   (INPUT) end-iterator for the first sequence
+     *  @param ybegin (INPUT) begin-iterator for the second sequence
      */
     template <class ITERATOR1, class ITERATOR2>
     inline double dot_kahan
-    ( ITERATOR1 xbegin , 
-      ITERATOR1 xend   , 
+    ( ITERATOR1 xbegin ,
+      ITERATOR1 xend   ,
       ITERATOR2 ybegin )
     {
       long double sum = 0 ;
       long double c   = 0 ;
-      for ( ; xbegin != xend ; ++xbegin , ++ybegin ) 
+      for ( ; xbegin != xend ; ++xbegin , ++ybegin )
       {
         const          long double v = (*xbegin ) * (*ybegin) ;
         volatile const long double y = v   - c ;
@@ -1145,60 +1145,60 @@ namespace Gaudi
     // ========================================================================
     /** make dot-multiplication of two sequences using Kahan summation
      *  \f$ r = \sum_i  x_i y_i \f$
-     *  @param x     (INPUT) the first sequence 
+     *  @param x     (INPUT) the first sequence
      *  @param begin (INPUT) start iterator of the second sequence
-     *  @return   "dot" product of two sequences 
+     *  @return   "dot" product of two sequences
      */
     template <unsigned int N, class TYPE, class ITERATOR>
     inline double dot_kahan
-    ( const std::array<TYPE,N>& x     , 
-      ITERATOR                  begin )  
+    ( const std::array<TYPE,N>& x     ,
+      ITERATOR                  begin )
     { return dot_kahan ( x.begin() , x.end() , begin ) ; }
     // ========================================================================
-    /** make dot-multiplication of two sequences using Kahan summation 
+    /** make dot-multiplication of two sequences using Kahan summation
      *  \f$ r = \sum_i  x_i y_i \f$
-     *  @param x (INPUT) the first sequence 
+     *  @param x (INPUT) the first sequence
      *  @param y (INPUT) the second sequence
-     *  @return   "dot" product of two sequences 
+     *  @return   "dot" product of two sequences
      */
     template <unsigned int N, class TYPE1, class TYPE2>
     inline double dot_kahan
-    ( const std::array<TYPE1,N>& x , 
-      const std::array<TYPE2,N>& y )  
+    ( const std::array<TYPE1,N>& x ,
+      const std::array<TYPE2,N>& y )
     { return dor_kahan ( x.begin() , x.end() , y.begin() ) ; }
-    // ========================================================================    
+    // ========================================================================
     /** make dot-multiplication of two sequences using Kahan summation
      *  \f$ r = \sum_i  x_i y_i \f$
-     *  @param x (INPUT) the first sequence 
-     *  @param y (INPUT) begin-iterator for the second sequence 
-     *  @return   "dot" product of two sequences 
+     *  @param x (INPUT) the first sequence
+     *  @param y (INPUT) begin-iterator for the second sequence
+     *  @return   "dot" product of two sequences
      */
-    template <class TYPE,unsigned int N, class ITERATOR> 
-    inline double dot_kahan 
-    ( TYPE(&x)[N] , 
+    template <class TYPE,unsigned int N, class ITERATOR>
+    inline double dot_kahan
+    ( TYPE(&x)[N] ,
       ITERATOR y  ) { return dot_kahan ( x , x + N , y ) ; }
    // ========================================================================
     /** make dot-multiplication of two sequences using Kahan summation
      *  \f$ r = \sum_i  x_i y_i \f$
-     *  @param x (INPUT) the first sequence 
-     *  @param y (INPUT) the second sequence 
-     *  @return   "dot" product of two sequences 
+     *  @param x (INPUT) the first sequence
+     *  @param y (INPUT) the second sequence
+     *  @return   "dot" product of two sequences
      */
-    template <class TYPE1, class TYPE2, unsigned int N> 
+    template <class TYPE1, class TYPE2, unsigned int N>
     inline double dot_kahan
-    ( TYPE1(&x)[N] , 
+    ( TYPE1(&x)[N] ,
       TYPE2(&y)[N] ) { return dot_kahan ( x , x + N , y ) ; }
     // ========================================================================
     /** make dot-multiplication of two sequences using Kahan summation
      *  \f$ r = \sum_i  x_i y_i \f$
-     *  @param N (INPUT) length of the sequences 
-     *  @param x (INPUT) the first sequence 
-     *  @param y (INPUT) the second sequence 
-     *  @return   "dot" product of two sequences 
+     *  @param N (INPUT) length of the sequences
+     *  @param x (INPUT) the first sequence
+     *  @param y (INPUT) the second sequence
+     *  @return   "dot" product of two sequences
      */
     inline double dot_kahan
-    ( const unsigned int N , 
-      const double*      x , 
+    ( const unsigned int N ,
+      const double*      x ,
       const double*      y ) { return dot_kahan ( x , x + N , y ) ; }
     // ========================================================================
   } //                                             end of namespace Gaudi::Math
