@@ -1065,33 +1065,6 @@ namespace LoKi
       : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Function
     {
     public:
-      // ======================================================================
-      /** constructor from the function and daughter index
-       *  @param fun    the function to be used
-       *  @param index  the index of daughter particle
-       */
-      ChildFun
-      ( const LoKi::GenTypes::GFunc& fun   ,
-        const unsigned int           index ) ;
-      /** constructor from the function and daughter index
-       *  @param fun    the function to be used
-       *  @param index  the index of daughter particle
-       */
-      ChildFun
-      ( const LoKi::GenTypes::GFunc& fun    ,
-        const unsigned int           index1 ,
-        const unsigned int           index2 ) ;
-      /** constructor from the function and daughter index
-       *  @param fun    the function to be used
-       *  @param index  the index of daughter particle
-       */
-      ChildFun
-      ( const LoKi::GenTypes::GFunc& fun         ,
-        const std::vector<unsigned int>& indices ) ;
-      /** constructor from the function and child selector
-       *  @param fun      the function to be used
-       *  @param selector the child selector
-       */
       ChildFun
       ( const LoKi::GenTypes::GFunc&    fun       ,
         const LoKi::GenChild::Selector& selector  ) ;
@@ -1150,29 +1123,6 @@ namespace LoKi
       : public LoKi::BasicFunctors<const HepMC::GenParticle*>::Predicate
     {
     public:
-      // ======================================================================
-      /** constructor from the function and daughter index
-       *  @param fun    the function to be used
-       *  @param index  the index of daughter particle
-       */
-      ChildCut
-      ( const LoKi::GenTypes::GCuts& fun   ,
-        const unsigned int           index ) ;
-      /** constructor from the function and daughter index
-       *  @param fun    the function to be used
-       *  @param index  the index of daughter particle
-       */
-      ChildCut
-      ( const LoKi::GenTypes::GCuts& fun    ,
-        const unsigned int           index1 ,
-        const unsigned int           index2 ) ;
-      /** constructor from the function and daughter index
-       *  @param fun    the function to be used
-       *  @param index  the index of daughter particle
-       */
-      ChildCut
-      ( const LoKi::GenTypes::GCuts& fun         ,
-        const std::vector<unsigned int>& indices ) ;
       /** constructor from the function and child selector
        *  @param fun      the function to be used
        *  @param selector the child selector
