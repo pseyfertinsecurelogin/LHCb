@@ -154,18 +154,13 @@ namespace LHCb
     public:
       // ======================================================================
       /// constructor from ULPS:
-      Lomont ( const unsigned short ulps ) : m_ulps ( ulps ) {}
+      constexpr Lomont ( const unsigned short ulps ) : m_ulps ( ulps ) {}
       // ======================================================================
     public:
       // ======================================================================
       /// the only one important method:
       inline bool operator () ( const float a , const float b ) const
       { return LHCb::Math::lomont_compare_float ( a , b , m_ulps ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Lomont() ;                         // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
@@ -200,18 +195,13 @@ namespace LHCb
     public:
       // ======================================================================
       /// constructor from ULPS:
-      Lomont ( const unsigned int ulps ) : m_ulps ( ulps ) {}
+      constexpr Lomont ( const unsigned int ulps ) : m_ulps ( ulps ) {}
       // ======================================================================
     public:
       // ======================================================================
       /// the only one important method:
       inline bool operator () ( const double a , const double b ) const
       { return LHCb::Math::lomont_compare_double ( a , b , m_ulps ) ; }
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      Lomont () ;                        // the default constructor is disabled
       // ======================================================================
     private:
       // ======================================================================
