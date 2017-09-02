@@ -350,12 +350,10 @@ namespace Gaudi
       // ======================================================================
     private:
       // ======================================================================
-      /// default constructor is disabled
-      SplineErrors () ;  // default constructor is disabled
       /// copy    constructor is disabled
-      SplineErrors ( const SplineErrors& ) ;  // default constructor is disabled
+      SplineErrors ( const SplineErrors& ) = delete;  // default constructor is disabled
       /// assignement is disabled
-      SplineErrors& operator= ( const SplineErrors& ) ;  // assignement is disabled
+      SplineErrors& operator= ( const SplineErrors& ) = delete;  // assignement is disabled
       // ======================================================================
     public:
       // ======================================================================
