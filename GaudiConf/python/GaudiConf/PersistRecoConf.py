@@ -154,6 +154,9 @@ standardDescriptors['2015'] = OrderedDict(
     for k, v in standardDescriptors['2016'].items()
 )
 
+# We have 2012 descriptors only for running the unit tests
+standardDescriptors['2012'] = standardDescriptors['2016'].copy()
+
 standardDescriptors['2017'] = standardDescriptors['2016'].copy()
 standardDescriptors['2017'].update([
     (i.name, i) for i in [
@@ -268,6 +271,9 @@ standardOutputs['2015']["Hlt2DownstreamRichPIDs"] = (
     "/Event/Hlt2/TrackFitted/Downstream/PID/RICH"
     "/electronmuonpionkaonprotonbelowThreshold/Rich1GasRich2GasDownstream")
 
+# We have 2012 descriptors only for running the unit tests
+standardOutputs['2012'] = standardOutputs['2016'].copy()
+
 # In 2017 we unpack into a prefixed location /Event/Turbo
 standardOutputs["2017"] = {
     "Hlt2LongProtos":           "/Event/Turbo/Long/Protos",
@@ -309,6 +315,8 @@ _externalLocations = [
     '/Event/Raw/Spd/Digits',
 ]
 externalLocations = {}
+# We have 2012 descriptors only for running the unit tests
+externalLocations['2012'] = list(_externalLocations)
 externalLocations['2015'] = list(_externalLocations)
 externalLocations['2016'] = list(externalLocations['2015'])
 # Digits are handled explicitly in 2017
