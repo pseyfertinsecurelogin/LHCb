@@ -176,7 +176,16 @@ Decoder("CaloDigitsFromRaw/"+name,
         active=True,banks=["PrsE","PrsPacked"],
         privateTools=[toolname],
         #set logically in code, so for the C++ it doesn't matter what is set here, but python matters too
-        outputs={"DigitsContainer" : "Raw/Spd/Digits", "AdcsContainer" : "Raw/Spd/Adcs"},
+        outputs={"DigitsContainer" : "Raw/Spd/Digits"},
+        properties= { "OutputType" : "Digits" },
+        conf=DecoderDB)
+
+Decoder("CaloDigitsFromRaw/"+name+"Adc",
+        active=True,banks=["PrsE","PrsPacked"],
+        privateTools=[toolname],
+        #set logically in code, so for the C++ it doesn't matter what is set here, but python matters too
+        outputs={"AdcsContainer" : "Raw/Spd/Adcs"},
+        properties= { "OutputType" : "ADCs" },
         conf=DecoderDB)
 
 
@@ -192,7 +201,16 @@ Decoder("CaloDigitsFromRaw/"+name,
         active=True,banks=["PrsE","PrsPacked"],
         privateTools=[toolname],
         #set logically in code, so for the C++ it doesn't matter what is set here, but python matters too
-        outputs={"DigitsContainer" : "Raw/Prs/Digits", "AdcsContainer" : "Raw/Prs/Adcs"},
+        outputs={"DigitsContainer" : "Raw/Prs/Digits"},
+        properties= { "OutputType" : "Digits" },
+        conf=DecoderDB)
+
+Decoder("CaloDigitsFromRaw/"+name+"Adc",
+        active=True,banks=["PrsE","PrsPacked"],
+        privateTools=[toolname],
+        #set logically in code, so for the C++ it doesn't matter what is set here, but python matters too
+        outputs={"AdcsContainer" : "Raw/Prs/Adcs"},
+        properties= { "OutputType" : "ADCs" },
         conf=DecoderDB)
 
 Decoder(toolname,active=False,
@@ -210,7 +228,7 @@ dec_calo_nzs=[]
 
 for cal in ["Ecal","Hcal"]:
     #first       Zero suppressed (Brunel),      Non-zero suppressed (Boole)
-    for algs in [("CaloZSupAlg","ZSup",True),("CaloDigitsFromRaw","FromRaw",False)]:
+    for algs in [("CaloZSupAlg","ZSup",True),("CaloZSupAlg","AdcZSup",True),("CaloDigitsFromRaw","FromRaw",False),("CaloDigitsFromRaw","AdcFromRaw",False)]:
         alg,nametag,zs=algs
         # \/ e.g. EcalZSup (Brunel) or EcalFromRaw (Boole)
         name=cal+nametag
@@ -223,14 +241,28 @@ for cal in ["Ecal","Hcal"]:
         toolname="CaloEnergyFromRaw/"+name+"Tool" #as in C++
         # Zero suppressed is "active", NZS is "not active", only activated in Boole
         if "CaloZSupAlg" in algname:
-            algOutputs = {"OutputADCData": "Raw/%s/Adcs" % cal, "OutputDigitData": "Raw/%s/Digits" % cal}
+            if "Adc" in nametag :
+                algOutputs = {"OutputADCData": "Raw/%s/Adcs" % cal }
+            else :
+                algOutputs = {"OutputDigitData": "Raw/%s/Digits" % cal}
         else:
-            algOutputs = ["Raw/"+cal+"/Adcs","Raw/"+cal+"/Digits"]
+            if "Adc" in nametag :
+                algOutputs = ["Raw/"+cal+"/Adcs"]
+            else :
+                algOutputs = ["Raw/"+cal+"/Digits"]
+                
+
+        outType="Digits"
+        if "Adc" in nametag :
+            outType="ADCs"
+
         Decoder(algname, active=zs,
                 privateTools=[toolname],banks=[cal+'E',cal+'Packed'],
                 #set logically in code, so for the C++ it doesn't matter what is set here, but python matters too
                 outputs=algOutputs,
-                conf=DecoderDB)
+                properties={"OutputType" : outType },
+                conf=DecoderDB
+                )
 
         Decoder(algname+"Expert", active=False,
                 privateTools=[toolname],banks=[cal+'PackedError'],
