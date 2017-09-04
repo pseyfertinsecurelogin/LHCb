@@ -16,8 +16,7 @@ from Configurables import ( DataOnDemandSvc,
                             RawBankToSTClusterAlg,
                             DecodeVeloRawBuffer,
                             RawBankToSTLiteClusterAlg,
-                            FTRawBankDecoder,
-                            Rich__DAQ__RawBufferToRichDigitsAlg )
+                            FTRawBankDecoder )
 # for the upgrade
 #VPLiteClusters = VPRawBankToLiteCluster("createVPLiteClusters")
 #VPLiteClusters.ClusterLocation  = "Raw/VP/LiteClusters"
@@ -43,7 +42,7 @@ DataOnDemandSvc().AlgMap["Raw/OT/Times"]          = "OTTimeCreator"
 DataOnDemandSvc().AlgMap["Raw/FT/LiteClusters"]    = FTClusters
 DataOnDemandSvc().AlgMap["Raw/Muon/Coords"]       = "MuonRec"
 DataOnDemandSvc().AlgMap["DAQ/ODIN"]              = "createODIN"
-DataOnDemandSvc().AlgMap["Raw/Rich/Digits"]       = "Rich::DAQ::RawBufferToRichDigitsAlg/RichRawEventToDigits"
+DataOnDemandSvc().AlgMap["Raw/Rich/L1Data/RICH1RICH2"] = "Rich::Future::RawBankDecoder/RichFutureDecode"
 
 RawBankToSTClusterAlg("createITClusters").clusterLocation         = "Raw/IT/Clusters"
 RawBankToSTClusterAlg("createITClusters").DetType                 = "IT"
@@ -67,7 +66,7 @@ DecodeVeloRawBuffer("createVeloClusters").DecodeToVeloLiteClusters = False
 DecodeVeloRawBuffer("createVeloLiteClusters").DecodeToVeloClusters     = False
 DecodeVeloRawBuffer("createVeloLiteClusters").DecodeToVeloLiteClusters = True
 
-Rich__DAQ__RawBufferToRichDigitsAlg("RichRawEventToDigits").DecodeBufferOnly = False
+#Rich__DAQ__RawBufferToRichDigitsAlg("RichRawEventToDigits").DecodeBufferOnly = False
 # Calorimeters
 from Configurables import CaloDigitConf
 CaloDigitConf(EnableDigitsOnDemand=True).applyConf()
