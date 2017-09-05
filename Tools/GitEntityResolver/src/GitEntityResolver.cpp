@@ -418,7 +418,7 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
   if ( UNLIKELY( !data.first ) ) return nullptr;
 
   Blob blob{std::move( data.first )};
-  auto buff_size = blob.size(); // must be done here because "adopt" set the size to 0
+  const auto buff_size = blob.size(); // must be done here because "adopt" set the size to 0
 
   std::unique_ptr<ValidInputSource> src{new ValidInputSource{blob.adopt(), buff_size, systemId, true}};
   src->setValidity( data.second.since, data.second.until );

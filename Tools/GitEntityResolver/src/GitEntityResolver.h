@@ -129,7 +129,7 @@ private:
     }
   }
 
-  /// entry opint to the implementation of the open method.
+  /// entry point to the implementation of the open method.
   std::pair<open_result_t, IOVInfo> i_open( const std::string& url );
 
   /// helper to convert to std::istream.
