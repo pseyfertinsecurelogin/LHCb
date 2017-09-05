@@ -360,7 +360,7 @@ StatusCode DeRichPMTPanel::geometryUpdate()
   m_localPlaneNormal = m_localPlane.Normal();
 
   // loop over all PD smartIDs to work out the largest copy number for this panel
-  m_maxPDCopyN = Rich::DAQ::HPDCopyNumber(0);
+  m_maxPDCopyN = Rich::DAQ::PDPanelIndex(0);
   for ( const auto pd : deRichSys()->allPDRichSmartIDs() )
   {
     if ( pd.rich() == rich() && pd.panel() == side() )
@@ -369,7 +369,7 @@ StatusCode DeRichPMTPanel::geometryUpdate()
       if ( copyN > m_maxPDCopyN ) { m_maxPDCopyN = copyN; }
     }
   }
-  debug() << "Max PD Copy Number = " <<  m_maxPDCopyN << endmsg;
+  _ri_debug << "Max PD Copy Number = " <<  m_maxPDCopyN << endmsg;
 
   return sc;
 }
