@@ -534,6 +534,12 @@ StatusCode DeRichHPDPanel::geometryUpdate()
   m_PDColumns  = param<int>("HPDColumns");
   m_PDNumInCol = param<int>("HPDNumberInColumn");
   m_PDMax      = nPDColumns() * nPDsPerCol();
+  if ( m_PDMax != m_DeHPDs.size() )
+  {
+    std::ostringstream mess;
+    mess << "PDMax=" << m_PDMax << " != DeHPDs.size()=" << m_DeHPDs.size();
+    return Error( mess.str() );
+  }
 
   m_HPDPitch = param<double>("HPDPitch");
   m_HPDColPitch = std::sqrt( 0.75 * m_HPDPitch*m_HPDPitch );

@@ -115,8 +115,7 @@ public:
   /// Returns the detector element for the given PD number
   inline const DeRichHPD* deHPD( const Rich::DAQ::HPDCopyNumber HPDNumber ) const
   {
-    // CRJ : should this just be < ??
-    const DeRichHPD * deHPD = ( HPDNumber.data() <= nPDs() ?
+    const DeRichHPD * deHPD = ( HPDNumber.data() < nPDs() ?
                                 m_DeHPDs[HPDNumber.data()] : nullptr );
 #ifndef NDEBUG
     if ( !deHPD )
