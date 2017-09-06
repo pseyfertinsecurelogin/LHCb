@@ -398,7 +398,7 @@ StatusCode DeRichPMTPanel::geometryUpdate()
   const ROOT::Math::Translation3D localTranslation = 
     ( rich() == Rich::Rich1 ?  
       ROOT::Math::Translation3D(aPon.x(),sign*aOffset,aPon.z()) :
-      ROOT::Math::Translation3D(sign*aOffset,aPon.y(), aPon.z()) );
+      ROOT::Math::Translation3D(sign*aOffset,aPon.y(),aPon.z()) );
 
 
   m_globalToPDPanelTransform = localTranslation * geometry()->toLocalMatrix();
@@ -406,10 +406,10 @@ StatusCode DeRichPMTPanel::geometryUpdate()
 
   m_localPlane = geometry()->toLocalMatrix() * m_detectionPlane;
 
-
   m_localPlaneNormal = m_localPlane.Normal();
 
   // loop over all PD smartIDs to work out the largest copy number for this panel
+  m_maxPDCopyN = Rich::DAQ::HPDCopyNumber(0);
   for ( const auto pd : deRichSys()->allPDRichSmartIDs() )
   {
     if ( pd.rich() == rich() && pd.panel() == side() )
@@ -418,6 +418,7 @@ StatusCode DeRichPMTPanel::geometryUpdate()
       if ( copyN > m_maxPDCopyN ) { m_maxPDCopyN = copyN; }
     }
   }
+  _ri_debug << "Max PD Copy Number = " <<  m_maxPDCopyN << endmsg;
 
   return sc;
 }
@@ -1311,17 +1312,15 @@ DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
     }
   }
 
-  if ( msgLevel(MSG::DEBUG) )
-    debug() << "mode used " <<mode<<endmsg;
+  _ri_debug << "mode used " <<mode<<endmsg;
 
   return res;
 }
 Gaudi::XYZPoint DeRichPMTPanel::DemagnifyFromLens(const Gaudi::XYZPoint& aLensPoint) const
 {
-  double aX = aLensPoint.x()/ m_Rich1LensMagnificationFactor ;
-  double aY = aLensPoint.y()/ m_Rich1LensMagnificationFactor ;
+  const auto aX = aLensPoint.x() / m_Rich1LensMagnificationFactor ;
+  const auto aY = aLensPoint.y() / m_Rich1LensMagnificationFactor ;
   return Gaudi::XYZPoint(aX,aY,aLensPoint.z());
-
 }
 
 StatusCode DeRichPMTPanel::getPanelInterSection ( const Gaudi::XYZPoint& pGlobal,
