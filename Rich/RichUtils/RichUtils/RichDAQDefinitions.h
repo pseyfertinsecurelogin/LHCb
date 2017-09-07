@@ -96,6 +96,9 @@ namespace Rich
     class NumericType
     {
     public:
+      /// The underlying type
+      using Type = TYPE;
+    public:
       /// Default Constructor
       NumericType() = default;
       /// Constructor
