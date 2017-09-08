@@ -11,12 +11,25 @@ from pprint import pprint
 
 from GitCondDB import IOVs as I
 
+
+def make_entries(iterable):
+    output = []
+    for data in iterable:
+        if isinstance(data[1], tuple):
+            output.append(I.NestedEntry(data[0], data[1][0],
+                                        make_entries(data[1][1])))
+        else:
+            output.append(I.Entry(*data))
+    return output
+
+
 TMP_DIR = None
-Cond1_IOVs = [(0, 'zero')] + zip(range(1270049171000000000,
-                                       1270116165000000000,
-                                       15000000000000),
-                                 ('abc{:03d}'.format(i)
-                                  for i in itertools.count()))
+Cond1_IOVs = make_entries([(0, 'zero')] +
+                          zip(range(1270049171000000000,
+                                    1270116165000000000,
+                                    15000000000000),
+                              ('abc{:03d}'.format(i)
+                               for i in itertools.count())))
 
 
 def tree(path):
@@ -55,15 +68,14 @@ def test_parse_flat():
     assert data == Cond1_IOVs
 
 def test_partition():
-    data = I.partition_iovs(Cond1_IOVs)
-    expected = [(0, 'zero'),
-                (1267401600000000000, ('2010-03', [(0, '../zero'),
-                                                   (1270049171000000000, '../abc000'),
-                                                   (1270064171000000000, '../abc001'),
-                                                   (1270079171000000000, '../abc002')])),
-                (1270080000000000000, ('2010-04', [(1270079171000000000, '../abc002'),
-                                                   (1270094171000000000, '../abc003'),
-                                                   (1270109171000000000, '../abc004')]))]
+    data = I.partition_by_month(Cond1_IOVs)
+    expected = make_entries(
+        [(0, ('1970-01', [(0, '../zero')])),
+         (1270049171000000000, ('2010-03', [(1270049171000000000, '../abc000'),
+                                            (1270064171000000000, '../abc001'),
+                                            (1270079171000000000, '../abc002')])),
+         (1270094171000000000, ('2010-04', [(1270094171000000000, '../abc003'),
+                                            (1270109171000000000, '../abc004')]))])
     print('expected:')
     pprint(expected)
     print('data:')
@@ -76,9 +88,10 @@ def test_remove_flat():
     assert not os.path.exists('repo1/Cond1')
 
 def test_write_partitions():
-    data = I.partition_iovs(Cond1_IOVs)
+    data = I.partition_by_month(Cond1_IOVs)
     I.write_iovs('repo1/Cond1', data)
     expected = {'IOVs': None,
+                '1970-01': {'IOVs': None},
                 '2010-03': {'IOVs': None},
                 '2010-04': {'IOVs': None}}
     print(expected)
@@ -86,18 +99,21 @@ def test_write_partitions():
     assert tree('repo1/Cond1') == expected
 
 def test_parse_partitions():
+    print(open('repo1/Cond1/IOVs').read())
     data = I.parse_iovs('repo1/Cond1')
-    expected = I.partition_iovs(Cond1_IOVs)
+    expected = I.partition_by_month(Cond1_IOVs)
+    print(data)
+    print(expected)
     assert data == expected
 
-def test_flatten_and_clean():
-    data = I.partition_iovs(Cond1_IOVs)
-    data = I.flatten_iovs(data)
-    data = I.remove_dummy_entries(data)
+def test_simplify():
+    data = I.partition_by_month(Cond1_IOVs)
+    data = list(I.simplify(data))
     assert data == Cond1_IOVs
 
 def test_remove_partitions():
     before = {'IOVs': None,
+              '1970-01': {'IOVs': None},
               '2010-03': {'IOVs': None},
               '2010-04': {'IOVs': None}}
     assert tree('repo1/Cond1') == before
@@ -110,7 +126,7 @@ def test_clean():
 
     I.clean_iovs('repo1')
 
-    expected = I.partition_iovs(Cond1_IOVs)
+    expected = I.partition_by_month(Cond1_IOVs)
     data1 = I.parse_iovs('repo1/Cond1')
     data2 = I.parse_iovs('repo1/Cond2')
 
@@ -118,56 +134,57 @@ def test_clean():
     assert data2 == expected
 
 def test_add_iov():
-    orig = [(0, '0x0'),
-            (10, '0xa'),
-            (20, '0x14'),
-            (30, '0x1e'),
-            (40, '0x28'),
-            (50, '0x32'),
-            (60, '0x3c'),
-            (70, '0x46'),
-            (80, '0x50'),
-            (90, '0x5a')]
+    orig = make_entries([(0, '0x0'),
+                         (10, '0xa'),
+                         (20, '0x14'),
+                         (30, '0x1e'),
+                         (40, '0x28'),
+                         (50, '0x32'),
+                         (60, '0x3c'),
+                         (70, '0x46'),
+                         (80, '0x50'),
+                         (90, '0x5a')])
 
     # starting from 0
     new = list(I.add_iov(orig, 'added', 0, 55))
-    expected = [(0, 'added'), (55, '0x32'),
-                (60, '0x3c'), (70, '0x46'), (80, '0x50'), (90, '0x5a')]
+    expected = make_entries([(0, 'added'), (55, '0x32'),
+                             (60, '0x3c'), (70, '0x46'),
+                             (80, '0x50'), (90, '0x5a')])
     # pprint(new)
     assert new == expected
 
     # in the middle
     new = list(I.add_iov(orig, 'added', 15, 75))
-    expected = [(0, '0x0'), (10, '0xa'),
-                (15, 'added'), (75, '0x46'),
-                (80, '0x50'), (90, '0x5a')]
+    expected = make_entries([(0, '0x0'), (10, '0xa'),
+                             (15, 'added'), (75, '0x46'),
+                             (80, '0x50'), (90, '0x5a')])
     # pprint(new)
     assert new == expected
 
     # at the end
     new = list(I.add_iov(orig, 'added', 15, I.IOV_MAX))
-    expected = [(0, '0x0'), (10, '0xa'),
-                (15, 'added')]
+    expected = make_entries([(0, '0x0'), (10, '0xa'),
+                             (15, 'added')])
     # pprint(new)
     assert new == expected
 
     # small
     new = list(I.add_iov(orig, 'added', 12, 18))
-    expected = [(0, '0x0'), (10, '0xa'),
-                (12, 'added'), (18, '0xa'),
-                (20, '0x14'), (30, '0x1e'),
-                (40, '0x28'), (50, '0x32'),
-                (60, '0x3c'), (70, '0x46'),
-                (80, '0x50'), (90, '0x5a')]
+    expected = make_entries([(0, '0x0'), (10, '0xa'),
+                             (12, 'added'), (18, '0xa'),
+                             (20, '0x14'), (30, '0x1e'),
+                             (40, '0x28'), (50, '0x32'),
+                             (60, '0x3c'), (70, '0x46'),
+                             (80, '0x50'), (90, '0x5a')])
     # pprint(new)
     assert new == expected
 
     # with matching boundaries
     new = list(I.add_iov(orig, 'added', 20, 80))
-    expected = [(0, '0x0'),
-                (10, '0xa'),
-                (20, 'added'),
-                (80, '0x50'),
-                (90, '0x5a')]
+    expected = make_entries([(0, '0x0'),
+                             (10, '0xa'),
+                             (20, 'added'),
+                             (80, '0x50'),
+                             (90, '0x5a')])
     # pprint(new)
     assert new == expected

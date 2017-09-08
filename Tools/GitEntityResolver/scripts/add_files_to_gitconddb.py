@@ -6,8 +6,9 @@ import os
 import shutil
 import logging
 from GitCondDB.IOVs import (IOV_MIN, IOV_MAX,
-                            parse_iovs, flatten_iovs, remove_dummy_entries,
-                            add_iov, remove_iovs, write_iovs, partition_iovs)
+                            parse_iovs, simplify,
+                            add_iov, remove_iovs, write_iovs,
+                            partition_by_month)
 from GitCondDB.Payload import fix_system_refs, fix_lines_ends, payload_filename
 
 
@@ -68,11 +69,10 @@ def _add_file_with_iov(data, dest, iov):
         orig_iovs = parse_iovs(dest)
         key = payload_filename(data)
 
-        iovs = list(add_iov(remove_dummy_entries(flatten_iovs(orig_iovs)),
-                            key, *iov))
-        referenced_payloads = set([p for _, p in iovs])
+        iovs = list(add_iov(simplify(orig_iovs), key, *iov))
+        referenced_payloads = set([e.key for e in iovs])
 
-        iovs = partition_iovs(iovs)
+        iovs = partition_by_month(iovs)
 
         if iovs == orig_iovs:
             logging.warning('no change needed for %s', dest)
