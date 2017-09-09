@@ -3,6 +3,10 @@
 ! Package Manager : Patrick Robbe & M-H. Schune
 !----------------------------------------------------------------------------
 
+! 2017-09-08 - Patrick Robbe
+ - L0CaloAlg: give name of CALO decoding tool via job options (by default, use
+   the standard tool as in the past)
+
 !========================= L0Calo v11r16 2016-03-16 =========================
 ! 2016-03-08 - Gerhard Raven
  - C++11 modernization
