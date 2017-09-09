@@ -71,6 +71,8 @@ L0CaloAlg::L0CaloAlg( const std::string & name , ISvcLocator * pSvcLocator)
   declareProperty( "EcalThreshold"   , m_ecalThreshold      = 0        ) ;
   declareProperty( "MaskHotCells"    , m_maskHotCells       = false    ) ;
   declareProperty( "IgnoreDatabase"  , m_ignoreDatabase     = false    ) ;
+  declareProperty( "L0CaloADCTool"   ,
+                   m_l0caloadctool = "CaloTriggerAdcsFromRaw" ) ;
   m_spdMult = std::vector< int >( 16 , 0 ) ;
 }
 
@@ -302,10 +304,10 @@ StatusCode L0CaloAlg::initialize() {
 
   // Initialize needed tools
   m_adcsEcal = 
-    tool<ICaloTriggerAdcsFromRaw>( "CaloTriggerAdcsFromRaw", 
+    tool<ICaloTriggerAdcsFromRaw>( m_l0caloadctool ,
                                    "EcalTriggerAdcTool", this );
   m_adcsHcal = 
-    tool<ICaloTriggerAdcsFromRaw>( "CaloTriggerAdcsFromRaw", 
+    tool<ICaloTriggerAdcsFromRaw>( m_l0caloadctool ,
                                    "HcalTriggerAdcTool", this );
   m_bitsFromRaw = 
     tool<ICaloTriggerBitsFromRaw>( "CaloTriggerBitsFromRaw", 
