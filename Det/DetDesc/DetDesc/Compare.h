@@ -5,15 +5,15 @@
 // ============================================================================
 // GaudiKernel
 // ============================================================================
-#include "GaudiKernel/Lomont.h"
+#include "LHCbMath/Lomont.h"
 // ============================================================================
 namespace DetDesc
 {
   // ==========================================================================
   /** @var s_tolerance_ULPs
    *  the tolerance in ULPs-units of tick/intersection comparison
-   *  @see Gaudi::Math::Lomont
-   *  @see Gaudi::Math::lomont_comapre_double
+   *  @see LHCb::Math::Lomont
+   *  @see LHCb::Math::lomont_comapre_double
    *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
    *  @date   2007-12-13
    */
@@ -30,7 +30,7 @@ namespace DetDesc
    */
   inline int compare( const double x1, const double x2, const unsigned int ULPs )
   {
-    return Gaudi::Math::lomont_compare_double ( x1 , x2 , ULPs ) ? 0 :
+    return LHCb::Math::lomont_compare_double ( x1 , x2 , ULPs ) ? 0 :
            x1 < x2 ? -1 : 1 ;
   }
   // ==========================================================================
