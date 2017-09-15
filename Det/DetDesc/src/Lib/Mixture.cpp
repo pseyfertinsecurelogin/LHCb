@@ -5,7 +5,7 @@
 #include <cmath>
 #include <numeric>
 // Gaudi Math (for floating point comparison)
-#include "GaudiKernel/Lomont.h"
+#include "LHCbMath/Lomont.h"
 //
 Mixture::Mixture( const std::string&  name    ,
                   const double        a       ,
@@ -254,10 +254,10 @@ StatusCode Mixture::computeByFraction()
   // only update the radiation and interaction length if the attribute is
   // is not provided in the input file
 
-  if ( Gaudi::Math::lomont_compare_double ( radiationLength(), 0.0, 1000 ) ) {
+  if ( LHCb::Math::lomont_compare_double ( radiationLength(), 0.0, 1000 ) ) {
     if( radleninv > 0 ) { setRadiationLength ( 1.0 / radleninv / density() ); }
   }
-  if( Gaudi::Math::lomont_compare_double ( absorptionLength(), 0.0, 1000 ) ) {
+  if( LHCb::Math::lomont_compare_double ( absorptionLength(), 0.0, 1000 ) ) {
     if( lambdainv > 0 ) { setAbsorptionLength( 1.0 / lambdainv / density() ); }
   }
   //
