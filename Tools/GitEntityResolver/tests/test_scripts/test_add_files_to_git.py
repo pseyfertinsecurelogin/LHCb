@@ -163,10 +163,12 @@ def test_add_iov_to_iov():
                                     'IOVs': '0 dcd8448175\n'}}}
     dumptree(dst, 'dest', True)
 
-    expected = {'Conditions': {'Cond1': {'2017-03': {'IOVs': '0 ../dcd8448175\n1490880800000000000 ../4d9f5cf4b2\n1490880850000000000 ../dcd8448175\n'},
+    expected = {'Conditions': {'Cond1': {'1970-01': {'IOVs': '0 ../dcd8448175\n'},
+                                         '2017-03': {'IOVs': '1490880800000000000 ../4d9f5cf4b2\n1490880850000000000 ../dcd8448175\n'},
                                          'dcd8448175': 'cond1\n',
+                                         '1970-01': {'IOVs': '0 ../dcd8448175\n'},
                                          '4d9f5cf4b2': 'new value\n',
-                                         'IOVs': '0 dcd8448175\n1488326400000000000 2017-03\n'}}}
+                                         'IOVs': '0 1970-01\n1490880800000000000 2017-03\n'}}}
     S.git_conddb_extend('source', 'dest',
                         since=1490880800000000000, until=1490880850000000000)
     pprint(tree('dest'))
@@ -176,16 +178,18 @@ def test_add_iov_hide_payload():
     src = {'Conditions': {'Cond1': 'new value 2'}}
     dumptree(src, 'source', True)
 
-    dst = {'Conditions': {'Cond1': {'2017-03': {'IOVs': '0 ../dcd8448175\n1490880800000000000 ../4d9f5cf4b2\n1490880850000000000 ../dcd8448175\n'},
-                                         'dcd8448175': 'cond1\n',
-                                         '4d9f5cf4b2': 'new value\n',
-                                         'IOVs': '0 dcd8448175\n1488326400000000000 2017-03\n'}}}
+    dst = {'Conditions': {'Cond1': {'1970-01': {'IOVs': '0 ../dcd8448175\n'},
+                                    '2017-03': {'IOVs': '1490880800000000000 ../4d9f5cf4b2\n1490880850000000000 ../dcd8448175\n'},
+                                    'dcd8448175': 'cond1\n',
+                                    '4d9f5cf4b2': 'new value\n',
+                                    'IOVs': '0 1970-01\n1490880800000000000 2017-03\n'}}}
     dumptree(dst, 'dest', True)
 
-    expected = {'Conditions': {'Cond1': {'2017-03': {'IOVs': '0 ../16a605d2d0\n1490880900000000000 ../dcd8448175\n'},
+    expected = {'Conditions': {'Cond1': {'1970-01': {'IOVs': '0 ../16a605d2d0\n'},
+                                         '2017-03': {'IOVs': '1490880900000000000 ../dcd8448175\n'},
                                          'dcd8448175': 'cond1\n',
                                          '16a605d2d0': 'new value 2\n',
-                                         'IOVs': '0 16a605d2d0\n1488326400000000000 2017-03\n'}}}
+                                         'IOVs': '0 1970-01\n1490880900000000000 2017-03\n'}}}
     S.git_conddb_extend('source', 'dest', until=1490880900000000000)
     pprint(tree('dest'))
     assert tree('dest') == expected
@@ -194,10 +198,11 @@ def test_add_remove_iov():
     src = {'Conditions': {'Cond1': 'unlimited\n'}}
     dumptree(src, 'source', True)
 
-    dst = {'Conditions': {'Cond1': {'2017-03': {'IOVs': '0 ../dcd8448175\n1490880800000000000 ../4d9f5cf4b2\n1490880850000000000 ../dcd8448175\n'},
-                                         'dcd8448175': 'cond1\n',
-                                         '4d9f5cf4b2': 'new value\n',
-                                         'IOVs': '0 dcd8448175\n1488326400000000000 2017-03\n'}}}
+    dst = {'Conditions': {'Cond1': {'1970-01': {'IOVs': '0 ../dcd8448175\n'},
+                                    '2017-03': {'IOVs': '1490880800000000000 ../4d9f5cf4b2\n1490880850000000000 ../dcd8448175\n'},
+                                    'dcd8448175': 'cond1\n',
+                                    '4d9f5cf4b2': 'new value\n',
+                                    'IOVs': '0 1970-01\n1490880800000000000 2017-03\n'}}}
     dumptree(dst, 'dest', True)
 
     S.git_conddb_extend('source', 'dest')
