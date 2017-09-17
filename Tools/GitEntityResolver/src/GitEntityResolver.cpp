@@ -202,7 +202,7 @@ StatusCode GitEntityResolver::initialize()
     {
       while ( git_object_type( obj.get() ) == GIT_OBJ_TAG ) {
         obj = git_call<git_object_ptr>( name(), "cannot resolve tag", m_commit.value(), git_tag_target,
-                                        (git_tag *)obj.get() );
+                                        (git_tag*)obj.get() );
       }
 
       char oid[GIT_OID_HEXSZ + 1] = {0};
@@ -211,20 +211,18 @@ StatusCode GitEntityResolver::initialize()
       if ( LIKELY( msgLevel( MSG::INFO ) ) ) {
         auto& log = info();
         log << "using commit '" << m_commit.value() << "'";
-        if ( m_commit.value().compare( oid ) != 0 )
-          log << " corresponding to " << oid;
+        if ( m_commit.value().compare( oid ) != 0 ) log << " corresponding to " << oid;
         log << endmsg;
       }
       // truncate oid to 8 characters
-      oid[8] = 0;
+      oid[8]       = 0;
       m_defaultTag = m_commit.value() + '[' + oid + ']';
     }
     if ( UNLIKELY( m_limitToLastCommitTime ) ) {
       // get the time of the requested commit/tag
-      m_lastCommitTime = Gaudi::Time(git_commit_time((git_commit*)obj.get()), 0);
-      DEBUG_MSG << "limit validity to commit time: "
-                << m_lastCommitTime.format(false, "%Y-%m-%d %H:%M:%S")
-                << "." << m_lastCommitTime.nanoformat() << " UTC" << endmsg;
+      m_lastCommitTime = Gaudi::Time( git_commit_time( (git_commit*)obj.get() ), 0 );
+      DEBUG_MSG << "limit validity to commit time: " << m_lastCommitTime.format( false, "%Y-%m-%d %H:%M:%S" ) << "."
+                << m_lastCommitTime.nanoformat() << " UTC" << endmsg;
     }
   } else {
     m_defaultTag = "<files>";
@@ -234,10 +232,10 @@ StatusCode GitEntityResolver::initialize()
   if ( m_incSvc ) {
     DEBUG_MSG << "registering to IncidentSvc" << endmsg;
     // we use a very low priority for BeginEvent to be triggered after UpdateManagerSvc
-    m_incSvc->addListener(this, IncidentType::BeginEvent, -100);
+    m_incSvc->addListener( this, IncidentType::BeginEvent, -100 );
     // we use a very high priority for special incident APP_INITIALIZED to be
     // called before fork/checkpoint in Online environment
-    m_incSvc->addListener(this, "APP_INITIALIZED", 100);
+    m_incSvc->addListener( this, "APP_INITIALIZED", 100 );
   } else {
     warning() << "cannot get IncidentSvc, automatic disconnect not possible" << endmsg;
   }
@@ -266,7 +264,7 @@ StatusCode GitEntityResolver::finalize()
 
   if ( m_incSvc ) {
     DEBUG_MSG << "deregistering from IncidentSvc" << endmsg;
-    m_incSvc->removeListener(this);
+    m_incSvc->removeListener( this );
   }
 
   m_repository.reset();
@@ -278,7 +276,8 @@ StatusCode GitEntityResolver::finalize()
   return base_class::finalize();
 }
 
-void GitEntityResolver::handle(const Incident&) {
+void GitEntityResolver::handle( const Incident& )
+{
   // disconnect from the repository
   m_repository.reset();
 }
@@ -305,7 +304,7 @@ GitEntityResolver::IOVInfo GitEntityResolver::i_getIOVInfo( const std::string& u
   const std::string iovs_url = url + "/IOVs";
   if ( i_exists( iovs_url ) ) {
     auto data              = i_open( iovs_url ).first;
-    const auto when = m_detDataSvc->eventTime();
+    const auto when        = m_detDataSvc->eventTime();
     std::int_fast64_t time = when.ns();
     DEBUG_MSG << "getting payload key for " << url << " at " << time << endmsg;
 
@@ -317,10 +316,8 @@ GitEntityResolver::IOVInfo GitEntityResolver::i_getIOVInfo( const std::string& u
       std::stringstream msg;
       // this message is not appropriate, but matches the message used in CondDBAccessSvc
       msg << "Database not up-to-date. Latest known update is at "
-          << m_lastCommitTime.format(false, "%Y-%m-%d %H:%M:%S") << "." << m_lastCommitTime.nanoformat()
-          << " UTC, event time is "
-          << when.format(false, "%Y-%m-%d %H:%M:%S") << "." << when.nanoformat()
-          << " UTC";
+          << m_lastCommitTime.format( false, "%Y-%m-%d %H:%M:%S" ) << "." << m_lastCommitTime.nanoformat()
+          << " UTC, event time is " << when.format( false, "%Y-%m-%d %H:%M:%S" ) << "." << when.nanoformat() << " UTC";
       throw GaudiException( msg.str(), name(), StatusCode::FAILURE );
     }
 
@@ -418,7 +415,7 @@ xercesc::InputSource* GitEntityResolver::resolveEntity( const XMLCh* const, cons
   if ( UNLIKELY( !data.first ) ) return nullptr;
 
   Blob blob{std::move( data.first )};
-  auto buff_size = blob.size(); // must be done here because "adopt" set the size to 0
+  const auto buff_size = blob.size(); // must be done here because "adopt" set the size to 0
 
   std::unique_ptr<ValidInputSource> src{new ValidInputSource{blob.adopt(), buff_size, systemId, true}};
   src->setValidity( data.second.since, data.second.until );

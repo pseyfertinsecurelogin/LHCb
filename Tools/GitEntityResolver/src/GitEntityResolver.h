@@ -5,8 +5,8 @@
 #include "GaudiKernel/AlgTool.h"
 #include "GaudiKernel/IDetDataSvc.h"
 #include "GaudiKernel/IFileAccess.h"
-#include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/IIncidentListener.h"
+#include "GaudiKernel/IIncidentSvc.h"
 #include "GaudiKernel/Time.h"
 #include "GitEntityResolver/helpers.h"
 #include "Kernel/ICondDBInfo.h"
@@ -21,7 +21,10 @@
 
 // this should be defined in GaudiKernel/Time.h, but the version there is not
 // found by ADL
-namespace Gaudi { using ::operator<; }
+namespace Gaudi
+{
+  using ::operator<;
+}
 
 /** Allow use of a Git repository as a source of XML files for XercesC.
  *
@@ -75,14 +78,13 @@ public:
   void defaultTags( std::vector<LHCb::CondDBNameTagPair>& tags ) const override;
 
   /// Inform that a new incident has occurred
-  void handle(const Incident&) override;
+  void handle( const Incident& ) override;
 
 private:
   Gaudi::Property<std::string> m_pathToRepository{this, "PathToRepository", "",
                                                   "path to the git repository to get data from"};
-  Gaudi::Property<std::string> m_commit{this, "Commit", "HEAD",
-                                        "commit id (or tag, or branch) of the version to use, "
-                                        "empty means use local files"};
+  Gaudi::Property<std::string> m_commit{this, "Commit", "HEAD", "commit id (or tag, or branch) of the version to use, "
+                                                                "empty means use local files"};
   Gaudi::Property<std::string> m_detDataSvcName{this, "DetDataSvc", "DetectorDataSvc",
                                                 "name of the IDetDataSvc, used to get the current event time"};
   Gaudi::Property<std::string> m_ignoreRegex{this, "Ignore", "",
@@ -96,9 +98,9 @@ private:
   /// Helper class to propagate info about needed IOV.
   struct IOVInfo {
     IOVInfo() = default;
-    IOVInfo( std::string k, const Gaudi::Time& s, const Gaudi::Time& u ):
-        key( std::move( k ) ),
-        since( s ), until( u ) {}
+    IOVInfo( std::string k, const Gaudi::Time& s, const Gaudi::Time& u ) : key( std::move( k ) ), since( s ), until( u )
+    {
+    }
     std::string key   = "";
     Gaudi::Time since = Gaudi::Time::epoch();
     Gaudi::Time until = Gaudi::Time::max();
@@ -129,7 +131,7 @@ private:
     }
   }
 
-  /// entry opint to the implementation of the open method.
+  /// entry point to the implementation of the open method.
   std::pair<open_result_t, IOVInfo> i_open( const std::string& url );
 
   /// helper to convert to std::istream.

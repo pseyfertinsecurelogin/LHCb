@@ -6,17 +6,36 @@ import re
 import logging
 
 from datetime import datetime
-
+from collections import namedtuple
 
 IOV_MIN = 0
 IOV_MAX = 0x7fffffffffffffff
 
-# Format YYYY-MM-DD[_HH:MM[:SS.SSS]][UTC]
+# Format YYYY-MM-DD[_HH:MM[:SS.SSS]][UTC] or YYYY-MM-DD[Thh:mm[:ss.sss]][Z]
 TIME_STRING_RE = re.compile(
     r'^(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2})'
     r'(?:[_T ](?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})(?::(?P<second>[0-9]{2})'
     r'(?:\.(?P<decimal>[0-9]*))?)?)?'
-    r'(?P<utc>UTC)?$')
+    r'(?P<utc>UTC|Z)?$')
+
+
+Entry = namedtuple('Entry', ['since', 'key'])
+NestedEntry = namedtuple('NestedEntry', ['since', 'key', 'entries'])
+
+
+class IOV(object):
+    __slots__ = ('since', 'until')
+    def __init__(self, since, until):
+        self.since, self.until = since, until
+    def ovelap(self, other):
+        '''
+        Check if two IOVs ovelap.
+        '''
+        return self.intersection(other).isValid()
+    def intersection(self, other):
+        return IOV(max(self.since, other.since), min(self.until, other.until))
+    def isValid(self):
+        return self.since < self.until
 
 
 def iov_files(path):
@@ -36,7 +55,7 @@ def parse_iov_line(path, l):
     Return the start of validity and the path to the payload entry.
     '''
     since, payload = l.strip().split()
-    return int(since), os.path.normpath(os.path.join(path, payload))
+    return Entry(int(since), os.path.normpath(os.path.join(path, payload)))
 
 
 def parse_iovs(path):
@@ -49,9 +68,10 @@ def parse_iovs(path):
         since, key = l.split()
         since = int(since)
         subpath = os.path.join(path, key)
-        return (since,
-                (key, parse_iovs(subpath))
-                if os.path.exists(os.path.join(subpath, 'IOVs')) else key)
+        if os.path.exists(os.path.join(subpath, 'IOVs')):
+            return NestedEntry(since, key, parse_iovs(subpath))
+        else:
+            return Entry(since, key)
 
     with open(os.path.join(path, 'IOVs')) as iovs:
         return map(parse_line, iovs)
@@ -72,58 +92,69 @@ def remove_iovs(path):
                 os.rmdir(root)
 
 
-def flatten_iovs(iovs, nested=''):
+def flatten(iovs, nested=''):
     from os.path import join, normpath
-    for since, key in iovs:
-        if isinstance(key, basestring):
-            yield (since, normpath(join(nested, key)))
-        else:
-            for item in flatten_iovs(key[1], join(nested, key[0])):
+    for entry in iovs:
+        try:
+            for item in flatten(entry.entries,join(nested, entry.key)):
                 yield item
+        except AttributeError:
+            # It's a plain Entry instance, no recursion
+            yield Entry(entry.since, normpath(join(nested, entry.key)))
 
 
-def partition_iovs(data):
+def simplify(iovs):
+    iovs = flatten(iovs)
+    last_entry = iovs.next()
+    for entry in iovs:
+        if entry.key == last_entry.key or entry.since < last_entry.since:
+            # skip this element if same as previous or wrong order
+            continue
+        if entry.since != last_entry.since:
+            # previous is valid only if not empty
+            yield last_entry
+        last_entry = entry
+    yield last_entry
+
+
+def _deepen_key(entry):
+    from os.path import join
+    key = join('..', entry.key)
+    if isinstance(entry, NestedEntry):
+        return NestedEntry(entry.since, key, entry.entries)
+    else:
+        return Entry(entry.since, key)
+
+
+def partition(iovs, since2key):
+    from itertools import groupby
+    iovs = simplify(iovs)
+    groups = groupby(iovs, lambda e: since2key(e.since))
+    return [NestedEntry(entries[0].since, key, entries)
+            for key, entries in [(key, map(_deepen_key, entries))
+                                 for key, entries in groups]]
+
+
+def partition_by_count(iovs, count, keys=None):
+    from itertools import islice, count
+    if keys is None:
+        keys = (str(i) for i in count)
+    iovs = simplify(iovs)
+    return [NestedEntry(entries[0].since, key, entries)
+            for key, entries in [(keys.next(), map(_deepen_key, entries))
+                                 for entries in islice(iovs, count)]]
+
+def partition_by_month(iovs):
     '''
     partition IOVs per month
     '''
     from itertools import groupby
     from os.path import join
 
-    def to_ts(d):
-        return int((d - datetime.utcfromtimestamp(0).date()).total_seconds() * 1e9)
-
-    def to_key(d):
-        return d.strftime('%Y-%m')
-
-    def from_key(key):
-        return datetime.strptime(key, '%Y-%m').date()
-
     def month_key(since):
-        if since == 0:
-            return None
-        return to_key(datetime.utcfromtimestamp(since * 1e-9).date())
+        return datetime.utcfromtimestamp(since * 1e-9).date().strftime('%Y-%m')
 
-    top_iovs = []
-    nested_iovs = {}
-    for month, entries in groupby(data, lambda d: month_key(d[0])):
-        if month is None:
-            top_iovs.extend(entries)
-        else:
-            nested_iovs[month] = []
-            if top_iovs:
-                if top_iovs[-1][0] == 0:
-                    nested_iovs[month].append((0, top_iovs[-1][1]))
-                else:
-                    # new month should start from the last entry of the
-                    # previous month
-                    nested_iovs[month].append(nested_iovs[top_iovs[-1][1]][-1])
-            nested_iovs[month].extend(entries)
-            top_iovs.append((to_ts(from_key(month)), month))
-
-    return [(since,
-             (key, map(lambda e: (e[0], join('..', e[1])), nested_iovs[key]))
-             if key in nested_iovs else key)
-            for since, key in top_iovs]
+    return partition(iovs, month_key)
 
 
 def write_iovs(path, data):
@@ -134,32 +165,21 @@ def write_iovs(path, data):
         os.mkdir(path)
     logging.debug('writing %s/IOVs', path)
     with open(os.path.join(path, 'IOVs'), 'w') as iovs:
-        for since, key in data:
-            if not isinstance(key, basestring):
-                key, subdata = key
-                write_iovs(os.path.join(path, key), subdata)
-            iovs.write('%d %s\n' % (since, key))
+        for entry in data:
+            iovs.write('{0.since} {0.key}\n'.format(entry))
+            if isinstance(entry, NestedEntry):
+                write_iovs(os.path.join(path, entry.key), entry.entries)
 
 
-def remove_dummy_entries(data):
-    # remove duplicated since values and fix order
-    new_data = []
-    for entry in sorted(dict(data).items()):
-        if new_data and entry[1] == new_data[-1][1]:
-            continue  # skip fake IOV boundaries
-        new_data.append(entry)
-    return new_data
-
-
-def clean_iovs(repo, partition=True):
+def clean_iovs(repo, partitioning=True):
     logging.debug('reducing IOVs...')
     for iovs in iov_files(repo):
         path = os.path.dirname(iovs)
         logging.debug('processing %s', path)
-        data = remove_dummy_entries(flatten_iovs(parse_iovs(path)))
+        data = list(simplify(parse_iovs(path)))
         remove_iovs(path)  # at this point we should not need old files
-        if partition:
-            data = partition_iovs(data)
+        if partitioning:
+            data = partition_by_month(data)
         write_iovs(path, data)
 
 
@@ -169,17 +189,19 @@ def add_iov(iovs, payload_key, since, until):
     with the specified one in the given range
     '''
     from itertools import takewhile, dropwhile, chain
-    if isinstance(iovs, list):
+    if not isinstance(iovs, list):
         iovs = list(iovs)
     def last(iterable):
         for x in iterable:
             pass
         return x
-    return chain(takewhile(lambda x: x[0] < since, iovs),
-                 [(since, payload_key)],
-                 [(until, last(takewhile(lambda x: x[0] <= until, iovs))[1])]
-                 if until != IOV_MAX else [],
-                 dropwhile(lambda x: x[0] <= until, iovs))
+    return chain(takewhile(lambda x: x.since < since, iovs),
+                 [Entry(since, payload_key)],
+                 [] if until == IOV_MAX else [
+                     Entry(until,
+                           last(takewhile(lambda x: x.since <= until, iovs))
+                           .key)],
+                 dropwhile(lambda x: x.since <= until, iovs))
 
 
 def to_iov_key(s, default):
@@ -188,8 +210,6 @@ def to_iov_key(s, default):
 
     The string can be ISO-like (YYYY-MM-DD[_HH:MM[:SS.SSS]][UTC]) or an integer.
     '''
-    retval = default
-
     # it may be an int in nanoseconds
     try:
         return int(s)
@@ -200,11 +220,11 @@ def to_iov_key(s, default):
     m = TIME_STRING_RE.match(s)
     if m:
         # FIXME: check for validity ranges
-        tm = tuple([int(n) if n else 0 for n in m.groups()[0:6] ] + [ 0, 0, -1 ])
+        tm = tuple([int(n) if n else 0 for n in m.groups()[0:6]] + [0, 0, -1])
         import time
         if m.group('utc'):
             # the user specified UTC
-            t = timegm(tm)
+            t = time.timegm(tm)
         else:
             # seconds since epoch UTC, from local time tuple
             t = time.mktime(tm)
