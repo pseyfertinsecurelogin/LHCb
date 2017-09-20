@@ -94,7 +94,7 @@ Decoder("Rich::Future::RawBankDecoder/RichFutureDecode",
         active=True, banks=['Rich'],
         outputs={"DecodedDataLocation":None},
         inputs={"RawEventLocation":None},
-        required=["createODIN"],
+        #required=["createODIN"],
         conf=DecoderDB)
 
 #===========IT===========
@@ -398,7 +398,7 @@ Decoder("RawBankToSTLiteClusterAlg/createUTLiteClusters",
         inputs={"RawEventLocations" : None},
         #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
         properties={"DetType":"UT"},
-        required=["createODIN"],
+        #required=["createODIN"],
         conf=DecoderDB)
 #"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
 
@@ -408,7 +408,7 @@ Decoder("RawBankToSTLiteClusterAlg/createUTLiteClustersExpert",
         inputs={"RawEventLocations" : None},
         #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
         properties={"DetType":"UT"},
-        required=["createODIN"],
+        #required=["createODIN"],
         conf=DecoderDB)
 #"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
 
@@ -418,7 +418,7 @@ Decoder("RawBankToSTClusterAlg/createUTClusters",
         inputs={"RawEventLocations" : None},
         #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
         properties={"DetType":"UT"},
-        required=["createODIN"],
+        #required=["createODIN"],
         conf=DecoderDB)
 #"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
 
@@ -428,7 +428,7 @@ Decoder("RawBankToSTClusterAlg/createUTClustersExpert",
         inputs={"RawEventLocations" : None},
         #publicTools=["STOfflinePosition/ToolSvc.UTClusterPosition"],
         properties={"DetType":"UT"},
-        required=["createODIN"],
+        #required=["createODIN"],
         conf=DecoderDB)
 #"STOfflinePosition/ToolSvc.UTClusterPosition" is not part of decoding.
 
