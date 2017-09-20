@@ -94,9 +94,9 @@ bool LHCb::Math::islong ( const double x )
   return 
     x <= s_MIN_L  ? false :
     x >= s_MAX_L  ? false :
-    Gaudi::Math::lomont_compare_double ( x                       , 
-                                         LHCb::Math::round ( x ) , 
-                                         mULPS_double            ) ;
+    LHCb::Math::lomont_compare_double ( x                       , 
+                                        LHCb::Math::round ( x ) , 
+                                        mULPS_double            ) ;
 }
 // ============================================================================
 /*  is the value actually long ?
@@ -109,9 +109,9 @@ bool LHCb::Math::islong ( const float x )
   return 
     x <= s_MIN_L  ? false :
     x >= s_MAX_L  ? false :
-    Gaudi::Math::lomont_compare_double ( x                       , 
-                                         LHCb::Math::round ( x ) , 
-                                         mULPS_float             ) ;
+    LHCb::Math::lomont_compare_double ( x                       , 
+                                        LHCb::Math::round ( x ) , 
+                                        mULPS_float             ) ;
 }
 // ============================================================================
 /*  is the value actually int ?
@@ -124,9 +124,9 @@ bool LHCb::Math::isint ( const double x )
   return 
     x <= s_MIN_I  ? false :
     x >= s_MAX_I  ? false :
-    Gaudi::Math::lomont_compare_double ( x                       , 
-                                         LHCb::Math::round ( x ) , 
-                                         mULPS_double            ) ;
+    LHCb::Math::lomont_compare_double ( x                       , 
+                                        LHCb::Math::round ( x ) , 
+                                        mULPS_double            ) ;
 }
 // ============================================================================
 /*  is the value actually int ?
@@ -139,9 +139,9 @@ bool LHCb::Math::isint ( const float x )
   return 
     x <= s_MIN_I  ? false :
     x >= s_MAX_I  ? false :
-    Gaudi::Math::lomont_compare_double ( x                       , 
-                                         LHCb::Math::round ( x ) , 
-                                         mULPS_float             ) ;
+    LHCb::Math::lomont_compare_double ( x                       , 
+                                        LHCb::Math::round ( x ) , 
+                                        mULPS_float             ) ;
 }
 // ============================================================================
 /* check if the double value is actually equal to the integer value  
@@ -160,7 +160,7 @@ bool LHCb::Math::equal_to_int
   const unsigned int mULPS ) 
 {
   const double tmp = ref ;
-  return Gaudi::Math::lomont_compare_double ( val , tmp , mULPS ) ;
+  return LHCb::Math::lomont_compare_double ( val , tmp , mULPS ) ;
 }
 // ============================================================================
 /*  check if the double value is actually equal to the unsigned integer value  
@@ -179,7 +179,7 @@ bool LHCb::Math::equal_to_uint
   const unsigned int mULPS ) 
 {
   const double tmp = ref ;
-  return Gaudi::Math::lomont_compare_double ( val , tmp , mULPS ) ;
+  return LHCb::Math::lomont_compare_double ( val , tmp , mULPS ) ;
 }
 // ============================================================================
 /*  get mantissa and exponent 
@@ -208,6 +208,22 @@ LHCb::Math::frexp10 ( const double x )
   return 0 < x ? 
     std::pair<double,int>(  xa , q ) : 
     std::pair<double,int>( -xa , q ) ;
+}
+// ============================================================================
+/*  get mantissa and binary exponent 
+ *  similar to std::frexp
+ *  @param x  INPUT  value 
+ *  @return   pair of mantissa (0.5<=m<1) and exponent 
+ *  @author Vanya BELYAEV Ivan.Belyaev       
+ *  @date 2015-07-21
+ */
+// ============================================================================
+std::pair<double,int>
+LHCb::Math::frexp2 ( const double x ) 
+{
+  int    e = 0 ;
+  double m = std::frexp ( x , &e ) ;
+  return std::make_pair ( m , e ) ;
 }
 // ============================================================================
 /*  get mantissa and exponent 

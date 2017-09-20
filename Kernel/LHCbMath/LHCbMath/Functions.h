@@ -1784,7 +1784,7 @@ namespace Gaudi
     private:
       // ======================================================================
       /// assignement operator is disabled
-      BreitWigner& operator=( const BreitWigner& ) ; // no assignement
+      BreitWigner& operator=( const BreitWigner& ) = delete; // no assignement
       // ======================================================================
     private:
       // ======================================================================
@@ -2487,7 +2487,7 @@ namespace Gaudi
     private:
       // ======================================================================
       /// assignement operator is disabled
-      Swanson& operator=( const Swanson& ) ; // no assignement
+      Swanson& operator=( const Swanson& ) = delete; // no assignement
       // ======================================================================
     private:
       // ======================================================================
