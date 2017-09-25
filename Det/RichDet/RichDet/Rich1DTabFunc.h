@@ -224,10 +224,13 @@ namespace Rich
       /// Compute the mean value of x in the given range
       inline TYPE meanX ( const TYPE from, 
                           const TYPE to ) const
-    {
-      const auto bot = integral(from,to);
-      return ( fabs(bot) > 0 ? integral(from,to,true) / bot : 0 );
-    }
+      {
+        const auto bot = integral(from,to);
+        return ( fabs(bot) > 0 ? integral(from,to,true) / bot : 0 );
+      }
+
+      /// Access the number of data points
+      inline std::size_t nDataPoints() const noexcept { return m_data.size(); }
 
     private:
 
@@ -504,7 +507,10 @@ namespace Rich
     {
       return checkLowerBound(x) && checkUpperBound(x);
     }
-    
+
+    /// Access the number of data points
+    inline std::size_t nDataPoints() const noexcept { return m_fastInterp.nDataPoints(); }
+
   public:
 
     /** Initialisation from arrays containing x and y values
