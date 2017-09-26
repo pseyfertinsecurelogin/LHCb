@@ -510,7 +510,7 @@ namespace Rich
 
     /// Access the number of data points
     inline std::size_t nDataPoints() const noexcept { return m_fastInterp.nDataPoints(); }
-    
+
   public:
 
     /** Initialisation from arrays containing x and y values
