@@ -16,7 +16,7 @@
 </b>
 
 <H1><A NAME=v42r4>2017-05-31 LHCbSys v42r4</A></H1>
-This version uses Gaudi v28r2 and LCG_82 with ROOT 6.08.06.
+This version uses Gaudi v28r2 and LCG_88 with ROOT 6.08.06.
 <p>
 This version is released on 2017-patches branch. 
 
@@ -127,7 +127,7 @@ This version is released on 2017-patches branch.
 
 
 <H1><A NAME=v42r3>2017-04-24 LHCbSys v42r3</A></H1>
-This version uses Gaudi v28r2 and LCG_82 with ROOT 6.08.06.
+This version uses Gaudi v28r2 and LCG_88 with ROOT 6.08.06.
 <p>
 This version is released on master branch. 
 
@@ -230,7 +230,7 @@ This version is released on master branch.
 
 
 <H1><A NAME=v42r2>2017-03-28 LHCbSys v42r2</A></H1>
-This version uses Gaudi v28r2 and LCG_82 with ROOT 6.08.06.
+This version uses Gaudi v28r2 and LCG_88 with ROOT 6.08.06.
 <p>
 This version is released on master branch. 
 
