@@ -18,3 +18,5 @@ god_build_dictionary(xml/*.xml
                      INCLUDE_DIRS Boost
                      LINK_LIBRARIES Boost LHCbKernel LHCbMathLib)
 
+gaudi_install_headers(Event)
+
