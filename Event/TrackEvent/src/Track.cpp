@@ -54,6 +54,36 @@ void Track::setFitResult(LHCb::TrackFitResult* absfit)
 }
 
 //=============================================================================
+// Move assignement operator
+//=============================================================================
+LHCb::Track& Track::operator=(LHCb::Track&& track) {
+  setChi2PerDoF( track.chi2PerDoF() );
+  setNDoF( track.nDoF() );
+  setLikelihood( track.likelihood() );
+  setGhostProbability( track.ghostProbability() );
+  setFlags( track.flags() );
+  m_lhcbIDs = std::move(track.m_lhcbIDs);
+
+  // copy the states
+  clearStates();
+  m_states = std::move(track.m_states);
+
+  // copy the track fit info
+  if ( track.m_fitResult ) {
+    delete m_fitResult;
+    m_fitResult = track.m_fitResult;
+    track.m_fitResult = nullptr;
+  }
+
+  setExtraInfo( track.extraInfo() );
+
+  // copy the ancestors
+  m_ancestors = std::move(track.m_ancestors);
+
+  return *this;
+}
+
+//=============================================================================
 // Get a range of nodes in this track
 //=============================================================================
 Track::ConstNodeRange Track::nodes() const
@@ -241,15 +271,23 @@ void Track::addToStates( const State& state )
 //=============================================================================
 void Track::addToStates( const StateContainer& states )
 {
-  auto pivot = m_states.insert(m_states.end(), states.begin(), states.end()) ;
+  auto middle = m_states.insert(m_states.end(), states.begin(), states.end()) ;
   // do not assumme that the incoming states are properly sorted.
   // The 'if' is ugly, but more efficient than using 'orderByZ'.
   if (checkFlag(Track::Flags::Backward)) {
-    std::sort(pivot,m_states.end(),TrackFunctor::decreasingByZ());
-    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::decreasingByZ()) ;
+    // it's already sorted in most cases
+    if( ! std::is_sorted(states.begin(), states.end(), TrackFunctor::decreasingByZ())) {
+      std::sort(middle,m_states.end(),TrackFunctor::decreasingByZ());
+    }
+
+    std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::decreasingByZ()) ;
   } else {
-    std::sort(pivot,m_states.end(),TrackFunctor::increasingByZ());
-    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::increasingByZ());
+    // it's already sorted in most cases
+    if( ! std::is_sorted(states.begin(), states.end(), TrackFunctor::increasingByZ())) {
+      std::sort(middle,m_states.end(),TrackFunctor::increasingByZ());
+    }
+
+    std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::increasingByZ());
   }
 }
 
