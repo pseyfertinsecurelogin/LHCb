@@ -101,6 +101,7 @@ private:
 
   bool        m_maskHotCells              ;   ///< Mask the 8 central cells in the HCAL
   bool        m_ignoreDatabase            ;   ///< Ignore the database content to add ECAL or to use PS/SPD
+  std::string m_l0caloadctool             ;   ///< Name of the decoding tool for the L0 ADC
 
   // Local variables
   DeCalorimeter *    m_ecal = nullptr     ; ///< Pointer to Ecal detector element

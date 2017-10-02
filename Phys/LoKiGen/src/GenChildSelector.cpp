@@ -55,7 +55,8 @@ namespace
 // ============================================================================
 LoKi::GenChild::Selector::Selector
 ( const std::vector<unsigned int>& indices )
-  : m_indices   ( indices    )
+  : LoKi::AuxFunBase ( std::tie ( indices ) )
+  , m_indices   ( indices    )
   , m_finder    ( s_INVALID  )
   , m_setCut    ( false      )
   , m_cut       ( s_NONE     )
@@ -67,7 +68,8 @@ LoKi::GenChild::Selector::Selector
 // ============================================================================
 LoKi::GenChild::Selector::Selector
 ( const Decays::IGenDecay::iTree& child )
-  : m_finder    ( child  )
+  : LoKi::AuxFunBase ()
+  , m_finder    ( child  )
   , m_setCut    ( false  )
   , m_cut       ( s_NONE )
 {
@@ -93,7 +95,8 @@ LoKi::GenChild::Selector::Selector
 // ============================================================================
 LoKi::GenChild::Selector::Selector
 ( const Decays::iNode& node )
-  : m_finder    ( s_INVALID )
+  : LoKi::AuxFunBase ()
+  , m_finder    ( s_INVALID )
   , m_setCut    ( false     )
   , m_cut       ( s_NONE    )
 {
@@ -108,7 +111,8 @@ LoKi::GenChild::Selector::Selector
 // ============================================================================
 LoKi::GenChild::Selector::Selector
 ( const Decays::IGenDecay::Finder& child )
-  : m_finder    ( child  )
+  : LoKi::AuxFunBase ()
+  , m_finder    ( child  )
   , m_setCut    ( false  )
   , m_cut       ( s_NONE )
 {
@@ -134,7 +138,7 @@ LoKi::GenChild::Selector::Selector
 // ============================================================================
 LoKi::GenChild::Selector::Selector
 ( const LoKi::Types::GCuts& cut )
-  : LoKi::AuxFunBase ()
+  : LoKi::AuxFunBase ( std::tie ( cut ) )
   , m_indices   (           )
   , m_finder    ( s_INVALID )
   , m_setCut    ( true      )
@@ -144,7 +148,7 @@ LoKi::GenChild::Selector::Selector
 // constructor from decay desctriptor
 // ============================================================================
 LoKi::GenChild::Selector::Selector ( const std::string& child )
-  : LoKi::AuxFunBase ()
+  : LoKi::AuxFunBase ( std::tie ( child ) )
   , m_indices   (           )
   , m_finder    ( s_INVALID )
   , m_setCut    ( false     )
@@ -161,7 +165,7 @@ LoKi::GenChild::Selector::Selector ( const std::string& child )
 LoKi::GenChild::Selector::Selector
 ( const std::string& child   ,
   const std::string& factory )
-  : LoKi::AuxFunBase ()
+  : LoKi::AuxFunBase ( std::tie ( child , factory ) )
   , m_indices   (           )
   , m_finder    ( s_INVALID )
   , m_setCut    ( false     )
@@ -231,20 +235,6 @@ LoKi::GenChild::Selector::fillStream ( std::ostream& s ) const
   //
   if ( !m_indices.empty() )
   {
-    if      ( 1 == m_indices.size() )
-    { return s <<  " " << m_indices[0] << " " ; }
-    else if ( 2 == m_indices.size() )
-    { return s <<  " " << m_indices[0]
-               << ", " << m_indices[1] << " " ; }
-    else if ( 3 == m_indices.size() )
-    { return s <<  " " << m_indices[0]
-               << ", " << m_indices[1]
-               << ", " << m_indices[2] << " " ; }
-    else if ( 4 == m_indices.size() )
-    { return s <<  " " << m_indices[0]
-               << ", " << m_indices[1]
-               << ", " << m_indices[2]
-               << ", " << m_indices[3] << " " ; }
     return s << " " << Gaudi::Utils::toString ( m_indices ) << " " ;
   }
   //

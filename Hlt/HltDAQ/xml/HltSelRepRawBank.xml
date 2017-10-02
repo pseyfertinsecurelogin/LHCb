@@ -27,8 +27,9 @@ Next 8 words are the first relative location in the bank body beyond given sub-b
 Sub-banks immediately follow the header.'
       >
 
+      <import name="algorithm" std="TRUE" />
       <import name='HltDAQ/HltSelRepRBEnums' />
-    <import name='GaudiKernel/GaudiException' />
+      <import name='GaudiKernel/GaudiException' />
 
       <enum 
         name = 'Header'
@@ -379,6 +380,7 @@ Sub-banks immediately follow the header.'
         desc ='clear bank content without deleting'
         >
         <code>
+          std::fill_n(m_location, kHeaderSize, 0);
           m_location[kSubBankIDs]=0;
           m_location[kSubBankLocations + numberOfSubBanks() ]=kHeaderSize;
         </code>

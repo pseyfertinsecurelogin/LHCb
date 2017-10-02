@@ -26,17 +26,13 @@ known_diffs={}
 
 #options which are known to differ, very very few right now :)
 default_opts_diffs={'Raw/Ecal/Digits' : { 'CaloZSupAlg/EcalZSup': {'Context': ['Offline', '-->', ''],
-                                                                   'OutputDigitData' : ['', '-->', 'Raw/Ecal/Digits'],
-                                                                   'OutputADCData' : ['', '-->', 'Raw/Ecal/Adcs']}},
+                                                                   'OutputDigitData' : ['', '-->', 'Raw/Ecal/Digits']}},
                     'Raw/Prs/Digits' : { 'CaloDigitsFromRaw/PrsFromRaw': {'Context': ['Offline', '-->', ''],
-                                                                          'DigitsContainer' : ['Raw/Ecal/Digits', '-->', 'Raw/Prs/Digits'],
-                                                                          'AdcsContainer' : ['Raw/Ecal/Adcs', '-->', 'Raw/Prs/Adcs']}},
+                                                                          'DigitsContainer' : ['Raw/Ecal/Digits', '-->', 'Raw/Prs/Digits']}},
                     'Raw/Hcal/Digits' : { 'CaloZSupAlg/HcalZSup': {'Context': ['Offline', '-->', ''],
-                                                                   'OutputDigitData' : ['', '-->', 'Raw/Hcal/Digits'],
-                                                                   'OutputADCData' : ['', '-->', 'Raw/Hcal/Adcs']}},
+                                                                   'OutputDigitData' : ['', '-->', 'Raw/Hcal/Digits']}},
                     'Raw/Spd/Digits' : { 'CaloDigitsFromRaw/SpdFromRaw': {'Context': ['Offline', '-->', ''],
-                                                                          'DigitsContainer' : ['Raw/Ecal/Digits', '-->', 'Raw/Spd/Digits'],
-                                                                          'AdcsContainer' : ['Raw/Ecal/Adcs', '-->', 'Raw/Spd/Adcs']}},
+                                                                          'DigitsContainer' : ['Raw/Ecal/Digits', '-->', 'Raw/Spd/Digits']}},
                     'Trig/L0/MuonBCSU' : { 'L0MuonCandidatesFromRaw/L0MuonFromRaw' : { 'DAQMode': [0, '-->', 1]}},
                     'Trig/L0/MuonCtrl' : { 'L0MuonCandidatesFromRaw/L0MuonFromRaw' : { 'DAQMode': [0, '-->', 1]}},
                     'Trig/L0/MuonData' : { 'L0MuonCandidatesFromRaw/L0MuonFromRaw' : { 'DAQMode': [0, '-->', 1]}}

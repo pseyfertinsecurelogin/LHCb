@@ -29,6 +29,7 @@
 #include "LoKi/MCTypes.h"
 #include "LoKi/MCPIDOperators.h"
 #include "LoKi/PidFunctions.h"
+#include "LoKi/MCChildSelector.h"
 // ============================================================================
 /** @file
  *
@@ -1604,24 +1605,51 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /** constructor from the function and daughter index
+      /** constructor from the function and child selector 
        *  @param fun    the function to be used
-       *  @param index  the index of daughter particle
+       *  @param child  the selector of the proper   child 
        *  @param bad    the value to be returned for invalid particle
        */
       ChildFunction
-      ( const LoKi::MCTypes::MCFunc& fun                     ,
-        const size_t                                   index ,
-        const double bad = LoKi::Constants::NegativeInfinity ) ;
-      /** constructor from the function and daughter index
-       *  @param index  the index of daughter particle
+        ( const LoKi::MCTypes::MCFunc&   fun   ,
+          const LoKi::MCChild::Selector& child , 
+          const double bad = LoKi::Constants::NegativeInfinity ) ;
+      /** constructor from the function and child selector 
        *  @param fun    the function to be used
+       *  @param child  the selector of the proper   child 
        *  @param bad    the value to be returned for invalid particle
        */
       ChildFunction
-      ( const size_t                 index ,
-        const LoKi::MCTypes::MCFunc& fun   ,
-        const double bad = LoKi::Constants::NegativeInfinity ) ;
+        ( const LoKi::MCTypes::MCFunc& fun   ,
+          const LoKi::MCTypes::MCCuts& child , 
+          const double bad = LoKi::Constants::NegativeInfinity ) ;
+      /** constructor from the function and child selector 
+       *  @param fun    the function to be used
+       *  @param child  the selector of the proper   child 
+       *  @param bad    the value to be returned for invalid particle
+       */
+      ChildFunction
+        ( const LoKi::MCTypes::MCFunc&   fun   ,
+          const std::string&             child , 
+          const double bad = LoKi::Constants::NegativeInfinity ) ;
+      /** constructor from the function and child selector 
+       *  @param fun    the function to be used
+       *  @param child  the selector of the proper   child 
+       *  @param bad    the value to be returned for invalid particle
+       */
+      ChildFunction
+        ( const LoKi::MCTypes::MCFunc&   fun   ,
+          const Decays::IMCDecay::iTree& child , 
+          const double bad = LoKi::Constants::NegativeInfinity ) ;
+      /** constructor from the function and child selector
+       *  @param fun    the function to be used
+       *  @param child  the selector of the proper   child 
+       *  @param bad    the value to be returned for invalid particle
+       */
+      ChildFunction
+        ( const LoKi::MCTypes::MCFunc&   fun   ,
+          const Decays::iNode&           child , 
+          const double bad = LoKi::Constants::NegativeInfinity ) ;
       /// MANDATORY: clone method ("virtual constructor")
       ChildFunction*  clone() const  override;
       /// MANDATORY: the only one essential method
@@ -1632,11 +1660,11 @@ namespace LoKi
     private:
       // ======================================================================
       /// the function itself
-      LoKi::MCTypes::MCFun m_fun   ;                     // the function itself
-      /// index of daughter particle
-      size_t               m_index ;              // index of daughter particle
-      /// return value for invalid particle
-      double               m_bad   ;       // return value for invalid particle
+      LoKi::MCTypes::MCFun    m_fun   ;                  // the function itself
+      /// the  child selector
+      LoKi::MCChild::Selector m_child ;
+      ///
+      double                  m_bad   ;    // return value for invalid particle
       // ======================================================================
     } ;
     // ========================================================================
@@ -1665,24 +1693,51 @@ namespace LoKi
     {
     public:
       // ======================================================================
-      /** constructor from the function and daughter index
+      /** constructor from the function and child selector 
        *  @param cut    the function to be used
-       *  @param index  the index of daughter particle
-       *  @param bad    the return valeu for invalid particle
+       *  @param child  the child selector 
+       *  @param bad    the return value for invalid particle
        */
       ChildPredicate
-      ( const LoKi::MCTypes::MCCuts& cut         ,
-        const size_t                 index       ,
-        const bool                   bad = false ) ;
-      /** constructor from the function and daughter index
-       *  @param index  the index of daughter particle
+        ( const LoKi::MCTypes::MCCuts&   cut         ,
+          const LoKi::MCChild::Selector& child       ,
+          const bool                     bad = false ) ;
+      /** constructor from the function and child selector 
        *  @param cut    the function to be used
-       *  @param bad    the return valeu for invalid particle
+       *  @param child  the child selector 
+       *  @param bad    the return value for invalid particle
        */
       ChildPredicate
-      ( const size_t                 index       ,
-        const LoKi::MCTypes::MCCuts& cut         ,
-        const bool                   bad = false ) ;
+        ( const LoKi::MCTypes::MCCuts&   cut         ,
+          const LoKi::MCTypes::MCCuts&   child       ,
+          const bool                     bad = false ) ;
+      /** constructor from the function and child selector 
+       *  @param cut    the function to be used
+       *  @param child  the child selector 
+       *  @param bad    the return value for invalid particle
+       */
+      ChildPredicate
+        ( const LoKi::MCTypes::MCCuts&   cut         ,
+          const std::string&             child       ,
+          const bool                     bad = false ) ;
+      /** constructor from the function and child selector 
+       *  @param cut    the function to be used
+       *  @param child  the child selector 
+       *  @param bad    the return value for invalid particle
+       */
+      ChildPredicate
+        ( const LoKi::MCTypes::MCCuts&   cut         ,
+          const Decays::IMCDecay::iTree& child       ,
+          const bool                     bad = false ) ;
+      /** constructor from the function and child selector 
+       *  @param cut    the function to be used
+       *  @param child  the child selector 
+       *  @param bad    the return value for invalid particle
+       */
+      ChildPredicate
+        ( const LoKi::MCTypes::MCCuts&   cut         ,
+          const Decays::iNode&           child       ,
+          const bool                     bad = false ) ;
       /// MANDATORY: clone method ("virtual constructor")
       ChildPredicate*  clone() const  override;
       /// MANDATORY: the only one essential method
@@ -1693,11 +1748,11 @@ namespace LoKi
     private:
       // ======================================================================
       /// the function itself
-      LoKi::MCTypes::MCCut m_cut   ;                     // the function itself
-      /// index of daughter particle
-      size_t               m_index ;              // index of daughter particle
-      /// bad value to be returned for invalid particle
-      bool                 m_bad   ;                               // bad value
+      LoKi::MCTypes::MCCut    m_cut   ;                  // the function itself
+      /// the  child selector
+      LoKi::MCChild::Selector m_child ;
+      ///
+      bool                    m_bad   ;    // return value for invalid particle
       // ======================================================================
     };
     // ========================================================================
