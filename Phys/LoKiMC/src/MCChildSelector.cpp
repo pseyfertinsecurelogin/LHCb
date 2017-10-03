@@ -105,80 +105,6 @@ LoKi::MCChild::child
 // constructor from the index
 // ============================================================================
 LoKi::MCChild::Selector::Selector
-( const unsigned int   i  )
-  : LoKi::AuxFunBase ( std::tie ( i ) )
-  , m_indices   ( 1 , i      )
-  , m_finder    ( s_INVALID  )
-  , m_decay     (            )
-  , m_setCut    ( false      )
-  , m_cut       ( s_NONE     )
-  , m_decayOnly ( false      )
-  , m_factory   ( s_FACTORY  )
-{}
-// ============================================================================
-// constructor from the index
-// ============================================================================
-LoKi::MCChild::Selector::Selector
-( const unsigned int   i1 ,
-  const unsigned int   i2 )
-  : LoKi::AuxFunBase ( std::tie ( i1 , i2 ) )
-  , m_indices   (           )
-  , m_finder    ( s_INVALID )
-  , m_decay     (           )
-  , m_setCut    ( false     )
-  , m_cut       ( s_NONE    )
-  , m_decayOnly ( false     )
-  , m_factory   ( s_FACTORY  )
-{
-  m_indices.push_back ( i1 ) ;
-  m_indices.push_back ( i2 ) ;
-}
-// ============================================================================
-// constructor from the index
-// ============================================================================
-LoKi::MCChild::Selector::Selector
-( const unsigned int   i1 ,
-  const unsigned int   i2 ,
-  const unsigned int   i3 )
-  : LoKi::AuxFunBase ( std::tie ( i1 , i2 , i3 ) )
-  , m_indices   (            )
-  , m_finder    ( s_INVALID  )
-  , m_decay     (            )
-  , m_setCut    ( false      )
-  , m_cut       ( s_NONE     )
-  , m_decayOnly ( false      )
-  , m_factory   ( s_FACTORY  )
-{
-  m_indices.push_back ( i1 ) ;
-  m_indices.push_back ( i2 ) ;
-  m_indices.push_back ( i3 ) ;
-}
-// ============================================================================
-// constructor from the index
-// ============================================================================
-LoKi::MCChild::Selector::Selector
-( const unsigned int   i1 ,
-  const unsigned int   i2 ,
-  const unsigned int   i3 ,
-  const unsigned int   i4 )
-  : LoKi::AuxFunBase ( std::tie ( i1 ,i2 , i3 , i4 ) )
-  , m_indices   (           )
-  , m_finder    ( s_INVALID )
-  , m_decay     (           )
-  , m_setCut    ( false     )
-  , m_cut       ( s_NONE    )
-  , m_decayOnly ( false      )
-  , m_factory   ( s_FACTORY  )
-{
-  m_indices.push_back ( i1 ) ;
-  m_indices.push_back ( i2 ) ;
-  m_indices.push_back ( i3 ) ;
-  m_indices.push_back ( i4 ) ;
-}
-// ============================================================================
-// constructor from the index
-// ============================================================================
-LoKi::MCChild::Selector::Selector
 ( const std::vector<unsigned int>& indices )
   : LoKi::AuxFunBase ( std::tie ( indices ) )
   , m_indices   ( indices    )
@@ -380,20 +306,6 @@ std::ostream& LoKi::MCChild::Selector::fillStream ( std::ostream& s ) const
   //
   if ( !m_indices.empty() )
   {
-    if      ( 1 == m_indices.size() )
-    { return s <<  " " << m_indices[0] << " " ; }
-    else if ( 2 == m_indices.size() )
-    { return s <<  " " << m_indices[0]
-               << ", " << m_indices[1] << " " ; }
-    else if ( 3 == m_indices.size() )
-    { return s <<  " " << m_indices[0]
-               << ", " << m_indices[1]
-               << ", " << m_indices[2] << " " ; }
-    else if ( 4 == m_indices.size() )
-    { return s <<  " " << m_indices[0]
-               << ", " << m_indices[1]
-               << ", " << m_indices[2]
-               << ", " << m_indices[3] << " " ; }
     return s << " " << Gaudi::Utils::toString ( m_indices ) << " " ;
   }
   //

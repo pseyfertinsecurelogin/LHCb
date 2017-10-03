@@ -7,6 +7,8 @@ gaudi_depends_on_subdirs(GaudiKernel
 
 set(PKG_CONFIG_USE_CMAKE_PREFIX_PATH ON)
 find_package(PkgConfig)
+# make sure pkg-config looks for packages on the system too
+list(APPEND CMAKE_PREFIX_PATH /usr)
 pkg_check_modules(git2 libgit2)
 
 
