@@ -23,9 +23,9 @@ class L0ProcessorDataDecoder : public GaudiTool, virtual public IL0ProcessorData
   bool   setL0ProcessorData(std::vector<LHCb::L0ProcessorDatas*> datass ) override;
   bool   setL0ProcessorData(std::string dataLoc ) override;
   bool   setL0ProcessorData(LHCb::L0ProcessorDatas* datas ) override;
-  unsigned long digit( const unsigned int   data[L0DUBase::Index::Size],int bx=0) override;
-  double value( const unsigned int base[L0DUBase::Index::Size],int bx=0) override;
-  std::vector<int> bxList( const unsigned int base[L0DUBase::Index::Size]) override;
+  unsigned long digit( const std::array<unsigned int,L0DUBase::Index::Size>& data,int bx=0) override;
+  double value( const std::array<unsigned int,L0DUBase::Index::Size>& base,int bx=0) override;
+  std::vector<int> bxList( const std::array<unsigned int,L0DUBase::Index::Size>& base) override;
   bool   isValid() override {return m_ok;}
 
 private:

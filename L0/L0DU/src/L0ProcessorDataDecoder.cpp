@@ -4,9 +4,9 @@
 // local
 #include "L0ProcessorDataDecoder.h"
 
-/** @file 
+/** @file
  *  Implementation file for class : L0ProcessorDataDecoder
- *  
+ *
  *  purpose : extract relevant information from L0ProcessorData
  *
  * 2006-02-17 : Olivier Deschamps
@@ -15,22 +15,22 @@
 DECLARE_TOOL_FACTORY( L0ProcessorDataDecoder )
 
 // ============================================================================
-L0ProcessorDataDecoder::L0ProcessorDataDecoder 
-( const std::string& type   , 
+L0ProcessorDataDecoder::L0ProcessorDataDecoder
+( const std::string& type   ,
   const std::string& name   ,
-  const IInterface*  parent ) 
+  const IInterface*  parent )
   : GaudiTool ( type, name , parent )
   , m_dataContainer(NULL)
   , m_condDB(NULL)
   , m_ok(false)
   , m_hasHC(false)
 {
-  declareInterface<IL0ProcessorDataDecoder> ( this ) ;  
+  declareInterface<IL0ProcessorDataDecoder> ( this ) ;
 }
 // ============================================================================
-StatusCode L0ProcessorDataDecoder::initialize () 
+StatusCode L0ProcessorDataDecoder::initialize ()
 {
-  if ( msgLevel(MSG::DEBUG) ) 
+  if ( msgLevel(MSG::DEBUG) )
     debug() << "Initialize L0ProcessorDataDecoder" << endmsg;
   StatusCode sc = GaudiTool::initialize();
   if(sc.isFailure())return sc;
@@ -40,7 +40,7 @@ StatusCode L0ProcessorDataDecoder::initialize ()
 }
 
 
-StatusCode L0ProcessorDataDecoder::finalize () 
+StatusCode L0ProcessorDataDecoder::finalize ()
 {
   if ( msgLevel(MSG::DEBUG) ) debug() << "release L0ProcessoDataDecoder" << endmsg;
   delete m_dataContainer;
@@ -52,7 +52,7 @@ StatusCode L0ProcessorDataDecoder::finalize ()
 // ============================================================================
 /// destructor
 // ============================================================================
-L0ProcessorDataDecoder::~L0ProcessorDataDecoder () {} 
+L0ProcessorDataDecoder::~L0ProcessorDataDecoder () {}
 // ============================================================================
 // ============================================================================
 bool L0ProcessorDataDecoder::setL0ProcessorData(std::vector<LHCb::L0ProcessorDatas*> datass){
@@ -88,36 +88,37 @@ bool L0ProcessorDataDecoder::setL0ProcessorData(std::vector<std::string> dataLoc
   m_ok=true;
   // check whether the fiber receives HC data
   m_hasHC=false;
-  for ( const auto& loc : dataLocs ) { 
+  for ( const auto& loc : dataLocs ) {
     if( loc == LHCb::L0ProcessorDataLocation::HC || loc == LHCb::L0ProcessorDataLocation::L0HC ){
       const LHCb::L0ProcessorDatas* datas = getIfExists<LHCb::L0ProcessorDatas>( loc ) ;
-      if( nullptr != datas && datas->size() != 0 )m_hasHC=true;      
-      if( ! m_hasHC )Warning("Expected Herschel L0ProcessorData container is not found or is empty",StatusCode::SUCCESS).ignore();
+      if ( datas && datas->size() != 0 ) m_hasHC=true;
+      if ( !m_hasHC )Warning("Expected Herschel L0ProcessorData container is not found or is empty",StatusCode::SUCCESS).ignore();
       break;
     }
   }
   // collect the data
-  for ( const auto& loc : dataLocs ) { 
-    bool isCalo = ( loc == LHCb::L0ProcessorDataLocation::Calo || loc == LHCb::L0ProcessorDataLocation::L0Calo );    
+  for ( const auto& loc : dataLocs ) {
+    bool isCalo = ( loc == LHCb::L0ProcessorDataLocation::Calo || loc == LHCb::L0ProcessorDataLocation::L0Calo );
     const LHCb::L0ProcessorDatas* datas = getIfExists<LHCb::L0ProcessorDatas>( loc ) ;
-    if( nullptr == datas ){ 
+    if( !datas ){
       Warning("L0ProcessorData container not found at " + loc , StatusCode::SUCCESS).ignore();
       m_ok=false;
       continue;
     }
     if( msgLevel(MSG::VERBOSE) ) verbose() << "inserting data from " << loc << endmsg;
+
     for(LHCb::L0ProcessorDatas::const_iterator itt=datas->begin();datas->end()!=itt;itt++){
-      if( isCalo && m_hasHC && 
+      if( isCalo && m_hasHC &&
           ( (*itt)->key() == L0DUBase::Fiber::CaloPi0Global ||  (*itt)->key() == L0DUBase::Fiber::CaloPi0Local) ){
         if( msgLevel(MSG::VERBOSE) ) verbose() << "CaloPI0 fibers to be replaced by HC fibers " << loc << endmsg;
       }else{
           m_dataContainer->insert(*itt);
-      }      
-    } 
-  } 
+      }
+    }
+  }
   if( msgLevel(MSG::VERBOSE) ) verbose() << "DATA INSERTED" << endmsg;
   return m_ok;
-} 
+}
 
 // ============================================================================
 bool L0ProcessorDataDecoder::setL0ProcessorData(std::string dataLoc ){
@@ -129,15 +130,15 @@ bool L0ProcessorDataDecoder::setL0ProcessorData(std::string dataLoc ){
 
 
 // ============================================================================
-double L0ProcessorDataDecoder::value( const unsigned int base[L0DUBase::Index::Size],int bx){
+double L0ProcessorDataDecoder::value( const std::array<unsigned int,L0DUBase::Index::Size>& base,int bx){
   return ((double) digit(base,bx))*m_condDB->scale(base[L0DUBase::Index::Scale]);
 }
 
 
-std::vector<int> L0ProcessorDataDecoder::bxList( const unsigned int base[L0DUBase::Index::Size]){
+std::vector<int> L0ProcessorDataDecoder::bxList( const std::array<unsigned int,L0DUBase::Index::Size>& base){
   std::vector<int> def;
   LHCb::L0ProcessorData* fiber = m_dataContainer->object( base[ L0DUBase::Index::Fiber ]  )  ;
-  if( 0 == fiber ){ 
+  if( 0 == fiber ){
     Warning("Fiber "+ Gaudi::Utils::toString(base[ L0DUBase::Index::Fiber ]) +" not found ",StatusCode::SUCCESS).ignore();
     m_ok=false;
     return def;
@@ -145,12 +146,12 @@ std::vector<int> L0ProcessorDataDecoder::bxList( const unsigned int base[L0DUBas
   return fiber->bxList();
 }
 
-unsigned long L0ProcessorDataDecoder::digit( const unsigned int base[L0DUBase::Index::Size], int bx){
-  
+unsigned long L0ProcessorDataDecoder::digit( const std::array<unsigned int,L0DUBase::Index::Size>& base, int bx){
+
   //  if(!m_ok)return 0;
 
   LHCb::L0ProcessorData* fiber = m_dataContainer->object( base[ L0DUBase::Index::Fiber ]  )  ;
-  if( 0 == fiber ){ 
+  if( 0 == fiber ){
     Warning("Fiber "+ Gaudi::Utils::toString(base[ L0DUBase::Index::Fiber ]) +" not found ",StatusCode::SUCCESS).ignore();
     m_ok=false;
     return 0;
@@ -159,11 +160,11 @@ unsigned long L0ProcessorDataDecoder::digit( const unsigned int base[L0DUBase::I
   if( ! fiber->hasData(bx))
     Warning("Fiber "+ Gaudi::Utils::toString(base[ L0DUBase::Index::Fiber ]) +
             " has no defined data for BX="+Gaudi::Utils::toString(bx),StatusCode::SUCCESS,1).ignore();
-  unsigned long val = ( ( fiber->word(bx)   &  base[L0DUBase::Index::Mask]  ) >> base[L0DUBase::Index::Shift]  ) ; 
+  unsigned long val = ( ( fiber->word(bx)   &  base[L0DUBase::Index::Mask]  ) >> base[L0DUBase::Index::Shift]  ) ;
 
   if( L0DUBase::Fiber::Empty != base[ L0DUBase::Index::Fiber2 ]  ) {
     LHCb::L0ProcessorData* fiber2= m_dataContainer->object( base[ L0DUBase::Index::Fiber2 ]  )  ;
-    if( 0 == fiber2 ){ 
+    if( 0 == fiber2 ){
       Warning("Data ( " + Gaudi::Utils::toString(base) + " ) not found in the container ",StatusCode::SUCCESS).ignore();
       m_ok=false;
       return 0;
@@ -172,7 +173,7 @@ unsigned long L0ProcessorDataDecoder::digit( const unsigned int base[L0DUBase::I
       Warning("Fiber "+ Gaudi::Utils::toString(base[ L0DUBase::Index::Fiber2 ]) +
               " has no defined data for BX="+Gaudi::Utils::toString(bx),StatusCode::SUCCESS,1).ignore();
     unsigned long val2 =( ( fiber2->word(bx) & base[ L0DUBase::Index::Mask2 ]  )  >> base[ L0DUBase::Index::Shift2 ]) ;
-    val |=  (val2  << base[ L0DUBase::Index::Offset ]  ); 
+    val |=  (val2  << base[ L0DUBase::Index::Offset ]  );
   }
   m_ok=true;
   return val;

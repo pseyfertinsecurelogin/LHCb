@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // from LHCb
 #include "Event/ODIN.h"
@@ -21,7 +21,7 @@ DECLARE_TOOL_FACTORY( L0DUEmulatorTool )
 L0DUEmulatorTool::L0DUEmulatorTool( const std::string& type,
                                   const std::string& name,
                                   const IInterface* parent )
-  : GaudiTool ( type, name , parent ),
+  : base_class ( type, name , parent ),
     m_report(),
     m_muCleaning(),
     m_muZeroSup(),
@@ -40,16 +40,12 @@ L0DUEmulatorTool::L0DUEmulatorTool( const std::string& type,
   m_nMu = 3; // # of largestmuon pT
   m_muHighest.reserve( m_nMu );
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-L0DUEmulatorTool::~L0DUEmulatorTool() {} 
 
 //=============================================================================
 
 StatusCode L0DUEmulatorTool::initialize(){
   if ( msgLevel(MSG::DEBUG) ) debug() << "Initialize  L0EmulatorTool" << endmsg;
-  StatusCode sc = GaudiTool::initialize();
+  StatusCode sc = base_class::initialize();
   if(sc.isFailure())return sc;
 
   // register incident
@@ -71,7 +67,7 @@ StatusCode L0DUEmulatorTool::process(LHCb::L0DUConfig* config,  LHCb::L0Processo
   if(!m_decoder -> setL0ProcessorData(datas)){
     Warning("L0ProcessorData decoder failed",StatusCode::SUCCESS).ignore();
     counter("Error with Processor data")+=1;
-  }  
+  }
   return processing();
 }
 
@@ -81,7 +77,7 @@ StatusCode L0DUEmulatorTool::process(LHCb::L0DUConfig* config,  std::vector<std:
   if(!m_decoder -> setL0ProcessorData(dataLocs)){
     Warning("L0ProcessorData decoder failed",StatusCode::SUCCESS).ignore();
     counter("Error with Processor data")+=1;
-}  
+}
   return processing();
 }
 
@@ -90,7 +86,7 @@ StatusCode L0DUEmulatorTool::process(LHCb::L0DUConfig* config,  std::vector<std:
 StatusCode L0DUEmulatorTool::fillData(){
   if(m_config == NULL)return StatusCode::FAILURE;
   m_config->clearDataValue(); // reset data + emulation flag
-  
+
   LHCb::L0DUElementaryData::Map& dataMap = m_config->data();
   using namespace L0DUBase::PredefinedData;
 
@@ -141,21 +137,21 @@ StatusCode L0DUEmulatorTool::fillData(){
     muonVec.push_back( digit( L0DUBase::Muon6::Pt   , bx ));
     muonVec.push_back( digit( L0DUBase::Muon7::Pt   , bx ));
     muonVec.push_back( digit( L0DUBase::Muon8::Pt   , bx ));
-    
-    // - define the pattern for ghost cleaning 
+
+    // - define the pattern for ghost cleaning
     int muPattern = 0;
-    if(m_muCleaning ){ 
-      if( muonVec[0] == muonVec[1])  muPattern |= 1<<1 ; 
-      if( muonVec[2] == muonVec[3])  muPattern |= 1<<3 ; 
-      if( muonVec[4] == muonVec[5])  muPattern |= 1<<5 ; 
-      if( muonVec[6] == muonVec[7])  muPattern |= 1<<7 ; 
+    if(m_muCleaning ){
+      if( muonVec[0] == muonVec[1])  muPattern |= 1<<1 ;
+      if( muonVec[2] == muonVec[3])  muPattern |= 1<<3 ;
+      if( muonVec[4] == muonVec[5])  muPattern |= 1<<5 ;
+      if( muonVec[6] == muonVec[7])  muPattern |= 1<<7 ;
     }
     if( bx == 0 )m_muPattern = muPattern; // collect muPattern for current BX (==>L0Bank)
 
     // - identify the m_nMu (3) highest pT
     std::vector<int> muHighest;
     for(int i=0 ; i != m_nMu ; i++){
-      int maxPt = -1;    
+      int maxPt = -1;
       int imax = -1;
       int mask = 1 << i;
       if(m_muCleaning && (mask & muPattern) != 0) continue; // apply the ghost-cleaning when requested
@@ -180,7 +176,7 @@ StatusCode L0DUEmulatorTool::fillData(){
     }
     if( bx == 0 )m_muHighest = muHighest; // collect the 3 highest muon for the current BX (==>L0Bank)
     if( msgLevel(MSG::VERBOSE))verbose() << "L0Muon pT-sorted " << endmsg;
-    
+
     int dimuon = 0; // diMuon sum(Pt)
     int dimuonP= 1; // diMuon prod(Pt)
     for(unsigned int i = 0; i != muHighest.size();++i){
@@ -218,7 +214,7 @@ StatusCode L0DUEmulatorTool::fillData(){
         pt  = digit( L0DUBase::Muon7::Pt      , bx ) ;
       }else if( k == 7 ){
         add = digit( L0DUBase::Muon8::Address , bx )  | (7 << 13)  ;
-        sgn = digit( L0DUBase::Muon8::Sign    , bx ) ; 
+        sgn = digit( L0DUBase::Muon8::Sign    , bx ) ;
         pt  = digit( L0DUBase::Muon8::Pt      , bx ) ;
      }
       std::string num=Gaudi::Utils::toString(i+1);
@@ -230,12 +226,12 @@ StatusCode L0DUEmulatorTool::fillData(){
         dimuonP *= pt;
       }
     }
-    dataMap[Name[DiMuonPt]]->setDigit(     dimuon  ,  sPt     , 1+2*mPt           , bx );  
-    dataMap[Name[DiMuonProdPt]]->setDigit( dimuonP ,  sPt*sPt , (mPt+1)*(mPt+1)-1 , bx );  
+    dataMap[Name[DiMuonPt]]->setDigit(     dimuon  ,  sPt     , 1+2*mPt           , bx );
+    dataMap[Name[DiMuonProdPt]]->setDigit( dimuonP ,  sPt*sPt , (mPt+1)*(mPt+1)-1 , bx );
   }
   // -------------------------------------
   // Data processing of user-defined data
-  // ------------------------------------  
+  // ------------------------------------
   for( LHCb::L0DUElementaryData::Map::iterator idata = dataMap.begin();idata != dataMap.end() ; idata++){
     LHCb::L0DUElementaryData* data = (*idata).second;
     // Fill RAM(BCID)
@@ -260,8 +256,8 @@ StatusCode L0DUEmulatorTool::fillData(){
     if( data->type() != LHCb::L0DUElementaryData::Compound )continue;
     StatusCode sc = dataTree(data, dataMap);
     if(sc.isFailure())return sc;
-  }       
-              
+  }
+
   if( msgLevel(MSG::VERBOSE)) {
     verbose() << "User-defined data filled " << endmsg;
     verbose() << " ---> data summary " << endmsg;
@@ -269,25 +265,25 @@ StatusCode L0DUEmulatorTool::fillData(){
       verbose() << "Data :  " << ((*idata).second)->summary() <<endmsg;
     }
   }
-  
+
   return StatusCode::SUCCESS;
 }
 
 //===========================================================================================================
-void L0DUEmulatorTool::setDataValue(LHCb::L0DUElementaryData* l0Data, 
-                                    const unsigned int  base[L0DUBase::Index::Size]){
+void L0DUEmulatorTool::setDataValue(LHCb::L0DUElementaryData* l0Data,
+                                    const std::array<unsigned int,L0DUBase::Index::Size>& base){
 
   l0Data->setScaleAndSaturation(scale(base) , max(base)  );
   const std::vector<int>& BXs = bxList( base );
   for( std::vector<int>::const_iterator ibx=BXs.begin();BXs.end()!=ibx;ibx++){
     l0Data->setDigit( digit( base, *ibx ) , *ibx );
     if( msgLevel(MSG::VERBOSE))
-      verbose() << "Set Data digit " << l0Data->name() << " : " <<digit(base, *ibx) << " : scale  = " << scale(base) 
+      verbose() << "Set Data digit " << l0Data->name() << " : " <<digit(base, *ibx) << " : scale  = " << scale(base)
                 << " for BX="<< Gaudi::Utils::toString(*ibx)<< endmsg;
   }
 }
 //===========================================================================================================
-StatusCode  L0DUEmulatorTool::dataTree(LHCb::L0DUElementaryData* data, LHCb::L0DUElementaryData::Map dataMap   ){  
+StatusCode  L0DUEmulatorTool::dataTree(LHCb::L0DUElementaryData* data, LHCb::L0DUElementaryData::Map dataMap   ){
   if( data->type() != LHCb::L0DUElementaryData::Compound )return StatusCode::SUCCESS;
   for(std::vector<std::string>::const_iterator iop =  data->componentsName().begin() ; iop != data->componentsName().end();iop++){
     if( dataMap.find(*iop) == dataMap.end() )
@@ -297,22 +293,22 @@ StatusCode  L0DUEmulatorTool::dataTree(LHCb::L0DUElementaryData* data, LHCb::L0D
   }
   return StatusCode::SUCCESS;
 }
- 
+
 //===========================================================================================================
 StatusCode L0DUEmulatorTool::processing(){
-  if(fillData().isFailure())return StatusCode::FAILURE;  
+  if(fillData().isFailure())return StatusCode::FAILURE;
   m_config->setCompleted(true);
 
   // downscaling counters updated once per event (paranoid pretection against multi-call of the emulator processing  / event)
-  
+
   std::map<unsigned int,bool>::iterator it = m_procMap.find( m_config->tck() );
   if( it == m_procMap.end() || (*it).second ){
     m_config->updateCounters( true );
     m_procMap[ m_config->tck() ]=false;
   } else {
     m_config->updateCounters( false );
-  } 
-  
+  }
+
   m_config->emulate();  // process the actual emulation  @ each processing (no longer onDemand becayse of downscaling)
 
   // output
@@ -331,11 +327,11 @@ const LHCb::L0DUReport L0DUEmulatorTool::emulatedReport(){
     error() << " Report is requested but the emulator has not been processed ... return empty report" << endmsg;
     return m_report;
   }
-  
+
   m_report.setDecisionValue( m_config->emulatedDecisionValue()  );
   m_report.setSumEt( digit(L0DUBase::Sum::Et) );
 
-  
+
   LHCb::L0DUElementaryCondition::Map& conditionMap  = m_config->conditions();
   LHCb::L0DUChannel::Map&             channelMap    = m_config->channels();
 
@@ -352,25 +348,21 @@ const LHCb::L0DUReport L0DUEmulatorTool::emulatedReport(){
   return m_report;
 }
 
-std::vector<int> L0DUEmulatorTool::bxList(const unsigned int   base[L0DUBase::Index::Size]){
+std::vector<int> L0DUEmulatorTool::bxList(const std::array<unsigned int, L0DUBase::Index::Size>& base){
   return m_decoder->bxList(base);
 }
-unsigned long L0DUEmulatorTool::digit(const unsigned int   base[L0DUBase::Index::Size],int bx){
+unsigned long L0DUEmulatorTool::digit(const std::array<unsigned int, L0DUBase::Index::Size>& base,int bx){
   return m_decoder->digit(base,bx);
 }
-double L0DUEmulatorTool::scale(const unsigned int base[L0DUBase::Index::Size]){
+double L0DUEmulatorTool::scale(const std::array<unsigned int,L0DUBase::Index::Size>& base){
   return m_condDB->scale(base[L0DUBase::Index::Scale]);
 }
 
-long L0DUEmulatorTool::max(const unsigned int base[L0DUBase::Index::Size]){
+long L0DUEmulatorTool::max(const std::array<unsigned int, L0DUBase::Index::Size>& base){
   long  w1 = base[L0DUBase::Index::Mask] >> base[L0DUBase::Index::Shift];
   long  w2 = base[L0DUBase::Index::Mask2] >> base[L0DUBase::Index::Shift2];
-  long  w  = w1 | (w2 << base[L0DUBase::Index::Offset]);
-  return  w;
+  return  w1 | (w2 << base[L0DUBase::Index::Offset]);
 }
-
-
-
 
 //=============================================================================
 const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
@@ -383,14 +375,14 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
     error() << " rawBank is requested but the emulator has not been processed ... return empty bank" << endmsg;
     return l0Block;
   }
-  
+
 
   // Version 0 : preliminary version used for DC06 simulated data
   //--------------------------------------------------------------
   if( 0 == version ){
 
     unsigned int word = ( (m_report.channelsDecisionSummary() << 1) | (m_report.decisionValue() & 0x1 )) & 0xFFFF;
-    
+
     l0Block.push_back( word ); // decision Pattern (first 32 bits)
     l0Block.push_back( m_report.conditionsValueSummary() ); // condition Pattern (first 32 bits)
     l0Block.push_back( digit( L0DUBase::PileUp::Peak1 ) |
@@ -414,9 +406,9 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
     // global header ( simulation : no PGA f/w version )
     unsigned int ec_size = (m_report.conditionsValueSummaries().size() ) & 0x3 ;
     unsigned int tc_size = (m_report.channelsDecisionSummaries().size() ) & 0x3;
-    unsigned int tck     = m_report.tck() & 0xFFFF; 
+    unsigned int tck     = m_report.tck() & 0xFFFF;
     unsigned int word  =  tc_size  |  ec_size << 2 | tck << 16;
-    if( 2 == version ) word |= ( nBxm & 0x3 ) << 12 | ( nBxp & 0x3 ) << 14;    
+    if( 2 == version ) word |= ( nBxm & 0x3 ) << 12 | ( nBxp & 0x3 ) << 14;
     l0Block.push_back( word );
 
     // ------------
@@ -446,15 +438,15 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
     unsigned int muAdd[4]={0,0,0,0};
     for(int i=0 ; i !=8 ; i++){
       // 0-suppression
-      if( 0 != ptMu[ i  ] || !m_muZeroSup ){ 
+      if( 0 != ptMu[ i  ] || !m_muZeroSup ){
         int ipt = (int) nmuons/4;
         int iad = (int) nmuons/2;
         muPt[ipt]  |= ( ptMu[ i ] << (nmuons - ipt*4)*8 );
         muAdd[iad] |= ( adMu[ i ] << (nmuons - iad*2)*16);
         nmuons++;
-      }      
+      }
     }
-    
+
     // Fill MuonBlock
     l0Block.push_back( digit(L0DUBase::Muon1::Status)       |
                        digit(L0DUBase::Muon3::Status) << 4  |
@@ -495,17 +487,17 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
       rsda |= ( m_report.decision(LHCb::L0DUDecision::Beam2)   ) << 11;
       rsda |= ( m_report.decision(LHCb::L0DUDecision::Beam1)   ) << 10;
     }
-    
-    unsigned int status = 
+
+    unsigned int status =
       digit(L0DUBase::Electron::Status) << L0DUBase::Fiber::CaloElectron  |
-      digit(L0DUBase::Photon::Status)   << L0DUBase::Fiber::CaloPhoton    |         
-      digit(L0DUBase::Hadron::Status)   << L0DUBase::Fiber::CaloHadron    |          
-      digit(L0DUBase::Pi0Local::Status) << L0DUBase::Fiber::CaloPi0Local  |          
-      digit(L0DUBase::Pi0Global::Status)<< L0DUBase::Fiber::CaloPi0Global |          
-      digit(L0DUBase::Sum::Status)      << L0DUBase::Fiber::CaloSumEt     |          
-      digit(L0DUBase::Spd::Status)      << L0DUBase::Fiber::CaloSpdMult   |          
-      digit(L0DUBase::PileUp::Status1)  << L0DUBase::Fiber::Pu1           |          
-      digit(L0DUBase::PileUp::Status2)  << L0DUBase::Fiber::Pu2      ;    
+      digit(L0DUBase::Photon::Status)   << L0DUBase::Fiber::CaloPhoton    |
+      digit(L0DUBase::Hadron::Status)   << L0DUBase::Fiber::CaloHadron    |
+      digit(L0DUBase::Pi0Local::Status) << L0DUBase::Fiber::CaloPi0Local  |
+      digit(L0DUBase::Pi0Global::Status)<< L0DUBase::Fiber::CaloPi0Global |
+      digit(L0DUBase::Sum::Status)      << L0DUBase::Fiber::CaloSumEt     |
+      digit(L0DUBase::Spd::Status)      << L0DUBase::Fiber::CaloSpdMult   |
+      digit(L0DUBase::PileUp::Status1)  << L0DUBase::Fiber::Pu1           |
+      digit(L0DUBase::PileUp::Status2)  << L0DUBase::Fiber::Pu2      ;
     // simulation : no L0DU status bit
     int L0DUstatus = 0;
     status |= (L0DUstatus & 0x7) << 9;
@@ -514,7 +506,7 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
       int bx = ( l0Id & 0x300 ) << 18;
       w |= bx ;
     }
-    if(  1 == version ) 
+    if(  1 == version )
       w |= ( nBxm << 28 )  | ( nBxp <<30 ) ;
 
     l0Block.push_back( w ); // header
@@ -530,7 +522,7 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
     }
     l0Block.push_back( digit(L0DUBase::Sum::Et )            |
                        digit(L0DUBase::Spd::Mult ) << 14    |
-                       digit(L0DUBase::PileUp::MoreInfo ) << 28 ); 
+                       digit(L0DUBase::PileUp::MoreInfo ) << 28 );
     l0Block.push_back( digit(L0DUBase::Electron::Et ) |
                        digit(L0DUBase::Photon::Et )    << 8 |
                        digit(L0DUBase::Pi0Global::Et ) << 16 |
@@ -566,7 +558,7 @@ const std::vector<unsigned int> L0DUEmulatorTool::bank(unsigned int version){
       for(unsigned int i=0;i< ec_size;++i)l0Block.push_back(0);// Next2 conditions-map
       l0Block.push_back( digit(L0DUBase::Sum::Et , +1) | digit(L0DUBase::Sum::Et , +2)<< 16); // SumEt Prev2/Prev1
     }
-    
+
   }
   else{
     warning() << "L0DU RawBank version " << version << " is not defined " << endmsg;
