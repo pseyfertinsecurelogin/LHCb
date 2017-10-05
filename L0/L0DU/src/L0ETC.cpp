@@ -29,11 +29,6 @@ L0ETC::L0ETC( const std::string& name,
     declareProperty( "CollectionName", m_collectionName = "<not set>");
 }
 //=============================================================================
-// Destructor
-//=============================================================================
-L0ETC::~L0ETC() {} 
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode L0ETC::initialize() {
@@ -83,7 +78,7 @@ StatusCode L0ETC::execute() {
     StatusCode sc = tup->column("Address", pObject->registry()->address() ); 
     if (!sc) return sc;
   } else {
-    Error("    not able to retrieve IOpaqueAddress");
+    Error("    not able to retrieve IOpaqueAddress").ignore();
   }
   
   // Retrieve informations about event
