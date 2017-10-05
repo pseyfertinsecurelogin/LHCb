@@ -37,7 +37,6 @@ class DecodePileUpData : public Decoder::AlgBase {
 public:
 
   DecodePileUpData( const std::string& name, ISvcLocator* pSvcLocator ); /// Standard constructor
-  virtual ~DecodePileUpData(); /// Destructor
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
