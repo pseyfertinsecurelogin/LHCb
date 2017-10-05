@@ -11,6 +11,11 @@ gaudi_depends_on_subdirs(Event/DAQEvent
                          Phys/LoKiCore
                          Phys/LoKiNumbers)
 
+find_package(Boost)
+find_package(ROOT)
+# hide warnings from some external projects
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+
 gaudi_add_library(LoKiHltLib
                   src/*.cpp
                   PUBLIC_HEADERS LoKi
