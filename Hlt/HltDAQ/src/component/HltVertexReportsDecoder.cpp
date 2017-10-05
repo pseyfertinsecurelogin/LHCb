@@ -45,7 +45,8 @@ StatusCode HltVertexReportsDecoder::execute() {
   if( hltvertexreportsRawBanks.empty() ){
     return Warning( " No HltVertexReports RawBank for requested SourceID in RawEvent. Quiting. ",StatusCode::SUCCESS, 20 );
   } else if( hltvertexreportsRawBanks.size() != 1 ){
-    Warning(" More then one HltVertexReports RawBanks for requested SourceID in RawEvent. Will only process the first one. " ,StatusCode::SUCCESS, 20 );
+    Warning(" More then one HltVertexReports RawBanks for requested SourceID in RawEvent. Will only process the first one. " ,
+            StatusCode::SUCCESS, 20 ).ignore();
   }
   const RawBank* hltvertexreportsRawBank = hltvertexreportsRawBanks.front();
 
@@ -73,7 +74,7 @@ StatusCode HltVertexReportsDecoder::execute() {
     auto  value = tbl.find( intSelID );
     if (value == std::end(tbl)) {
       Error( std::string{ " did not find name for id = "} + std::to_string(intSelID) + "; skipping this selection",
-            StatusCode::SUCCESS, 50 );
+             StatusCode::SUCCESS, 50 ).ignore();
       i += nVert * ( bankVersionNumber == 0 ? 5 : 11 ); // would have been nice to have a size / vtx in the bank...
       continue;
     }
@@ -116,7 +117,7 @@ StatusCode HltVertexReportsDecoder::execute() {
     if( outputSummary->insert(value->second,pVtxs) == StatusCode::FAILURE ){
       Error(" Failed to add Hlt vertex selection name "
             + std::string(value->second)
-            + " to its container ",StatusCode::SUCCESS, 20 );
+            + " to its container ",StatusCode::SUCCESS, 20 ).ignore();
     }
   }
   if (nSel!=0) {

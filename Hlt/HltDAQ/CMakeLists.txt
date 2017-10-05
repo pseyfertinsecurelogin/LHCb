@@ -19,6 +19,9 @@ gaudi_depends_on_subdirs(Det/DetCond
 
 find_package(AIDA)
 find_package(Boost COMPONENTS iostreams filesystem)
+find_package(ROOT)
+# hide warnings from some external projects
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 include(GaudiObjDesc)
 

@@ -87,7 +87,7 @@ StatusCode HltVertexReportsWriter::execute() {
      // find int selection id
      auto si = selectionNameToInt(*m_hltANNSvc, s.first );
      if( !si ) {
-       Error(" selectionName=" +s.first+ " from HltVertexReports not found in HltANNSvc. Skipped. ", StatusCode::SUCCESS, 20 );
+       Error(" selectionName=" +s.first+ " from HltVertexReports not found in HltANNSvc. Skipped. ", StatusCode::SUCCESS, 20 ).ignore();
        continue;
      }
 

@@ -276,9 +276,9 @@ StatusCode HltSelReportsWriter::execute() {
   if( !saveExtraInfo ){
         Error( "ExtraInfoSubBank too large to store nObj="  + std::to_string( sortedHosPtrs.size() )
              + " nInfo=" + std::to_string(nExtraInfo)
-             + " No Extra Info will be saved!", StatusCode::SUCCESS, 50 );
+             + " No Extra Info will be saved!", StatusCode::SUCCESS, 50 ).ignore();
         if( !extraInfoSubBank.initialize( sortedHosPtrs.size(), 0 ) ){
-          Error( "Cannot save even empty ExtraInfoSubBank  - expect a fatal error", StatusCode::SUCCESS, 50 );
+          Error( "Cannot save even empty ExtraInfoSubBank  - expect a fatal error", StatusCode::SUCCESS, 50 ).ignore();
         }
   }
   bool saveStdInfo = stdInfoSubBank.initialize( sortedHosPtrs.size(), nStdInfo );
@@ -286,7 +286,7 @@ StatusCode HltSelReportsWriter::execute() {
         Error( "StdInfoSubBank too large to store nObj="
              + std::to_string( sortedHosPtrs.size())
              + " nInfo=" + std::to_string(nStdInfo) + " No Std Info will be saved!",
-               StatusCode::SUCCESS, 50 );
+               StatusCode::SUCCESS, 50 ).ignore();
         // save only selection IDs
         nStdInfo = std::accumulate( std::begin(sortedHosPtrs), std::end(sortedHosPtrs),
                                     0 , [](int n, const HltObjectSummary* hos) {
@@ -329,7 +329,7 @@ StatusCode HltSelReportsWriter::execute() {
         } else {
           // this is very unexpected but shouldn't be fatal
           Error( "Int key for string info key=" + i.first + " not found ",
-                 StatusCode::SUCCESS, 50 );
+                 StatusCode::SUCCESS, 50 ).ignore();
         }
       }
     }
@@ -474,7 +474,7 @@ StatusCode HltSelReportsWriter::execute() {
   if( nBank>1 ){
     Warning( "HltSelReports is huge. Saved in "
            + std::to_string( nBank ) + " separate RawBanks ",
-             StatusCode::SUCCESS, 10 );
+             StatusCode::SUCCESS, 10 ).ignore();
   }
 
   if ( msgLevel(MSG::VERBOSE) ){
