@@ -231,4 +231,9 @@ class LHCbApp(LHCbConfigurableUser):
         self.defineXMLSum()
         self.defineOutput()
         self.definePersistency()
-        
+
+        # Restore the default behaviour of AlgContextSvc, which was changed in
+        # Gaudi v29r0. This is needed in order to be able to determine the
+        # parent of public tools during intitialize (mostly for LoKi functors).
+        from Configurables import AlgContextSvc
+        AlgContextSvc(BypassIncidents=True)
