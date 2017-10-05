@@ -59,7 +59,7 @@ StatusCode CaloFillRawBuffer::initialize() {
   }
   
   if ( 2 < m_dataCodingType || 0 >= m_dataCodingType ) {
-    Error( "Invalid Data coding type", StatusCode::FAILURE );
+    Error( "Invalid Data coding type", StatusCode::FAILURE ).ignore();
   }
 
   m_calo = getDet<DeCalorimeter>( m_detectorLocation );
