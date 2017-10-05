@@ -300,7 +300,7 @@ StatusCode HltSelReportsWriter::execute() {
             return n;
         } );
         if( !stdInfoSubBank.initialize( sortedHosPtrs.size(), nStdInfo ) ){
-          Error( "Cannot save even selectionIDs - expect a fatal error", StatusCode::SUCCESS, 50 );
+          Error( "Cannot save even selectionIDs - expect a fatal error", StatusCode::SUCCESS, 50 ).ignore();
         }
   }
 
