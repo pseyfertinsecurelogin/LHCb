@@ -16,6 +16,7 @@
 
 // local
 #include "HltSelReportsWriter.h"
+#include "pun.h"
 
 using namespace LHCb;
 
@@ -33,12 +34,6 @@ bool isStdInfo(const std::string& s) {
     return i != std::begin(s) && i != std::end(s) && *i == '#' ;
 }
 
-unsigned int asUInt( float x ) {
-    union IntFloat { unsigned int mInt; float mFloat; };
-    IntFloat a;
-    a.mFloat = x;
-    return a.mInt;
-}
 
 static const Gaudi::StringKey InfoID{"InfoID"};
 
@@ -318,7 +313,7 @@ StatusCode HltSelReportsWriter::execute() {
 
         if ( saveStdInfo || ( hos->summarizedObjectCLID() == 1 ) ){
           // push floats as ints (allows for possible compression in future versions)
-          stdInfo.push_back( asUInt(i.second) );
+          stdInfo.push_back( pun_to<unsigned int>(i.second) );
         }
 
       } else if(saveExtraInfo) {
