@@ -13,6 +13,11 @@ gaudi_depends_on_subdirs(Calo/CaloUtils
                          Event/RecEvent
                          GaudiAlg)
 
+find_package(Boost)
+find_package(ROOT)
+# hide warnings from some external projects
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
+
 gaudi_add_module(CaloDAQ
                  src/*.cpp
                  INCLUDE_DIRS DAQ/DAQUtils Event/DigiEvent

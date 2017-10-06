@@ -1093,7 +1093,7 @@ void RawBankDecoder::suppressHotPixels( const LHCb::RichSmartID& hpdID,
           std::ostringstream mess;
           mess << "L1HardID=" << l1ID << " L1Input=" << l1Input
                << " L0ID=" << l0ID << " " << ID << " is software SUPPRESSED";
-          Warning( mess.str(), StatusCode::SUCCESS );
+          Warning( mess.str(), StatusCode::SUCCESS ).ignore();
         }
 
       } // loop over pixels

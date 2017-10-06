@@ -205,11 +205,11 @@ StatusCode LoKi::HDRFilter::initialize ()
   {
     std::string s ( name() , 5 ) ;
     if ( !_ok_ ( s       , m_location ) )
-    { Error    ( "Inconsistent setting of name&location/2"      ) ;  }
+    { Error    ( "Inconsistent setting of name&location/2"      ).ignore() ;  }
     if ( !_ok_ ( code()  , m_location ) )
-    { Error    ( "Inconsistent setting of code&location/2"      ) ;  }
+    { Error    ( "Inconsistent setting of code&location/2"      ).ignore() ;  }
     if ( !_ok_ ( s       , code() , m_location ) )
-    { Warning  ( "Inconsistent setting of name&code&location/2" ) ;  }
+    { Warning  ( "Inconsistent setting of name&code&location/2" ).ignore() ;  }
   }
   else if ( !_hlt1_ ( name ()     )   &&
             !_hlt1_ ( code ()     )   &&
@@ -220,11 +220,11 @@ StatusCode LoKi::HDRFilter::initialize ()
   else
   {
     if ( !_ok_ ( code () , m_location ) )
-    { Error    ( "Inconsistent setting of code&location      " ) ;  }
+    { Error    ( "Inconsistent setting of code&location      " ).ignore() ;  }
     if ( !_ok_ ( name () , m_location ) )
-    { Warning  ( "Inconsistent setting of name&location      " ) ;  }
+    { Warning  ( "Inconsistent setting of name&location      " ).ignore() ;  }
     if ( !_ok_ ( name() , code() , m_location ) )
-    { Warning  ( "Inconsistent setting of name&code&location " ) ;  }
+    { Warning  ( "Inconsistent setting of name&code&location " ).ignore() ;  }
   }
   //
   return sc ;

@@ -90,7 +90,7 @@ StatusCode PackCluster::execute()
       if ( UNLIKELY(!vClus) ) 
       { 
         vClus = getIfExists<LHCb::VeloClusters>(m_veloClusLoc); 
-        if ( !vClus ) { Warning("Failed to load '"+m_veloClusLoc+"'"); }
+        if ( !vClus ) { Warning("Failed to load '"+m_veloClusLoc+"'").ignore(); }
       }
       const auto * cl = ( vClus ? vClus->object(id.veloID()) : nullptr );
       if ( cl ) { out->addVeloCluster( cl ); }
@@ -105,7 +105,7 @@ StatusCode PackCluster::execute()
       if ( UNLIKELY(!ttClus) ) 
       {
         ttClus = getIfExists<LHCb::STClusters>(m_ttClusLoc);
-        if ( !ttClus ) { Warning("Failed to load '"+m_ttClusLoc+"'"); }
+        if ( !ttClus ) { Warning("Failed to load '"+m_ttClusLoc+"'").ignore(); }
       }
       const auto * cl = ( ttClus ? ttClus->object(id.stID()) : nullptr );
       if ( cl ) { out->addTTCluster( cl ); }
@@ -120,7 +120,7 @@ StatusCode PackCluster::execute()
       if ( UNLIKELY(!utClus) ) 
       {
         utClus = getIfExists<LHCb::STClusters>(m_utClusLoc);
-        if ( !utClus ) { Warning("Failed to load '"+m_utClusLoc+"'"); }
+        if ( !utClus ) { Warning("Failed to load '"+m_utClusLoc+"'").ignore(); }
       }
       const auto * cl = ( utClus ? utClus->object(id.stID()) : nullptr );
       if ( cl ) { out->addUTCluster( cl ); }
@@ -135,7 +135,7 @@ StatusCode PackCluster::execute()
       if ( UNLIKELY(!itClus) ) 
       {
         itClus = getIfExists<LHCb::STClusters>(m_itClusLoc);
-        if ( !itClus ) { Warning("Failed to load '"+m_itClusLoc+"'"); }
+        if ( !itClus ) { Warning("Failed to load '"+m_itClusLoc+"'").ignore(); }
       }
       const auto * cl = ( itClus ? itClus->object(id.stID()) : nullptr );
       if ( cl ) { out->addITCluster( cl ); }

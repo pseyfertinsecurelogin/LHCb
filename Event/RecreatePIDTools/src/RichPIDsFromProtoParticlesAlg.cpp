@@ -1,4 +1,3 @@
-
 //-----------------------------------------------------------------------------
 /** @file RichPIDsFromProtoParticlesAlg.cpp
  *
@@ -41,11 +40,6 @@ RichPIDsFromProtoParticlesAlg( const std::string& name,
   declareProperty( "InputProtoParticles", m_protoPloc  );
   declareProperty( "OutputRichPIDs",      m_richPIDloc );
 }
-
-//=============================================================================
-// Destructor
-//=============================================================================
-RichPIDsFromProtoParticlesAlg::~RichPIDsFromProtoParticlesAlg() {}
 
 //=============================================================================
 // Initialization
@@ -95,7 +89,7 @@ StatusCode RichPIDsFromProtoParticlesAlg::execute()
         const auto * track = proto->track();
         if ( !track )
         {
-          Warning( "Charged ProtoParticle has NULL Track pointer" );
+          Warning( "Charged ProtoParticle has NULL Track pointer" ).ignore();
           continue;
         }
 

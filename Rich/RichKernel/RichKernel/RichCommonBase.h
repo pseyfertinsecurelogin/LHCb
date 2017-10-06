@@ -212,7 +212,7 @@ namespace Rich
       }
       else
       {
-        this -> Warning ( "Attempt to release a NULL Tool pointer" );
+        this -> Warning ( "Attempt to release a NULL Tool pointer" ).ignore();
       }
     }
 

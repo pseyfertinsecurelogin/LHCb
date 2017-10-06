@@ -171,7 +171,7 @@ StatusCode HltSelReportsDecoder::execute() {
          + std::to_string( hltSelReportsBank.size() )
          + " less than bank size delivered by RawEvent "
          + std::to_string(bankSize),
-         StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
 
   } else {
@@ -342,7 +342,7 @@ StatusCode HltSelReportsDecoder::execute() {
             auto iselName = idmap.find(id);
             if (iselName == std::end(idmap)) {
               Error( " Did not find string key for PV-selection-ID in trigger selection in storage id=" + std::to_string(id),
-                     StatusCode::SUCCESS, 10 );
+                     StatusCode::SUCCESS, 10 ).ignore();
               infoPersistent.insert( "10#Unknown" , floatFromInt(id) );
             } else
               infoPersistent.insert( "10#" + iselName->second.str(), floatFromInt(stdInfo[1]) );
@@ -358,7 +358,7 @@ StatusCode HltSelReportsDecoder::execute() {
         {
 
           Warning( " StdInfo on unsupported class type " + std::to_string(hos->summarizedObjectCLID()),
-                   StatusCode::SUCCESS, 20 );
+                   StatusCode::SUCCESS, 20 ).ignore();
           int e = 0;
           for (const auto& i : stdInfo) {
             infoPersistent.insert( "z#Unknown.unknown" + std::to_string( e++ ), floatFromInt(i) );

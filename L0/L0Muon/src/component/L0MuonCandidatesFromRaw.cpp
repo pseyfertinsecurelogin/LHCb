@@ -154,7 +154,7 @@ StatusCode L0MuonCandidatesFromRaw::execute()
     if ( sc.isFailure() ) 
     { 
       Warning("Error from decodeRawBanks - skip this time slice"
-              ,StatusCode::SUCCESS,50);
+              ,StatusCode::SUCCESS,50).ignore();
       sc = m_outputTool->releaseRegisters();
       if ( sc.isFailure() ) 
       {
@@ -175,7 +175,7 @@ StatusCode L0MuonCandidatesFromRaw::execute()
       sc = m_outputTool->writeOnTES(m_l0context , taeInTes);
       if ( sc.isFailure() ) { 
         Warning("Error from writeOnTES - skip this time slice"
-                       ,StatusCode::SUCCESS,50);
+                ,StatusCode::SUCCESS,50).ignore();
         sc = m_outputTool->releaseRegisters();
         if ( sc.isFailure() ) {
           return Warning("Fail to release registers - skip the rest of event"
@@ -191,7 +191,7 @@ StatusCode L0MuonCandidatesFromRaw::execute()
       sc = m_outputTool->writeL0ProcessorData();
       if ( sc.isFailure() ) { 
         Warning("Error from writeL0ProcessorData - skip this time slice"
-                       ,StatusCode::SUCCESS,50);
+                ,StatusCode::SUCCESS,50).ignore();
         sc = m_outputTool->releaseRegisters();
         if ( sc.isFailure() ) {
           return Warning("Fail to release registers - skip the rest of event"

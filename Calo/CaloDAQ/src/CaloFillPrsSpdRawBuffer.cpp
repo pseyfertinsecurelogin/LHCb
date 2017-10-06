@@ -68,7 +68,7 @@ StatusCode CaloFillPrsSpdRawBuffer::initialize() {
   info() << "Data coding type " << m_dataCodingType << endmsg;
 
   if ( 3 < m_dataCodingType || 1 > m_dataCodingType ) {
-    Error( "Invalid Data coding type", StatusCode::FAILURE );
+    Error( "Invalid Data coding type", StatusCode::FAILURE ).ignore();
   }
 
   return StatusCode::SUCCESS;

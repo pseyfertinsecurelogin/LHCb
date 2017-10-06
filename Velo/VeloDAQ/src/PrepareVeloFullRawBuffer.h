@@ -78,8 +78,6 @@ public:
   /// Standard constructor
   PrepareVeloFullRawBuffer( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~PrepareVeloFullRawBuffer( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 
