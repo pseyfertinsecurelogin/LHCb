@@ -19,3 +19,4 @@ gaudi_add_module(MDF
                  INCLUDE_DIRS ROOT
                  LINK_LIBRARIES ROOT GaudiKernel DAQEventLib MDFLib)
 
+gaudi_add_test(QMTest QMTEST)

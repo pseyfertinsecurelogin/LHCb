@@ -337,7 +337,7 @@ Access LHCb::StreamDescriptor::connect(const std::string& specs)  {
       if ( !proto.empty() )  {
         result.type = char(::toupper(proto[0]));
         if ( result.type == 'F' ) {
-          result.ioDesc     = file_open(file.c_str(), O_WRONLY|O_BINARY|O_CREAT, S_IRWXU|S_IRWXG );
+          result.ioDesc     = file_open(file.c_str(), O_WRONLY|O_BINARY|O_CREAT|O_TRUNC, S_IRWXU|S_IRWXG );
           result.m_write    = file_write;
           result.m_read     = file_read;
           result.m_seek     = file_seek;
@@ -354,7 +354,7 @@ Access LHCb::StreamDescriptor::connect(const std::string& specs)  {
           PosixIO *io = getIOModule(proto);
           if ( io && io->open && io->close && io->write && io->read && io->lseek64 )  {
             result.ioFuncs    = io;
-            result.ioDesc     = io->open(file.c_str(), O_WRONLY|O_BINARY|O_CREAT, S_IRWXU|S_IRWXG);
+            result.ioDesc     = io->open(file.c_str(), O_WRONLY|O_BINARY|O_CREAT|O_TRUNC, S_IRWXU|S_IRWXG);
             result.m_write    = posix_write;
             result.m_read     = posix_read;
             result.m_seek     = posix_seek;
