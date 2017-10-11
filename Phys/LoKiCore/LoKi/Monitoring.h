@@ -154,10 +154,10 @@ namespace LoKi
         return result ;                                           // RETURN
       }
       /// OPTIONAL: just a nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override
       { return m_cut.fillStream ( s ) ; }
       /// OPTIONAL: delegate ID:
-      virtual std::size_t id() const { return m_cut.id() ; }
+      std::size_t id() const override { return m_cut.id() ; }
       // ======================================================================
     private:
       // ======================================================================
@@ -308,10 +308,10 @@ namespace LoKi
         return result ;
       }
       /// OPTIONAL: just a nice printout
-      virtual std::ostream& fillStream ( std::ostream& s ) const
+      std::ostream& fillStream ( std::ostream& s ) const override 
       { return m_fun.fillStream ( s ) ; }
       /// delegate ID:
-      virtual std::size_t id() const { return m_fun.id() ; }
+      std::size_t id() const override { return m_fun.id() ; }
       // ======================================================================
     private:
       // ======================================================================

@@ -173,8 +173,8 @@ double LoKi::TES::Contains::operator() ( /* LoKi::TES::Contains::argument */ ) c
 {
   //
   const ObjectContainerBase *obj = LoKi::TES::get_<ObjectContainerBase> ( *this ) ;
-  //
-  return obj ? obj -> numberOfObjects () : -1;
+  if ( !obj ) { return -1 ; }
+  return obj -> numberOfObjects () ;
 }
 // ============================================================================
 // OPTIONAL: nice printout
