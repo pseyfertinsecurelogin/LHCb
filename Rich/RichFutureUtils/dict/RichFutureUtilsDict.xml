@@ -2,6 +2,8 @@
 
   <class name = "Rich::Future::HypoData&lt;float&gt;" />
   <class name = "Rich::Future::HypoData&lt;double&gt;" />
+  <class name = "Rich::Future::RecoPhoton" />
+  <!--class name = "Rich::Future::SIMDRecoPhoton" /-->
   <class name = "Rich::Future::GeomPhoton" />
 
 </lcgdict>

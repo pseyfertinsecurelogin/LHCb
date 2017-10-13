@@ -3,6 +3,7 @@
 
 #include "RichFutureUtils/RichHypoData.h"
 #include "RichFutureUtils/RichGeomPhoton.h"
+//#include "RichFutureUtils/RichSIMDGeomPhoton.h"
 
 // instanciate templated classes
 namespace 

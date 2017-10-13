@@ -7,10 +7,10 @@ gaudi_depends_on_subdirs(GaudiUtils
                          Kernel/LHCbKernel
                          Rich/RichUtils)
 
-#find_package(AIDA)
-#find_package(Boost)
-#find_package(VDT)
-#find_package(ROOT COMPONENTS Vc)
+find_package(Vc)
+find_package(ROOT)
+
+include_directories(SYSTEM ${ROOT_INCLUDE_DIRS} ${Vc_INCLUDE_DIR})
 
 gaudi_add_library(RichFutureUtils
                   src/*.cpp
@@ -24,3 +24,6 @@ gaudi_add_dictionary(RichFutureUtils
                      INCLUDE_DIRS AIDA Boost
                      LINK_LIBRARIES GaudiUtilsLib LHCbKernel RichUtils RichFutureUtils
                      OPTIONS "-U__MINGW32__")
+
+target_link_libraries( RichFutureUtils "${Vc_LIB_DIR}/libVc.a" )
+target_link_libraries( RichFutureUtilsDict "${Vc_LIB_DIR}/libVc.a" )
