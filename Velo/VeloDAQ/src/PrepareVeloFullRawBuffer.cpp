@@ -40,8 +40,7 @@ PrepareVeloFullRawBuffer::PrepareVeloFullRawBuffer( const std::string& name,
     m_veloPedestals ( 0 ),
     m_veloPedestalsLoc ( VeloFullBankLocation::Pedestals ),
     m_adcBankPresent ( false ),
-    m_pedBankPresent ( false ),
-    m_isDebug ( msgLevel( MSG::DEBUG ) )
+    m_pedBankPresent ( false )
 {
 
   declareProperty("RunWithODIN", m_runWithODIN=true); 
@@ -63,7 +62,7 @@ StatusCode PrepareVeloFullRawBuffer::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
 
-  if(m_isDebug) debug() << "==> Initialize" << endmsg;
+  if(msgLevel( MSG::DEBUG )) debug() << "==> Initialize" << endmsg;
   //
   //  setHistoTopDir( "Vetra/" );
   return StatusCode::SUCCESS;
@@ -73,7 +72,7 @@ StatusCode PrepareVeloFullRawBuffer::initialize() {
 //=============================================================================
 StatusCode PrepareVeloFullRawBuffer::execute() {
 
-  if(m_isDebug) debug() << "==> Execute" << endmsg;
+  if(msgLevel( MSG::DEBUG )) debug() << "==> Execute" << endmsg;
   //  
   StatusCode rawEvtStatus=getRawEvent();
 
@@ -101,7 +100,7 @@ StatusCode PrepareVeloFullRawBuffer::execute() {
 
   }
   //
-  if(m_isDebug) debug()<< " end of execute" <<endmsg;
+  if(msgLevel( MSG::DEBUG )) debug()<< " end of execute" <<endmsg;
 
   return ( StatusCode::SUCCESS );
 }
@@ -109,7 +108,7 @@ StatusCode PrepareVeloFullRawBuffer::execute() {
 //=============================================================================
 StatusCode PrepareVeloFullRawBuffer::getRawEvent()
 {
-  if(m_isDebug) {
+  if(msgLevel( MSG::DEBUG )) {
     debug()<< " ==> getRawEvent() " <<endmsg;
     debug()<< "--------------------" <<endmsg;
   }
@@ -119,7 +118,7 @@ StatusCode PrepareVeloFullRawBuffer::getRawEvent()
   if( NULL == m_rawEvent ){
     return Error( " ==> There is no RawEvent at: " + m_rawEventLoc );
   }else{  
-    if(m_isDebug) debug()<< " ==> The RawEvent has been read-in from location: "
+    if(msgLevel( MSG::DEBUG )) debug()<< " ==> The RawEvent has been read-in from location: "
            << m_rawEventLoc  <<endmsg;  
   }
   //
@@ -128,7 +127,7 @@ StatusCode PrepareVeloFullRawBuffer::getRawEvent()
 //=============================================================================
 StatusCode PrepareVeloFullRawBuffer::getRawBanks()
 {
-  if(m_isDebug) debug()<< " ==> getRawBanks() " <<endmsg;
+  if(msgLevel( MSG::DEBUG )) debug()<< " ==> getRawBanks() " <<endmsg;
   // check if there is non-zero suppressed bank present
   const std::vector<LHCb::RawBank*>& fullBanks=
         m_rawEvent->banks(LHCb::RawBank::VeloFull);
@@ -205,7 +204,7 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks()
     m_veloPedestals=new VeloFullBanks();
     //
 
-    if(m_isDebug) debug()<< "VeloPed bank detected of size: "
+    if(msgLevel( MSG::DEBUG )) debug()<< "VeloPed bank detected of size: "
                          << pedBanks.size() <<endmsg;
 
     for(bIt=pedBanks.begin(); bIt!=pedBanks.end(); bIt++){
@@ -240,7 +239,7 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks()
     m_veloADCData=new VeloFullBanks();
     m_veloADCPartialData=new VeloFullBanks();
     unsigned int msgCount=0;
-    if(m_isDebug) msgCount=10;
+    if(msgLevel( MSG::DEBUG )) msgCount=10;
     Warning(" --> There are no NZS banks!", StatusCode::SUCCESS, msgCount).ignore();
 
   }
@@ -254,7 +253,7 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks()
 // /// ///////////////////////////////////////////////////////////////// /// //
 void PrepareVeloFullRawBuffer::createOrderedSections()
 {
-  if(m_isDebug) debug()<< " ==> createOrderedSection() " <<endmsg;
+  if(msgLevel( MSG::DEBUG )) debug()<< " ==> createOrderedSection() " <<endmsg;
   //
   if(adcBankFlag()){
 
@@ -277,8 +276,8 @@ void PrepareVeloFullRawBuffer::createOrderedSections()
 
       if(WORD2BYTE*FPGAx4==(*part_IT).second.first)
       {
-        //if (m_isDebug) debug()<< " --> Will write partial data! " <<endmsg;
-        //if (m_isDebug) debug()<< " --> source id: " << ((*part_IT).first) <<endmsg;
+        //if (msgLevel( MSG::DEBUG )) debug()<< " --> Will write partial data! " <<endmsg;
+        //if (msgLevel( MSG::DEBUG )) debug()<< " --> source id: " << ((*part_IT).first) <<endmsg;
         info()<< " --> Will write partial data! " <<endmsg;
         info()<< " --> source id: " << ((*part_IT).first) <<endmsg;
         
@@ -316,12 +315,12 @@ void PrepareVeloFullRawBuffer::createOrderedSections()
 //=============================================================================
 StatusCode PrepareVeloFullRawBuffer::writeVeloFull()
 {
-  if(m_isDebug) debug()<< " ==> writeVeloFull() " <<endmsg;
+  if(msgLevel( MSG::DEBUG )) debug()<< " ==> writeVeloFull() " <<endmsg;
   //
 
   if(adcBankFlag()||m_roundRobin){
 
-    if(m_isDebug) debug()<< "Registered container with bank data of size: "
+    if(msgLevel( MSG::DEBUG )) debug()<< "Registered container with bank data of size: "
           << m_veloADCData->size() << ", at" 
           << m_veloADCDataLoc <<endmsg;
 
@@ -333,7 +332,7 @@ StatusCode PrepareVeloFullRawBuffer::writeVeloFull()
 
   if(pedBankFlag()){
 
-    if(m_isDebug) debug()<< "Registered container with bank data of size: "
+    if(msgLevel( MSG::DEBUG )) debug()<< "Registered container with bank data of size: "
           << m_veloPedestals->size() << ", at" 
           << m_veloPedestalsLoc <<endmsg;
 
@@ -346,7 +345,7 @@ StatusCode PrepareVeloFullRawBuffer::writeVeloFull()
 //=============================================================================
 void PrepareVeloFullRawBuffer::resetMemory()
 {
-  if(m_isDebug) debug()<< " ==> resetMemory() " <<endmsg;
+  if(msgLevel( MSG::DEBUG )) debug()<< " ==> resetMemory() " <<endmsg;
   //
   m_fullData2Decode.clear();
   m_partialData2Decode.clear();
