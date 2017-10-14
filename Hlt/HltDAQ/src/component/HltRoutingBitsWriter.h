@@ -3,7 +3,6 @@
 
 // Include files
 #include <array>
-#include <functional>
 
 // boost
 #include <boost/variant.hpp>

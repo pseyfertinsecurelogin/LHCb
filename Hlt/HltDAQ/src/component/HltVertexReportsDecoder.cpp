@@ -6,14 +6,7 @@
 // local
 #include "HltVertexReportsDecoder.h"
 #include "HltVertexReportsWriter.h"
-
-namespace {
-    double doubleFromInt(unsigned int i) {
-            union IntFloat { unsigned int mInt; float mFloat; };
-            IntFloat a; a.mInt=i;
-            return double(a.mFloat);
-    }
-}
+#include "pun.h"
 
 using namespace LHCb;
 
@@ -92,20 +85,20 @@ StatusCode HltVertexReportsDecoder::execute() {
 
     for( unsigned int j=0; j!=nVert; ++j ){
       auto  pVtx = new VertexBase();
-      double x = doubleFromInt( *i++ );
-      double y = doubleFromInt( *i++ );
-      double z = doubleFromInt( *i++ );
+      double x = pun_to<float>( *i++ );
+      double y = pun_to<float>( *i++ );
+      double z = pun_to<float>( *i++ );
       pVtx->setPosition( { x,y,z } );
-      pVtx->setChi2( doubleFromInt( *i++ ) );
+      pVtx->setChi2( pun_to<float>( *i++ ) );
       pVtx->setNDoF( *i++ ) ;
       if( bankVersionNumber>0 ){
         Gaudi::SymMatrix3x3 cov;
-        cov[0][0] = doubleFromInt( *i++ ) ;
-        cov[1][1] = doubleFromInt( *i++ ) ;
-        cov[2][2] = doubleFromInt( *i++ ) ;
-        cov[0][1] = doubleFromInt( *i++ ) ;
-        cov[0][2] = doubleFromInt( *i++ ) ;
-        cov[1][2] = doubleFromInt( *i++ ) ;
+        cov[0][0] = pun_to<float>( *i++ ) ;
+        cov[1][1] = pun_to<float>( *i++ ) ;
+        cov[2][2] = pun_to<float>( *i++ ) ;
+        cov[0][1] = pun_to<float>( *i++ ) ;
+        cov[0][2] = pun_to<float>( *i++ ) ;
+        cov[1][2] = pun_to<float>( *i++ ) ;
         pVtx->setCovMatrix(cov);
       }
 

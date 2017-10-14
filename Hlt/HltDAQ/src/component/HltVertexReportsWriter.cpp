@@ -5,24 +5,11 @@
 
 // local
 #include "HltVertexReportsWriter.h"
+#include "pun.h"
 
 using namespace LHCb;
 
 namespace {
-
-float floatFromInt(unsigned int i)
-{
-        union IntFloat { unsigned int mInt; float mFloat; };
-        IntFloat a; a.mInt=i;
-        return a.mFloat;
-}
-
-unsigned int doubleToInt(double d)
-{
-        union IntFloat { unsigned int mInt; float mFloat; };
-        IntFloat a; a.mFloat = float(d);
-        return a.mInt;
-}
 
 static const Gaudi::StringKey Hlt1SelectionID{"Hlt1SelectionID"};
 static const Gaudi::StringKey Hlt2SelectionID{"Hlt2SelectionID"};
@@ -101,18 +88,18 @@ StatusCode HltVertexReportsWriter::execute() {
 
      for(const auto& vtx : s.second ) {
        // now push vertex info
-       *out++ = doubleToInt( vtx->position().x() );
-       *out++ = doubleToInt( vtx->position().y() );
-       *out++ = doubleToInt( vtx->position().z() );
-       *out++ = doubleToInt( vtx->chi2() );
+       *out++ = pun_to<unsigned int>( vtx->position().x() );
+       *out++ = pun_to<unsigned int>( vtx->position().y() );
+       *out++ = pun_to<unsigned int>( vtx->position().z() );
+       *out++ = pun_to<unsigned int>( vtx->chi2() );
        *out++ = std::max( vtx->nDoF(), 0 );
        const auto& cov = vtx->covMatrix();
-       *out++ = doubleToInt( cov[0][0] );
-       *out++ = doubleToInt( cov[1][1] );
-       *out++ = doubleToInt( cov[2][2] );
-       *out++ = doubleToInt( cov[0][1] );
-       *out++ = doubleToInt( cov[0][2] );
-       *out++ = doubleToInt( cov[1][2] );
+       *out++ = pun_to<unsigned int>( cov[0][0] );
+       *out++ = pun_to<unsigned int>( cov[1][1] );
+       *out++ = pun_to<unsigned int>( cov[2][2] );
+       *out++ = pun_to<unsigned int>( cov[0][1] );
+       *out++ = pun_to<unsigned int>( cov[0][2] );
+       *out++ = pun_to<unsigned int>( cov[1][2] );
      }
   }
 
@@ -138,17 +125,17 @@ StatusCode HltVertexReportsWriter::execute() {
       ++iWord;
       for( unsigned int j=0; j!=n; ++j ){
         verbose() << " " << j
-                  << " x " << floatFromInt( hltVertexReportsRawBank[iWord] )
-                  << " y " << floatFromInt( hltVertexReportsRawBank[iWord+1] )
-                  << " z " << floatFromInt( hltVertexReportsRawBank[iWord+2] )
-                  << " chi2 " << floatFromInt( hltVertexReportsRawBank[iWord+3] )
+                  << " x " << pun_to<float>( hltVertexReportsRawBank[iWord] )
+                  << " y " << pun_to<float>( hltVertexReportsRawBank[iWord+1] )
+                  << " z " << pun_to<float>( hltVertexReportsRawBank[iWord+2] )
+                  << " chi2 " << pun_to<float>( hltVertexReportsRawBank[iWord+3] )
                   << " nDoF " << hltVertexReportsRawBank[iWord+4]
-                  << " cov(x,x) " << floatFromInt( hltVertexReportsRawBank[iWord+5] )
-                  << " cov(y,y) " << floatFromInt( hltVertexReportsRawBank[iWord+6] )
-                  << " cov(z,z) " << floatFromInt( hltVertexReportsRawBank[iWord+7] )
-                  << " cov(x,y) " << floatFromInt( hltVertexReportsRawBank[iWord+8] )
-                  << " cov(x,z) " << floatFromInt( hltVertexReportsRawBank[iWord+9] )
-                  << " cov(y,z) " << floatFromInt( hltVertexReportsRawBank[iWord+10] )
+                  << " cov(x,x) " << pun_to<float>( hltVertexReportsRawBank[iWord+5] )
+                  << " cov(y,y) " << pun_to<float>( hltVertexReportsRawBank[iWord+6] )
+                  << " cov(z,z) " << pun_to<float>( hltVertexReportsRawBank[iWord+7] )
+                  << " cov(x,y) " << pun_to<float>( hltVertexReportsRawBank[iWord+8] )
+                  << " cov(x,z) " << pun_to<float>( hltVertexReportsRawBank[iWord+9] )
+                  << " cov(y,z) " << pun_to<float>( hltVertexReportsRawBank[iWord+10] )
                   << endmsg;
         iWord += 11;
 
