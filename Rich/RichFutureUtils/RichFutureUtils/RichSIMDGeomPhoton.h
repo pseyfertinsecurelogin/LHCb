@@ -16,6 +16,9 @@
 #include <array>
 #include <cmath>
 
+// Utils
+#include "RichUtils/RichSIMDTypes.h"
+
 // geometry
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
@@ -23,9 +26,6 @@
 // Kernel
 #include "Kernel/RichSmartID.h"
 #include "Kernel/FastAllocVector.h"
-
-// Vc
-#include <Vc/Vc>
 
 // Forward declarations
 class DeRichSphMirror;
@@ -48,14 +48,14 @@ namespace Rich
 
     public:
 
+      /// The scalar floating point precision
+      using FP         = float;
       /// The floating point precision to use
-      using Scalar = Vc::Vector<float>;
-
+      using SIMDFP     = Rich::SIMD::FP<FP>; 
       /// Type for SmartIDs.
-      using SmartIDs = std::array<LHCb::RichSmartID,Scalar::Size>;
-
+      using SmartIDs   = Rich::SIMD::STDArray<LHCb::RichSmartID,FP>;
       /// Container of photons
-      using Vector = LHCb::STL::Vector<SIMDRecoPhoton>;
+      using Vector     = Rich::SIMD::STDVector<SIMDRecoPhoton>;
 
     public:
 
@@ -71,10 +71,10 @@ namespace Rich
        *  @param smartID The RCH PD channel identifiers associated to the photons
        *  @param activeFrac The fraction of the associated segment that these photons could have been radiated from
        */
-      SIMDRecoPhoton( const Scalar theta,
-                      const Scalar phi,
-                      const SmartIDs smartID = SmartIDs(),
-                      const Scalar activeFrac = Scalar(1) ) : 
+      SIMDRecoPhoton( const SIMDFP theta,
+                      const SIMDFP phi,
+                      const SmartIDs& smartID = SmartIDs(),
+                      const SIMDFP activeFrac = SIMDFP::One() ) : 
         m_CherenkovTheta        ( theta      ),
         m_CherenkovPhi          ( phi        ),
         m_smartID               ( smartID    ),
@@ -84,19 +84,19 @@ namespace Rich
 
       /** Set accessor for the Cherenkov theta angle
        *  @param theta the new value for the Cherenkov theta angle */
-      inline void setCherenkovTheta ( const Scalar theta ) noexcept { m_CherenkovTheta = theta; }
+      inline void setCherenkovTheta ( const SIMDFP theta ) noexcept { m_CherenkovTheta = theta; }
 
       /** Get accessor for the Cherenkov theta angle
        *  @return the current value of the Cherenkov theta angle */
-      inline Scalar CherenkovTheta () const noexcept { return m_CherenkovTheta; }
+      inline SIMDFP CherenkovTheta () const noexcept { return m_CherenkovTheta; }
 
       /** Set accessor for Cherenkov phi angle
        *  @param phi the new value for the Cherenkov phi angle */
-      inline void setCherenkovPhi ( const Scalar phi ) noexcept { m_CherenkovPhi = phi; }
+      inline void setCherenkovPhi ( const SIMDFP phi ) noexcept { m_CherenkovPhi = phi; }
 
       /** Get accessor for Cherenkov phi angle
        *  @return the current value of the Cherenkov phi angle */
-      inline Scalar CherenkovPhi () const noexcept { return m_CherenkovPhi; }
+      inline SIMDFP CherenkovPhi () const noexcept { return m_CherenkovPhi; }
 
       /**
        * Set accessor for the current active segment fraction.
@@ -105,7 +105,7 @@ namespace Rich
        *
        * @param fraction the new value for the active fraction
        */
-      inline void setActiveSegmentFraction ( const Scalar fraction ) noexcept
+      inline void setActiveSegmentFraction ( const SIMDFP fraction ) noexcept
       {
         m_activeSegmentFraction = fraction;
       }
@@ -117,7 +117,7 @@ namespace Rich
        *
        * @return the current value of the current active segment fraction.
        */
-      inline Scalar activeSegmentFraction() const noexcept
+      inline SIMDFP activeSegmentFraction() const noexcept
       {
         return m_activeSegmentFraction;
       }
@@ -131,31 +131,31 @@ namespace Rich
       inline const SmartIDs& smartID() const noexcept { return m_smartID; }
 
       /// Set the unambiguous photon flag
-      inline void setUnambiguousPhoton( const Scalar::mask_type unambig ) noexcept 
+      inline void setUnambiguousPhoton( const SIMDFP::mask_type unambig ) noexcept 
       {
         m_unambigPhot = unambig;
       }
 
       /// Access the unambiguous photon flag
-      inline Scalar::mask_type unambiguousPhoton() const noexcept { return m_unambigPhot; }
+      inline SIMDFP::mask_type unambiguousPhoton() const noexcept { return m_unambigPhot; }
 
     private:
 
       /// Cherenkov angles theta
-      Scalar m_CherenkovTheta;
+      SIMDFP m_CherenkovTheta { SIMDFP::Zero() };
 
       /// Cherenkov angles phi
-      Scalar m_CherenkovPhi;     
+      SIMDFP m_CherenkovPhi { SIMDFP::Zero() };  
 
       /// The channel IDs for the photon detection points
       SmartIDs m_smartID; 
 
       /** The fraction of the RichTrackSegment trajectory these photons are associated
        *  with for which it is geometrically possible these photon were produced */
-      Scalar m_activeSegmentFraction;
+      SIMDFP m_activeSegmentFraction { SIMDFP::One() };
 
       /// Flag to indicate if unambiguous photons or not
-      Scalar::mask_type m_unambigPhot;
+      SIMDFP::mask_type m_unambigPhot;
 
     };
 
