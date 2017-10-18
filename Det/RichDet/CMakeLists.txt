@@ -8,6 +8,10 @@ gaudi_depends_on_subdirs(Det/DetDescCnv
 
 find_package(Boost)
 find_package(GSL)
+find_package(Vc)
+
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${GSL_INCLUDE_DIRS}
+                           ${Vc_INCLUDE_DIR})     
 
 gaudi_add_library(RichDetLib
                   src/Lib/*.cpp
@@ -27,3 +31,6 @@ gaudi_add_dictionary(RichDet
                      LINK_LIBRARIES GSL Boost DetDescCnvLib RichUtils RichDetLib
                      OPTIONS "-U__MINGW32__")
 
+target_link_libraries( RichDetLib  "${Vc_LIB_DIR}/libVc.a" )
+target_link_libraries( RichDet     "${Vc_LIB_DIR}/libVc.a" )
+target_link_libraries( RichDetDict "${Vc_LIB_DIR}/libVc.a" )

@@ -11,8 +11,10 @@ gaudi_depends_on_subdirs(Det/RichDet
                          Rich/RichUtils)
 
 find_package(Boost)
+find_package(Vc)
+
 # hide warnings from some external projects
-include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${Vc_INCLUDE_DIR})
 
 
 gaudi_add_module(RichFutureDAQ

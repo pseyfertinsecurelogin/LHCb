@@ -25,5 +25,5 @@ gaudi_add_dictionary(RichFutureUtils
                      LINK_LIBRARIES GaudiUtilsLib LHCbKernel RichUtils RichFutureUtils
                      OPTIONS "-U__MINGW32__")
 
-target_link_libraries( RichFutureUtils "${Vc_LIB_DIR}/libVc.a" )
+target_link_libraries( RichFutureUtils     "${Vc_LIB_DIR}/libVc.a" )
 target_link_libraries( RichFutureUtilsDict "${Vc_LIB_DIR}/libVc.a" )
