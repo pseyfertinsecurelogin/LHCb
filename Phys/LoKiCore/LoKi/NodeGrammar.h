@@ -1,5 +1,5 @@
 // ============================================================================
-#ifndef LOKI_NODEGRAMMAR_H 
+#ifndef LOKI_NODEGRAMMAR_H
 #define LOKI_NODEGRAMMAR_H 1
 // ============================================================================
 // Include files
@@ -18,25 +18,25 @@
 #include <boost/spirit/include/phoenix_operator.hpp>
 #include <boost/fusion/include/unused.hpp>
 // ============================================================================
-/** @file 
+/** @file
  *
- *  The grammars for decay tree nodes, 
+ *  The grammars for decay tree nodes,
  *  reimplementation using Boost.Spirit version 2.
  *
- *  This file is a part of LoKi project - 
+ *  This file is a part of LoKi project -
  *  ``C++ ToolKit  for Smart and Friendly Physics Analysis''
  *
  *  The package has been designed with the kind help from
- *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas, 
- *  contributions and advices from G.Raven, J.van Tilburg, 
+ *  Galina PAKHLOVA and Sergey BARSUK.  Many bright ideas,
+ *  contributions and advices from G.Raven, J.van Tilburg,
  *  A.Golutvin, P.Koppenburg have been used in the design.
  *
  *  @author Alexander Mazurov
  *  @date   2011-12-11
  */
 // ============================================================================
-namespace Decays 
-{ 
+namespace Decays
+{
   // ==========================================================================
   namespace Grammars
   {
@@ -47,11 +47,11 @@ namespace Decays
     namespace qi  = sp::qi;
     namespace enc = sp::ascii;
     namespace dn  = Decays::Nodes;
-    //namespace rep = sp::repository;  
+    //namespace rep = sp::repository;
     // Typedefs
     typedef Decays::Nodes::_Node Node_;
-    //typedef Decays::NodeList NodeList_ ;  
-    struct quarks : qi::symbols<char, LHCb::ParticleID::Quark> 
+    //typedef Decays::NodeList NodeList_ ;
+    struct quarks : qi::symbols<char, LHCb::ParticleID::Quark>
     {
       // Constructor
       quarks() {
@@ -65,13 +65,13 @@ namespace Decays
       }
     };
     // ========================================================================
-    /** @class Node 
-     *  Main grammar foe decay nodes 
+    /** @class Node
+     *  Main grammar foe decay nodes
      *  @author Alexander Mazurov
      *  @date   2011-12-11
      */
     template<typename Iterator, typename Skipper>
-    struct Node: qi::grammar<Iterator, Node_(), Skipper> 
+    struct Node: qi::grammar<Iterator, Node_(), Skipper>
     {
       // ======================================================================
       typedef Node_ ResultT;
@@ -92,11 +92,6 @@ namespace Decays
       // ======================================================================
       struct Operations
       {
-        // ====================================================================
-        template <typename A, typename B = boost::fusion::unused_type,
-                  typename C = boost::fusion::unused_type,
-                  typename D = boost::fusion::unused_type>
-        struct result { typedef void type; };
         // ====================================================================
         void operator()(Node_& res, const std::string& value, tag_pid) const
         {
@@ -148,22 +143,22 @@ namespace Decays
           res = dn::Heavy(value);
         }
         // ====================================================================
-        void operator()(Node_& res  , 
-                        const LHCb::ParticleID::Quark& value, 
+        void operator()(Node_& res  ,
+                        const LHCb::ParticleID::Quark& value,
                         tag_quarks  ) const
         {
           res = dn::HasQuark(value);
         }
-        // ====================================================================        
-        void operator()(Node_& res, const Node_& value, tag_not) const 
+        // ====================================================================
+        void operator()(Node_& res, const Node_& value, tag_not) const
         {
           res = dn::Not(value);
-        }  
+        }
         // ====================================================================
       };
       // ======================================================================
-      void make_symbols( qi::symbols<char,std::string>& output, 
-                         const VectorOfStringsT&        symbols) 
+      void make_symbols( qi::symbols<char,std::string>& output,
+                         const VectorOfStringsT&        symbols)
       {
         for(VectorOfStringsT::const_iterator curr = symbols.begin();
             curr != symbols.end(); ++curr) {
@@ -174,100 +169,100 @@ namespace Decays
         //std::cerr << "<-" << std::endl;
       }
       // ======================================================================
-      Node ( const VectorOfStringsT& symbols   , 
-             const VectorOfStringsT& particles ) 
-        : Node::base_type(res) 
+      Node ( const VectorOfStringsT& symbols   ,
+             const VectorOfStringsT& particles )
+        : Node::base_type(res)
       {
         //
         make_symbols ( parts , particles ) ;
         //
         make_symbols ( symbs , symbols   ) ;
         //
-        res %= expression;  
+        res %= expression;
         //
         expression  =
-          // boolean operation 
+          // boolean operation
           operation[qi::_val = qi::_1]
           |
           // negation 1 :
-          ("!" >> expression[op(qi::_val, qi::_1, tag_not())]) 
-          | 
+          ("!" >> expression[op(qi::_val, qi::_1, tag_not())])
+          |
           // negation 2 :
-          (qi::lit("~") >> 
-           "(" >> expression[op(qi::_val, qi::_1, tag_not())] >> ")") 
-          | 
+          (qi::lit("~") >>
+           "(" >> expression[op(qi::_val, qi::_1, tag_not())] >> ")")
+          |
           // allow extra "()"
           ("(" >> expression[qi::_val = qi::_1] >> ")" ) |
-          // simple atomic expression 
+          // simple atomic expression
           atomic[qi::_val = qi::_1] ;
-        // 
-        operation  = 
-          ( qi::lit( "(" ) 
-            >> 
+        //
+        operation  =
+          ( qi::lit( "(" )
+            >>
             expression[qi::_val = qi::_1] >>
-            +(('&' >> expression[qi::_val &= qi::_1]) 
-              | 
-              ("|" >> expression[qi::_val |= qi::_1])) 
+            +(('&' >> expression[qi::_val &= qi::_1])
+              |
+              ("|" >> expression[qi::_val |= qi::_1]))
             >> ")"
-            ) 
+            )
           |
-          ("[" 
-           >> expression[qi::_val = qi::_1] 
+          ("["
+           >> expression[qi::_val = qi::_1]
            >> +("," >> expression[qi::_val |= qi::_1])
-           >> 
+           >>
            "]"
            );
-        // 
-        atomic =  
+        //
+        atomic =
           spin  [qi::_val = qi::_1]
           |
           tm    [qi::_val = qi::_1]
-          | 
+          |
           qs    [op(qi::_val, qi::_1, tag_quarks())]
           |
-          parts [op(qi::_val, qi::_1, tag_pid())] 
+          parts [op(qi::_val, qi::_1, tag_pid())]
           |
           ("[" >> parts[op(qi::_val, qi::_1, tag_cc())] >> "]cc")
-          | 
-          symbs[op(qi::_val, qi::_1, tag_symbol())];
-        
-        spin = 
-          ( qi::lit("JSpin") >> '(' 
-            >> min_limit(1)[op(qi::_val, qi::_1, tag_jspin())] >> ')') 
           |
-          ( qi::lit("LSpin") >> '(' 
+          symbs[op(qi::_val, qi::_1, tag_symbol())];
+
+        spin =
+          ( qi::lit("JSpin") >> '('
+            >> min_limit(1)[op(qi::_val, qi::_1, tag_jspin())] >> ')')
+          |
+          ( qi::lit("LSpin") >> '('
             >> min_limit(1)[op(qi::_val, qi::_1, tag_lspin())] >> ')')
           |
-          ( qi::lit("SSpin") >> '(' 
+          ( qi::lit("SSpin") >> '('
             >> min_limit(1)[op(qi::_val, qi::_1, tag_sspin())] >> ')');
-        
-        tm = 
-          ( qi::lit("LongLived_") >> '(' 
-            >> qi::double_[op(qi::_val, qi::_1, tag_longlived())] >> ')') 
-          | 
-          ( qi::lit("ShortLived_") >> '(' 
+
+        tm =
+          ( qi::lit("LongLived_") >> '('
+            >> qi::double_[op(qi::_val, qi::_1, tag_longlived())] >> ')')
+          |
+          ( qi::lit("ShortLived_") >> '('
             >> qi::double_[op(qi::_val, qi::_1, tag_shortlived())] >> ')')
-          | 
-          ( qi::lit("Light") >> '(' 
-            >> qi::double_[op(qi::_val, qi::_1, tag_light())] >> ')') 
-          | 
-          ( qi::lit("Heavy") >> '(' 
+          |
+          ( qi::lit("Light") >> '('
+            >> qi::double_[op(qi::_val, qi::_1, tag_light())] >> ')')
+          |
+          ( qi::lit("Heavy") >> '('
             >> qi::double_[op(qi::_val, qi::_1, tag_heavy())] >> ')');
-        
+
         min_limit %=   qi::int_[qi::_a = qi::_1] >>
-          qi::eps( qi::_a >= qi::_r1 && qi::_a >= 0);                 
+          qi::eps( qi::_a >= qi::_r1 && qi::_a >= 0);
       }
         // ====================================================================
-        qi::rule<Iterator, Node_(), Skipper> 
-          res        , 
-          atomic     ,  
-          spin       , 
-          tm         , 
+        qi::rule<Iterator, Node_(), Skipper>
+          res        ,
+          atomic     ,
+          spin       ,
+          tm         ,
           expression ,
           operation  ;
         qi::symbols<char,std::string> symbs , parts;
         qi::rule<Iterator,int(int), qi::locals<int>, Skipper>  min_limit;
-        
+
         quarks qs;
         ph::function<Operations> op;
         // ====================================================================
@@ -277,7 +272,7 @@ namespace Decays
   // ==========================================================================
 } //                                                    end of namespace Decays
 // ============================================================================
-//                                                                      The END 
+//                                                                      The END
 // ============================================================================
 #endif // LOKI_NODEGRAMMAR_H
 // ============================================================================
