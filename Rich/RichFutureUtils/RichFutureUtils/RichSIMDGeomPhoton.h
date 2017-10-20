@@ -49,11 +49,11 @@ namespace Rich
     public:
 
       /// The scalar floating point precision
-      using FP         = float;
+      using FP         = Rich::SIMD::DefaultFP;
       /// The floating point precision to use
       using SIMDFP     = Rich::SIMD::FP<FP>; 
       /// Type for SmartIDs.
-      using SmartIDs   = Rich::SIMD::STDArray<LHCb::RichSmartID,FP>;
+      using SmartIDs   = Rich::SIMD::STDArray<LHCb::RichSmartID,SIMDFP>;
       /// Container of photons
       using Vector     = Rich::SIMD::STDVector<SIMDRecoPhoton>;
 
