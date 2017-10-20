@@ -65,7 +65,8 @@ namespace Rich
       if ( any_of(OK) )
       {
         // Zero out the negative values in discr, to prevent sqrt(-ve)
-        discr(!OK) = FTYPE::Zero();
+        //discr(!OK) = FTYPE::Zero();
+        discr.setZero(!OK);
         // distance
         const FTYPE dist = half * ( sqrt(discr) - b ) / a;
         // set intersection point
@@ -113,7 +114,8 @@ namespace Rich
       if ( any_of(OK) )
       {
         // Zero out the negative values in discr, to prevent sqrt(-ve)
-        discr(!OK) = FTYPE::Zero();
+        //discr(!OK) = FTYPE::Zero();
+        discr.setZero(!OK);
         // compute the distance
         const FTYPE dist = half * ( sqrt(discr) - b ) / a;
         // change position to the intersection point
