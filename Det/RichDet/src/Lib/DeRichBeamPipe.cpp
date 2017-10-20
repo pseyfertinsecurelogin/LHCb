@@ -92,6 +92,23 @@ StatusCode DeRichBeamPipe::initialize ( )
         _ri_debug << "Start Global = " << m_startPGlo << endmsg;
         _ri_debug << "End Global   = " << m_endPGlo << endmsg;
 
+        // cache SIMD data
+        m_startPGloSIMD     = m_startPGlo;
+        m_endPGloSIMD       = m_endPGlo;
+        // transform does not like direct assignent from scalar version :(
+        {
+          double xx{0}, xy{0}, xz{0}, dx{0}, yx{0}, yy{0};
+          double yz{0}, dy{0}, zx{0}, zy{0}, zz{0}, dz{0};
+          geometry()->toLocalMatrix().GetComponents( xx, xy, xz, 
+                                                     dx, yx, yy, 
+                                                     yz, dy, zx, 
+                                                     zy, zz, dz );
+          m_toLocalMatrixSIMD.SetComponents( xx, xy, xz, 
+                                             dx, yx, yy, 
+                                             yz, dy, zx, 
+                                             zy, zz, dz );
+        }
+
         // Compute the y = mx + c parameters for the beam pipe x,y and R^2
 
         const auto zDiff = ( m_startPGlo.z() - m_endPGlo.z() );
@@ -107,6 +124,13 @@ StatusCode DeRichBeamPipe::initialize ( )
         // R^2 
         m_m[2] = ( startRad2 - endRad2 ) / zDiff;
         m_c[2] = startRad2 - ( m_m[2] * m_startPGlo.z() );
+
+        // SIMD copies
+        for ( const int i : { 0, 1, 2 } )
+        {
+          m_mSIMD[i] = m_m[i];
+          m_cSIMD[i] = m_c[i];
+        }        
 
       }
       else
