@@ -7,8 +7,8 @@ gaudi_depends_on_subdirs(GaudiUtils
                          Kernel/LHCbKernel
                          Rich/RichUtils)
 
-find_package(Vc)
 find_package(ROOT)
+find_package(Vc)
 
 include_directories(SYSTEM ${ROOT_INCLUDE_DIRS} ${Vc_INCLUDE_DIR})
 
@@ -26,4 +26,4 @@ gaudi_add_dictionary(RichFutureUtils
                      OPTIONS "-U__MINGW32__")
 
 target_link_libraries( RichFutureUtils     "${Vc_LIB_DIR}/libVc.a" )
-target_link_libraries( RichFutureUtilsDict "${Vc_LIB_DIR}/libVc.a" )
+#target_link_libraries( RichFutureUtilsDict "${Vc_LIB_DIR}/libVc.a" )
