@@ -96,9 +96,8 @@ void SolidCons::setBP()
   // set bounding parameters of SolidBase class
   setZMin   ( -zHalfLength() );
   setZMax   (  zHalfLength() );
-  setRhoMax (  outerRadiusAtMinusZ() > outerRadiusAtPlusZ() ?
-               outerRadiusAtMinusZ() : outerRadiusAtPlusZ() );
-  setRMax   ( sqrt( zMax() * zMax() + rhoMax() * rhoMax () ) );
+  setRhoMax (  std::max(outerRadiusAtMinusZ(),outerRadiusAtPlusZ()) );
+  setRMax   (  sqrt( zMax() * zMax() + rhoMax() * rhoMax () ) );
 
 
   const double phi1   = startPhiAngle   ()                      ;
@@ -108,14 +107,17 @@ void SolidCons::setBP()
     innerRadiusAtMinusZ() < innerRadiusAtPlusZ()  ?
     innerRadiusAtMinusZ() : innerRadiusAtPlusZ()  ;
 
+  const auto cphi1 = cos(phi1); const auto sphi1 = sin(phi1);
+  const auto cphi2 = cos(phi2); const auto sphi2 = sin(phi2);
+
   { // evaluate xmin & xmax
     boost::container::static_vector<double,12> values;
 
     // regular cases
-    values.push_back( rhoMax () * cos ( phi1 ) );
-    values.push_back( rhoMax () * cos ( phi2 ) );
-    values.push_back( rhoMin    * cos ( phi1 ) );
-    values.push_back( rhoMin    * cos ( phi2 ) );
+    values.push_back( rhoMax () * cphi1 );
+    values.push_back( rhoMax () * cphi2 );
+    values.push_back( rhoMin    * cphi1 );
+    values.push_back( rhoMin    * cphi2 );
 
     // special cases
     if( phi1 <=    0*Gaudi::Units::degree &&    0*Gaudi::Units::degree <= phi2 )
@@ -151,10 +153,10 @@ void SolidCons::setBP()
     boost::container::static_vector<double,10> values;
 
     // regular cases
-    values.push_back( rhoMax () * sin ( phi1 ) );
-    values.push_back( rhoMax () * sin ( phi2 ) );
-    values.push_back( rhoMin    * sin ( phi1 ) );
-    values.push_back( rhoMin    * sin ( phi2 ) );
+    values.push_back( rhoMax () * sphi1 );
+    values.push_back( rhoMax () * sphi2 );
+    values.push_back( rhoMin    * sphi1 );
+    values.push_back( rhoMin    * sphi2 );
 
     // special cases
     if( phi1 <=   90*Gaudi::Units::degree &&   90*Gaudi::Units::degree <= phi2 )
