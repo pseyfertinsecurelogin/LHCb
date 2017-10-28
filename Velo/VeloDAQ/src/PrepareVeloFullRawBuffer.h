@@ -122,7 +122,6 @@ private:
   bool m_adcBankPresent;               /// flag to check if data is sent out
   bool m_pedBankPresent;               /// flag to check if ped is sent out
   bool m_runWithODIN;
-  bool m_isDebug;
   bool m_roundRobin;
   bool m_ignoreErrorBanks;
 
