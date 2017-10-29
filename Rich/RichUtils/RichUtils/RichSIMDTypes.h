@@ -4,6 +4,8 @@
 // STL
 #include <vector>
 #include <array>
+#include <type_traits>
+#include <cstdint>
 
 // Vc
 #include <Vc/Vc>
@@ -12,6 +14,10 @@
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Transform3DTypes.h"
+
+// Kernel
+#include "Kernel/RichDetectorType.h"
+#include "Kernel/RichSide.h"
 
 namespace Rich
 {
@@ -45,6 +51,10 @@ namespace Rich
     /// SIMD Plane
     template < typename FPTYPE >
     using Plane  = ROOT::Math::Impl::Plane3D< FP<FPTYPE> >;
+
+    /// SIMD Transform3D
+    template < typename FPTYPE >
+    using Transform3D = ROOT::Math::Impl::Transform3D< FP<FPTYPE> >;
     
     //------------------------------------------------------------------------------------------------
     // Types for doubles
@@ -85,10 +95,20 @@ namespace Rich
     /// SIMD Vector
     template < typename TYPE >
     using STDVector = std::vector< TYPE, Vc::Allocator<TYPE> >;
-    
+
     /// SIMD 'Array' (same size as Vc vectors
     template < typename TYPE, typename FPTYPE >
-    using STDArray = std::array< TYPE, FP<FPTYPE>::Size >;
-   
+    using STDArray = std::array< TYPE, FPTYPE::Size >;
+
+    /// Default float precision for SIMD types
+    using DefaultFP = float;
+
+    //------------------------------------------------------------------------------------------------
+    // SIMD Representations of various RICH enums
+    //------------------------------------------------------------------------------------------------
+
+    /// Container for detector sides
+    using Sides = Vc::Vector<int32_t>;
+    
   }
 }
