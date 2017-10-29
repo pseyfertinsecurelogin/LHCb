@@ -299,3 +299,17 @@ void DeRich::loadPDPanels()
 
 //=============================================================================
 
+void DeRich::fillSIMDTypes()
+{
+  // this loop also does RICH1 Up and down as enums have same numerical value
+  for ( const Rich::Side side : { Rich::firstSide, Rich::secondSide } )
+  {
+    const auto & p = m_nominalPlanes[side];
+    m_nominalPlanesSIMD[side]  = Rich::SIMD::Plane<float>( p.A(), p.B(), p.C(), p.D() );
+    m_nominalNormalsSIMD[side] = m_nominalNormals[side];
+    m_nominalCentresOfCurvatureSIMD[side] = m_nominalCentresOfCurvature[side];
+    m_sphMirrorRadiusSIMD      = m_sphMirrorRadius;
+  }
+}
+
+//=============================================================================
