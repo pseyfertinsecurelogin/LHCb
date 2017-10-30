@@ -60,6 +60,9 @@ namespace
       "x86_64+avx2+fma-centos7-gcc62-opt",
       "x86_64+avx2+fma-centos7-gcc62-opt+o3",
       "x86_64-ubuntu1704-gcc63-opt",
+      "x86_64-centos7-clang50-opt",
+      "x86_64-centos7-clang50-dbg",
+      "x86_64+avx2+fma-centos7-gcc7-opt",
   };
 
   const std::string invalid_platform = "invalid";
