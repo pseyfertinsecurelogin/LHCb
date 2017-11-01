@@ -19,6 +19,7 @@
 
 namespace Rich
 {
+
   /** @namespace Rich::SIMD
    *
    *  Namespace for RICH SIMD types and utilities
@@ -59,11 +60,11 @@ namespace Rich
      
         const auto z2 = z * z;
 
-        auto ret =((((    TYPE(8.05374449538e-2f)  * z2
-                       -  TYPE(1.38776856032E-1f)) * z2
-                       +  TYPE(1.99777106478E-1f)) * z2
-                       -  TYPE(3.33329491539E-1f)) * z2 * z
-                       + z );
+        auto ret = ((((   TYPE(8.05374449538e-2f)  * z2
+                        - TYPE(1.38776856032E-1f)) * z2
+                        + TYPE(1.99777106478E-1f)) * z2
+                        - TYPE(3.33329491539E-1f)) * z2 * z
+                        + z );
 
         // Here we put the result to 0 if xx was 0, if not nothing happens!
         m = ( xx == TYPE::Zero() );
