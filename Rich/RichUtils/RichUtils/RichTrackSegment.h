@@ -16,6 +16,13 @@
 #include <iostream>
 #include <memory>
 #include <cmath>
+#include <array>
+#include <type_traits>
+
+// local
+#include "RichUtils/RichException.h"
+#include "RichUtils/RichSIMDTypes.h"
+#include "RichUtils/FastMaths.h"
 
 // LHCbKernel
 #include "Kernel/RichRadiatorType.h"
@@ -28,16 +35,13 @@
 #include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Transform3DTypes.h"
 
-// Kernel
-#include "Kernel/MemPoolAlloc.h"
-
-// local
-#include "RichUtils/RichException.h"
-
 // VDT
 #include "vdt/sincos.h"
 #include "vdt/sqrt.h"
 #include "vdt/atan2.h"
+
+// Vc
+#include <Vc/common/alignedbase.h>
 
 // General LHCb namespace
 namespace LHCb
@@ -59,13 +63,22 @@ namespace LHCb
    */
   //-----------------------------------------------------------------------------
 
-  class RichTrackSegment final : public LHCb::MemPoolAlloc<LHCb::RichTrackSegment>
+  class RichTrackSegment final : public Vc::AlignedBase<Vc::VectorAlignment>
   {
 
   public:
     
     /// Vector of track segments
-    using Vector = LHCb::STL::Vector<RichTrackSegment>;
+    using Vector = Rich::SIMD::STDVector<RichTrackSegment>;
+
+    /// SIMD Float Type
+    using SIMDFP = Rich::SIMD::FP<Rich::SIMD::DefaultFP>;
+
+    /// SIMD Point Type
+    using SIMDPoint = Rich::SIMD::Point<Rich::SIMD::DefaultFP>;
+
+    /// SIMD Vector Type
+    using SIMDVector = Rich::SIMD::Vector<Rich::SIMD::DefaultFP>;
     
   private:
 
@@ -74,10 +87,11 @@ namespace LHCb
      *  @param p2 The second point
      *  @return The point represented by "p1+p2"
      */
-    inline Gaudi::XYZPoint add_points ( const Gaudi::XYZPoint & p1,
-                                        const Gaudi::XYZPoint & p2 ) const noexcept
+    template < typename POINT >
+    inline POINT add_points ( const POINT & p1,
+                              const POINT & p2 ) const noexcept
     {
-      return Gaudi::XYZPoint ( p1.x()+p2.x(), p1.y()+p2.y(), p1.z()+p2.z() );
+      return { p1.x()+p2.x(), p1.y()+p2.y(), p1.z()+p2.z() };
     }
 
     /** Returns the average photon energy for the given RICH radiator
@@ -170,6 +184,34 @@ namespace LHCb
     };
 
     // ------------------------------------------------------------------------------------------------------
+
+    /// Private SIMD implementation of Rotation3D (Not yet in ROOT)
+    class SIMDRotation3D
+    {
+    private:
+      /// 9 elements (3x3 matrix) representing the rotation
+      std::array<SIMDFP,9> fM; 
+    public:
+      /// Default Constructor
+      SIMDRotation3D() { }
+      /// Construct from Gaudi::Rotation3D
+      SIMDRotation3D( const Gaudi::Rotation3D & rot )
+      {
+        std::array<Gaudi::Rotation3D::Scalar,9> m;
+        rot.GetComponents( m[0], m[1], m[2], 
+                           m[3], m[4], m[5],
+                           m[6], m[7], m[8] );
+        for ( int i = 0; i < 9; ++i ) { fM[i] = m[i]; }
+      }
+      /// Vector rotation operator
+      template< typename VECTOR >
+      inline VECTOR operator* ( const VECTOR & v ) const noexcept
+      {
+        return VECTOR( fM[0] * v.X() + fM[1] * v.Y() + fM[2] * v.Z() ,
+                       fM[3] * v.X() + fM[4] * v.Y() + fM[5] * v.Z() ,
+                       fM[6] * v.X() + fM[7] * v.Y() + fM[8] * v.Z() );
+      }
+    };
 
   private:
 
@@ -295,22 +337,46 @@ namespace LHCb
      *  @param theta The angle between input direction and the segment
      *  @param phi   The azimuthal angle of the direction around the segment
      */
-    template < typename VECTOR, typename TYPE >
-    inline void __attribute__((always_inline))
-      angleToDirection ( const VECTOR & direction,
-                         TYPE & theta,
-                         TYPE & phi ) const
+    template < typename VECTOR, typename TYPE,
+               typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
+    inline void angleToDirection ( const VECTOR & direction,
+                                   TYPE & theta,
+                                   TYPE & phi ) const
     {
       // create vector in track reference frame
-      const auto rotDir = rotationMatrix() * direction;
+      const auto rotDir = m_rotation * direction;
+      // extract components
+      const TYPE x(rotDir.x()), y(rotDir.y()), z(rotDir.z());
       // compute theta and phi directly from the vector components
-      phi   = myatan2( (TYPE)rotDir.y(), (TYPE)rotDir.x() );
-      theta = myatan2( (TYPE)std::sqrt( std::pow((TYPE)rotDir.x(),2) +
-                                        std::pow((TYPE)rotDir.y(),2) ),
-                       (TYPE)rotDir.z() );
+      phi   = myatan2( y, x );
+      theta = myatan2( (TYPE)std::sqrt( (x*x) + (y*y) ), z );
       // correct phi to range 0 - 2PI
       constexpr TYPE twopi = (TYPE)(2.0*M_PI);
       if ( phi < 0 ) { phi += twopi; }
+    }
+
+    /** Calculates the theta and phi angles of a direction with respect to
+     *  the segment direction
+     *
+     *  @param direction Direction to which to calculate the angles for this segment
+     *  @param theta The angle between input direction and the segment
+     *  @param phi   The azimuthal angle of the direction around the segment
+     */
+    template < typename VECTOR, typename TYPE,
+               typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
+    inline void angleToDirection ( const VECTOR & direction,
+                                   TYPE & theta,
+                                   TYPE & phi ) const
+    {
+      // create vector in track reference frame
+      const auto rotDir = m_rotationSIMD * direction;
+      // extract components
+      const TYPE x(rotDir.x()), y(rotDir.y()), z(rotDir.z());
+      // compute theta and phi directly from the vector components
+      phi   = Rich::SIMD::Maths::fast_atan2f( y, x );
+      theta = Rich::SIMD::Maths::fast_atan2f( std::sqrt( (x*x) + (y*y) ), z );
+      // correct phi to range 0 - 2PI
+      phi( phi < TYPE::Zero() ) += TYPE( 2.0*M_PI );
     }
 
     /** Creates a vector at an given angle and azimuth to the track segment
@@ -321,9 +387,8 @@ namespace LHCb
      *  @return The vector at the given theta and phi angles to this track segment
      */
     template < typename TYPE >
-    inline Gaudi::XYZVector __attribute__((always_inline))
-      vectorAtThetaPhi ( const TYPE theta,
-                         const TYPE phi ) const
+    inline decltype(auto) vectorAtThetaPhi ( const TYPE theta,
+                                             const TYPE phi ) const
     {
       TYPE sinTheta(0), cosTheta(0), sinPhi(0), cosPhi(0);
       mysincos( theta, sinTheta, cosTheta );
@@ -341,14 +406,14 @@ namespace LHCb
      *  @return The vector at the given theta and phi angles to this track segment
      */
     template< typename THETA, typename PHI >
-    inline Gaudi::XYZVector vectorAtCosSinThetaPhi ( const THETA cosTheta,
-                                                     const THETA sinTheta,
-                                                     const PHI cosPhi,
-                                                     const PHI sinPhi ) const
+    inline decltype(auto) vectorAtCosSinThetaPhi ( const THETA cosTheta,
+                                                   const THETA sinTheta,
+                                                   const PHI cosPhi,
+                                                   const PHI sinPhi ) const noexcept
     {
-      return rotationMatrix2() * Gaudi::XYZVector( sinTheta*cosPhi,
-                                                   sinTheta*sinPhi,
-                                                   cosTheta );
+      return m_rotation2 * Gaudi::XYZVector( sinTheta*cosPhi,
+                                             sinTheta*sinPhi,
+                                             cosTheta );
     }
 
     /** Calculates the path lenth of a track segment.
@@ -362,40 +427,98 @@ namespace LHCb
       return radIntersections().front().entryPoint();
     }
 
+    /// Returns the segment entry point to the radiator
+    inline const SIMDPoint& entryPointSIMD() const noexcept
+    {
+      return m_entryPointSIMD;
+    }
+
     /// Returns the segment mid-point in the radiator
     inline const Gaudi::XYZPoint& middlePoint() const noexcept
     {
       return m_middlePoint;
     }
 
-    /// Returns the segment exit point from the radiator
+    /// Returns the segment mid-point in the radiator
+    inline const SIMDPoint& middlePointSIMD() const noexcept
+    {
+      return m_middlePointSIMD;
+    }
+
+    /// Returns the segment exit point from the radiator (scalar)
     inline const Gaudi::XYZPoint& exitPoint() const noexcept
     {
       return radIntersections().back().exitPoint();
     }
 
+    /// Returns the segment exit point from the radiator (SIMD)
+    inline const SIMDPoint& exitPointSIMD() const noexcept
+    {
+      return m_exitPointSIMD;
+    }
+
     // need to double check this is correct...
     /// Returns the z coordinate at a given fractional distance along segment
-    inline double zCoordAt( const double fraction ) const
+    template< typename TYPE,
+              typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
+    inline TYPE zCoordAt( const TYPE fraction ) const
     {
       return fraction*exitPoint().z() + (1-fraction)*entryPoint().z();
     }
 
+    /// Returns the z coordinate at a given fractional distance along segment
+    template< typename TYPE,
+              typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
+    inline TYPE zCoordAt( const TYPE fraction ) const
+    {
+      return fraction*exitPointSIMD().z() + (TYPE::One()-fraction)*entryPointSIMD().z();
+    }
+
     /// Returns the best space point for segment at a given fractional distance along segment.
     /// Zero gives the entry point, one gives the exit point
-    inline Gaudi::XYZPoint bestPoint( const double fractDist ) const
+    template< typename TYPE,
+              typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
+    inline Gaudi::XYZPoint bestPoint( const TYPE fractDist ) const
     {
       // return the best point
       return ( zCoordAt(fractDist) < middlePoint().z() ?
                entryPoint()  + (fractDist*m_invMidFrac1*m_midEntryV) :
                middlePoint() + (m_exitMidV*((fractDist-m_midFrac2)/m_midFrac2)) );
     }
+
+    /// Returns the best space point for segment at a given fractional distance along segment.
+    /// Zero gives the entry point, one gives the exit point
+    template< typename TYPE,
+              typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
+    inline SIMDPoint bestPoint( const TYPE fractDist ) const
+    {
+      auto p = middlePointSIMD() + (m_exitMidVSIMD*((fractDist-m_midFrac2SIMD)/m_midFrac2SIMD));
+      const auto mask = zCoordAt(fractDist) < middlePointSIMD().z();
+      if ( any_of(mask) ) // need to decide if it helps to do this
+      { 
+        const auto p2 = entryPointSIMD() + (fractDist*m_invMidFrac1SIMD*m_midEntryVSIMD);
+        // Need to fix GenVector to allow direct blending of those types..
+        SIMDFP x(p.x()), y(p.y()), z(p.z());
+        x(mask) = p2.x();
+        y(mask) = p2.y();
+        z(mask) = p2.z();
+        p = SIMDPoint( x, y, z );
+      }
+      return p;
+    }
     
     /// Returns the best estimate of the average point in the radiator
     /// Equivalent to RichTrackSegment::bestPoint(0.5), but more efficient
     inline const Gaudi::XYZPoint& bestPoint() const noexcept
     {
-      return m_middlePoint;
+      return middlePoint();
+    }
+
+    /// Returns the best estimate of the average point in the radiator
+    /// Equivalent to RichTrackSegment::bestPoint(0.5), but more efficient
+    inline const SIMDPoint& bestPointSIMD() const noexcept
+    {
+      return middlePointSIMD();
     }
 
     /// Returns the momentum vector at entry
@@ -457,8 +580,8 @@ namespace LHCb
     inline void setMiddleState( const Gaudi::XYZPoint& point,
                                 const Gaudi::XYZVector& dir )
     {
-      m_middlePoint    = point;
-      m_middleMomentum = dir;
+      m_middlePoint     = point;
+      m_middleMomentum  = dir;
       updateCachedInfo();
     }
 
@@ -481,8 +604,8 @@ namespace LHCb
     {
       radIntersections().front().setEntryPoint    ( entry_point );
       radIntersections().front().setEntryMomentum ( entry_dir   );
-      m_middlePoint    = mid_point;
-      m_middleMomentum = mid_dir;
+      m_middlePoint     = mid_point;
+      m_middleMomentum  = mid_dir;
       radIntersections().back().setExitPoint    ( exit_point );
       radIntersections().back().setExitMomentum ( exit_dir   );
       updateCachedInfo();
@@ -553,18 +676,6 @@ namespace LHCb
       return m_radIntersections;
     }
 
-    /// Access the rotation matrix 1
-    inline const Gaudi::Rotation3D & rotationMatrix() const noexcept
-    {
-      return m_rotation;
-    }
-
-    /// Access the rotation matrix 2
-    inline const Gaudi::Rotation3D & rotationMatrix2() const noexcept
-    {
-      return m_rotation2;
-    }
-
     /// Updates the cached information
     void updateCachedInfo();
 
@@ -573,7 +684,7 @@ namespace LHCb
     /// The raw intersections with the radiator volumes
     Rich::RadIntersection::Vector m_radIntersections{1};
 
-    /// The middle point of the segment in the radiator volume
+    /// The middle point of the segment in the radiator volume (Scalar)
     Gaudi::XYZPoint m_middlePoint;
 
     /// The momentum vector at the segment middle point in the radiator volume
@@ -596,12 +707,11 @@ namespace LHCb
   private: // Some variables for internal caching of information for speed
 
     /** Rotation matrix used to calculate the theta and phi angles between
-     *  this track segment and a given direction.
-     *  Created on demand as required. */
+     *  this track segment and a given direction. */
     Gaudi::Rotation3D m_rotation;
 
     /** Rotation matrix used to create vectors at a given theta and phi angle
-     *  to this track segment. Created on demand as required */
+     *  to this track segment. */
     Gaudi::Rotation3D m_rotation2;
 
     Gaudi::XYZVector m_midEntryV; ///< Entry to middle point vector
@@ -609,6 +719,29 @@ namespace LHCb
     double m_invMidFrac1{0};      ///< Cached fraction 1
     double m_midFrac2{0};         ///< Cached fraction 2
     double m_pathLength{0};       ///< Segment path length
+
+  private: // SIMD data caches
+
+    /// SIMD Entry Point
+    SIMDPoint m_entryPointSIMD;
+    
+    /// SIMD Exit Point
+    SIMDPoint m_exitPointSIMD;
+
+    /// The middle point of the segment in the radiator volume (SIMD)
+    SIMDPoint m_middlePointSIMD;
+
+    /// Entry to middle point vector
+    SIMDVector m_midEntryVSIMD;  
+
+    /// Middle to exit point vector
+    SIMDVector m_exitMidVSIMD;
+
+    SIMDFP m_invMidFrac1SIMD;  ///< Cached fraction 1
+    SIMDFP m_midFrac2SIMD;     ///< Cached fraction 2
+
+    /// SIMD rotations
+    SIMDRotation3D m_rotationSIMD, m_rotation2SIMD; 
 
   };
 
