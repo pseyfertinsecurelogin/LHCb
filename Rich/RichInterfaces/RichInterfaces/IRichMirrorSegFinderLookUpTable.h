@@ -298,13 +298,16 @@ namespace Rich
         /// Get the x index (SIMD)
         template< typename TYPE,
                   typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-        inline SIMD::FP<uint32_t> xIndex( TYPE x ) const noexcept
+        inline SIMD::FP<uint32_t> xIndex( const TYPE x ) const noexcept
         {
-          // Check for over and under flows
-          x( x < m_minXSIMD ) = m_minXSIMD;
-          x( x > m_maxXSIMD ) = m_maxXSIMD;
           // form indices
-          return Vc::simd_cast< SIMD::FP<uint32_t> >( ( x - m_minXSIMD ) * m_incXSIMD );
+          auto xi = Vc::simd_cast< SIMD::FP<uint32_t> >( ( x - m_minXSIMD ) * m_incXSIMD );
+          // Over/Underflow protection
+          xi( Vc::simd_cast<SIMD::FP<uint32_t>::MaskType>( x < m_minXSIMD ) ) = SIMD::FP<uint32_t>::Zero();
+          //xi( Vc::simd_cast<SIMD::FP<uint32_t>::MaskType>( x > m_maxXSIMD ) ) = SIMD::FP<uint32_t>( nXBins() - 1 );
+          xi( xi >= SIMD::FP<uint32_t>(NXBINS) ) = SIMD::FP<uint32_t>( nXBins() - 1 );
+          //std::cout << NXBINS << " " << xi << std::endl;
+          return xi;
         }
         /// Get the y index (Scalar)
         template< typename TYPE,
@@ -318,13 +321,16 @@ namespace Rich
         /// Get the y index (SIMD)
         template< typename TYPE,
                   typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-        inline SIMD::FP<uint32_t> yIndex( TYPE y ) const noexcept
+        inline SIMD::FP<uint32_t> yIndex( const TYPE y ) const noexcept
         {
-          // Check for over and under flows
-          y( y < m_minYSIMD ) = m_minYSIMD;
-          y( y > m_maxYSIMD ) = m_maxYSIMD;
           // form indices
-          return Vc::simd_cast< SIMD::FP<uint32_t> >( ( y - m_minYSIMD ) * m_incYSIMD );
+          auto yi = Vc::simd_cast< SIMD::FP<uint32_t> >( ( y - m_minYSIMD ) * m_incYSIMD );
+          // Over/Underflow protection
+          yi( Vc::simd_cast<SIMD::FP<uint32_t>::MaskType>( y < m_minYSIMD ) ) = SIMD::FP<uint32_t>::Zero();
+          //yi( Vc::simd_cast<SIMD::FP<uint32_t>::MaskType>( y > m_maxYSIMD ) ) = SIMD::FP<uint32_t>( nYBins() - 1 );
+          yi( yi >= SIMD::FP<uint32_t>(NYBINS) ) = SIMD::FP<uint32_t>( nYBins() - 1 );
+          //std::cout << NYBINS << " " << yi << std::endl;
+          return yi;
         }
       private:
         SIMD::FP<SIMDTYPE> m_minXSIMD; ///< Minimum X (SIMD)
@@ -489,26 +495,35 @@ namespace Rich
           m_r2Finder[Rich::left]  .init();
           m_r2Finder[Rich::right] .init(); 
         }
-        /// Find the mirror for the given RICH, panel and point (Scalar)
+      public:
+        /// Find the mirrors for the given RICH, panel and point (Scalar)
         template< typename POINT,
                   typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
         inline const DeRichSphMirror* find( const Rich::DetectorType rich,
                                             const Rich::Side side,
                                             const POINT& p ) const noexcept
         {
-          return ( Rich::Rich1 == rich ?
-                   m_r1Finder[side].find(p) : m_r2Finder[side].find(p) );
+          return find( rich, side, p.x(), p.y() );
         }
-        /// Find the mirror for the given RICH, panel and point (SIMD)
+        /// Find the mirrors for the given RICH, panel and point (SIMD)
         template< typename POINT,
                   typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
         inline SIMDMirrors<typename POINT::Scalar> find( const Rich::DetectorType rich,
                                                          const Rich::Side side,
                                                          const POINT& p ) const noexcept
         {
-          return ( Rich::Rich1 == rich ?
-                   m_r1Finder[side].find(p) : m_r2Finder[side].find(p) );
+          return find( rich, side, p.x(), p.y() );
         }
+        /// Find the mirrors for the given RICH, panels and point (SIMD)
+        template< typename POINT,
+                  typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
+        inline SIMDMirrors<typename POINT::Scalar> find( const Rich::DetectorType rich,
+                                                         const Rich::SIMD::Sides& sides,
+                                                         const POINT& p ) const noexcept
+        {
+          return find( rich, sides, p.x(), p.y() );
+        }
+      public:
         /// Find the mirror for the given RICH, panel and point (x,y) (Scalar)
         template< typename TYPE,
                   typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
@@ -529,6 +544,31 @@ namespace Rich
           return ( Rich::Rich1 == rich ?
                    m_r1Finder[side].find(x,y) : m_r2Finder[side].find(x,y) );
         }
+        /// Find the mirror for the given RICH, panels and point (x,y) (SIMD)
+        template< typename TYPE,
+                  typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
+        inline SIMDMirrors<TYPE> find( const Rich::DetectorType rich,
+                                       const Rich::SIMD::Sides& sides,
+                                       const TYPE x, const TYPE y ) const noexcept
+        {
+          // Side masks
+          const auto m1 = ( sides == Rich::SIMD::Sides(Rich::firstSide)  );
+          const auto m2 = ( sides == Rich::SIMD::Sides(Rich::secondSide) );
+          // return the right ones
+          if      ( all_of(m1) ) { return find( rich, Rich::firstSide,  x, y ); }
+          else if ( all_of(m2) ) { return find( rich, Rich::secondSide, x, y ); }
+          else
+          {
+            auto mirrs1 = find( rich, Rich::firstSide,  x, y );
+            auto mirrs2 = find( rich, Rich::secondSide, x, y );
+            for ( std::size_t i = 0; i < Rich::SIMD::Sides::Size; ++i )
+            {
+              if ( m2[i] ) { mirrs1[i] = mirrs2[i]; }
+            }
+            return mirrs1;
+          }
+        }
+      public:
         /// Get the list of mirrors
         const Mirrors& mirrors( const Rich::DetectorType rich,
                                 const Rich::Side side ) const noexcept
@@ -578,7 +618,7 @@ namespace Rich
                      const POINT& reflPoint ) const noexcept
       { 
         // Find the mirror from the lookup map
-        return m_sphMirrFinder.find( rich, side, reflPoint );
+        return findSphMirror( rich, side, reflPoint.x(), reflPoint.y() );
       }
 
       /** Locates the spherical mirror Segment given a reflection point,
@@ -599,12 +639,35 @@ namespace Rich
                      const Rich::Side side,
                      const POINT& reflPoint ) const noexcept
       { 
-        //std::cout << "Point " << reflPoint << std::endl;
         // Find the mirror from the lookup map
-        return m_sphMirrFinder.find( rich, side, reflPoint );
+        return findSphMirror( rich, side, reflPoint.x(), reflPoint.y() );
+      }
+
+      /** Locates the spherical mirror Segment given a reflection point,
+       *  RICH identifier and panel
+       *
+       *  SIMD implementation
+       *
+       *  @param rich       The RICH detector
+       *  @param sides      The RICH HPD panel sides
+       *  @param reflPoint  The reflection point on the spherical mirror
+       *
+       *  @return Array of DeRichSphMirror objects for the associated mirror segments
+       */
+      template< typename POINT,
+                typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
+      inline SIMDMirrors<typename POINT::Scalar>
+      findSphMirror( const Rich::DetectorType rich,
+                     const Rich::SIMD::Sides& sides,
+                     const POINT& reflPoint ) const noexcept
+      { 
+        // Find the mirror from the lookup map
+        return findSphMirror( rich, sides, reflPoint.x(), reflPoint.y() );
       }
       
-      /** Locates the secondary (spherical) mirror Segment given a reflection point,
+   public:
+
+      /** Locates the secondary mirror Segment given a reflection point,
        *  RICH identifier and panel
        *
        *  Scalar implementation
@@ -623,10 +686,10 @@ namespace Rich
                      const POINT& reflPoint ) const noexcept
       {
         // Find the mirror from the lookup map
-        return m_secMirrFinder.find( rich, side, reflPoint );
+        return findSecMirror( rich, side, reflPoint.x(), reflPoint.y() );
       }
 
-      /** Locates the secondary (spherical) mirror Segment given a reflection point,
+      /** Locates the secondary mirror Segment given a reflection point,
        *  RICH identifier and panel
        *
        *  SIMD implementation
@@ -645,7 +708,29 @@ namespace Rich
                      const POINT& reflPoint ) const noexcept
       {
         // Find the mirror from the lookup map
-        return m_secMirrFinder.find( rich, side, reflPoint );
+        return findSecMirror( rich, side, reflPoint.x(), reflPoint.y() );
+      }
+
+      /** Locates the secondary mirror Segment given a reflection point,
+       *  RICH identifier and panel
+       *
+       *  SIMD implementation
+       *
+       *  @param rich       The RICH detector
+       *  @param sides      The RICH HPD panel sides
+       *  @param reflPoint  The reflection point on the spherical mirror
+       *
+       *  @return Array of DeRichSphMirror objects for the associated mirror segments
+       */
+      template< typename POINT,
+                typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
+      inline SIMDMirrors<typename POINT::Scalar>
+      findSecMirror( const Rich::DetectorType rich,
+                     const Rich::SIMD::Sides& sides,
+                     const POINT& reflPoint ) const noexcept
+      { 
+        // Find the mirror from the lookup map
+        return findSecMirror( rich, sides, reflPoint.x(), reflPoint.y() );
       }
 
     public:
@@ -693,8 +778,32 @@ namespace Rich
         // Find the mirror from the lookup map
         return m_sphMirrFinder.find( rich, side, x, y );
       }
+
+      /** Locates the spherical mirror Segment given a reflection point,
+       *  RICH identifier and panel  
+       *
+       *  SIMD implementation
+       *
+       *  @param rich       The RICH detector
+       *  @param sides      The RICH HPD panel sides
+       *  @param reflPoint  The reflection point on the spherical mirror
+       *
+       *  @return Array of DeRichSphMirror objects for the associated mirror segments
+       */
+      template< typename TYPE,
+                typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
+      inline SIMDMirrors<TYPE>
+      findSphMirror( const Rich::DetectorType rich,
+                     const Rich::SIMD::Sides& sides,
+                     const TYPE x, const TYPE y ) const noexcept
+      { 
+        // Find the mirror from the lookup map
+        return m_sphMirrFinder.find( rich, sides, x, y );
+      }
+
+    public:
       
-      /** Locates the secondary (spherical) mirror Segment given a reflection point,
+      /** Locates the secondary mirror Segment given a reflection point,
        *  RICH identifier and panel
        *
        *  Scalar implementation
@@ -716,7 +825,7 @@ namespace Rich
         return m_secMirrFinder.find( rich, side, x, y );
       }
 
-      /** Locates the secondary (spherical) mirror Segment given a reflection point,
+      /** Locates the secondary mirror Segment given a reflection point,
        *  RICH identifier and panel
        *
        *  SIMD implementation
@@ -736,6 +845,28 @@ namespace Rich
       {
         // Find the mirror from the lookup map
         return m_secMirrFinder.find( rich, side, x, y );
+      }
+
+      /** Locates the secondary mirror Segment given a reflection point,
+       *  RICH identifier and panel  
+       *
+       *  SIMD implementation
+       *
+       *  @param rich       The RICH detector
+       *  @param sides      The RICH HPD panel sides
+       *  @param reflPoint  The reflection point on the spherical mirror
+       *
+       *  @return Array of DeRichSphMirror objects for the associated mirror segments
+       */
+      template< typename TYPE,
+                typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
+      inline SIMDMirrors<TYPE>
+      findSecMirror( const Rich::DetectorType rich,
+                     const Rich::SIMD::Sides& sides,
+                     const TYPE x, const TYPE y ) const noexcept
+      { 
+        // Find the mirror from the lookup map
+        return m_secMirrFinder.find( rich, sides, x, y );
       }
       
     };
