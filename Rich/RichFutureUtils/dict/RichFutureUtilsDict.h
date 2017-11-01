@@ -1,18 +1,23 @@
-#ifndef DICT_RICHUTILSDICT_H 
-#define DICT_RICHUTILSDICT_H 1
+#ifndef DICT_RICHFUTUREUTILSDICT_H 
+#define DICT_RICHFUTUREUTILSDICT_H 1
 
-#include "RichFutureUtils/RichHypoData.h"
+//#include "RichFutureUtils/RichHypoData.h"
 #include "RichFutureUtils/RichGeomPhoton.h"
-//#include "RichFutureUtils/RichSIMDGeomPhoton.h"
+#include "RichFutureUtils/RichSIMDGeomPhoton.h"
 
-// instanciate templated classes
 namespace 
 {
   struct _Instantiations 
   {
-    Rich::Future::HypoData<float>         obj_1;
-    Rich::Future::HypoData<double>        obj_2;
+
+    // instanciate templated classes
+    //Rich::Future::HypoData<float>            obj_1;
+    //Rich::Future::HypoData<double>           obj_2;
+    Rich::SIMD::Future::RecoPhoton           obj_3;
+    Rich::SIMD::Future::RecoPhoton::SIMDFP   obj_4;
+    Rich::SIMD::Future::RecoPhoton::Vector   obj_6;
+  
   };
 }
 
-#endif // DICT_RICHUTILSDICT_H
+#endif // DICT_RICHFUTUREUTILSDICT_H
