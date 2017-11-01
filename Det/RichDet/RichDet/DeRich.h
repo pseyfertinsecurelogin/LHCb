@@ -8,13 +8,13 @@
 
 #pragma once
 
-// Utils
-#include "RichUtils/RichSIMDTypes.h"
-
 // STL
 #include <vector>
 #include <array>
 #include <memory>
+
+// Utils
+#include "RichUtils/RichSIMDTypes.h"
 
 // DetDesc
 #include "RichDet/Rich1DTabProperty.h"
@@ -101,7 +101,7 @@ public:
    * Returns the nominal centres of curvature of the spherical mirror for
    * this Rich for the given sides
    *
-   * @param side Which side: top, bottom (Rich1), left, right (Rich2)
+   * @param sides Which sides : top, bottom (Rich1), left, right (Rich2)
    * @return The nominal centre of curvature
    */
   inline Rich::SIMD::Point<Rich::SIMD::DefaultFP> 
@@ -171,6 +171,35 @@ public:
   nominalPlaneSIMD( const Rich::Side side ) const noexcept
   {
     return m_nominalPlanesSIMD[side];
+  }
+
+ /**
+   * Returns the nominal flat mirror plane for this Rich
+   *
+   * @param sides Which sides : top, bottom (Rich1), left, right (Rich2)
+   * @return The nominal flat mirror plane
+   */
+  inline const Rich::SIMD::Plane<Rich::SIMD::DefaultFP>
+  nominalPlane( const Rich::SIMD::Sides& sides ) const noexcept
+  {
+    using namespace Rich::SIMD;
+    // start with the SIMD planes for each side
+    const auto & P1( nominalPlaneSIMD(Rich::firstSide)  );
+    const auto & P2( nominalPlaneSIMD(Rich::secondSide) );
+    // local copy of A,B,C,D for first side
+    auto A = P1.A();
+    auto B = P1.B();
+    auto C = P1.C();
+    auto D = P1.D();
+    // mask for side 2
+    const auto m = Vc::simd_cast<Point<DefaultFP>::Scalar::MaskType>(sides == Sides(Rich::secondSide));
+    // update values for side 2
+    A(m) = P2.A();
+    B(m) = P2.B();
+    C(m) = P2.C();
+    D(m) = P2.D();
+    // return the SIMD plane object
+    return Plane<DefaultFP>(A,B,C,D);
   }
 
   /**
