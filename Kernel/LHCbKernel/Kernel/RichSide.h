@@ -38,7 +38,7 @@ namespace Rich
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   08/07/2004
    */
-  enum Side : int8_t
+  enum Side : int32_t
     {
       InvalidSide  = -1, ///< Invalid side
         // RICH1
