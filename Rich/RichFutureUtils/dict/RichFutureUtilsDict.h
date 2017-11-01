@@ -10,7 +10,7 @@ namespace
   struct _Instantiations 
   {
 
-    // instanciate templated classes
+    // instantiate templated classes
     //Rich::Future::HypoData<float>            obj_1;
     //Rich::Future::HypoData<double>           obj_2;
     Rich::SIMD::Future::RecoPhoton           obj_3;
