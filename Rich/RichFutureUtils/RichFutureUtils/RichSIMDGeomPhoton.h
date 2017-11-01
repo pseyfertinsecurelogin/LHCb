@@ -53,11 +53,11 @@ namespace Rich
         
         /// The scalar floating point precision
         using FP         = Rich::SIMD::DefaultFP;
-        /// The floating point precision to use
+        /// The SIMD floating point type
         using SIMDFP     = Rich::SIMD::FP<FP>; 
-        /// Type for SmartIDs.
+        /// Type for SmartIDs container.
         using SmartIDs   = Rich::SIMD::STDArray<LHCb::RichSmartID,SIMDFP>;
-        /// Container of photons
+        /// Container of photons.
         using Vector     = Rich::SIMD::STDVector<RecoPhoton>;
         
       public:
@@ -69,10 +69,8 @@ namespace Rich
 
         /** Constructor from RICH and SmartIDs
          *
-         *  @param theta Cherenkov angles theta
-         *  @param phi   Cherenkov angles phi
+         *  @param rich  The RICH detector
          *  @param smartID The RCH PD channel identifiers associated to the photons
-         *  @param activeFrac The fraction of the associated segment that these photons could have been radiated from
          */
         RecoPhoton( const Rich::DetectorType    rich,
                     const SmartIDs&          smartID ) : 
@@ -214,10 +212,10 @@ namespace Rich
         SIMDFP m_activeSegmentFraction { SIMDFP::One() };
         
         /// Flag to indicate if unambiguous photons or not
-        SIMDFP::mask_type m_unambigPhot;
+        SIMDFP::mask_type m_unambigPhot { false };
         
         /// Validity mask
-        SIMDFP::mask_type m_valid;
+        SIMDFP::mask_type m_valid { false };
 
         /// RICH
         Rich::DetectorType m_rich { Rich::InvalidDetector };
