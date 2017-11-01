@@ -8,7 +8,19 @@
 #include <cstdint>
 
 // Vc
-#include <Vc/Vc>
+// simdize.h causes problems so include by hand the includes in Vc/Vc
+// see https://github.com/VcDevel/Vc/issues/177
+//#include <Vc/Vc> 
+#ifndef VC_VC_
+#define VC_VC_
+#include <Vc/vector.h>
+#include <Vc/IO>
+#include <Vc/Memory>
+#include <Vc/Utils>
+#include <Vc/Allocator>
+#include <Vc/iterators>
+#include <Vc/SimdArray>
+#endif // VC_VC_
 
 // geometry
 #include "GaudiKernel/Point3DTypes.h"
