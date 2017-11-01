@@ -12,7 +12,15 @@
 
   <class name  = "LHCb::RichGeomPhoton"                />
 
+  <class name  = "Rich::SIMD::FP<Rich::SIMD::DefaultFP>"          />
+  <class name  = "Rich::SIMD::Point<Rich::SIMD::DefaultFP>"       />
+  <class name  = "Rich::SIMD::Vector<Rich::SIMD::DefaultFP>"      />
+  <class name  = "Rich::SIMD::Plane<Rich::SIMD::DefaultFP>"       />
+  <class name  = "Rich::SIMD::Transform3D<Rich::SIMD::DefaultFP>" />
+
   <class name  = "LHCb::RichTrackSegment"              />
+  <class name  = "LHCb::RichTrackSegment::SIMDPoint"   />
+  <class name  = "LHCb::RichTrackSegment::SIMDVector"  />
 
   <class name  = "Rich::DAQ::NumericType<unsigned int>"       />
   <class name  = "Rich::DAQ::NumericType<unsigned long long>" />

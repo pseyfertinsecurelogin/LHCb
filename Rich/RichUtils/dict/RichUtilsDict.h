@@ -5,6 +5,7 @@
 #pragma warning(disable:1572) // Floating-point comparisons are unreliable
 #endif
 
+#include "RichUtils/RichSIMDTypes.h"
 #include "RichUtils/RichPixelCluster.h"
 #include "RichUtils/RichGeomPhoton.h"
 #include "RichUtils/RichTrackSegment.h"
@@ -19,26 +20,35 @@
 #include "RichUtils/RichHypoData.h"
 #include "RichUtils/RichObjPtn.h"
 
-// instanciate templated classes
+// instanciate types
 namespace 
 {
   struct _Instantiations 
   {
-    Rich::HypoData<float>                        obj_2;
-    Rich::HypoData<double>                       obj_3;
-    Rich::DAQ::Level0ID                          obj_4;
-    Rich::DAQ::EventID                           obj_5;
-    Rich::DAQ::BXID                              obj_6;
-    Rich::DAQ::Level1LogicalID                   obj_7;
-    Rich::DAQ::Level1HardwareID                  obj_8;
-    Rich::DAQ::L1IngressID                       obj_9;
-    Rich::DAQ::L1InputWithinIngress              obj_10;
-    Rich::DAQ::Level1Input                       obj_11;
-    Rich::DAQ::HPDHardwareID                     obj_12;
-    Rich::DAQ::HPDL1InputID                      obj_13;
-    Rich::DAQ::PDCopyNumber                      obj_14;
-    Rich::DAQ::Level1CopyNumber                  obj_15;
-    Rich::DAQ::PDPanelIndex                      obj_16;
+    Rich::HypoData<float>                          obj_2;
+    Rich::HypoData<double>                         obj_3;
+    Rich::DAQ::Level0ID                            obj_4;
+    Rich::DAQ::EventID                             obj_5;
+    Rich::DAQ::BXID                                obj_6;
+    Rich::DAQ::Level1LogicalID                     obj_7;
+    Rich::DAQ::Level1HardwareID                    obj_8;
+    Rich::DAQ::L1IngressID                         obj_9;
+    Rich::DAQ::L1InputWithinIngress                obj_10;
+    Rich::DAQ::Level1Input                         obj_11;
+    Rich::DAQ::HPDHardwareID                       obj_12;
+    Rich::DAQ::HPDL1InputID                        obj_13;
+    Rich::DAQ::PDCopyNumber                        obj_14;
+    Rich::DAQ::Level1CopyNumber                    obj_15;
+    Rich::DAQ::PDPanelIndex                        obj_16;
+    LHCb::RichTrackSegment                         obj_17;
+    LHCb::RichTrackSegment::SIMDFP                 obj_18;
+    LHCb::RichTrackSegment::SIMDPoint              obj_19;
+    LHCb::RichTrackSegment::SIMDVector             obj_20;
+    Rich::SIMD::FP<Rich::SIMD::DefaultFP>          obj_21;
+    Rich::SIMD::Point<Rich::SIMD::DefaultFP>       obj_22;
+    Rich::SIMD::Vector<Rich::SIMD::DefaultFP>      obj_23;
+    Rich::SIMD::Plane<Rich::SIMD::DefaultFP>       obj_24;
+    Rich::SIMD::Transform3D<Rich::SIMD::DefaultFP> obj_25;
   };
 }
 

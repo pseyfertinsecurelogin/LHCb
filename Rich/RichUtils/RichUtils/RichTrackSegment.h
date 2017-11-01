@@ -82,7 +82,7 @@ namespace LHCb
     
   private:
 
-    /** Add two Gaudi::XYZPoint points together
+    /** Add two points together
      *  @param p1 The first point
      *  @param p2 The second point
      *  @return The point represented by "p1+p2"
