@@ -9,20 +9,22 @@
  */
 //------------------------------------------------------------------------
 
-#ifndef RICHUTILS_RICHHYPODATA_H
-#define RICHUTILS_RICHHYPODATA_H 1
+#pragma once
 
 // STL
 #include <ostream>
 #include <type_traits>
+#include <vector>
 
 // LHCbKernel
 #include "Kernel/RichParticleIDType.h"
-#include "Kernel/MemPoolAlloc.h"
-#include "Kernel/FastAllocVector.h"
 
 // local
 #include "RichUtils/StlArray.h"
+#include "RichUtils/RichSIMDTypes.h"
+
+// Vc
+#include <Vc/common/alignedbase.h>
 
 namespace Rich
 {
@@ -42,11 +44,8 @@ namespace Rich
      */
     //------------------------------------------------------------------------
 
-    template < typename TYPE,
-	       typename = typename std::enable_if< std::is_arithmetic <TYPE> ::value ||
-						   std::is_pointer    <TYPE> ::value >::type
-    >
-    class HypoData : public LHCb::MemPoolAlloc< HypoData<TYPE> >
+    template < typename TYPE >
+    class HypoData : public Vc::AlignedBase<Vc::VectorAlignment>
     {
 
     public: // definitions
@@ -55,7 +54,10 @@ namespace Rich
       using DataArray = Rich::ParticleArray<TYPE>;
 
       /// Type for vector
-      using Vector = LHCb::STL::Vector<HypoData>;
+      using Vector = typename std::conditional< std::is_pointer<TYPE>::value ||
+                                                std::is_arithmetic<TYPE>::value,
+                                                std::vector<HypoData>,
+                                                Rich::SIMD::STDVector<HypoData> >::type;
 
     public: // constructors and destructors
 
@@ -87,7 +89,7 @@ namespace Rich
        */
       inline void setData( const Rich::ParticleIDType type, const TYPE value ) noexcept
       {
-	m_data[type]  = value;
+	m_data[type] = value;
       }
 
       /** Reset the data for all mass hypotheses. Following this call all data
@@ -97,7 +99,7 @@ namespace Rich
        */
       inline void resetData( const TYPE value ) noexcept
       {
-	m_data.fill  ( value );
+	m_data.fill( value );
       }
 
       /** Reset the data for all mass hypotheses. Following this call all data
@@ -109,8 +111,8 @@ namespace Rich
        */
       template< typename T = TYPE >
       inline 
-      typename std::enable_if< std::is_arithmetic<T>::value >::type
-      resetData() noexcept { resetData( 0 );  }
+      typename std::enable_if< !std::is_pointer<T>::value >::type
+      resetData() noexcept { resetData( T(0) );  }
 
       /** Reset the data for all mass hypotheses. Following this call all data
        *  fields will be flagged as invalid (i.e. unset)
@@ -132,7 +134,7 @@ namespace Rich
        */
       inline void resetData( const Rich::ParticleIDType type, const TYPE value ) noexcept
       {
-	m_data[type]  = value;
+	m_data[type] = value;
       }
     
       /** Reset data for given particle hypothesis. Following this call the
@@ -144,10 +146,10 @@ namespace Rich
        */
       template< typename T = TYPE >
       inline 
-      typename std::enable_if< std::is_arithmetic<T>::value >::type
+      typename std::enable_if< !std::is_pointer<T>::value >::type
       resetData( const Rich::ParticleIDType type ) noexcept
       {
-	resetData( type, 0 );
+	resetData( type, T(0) );
       }
 
       /** Reset data for given particle hypothesis. Following this call the
@@ -194,5 +196,3 @@ namespace Rich
 
   }
 }
-
-#endif // RICHUTILS_RICHHYPODATA_H
