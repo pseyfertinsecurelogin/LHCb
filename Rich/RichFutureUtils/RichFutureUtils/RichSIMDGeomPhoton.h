@@ -66,22 +66,37 @@ namespace Rich
         RecoPhoton() = default;
         
       public:
-        
-        /** Constructor with parameters
+
+        /** Constructor from RICH and SmartIDs
          *
          *  @param theta Cherenkov angles theta
          *  @param phi   Cherenkov angles phi
          *  @param smartID The RCH PD channel identifiers associated to the photons
          *  @param activeFrac The fraction of the associated segment that these photons could have been radiated from
          */
-        RecoPhoton( const SIMDFP theta,
-                    const SIMDFP phi,
+        RecoPhoton( const Rich::DetectorType    rich,
+                    const SmartIDs&          smartID ) : 
+          m_smartID( smartID ),
+          m_rich   ( rich    ) { }
+        
+        /** Constructor with full parameters
+         *
+         *  @param rich  The RICH detector
+         *  @param theta Cherenkov angles theta
+         *  @param phi   Cherenkov angles phi
+         *  @param smartID The RCH PD channel identifiers associated to the photons
+         *  @param activeFrac The fraction of the associated segment that these photons could have been radiated from
+         */
+        RecoPhoton( const Rich::DetectorType   rich,
+                    const SIMDFP              theta,
+                    const SIMDFP                phi,
                     const SmartIDs& smartID = SmartIDs(),
                     const SIMDFP activeFrac = SIMDFP::One() ) : 
           m_CherenkovTheta        ( theta      ),
           m_CherenkovPhi          ( phi        ),
           m_smartID               ( smartID    ),
-          m_activeSegmentFraction ( activeFrac ) { }
+          m_activeSegmentFraction ( activeFrac ),
+          m_rich                  ( rich       ) { }
         
       public:
         
@@ -91,7 +106,7 @@ namespace Rich
         
         /** Get accessor for the Cherenkov theta angle
          *  @return the current value of the Cherenkov theta angle */
-        inline SIMDFP CherenkovTheta () const noexcept { return m_CherenkovTheta; }
+        inline const SIMDFP& CherenkovTheta () const noexcept { return m_CherenkovTheta; }
         
         /** Set accessor for Cherenkov phi angle
          *  @param phi the new value for the Cherenkov phi angle */
@@ -99,7 +114,7 @@ namespace Rich
         
         /** Get accessor for Cherenkov phi angle
          *  @return the current value of the Cherenkov phi angle */
-        inline SIMDFP CherenkovPhi () const noexcept { return m_CherenkovPhi; }
+        inline const SIMDFP& CherenkovPhi () const noexcept { return m_CherenkovPhi; }
         
         /**
          * Set accessor for the current active segment fraction.
@@ -120,7 +135,7 @@ namespace Rich
          *
          * @return the current value of the current active segment fraction.
          */
-        inline SIMDFP activeSegmentFraction() const noexcept
+        inline const SIMDFP& activeSegmentFraction() const noexcept
         {
           return m_activeSegmentFraction;
         }
@@ -140,7 +155,7 @@ namespace Rich
         }
         
         /// Access the unambiguous photon mask
-        inline SIMDFP::mask_type unambiguousPhoton() const noexcept { return m_unambigPhot; }
+        inline const SIMDFP::mask_type& unambiguousPhoton() const noexcept { return m_unambigPhot; }
         
         /// Set the photon validity mask
         inline void setValidityMask( const SIMDFP::mask_type valid ) noexcept 
@@ -149,12 +164,16 @@ namespace Rich
         }
         
         /// Access the unambiguous photon flag
-        inline SIMDFP::mask_type validityMask() const noexcept { return m_valid; }
+        inline const SIMDFP::mask_type& validityMask() const noexcept { return m_valid; }
+
+        /// Access the RICH
+        inline Rich::DetectorType rich() const noexcept { return m_rich; }
 
       public:
 
         /// Create a scalar photon object for the given SIMD entry
-        Rich::Future::RecoPhoton scalarPhoton( const std::size_t simdEntry ) const noexcept
+        inline Rich::Future::RecoPhoton 
+        scalarPhoton( const std::size_t simdEntry ) const noexcept
         {
           return Rich::Future::RecoPhoton( CherenkovTheta()[simdEntry],
                                            CherenkovPhi()[simdEntry],
@@ -199,6 +218,9 @@ namespace Rich
         
         /// Validity mask
         SIMDFP::mask_type m_valid;
+
+        /// RICH
+        Rich::DetectorType m_rich { Rich::InvalidDetector };
         
       };
       
