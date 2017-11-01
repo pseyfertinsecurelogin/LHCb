@@ -5,11 +5,12 @@
 std::ostream & Rich::SIMD::Future::RecoPhoton::fillStream ( std::ostream& s ) const
 {
   // Loop over SIMD entries
+  s << "{ " << rich() << " ";
   for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
   {
     if ( validityMask()[i] ) { s << scalarPhoton(i); }
   }
-  return s;
+  return s << " }";
 }
 
 Rich::Future::RecoPhoton::Vector 
