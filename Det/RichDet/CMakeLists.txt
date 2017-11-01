@@ -29,8 +29,11 @@ gaudi_add_dictionary(RichDet
                      dict/RichDetDict.xml
                      INCLUDE_DIRS GSL Boost
                      LINK_LIBRARIES GSL Boost DetDescCnvLib RichUtils RichDetLib
-                     OPTIONS "-U__MINGW32__")
+                     OPTIONS " -Wno-undefined-var-template -U__MINGW32__ ")
+
+# Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
+#        To be removed once Vc is updated.
 
 target_link_libraries( RichDetLib  "${Vc_LIB_DIR}/libVc.a" )
-target_link_libraries( RichDet     "${Vc_LIB_DIR}/libVc.a" )
-target_link_libraries( RichDetDict "${Vc_LIB_DIR}/libVc.a" )
+#target_link_libraries( RichDet     "${Vc_LIB_DIR}/libVc.a" )
+#target_link_libraries( RichDetDict "${Vc_LIB_DIR}/libVc.a" )
