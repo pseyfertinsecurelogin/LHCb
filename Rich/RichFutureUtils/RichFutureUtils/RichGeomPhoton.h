@@ -129,6 +129,20 @@ namespace Rich
       /// Access the unambiguous photon flag
       inline bool unambiguousPhoton() const noexcept { return m_unambigPhot; }
 
+    protected:
+      
+      /// Printout method
+      std::ostream & fillStream ( std::ostream& s ) const;
+
+    public:
+      
+      /// Implement ostream << method for GeomPhoton
+      friend inline std::ostream& operator << ( std::ostream& s,
+                                                const RecoPhoton& photon )
+      {
+        return photon.fillStream(s);
+      }
+
     private:
 
       /// Cherenkov angle theta
@@ -403,18 +417,20 @@ namespace Rich
         return m_flatMirReflectionPoint;
       }
 
-    public:
+    private:
 
       /// Printout method
       std::ostream & fillStream ( std::ostream& s ) const;
 
+    public:
+      
       /// Implement ostream << method for GeomPhoton
       friend inline std::ostream& operator << ( std::ostream& s,
                                                 const GeomPhoton& photon )
       {
         return photon.fillStream(s);
       }
-
+      
     private: // data
 
     
