@@ -300,13 +300,16 @@ namespace Rich
                   typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
         inline SIMD::FP<uint32_t> xIndex( const TYPE x ) const noexcept
         {
+          // mask for x < min value
+          const auto mask = x < m_minXSIMD;
           // form indices
-          auto xi = Vc::simd_cast< SIMD::FP<uint32_t> >( ( x - m_minXSIMD ) * m_incXSIMD );
-          // Over/Underflow protection
-          xi( Vc::simd_cast<SIMD::FP<uint32_t>::MaskType>( x < m_minXSIMD ) ) = SIMD::FP<uint32_t>::Zero();
-          //xi( Vc::simd_cast<SIMD::FP<uint32_t>::MaskType>( x > m_maxXSIMD ) ) = SIMD::FP<uint32_t>( nXBins() - 1 );
-          xi( xi >= SIMD::FP<uint32_t>(NXBINS) ) = SIMD::FP<uint32_t>( nXBins() - 1 );
-          //std::cout << NXBINS << " " << xi << std::endl;
+          auto xtmp = ( x - m_minXSIMD ) * m_incXSIMD;
+          // Underflow protection
+          xtmp(mask) = TYPE::Zero();
+          auto xi = Vc::simd_cast< SIMD::FP<uint32_t> >( xtmp );
+          // Overflow protection
+          xi( xi >= SIMD::FP<uint32_t>(NXBINS) ) = SIMD::FP<uint32_t>(NXBINS-1);
+          // return
           return xi;
         }
         /// Get the y index (Scalar)
@@ -323,22 +326,25 @@ namespace Rich
                   typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
         inline SIMD::FP<uint32_t> yIndex( const TYPE y ) const noexcept
         {
+          // mask for y < min value
+          const auto mask = y < m_minYSIMD;
           // form indices
-          auto yi = Vc::simd_cast< SIMD::FP<uint32_t> >( ( y - m_minYSIMD ) * m_incYSIMD );
-          // Over/Underflow protection
-          yi( Vc::simd_cast<SIMD::FP<uint32_t>::MaskType>( y < m_minYSIMD ) ) = SIMD::FP<uint32_t>::Zero();
-          //yi( Vc::simd_cast<SIMD::FP<uint32_t>::MaskType>( y > m_maxYSIMD ) ) = SIMD::FP<uint32_t>( nYBins() - 1 );
-          yi( yi >= SIMD::FP<uint32_t>(NYBINS) ) = SIMD::FP<uint32_t>( nYBins() - 1 );
-          //std::cout << NYBINS << " " << yi << std::endl;
+          auto ytmp = ( y - m_minYSIMD ) * m_incYSIMD;
+          // Underflow protection
+          ytmp(mask) = TYPE::Zero();
+          auto yi = Vc::simd_cast< SIMD::FP<uint32_t> >( ytmp );
+          // Overflow protection
+          yi( yi >= SIMD::FP<uint32_t>(NYBINS) ) = SIMD::FP<uint32_t>(NYBINS-1);
+          // return
           return yi;
         }
-      private:
-        SIMD::FP<SIMDTYPE> m_minXSIMD; ///< Minimum X (SIMD)
-        SIMD::FP<SIMDTYPE> m_maxXSIMD; ///< Maximum X (SIMD)
-        SIMD::FP<SIMDTYPE> m_minYSIMD; ///< Minimum Y (SIMD)
-        SIMD::FP<SIMDTYPE> m_maxYSIMD; ///< Maximum Y (SIMD)
-        SIMD::FP<SIMDTYPE> m_incXSIMD; ///< 1 / Increment in X
-        SIMD::FP<SIMDTYPE> m_incYSIMD; ///< 1 / Increment in Y
+      private: // SIMD cached values
+        SIMD::FP<SIMDTYPE> m_minXSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< Minimum X (SIMD)
+        SIMD::FP<SIMDTYPE> m_maxXSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< Maximum X (SIMD)
+        SIMD::FP<SIMDTYPE> m_minYSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< Minimum Y (SIMD)
+        SIMD::FP<SIMDTYPE> m_maxYSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< Maximum Y (SIMD)
+        SIMD::FP<SIMDTYPE> m_incXSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< 1 / Increment in X
+        SIMD::FP<SIMDTYPE> m_incYSIMD = SIMD::FP<SIMDTYPE>::Zero(); ///< 1 / Increment in Y
       private:
         FPTYPE m_minX{ 9e9};         ///< Minimum X
         FPTYPE m_maxX{-9e9};         ///< Maximum X
