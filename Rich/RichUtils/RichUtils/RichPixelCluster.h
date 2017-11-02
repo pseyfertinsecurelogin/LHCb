@@ -23,12 +23,14 @@
 
 // Kernel
 #include "Kernel/RichSmartID.h"
-#include "Kernel/MemPoolAlloc.h"
 #include "Kernel/FastAllocList.h"
 #include "Kernel/FastAllocVector.h"
 
 // RichUtils
 #include "RichUtils/RichDAQDefinitions.h"
+
+// RichDet
+class DeRichPD;
 
 namespace Rich
 {
@@ -44,7 +46,7 @@ namespace Rich
    *  @date   07/02/2007
    */
   //-----------------------------------------------------------------------------------------------
-  class PDPixelCluster final : public LHCb::MemPoolAlloc<Rich::PDPixelCluster>
+  class PDPixelCluster final 
   {
 
   public:
@@ -71,13 +73,15 @@ namespace Rich
       : m_side(id.panel()), m_rich(id.rich()), m_ids(1,id) { }
 
     /// Copy Constructor from a vector of RichSmartIDs
-    explicit PDPixelCluster( const SmartIDVector & ids ) : m_ids(ids)
+    explicit PDPixelCluster( const SmartIDVector & ids ) 
+      : m_ids(ids)
     {
       updateCachedEnums();
     }
 
     /// Move Constructor from a vector of RichSmartIDs
-    explicit PDPixelCluster( SmartIDVector && ids ) : m_ids(std::move(ids))
+    explicit PDPixelCluster( SmartIDVector && ids ) 
+      : m_ids(std::move(ids))
     {
       updateCachedEnums();
     }
@@ -97,16 +101,26 @@ namespace Rich
     }
 
     /// The RICH detector for this cluster
-    inline Rich::DetectorType rich() const noexcept { return m_rich; }
+    inline Rich::DetectorType   rich() const noexcept { return m_rich; }
 
     /// The RICH panel for this cluster
-    inline Rich::Side        panel() const noexcept { return m_side; }
+    inline Rich::Side          panel() const noexcept { return m_side; }
 
     /// The RICH panel SmartID for this cluster
     inline LHCb::RichSmartID panelID() const noexcept { return primaryID().panelID(); }
 
     /// The RICH PD SmartID for this cluster
     inline LHCb::RichSmartID    pdID() const noexcept { return primaryID().pdID(); }
+
+  public:
+
+    /// Set the DeRichPD pointer
+    inline void setDePD( const DeRichPD * dePD ) noexcept { m_dePD = dePD; }
+
+    /// Access the DeRichPD object
+    inline const DeRichPD * dePD() const noexcept { return m_dePD; }
+
+  public:
 
     /// Number of channels in this cluster
     inline SmartIDVector::size_type size() const noexcept { return smartIDs().size(); }
@@ -123,20 +137,18 @@ namespace Rich
       updateCachedEnums();
     }
 
-    /// Add a channel to this cluster
-    inline void addChannel( LHCb::RichSmartID&& id )
-    {
-      m_ids.emplace_back(std::move(id));
-      updateCachedEnums();
-    }
-
   public:
 
     /// overload printout to ostream operator <<
     friend inline std::ostream& operator << ( std::ostream& s,
                                               const PDPixelCluster & cluster )
     {
-      return s << "[ " << cluster.smartIDs() << " ]";
+      return s << "[ " 
+               << cluster.rich() << " "
+               << Rich::text(cluster.rich(),cluster.panel()) << " "
+               << (void*)cluster.dePD() << " "
+               << cluster.smartIDs()
+               << " ]";
     }
 
   private:
@@ -159,6 +171,9 @@ namespace Rich
     /// The vector of RichSmartIDs for this cluster
     SmartIDVector m_ids;
 
+    /// Pointer to associated DeRichPD object
+    const DeRichPD * m_dePD = nullptr;
+
   };
 
   /// Pixel Cluster data locations
@@ -177,7 +192,7 @@ namespace Rich
    *  @date   21/03/2006
    */
   //-----------------------------------------------------------------------------
-  class PDPixelClusters final : public LHCb::MemPoolAlloc<Rich::PDPixelClusters>
+  class PDPixelClusters final 
   {
 
   public:
@@ -192,16 +207,14 @@ namespace Rich
      *  @date   21/03/2006
      */
     //-----------------------------------------------------------------------------
-    class Cluster final : public LHCb::MemPoolAlloc<Rich::PDPixelClusters::Cluster>
+    class Cluster final
     {
 
     public: // definitions
 
       /// Collection of cluster pointers
-      //using PtnVector      = LHCb::Boost::PoolAllocList< Cluster* >;
       using PtnVector      = LHCb::STL::List< Cluster* >;
       /// Collection of cluster smart pointers (i.e. for ownership with memory management)
-      //using SmartPtnVector = LHCb::Boost::PoolAllocList< std::unique_ptr<Cluster> >;
       using SmartPtnVector = LHCb::STL::List< std::unique_ptr<Cluster> >;
 
     public: // Constructors etc.
@@ -322,7 +335,7 @@ namespace Rich
    *  @date   21/03/2006
    */
   //-----------------------------------------------------------------------------
-  class PDPixelClustersBuilder final : public LHCb::MemPoolAlloc<Rich::PDPixelClustersBuilder>
+  class PDPixelClustersBuilder final
   {
 
   public:
