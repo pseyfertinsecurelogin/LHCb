@@ -47,12 +47,11 @@ namespace Rich
                typename = typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
                                                    !std::is_arithmetic<typename VECTOR::Scalar>::value && 
                                                    !std::is_arithmetic<FTYPE>::value >::type >
-    inline typename FTYPE::mask_type
-    intersectSpherical ( const POINT& position,
-                         const VECTOR& direction,
-                         const POINT& CoC,
-                         const FTYPE radius,
-                         POINT& intersection )
+    inline decltype(auto) intersectSpherical ( const POINT& position,
+                                               const VECTOR& direction,
+                                               const POINT& CoC,
+                                               const FTYPE radius,
+                                               POINT& intersection )
     {
       const FTYPE two(2.0), four(4.0), half(0.5);
       // for line sphere intersection look at http://www.realtimerendering.com/int/
@@ -61,17 +60,14 @@ namespace Rich
       const FTYPE      b = two * direction.Dot( delta );
       const FTYPE      c = delta.Mag2() - radius*radius;
       FTYPE        discr = b*b - four*a*c;
-      typename FTYPE::mask_type OK = discr > FTYPE::Zero();
-      if ( any_of(OK) )
-      {
-        // Zero out the negative values in discr, to prevent sqrt(-ve)
-        //discr(!OK) = FTYPE::Zero();
-        discr.setZero(!OK);
-        // distance
-        const FTYPE dist = half * ( sqrt(discr) - b ) / a;
-        // set intersection point
-        intersection = position + ( dist * direction );
-      }
+      // Zero out the negative values in discr, to prevent sqrt(-ve)
+      const auto OK = discr > FTYPE::Zero();
+      discr.setZeroInverted(OK);
+      // distance
+      const auto dist = half * ( sqrt(discr) - b ) / a;
+      // set intersection point
+      intersection = position + ( dist * direction );
+      // return the mask
       return OK;
     }
 
@@ -98,11 +94,10 @@ namespace Rich
                typename = typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value && 
                                                    !std::is_arithmetic<typename VECTOR::Scalar>::value && 
                                                    !std::is_arithmetic<FTYPE>::value >::type > 
-    inline typename FTYPE::mask_type
-    reflectSpherical ( POINT& position,
-                       VECTOR& direction,
-                       const POINT& CoC,
-                       const FTYPE radius )
+    inline decltype(auto) reflectSpherical ( POINT& position,
+                                             VECTOR& direction,
+                                             const POINT& CoC,
+                                             const FTYPE radius )
     {
       const FTYPE two(2.0), four(4.0), half(0.5);
       const FTYPE      a = direction.Mag2();
@@ -110,21 +105,17 @@ namespace Rich
       const FTYPE      b = two * direction.Dot( delta );
       const FTYPE      c = delta.Mag2() - radius*radius;
       FTYPE        discr = b*b - four*a*c;
-      typename FTYPE::mask_type OK = discr > FTYPE::Zero();
-      if ( any_of(OK) )
-      {
-        // Zero out the negative values in discr, to prevent sqrt(-ve)
-        //discr(!OK) = FTYPE::Zero();
-        discr.setZero(!OK);
-        // compute the distance
-        const FTYPE dist = half * ( sqrt(discr) - b ) / a;
-        // change position to the intersection point
-        position += dist * direction;
-        // reflect the vector
-        // r = u - 2(u.n)n, r=reflection, u=incident, n=normal
-        const VECTOR normal = position - CoC;
-        direction -= ( two * normal.Dot(direction) / normal.Mag2() ) * normal;
-      }
+      // Zero out the negative values in discr, to prevent sqrt(-ve)
+      const auto OK = discr > FTYPE::Zero();
+      discr.setZeroInverted(OK);
+      // compute the distance
+      const auto dist = half * ( sqrt(discr) - b ) / a;
+      // change position to the intersection point
+      position += dist * direction;
+      // reflect the vector
+      // r = u - 2(u.n)n, r=reflection, u=incident, n=normal
+      const VECTOR normal = position - CoC;
+      direction -= ( two * normal.Dot(direction) / normal.Mag2() ) * normal;
       // return the mask indicating which results should be used
       return OK;
     }
