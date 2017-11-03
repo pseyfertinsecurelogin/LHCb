@@ -72,12 +72,22 @@ namespace Rich
 
     public: // methods
 
+      /** Read/Write access operator
+       *
+       *  @param type  The mass hypothesis for which the data is requested
+       *  @return The data value
+       */
+      inline TYPE & operator[] ( const Rich::ParticleIDType type ) noexcept
+      {
+	return m_data[type];
+      }
+
       /** Read access operator
        *
        *  @param type  The mass hypothesis for which the data is requested
        *  @return The data value
        */
-      inline const TYPE & operator[] ( const Rich::ParticleIDType type ) const
+      inline const TYPE & operator[] ( const Rich::ParticleIDType type ) const noexcept
       {
 	return m_data[type];
       }
