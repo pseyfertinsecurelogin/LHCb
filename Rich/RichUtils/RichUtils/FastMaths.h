@@ -53,11 +53,11 @@ namespace Rich
           tmp(m) = TYPE::One();
         }
 
-        auto t = yy / xx;
-        auto z = t;
-        m      = t > TYPE(0.4142135623730950);
+        const auto t = yy / xx;
+        auto       z = t;
+        m            = t > TYPE(0.4142135623730950);
         if ( any_of(m) ) { z(m) = ( t - TYPE::One() ) / ( t + TYPE::One() ); }
-     
+
         const auto z2 = z * z;
 
         auto ret = ((((   TYPE(8.05374449538e-2f)  * z2
@@ -66,16 +66,13 @@ namespace Rich
                         - TYPE(3.33329491539E-1f)) * z2 * z
                         + z );
 
-        // Here we put the result to 0 if xx was 0, if not nothing happens!
-        m = ( xx == TYPE::Zero() );
-        if ( any_of(m) ) { ret(m) = TYPE::Zero(); }
-
         // move back in place
-        ret( y == TYPE::Zero() ) = TYPE::Zero();
-        ret( t > TYPE(0.4142135623730950f) ) += TYPE(M_PI_4);
-        ret( tmp != TYPE::Zero() ) = TYPE(M_PI_2) - ret;
-        ret( x    < TYPE::Zero() ) = TYPE(M_PI)   - ret;
-        ret( y    < TYPE::Zero() ) = - ret;
+        ret.setZero( xx == TYPE::Zero() ||
+                     y  == TYPE::Zero() );
+        ret( m                   ) += TYPE(M_PI_4);
+        ret( tmp != TYPE::Zero() )  = TYPE(M_PI_2) - ret;
+        ret( x    < TYPE::Zero() )  = TYPE(M_PI)   - ret;
+        ret( y    < TYPE::Zero() )  =              - ret;
 
         return ret;
       }
