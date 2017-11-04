@@ -12,11 +12,11 @@
 
   <class name  = "LHCb::RichGeomPhoton"                />
 
-  <class name  = "Rich::SIMD::FP<Rich::SIMD::DefaultFP>"          />
-  <class name  = "Rich::SIMD::Point<Rich::SIMD::DefaultFP>"       />
-  <class name  = "Rich::SIMD::Vector<Rich::SIMD::DefaultFP>"      />
-  <class name  = "Rich::SIMD::Plane<Rich::SIMD::DefaultFP>"       />
-  <class name  = "Rich::SIMD::Transform3D<Rich::SIMD::DefaultFP>" />
+  <class name  = "Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP>"          />
+  <class name  = "Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP>"       />
+  <class name  = "Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP>"      />
+  <class name  = "Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP>"       />
+  <class name  = "Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP>" />
 
   <class name  = "LHCb::RichTrackSegment"              />
   <class name  = "LHCb::RichTrackSegment::SIMDPoint"   />

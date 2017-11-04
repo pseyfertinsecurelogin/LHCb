@@ -72,13 +72,13 @@ namespace LHCb
     using Vector = Rich::SIMD::STDVector<RichTrackSegment>;
 
     /// SIMD Float Type
-    using SIMDFP = Rich::SIMD::FP<Rich::SIMD::DefaultFP>;
+    using SIMDFP = Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP>;
 
     /// SIMD Point Type
-    using SIMDPoint = Rich::SIMD::Point<Rich::SIMD::DefaultFP>;
+    using SIMDPoint = Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP>;
 
     /// SIMD Vector Type
-    using SIMDVector = Rich::SIMD::Vector<Rich::SIMD::DefaultFP>;
+    using SIMDVector = Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP>;
     
   private:
 

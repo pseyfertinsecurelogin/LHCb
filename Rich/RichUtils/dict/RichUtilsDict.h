@@ -44,11 +44,11 @@ namespace
     LHCb::RichTrackSegment::SIMDFP                 obj_18;
     LHCb::RichTrackSegment::SIMDPoint              obj_19;
     LHCb::RichTrackSegment::SIMDVector             obj_20;
-    Rich::SIMD::FP<Rich::SIMD::DefaultFP>          obj_21;
-    Rich::SIMD::Point<Rich::SIMD::DefaultFP>       obj_22;
-    Rich::SIMD::Vector<Rich::SIMD::DefaultFP>      obj_23;
-    Rich::SIMD::Plane<Rich::SIMD::DefaultFP>       obj_24;
-    Rich::SIMD::Transform3D<Rich::SIMD::DefaultFP> obj_25;
+    Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP>          obj_21;
+    Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP>       obj_22;
+    Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP>      obj_23;
+    Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP>       obj_24;
+    Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP> obj_25;
   };
 }
 

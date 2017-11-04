@@ -69,7 +69,7 @@ namespace Rich
     using Transform3D = ROOT::Math::Impl::Transform3D< FP<FPTYPE> >;
     
     //------------------------------------------------------------------------------------------------
-    // Types for doubles
+    // Types for 64 bit types
     //------------------------------------------------------------------------------------------------
     
     /// SIMD double
@@ -83,9 +83,9 @@ namespace Rich
     
     /// SIMD double plane
     using PlaneD  = Plane<double>;
-    
+
     //------------------------------------------------------------------------------------------------
-    // Types for floats
+    // Types for 32 bit types
     //------------------------------------------------------------------------------------------------
     
     /// SIMD float
@@ -99,6 +99,27 @@ namespace Rich
     
     /// SIMD float plane
     using PlaneF  = Plane<float>;
+
+#if defined(Vc_IMPL_AVX) && !defined(Vc_IMPL_AVX2) 
+
+    // Despite what the Vc documentation claims, when only AVX is available float and int
+    // Vc::Vector sizes are not the same (float 8, int 4).... This works around this.
+
+    /// SIMD Int32
+    using Int32   = Vc::SimdArray<std::int32_t,FPF::Size>;
+
+    /// SIMD UInt32
+    using UInt32  = Vc::SimdArray<std::uint32_t,FPF::Size>;
+
+#else
+
+    /// SIMD Int32
+    using Int32   = Vc::Vector<std::int32_t>;
+
+    /// SIMD UInt32
+    using UInt32  = Vc::Vector<std::uint32_t>;
+
+#endif
     
     //------------------------------------------------------------------------------------------------
     // Containers for SIMD types
@@ -112,15 +133,25 @@ namespace Rich
     template < typename TYPE, typename FPTYPE >
     using STDArray = std::array< TYPE, FPTYPE::Size >;
 
-    /// Default float precision for SIMD types
-    using DefaultFP = float;
+    //------------------------------------------------------------------------------------------------
+    // Default scalar types
+    //------------------------------------------------------------------------------------------------
+
+    /// Default scalar float precision for SIMD types
+    using DefaultScalarFP   = float;
+
+    /// Default scalar int type
+    using DefaultScalarInt  = Int32::EntryType;
+
+    /// Default scalar unsigned int type
+    using DefaultScalarUInt = UInt32::EntryType;
 
     //------------------------------------------------------------------------------------------------
     // SIMD Representations of various RICH enums
     //------------------------------------------------------------------------------------------------
 
     /// Container for detector sides
-    using Sides = Vc::Vector<int32_t>;
+    using Sides = Int32;
     
   }
 }

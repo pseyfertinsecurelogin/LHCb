@@ -91,7 +91,7 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal centre of curvature
    */
-  inline const Rich::SIMD::Point<Rich::SIMD::DefaultFP> & 
+  inline const Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP> & 
   nominalCentreOfCurvatureSIMD( const Rich::Side side ) const noexcept
   {
     return m_nominalCentresOfCurvatureSIMD[side];
@@ -104,7 +104,7 @@ public:
    * @param sides Which sides : top, bottom (Rich1), left, right (Rich2)
    * @return The nominal centre of curvature
    */
-  inline Rich::SIMD::Point<Rich::SIMD::DefaultFP> 
+  inline Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP> 
   nominalCentreOfCurvature( const Rich::SIMD::Sides& sides ) const noexcept
   {
     using namespace Rich::SIMD;
@@ -116,13 +116,13 @@ public:
     auto Y = CoC1.Y();
     auto Z = CoC1.Z();
     // mask for side 2
-    const auto m = Vc::simd_cast<Point<DefaultFP>::Scalar::MaskType>(sides == Sides(Rich::secondSide));
+    const auto m = Vc::simd_cast<Point<DefaultScalarFP>::Scalar::MaskType>(sides == Sides(Rich::secondSide));
     // update values for side 2
     X(m) = CoC2.X();
     Y(m) = CoC2.Y();
     Z(m) = CoC2.Z();
     // return the final result
-    return Point<DefaultFP>(X,Y,Z);
+    return Point<DefaultScalarFP>(X,Y,Z);
   }
 
   /**
@@ -143,7 +143,7 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal normal vector
    */
-  inline const Rich::SIMD::Vector<Rich::SIMD::DefaultFP> & 
+  inline const Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP> & 
   nominalNormalSIMD( const Rich::Side side ) const noexcept
   {
     return m_nominalNormalsSIMD[side];
@@ -167,7 +167,7 @@ public:
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal flat mirror plane
    */
-  inline const Rich::SIMD::Plane<Rich::SIMD::DefaultFP> & 
+  inline const Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP> & 
   nominalPlaneSIMD( const Rich::Side side ) const noexcept
   {
     return m_nominalPlanesSIMD[side];
@@ -179,7 +179,7 @@ public:
    * @param sides Which sides : top, bottom (Rich1), left, right (Rich2)
    * @return The nominal flat mirror plane
    */
-  inline const Rich::SIMD::Plane<Rich::SIMD::DefaultFP>
+  inline const Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP>
   nominalPlane( const Rich::SIMD::Sides& sides ) const noexcept
   {
     using namespace Rich::SIMD;
@@ -192,14 +192,14 @@ public:
     auto C = P1.C();
     auto D = P1.D();
     // mask for side 2
-    const auto m = Vc::simd_cast<Point<DefaultFP>::Scalar::MaskType>(sides == Sides(Rich::secondSide));
+    const auto m = Vc::simd_cast<Point<DefaultScalarFP>::Scalar::MaskType>(sides == Sides(Rich::secondSide));
     // update values for side 2
     A(m) = P2.A();
     B(m) = P2.B();
     C(m) = P2.C();
     D(m) = P2.D();
     // return the SIMD plane object
-    return Plane<DefaultFP>(A,B,C,D);
+    return Plane<DefaultScalarFP>(A,B,C,D);
   }
 
   /**
@@ -283,7 +283,7 @@ public:
    *
    * @return The nominal spherical mirror radius
    */
-  inline Rich::SIMD::FP<Rich::SIMD::DefaultFP> sphMirrorRadiusSIMD() const noexcept
+  inline Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP> sphMirrorRadiusSIMD() const noexcept
   {
     return m_sphMirrorRadiusSIMD;
   }
@@ -491,15 +491,15 @@ private:
   // SIMD copies of various types
 
   /// SIMD Nominal planes for each panel
-  Rich::PanelArray< Rich::SIMD::Plane<Rich::SIMD::DefaultFP> > m_nominalPlanesSIMD = {{}};
+  Rich::PanelArray< Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP> > m_nominalPlanesSIMD = {{}};
 
   /// SIMD nominal normal vector of the flat mirror planes
-  Rich::PanelArray< Rich::SIMD::Vector<Rich::SIMD::DefaultFP> > m_nominalNormalsSIMD = {{}};
+  Rich::PanelArray< Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP> > m_nominalNormalsSIMD = {{}};
 
   /// The nominal centres of curvature of the spherical mirrors
-  Rich::PanelArray< Rich::SIMD::Point<Rich::SIMD::DefaultFP> > m_nominalCentresOfCurvatureSIMD = {{}};
+  Rich::PanelArray< Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP> > m_nominalCentresOfCurvatureSIMD = {{}};
 
   /// The nominal radius of the spherical mirror
-  Rich::SIMD::FP<Rich::SIMD::DefaultFP> m_sphMirrorRadiusSIMD;
+  Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP> m_sphMirrorRadiusSIMD;
 
 };

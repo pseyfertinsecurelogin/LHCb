@@ -52,7 +52,7 @@ namespace Rich
       public:
         
         /// The scalar floating point precision
-        using FP         = Rich::SIMD::DefaultFP;
+        using FP         = Rich::SIMD::DefaultScalarFP;
         /// The SIMD floating point type
         using SIMDFP     = Rich::SIMD::FP<FP>; 
         /// Type for SmartIDs container.
