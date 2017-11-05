@@ -100,6 +100,12 @@ namespace Rich
     /// Default constructor
     LookupTableInterpolator() = default;
 
+    /// Constructor from data
+    template< typename... Args >
+    LookupTableInterpolator( Args&&... args ) { init( std::forward<Args>(args)... ); }
+
+  public:
+
     /// Initialise
     template< typename FUNC >
     inline void init( const TYPE minX, 
