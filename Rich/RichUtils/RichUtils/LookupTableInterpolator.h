@@ -137,7 +137,11 @@ namespace Rich
     {
       // Note for speed no range checking....
       // User must garantee x is in the valid range
+
+      // get the data bin for the index for the given x
       const auto & bin = m_data[xIndex(x)];
+
+      // return the function value in this bin
       return ( bin.m * x ) + bin.c;
     }
 
