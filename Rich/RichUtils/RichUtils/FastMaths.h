@@ -40,18 +40,18 @@ namespace Rich
       const FPF     PIO2F( M_PI_2 );               ///< pi/2
       const FPF     PIF  ( M_PI );                 ///< pi
       // For exp
-      const FPF   LOG2EF ( 1.44269504088896341f ); ///< log2(e)
-      const FPF C1F      (  0.693359375f    );
-      const FPF C2F      ( -2.12194440e-4f  );
-      const FPF C1PC2F   ( C1F + C2F        );
-      const FPF PX1expf  ( 1.9875691500E-4f );
-      const FPF PX2expf  ( 1.3981999507E-3f );
-      const FPF PX3expf  ( 8.3334519073E-3f );
-      const FPF PX4expf  ( 4.1665795894E-2f );
-      const FPF PX5expf  ( 1.6666665459E-1f );
-      const FPF PX6expf  ( 5.0000001201E-1f );
-      const FPF MAXLOGF  ( 88.72283905206835f );
-      const FPF MINLOGF  ( -88.f );
+      const FPF LOG2EF   (  1.44269504088896341f ); ///< log2(e)
+      const FPF C1F      (  0.693359375f       );
+      const FPF C2F      ( -2.12194440e-4f     );
+      const FPF C1PC2F   (  C1F + C2F          );
+      const FPF PX1expf  (  1.9875691500E-4f   );
+      const FPF PX2expf  (  1.3981999507E-3f   );
+      const FPF PX3expf  (  8.3334519073E-3f   );
+      const FPF PX4expf  (  4.1665795894E-2f   );
+      const FPF PX5expf  (  1.6666665459E-1f   );
+      const FPF PX6expf  (  5.0000001201E-1f   );
+      const FPF MAXLOGF  (  88.72283905206835f );
+      const FPF MINLOGF  ( -88.0f              );
       const FPF INFF     ( std::numeric_limits<float>::infinity() );
 
       /// Converts a float to an int
@@ -83,7 +83,7 @@ namespace Rich
 
       /** fast exp for Vc::Vector<float> type
        *  Based on VDT fast_exp2f */
-      inline FPF fast_expf( const FPF& initial_x )
+      inline FPF fast_exp( const FPF& initial_x )
       {
 
         FPF x = initial_x;
@@ -95,7 +95,7 @@ namespace Rich
 
         const auto n = Vc::simd_cast<Int32>( z );
 
-        z  = x*details::PX1expf;
+        z  = details::PX1expf * x;
         z += details::PX2expf;
         z *= x;
         z += details::PX3expf;
@@ -119,7 +119,7 @@ namespace Rich
 
       /** fast atan2 for Vc::Vector<float> type
        *  Based on VDT fast_atan2f */
-      inline FPF fast_atan2f( const FPF& y, const FPF& x )
+      inline FPF fast_atan2( const FPF& y, const FPF& x )
       {
 
         // move in first octant

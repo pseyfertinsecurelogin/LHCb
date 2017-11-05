@@ -373,8 +373,8 @@ namespace LHCb
       // extract components
       const TYPE x(rotDir.x()), y(rotDir.y()), z(rotDir.z());
       // compute theta and phi directly from the vector components
-      phi   = Rich::SIMD::Maths::fast_atan2f( y, x );
-      theta = Rich::SIMD::Maths::fast_atan2f( std::sqrt( (x*x) + (y*y) ), z );
+      phi   = Rich::SIMD::Maths::fast_atan2( y, x );
+      theta = Rich::SIMD::Maths::fast_atan2( std::sqrt( (x*x) + (y*y) ), z );
       // correct phi to range 0 - 2PI
       phi( phi < TYPE::Zero() ) += TYPE( 2.0*M_PI );
     }
