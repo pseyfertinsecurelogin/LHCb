@@ -57,7 +57,6 @@ namespace Rich
       /// Converts a float to an int
       inline UInt32 float2uint32( const FPF& x )
       {
-        //return std::floor(x); // Vc implementation
         union { FPF f; UInt32 i; } vp = { x };
         return vp.i;
       }
@@ -72,6 +71,7 @@ namespace Rich
       /// floor implementation
       inline FPF fpfloor( const FPF& x )
       {
+        //return std::floor(x); // Vc implementation
         auto ret = Vc::simd_cast<Int32>(x);
         ret -= ( float2uint32(x) >> 31 );  
         return Vc::simd_cast<FPF>(ret); 
