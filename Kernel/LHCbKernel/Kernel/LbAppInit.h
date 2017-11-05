@@ -111,11 +111,11 @@ private:
   Gaudi::Property< unsigned long long> m_increment{this, "Increment", 100, "Number of events to measure memory"};
   Gaudi::Property<long long> m_memPurgeLimit{this, "MemoryPurgeLimit", -1, "OBSOLETE"};
   Gaudi::Property<long long> m_minMemDelta{this, "MinMemoryDelta", 16, "The minimum change in memory usage (KB) to trigger a message"}; // defaults to 16KB
-  
+
   mutable SmartIF<IRndmGenSvc> m_randSvc;  ///< Pointer to random number service
   mutable IRndmEngine* m_engine{0};        ///< Pointer to random number engine
+  mutable std::once_flag m_randSvc_init;
   mutable std::atomic_ullong m_lastMem{0}; ///< Last memory usage
-  mutable std::mutex m_mutex;              ///< Mutex to secure non thread safe code, that is on demand initializations
 
   SmartIF<ICondDBInfo> m_condDBInfo; ///< Pointer to Info interface of CondDB service
   mutable std::atomic_long m_evtCounter{0};  ///< Pointer to EventCounter interface
