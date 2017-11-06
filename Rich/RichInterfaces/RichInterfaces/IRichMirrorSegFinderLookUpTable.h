@@ -84,14 +84,12 @@ namespace Rich
       class LookupTableFinder
       {
       private:
-        /// Type for index
-        using Index       = std::uint8_t;
-        //using Index       = std::uint16_t;
-        //using Index       = std::uint32_t;
+        /// Type for Mirror Number. Small to minimise LUT size.
+        using MirrorNum   = std::uint8_t;
         /// Type for SIMD array of indices
-        //using SIMDIndices = SIMD::UInt8;
-        //using SIMDIndices = SIMD::UInt16;
         using SIMDIndices = SIMD::UInt32;
+        /// Type for Scalar index
+        using ScalarIndex = std::uint32_t;
       public:  
         /// Constructor from extra size
         explicit LookupTableFinder( const FPTYPE eSize ) : m_eSize(eSize) { }
@@ -115,7 +113,7 @@ namespace Rich
         void init()
         {
           // sanity check
-          if ( std::numeric_limits<Index>::max() < mirrors.size() )
+          if ( std::numeric_limits<MirrorNum>::max() < mirrors.size() )
           {
             throw GaudiException( "Too many mirrors", 
                                   "MirrorSegFinderLookUpTable::LookupTableFinder",
@@ -239,7 +237,7 @@ namespace Rich
         }
       private:
         /// Type for lookup storage
-        using MirrorArray = Vc::vector< Index >;
+        using MirrorArray = Vc::vector< MirrorNum >;
         /** @class LookupTable RichMirrorSegFinderLookUpTable.h
          *  2D (x,y) Lookup table for RICH mirrors */
         class LookupTable final : private MirrorArray
@@ -249,13 +247,13 @@ namespace Rich
           LookupTable( ) { clear(); }
         public:
           /// Access the mirror for a given combined xy index (Scalar)
-          inline Index get( const std::uint32_t ixy ) const noexcept
+          inline MirrorNum get( const ScalarIndex ixy ) const noexcept
           {
             return (*this)[ixy];
           }
           /// Access the mirror for a given set of (x,y) indices (Scalar)
-          inline Index get( const std::uint32_t ix,
-                            const std::uint32_t iy ) const noexcept
+          inline MirrorNum get( const ScalarIndex ix,
+                                const ScalarIndex iy ) const noexcept
           {
             return get( ( NYBINS * ix ) + iy );
           }
@@ -275,9 +273,9 @@ namespace Rich
           }
         public:
           /// Set the mirror for a given bin
-          void set( const std::uint32_t ix,
-                    const std::uint32_t iy,
-                    const Index         im ) noexcept
+          void set( const ScalarIndex ix,
+                    const ScalarIndex iy,
+                    const MirrorNum   im ) noexcept
           {
             (*this)[ ( NYBINS * ix ) + iy ] = im;
           }
@@ -303,12 +301,12 @@ namespace Rich
         FPTYPE                    maxY() const noexcept { return m_maxY; }
       private:
         /// Get x for a given index value
-        inline FPTYPE binX( const std::uint32_t i ) const noexcept
+        inline FPTYPE binX( const ScalarIndex i ) const noexcept
         {
           return minX() + ( ( (FPTYPE)i + 0.5 ) / m_incX ) ;
         }
         /// Get y for a given index value
-        inline FPTYPE binY( const std::uint32_t i ) const noexcept
+        inline FPTYPE binY( const ScalarIndex i ) const noexcept
         {
           return minY() + ( ( (FPTYPE)i + 0.5 ) / m_incY ) ;
         }
@@ -316,7 +314,7 @@ namespace Rich
         /// Get the combined xy index (scalar)
         template< typename TYPE,
                   typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
-        inline std::uint32_t xyIndex( const TYPE x, const TYPE y ) const noexcept
+        inline ScalarIndex xyIndex( const TYPE x, const TYPE y ) const noexcept
         {
           return ( NYBINS * xIndex(x) ) + yIndex(y);
         }
@@ -330,11 +328,11 @@ namespace Rich
         /// Get the x index (Scalar)
         template< typename TYPE,
                   typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
-        inline std::uint32_t xIndex( const TYPE x ) const noexcept
+        inline ScalarIndex xIndex( const TYPE x ) const noexcept
         {
           return ( x < minX() ? 0            :
                    x > maxX() ? nXBins() - 1 :
-                   (std::uint32_t)((x-minX())*m_incX) );
+                   (ScalarIndex)((x-minX())*m_incX) );
         }
         /// Get the x index (SIMD)
         template< typename TYPE,
@@ -356,11 +354,11 @@ namespace Rich
         /// Get the y index (Scalar)
         template< typename TYPE,
                   typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
-        inline std::uint32_t yIndex( const TYPE y ) const noexcept
+        inline ScalarIndex yIndex( const TYPE y ) const noexcept
         {
           return ( y < minY() ? 0            :
                    y > maxY() ? nYBins() - 1 :
-                   (std::uint32_t)((y-minY())*m_incY) );
+                   (ScalarIndex)((y-minY())*m_incY) );
         }
         /// Get the y index (SIMD)
         template< typename TYPE,
