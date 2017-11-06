@@ -100,10 +100,26 @@ namespace Rich
     /// SIMD float plane
     using PlaneF  = Plane<float>;
 
+    //------------------------------------------------------------------------------------------------
+    // Int types
+    //------------------------------------------------------------------------------------------------
+
 #if defined(Vc_IMPL_AVX) && !defined(Vc_IMPL_AVX2) 
 
     // Despite what the Vc documentation claims, when only AVX is available float and int
     // Vc::Vector sizes are not the same (float 8, int 4).... This works around this.
+
+    /// SIMD Int8
+    using Int8    = Vc::SimdArray<std::int8_t,FPF::Size>;
+
+    /// SIMD UInt8
+    using UInt8   = Vc::SimdArray<std::uint8_t,FPF::Size>;
+
+    /// SIMD Int16
+    using Int16   = Vc::SimdArray<std::int16_t,FPF::Size>;
+
+    /// SIMD UInt32
+    using UInt16  = Vc::SimdArray<std::uint16_t,FPF::Size>;
 
     /// SIMD Int32
     using Int32   = Vc::SimdArray<std::int32_t,FPF::Size>;
@@ -113,6 +129,18 @@ namespace Rich
 
 #else
 
+    /// SIMD Int8
+    using Int8    = Vc::Vector<std::int8_t>;
+
+    /// SIMD UInt8
+    using UInt8   = Vc::Vector<std::uint8_t>;
+
+    /// SIMD Int16
+    using Int16   = Vc::Vector<std::int16_t>;
+
+    /// SIMD UInt16
+    using UInt16  = Vc::Vector<std::uint16_t>;
+
     /// SIMD Int32
     using Int32   = Vc::Vector<std::int32_t>;
 
@@ -120,18 +148,6 @@ namespace Rich
     using UInt32  = Vc::Vector<std::uint32_t>;
 
 #endif
-    
-    //------------------------------------------------------------------------------------------------
-    // Containers for SIMD types
-    //------------------------------------------------------------------------------------------------
-    
-    /// SIMD Vector
-    template < typename TYPE >
-    using STDVector = std::vector< TYPE, Vc::Allocator<TYPE> >;
-
-    /// SIMD 'Array' (same size as Vc vectors
-    template < typename TYPE, typename FPTYPE >
-    using STDArray = std::array< TYPE, FPTYPE::Size >;
 
     //------------------------------------------------------------------------------------------------
     // Default scalar types
@@ -145,6 +161,18 @@ namespace Rich
 
     /// Default scalar unsigned int type
     using DefaultScalarUInt = UInt32::EntryType;
+
+   //------------------------------------------------------------------------------------------------
+    // Containers for SIMD types
+    //------------------------------------------------------------------------------------------------
+    
+    /// SIMD Vector
+    template < typename TYPE >
+    using STDVector = std::vector< TYPE, Vc::Allocator<TYPE> >;
+
+    /// SIMD 'Array' (same size as Vc vectors
+    template < typename TYPE, typename FPTYPE = FP<DefaultScalarFP> >
+    using STDArray = std::array< TYPE, FPTYPE::Size >;
 
     //------------------------------------------------------------------------------------------------
     // SIMD Representations of various RICH enums
