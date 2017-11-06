@@ -31,14 +31,15 @@ namespace Rich
   namespace SIMD
   {
 
+    /// Hidden(ish) details
     namespace details
     {
       // Some SIMD constants
-      const FPF     HALF ( 0.5 );                  ///< 1/2
+      const FPF     HALF ( 0.5    );               ///< 1/2
       const FPF TAN_PIO8F( 0.4142135623730950 );   ///< tan(pi/8)
       const FPF     PIO4F( M_PI_4 );               ///< pi/4
       const FPF     PIO2F( M_PI_2 );               ///< pi/2
-      const FPF     PIF  ( M_PI );                 ///< pi
+      const FPF     PIF  ( M_PI   );               ///< pi
       // For exp
       const FPF LOG2EF   (  1.44269504088896341f ); ///< log2(e)
       const FPF C1F      (  0.693359375f       );
