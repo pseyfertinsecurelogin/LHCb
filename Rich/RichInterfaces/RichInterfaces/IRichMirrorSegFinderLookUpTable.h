@@ -80,7 +80,9 @@ namespace Rich
        *  @date   2015-02-01
        */
       //-----------------------------------------------------------------------------
-      template < typename FPTYPE, std::uint32_t NXBINS, std::uint32_t NYBINS, typename SIMDTYPE = float >
+      template < typename FPTYPE, 
+                 std::uint32_t NXBINS, std::uint32_t NYBINS, 
+                 typename SIMDTYPE = SIMD::DefaultScalarFP >
       class LookupTableFinder
       {
       private:
