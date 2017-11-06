@@ -86,10 +86,12 @@ namespace Rich
       private:
         /// Type for index
         using Index       = std::uint8_t;
+        //using Index       = std::uint16_t;
         //using Index       = std::uint32_t;
         /// Type for SIMD array of indices
-        using SIMDIndices = SIMD::UInt8;
-        //using SIMDIndices = SIMD::UInt32;
+        //using SIMDIndices = SIMD::UInt8;
+        //using SIMDIndices = SIMD::UInt16;
+        using SIMDIndices = SIMD::UInt32;
       public:  
         /// Constructor from extra size
         explicit LookupTableFinder( const FPTYPE eSize ) : m_eSize(eSize) { }
@@ -199,17 +201,16 @@ namespace Rich
         inline decltype(auto) find( const TYPE & x, const TYPE & y ) const noexcept
         {
           // Get the mirror indices
-          const auto xi = xIndex(x);
-          const auto yi = yIndex(y);
+          const auto xyi = xyIndex(x,y);
           // gather lookup seems slower for now ... :(
           //const auto xyi = m_lookupTable.get( xIndex(x), yIndex(y) );
           // Mirrors to return
           SIMDMirrors<TYPE> mirrs;
-          // can this be vectorised ?
+          // Fill the mirrors. Can this be vectoirsed ??
           for ( std::size_t i = 0; i < TYPE::Size; ++i )
           {
             //mirrs[i] = mirrors[ xyi[i] ];
-            mirrs[i] = mirrors[ m_lookupTable.get( xi[i], yi[i] ) ];
+            mirrs[i] = mirrors[ m_lookupTable.get( xyi[i] ) ];
           }
           // return the filled mirrors
           return mirrs;
@@ -312,6 +313,20 @@ namespace Rich
           return minY() + ( ( (FPTYPE)i + 0.5 ) / m_incY ) ;
         }
       private:
+        /// Get the combined xy index (scalar)
+        template< typename TYPE,
+                  typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
+        inline std::uint32_t xyIndex( const TYPE x, const TYPE y ) const noexcept
+        {
+          return ( NYBINS * xIndex(x) ) + yIndex(y);
+        }
+        /// Get the combined xy index (SIMD)
+        template< typename TYPE,
+                  typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
+        inline SIMDIndices::IndexType xyIndex( const TYPE & x, const TYPE & y ) const noexcept
+        {
+          return ( SIMDIndices::IndexType(NYBINS) * xIndex(x) ) + yIndex(y);
+        }
         /// Get the x index (Scalar)
         template< typename TYPE,
                   typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
