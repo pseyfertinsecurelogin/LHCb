@@ -50,15 +50,15 @@ StatusCode DetElemFinder::initialize ( )
     return StatusCode::FAILURE;
   }
 
-  DataObject *obj;
-  sc = detSvc->retrieveObject(m_rootElement,obj);
+  DataObject *obj = nullptr;
+  sc = detSvc->retrieveObject(m_rootElement.value(),obj);
   if (!sc.isSuccess()) {
-		log << MSG::ERROR << "Unable to retrieve object '" << m_rootElement << "'" << endmsg;
+    log << MSG::ERROR << "Unable to retrieve object '" << m_rootElement.value() << "'" << endmsg;
     return sc;
   }
   IDetectorElement *de = dynamic_cast<IDetectorElement *>(obj);
   if (!de) {
-		log << MSG::ERROR << "Object '" << m_rootElement << "' is not a DetectorElement" << endmsg;
+    log << MSG::ERROR << "Object '" << m_rootElement.value() << "' is not a DetectorElement" << endmsg;
     return sc;
   }
 
