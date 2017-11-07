@@ -48,6 +48,7 @@ namespace generic {
     extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
     extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
     extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
+    extern void similarity_2_5(gsl::span<const double, 3> Ci, gsl::span<const double,10> Fi, gsl::span<double,15> Ti);
 }
 }
 }
@@ -71,6 +72,8 @@ std::map<ISet, LHCb::Math::detail::similarity_t<5,7>>  vtbl_5_7 = {
                                                 { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_7 },
                                                 { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_7 },
                                                 { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_7 } };
+std::map<ISet, LHCb::Math::detail::similarity_t<2,5>>  vtbl_2_5 = {
+                                                { ISet::GENERIC, LHCb::Math::detail::generic::similarity_2_5 } };
 
 // ============================================================================
 // Util methods
@@ -412,6 +415,20 @@ int main(int argc, char *argv[])
       fillRandomSMatrix(F,r);
       fillSMatrixSymWithCondNumber<Gaudi::Matrix5x5,Gaudi::SymMatrix5x5>(origin,r,condNumber);
       const auto ret = compareInstructionSets(origin, F, target, condNumber,  vtbl_5_7, (i%5000) == 0, iSet);
+      if (ret > 0) return ret;
+    }
+  }
+
+  std::cout << "============= Similarity_2_5 Test =============" << std::endl;
+  for( int i = 0; i < testcount; ++i )
+  {
+    for (auto condNumber: condNumbers) {
+      Gaudi::SymMatrix2x2 origin;
+      ROOT::Math::SMatrix<double,5,2> F;
+      Gaudi::SymMatrix5x5 target;
+      fillRandomSMatrix(F,r);
+      fillSMatrixSymWithCondNumber<Gaudi::Matrix2x2,Gaudi::SymMatrix2x2>(origin,r,condNumber);
+      const auto ret = compareInstructionSets(origin, F, target, condNumber,  vtbl_2_5, (i%5000) == 0, iSet);
       if (ret > 0) return ret;
     }
   }
