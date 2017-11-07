@@ -1,0 +1,188 @@
+#pragma once
+
+#include <array>
+#include "VectorConfiguration.h"
+#include "Math/SVector.h"
+
+#include "LHCbMath/MatrixManip.h"
+#include "Event/StateVector.h"
+
+namespace LHCb {
+
+namespace Vector {
+
+namespace Mem {
+
+namespace View {
+
+/**
+ * @brief      A generic Matrix SOA view.
+ *             It requires a valid basePointer to function properly.
+ *
+ * @tparam     PRECISION  Precision of the matrix.
+ * @tparam     N          Number of elements of the matrix.
+ */
+template<class PRECISION, std::size_t N>
+struct Matrix {
+  constexpr static unsigned size () { return N; }
+  
+  PRECISION* m_basePointer = nullptr;
+  Matrix () = default;
+  Matrix (PRECISION* m_basePointer) : m_basePointer(m_basePointer) {}
+  inline void setBasePointer (const Matrix<PRECISION, N>& v) { m_basePointer = v.m_basePointer; }
+  inline void setBasePointer (PRECISION* m_basePointer) { this->m_basePointer = m_basePointer; }
+  inline PRECISION& operator[] (const unsigned i) { return m_basePointer[i * VectorConfiguration::width<PRECISION>()]; }
+  inline PRECISION operator[] (const unsigned i) const { return m_basePointer[i * VectorConfiguration::width<PRECISION>()]; }
+
+  /**
+   * @brief      Copies v into its state
+   *             Assumes m_basePointer is well defined
+   */
+  inline void copy (const Matrix<PRECISION, N>& m) {
+    for (unsigned i=0; i<N; ++i) {
+      this->operator[](i) = m[i];
+    }
+  }
+
+  inline void operator+= (const Matrix<PRECISION, N>& m) {
+    for (unsigned i=0; i<N; ++i) {
+      this->operator[](i) += m[i];
+    }
+  }
+
+  template<class __GAUDITYPE>
+  inline void copy (const __GAUDITYPE& gm) {
+    for (unsigned i=0; i<N; ++i) {
+      this->operator[](i) = gm.Array()[i];
+    }
+  }
+
+  template<class __GAUDITYPE>
+  inline void operator+= (const __GAUDITYPE& gm) {
+    for (unsigned i=0; i<N; ++i) {
+      this->operator[](i) += gm.Array()[i];
+    }
+  }
+};
+
+template<class PRECISION>
+struct TrackVector : public Matrix<PRECISION, 5> {
+  TrackVector () = default;
+  TrackVector (PRECISION* m_basePointer) : Matrix<PRECISION, 5>(m_basePointer) {}
+
+  inline void copy (const TrackVector& v) { Matrix<PRECISION, 5>::copy(static_cast<Matrix<PRECISION, 5>>(v)); }
+  inline void operator+= (const TrackVector& v) { Matrix<PRECISION, 5>::operator+=(static_cast<Matrix<PRECISION, 5>>(v)); }
+
+  inline void copy (const Gaudi::TrackVector& v) { Matrix<PRECISION, 5>::template copy<Gaudi::TrackVector>(v); }
+  inline void copy (const Gaudi::TrackProjectionMatrix& v) { Matrix<PRECISION, 5>::template copy<Gaudi::TrackProjectionMatrix>(v); }
+  inline void operator+= (const Gaudi::TrackVector& v) { Matrix<PRECISION, 5>::template operator+=<Gaudi::TrackVector>(v); }
+  
+  inline operator Gaudi::TrackVector () const {
+    return Gaudi::TrackVector{this->operator[](0), this->operator[](1), this->operator[](2), this->operator[](3), this->operator[](4)};
+  }
+
+  inline operator Gaudi::TrackProjectionMatrix () const {
+    Gaudi::TrackProjectionMatrix pm;
+    for (unsigned i=0; i<5; ++i) {
+      pm.Array()[i] = this->operator[](i);
+    }
+    return pm;
+  }
+};
+
+template<class PRECISION>
+struct TrackSymMatrix : public Matrix<PRECISION, 15> {
+  TrackSymMatrix () = default;
+  TrackSymMatrix (PRECISION* m_basePointer) : Matrix<PRECISION, 15>(m_basePointer) {}
+
+  inline void copy (const TrackSymMatrix& v) { Matrix<PRECISION, 15>::copy(static_cast<Matrix<PRECISION, 15>>(v)); }
+  inline void operator+= (const TrackSymMatrix& v) { Matrix<PRECISION, 15>::operator+=(static_cast<Matrix<PRECISION, 15>>(v)); }
+  
+  inline void copy (const Gaudi::TrackSymMatrix& v) { Matrix<PRECISION, 15>::template copy<Gaudi::TrackSymMatrix>(v); }
+  inline void operator+= (const Gaudi::TrackSymMatrix& v) { Matrix<PRECISION, 15>::template operator+=<Gaudi::TrackSymMatrix>(v); }
+  
+  inline PRECISION& operator() (const unsigned row, const unsigned col) {
+    return row>col ?
+      this->m_basePointer[(row*(row+1)/2 + col) * VectorConfiguration::width<PRECISION>()] :
+      this->m_basePointer[(col*(col+1)/2 + row) * VectorConfiguration::width<PRECISION>()];
+  }
+
+  inline PRECISION operator() (const unsigned row, const unsigned col) const {
+    return row>col ?
+      this->m_basePointer[(row*(row+1)/2 + col) * VectorConfiguration::width<PRECISION>()] :
+      this->m_basePointer[(col*(col+1)/2 + row) * VectorConfiguration::width<PRECISION>()];
+  }
+  
+  inline operator Gaudi::TrackSymMatrix () const {
+    Gaudi::TrackSymMatrix t;
+    for (unsigned i=0; i<15; ++i) {
+      t.Array()[i] = this->operator[](i);
+    }
+    return t;
+
+    // TODO - Find a suitable constructor in place
+    // return Gaudi::TrackSymMatrix(
+    //   ROOT::Math::SVector<PRECISION, 15>{
+    //     this->operator[](0), this->operator[](1), this->operator[](2), this->operator[](3), this->operator[](4),
+    //     this->operator[](5), this->operator[](6), this->operator[](7), this->operator[](8), this->operator[](9),
+    //     this->operator[](10), this->operator[](11), this->operator[](12), this->operator[](13), this->operator[](14)
+    //   }
+    // );
+  }
+};
+
+// Some operators
+template<class PRECISION>
+inline Gaudi::TrackVector operator- (const Gaudi::TrackVector& mA, const TrackVector<PRECISION>& mB) {
+  const auto* A = mA.Array();
+  return Gaudi::TrackVector {
+    A[0]-mB[0],
+    A[1]-mB[1],
+    A[2]-mB[2],
+    A[3]-mB[3],
+    A[4]-mB[4]
+  };
+}
+
+template<class PRECISION, std::size_t N>
+inline std::ostream& operator<< (std::ostream& s, const Matrix<PRECISION, N>& v) {
+  for (unsigned i=0; i<N; ++i) {
+    s << v[i];
+    if (i != N-1) s << " ";
+  }
+  return s;
+}
+
+template<class PRECISION>
+inline std::ostream& operator<< (std::ostream& s, const TrackVector<PRECISION>& v) {
+  if (v.m_basePointer != nullptr) {
+    for (unsigned i=0; i<5; ++i) {
+      s << v[i];
+      if (i!=4) s << " ";
+    }
+  } else {
+    s << "uninitialized";
+  }
+  return s;
+}
+
+template<class PRECISION>
+inline std::ostream& operator<< (std::ostream& s, const TrackSymMatrix<PRECISION>& v) {
+  if (v.m_basePointer != nullptr) {
+    for (unsigned i=0; i<15; ++i) {
+      s << v[i];
+      if (i!=14) s << " ";
+    }
+  } else {
+    s << "uninitialized";
+  }
+  return s;
+}
+
+}
+
+}
+
+}
+
+}
