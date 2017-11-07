@@ -148,25 +148,13 @@ void LbAppInit::printEventRun(long long event, int run,
 }
 
 StatusCode LbAppInit::initRndm(const std::vector<long int>& seeds) const {
-  // Get the random number engine if not already done
-  if (!m_randSvc) {
-    // We need to guard the getting of m_randSvc
-    std::lock_guard<std::mutex> guard(m_mutex);
-    // recheck now that we have the lock
-    if (!m_randSvc) {
-      m_randSvc = service("RndmGenSvc", true);
-      if (!m_randSvc) return Error("Random number service not found!");
-    }
-  }
-  if (!m_engine ) {
-    // We need to guard the creation of m_engine
-    std::lock_guard<std::mutex> guard(m_mutex);
-    // recheck now that we have the lock
-    if (!m_engine) {
-      m_engine  = m_randSvc->engine();
-      if (!m_engine) return Error("Random number engine not found!");
-    }
-  }
+  // Get the random number engine (if not already done)
+  std::call_once( m_randSvc_init, [&]() { m_randSvc = service("RndmGenSvc", true);
+                                          if (m_randSvc) m_engine = m_randSvc->engine();
+                                        } );
+  if (!m_randSvc) return Error("Random number service not found!");
+  if (!m_engine) return Error("Random number engine not found!");
+
   StatusCode sc = m_engine->setSeeds(seeds);
   if (sc.isFailure()) return Error("Unable to set random number seeds", sc);
 
