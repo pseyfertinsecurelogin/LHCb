@@ -201,7 +201,7 @@ namespace Rich
         inline decltype(auto) find( const TYPE & x, const TYPE & y ) const noexcept
         {
           // Get the mirror indices
-          const auto xyi = xyIndex(x,y);
+          const auto xyi = m_lookupTable.xyIndex( xIndex(x), yIndex(y) );
           // gather lookup seems slower for now ... :(
           //const auto xyi = m_lookupTable.get( xIndex(x), yIndex(y) );
           // Mirrors to return
@@ -209,7 +209,9 @@ namespace Rich
           // Fill the mirrors. Can this be vectoirsed ??
           for ( std::size_t i = 0; i < TYPE::Size; ++i )
           {
-            //mirrs[i] = mirrors[ xyi[i] ];
+            // just load the mirror using the number
+            // mirrs[i] = mirrors[ xyi[i] ];
+            // Revert to scalar lookup
             mirrs[i] = mirrors[ m_lookupTable.get( xyi[i] ) ];
           }
           // return the filled mirrors
@@ -248,6 +250,19 @@ namespace Rich
           /// Constructor
           LookupTable( ) { clear(); }
         public:
+          /// Combine two (scalar) x,y indices in a single one
+          inline ScalarIndex xyIndex( const ScalarIndex ix, 
+                                      const ScalarIndex iy ) const noexcept
+          {
+            return ( NYBINS * ix ) + iy;
+          }
+          /// Combine two (SIMD) x,y indices in a single one
+          inline SIMDIndices::IndexType xyIndex( const SIMDIndices::IndexType & ix, 
+                                                 const SIMDIndices::IndexType & iy ) const noexcept
+          {
+            return ( SIMDIndices::IndexType(NYBINS) * ix ) + iy;
+          }
+        public:
           /// Access the mirror for a given combined xy index (Scalar)
           inline MirrorNum get( const ScalarIndex ixy ) const noexcept
           {
@@ -257,21 +272,21 @@ namespace Rich
           inline MirrorNum get( const ScalarIndex ix,
                                 const ScalarIndex iy ) const noexcept
           {
-            return get( ( NYBINS * ix ) + iy );
+            return get( xyIndex(ix,iy) );
           }
         public:
           /// Access the mirror for a given xy index (SIMD)
-          //inline SIMDIndices get( const SIMDIndices::IndexType & ixy ) const noexcept
-          // {
+          inline SIMDIndices get( const SIMDIndices::IndexType & ixy ) const noexcept
+          {
             // gather SIMD lookup
-          //   return (*this)[ixy]; 
-          // }
+            return (*this)[ixy]; 
+          }
           /// Access the mirror for a given set of (x,y) indices (SIMD)
           inline SIMDIndices get( const SIMDIndices::IndexType & ix,
                                   const SIMDIndices::IndexType & iy ) const noexcept
           {
             // Make '1D' indices from X and Y
-            return get( ( ix * SIMDIndices::IndexType(NYBINS) ) + iy );
+            return get( xyIndex(ix,iy) );
           }
         public:
           /// Set the mirror for a given bin
@@ -279,7 +294,7 @@ namespace Rich
                     const ScalarIndex iy,
                     const MirrorNum   im ) noexcept
           {
-            (*this)[ ( NYBINS * ix ) + iy ] = im;
+            (*this)[ xyIndex(ix,iy) ] = im;
           }
           /// Clear the table
           void clear() noexcept 
@@ -313,20 +328,6 @@ namespace Rich
           return minY() + ( ( (FPTYPE)i + 0.5 ) / m_incY ) ;
         }
       private:
-        /// Get the combined xy index (scalar)
-        template< typename TYPE,
-                  typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
-        inline ScalarIndex xyIndex( const TYPE x, const TYPE y ) const noexcept
-        {
-          return ( NYBINS * xIndex(x) ) + yIndex(y);
-        }
-        /// Get the combined xy index (SIMD)
-        template< typename TYPE,
-                  typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
-        inline SIMDIndices::IndexType xyIndex( const TYPE & x, const TYPE & y ) const noexcept
-        {
-          return ( SIMDIndices::IndexType(NYBINS) * xIndex(x) ) + yIndex(y);
-        }
         /// Get the x index (Scalar)
         template< typename TYPE,
                   typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
