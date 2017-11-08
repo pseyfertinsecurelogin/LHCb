@@ -51,6 +51,10 @@ namespace Rich
     /// The SIMD floating point type
     template < typename FPTYPE >
     using FP     = Vc::Vector<FPTYPE>;
+
+    /// The SIMD floating point type
+    template < typename ITYPE >
+    using INT    = Vc::Vector<ITYPE>;
     
     /// SIMD Point
     template < typename FPTYPE >
@@ -130,22 +134,22 @@ namespace Rich
 #else
 
     /// SIMD Int8
-    using Int8    = Vc::Vector<std::int8_t>;
+    using Int8    = INT<std::int8_t>;
 
     /// SIMD UInt8
-    using UInt8   = Vc::Vector<std::uint8_t>;
+    using UInt8   = INT<std::uint8_t>;
 
     /// SIMD Int16
-    using Int16   = Vc::Vector<std::int16_t>;
+    using Int16   = INT<std::int16_t>;
 
     /// SIMD UInt16
-    using UInt16  = Vc::Vector<std::uint16_t>;
+    using UInt16  = INT<std::uint16_t>;
 
     /// SIMD Int32
-    using Int32   = Vc::Vector<std::int32_t>;
+    using Int32   = INT<std::int32_t>;
 
     /// SIMD UInt32
-    using UInt32  = Vc::Vector<std::uint32_t>;
+    using UInt32  = INT<std::uint32_t>;
 
 #endif
 
