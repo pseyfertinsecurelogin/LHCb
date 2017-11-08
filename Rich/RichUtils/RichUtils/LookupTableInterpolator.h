@@ -90,9 +90,9 @@ namespace Rich
     /// Get the look up index for a given SIMD x (no range checks)
     template < typename PARAM,
                typename std::enable_if<!std::is_arithmetic<PARAM>::value>::type * = nullptr >
-    inline decltype(auto) xIndex( const PARAM x ) const noexcept
+    inline decltype(auto) xIndex( const PARAM & x ) const noexcept
     {
-      return Vc::simd_cast< typename PARAM::IndexType >( ( x - m_minX ) * m_incXinv );
+      return Vc::simd_cast< typename PARAM::IndexType >( ( x - PARAM(m_minX) ) * PARAM(m_incXinv) );
     }
 
   public:
