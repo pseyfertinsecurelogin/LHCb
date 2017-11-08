@@ -28,39 +28,39 @@ struct Matrix {
   
   PRECISION* m_basePointer = nullptr;
   Matrix () = default;
-  Matrix (PRECISION* m_basePointer) : m_basePointer(m_basePointer) {}
-  inline void setBasePointer (const Matrix<PRECISION, N>& v) { m_basePointer = v.m_basePointer; }
-  inline void setBasePointer (PRECISION* m_basePointer) { this->m_basePointer = m_basePointer; }
-  inline PRECISION& operator[] (const unsigned i) { return m_basePointer[i * VectorConfiguration::width<PRECISION>()]; }
-  inline PRECISION operator[] (const unsigned i) const { return m_basePointer[i * VectorConfiguration::width<PRECISION>()]; }
+  Matrix (PRECISION* basePointer) : m_basePointer(basePointer) {}
+  void setBasePointer (const Matrix<PRECISION, N>& v) { m_basePointer = v.m_basePointer; }
+  void setBasePointer (PRECISION* basePointer) { m_basePointer = basePointer; }
+  PRECISION& operator[] (const unsigned i) { return m_basePointer[i * VectorConfiguration::width<PRECISION>()]; }
+  PRECISION operator[] (const unsigned i) const { return m_basePointer[i * VectorConfiguration::width<PRECISION>()]; }
 
   /**
    * @brief      Copies v into its state
    *             Assumes m_basePointer is well defined
    */
-  inline void copy (const Matrix<PRECISION, N>& m) {
+  void copy (const Matrix<PRECISION, N>& m) {
     for (unsigned i=0; i<N; ++i) {
-      this->operator[](i) = m[i];
+      (*this)[i] = m[i];
     }
   }
 
-  inline void operator+= (const Matrix<PRECISION, N>& m) {
+  void operator+= (const Matrix<PRECISION, N>& m) {
     for (unsigned i=0; i<N; ++i) {
-      this->operator[](i) += m[i];
-    }
-  }
-
-  template<class __GAUDITYPE>
-  inline void copy (const __GAUDITYPE& gm) {
-    for (unsigned i=0; i<N; ++i) {
-      this->operator[](i) = gm.Array()[i];
+      (*this)[i] += m[i];
     }
   }
 
   template<class __GAUDITYPE>
-  inline void operator+= (const __GAUDITYPE& gm) {
+  void copy (const __GAUDITYPE& gm) {
     for (unsigned i=0; i<N; ++i) {
-      this->operator[](i) += gm.Array()[i];
+      (*this)[i] = gm.Array()[i];
+    }
+  }
+
+  template<class __GAUDITYPE>
+  void operator+= (const __GAUDITYPE& gm) {
+    for (unsigned i=0; i<N; ++i) {
+      (*this)[i] += gm.Array()[i];
     }
   }
 };
@@ -70,21 +70,21 @@ struct TrackVector : public Matrix<PRECISION, 5> {
   TrackVector () = default;
   TrackVector (PRECISION* m_basePointer) : Matrix<PRECISION, 5>(m_basePointer) {}
 
-  inline void copy (const TrackVector& v) { Matrix<PRECISION, 5>::copy(static_cast<Matrix<PRECISION, 5>>(v)); }
-  inline void operator+= (const TrackVector& v) { Matrix<PRECISION, 5>::operator+=(static_cast<Matrix<PRECISION, 5>>(v)); }
+  void copy (const TrackVector& v) { Matrix::copy(static_cast<Matrix>(v)); }
+  void operator+= (const TrackVector& v) { Matrix::operator+=(static_cast<Matrix>(v)); }
 
-  inline void copy (const Gaudi::TrackVector& v) { Matrix<PRECISION, 5>::template copy<Gaudi::TrackVector>(v); }
-  inline void copy (const Gaudi::TrackProjectionMatrix& v) { Matrix<PRECISION, 5>::template copy<Gaudi::TrackProjectionMatrix>(v); }
-  inline void operator+= (const Gaudi::TrackVector& v) { Matrix<PRECISION, 5>::template operator+=<Gaudi::TrackVector>(v); }
+  void copy (const Gaudi::TrackVector& v) { Matrix::template copy<Gaudi::TrackVector>(v); }
+  void copy (const Gaudi::TrackProjectionMatrix& v) { Matrix::template copy<Gaudi::TrackProjectionMatrix>(v); }
+  void operator+= (const Gaudi::TrackVector& v) { Matrix::template operator+=<Gaudi::TrackVector>(v); }
   
-  inline operator Gaudi::TrackVector () const {
-    return Gaudi::TrackVector{this->operator[](0), this->operator[](1), this->operator[](2), this->operator[](3), this->operator[](4)};
+  operator Gaudi::TrackVector () const {
+    return Gaudi::TrackVector{(*this)[0], (*this)[1], (*this)[2], (*this)[3], (*this)[4]};
   }
 
-  inline operator Gaudi::TrackProjectionMatrix () const {
+  operator Gaudi::TrackProjectionMatrix () const {
     Gaudi::TrackProjectionMatrix pm;
     for (unsigned i=0; i<5; ++i) {
-      pm.Array()[i] = this->operator[](i);
+      pm.Array()[i] = (*this)[i];
     }
     return pm;
   }
@@ -95,28 +95,28 @@ struct TrackSymMatrix : public Matrix<PRECISION, 15> {
   TrackSymMatrix () = default;
   TrackSymMatrix (PRECISION* m_basePointer) : Matrix<PRECISION, 15>(m_basePointer) {}
 
-  inline void copy (const TrackSymMatrix& v) { Matrix<PRECISION, 15>::copy(static_cast<Matrix<PRECISION, 15>>(v)); }
-  inline void operator+= (const TrackSymMatrix& v) { Matrix<PRECISION, 15>::operator+=(static_cast<Matrix<PRECISION, 15>>(v)); }
+  void copy (const TrackSymMatrix& v) { Matrix::copy(static_cast<Matrix>(v)); }
+  void operator+= (const TrackSymMatrix& v) { Matrix::operator+=(static_cast<Matrix>(v)); }
   
-  inline void copy (const Gaudi::TrackSymMatrix& v) { Matrix<PRECISION, 15>::template copy<Gaudi::TrackSymMatrix>(v); }
-  inline void operator+= (const Gaudi::TrackSymMatrix& v) { Matrix<PRECISION, 15>::template operator+=<Gaudi::TrackSymMatrix>(v); }
+  void copy (const Gaudi::TrackSymMatrix& v) { Matrix::template copy<Gaudi::TrackSymMatrix>(v); }
+  void operator+= (const Gaudi::TrackSymMatrix& v) { Matrix::template operator+=<Gaudi::TrackSymMatrix>(v); }
   
-  inline PRECISION& operator() (const unsigned row, const unsigned col) {
+  PRECISION& operator() (const unsigned row, const unsigned col) {
     return row>col ?
       this->m_basePointer[(row*(row+1)/2 + col) * VectorConfiguration::width<PRECISION>()] :
       this->m_basePointer[(col*(col+1)/2 + row) * VectorConfiguration::width<PRECISION>()];
   }
 
-  inline PRECISION operator() (const unsigned row, const unsigned col) const {
+  PRECISION operator() (const unsigned row, const unsigned col) const {
     return row>col ?
       this->m_basePointer[(row*(row+1)/2 + col) * VectorConfiguration::width<PRECISION>()] :
       this->m_basePointer[(col*(col+1)/2 + row) * VectorConfiguration::width<PRECISION>()];
   }
   
-  inline operator Gaudi::TrackSymMatrix () const {
+  operator Gaudi::TrackSymMatrix () const {
     Gaudi::TrackSymMatrix t;
     for (unsigned i=0; i<15; ++i) {
-      t.Array()[i] = this->operator[](i);
+      t.Array()[i] = (*this)[i];
     }
     return t;
 
@@ -133,7 +133,7 @@ struct TrackSymMatrix : public Matrix<PRECISION, 15> {
 
 // Some operators
 template<class PRECISION>
-inline Gaudi::TrackVector operator- (const Gaudi::TrackVector& mA, const TrackVector<PRECISION>& mB) {
+Gaudi::TrackVector operator- (const Gaudi::TrackVector& mA, const TrackVector<PRECISION>& mB) {
   const auto* A = mA.Array();
   return Gaudi::TrackVector {
     A[0]-mB[0],
@@ -145,7 +145,7 @@ inline Gaudi::TrackVector operator- (const Gaudi::TrackVector& mA, const TrackVe
 }
 
 template<class PRECISION, std::size_t N>
-inline std::ostream& operator<< (std::ostream& s, const Matrix<PRECISION, N>& v) {
+std::ostream& operator<< (std::ostream& s, const Matrix<PRECISION, N>& v) {
   for (unsigned i=0; i<N; ++i) {
     s << v[i];
     if (i != N-1) s << " ";
@@ -154,7 +154,7 @@ inline std::ostream& operator<< (std::ostream& s, const Matrix<PRECISION, N>& v)
 }
 
 template<class PRECISION>
-inline std::ostream& operator<< (std::ostream& s, const TrackVector<PRECISION>& v) {
+std::ostream& operator<< (std::ostream& s, const TrackVector<PRECISION>& v) {
   if (v.m_basePointer != nullptr) {
     for (unsigned i=0; i<5; ++i) {
       s << v[i];
@@ -167,7 +167,7 @@ inline std::ostream& operator<< (std::ostream& s, const TrackVector<PRECISION>& 
 }
 
 template<class PRECISION>
-inline std::ostream& operator<< (std::ostream& s, const TrackSymMatrix<PRECISION>& v) {
+std::ostream& operator<< (std::ostream& s, const TrackSymMatrix<PRECISION>& v) {
   if (v.m_basePointer != nullptr) {
     for (unsigned i=0; i<15; ++i) {
       s << v[i];

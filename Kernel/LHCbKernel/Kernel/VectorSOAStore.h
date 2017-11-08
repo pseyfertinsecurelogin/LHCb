@@ -198,7 +198,7 @@ template<class PRECISION>
 struct Stores : DataObject {
   std::unique_ptr<std::vector<Store<PRECISION>>> m_stores;
 
-  Stores (std::unique_ptr<std::vector<Store<PRECISION>>>&& stores) : m_stores(std::move(stores)) {}
+  Stores (std::unique_ptr<std::vector<Store<PRECISION>>> stores) : m_stores(std::move(stores)) {}
 };
 
 }
