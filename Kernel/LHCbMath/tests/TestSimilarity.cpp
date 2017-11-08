@@ -73,6 +73,9 @@ std::map<ISet, LHCb::Math::detail::similarity_t<5,7>>  vtbl_5_7 = {
                                                 { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_7 },
                                                 { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_7 } };
 std::map<ISet, LHCb::Math::detail::similarity_t<2,5>>  vtbl_2_5 = {
+                                                { ISet::AVX2,    LHCb::Math::detail::generic::similarity_2_5 },
+                                                { ISet::AVX,     LHCb::Math::detail::generic::similarity_2_5 },
+                                                { ISet::SSE3,    LHCb::Math::detail::generic::similarity_2_5 },
                                                 { ISet::GENERIC, LHCb::Math::detail::generic::similarity_2_5 } };
 
 // ============================================================================
@@ -183,7 +186,7 @@ void fillSMatrixSymWithCondNumber(SymMat &F, TRandom& r, const double condNumber
 
     Mat D;
     D(0,0) = 1;
-    for (int i=1; i < 5; i++)
+    for (int i=1; i < D.kRows; i++)
     {
       D(i, i) = r.Rndm() * condNumber;
     }
@@ -420,6 +423,7 @@ int main(int argc, char *argv[])
   }
 
   std::cout << "============= Similarity_2_5 Test =============" << std::endl;
+  std::cout << "!! Only the generic version is implemented !!" << std::endl;
   for( int i = 0; i < testcount; ++i )
   {
     for (auto condNumber: condNumbers) {
