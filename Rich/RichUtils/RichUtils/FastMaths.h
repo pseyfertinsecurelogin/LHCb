@@ -59,14 +59,14 @@ namespace Rich
       // for log
       const FPF SQRTHF   (  0.707106781186547524f );
       const FPF PX1logf  (  7.0376836292E-2f );
-      const FPF PX2logf	 ( -1.1514610310E-1f );
-      const FPF PX3logf	 (  1.1676998740E-1f );
-      const FPF PX4logf	 ( -1.2420140846E-1f );
-      const FPF PX5logf	 (  1.4249322787E-1f );
-      const FPF PX6logf	 ( -1.6668057665E-1f );
-      const FPF PX7logf	 (  2.0000714765E-1f );
-      const FPF PX8logf	 ( -2.4999993993E-1f );
-      const FPF PX9logf	 (  3.3333331174E-1f );
+      const FPF PX2logf  ( -1.1514610310E-1f );
+      const FPF PX3logf  (  1.1676998740E-1f );
+      const FPF PX4logf  ( -1.2420140846E-1f );
+      const FPF PX5logf  (  1.4249322787E-1f );
+      const FPF PX6logf  ( -1.6668057665E-1f );
+      const FPF PX7logf  (  2.0000714765E-1f );
+      const FPF PX8logf  ( -2.4999993993E-1f );
+      const FPF PX9logf  (  3.3333331174E-1f );
       const FPF LOGF_UPPER_LIMIT ( MAXNUMF );
       const FPF LOGF_LOWER_LIMIT ( 0 );
 
@@ -89,44 +89,46 @@ namespace Rich
       {
         //return std::floor(x); // Vc implementation
         auto ret = Vc::simd_cast<Int32>(x);
-        ret -= ( float2uint32(x) >> 31 );  
-        return Vc::simd_cast<FPF>(ret); 
+        ret -= ( float2uint32(x) >> 31 );
+        return Vc::simd_cast<FPF>(ret);
       }
 
       // Like frexp but vectorising and the exponent is a float.
       inline std::pair<FPF,FPF> getMantExponent( const FPF& x )
       {
-        auto n = float2uint32(x);
-        const Int32 e = ( n >> 23 ) - 127;
+        union { FPF x; UInt32 n; } v = { x };
+
+        const Int32 e = ( v.n >> 23 ) - 127;
 
         // fractional part
         const UInt32 p05f( 0x3f000000 ); // float2uint32(0.5);
         const UInt32 AA  ( 0x807fffff ); // ~0x7f800000;
-        n &= AA;
-        n |= p05f;
+        v.n &= AA;
+        v.n |= p05f;
 
-        return { uint322float(n), Vc::simd_cast<FPF>(e) };
+        return { v.x, Vc::simd_cast<FPF>(e) };
       }
 
+      /// polynominal function for fast_log implementation
       inline FPF get_log_poly( const FPF& x )
       {
-	auto y = x*PX1logf;
-	y += PX2logf;
-	y *= x;
-	y += PX3logf;
-	y *= x;
-	y += PX4logf;
-	y *= x;
-	y += PX5logf;
-	y *= x;
-	y += PX6logf;
-	y *= x;
-	y += PX7logf;
-	y *= x;
-	y += PX8logf;
-	y *= x;
-	y += PX9logf;
-	return y;
+        auto y = x*PX1logf;
+        y += PX2logf;
+        y *= x;
+        y += PX3logf;
+        y *= x;
+        y += PX4logf;
+        y *= x;
+        y += PX5logf;
+        y *= x;
+        y += PX6logf;
+        y *= x;
+        y += PX7logf;
+        y *= x;
+        y += PX8logf;
+        y *= x;
+        y += PX9logf;
+        return y;
       }
 
     }
@@ -147,7 +149,7 @@ namespace Rich
       {
 
         auto x_fe = details::getMantExponent( initial_x );
-        
+
         auto & x  = x_fe.first;
         auto & fe = x_fe.second;
 
@@ -156,22 +158,22 @@ namespace Rich
         x(!m) += x;
         x     -= FPF::One();
 
-	const auto x2 = x*x;
+        const auto x2 = x*x;
 
-	auto res = details::get_log_poly(x);
-	res *= x2 * x;
+        auto res = details::get_log_poly(x);
+        res *= x2 * x;
 
-	res += FPF(-2.12194440e-4f) * fe;
-	res -= details::HALF * x2;
+        res += FPF(-2.12194440e-4f) * fe;
+        res -= details::HALF * x2;
 
-	res = x + res;
+        res = x + res;
 
-	res += FPF(0.693359375f) * fe;
+        res += FPF(0.693359375f) * fe;
 
         res        ( initial_x > details::LOGF_UPPER_LIMIT ) = details::INFF;
         res.setQnan( initial_x < details::LOGF_LOWER_LIMIT );
 
-	return res;
+        return res;
       }
 
       /** fast exp for Vc::Vector<float> type
@@ -202,7 +204,7 @@ namespace Rich
         z += x + FPF::One();
 
         // multiply by power of 2
-        z *= details::uint322float( ( n + Int32(0x7f) ) <<23 );
+        z *= details::uint322float( ( n + Int32(0x7f) ) << 23 );
 
         z        ( initial_x > details::MAXLOGF ) = details::INFF;
         z.setZero( initial_x < details::MINLOGF );
@@ -223,7 +225,7 @@ namespace Rich
         if ( any_of(m) )
         {
           tmp(m) = yy;
-          yy(m)  = xx; 
+          yy(m)  = xx;
           xx(m)  = tmp;
           tmp(m) = FPF::One();
         }
@@ -236,10 +238,10 @@ namespace Rich
         const auto z2 = z * z;
 
         auto ret = ((((   FPF(8.05374449538e-2f)  * z2
-                        - FPF(1.38776856032E-1f)) * z2
-                        + FPF(1.99777106478E-1f)) * z2
-                        - FPF(3.33329491539E-1f)) * z2 * z
-                        + z );
+                          - FPF(1.38776856032E-1f)) * z2
+                      + FPF(1.99777106478E-1f)) * z2
+                     - FPF(3.33329491539E-1f)) * z2 * z
+                    + z );
 
         // move back in place
         ret.setZero( xx == FPF::Zero() ||
@@ -251,7 +253,7 @@ namespace Rich
 
         return ret;
       }
-      
+
     }
   }
 }
