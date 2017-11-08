@@ -70,12 +70,12 @@ struct TrackVector : public Matrix<PRECISION, 5> {
   TrackVector () = default;
   TrackVector (PRECISION* m_basePointer) : Matrix<PRECISION, 5>(m_basePointer) {}
 
-  void copy (const TrackVector& v) { Matrix::copy(static_cast<Matrix>(v)); }
-  void operator+= (const TrackVector& v) { Matrix::operator+=(static_cast<Matrix>(v)); }
+  void copy (const TrackVector& v) { Matrix<PRECISION, 5>::copy(static_cast<Matrix<PRECISION, 5>>(v)); }
+  void operator+= (const TrackVector& v) { Matrix<PRECISION, 5>::operator+=(static_cast<Matrix<PRECISION, 5>>(v)); }
 
-  void copy (const Gaudi::TrackVector& v) { Matrix::template copy<Gaudi::TrackVector>(v); }
-  void copy (const Gaudi::TrackProjectionMatrix& v) { Matrix::template copy<Gaudi::TrackProjectionMatrix>(v); }
-  void operator+= (const Gaudi::TrackVector& v) { Matrix::template operator+=<Gaudi::TrackVector>(v); }
+  void copy (const Gaudi::TrackVector& v) { Matrix<PRECISION, 5>::template copy<Gaudi::TrackVector>(v); }
+  void copy (const Gaudi::TrackProjectionMatrix& v) { Matrix<PRECISION, 5>::template copy<Gaudi::TrackProjectionMatrix>(v); }
+  void operator+= (const Gaudi::TrackVector& v) { Matrix<PRECISION, 5>::template operator+=<Gaudi::TrackVector>(v); }
   
   operator Gaudi::TrackVector () const {
     return Gaudi::TrackVector{(*this)[0], (*this)[1], (*this)[2], (*this)[3], (*this)[4]};
@@ -95,11 +95,11 @@ struct TrackSymMatrix : public Matrix<PRECISION, 15> {
   TrackSymMatrix () = default;
   TrackSymMatrix (PRECISION* m_basePointer) : Matrix<PRECISION, 15>(m_basePointer) {}
 
-  void copy (const TrackSymMatrix& v) { Matrix::copy(static_cast<Matrix>(v)); }
-  void operator+= (const TrackSymMatrix& v) { Matrix::operator+=(static_cast<Matrix>(v)); }
+  void copy (const TrackSymMatrix& v) { Matrix<PRECISION, 15>::copy(static_cast<Matrix<PRECISION, 15>>(v)); }
+  void operator+= (const TrackSymMatrix& v) { Matrix<PRECISION, 15>::operator+=(static_cast<Matrix<PRECISION, 15>>(v)); }
   
-  void copy (const Gaudi::TrackSymMatrix& v) { Matrix::template copy<Gaudi::TrackSymMatrix>(v); }
-  void operator+= (const Gaudi::TrackSymMatrix& v) { Matrix::template operator+=<Gaudi::TrackSymMatrix>(v); }
+  void copy (const Gaudi::TrackSymMatrix& v) { Matrix<PRECISION, 15>::template copy<Gaudi::TrackSymMatrix>(v); }
+  void operator+= (const Gaudi::TrackSymMatrix& v) { Matrix<PRECISION, 15>::template operator+=<Gaudi::TrackSymMatrix>(v); }
   
   PRECISION& operator() (const unsigned row, const unsigned col) {
     return row>col ?
