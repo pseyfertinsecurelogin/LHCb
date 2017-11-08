@@ -86,10 +86,10 @@ namespace Rich
          *  @param activeFrac The fraction of the associated segment that these photons could have been radiated from
          */
         RecoPhoton( const Rich::DetectorType   rich,
-                    const SIMDFP              theta,
-                    const SIMDFP                phi,
-                    const SmartIDs& smartID = SmartIDs(),
-                    const SIMDFP activeFrac = SIMDFP::One() ) : 
+                    const SIMDFP&             theta,
+                    const SIMDFP&               phi,
+                    const SmartIDs& smartID  = SmartIDs(),
+                    const SIMDFP& activeFrac = SIMDFP::One() ) : 
           m_CherenkovTheta        ( theta      ),
           m_CherenkovPhi          ( phi        ),
           m_smartID               ( smartID    ),
@@ -100,7 +100,7 @@ namespace Rich
         
         /** Set accessor for the Cherenkov theta angle
          *  @param theta the new value for the Cherenkov theta angle */
-        inline void setCherenkovTheta ( const SIMDFP theta ) noexcept { m_CherenkovTheta = theta; }
+        inline void setCherenkovTheta ( const SIMDFP& theta ) noexcept { m_CherenkovTheta = theta; }
         
         /** Get accessor for the Cherenkov theta angle
          *  @return the current value of the Cherenkov theta angle */
@@ -108,7 +108,7 @@ namespace Rich
         
         /** Set accessor for Cherenkov phi angle
          *  @param phi the new value for the Cherenkov phi angle */
-        inline void setCherenkovPhi ( const SIMDFP phi ) noexcept { m_CherenkovPhi = phi; }
+        inline void setCherenkovPhi ( const SIMDFP& phi ) noexcept { m_CherenkovPhi = phi; }
         
         /** Get accessor for Cherenkov phi angle
          *  @return the current value of the Cherenkov phi angle */
@@ -121,7 +121,7 @@ namespace Rich
          *
          * @param fraction the new value for the active fraction
          */
-        inline void setActiveSegmentFraction ( const SIMDFP fraction ) noexcept
+        inline void setActiveSegmentFraction ( const SIMDFP& fraction ) noexcept
         {
           m_activeSegmentFraction = fraction;
         }
@@ -140,14 +140,14 @@ namespace Rich
         
         /** Set accessor for the RichSmartID
          *  @param id The new RichSmartID */
-        inline void setSmartID ( const SmartIDs id ) noexcept { m_smartID = id; }
+        inline void setSmartID ( const SmartIDs& id ) noexcept { m_smartID = id; }
         
         /** Get accessor to RichSmartID
          *  @return the current value of RichSmartID */
         inline const SmartIDs& smartID() const noexcept { return m_smartID; }
         
         /// Set the unambiguous photon mask
-        inline void setUnambiguousPhoton( const SIMDFP::mask_type unambig ) noexcept 
+        inline void setUnambiguousPhoton( const SIMDFP::mask_type& unambig ) noexcept 
         {
           m_unambigPhot = unambig;
         }
@@ -156,7 +156,7 @@ namespace Rich
         inline const SIMDFP::mask_type& unambiguousPhoton() const noexcept { return m_unambigPhot; }
         
         /// Set the photon validity mask
-        inline void setValidityMask( const SIMDFP::mask_type valid ) noexcept 
+        inline void setValidityMask( const SIMDFP::mask_type& valid ) noexcept 
         {
           m_valid = valid;
         }
