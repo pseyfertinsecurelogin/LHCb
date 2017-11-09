@@ -52,10 +52,6 @@ namespace Rich
     template < typename FPTYPE >
     using FP     = Vc::Vector<FPTYPE>;
 
-    /// The SIMD floating point type
-    template < typename ITYPE >
-    using INT    = Vc::Vector<ITYPE>;
-    
     /// SIMD Point
     template < typename FPTYPE >
     using Point  = ROOT::Math::PositionVector3D< ROOT::Math::Cartesian3D< FP<FPTYPE> > >;
@@ -113,25 +109,17 @@ namespace Rich
     // Despite what the Vc documentation claims, when only AVX is available float and int
     // Vc::Vector sizes are not the same (float 8, int 4).... This works around this.
 
-    /// SIMD Int8
-    using Int8    = Vc::SimdArray<std::int8_t,FPF::Size>;
-
-    /// SIMD UInt8
-    using UInt8   = Vc::SimdArray<std::uint8_t,FPF::Size>;
-
-    /// SIMD Int16
-    using Int16   = Vc::SimdArray<std::int16_t,FPF::Size>;
-
-    /// SIMD UInt32
-    using UInt16  = Vc::SimdArray<std::uint16_t,FPF::Size>;
-
-    /// SIMD Int32
-    using Int32   = Vc::SimdArray<std::int32_t,FPF::Size>;
-
-    /// SIMD UInt32
-    using UInt32  = Vc::SimdArray<std::uint32_t,FPF::Size>;
+    /// The SIMD int type with same size as that for floats
+    template < typename ITYPE >
+    using INT = Vc::SimdArray<ITYPE,FPF::Size>;
 
 #else
+
+    /// The SIMD int type with same size as that for floats
+    template < typename ITYPE >
+    using INT = Vc::Vector<ITYPE>;
+
+#endif
 
     /// SIMD Int8
     using Int8    = INT<std::int8_t>;
@@ -150,8 +138,6 @@ namespace Rich
 
     /// SIMD UInt32
     using UInt32  = INT<std::uint32_t>;
-
-#endif
 
     //------------------------------------------------------------------------------------------------
     // Default scalar types
