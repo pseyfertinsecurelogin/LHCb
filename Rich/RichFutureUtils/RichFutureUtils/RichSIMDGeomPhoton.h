@@ -173,10 +173,10 @@ namespace Rich
         inline Rich::Future::RecoPhoton 
         scalarPhoton( const std::size_t simdEntry ) const noexcept
         {
-          return Rich::Future::RecoPhoton( CherenkovTheta()[simdEntry],
-                                           CherenkovPhi()[simdEntry],
-                                           smartID()[simdEntry],
-                                           activeSegmentFraction()[simdEntry] );
+          return { CherenkovTheta()[simdEntry],
+                   CherenkovPhi()[simdEntry],
+                   smartID()[simdEntry],
+                   activeSegmentFraction()[simdEntry] };
         }
 
         /// Create a vector of valid scalar photons
