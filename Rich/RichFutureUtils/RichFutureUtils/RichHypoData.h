@@ -54,10 +54,7 @@ namespace Rich
       using DataArray = Rich::ParticleArray<TYPE>;
 
       /// Type for vector
-      using Vector = typename std::conditional< std::is_pointer<TYPE>::value ||
-                                                std::is_arithmetic<TYPE>::value,
-                                                std::vector<HypoData>,
-                                                Rich::SIMD::STDVector<HypoData> >::type;
+      using Vector = Rich::SIMD::STDVector<HypoData>;
 
     public: // constructors and destructors
 
