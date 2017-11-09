@@ -5,6 +5,7 @@
 #include <ostream>
 #include <type_traits>
 #include <vector>
+#include <algorithm>
 
 // local
 #include "RichUtils/RichSIMDTypes.h"
@@ -203,7 +204,7 @@ namespace Rich
     /// Access the computed value for the given scalar parameter
     inline TYPE operator() ( const TYPE x ) const noexcept
     {
-      return this -> value( xIndex(x), x );
+      return this -> value( std::min(xIndex(x),NBINS-1), x );
     }
 
     /// Access the computed value for the given SIMD parameter
