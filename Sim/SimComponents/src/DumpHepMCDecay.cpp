@@ -200,7 +200,7 @@ std::string DumpHepMCDecay::particleName
                          (const HepMC::GenParticle* particle ) const {
 
   if ( !particle ) {
-    Error ( "particlename(): HepMC::GenParticle* points to NULL!" ) ;
+    Error ( "particlename(): HepMC::GenParticle* points to NULL!" ).ignore() ;
     return adjust ( "#INVALID****" ) ;
   }
 
@@ -216,7 +216,7 @@ std::string DumpHepMCDecay::particleName
 
   Warning  ( "particleName(): ParticleProperty* points to NULL for PDG=" +
              std::to_string( pdg_id ) ,
-             StatusCode::SUCCESS , 0 ) ;
+             StatusCode::SUCCESS , 0 ).ignore() ;
 
   return adjust ( "#UNKNOWN****" ) ;
 }

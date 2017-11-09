@@ -43,11 +43,6 @@ SmartVeloErrorBankDecoder::SmartVeloErrorBankDecoder( const std::string& name,
                   m_errorBankLoc=VeloErrorBankLocation::Default);
 }
 //=============================================================================
-// Destructor
-//=============================================================================
-SmartVeloErrorBankDecoder::~SmartVeloErrorBankDecoder() {} 
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode SmartVeloErrorBankDecoder::initialize() {
@@ -181,7 +176,7 @@ StatusCode SmartVeloErrorBankDecoder::cacheErrorRawBanks()
       if(m_isDebug) debug()<< " --> bank body size: " << (dist*sizeof(unsigned int)) <<endmsg;
     }
   }else{
-    Info(" --> No error bank detected - skipping to the next event ");
+    Info(" --> No error bank detected - skipping to the next event ").ignore();
     return ( StatusCode::FAILURE );
   }
   if(m_isDebug) debug()<< " --> cached error bank strucure's size:" 

@@ -1,5 +1,4 @@
 // Include files
-#include <functional>
 #include <algorithm>
 #include <iostream>
 #include <numeric>
@@ -110,7 +109,7 @@ void encodeTracks( const LHCb::Tracks& tracks, std::vector<unsigned int>& rawBan
             *out++ = pac.energy( 1.e5 * fabs( p ) * err[4] ); //== 1.e5 * dp/p (*1.e2)
             for ( unsigned i = 1; i < 5; ++i ) for ( unsigned j = 0; j < i; ++j ) {
                 *out++ = pac.fraction( state->covariance()( i, j ) / err[i] / err[j] );
-            } 
+            }
         }//  end loop over states
     }
 
@@ -182,7 +181,7 @@ unsigned int decodeTracks( const unsigned int* rawit, unsigned int nentries,
             std::array<double, 5> err;
             err[0] = pac.position( (int)rawit[k++] );
             err[1] = pac.position( (int)rawit[k++] );
-            err[2] = pac.slope( (int)rawit[k++] ); 
+            err[2] = pac.slope( (int)rawit[k++] );
             err[3] = pac.slope( (int)rawit[k++] );
             err[4] = pac.energy( (int)rawit[k++] ) * fabs( par[4] ) * 1.e-5; // par[4]=1/p
 

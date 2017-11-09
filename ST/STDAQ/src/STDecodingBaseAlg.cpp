@@ -118,7 +118,7 @@ bool STDecodingBaseAlg::checkDataIntegrity(STDecoder& decoder,
                 << aBoard->DAQToOffline(fracStrip,bankVersion,STDAQ::StripRepresentation(aWord.channelID()))
                 << " source ID  " << aBoard->boardID()  <<  " chan "  << aWord.channelID()
                 << endmsg ;
-      Warning("ADC values do not match", StatusCode::SUCCESS,2);
+      Warning("ADC values do not match", StatusCode::SUCCESS,2).ignore();
       ok = false;
       break;
     }
@@ -127,7 +127,7 @@ bool STDecodingBaseAlg::checkDataIntegrity(STDecoder& decoder,
     if (!aBoard->validChannel(aWord.channelID())){
       if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
         debug() << "invalid TELL1 channel number board: " << aBoard->boardID() << " chan " << aWord.channelID() << endmsg;
-      Warning("Invalid tell1 channel", StatusCode::SUCCESS,2);
+      Warning("Invalid tell1 channel", StatusCode::SUCCESS,2).ignore();
       ok = false;
       break;
     }
@@ -140,7 +140,7 @@ bool STDecodingBaseAlg::checkDataIntegrity(STDecoder& decoder,
     if( UNLIKELY( msgLevel(MSG::DEBUG) ) )
       debug() << "Inconsistant byte count " << aBoard->boardID() << " Read: "  << iterDecoder.bytesRead()
               << " Expected: " << bankSize << endmsg;
-    Warning("Inconsistant byte count", StatusCode::SUCCESS);
+    Warning("Inconsistant byte count", StatusCode::SUCCESS).ignore();
   }
 
   if (!ok) ++counter("skipped Banks");
@@ -196,7 +196,7 @@ std::unique_ptr<LHCb::STTELL1BoardErrorBanks> STDecodingBaseAlg::decodeErrors(co
    if (bank->magic() != RawBank::MagicPattern) {
      std::string pattern = "wrong magic pattern "+
 	boost::lexical_cast<std::string>(bank->sourceID());
-     Warning(pattern, StatusCode::SUCCESS,2);
+     Warning(pattern, StatusCode::SUCCESS,2).ignore();
      continue;
    }
 
@@ -207,14 +207,14 @@ std::unique_ptr<LHCb::STTELL1BoardErrorBanks> STDecodingBaseAlg::decodeErrors(co
    // bank has to be at least 28 words
    if (bankEnd < STDAQ::minErrorBankWords){
      warning() << "Error bank length is " << bankEnd << " and should be at least " << STDAQ::minErrorBankWords << endmsg;
-     Warning("Error bank too short --> not decoded for TELL1 " + ST::toString(bank->sourceID()), StatusCode::SUCCESS,2);
+     Warning("Error bank too short --> not decoded for TELL1 " + ST::toString(bank->sourceID()), StatusCode::SUCCESS,2).ignore();
      continue;
    }
 
    // and less than 56 words
    if (bankEnd > STDAQ::maxErrorBankWords){
      warning() << "Error bank length is " << bankEnd << " and should be at most " << STDAQ::maxErrorBankWords << endmsg;
-     Warning("Error bank too long --> not decoded for TELL1 " + ST::toString(bank->sourceID()), StatusCode::SUCCESS,2);
+     Warning("Error bank too long --> not decoded for TELL1 " + ST::toString(bank->sourceID()), StatusCode::SUCCESS,2).ignore();
      continue;
    }
 
@@ -234,7 +234,7 @@ std::unique_ptr<LHCb::STTELL1BoardErrorBanks> STDecodingBaseAlg::decodeErrors(co
 
      // we must find 5 words
      if (bankEnd - w < 5 ){
-       Warning("Ran out of words to read", StatusCode::SUCCESS,2);
+       Warning("Ran out of words to read", StatusCode::SUCCESS,2).ignore();
        break;
      }
 
@@ -246,7 +246,7 @@ std::unique_ptr<LHCb::STTELL1BoardErrorBanks> STDecodingBaseAlg::decodeErrors(co
 
      // we must find the optional words + 2 more control words
      if (bankEnd - w < nOptional + 2 ){
-        Warning("Ran out of words to read", StatusCode::SUCCESS,2);
+       Warning("Ran out of words to read", StatusCode::SUCCESS,2).ignore();
         break;
       }
 

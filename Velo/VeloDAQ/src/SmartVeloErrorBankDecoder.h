@@ -49,8 +49,6 @@ public:
   /// Standard constructor
   SmartVeloErrorBankDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
-  virtual ~SmartVeloErrorBankDecoder( ); ///< Destructor
-
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution
 

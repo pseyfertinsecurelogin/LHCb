@@ -2590,11 +2590,6 @@ namespace Gaudi
      private: // Semantic actions:
       struct tag_error{};
       struct Operations {
-        // Some magic:
-        template <typename A, typename B = boost::fusion::unused_type,
-            typename C = boost::fusion::unused_type,
-            typename D = boost::fusion::unused_type>
-        struct result { typedef void type; };
         // Actions:
         // --------------------------------------------------------------------
         void operator()(Gaudi::Math::ValueWithError& val, double v) const {

@@ -23,19 +23,9 @@
 #include "Event/Particle.h"
 #include "Event/RecVertex.h"
 #include "Event/CaloCluster.h"
-
+#include "pun.h"
 
 using namespace LHCb;
-
-namespace {
-float floatFromInt(unsigned int i)
-{
-        union IntFloat { unsigned int mInt; float mFloat; };
-        IntFloat a; a.mInt=i;
-        return a.mFloat;
-}
-
-}
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : HltSelReportsDecoder
@@ -209,7 +199,7 @@ HltSelReportsDecoder::operator()(const LHCb::RawEvent& rawEvent) const {
          + std::to_string( hltSelReportsBank.size() )
          + " less than bank size delivered by RawEvent "
          + std::to_string(bankSize),
-         StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
 
   } else {
@@ -369,20 +359,20 @@ HltSelReportsDecoder::operator()(const LHCb::RawEvent& rawEvent) const {
         break;
       case 1:
         {
-          infoPersistent.insert( "0#SelectionID", floatFromInt(stdInfo[0]) );
+          infoPersistent.insert( "0#SelectionID", pun_to<float>(stdInfo[0]) );
           if( stdInfo.size()>1 ){
-            int id = (int)(  floatFromInt(stdInfo[1])+0.1 );
+            int id = (int)(  pun_to<float>(stdInfo[1])+0.1 );
             auto iselName = idmap.find(id);
             if (iselName == std::end(idmap)) {
               Error( " Did not find string key for PV-selection-ID in trigger selection in storage id=" + std::to_string(id),
-                     StatusCode::SUCCESS, 10 );
-              infoPersistent.insert( "10#Unknown" , floatFromInt(id) );
+                     StatusCode::SUCCESS, 10 ).ignore();
+              infoPersistent.insert( "10#Unknown" , pun_to<float,unsigned int>(id) );
             } else
-              infoPersistent.insert( "10#" + iselName->second.str(), floatFromInt(stdInfo[1]) );
+              infoPersistent.insert( "10#" + iselName->second.str(), pun_to<float>(stdInfo[1]) );
             }
             for( unsigned int ipvkeys=2; ipvkeys< stdInfo.size(); ++ipvkeys ){
               infoPersistent.insert( "11#" + boost::str(boost::format("%1$=08X") % (ipvkeys-2)),
-                                     floatFromInt( stdInfo[ipvkeys] ) );
+                                     pun_to<float>( stdInfo[ipvkeys] ) );
             }
 
         }
@@ -391,10 +381,10 @@ HltSelReportsDecoder::operator()(const LHCb::RawEvent& rawEvent) const {
         {
 
           Warning( " StdInfo on unsupported class type " + std::to_string(hos->summarizedObjectCLID()),
-                   StatusCode::SUCCESS, 20 );
+                   StatusCode::SUCCESS, 20 ).ignore();
           int e = 0;
           for (const auto& i : stdInfo) {
-            infoPersistent.insert( "z#Unknown.unknown" + std::to_string( e++ ), floatFromInt(i) );
+            infoPersistent.insert( "z#Unknown.unknown" + std::to_string( e++ ), pun_to<float>(i) );
           }
         }
       }

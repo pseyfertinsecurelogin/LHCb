@@ -114,7 +114,7 @@ Gaudi::Functional::vector_of_optional_<Tracks> HltTrackReportsDecoder::operator(
                         std::end( hltTrackReportsRawBanks ), [=]( const RawBank* bank ) {
             if ( bank->magic() != RawBank::MagicPattern ) {
                 Warning( " HltTrackReports RawBank has wrong magic number. Skipped ",
-                       StatusCode::SUCCESS, 20 );
+                         StatusCode::SUCCESS, 20 ).ignore();
                 return true;
             }
             return false;

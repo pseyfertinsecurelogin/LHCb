@@ -3,8 +3,6 @@
 #include "Event/HltDecReports.h"
 #include "Event/RawEvent.h"
 
-#include <functional>
-
 // local
 #include "HltDecReportsWriter.h"
 

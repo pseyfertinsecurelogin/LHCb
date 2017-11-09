@@ -31,7 +31,7 @@ public:
 protected:
 
 private:
-  void encode(unsigned int data ,  const unsigned int base[L0DUBase::Index::Size]);
+  void encode(unsigned int data ,  const std::array<unsigned int, L0DUBase::Index::Size> &base);
 
 
   // Tools

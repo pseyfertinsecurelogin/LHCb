@@ -212,14 +212,14 @@ void Gaudi::DataCopy::handler_1 ( ::Property&  /* p */ )
 {
   if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
   m_what = _TESLocation ( m_what     , true ) ;
-  Info ( "Change property 'What'   :" + m_what   , StatusCode::SUCCESS ) ;
+  Info ( "Change property 'What'   :" + m_what   , StatusCode::SUCCESS ).ignore() ;
 }
 // ========================================================================
 void Gaudi::DataCopy::handler_2 ( ::Property&  /* p */ )
 {
   if ( Gaudi::StateMachine::INITIALIZED > FSMState() ) { return ; }
   m_target = _TESLocation ( m_target , true ) ;
-  Info ( "Change property 'Target' :" + m_target , StatusCode::SUCCESS ) ;
+  Info ( "Change property 'Target' :" + m_target , StatusCode::SUCCESS ).ignore() ;
 }
 // ========================================================================
 // standard initialization

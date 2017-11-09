@@ -104,7 +104,7 @@ StatusCode Pack<PACKER>::execute()
         // clean up after checks
         const auto sc = evtSvc()->unregisterObject( unpacked );
         if ( sc.isSuccess() ) { delete unpacked; }
-        else { Error( "Problem unregistering data at "+m_inputName+"_PackingCheck" ); }
+        else { Error( "Problem unregistering data at "+m_inputName+"_PackingCheck" ).ignore(); }
       }
 
       // If requested, remove the input data from the TES and delete
@@ -112,7 +112,7 @@ StatusCode Pack<PACKER>::execute()
       {
         const auto sc = evtSvc()->unregisterObject( data );
         if ( sc.isSuccess() ) { delete data; data = nullptr; }
-        else { Error( "Problem unregistering data at "+m_inputName ); }
+        else { Error( "Problem unregistering data at "+m_inputName ).ignore(); }
       }
       else
       {

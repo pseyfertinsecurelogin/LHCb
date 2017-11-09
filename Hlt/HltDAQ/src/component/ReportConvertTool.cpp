@@ -1,5 +1,6 @@
 // local
 #include "HltDAQ/ReportConvertTool.h"
+#include "pun.h"
 
 using LHCb::HltObjectSummary;
 using LHCb::HltSelRepRBStdInfo;
@@ -12,12 +13,6 @@ namespace {
                           [](typename C::const_reference elem) {
                           return elem.first.find("#")!=std::string::npos;
   } ); }
-
-  float floatFromInt(unsigned int i) {
-    union { unsigned int ui; float f; };
-    ui=i;
-    return f;
-  }
 
   static const std::array<LHCb::RecSummary::DataTypes,23> s_rsum_map = {
        LHCb::RecSummary::nLongTracks,
@@ -45,78 +40,78 @@ namespace {
        LHCb::RecSummary::nPVs
   };
   static const std::array<LHCb::ProtoParticle::additionalInfo,72> s_proto_map = {
-      LHCb::ProtoParticle::IsPhoton,//381
-      LHCb::ProtoParticle::IsNotE,//382
-      LHCb::ProtoParticle::IsNotH,//383
-      LHCb::ProtoParticle::EcalPIDe,//360
-      LHCb::ProtoParticle::PrsPIDe,//361
-      LHCb::ProtoParticle::BremPIDe,//362
-      LHCb::ProtoParticle::HcalPIDe,//363
-      LHCb::ProtoParticle::HcalPIDmu,//364
-      LHCb::ProtoParticle::EcalPIDmu,//365
-      LHCb::ProtoParticle::CaloTrMatch,//310
-      LHCb::ProtoParticle::CaloElectronMatch,//311
-      LHCb::ProtoParticle::CaloBremMatch,//312
-      LHCb::ProtoParticle::CaloNeutralSpd,//323
-      LHCb::ProtoParticle::CaloNeutralPrs,//324
-      LHCb::ProtoParticle::CaloNeutralEcal,//325
-      LHCb::ProtoParticle::CaloNeutralHcal2Ecal,//326
-      LHCb::ProtoParticle::CaloNeutralE49,//327
-      LHCb::ProtoParticle::CaloNeutralID,//328
-      LHCb::ProtoParticle::CaloDepositID,//320
-      LHCb::ProtoParticle::ShowerShape,//321
-      LHCb::ProtoParticle::ClusterMass,//322
-      LHCb::ProtoParticle::CaloSpdE,//330
-      LHCb::ProtoParticle::CaloPrsE,//331
-      LHCb::ProtoParticle::CaloEcalE,//332
-      LHCb::ProtoParticle::CaloHcalE,//333
-      LHCb::ProtoParticle::CaloEcalChi2,//334
-      LHCb::ProtoParticle::CaloBremChi2,//335
-      LHCb::ProtoParticle::CaloClusChi2,//336
-      LHCb::ProtoParticle::CaloNeutralPrsM,//343
-      LHCb::ProtoParticle::CaloShapeFr2r4,//344
-      LHCb::ProtoParticle::CaloShapeKappa,//345
-      LHCb::ProtoParticle::CaloShapeAsym,//346
-      LHCb::ProtoParticle::CaloShapeE1,//347
-      LHCb::ProtoParticle::CaloShapeE2,//348
-      LHCb::ProtoParticle::CaloPrsShapeE2,//349
-      LHCb::ProtoParticle::CaloPrsShapeEmax,//350
-      LHCb::ProtoParticle::CaloPrsShapeFr2,//351
-      LHCb::ProtoParticle::CaloPrsShapeAsym,//352
-      LHCb::ProtoParticle::CaloPrsM,//353
-      LHCb::ProtoParticle::CaloPrsM15,//354
-      LHCb::ProtoParticle::CaloPrsM30,//355
-      LHCb::ProtoParticle::CaloPrsM45,//356
-      LHCb::ProtoParticle::CaloClusterCode,//357
-      LHCb::ProtoParticle::CaloClusterFrac,//358
-      LHCb::ProtoParticle::CombDLLe,//600
-      LHCb::ProtoParticle::CombDLLmu,//601
-      LHCb::ProtoParticle::CombDLLpi,//602
-      LHCb::ProtoParticle::CombDLLk,//603
-      LHCb::ProtoParticle::CombDLLp,//604
-      LHCb::ProtoParticle::InAccBrem,// Extra for PID group
-      LHCb::ProtoParticle::InAccSpd,// ''
-      LHCb::ProtoParticle::InAccPrs,// ''
-      LHCb::ProtoParticle::InAccEcal,// ''
-      LHCb::ProtoParticle::InAccHcal,// ''
-      LHCb::ProtoParticle::VeloCharge,// ''
-      LHCb::ProtoParticle::RichPIDStatus,// ''
-      LHCb::ProtoParticle::CaloChargedID,//
-      LHCb::ProtoParticle::CaloChargedEcal,//
-      LHCb::ProtoParticle::CaloChargedPrs,//
-      LHCb::ProtoParticle::CaloChargedSpd,//
-      LHCb::ProtoParticle::ProbNNe,//
-      LHCb::ProtoParticle::ProbNNmu,//
-      LHCb::ProtoParticle::ProbNNpi,//
-      LHCb::ProtoParticle::ProbNNk,//
-      LHCb::ProtoParticle::ProbNNp,//
-      LHCb::ProtoParticle::ProbNNghost, //
-      LHCb::ProtoParticle::CombDLLd,//605
-      LHCb::ProtoParticle::MuonChi2Corr,//
-      LHCb::ProtoParticle::MuonMVA1,//
-      LHCb::ProtoParticle::MuonMVA2,//
-      LHCb::ProtoParticle::MuonMVA3,//
-      LHCb::ProtoParticle::MuonMVA4//
+      LHCb::ProtoParticle::additionalInfo::IsPhoton,//381
+      LHCb::ProtoParticle::additionalInfo::IsNotE,//382
+      LHCb::ProtoParticle::additionalInfo::IsNotH,//383
+      LHCb::ProtoParticle::additionalInfo::EcalPIDe,//360
+      LHCb::ProtoParticle::additionalInfo::PrsPIDe,//361
+      LHCb::ProtoParticle::additionalInfo::BremPIDe,//362
+      LHCb::ProtoParticle::additionalInfo::HcalPIDe,//363
+      LHCb::ProtoParticle::additionalInfo::HcalPIDmu,//364
+      LHCb::ProtoParticle::additionalInfo::EcalPIDmu,//365
+      LHCb::ProtoParticle::additionalInfo::CaloTrMatch,//310
+      LHCb::ProtoParticle::additionalInfo::CaloElectronMatch,//311
+      LHCb::ProtoParticle::additionalInfo::CaloBremMatch,//312
+      LHCb::ProtoParticle::additionalInfo::CaloNeutralSpd,//323
+      LHCb::ProtoParticle::additionalInfo::CaloNeutralPrs,//324
+      LHCb::ProtoParticle::additionalInfo::CaloNeutralEcal,//325
+      LHCb::ProtoParticle::additionalInfo::CaloNeutralHcal2Ecal,//326
+      LHCb::ProtoParticle::additionalInfo::CaloNeutralE49,//327
+      LHCb::ProtoParticle::additionalInfo::CaloNeutralID,//328
+      LHCb::ProtoParticle::additionalInfo::CaloDepositID,//320
+      LHCb::ProtoParticle::additionalInfo::ShowerShape,//321
+      LHCb::ProtoParticle::additionalInfo::ClusterMass,//322
+      LHCb::ProtoParticle::additionalInfo::CaloSpdE,//330
+      LHCb::ProtoParticle::additionalInfo::CaloPrsE,//331
+      LHCb::ProtoParticle::additionalInfo::CaloEcalE,//332
+      LHCb::ProtoParticle::additionalInfo::CaloHcalE,//333
+      LHCb::ProtoParticle::additionalInfo::CaloEcalChi2,//334
+      LHCb::ProtoParticle::additionalInfo::CaloBremChi2,//335
+      LHCb::ProtoParticle::additionalInfo::CaloClusChi2,//336
+      LHCb::ProtoParticle::additionalInfo::CaloNeutralPrsM,//343
+      LHCb::ProtoParticle::additionalInfo::CaloShapeFr2r4,//344
+      LHCb::ProtoParticle::additionalInfo::CaloShapeKappa,//345
+      LHCb::ProtoParticle::additionalInfo::CaloShapeAsym,//346
+      LHCb::ProtoParticle::additionalInfo::CaloShapeE1,//347
+      LHCb::ProtoParticle::additionalInfo::CaloShapeE2,//348
+      LHCb::ProtoParticle::additionalInfo::CaloPrsShapeE2,//349
+      LHCb::ProtoParticle::additionalInfo::CaloPrsShapeEmax,//350
+      LHCb::ProtoParticle::additionalInfo::CaloPrsShapeFr2,//351
+      LHCb::ProtoParticle::additionalInfo::CaloPrsShapeAsym,//352
+      LHCb::ProtoParticle::additionalInfo::CaloPrsM,//353
+      LHCb::ProtoParticle::additionalInfo::CaloPrsM15,//354
+      LHCb::ProtoParticle::additionalInfo::CaloPrsM30,//355
+      LHCb::ProtoParticle::additionalInfo::CaloPrsM45,//356
+      LHCb::ProtoParticle::additionalInfo::CaloClusterCode,//357
+      LHCb::ProtoParticle::additionalInfo::CaloClusterFrac,//358
+      LHCb::ProtoParticle::additionalInfo::CombDLLe,//600
+      LHCb::ProtoParticle::additionalInfo::CombDLLmu,//601
+      LHCb::ProtoParticle::additionalInfo::CombDLLpi,//602
+      LHCb::ProtoParticle::additionalInfo::CombDLLk,//603
+      LHCb::ProtoParticle::additionalInfo::CombDLLp,//604
+      LHCb::ProtoParticle::additionalInfo::InAccBrem,// Extra for PID group
+      LHCb::ProtoParticle::additionalInfo::InAccSpd,// ''
+      LHCb::ProtoParticle::additionalInfo::InAccPrs,// ''
+      LHCb::ProtoParticle::additionalInfo::InAccEcal,// ''
+      LHCb::ProtoParticle::additionalInfo::InAccHcal,// ''
+      LHCb::ProtoParticle::additionalInfo::VeloCharge,// ''
+      LHCb::ProtoParticle::additionalInfo::RichPIDStatus,// ''
+      LHCb::ProtoParticle::additionalInfo::CaloChargedID,//
+      LHCb::ProtoParticle::additionalInfo::CaloChargedEcal,//
+      LHCb::ProtoParticle::additionalInfo::CaloChargedPrs,//
+      LHCb::ProtoParticle::additionalInfo::CaloChargedSpd,//
+      LHCb::ProtoParticle::additionalInfo::ProbNNe,//
+      LHCb::ProtoParticle::additionalInfo::ProbNNmu,//
+      LHCb::ProtoParticle::additionalInfo::ProbNNpi,//
+      LHCb::ProtoParticle::additionalInfo::ProbNNk,//
+      LHCb::ProtoParticle::additionalInfo::ProbNNp,//
+      LHCb::ProtoParticle::additionalInfo::ProbNNghost, //
+      LHCb::ProtoParticle::additionalInfo::CombDLLd,//605
+      LHCb::ProtoParticle::additionalInfo::MuonChi2Corr,//
+      LHCb::ProtoParticle::additionalInfo::MuonMVA1,//
+      LHCb::ProtoParticle::additionalInfo::MuonMVA2,//
+      LHCb::ProtoParticle::additionalInfo::MuonMVA3,//
+      LHCb::ProtoParticle::additionalInfo::MuonMVA4//
   };
     //===========================================================================
     /// Version unordered_map for LHCb::Particle in the Turbo stream
@@ -1285,7 +1280,7 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info,
       break;
     case 40: // This is a special number to deal with the holder of related info, contains only the location enum
       {
-        info->insert( "0#LocationID", floatFromInt( (*subbank)[ 0 ]));
+        info->insert( "0#LocationID", pun_to<float>( (*subbank)[ 0 ]));
         return;
       }
       break;
@@ -1299,7 +1294,7 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info,
           int padding = 4 - len;
           for(int m=0; m<padding; m++) key << "0";
           key << n << "#GenericKey";
-          info->insert(key.str().c_str(),floatFromInt( (*subbank)[ n ]));
+          info->insert(key.str().c_str(),pun_to<float>( (*subbank)[ n ]));
           n++;
 
           // Then do the same for the value
@@ -1308,7 +1303,7 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info,
           int padding2 = 4 - len2;
           for(int m=0; m<padding2; m++) keykey << "0";
           keykey << n << "#GenericValue";
-          info->insert(keykey.str().c_str(),floatFromInt( (*subbank)[ n ]));
+          info->insert(keykey.str().c_str(),pun_to<float>( (*subbank)[ n ]));
           n++;
         }while(n<subbank->size());
         return;
@@ -1334,7 +1329,7 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info,
         int e = 0;
         for (const auto& i : (*subbank)) {
            info->insert( std::string { "z#Unknown.unknown" } + std::to_string( e++ ),
-                                  floatFromInt(i) );
+                                  pun_to<float>(i) );
         }
         return;
       }
@@ -1352,7 +1347,7 @@ void ReportConvertTool::SummaryFromRaw(HltObjectSummary::Info* info,
           + std::to_string(object.second.first) + " in subbank of size "
           + std::to_string(subbank->size())).ignore();
     }
-    auto float_value = floatFromInt( (*subbank)[ object.second.first ] );
+    auto float_value = pun_to<float>( (*subbank)[ object.second.first ] );
     info->insert( object.first, float_value );
   }
 }
@@ -1481,12 +1476,12 @@ void ReportConvertTool::TrackObject2Summary( HltObjectSummary::Info* info, const
       case 14: info->insert( track.first, float( last.tx() ) ); break;
       case 15: info->insert( track.first, float( last.ty() ) ); break;
       case 16: info->insert( track.first, float( last.qOverP() ) ); break;
-      case 17: info->insert( track.first, float( object->info( LHCb::Track::CloneDist, -1000) ) ); break;
-      case 18: info->insert( track.first, float( object->info( LHCb::Track::FitMatchChi2, -1000) ) ); break;
-      case 19: info->insert( track.first, float( object->info( LHCb::Track::FitVeloChi2, -1000) ) ); break;
-      case 20: info->insert( track.first, float( object->info( LHCb::Track::FitTChi2, -1000) ) ); break;
-      case 21: info->insert( track.first, float( object->info( LHCb::Track::FitVeloNDoF, -1000) ) ); break;
-      case 22: info->insert( track.first, float( object->info( LHCb::Track::FitTNDoF, -1000) ) ); break;
+      case 17: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::CloneDist, -1000) ) ); break;
+      case 18: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::FitMatchChi2, -1000) ) ); break;
+      case 19: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::FitVeloChi2, -1000) ) ); break;
+      case 20: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::FitTChi2, -1000) ) ); break;
+      case 21: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::FitVeloNDoF, -1000) ) ); break;
+      case 22: info->insert( track.first, float( object->info( LHCb::Track::AdditionalInfo::FitTNDoF, -1000) ) ); break;
       case 23: info->insert( track.first, float( first.flags() ) ); break;
       case 24: info->insert( track.first, float( last.flags() ) ); break;
       case 25: info->insert( track.first, float( first.covariance()(0,0) ) ); break;
@@ -1856,12 +1851,12 @@ void ReportConvertTool::TrackObjectFromSummary( const HltObjectSummary::Info* in
       case 14: last.setTx( x ); break;
       case 15: last.setTy( x ); break;
       case 16: last.setQOverP( x ); break;
-      case 17: if( x != -1000 ) object->addInfo( LHCb::Track::CloneDist, x ); break;
-      case 18: if( x != -1000 ) object->addInfo( LHCb::Track::FitMatchChi2, x ); break;
-      case 19: if( x != -1000 ) object->addInfo( LHCb::Track::FitVeloChi2, x ); break;
-      case 20: if( x != -1000 ) object->addInfo( LHCb::Track::FitTChi2, x ); break;
-      case 21: if( x != -1000 ) object->addInfo( LHCb::Track::FitVeloNDoF, x ); break;
-      case 22: if( x != -1000 ) object->addInfo( LHCb::Track::FitTNDoF, x ); break;
+      case 17: if( x != -1000 ) object->addInfo( LHCb::Track::AdditionalInfo::CloneDist, x ); break;
+      case 18: if( x != -1000 ) object->addInfo( LHCb::Track::AdditionalInfo::FitMatchChi2, x ); break;
+      case 19: if( x != -1000 ) object->addInfo( LHCb::Track::AdditionalInfo::FitVeloChi2, x ); break;
+      case 20: if( x != -1000 ) object->addInfo( LHCb::Track::AdditionalInfo::FitTChi2, x ); break;
+      case 21: if( x != -1000 ) object->addInfo( LHCb::Track::AdditionalInfo::FitVeloNDoF, x ); break;
+      case 22: if( x != -1000 ) object->addInfo( LHCb::Track::AdditionalInfo::FitTNDoF, x ); break;
       case 23: first.setFlags( x ); break;
       case 24: last.setFlags( x ); break;
       case 25: cov(0,0) = x ; break;

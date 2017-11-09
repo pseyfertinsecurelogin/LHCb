@@ -1,4 +1,3 @@
-
 //-----------------------------------------------------------------------------
 /** @file RichPIDsFromProtoParticlesAlg.h
  *
@@ -37,8 +36,6 @@ public:
 
   /// Standard constructor
   RichPIDsFromProtoParticlesAlg( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~RichPIDsFromProtoParticlesAlg( ); ///< Destructor
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution

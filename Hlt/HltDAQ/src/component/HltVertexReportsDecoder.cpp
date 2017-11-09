@@ -7,36 +7,7 @@
 // local
 #include "HltVertexReportsDecoder.h"
 #include "HltVertexReportsWriter.h"
-
-namespace {
-    double doubleFromInt(unsigned int i) {
-        union { unsigned int mInt; float mFloat; };
-        mInt=i;
-        return double(mFloat);
-    }
-
-  
-    static const std::vector<std::string> DefaultLabels = { "PV3D", "ProtoPV3D" };
-
-    template <typename StringContainer>
-    std::vector<std::string> prefix(const std::string& prefix, const StringContainer& strs ) {
-        std::vector<std::string> vs; vs.reserve(strs.size());
-        std::transform( strs.begin(), strs.end(),
-                        std::back_inserter(vs),
-                        [&](const std::string& s) {  return prefix + "/" + s; } );
-        return vs;
-    }
-
-    template <typename Container>
-    int index_(const Container& c, typename Container::const_reference v ) { 
-      auto i = std::find(c.begin(),c.end(),v);
-      return i!=c.end() ? std::distance( c.begin(), i) : -1 ;
-    }
-
-
-
-    
-}
+#include "pun.h"
 
 using namespace LHCb;
 
@@ -75,12 +46,10 @@ Gaudi::Functional::vector_of_optional_<VertexBase::Container> HltVertexReportsDe
   auto hltvertexreportsRawBanks = selectRawBanks( rawEvent.banks(RawBank::HltVertexReports) );
 
   if( hltvertexreportsRawBanks.empty() ){
-    throw GaudiException( " No HltVertexReports RawBank for requested SourceID in RawEvent. Quiting. ",
-                          name(),
-                          StatusCode::SUCCESS );
-  } 
-  if( hltvertexreportsRawBanks.size() != 1 ){
-    Warning(" More then one HltVertexReports RawBanks for requested SourceID in RawEvent. Will only process the first one. " ,StatusCode::SUCCESS, 20 ).ignore();
+    return Warning( " No HltVertexReports RawBank for requested SourceID in RawEvent. Quiting. ",StatusCode::SUCCESS, 20 );
+  } else if( hltvertexreportsRawBanks.size() != 1 ){
+    Warning(" More then one HltVertexReports RawBanks for requested SourceID in RawEvent. Will only process the first one. " ,
+            StatusCode::SUCCESS, 20 ).ignore();
   }
 
   const RawBank* hltvertexreportsRawBank = hltvertexreportsRawBanks.front();
@@ -111,9 +80,9 @@ Gaudi::Functional::vector_of_optional_<VertexBase::Container> HltVertexReportsDe
 
     auto  value = tbl.find( intSelID );
     if (value == std::end(tbl)) {
-      Error( " did not find name for id = " + std::to_string(intSelID) + "; skipping this selection",
-            StatusCode::SUCCESS, 50 ).ignore();
-      i += nWordsPerVert * nVert;
+      Error( std::string{ " did not find name for id = "} + std::to_string(intSelID) + "; skipping this selection",
+             StatusCode::SUCCESS, 50 ).ignore();
+      i += nVert * ( bankVersionNumber == 0 ? 5 : 11 ); // would have been nice to have a size / vtx in the bank...
       continue;
     }
     // skip reports if of wrong type, or not requested to decode
@@ -134,27 +103,33 @@ Gaudi::Functional::vector_of_optional_<VertexBase::Container> HltVertexReportsDe
     verticesOutput.emplace(); // activate the optional, and make it refer to an empty container!!
 
     for( unsigned int j=0; j!=nVert; ++j ){
-      auto  pVtx = std::make_unique<VertexBase>();
-      double x = doubleFromInt( *i++ );
-      double y = doubleFromInt( *i++ );
-      double z = doubleFromInt( *i++ );
+      auto  pVtx = new VertexBase();
+      double x = pun_to<float>( *i++ );
+      double y = pun_to<float>( *i++ );
+      double z = pun_to<float>( *i++ );
       pVtx->setPosition( { x,y,z } );
-      pVtx->setChi2( doubleFromInt( *i++ ) );
+      pVtx->setChi2( pun_to<float>( *i++ ) );
       pVtx->setNDoF( *i++ ) ;
       if( bankVersionNumber>0 ){
         Gaudi::SymMatrix3x3 cov;
-        cov[0][0] = doubleFromInt( *i++ );
-        cov[1][1] = doubleFromInt( *i++ );
-        cov[2][2] = doubleFromInt( *i++ );
-        cov[0][1] = doubleFromInt( *i++ );
-        cov[0][2] = doubleFromInt( *i++ );
-        cov[1][2] = doubleFromInt( *i++ );
+        cov[0][0] = pun_to<float>( *i++ ) ;
+        cov[1][1] = pun_to<float>( *i++ ) ;
+        cov[2][2] = pun_to<float>( *i++ ) ;
+        cov[0][1] = pun_to<float>( *i++ ) ;
+        cov[0][2] = pun_to<float>( *i++ ) ;
+        cov[1][2] = pun_to<float>( *i++ ) ;
         pVtx->setCovMatrix(cov);
       }
 
       verticesOutput->insert(pVtx.release()); //transfer ownership 
     }
 
+    // insert selection into the container
+    if( outputSummary->insert(value->second,pVtxs) == StatusCode::FAILURE ){
+      Error(" Failed to add Hlt vertex selection name "
+            + std::string(value->second)
+            + " to its container ",StatusCode::SUCCESS, 20 ).ignore();
+    }
   }
   if (nSel!=0) {
      error()  << "Unexpected banksize while decoding (case 1).... " << endmsg;

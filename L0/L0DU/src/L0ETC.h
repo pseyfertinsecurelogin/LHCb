@@ -1,4 +1,3 @@
-// $Id: L0ETC.h,v 1.2 2007-07-15 16:57:48 pkoppenb Exp $
 #ifndef L0ETC_H
 #define L0ETC_H 1
 
@@ -16,8 +15,6 @@ class L0ETC : public GaudiTupleAlg {
 public:
   /// Standard constructor
   L0ETC( const std::string& name, ISvcLocator* pSvcLocator );
-
-  virtual ~L0ETC( ); ///< Destructor
 
   StatusCode initialize() override;    ///< Algorithm initialization
   StatusCode execute   () override;    ///< Algorithm execution

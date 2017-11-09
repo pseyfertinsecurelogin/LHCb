@@ -54,10 +54,7 @@ PrepareVeloFullRawBuffer::PrepareVeloFullRawBuffer( const std::string& name,
   declareProperty("IgnoreErrorBanks", m_ignoreErrorBanks=true);
 
 }
-//=============================================================================
-// Destructor
-//=============================================================================
-PrepareVeloFullRawBuffer::~PrepareVeloFullRawBuffer() {}
+
 //=============================================================================
 // Initialization
 //=============================================================================
@@ -230,8 +227,7 @@ StatusCode PrepareVeloFullRawBuffer::getRawBanks()
 
     if(m_runWithODIN){
 
-      Error(" ==> ODIN bank missing!");
-      return ( StatusCode::FAILURE );
+      return Error(" ==> ODIN bank missing!", StatusCode::FAILURE);
 
     }
 

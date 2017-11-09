@@ -90,6 +90,8 @@ void SolidTubs::setBP()
 
   const double phi1   = startPhiAngle   ()                      ;
   const double phi2   = startPhiAngle   () + deltaPhiAngle   () ;
+  const auto sphi1 = sin(phi1); const auto cphi1 = cos(phi1);
+  const auto sphi2 = sin(phi2); const auto cphi2 = cos(phi2);
 
   const double rhoMin = innerRadius     () ;
 
@@ -97,10 +99,10 @@ void SolidTubs::setBP()
     boost::container::static_vector<double,12> values;
 
     // regular cases
-    values.push_back( rhoMax () * cos ( phi1 ) );
-    values.push_back( rhoMax () * cos ( phi2 ) );
-    values.push_back( rhoMin    * cos ( phi1 ) );
-    values.push_back( rhoMin    * cos ( phi2 ) );
+    values.push_back( rhoMax () * cphi1 );
+    values.push_back( rhoMax () * cphi2 );
+    values.push_back( rhoMin    * cphi1 );
+    values.push_back( rhoMin    * cphi2 );
 
     // special cases
     if( phi1 <=    0*Gaudi::Units::degree &&    0*Gaudi::Units::degree <= phi2 )
@@ -136,10 +138,10 @@ void SolidTubs::setBP()
     boost::container::static_vector<double,10> values ;
 
     // regular cases
-    values.push_back( rhoMax () * sin ( phi1 ) );
-    values.push_back( rhoMax () * sin ( phi2 ) );
-    values.push_back( rhoMin    * sin ( phi1 ) );
-    values.push_back( rhoMin    * sin ( phi2 ) );
+    values.push_back( rhoMax () * sphi1 );
+    values.push_back( rhoMax () * sphi2 );
+    values.push_back( rhoMin    * sphi1 );
+    values.push_back( rhoMin    * sphi2 );
 
     // special cases
     if( phi1 <=   90*Gaudi::Units::degree &&   90*Gaudi::Units::degree <= phi2 )
