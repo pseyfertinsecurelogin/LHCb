@@ -6,6 +6,7 @@
 #include <type_traits>
 #include <vector>
 #include <algorithm>
+#include <utility>
 
 // local
 #include "RichUtils/RichSIMDTypes.h"
