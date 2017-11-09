@@ -9,6 +9,26 @@
 #include "HltVertexReportsWriter.h"
 #include "pun.h"
 
+namespace {
+    static const std::vector<std::string> DefaultLabels = { "PV3D", "ProtoPV3D" };
+
+    template <typename StringContainer>
+    std::vector<std::string> prefix(const std::string& prefix, const StringContainer& strs ) {
+        std::vector<std::string> vs; vs.reserve(strs.size());
+        std::transform( strs.begin(), strs.end(),
+                        std::back_inserter(vs),
+                        [&](const std::string& s) {  return prefix + "/" + s; } );
+        return vs;
+    }
+
+    template <typename Container>
+    int index_(const Container& c, typename Container::const_reference v ) {
+      auto i = std::find(c.begin(),c.end(),v);
+      return i!=c.end() ? std::distance( c.begin(), i) : -1 ;
+    }
+
+}
+
 using namespace LHCb;
 
 //-----------------------------------------------------------------------------
@@ -46,10 +66,12 @@ Gaudi::Functional::vector_of_optional_<VertexBase::Container> HltVertexReportsDe
   auto hltvertexreportsRawBanks = selectRawBanks( rawEvent.banks(RawBank::HltVertexReports) );
 
   if( hltvertexreportsRawBanks.empty() ){
-    return Warning( " No HltVertexReports RawBank for requested SourceID in RawEvent. Quiting. ",StatusCode::SUCCESS, 20 );
-  } else if( hltvertexreportsRawBanks.size() != 1 ){
-    Warning(" More then one HltVertexReports RawBanks for requested SourceID in RawEvent. Will only process the first one. " ,
-            StatusCode::SUCCESS, 20 ).ignore();
+    throw GaudiException( " No HltVertexReports RawBank for requested SourceID in RawEvent. Quiting. ",
+                          name(),
+                          StatusCode::SUCCESS );
+  }
+  if( hltvertexreportsRawBanks.size() != 1 ){
+    Warning(" More then one HltVertexReports RawBanks for requested SourceID in RawEvent. Will only process the first one. " ,StatusCode::SUCCESS, 20 ).ignore();
   }
 
   const RawBank* hltvertexreportsRawBank = hltvertexreportsRawBanks.front();
@@ -103,7 +125,7 @@ Gaudi::Functional::vector_of_optional_<VertexBase::Container> HltVertexReportsDe
     verticesOutput.emplace(); // activate the optional, and make it refer to an empty container!!
 
     for( unsigned int j=0; j!=nVert; ++j ){
-      auto  pVtx = new VertexBase();
+      auto  pVtx = std::make_unique<VertexBase>();
       double x = pun_to<float>( *i++ );
       double y = pun_to<float>( *i++ );
       double z = pun_to<float>( *i++ );
@@ -124,12 +146,6 @@ Gaudi::Functional::vector_of_optional_<VertexBase::Container> HltVertexReportsDe
       verticesOutput->insert(pVtx.release()); //transfer ownership 
     }
 
-    // insert selection into the container
-    if( outputSummary->insert(value->second,pVtxs) == StatusCode::FAILURE ){
-      Error(" Failed to add Hlt vertex selection name "
-            + std::string(value->second)
-            + " to its container ",StatusCode::SUCCESS, 20 ).ignore();
-    }
   }
   if (nSel!=0) {
      error()  << "Unexpected banksize while decoding (case 1).... " << endmsg;

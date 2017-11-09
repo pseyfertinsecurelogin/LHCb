@@ -168,30 +168,29 @@ LoKi::HDRFilter::HDRFilter
   /// the special name
     if ( special_case ( nam ) )
   {
-    std::string s ( name() , 5 ) ;
-    if ( !_ok_ ( s       , m_location ) )
-    { Error    ( "Inconsistent setting of name&location/2"      ).ignore() ;  }
-    if ( !_ok_ ( code()  , m_location ) )
-    { Error    ( "Inconsistent setting of code&location/2"      ).ignore() ;  }
-    if ( !_ok_ ( s       , code() , m_location ) )
-    { Warning  ( "Inconsistent setting of name&code&location/2" ).ignore() ;  }
-  }
-  else if ( !_hlt1_ ( name ()     )   &&
-            !_hlt1_ ( code ()     )   &&
-            !_hlt1_ ( m_location  )   &&
-            !_hlt2_ ( name ()     )   &&
-            !_hlt2_ ( code ()     )   &&
-            !_hlt2_ ( m_location  ) ) { /* stripping case? */ }
-  else
-  {
-    if ( !_ok_ ( code () , m_location ) )
-    { Error    ( "Inconsistent setting of code&location      " ).ignore() ;  }
-    if ( !_ok_ ( name () , m_location ) )
-    { Warning  ( "Inconsistent setting of name&location      " ).ignore() ;  }
-    if ( !_ok_ ( name() , code() , m_location ) )
-    { Warning  ( "Inconsistent setting of name&code&location " ).ignore() ;  }
+      std::string s ( nam , 5 ) ;
+      if ( !_ok_ ( s       , loc ) )
+    { Error    ( "Inconsistent setting of name&location/2"      ) ;  }
+      if ( !_ok_ ( code()  , loc ) )
+    { Error    ( "Inconsistent setting of code&location/2"      ) ;  }
+      if ( !_ok_ ( s       , code() , loc ) )
+    { Warning  ( "Inconsistent setting of name&code&location/2" ) ;  }
+    } else if ( !_hlt1_ ( nam      )   &&
+                !_hlt1_ ( this->code ()     )   &&
+                !_hlt1_ ( loc  )   &&
+                !_hlt2_ ( nam      )   &&
+                !_hlt2_ ( this->code ()     )   &&
+                !_hlt2_ ( loc  ) ) { /* stripping case? */ }
+    else {
+      if ( !_ok_ ( this->code () , loc ) )
+    { Error    ( "Inconsistent setting of code&location      " ) ;  }
+      if ( !_ok_ ( nam  , loc ) )
+    { Warning  ( "Inconsistent setting of name&location      " ) ;  }
+      if ( !_ok_ ( nam , this->code() , loc ) )
+    { Warning  ( "Inconsistent setting of name&code&location " ) ;  }
   }
   });
+
   StatusCode sc = setProperty ( "Code" , "HLT_NONE" ) ;
   Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
   sc = setProperty
