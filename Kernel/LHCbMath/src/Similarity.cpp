@@ -55,6 +55,7 @@ namespace LHCb {
       extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
       extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
       extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
+      extern void similarity_2_5(gsl::span<const double,3 > Ci, gsl::span<const double,10> Fi, gsl::span<double,15> Ti);
       extern bool average(gsl::span<const double,5> X1, gsl::span<const double,15> C1,
                           gsl::span<const double,5> X2, gsl::span<const double,15> C2,
                           gsl::span<double,5> X, gsl::span<double,15> C );
@@ -93,6 +94,12 @@ namespace LHCb {
         dispatch_fn( vtbl, LHCb::Math::detail::similarity_5_7, Ci, Fi, ti );
       }
 
+      void similarity_2_5(gsl::span<const double,3> Ci, gsl::span<const double,10> Fi, gsl::span<double,15> ti)
+      {
+        auto vtbl = { std::make_pair( CPU::GENERIC, generic::similarity_2_5 ) };
+        dispatch_fn( vtbl, LHCb::Math::detail::similarity_2_5, Ci, Fi, ti );
+      }
+
       bool average(gsl::span<const double,5> X1, gsl::span<const double,15> C1,
                    gsl::span<const double,5> X2, gsl::span<const double,15> C2,
                    gsl::span<double,5> X, gsl::span<double,15> C )
@@ -117,6 +124,7 @@ namespace LHCb {
     similarity_t<5,1> similarity_5_1 = &dispatch::similarity_5_1;
     similarity_t<5,5> similarity_5_5 = &dispatch::similarity_5_5;
     similarity_t<5,7> similarity_5_7 = &dispatch::similarity_5_7;
+    similarity_t<2,5> similarity_2_5 = &dispatch::similarity_2_5;
 
     average_t average = &dispatch::average;
     filter_t filter = &dispatch::filter;
