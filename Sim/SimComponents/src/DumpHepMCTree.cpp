@@ -63,9 +63,12 @@ StatusCode DumpHepMCTree::execute()
       {
         signal = evt->barcode_to_vertex( -1 ) ;
         if ( 0 != signal )
-        {  Warning ( "Signal_process_vertex is NULL, use -1 " ) ;            }
+        { Warning ( "Signal_process_vertex is NULL, use -1 " ).ignore() ; }
         else
-        {  Warning ( "Signal_process_vertex is NULL, skip!  " ) ; continue ; }
+        { 
+          Warning ( "Signal_process_vertex is NULL, skip!  " ).ignore() ;
+          continue ;
+        }
       }
       if ( log.isActive() )
       { printDecay ( signal , log.stream() , 0 ) ; }

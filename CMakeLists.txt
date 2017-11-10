@@ -22,8 +22,8 @@ include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS}
 # USE Gaudi mr284
 # Otherwise
 # USE Gaudi v28r2
-gaudi_project(LHCb v43r0
-              USE Gaudi v28r2
+gaudi_project(LHCb v43r1
+              USE Gaudi v29r1
               DATA Gen/DecFiles
                    Det/SQLDDDB VERSION v7r*
                    FieldMap

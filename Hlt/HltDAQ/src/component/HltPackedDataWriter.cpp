@@ -229,7 +229,7 @@ void HltPackedDataWriter::addBanks(LHCb::RawEvent& rawEvent, const std::vector<u
 
   const size_t nbanks = (data.size() + MAX_PAYLOAD_SIZE - 1) / MAX_PAYLOAD_SIZE;
   if (nbanks > (PartIDMask >> PartIDBits)) {
-    Error("Packed objects too long to save", StatusCode::SUCCESS, 50);
+    Error("Packed objects too long to save", StatusCode::SUCCESS, 50).ignore();
     return;
   }
   if (UNLIKELY(msgLevel(MSG::DEBUG))) {

@@ -190,6 +190,7 @@ LoKi::HDRFilter::HDRFilter
     { Warning  ( "Inconsistent setting of name&code&location " ) ;  }
   }
   });
+
   StatusCode sc = setProperty ( "Code" , "HLT_NONE" ) ;
   Assert ( sc.isSuccess () , "Unable (re)set property 'Code'"    , sc ) ;
   sc = setProperty

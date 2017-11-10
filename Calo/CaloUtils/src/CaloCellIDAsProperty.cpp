@@ -82,10 +82,6 @@ namespace Gaudi
       struct tag_row {};
       struct tag_col {};
       struct Operations {
-        template <typename A, typename B = boost::fusion::unused_type,
-            typename C = boost::fusion::unused_type,
-            typename D = boost::fusion::unused_type>
-        struct result { typedef void type; };
         // ====================================================================
         void operator()(LHCb::CaloCellID& val, const ContentT v) const {
           val.setAll(v);

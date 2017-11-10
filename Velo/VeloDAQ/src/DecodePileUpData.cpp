@@ -38,11 +38,6 @@ DecodePileUpData::DecodePileUpData( const std::string& name,
 }
 
 //=============================================================================
-// Destructor
-//=============================================================================
-DecodePileUpData::~DecodePileUpData() {} 
-
-//=============================================================================
 // Initialization
 //=============================================================================
 StatusCode DecodePileUpData::initialize() {
@@ -137,7 +132,7 @@ StatusCode DecodePileUpData::decode() {
     nzsBinDecoder.ignore();
     if ( msgLevel(MSG::DEBUG) ) debug() << " decode() : NZS bank decoded " << endmsg;
   }
-  else Info(" NZS bank empty ");
+  else Info(" NZS bank empty ").ignore();
 
   // ZS PU decode
   const std::vector<LHCb::RawBank*> banks = m_rawEvent->banks(LHCb::RawBank::L0PU); 
@@ -147,7 +142,7 @@ StatusCode DecodePileUpData::decode() {
     binDecoder.ignore();
      if ( msgLevel(MSG::DEBUG) ) debug() << " decode() : ZS bank decoded " << endmsg;
   }
-  else Info(" ZS bank empty ");
+  else Info(" ZS bank empty ").ignore();
 
   return ( StatusCode::SUCCESS ); 
 }

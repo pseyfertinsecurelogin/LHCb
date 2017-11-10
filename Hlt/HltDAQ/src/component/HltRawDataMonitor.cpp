@@ -153,7 +153,7 @@ StatusCode HltRawDataMonitor::fillRawBank()
   }
   const RawBank* hltselreportsRawBank0 = *(hltselreportsRawBanks.begin());
   if( hltselreportsRawBank0->version() > kVersionNumber ){
-    Warning( " HltSelReports RawBank version is higher than expected. Will try to decode it anyway." ,StatusCode::SUCCESS, 20 );
+    Warning( " HltSelReports RawBank version is higher than expected. Will try to decode it anyway." ,StatusCode::SUCCESS, 20 ).ignore();
   }
 
   unsigned int bankCounterMax = 0;
@@ -170,7 +170,7 @@ StatusCode HltRawDataMonitor::fillRawBank()
     if( m_sourceID != sourceID )continue;
 
     if( hltselreportsRawBank->magic() != RawBank::MagicPattern ){
-      Error(" HltSelReports RawBank has wrong magic number. Skipped ",StatusCode::SUCCESS, 20 );
+      Error(" HltSelReports RawBank has wrong magic number. Skipped ",StatusCode::SUCCESS, 20 ).ignore();
       continue;
     }
     unsigned int bankCounter = hltselreportsRawBank->sourceID();
@@ -181,7 +181,7 @@ StatusCode HltRawDataMonitor::fillRawBank()
       orderedBanks[bankCounter]= hltselreportsRawBank;
       if( bankCounter > bankCounterMax ) bankCounterMax = bankCounter;
     } else {
-      Error( " Illegal Source ID HltSelReports bank skipped ", StatusCode::SUCCESS, 20 );
+      Error( " Illegal Source ID HltSelReports bank skipped ", StatusCode::SUCCESS, 20 ).ignore();
     }
     bankSize += hltselreportsRawBank->size();
   }
@@ -201,7 +201,7 @@ StatusCode HltRawDataMonitor::fillRawBank()
 	if( HltSelReportsWriter::kSourceID_Hlt != sourceID )continue;
 
 	if( hltselreportsRawBank->magic() != RawBank::MagicPattern ){
-	  Error(" HltSelReports RawBank has wrong magic number. Skipped ",StatusCode::SUCCESS, 20 );
+	  Error(" HltSelReports RawBank has wrong magic number. Skipped ",StatusCode::SUCCESS, 20 ).ignore();
 	  continue;
 	}
 	unsigned int bankCounter = hltselreportsRawBank->sourceID();
@@ -212,7 +212,7 @@ StatusCode HltRawDataMonitor::fillRawBank()
 	  orderedBanks[bankCounter]= hltselreportsRawBank;
 	  if( bankCounter > bankCounterMax ) bankCounterMax = bankCounter;
 	} else {
-	  Error( " Illegal Source ID HltSelReports bank skipped ", StatusCode::SUCCESS, 20 );
+	  Error( " Illegal Source ID HltSelReports bank skipped ", StatusCode::SUCCESS, 20 ).ignore();
 	}
 	bankSize += hltselreportsRawBank->size();
       }
@@ -255,7 +255,7 @@ StatusCode HltRawDataMonitor::fillRawBank()
   if( bankSize < hltSelReportsBank.size() ){
     Error( " HltSelReportsRawBank internally reported size " + std::to_string( hltSelReportsBank.size() )
            + " less than bank size delivered by RawEvent " + std::to_string(bankSize),
-          StatusCode::SUCCESS, 100 );
+           StatusCode::SUCCESS, 100 ).ignore();
     errors=true;
 
   } else {
@@ -264,7 +264,7 @@ StatusCode HltRawDataMonitor::fillRawBank()
     if( ic ){
       Error( " HltSelReportsRawBank fails integrity check with code " 
             + std::to_string( ic ) + " " +  HltSelRepRBEnums::IntegrityCodesToString(ic) ,
-             StatusCode::SUCCESS, 100 );
+             StatusCode::SUCCESS, 100 ).ignore();
       errors=true;
     }
 
@@ -272,7 +272,7 @@ StatusCode HltRawDataMonitor::fillRawBank()
     if( ic ){
       Error( " HltSelRepRBHits fails integrity check with code " 
              + std::to_string(ic) +  " " +  HltSelRepRBEnums::IntegrityCodesToString(ic),
-             StatusCode::SUCCESS, 100 );
+             StatusCode::SUCCESS, 100 ).ignore();
       errors=true;
     }
 
@@ -280,7 +280,7 @@ StatusCode HltRawDataMonitor::fillRawBank()
     if( ic ){
       Error( " HltSelRepRBObjTyp fails integrity check with code " 
              + std::to_string(ic) +  " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
-             StatusCode::SUCCESS, 100 );
+             StatusCode::SUCCESS, 100 ).ignore();
       errors=true;
     }
 
@@ -288,14 +288,14 @@ StatusCode HltRawDataMonitor::fillRawBank()
     if( ic ){
       Error( " HltSelRepRBSubstr fails integrity check with code " 
              + std::to_string(ic) + " " +  HltSelRepRBEnums::IntegrityCodesToString(ic),
-             StatusCode::SUCCESS, 100 );
+             StatusCode::SUCCESS, 100 ).ignore();
       errors=true;
     }
     if( nObj != substrSubBank.numberOfObj() ){
       Error( " HltSelRepRBSubstr has number of objects " 
              + std::to_string( substrSubBank.numberOfObj( ))
              +  " which is different than HltSelRepRBObjTyp " + std::to_string(nObj),
-             StatusCode::SUCCESS, 100 );
+             StatusCode::SUCCESS, 100 ).ignore();
       errors=true;
     }
 
@@ -303,14 +303,14 @@ StatusCode HltRawDataMonitor::fillRawBank()
     if( ic ){
       Error( " HltSelRepRBStdInfo fails integrity check with code " 
              + std::to_string(ic) +  " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
-             StatusCode::SUCCESS, 100 );
+             StatusCode::SUCCESS, 100 ).ignore();
       errors=true;
     }
     if( nObj != stdInfoSubBank.numberOfObj() ){
       Error( " HltSelRepRBStdInfo has number of objects " 
              + std::to_string(stdInfoSubBank.numberOfObj())
              + " which is different than HltSelRepRBObjTyp " + std::to_string(nObj),
-             StatusCode::SUCCESS, 100 );
+             StatusCode::SUCCESS, 100 ).ignore();
       errors=true;
     }
 
@@ -318,14 +318,14 @@ StatusCode HltRawDataMonitor::fillRawBank()
     if( ic ){
       Error( " HltSelRepRBExtraInfo fails integrity check with code " 
              + std::to_string(ic) +  " " + HltSelRepRBEnums::IntegrityCodesToString(ic),
-             StatusCode::SUCCESS, 100 );
+             StatusCode::SUCCESS, 100 ).ignore();
       //      exInfOn=false; // the only non-fatal info corruption. Set but not used!
     }
     if( nObj != extraInfoSubBank.numberOfObj() ){
       Error(  " HltSelRepRBExtraInfo has number of objects " 
               + std::to_string(extraInfoSubBank.numberOfObj())
               +  " which is different than HltSelRepRBObjTyp " + std::to_string( nObj),
-             StatusCode::SUCCESS, 100 );
+              StatusCode::SUCCESS, 100 ).ignore();
       //      exInfOn=false; // Set but not used!
     }
   }

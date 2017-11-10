@@ -16,6 +16,7 @@
 
 // local
 #include "HltSelReportsWriter.h"
+#include "pun.h"
 
 using namespace LHCb;
 
@@ -33,12 +34,6 @@ bool isStdInfo(const std::string& s) {
     return i != std::begin(s) && i != std::end(s) && *i == '#' ;
 }
 
-unsigned int asUInt( float x ) {
-    union IntFloat { unsigned int mInt; float mFloat; };
-    IntFloat a;
-    a.mFloat = x;
-    return a.mInt;
-}
 
 static const Gaudi::StringKey InfoID{"InfoID"};
 
@@ -276,9 +271,9 @@ StatusCode HltSelReportsWriter::execute() {
   if( !saveExtraInfo ){
         Error( "ExtraInfoSubBank too large to store nObj="  + std::to_string( sortedHosPtrs.size() )
              + " nInfo=" + std::to_string(nExtraInfo)
-             + " No Extra Info will be saved!", StatusCode::SUCCESS, 50 );
+             + " No Extra Info will be saved!", StatusCode::SUCCESS, 50 ).ignore();
         if( !extraInfoSubBank.initialize( sortedHosPtrs.size(), 0 ) ){
-          Error( "Cannot save even empty ExtraInfoSubBank  - expect a fatal error", StatusCode::SUCCESS, 50 );
+          Error( "Cannot save even empty ExtraInfoSubBank  - expect a fatal error", StatusCode::SUCCESS, 50 ).ignore();
         }
   }
   bool saveStdInfo = stdInfoSubBank.initialize( sortedHosPtrs.size(), nStdInfo );
@@ -286,7 +281,7 @@ StatusCode HltSelReportsWriter::execute() {
         Error( "StdInfoSubBank too large to store nObj="
              + std::to_string( sortedHosPtrs.size())
              + " nInfo=" + std::to_string(nStdInfo) + " No Std Info will be saved!",
-               StatusCode::SUCCESS, 50 );
+               StatusCode::SUCCESS, 50 ).ignore();
         // save only selection IDs
         nStdInfo = std::accumulate( std::begin(sortedHosPtrs), std::end(sortedHosPtrs),
                                     0 , [](int n, const HltObjectSummary* hos) {
@@ -300,7 +295,7 @@ StatusCode HltSelReportsWriter::execute() {
             return n;
         } );
         if( !stdInfoSubBank.initialize( sortedHosPtrs.size(), nStdInfo ) ){
-          Error( "Cannot save even selectionIDs - expect a fatal error", StatusCode::SUCCESS, 50 );
+          Error( "Cannot save even selectionIDs - expect a fatal error", StatusCode::SUCCESS, 50 ).ignore();
         }
   }
 
@@ -318,7 +313,7 @@ StatusCode HltSelReportsWriter::execute() {
 
         if ( saveStdInfo || ( hos->summarizedObjectCLID() == 1 ) ){
           // push floats as ints (allows for possible compression in future versions)
-          stdInfo.push_back( asUInt(i.second) );
+          stdInfo.push_back( pun_to<unsigned int>(i.second) );
         }
 
       } else if(saveExtraInfo) {
@@ -329,7 +324,7 @@ StatusCode HltSelReportsWriter::execute() {
         } else {
           // this is very unexpected but shouldn't be fatal
           Error( "Int key for string info key=" + i.first + " not found ",
-                 StatusCode::SUCCESS, 50 );
+                 StatusCode::SUCCESS, 50 ).ignore();
         }
       }
     }
@@ -474,7 +469,7 @@ StatusCode HltSelReportsWriter::execute() {
   if( nBank>1 ){
     Warning( "HltSelReports is huge. Saved in "
            + std::to_string( nBank ) + " separate RawBanks ",
-             StatusCode::SUCCESS, 10 );
+             StatusCode::SUCCESS, 10 ).ignore();
   }
 
   if ( msgLevel(MSG::VERBOSE) ){

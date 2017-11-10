@@ -1,10 +1,8 @@
-// $Id$
 // Include files
 
 #include "Event/RawEvent.h"
 #include "Event/Track.h"
 #include "HltTrackingCoder.h"
-#include <functional>
 #include <algorithm>
 
 // local
