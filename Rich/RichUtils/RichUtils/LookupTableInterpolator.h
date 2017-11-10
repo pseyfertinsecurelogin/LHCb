@@ -12,7 +12,11 @@
 #include "RichUtils/RichSIMDTypes.h"
 
 // Vc
+// Note clang 5.0 has problems with Vc::vector.
+// See https://bugs.llvm.org/show_bug.cgi?id=26764
+#ifndef __clang__
 #include <Vc/vector>
+#endif
 
 namespace Rich
 {
@@ -53,6 +57,12 @@ namespace Rich
         m = ( lowY - highY ) / ( lowX - highX );
         c = lowY - ( lowX * m );
       }
+    public:
+#ifndef __clang__
+      using Vector =  Vc::vector<Bin>;
+#else
+      using Vector = std::vector<Bin>;
+#endif
     };
 
   public:
@@ -118,9 +128,20 @@ namespace Rich
     inline SIMDFP value ( const SIMDFP::IndexType& index,
                           const SIMDFP& x ) const noexcept
     {
+#ifndef __clang__
       // gather the m and c parameters for x
       const auto m = m_data[index][&Bin::m];
       const auto c = m_data[index][&Bin::c];
+#else
+      // clang 5.0 has issues with Vc::vector. So fallback to scalar lookup.
+      SIMDFP m(SIMDFP::Zero()), c(SIMDFP::Zero());
+      for ( std::size_t i = 0; i < SIMDFP::Size; ++ i )
+      {
+        const auto & bin = m_data[ index[i] ];
+        m[i] = bin.m;
+        c[i] = bin.c;
+      }
+#endif
       // return the function values
       return ( m * x ) + c;
     }
@@ -128,7 +149,7 @@ namespace Rich
   protected:
 
     /// Data storage 
-    Vc::vector<Bin> m_data;
+    typename Bin::Vector m_data;
 
     /// Minimum valid x (scalar)
     TYPE m_minX{0};

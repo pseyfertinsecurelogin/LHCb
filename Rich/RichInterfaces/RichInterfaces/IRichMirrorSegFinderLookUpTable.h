@@ -20,6 +20,13 @@
 // Utils
 #include "RichUtils/RichSIMDTypes.h"
 
+// Vc
+// Note clang 5.0 has problems with Vc::vector.
+// See https://bugs.llvm.org/show_bug.cgi?id=26764
+#ifndef __clang__
+#include <Vc/vector>
+#endif
+
 // from Gaudi
 #include "GaudiKernel/IAlgTool.h"
 #include "GaudiKernel/SystemOfUnits.h"
@@ -33,9 +40,6 @@
 
 // RichDet
 #include "RichDet/DeRichSphMirror.h"
-
-// Vc
-#include <Vc/vector>
 
 namespace Rich
 {
@@ -65,7 +69,11 @@ namespace Rich
     protected: // helper classes
       
       /// Type for list of mirrors
-      using Mirrors = Vc::vector<const DeRichSphMirror*>;
+#ifndef __clang__
+      using Mirrors =  Vc::vector<const DeRichSphMirror*>;
+#else
+      using Mirrors = std::vector<const DeRichSphMirror*>;
+#endif
 
       /// SIMD Type for array of Mirrors
       template< typename TYPE >
@@ -241,7 +249,11 @@ namespace Rich
         }
       private:
         /// Type for lookup storage
-        using MirrorArray = Vc::vector< MirrorNum >;
+#ifndef __clang__
+        using MirrorArray =  Vc::vector< MirrorNum >;
+#else
+        using MirrorArray = std::vector< MirrorNum >;
+#endif
         /** @class LookupTable RichMirrorSegFinderLookUpTable.h
          *  2D (x,y) Lookup table for RICH mirrors */
         class LookupTable final : private MirrorArray
@@ -275,12 +287,14 @@ namespace Rich
             return get( xyIndex(ix,iy) );
           }
         public:
+#ifndef __clang__
           /// Access the mirror for a given xy index (SIMD)
           inline SIMDIndices get( const SIMDIndices::IndexType & ixy ) const noexcept
           {
             // gather SIMD lookup
             return (*this)[ixy]; 
           }
+#endif
           /// Access the mirror for a given set of (x,y) indices (SIMD)
           inline SIMDIndices get( const SIMDIndices::IndexType & ix,
                                   const SIMDIndices::IndexType & iy ) const noexcept
