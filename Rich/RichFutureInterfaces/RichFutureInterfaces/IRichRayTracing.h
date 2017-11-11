@@ -28,6 +28,9 @@
 #include "GaudiKernel/Vector3DTypes.h"
 #include "GaudiKernel/Plane3DTypes.h"
 
+// RichUtils
+#include "RichUtils/RichSIMDTypes.h"
+
 // forward decs
 namespace LHCb
 {
@@ -64,28 +67,54 @@ namespace Rich
       /// Interface ID
       DeclareInterfaceID( IRayTracing, 1, 0 );
 
-    public: // vector methods
+    public: // types
+
+      // SIMD types
+      using FP         = Rich::SIMD::DefaultScalarFP; ///< Default scalar floating point type
+      using SIMDFP     = SIMD::FP<FP>;                ///< Default vector floating point type
+      using SIMDVector = SIMD::Vector<FP>;            ///< Default vector Vector class
+      using SIMDPoint  = SIMD::Point<FP>;             ///< Default vector Point class
 
       /// Return type for the vectorised raytracing
       class Result
       {
       public:
+        /// Type for array of result codes
+        using Results  = Rich::SIMD::STDArray<LHCb::RichTraceMode::RayTraceResult>;
+        /// Type for SmartIDs container.
+        using SmartIDs = Rich::SIMD::STDArray<LHCb::RichSmartID>;
+        /// Type for mirror pointers
+        using Mirrors  = Rich::SIMD::STDArray<const DeRichSphMirror *>;
+        /// Type for PDs
+        using PDs      = Rich::SIMD::STDArray<const DeRichPD *>;
+        /// Type for Point
+        using Point    = Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP>;
+        /// Type for validity mask
+        using Mask     = Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP>::mask_type;
+      public:
+        /// Default constructor
+        Result() { result.fill( LHCb::RichTraceMode::RayTraceFailed ); }
+      public:
         /// Ray tracing status code
-        LHCb::RichTraceMode::RayTraceResult result{ LHCb::RichTraceMode::RayTraceFailed };
+        Results result = {{}};
         /// Detection point
-        Gaudi::XYZPoint detectionPoint; 
+        Point detectionPoint; 
         /// Channel ID for detection point
-        LHCb::RichSmartID smartID;     
+        SmartIDs smartID = {{}};     
         /// Pointer to the associated primary mirror detector element
-        const DeRichSphMirror * primaryMirror   { nullptr };
+        Mirrors primaryMirror = {{}};
         /// Pointer to the associated secondary mirror detector element
-        const DeRichSphMirror * secondaryMirror { nullptr };
+        Mirrors secondaryMirror = {{}};
         /// Pointer to the associated DeRichPD object (if available)
-        const DeRichPD        * photonDetector  { nullptr };
+        PDs photonDetector = {{}};
+        /// Validity mask
+        Mask valid;
       public:
         /// Container of results
-        using Vector = std::vector<Result>;
+        using Vector = SIMD::STDVector<Result>;
       };
+
+    public: // vector methods
 
       /** For a given detector, ray-traces a given set of directions from a given point to
        *  the photo detectors.
@@ -99,7 +128,7 @@ namespace Rich
        */
       virtual Result::Vector
       traceToDetector ( const Gaudi::XYZPoint& startPoint,
-                        const std::vector<Gaudi::XYZVector>& startDirs,
+                        const SIMD::STDVector<SIMDVector>& startDirs,
                         const LHCb::RichTrackSegment& trSeg,
                         const LHCb::RichTraceMode mode = LHCb::RichTraceMode() ) const = 0;
 
