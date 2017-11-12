@@ -998,8 +998,8 @@ DeRichPMTPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,
 }
 
 LHCb::RichTraceMode::RayTraceResult
-DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
-                               const Gaudi::XYZPoint& pGlobal,
+DeRichPMTPanel::PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
+                               const Gaudi::XYZVector& vGlobal,
                                Gaudi::XYZPoint& windowPointGlobal,
                                LHCb::RichSmartID& smartID,
                                const DeRichPD*& pd,

@@ -13,9 +13,6 @@
 #include <array>
 #include <memory>
 
-// Utils
-#include "RichUtils/RichSIMDTypes.h"
-
 // DetDesc
 #include "RichDet/Rich1DTabProperty.h"
 
@@ -27,6 +24,8 @@
 // LHCbKernel
 #include "Kernel/RichDetectorType.h"
 #include "Kernel/RichSide.h"
+#include "Kernel/RichTraceMode.h"
+#include "Kernel/RichSmartID.h"
 
 // Local
 #include "RichDet/DeRichBase.h"
@@ -34,10 +33,8 @@
 #include "RichDet/DeRichLocations.h"
 #include "RichDet/RichDetConfigType.h"
 
-// Vc
-#include <Vc/common/alignedbase.h>
-
 class DeRichPDPanel;
+class DeRichPD;
 
 /** @class DeRich DeRich.h
  *
@@ -47,8 +44,7 @@ class DeRichPDPanel;
  *
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  */
-class DeRich: public DeRichBase,
-              public Vc::AlignedBase<Vc::VectorAlignment>
+class DeRich: public DeRichBase
 {
 
 public:
@@ -294,7 +290,9 @@ public:
     return m_RichPhotoDetConfig;
   }
 
-  /** Returns the Rich Geometry config type 0=current optics, 1 upgrade optics, 2 horizontal rich1-upgrade optics.
+  /** Returns the Rich Geometry config type 0=current optics, 
+   *  1 upgrade optics, 2 horizontal rich1-upgrade optics.
+   *
    *  CRJ - This should be an enum, not an int ....
    *        Should also be cleaned up now the horizontal RICH1 is no longer an option
    */
@@ -394,7 +392,17 @@ public:
   {
     return m_PDPanels[panel];
   }
-
+  
+  /// Ray trace a given direction with the correct PD panel (scalar)
+  LHCb::RichTraceMode::RayTraceResult 
+  rayTrace( const Rich::Side side,
+            const Gaudi::XYZPoint& pGlobal,
+            const Gaudi::XYZVector& vGlobal,
+            Gaudi::XYZPoint& hitPosition,
+            LHCb::RichSmartID& smartID,
+            const DeRichPD*& dePD,
+            const LHCb::RichTraceMode mode ) const;
+  
 protected:
 
   /// Load on demand the nominal PD Q.E.

@@ -24,14 +24,6 @@
 // Local
 #include "RichDet/DeRichBase.h"
 
-// LHCbMath
-//#include "LHCbMath/Line.h"
-//#include "LHCbMath/GeomFun.h"
-
-// Vc
-#include <Vc/Vc>
-#include <Vc/common/alignedbase.h>
-
 // External declarations
 extern const CLID CLID_DERichBeamPipe;
 
@@ -42,8 +34,7 @@ extern const CLID CLID_DERichBeamPipe;
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  * @date   2006-11-27
  */
-class DeRichBeamPipe : public DeRichBase,
-                       public Vc::AlignedBase<Vc::VectorAlignment>
+class DeRichBeamPipe : public DeRichBase
 {
 
 private:

@@ -298,6 +298,8 @@ void DeRich::loadPDPanels()
 }
 
 //=============================================================================
+// Cache various SIMD type
+//=============================================================================
 
 void DeRich::fillSIMDTypes()
 {
@@ -313,3 +315,24 @@ void DeRich::fillSIMDTypes()
 }
 
 //=============================================================================
+// Ray trace a given direction with the correct PD panel (scalar)
+//=============================================================================
+
+LHCb::RichTraceMode::RayTraceResult
+DeRich::rayTrace( const Rich::Side side,
+                  const Gaudi::XYZPoint& pGlobal,
+                  const Gaudi::XYZVector& vGlobal,
+                  Gaudi::XYZPoint& hitPosition,
+                  LHCb::RichSmartID& smartID,
+                  const DeRichPD*& dePD,
+                  const LHCb::RichTraceMode mode ) const
+{
+  // are we configured to test individual PD acceptance or just interset the plane ?
+  return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectPDTubes ?
+           // Full PD acceptance
+           pdPanel(side) -> PDWindowPoint( pGlobal, vGlobal,
+                                           hitPosition, smartID, dePD, mode ) :
+           // just the plane
+           pdPanel(side) -> detPlanePoint( pGlobal, vGlobal,
+                                           hitPosition, smartID, dePD, mode ) );
+}
