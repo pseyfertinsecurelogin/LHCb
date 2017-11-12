@@ -92,8 +92,8 @@ public:
 
   // Returns the intersection point with an HPD window given a vector and a point.
   LHCb::RichTraceMode::RayTraceResult
-  PDWindowPoint( const Gaudi::XYZVector& vGlobal,
-                 const Gaudi::XYZPoint& pGlobal,
+  PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
+                 const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
                  const DeRichPD*& pd,

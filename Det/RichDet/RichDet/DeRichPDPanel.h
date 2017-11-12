@@ -146,17 +146,18 @@ public: // virtual methods. Derived classes must implement these
    *  to test if there would be an intersection with a flat circle instead
    *  of the PD window.
    *
-   *  @param[in]  vGlobal           The intersection direction
    *  @param[in]  pGlobal           The intersection start point
+   *  @param[in]  vGlobal           The intersection direction
    *  @param[out] windowPointGlobal The return point on the PD window
    *  @param[out] smartID           The returned smartID with hit PD info
+   *  @param[out] dePD              Pointer to the associated DePD object
    *  @param[in]  mode              The ray-tracing configuration mode
    *
    *  @return Status of intersection
    */
   virtual LHCb::RichTraceMode::RayTraceResult
-  PDWindowPoint( const Gaudi::XYZVector& vGlobal,
-                 const Gaudi::XYZPoint& pGlobal,
+  PDWindowPoint( const Gaudi::XYZPoint& pGlobal, 
+                 const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
                  const DeRichPD*& dePD,
@@ -171,6 +172,8 @@ public: // virtual methods. Derived classes must implement these
    * @param[in]  vGlobal     The intersection direction
    * @param[in]  pGlobal     The intersection start point
    * @param[out] hitPosition The intersection point on the PD plane
+   * @param[out] smartID     The returned smartID with hit PD info
+   * @param[out] dePD        Pointer to the associated DePD object
    * @param[in]  mode        The ray-tracing configuration mode
    *
    * @return Intersection status

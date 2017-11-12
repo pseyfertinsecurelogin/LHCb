@@ -198,8 +198,8 @@ bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
 //  find an intersection with the HPD window
 //=========================================================================
 LHCb::RichTraceMode::RayTraceResult
-DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
-                               const Gaudi::XYZPoint& pGlobal,
+DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
+                               const Gaudi::XYZVector& vGlobal,
                                Gaudi::XYZPoint& windowPointGlobal,
                                LHCb::RichSmartID& smartID,
                                const DeRichPD*& pd,
