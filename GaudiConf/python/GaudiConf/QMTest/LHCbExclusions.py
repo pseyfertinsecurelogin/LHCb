@@ -9,17 +9,16 @@ gitCondDBFixes = (RegexpReplacer(when='Detector description database:',
 
 preprocessor = (
     normalizeExamples +
-    RegexpReplacer(when = "/afs/cern.ch/lhcb/software/DEV/nightlies",
-        orig = r'/afs/cern.ch/lhcb/software/DEV/nightlies',
+    RegexpReplacer(  # normalize full path to DBASE or PARAM
+        orig = r'/[^ ]+/(DBASE|PARAM)/',
+        repl = r'\1/') +
+    RegexpReplacer(  # hide release directories
+        when = "cern.ch",
+        orig = r'/afs/cern.ch/lhcb/software/(DEV/nightlies|releases)/|/cvmfs/lhcb.cern.ch/lib/lhcb',
         repl = r'') +
-    RegexpReplacer(when = "/cvmfs/lhcb.cern.ch/lib/lhcb",
-        orig = r'/cvmfs/lhcb.cern.ch/lib/lhcb',
-        repl = r'') +
-    RegexpReplacer(when = "/afs/cern.ch/lhcb/software/releases",
-        orig = r'/afs/cern.ch/lhcb/software/releases',
-        repl = r'') +
-    RegexpReplacer(when = "/DBASE/TCK/HltTCK/",
-        orig = r'/v[0-9]+r[0-9]+p?[0-9]*/',
+    RegexpReplacer(  # hide HltTCK version
+        when = "DBASE/TCK/HltTCK/",
+        orig = r'/v[0-9]+r[0-9]+(p[0-9]+)?/',
         repl = r'/vXrYpZ/') +
     RegexpReplacer(when = "at 0x########L",
         orig = r'0x########L',
