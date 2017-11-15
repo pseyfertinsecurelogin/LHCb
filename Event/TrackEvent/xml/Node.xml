@@ -314,7 +314,7 @@
 	      const   = 'TRUE'
         desc    = 'Return true if this Node has a valid pointer to measurement'>
         <code>
-  return (m_measurement != 0);
+  return m_measurement != nullptr;
         </code>
       </method>
 
@@ -340,16 +340,15 @@
 
     // This performs an inverse kalman filter step.
     // First calculate the gain matrix
-    const Gaudi::TrackProjectionMatrix&amp; H = projectionMatrix();
-    const Gaudi::TrackSymMatrix&amp; biasedC = state().covariance();
+    const auto&amp; H = projectionMatrix();
+    const auto&amp; biasedC = state().covariance();
     double r = residual();
     double R = errResidual2();
 
     ROOT::Math::SMatrix&lt;double,5,1&gt; K = (biasedC * Transpose(H)) / R;
 
     // Forwarddate the state vectors
-    const Gaudi::TrackVector&amp; biasedX = state().stateVector();
-    Gaudi::TrackVector unbiasedX=biasedX - K.Col(0) * r;
+    Gaudi::TrackVector unbiasedX=state().stateVector() - K.Col(0) * r;
     
     // Forwarddate the covariance matrix
     static const Gaudi::TrackSymMatrix unit = ROOT::Math::SMatrixIdentity();
