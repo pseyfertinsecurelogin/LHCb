@@ -124,9 +124,10 @@ public:
   Rich::DAQ::PDPanelIndex maxPdNumber() const override;
 
 private: 
-
+  
   using Int        = std::int32_t;
   using IDeElemV   = std::vector<IDetectorElement*>;
+  using IGeomInfoV = std::vector<const IGeometryInfo*>;
   using DRiPMTV    = std::vector<DeRichPMT*>;
   using ArraySetup = std::array<Int,4>;
   using RowCol     = std::array<Int,2>;
@@ -248,7 +249,30 @@ private:
     return rc;
   }
 
-  Int getPmtModuleNumFromRowCol( Int MRow, Int MCol ) const;
+  inline Int getPmtModuleNumFromRowCol( Int MRow, Int MCol ) const
+  { 
+    // set the closest Row Col.
+    // This means if the row col exceeds the edges set them to those at the closest edge.
+    
+    if ( MRow < 0 ) MRow = 0;
+    if ( MCol < 0 ) MCol = 0;
+    
+    Int aMNum = m_RichPmtModuleCopyNumBeginPanel[m_CurPanelNum];
+    if ( Rich::Rich1 == rich() )
+    {
+      if ( MRow >= m_RichPmtNumModulesInRowCol[1] ) MRow = m_RichPmtNumModulesInRowCol[1]-1;
+      if ( MCol >= m_RichPmtNumModulesInRowCol[0] ) MCol = m_RichPmtNumModulesInRowCol[0]-1;
+      aMNum += MCol + ( MRow*m_RichPmtNumModulesInRowCol[0] );
+    }
+    else //if ( rich() == Rich::Rich2 || rich() == Rich::Rich )
+    {
+      if ( MRow >= m_RichPmtNumModulesInRowCol[3] ) MRow = m_RichPmtNumModulesInRowCol[3]-1;
+      if ( MCol >= m_RichPmtNumModulesInRowCol[2] ) MCol = m_RichPmtNumModulesInRowCol[2]-1;
+      aMNum += MRow + ( MCol*m_RichPmtNumModulesInRowCol[3] );
+    }
+    
+    return aMNum;
+  }
 
   inline ArraySetup findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
   {
@@ -267,7 +291,19 @@ private:
     Int  aModuleNumInPanel = -1;
     bool aModuleWithLens   =  false;
   };
-  void getModuleNums( const double x, const double y, ModuleNumbers& nums ) const;
+
+  void getModuleNums( const double x, const double y, ModuleNumbers& nums ) const
+  {
+    (this->*m_getModuleNums)( x, y, nums );
+  }
+
+  void getModuleNumsR1Up( const double x, const double y, ModuleNumbers& nums ) const;
+  void getModuleNumsR1Dn( const double x, const double y, ModuleNumbers& nums ) const;
+  void getModuleNumsR2Le( const double x, const double y, ModuleNumbers& nums ) const;
+  void getModuleNumsR2Ri( const double x, const double y, ModuleNumbers& nums ) const;
+
+  void (DeRichPMTPanel::*m_getModuleNums)
+  ( const double x, const double y, ModuleNumbers& nums ) const = nullptr;
 
   template< typename TYPE >
   inline void setRichPmtSmartID( const TYPE pdCol,
@@ -466,16 +502,16 @@ private:
   LHCb::RichSmartID m_panelID;
 
   /// Index for this panel
-  std::int8_t m_CurPanelNum{-1};
+  Int m_CurPanelNum{-1};
 
-  /// Container for the PMT Modules as Det Elements
-  IDeElemV m_DePMTModules{1,nullptr};
+  /// Container for the PMT Module geometry() pointers
+  IGeomInfoV m_DePMTModules{1,nullptr};
 
   ///< Container for the PMTs, sorted by panel
   std::vector<DRiPMTV> m_DePMTs{1,DRiPMTV(2,nullptr)};
 
-  /// Container for the PMTAnodes as Det Elements
-  std::vector<IDeElemV> m_DePMTAnodes{1,IDeElemV(2,nullptr)};
+  /// Container for the PMTAnodes geometry() pointers
+  std::vector<IGeomInfoV> m_DePMTAnodes{1,IGeomInfoV(2,nullptr)};
 
   /// Total number of PMT
   unsigned int m_totNumPMTs{0};
@@ -510,7 +546,7 @@ private:
   double m_RichPmtQuartzThickness{0};
   double m_RichPmtQuartzLocalZInPmt{0};
 
-  Int m_Rich1PmtLensPresence{0};
+  bool m_Rich1PmtLensPresence{false};
   std::vector<int>  m_Rich1PmtLensModuleCol;
   std::vector<bool> m_RichPmtModuleLensFlag;
   Int m_totNumPmtModuleInRich1{0};
