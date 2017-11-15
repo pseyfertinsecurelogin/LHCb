@@ -9,6 +9,7 @@
       name        = 'Track'
       author      = 'Jose Hernando, Eduardo Rodrigues'
       desc        = 'Track is the base class for offline and online tracks.'
+      final       = 'TRUE'
       id          = '10010'
       location    = 'Rec/Track/Best'
       keyedContTypeDef = "TRUE"
