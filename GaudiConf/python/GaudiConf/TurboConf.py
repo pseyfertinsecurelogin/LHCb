@@ -151,6 +151,7 @@ class TurboConf(LHCbConfigurableUser):
         trigger raw bank is in DAQ/RawEvent. In DaVinci, the trigger raw bank
         is expected to be in Trigger/RawEvent, so create a symlink.
         """
+        from Configurables import Gaudi__DataLink as DataLink 
         link_daq = DataLink('LinkDAQRawEvent',
                             What='/Event/DAQ/RawEvent',
                             Target='/Event/Trigger/RawEvent')
