@@ -83,6 +83,24 @@ public:
                  const DeRichPD*& pd,
                  const LHCb::RichTraceMode mode ) const override final;
 
+  // Returns the SIMD intersection point with an HPD window given a vector and a point.
+  SIMDRayTResult::Results
+  PDWindowPointSIMD( const Rich::SIMD::Point<FP> & pGlobal,
+                     const Rich::SIMD::Vector<FP> & vGlobal,
+                     Rich::SIMD::Point<FP> & hitPosition,
+                     SIMDRayTResult::SmartIDs& smartID,
+                     SIMDRayTResult::PDs& PDs,
+                     const LHCb::RichTraceMode mode ) const override final;
+
+  // Returns the SIMD intersection point with the detector plane given a vector and a point.
+  SIMDRayTResult::Results
+  detPlanePointSIMD( const Rich::SIMD::Point<FP> & pGlobal,
+                     const Rich::SIMD::Vector<FP> & vGlobal,
+                     Rich::SIMD::Point<FP> & hitPosition,
+                     SIMDRayTResult::SmartIDs& smartID,
+                     SIMDRayTResult::PDs& PDs,
+                     const LHCb::RichTraceMode mode ) const override final;
+
   // Adds to the given vector all the available readout channels in this HPD panel
   bool readoutChannelList( LHCb::RichSmartID::Vector& readoutChannels ) const override final;
 
@@ -107,12 +125,14 @@ public:
 
 private: 
 
-  using Int        = std::int16_t;
+  using Int        = std::int32_t;
   using IDeElemV   = std::vector<IDetectorElement*>;
   using DRiPMTV    = std::vector<DeRichPMT*>;
   using ArraySetup = std::array<Int,4>;
   using RowCol     = std::array<Int,2>;
   using XYArray    = std::array<double,2>;
+  
+  using XYArraySIMD = std::array<SIMDFP,2>;
 
 private: // setup methods
 
@@ -230,7 +250,24 @@ private:
 
   Int getPmtModuleNumFromRowCol( Int MRow, Int MCol ) const;
 
-  ArraySetup findPMTArraySetup(const Gaudi::XYZPoint& inPanel) const;
+  inline ArraySetup findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
+  {
+    const auto inPanel = geometry()->toLocalMatrix() * aGlobalPoint;
+    return findPMTArraySetup( aGlobalPoint, inPanel );
+  } 
+
+  ArraySetup findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint,
+                                const Gaudi::XYZPoint& aLocalPoint ) const;
+
+  struct ModuleNumbers
+  {
+    Int  aModuleCol        = -1;
+    Int  aModuleRow        = -1;
+    Int  aModuleNum        = -1;
+    Int  aModuleNumInPanel = -1;
+    bool aModuleWithLens   =  false;
+  };
+  void getModuleNums( const double x, const double y, ModuleNumbers& nums ) const;
 
   template< typename TYPE >
   inline void setRichPmtSmartID( const TYPE pdCol,
@@ -294,16 +331,62 @@ private:
              fabs(aPointInPmt.y()) < aPmtH );
   }
   
-  bool isInPmtPanel( const Gaudi::XYZPoint& aPointInPanel ) const noexcept
+  inline bool isInPmtPanel( const Gaudi::XYZPoint& aPointInPanel ) const noexcept
   {
     return ( fabs(aPointInPanel.x()) < m_xyHalfSize[0] &&
              fabs(aPointInPanel.y()) < m_xyHalfSize[1] );
   }
+
+  inline decltype(auto) isInPmtPanel( const Rich::SIMD::Point<FP>& aPointInPanel ) const noexcept
+  {
+    return ( abs(aPointInPanel.x()) < m_xyHalfSizeSIMD[0] &&
+             abs(aPointInPanel.y()) < m_xyHalfSizeSIMD[1] ); 
+  }
   
-  /// Gets the intercestion with the panel
-  bool getPanelInterSection ( const Gaudi::XYZPoint& pGlobal,
-                              const Gaudi::XYZVector& vGlobal ,
-                              Gaudi::XYZPoint& panelIntersection ) const;
+  /// Gets the intercestion with the panel (scalar)
+  inline bool getPanelInterSection ( const Gaudi::XYZPoint& pGlobal,
+                                     const Gaudi::XYZVector& vGlobal ,
+                                     Gaudi::XYZPoint& panelIntersection ) const
+  {
+    // transform to the panel
+    const auto vInPanel = geometry()->toLocalMatrix() * vGlobal;
+    // find the intersection with the detection plane
+    const auto scalar = vInPanel.Dot(m_localPlaneNormal);
+    // check norm
+    const auto sc = fabs(scalar) > 1e-5;
+    if ( sc )
+    {
+      // transform point to the PMTPanel coordsystem.
+      const auto pInPanel = geometry()->toLocalMatrix() * pGlobal;
+      // get panel intersection point
+      const auto distance = -m_localPlane.Distance(pInPanel) / scalar;
+      panelIntersection = pInPanel + ( distance * vInPanel );
+    }
+    // return
+    return sc;
+  }
+
+  /// Gets the intercestion with the panel (SIMD)
+  inline decltype(auto) getPanelInterSection ( const Rich::SIMD::Point<FP>& pGlobal,
+                                               const Rich::SIMD::Vector<FP>& vGlobal ,
+                                               Rich::SIMD::Point<FP>& panelIntersection ) const
+  {
+    // transform to the panel
+    const auto vInPanel = m_toLocalMatrixSIMD * vGlobal;
+    // find the intersection with the detection plane
+    auto scalar = vInPanel.Dot(m_localPlaneNormalSIMD);
+    // check norm
+    const auto sc = abs(scalar) > SIMDFP(1e-5);
+    // Protect against /0
+    scalar(!sc) = SIMDFP::One();
+    // transform point to the PMTPanel coordsystem.
+    const auto pInPanel = m_toLocalMatrixSIMD * pGlobal;
+    // get panel intersection point
+    const auto distance = -m_localPlaneSIMD.Distance(pInPanel) / scalar;
+    panelIntersection = pInPanel + ( distance * vInPanel );
+    // return
+    return sc;
+  }
 
   inline Int getLensPmtNumFromRowCol( Int PRow, Int PCol ) const noexcept
   {
@@ -357,6 +440,25 @@ private:
     std::copy( v.begin(), v.end(), a.begin() );
     return a;
   }
+
+private:
+
+  // SIMD caches of quantities
+
+  /// SIMD To global transform
+  Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP> m_toGlobalMatrixSIMD;
+  
+  /// SIMD 'toLocal' transformation
+  Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP> m_toLocalMatrixSIMD;
+
+  /// SIMD local plane normal
+  Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP> m_localPlaneNormalSIMD;
+
+  /// SIMD local plane
+  Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP> m_localPlaneSIMD;
+
+  /// (X,Y) panel half sizes for this panel
+  XYArraySIMD m_xyHalfSizeSIMD = {{}};
 
 private:
 
@@ -441,8 +543,8 @@ private:
   double m_GrandPmtAnodeXSize{0};
   double m_GrandPmtAnodeYSize{0};
   double m_GrandPmtPixelGap{0};
-  Int  m_GrandPmtPixelsInRow{0};
-  Int  m_GrandPmtPixelsInCol{0};
+  Int    m_GrandPmtPixelsInRow{0};
+  Int    m_GrandPmtPixelsInCol{0};
   double m_GrandPmtAnodeXEdge{0};
   double m_GrandPmtAnodeYEdge{0};
   double m_GrandAnodeXPixelSize{0};

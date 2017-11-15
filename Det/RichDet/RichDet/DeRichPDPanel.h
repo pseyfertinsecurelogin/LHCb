@@ -25,6 +25,7 @@
 
 // RichUtils
 #include "RichUtils/RichDAQDefinitions.h"
+#include "RichUtils/RichSIMDRayTracing.h"
 
 //=============================================================================
 /** @class DeRichPDPanel DeRichPDPanel.h RichDet/DeRichPDPanel.h
@@ -140,7 +141,7 @@ public: // virtual methods. Derived classes must implement these
   virtual const DeRichPD* dePD( const Rich::DAQ::PDPanelIndex PDNumber ) const = 0;
 
   /** @brief Returns the intersection point with an HPD window given a vector
-   *  and a point.
+   *  and a point (scalar)
    *
    *  With the "circle" option a quick check is performed
    *  to test if there would be an intersection with a flat circle instead
@@ -164,7 +165,7 @@ public: // virtual methods. Derived classes must implement these
                  const LHCb::RichTraceMode mode ) const = 0;
 
   /** @brief Returns the intersection point with the detector plane given a vector
-   *         and a point.
+   *         and a point (Scalar).
    *
    * If mode is tight, returns true only if point is within
    * the detector coverage.
@@ -186,6 +187,60 @@ public: // virtual methods. Derived classes must implement these
                  const DeRichPD*& dePD,
                  const LHCb::RichTraceMode mode ) const = 0;
 
+  /// type for SIMD ray tracing result
+  using SIMDRayTResult = Rich::RayTracingUtils::SIMDResult;
+  /// scalar FP type for SIMD objects
+  using FP             = Rich::SIMD::DefaultScalarFP;
+  /// SIMD float type
+  using SIMDFP         = Rich::SIMD::FP<FP>; 
+
+  /** @brief Returns the intersection point with an HPD window given a vector
+   *  and a point (SIMD)
+   *
+   *  With the "circle" option a quick check is performed
+   *  to test if there would be an intersection with a flat circle instead
+   *  of the PD window.
+   *
+   *  @param[in]  pGlobal           The intersection start point
+   *  @param[in]  vGlobal           The intersection direction
+   *  @param[out] windowPointGlobal The return point on the PD window
+   *  @param[out] smartID           The returned smartID with hit PD info
+   *  @param[out] dePD              Pointer to the associated DePD object
+   *  @param[in]  mode              The ray-tracing configuration mode
+   *
+   *  @return Status of intersection
+   */
+  virtual SIMDRayTResult::Results
+  PDWindowPointSIMD( const Rich::SIMD::Point<FP> & pGlobal,
+                     const Rich::SIMD::Vector<FP> & vGlobal,
+                     Rich::SIMD::Point<FP> & hitPosition,
+                     SIMDRayTResult::SmartIDs& smartID,
+                     SIMDRayTResult::PDs& PDs,
+                     const LHCb::RichTraceMode mode ) const = 0;
+
+  /** @brief Returns the intersection point with the detector plane given a vector
+   *         and a point (SIMD).
+   *
+   * If mode is tight, returns true only if point is within
+   * the detector coverage.
+   *
+   * @param[in]  vGlobal     The intersection direction
+   * @param[in]  pGlobal     The intersection start point
+   * @param[out] hitPosition The intersection point on the PD plane
+   * @param[out] smartID     The returned smartID with hit PD info
+   * @param[out] dePD        Pointer to the associated DePD object
+   * @param[in]  mode        The ray-tracing configuration mode
+   *
+   * @return Intersection status
+   */
+  virtual SIMDRayTResult::Results
+  detPlanePointSIMD( const Rich::SIMD::Point<FP> & pGlobal,
+                     const Rich::SIMD::Vector<FP> & vGlobal,
+                     Rich::SIMD::Point<FP> & hitPosition,
+                     SIMDRayTResult::SmartIDs& smartID,
+                     SIMDRayTResult::PDs& PDs,
+                     const LHCb::RichTraceMode mode ) const = 0;
+  
   /** @brief Converts a Gaudi::XYZPoint in global coordinates to a RichSmartID.
    *
    *  The point is assumed to be on the actual detection volume (silicon pixel sensor).
