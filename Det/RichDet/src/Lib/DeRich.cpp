@@ -307,7 +307,7 @@ void DeRich::fillSIMDTypes()
   for ( const Rich::Side side : { Rich::firstSide, Rich::secondSide } )
   {
     const auto & p = m_nominalPlanes[side];
-    m_nominalPlanesSIMD[side]  = Rich::SIMD::Plane<float>( p.A(), p.B(), p.C(), p.D() );
+    m_nominalPlanesSIMD[side]  = Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP>( p.A(), p.B(), p.C(), p.D() );
     m_nominalNormalsSIMD[side] = m_nominalNormals[side];
     m_nominalCentresOfCurvatureSIMD[side] = m_nominalCentresOfCurvature[side];
     m_sphMirrorRadiusSIMD      = m_sphMirrorRadius;
@@ -315,7 +315,7 @@ void DeRich::fillSIMDTypes()
 }
 
 //=============================================================================
-// Ray trace a given direction with the correct PD panel (scalar)
+// Ray trace a given direction with the given PD panel (scalar)
 //=============================================================================
 
 LHCb::RichTraceMode::RayTraceResult
@@ -335,4 +335,89 @@ DeRich::rayTrace( const Rich::Side side,
            // just the plane
            pdPanel(side) -> detPlanePoint( pGlobal, vGlobal,
                                            hitPosition, smartID, dePD, mode ) );
+}
+
+//=============================================================================
+// Ray trace a given direction with the given PD panel (SIMD)
+//=============================================================================
+
+DeRich::SIMDRayTResult::Results
+DeRich::rayTrace( const Rich::Side side,
+                  const Rich::SIMD::Point<FP> & pGlobal,
+                  const Rich::SIMD::Vector<FP> & vGlobal,
+                  Rich::SIMD::Point<FP> & hitPosition,
+                  SIMDRayTResult::SmartIDs& smartID,
+                  SIMDRayTResult::PDs& PDs,
+                  const LHCb::RichTraceMode mode ) const
+{
+  // are we configured to test individual PD acceptance or just interset the plane ?
+  return ( mode.detPlaneBound() == LHCb::RichTraceMode::RespectPDTubes ?
+           // Full PD acceptance
+           pdPanel(side) -> PDWindowPointSIMD( pGlobal, vGlobal,
+                                               hitPosition, smartID, PDs, mode ) :
+           // just the plane
+           pdPanel(side) -> detPlanePointSIMD( pGlobal, vGlobal,
+                                               hitPosition, smartID, PDs, mode ) );
+}
+
+//=============================================================================
+ // Ray trace a given direction with the correct PD panel (SIMD)
+//=============================================================================
+DeRich::SIMDRayTResult::Results
+DeRich::rayTrace( const Rich::SIMD::Sides & sides,
+                  const Rich::SIMD::Point<FP> & pGlobal,
+                  const Rich::SIMD::Vector<FP> & vGlobal,
+                  Rich::SIMD::Point<FP> & hitPosition,
+                  SIMDRayTResult::SmartIDs& smartID,
+                  SIMDRayTResult::PDs& PDs,
+                  const LHCb::RichTraceMode mode ) const
+{
+  // Side masks
+  const auto m1 = ( sides == Rich::SIMD::Sides(Rich::firstSide)  );
+  const auto m2 = ( sides == Rich::SIMD::Sides(Rich::secondSide) );
+
+  // If all sides are the same, shortcut to a single call
+  // hopefully the most common situation ...
+  if      ( all_of(m1) ) { return rayTrace( Rich::firstSide, pGlobal, vGlobal, 
+                                            hitPosition, smartID, PDs, mode ); }
+  else if ( all_of(m2) ) { return rayTrace( Rich::secondSide, pGlobal, vGlobal, 
+                                            hitPosition, smartID, PDs, mode ); }
+ 
+  // we have a mixture... So must run both and merge..
+  // Is there a better way to handle this ... ?
+  
+  // copy input objects for second call
+  auto hitPosition2 = hitPosition;
+  auto smartID2     = smartID;
+  auto PDs2         = PDs;
+  
+  // call for the first side
+  auto res1 = rayTrace( Rich::firstSide, pGlobal, vGlobal, 
+                        hitPosition, smartID, PDs, mode );
+  // call for the second side
+  auto res2 = rayTrace( Rich::secondSide, pGlobal, vGlobal, 
+                        hitPosition2, smartID2, PDs2, mode );
+  
+  // merge results2 into the returned results
+
+  const auto fm2 = Vc::simd_cast<SIMDFP::MaskType>(m2);
+  SIMDFP hx(hitPosition.x()), hy(hitPosition.y()), hz(hitPosition.z());
+  hx(fm2) = hitPosition2.x();
+  hy(fm2) = hitPosition2.y();
+  hz(fm2) = hitPosition2.z();
+  hitPosition = { hx, hy, hz };
+
+  // scalar loop for non-Vc types
+  for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
+  {
+    if ( m2[i] )
+    {
+      res1[i]    = res2[i];
+      smartID[i] = smartID2[i];
+      PDs[i]     = PDs2[i];
+    }
+  }
+
+  // return
+  return res1;
 }

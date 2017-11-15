@@ -35,5 +35,4 @@ gaudi_add_dictionary(RichDet
 #        To be removed once Vc is updated.
 
 target_link_libraries( RichDetLib  "${Vc_LIB_DIR}/libVc.a" )
-#target_link_libraries( RichDet     "${Vc_LIB_DIR}/libVc.a" )
-#target_link_libraries( RichDetDict "${Vc_LIB_DIR}/libVc.a" )
+

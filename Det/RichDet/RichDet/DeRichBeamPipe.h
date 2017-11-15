@@ -286,16 +286,16 @@ private:
 private: // data
 
   /// SIMD Global position on the z axis for the start of the beampipe
-  Rich::SIMD::Point<float> m_startPGloSIMD;
+  Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP> m_startPGloSIMD;
 
   /// SIMD Global position on the z axis for the end of the beampipe
-  Rich::SIMD::Point<float> m_endPGloSIMD;
+  Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP> m_endPGloSIMD;
 
   /// SIMD parameters for y = mx +c scaling of cone axis (x,y) and R^2 as a function of z
-  std::array<Rich::SIMD::FP<float>,3> m_mSIMD, m_cSIMD;
+  std::array<Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP>,3> m_mSIMD, m_cSIMD;
 
-  /// SIMD to local transformation
-  Rich::SIMD::Transform3D<float> m_toLocalMatrixSIMD;
+  /// SIMD 'toLocal' transformation
+  Rich::SIMD::Transform3D<Rich::SIMD::DefaultScalarFP> m_toLocalMatrixSIMD;
 
 private: // data
 

@@ -13,9 +13,6 @@
 #include <array>
 #include <memory>
 
-// DetDesc
-#include "RichDet/Rich1DTabProperty.h"
-
 // Mathcore
 #include "GaudiKernel/Point3DTypes.h"
 #include "GaudiKernel/Vector3DTypes.h"
@@ -28,10 +25,14 @@
 #include "Kernel/RichSmartID.h"
 
 // Local
+#include "RichDet/Rich1DTabProperty.h"
 #include "RichDet/DeRichBase.h"
 #include "RichDet/RichMirrorSegPosition.h"
 #include "RichDet/DeRichLocations.h"
 #include "RichDet/RichDetConfigType.h"
+
+// Utils
+#include "RichUtils/RichSIMDRayTracing.h"
 
 class DeRichPDPanel;
 class DeRichPD;
@@ -104,6 +105,7 @@ public:
   nominalCentreOfCurvature( const Rich::SIMD::Sides& sides ) const noexcept
   {
     using namespace Rich::SIMD;
+    using MaskType = Point<DefaultScalarFP>::Scalar::MaskType;
     // Start by making CoCs for each side
     const auto & CoC1( nominalCentreOfCurvatureSIMD(Rich::firstSide)  );
     const auto & CoC2( nominalCentreOfCurvatureSIMD(Rich::secondSide) );
@@ -112,7 +114,7 @@ public:
     auto Y = CoC1.Y();
     auto Z = CoC1.Z();
     // mask for side 2
-    const auto m = Vc::simd_cast<Point<DefaultScalarFP>::Scalar::MaskType>(sides == Sides(Rich::secondSide));
+    const auto m = Vc::simd_cast<MaskType>(sides == Sides(Rich::secondSide));
     // update values for side 2
     X(m) = CoC2.X();
     Y(m) = CoC2.Y();
@@ -179,6 +181,7 @@ public:
   nominalPlane( const Rich::SIMD::Sides& sides ) const noexcept
   {
     using namespace Rich::SIMD;
+    using MaskType = Point<DefaultScalarFP>::Scalar::MaskType;
     // start with the SIMD planes for each side
     const auto & P1( nominalPlaneSIMD(Rich::firstSide)  );
     const auto & P2( nominalPlaneSIMD(Rich::secondSide) );
@@ -188,7 +191,7 @@ public:
     auto C = P1.C();
     auto D = P1.D();
     // mask for side 2
-    const auto m = Vc::simd_cast<Point<DefaultScalarFP>::Scalar::MaskType>(sides == Sides(Rich::secondSide));
+    const auto m = Vc::simd_cast<MaskType>(sides == Sides(Rich::secondSide));
     // update values for side 2
     A(m) = P2.A();
     B(m) = P2.B();
@@ -393,7 +396,7 @@ public:
     return m_PDPanels[panel];
   }
   
-  /// Ray trace a given direction with the correct PD panel (scalar)
+  /// Ray trace a given direction with the given PD panel (scalar)
   LHCb::RichTraceMode::RayTraceResult 
   rayTrace( const Rich::Side side,
             const Gaudi::XYZPoint& pGlobal,
@@ -401,6 +404,33 @@ public:
             Gaudi::XYZPoint& hitPosition,
             LHCb::RichSmartID& smartID,
             const DeRichPD*& dePD,
+            const LHCb::RichTraceMode mode ) const;
+
+  /// type for SIMD ray tracing result
+  using SIMDRayTResult = Rich::RayTracingUtils::SIMDResult;
+  /// scalar FP type for SIMD objects
+  using FP             = Rich::SIMD::DefaultScalarFP;
+  /// SIMD float type
+  using SIMDFP         = Rich::SIMD::FP<FP>; 
+
+  /// Ray trace a given direction with the given PD panel (SIMD)
+  SIMDRayTResult::Results
+  rayTrace( const Rich::Side side,
+            const Rich::SIMD::Point<FP> & pGlobal,
+            const Rich::SIMD::Vector<FP> & vGlobal,
+            Rich::SIMD::Point<FP> & hitPosition,
+            SIMDRayTResult::SmartIDs& smartID,
+            SIMDRayTResult::PDs& PDs,
+            const LHCb::RichTraceMode mode ) const;
+
+  /// Ray trace a given direction with the correct PD panel (SIMD)
+  SIMDRayTResult::Results
+  rayTrace( const Rich::SIMD::Sides & sides,
+            const Rich::SIMD::Point<FP> & pGlobal,
+            const Rich::SIMD::Vector<FP> & vGlobal,
+            Rich::SIMD::Point<FP> & hitPosition,
+            SIMDRayTResult::SmartIDs& smartID,
+            SIMDRayTResult::PDs& PDs,
             const LHCb::RichTraceMode mode ) const;
   
 protected:
