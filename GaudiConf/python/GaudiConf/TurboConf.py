@@ -144,6 +144,18 @@ class TurboConf(LHCbConfigurableUser):
         DataOnDemandSvc().AlgMap[link_pPhys.Target] = link_pPhys
         DataOnDemandSvc().AlgMap[link_pRec.Target] = link_pRec
 
+    def _register_raw_event_links(self):
+        """Link /Event/DAQ/RawEvent to /Event/Trigger/RawEvent.
+
+        For 2015 and 2016 Tesla output, the raw event is not split, and so the
+        trigger raw bank is in DAQ/RawEvent. In DaVinci, the trigger raw bank
+        is expected to be in Trigger/RawEvent, so create a symlink.
+        """
+        link_daq = DataLink('LinkDAQRawEvent',
+                            What='/Event/DAQ/RawEvent',
+                            Target='/Event/Trigger/RawEvent')
+        DataOnDemandSvc().AlgMap[link_daq.Target] = link_daq
+
     def _persistrecopacking(self, datatype, rootintes):
         """Return configured PersistRecoPacking object.
 
@@ -258,6 +270,7 @@ class TurboConf(LHCbConfigurableUser):
         # CALO objects are treated specially in 2015 and 2016
         if datatype <= 2017:
             self._register_unpackers()
+            self._register_raw_event_links()
         if unpack or persistreco:
             self._register_pr_unpackers(packing)
             self._register_pr_links(packing, rootintes)
