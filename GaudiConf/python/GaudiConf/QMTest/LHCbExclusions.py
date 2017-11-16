@@ -16,8 +16,8 @@ preprocessor = (
         when = "cern.ch",
         orig = r'/afs/cern.ch/lhcb/software/(DEV/nightlies|releases)/|/cvmfs/lhcb.cern.ch/lib/lhcb',
         repl = r'') +
-    RegexpReplacer(  # hide HltTCK version
-        when = "DBASE/TCK/HltTCK/",
+    RegexpReplacer(  # hide HltTCK and ParamFiles versions
+        when = 'DBASE/TCK/HltTCK/|PARAM/ParamFiles/',
         orig = r'/v[0-9]+r[0-9]+(p[0-9]+)?/',
         repl = r'/vXrYpZ/') +
     RegexpReplacer(when = "at 0x########L",
@@ -30,7 +30,6 @@ preprocessor = (
         orig = r'"[^"]*/([0-9A-Z_]{1,8})"',
         repl = r'"\1"') +
     LineSkipper(["EventSelector        INFO Stream:EventSelector.DataStreamTool",
-                 "/PARAM/ParamFiles/",
                  "INFO Using TAG", "TimingAuditor.T", "RootDBase.open",
                  "INFO Opened magnetic field file",
                  "INFO Connecting to database",
