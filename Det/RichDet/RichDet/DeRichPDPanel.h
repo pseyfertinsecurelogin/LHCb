@@ -193,6 +193,8 @@ public: // virtual methods. Derived classes must implement these
   using FP             = Rich::SIMD::DefaultScalarFP;
   /// SIMD float type
   using SIMDFP         = Rich::SIMD::FP<FP>; 
+  /// SIMD Int32 type
+  using SIMDINT32      = Rich::SIMD::Int32;
 
   /** @brief Returns the intersection point with an HPD window given a vector
    *  and a point (SIMD)

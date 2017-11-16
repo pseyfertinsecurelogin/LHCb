@@ -133,7 +133,8 @@ private:
   using RowCol     = std::array<Int,2>;
   using XYArray    = std::array<double,2>;
   
-  using XYArraySIMD = std::array<SIMDFP,2>;
+  using XYArraySIMD    = std::array<SIMDFP,2>;
+  using ArraySetupSIMD = std::array<SIMDINT32,4>;
 
 private: // setup methods
 
@@ -152,6 +153,9 @@ private: // setup methods
 
 private:
 
+  /// Get the first RICH pointer
+  const DetectorElement * getFirstDeRich() const;
+
   /// Returns the PD number for the given RichSmartID
   inline Rich::DAQ::PDPanelIndex _pdNumber( const LHCb::RichSmartID smartID ) const noexcept
   {
@@ -162,7 +166,7 @@ private:
     }
     // Should never get different rich or panel, so skip check
     //return Rich::DAQ::PDPanelIndex( smartID.rich() == rich() && smartID.panel() == side() ?
-    //                                ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() :
+    //                                ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() : 
     //                                nPDs() + 1 );
     return Rich::DAQ::PDPanelIndex( ( smartID.pdCol() * m_NumPmtInRichModule ) + smartID.pdNumInCol() );
   }
@@ -186,6 +190,8 @@ private:
     //return dePMT( _pdNumber( pdID ) );
   }
 
+private:
+
   inline RowCol getPmtRowColFromPmtNum( const Int aPmtNum ) const noexcept
   {
     const Int aPRow = (aPmtNum/m_NumPmtInRowCol[0]);
@@ -205,19 +211,6 @@ private:
 
   inline Int PmtModuleNumInPanelFromModuleNumAlone( const Int aMnum ) const noexcept
   {
-    //info() << "PmtModuleNumInPanelFromModuleNumAlone Begin " << m_RichPmtModuleCopyNumBeginPanel << endmsg;
-    //info() << "PmtModuleNumInPanelFromModuleNumAlone End   " << m_RichPmtModuleCopyNumEndPanel   << endmsg;
-    // const auto i = ( aMnum >= m_RichPmtModuleCopyNumBeginPanel[0] &&
-    //                  aMnum <= m_RichPmtModuleCopyNumEndPanel[0]   ? 0 :
-    //                  aMnum >= m_RichPmtModuleCopyNumBeginPanel[1] &&
-    //                  aMnum <= m_RichPmtModuleCopyNumEndPanel[1]   ? 1 :
-    //                  aMnum >= m_RichPmtModuleCopyNumBeginPanel[2] &&
-    //                  aMnum <= m_RichPmtModuleCopyNumEndPanel[2]   ? 2 :
-    //                  aMnum >= m_RichPmtModuleCopyNumBeginPanel[3] &&
-    //                  aMnum <= m_RichPmtModuleCopyNumEndPanel[3]   ? 3 :
-    //          -1 );
-    //info() << "PmtModuleNumInPanelFromModuleNumAlone " << aMnum << " i = " << i << endmsg;
-
     return ( aMnum >= m_RichPmtModuleCopyNumBeginPanel[0] &&
              aMnum <= m_RichPmtModuleCopyNumEndPanel[0]   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[0] :
              aMnum >= m_RichPmtModuleCopyNumBeginPanel[1] &&
@@ -227,6 +220,20 @@ private:
              aMnum >= m_RichPmtModuleCopyNumBeginPanel[3] &&
              aMnum <= m_RichPmtModuleCopyNumEndPanel[3]   ? aMnum - m_RichPmtModuleCopyNumBeginPanel[3] :
              -1 );
+  }
+
+  inline SIMDINT32 PmtModuleNumInPanelFromModuleNumAlone( const SIMDINT32& aMnum ) const noexcept
+  {
+    SIMDINT32 res = -SIMDINT32::One();
+    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[0] &&
+         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[0] ) = aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[0];
+    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[1] &&
+         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[1] ) = aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[1];
+    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[2] &&
+         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[2] ) = aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[2];
+    res( aMnum >= m_RichPmtModuleCopyNumBeginPanelSIMD[3] &&
+         aMnum <= m_RichPmtModuleCopyNumEndPanelSIMD[3] ) = aMnum - m_RichPmtModuleCopyNumBeginPanelSIMD[3];
+    return res;
   }
 
   inline RowCol PmtModuleRowColFromModuleNumInPanel( const Int aMnum ) const noexcept
@@ -247,6 +254,32 @@ private:
     }
     
     return rc;
+  }
+
+  inline SIMDINT32 getPmtModuleNumFromRowCol( SIMDINT32 MRow, SIMDINT32 MCol ) const
+  { 
+    // set the closest Row Col.
+    // This means if the row col exceeds the edges set them to those at the closest edge.
+    
+    MRow.setZero(  MRow < SIMDINT32::Zero() );
+    MCol.setZero(  MCol < SIMDINT32::Zero() );
+    
+    SIMDINT32 aMNum = m_RichPmtModuleCopyNumBeginPanelSIMD[m_CurPanelNum];
+
+    if ( Rich::Rich1 == rich() )
+    {
+      MRow( MRow >= m_RichPmtNumModulesInRowColSIMD[1] ) = m_RichPmtNumModulesInRowColSIMD[1] - SIMDINT32::One();
+      MCol( MCol >= m_RichPmtNumModulesInRowColSIMD[0] ) = m_RichPmtNumModulesInRowColSIMD[0] - SIMDINT32::One();
+      aMNum += MCol + ( MRow*m_RichPmtNumModulesInRowColSIMD[0] );
+    }
+    else //if ( rich() == Rich::Rich2 || rich() == Rich::Rich )
+    {
+      MRow( MRow >= m_RichPmtNumModulesInRowColSIMD[3] ) = m_RichPmtNumModulesInRowColSIMD[3] - SIMDINT32::One();
+      MCol( MCol >= m_RichPmtNumModulesInRowColSIMD[2] ) = m_RichPmtNumModulesInRowColSIMD[2] - SIMDINT32::One();
+      aMNum += MRow + ( MCol*m_RichPmtNumModulesInRowColSIMD[3] );
+    }
+    
+    return aMNum;
   }
 
   inline Int getPmtModuleNumFromRowCol( Int MRow, Int MCol ) const
@@ -274,6 +307,31 @@ private:
     return aMNum;
   }
 
+  inline Int getLensPmtNumFromRowCol( Int PRow, Int PCol ) const noexcept
+  {
+    // for values outside the range, set the closest value to the
+    // corresponding edges.
+    if      ( PRow < 0                                  ) { PRow = 0; }
+    else if ( PRow >= m_RichNumLensPmtinModuleRowCol[1] ) { PRow = m_RichNumLensPmtinModuleRowCol[1] - 1; }
+    if      ( PCol < 0                                  ) { PCol = 0; }
+    else if ( PCol >= m_RichNumLensPmtinModuleRowCol[0] ) { PCol = m_RichNumLensPmtinModuleRowCol[0] - 1; }
+    return ( PCol + ( PRow*m_RichNumLensPmtinModuleRowCol[0] ) );
+  }
+
+  inline SIMDINT32 getLensPmtNumFromRowCol( SIMDINT32 PRow, SIMDINT32 PCol ) const noexcept
+  {
+    // for values outside the range, set the closest value to the
+    // corresponding edges.
+    PRow.setZero( PRow < SIMDINT32::Zero() );
+    PRow( PRow >= m_RichNumLensPmtinModuleRowColSIMD[1] ) = m_RichNumLensPmtinModuleRowColSIMD[1] - SIMDINT32::One();
+    PCol.setZero( PCol < SIMDINT32::Zero() );
+    PCol( PCol >= m_RichNumLensPmtinModuleRowColSIMD[0] ) = m_RichNumLensPmtinModuleRowColSIMD[0] - SIMDINT32::One();
+    return ( PCol + ( PRow*m_RichNumLensPmtinModuleRowColSIMD[0] ) );
+  }
+
+  /// setup flags for grand Modules
+  Int getModuleCopyNumber( const std::string& aModuleName );
+
   inline ArraySetup findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint ) const
   {
     const auto inPanel = geometry()->toLocalMatrix() * aGlobalPoint;
@@ -283,6 +341,180 @@ private:
   ArraySetup findPMTArraySetup( const Gaudi::XYZPoint& aGlobalPoint,
                                 const Gaudi::XYZPoint& aLocalPoint ) const;
 
+  inline ArraySetupSIMD findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint ) const
+  {
+    const auto inPanel = m_toLocalMatrixSIMD * aGlobalPoint;
+    return findPMTArraySetupSIMD( aGlobalPoint, inPanel );
+  } 
+  
+  ArraySetupSIMD findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint,
+                                        const Rich::SIMD::Point<FP>& aLocalPoint ) const;
+
+private:
+
+  // Simple struct to store module numbers
+  struct ModuleNumbersSIMD
+  {
+    SIMDINT32           aModuleCol        = -SIMDINT32::One();
+    SIMDINT32           aModuleRow        = -SIMDINT32::One();
+    SIMDINT32           aModuleNum        = -SIMDINT32::One();
+    SIMDINT32           aModuleNumInPanel = -SIMDINT32::One();
+    SIMDINT32::MaskType aModuleWithLens   { false };
+  };
+
+  /// Function pointer for the getModuleNums method to use depending on settings
+  void (DeRichPMTPanel::*m_getModuleNumsSIMD)
+  ( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const = nullptr;
+
+  inline void getModuleNumsSIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+  {
+    (this->*m_getModuleNumsSIMD)( x, y, nums );
+  }
+
+  void getModuleNums_R1Up_Lens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+  {
+    
+    //const auto m1 = Vc::simd_cast<SIMDINT32::MaskType>( x > m_Rich1PmtPanelWithLensXSizeSIMD[0] && x < m_Rich1PmtPanelWithLensXSizeSIMD[1] );
+    nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[0]) * m_PmtModulePitchInvSIMD ) ) + m_Rich1PmtPanelWithLensColSizeSIMD[2];
+    nums.aModuleRow = Vc::simd_cast<SIMDINT32>( abs( (y-m_PmtModulePlaneHalfSizeR1SIMD[1]) * m_PmtModulePitchInvSIMD ) );
+
+    const auto m1 = Vc::simd_cast<SIMDINT32::MaskType>( x < m_Rich1PmtPanelWithLensXSizeSIMD[0] );
+    if ( any_of(m1) )
+    {
+      nums.aModuleCol(m1) = Vc::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[2])*m_PmtModuleWithLensPitchInvSIMD ) );
+      nums.aModuleRow(m1) = Vc::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ) );
+    }
+
+    const auto m2 = Vc::simd_cast<SIMDINT32::MaskType>( x > m_Rich1PmtPanelWithLensXSizeSIMD[1] );
+    if ( any_of(m2) )
+    {
+      nums.aModuleCol(m2) = Vc::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[4])*m_PmtModuleWithLensPitchInvSIMD ) ) + m_Rich1PmtPanelWithLensColSizeSIMD[0] + m_Rich1PmtPanelWithLensColSizeSIMD[2];
+      nums.aModuleRow(m2) = Vc::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ) );
+    }
+    
+    nums.aModuleWithLens = m1 || m2;
+    
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[0];
+  }
+  
+  void getModuleNums_R1Up_NoLens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+  {
+    nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_PmtModulePlaneHalfSizeR1SIMD[0])*m_PmtModulePitchInvSIMD) );
+    nums.aModuleRow = Vc::simd_cast<SIMDINT32>( abs( (y-m_PmtModulePlaneHalfSizeR1SIMD[1])*m_PmtModulePitchInvSIMD) ); 
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[0];  
+  }
+  
+  void getModuleNums_R1Dn_Lens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+  {
+    
+    nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[1])*m_PmtModulePitchInvSIMD ) ) + m_Rich1PmtPanelWithLensColSizeSIMD[1];
+    nums.aModuleRow = Vc::simd_cast<SIMDINT32>( abs( (y-m_PmtModulePlaneHalfSizeR1SIMD[3])*m_PmtModulePitchInvSIMD)    );
+    
+    const auto m1 = Vc::simd_cast<SIMDINT32::MaskType>( x > m_Rich1PmtPanelWithLensXSizeSIMD[1] );
+    if ( any_of(m1) )
+    {
+      nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[5])*m_PmtModuleWithLensPitchInvSIMD ) );
+      nums.aModuleRow = Vc::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ) );
+    }
+    
+    const auto m2 = Vc::simd_cast<SIMDINT32::MaskType>( x < m_Rich1PmtPanelWithLensXSizeSIMD[0] );
+    if ( any_of(m2) )
+    {
+      nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_Rich1PmtPanelWithLensXSizeSIMD[3])*m_PmtModuleWithLensPitchInvSIMD ))
+        + m_Rich1PmtPanelWithLensColSizeSIMD[0]+ m_Rich1PmtPanelWithLensColSizeSIMD[1] ;
+      nums.aModuleRow = Vc::simd_cast<SIMDINT32>( abs( (y-m_Rich1PmtPanelWithLensYSizeSIMD[0])*m_PmtModuleWithLensPitchInvSIMD ));
+    }
+  
+    nums.aModuleWithLens = m1 || m2;
+  
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[1];
+  }
+
+  void getModuleNums_R1Dn_NoLens_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+  {
+    nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_PmtModulePlaneHalfSizeR1SIMD[2])*m_PmtModulePitchInvSIMD) );
+    nums.aModuleRow = Vc::simd_cast<SIMDINT32>( abs( (y-m_PmtModulePlaneHalfSizeR1SIMD[3])*m_PmtModulePitchInvSIMD) );
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[1];
+  }
+
+void getModuleNums_R2Le_Small_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+{
+  nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_PmtModulePlaneHalfSizeR2SIMD[0])*m_PmtModulePitchInvSIMD));
+  nums.aModuleRow = Vc::simd_cast<SIMDINT32>( abs( (y-m_PmtModulePlaneHalfSizeR2SIMD[1])*m_PmtModulePitchInvSIMD));
+  nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+  nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[2];
+}
+
+void getModuleNums_R2Ri_Small_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+{
+    nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_PmtModulePlaneHalfSizeR2SIMD[2])*m_PmtModulePitchInvSIMD ) );
+    nums.aModuleRow = Vc::simd_cast<SIMDINT32>( abs( (y-m_PmtModulePlaneHalfSizeR2SIMD[3])*m_PmtModulePitchInvSIMD ) );
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[3];
+  }
+
+  void getModuleNums_R2Le_Grand_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+  {
+    nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_GrandPmtModulePlaneHalfSizeR2SIMD[0])*m_GrandPmtModulePitchInvSIMD));
+    nums.aModuleRow = Vc::simd_cast<SIMDINT32>( abs( (y-m_GrandPmtModulePlaneHalfSizeR2SIMD[1])*m_GrandPmtModulePitchInvSIMD));
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[2];
+  }
+
+  void getModuleNums_R2Ri_Grand_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+  {
+    nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_GrandPmtModulePlaneHalfSizeR2SIMD[2])*m_GrandPmtModulePitchInvSIMD));
+    nums.aModuleRow = Vc::simd_cast<SIMDINT32>( abs( (y-m_GrandPmtModulePlaneHalfSizeR2SIMD[3])*m_GrandPmtModulePitchInvSIMD));
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[3];
+  }
+
+  void getModuleNums_R2Le_Mixed_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+  {
+    nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_MixedPmtModulePlaneHalfSizeR2SIMD[0])*m_GrandPmtModulePitchInvSIMD ));
+
+    const auto m1 = Vc::simd_cast<SIMDINT32::MaskType>( y < m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1] );
+    nums.aModuleRow(m1) = Vc::simd_cast<SIMDINT32>( abs( (y-m_MixedPmtModulePlaneHalfSizeR2SIMD[1])*m_GrandPmtModulePitchInvSIMD));
+
+    const auto m2 = Vc::simd_cast<SIMDINT32::MaskType>( y >= abs(m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1]) );
+    nums.aModuleRow(m2) = Vc::simd_cast<SIMDINT32>( abs( (y-(abs(m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1])))*m_GrandPmtModulePitchInvSIMD))
+      + m_Rich2MixedModuleArrayColumnSizeSIMD[0] + m_Rich2MixedModuleArrayColumnSizeSIMD[1];
+
+    const auto m3 = Vc::simd_cast<SIMDINT32::MaskType>( abs(y) < abs(m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1]) );
+    nums.aModuleCol(m3) = Vc::simd_cast<SIMDINT32>( abs( (x-m_MixedStdPmtModulePlaneHalfSizeR2SIMD[0])*m_PmtModulePitchInvSIMD));
+    nums.aModuleRow(m3) = Vc::simd_cast<SIMDINT32>( abs( (y-m_MixedStdPmtModulePlaneHalfSizeR2SIMD[1])*m_PmtModulePitchInvSIMD)) 
+        + m_Rich2MixedModuleArrayColumnSizeSIMD[0];
+   
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[2];
+  }
+
+  void getModuleNums_R2Ri_Mixed_SIMD( const SIMDFP& x, const SIMDFP& y, ModuleNumbersSIMD& nums ) const
+  {
+    nums.aModuleCol = Vc::simd_cast<SIMDINT32>( abs( (x-m_MixedPmtModulePlaneHalfSizeR2SIMD[2])*m_GrandPmtModulePitchInvSIMD ));
+
+    const auto m1 = Vc::simd_cast<SIMDINT32::MaskType>( y > m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
+    nums.aModuleRow(m1) = Vc::simd_cast<SIMDINT32>( abs( (y-m_MixedPmtModulePlaneHalfSizeR2SIMD[3])*m_GrandPmtModulePitchInvSIMD ));
+
+    const auto m2 = Vc::simd_cast<SIMDINT32::MaskType>( y <= -m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3] );
+    nums.aModuleRow(m2) = Vc::simd_cast<SIMDINT32>( abs( (y+m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3]) * m_GrandPmtModulePitchInvSIMD ) )
+          + m_Rich2MixedModuleArrayColumnSizeSIMD[0] + m_Rich2MixedModuleArrayColumnSizeSIMD[1];
+
+    const auto m3 = Vc::simd_cast<SIMDINT32::MaskType>( abs(y) < abs(m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3]) );
+    nums.aModuleCol(m3) = Vc::simd_cast<SIMDINT32>( abs( (x-m_MixedStdPmtModulePlaneHalfSizeR2SIMD[2])*m_PmtModulePitchInvSIMD));
+    nums.aModuleRow(m3) = Vc::simd_cast<SIMDINT32>( abs( (y-m_MixedStdPmtModulePlaneHalfSizeR2SIMD[3])*m_PmtModulePitchInvSIMD)) + m_Rich2MixedModuleArrayColumnSizeSIMD[0];
+
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanelSIMD[3];
+  }
+
+private:
+
+  // Simple struct to store module numbers
   struct ModuleNumbers
   {
     Int  aModuleCol        = -1;
@@ -292,18 +524,172 @@ private:
     bool aModuleWithLens   =  false;
   };
 
-  void getModuleNums( const double x, const double y, ModuleNumbers& nums ) const
+  /// Function pointer for the getModuleNums method to use depending on settings
+  void (DeRichPMTPanel::*m_getModuleNums)
+  ( const double x, const double y, ModuleNumbers& nums ) const = nullptr;
+
+  inline void getModuleNums( const double x, const double y, ModuleNumbers& nums ) const
   {
     (this->*m_getModuleNums)( x, y, nums );
   }
 
-  void getModuleNumsR1Up( const double x, const double y, ModuleNumbers& nums ) const;
-  void getModuleNumsR1Dn( const double x, const double y, ModuleNumbers& nums ) const;
-  void getModuleNumsR2Le( const double x, const double y, ModuleNumbers& nums ) const;
-  void getModuleNumsR2Ri( const double x, const double y, ModuleNumbers& nums ) const;
+  void getModuleNums_R1Up_Lens( const double x, const double y, ModuleNumbers& nums ) const
+  {
+    if ( x > m_Rich1PmtPanelWithLensXSize[0] &&
+         x < m_Rich1PmtPanelWithLensXSize[1] )
+    {
+      nums.aModuleCol = (Int)( fabs( (x-m_Rich1PmtPanelWithLensXSize[0])*m_PmtModulePitchInv ) ) + m_Rich1PmtPanelWithLensColSize[2];
+      nums.aModuleRow = (Int)( fabs( (y-m_PmtModulePlaneHalfSizeR1[1])  *m_PmtModulePitchInv ) );
+    }
+    else if ( x < m_Rich1PmtPanelWithLensXSize[0] )
+    {
+      nums.aModuleCol = (Int) (fabs( (x-m_Rich1PmtPanelWithLensXSize[2])*m_PmtModuleWithLensPitchInv ) );
+      nums.aModuleRow = (Int) (fabs( (y-m_Rich1PmtPanelWithLensYSize[0])*m_PmtModuleWithLensPitchInv ) );
+      nums.aModuleWithLens = true;
+    }
+    else // if ( x > m_Rich1PmtPanelWithLensXSize[1] )
+    {
+      nums.aModuleCol = (Int)( fabs( (x-m_Rich1PmtPanelWithLensXSize[4])*m_PmtModuleWithLensPitchInv ) ) + 
+        m_Rich1PmtPanelWithLensColSize[0] + m_Rich1PmtPanelWithLensColSize[2] ;
+      nums.aModuleRow = (Int)( fabs( (y-m_Rich1PmtPanelWithLensYSize[0])*m_PmtModuleWithLensPitchInv ) );
+      nums.aModuleWithLens = true;
+    }
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanel[0];
+  }
 
-  void (DeRichPMTPanel::*m_getModuleNums)
-  ( const double x, const double y, ModuleNumbers& nums ) const = nullptr;
+  void getModuleNums_R1Up_NoLens( const double x, const double y, ModuleNumbers& nums ) const
+  {
+    nums.aModuleCol = (Int)( fabs( (x-m_PmtModulePlaneHalfSizeR1[0])*m_PmtModulePitchInv) );
+    nums.aModuleRow = (Int)( fabs( (y-m_PmtModulePlaneHalfSizeR1[1])*m_PmtModulePitchInv) ); 
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanel[0];  
+  }
+
+  void getModuleNums_R1Dn_Lens( const double x, const double y, ModuleNumbers& nums ) const
+  {
+    if ( x > m_Rich1PmtPanelWithLensXSize[0] && 
+         x < m_Rich1PmtPanelWithLensXSize[1] )
+    {
+      nums.aModuleCol = (Int)( fabs( (x-m_Rich1PmtPanelWithLensXSize[1])*m_PmtModulePitchInv ) ) + m_Rich1PmtPanelWithLensColSize[1];
+      nums.aModuleRow = (Int)( fabs( (y-m_PmtModulePlaneHalfSizeR1[3])*m_PmtModulePitchInv)    );
+    }
+    else if ( x > m_Rich1PmtPanelWithLensXSize[1] )
+    {
+      nums.aModuleCol = (Int)( fabs( (x-m_Rich1PmtPanelWithLensXSize[5])*m_PmtModuleWithLensPitchInv ) );
+      nums.aModuleRow = (Int)( fabs( (y-m_Rich1PmtPanelWithLensYSize[0])*m_PmtModuleWithLensPitchInv ) );
+      nums.aModuleWithLens = true;
+    }
+    else // if ( x < m_Rich1PmtPanelWithLensXSize[0] )
+    {
+      nums.aModuleCol = (Int)( fabs( (x-m_Rich1PmtPanelWithLensXSize[3])*m_PmtModuleWithLensPitchInv ))
+        + m_Rich1PmtPanelWithLensColSize[0]+ m_Rich1PmtPanelWithLensColSize[1] ;
+      nums.aModuleRow = (Int)( fabs( (y-m_Rich1PmtPanelWithLensYSize[0])*m_PmtModuleWithLensPitchInv ));
+      nums.aModuleWithLens = true;
+    }
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanel[1];
+  }
+
+  void getModuleNums_R1Dn_NoLens( const double x, const double y, ModuleNumbers& nums ) const
+  {
+    nums.aModuleCol = (Int) ( fabs( (x-m_PmtModulePlaneHalfSizeR1[2])*m_PmtModulePitchInv));
+    nums.aModuleRow = (Int) ( fabs( (y-m_PmtModulePlaneHalfSizeR1[3])*m_PmtModulePitchInv));
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanel[1];
+  }
+
+  void getModuleNums_R2Le_Small( const double x, const double y, ModuleNumbers& nums ) const
+  {
+    nums.aModuleCol = (Int) (fabs( (x-m_PmtModulePlaneHalfSizeR2[0])*m_PmtModulePitchInv));
+    nums.aModuleRow = (Int) (fabs( (y-m_PmtModulePlaneHalfSizeR2[1])*m_PmtModulePitchInv));
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanel[2];
+  }
+
+  void getModuleNums_R2Ri_Small( const double x, const double y, ModuleNumbers& nums ) const
+  {
+    nums.aModuleCol = (Int) (fabs( (x-m_PmtModulePlaneHalfSizeR2[2])*m_PmtModulePitchInv ) );
+    nums.aModuleRow = (Int) (fabs( (y-m_PmtModulePlaneHalfSizeR2[3])*m_PmtModulePitchInv ) );
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanel[3];
+  }
+
+  void getModuleNums_R2Le_Grand( const double x, const double y, ModuleNumbers& nums ) const
+  {
+    nums.aModuleCol = (Int) (fabs( (x-m_GrandPmtModulePlaneHalfSizeR2[0])*m_GrandPmtModulePitchInv));
+    nums.aModuleRow = (Int) (fabs( (y-m_GrandPmtModulePlaneHalfSizeR2[1])*m_GrandPmtModulePitchInv));
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanel[2];
+  }
+
+  void getModuleNums_R2Ri_Grand( const double x, const double y, ModuleNumbers& nums ) const
+  {
+    nums.aModuleCol = (Int) (fabs( (x-m_GrandPmtModulePlaneHalfSizeR2[2])*m_GrandPmtModulePitchInv));
+    nums.aModuleRow = (Int) (fabs( (y-m_GrandPmtModulePlaneHalfSizeR2[3])*m_GrandPmtModulePitchInv));
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanel[3];
+  }
+
+  void getModuleNums_R2Le_Mixed( const double x, const double y, ModuleNumbers& nums ) const
+  {
+    if ( fabs(y) < fabs(m_MixedStdPmtModulePlaneHalfSizeR2[1]) )
+    {
+      nums.aModuleCol = (Int) (fabs( (x-m_MixedStdPmtModulePlaneHalfSizeR2[0])*m_PmtModulePitchInv));
+      nums.aModuleRow = (Int) (fabs( (y-m_MixedStdPmtModulePlaneHalfSizeR2[1])*m_PmtModulePitchInv)) 
+        + m_Rich2MixedModuleArrayColumnSize[0];
+    }
+    else
+    {
+      nums.aModuleCol = (Int) (fabs( (x-m_MixedPmtModulePlaneHalfSizeR2[0])*m_GrandPmtModulePitchInv ));
+      if      ( y < m_MixedStdPmtModulePlaneHalfSizeR2[1] )
+      {
+        nums.aModuleRow = (Int) (fabs( (y-m_MixedPmtModulePlaneHalfSizeR2[1])*m_GrandPmtModulePitchInv));
+      }
+      else if ( y >= fabs(m_MixedStdPmtModulePlaneHalfSizeR2[1]) )
+      {
+        nums.aModuleRow = (Int) (fabs( (y-(fabs(m_MixedStdPmtModulePlaneHalfSizeR2 [1])))*m_GrandPmtModulePitchInv))
+          + m_Rich2MixedModuleArrayColumnSize[0] + m_Rich2MixedModuleArrayColumnSize[1];
+      }
+    }
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanel[2];
+  }
+
+  void getModuleNums_R2Ri_Mixed( const double x, const double y, ModuleNumbers& nums ) const
+  {
+    if ( fabs(y) < fabs( m_MixedStdPmtModulePlaneHalfSizeR2[3]) )
+    {
+      nums.aModuleCol = (Int) (fabs( (x-m_MixedStdPmtModulePlaneHalfSizeR2[2])*m_PmtModulePitchInv));
+      nums.aModuleRow = (Int) (fabs( (y-m_MixedStdPmtModulePlaneHalfSizeR2[3])*m_PmtModulePitchInv)) + m_Rich2MixedModuleArrayColumnSize[0];
+    }
+    else
+    {
+      nums.aModuleCol = (Int) (fabs( (x-m_MixedPmtModulePlaneHalfSizeR2[2])*m_GrandPmtModulePitchInv ));
+      if      ( y > m_MixedStdPmtModulePlaneHalfSizeR2[3] )
+      {
+        nums.aModuleRow = (Int) (fabs( (y-m_MixedPmtModulePlaneHalfSizeR2[3])*m_GrandPmtModulePitchInv));
+      }
+      else if ( y <= -m_MixedStdPmtModulePlaneHalfSizeR2[3] )
+      {
+        nums.aModuleRow = (Int) ( fabs( (y+m_MixedStdPmtModulePlaneHalfSizeR2[3]) * m_GrandPmtModulePitchInv ) )
+          + m_Rich2MixedModuleArrayColumnSize[0] + m_Rich2MixedModuleArrayColumnSize[1];
+      }
+    }
+    nums.aModuleNum        = getPmtModuleNumFromRowCol(nums.aModuleRow,nums.aModuleCol);
+    nums.aModuleNumInPanel = nums.aModuleNum - m_RichPmtModuleCopyNumBeginPanel[3];
+  }
+
+private:
+
+  template< typename TYPE >
+  inline void setRichPmtSmartIDPix( const TYPE pixCol,
+                                    const TYPE pixRow,
+                                    LHCb::RichSmartID& id ) const noexcept
+  {
+    id.setPixelCol_PMT(pixCol);
+    id.setPixelRow_PMT(pixRow);
+  }
 
   template< typename TYPE >
   inline void setRichPmtSmartID( const TYPE pdCol,
@@ -312,12 +698,11 @@ private:
                                  const TYPE pixRow,
                                  LHCb::RichSmartID& id ) const noexcept
   {
-    id.setPD(pdCol,pdInCol); 
-    id.setPixelCol(pixCol);
-    id.setPixelRow(pixRow);
+    id.setPD_PMT(pdCol,pdInCol); 
+    setRichPmtSmartIDPix(pixCol,pixRow,id);
   }
-  
-  const DetectorElement * getFirstDeRich() const;
+
+private:
   
   inline Int getNumModulesInThisPanel() const noexcept
   {
@@ -335,6 +720,17 @@ private:
     return ( PCol + ( PRow*m_NumPmtInRowCol[0] ) );
   }
 
+  inline SIMDINT32 getPmtNumFromRowCol( SIMDINT32 PRow, SIMDINT32 PCol ) const noexcept
+  {
+    // for values outside the range, set the closest value to the
+    // corresponding edges. 
+    PRow.setZero( PRow < SIMDINT32::Zero() );
+    PRow( PRow >= m_NumPmtInRowColSIMD[1] ) = m_NumPmtInRowCol[1] - SIMDINT32::One();
+    PCol.setZero( PCol < SIMDINT32::Zero() );
+    PCol( PCol >= m_NumPmtInRowColSIMD[0] ) = m_NumPmtInRowCol[0] - SIMDINT32::One();
+    return ( PCol + ( PRow*m_NumPmtInRowColSIMD[0] ) );
+  }
+
   inline Int getGrandPmtNumFromRowCol( Int PRow, Int PCol ) const noexcept
   {
     // for values outside the range, set the closest value to the
@@ -344,6 +740,15 @@ private:
     if      ( PCol < 0                         ) { PCol = 0; }
     else if ( PCol >= m_NumGrandPmtInRowCol[0] ) { PCol = m_NumGrandPmtInRowCol[0] - 1; }
     return ( PCol + ( PRow*m_NumGrandPmtInRowCol[0] ) );
+  }
+
+  inline SIMDINT32 getGrandPmtNumFromRowCol( SIMDINT32 PRow, SIMDINT32 PCol ) const noexcept
+  {
+    PRow.setZero( PRow < SIMDINT32::Zero() );
+    PRow( PRow >= m_NumGrandPmtInRowColSIMD[1] ) = m_NumGrandPmtInRowColSIMD[1] - SIMDINT32::One();
+    PCol.setZero( PCol < SIMDINT32::Zero() );
+    PCol( PCol >= m_NumGrandPmtInRowColSIMD[0] ) = m_NumGrandPmtInRowColSIMD[0] - SIMDINT32::One();
+    return ( PCol + ( PRow*m_NumGrandPmtInRowColSIMD[0] ) );
   }
 
   inline bool isInPmtAnodeLateralAcc( const Gaudi::XYZPoint& aPointInPmtAnode,
@@ -378,6 +783,8 @@ private:
     return ( abs(aPointInPanel.x()) < m_xyHalfSizeSIMD[0] &&
              abs(aPointInPanel.y()) < m_xyHalfSizeSIMD[1] ); 
   }
+
+private:
   
   /// Gets the intercestion with the panel (scalar)
   inline bool getPanelInterSection ( const Gaudi::XYZPoint& pGlobal,
@@ -424,20 +831,6 @@ private:
     return sc;
   }
 
-  inline Int getLensPmtNumFromRowCol( Int PRow, Int PCol ) const noexcept
-  {
-    // for values outside the range, set the closest value to the
-    // corresponding edges.
-    if      ( PRow < 0                                  ) { PRow = 0; }
-    else if ( PRow >= m_RichNumLensPmtinModuleRowCol[1] ) { PRow = m_RichNumLensPmtinModuleRowCol[1] - 1; }
-    if      ( PCol < 0                                  ) { PCol = 0; }
-    else if ( PCol >= m_RichNumLensPmtinModuleRowCol[0] ) { PCol = m_RichNumLensPmtinModuleRowCol[0] - 1; }
-    return ( PCol + ( PRow*m_RichNumLensPmtinModuleRowCol[0] ) );
-  }
-
-  /// setup flags for grand Modules
-  Int getModuleCopyNumber( const std::string& aModuleName );
-
   inline bool isCurrentPmtModuleWithLens(const Int aModuleNum) const noexcept
   {
     return ( aModuleNum < m_totNumPmtModuleInRich1 ?
@@ -462,6 +855,17 @@ private:
     return ( aModuleNum >= 0 && 
              aModuleNum <  (Int) m_ModuleIsWithGrandPMT.size() ?
              m_ModuleIsWithGrandPMT[aModuleNum] : false );
+  }
+
+  inline SIMDINT32::MaskType ModuleIsWithGrandPMT( const SIMDINT32& aModuleNum ) const noexcept
+  {
+    auto m = ( aModuleNum >= SIMDINT32::Zero() &&
+               aModuleNum <  SIMDINT32(m_ModuleIsWithGrandPMT.size()) );
+    for ( std::size_t i = 0; i < SIMDINT32::Size; ++i )
+    {
+      if ( m[i] ) { m[i] = m_ModuleIsWithGrandPMT[aModuleNum[i]]; }
+    }
+    return m;
   }
 
 private:
@@ -495,6 +899,68 @@ private:
 
   /// (X,Y) panel half sizes for this panel
   XYArraySIMD m_xyHalfSizeSIMD = {{}};
+
+  std::array<SIMDFP,2> m_Rich1PmtPanelWithLensXSizeSIMD = {{}};
+  std::array<SIMDFP,2> m_Rich1PmtPanelWithLensYSizeSIMD = {{}};
+
+  std::array<SIMDINT32,2> m_Rich1PmtPanelWithLensColSizeSIMD = {{}};
+
+  SIMDFP m_PmtModulePitchInvSIMD = SIMDFP::Zero();
+
+  std::array<SIMDFP,4> m_PmtModulePlaneHalfSizeR1SIMD = {{}};
+  std::array<SIMDFP,4> m_PmtModulePlaneHalfSizeR2SIMD = {{}};
+
+  SIMDFP m_PmtModuleWithLensPitchInvSIMD = SIMDFP::Zero();
+
+  std::array<SIMDINT32,4> m_RichPmtNumModulesInRowColSIMD = {{}};
+
+  std::array<SIMDFP,4> m_GrandPmtModulePlaneHalfSizeR2SIMD = {{}};
+  std::array<SIMDFP,4> m_MixedPmtModulePlaneHalfSizeR2SIMD = {{}};
+
+  SIMDFP m_GrandPmtModulePitchInvSIMD = SIMDFP::Zero();
+
+  std::array<SIMDFP,4> m_MixedStdPmtModulePlaneHalfSizeR2SIMD = {{}};
+
+  Rich::SIMD::STDVector<SIMDINT32> m_Rich2MixedModuleArrayColumnSizeSIMD;
+
+  SIMDFP m_PmtMasterWithLensLateralSizeSIMD = SIMDFP::Zero();
+
+  std::array<SIMDINT32,2> m_RichNumLensPmtinModuleRowColSIMD = {{}};
+
+  std::array<SIMDFP,2> m_RichGrandPmtModuleActiveAreaHalfSizeSIMD = {{}};
+
+  std::array<SIMDINT32,2> m_NumGrandPmtInRowColSIMD = {{}};
+
+  SIMDFP m_GrandPmtPitchInvSIMD = SIMDFP::Zero();
+
+  std::array<SIMDFP,2> m_RichPmtModuleActiveAreaHalfSizeSIMD = {{}};
+
+  SIMDFP m_PmtPitchInvSIMD = SIMDFP::Zero();
+
+  std::array<SIMDINT32,2> m_NumPmtInRowColSIMD = {{}};
+
+  SIMDFP m_Rich1LensDemagnificationFactorSIMD = SIMDFP::Zero();
+
+  SIMDFP m_GrandPmtAnodeXEdgeSIMD = SIMDFP::Zero();
+  SIMDFP m_GrandPmtAnodeYEdgeSIMD = SIMDFP::Zero();
+
+  SIMDFP m_GrandPmtAnodeEffectiveXPixelSizeInvSIMD = SIMDFP::Zero();
+  SIMDFP m_GrandPmtAnodeEffectiveYPixelSizeInvSIMD = SIMDFP::Zero();
+
+  SIMDINT32 m_GrandPmtPixelsInRowSIMD = SIMDINT32::Zero();
+  SIMDINT32 m_GrandPmtPixelsInColSIMD = SIMDINT32::Zero();
+
+  SIMDFP m_PmtAnodeXEdgeSIMD = SIMDFP::Zero();
+  SIMDFP m_PmtAnodeYEdgeSIMD = SIMDFP::Zero();
+
+  SIMDFP m_PmtAnodeEffectiveXPixelSizeInvSIMD = SIMDFP::Zero();
+  SIMDFP m_PmtAnodeEffectiveYPixelSizeInvSIMD = SIMDFP::Zero();
+
+  SIMDINT32 m_PmtPixelsInRowSIMD = SIMDINT32::Zero();
+  SIMDINT32 m_PmtPixelsInColSIMD = SIMDINT32::Zero();
+
+  std::array<SIMDINT32,4> m_RichPmtModuleCopyNumBeginPanelSIMD = {{}};
+  std::array<SIMDINT32,4> m_RichPmtModuleCopyNumEndPanelSIMD = {{}};
 
 private:
 
