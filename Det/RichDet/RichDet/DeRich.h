@@ -13,6 +13,9 @@
 #include <array>
 #include <memory>
 
+// Utils
+#include "RichUtils/RichSIMDTypes.h"
+
 // DetDesc
 #include "RichDet/Rich1DTabProperty.h"
 
@@ -31,6 +34,9 @@
 #include "RichDet/DeRichLocations.h"
 #include "RichDet/RichDetConfigType.h"
 
+// Vc
+#include <Vc/common/alignedbase.h>
+
 class DeRichPDPanel;
 
 /** @class DeRich DeRich.h
@@ -41,7 +47,8 @@ class DeRichPDPanel;
  *
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  */
-class DeRich: public DeRichBase
+class DeRich: public DeRichBase,
+              public Vc::AlignedBase<Vc::VectorAlignment>
 {
 
 public:
@@ -66,15 +73,56 @@ public:
 
   /**
    * Returns the nominal centre of curvature of the spherical mirror for
-   * this Rich
+   * this Rich for the given side
    *
    * @param side Which side: top, bottom (Rich1), left, right (Rich2)
    * @return The nominal centre of curvature
    */
   inline const Gaudi::XYZPoint& 
-  nominalCentreOfCurvature(const Rich::Side side) const noexcept
+  nominalCentreOfCurvature( const Rich::Side side ) const noexcept
   {
     return m_nominalCentresOfCurvature[side];
+  }
+
+  /**
+   * Returns the nominal centres of curvature of the spherical mirror for
+   * this Rich for the given side
+   *
+   * @param side Which side: top, bottom (Rich1), left, right (Rich2)
+   * @return The nominal centre of curvature
+   */
+  inline const Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP> & 
+  nominalCentreOfCurvatureSIMD( const Rich::Side side ) const noexcept
+  {
+    return m_nominalCentresOfCurvatureSIMD[side];
+  }
+
+  /**
+   * Returns the nominal centres of curvature of the spherical mirror for
+   * this Rich for the given sides
+   *
+   * @param sides Which sides : top, bottom (Rich1), left, right (Rich2)
+   * @return The nominal centre of curvature
+   */
+  inline Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP> 
+  nominalCentreOfCurvature( const Rich::SIMD::Sides& sides ) const noexcept
+  {
+    using namespace Rich::SIMD;
+    // Start by making CoCs for each side
+    const auto & CoC1( nominalCentreOfCurvatureSIMD(Rich::firstSide)  );
+    const auto & CoC2( nominalCentreOfCurvatureSIMD(Rich::secondSide) );
+    // local copy of X,Y,Z for first side
+    auto X = CoC1.X();
+    auto Y = CoC1.Y();
+    auto Z = CoC1.Z();
+    // mask for side 2
+    const auto m = Vc::simd_cast<Point<DefaultScalarFP>::Scalar::MaskType>(sides == Sides(Rich::secondSide));
+    // update values for side 2
+    X(m) = CoC2.X();
+    Y(m) = CoC2.Y();
+    Z(m) = CoC2.Z();
+    // return the final result
+    return Point<DefaultScalarFP>(X,Y,Z);
   }
 
   /**
@@ -84,9 +132,21 @@ public:
    * @return The nominal normal vector
    */
   inline const Gaudi::XYZVector& 
-  nominalNormal(const Rich::Side side) const noexcept
+  nominalNormal( const Rich::Side side ) const noexcept
   {
     return m_nominalNormals[side];
+  }
+
+  /**
+   * Returns the SIMD nominal normal vector of the flat mirror plane for this Rich
+   *
+   * @param side Which side: top, bottom (Rich1), left, right (Rich2)
+   * @return The nominal normal vector
+   */
+  inline const Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP> & 
+  nominalNormalSIMD( const Rich::Side side ) const noexcept
+  {
+    return m_nominalNormalsSIMD[side];
   }
 
   /**
@@ -96,9 +156,50 @@ public:
    * @return The nominal flat mirror plane
    */
   inline const Gaudi::Plane3D& 
-  nominalPlane(const Rich::Side side) const noexcept
+  nominalPlane( const Rich::Side side ) const noexcept
   {
     return m_nominalPlanes[side];
+  }
+
+  /**
+   * Returns the nominal flat mirror plane for this Rich
+   *
+   * @param side Which side: top, bottom (Rich1), left, right (Rich2)
+   * @return The nominal flat mirror plane
+   */
+  inline const Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP> & 
+  nominalPlaneSIMD( const Rich::Side side ) const noexcept
+  {
+    return m_nominalPlanesSIMD[side];
+  }
+
+ /**
+   * Returns the nominal flat mirror plane for this Rich
+   *
+   * @param sides Which sides : top, bottom (Rich1), left, right (Rich2)
+   * @return The nominal flat mirror plane
+   */
+  inline const Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP>
+  nominalPlane( const Rich::SIMD::Sides& sides ) const noexcept
+  {
+    using namespace Rich::SIMD;
+    // start with the SIMD planes for each side
+    const auto & P1( nominalPlaneSIMD(Rich::firstSide)  );
+    const auto & P2( nominalPlaneSIMD(Rich::secondSide) );
+    // local copy of A,B,C,D for first side
+    auto A = P1.A();
+    auto B = P1.B();
+    auto C = P1.C();
+    auto D = P1.D();
+    // mask for side 2
+    const auto m = Vc::simd_cast<Point<DefaultScalarFP>::Scalar::MaskType>(sides == Sides(Rich::secondSide));
+    // update values for side 2
+    A(m) = P2.A();
+    B(m) = P2.B();
+    C(m) = P2.C();
+    D(m) = P2.D();
+    // return the SIMD plane object
+    return Plane<DefaultScalarFP>(A,B,C,D);
   }
 
   /**
@@ -108,89 +209,50 @@ public:
    * @return The side for this point
    */
   template < typename POINT >
-  inline 
-  typename std::enable_if< std::is_arithmetic<typename POINT::Scalar>::value, Rich::Side >::type
-  side( const POINT& point ) const noexcept
+  inline decltype(auto) side( const POINT& point ) const noexcept
   {
-    return ( Rich::Rich1 == rich()                            ?
-             ( point.y() >= 0 ? Rich::top  : Rich::bottom ) :
-             ( point.x() >= 0 ? Rich::left : Rich::right  ) );
+    return side( point.x(), point.y() );
   }
 
-  // /**
-  //  * Check on which side of this Rich lies this point
-  //  *
-  //  * @param point A point in the global coordinate system
-  //  * @return The side for this point
-  //  */
-  // template < typename POINT, typename SIDES >
-  // inline 
-  // typename std::enable_if< !std::is_arithmetic<typename POINT::Scalar>::value, void >::type
-  // sides( const POINT& point, SIDES& sides ) const noexcept
-  // {
-  //   if ( Rich::Rich1 == rich() )
-  //   {
-      
-  //     //if ( point.y() >= POINT::Scalar::Zero() )
-  //     //{
-  //     //  sides = SIDES(Rich::top);
-  //     // }
-  //     //else
-  //     // {
-  //     // sides = SIDES(Rich::bottom);
-  //     // }
-
-
-  //     //const typename SIDES::mask_type m = ( point.y() >= POINT::Scalar::Zero() );
-  //     //Vc::iff( m, SIDES(Rich::top), SIDES(Rich::bottom) );
-  //     //sides = SIDES(Rich::bottom);
-  //     //sides( m ) = SIDES(Rich::top);
-  //   }
-  //   else
-  //   {
-  //     //sides = SIDES(Rich::right);
-  //     //sides( point.x() >= POINT::Scalar::Zero() ) = SIDES(Rich::left);
-  //   }
-  // }
-
   /**
-   * Check on which side of this Rich lies this (x,y) point
+   * Check on which side of this Rich lies this (x,y) point (Scalar)
    *
    * @param point A point in the global coordinate system
    * @return The side for this point
    */
-  template< typename TYPE >
-  inline 
-  typename std::enable_if< std::is_arithmetic<TYPE>::value, Rich::Side >::type
-  side( const TYPE x, const TYPE y ) const noexcept
+  template< typename TYPE,
+            typename std::enable_if<std::is_arithmetic<TYPE>::value>::type * = nullptr >
+  inline Rich::Side side( const TYPE x, const TYPE y ) const noexcept
   {
-    return ( Rich::Rich1 == rich()                  ?
-             ( y >= 0 ? Rich::top  : Rich::bottom ) :
-             ( x >= 0 ? Rich::left : Rich::right  ) );
+    return ( Rich::Rich1 == rich()                 ?
+             ( y < 0 ? Rich::bottom : Rich::top  ) :
+             ( x < 0 ? Rich::right  : Rich::left ) );
   }
 
-  // /**
-  //  * Check on which side of this Rich lies this point
-  //  *
-  //  * @param point A point in the global coordinate system
-  //  * @return The side for this point
-  //  */
-  // template < typename TYPE, typename SIDES >
-  // inline 
-  // typename std::enable_if< !std::is_arithmetic<TYPE>::value, void >::type
-  // sides( const TYPE x, const TYPE y, SIDES& sides ) const noexcept
-  // {
-  //   if ( Rich::Rich1 == rich() )
-  //   {
-  //     sides = SIDES(Rich::bottom);
-  //     sides( y >= TYPE::Zero() ) = SIDES(Rich::top);
-  //   }
-  //   else
-  //   {
-  //     sides = SIDES(Rich::right);
-  //     sides( x >= TYPE::Zero() ) = SIDES(Rich::left);
-  //   }
-  // }
+  /**
+   * Check on which side of this Rich lies this (x,y) point (SIMD)
+   *
+   * @param point A point in the global coordinate system
+   * @return The side for this point
+   */
+  template< typename TYPE,
+            typename std::enable_if<!std::is_arithmetic<TYPE>::value>::type * = nullptr >
+  inline Rich::SIMD::Sides side( const TYPE x, const TYPE y ) const noexcept
+  {
+    using namespace Rich::SIMD;
+    Sides sides( Rich::firstSide ); // R1 top or R2 left
+    // update as needed to R1 bottom or R2 right
+    // Is there a better way to do ??
+    if ( Rich::Rich1 == rich() )
+    {
+      sides( Vc::simd_cast<Sides::MaskType>( y < TYPE::Zero() ) ) = Sides( Rich::secondSide );
+    }
+    else
+    {
+      sides( Vc::simd_cast<Sides::MaskType>( x < TYPE::Zero() ) ) = Sides( Rich::secondSide );
+    }
+    return sides;
+  }
 
   /**
    * Returns the detector type for this Rich
@@ -214,6 +276,16 @@ public:
   inline double sphMirrorRadius() const noexcept
   {
     return m_sphMirrorRadius;
+  }
+
+  /**
+   * Returns the nominal spherical mirror radius for this Rich
+   *
+   * @return The nominal spherical mirror radius
+   */
+  inline Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP> sphMirrorRadiusSIMD() const noexcept
+  {
+    return m_sphMirrorRadiusSIMD;
   }
 
   /// Returns the Photon Detector config type 0=hpd, 1=pmt
@@ -331,6 +403,9 @@ protected:
   /// Load the PD panels
   void loadPDPanels();
 
+  /// Fill SIMD caches
+  void fillSIMDTypes();
+
 private:
 
   /// Access the name for a given panel
@@ -410,5 +485,21 @@ private: // data
 
   /// PD quantum efficiency
   std::shared_ptr<const Rich::TabulatedProperty1D> m_nominalPDQuantumEff;
+
+private:
+
+  // SIMD copies of various types
+
+  /// SIMD Nominal planes for each panel
+  Rich::PanelArray< Rich::SIMD::Plane<Rich::SIMD::DefaultScalarFP> > m_nominalPlanesSIMD = {{}};
+
+  /// SIMD nominal normal vector of the flat mirror planes
+  Rich::PanelArray< Rich::SIMD::Vector<Rich::SIMD::DefaultScalarFP> > m_nominalNormalsSIMD = {{}};
+
+  /// The nominal centres of curvature of the spherical mirrors
+  Rich::PanelArray< Rich::SIMD::Point<Rich::SIMD::DefaultScalarFP> > m_nominalCentresOfCurvatureSIMD = {{}};
+
+  /// The nominal radius of the spherical mirror
+  Rich::SIMD::FP<Rich::SIMD::DefaultScalarFP> m_sphMirrorRadiusSIMD;
 
 };

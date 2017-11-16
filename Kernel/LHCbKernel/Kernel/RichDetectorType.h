@@ -9,8 +9,7 @@
  */
 //-----------------------------------------------------------------------------
 
-#ifndef LHCBKERNEL_RICHDETECTORTYPE_H
-#define LHCBKERNEL_RICHDETECTORTYPE_H 1
+#pragma once
 
 // std include
 #include <string>
@@ -69,4 +68,3 @@ namespace Rich
 
 }
 
-#endif // LHCBKERNEL_RICHDETECTORTYPE_H

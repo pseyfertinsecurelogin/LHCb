@@ -1,7 +1,9 @@
+
 //-----------------------------------------------------------------------------
 /** @file RichGeomPhoton.h
  *
- *  Header file for RICH utility class : Rich::Future::GeomPhoton
+ *  Header file for RICH utility classes : Rich::Future::GeomPhoton
+ *  and Rich::Future::RecoPhoton
  *
  *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
  *  @date   2017-02-06
@@ -30,9 +32,9 @@ namespace Rich
   namespace Future
   {
 
-    /** @class RecoPhoton RichGeomPhoton.h RichUtils/RichGeomPhoton.h
+    /** @class RecoPhoton RichFutureUtils/RichGeomPhoton.h
      *
-     *  Basic representation of a Cherenkov photon
+     *  Basic scalar representation of a Cherenkov photon
      *
      *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
      *  @date   2017-02-06
@@ -59,6 +61,7 @@ namespace Rich
        *
        *  @param theta Cherenkov angle theta
        *  @param phi   Cherenkov angle phi
+       *  @param smartID The RCH PD channel identifier associated to the photon
        *  @param activeFrac The fraction of the associated segment that this photon could have been radiated from
        */
       RecoPhoton( const Scalar theta,
@@ -82,7 +85,7 @@ namespace Rich
 
       /** Set accessor for Cherenkov phi angle
        *  @param phi the new value for the Cherenkov phi angle */
-      inline void setCherenkovPhi (const Scalar phi) noexcept { m_CherenkovPhi = phi; }
+      inline void setCherenkovPhi ( const Scalar phi ) noexcept { m_CherenkovPhi = phi; }
 
       /** Get accessor for Cherenkov phi angle
        *  @return the current value of the Cherenkov phi angle */
@@ -107,7 +110,7 @@ namespace Rich
        *
        * @return the current value of the current active segment fraction.
        */
-      inline Scalar activeSegmentFraction () const noexcept
+      inline Scalar activeSegmentFraction() const noexcept
       {
         return m_activeSegmentFraction;
       }
@@ -125,6 +128,20 @@ namespace Rich
 
       /// Access the unambiguous photon flag
       inline bool unambiguousPhoton() const noexcept { return m_unambigPhot; }
+
+    protected:
+      
+      /// Printout method
+      std::ostream & fillStream ( std::ostream& s ) const;
+
+    public:
+      
+      /// Implement ostream << method for GeomPhoton
+      friend inline std::ostream& operator << ( std::ostream& s,
+                                                const RecoPhoton& photon )
+      {
+        return photon.fillStream(s);
+      }
 
     private:
 
@@ -400,18 +417,20 @@ namespace Rich
         return m_flatMirReflectionPoint;
       }
 
-    public:
+    private:
 
       /// Printout method
       std::ostream & fillStream ( std::ostream& s ) const;
 
+    public:
+      
       /// Implement ostream << method for GeomPhoton
       friend inline std::ostream& operator << ( std::ostream& s,
                                                 const GeomPhoton& photon )
       {
         return photon.fillStream(s);
       }
-
+      
     private: // data
 
     

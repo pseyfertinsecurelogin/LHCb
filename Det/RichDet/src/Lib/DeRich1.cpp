@@ -247,6 +247,9 @@ StatusCode DeRich1::updateMirrorParams()
 
   _ri_debug << "Nominal normal " << m_nominalNormals << endmsg;
 
+  // Fill SIMD caches
+  fillSIMDTypes();
+
   return StatusCode::SUCCESS;
 }
 
@@ -260,7 +263,8 @@ const std::string DeRich1::panelName( const Rich::Side panel ) const
                         DeRichLocations::Rich1Panel0 :
                         DeRichLocations::Rich1Panel1 );
  
-  if(  RichPhotoDetConfig() == Rich::HPDConfig ) {
+  if ( RichPhotoDetConfig() == Rich::HPDConfig ) 
+  {
 
     if ( exists("Rich1HPDPanelDetElemLocations") )
     {
