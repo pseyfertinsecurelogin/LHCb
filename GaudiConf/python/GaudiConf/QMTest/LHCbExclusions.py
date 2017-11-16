@@ -10,16 +10,15 @@ gitCondDBFixes = (RegexpReplacer(when='Detector description database:',
 preprocessor = (
     normalizeExamples +
     RegexpReplacer(  # normalize full path to DBASE or PARAM
-        orig = r'/[^ ]+/(DBASE|PARAM)/',
+        orig = r'/[^ :]+/(DBASE|PARAM)/',
         repl = r'\1/') +
     RegexpReplacer(  # hide release directories
         when = "cern.ch",
         orig = r'/afs/cern.ch/lhcb/software/(DEV/nightlies|releases)/|/cvmfs/lhcb.cern.ch/lib/lhcb',
         repl = r'') +
-    RegexpReplacer(  # hide HltTCK and ParamFiles versions
-        when = 'DBASE/TCK/HltTCK/|PARAM/ParamFiles/',
-        orig = r'/v[0-9]+r[0-9]+(p[0-9]+)?/',
-        repl = r'/vXrYpZ/') +
+    RegexpReplacer(  # hide data package versions
+        orig = r'((DBASE|PARAM)/([^/]+/)?[^/]+)/v[0-9]+r[0-9]+(p[0-9]+)?/',
+        repl = r'\1/vXrYpZ/') +
     RegexpReplacer(when = "at 0x########L",
         orig = r'0x########L',
         repl = r'0x########') +
