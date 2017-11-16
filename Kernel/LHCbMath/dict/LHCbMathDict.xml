@@ -125,6 +125,9 @@
   <class name    = "Gaudi::Math::Expo2DPol"        />
   <class name    = "Gaudi::Math::Expo2DPolSym"     />
 
+  <class name    = "Gaudi::Math::Bernstein3D"      />
+  <class name    = "Gaudi::Math::Positive3D"       />
+
   <class name    = "Gaudi::Math::Spline2D"         />
   <class name    = "Gaudi::Math::Spline2DSym"      />
 
