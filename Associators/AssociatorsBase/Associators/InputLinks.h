@@ -23,9 +23,9 @@ namespace {
       {
          if (linkID != -1) {
             LinkManager::Link* link = links.linkMgr()->link(linkID);
+            if (!link) return nullptr;
             ObjectContainerBase* parent = dynamic_cast<ObjectContainerBase*>(link->object());
-            return parent ? static_cast<const Source*>(parent->containedObject(index))
-               : nullptr;
+            return parent ? static_cast<const Source*>(parent->containedObject(index)) : nullptr;
          } else {
             return nullptr;
          }
@@ -68,24 +68,32 @@ public:
       // the target and the weight. The source and target objects can
       // be obtained by getting container from the link manager and
       // then the object at the respective indices.
+
+      // The linkReference also contains information on whether there
+      // are more targets associated with a given source key. If
+      // nextIndex() returns -1, no more targets are associated,
+      // otherwise the returned number is the index of the next target.
       const auto& refs = links.linkReference();
 
       int srcKey = 0;
-      int refStart = 0;
-      auto last = links.keyIndex().cend() - 1;
+      int refIndex = 0;
       for (auto it = links.keyIndex().cbegin(); it != links.keyIndex().cend(); ++it) {
-         std::tie(srcKey, refStart) = *it;
-         size_t refEnd = (it == last) ? refs.size() : std::next(it)->second;
-         for (size_t refIndex = refStart; refIndex != refEnd; ++refIndex) {
+         std::tie(srcKey, refIndex) = *it;
+         do {
             const auto& ref = refs[refIndex];
             const auto target = GetObject<Target>{}(links, ref.linkID(), ref.objectKey());
-            if (ref.srcLinkID() != -1) {
+            // Fill the object to object relations if we can find the
+            // source object.
+            if (target && ref.srcLinkID() != -1) {
                const Source* source = GetObject<Source>{}(links, ref.srcLinkID(), srcKey);
-               m_relations.i_push(source, target, ref.weight());
-            } else {
+               if (source) m_relations.i_push(source, target, ref.weight());
+            }
+            // Always fill the key relations
+            if (target) {
                m_keyRelations.i_push(srcKey, target, ref.weight());
             }
-         }
+            refIndex = ref.nextIndex();
+         } while (refIndex >= 0);
       }
       m_relations.i_sort();
       m_keyRelations.i_sort();
