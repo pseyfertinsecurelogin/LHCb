@@ -944,17 +944,19 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint
   const SIMDINT32::MaskType r2mask( rich() == Rich::Rich2 );
   const auto gmask = r2mask && ModuleIsWithGrandPMT(nums.aModuleNum);
 
-  if ( any_of(gmask) )
+  const auto am = antim && gmask;
+  if ( any_of(am) )
   {
-    aPmtCol(antim && gmask) = Vc::simd_cast<SIMDINT32>( abs( (xp-m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[0])*m_GrandPmtPitchInvSIMD ) );
-    aPmtRow(antim && gmask) = Vc::simd_cast<SIMDINT32>( abs( (yp-m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[1])*m_GrandPmtPitchInvSIMD ) );
-    aPmtNum(antim && gmask) = getGrandPmtNumFromRowCol(aPmtRow,aPmtCol);
+    aPmtCol(am) = Vc::simd_cast<SIMDINT32>( abs( (xp-m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[0])*m_GrandPmtPitchInvSIMD ) );
+    aPmtRow(am) = Vc::simd_cast<SIMDINT32>( abs( (yp-m_RichGrandPmtModuleActiveAreaHalfSizeSIMD[1])*m_GrandPmtPitchInvSIMD ) );
+    aPmtNum(am) = getGrandPmtNumFromRowCol(aPmtRow,aPmtCol);
   }
-  if ( any_of(!gmask) )
+  const auto bm = antim && !gmask;
+  if ( any_of(bm) )
   {
-    aPmtCol(antim && !gmask) = Vc::simd_cast<SIMDINT32>( abs( (xp-m_RichPmtModuleActiveAreaHalfSizeSIMD[0])*m_PmtPitchInvSIMD ) );
-    aPmtRow(antim && !gmask) = Vc::simd_cast<SIMDINT32>( abs( (yp-m_RichPmtModuleActiveAreaHalfSizeSIMD[1])*m_PmtPitchInvSIMD ) );
-    aPmtNum(antim && !gmask) = getPmtNumFromRowCol(aPmtRow,aPmtCol);
+    aPmtCol(bm) = Vc::simd_cast<SIMDINT32>( abs( (xp-m_RichPmtModuleActiveAreaHalfSizeSIMD[0])*m_PmtPitchInvSIMD ) );
+    aPmtRow(bm) = Vc::simd_cast<SIMDINT32>( abs( (yp-m_RichPmtModuleActiveAreaHalfSizeSIMD[1])*m_PmtPitchInvSIMD ) );
+    aPmtNum(bm) = getPmtNumFromRowCol(aPmtRow,aPmtCol);
   }
 
   if ( UNLIKELY( any_of( aPmtNum < SIMDINT32::Zero() ) ) )
@@ -978,8 +980,11 @@ DeRichPMTPanel::findPMTArraySetupSIMD( const Rich::SIMD::Point<FP>& aGlobalPoint
   }
 
   const auto mm = Vc::simd_cast<SIMDFP::MaskType>(nums.aModuleWithLens);
-  xpi(mm) *= m_Rich1LensDemagnificationFactorSIMD;
-  ypi(mm) *= m_Rich1LensDemagnificationFactorSIMD;
+  if ( any_of(mm) )
+  {
+    xpi(mm) *= m_Rich1LensDemagnificationFactorSIMD;
+    ypi(mm) *= m_Rich1LensDemagnificationFactorSIMD;
+  }
 
   auto & aPmtPixelCol = aCh[2];
   auto & aPmtPixelRow = aCh[3];
