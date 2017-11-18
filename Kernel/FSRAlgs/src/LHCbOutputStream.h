@@ -17,7 +17,7 @@
 // forward declarations
 class IRegistry;
 class IConversionSvc;
-class IDataManagerSvc;
+struct IDataManagerSvc;
 class DataStoreItem;
 
 /** A small to stream Data I/O.
