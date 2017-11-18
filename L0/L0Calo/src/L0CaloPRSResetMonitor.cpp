@@ -9,7 +9,7 @@
 #include "Event/L0DUBase.h"
 
 // Declare Algorithm
-DECLARE_ALGORITHM_FACTORY( L0CaloPRSResetMonitor )
+DECLARE_COMPONENT( L0CaloPRSResetMonitor )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : L0CaloPRSResetMonirot

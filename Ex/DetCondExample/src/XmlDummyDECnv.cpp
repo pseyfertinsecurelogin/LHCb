@@ -12,7 +12,7 @@
 // 2005-04-11 : Marco CLEMENCIC
 //-----------------------------------------------------------------------------
 
-DECLARE_CONVERTER_FACTORY( XmlDummyDECnv )
+DECLARE_CONVERTER( XmlDummyDECnv )
 
 //=============================================================================
 // Standard constructor, initializes variables

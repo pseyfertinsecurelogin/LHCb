@@ -12,7 +12,7 @@
 //
 // 03/10/2011: Marco Clemencic
 // ----------------------------------------------------------------------------
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LHCbAlgsTest, PrintEventTime)
+DECLARE_COMPONENT( LHCbAlgsTest::PrintEventTime )
 
 namespace LHCbAlgsTest 
 {

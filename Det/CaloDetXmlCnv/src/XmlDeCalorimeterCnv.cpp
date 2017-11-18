@@ -29,7 +29,7 @@
 
 /// converter type 
 typedef XmlUserDetElemCnv<DeCalorimeter>   XmlDeCalorimeterCnv;
-DECLARE_CONVERTER_FACTORY(XmlDeCalorimeterCnv)
+DECLARE_CONVERTER( XmlDeCalorimeterCnv )
 
 
 // ============================================================================

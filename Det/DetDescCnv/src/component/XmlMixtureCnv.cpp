@@ -27,7 +27,7 @@
 // Instantiation of a static factory class used by clients to create
 // instances of this service
 // -----------------------------------------------------------------------
-DECLARE_CONVERTER_FACTORY(XmlMixtureCnv)
+DECLARE_CONVERTER( XmlMixtureCnv )
 
 // -----------------------------------------------------------------------
 // Material state string to state enumeration map

@@ -13,7 +13,7 @@
 //------------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( ProcessPhase )
+DECLARE_COMPONENT( ProcessPhase )
 
 
 ProcessPhase::ProcessPhase( const std::string& name, ISvcLocator* pSvcLocator )

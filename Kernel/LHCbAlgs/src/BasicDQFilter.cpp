@@ -11,7 +11,7 @@ using boost::algorithm::to_lower_copy;
 //
 // 04/11/2011: Marco Clemencic
 // ----------------------------------------------------------------------------
-DECLARE_TOOL_FACTORY(BasicDQFilter)
+DECLARE_COMPONENT( BasicDQFilter )
 
 // ============================================================================
 // Standard constructor, initializes variables

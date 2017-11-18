@@ -23,7 +23,7 @@ static const Gaudi::StringKey Hlt2SelectionID{"Hlt2SelectionID"};
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( HltVertexReportsWriter )
+DECLARE_COMPONENT( HltVertexReportsWriter )
 
 //=============================================================================
 // Initialization

@@ -13,7 +13,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( ExampleAlg )
+DECLARE_COMPONENT( ExampleAlg )
 
 
 //=============================================================================

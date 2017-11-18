@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY(RawEventSimpleCombiner)
+DECLARE_COMPONENT( RawEventSimpleCombiner )
 
 using namespace LHCb;
 //=============================================================================

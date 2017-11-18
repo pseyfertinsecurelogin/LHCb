@@ -27,7 +27,7 @@
 #include "LHCbMath/ModeFunctions.h"
 
 // Needed for the creation of MCHitMonitor objects.
-DECLARE_ALGORITHM_FACTORY( MCHitMonitor )
+DECLARE_COMPONENT( MCHitMonitor )
 
 //_________________________________________________
 /// MCHitMonitor

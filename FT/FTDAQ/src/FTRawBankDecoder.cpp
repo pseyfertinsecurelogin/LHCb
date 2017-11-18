@@ -14,7 +14,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( FTRawBankDecoder )
+DECLARE_COMPONENT( FTRawBankDecoder )
 
 //=============================================================================
 // Standard constructor, initializes variables

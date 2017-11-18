@@ -33,9 +33,6 @@ namespace LoKi
     , public virtual Decays::IGenDecay
   {
     // ========================================================================
-    /// the friend factory for instantiation
-    friend struct ToolFactory<LoKi::GenDecay> ;                   // the factory
-    // ========================================================================
     typedef Decays::Trees::Types_<const HepMC::GenParticle*>::Invalid Invalid ;
     // ========================================================================
   public:
@@ -52,8 +49,6 @@ namespace LoKi
     Decays::Node node ( const std::string& descriptor ) const override
     { return LoKi::DecayBase::node ( descriptor ) ; }
     // ========================================================================
-  protected:
-    // ========================================================================
     /** constructor form the type, name and parent
      *  @param type the tool type (?)
      *  @param name the instance name
@@ -68,13 +63,6 @@ namespace LoKi
       declareInterface<Decays::IGenDecay>  ( this ) ;
       declareInterface<Decays::IDecayNode> ( this ) ;
     }
-    // ========================================================================
-  private:
-    // ========================================================================
-    /// the copy constructor is disabled
-    GenDecay ( const GenDecay& ) ;          // the copy constructor is disabled
-    /// the assignement operator is disabled
-    GenDecay& operator=( const GenDecay& ) ;         // no assignement operator
     // ========================================================================
   private:
     // ========================================================================
@@ -135,7 +123,7 @@ LoKi::GenDecay::tree ( const std::string& decay ) const
 // ============================================================================
 //                                                the factory for instantiation
 // ============================================================================
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi,GenDecay)
+DECLARE_COMPONENT( LoKi::GenDecay )
 // ============================================================================
 
 // ============================================================================

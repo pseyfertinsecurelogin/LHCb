@@ -60,10 +60,6 @@ namespace LoKi
    */
   class CounterAlg : public GaudiAlgorithm
   {
-    // ========================================================================
-    /// friend factory for instantiation
-    friend class AlgFactory<LoKi::CounterAlg> ;
-    // ========================================================================
   public:
     // ========================================================================
     /// the main method: execute
@@ -94,10 +90,7 @@ namespace LoKi
       StatEntity*                                             m_cnt  = nullptr;
       // ====================================================================
     } ;
-    // ======================================================================
-    // ========================================================================
-  protected:
-    // ========================================================================
+  public:
     /** standard constructor
      *  @see GaudiAlgorithm
      *  @see      Algorithm
@@ -138,11 +131,6 @@ namespace LoKi
           m_location  ,
           "TES-location of counters" ) ;
     }
-    // ========================================================================
-    /// the copy constructor is disabled
-    CounterAlg ( const CounterAlg& ) = delete ;      // the copy constructor is disabled
-    /// the assignement operator is disabled
-    CounterAlg& operator=( const CounterAlg& ) = delete ; // the assignement is disabled
     // ========================================================================
   protected:
     // ========================================================================
@@ -304,7 +292,7 @@ StatusCode LoKi::CounterAlg::execute ()
 
 // ============================================================================
 /// the factory (needed for instantiation)
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,CounterAlg)
+DECLARE_COMPONENT( LoKi::CounterAlg )
 // ============================================================================
 
 // ============================================================================

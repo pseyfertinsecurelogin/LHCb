@@ -131,7 +131,7 @@ StatusCode LoKi::VoidFilter::finalize ()
 }
 // ========================================================================
 /// the factory (needed for instantiation)
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,VoidFilter)
+DECLARE_COMPONENT( LoKi::VoidFilter )
 // ============================================================================
 // The END
 // ============================================================================

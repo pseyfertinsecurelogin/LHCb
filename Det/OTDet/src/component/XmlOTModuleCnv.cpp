@@ -6,4 +6,4 @@
 #include "OTDet/DeOTModule.h"
 
 typedef XmlUserDetElemCnv<DeOTModule>       XmlOTModuleCnv;
-DECLARE_CONVERTER_FACTORY(XmlOTModuleCnv)
+DECLARE_CONVERTER( XmlOTModuleCnv )

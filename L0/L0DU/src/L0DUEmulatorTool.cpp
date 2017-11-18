@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( L0DUEmulatorTool )
+DECLARE_COMPONENT( L0DUEmulatorTool )
 
 
 //=============================================================================

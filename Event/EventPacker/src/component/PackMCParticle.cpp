@@ -13,7 +13,7 @@
 // 2005-03-18 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( PackMCParticle )
+DECLARE_COMPONENT( PackMCParticle )
 
 //=============================================================================
 // Standard constructor, initializes variables

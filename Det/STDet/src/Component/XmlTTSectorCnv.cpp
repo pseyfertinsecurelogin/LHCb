@@ -7,4 +7,4 @@
 #include "STDet/DeTTSector.h"
 
 typedef XmlUserDetElemCnv<DeTTSector >        XmlTTSectorCnv;
-DECLARE_CONVERTER_FACTORY(XmlTTSectorCnv)
+DECLARE_CONVERTER( XmlTTSectorCnv )

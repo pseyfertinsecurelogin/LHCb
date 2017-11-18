@@ -20,7 +20,7 @@
 // 2004-01-16 : Alessia Satta
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( MuonDigitToRawBuffer )
+DECLARE_COMPONENT( MuonDigitToRawBuffer )
 
 using namespace LHCb;
 

@@ -295,7 +295,7 @@ class MCDecayFinder::Descriptor final
     std::unique_ptr<Descriptor> alternate;
 };
 
-DECLARE_TOOL_FACTORY( MCDecayFinder )
+DECLARE_COMPONENT( MCDecayFinder )
 
 //=============================================================================
 // Standard constructor, initializes variables

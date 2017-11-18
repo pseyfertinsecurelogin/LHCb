@@ -23,7 +23,7 @@
 //  Compute L0Calo quantities from Calorimeter full information
 //
 
-DECLARE_ALGORITHM_FACTORY( L0CaloAlg )
+DECLARE_COMPONENT( L0CaloAlg )
 
 // Temporary, to be moved to confDB
 int L0CaloAlg::s_ecalLUT[ 14 ][ 2 ] = {

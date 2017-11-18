@@ -67,9 +67,6 @@
 // ============================================================================
 class TESCheck final : public GaudiAlgorithm
 {
-
-  friend class AlgFactory<TESCheck>;
-
  public:
 
   typedef StringArrayProperty       Inputs ;
@@ -89,8 +86,6 @@ class TESCheck final : public GaudiAlgorithm
   /// execute the algorithm itself
   StatusCode execute()  override;
 
- protected:
-
   /** constructor
    *  @param name algorithm instance name
    *  @param pSvc pointer to Service Locator
@@ -109,22 +104,10 @@ class TESCheck final : public GaudiAlgorithm
     m_inputs.declareUpdateHandler (&TESCheck::propHndl , this);
   }
 
-  /// virtual destructor
-  virtual ~TESCheck() = default;
-
  public:
 
   /// a technical - to be able to modify it interactively, e.g. in Python
   void propHndl ( Property&  /* p */ ) {};
-
- private:
-
-  // default constructor is disabled
-  TESCheck() ;
-  // copy constructor is disabled
-  TESCheck           ( const TESCheck& ) ;
-  // assignement operator is disabled
-  TESCheck& operator=( const TESCheck& ) ;
 
  private:
 
@@ -136,7 +119,7 @@ class TESCheck final : public GaudiAlgorithm
 // ============================================================================
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( TESCheck )
+DECLARE_COMPONENT( TESCheck )
 
 // ============================================================================
 /// execute the algorithm itself

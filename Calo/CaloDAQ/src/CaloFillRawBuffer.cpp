@@ -12,7 +12,7 @@
 // 2004-12-17 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( CaloFillRawBuffer )
+DECLARE_COMPONENT( CaloFillRawBuffer )
 
 //=============================================================================
 // Standard constructor, initializes variables

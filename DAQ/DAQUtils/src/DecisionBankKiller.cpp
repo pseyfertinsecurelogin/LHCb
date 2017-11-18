@@ -1,6 +1,6 @@
 #include "DecisionBankKiller.h"
 
-DECLARE_ALGORITHM_FACTORY(DecisionBankKiller)
+DECLARE_COMPONENT( DecisionBankKiller )
 
 //=============================================================================
 // Standard creator, initializes variables

@@ -6,6 +6,6 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 
 typedef  XmlUserDetElemCnv<DeRichSphMirror>  XmlDeRichSphMirrorCnv;
-DECLARE_CONVERTER_FACTORY( XmlDeRichSphMirrorCnv )
+DECLARE_CONVERTER( XmlDeRichSphMirrorCnv )
 
 #endif // XMLDERICHSPHMIRRORCNV_H

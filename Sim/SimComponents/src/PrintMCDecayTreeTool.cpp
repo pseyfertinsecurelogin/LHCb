@@ -23,7 +23,7 @@
 
 // Declaration of the AlgTool Factory
 
-DECLARE_TOOL_FACTORY( PrintMCDecayTreeTool )
+DECLARE_COMPONENT( PrintMCDecayTreeTool )
 
 using namespace Gaudi::Units;
 

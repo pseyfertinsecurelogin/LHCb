@@ -330,6 +330,6 @@ void ParticlesAndVerticesMapper::addPath( const std::string & path )
 
 // ============================================================================
 
-DECLARE_TOOL_FACTORY(ParticlesAndVerticesMapper)
+DECLARE_COMPONENT( ParticlesAndVerticesMapper )
 
 // ============================================================================

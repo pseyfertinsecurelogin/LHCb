@@ -53,10 +53,6 @@ namespace LoKi
       , public virtual IMCHybridTool
       , public virtual IMCHybridFactory
     {
-      // ======================================================================
-      // friend factory forn instantiation
-      friend struct ToolFactory<LoKi::Hybrid::MCTool> ;
-      // ======================================================================
     public:
       // ======================================================================
       /// initialization of the tool
@@ -336,19 +332,11 @@ namespace LoKi
       /// set the C++ source  for LHCb::MCVertex
       void set ( const LoKi::Types::MCVSources&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_mcvsource , cut ) ; }
-      // ======================================================================
-    protected:
-      // ======================================================================
       /// constrcutor
       MCTool
       ( const std::string& type   ,
         const std::string& name   ,
         const IInterface*  parent ) ;
-      // ======================================================================
-      /// the copy constructor is disabled
-      MCTool( const MCTool& ) = delete;     // the copy constructor is disabled
-      /// the assignement operator  is disabled
-      MCTool& operator=( const MCTool& ) = delete;            // no assignement
       // ======================================================================
     private:
       // ======================================================================
@@ -421,7 +409,7 @@ LoKi::Hybrid::MCTool::_get
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi::Hybrid,MCTool)
+DECLARE_COMPONENT( LoKi::Hybrid::MCTool )
 // ============================================================================
 // Standard constructor
 // ============================================================================

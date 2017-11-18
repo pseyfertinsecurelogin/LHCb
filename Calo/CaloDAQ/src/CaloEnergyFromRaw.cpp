@@ -8,7 +8,7 @@
 // 2005-01-10 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_TOOL_FACTORY( CaloEnergyFromRaw )
+DECLARE_COMPONENT( CaloEnergyFromRaw )
 
 //=============================================================================
 // Standard constructor, initializes variables

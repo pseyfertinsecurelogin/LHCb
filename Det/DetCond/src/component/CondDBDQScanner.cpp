@@ -21,7 +21,7 @@
 //
 // 04/11/2011: Marco Clemencic
 // ----------------------------------------------------------------------------
-DECLARE_TOOL_FACTORY(CondDBDQScanner)
+DECLARE_COMPONENT( CondDBDQScanner )
 
 // ============================================================================
 // Standard constructor, initializes variables

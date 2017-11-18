@@ -1,6 +1,6 @@
 #include "RunChangeHandlerSvc.h"
 
-DECLARE_SERVICE_FACTORY( RunChangeHandlerSvc )
+DECLARE_COMPONENT( RunChangeHandlerSvc )
 
 #define ON_DEBUG if (msgLevel(MSG::DEBUG))
 #define DEBUG_MSG ON_DEBUG debug()

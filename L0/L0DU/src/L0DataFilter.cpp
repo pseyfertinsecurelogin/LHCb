@@ -13,7 +13,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( L0DataFilter )
+DECLARE_COMPONENT( L0DataFilter )
 
 
 //=============================================================================

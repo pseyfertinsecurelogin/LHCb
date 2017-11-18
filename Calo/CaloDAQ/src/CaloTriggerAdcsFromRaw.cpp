@@ -8,7 +8,7 @@
 // 2005-01-05 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_TOOL_FACTORY( CaloTriggerAdcsFromRaw )
+DECLARE_COMPONENT( CaloTriggerAdcsFromRaw )
 
 //=============================================================================
 // Standard constructor, initializes variables

@@ -7,4 +7,4 @@
 #include "STDet/DeTTHalfModule.h"
 
 typedef XmlUserDetElemCnv<DeTTHalfModule>      XmlTTHalfModuleCnv;
-DECLARE_CONVERTER_FACTORY(XmlTTHalfModuleCnv)
+DECLARE_CONVERTER( XmlTTHalfModuleCnv )

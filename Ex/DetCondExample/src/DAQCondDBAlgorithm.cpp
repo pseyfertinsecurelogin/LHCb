@@ -15,7 +15,7 @@
 #include "CoolKernel/ValidityKey.h"
 
 /// Instantiation of a static factory to create instances of this algorithm
-DECLARE_ALGORITHM_FACTORY( DAQCondDBAlgorithm )
+DECLARE_COMPONENT( DAQCondDBAlgorithm )
 
 // Define the attributes for all folders created in this example
 const std::string folderAttributes = "";

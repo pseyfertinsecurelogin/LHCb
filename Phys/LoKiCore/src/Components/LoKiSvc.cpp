@@ -65,10 +65,6 @@ class LoKiSvc
   , public virtual LoKi::ILoKiSvc
   , public virtual IIncidentListener
 {
-  // ==========================================================================
-  // the friend factory for instantiation
-  friend class SvcFactory<LoKiSvc> ;
-  // ==========================================================================
 public:
   // ==========================================================================
   /** get "good" error reporter
@@ -594,7 +590,7 @@ public:
     return StatusCode::SUCCESS ;
   }
   // ==========================================================================
-protected:
+public:
   // ==========================================================================
   /** standard constructor
    *  @param name service instance name
@@ -603,7 +599,7 @@ protected:
   using Service::Service;
   // ==========================================================================
   /// virtual and protected destructor
-  virtual ~LoKiSvc ()
+  ~LoKiSvc ()
   {
     if ( m_reporter && m_toolSvc )
     { m_toolSvc -> releaseTool ( m_reporter ) ; }
@@ -620,11 +616,6 @@ protected:
     if ( m_chronoSvc   ) { m_chronoSvc   -> release() ; }
     if ( m_updateSvc   ) { m_updateSvc   -> release() ; }
   }
-  // ==========================================================================
-  /// copy constructor is disabled
-  LoKiSvc           ( const  LoKiSvc& ) = delete;                    // no copy
-  /// assignement operator is disabled
-  LoKiSvc& operator=( const  LoKiSvc& ) = delete;    // no assignement operator
   // ==========================================================================
 private:
   // ==========================================================================
@@ -663,7 +654,7 @@ private:
   // ==========================================================================
 };
 // ============================================================================
-DECLARE_SERVICE_FACTORY(LoKiSvc)
+DECLARE_COMPONENT( LoKiSvc )
 // ============================================================================
 // The END
 // ============================================================================

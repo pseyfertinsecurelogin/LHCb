@@ -22,17 +22,11 @@ class IOpaqueAddress;
     @date November 2004
 *///--------------------------------------------------------------------------
 
-class CondDBCnvSvc : public extends1<ConversionSvc, ICondDBReader> {
-
-  /// Only factories can access protected constructors
-  friend class SvcFactory<CondDBCnvSvc>;
-
-protected:
+class CondDBCnvSvc : public extends<ConversionSvc, ICondDBReader> {
+public:
 
   /// Constructor
   CondDBCnvSvc( const std::string& name, ISvcLocator* svc );
-
-public:
 
   // Overloaded from ConversionSvc
 
@@ -114,5 +108,3 @@ private:
 };
 
 #endif    // DETCOND_CONDITIONSDBCNVSVC_H
-
-

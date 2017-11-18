@@ -162,7 +162,7 @@ namespace
 }
 
 // Factory implementation
-DECLARE_SERVICE_FACTORY(COOLConfSvc)
+DECLARE_COMPONENT( COOLConfSvc )
 
 //=============================================================================
 // Standard constructor, initializes variables

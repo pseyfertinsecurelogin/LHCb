@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( CondDBReplayAlg )
+DECLARE_COMPONENT( CondDBReplayAlg )
 
 //=============================================================================
 // Standard constructor, initializes variables

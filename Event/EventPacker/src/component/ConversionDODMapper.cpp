@@ -25,7 +25,7 @@ namespace Gaudi
 //
 // 17/01/2012: Marco Clemencic
 // ----------------------------------------------------------------------------
-DECLARE_TOOL_FACTORY(ConversionDODMapper)
+DECLARE_COMPONENT( ConversionDODMapper )
 
 // ============================================================================
 // Standard constructor, initializes variables

@@ -6,6 +6,6 @@
 #include "DetDescCnv/XmlUserDetElemCnv.h"
 
 typedef  XmlUserDetElemCnv<DeRichAerogelRadiator>  XmlDeRichAerogelRadiatorCnv;
-DECLARE_CONVERTER_FACTORY( XmlDeRichAerogelRadiatorCnv )
+DECLARE_CONVERTER( XmlDeRichAerogelRadiatorCnv )
 
 #endif // XMLDERICHAEROGELRADIATORCNV_H

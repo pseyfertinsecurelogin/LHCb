@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( EventAccounting )
+DECLARE_COMPONENT( EventAccounting )
 
 //=============================================================================
 // Standard constructor, initializes variables

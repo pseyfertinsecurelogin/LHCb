@@ -145,7 +145,7 @@ bool LoKi::MCFilter::operator() (const LHCb::MCParticle::Container& particles) c
 }
 // ============================================================================
 /// the factory (needed for instantiation)
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,MCFilter)
+DECLARE_COMPONENT( LoKi::MCFilter )
 // ============================================================================
 // The END
 // ============================================================================

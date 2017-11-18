@@ -19,7 +19,7 @@
 // 2005-05-12 : Eduardo Rodrigues (adaptations to GaudiTool)
 //-----------------------------------------------------------------------------
 
-DECLARE_TOOL_FACTORY( BIntegrator )
+DECLARE_COMPONENT( BIntegrator )
 
 //=============================================================================
 // Standard constructor, initializes variables

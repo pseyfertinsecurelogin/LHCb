@@ -13,7 +13,7 @@
 #include "LHCbFSRStream.h"
 
 // Define the algorithm factory for the standard output data writer
-DECLARE_ALGORITHM_FACTORY(LHCbFSRStream)
+DECLARE_COMPONENT( LHCbFSRStream )
 
 // Standard Constructor
 LHCbFSRStream::LHCbFSRStream(const std::string& name, ISvcLocator* pSvcLocator)

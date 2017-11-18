@@ -12,7 +12,7 @@
 // local
 #include "DetElemFinder.h"
 
-DECLARE_SERVICE_FACTORY( DetElemFinder )
+DECLARE_COMPONENT( DetElemFinder )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : DetElemFinder

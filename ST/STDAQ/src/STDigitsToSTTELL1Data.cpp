@@ -25,7 +25,7 @@ using namespace LHCb;
 // 2004-01-07 : Matthew Needham
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( STDigitsToSTTELL1Data )
+DECLARE_COMPONENT( STDigitsToSTTELL1Data )
 
 STDigitsToSTTELL1Data::STDigitsToSTTELL1Data( const std::string& name,
                                            ISvcLocator* pSvcLocator ):

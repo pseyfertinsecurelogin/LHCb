@@ -6,4 +6,4 @@
 #include "OTDet/DeOTQuarter.h"
 
 typedef XmlUserDetElemCnv<DeOTQuarter>       XmlOTQuarterCnv;
-DECLARE_CONVERTER_FACTORY(XmlOTQuarterCnv)
+DECLARE_CONVERTER( XmlOTQuarterCnv )

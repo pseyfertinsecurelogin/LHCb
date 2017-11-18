@@ -11,7 +11,7 @@ using namespace LHCbAlgsTest;
 //
 // 09/01/2012: Marco Clemencic
 // ----------------------------------------------------------------------------
-DECLARE_ALGORITHM_FACTORY(ServiceStarter)
+DECLARE_COMPONENT( ServiceStarter )
 
 namespace {
   const std::vector<std::string> phases = {"initialize", "start", "execute"};

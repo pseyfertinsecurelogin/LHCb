@@ -7,4 +7,4 @@
 #include "STDet/DeITBox.h"
 
 typedef XmlUserDetElemCnv<DeITBox >        XmlITBoxCnv;
-DECLARE_CONVERTER_FACTORY(XmlITBoxCnv)
+DECLARE_CONVERTER( XmlITBoxCnv )

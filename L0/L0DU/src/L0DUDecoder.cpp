@@ -56,7 +56,7 @@ namespace {
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_ALGORITHM_FACTORY( L0DUDecoder )
+DECLARE_COMPONENT( L0DUDecoder )
 
 //=============================================================================
 // Standard constructor, initializes variables

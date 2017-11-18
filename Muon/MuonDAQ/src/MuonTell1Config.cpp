@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Tool Factory
-DECLARE_TOOL_FACTORY( MuonTell1Config )
+DECLARE_COMPONENT( MuonTell1Config )
 
 namespace {
  static const  std::map<std::string,long> TUName {

@@ -35,7 +35,7 @@ struct DumpHepMCTree : DumpHepMCDecay
 // ============================================================================
 // Declaration of the Algorithm Factory
 // ============================================================================
-DECLARE_ALGORITHM_FACTORY( DumpHepMCTree )
+DECLARE_COMPONENT( DumpHepMCTree )
 // ============================================================================
 StatusCode DumpHepMCTree::execute()
 {

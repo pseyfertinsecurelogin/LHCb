@@ -273,6 +273,6 @@ public:
 }
 
 // Declaration of the Algorithm Factory
-DECLARE_NAMESPACE_ALGORITHM_FACTORY( DetCondTest, TestConditionAlg )
-DECLARE_NAMESPACE_ALGORITHM_FACTORY( DetCondTest, FinalizationEvtLoop )
-DECLARE_NAMESPACE_ALGORITHM_FACTORY( DetCondTest, bug_80076 )
+DECLARE_COMPONENT( DetCondTest::TestConditionAlg )
+DECLARE_COMPONENT( DetCondTest::FinalizationEvtLoop )
+DECLARE_COMPONENT( DetCondTest::bug_80076 )

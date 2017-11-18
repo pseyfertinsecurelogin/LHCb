@@ -10,7 +10,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( CompareProtoParticle )
+DECLARE_COMPONENT( CompareProtoParticle )
 
 //=============================================================================
 // Standard constructor, initializes variables

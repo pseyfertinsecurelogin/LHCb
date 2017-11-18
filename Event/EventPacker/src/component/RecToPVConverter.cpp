@@ -13,7 +13,7 @@ private:
   bool m_doFit ;
 } ;
 
-DECLARE_ALGORITHM_FACTORY( RecToPVConverter )
+DECLARE_COMPONENT( RecToPVConverter )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : RecToPVConverter

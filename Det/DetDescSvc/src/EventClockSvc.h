@@ -31,10 +31,6 @@ public:
   void handle(const Incident &inc) override;
 
 private:
-
-  /// Allow SvcFactory to instantiate the service.
-  friend class SvcFactory<EventClockSvc>;
-
   // ---------- data members ----------
   // --- names ---
   /// Name of the Data Provider (set by the option DetDataSvc, by default "DetectorDataSvc").

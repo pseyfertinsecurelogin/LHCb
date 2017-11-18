@@ -29,7 +29,7 @@
 //#define NREG 16
 
 
-DECLARE_SERVICE_FACTORY( AnalyticFieldSvc )
+DECLARE_COMPONENT( AnalyticFieldSvc )
 
 //=============================================================================
 // Standard constructor, initializes variables

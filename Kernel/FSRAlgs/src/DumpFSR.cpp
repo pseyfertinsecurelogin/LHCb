@@ -28,7 +28,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( DumpFSR )
+DECLARE_COMPONENT( DumpFSR )
 
 //=============================================================================
 // Standard constructor, initializes variables

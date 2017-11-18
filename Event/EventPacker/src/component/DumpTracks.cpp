@@ -13,7 +13,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY(DumpTracks)
+DECLARE_COMPONENT( DumpTracks )
 
 //=============================================================================
 // Standard constructor, initializes variables

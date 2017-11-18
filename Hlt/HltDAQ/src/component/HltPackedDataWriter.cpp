@@ -24,7 +24,7 @@
 static const Gaudi::StringKey PackedObjectLocations{"PackedObjectLocations"};
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY(HltPackedDataWriter)
+DECLARE_COMPONENT( HltPackedDataWriter )
 
 HltPackedDataWriter::HltPackedDataWriter(const std::string& name, ISvcLocator* pSvcLocator)
 : GaudiAlgorithm(name, pSvcLocator)

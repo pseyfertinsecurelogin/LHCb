@@ -13,7 +13,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( PackRecVertex )
+DECLARE_COMPONENT( PackRecVertex )
 
 //=============================================================================
 // Standard constructor, initializes variables

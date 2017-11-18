@@ -11,7 +11,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( UnpackTwoProngVertex )
+DECLARE_COMPONENT( UnpackTwoProngVertex )
 
 //=============================================================================
 // Standard constructor, initializes variables

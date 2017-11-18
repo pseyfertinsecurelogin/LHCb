@@ -223,7 +223,7 @@ bool LoKi::HDRFilter::operator()(const LHCb::HltDecReports& hdr) const // the ma
 }
 // ============================================================================
 /// the factory (needed for instantiation)
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(LoKi,HDRFilter)
+DECLARE_COMPONENT( LoKi::HDRFilter )
 // ============================================================================
 // The END
 // ============================================================================

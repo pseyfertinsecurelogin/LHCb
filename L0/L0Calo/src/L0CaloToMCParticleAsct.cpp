@@ -16,7 +16,7 @@
 // 2002-07-01 : Olivier Callot
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( L0CaloToMCParticleAsct )
+DECLARE_COMPONENT( L0CaloToMCParticleAsct )
 
 //=============================================================================
 // Standard constructor, initializes variables

@@ -1158,6 +1158,6 @@ void RawBankDecoder::dumpRawBank( const LHCb::RawBank & bank,
 //=============================================================================
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( RawBankDecoder )
+DECLARE_COMPONENT( RawBankDecoder )
 
 //=============================================================================

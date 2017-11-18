@@ -521,6 +521,6 @@ StatusCode UnpackParticlesAndVertices::execute()
 //=============================================================================
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( UnpackParticlesAndVertices )
+DECLARE_COMPONENT( UnpackParticlesAndVertices )
 
 //=============================================================================

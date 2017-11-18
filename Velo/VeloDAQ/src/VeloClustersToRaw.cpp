@@ -22,7 +22,7 @@
 // 2011-09-20 : Kurt Rinnert
 //-----------------------------------------------------------------------------
 
-DECLARE_ALGORITHM_FACTORY( VeloClustersToRaw )
+DECLARE_COMPONENT( VeloClustersToRaw )
 
 //=============================================================================
 // Standard constructor, initializes variables

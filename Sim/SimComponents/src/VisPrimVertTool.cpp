@@ -16,7 +16,7 @@
 // 2004-03-18 : Christian Jacoby (LPHE, EPFL, Lausanne)
 //-----------------------------------------------------------------------------
 
-DECLARE_TOOL_FACTORY( VisPrimVertTool )
+DECLARE_COMPONENT( VisPrimVertTool )
 
 
 //-----------------------------------------------------------------------------

@@ -68,10 +68,6 @@ namespace LoKi
       : public               GaudiTool
       , public virtual IEventTupleTool
     {
-      // ======================================================================
-      /// friend factory for instantiation
-      friend struct ToolFactory<LoKi::Hybrid::EvtTupleTool> ;
-      // ======================================================================
     public:
       // ======================================================================
       /**  Fill the tuple
@@ -85,9 +81,6 @@ namespace LoKi
       StatusCode initialize ()  override;
       /// standard finalization   of the tool
       StatusCode finalize   ()  override;
-      // ======================================================================
-    protected:
-      // ======================================================================
       /** constructor
        *  @param type   the tool type (??)
        *  @param name   the tool instance name
@@ -99,15 +92,6 @@ namespace LoKi
         const IInterface*   parent ) ;                    // the parent
       /// vitual & protected destructor
       virtual ~EvtTupleTool () ;               // vitual & protected destructor
-      // ======================================================================
-    private:
-      // ======================================================================
-      /// the default constructor is disabled
-      EvtTupleTool () ;                  // the default constructor is disabled
-      /// the copy constructor is disabled
-      EvtTupleTool ( const EvtTupleTool& ) ; // the copy constructor is disabled
-      /// assignement operator is disabled
-      EvtTupleTool& operator=( const EvtTupleTool& ) ;        // no assignement
       // ======================================================================
     public:
       // ======================================================================
@@ -696,13 +680,10 @@ StatusCode LoKi::Hybrid::EvtTupleTool::fill( Tuples::Tuple& t )
 
 // ============================================================================
 /// Declaration of the Tool Factory
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi::Hybrid,EvtTupleTool)
+DECLARE_COMPONENT( LoKi::Hybrid::EvtTupleTool )
 // ============================================================================
 
 
 // ============================================================================
 // The END
 // ============================================================================
-
-
-

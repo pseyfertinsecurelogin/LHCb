@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY(DumpMCEventAlg)
+DECLARE_COMPONENT( DumpMCEventAlg )
 
 //=============================================================================
 // Standard constructor, initializes variables

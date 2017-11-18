@@ -7,4 +7,4 @@
 #include "STDet/DeTTStation.h"
 
 typedef XmlUserDetElemCnv<DeTTStation>        XmlTTStationCnv;
-DECLARE_CONVERTER_FACTORY(XmlTTStationCnv)
+DECLARE_CONVERTER( XmlTTStationCnv )

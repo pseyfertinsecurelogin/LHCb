@@ -31,7 +31,7 @@ namespace {
 }
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( HltRoutingBitsWriter )
+DECLARE_COMPONENT( HltRoutingBitsWriter )
 
 //=============================================================================
 StatusCode HltRoutingBitsWriter::decode() {

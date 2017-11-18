@@ -42,4 +42,4 @@ struct createODIN final : Gaudi::Functional::Transformer<LHCb::ODIN(const LHCb::
 };
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( createODIN )
+DECLARE_COMPONENT( createODIN )

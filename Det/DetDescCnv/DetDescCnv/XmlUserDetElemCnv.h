@@ -30,13 +30,6 @@
  * @author Sebastien Ponce
  */
 template <class DeType> class XmlUserDetElemCnv : public XmlBaseDetElemCnv {
-
-  /// The type of this object
-  typedef XmlUserDetElemCnv<DeType> MyType;
-  /// Friend needed for instantiation
-  friend class CnvFactory<MyType>;
-
-
  public:
 
   /**
@@ -44,11 +37,6 @@ template <class DeType> class XmlUserDetElemCnv : public XmlBaseDetElemCnv {
    * @param svc a ISvcLocator interface to find services
    */
   XmlUserDetElemCnv (ISvcLocator* svc);
-
-  /**
-   * Default destructor
-   */
-  virtual ~XmlUserDetElemCnv() {}
 
   /**
    * accessor to the type of elements that this converter converts

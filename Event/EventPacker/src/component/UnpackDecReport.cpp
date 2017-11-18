@@ -17,7 +17,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( UnpackDecReport )
+DECLARE_COMPONENT( UnpackDecReport )
 
 //=============================================================================
 // Standard constructor, initializes variables

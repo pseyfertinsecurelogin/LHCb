@@ -18,7 +18,7 @@ using namespace LHCb;
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( MuonPIDsFromProtoParticlesAlg )
+DECLARE_COMPONENT( MuonPIDsFromProtoParticlesAlg )
 
 //=============================================================================
 // Standard constructor, initializes variables

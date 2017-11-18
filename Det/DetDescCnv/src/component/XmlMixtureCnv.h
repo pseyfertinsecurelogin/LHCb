@@ -1,5 +1,3 @@
-// $Id: XmlMixtureCnv.h,v 1.5 2008-05-20 08:28:10 smenzeme Exp $
-
 #ifndef DETDESCCNV_XMLMIXTURECNV_H
 #define DETDESCCNV_XMLMIXTURECNV_H
 
@@ -22,10 +20,6 @@ template <class TYPE> class CnvFactory;
  * @author Pere Mato
  */
 class XmlMixtureCnv : public XmlGenericCnv {
-
-  /// Friend needed for instantiation
-  friend class CnvFactory<XmlMixtureCnv>;
-
  public:
 
   /**
@@ -33,9 +27,6 @@ class XmlMixtureCnv : public XmlGenericCnv {
    * @return the classID for this type
    */
   static const CLID& classID () { return CLID_Mixture; }
-
-
- protected:
 
   /**
    * Constructor for this converter
@@ -47,6 +38,8 @@ class XmlMixtureCnv : public XmlGenericCnv {
    * Default destructor
    */
   virtual ~XmlMixtureCnv();
+
+ protected:
 
   /** Creates the transient representation of an object from a DOMElement.
    * Overrides the default method in XmlGenericCnv
@@ -122,4 +115,3 @@ private:
 };
 
 #endif // DETDESCCNV_XMLCNVSVC_XMLMIXTURECNV_H
-

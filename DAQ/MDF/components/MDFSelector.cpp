@@ -139,4 +139,4 @@ namespace LHCb  {
   };
 }
 
-DECLARE_NAMESPACE_SERVICE_FACTORY(LHCb,MDFSelector)
+DECLARE_COMPONENT( LHCb::MDFSelector )

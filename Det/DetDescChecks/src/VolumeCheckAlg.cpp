@@ -74,10 +74,6 @@ DetDesc::VolumeCheck::VolumeCheck
   declareProperty ( "Null"                 , m_vertex       ) ;
  }
 // ============================================================================
-// destructor (protected and virtual)
-// ============================================================================
-DetDesc::VolumeCheck::~VolumeCheck() {}
-// ============================================================================
 /*  standard algorithm initialization
  *  @see IAlgorithm
  *  @return status code
@@ -342,9 +338,7 @@ StatusCode DetDesc::VolumeCheck::execute()
 // ============================================================================
 // Declaration of the Algorithm Factory
 // ============================================================================
-DECLARE_NAMESPACE_ALGORITHM_FACTORY(DetDesc,VolumeCheck)
+DECLARE_COMPONENT( DetDesc::VolumeCheck )
 // ============================================================================
 // The END
 // ============================================================================
-
-

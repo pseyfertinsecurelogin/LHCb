@@ -56,8 +56,6 @@ namespace LoKi
       , public virtual IGenHybridTool
       , public virtual IGenHybridFactory
     {
-      // friend factory forn instantiation
-      friend struct ToolFactory<LoKi::Hybrid::GenTool> ;
     public:
       // ======================================================================
       /// initialization of the tool
@@ -310,20 +308,11 @@ namespace LoKi
       void set ( const LoKi::Types::GVSources&   cut ) override
       { LoKi::Hybrid::Base::_set ( m_gvsource , cut ) ; }
       // ======================================================================
-    protected:
-      // ======================================================================
       /// constrcutor
       GenTool
       ( const std::string& type   ,
         const std::string& name   ,
         const IInterface*  parent ) ;
-      // ======================================================================
-    private:
-      // ======================================================================
-      // the copy constructor is disabled
-      GenTool           ( const GenTool& )  ; ///< the copy constructor is disabled
-      // the assignement operator  is disabled
-      GenTool& operator=( const GenTool& )  ; ///< no assignement
       // ======================================================================
     private:
       // ======================================================================
@@ -401,7 +390,7 @@ inline StatusCode LoKi::Hybrid::GenTool::_get
   return StatusCode::SUCCESS ;
 }
 // ============================================================================
-DECLARE_NAMESPACE_TOOL_FACTORY(LoKi::Hybrid,GenTool)
+DECLARE_COMPONENT( LoKi::Hybrid::GenTool )
 // ============================================================================
 // Standard constructor
 // ============================================================================

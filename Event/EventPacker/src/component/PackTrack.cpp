@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------
 
 // Declaration of the Algorithm Factory
-DECLARE_ALGORITHM_FACTORY( PackTrack )
+DECLARE_COMPONENT( PackTrack )
 
 //=============================================================================
 // Standard constructor, initializes variables

@@ -5,4 +5,4 @@
 #include "STDet/DeUTDetector.h"
 
 typedef XmlUserDetElemCnv<DeUTDetector>       XmlUTDetectorCnv;
-DECLARE_CONVERTER_FACTORY(XmlUTDetectorCnv)
+DECLARE_CONVERTER( XmlUTDetectorCnv )

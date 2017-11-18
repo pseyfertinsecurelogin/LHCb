@@ -87,4 +87,4 @@ void DQFilter::handle(const Incident&) {
   }
 }
 
-DECLARE_ALGORITHM_FACTORY( DQFilter )
+DECLARE_COMPONENT( DQFilter )

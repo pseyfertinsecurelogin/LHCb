@@ -7,7 +7,7 @@
 #include "CondDBCommon.h"
 
 // Factory implementation
-DECLARE_SERVICE_FACTORY(CondDBDispatcherSvc)
+DECLARE_COMPONENT( CondDBDispatcherSvc )
 
 //-----------------------------------------------------------------------------
 // Implementation file for class : CondDBDispatcherSvc
