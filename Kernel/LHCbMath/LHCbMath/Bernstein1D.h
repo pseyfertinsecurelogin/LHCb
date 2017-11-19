@@ -494,6 +494,15 @@ namespace Gaudi
       /// Divide Bernstein polynomial by a constant
       BernsteinEven __div__   ( const double value ) const { return m_even / value  ; }
       // ======================================================================
+    public:
+      // ======================================================================     
+      /// swap  two polynomials 
+      void swap ( PositiveEven& right ) 
+      {
+        Gaudi::Math::swap (  m_even    , right.m_even   ) ;
+        Gaudi::Math::swap (  m_sphere  , right.m_sphere ) ;        
+      }
+      // ======================================================================
     protected:
       // ======================================================================
       /// update bernstein coefficients
@@ -529,6 +538,9 @@ namespace Gaudi
     ///  Constant minus Positive
     inline BernsteinEven operator-( const double v , const PositiveEven& p )
     { return v - p.even() ; } 
+    // ========================================================================
+    // swap two positive polynomials 
+    inline void swap ( PositiveEven& a , PositiveEven& b ) { a.swap ( b ) ; }
     // ========================================================================
     /** @class Monothonic
      *  The "positive" monothonic polynomial of order N
@@ -580,6 +592,14 @@ namespace Gaudi
       /// get the maximal value of function
       double fun_max () const ; // get the maximal value of function
       // ======================================================================
+    public:
+      // ======================================================================
+      void swap ( Monothonic& right ) 
+      {
+        std::swap ( m_increasing , right.m_increasing ) ;
+        Gaudi::Math::Positive::swap ( right ) ;
+      }
+      // ======================================================================
     protected:
       // ======================================================================
       /// update bernstein coefficients
@@ -591,6 +611,9 @@ namespace Gaudi
       bool                   m_increasing ; // increasing ?
       // ======================================================================
     } ;
+    // ========================================================================
+    /// swap two monothonic polynomials 
+    inline void swap ( Monothonic& a , Monothonic& b ) { a.swap ( b ) ; }
     // ========================================================================
     /** @class Convex
      *  The "positive" polynomial of order N with
@@ -642,6 +665,14 @@ namespace Gaudi
       /// convex     ?
       bool   concave   () const { return   !convex () ; }
       // ======================================================================
+    public:
+      // ======================================================================
+      void swap ( Convex& right ) 
+      {
+        std::swap ( m_convex , right.m_convex ) ;
+        Gaudi::Math::Monothonic::swap ( right ) ;
+      }
+      // ======================================================================
     protected:
       // ======================================================================
       /// update bernstein coefficients
@@ -653,6 +684,9 @@ namespace Gaudi
       bool                   m_convex     ; // iconvex ?
       // ======================================================================
     } ;
+    // ========================================================================
+    /// swap two convex polynomials 
+    inline void swap ( Convex& a , Convex& b ) { a.swap ( b ) ; }
     // ========================================================================
     /** @class ConvexOnly
      *  The "positive" polynomial of order N with
@@ -694,6 +728,14 @@ namespace Gaudi
       /// convex     ?
       bool   concave   () const { return   !convex () ; }
       // ======================================================================
+    public:
+      // ======================================================================
+      void swap ( ConvexOnly& right ) 
+      {
+        std::swap ( m_convex , right.m_convex ) ;
+        Gaudi::Math::Positive::swap ( right ) ;
+      }
+      // ======================================================================
     protected:
       // ======================================================================
       /// update bernstein coefficients
@@ -705,6 +747,9 @@ namespace Gaudi
       bool                   m_convex     ; // iconvex ?
       // ======================================================================
     } ;
+    // ========================================================================
+    /// swap two convex polynomials 
+    inline void swap ( ConvexOnly& a , ConvexOnly& b ) { a.swap ( b ) ; }
     // ========================================================================
   } //                                        The end of namespace  Gaudi::Math
   // ==========================================================================
