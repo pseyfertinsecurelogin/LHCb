@@ -74,6 +74,36 @@ Gaudi::Math::Bernstein2D::Bernstein2D
   //
 }
 // ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::Bernstein2D::Bernstein2D
+(       Gaudi::Math::Bernstein2D&& right )
+  : m_nx   ( std::move ( right.m_nx   ) ) 
+  , m_ny   ( std::move ( right.m_ny   ) ) 
+  , m_pars ( std::move ( right.m_pars ) ) 
+  , m_xmin ( std::move ( right.m_xmin ) ) 
+  , m_xmax ( std::move ( right.m_xmax ) ) 
+  , m_ymin ( std::move ( right.m_ymin ) ) 
+  , m_ymax ( std::move ( right.m_ymax ) ) 
+  , m_bx   ( std::move ( right.m_bx   ) ) 
+  , m_by   ( std::move ( right.m_by   ) ) 
+{}
+// ============================================================================
+// swap  two 2D-polynomials 
+// ============================================================================
+void Gaudi::Math::Bernstein2D::swap ( Gaudi::Math::Bernstein2D&  right ) 
+{
+  std::swap ( m_nx   , right.m_nx    ) ;
+  std::swap ( m_ny   , right.m_ny    ) ;
+  std::swap ( m_pars , right.m_pars  ) ;
+  std::swap ( m_xmin , right.m_xmin  ) ;
+  std::swap ( m_xmax , right.m_xmax  ) ;
+  std::swap ( m_ymin , right.m_ymin  ) ;
+  std::swap ( m_ymax , right.m_ymax  ) ;
+  std::swap ( m_bx   , right.m_bx    ) ;
+  std::swap ( m_by   , right.m_by    ) ;
+}
+// ============================================================================
 // helper function to make calculations
 // ============================================================================
 double Gaudi::Math::Bernstein2D::calculate
@@ -310,6 +340,95 @@ double  Gaudi::Math::Bernstein2D::par
   return par ( k ) ;
 }
 // ============================================================================
+Gaudi::Math::Bernstein2D&
+Gaudi::Math::Bernstein2D::operator+=( const double a )
+{
+  if   ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein2D&
+Gaudi::Math::Bernstein2D::operator*=( const double a )
+{
+  if      ( s_equal ( a , 1 ) ) { return *this ; }
+  else if ( s_zero  ( a     ) ) { std::fill ( m_pars.begin() , m_pars.end() , 0 ) ; }
+  LHCb::Math::scale ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein2D&
+Gaudi::Math::Bernstein2D::operator-=( const double a )
+{
+  if ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , -a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein2D&
+Gaudi::Math::Bernstein2D::operator/=( const double a )
+{
+  if   ( s_equal ( a , 1 ) ) { return *this ; }
+  LHCb::Math::scale ( m_pars , 1/a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein2D
+Gaudi::Math::Bernstein2D::operator-() const
+{
+  Bernstein2D b ( *this ) ;
+  LHCb::Math::negate ( b.m_pars ) ;
+  return b ;
+}
+// ============================================================================
+// Sum of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein2D
+Gaudi::Math::Bernstein2D::__add__   ( const double value ) const
+{ return (*this) + value ; }
+// ============================================================================
+// Sum of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein2D
+Gaudi::Math::Bernstein2D::__radd__  ( const double value ) const
+{ return value + (*this) ; }
+// ============================================================================
+// Product of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein2D
+Gaudi::Math::Bernstein2D::__mul__   ( const double value ) const
+{ return (*this) * value ; }
+// ============================================================================
+// Product of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein2D
+Gaudi::Math::Bernstein2D::__rmul__  ( const double value ) const
+{ return value * (*this) ; }
+// ============================================================================
+// Subtract a constant from Benrstein polynomial
+// ============================================================================
+Gaudi::Math::Bernstein2D
+Gaudi::Math::Bernstein2D::__sub__  ( const double value ) const
+{ return (*this) - value ; }
+// ============================================================================
+// Subtract Bernstein polynomial from a constant
+// ============================================================================
+Gaudi::Math::Bernstein2D
+Gaudi::Math::Bernstein2D::__rsub__ ( const double value ) const
+{ return value - (*this) ; }
+// ============================================================================
+// Divide Benrstein polynomial by a constant
+// ============================================================================
+Gaudi::Math::Bernstein2D
+Gaudi::Math::Bernstein2D:: __div__   ( const double value ) const
+{ return (*this) / value ; }
+// ============================================================================
+// Negate Bernstein polynomial
+// ============================================================================
+Gaudi::Math::Bernstein2D
+Gaudi::Math::Bernstein2D::__neg__ ()  const
+{ return -(*this); }
+// ============================================================================
 
 // ============================================================================
 // 2D-SYMMETRIC POLYNOMIAL
@@ -339,6 +458,51 @@ Gaudi::Math::Bernstein2DSym::Bernstein2DSym
   //
 }
 // ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::Bernstein2DSym::Bernstein2DSym
+(       Gaudi::Math::Bernstein2DSym&& right ) 
+  : m_n    ( std::move ( right.m_n    ) ) 
+  , m_pars ( std::move ( right.m_pars ) ) 
+  , m_xmin ( std::move ( right.m_xmin ) ) 
+  , m_xmax ( std::move ( right.m_xmax ) ) 
+  , m_b    ( std::move ( right.m_b    ) ) 
+{}
+// ============================================================================
+// swap  two 2D-polynomials 
+// ============================================================================
+void Gaudi::Math::Bernstein2DSym::swap ( Gaudi::Math::Bernstein2DSym&  right ) 
+{
+  std::swap ( m_n    , right.m_n     ) ;
+  std::swap ( m_pars , right.m_pars  ) ;
+  std::swap ( m_xmin , right.m_xmin  ) ;
+  std::swap ( m_xmax , right.m_xmax  ) ;
+  std::swap ( m_b    , right.m_b     ) ;
+}
+// ============================================================================
+// helper function to make calculations
+// ============================================================================
+double Gaudi::Math::Bernstein2DSym::calculate
+( const std::vector<double>& fx , 
+  const std::vector<double>& fy ) const 
+{
+  double       result = 0 ;
+  for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix )
+  {
+    result   += par ( ix , ix ) * fx[ix] * fy[ix] ;
+    for  ( unsigned short iy = 0 ; iy < ix ; ++iy )
+    { 
+      result += par ( ix , iy ) * fx[ix] * fy[iy] 
+        +       par ( ix , iy ) * fx[iy] * fy[ix] ; 
+    } 
+  }
+  //
+  const double scalex = ( m_n  + 1 ) / ( xmax () - xmin () ) ;
+  const double scaley = scalex ;
+  //
+  return result * scalex * scaley ;
+}
+// ============================================================================
 // get the value
 // ============================================================================
 double Gaudi::Math::Bernstein2DSym::evaluate 
@@ -349,10 +513,12 @@ double Gaudi::Math::Bernstein2DSym::evaluate
   if ( x < xmin () || x > xmax () ) { return 0.0        ; }
   if ( y < ymin () || y > ymax () ) { return 0.0        ; }
   //
-  const double scale = ( m_n + 1 ) / ( xmax() - xmin() ) ;
-  //
   if      ( 0 == npars ()       ) { return 0.0 ; }
-  else if ( 1 == npars ()       ) { return m_pars [0] * ( scale * scale ) ; }
+  else if ( 1 == npars ()       ) 
+  {
+    const double scale = ( m_n + 1 ) / ( xmax() - xmin() ) ;
+    return m_pars [0] * ( scale * scale ) ;
+  }
   ///
   std::vector<double> fy ( m_n + 1 , 0 ) ;
   for ( unsigned short i = 0 ; i <= m_n ; ++i )
@@ -362,18 +528,7 @@ double Gaudi::Math::Bernstein2DSym::evaluate
   for  ( unsigned short i = 0 ; i <= m_n ; ++i )
   { fx[i] = m_b[i] ( x ) ; }
   //
-  double       result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= m_n ; ++iy )
-    {
-      result +=
-        ix == iy  ? par ( ix , iy ) * fx[ix] * fy[iy] :
-        0.5       * par ( ix , iy ) * fx[ix] * fy[iy] ;
-    }
-  }
-  //
-  return result * ( scale * scale ) ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
 /* get the integral over 2D-region
@@ -409,19 +564,7 @@ double Gaudi::Math::Bernstein2DSym::integral
   for  ( unsigned short i = 0 ; i <= m_n ; ++i )
   { fx[i] = m_b[i].integral ( xlow , xhigh ) ; }
   //
-  double       result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= m_n ; ++iy )
-    {
-      result +=
-        ix == iy  ? par ( ix , iy ) * fx[ix] * fy[iy] :
-        0.5       * par ( ix , iy ) * fx[ix] * fy[iy] ;
-    }
-  }
-  //
-  const double scale = ( m_n + 1 ) / ( xmax() - xmin() ) ;
-  return result * ( scale * scale ) ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
 /*  integral over x-dimension
@@ -467,19 +610,7 @@ double Gaudi::Math::Bernstein2DSym::integrateY
   for  ( unsigned short i = 0 ; i <= m_n ; ++i )
   { fx[i] = m_b[i] ( x ) ; }
   //
-  double       result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= m_n ; ++iy )
-    {
-      result +=
-        ix == iy  ? par ( ix , iy ) * fx[ix] * fy[iy] :
-        0.5       * par ( ix , iy ) * fx[ix] * fy[iy] ;
-    }
-  }
-  //
-  const double scale = ( m_n + 1 ) / ( xmax() - xmin() ) ;
-  return result * ( scale * scale ) ;
+  return calculate ( fx , fy ) ;
 }
 // ============================================================================
 /* get the integral over 2D-region
@@ -488,7 +619,18 @@ double Gaudi::Math::Bernstein2DSym::integrateY
  */
 // ============================================================================
 double  Gaudi::Math::Bernstein2DSym::integral   () const
-{ return std::accumulate ( m_pars.begin() , m_pars.end() , 0.0 ) ; }
+{
+  double       result = 0 ;
+  for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix )
+  {
+    result   += par ( ix , ix ) ;
+    for  ( unsigned short iy = 0 ; iy < ix ; ++iy )
+    { result += 2 * par ( ix , iy ) ; } 
+  }
+  //
+  return result ;
+  // return std::accumulate ( m_pars.begin() , m_pars.end() , 0.0 ) ; 
+}
 // ============================================================================
 /* integral over x-dimension
  *  \f[ \int_{x_{min}}^{x_{max}} \mathcal{B}(x,y) \mathrm{d}x\f]
@@ -508,22 +650,11 @@ double Gaudi::Math::Bernstein2DSym::integrateY ( const double x ) const
   //
   if ( x     <  xmin () || x    >  xmax() ) { return 0 ; }
   //
-  std::vector<double> fx ( m_n + 1 , 0 ) ;
+  std::vector<double>       fx ( m_n + 1 , 0 ) ;
   for  ( unsigned short i = 0 ; i <= m_n ; ++i ) { fx[i] = m_b[i] ( x ) ; }
+  const std::vector<double> fy ( m_n + 1 , ( ymax() - ymin () ) / ( m_n + 1 ) ) ;
   //
-  double       result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_n ; ++ix )
-  {
-    for  ( unsigned short iy = 0 ; iy <= m_n ; ++iy )
-    {
-      result +=
-        ix == iy  ? par ( ix , iy ) * fx[ix] :
-        0.5       * par ( ix , iy ) * fx[ix] ;
-    }
-  }
-  //
-  const double scale = ( m_n + 1 ) / ( xmax() - xmin() ) ;
-  return result * scale  ;
+  return  calculate ( fx , fy ) ;
 }
 // ============================================================================
 // set (k)-parameter
@@ -594,6 +725,22 @@ Gaudi::Math::Positive2D::Positive2D
   , m_sphere    ( ( nX + 1 ) * ( nY + 1 ) - 1 )
 {
   updateBernstein () ;
+}
+// ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::Positive2D::Positive2D
+(       Gaudi::Math::Positive2D&& right ) 
+  : m_bernstein ( std::move ( right.m_bernstein ) ) 
+  , m_sphere    ( std::move ( right.m_sphere    ) ) 
+{}
+// ============================================================================
+// swap  two 2D-polynomials 
+// ============================================================================
+void Gaudi::Math::Positive2D::swap ( Gaudi::Math::Positive2D&  right ) 
+{
+  Gaudi::Math::swap ( m_bernstein , right.m_bernstein ) ;
+  Gaudi::Math::swap ( m_sphere    , right.m_sphere    ) ;  
 }
 // ============================================================================
 // set k-parameter
@@ -675,6 +822,22 @@ Gaudi::Math::Positive2DSym::Positive2DSym
   updateBernstein () ;
 }
 // ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::Positive2DSym::Positive2DSym
+(       Gaudi::Math::Positive2DSym&& right ) 
+  : m_bernstein ( std::move ( right.m_bernstein ) )
+  , m_sphere    ( std::move ( right.m_sphere    ) )
+{}   
+// ============================================================================
+// swap  two 2D-polynomials 
+// ============================================================================
+void Gaudi::Math::Positive2DSym::swap ( Gaudi::Math::Positive2DSym&  right ) 
+{
+  Gaudi::Math::swap ( m_bernstein , right.m_bernstein ) ;
+  Gaudi::Math::swap ( m_sphere    , right.m_sphere    ) ;  
+}
+// ============================================================================
 // set k-parameter
 // ============================================================================
 bool Gaudi::Math::Positive2DSym::setPar
@@ -699,6 +862,12 @@ bool Gaudi::Math::Positive2DSym::updateBernstein ()
   {
     const bool updated = m_bernstein.setPar ( ix , m_sphere.x2 ( ix ) ) ;
     update = updated || update ;
+  }
+  //
+  if ( update ) 
+  {
+    const double ii = m_bernstein.integral() ;
+    m_bernstein /= ii ;
   }
   //
   return update ;
@@ -783,6 +952,97 @@ double Gaudi::Math::Positive2DSym::integrateX ( const double y ) const
 double Gaudi::Math::Positive2DSym::integrateY ( const double x ) const
 { return m_bernstein.integrateY ( x ) ; }
 // ======================================================================
+Gaudi::Math::Bernstein2DSym&
+Gaudi::Math::Bernstein2DSym::operator+=( const double a )
+{
+  if   ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein2DSym&
+Gaudi::Math::Bernstein2DSym::operator*=( const double a )
+{
+  if      ( s_equal ( a , 1 ) ) { return *this ; }
+  else if ( s_zero  ( a     ) ) { std::fill ( m_pars.begin() , m_pars.end() , 0 ) ; }
+  LHCb::Math::scale ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein2DSym&
+Gaudi::Math::Bernstein2DSym::operator-=( const double a )
+{
+  if ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , -a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein2DSym&
+Gaudi::Math::Bernstein2DSym::operator/=( const double a )
+{
+  if   ( s_equal ( a , 1 ) ) { return *this ; }
+  LHCb::Math::scale ( m_pars , 1/a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein2DSym
+Gaudi::Math::Bernstein2DSym::operator-() const
+{
+  Bernstein2DSym b ( *this ) ;
+  LHCb::Math::negate ( b.m_pars ) ;
+  return b ;
+}
+// ============================================================================
+// Sum of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein2DSym
+Gaudi::Math::Bernstein2DSym::__add__   ( const double value ) const
+{ return (*this) + value ; }
+// ============================================================================
+// Sum of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein2DSym
+Gaudi::Math::Bernstein2DSym::__radd__  ( const double value ) const
+{ return value + (*this) ; }
+// ============================================================================
+// Product of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein2DSym
+Gaudi::Math::Bernstein2DSym::__mul__   ( const double value ) const
+{ return (*this) * value ; }
+// ============================================================================
+// Product of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein2DSym
+Gaudi::Math::Bernstein2DSym::__rmul__  ( const double value ) const
+{ return value * (*this) ; }
+// ============================================================================
+// Subtract a constant from Benrstein polynomial
+// ============================================================================
+Gaudi::Math::Bernstein2DSym
+Gaudi::Math::Bernstein2DSym::__sub__  ( const double value ) const
+{ return (*this) - value ; }
+// ============================================================================
+// Subtract Bernstein polynomial from a constant
+// ============================================================================
+Gaudi::Math::Bernstein2DSym
+Gaudi::Math::Bernstein2DSym::__rsub__ ( const double value ) const
+{ return value - (*this) ; }
+// ============================================================================
+// Divide Benrstein polynomial by a constant
+// ============================================================================
+Gaudi::Math::Bernstein2DSym
+Gaudi::Math::Bernstein2DSym:: __div__   ( const double value ) const
+{ return (*this) / value ; }
+// ============================================================================
+// Negate Bernstein polynomial
+// ============================================================================
+Gaudi::Math::Bernstein2DSym
+Gaudi::Math::Bernstein2DSym::__neg__ ()  const
+{ return -(*this); }
+// ============================================================================
+
+
 
 // ======================================================================
 //                                                                The END 

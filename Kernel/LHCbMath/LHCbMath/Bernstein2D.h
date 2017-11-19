@@ -39,6 +39,11 @@ namespace Gaudi
                     const double               ymin  =  0 ,
                     const double               ymax  =  1 ) ;
       // ======================================================================
+      /// copy 
+      Bernstein2D ( const Bernstein2D&  right ) =   default ;
+      /// move 
+      Bernstein2D (       Bernstein2D&& right ) ;
+      // ======================================================================
     public:
       // ======================================================================
       ///  get the  value 
@@ -156,6 +161,41 @@ namespace Gaudi
        */
       double integrateY ( const double x    ) const ;
       // ======================================================================
+    public:
+      // ======================================================================
+      /// simple  manipulations with polynoms: shift it!
+      Bernstein2D& operator += ( const double a ) ;
+      /// simple  manipulations with polynoms: shift it!
+      Bernstein2D& operator -= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      Bernstein2D& operator *= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      Bernstein2D& operator /= ( const double a ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// negate it!
+      Bernstein2D  operator-() const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// Sum of Bernstein polynomial and a constant
+      Bernstein2D __add__   ( const double value ) const ;
+      /// Sum of Bernstein polynomial and a constant
+      Bernstein2D __radd__  ( const double value ) const ;
+      /// Product of Bernstein polynomial and a constant
+      Bernstein2D __mul__   ( const double value ) const ;
+      /// Product of Bernstein polynomial and a constant
+      Bernstein2D __rmul__  ( const double value ) const ;
+      /// Subtract a constant from Benrstein polynomial
+      Bernstein2D __sub__   ( const double value ) const ;
+      /// Constant minus Bernstein polynomial
+      Bernstein2D __rsub__  ( const double value ) const ;
+      /// Divide Benrstein polynomial by a constant
+      Bernstein2D __div__   ( const double value ) const ;
+      /// Negate Bernstein polynomial
+      Bernstein2D __neg__   () const ;
+      // ======================================================================
     public: // few helper functions to expose internals
       // ======================================================================
       /// evaluate the basic polynomials
@@ -169,7 +209,12 @@ namespace Gaudi
       /// expose some internals
       const Bernstein& basicY ( const unsigned short i ) const { return m_by[i] ; }
       // ======================================================================
-    private: // helper functions to make calculations
+    public:
+      // ======================================================================
+      /// swap  two 2D-polynomials 
+      void swap ( Bernstein2D&  right ) ;
+      // ======================================================================
+    private: // helper functions to make the calculations
       // ======================================================================
       /// helper function to make calculations
       double calculate ( const std::vector<double>& fx , 
@@ -203,6 +248,28 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
+    ///  Bernstein plus      constant
+    inline Bernstein2D operator+( const Bernstein2D& p , const double v )
+    { return Bernstein2D ( p ) += v ; } //  Bernstein plus constant
+    ///  Bernstein multiply  constant
+    inline Bernstein2D operator*( const Bernstein2D& p , const double v )
+    { return Bernstein2D ( p ) *= v ; } //  Bernstein plus constant
+    ///  Bernstein minus constant
+    inline Bernstein2D operator-( const Bernstein2D& p , const double v )
+    { return Bernstein2D ( p ) -= v ; } //  Bernstein plus constant
+    ///  Bernstein divide constant
+    inline Bernstein2D operator/( const Bernstein2D& p , const double v )
+    { return Bernstein2D ( p ) /= v ; } //  Bernstein plus constant
+    ///  Constant plus  Bernstein
+    inline Bernstein2D operator+( const double v , const Bernstein2D& p ) { return p +   v  ; }
+    ///  Constant times Bernstein
+    inline Bernstein2D operator*( const double v , const Bernstein2D& p ) { return p *   v  ; }
+    ///  Constant minus Bernstein
+    inline Bernstein2D operator-( const double v , const Bernstein2D& p ) { return v + (-p) ; }
+    // ========================================================================
+    /// swap  two 2D-polynomials 
+    inline void  swap ( Bernstein2D& a  , Bernstein2D& b ) { a.swap ( b ) ; }
+    // ========================================================================
     /** @class Positive2D
      *  The 2D-polynomial of order Nx*Ny, that is constrained 
      *  to be non-negative over the  defined range      
@@ -223,6 +290,11 @@ namespace Gaudi
                    const double               xmax  =  1 ,
                    const double               ymin  =  0 ,
                    const double               ymax  =  1 ) ;
+      // ======================================================================
+      /// copy 
+      Positive2D ( const Positive2D&  right ) = default ;
+      /// move 
+      Positive2D (       Positive2D&& right ) ;
       // ======================================================================
     public:
       // ======================================================================
@@ -329,6 +401,11 @@ namespace Gaudi
       const  Gaudi::Math::NSphere&     sphere    () const
       { return m_sphere ; }
       // ======================================================================
+    public:
+      // ======================================================================
+      /// swap  two 2D-polynomials 
+      void swap ( Positive2D&  right ) ;
+      // ======================================================================
     private:
       // ======================================================================
       /// update bernstein coefficients
@@ -343,6 +420,9 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
+    /// swap  two 2D-polynomials 
+    inline void  swap ( Positive2D& a  , Positive2D& b ) { a.swap ( b ) ; }
+    // ========================================================================
     /** @class Bernstein2DSym
      *  The symmetric Bernstein's polynomial of order N*N
      */
@@ -355,6 +435,11 @@ namespace Gaudi
       Bernstein2DSym ( const unsigned short       n     =  1 ,
                        const double               xmin  =  0 ,
                        const double               xmax  =  1 ) ;
+      // ======================================================================
+      /// copy 
+      Bernstein2DSym ( const Bernstein2DSym&  right ) =   default ;
+      /// move 
+      Bernstein2DSym (       Bernstein2DSym&& right ) ;
       // ======================================================================
     public:
       // ======================================================================
@@ -424,6 +509,41 @@ namespace Gaudi
       double ty ( const double y ) const
       { return  ( y - ymin () ) / ( ymax () - ymin () ) ; }
       // ======================================================================
+    public:
+      // ======================================================================
+      /// simple  manipulations with polynoms: shift it!
+      Bernstein2DSym& operator += ( const double a ) ;
+      /// simple  manipulations with polynoms: shift it!
+      Bernstein2DSym& operator -= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      Bernstein2DSym& operator *= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      Bernstein2DSym& operator /= ( const double a ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// negate it!
+      Bernstein2DSym  operator-() const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// Sum of Bernstein polynomial and a constant
+      Bernstein2DSym __add__   ( const double value ) const ;
+      /// Sum of Bernstein polynomial and a constant
+      Bernstein2DSym __radd__  ( const double value ) const ;
+      /// Product of Bernstein polynomial and a constant
+      Bernstein2DSym __mul__   ( const double value ) const ;
+      /// Product of Bernstein polynomial and a constant
+      Bernstein2DSym __rmul__  ( const double value ) const ;
+      /// Subtract a constant from Benrstein polynomial
+      Bernstein2DSym __sub__   ( const double value ) const ;
+      /// Constant minus Bernstein polynomial
+      Bernstein2DSym __rsub__  ( const double value ) const ;
+      /// Divide Benrstein polynomial by a constant
+      Bernstein2DSym __div__   ( const double value ) const ;
+      /// Negate Bernstein polynomial
+      Bernstein2DSym __neg__   () const ;
+      // ======================================================================
     public: // generic integrals
       // ======================================================================
       /** get the integral over 2D-region
@@ -479,6 +599,17 @@ namespace Gaudi
       /// expose some internals
       const Bernstein& basic ( const unsigned short i ) const { return m_b[i] ; }
       // ======================================================================
+    public:
+      // ======================================================================
+      /// swap  two 2D-polynomials 
+      void swap ( Bernstein2DSym&  right ) ;
+      // ======================================================================
+    private: // helper functions to make the calculations
+      // ======================================================================
+      /// helper function to make calculations
+      double calculate ( const std::vector<double>& fx , 
+                         const std::vector<double>& fy ) const ;
+      // ======================================================================
     private:
       // ======================================================================
       // polynom order
@@ -499,6 +630,28 @@ namespace Gaudi
       // ======================================================================
     } ;
     // ========================================================================
+    ///  Bernstein plus      constant
+    inline Bernstein2DSym operator+( const Bernstein2DSym& p , const double v )
+    { return Bernstein2DSym ( p ) += v ; } //  Bernstein plus constant
+    ///  Bernstein multiply  constant
+    inline Bernstein2DSym operator*( const Bernstein2DSym& p , const double v )
+    { return Bernstein2DSym ( p ) *= v ; } //  Bernstein plus constant
+    ///  Bernstein minus constant
+    inline Bernstein2DSym operator-( const Bernstein2DSym& p , const double v )
+    { return Bernstein2DSym ( p ) -= v ; } //  Bernstein plus constant
+    ///  Bernstein divide constant
+    inline Bernstein2DSym operator/( const Bernstein2DSym& p , const double v )
+    { return Bernstein2DSym ( p ) /= v ; } //  Bernstein plus constant
+    ///  Constant plus  Bernstein
+    inline Bernstein2DSym operator+( const double v , const Bernstein2DSym& p ) { return p +   v  ; }
+    ///  Constant times Bernstein
+    inline Bernstein2DSym operator*( const double v , const Bernstein2DSym& p ) { return p *   v  ; }
+    ///  Constant minus Bernstein
+    inline Bernstein2DSym operator-( const double v , const Bernstein2DSym& p ) { return v + (-p) ; }
+    // ========================================================================
+    /// swap  two 2D-polynomials 
+    inline void  swap ( Bernstein2DSym& a  , Bernstein2DSym& b ) { a.swap ( b ) ; }
+    // ========================================================================
     /** @class Positive2DSym
      *  The "positive" symmetrical polynomial of order Nx*Ny
      *  Actually it is a sum of basic bernstein 2D-polynomials with
@@ -513,6 +666,11 @@ namespace Gaudi
       Positive2DSym ( const unsigned short       Nx    =  1 ,
                       const double               xmin  =  0 ,
                       const double               xmax  =  1 ) ;
+      // ======================================================================
+      /// copy 
+      Positive2DSym ( const Positive2DSym&  right ) =   default ;
+      /// move 
+      Positive2DSym (       Positive2DSym&& right ) ;
       // ======================================================================
     public:
       // ======================================================================
@@ -609,6 +767,11 @@ namespace Gaudi
       /// get the parameter sphere
       const  Gaudi::Math::NSphere&       sphere   () const
       { return m_sphere ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// swap  two 2D-polynomials 
+      void swap ( Positive2DSym&  right ) ;
       // ======================================================================
     private:
       // ======================================================================

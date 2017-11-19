@@ -83,6 +83,44 @@ Gaudi::Math::Bernstein3D::Bernstein3D
   //
 }
 // ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::Bernstein3D::Bernstein3D
+(       Gaudi::Math::Bernstein3D&& right )
+  : m_nx   ( std::move ( right.m_nx   ) ) 
+  , m_ny   ( std::move ( right.m_ny   ) ) 
+  , m_nz   ( std::move ( right.m_nz   ) ) 
+  , m_pars ( std::move ( right.m_pars ) ) 
+  , m_xmin ( std::move ( right.m_xmin ) ) 
+  , m_xmax ( std::move ( right.m_xmax ) ) 
+  , m_ymin ( std::move ( right.m_ymin ) ) 
+  , m_ymax ( std::move ( right.m_ymax ) ) 
+  , m_zmin ( std::move ( right.m_zmin ) ) 
+  , m_zmax ( std::move ( right.m_zmax ) ) 
+  , m_bx   ( std::move ( right.m_bx   ) ) 
+  , m_by   ( std::move ( right.m_by   ) ) 
+  , m_bz   ( std::move ( right.m_bz   ) ) 
+{}
+// ============================================================================
+// swap  two 3D-polynomials 
+// ============================================================================
+void Gaudi::Math::Bernstein3D::swap ( Gaudi::Math::Bernstein3D&  right ) 
+{
+  std::swap ( m_nx   , right.m_nx    ) ;
+  std::swap ( m_ny   , right.m_ny    ) ;
+  std::swap ( m_nz   , right.m_nz    ) ;
+  std::swap ( m_pars , right.m_pars  ) ;
+  std::swap ( m_xmin , right.m_xmin  ) ;
+  std::swap ( m_xmax , right.m_xmax  ) ;
+  std::swap ( m_ymin , right.m_ymin  ) ;
+  std::swap ( m_ymax , right.m_ymax  ) ;
+  std::swap ( m_zmin , right.m_zmin  ) ;
+  std::swap ( m_zmax , right.m_zmax  ) ;
+  std::swap ( m_bx   , right.m_bx    ) ;
+  std::swap ( m_by   , right.m_by    ) ;
+  std::swap ( m_bz   , right.m_bz    ) ;
+}
+// ============================================================================
 // helper function to make calculations
 // ============================================================================
 double Gaudi::Math::Bernstein3D::calculate
@@ -109,9 +147,10 @@ double Gaudi::Math::Bernstein3D::calculate
 // ============================================================================
 // get the value
 // ============================================================================
-double Gaudi::Math::Bernstein3D::operator () ( const double x ,
-                                               const double y , 
-                                               const double z ) const
+double Gaudi::Math::Bernstein3D::evaluate
+( const double x ,
+  const double y , 
+  const double z ) const
 {
   /// the trivial cases
   if ( x < m_xmin || x > m_xmax ) { return 0.0        ; }
@@ -655,10 +694,102 @@ double  Gaudi::Math::Bernstein3D::par
   return par ( k ) ;
 }
 // ============================================================================
+Gaudi::Math::Bernstein3D&
+Gaudi::Math::Bernstein3D::operator+=( const double a )
+{
+  if   ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3D&
+Gaudi::Math::Bernstein3D::operator*=( const double a )
+{
+  if      ( s_equal ( a , 1 ) ) { return *this ; }
+  else if ( s_zero  ( a     ) ) { std::fill ( m_pars.begin() , m_pars.end() , 0 ) ; }
+  LHCb::Math::scale ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3D&
+Gaudi::Math::Bernstein3D::operator-=( const double a )
+{
+  if ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , -a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3D&
+Gaudi::Math::Bernstein3D::operator/=( const double a )
+{
+  if   ( s_equal ( a , 1 ) ) { return *this ; }
+  LHCb::Math::scale ( m_pars , 1/a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3D
+Gaudi::Math::Bernstein3D::operator-() const
+{
+  Bernstein3D b ( *this ) ;
+  LHCb::Math::negate ( b.m_pars ) ;
+  return b ;
+}
+// ============================================================================
+// Sum of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3D
+Gaudi::Math::Bernstein3D::__add__   ( const double value ) const
+{ return (*this) + value ; }
+// ============================================================================
+// Sum of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3D
+Gaudi::Math::Bernstein3D::__radd__  ( const double value ) const
+{ return value + (*this) ; }
+// ============================================================================
+// Product of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3D
+Gaudi::Math::Bernstein3D::__mul__   ( const double value ) const
+{ return (*this) * value ; }
+// ============================================================================
+// Product of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3D
+Gaudi::Math::Bernstein3D::__rmul__  ( const double value ) const
+{ return value * (*this) ; }
+// ============================================================================
+// Subtract a constant from Benrstein polynomial
+// ============================================================================
+Gaudi::Math::Bernstein3D
+Gaudi::Math::Bernstein3D::__sub__  ( const double value ) const
+{ return (*this) - value ; }
+// ============================================================================
+// Subtract Bernstein polynomial from a constant
+// ============================================================================
+Gaudi::Math::Bernstein3D
+Gaudi::Math::Bernstein3D::__rsub__ ( const double value ) const
+{ return value - (*this) ; }
+// ============================================================================
+// Divide Benrstein polynomial by a constant
+// ============================================================================
+Gaudi::Math::Bernstein3D
+Gaudi::Math::Bernstein3D:: __div__   ( const double value ) const
+{ return (*this) / value ; }
+// ============================================================================
+// Negate Bernstein polynomial
+// ============================================================================
+Gaudi::Math::Bernstein3D
+Gaudi::Math::Bernstein3D::__neg__ ()  const
+{ return -(*this); }
+// ============================================================================
+
+
 
 // ============================================================================
 // 2D-POSITIVE 
 // ============================================================================
+
 // ============================================================================
 // constructor from the order
 // ============================================================================
@@ -676,6 +807,22 @@ Gaudi::Math::Positive3D::Positive3D
   , m_sphere    ( ( Nx + 1 ) * ( Ny + 1 ) * ( Nz + 1 ) - 1 )
 {
   updateBernstein () ;
+}
+// ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::Positive3D::Positive3D
+(       Gaudi::Math::Positive3D&& right ) 
+  : m_bernstein ( std::move ( right.m_bernstein ) ) 
+  , m_sphere    ( std::move ( right.m_sphere    ) ) 
+{}
+// ============================================================================
+// swap  two 2D-polynomials 
+// ============================================================================
+void Gaudi::Math::Positive3D::swap ( Gaudi::Math::Positive3D&  right ) 
+{
+  Gaudi::Math::swap ( m_bernstein , right.m_bernstein ) ;
+  Gaudi::Math::swap ( m_sphere    , right.m_sphere    ) ;  
 }
 // ============================================================================
 // set k-parameter

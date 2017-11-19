@@ -44,12 +44,23 @@ namespace Gaudi
                     const double               zmin  =  0 ,
                     const double               zmax  =  1 ) ;
       // ======================================================================
+      /// copy constructor 
+      Bernstein3D ( const Bernstein3D&  right ) = default ;   
+      /// move constructor 
+      Bernstein3D (       Bernstein3D&& right ) ;
+      // ======================================================================
     public:
+      // ======================================================================
+      /// get the value
+      double evaluate    ( const double x ,
+                           const double y , 
+                           const double z ) const ;
       // ======================================================================
       /// get the value
       double operator () ( const double x ,
                            const double y , 
-                           const double z ) const ;
+                           const double z ) const 
+      { return evaluate ( x ,   y , z ) ; }
       // ======================================================================
     public: // setters
       // ======================================================================
@@ -127,6 +138,41 @@ namespace Gaudi
       { return  ( y - ymin () ) / ( ymax () - ymin () )      ; }
       double tz ( const double z ) const
       { return  ( z - zmin () ) / ( zmax () - zmin () )      ; }
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// simple  manipulations with polynoms: shift it!
+      Bernstein3D& operator += ( const double a ) ;
+      /// simple  manipulations with polynoms: shift it!
+      Bernstein3D& operator -= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      Bernstein3D& operator *= ( const double a ) ;
+      /// simple  manipulations with polynoms: scale it!
+      Bernstein3D& operator /= ( const double a ) ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// negate it!
+      Bernstein3D  operator-() const ;
+      // ======================================================================
+    public:
+      // ======================================================================
+      /// Sum of Bernstein polynomial and a constant
+      Bernstein3D __add__   ( const double value ) const ;
+      /// Sum of Bernstein polynomial and a constant
+      Bernstein3D __radd__  ( const double value ) const ;
+      /// Product of Bernstein polynomial and a constant
+      Bernstein3D __mul__   ( const double value ) const ;
+      /// Product of Bernstein polynomial and a constant
+      Bernstein3D __rmul__  ( const double value ) const ;
+      /// Subtract a constant from Benrstein polynomial
+      Bernstein3D __sub__   ( const double value ) const ;
+      /// Constant minus Bernstein polynomial
+      Bernstein3D __rsub__  ( const double value ) const ;
+      /// Divide Benrstein polynomial by a constant
+      Bernstein3D __div__   ( const double value ) const ;
+      /// Negate Bernstein polynomial
+      Bernstein3D __neg__   () const ;
       // ======================================================================
     public: // general integration
       // ======================================================================
@@ -284,6 +330,11 @@ namespace Gaudi
       /// expose some internals
       const Bernstein& basicZ ( const unsigned short i ) const { return m_bz[i] ; }
       // ======================================================================
+    public:
+      // ======================================================================
+      /// swap two Bernstein polynomials   
+      void swap ( Bernstein3D& right ) ;
+      // ======================================================================
     private: // helper functions to make calculations
       // ======================================================================
       /// helper function to make calculations
@@ -326,7 +377,28 @@ namespace Gaudi
       VB m_bz ; //  vector  of basic  Bernstein polynomials
       // ======================================================================
     } ;
-
+    // ========================================================================
+    ///  Bernstein plus      constant
+    inline Bernstein3D operator+( const Bernstein3D& p , const double v )
+    { return Bernstein3D ( p ) += v ; } //  Bernstein plus constant
+    ///  Bernstein multiply  constant
+    inline Bernstein3D operator*( const Bernstein3D& p , const double v )
+    { return Bernstein3D ( p ) *= v ; } //  Bernstein plus constant
+    ///  Bernstein minus constant
+    inline Bernstein3D operator-( const Bernstein3D& p , const double v )
+    { return Bernstein3D ( p ) -= v ; } //  Bernstein plus constant
+    ///  Bernstein divide constant
+    inline Bernstein3D operator/( const Bernstein3D& p , const double v )
+    { return Bernstein3D ( p ) /= v ; } //  Bernstein plus constant
+    ///  Constant plus  Bernstein
+    inline Bernstein3D operator+( const double v , const Bernstein3D& p ) { return p +   v  ; }
+    ///  Constant times Bernstein
+    inline Bernstein3D operator*( const double v , const Bernstein3D& p ) { return p *   v  ; }
+    ///  Constant minus Bernstein
+    inline Bernstein3D operator-( const double v , const Bernstein3D& p ) { return v + (-p) ; }
+     // ========================================================================
+    /// swap two Bernstein polynomials   
+    inline  void swap ( Bernstein3D& a , Bernstein3D& b ) { a.swap ( b ) ;  }
     // ========================================================================
     /** @class Positive3D
      *  The 3D-polynomial of order Nx*Ny*Nz, that is constrained 
@@ -353,13 +425,24 @@ namespace Gaudi
                    const double               zmin  =  0 ,
                    const double               zmax  =  1 ) ;
       // ======================================================================
+      /// copy constructor 
+      Positive3D ( const Positive3D&  right ) = default ;
+      /// move constructor 
+      Positive3D (       Positive3D&& right ) ;
+      // ======================================================================
     public:
+      // ======================================================================
+      /// get the value
+      double evaluate    ( const double x , 
+                           const double y , 
+                           const double z ) const
+      { return m_bernstein ( x , y , z ) ; }
       // ======================================================================
       /// get the value
       double operator () ( const double x , 
                            const double y , 
                            const double z ) const
-      { return m_bernstein ( x , y , z ) ; }
+      { return evaluate  ( x , y , z ) ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -559,6 +642,11 @@ namespace Gaudi
       const  Gaudi::Math::NSphere&     sphere    () const
       { return m_sphere ; }
       // ======================================================================
+    public:
+      // ======================================================================
+      /// swap two Bernstein polynomials   
+      void swap ( Positive3D& right ) ;
+      // ======================================================================
     private:
       // ======================================================================
       /// update bernstein coefficients
@@ -572,6 +660,9 @@ namespace Gaudi
       Gaudi::Math::NSphere     m_sphere    ;
       // ======================================================================
     } ;
+    // ========================================================================
+    /// swap two Bernstein polynomials   
+    inline  void swap ( Positive3D& a , Positive3D& b ) { a.swap ( b ) ;  }
     // ========================================================================
   } //                                         The end of namespace Gaudi::Math
   // ==========================================================================
