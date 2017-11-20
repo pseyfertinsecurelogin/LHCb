@@ -23,6 +23,7 @@
         <base name="KeyedObject&lt;int&gt;" virtual="FALSE"/>
         &KeyedObject;
 
+        <import name = "utility" std="TRUE"/>
         <import name = "Kernel/RichParticleIDType"      />
         <import name = "Kernel/RichRadiatorType"        />
         <import name = "Event/Track"                    />
@@ -95,6 +96,15 @@
                 <arg const="TRUE" name="deltaLL" type="float"/>
                 <code>
                    m_particleLLValues[type] = deltaLL;
+                </code>
+        </method>
+
+        <method
+                name = "setParticleLLValues"
+                desc = "Sets the particle delta LL value for the given hypothesis">
+                <arg const="FALSE" name="value" type="std::vector&lt;float&gt; &amp;"/>
+                <code>
+                   m_particleLLValues = std::forward&lt; std::vector&lt;float&gt; &gt;(value);
                 </code>
         </method>
 
