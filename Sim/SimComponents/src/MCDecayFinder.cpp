@@ -112,6 +112,9 @@ static int thirdQuark( int id )
   return q*(id>0 ? 1 : -1);
 }
 
+//FIXME: with version of Gaudi 30r1 or higher, just
+//  #include "GaudiKernel/compose.h"
+namespace Compose {
 template <typename... lambda_ts>
 struct composer_t;
 
@@ -141,11 +144,11 @@ template <typename... lambda_ts>
 composer_t<std::decay_t<lambda_ts>...>
 compose(lambda_ts&&... lambdas)
 { return {std::forward<lambda_ts>(lambdas)...}; }
-
+}
 
 
 auto dispatch_variant = [](auto&& variant, auto&&... lambdas) -> decltype(auto) {
-  return boost::apply_visitor( compose( std::forward<decltype(lambdas)>(lambdas)... ),
+  return boost::apply_visitor( Compose::compose( std::forward<decltype(lambdas)>(lambdas)... ),
                                std::forward<decltype(variant)>(variant) );
 };
 
