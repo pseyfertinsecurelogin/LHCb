@@ -450,6 +450,11 @@ namespace Gaudi
       // ======================================================================
     protected:
       // ======================================================================
+      /// swap two polynomials 
+      void swap ( PolySum& right ) { std::swap ( m_pars , right.m_pars ) ; }
+      // ======================================================================
+    protected:
+      // ======================================================================
       /// copy assignement
       PolySum& operator=( const PolySum&  right ) ;
       /// move assignement
