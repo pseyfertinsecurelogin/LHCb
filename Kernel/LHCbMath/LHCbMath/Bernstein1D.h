@@ -239,7 +239,10 @@ namespace Gaudi
     public:
       // ======================================================================
       /// get the value
-      double operator () ( const double x ) const { return m_bernstein ( x ) ; }
+      double evaluate    ( const double x ) const { return m_bernstein ( x ) ; }
+      // ======================================================================
+      /// get the value
+      double operator () ( const double x ) const { return evaluate    ( x ) ; }
       // ======================================================================
     public:
       // ======================================================================

@@ -64,7 +64,11 @@ namespace Gaudi
       /// set (l,m)-parameter
       bool setPar       ( const unsigned short l     ,
                           const unsigned short m     ,
-                          const double         value ) ;
+                          const double         value ) 
+      {
+        const unsigned int k = index ( l , m ) ;
+        return ( k < m_pars.size() ) && setPar ( k , value ) ;
+      }
       /// set (l,m)-parameter
       bool setParameter ( const unsigned short l     ,
                           const unsigned short m     ,
@@ -75,7 +79,8 @@ namespace Gaudi
       // ======================================================================
       /// get (l,m)-parameter
       double  par       ( const unsigned short l ,
-                          const unsigned short m ) const ;
+                          const unsigned short m ) const 
+      { return par ( index ( l , m ) ) ; }      
       /// get (l,m)-parameter
       double  parameter ( const unsigned short l ,
                           const unsigned short m ) const { return par (  l , m  ) ; }
@@ -86,6 +91,18 @@ namespace Gaudi
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
       /// get all parameters at once
       const std::vector<double>& pars() const { return m_pars ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      ///  convert (l,m)-index into single k-index
+      unsigned int index ( const unsigned short l , 
+                           const unsigned short m ) const 
+      {
+        return
+          l > m_nx ? -1 :
+          m > m_ny ? -1 :
+          1u * l * ( m_ny + 1 ) + m ;  
+      }
       // ======================================================================
     public:
       // ======================================================================
@@ -315,9 +332,15 @@ namespace Gaudi
       bool setParameter ( const unsigned int k , const double value )
       { return setPar   ( k , value ) ; }
       /// get the parameter value
-      double  par       ( const unsigned int k ) const ;
+      double  par       ( const unsigned int k ) const 
+      { return m_sphere.phase ( k ) ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      // ======================================================================
+      /// get all parameters (phases on sphere)
+      const std::vector<double>& pars  () const { return m_sphere   .pars () ; }
+      /// get bernstein coefficients
+      const std::vector<double>& bpars () const { return m_bernstein.pars () ; }
       // ======================================================================
     public:
       // ======================================================================
@@ -463,7 +486,11 @@ namespace Gaudi
       /// set (l,m)-parameter
       bool setPar       ( const unsigned short l     ,
                           const unsigned short m     ,
-                          const double         value ) ;
+                          const double         value ) 
+      {
+        const  unsigned int k = index ( l , m ) ;
+        return ( k < m_pars.size() ) && setPar ( k , value ) ;
+      }
       /// set (l,m)-parameter
       bool setParameter ( const unsigned short l     ,
                           const unsigned short m     ,
@@ -471,7 +498,8 @@ namespace Gaudi
       { return setPar   ( l , m  , value ) ; }
       /// get (l,m)-parameter
       double  par       ( const unsigned short l ,
-                          const unsigned short m ) const ;
+                          const unsigned short m ) const 
+      { return par ( index ( l , m ) ) ; }
       /// get (l,m)-parameter value
       double  parameter ( const unsigned short l ,
                           const unsigned short m ) const { return par (  l , m  ) ; }
@@ -482,6 +510,18 @@ namespace Gaudi
       double  parameter ( const unsigned int   k ) const { return par ( k ) ; }
       /// get all parameters at once
       const std::vector<double>& pars() const { return m_pars ; }
+      // ======================================================================
+    private:
+      // ======================================================================
+      ///  convert (l,m)-index into single k-index
+      unsigned int index ( const unsigned short l , 
+                           const unsigned short m ) const 
+      {
+        return
+          m > l   ? index ( m , l )  :
+          l > m_n ? -1               :  // NB !!
+          1u * l * ( l + 1 ) / 2 + m ;
+      }
       // ======================================================================
     public:
       // ======================================================================
@@ -690,9 +730,18 @@ namespace Gaudi
       bool setParameter ( const unsigned int k , const double value )
       { return setPar   ( k , value ) ; }
       /// get the parameter value
-      double  par       ( const unsigned int k ) const ;
+      double  par       ( const unsigned int k ) const 
+      { return m_sphere.phase ( k ) ; }
       /// get the parameter value
       double  parameter ( const unsigned int k ) const { return par ( k ) ; }
+      // ======================================================================
+      /// get all parameters (phases on sphere)
+      const std::vector<double>& pars  () const { return m_sphere   .pars () ; }
+      /// get bernstein coefficients
+      const std::vector<double>& bpars () const { return m_bernstein.pars () ; }
+      // ======================================================================
+    public:
+      // ======================================================================
       /// get lower/upper edges
       double         xmin () const { return m_bernstein.xmin () ; }
       double         xmax () const { return m_bernstein.xmax () ; }
