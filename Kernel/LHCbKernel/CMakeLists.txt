@@ -11,6 +11,7 @@ gaudi_depends_on_subdirs(GaudiAlg
 find_package(Boost COMPONENTS system)
 find_package(ROOT)
 find_package(VDT)
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS} ${ROOT_INCLUDE_DIRS})
 
 include(GaudiObjDesc)
 
