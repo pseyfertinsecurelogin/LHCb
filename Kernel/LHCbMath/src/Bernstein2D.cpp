@@ -305,18 +305,6 @@ double Gaudi::Math::Bernstein2D::integrateY
   return calculate ( fx ,  fy ) ;
 }
 // ============================================================================
-// set (l,m)-parameter
-// ============================================================================
-bool Gaudi::Math::Bernstein2D::setPar
-( const unsigned short l     ,
-  const unsigned short m     ,
-  const double         value )
-{
-  if ( l > m_nx || m > m_ny )             { return false ; }
-  const unsigned int k =  l * ( m_ny + 1 ) + m ;
-  return setPar ( k , value ) ;
-}
-// ============================================================================
 // set k-parameter
 // ============================================================================
 bool Gaudi::Math::Bernstein2D::setPar
@@ -327,17 +315,6 @@ bool Gaudi::Math::Bernstein2D::setPar
   if ( s_equal ( m_pars [ k ] , value ) ) { return false ; }
   m_pars [ k ] = value ;
   return true ;
-}
-// ============================================================================
-// get (l,m)-parameter
-// ============================================================================
-double  Gaudi::Math::Bernstein2D::par
-( const unsigned short l ,
-  const unsigned short m ) const
-{
-  if ( l > m_nx || m > m_ny ) { return 0 ; }
-  const unsigned int k =  l * ( m_ny + 1 ) + m ;
-  return par ( k ) ;
 }
 // ============================================================================
 Gaudi::Math::Bernstein2D&
@@ -491,10 +468,7 @@ double Gaudi::Math::Bernstein2DSym::calculate
   {
     result   += par ( ix , ix ) * fx[ix] * fy[ix] ;
     for  ( unsigned short iy = 0 ; iy < ix ; ++iy )
-    { 
-      result += par ( ix , iy ) * fx[ix] * fy[iy] 
-        +       par ( ix , iy ) * fx[iy] * fy[ix] ; 
-    } 
+    { result += par ( ix , iy ) * ( fx[ix] * fy[iy] + fx[iy] * fy[ix] ) ; } 
   }
   //
   const double scalex = ( m_n  + 1 ) / ( xmax () - xmin () ) ;
@@ -671,39 +645,6 @@ bool Gaudi::Math::Bernstein2DSym::setPar
   return true ;
 }
 // ============================================================================
-// set (l,m)-parameter
-// ============================================================================
-bool Gaudi::Math::Bernstein2DSym::setPar
-( const unsigned short l     ,
-  const unsigned short m     ,
-  const double         value )
-{
-  //
-  if ( l > m_n || m > m_n )               { return false ; }
-  //
-  const unsigned int k = ( l < m ) ?
-    ( m * ( m + 1 ) / 2 + l ) :
-    ( l * ( l + 1 ) / 2 + m ) ;
-  //
-  return setPar ( k , value ) ;
-}
-// ============================================================================
-// get (l,m)-parameter
-// ============================================================================
-double Gaudi::Math::Bernstein2DSym::par
-( const unsigned short l ,
-  const unsigned short m ) const
-{
-  //
-  if ( l > m_n || m > m_n )               { return 0 ; }
-  //
-  const unsigned int k = ( l < m ) ?
-    ( m * ( m + 1 ) / 2 + l ) :
-    ( l * ( l + 1 ) / 2 + m ) ;
-  //
-  return par ( k ) ;
-}
-// ============================================================================
 
 // ============================================================================
 // 2D-POSITIVE 
@@ -770,11 +711,6 @@ bool Gaudi::Math::Positive2D::updateBernstein ()
   //
   return update ;
 }
-// ============================================================================
-// get the parameter value
-// ============================================================================
-double Gaudi::Math::Positive2D::par ( const unsigned int k ) const
-{ return m_sphere.phase ( k ) ; }
 // ============================================================================
 /*  get the integral over 2D-region
  *  \f[ \int_{x_{min}}^{x_{max}}\int_{y_{min}}^{y_{max}}
@@ -864,11 +800,7 @@ bool Gaudi::Math::Positive2DSym::updateBernstein ()
     update = updated || update ;
   }
   //
-  if ( update ) 
-  {
-    const double ii = m_bernstein.integral() ;
-    m_bernstein /= ii ;
-  }
+  if ( update ) { m_bernstein /= m_bernstein.integral() ; }
   //
   return update ;
 }
@@ -878,11 +810,6 @@ bool Gaudi::Math::Positive2DSym::updateBernstein ()
 double  Gaudi::Math::Positive2DSym::evaluate
 ( const double x , const double y ) const
 { return m_bernstein ( x , y ) ; }
-// ============================================================================
-// get the parameter value
-// ============================================================================
-double Gaudi::Math::Positive2DSym::par ( const unsigned int  k ) const
-{ return m_sphere.phase ( k ) ; }
 // ============================================================================
 /*  get the integral over 2D-region
  *  \f[ \int_{x_{min}}^{x_{max}}\int_{y_{min}}^{y_{max}}
