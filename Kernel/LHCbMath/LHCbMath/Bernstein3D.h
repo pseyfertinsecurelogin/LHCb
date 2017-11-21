@@ -662,7 +662,8 @@ namespace Gaudi
        */
       double integrateXZ ( const double y    ,                          
                            const double xlow , const double xhigh ,
-                           const double zlow , const double zhigh ) const ;      
+                           const double zlow , const double zhigh ) const 
+      { return integrateXY (  y , xlow , xhigh , zlow , zhigh ) ; }
       /** integral over y&z-dimensions
        *  \f[ \int_{y_{low}}^{y_{high}}
        *      \int_{z_{low}}^{z_{high}} \mathcal{B}(x,y,z) \mathrm{d}y\mathrm{d}z\f]
@@ -674,7 +675,8 @@ namespace Gaudi
        */
       double integrateYZ ( const double x    ,                          
                            const double ylow , const double yhigh ,
-                           const double zlow , const double zhigh ) const ;
+                           const double zlow , const double zhigh ) const 
+      { return integrateXY (  x , ylow , yhigh , zlow , zhigh ) ; }
       // ======================================================================      
     public: // special cases
       // ======================================================================
@@ -1052,7 +1054,8 @@ namespace Gaudi
        */
       double integrateYZ ( const double x    ,                          
                            const double ylow , const double yhigh ,
-                           const double zlow , const double zhigh ) const ;
+                           const double zlow , const double zhigh ) const 
+      { return integrateXZ ( x , ylow , yhigh , zlow , zhigh ) ; }
       // ======================================================================      
     public: // special cases
       // ======================================================================

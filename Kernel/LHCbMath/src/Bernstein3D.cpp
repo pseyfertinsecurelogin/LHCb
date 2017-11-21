@@ -1602,6 +1602,54 @@ double Gaudi::Math::Bernstein3DMix::integrateXY
   return calculate ( fx , fy , fz ) ;
 }
 // ============================================================================
+/*  integral over x&z-dimensions
+ *  \f[ \int_{x_{low}}^{x_{high}}
+ *      \int_{z_{low}}^{z_{high}} \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}z\f]
+ *  @param x     variable
+ *  @param xlow  low  edge in x
+ *  @param xhigh high edge in x
+ *  @param zlow  low  edge in z
+ *  @param zhigh high edge in z
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integrateXZ
+( const double y    ,                          
+  const double xlow , const double xhigh ,
+  const double zlow , const double zhigh ) const 
+{
+  if      ( s_equal ( xlow  , xhigh ) ) { return 0 ; }
+  else if ( s_equal ( zlow  , zhigh ) ) { return 0 ; }
+  else if ( xlow  >  xhigh ) { return -1*integrateXZ ( y , xhigh , xlow  , zlow  , zhigh ) ; }
+  else if ( zlow  >  zhigh ) { return -1*integrateXZ ( y , xlow  , xhigh , zlow  , zhigh ) ; }
+  else if ( y     <  ymin () || y    >  ymax() ) { return 0 ; }
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () ) &&
+            s_equal ( zlow  , zmin () ) &&
+            s_equal ( zhigh , zmax () ) ) { return integrateXZ ( y ) ; }
+  //  //
+  const double  x_low  = std::max ( xmin() , xlow  ) ;
+  const double  x_high = std::min ( xmax() , xhigh ) ;
+  if ( x_low >= x_high ) { return 0 ; }
+  //
+  const double  z_low  = std::max ( zmin() , zlow  ) ;
+  const double  z_high = std::min ( zmax() , zhigh ) ;
+  if ( z_low >= z_high ) { return 0 ; }
+  //
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
+  { fx[i] = m_b [i].integral ( x_low , x_high ) ; }
+  //
+  std::vector<double> fy ( nY () + 1  , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY ()  ; ++i )
+  { fy[i] = m_b [i] ( y ) ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ () ; ++i )
+  { fz[i] = m_b [i].integral ( z_low , z_high ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
 /*  integral over x&y-dimensions
  *  \f[ \int_{x_{min}}^{x_{max}}
  *      \int_{y_{min}}^{y_{max}} \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}y\f]
@@ -1618,6 +1666,27 @@ double Gaudi::Math::Bernstein3DMix::integrateXY ( const double z    ) const
   std::vector<double> fz ( nZ () + 1 , 0 ) ;
   for ( unsigned short i = 0 ; i <= nZ () ; ++i )
   { fz[i] = m_bz [i] ( z ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/*  integral over x&z-dimensions
+ *  \f[ \int_{x_{min}}^{x_{max}}
+ *      \int_{z_{min}}^{z_{max}} \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}z\f]
+ *  @param y     variable
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integrateXZ ( const double y    ) const 
+{
+  if ( y < ymin () || y > ymax() ) { return 0 ; }
+  //
+  const std::vector<double> fx ( nX () + 1 , ( xmax() - xmin () ) / ( nX () + 1 ) ) ;
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
+  { fy[i] = m_b  [i] ( y ) ; }
+  //
+  const std::vector<double> fz ( nZ () + 1 , ( zmax() - zmin () ) / ( nZ () + 1 ) ) ;
   //
   return calculate ( fx , fy , fz ) ;
 }
