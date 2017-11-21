@@ -725,8 +725,6 @@ private:
 
   std::array<double,4> m_PmtModulePlaneHalfSizeR1 = {{}};
   std::array<double,4> m_PmtModulePlaneHalfSizeR2 = {{}};
-  double m_PmtModulePitchInv{0};
-  double m_PmtPitchInv{0};
   std::array<Int,4> m_RichPmtNumModulesInRowCol = {{}};
   std::array<Int,4> m_RichPmtModuleCopyNumBeginPanel = {{}};
   std::array<Int,4> m_RichPmtModuleCopyNumEndPanel = {{}};
@@ -738,14 +736,10 @@ private:
   double m_PmtAnodeXSize{0};
   double m_PmtAnodeYSize{0};
   double m_PmtPixelGap{0};
-  Int m_PmtPixelsInRow{0};
-  Int m_PmtPixelsInCol{0};
   double m_PmtAnodeXEdge{0};
   double m_PmtAnodeYEdge{0};
   double m_AnodeXPixelSize{0};
   double m_AnodeYPixelSize{0};
-  double m_PmtAnodeEffectiveXPixelSizeInv{0};
-  double m_PmtAnodeEffectiveYPixelSizeInv{0};
   double m_PmtMasterLateralSize{0};
   double m_RichPmtQuartzThickness{0};
   double m_RichPmtQuartzLocalZInPmt{0};
@@ -761,8 +755,6 @@ private:
   Gaudi::Plane3D m_detectionPlane_exterior;
   // Access info related to PMT Lens flag
 
-  double m_PmtMasterWithLensLateralSize{0};
-  double m_PmtModuleWithLensPitchInv{0};
   double m_PmtLensPitch{0};
   std::array<double,2> m_Rich1PmtPanelWithLensXSize = {{}};
   std::array<double,2> m_Rich1PmtPanelWithLensYSize = {{}};
@@ -777,20 +769,14 @@ private:
   std::array<double,4> m_GrandPmtModulePlaneHalfSizeR2 = {{}};
   std::array<double,4> m_MixedPmtModulePlaneHalfSizeR2 = {{}};
   std::array<double,4> m_MixedStdPmtModulePlaneHalfSizeR2 = {{}};
-  double m_GrandPmtModulePitchInv{0};
   std::array<double,2> m_RichGrandPmtModuleActiveAreaHalfSize = {{}};
-  double m_GrandPmtPitchInv{0};
   double m_GrandPmtAnodeXSize{0};
   double m_GrandPmtAnodeYSize{0};
   double m_GrandPmtPixelGap{0};
-  Int    m_GrandPmtPixelsInRow{0};
-  Int    m_GrandPmtPixelsInCol{0};
   double m_GrandPmtAnodeXEdge{0};
   double m_GrandPmtAnodeYEdge{0};
   double m_GrandAnodeXPixelSize{0};
   double m_GrandAnodeYPixelSize{0};
-  double m_GrandPmtAnodeEffectiveXPixelSizeInv{0};
-  double m_GrandPmtAnodeEffectiveYPixelSizeInv{0};
   double m_GrandPmtMasterLateralSize{0};
   Int m_GrandNumPmtInRichModule{0};
   std::array<Int,2> m_NumGrandPmtInRowCol = {{}};
