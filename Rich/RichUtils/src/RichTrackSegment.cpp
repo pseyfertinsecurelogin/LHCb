@@ -62,6 +62,17 @@ void LHCb::RichTrackSegment::updateCachedInfo()
 
   // update the path length
   m_pathLength = std::sqrt(m_midEntryV.mag2()) + std::sqrt(m_exitMidV.mag2());
+
+  // SIMD data caches
+  m_entryPointSIMD  = entryPoint();
+  m_middlePointSIMD = middlePoint();
+  m_exitPointSIMD   = exitPoint();
+  m_midEntryVSIMD   = m_midEntryV;
+  m_exitMidVSIMD    = m_exitMidV;
+  m_invMidFrac1SIMD = m_invMidFrac1;
+  m_midFrac2SIMD    = m_midFrac2;
+  m_rotationSIMD    = SIMDRotation3D(m_rotation);
+  m_rotation2SIMD   = SIMDRotation3D(m_rotation2);
 }
 
 Gaudi::XYZVector LHCb::RichTrackSegment::bestMomentum( const double fractDist ) const

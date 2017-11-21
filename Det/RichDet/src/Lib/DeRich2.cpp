@@ -232,6 +232,9 @@ StatusCode DeRich2::updateMirrorParams()
 
   _ri_debug << "Nominal normal " << m_nominalNormals << endmsg;
 
+  // Fill SIMD caches
+  fillSIMDTypes();
+
   return StatusCode::SUCCESS;
 }
 

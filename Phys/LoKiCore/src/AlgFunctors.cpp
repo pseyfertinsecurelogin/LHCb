@@ -4,6 +4,8 @@
 // STD & STL
 // ============================================================================
 #include <algorithm>
+#include <initializer_list>
+#include <memory>
 // ============================================================================
 // GaudiKernel
 // ============================================================================
@@ -52,6 +54,60 @@
 // ============================================================================
 namespace
 {
+  bool isDefault( const std::string& s ) { return s.empty(); }
+  // utility class to populate some properties in the job options service
+  // for a given instance name in case those options are not explicitly
+  // set a-priori (effectively inheriting their values from the GaudiSequencer)
+  class populate_JobOptionsSvc_t
+  {
+    std::vector<std::unique_ptr<Gaudi::Details::PropertyBase>> m_props;
+    IJobOptionsSvc* m_jos;
+    std::string m_name;
+
+    template <typename T>
+    void push_back( T&& t )
+    {
+      static_assert( std::tuple_size<T>::value == 2, "Expecting an std::tuple key-value pair" );
+      using type   = typename std::decay<typename std::tuple_element<1, T>::type>::type;
+      using prop_t = Gaudi::Property<type>;
+      if ( !isDefault( std::get<1>( t ) ) )
+        m_props.push_back( std::make_unique<prop_t>( std::get<0>( t ), std::get<1>( t ) ) );
+    }
+    void check_veto()
+    { // avoid changing properties expliclty present in the JOS...
+      const auto* props = m_jos->getProperties( m_name );
+      if ( !props ) return;
+      for ( const auto& i : *props ) {
+        auto j = std::find_if( std::begin( m_props ), std::end( m_props ),
+                               [&i]( const auto& prop ) {
+                                   return prop->name() == i->name();
+                                } );
+        if ( j == std::end( m_props ) ) continue;
+        m_props.erase( j );
+        if ( m_props.empty() ) break; // done!
+      }
+    }
+
+  public:
+    template <typename... Args>
+    populate_JobOptionsSvc_t( std::string name, IJobOptionsSvc* jos, Args&&... args )
+        : m_jos{jos}, m_name{std::move( name )}
+    {
+      (void)std::initializer_list<int>{ (push_back( std::forward<Args>( args )),0)... };
+      if ( !m_props.empty() ) check_veto();
+      std::for_each( std::begin( m_props ), std::end( m_props ),
+                     [&]( const auto& i ) {
+                       m_jos->addPropertyToCatalogue( m_name, *i ).ignore();
+                     } );
+    }
+    ~populate_JobOptionsSvc_t()
+    {
+      std::for_each( std::begin( m_props ), std::end( m_props ),
+                     [&]( const auto& i ) {
+                       m_jos->removePropertyFromCatalogue( m_name, i->name() ).ignore();
+                     } );
+    }
+  };
   // ==========================================================================
   //  const IAlgManager* const s_ALGMANAGER = 0 ;
   const IAlgorithm*  const s_ALGORITHM  = nullptr ;
@@ -118,42 +174,15 @@ namespace
     const std::string &theName = typeName.name();
     const std::string &theType = typeName.type();
 
-    bool addedContext = false;
-    bool addedRootInTES = false;
     // do not create it now
     SmartIF<IAlgorithm> myIAlg = iam->algorithm( typeName , false);
 
     if ( !myIAlg.isValid() ) {
-      //== Set the Context if not in the jobOptions list
-      if ( ""  != parent->context() ||
-           ""  != parent->rootInTES() ) {
-        bool foundContext = false;
-        bool foundRootInTES = false;
-        const std::vector<const Property*>* properties =
-          jos->getProperties( theName );
-        if ( properties ) {
-          // Iterate over the list to set the options
-          for (const auto & property : *properties)   {
-            const StringProperty* sp =
-              dynamic_cast<const StringProperty*>(property);
-            if ( sp )    {
-              if ( "Context" == property->name() ) foundContext = true;
-              if ( "RootInTES" == property->name() ) foundRootInTES = true;
-            }
-          }
-        }
-        if ( !foundContext && "" != parent->context() ) {
-          StringProperty contextProperty( "Context", parent->context() );
-          jos->addPropertyToCatalogue( theName, contextProperty ).ignore();
-          addedContext = true;
-        }
-        if ( !foundRootInTES && "" != parent->rootInTES() ) {
-          StringProperty rootInTESProperty( "RootInTES", parent->rootInTES() );
-          jos->addPropertyToCatalogue( theName, rootInTESProperty ).ignore();
-          addedRootInTES = true;
-        }
-      }
-
+      // ensure some magic properties are set while we create the subalgorithm so
+      // that it effectively inherites 'our' settings -- if they have non-default
+      // values... and are not set explicitly already.
+      populate_JobOptionsSvc_t populate_guard{theName, jos, std::forward_as_tuple( "Context", parent->context() ),
+                                                            std::forward_as_tuple( "RootInTES", parent->rootInTES() )};
       Algorithm *myAlg = nullptr;
       StatusCode result = parent->createSubAlgorithm( theType, theName, myAlg );
       // (MCl) this should prevent bug #35199... even if I didn't manage to
@@ -169,16 +198,6 @@ namespace
       }
     }
 
-
-    //== Remove the property, in case this is not a GaudiAlgorithm...
-    if ( addedContext ) {
-      jos->removePropertyFromCatalogue( theName, "Context" ).ignore();
-      addedContext = false;
-    }
-    if ( addedRootInTES ) {
-      jos->removePropertyFromCatalogue( theName, "RootInTES" ).ignore();
-      addedRootInTES = false;
-    }
     ///////// end of code copied from GaudiSequencer...
 
     IAlgorithm* _a =  myIAlg;

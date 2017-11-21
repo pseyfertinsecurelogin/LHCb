@@ -3,6 +3,9 @@
 ! Responsible : P. Koppenburg, C. Jones
 !----------------------------------------------------------------------------
 
+! 2017-09-15 - Vincenzo Battista
+ - Update enum list in Tagger.xml
+
 ! 2016-07-26 - Chris Jones
  - Fix for LCG dictionary warning due to Particle range.
 

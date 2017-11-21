@@ -59,6 +59,7 @@ namespace generic {
     extern void similarity_5_1(gsl::span<const double,15> Ci, gsl::span<const double, 5> Fi, gsl::span<double, 1> Ti);
     extern void similarity_5_5(gsl::span<const double,15> Ci, gsl::span<const double,25> Fi, gsl::span<double,15> Ti);
     extern void similarity_5_7(gsl::span<const double,15> Ci, gsl::span<const double,35> Fi, gsl::span<double,28> Ti);
+    extern void similarity_2_5(gsl::span<const double, 3> Ci, gsl::span<const double,10> Fi, gsl::span<double,15> Ti);
 }
 }
 }
@@ -82,6 +83,8 @@ std::map<ISet, LHCb::Math::detail::similarity_t<5,7>>  vtbl_5_7 = {
                                                 { ISet::AVX,     LHCb::Math::detail::avx::similarity_5_7 },
                                                 { ISet::SSE3,    LHCb::Math::detail::sse3::similarity_5_7 },
                                                 { ISet::GENERIC, LHCb::Math::detail::generic::similarity_5_7 } };
+std::map<ISet, LHCb::Math::detail::similarity_t<2,5>>  vtbl_2_5 = {
+                                                { ISet::GENERIC, LHCb::Math::detail::generic::similarity_2_5 } };
 
 // Util class for test results
 struct TestResults {

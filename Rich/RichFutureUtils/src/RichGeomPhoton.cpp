@@ -12,18 +12,26 @@
 // local
 #include "RichFutureUtils/RichGeomPhoton.h"
 
+std::ostream & Rich::Future::RecoPhoton::fillStream ( std::ostream& s ) const
+{
+  return s << "{"
+           << " ckTheta:" << CherenkovTheta() 
+           << " ckPhi:" << CherenkovPhi() 
+           << " smartID:" << smartID() 
+           << " activeFraction:" << activeSegmentFraction() 
+           << " }";
+}
+
 std::ostream & Rich::Future::GeomPhoton::fillStream ( std::ostream& s ) const
 {
-  s << "{ "
-    << " cherenkovTheta:\t" << CherenkovTheta() << std::endl
-    << " cherenkovPhi:\t" << CherenkovPhi() << std::endl
-    << " emissionPoint:\t" << emissionPoint() << std::endl
-    << " detectionPoint:\t" << detectionPoint() << std::endl
-    << " sphMirReflectionPoint:\t"<<sphMirReflectionPoint() << std::endl
-    << " flatMirReflectionPoint:\t"<<flatMirReflectionPoint() << std::endl
-    //<< " primaryMirror:\t" << primaryMirror() << std::endl
-    //<< " secondaryMirror:\t" << secondaryMirror() << std::endl
-    << " smartID:\t" << smartID() << std::endl
-    << " activeSegmentFraction:\t" << activeSegmentFraction() << " } ";
-  return s;
+  RecoPhoton::fillStream(s);
+  return s << "{"
+           << " emissionPoint:" << emissionPoint()
+           << " emissionDir:" << emissionDir()
+           << " detectionPoint:" << detectionPoint()
+           << " sphMirReflectionPoint:"<<sphMirReflectionPoint()
+           << " flatMirReflectionPoint:"<<flatMirReflectionPoint()
+           << " primaryMirror:" << (void*)primaryMirror() 
+           << " secondaryMirror:" << (void*)secondaryMirror()
+           << " }";
 }
