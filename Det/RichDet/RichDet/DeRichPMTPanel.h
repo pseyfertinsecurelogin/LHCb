@@ -659,8 +659,6 @@ private:
 
   std::array<SIMDFP,4> m_MixedStdPmtModulePlaneHalfSizeR2SIMD = {{}};
 
-  Rich::SIMD::STDVector<SIMDINT32> m_Rich2MixedModuleArrayColumnSizeSIMD;
-
   SIMDFP m_PmtMasterWithLensLateralSizeSIMD = SIMDFP::Zero();
 
   std::array<SIMDINT32,2> m_RichNumLensPmtinModuleRowColSIMD = {{}};
@@ -700,6 +698,8 @@ private:
   std::array<SIMDINT32,4> m_RichPmtModuleCopyNumBeginPanelSIMD = {{}};
   std::array<SIMDINT32,4> m_RichPmtModuleCopyNumEndPanelSIMD = {{}};
 
+  Rich::SIMD::STDVector<SIMDINT32> m_Rich2MixedModuleArrayColumnSizeSIMD;
+
 private:
 
   /// SmartID for this panel
@@ -720,15 +720,9 @@ private:
   /// Total number of PMT
   unsigned int m_totNumPMTs{0};
 
-  /// (X,Y) panel half sizes for this panel
-  XYArray m_xyHalfSize = {{}};
-
-  std::array<double,4> m_PmtModulePlaneHalfSizeR1 = {{}};
-  std::array<double,4> m_PmtModulePlaneHalfSizeR2 = {{}};
   std::array<Int,4> m_RichPmtNumModulesInRowCol = {{}};
   std::array<Int,4> m_RichPmtModuleCopyNumBeginPanel = {{}};
   std::array<Int,4> m_RichPmtModuleCopyNumEndPanel = {{}};
-  std::array<double,2> m_RichPmtModuleActiveAreaHalfSize = {{}};
   std::array<Int,2> m_NumPmtInRowCol = {{}};
   std::array<Int,4> m_NumPmtModuleInRich = {{}};
   Int m_NumPmtInRichModule{0};
@@ -756,20 +750,12 @@ private:
   // Access info related to PMT Lens flag
 
   double m_PmtLensPitch{0};
-  std::array<double,2> m_Rich1PmtPanelWithLensXSize = {{}};
-  std::array<double,2> m_Rich1PmtPanelWithLensYSize = {{}};
-  std::array<Int,2>    m_Rich1PmtPanelWithLensColSize = {{}};
-  std::array<Int,2>    m_RichNumLensPmtinModuleRowCol = {{}};
   double m_Rich1LensDemagnificationFactor{0};
 
   bool  m_Rich2UseGrandModule{false};
   Int   m_Rich2ArrayConfig{0};
   bool  m_Rich2UseMixedModule{false};
 
-  std::array<double,4> m_GrandPmtModulePlaneHalfSizeR2 = {{}};
-  std::array<double,4> m_MixedPmtModulePlaneHalfSizeR2 = {{}};
-  std::array<double,4> m_MixedStdPmtModulePlaneHalfSizeR2 = {{}};
-  std::array<double,2> m_RichGrandPmtModuleActiveAreaHalfSize = {{}};
   double m_GrandPmtAnodeXSize{0};
   double m_GrandPmtAnodeYSize{0};
   double m_GrandPmtPixelGap{0};
