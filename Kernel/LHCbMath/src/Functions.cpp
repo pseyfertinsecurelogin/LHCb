@@ -23,9 +23,13 @@
 #include "LHCbMath/LHCbMath.h"
 #include "LHCbMath/Power.h"
 #include "LHCbMath/Polynomials.h"
-#include "LHCbMath/Bernstein.h"
 #include "LHCbMath/Clenshaw.h"
 #include "LHCbMath/MoreFunctions.h"
+// ============================================================================
+#include "LHCbMath/BernsteinPoly.h"
+#include "LHCbMath/Bernstein1D.h"
+#include "LHCbMath/Bernstein2D.h"
+#include "LHCbMath/Bernstein3D.h"
 // ============================================================================
 // GSL
 // ============================================================================
