@@ -13,6 +13,9 @@
 #include <memory>
 #include <array>
 
+// Utils
+#include "RichUtils/RichSIMDTypes.h"
+
 // DetDesc
 #include "DetDesc/IGeometryInfo.h"
 #include "DetDesc/ISolid.h"
@@ -25,6 +28,10 @@
 //#include "LHCbMath/Line.h"
 //#include "LHCbMath/GeomFun.h"
 
+// Vc
+#include <Vc/Vc>
+#include <Vc/common/alignedbase.h>
+
 // External declarations
 extern const CLID CLID_DERichBeamPipe;
 
@@ -35,7 +42,8 @@ extern const CLID CLID_DERichBeamPipe;
  * @author Antonis Papanestis a.papanestis@rl.ac.uk
  * @date   2006-11-27
  */
-class DeRichBeamPipe : public DeRichBase
+class DeRichBeamPipe : public DeRichBase,
+                       public Vc::AlignedBase<Vc::VectorAlignment>
 {
 
 private:
@@ -110,6 +118,8 @@ public:
    *  Faster than intersectionPoints since it does not compute the intersection points
    *  in global coordinates.
    *
+   *  Scalar implementation
+   *
    *  @param[in]  start The start point of the vector to test
    *  @param[in]  end   The end point of the vector to test
    *
@@ -117,20 +127,22 @@ public:
    *  @retval true  The beam pipe was intersected
    *  @retval false The beam pipe was NOT intersected
    */
-  inline bool __attribute__((always_inline)) 
-  testForIntersection( const Gaudi::XYZPoint& start,
-                       const Gaudi::XYZPoint& end ) const
+  template < typename POINT,
+             typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
+  inline bool
+  testForIntersection( const POINT& start,
+                       const POINT& end ) const
   {
     
     // fast test on if the start and end points are close enough to the
     // the beam axis in global coords
-    bool inter = isCloseBy(start,end);
+    auto inter = isCloseBy(start,end);
     
     // If close enough, run full test
     if ( inter )
     {
       // get point and direction in local coordinates
-      const auto pLocal = geometry()->toLocal(start);
+      const auto pLocal = geometry()->toLocalMatrix()*start;
       const auto vLocal = geometry()->toLocalMatrix()*(end-start);
       // run full intersection test
       ISolid::Ticks ticks;
@@ -154,34 +166,96 @@ public:
     return inter;
   }
 
+  /**
+   *  Test if a given direction intersects the beam-pipe volume at all.
+   *  Faster than intersectionPoints since it does not compute the intersection points
+   *  in global coordinates.
+   *
+   *  SIMD implementation
+   *
+   *  @param[in]  start The start point of the vector to test
+   *  @param[in]  end   The end point of the vector to test
+   *
+   *  @return boolean indicating if the beam pipe was intersected or not
+   *  @retval true  The beam pipe was intersected
+   *  @retval false The beam pipe was NOT intersected
+   */
+  template < typename POINT,
+             typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
+  inline typename POINT::Scalar::mask_type
+  testForIntersection( const POINT& start,
+                       const POINT& end,
+                       typename POINT::Scalar::mask_type mask ) const
+  {
+    
+    // fast test on if the start and end points are close enough to the
+    // the beam axis in global coords
+    mask &= isCloseBy(start,end);
+    
+    // If close enough, run full test
+    if ( UNLIKELY( any_of(mask) ) )
+    {
+      // get point and direction in local coordinates
+      const auto pL = m_toLocalMatrixSIMD * start;
+      const auto vL = m_toLocalMatrixSIMD * (end-start);
+      // run full intersection test
+      // For the moment run this scalar ... Vectorising SolidCons is for later on ...
+      for ( std::size_t i = 0; i < POINT::Scalar::Size; ++i )
+      {
+        if ( mask[i] )
+        {
+          ISolid::Ticks ticks;
+          mask[i] = 0 != m_localCone->intersectionTicks( Gaudi::XYZPoint { pL.X()[i], pL.Y()[i], pL.Z()[i] },
+                                                         Gaudi::XYZVector{ vL.X()[i], vL.Y()[i], vL.Z()[i] }, 
+                                                         ticks );
+        }
+      }
+    }
+
+    return mask;
+  }
+
 public:
 
   /// Convert the enum to text for easy reading
-  static std::string text(const DeRichBeamPipe::BeamPipeIntersectionType& type);
+  static std::string text( const DeRichBeamPipe::BeamPipeIntersectionType& type );
 
 private:
 
   /// Returns the 'average' of two points
-  template< class POINT >
+  template< typename POINT >
   inline POINT average( const POINT& p1, const POINT& p2 ) const
   {
-    return POINT( 0.5*(p1.x()+p2.x()),
-                  0.5*(p1.y()+p2.y()),
-                  0.5*(p1.z()+p2.z()) );
+    return POINT( 0.5 * ( p1.x() + p2.x() ),
+                  0.5 * ( p1.y() + p2.y() ),
+                  0.5 * ( p1.z() + p2.z() ) );
   }
 
-  /// Test if the given start and end points are 'close' to the beampipe or not
-  inline bool isCloseBy( const Gaudi::XYZPoint& start,
-                         const Gaudi::XYZPoint& end ) const
+  /// Scalar Test if the given start and end points are 'close' to the beampipe or not
+  template< typename POINT,
+            typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
+  inline bool isCloseBy( const POINT& start,
+                                   const POINT& end ) const
   {
-    return ( isCloseBy(start) || isCloseBy(end)
-             // || isCloseBy(average(start,end))
-             );
+    return ( isCloseBy(start) || isCloseBy(end) );
   }
 
-  /// Test if the given point is 'close' to the beampipe or not
-  inline bool __attribute__((always_inline)) 
-  isCloseBy( const Gaudi::XYZPoint& p ) const
+  /// SIMD Test if the given start and end points are 'close' to the beampipe or not
+  template< typename POINT,
+            typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
+  inline typename POINT::Scalar::mask_type isCloseBy( const POINT& start,
+                                                      const POINT& end ) const
+  {
+    auto mask = isCloseBy(start);
+    if ( !all_of(mask) ) { mask |= isCloseBy(end); }
+    return mask;
+  }
+
+  /// Scalar Test if the given point is 'close' to the beampipe or not
+  template< typename POINT,
+            typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
+  inline bool 
+  isCloseBy( const POINT& p ) const
   {
     // Get the closest z coord in the beam pipe
     const auto beamz  = ( p.z() > m_endPGlo.z()   ? m_endPGlo.z()   :
@@ -194,15 +268,47 @@ private:
     const auto dist2  = ( std::pow(beamx-p.x(),2) +
                           std::pow(beamy-p.y(),2) +
                           std::pow(beamz-p.z(),2) );
-    //info() << "Point " << p << endmsg;
-    //info() << "Beam  " << beamx << " " << beamy << " " << beamz << endmsg;
-    //info() << " -> Dist2 " << dist2 << " " << beamR2 << " " << ( dist2 < beamR2 ) << endmsg;
+    return ( dist2 < beamR2 );
+  }
+
+  /// SIMD Test if the given point is 'close' to the beampipe or not
+  template< typename POINT,
+            typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
+  inline typename POINT::Scalar::mask_type
+  isCloseBy( const POINT& p ) const
+  {
+    // Get the closest z coord in the beam pipe
+    auto beamz = p.z();
+    beamz( beamz > m_endPGloSIMD.z()   ) = m_endPGloSIMD.z();
+    beamz( beamz < m_startPGloSIMD.z() ) = m_startPGloSIMD.z();
+    // Get beam pipe axis (x,y) and R^2 at this point in z position
+    const auto beamx  = ( m_mSIMD[0] * beamz ) + m_cSIMD[0];
+    const auto beamy  = ( m_mSIMD[1] * beamz ) + m_cSIMD[1];
+    const auto beamR2 = ( m_mSIMD[2] * beamz ) + m_cSIMD[2];
+    const auto xdiff  = beamx - p.x();
+    const auto ydiff  = beamy - p.y();
+    const auto zdiff  = beamz - p.z();
+    const auto dist2  = ( (xdiff*xdiff) + (ydiff*ydiff) + (zdiff*zdiff) );
     return ( dist2 < beamR2 );
   }
 
 private: // data
 
-  // The RICH detector
+  /// SIMD Global position on the z axis for the start of the beampipe
+  Rich::SIMD::Point<float> m_startPGloSIMD;
+
+  /// SIMD Global position on the z axis for the end of the beampipe
+  Rich::SIMD::Point<float> m_endPGloSIMD;
+
+  /// SIMD parameters for y = mx +c scaling of cone axis (x,y) and R^2 as a function of z
+  std::array<Rich::SIMD::FP<float>,3> m_mSIMD, m_cSIMD;
+
+  /// SIMD to local transformation
+  Rich::SIMD::Transform3D<float> m_toLocalMatrixSIMD;
+
+private: // data
+
+  /// The RICH detector
   Rich::DetectorType m_rich = Rich::InvalidDetector;
 
   /// A copy of the beam pipe cone that is solid (not hollow)
@@ -227,3 +333,4 @@ inline std::ostream& operator << ( std::ostream& s,
   return s << DeRichBeamPipe::text( type );
 }
 
+//==============================================================================

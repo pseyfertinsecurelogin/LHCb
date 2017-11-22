@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<!DOCTYPE extension  PUBLIC '-//QM/2.3/Extension//EN'  'http://www.codesourcery.com/qm/dtds/2.3/-//qm/2.3/extension//en.dtd'>
+<extension class="GaudiTest.GaudiExeTest" kind="test">
+<argument name="program">   <text>../test_B2D.py</text></argument>
+<argument name="validator"><text>
+block = """
+Check for constant 2D-polynomial      is OK
+Check for symmetric 2D-polynomial(x2) is OK
+Check for integrals[0]                is OK
+Check for integrals[1]                is OK
+Check for integrals[2]                is OK
+Check for integrals[3]                is OK
+Check for integrals[4]                is OK
+Check for integrals[5]                is OK
+Check for integrals[6]                is OK
+"""
+findReferenceBlock(block)  
+</text></argument>
+</extension>

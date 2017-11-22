@@ -8,6 +8,8 @@
       author      = 'Wouter Hulsbergen'
       desc        = 'structure holding a chisquare and associated number of dofs'
       allocator   = 'NO'
+      final       = 'TRUE'
+      defaultdestructor  = 'FALSE'
       virtual     = 'FALSE'>
 
       <constructor

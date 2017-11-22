@@ -52,6 +52,7 @@ using similarity_t = void (*)(span<const double,N*(N+1)/2> Ci,
 extern similarity_t<5,1> similarity_5_1;
 extern similarity_t<5,5> similarity_5_5;
 extern similarity_t<5,7> similarity_5_7;
+extern similarity_t<2,5> similarity_2_5;
 
 }
 
@@ -108,6 +109,22 @@ inline Gaudi::SymMatrix7x7 Similarity( const ROOT::Math::SMatrix<double,7,5>& F,
                                        const Gaudi::SymMatrix5x5& origin )
 {
     Gaudi::SymMatrix7x7 target;
+    Similarity( F, origin, target );
+    return target; // rely on RVO to make this efficient...
+}
+
+// 'target' and 'origin' are NOT allowed to be the same object.
+inline void Similarity( const ROOT::Math::SMatrix<double,5,2>& F,
+                        const Gaudi::SymMatrix2x2& origin,
+                        Gaudi::SymMatrix5x5& target )
+{
+    (*detail::similarity_2_5)( detail::to_span(origin), detail::to_span(F), detail::to_span(target) );
+}
+
+inline Gaudi::SymMatrix5x5 Similarity( const ROOT::Math::SMatrix<double,5,2>& F,
+                                       const Gaudi::SymMatrix2x2& origin )
+{
+    Gaudi::SymMatrix5x5 target;
     Similarity( F, origin, target );
     return target; // rely on RVO to make this efficient...
 }

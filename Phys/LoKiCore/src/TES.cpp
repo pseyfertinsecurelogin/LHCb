@@ -65,7 +65,7 @@ namespace
 LoKi::TES::Get::Get
 ( const std::string& location     ,
   const bool         useRootInTES )
-  : LoKi::AuxFunBase ()
+  : LoKi::AuxFunBase ( std::tie ( location, useRootInTES ) )
   , m_location     ( location     )
   , m_useRootInTES ( useRootInTES )
   , m_algorithm ()

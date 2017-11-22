@@ -24,6 +24,7 @@ namespace
       "x86_64-centos7-gcc62-opt",
       "x86_64-centos7-gcc62-opt+o3",
       "x86_64-centos7-gcc7-opt",
+      "x86_64-centos7-gcc7-dbg",
       "x86_64-slc5-gcc43-dbg",
       "x86_64-slc5-gcc43-opt",
       "x86_64-slc5-gcc46-dbg",

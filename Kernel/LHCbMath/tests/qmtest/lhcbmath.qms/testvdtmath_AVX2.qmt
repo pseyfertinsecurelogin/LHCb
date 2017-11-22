@@ -3,7 +3,9 @@
   <argument name="program"><text>TestVDTMathAVX2.exe</text></argument>
   <argument name="reference"><text>../refs/TestVDTMath.ref</text></argument>
   <argument name="validator"><text>
-from GaudiConf.QMTest.LHCbExclusions import preprocessor
+from GaudiConf.QMTest.LHCbExclusions import preprocessor as LHCbPreprocessor
+preprocessor = LHCbPreprocessor + \
+  RegexpReplacer(when = "-0.633977997731447", orig = r'-0.633977997731447', repl = r'-0.633977997731446')
 validateWithReference(preproc = preprocessor)
   </text></argument>
 </extension>

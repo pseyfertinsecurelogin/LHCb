@@ -449,17 +449,8 @@ std::string LoKi::Hybrid::Base::makeCode
   return result ;
 }
 // ============================================================================
-// write C++ code
-// ============================================================================
 namespace
 {
-  inline std::ostream&
-  writeLines ( const std::vector<std::string>& lines  ,
-               std::ostream&                   stream )
-  {
-    for ( const auto& l : lines ) stream << l << '\n' ;
-    return stream ;
-  }
   // ==========================================================================
   typedef std::pair<std::string,std::string>  _PAIR       ;
   typedef std::map<std::string,_PAIR>         _FUNCTIONS  ;

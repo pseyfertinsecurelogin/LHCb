@@ -38,13 +38,18 @@ namespace Rich
    *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
    *  @date   08/07/2004
    */
-  enum Side : int8_t
+  enum Side : int32_t
     {
       InvalidSide  = -1, ///< Invalid side
+        // RICH1
       top          = 0,  ///< Upper panel in RICH1
       bottom       = 1,  ///< Lower panel in RICH1
+        // RICH2
       left         = 0,  ///< Left panel in RICH2
-      right        = 1   ///< Right panel in RICH2
+      right        = 1,  ///< Right panel in RICH2
+        // Generic
+      firstSide    = 0,  ///< Upper panel in RICH1 or Left panel in RICH2
+      secondSide   = 1   ///< Lower panel in RICH1 or Right panel in RICH2
     };
 
   /** Text conversion for Rich::Side enumeration

@@ -66,19 +66,16 @@ Track::ConstNodeRange Track::nodes() const
   //
   typedef LHCb::TrackFitResult::NodeContainer::const_iterator Iterator1 ;
   typedef Track::ConstNodeRange::const_iterator               Iterator2 ;
+  static_assert( sizeof(Iterator1) == sizeof(Iterator2), "iterator sizes must be equal" ) ;
   //
-  const Iterator1 begin = nodes_ . begin () ;
-  const Iterator1 end   = nodes_ . end   () ;
+  const auto begin = nodes_ . cbegin () ;
+  const auto end   = nodes_ . cend   () ;
   //
   // Helper union to avoid reinterpret_cast
   union _IteratorCast
   {
-    //
-    //
     const Iterator1* input  ;
     const Iterator2* output ;
-    //
-    static_assert( sizeof(Iterator1) == sizeof(Iterator2), "iterator sizes must be equal" ) ;
   } ;
   // somehow, volatile didn't work here in gcc46
   _IteratorCast _begin ;
@@ -230,7 +227,7 @@ const State* Track::stateAt( const LHCb::State::Location& location ) const
 //=============================================================================
 void Track::addToStates( const State& state )
 {
-  State* local = state.clone();
+  auto local = state.clone();
   const int order = ( checkFlag(Track::Flags::Backward) ? -1 : 1 );
   auto ipos = std::upper_bound(m_states.begin(),
                                m_states.end(),
@@ -244,15 +241,15 @@ void Track::addToStates( const State& state )
 //=============================================================================
 void Track::addToStates( const StateContainer& states )
 {
-  auto middle = m_states.insert(m_states.end(), states.begin(), states.end()) ;
+  auto pivot = m_states.insert(m_states.end(), states.begin(), states.end()) ;
   // do not assumme that the incoming states are properly sorted.
   // The 'if' is ugly, but more efficient than using 'orderByZ'.
   if (checkFlag(Track::Flags::Backward)) {
-    std::sort(middle,m_states.end(),TrackFunctor::decreasingByZ());
-    std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::decreasingByZ()) ;
+    std::sort(pivot,m_states.end(),TrackFunctor::decreasingByZ());
+    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::decreasingByZ()) ;
   } else {
-    std::sort(middle,m_states.end(),TrackFunctor::increasingByZ());
-    std::inplace_merge(m_states.begin(),middle,m_states.end(),TrackFunctor::increasingByZ());
+    std::sort(pivot,m_states.end(),TrackFunctor::increasingByZ());
+    std::inplace_merge(m_states.begin(),pivot,m_states.end(),TrackFunctor::increasingByZ());
   }
 }
 
@@ -299,28 +296,25 @@ bool Track::addSortedToLhcbIDs( const LHCbIDContainer& ids )
 }
 
 //=============================================================================
-// Compute the number of LHCbIDs that two tracks have in common
+// Count the number of LHCbIDs that two tracks have in common
 //=============================================================================
+namespace {
+
+// inserter which only counts how often something is inserted
+struct counting_inserter {
+    size_t count = 0;
+    counting_inserter& operator++() { return *this; } // nop
+    counting_inserter& operator*() { return *this; } // redirect to self, so that out op= is called
+    counting_inserter& operator=(const LHCbID&) { ++count; return *this; } // raison d'etre
+};
+
+}
+
 size_t Track::nCommonLhcbIDs(const Track& rhs) const
 {
-  // adapted from std::set_intersection
-  size_t rc(0) ;
-  auto first1 = m_lhcbIDs.begin() ;
-  auto last1  = m_lhcbIDs.end() ;
-  auto first2 = rhs.m_lhcbIDs.begin() ;
-  auto last2  = rhs.m_lhcbIDs.end() ;
-  while (first1 != last1 && first2 != last2) {
-    if ( *first1 < *first2 ) {
-      ++first1;
-    } else if ( *first2 < *first1 ) {
-      ++first2;
-    } else {
-      ++first1;
-      ++first2;
-      ++rc ;
-    }
-  }
-  return rc ;
+  return std::set_intersection( begin(m_lhcbIDs), end(m_lhcbIDs),
+                                begin(rhs.m_lhcbIDs), end(rhs.m_lhcbIDs),
+                                counting_inserter{} ).count;
 }
 
 //=============================================================================

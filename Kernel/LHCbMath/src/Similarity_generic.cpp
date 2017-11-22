@@ -140,6 +140,34 @@ void similarity_5_7(span<const double,15> Ci, span<const double,35> Fi, span<dou
       ti[27] = Fi[30]*_0 + Fi[31]*_1 + Fi[32]*_2 + Fi[33]*_3 + Fi[34]*_4;
 }
 
+void similarity_2_5(span<const double,3> Ci, span<const double,10> Fi, span<double,15> ti)  {
+      if (Ci.data() == ti.data() ) throw "target and source overlap -- do not do that";
+      auto _0 = Ci[ 0]*Fi[0]+Ci[ 1]*Fi[1];
+      auto _1 = Ci[ 1]*Fi[0]+Ci[ 2]*Fi[1];
+      ti[ 0] = Fi[0]*_0 + Fi[1]*_1;
+      ti[ 1] = Fi[2]*_0 + Fi[3]*_1;
+      ti[ 3] = Fi[4]*_0 + Fi[5]*_1;
+      ti[ 6] = Fi[6]*_0 + Fi[7]*_1;
+      ti[10] = Fi[8]*_0 + Fi[9]*_1;
+      _0 = Ci[ 0]*Fi[2]+Ci[ 1]*Fi[3];
+      _1 = Ci[ 1]*Fi[2]+Ci[ 2]*Fi[3];
+      ti[ 2] = Fi[2]*_0 + Fi[3]*_1;
+      ti[ 4] = Fi[4]*_0 + Fi[5]*_1;
+      ti[ 7] = Fi[6]*_0 + Fi[7]*_1;
+      ti[11] = Fi[8]*_0 + Fi[9]*_1;
+      _0 = Ci[ 0]*Fi[4]+Ci[ 1]*Fi[5];
+      _1 = Ci[ 1]*Fi[4]+Ci[ 2]*Fi[5];
+      ti[ 5] = Fi[4]*_0 + Fi[5]*_1;
+      ti[ 8] = Fi[6]*_0 + Fi[7]*_1;
+      ti[12] = Fi[8]*_0 + Fi[9]*_1;
+      _0 = Ci[ 0]*Fi[6]+Ci[ 1]*Fi[7];
+      _1 = Ci[ 1]*Fi[6]+Ci[ 2]*Fi[7];
+      ti[ 9] = Fi[6]*_0 + Fi[7]*_1;
+      ti[13] = Fi[8]*_0 + Fi[9]*_1;
+      _0 = Ci[ 0]*Fi[8]+Ci[ 1]*Fi[9];
+      _1 = Ci[ 1]*Fi[8]+Ci[ 2]*Fi[9];
+      ti[14] = Fi[8]*_0 + Fi[9]*_1;
+}
 
 bool average( span<const double,5> X1, span<const double,15> C1,
               span<const double,5> X2, span<const double,15> C2,
