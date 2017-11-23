@@ -135,20 +135,13 @@ namespace Rich
       inline FPF get_log_poly( const FPF& x ) noexcept
       {
         auto y = x*PX1logf;
-        y += PX2logf;
-        y *= x;
-        y += PX3logf;
-        y *= x;
-        y += PX4logf;
-        y *= x;
-        y += PX5logf;
-        y *= x;
-        y += PX6logf;
-        y *= x;
-        y += PX7logf;
-        y *= x;
-        y += PX8logf;
-        y *= x;
+        y += PX2logf;  y *= x;
+        y += PX3logf;  y *= x;
+        y += PX4logf;  y *= x;
+        y += PX5logf;  y *= x;
+        y += PX6logf;  y *= x;
+        y += PX7logf;  y *= x;
+        y += PX8logf;  y *= x;
         y += PX9logf;
         return y;
       }
@@ -300,16 +293,11 @@ namespace Rich
       const auto n = Vc::simd_cast<Int32>( z );
 
       z  = details::PX1expf * x;
-      z += details::PX2expf;
-      z *= x;
-      z += details::PX3expf;
-      z *= x;
-      z += details::PX4expf;
-      z *= x;
-      z += details::PX5expf;
-      z *= x;
-      z += details::PX6expf;
-      z *= x*x;
+      z += details::PX2expf;  z *= x;
+      z += details::PX3expf;  z *= x;
+      z += details::PX4expf;  z *= x;
+      z += details::PX5expf;  z *= x;
+      z += details::PX6expf;  z *= x*x;
       z += x + FPF::One();
 
       // multiply by power of 2
