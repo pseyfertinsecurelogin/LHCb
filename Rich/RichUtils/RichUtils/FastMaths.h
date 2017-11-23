@@ -24,6 +24,7 @@
 #include "vdt/log.h"
 #include "vdt/atan2.h"
 #include "vdt/sincos.h"
+#include "vdt/sqrt.h"
 
 namespace Rich
 {
@@ -53,6 +54,7 @@ namespace Rich
       const FPF MAXNUMF  ( 3.4028234663852885981170418348451692544e38f );
       // numbers
       const FPF HALF     ( 0.5    );               ///< 1/2
+      const FPF THREEHALVES ( 1.5 );               ///< 3/2
       const FPF TAN_PIO8F( 0.4142135623730950 );   ///< tan(pi/8)
       const FPF PIO4F    ( M_PI_4 );               ///< pi/4
       const FPF PIO2F    ( M_PI_2 );               ///< pi/2
@@ -105,7 +107,7 @@ namespace Rich
       }
 
       /// floor implementation
-      inline FPF fpfloor( const FPF& x )
+      inline FPF fpfloor( const FPF& x ) noexcept
       {
         //return std::floor(x); // Vc implementation
         auto ret = Vc::simd_cast<Int32>(x);
@@ -174,22 +176,55 @@ namespace Rich
       {
         auto z = x * x;
         s = (((   FPF(-1.9515295891E-4f) * z
-                  + FPF(8.3321608736E-3f)) * z
-              - FPF(1.6666654611E-1f)) * z * x )
+                + FPF(8.3321608736E-3f)) * z
+                - FPF(1.6666654611E-1f)) * z * x )
           + x;
         c = ((    FPF(2.443315711809948E-005f) * z
-                  - FPF(1.388731625493765E-003f)) * z
-             + FPF(4.166664568298827E-002f)) * z * z
+                - FPF(1.388731625493765E-003f)) * z
+                + FPF(4.166664568298827E-002f)) * z * z
           - details::HALF * z + FPF::One();
+      }
+
+      /// Sqrt implmentation from Quake3
+      template < std::size_t ITERATIONS >
+      inline FPF fast_isqrtf_general( const FPF& x ) noexcept
+      {
+        const FPF x2 = x * HALF;
+        union { FPF y; UInt32 i; } z = { x };
+        const UInt32 magic ( 0x5f3759df );
+        z.i = magic - ( z.i >> 1 );
+        for ( std::size_t j = 0; j < ITERATIONS; ++j )
+        {
+          z.y *= ( THREEHALVES - ( x2 * z.y * z.y ) );
+        }
+        return z.y;
       }
 
     } // details
 
     //------------------------------------------------------------------------------
 
+    /** fast inverse sqrt for Vc::Vector<float> type
+     *  Based on VDT fast_isqrtf */
+    inline FPF fast_isqrt( const FPF& x ) noexcept
+    {
+      // use two iterations
+      return details::fast_isqrtf_general<2>(x);
+    }
+
+    /** fast approximate inverse sqrt for Vc::Vector<float> type
+     *  Based on VDT fast_approx_isqrtf */
+    inline FPF fast_approx_isqrt( const FPF& x ) noexcept
+    {
+      // use only 1 iteration
+      return details::fast_isqrtf_general<1>(x);
+    }
+
+    //------------------------------------------------------------------------------
+
     /** fast sincos for Vc::Vector<float> type
      *  Based on VDT fast_sincosf */
-    inline void fast_sincos( const FPF& xx, FPF& s, FPF& c )
+    inline void fast_sincos( const FPF& xx, FPF& s, FPF& c ) noexcept
     {
       auto xj = details::reduce2quadrant(xx);
 
@@ -217,7 +252,7 @@ namespace Rich
 
     /** fast log for Vc::Vector<float> type
      *  Based on VDT fast_logf */
-    inline FPF fast_log( const FPF& initial_x )
+    inline FPF fast_log( const FPF& initial_x ) noexcept
     {
 
       auto x_fe = details::getMantExponent( initial_x );
@@ -252,7 +287,7 @@ namespace Rich
 
     /** fast exp for Vc::Vector<float> type
      *  Based on VDT fast_expf */
-    inline FPF fast_exp( const FPF& initial_x )
+    inline FPF fast_exp( const FPF& initial_x ) noexcept
     {
 
       FPF x = initial_x;
@@ -290,7 +325,7 @@ namespace Rich
 
     /** fast atan2 for Vc::Vector<float> type
      *  Based on VDT fast_atan2f */
-    inline FPF fast_atan2( const FPF& y, const FPF& x )
+    inline FPF fast_atan2( const FPF& y, const FPF& x ) noexcept
     {
 
       // move in first octant
@@ -349,6 +384,16 @@ namespace Rich
     inline float  fast_exp( const float  x ) { return vdt::fast_expf(x); }
     /// Fast exp
     inline double fast_exp( const double x ) { return vdt::fast_exp(x); }
+
+    /// Fast inverse sqrt
+    inline float  fast_isqrt( const float  x ) { return vdt::fast_isqrtf(x); }
+    /// Fast inverse sqrt
+    inline double fast_isqrt( const double x ) { return vdt::fast_isqrt(x); }
+
+    /// Fast approximate inverse sqrt
+    inline float  fast_approx_isqrt( const float  x ) { return vdt::fast_approx_isqrtf(x); }
+    /// Fast approximate inverse sqrt
+    inline double fast_approx_isqrt( const double x ) { return vdt::fast_approx_isqrt(x); }
 
     /// Fast atan2
     inline float  fast_atan2( const float  y, const float  x ) { return vdt::fast_atan2f(y,x); }
