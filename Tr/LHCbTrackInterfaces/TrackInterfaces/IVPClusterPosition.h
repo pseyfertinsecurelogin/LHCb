@@ -20,8 +20,7 @@ namespace LHCb {
 class VPCluster;
 }
 
-class IVPClusterPosition : public extend_interfaces<IAlgTool> {
- public:
+struct IVPClusterPosition : extend_interfaces<IAlgTool> {
     DeclareInterfaceID(IVPClusterPosition, 2, 0);
 
   /** Calculate position of a given VPCluster
@@ -29,8 +28,7 @@ class IVPClusterPosition : public extend_interfaces<IAlgTool> {
    * @return struct containing coordinates and errors
    * The returned error estimate depends only on the pixel size.
    */
-  virtual LHCb::VPPositionInfo position(const LHCb::VPCluster* cluster)
-      const = 0;
+  virtual LHCb::VPPositionInfo position(const LHCb::VPCluster* cluster) const = 0;
 
   /** Calculate position of a given VPCluster
    * @param cluster pointer to a VPCluster
