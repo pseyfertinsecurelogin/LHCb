@@ -33,6 +33,3 @@ gaudi_add_dictionary(RichDet
 
 # Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
 #        To be removed once Vc is updated.
-
-target_link_libraries( RichDetLib  "${Vc_LIB_DIR}/libVc.a" )
-
