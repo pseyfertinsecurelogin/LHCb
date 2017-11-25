@@ -25,9 +25,9 @@ m_channelID = ( sensor &lt;&lt; sensorBits ) | ( type &lt;&lt; typeBits ) | stri
         <code>
           setSensor(sensor);
           setStrip(strip);
-          if(64 &gt; sensor) setType(VeloChannelID::RType);
-          else if(128 &gt; sensor) setType(VeloChannelID::PhiType);
-          else setType(VeloChannelID::PileUpType);
+          if(64 &gt; sensor) setType(VeloChannelID::sensorType::RType);
+          else if(128 &gt; sensor) setType(VeloChannelID::sensorType::PhiType);
+          else setType(VeloChannelID::sensorType::PileUpType);
        </code>
       </constructor>
       <constructor argList='int id' initList = 'm_channelID(id)' 
@@ -54,17 +54,17 @@ m_channelID = ( sensor &lt;&lt; sensorBits ) | ( type &lt;&lt; typeBits ) | stri
 
       <method type='bool' name='isPileUp' const='TRUE'
         desc="Is the channel in a pile up sensor">
-        <code> return (VeloChannelID::PileUpType == type());</code>
+        <code> return (VeloChannelID::sensorType::PileUpType == type());</code>
       </method>
 
       <method type='bool' name='isRType' const='TRUE'
         desc="Is the channel in an R type sensor">
-        <code> return (VeloChannelID::RType == type());</code>
+        <code> return (VeloChannelID::sensorType::RType == type());</code>
       </method>
 
       <method type='bool' name='isPhiType' const='TRUE'
         desc="Is the channel in a phi type sensor">
-        <code> return (VeloChannelID::PhiType == type());</code>
+        <code> return (VeloChannelID::sensorType::PhiType == type());</code>
       </method>
 
       <method type='' name='operator long' const='TRUE'  desc='cast'>
@@ -78,7 +78,7 @@ m_channelID = ( sensor &lt;&lt; sensorBits ) | ( type &lt;&lt; typeBits ) | stri
       </method> 
 
       <enum access='PUBLIC'
-        desc='Enumberates the 3 sensor types'
+        desc='Enumerates the 3 sensor types'
         name='sensorType'
         value=' Null = 0, RType = 1, PhiType = 2, PileUpType = 3 ' />
       
