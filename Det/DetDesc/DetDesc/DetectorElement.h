@@ -32,7 +32,7 @@ class IDataProviderSvc;
 class IMessageSvc;
 template <class T> class DataObjectFactory;
 class IUpdateManagerSvc;
-class IRegistry;
+#include "GaudiKernel/IRegistry.h"
 
 /** @class DetectorElement DetectorElement.h DetDesc/DetectorElement.h
  *
