@@ -9,10 +9,6 @@
        def = "ADCVector"
        access = "PUBLIC " />
 
-      <destructor desc="my non virtual destructor">
-      <code> // </code>
-      </destructor>
-      
       <attribute 
        name="liteCluster" 
        type="LHCb::&liteClusterName;" 
