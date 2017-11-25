@@ -23,6 +23,4 @@ gaudi_add_library(RichFutureKernel
                   INCLUDE_DIRS AIDA Boost VDT RichUtils LHCbKernel
                   LINK_LIBRARIES Boost VDT GaudiAlgLib GaudiUtilsLib RichUtils LHCbKernel)
 
-target_link_libraries( RichFutureKernel "${Vc_LIB_DIR}/libVc.a" )
-
 gaudi_install_python_modules()
