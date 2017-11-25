@@ -91,7 +91,7 @@ namespace Rich
        */
       virtual Result::Vector
       traceToDetector ( const Gaudi::XYZPoint& startPoint,
-                        const SIMD::STDVector<SIMDVector>& startDirs,
+                        SIMD::STDVector<SIMDVector>&& startDirs,
                         const LHCb::RichTrackSegment& trSeg,
                         const LHCb::RichTraceMode mode = LHCb::RichTraceMode() ) const = 0;
 
