@@ -2,15 +2,14 @@
 #include <vector>
 #include "Event/L0MuonCandidate.h"
 
-LHCb::L0MuonCandidate::L0MuonCandidate() : 
+LHCb::L0MuonCandidate::L0MuonCandidate() :
                  m_pt(0.0),
                  m_theta(0.0),
                  m_phi(0.0),
-					       m_pads(),
                  m_encodedPt(0){
 }
 
-LHCb::L0MuonCandidate::L0MuonCandidate(double pt, double theta, double phi, 
+LHCb::L0MuonCandidate::L0MuonCandidate(double pt, double theta, double phi,
                                        const std::vector<LHCb::MuonTileID> &pads, int encodedPt) {
   m_pt        = pt;
   m_theta     = theta;
@@ -20,11 +19,8 @@ LHCb::L0MuonCandidate::L0MuonCandidate(double pt, double theta, double phi,
 }
 
 std::vector<LHCb::MuonTileID> LHCb::L0MuonCandidate::muonTileIDs(unsigned int station) const {
-  std::vector<LHCb::MuonTileID> mids;
-  if ( station < m_pads.size() ) {
-    mids = m_pads[station].layout().tiles(m_pads[station]);
-  } 
-  return mids;
+  return station < m_pads.size() ? m_pads[station].layout().tiles(m_pads[station])
+                                 : std::vector<LHCb::MuonTileID>{} ;
 }
 
 
@@ -36,11 +32,8 @@ bool LHCb::L0MuonCandidate::operator==(const LHCb::L0MuonCandidate& lmc) const {
 
   if (encodedPt()!=lmc.encodedPt()) return false;
   for (int sta=0; sta<3; ++sta){
-    std::vector<LHCb::MuonTileID> p0=muonTileIDs(sta);
-    std::vector<LHCb::MuonTileID> p1=lmc.muonTileIDs(sta);
-    if (p0!=p1) return false;
+    if (muonTileIDs(sta)!=lmc.muonTileIDs(sta)) return false;
   }
-
   return true;
 }
 
