@@ -33,3 +33,10 @@ gaudi_add_dictionary(RichDet
 
 # Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
 #        To be removed once Vc is updated.
+
+# Fixes for GCC7.
+if( BINARY_TAG_COMP_NAME STREQUAL "gcc" AND BINARY_TAG_COMP_VERSION VERSION_GREATER "6.99")
+  set_property(TARGET RichDetLib APPEND PROPERTY COMPILE_FLAGS " -faligned-new ")
+  set_property(TARGET RichDet    APPEND PROPERTY COMPILE_FLAGS " -faligned-new ")
+endif()
+
