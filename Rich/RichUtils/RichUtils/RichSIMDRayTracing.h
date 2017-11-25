@@ -9,6 +9,9 @@
 #include "Kernel/RichTraceMode.h"
 #include "Kernel/RichSmartID.h"
 
+// Vc
+#include <Vc/common/alignedbase.h>
+
 // Forward declarations
 class DeRichSphMirror;
 class DeRichPD;
@@ -18,7 +21,7 @@ namespace Rich
   namespace RayTracingUtils
   {
     /// Return type for the vectorised raytracing
-    class SIMDResult
+    class SIMDResult : public Vc::AlignedBase<Vc::VectorAlignment>
     {
 
     public:
