@@ -15,6 +15,7 @@
 #include <iostream>
 #include <array>
 #include <cmath>
+#include <vector>
 
 // Utils
 #include "RichUtils/RichSIMDTypes.h"
@@ -26,7 +27,9 @@
 
 // Kernel
 #include "Kernel/RichSmartID.h"
-#include "Kernel/FastAllocVector.h"
+
+// Vc
+#include <Vc/common/alignedbase.h>
 
 // Forward declarations
 class DeRichSphMirror;
@@ -46,19 +49,19 @@ namespace Rich
        *  @author Chris Jones    Christopher.Rob.Jones@cern.ch
        *  @date   2017-10-13
        */
-      class RecoPhoton 
+      class RecoPhoton : public Vc::AlignedBase<Vc::VectorAlignment>
       {
         
       public:
         
         /// The scalar floating point precision
-        using FP         = Rich::SIMD::DefaultScalarFP;
+        using FP        = Rich::SIMD::DefaultScalarFP;
         /// The SIMD floating point type
-        using SIMDFP     = Rich::SIMD::FP<FP>; 
+        using SIMDFP    = Rich::SIMD::FP<FP>; 
         /// Type for SmartIDs container.
-        using SmartIDs   = Rich::SIMD::STDArray<LHCb::RichSmartID,SIMDFP>;
+        using SmartIDs  = Rich::SIMD::STDArray<LHCb::RichSmartID,SIMDFP>;
         /// Container of photons.
-        using Vector     = Rich::SIMD::STDVector<RecoPhoton>;
+        using Vector    = Rich::SIMD::STDVector<RecoPhoton>;
         
       public:
         
