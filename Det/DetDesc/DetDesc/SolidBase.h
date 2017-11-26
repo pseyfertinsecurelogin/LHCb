@@ -38,6 +38,23 @@ public:
    */
   ISolid* reset () override;
 
+  /** Tests whether or not the given line (defined as a point and 
+   *  a direction) intersects or not with the given solid.
+   *  - Line is parametrized with parameter \a t :
+   *     \f$ \vec{x}(t) = \vec{p} + t \times \vec{v} \f$
+   *      - \f$ \vec{p} \f$ is a point on the line
+   *      - \f$ \vec{v} \f$ is a vector along the line
+   *  @param Point initial point for the line
+   *  @param Vector vector along the line
+   *  @return the number of intersection points
+   */
+  bool testForIntersection( const Gaudi::XYZPoint & Point      ,
+                            const Gaudi::XYZVector& Vector     ) const override;
+  bool testForIntersection( const Gaudi::Polar3DPoint & Point  ,
+                            const Gaudi::Polar3DVector& Vector ) const override;
+  bool testForIntersection( const Gaudi::RhoZPhiPoint & Point  ,
+                            const Gaudi::RhoZPhiVector& Vector ) const override;
+
   /** - calculate the intersection points("ticks") of the solid objects
    *    with given line.
    *  -# Line is parametrized with parameter \a t :
@@ -56,15 +73,15 @@ public:
    *  @param ticks output container of "Ticks"
    *  @return the number of intersection points
    */
-  unsigned int  intersectionTicks( const Gaudi::XYZPoint  & Point,
-                                   const Gaudi::XYZVector & Vector,
-                                   ISolid::Ticks     & ticks) const override;
-  unsigned int  intersectionTicks( const Gaudi::Polar3DPoint  & Point,
-                                   const Gaudi::Polar3DVector & Vector,
-                                   ISolid::Ticks     & ticks) const override;
-  unsigned int  intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
-                                   const Gaudi::RhoZPhiVector & Vector,
-                                   ISolid::Ticks     & ticks) const override;
+  unsigned int intersectionTicks( const Gaudi::XYZPoint  & Point,
+                                  const Gaudi::XYZVector & Vector,
+                                  ISolid::Ticks     & ticks) const override;
+  unsigned int intersectionTicks( const Gaudi::Polar3DPoint  & Point,
+                                  const Gaudi::Polar3DVector & Vector,
+                                  ISolid::Ticks     & ticks) const override;
+  unsigned int intersectionTicks( const Gaudi::RhoZPhiPoint  & Point,
+                                  const Gaudi::RhoZPhiVector & Vector,
+                                  ISolid::Ticks     & ticks) const override;
 
   /** - calculate the intersection points("ticks") of the solid objects
    *    with given line.
@@ -467,19 +484,19 @@ private:
 
 protected:
 
-  std::string     m_name  ; ///< name of the solid
-  mutable ISolid* m_cover ; ///< pointer to cover
+  std::string     m_name  ;          ///< name of the solid
+  mutable ISolid* m_cover = nullptr; ///< pointer to cover
 
-  double m_xmin   ;
-  double m_ymin   ;
-  double m_zmin   ;
+  double m_xmin   {0};
+  double m_ymin   {0};
+  double m_zmin   {0};
 
-  double m_xmax   ;
-  double m_ymax   ;
-  double m_zmax   ;
+  double m_xmax   {0};
+  double m_ymax   {0};
+  double m_zmax   {0};
 
-  double m_rmax   ;
-  double m_rhomax ;
+  double m_rmax   {0};
+  double m_rhomax {0};
 
   /// reference to services
   DetDesc::ServicesPtr m_services;
