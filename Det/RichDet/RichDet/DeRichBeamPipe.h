@@ -187,7 +187,7 @@ public:
     if ( UNLIKELY( any_of(mask) ) )
     {
       // get point and direction in local coordinates
-      const auto pL = m_toLocalMatrixSIMD * start;
+      const auto pL = m_toLocalMatrixSIMD * start;      
       const auto vL = m_toLocalMatrixSIMD * (end-start);
       // run full intersection test
       // For the moment run this scalar ... Vectorising SolidCons is for later on ...
@@ -195,10 +195,9 @@ public:
       {
         if ( mask[i] )
         {
-          ISolid::Ticks ticks;
-          mask[i] = 0 != m_localCone->intersectionTicks( Gaudi::XYZPoint { pL.X()[i], pL.Y()[i], pL.Z()[i] },
-                                                         Gaudi::XYZVector{ vL.X()[i], vL.Y()[i], vL.Z()[i] }, 
-                                                         ticks );
+          mask[i] = 
+            m_localCone->testForIntersection( Gaudi::XYZPoint { pL.X()[i], pL.Y()[i], pL.Z()[i] },
+                                              Gaudi::XYZVector{ vL.X()[i], vL.Y()[i], vL.Z()[i] } );
         }
       }
     }
@@ -221,12 +220,12 @@ private:
                   0.5 * ( p1.y() + p2.y() ),
                   0.5 * ( p1.z() + p2.z() ) );
   }
-
+  
   /// Scalar Test if the given start and end points are 'close' to the beampipe or not
   template< typename POINT,
             typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
   inline bool isCloseBy( const POINT& start,
-                                   const POINT& end ) const
+                         const POINT& end ) const
   {
     return ( isCloseBy(start) || isCloseBy(end) );
   }
