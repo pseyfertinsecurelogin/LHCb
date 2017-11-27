@@ -129,18 +129,20 @@ double Gaudi::Math::Bernstein3D::calculate
   const std::vector<double>& fz ) const 
 {
   double       result = 0 ;
-  for  ( unsigned short ix = 0 ; ix <= m_nx ; ++ix )
+  for  ( unsigned short ix = 0 ; ix <= nX () ; ++ix )
   {
-    for  ( unsigned short iy = 0 ; iy <= m_ny ; ++iy )
+    for  ( unsigned short iy = 0 ; iy <= nY () ; ++iy )
     { 
-      for  ( unsigned short iz = 0 ; iz <= m_nz ; ++iz )
-      { result += par ( ix , iy , iz ) * fx[ix] * fy[iy] * fz[iz]; }
+      for  ( unsigned short iz = 0 ; iz <= nZ () ; ++iz )
+      { 
+        result += par ( ix , iy , iz ) * fx[ix] * fy[iy] * fz[iz]; 
+      }
     }
   }
   //
-  const double scalex = ( m_nx + 1 ) / ( xmax() - xmin() ) ;
-  const double scaley = ( m_ny + 1 ) / ( ymax() - ymin() ) ;
-  const double scalez = ( m_nz + 1 ) / ( zmax() - zmin() ) ;
+  const double scalex = ( nX () + 1 ) / ( xmax() - xmin() ) ;
+  const double scaley = ( nY () + 1 ) / ( ymax() - ymin() ) ;
+  const double scalez = ( nZ () + 1 ) / ( zmax() - zmin() ) ;
   //
   return result * scalex * scaley * scalez ;
 }
@@ -153,30 +155,30 @@ double Gaudi::Math::Bernstein3D::evaluate
   const double z ) const
 {
   /// the trivial cases
-  if ( x < m_xmin || x > m_xmax ) { return 0.0        ; }
-  if ( y < m_ymin || y > m_ymax ) { return 0.0        ; }
-  if ( z < m_zmin || z > m_zmax ) { return 0.0        ; }
+  if ( x < xmin () || x > xmax () ) { return 0.0        ; }
+  if ( y < ymin () || y > ymax () ) { return 0.0        ; }
+  if ( z < zmin () || z > zmax () ) { return 0.0        ; }
   //
   if      ( 0 == npars ()       ) { return 0.0        ; }
   else if ( 1 == npars ()       ) 
   { 
-    const double scalex = ( m_nx + 1 ) / ( xmax() - xmin() ) ;
-    const double scaley = ( m_ny + 1 ) / ( ymax() - ymin() ) ;
-    const double scalez = ( m_nz + 1 ) / ( zmax() - zmin() ) ;
+    const double scalex = ( nX () + 1 ) / ( xmax() - xmin() ) ;
+    const double scaley = ( nY () + 1 ) / ( ymax() - ymin() ) ;
+    const double scalez = ( nZ () + 1 ) / ( zmax() - zmin() ) ;
     //
     return m_pars [0] * scalex * scaley * scalez ;
   }
   ///
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nx ; ++i )
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nX ()  ; ++i )
   { fx[i] = m_bx[i] ( x )  ; }
   //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
+  std::vector<double> fy ( nY ()  + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY ()  ; ++i )
   { fy[i] = m_by[i] ( y )  ; }
   //
-  std::vector<double> fz ( m_nz + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nz ; ++i )
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ () ; ++i )
   { fz[i] = m_bz[i] ( z )  ; }
   //
   return calculate ( fx , fy , fz ) ;
@@ -212,12 +214,12 @@ double Gaudi::Math::Bernstein3D::integral
             s_equal ( ylow , yhigh ) ||
             s_equal ( zlow , zhigh ) ) { return 0 ; }
   //
-  else if ( s_equal ( xlow  , m_xmin ) &&
-            s_equal ( xhigh , m_xmax ) &&
-            s_equal ( ylow  , m_ymin ) &&
-            s_equal ( yhigh , m_ymax ) &&  
-            s_equal ( zlow  , m_zmin ) &&
-            s_equal ( zhigh , m_zmax ) )  { return integral () ; }
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () ) &&
+            s_equal ( ylow  , ymin () ) &&
+            s_equal ( yhigh , ymax () ) &&  
+            s_equal ( zlow  , zmin () ) &&
+            s_equal ( zhigh , zmax () ) )  { return integral () ; }
   //
   else if ( xlow  > xhigh ) 
   { return -1*integral ( xhigh , xlow  , ylow  , yhigh , zlow  , zhigh ) ; }
@@ -242,16 +244,16 @@ double Gaudi::Math::Bernstein3D::integral
   const double  z_high = std::min ( zmax() , zhigh ) ;
   if ( z_low >= z_high ) { return 0 ; }
   //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nx ; ++i )
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nX ()  ; ++i )
   { fx[i] = m_bx[i].integral ( x_low , x_high ) ; }
   //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY ()  ; ++i )
   { fy[i] = m_by[i].integral ( y_low , y_high ) ; }
   //
-  std::vector<double> fz ( m_nz + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_nz ; ++i )
+  std::vector<double> fz ( nZ ()  + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ ()  ; ++i )
   { fz[i] = m_bz[i].integral ( z_low , z_high ) ; }
   //
   return calculate ( fx , fy , fz ) ;
@@ -275,23 +277,23 @@ double Gaudi::Math::Bernstein3D::integrateX
   else if ( xhigh <= xmin () || xlow >= xmax() ) { return 0 ; }
   else if ( y     <  ymin () || y    >  ymax() ) { return 0 ; }
   else if ( z     <  zmin () || z    >  zmax() ) { return 0 ; }
-  else if ( s_equal ( xlow  , m_xmin ) &&
-            s_equal ( xhigh , m_xmax )         ) { return integrateX ( y ,  z ) ; }
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () )         ) { return integrateX ( y ,  z ) ; }
   //
   const double  x_low  = std::max ( xmin() , xlow  ) ;
   const double  x_high = std::min ( xmax() , xhigh ) ;
   if ( x_low >= x_high ) { return 0 ; }
   //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nx ; ++i )
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nX () ; ++i )
   { fx[i] = m_bx[i].integral ( x_low , x_high ) ; }
   //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
   { fy[i] = m_by[i] ( y ) ; }
   //
-  std::vector<double> fz ( m_nz + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_nz ; ++i )
+  std::vector<double> fz ( nZ ()  + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ ()  ; ++i )
   { fz[i] = m_bz[i] ( z ) ; }
   //
   return calculate ( fx , fy , fz ) ;
@@ -315,23 +317,23 @@ double Gaudi::Math::Bernstein3D::integrateY
   else if ( x     <  xmin () || x    >  xmax() ) { return 0 ; }
   else if ( z     <  zmin () || z    >  zmax() ) { return 0 ; }
   else if ( yhigh <= ymin () || ylow >= ymax() ) { return 0 ; }
-  else if ( s_equal ( ylow  , m_ymin ) &&
-            s_equal ( yhigh , m_ymax )         ) { return integrateY ( x , z ) ; }
+  else if ( s_equal ( ylow  , ymin () ) &&
+            s_equal ( yhigh , ymax () )         ) { return integrateY ( x , z ) ; }
   //
   const double  y_low  = std::max ( ymin() , ylow  ) ;
   const double  y_high = std::min ( ymax() , yhigh ) ;
   if ( y_low >= y_high ) { return 0 ; }
   //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nx ; ++i )
+  std::vector<double> fx ( nX ()  + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nX ()  ; ++i )
   { fx[i] = m_bx[i] ( x ) ; }
   //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
   { fy[i] = m_by[i].integral ( y_low , y_high ) ; }
   //
-  std::vector<double> fz ( m_nz + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nz ; ++i )
+  std::vector<double> fz ( nZ ()  + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ ()  ; ++i )
   { fz[i] = m_bz[i] ( z ) ; }
   //
   return calculate ( fx , fy , fz ) ;
@@ -355,29 +357,27 @@ double Gaudi::Math::Bernstein3D::integrateZ
   else if ( x     <  xmin () || x    >  xmax() ) { return 0 ; }
   else if ( y     <  ymin () || y    >  ymax() ) { return 0 ; }
   else if ( zhigh <= zmin () || zlow >= zmax() ) { return 0 ; }
-  else if ( s_equal ( zlow  , m_zmin ) &&
-            s_equal ( zhigh , m_zmax )         ) { return integrateZ ( x , y ) ; }
+  else if ( s_equal ( zlow  , zmin () ) &&
+            s_equal ( zhigh , zmax () )         ) { return integrateZ ( x , y ) ; }
   //
   const double  z_low  = std::max ( zmin() , zlow  ) ;
   const double  z_high = std::min ( zmax() , zhigh ) ;
   if ( z_low >= z_high ) { return 0 ; }
   //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nx ; ++i )
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nX ()  ; ++i )
   { fx[i] = m_bx[i] ( x ) ; }
   //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY ()  ; ++i )
   { fy[i] = m_by[i] ( y ) ; }
   //
-  std::vector<double> fz ( m_nz + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nz ; ++i ) 
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ () ; ++i ) 
   { fz[i] = m_bz[i].integral ( z_low , z_high ) ; }
   //
   return calculate ( fx , fy , fz ) ;
 }
-
-
 // ============================================================================
 double Gaudi::Math::Bernstein3D::integrateX ( const double y , 
                                               const double z ) const
@@ -385,14 +385,14 @@ double Gaudi::Math::Bernstein3D::integrateX ( const double y ,
   if      ( y < ymin () || y > ymax() ) { return 0 ; }
   else if ( z < zmin () || z > zmax() ) { return 0 ; }
   //
-  const std::vector<double> fx ( m_nx + 1 , ( xmax() - xmin () ) / ( m_nx + 1 ) ) ;
+  const std::vector<double> fx ( nX () + 1 , ( xmax() - xmin () ) / ( nX () + 1 ) ) ;
   //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
   { fy[i] = m_by[i] ( y ) ; }
   //
-  std::vector<double> fz ( m_nz + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_nz ; ++i )
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ ()  ; ++i )
   { fz[i] = m_bz[i] ( z ) ; }
   //
   return calculate ( fx , fy , fz ) ;
@@ -404,14 +404,14 @@ double Gaudi::Math::Bernstein3D::integrateY ( const double x ,
   if      ( x < xmin () || x > xmax() ) { return 0 ; }
   else if ( z < zmin () || z > zmax() ) { return 0 ; }
   //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_nx ; ++i )
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
   { fx[i] = m_bx[i] ( x ) ; }
   //
-  const std::vector<double> fy ( m_ny + 1 , ( ymax() - ymin () ) / ( m_ny + 1 ) ) ;
+  const std::vector<double> fy ( nY () + 1 , ( ymax() - ymin () ) / ( nY () + 1 ) ) ;
   //
-  std::vector<double> fz ( m_nz + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_nz ; ++i )
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ ()  ; ++i )
   { fz[i] = m_bz[i] ( z ) ; }
   //
   return calculate ( fx , fy , fz ) ;
@@ -423,19 +423,18 @@ double Gaudi::Math::Bernstein3D::integrateZ ( const double x ,
   if      ( x < xmin () || x > xmax() ) { return 0 ; }
   else if ( y < ymin () || y > ymax() ) { return 0 ; }
   //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_nx ; ++i )
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
   { fx[i] = m_bx[i] ( x ) ; }
   //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
   { fy[i] = m_by[i] ( y ) ; }
   //
-  const std::vector<double> fz ( m_nz + 1 , ( zmax() - zmin () ) / ( m_nz + 1 ) ) ;
+  const std::vector<double> fz ( nZ() + 1 , ( zmax() - zmin () ) / ( nZ () + 1 ) ) ;
   //
   return calculate ( fx , fy , fz ) ;
 }
-
 // ============================================================================
 /*  integral over x&y-dimensions
  *  \f[ \int_{x_{low}}^{x_{high}}
@@ -457,10 +456,10 @@ double Gaudi::Math::Bernstein3D::integrateXY
   else if ( xlow  >  xhigh ) { return -1*integrateXY ( z , xhigh , xlow  , ylow  , yhigh ) ; }
   else if ( ylow  >  yhigh ) { return -1*integrateXY ( z , xlow  , xhigh , yhigh , ylow  ) ; }
   else if ( z     <  zmin () || z    >  zmax() ) { return 0 ; }
-  else if ( s_equal ( xlow  , m_xmin ) &&
-            s_equal ( xhigh , m_xmax ) &&
-            s_equal ( ylow  , m_ymin ) &&
-            s_equal ( yhigh , m_ymax ) ) { return integrateXY ( z ) ; }
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () ) &&
+            s_equal ( ylow  , ymin () ) &&
+            s_equal ( yhigh , ymax () ) ) { return integrateXY ( z ) ; }
   //  //
   const double  x_low  = std::max ( xmin() , xlow  ) ;
   const double  x_high = std::min ( xmax() , xhigh ) ;
@@ -470,16 +469,16 @@ double Gaudi::Math::Bernstein3D::integrateXY
   const double  y_high = std::min ( ymax() , yhigh ) ;
   if ( y_low >= y_high ) { return 0 ; }
   //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_nx ; ++i )
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX ()  ; ++i )
   { fx[i] = m_bx[i].integral ( x_low , x_high ) ; }
   //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
   { fy[i] = m_by[i].integral ( y_low , y_high ) ; }
   //
-  std::vector<double> fz ( m_nz + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nz ; ++i )
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ () ; ++i )
   { fz[i] = m_bz[i] ( z ) ; }
   //
   return calculate ( fx , fy , fz ) ;
@@ -505,10 +504,10 @@ double Gaudi::Math::Bernstein3D::integrateXZ
   else if ( xlow  >  xhigh ) { return -1*integrateXZ ( y , xhigh , xlow  , zlow  , zhigh ) ; }
   else if ( zlow  >  zhigh ) { return -1*integrateXZ ( y , xlow  , xhigh , zhigh , zlow  ) ; }
   else if ( y     <  ymin () || y    >  ymax() ) { return 0 ; }
-  else if ( s_equal ( xlow  , m_xmin ) &&
-            s_equal ( xhigh , m_xmax ) &&
-            s_equal ( zlow  , m_zmin ) &&
-            s_equal ( zhigh , m_zmax ) ) { return integrateXZ ( y ) ; }
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () ) &&
+            s_equal ( zlow  , zmin () ) &&
+            s_equal ( zhigh , zmax () ) ) { return integrateXZ ( y ) ; }
   //
   const double  x_low  = std::max ( xmin() , xlow  ) ;
   const double  x_high = std::min ( xmax() , xhigh ) ;
@@ -518,16 +517,16 @@ double Gaudi::Math::Bernstein3D::integrateXZ
   const double  z_high = std::min ( zmax() , zhigh ) ;
   if ( z_low >= z_high ) { return 0 ; }
   //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_nx ; ++i )
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
   { fx[i] = m_bx[i].integral ( x_low , x_high ) ; }
   //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
   { fy[i] = m_by[i] ( y ) ; }
   //
-  std::vector<double> fz ( m_nz + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nz ; ++i )
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ () ; ++i )
   { fz[i] = m_bz[i].integral ( z_low , z_high ) ; }
   //
   return calculate ( fx , fy , fz ) ;
@@ -553,10 +552,10 @@ double Gaudi::Math::Bernstein3D::integrateYZ
   else if ( ylow  >  yhigh ) { return -1*integrateYZ ( x , yhigh , ylow  , zlow  , zhigh ) ; }
   else if ( zlow  >  zhigh ) { return -1*integrateYZ ( x , ylow  , yhigh , zhigh , zlow  ) ; }
   else if ( x     <  xmin () || x    >  xmax() ) { return 0 ; }
-  else if ( s_equal ( ylow  , m_ymin ) &&
-            s_equal ( yhigh , m_ymax ) &&
-            s_equal ( zlow  , m_zmin ) &&
-            s_equal ( zhigh , m_zmax ) ) { return integrateYZ ( x ) ; }
+  else if ( s_equal ( ylow  , ymin () ) &&
+            s_equal ( yhigh , ymax () ) &&
+            s_equal ( zlow  , zmin () ) &&
+            s_equal ( zhigh , zmax () ) ) { return integrateYZ ( x ) ; }
   //
   const double  y_low  = std::max ( ymin() , ylow  ) ;
   const double  y_high = std::min ( ymax() , yhigh ) ;
@@ -566,16 +565,16 @@ double Gaudi::Math::Bernstein3D::integrateYZ
   const double  z_high = std::min ( zmax() , zhigh ) ;
   if ( z_low >= z_high ) { return 0 ; }
   //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_nx ; ++i )
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
   { fx[i] = m_bx[i] ( x ) ; }
   //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
   { fy[i] = m_by[i].integral ( y_low , y_high ) ; }
   //
-  std::vector<double> fz ( m_nz + 1 , 0 ) ;
-  for  ( unsigned short i = 0 ; i <= m_nz ; ++i )
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <=  nZ () ; ++i )
   { fz[i] = m_bz[i].integral ( z_low , z_high ) ; }
   //
   return calculate ( fx , fy , fz ) ;
@@ -591,11 +590,11 @@ double Gaudi::Math::Bernstein3D::integrateXY ( const double z    ) const
 {
   if ( z < zmin () || z > zmax() ) { return 0 ; }
   //
-  const std::vector<double> fx ( m_nx + 1 , ( xmax() - xmin () ) / ( m_nx + 1 ) ) ;
-  const std::vector<double> fy ( m_ny + 1 , ( ymax() - ymin () ) / ( m_ny + 1 ) ) ;
+  const std::vector<double> fx ( nX () + 1 , ( xmax() - xmin () ) / ( nX () + 1 ) ) ;
+  const std::vector<double> fy ( nY () + 1 , ( ymax() - ymin () ) / ( nY () + 1 ) ) ;
   //
-  std::vector<double> fz ( m_nz + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_nz ; ++i )
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ () ; ++i )
   { fz[i] = m_bz[i] ( z ) ; }
   //
   return calculate ( fx , fy , fz ) ;
@@ -611,13 +610,13 @@ double Gaudi::Math::Bernstein3D::integrateXZ ( const double y    ) const
 {
   if ( y < ymin () || y > ymax() ) { return 0 ; }
   //
-  const std::vector<double> fx ( m_nx + 1 , ( xmax() - xmin () ) / ( m_nx + 1 ) ) ;
+  const std::vector<double> fx ( nX() + 1 , ( xmax() - xmin () ) / ( nX () + 1 ) ) ;
   //
-  std::vector<double> fy ( m_ny + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_ny ; ++i )
+  std::vector<double> fy ( nY ()  + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
   { fy[i] = m_by[i] ( y ) ; }
   //
-  const std::vector<double> fz ( m_nz + 1 , ( zmax() - zmin () ) / ( m_nz + 1 ) ) ;
+  const std::vector<double> fz ( nZ () + 1 , ( zmax() - zmin () ) / ( nZ () + 1 ) ) ;
   //
   return calculate ( fx , fy , fz ) ;
 }
@@ -632,35 +631,15 @@ double Gaudi::Math::Bernstein3D::integrateYZ ( const double x    ) const
 {
   if ( x < xmin () || x > xmax() ) { return 0 ; }
   //
-  std::vector<double> fx ( m_nx + 1 , 0 ) ;
-  for ( unsigned short i = 0 ; i <= m_nx ; ++i )
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
   { fx[i] = m_bx[i] ( x ) ; }
   //
-  const std::vector<double> fy ( m_ny + 1 , ( ymax() - ymin () ) / ( m_ny + 1 ) ) ;
+  const std::vector<double> fy ( nY () + 1 , ( ymax() - ymin () ) / ( nY () + 1 ) ) ;
   //
-  const std::vector<double> fz ( m_nz + 1 , ( zmax() - zmin () ) / ( m_nz + 1 ) ) ;
+  const std::vector<double> fz ( nZ () + 1 , ( zmax() - zmin () ) / ( nZ () + 1 ) ) ;
   //
   return calculate ( fx , fy , fz ) ;
-}
-// ============================================================================
-// set (l,m,n)-parameter
-// ============================================================================
-bool Gaudi::Math::Bernstein3D::setPar
-( const unsigned short l     ,
-  const unsigned short m     ,
-  const unsigned short n     ,
-  const double         value )
-{
-  if ( l > m_nx || m > m_ny || n > m_nz ) { return false ; }
-  //
-  // ix*(ny+1)*(nz+1)+iy*(nz+1)+iz
-  const unsigned int nzp1 =  m_nz + 1 ;
-  const unsigned int k    =
-    nzp1 * l * ( m_ny + 1 ) + 
-    nzp1 * m                + 
-    n ;
-  //
-  return setPar ( k , value ) ;
 }
 // ============================================================================
 // set k-parameter
@@ -673,25 +652,6 @@ bool Gaudi::Math::Bernstein3D::setPar
   if ( s_equal ( m_pars [ k ] , value ) ) { return false ; }
   m_pars [ k ] = value ;
   return true ;
-}
-// ============================================================================
-// get (l,m)-parameter
-// ============================================================================
-double  Gaudi::Math::Bernstein3D::par
-( const unsigned short l ,
-  const unsigned short m ,
-  const unsigned short n ) const
-{
-  if ( l > m_nx || m > m_ny || n > m_nz ) { return 0 ; }
-  //
-  // ix*(ny+1)*(nz+1)+iy*(nz+1)+iz
-  const unsigned int nzp1 =  m_nz + 1 ;
-  const unsigned int k    =
-    nzp1 * l * ( m_ny + 1 ) + 
-    nzp1 * m                + 
-    n ;
-  //
-  return par ( k ) ;
 }
 // ============================================================================
 Gaudi::Math::Bernstein3D&
@@ -787,7 +747,1055 @@ Gaudi::Math::Bernstein3D::__neg__ ()  const
 
 
 // ============================================================================
-// 2D-POSITIVE 
+// 3S symmetric polynomial
+// ============================================================================
+
+// ============================================================================
+// constructor from the order
+// ============================================================================
+Gaudi::Math::Bernstein3DSym::Bernstein3DSym 
+( const unsigned short       N     ,
+  const double               xmin  ,
+  const double               xmax  )
+  : m_n    ( N )
+    //
+  , m_pars ( ( N + 1 ) * ( N + 2 ) * ( N + 3 ) / 6 , 0.0 )
+    //
+  , m_xmin ( std::min ( xmin , xmax ) )
+  , m_xmax ( std::max ( xmin , xmax ) )
+    //
+  , m_b    ()
+{
+  //
+  typedef  Gaudi::Math::Bernstein::Basic BB ;
+  for ( unsigned short ix = 0 ; ix <= N ; ++ix )
+  { m_b.push_back ( Bernstein ( BB ( ix , N ) , xmin , xmax ) ) ; }
+  //
+}
+// ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::Bernstein3DSym::Bernstein3DSym
+(       Gaudi::Math::Bernstein3DSym&& right )
+  : m_n    ( std::move ( right.m_n    ) ) 
+  , m_pars ( std::move ( right.m_pars ) ) 
+  , m_xmin ( std::move ( right.m_xmin ) ) 
+  , m_xmax ( std::move ( right.m_xmax ) ) 
+  , m_b    ( std::move ( right.m_b    ) ) 
+{}
+// ============================================================================
+// swap  two 3D-polynomials 
+// ============================================================================
+void Gaudi::Math::Bernstein3DSym::swap
+( Gaudi::Math::Bernstein3DSym&  right ) 
+{
+  std::swap ( m_n    , right.m_n     ) ;
+  std::swap ( m_pars , right.m_pars  ) ;
+  std::swap ( m_xmin , right.m_xmin  ) ;
+  std::swap ( m_xmax , right.m_xmax  ) ;
+  std::swap ( m_b    , right.m_b     ) ;
+}
+// ============================================================================
+// helper function to make calculations
+// ============================================================================
+double Gaudi::Math::Bernstein3DSym::calculate
+( const std::vector<double>& fx , 
+  const std::vector<double>& fy , 
+  const std::vector<double>& fz ) const 
+{
+  double       result = 0 ;
+  for  ( unsigned short ix = 0 ; ix <= nX ()  ; ++ix )
+  {
+    for  ( unsigned short iy = 0 ; iy <= ix ; ++iy )
+    { 
+      for  ( unsigned short iz = 0 ; iz <= iy ; ++iz )
+      { 
+        double r = 0 ;
+        if      ( ix == iy && iy == iz ) 
+        { 
+          r += fx[ix] * fy[iy] * fz[iz]; 
+        }
+        else if ( ix == iy ) 
+        { 
+          r += fx[ix] * fy[iy] * fz[iz]
+            +  fx[iz] * fy[ix] * fz[iy]
+            +  fx[ix] * fy[iz] * fz[iy] ; 
+        }
+        else if ( iy == iz ) 
+        { 
+          r += fx[ix] * fy[iy] * fz[iz] 
+            +  fx[iy] * fy[ix] * fz[iz]  
+            +  fx[iy] * fy[iz] * fz[ix] ; 
+        }
+        else 
+        {
+          r += fx[ix] * fy[iy] * fz[iz]
+            +  fx[ix] * fy[iz] * fz[iy]
+            +  fx[iy] * fy[ix] * fz[iz] 
+            +  fx[iy] * fy[iz] * fz[ix] 
+            +  fx[iz] * fy[ix] * fz[iy]
+            +  fx[iz] * fy[iy] * fz[ix] ;          
+        }
+        // 
+        result += r * par( ix , iy , iz ) ;
+      }
+    }  
+  }
+  //
+  const double scalex = ( nX () + 1 ) / ( xmax() - xmin() ) ;
+  const double scaley = scalex ;
+  const double scalez = scalex ;
+  //
+  return result * scalex * scaley * scalez ;
+}
+// ============================================================================
+// get the value
+// ============================================================================
+double Gaudi::Math::Bernstein3DSym::evaluate
+( const double x ,
+  const double y , 
+  const double z ) const
+{
+  /// the trivial cases
+  if ( x < xmin () || x > xmax () ) { return 0.0        ; }
+  if ( y < ymin () || y > ymax () ) { return 0.0        ; }
+  if ( z < zmin () || z > zmax () ) { return 0.0        ; }
+  //
+  if      ( 0 == npars ()       ) { return 0.0        ; }
+  else if ( 1 == npars ()       ) 
+  { 
+    const double scale = ( nX () + 1 ) / ( xmax() - xmin() ) ;
+    //
+    return m_pars [0] * scale * scale * scale ;
+  }
+  ///
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
+  { fx[i] = m_b [i] ( x )  ; }
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY ()  ; ++i )
+  { fy[i] = m_b [i] ( y )  ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ () ; ++i )
+  { fz[i] = m_b [i] ( z )  ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/** get the integral over 3D-region
+ *  \f[  x_{min} < x < x_{max}, y_{min}< y< y_{max} , z_{min} < z < z_{max}\f]
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DSym::integral() const
+{ 
+  double       result = 0 ;
+  for  ( unsigned short ix = 0 ; ix <= nX () ; ++ix )
+  {
+    for  ( unsigned short iy = 0 ; iy <= ix ; ++iy )
+    { 
+      for  ( unsigned short iz = 0 ; iz <= iy ; ++iz )
+      { 
+        unsigned short r =
+          ( ix == iy && iy == iz ) ? 1 :
+          ( ix == iy || iy == iz ) ? 3 : 6 ;
+        // 
+        result += r  *  par( ix , iy , iz ) ;
+      }
+    }  
+  }
+  //
+  return result ;
+}
+// ============================================================================
+/* get the integral over 3D-region
+ *  \f[ \int_{x_{low}}^{x_{high}}
+ *      \int_{y_{low}}^{y_{high}} 
+ *      \int_{z_{low}}^{z_{high}} 
+ *\mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}y\mathrm{d}z\f]
+ *  @param xlow  low  edge in x
+ *  @param xhigh high edge in x
+ *  @param ylow  low  edge in y
+ *  @param yhigh high edge in y
+ *  @param zlow  low  edge in z
+ *  @param zhigh high edge in z
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DSym::integral
+( const double xlow , const double xhigh ,
+  const double ylow , const double yhigh ,
+  const double zlow , const double zhigh ) const
+{
+  if      ( s_equal ( xlow , xhigh ) ||
+            s_equal ( ylow , yhigh ) ||
+            s_equal ( zlow , zhigh ) ) { return 0 ; }
+  //
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () ) &&
+            s_equal ( ylow  , ymin () ) &&
+            s_equal ( yhigh , ymax () ) &&  
+            s_equal ( zlow  , zmin () ) &&
+            s_equal ( zhigh , zmax () ) )  { return integral () ; }
+  //
+  else if ( xlow  > xhigh ) 
+  { return -1*integral ( xhigh , xlow  , ylow  , yhigh , zlow  , zhigh ) ; }
+  else if ( ylow  > yhigh ) 
+  { return -1*integral ( xlow  , xhigh , yhigh , ylow  , zlow  , zhigh ) ; }
+  else if ( zlow  > zhigh ) 
+  { return -1*integral ( xlow  , xhigh , ylow  , yhigh , zhigh , zlow  ) ; }
+  //
+  else if ( xhigh <  xmin () || xlow >  xmax() ) { return 0 ; }
+  else if ( yhigh <  ymin () || ylow >  ymax() ) { return 0 ; }
+  else if ( zhigh <  zmin () || zlow >  zmax() ) { return 0 ; }
+  //
+  const double  x_low  = std::max ( xmin() , xlow  ) ;
+  const double  x_high = std::min ( xmax() , xhigh ) ;
+  if ( x_low >= x_high ) { return 0 ; }
+  //
+  const double  y_low  = std::max ( ymin() , ylow  ) ;
+  const double  y_high = std::min ( ymax() , yhigh ) ;
+  if ( y_low >= y_high ) { return 0 ; }
+  //
+  const double  z_low  = std::max ( zmin() , zlow  ) ;
+  const double  z_high = std::min ( zmax() , zhigh ) ;
+  if ( z_low >= z_high ) { return 0 ; }
+  //
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nX () ; ++i )
+  { fx[i] = m_b [i].integral ( x_low , x_high ) ; }
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
+  { fy[i] = m_b [i].integral ( y_low , y_high ) ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ ()  ; ++i )
+  { fz[i] = m_b [i].integral ( z_low , z_high ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/*  integral over x-dimension
+ *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y,z) \mathrm{d}y\f]
+ *  @param y     variable
+ *  @param z     variable
+ *  @param ylow  low  edge in y
+ *  @param yhigh high edge in y
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DSym::integrateX
+( const double y    ,
+  const double z    ,
+  const double xlow , const double xhigh ) const
+{
+  if      ( s_equal ( xlow , xhigh ) ) { return 0 ; }
+  else if ( xlow  > xhigh  ) { return -1*integrateX ( y , z , xhigh , xlow ) ; }
+  else if ( xhigh <= xmin () || xlow >= xmax() ) { return 0 ; }
+  else if ( y     <  ymin () || y    >  ymax() ) { return 0 ; }
+  else if ( z     <  zmin () || z    >  zmax() ) { return 0 ; }
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () )         ) { return integrateX ( y ,  z ) ; }
+  //
+  const double  x_low  = std::max ( xmin() , xlow  ) ;
+  const double  x_high = std::min ( xmax() , xhigh ) ;
+  if ( x_low >= x_high ) { return 0 ; }
+  //
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
+  { fx[i] = m_b [i].integral ( x_low , x_high ) ; }
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY ()   ; ++i )
+  { fy[i] = m_b [i] ( y ) ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ ()  ; ++i )
+  { fz[i] = m_b [i] ( z ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+double Gaudi::Math::Bernstein3DSym::integrateX ( const double y , 
+                                                 const double z ) const
+{
+  if      ( y < ymin () || y > ymax() ) { return 0 ; }
+  else if ( z < zmin () || z > zmax() ) { return 0 ; }
+  //
+  const std::vector<double> fx ( nX () + 1 , ( xmax() - xmin () ) / ( nX () + 1 ) ) ;
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
+  { fy[i] = m_b [i] ( y ) ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ () ; ++i )
+  { fz[i] = m_b [i] ( z ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/*  integral over x&y-dimensions
+ *  \f[ \int_{x_{low}}^{x_{high}}
+ *      \int_{y_{low}}^{y_{high}} \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}y\f]
+ *  @param z     variable
+ *  @param xlow  low  edge in x
+ *  @param xhigh high edge in x
+ *  @param ylow  low  edge in y
+ *  @param yhigh high edge in y
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DSym::integrateXY
+( const double z    ,                          
+  const double xlow , const double xhigh ,
+  const double ylow , const double yhigh ) const 
+{
+  if      ( s_equal ( xlow  , xhigh ) ) { return 0 ; }
+  else if ( s_equal ( ylow  , yhigh ) ) { return 0 ; }
+  else if ( xlow  >  xhigh ) { return -1*integrateXY ( z , xhigh , xlow  , ylow  , yhigh ) ; }
+  else if ( ylow  >  yhigh ) { return -1*integrateXY ( z , xlow  , xhigh , yhigh , ylow  ) ; }
+  else if ( z     <  zmin () || z    >  zmax() ) { return 0 ; }
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () ) &&
+            s_equal ( ylow  , ymin () ) &&
+            s_equal ( yhigh , ymax () ) ) { return integrateXY ( z ) ; }
+  //  //
+  const double  x_low  = std::max ( xmin() , xlow  ) ;
+  const double  x_high = std::min ( xmax() , xhigh ) ;
+  if ( x_low >= x_high ) { return 0 ; }
+  //
+  const double  y_low  = std::max ( ymin() , ylow  ) ;
+  const double  y_high = std::min ( ymax() , yhigh ) ;
+  if ( y_low >= y_high ) { return 0 ; }
+  //
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
+  { fx[i] = m_b [i].integral ( x_low , x_high ) ; }
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
+  { fy[i] = m_b [i].integral ( y_low , y_high ) ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ () ; ++i )
+  { fz[i] = m_b [i] ( z ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/*  integral over x&y-dimensions
+ *  \f[ \int_{x_{min}}^{x_{max}}
+ *      \int_{y_{min}}^{y_{max}} \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}y\f]
+ *  @param z     variable
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DSym::integrateXY ( const double z    ) const 
+{
+  if ( z < zmin () || z > zmax() ) { return 0 ; }
+  //
+  const std::vector<double> fx ( nX() + 1 , ( xmax() - xmin () ) / ( nX () + 1 ) ) ;
+  const std::vector<double> fy ( nY() + 1 , ( ymax() - ymin () ) / ( nY () + 1 ) ) ;
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ () ; ++i )
+  { fz[i] = m_b [i] ( z ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+// set k-parameter
+// ============================================================================
+bool Gaudi::Math::Bernstein3DSym::setPar
+( const unsigned int   k     ,
+  const double         value )
+{
+  if ( k >= npars() )                     { return false ; }
+  if ( s_equal ( m_pars [ k ] , value ) ) { return false ; }
+  m_pars [ k ] = value ;
+  return true ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3DSym&
+Gaudi::Math::Bernstein3DSym::operator+=( const double a )
+{
+  if   ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3DSym&
+Gaudi::Math::Bernstein3DSym::operator*=( const double a )
+{
+  if      ( s_equal ( a , 1 ) ) { return *this ; }
+  else if ( s_zero  ( a     ) ) { std::fill ( m_pars.begin() , m_pars.end() , 0 ) ; }
+  LHCb::Math::scale ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3DSym&
+Gaudi::Math::Bernstein3DSym::operator-=( const double a )
+{
+  if ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , -a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3DSym&
+Gaudi::Math::Bernstein3DSym::operator/=( const double a )
+{
+  if   ( s_equal ( a , 1 ) ) { return *this ; }
+  LHCb::Math::scale ( m_pars , 1/a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3DSym
+Gaudi::Math::Bernstein3DSym::operator-() const
+{
+  Bernstein3DSym b ( *this ) ;
+  LHCb::Math::negate ( b.m_pars ) ;
+  return b ;
+}
+// ============================================================================
+// Sum of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DSym
+Gaudi::Math::Bernstein3DSym::__add__   ( const double value ) const
+{ return (*this) + value ; }
+// ============================================================================
+// Sum of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DSym
+Gaudi::Math::Bernstein3DSym::__radd__  ( const double value ) const
+{ return value + (*this) ; }
+// ============================================================================
+// Product of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DSym
+Gaudi::Math::Bernstein3DSym::__mul__   ( const double value ) const
+{ return (*this) * value ; }
+// ============================================================================
+// Product of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DSym
+Gaudi::Math::Bernstein3DSym::__rmul__  ( const double value ) const
+{ return value * (*this) ; }
+// ============================================================================
+// Subtract a constant from Benrstein polynomial
+// ============================================================================
+Gaudi::Math::Bernstein3DSym
+Gaudi::Math::Bernstein3DSym::__sub__  ( const double value ) const
+{ return (*this) - value ; }
+// ============================================================================
+// Subtract Bernstein polynomial from a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DSym
+Gaudi::Math::Bernstein3DSym::__rsub__ ( const double value ) const
+{ return value - (*this) ; }
+// ============================================================================
+// Divide Benrstein polynomial by a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DSym
+Gaudi::Math::Bernstein3DSym:: __div__   ( const double value ) const
+{ return (*this) / value ; }
+// ============================================================================
+// Negate Bernstein polynomial
+// ============================================================================
+Gaudi::Math::Bernstein3DSym
+Gaudi::Math::Bernstein3DSym::__neg__ ()  const
+{ return -(*this); }
+// ============================================================================
+
+
+// ============================================================================
+// 3D  with X<->Y symmetry 
+// ============================================================================
+
+// ============================================================================
+// constructor from the order
+// ============================================================================
+Gaudi::Math::Bernstein3DMix::Bernstein3DMix
+( const unsigned short       N     ,
+  const unsigned short       Nz    ,
+  const double               xmin  ,
+  const double               xmax  ,
+  const double               zmin  ,
+  const double               zmax  )
+  : m_n    ( N  )
+  , m_nz   ( Nz )
+    //
+  , m_pars ( ( N + 1 ) * ( N + 2 ) * ( Nz + 1 ) / 2 , 0.0 )
+    //
+  , m_xmin ( std::min ( xmin , xmax ) )
+  , m_xmax ( std::max ( xmin , xmax ) )
+  , m_zmin ( std::min ( zmin , zmax ) )
+  , m_zmax ( std::max ( zmin , zmax ) )
+    //
+  , m_b    ()
+  , m_bz   ()
+{
+  //
+  typedef  Gaudi::Math::Bernstein::Basic BB ;
+  for ( unsigned short ix = 0 ; ix <= N  ; ++ix )
+  { m_b .push_back ( Bernstein ( BB ( ix , N  ) , xmin , xmax ) ) ; }
+  for ( unsigned short iz = 0 ; iz <= Nz ; ++iz )
+  { m_bz.push_back ( Bernstein ( BB ( iz , Nz ) , zmin , zmax ) ) ; }
+  //
+}
+// ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::Bernstein3DMix::Bernstein3DMix
+(       Gaudi::Math::Bernstein3DMix&& right )
+  : m_n    ( std::move ( right.m_n    ) ) 
+  , m_nz   ( std::move ( right.m_nz   ) ) 
+  , m_pars ( std::move ( right.m_pars ) ) 
+  , m_xmin ( std::move ( right.m_xmin ) ) 
+  , m_xmax ( std::move ( right.m_xmax ) ) 
+  , m_zmin ( std::move ( right.m_zmin ) ) 
+  , m_zmax ( std::move ( right.m_zmax ) ) 
+  , m_b    ( std::move ( right.m_b    ) ) 
+  , m_bz   ( std::move ( right.m_bz   ) ) 
+{}
+// ============================================================================
+// swap  two 3D-polynomials 
+// ============================================================================
+void Gaudi::Math::Bernstein3DMix::swap
+( Gaudi::Math::Bernstein3DMix&  right ) 
+{
+  std::swap ( m_n    , right.m_n     ) ;
+  std::swap ( m_nz   , right.m_nz    ) ;
+  std::swap ( m_pars , right.m_pars  ) ;
+  std::swap ( m_xmin , right.m_xmin  ) ;
+  std::swap ( m_xmax , right.m_xmax  ) ;
+  std::swap ( m_zmin , right.m_zmin  ) ;
+  std::swap ( m_zmax , right.m_zmax  ) ;
+  std::swap ( m_b    , right.m_b     ) ;
+  std::swap ( m_bz   , right.m_bz    ) ;
+}
+// ============================================================================
+// helper function to make calculations
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::calculate
+( const std::vector<double>& fx , 
+  const std::vector<double>& fy , 
+  const std::vector<double>& fz ) const 
+{
+  double       result = 0 ;
+  for  ( unsigned short ix = 0 ; ix <= nX () ; ++ix )
+  {
+    for  ( unsigned short iy = 0 ; iy <= ix ; ++iy )
+    { 
+      for  ( unsigned short iz = 0 ; iz <= nZ () ; ++iz )
+      { 
+        double r = 0 ;
+        if      ( ix == iy ) 
+        { 
+          r += fx[ix] * fy[iy] * fz[iz] ;
+        }
+        else 
+        { 
+          r += fx[ix] * fy[iy] * fz[iz] 
+            +  fx[iy] * fy[ix] * fz[iz] ;  
+        }
+        //
+        result += r * par( ix , iy , iz ) ;
+      }
+    }  
+  }
+  //
+  const double scalex = ( nX () + 1 ) / ( xmax() - xmin() ) ;
+  const double scaley = scalex ;
+  const double scalez = ( nZ () + 1 ) / ( zmax() - zmin() ) ;
+  //
+  return result * scalex * scaley * scalez ;
+}
+// ============================================================================
+// get the value
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::evaluate
+( const double x ,
+  const double y , 
+  const double z ) const
+{
+  /// the trivial cases
+  if ( x < xmin () || x > xmax () ) { return 0.0        ; }
+  if ( y < ymin () || y > ymax () ) { return 0.0        ; }
+  if ( z < zmin () || z > zmax () ) { return 0.0        ; }
+  //
+  if      ( 0 == npars ()       ) { return 0.0        ; }
+  else if ( 1 == npars ()       ) 
+  { 
+    const double scalex = ( nX () + 1 ) / ( xmax() - xmin() ) ;
+    const double scaley = scalex ;
+    const double scalez = ( nZ () + 1 ) / ( zmax() - zmin() ) ;
+    //
+    return m_pars [0] * scalex * scaley * scalez ;
+  }
+  ///
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nX () ; ++i )
+  { fx[i] = m_b [i] ( x )  ; }
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
+  { fy[i] = m_b [i] ( y )  ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ () ; ++i )
+  { fz[i] = m_bz[i] ( z )  ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/** get the integral over 3D-region
+ *  \f[  x_{min} < x < x_{max}, y_{min}< y< y_{max} , z_{min} < z < z_{max}\f]
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integral() const
+{ 
+  double       result = 0 ;
+  for  ( unsigned short ix = 0 ; ix <= nX () ; ++ix )
+  {
+    for  ( unsigned short iy = 0 ; iy <= ix ; ++iy )
+    { 
+      for  ( unsigned short iz = 0 ; iz <= nZ () ; ++iz )
+      { 
+        const unsigned short r =  ix == iy ? 1 : 2 ;
+        result += r  *  par( ix , iy , iz ) ;
+      }
+    }  
+  }
+  //
+  return result ;
+}
+// ============================================================================
+/* get the integral over 3D-region
+ *  \f[ \int_{x_{low}}^{x_{high}}
+ *      \int_{y_{low}}^{y_{high}} 
+ *      \int_{z_{low}}^{z_{high}} 
+ *\mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}y\mathrm{d}z\f]
+ *  @param xlow  low  edge in x
+ *  @param xhigh high edge in x
+ *  @param ylow  low  edge in y
+ *  @param yhigh high edge in y
+ *  @param zlow  low  edge in z
+ *  @param zhigh high edge in z
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integral
+( const double xlow , const double xhigh ,
+  const double ylow , const double yhigh ,
+  const double zlow , const double zhigh ) const
+{
+  if      ( s_equal ( xlow , xhigh ) ||
+            s_equal ( ylow , yhigh ) ||
+            s_equal ( zlow , zhigh ) ) { return 0 ; }
+  //
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () ) &&
+            s_equal ( ylow  , ymin () ) &&
+            s_equal ( yhigh , ymax () ) &&  
+            s_equal ( zlow  , zmin () ) &&
+            s_equal ( zhigh , zmax () ) )  { return integral () ; }
+  //
+  else if ( xlow  > xhigh ) 
+  { return -1*integral ( xhigh , xlow  , ylow  , yhigh , zlow  , zhigh ) ; }
+  else if ( ylow  > yhigh ) 
+  { return -1*integral ( xlow  , xhigh , yhigh , ylow  , zlow  , zhigh ) ; }
+  else if ( zlow  > zhigh ) 
+  { return -1*integral ( xlow  , xhigh , ylow  , yhigh , zhigh , zlow  ) ; }
+  //
+  else if ( xhigh <  xmin () || xlow >  xmax() ) { return 0 ; }
+  else if ( yhigh <  ymin () || ylow >  ymax() ) { return 0 ; }
+  else if ( zhigh <  zmin () || zlow >  zmax() ) { return 0 ; }
+  //
+  const double  x_low  = std::max ( xmin() , xlow  ) ;
+  const double  x_high = std::min ( xmax() , xhigh ) ;
+  if ( x_low >= x_high ) { return 0 ; }
+  //
+  const double  y_low  = std::max ( ymin() , ylow  ) ;
+  const double  y_high = std::min ( ymax() , yhigh ) ;
+  if ( y_low >= y_high ) { return 0 ; }
+  //
+  const double  z_low  = std::max ( zmin() , zlow  ) ;
+  const double  z_high = std::min ( zmax() , zhigh ) ;
+  if ( z_low >= z_high ) { return 0 ; }
+  //
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nX () ; ++i )
+  { fx[i] = m_b [i].integral ( x_low , x_high ) ; }
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
+  { fy[i] = m_b [i].integral ( y_low , y_high ) ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ () ; ++i )
+  { fz[i] = m_bz[i].integral ( z_low , z_high ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/*  integral over x-dimension
+ *  \f[ \int_{y_low}^{y_high} \mathcal{B}(x,y,z) \mathrm{d}y\f]
+ *  @param y     variable
+ *  @param z     variable
+ *  @param ylow  low  edge in y
+ *  @param yhigh high edge in y
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integrateX
+( const double y    ,
+  const double z    ,
+  const double xlow , const double xhigh ) const
+{
+  if      ( s_equal ( xlow , xhigh ) ) { return 0 ; }
+  else if ( xlow  > xhigh  ) { return -1*integrateX ( y , z , xhigh , xlow ) ; }
+  else if ( xhigh <= xmin () || xlow >= xmax() ) { return 0 ; }
+  else if ( y     <  ymin () || y    >  ymax() ) { return 0 ; }
+  else if ( z     <  zmin () || z    >  zmax() ) { return 0 ; }
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () )         ) { return integrateX ( y ,  z ) ; }
+  //
+  const double  x_low  = std::max ( xmin() , xlow  ) ;
+  const double  x_high = std::min ( xmax() , xhigh ) ;
+  if ( x_low >= x_high ) { return 0 ; }
+  //
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX ()  ; ++i )
+  { fx[i] = m_b [i].integral ( x_low , x_high ) ; }
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY ()  ; ++i )
+  { fy[i] = m_b [i] ( y ) ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ () ; ++i )
+  { fz[i] = m_bz[i] ( z ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/*  integral over z-dimension
+ *  \f[ \int_{z_{low}}^{z_{high}} \mathcal{B}(x,y,z) \mathrm{d}z\f]
+ *  @param x     variable
+ *  @param y     variable
+ *  @param zlow  low  edge in z
+ *  @param zhigh high edge in z
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integrateZ
+( const double x    ,
+  const double y    ,
+  const double zlow , const double zhigh ) const
+{
+  if      ( s_equal ( zlow  , zhigh ) ) { return 0 ; }
+  else if ( zlow  >  zhigh ) { return -1*integrateZ ( x , y , zhigh , zlow  ) ; }
+  else if ( x     <  xmin () || x    >  xmax() ) { return 0 ; }
+  else if ( y     <  ymin () || y    >  ymax() ) { return 0 ; }
+  else if ( zhigh <= zmin () || zlow >= zmax() ) { return 0 ; }
+  else if ( s_equal ( zlow  , zmin() ) &&
+            s_equal ( zhigh , zmax() )         ) { return integrateZ ( x , y ) ; }
+  //
+  const double  z_low  = std::max ( zmin() , zlow  ) ;
+  const double  z_high = std::min ( zmax() , zhigh ) ;
+  if ( z_low >= z_high ) { return 0 ; }
+  //
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
+  { fx[i] = m_b [i] ( x ) ; }
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
+  { fy[i] = m_b [i] ( y ) ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ () ; ++i ) 
+  { fz[i] = m_bz[i].integral ( z_low , z_high ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integrateX ( const double y , 
+                                                 const double z ) const
+{
+  if      ( y < ymin () || y > ymax() ) { return 0 ; }
+  else if ( z < zmin () || z > zmax() ) { return 0 ; }
+  //
+  const std::vector<double> fx ( nX () + 1 , ( xmax() - xmin () ) / ( m_n + 1 ) ) ;
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
+  { fy[i] = m_b [i] ( y ) ; }
+  //
+  std::vector<double> fz ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY ()  ; ++i )
+  { fz[i] = m_bz[i] ( z ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integrateZ ( const double x , 
+                                                 const double y ) const
+{
+  if      ( x < xmin () || x > xmax() ) { return 0 ; }
+  else if ( y < ymin () || y > ymax() ) { return 0 ; }
+  //
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
+  { fx[i] = m_b [i] ( x ) ; }
+  //
+  std::vector<double> fy ( nY() + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
+  { fy[i] = m_b [i] ( y ) ; }
+  //
+  const std::vector<double> fz ( nZ () + 1  , ( zmax() - zmin () ) / ( nZ () + 1  ) ) ;
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/*  integral over x&y-dimensions
+ *  \f[ \int_{x_{low}}^{x_{high}}
+ *      \int_{y_{low}}^{y_{high}} \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}y\f]
+ *  @param z     variable
+ *  @param xlow  low  edge in x
+ *  @param xhigh high edge in x
+ *  @param ylow  low  edge in y
+ *  @param yhigh high edge in y
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integrateXY
+( const double z    ,                          
+  const double xlow , const double xhigh ,
+  const double ylow , const double yhigh ) const 
+{
+  if      ( s_equal ( xlow  , xhigh ) ) { return 0 ; }
+  else if ( s_equal ( ylow  , yhigh ) ) { return 0 ; }
+  else if ( xlow  >  xhigh ) { return -1*integrateXY ( z , xhigh , xlow  , ylow  , yhigh ) ; }
+  else if ( ylow  >  yhigh ) { return -1*integrateXY ( z , xlow  , xhigh , yhigh , ylow  ) ; }
+  else if ( z     <  zmin () || z    >  zmax() ) { return 0 ; }
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () ) &&
+            s_equal ( ylow  , ymin () ) &&
+            s_equal ( yhigh , ymax () ) ) { return integrateXY ( z ) ; }
+  //  //
+  const double  x_low  = std::max ( xmin() , xlow  ) ;
+  const double  x_high = std::min ( xmax() , xhigh ) ;
+  if ( x_low >= x_high ) { return 0 ; }
+  //
+  const double  y_low  = std::max ( ymin() , ylow  ) ;
+  const double  y_high = std::min ( ymax() , yhigh ) ;
+  if ( y_low >= y_high ) { return 0 ; }
+  //
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
+  { fx[i] = m_b [i].integral ( x_low , x_high ) ; }
+  //
+  std::vector<double> fy ( nY () + 1  , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY ()  ; ++i )
+  { fy[i] = m_b [i].integral ( y_low , y_high ) ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ () ; ++i )
+  { fz[i] = m_bz [i] ( z ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/*  integral over x&z-dimensions
+ *  \f[ \int_{x_{low}}^{x_{high}}
+ *      \int_{z_{low}}^{z_{high}} \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}z\f]
+ *  @param x     variable
+ *  @param xlow  low  edge in x
+ *  @param xhigh high edge in x
+ *  @param zlow  low  edge in z
+ *  @param zhigh high edge in z
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integrateXZ
+( const double y    ,                          
+  const double xlow , const double xhigh ,
+  const double zlow , const double zhigh ) const 
+{
+  if      ( s_equal ( xlow  , xhigh ) ) { return 0 ; }
+  else if ( s_equal ( zlow  , zhigh ) ) { return 0 ; }
+  else if ( xlow  >  xhigh ) { return -1*integrateXZ ( y , xhigh , xlow  , zlow  , zhigh ) ; }
+  else if ( zlow  >  zhigh ) { return -1*integrateXZ ( y , xlow  , xhigh , zlow  , zhigh ) ; }
+  else if ( y     <  ymin () || y    >  ymax() ) { return 0 ; }
+  else if ( s_equal ( xlow  , xmin () ) &&
+            s_equal ( xhigh , xmax () ) &&
+            s_equal ( zlow  , zmin () ) &&
+            s_equal ( zhigh , zmax () ) ) { return integrateXZ ( y ) ; }
+  //  //
+  const double  x_low  = std::max ( xmin() , xlow  ) ;
+  const double  x_high = std::min ( xmax() , xhigh ) ;
+  if ( x_low >= x_high ) { return 0 ; }
+  //
+  const double  z_low  = std::max ( zmin() , zlow  ) ;
+  const double  z_high = std::min ( zmax() , zhigh ) ;
+  if ( z_low >= z_high ) { return 0 ; }
+  //
+  std::vector<double> fx ( nX () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nX () ; ++i )
+  { fx[i] = m_b [i].integral ( x_low , x_high ) ; }
+  //
+  std::vector<double> fy ( nY () + 1  , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY ()  ; ++i )
+  { fy[i] = m_b [i] ( y ) ; }
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for  ( unsigned short i = 0 ; i <= nZ () ; ++i )
+  { fz[i] = m_b [i].integral ( z_low , z_high ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/*  integral over x&y-dimensions
+ *  \f[ \int_{x_{min}}^{x_{max}}
+ *      \int_{y_{min}}^{y_{max}} \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}y\f]
+ *  @param z     variable
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integrateXY ( const double z    ) const 
+{
+  if ( z < zmin () || z > zmax() ) { return 0 ; }
+  //
+  const std::vector<double> fx ( nX () + 1 , ( xmax() - xmin () ) / ( nX () + 1 ) ) ;
+  const std::vector<double> fy ( nY () + 1 , ( ymax() - ymin () ) / ( nY () + 1 ) ) ;
+  //
+  std::vector<double> fz ( nZ () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nZ () ; ++i )
+  { fz[i] = m_bz [i] ( z ) ; }
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+/*  integral over x&z-dimensions
+ *  \f[ \int_{x_{min}}^{x_{max}}
+ *      \int_{z_{min}}^{z_{max}} \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}z\f]
+ *  @param y     variable
+ */
+// ============================================================================
+double Gaudi::Math::Bernstein3DMix::integrateXZ ( const double y    ) const 
+{
+  if ( y < ymin () || y > ymax() ) { return 0 ; }
+  //
+  const std::vector<double> fx ( nX () + 1 , ( xmax() - xmin () ) / ( nX () + 1 ) ) ;
+  //
+  std::vector<double> fy ( nY () + 1 , 0 ) ;
+  for ( unsigned short i = 0 ; i <= nY () ; ++i )
+  { fy[i] = m_b  [i] ( y ) ; }
+  //
+  const std::vector<double> fz ( nZ () + 1 , ( zmax() - zmin () ) / ( nZ () + 1 ) ) ;
+  //
+  return calculate ( fx , fy , fz ) ;
+}
+// ============================================================================
+// set k-parameter
+// ============================================================================
+bool Gaudi::Math::Bernstein3DMix::setPar
+( const unsigned int   k     ,
+  const double         value )
+{
+  if ( k >= npars() )                     { return false ; }
+  if ( s_equal ( m_pars [ k ] , value ) ) { return false ; }
+  m_pars [ k ] = value ;
+  return true ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3DMix&
+Gaudi::Math::Bernstein3DMix::operator+=( const double a )
+{
+  if   ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3DMix&
+Gaudi::Math::Bernstein3DMix::operator*=( const double a )
+{
+  if      ( s_equal ( a , 1 ) ) { return *this ; }
+  else if ( s_zero  ( a     ) ) { std::fill ( m_pars.begin() , m_pars.end() , 0 ) ; }
+  LHCb::Math::scale ( m_pars , a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3DMix&
+Gaudi::Math::Bernstein3DMix::operator-=( const double a )
+{
+  if ( s_zero ( a ) ) { return *this ; }
+  LHCb::Math::shift ( m_pars , -a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3DMix&
+Gaudi::Math::Bernstein3DMix::operator/=( const double a )
+{
+  if   ( s_equal ( a , 1 ) ) { return *this ; }
+  LHCb::Math::scale ( m_pars , 1/a ) ;
+  return *this ;
+}
+// ============================================================================
+Gaudi::Math::Bernstein3DMix
+Gaudi::Math::Bernstein3DMix::operator-() const
+{
+  Bernstein3DMix b ( *this ) ;
+  LHCb::Math::negate ( b.m_pars ) ;
+  return b ;
+}
+// ============================================================================
+// Sum of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DMix
+Gaudi::Math::Bernstein3DMix::__add__   ( const double value ) const
+{ return (*this) + value ; }
+// ============================================================================
+// Sum of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DMix
+Gaudi::Math::Bernstein3DMix::__radd__  ( const double value ) const
+{ return value + (*this) ; }
+// ============================================================================
+// Product of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DMix
+Gaudi::Math::Bernstein3DMix::__mul__   ( const double value ) const
+{ return (*this) * value ; }
+// ============================================================================
+// Product of Bernstein polynomial and a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DMix
+Gaudi::Math::Bernstein3DMix::__rmul__  ( const double value ) const
+{ return value * (*this) ; }
+// ============================================================================
+// Subtract a constant from Benrstein polynomial
+// ============================================================================
+Gaudi::Math::Bernstein3DMix
+Gaudi::Math::Bernstein3DMix::__sub__  ( const double value ) const
+{ return (*this) - value ; }
+// ============================================================================
+// Subtract Bernstein polynomial from a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DMix
+Gaudi::Math::Bernstein3DMix::__rsub__ ( const double value ) const
+{ return value - (*this) ; }
+// ============================================================================
+// Divide Benrstein polynomial by a constant
+// ============================================================================
+Gaudi::Math::Bernstein3DMix
+Gaudi::Math::Bernstein3DMix:: __div__   ( const double value ) const
+{ return (*this) / value ; }
+// ============================================================================
+// Negate Bernstein polynomial
+// ============================================================================
+Gaudi::Math::Bernstein3DMix
+Gaudi::Math::Bernstein3DMix::__neg__ ()  const
+{ return -(*this); }
+// ============================================================================
+
+
+// ============================================================================
+// 3D-POSITIVE 
 // ============================================================================
 
 // ============================================================================
@@ -850,13 +1858,10 @@ bool Gaudi::Math::Positive3D::updateBernstein ()
     update = updated || update ;  
   }
   //
+  if ( update ) { m_bernstein /= m_bernstein.integral() ; }  
+  //
   return update ;
 }
-// ============================================================================
-// get the parameter value
-// ============================================================================
-double Gaudi::Math::Positive3D::par ( const unsigned int k ) const 
-{ return m_sphere.phase ( k ) ; }
 // ============================================================================
 /*  get the integral over 3D-region           
  *  \f[ \int_{x_{min}}^{x_{max}}
@@ -896,7 +1901,211 @@ double Gaudi::Math::Positive3D::integral
 }
 // ============================================================================
 
+// ============================================================================
+// 3D-SYMMETRIC POSITIVE 
+// ============================================================================
 
+// ============================================================================
+// constructor from the order
+// ============================================================================
+Gaudi::Math::Positive3DSym::Positive3DSym 
+( const unsigned short       N     ,
+  const double               xmin  ,
+  const double               xmax  )
+  : m_bernstein (   N ,  xmin , xmax ) 
+  , m_sphere    ( ( N + 1 ) * ( N + 2 ) * ( N + 3 ) / 6 - 1 ) ///  ????? 
+{
+  updateBernstein () ;
+}
+// ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::Positive3DSym::Positive3DSym
+(       Gaudi::Math::Positive3DSym&& right ) 
+  : m_bernstein ( std::move ( right.m_bernstein ) ) 
+  , m_sphere    ( std::move ( right.m_sphere    ) ) 
+{}
+// ============================================================================
+// swap  two 2D-polynomials 
+// ============================================================================
+void Gaudi::Math::Positive3DSym::swap ( Gaudi::Math::Positive3DSym&  right ) 
+{
+  Gaudi::Math::swap ( m_bernstein , right.m_bernstein ) ;
+  Gaudi::Math::swap ( m_sphere    , right.m_sphere    ) ;  
+}
+// ============================================================================
+// set k-parameter
+// ============================================================================
+bool Gaudi::Math::Positive3DSym::setPar 
+( const unsigned int k     , 
+  const double       value )
+{
+  //
+  const bool update = m_sphere.setPhase ( k , value ) ;
+  if ( !update ) { return false ; }   // no actual change 
+  //
+  return updateBernstein () ;
+}
+// =============================================================================
+// update bernstein coefficients
+// =============================================================================
+bool Gaudi::Math::Positive3DSym::updateBernstein ()
+{
+  //
+  bool update = false ;
+  for ( unsigned int ix = 0 ; ix < m_sphere.nX() ; ++ix ) 
+  { 
+    const bool updated = m_bernstein.setPar ( ix , m_sphere.x2 ( ix ) ) ;
+    update = updated || update ;  
+  }
+  //
+  if ( update ) { m_bernstein /= m_bernstein.integral() ; }
+  //
+  return update ;
+}
+// ============================================================================
+/*  get the integral over 3D-region           
+ *  \f[ \int_{x_{min}}^{x_{max}}
+ *      \int_{y_{min}}^{y_{max}} 
+ *      \int_{z_{min}}^{z_{max}} 
+ *        \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}y\mathrm{d}z\f] 
+ */
+// ============================================================================
+double  Gaudi::Math::Positive3DSym::integral   () const { return 1 ; }
+// ============================================================================
+/* get the integral over 3D-region 
+ *  \f[ \int_{x_{low}}^{x_{high}}
+ *      \int_{y_{low}}^{y_{high}} 
+ *      \int_{z_{low}}^{z_{high}} 
+ *      \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}y\mathrm{d}z\f] 
+ *  @param xlow  low  edge in x 
+ *  @param xhigh high edge in x 
+ *  @param ylow  low  edge in y 
+ *  @param yhigh high edge in y 
+ *  @param zlow  low  edge in z 
+ *  @param zhigh high edge in z 
+ */
+// ============================================================================
+double Gaudi::Math::Positive3DSym::integral   
+( const double xlow , const double xhigh , 
+  const double ylow , const double yhigh ,
+  const double zlow , const double zhigh ) const 
+{ 
+  return
+    s_equal ( xlow  , xmin() ) && 
+    s_equal ( xhigh , xmax() ) && 
+    s_equal ( ylow  , ymin() ) && 
+    s_equal ( yhigh , ymax() ) && 
+    s_equal ( zlow  , zmin() ) && 
+    s_equal ( zhigh , zmax() )  ? 1.0 : 
+    m_bernstein.integral ( xlow , xhigh , ylow , yhigh , zlow , zhigh ) ; 
+}
+// ============================================================================
+
+
+// ============================================================================
+// 3D-POSITIVE with X<-->Y  SYMMETRY
+// ============================================================================
+
+// ============================================================================
+// constructor from the order
+// ============================================================================
+Gaudi::Math::Positive3DMix::Positive3DMix
+( const unsigned short       N     , 
+  const unsigned short       Nz    ,
+  const double               xmin  ,
+  const double               xmax  ,
+  const double               zmin  ,
+  const double               zmax  )
+  : m_bernstein (   N , Nz ,  xmin , xmax , zmin , zmax ) 
+  , m_sphere    ( ( N + 1 ) * ( N + 2 ) * ( Nz + 1 ) / 2  - 1 ) 
+{
+  updateBernstein () ;
+}
+// ============================================================================
+// move constructor 
+// ============================================================================
+Gaudi::Math::Positive3DMix::Positive3DMix
+(       Gaudi::Math::Positive3DMix&& right ) 
+  : m_bernstein ( std::move ( right.m_bernstein ) ) 
+  , m_sphere    ( std::move ( right.m_sphere    ) ) 
+{}
+// ============================================================================
+// swap  two 2D-polynomials 
+// ============================================================================
+void Gaudi::Math::Positive3DMix::swap ( Gaudi::Math::Positive3DMix&  right ) 
+{
+  Gaudi::Math::swap ( m_bernstein , right.m_bernstein ) ;
+  Gaudi::Math::swap ( m_sphere    , right.m_sphere    ) ;  
+}
+// ============================================================================
+// set k-parameter
+// ============================================================================
+bool Gaudi::Math::Positive3DMix::setPar 
+( const unsigned int k     , 
+  const double       value )
+{
+  //
+  const bool update = m_sphere.setPhase ( k , value ) ;
+  if ( !update ) { return false ; }   // no actual change 
+  //
+  return updateBernstein () ;
+}
+// =============================================================================
+// update bernstein coefficients
+// =============================================================================
+bool Gaudi::Math::Positive3DMix::updateBernstein ()
+{
+  //
+  bool update = false ;
+  for ( unsigned int ix = 0 ; ix < m_sphere.nX() ; ++ix ) 
+  { 
+    const bool updated = m_bernstein.setPar ( ix , m_sphere.x2 ( ix ) ) ;
+    update = updated || update ;  
+  }
+  //
+  if ( update ) { m_bernstein /= m_bernstein.integral() ; }
+  //
+  return update ;
+}
+// ============================================================================
+/*  get the integral over 3D-region           
+ *  \f[ \int_{x_{min}}^{x_{max}}
+ *      \int_{y_{min}}^{y_{max}} 
+ *      \int_{z_{min}}^{z_{max}} 
+ *        \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}y\mathrm{d}z\f] 
+ */
+// ============================================================================
+double  Gaudi::Math::Positive3DMix::integral   () const { return 1 ; }
+// ============================================================================
+/* get the integral over 3D-region 
+ *  \f[ \int_{x_{low}}^{x_{high}}
+ *      \int_{y_{low}}^{y_{high}} 
+ *      \int_{z_{low}}^{z_{high}} 
+ *      \mathcal{B}(x,y,z) \mathrm{d}x\mathrm{d}y\mathrm{d}z\f] 
+ *  @param xlow  low  edge in x 
+ *  @param xhigh high edge in x 
+ *  @param ylow  low  edge in y 
+ *  @param yhigh high edge in y 
+ *  @param zlow  low  edge in z 
+ *  @param zhigh high edge in z 
+ */
+// ============================================================================
+double Gaudi::Math::Positive3DMix::integral   
+( const double xlow , const double xhigh , 
+  const double ylow , const double yhigh ,
+  const double zlow , const double zhigh ) const 
+{ 
+  return
+    s_equal ( xlow  , xmin() ) && 
+    s_equal ( xhigh , xmax() ) && 
+    s_equal ( ylow  , ymin() ) && 
+    s_equal ( yhigh , ymax() ) && 
+    s_equal ( zlow  , zmin() ) && 
+    s_equal ( zhigh , zmax() )  ? 1.0 : 
+    m_bernstein.integral ( xlow , xhigh , ylow , yhigh , zlow , zhigh ) ; 
+}
+// ============================================================================
 
 // ============================================================================
 //                                                                      The END
