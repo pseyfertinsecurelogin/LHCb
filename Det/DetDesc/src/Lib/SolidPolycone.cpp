@@ -63,7 +63,8 @@ SolidPolycone::SolidPolycone( const std::string&             Name          ,
   // set bounding parameters
   setBP();
   ///
-  checkTickContainerCapacity() ;
+  checkTickContainerCapacity();
+  createCover();
 }
 
 // ============================================================================
@@ -184,7 +185,6 @@ void SolidPolycone::setBP()
   ///
   checkBP();
 }
-// ============================================================================
 
 // ============================================================================
 /** check for the given point (local frame)
@@ -244,34 +244,21 @@ bool SolidPolycone::isInsideImpl (  const aPoint& point ) const
  *  @return pointer to "simplified" solid - "cover"
  */
 // ============================================================================
-const ISolid* SolidPolycone::cover () const
-{
-  /// cover is calculated already
-  if( 0 != m_cover ) { return m_cover; }
-  //
-  ISolid* cov = 0 ;
-  if( 0.0 != startPhiAngle() || 360 * Gaudi::Units::degree != deltaPhiAngle() )
-    { cov = new SolidPolycone( "Cover for " + name () , triplets() ); }
-  else
-    {
-      double rmxmx = RMin( 0 ) ;
-      double rmnmn = RMax( 0 ) ;
-      double zmxmx = 0         ;
-      ///
-      for( unsigned int i = 0 ; i < number() ; ++i )
-        {
-          if( RMax  ( i )   > rmxmx ) { rmxmx = RMax   ( i )   ; }
-          if( RMin  ( i )   < rmnmn ) { rmnmn = RMin   ( i )   ; }
-          if( fabs( z(i) )  > zmxmx ) { zmxmx = fabs( z ( i ) ) ; }
-        }
-      cov = new SolidTubs( "Cover for " + name () , zmxmx , rmxmx , rmnmn ) ;
+void SolidPolycone::createCover() {
+  if (0.0 != startPhiAngle() || 360 * Gaudi::Units::degree != deltaPhiAngle()) {
+    m_cover = std::make_unique<SolidPolycone>("Cover for " + name(), triplets());
+  } else {
+    double rmxmx = RMin( 0 ) ;
+    double rmnmn = RMax( 0 ) ;
+    double zmxmx = std::abs(z(0)) ;
+    ///
+    for( unsigned int i = 1 ; i < number() ; ++i ) {
+      if (RMax(i)    > rmxmx ) { rmxmx = RMax(i)   ; }
+      if (RMin(i)    < rmnmn ) { rmnmn = RMin(i)   ; }
+      if (std::abs(z(i)) > zmxmx ) { zmxmx = std::abs(z(i)); }
     }
-  ///
-  if( 0 == cov ) { return this ; }
-  ///
-  m_cover = cov ;
-  ///
-  return m_cover;
+    m_cover = std::make_unique<SolidTubs>("Cover for " + name(), zmxmx, rmxmx, rmnmn) ;
+  }
 }
 
 // ============================================================================

@@ -9,6 +9,7 @@
 #include "DetDesc/SolidTicks.h"
 #include "DetDesc/SolidException.h"
 //
+#include <memory>
 
 // ============================================================================
 /** @file SolidTubs.cpp
@@ -72,6 +73,7 @@ SolidTubs::SolidTubs( const std::string& name          ,
   // set bounding parameters
   setBP();
   //
+  createCover();
 }
 // ============================================================================
 
@@ -85,7 +87,6 @@ void SolidTubs::setBP()
   setZMax   (  zHalfLength() );
   setRhoMax (  outerRadius() );
   setRMax   ( sqrt( zMax() * zMax() + rhoMax() * rhoMax () ) );
-
 
   const double phi1   = startPhiAngle   ()                      ;
   const double phi2   = startPhiAngle   () + deltaPhiAngle   () ;
@@ -185,8 +186,9 @@ SolidTubs::SolidTubs( const std::string& name )
   , m_tubs_startPhiAngle  ( 0             )
   , m_tubs_deltaPhiAngle  ( 360*Gaudi::Units::degree )
   , m_tubs_coverModel     (        0      )
-  , m_noPhiGap            ( true          )
-{}
+  , m_noPhiGap            ( true          ) {
+  createCover();
+}
 
 
 // ============================================================================
@@ -228,78 +230,47 @@ bool  SolidTubs::isInsideImpl( const aPoint & point ) const
 }
 
 // ============================================================================
-/** retrieve the pointer to "the most simplified cover"
- *    -# for Model = 0
- *      - the cover for general tube segment is tube
- *      - the cover for tube  is the cylinder
- *      - the cover for cylinder is the box
- *    -#  for Model = 1
- *      - the cover for general tube segment is teh cylinder segment
- *      - the cover for cylinder segment is cylinder
- *      - the cover for cylinder is the box
- *  implementation  of ISolid abstract interface
- *  @see ISolid
- *  @return pointer to the most simplified cover
- */
-// ============================================================================
-const ISolid* SolidTubs::cover () const
-{
-  /// cover is calculated already
-  if( 0 != m_cover ) { return m_cover; }
-  //
-  ISolid* cov = 0 ;
-  if( 0 == m_tubs_coverModel )
-    {
+void SolidTubs::createCover() {
+  if( 0 == m_tubs_coverModel ) {
       if( 0.0   * Gaudi::Units::degree  != startPhiAngle() ||
           360.0 * Gaudi::Units::degree  != deltaPhiAngle()    )
-        { cov =
-            new SolidTubs("Cover for " + name () ,
-                          zHalfLength         () ,
-                          outerRadius         () ,
-                          innerRadius         () ); }
+        { m_cover = std::make_unique<SolidTubs>("Cover for " + name () ,
+                                                zHalfLength         () ,
+                                                outerRadius         () ,
+                                                innerRadius         () ); }
       else if ( 0.0 != innerRadius() )
-        { cov =
-            new SolidTubs("Cover for " + name () ,
-                          zHalfLength         () ,
-                          outerRadius         () ); }
+        { m_cover = std::make_unique<SolidTubs>("Cover for " + name () ,
+                                                zHalfLength         () ,
+                                                outerRadius         () ); }
       else
-        { cov =
-            new SolidBox ("Cover for " + name () ,
-                          outerRadius         () ,
-                          outerRadius         () ,
-                          zHalfLength         () ); }
-    }
-  else
-    {
+        { m_cover = std::make_unique<SolidBox>("Cover for " + name () ,
+                                               outerRadius         () ,
+                                               outerRadius         () ,
+                                               zHalfLength         () ); }
+    } else {
       if ( 0.0 != innerRadius() )
-        { cov =
-            new SolidTubs("Cover for " + name () ,
-                          zHalfLength         () ,
-                          outerRadius         () ,
-                          0.0 * Gaudi::Units::mm ,
-                          startPhiAngle       () ,
-                          deltaPhiAngle       () ,
-                          m_tubs_coverModel      ); }
+        { m_cover = std::make_unique<SolidTubs>("Cover for " + name () ,
+                                                zHalfLength         () ,
+                                                outerRadius         () ,
+                                                0.0 * Gaudi::Units::mm ,
+                                                startPhiAngle       () ,
+                                                deltaPhiAngle       () ,
+                                                m_tubs_coverModel      ); }
       else if( 0.0   * Gaudi::Units::degree  != startPhiAngle() ||
                360.0 * Gaudi::Units::degree  != deltaPhiAngle()    )
-        { cov =
-            new SolidTubs("Cover for " + name () ,
-                          zHalfLength         () ,
-                          outerRadius         () ,
-                          innerRadius         () ,
-                          0.0 * Gaudi::Units::degree ,
-                          360.0 * Gaudi::Units::degree ,
-                          m_tubs_coverModel      ); }
+        { m_cover = std::make_unique<SolidTubs>("Cover for " + name () ,
+                                                zHalfLength         () ,
+                                                outerRadius         () ,
+                                                innerRadius         () ,
+                                                0.0 * Gaudi::Units::degree ,
+                                                360.0 * Gaudi::Units::degree ,
+                                                m_tubs_coverModel      ); }
       else
-        { cov =
-            new SolidBox ("Cover for " + name () ,
-                          outerRadius         () ,
-                          outerRadius         () ,
-                          zHalfLength         () ); }
-    }
-  if( 0 == cov ) { return this; }
-  m_cover = cov ;
-  return m_cover;
+        { m_cover = std::make_unique<SolidBox>("Cover for " + name () ,
+                                               outerRadius         () ,
+                                               outerRadius         () ,
+                                               zHalfLength         () ); }
+  }
 }
 
 // ============================================================================
@@ -358,7 +329,7 @@ unsigned int SolidTubs::intersectionTicksImpl( const aPoint &  Point,
   if( !crossBCylinder( Point , Vector ) )   { return 0 ; }
 
   // first the cylinders
-  static ISolid::Ticks tmpticks ; tmpticks.clear() ;
+  ISolid::Ticks tmpticks ;
   SolidTicks::LineIntersectsTheCylinder( Point, Vector,outerRadius(),std::back_inserter( tmpticks   ) );
   if( innerRadius() > 0 )
     SolidTicks::LineIntersectsTheCylinder( Point, Vector, innerRadius(), std::back_inserter( tmpticks ) );

@@ -64,7 +64,7 @@ namespace LHCb
      *  @param init Initialisation value
      */
     constexpr FastAllocList( const typename BaseClass::size_type size,
-                             const TYPE & init ) 
+                             const TYPE & init )
       : BaseClass(size,init) { }
 
   public:
@@ -96,7 +96,7 @@ namespace LHCb
 #ifndef GOD_NOALLOC
     template < typename TYPE,
                typename USERALLOC = boost::default_user_allocator_new_delete,
-               typename MUTEX     = boost::details::pool::null_mutex,
+               typename MUTEX     = boost::details::pool::default_mutex,
                unsigned NEXTSIZE  = 32 >
     using ListPoolAlloc = boost::fast_pool_allocator< TYPE, USERALLOC, MUTEX, NEXTSIZE >;
 #else
@@ -140,7 +140,7 @@ namespace LHCb
      *  @date   23/09/2015
      */
     //--------------------------------------------------------------------------------
-    
+
     template < typename TYPE,
 #ifndef GOD_NOALLOC
              typename ALLOC = __gnu_cxx::__pool_alloc< TYPE >
@@ -159,13 +159,13 @@ namespace LHCb
      *  @date   23/09/2015
      */
     //--------------------------------------------------------------------------------
-    
+
     template < typename TYPE,
                typename ALLOC = std::allocator< TYPE > >
     using List = FastAllocList< TYPE, ALLOC >;
-    
+
   }
-  
+
 }
 
 #endif // KERNEL_FastAllocList_H

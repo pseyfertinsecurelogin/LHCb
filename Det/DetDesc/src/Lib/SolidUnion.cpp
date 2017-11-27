@@ -30,6 +30,7 @@ SolidUnion::SolidUnion( const std::string& name  ,
 {
   if( UNLIKELY(!SolidBoolean::first()) )
     { throw SolidException(" SolidUnion:: ISolid* points to NULL!"); }
+  createCoverTop();
 }
 // ============================================================================
 
@@ -112,19 +113,14 @@ StatusCode  SolidUnion::unite ( std::unique_ptr<ISolid>  child    ,
 // ============================================================================
 
 // ============================================================================
-/** create the cover top box
+/** create the cover box
  */
 // ============================================================================
-const ISolid* SolidUnion::coverTop() const
-{
-  if( UNLIKELY(!m_coverTop) ) {
+void SolidUnion::createCoverTop() {
     const double x =  std::max( std::abs(xMin()), std::abs(xMax()) );
     const double y =  std::max( std::abs(yMin()), std::abs(yMax()) );
     const double z =  std::max( std::abs(zMin()), std::abs(zMax()) );
     m_coverTop = std::make_unique<SolidBox> ("CoverTop for " + name () , x , y, z  ) ;
-  }
-  //
-  return m_coverTop.get();
 }
 // ============================================================================
 
@@ -153,6 +149,7 @@ StatusCode SolidUnion::updateBP()
   setRhoMax ( std::max( base.rhoMax(), rhoMax() ) );
   //
   checkBP();
+  createCoverTop();
   return StatusCode::SUCCESS;
 }
 // ============================================================================

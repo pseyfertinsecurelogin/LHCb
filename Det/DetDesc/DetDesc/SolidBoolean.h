@@ -148,7 +148,6 @@ class SolidBoolean: public virtual SolidBase
   childEnd   () const { return m_sb_childrens.end  (); }
 
   ///
-protected:
 
   /** constructor - "main"("first") solid is mandatory!
    *  @param name name of the solid

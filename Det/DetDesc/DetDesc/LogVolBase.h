@@ -32,12 +32,12 @@ class IMessageSvc;
  *  @author  Marco Clemencic
  */
 
-class LogVolBase: public virtual ILVolume   ,
+class LogVolBase: public virtual ILVolume,
                   public         ValidDataObject,
                   private Details::InstanceCounter<LogVolBase>
 {
 
-protected:
+public:
 
   /** constructor
    *  @exception LVolumeException wrong paramaters value
@@ -90,8 +90,7 @@ public:
    *  @param  index    physical volume index
    *  @return pointer to daughter (Physical Volume)
    */
-  inline const IPVolume* operator[]
-  ( const ILVolume::ReplicaType& index ) const override
+  const IPVolume* operator[]( const ILVolume::ReplicaType& index ) const override
   {
     return index < m_pvolumes.size() ? m_pvolumes[index] : nullptr ;
   };
@@ -283,6 +282,10 @@ protected:
    *  @return pointer to created physical volume
    */
   IPVolume* createPVolume();
+
+  /// updates box cover integrating the new PVolume
+  /// default implementation is empty
+  virtual void updateCover(const IPVolume&) {};
 
   /** Assertion
    *  @param assertion condition

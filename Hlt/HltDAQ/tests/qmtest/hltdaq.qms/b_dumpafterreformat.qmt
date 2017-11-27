@@ -47,13 +47,14 @@ if prevstdout!=stdout:
   #copy both as new references
   if len(newlines+missing):
     import os
-    os.system("cp hltdaq.dump.previous.stdout ../refs/hltdaq.dump.previous.stdout.ref.new")
-    f=open("../refs/hltdaq.dump.new.stdout.ref.new","w")
+    os.system("pwd")
+    os.system("cp hltdaq.dump.previous.stdout hltdaq.dump.previous.stdout.ref.new")
+    f=open("hltdaq.dump.new.stdout.ref.new","w")
     f.write("\n".join(stdout))
     f.close()
     causes.append("difference in data formats")
   if len(newlines)+len(missing)&gt;20:
-    result['hltdaq.dumpafterreformat']=result.Quote("more than 20 differences in data formats, check stdout, and diff refs/hltdaq.dump.previous.stdout.new wrt refs/hltdaq.dump.new.stdout.ref.new ")
+    result['hltdaq.dumpafterreformat']=result.Quote("more than 20 differences in data formats, check stdout, and diff hltdaq.dump.previous.stdout.new wrt hltdaq.dump.new.stdout.ref.new ")
   elif len(newlines) and len(newlines)==len(missing):
     printme=["+ "+newlines[i]+"\n- "+missing[i] for i in range(len(newlines))]
     result['hltdaq.dumpafterreformat']=result.Quote("\n".join(printme))

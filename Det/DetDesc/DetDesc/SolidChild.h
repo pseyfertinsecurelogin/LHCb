@@ -33,7 +33,7 @@ class SolidChild : public virtual SolidBase
   friend class SolidBoolean;
   friend class SolidFactory<SolidChild>;
   ///
-protected:
+public:
 
   /** constructor
    *  @param Name name of this solid
@@ -61,7 +61,6 @@ protected:
               const std::string&    Name  = ""            );
 
 
-public:
 
   /** retrieve the specific type of the solid
    *  @return specific type of the solid

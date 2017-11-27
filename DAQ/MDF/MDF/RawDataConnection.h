@@ -27,7 +27,7 @@ namespace LHCb  {
     /// Standard destructor
     virtual ~RawDataConnection();
     /// Check if connected to data source
-    bool isConnected() const override {     return m_access.ioDesc != 0; }
+    bool isConnected() const        override {     return m_access.ioDesc != 0; }
     /// Open data stream in read mode
     StatusCode connectRead() override;
     /// Open data stream in write mode

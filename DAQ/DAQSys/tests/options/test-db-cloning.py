@@ -1,32 +1,31 @@
 from DAQSys.DecoderClass import Decoder, decodersForBank
 from DAQSys.Decoders import DecoderDB
 
-velo=decodersForBank(DecoderDB,"Velo")
+rich=decodersForBank(DecoderDB,"Rich")
 required=[]
-for r in velo:
+for r in rich:
     for req in r.allDaughters():
         req=DecoderDB[req]
-        if req not in required and req not in velo:
+        if req not in required and req not in rich:
             required.append(req)
 
 #push into a smaller DB
 
 db={}
 
-for r in velo+required:
+for r in rich+required:
     r.__db__=db
     db[r.FullName]=r
 
-r0=velo[0]
+r0=rich[0]
 r0.overrideOutputs("Dev/Null")
 
-expectname="DecodeVeloRawBuffer/DecodeVeloRawBuffer"
-prop="DumpVeloClusters"
+expectname="Rich::Future::RawBankDecoder/DecodeRawRichOffline"
+prop="DumpRawBanks"
 
 rclone=r0.clone(expectname)
 rclone.Properties[prop]=True
 r0.Properties[prop]=False
-
 
 rcloneset=rclone.setup()
 

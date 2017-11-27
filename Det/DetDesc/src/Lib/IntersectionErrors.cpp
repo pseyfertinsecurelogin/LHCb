@@ -1,6 +1,5 @@
-// $Id: IntersectionErrors.cpp,v 1.1 2007-12-19 09:42:40 ibelyaev Exp $
 // ============================================================================
-// Include files 
+// Include files
 // ============================================================================
 // DetDesk
 // ============================================================================
@@ -9,59 +8,58 @@
 #include "DetDesc/VolumeIntersectionIntervals.h"
 #include "DetDesc/IGeometryErrorSvc.h"
 // ============================================================================
-/** @file 
+/** @file
  *  Implementation file for class DetDesc::IntersectionErrors
- *  @date 2007-12-12 
+ *  @date 2007-12-12
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  */
 // ============================================================================
 // initialize the static variable
-StatusCode DetDesc::IntersectionErrors::s_code = 
-StatusCode ( StatusCode::SUCCESS , true ) ;
-// ============================================================================
-// initialize the static variable 
-DetDesc::IGeometryErrorSvc* DetDesc::IntersectionErrors::s_service = 0 ;
+std::atomic<unsigned long> DetDesc::IntersectionErrors::s_code = { StatusCode::SUCCESS };
 // ============================================================================
 // initialize the static variable
-unsigned long DetDesc::IntersectionErrors::s_errors = 0 ;
+std::atomic<DetDesc::IGeometryErrorSvc*> DetDesc::IntersectionErrors::s_service = {nullptr} ;
 // ============================================================================
 // initialize the static variable
-bool DetDesc::IntersectionErrors::s_recovery = false ;
+std::atomic<unsigned long> DetDesc::IntersectionErrors::s_errors = {0} ;
 // ============================================================================
-// set the static code 
+// initialize the static variable
+std::atomic<bool> DetDesc::IntersectionErrors::s_recovery = {false} ;
 // ============================================================================
-void  DetDesc::IntersectionErrors::setCode 
-( const StatusCode& sc     , 
-  const ILVolume*   volume ) 
+// set the static code
+// ============================================================================
+void  DetDesc::IntersectionErrors::setCode
+( const StatusCode& sc     ,
+  const ILVolume*   volume )
 {
-  s_code = sc ; 
-  if ( s_code.isFailure() )
-  {
-    if ( 0 != s_service ) { s_service -> setCode ( s_code , volume ) ; }
-    else                  { ++s_errors ; } /// increment number of errors 
+  s_code = sc.getCode() ;
+  if ( sc.isFailure() ) {
+    auto svc = s_service.load();
+    if ( svc ) { svc -> setCode ( sc , volume ) ; }
+    else       { ++s_errors ; } /// increment number of errors
   }
 }
 // ============================================================================
-// get the total number of uncatched errors 
+// get the total number of uncatched errors
 // ============================================================================
 unsigned long DetDesc::IntersectionErrors::errors() { return s_errors ; }
 // ============================================================================
-// get the static error code 
+// get the static error code
 // ============================================================================
-const StatusCode& DetDesc::IntersectionErrors::code() { return s_code ; }
+StatusCode DetDesc::IntersectionErrors::code() { return s_code.load(); }
 // ============================================================================
-// set the static pointer to Geoemtry Error Service 
+// set the static pointer to Geoemtry Error Service
 // ============================================================================
-void DetDesc::IntersectionErrors::setService 
+void DetDesc::IntersectionErrors::setService
 ( DetDesc::IGeometryErrorSvc* svc) { s_service = svc ; }
 // ============================================================================
-// get the static pointer to Geoemtry Error Service 
+// get the static pointer to Geoemtry Error Service
 // ============================================================================
-DetDesc::IGeometryErrorSvc* DetDesc::IntersectionErrors::service() 
+DetDesc::IGeometryErrorSvc* DetDesc::IntersectionErrors::service()
 { return s_service ; }
 // ============================================================================
 // set the static flag for recovery
-void DetDesc::IntersectionErrors::setRecovery ( const bool value ) 
+void DetDesc::IntersectionErrors::setRecovery ( const bool value )
 { s_recovery = value ; }
 // ============================================================================
 // get the static flag for recovery
@@ -71,65 +69,53 @@ bool DetDesc::IntersectionErrors::recovery() { return s_recovery ; }
 // inspect the potential error in intersectionsa
 // ============================================================================
 void  DetDesc::IntersectionErrors::inspect
-( const ILVolume*                volume , 
-  const Gaudi::XYZPoint&         pnt    , 
-  const Gaudi::XYZVector&        vect   , 
-  const ILVolume::Intersections& cnt    ) 
+( const ILVolume*                volume ,
+  const Gaudi::XYZPoint&         pnt    ,
+  const Gaudi::XYZVector&        vect   ,
+  const ILVolume::Intersections& cnt    )
 {
-  if ( 0 != s_service ) 
-  {
-    s_service -> inspect( volume , pnt , vect , cnt ) ;
-    return ;
-  }
-  // increment number of improcessed errors 
-  ++s_errors ;
+  auto svc = s_service.load();
+  if ( svc ) { svc -> inspect( volume , pnt , vect , cnt ) ; }
+  else       { ++s_errors ; } // increment number of improcessed errors
 }
 // ============================================================================
-/* report the recovered action in intersections 
- *  @param  volume    the problematic volume 
- *  @aram   material1 the affected material 
- *  @aram   material2 the affected material 
+/* report the recovered action in intersections
+ *  @param  volume    the problematic volume
+ *  @aram   material1 the affected material
+ *  @aram   material2 the affected material
  *  @param  delta    the problematic delta  (non-negative!)
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-12-14
  */
 // ============================================================================
 void DetDesc::IntersectionErrors::recovered
-( const ILVolume* volume    , 
+( const ILVolume* volume    ,
   const Material* material1 ,
   const Material* material2 ,
-  const double    delta     ) 
+  const double    delta     )
 {
-  if ( 0 != s_service ) 
-  { 
-    s_service -> recovered ( volume , material1 , material2 , delta ) ;   
-    return ;
-  }
-  // increment number of improcessed errors 
-  ++s_errors ;
+  auto svc = s_service.load();
+  if ( svc ) { svc -> recovered ( volume , material1 , material2 , delta ) ; }
+  else       { ++s_errors ; } // increment number of improcessed errors
 }
 // ============================================================================
-/* report the skipped intersection 
- *  @param  volume   the problematic volume 
- *  @aram   material the affected material 
+/* report the skipped intersection
+ *  @param  volume   the problematic volume
+ *  @aram   material the affected material
  *  @param  delta    the problematic delta  (non-negative!)
  *  @author Vanya BELYAEV ibelyaev@physics.syr.edu
  *  @date 2007-12-14
  */
 // ===========================================================================
 void DetDesc::IntersectionErrors::skip
-( const ILVolume* volume   , 
+( const ILVolume* volume   ,
   const Material* material ,
-  const double    delta    ) 
+  const double    delta    )
 {
-  if ( 0 != s_service ) 
-  { 
-    s_service -> skip ( volume , material , delta ) ; 
-    return ;
-  }
-  // increment number of improcessed errors 
-  ++s_errors ;
+  auto svc = s_service.load();
+  if ( svc ) { svc -> skip ( volume , material , delta ) ; }
+  else       { ++s_errors ; } // increment number of improcessed errors
 }
 // ============================================================================
-// The END 
+// The END
 // ============================================================================

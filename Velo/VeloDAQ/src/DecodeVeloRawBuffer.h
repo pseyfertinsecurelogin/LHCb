@@ -5,6 +5,7 @@
 
 #include "GaudiAlg/GaudiAlgorithm.h"
 #include "DAQKernel/DecoderAlgBase.h"
+#include "GaudiKernel/AnyDataHandle.h"
 #include "VeloEvent/VeloDecodeStatus.h"
 
 #include "SiDAQ/SiRawBufferWord.h"
@@ -53,8 +54,8 @@ private:
    *
    * @see VeloLiteCluster
    */
-  StatusCode decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks,
-				      LHCb::VeloDecodeStatus* decStatus) const;
+  LHCb::VeloLiteCluster::FastContainer decodeToVeloLiteClusters(const std::vector<LHCb::RawBank*>& banks,
+				  LHCb::VeloDecodeStatus* decStatus) const;
 
   /** Decode raw buffer to clusters
    * This decodes the raw buffer to VeloClusters and
@@ -62,8 +63,8 @@ private:
    *
    * @see VeloCluster
    */
-  StatusCode decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks,
-				  LHCb::VeloDecodeStatus *decStatus) const;
+  LHCb::VeloClusters decodeToVeloClusters(const std::vector<LHCb::RawBank*>& banks,
+				  LHCb::VeloDecodeStatus *decStatus);
 
   /** Write VeloClusters to stdout
    *
@@ -77,7 +78,7 @@ private:
    * This called as a failsafe option in case the raw event
    * is missing.
    * */
-  void createEmptyBanks() const;
+  void createEmptyBanks();
 
   /** Add DecodeVeloRawBuffer to list of failed algorithms
    *  if procAbort = true set the ProcStatus to "aborted" to show
@@ -94,7 +95,7 @@ private:
   StatusCode replaceFullFromLite(LHCb::VeloClusters& clusters,
                                  unsigned int nSensor,
                                  const std::vector<LHCb::RawBank*>& banks,
-				 LHCb::VeloDecodeStatus *decStatus) const;
+				 LHCb::VeloDecodeStatus *decStatus);
 
   /// Add a fake lite cluster to the full cluster container
   void makeFakeCluster(LHCb::VeloLiteCluster const &liteCluster,
@@ -102,7 +103,11 @@ private:
 
 private:
 
-  // configuration
+  /// data handler for writing lite clusters to the transient event store
+  AnyDataHandle<LHCb::VeloLiteCluster::FastContainer> m_liteClusters = { LHCb::VeloLiteClusterLocation::Default, Gaudi::DataHandle::Writer, this };
+
+  /// data handler for writing clusters to the transient event store
+  DataObjectHandle<LHCb::VeloClusters> m_clusters = { LHCb::VeloClusterLocation::Default, Gaudi::DataHandle::Writer, this};
 
   bool m_decodeToVeloLiteClusters;
   bool m_decodeToVeloClusters;
@@ -110,9 +115,6 @@ private:
   bool m_dumpVeloClusters;
 
   unsigned int m_forcedBankVersion; ///< user forced bank version
-
-  std::string m_veloLiteClusterLocation;
-  std::string m_veloClusterLocation;
 
   /// do we assume chip channels instead of strips in the raw buffer?
   /// (useful for some testbeam TELL1 cinfigurations, defaults to false)
