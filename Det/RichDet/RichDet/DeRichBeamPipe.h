@@ -130,7 +130,7 @@ public:
     auto inter = isCloseBy(start,end);
     
     // If close enough, run full test
-    if ( inter )
+    if ( UNLIKELY( inter ) )
     {
       // get point and direction in local coordinates
       const auto pLocal = geometry()->toLocalMatrix()*start;
