@@ -159,7 +159,7 @@ public:
    */
   template < typename POINT,
              typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-  inline typename POINT::Scalar::mask_type
+  inline decltype(auto)
   testForIntersection( const POINT& start,
                        const POINT& end,
                        typename POINT::Scalar::mask_type mask ) const
@@ -220,8 +220,8 @@ private:
   /// SIMD Test if the given start and end points are 'close' to the beampipe or not
   template< typename POINT,
             typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-  inline typename POINT::Scalar::mask_type isCloseBy( const POINT& start,
-                                                      const POINT& end ) const
+  inline decltype(auto) isCloseBy( const POINT& start,
+                                   const POINT& end ) const
   {
     auto mask = isCloseBy(start);
     if ( !all_of(mask) ) { mask |= isCloseBy(end); }
@@ -231,8 +231,7 @@ private:
   /// Scalar Test if the given point is 'close' to the beampipe or not
   template< typename POINT,
             typename std::enable_if<std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-  inline bool 
-  isCloseBy( const POINT& p ) const
+  inline bool isCloseBy( const POINT& p ) const
   {
     // Get the closest z coord in the beam pipe
     const auto beamz  = ( p.z() > m_endPGlo.z()   ? m_endPGlo.z()   :
@@ -251,8 +250,7 @@ private:
   /// SIMD Test if the given point is 'close' to the beampipe or not
   template< typename POINT,
             typename std::enable_if<!std::is_arithmetic<typename POINT::Scalar>::value>::type * = nullptr >
-  inline typename POINT::Scalar::mask_type
-  isCloseBy( const POINT& p ) const
+  inline decltype(auto) isCloseBy( const POINT& p ) const
   {
     // Get the closest z coord in the beam pipe
     auto beamz = p.z();
