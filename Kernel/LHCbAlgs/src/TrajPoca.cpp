@@ -1,6 +1,6 @@
-// $Id: TrajPoca.cpp,v 1.11 2009-12-28 21:27:49 wouter Exp $
 // Include files
-
+#include <utility>
+#include <algorithm>
 #include "Math/CholeskyDecomp.h"
 
 // Math Definitions
@@ -10,6 +10,20 @@
 
 // local
 #include "TrajPoca.h"
+
+namespace {
+
+inline bool restrictToRange(double& l, const LHCb::Trajectory& t)
+{
+  const auto minmax = std::minmax( { t.beginRange(), t.endRange() } ) ;
+  //C++17: use std::clamp instead...
+  auto clamp = [](const auto& v, const auto& lo, const auto& hi ) -> decltype(auto)
+               { return v<lo ? lo : hi<v ? hi : v; };
+  const auto oldl = std::exchange( l, clamp( l, minmax.first, minmax.second ) );
+  return oldl != l;
+}
+
+}
 
 DECLARE_TOOL_FACTORY( TrajPoca )
 
@@ -22,13 +36,6 @@ TrajPoca::TrajPoca( const std::string& type,
 : base_class ( type, name , parent )
 {
   declareInterface<ITrajPoca>(this);
-
-  declareProperty( "MaxnOscillStep",    m_maxnOscillStep = 5    );
-  declareProperty( "MaxnDivergingStep", m_maxnDivergingStep = 5 );
-  declareProperty( "MaxnStuck",         m_maxnStuck = 3         );
-  declareProperty( "MaxnTry",           m_maxnTry = 100         );
-  declareProperty( "MaxDist",           m_maxDist = 100000000   );
-  declareProperty( "MaxExtrapTolerance", m_maxExtrapTolerance = 1*Gaudi::Units::cm) ;
 }
 
 //=============================================================================
@@ -45,32 +52,35 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
 {
   StatusCode status = StatusCode::SUCCESS;
 
-  unsigned int maxWarnings = 0;
-  if (UNLIKELY(msgLevel(MSG::DEBUG))) maxWarnings = 9999;
+  unsigned int maxWarnings = ( LIKELY(!msgLevel(MSG::DEBUG)) ? 0 : 9999 );
 
-  Gaudi::XYZPoint newPos1, newPos2;
-  double delta(0), prevdelta(0);
+  double delta2(0), prevdelta2(0);
   int nOscillStep(0);
   int nDivergingStep(0);
   int nStuck(0);
   bool finished = false;
-  cache_t cache;
+  cache_t workspace;
 
   for (int istep = 0; LIKELY(istep < m_maxnTry && !finished); ++istep) {
     double prevflt1      = mu1;
     double prevflt2      = mu2;
-    double prevprevdelta = prevdelta;
-    prevdelta = delta ;
-    if (UNLIKELY(!stepTowardPoca(traj1, mu1, restrictRange1,
-                                 traj2, mu2, restrictRange2, precision,cache))) {
+    double prevprevdelta2 = std::exchange(prevdelta2,delta2);
+    auto step_status = stepTowardPoca( traj1, mu1, restrictRange1,
+                                       traj2, mu2, restrictRange2,
+                                       precision, workspace,
+                                       m_maxExtrapTolerance, m_maxDist );
+    if (UNLIKELY(step_status!=ok)) {
+      if  (UNLIKELY(msgLevel(MSG::DEBUG))) {
+          debug() << ( step_status==parallel ? "The Trajectories are parallel."
+                     : step_status==nearly_parallel ? "The Trajectories are very nearly parallel."
+                     : "Stepped further than MaxDist." ) << endmsg;
+      }
       status = StatusCode::FAILURE;
       break; // Parallel Trajectories in stepTowardPoca
     }
 
-    newPos1  = traj1.position( mu1 );
-    newPos2  = traj2.position( mu2 );
-    distance = ( newPos1 - newPos2 );
-    delta    = distance.R();
+    distance = traj1.position( mu1 ) - traj2.position( mu2 );
+    delta2    = distance.Mag2();
     double step1 = mu1 - prevflt1;
     double step2 = mu2 - prevflt2;
     int pathDir1 = ( step1 > 0. ) ? 1 : -1;
@@ -82,22 +92,22 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
     finished = std::abs(step1) < distToErr1 && std::abs(step2) < distToErr2;
 
     // we have to catch some problematic cases
-    if (UNLIKELY(!finished && istep > 2 && delta > prevdelta)) {
+    if (UNLIKELY(!finished && istep > 2 && delta2 > prevdelta2)) {
       // we can get stuck if a flt range is restricted
       if (UNLIKELY((restrictRange1 && std::abs(step1) > 1.0e-10) || (restrictRange2 && std::abs(step2) > 1e-10))) {
         if (UNLIKELY(++nStuck > m_maxnStuck)) {
           // downgrade to a point poca
           Gaudi::XYZVector dist(0., 0., 0.);
           restrictRange2 ?
-            minimize(traj1, mu1, restrictRange1, newPos2, dist, precision) :
-            minimize(traj2, mu2, restrictRange2, newPos1, dist, precision);
+            minimize(traj1, mu1, restrictRange1, traj2.position(mu2), dist, precision) :
+            minimize(traj2, mu2, restrictRange2, traj1.position(mu1), dist, precision);
           if (UNLIKELY(msgLevel(MSG::DEBUG))) {
             debug() << "Minimization got stuck." << endmsg;
           }
           status = StatusCode::SUCCESS; // "Stuck poca"
           finished = true;
         }
-      } else if (UNLIKELY(prevdelta > prevprevdelta)) {
+      } else if (UNLIKELY(prevdelta2 > prevprevdelta2)) {
         // diverging
         if (UNLIKELY(++nDivergingStep > m_maxnDivergingStep)) {
           status = StatusCode::SUCCESS; // "Failed to converge"
@@ -126,10 +136,8 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj1,
           if( restrictRange1 ) restrictToRange(mu1,traj1) ;
           mu2 = prevflt2 + 0.5 * step2 ;
           if( restrictRange2 ) restrictToRange(mu2,traj2) ;
-          newPos1    = traj1.position( mu1 );
-          newPos2    = traj2.position( mu2 );
-          distance   = ( newPos1 - newPos2 );
-          delta      = distance.R();
+          distance   = traj1.position( mu1 ) - traj2.position( mu2 );
+          delta2      = distance.Mag2();
         }
       }
     }
@@ -163,9 +171,16 @@ StatusCode TrajPoca::minimize( const LHCb::Trajectory& traj,
 //=============================================================================
 //
 //=============================================================================
-bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, RestrictRange restrictRange1,
-                               const LHCb::Trajectory& traj2, double& mu2, RestrictRange restrictRange2,
-                               double tolerance, cache_t& cache ) const
+auto TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1,
+                               double& mu1,
+                               RestrictRange restrictRange1,
+                               const LHCb::Trajectory& traj2,
+                               double& mu2,
+                               RestrictRange restrictRange2,
+                               double tolerance,
+                               cache_t& cache,
+                               double maxExtrapTolerance,
+                               double maxDist ) const -> step_status_t
 {
   // a bunch of ugly, unitialized member variables
   traj1.expansion(mu1, cache.p1, cache.dp1dmu1, cache.d2p1dmu12);
@@ -174,7 +189,7 @@ bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, Restr
   // if the distance between points is below 1e-4 mm, we consider the
   // minimisation to be converged
   if (UNLIKELY(d.mag2() < std::pow(1e-4 * Gaudi::Units::mm, 2))) {
-    return true;
+    return ok;
   }
   std::array<double, 3> mat = { // keep all terms up to order mu1, mu2, mu1 * mu2
     cache.dp1dmu1.mag2() + d.Dot(cache.d2p1dmu12), -cache.dp2dmu2.Dot(cache.dp1dmu1),
@@ -191,7 +206,7 @@ bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, Restr
       if (UNLIKELY(msgLevel(MSG::DEBUG))) {
         debug() << "The Trajectories are parallel." << endmsg;
       }
-      return false;
+      return parallel;
     }
   }
   {
@@ -203,7 +218,7 @@ bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, Restr
       if (UNLIKELY(msgLevel(MSG::DEBUG))) {
         debug() << "The Trajectories are very nearly parallel." << endmsg;
       }
-      return false;
+      return nearly_parallel;
     }
   }
   const std::array<double, 2> rhs = { -d.Dot(cache.dp1dmu1), d.Dot(cache.dp2dmu2) };
@@ -218,7 +233,7 @@ bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, Restr
   // improvement in the doca. We bound this by tolerance from below
   // and maxExtrapTolerance from above.
   double deltadoca = std::sqrt(std::abs(rhs[0] * dmu[0]) + std::abs(rhs[1] * dmu[1])); // std::abs only because of machine precision issues.
-  double extraptolerance = std::min(std::max(deltadoca, tolerance), m_maxExtrapTolerance);
+  double extraptolerance = std::min(std::max(deltadoca, tolerance), maxExtrapTolerance);
   static constexpr double smudge = 1.01; // Factor to push just over border of piecewise traj (essential!)
   double distToErr1 = smudge * traj1.distTo2ndError(mu1, extraptolerance, pathDir1);
   double distToErr2 = smudge * traj2.distTo2ndError(mu2, extraptolerance, pathDir2);
@@ -250,14 +265,14 @@ bool TrajPoca::stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, Restr
   if (UNLIKELY(bool(restrictRange2))) restrictToRange(mu2, traj2);
 
   // another check for parallel trajectories
-  if (UNLIKELY(std::min(std::abs(mu1), std::abs(mu2)) > m_maxDist)) {
+  if (UNLIKELY(std::min(std::abs(mu1), std::abs(mu2)) > maxDist)) {
     if (UNLIKELY(msgLevel(MSG::DEBUG))) {
       debug() << "Stepped further than MaxDist." << endmsg;
     }
-    return false;
+    return beyond_maxdist;
   }
 
-  return true;
+  return ok;
 }
 
 //=============================================================================

@@ -775,9 +775,6 @@ namespace LHCb
         setData( flag, MaPMT::ShiftLargePixel, MaPMT::MaskLargePixel );
       }
     }
-
-  public:
-
     /// Print this RichSmartID in a human readable way
     std::ostream& fillStream( std::ostream& s,
 #ifdef NDEBUG

@@ -7,6 +7,7 @@ gaudi_depends_on_subdirs(Kernel/LHCbKernel
                          L0/L0DU
                          DAQ/RawEventCompat
                          Event/EventPacker
+                         Rich/RichDAQ
                          )
 
 set_property(DIRECTORY PROPERTY CONFIGURABLE_USER_MODULES

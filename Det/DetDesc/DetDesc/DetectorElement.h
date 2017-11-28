@@ -11,6 +11,7 @@
 // Include Files
 #include <string>
 #include <vector>
+#include <mutex>
 #include <map>
 
 #include "GaudiKernel/MsgStream.h"
@@ -346,8 +347,9 @@ private:
   /// Container of the SmartRefs for the conditions.
   ConditionMap m_de_conditions;
 
-  mutable bool                              m_de_childrensLoaded = false;
-  mutable IDetectorElement::IDEContainer    m_de_childrens;
+  mutable std::atomic<bool>              m_de_childrensLoaded{false};
+  mutable IDetectorElement::IDEContainer m_de_childrens;
+  mutable std::mutex                     m_de_childrens_lock;
 
   /// This defines the type of a userParameter
   enum userParamKind { DOUBLE, INT, OTHER };

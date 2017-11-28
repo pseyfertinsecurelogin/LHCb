@@ -14,7 +14,7 @@ ioh.outStream('PFN:Reco14-Stripping21.mdst',"InputCopyStream")
 
 TestFileDB.test_file_db['S21_bhadron_mdst'].run()
   </text></argument>
-  <argument name="reference"><text>../refs/reco14stripping21mdst.ref</text></argument>
+  <argument name="reference"><text>../refs/reco14stripping21mdsttoroot.ref</text></argument>
   <argument name="validator"><text>
 from GaudiConf.QMTest.LHCbExclusions import preprocessor as LHCbPreprocessor
 preprocessor = LHCbPreprocessor

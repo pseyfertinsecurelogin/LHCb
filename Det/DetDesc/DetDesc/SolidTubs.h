@@ -81,7 +81,7 @@ public:
    *  @see ISolid
    *  @return pointer to the most simplified cover
    */
-  const ISolid* cover () const override;
+  inline const ISolid* cover() const override { return m_cover.get(); }
 
   /** - printout to STD/STL stream
    *  - implementation  of ISolid abstract interface
@@ -259,7 +259,9 @@ private:
   unsigned int intersectionTicksImpl( const aPoint  & Point,
                                       const aVector & Vector,
                                       ISolid::Ticks& ticks ) const;
-
+  /// fills m_cover member
+  void createCover();
+  
 private:
 
   // parameters of tube segment
@@ -272,6 +274,8 @@ private:
   int                     m_tubs_coverModel    ;
   //
   bool                    m_noPhiGap           ;
+  // cover
+  std::unique_ptr<ISolid> m_cover;
 };
 
 

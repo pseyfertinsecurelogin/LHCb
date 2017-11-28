@@ -74,7 +74,7 @@ class TCKPrescaleEmulator final : public GaudiAlgorithm
 
   std::map<std::string, Algorithm*> prescalers; ///< map of prescaler algorithms
 
-  mutable IPropertyConfigSvc * m_propertyConfigSvc = nullptr;
+  IPropertyConfigSvc * m_propertyConfigSvc = nullptr;
   unsigned int m_tck{0};         //
   std::string m_propertyConfigSvcName;          ///< Name of PropertyConfigSvc
   Condition *m_condTrigger = nullptr;                     ///< Condition for sampling coefficients

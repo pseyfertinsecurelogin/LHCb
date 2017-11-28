@@ -159,10 +159,8 @@ SolidPolyHedronHelper::intersectionTicksImpl(const aPoint&  Point,
       ticks.push_back( tick );
   };
   ///
-  return SolidTicks::RemoveAdjancentTicks( ticks  ,
-                                           Point  ,
-                                           Vector ,
-                                           *this  );
+  return SolidTicks::RemoveAdjacentTicks( ticks  , Point  ,
+                                          Vector , *this  );
 }
 // ============================================================================
 // ============================================================================

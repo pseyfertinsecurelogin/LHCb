@@ -23,7 +23,6 @@
 // ============================================================================
 
 
-
 // ============================================================================
 /** constructor
  *  @param PhysVol_name name of phys volume
@@ -44,8 +43,9 @@ PVolume::PVolume
   m_nominal =  Gaudi::Transform3D( Rotation,
                                    Rotation(Gaudi::XYZVector(Position)));
   m_matrix  = m_nominal ;
-  ///
+  m_imatrix = m_nominal.Inverse();
   m_services = DetDesc::services();
+  findLogical();
 }
 
 // ============================================================================
@@ -65,6 +65,8 @@ PVolume::PVolume
   , m_matrix    ( Transform      )
 {
   m_services = DetDesc::services();
+  m_imatrix = m_matrix.Inverse();
+  findLogical();
 }
 
 
@@ -73,8 +75,7 @@ PVolume::PVolume
  *  @return pointet to logical volume
  */
 // ============================================================================
-ILVolume* PVolume::findLogical() const
-{
+void PVolume::findLogical() {
   m_lvolume = nullptr ;
   ILVolume* lv = nullptr ;
   try
@@ -93,14 +94,10 @@ ILVolume* PVolume::findLogical() const
   catch(...)
     { Assert( false ,
               " PVolume::findLogical(), unknown exception caught! ") ; }
-  ///
   Assert( lv ,
           " PVolume::findLogical, unable to locate LV=" +
           lvolumeName() );
-  ///
   m_lvolume = lv ;
-  ///
-  return m_lvolume;
 }
 
 
@@ -216,7 +213,6 @@ void PVolume::Assert( bool                  assertion ,
 // ============================================================================
 const ILVolume* PVolume::lvolume () const
 {
-    if (!m_lvolume) m_lvolume = findLogical();
     return m_lvolume;
 }
 // ============================================================================
@@ -228,7 +224,6 @@ const ILVolume* PVolume::lvolume () const
 // ============================================================================
 const Gaudi::Transform3D&  PVolume::matrixInv  () const
 {
-  if( !m_imatrix ) { m_imatrix = matrix().Inverse(); }
   return *m_imatrix ;
 }
 // ============================================================================
@@ -256,7 +251,6 @@ Gaudi::XYZPoint PVolume::toLocal
 // ============================================================================
 Gaudi::XYZPoint PVolume::toMother ( const Gaudi::XYZPoint& PointInLocal  ) const
 {
-  if( !m_imatrix ) { m_imatrix = matrix().Inverse(); }
   return (*m_imatrix) * PointInLocal ;
 }
 // ============================================================================
@@ -270,7 +264,6 @@ Gaudi::XYZPoint PVolume::toMother ( const Gaudi::XYZPoint& PointInLocal  ) const
 bool PVolume::isInside
 ( const Gaudi::XYZPoint& PointInMother ) const
 {
-  if( !m_lvolume ) { m_lvolume = findLogical() ; }
   return m_lvolume->isInside( toLocal( PointInMother ) ) ;
 }
 // ============================================================================
@@ -282,8 +275,7 @@ bool PVolume::isInside
 // ============================================================================
 IPVolume* PVolume::reset ()
 {
-  if( m_lvolume ) { m_lvolume->reset() ; m_lvolume = nullptr ; }
-  m_imatrix = boost::none;
+  if (m_lvolume) { m_lvolume->reset() ; findLogical() ; }
   return this;
 }
 // ============================================================================
@@ -318,7 +310,6 @@ unsigned int PVolume::intersectLine
   ILVolume::Intersections & intersections ,
   const double              threshold     ) const
 {
-  if (!m_lvolume) m_lvolume = findLogical();
   return m_lvolume->intersectLine ( m_matrix * Point  ,
                                     m_matrix * Vector ,
                                     intersections     ,
@@ -357,7 +348,6 @@ unsigned int PVolume::intersectLine
   const ISolid::Tick        tickMax       ,
   const double              threshold     ) const
 {
-  if (!m_lvolume) m_lvolume = findLogical();
   return m_lvolume->intersectLine( m_matrix * Point    ,
                                    m_matrix * Vector   ,
                                    intersections       ,

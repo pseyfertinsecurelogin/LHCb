@@ -95,7 +95,7 @@ StatusCode SolidBoolean::addChild( std::unique_ptr<ISolid>      child ,
                                    const Gaudi::Transform3D*    mtrx  )
 {
   if( !child  ) { return StatusCode::FAILURE; }
-  std::unique_ptr<SolidChild> pChild{ new  SolidChild( std::move(child) , mtrx , "Child For " + name () ) };
+  auto pChild = std::make_unique<SolidChild>( std::move(child) , mtrx , "Child For " + name () ) ;
   if( !pChild ) { return StatusCode::FAILURE; }
   m_sb_childrens.push_back(std::move(pChild));
   checkTickContainerCapacity() ;
@@ -114,8 +114,7 @@ StatusCode SolidBoolean::addChild   ( std::unique_ptr<ISolid>  child    ,
                                       const Gaudi::Rotation3D&    rotation )
 {
   if( !child  ) { return StatusCode::FAILURE; }
-  std::unique_ptr<SolidChild> pChild {
-    new  SolidChild( std::move(child) , position , rotation , "Child For " + name () ) };
+  auto pChild = std::make_unique<SolidChild>( std::move(child) , position , rotation , "Child For " + name () ) ;
   if( !pChild ) { return StatusCode::FAILURE; }
   m_sb_childrens.push_back(std::move(pChild));
   checkTickContainerCapacity() ;
@@ -173,8 +172,8 @@ unsigned int SolidBoolean::intersectionTicksImpl( const aPoint & Point,
                  std::back_inserter( ticks ) );
       childTicks.clear();
     }
-  /// sort and remove adjancent and some EXTRA ticks and return
-  return SolidTicks::RemoveAdjancentTicks( ticks , Point , Vector , *this );
+  /// sort and remove adjacent and some EXTRA ticks and return
+  return SolidTicks::RemoveAdjacentTicks( ticks , Point , Vector , *this );
 }
 // ============================================================================
 /** Calculate the maximum number of ticks that a straight line could make with this solid
@@ -241,10 +240,10 @@ unsigned int SolidBoolean::intersectionTicksImpl( const aPoint  & point,
   if( isOutBBox( point , vect , tickMin , tickMax ) ) { return 0; }
   ///
   intersectionTicks( point , vect , ticks );
-  // sort and remove adjancent and some EXTRA ticks and return
+  // sort and remove adjacent and some EXTRA ticks and return
   return
-    SolidTicks::RemoveAdjancentTicks( ticks , point , vect ,
-                                      tickMin , tickMax , *this );
+    SolidTicks::RemoveAdjacentTicks( ticks , point , vect ,
+                                     tickMin , tickMax , *this );
 }
 
 // ============================================================================

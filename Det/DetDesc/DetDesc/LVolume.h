@@ -73,9 +73,7 @@ public:
    *  @exception LVolumeException no material
    *  @return the material, associated with the Logical Volume
    */
-  inline const Material*
-  material   () const override
-  { return m_material ? m_material : findMaterial() ; }
+  inline const Material* material() const override { return m_material; }
 
   /** the material(by name), associated with the Logical Volume
    *  @see ILVolume
@@ -203,18 +201,9 @@ public:
   {
     /// reset the pointed-to solid
     if( m_solid ) { m_solid->reset() ; }
-    /// reset the material
-    m_material = nullptr ;
     /// reset the base
     return LogVolBase::reset() ;
   }
-
-  //protected:
-
-  /** default constructor
-   *  @param Name name of logical volume
-   */
-  LVolume( const std::string& Name = "");
 
 private:
 
@@ -224,12 +213,6 @@ private:
   LVolume& operator=( const LVolume& );
 
 private:
-
-  /** find C++ pointer to material by it's name
-   *  @exception LogVolumeException if the material is not found
-   *  @return the C++ pointer to material
-   */
-  const Material* findMaterial() const ;
 
   /** Auxillary method  to calculate own intersections
    *  @exception LogVolumeException for wrong parameters or geometry error
@@ -269,7 +252,7 @@ private:
   std::unique_ptr<ISolid>   m_solid        ;
   /// material
   std::string               m_materialName ;
-  mutable const Material*   m_material     ;
+  const Material*           m_material     ;
 
 };
 
@@ -278,11 +261,3 @@ private:
 // ============================================================================
 #endif  ///< DETDESC_LVOLUME_H
 // ============================================================================
-
-
-
-
-
-
-
-

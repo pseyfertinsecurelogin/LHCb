@@ -1,6 +1,5 @@
-
 // Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
+#include "GaudiAlg/FilterPredicate.h"
 
 // STL
 #include <string>
@@ -16,21 +15,13 @@ using boost::uint64_t;
 // from LHCb core
 #include "Event/ODIN.h"
 
-class DeterministicPrescaler final : public GaudiAlgorithm
+class DeterministicPrescaler final : public Gaudi::Functional::FilterPredicate<bool(const LHCb::ODIN&)>
 {
-
- public:
-
+public:
   DeterministicPrescaler( const std::string& name, ISvcLocator* pSvcLocator );
-  ~DeterministicPrescaler( ) = default;
 
   StatusCode initialize() override;
-  StatusCode execute() override;
-
- private:
-
-  inline bool accept(const LHCb::ODIN& odin) const ;
-  void update(Property&) ;
+  bool operator()(const LHCb::ODIN&) const override;
 
 private:
 
@@ -47,4 +38,3 @@ private:
   StatEntity*             m_counter = nullptr;
 
 };
-

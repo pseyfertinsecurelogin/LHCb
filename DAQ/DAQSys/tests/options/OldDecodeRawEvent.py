@@ -44,11 +44,17 @@ DataOnDemandSvc().AlgMap["Raw/Muon/Coords"]       = "MuonRec"
 DataOnDemandSvc().AlgMap["DAQ/ODIN"]              = "createODIN"
 DataOnDemandSvc().AlgMap["Raw/Rich/L1Data/RICH1RICH2"] = "Rich::Future::RawBankDecoder/RichFutureDecode"
 
-RawBankToSTClusterAlg("createITClusters").DetType          = "IT"
-RawBankToSTLiteClusterAlg("createITLiteClusters").DetType  = "IT"
+RawBankToSTClusterAlg("createITClusters").clusterLocation         = "Raw/IT/Clusters"
+RawBankToSTClusterAlg("createITClusters").DetType                 = "IT"
+RawBankToSTClusterAlg("createITClusters").summaryLocation         = "Rec/IT/Summary"
+RawBankToSTLiteClusterAlg("createITLiteClusters").clusterLocation = "Raw/IT/LiteClusters"
+RawBankToSTLiteClusterAlg("createITLiteClusters").DetType         = "IT"
 
-RawBankToSTClusterAlg("createUTClusters").DetType          = "UT"
-RawBankToSTLiteClusterAlg("createUTLiteClusters").DetType  = "UT"
+RawBankToSTClusterAlg("createUTClusters").clusterLocation         = "Raw/UT/Clusters"
+RawBankToSTClusterAlg("createUTClusters").DetType                 = "UT"
+RawBankToSTClusterAlg("createUTClusters").summaryLocation         = "Rec/UT/Summary"
+RawBankToSTLiteClusterAlg("createUTLiteClusters").clusterLocation = "Raw/UT/LiteClusters"
+RawBankToSTLiteClusterAlg("createUTLiteClusters").DetType         = "UT"
 
 #Moved to ST/STTools/python/STTools/STOfflineConf, as with TT and IT
 #from Configurables import STOfflinePosition

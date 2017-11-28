@@ -83,31 +83,8 @@ SolidTrap::SolidTrap( const std::string&  Name             ,
    setBP();
    ///
    checkTickContainerCapacity() ;
+   createCover();
 }
-
-// ============================================================================
-/** constructor
- *  @param Name name of general trapezoid
- */
-// ============================================================================
-SolidTrap::SolidTrap( const std::string& Name )
-  : SolidBase               ( Name )
-  , SolidPolyHedronHelper   ( Name )
-  , m_trap_zHalfLength      ( 100  )
-  , m_trap_theta            ( 0    )
-  , m_trap_phi              ( 0    )
-  , m_trap_dyAtMinusZ       ( 100  )
-  , m_trap_dxAtMinusZMinusY ( 100  )
-  , m_trap_dxAtMinusZPlusY  ( 100  )
-  , m_trap_alphaAtMinusZ    ( 0    )
-  , m_trap_dyAtPlusZ        ( 100  )
-  , m_trap_dxAtPlusZMinusY  ( 100  )
-  , m_trap_dxAtPlusZPlusY   ( 100  )
-  , m_trap_alphaAtPlusZ     ( 0    )
-  , m_trap_sinAlphaAtPlusZ  ( 0    )
-  , m_trap_cosAlphaAtPlusZ  ( 1    )
-{}
-
 
 // ============================================================================
 /** initialize the polihedron base
@@ -170,37 +147,31 @@ void SolidTrap::makeAll()
 }
 
 // ============================================================================
-/** - retrieve the pointer to "simplified" solid - "cover"
- *    -# the cover for Trap is Trd
- *  - implementation of ISolid abstract interface
- *  @see ISolid
- *  @return pointer to "simplified" solid - "cover"
+/** - creates the pointer to "simplified" solid - "cover"
+ *    -# the cover for Trap is Trd 
  */
 // ============================================================================
-const ISolid*           SolidTrap::cover         () const
-{
-  if( UNLIKELY(!m_cover) ) {
-      ///
-      double xmx1 = std::abs( point(0).x() ) ;
-      double ymx1 = std::abs( point(0).y() )  ;
-      for( std::size_t i = 1 ; i <  4 ; ++i ) {
-          xmx1 = std::max( std::abs( point(i).x() ), xmx1 );
-          ymx1 = std::max( std::abs( point(i).y() ), ymx1 );
-      }
-      ///
-      double xmx2 = std::abs( point(4).x() ) ;
-      double ymx2 = std::abs( point(4).y() )  ;
-      for( std::size_t i1 = 5 ; i1 <  8 ; ++i1 ) {
-          xmx2 = std::max( std::abs( point(i1).x() ),  xmx2 );
-          ymx2 = std::max( std::abs( point(i1).y() ),  ymx2 );
-      }
-      ///
-      m_cover = new SolidTrd( "Cover for " + name  () ,
-                              zHalfLength          () ,
-                              xmx1         , ymx1     ,
-                              xmx2         , ymx2     );
-  }
-  return m_cover;
+void SolidTrap::createCover() {
+  double ymx1 = fabs( point(0).y() )  ;
+  double xmx1 = fabs( point(0).x() ) ;
+  double ymx2 = fabs( point(4).y() )  ;
+  double xmx2 = fabs( point(4).x() ) ;
+  ///  
+  for( std::size_t i = 1 ; i <  4 ; ++i )
+    {
+      xmx1 = fabs( point(i).x() ) > xmx1 ? fabs( point(i).x() ) : xmx1 ; 
+      ymx1 = fabs( point(i).y() ) > ymx1 ? fabs( point(i).y() ) : ymx1 ; 
+    }  
+  for( std::size_t i1 = 4 ; i1 <  8 ; ++i1 )
+    {
+      xmx2 = fabs( point(i1).x() ) > xmx2 ? fabs( point(i1).x() ) : xmx2 ; 
+      ymx2 = fabs( point(i1).y() ) > ymx2 ? fabs( point(i1).y() ) : ymx2 ; 
+    } 
+  ///   
+  m_cover = std::make_unique<SolidTrd>("Cover for " + name(),
+                                       zHalfLength(),
+                                       xmx1, ymx1, 
+                                       xmx2, ymx2);
 }
 
 // ============================================================================

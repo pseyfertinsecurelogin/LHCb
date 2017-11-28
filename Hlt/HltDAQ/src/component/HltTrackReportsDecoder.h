@@ -1,11 +1,11 @@
-// $Id$
 #ifndef HLTTRACKREPORTSDECODER_H 
 #define HLTTRACKREPORTSDECODER_H 1
 
 // Include files
+#include <atomic>
 // from Gaudi
-#include "GaudiAlg/GaudiAlgorithm.h"
-#include "DAQKernel/DecoderAlgBase.h"
+#include "Event/Track.h"
+#include "HltRawBankDecoderBase.h"
 
 /** @class HltTrackReportsDecoder HltTrackReportsDecoder.h
  *  
@@ -16,7 +16,7 @@
  *  Algorithm to read HltTracks from Raw Data and create containers on TES
  *
  */
-class HltTrackReportsDecoder : public Decoder::AlgBase {
+class HltTrackReportsDecoder : public HltRawBankSplittingDecoder<LHCb::Tracks> {
 public: 
 
   enum HeaderIDs { kVersionNumber=1 };
@@ -24,8 +24,11 @@ public:
   /// Standard constructor
   HltTrackReportsDecoder( const std::string& name, ISvcLocator* pSvcLocator );
 
-  StatusCode initialize() override;    ///< Algorithm initialization
-  StatusCode execute   () override;    ///< Algorithm execution
+  ///< Algorithm initialization
+  StatusCode initialize() override;
+
+  ///< Algorithm execution
+  Gaudi::Functional::vector_of_optional_<LHCb::Tracks> operator()(const LHCb::RawEvent&) const override; 
 
 private:
 
@@ -34,9 +37,9 @@ private:
   StringProperty m_HltTrackReportsLocation;
 
   /// SourceID to decode. source ids are linked to track stages in TrackNames.trackingSources 
-  std::map<std::string,unsigned> m_map;
+  std::vector<unsigned> m_map;
 
-  unsigned int m_callcount;
+  mutable std::atomic<unsigned int> m_callcount{ 0 };
 
 };
 

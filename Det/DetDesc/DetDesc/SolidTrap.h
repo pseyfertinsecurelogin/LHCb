@@ -5,6 +5,7 @@
 /** STD and STL  includes */
 #include <cmath>
 #include <iostream>
+#include <memory>
 
 /** Geometry Definitions */
 #include "GaudiKernel/Point3DTypes.h"
@@ -77,7 +78,7 @@ public:
    *  @see ISolid
    *  @return pointer to "simplified" solid - "cover"
    */
-  const ISolid* cover () const override;
+  inline const ISolid* cover() const override { return m_cover.get(); }
 
   /** - printout to STD/STL stream
    *  - implementation  of ISolid abstract interface
@@ -139,11 +140,6 @@ public:
 
 protected:
 
-  /** constructor
-   *  @param Name name of general trapezoid
-   */
-  SolidTrap( const std::string& Name = "Anonymous Trap");
-
   /** initialize the polihedron base
    *  @exception SolidException wrong parameters
    */
@@ -160,6 +156,7 @@ private:
 
   SolidTrap           ( const SolidTrap & );  ///< no copy-constructor
   SolidTrap& operator=( const SolidTrap & );  ///< no assignment
+  void createCover();
 
 private:
 
@@ -179,6 +176,7 @@ private:
   double               m_trap_sinAlphaAtPlusZ   ;
   double               m_trap_cosAlphaAtPlusZ   ;
   ///@}
+  std::unique_ptr<ISolid> m_cover;
 };
 
 /// ===========================================================================

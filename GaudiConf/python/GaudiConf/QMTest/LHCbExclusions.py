@@ -1,4 +1,5 @@
-from GaudiTesting.BaseTest import normalizeExamples, RegexpReplacer, LineSkipper
+import os
+from GaudiTesting.BaseTest import normalizeExamples, RegexpReplacer, LineSkipper, SortGroupOfLines, BlockSkipper
 
 gitCondDBFixes = (RegexpReplacer(when='Detector description database:',
                                  orig='conddb:/', repl='git:/') +
@@ -44,9 +45,23 @@ preprocessor = (
                  "Run numbers generated from 0 every 0 events",
                  "############ CONFIGURING RawEventFormatConf!! ###############",
                  "INFO  resolving alias TCK/0x",
+                 "SUCCESS Number of counters : "
                 ],
       regexps = [r"DEBUG Property \['Name': Value\] =  '(Timeline|(Extra|Data)(In|Out)puts)'",
-                ])
+                ]) +
+    # Functional framework related
+    BlockSkipper("ForwardSchedule...   INFO Data Dependencies for Algorithms:",
+                 "ForwardSchedule...   INFO No unmet INPUT data dependencies were found") +
+    LineSkipper(["HiveSlimEventLo...   INFO",
+                 "ThreadPoolSvc        INFO no thread init tools attached",
+                 "AlgResourcePool      INFO",
+                 "ForwardSchedule...   INFO",
+                ]) +
+    RegexpReplacer(when = "Histograms converted successfully according to request",
+        orig = r'"HiveSlimEventLo..."',
+        repl = r'"EventLoopMgr      "') +
+    # Grouping
+    SortGroupOfLines(r'.*SUCCESS (Exceptions/Errors/Warnings/Infos Statistics :| #WARNINGS   =| #ERRORS   =|List of booked \dD histograms in directory).*')
    )
 
 from DDDB.Configuration import GIT_CONDDBS

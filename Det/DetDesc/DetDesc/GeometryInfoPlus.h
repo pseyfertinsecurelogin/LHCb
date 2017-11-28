@@ -492,7 +492,7 @@ private:
   /// Transformation from the  global reference system
   /// to the local reference system.
   /// Total matrix, including ideal alignment plus deltas.
-  mutable boost::optional<Gaudi::Transform3D>        m_matrix;
+  boost::optional<Gaudi::Transform3D>        m_matrix;
 
   /// Transformation from the  global reference system
   /// to the local reference system.

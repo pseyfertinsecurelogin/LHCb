@@ -42,17 +42,17 @@ namespace LHCb  {
     virtual ~RawEventTestDump()  {
     }
     /// Algorithm initialization
-    StatusCode initialize() override  {
+    StatusCode initialize()  override {
       m_numEvent = 0;
       return StatusCode::SUCCESS;
     }
     /// Algorithm finalization
-    StatusCode finalize() override  {
+    StatusCode finalize()  override {
       m_numEvent = 0;
       return StatusCode::SUCCESS;
     }
     /// Main execution
-    StatusCode execute() override  {
+    StatusCode execute()  override {
       SmartDataPtr<RawEvent> raw(eventSvc(),m_rawLocation);
       MsgStream info(msgSvc(),name());
       bool dmp = m_numEvent<m_debug || m_dump;

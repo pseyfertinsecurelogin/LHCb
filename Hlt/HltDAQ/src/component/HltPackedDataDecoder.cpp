@@ -28,9 +28,14 @@ HltPackedDataDecoder::HltPackedDataDecoder(const std::string& name,
                                            ISvcLocator* pSvcLocator)
   : HltRawBankDecoderBase(name, pSvcLocator)
 {
+  //new for decoders, initialize search path, and then call the base method
+  m_rawEventLocations = {LHCb::RawEventLocation::Trigger, LHCb::RawEventLocation::Copied, LHCb::RawEventLocation::Default};
+  initRawEventSearch();
+  declareProperty("EnableChecksum", m_enableChecksum = false);
+  declareProperty("ContainerMap", m_containerMap);
   // The default m_sourceID=0 triggers a warning in HltRawBankDecoderBase::initialize
   // Since we only care about HLT2 persistence, set it explicitly:
-  m_sourceID = kSourceID_Hlt2;
+  setProperty("SourceID", kSourceID_Hlt2);
   m_rawEventLocations.push_back(LHCb::RawEventLocation::PersistReco);
 }
 
@@ -63,7 +68,7 @@ StatusCode HltPackedDataDecoder::initialize() {
   register_object<LHCb::PackedCaloAdcs>();
 
   if (UNLIKELY(m_enableChecksum)) {
-    m_checksum = new PackedDataPersistence::PackedDataChecksum();
+    m_checksum.reset( new PackedDataPersistence::PackedDataChecksum());
   }
 
   return StatusCode::SUCCESS;
@@ -76,14 +81,19 @@ std::pair<DataObject*, size_t> HltPackedDataDecoder::loadObject(const std::strin
   put(object, location);
   auto nBytesRead = m_buffer.load(*object);
   if (UNLIKELY(m_enableChecksum)) m_checksum->processObject(*object, location);
-  return std::make_pair(dynamic_cast<DataObject*>(object), nBytesRead);
+  return { object, nBytesRead };
 }
 
 
 StatusCode HltPackedDataDecoder::execute() {
   if (UNLIKELY(msgLevel(MSG::DEBUG))) debug() << "==> Execute" << endmsg;
 
-  const auto& rawBanksConst = findFirstRawBank(LHCb::RawBank::DstData);
+  auto* rawEvent = findFirstRawEvent();
+  if (!rawEvent) {
+    return Error("Raw event not found!");
+  }
+
+  const auto& rawBanksConst = rawEvent->banks(LHCb::RawBank::DstData);
   if (rawBanksConst.empty()) {
     return Warning("No HltPackedData raw bank (the DstData bank) in raw event. Quitting.",
                    StatusCode::SUCCESS, 10);
@@ -149,7 +159,7 @@ StatusCode HltPackedDataDecoder::execute() {
   }
 
   // Get the map of ids to locations (may differ between events)
-  const auto& locationsMap = packedObjectLocation2string(tck());
+  const auto& locationsMap = packedObjectLocation2string(tck(*rawEvent));
 
   std::vector<int32_t> linkLocationIDs;
 
@@ -182,10 +192,8 @@ StatusCode HltPackedDataDecoder::execute() {
       m_buffer.skip(storedObjectSize);
       continue;
     }
-    const auto loadObjectFun = it->second;
-
     // Load the packed object
-    auto ret = loadObjectFun(containerPath);
+    auto ret = (it->second)(containerPath);
     auto dataObject = ret.first;
     auto readObjectSize = ret.second;
 
@@ -233,7 +241,7 @@ StatusCode HltPackedDataDecoder::finalize() {
   if (UNLIKELY(m_enableChecksum)) {
     for (const auto& x: m_checksum->checksums())
       info() << "Packed data checksum for '" << x.first << "' = " << x.second << endmsg;
-    delete m_checksum;
+    m_checksum.reset();
   }
   return HltRawBankDecoderBase::finalize();  // must be called after all other actions
 }
