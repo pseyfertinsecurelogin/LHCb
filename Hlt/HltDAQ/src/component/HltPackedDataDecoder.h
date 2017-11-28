@@ -1,6 +1,10 @@
 #ifndef PACKEDDATADECODER_H
 #define PACKEDDATADECODER_H 1
 
+
+//// TODO: split this up into RawEvent -> [ loc, Out_i ]
+//         and then use SuperAlgorithm to have a vector over i....
+
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 #include "HltRawBankDecoderBase.h"
@@ -29,9 +33,9 @@ private:
   template<typename PackedData> void register_object();
 
   /// Property giving the mapping between packed containers and containers
-  Gaudi::Property<std::map<std::string, std::string>> m_containerMap { this, "ContainerMap" };
+  std::map<std::string, std::string> m_containerMap;
   /// Property enabling calculation and print of checksums
-  Gaudi::Property<bool> m_enableChecksum { this, "EnableChecksum", false};
+  bool m_enableChecksum;
 
   /// Load an object from the buffer and save it to TES.
   template<typename T> std::pair<DataObject*, size_t> loadObject(const std::string& location);
@@ -39,9 +43,9 @@ private:
   /// Map between CLIDs and load functions
   std::map<CLID, std::function<std::pair<DataObject*, size_t>(const std::string&)> > m_loaders;
   /// Buffer for de-serialization of the packed objects
-  PackedDataPersistence::PackedDataInBuffer m_buffer;
+  PackedDataPersistence::PackedDataInBuffer m_buffer; 
   /// Helper for computing checksums
-  PackedDataPersistence::PackedDataChecksum* m_checksum{nullptr};
+  std::unique_ptr<PackedDataPersistence::PackedDataChecksum> m_checksum;
 };
 
 #endif // PACKEDDATADECODER_H

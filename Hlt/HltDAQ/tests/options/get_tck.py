@@ -24,8 +24,6 @@ IOHelper("MDF").inputFiles(args.file)
 
 # Top level sequence
 topSeq = GaudiSequencer( "TopSequence" )
-from Configurables import createODIN
-topSeq.Members = [createODIN()]
 
 from DAQSys.Decoders import DecoderDB
 for dec in ("HltDecReportsDecoder/Hlt1DecReportsDecoder", "HltDecReportsDecoder/Hlt2DecReportsDecoder"):

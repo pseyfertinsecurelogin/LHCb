@@ -75,13 +75,10 @@ unsigned long LogVolBase::release () { return DataObject::release(); }
  *  @return status code
  */
 // ============================================================================
-StatusCode
-LogVolBase::queryInterface
-( const InterfaceID& ID  ,
-  void**             ppI )
+StatusCode LogVolBase::queryInterface ( const InterfaceID& ID, void** ppI )
 {
-  if(  0 ==  ppI ) { return StatusCode::FAILURE ; }
-  *ppI = 0 ;
+  if(  !ppI ) { return StatusCode::FAILURE ; }
+  *ppI = nullptr ;
   if      ( ID == ILVolume::   interfaceID() )
   { *ppI = static_cast<ILVolume*>   ( this ) ; }
   else if ( ID == IInterface:: interfaceID() )
@@ -208,6 +205,7 @@ IPVolume* LogVolBase::createPVolume ( const std::string&    PVname         ,
                               this, StatusCode::FAILURE );
   }
 
+  updateCover(*pv);
   m_pvolumes.push_back( pv.release() );
   return m_pvolumes.back();
 }
@@ -239,6 +237,7 @@ LogVolBase::createPVolume( const std::string&    PVname      ,
                               PVname+"(lv="+LVnameForPV+")",
                               this, StatusCode::FAILURE );
   }
+  updateCover(*pv);
   m_pvolumes.push_back( pv.release() );
   return m_pvolumes.back();
 }

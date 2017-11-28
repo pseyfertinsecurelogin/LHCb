@@ -143,6 +143,14 @@ StatusCode UpdateManagerSvc::initialize(){
   return StatusCode::SUCCESS;
 }
 
+StatusCode UpdateManagerSvc::start() {
+  if (m_withoutBeginEvent) {
+    return newEvent();
+  } else {
+    return StatusCode::SUCCESS;
+  }
+}
+
 StatusCode UpdateManagerSvc::stop(){
   if( msgLevel(MSG::DEBUG) ) {
     debug() << "--- stop ---" << endmsg;
@@ -606,10 +614,10 @@ void UpdateManagerSvc::dump(){
     if (dot_file) {
       // graph node for registered item (first part, label)
       (*dot_file) << "item_" << std::hex << i.get()
-    		  << "[label=\""
-    		  << "(" << std::dec << cnt-1 << ") "
-    		  << std::hex << i.get() << "\\n"
-    		  << "(" << i->ptr << ")";
+                  << "[label=\""
+                  << "(" << std::dec << cnt-1 << ") "
+                  << std::hex << i.get() << "\\n"
+                  << "(" << i->ptr << ")";
     }
 
     if ( msgLevel(MSG::VERBOSE) )
@@ -624,8 +632,8 @@ void UpdateManagerSvc::dump(){
     }/* else {
       INamedInterface *ni = dynamic_cast<INamedInterface>(i->ptr);
       if (ni) {
-    	// It's a component with name, we can put it in the graph label
-    	(*dot_file) << "\\n" << ni->name();
+        // It's a component with name, we can put it in the graph label
+        (*dot_file) << "\\n" << ni->name();
       }
     } */
 
@@ -797,4 +805,50 @@ void UpdateManagerSvc::releaseLock(){
 #endif
 }
 
+namespace {
+  /**
+   * UpdateManagerSvc specific implementation of the ICondIOVResource::IOVLock::LockManager.
+   */
+  struct UMSLockManager : public ICondIOVResource::IOVLock::LockManager {
+    UMSLockManager(std::shared_lock<std::shared_timed_mutex>&& lock): m_lock(std::move(lock)) {}
+    std::shared_lock<std::shared_timed_mutex> m_lock;
+  };
+}
+
+ICondIOVResource::IOVLock UpdateManagerSvc::reserve(const Gaudi::Time &eventTime) const {
+  // take a read lock on the IOV resource. This secures the reading of m_head_since/until
+  // by preventing any update of it
+  std::shared_lock<std::shared_timed_mutex> reading {m_IOVresource};
+  if ( eventTime < m_head_since || eventTime >= m_head_until ) {
+    // We seem to need to update. We will need to take a write lock on the IOV resource
+    // First thing to do is release our read lock, or we have no chance
+    reading.unlock();
+    // We now can attempt to take the write lock. However, we need to make sure that a
+    // single thread is trying to get it at a given moment. Otherwise, the one losing
+    // may get stuck if the winning one gets back the read lock immediately after giving
+    // away the write one. For this purpose, we use an (independent) extra lock.
+    // Note that this extra lock is where concurrent threads will wait for the write
+    // lock aquisition. If we want the write lock aquisition to succeed at the end,
+    // we need to take the extra lock AFTER releasing the read lock or we create a nice
+    // dead lock.
+    std::lock_guard<std::mutex> need_to_update {m_IOVreserve_mutex};
+    // now that we have the privilege to attempt taking the write lock,
+    // redo the initial check as things may have changed
+    if ( eventTime < m_head_since || eventTime >= m_head_until ) {
+      // finally take the write lock and update. Note that if any one is holding a read
+      // lock, we will wait here. And keep in mind that the read lock is stored in the
+      // TES at the end of this method by whoever called it and kept until the end of
+      // the event. This is preventing another change of IOV while the current one is
+      // still under use
+      std::unique_lock<std::shared_timed_mutex> updating {m_IOVresource};
+      detDataSvc()->setEventTime( eventTime );
+      const_cast<UpdateManagerSvc*>(this)->newEvent( eventTime );
+    } // releasing write lock
+    // now taking again the read lock. Note that we are still alone in that path
+    // as we still hold the need_to_update lock
+    reading.lock();
+  } // release need_to_update lock
+  // return and release the read lock, allowing future updates to take place
+  return ICondIOVResource::IOVLock{std::make_unique<UMSLockManager>(std::move(reading))};
+}
 //=============================================================================

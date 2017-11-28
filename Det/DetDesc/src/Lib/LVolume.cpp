@@ -57,17 +57,13 @@ LVolume::LVolume
 {
   if( !m_solid )
     { throw LogVolumeException("LVolume: ISolid* points to NULL ") ; }
+  SmartDataPtr<const Material> tmpmaterial( dataSvc() , materialName() );
+  if( !tmpmaterial ) {
+    throw LogVolumeException( "Could not locate material " + materialName(),
+                              this, StatusCode::FAILURE );
+  }
+  m_material = tmpmaterial;
 }
-// ===========================================================================
-/* (default) constructor
- *  @param name         name of logical volume
- */
-// ===========================================================================
-LVolume::LVolume( const std::string& name )
-  : LogVolBase     ( name       )
-  , m_materialName ( ""         )
-  , m_material     ( 0          )
-{}
 // ============================================================================
 const CLID& LVolume::clID   () const { return classID()    ; }
 // ============================================================================
@@ -140,22 +136,6 @@ StatusCode LVolume::belongsTo( const Gaudi::XYZPoint&   LocalPoint ,
   return pv->lvolume()->belongsTo( pv->matrix() * LocalPoint ,
                                    Level - 1                 ,
                                    replicaPath               );
-}
-// ============================================================================
-/*  locate material
- *  @exception LVolumeException
- *  @return pointer to material
- */
-// ============================================================================
-const Material* LVolume::findMaterial() const
-{
-  SmartDataPtr<const Material> material( dataSvc() , materialName() );
-  if( !material ) {
-    throw LogVolumeException( "Could not locate material " + materialName(),
-                              this, StatusCode::FAILURE );
-  }
-  m_material = material;
-  return m_material;
 }
 // ============================================================================
 /*  printout to STD/STL stream

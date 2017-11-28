@@ -1,6 +1,8 @@
 #ifndef DETDESC_SOLIDBASE_H
 #define DETDESC_SOLIDBASE_H 1
 
+// Units
+#include "GaudiKernel/SystemOfUnits.h"
 // DetDesc
 #include "DetDesc/Services.h"
 #include "DetDesc/ISolid.h"
@@ -156,26 +158,11 @@ public:
 
 public :
 
-  /// accessor to "minimal x" value of the solid   ("bounding box")
-  inline double  xMin      () const                { return m_xmin    ; }
-  /// accessor to "maximal x" value of the solid   ("bounding box")
-  inline double  xMax      () const                { return m_xmax    ; }
+  /// accessor to "maximal r" value of the solid("bounding sphere")
+  inline double rMax() const { return m_rmax; }
 
-  /// accessor to "minimal y" value of the solid   ("bounding box")
-  inline double  yMin      () const                { return m_ymin    ; }
-  /// accessor to "maximal y" value of the solid   ("bounding box")
-  inline double  yMax      () const                { return m_ymax    ; }
-
-  /// accessor to "minimal z" value of the solid   ("bounding box")
-  inline double  zMin      () const                { return m_zmin    ; }
-  /// accessor to "maximal z" value of the solid   ("bounding box")
-  inline double  zMax      () const                { return m_zmax    ; }
-
-  /// accessor to "maximal r" value of the solid   ("bounding sphere")
-  inline double  rMax      () const                { return m_rmax    ; }
-
-  /// accessor to "maximal rho" value of the solid ("bounding sphere")
-  inline double  rhoMax    () const                { return m_rhomax  ; }
+  /// accessor to "maximal rho" value of the solid("bounding sphere")
+  inline double rhoMax() const { return m_rhomax; }
 
 protected:
 
@@ -396,21 +383,6 @@ protected:
 
 protected:
 
-  /// set "minimal x" for the solid
-  inline void    setXMin   ( const double value )  { m_xmin   = value ; }
-  /// set "maximal x" for the solid
-  inline void    setXMax   ( const double value )  { m_xmax   = value ; }
-
-  /// set "minimal y" for the solid
-  inline void    setYMin   ( const double value )  { m_ymin   = value ; }
-  /// set "maximal y" for the solid
-  inline void    setYMax   ( const double value )  { m_ymax   = value ; }
-
-  /// set "minimal z" for the solid
-  inline void    setZMin   ( const double value )  { m_zmin   = value ; }
-  /// set "maximal z" for the solid
-  inline void    setZMax   ( const double value )  { m_zmax   = value ; }
-
   /// set "maximal r" for the solid
   inline void    setRMax   ( const double value )  { m_rmax   = value ; }
   /// set "maximal r" for the solid
@@ -447,9 +419,6 @@ protected:
    */
   SolidBase( const std::string& Name="Undefined" );
 
-  /// virtual destructor
-  virtual ~SolidBase();
-
 private:
 
   // assignement operator is disabled
@@ -468,18 +437,9 @@ private:
 protected:
 
   std::string     m_name  ; ///< name of the solid
-  mutable ISolid* m_cover ; ///< pointer to cover
 
-  double m_xmin   ;
-  double m_ymin   ;
-  double m_zmin   ;
-
-  double m_xmax   ;
-  double m_ymax   ;
-  double m_zmax   ;
-
-  double m_rmax   ;
-  double m_rhomax ;
+  double m_rmax{-10 * Gaudi::Units::km};
+  double m_rhomax{-10 * Gaudi::Units::km};
 
   /// reference to services
   DetDesc::ServicesPtr m_services;

@@ -8,6 +8,7 @@
 #include <functional>
 #include <algorithm>
 #include <vector>
+#include <memory>
 // Units
 #include "GaudiKernel/SystemOfUnits.h"
 // Geometry Definitions
@@ -71,12 +72,13 @@ public:
   bool isInside (  const Gaudi::XYZPoint& point ) const override;
   bool isInside ( const Gaudi::Polar3DPoint& point ) const override;
   bool isInside ( const Gaudi::RhoZPhiPoint& point ) const override;
+
   /** -# retrieve the pointer to "simplified" solid - "cover"
    *  -# implementation of ISolid abstract interface
    *  @see ISolid
    *  @return pointer to "simplified" solid - "cover"
    */
-  const ISolid* cover () const override;
+  inline const ISolid* cover () const override { return m_cover.get(); }
 
   /** - printout to STD/STL stream
    *  - implementation  of ISolid abstract interface
@@ -220,11 +222,6 @@ protected:
 
 protected:
 
-  /** default protected  constructor
-   *  @param Name name of conical tube segment
-   */
-  SolidPolycone( const std::string& Name = "Anonymous Polycone") : SolidBase(Name) {}
-
   /** set bounding parameters
    */
   void setBP();
@@ -264,9 +261,12 @@ private:
   bool noPhiGap() const { return m_deltaPhiAngle == 360 * Gaudi::Units::degree ; }
 private:
 
+  void createCover();
+
   Triplets       m_triplets      ; ///< vector of parameters
   double         m_startPhiAngle = 0                          ; ///< start phi angle
   double         m_deltaPhiAngle = 360 * Gaudi::Units::degree ; ///< delta phi angle
+  std::unique_ptr<ISolid> m_cover;
 
 };
 

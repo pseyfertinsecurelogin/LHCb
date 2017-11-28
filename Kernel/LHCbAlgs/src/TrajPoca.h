@@ -51,37 +51,28 @@ public:
                        const Gaudi::XYZPoint& pt,
                        Gaudi::XYZVector& distance,
                        double precision ) const override;
+
 private:
+
   struct cache_t {
     Gaudi::XYZPoint p1, p2;
     Gaudi::XYZVector dp1dmu1, dp2dmu2;
     Gaudi::XYZVector d2p1dmu12, d2p2dmu22;
   };
 
+  enum step_status_t { ok = 0, parallel, nearly_parallel, beyond_maxdist };
 
-  bool stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, RestrictRange range1,
-                       const LHCb::Trajectory& traj2, double& mu2, RestrictRange range2,
-                       double precision, cache_t& cache ) const;
-
-  inline bool restrictToRange(double& l, const LHCb::Trajectory& t) const
-  {
-    const auto lmax = std::max(t.beginRange(),t.endRange());
-    const auto lmin = std::min(t.beginRange(),t.endRange());
-    const auto oldl = l;
-    l = std::max(lmin, std::min(lmax, l));
-    return oldl != l;
-  }
-
-private:
+  step_status_t stepTowardPoca( const LHCb::Trajectory& traj1, double& mu1, RestrictRange range1,
+                                const LHCb::Trajectory& traj2, double& mu2, RestrictRange range2,
+                                double precision, cache_t& cache, double maxExtrapTolerance, double maxDist ) const;
 
   // jobOptions
-  int m_maxnOscillStep;
-  int m_maxnDivergingStep;
-  int m_maxnStuck;
-  int m_maxnTry;
-  double m_maxDist;
-  double m_maxExtrapTolerance;
-
+  Gaudi::Property<int> m_maxnOscillStep { this,  "MaxnOscillStep", 5 };
+  Gaudi::Property<int> m_maxnDivergingStep {  this,  "MaxnDivergingStep", 5 };
+  Gaudi::Property<int> m_maxnStuck { this,  "MaxnStuck",         3  };
+  Gaudi::Property<int> m_maxnTry { this, "MaxnTry",           100 };
+  Gaudi::Property<double> m_maxDist { this, "MaxDist", 100000000  };
+  Gaudi::Property<double> m_maxExtrapTolerance { this, "MaxExtrapTolerance", 1*Gaudi::Units::cm };
 };
 
 #endif // TRACKTOOLS_TRAJPOCA_H

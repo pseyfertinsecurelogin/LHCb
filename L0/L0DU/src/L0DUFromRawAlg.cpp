@@ -1,4 +1,4 @@
-// Include files 
+// Include files
 
 // DAQEvent
 #include "Event/RawEvent.h"
@@ -43,19 +43,18 @@ L0DUFromRawAlg::L0DUFromRawAlg( const std::string& name,
 StatusCode L0DUFromRawAlg::initialize() {
   StatusCode sc = L0FromRawBase::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
-  
+
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Initialize" << endmsg;
 
-  if ( m_hlt1 &&
-       m_fromRawTool == "L0DUFromRawTool" ) { 
+  if ( m_hlt1 && m_fromRawTool == "L0DUFromRawTool" ) {
     m_fromRawTool = "L0DUFromRawHlt1Tool";
   }
-  
+
   // get the decoding tool
   m_fromRaw = tool<IL0DUFromRawTool>( m_fromRawTool , m_fromRawTool  , this);
   if ( m_compare ) m_fromRaw2 = tool<IL0DUFromRawTool>( "L0DUFromRawTool"  , "L0DUFromRawTool" , this);
 
-  if ( !m_hlt1 ) {    
+  if ( !m_hlt1 ) {
     // decode the bank
     if ( m_fromRaw->_setProperty("RawEventLocations",Gaudi::Utils::toString(rawEventLocations()) ).isFailure() )
       return Error("Unable to set RawEventLocations in L0DUFromRawTool",StatusCode::SUCCESS,50);
@@ -88,7 +87,7 @@ StatusCode L0DUFromRawAlg::execute() {
 
   if ( m_compare ) compareReports();
 
-  // Clone Processor Data and put it on TES 
+  // Clone Processor Data and put it on TES
   // WARNING : PROCESSOR DATA ARE NOT CONTEXT DEPENDANT
   if( m_writeProcData) {
     LHCb::L0ProcessorDatas* datas = new LHCb::L0ProcessorDatas();
@@ -97,7 +96,7 @@ StatusCode L0DUFromRawAlg::execute() {
       datas->insert (new LHCb::L0ProcessorData( *it ));
     }
   }
-  
+
   counter("L0DU RawBank Size (Bytes)") += m_fromRaw->size();
 
   // print out (CHECKS)
@@ -109,15 +108,15 @@ StatusCode L0DUFromRawAlg::execute() {
     while(mask != 0x0){
       debug()   << " -- Decision type = " << LHCb::L0DUDecision::Name[typ] << " -- " << endmsg;
       debug()   << "    o decision bit from raw                          : " <<  m_fromRaw->report().decision(typ) << endmsg;
-      debug()   << "    o decision re-built from summary report          : " 
+      debug()   << "    o decision re-built from summary report          : "
                 <<   m_fromRaw->report().decisionFromSummary(typ) << endmsg;
-      if( m_fromRaw->version() != 0 && 
+      if( m_fromRaw->version() != 0 &&
           m_fromRaw->report().configuration() != NULL &&
           m_fromRaw->report().configuration()->completed()
           ){
         debug()   << "    o emulated decision from configuration ( "
                   << format("0x%04X",m_fromRaw->report().configuration()->tck() ) << ") : "
-                  <<   m_fromRaw->report().configuration()->emulatedDecision(typ) 
+                  <<   m_fromRaw->report().configuration()->emulatedDecision(typ)
                   << " (Downscaling decision : " << m_fromRaw->report().configuration()->isDownscaled() << ") " << endmsg;
       }
       typ  = typ  << 1;
@@ -129,7 +128,7 @@ StatusCode L0DUFromRawAlg::execute() {
       for(LHCb::L0DUChannel::Map::iterator it = channels.begin();channels.end()!=it;it++){
         std::string name = ((*it).second)->name();
         verbose() << " -- Channel Decision '" << name << "'"
-                  << " (Decision type  : " << LHCb::L0DUDecision::Name[((*it).second)->decisionType()] << ") : " 
+                  << " (Decision type  : " << LHCb::L0DUDecision::Name[((*it).second)->decisionType()] << ") : "
                   << m_fromRaw->report().channelDecisionByName( name ) << endmsg;
       }
       LHCb::L0DUElementaryCondition::Map& conds = m_fromRaw->report().configuration()->conditions();
@@ -138,7 +137,7 @@ StatusCode L0DUFromRawAlg::execute() {
         verbose() << "    - Condition Value " << name << " : " << m_fromRaw->report().conditionValueByName( name ) << endmsg;
       }
     }
-  }  
+  }
   return StatusCode::SUCCESS;
 }
 
@@ -149,11 +148,11 @@ void L0DUFromRawAlg::compareReports ( ) {
   if( !m_fromRaw2->decodeBank()){
     Warning("RawBank decoding failed - no report comparaison").ignore();
     return;
-  } 
-  
-  LHCb::L0DUReport rep  = m_fromRaw->report(); 
+  }
+
+  LHCb::L0DUReport rep  = m_fromRaw->report();
   LHCb::L0DUReport rep2 = m_fromRaw2->report();
-  
+
   if ( rep.decisionValue() != rep2.decisionValue() ) {
     info() << "!= decisionValue : hlt " << rep.decisionValue() << " pro " << rep2.decisionValue()  << endmsg;
   }
@@ -170,15 +169,15 @@ void L0DUFromRawAlg::compareReports ( ) {
     info() << "!= sumEt : hlt " << rep.sumEt() << " pro " << rep2.sumEt()  << endmsg;
   }
   if ( rep.channelsPreDecisionSummaries() != rep2.channelsPreDecisionSummaries() ) {
-    info() << "!= channelsPreDecisionSummaries : hlt " << rep.channelsPreDecisionSummaries() 
+    info() << "!= channelsPreDecisionSummaries : hlt " << rep.channelsPreDecisionSummaries()
            << " pro " << rep2.channelsPreDecisionSummaries()  << endmsg;
   }
   if ( rep.channelsDecisionSummaries() != rep2.channelsDecisionSummaries() ) {
-    info() << "!= channelsDecisionSummaries : hlt " << rep.channelsDecisionSummaries() 
+    info() << "!= channelsDecisionSummaries : hlt " << rep.channelsDecisionSummaries()
            << " pro " << rep2.channelsDecisionSummaries()  << endmsg;
   }
   if ( rep.conditionsValueSummaries() != rep2.conditionsValueSummaries() ) {
-    info() << "!= conditionsValueSummaries : hlt " << rep.conditionsValueSummaries() 
+    info() << "!= conditionsValueSummaries : hlt " << rep.conditionsValueSummaries()
            << " pro " << rep2.conditionsValueSummaries()  << endmsg;
   }
   if ( rep.valid() != rep2.valid() ) {
@@ -191,14 +190,14 @@ void L0DUFromRawAlg::compareReports ( ) {
     for(std::map<std::string, std::pair<int,double> >::const_iterator imap = rep.dataMap().begin();
         imap!= rep.dataMap().end();imap++){
       if ( int(rep2.dataDigit(imap->first)) != imap->second.first ) {
-        info() << "!= dataMap : For name " << imap->first 
+        info() << "!= dataMap : For name " << imap->first
                << " hlt: " << imap->second.first << " pro " <<   rep2.dataDigit(imap->first) << endmsg;
       }
     }
     for(std::map<std::string, std::pair<int,double> >::const_iterator imap = rep2.dataMap().begin();
         imap!= rep2.dataMap().end();imap++){
       if ( int(rep.dataDigit(imap->first)) != imap->second.first ) {
-        info() << "!= dataMap : For name " << imap->first 
+        info() << "!= dataMap : For name " << imap->first
                << " pro: " << imap->second.first << " hlt " <<   rep.dataDigit(imap->first) << endmsg;
       }
     }

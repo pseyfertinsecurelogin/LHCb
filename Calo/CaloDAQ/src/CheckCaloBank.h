@@ -13,15 +13,14 @@
  */
 
 class CheckCaloBank : public GaudiAlgorithm {
-  friend class AlgFactory<CheckCaloBank>;
- public:
+public:
 
   CheckCaloBank( const std::string& name, ISvcLocator* pSvcLocator);
-
   StatusCode initialize() override;
   StatusCode execute   () override;
 
- private:
+
+private:
   LHCb::RawBank::BankType m_trig;
   LHCb::RawBank::BankType m_bank;
   std::string m_typ;

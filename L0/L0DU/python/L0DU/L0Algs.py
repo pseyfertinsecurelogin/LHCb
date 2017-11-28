@@ -102,8 +102,8 @@ def decodeL0MuonSeq(suffix=''):
 ## L0DU algorithm
 def decodeL0DU(suffix=''):
     """ Returns the algorithm to decode the L0DU data."""
-    from Configurables import L0DUFromRawAlg
-    return L0DUFromRawAlg(L0DUFromRawAlgName+suffix)
+    from Configurables import L0DUDecoder
+    return L0DUDecoder(L0DUFromRawAlgName+suffix)
 
 ## L0DU sequence
 def decodeL0DUSeq(suffix=''):

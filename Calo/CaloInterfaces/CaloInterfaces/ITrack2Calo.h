@@ -1,4 +1,4 @@
-#ifndef ITRACK2CALO_H 
+#ifndef ITRACK2CALO_H
 #define ITRACK2CALO_H 1
 
 // Include files
@@ -12,10 +12,10 @@
 #include "Event/CaloPosition.h"
 #include "CaloDet/DeCalorimeter.h"
 #include "Kernel/CaloCellID.h"
-#include "Kernel/ParticleID.h"
+#include "Kernel/TrackDefaultParticles.h"
 
 // Forward declarations
-namespace LHCb 
+namespace LHCb
 {
   class Track;
   class CaloHypo;
@@ -25,7 +25,7 @@ namespace LHCb
 
 
 /** @class ITrack2Calo ITrack2Calo.h Kernel/ITrack2Calo.h
- *  
+ *
  *
  *  @author Olivier Deschamps
  *  @date   2007-06-25
@@ -35,23 +35,18 @@ struct ITrack2Calo : extend_interfaces<IAlgTool>
   // Return the interface ID
   DeclareInterfaceID(ITrack2Calo, 3, 0 );
 
-  virtual bool  match(const  LHCb::Track* track,
-                      std::string det = DeCalorimeterLocation::Ecal,
-                      CaloPlane::Plane plane = CaloPlane::ShowerMax, 
-                      double delta = 0.,
-                      LHCb::ParticleID pid = LHCb::ParticleID(211)
-                      )= 0;
-
+  virtual bool match( const LHCb::Track* track, std::string det = DeCalorimeterLocation::Ecal,
+                      CaloPlane::Plane plane = CaloPlane::ShowerMax, double delta = 0.,
+                      LHCb::Tr::PID pid = LHCb::Tr::PID::Pion() ) = 0;
 
   virtual LHCb::State caloState() = 0;
   virtual LHCb::CaloCellID caloCellID() = 0;
   virtual bool isValid() = 0;
   //
-  virtual LHCb::State closestState(LHCb::CaloHypo*    hypo   ,LHCb::ParticleID pid = LHCb::ParticleID(211))=0;
-  virtual LHCb::State closestState(LHCb::CaloCluster* cluster,LHCb::ParticleID pid = LHCb::ParticleID(211))=0;
-  virtual LHCb::State closestState(LHCb::CaloPosition calopos,LHCb::ParticleID pid = LHCb::ParticleID(211))=0;
-  virtual LHCb::State closestState(LHCb::CaloCellID   cellID ,LHCb::ParticleID pid = LHCb::ParticleID(211))=0;
-  virtual const LHCb::Track* track()=0;  
-
+  virtual LHCb::State closestState( LHCb::CaloHypo* hypo, LHCb::Tr::PID pid = LHCb::Tr::PID::Pion() ) = 0;
+  virtual LHCb::State closestState( LHCb::CaloCluster* cluster, LHCb::Tr::PID pid = LHCb::Tr::PID::Pion() ) = 0;
+  virtual LHCb::State closestState( LHCb::CaloPosition calopos, LHCb::Tr::PID pid = LHCb::Tr::PID::Pion() ) = 0;
+  virtual LHCb::State closestState( LHCb::CaloCellID cellID, LHCb::Tr::PID pid = LHCb::Tr::PID::Pion() ) = 0;
+  virtual const LHCb::Track* track() = 0;
 };
 #endif // ITRACK2CALO_H

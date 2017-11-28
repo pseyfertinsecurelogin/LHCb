@@ -55,7 +55,6 @@ LoKi::Listener::Listener ( const LoKi::Listener& right )
   , extend_interfaces1<IIncidentListener> ( right )
   , implements1<IIncidentListener>        ( right )
   , m_incSvc          ( right.m_incSvc )
-  , m_incidents       ()
 {
   // subscribe to all incidents
   for ( auto& ii : right.m_incidents ) subscribe( ii.first, ii.second ).ignore();
@@ -168,17 +167,6 @@ StatusCode LoKi::Listener::unsubscribe ( const std::string& incident )
   m_incidents.erase ( ifind ) ;
   //
   return StatusCode::SUCCESS ;
-}
-// ========================================================================
-/* IInterface::release need to be modify to avoid ``suicidal''-behaviour
- * @see IInterface
- */
-// ========================================================================
-unsigned long LoKi::Listener::release()
-{
-  if ( m_refCount ) { --m_refCount ; }
-  // no suicide here!!!
-  return m_refCount ;
 }
 // ========================================================================
 

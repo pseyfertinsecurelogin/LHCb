@@ -311,11 +311,11 @@ namespace LHCb
     /// Constructor from unsigned 64 bit int
     explicit constexpr RichSmartID( const uint64_t key ) noexcept
       : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
-    
+
     /// Constructor from signed 32 bit int type
     explicit           RichSmartID( const int32_t key ) noexcept
       : m_key( reinterpret_cast<const LHCb::RichSmartID::KeyType&>(key) ) { }
-    
+
     /// Constructor from signed 64 bit int
     explicit constexpr RichSmartID( const int64_t key ) noexcept
       : m_key( static_cast<LHCb::RichSmartID::KeyType>( key & 0x00000000FFFFFFFF ) ) { }
@@ -778,9 +778,6 @@ namespace LHCb
         setData( flag, MaPMT::ShiftLargePixel, MaPMT::MaskLargePixel );
       }
     }
-  
-  public:
-    
     /// Print this RichSmartID in a human readable way
     std::ostream& fillStream( std::ostream& s,
 #ifdef NDEBUG
@@ -789,28 +786,28 @@ namespace LHCb
                               const bool dumpSmartIDBits = true
 #endif
                               ) const;
-    
+
     /** Return the output of the ostream printing of this object as a string.
      *  Mainly for use in GaudiPython. */
     std::string toString() const;
-    
+
   public:
-    
+
     /// Test if a given bit in the ID is on
     inline constexpr bool isBitOn( const int32_t pos ) const noexcept
     {
       return ( 0 != ( key() & ( 1 << pos ) ) );
     }
-    
+
     /// Print the ID as a series of bits (0/1)
     std::ostream& dumpBits( std::ostream& s ) const;
-    
+
   };
-  
+
   /// ostream operator
   inline std::ostream& operator<< (std::ostream& str, const RichSmartID& obj)
   {
     return obj.fillStream(str);
   }
-  
+
 }

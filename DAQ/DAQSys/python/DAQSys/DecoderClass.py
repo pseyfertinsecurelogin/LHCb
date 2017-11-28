@@ -5,7 +5,7 @@ and also simple manipulators of the database it creates:
 validate(db), decodersForBank(db,bank,ignoreActive=False), decoderToLocation(db,location,ignoreActive=False)
 """
 from GaudiConf.Manipulations import configurableInstanceFromString, addPrivateToolFromString
-
+from GaudiKernel.DataObjectHandleBase import DataObjectHandleBase
 
 class Decoder(object):
     """
@@ -185,7 +185,6 @@ class Decoder(object):
         """
         Set a List of input locations to search, set to all daughters
         """
-        from GaudiKernel.DataObjectHandleBase import DataObjectHandleBase
         if not self.isInputSettable():
             raise AttributeError("My input is not settable "+self.FullName)
         #if type(self.Inputs) is list and len(self.Inputs):
@@ -204,12 +203,13 @@ class Decoder(object):
                     ensuretype=type(ip)
                 if type(input)==ensuretype:
                     self.Inputs[k]=input
-                elif type(input) is str and ensuretype is DataObjectHandleBase:
-                    self.Inputs[k]=input
                 elif type(input) is list and len(input)>0 and ensuretype is str:
                     raise TypeError(self.FullName+" cannot set property of type list to this string, "+self.FullName+" "+input.__str__())
                 elif ensuretype is list and type(input) is str:
                     self.Inputs[k]=[input]
+                elif ensuretype is DataObjectHandleBase:
+                    path = input if type(input) is str else ':'.join(input)
+                    self.Inputs[k] = DataObjectHandleBase(path)
                 else:
                     raise TypeError(self.FullName+" cannot convert input from type "+ str(type(input)) +" to "+ str(ensuretype))
         #then cascade downwards
@@ -222,15 +222,11 @@ class Decoder(object):
         """
         Set a list or dict of OutputLocations, set to all daughters
         """
-        from GaudiKernel.DataObjectHandleBase import DataObjectHandleBase
         #print "GAAAAAAAHHHHHHHHH!!!!!!", output, self.FullName
         if not self.isOutputSettable():
             raise AttributeError("My output is not settable "+self.FullName)
-        #if type(self.Outputs) is list and len(self.Outputs):
-        #    if type(output) is list:
-        #        self.Outputs=output
-        #    elif type(output) is str:
-        #        self.Outputs=[output]
+        if type(self.Outputs) is list and len(self.Outputs):
+            raise TypeError(self.FullName+": outputs must be a dict, not "+ str(type(self.Outputs)))
         if type(self.Outputs) is dict and len(self.Outputs):
             #print "recognized I can set the output"
             for k,op in self.Outputs.items():
@@ -246,24 +242,26 @@ class Decoder(object):
                 if op is None:
                     #determine default type, first get my configurable
                     thedecoder=configurableInstanceFromString(self.FullName)
-                    ensuretype=type(self.__getprop__(thedecoder,k))
+                    prop = self.__getprop__(thedecoder,k)
+                    if isinstance(prop, DataObjectHandleBase):
+                        # special case for datahandles
+                        ensuretype=str
+                    else:
+                        ensuretype=type(prop)
                 else:
                     ensuretype=type(op)
                 #set this type
                 #print "Type converted"
-                ensuretypeisnotlist = ensuretype is not list and ensuretype is not dict
                 if type(setoutput)==ensuretype:
                     self.Outputs[k]=setoutput
-                elif type(setoutput) is str and ensuretype is DataObjectHandleBase:
-                    self.Outputs[k]=setoutput
-                elif type(setoutput) is list and (len(setoutput)>1 or len(setoutput)==0) and ensuretypeisnotlist:
+                elif type(setoutput) is list and (len(setoutput)>1 or len(setoutput)==0) and ensuretype is str:
                     raise TypeError("Cannot set property of type list to this string, "+self.FullName+" "+setoutput.__str__())
-                elif type(setoutput) is list and len(setoutput)==1 and ensuretypeisnotlist:
+                elif type(setoutput) is list and len(setoutput)==1 and ensuretype is str:
                     self.Outputs[k]=setoutput[0]
                 elif ensuretype is list and type(setoutput) is str:
                     self.Outputs[k]=[setoutput]
                 else:
-                    raise TypeError(self.FullName+": Cannot convert from type "+ str(type(setoutput)) +" to "+ str(ensuretype) )
+                    raise TypeError(self.FullName+": Cannot convert from type "+ str(type(setoutput)) +" to "+ str(ensuretype))
         #then cascade downwards
         for tool in self.PublicTools+self.PrivateTools:
             if tool in self.__db__:
@@ -275,25 +273,29 @@ class Decoder(object):
         Cascade down the database and find all output locations
         """
         outputs=[]
+        #maybe I'm just a list
         if type(self.Outputs) is list:
             outputs=outputs+self.Outputs
+        #or I'm a dict
         elif type(self.Outputs) is dict:
             for key in self.Outputs:
+                #do I have to be found from the configurable?
                 if self.Outputs[key] is None:
+                    #OK, find me then
                     ops=self.__getprop__(configurableInstanceFromString(self.FullName),key)
-                    if ops is not None and type(ops) is not list and type(ops) is not dict :
-                        ops=[ops]
-                    for op in ops:
-                        if op not in outputs:
-                            outputs.append(op)
                 else:
+                    #no? well add me to the list
                     ops=self.Outputs[key]
-                    if ops is not None and type(ops) is not list and type(ops) is not dict :
-                        ops=[ops]
-                    for op in ops:
-                        if op not in outputs:
-                            outputs.append(op)
-        
+
+                #only add if not already in the list
+                if ops is not None and type(ops) is str:
+                    ops=[ops]
+                elif isinstance(ops, DataObjectHandleBase):
+                    ops = ops.Path.split(":")
+                for op in ops:
+                    if op not in outputs:
+                        outputs.append(op)
+        #cascade down the tools        
         for tool in self.PrivateTools+self.PublicTools:
             if tool in self.__db__:
                 thieroutputs=self.__db__[tool].listOutputs()
@@ -315,20 +317,18 @@ class Decoder(object):
                 if self.Inputs[key] is None:
                     #OK, find me then
                     ips=self.__getprop__(configurableInstanceFromString(self.FullName),key)
-                    #only add if not already in the list
-                    if ips is not None and type(ips) is not list and type(ips) is not dict :
-                        ips=[ips]
-                    for ip in ips:
-                        if ip not in inputs:
-                            inputs.append(ip)
                 else:
                     #no? well add me to the list
                     ips=self.Inputs[key]
-                    if ips is not None and type(ips) is not list and type(ips) is not dict :
-                        ips=[ips]
-                    for ip in ips:
-                        if ip not in inputs:
-                            inputs.append(ip)
+
+                #only add if not already in the list
+                if type(ips) is str:
+                    ips=[ips]
+                elif isinstance(ips, DataObjectHandleBase):
+                    ips = ips.Path.split(":")
+                for ip in ips:
+                    if ip not in inputs:
+                        inputs.append(ip)
         #cascade down the tools
         for tool in self.PrivateTools+self.PublicTools:
             if tool in self.__db__:

@@ -199,7 +199,7 @@ class DecodeRawEvent(ConfigurableUser):
                 if DataOnDemandSvc().AlgMap is None or type(DataOnDemandSvc().AlgMap) is not dict:
                     DataOnDemandSvc().AlgMap={}
                 locs=v.listOutputs()
-                for loc in map(str, locs):
+                for loc in locs:
                     if loc in DataOnDemandSvc().AlgMap:
                         testname=DataOnDemandSvc().AlgMap[loc]
                         if type(testname) is not str:

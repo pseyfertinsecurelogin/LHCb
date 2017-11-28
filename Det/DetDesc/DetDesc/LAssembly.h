@@ -2,6 +2,7 @@
 #define DETDESC_LASSEMBLY_H 1
 // Include files
 // from DetDesc
+#include "DetDesc/IBoxCover.h"
 #include "DetDesc/LogVolBase.h"
 #include "DetDesc/CLIDLAssembly.h"
 #include "DetDesc/DetDesc.h"
@@ -21,8 +22,8 @@ static const std::string EmptyString("");
  *  @date   18/11/2001
  */
 
-class LAssembly : public LogVolBase
-{
+class LAssembly : public virtual IBoxCover,
+                  public LogVolBase {
   /// friend factory for instantiation
   friend class DataObjectFactory<LAssembly>;
 
@@ -197,23 +198,10 @@ public:
   MsgStream&    printOut
   ( MsgStream    & os             ) const override;
 
-  double xMin() const   { return m_xMin;  }
-  double xMax() const   { return m_xMax;  }
-  double yMin() const   { return m_yMin;  }
-  double yMax() const   { return m_yMax;  }
-  double zMin() const   { return m_zMin;  }
-  double zMax() const   { return m_zMax;  }
+protected:
 
-  void   computeCover ();
-
-private:
-  double m_xMin =  1000000.;
-  double m_xMax = -1000000.;
-  double m_yMin =  1000000.;
-  double m_yMax = -1000000.;
-  double m_zMin =  1000000.;
-  double m_zMax = -1000000.;
-  bool   m_coverComputed =  false ;
+  /// updates box cover integrating the new BoxCover
+  void updateCover(const IPVolume& box) override;
 
 };
 

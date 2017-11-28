@@ -40,7 +40,7 @@ namespace LHCb  {
       /// Connection specs of current file
       std::string                      m_conSpec;
       /// Data holder
-      std::pair<char*,int>             m_data;
+      mutable std::pair<char*,int>     m_data;
       /// Current file offset
       long long                        m_fileOffset;
       /// Pointer to file manager service
@@ -58,13 +58,20 @@ namespace LHCb  {
       /// Standard destructor
       virtual ~LoopContext()                    { close();              }
       /// IEvtSelector::Context overload; context identifier
-      virtual void* identifier() const override { return (void*)m_sel;  }
+      void* identifier() const          override { return (void*)m_sel;  }
       /// Connection specification
       const std::string& specs() const          { return m_conSpec;     }
       /// Access to file offset(if possible)
       virtual long long offset()  const         { return m_fileOffset;  }
       /// Raw data buffer (if it exists)
       virtual std::pair<char*,int> data() const { return m_data;        }
+      /// Release data buffer and give ownership to caller
+      virtual std::pair<char*,int> releaseData() const {
+	std::pair<char*,int> tmp = m_data;
+	m_data.first  = 0;
+	m_data.second = 0;
+	return tmp;
+      }
       /// Receive event and update communication structure
       virtual StatusCode receiveData(IMessageSvc* msg) = 0;
       /// Skip N events
@@ -92,7 +99,7 @@ namespace LHCb  {
     /** Access last item in the iteration
       * @param[in,out] refContext Reference to the Context object.
       */
-    virtual StatusCode last(Context& /* refContext */ ) const override {
+    StatusCode last(Context& /* refContext */ ) const    override {
       return StatusCode::FAILURE;
     }
 
@@ -131,7 +138,7 @@ namespace LHCb  {
       *
       * @return StatusCode indicating success or failure
       */
-    StatusCode rewind(Context& /* refCtxt */ ) const override {
+    StatusCode rewind(Context& /* refCtxt */ ) const   override {
       return StatusCode::FAILURE;
     }
 

@@ -1,7 +1,6 @@
 import DAQSys
 from DAQSys.Decoders import DecoderDB
 from DAQSys.DecoderClass import validate
-from GaudiKernel.DataObjectHandleBase import DataObjectHandleBase
 
 validate(DecoderDB)
 
@@ -10,12 +9,12 @@ for k,v in DecoderDB.items():
         if len(v.listInputs())==0:
             raise ValueError("Decoder "+v.FullName+" input location unknown.")
         for l in v.listInputs():
-            if ( type(l) is str and not len(l) ) or ( type(l) is DataObjectHandleBase and not len(l.toStringProperty()) ) : 
+            if not len(l):
                 raise ValueError("Zero length default for input "+v.FullName)
         if len(v.listOutputs())==0:
             raise ValueError("Decoder "+v.FullName+" output location unknown.")
         for l in v.listOutputs():
-            if ( type(l) is str and not len(l) ) or ( type(l) is DataObjectHandleBase and not len(l.toStringProperty()) ) :  
+            if not len(l):
                 raise ValueError("Zero length default for output "+v.FullName)
         if len(v.Banks)==0:
             raise ValueError("Decoder "+v.FullName+" banks unknown.")
@@ -26,7 +25,7 @@ for k,decoder in DecoderDB.items():
         decoder.setup()
 
 #add an alg already into the DoD with the default name
-dec = None
+dec=None
 for k,decoder in DecoderDB.iteritems():
     if decoder.Active:
         if k.split('/')[0]==k.split('/')[-1]:
