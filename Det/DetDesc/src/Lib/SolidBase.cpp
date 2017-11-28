@@ -131,7 +131,38 @@ MsgStream&    SolidBase::printOut ( MsgStream&    st ) const
        << DetDesc::print(   rMax () / Gaudi::Units::mm )  << ","
        << DetDesc::print( rhoMax () / Gaudi::Units::mm )  << ") " << endmsg ;
 }
-
+// ============================================================================
+/** Tests whether or not the given line (defined as a point and 
+   *  a direction) intersects or not with the given solid.
+   *  - Line is parametrized with parameter \a t :
+   *     \f$ \vec{x}(t) = \vec{p} + t \times \vec{v} \f$
+   *      - \f$ \vec{p} \f$ is a point on the line
+   *      - \f$ \vec{v} \f$ is a vector along the line
+   *  @param Point initial point for the line
+   *  @param Vector vector along the line
+   *  @return the number of intersection points
+   */
+// ============================================================================
+bool SolidBase::testForIntersection( const Gaudi::XYZPoint & Point      ,
+                                     const Gaudi::XYZVector& Vector     ) const
+{
+  ISolid::Ticks ticks;
+  return 0 != intersectionTicks( Point, Vector, ticks );
+}
+// ============================================================================
+bool SolidBase::testForIntersection( const Gaudi::Polar3DPoint & Point  ,
+                                     const Gaudi::Polar3DVector& Vector ) const
+{
+  ISolid::Ticks ticks;
+  return 0 != intersectionTicks( Point, Vector, ticks );
+}
+// ============================================================================
+bool SolidBase::testForIntersection( const Gaudi::RhoZPhiPoint & Point  ,
+                                     const Gaudi::RhoZPhiVector& Vector ) const
+{
+  ISolid::Ticks ticks;
+  return 0 != intersectionTicks( Point, Vector, ticks );
+}
 // ============================================================================
 /** - calculate the intersection points("ticks") of the solid objects
  *    with given line.
