@@ -136,24 +136,10 @@ public:
       const auto pLocal = geometry()->toLocalMatrix()*start;
       const auto vLocal = geometry()->toLocalMatrix()*(end-start);
       // run full intersection test
-      ISolid::Ticks ticks;
-      inter = 0 != m_localCone->intersectionTicks( pLocal, vLocal, ticks );
+      inter = m_localCone->testForIntersection( pLocal, vLocal );
     }
     
-    // // test against running the full test always
-    // {
-    //   const auto pLocal = geometry()->toLocal(start);
-    //   const auto vLocal = geometry()->toLocalMatrix()*(end-start);
-    //   ISolid::Ticks ticks;
-    //   const bool testinter = ( 0 != m_localCone->intersectionTicks(pLocal,vLocal,ticks) );
-    //   if ( testinter != inter )
-    //   {
-    //     info() << " -> Mis-match : " << testinter << " " << inter
-    //            << " " << pLocal << " " << vLocal << endmsg;
-    //   }
-    //   //else { info() << " Beam OK !!" << endmsg; }
-    // }
-    
+    // return
     return inter;
   }
 
@@ -202,6 +188,7 @@ public:
       }
     }
 
+    // return
     return mask;
   }
 
