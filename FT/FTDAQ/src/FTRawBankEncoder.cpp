@@ -1,6 +1,6 @@
 // Include files
 #include "boost/optional.hpp"
-#include "Event/FTLiteCluster.h"
+#include "Event/FTCluster.h"
 #include "Event/RawEvent.h"
 
 #include <numeric>
@@ -28,9 +28,6 @@ StatusCode FTRawBankEncoder::initialize() {
   StatusCode sc = GaudiAlgorithm::initialize(); // must be executed first
   if ( sc.isFailure() ) return sc;  // error printed already by GaudiAlgorithm
 
-  //== create the vector of vectors of vectors with the proper size...
-  m_sipmData.resize( s_nbBanks, std::vector<std::vector<uint16_t> >{s_nbSipmPerTELL40});
-
   return StatusCode::SUCCESS;
 }
 
@@ -39,18 +36,22 @@ StatusCode FTRawBankEncoder::initialize() {
 //=============================================================================
 StatusCode FTRawBankEncoder::execute() {
 
-  typedef FastClusterContainer<LHCb::FTLiteCluster,int> FTLiteClusters;
-  FTLiteClusters* clusters = get<FTLiteClusters>( m_inputLocation );
+  //typedef FastClusterContainer<LHCb::FTLiteCluster,int> FTLiteClusters;
+  LHCb::FTClusters* clusters = get<LHCb::FTClusters>( m_inputLocation );
   if ( msgLevel( MSG::DEBUG) ) debug() << "Retrieved " << clusters->size() << " clusters" << endmsg;
   LHCb::RawEvent* event = getOrCreate<LHCb::RawEvent,LHCb::RawEvent>( m_outputLocation );
 
   // Incremented to deal with new numbering scheme
-  int codingVersion = 2;
+  int codingVersion = 3;
+
+  //== create the vector of vectors of vectors with the proper size...
+  std::vector<std::vector<std::vector<uint16_t> > > m_sipmData;
+  m_sipmData.resize( s_nbBanks, std::vector<std::vector<uint16_t> >{s_nbSipmPerTELL40});
 
   for (auto &b : m_sipmData ) for (auto &pm : b ) pm.clear();
 
   for ( const auto& cluster : *clusters ) {
-    LHCb::FTChannelID id = cluster.channelID();
+    LHCb::FTChannelID id = cluster->channelID();
 
     unsigned int bankNumber = id.quarter() + 4*id.layer() + 16*(id.station()-1u);   //== Temp, assumes 1 TELL40 per quarter.
 
@@ -65,18 +66,19 @@ StatusCode FTRawBankEncoder::execute() {
     }
 
     auto& data = m_sipmData[bankNumber][sipmNumber];
-    if (data.size() > FTRawBank::nbClusMaximum ) continue; // JvT: should be 9 (only for non-central)
+    if (id.module()>0 && data.size() > FTRawBank::nbClusMaximum+1 ) continue; 
+
     // one extra word for sipm number + nbClus
     if ( data.empty() ) data.push_back( sipmNumber << FTRawBank::sipmShift );
     data.push_back( ( id.channel()          << FTRawBank::cellShift ) |
-                    ( cluster.fractionBit() << FTRawBank::fractionShift ) |
-                    ( cluster.isLarge()     << FTRawBank::sizeShift )
+                    ( cluster->fractionBit() << FTRawBank::fractionShift ) |
+                    ( cluster->isLarge()     << FTRawBank::sizeShift )
                    );
     ++data[0]; // counts the number of clusters (in the header)
     if ( msgLevel( MSG::VERBOSE ) ) {
       verbose() << format( "Bank%3d sipm%4d channel %4d frac %3.1f isLarge %1d code %4.4x",
-                           bankNumber, sipmNumber, id.channel(), cluster.fraction(),
-                           cluster.isLarge(), data.back() ) << endmsg;
+                           bankNumber, sipmNumber, id.channel(), cluster->fraction(),
+                           cluster->isLarge(), data.back() ) << endmsg;
     }
   }
 
@@ -116,7 +118,6 @@ StatusCode FTRawBankEncoder::execute() {
 StatusCode FTRawBankEncoder::finalize() {
 
   if ( msgLevel(MSG::DEBUG) ) debug() << "==> Finalize" << endmsg;
-  m_sipmData.clear();
   return GaudiAlgorithm::finalize();  // must be called after all other actions
 }
 

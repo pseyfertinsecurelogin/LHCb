@@ -25,8 +25,7 @@ public:
   StatusCode finalize  () override;    ///< Algorithm finalization
 
 private:
-  std::vector<std::vector<std::vector<uint16_t> > > m_sipmData;
-  Gaudi::Property<std::string> m_inputLocation  {this, "InputLocation"  , LHCb::FTLiteClusterLocation::Default };
+  Gaudi::Property<std::string> m_inputLocation  {this, "InputLocation"  , LHCb::FTClusterLocation::Default };
   Gaudi::Property<std::string> m_outputLocation {this, "OutputLocation" , LHCb::RawEventLocation::Default };
   
 

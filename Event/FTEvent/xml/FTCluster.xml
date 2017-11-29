@@ -5,7 +5,8 @@
 
 <!DOCTYPE gdd SYSTEM "gdd.dtd" >
 <gdd>
-  <package name="FTEvent">
+  <package name   = "FTEvent">
+
     <class name   = "FTCluster"
            id     = "14003"
            author = "Olivier Callot,Eric Cogneras"
@@ -13,6 +14,7 @@
            final  = "TRUE"
            defaultdestructor = "FALSE"
            serializers="FALSE">
+      <import   name = "Kernel/FastClusterContainer"/>
       <import   name = "Kernel/FTChannelID" />
       <location name = "Default"   place="Raw/FT/Clusters"   />
 
@@ -21,8 +23,11 @@
       &KeyedObject;
 
       <constructor desc     = "Constructor"
-                   argList  = "LHCb::FTChannelID&amp; id , double fraction, int size, float charge"
-                   initList = "m_fraction(fraction), m_size(size), m_charge(charge)">
+                   argList  = "LHCb::FTChannelID&amp; id , double fraction, int fractionBit, 
+			       int size, std::vector&lt;LHCb::FTChannelID&gt; ids,int isLarge, 
+			       float charge"
+                   initList = "m_fraction(fraction), m_fractionBit(fractionBit), m_size(size), m_isLarge(isLarge),
+			       m_charge(charge), m_ids(ids)">
         <code> this->setKey(id); </code>
       </constructor>
 
@@ -39,8 +44,13 @@
       </method>
 
       <attribute name   = "fraction"
-                 desc   = "Fractional part of the channel ID, when barycentre si computed. between -0.25 and 0.75"
+                 desc   = "Fractional part of the channel ID, when barycentre is computed. between -0.25 and 0.75"
                  type   = "double"
+                 access = "PUBLIC"/>
+
+      <attribute name   = "fractionBit"
+                 desc   = "The fraction of channel as the integer value (0 or 1)"
+                 type   = "int"
                  access = "PUBLIC"/>
 
       <attribute name   = "size"
@@ -48,10 +58,23 @@
                  type   = "int"
                  access = "PUBLIC"/>
 
+      <attribute name   = "isLarge"
+                 desc   = "size category of the cluster: 0 lt 4, 1 lt 8, 2 others  "
+                 type   = "int"
+                 access = "PUBLIC"/>
+
       <attribute name   = "charge"
                  desc   = "Total charge in ADC count"
                  type   = "float"
                  access = "PUBLIC"/>
+
+      <attribute name   = "ids"
+                 desc   = "all FTChannelIDs corresponding to this cluster"
+                 type   = "std::vector&lt;LHCb::FTChannelID&gt;"
+                 setMeth= "FALSE"
+                 access = "PUBLIC"/>
+
+
 
     </class>
   </package>
