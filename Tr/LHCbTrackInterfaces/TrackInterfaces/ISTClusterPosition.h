@@ -1,4 +1,3 @@
-// $Id: $
 #ifndef TrackInterfaces_ISTClusterPosition_H
 #define TrackInterfaces_ISTClusterPosition_H
 
@@ -24,9 +23,8 @@ class STDigit;
  */
 
 
-class  ISTClusterPosition: public extend_interfaces<IAlgTool> {
+struct  ISTClusterPosition: extend_interfaces<IAlgTool> {
 
-public:
   // Declaration of the interface ID ( interface id, major version, minor version)
   DeclareInterfaceID( ISTClusterPosition, 1 , 0);
 
