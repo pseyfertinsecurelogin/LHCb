@@ -33,9 +33,7 @@ std::string LHCb::L0DUConfig::summary(){
   s << " ======= Trigger Sets ";
   if( !triggers().empty() ){
     s << " --> " << triggers().size() << " Trigger sets are defined : " << '\n';
-    for(const auto& t : triggers()) {
-      s << t.second->summary();
-    }
+    for(const auto& t : triggers()) s << t.second->summary();
   }
   return s.str();
 }
