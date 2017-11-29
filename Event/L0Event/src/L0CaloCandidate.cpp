@@ -36,7 +36,7 @@ std::string LHCb::L0CaloCandidate::typeName() const {
   }
 }
 //=========================================================================
-// Print on Gaudi MsgStream 
+// Print on Gaudi MsgStream
 //=========================================================================
 MsgStream& LHCb::L0CaloCandidate::fillStream( MsgStream& msg ) const {
 
@@ -44,7 +44,7 @@ MsgStream& LHCb::L0CaloCandidate::fillStream( MsgStream& msg ) const {
     msg << "L0CaloCandidate "  <<  typeName() <<  " Multiplicity " << m_etCode;
     return msg;
   }
-  msg << "L0CaloCandidate "  <<  typeName() 
+  msg << "L0CaloCandidate "  <<  typeName()
       <<  format( " Et %4d GeV %6.2f ID ", m_etCode, m_et/Gaudi::Units::GeV ) ;
   if ( L0DUBase::Fiber::CaloSumEt != m_type ) {
     msg << " ID " << m_ID << format( "%7.1f %7.1f %7.1f Error(cm) %5.2f",
@@ -53,7 +53,7 @@ MsgStream& LHCb::L0CaloCandidate::fillStream( MsgStream& msg ) const {
                                      m_position.z()/Gaudi::Units::centimeter,
                                      m_posTol/Gaudi::Units::centimeter );
   }
-  return msg; 
+  return msg;
 }
 
 
@@ -66,11 +66,8 @@ namespace LHCb {
   }
 
   MsgStream& operator<<( MsgStream& ms, const L0CaloCandidate* cand) {
-    if ( 0 != cand ) {
-      return cand->fillStream( ms );
-    }
-    ms << "L0CaloCandidate* points to null";
-    return ms;
+    if ( cand ) return ms << *cand;
+    return ms << "L0CaloCandidate* points to null";
   }
 }
 //=============================================================================

@@ -1,12 +1,13 @@
-// Include files 
+// Include files
 #include <utility>
 #include <string>
 #include <map>
 #include <sstream>
 
+#include "GaudiKernel/SerializeSTL.h"
 #include "Event/L0DUTrigger.h"
 
-//-------------------------------–—----------------------------------------------
+//-----------------------------------------------------------------------------
 // Auxilliary Implementation file for L0DUTrigger Event classes
 //
 // 09/02/2006 : Olivier Deschamps
@@ -24,17 +25,17 @@ std::string LHCb::L0DUTrigger::summary(){
 }
 
 std::string LHCb::L0DUTrigger::description(){
-  std::ostringstream os(" ");
-  std::ostringstream s(" ");
-  unsigned int k=0;
-  for(LHCb::L0DUChannel::Map::iterator ic = m_channels.begin()  ; ic != m_channels.end() ; ic++){
-    k++;
-    os << L0DUDecision::Name[((*ic).second)->decisionType()] <<"|" <<((*ic).second)->name()  ;
-    if( k != m_channels.size() ) os << " || ";
-  }
-  s << " ====  Trigger '" << L0DUDecision::Name[m_decisionType] +"|"+m_name   << "' = [" << os.str() << "]" << std::endl;
+  std::ostringstream s;
+  GaudiUtils::details::ostream_joiner( s << "  ====  Trigger '"
+                                         << L0DUDecision::Name[m_decisionType] << "|"
+                                         << m_name
+                                         << "' = [",
+                                       m_channels, " || ",
+                                       [](std::ostream& os, const auto& c) -> std::ostream&
+                                       {
+                                           return os << L0DUDecision::Name[c.second->decisionType()]
+                                                     << "|" << c.second->name()  ;
+                                       } ) << "]\n" ;
   return s.str();
-
-
 }
 

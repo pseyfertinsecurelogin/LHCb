@@ -17,9 +17,9 @@
      desc="A cluster as produced by the TELL1 but without full ADC information"
      location="Raw/Velo/LiteClusters"
      serializers="FALSE"
-    virtual = "FALSE"
-    final = "TRUE"
-    defaultdestructor="FALSE"
+     virtual = "FALSE"
+     final = "TRUE"
+     defaultdestructor="FALSE"
     >
 
   &VeloLiteClusterClass;

@@ -79,13 +79,6 @@
       </constructor>
 
 
-
-     <destructor  desc="destructor">
-     <code>
-     //
-     </code>
-     </destructor>
-
      <method type='LHCb::&className; &amp;' 
              name='operator ='
              argList='const &className; &amp; c'  
