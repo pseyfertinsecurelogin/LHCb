@@ -139,6 +139,7 @@ std::vector<LHCb::MuonTileID> MuonLayout::tiles() const {
 
   std::vector<LHCb::MuonTileID> vmt;
   if( ! isDefined() ) return vmt;
+  vmt.reserve(4*4*xGrid()*yGrid()*3);
   for(int iq = 0; iq <4; iq++) {
     for(int ir = 0; ir <4; ir++) {
       auto vmtr = tiles(iq,ir);
@@ -146,13 +147,13 @@ std::vector<LHCb::MuonTileID> MuonLayout::tiles() const {
     }
   }
   return vmt;
-
 }
 
 std::vector<LHCb::MuonTileID> MuonLayout::tiles(int iq) const {
 
   std::vector<LHCb::MuonTileID> vmt;
   if( !isDefined() ) return vmt;
+  vmt.reserve(4*xGrid()*yGrid()*3);
 
   for(int ir = 0; ir <4; ir++) {
     auto vmtr = tiles(iq,ir);

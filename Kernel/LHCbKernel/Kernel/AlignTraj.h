@@ -96,10 +96,10 @@ namespace LHCb
 
     double distTo1stError( double arclength,
                            double tolerance,
-                           int pathDirection = +1 ) const override;
+                           int pathDirection ) const override;
     double distTo2ndError( double arclength,
                            double tolerance,
-                           int pathDirection = +1 ) const override;
+                           int pathDirection ) const override;
 
     /// Distance, along the Trajectory, between position(mu1) and
     /// position(mu2). Trivial because AlignTraj is parameterized in

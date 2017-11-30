@@ -3,7 +3,7 @@
 
 #include "Math/Rotation3D.h"
 
-#include <math.h>
+#include <cmath>
 
 using LHCb::AlignTraj;
 
@@ -22,7 +22,7 @@ namespace {
     template <typename T>
     class Diag {
     public:
-       Diag(T& t,unsigned begin=0,unsigned end=T::kRows) : m_t(t), m_b(begin), m_e(end) {}
+       explicit Diag(T& t,unsigned begin=0,unsigned end=T::kRows) : m_t(t), m_b(begin), m_e(end) {}
        Diag<T>& operator=(double x) { for (unsigned i=m_b;i<m_e;++i) m_t(i,i) = x ; return *this; }
     private:
        T& m_t;

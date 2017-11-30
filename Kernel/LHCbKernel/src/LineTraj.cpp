@@ -3,19 +3,17 @@
 // local
 #include "Kernel/LineTraj.h"
 #include "GaudiKernel/SystemOfUnits.h"
-using namespace LHCb;
-using namespace ROOT::Math;
 
-std::unique_ptr<Trajectory> LineTraj::clone() const
+std::unique_ptr<LHCb::Trajectory> LHCb::LineTraj::clone() const
 {
-  return std::make_unique<LineTraj>(*this);
+  return std::make_unique<LHCb::LineTraj>(*this);
 }
 
 
 /// Constructor from a begin and an end point
-LineTraj::LineTraj( const Point& begPoint,
-                    const Point& endPoint )
-  : Trajectory(-(XYZVector(endPoint-begPoint)).r()/2.,(XYZVector(endPoint-begPoint)).r()/2.),
+LHCb::LineTraj::LineTraj( const Trajectory::Point& begPoint,
+                          const Trajectory::Point& endPoint )
+  : Trajectory(-(Gaudi::XYZVector(endPoint-begPoint)).r()/2.,(Gaudi::XYZVector(endPoint-begPoint)).r()/2.),
     m_dir(endPoint-begPoint),
     m_pos(begPoint+0.5*m_dir)
 {
@@ -23,50 +21,50 @@ LineTraj::LineTraj( const Point& begPoint,
 }
 
 /// Point on the trajectory at arclength from the starting point
-Trajectory::Point LineTraj::position( double arclength ) const
+LHCb::Trajectory::Point LHCb::LineTraj::position( double arclength ) const
 {
   return m_pos + arclength * m_dir;
 }
 
 /// First derivative of the trajectory at arclength from the starting point
-Trajectory::Vector LineTraj::direction( double /* arclength*/ ) const
+LHCb::Trajectory::Vector LHCb::LineTraj::direction( double /* arclength*/ ) const
 {
   return m_dir;
 }
 
 /// Second derivative of the trajectory at arclength from the starting point
-Trajectory::Vector LineTraj::curvature( double /* arclength */ ) const
+LHCb::Trajectory::Vector LHCb::LineTraj::curvature( double /* arclength */ ) const
 {
-  return Vector(0,0,0);
+  return {0,0,0};
 }
 
 /// Create a parabolic approximation to the trajectory
 /// at arclength from the starting point
-void LineTraj::expansion( double arclength,
-                          Point& p,
-                          Vector& dp,
-                          Vector& ddp ) const
+void LHCb::LineTraj::expansion( double arclength,
+                          Trajectory::Point& p,
+                          Trajectory::Vector& dp,
+                          Trajectory::Vector& ddp ) const
 {
-  ddp = Vector(0,0,0);
+  ddp = {0,0,0};
   dp  = m_dir;
   p   = m_pos + arclength * m_dir;
 }
 
 /// Determine the distance in arclenghts to the
 /// closest point on the trajectory to a given point
-double LineTraj::muEstimate( const Point& point ) const
+double LHCb::LineTraj::muEstimate( const Trajectory::Point& point ) const
 {
   return m_dir.Dot(point-m_pos);
 }
 
 // 1st order approx OK everywhere
-double LineTraj::distTo1stError( double , double , int ) const
+double LHCb::LineTraj::distTo1stError( double , double , int ) const
 {
   return 10*Gaudi::Units::km;
 }
 
 // 2nd order approx OK everywhere
-double LineTraj::distTo2ndError( double , double , int ) const
+double LHCb::LineTraj::distTo2ndError( double , double , int ) const
 {
   return 10*Gaudi::Units::km;
 }

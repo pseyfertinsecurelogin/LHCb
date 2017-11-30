@@ -4,7 +4,6 @@
 #include "Kernel/ParabolaTraj.h"
 #include "GaudiKernel/SystemOfUnits.h"
 using namespace LHCb;
-using namespace ROOT::Math;
 
 std::unique_ptr<Trajectory> ParabolaTraj::clone() const
 {
