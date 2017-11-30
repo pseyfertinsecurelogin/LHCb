@@ -15,6 +15,7 @@
 #include <cmath>
 #include <limits>
 #include <utility>
+#include <cstdint>
 
 // Local
 #include "RichUtils/RichSIMDTypes.h"
@@ -95,14 +96,14 @@ namespace Rich
       /// Converts a float to an int
       inline UInt32 float2uint32( const FPF& x ) noexcept
       {
-        union { FPF f; UInt32 i; } vp = { x };
+        const union { FPF f; UInt32 i; } vp = { x };
         return vp.i;
       }
 
       /// Converts an int to a float
       inline FPF uint322float( const UInt32& x ) noexcept
       {
-        union { UInt32 i; FPF f; } vp = { x };
+        const union { UInt32 i; FPF f; } vp = { x };
         return vp.f;
       }
 
@@ -387,6 +388,161 @@ namespace Rich
     inline float  fast_atan2( const float  y, const float  x ) { return vdt::fast_atan2f(y,x); }
     /// Fast atan2
     inline double fast_atan2( const double y, const double x ) { return vdt::fast_atan2(y,x); }
+
+    //------------------------------------------------------------------------------
+
+    /** @namespace Rich::SIMD::Maths::Approx
+     *
+     *  Namespace for fast approximations to various math functions.
+     *
+     *  These implementations are less precise than those above, but consequently
+     *  varying degress faster (depending on how approximate you go). 
+     *  Use with care, but in the right case can give good gains.
+     *
+     *  Based in part on the code at
+     *
+     *  http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
+     *
+     *  @author Chris Jones  Christopher.Rob.Jones@cern.ch
+     *  @date   30/11/2017
+     */
+    namespace Approx
+    {
+
+      //------------------------------------------------------------------------------
+
+      // SIMD versions
+
+      /// Fast log2 approximation 
+      inline FPF approx_log2( const FPF & x ) noexcept
+      {
+        const union { FPF f; UInt32 i; } vx = { x };
+        const union { UInt32 i; FPF f; } mx = { ( vx.i & UInt32(0x007FFFFF) ) | UInt32(0x3f000000) };
+        const auto y = Vc::simd_cast<FPF>(vx.i) * FPF(1.1920928955078125e-7f);
+        return ( y - FPF(124.22551499f)
+                 - FPF(1.498030302f) * mx.f 
+                 - FPF(1.72587999f) / ( FPF(0.3520887068f) + mx.f ) );
+      }
+
+      /// Fast log approximation 
+      inline FPF approx_log( const FPF & x ) noexcept
+      {
+        return FPF(0.69314718f) * approx_log2( x );
+      }
+      
+      /// Very fast log approximation 
+      inline FPF vapprox_log( const FPF & x ) noexcept
+      {
+        const union { FPF f; UInt32 i; } vx = { x };
+        return ( Vc::simd_cast<FPF>(vx.i) * FPF(8.2629582881927490e-8f) ) - FPF(87.989971088f);
+      }
+
+      /// Fast pow2 approximation
+      inline FPF approx_pow2( const FPF & p ) noexcept
+      {
+        auto clipp = p;
+        const FPF A( -126.0f ); 
+        clipp( p < A ) = A;
+        const auto w = Vc::simd_cast<Int32>(clipp);
+        const auto z = clipp - Vc::simd_cast<FPF>(w);
+        const union { UInt32 i; FPF f; } v = {
+          Vc::simd_cast<UInt32>( ( 1 << 23 ) * ( clipp + FPF(121.2740575f) + FPF(27.7280233f) /
+                                              ( FPF(4.84252568f) - z) - FPF(1.49012907f) * z ) ) 
+        };
+        return v.f;
+      }
+
+      /// Fast exp approximation
+      inline FPF approx_exp( const FPF & p ) noexcept
+      {
+        return approx_pow2( FPF(1.442695040f) * p );
+      }
+
+      /// Very fast pow2 approximation
+      inline FPF vapprox_pow2( const FPF & p ) noexcept
+      {
+        auto clipp = p;
+        const FPF A( -126.0f ); 
+        clipp( p < A ) = A;
+        const union { UInt32 i; FPF f; } v = {
+          Vc::simd_cast<UInt32>( ( 1 << 23 ) * ( clipp + FPF(126.94269504f) ) ) 
+        };
+        return v.f;
+      }
+
+      /// Very fast exp approximation
+      inline FPF vapprox_exp( const FPF & p ) noexcept
+      {
+        return vapprox_pow2( FPF(1.442695040f) * p );
+      }
+ 
+      //------------------------------------------------------------------------------
+
+      // Scalar versions
+
+      /// Fast log2 approximation 
+      inline float approx_log2( const float x ) noexcept
+      {
+        const union { float f; std::uint32_t i; } vx = { x };
+        const union { std::uint32_t i; float f; } mx = { ( vx.i & 0x007FFFFF ) | 0x3f000000 };
+        const auto y = float(vx.i) * 1.1920928955078125e-7f;
+        return ( y - 124.22551499f
+                 - 1.498030302f * mx.f 
+                 - 1.72587999f / ( 0.3520887068f + mx.f ) );
+      }
+
+      /// Fast log approximation 
+      inline float approx_log( const float x ) noexcept
+      {
+        return 0.69314718f * approx_log2( x );
+      }
+
+      /// Very Fast log approximation 
+      inline float vapprox_log( const float x ) noexcept
+      {
+        const union { float f; std::uint32_t i; } vx = { x };
+        return ( float(vx.i) * 8.2629582881927490e-8f ) - 87.989971088f;
+      }
+
+      inline float approx_pow2 ( const float p )
+      {
+        const float offset   = ( p < 0 ? 1.0f : 0.0f );
+        const float clipp    = ( p < -126 ? -126.0f : p );
+        const std::int32_t w = clipp;
+        const float        z = clipp - w + offset;
+        const union { std::uint32_t i; float f; } v = { 
+          static_cast<std::uint32_t>( (1 << 23) * ( clipp + 121.2740575f + 27.7280233f / 
+                                                   ( 4.84252568f - z ) - 1.49012907f * z ) )
+        };
+        return v.f;
+      }
+
+      /// Fast exp approximation
+      inline float approx_exp( const float p ) noexcept
+      {
+        return approx_pow2( 1.442695040f * p );
+      }
+
+      /// Very fast pow2 approximation
+      inline float vapprox_pow2( const float p ) noexcept
+      {
+        const float clipp = ( p < -126 ? -126.0f : p );
+        const union { uint32_t i; float f; } v = { 
+          static_cast<std::uint32_t>( (1 << 23) * (clipp + 126.94269504f) )
+        };
+        return v.f;
+      }
+
+      /// Very fast exp approximation
+      inline float vapprox_exp( const float p ) noexcept
+      {
+        return vapprox_pow2( 1.442695040f * p );
+      }
+
+
+      //------------------------------------------------------------------------------
+      
+    }
 
     //------------------------------------------------------------------------------
 
