@@ -1,4 +1,3 @@
-// $Id: MDFWriterLite.cpp,v 1.3 2010-05-19 06:48:45 kakiba Exp $
 //  ====================================================================
 //  MDFWriterLite.cpp
 //  --------------------------------------------------------------------
@@ -37,7 +36,7 @@ std::string MDFWriterLite::getConnection(const std::string& org_conn)  {
   ::setlocale(LC_ALL, "");
   m_lastOpen = ::time(0);
   struct tm *currtime = ::localtime(&m_lastOpen);
-  ::strftime (dateStr,sizeof(dateStr), "%EY.%0m.%0d-%0H.%0M.%0S.mdf",currtime);
+  ::strftime (dateStr,sizeof(dateStr), "%EY.%m.%d-%H.%M.%S.mdf",currtime);
   string con = org_conn+dateStr;
   
   MsgStream log(msgSvc(), name());
