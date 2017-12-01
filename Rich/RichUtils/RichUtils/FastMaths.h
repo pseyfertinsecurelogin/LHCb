@@ -26,6 +26,7 @@
 #include "vdt/atan2.h"
 #include "vdt/sincos.h"
 #include "vdt/sqrt.h"
+#include "vdt/asin.h"
 
 namespace Rich
 {
@@ -360,34 +361,44 @@ namespace Rich
     // For consistency across all scalar and SIMD types
 
     /// Fast sin and cos
-    inline void fast_sincos( const float  x, float&  s, float&  c ) { vdt::fast_sincosf(x,s,c); }
+    inline void fast_sincos( const float  x, float&  s, float&  c ) noexcept { vdt::fast_sincosf(x,s,c); }
     /// Fast sin and cos
-    inline void fast_sincos( const double x, double& s, double& c ) { vdt::fast_sincos(x,s,c);  }
+    inline void fast_sincos( const double x, double& s, double& c ) noexcept { vdt::fast_sincos(x,s,c);  }
 
     /// Fast log
-    inline float  fast_log( const float  x ) { return vdt::fast_logf(x); }
+    inline float  fast_log( const float  x ) noexcept { return vdt::fast_logf(x); }
     /// Fast log
-    inline double fast_log( const double x ) { return vdt::fast_log(x); }
+    inline double fast_log( const double x ) noexcept { return vdt::fast_log(x); }
 
     /// Fast exp
-    inline float  fast_exp( const float  x ) { return vdt::fast_expf(x); }
+    inline float  fast_exp( const float  x ) noexcept { return vdt::fast_expf(x); }
     /// Fast exp
-    inline double fast_exp( const double x ) { return vdt::fast_exp(x); }
+    inline double fast_exp( const double x ) noexcept { return vdt::fast_exp(x); }
 
     /// Fast inverse sqrt
-    inline float  fast_isqrt( const float  x ) { return vdt::fast_isqrtf(x); }
+    inline float  fast_isqrt( const float  x ) noexcept { return vdt::fast_isqrtf(x); }
     /// Fast inverse sqrt
-    inline double fast_isqrt( const double x ) { return vdt::fast_isqrt(x); }
+    inline double fast_isqrt( const double x ) noexcept { return vdt::fast_isqrt(x); }
 
     /// Fast approximate inverse sqrt
-    inline float  fast_approx_isqrt( const float  x ) { return vdt::fast_approx_isqrtf(x); }
+    inline float  fast_approx_isqrt( const float  x ) noexcept { return vdt::fast_approx_isqrtf(x); }
     /// Fast approximate inverse sqrt
-    inline double fast_approx_isqrt( const double x ) { return vdt::fast_approx_isqrt(x); }
+    inline double fast_approx_isqrt( const double x ) noexcept { return vdt::fast_approx_isqrt(x); }
 
     /// Fast atan2
-    inline float  fast_atan2( const float  y, const float  x ) { return vdt::fast_atan2f(y,x); }
+    inline float  fast_atan2( const float  y, const float  x ) noexcept { return vdt::fast_atan2f(y,x); }
     /// Fast atan2
-    inline double fast_atan2( const double y, const double x ) { return vdt::fast_atan2(y,x); }
+    inline double fast_atan2( const double y, const double x ) noexcept { return vdt::fast_atan2(y,x); }
+
+    /// Fast acos
+    inline float fast_acos( const float  x ) noexcept { return vdt::fast_acosf(x); }
+    /// Fast acos
+    inline float fast_acos( const double x ) noexcept { return vdt::fast_acos(x); }
+
+    /// Fast asin
+    inline float fast_asin( const float  x ) noexcept { return vdt::fast_asinf(x); }
+    /// Fast asin
+    inline float fast_asin( const double x ) noexcept { return vdt::fast_asin(x); }
 
     //------------------------------------------------------------------------------
 
