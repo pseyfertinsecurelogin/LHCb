@@ -444,10 +444,11 @@ namespace Rich
         const FPF A( -126.0f ); 
         clipp( p < A ) = A;
         const auto w = Vc::simd_cast<Int32>(clipp);
-        const auto z = clipp - Vc::simd_cast<FPF>(w);
+        auto z = clipp - Vc::simd_cast<FPF>(w);
+        z( p < FPF::Zero() ) += FPF::One();
         const union { UInt32 i; FPF f; } v = {
           Vc::simd_cast<UInt32>( ( 1 << 23 ) * ( clipp + FPF(121.2740575f) + FPF(27.7280233f) /
-                                              ( FPF(4.84252568f) - z) - FPF(1.49012907f) * z ) ) 
+                                              ( FPF(4.84252568f) - z ) - FPF(1.49012907f) * z ) ) 
         };
         return v.f;
       }
