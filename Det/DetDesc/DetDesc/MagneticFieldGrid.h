@@ -82,18 +82,38 @@ private:
     }
 
 public:
-    // template<class vectype>
-    // std::array<vectype, 3> horizontallyVectorizedFieldVectorClosestPoint (
-    //   const std::array<vectype, 3>& point
-    // ) {
-    //   std::array<vectype, 3> inverted_Dxyz {vectype{m_invDxyz_V[0]}, vectype{m_invDxyz_V[1]}, vectype{m_invDxyz_V[2]}};
-    //   vectype x = (point[0] - vectype{m_min_FL_V[0]}) * inverted_Dxyz[0];
-    //   vectype y = (point[1] - vectype{m_min_FL_V[1]}) * inverted_Dxyz[1];
-    //   vectype z = (point[2] - vectype{m_min_FL_V[2]}) * inverted_Dxyz[2];
-    //   vectype i = floor(x);
-    //   vectype j = floor(y);
-    //   vectype k = floor(z);
-    // }
+    template<class vectype>
+    std::array<vectype, 3> horizontallyVectorizedFieldVectorClosestPoint (
+      const std::array<vectype, 3>& point
+    ) const {
+      std::array<vectype, 3> bf;
+
+      std::array<vectype, 3> inverted_Dxyz {vectype{m_invDxyz_V[0]}, vectype{m_invDxyz_V[1]}, vectype{m_invDxyz_V[2]}};
+      std::array<vectype, 3> Nxyz {vectype{(double) m_Nxyz_V[0]}, vectype{(double) m_Nxyz_V[1]}, vectype{(double) m_Nxyz_V[2]}};
+      vectype scaleFactor {m_scaleFactor};
+      vectype x = (point[0] - vectype{m_min_FL_V[0]}) * inverted_Dxyz[0];
+      vectype y = (point[1] - vectype{m_min_FL_V[1]}) * inverted_Dxyz[1];
+      vectype z = (point[2] - vectype{m_min_FL_V[2]}) * inverted_Dxyz[2];
+      vectype i = floor(x);
+      vectype j = floor(y);
+      vectype k = floor(z);
+      
+      const vectype index = Nxyz[0] * (Nxyz[1] * k + j) + i;
+      const std::array<vectype, 3> q = fetchVectorQ<vectype>(index);
+
+      // if ( _i < m_Nxyz_V[0]-1 &&
+      //      _j < m_Nxyz_V[1]-1 &&
+      //      _k < m_Nxyz_V[2]-1 ) {
+      auto condition {i < Nxyz[0] - 1. &&
+                      j < Nxyz[1] - 1. &&
+                      k < Nxyz[2] - 1.};
+
+      bf[0] = select(condition, scaleFactor * q[0], vectype{0.});
+      bf[1] = select(condition, scaleFactor * q[1], vectype{0.});
+      bf[2] = select(condition, scaleFactor * q[2], vectype{0.});
+
+      return bf;
+    }
 
     template<class vectype>
     std::array<vectype, 3> horizontallyVectorizedFieldVector (
