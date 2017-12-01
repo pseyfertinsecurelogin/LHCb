@@ -158,7 +158,6 @@ class L0Conf(LHCbConfigurableUser) :
         if writeOnTes is not None:     
             l0calo.WriteOnTES = writeOnTes
             l0muon.WriteOnTES = writeOnTes
-            l0du.WriteOnTES   = writeOnTes
 
         # Build the sequence 
         l0decodingSeq.Members+=[ l0calo, l0muon, l0du ]
@@ -202,7 +201,6 @@ class L0Conf(LHCbConfigurableUser) :
         if writeOnTes is not None:     
             l0calo.WriteOnTES = writeOnTes
             l0muon.WriteOnTES = writeOnTes
-            l0du.WriteOnTES   = writeOnTes
 
         # Build the sequence in two steps :
         # First :  run L0Calo + L0Muon + PUVeto (+ L0HC, if requested) emulators
@@ -305,7 +303,6 @@ class L0Conf(LHCbConfigurableUser) :
             # Decode the l0du to produce the processor data (input to simulation)
             decoding = decodeL0DU()
             decoding.WriteProcData = True 
-            decoding.WriteOnTES = False # Do not write the L0DU report 
             decoding.ProcessorDataLocation  = "Trig/L0/L0DUData"
             # Emulate the l0du from the processor data
             emulation = emulateL0DU()        
