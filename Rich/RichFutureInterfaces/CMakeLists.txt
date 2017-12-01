@@ -16,6 +16,9 @@ gaudi_add_dictionary(RichFutureInterfaces
                      dict/RichFutureInterfacesDict.xml
                      INCLUDE_DIRS AIDA Boost
                      LINK_LIBRARIES LHCbKernel RichFutureUtils RichUtils
-                     OPTIONS "-U__MINGW32__")
+                     OPTIONS " -U__MINGW32__ -Wno-undefined-var-template ")
+
+# Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
+#        To be removed once Vc is updated.
 
 gaudi_install_headers(RichFutureInterfaces)
