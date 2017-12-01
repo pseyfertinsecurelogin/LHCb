@@ -209,7 +209,7 @@ public:
     Vec4db get_high() const {
         return reinterpret_d(Vec4q(z1));
     }
-    static int size () {
+    constexpr static int size () {
         return 8;
     }
 };
@@ -382,7 +382,7 @@ public:
     float operator [] (uint32_t index) const {
         return extract(index);
     }
-    static int size () {
+    constexpr static int size () {
         return 16;
     }
 };
@@ -999,7 +999,7 @@ public:
     Vec4d get_high() const {
         return z1;
     }
-    static int size () {
+    constexpr static int size () {
         return 8;
     }
 };

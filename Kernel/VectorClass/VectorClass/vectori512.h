@@ -193,7 +193,7 @@ public:
     bool operator [] (uint32_t index) const {
         return extract(index);
     }
-    static int size () {
+    constexpr static int size () {
         return 16;
     }
 };
@@ -418,7 +418,7 @@ public:
     Vec4qb get_high() const {
         return Vec8b(__mmask16(m16 >> 4)).get_low();
     }
-    static int size () {
+    constexpr static int size () {
         return 8;
     }
 };
@@ -644,7 +644,7 @@ public:
     Vec256b get_high() const {
         return _mm512_extracti64x4_epi64(zmm,1);
     }
-    static int size () {
+    constexpr static int size () {
         return 512;
     }
 };
@@ -788,7 +788,7 @@ public:
     Vec8i get_high() const {
         return _mm512_extracti64x4_epi64(zmm,1);
     }
-    static int size () {
+    constexpr static int size () {
         return 16;
     }
 };
@@ -1325,7 +1325,7 @@ public:
     Vec4q get_high() const {
         return _mm512_extracti64x4_epi64(zmm,1);
     }
-    static int size () {
+    constexpr static int size () {
         return 8;
     }
 };
