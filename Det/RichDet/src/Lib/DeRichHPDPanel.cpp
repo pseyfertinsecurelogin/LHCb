@@ -195,11 +195,69 @@ bool DeRichHPDPanel::smartID ( const Gaudi::XYZPoint& globalPoint,
 }
 
 //=========================================================================
-//  find an intersection with the HPD window
+// find an intersection with the HPD window (SIMD)
+//=========================================================================
+DeRichHPDPanel::SIMDRayTResult::Results
+DeRichHPDPanel::PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
+                                   const Rich::SIMD::Vector<FP>& vGlobal,
+                                   Rich::SIMD::Point<FP>& hitPosition,
+                                   SIMDRayTResult::SmartIDs& smartID,
+                                   SIMDRayTResult::PDs& PDs,
+                                   const LHCb::RichTraceMode mode ) const
+{
+  SIMDRayTResult::Results res;
+  // Hit position
+  SIMDFP hx, hy, hz;
+  // Just do a scalar loop
+  for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
+  {
+    const Gaudi::XYZPoint  p { pGlobal.x()[i], pGlobal.y()[i], pGlobal.z()[i] };
+    const Gaudi::XYZVector v { vGlobal.x()[i], vGlobal.y()[i], vGlobal.z()[i] };
+    Gaudi::XYZPoint h;
+    res[i] = PDWindowPoint( p, v, h, smartID[i], PDs[i], mode );
+    hx[i] = h.x();
+    hy[i] = h.y();
+    hz[i] = h.z();
+  }
+  hitPosition = { hx, hy, hz };
+  return res;
+}
+
+//=========================================================================
+// returns the (SIMD) intersection point with the detection plane
+//=========================================================================
+DeRichHPDPanel::SIMDRayTResult::Results
+DeRichHPDPanel::detPlanePointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
+                                   const Rich::SIMD::Vector<FP>& vGlobal,
+                                   Rich::SIMD::Point<FP>& hitPosition,
+                                   SIMDRayTResult::SmartIDs& smartID,
+                                   SIMDRayTResult::PDs& PDs,
+                                   const LHCb::RichTraceMode mode ) const
+{
+  SIMDRayTResult::Results res;
+  // Hit position
+  SIMDFP hx, hy, hz;
+  // Just do a scalar loop
+  for ( std::size_t i = 0; i < SIMDFP::Size; ++i )
+  {
+    const Gaudi::XYZPoint  p { pGlobal.x()[i], pGlobal.y()[i], pGlobal.z()[i] };
+    const Gaudi::XYZVector v { vGlobal.x()[i], vGlobal.y()[i], vGlobal.z()[i] };
+    Gaudi::XYZPoint h;
+    res[i] = detPlanePoint( p, v, h, smartID[i], PDs[i], mode );
+    hx[i] = h.x();
+    hy[i] = h.y();
+    hz[i] = h.z();
+  }
+  hitPosition = { hx, hy, hz };
+  return res;
+}
+
+//=========================================================================
+// find an intersection with the HPD window (scalar)
 //=========================================================================
 LHCb::RichTraceMode::RayTraceResult
-DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZVector& vGlobal,
-                               const Gaudi::XYZPoint& pGlobal,
+DeRichHPDPanel::PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
+                               const Gaudi::XYZVector& vGlobal,
                                Gaudi::XYZPoint& windowPointGlobal,
                                LHCb::RichSmartID& smartID,
                                const DeRichPD*& pd,
@@ -393,7 +451,7 @@ DeRichHPDPanel::readoutChannelList ( LHCb::RichSmartID::Vector& readoutChannels 
 }
 
 //=========================================================================
-// returns the intersection point with the detection plane
+// returns the (scalar) intersection point with the detection plane
 //=========================================================================
 LHCb::RichTraceMode::RayTraceResult
 DeRichHPDPanel::detPlanePoint( const Gaudi::XYZPoint& pGlobal,

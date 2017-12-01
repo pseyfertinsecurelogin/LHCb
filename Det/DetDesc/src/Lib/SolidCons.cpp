@@ -10,8 +10,10 @@
 #include "DetDesc/SolidTrd.h"
 #include "DetDesc/SolidTicks.h"
 #include "DetDesc/SolidException.h"
-
+// boost
 #include "boost/container/static_vector.hpp"
+// VDT
+#include "vdt/atan2.h"
 // ============================================================================
 /** @file SolidCons.cpp
  *
@@ -98,8 +100,7 @@ void SolidCons::setBP()
   setZMin   ( -zHalfLength() );
   setZMax   (  zHalfLength() );
   setRhoMax (  std::max(outerRadiusAtMinusZ(),outerRadiusAtPlusZ()) );
-  setRMax   ( sqrt( zMax() * zMax() + rhoMax() * rhoMax () ) );
-
+  setRMax   (  std::sqrt( zMax() * zMax() + rhoMax() * rhoMax () ) );
 
   const double phi1   = startPhiAngle   ()                      ;
   const double phi2   = startPhiAngle   () + deltaPhiAngle   () ;
@@ -305,6 +306,109 @@ void SolidCons::createCover() {
 }
 
 // ============================================================================
+bool SolidCons::testForIntersection( const Gaudi::XYZPoint & Point      ,
+                                     const Gaudi::XYZVector& Vector     ) const
+{
+  return testForIntersectionImpl( Point, Vector );
+}
+// ============================================================================
+bool SolidCons::testForIntersection( const Gaudi::Polar3DPoint & Point  ,
+                                     const Gaudi::Polar3DVector& Vector ) const
+{
+  return testForIntersectionImpl( Point, Vector );
+}
+// ============================================================================
+bool SolidCons::testForIntersection( const Gaudi::RhoZPhiPoint & Point  ,
+                                     const Gaudi::RhoZPhiVector& Vector ) const
+{
+  return testForIntersectionImpl( Point, Vector );
+}
+// ============================================================================
+template<class aPoint, class aVector>
+bool SolidCons::testForIntersectionImpl( const aPoint  & Point,
+                                         const aVector & Vector ) const
+{
+  // line with null direction vector is not able to intersect any solid
+  if ( Vector.mag2() <= 0 )  { return false; }
+
+  // cross bounding cylinder ?
+  if ( !crossBCylinder( Point , Vector ) ) { return false; }
+
+  // intersect with first z-plane
+  auto interZ = SolidTicks::LineZIntersectTick( Point, Vector, -zHalfLength() );
+  if ( interZ.first )
+  {
+    const auto x  = Point.x() + interZ.second * Vector.x() ;
+    const auto y  = Point.y() + interZ.second * Vector.y() ;
+    const auto r2 = ( (x*x) + (y*y) );
+    if ( innerRadiusSqrAtMinusZ() <= r2 && 
+         outerRadiusSqrAtMinusZ() >= r2 && 
+         ( noPhiGap() || insidePhi( std::atan2(y,x) ) ) )
+    { return true; }
+  }
+
+  // intersect with 2nd z-plane
+  interZ = SolidTicks::LineZIntersectTick( Point, Vector, zHalfLength() );
+  if ( interZ.first )
+  {
+    const auto x  = Point.x() + interZ.second * Vector.x() ;
+    const auto y  = Point.y() + interZ.second * Vector.y() ;
+    const auto r2 = ( (x*x) + (y*y) );
+    if ( innerRadiusSqrAtPlusZ() <= r2 &&
+         outerRadiusSqrAtPlusZ() >= r2 && 
+         ( noPhiGap() || insidePhi( std::atan2(y,x) ) ) )
+    { return true; }
+  }
+
+  boost::container::static_vector<ISolid::Tick,6> tmpticks;
+
+  if ( UNLIKELY( !noPhiGap() ) )
+  {
+    // intersect with phi planes
+    tmpticks.clear() ;
+    SolidTicks::LineIntersectsThePhi( Point, Vector, startPhiAngle(), std::back_inserter( tmpticks ) );
+    //if( deltaPhiAngle() != M_PI )
+    SolidTicks::LineIntersectsThePhi( Point, Vector, startPhiAngle() + deltaPhiAngle(), std::back_inserter( tmpticks ));
+    // check that we are anywhere inside this cylinder
+    for ( const auto & tick : tmpticks )
+    {
+      const auto zfrac = ( Point.z() + tick * Vector.z() ) / zHalfLength() ;
+      if ( fabs(zfrac) <= 1 )
+      {
+        const auto x = Point.x() + tick * Vector.x() ;
+        const auto y = Point.y() + tick * Vector.y() ;
+        const auto r = std::sqrt( (x*x) + (y*y) );
+        if ( r >= 0.5*( (1.0-zfrac)*innerRadiusAtMinusZ() + (1.0+zfrac)*innerRadiusAtMinusZ() ) &&
+             r <= 0.5*( (1.0-zfrac)*outerRadiusAtMinusZ() + (1.0+zfrac)*outerRadiusAtMinusZ() ) )
+        { return true ; }
+      }
+    }
+  }
+
+  // intersect with outer conical surface
+  tmpticks.clear() ;
+  SolidTicks::LineIntersectsTheCone( Point, Vector, outerRadiusAtMinusZ(), outerRadiusAtPlusZ(),
+                                     -zHalfLength(), zHalfLength(), std::back_inserter(tmpticks) );
+  // intersect with inner conical surface
+  if ( UNLIKELY( 0 < innerRadiusAtPlusZ() || 0 < innerRadiusAtMinusZ() ) )
+  {
+    SolidTicks::LineIntersectsTheCone( Point, Vector, innerRadiusAtMinusZ(), innerRadiusAtPlusZ(),
+                                       -zHalfLength(), zHalfLength(), std::back_inserter(tmpticks) );
+  }
+
+  // check that we are in the right z and phi range
+  for ( const auto & tick : tmpticks )
+  {
+    if ( fabs(Point.z() + tick * Vector.z()) <= zHalfLength() &&
+        ( noPhiGap() || insidePhi( std::atan2( Point.y() + tick * Vector.y(), Point.x() + tick * Vector.x() ) ) ) )
+    { return true ; }
+  }
+
+  // if get here, no intersection
+  return false;
+}
+
+// ============================================================================
 /** calculate the intersection points("ticks") with a given line.
  *  Input - line, paramterised by  x_vect = Point + Vector * T
  *  "tick" is just a value of T, at which the intersection occurs
@@ -344,73 +448,84 @@ unsigned int SolidCons::intersectionTicksImpl( const aPoint & Point,
   ticks.clear();
 
   // line with null direction vector is not able to intersect any solid
-  if( Vector.mag2() <= 0 )  { return 0 ;}  ///< RETURN!!!
+  if ( Vector.mag2() <= 0 )  { return 0 ; }
 
   // cross bounding cylinder ?
-  if( !crossBCylinder( Point , Vector ) ) { return 0 ; }
+  if ( !crossBCylinder( Point , Vector ) ) { return 0 ; }
 
   // intersect with first z-plane
   boost::container::static_vector<ISolid::Tick,6> tmpticks ;
   tmpticks.clear() ;
-  if(SolidTicks::LineIntersectsTheZ( Point, Vector, -zHalfLength(), std::back_inserter( tmpticks ))) {
-    double tick = tmpticks.front() ;
-    double x = Point.x() + tick * Vector.x() ;
-    double y = Point.y() + tick * Vector.y() ;
-    double r = sqrt(x*x+y*y) ;
-    if(innerRadiusAtMinusZ()<=r && r<=outerRadiusAtMinusZ() && (noPhiGap() || insidePhi( atan2(y,x) ) ) )
-      ticks.push_back(tick) ;
+  if ( SolidTicks::LineIntersectsTheZ( Point, Vector, -zHalfLength(), std::back_inserter(tmpticks) ) )
+  {
+    const auto tick = tmpticks.front() ;
+    const auto x  = Point.x() + tick * Vector.x() ;
+    const auto y  = Point.y() + tick * Vector.y() ;
+    const auto r2 = ( (x*x) + (y*y) );
+    if ( innerRadiusSqrAtMinusZ() <= r2 && 
+         outerRadiusSqrAtMinusZ() >= r2 && 
+         ( noPhiGap() || insidePhi( std::atan2(y,x) ) ) )
+    { ticks.emplace_back(tick) ; }
   }
 
   // intersect with 2nd z-plane
   tmpticks.clear() ;
-  if(SolidTicks::LineIntersectsTheZ( Point, Vector, zHalfLength(), std::back_inserter( tmpticks ))) {
-    double tick = tmpticks.front() ;
-    double x = Point.x() + tick * Vector.x() ;
-    double y = Point.y() + tick * Vector.y() ;
-    double r = sqrt(x*x+y*y) ;
-    if(innerRadiusAtPlusZ()<=r && r<=outerRadiusAtPlusZ() && (noPhiGap() || insidePhi( atan2(y,x) ) ) )
-      ticks.push_back(tick) ;
+  if ( SolidTicks::LineIntersectsTheZ( Point, Vector, zHalfLength(), std::back_inserter(tmpticks) ) ) 
+  {
+    const auto tick = tmpticks.front() ;
+    const auto x  = Point.x() + tick * Vector.x() ;
+    const auto y  = Point.y() + tick * Vector.y() ;
+    const auto r2 = ( (x*x) + (y*y) );
+    if ( innerRadiusSqrAtPlusZ() <= r2 &&
+         outerRadiusSqrAtPlusZ() >= r2 && 
+         ( noPhiGap() || insidePhi( std::atan2(y,x) ) ) )
+    { ticks.emplace_back(tick) ; }
   }
 
-  if( !noPhiGap() ) {
+  if ( UNLIKELY( !noPhiGap() ) )
+  {
     // intersect with phi planes
     tmpticks.clear() ;
-    SolidTicks::LineIntersectsThePhi( Point,Vector,startPhiAngle(), std::back_inserter( tmpticks ) );
+    SolidTicks::LineIntersectsThePhi( Point, Vector, startPhiAngle(), std::back_inserter( tmpticks ) );
     //if( deltaPhiAngle() != M_PI )
-    SolidTicks::LineIntersectsThePhi( Point,Vector,startPhiAngle() + deltaPhiAngle(), std::back_inserter( tmpticks ));
-
+    SolidTicks::LineIntersectsThePhi( Point, Vector, startPhiAngle() + deltaPhiAngle(), std::back_inserter( tmpticks ));
     // check that we are anywhere inside this cylinder
-    for( auto it = tmpticks.begin(); it != tmpticks.end(); ++it) {
-      double zfrac = (Point.z() + *it * Vector.z())/zHalfLength() ;
-      if( fabs(zfrac) <= 1 ) {
-        double x = Point.x() + *it * Vector.x() ;
-        double y = Point.y() + *it * Vector.y() ;
-        double r = sqrt(x*x+y*y) ;
-        if( r >= 0.5*( (1-zfrac)*innerRadiusAtMinusZ() + (1+zfrac)*innerRadiusAtMinusZ()) &&
-            r<=  0.5*( (1-zfrac)*outerRadiusAtMinusZ() + (1+zfrac)*outerRadiusAtMinusZ()) )
-          ticks.push_back(*it) ;
+    for ( const auto & tick : tmpticks )
+    {
+      const auto zfrac = ( Point.z() + tick * Vector.z() ) / zHalfLength() ;
+      if( fabs(zfrac) <= 1 )
+      {
+        const auto x = Point.x() + tick * Vector.x() ;
+        const auto y = Point.y() + tick * Vector.y() ;
+        const auto r = std::sqrt( (x*x) + (y*y) );
+        if ( r >= 0.5*( (1.0-zfrac)*innerRadiusAtMinusZ() + (1.0+zfrac)*innerRadiusAtMinusZ()) &&
+             r <= 0.5*( (1.0-zfrac)*outerRadiusAtMinusZ() + (1.0+zfrac)*outerRadiusAtMinusZ()) )
+        { ticks.emplace_back(tick) ; }
       }
     }
   }
 
   // intersect with outer conical surface
   tmpticks.clear() ;
-  SolidTicks::LineIntersectsTheCone( Point, Vector, outerRadiusAtMinusZ(), outerRadiusAtPlusZ (),
-				     -zHalfLength(), zHalfLength(), std::back_inserter( tmpticks ));
+  SolidTicks::LineIntersectsTheCone( Point, Vector, outerRadiusAtMinusZ(), outerRadiusAtPlusZ(),
+                                     -zHalfLength(), zHalfLength(), std::back_inserter(tmpticks) );
   // intersect with inner conical surface
-  if( ( 0 < innerRadiusAtPlusZ() ) || ( 0 < innerRadiusAtMinusZ() )  )
-    SolidTicks::LineIntersectsTheCone( Point, Vector, innerRadiusAtMinusZ(), innerRadiusAtPlusZ (),
-				       -zHalfLength(), zHalfLength(), std::back_inserter( tmpticks ) );
+  if ( UNLIKELY( 0 < innerRadiusAtPlusZ() || 0 < innerRadiusAtMinusZ() ) )
+  {
+    SolidTicks::LineIntersectsTheCone( Point, Vector, innerRadiusAtMinusZ(), innerRadiusAtPlusZ(),
+                                       -zHalfLength(), zHalfLength(), std::back_inserter(tmpticks) );
+  }
 
   // check that we are in the right z and phi range
-  for( auto it = tmpticks.begin(); it != tmpticks.end(); ++it)
-    if( fabs(Point.z() + *it * Vector.z()) <= zHalfLength() &&
-	(noPhiGap() ||
-	 insidePhi(atan2( Point.y() + *it * Vector.y(), Point.x() + *it * Vector.x())) ) )
-      ticks.push_back(*it) ;
+  for ( const auto & tick : tmpticks )
+  {
+    if ( fabs(Point.z() + tick * Vector.z()) <= zHalfLength() &&
+        ( noPhiGap() || insidePhi( std::atan2( Point.y() + tick * Vector.y(), Point.x() + tick * Vector.x())) ) )
+    { ticks.emplace_back(tick) ; }
+  }
 
   std::sort(ticks.begin(),ticks.end()) ;
-  return SolidTicks::RemoveAdjacentTicksFast(ticks , Point , Vector , *this );
+  return SolidTicks::RemoveAdjacentTicksFast( ticks , Point , Vector , *this );
 }
 
 // ============================================================================

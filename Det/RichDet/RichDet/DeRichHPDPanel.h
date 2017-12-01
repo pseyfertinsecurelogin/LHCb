@@ -90,16 +90,16 @@ public:
    */
   Gaudi::XYZPoint detPointOnAnode( const LHCb::RichSmartID& smartID ) const;
 
-  // Returns the intersection point with an HPD window given a vector and a point.
+  // Returns the scalar intersection point with an HPD window given a vector and a point.
   LHCb::RichTraceMode::RayTraceResult
-  PDWindowPoint( const Gaudi::XYZVector& vGlobal,
-                 const Gaudi::XYZPoint& pGlobal,
+  PDWindowPoint( const Gaudi::XYZPoint& pGlobal,
+                 const Gaudi::XYZVector& vGlobal,
                  Gaudi::XYZPoint& windowPointGlobal,
                  LHCb::RichSmartID& smartID,
                  const DeRichPD*& pd,
                  const LHCb::RichTraceMode mode ) const override final;
 
-  // Returns the intersection point with the detector plane given a vector and a point.
+  // Returns the scalar intersection point with the detector plane given a vector and a point.
   LHCb::RichTraceMode::RayTraceResult
   detPlanePoint( const Gaudi::XYZPoint& pGlobal,
                  const Gaudi::XYZVector& vGlobal,
@@ -108,6 +108,24 @@ public:
                  const DeRichPD*& pd,
                  const LHCb::RichTraceMode mode ) const override final;
 
+  // Returns the SIMD intersection point with an HPD window given a vector and a point.
+  SIMDRayTResult::Results
+  PDWindowPointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
+                     const Rich::SIMD::Vector<FP>& vGlobal,
+                     Rich::SIMD::Point<FP>& hitPosition,
+                     SIMDRayTResult::SmartIDs& smartID,
+                     SIMDRayTResult::PDs& PDs,
+                     const LHCb::RichTraceMode mode ) const override final;
+
+  // Returns the SIMD intersection point with the detector plane given a vector and a point.
+  SIMDRayTResult::Results
+  detPlanePointSIMD( const Rich::SIMD::Point<FP>& pGlobal,
+                     const Rich::SIMD::Vector<FP>& vGlobal,
+                     Rich::SIMD::Point<FP>& hitPosition,
+                     SIMDRayTResult::SmartIDs& smartID,
+                     SIMDRayTResult::PDs& PDs,
+                     const LHCb::RichTraceMode mode ) const override final;
+  
   /// Access the DeRichPD object for a given PD RichSmartID
   const DeRichPD* dePD( const LHCb::RichSmartID pdID ) const override final;
 

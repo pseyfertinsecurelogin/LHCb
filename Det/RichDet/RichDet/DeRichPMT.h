@@ -12,6 +12,7 @@
 
 // LHCbKernel
 #include "Kernel/ILHCbMagnetSvc.h"
+#include "Kernel/RichSmartID.h"
 
 // RichDet
 #include "RichDet/DeRichPD.h"
@@ -85,6 +86,12 @@ public:
 
   inline bool PmtIsGrand() const noexcept { return m_PmtIsGrand; }
 
+  /// Set the PD ID
+  inline void setPDSmartID( const LHCb::RichSmartID id ) noexcept { m_pdSmartID = id; }
+
+  /// Access the PD ID
+  inline LHCb::RichSmartID pdSmartID() const noexcept { return m_pdSmartID; }
+
 private:
 
   // CRJ Use float not double to reduce memory footprint
@@ -142,9 +149,6 @@ private:
   //       Also, data members should be arranged so most commonly 
   //       accessed are listed first.
 
-  //FType m_QwToAnodeZDist{0};
-  //FType m_PmtAnodeLocationInPmt{0};
-
   FType m_zShift{0};
 
   FType m_PmtQwZSize{0};
@@ -156,18 +160,6 @@ private:
   int m_moduleNum{0}; ///< Module number
   int m_copyNum{0};   ///< Copy number
 
-  //FType m_PmtAnodeXSize{0};
-  //FType m_PmtAnodeYSize{0};
-  //FType m_PmtAnodeZSize{0};
-
-  //FType m_GrandPmtAnodeXSize{0};
-  //FType m_GrandPmtAnodeYSize{0};
-  //FType m_GrandPmtAnodeZSize{0};
-
-  //FType m_PmtPixelXSize{0};
-  //FType m_PmtPixelYSize{0};
-
-  //FType m_PmtPixelGap{0};
   FType m_PmtEffectivePixelXSize{0};
   FType m_PmtEffectivePixelYSize{0};
   FType m_PmtAnodeHalfThickness{0};
@@ -176,20 +168,13 @@ private:
   FType m_PmtNumPixColFrac{0};
   FType m_PmtNumPixRowFrac{0};
 
-  //FType m_GrandPmtPixelXSize{0};
-  //FType m_GrandPmtPixelYSize{0};
-
-  //FType m_GrandPmtPixelGap{0};
   FType m_GrandPmtEdgePixelXSize{0};
   FType m_GrandPmtEdgePixelYSize{0};
   FType m_GrandPmtEffectivePixelXSize{0};
   FType m_GrandPmtEffectivePixelYSize{0};
-  //FType m_GrandPmtEdgePixelXDiff{0};
-  //FType m_GrandPmtEdgePixelYDiff{0};
   FType m_GrandPmtAnodeHalfThickness{0};
   bool m_Rich2UseGrandPmt{false};
   bool m_Rich2UseMixedPmt{false};
-  //std::uint8_t m_Rich2PmtArrayConfig{0};
 
   bool m_PmtIsGrand{false};
 
@@ -197,5 +182,8 @@ private:
   IDetectorElement * m_dePmtAnode = nullptr;
 
   Rich::DetectorType m_rich = Rich::InvalidDetector;
+
+  /// PD SmartID
+  LHCb::RichSmartID m_pdSmartID;
 
 };

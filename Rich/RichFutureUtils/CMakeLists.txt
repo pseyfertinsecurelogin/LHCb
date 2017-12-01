@@ -27,6 +27,3 @@ gaudi_add_dictionary(RichFutureUtils
 
 # Note - Above -Wno-undefined-var-template is to work around an issue in Vc 1.3.0.
 #        To be removed once Vc is updated.
-
-target_link_libraries( RichFutureUtils     "${Vc_LIB_DIR}/libVc.a" )
-
